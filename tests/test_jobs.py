@@ -317,3 +317,53 @@ def test_ghidra_output_path_rejects_overlong_windows_path(tmp_path):
     output = tmp_path / ('a' * 90) / ('b' * 90) / 'raw'
     with pytest.raises(ValueError, match='shorter'):
         backend._validated_ghidra_output_path(output)
+
+
+def test_native_engine_workspace_is_local_temporary_and_removed(fake_runtime):
+    """Ghidra databases must not be created inside a OneDrive-backed case."""
+    root, package, project, config = fake_runtime
+    script = (
+        'args=sys.argv\n'
+        'if "--project-location" not in args or "--gzfs-path" not in args:\n'
+        '    print("Missing isolated engine workspace");sys.exit(9)\n'
+        'workspace=pathlib.Path(args[args.index("--project-location")+1])\n'
+        'gzfs=pathlib.Path(args[args.index("--gzfs-path")+1])\n'
+        'if out in workspace.parents or out.parent in workspace.parents or workspace==out:\n'
+        '    print("Ghidra project created beneath the case");sys.exit(9)\n'
+        'if any(part.startswith(".") for part in workspace.parts):\n'
+        '    print("Unsafe dot-prefixed workspace");sys.exit(9)\n'
+        'workspace.mkdir(parents=True,exist_ok=True)\n'
+        '(workspace/"created.txt").write_text("transient")\n'
+        '(out/"workspace-path.txt").write_text(str(workspace))\n'
+        '(out/"gzfs-path.txt").write_text(str(gzfs))\n'
+        '(out/"json"/"old-new.ghidriff.json").write_text('
+        'json.dumps({"functions":{"added":[],"deleted":[],"modified":[]}}))\n'
+    )
+    write_backend(package, script)
+    path, run = run_comparison(config, project, root, threading.Event(), lambda _: None)
+    assert run.status == 'completed', run.error
+    workspace = Path((path.parent.parent / 'workspace-path.txt').read_text())
+    gzfs = Path((path.parent.parent / 'gzfs-path.txt').read_text())
+    assert workspace.is_absolute() and gzfs.is_absolute()
+    assert workspace.parent == gzfs.parent
+    assert not workspace.parent.exists()
+    assert path.is_file()
+    assert not (root / 'runs' / run.id / 'raw' / 'ghidra_projects').exists()
+
+
+def test_native_engine_workspace_removed_when_analysis_fails(fake_runtime):
+    root, package, project, config = fake_runtime
+    write_backend(package,
+        'args=sys.argv\n'
+        'if "--project-location" not in args:\n'
+        '    print("Missing isolated workspace");sys.exit(9)\n'
+        'workspace=pathlib.Path(args[args.index("--project-location")+1])\n'
+        'workspace.mkdir(parents=True,exist_ok=True)\n'
+        '(workspace/"marker").write_text("transient")\n'
+        '(out/"workspace-path.txt").write_text(str(workspace))\n'
+        'sys.exit(7)\n')
+    path, run = run_comparison(config, project, root, threading.Event(), lambda _: None)
+    assert run.status == 'failed'
+    workspace = Path((path / 'raw' / 'workspace-path.txt').read_text())
+    assert not workspace.parent.exists()
+    assert (path / 'failure.txt').is_file()
