@@ -22,6 +22,30 @@ from .models import AnalysisRun, ComparisonProject, JobEvent, uid
 JSON_LIMIT = 100 * 1024 * 1024
 
 
+def _validated_ghidra_output_path(path: Path) -> Path:
+    """Validate the resolved path that Ghidriff will use for Ghidra projects.
+
+    Ghidra rejects *any* path component beginning with a dot, not just the
+    output directory's basename. Never silently rename the user's project.
+    Windows path-length failures are also surfaced before starting Java.
+    """
+    candidate = Path(path)
+    if not candidate.is_absolute():
+        raise ValueError('PT-BACKEND: Ghidra output path must be absolute')
+    resolved = candidate.resolve()
+    if any(part.startswith('.') for part in resolved.parts):
+        raise ValueError(
+            'PT-BACKEND: Ghidra cannot use a dot-prefixed directory in its output/project '
+            'path; move the PatchTrace project to a directory without hidden ancestors'
+        )
+    if os.name == 'nt' and len(str(resolved)) >= 240:
+        raise ValueError(
+            'PT-BACKEND: Ghidra output path is too long for reliable Windows analysis; '
+            'choose a shorter project location'
+        )
+    return resolved
+
+
 @dataclass(frozen=True)
 class BackendConfig:
     python_executable: str
@@ -170,7 +194,7 @@ def quarantine_failed_run(root: Path, run: AnalysisRun, error: str) -> AnalysisR
     if run.status != 'completed':
         raise ValueError('PT-SCHEMA: only completed CLI output can fail normalization')
     source = safe_path(root, f'runs/{run.id}')
-    destination = safe_path(root, f'runs/.quarantine-{run.id}')
+    destination = safe_path(root, f'runs/quarantine-{run.id}')
     if not source.is_dir() or destination.exists():
         raise ValueError('PT-STORAGE: run output is missing or quarantine destination already exists')
     raw_relative = None
@@ -195,14 +219,14 @@ def run_comparison(config: BackendConfig, project: ComparisonProject, root: Path
     """Return completed raw JSON and a new run, or a quarantined directory on failure.
 
     The caller validates/normalizes completed JSON and commits it transactionally.
-    Failed data is retained under runs/.quarantine-<id>, never published as a run.
+    Failed data is retained under runs/quarantine-<id>, never published as a run.
     """
     root = root.resolve()
     run_id = uid()
     runs = root / 'runs'
     if runs.is_symlink() or not runs.resolve().is_relative_to(root):
         raise ValueError('PT-STORAGE: run directory escapes the project root')
-    quarantine = root / 'runs' / f'.quarantine-{run_id}'
+    quarantine = root / 'runs' / f'quarantine-{run_id}'
     quarantine.mkdir(parents=True, exist_ok=False)
     raw = quarantine / 'raw'
     raw.mkdir()
@@ -227,6 +251,7 @@ def run_comparison(config: BackendConfig, project: ComparisonProject, root: Path
         if errors:
             raise RuntimeError('; '.join(errors))
         paths = {a.side: _input_path(root, a.relative_path, a.sha256, cancel) for a in project.artifacts}
+        _validated_ghidra_output_path(raw)
         metadata = _probe_backend(config, cancel)
         backend_version = str(metadata['ghidriff'])
         settings.update({'python_version': metadata['python'], 'pyghidra_version': metadata['pyghidra']})
@@ -238,7 +263,8 @@ def run_comparison(config: BackendConfig, project: ComparisonProject, root: Path
             return destination, AnalysisRun(id=run_id, status='identical',
                                            backend_version=backend_version, settings=settings)
         argv = [str(Path(config.python_executable).resolve()), '-m', 'ghidriff',
-                str(paths['older']), str(paths['newer']), '--output-path', str(raw)]
+                str(paths['older']), str(paths['newer']), '--output-path',
+                str(_validated_ghidra_output_path(raw))]
         event('analysis', 'Ghidriff is performing static analysis; detailed counts are unavailable')
         result = run_process(argv, cwd=Path(config.ghidra_dir), env=_environment(config), cancel=cancel,
                              timeout_seconds=config.timeout_seconds,

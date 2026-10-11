@@ -4,6 +4,7 @@
 2026-10-11: source inspection of pinned upstream revisions completed. Linux Qt offscreen desktop self-test starts and displays the synthetic project. Integrated Linux QA: 91 tests passed, 2 Windows-only tests skipped; Ruff and Qt offscreen desktop self-test passed. Domain, transport, worker, schema and UI tests are included. Synthetic fixtures and mocked providers verify wiring and validation, not real matching accuracy or model interpretation correctness.
 
 ## Repaired audit defects
+- Ghidra rejected `runs/.quarantine-<uuid>/raw` with `Path element starting with '.' is not permitted`. Active and normalization-failed run directories now use `quarantine-<uuid>`. Preflight validates every resolved output ancestor, with an actionable error for dot-prefixed names and excessively long Windows output paths. The fake backend reproduces this exact rejection; native Ghidriff confirmation on Windows and clean-user reinstall remain release checks.
 - Artifact storage could escape project roots: pure models and disk paths now reject traversal, absolute/drive paths and symlinks.
 - Same-run evidence could be cited against the wrong function match: exact match/function and explicit neighbor associations are enforced.
 - Repeated content-addressed contexts could conflict with global uniqueness: identical context/evidence can be shared; conflicting identities rejected.

@@ -307,7 +307,7 @@ def test_backend_normalization_error_is_quarantined_and_recorded(window, monkeyp
     qtbot.waitUntil(lambda: window.worker is None, timeout=5000)
     terminal = window.project.runs[-1]
     assert terminal.status == 'failed'
-    assert terminal.raw_path.startswith('runs/.quarantine-')
+    assert terminal.raw_path.startswith('runs/quarantine-')
     assert (window.service.root / terminal.raw_path).is_file()
     assert [m.id for m in window.project.matches] == before
     assert errors and 'PT-SCHEMA' in errors[0]

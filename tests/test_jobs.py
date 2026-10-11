@@ -142,7 +142,7 @@ def test_failure_quarantines_without_publishing(fake_runtime, body):
     write_backend(package, body)
     path, run = run_comparison(config, project, root, threading.Event(), lambda _: None)
     assert run.status == 'failed'
-    assert path.name.startswith('.quarantine-')
+    assert path.name.startswith('quarantine-')
     assert (path / 'failure.txt').is_file()
     assert not (root / 'runs' / run.id).exists()
     assert not project.runs
@@ -204,7 +204,7 @@ def test_normalization_failure_quarantines_complete_output(fake_runtime):
     assert 'private-secret' not in failed.error and '[redacted]' in failed.error
     assert failed.raw_sha256 == completed.raw_sha256
     assert (root / failed.raw_path).read_bytes() == payload
-    assert (root / 'runs' / f'.quarantine-{failed.id}' / 'failure.txt').read_text() == failed.error
+    assert (root / 'runs' / f'quarantine-{failed.id}' / 'failure.txt').read_text() == failed.error
     assert not path.exists() and not (root / 'runs' / completed.id).exists()
     assert not project.runs
 
@@ -270,3 +270,50 @@ def test_windows_assignment_denial_terminates_suspended_child(tmp_path, monkeypa
             assert kernel.WaitForSingleObject(handle, 5000) == 0
         finally:
             kernel.CloseHandle(handle)
+
+
+def test_ghidriff_output_never_passes_dot_prefixed_directory(fake_runtime):
+    """Reproduce Ghidra's IllegalArgumentException instead of mocking success."""
+    root, package, project, config = fake_runtime
+    write_backend(
+        package,
+        'if any(part.startswith(".") for part in out.parts):\n'
+        '    print("java.lang.IllegalArgumentException: Path element starting with dot is not permitted")\n'
+        '    sys.exit(1)\n'
+        '(out/"json"/"old-new.ghidriff.json").write_text('
+        'json.dumps({"functions":{"added":[],"deleted":[],"modified":[]}}))\n',
+    )
+    path, run = run_comparison(config, project, root, threading.Event(), lambda _: None)
+    assert run.status == 'completed', run.error
+    assert path.is_file()
+
+
+def test_dot_prefixed_project_ancestor_fails_before_ghidriff(fake_runtime, monkeypatch):
+    """A user-selected project directory can also contain an unsafe ancestor."""
+    root, _package, project, config = fake_runtime
+    hidden_root = root / '.hidden-project'
+    hidden_root.mkdir()
+    for side in ('older', 'newer'):
+        (hidden_root / f'{side}.bin').write_bytes((root / f'{side}.bin').read_bytes())
+
+    def must_not_start(*_args, **_kwargs):
+        pytest.fail('ghidriff must never start with an unsafe output path')
+
+    monkeypatch.setattr(backend, 'run_process', must_not_start)
+    directory, run = run_comparison(
+        config, project, hidden_root, threading.Event(), lambda _: None)
+    assert run.status == 'failed'
+    assert 'dot-prefixed' in run.error
+    assert (directory / 'failure.txt').is_file()
+
+
+def test_ghidra_output_path_preserves_spaces_and_onedrive_names(tmp_path):
+    output = tmp_path / 'OneDrive - Research' / 'Projects with spaces' / 'runs' / 'quarantine-123' / 'raw'
+    assert backend._validated_ghidra_output_path(output) == output.resolve()
+
+
+@pytest.mark.skipif(os.name != 'nt', reason='Windows Ghidra path-length preflight')
+def test_ghidra_output_path_rejects_overlong_windows_path(tmp_path):
+    output = tmp_path / ('a' * 90) / ('b' * 90) / 'raw'
+    with pytest.raises(ValueError, match='shorter'):
+        backend._validated_ghidra_output_path(output)
