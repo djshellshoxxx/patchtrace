@@ -29,6 +29,8 @@
 
 - Ghidriff symbol-server behavior is now opt-in via an explicit saved GUI setting. The backend passes `--no-symbols` by default and records the choice in run provenance. Tests exercise both modes and reject ambiguous types. A passing no-symbols CLI fixture is not proof of OS-enforced network isolation.
 
+- Local runtime discovery is a separate, read-only stdlib module with bounded direct-child scanning and no process execution. Setup prefills only unique existing candidates and preserves analyst-selected paths. This reduces manual path navigation but does not install or validate the full runtime; automated fixture coverage is distinct from real Windows/OneDrive acceptance.
+
 - Native backend failure classifier maps supported error signatures to fixed actionable guidance (JDK mismatch, missing Ghidriff, Ghidra path, heap/disk/permissions), preserving original exit code and sanitized log. Unknown signatures retain the generic inspect-analysis.log message. Regression tests assert no tokens from raw upstream output are echoed.
 
 ## Acceptance gates
