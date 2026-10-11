@@ -9,7 +9,7 @@ from pathlib import Path
 import pytest
 
 from patchtrace import backend
-from patchtrace.backend import BackendConfig, run_comparison
+from patchtrace.backend import BackendConfig, quarantine_failed_run, run_comparison
 from patchtrace.diagnostics import redact_log
 from patchtrace.jobs import run_process
 from patchtrace.models import Artifact, ComparisonProject
@@ -191,6 +191,33 @@ def test_completed_log_event_is_bounded_and_redacted(fake_runtime):
     assert len(log) <= 8192 and 'private-secret' not in log and '[redacted]' in log
     assert run.settings['ghidra_version'] == '12.0.4'
     assert run.settings['java_runtime_version'] == 'unverified'
+
+
+def test_normalization_failure_quarantines_complete_output(fake_runtime):
+    root, package, project, config = fake_runtime
+    write_backend(package, '(out/"json"/"old-new.ghidriff.json").write_text('
+                  'json.dumps({"functions":{"added":[],"deleted":[],"modified":[]}}))\n')
+    path, completed = run_comparison(config, project, root, threading.Event(), lambda _: None)
+    payload = path.read_bytes()
+    failed = quarantine_failed_run(root, completed, 'PT-SCHEMA: bad identity token=private-secret')
+    assert failed.status == 'failed' and completed.status == 'completed'
+    assert 'private-secret' not in failed.error and '[redacted]' in failed.error
+    assert failed.raw_sha256 == completed.raw_sha256
+    assert (root / failed.raw_path).read_bytes() == payload
+    assert (root / 'runs' / f'.quarantine-{failed.id}' / 'failure.txt').read_text() == failed.error
+    assert not path.exists() and not (root / 'runs' / completed.id).exists()
+    assert not project.runs
+
+
+def test_quarantine_rejects_foreign_raw_path(fake_runtime):
+    root, package, project, config = fake_runtime
+    write_backend(package, '(out/"json"/"old-new.ghidriff.json").write_text('
+                  'json.dumps({"functions":{"added":[],"deleted":[],"modified":[]}}))\n')
+    path, run = run_comparison(config, project, root, threading.Event(), lambda _: None)
+    run.raw_path = '../outside.json'
+    with pytest.raises(ValueError, match='relative and contained'):
+        quarantine_failed_run(root, run, 'normalization failed')
+    assert path.is_file()
 
 
 @pytest.mark.skipif(os.name != 'nt', reason='Windows Job Object platform acceptance')

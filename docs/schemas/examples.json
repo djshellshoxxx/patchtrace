@@ -1,0 +1,1717 @@
+{
+  "Artifact": {
+    "valid": {
+      "schema_version": 1,
+      "id": "3dd4d7f1-343b-4d19-88ec-1d69e3cb6ff0",
+      "side": "older",
+      "name": "older_sample.dll",
+      "sha256": "dc71b8420acc68418eaebfb8a4848cd2f63626125868e9977f017010c8d30215",
+      "size": 1024,
+      "relative_path": "artifacts/dc71b8420acc68418eaebfb8a4848cd2f63626125868e9977f017010c8d30215.bin",
+      "architecture": "x86-64",
+      "format": "PE"
+    },
+    "invalid": {
+      "schema_version": 2,
+      "id": "3dd4d7f1-343b-4d19-88ec-1d69e3cb6ff0",
+      "side": "older",
+      "name": "older_sample.dll",
+      "sha256": "dc71b8420acc68418eaebfb8a4848cd2f63626125868e9977f017010c8d30215",
+      "size": 1024,
+      "relative_path": "artifacts/dc71b8420acc68418eaebfb8a4848cd2f63626125868e9977f017010c8d30215.bin",
+      "architecture": "x86-64",
+      "format": "PE"
+    },
+    "invalid_reason": "Unsupported future schema version; fail without guessing"
+  },
+  "ComparisonProject": {
+    "valid": {
+      "schema_version": 1,
+      "id": "1c35e9db-2dea-464a-95e9-5832d0574f76",
+      "name": "Synthetic bounds-check walkthrough",
+      "created": "2026-10-11T08:51:14.104131+00:00",
+      "revision": 1,
+      "artifacts": [
+        {
+          "schema_version": 1,
+          "id": "3dd4d7f1-343b-4d19-88ec-1d69e3cb6ff0",
+          "side": "older",
+          "name": "older_sample.dll",
+          "sha256": "dc71b8420acc68418eaebfb8a4848cd2f63626125868e9977f017010c8d30215",
+          "size": 1024,
+          "relative_path": "artifacts/dc71b8420acc68418eaebfb8a4848cd2f63626125868e9977f017010c8d30215.bin",
+          "architecture": "x86-64",
+          "format": "PE"
+        },
+        {
+          "schema_version": 1,
+          "id": "ea09a4bf-4e85-446a-95c0-bad8ddbb286a",
+          "side": "newer",
+          "name": "newer_sample.dll",
+          "sha256": "4af23bcb773054ad469c57363d50e2b53a6590bfba2286f16a06b4fb1440a168",
+          "size": 1024,
+          "relative_path": "artifacts/4af23bcb773054ad469c57363d50e2b53a6590bfba2286f16a06b4fb1440a168.bin",
+          "architecture": "x86-64",
+          "format": "PE"
+        }
+      ],
+      "runs": [
+        {
+          "schema_version": 1,
+          "id": "51e066ce-a35a-4c86-bb91-1458458f9f56",
+          "created": "2026-10-11T08:51:14.105071+00:00",
+          "status": "completed",
+          "backend": "synthetic-sample",
+          "backend_version": "1",
+          "settings": {
+            "synthetic": true
+          },
+          "raw_path": "runs/51e066ce-a35a-4c86-bb91-1458458f9f56/raw/result.ghidriff.json",
+          "raw_sha256": "25483166fb8d80011d03ffc8fcce7bf82de77fe3f7e0dd9c158c8dce43d1f3de",
+          "error": null
+        }
+      ],
+      "matches": [
+        {
+          "schema_version": 1,
+          "id": "62155a03-63fa-4ee5-8f43-8a1aa8c46712",
+          "run_id": "51e066ce-a35a-4c86-bb91-1458458f9f56",
+          "older": [],
+          "newer": [
+            {
+              "schema_version": 1,
+              "id": "622b21a4-a910-4451-b3fb-0cb7ff710278",
+              "artifact_id": "ea09a4bf-4e85-446a-95c0-bad8ddbb286a",
+              "run_id": "51e066ce-a35a-4c86-bb91-1458458f9f56",
+              "name": "report_invalid_index",
+              "address": "180001200",
+              "address_space": "virtual",
+              "code": "int report_invalid_index(size_t index, size_t length) {\n    return -1;\n}",
+              "assembly": null,
+              "callers": [
+                "read_item"
+              ],
+              "callees": [],
+              "metadata": {
+                "sig": "int report_invalid_index(...)",
+                "sym_type": "FUNCTION",
+                "external": false,
+                "instructions_hash": -17200333,
+                "assembly_unavailable": "Upstream persisted an instruction hash, not assembly",
+                "upstream_name": "report_invalid_index"
+              }
+            }
+          ],
+          "category": "added",
+          "match_types": [],
+          "quality": "unknown",
+          "manual": false,
+          "reason": "",
+          "review": "unreviewed"
+        },
+        {
+          "schema_version": 1,
+          "id": "03d3fc26-d6ea-458a-b26d-37690f12aa9a",
+          "run_id": "51e066ce-a35a-4c86-bb91-1458458f9f56",
+          "older": [
+            {
+              "schema_version": 1,
+              "id": "e64eaef1-0834-4f33-8955-245d7a452d78",
+              "artifact_id": "3dd4d7f1-343b-4d19-88ec-1d69e3cb6ff0",
+              "run_id": "51e066ce-a35a-4c86-bb91-1458458f9f56",
+              "name": "debug_dump",
+              "address": "180001400",
+              "address_space": "virtual",
+              "code": "void debug_dump(const char *text) {\n    puts(text);\n}",
+              "assembly": null,
+              "callers": [],
+              "callees": [],
+              "metadata": {
+                "sig": "int debug_dump(...)",
+                "sym_type": "FUNCTION",
+                "external": false,
+                "instructions_hash": -17200333,
+                "assembly_unavailable": "Upstream persisted an instruction hash, not assembly",
+                "upstream_name": "debug_dump"
+              }
+            }
+          ],
+          "newer": [],
+          "category": "removed",
+          "match_types": [],
+          "quality": "unknown",
+          "manual": false,
+          "reason": "",
+          "review": "unreviewed"
+        },
+        {
+          "schema_version": 1,
+          "id": "b649d27f-5a40-4355-85e4-b7cb345a5a74",
+          "run_id": "51e066ce-a35a-4c86-bb91-1458458f9f56",
+          "older": [
+            {
+              "schema_version": 1,
+              "id": "05d9fade-88ae-4bd4-baf2-9c24ac9226a6",
+              "artifact_id": "3dd4d7f1-343b-4d19-88ec-1d69e3cb6ff0",
+              "run_id": "51e066ce-a35a-4c86-bb91-1458458f9f56",
+              "name": "read_item",
+              "address": "180001000",
+              "address_space": "virtual",
+              "code": "int read_item(const unsigned char *buffer, size_t length, size_t index) {\n    return buffer[index];\n}",
+              "assembly": null,
+              "callers": [],
+              "callees": [],
+              "metadata": {
+                "sig": "int read_item(...)",
+                "sym_type": "FUNCTION",
+                "external": false,
+                "instructions_hash": -17200333,
+                "assembly_unavailable": "Upstream persisted an instruction hash, not assembly",
+                "upstream_name": "read_item",
+                "diff_types": [
+                  "code",
+                  "address",
+                  "called"
+                ],
+                "upstream_similarity": 0.58
+              }
+            }
+          ],
+          "newer": [
+            {
+              "schema_version": 1,
+              "id": "1e77bed1-1452-4ee2-bf06-453295b2e3bc",
+              "artifact_id": "ea09a4bf-4e85-446a-95c0-bad8ddbb286a",
+              "run_id": "51e066ce-a35a-4c86-bb91-1458458f9f56",
+              "name": "read_item",
+              "address": "180001080",
+              "address_space": "virtual",
+              "code": "int read_item(const unsigned char *buffer, size_t length, size_t index) {\n    if (buffer == NULL || index >= length) {\n        return report_invalid_index(index, length);\n    }\n    return buffer[index];\n}",
+              "assembly": null,
+              "callers": [],
+              "callees": [
+                "report_invalid_index"
+              ],
+              "metadata": {
+                "sig": "int read_item(...)",
+                "sym_type": "FUNCTION",
+                "external": false,
+                "instructions_hash": -17200333,
+                "assembly_unavailable": "Upstream persisted an instruction hash, not assembly",
+                "upstream_name": "read_item",
+                "diff_types": [
+                  "code",
+                  "address",
+                  "called"
+                ],
+                "upstream_similarity": 0.58
+              }
+            }
+          ],
+          "category": "modified",
+          "match_types": [
+            "Symbols",
+            "StructuralGraph"
+          ],
+          "quality": "upstream similarity 0.58 (uncalibrated)",
+          "manual": false,
+          "reason": "",
+          "review": "unreviewed"
+        },
+        {
+          "schema_version": 1,
+          "id": "9324e9cd-49b9-4cb0-a20d-17dd891c78fa",
+          "run_id": "51e066ce-a35a-4c86-bb91-1458458f9f56",
+          "older": [
+            {
+              "schema_version": 1,
+              "id": "4ae05ee5-b2e0-4cd2-91e5-6f750420620d",
+              "artifact_id": "3dd4d7f1-343b-4d19-88ec-1d69e3cb6ff0",
+              "run_id": "51e066ce-a35a-4c86-bb91-1458458f9f56",
+              "name": "get_version",
+              "address": "180001600",
+              "address_space": "virtual",
+              "code": "int get_version(void) {\n    return 1;\n}",
+              "assembly": null,
+              "callers": [],
+              "callees": [],
+              "metadata": {
+                "sig": "int get_version(...)",
+                "sym_type": "FUNCTION",
+                "external": false,
+                "instructions_hash": -17200333,
+                "assembly_unavailable": "Upstream persisted an instruction hash, not assembly",
+                "upstream_name": "get_version",
+                "diff_types": [
+                  "code",
+                  "address"
+                ],
+                "upstream_similarity": 0.94
+              }
+            }
+          ],
+          "newer": [
+            {
+              "schema_version": 1,
+              "id": "eede1f44-708f-4e33-aa54-0b93188bf048",
+              "artifact_id": "ea09a4bf-4e85-446a-95c0-bad8ddbb286a",
+              "run_id": "51e066ce-a35a-4c86-bb91-1458458f9f56",
+              "name": "get_version",
+              "address": "180001700",
+              "address_space": "virtual",
+              "code": "int get_version(void) {\n    return 2;\n}",
+              "assembly": null,
+              "callers": [],
+              "callees": [],
+              "metadata": {
+                "sig": "int get_version(...)",
+                "sym_type": "FUNCTION",
+                "external": false,
+                "instructions_hash": -17200333,
+                "assembly_unavailable": "Upstream persisted an instruction hash, not assembly",
+                "upstream_name": "get_version",
+                "diff_types": [
+                  "code",
+                  "address"
+                ],
+                "upstream_similarity": 0.94
+              }
+            }
+          ],
+          "category": "modified",
+          "match_types": [
+            "Symbols"
+          ],
+          "quality": "upstream similarity 0.94 (uncalibrated)",
+          "manual": false,
+          "reason": "",
+          "review": "unreviewed"
+        }
+      ],
+      "interpretations": [
+        {
+          "schema_version": 1,
+          "id": "022c74a9-8b59-47fd-8ae4-04c4edaaf3e6",
+          "context": {
+            "schema_version": 1,
+            "id": "ctx-8e4b02e68f2492f9a13ae04e8498462e25ae5124907580295a6c56e4ebe1e5ca",
+            "project_id": "1c35e9db-2dea-464a-95e9-5832d0574f76",
+            "revision": 1,
+            "match_ids": [
+              "b649d27f-5a40-4355-85e4-b7cb345a5a74"
+            ],
+            "evidence": [
+              {
+                "schema_version": 1,
+                "id": "ev-2989bfca4b09e8c39f2b51fb9a2cf19761c74de0a58903a155f8c037d02bc624",
+                "artifact_id": "ea09a4bf-4e85-446a-95c0-bad8ddbb286a",
+                "run_id": "51e066ce-a35a-4c86-bb91-1458458f9f56",
+                "function_id": "1e77bed1-1452-4ee2-bf06-453295b2e3bc",
+                "side": "newer",
+                "start_line": 1,
+                "end_line": 6,
+                "text": "int read_item(const unsigned char *buffer, size_t length, size_t index) {\n    if (buffer == NULL || index >= length) {\n        return report_invalid_index(index, length);\n    }\n    return buffer[index];\n}"
+              },
+              {
+                "schema_version": 1,
+                "id": "ev-6067f7c751a1272357604aaccff02d092724a47345cfb32494ca531d7713f797",
+                "artifact_id": "3dd4d7f1-343b-4d19-88ec-1d69e3cb6ff0",
+                "run_id": "51e066ce-a35a-4c86-bb91-1458458f9f56",
+                "function_id": "05d9fade-88ae-4bd4-baf2-9c24ac9226a6",
+                "side": "older",
+                "start_line": 1,
+                "end_line": 3,
+                "text": "int read_item(const unsigned char *buffer, size_t length, size_t index) {\n    return buffer[index];\n}"
+              },
+              {
+                "schema_version": 1,
+                "id": "ev-b063eaae5daa18fbc79343a2f985ed467545ad9c609434cf7813bf936dc1f837",
+                "artifact_id": "ea09a4bf-4e85-446a-95c0-bad8ddbb286a",
+                "run_id": "51e066ce-a35a-4c86-bb91-1458458f9f56",
+                "function_id": "622b21a4-a910-4451-b3fb-0cb7ff710278",
+                "side": "newer",
+                "start_line": 1,
+                "end_line": 3,
+                "text": "int report_invalid_index(size_t index, size_t length) {\n    return -1;\n}"
+              }
+            ],
+            "omitted": [
+              "1e77bed1-1452-4ee2-bf06-453295b2e3bc: caller context unavailable (no references supplied)",
+              "05d9fade-88ae-4bd4-baf2-9c24ac9226a6: caller context unavailable (no references supplied)",
+              "05d9fade-88ae-4bd4-baf2-9c24ac9226a6: callee context unavailable (no references supplied)"
+            ],
+            "digest": "8e4b02e68f2492f9a13ae04e8498462e25ae5124907580295a6c56e4ebe1e5ca",
+            "token_estimate": 778,
+            "payload": "{\"artifacts\":[{\"id\":\"ea09a4bf-4e85-446a-95c0-bad8ddbb286a\",\"sha256\":\"4af23bcb773054ad469c57363d50e2b53a6590bfba2286f16a06b4fb1440a168\",\"side\":\"newer\"},{\"id\":\"3dd4d7f1-343b-4d19-88ec-1d69e3cb6ff0\",\"sha256\":\"dc71b8420acc68418eaebfb8a4848cd2f63626125868e9977f017010c8d30215\",\"side\":\"older\"}],\"evidence\":[{\"artifact_id\":\"ea09a4bf-4e85-446a-95c0-bad8ddbb286a\",\"end_line\":6,\"function_id\":\"1e77bed1-1452-4ee2-bf06-453295b2e3bc\",\"id\":\"ev-2989bfca4b09e8c39f2b51fb9a2cf19761c74de0a58903a155f8c037d02bc624\",\"run_id\":\"51e066ce-a35a-4c86-bb91-1458458f9f56\",\"schema_version\":1,\"side\":\"newer\",\"start_line\":1,\"text\":\"int read_item(const unsigned char *buffer, size_t length, size_t index) {\\n    if (buffer == NULL || index >= length) {\\n        return report_invalid_index(index, length);\\n    }\\n    return buffer[index];\\n}\"},{\"artifact_id\":\"3dd4d7f1-343b-4d19-88ec-1d69e3cb6ff0\",\"end_line\":3,\"function_id\":\"05d9fade-88ae-4bd4-baf2-9c24ac9226a6\",\"id\":\"ev-6067f7c751a1272357604aaccff02d092724a47345cfb32494ca531d7713f797\",\"run_id\":\"51e066ce-a35a-4c86-bb91-1458458f9f56\",\"schema_version\":1,\"side\":\"older\",\"start_line\":1,\"text\":\"int read_item(const unsigned char *buffer, size_t length, size_t index) {\\n    return buffer[index];\\n}\"},{\"artifact_id\":\"ea09a4bf-4e85-446a-95c0-bad8ddbb286a\",\"end_line\":3,\"function_id\":\"622b21a4-a910-4451-b3fb-0cb7ff710278\",\"id\":\"ev-b063eaae5daa18fbc79343a2f985ed467545ad9c609434cf7813bf936dc1f837\",\"run_id\":\"51e066ce-a35a-4c86-bb91-1458458f9f56\",\"schema_version\":1,\"side\":\"newer\",\"start_line\":1,\"text\":\"int report_invalid_index(size_t index, size_t length) {\\n    return -1;\\n}\"}],\"matches\":[{\"category\":\"modified\",\"context_function_ids\":[\"05d9fade-88ae-4bd4-baf2-9c24ac9226a6\",\"1e77bed1-1452-4ee2-bf06-453295b2e3bc\",\"622b21a4-a910-4451-b3fb-0cb7ff710278\"],\"function_ids\":[\"05d9fade-88ae-4bd4-baf2-9c24ac9226a6\",\"1e77bed1-1452-4ee2-bf06-453295b2e3bc\"],\"id\":\"b649d27f-5a40-4355-85e4-b7cb345a5a74\",\"run_id\":\"51e066ce-a35a-4c86-bb91-1458458f9f56\"}],\"omitted\":[\"1e77bed1-1452-4ee2-bf06-453295b2e3bc: caller context unavailable (no references supplied)\",\"05d9fade-88ae-4bd4-baf2-9c24ac9226a6: caller context unavailable (no references supplied)\",\"05d9fade-88ae-4bd4-baf2-9c24ac9226a6: callee context unavailable (no references supplied)\"],\"project_id\":\"1c35e9db-2dea-464a-95e9-5832d0574f76\",\"revision\":1,\"schema_version\":1}",
+            "stale": false
+          },
+          "provider": "curated synthetic sample",
+          "model": "no model invoked",
+          "endpoint": null,
+          "prompt_version": "patchtrace-1",
+          "created": "2026-10-11T08:51:14.108508+00:00",
+          "status": "completed",
+          "findings": [
+            {
+              "schema_version": 1,
+              "id": "75fdbccd-fc31-44f3-803f-4f72c5ad7954",
+              "context_id": "ctx-8e4b02e68f2492f9a13ae04e8498462e25ae5124907580295a6c56e4ebe1e5ca",
+              "match_ids": [
+                "b649d27f-5a40-4355-85e4-b7cb345a5a74"
+              ],
+              "summary": "Synthetic example: guard added before indexed buffer access",
+              "fix_purpose": "Return an error for a null buffer or index outside the supplied length",
+              "category": "ordinary-bug",
+              "hypothesis": {
+                "schema_version": 1,
+                "id": "94e2e835-4f39-4319-847e-9865cc9316ab",
+                "explanation": "The sample now checks the pointer and index before dereferencing the buffer.",
+                "supporting": [
+                  "ev-6067f7c751a1272357604aaccff02d092724a47345cfb32494ca531d7713f797",
+                  "ev-2989bfca4b09e8c39f2b51fb9a2cf19761c74de0a58903a155f8c037d02bc624"
+                ],
+                "contradicting": [],
+                "preconditions": [
+                  "The supplied length accurately describes the readable buffer."
+                ],
+                "unknowns": [
+                  "Caller validation and actual shipped machine code are outside this synthetic example."
+                ],
+                "verification": [
+                  "Review callers and test null, empty, boundary and out-of-range inputs."
+                ],
+                "confidence": "medium"
+              },
+              "alternatives": [
+                {
+                  "schema_version": 1,
+                  "id": "5eab3bc0-1db5-4237-8a39-fc6e2ea67957",
+                  "explanation": "Caller validation may already have prevented invalid access.",
+                  "supporting": [],
+                  "contradicting": [
+                    "ev-6067f7c751a1272357604aaccff02d092724a47345cfb32494ca531d7713f797"
+                  ],
+                  "preconditions": [],
+                  "unknowns": [
+                    "No caller implementation was provided."
+                  ],
+                  "verification": [],
+                  "confidence": "unknown"
+                }
+              ],
+              "cwe": null,
+              "cwe_rationale": null,
+              "review": "unreviewed",
+              "analyst_conclusion": "",
+              "stale": false
+            }
+          ],
+          "raw_response": "Synthetic walkthrough record",
+          "error": null,
+          "duration_seconds": 0.0
+        }
+      ],
+      "annotations": [
+        {
+          "schema_version": 1,
+          "id": "72838afc-f581-4bb9-a21f-c5d388b0a9b6",
+          "target_id": "b649d27f-5a40-4355-85e4-b7cb345a5a74",
+          "kind": "note",
+          "text": "Synthetic sample only. PE fixtures, decompilation and finding are authored examples; no backend or model was run, and no vulnerability is established.",
+          "created": "2026-10-11T08:51:14.119319+00:00",
+          "stale": false
+        }
+      ],
+      "sample": true
+    },
+    "invalid": {
+      "schema_version": 2,
+      "id": "1c35e9db-2dea-464a-95e9-5832d0574f76",
+      "name": "Synthetic bounds-check walkthrough",
+      "created": "2026-10-11T08:51:14.104131+00:00",
+      "revision": 1,
+      "artifacts": [
+        {
+          "schema_version": 1,
+          "id": "3dd4d7f1-343b-4d19-88ec-1d69e3cb6ff0",
+          "side": "older",
+          "name": "older_sample.dll",
+          "sha256": "dc71b8420acc68418eaebfb8a4848cd2f63626125868e9977f017010c8d30215",
+          "size": 1024,
+          "relative_path": "artifacts/dc71b8420acc68418eaebfb8a4848cd2f63626125868e9977f017010c8d30215.bin",
+          "architecture": "x86-64",
+          "format": "PE"
+        },
+        {
+          "schema_version": 1,
+          "id": "ea09a4bf-4e85-446a-95c0-bad8ddbb286a",
+          "side": "newer",
+          "name": "newer_sample.dll",
+          "sha256": "4af23bcb773054ad469c57363d50e2b53a6590bfba2286f16a06b4fb1440a168",
+          "size": 1024,
+          "relative_path": "artifacts/4af23bcb773054ad469c57363d50e2b53a6590bfba2286f16a06b4fb1440a168.bin",
+          "architecture": "x86-64",
+          "format": "PE"
+        }
+      ],
+      "runs": [
+        {
+          "schema_version": 1,
+          "id": "51e066ce-a35a-4c86-bb91-1458458f9f56",
+          "created": "2026-10-11T08:51:14.105071+00:00",
+          "status": "completed",
+          "backend": "synthetic-sample",
+          "backend_version": "1",
+          "settings": {
+            "synthetic": true
+          },
+          "raw_path": "runs/51e066ce-a35a-4c86-bb91-1458458f9f56/raw/result.ghidriff.json",
+          "raw_sha256": "25483166fb8d80011d03ffc8fcce7bf82de77fe3f7e0dd9c158c8dce43d1f3de",
+          "error": null
+        }
+      ],
+      "matches": [
+        {
+          "schema_version": 1,
+          "id": "62155a03-63fa-4ee5-8f43-8a1aa8c46712",
+          "run_id": "51e066ce-a35a-4c86-bb91-1458458f9f56",
+          "older": [],
+          "newer": [
+            {
+              "schema_version": 1,
+              "id": "622b21a4-a910-4451-b3fb-0cb7ff710278",
+              "artifact_id": "ea09a4bf-4e85-446a-95c0-bad8ddbb286a",
+              "run_id": "51e066ce-a35a-4c86-bb91-1458458f9f56",
+              "name": "report_invalid_index",
+              "address": "180001200",
+              "address_space": "virtual",
+              "code": "int report_invalid_index(size_t index, size_t length) {\n    return -1;\n}",
+              "assembly": null,
+              "callers": [
+                "read_item"
+              ],
+              "callees": [],
+              "metadata": {
+                "sig": "int report_invalid_index(...)",
+                "sym_type": "FUNCTION",
+                "external": false,
+                "instructions_hash": -17200333,
+                "assembly_unavailable": "Upstream persisted an instruction hash, not assembly",
+                "upstream_name": "report_invalid_index"
+              }
+            }
+          ],
+          "category": "added",
+          "match_types": [],
+          "quality": "unknown",
+          "manual": false,
+          "reason": "",
+          "review": "unreviewed"
+        },
+        {
+          "schema_version": 1,
+          "id": "03d3fc26-d6ea-458a-b26d-37690f12aa9a",
+          "run_id": "51e066ce-a35a-4c86-bb91-1458458f9f56",
+          "older": [
+            {
+              "schema_version": 1,
+              "id": "e64eaef1-0834-4f33-8955-245d7a452d78",
+              "artifact_id": "3dd4d7f1-343b-4d19-88ec-1d69e3cb6ff0",
+              "run_id": "51e066ce-a35a-4c86-bb91-1458458f9f56",
+              "name": "debug_dump",
+              "address": "180001400",
+              "address_space": "virtual",
+              "code": "void debug_dump(const char *text) {\n    puts(text);\n}",
+              "assembly": null,
+              "callers": [],
+              "callees": [],
+              "metadata": {
+                "sig": "int debug_dump(...)",
+                "sym_type": "FUNCTION",
+                "external": false,
+                "instructions_hash": -17200333,
+                "assembly_unavailable": "Upstream persisted an instruction hash, not assembly",
+                "upstream_name": "debug_dump"
+              }
+            }
+          ],
+          "newer": [],
+          "category": "removed",
+          "match_types": [],
+          "quality": "unknown",
+          "manual": false,
+          "reason": "",
+          "review": "unreviewed"
+        },
+        {
+          "schema_version": 1,
+          "id": "b649d27f-5a40-4355-85e4-b7cb345a5a74",
+          "run_id": "51e066ce-a35a-4c86-bb91-1458458f9f56",
+          "older": [
+            {
+              "schema_version": 1,
+              "id": "05d9fade-88ae-4bd4-baf2-9c24ac9226a6",
+              "artifact_id": "3dd4d7f1-343b-4d19-88ec-1d69e3cb6ff0",
+              "run_id": "51e066ce-a35a-4c86-bb91-1458458f9f56",
+              "name": "read_item",
+              "address": "180001000",
+              "address_space": "virtual",
+              "code": "int read_item(const unsigned char *buffer, size_t length, size_t index) {\n    return buffer[index];\n}",
+              "assembly": null,
+              "callers": [],
+              "callees": [],
+              "metadata": {
+                "sig": "int read_item(...)",
+                "sym_type": "FUNCTION",
+                "external": false,
+                "instructions_hash": -17200333,
+                "assembly_unavailable": "Upstream persisted an instruction hash, not assembly",
+                "upstream_name": "read_item",
+                "diff_types": [
+                  "code",
+                  "address",
+                  "called"
+                ],
+                "upstream_similarity": 0.58
+              }
+            }
+          ],
+          "newer": [
+            {
+              "schema_version": 1,
+              "id": "1e77bed1-1452-4ee2-bf06-453295b2e3bc",
+              "artifact_id": "ea09a4bf-4e85-446a-95c0-bad8ddbb286a",
+              "run_id": "51e066ce-a35a-4c86-bb91-1458458f9f56",
+              "name": "read_item",
+              "address": "180001080",
+              "address_space": "virtual",
+              "code": "int read_item(const unsigned char *buffer, size_t length, size_t index) {\n    if (buffer == NULL || index >= length) {\n        return report_invalid_index(index, length);\n    }\n    return buffer[index];\n}",
+              "assembly": null,
+              "callers": [],
+              "callees": [
+                "report_invalid_index"
+              ],
+              "metadata": {
+                "sig": "int read_item(...)",
+                "sym_type": "FUNCTION",
+                "external": false,
+                "instructions_hash": -17200333,
+                "assembly_unavailable": "Upstream persisted an instruction hash, not assembly",
+                "upstream_name": "read_item",
+                "diff_types": [
+                  "code",
+                  "address",
+                  "called"
+                ],
+                "upstream_similarity": 0.58
+              }
+            }
+          ],
+          "category": "modified",
+          "match_types": [
+            "Symbols",
+            "StructuralGraph"
+          ],
+          "quality": "upstream similarity 0.58 (uncalibrated)",
+          "manual": false,
+          "reason": "",
+          "review": "unreviewed"
+        },
+        {
+          "schema_version": 1,
+          "id": "9324e9cd-49b9-4cb0-a20d-17dd891c78fa",
+          "run_id": "51e066ce-a35a-4c86-bb91-1458458f9f56",
+          "older": [
+            {
+              "schema_version": 1,
+              "id": "4ae05ee5-b2e0-4cd2-91e5-6f750420620d",
+              "artifact_id": "3dd4d7f1-343b-4d19-88ec-1d69e3cb6ff0",
+              "run_id": "51e066ce-a35a-4c86-bb91-1458458f9f56",
+              "name": "get_version",
+              "address": "180001600",
+              "address_space": "virtual",
+              "code": "int get_version(void) {\n    return 1;\n}",
+              "assembly": null,
+              "callers": [],
+              "callees": [],
+              "metadata": {
+                "sig": "int get_version(...)",
+                "sym_type": "FUNCTION",
+                "external": false,
+                "instructions_hash": -17200333,
+                "assembly_unavailable": "Upstream persisted an instruction hash, not assembly",
+                "upstream_name": "get_version",
+                "diff_types": [
+                  "code",
+                  "address"
+                ],
+                "upstream_similarity": 0.94
+              }
+            }
+          ],
+          "newer": [
+            {
+              "schema_version": 1,
+              "id": "eede1f44-708f-4e33-aa54-0b93188bf048",
+              "artifact_id": "ea09a4bf-4e85-446a-95c0-bad8ddbb286a",
+              "run_id": "51e066ce-a35a-4c86-bb91-1458458f9f56",
+              "name": "get_version",
+              "address": "180001700",
+              "address_space": "virtual",
+              "code": "int get_version(void) {\n    return 2;\n}",
+              "assembly": null,
+              "callers": [],
+              "callees": [],
+              "metadata": {
+                "sig": "int get_version(...)",
+                "sym_type": "FUNCTION",
+                "external": false,
+                "instructions_hash": -17200333,
+                "assembly_unavailable": "Upstream persisted an instruction hash, not assembly",
+                "upstream_name": "get_version",
+                "diff_types": [
+                  "code",
+                  "address"
+                ],
+                "upstream_similarity": 0.94
+              }
+            }
+          ],
+          "category": "modified",
+          "match_types": [
+            "Symbols"
+          ],
+          "quality": "upstream similarity 0.94 (uncalibrated)",
+          "manual": false,
+          "reason": "",
+          "review": "unreviewed"
+        }
+      ],
+      "interpretations": [
+        {
+          "schema_version": 1,
+          "id": "022c74a9-8b59-47fd-8ae4-04c4edaaf3e6",
+          "context": {
+            "schema_version": 1,
+            "id": "ctx-8e4b02e68f2492f9a13ae04e8498462e25ae5124907580295a6c56e4ebe1e5ca",
+            "project_id": "1c35e9db-2dea-464a-95e9-5832d0574f76",
+            "revision": 1,
+            "match_ids": [
+              "b649d27f-5a40-4355-85e4-b7cb345a5a74"
+            ],
+            "evidence": [
+              {
+                "schema_version": 1,
+                "id": "ev-2989bfca4b09e8c39f2b51fb9a2cf19761c74de0a58903a155f8c037d02bc624",
+                "artifact_id": "ea09a4bf-4e85-446a-95c0-bad8ddbb286a",
+                "run_id": "51e066ce-a35a-4c86-bb91-1458458f9f56",
+                "function_id": "1e77bed1-1452-4ee2-bf06-453295b2e3bc",
+                "side": "newer",
+                "start_line": 1,
+                "end_line": 6,
+                "text": "int read_item(const unsigned char *buffer, size_t length, size_t index) {\n    if (buffer == NULL || index >= length) {\n        return report_invalid_index(index, length);\n    }\n    return buffer[index];\n}"
+              },
+              {
+                "schema_version": 1,
+                "id": "ev-6067f7c751a1272357604aaccff02d092724a47345cfb32494ca531d7713f797",
+                "artifact_id": "3dd4d7f1-343b-4d19-88ec-1d69e3cb6ff0",
+                "run_id": "51e066ce-a35a-4c86-bb91-1458458f9f56",
+                "function_id": "05d9fade-88ae-4bd4-baf2-9c24ac9226a6",
+                "side": "older",
+                "start_line": 1,
+                "end_line": 3,
+                "text": "int read_item(const unsigned char *buffer, size_t length, size_t index) {\n    return buffer[index];\n}"
+              },
+              {
+                "schema_version": 1,
+                "id": "ev-b063eaae5daa18fbc79343a2f985ed467545ad9c609434cf7813bf936dc1f837",
+                "artifact_id": "ea09a4bf-4e85-446a-95c0-bad8ddbb286a",
+                "run_id": "51e066ce-a35a-4c86-bb91-1458458f9f56",
+                "function_id": "622b21a4-a910-4451-b3fb-0cb7ff710278",
+                "side": "newer",
+                "start_line": 1,
+                "end_line": 3,
+                "text": "int report_invalid_index(size_t index, size_t length) {\n    return -1;\n}"
+              }
+            ],
+            "omitted": [
+              "1e77bed1-1452-4ee2-bf06-453295b2e3bc: caller context unavailable (no references supplied)",
+              "05d9fade-88ae-4bd4-baf2-9c24ac9226a6: caller context unavailable (no references supplied)",
+              "05d9fade-88ae-4bd4-baf2-9c24ac9226a6: callee context unavailable (no references supplied)"
+            ],
+            "digest": "8e4b02e68f2492f9a13ae04e8498462e25ae5124907580295a6c56e4ebe1e5ca",
+            "token_estimate": 778,
+            "payload": "{\"artifacts\":[{\"id\":\"ea09a4bf-4e85-446a-95c0-bad8ddbb286a\",\"sha256\":\"4af23bcb773054ad469c57363d50e2b53a6590bfba2286f16a06b4fb1440a168\",\"side\":\"newer\"},{\"id\":\"3dd4d7f1-343b-4d19-88ec-1d69e3cb6ff0\",\"sha256\":\"dc71b8420acc68418eaebfb8a4848cd2f63626125868e9977f017010c8d30215\",\"side\":\"older\"}],\"evidence\":[{\"artifact_id\":\"ea09a4bf-4e85-446a-95c0-bad8ddbb286a\",\"end_line\":6,\"function_id\":\"1e77bed1-1452-4ee2-bf06-453295b2e3bc\",\"id\":\"ev-2989bfca4b09e8c39f2b51fb9a2cf19761c74de0a58903a155f8c037d02bc624\",\"run_id\":\"51e066ce-a35a-4c86-bb91-1458458f9f56\",\"schema_version\":1,\"side\":\"newer\",\"start_line\":1,\"text\":\"int read_item(const unsigned char *buffer, size_t length, size_t index) {\\n    if (buffer == NULL || index >= length) {\\n        return report_invalid_index(index, length);\\n    }\\n    return buffer[index];\\n}\"},{\"artifact_id\":\"3dd4d7f1-343b-4d19-88ec-1d69e3cb6ff0\",\"end_line\":3,\"function_id\":\"05d9fade-88ae-4bd4-baf2-9c24ac9226a6\",\"id\":\"ev-6067f7c751a1272357604aaccff02d092724a47345cfb32494ca531d7713f797\",\"run_id\":\"51e066ce-a35a-4c86-bb91-1458458f9f56\",\"schema_version\":1,\"side\":\"older\",\"start_line\":1,\"text\":\"int read_item(const unsigned char *buffer, size_t length, size_t index) {\\n    return buffer[index];\\n}\"},{\"artifact_id\":\"ea09a4bf-4e85-446a-95c0-bad8ddbb286a\",\"end_line\":3,\"function_id\":\"622b21a4-a910-4451-b3fb-0cb7ff710278\",\"id\":\"ev-b063eaae5daa18fbc79343a2f985ed467545ad9c609434cf7813bf936dc1f837\",\"run_id\":\"51e066ce-a35a-4c86-bb91-1458458f9f56\",\"schema_version\":1,\"side\":\"newer\",\"start_line\":1,\"text\":\"int report_invalid_index(size_t index, size_t length) {\\n    return -1;\\n}\"}],\"matches\":[{\"category\":\"modified\",\"context_function_ids\":[\"05d9fade-88ae-4bd4-baf2-9c24ac9226a6\",\"1e77bed1-1452-4ee2-bf06-453295b2e3bc\",\"622b21a4-a910-4451-b3fb-0cb7ff710278\"],\"function_ids\":[\"05d9fade-88ae-4bd4-baf2-9c24ac9226a6\",\"1e77bed1-1452-4ee2-bf06-453295b2e3bc\"],\"id\":\"b649d27f-5a40-4355-85e4-b7cb345a5a74\",\"run_id\":\"51e066ce-a35a-4c86-bb91-1458458f9f56\"}],\"omitted\":[\"1e77bed1-1452-4ee2-bf06-453295b2e3bc: caller context unavailable (no references supplied)\",\"05d9fade-88ae-4bd4-baf2-9c24ac9226a6: caller context unavailable (no references supplied)\",\"05d9fade-88ae-4bd4-baf2-9c24ac9226a6: callee context unavailable (no references supplied)\"],\"project_id\":\"1c35e9db-2dea-464a-95e9-5832d0574f76\",\"revision\":1,\"schema_version\":1}",
+            "stale": false
+          },
+          "provider": "curated synthetic sample",
+          "model": "no model invoked",
+          "endpoint": null,
+          "prompt_version": "patchtrace-1",
+          "created": "2026-10-11T08:51:14.108508+00:00",
+          "status": "completed",
+          "findings": [
+            {
+              "schema_version": 1,
+              "id": "75fdbccd-fc31-44f3-803f-4f72c5ad7954",
+              "context_id": "ctx-8e4b02e68f2492f9a13ae04e8498462e25ae5124907580295a6c56e4ebe1e5ca",
+              "match_ids": [
+                "b649d27f-5a40-4355-85e4-b7cb345a5a74"
+              ],
+              "summary": "Synthetic example: guard added before indexed buffer access",
+              "fix_purpose": "Return an error for a null buffer or index outside the supplied length",
+              "category": "ordinary-bug",
+              "hypothesis": {
+                "schema_version": 1,
+                "id": "94e2e835-4f39-4319-847e-9865cc9316ab",
+                "explanation": "The sample now checks the pointer and index before dereferencing the buffer.",
+                "supporting": [
+                  "ev-6067f7c751a1272357604aaccff02d092724a47345cfb32494ca531d7713f797",
+                  "ev-2989bfca4b09e8c39f2b51fb9a2cf19761c74de0a58903a155f8c037d02bc624"
+                ],
+                "contradicting": [],
+                "preconditions": [
+                  "The supplied length accurately describes the readable buffer."
+                ],
+                "unknowns": [
+                  "Caller validation and actual shipped machine code are outside this synthetic example."
+                ],
+                "verification": [
+                  "Review callers and test null, empty, boundary and out-of-range inputs."
+                ],
+                "confidence": "medium"
+              },
+              "alternatives": [
+                {
+                  "schema_version": 1,
+                  "id": "5eab3bc0-1db5-4237-8a39-fc6e2ea67957",
+                  "explanation": "Caller validation may already have prevented invalid access.",
+                  "supporting": [],
+                  "contradicting": [
+                    "ev-6067f7c751a1272357604aaccff02d092724a47345cfb32494ca531d7713f797"
+                  ],
+                  "preconditions": [],
+                  "unknowns": [
+                    "No caller implementation was provided."
+                  ],
+                  "verification": [],
+                  "confidence": "unknown"
+                }
+              ],
+              "cwe": null,
+              "cwe_rationale": null,
+              "review": "unreviewed",
+              "analyst_conclusion": "",
+              "stale": false
+            }
+          ],
+          "raw_response": "Synthetic walkthrough record",
+          "error": null,
+          "duration_seconds": 0.0
+        }
+      ],
+      "annotations": [
+        {
+          "schema_version": 1,
+          "id": "72838afc-f581-4bb9-a21f-c5d388b0a9b6",
+          "target_id": "b649d27f-5a40-4355-85e4-b7cb345a5a74",
+          "kind": "note",
+          "text": "Synthetic sample only. PE fixtures, decompilation and finding are authored examples; no backend or model was run, and no vulnerability is established.",
+          "created": "2026-10-11T08:51:14.119319+00:00",
+          "stale": false
+        }
+      ],
+      "sample": true
+    },
+    "invalid_reason": "Unsupported future schema version; fail without guessing"
+  },
+  "AnalysisRun": {
+    "valid": {
+      "schema_version": 1,
+      "id": "51e066ce-a35a-4c86-bb91-1458458f9f56",
+      "created": "2026-10-11T08:51:14.105071+00:00",
+      "status": "completed",
+      "backend": "synthetic-sample",
+      "backend_version": "1",
+      "settings": {
+        "synthetic": true
+      },
+      "raw_path": "runs/51e066ce-a35a-4c86-bb91-1458458f9f56/raw/result.ghidriff.json",
+      "raw_sha256": "25483166fb8d80011d03ffc8fcce7bf82de77fe3f7e0dd9c158c8dce43d1f3de",
+      "error": null
+    },
+    "invalid": {
+      "schema_version": 2,
+      "id": "51e066ce-a35a-4c86-bb91-1458458f9f56",
+      "created": "2026-10-11T08:51:14.105071+00:00",
+      "status": "completed",
+      "backend": "synthetic-sample",
+      "backend_version": "1",
+      "settings": {
+        "synthetic": true
+      },
+      "raw_path": "runs/51e066ce-a35a-4c86-bb91-1458458f9f56/raw/result.ghidriff.json",
+      "raw_sha256": "25483166fb8d80011d03ffc8fcce7bf82de77fe3f7e0dd9c158c8dce43d1f3de",
+      "error": null
+    },
+    "invalid_reason": "Unsupported future schema version; fail without guessing"
+  },
+  "BackendCapabilities": {
+    "valid": {
+      "schema_version": 1,
+      "id": "8cac17ad-621c-4236-8827-a64273564152",
+      "name": "ghidriff",
+      "version": "synthetic; no backend invoked",
+      "decompiler": true,
+      "instruction_mapping": false,
+      "progress_counts": false,
+      "limitations": []
+    },
+    "invalid": {
+      "schema_version": 2,
+      "id": "8cac17ad-621c-4236-8827-a64273564152",
+      "name": "ghidriff",
+      "version": "synthetic; no backend invoked",
+      "decompiler": true,
+      "instruction_mapping": false,
+      "progress_counts": false,
+      "limitations": []
+    },
+    "invalid_reason": "Unsupported future schema version; fail without guessing"
+  },
+  "FunctionRecord": {
+    "valid": {
+      "schema_version": 1,
+      "id": "05d9fade-88ae-4bd4-baf2-9c24ac9226a6",
+      "artifact_id": "3dd4d7f1-343b-4d19-88ec-1d69e3cb6ff0",
+      "run_id": "51e066ce-a35a-4c86-bb91-1458458f9f56",
+      "name": "read_item",
+      "address": "180001000",
+      "address_space": "virtual",
+      "code": "int read_item(const unsigned char *buffer, size_t length, size_t index) {\n    return buffer[index];\n}",
+      "assembly": null,
+      "callers": [],
+      "callees": [],
+      "metadata": {
+        "sig": "int read_item(...)",
+        "sym_type": "FUNCTION",
+        "external": false,
+        "instructions_hash": -17200333,
+        "assembly_unavailable": "Upstream persisted an instruction hash, not assembly",
+        "upstream_name": "read_item",
+        "diff_types": [
+          "code",
+          "address",
+          "called"
+        ],
+        "upstream_similarity": 0.58
+      }
+    },
+    "invalid": {
+      "schema_version": 2,
+      "id": "05d9fade-88ae-4bd4-baf2-9c24ac9226a6",
+      "artifact_id": "3dd4d7f1-343b-4d19-88ec-1d69e3cb6ff0",
+      "run_id": "51e066ce-a35a-4c86-bb91-1458458f9f56",
+      "name": "read_item",
+      "address": "180001000",
+      "address_space": "virtual",
+      "code": "int read_item(const unsigned char *buffer, size_t length, size_t index) {\n    return buffer[index];\n}",
+      "assembly": null,
+      "callers": [],
+      "callees": [],
+      "metadata": {
+        "sig": "int read_item(...)",
+        "sym_type": "FUNCTION",
+        "external": false,
+        "instructions_hash": -17200333,
+        "assembly_unavailable": "Upstream persisted an instruction hash, not assembly",
+        "upstream_name": "read_item",
+        "diff_types": [
+          "code",
+          "address",
+          "called"
+        ],
+        "upstream_similarity": 0.58
+      }
+    },
+    "invalid_reason": "Unsupported future schema version; fail without guessing"
+  },
+  "FunctionMatch": {
+    "valid": {
+      "schema_version": 1,
+      "id": "b649d27f-5a40-4355-85e4-b7cb345a5a74",
+      "run_id": "51e066ce-a35a-4c86-bb91-1458458f9f56",
+      "older": [
+        {
+          "schema_version": 1,
+          "id": "05d9fade-88ae-4bd4-baf2-9c24ac9226a6",
+          "artifact_id": "3dd4d7f1-343b-4d19-88ec-1d69e3cb6ff0",
+          "run_id": "51e066ce-a35a-4c86-bb91-1458458f9f56",
+          "name": "read_item",
+          "address": "180001000",
+          "address_space": "virtual",
+          "code": "int read_item(const unsigned char *buffer, size_t length, size_t index) {\n    return buffer[index];\n}",
+          "assembly": null,
+          "callers": [],
+          "callees": [],
+          "metadata": {
+            "sig": "int read_item(...)",
+            "sym_type": "FUNCTION",
+            "external": false,
+            "instructions_hash": -17200333,
+            "assembly_unavailable": "Upstream persisted an instruction hash, not assembly",
+            "upstream_name": "read_item",
+            "diff_types": [
+              "code",
+              "address",
+              "called"
+            ],
+            "upstream_similarity": 0.58
+          }
+        }
+      ],
+      "newer": [
+        {
+          "schema_version": 1,
+          "id": "1e77bed1-1452-4ee2-bf06-453295b2e3bc",
+          "artifact_id": "ea09a4bf-4e85-446a-95c0-bad8ddbb286a",
+          "run_id": "51e066ce-a35a-4c86-bb91-1458458f9f56",
+          "name": "read_item",
+          "address": "180001080",
+          "address_space": "virtual",
+          "code": "int read_item(const unsigned char *buffer, size_t length, size_t index) {\n    if (buffer == NULL || index >= length) {\n        return report_invalid_index(index, length);\n    }\n    return buffer[index];\n}",
+          "assembly": null,
+          "callers": [],
+          "callees": [
+            "report_invalid_index"
+          ],
+          "metadata": {
+            "sig": "int read_item(...)",
+            "sym_type": "FUNCTION",
+            "external": false,
+            "instructions_hash": -17200333,
+            "assembly_unavailable": "Upstream persisted an instruction hash, not assembly",
+            "upstream_name": "read_item",
+            "diff_types": [
+              "code",
+              "address",
+              "called"
+            ],
+            "upstream_similarity": 0.58
+          }
+        }
+      ],
+      "category": "modified",
+      "match_types": [
+        "Symbols",
+        "StructuralGraph"
+      ],
+      "quality": "upstream similarity 0.58 (uncalibrated)",
+      "manual": false,
+      "reason": "",
+      "review": "unreviewed"
+    },
+    "invalid": {
+      "schema_version": 2,
+      "id": "b649d27f-5a40-4355-85e4-b7cb345a5a74",
+      "run_id": "51e066ce-a35a-4c86-bb91-1458458f9f56",
+      "older": [
+        {
+          "schema_version": 1,
+          "id": "05d9fade-88ae-4bd4-baf2-9c24ac9226a6",
+          "artifact_id": "3dd4d7f1-343b-4d19-88ec-1d69e3cb6ff0",
+          "run_id": "51e066ce-a35a-4c86-bb91-1458458f9f56",
+          "name": "read_item",
+          "address": "180001000",
+          "address_space": "virtual",
+          "code": "int read_item(const unsigned char *buffer, size_t length, size_t index) {\n    return buffer[index];\n}",
+          "assembly": null,
+          "callers": [],
+          "callees": [],
+          "metadata": {
+            "sig": "int read_item(...)",
+            "sym_type": "FUNCTION",
+            "external": false,
+            "instructions_hash": -17200333,
+            "assembly_unavailable": "Upstream persisted an instruction hash, not assembly",
+            "upstream_name": "read_item",
+            "diff_types": [
+              "code",
+              "address",
+              "called"
+            ],
+            "upstream_similarity": 0.58
+          }
+        }
+      ],
+      "newer": [
+        {
+          "schema_version": 1,
+          "id": "1e77bed1-1452-4ee2-bf06-453295b2e3bc",
+          "artifact_id": "ea09a4bf-4e85-446a-95c0-bad8ddbb286a",
+          "run_id": "51e066ce-a35a-4c86-bb91-1458458f9f56",
+          "name": "read_item",
+          "address": "180001080",
+          "address_space": "virtual",
+          "code": "int read_item(const unsigned char *buffer, size_t length, size_t index) {\n    if (buffer == NULL || index >= length) {\n        return report_invalid_index(index, length);\n    }\n    return buffer[index];\n}",
+          "assembly": null,
+          "callers": [],
+          "callees": [
+            "report_invalid_index"
+          ],
+          "metadata": {
+            "sig": "int read_item(...)",
+            "sym_type": "FUNCTION",
+            "external": false,
+            "instructions_hash": -17200333,
+            "assembly_unavailable": "Upstream persisted an instruction hash, not assembly",
+            "upstream_name": "read_item",
+            "diff_types": [
+              "code",
+              "address",
+              "called"
+            ],
+            "upstream_similarity": 0.58
+          }
+        }
+      ],
+      "category": "modified",
+      "match_types": [
+        "Symbols",
+        "StructuralGraph"
+      ],
+      "quality": "upstream similarity 0.58 (uncalibrated)",
+      "manual": false,
+      "reason": "",
+      "review": "unreviewed"
+    },
+    "invalid_reason": "Unsupported future schema version; fail without guessing"
+  },
+  "DiffHunk": {
+    "valid": {
+      "schema_version": 1,
+      "id": "7dd95eb0-9ca0-4c7a-a856-01ba11709470",
+      "match_id": "b649d27f-5a40-4355-85e4-b7cb345a5a74",
+      "old_start": 0,
+      "old_end": 1,
+      "new_start": 0,
+      "new_end": 1,
+      "operation": "equal"
+    },
+    "invalid": {
+      "schema_version": 2,
+      "id": "7dd95eb0-9ca0-4c7a-a856-01ba11709470",
+      "match_id": "b649d27f-5a40-4355-85e4-b7cb345a5a74",
+      "old_start": 0,
+      "old_end": 1,
+      "new_start": 0,
+      "new_end": 1,
+      "operation": "equal"
+    },
+    "invalid_reason": "Unsupported future schema version; fail without guessing"
+  },
+  "EvidenceReference": {
+    "valid": {
+      "schema_version": 1,
+      "id": "ev-2989bfca4b09e8c39f2b51fb9a2cf19761c74de0a58903a155f8c037d02bc624",
+      "artifact_id": "ea09a4bf-4e85-446a-95c0-bad8ddbb286a",
+      "run_id": "51e066ce-a35a-4c86-bb91-1458458f9f56",
+      "function_id": "1e77bed1-1452-4ee2-bf06-453295b2e3bc",
+      "side": "newer",
+      "start_line": 1,
+      "end_line": 6,
+      "text": "int read_item(const unsigned char *buffer, size_t length, size_t index) {\n    if (buffer == NULL || index >= length) {\n        return report_invalid_index(index, length);\n    }\n    return buffer[index];\n}"
+    },
+    "invalid": {
+      "schema_version": 2,
+      "id": "ev-2989bfca4b09e8c39f2b51fb9a2cf19761c74de0a58903a155f8c037d02bc624",
+      "artifact_id": "ea09a4bf-4e85-446a-95c0-bad8ddbb286a",
+      "run_id": "51e066ce-a35a-4c86-bb91-1458458f9f56",
+      "function_id": "1e77bed1-1452-4ee2-bf06-453295b2e3bc",
+      "side": "newer",
+      "start_line": 1,
+      "end_line": 6,
+      "text": "int read_item(const unsigned char *buffer, size_t length, size_t index) {\n    if (buffer == NULL || index >= length) {\n        return report_invalid_index(index, length);\n    }\n    return buffer[index];\n}"
+    },
+    "invalid_reason": "Unsupported future schema version; fail without guessing"
+  },
+  "AnalysisContext": {
+    "valid": {
+      "schema_version": 1,
+      "id": "ctx-8e4b02e68f2492f9a13ae04e8498462e25ae5124907580295a6c56e4ebe1e5ca",
+      "project_id": "1c35e9db-2dea-464a-95e9-5832d0574f76",
+      "revision": 1,
+      "match_ids": [
+        "b649d27f-5a40-4355-85e4-b7cb345a5a74"
+      ],
+      "evidence": [
+        {
+          "schema_version": 1,
+          "id": "ev-2989bfca4b09e8c39f2b51fb9a2cf19761c74de0a58903a155f8c037d02bc624",
+          "artifact_id": "ea09a4bf-4e85-446a-95c0-bad8ddbb286a",
+          "run_id": "51e066ce-a35a-4c86-bb91-1458458f9f56",
+          "function_id": "1e77bed1-1452-4ee2-bf06-453295b2e3bc",
+          "side": "newer",
+          "start_line": 1,
+          "end_line": 6,
+          "text": "int read_item(const unsigned char *buffer, size_t length, size_t index) {\n    if (buffer == NULL || index >= length) {\n        return report_invalid_index(index, length);\n    }\n    return buffer[index];\n}"
+        },
+        {
+          "schema_version": 1,
+          "id": "ev-6067f7c751a1272357604aaccff02d092724a47345cfb32494ca531d7713f797",
+          "artifact_id": "3dd4d7f1-343b-4d19-88ec-1d69e3cb6ff0",
+          "run_id": "51e066ce-a35a-4c86-bb91-1458458f9f56",
+          "function_id": "05d9fade-88ae-4bd4-baf2-9c24ac9226a6",
+          "side": "older",
+          "start_line": 1,
+          "end_line": 3,
+          "text": "int read_item(const unsigned char *buffer, size_t length, size_t index) {\n    return buffer[index];\n}"
+        },
+        {
+          "schema_version": 1,
+          "id": "ev-b063eaae5daa18fbc79343a2f985ed467545ad9c609434cf7813bf936dc1f837",
+          "artifact_id": "ea09a4bf-4e85-446a-95c0-bad8ddbb286a",
+          "run_id": "51e066ce-a35a-4c86-bb91-1458458f9f56",
+          "function_id": "622b21a4-a910-4451-b3fb-0cb7ff710278",
+          "side": "newer",
+          "start_line": 1,
+          "end_line": 3,
+          "text": "int report_invalid_index(size_t index, size_t length) {\n    return -1;\n}"
+        }
+      ],
+      "omitted": [
+        "1e77bed1-1452-4ee2-bf06-453295b2e3bc: caller context unavailable (no references supplied)",
+        "05d9fade-88ae-4bd4-baf2-9c24ac9226a6: caller context unavailable (no references supplied)",
+        "05d9fade-88ae-4bd4-baf2-9c24ac9226a6: callee context unavailable (no references supplied)"
+      ],
+      "digest": "8e4b02e68f2492f9a13ae04e8498462e25ae5124907580295a6c56e4ebe1e5ca",
+      "token_estimate": 778,
+      "payload": "{\"artifacts\":[{\"id\":\"ea09a4bf-4e85-446a-95c0-bad8ddbb286a\",\"sha256\":\"4af23bcb773054ad469c57363d50e2b53a6590bfba2286f16a06b4fb1440a168\",\"side\":\"newer\"},{\"id\":\"3dd4d7f1-343b-4d19-88ec-1d69e3cb6ff0\",\"sha256\":\"dc71b8420acc68418eaebfb8a4848cd2f63626125868e9977f017010c8d30215\",\"side\":\"older\"}],\"evidence\":[{\"artifact_id\":\"ea09a4bf-4e85-446a-95c0-bad8ddbb286a\",\"end_line\":6,\"function_id\":\"1e77bed1-1452-4ee2-bf06-453295b2e3bc\",\"id\":\"ev-2989bfca4b09e8c39f2b51fb9a2cf19761c74de0a58903a155f8c037d02bc624\",\"run_id\":\"51e066ce-a35a-4c86-bb91-1458458f9f56\",\"schema_version\":1,\"side\":\"newer\",\"start_line\":1,\"text\":\"int read_item(const unsigned char *buffer, size_t length, size_t index) {\\n    if (buffer == NULL || index >= length) {\\n        return report_invalid_index(index, length);\\n    }\\n    return buffer[index];\\n}\"},{\"artifact_id\":\"3dd4d7f1-343b-4d19-88ec-1d69e3cb6ff0\",\"end_line\":3,\"function_id\":\"05d9fade-88ae-4bd4-baf2-9c24ac9226a6\",\"id\":\"ev-6067f7c751a1272357604aaccff02d092724a47345cfb32494ca531d7713f797\",\"run_id\":\"51e066ce-a35a-4c86-bb91-1458458f9f56\",\"schema_version\":1,\"side\":\"older\",\"start_line\":1,\"text\":\"int read_item(const unsigned char *buffer, size_t length, size_t index) {\\n    return buffer[index];\\n}\"},{\"artifact_id\":\"ea09a4bf-4e85-446a-95c0-bad8ddbb286a\",\"end_line\":3,\"function_id\":\"622b21a4-a910-4451-b3fb-0cb7ff710278\",\"id\":\"ev-b063eaae5daa18fbc79343a2f985ed467545ad9c609434cf7813bf936dc1f837\",\"run_id\":\"51e066ce-a35a-4c86-bb91-1458458f9f56\",\"schema_version\":1,\"side\":\"newer\",\"start_line\":1,\"text\":\"int report_invalid_index(size_t index, size_t length) {\\n    return -1;\\n}\"}],\"matches\":[{\"category\":\"modified\",\"context_function_ids\":[\"05d9fade-88ae-4bd4-baf2-9c24ac9226a6\",\"1e77bed1-1452-4ee2-bf06-453295b2e3bc\",\"622b21a4-a910-4451-b3fb-0cb7ff710278\"],\"function_ids\":[\"05d9fade-88ae-4bd4-baf2-9c24ac9226a6\",\"1e77bed1-1452-4ee2-bf06-453295b2e3bc\"],\"id\":\"b649d27f-5a40-4355-85e4-b7cb345a5a74\",\"run_id\":\"51e066ce-a35a-4c86-bb91-1458458f9f56\"}],\"omitted\":[\"1e77bed1-1452-4ee2-bf06-453295b2e3bc: caller context unavailable (no references supplied)\",\"05d9fade-88ae-4bd4-baf2-9c24ac9226a6: caller context unavailable (no references supplied)\",\"05d9fade-88ae-4bd4-baf2-9c24ac9226a6: callee context unavailable (no references supplied)\"],\"project_id\":\"1c35e9db-2dea-464a-95e9-5832d0574f76\",\"revision\":1,\"schema_version\":1}",
+      "stale": false
+    },
+    "invalid": {
+      "schema_version": 2,
+      "id": "ctx-8e4b02e68f2492f9a13ae04e8498462e25ae5124907580295a6c56e4ebe1e5ca",
+      "project_id": "1c35e9db-2dea-464a-95e9-5832d0574f76",
+      "revision": 1,
+      "match_ids": [
+        "b649d27f-5a40-4355-85e4-b7cb345a5a74"
+      ],
+      "evidence": [
+        {
+          "schema_version": 1,
+          "id": "ev-2989bfca4b09e8c39f2b51fb9a2cf19761c74de0a58903a155f8c037d02bc624",
+          "artifact_id": "ea09a4bf-4e85-446a-95c0-bad8ddbb286a",
+          "run_id": "51e066ce-a35a-4c86-bb91-1458458f9f56",
+          "function_id": "1e77bed1-1452-4ee2-bf06-453295b2e3bc",
+          "side": "newer",
+          "start_line": 1,
+          "end_line": 6,
+          "text": "int read_item(const unsigned char *buffer, size_t length, size_t index) {\n    if (buffer == NULL || index >= length) {\n        return report_invalid_index(index, length);\n    }\n    return buffer[index];\n}"
+        },
+        {
+          "schema_version": 1,
+          "id": "ev-6067f7c751a1272357604aaccff02d092724a47345cfb32494ca531d7713f797",
+          "artifact_id": "3dd4d7f1-343b-4d19-88ec-1d69e3cb6ff0",
+          "run_id": "51e066ce-a35a-4c86-bb91-1458458f9f56",
+          "function_id": "05d9fade-88ae-4bd4-baf2-9c24ac9226a6",
+          "side": "older",
+          "start_line": 1,
+          "end_line": 3,
+          "text": "int read_item(const unsigned char *buffer, size_t length, size_t index) {\n    return buffer[index];\n}"
+        },
+        {
+          "schema_version": 1,
+          "id": "ev-b063eaae5daa18fbc79343a2f985ed467545ad9c609434cf7813bf936dc1f837",
+          "artifact_id": "ea09a4bf-4e85-446a-95c0-bad8ddbb286a",
+          "run_id": "51e066ce-a35a-4c86-bb91-1458458f9f56",
+          "function_id": "622b21a4-a910-4451-b3fb-0cb7ff710278",
+          "side": "newer",
+          "start_line": 1,
+          "end_line": 3,
+          "text": "int report_invalid_index(size_t index, size_t length) {\n    return -1;\n}"
+        }
+      ],
+      "omitted": [
+        "1e77bed1-1452-4ee2-bf06-453295b2e3bc: caller context unavailable (no references supplied)",
+        "05d9fade-88ae-4bd4-baf2-9c24ac9226a6: caller context unavailable (no references supplied)",
+        "05d9fade-88ae-4bd4-baf2-9c24ac9226a6: callee context unavailable (no references supplied)"
+      ],
+      "digest": "8e4b02e68f2492f9a13ae04e8498462e25ae5124907580295a6c56e4ebe1e5ca",
+      "token_estimate": 778,
+      "payload": "{\"artifacts\":[{\"id\":\"ea09a4bf-4e85-446a-95c0-bad8ddbb286a\",\"sha256\":\"4af23bcb773054ad469c57363d50e2b53a6590bfba2286f16a06b4fb1440a168\",\"side\":\"newer\"},{\"id\":\"3dd4d7f1-343b-4d19-88ec-1d69e3cb6ff0\",\"sha256\":\"dc71b8420acc68418eaebfb8a4848cd2f63626125868e9977f017010c8d30215\",\"side\":\"older\"}],\"evidence\":[{\"artifact_id\":\"ea09a4bf-4e85-446a-95c0-bad8ddbb286a\",\"end_line\":6,\"function_id\":\"1e77bed1-1452-4ee2-bf06-453295b2e3bc\",\"id\":\"ev-2989bfca4b09e8c39f2b51fb9a2cf19761c74de0a58903a155f8c037d02bc624\",\"run_id\":\"51e066ce-a35a-4c86-bb91-1458458f9f56\",\"schema_version\":1,\"side\":\"newer\",\"start_line\":1,\"text\":\"int read_item(const unsigned char *buffer, size_t length, size_t index) {\\n    if (buffer == NULL || index >= length) {\\n        return report_invalid_index(index, length);\\n    }\\n    return buffer[index];\\n}\"},{\"artifact_id\":\"3dd4d7f1-343b-4d19-88ec-1d69e3cb6ff0\",\"end_line\":3,\"function_id\":\"05d9fade-88ae-4bd4-baf2-9c24ac9226a6\",\"id\":\"ev-6067f7c751a1272357604aaccff02d092724a47345cfb32494ca531d7713f797\",\"run_id\":\"51e066ce-a35a-4c86-bb91-1458458f9f56\",\"schema_version\":1,\"side\":\"older\",\"start_line\":1,\"text\":\"int read_item(const unsigned char *buffer, size_t length, size_t index) {\\n    return buffer[index];\\n}\"},{\"artifact_id\":\"ea09a4bf-4e85-446a-95c0-bad8ddbb286a\",\"end_line\":3,\"function_id\":\"622b21a4-a910-4451-b3fb-0cb7ff710278\",\"id\":\"ev-b063eaae5daa18fbc79343a2f985ed467545ad9c609434cf7813bf936dc1f837\",\"run_id\":\"51e066ce-a35a-4c86-bb91-1458458f9f56\",\"schema_version\":1,\"side\":\"newer\",\"start_line\":1,\"text\":\"int report_invalid_index(size_t index, size_t length) {\\n    return -1;\\n}\"}],\"matches\":[{\"category\":\"modified\",\"context_function_ids\":[\"05d9fade-88ae-4bd4-baf2-9c24ac9226a6\",\"1e77bed1-1452-4ee2-bf06-453295b2e3bc\",\"622b21a4-a910-4451-b3fb-0cb7ff710278\"],\"function_ids\":[\"05d9fade-88ae-4bd4-baf2-9c24ac9226a6\",\"1e77bed1-1452-4ee2-bf06-453295b2e3bc\"],\"id\":\"b649d27f-5a40-4355-85e4-b7cb345a5a74\",\"run_id\":\"51e066ce-a35a-4c86-bb91-1458458f9f56\"}],\"omitted\":[\"1e77bed1-1452-4ee2-bf06-453295b2e3bc: caller context unavailable (no references supplied)\",\"05d9fade-88ae-4bd4-baf2-9c24ac9226a6: caller context unavailable (no references supplied)\",\"05d9fade-88ae-4bd4-baf2-9c24ac9226a6: callee context unavailable (no references supplied)\"],\"project_id\":\"1c35e9db-2dea-464a-95e9-5832d0574f76\",\"revision\":1,\"schema_version\":1}",
+      "stale": false
+    },
+    "invalid_reason": "Unsupported future schema version; fail without guessing"
+  },
+  "InterpretationRun": {
+    "valid": {
+      "schema_version": 1,
+      "id": "022c74a9-8b59-47fd-8ae4-04c4edaaf3e6",
+      "context": {
+        "schema_version": 1,
+        "id": "ctx-8e4b02e68f2492f9a13ae04e8498462e25ae5124907580295a6c56e4ebe1e5ca",
+        "project_id": "1c35e9db-2dea-464a-95e9-5832d0574f76",
+        "revision": 1,
+        "match_ids": [
+          "b649d27f-5a40-4355-85e4-b7cb345a5a74"
+        ],
+        "evidence": [
+          {
+            "schema_version": 1,
+            "id": "ev-2989bfca4b09e8c39f2b51fb9a2cf19761c74de0a58903a155f8c037d02bc624",
+            "artifact_id": "ea09a4bf-4e85-446a-95c0-bad8ddbb286a",
+            "run_id": "51e066ce-a35a-4c86-bb91-1458458f9f56",
+            "function_id": "1e77bed1-1452-4ee2-bf06-453295b2e3bc",
+            "side": "newer",
+            "start_line": 1,
+            "end_line": 6,
+            "text": "int read_item(const unsigned char *buffer, size_t length, size_t index) {\n    if (buffer == NULL || index >= length) {\n        return report_invalid_index(index, length);\n    }\n    return buffer[index];\n}"
+          },
+          {
+            "schema_version": 1,
+            "id": "ev-6067f7c751a1272357604aaccff02d092724a47345cfb32494ca531d7713f797",
+            "artifact_id": "3dd4d7f1-343b-4d19-88ec-1d69e3cb6ff0",
+            "run_id": "51e066ce-a35a-4c86-bb91-1458458f9f56",
+            "function_id": "05d9fade-88ae-4bd4-baf2-9c24ac9226a6",
+            "side": "older",
+            "start_line": 1,
+            "end_line": 3,
+            "text": "int read_item(const unsigned char *buffer, size_t length, size_t index) {\n    return buffer[index];\n}"
+          },
+          {
+            "schema_version": 1,
+            "id": "ev-b063eaae5daa18fbc79343a2f985ed467545ad9c609434cf7813bf936dc1f837",
+            "artifact_id": "ea09a4bf-4e85-446a-95c0-bad8ddbb286a",
+            "run_id": "51e066ce-a35a-4c86-bb91-1458458f9f56",
+            "function_id": "622b21a4-a910-4451-b3fb-0cb7ff710278",
+            "side": "newer",
+            "start_line": 1,
+            "end_line": 3,
+            "text": "int report_invalid_index(size_t index, size_t length) {\n    return -1;\n}"
+          }
+        ],
+        "omitted": [
+          "1e77bed1-1452-4ee2-bf06-453295b2e3bc: caller context unavailable (no references supplied)",
+          "05d9fade-88ae-4bd4-baf2-9c24ac9226a6: caller context unavailable (no references supplied)",
+          "05d9fade-88ae-4bd4-baf2-9c24ac9226a6: callee context unavailable (no references supplied)"
+        ],
+        "digest": "8e4b02e68f2492f9a13ae04e8498462e25ae5124907580295a6c56e4ebe1e5ca",
+        "token_estimate": 778,
+        "payload": "{\"artifacts\":[{\"id\":\"ea09a4bf-4e85-446a-95c0-bad8ddbb286a\",\"sha256\":\"4af23bcb773054ad469c57363d50e2b53a6590bfba2286f16a06b4fb1440a168\",\"side\":\"newer\"},{\"id\":\"3dd4d7f1-343b-4d19-88ec-1d69e3cb6ff0\",\"sha256\":\"dc71b8420acc68418eaebfb8a4848cd2f63626125868e9977f017010c8d30215\",\"side\":\"older\"}],\"evidence\":[{\"artifact_id\":\"ea09a4bf-4e85-446a-95c0-bad8ddbb286a\",\"end_line\":6,\"function_id\":\"1e77bed1-1452-4ee2-bf06-453295b2e3bc\",\"id\":\"ev-2989bfca4b09e8c39f2b51fb9a2cf19761c74de0a58903a155f8c037d02bc624\",\"run_id\":\"51e066ce-a35a-4c86-bb91-1458458f9f56\",\"schema_version\":1,\"side\":\"newer\",\"start_line\":1,\"text\":\"int read_item(const unsigned char *buffer, size_t length, size_t index) {\\n    if (buffer == NULL || index >= length) {\\n        return report_invalid_index(index, length);\\n    }\\n    return buffer[index];\\n}\"},{\"artifact_id\":\"3dd4d7f1-343b-4d19-88ec-1d69e3cb6ff0\",\"end_line\":3,\"function_id\":\"05d9fade-88ae-4bd4-baf2-9c24ac9226a6\",\"id\":\"ev-6067f7c751a1272357604aaccff02d092724a47345cfb32494ca531d7713f797\",\"run_id\":\"51e066ce-a35a-4c86-bb91-1458458f9f56\",\"schema_version\":1,\"side\":\"older\",\"start_line\":1,\"text\":\"int read_item(const unsigned char *buffer, size_t length, size_t index) {\\n    return buffer[index];\\n}\"},{\"artifact_id\":\"ea09a4bf-4e85-446a-95c0-bad8ddbb286a\",\"end_line\":3,\"function_id\":\"622b21a4-a910-4451-b3fb-0cb7ff710278\",\"id\":\"ev-b063eaae5daa18fbc79343a2f985ed467545ad9c609434cf7813bf936dc1f837\",\"run_id\":\"51e066ce-a35a-4c86-bb91-1458458f9f56\",\"schema_version\":1,\"side\":\"newer\",\"start_line\":1,\"text\":\"int report_invalid_index(size_t index, size_t length) {\\n    return -1;\\n}\"}],\"matches\":[{\"category\":\"modified\",\"context_function_ids\":[\"05d9fade-88ae-4bd4-baf2-9c24ac9226a6\",\"1e77bed1-1452-4ee2-bf06-453295b2e3bc\",\"622b21a4-a910-4451-b3fb-0cb7ff710278\"],\"function_ids\":[\"05d9fade-88ae-4bd4-baf2-9c24ac9226a6\",\"1e77bed1-1452-4ee2-bf06-453295b2e3bc\"],\"id\":\"b649d27f-5a40-4355-85e4-b7cb345a5a74\",\"run_id\":\"51e066ce-a35a-4c86-bb91-1458458f9f56\"}],\"omitted\":[\"1e77bed1-1452-4ee2-bf06-453295b2e3bc: caller context unavailable (no references supplied)\",\"05d9fade-88ae-4bd4-baf2-9c24ac9226a6: caller context unavailable (no references supplied)\",\"05d9fade-88ae-4bd4-baf2-9c24ac9226a6: callee context unavailable (no references supplied)\"],\"project_id\":\"1c35e9db-2dea-464a-95e9-5832d0574f76\",\"revision\":1,\"schema_version\":1}",
+        "stale": false
+      },
+      "provider": "curated synthetic sample",
+      "model": "no model invoked",
+      "endpoint": null,
+      "prompt_version": "patchtrace-1",
+      "created": "2026-10-11T08:51:14.108508+00:00",
+      "status": "completed",
+      "findings": [
+        {
+          "schema_version": 1,
+          "id": "75fdbccd-fc31-44f3-803f-4f72c5ad7954",
+          "context_id": "ctx-8e4b02e68f2492f9a13ae04e8498462e25ae5124907580295a6c56e4ebe1e5ca",
+          "match_ids": [
+            "b649d27f-5a40-4355-85e4-b7cb345a5a74"
+          ],
+          "summary": "Synthetic example: guard added before indexed buffer access",
+          "fix_purpose": "Return an error for a null buffer or index outside the supplied length",
+          "category": "ordinary-bug",
+          "hypothesis": {
+            "schema_version": 1,
+            "id": "94e2e835-4f39-4319-847e-9865cc9316ab",
+            "explanation": "The sample now checks the pointer and index before dereferencing the buffer.",
+            "supporting": [
+              "ev-6067f7c751a1272357604aaccff02d092724a47345cfb32494ca531d7713f797",
+              "ev-2989bfca4b09e8c39f2b51fb9a2cf19761c74de0a58903a155f8c037d02bc624"
+            ],
+            "contradicting": [],
+            "preconditions": [
+              "The supplied length accurately describes the readable buffer."
+            ],
+            "unknowns": [
+              "Caller validation and actual shipped machine code are outside this synthetic example."
+            ],
+            "verification": [
+              "Review callers and test null, empty, boundary and out-of-range inputs."
+            ],
+            "confidence": "medium"
+          },
+          "alternatives": [
+            {
+              "schema_version": 1,
+              "id": "5eab3bc0-1db5-4237-8a39-fc6e2ea67957",
+              "explanation": "Caller validation may already have prevented invalid access.",
+              "supporting": [],
+              "contradicting": [
+                "ev-6067f7c751a1272357604aaccff02d092724a47345cfb32494ca531d7713f797"
+              ],
+              "preconditions": [],
+              "unknowns": [
+                "No caller implementation was provided."
+              ],
+              "verification": [],
+              "confidence": "unknown"
+            }
+          ],
+          "cwe": null,
+          "cwe_rationale": null,
+          "review": "unreviewed",
+          "analyst_conclusion": "",
+          "stale": false
+        }
+      ],
+      "raw_response": "Synthetic walkthrough record",
+      "error": null,
+      "duration_seconds": 0.0
+    },
+    "invalid": {
+      "schema_version": 2,
+      "id": "022c74a9-8b59-47fd-8ae4-04c4edaaf3e6",
+      "context": {
+        "schema_version": 1,
+        "id": "ctx-8e4b02e68f2492f9a13ae04e8498462e25ae5124907580295a6c56e4ebe1e5ca",
+        "project_id": "1c35e9db-2dea-464a-95e9-5832d0574f76",
+        "revision": 1,
+        "match_ids": [
+          "b649d27f-5a40-4355-85e4-b7cb345a5a74"
+        ],
+        "evidence": [
+          {
+            "schema_version": 1,
+            "id": "ev-2989bfca4b09e8c39f2b51fb9a2cf19761c74de0a58903a155f8c037d02bc624",
+            "artifact_id": "ea09a4bf-4e85-446a-95c0-bad8ddbb286a",
+            "run_id": "51e066ce-a35a-4c86-bb91-1458458f9f56",
+            "function_id": "1e77bed1-1452-4ee2-bf06-453295b2e3bc",
+            "side": "newer",
+            "start_line": 1,
+            "end_line": 6,
+            "text": "int read_item(const unsigned char *buffer, size_t length, size_t index) {\n    if (buffer == NULL || index >= length) {\n        return report_invalid_index(index, length);\n    }\n    return buffer[index];\n}"
+          },
+          {
+            "schema_version": 1,
+            "id": "ev-6067f7c751a1272357604aaccff02d092724a47345cfb32494ca531d7713f797",
+            "artifact_id": "3dd4d7f1-343b-4d19-88ec-1d69e3cb6ff0",
+            "run_id": "51e066ce-a35a-4c86-bb91-1458458f9f56",
+            "function_id": "05d9fade-88ae-4bd4-baf2-9c24ac9226a6",
+            "side": "older",
+            "start_line": 1,
+            "end_line": 3,
+            "text": "int read_item(const unsigned char *buffer, size_t length, size_t index) {\n    return buffer[index];\n}"
+          },
+          {
+            "schema_version": 1,
+            "id": "ev-b063eaae5daa18fbc79343a2f985ed467545ad9c609434cf7813bf936dc1f837",
+            "artifact_id": "ea09a4bf-4e85-446a-95c0-bad8ddbb286a",
+            "run_id": "51e066ce-a35a-4c86-bb91-1458458f9f56",
+            "function_id": "622b21a4-a910-4451-b3fb-0cb7ff710278",
+            "side": "newer",
+            "start_line": 1,
+            "end_line": 3,
+            "text": "int report_invalid_index(size_t index, size_t length) {\n    return -1;\n}"
+          }
+        ],
+        "omitted": [
+          "1e77bed1-1452-4ee2-bf06-453295b2e3bc: caller context unavailable (no references supplied)",
+          "05d9fade-88ae-4bd4-baf2-9c24ac9226a6: caller context unavailable (no references supplied)",
+          "05d9fade-88ae-4bd4-baf2-9c24ac9226a6: callee context unavailable (no references supplied)"
+        ],
+        "digest": "8e4b02e68f2492f9a13ae04e8498462e25ae5124907580295a6c56e4ebe1e5ca",
+        "token_estimate": 778,
+        "payload": "{\"artifacts\":[{\"id\":\"ea09a4bf-4e85-446a-95c0-bad8ddbb286a\",\"sha256\":\"4af23bcb773054ad469c57363d50e2b53a6590bfba2286f16a06b4fb1440a168\",\"side\":\"newer\"},{\"id\":\"3dd4d7f1-343b-4d19-88ec-1d69e3cb6ff0\",\"sha256\":\"dc71b8420acc68418eaebfb8a4848cd2f63626125868e9977f017010c8d30215\",\"side\":\"older\"}],\"evidence\":[{\"artifact_id\":\"ea09a4bf-4e85-446a-95c0-bad8ddbb286a\",\"end_line\":6,\"function_id\":\"1e77bed1-1452-4ee2-bf06-453295b2e3bc\",\"id\":\"ev-2989bfca4b09e8c39f2b51fb9a2cf19761c74de0a58903a155f8c037d02bc624\",\"run_id\":\"51e066ce-a35a-4c86-bb91-1458458f9f56\",\"schema_version\":1,\"side\":\"newer\",\"start_line\":1,\"text\":\"int read_item(const unsigned char *buffer, size_t length, size_t index) {\\n    if (buffer == NULL || index >= length) {\\n        return report_invalid_index(index, length);\\n    }\\n    return buffer[index];\\n}\"},{\"artifact_id\":\"3dd4d7f1-343b-4d19-88ec-1d69e3cb6ff0\",\"end_line\":3,\"function_id\":\"05d9fade-88ae-4bd4-baf2-9c24ac9226a6\",\"id\":\"ev-6067f7c751a1272357604aaccff02d092724a47345cfb32494ca531d7713f797\",\"run_id\":\"51e066ce-a35a-4c86-bb91-1458458f9f56\",\"schema_version\":1,\"side\":\"older\",\"start_line\":1,\"text\":\"int read_item(const unsigned char *buffer, size_t length, size_t index) {\\n    return buffer[index];\\n}\"},{\"artifact_id\":\"ea09a4bf-4e85-446a-95c0-bad8ddbb286a\",\"end_line\":3,\"function_id\":\"622b21a4-a910-4451-b3fb-0cb7ff710278\",\"id\":\"ev-b063eaae5daa18fbc79343a2f985ed467545ad9c609434cf7813bf936dc1f837\",\"run_id\":\"51e066ce-a35a-4c86-bb91-1458458f9f56\",\"schema_version\":1,\"side\":\"newer\",\"start_line\":1,\"text\":\"int report_invalid_index(size_t index, size_t length) {\\n    return -1;\\n}\"}],\"matches\":[{\"category\":\"modified\",\"context_function_ids\":[\"05d9fade-88ae-4bd4-baf2-9c24ac9226a6\",\"1e77bed1-1452-4ee2-bf06-453295b2e3bc\",\"622b21a4-a910-4451-b3fb-0cb7ff710278\"],\"function_ids\":[\"05d9fade-88ae-4bd4-baf2-9c24ac9226a6\",\"1e77bed1-1452-4ee2-bf06-453295b2e3bc\"],\"id\":\"b649d27f-5a40-4355-85e4-b7cb345a5a74\",\"run_id\":\"51e066ce-a35a-4c86-bb91-1458458f9f56\"}],\"omitted\":[\"1e77bed1-1452-4ee2-bf06-453295b2e3bc: caller context unavailable (no references supplied)\",\"05d9fade-88ae-4bd4-baf2-9c24ac9226a6: caller context unavailable (no references supplied)\",\"05d9fade-88ae-4bd4-baf2-9c24ac9226a6: callee context unavailable (no references supplied)\"],\"project_id\":\"1c35e9db-2dea-464a-95e9-5832d0574f76\",\"revision\":1,\"schema_version\":1}",
+        "stale": false
+      },
+      "provider": "curated synthetic sample",
+      "model": "no model invoked",
+      "endpoint": null,
+      "prompt_version": "patchtrace-1",
+      "created": "2026-10-11T08:51:14.108508+00:00",
+      "status": "completed",
+      "findings": [
+        {
+          "schema_version": 1,
+          "id": "75fdbccd-fc31-44f3-803f-4f72c5ad7954",
+          "context_id": "ctx-8e4b02e68f2492f9a13ae04e8498462e25ae5124907580295a6c56e4ebe1e5ca",
+          "match_ids": [
+            "b649d27f-5a40-4355-85e4-b7cb345a5a74"
+          ],
+          "summary": "Synthetic example: guard added before indexed buffer access",
+          "fix_purpose": "Return an error for a null buffer or index outside the supplied length",
+          "category": "ordinary-bug",
+          "hypothesis": {
+            "schema_version": 1,
+            "id": "94e2e835-4f39-4319-847e-9865cc9316ab",
+            "explanation": "The sample now checks the pointer and index before dereferencing the buffer.",
+            "supporting": [
+              "ev-6067f7c751a1272357604aaccff02d092724a47345cfb32494ca531d7713f797",
+              "ev-2989bfca4b09e8c39f2b51fb9a2cf19761c74de0a58903a155f8c037d02bc624"
+            ],
+            "contradicting": [],
+            "preconditions": [
+              "The supplied length accurately describes the readable buffer."
+            ],
+            "unknowns": [
+              "Caller validation and actual shipped machine code are outside this synthetic example."
+            ],
+            "verification": [
+              "Review callers and test null, empty, boundary and out-of-range inputs."
+            ],
+            "confidence": "medium"
+          },
+          "alternatives": [
+            {
+              "schema_version": 1,
+              "id": "5eab3bc0-1db5-4237-8a39-fc6e2ea67957",
+              "explanation": "Caller validation may already have prevented invalid access.",
+              "supporting": [],
+              "contradicting": [
+                "ev-6067f7c751a1272357604aaccff02d092724a47345cfb32494ca531d7713f797"
+              ],
+              "preconditions": [],
+              "unknowns": [
+                "No caller implementation was provided."
+              ],
+              "verification": [],
+              "confidence": "unknown"
+            }
+          ],
+          "cwe": null,
+          "cwe_rationale": null,
+          "review": "unreviewed",
+          "analyst_conclusion": "",
+          "stale": false
+        }
+      ],
+      "raw_response": "Synthetic walkthrough record",
+      "error": null,
+      "duration_seconds": 0.0
+    },
+    "invalid_reason": "Unsupported future schema version; fail without guessing"
+  },
+  "Finding": {
+    "valid": {
+      "schema_version": 1,
+      "id": "75fdbccd-fc31-44f3-803f-4f72c5ad7954",
+      "context_id": "ctx-8e4b02e68f2492f9a13ae04e8498462e25ae5124907580295a6c56e4ebe1e5ca",
+      "match_ids": [
+        "b649d27f-5a40-4355-85e4-b7cb345a5a74"
+      ],
+      "summary": "Synthetic example: guard added before indexed buffer access",
+      "fix_purpose": "Return an error for a null buffer or index outside the supplied length",
+      "category": "ordinary-bug",
+      "hypothesis": {
+        "schema_version": 1,
+        "id": "94e2e835-4f39-4319-847e-9865cc9316ab",
+        "explanation": "The sample now checks the pointer and index before dereferencing the buffer.",
+        "supporting": [
+          "ev-6067f7c751a1272357604aaccff02d092724a47345cfb32494ca531d7713f797",
+          "ev-2989bfca4b09e8c39f2b51fb9a2cf19761c74de0a58903a155f8c037d02bc624"
+        ],
+        "contradicting": [],
+        "preconditions": [
+          "The supplied length accurately describes the readable buffer."
+        ],
+        "unknowns": [
+          "Caller validation and actual shipped machine code are outside this synthetic example."
+        ],
+        "verification": [
+          "Review callers and test null, empty, boundary and out-of-range inputs."
+        ],
+        "confidence": "medium"
+      },
+      "alternatives": [
+        {
+          "schema_version": 1,
+          "id": "5eab3bc0-1db5-4237-8a39-fc6e2ea67957",
+          "explanation": "Caller validation may already have prevented invalid access.",
+          "supporting": [],
+          "contradicting": [
+            "ev-6067f7c751a1272357604aaccff02d092724a47345cfb32494ca531d7713f797"
+          ],
+          "preconditions": [],
+          "unknowns": [
+            "No caller implementation was provided."
+          ],
+          "verification": [],
+          "confidence": "unknown"
+        }
+      ],
+      "cwe": null,
+      "cwe_rationale": null,
+      "review": "unreviewed",
+      "analyst_conclusion": "",
+      "stale": false
+    },
+    "invalid": {
+      "schema_version": 2,
+      "id": "75fdbccd-fc31-44f3-803f-4f72c5ad7954",
+      "context_id": "ctx-8e4b02e68f2492f9a13ae04e8498462e25ae5124907580295a6c56e4ebe1e5ca",
+      "match_ids": [
+        "b649d27f-5a40-4355-85e4-b7cb345a5a74"
+      ],
+      "summary": "Synthetic example: guard added before indexed buffer access",
+      "fix_purpose": "Return an error for a null buffer or index outside the supplied length",
+      "category": "ordinary-bug",
+      "hypothesis": {
+        "schema_version": 1,
+        "id": "94e2e835-4f39-4319-847e-9865cc9316ab",
+        "explanation": "The sample now checks the pointer and index before dereferencing the buffer.",
+        "supporting": [
+          "ev-6067f7c751a1272357604aaccff02d092724a47345cfb32494ca531d7713f797",
+          "ev-2989bfca4b09e8c39f2b51fb9a2cf19761c74de0a58903a155f8c037d02bc624"
+        ],
+        "contradicting": [],
+        "preconditions": [
+          "The supplied length accurately describes the readable buffer."
+        ],
+        "unknowns": [
+          "Caller validation and actual shipped machine code are outside this synthetic example."
+        ],
+        "verification": [
+          "Review callers and test null, empty, boundary and out-of-range inputs."
+        ],
+        "confidence": "medium"
+      },
+      "alternatives": [
+        {
+          "schema_version": 1,
+          "id": "5eab3bc0-1db5-4237-8a39-fc6e2ea67957",
+          "explanation": "Caller validation may already have prevented invalid access.",
+          "supporting": [],
+          "contradicting": [
+            "ev-6067f7c751a1272357604aaccff02d092724a47345cfb32494ca531d7713f797"
+          ],
+          "preconditions": [],
+          "unknowns": [
+            "No caller implementation was provided."
+          ],
+          "verification": [],
+          "confidence": "unknown"
+        }
+      ],
+      "cwe": null,
+      "cwe_rationale": null,
+      "review": "unreviewed",
+      "analyst_conclusion": "",
+      "stale": false
+    },
+    "invalid_reason": "Unsupported future schema version; fail without guessing"
+  },
+  "Hypothesis": {
+    "valid": {
+      "schema_version": 1,
+      "id": "94e2e835-4f39-4319-847e-9865cc9316ab",
+      "explanation": "The sample now checks the pointer and index before dereferencing the buffer.",
+      "supporting": [
+        "ev-6067f7c751a1272357604aaccff02d092724a47345cfb32494ca531d7713f797",
+        "ev-2989bfca4b09e8c39f2b51fb9a2cf19761c74de0a58903a155f8c037d02bc624"
+      ],
+      "contradicting": [],
+      "preconditions": [
+        "The supplied length accurately describes the readable buffer."
+      ],
+      "unknowns": [
+        "Caller validation and actual shipped machine code are outside this synthetic example."
+      ],
+      "verification": [
+        "Review callers and test null, empty, boundary and out-of-range inputs."
+      ],
+      "confidence": "medium"
+    },
+    "invalid": {
+      "schema_version": 2,
+      "id": "94e2e835-4f39-4319-847e-9865cc9316ab",
+      "explanation": "The sample now checks the pointer and index before dereferencing the buffer.",
+      "supporting": [
+        "ev-6067f7c751a1272357604aaccff02d092724a47345cfb32494ca531d7713f797",
+        "ev-2989bfca4b09e8c39f2b51fb9a2cf19761c74de0a58903a155f8c037d02bc624"
+      ],
+      "contradicting": [],
+      "preconditions": [
+        "The supplied length accurately describes the readable buffer."
+      ],
+      "unknowns": [
+        "Caller validation and actual shipped machine code are outside this synthetic example."
+      ],
+      "verification": [
+        "Review callers and test null, empty, boundary and out-of-range inputs."
+      ],
+      "confidence": "medium"
+    },
+    "invalid_reason": "Unsupported future schema version; fail without guessing"
+  },
+  "AnalystAnnotation": {
+    "valid": {
+      "schema_version": 1,
+      "id": "72838afc-f581-4bb9-a21f-c5d388b0a9b6",
+      "target_id": "b649d27f-5a40-4355-85e4-b7cb345a5a74",
+      "kind": "note",
+      "text": "Synthetic sample only. PE fixtures, decompilation and finding are authored examples; no backend or model was run, and no vulnerability is established.",
+      "created": "2026-10-11T08:51:14.119319+00:00",
+      "stale": false
+    },
+    "invalid": {
+      "schema_version": 2,
+      "id": "72838afc-f581-4bb9-a21f-c5d388b0a9b6",
+      "target_id": "b649d27f-5a40-4355-85e4-b7cb345a5a74",
+      "kind": "note",
+      "text": "Synthetic sample only. PE fixtures, decompilation and finding are authored examples; no backend or model was run, and no vulnerability is established.",
+      "created": "2026-10-11T08:51:14.119319+00:00",
+      "stale": false
+    },
+    "invalid_reason": "Unsupported future schema version; fail without guessing"
+  },
+  "JobEvent": {
+    "valid": {
+      "schema_version": 1,
+      "id": "260f9842-5ef7-42fd-b490-854beee6ef0e",
+      "run_id": "51e066ce-a35a-4c86-bb91-1458458f9f56",
+      "stage": "synthetic",
+      "message": "Sample only",
+      "progress": null,
+      "created": "2026-10-11T08:51:14.120551+00:00"
+    },
+    "invalid": {
+      "schema_version": 2,
+      "id": "260f9842-5ef7-42fd-b490-854beee6ef0e",
+      "run_id": "51e066ce-a35a-4c86-bb91-1458458f9f56",
+      "stage": "synthetic",
+      "message": "Sample only",
+      "progress": null,
+      "created": "2026-10-11T08:51:14.120551+00:00"
+    },
+    "invalid_reason": "Unsupported future schema version; fail without guessing"
+  },
+  "ExportManifest": {
+    "valid": {
+      "schema_version": 1,
+      "id": "7161d30a-9b6a-4e0b-b37d-85b001bf0b85",
+      "project_id": "1c35e9db-2dea-464a-95e9-5832d0574f76",
+      "revision": 1,
+      "format": "json",
+      "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "finding_ids": [
+        "75fdbccd-fc31-44f3-803f-4f72c5ad7954"
+      ],
+      "include_code": false,
+      "include_notes": true,
+      "created": "2026-10-11T08:51:14.120564+00:00"
+    },
+    "invalid": {
+      "schema_version": 2,
+      "id": "7161d30a-9b6a-4e0b-b37d-85b001bf0b85",
+      "project_id": "1c35e9db-2dea-464a-95e9-5832d0574f76",
+      "revision": 1,
+      "format": "json",
+      "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "finding_ids": [
+        "75fdbccd-fc31-44f3-803f-4f72c5ad7954"
+      ],
+      "include_code": false,
+      "include_notes": true,
+      "created": "2026-10-11T08:51:14.120564+00:00"
+    },
+    "invalid_reason": "Unsupported future schema version; fail without guessing"
+  }
+}

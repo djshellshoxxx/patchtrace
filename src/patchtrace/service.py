@@ -30,7 +30,7 @@ class ProjectService:
         self.root = Path(root).resolve()
         self.project = project
         self.store = store
-        self._prepared: dict[str, tuple[PreparedImport, str]] = {}
+        self._prepared: dict[str, tuple[PreparedImport, AnalysisRun, tuple[FunctionMatch, ...]]] = {}
 
     @classmethod
     def create(cls, older: Path, newer: Path, name: str, root: Path) -> ProjectService:
@@ -162,35 +162,34 @@ class ProjectService:
         owned_run.raw_path, owned_run.raw_sha256 = relative, digest
         prepared = PreparedImport(candidate.id, candidate.revision, owned_run, tuple(normalized),
                                   self.store.file_fingerprint(destination))
-        self._prepared[run.id] = (prepared, self._prepared_signature(prepared))
+        self._prepared[run.id] = (prepared, owned_run.model_copy(deep=True),
+                                  tuple(match.model_copy(deep=True) for match in normalized))
         return prepared
-
-    @staticmethod
-    def _prepared_signature(prepared: PreparedImport) -> str:
-        content = {'run': prepared.run.model_dump(mode='json'),
-                   'matches': [match.model_dump(mode='json') for match in prepared.matches]}
-        return hashlib.sha256(json.dumps(content, sort_keys=True, separators=(',', ':')).encode()).hexdigest()
 
     def apply_import(self, prepared: PreparedImport) -> None:
         self.store._check_open()
         owned = self._prepared.get(prepared.run.id)
         if owned is None or owned[0] is not prepared:
             raise ValueError('PT-SCHEMA: import was not prepared by this project service')
-        if owned[1] != self._prepared_signature(prepared):
-            raise ValueError('PT-SCHEMA: prepared import records were changed before commit')
+        owned_run, owned_matches = owned[1], owned[2]
         if prepared.project_id != self.project.id or prepared.revision != self.project.revision:
             self._prepared.pop(prepared.run.id, None)
             raise ValueError('PT-SCHEMA: project changed during import; prepare the import again')
-        path = safe_path(self.root, prepared.run.raw_path)
+        path = safe_path(self.root, owned_run.raw_path)
         if self.store.file_fingerprint(path) != prepared.fingerprint:
             raise ValueError('PT-STORAGE: prepared raw output changed before commit')
         candidate = self.project.model_copy(deep=True)
-        candidate.runs = [item for item in candidate.runs if item.id != prepared.run.id] + [prepared.run]
+        candidate.runs = [item for item in candidate.runs if item.id != owned_run.id] + [owned_run]
         self._invalidate(candidate)
-        candidate.matches = list(prepared.matches)
-        self.store.remember_verified(path, prepared.run.raw_sha256, prepared.fingerprint)
+        candidate.matches = list(owned_matches)
+        self.store.remember_verified(path, owned_run.raw_sha256, prepared.fingerprint)
         self._commit(candidate)
         self._prepared.pop(prepared.run.id, None)
+
+    def discard_import(self, prepared: PreparedImport) -> None:
+        owned = self._prepared.get(prepared.run.id)
+        if owned is not None and owned[0] is prepared:
+            self._prepared.pop(prepared.run.id, None)
 
     def record_terminal_run(self, run: AnalysisRun) -> None:
         if run.status not in {'failed', 'cancelled', 'identical'}:
@@ -278,6 +277,53 @@ class ProjectService:
                   'category': category, 'reason': reason}
         candidate.annotations.append(AnalystAnnotation(target_id=match_id, kind='match-override',
                                                        text=json.dumps(record, ensure_ascii=False, sort_keys=True)))
+        self._commit(candidate)
+
+    def restore_match_override(self, annotation_id: str) -> None:
+        candidate = self.project.model_copy(deep=True)
+        annotation = next((item for item in candidate.annotations if item.id == annotation_id), None)
+        if annotation is None or annotation.kind != 'match-override' or annotation.stale:
+            raise ValueError('PT-SCHEMA: correction is absent or superseded; only an active override can be restored')
+        record = strict_json(annotation.text)
+        if not isinstance(record, dict) or set(record) != {
+                'previous_matches', 'older_ids', 'newer_ids', 'category', 'reason'}:
+            raise ValueError('PT-SCHEMA: correction provenance is malformed')
+        original = [FunctionMatch.model_validate(item) for item in record['previous_matches']]
+        current = next((match for match in candidate.matches if match.id == annotation.target_id), None)
+        if (current is None or not current.manual or current.category != record['category']
+                or current.reason != record['reason'] or {f.id for f in current.older} != set(record['older_ids'])
+                or {f.id for f in current.newer} != set(record['newer_ids'])):
+            raise ValueError('PT-SCHEMA: correction no longer describes the active match')
+        if not original or annotation.target_id not in {match.id for match in original}:
+            raise ValueError('PT-SCHEMA: correction provenance lacks its original relation')
+        functions = {func.id: func for match in candidate.matches for func in match.older + match.newer}
+        original_ids = set()
+        for match in original:
+            if match.run_id != current.run_id:
+                raise ValueError('PT-SCHEMA: correction provenance crosses analysis runs')
+            for side in ('older', 'newer'):
+                for func in getattr(match, side):
+                    if func.id in original_ids or functions.get(func.id) != func:
+                        raise ValueError('PT-SCHEMA: original function ownership/content is no longer current')
+                    artifact = next(a for a in candidate.artifacts if a.id == func.artifact_id)
+                    if artifact.side != side:
+                        raise ValueError('PT-SCHEMA: original function orientation is no longer current')
+                    original_ids.add(func.id)
+        affected = [match for match in candidate.matches
+                    if original_ids.intersection(func.id for func in match.older + match.newer)]
+        if {func.id for match in affected for func in match.older + match.newer} != original_ids:
+            raise ValueError('PT-SCHEMA: correction intersects another active relation')
+        affected_ids = {match.id for match in affected}
+        retained = [match for match in candidate.matches if match.id not in affected_ids]
+        if {match.id for match in retained}.intersection(match.id for match in original):
+            raise ValueError('PT-SCHEMA: restored match identities conflict with current relations')
+        self._invalidate(candidate)
+        candidate.matches = retained + original
+        candidate.annotations.append(AnalystAnnotation(
+            target_id=annotation.target_id, kind='validation',
+            text=json.dumps({'action': 'restore-match-override', 'annotation_id': annotation_id,
+                             'reason': 'Analyst restored the recorded relations before the manual correction'},
+                            ensure_ascii=False, sort_keys=True)))
         self._commit(candidate)
 
     def swap_orientation(self) -> None:

@@ -285,3 +285,105 @@ def test_finding_citations_cannot_cross_selected_match_scope(project, tmp_path):
         project.add_interpretation(InterpretationRun(context=context, provider='test', model='test',
                                                      status='completed', findings=[finding]))
     assert not project.project.interpretations
+
+
+def test_restore_latest_manual_override_preserves_history_and_roundtrips(tmp_path):
+    root = tmp_path / 'sample'
+    with ProjectService.sample(root) as service:
+        before = {match.id: match.model_dump() for match in service.project.matches}
+        changed = next(m for m in service.project.matches if m.category == 'modified' and m.newer[0].name == 'read_item')
+        added = next(m for m in service.project.matches if m.category == 'added')
+        service.correct_match(changed.id, [changed.older[0].id],
+                              [changed.newer[0].id, added.newer[0].id], 'split', 'Check extracted helper')
+        annotation = next(a for a in service.project.annotations if a.kind == 'match-override' and not a.stale)
+        history_size = len(service.store.history())
+        service.restore_match_override(annotation.id)
+        assert {match.id: match.model_dump() for match in service.project.matches} == before
+        assert len(service.store.history()) == history_size + 1
+        assert next(a for a in service.project.annotations if a.id == annotation.id).stale
+        assert service.project.annotations[-1].kind == 'validation'
+        assert service.project.interpretations[0].context.stale
+        with pytest.raises(ValueError, match='superseded'):
+            service.restore_match_override(annotation.id)
+        expected = service.project.model_dump()
+    with ProjectService.open(root) as restored:
+        assert restored.project.model_dump() == expected
+
+
+def test_large_repeated_line_alignment_is_bounded_and_equal_ranges_are_exact():
+    import time
+
+    from patchtrace.alignment import alignment_strategy
+    old_lines = ['repeat'] * 50000
+    new_lines = ['repeat'] * 25000 + ['changed'] + ['repeat'] * 24999
+    older, newer = '\n'.join(old_lines), '\n'.join(new_lines)
+    start = time.monotonic()
+    hunks = diff_hunks(older, newer, 'large')
+    assert time.monotonic() - start < 5  # Broad guard against accidentally quadratic repeated-line matching.
+    assert alignment_strategy(older, newer).startswith('coarse')
+    assert len(hunks) == 3
+    assert [h.operation for h in hunks] == ['equal', 'replace', 'equal']
+    for hunk in hunks:
+        if hunk.operation == 'equal':
+            assert old_lines[hunk.old_start:hunk.old_end] == new_lines[hunk.new_start:hunk.new_end]
+    assert hunks[0].old_start == 0 and hunks[-1].old_end == len(old_lines)
+    assert hunks[-1].new_end == len(new_lines)
+
+
+def test_input_path_and_handle_creation_time_discrepancy_is_not_a_false_change(tmp_path, monkeypatch):
+    import os
+
+    import patchtrace.ingestion as ingestion
+    source = tmp_path / 'windows-stat-fixture.dll'
+    source.write_bytes(synthetic_pe())
+    actual_fstat = os.fstat
+    class HandleStat:
+        def __init__(self, source_stat):
+            self.source_stat = source_stat
+        def __getattr__(self, name):
+            if name == 'st_ctime_ns':
+                return self.source_stat.st_ctime_ns + 100
+            return getattr(self.source_stat, name)
+    monkeypatch.setattr(ingestion.os, 'fstat', lambda fd: HandleStat(actual_fstat(fd)))
+    artifact = inspect_artifact(source, 'older', tmp_path / 'project')
+    assert artifact.sha256 == sha256_file(source)
+
+
+def test_source_write_with_restored_mtime_during_copy_is_rejected(tmp_path, monkeypatch):
+    import os
+    from pathlib import Path
+
+    import patchtrace.ingestion as ingestion
+    source = tmp_path / 'changing.dll'
+    source.write_bytes(synthetic_pe())
+    source_stat = source.stat()
+    actual_open = Path.open
+    class MutatingStream:
+        def __init__(self, stream):
+            self.stream = stream
+            self.changed = False
+        def fileno(self):
+            return self.stream.fileno()
+        def read(self, size):
+            result = self.stream.read(size)
+            if result and not self.changed:
+                self.changed = True
+                with actual_open(source, 'r+b') as writer:
+                    writer.seek(900)
+                    writer.write(b'X')
+                    writer.flush()
+                    os.fsync(writer.fileno())
+                os.utime(source, ns=(source_stat.st_atime_ns, source_stat.st_mtime_ns))
+            return result
+        def __enter__(self):
+            return self
+        def __exit__(self, *args):
+            return self.stream.__exit__(*args)
+    def intercepted_open(path, mode='r', *args, **kwargs):
+        stream = actual_open(path, mode, *args, **kwargs)
+        return MutatingStream(stream) if path == source and mode == 'rb' else stream
+    monkeypatch.setattr(Path, 'open', intercepted_open)
+    monkeypatch.setattr(ingestion, 'CHUNK_SIZE', 64)
+    with pytest.raises(ValueError, match='source changed while copying'):
+        inspect_artifact(source, 'older', tmp_path / 'project')
+    assert not list((tmp_path / 'project' / 'artifacts').iterdir())

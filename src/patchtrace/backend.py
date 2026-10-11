@@ -12,8 +12,10 @@ import threading
 from collections.abc import Callable
 from dataclasses import dataclass
 from pathlib import Path
+from uuid import UUID
 
 from .diagnostics import redact_log
+from .ingestion import safe_path
 from .jobs import run_process
 from .models import AnalysisRun, ComparisonProject, JobEvent, uid
 
@@ -151,6 +153,41 @@ def _output_error(directory: Path) -> str | None:
         if total > JSON_LIMIT:
             return 'output-limit'
     return None
+
+
+def quarantine_failed_run(root: Path, run: AnalysisRun, error: str) -> AnalysisRun:
+    """Retain a CLI result rejected by normalization as a failed, hash-linked attempt.
+
+    The service commits the returned copy; this function never changes its project.
+    Only PatchTrace's canonical UUID run directory can be renamed.
+    """
+    root = Path(root).resolve()
+    try:
+        if str(UUID(run.id)) != run.id:
+            raise ValueError('Noncanonical run ID')
+    except (ValueError, AttributeError) as exc:
+        raise ValueError('PT-SCHEMA: quarantining a run requires a canonical UUID') from exc
+    if run.status != 'completed':
+        raise ValueError('PT-SCHEMA: only completed CLI output can fail normalization')
+    source = safe_path(root, f'runs/{run.id}')
+    destination = safe_path(root, f'runs/.quarantine-{run.id}')
+    if not source.is_dir() or destination.exists():
+        raise ValueError('PT-STORAGE: run output is missing or quarantine destination already exists')
+    raw_relative = None
+    if run.raw_path is not None:
+        raw_path = safe_path(root, run.raw_path)
+        if not raw_path.is_relative_to(source) or not raw_path.is_file():
+            raise ValueError('PT-STORAGE: raw output does not belong to this run directory')
+        raw_relative = raw_path.relative_to(source)
+    message = redact_log(str(error), 4096) or 'PT-SCHEMA: analysis normalization failed'
+    if not message.startswith('PT-'):
+        message = 'PT-SCHEMA: ' + message
+    # Write the explanation before the atomic directory rename. A write failure
+    # leaves the original run intact and visibly propagates to the caller.
+    safe_path(root, f'runs/{run.id}/failure.txt').write_text(message, encoding='utf-8')
+    source.rename(destination)
+    raw_path = (destination / raw_relative).relative_to(root).as_posix() if raw_relative else None
+    return run.model_copy(deep=True, update={'status': 'failed', 'error': message, 'raw_path': raw_path})
 
 
 def run_comparison(config: BackendConfig, project: ComparisonProject, root: Path,

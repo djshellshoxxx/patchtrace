@@ -31,6 +31,30 @@ def safe_path(root: Path, relative: str) -> Path:
     return candidate
 
 
+def file_fingerprint(path: Path) -> tuple:
+    if os.name == 'nt':
+        # Python 3.12 Windows st_ctime is creation time, not metadata/content change time.
+        # Use NTFS FILE_BASIC_INFO.ChangeTime so restoring mtime cannot bypass verification.
+        import ctypes
+        import msvcrt
+        from ctypes import wintypes
+        class FileBasicInfo(ctypes.Structure):
+            _fields_ = [('creation', ctypes.c_int64), ('access', ctypes.c_int64),
+                        ('write', ctypes.c_int64), ('change', ctypes.c_int64),
+                        ('attributes', wintypes.DWORD)]
+        info = FileBasicInfo()
+        get_info = ctypes.WinDLL('kernel32', use_last_error=True).GetFileInformationByHandleEx
+        get_info.argtypes = [wintypes.HANDLE, ctypes.c_int, ctypes.c_void_p, wintypes.DWORD]
+        get_info.restype = wintypes.BOOL
+        with path.open('rb') as stream:
+            stat = os.fstat(stream.fileno())
+            if not get_info(msvcrt.get_osfhandle(stream.fileno()), 0, ctypes.byref(info), ctypes.sizeof(info)):
+                raise OSError(ctypes.get_last_error(), 'Cannot query immutable file change time')
+        return stat.st_dev, stat.st_ino, stat.st_size, stat.st_mtime_ns, info.change
+    stat = path.stat()
+    return stat.st_dev, stat.st_ino, stat.st_size, stat.st_mtime_ns, stat.st_ctime_ns
+
+
 def sha256_file(path: Path) -> str:
     digest = hashlib.sha256()
     with Path(path).open('rb') as stream:
@@ -58,10 +82,24 @@ def validate_pe(path: Path) -> None:
         if struct.unpack_from('<H', pe, 4)[0] != 0x8664:
             raise ValueError('PT-INPUT: only PE AMD64 inputs are supported')
         optional_size = struct.unpack_from('<H', pe, 20)[0]
-        if optional_size < 2 or offset + 24 + optional_size > size:
+        if optional_size < 112 or offset + 24 + optional_size > size:
             raise ValueError('PT-INPUT: truncated PE optional header')
         if struct.unpack_from('<H', pe, 24)[0] != 0x20B:
             raise ValueError('PT-INPUT: PE32+ optional header required')
+        section_count = struct.unpack_from('<H', pe, 6)[0]
+        section_offset = offset + 24 + optional_size
+        if section_count < 1 or section_offset + section_count * 40 > size:
+            raise ValueError('PT-INPUT: PE section table is truncated or empty')
+        stream.seek(offset + 24 + 108)
+        directories = struct.unpack('<I', stream.read(4))[0]
+        if directories > (optional_size - 112) // 8:
+            raise ValueError('PT-INPUT: PE data directory count exceeds optional header')
+        stream.seek(section_offset)
+        for _ in range(section_count):
+            section = stream.read(40)
+            raw_size, raw_offset = struct.unpack_from('<II', section, 16)
+            if raw_size and (raw_offset > size or raw_size > size - raw_offset):
+                raise ValueError('PT-INPUT: PE section raw data is out of bounds')
 
 
 def inspect_artifact(path: Path, side: str, root: Path) -> Artifact:
@@ -72,6 +110,7 @@ def inspect_artifact(path: Path, side: str, root: Path) -> Artifact:
     stage: Path | None = None
     try:
         before = source.stat()
+        before_fingerprint = file_fingerprint(source)
         if not stat.S_ISREG(before.st_mode):
             raise ValueError('PT-INPUT: input must be a regular file')
         if not 1 <= before.st_size <= MAX_ARTIFACT_BYTES:
@@ -100,7 +139,8 @@ def inspect_artifact(path: Path, side: str, root: Path) -> Artifact:
         after = source.stat()
         def fingerprint(s):
             return s.st_dev, s.st_ino, s.st_size, s.st_mtime_ns, s.st_ctime_ns
-        if fingerprint(before) != fingerprint(after) or fingerprint(before) != fingerprint(after_open):
+        if (fingerprint(before) != fingerprint(after) or fingerprint(opened) != fingerprint(after_open)
+                or before_fingerprint != file_fingerprint(source)):
             raise ValueError('PT-INPUT: source changed while copying; try again')
         if copied != before.st_size:
             raise ValueError('PT-INPUT: incomplete input copy')

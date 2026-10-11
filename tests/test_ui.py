@@ -13,6 +13,7 @@ from PySide6.QtWidgets import QApplication, QDialog
 
 from patchtrace.evidence import build_context
 from patchtrace.models import AnalysisRun
+from patchtrace.reports import export_project
 from patchtrace.service import ProjectService
 from patchtrace.ui import ContextDialog, ExportDialog, MainWindow, NewProjectDialog
 
@@ -67,7 +68,7 @@ def test_match_review_note_and_provenance_clipboard(window):
 def test_finding_review_evidence_and_bookmark(window):
     window.findings_list.setCurrentRow(0)
     assert 'Preconditions:' in window.finding_detail.toPlainText()
-    assert window.evidence_list.count() == 2
+    assert window.evidence_list.count() == 3
     window.evidence_list.setCurrentRow(1)
     ref = window._evidence[window.evidence_list.currentItem().data(Qt.ItemDataRole.UserRole)]
     assert window.views[ref.side].textCursor().selectedText().replace('\u2029', '\n') == ref.text
@@ -152,6 +153,9 @@ def test_export_preview_matches_written_output(window, tmp_path):
     dialog.format.setCurrentText('json')
     dialog.code.setChecked(True)
     assert 'buffer[index]' in dialog.preview.toPlainText()
+    output = tmp_path / 'report.json'
+    export_project(window.project, dialog.format.currentText(), output, **dialog.options())
+    assert output.read_text(encoding='utf-8') == dialog.preview.toPlainText()
 
 
 def test_font_preference_and_imported_label_are_plain_text(window, qtbot):
@@ -221,6 +225,7 @@ def test_cancelled_prepared_import_never_changes_revision(window, monkeypatch, q
     qtbot.waitUntil(lambda: window.worker is None, timeout=3000)
     assert window.project.revision == before
     assert 'Cancelled' in window.job_label.text()
+    assert not window.service._prepared
 
 
 def test_context_budget_is_used_in_preview(window, monkeypatch):
@@ -266,3 +271,43 @@ def test_rejected_evidence_navigation_does_not_jump(window, monkeypatch):
     window.evidence_list.setCurrentRow(0)
     assert errors == ['Invalid exact evidence ownership']
     assert window.views['older'].textCursor().position() == before
+
+
+def test_undo_latest_manual_correction_restores_relationship(window):
+    match = window.current_match()
+    original_names = [f.name for f in match.older + match.newer]
+    window.service.correct_match(match.id, [f.id for f in match.older], [f.id for f in match.newer],
+                                 'ambiguous', 'Manual correction undo regression')
+    window.refresh()
+    assert window.undo_match_action.isEnabled()
+    window.undo_match_correction()
+    restored = next(m for m in window.project.matches if m.id == match.id)
+    assert restored.category == 'modified'
+    assert [f.name for f in restored.older + restored.newer] == original_names
+    assert not window.undo_match_action.isEnabled()
+
+
+def test_backend_normalization_error_is_quarantined_and_recorded(window, monkeypatch, qtbot):
+    import hashlib
+
+    from patchtrace.models import uid
+    run_id = uid()
+    raw = window.service.root / 'runs' / run_id / 'raw' / 'bad.json'
+    raw.parent.mkdir(parents=True)
+    raw.write_bytes(b'{"unexpected":"fixture"}')
+    run = AnalysisRun(id=run_id, status='completed', raw_path=raw.relative_to(window.service.root).as_posix(),
+                      raw_sha256=hashlib.sha256(raw.read_bytes()).hexdigest())
+    monkeypatch.setattr('patchtrace.ui.run_comparison', lambda *args: (raw, run))
+    errors = []
+    monkeypatch.setattr(window, 'show_error', errors.append)
+    window.settings.setValue('backend/python', '/configured/test-python')
+    window.settings.setValue('backend/ghidra', '/configured/test-ghidra')
+    before = [m.id for m in window.project.matches]
+    window.run_analysis()
+    qtbot.waitUntil(lambda: window.worker is None, timeout=5000)
+    terminal = window.project.runs[-1]
+    assert terminal.status == 'failed'
+    assert terminal.raw_path.startswith('runs/.quarantine-')
+    assert (window.service.root / terminal.raw_path).is_file()
+    assert [m.id for m in window.project.matches] == before
+    assert errors and 'PT-SCHEMA' in errors[0]

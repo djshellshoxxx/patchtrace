@@ -38,8 +38,8 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 
-from .alignment import diff_hunks
-from .backend import BackendConfig, diagnose, run_comparison
+from .alignment import alignment_strategy, diff_hunks
+from .backend import BackendConfig, diagnose, quarantine_failed_run, run_comparison
 from .evidence import build_context, resolve_evidence
 from .interpretation import interpret, system_prompt
 from .providers import ProviderConfig
@@ -534,6 +534,7 @@ class MainWindow(QMainWindow):
         self.swap_action = self._action('Swap orientation', self.swap_orientation)
         self.save_action = self._action('Save', self.save_project, 'Ctrl+S')
         self.backup_action = self._action('Back up project…', self.backup_project)
+        self.undo_match_action = self._action('Undo latest match correction', self.undo_match_correction)
         self.help_action = self._action('Workflow and dependencies', self.show_help, 'F1')
         toolbar = QToolBar('Project and analysis', self)
         toolbar.setMovable(False)
@@ -546,6 +547,7 @@ class MainWindow(QMainWindow):
                        self.import_action, self.export_action, self.swap_action]:
             file_menu.addAction(action)
         file_menu.addAction(self.backup_action)
+        file_menu.addAction(self.undo_match_action)
         self.recent_menu = file_menu.addMenu('Recent projects')
         self.refresh_recent()
         analysis = self.menuBar().addMenu('Analysis')
@@ -829,6 +831,15 @@ class MainWindow(QMainWindow):
                 self.logs.appendPlainText(f'Backup: {result}')
                 self.statusBar().showMessage(f'Backup created: {result}')
 
+    def undo_match_correction(self):
+        if not self.service:
+            return
+        annotation = next((a for a in reversed(self.project.annotations)
+                           if a.kind == 'match-override' and not a.stale), None)
+        if annotation:
+            self._guard(lambda: self.service.restore_match_override(annotation.id))
+            self.refresh()
+
     def new_project(self):
         dialog = NewProjectDialog(self)
         if dialog.exec() != QDialog.DialogCode.Accepted:
@@ -916,7 +927,9 @@ class MainWindow(QMainWindow):
                 self.navigator.setCurrentItem(item)
             item.setSelected(match.id in selected_ids)
         if self.navigator.currentRow() < 0 and self.navigator.count():
-            self.navigator.setCurrentRow(0)
+            first_modified = next((index for index in range(self.navigator.count())
+                                   if self.navigator.item(index).text().split('\n')[-1].startswith('modified')), 0)
+            self.navigator.setCurrentRow(first_modified)
         self.navigator.blockSignals(False)
         self.match_count.setText(f'{self.navigator.count()} / {total} matches')
         self.render_match()
@@ -969,6 +982,10 @@ class MainWindow(QMainWindow):
         # Alignment preserves original line numbers for evidence navigation through a row map.
         old_lines = texts['older'].splitlines()
         new_lines = texts['newer'].splitlines()
+        strategy = alignment_strategy(texts['older'], texts['newer'])
+        self.match_label.setToolTip(strategy)
+        if strategy != 'exact SequenceMatcher':
+            self.match_label.setText(self.match_label.text() + ' · ' + strategy)
         self._line_maps = {'older': {}, 'newer': {}}
         aligned = {'older': [], 'newer': []}
         for hunk in diff_hunks(texts['older'], texts['newer'], match.id):
@@ -1120,8 +1137,11 @@ class MainWindow(QMainWindow):
         for title, values in [('Preconditions', hypothesis.preconditions), ('Unknowns', hypothesis.unknowns),
                               ('Proposed verification', hypothesis.verification)]:
             detail += '\n\n' + title + ':\n' + ('\n'.join('• ' + value for value in values) or 'None supplied')
-        for alternative in finding.alternatives:
-            detail += f'\n\nAlternative ({alternative.confidence}): {alternative.explanation}'
+        for number, alternative in enumerate(finding.alternatives, 1):
+            detail += f'\n\nAlternative {number} ({alternative.confidence}): {alternative.explanation}'
+            for title, values in [('Preconditions', alternative.preconditions), ('Unknowns', alternative.unknowns),
+                                  ('Proposed verification', alternative.verification)]:
+                detail += '\n' + title + ': ' + ('; '.join(values) or 'None supplied')
         if finding.cwe:
             detail += f'\n\nProposed CWE: {finding.cwe}\nRationale: {finding.cwe_rationale or "not supplied"}'
         notes = [a for a in self.project.annotations if a.target_id == finding.id]
@@ -1131,7 +1151,11 @@ class MainWindow(QMainWindow):
         self.finding_review.setCurrentText(finding.review)
         self.conclusion.setPlainText(finding.analyst_conclusion)
         self._evidence = {e.id: e for e in self._context.evidence}
-        for label, ids in [('Support', hypothesis.supporting), ('Counterevidence', hypothesis.contradicting)]:
+        groups = [('Support', hypothesis.supporting), ('Counterevidence', hypothesis.contradicting)]
+        for number, alternative in enumerate(finding.alternatives, 1):
+            groups.extend([(f'Alternative {number} support', alternative.supporting),
+                           (f'Alternative {number} counterevidence', alternative.contradicting)])
+        for label, ids in groups:
             for evidence_id in ids:
                 evidence = self._evidence.get(evidence_id)
                 text = (f'{label} · {evidence.side} lines {evidence.start_line}–{evidence.end_line}\n{evidence.id[:12]}'
@@ -1247,7 +1271,20 @@ class MainWindow(QMainWindow):
         snapshot, root, service = self.project.model_copy(deep=True), self.service.root, self.service
         def compare(cancel, event):
             raw_path, run = run_comparison(config, snapshot, root, cancel, event)
-            prepared = service.prepare_analysis(raw_path, run) if run.status == 'completed' and not cancel.is_set() else None
+            prepared = None
+            if run.status == 'completed':
+                try:
+                    if cancel.is_set():
+                        raise ValueError('PT-CANCEL: cancelled before normalization')
+                    prepared = service.prepare_analysis(raw_path, run)
+                    if cancel.is_set():
+                        service.discard_import(prepared)
+                        prepared = None
+                        raise ValueError('PT-CANCEL: cancelled during normalization')
+                except Exception as exc:
+                    run = quarantine_failed_run(root, run, str(exc))
+                    if cancel.is_set():
+                        run = run.model_copy(update={'status': 'cancelled'})
             return raw_path, run, prepared
         self.start_job('Comparing artifacts', compare, self.complete_analysis)
 
@@ -1255,7 +1292,10 @@ class MainWindow(QMainWindow):
         raw_path, run = result[:2]
         prepared = result[2] if len(result) > 2 else None
         if self.worker and self.worker.cancel.is_set() and run.status == 'completed':
-            run = run.model_copy(update={'status': 'cancelled', 'error': 'PT-CANCEL: cancelled before result commit'})
+            if prepared is not None:
+                self.service.discard_import(prepared)
+            run = quarantine_failed_run(self.service.root, run, 'PT-CANCEL: cancelled before result commit')
+            run = run.model_copy(update={'status': 'cancelled'})
         if run.status == 'completed':
             if prepared is not None:
                 self.service.apply_import(prepared)
@@ -1285,6 +1325,7 @@ class MainWindow(QMainWindow):
         service = self.service
         def commit(prepared):
             if self.worker and self.worker.cancel.is_set():
+                service.discard_import(prepared)
                 self.job_label.setText('Cancelled · import not applied')
                 return
             service.apply_import(prepared)
@@ -1313,6 +1354,9 @@ class MainWindow(QMainWindow):
                        self.complete_interpretation)
 
     def complete_interpretation(self, run):
+        if self.worker and self.worker.cancel.is_set() and run.status == 'completed':
+            run = run.model_copy(update={'status': 'cancelled', 'findings': [],
+                                         'error': 'PT-CANCEL: cancelled before interpretation commit'})
         self.service.add_interpretation(run)
         self.refresh()
         if run.status == 'failed':
@@ -1386,6 +1430,8 @@ class MainWindow(QMainWindow):
                        self.backup_action]:
             action.setEnabled(project and idle)
         self.recent_menu.setEnabled(idle and bool(self.recent_menu.actions()))
+        self.undo_match_action.setEnabled(project and idle and any(
+            a.kind == 'match-override' and not a.stale for a in self.project.annotations))
         self.interpret_action.setEnabled(project and idle and bool(self.navigator.selectedItems()))
         self.cancel_action.setEnabled(not idle and not self.worker.cancel.is_set())
         self.correct_button.setEnabled(bool(match) and idle)
@@ -1462,12 +1508,15 @@ class MainWindow(QMainWindow):
         geometry = self.settings.value('desktop/geometry')
         if geometry:
             self.restoreGeometry(geometry)
-        screen = QApplication.primaryScreen()
+        screen = QApplication.screenAt(self.frameGeometry().center()) or QApplication.primaryScreen()
         if screen:
             available = screen.availableGeometry()
+            self.setMinimumSize(min(960, available.width()), min(640, available.height()))
             self.resize(min(self.width(), available.width()), min(self.height(), available.height()))
-            if not available.intersects(self.frameGeometry()):
-                self.move(available.topLeft())
+            if not available.contains(self.frameGeometry()):
+                x = max(available.left(), min(self.x(), available.right() - self.width() + 1))
+                y = max(available.top(), min(self.y(), available.bottom() - self.height() + 1))
+                self.move(x, y)
         for name, splitter in [('workspace', self.workspace), ('vertical', self.vertical), ('code', self.code_split)]:
             state = self.settings.value('desktop/' + name)
             if state:
@@ -1486,6 +1535,7 @@ class MainWindow(QMainWindow):
         for name, splitter in [('workspace', self.workspace), ('vertical', self.vertical), ('code', self.code_split)]:
             self.settings.setValue('desktop/' + name, splitter.saveState())
         self.settings.setValue('desktop/sync', self.sync_scroll.isChecked())
+        self.settings.sync()
         if self.service:
             self.service.close()
             self.service = None

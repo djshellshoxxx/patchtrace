@@ -10,7 +10,7 @@ import tempfile
 from pathlib import Path
 from uuid import uuid4
 
-from .ingestion import safe_path, sha256_file, verify_artifact
+from .ingestion import file_fingerprint, safe_path, sha256_file, verify_artifact
 from .models import ComparisonProject, now
 
 SCHEMA_VERSION = 1
@@ -229,27 +229,7 @@ class ProjectStore:
 
     @staticmethod
     def file_fingerprint(path: Path) -> tuple:
-        if os.name == 'nt':
-            # Python 3.12 Windows st_ctime is creation time, not metadata/content change time.
-            # Use NTFS FILE_BASIC_INFO.ChangeTime so restoring mtime cannot bypass verification.
-            import ctypes
-            import msvcrt
-            from ctypes import wintypes
-            class FileBasicInfo(ctypes.Structure):
-                _fields_ = [('creation', ctypes.c_int64), ('access', ctypes.c_int64),
-                            ('write', ctypes.c_int64), ('change', ctypes.c_int64),
-                            ('attributes', wintypes.DWORD)]
-            info = FileBasicInfo()
-            get_info = ctypes.WinDLL('kernel32', use_last_error=True).GetFileInformationByHandleEx
-            get_info.argtypes = [wintypes.HANDLE, ctypes.c_int, ctypes.c_void_p, wintypes.DWORD]
-            get_info.restype = wintypes.BOOL
-            with path.open('rb') as stream:
-                stat = os.fstat(stream.fileno())
-                if not get_info(msvcrt.get_osfhandle(stream.fileno()), 0, ctypes.byref(info), ctypes.sizeof(info)):
-                    raise OSError(ctypes.get_last_error(), 'Cannot query immutable file change time')
-            return stat.st_dev, stat.st_ino, stat.st_size, stat.st_mtime_ns, info.change
-        stat = path.stat()
-        return stat.st_dev, stat.st_ino, stat.st_size, stat.st_mtime_ns, stat.st_ctime_ns
+        return file_fingerprint(path)
 
     def remember_verified(self, path: Path, sha256: str, fingerprint: tuple) -> None:
         if self.file_fingerprint(path) != fingerprint:
