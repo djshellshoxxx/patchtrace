@@ -15,7 +15,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from uuid import UUID
 
-from .diagnostics import redact_log
+from .diagnostics import describe_backend_exit, redact_log
 from .ingestion import safe_path
 from .jobs import run_process
 from .models import AnalysisRun, ComparisonProject, JobEvent, uid
@@ -300,7 +300,7 @@ def run_comparison(config: BackendConfig, project: ComparisonProject, root: Path
         if result.reason or _output_error(raw):
             raise RuntimeError('PT-BACKEND: unsafe or oversized JSON output; partial output quarantined')
         if result.returncode:
-            raise RuntimeError(f'PT-BACKEND: ghidriff exited with code {result.returncode}; inspect analysis.log')
+            raise RuntimeError(describe_backend_exit(result.returncode, sanitized_log))
         candidates = list((raw / 'json').glob('*.ghidriff.json'))
         if len(candidates) != 1:
             raise RuntimeError('PT-BACKEND: expected exactly one Ghidriff PDiff JSON; check runtime compatibility')

@@ -401,3 +401,38 @@ def test_symbol_policy_rejects_ambiguous_non_boolean_values(fake_runtime, value)
     assert run.status == 'failed'
     assert 'allow_symbol_downloads' in run.error
     assert (directory / 'failure.txt').is_file()
+
+
+@pytest.mark.parametrize(('upstream_log', 'expected'), [
+    ("java.lang.IllegalArgumentException: Path element starting with '.' is not permitted", 'dot-prefixed'),
+    ('java.lang.UnsupportedClassVersionError: class file version', 'JDK'),
+    ("ModuleNotFoundError: No module named 'ghidriff'", 'Ghidriff installation'),
+    ('java.lang.OutOfMemoryError: Java heap space', 'memory'),
+    ('OSError: No space left on device', 'disk space'),
+    ('java.nio.file.AccessDeniedException: C:/work', 'permissions'),
+])
+def test_exit_diagnostics_identify_common_failures_without_echoing_raw_logs(upstream_log, expected):
+    from patchtrace.diagnostics import describe_backend_exit
+
+    text = describe_backend_exit(1, 'api_key=secretvalue\n' + upstream_log)
+    assert text.startswith('PT-BACKEND:')
+    assert expected.lower() in text.lower()
+    assert 'secretvalue' not in text
+    assert 'analysis.log' in text
+
+
+def test_unknown_exit_diagnostics_keep_original_status_code():
+    from patchtrace.diagnostics import describe_backend_exit
+
+    assert 'code 17' in describe_backend_exit(17, 'unknown failure')
+
+
+def test_nonzero_backend_exit_preserves_classified_error_and_log(fake_runtime):
+    root, package, project, config = fake_runtime
+    write_backend(package, 'print("java.lang.UnsupportedClassVersionError: class version")\n'
+                  'sys.exit(7)\n')
+    directory, run = run_comparison(config, project, root, threading.Event(), lambda _: None)
+    assert run.status == 'failed'
+    assert 'JDK' in run.error
+    assert 'UnsupportedClassVersionError' in (directory / 'analysis.log').read_text()
+    assert not project.runs

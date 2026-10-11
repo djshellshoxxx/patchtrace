@@ -22,3 +22,32 @@ def diagnose(config):
     """Public convenience alias, with backend import deferred to avoid a cycle."""
     from .backend import diagnose as backend_diagnose
     return backend_diagnose(config)
+
+
+def describe_backend_exit(returncode: int, log_tail: str) -> str:
+    """Return fixed recovery hints for recognizable native process failures.
+
+    Never interpolate untrusted output into UI errors, reports or telemetry.
+    The separately saved bounded analysis.log remains the authoritative trace.
+    """
+    log = log_tail[-(2 * 1024 * 1024):].casefold()
+    if 'path element starting with' in log and 'not permitted' in log:
+        hint = ('Ghidra rejected a dot-prefixed path component; use a project and '
+                'temporary directory without hidden path components')
+    elif ('unsupportedclassversionerror' in log or 'class file version' in log
+          or 'compiled by a more recent version of the java runtime' in log):
+        hint = 'JDK is incompatible with Ghidra or one of its plugins; check the supported Java version'
+    elif ("no module named 'ghidriff'" in log or 'no module named ghidriff' in log):
+        hint = 'Ghidriff installation is missing from the selected external Python environment'
+    elif ('outofmemoryerror' in log or 'java heap space' in log
+          or 'gc overhead limit exceeded' in log or 'memoryerror' in log):
+        hint = 'Ghidra ran out of memory; check available RAM and Ghidriff JVM settings'
+    elif ('no space left on device' in log or 'not enough space on the disk' in log
+          or 'disk full' in log):
+        hint = 'Insufficient disk space for Ghidra analysis; free space on workspace and project drives'
+    elif ('accessdeniedexception' in log or 'permission denied' in log
+          or 'access is denied' in log):
+        hint = 'Filesystem permissions or locks prevent Ghidra analysis; check writable paths'
+    else:
+        return f'PT-BACKEND: ghidriff exited with code {returncode}; inspect analysis.log'
+    return f'PT-BACKEND: ghidriff exited with code {returncode}; {hint}; inspect analysis.log'

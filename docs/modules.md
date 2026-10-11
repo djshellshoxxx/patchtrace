@@ -18,7 +18,7 @@ Stable IDs are independent of filenames. Public interfaces in SPEC-01 and schema
 | findings | service.py | Reviews, manual matches, notes, stale invalidation | contracts/persistence | Service owns project aggregate; transaction tests |
 | desktop | ui.py | Wizard/workspace/settings/context preview/evidence navigation | service/jobs | Main thread Qt; pytest-qt |
 | reports | reports.py | JSON/Markdown/self-contained HTML and manifests | contracts | Atomic exports; injection fixtures |
-| diagnostics | diagnostics.py | Dependency status and bounded redacted logs | stdlib | No credentials; redaction tests |
+| diagnostics | diagnostics.py | Dependency status, bounded redacted logs and pure fixed-text Ghidriff exit classification | stdlib | No credentials; redaction tests |
 | samples | sample.py | Representative synthetic ordinary fix with explicit sample identity | contracts | Never masquerades as real analysis |
 
 | packaging | tools/build_windows.py; tools/pyinstaller_hooks/ | Frozen Windows runtime, curated Qt desktop plugins, licenses, inventory and checksum | PyInstaller | Windows Actions and archive inspection |
