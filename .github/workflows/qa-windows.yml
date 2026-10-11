@@ -28,6 +28,16 @@ jobs:
       - run: python -m ruff check src tests tools
       - if: runner.os == 'Windows'
         run: python tools/build_windows.py
+      # SRC-2/SRC-5: release builds come from a clean checkout of exactly $GITHUB_SHA.
+      - if: runner.os == 'Windows'
+        shell: python
+        run: |
+          import json, os, pathlib
+          path = pathlib.Path('dist/PatchTrace/_internal/patchtrace/build-info.json')
+          info = json.loads(path.read_text(encoding='utf-8'))
+          print(json.dumps(info, indent=2))
+          assert info['dirty'] is False, 'dirty build rejected'
+          assert info['git_commit'] == os.environ['GITHUB_SHA'], (info['git_commit'], os.environ['GITHUB_SHA'])
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -37,9 +47,13 @@ jobs:
         if: runner.os == 'Windows' && success()
         with:
           name: PatchTrace-windows-x64
+          if-no-files-found: error
           path: |
-            dist/PatchTrace-0.1.0-windows-x64.zip
-            dist/PatchTrace-0.1.0-windows-x64.zip.sha256
+            dist/PatchTrace-*-windows-x64.zip
+            dist/PatchTrace-*-windows-x64.zip.sha256
+            dist/PatchTrace-*-source.zip
+            dist/PatchTrace-*-source.zip.sha256
+            dist/SOURCE.txt
   release:
     if: startsWith(github.ref, 'refs/tags/v') || (github.ref == 'refs/heads/main' && github.event_name == 'push')
     needs: qa
@@ -51,6 +65,14 @@ jobs:
         with:
           name: PatchTrace-windows-x64
           path: release
+      # T-P04: binary ZIP, source ZIP, both .sha256 files and SOURCE.txt must be attached.
+      - run: |
+          ls -l release
+          for pattern in 'PatchTrace-*-windows-x64.zip' 'PatchTrace-*-windows-x64.zip.sha256' \
+                         'PatchTrace-*-source.zip' 'PatchTrace-*-source.zip.sha256' 'SOURCE.txt'; do
+            compgen -G "release/$pattern" > /dev/null || { echo "missing release asset: $pattern"; exit 1; }
+          done
+          cd release && sha256sum -c ./*.sha256
       - uses: softprops/action-gh-release@v2
         with:
           prerelease: true
@@ -62,4 +84,5 @@ jobs:
             Python and Qt are bundled. Native binary comparison needs separately configured Ghidra, Java and Ghidriff.
             The included synthetic sample works without an analysis backend or AI provider.
             See docs/qa.md for the exact checks performed and unverified acceptance gates.
+            Source for this exact commit: the -source.zip asset (git archive) with its SHA-256. SOURCE.txt names the commit and build commands.
           files: release/*
