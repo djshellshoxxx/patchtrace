@@ -443,6 +443,7 @@ def test_backend_private_java_home_changes_child_environment_only(tmp_path, monk
 
     python = tmp_path / 'python.exe'
     python.write_bytes(b'fake')
+    python.chmod(0o700)
     ghidra = tmp_path / 'ghidra'
     (ghidra / 'Ghidra').mkdir(parents=True)
     (ghidra / 'Ghidra' / 'application.properties').write_text('application.version=12.0.4')
