@@ -190,7 +190,7 @@ def _zip_entries(archive: zipfile.ZipFile, files: tuple[BundleFile, ...]) -> Non
         if (info.is_dir() or info.flag_bits & 1
                 or info.compress_type not in (zipfile.ZIP_STORED, zipfile.ZIP_DEFLATED)):
             _fail('unsupported directory, encryption or compression in ZIP')
-        mode = (info.external_attr >> 16) & stat.S_IFMT(0o777777)
+        mode = stat.S_IFMT(info.external_attr >> 16)
         if mode not in (0, stat.S_IFREG):
             _fail('symlink or special file in ZIP is forbidden')
         if info.file_size > MAX_FILE or (info.file_size > 1024 and info.compress_size * 200 < info.file_size):
