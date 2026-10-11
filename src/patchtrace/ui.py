@@ -233,6 +233,9 @@ class SetupDialog(QDialog):
             button.clicked.connect(lambda checked=False, e=edit, d=directory: self.browse(e, d))
             horizontal.addWidget(button)
             form.addRow(name, row)
+        self.allow_symbol_downloads = QCheckBox('Allow Ghidriff symbol-server lookups (may access the Internet)')
+        self.allow_symbol_downloads.setChecked(settings.value('backend/allow_symbol_downloads', False, type=bool))
+        form.addRow(self.allow_symbol_downloads)
         self.timeout = QSpinBox()
         self.timeout.setRange(10, 86400)
         self.timeout.setValue(int(settings.value('backend/timeout', 3600)))
@@ -267,7 +270,8 @@ class SetupDialog(QDialog):
 
     def config(self):
         return BackendConfig(python_executable=self.python.text().strip(), ghidra_dir=self.ghidra.text().strip(),
-                             timeout_seconds=self.timeout.value())
+                             timeout_seconds=self.timeout.value(),
+                             allow_symbol_downloads=self.allow_symbol_downloads.isChecked())
 
     def check_dependencies(self):
         config = self.config()
@@ -1256,7 +1260,9 @@ class MainWindow(QMainWindow):
     def backend_config(self):
         return BackendConfig(python_executable=str(self.settings.value('backend/python', '')),
                              ghidra_dir=str(self.settings.value('backend/ghidra', '')),
-                             timeout_seconds=int(self.settings.value('backend/timeout', 3600)))
+                             timeout_seconds=int(self.settings.value('backend/timeout', 3600)),
+                             allow_symbol_downloads=self.settings.value('backend/allow_symbol_downloads', False,
+                                                                         type=bool))
 
     def run_analysis(self):
         if not self.project:
@@ -1456,6 +1462,7 @@ class MainWindow(QMainWindow):
         self.settings.setValue('backend/python', dialog.python.text().strip())
         self.settings.setValue('backend/ghidra', dialog.ghidra.text().strip())
         self.settings.setValue('backend/timeout', dialog.timeout.value())
+        self.settings.setValue('backend/allow_symbol_downloads', dialog.allow_symbol_downloads.isChecked())
         self.settings.setValue('desktop/font_size', dialog.font_size.value())
         self.settings.setValue('provider/context_budget', dialog.context_budget.value())
         self.settings.setValue('desktop/sync', dialog.sync.isChecked())
