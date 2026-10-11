@@ -203,3 +203,76 @@ def test_producer_does_not_modify_source_and_creates_installable_bundle(tmp_path
     plan = inspect_offline_bundle(archive)
     assert plan.runtime_id == RUNTIME_ID
     assert install_offline_bundle(plan, tmp_path / 'installed').python_executable.read_bytes() == FILES['python/python.exe']
+
+
+def test_cancellation_during_extraction_removes_stage_and_lock(tmp_path):
+    plan = inspect_offline_bundle(make_bundle(tmp_path))
+    cancel = threading.Event()
+    root = tmp_path / 'runtimes'
+    events = []
+    def stop_after_first_file(message):
+        events.append(message)
+        cancel.set()
+
+    with pytest.raises(OfflineBundleError, match='cancel'):
+        install_offline_bundle(plan, root, cancel=cancel, event=stop_after_first_file)
+    assert events
+    assert not (root / RUNTIME_ID).exists()
+    assert not list(root.iterdir())
+
+
+def test_rejects_case_insensitive_member_collision(tmp_path):
+    archive = make_bundle(tmp_path, extra_members=[('payload/PYTHON/python.exe', b'collision')])
+    with pytest.raises(OfflineBundleError, match='colliding'):
+        inspect_offline_bundle(archive)
+
+
+def test_rejects_windows_device_name_runtime_id(tmp_path):
+    archive = make_bundle(tmp_path, manifest_override=lambda m: {**m, 'runtime_id': 'CON'})
+    with pytest.raises(OfflineBundleError, match='runtime ID'):
+        inspect_offline_bundle(archive)
+
+
+def test_rejects_symlink_member(tmp_path):
+    archive = make_bundle(tmp_path)
+    # Rebuild ZIP using identical manifest but a Unix symbolic-link mode for a payload file.
+    with zipfile.ZipFile(archive) as original:
+        contents = [(info.filename, original.read(info.filename)) for info in original.infolist()]
+    with zipfile.ZipFile(archive, 'w', compression=zipfile.ZIP_DEFLATED) as dest:
+        for name, data in contents:
+            info = zipfile.ZipInfo(name)
+            info.compress_type = zipfile.ZIP_DEFLATED
+            if name == 'payload/python/python.exe':
+                info.create_system = 3
+                info.external_attr = 0o120777 << 16
+            dest.writestr(info, data)
+    with pytest.raises(OfflineBundleError, match='symlink'):
+        inspect_offline_bundle(archive)
+
+
+def test_insufficient_disk_space_is_reported_before_install(tmp_path, monkeypatch):
+    from collections import namedtuple
+    from patchtrace import offline_bundle
+
+    plan = inspect_offline_bundle(make_bundle(tmp_path))
+    usage = namedtuple('usage', ['total', 'used', 'free'])
+    monkeypatch.setattr(offline_bundle.shutil, 'disk_usage', lambda _: usage(100, 100, 0))
+    root = tmp_path / 'runtimes'
+    with pytest.raises(OfflineBundleError, match='disk space'):
+        install_offline_bundle(plan, root)
+    assert not root.exists()
+
+
+def test_producer_is_byte_deterministic_across_distinct_destinations(tmp_path):
+    from patchtrace.offline_bundle import build_offline_bundle
+
+    source = tmp_path / 'payload'
+    for name, content in FILES.items():
+        path = source / name
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_bytes(content)
+    versions = {'python': '3.12.10', 'ghidra': '12.0.4', 'jdk': '25',
+                'ghidriff_revision': '4f5d895fcbb1eacd65efd81145922c15bb7e741d'}
+    a = build_offline_bundle(source, RUNTIME_ID, versions, tmp_path / 'a.zip')
+    b = build_offline_bundle(source, RUNTIME_ID, versions, tmp_path / 'b.zip')
+    assert a.read_bytes() == b.read_bytes()
