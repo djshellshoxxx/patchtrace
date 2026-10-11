@@ -4,7 +4,8 @@ import tempfile
 from pathlib import Path
 
 from patchtrace.alignment import diff_hunks
-from patchtrace.models import BackendCapabilities, ExportManifest, JobEvent
+from patchtrace.config import PatchTraceConfig
+from patchtrace.models import BackendCapabilities, CliRunReport, ExportManifest, JobEvent
 from patchtrace.service import ProjectService
 
 with tempfile.TemporaryDirectory() as directory:
@@ -26,6 +27,14 @@ with tempfile.TemporaryDirectory() as directory:
             'ExportManifest': ExportManifest(project_id=p.id, revision=p.revision, format='json',
                                               sha256='a' * 64, finding_ids=[finding.id],
                                               include_code=False, include_notes=True),
+            'CliRunReport': CliRunReport(
+                tool={'version': '0.1.0', 'frozen': False}, command='diff', argv=['diff', '--dry-run'],
+                started='2026-01-01T00:00:00+00:00', finished='2026-01-01T00:00:01+00:00',
+                duration_seconds=1.0, exit_code=0, exit_name='OK', status='dry-run',
+                inputs=[{'side': a.side, 'path': a.relative_path, 'name': a.name, 'sha256': a.sha256,
+                         'size': a.size} for a in p.artifacts],
+                environment={'platform': 'synthetic'}, settings={'engine': 'VersionTrackingDiff'}),
+            'PatchTraceConfig': PatchTraceConfig(),
         }
         examples = {name: {'valid': record.model_dump(mode='json'),
                             'invalid': record.model_dump(mode='json') | {'schema_version': 2},
