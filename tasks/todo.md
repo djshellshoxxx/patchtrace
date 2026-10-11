@@ -9,3 +9,6 @@
 - [ ] Live local and remote provider acceptance
 - [ ] Clean Windows GUI acceptance
 - [ ] Confirm dot-free quarantine fix with a real Ghidriff analysis from a Windows OneDrive-backed project and verify the rebuilt executable
+- [ ] SPEC-05 phase 1: Ghidra-safe local workspace, shared config, headless orchestration, CLI, exit codes, build provenance (docs/specs/cli.md)
+- [ ] SPEC-05 live gates L1–L5 on Windows (OneDrive/dot project, exit codes in cmd/PowerShell, double-click GUI, path-length reserve calibration, JAVA_HOME override)
+- [ ] SPEC-05 phase 2 commands (import, export, show, project, interpret)

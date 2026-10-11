@@ -19,7 +19,10 @@ Stable IDs are independent of filenames. Public interfaces in SPEC-01 and schema
 | reports | reports.py | JSON/Markdown/self-contained HTML and manifests | contracts | Atomic exports; injection fixtures |
 | diagnostics | diagnostics.py | Dependency status and bounded redacted logs | stdlib | No credentials; redaction tests |
 | samples | sample.py | Representative synthetic ordinary fix with explicit sample identity | contracts | Never masquerades as real analysis |
-
+| workspace | workspace.py (planned, SPEC-05) | Ghidra-safe local workspace: path validation (GP-* rules), staged input names, publish/quarantine, stale cleanup | ingestion | Pure paths; fake-Ghidra path rule fixture |
+| config | config.py (planned, SPEC-05) | Strict versioned PatchTraceConfig shared by GUI and CLI; precedence/provenance; QSettings migration | contracts/persistence | Pure JSON; temp config roots |
+| analysis | analysis.py (planned, SPEC-05) | Headless execute/commit orchestration extracted from desktop | backend/service/workspace | Thread-confined commit; fake backend |
+| cli | cli.py (planned, SPEC-05) | Subcommands, flag-to-ghidriff mapping, exit codes, run report; never imports Qt | config/analysis/reports | Subprocess and golden-help tests |
 | packaging | tools/build_windows.py; tools/pyinstaller_hooks/ | Frozen Windows runtime, curated Qt desktop plugins, licenses, inventory and checksum | PyInstaller | Windows Actions and archive inspection |
 
 Every substantial future module must be added here before implementation. UI must not own analysis logic; provider must not own project state.

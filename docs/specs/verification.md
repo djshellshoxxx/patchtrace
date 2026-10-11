@@ -18,6 +18,10 @@ All priorities below are P0 beta gates, unless explicitly P1. Failure must remai
 | R12 diagnostics | Backend setup errors actionable; logs/credentials excluded from DB/reports | diagnostics | T12 secret scan, M5 |
 | R13 package | Windows x64 desktop ZIP starts on clean Windows; sample works without backend; dependency setup documented | packaging | T13 Windows CI + manual clean install, M6 |
 | R14 audit | Full requirement traceability, defect repairs, truthful status and open blockers | all | T14 audit record, M6 |
+| R15 Ghidra-safe paths | No dot-prefixed/unsafe Ghidra-facing path; explicit unsafe overrides fail before launch; OneDrive/dot project works natively | workspace/backend | SPEC-05 T-A01–A12, live L1 |
+| R16 CLI | Same exe GUI/CLI dispatch; all ghidriff options mapped; distinct exit codes; results-only stdout; no Qt on CLI path | cli/entry | SPEC-05 T-B01–B20, live L2/L3 |
+| R17 Shared config | One strict versioned config for GUI and CLI; precedence and provenance; no credentials persisted | config/desktop | SPEC-05 T-C01–C07 |
+| R18 Build provenance | Exe reports source commit; source archive shipped; dirty builds rejected | packaging | SPEC-05 T-P01–P04 |
 
 ## Proposed performance targets, not measurements
 Reference desktop Windows 11, 4 logical CPUs, 8 GiB RAM, SSD. GUI interactions under 200 ms for 1000 matches, first project load under 3 s for 10 MiB normalized data. Code pane max 200000 characters per side; show truncation rather than freezing. Small/medium/large analysis classes: 1/20/100 MiB PE. Benchmark elapsed time, peak RSS, tool versions/settings, function counts and cancellation latency; no fixed decompilation promise. Worker cancellation target 5 seconds. Context 24000 chars default, raw import maximum 100 MiB. Matching precision/recall and interpretation correctness require held-out labeled real patch corpus; synthetic tests verify integration, cannot establish research accuracy.
