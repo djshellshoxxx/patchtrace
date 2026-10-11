@@ -367,9 +367,10 @@ def test_setup_does_not_choose_ambiguous_runtime_automatically(window, tmp_path,
 
 
 def test_offline_bundle_explicit_import_updates_paths_only_after_accept(window, tmp_path, monkeypatch, qtbot):
+    from PySide6.QtWidgets import QFileDialog, QMessageBox
+
     from patchtrace.offline_bundle import build_offline_bundle
     from patchtrace.ui import SetupDialog
-    from PySide6.QtWidgets import QFileDialog, QMessageBox
 
     local = tmp_path / 'local data'
     monkeypatch.setenv('LOCALAPPDATA', str(local))
