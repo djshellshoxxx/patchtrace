@@ -9,7 +9,7 @@ py -3.12 -m venv "$env:LOCALAPPDATA\PatchTrace-backend"
 $env:GHIDRA_INSTALL_DIR = 'C:\Tools\ghidra_12.0.4_PUBLIC'
 & "$env:LOCALAPPDATA\PatchTrace-backend\Scripts\python.exe" -m ghidriff --help
 ```
-Settings must point at that backend python.exe, not PatchTrace.exe, and the unpacked Ghidra directory. Research documents the inspected Ghidra target; use setup diagnostics to verify the installed combination. Ghidriff/Java compatibility remains a live acceptance gate. Static PE drivers can be inspected but are never installed or loaded.
+Settings must point at that backend python.exe, not PatchTrace.exe, and the unpacked Ghidra directory. Research documents the inspected Ghidra target; use setup diagnostics to verify the installed combination. The pinned combination passed the native known-patch workflow; other installed combinations need setup diagnostics and verification. Static PE drivers can be inspected but are never installed or loaded.
 
 Build on Windows from source:
 ```powershell

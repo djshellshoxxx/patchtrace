@@ -63,8 +63,11 @@ def main():
     (package / 'dependency-versions.json').write_text(json.dumps(versions, indent=2), encoding='utf-8')
     inventory = sorted(str(path.relative_to(package)).replace('\\', '/')
                        for path in package.rglob('*') if path.is_file())
-    if any('webengine' in item.lower() or 'qtpdf' in item.lower() for item in inventory):
-        raise RuntimeError('Unexpected unused WebEngine/PDF binaries collected')
+    unexpected = [item for item in inventory
+                  if Path(item).suffix.lower() in {'.dll', '.pyd', '.exe', '.pak'}
+                  and ('webengine' in item.lower() or 'qtpdf' in item.lower())]
+    if unexpected:
+        raise RuntimeError(f'Unexpected unused WebEngine/PDF binaries collected: {unexpected}')
     (package / 'file-inventory.json').write_text(json.dumps(inventory, indent=2), encoding='utf-8')
     subprocess.run([str(package / 'PatchTrace.exe'), '--self-test'], timeout=60, check=True)
     archive = Path(shutil.make_archive(str(root / 'dist' / 'PatchTrace-0.1.0-windows-x64'),

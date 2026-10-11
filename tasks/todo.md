@@ -5,6 +5,6 @@
 - [x] M4 Context and optional providers
 - [x] M5 Reports and diagnostics
 - [ ] M6 Audit, QA, Windows standalone
-- [ ] Live Ghidriff known-patch acceptance
+- [x] Live Ghidriff known-patch acceptance
 - [ ] Live local and remote provider acceptance
 - [ ] Clean Windows GUI acceptance
