@@ -12,7 +12,7 @@ from pathlib import Path
 from .models import ComparisonProject, ExportManifest
 
 MAX_REPORT_BYTES = 20 * 1024 * 1024
-SAFE_SETTING_KEYS = {'timeout_seconds', 'older_sha256', 'newer_sha256', 'python_version',
+SAFE_SETTING_KEYS = {'timeout_seconds', 'allow_symbol_downloads', 'older_sha256', 'newer_sha256', 'python_version',
                      'pyghidra_version', 'ghidra_version', 'java_runtime_version'}
 
 
@@ -45,7 +45,10 @@ def _safe_settings(settings: dict) -> dict:
     result = {}
     for key in sorted(SAFE_SETTING_KEYS & settings.keys()):
         value = settings[key]
-        if key == 'timeout_seconds':
+        if key == 'allow_symbol_downloads':
+            if isinstance(value, bool):
+                result[key] = value
+        elif key == 'timeout_seconds':
             if type(value) is int and 1 <= value <= 86400:
                 result[key] = value
         elif key.endswith('_sha256'):
