@@ -44,6 +44,7 @@ from .evidence import build_context, resolve_evidence
 from .interpretation import interpret, system_prompt
 from .providers import ProviderConfig
 from .reports import export_project
+from .runtime_discovery import discover_local_runtimes
 from .service import ProjectService
 
 REVIEWS = ['unreviewed', 'accepted', 'rejected', 'needs-review']
@@ -254,11 +255,36 @@ class SetupDialog(QDialog):
         layout.addLayout(form)
         self.diagnostics = plain_view('Configure paths, then diagnose dependencies.')
         layout.addWidget(self.diagnostics)
+        self.find = QPushButton('Find existing installations')
+        self.find.clicked.connect(self.discover_existing)
+        layout.addWidget(self.find)
         self.check = QPushButton('Diagnose dependencies')
         self.check.clicked.connect(self.check_dependencies)
         layout.addWidget(self.check)
         layout.addWidget(dialog_buttons(self, 'Save setup'))
         self.worker = None
+        self.discover_existing()
+
+    def discover_existing(self):
+        """Suggest known local installations without executing or installing tools."""
+        found = discover_local_runtimes()
+        notes = ['Local discovery only: nothing downloaded or executed.']
+        for label, edit, paths in (
+            ('External Python', self.python, found.python_executables),
+            ('Ghidra', self.ghidra, found.ghidra_roots),
+        ):
+            if edit.text().strip():
+                notes.append(f'{label}: retaining configured path')
+            elif len(paths) == 1:
+                edit.setText(str(paths[0]))
+                notes.append(f'{label}: detected {paths[0]}')
+            elif paths:
+                notes.append(f'{label}: multiple installations found; choose one using Browse:')
+                notes.extend(str(path) for path in paths[:8])
+            else:
+                notes.append(f'{label}: not found; use Browse after installing')
+        notes.append('Detected paths require Diagnose dependencies and a real comparison to verify.')
+        self.diagnostics.setPlainText('\n'.join(notes))
 
     def browse(self, edit, directory):
         if directory:
