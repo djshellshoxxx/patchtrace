@@ -29,6 +29,8 @@
 
 - Ghidriff symbol-server behavior is now opt-in via an explicit saved GUI setting. The backend passes `--no-symbols` by default and records the choice in run provenance. Tests exercise both modes and reject ambiguous types. A passing no-symbols CLI fixture is not proof of OS-enforced network isolation.
 
+- Local runtime discovery is a separate, read-only stdlib module with bounded direct-child scanning and no process execution. Setup prefills only unique existing candidates and preserves analyst-selected paths. This reduces manual path navigation but does not install or validate the full runtime; automated fixture coverage is distinct from real Windows/OneDrive acceptance.
+
 ## Acceptance gates
 - Windows unit/Qt suite: 93 passed; Ruff passed ([run](https://github.com/djshellshoxxx/patchtrace/actions/runs/38126515355)). Frozen desktop smoke passed on the final curated package ([run](https://github.com/djshellshoxxx/patchtrace/actions/runs/38127040440)). That run repeats 93 Windows passes and 91 Linux passes with 2 Windows-only skips.
 - Real native Ghidriff known bounds-check DLL patch: passed ([run](https://github.com/djshellshoxxx/patchtrace/actions/runs/38126512208)). Python 3.12.10, Ghidra 12.0.4, Temurin Java 25; pinned Ghidriff revision from research. Both MSVC-built DLLs were statically analyzed, never executed. One modified change record contains the expected check. This single fixture does not establish general matching accuracy.

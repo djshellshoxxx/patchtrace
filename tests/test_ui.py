@@ -331,3 +331,36 @@ def test_symbol_server_policy_disabled_by_default_and_persisted(window, monkeypa
     window.setup()
     assert window.settings.value('backend/allow_symbol_downloads', False, type=bool)
     assert window.backend_config().allow_symbol_downloads
+
+
+def test_setup_prefills_unique_existing_tools_without_overwriting_manual_paths(window, tmp_path, monkeypatch):
+    from patchtrace.runtime_discovery import RuntimeCandidates
+    from patchtrace.ui import SetupDialog
+
+    python = tmp_path / "backend" / "Scripts" / "python.exe"
+    ghidra = tmp_path / "Ghidra Tools"
+    candidates = RuntimeCandidates((python,), (ghidra,))
+    monkeypatch.setattr('patchtrace.ui.discover_local_runtimes', lambda: candidates)
+    dialog = SetupDialog(window.settings, window)
+    assert dialog.python.text() == str(python)
+    assert dialog.ghidra.text() == str(ghidra)
+
+    window.settings.setValue('backend/python', '/manual/python.exe')
+    extra = RuntimeCandidates((python, tmp_path / "other-python.exe"), (ghidra,))
+    monkeypatch.setattr('patchtrace.ui.discover_local_runtimes', lambda: extra)
+    second = SetupDialog(window.settings, window)
+    assert second.python.text() == '/manual/python.exe'
+    assert second.ghidra.text() == str(ghidra)
+
+
+def test_setup_does_not_choose_ambiguous_runtime_automatically(window, tmp_path, monkeypatch):
+    from patchtrace.runtime_discovery import RuntimeCandidates
+    from patchtrace.ui import SetupDialog
+
+    python_a = tmp_path / 'a' / 'python.exe'
+    python_b = tmp_path / 'b' / 'python.exe'
+    monkeypatch.setattr('patchtrace.ui.discover_local_runtimes',
+                        lambda: RuntimeCandidates((python_a, python_b), ()))
+    dialog = SetupDialog(window.settings, window)
+    assert dialog.python.text() == ''
+    assert 'multiple' in dialog.diagnostics.toPlainText().lower()

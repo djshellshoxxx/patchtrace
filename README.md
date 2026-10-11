@@ -79,7 +79,7 @@ $env:GHIDRA_INSTALL_DIR = 'C:\Tools\ghidra_12.0.4_PUBLIC'
 & "$env:LOCALAPPDATA\PatchTrace-backend\Scripts\python.exe" -m ghidriff --help
 ```
 
-6. Restart PatchTrace after changing system Java settings so it inherits the new environment. Click **Setup** and enter:
+6. Restart PatchTrace after changing system Java settings so it inherits the new environment. Click **Setup**. PatchTrace now checks common local installation locations and prefills Python and Ghidra paths only when exactly one candidate of each type is found. Use **Find existing installations** to rescan, or Browse if more than one is found. Detection does not install or run other programs. Then verify the fields:
 
 | Setup field | Value or purpose |
 |---|---|
