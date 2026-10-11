@@ -21,6 +21,7 @@ def main():
                     '--exclude-module', 'PySide6.QtWebEngineWidgets',
                     '--exclude-module', 'PySide6.QtPdf',
                     '--exclude-module', 'PySide6.QtPdfWidgets',
+                    '--additional-hooks-dir', str(root / 'tools' / 'pyinstaller_hooks'),
                     '--paths', str(root / 'src'),
                     str(root / 'tools' / 'desktop_entry.py')], cwd=root, check=True)
     package = root / 'dist' / 'PatchTrace'
@@ -65,7 +66,8 @@ def main():
                        for path in package.rglob('*') if path.is_file())
     unexpected = [item for item in inventory
                   if Path(item).suffix.lower() in {'.dll', '.pyd', '.exe', '.pak'}
-                  and ('webengine' in item.lower() or 'qtpdf' in item.lower())]
+                  and any(name in Path(item).name.lower() for name in
+                          ['webengine', 'pdf', 'virtualkeyboard', 'qt6quick', 'qt6qml'])]
     if unexpected:
         raise RuntimeError(f'Unexpected unused WebEngine/PDF binaries collected: {unexpected}')
     (package / 'file-inventory.json').write_text(json.dumps(inventory, indent=2), encoding='utf-8')

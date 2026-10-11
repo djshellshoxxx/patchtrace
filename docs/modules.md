@@ -20,4 +20,6 @@ Stable IDs are independent of filenames. Public interfaces in SPEC-01 and schema
 | diagnostics | diagnostics.py | Dependency status and bounded redacted logs | stdlib | No credentials; redaction tests |
 | samples | sample.py | Representative synthetic ordinary fix with explicit sample identity | contracts | Never masquerades as real analysis |
 
+| packaging | tools/build_windows.py; tools/pyinstaller_hooks/ | Frozen Windows runtime, curated Qt desktop plugins, licenses, inventory and checksum | PyInstaller | Windows Actions and archive inspection |
+
 Every substantial future module must be added here before implementation. UI must not own analysis logic; provider must not own project state.
