@@ -21,15 +21,16 @@
 - Large repetitive code could spend excessive time in line matching: bounded strategies and a disclosed linear fallback now cap the expensive path.
 - Failed normalization after native execution needed quarantine and a persisted failed attempt; late cancellation cannot promote output.
 - Export preview and actual bytes needed identical option handling and deterministic rendering.
+- Optional Qt image/input plugins pulled unused PDF and virtual-keyboard dependencies into the freeze: custom desktop plugin collection now prevents those imports, with an executable-component rejection gate and post-build ZIP inspection.
 - Qt wheels lacked redistributed license texts: exact upstream notice sources are vendored; the builder refuses missing required notices and excluded WebEngine/PDF collection.
 
 ## Acceptance gates
-- Windows unit/Qt suite: 93 passed; Ruff passed ([run](https://github.com/djshellshoxxx/patchtrace/actions/runs/38126515355)). Frozen desktop smoke: pending rebuilt package.
+- Windows unit/Qt suite: 93 passed; Ruff passed ([run](https://github.com/djshellshoxxx/patchtrace/actions/runs/38126515355)). Frozen desktop smoke passed on the final curated package ([run](https://github.com/djshellshoxxx/patchtrace/actions/runs/38127040440)). That run repeats 93 Windows passes and 91 Linux passes with 2 Windows-only skips.
 - Real native Ghidriff known bounds-check DLL patch: passed ([run](https://github.com/djshellshoxxx/patchtrace/actions/runs/38126512208)). Python 3.12.10, Ghidra 12.0.4, Temurin Java 25; pinned Ghidriff revision from research. Both MSVC-built DLLs were statically analyzed, never executed. One modified change record contains the expected check. This single fixture does not establish general matching accuracy.
 - Live Ollama and remote provider paths: unverified; no configured model/credentials supplied. Mocked HTTP request/envelope/schema tests are present. Follow SPEC-03 acceptance procedures; successful transport does not validate model truth.
 - Clean Windows interactive resize/keyboard/code/evidence test: pending actual package and user testing.
 - Matching precision/recall, held-out real patch corpus and resource targets: unmeasured. No accuracy or speed benchmark claimed.
-- Dependency archive/license audit: distribution script collects Python/Qt/Pydantic notices; actual ZIP must be inspected before release status is claimed.
+- Dependency archive audit: CI ZIP downloaded and inspected; SHA-256 matched, all listed files existed, 47 Core/GUI attribution pages and required notice texts were present; two Qt Network attribution pages were subsequently added for the linked Network DLL. Curated package: 46,370,158 bytes, 417 ZIP entries; SHA-256 `c5783e25146029a741a5450209638a15cf9f955e6e24582c04277325079e95b2`. Qt Core/Gui/Network/Widgets and Windows/offscreen/style/network/TLS plugins remain. No PDF/WebEngine/QML/Quick/virtual-keyboard executable components. Final release is rebuilt from the merged commit and has its own accompanying checksum.
 
 ## Practical limits
 Provider cancellation is cooperative around network reads; an active read can wait until the 120-second timeout, and transmitted remote context cannot be recalled. Native decompiler crashes/timeouts preserve logs and quarantined output; process isolation is not an OS sandbox. Backend output contracts are pinned to inspected Ghidriff; unknown output fields fail clearly. Only static PE AMD64 is initially supported. Call graph visualization, runtime debugging, automatic reproduction, auto-download and additional formats are deferred. The synthetic sample is authored and explicitly labeled.

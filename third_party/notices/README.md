@@ -17,8 +17,15 @@ These files are verbatim license texts from upstream source revisions. They are 
 - Release tag: `v6.12.0`
 - Peeled commit: `025bdad181de241e81bf853c8a2d7bf3d19261a9`
 - `LICENSES/` contains the standard license texts present in that exact qtbase release, including the Qt GPL exception and the common third-party license texts referenced by Qt modules.
-- `attributions/` contains the official Qt 6.12 Core and GUI attribution pages linked by Qt's [Qt 6.12 third-party code index](https://doc.qt.io/qt-6.12/licenses-used-in-qt.html), plus a local index of their component names and license identifiers. This preserves the upstream attributions rather than only generic license texts. The pages cover module source, including platform-specific entries; the exact Windows DLL/plugin set has not been inspected, so they are not a claim that every listed component is included in PatchTrace.
+- `attributions/` contains the official Qt 6.12 Core, GUI, and Network attribution pages linked by Qt's [Qt 6.12 third-party code index](https://doc.qt.io/qt-6.12/licenses-used-in-qt.html), plus a local index of their component names and license identifiers. This preserves the upstream attributions rather than only generic license texts. The pages cover module source, including platform-specific entries; the final Windows inventory confirms these three Qt modules are present, but the attribution set still requires checking against the exact collected DLL/plugin subset.
 - The index is useful to resolve a package-level bill of materials against the Qt modules and plugins actually collected. If the frozen build includes Qt PDF or Qt WebEngine binaries, follow their module entries and obtain any component-specific notices from the corresponding exact upstream sources before release.
+
+## OpenSSL DLL version notices
+
+- Upstream repository: [OpenSSL](https://github.com/openssl/openssl)
+- The frozen inventory contains DLL version resources reporting OpenSSL 3.5.5 for `libcrypto-3-x64.dll` and `libssl-3-x64.dll`, and OpenSSL 3.0.16 for `libcrypto-3.dll` and `libssl-3.dll`. Their exact supplying distribution/build was not established from the inventory.
+- The `LICENSE.txt` and `ACKNOWLEDGEMENTS.md` files under `openssl-3.5.5/` are from tag `openssl-3.5.5`, commit `85a9a2ee19845d6a68a2c68255271068935f57f4`. The corresponding files under `openssl-3.0.16/` are from tag `openssl-3.0.16`, commit `22d88ecb267055a195fe8df11bbdf763f8e7b719`. Both tags have the same `LICENSE.txt` SHA-256 (`7d5450cb2d142651b8afa315b5f238efc805dad827d91ba367d8516bc9d49e7a`); their acknowledgements differ. Neither tag has a repository-root `NOTICE` file.
+- These source copies are matched to the parsed version resources as notices, not proof that the binaries were built from those exact upstream source revisions.
 
 ## PyInstaller
 
@@ -29,4 +36,4 @@ These files are verbatim license texts from upstream source revisions. They are 
 
 ## Scope
 
-These are upstream license texts and source references, not a complete SBOM or final package audit. PySide6 6.12.0 metadata in the inspected environment also required `PySide6_WebEngine==6.12.0.140` and `PySide6_Pdf==6.12.0.140`; the PatchTrace source imports QtCore, QtGui, and QtWidgets, but the Windows PyInstaller collection is the deciding evidence for which binaries ship. Reconcile the actual frozen files, their DLL dependencies, plugins, and distribution metadata before deciding whether additional third-party notices are needed.
+These are upstream license texts and source references, not a complete SBOM. PySide6 6.12.0 metadata in the inspected environment also required `PySide6_WebEngine==6.12.0.140` and `PySide6_Pdf==6.12.0.140`; the final PyInstaller inventory excludes their binaries. The inventory includes Qt Network and its TLS/network-information plugins. Reconcile future package changes against their exact DLL dependencies and distribution metadata before deciding whether additional third-party notices are needed.
