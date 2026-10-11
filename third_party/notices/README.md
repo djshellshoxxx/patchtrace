@@ -17,7 +17,7 @@ These files are verbatim license texts from upstream source revisions. They are 
 - Release tag: `v6.12.0`
 - Peeled commit: `025bdad181de241e81bf853c8a2d7bf3d19261a9`
 - `LICENSES/` contains the standard license texts present in that exact qtbase release, including the Qt GPL exception and the common third-party license texts referenced by Qt modules.
-- Qt's [Qt 6.12 third-party code index](https://doc.qt.io/qt-6.12/licenses-used-in-qt.html) is the module-level inventory. Its Qt Core and Qt GUI sections list the code and license identifiers used by those modules; the exact Windows DLL/plugin set has not been inspected, so this source inventory is not a claim that every listed component is included in PatchTrace.
+- `attributions/` contains the official Qt 6.12 Core and GUI attribution pages linked by Qt's [Qt 6.12 third-party code index](https://doc.qt.io/qt-6.12/licenses-used-in-qt.html), plus a local index of their component names and license identifiers. This preserves the upstream attributions rather than only generic license texts. The pages cover module source, including platform-specific entries; the exact Windows DLL/plugin set has not been inspected, so they are not a claim that every listed component is included in PatchTrace.
 - The index is useful to resolve a package-level bill of materials against the Qt modules and plugins actually collected. If the frozen build includes Qt PDF or Qt WebEngine binaries, follow their module entries and obtain any component-specific notices from the corresponding exact upstream sources before release.
 
 ## PyInstaller

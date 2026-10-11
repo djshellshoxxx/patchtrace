@@ -1,7 +1,7 @@
 # QA and audit record
 
 ## Current evidence
-2026-10-11: source inspection of pinned upstream revisions completed. Linux Qt offscreen desktop self-test starts and displays the synthetic project. Pure-domain, transport, worker and schema tests run locally; the final count is recorded after integration below. Synthetic fixtures and mocked providers verify wiring and validation, not real matching accuracy or model interpretation correctness.
+2026-10-11: source inspection of pinned upstream revisions completed. Linux Qt offscreen desktop self-test starts and displays the synthetic project. Integrated Linux QA: 91 tests passed, 2 Windows-only tests skipped; Ruff and Qt offscreen desktop self-test passed. Domain, transport, worker, schema and UI tests are included. Synthetic fixtures and mocked providers verify wiring and validation, not real matching accuracy or model interpretation correctness.
 
 ## Repaired audit defects
 - Artifact storage could escape project roots: pure models and disk paths now reject traversal, absolute/drive paths and symlinks.
@@ -16,6 +16,12 @@
 - Large import parsing/normalization moved behind prepare/apply worker seam; atomic project changes on GUI thread.
 - Ghidra/Python/pyghidra versions and dependency diagnostics are recorded, with unverified Java compatibility visible.
 - Missing persisted instruction arrays are displayed as unavailable, never fabricated assembly.
+
+- Unchanged Windows inputs were incorrectly rejected because path and open-handle ctime semantics differ: compare each source consistently, with native ChangeTime protecting against hidden edits.
+- Large repetitive code could spend excessive time in line matching: bounded strategies and a disclosed linear fallback now cap the expensive path.
+- Failed normalization after native execution needed quarantine and a persisted failed attempt; late cancellation cannot promote output.
+- Export preview and actual bytes needed identical option handling and deterministic rendering.
+- Qt wheels lacked redistributed license texts: exact upstream notice sources are vendored; the builder refuses missing required notices and excluded WebEngine/PDF collection.
 
 ## Acceptance gates
 - Windows unit/Qt tests and frozen desktop smoke: pending Windows Actions execution.

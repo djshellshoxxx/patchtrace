@@ -6,9 +6,9 @@ Stable IDs are independent of filenames. Public interfaces in SPEC-01 and schema
 |---|---|---|---|---|
 | contracts | models.py | Versioned validated artifact/project/run/function/match/evidence/context/finding/job/export records | pydantic | Pure data; schema and invariant tests |
 | ingestion | ingestion.py | inspect_artifact and immutable copies; PE AMD64 validation | contracts | Disk staging; synthetic PE fixtures |
-| persistence | persistence.py | create/load/save project, lock, backups, revision history | contracts | SQLite connection per operation; temp roots |
+| persistence | persistence.py | create/load/save project, lock, backups, revision history | contracts | SQLite connection confined to its creating thread; temp roots |
 | normalization | normalization.py | normalize_ghidriff, preserve unavailable fields | contracts | Pure conversion; upstream JSON fixtures |
-| alignment | alignment.py | SequenceMatcher line alignment and hunks | contracts | Pure lines; unequal/empty fixtures |
+| alignment | alignment.py | Bounded line alignment and hunks; large-input fallback | contracts | Pure lines; unequal/empty fixtures |
 | backend | backend.py | Discover configured dependencies; construct verified argv | contracts | External runtime config; fake executable |
 | jobs | jobs.py | Child lifecycle, log bounds, timeout/cancellation | backend | Job Object/process group; fake children |
 | evidence | evidence.py | Context selection, digest, evidence resolution | contracts | Pure exact references; forged IDs |

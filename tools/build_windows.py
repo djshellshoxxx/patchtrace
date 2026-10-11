@@ -33,9 +33,16 @@ def main():
     bundled_notices = root / 'third_party' / 'notices'
     required = ['qtbase-6.12.0/LICENSES/LGPL-3.0-only.txt',
                 'pyside-setup-6.12.0/LICENSES/LGPL-3.0-only.txt',
-                'pyinstaller-6.22.3/COPYING.txt', 'README.md']
+                'pyinstaller-6.22.3/COPYING.txt', 'README.md',
+                'qtbase-6.12.0/attributions/README.md',
+                'pyside-setup-6.12.0/sources/PySide6-licensecomment.txt']
+    required += [f'{module}-6.12.0/LICENSES/{name}.txt'
+                 for module in ['qtbase', 'pyside-setup']
+                 for name in ['GPL-2.0-only', 'GPL-3.0-only', 'Qt-GPL-exception-1.0']]
     if any(not (bundled_notices / item).is_file() for item in required):
         raise RuntimeError('Pinned third-party notices are missing; refusing to publish distribution')
+    if len(list((bundled_notices / 'qtbase-6.12.0/attributions').glob('*.html'))) != 47:
+        raise RuntimeError('Qt Core/GUI attribution set is incomplete')
     shutil.copytree(bundled_notices, notices / 'upstream', dirs_exist_ok=True)
     for name in ['PySide6', 'PySide6_Essentials', 'PySide6_Addons', 'PySide6_WebEngine', 'PySide6_Pdf', 'shiboken6', 'pydantic',
                  'pydantic_core', 'PyInstaller', 'annotated-types', 'typing_extensions', 'typing-inspection']:
