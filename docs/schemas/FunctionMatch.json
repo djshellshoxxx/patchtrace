@@ -1,0 +1,194 @@
+{
+  "$defs": {
+    "FunctionRecord": {
+      "additionalProperties": false,
+      "properties": {
+        "schema_version": {
+          "const": 1,
+          "default": 1,
+          "title": "Schema Version",
+          "type": "integer"
+        },
+        "id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "artifact_id": {
+          "title": "Artifact Id",
+          "type": "string"
+        },
+        "run_id": {
+          "title": "Run Id",
+          "type": "string"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "address": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Address"
+        },
+        "address_space": {
+          "default": "unknown",
+          "enum": [
+            "virtual",
+            "relative",
+            "file-offset",
+            "unknown"
+          ],
+          "title": "Address Space",
+          "type": "string"
+        },
+        "code": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Code"
+        },
+        "assembly": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Assembly"
+        },
+        "callers": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Callers",
+          "type": "array"
+        },
+        "callees": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Callees",
+          "type": "array"
+        },
+        "metadata": {
+          "additionalProperties": true,
+          "title": "Metadata",
+          "type": "object"
+        }
+      },
+      "required": [
+        "artifact_id",
+        "run_id",
+        "name"
+      ],
+      "title": "FunctionRecord",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": 1,
+      "default": 1,
+      "title": "Schema Version",
+      "type": "integer"
+    },
+    "id": {
+      "maxLength": 128,
+      "minLength": 1,
+      "title": "Id",
+      "type": "string"
+    },
+    "run_id": {
+      "title": "Run Id",
+      "type": "string"
+    },
+    "older": {
+      "items": {
+        "$ref": "#/$defs/FunctionRecord"
+      },
+      "title": "Older",
+      "type": "array"
+    },
+    "newer": {
+      "items": {
+        "$ref": "#/$defs/FunctionRecord"
+      },
+      "title": "Newer",
+      "type": "array"
+    },
+    "category": {
+      "enum": [
+        "modified",
+        "added",
+        "removed",
+        "unmatched",
+        "ambiguous",
+        "split",
+        "merged",
+        "unchanged"
+      ],
+      "title": "Category",
+      "type": "string"
+    },
+    "match_types": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Match Types",
+      "type": "array"
+    },
+    "quality": {
+      "default": "unknown",
+      "title": "Quality",
+      "type": "string"
+    },
+    "manual": {
+      "default": false,
+      "title": "Manual",
+      "type": "boolean"
+    },
+    "reason": {
+      "default": "",
+      "title": "Reason",
+      "type": "string"
+    },
+    "review": {
+      "default": "unreviewed",
+      "enum": [
+        "unreviewed",
+        "accepted",
+        "rejected",
+        "needs-review"
+      ],
+      "title": "Review",
+      "type": "string"
+    }
+  },
+  "required": [
+    "run_id",
+    "category"
+  ],
+  "title": "FunctionMatch",
+  "type": "object",
+  "$id": "https://patchtrace.local/schemas/v1/FunctionMatch.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}

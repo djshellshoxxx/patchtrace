@@ -1,0 +1,55 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": 1,
+      "default": 1,
+      "title": "Schema Version",
+      "type": "integer"
+    },
+    "id": {
+      "maxLength": 128,
+      "minLength": 1,
+      "title": "Id",
+      "type": "string"
+    },
+    "name": {
+      "default": "ghidriff",
+      "title": "Name",
+      "type": "string"
+    },
+    "version": {
+      "title": "Version",
+      "type": "string"
+    },
+    "decompiler": {
+      "default": true,
+      "title": "Decompiler",
+      "type": "boolean"
+    },
+    "instruction_mapping": {
+      "default": false,
+      "title": "Instruction Mapping",
+      "type": "boolean"
+    },
+    "progress_counts": {
+      "default": false,
+      "title": "Progress Counts",
+      "type": "boolean"
+    },
+    "limitations": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Limitations",
+      "type": "array"
+    }
+  },
+  "required": [
+    "version"
+  ],
+  "title": "BackendCapabilities",
+  "type": "object",
+  "$id": "https://patchtrace.local/schemas/v1/BackendCapabilities.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}

@@ -1,0 +1,67 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": 1,
+      "default": 1,
+      "title": "Schema Version",
+      "type": "integer"
+    },
+    "id": {
+      "maxLength": 128,
+      "minLength": 1,
+      "title": "Id",
+      "type": "string"
+    },
+    "side": {
+      "enum": [
+        "older",
+        "newer"
+      ],
+      "title": "Side",
+      "type": "string"
+    },
+    "name": {
+      "title": "Name",
+      "type": "string"
+    },
+    "sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Sha256",
+      "type": "string"
+    },
+    "size": {
+      "maximum": 1073741824,
+      "minimum": 1,
+      "title": "Size",
+      "type": "integer"
+    },
+    "relative_path": {
+      "title": "Relative Path",
+      "type": "string"
+    },
+    "architecture": {
+      "const": "x86-64",
+      "default": "x86-64",
+      "title": "Architecture",
+      "type": "string"
+    },
+    "format": {
+      "const": "PE",
+      "default": "PE",
+      "title": "Format",
+      "type": "string"
+    }
+  },
+  "required": [
+    "side",
+    "name",
+    "sha256",
+    "size",
+    "relative_path"
+  ],
+  "title": "Artifact",
+  "type": "object",
+  "$id": "https://patchtrace.local/schemas/v1/Artifact.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}

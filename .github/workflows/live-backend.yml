@@ -1,0 +1,42 @@
+name: Native Windows Ghidriff acceptance
+on:
+  workflow_dispatch:
+  push:
+    branches: [main, 'codex/**']
+    paths: ['src/**', 'tools/live_backend_check.py', 'tests/fixtures/**', '.github/workflows/live-backend.yml']
+permissions:
+  contents: read
+jobs:
+  native:
+    runs-on: windows-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '25'
+      - uses: ilammy/msvc-dev-cmd@v1
+      - shell: cmd
+        run: |
+          cl /nologo /LD /Od /GS- tests\fixtures\old.c /link /OUT:tests\fixtures\old.dll
+          cl /nologo /LD /Od /GS- tests\fixtures\new.c /link /OUT:tests\fixtures\new.dll
+      - shell: pwsh
+        run: |
+          Invoke-WebRequest 'https://github.com/NationalSecurityAgency/ghidra/releases/download/Ghidra_12.0.4_build/ghidra_12.0.4_PUBLIC_20260303.zip' -OutFile ghidra.zip
+          if ((Get-FileHash ghidra.zip -Algorithm SHA256).Hash.ToLower() -ne 'c3b458661d69e26e203d739c0c82d143cc8a4a29d9e571f099c2cf4bda62a120') { throw 'Ghidra archive digest mismatch' }
+          Expand-Archive ghidra.zip -DestinationPath ghidra-runtime
+          $ghidra = (Get-ChildItem ghidra-runtime -Directory | Select-Object -First 1).FullName
+          "GHIDRA_INSTALL_DIR=$ghidra" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
+      - run: python -m pip install -e . 'ghidriff @ git+https://github.com/clearbluejar/ghidriff.git@4f5d895fcbb1eacd65efd81145922c15bb7e741d'
+      - run: python tools/live_backend_check.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: native-static-acceptance
+          path: |
+            live-project/runs/
+            live-project/project.sqlite3

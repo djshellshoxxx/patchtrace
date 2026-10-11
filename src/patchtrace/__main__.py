@@ -1,0 +1,47 @@
+"""Explicit desktop entry point; importing PatchTrace never launches Qt."""
+from __future__ import annotations
+
+
+def main() -> int:
+    import os
+    import sys
+    import tempfile
+    from pathlib import Path
+
+    self_test = '--self-test' in sys.argv
+    if self_test:
+        os.environ.setdefault('QT_QPA_PLATFORM', 'offscreen')
+    from PySide6.QtWidgets import QApplication
+
+    from .ui import MainWindow
+
+    app = QApplication.instance() or QApplication(sys.argv)
+    app.setApplicationName('PatchTrace')
+    app.setOrganizationName('PatchTrace')
+    if self_test:
+        from PySide6.QtCore import QSettings
+
+        from .service import ProjectService
+        with tempfile.TemporaryDirectory(prefix='patchtrace-self-test-') as directory:
+            root = Path(directory)
+            service = ProjectService.sample(root / 'sample')
+            settings = QSettings(str(root / 'settings.ini'), QSettings.Format.IniFormat)
+            window = MainWindow(service=service, settings=settings)
+            window.show()
+            app.processEvents()
+            if not window.navigator.count() or 'SYNTHETIC SAMPLE' not in window.project_label.text():
+                raise RuntimeError('Desktop self-test did not display sample matches')
+            window.close()
+            app.processEvents()
+            # Windows cannot remove immutable copied artifacts until permissions are restored.
+            for path in root.rglob('*'):
+                if path.is_file():
+                    path.chmod(0o600)
+        return 0
+    window = MainWindow()
+    window.show()
+    return app.exec()
+
+
+if __name__ == '__main__':
+    raise SystemExit(main())
