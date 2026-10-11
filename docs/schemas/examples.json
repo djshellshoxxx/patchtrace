@@ -865,7 +865,9 @@
       "decompiler": true,
       "instruction_mapping": false,
       "progress_counts": false,
-      "limitations": []
+      "limitations": [],
+      "engines": [],
+      "options": []
     },
     "invalid": {
       "schema_version": 2,
@@ -875,7 +877,9 @@
       "decompiler": true,
       "instruction_mapping": false,
       "progress_counts": false,
-      "limitations": []
+      "limitations": [],
+      "engines": [],
+      "options": []
     },
     "invalid_reason": "Unsupported future schema version; fail without guessing"
   },
@@ -1711,6 +1715,266 @@
       "include_code": false,
       "include_notes": true,
       "created": "2026-10-11T08:51:14.120564+00:00"
+    },
+    "invalid_reason": "Unsupported future schema version; fail without guessing"
+  },
+  "CliRunReport": {
+    "valid": {
+      "schema_version": 1,
+      "tool": {
+        "name": "PatchTrace",
+        "version": "0.1.0",
+        "git_commit": null,
+        "dirty": null,
+        "frozen": false
+      },
+      "command": "diff",
+      "argv": [
+        "diff",
+        "--dry-run"
+      ],
+      "started": "2026-01-01T00:00:00+00:00",
+      "finished": "2026-01-01T00:00:01+00:00",
+      "duration_seconds": 1.0,
+      "exit_code": 0,
+      "exit_name": "OK",
+      "status": "dry-run",
+      "error": null,
+      "warnings": [],
+      "inputs": [
+        {
+          "side": "older",
+          "path": "artifacts/dc71b8420acc68418eaebfb8a4848cd2f63626125868e9977f017010c8d30215.bin",
+          "name": "older_sample.dll",
+          "sha256": "dc71b8420acc68418eaebfb8a4848cd2f63626125868e9977f017010c8d30215",
+          "size": 1024
+        },
+        {
+          "side": "newer",
+          "path": "artifacts/4af23bcb773054ad469c57363d50e2b53a6590bfba2286f16a06b4fb1440a168.bin",
+          "name": "newer_sample.dll",
+          "sha256": "4af23bcb773054ad469c57363d50e2b53a6590bfba2286f16a06b4fb1440a168",
+          "size": 1024
+        }
+      ],
+      "environment": {
+        "python_executable": null,
+        "python_version": null,
+        "ghidriff_version": null,
+        "pyghidra_version": null,
+        "ghidra_version": null,
+        "java_home": null,
+        "java_runtime_version": null,
+        "long_paths_enabled": null,
+        "platform": "synthetic"
+      },
+      "settings": {
+        "engine": "VersionTrackingDiff",
+        "analysis": {},
+        "origins": {}
+      },
+      "ghidriff": null,
+      "project": null,
+      "results": null,
+      "artifacts": [],
+      "extensions": {}
+    },
+    "invalid": {
+      "schema_version": 2,
+      "tool": {
+        "name": "PatchTrace",
+        "version": "0.1.0",
+        "git_commit": null,
+        "dirty": null,
+        "frozen": false
+      },
+      "command": "diff",
+      "argv": [
+        "diff",
+        "--dry-run"
+      ],
+      "started": "2026-01-01T00:00:00+00:00",
+      "finished": "2026-01-01T00:00:01+00:00",
+      "duration_seconds": 1.0,
+      "exit_code": 0,
+      "exit_name": "OK",
+      "status": "dry-run",
+      "error": null,
+      "warnings": [],
+      "inputs": [
+        {
+          "side": "older",
+          "path": "artifacts/dc71b8420acc68418eaebfb8a4848cd2f63626125868e9977f017010c8d30215.bin",
+          "name": "older_sample.dll",
+          "sha256": "dc71b8420acc68418eaebfb8a4848cd2f63626125868e9977f017010c8d30215",
+          "size": 1024
+        },
+        {
+          "side": "newer",
+          "path": "artifacts/4af23bcb773054ad469c57363d50e2b53a6590bfba2286f16a06b4fb1440a168.bin",
+          "name": "newer_sample.dll",
+          "sha256": "4af23bcb773054ad469c57363d50e2b53a6590bfba2286f16a06b4fb1440a168",
+          "size": 1024
+        }
+      ],
+      "environment": {
+        "python_executable": null,
+        "python_version": null,
+        "ghidriff_version": null,
+        "pyghidra_version": null,
+        "ghidra_version": null,
+        "java_home": null,
+        "java_runtime_version": null,
+        "long_paths_enabled": null,
+        "platform": "synthetic"
+      },
+      "settings": {
+        "engine": "VersionTrackingDiff",
+        "analysis": {},
+        "origins": {}
+      },
+      "ghidriff": null,
+      "project": null,
+      "results": null,
+      "artifacts": [],
+      "extensions": {}
+    },
+    "invalid_reason": "Unsupported future schema version; fail without guessing"
+  },
+  "PatchTraceConfig": {
+    "valid": {
+      "schema_version": 1,
+      "backend": {
+        "python_executable": null,
+        "ghidra_install_dir": null,
+        "java_home": null,
+        "timeout_seconds": 3600,
+        "workspace": "local",
+        "work_root": null,
+        "ghidra_project_location": null,
+        "ghidra_project_name": "pt",
+        "gzfs_path": null
+      },
+      "analysis": {
+        "engine": "version-tracking",
+        "threaded": true,
+        "force_analysis": false,
+        "force_diff": false,
+        "symbols": true,
+        "symbols_path": null,
+        "min_func_len": 10,
+        "max_ram_percent": 60.0,
+        "bsim": true,
+        "bsim_full": false,
+        "decompiler_timeout": 60,
+        "use_calling_counts": false,
+        "base_address": null,
+        "program_options": null,
+        "gdt": [],
+        "verbose_analysis": false,
+        "jvm_args": [],
+        "max_section_funcs": 200
+      },
+      "output": {
+        "directory": null,
+        "emit": [
+          "ghidriff-md",
+          "ghidriff-json",
+          "report-md",
+          "summary",
+          "metadata"
+        ],
+        "name_template": "{old}-{new}",
+        "report_include_code": false,
+        "report_include_notes": true,
+        "keep_ghidra_project": false,
+        "keep_workspace": false
+      },
+      "logging": {
+        "console_level": "info",
+        "file_level": "debug",
+        "format": "text",
+        "engine_level": "INFO",
+        "engine_file_level": "INFO"
+      },
+      "provider": {
+        "kind": "ollama",
+        "endpoint": "http://127.0.0.1:11434",
+        "model": "",
+        "context_budget": 24000
+      },
+      "desktop": {
+        "font_size": 11,
+        "sync_scroll": true
+      },
+      "extensions": {}
+    },
+    "invalid": {
+      "schema_version": 2,
+      "backend": {
+        "python_executable": null,
+        "ghidra_install_dir": null,
+        "java_home": null,
+        "timeout_seconds": 3600,
+        "workspace": "local",
+        "work_root": null,
+        "ghidra_project_location": null,
+        "ghidra_project_name": "pt",
+        "gzfs_path": null
+      },
+      "analysis": {
+        "engine": "version-tracking",
+        "threaded": true,
+        "force_analysis": false,
+        "force_diff": false,
+        "symbols": true,
+        "symbols_path": null,
+        "min_func_len": 10,
+        "max_ram_percent": 60.0,
+        "bsim": true,
+        "bsim_full": false,
+        "decompiler_timeout": 60,
+        "use_calling_counts": false,
+        "base_address": null,
+        "program_options": null,
+        "gdt": [],
+        "verbose_analysis": false,
+        "jvm_args": [],
+        "max_section_funcs": 200
+      },
+      "output": {
+        "directory": null,
+        "emit": [
+          "ghidriff-md",
+          "ghidriff-json",
+          "report-md",
+          "summary",
+          "metadata"
+        ],
+        "name_template": "{old}-{new}",
+        "report_include_code": false,
+        "report_include_notes": true,
+        "keep_ghidra_project": false,
+        "keep_workspace": false
+      },
+      "logging": {
+        "console_level": "info",
+        "file_level": "debug",
+        "format": "text",
+        "engine_level": "INFO",
+        "engine_file_level": "INFO"
+      },
+      "provider": {
+        "kind": "ollama",
+        "endpoint": "http://127.0.0.1:11434",
+        "model": "",
+        "context_budget": 24000
+      },
+      "desktop": {
+        "font_size": 11,
+        "sync_scroll": true
+      },
+      "extensions": {}
     },
     "invalid_reason": "Unsupported future schema version; fail without guessing"
   }

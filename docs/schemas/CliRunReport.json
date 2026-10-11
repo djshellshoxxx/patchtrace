@@ -1,0 +1,736 @@
+{
+  "$defs": {
+    "ReportArtifact": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "minLength": 1,
+          "title": "Kind",
+          "type": "string"
+        },
+        "path": {
+          "title": "Path",
+          "type": "string"
+        },
+        "sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Sha256",
+          "type": "string"
+        },
+        "size": {
+          "minimum": 0,
+          "title": "Size",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "kind",
+        "path",
+        "sha256",
+        "size"
+      ],
+      "title": "ReportArtifact",
+      "type": "object"
+    },
+    "ReportCapabilities": {
+      "additionalProperties": false,
+      "properties": {
+        "engines": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Engines",
+          "type": "array"
+        },
+        "options": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Options",
+          "type": "array"
+        },
+        "probed": {
+          "default": false,
+          "title": "Probed",
+          "type": "boolean"
+        }
+      },
+      "title": "ReportCapabilities",
+      "type": "object"
+    },
+    "ReportCounts": {
+      "additionalProperties": false,
+      "properties": {
+        "modified": {
+          "minimum": 0,
+          "title": "Modified",
+          "type": "integer"
+        },
+        "added": {
+          "minimum": 0,
+          "title": "Added",
+          "type": "integer"
+        },
+        "deleted": {
+          "minimum": 0,
+          "title": "Deleted",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "modified",
+        "added",
+        "deleted"
+      ],
+      "title": "ReportCounts",
+      "type": "object"
+    },
+    "ReportEnvironment": {
+      "additionalProperties": false,
+      "properties": {
+        "python_executable": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Python Executable"
+        },
+        "python_version": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Python Version"
+        },
+        "ghidriff_version": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Ghidriff Version"
+        },
+        "pyghidra_version": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Pyghidra Version"
+        },
+        "ghidra_version": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Ghidra Version"
+        },
+        "java_home": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Java Home"
+        },
+        "java_runtime_version": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Java Runtime Version"
+        },
+        "long_paths_enabled": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Long Paths Enabled"
+        },
+        "platform": {
+          "title": "Platform",
+          "type": "string"
+        }
+      },
+      "required": [
+        "platform"
+      ],
+      "title": "ReportEnvironment",
+      "type": "object"
+    },
+    "ReportGhidriff": {
+      "additionalProperties": false,
+      "properties": {
+        "argv": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Argv",
+          "type": "array"
+        },
+        "cwd": {
+          "title": "Cwd",
+          "type": "string"
+        },
+        "env_set": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "title": "Env Set",
+          "type": "object"
+        },
+        "env_removed": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Env Removed",
+          "type": "array"
+        },
+        "argv_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Argv Sha256",
+          "type": "string"
+        },
+        "returncode": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Returncode"
+        },
+        "workspace": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Workspace"
+        },
+        "workspace_mode": {
+          "default": "local",
+          "enum": [
+            "local",
+            "project"
+          ],
+          "title": "Workspace Mode",
+          "type": "string"
+        },
+        "capabilities": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ReportCapabilities"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "failure": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Failure"
+        }
+      },
+      "required": [
+        "argv",
+        "cwd",
+        "argv_sha256"
+      ],
+      "title": "ReportGhidriff",
+      "type": "object"
+    },
+    "ReportInput": {
+      "additionalProperties": false,
+      "properties": {
+        "side": {
+          "enum": [
+            "older",
+            "newer"
+          ],
+          "title": "Side",
+          "type": "string"
+        },
+        "path": {
+          "title": "Path",
+          "type": "string"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Sha256",
+          "type": "string"
+        },
+        "size": {
+          "minimum": 0,
+          "title": "Size",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "side",
+        "path",
+        "name",
+        "sha256",
+        "size"
+      ],
+      "title": "ReportInput",
+      "type": "object"
+    },
+    "ReportMessage": {
+      "additionalProperties": false,
+      "description": "One error or warning block (SPEC-05 section 5.2).",
+      "properties": {
+        "code": {
+          "minLength": 1,
+          "title": "Code",
+          "type": "string"
+        },
+        "message": {
+          "title": "Message",
+          "type": "string"
+        },
+        "taxonomy": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Taxonomy"
+        },
+        "path": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Path"
+        },
+        "hint": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Hint"
+        },
+        "log": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Log"
+        }
+      },
+      "required": [
+        "code",
+        "message"
+      ],
+      "title": "ReportMessage",
+      "type": "object"
+    },
+    "ReportProject": {
+      "additionalProperties": false,
+      "properties": {
+        "root": {
+          "title": "Root",
+          "type": "string"
+        },
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "run_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Run Id"
+        },
+        "revision": {
+          "minimum": 0,
+          "title": "Revision",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "root",
+        "id",
+        "revision"
+      ],
+      "title": "ReportProject",
+      "type": "object"
+    },
+    "ReportResults": {
+      "additionalProperties": false,
+      "properties": {
+        "counts": {
+          "$ref": "#/$defs/ReportCounts"
+        },
+        "identical_inputs": {
+          "default": false,
+          "title": "Identical Inputs",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "counts"
+      ],
+      "title": "ReportResults",
+      "type": "object"
+    },
+    "ReportSettings": {
+      "additionalProperties": false,
+      "properties": {
+        "engine": {
+          "title": "Engine",
+          "type": "string"
+        },
+        "analysis": {
+          "additionalProperties": true,
+          "title": "Analysis",
+          "type": "object"
+        },
+        "origins": {
+          "additionalProperties": {
+            "enum": [
+              "default",
+              "env-generic",
+              "file",
+              "env",
+              "flag"
+            ],
+            "type": "string"
+          },
+          "title": "Origins",
+          "type": "object"
+        }
+      },
+      "required": [
+        "engine"
+      ],
+      "title": "ReportSettings",
+      "type": "object"
+    },
+    "ReportTool": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "const": "PatchTrace",
+          "default": "PatchTrace",
+          "title": "Name",
+          "type": "string"
+        },
+        "version": {
+          "title": "Version",
+          "type": "string"
+        },
+        "git_commit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Git Commit"
+        },
+        "dirty": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Dirty"
+        },
+        "frozen": {
+          "default": false,
+          "title": "Frozen",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "version"
+      ],
+      "title": "ReportTool",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "description": "Machine-readable command result (SPEC-05 section 5.4); written even on failure.",
+  "properties": {
+    "schema_version": {
+      "const": 1,
+      "default": 1,
+      "title": "Schema Version",
+      "type": "integer"
+    },
+    "tool": {
+      "$ref": "#/$defs/ReportTool"
+    },
+    "command": {
+      "minLength": 1,
+      "title": "Command",
+      "type": "string"
+    },
+    "argv": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Argv",
+      "type": "array"
+    },
+    "started": {
+      "title": "Started",
+      "type": "string"
+    },
+    "finished": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Finished"
+    },
+    "duration_seconds": {
+      "default": 0,
+      "minimum": 0,
+      "title": "Duration Seconds",
+      "type": "number"
+    },
+    "exit_code": {
+      "title": "Exit Code",
+      "type": "integer"
+    },
+    "exit_name": {
+      "enum": [
+        "OK",
+        "INTERNAL",
+        "ENVIRONMENT",
+        "ANALYSIS_FAILED",
+        "NO_DIFFERENCES",
+        "INPUT",
+        "IDENTICAL",
+        "OUTPUT",
+        "PROJECT",
+        "ENGINE_OUTPUT_REJECTED",
+        "PROVIDER",
+        "NETWORK",
+        "USAGE",
+        "TIMEOUT",
+        "CANCELLED"
+      ],
+      "title": "Exit Name",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "completed",
+        "no-differences",
+        "identical",
+        "failed",
+        "cancelled",
+        "timeout",
+        "dry-run"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "error": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ReportMessage"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "warnings": {
+      "items": {
+        "$ref": "#/$defs/ReportMessage"
+      },
+      "title": "Warnings",
+      "type": "array"
+    },
+    "inputs": {
+      "items": {
+        "$ref": "#/$defs/ReportInput"
+      },
+      "title": "Inputs",
+      "type": "array"
+    },
+    "environment": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ReportEnvironment"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "settings": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ReportSettings"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "ghidriff": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ReportGhidriff"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "project": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ReportProject"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "results": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ReportResults"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "artifacts": {
+      "items": {
+        "$ref": "#/$defs/ReportArtifact"
+      },
+      "title": "Artifacts",
+      "type": "array"
+    },
+    "extensions": {
+      "additionalProperties": {
+        "additionalProperties": true,
+        "type": "object"
+      },
+      "title": "Extensions",
+      "type": "object"
+    }
+  },
+  "required": [
+    "tool",
+    "command",
+    "started",
+    "exit_code",
+    "exit_name",
+    "status"
+  ],
+  "title": "CliRunReport",
+  "type": "object",
+  "$id": "https://patchtrace.local/schemas/v1/CliRunReport.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}

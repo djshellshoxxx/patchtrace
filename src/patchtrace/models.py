@@ -47,6 +47,8 @@ class BackendCapabilities(Record):
     instruction_mapping: bool = False
     progress_counts: bool = False
     limitations: list[str] = Field(default_factory=list)
+    engines: list[str] = Field(default_factory=list)
+    options: list[str] = Field(default_factory=list)
 
 
 class FunctionRecord(Record):
@@ -242,3 +244,142 @@ class ExportManifest(Record):
     include_code: bool
     include_notes: bool
     created: str = Field(default_factory=now)
+
+
+# --- SPEC-05: CLI exit codes and run report -------------------------------------------------------
+
+EXIT_CODES: dict[str, int] = {
+    'OK': 0, 'INTERNAL': 1, 'ENVIRONMENT': 2, 'ANALYSIS_FAILED': 3, 'NO_DIFFERENCES': 4, 'INPUT': 5,
+    'IDENTICAL': 6, 'OUTPUT': 7, 'PROJECT': 8, 'ENGINE_OUTPUT_REJECTED': 9, 'PROVIDER': 10,
+    'NETWORK': 11, 'USAGE': 64, 'TIMEOUT': 124, 'CANCELLED': 130,
+}
+ExitName = Literal['OK', 'INTERNAL', 'ENVIRONMENT', 'ANALYSIS_FAILED', 'NO_DIFFERENCES', 'INPUT',
+                   'IDENTICAL', 'OUTPUT', 'PROJECT', 'ENGINE_OUTPUT_REJECTED', 'PROVIDER', 'NETWORK',
+                   'USAGE', 'TIMEOUT', 'CANCELLED']
+ConfigOrigin = Literal['default', 'env-generic', 'file', 'env', 'flag']
+RunStatus = Literal['completed', 'no-differences', 'identical', 'failed', 'cancelled', 'timeout', 'dry-run']
+
+
+class Contract(BaseModel):
+    """Strict versioned document without project-owned identity (reports, configuration)."""
+    model_config = ConfigDict(extra='forbid', strict=True)
+
+
+class ReportTool(Contract):
+    name: Literal['PatchTrace'] = 'PatchTrace'
+    version: str
+    git_commit: str | None = None
+    dirty: bool | None = None
+    frozen: bool = False
+
+
+class ReportMessage(Contract):
+    """One error or warning block (SPEC-05 section 5.2)."""
+    code: str = Field(min_length=1)
+    message: str
+    taxonomy: str | None = None
+    path: str | None = None
+    hint: str | None = None
+    log: str | None = None
+
+
+class ReportInput(Contract):
+    side: Literal['older', 'newer']
+    path: str
+    name: str
+    sha256: str = Field(pattern=r'^[0-9a-f]{64}$')
+    size: int = Field(ge=0)
+
+
+class ReportEnvironment(Contract):
+    python_executable: str | None = None
+    python_version: str | None = None
+    ghidriff_version: str | None = None
+    pyghidra_version: str | None = None
+    ghidra_version: str | None = None
+    java_home: str | None = None
+    java_runtime_version: str | None = None
+    long_paths_enabled: bool | None = None
+    platform: str
+
+
+class ReportSettings(Contract):
+    engine: str
+    analysis: dict = Field(default_factory=dict)
+    origins: dict[str, ConfigOrigin] = Field(default_factory=dict)
+
+
+class ReportCapabilities(Contract):
+    engines: list[str] = Field(default_factory=list)
+    options: list[str] = Field(default_factory=list)
+    probed: bool = False
+
+
+class ReportGhidriff(Contract):
+    argv: list[str]
+    cwd: str
+    env_set: dict[str, str] = Field(default_factory=dict)
+    env_removed: list[str] = Field(default_factory=list)
+    argv_sha256: str = Field(pattern=r'^[0-9a-f]{64}$')
+    returncode: int | None = None
+    workspace: str | None = None
+    workspace_mode: Literal['local', 'project'] = 'local'
+    capabilities: ReportCapabilities | None = None
+    failure: dict | None = None
+
+
+class ReportProject(Contract):
+    root: str
+    id: str
+    run_id: str | None = None
+    revision: int = Field(ge=0)
+
+
+class ReportCounts(Contract):
+    modified: int = Field(ge=0)
+    added: int = Field(ge=0)
+    deleted: int = Field(ge=0)
+
+
+class ReportResults(Contract):
+    counts: ReportCounts
+    identical_inputs: bool = False
+
+
+class ReportArtifact(Contract):
+    kind: str = Field(min_length=1)
+    path: str
+    sha256: str = Field(pattern=r'^[0-9a-f]{64}$')
+    size: int = Field(ge=0)
+
+
+class CliRunReport(Contract):
+    """Machine-readable command result (SPEC-05 section 5.4); written even on failure."""
+    schema_version: Literal[1] = 1
+    tool: ReportTool
+    command: str = Field(min_length=1)
+    argv: list[str] = Field(default_factory=list)
+    started: str
+    finished: str | None = None
+    duration_seconds: float = Field(default=0, ge=0)
+    exit_code: int
+    exit_name: ExitName
+    status: RunStatus
+    error: ReportMessage | None = None
+    warnings: list[ReportMessage] = Field(default_factory=list)
+    inputs: list[ReportInput] = Field(default_factory=list)
+    environment: ReportEnvironment | None = None
+    settings: ReportSettings | None = None
+    ghidriff: ReportGhidriff | None = None
+    project: ReportProject | None = None
+    results: ReportResults | None = None
+    artifacts: list[ReportArtifact] = Field(default_factory=list)
+    extensions: dict[str, dict] = Field(default_factory=dict)
+
+    @model_validator(mode='after')
+    def exit_consistent(self):
+        if EXIT_CODES[self.exit_name] != self.exit_code:
+            raise ValueError('exit_code does not match exit_name')
+        if self.status == 'failed' and self.error is None:
+            raise ValueError('Failed report requires an error')
+        return self

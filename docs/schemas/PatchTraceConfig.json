@@ -1,0 +1,484 @@
+{
+  "$defs": {
+    "AnalysisSettings": {
+      "additionalProperties": false,
+      "properties": {
+        "engine": {
+          "default": "version-tracking",
+          "enum": [
+            "version-tracking",
+            "structural-graph",
+            "simple"
+          ],
+          "title": "Engine",
+          "type": "string"
+        },
+        "threaded": {
+          "default": true,
+          "title": "Threaded",
+          "type": "boolean"
+        },
+        "force_analysis": {
+          "default": false,
+          "title": "Force Analysis",
+          "type": "boolean"
+        },
+        "force_diff": {
+          "default": false,
+          "title": "Force Diff",
+          "type": "boolean"
+        },
+        "symbols": {
+          "default": true,
+          "title": "Symbols",
+          "type": "boolean"
+        },
+        "symbols_path": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Symbols Path"
+        },
+        "min_func_len": {
+          "default": 10,
+          "minimum": 0,
+          "title": "Min Func Len",
+          "type": "integer"
+        },
+        "max_ram_percent": {
+          "default": 60.0,
+          "exclusiveMinimum": 0,
+          "maximum": 95,
+          "title": "Max Ram Percent",
+          "type": "number"
+        },
+        "bsim": {
+          "default": true,
+          "title": "Bsim",
+          "type": "boolean"
+        },
+        "bsim_full": {
+          "default": false,
+          "title": "Bsim Full",
+          "type": "boolean"
+        },
+        "decompiler_timeout": {
+          "default": 60,
+          "minimum": 1,
+          "title": "Decompiler Timeout",
+          "type": "integer"
+        },
+        "use_calling_counts": {
+          "default": false,
+          "title": "Use Calling Counts",
+          "type": "boolean"
+        },
+        "base_address": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Base Address"
+        },
+        "program_options": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Program Options"
+        },
+        "gdt": {
+          "items": {
+            "maxLength": 4096,
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Gdt",
+          "type": "array"
+        },
+        "verbose_analysis": {
+          "default": false,
+          "title": "Verbose Analysis",
+          "type": "boolean"
+        },
+        "jvm_args": {
+          "items": {
+            "maxLength": 4096,
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Jvm Args",
+          "type": "array"
+        },
+        "max_section_funcs": {
+          "default": 200,
+          "minimum": 1,
+          "title": "Max Section Funcs",
+          "type": "integer"
+        }
+      },
+      "title": "AnalysisSettings",
+      "type": "object"
+    },
+    "BackendSettings": {
+      "additionalProperties": false,
+      "properties": {
+        "python_executable": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Python Executable"
+        },
+        "ghidra_install_dir": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Ghidra Install Dir"
+        },
+        "java_home": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Java Home"
+        },
+        "timeout_seconds": {
+          "default": 3600,
+          "maximum": 604800,
+          "minimum": 1,
+          "title": "Timeout Seconds",
+          "type": "integer"
+        },
+        "workspace": {
+          "default": "local",
+          "enum": [
+            "local",
+            "project"
+          ],
+          "title": "Workspace",
+          "type": "string"
+        },
+        "work_root": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Work Root"
+        },
+        "ghidra_project_location": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Ghidra Project Location"
+        },
+        "ghidra_project_name": {
+          "default": "pt",
+          "pattern": "^[A-Za-z0-9_-]{1,32}$",
+          "title": "Ghidra Project Name",
+          "type": "string"
+        },
+        "gzfs_path": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Gzfs Path"
+        }
+      },
+      "title": "BackendSettings",
+      "type": "object"
+    },
+    "DesktopSettings": {
+      "additionalProperties": false,
+      "properties": {
+        "font_size": {
+          "default": 11,
+          "maximum": 28,
+          "minimum": 8,
+          "title": "Font Size",
+          "type": "integer"
+        },
+        "sync_scroll": {
+          "default": true,
+          "title": "Sync Scroll",
+          "type": "boolean"
+        }
+      },
+      "title": "DesktopSettings",
+      "type": "object"
+    },
+    "LoggingSettings": {
+      "additionalProperties": false,
+      "properties": {
+        "console_level": {
+          "default": "info",
+          "enum": [
+            "debug",
+            "info",
+            "warning",
+            "error",
+            "critical"
+          ],
+          "title": "Console Level",
+          "type": "string"
+        },
+        "file_level": {
+          "default": "debug",
+          "enum": [
+            "debug",
+            "info",
+            "warning",
+            "error",
+            "critical"
+          ],
+          "title": "File Level",
+          "type": "string"
+        },
+        "format": {
+          "default": "text",
+          "enum": [
+            "text",
+            "json"
+          ],
+          "title": "Format",
+          "type": "string"
+        },
+        "engine_level": {
+          "default": "INFO",
+          "enum": [
+            "CRITICAL",
+            "ERROR",
+            "WARNING",
+            "INFO",
+            "DEBUG"
+          ],
+          "title": "Engine Level",
+          "type": "string"
+        },
+        "engine_file_level": {
+          "default": "INFO",
+          "enum": [
+            "CRITICAL",
+            "ERROR",
+            "WARNING",
+            "INFO",
+            "DEBUG"
+          ],
+          "title": "Engine File Level",
+          "type": "string"
+        }
+      },
+      "title": "LoggingSettings",
+      "type": "object"
+    },
+    "OutputSettings": {
+      "additionalProperties": false,
+      "properties": {
+        "directory": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Directory"
+        },
+        "emit": {
+          "items": {
+            "enum": [
+              "ghidriff-md",
+              "ghidriff-json",
+              "matches-json",
+              "sxs-html",
+              "ghidriff-log",
+              "report-md",
+              "report-html",
+              "report-json",
+              "summary",
+              "metadata",
+              "all",
+              "none"
+            ],
+            "type": "string"
+          },
+          "title": "Emit",
+          "type": "array"
+        },
+        "name_template": {
+          "default": "{old}-{new}",
+          "title": "Name Template",
+          "type": "string"
+        },
+        "report_include_code": {
+          "default": false,
+          "title": "Report Include Code",
+          "type": "boolean"
+        },
+        "report_include_notes": {
+          "default": true,
+          "title": "Report Include Notes",
+          "type": "boolean"
+        },
+        "keep_ghidra_project": {
+          "default": false,
+          "title": "Keep Ghidra Project",
+          "type": "boolean"
+        },
+        "keep_workspace": {
+          "default": false,
+          "title": "Keep Workspace",
+          "type": "boolean"
+        }
+      },
+      "title": "OutputSettings",
+      "type": "object"
+    },
+    "ProviderSettings": {
+      "additionalProperties": false,
+      "description": "Provider selection only. There is deliberately no credential field.",
+      "properties": {
+        "kind": {
+          "default": "ollama",
+          "enum": [
+            "ollama",
+            "openai"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "endpoint": {
+          "default": "http://127.0.0.1:11434",
+          "maxLength": 2048,
+          "minLength": 1,
+          "title": "Endpoint",
+          "type": "string"
+        },
+        "model": {
+          "default": "",
+          "maxLength": 256,
+          "title": "Model",
+          "type": "string"
+        },
+        "context_budget": {
+          "default": 24000,
+          "maximum": 200000,
+          "minimum": 512,
+          "title": "Context Budget",
+          "type": "integer"
+        }
+      },
+      "title": "ProviderSettings",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "description": "Versioned configuration shared by the desktop and the CLI (schema_version exactly 1).",
+  "properties": {
+    "schema_version": {
+      "const": 1,
+      "default": 1,
+      "title": "Schema Version",
+      "type": "integer"
+    },
+    "backend": {
+      "$ref": "#/$defs/BackendSettings"
+    },
+    "analysis": {
+      "$ref": "#/$defs/AnalysisSettings"
+    },
+    "output": {
+      "$ref": "#/$defs/OutputSettings"
+    },
+    "logging": {
+      "$ref": "#/$defs/LoggingSettings"
+    },
+    "provider": {
+      "$ref": "#/$defs/ProviderSettings"
+    },
+    "desktop": {
+      "$ref": "#/$defs/DesktopSettings"
+    },
+    "extensions": {
+      "additionalProperties": {
+        "additionalProperties": true,
+        "type": "object"
+      },
+      "title": "Extensions",
+      "type": "object"
+    }
+  },
+  "title": "PatchTraceConfig",
+  "type": "object",
+  "$id": "https://patchtrace.local/schemas/v1/PatchTraceConfig.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}

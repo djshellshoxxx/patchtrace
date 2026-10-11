@@ -43,6 +43,20 @@
       },
       "title": "Limitations",
       "type": "array"
+    },
+    "engines": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Engines",
+      "type": "array"
+    },
+    "options": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Options",
+      "type": "array"
     }
   },
   "required": [
