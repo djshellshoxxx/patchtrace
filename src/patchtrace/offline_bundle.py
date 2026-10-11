@@ -359,7 +359,6 @@ def build_offline_bundle(source_payload: Path, runtime_id: str, versions: Mappin
     if destination.exists() or destination.is_relative_to(source):
         _fail('producer will not replace an archive or write inside the source payload')
     records = []
-    source_paths = []
     for source_file in source.rglob('*'):
         if source_file.is_symlink():
             _fail('producer refuses symbolic links in payload')
@@ -373,7 +372,6 @@ def build_offline_bundle(source_payload: Path, runtime_id: str, versions: Mappin
             _fail('payload file exceeds size limit')
         records.append({'path': relative, 'size': length,
                         'sha256': _sha256_file(source_file, None)})
-        source_paths.append(source_file)
     records.sort(key=lambda entry: entry['path'])
     info = {
         'format': FORMAT, 'schema_version': 1, 'runtime_id': runtime_id,
