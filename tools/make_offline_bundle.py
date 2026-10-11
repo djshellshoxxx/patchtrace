@@ -31,7 +31,8 @@ def main() -> int:
         'ghidriff_revision': args.ghidriff_revision,
     }
     archive = build_offline_bundle(args.payload, args.runtime_id, versions, args.out)
-    digest = hashlib.file_digest(archive.open('rb'), 'sha256').hexdigest()
+    with archive.open('rb') as stream:
+        digest = hashlib.file_digest(stream, 'sha256').hexdigest()
     sidecar = archive.with_suffix(archive.suffix + '.sha256')
     sidecar.write_text(f'{digest}  {archive.name}\n', encoding='ascii')
     print(f'Packed {archive.name} SHA-256 {digest}')
