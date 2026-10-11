@@ -322,8 +322,11 @@ def test_symbol_server_policy_disabled_by_default_and_persisted(window, monkeypa
 
     dialog.allow_symbol_downloads.setChecked(True)
     assert dialog.config().allow_symbol_downloads
-    monkeypatch.setattr(SetupDialog, 'exec', lambda _self: QDialog.DialogCode.Accepted)
-    monkeypatch.setattr(SetupDialog, 'allow_symbol_downloads', dialog.allow_symbol_downloads, raising=False)
+    def accept_with_symbol_lookup(self):
+        self.allow_symbol_downloads.setChecked(True)
+        return QDialog.DialogCode.Accepted
+
+    monkeypatch.setattr(SetupDialog, 'exec', accept_with_symbol_lookup)
     # Save settings through the existing GUI workflow using a real dialog.
     window.setup()
     assert window.settings.value('backend/allow_symbol_downloads', False, type=bool)
