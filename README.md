@@ -90,7 +90,9 @@ $env:GHIDRA_INSTALL_DIR = 'C:\Tools\ghidra_12.0.4_PUBLIC'
 | Interpretation context budget (characters) | Default 24,000; controls evidence selection for AI context, not a provider's token limit. |
 | Synchronize code scrolling | Initial preference for the paired code panes. |
 
-7. Click **Diagnose dependencies**, read the results, then **Save setup**. Diagnosis checks paths, installed backend versions, and Java availability. A successful diagnosis is not a full native comparison test or proof of JDK compatibility.
+7. **Ghidriff symbol-server lookups** are disabled by default to avoid automatic online symbol retrieval. Check **Allow Ghidriff symbol-server lookups (may access the Internet)** only when intentionally enabling this Ghidriff feature. Disabling it can reduce function names and matching information; it is not a whole-system network isolation mechanism. This choice is recorded with every analysis run.
+
+8. Click **Diagnose dependencies**, read the results, then **Save setup**. Diagnosis checks paths, installed backend versions, and Java availability. A successful diagnosis is not a full native comparison test or proof of JDK compatibility.
 
 The GUI passes its configured Ghidra directory to the backend. The temporary `GHIDRA_INSTALL_DIR` assignment above is for the command-line check; it does not permanently configure future shells. See [Windows setup](docs/windows.md) for the packaging and clean-machine test procedure.
 
