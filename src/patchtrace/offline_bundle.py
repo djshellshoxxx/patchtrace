@@ -178,8 +178,8 @@ def _validated_manifest(data: dict) -> tuple[str, tuple[BundleFile, ...]]:
 
 def _zip_entries(archive: zipfile.ZipFile, files: tuple[BundleFile, ...]) -> None:
     entries = archive.infolist()
-    if len(entries) != len(files) + 1 or len(entries) > MAX_MEMBERS + 1:
-        _fail('ZIP entries do not match the exact manifest inventory')
+    if len(entries) > MAX_MEMBERS + 1:
+        _fail('ZIP contains too many entries')
     mapped = {}
     for info in entries:
         name = info.filename
@@ -196,6 +196,8 @@ def _zip_entries(archive: zipfile.ZipFile, files: tuple[BundleFile, ...]) -> Non
             _fail('symlink or special file in ZIP is forbidden')
         if info.file_size > MAX_FILE or (info.file_size > 1024 and info.compress_size * 200 < info.file_size):
             _fail('ZIP member exceeds safe size or compression limits')
+    if len(entries) != len(files) + 1:
+        _fail('ZIP entries do not match the exact manifest inventory')
     if 'manifest.json' not in mapped:
         _fail('ZIP must contain manifest.json')
     for f in files:
