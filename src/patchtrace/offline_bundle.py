@@ -271,7 +271,7 @@ def install_offline_bundle(plan: OfflineBundlePlan, runtimes_root: Path, *,
     """Verify again, extract to private staging, publish atomically, never overwrite."""
     _cancel(cancel)
     destination_root = Path(runtimes_root)
-    if not destination_root.is_absolute() or destination_root == destination_root.anchor:
+    if not destination_root.is_absolute() or str(destination_root) == destination_root.anchor:
         _fail('installation root must be an absolute dedicated runtimes directory')
     _no_symlink_ancestors(destination_root)
     try:
@@ -285,6 +285,15 @@ def install_offline_bundle(plan: OfflineBundlePlan, runtimes_root: Path, *,
         raise
     destination = destination_root / verified.runtime_id
     _no_symlink_ancestors(destination)
+    disk_path = destination_root
+    while not disk_path.exists():
+        disk_path = disk_path.parent
+    reserve = min(512 * 1024 * 1024, verified.total_bytes // 10)
+    try:
+        if shutil.disk_usage(disk_path).free < verified.total_bytes + reserve:
+            _fail('insufficient disk space for this offline backend and extraction reserve')
+    except OSError:
+        _fail('cannot determine available disk space for offline backend')
     if destination.exists():
         _fail('runtime already installed; existing files were not overwritten')
     destination_root.mkdir(parents=True, exist_ok=True)
@@ -303,6 +312,8 @@ def install_offline_bundle(plan: OfflineBundlePlan, runtimes_root: Path, *,
             for index, item in enumerate(verified.files):
                 _cancel(cancel)
                 target = stage / 'payload' / item.path
+                if os.name == 'nt' and len(str(destination / 'payload' / item.path)) >= 248:
+                    _fail('Windows destination path too long; use a shorter runtime ID or install root')
                 target.parent.mkdir(parents=True, exist_ok=True)
                 with zf.open('payload/' + item.path) as src, target.open('xb') as output:
                     _verify_stream(src, item, cancel, output)
@@ -330,16 +341,17 @@ def install_offline_bundle(plan: OfflineBundlePlan, runtimes_root: Path, *,
     except (OSError, EOFError, zipfile.BadZipFile, RuntimeError) as exc:
         _fail(f'installation failed; no runtime published ({type(exc).__name__})')
     finally:
-        if stage is not None and stage.exists():
-            try:
-                shutil.rmtree(stage)
-            except OSError:
-                # Do not delete other users' data or mutate unknown stage names.
-                # Report an explicit recoverable staging location for manual review.
-                raise OfflineBundleError(f'PT-OFFLINE: staging cleanup failed at {stage}') from None
-        if lock_fd is not None:
-            os.close(lock_fd)
-            lock.unlink(missing_ok=True)
+        try:
+            if stage is not None and stage.exists():
+                try:
+                    shutil.rmtree(stage)
+                except OSError:
+                    # Do not touch unknown stages; provide the exact path for manual review.
+                    raise OfflineBundleError(f'PT-OFFLINE: staging cleanup failed at {stage}') from None
+        finally:
+            if lock_fd is not None:
+                os.close(lock_fd)
+                lock.unlink(missing_ok=True)
 
 
 def build_offline_bundle(source_payload: Path, runtime_id: str, versions: Mapping[str, str],
