@@ -9,3 +9,4 @@
 - [ ] Live local and remote provider acceptance
 - [ ] Clean Windows GUI acceptance
 - [ ] Confirm dot-free quarantine fix with a real Ghidriff analysis from a Windows OneDrive-backed project and verify the rebuilt executable
+- [ ] Confirm external Ghidra scratch/GZF isolation with Windows native fixture and a Windows OneDrive-backed user case
