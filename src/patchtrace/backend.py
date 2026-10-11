@@ -9,6 +9,7 @@ import re
 import shutil
 import sys
 import threading
+import tempfile
 from collections.abc import Callable
 from dataclasses import dataclass
 from pathlib import Path
@@ -262,13 +263,23 @@ def run_comparison(config: BackendConfig, project: ComparisonProject, root: Path
             event('identical', 'Copied binaries have identical SHA-256 hashes; analysis skipped')
             return destination, AnalysisRun(id=run_id, status='identical',
                                            backend_version=backend_version, settings=settings)
-        argv = [str(Path(config.python_executable).resolve()), '-m', 'ghidriff',
-                str(paths['older']), str(paths['newer']), '--output-path',
-                str(_validated_ghidra_output_path(raw))]
+        # Ghidriff defaults its large, lock-heavy Ghidra projects under --output-path.
+        # Keep those transient databases and GZF caches off OneDrive/network-backed
+        # case directories. The project-owned JSON and analysis log stay under raw/.
+        # TemporaryDirectory has a randomized private name; no shared static workspace
+        # is used between concurrent comparisons. Cleanup runs on success and failure.
         event('analysis', 'Ghidriff is performing static analysis; detailed counts are unavailable')
-        result = run_process(argv, cwd=Path(config.ghidra_dir), env=_environment(config), cancel=cancel,
-                             timeout_seconds=config.timeout_seconds,
-                             check_output=lambda: _output_error(raw))
+        with tempfile.TemporaryDirectory(prefix='patchtrace-ghidra-') as scratch:
+            scratch_root = Path(scratch).resolve()
+            engine_project = _validated_ghidra_output_path(scratch_root / 'projects')
+            engine_gzfs = _validated_ghidra_output_path(scratch_root / 'gzfs')
+            argv = [str(Path(config.python_executable).resolve()), '-m', 'ghidriff',
+                    str(paths['older']), str(paths['newer']), '--output-path',
+                    str(_validated_ghidra_output_path(raw)),
+                    '--project-location', str(engine_project), '--gzfs-path', str(engine_gzfs)]
+            result = run_process(argv, cwd=Path(config.ghidra_dir), env=_environment(config), cancel=cancel,
+                                 timeout_seconds=config.timeout_seconds,
+                                 check_output=lambda: _output_error(raw))
         sanitized_log = redact_log(result.log_tail)
         (quarantine / 'analysis.log').write_text(sanitized_log, encoding='utf-8')
         if sanitized_log:
