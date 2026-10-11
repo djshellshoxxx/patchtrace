@@ -27,6 +27,8 @@
 
 - Native Ghidra workspace isolation: new regression tests require Ghidriff to receive an external private `--project-location` and `--gzfs-path`, check cleanup on success/failure, and preserve case-owned JSON/logs. Temporary engine workspaces should not be inside synced project directories; new Windows native compatibility must be rerun after this change.
 
+- Ghidriff symbol-server behavior is now opt-in via an explicit saved GUI setting. The backend passes `--no-symbols` by default and records the choice in run provenance. Tests exercise both modes and reject ambiguous types. A passing no-symbols CLI fixture is not proof of OS-enforced network isolation.
+
 ## Acceptance gates
 - Windows unit/Qt suite: 93 passed; Ruff passed ([run](https://github.com/djshellshoxxx/patchtrace/actions/runs/38126515355)). Frozen desktop smoke passed on the final curated package ([run](https://github.com/djshellshoxxx/patchtrace/actions/runs/38127040440)). That run repeats 93 Windows passes and 91 Linux passes with 2 Windows-only skips.
 - Real native Ghidriff known bounds-check DLL patch: passed ([run](https://github.com/djshellshoxxx/patchtrace/actions/runs/38126512208)). Python 3.12.10, Ghidra 12.0.4, Temurin Java 25; pinned Ghidriff revision from research. Both MSVC-built DLLs were statically analyzed, never executed. One modified change record contains the expected check. This single fixture does not establish general matching accuracy.
