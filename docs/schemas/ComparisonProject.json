@@ -1,0 +1,895 @@
+{
+  "$defs": {
+    "AnalysisContext": {
+      "additionalProperties": false,
+      "properties": {
+        "schema_version": {
+          "const": 1,
+          "default": 1,
+          "title": "Schema Version",
+          "type": "integer"
+        },
+        "id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "project_id": {
+          "title": "Project Id",
+          "type": "string"
+        },
+        "revision": {
+          "minimum": 0,
+          "title": "Revision",
+          "type": "integer"
+        },
+        "match_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Match Ids",
+          "type": "array"
+        },
+        "evidence": {
+          "items": {
+            "$ref": "#/$defs/EvidenceReference"
+          },
+          "title": "Evidence",
+          "type": "array"
+        },
+        "omitted": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Omitted",
+          "type": "array"
+        },
+        "digest": {
+          "title": "Digest",
+          "type": "string"
+        },
+        "token_estimate": {
+          "minimum": 0,
+          "title": "Token Estimate",
+          "type": "integer"
+        },
+        "payload": {
+          "title": "Payload",
+          "type": "string"
+        },
+        "stale": {
+          "default": false,
+          "title": "Stale",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "project_id",
+        "revision",
+        "match_ids",
+        "evidence",
+        "digest",
+        "token_estimate",
+        "payload"
+      ],
+      "title": "AnalysisContext",
+      "type": "object"
+    },
+    "AnalysisRun": {
+      "additionalProperties": false,
+      "properties": {
+        "schema_version": {
+          "const": 1,
+          "default": 1,
+          "title": "Schema Version",
+          "type": "integer"
+        },
+        "id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "created": {
+          "title": "Created",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "queued",
+            "running",
+            "completed",
+            "failed",
+            "cancelled",
+            "identical"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "backend": {
+          "default": "ghidriff",
+          "title": "Backend",
+          "type": "string"
+        },
+        "backend_version": {
+          "default": "unknown",
+          "title": "Backend Version",
+          "type": "string"
+        },
+        "settings": {
+          "additionalProperties": true,
+          "title": "Settings",
+          "type": "object"
+        },
+        "raw_path": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Raw Path"
+        },
+        "raw_sha256": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Raw Sha256"
+        },
+        "error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Error"
+        }
+      },
+      "required": [
+        "status"
+      ],
+      "title": "AnalysisRun",
+      "type": "object"
+    },
+    "AnalystAnnotation": {
+      "additionalProperties": false,
+      "properties": {
+        "schema_version": {
+          "const": 1,
+          "default": 1,
+          "title": "Schema Version",
+          "type": "integer"
+        },
+        "id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "target_id": {
+          "title": "Target Id",
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "note",
+            "bookmark",
+            "match-override",
+            "validation"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "text": {
+          "title": "Text",
+          "type": "string"
+        },
+        "created": {
+          "title": "Created",
+          "type": "string"
+        },
+        "stale": {
+          "default": false,
+          "title": "Stale",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "target_id",
+        "kind",
+        "text"
+      ],
+      "title": "AnalystAnnotation",
+      "type": "object"
+    },
+    "Artifact": {
+      "additionalProperties": false,
+      "properties": {
+        "schema_version": {
+          "const": 1,
+          "default": 1,
+          "title": "Schema Version",
+          "type": "integer"
+        },
+        "id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "side": {
+          "enum": [
+            "older",
+            "newer"
+          ],
+          "title": "Side",
+          "type": "string"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Sha256",
+          "type": "string"
+        },
+        "size": {
+          "maximum": 1073741824,
+          "minimum": 1,
+          "title": "Size",
+          "type": "integer"
+        },
+        "relative_path": {
+          "title": "Relative Path",
+          "type": "string"
+        },
+        "architecture": {
+          "const": "x86-64",
+          "default": "x86-64",
+          "title": "Architecture",
+          "type": "string"
+        },
+        "format": {
+          "const": "PE",
+          "default": "PE",
+          "title": "Format",
+          "type": "string"
+        }
+      },
+      "required": [
+        "side",
+        "name",
+        "sha256",
+        "size",
+        "relative_path"
+      ],
+      "title": "Artifact",
+      "type": "object"
+    },
+    "EvidenceReference": {
+      "additionalProperties": false,
+      "properties": {
+        "schema_version": {
+          "const": 1,
+          "default": 1,
+          "title": "Schema Version",
+          "type": "integer"
+        },
+        "id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "artifact_id": {
+          "title": "Artifact Id",
+          "type": "string"
+        },
+        "run_id": {
+          "title": "Run Id",
+          "type": "string"
+        },
+        "function_id": {
+          "title": "Function Id",
+          "type": "string"
+        },
+        "side": {
+          "enum": [
+            "older",
+            "newer"
+          ],
+          "title": "Side",
+          "type": "string"
+        },
+        "start_line": {
+          "minimum": 1,
+          "title": "Start Line",
+          "type": "integer"
+        },
+        "end_line": {
+          "minimum": 1,
+          "title": "End Line",
+          "type": "integer"
+        },
+        "text": {
+          "title": "Text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "artifact_id",
+        "run_id",
+        "function_id",
+        "side",
+        "start_line",
+        "end_line",
+        "text"
+      ],
+      "title": "EvidenceReference",
+      "type": "object"
+    },
+    "Finding": {
+      "additionalProperties": false,
+      "properties": {
+        "schema_version": {
+          "const": 1,
+          "default": 1,
+          "title": "Schema Version",
+          "type": "integer"
+        },
+        "id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "context_id": {
+          "title": "Context Id",
+          "type": "string"
+        },
+        "match_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Match Ids",
+          "type": "array"
+        },
+        "summary": {
+          "title": "Summary",
+          "type": "string"
+        },
+        "fix_purpose": {
+          "title": "Fix Purpose",
+          "type": "string"
+        },
+        "category": {
+          "enum": [
+            "security-fix",
+            "ordinary-bug",
+            "feature",
+            "refactor",
+            "compiler-noise",
+            "unknown"
+          ],
+          "title": "Category",
+          "type": "string"
+        },
+        "hypothesis": {
+          "$ref": "#/$defs/Hypothesis"
+        },
+        "alternatives": {
+          "items": {
+            "$ref": "#/$defs/Hypothesis"
+          },
+          "title": "Alternatives",
+          "type": "array"
+        },
+        "cwe": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cwe"
+        },
+        "cwe_rationale": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cwe Rationale"
+        },
+        "review": {
+          "default": "unreviewed",
+          "enum": [
+            "unreviewed",
+            "accepted",
+            "rejected",
+            "needs-review"
+          ],
+          "title": "Review",
+          "type": "string"
+        },
+        "analyst_conclusion": {
+          "default": "",
+          "title": "Analyst Conclusion",
+          "type": "string"
+        },
+        "stale": {
+          "default": false,
+          "title": "Stale",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "context_id",
+        "match_ids",
+        "summary",
+        "fix_purpose",
+        "category",
+        "hypothesis"
+      ],
+      "title": "Finding",
+      "type": "object"
+    },
+    "FunctionMatch": {
+      "additionalProperties": false,
+      "properties": {
+        "schema_version": {
+          "const": 1,
+          "default": 1,
+          "title": "Schema Version",
+          "type": "integer"
+        },
+        "id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "run_id": {
+          "title": "Run Id",
+          "type": "string"
+        },
+        "older": {
+          "items": {
+            "$ref": "#/$defs/FunctionRecord"
+          },
+          "title": "Older",
+          "type": "array"
+        },
+        "newer": {
+          "items": {
+            "$ref": "#/$defs/FunctionRecord"
+          },
+          "title": "Newer",
+          "type": "array"
+        },
+        "category": {
+          "enum": [
+            "modified",
+            "added",
+            "removed",
+            "unmatched",
+            "ambiguous",
+            "split",
+            "merged",
+            "unchanged"
+          ],
+          "title": "Category",
+          "type": "string"
+        },
+        "match_types": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Match Types",
+          "type": "array"
+        },
+        "quality": {
+          "default": "unknown",
+          "title": "Quality",
+          "type": "string"
+        },
+        "manual": {
+          "default": false,
+          "title": "Manual",
+          "type": "boolean"
+        },
+        "reason": {
+          "default": "",
+          "title": "Reason",
+          "type": "string"
+        },
+        "review": {
+          "default": "unreviewed",
+          "enum": [
+            "unreviewed",
+            "accepted",
+            "rejected",
+            "needs-review"
+          ],
+          "title": "Review",
+          "type": "string"
+        }
+      },
+      "required": [
+        "run_id",
+        "category"
+      ],
+      "title": "FunctionMatch",
+      "type": "object"
+    },
+    "FunctionRecord": {
+      "additionalProperties": false,
+      "properties": {
+        "schema_version": {
+          "const": 1,
+          "default": 1,
+          "title": "Schema Version",
+          "type": "integer"
+        },
+        "id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "artifact_id": {
+          "title": "Artifact Id",
+          "type": "string"
+        },
+        "run_id": {
+          "title": "Run Id",
+          "type": "string"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "address": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Address"
+        },
+        "address_space": {
+          "default": "unknown",
+          "enum": [
+            "virtual",
+            "relative",
+            "file-offset",
+            "unknown"
+          ],
+          "title": "Address Space",
+          "type": "string"
+        },
+        "code": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Code"
+        },
+        "assembly": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Assembly"
+        },
+        "callers": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Callers",
+          "type": "array"
+        },
+        "callees": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Callees",
+          "type": "array"
+        },
+        "metadata": {
+          "additionalProperties": true,
+          "title": "Metadata",
+          "type": "object"
+        }
+      },
+      "required": [
+        "artifact_id",
+        "run_id",
+        "name"
+      ],
+      "title": "FunctionRecord",
+      "type": "object"
+    },
+    "Hypothesis": {
+      "additionalProperties": false,
+      "properties": {
+        "schema_version": {
+          "const": 1,
+          "default": 1,
+          "title": "Schema Version",
+          "type": "integer"
+        },
+        "id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "explanation": {
+          "title": "Explanation",
+          "type": "string"
+        },
+        "supporting": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Supporting",
+          "type": "array"
+        },
+        "contradicting": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Contradicting",
+          "type": "array"
+        },
+        "preconditions": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Preconditions",
+          "type": "array"
+        },
+        "unknowns": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Unknowns",
+          "type": "array"
+        },
+        "verification": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Verification",
+          "type": "array"
+        },
+        "confidence": {
+          "default": "unknown",
+          "enum": [
+            "low",
+            "medium",
+            "high",
+            "unknown"
+          ],
+          "title": "Confidence",
+          "type": "string"
+        }
+      },
+      "required": [
+        "explanation"
+      ],
+      "title": "Hypothesis",
+      "type": "object"
+    },
+    "InterpretationRun": {
+      "additionalProperties": false,
+      "properties": {
+        "schema_version": {
+          "const": 1,
+          "default": 1,
+          "title": "Schema Version",
+          "type": "integer"
+        },
+        "id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "context": {
+          "$ref": "#/$defs/AnalysisContext"
+        },
+        "provider": {
+          "title": "Provider",
+          "type": "string"
+        },
+        "model": {
+          "title": "Model",
+          "type": "string"
+        },
+        "endpoint": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Endpoint"
+        },
+        "prompt_version": {
+          "default": "patchtrace-1",
+          "title": "Prompt Version",
+          "type": "string"
+        },
+        "created": {
+          "title": "Created",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "completed",
+            "failed",
+            "cancelled"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "findings": {
+          "items": {
+            "$ref": "#/$defs/Finding"
+          },
+          "title": "Findings",
+          "type": "array"
+        },
+        "raw_response": {
+          "default": "",
+          "title": "Raw Response",
+          "type": "string"
+        },
+        "error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Error"
+        },
+        "duration_seconds": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Duration Seconds",
+          "type": "number"
+        }
+      },
+      "required": [
+        "context",
+        "provider",
+        "model",
+        "status"
+      ],
+      "title": "InterpretationRun",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": 1,
+      "default": 1,
+      "title": "Schema Version",
+      "type": "integer"
+    },
+    "id": {
+      "maxLength": 128,
+      "minLength": 1,
+      "title": "Id",
+      "type": "string"
+    },
+    "name": {
+      "title": "Name",
+      "type": "string"
+    },
+    "created": {
+      "title": "Created",
+      "type": "string"
+    },
+    "revision": {
+      "default": 0,
+      "minimum": 0,
+      "title": "Revision",
+      "type": "integer"
+    },
+    "artifacts": {
+      "items": {
+        "$ref": "#/$defs/Artifact"
+      },
+      "title": "Artifacts",
+      "type": "array"
+    },
+    "runs": {
+      "items": {
+        "$ref": "#/$defs/AnalysisRun"
+      },
+      "title": "Runs",
+      "type": "array"
+    },
+    "matches": {
+      "items": {
+        "$ref": "#/$defs/FunctionMatch"
+      },
+      "title": "Matches",
+      "type": "array"
+    },
+    "interpretations": {
+      "items": {
+        "$ref": "#/$defs/InterpretationRun"
+      },
+      "title": "Interpretations",
+      "type": "array"
+    },
+    "annotations": {
+      "items": {
+        "$ref": "#/$defs/AnalystAnnotation"
+      },
+      "title": "Annotations",
+      "type": "array"
+    },
+    "sample": {
+      "default": false,
+      "title": "Sample",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "name",
+    "artifacts"
+  ],
+  "title": "ComparisonProject",
+  "type": "object",
+  "$id": "https://patchtrace.local/schemas/v1/ComparisonProject.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}

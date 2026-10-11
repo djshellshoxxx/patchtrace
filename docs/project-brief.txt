@@ -1,0 +1,860 @@
+# PatchTrace Specification Research and Authoring Prompt
+
+## Role and task
+
+You are a senior software architect, reverse engineering researcher, desktop application designer, and real-time systems engineer.
+
+Research and produce a complete, developer-ready specification package for PatchTrace.
+
+Project repository:
+https://github.com/djshellshoxxx/patchtrace/
+
+Your task is specification authoring, upstream investigation, integration design, and completeness auditing. Do not implement application code or begin application development.
+
+Inspect the project repository before deciding its structure. Read any applicable repository instructions, existing documentation, specifications, branches, and relevant issues. Preserve existing work and identify conflicts or gaps. If the repository is empty, define an appropriate documentation structure without assuming an implementation already exists.
+
+If repository writing is available, commit the specification package and research records to this repository on a dedicated documentation branch and open a reviewable pull request. Do not merge without authorization. If writing is unavailable, deliver the same package as clearly named files and explain the limitation. Do not create unrelated repositories.
+
+Stop after delivering the specifications and their completeness audit.
+
+## Project definition
+
+App name: PatchTrace.
+
+Working tagline: Compare binaries. Trace fixes. Investigate flaws.
+
+The name is provisional. Repository existence does not establish trademark or domain availability.
+
+Category: Local-first desktop application for binary comparison, patch review, and evidence-based investigation of software bugs and vulnerabilities.
+
+Primary goal:
+Compare an older compiled software version with a newer version, display corresponding code side by side, and analyse changes to investigate what bug or vulnerability the patch may have addressed.
+
+The proposed foundation combines:
+
+1. Ghidriff for Ghidra-backed binary analysis, function matching, and difference extraction.
+2. Suitable Diffalayze components for optional LLM-assisted interpretation and synthesis.
+3. PatchTrace-owned UI, normalized contracts, project persistence, evidence registry, and analyst review workflows.
+
+Reuse verified upstream capabilities. Concentrate original development on integration, usability, traceability, and reliable review.
+
+The application must distinguish:
+
+- Changes directly observed by analysis tools.
+- Model-generated hypotheses.
+- Analyst conclusions.
+- Supporting and contradicting evidence.
+- Unknowns and missing context.
+- Review status.
+- Separately supplied validation evidence.
+
+A patch may be a security fix, ordinary bug fix, feature change, refactoring, compiler-generated difference, or an unresolved mixture. Do not assume changed code represents a vulnerability.
+
+## Platforms, audience, and delivery
+
+Initial application platform: Windows 11 x64.
+
+Initial target artifacts: PE x86-64 executables, DLLs, and driver binaries, inspected statically. Parsing a driver must not install or load it.
+
+Design portable boundaries for later Linux application support and additional formats. Windows x86, ELF, ARM64, and Mach-O are deferred unless research supports a low-cost addition without weakening the initial release.
+
+Audience:
+
+- Vulnerability researchers.
+- Reverse engineers.
+- Malware analysts.
+- Incident responders.
+- Product security teams.
+- Native software maintainers.
+- Experienced system administrators.
+
+Initial collaboration model: one local analyst per project.
+
+Delivery context: one developer assisted by coding LLMs.
+
+Prefer free and open-source dependencies. Require no mandatory paid analysis engine, cloud account, or AI subscription.
+
+First release: Windows standalone beta with a complete comparison and review workflow.
+
+“Standalone” means a packaged desktop application. Research whether Java, Ghidra, Python, and other runtimes should be bundled or installed separately. Explicitly distinguish the desktop package from its required analysis dependencies.
+
+No fixed schedule or hardware minimum has been supplied. Propose hardware classes, measurable targets, and dependency-aware milestones. Do not invent benchmark results or imply large binary analysis is inexpensive.
+
+## Research requirements
+
+Inspect primary sources before finalizing architecture.
+
+Required upstream candidates:
+
+Ghidriff:
+https://github.com/clearbluejar/ghidriff
+
+Diffalayze:
+https://github.com/SySS-Research/diffalayze
+
+Ghidra:
+https://github.com/NationalSecurityAgency/ghidra
+
+Related projects to evaluate:
+
+PatchWatch:
+https://github.com/originsec/patchwatch
+
+BinDiff:
+https://github.com/google/bindiff
+
+BinExport:
+https://github.com/google/binexport
+
+Diaphora:
+https://github.com/joxeankoret/diaphora
+
+Ghidra RPC:
+https://github.com/cellebrite-labs/ghidra-rpc
+
+GhidrAssist:
+https://github.com/symgraph/GhidrAssist
+
+These are research inputs, not established claims about capabilities, licenses, compatibility, or quality.
+
+For Ghidriff and Diffalayze record:
+
+- Repository URL, inspected tag or commit, and access date.
+- Exact applicable licenses and dependency obligations.
+- Relevant source paths, classes, entry points, and output structures.
+- Runtime, backend, and platform compatibility.
+- Documented capabilities and capabilities confirmed through source inspection.
+- Tests and CI evidence, including their practical limits.
+- Windows packaging concerns.
+- Integration limitations and missing interfaces.
+- Relevant current issues.
+- Maintenance and upgrade risks.
+
+Investigate related projects sufficiently to identify useful concepts and avoid rebuilding existing capabilities. Do not add another engine merely because it exists.
+
+Produce this reuse matrix:
+
+Component | Upstream source and revision | Verified capability | Reuse method | Required adaptation | License | Test evidence | Risk
+
+Choose a concrete reuse method for each component:
+
+- Unchanged dependency.
+- Supported CLI invocation.
+- Existing API wrapper.
+- Permitted extraction with attribution.
+- Minimal documented fork.
+- New PatchTrace implementation for a verified gap.
+
+Prefer small adapters and upstream compatibility. If required source access is unavailable, identify the limitation and mark affected decisions provisional. Never invent internal APIs.
+
+Cite source titles, URLs, inspected versions, access dates, and relevant source paths. Separate facts, assumptions, recommendations, and unresolved decisions.
+
+## Technical decisions
+
+Recommend a coherent desktop stack after investigating upstream runtime and packaging constraints.
+
+Evaluate a Python desktop approach, such as PySide6, against credible alternatives where useful. Do not select it solely because upstream tools use Python.
+
+Explain decisions concerning:
+
+- Desktop framework and code-view implementation.
+- Runtime ownership.
+- Worker communication.
+- Storage.
+- Schema validation.
+- Secret storage.
+- Provider integrations.
+- Packaging.
+- Dependency distribution.
+- Test tooling.
+- License compatibility.
+- Future platform portability.
+
+Choose one preferred initial architecture. Record alternatives and the conditions that would justify switching. Avoid presenting unresolved alternatives throughout implementation contracts.
+
+Do not propose a custom decompiler or matching engine when the verified upstream foundation can provide the required capability.
+
+## End-to-end integration workflow
+
+### Stage 1: Project creation and ingestion
+
+The analyst explicitly selects older and newer artifacts.
+
+Validate supported formats and architectures. Hash and identify inputs, preserve originals, capture metadata, and create a comparison project.
+
+Define policies for:
+
+- File-size and parser limits.
+- Duplicate artifacts and identical binaries.
+- Unreadable or changing files.
+- Symbols and optional supporting documents.
+- Unicode paths, long paths, and workspace permissions.
+- Ownership and copying of artifacts.
+- Storage exhaustion.
+- Unsupported and incompatible pairs.
+
+Record analyst-selected orientation. Never infer older/newer solely from filenames, embedded version information, or timestamps.
+
+Swapping orientation must invalidate dependent interpretations and identify which artifact analysis can be reused.
+
+### Stage 2: Ghidriff/Ghidra worker
+
+Run analysis in a separate process so the desktop stays responsive and backend failure is contained. Process isolation is not a security sandbox.
+
+Prefer native Windows execution if verified practical. Docker may be an optional backend.
+
+Specify:
+
+- Backend discovery and version compatibility.
+- Safe argv construction without shell interpolation.
+- Worker protocol and event schemas.
+- Workspace and artifact ownership.
+- Analysis settings and reproducibility.
+- Log capture and redaction.
+- Determinate versus indeterminate progress.
+- Cancellation and process-tree cleanup.
+- Timeouts and enforceable resource limits.
+- Exit codes and failure classification.
+- Partial-result quarantine and inspection.
+- Retry and recovery.
+- Cache reuse and invalidation.
+- Atomic publication of completed outputs.
+
+Do not assume Ghidriff already supplies reliable progress, cancellation, or every required evidence field. Identify adapter work and any minimal upstream changes.
+
+Define Windows process cleanup concretely, including child processes and any required Job Object behavior.
+
+### Stage 3: Normalization
+
+Convert upstream outputs into PatchTrace-owned, versioned contracts.
+
+The UI and interpretation pipeline must consume these contracts rather than arbitrary Ghidriff JSON.
+
+Preserve raw outputs and upstream provenance.
+
+If required function addresses, instruction references, cross-references, or code mappings are absent, specify the smallest additional Ghidra extraction step.
+
+Represent missing evidence explicitly. Do not invent instruction-to-decompiler mappings or imply a decompiled line corresponds precisely to an instruction without verified mapping data.
+
+### Stage 4: Comparison and manual review
+
+Render function matches and code differences through normalized presentation models.
+
+Allow analysts to inspect, reject, and correct matches before interpretation.
+
+Persist manual decisions with provenance. Define their interaction with reanalysis and ambiguous, split, or merged functions.
+
+### Stage 5: Diffalayze-derived interpretation
+
+Inspect suitable Diffalayze provider and staged-analysis components.
+
+Adapt the workflow for user-supplied binary comparisons. Automatic acquisition must not be required.
+
+Choose whether each reused component is imported, wrapped, extracted, or minimally forked. State exact source boundaries and attribution obligations.
+
+Separate acquisition, interpretation, provider access, UI, and project ownership.
+
+Do not carry over automatic command execution triggered by model-generated severity.
+
+AI is optional. Offline comparison and manual review must remain usable without model configuration.
+
+Specify one local-provider path and one remote-provider path. Document verification evidence accurately. If live verification is unavailable, provide executable acceptance procedures and mark the path unverified.
+
+Remote transmission requires an explicit analyst choice and context preview.
+
+### Stage 6: Validation and persistence
+
+Parse interpretation output into a strict schema.
+
+Validate evidence IDs against the exact supplied context. Validate their artifact, run, side, and location associations.
+
+A valid citation establishes traceability, not interpretation correctness.
+
+Reject or visibly mark malformed output, unsupported references, and ungrounded claims. Preserve raw model text separately without promoting it into accepted findings.
+
+Persist:
+
+- Structured findings and hypotheses.
+- Review status and annotations.
+- Provider and model configuration, excluding credentials.
+- Prompt and schema versions.
+- Context identity and digest.
+- Relevant analysis settings.
+- Truncation and limitations.
+- Timing, usage, and retry metadata where available.
+
+### Stage 7: Reporting
+
+Generate Markdown, self-contained HTML, and versioned JSON reports from persisted project data.
+
+Distinguish observations, model hypotheses, analyst conclusions, and validation evidence.
+
+Define deterministic report selection, provenance, redaction, manifests, and error behavior.
+
+## Architecture and modularity
+
+Define a proposed project tree and module catalog covering:
+
+1. Artifact ingestion and identification.
+2. Backend discovery and configuration.
+3. Ghidriff/Ghidra worker adapter.
+4. Upstream output normalization.
+5. Function matching and manual overrides.
+6. Difference and alignment presentation models.
+7. Evidence registry.
+8. Diffalayze interpretation adapter.
+9. Model-provider interfaces.
+10. Context selection and token budgeting.
+11. Finding and hypothesis management.
+12. Project persistence and migrations.
+13. Jobs, progress, cancellation, and recovery.
+14. Desktop UI.
+15. Report generation.
+16. Diagnostics and redacted logging.
+
+For every module specify:
+
+- Stable module ID.
+- Responsibilities and explicit boundaries.
+- Public interfaces.
+- Inputs, outputs, and validation.
+- Dependency direction.
+- State and resource ownership.
+- Error and recovery behavior.
+- Thread and process constraints.
+- Portability boundaries.
+- Test seams and fixtures.
+- Integration sequence.
+- Compatibility and upgrade risks.
+
+UI modules must not own binary analysis logic. Provider adapters must not own findings or project state. Backend details must stay behind explicit adapters.
+
+Make substantial components reusable independently of the desktop and chosen backend. Avoid splitting every trivial operation into a separate module.
+
+Define API signatures or language-neutral contracts, error taxonomy, cancellation semantics, and examples. Schema examples and interface signatures are specification material, not application implementation.
+
+## Required normalized contracts
+
+Provide developer-ready schemas for:
+
+- Artifact.
+- ComparisonProject.
+- AnalysisRun.
+- BackendCapabilities.
+- FunctionRecord.
+- FunctionMatch.
+- DiffHunk.
+- EvidenceReference.
+- AnalysisContext.
+- InterpretationRun.
+- Finding.
+- Hypothesis.
+- AnalystAnnotation.
+- JobEvent.
+- ExportManifest.
+
+For each define:
+
+- Stable schema ID and version.
+- Identity and lifecycle.
+- Field names, types, optionality, and null semantics.
+- Validation and invariants.
+- Relationships and ownership.
+- Serialization.
+- Compatibility and migration rules.
+- Representative valid and invalid examples.
+
+Use project-owned stable IDs.
+
+Represent addresses with artifact identity, address space, and a clearly defined representation. Distinguish virtual addresses, relative addresses, and file offsets where relevant. Do not assume equal addresses indicate corresponding code.
+
+Separate function-match quality from interpretation confidence.
+
+Support added, removed, ambiguous, unmatched, split, and merged relationships. If upstream matching lacks split or merge detection, define honest initial manual or unresolved representations and defer automated detection.
+
+Preserve manual match provenance.
+
+Track stale evidence and findings after reanalysis, orientation changes, match corrections, or settings changes. Specify invalidation rules precisely.
+
+Record artifact hashes, backend versions, settings, context identities, and prompt versions.
+
+Do not display model confidence percentages as calibrated probabilities.
+
+Define backwards-compatible imports and treatment of unknown future schema versions.
+
+## Interpretation behavior
+
+For each selected change investigate:
+
+1. What changed?
+2. What did the older code appear to do?
+3. How does the newer code alter behavior?
+4. Which bug or vulnerability hypothesis best explains the change?
+5. Which alternative explanations remain plausible?
+6. Which preconditions would be necessary?
+7. Is relevant input influence established or unknown?
+8. Is reachability established or unknown?
+9. Which evidence supports or contradicts the hypothesis?
+10. Which inspection or reproduction would resolve uncertainty?
+
+Require:
+
+- Change summary.
+- Proposed fix purpose.
+- Bug category.
+- Optional CWE mapping and rationale.
+- Affected functions and paths.
+- Supporting evidence.
+- Counterevidence.
+- Preconditions.
+- Unknowns.
+- Alternative hypotheses.
+- Suggested verification steps.
+- Analyst review status.
+
+Do not invent CVE attribution, affected version ranges, attacker control, exploitability, or severity.
+
+Use changed functions and relevant caller/callee context within a bounded budget. Avoid isolated interpretation when behavior depends on related functions.
+
+Specify:
+
+- Context selection and ranking.
+- Cross-reference depth and expansion.
+- Handling of missing code.
+- Token estimation and budgeting.
+- Truncation and visible omission records.
+- Batching and deduplication.
+- Cache keys and invalidation.
+- Provider limits.
+- Retry policies and bounded repair attempts.
+- Rate limits and cancellation.
+- Cost estimation with clearly stated assumptions.
+- Context preview.
+- Provider response validation.
+
+Do not claim omitted context is harmless. Preserve a record of what was selected, excluded, unavailable, or truncated.
+
+Treat artifact text, imported documents, code comments, and model output as untrusted data. They cannot authorize tools, commands, or changes to analysis policy.
+
+## Interface specification
+
+Provide detailed screen specifications and annotated wireframes.
+
+Use a professional technical appearance:
+
+- Dark neutral theme with blue/cyan accents.
+- Optional light theme.
+- Readable monospace code.
+- Adjustable font size.
+- Restrained highlighting.
+- Clearly labeled older and newer sides.
+- Indicators that do not rely solely on color.
+- Resizable panels.
+- Persistent layout preferences.
+- Keyboard access and accessible focus behavior.
+
+The complete workflow must work on one monitor. Detached comparison or findings panels may support additional monitors.
+
+For every control specify its action, enabled conditions, validation, loading state, error state, and resulting persisted changes.
+
+### Screen 1: Start and project browser
+
+Include:
+
+- New comparison.
+- Open project.
+- Recent projects.
+- Import supported diff output.
+- Backend setup status.
+- Model setup status.
+- Documentation.
+- Representative sample project.
+
+Missing model configuration must not block ordinary comparison.
+
+### Screen 2: New comparison wizard
+
+Include:
+
+- Older and newer artifact pickers.
+- Drag and drop.
+- Swap versions.
+- Detected format and architecture.
+- Hashes and metadata.
+- Optional symbols and supporting documents.
+- Project name and workspace selection.
+- Backend and analysis settings.
+- Static-only operation indicator.
+- Unsupported and incompatible input states.
+
+AI interpretation is a separately selected step. Remote context preview must show what will actually be transmitted.
+
+### Screen 3: Investigation workspace
+
+Define a toolbar and four resizable regions: function navigator, comparison, findings/evidence, and jobs/diagnostics.
+
+Toolbar:
+
+- Project and artifact identity.
+- Comparison status.
+- Search.
+- Run comparison.
+- Analyse selected functions.
+- Cancel active job.
+- Export.
+- Backend and model settings.
+
+Explain queued and running actions.
+
+Function navigator:
+
+- Function names or generated identifiers.
+- Older/newer addresses.
+- Match status.
+- Observed change category.
+- Match quality.
+- Review status.
+- Finding indicator.
+
+Filters:
+
+- Modified.
+- Added.
+- Removed.
+- Unmatched.
+- Ambiguous.
+- Reviewed or unreviewed.
+- Has findings.
+- Manual matches.
+
+Keep observed categories separate from model-generated security relevance.
+
+Comparison:
+
+Older version on the left, newer version on the right.
+
+Modes:
+
+- Decompiled code.
+- Assembly.
+- Metadata and references.
+
+Include:
+
+- Synchronized and independent scrolling.
+- Next and previous difference.
+- Matching-region alignment.
+- Explicit gaps when correspondence is unavailable.
+- Function identity and address headers.
+- Context expansion.
+- Cross-reference navigation.
+- Evidence selection and bookmarks.
+- Manual match correction.
+- Copy with provenance.
+- Decompilation failure and missing-code states.
+
+Do not align solely by equal line numbers or equal addresses. Specify the alignment algorithm, uncertainty representation, and selection mapping.
+
+Control-flow and call-graph visualizations are deferred unless research establishes practical initial-release feasibility.
+
+Findings and evidence:
+
+- Change summary.
+- Proposed bug or vulnerability.
+- Alternative explanations.
+- Supporting and contradicting evidence.
+- Preconditions and unknowns.
+- Review controls.
+- Analyst notes.
+- Provider/model information.
+- Context and truncation information.
+
+Clicking evidence must navigate to the correct artifact side and highlight the cited location. Define unavailable and stale-reference behavior.
+
+Optional “Ask about this change” uses explicit selected context and preserved citations. It cannot replace structured findings or become an unrestricted tool-execution agent.
+
+Jobs and diagnostics:
+
+- Analysis stages.
+- Progress or indeterminate state.
+- Cancellation state.
+- Redacted logs.
+- Backend errors.
+- Retry controls.
+- Partial results.
+- Resumable stages.
+
+### Screen 4: Project findings
+
+Provide a searchable table showing:
+
+- Function.
+- Interpretation category.
+- Evidence completeness.
+- Review status.
+- Unknowns.
+- Last analysis.
+- Current or stale status.
+
+Include batch selection, report inclusion controls, and navigation to code.
+
+### Screen 5: Settings and diagnostics
+
+Cover:
+
+- Backend paths and version checks.
+- Native and optional container execution.
+- Worker limits.
+- Local model endpoints.
+- Remote providers and credentials.
+- Context/token budgets.
+- Storage and cache management.
+- Privacy and logging.
+- Accessibility.
+- Dependency diagnostics.
+
+Store secrets separately from projects, reports, and exports.
+
+### Screen 6: Export review
+
+Preview report contents.
+
+Options:
+
+- Selected findings or entire project.
+- Include or omit binary-derived code.
+- Include analyst notes.
+- Include raw model text.
+- Redact paths and sensitive strings.
+- Include provenance and limitations.
+
+HTML exports must escape untrusted content and require no third-party scripts or assets.
+
+## Scope
+
+Initial release:
+
+- Arbitrary user-selected supported binary pairs.
+- Ghidriff/Ghidra static comparison.
+- Side-by-side code review.
+- Function matching with visible uncertainty.
+- Manual match correction.
+- Optional Diffalayze-derived interpretation.
+- Local and remote provider architecture.
+- Acceptance evidence for at least one local and one remote provider path.
+- Evidence-linked findings.
+- Notes, bookmarks, review state, and persistence.
+- Cancellation and recovery.
+- Markdown, HTML, and JSON export.
+- Windows packaging and setup diagnostics.
+- Help and representative sample workflows.
+
+Deferred:
+
+- Automatic Patch Tuesday ingestion.
+- Automatic binary downloads.
+- Multi-file release comparisons.
+- Additional formats and architectures.
+- Advanced graph visualizations.
+- Runtime debugging and automatic reproduction.
+- Collaboration and hosted deployment.
+- Automatic exploit or payload generation.
+
+Provide useful extension boundaries without inflating the MVP.
+
+## Security, privacy, and licensing
+
+Provide a proportionate threat model covering:
+
+- Malformed binaries and symbols.
+- Unsafe paths and subprocess arguments.
+- Backend and parser crashes.
+- Prompt injection in imported content.
+- Malicious markup or instructions in model output.
+- Remote data transmission.
+- Credential exposure.
+- Local endpoint authentication and unintended exposure.
+- Project corruption and unsafe deserialization.
+- Dependency supply-chain risks.
+
+Specify controls at their responsible modules and map them to tests.
+
+No automatic execution of target binaries or model-suggested commands.
+
+Define remote consent scope, context previews, cancellation limitations after transmission, logging policy, and secret redaction.
+
+Review exact pinned licenses for Ghidriff, Diffalayze, Ghidra, UI libraries, provider SDKs, and bundled runtimes.
+
+An MIT wrapper does not remove GPL dependency obligations. Subprocess separation does not automatically resolve distribution licensing questions.
+
+Produce dependency, attribution, notice, and distribution inventories. Identify unresolved decisions explicitly. Do not make definitive legal claims where the facts or interpretation remain uncertain.
+
+## Persistence, migrations, and recovery
+
+Specify:
+
+- Project directory layout and database choice.
+- Original artifacts, derived outputs, and raw upstream output storage.
+- Transactions and atomic writes.
+- Crash recovery and interrupted jobs.
+- Schema migrations.
+- Backup and restoration.
+- Integrity checks.
+- Concurrent-open behavior.
+- Cache cleanup.
+- Portable project export/import.
+- Missing artifact recovery.
+- Disk-full behavior.
+- Path relocation.
+- Stale-result handling.
+- Secret exclusion.
+
+Do not use unsafe deserialization for imported projects.
+
+## Quality and verification
+
+Every requirement needs a stable ID, priority, rationale, failure behavior, and testable acceptance criteria.
+
+Define measurable resource and responsiveness targets against explicit hardware and dataset classes. Include small, medium, and large binary scenarios, code-view scale, evidence volume, and model-context limits.
+
+Separate proposed targets from measured results.
+
+Define matching precision/recall separately from interpretation evaluation. Establish ground truth and held-out examples. Explain ambiguous correspondence and analyst disagreement.
+
+Include acceptance coverage for:
+
+- Known patched and unpatched examples.
+- Ordinary non-security fixes.
+- Identical binaries.
+- Address relocation and rebuild noise.
+- Different compiler settings.
+- Stripped symbols.
+- Added, removed, split, merged, and ambiguous functions.
+- Manual-match persistence.
+- Incorrect high-confidence matches.
+- Analysis-setting-induced decompiler differences.
+- Missing caller/callee context.
+- Malformed model output.
+- Fabricated evidence references.
+- Unsupported model claims.
+- Prompt injection.
+- Offline comparison.
+- Provider timeouts, rate limits, and interruption.
+- Worker failure and cancellation.
+- Migrations and stale results.
+- Alignment, keyboard use, and evidence navigation.
+- Export escaping and redaction.
+- Fresh Windows installation and dependency setup.
+
+Specify test fixtures, expected results, execution procedure, and evidence capture.
+
+During specification work, source inspection and limited dependency evaluation may be performed if tools permit. Do not create the application. Never claim tests, benchmarks, provider checks, or demonstrations were performed unless they actually were.
+
+## Required specification package
+
+Deliver all of the following, organized into maintainable repository documents:
+
+1. Executive summary.
+2. Confirmed requirements, assumptions, recommendations, and open decisions.
+3. Research notes and cited sources.
+4. Upstream investigation and reuse matrix.
+5. Scope and feature inventory.
+6. User journeys and edge cases.
+7. Functional requirements.
+8. Measurable quality requirements.
+9. Platform and compatibility matrix.
+10. Architecture and data-flow diagrams.
+11. Module catalog and project structure.
+12. Function/API contracts.
+13. Normalized schemas and example records.
+14. Detailed Ghidriff integration specification.
+15. Detailed Diffalayze integration specification.
+16. UI specification and annotated wireframes.
+17. Interpretation and evidence rules.
+18. Threat model and privacy controls.
+19. License and distribution inventory.
+20. Persistence, migrations, backup, and recovery design.
+21. Verification strategy and benchmark plan.
+22. Build, packaging, update, and support requirements.
+23. Dependency-aware implementation plan.
+24. Traceability matrix.
+25. Risks and decision register.
+26. Final completeness audit.
+27. Glossary.
+
+Explain genuinely inapplicable sections rather than omitting them.
+
+Use compact rendered diagrams for architecture, state transitions, and meaningful event sequences. Use tables for exact contracts and mappings. Avoid decorative diagrams.
+
+## Implementation roadmap
+
+Provide an actionable future implementation sequence:
+
+1. Pin and evaluate dependencies.
+2. Demonstrate comparison and interpretation on a known example.
+3. Define and validate normalized contracts.
+4. Implement worker orchestration and persistence.
+5. Deliver a usable comparison-only UI.
+6. Integrate optional interpretation.
+7. Add evidence navigation and analyst review.
+8. Complete exports, recovery, and diagnostics.
+9. Validate packaging on a clean Windows machine.
+10. Run acceptance, security, correctness, and performance checks.
+
+For every milestone specify:
+
+- Dependencies.
+- Deliverables.
+- Relevant modules and requirements.
+- Test evidence.
+- Completion criteria.
+- Unresolved risks.
+- Decisions that must be settled first.
+
+Give developers enough detail to estimate, implement, integrate, and verify each milestone without guessing about core behavior.
+
+Maintain a traceability matrix connecting requirements, interfaces, modules, UI workflows, tests, milestones, risks, and decisions.
+
+Do not represent this roadmap as completed development.
+
+## Final completeness audit
+
+Audit the package for:
+
+- Requirements without tests.
+- Features without module support.
+- Modules without contracts.
+- UI controls without complete workflows.
+- Findings without evidence rules.
+- Hidden assumptions about upstream APIs.
+- License or packaging contradictions.
+- Missing cancellation, recovery, or partial-result states.
+- Missing invalidation and stale-evidence behavior.
+- Inconsistent schema identity or versioning.
+- Scope creep.
+- Unsupported claims about accuracy, novelty, security, or exploitability.
+
+Use stable IDs for requirements, modules, interfaces, schemas, tests, risks, and decisions.
+
+Resolve gaps that can be resolved through research and specification. Record remaining blockers with their impact, owner or responsible role, required evidence, and the implementation stage they block.
+
+Ask only questions essential to prevent a materially incorrect specification. Otherwise proceed with clearly labeled assumptions.
+
+Research whenever a gap affects correctness. Prefer official documentation, source repositories, standards, and research papers.
+
+If tools or sources are unavailable, state the limitation and preserve uncertainty.
+
+## Final delivery
+
+Deliver the complete specification package, its completeness audit, and a concise account of:
+
+- Documents produced.
+- Repository branch, commit, and pull request, when applicable.
+- Upstream revisions inspected.
+- Dependency checks actually performed.
+- Remaining blockers and provisional decisions.
+- Recommended first implementation milestone.
+
+Do not claim PatchTrace is implemented, tested, packaged, or released.
+
+Stop after specification delivery and the audit. Application implementation requires a separate instruction.

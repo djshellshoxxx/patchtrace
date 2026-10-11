@@ -1,0 +1,189 @@
+{
+  "$defs": {
+    "Hypothesis": {
+      "additionalProperties": false,
+      "properties": {
+        "schema_version": {
+          "const": 1,
+          "default": 1,
+          "title": "Schema Version",
+          "type": "integer"
+        },
+        "id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "explanation": {
+          "title": "Explanation",
+          "type": "string"
+        },
+        "supporting": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Supporting",
+          "type": "array"
+        },
+        "contradicting": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Contradicting",
+          "type": "array"
+        },
+        "preconditions": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Preconditions",
+          "type": "array"
+        },
+        "unknowns": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Unknowns",
+          "type": "array"
+        },
+        "verification": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Verification",
+          "type": "array"
+        },
+        "confidence": {
+          "default": "unknown",
+          "enum": [
+            "low",
+            "medium",
+            "high",
+            "unknown"
+          ],
+          "title": "Confidence",
+          "type": "string"
+        }
+      },
+      "required": [
+        "explanation"
+      ],
+      "title": "Hypothesis",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": 1,
+      "default": 1,
+      "title": "Schema Version",
+      "type": "integer"
+    },
+    "id": {
+      "maxLength": 128,
+      "minLength": 1,
+      "title": "Id",
+      "type": "string"
+    },
+    "context_id": {
+      "title": "Context Id",
+      "type": "string"
+    },
+    "match_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Match Ids",
+      "type": "array"
+    },
+    "summary": {
+      "title": "Summary",
+      "type": "string"
+    },
+    "fix_purpose": {
+      "title": "Fix Purpose",
+      "type": "string"
+    },
+    "category": {
+      "enum": [
+        "security-fix",
+        "ordinary-bug",
+        "feature",
+        "refactor",
+        "compiler-noise",
+        "unknown"
+      ],
+      "title": "Category",
+      "type": "string"
+    },
+    "hypothesis": {
+      "$ref": "#/$defs/Hypothesis"
+    },
+    "alternatives": {
+      "items": {
+        "$ref": "#/$defs/Hypothesis"
+      },
+      "title": "Alternatives",
+      "type": "array"
+    },
+    "cwe": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Cwe"
+    },
+    "cwe_rationale": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Cwe Rationale"
+    },
+    "review": {
+      "default": "unreviewed",
+      "enum": [
+        "unreviewed",
+        "accepted",
+        "rejected",
+        "needs-review"
+      ],
+      "title": "Review",
+      "type": "string"
+    },
+    "analyst_conclusion": {
+      "default": "",
+      "title": "Analyst Conclusion",
+      "type": "string"
+    },
+    "stale": {
+      "default": false,
+      "title": "Stale",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "context_id",
+    "match_ids",
+    "summary",
+    "fix_purpose",
+    "category",
+    "hypothesis"
+  ],
+  "title": "Finding",
+  "type": "object",
+  "$id": "https://patchtrace.local/schemas/v1/Finding.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}

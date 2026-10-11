@@ -1,0 +1,104 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": 1,
+      "default": 1,
+      "title": "Schema Version",
+      "type": "integer"
+    },
+    "id": {
+      "maxLength": 128,
+      "minLength": 1,
+      "title": "Id",
+      "type": "string"
+    },
+    "artifact_id": {
+      "title": "Artifact Id",
+      "type": "string"
+    },
+    "run_id": {
+      "title": "Run Id",
+      "type": "string"
+    },
+    "name": {
+      "title": "Name",
+      "type": "string"
+    },
+    "address": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Address"
+    },
+    "address_space": {
+      "default": "unknown",
+      "enum": [
+        "virtual",
+        "relative",
+        "file-offset",
+        "unknown"
+      ],
+      "title": "Address Space",
+      "type": "string"
+    },
+    "code": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Code"
+    },
+    "assembly": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Assembly"
+    },
+    "callers": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Callers",
+      "type": "array"
+    },
+    "callees": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Callees",
+      "type": "array"
+    },
+    "metadata": {
+      "additionalProperties": true,
+      "title": "Metadata",
+      "type": "object"
+    }
+  },
+  "required": [
+    "artifact_id",
+    "run_id",
+    "name"
+  ],
+  "title": "FunctionRecord",
+  "type": "object",
+  "$id": "https://patchtrace.local/schemas/v1/FunctionRecord.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}

@@ -1,0 +1,142 @@
+{
+  "$defs": {
+    "EvidenceReference": {
+      "additionalProperties": false,
+      "properties": {
+        "schema_version": {
+          "const": 1,
+          "default": 1,
+          "title": "Schema Version",
+          "type": "integer"
+        },
+        "id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "artifact_id": {
+          "title": "Artifact Id",
+          "type": "string"
+        },
+        "run_id": {
+          "title": "Run Id",
+          "type": "string"
+        },
+        "function_id": {
+          "title": "Function Id",
+          "type": "string"
+        },
+        "side": {
+          "enum": [
+            "older",
+            "newer"
+          ],
+          "title": "Side",
+          "type": "string"
+        },
+        "start_line": {
+          "minimum": 1,
+          "title": "Start Line",
+          "type": "integer"
+        },
+        "end_line": {
+          "minimum": 1,
+          "title": "End Line",
+          "type": "integer"
+        },
+        "text": {
+          "title": "Text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "artifact_id",
+        "run_id",
+        "function_id",
+        "side",
+        "start_line",
+        "end_line",
+        "text"
+      ],
+      "title": "EvidenceReference",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": 1,
+      "default": 1,
+      "title": "Schema Version",
+      "type": "integer"
+    },
+    "id": {
+      "maxLength": 128,
+      "minLength": 1,
+      "title": "Id",
+      "type": "string"
+    },
+    "project_id": {
+      "title": "Project Id",
+      "type": "string"
+    },
+    "revision": {
+      "minimum": 0,
+      "title": "Revision",
+      "type": "integer"
+    },
+    "match_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Match Ids",
+      "type": "array"
+    },
+    "evidence": {
+      "items": {
+        "$ref": "#/$defs/EvidenceReference"
+      },
+      "title": "Evidence",
+      "type": "array"
+    },
+    "omitted": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Omitted",
+      "type": "array"
+    },
+    "digest": {
+      "title": "Digest",
+      "type": "string"
+    },
+    "token_estimate": {
+      "minimum": 0,
+      "title": "Token Estimate",
+      "type": "integer"
+    },
+    "payload": {
+      "title": "Payload",
+      "type": "string"
+    },
+    "stale": {
+      "default": false,
+      "title": "Stale",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "project_id",
+    "revision",
+    "match_ids",
+    "evidence",
+    "digest",
+    "token_estimate",
+    "payload"
+  ],
+  "title": "AnalysisContext",
+  "type": "object",
+  "$id": "https://patchtrace.local/schemas/v1/AnalysisContext.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}

@@ -1,0 +1,74 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": 1,
+      "default": 1,
+      "title": "Schema Version",
+      "type": "integer"
+    },
+    "id": {
+      "maxLength": 128,
+      "minLength": 1,
+      "title": "Id",
+      "type": "string"
+    },
+    "explanation": {
+      "title": "Explanation",
+      "type": "string"
+    },
+    "supporting": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Supporting",
+      "type": "array"
+    },
+    "contradicting": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Contradicting",
+      "type": "array"
+    },
+    "preconditions": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Preconditions",
+      "type": "array"
+    },
+    "unknowns": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Unknowns",
+      "type": "array"
+    },
+    "verification": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Verification",
+      "type": "array"
+    },
+    "confidence": {
+      "default": "unknown",
+      "enum": [
+        "low",
+        "medium",
+        "high",
+        "unknown"
+      ],
+      "title": "Confidence",
+      "type": "string"
+    }
+  },
+  "required": [
+    "explanation"
+  ],
+  "title": "Hypothesis",
+  "type": "object",
+  "$id": "https://patchtrace.local/schemas/v1/Hypothesis.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}

@@ -1,0 +1,2 @@
+# Build order and gates
+M1 contracts, ingestion, normalization and research. M2 native worker/lifecycle with isolated fixture. M3 transactional projects, manual review, responsive desktop. M4 bounded context, optional providers, strict evidence. M5 reports, help and diagnostics. M6 code audit, acceptance checks, Windows package, merge and release artifact. Each milestone keeps traceability and tests; no failed/blocked check counts as passed.

@@ -1,0 +1,63 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": 1,
+      "default": 1,
+      "title": "Schema Version",
+      "type": "integer"
+    },
+    "id": {
+      "maxLength": 128,
+      "minLength": 1,
+      "title": "Id",
+      "type": "string"
+    },
+    "match_id": {
+      "title": "Match Id",
+      "type": "string"
+    },
+    "old_start": {
+      "minimum": 0,
+      "title": "Old Start",
+      "type": "integer"
+    },
+    "old_end": {
+      "minimum": 0,
+      "title": "Old End",
+      "type": "integer"
+    },
+    "new_start": {
+      "minimum": 0,
+      "title": "New Start",
+      "type": "integer"
+    },
+    "new_end": {
+      "minimum": 0,
+      "title": "New End",
+      "type": "integer"
+    },
+    "operation": {
+      "enum": [
+        "equal",
+        "replace",
+        "delete",
+        "insert"
+      ],
+      "title": "Operation",
+      "type": "string"
+    }
+  },
+  "required": [
+    "match_id",
+    "old_start",
+    "old_end",
+    "new_start",
+    "new_end",
+    "operation"
+  ],
+  "title": "DiffHunk",
+  "type": "object",
+  "$id": "https://patchtrace.local/schemas/v1/DiffHunk.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}

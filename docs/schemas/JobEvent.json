@@ -1,0 +1,56 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": 1,
+      "default": 1,
+      "title": "Schema Version",
+      "type": "integer"
+    },
+    "id": {
+      "maxLength": 128,
+      "minLength": 1,
+      "title": "Id",
+      "type": "string"
+    },
+    "run_id": {
+      "title": "Run Id",
+      "type": "string"
+    },
+    "stage": {
+      "title": "Stage",
+      "type": "string"
+    },
+    "message": {
+      "title": "Message",
+      "type": "string"
+    },
+    "progress": {
+      "anyOf": [
+        {
+          "maximum": 1,
+          "minimum": 0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Progress"
+    },
+    "created": {
+      "title": "Created",
+      "type": "string"
+    }
+  },
+  "required": [
+    "run_id",
+    "stage",
+    "message"
+  ],
+  "title": "JobEvent",
+  "type": "object",
+  "$id": "https://patchtrace.local/schemas/v1/JobEvent.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}
