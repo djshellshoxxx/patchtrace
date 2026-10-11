@@ -138,7 +138,8 @@ def _validated_manifest(data: dict) -> tuple[str, tuple[BundleFile, ...]]:
     if data['platform'] != 'windows' or data['architecture'] != 'amd64':
         _fail('this bundle is not a Windows x64 backend')
     runtime_id = data['runtime_id']
-    if not isinstance(runtime_id, str) or not ID.fullmatch(runtime_id) or runtime_id.endswith('.'):
+    if (not isinstance(runtime_id, str) or not ID.fullmatch(runtime_id)
+            or runtime_id.endswith('.') or runtime_id.split('.')[0].upper() in WINDOWS_RESERVED):
         _fail('invalid runtime ID')
     if data['python'] != 'python/python.exe' or data['ghidra'] != 'ghidra' or data['java'] != 'jdk':
         _fail('unsupported portable runtime layout')
