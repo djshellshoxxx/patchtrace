@@ -1,5 +1,6 @@
 """Fake child coverage; this does not claim Ghidra runtime acceptance."""
 import hashlib
+import json
 import os
 import sys
 import threading
@@ -367,3 +368,36 @@ def test_native_engine_workspace_removed_when_analysis_fails(fake_runtime):
     workspace = Path((path / 'raw' / 'workspace-path.txt').read_text())
     assert not workspace.parent.exists()
     assert (path / 'failure.txt').is_file()
+
+
+def test_symbol_lookup_requires_explicit_opt_in(fake_runtime):
+    root, package, project, config = fake_runtime
+    write_backend(package,
+        '(out/"argv.json").write_text(json.dumps(sys.argv))\n'
+        '(out/"json"/"old-new.ghidriff.json").write_text('
+        'json.dumps({"functions":{"added":[],"deleted":[],"modified":[]}}))\n')
+
+    path, offline = run_comparison(config, project, root, threading.Event(), lambda _: None)
+    argv = json.loads((path.parent.parent / 'argv.json').read_text())
+    assert offline.status == 'completed', offline.error
+    assert '--no-symbols' in argv
+    assert offline.settings['allow_symbol_downloads'] is False
+
+    online_config = backend.BackendConfig(
+        config.python_executable, config.ghidra_dir, allow_symbol_downloads=True)
+    path, online = run_comparison(online_config, project, root, threading.Event(), lambda _: None)
+    argv = json.loads((path.parent.parent / 'argv.json').read_text())
+    assert online.status == 'completed', online.error
+    assert '--no-symbols' not in argv
+    assert online.settings['allow_symbol_downloads'] is True
+
+
+@pytest.mark.parametrize('value', ['false', 0, None, 1])
+def test_symbol_policy_rejects_ambiguous_non_boolean_values(fake_runtime, value):
+    root, _package, project, config = fake_runtime
+    invalid = backend.BackendConfig(
+        config.python_executable, config.ghidra_dir, allow_symbol_downloads=value)
+    directory, run = run_comparison(invalid, project, root, threading.Event(), lambda _: None)
+    assert run.status == 'failed'
+    assert 'allow_symbol_downloads' in run.error
+    assert (directory / 'failure.txt').is_file()

@@ -311,3 +311,23 @@ def test_backend_normalization_error_is_quarantined_and_recorded(window, monkeyp
     assert (window.service.root / terminal.raw_path).is_file()
     assert [m.id for m in window.project.matches] == before
     assert errors and 'PT-SCHEMA' in errors[0]
+
+
+def test_symbol_server_policy_disabled_by_default_and_persisted(window, monkeypatch):
+    from patchtrace.ui import SetupDialog
+
+    dialog = SetupDialog(window.settings, window)
+    assert not dialog.allow_symbol_downloads.isChecked()
+    assert not dialog.config().allow_symbol_downloads
+
+    dialog.allow_symbol_downloads.setChecked(True)
+    assert dialog.config().allow_symbol_downloads
+    def accept_with_symbol_lookup(self):
+        self.allow_symbol_downloads.setChecked(True)
+        return QDialog.DialogCode.Accepted
+
+    monkeypatch.setattr(SetupDialog, 'exec', accept_with_symbol_lookup)
+    # Save settings through the existing GUI workflow using a real dialog.
+    window.setup()
+    assert window.settings.value('backend/allow_symbol_downloads', False, type=bool)
+    assert window.backend_config().allow_symbol_downloads
