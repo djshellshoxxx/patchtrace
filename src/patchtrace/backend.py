@@ -52,6 +52,7 @@ class BackendConfig:
     python_executable: str
     ghidra_dir: str
     timeout_seconds: int = 3600
+    allow_symbol_downloads: bool = False
 
 
 def _config_errors(config: BackendConfig) -> list[str]:
@@ -70,6 +71,8 @@ def _config_errors(config: BackendConfig) -> list[str]:
         errors.append('PT-BACKEND: Ghidra/application.properties is missing; select the installation root')
     if isinstance(config.timeout_seconds, bool) or not isinstance(config.timeout_seconds, int) or config.timeout_seconds <= 0:
         errors.append('PT-BACKEND: timeout_seconds must be a positive integer')
+    if not isinstance(config.allow_symbol_downloads, bool):
+        errors.append('PT-BACKEND: allow_symbol_downloads must be a boolean')
     return errors
 
 
@@ -131,6 +134,8 @@ def diagnose(config: BackendConfig) -> list[str]:
         return ['PT-BACKEND: Ghidra application.properties is unreadable; correct installation permissions']
     statuses = ['Python executable: configured external interpreter',
                 f'Ghidra installation: root verified; version {ghidra_version}']
+    statuses.append('Ghidriff symbol-server lookup: enabled by analyst' if config.allow_symbol_downloads
+                    else 'Ghidriff symbol-server lookup: disabled (local/offline option)')
     try:
         metadata = _probe_backend(config)
         statuses.append(f'Python {metadata["python"]}; ghidriff {metadata["ghidriff"]}; '
@@ -232,6 +237,7 @@ def run_comparison(config: BackendConfig, project: ComparisonProject, root: Path
     raw = quarantine / 'raw'
     raw.mkdir()
     settings = {'timeout_seconds': config.timeout_seconds,
+                'allow_symbol_downloads': config.allow_symbol_downloads,
                 'older_sha256': next(a.sha256 for a in project.artifacts if a.side == 'older'),
                 'newer_sha256': next(a.sha256 for a in project.artifacts if a.side == 'newer')}
     backend_version = 'unknown'
@@ -277,6 +283,8 @@ def run_comparison(config: BackendConfig, project: ComparisonProject, root: Path
                     str(paths['older']), str(paths['newer']), '--output-path',
                     str(_validated_ghidra_output_path(raw)),
                     '--project-location', str(engine_project), '--gzfs-path', str(engine_gzfs)]
+            if not config.allow_symbol_downloads:
+                argv.append('--no-symbols')
             result = run_process(argv, cwd=Path(config.ghidra_dir), env=_environment(config), cancel=cancel,
                                  timeout_seconds=config.timeout_seconds,
                                  check_output=lambda: _output_error(raw))
