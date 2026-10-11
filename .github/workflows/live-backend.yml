@@ -3,9 +3,9 @@ on:
   workflow_dispatch:
   push:
     branches: [main, 'codex/**']
-    paths: ['src/**', 'tools/live_backend_check.py', 'tests/fixtures/**', '.github/workflows/live-backend.yml']
+    paths: ['src/**', 'tools/live_backend_check.py', 'tools/seed_symbol_cache.py', 'tests/fixtures/**', '.github/workflows/live-backend.yml']
   pull_request:
-    paths: ['src/**', 'tools/live_backend_check.py', 'tests/fixtures/**', '.github/workflows/live-backend.yml']
+    paths: ['src/**', 'tools/live_backend_check.py', 'tools/seed_symbol_cache.py', 'tests/fixtures/**', '.github/workflows/live-backend.yml']
 permissions:
   contents: read
 jobs:
@@ -24,8 +24,8 @@ jobs:
       - uses: ilammy/msvc-dev-cmd@v1
       - shell: cmd
         run: |
-          cl /nologo /LD /Od /GS- tests\fixtures\old.c /link /OUT:tests\fixtures\old.dll
-          cl /nologo /LD /Od /GS- tests\fixtures\new.c /link /OUT:tests\fixtures\new.dll
+          cl /nologo /LD /Od /GS- /Zi tests\fixtures\old.c /Fdtests\fixtures\ /link /DEBUG /OUT:tests\fixtures\old.dll /PDB:tests\fixtures\old.pdb
+          cl /nologo /LD /Od /GS- /Zi tests\fixtures\new.c /Fdtests\fixtures\ /link /DEBUG /OUT:tests\fixtures\new.dll /PDB:tests\fixtures\new.pdb
       - shell: pwsh
         run: |
           Invoke-WebRequest 'https://github.com/NationalSecurityAgency/ghidra/releases/download/Ghidra_12.0.4_build/ghidra_12.0.4_PUBLIC_20260303.zip' -OutFile ghidra.zip
@@ -34,7 +34,23 @@ jobs:
           $ghidra = (Get-ChildItem ghidra-runtime -Directory | Select-Object -First 1).FullName
           "GHIDRA_INSTALL_DIR=$ghidra" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
       - run: python -m pip install -e . 'ghidriff @ git+https://github.com/clearbluejar/ghidriff.git@4f5d895fcbb1eacd65efd81145922c15bb7e741d'
-      - run: python tools/live_backend_check.py
+      - name: Reproduce cached-PDB FileExistsError with plain Ghidriff (global prefs persisted)
+        shell: pwsh
+        run: |
+          $fx = "$PWD\tests\fixtures"
+          New-Item -ItemType Directory -Force C:\gout, C:\gsym | Out-Null
+          Copy-Item "$fx\old.dll","$fx\new.dll" C:\gsym\
+          python tools/seed_symbol_cache.py C:\gout\symbols "$fx\old.dll" "$fx\new.dll"
+          python -m ghidriff C:\gsym\old.dll C:\gsym\new.dll --output-path C:\gout 2>&1 | Select-Object -Last 15
+          python -m ghidriff C:\gsym\old.dll C:\gsym\new.dll --output-path C:\gout2 --no-symbols *> repro.log
+          $code = $LASTEXITCODE
+          Get-Content repro.log -Tail 15
+          if ($code -eq 0 -or -not (Select-String -Path repro.log -SimpleMatch 'symbol is already downloaded' -Quiet)) {
+            throw "Native reproduction of cached-PDB failure did not occur (exit $code)"
+          }
+          $global:LASTEXITCODE = 0
+      - name: PatchTrace offline analysis succeeds despite persisted symbol store
+        run: python tools/live_backend_check.py
       - uses: actions/upload-artifact@v4
         if: always()
         with:

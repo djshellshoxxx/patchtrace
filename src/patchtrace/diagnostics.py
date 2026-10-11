@@ -34,6 +34,10 @@ def describe_backend_exit(returncode: int, log_tail: str) -> str:
     if 'path element starting with' in log and 'not permitted' in log:
         hint = ('Ghidra rejected a dot-prefixed path component; use a project and '
                 'temporary directory without hidden path components')
+    elif 'symbols are disabled, but the symbol is already downloaded' in log:
+        hint = ('Ghidriff found a matching PDB in a local symbol location while symbol lookup is '
+                'disabled (cached-symbol conflict); PatchTrace isolates Ghidra settings per run, so check '
+                'for a PDB beside the analysed binary or enable symbol lookup in Setup')
     elif ('unsupportedclassversionerror' in log or 'class file version' in log
           or 'compiled by a more recent version of the java runtime' in log):
         hint = 'JDK is incompatible with Ghidra or one of its plugins; check the supported Java version'
