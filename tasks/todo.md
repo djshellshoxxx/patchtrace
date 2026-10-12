@@ -21,6 +21,11 @@
 - [ ] Analysis profiles in Setup (detector weights, feature filters, CVE/provider choice, cache location); CLI flags only today
 - [ ] Raw Ghidriff output cache reuse (B4 raw API exists; pipeline/backend wiring and cross-project run creation pending)
 - [ ] Live NVD/MSRC fetch through the CLI recorded as a separate probe
-- [ ] Phase 3 (acquisition, N-way, BinExport/BinDiff, Rizin) not started; Phase 4 deferred
+- [x] Phase 3 contracts: SPEC-08 acquisition, SPEC-09 N-way, SPEC-10 BinExport/BinDiff, SPEC-11 rz-diff (tool research in docs/research/phase3)
+- [ ] 3a acquisition implementation (Winbindex parse, consented download, quarantine; Windows msdelta optional)
+- [ ] 3b N-way series implementation
+- [ ] 3c/3d secondary match import (BinDiff) and rz-diff runner; shared reconciliation view
+- [ ] Phase 4 deferred
+- [x] Full code audit (5 areas, 2026-10-12): see docs/qa.md
 - [ ] Assemble, license-audit and publish a **real relocatable offline Python 3.12 / ghidriff / pyghidra / Ghidra / JDK** payload. Validate from fully disconnected Windows 11 and known-patch fixture; currently only synthetic archive/import tests exist.
 - [ ] Add clean Windows disk-space, user-profile path-length, antivirus-lock and full-stack offline smoke checks before claiming no-setup beta.
