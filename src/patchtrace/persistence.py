@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import json
+import math
 import os
 import shutil
 import socket
@@ -27,8 +28,20 @@ def strict_json(text: str) -> dict:
         return value
     def invalid_constant(value):
         raise ValueError(f'PT-SCHEMA: invalid JSON number {value}')
+    def finite_float(value):
+        # Overflowing literals such as 1e999 parse to inf without reaching parse_constant.
+        number = float(value)
+        if not math.isfinite(number):
+            invalid_constant(value[:40])
+        return number
+    def bounded_int(value):
+        try:
+            return int(value)
+        except ValueError as exc:
+            raise ValueError('PT-SCHEMA: JSON integer exceeds the supported digit limit') from exc
     try:
-        return json.loads(text, object_pairs_hook=pairs, parse_constant=invalid_constant)
+        return json.loads(text, object_pairs_hook=pairs, parse_constant=invalid_constant,
+                          parse_float=finite_float, parse_int=bounded_int)
     except RecursionError as exc:
         raise ValueError('PT-SCHEMA: JSON nesting limit exceeded') from exc
 
@@ -195,6 +208,7 @@ class ProjectStore:
         if not self.root.is_dir():
             raise ValueError('PT-STORAGE: project directory does not exist')
         self.lock = ProjectLock(self.root)
+        created_database = False
         try:
             path = safe_path(self.root, 'project.sqlite3')
             if create and path.exists():
@@ -202,9 +216,12 @@ class ProjectStore:
             if not create and not path.is_file():
                 raise ValueError('PT-STORAGE: project database is missing')
             self.connection = sqlite3.connect(path, timeout=5)
+            created_database = create
             self.connection.execute('PRAGMA foreign_keys=ON')
             if create:
                 with self.connection:
+                    # Legacy sqlite3 mode does not BEGIN before PRAGMA/DDL; make initialization atomic.
+                    self.connection.execute('BEGIN IMMEDIATE')
                     self.connection.execute(f'PRAGMA user_version={SCHEMA_VERSION}')
                     self.connection.execute('CREATE TABLE current_snapshot (singleton INTEGER PRIMARY KEY '
                                             'CHECK(singleton=1), payload TEXT NOT NULL, sha256 TEXT NOT NULL)')
@@ -219,6 +236,9 @@ class ProjectStore:
                     raise ValueError('PT-STORAGE: database integrity check failed')
         except Exception as exc:
             self.close()
+            if created_database:
+                # Never leave a half-initialized database that blocks retry yet cannot be opened.
+                path.unlink(missing_ok=True)
             if isinstance(exc, sqlite3.Error):
                 raise ValueError('PT-STORAGE: project database cannot be opened') from exc
             raise
