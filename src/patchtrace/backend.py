@@ -128,7 +128,10 @@ def _probe_backend(config: BackendConfig, cancel: threading.Event | None = None)
     if result.reason or result.returncode:
         raise RuntimeError('PT-BACKEND: Python dependency check failed; verify the selected interpreter')
     try:
-        metadata = json.loads(result.log_tail)
+        # stdout and stderr are merged; interpreter warnings (for example a venv's
+        # "Could not find platform independent libraries") may precede the JSON.
+        lines = result.log_tail.strip().splitlines()
+        metadata = json.loads(lines[-1] if lines else '')
         if not isinstance(metadata, dict) or not metadata.get('available'):
             raise ValueError('ghidriff absent')
         major, minor = map(int, metadata['python'].split('.')[:2])

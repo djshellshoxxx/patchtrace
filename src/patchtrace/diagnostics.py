@@ -7,7 +7,9 @@ _ASSIGNMENT = re.compile(
     r'''(?ix)(authorization["']?\s*[:=]\s*["']?\s*(?:(?:bearer|basic)\s+)?|
     (?:api[_-]?key|token|password|secret)["']?\s*[:=]\s*["']?)([^\s,;"']+)'''
 )
-_URL_AUTH = re.compile(r'(https?://)[^/\s:@]+:[^/\s@]+@', re.IGNORECASE)
+# Greedy to the last '@' before the path: unencoded '@' in a password must not
+# leave its tail visible, and proxy schemes such as socks5:// carry credentials too.
+_URL_AUTH = re.compile(r'([a-z][a-z0-9+.-]*://)[^/\s]*@', re.IGNORECASE)
 
 
 def redact_log(text: str, limit: int = 2 * 1024 * 1024) -> str:
