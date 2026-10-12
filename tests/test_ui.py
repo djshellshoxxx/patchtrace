@@ -364,3 +364,56 @@ def test_setup_does_not_choose_ambiguous_runtime_automatically(window, tmp_path,
     dialog = SetupDialog(window.settings, window)
     assert dialog.python.text() == ''
     assert 'multiple' in dialog.diagnostics.toPlainText().lower()
+
+
+def test_offline_bundle_explicit_import_updates_paths_only_after_accept(window, tmp_path, monkeypatch, qtbot):
+    from PySide6.QtWidgets import QFileDialog, QMessageBox
+
+    from patchtrace.offline_bundle import build_offline_bundle
+    from patchtrace.ui import SetupDialog
+
+    local = tmp_path / 'local data'
+    monkeypatch.setenv('LOCALAPPDATA', str(local))
+    source = tmp_path / 'bundle payload'
+    items = {
+        'python/python.exe': b'fake-private-python',
+        'ghidra/Ghidra/application.properties': b'application.version=12.0.4',
+        'jdk/bin/java.exe': b'fake-private-java',
+        'LICENSES/NOTICE.txt': b'Test fake bundle only, no actual dependencies',
+    }
+    for path, data in items.items():
+        file = source / path
+        file.parent.mkdir(parents=True, exist_ok=True)
+        file.write_bytes(data)
+    archive = tmp_path / 'backend.zip'
+    runtime_id = 'test-private-runtime'
+    build_offline_bundle(source, runtime_id,
+                         {'python': '3.12.10', 'ghidra': '12.0.4', 'jdk': '25',
+                          'ghidriff_revision': '4f5d895fcbb1eacd65efd81145922c15bb7e741d'},
+                         archive)
+    monkeypatch.setattr(QFileDialog, 'getOpenFileName', lambda *args: (str(archive), 'ZIP'))
+    monkeypatch.setattr(QMessageBox, 'question',
+                        lambda *args, **kwargs: QMessageBox.StandardButton.Yes)
+    dialog = SetupDialog(window.settings, window)
+    qtbot.addWidget(dialog)
+    assert not dialog.python.text()
+    dialog.import_offline_bundle()
+    expected = local / 'PatchTrace' / 'runtimes' / runtime_id
+    qtbot.waitUntil(lambda: dialog.worker is None and (expected / 'manifest.json').is_file(),
+                    timeout=10000)
+    assert dialog.python.text() == str(expected / 'payload' / 'python' / 'python.exe')
+    assert dialog.ghidra.text() == str(expected / 'payload' / 'ghidra')
+    assert dialog.java_home.text() == str(expected / 'payload' / 'jdk')
+    # No persistent selection unless the user also saves Setup.
+    assert not window.settings.value('backend/java_home')
+
+
+def test_setup_persists_manual_private_java_home(window, monkeypatch):
+    from patchtrace.ui import SetupDialog
+
+    def accept(self):
+        self.java_home.setText('/custom/Java Home')
+        return QDialog.DialogCode.Accepted
+    monkeypatch.setattr(SetupDialog, 'exec', accept)
+    window.setup()
+    assert window.backend_config().java_home == '/custom/Java Home'
