@@ -4,11 +4,10 @@ from __future__ import annotations
 import json
 
 import pytest
+from test_secondary_bindiff import build
 
 from patchtrace import cli
 from patchtrace.service import ProjectService
-
-from test_secondary_bindiff import build
 
 
 @pytest.fixture
