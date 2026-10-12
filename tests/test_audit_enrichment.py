@@ -230,3 +230,52 @@ def test_cli_gui_export_agree_on_default_ranking(project, capsys):
     assert cli_rows == gui_rows == export_rows
     assert doc['result']['status'] == ranking.status == section['status']
     assert doc['result']['config_digest'] == section['config_digest']
+
+
+# ---- correlate: partial fetch and duplicate snapshots (audit round 3) ----
+
+FIXTURES = __import__('pathlib').Path(__file__).parent / 'fixtures' / 'cve'
+CVE_ID = 'CVE-2024-38063'
+
+
+def test_correlate_partial_fetch_normalizes_remaining_provider(project, capsys, monkeypatch):
+    from patchtrace.enrichment import intelligence
+    from patchtrace.enrichment.contracts import EnrichmentError
+    nvd = (FIXTURES / f'nvd_{CVE_ID}.json').read_bytes()
+
+    def fake(plan, consent, **_k):
+        ok = intelligence.RawResponse('nvd', CVE_ID, nvd, 'x', 'u', '2026-10-12T00:00:00Z')
+        return {CVE_ID: {'nvd': ok}}, {(CVE_ID, 'msrc'): EnrichmentError('PT-ENRICH-PROVIDER', 'HTTP 404')}
+    monkeypatch.setattr(intelligence, 'fetch_all', fake)
+    code = cli.main(['correlate', str(project), '--cve', CVE_ID, '--fetch', '--providers', 'msrc,nvd',
+                     '--consent-providers', 'msrc,nvd', '--json', '--dry-run'])
+    doc = json.loads(capsys.readouterr()[0])
+    assert code == 0 and doc['status'] == 'partial'
+    assert any('msrc' in w and 'failed' in w for w in doc['warnings'])
+    assert doc['result']['snapshot_ids']
+
+
+def test_correlate_all_providers_failed_exits_3(project, capsys, monkeypatch):
+    from patchtrace.enrichment import intelligence
+    from patchtrace.enrichment.contracts import EnrichmentError
+    monkeypatch.setattr(intelligence, 'fetch_all', lambda *a, **k: (
+        {}, {(CVE_ID, 'nvd'): EnrichmentError('PT-ENRICH-NETWORK', 'down')}))
+    code = cli.main(['correlate', str(project), '--cve', CVE_ID, '--fetch', '--providers', 'nvd',
+                     '--consent-providers', 'nvd', '--json', '--dry-run'])
+    assert code == 3 and json.loads(capsys.readouterr()[0])['status'] == 'failed'
+
+
+def test_correlate_duplicate_snapshots_uses_latest_and_warns(project, capsys, tmp_path):
+    from patchtrace.enrichment import cve
+    nvd = (FIXTURES / f'nvd_{CVE_ID}.json').read_bytes()
+    msrc = (FIXTURES / f'msrc_{CVE_ID}.json').read_bytes()
+    old = cve.normalize(CVE_ID, {'nvd': nvd}, '2026-01-01T00:00:00Z')
+    new = cve.normalize(CVE_ID, {'nvd': nvd, 'msrc': msrc}, '2026-10-01T00:00:00Z')
+    files = []
+    for name, s in (('a.json', new), ('b.json', old)):
+        (tmp_path / name).write_text(json.dumps(s.model_dump(mode='json')))
+        files += ['--snapshot', str(tmp_path / name)]
+    cli.main(['correlate', str(project), '--cve', CVE_ID, *files, '--json', '--dry-run'])
+    doc = json.loads(capsys.readouterr()[0])
+    assert doc['result']['snapshot_ids'] == [new.snapshot_id]
+    assert any('ignored' in w and '2026-01-01' in w for w in doc['warnings'])

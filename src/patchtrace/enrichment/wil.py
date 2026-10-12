@@ -19,6 +19,7 @@ from dataclasses import dataclass
 
 from . import identity
 from .contracts import UINT32_MAX, ChangeSignal, FeatureSite, FeatureTransition, SourceLocation
+from .signals import _clean as clean_lines
 from .signals import edit_group_key, normalized_text, semantic_hunk_ordinals
 from .views import FunctionView, MatchView
 
@@ -144,7 +145,9 @@ def _scan(function: FunctionView) -> _Scan:
             break
         total += len(line) + 1
         kept.append(line)
-    lines = tuple(kept)
+    # Blank comments and string/char literal contents (line numbers kept) so a flag name
+    # quoted in a log message or comment is never a site; locations still hash raw lines.
+    lines = tuple(clean_lines(tuple(kept)))
     text = '\n'.join(lines)
     starts, pos = [], 0
     for line in lines:

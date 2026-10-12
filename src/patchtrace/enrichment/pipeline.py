@@ -257,7 +257,9 @@ def run(project: ComparisonProject, options: PipelineOptions | None = None,
         try:
             from datetime import UTC, datetime
             names = {m.pairing_id: tuple(f.name for f in m.older + m.newer) for m in views.matches}
-            contextual = cve.contextual_rank(ranking_result, signal_sets, transitions, options.snapshots,
+            # One snapshot per CVE so a duplicate can never double-count contributions.
+            latest, _ = cve.select_latest(options.snapshots)
+            contextual = cve.contextual_rank(ranking_result, signal_sets, transitions, latest,
                                              (views.older_name, views.newer_name), names,
                                              now=datetime.now(UTC), max_age_days=options.max_age_days)
             record('contextual', contextual.status)

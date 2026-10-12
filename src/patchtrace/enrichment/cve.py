@@ -307,6 +307,24 @@ def is_stale(snapshot: CveSnapshot, now: datetime, max_age_days: int) -> bool:
     return age.total_seconds() < 0 or age.days * 86400 + age.seconds > max_age_days * 86400
 
 
+def select_latest(snapshots: Iterable[CveSnapshot]) -> tuple[tuple[CveSnapshot, ...], tuple[CveSnapshot, ...]]:
+    """One snapshot per CVE: latest `retrieved_at`, ties broken by smallest snapshot_id.
+    Returns (kept sorted by CVE, ignored sorted by CVE/snapshot_id)."""
+    best: dict[str, CveSnapshot] = {}
+    ignored = []
+    for snap in sorted(snapshots, key=lambda x: (x.cve_id, x.snapshot_id)):
+        current = best.get(snap.cve_id)
+        if current is None:
+            best[snap.cve_id] = snap
+        elif _timestamp(snap.retrieved_at) > _timestamp(current.retrieved_at):
+            ignored.append(current)
+            best[snap.cve_id] = snap
+        else:
+            ignored.append(snap)
+    return (tuple(best[c] for c in sorted(best)),
+            tuple(sorted(ignored, key=lambda x: (x.cve_id, x.snapshot_id))))
+
+
 def _canon(token: str) -> str:
     token = token.lower()
     return SYNONYMS.get(token, token)
@@ -372,11 +390,19 @@ def contextual_rank(ranking: RankingResult, signal_sets: Iterable[SignalSet],
     cwe_sources: dict[str, set[str]] = {}
     cwe_blocked: dict[str, set[str]] = {}
     for s in snapshots:
+        agreed = {c.value for c in s.cwes}
         if any(c.startswith('cwe:') for c in s.conflicts):
-            cwe_blocked[s.cve_id] = {c.value for c in s.cwes}
-            continue
+            # Only values reported by every CWE-reporting provider survive a disagreement.
+            by_provider: dict[str, set[str]] = {}
+            for c in s.cwes:
+                by_provider.setdefault(c.source, set()).add(c.value)
+            agreed = set.intersection(*by_provider.values()) if by_provider else set()
+            disputed = {c.value for c in s.cwes} - agreed
+            if disputed:
+                cwe_blocked[s.cve_id] = disputed
         for c in s.cwes:
-            cwe_sources.setdefault(c.value, set()).add(f'{s.cve_id}[{c.source}]')
+            if c.value in agreed:
+                cwe_sources.setdefault(c.value, set()).add(f'{s.cve_id}[{c.source}]')
     features = {f: s.cve_id for s in snapshots for f in s.feature_ids}
     stems = {_artifact_stem(n) for n in artifact_names}
     product_hits = sorted(

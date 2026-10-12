@@ -242,3 +242,17 @@ def test_wil_and_b1_signals_on_same_hunk_share_group_key():
     signals = wil_signals(view, transitions)
     assert signals, transitions
     assert signals[0].group_key == edit_group_key(view, 0, 'newer', new[1:4])
+
+
+def test_flag_names_in_strings_and_comments_are_not_sites():
+    from patchtrace.enrichment import wil as wil_mod
+    from patchtrace.enrichment.views import match_view
+    from patchtrace.models import FunctionMatch, FunctionRecord
+    code = ('void f(void) {\n  log("Feature_9 enabled");\n  /* Feature_10 */ g(); // Feature_11\n'
+            '  if (Feature_12__private_IsEnabledDeviceUsage()) {\n    h();\n  }\n}')
+    rec = FunctionRecord(artifact_id='a-new', run_id='r', name='f', code=code)
+    view = match_view(FunctionMatch(run_id='r', category='added', newer=[rec]), '0' * 64,
+                      {'older': 'a-old', 'newer': 'a-new'})
+    sites = wil_mod.find_sites(view.newer[0])
+    assert [s.feature_id for s in sites] == [12] and sites[0].control == 'lexical-enclosure'
+    assert sites[0].location.start_line == 4
