@@ -111,7 +111,7 @@ def test_probe(log, code, supported, version):
     seen = []
     result = probe(Path('/opt/rz-diff'), {}, runner=runner_returning(log, code, seen=seen))
     assert (result.supported, result.version, result.supports_json) == (supported, version, supported)
-    assert seen[0][0] == ['/opt/rz-diff', '-v']
+    assert seen[0][0] == [str(Path('/opt/rz-diff')), '-v']  # platform path spelling
 
 
 def test_probe_relative_path_is_unsupported():
@@ -155,7 +155,9 @@ def test_unsupported_capability_refused(tmp_path):
     ('x' * (64 * 1024 * 1024 + 1), 0, None, 'PT-SECONDARY-LIMIT'),
     ('[{"similarity":0.5,"type":"PARTIAL","original":null,"modified":{"addr":1,"name":"\ufffd","size":1}}]',
      0, None, 'PT-SECONDARY-INPUT'),
-])
+], ids=['empty', 'exit-1', 'timeout', 'cancelled', 'over-64MiB', 'invalid-utf8'])
+# Explicit ids: pytest would otherwise build a 64 MiB test id from the oversized log and stall
+# writing it to a Windows console.
 def test_run_failures(tmp_path, log, code, reason, error):
     older, newer = artifacts(tmp_path)
     with pytest.raises(SecondaryError) as info:
