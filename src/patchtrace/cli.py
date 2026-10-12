@@ -98,6 +98,8 @@ def _config(args):
             loaded = strict_json(args.weights.read_text(encoding='utf-8'))
         except (OSError, ValueError) as exc:
             raise CliError(ENVIRONMENT, f'cannot read weights file: {exc}') from None
+        if not isinstance(loaded, dict):
+            raise CliError(ENVIRONMENT, 'weights file must be a JSON object of detector IDs to integers')
         unknown = set(loaded) - set(DETECTOR_IDS)
         if unknown:
             raise CliError(ENVIRONMENT, f'unknown detector IDs in weights: {sorted(unknown)}')
@@ -222,12 +224,17 @@ def cmd_correlate(args, cancel) -> int:
     from .enrichment.contracts import CveSnapshot, EnrichmentError
     from .enrichment.pipeline import PipelineOptions
     snapshots: list[CveSnapshot] = []
+    unverified: set[str] = set()
     requested = set(args.cve)
     for path in args.snapshot:
         try:
             data = json.loads(path.read_text(encoding='utf-8'))
             items = data if isinstance(data, list) else [data]
-            snapshots += [CveSnapshot.model_validate_json(json.dumps(item)) for item in items]
+            # A saved file cannot be re-verified against provider bodies: drop claims that
+            # normalization never derives (feature IDs) and flag the snapshot as unverified.
+            loaded = [CveSnapshot.model_validate_json(json.dumps(item)) for item in items]
+            snapshots += [s.model_copy(update={'feature_ids': ()}) for s in loaded]
+            unverified.update(s.cve_id for s in loaded)
         except (OSError, ValueError) as exc:
             raise CliError(ENVIRONMENT, f'cannot load snapshot {path.name}: {exc}') from None
     warnings: list[str] = []
@@ -271,10 +278,15 @@ def cmd_correlate(args, cancel) -> int:
     if result.contextual is None:
         _emit(args, 'correlate', 'unavailable', None, warnings, 'Contextual ranking unavailable.')
         return RUNTIME if snapshots else NO_RESULTS
+    warnings += [f'{c}: snapshot loaded from file is unverified (provider bodies unavailable); '
+                 'feature-ID claims ignored' for c in sorted(unverified & requested)]
+    warnings += [f'{c}: CVE snapshot is stale; check its retrieval date' for c in result.contextual.stale_snapshots]
+    status = 'partial' if result.contextual.stale_snapshots and result.contextual.status == 'complete' \
+        else result.contextual.status
     names = {m.match_id: ' / '.join(sorted({f.name for f in m.older + m.newer})) for m in result.views.matches}
     text = '\n'.join(f'{e.context_rank:>4} ctx {e.context_score:>3} base {e.base_score:>3} (#{e.base_rank}) '
                      f'+{e.adjustment:<2} {names.get(e.match_id, "")}' for e in result.contextual.entries)
-    _emit(args, 'correlate', result.contextual.status, result.contextual.model_dump(mode='json'), warnings,
+    _emit(args, 'correlate', status, result.contextual.model_dump(mode='json'), warnings,
           text + '\nContext descriptions never prove code behavior; base scores are unchanged.')
     return OK
 

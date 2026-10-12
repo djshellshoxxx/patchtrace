@@ -636,6 +636,7 @@ class MainWindow(QMainWindow):
         self._ranking = {}
         self._signal_sets = {}
         self._ranking_note = ''
+        self._ranking_result = None
         self._syncing = False
         self._close_requested = False
         self._job_started = 0.0
@@ -1401,45 +1402,28 @@ class MainWindow(QMainWindow):
     def _load_enrichment(self):
         """Show the stored ranking only when it was computed from the current run and pairings."""
         from .enrichment import pipeline
-        from .enrichment.contracts import EnrichmentError, RankingResult, SignalSet
+        from .enrichment.contracts import EnrichmentError
         from .enrichment.storage import EnrichmentStore
         self._ranking, self._signal_sets, self._ranking_note = {}, {}, ''
+        self._ranking_result = None
         if not self.service:
             return
         try:
-            guard = pipeline.guard_for(self.project)
-        except EnrichmentError:
-            self._ranking_note = 'Ranking unavailable: no completed analysis run.'
-            return
-        store = EnrichmentStore(self.service.store)
-        try:
-            ranking_entry = store.current('ranking', guard)
-            signals_entry = store.current('signals', guard)
+            ranking, sets, note = pipeline.load_default(EnrichmentStore(self.service.store), self.project)
         except EnrichmentError as exc:
             self._ranking_note = f'Stored ranking unreadable: {exc}'
             return
-        if ranking_entry is None or signals_entry is None:
-            if store.entries('ranking'):
-                self._ranking_note = 'Stored ranking is stale (project changed). Rank changes again.'
-            return
-        import json
-        ranking = RankingResult.model_validate_json(json.dumps(ranking_entry.body['items'][0]))
-        self._ranking = {e.match_id: e for e in ranking.entries}
-        self._signal_sets = {s.match_id: s for s in (SignalSet.model_validate_json(json.dumps(item))
-                                                     for item in signals_entry.body['items'])}
+        self._ranking_note = note
+        if ranking is not None:
+            self._ranking_result = ranking
+            self._ranking = {e.match_id: e for e in ranking.entries}
+            self._signal_sets = {s.match_id: s for s in sets}
 
     def _enrichment_export(self):
-        """The exact ranking shown in the navigator, for preview and written report alike."""
-        if not self._ranking:
+        """The exact default-profile ranking shown in the navigator, for preview and report alike."""
+        if self._ranking_result is None:
             return None
-        from .enrichment import pipeline
-        from .enrichment.contracts import RankingResult
-        from .enrichment.storage import EnrichmentStore
-        entry = EnrichmentStore(self.service.store).current('ranking', pipeline.guard_for(self.project))
-        if entry is None:
-            return None
-        ranking = RankingResult.model_validate_json(json.dumps(entry.body['items'][0]))
-        return {'ranking': ranking.model_dump(mode='json'), 'stale': entry.stale}
+        return {'ranking': self._ranking_result.model_dump(mode='json'), 'stale': False}
 
     def rank_changes(self):
         if not self.service or self.worker:

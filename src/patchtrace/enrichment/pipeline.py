@@ -55,6 +55,8 @@ class PipelineResult:
     contextual: ContextualRanking | None
     status: PipelineStatus
     stage_ids: dict[str, str]
+    config_digest: str = ''
+    default_profile: bool = False
 
 
 def input_digest(views: RunView) -> str:
@@ -76,8 +78,43 @@ def _check(cancel: threading.Event | None) -> None:
         raise EnrichmentError('PT-ENRICH-CANCEL', 'enrichment cancelled; completed stages were kept')
 
 
-def _cached(cache, stage: str, key: str, model, compute: Callable[[], tuple]):
-    """Return (value_tuple, from_cache). Cache admission failure never fails the stage."""
+def _locations_owned(views: RunView, items) -> bool:
+    """A cache entry is only trusted if every record belongs to a current pairing and every
+    location re-derives to the same excerpt hash from the live views. The manifest hash only
+    proves the file is self-consistent, not that it was produced from these inputs."""
+    matches = {m.pairing_id: m for m in views.matches}
+    for item in items:
+        match = matches.get(item.pairing_id)
+        if match is None or item.match_id != match.match_id:
+            return False
+        sites = []
+        if isinstance(item, SignalSet):
+            sites = [loc for sig in item.signals for loc in sig.locations]
+            if any(sig.pairing_id != item.pairing_id or sig.match_id != item.match_id for sig in item.signals):
+                return False
+        elif isinstance(item, FeatureTransition):
+            sites = [site.location for site in item.older_sites + item.newer_sites]
+        functions = {f.id: f for f in match.older + match.newer}
+        for loc in sites:
+            function = functions.get(loc.function_id)
+            if function is None or function.side != loc.side or function.artifact_id != loc.artifact_id \
+                    or function.run_id != loc.run_id:
+                return False
+            try:
+                if function.location(loc.start_line, loc.end_line, loc.representation).excerpt_sha256 \
+                        != loc.excerpt_sha256:
+                    return False
+            except EnrichmentError:
+                return False
+    if all(isinstance(i, SignalSet) for i in items) and {i.pairing_id for i in items} != set(matches):
+        return False
+    return True
+
+
+def _cached(cache, stage: str, key: str, model, compute: Callable[[], tuple], views: RunView):
+    """Return (value_tuple, from_cache). Cache admission failure never fails the stage.
+    Only fully completed values are admitted, so a cancelled or failed computation can
+    never be replayed as if it were a real empty result."""
     if cache is not None:
         try:
             payload = cache.get(stage, key)
@@ -87,10 +124,14 @@ def _cached(cache, stage: str, key: str, model, compute: Callable[[], tuple]):
             import json
             try:
                 items = json.loads(payload.decode('utf-8'))
-                return tuple(model.model_validate_json(json.dumps(item)) for item in items), True
+                value = tuple(model.model_validate_json(json.dumps(item)) for item in items)
+                if _locations_owned(views, value):
+                    return value, True
             except (ValueError, UnicodeError):
-                payload = None
+                pass
     value = compute()
+    if any(getattr(item, 'status', 'complete') in {'cancelled', 'failed'} for item in value):
+        return value, False
     if cache is not None:
         import json
         body = json.dumps([item.model_dump(mode='json') for item in value], sort_keys=True,
@@ -151,8 +192,10 @@ def run(project: ComparisonProject, options: PipelineOptions | None = None,
                     if progress:
                         progress(f'Change signals {index}/{len(views.matches)}')
                 out.append(signals.detect(match, enabled, cancel))
+            if any(item.status == 'cancelled' for item in out):
+                raise EnrichmentError('PT-ENRICH-CANCEL', 'enrichment cancelled; completed stages were kept')
             return tuple(out)
-        signal_sets, _ = _cached(options.cache, 'signals', signals_key, SignalSet, compute_signals)
+        signal_sets, _ = _cached(options.cache, 'signals', signals_key, SignalSet, compute_signals, views)
         record('signals', 'complete' if all(s.status == 'complete' for s in signal_sets) else 'partial')
     except EnrichmentError as exc:
         record('signals', 'cancelled' if exc.code == 'PT-ENRICH-CANCEL' else 'failed', exc)
@@ -171,7 +214,7 @@ def run(project: ComparisonProject, options: PipelineOptions | None = None,
                     out.extend(t for t in wil.analyze(match)
                                if options.feature_ids is None or t.feature_id in options.feature_ids)
                 return tuple(out)
-            transitions, _ = _cached(options.cache, 'wil', wil_key, FeatureTransition, compute_wil)
+            transitions, _ = _cached(options.cache, 'wil', wil_key, FeatureTransition, compute_wil, views)
             wil_status = 'complete'
             record('wil', 'complete')
         except EnrichmentError as exc:
@@ -184,8 +227,10 @@ def run(project: ComparisonProject, options: PipelineOptions | None = None,
         by_pairing.setdefault(transition.pairing_id, []).append(transition)
     matches: dict[str, MatchView] = {m.pairing_id: m for m in views.matches}
     if 'WIL' in options.config.enabled and signal_sets:
-        signal_sets = tuple(_merge(s, wil.wil_signals(matches[s.pairing_id], tuple(by_pairing.get(s.pairing_id, ())))
-                                   if wil_status == 'complete' else (), wil_status) for s in signal_sets)
+        signal_sets = tuple(
+            _merge(s, wil.wil_signals(matches[s.pairing_id], tuple(by_pairing.get(s.pairing_id, ())))
+                   if wil_status == 'complete' and s.pairing_id in matches else (), wil_status)
+            for s in signal_sets)
 
     ranking_result: RankingResult | None = None
     stage('ranking', {'signals': signals_key, 'wil': wil_key,
@@ -218,7 +263,9 @@ def run(project: ComparisonProject, options: PipelineOptions | None = None,
 
     status = PipelineStatus(project_id=views.project_id, revision=views.revision, run_id=views.run_id,
                             raw_sha256=views.raw_sha256, stages=tuple(stages), status=_overall(stages))
-    return PipelineResult(views, guard, signal_sets, transitions, ranking_result, contextual, status, stage_ids)
+    default = options.config == RankingConfig() and options.feature_ids is None
+    return PipelineResult(views, guard, signal_sets, transitions, ranking_result, contextual, status, stage_ids,
+                          ranking.config_digest(options.config), default)
 
 
 def publish(store: EnrichmentStore, project: ComparisonProject, result: PipelineResult) -> list[Entry]:
@@ -227,18 +274,49 @@ def publish(store: EnrichmentStore, project: ComparisonProject, result: Pipeline
         current = guard_for(project, result.views.run_id)
     except EnrichmentError:
         current = Guard('', '', '', '')
-    revision = project.revision
+    revision = result.views.revision  # the revision the result was computed from
     written = []
+    # Rows that depend on configuration or the WIL filter are keyed by the ranking stage ID,
+    # which digests detectors, weights, filter and inputs, so profiles never overwrite or
+    # impersonate each other. The pipeline row records which profile produced them.
+    rid = result.stage_ids['ranking']
 
-    def put(kind: str, items, status: Status, key: str):
-        body = {'items': [i.model_dump(mode='json') for i in items]}
+    def put(kind: str, items, status: Status, key: str, extra: dict | None = None):
+        body = {'items': [i.model_dump(mode='json') for i in items]} | (extra or {})
         written.append(store.publish(kind, result.guard, current, revision, status, body, f'{kind}:{key}'))
 
-    put('signals', result.signal_sets, result.status.stages[0].status, result.stage_ids['signals'])
+    put('signals', result.signal_sets, result.status.stages[0].status, rid)
     put('wil', result.transitions, result.status.stages[1].status, result.stage_ids['wil'])
     if result.ranking is not None:
-        put('ranking', (result.ranking,), result.ranking.status, result.stage_ids['ranking'])
+        put('ranking', (result.ranking,), result.ranking.status, rid)
     if result.contextual is not None:
         put('contextual', (result.contextual,), result.contextual.status, result.stage_ids['contextual'])
-    put('pipeline', (result.status,), result.status.status, result.stage_ids['ranking'])
+    put('pipeline', (result.status,), result.status.status, rid,
+        {'stage_ids': dict(result.stage_ids), 'config_digest': result.config_digest,
+         'default_profile': result.default_profile})
     return written
+
+
+def load_default(store: EnrichmentStore, project: ComparisonProject):
+    """(RankingResult, signal sets, note) for the default profile computed from the live
+    project, or (None, (), reason). Rows from other profiles are never returned."""
+    import json
+    try:
+        guard = guard_for(project)
+    except EnrichmentError:
+        return None, (), 'Ranking unavailable: no completed analysis run.'
+    digest = ranking.config_digest(RankingConfig())
+    candidates = [e for e in store.entries('pipeline', guard)
+                  if e.body.get('default_profile') is True and e.body.get('config_digest') == digest]
+    current = next((e for e in candidates if not e.stale), None)
+    if current is None:
+        stale = bool(candidates) or bool(store.entries('ranking'))
+        return None, (), ('Stored ranking is stale (project changed). Rank changes again.' if stale else '')
+    rid = current.body['stage_ids']['ranking']
+    rows = {e.kind: e for kind in ('ranking', 'signals') for e in store.entries(kind, guard)
+            if e.id == f'{kind}:{rid}' and not e.stale}
+    if set(rows) != {'ranking', 'signals'}:
+        return None, (), 'Stored ranking is incomplete. Rank changes again.'
+    result = RankingResult.model_validate_json(json.dumps(rows['ranking'].body['items'][0]))
+    sets = tuple(SignalSet.model_validate_json(json.dumps(i)) for i in rows['signals'].body['items'])
+    return result, sets, ''
