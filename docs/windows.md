@@ -2,7 +2,9 @@
 
 Desktop target: Windows 11 x64. Extract the complete distribution ZIP into a user-writable location and run PatchTrace.exe. The package includes Python/Qt; it does not include Ghidra, Java, Ghidriff or local LLM weights. The app opens its sample and imports supported diff files without an analysis runtime.
 
-For native comparison install a supported JDK per Ghidra release requirements, unpack Ghidra, and create a separate Python 3.12+ virtual environment:
+Alternatively, PatchTrace now supports importing a prepared offline backend ZIP from Setup, with complete SHA-256 inventory verification, cancellable atomic extraction and private child-process Java configuration. A *genuine official complete runtime bundle* remains subject to legal review and clean air-gapped Windows acceptance; the importer alone is not proof that one exists. See [offline backend guide](offline-backend.md).
+
+For manual native comparison install a supported JDK per Ghidra release requirements, unpack Ghidra, and create a separate Python 3.12+ virtual environment:
 ```powershell
 py -3.12 -m venv "$env:LOCALAPPDATA\PatchTrace-backend"
 & "$env:LOCALAPPDATA\PatchTrace-backend\Scripts\python.exe" -m pip install "ghidriff @ git+https://github.com/clearbluejar/ghidriff.git@4f5d895fcbb1eacd65efd81145922c15bb7e741d"

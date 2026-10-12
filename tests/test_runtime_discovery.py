@@ -62,3 +62,15 @@ def test_does_not_accept_symlinked_ghidra_or_python(tmp_path):
         pytest.skip("test host does not permit creating directory symlinks")
     found = discover_local_runtimes({"GHIDRA_INSTALL_DIR": str(alias)}, search_roots=[alias.parent])
     assert not found.ghidra_roots
+
+
+def test_discovery_finds_installed_offline_bundle_layout(tmp_path):
+    local = tmp_path / 'Local App Data'
+    target = local / 'PatchTrace' / 'runtimes' / 'offline-runtime-v1' / 'payload'
+    python = target / 'python' / 'python.exe'
+    python.parent.mkdir(parents=True)
+    python.write_bytes(b'stub')
+    ghidra = make_ghidra(target / 'ghidra')
+    found = discover_local_runtimes({'LOCALAPPDATA': str(local)})
+    assert found.python_executables == (python.resolve(),)
+    assert found.ghidra_roots == (ghidra.resolve(),)

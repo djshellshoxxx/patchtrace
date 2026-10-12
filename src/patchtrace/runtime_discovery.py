@@ -96,9 +96,10 @@ def discover_local_runtimes(
         runtimes = local / 'PatchTrace' / 'runtimes'
         for child in _children(runtimes):
             for relative in ('Scripts/python.exe', 'backend/Scripts/python.exe',
-                             'python/Scripts/python.exe'):
+                             'python/Scripts/python.exe', 'payload/python/python.exe'):
                 add_python(child / relative)
             add_ghidra(child)
+            add_ghidra(child / 'payload' / 'ghidra')
             for subdir in _children(child):
                 if subdir.name.casefold().startswith('ghidra_'):
                     add_ghidra(subdir)
