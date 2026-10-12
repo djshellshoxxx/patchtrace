@@ -10,6 +10,12 @@ permissions:
   contents: read
 jobs:
   native:
+    # Separate jobs per hypothesis: job names/conclusions are visible without log access.
+    name: native (${{ matrix.variant }})
+    strategy:
+      fail-fast: false
+      matrix:
+        variant: [repro-plain-ghidriff, patchtrace-seeded-store, patchtrace-seeded-store-no-adjacent-pdb]
     runs-on: windows-latest
     timeout-minutes: 25
     steps:
@@ -34,7 +40,7 @@ jobs:
           $ghidra = (Get-ChildItem ghidra-runtime -Directory | Select-Object -First 1).FullName
           "GHIDRA_INSTALL_DIR=$ghidra" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
       - run: python -m pip install -e . 'ghidriff @ git+https://github.com/clearbluejar/ghidriff.git@4f5d895fcbb1eacd65efd81145922c15bb7e741d'
-      - name: Reproduce cached-PDB FileExistsError with plain Ghidriff (global prefs persisted)
+      - name: Persist a symbol store in global Ghidra preferences (symbol-enabled plain Ghidriff run)
         shell: pwsh
         run: |
           $fx = "$PWD\tests\fixtures"
@@ -42,14 +48,24 @@ jobs:
           Copy-Item "$fx\old.dll","$fx\new.dll" C:\gsym\
           python tools/seed_symbol_cache.py C:\gout\symbols "$fx\old.dll" "$fx\new.dll"
           python -m ghidriff C:\gsym\old.dll C:\gsym\new.dll --output-path C:\gout 2>&1 | Select-Object -Last 15
+          $global:LASTEXITCODE = 0
+      - name: Reproduce cached-PDB FileExistsError with plain Ghidriff --no-symbols
+        if: matrix.variant == 'repro-plain-ghidriff'
+        shell: pwsh
+        run: |
           python -m ghidriff C:\gsym\old.dll C:\gsym\new.dll --output-path C:\gout2 --no-symbols *> repro.log
           $code = $LASTEXITCODE
-          Get-Content repro.log -Tail 15
+          Get-Content repro.log -Tail 25
           if ($code -eq 0 -or -not (Select-String -Path repro.log -SimpleMatch 'symbol is already downloaded' -Quiet)) {
             throw "Native reproduction of cached-PDB failure did not occur (exit $code)"
           }
           $global:LASTEXITCODE = 0
+      - name: Remove PDBs at the path embedded in the fixture DLLs
+        if: matrix.variant == 'patchtrace-seeded-store-no-adjacent-pdb'
+        shell: pwsh
+        run: Remove-Item tests\fixtures\old.pdb, tests\fixtures\new.pdb
       - name: PatchTrace offline analysis succeeds despite persisted symbol store
+        if: matrix.variant != 'repro-plain-ghidriff'
         run: python tools/live_backend_check.py
       - uses: actions/upload-artifact@v4
         if: always()
