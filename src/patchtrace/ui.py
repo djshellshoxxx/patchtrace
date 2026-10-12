@@ -1319,6 +1319,26 @@ class MainWindow(QMainWindow):
 
     def _action(self, title, callback, shortcut=None):
         action = QAction(title, self)
+        # Actions share the same tooltip in menus and in the toolbar.
+        descriptions = {
+            'Sample': 'Create a separate synthetic comparison project. It demonstrates code, evidence and reviews without analyzing actual binaries.',
+            'Import JSON': 'Load raw Ghidriff JSON from a comparison of this exact binary pair. PatchTrace validates orientation and artifact identity before committing results.',
+            'Run comparison': 'Run an external Ghidriff/Ghidra static comparison of the project-owned older and newer PE x64 files. Results come from Ghidriff, not live execution. An external backend must be configured.',
+            'Cancel job': 'Request cancellation of the active comparison, import or analysis job. Previous committed results are retained.',
+            'Interpret selection': 'Send selected function differences and evidence to the configured AI provider after showing the exact context. AI conclusions are unverified hypotheses.',
+            'Export': 'Preview and export a report containing analysis provenance, reviews and optionally notes or code. The report is based on saved project data.',
+            'Setup': 'Configure local Python/Ghidra backends, preferences, optional offline runtime and AI provider settings. This does not automatically install external tools.',
+            'Swap orientation': 'Exchange older and newer binaries for the project. Existing interpretations may become stale because patch direction changes.',
+            'Save': 'Persist the current project snapshot and review state to its local SQLite history.',
+            'Back up project…': 'Create a complete separate backup with SQLite database, stored binaries and analysis outputs.',
+            'Undo latest match correction': 'Undo the most recent eligible manual function relationship correction while retaining provenance.',
+            'Workflow and dependencies': 'Explain how analysis, external dependencies, projects, findings and reports work.',
+            'Rank changes': 'Apply PatchTrace heuristic signals to changed Ghidriff decompiled code and order functions by attention score. This score is not vulnerability likelihood.',
+            'Download from Microsoft symbol server…': 'Search Winbindex metadata and, after explicit host consent, download exact-hash Microsoft binaries for comparison. Availability and signature authenticity are separate questions.',
+        }
+        if title in descriptions:
+            action.setToolTip(descriptions[title])
+            action.setStatusTip(descriptions[title])
         action.triggered.connect(callback)
         if shortcut:
             action.setShortcut(QKeySequence(shortcut))
