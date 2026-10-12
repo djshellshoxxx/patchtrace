@@ -708,11 +708,25 @@ def cmd_secondary(args, cancel) -> int:
                 _emit(args, 'secondary reconcile', 'complete', {'reports': []}, [], 'No secondary match sets stored.')
                 return NO_RESULTS
             reports = [reconcile(project.matches, m) for m in sets]
+            from .secondary.evidence import assess_reports
+            assessment = assess_reports(tuple(reports))
             result = {'reports': [{'engine': r.engine, 'engine_version': r.engine_version, 'counts': r.counts(),
                                    'secondary_only': len(r.secondary_only), 'limitations': list(r.limitations)}
-                                  for r in reports]}
-            text = '\n'.join(f'{r.engine} {r.engine_version}: {r.counts()} secondary-only {len(r.secondary_only)}'
-                             for r in reports) + '\nAgreement is not independent proof or a probability.'
+                                  for r in reports],
+                      'match_evidence': [{'match_id': e.match_id, 'verdict': e.verdict, 'tier': e.tier,
+                                          'evidence_index': e.evidence_index,
+                                          'supporting_engines': list(e.supporting_engines),
+                                          'contradicting_engines': list(e.contradicting_engines),
+                                          'missing_engines': list(e.missing_engines),
+                                          'limitations': list(e.limitations),
+                                          'explanation': e.explanation}
+                                         for e in assessment.rows],
+                      'evidence_warnings': list(assessment.warnings)}
+            text = '\\n'.join(f'{r.engine} {r.engine_version}: {r.counts()} secondary-only {len(r.secondary_only)}'
+                             for r in reports) + '\\n' + '\\n'.join(
+                                 f'{e.match_id[:12]}: {e.verdict} ({e.tier}; index {e.evidence_index})'
+                                 for e in assessment.rows)
+            text += '\\nEvidence index is NOT a calibrated probability of match correctness or vulnerability.'
             _emit(args, 'secondary reconcile', 'complete', result, [], text)
             return OK
         if run is None:
