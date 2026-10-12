@@ -7,8 +7,10 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
 import threading
 import zipfile
+from pathlib import Path
 
 import pytest
 
@@ -277,3 +279,96 @@ def test_producer_is_byte_deterministic_across_distinct_destinations(tmp_path):
     a = build_offline_bundle(source, RUNTIME_ID, versions, tmp_path / 'a.zip')
     b = build_offline_bundle(source, RUNTIME_ID, versions, tmp_path / 'b.zip')
     assert a.read_bytes() == b.read_bytes()
+
+
+# Regressions from the 2026-10-12 security review of the installer.
+
+def test_cancellation_is_reported_as_pt_cancel_not_rejection(tmp_path):
+    from patchtrace.offline_bundle import OfflineBundleCancelled
+    plan = inspect_offline_bundle(make_bundle(tmp_path))
+    cancel = threading.Event()
+    cancel.set()
+    with pytest.raises(OfflineBundleCancelled, match=r'^PT-CANCEL:'):
+        install_offline_bundle(plan, tmp_path / 'runtimes', cancel=cancel)
+    with pytest.raises(OfflineBundleCancelled):
+        inspect_offline_bundle(make_bundle(tmp_path), cancel=cancel)
+
+
+@pytest.mark.parametrize('suffix', ['..'])
+def test_rejects_non_normalized_install_root(tmp_path, suffix):
+    plan = inspect_offline_bundle(make_bundle(tmp_path))
+    (tmp_path / 'inner').mkdir()
+    root = tmp_path / 'inner' / suffix
+    with pytest.raises(OfflineBundleError, match='normalized'):
+        install_offline_bundle(plan, root)
+    assert not (tmp_path / RUNTIME_ID).exists()
+
+
+def test_rejects_filesystem_root_and_os_directory(tmp_path, monkeypatch):
+    plan = inspect_offline_bundle(make_bundle(tmp_path))
+    with pytest.raises(OfflineBundleError, match='root'):
+        install_offline_bundle(plan, Path(tmp_path.anchor))
+    system = tmp_path / 'fake-windows'
+    system.mkdir()
+    monkeypatch.setenv('WINDIR', str(system))
+    with pytest.raises(OfflineBundleError, match='operating-system'):
+        install_offline_bundle(plan, system / 'runtimes')
+    assert not (system / 'runtimes').exists()
+
+
+def test_corrupt_deflate_stream_is_a_pt_offline_error(tmp_path):
+    archive = make_bundle(tmp_path, files={**FILES, 'LICENSES/NOTICE.txt': b'N' * 4096})
+    data = bytearray(archive.read_bytes())
+    with zipfile.ZipFile(archive) as zf:
+        info = zf.getinfo('payload/LICENSES/NOTICE.txt')
+    start = info.header_offset + 30 + len(info.filename.encode()) + len(info.extra)
+    for i in range(start, start + min(8, info.compress_size)):
+        data[i] ^= 0xFF
+    archive.write_bytes(bytes(data))
+    with pytest.raises(OfflineBundleError, match='PT-OFFLINE'):
+        inspect_offline_bundle(archive)
+
+
+@pytest.mark.parametrize('member', ['payload/x/COM¹.txt', 'payload/x/LPT³', 'payload/CONIN$',
+                                    'payload/x/CONOUT$.log', 'payload/x/NUL .txt'])
+def test_rejects_extended_windows_device_names(tmp_path, member):
+    with pytest.raises(OfflineBundleError):
+        inspect_offline_bundle(make_bundle(tmp_path, extra_members=[(member, b'x')]))
+
+
+def test_cleanup_failure_keeps_original_reason(tmp_path, monkeypatch):
+    from patchtrace import offline_bundle
+    plan = inspect_offline_bundle(make_bundle(tmp_path))
+    cancel = threading.Event()
+    monkeypatch.setattr(offline_bundle.shutil, 'rmtree', lambda *_a, **_k: (_ for _ in ()).throw(OSError('locked')))
+    with pytest.raises(OfflineBundleError) as caught:
+        install_offline_bundle(plan, tmp_path / 'runtimes', cancel=cancel, event=lambda _m: cancel.set())
+    message = str(caught.value)
+    assert message.startswith('PT-CANCEL:') and 'staging cleanup failed at' in message
+
+
+@pytest.mark.skipif(os.name == 'nt', reason='POSIX os.replace semantics')
+def test_publish_does_not_replace_directory_created_after_check(tmp_path, monkeypatch):
+    from patchtrace import offline_bundle
+    plan = inspect_offline_bundle(make_bundle(tmp_path))
+    root = tmp_path / 'runtimes'
+    real = offline_bundle._publish_no_replace
+
+    def intruder(stage, destination):
+        destination.mkdir()
+        return real(stage, destination)
+
+    monkeypatch.setattr(offline_bundle, '_publish_no_replace', intruder)
+    with pytest.raises(OfflineBundleError):
+        install_offline_bundle(plan, root)
+    assert (root / RUNTIME_ID).is_dir() and not any((root / RUNTIME_ID).iterdir())
+    assert not list(root.glob('.install-*'))
+
+
+def test_plan_and_installed_runtime_expose_parsed_manifest(tmp_path):
+    plan = inspect_offline_bundle(make_bundle(tmp_path))
+    assert plan.manifest['runtime_id'] == RUNTIME_ID
+    installed = install_offline_bundle(plan, tmp_path / 'runtimes')
+    assert installed.manifest == plan.manifest
+    assert installed.manifest_path.read_bytes() == plan.manifest_bytes
+    assert installed.python_executable == installed.root / plan.python_relative

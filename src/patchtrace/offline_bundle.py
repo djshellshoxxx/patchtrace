@@ -15,6 +15,7 @@ import tempfile
 import threading
 import unicodedata
 import zipfile
+import zlib
 from collections.abc import Callable, Mapping
 from dataclasses import dataclass
 from pathlib import Path
@@ -29,8 +30,11 @@ HEX = re.compile(r'^[0-9a-f]{64}$')
 ID = re.compile(r'^[a-zA-Z0-9][a-zA-Z0-9._-]{0,95}$')
 VERSION = re.compile(r'^[a-zA-Z0-9][a-zA-Z0-9._+\-]{0,95}$')
 WINDOWS_RESERVED = {'CON', 'PRN', 'AUX', 'NUL'} | {
-    f'{kind}{index}' for kind in ('COM', 'LPT') for index in range(1, 10)
-}
+    f'{kind}{index}' for kind in ('COM', 'LPT') for index in (*range(1, 10), '¹', '²', '³')
+} | {'CONIN$', 'CONOUT$'}
+# Errors raised by zipfile/zlib for corrupt or unsupported members.
+_READ_ERRORS = (OSError, EOFError, zipfile.BadZipFile, zipfile.LargeZipFile, RuntimeError,
+                zlib.error, NotImplementedError)
 MANIFEST_KEYS = {'format', 'schema_version', 'runtime_id', 'platform', 'architecture',
                  'python', 'ghidra', 'java', 'versions', 'files'}
 VERSION_KEYS = {'python', 'ghidra', 'jdk', 'ghidriff_revision'}
@@ -40,6 +44,10 @@ REQUIRED_FILES = ('python/python.exe', 'ghidra/Ghidra/application.properties',
 
 class OfflineBundleError(ValueError):
     """A predictable, actionable PT-OFFLINE failure."""
+
+
+class OfflineBundleCancelled(OfflineBundleError):
+    """User cancellation, prefixed PT-CANCEL so callers can tell it from rejection."""
 
 
 @dataclass(frozen=True)
@@ -56,6 +64,10 @@ class OfflineBundlePlan:
     runtime_id: str
     files: tuple[BundleFile, ...]
     manifest_bytes: bytes
+    manifest: Mapping[str, object]
+    python_relative: str = 'payload/python/python.exe'
+    ghidra_relative: str = 'payload/ghidra'
+    java_relative: str = 'payload/jdk'
 
     @property
     def file_count(self) -> int:
@@ -72,7 +84,8 @@ class InstalledRuntime:
     python_executable: Path
     ghidra_dir: Path
     java_home: Path
-    manifest: Path
+    manifest_path: Path
+    manifest: Mapping[str, object]
     archive_sha256: str
 
 
@@ -82,7 +95,7 @@ def _fail(message: str) -> None:
 
 def _cancel(cancel: threading.Event | None) -> None:
     if cancel is not None and cancel.is_set():
-        _fail('installation cancelled; existing runtimes were preserved')
+        raise OfflineBundleCancelled('PT-CANCEL: installation cancelled; existing runtimes were preserved')
 
 
 def _sha256_file(path: Path, cancel: threading.Event | None) -> str:
@@ -125,7 +138,7 @@ def _safe_relative(name: str) -> str:
     parts = name.split('/')
     if any(part in ('', '.', '..') or part.endswith((' ', '.')) or ':' in part
            or any(char in part for char in '<>"|?*')
-           or part.split('.')[0].upper() in WINDOWS_RESERVED for part in parts):
+           or part.split('.')[0].rstrip(' ').upper() in WINDOWS_RESERVED for part in parts):
         _fail('unsafe archive path')
     return name
 
@@ -250,22 +263,68 @@ def inspect_offline_bundle(archive: Path, *, expected_sha256: str | None = None,
                 raw = stream.read(MAX_MANIFEST + 1)
             if len(raw) > MAX_MANIFEST:
                 _fail('manifest exceeds size limit')
-            runtime_id, files = _validated_manifest(_json_no_duplicates(raw))
+            manifest = _json_no_duplicates(raw)
+            runtime_id, files = _validated_manifest(manifest)
             _zip_entries(zf, files)
             for item in files:
                 with zf.open('payload/' + item.path) as stream:
                     _verify_stream(stream, item, cancel)
-        return OfflineBundlePlan(archive, archive_hash, runtime_id, files, raw)
+        return OfflineBundlePlan(archive, archive_hash, runtime_id, files, raw, manifest)
     except OfflineBundleError:
         raise
-    except (OSError, EOFError, zipfile.BadZipFile, zipfile.LargeZipFile, RuntimeError) as exc:
+    except _READ_ERRORS as exc:
         _fail(f'cannot read or verify offline ZIP ({type(exc).__name__})')
+
+
+def _is_link_or_junction(path: Path) -> bool:
+    """Symlinks, and on Windows junctions/mount points, which is_symlink() misses."""
+    if path.is_symlink() or (hasattr(path, 'is_junction') and path.is_junction()):
+        return True
+    try:
+        attributes = getattr(os.lstat(path), 'st_file_attributes', 0)
+    except OSError:
+        return False
+    return bool(attributes & getattr(stat, 'FILE_ATTRIBUTE_REPARSE_POINT', 0))
 
 
 def _no_symlink_ancestors(path: Path) -> None:
     for candidate in (path, *path.parents):
-        if candidate.is_symlink():
-            _fail('symbolic link in installation destination is forbidden')
+        if _is_link_or_junction(candidate):
+            _fail('symbolic link or junction in installation destination is forbidden')
+
+
+def _system_directories() -> list[Path]:
+    names = ('WINDIR', 'SystemRoot', 'ProgramFiles', 'ProgramFiles(x86)', 'ProgramW6432', 'ProgramData')
+    found = [Path(os.environ[name]) for name in names if os.environ.get(name)]
+    if os.name != 'nt':
+        found += [Path(p) for p in ('/bin', '/boot', '/dev', '/etc', '/lib', '/proc', '/sbin',
+                                    '/sys', '/usr', '/var')]
+    return [item.resolve() for item in found]
+
+
+def _validated_root(runtimes_root: Path) -> Path:
+    """Reject relative, non-normalized, filesystem-root and OS directories (SPEC-06 §6)."""
+    raw = Path(runtimes_root)
+    if not raw.is_absolute() or any(part in ('.', '..') for part in raw.parts):
+        _fail('installation root must be an absolute, normalized dedicated runtimes directory')
+    resolved = raw.resolve()
+    if resolved == Path(resolved.anchor) or any(
+            resolved == system or resolved.is_relative_to(system) for system in _system_directories()):
+        _fail('installation root must not be a filesystem root or operating-system directory')
+    return raw
+
+
+def _publish_no_replace(stage: Path, destination: Path) -> None:
+    """Move stage to an absent destination. POSIX os.replace would replace an empty dir."""
+    if os.name == 'nt':
+        os.replace(stage, destination)  # Windows refuses to replace an existing directory.
+        return
+    os.mkdir(destination)  # reservation: fails if anything appeared at destination
+    try:
+        os.rename(stage, destination)  # rename over our own empty reservation
+    except OSError:
+        os.rmdir(destination)
+        raise
 
 
 def install_offline_bundle(plan: OfflineBundlePlan, runtimes_root: Path, *,
@@ -273,9 +332,7 @@ def install_offline_bundle(plan: OfflineBundlePlan, runtimes_root: Path, *,
                            event: Callable[[str], None] | None = None) -> InstalledRuntime:
     """Verify again, extract to private staging, publish atomically, never overwrite."""
     _cancel(cancel)
-    destination_root = Path(runtimes_root)
-    if not destination_root.is_absolute() or str(destination_root) == destination_root.anchor:
-        _fail('installation root must be an absolute dedicated runtimes directory')
+    destination_root = _validated_root(runtimes_root)
     _no_symlink_ancestors(destination_root)
     try:
         verified = inspect_offline_bundle(plan.archive, expected_sha256=plan.sha256, cancel=cancel)
@@ -303,6 +360,7 @@ def install_offline_bundle(plan: OfflineBundlePlan, runtimes_root: Path, *,
     lock = destination_root / f'.runtime-{verified.runtime_id}.lock'
     stage = None
     lock_fd = None
+    primary: OfflineBundleError | None = None
     try:
         try:
             lock_fd = os.open(lock, os.O_CREAT | os.O_EXCL | os.O_WRONLY, 0o600)
@@ -329,20 +387,23 @@ def install_offline_bundle(plan: OfflineBundlePlan, runtimes_root: Path, *,
         _cancel(cancel)
         if destination.exists():
             _fail('runtime already installed; existing files were not overwritten')
-        os.replace(stage, destination)
+        _publish_no_replace(stage, destination)
         stage = None
         return InstalledRuntime(
             root=destination,
-            python_executable=destination / 'payload' / 'python' / 'python.exe',
-            ghidra_dir=destination / 'payload' / 'ghidra',
-            java_home=destination / 'payload' / 'jdk',
-            manifest=destination / 'manifest.json',
+            python_executable=destination / verified.python_relative,
+            ghidra_dir=destination / verified.ghidra_relative,
+            java_home=destination / verified.java_relative,
+            manifest_path=destination / 'manifest.json',
+            manifest=verified.manifest,
             archive_sha256=verified.sha256,
         )
-    except OfflineBundleError:
+    except OfflineBundleError as exc:
+        primary = exc
         raise
-    except (OSError, EOFError, zipfile.BadZipFile, RuntimeError) as exc:
-        _fail(f'installation failed; no runtime published ({type(exc).__name__})')
+    except _READ_ERRORS as exc:
+        primary = OfflineBundleError(f'PT-OFFLINE: installation failed; no runtime published ({type(exc).__name__})')
+        raise primary from None
     finally:
         try:
             if stage is not None and stage.exists():
@@ -350,7 +411,12 @@ def install_offline_bundle(plan: OfflineBundlePlan, runtimes_root: Path, *,
                     shutil.rmtree(stage)
                 except OSError:
                     # Do not touch unknown stages; provide the exact path for manual review.
-                    raise OfflineBundleError(f'PT-OFFLINE: staging cleanup failed at {stage}') from None
+                    # Keep the original failure/cancel reason rather than masking it.
+                    note = f'staging cleanup failed at {stage}'
+                    if primary is not None:
+                        primary.args = (f'{primary.args[0]}; {note}',)
+                    else:
+                        raise OfflineBundleError(f'PT-OFFLINE: {note}') from None
         finally:
             if lock_fd is not None:
                 os.close(lock_fd)
