@@ -438,27 +438,6 @@ def test_nonzero_backend_exit_preserves_classified_error_and_log(fake_runtime):
     assert not project.runs
 
 
-def test_backend_private_java_home_changes_child_environment_only(tmp_path, monkeypatch):
-    from patchtrace.backend import BackendConfig, _config_errors, _environment
-
-    python = tmp_path / 'python.exe'
-    python.write_bytes(b'fake')
-    python.chmod(0o700)
-    ghidra = tmp_path / 'ghidra'
-    (ghidra / 'Ghidra').mkdir(parents=True)
-    (ghidra / 'Ghidra' / 'application.properties').write_text('application.version=12.0.4')
-    jdk = tmp_path / 'my private jdk'
-    (jdk / 'bin').mkdir(parents=True)
-    (jdk / 'bin' / ('java.exe' if os.name == 'nt' else 'java')).write_bytes(b'fake')
-    monkeypatch.setenv('JAVA_HOME', 'parent-untouched')
-    config = BackendConfig(str(python), str(ghidra), java_home=str(jdk))
-    assert _config_errors(config) == []
-    child_env = _environment(config)
-    assert child_env['JAVA_HOME'] == str(jdk)
-    assert child_env['PATH'].split(os.pathsep)[0] == str(jdk / 'bin')
-    assert os.environ['JAVA_HOME'] == 'parent-untouched'
-    bad_config = BackendConfig(str(python), str(ghidra), java_home=str(tmp_path / 'missing'))
-    assert any('Java' in item for item in _config_errors(bad_config))
 # Emulates pinned Ghidriff 1.0.0 setup_project()/get_pdb() symbol handling: Ghidra
 # resolves user settings from XDG_CONFIG_HOME, else %APPDATA% / ~/.config; a
 # symbol store persisted there by an earlier run is consulted even under
@@ -578,3 +557,26 @@ def test_cached_pdb_classifier_does_not_capture_unrelated_file_exists():
 
     text = describe_backend_exit(1, 'FileExistsError: [Errno 17] File exists: out/json')
     assert 'symbol' not in text.lower()
+
+
+def test_backend_private_java_home_changes_child_environment_only(tmp_path, monkeypatch):
+    from patchtrace.backend import BackendConfig, _config_errors, _environment
+
+    python = tmp_path / 'python.exe'
+    python.write_bytes(b'fake')
+    python.chmod(0o700)
+    ghidra = tmp_path / 'ghidra'
+    (ghidra / 'Ghidra').mkdir(parents=True)
+    (ghidra / 'Ghidra' / 'application.properties').write_text('application.version=12.0.4')
+    jdk = tmp_path / 'my private jdk'
+    (jdk / 'bin').mkdir(parents=True)
+    (jdk / 'bin' / ('java.exe' if os.name == 'nt' else 'java')).write_bytes(b'fake')
+    monkeypatch.setenv('JAVA_HOME', 'parent-untouched')
+    config = BackendConfig(str(python), str(ghidra), java_home=str(jdk))
+    assert _config_errors(config) == []
+    child_env = _environment(config)
+    assert child_env['JAVA_HOME'] == str(jdk)
+    assert child_env['PATH'].split(os.pathsep)[0] == str(jdk / 'bin')
+    assert os.environ['JAVA_HOME'] == 'parent-untouched'
+    bad_config = BackendConfig(str(python), str(ghidra), java_home=str(tmp_path / 'missing'))
+    assert any('Java' in item for item in _config_errors(bad_config))
