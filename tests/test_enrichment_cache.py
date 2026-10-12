@@ -374,7 +374,10 @@ def test_symlink_escape_refused(tmp_path):
     c = DerivedCache(CacheConfig(root=tmp_path / 'cache'))
     (tmp_path / 'cache' / 'v1').mkdir(parents=True)
     try:
-        os.symlink(outside, tmp_path / 'cache' / 'v1' / 'signals', target_is_directory=True)
+        try:
+            os.symlink(outside, tmp_path / 'cache' / 'v1' / 'signals', target_is_directory=True)
+        except OSError:
+            pytest.skip('symlink creation not permitted')
     except OSError:
         pytest.skip('symlink creation not permitted')
     assert c.put('signals', KEY, PAYLOAD, {}) is False
@@ -391,7 +394,10 @@ def test_symlinked_entry_payload_is_not_served(cache, tmp_path):
     secret = tmp_path / 'secret'
     secret.write_bytes(PAYLOAD)
     (entry / 'payload').unlink()
-    os.symlink(secret, entry / 'payload')
+    try:
+        os.symlink(secret, entry / 'payload')
+    except OSError:
+        pytest.skip('symlink creation not permitted')
     assert cache.get('signals', KEY) is None
     assert secret.read_bytes() == PAYLOAD
 

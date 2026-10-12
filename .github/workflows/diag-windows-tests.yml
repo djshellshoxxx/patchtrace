@@ -1,0 +1,32 @@
+# Temporary diagnostic: one job per new test module so a Windows failure is identifiable by job name.
+name: Windows per-module diagnostics
+on:
+  pull_request:
+    paths: ['src/**', 'tests/**', 'tools/**', '.github/workflows/diag-windows-tests.yml']
+permissions:
+  contents: read
+jobs:
+  module:
+    name: win ${{ matrix.module }}
+    strategy:
+      fail-fast: false
+      matrix:
+        module: [test_enrichment_core, test_enrichment_storage, test_enrichment_signals, test_enrichment_wil,
+                 test_enrichment_cve, test_enrichment_intelligence, test_enrichment_cache, test_cli,
+                 test_ui_enrichment, test_enrichment_review_regressions, test_rest, ruff]
+    runs-on: windows-latest
+    env:
+      QT_QPA_PLATFORM: offscreen
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install -e '.[dev]'
+      - if: matrix.module == 'ruff'
+        run: python -m ruff check src tests tools
+      - if: matrix.module == 'test_rest'
+        shell: bash
+        run: python -m pytest -q $(ls tests/test_*.py | grep -v -E 'test_enrichment_|test_cli.py|test_ui_enrichment')
+      - if: matrix.module != 'ruff' && matrix.module != 'test_rest'
+        run: python -m pytest -q tests/${{ matrix.module }}.py

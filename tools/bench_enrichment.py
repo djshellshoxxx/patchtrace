@@ -11,7 +11,6 @@ from __future__ import annotations
 import argparse
 import json
 import platform
-import resource
 import sys
 import tempfile
 import time
@@ -58,7 +57,11 @@ def main() -> int:
         t2 = time.perf_counter()
         hit = pipeline.run(project, pipeline.PipelineOptions(cache=cache))
         warm = time.perf_counter() - t2
-    rss_kib = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
+    try:
+        import resource  # POSIX only
+        rss_kib = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
+    except ImportError:
+        rss_kib = 0
     report = {
         'workload': 'synthetic', 'pairs': args.pairs, 'lines_total': sum(
             len(f.code.splitlines()) for m in project.matches for f in m.older + m.newer),
