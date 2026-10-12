@@ -195,7 +195,7 @@ def test_lru_evicts_least_recently_accessed(cache):
     keys = [stage_id('signals', 1, {'n': str(i)}) for i in range(3)]
     for i, k in enumerate(keys):
         assert cache.put('signals', k, PAYLOAD, {})
-        os.utime(entry_dir(cache, 'signals', k) / 'manifest.json', ns=(10**18 + i, 10**18 + i))
+        os.utime(entry_dir(cache, 'signals', k) / 'manifest.json', ns=(10**18 + i * 10**9, 10**18 + i * 10**9))  # NTFS: 100 ns resolution
     assert cache.get('signals', keys[0]) == PAYLOAD  # refreshes its clock
     one = cache.status()['bytes'] // 3
     cache.prune(one * 2)
