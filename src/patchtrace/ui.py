@@ -443,6 +443,7 @@ class ExportDialog(QDialog):
         self.project = project
         self.root = root
         self.selected_ids = selected_ids
+        self.enrichment = None
         self.setWindowTitle('Export report · review exact preview')
         self.resize(880, 700)
         layout = QVBoxLayout(self)
@@ -496,7 +497,8 @@ class ExportDialog(QDialog):
 
     def options(self):
         return dict(include_code=self.code.isChecked(), include_notes=self.notes.isChecked(),
-                    finding_ids=self.selected_ids if self.selection.isChecked() else None)
+                    finding_ids=self.selected_ids if self.selection.isChecked() else None,
+                    enrichment=self.enrichment)
 
     def refresh_preview(self, *_):
         try:
@@ -1320,6 +1322,19 @@ class MainWindow(QMainWindow):
         self._signal_sets = {s.match_id: s for s in (SignalSet.model_validate_json(json.dumps(item))
                                                      for item in signals_entry.body['items'])}
 
+    def _enrichment_export(self):
+        """The exact ranking shown in the navigator, for preview and written report alike."""
+        if not self._ranking:
+            return None
+        from .enrichment import pipeline
+        from .enrichment.contracts import RankingResult
+        from .enrichment.storage import EnrichmentStore
+        entry = EnrichmentStore(self.service.store).current('ranking', pipeline.guard_for(self.project))
+        if entry is None:
+            return None
+        ranking = RankingResult.model_validate_json(json.dumps(entry.body['items'][0]))
+        return {'ranking': ranking.model_dump(mode='json'), 'stale': entry.stale}
+
     def rank_changes(self):
         if not self.service or self.worker:
             return
@@ -1640,6 +1655,8 @@ class MainWindow(QMainWindow):
             return
         selected = [item.data(Qt.ItemDataRole.UserRole) for item in self.findings_list.selectedItems()]
         dialog = ExportDialog(self.project, self.service.root, selected, self)
+        dialog.enrichment = self._enrichment_export()
+        dialog.refresh_preview()
         if dialog.exec() == QDialog.DialogCode.Accepted:
             output = Path(dialog.destination.text())
             result = self._guard(lambda: export_project(self.project, dialog.format.currentText(), output,

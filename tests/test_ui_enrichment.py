@@ -53,3 +53,36 @@ def test_stored_ranking_reloads_and_goes_stale_after_rematch(window, qtbot):
     window.refresh()
     assert not window._ranking
     assert 'stale' in window._ranking_note
+
+
+def test_export_contains_identical_ranking_values(window, qtbot, tmp_path):
+    import json
+
+    from patchtrace.reports import export_project
+    window.rank_action.trigger()
+    qtbot.waitUntil(lambda: window.worker is None, timeout=10000)
+    enrichment = window._enrichment_export()
+    out = tmp_path / 'r.json'
+    export_project(window.project, 'json', out, enrichment=enrichment)
+    exported = json.loads(out.read_text())['change_ranking']
+    assert {e['match_id']: e['score'] for e in exported['entries']} == {
+        k: v.score for k, v in window._ranking.items()}
+    md = tmp_path / 'r.md'
+    export_project(window.project, 'md', md, enrichment=enrichment)
+    assert '## Change ranking (attention/1)' in md.read_text()
+    html = tmp_path / 'r.html'
+    export_project(window.project, 'html', html, enrichment=enrichment)
+    assert '<script' not in html.read_text()
+
+
+def test_export_rejects_forged_ranking(window, qtbot, tmp_path):
+    from patchtrace.reports import ExportError, export_project
+    window.rank_action.trigger()
+    qtbot.waitUntil(lambda: window.worker is None, timeout=10000)
+    enrichment = window._enrichment_export()
+    enrichment['ranking']['entries'][0]['match_id'] = 'not-in-project'
+    with pytest.raises(ExportError, match='outside'):
+        export_project(window.project, 'json', tmp_path / 'x.json', enrichment=enrichment)
+    enrichment['ranking']['entries'][0]['score'] = 101
+    with pytest.raises(ExportError):
+        export_project(window.project, 'json', tmp_path / 'x.json', enrichment=enrichment)
