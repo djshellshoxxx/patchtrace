@@ -76,13 +76,17 @@ def _config_errors(config: BackendConfig) -> list[str]:
     return errors
 
 
-def _environment(config: BackendConfig) -> dict[str, str]:
+def _environment(config: BackendConfig, settings_dir: Path | None = None) -> dict[str, str]:
     env = os.environ.copy()
     # A case directory or inherited development path must not supply Python modules.
     env.pop('PYTHONPATH', None)
     env.pop('PYTHONHOME', None)
     env['GHIDRA_INSTALL_DIR'] = str(Path(config.ghidra_dir).resolve())
     env['PYTHONIOENCODING'] = 'utf-8'
+    if settings_dir is not None:
+        # Ghidra honours XDG_CONFIG_HOME on every OS. A per-run empty settings
+        # directory hides symbol-server preferences persisted by earlier runs.
+        env['XDG_CONFIG_HOME'] = str(settings_dir)
     return env
 
 
@@ -238,6 +242,8 @@ def run_comparison(config: BackendConfig, project: ComparisonProject, root: Path
     raw.mkdir()
     settings = {'timeout_seconds': config.timeout_seconds,
                 'allow_symbol_downloads': config.allow_symbol_downloads,
+                'symbol_policy': 'online' if config.allow_symbol_downloads is True else 'disabled',
+                'ghidra_settings': 'isolated-per-run',
                 'older_sha256': next(a.sha256 for a in project.artifacts if a.side == 'older'),
                 'newer_sha256': next(a.sha256 for a in project.artifacts if a.side == 'newer')}
     backend_version = 'unknown'
@@ -279,13 +285,16 @@ def run_comparison(config: BackendConfig, project: ComparisonProject, root: Path
             scratch_root = Path(scratch).resolve()
             engine_project = _validated_ghidra_output_path(scratch_root / 'projects')
             engine_gzfs = _validated_ghidra_output_path(scratch_root / 'gzfs')
+            ghidra_settings = scratch_root / 'ghidra-settings'
+            ghidra_settings.mkdir()
             argv = [str(Path(config.python_executable).resolve()), '-m', 'ghidriff',
                     str(paths['older']), str(paths['newer']), '--output-path',
                     str(_validated_ghidra_output_path(raw)),
                     '--project-location', str(engine_project), '--gzfs-path', str(engine_gzfs)]
             if not config.allow_symbol_downloads:
                 argv.append('--no-symbols')
-            result = run_process(argv, cwd=Path(config.ghidra_dir), env=_environment(config), cancel=cancel,
+            result = run_process(argv, cwd=Path(config.ghidra_dir), env=_environment(config, ghidra_settings),
+                                 cancel=cancel,
                                  timeout_seconds=config.timeout_seconds,
                                  check_output=lambda: _output_error(raw))
         sanitized_log = redact_log(result.log_tail)
