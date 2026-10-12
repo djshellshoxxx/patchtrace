@@ -33,12 +33,15 @@ def main() -> int:
             service = ProjectService.sample(root / 'sample')
             settings = QSettings(str(root / 'settings.ini'), QSettings.Format.IniFormat)
             window = MainWindow(service=service, settings=settings)
-            window.show()
-            app.processEvents()
-            if not window.navigator.count() or 'SYNTHETIC SAMPLE' not in window.project_label.text():
-                raise RuntimeError('Desktop self-test did not display sample matches')
-            window.close()
-            app.processEvents()
+            try:
+                window.show()
+                app.processEvents()
+                if not window.navigator.count() or 'SYNTHETIC SAMPLE' not in window.project_label.text():
+                    raise RuntimeError('Desktop self-test did not display sample matches')
+            finally:
+                # Release the project lock/SQLite connection even on failure so cleanup can proceed.
+                window.close()
+                app.processEvents()
             # Windows cannot remove immutable copied artifacts until permissions are restored.
             for path in root.rglob('*'):
                 if path.is_file():

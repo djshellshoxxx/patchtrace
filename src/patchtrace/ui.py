@@ -1,6 +1,7 @@
 """Qt desktop. Workers produce values; project mutations stay on the GUI thread."""
 from __future__ import annotations
 
+import html
 import json
 import os
 import tempfile
@@ -99,6 +100,11 @@ class ArtifactPathEdit(QLineEdit):
         if len(urls) == 1 and urls[0].isLocalFile():
             self.setText(urls[0].toLocalFile())
             event.acceptProposedAction()
+
+
+def plain_tip(text):
+    """Tooltips auto-detect rich text (Qt::mightBeRichText); escape untrusted text so it renders literally."""
+    return '<p style="white-space:pre-wrap">' + html.escape(text).replace('\n', '<br>') + '</p>'
 
 
 def plain_view(text='', parent=None):
@@ -372,8 +378,8 @@ class SetupDialog(QDialog):
         self._pending_plan = None
         if plan is None:
             return
-        answer = QMessageBox.question(
-            self, 'Install verified offline backend?',
+        box = QMessageBox(
+            QMessageBox.Icon.Question, 'Install verified offline backend?',
             f'Bundle: {plan.archive.name}\nRuntime: {plan.runtime_id}\n'
             f'Files: {plan.file_count:,}; uncompressed: {plan.total_bytes:,} bytes\n'
             f'Archive SHA-256: {plan.sha256}\n\n'
@@ -381,8 +387,11 @@ class SetupDialog(QDialog):
             'Verify the archive checksum against a trusted source and review the included '
             'LICENSES/NOTICE.txt before relying on this software.\n\n'
             'Continue with private per-user installation?',
-            QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
-            QMessageBox.StandardButton.No)
+            QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No, self)
+        # Archive name and runtime ID come from an untrusted file; never interpret them as rich text.
+        box.setTextFormat(Qt.TextFormat.PlainText)
+        box.setDefaultButton(QMessageBox.StandardButton.No)
+        answer = box.exec()
         if answer != QMessageBox.StandardButton.Yes:
             self.diagnostics.setPlainText('Offline bundle checked; installation not authorized.')
             return
@@ -594,6 +603,8 @@ class ExportDialog(QDialog):
         self.refresh_preview()
 
     def change_format(self, value):
+        if not self.destination.text().strip():
+            return
         self.destination.setText(str(Path(self.destination.text()).with_suffix('.' + value)))
 
     def browse(self):
@@ -1044,7 +1055,7 @@ class MainWindow(QMainWindow):
             for side in ['older', 'newer']:
                 artifact = next(a for a in project.artifacts if a.side == side)
                 self.side_labels[side].setText(f'{side.upper()} · {artifact.name}\nSHA-256 {artifact.sha256[:16]}…')
-                self.side_labels[side].setToolTip(f'{artifact.name}\nSHA-256 {artifact.sha256}\n{artifact.size:,} bytes')
+                self.side_labels[side].setToolTip(plain_tip(f'{artifact.name}\nSHA-256 {artifact.sha256}\n{artifact.size:,} bytes'))
         else:
             self.project_label.setText('Open a project or load the synthetic sample to begin.')
         self._load_enrichment()
@@ -1091,7 +1102,7 @@ class MainWindow(QMainWindow):
             if entry:
                 tip += (f'\nAttention {entry.score}/100 (raw {entry.raw}/80, rank {entry.rank}, '
                         f'{len(entry.groups)} edit group(s), evidence {entry.evidence})')
-            item.setToolTip(tip)
+            item.setToolTip(plain_tip(tip))
             self.navigator.addItem(item)
             if match.id == selected_id:
                 self.navigator.setCurrentItem(item)
@@ -1274,7 +1285,7 @@ class MainWindow(QMainWindow):
                 item = QListWidgetItem(f'{"STALE · " if finding.stale else ""}{finding.summary}\n'
                                        f'{finding.category} · {finding.review}')
                 item.setData(Qt.ItemDataRole.UserRole, finding.id)
-                item.setToolTip(finding.summary)
+                item.setToolTip(plain_tip(finding.summary))
                 self.findings_list.addItem(item)
                 if finding.id == current_id:
                     self.findings_list.setCurrentItem(item)
@@ -1363,8 +1374,8 @@ class MainWindow(QMainWindow):
                 item = QListWidgetItem(f'{signal.detector} · {signal.confidence} · {first.side} '
                                        f'lines {first.start_line}-{first.end_line}')
                 item.setData(Qt.ItemDataRole.UserRole, signal.signal_id)
-                item.setToolTip(signal.rationale + ('\nLimitations: ' + ', '.join(signal.limitations)
-                                                    if signal.limitations else ''))
+                item.setToolTip(plain_tip(signal.rationale + ('\nLimitations: ' + ', '.join(signal.limitations)
+                                                               if signal.limitations else '')))
                 self.signal_list.addItem(item)
             unavailable = [o.detector for o in signal_set.outcomes if o.status == 'unavailable']
             if not signal_set.signals:
