@@ -73,6 +73,8 @@ Input: `MatchView` (immutable): pairing id, match id, category, older/newer func
 | WIL | 12 | Qualifying B2 feature-gate transition (introduced/removed/condition-changed/guarded-behavior-changed) for this pairing | from B2 |
 | SCRUB | 34 | Added zeroing/masking (`memset(x,0,..)`, `RtlZeroMemory`, `RtlSecureZeroMemory`, `&= mask`) of object `x` **before** a copy-out/copy (`memcpy`, `RtlCopyMemory`, `copy_to_user`, `ProbeForWrite`+copy) whose source is the same `x` in the newer side | moderate |
 
+Predicate lines include `if (…)`, `} else if (…)` and `else if (…)`. ERR recognises negative literals, NTSTATUS error values 0xC0000000–0xFFFFFFFF and `STATUS_*` error names; HRESULT failures (0x80000000–0xBFFFFFFF) are a documented false negative because that range overlaps NTSTATUS warnings. SIZE does not fire when the newer size argument is a decompiler temporary assigned, within the window, an expression equal to the older argument (temporary spill).
+
 Not sufficient alone (negative fixtures required): API names, nearby zeroing without the same object, decompiler variable renames, whitespace/display hunks, instruction hashes, call-name proximity. Added/removed functions (one side absent) cannot produce two-sided guard claims; detectors return `unavailable` for those categories except where the rule is one-sided by definition (none in this release). Missing decompiled code on a required side → detector status `unavailable` (not zero). No special-casing of any binary name.
 
 Each detector declares: `id`, `version`, `prerequisites`, `categories` (default: `modified`, `split`, `merged`, `ambiguous` with ambiguity recorded), `limitations`. A disproved prerequisite suppresses that detector (status `complete`, no signal) and never yields negative scores.
@@ -128,7 +130,7 @@ Additive tables in `project.sqlite3`: `enrichment_meta(key TEXT PRIMARY KEY, val
 
 ## 11. CLI (headless, no Qt import)
 
-`patchtrace rank PROJECT [--weights FILE] [--json] [--limit N]`, `patchtrace flags PROJECT [--feature-id N]... [--json]`, `patchtrace correlate PROJECT --cve ID... [--snapshot FILE] [--fetch --consent-providers msrc,nvd] [--json]`, `patchtrace cache {status,verify,prune} [--cache-dir D] [--json]`. JSON mode: exactly one document on stdout `{"contract":"enrichment-cli/1","command":..,"status":..,"result":..,"warnings":[..]}`; diagnostics on stderr. Exit codes: 0 success, 2 invalid arguments/config/environment, 3 runtime failure, 4 legitimate no-results (rank/flags with zero entries on complete evidence), 5 cancellation. Partial success is explicit (`status: partial`).
+`patchtrace rank PROJECT [--weights FILE] [--json] [--limit N]`, `patchtrace flags PROJECT [--feature-id N]... [--json]`, `patchtrace correlate PROJECT --cve ID... [--snapshot FILE] [--fetch --consent-providers msrc,nvd] [--json]`, `patchtrace cache {status,verify,prune} [--cache-dir D] [--json]`. JSON mode: exactly one document on stdout `{"contract":"enrichment-cli/1","command":..,"status":..,"result":..,"warnings":[..]}`, plus `"error": <message>` and `status: "failed"` when the command fails, or `status: "cancelled"` on interruption; diagnostics on stderr. Exit codes: 0 success, 2 invalid arguments/config/environment, 3 runtime failure, 4 legitimate no-results (rank/flags with zero entries on complete evidence), 5 cancellation. Partial success is explicit (`status: partial`).
 
 ## 12. Analysis profiles (shared nonsecret settings)
 
