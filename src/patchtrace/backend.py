@@ -53,6 +53,7 @@ class BackendConfig:
     ghidra_dir: str
     timeout_seconds: int = 3600
     allow_symbol_downloads: bool = False
+    java_home: str = ''
 
 
 def _config_errors(config: BackendConfig) -> list[str]:
@@ -73,6 +74,13 @@ def _config_errors(config: BackendConfig) -> list[str]:
         errors.append('PT-BACKEND: timeout_seconds must be a positive integer')
     if not isinstance(config.allow_symbol_downloads, bool):
         errors.append('PT-BACKEND: allow_symbol_downloads must be a boolean')
+    if not isinstance(config.java_home, str):
+        errors.append('PT-BACKEND: Java home must be a directory path')
+    elif config.java_home:
+        java_home = Path(config.java_home)
+        java_name = 'java.exe' if os.name == 'nt' else 'java'
+        if not java_home.is_absolute() or not (java_home / 'bin' / java_name).is_file():
+            errors.append('PT-BACKEND: private Java home must contain bin/' + java_name)
     return errors
 
 
@@ -82,6 +90,10 @@ def _environment(config: BackendConfig, settings_dir: Path | None = None) -> dic
     env.pop('PYTHONPATH', None)
     env.pop('PYTHONHOME', None)
     env['GHIDRA_INSTALL_DIR'] = str(Path(config.ghidra_dir).resolve())
+    if config.java_home:
+        java_home = str(Path(config.java_home).resolve())
+        env['JAVA_HOME'] = java_home
+        env['PATH'] = str(Path(java_home) / 'bin') + os.pathsep + env.get('PATH', '')
     env['PYTHONIOENCODING'] = 'utf-8'
     if settings_dir is not None:
         # Ghidra honours XDG_CONFIG_HOME on every OS. A per-run empty settings
@@ -148,7 +160,7 @@ def diagnose(config: BackendConfig) -> list[str]:
             statuses.append('PT-BACKEND: pyghidra version unavailable; install ghidriff with its dependencies')
     except (OSError, RuntimeError, ValueError) as error:
         statuses.append(redact_log(str(error), 2048))
-    java_home = os.environ.get('JAVA_HOME')
+    java_home = config.java_home or os.environ.get('JAVA_HOME')
     java_name = 'java.exe' if os.name == 'nt' else 'java'
     java = Path(java_home) / 'bin' / java_name if java_home else None
     if not ((java and java.is_file()) or shutil.which('java')):

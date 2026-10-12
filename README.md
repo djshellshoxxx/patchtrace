@@ -59,6 +59,12 @@ This is an authored, synthetic bounds-check example with a curated finding. Its 
 
 The native fixture passed with Python 3.12.10, Ghidra 12.0.4, Temurin Java 25, and Ghidriff revision `4f5d895fcbb1eacd65efd81145922c15bb7e741d`. This is the tested combination, rather than a claim that every newer or older combination works.
 
+### Fully offline backend ZIP (optional)
+
+The desktop now supports **Setup → Install offline backend ZIP…**. Select a preassembled, licensed, compatible PatchTrace offline runtime ZIP from local storage, optionally supply its independently trusted SHA-256, review the installer confirmation, and install without downloads, elevation, or changes to global Python/Java settings. Installed Python, Ghidra, and private JDK paths automatically populate Setup after success. Use **Diagnose dependencies** and **Save setup** before running a real comparison. Installation is atomic; cancelled or invalid packages do not replace existing runtimes.
+
+**Availability:** an official complete prebuilt runtime bundle has **not yet been produced or validated**. The ZIP consumer and producer work on synthetic fixtures, but the actual relocatable Python/Ghidriff/Ghidra/JDK payload and disconnected Windows acceptance are still release gates. Without an approved complete bundle, use the manual installation described below. See [offline runtime guide](docs/offline-backend.md) and [installer specification](docs/specs/offline-backend-installer.md).
+
 ### Windows setup
 
 1. Install Python 3.12 with the Windows `py` launcher and install Git with `git` available on PATH. Git is needed for the pinned source installation below.

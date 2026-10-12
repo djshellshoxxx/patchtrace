@@ -33,6 +33,8 @@
 
 - Native backend failure classifier maps supported error signatures to fixed actionable guidance (JDK mismatch, missing Ghidriff, Ghidra path, heap/disk/permissions), preserving original exit code and sanitized log. Unknown signatures retain the generic inspect-analysis.log message. Regression tests assert no tokens from raw upstream output are echoed.
 
+- Offline bundle importer: strict versioned manifest/ZIP inventory SHA-256 checks, Windows path/type checks, per-user atomic staging/lock with cancellation/rollback, no network or payload execution in the install path, dedicated child-only Java environment. Synthetic payload fixtures verify importer plumbing, not a functional relocatable Ghidriff distribution. Spec-06 full disconnected Windows bundle acceptance remains pending.
+
 ## Acceptance gates
 - Windows unit/Qt suite: 93 passed; Ruff passed ([run](https://github.com/djshellshoxxx/patchtrace/actions/runs/38126515355)). Frozen desktop smoke passed on the final curated package ([run](https://github.com/djshellshoxxx/patchtrace/actions/runs/38127040440)). That run repeats 93 Windows passes and 91 Linux passes with 2 Windows-only skips.
 - Real native Ghidriff known bounds-check DLL patch: passed ([run](https://github.com/djshellshoxxx/patchtrace/actions/runs/38126512208)). Python 3.12.10, Ghidra 12.0.4, Temurin Java 25; pinned Ghidriff revision from research. Both MSVC-built DLLs were statically analyzed, never executed. One modified change record contains the expected check. This single fixture does not establish general matching accuracy.

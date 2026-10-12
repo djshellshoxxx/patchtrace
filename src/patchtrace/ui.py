@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import json
+import os
 import tempfile
 import threading
 import time
@@ -42,6 +43,7 @@ from .alignment import alignment_strategy, diff_hunks
 from .backend import BackendConfig, diagnose, quarantine_failed_run, run_comparison
 from .evidence import build_context, resolve_evidence
 from .interpretation import interpret, system_prompt
+from .offline_bundle import inspect_offline_bundle, install_offline_bundle
 from .providers import ProviderConfig
 from .reports import export_project
 from .runtime_discovery import discover_local_runtimes
@@ -217,15 +219,17 @@ class SetupDialog(QDialog):
         self.setWindowTitle('Backend and desktop setup')
         self.resize(720, 470)
         layout = QVBoxLayout(self)
-        intro = PlainLabel('Comparison uses an external Python environment containing Ghidriff, plus Ghidra and Java.\n'
-                       'No downloads or binary execution are performed by setup.')
+        intro = PlainLabel('Comparison needs Ghidriff, Ghidra and Java. You can use existing tools or import a prebuilt offline backend ZIP.\n'
+                       'Import does not download or execute software; Diagnose dependencies is a separate explicit action.')
         intro.setWordWrap(True)
         layout.addWidget(intro)
         form = QFormLayout()
         self.python = QLineEdit(settings.value('backend/python', ''))
         self.ghidra = QLineEdit(settings.value('backend/ghidra', ''))
+        self.java_home = QLineEdit(settings.value('backend/java_home', ''))
         for name, edit, directory in [('External Python executable', self.python, False),
-                                       ('Ghidra installation directory', self.ghidra, True)]:
+                                       ('Ghidra installation directory', self.ghidra, True),
+                                       ('Private Java installation directory (optional)', self.java_home, True)]:
             row = QWidget()
             horizontal = QHBoxLayout(row)
             horizontal.setContentsMargins(0, 0, 0, 0)
@@ -258,11 +262,22 @@ class SetupDialog(QDialog):
         self.find = QPushButton('Find existing installations')
         self.find.clicked.connect(self.discover_existing)
         layout.addWidget(self.find)
+        self.bundle_sha = QLineEdit()
+        self.bundle_sha.setPlaceholderText('Optional trusted ZIP SHA-256 (64 lowercase hex)')
+        form.addRow('Trusted offline ZIP checksum', self.bundle_sha)
+        self.install = QPushButton('Install offline backend ZIP…')
+        self.install.clicked.connect(self.import_offline_bundle)
+        layout.addWidget(self.install)
+        self.cancel_install = QPushButton('Cancel offline installation')
+        self.cancel_install.setEnabled(False)
+        self.cancel_install.clicked.connect(self.cancel_offline_install)
+        layout.addWidget(self.cancel_install)
         self.check = QPushButton('Diagnose dependencies')
         self.check.clicked.connect(self.check_dependencies)
         layout.addWidget(self.check)
         layout.addWidget(dialog_buttons(self, 'Save setup'))
         self.worker = None
+        self._pending_plan = None
         self.discover_existing()
 
     def discover_existing(self):
@@ -288,7 +303,7 @@ class SetupDialog(QDialog):
 
     def browse(self, edit, directory):
         if directory:
-            value = QFileDialog.getExistingDirectory(self, 'Ghidra installation directory')
+            value = QFileDialog.getExistingDirectory(self, 'Select extracted installation directory')
         else:
             value, _ = QFileDialog.getOpenFileName(self, 'External Python executable')
         if value:
@@ -297,17 +312,108 @@ class SetupDialog(QDialog):
     def config(self):
         return BackendConfig(python_executable=self.python.text().strip(), ghidra_dir=self.ghidra.text().strip(),
                              timeout_seconds=self.timeout.value(),
-                             allow_symbol_downloads=self.allow_symbol_downloads.isChecked())
+                             allow_symbol_downloads=self.allow_symbol_downloads.isChecked(),
+                             java_home=self.java_home.text().strip())
 
     def check_dependencies(self):
+        if self.worker and self.worker.isRunning():
+            return
         config = self.config()
         self.check.setEnabled(False)
         self.diagnostics.setPlainText('Checking external dependencies…')
         self.worker = Worker(lambda cancel, event: diagnose(config), self)
         self.worker.result_ready.connect(lambda result: self.diagnostics.setPlainText('\n'.join(result)))
         self.worker.failed.connect(self.diagnostics.setPlainText)
-        self.worker.finished.connect(lambda: self.check.setEnabled(True))
+        self.worker.finished.connect(self._finish_diagnosis)
         self.worker.start()
+
+    def _finish_diagnosis(self):
+        self.worker = None
+        self.check.setEnabled(True)
+
+    def _offline_busy(self, active):
+        self.install.setEnabled(not active)
+        self.find.setEnabled(not active)
+        self.check.setEnabled(not active)
+        self.cancel_install.setEnabled(active)
+        for edit in (self.python, self.ghidra, self.java_home):
+            edit.setReadOnly(active)
+
+    def cancel_offline_install(self):
+        if self.worker and self.worker.isRunning():
+            self.worker.cancel.set()
+            self.cancel_install.setEnabled(False)
+            self.diagnostics.setPlainText('Cancelling offline operation after current chunk…')
+
+    def import_offline_bundle(self):
+        """Explicit local selection, background verification, then user confirmation."""
+        if self.worker and self.worker.isRunning():
+            return
+        chosen, _ = QFileDialog.getOpenFileName(
+            self, 'Choose a previously prepared offline backend ZIP', '', 'ZIP archives (*.zip)')
+        if not chosen:
+            return
+        self._pending_plan = None
+        digest = self.bundle_sha.text().strip() or None
+        self._offline_busy(True)
+        self.diagnostics.setPlainText('Verifying local offline bundle integrity…')
+        self.worker = Worker(
+            lambda cancel, event: inspect_offline_bundle(Path(chosen), expected_sha256=digest, cancel=cancel),
+            self)
+        self.worker.result_ready.connect(lambda plan: setattr(self, '_pending_plan', plan))
+        self.worker.failed.connect(self.diagnostics.setPlainText)
+        self.worker.finished.connect(self._finish_offline_inspection)
+        self.worker.start()
+
+    def _finish_offline_inspection(self):
+        self.worker = None
+        self._offline_busy(False)
+        plan = self._pending_plan
+        self._pending_plan = None
+        if plan is None:
+            return
+        answer = QMessageBox.question(
+            self, 'Install verified offline backend?',
+            f'Bundle: {plan.archive.name}\nRuntime: {plan.runtime_id}\n'
+            f'Files: {plan.file_count:,}; uncompressed: {plan.total_bytes:,} bytes\n'
+            f'Archive SHA-256: {plan.sha256}\n\n'
+            'The file hashes match its own manifest. This does NOT prove publisher authenticity. '
+            'Verify the archive checksum against a trusted source and review the included '
+            'LICENSES/NOTICE.txt before relying on this software.\n\n'
+            'Continue with private per-user installation?',
+            QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
+            QMessageBox.StandardButton.No)
+        if answer != QMessageBox.StandardButton.Yes:
+            self.diagnostics.setPlainText('Offline bundle checked; installation not authorized.')
+            return
+        local = os.environ.get('LOCALAPPDATA')
+        if not local:
+            self.diagnostics.setPlainText('PT-OFFLINE: LOCALAPPDATA is unavailable; Windows per-user install required')
+            return
+        target = Path(local) / 'PatchTrace' / 'runtimes'
+        self._offline_busy(True)
+        self.diagnostics.setPlainText('Installing verified backend into private user directory…')
+        self.worker = Worker(
+            lambda cancel, event: install_offline_bundle(
+                plan, target, cancel=cancel, event=lambda message: event(message)), self)
+        self.worker.event_ready.connect(lambda message: self.diagnostics.setPlainText(str(message)))
+        self.worker.result_ready.connect(self._offline_installed)
+        self.worker.failed.connect(self.diagnostics.setPlainText)
+        self.worker.finished.connect(self._finish_offline_install)
+        self.worker.start()
+
+    def _offline_installed(self, installed):
+        self.python.setText(str(installed.python_executable))
+        self.ghidra.setText(str(installed.ghidra_dir))
+        self.java_home.setText(str(installed.java_home))
+        self.diagnostics.setPlainText(
+            f'Offline backend installed at {installed.root}.\n'
+            'Use Diagnose dependencies, then Save setup. A native comparison must still '
+            'verify compatibility. No system-wide settings were changed.')
+
+    def _finish_offline_install(self):
+        self.worker = None
+        self._offline_busy(False)
 
     def reject(self):
         if self.worker and self.worker.isRunning():
@@ -1440,7 +1546,8 @@ class MainWindow(QMainWindow):
                              ghidra_dir=str(self.settings.value('backend/ghidra', '')),
                              timeout_seconds=int(self.settings.value('backend/timeout', 3600)),
                              allow_symbol_downloads=self.settings.value('backend/allow_symbol_downloads', False,
-                                                                         type=bool))
+                                                                         type=bool),
+                             java_home=str(self.settings.value('backend/java_home', '')))
 
     def run_analysis(self):
         if not self.project:
@@ -1641,6 +1748,7 @@ class MainWindow(QMainWindow):
             return
         self.settings.setValue('backend/python', dialog.python.text().strip())
         self.settings.setValue('backend/ghidra', dialog.ghidra.text().strip())
+        self.settings.setValue('backend/java_home', dialog.java_home.text().strip())
         self.settings.setValue('backend/timeout', dialog.timeout.value())
         self.settings.setValue('backend/allow_symbol_downloads', dialog.allow_symbol_downloads.isChecked())
         self.settings.setValue('desktop/font_size', dialog.font_size.value())
