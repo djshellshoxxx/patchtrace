@@ -45,6 +45,7 @@ class PairRef(Record):
     project_id: str = Field(min_length=1, max_length=128)
     revision: int = Field(ge=0)
     run_id: str | None = Field(default=None, max_length=128)
+    notes: tuple[str, ...] = ()
 
     @model_validator(mode='after')
     def _relative(self):
@@ -58,9 +59,16 @@ class PairRef(Record):
 
 
 class FunctionNode(Record):
+    """Name is null for an address-only node reached solely through upstream address_matches."""
     ordinal: Ordinal
     address: int | None = Field(default=None, ge=0, le=2**64 - 1)
-    name: str = Field(min_length=1, max_length=4096)
+    name: str | None = Field(default=None, min_length=1, max_length=4096)
+
+    @model_validator(mode='after')
+    def _identified(self):
+        if self.address is None and self.name is None:
+            raise ValueError('function node needs an address or a name')
+        return self
 
 
 class PairEdge(Record):

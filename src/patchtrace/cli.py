@@ -627,6 +627,8 @@ def cmd_series(args, cancel) -> int:
             raise _nway_error(exc) from None
         except OSError as exc:
             raise CliError(RUNTIME, f'cannot write series.json: {exc}') from None
+        refs = [*series.pair_projects, *([series.direct_project] if series.direct_project else [])]
+        warnings += [f'{ref.path}: {note}' for ref in refs for note in ref.notes]
         unrun = [p.path for p in series.pair_projects if p.run_id is None]
         if unrun:
             warnings.append(f'pair projects without a completed run (no edges): {", ".join(unrun)}; '
@@ -660,7 +662,7 @@ def cmd_series(args, cancel) -> int:
     labels = {b.ordinal: b.label for b in series.builds}
     text = '\n'.join(
         f'{c.status:<12} {"STALE " if r["stale"] else ""}{c.weakest_match_type:<28} '
-        + ' -> '.join(f'[{labels[n.ordinal]}] {n.name}' + (f'@{n.address:x}' if n.address is not None else '')
+        + ' -> '.join(f'[{labels[n.ordinal]}] {n.name or "?"}' + (f'@{n.address:x}' if n.address is not None else '')
                       for n in c.nodes)
         + ''.join(f' ({e.kind}@{labels[e.ordinal]})' for e in c.events)
         + (f' gaps:{",".join(labels[g] for g in c.gaps)}' if c.gaps else '')

@@ -182,3 +182,47 @@ def test_chain_contract_rejects_inconsistent_edges():
     with pytest.raises(ValueError):
         Chain.model_validate(chain.model_copy(update={'hops': 3}).model_dump(), strict=False)
     assert Chain.model_validate_json(chain.model_dump_json()) == chain
+
+
+def raw(table):
+    return {'address_matches': {f'{k:x}': [[f'{t:x}', types] for t, types in v] for k, v in table.items()}}
+
+
+def test_raw_unchanged_hop_joins_by_address():
+    ps = pairs(3)
+    ps[1].one(fn('f', 0x20, 'b'), fn('f', 0x30, 'c'))
+    [chain] = extract_chains(H[:3], [p.build() for p in ps],
+                             raw_matches=[raw({0x10: [(0x20, ['SymbolsHash'])]}), None])[0]
+    assert [(n.address, n.name) for n in chain.nodes] == [(0x10, None), (0x20, 'f'), (0x30, 'f')]
+    assert chain.edges[0].category == 'unchanged' and chain.edges[0].match_id.startswith('raw:')
+
+
+@pytest.mark.parametrize('table', [
+    {0x10: [(0x20, ['A']), (0x21, ['B'])]},           # two targets
+    {0x10: [(0x20, ['A'])], 0x11: [(0x20, ['B'])]},  # shared target
+])
+def test_ambiguous_address_matches_create_no_hop(table):
+    ps = pairs(4)
+    ps[0].one(fn('f', 0x1, 'a'), fn('f', 0x2, 'b'))
+    ps[1].one(fn('f', 0x2, 'b'), fn('f', 0x10, 'c'))
+    ps[2].matches = []
+    [chain] = extract_chains(H[:4], [p.build() for p in ps], raw_matches=[None, None, raw(table)])[0]
+    assert chain.nodes[-1].address == 0x10
+    assert [(e.kind, e.ordinal) for e in chain.events] == [('ambiguous', 3)]
+
+
+def test_normalized_and_manual_relations_override_raw():
+    ps = pairs(3)
+    ps[0].one(fn('f', 0x1), fn('f', 0x10))
+    ps[1].one(fn('f', 0x10), fn('right', 0x40), match_types=('manual',), manual=True)
+    raws = [None, raw({0x10: [(0x30, ['ExactBytesFunctionHasher'])], 0x11: [(0x40, ['BSIM'])]})]
+    [chain] = extract_chains(H[:3], [p.build() for p in ps], raw_matches=raws)[0]
+    assert chain.nodes[-1].name == 'right' and chain.edges[-1].manual
+
+
+def test_malformed_raw_matches_rejected():
+    with pytest.raises(NwayError, match='address_matches'):
+        extract_chains(H[:3], [p.build() for p in straight()], raw_matches=[{'address_matches': []}, None])
+    with pytest.raises(NwayError, match='target'):
+        extract_chains(H[:3], [p.build() for p in straight()],
+                       raw_matches=[{'address_matches': {'10': [['zz', []]]}}, None])

@@ -1,16 +1,22 @@
 """Pure chain extraction over adjacent pair projects (SPEC-09 §3). No Qt, I/O or network.
 
 Each pair project is an independent pairwise result. A node of build k is joined across the
-(k-1→k) and (k→k+1) projects by exact (address, name) identity within that same build —
-never by address equality across different builds. Only unambiguous 1:1 relations extend a
+(k-1→k) and (k→k+1) projects within that same build: by address when the record has one (one
+binary cannot hold two functions at one address), otherwise by exact name among address-less
+records. Addresses are never compared across different builds.
+
+Normalized pair matches cover only modified/added/deleted functions, so unchanged pairs come
+from the run's preserved Ghidriff `matches.address_matches`. Those engine relations never
+override a normalized or manual relation touching either endpoint. Only unambiguous 1:1 relations extend a
 chain; anything else ends it and is reported as an event so no many-to-many transitivity is
 ever implied. Runtime is O(matches + functions).
 """
 from __future__ import annotations
 
-from collections.abc import Sequence
+from collections.abc import Mapping, Sequence
+from dataclasses import dataclass, field
 
-from ..enrichment.identity import domain_id
+from ..enrichment.identity import domain_id, parse_address
 from ..models import ComparisonProject, FunctionMatch, FunctionRecord
 from .contracts import (
     MAX_BUILDS,
@@ -34,7 +40,7 @@ MATCH_TYPE_ORDER = ('manual', 'SymbolsHash', 'ExternalsName', 'ExactBytesFunctio
                     'StrUniqueFuncRefsHasher', 'SwitchSigHasher', 'BSIM', 'Implied Match', 'Decomp Match')
 UNKNOWN_TYPE = 'unknown'
 
-Key = tuple[int | None, str]
+Key = int | tuple[None, str]
 
 
 def series_id(hashes: Sequence[str]) -> str:
@@ -55,20 +61,77 @@ def validate_pair(project: ComparisonProject, older_sha: str, newer_sha: str) ->
                         f'{older_sha[:12]}→{newer_sha[:12]}')
 
 
-def parse_address(text: str | None) -> int | None:
-    if not text:
-        return None
-    body = text[2:] if text[:2].lower() == '0x' else text
-    if not body or len(body) > 16 or any(c not in '0123456789abcdefABCDEF' for c in body):
-        return None
-    return int(body, 16)
 
 
-def _key(func: FunctionRecord) -> Key:
-    return parse_address(func.address), func.name
+@dataclass(frozen=True)
+class RawFunction:
+    """An endpoint known only from upstream address_matches: no name, code or metadata."""
+    address: str
+    name: str | None = None
+    code: None = None
+    metadata: dict = field(default_factory=dict)
 
 
-def _ratio_text(match: FunctionMatch) -> str | None:
+@dataclass(frozen=True)
+class RawRelation:
+    id: str
+    category: str
+    older: list
+    newer: list
+    match_types: list
+    manual: bool = False
+
+
+def _key(func) -> Key:
+    address = parse_address(func.address)
+    return address if address is not None else (None, func.name)
+
+
+def _key_parts(key: Key) -> tuple[int | None, str | None]:
+    return (key, None) if isinstance(key, int) else (None, key[1])
+
+
+def _raw_relations(raw: Mapping, run_id: str, taken_old: set, taken_new: set) -> list[RawRelation]:
+    """Engine relations from Ghidriff address_matches for endpoints no normalized match touches."""
+    table = raw.get('address_matches')
+    if not isinstance(table, Mapping):
+        raise NwayError('PT-NWAY-PAIR', 'raw matches.address_matches must be an object')
+    parsed: dict[int, list[tuple[int, list[str]]]] = {}
+    for old_text, targets in table.items():
+        old = parse_address(old_text)
+        if old is None or not isinstance(targets, list):
+            raise NwayError('PT-NWAY-PAIR', 'raw address_matches has an invalid address or target list')
+        entries = []
+        for target in targets:
+            if (not isinstance(target, list) or len(target) != 2 or not isinstance(target[0], str)
+                    or not isinstance(target[1], list) or not all(isinstance(t, str) for t in target[1])):
+                raise NwayError('PT-NWAY-PAIR', 'raw address_matches target must be [address, [match types]]')
+            new = parse_address(target[0])
+            if new is None:
+                raise NwayError('PT-NWAY-PAIR', 'raw address_matches has an invalid target address')
+            entries.append((new, target[1]))
+        if old in parsed:
+            raise NwayError('PT-NWAY-PAIR', 'raw address_matches repeats a source address')
+        parsed[old] = entries
+    claims: dict[int, int] = {}
+    for entries in parsed.values():
+        for new in {new for new, _ in entries}:
+            claims[new] = claims.get(new, 0) + 1
+    relations = []
+    for old in sorted(parsed):
+        entries = parsed[old]
+        targets = sorted({new for new, _ in entries})
+        if old in taken_old or any(new in taken_new for new in targets):
+            continue  # normalized and manual relations always win over raw engine relations
+        one = len(targets) == 1 and len(entries) == 1 and claims[targets[0]] == 1
+        relations.append(RawRelation(
+            id=f'raw:{run_id}:{old:x}', category='unchanged' if one else 'ambiguous',
+            older=[RawFunction(f'{old:x}')], newer=[RawFunction(f'{new:x}') for new in targets],
+            match_types=list(entries[0][1]) if one else []))
+    return relations
+
+
+def _ratio_text(match) -> str | None:
     value = match.older[0].metadata.get('upstream_similarity') if match.older else None
     if isinstance(value, bool) or not isinstance(value, (int, float)):
         return None
@@ -79,15 +142,22 @@ def _ratio_text(match: FunctionMatch) -> str | None:
 class _Pair:
     """Relations of one pair project indexed by node key, with manual corrections winning."""
 
-    def __init__(self, project: ComparisonProject):
+    def __init__(self, project: ComparisonProject, raw: Mapping | None = None):
         older: dict[Key, list[FunctionMatch]] = {}
         newer: dict[Key, list[FunctionMatch]] = {}
-        for match in project.matches:
+        relations: list = list(project.matches)
+        if raw is not None:
+            taken_old = {_key(f) for m in project.matches for f in m.older}
+            taken_new = {_key(f) for m in project.matches for f in m.newer}
+            run_id = project.matches[0].run_id if project.matches else 'run'
+            relations += _raw_relations(raw, run_id, taken_old, taken_new)
+        for match in relations:
             for side, index in (('older', older), ('newer', newer)):
                 for func in getattr(match, side):
                     index.setdefault(_key(func), []).append(match)
         self.older = {k: self._prefer_manual(v) for k, v in older.items()}
         self.newer = {k: self._prefer_manual(v) for k, v in newer.items()}
+        # Names/code of normalized records, used to describe nodes reached by raw relations.
         self.funcs: dict[tuple[str, Key], FunctionRecord] = {}
         for match in project.matches:
             for side in ('older', 'newer'):
@@ -141,13 +211,28 @@ def _weakest(edges: Sequence[PairEdge]) -> str:
     return max(firsts, key=lambda t: (t == UNKNOWN_TYPE, _rank(t), t))
 
 
-def _node(ordinal: int, key: Key) -> FunctionNode:
-    return FunctionNode(ordinal=ordinal, address=key[0], name=key[1])
+def _describe(indexed: list[_Pair], ordinal: int, key: Key) -> FunctionRecord | None:
+    """A normalized record for this node from either adjacent pair, if any exists."""
+    sources = []
+    if ordinal > 0:
+        sources.append(indexed[ordinal - 1].funcs.get(('newer', key)))
+    if ordinal < len(indexed):
+        sources.append(indexed[ordinal].funcs.get(('older', key)))
+    return next((s for s in sources if s is not None), None)
+
+
+def _node(ordinal: int, key: Key, record) -> FunctionNode:
+    address, name = _key_parts(key)
+    return FunctionNode(ordinal=ordinal, address=address, name=name if record is None else record.name)
 
 
 def extract_chains(hashes: Sequence[str], pairs: Sequence[ComparisonProject],
-                   direct: ComparisonProject | None = None) -> tuple[list[Chain], int]:
-    """Return (chains sorted deterministically, distinct node count)."""
+                   direct: ComparisonProject | None = None, raw_matches: Sequence[Mapping | None] | None = None,
+                   direct_raw: Mapping | None = None) -> tuple[list[Chain], int]:
+    """Return (chains sorted deterministically, distinct node count).
+
+    raw_matches[i] is the upstream `matches` object of pair i's current run, or None if absent.
+    """
     validate_builds(hashes)
     n = len(hashes)
     if len(pairs) != n - 1:
@@ -156,7 +241,10 @@ def extract_chains(hashes: Sequence[str], pairs: Sequence[ComparisonProject],
         validate_pair(project, hashes[i], hashes[i + 1])
     if direct is not None:
         validate_pair(direct, hashes[0], hashes[-1])
-    indexed = [_Pair(p) for p in pairs]
+    raw_matches = list(raw_matches) if raw_matches is not None else [None] * len(pairs)
+    if len(raw_matches) != len(pairs):
+        raise NwayError('PT-NWAY-PAIR', 'raw matches must be given per pair project')
+    indexed = [_Pair(p, r) for p, r in zip(pairs, raw_matches, strict=True)]
     nodes = {(0, k) for k in indexed[0].older}
     for i, pair in enumerate(indexed):
         nodes.update((i + 1, k) for k in pair.newer)
@@ -164,9 +252,9 @@ def extract_chains(hashes: Sequence[str], pairs: Sequence[ComparisonProject],
     if len(nodes) > MAX_NODES:
         raise NwayError('PT-NWAY-LIMIT', f'series has {len(nodes)} function nodes; the limit is {MAX_NODES}')
     sid = series_id(hashes)
-    direct_pair = _Pair(direct) if direct is not None else None
+    direct_pair = _Pair(direct, direct_raw) if direct is not None else None
     chains = []
-    for ordinal, key in sorted(nodes, key=lambda item: (item[0], item[1][0] is None, item[1][0] or 0, item[1][1])):
+    for ordinal, key in sorted(nodes, key=lambda item: (item[0], *_sort_key(item[1]))):
         # A node with a 1:1 predecessor is interior to another chain; starting here would duplicate it.
         if ordinal > 0 and _has_predecessor(indexed[ordinal - 1], key):
             continue
@@ -185,6 +273,10 @@ def extract_chains(hashes: Sequence[str], pairs: Sequence[ComparisonProject],
     return chains, len(nodes)
 
 
+def _sort_key(key: Key) -> tuple:
+    return (0, key, '') if isinstance(key, int) else (1, 0, key[1])
+
+
 def _has_predecessor(pair: _Pair, key: Key) -> bool:
     relations = pair.newer.get(key, [])
     return len(relations) == 1 and len(relations[0].older) == 1 and \
@@ -193,7 +285,8 @@ def _has_predecessor(pair: _Pair, key: Key) -> bool:
 
 def _build_chain(sid: str, start: int, path: list[Key], matches: list[FunctionMatch], indexed: list[_Pair],
                  direct: _Pair | None, n: int) -> Chain:
-    nodes = [_node(start + i, key) for i, key in enumerate(path)]
+    records = [_describe(indexed, start + i, key) for i, key in enumerate(path)]
+    nodes = [_node(start + i, key, record) for i, (key, record) in enumerate(zip(path, records, strict=True))]
     edges = [PairEdge(from_node=nodes[i], to_node=nodes[i + 1], category=m.category,
                       match_types=tuple(m.match_types), ratio_text=_ratio_text(m), manual=m.manual, match_id=m.id)
              for i, m in enumerate(matches)]
@@ -206,7 +299,7 @@ def _build_chain(sid: str, start: int, path: list[Key], matches: list[FunctionMa
             gaps.append(start - 1)
         else:
             events.append(ChainEvent(kind=kind, ordinal=start, detail=f'relation from build {start - 1}'))
-    codes = [matches[0].older[0].code] + [m.newer[0].code for m in matches]
+    codes = [None if r is None else r.code for r in records]
     for j in range(2, len(codes)):
         if codes[j] is None or codes[j] == codes[j - 1]:
             continue

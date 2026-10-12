@@ -43,7 +43,7 @@ def func(name, address, code):
             'called': [], 'sig': f'int {name}(void)'}
 
 
-def import_pair(path: Path, modified, added=(), deleted=()):
+def import_pair(path: Path, modified, added=(), deleted=(), matches=None):
     """Import a synthetic Ghidriff result into an existing pair project (as the GUI import does)."""
     with ProjectService.open(path) as service:
         sides = {a.side: a.sha256 for a in service.project.artifacts}
@@ -51,6 +51,8 @@ def import_pair(path: Path, modified, added=(), deleted=()):
                'functions': {'added': list(added), 'deleted': list(deleted), 'modified': [
                    {'old': func(*o), 'new': func(*n), 'diff': '', 'diff_type': ['code'], 'ratio': r,
                     'match_types': ['SymbolsHash']} for o, n, r in modified]}}
+        if matches is not None:
+            raw['matches'] = matches
         file = path.parent / f'{path.name}.raw.json'
         file.write_text(json.dumps(raw))
         service.import_diff(file)
@@ -282,3 +284,40 @@ def test_failed_pair_run_is_recorded_and_exits_3(fake_runtime, builds, capsys): 
     ref = store.load(root / 'series.json').pair_projects[0]
     with ProjectService.open(root / ref.path) as service:
         assert [r.status for r in service.project.runs] == ['failed']
+
+
+def test_unchanged_pair_from_raw_address_matches_extends_chain(builds, tmp_path, capsys):
+    root = tmp_path / 's'
+    code, doc, _ = create(capsys, builds[:3], root)
+    plan = [root / p['path'] for p in doc['result']['pair_projects']]
+    import_pair(plan[0], [], matches={'address_matches': {'1000': [['1010', ['ExactBytesFunctionHasher']]]},
+                                      'name_matches': {'f': [['f', ['ExactBytesFunctionHasher']]]}})
+    import_pair(plan[1], [(('f', 0x1010, 'v1'), ('f', 0x1020, 'v2'), 0.5)])
+    code, doc, _ = create(capsys, builds[:3], root)
+    assert code == 0 and doc['result']['chains'] == 1
+    assert any('no matches section' in w for w in doc['warnings'])  # pair 1 raw lacks matches
+    [chain] = store.load(root / 'series.json').chains
+    assert [(n.ordinal, n.address, n.name) for n in chain.nodes] == [(0, 0x1000, None), (1, 0x1010, 'f'),
+                                                                    (2, 0x1020, 'f')]
+    first = chain.edges[0]
+    assert (first.category, first.match_types, first.ratio_text, first.manual) == (
+        'unchanged', ('ExactBytesFunctionHasher',), None, False)
+    assert store.load(root / 'series.json').pair_projects[1].notes
+
+
+def test_tampered_raw_output_is_rejected(builds, tmp_path, capsys):
+    root = tmp_path / 's'
+    code, doc, _ = create(capsys, builds[:3], root)
+    plan = [root / p['path'] for p in doc['result']['pair_projects']]
+    import_pair(plan[0], [], matches={'address_matches': {}})
+    project = store.read_project(plan[0])
+    assert store.read_raw_matches(plan[0], project) == ({'address_matches': {}}, ())
+    raw = plan[0] / project.runs[-1].raw_path
+    raw.chmod(0o644)
+    raw.write_text(raw.read_text().replace('{}', '{"1": [["2", []]]}', 1))
+    # Tampering after the project snapshot was read: series computation re-verifies the hash itself.
+    with pytest.raises(NwayError, match='recorded SHA-256'):
+        store.read_raw_matches(plan[0], project)
+    # Through the CLI, ProjectService.open already refuses the changed raw file.
+    code, doc, _ = create(capsys, builds[:3], root)
+    assert code == 2 and 'preserved raw output' in doc['error']

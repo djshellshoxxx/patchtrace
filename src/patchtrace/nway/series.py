@@ -52,10 +52,50 @@ def current_run_id(project: ComparisonProject) -> str | None:
     return completed[-1] if completed else None
 
 
-def pair_ref(root: Path, path: Path, project: ComparisonProject, from_ordinal: int, to_ordinal: int) -> PairRef:
+def read_raw_matches(path: Path, project: ComparisonProject) -> tuple[dict | None, tuple[str, ...]]:
+    """The upstream `matches` object of the current completed run's preserved raw JSON.
+
+    The preserved file is verified against the run's recorded SHA-256 before it is trusted;
+    a missing `matches` key only means no unchanged-pair edges, which is noted, not fatal.
+    """
+    from ..ingestion import safe_path
+    from ..service import MAX_RAW_BYTES
+    run = next((r for r in reversed(project.runs) if r.status in {'completed', 'identical'}), None)
+    if run is None or run.status == 'identical':
+        return None, ()
+    if not run.raw_path or not run.raw_sha256:
+        return None, ('current run has no preserved raw output; unchanged functions have no edges',)
+    try:
+        file = safe_path(Path(path).resolve(), run.raw_path)
+        if not file.is_file() or file.stat().st_size > MAX_RAW_BYTES:
+            raise NwayError('PT-NWAY-PAIR', f'{Path(path).name}: preserved raw output is missing or exceeds 100 MiB')
+        data = file.read_bytes()
+    except (OSError, ValueError) as exc:
+        if isinstance(exc, NwayError):
+            raise
+        raise NwayError('PT-NWAY-PAIR', f'{Path(path).name}: cannot read preserved raw output: {exc}') from None
+    if len(data) > MAX_RAW_BYTES:
+        raise NwayError('PT-NWAY-PAIR', f'{Path(path).name}: preserved raw output exceeds 100 MiB')
+    if hashlib.sha256(data).hexdigest() != run.raw_sha256:
+        raise NwayError('PT-NWAY-PAIR', f'{Path(path).name}: preserved raw output does not match its recorded '
+                        'SHA-256 (tampered or corrupted); restore it or re-run the pair')
+    try:
+        raw = strict_json(data.decode('utf-8'))
+    except (UnicodeError, ValueError) as exc:
+        raise NwayError('PT-NWAY-PAIR', f'{Path(path).name}: preserved raw output is not strict JSON') from exc
+    matches = raw.get('matches') if isinstance(raw, dict) else None
+    if matches is None:
+        return None, ('raw output has no matches section; unchanged functions have no edges',)
+    if not isinstance(matches, dict):
+        raise NwayError('PT-NWAY-PAIR', f'{Path(path).name}: raw matches section must be an object')
+    return matches, ()
+
+
+def pair_ref(root: Path, path: Path, project: ComparisonProject, from_ordinal: int, to_ordinal: int,
+             notes: tuple[str, ...] = ()) -> PairRef:
     return PairRef(from_ordinal=from_ordinal, to_ordinal=to_ordinal,
                    path=Path(path).resolve().relative_to(Path(root).resolve()).as_posix(),
-                   project_id=project.id, revision=project.revision, run_id=current_run_id(project))
+                   project_id=project.id, revision=project.revision, run_id=current_run_id(project), notes=notes)
 
 
 def discover_pairs(root: Path, wanted: dict[tuple[str, str], tuple[int, int]]) -> dict[tuple[int, int], Path]:
@@ -131,15 +171,17 @@ def prepare(files: list[Path], root: Path, labels: list[str] | None = None, dire
 def compute(plan: SeriesPlan) -> Series:
     pairs = [read_project(p) for p in plan.pair_paths]
     direct = read_project(plan.direct_path) if plan.direct_path is not None else None
-    chains, node_count = extract_chains(plan.hashes, pairs, direct)
+    raws = [read_raw_matches(path, project) for path, project in zip(plan.pair_paths, pairs, strict=True)]
+    direct_raw = read_raw_matches(plan.direct_path, direct) if direct is not None else (None, ())
+    chains, node_count = extract_chains(plan.hashes, pairs, direct, [r[0] for r in raws], direct_raw[0])
     return Series(
         series_id=series_id(plan.hashes),
         builds=tuple(BuildRef(ordinal=i, label=label, artifact_sha256=sha)
                      for i, (label, sha) in enumerate(zip(plan.labels, plan.hashes, strict=True))),
-        pair_projects=tuple(pair_ref(plan.root, path, project, i, i + 1)
-                            for i, (path, project) in enumerate(zip(plan.pair_paths, pairs, strict=True))),
+        pair_projects=tuple(pair_ref(plan.root, path, project, i, i + 1, raw[1])
+                            for i, (path, project, raw) in enumerate(zip(plan.pair_paths, pairs, raws, strict=True))),
         direct_project=None if direct is None else pair_ref(plan.root, plan.direct_path, direct, 0,
-                                                            len(plan.hashes) - 1),
+                                                            len(plan.hashes) - 1, direct_raw[1]),
         node_count=node_count, chains=tuple(chains))
 
 
