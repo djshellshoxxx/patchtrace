@@ -29,3 +29,12 @@ for name in ENRICHMENT:
     schema['$id'] = f'https://patchtrace.local/schemas/enrichment/1/{name}.json'
     schema['$schema'] = 'https://json-schema.org/draft/2020-12/schema'
     (enrichment_root / f'{name}.json').write_text(json.dumps(schema, indent=2) + '\n', encoding='utf-8')
+
+# SPEC-07 §12 analysis profile files (desktop settings directory, never in a project).
+from patchtrace.enrichment.profiles import AnalysisProfile  # noqa: E402
+
+profile_schema = AnalysisProfile.model_json_schema()
+profile_schema['$id'] = 'https://patchtrace.local/schemas/profile/1/AnalysisProfile.json'
+profile_schema['$schema'] = 'https://json-schema.org/draft/2020-12/schema'
+(root / 'profile').mkdir(exist_ok=True)
+(root / 'profile' / 'AnalysisProfile.json').write_text(json.dumps(profile_schema, indent=2) + '\n', encoding='utf-8')

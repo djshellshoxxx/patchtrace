@@ -67,8 +67,15 @@ def _ranking_section(project: ComparisonProject, enrichment: dict | None, select
     if enrichment is None:
         return None
     from .enrichment.contracts import RankingResult
-    if set(enrichment) != {'ranking', 'stale'} or type(enrichment['stale']) is not bool:
+    if set(enrichment) - {'profile'} != {'ranking', 'stale'} or type(enrichment['stale']) is not bool:
         raise ExportError('PT-EXPORT: malformed ranking input')
+    profile = enrichment.get('profile')
+    if profile is not None and (not isinstance(profile, dict) or set(profile) != {'name', 'digest'}
+                                or not isinstance(profile['name'], str)
+                                or not re.fullmatch(r'[A-Za-z0-9][A-Za-z0-9 _.-]{0,63}', profile['name'])
+                                or not isinstance(profile['digest'], str)
+                                or not re.fullmatch(r'[0-9a-f]{64}', profile['digest'])):
+        raise ExportError('PT-EXPORT: malformed ranking profile')
     try:
         ranking = RankingResult.model_validate_json(json.dumps(enrichment['ranking']))
     except ValueError:
@@ -88,6 +95,7 @@ def _ranking_section(project: ComparisonProject, enrichment: dict | None, select
                         'functions': sorted({f.name for f in match.older + match.newer})})
     return {'formula': ranking.formula, 'config_digest': ranking.config_digest,
             'input_digest': ranking.input_digest, 'status': ranking.status, 'stale': enrichment['stale'],
+            'profile': dict(profile) if profile is not None else None,
             'note': 'Attention scores prioritize research; they do not establish exploitability or CVE relevance.',
             'entries': entries}
 
@@ -195,7 +203,9 @@ def _render(data: dict, format: str) -> str:
         if ranking:
             parts.append('<h2>Change ranking (' + html.escape(ranking['formula'])
                          + (', STALE' if ranking['stale'] else '') + ')</h2><p>' + html.escape(ranking['note'])
-                         + '</p><table><tr><th>Rank</th><th>Score</th><th>Evidence</th><th>Functions</th></tr>')
+                         + '</p>' + (f'<p>Profile: {html.escape(ranking["profile"]["name"])} '
+                                     f'(digest {ranking["profile"]["digest"]})</p>' if ranking.get('profile') else '')
+                         + '<table><tr><th>Rank</th><th>Score</th><th>Evidence</th><th>Functions</th></tr>')
             for entry in ranking['entries']:
                 parts.append(f'<tr><td>{entry["rank"]}</td><td>{entry["score"]}</td><td>'
                              + html.escape(entry['evidence']) + '</td><td>'
@@ -215,6 +225,8 @@ def _render(data: dict, format: str) -> str:
     if ranking:
         parts += ['## Change ranking (' + _markdown_escape(ranking['formula'])
                   + (', STALE' if ranking['stale'] else '') + ')', '', _markdown_escape(ranking['note']), '',
+                  *([f'Profile: {_markdown_escape(ranking["profile"]["name"])} '
+                     f'(digest {ranking["profile"]["digest"]})', ''] if ranking.get('profile') else []),
                   '| Rank | Score | Evidence | Functions |', '|---:|---:|---|---|']
         parts += [f'| {e["rank"]} | {e["score"]} | {_cell(e["evidence"])} | '
                   + _cell(', '.join(e['functions'])) + ' |' for e in ranking['entries']]

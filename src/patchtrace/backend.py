@@ -5,6 +5,7 @@ import hashlib
 import json
 import logging
 import os
+import platform
 import re
 import shutil
 import sys
@@ -55,6 +56,10 @@ class BackendConfig:
     timeout_seconds: int = 3600
     allow_symbol_downloads: bool = False
     java_home: str = ''
+    # Empty cache_dir disables the raw-output cache, preserving pre-cache behaviour.
+    cache_dir: str = ''
+    no_cache: bool = False
+    refresh: bool = False
 
 
 def _config_errors(config: BackendConfig) -> list[str]:
@@ -75,6 +80,12 @@ def _config_errors(config: BackendConfig) -> list[str]:
         errors.append('PT-BACKEND: timeout_seconds must be a positive integer')
     if not isinstance(config.allow_symbol_downloads, bool):
         errors.append('PT-BACKEND: allow_symbol_downloads must be a boolean')
+    if not isinstance(config.cache_dir, str) or (config.cache_dir and not Path(config.cache_dir).is_absolute()):
+        errors.append('PT-BACKEND: cache directory must be an absolute path')
+    if not isinstance(config.no_cache, bool) or not isinstance(config.refresh, bool):
+        errors.append('PT-BACKEND: no_cache and refresh must be booleans')
+    elif config.no_cache and config.refresh:
+        errors.append('PT-BACKEND: no_cache and refresh are mutually exclusive')
     if not isinstance(config.java_home, str):
         errors.append('PT-BACKEND: Java home must be a directory path')
     elif config.java_home:
@@ -108,6 +119,30 @@ def _ghidra_version(config: BackendConfig) -> str:
     with path.open('r', encoding='utf-8', errors='replace') as source:
         properties = source.read(65536)
     match = re.search(r'^application\.version\s*=\s*([A-Za-z0-9_.-]{1,64})\s*$', properties, re.MULTILINE)
+    return match.group(1) if match else 'unknown'
+
+
+def _java_executable(config: BackendConfig) -> str | None:
+    java_name = 'java.exe' if os.name == 'nt' else 'java'
+    java_home = config.java_home or os.environ.get('JAVA_HOME')
+    if java_home and (Path(java_home) / 'bin' / java_name).is_file():
+        return str((Path(java_home) / 'bin' / java_name).resolve())
+    return shutil.which('java')
+
+
+def _java_version(config: BackendConfig, cancel: threading.Event | None = None) -> str:
+    """Probed JVM version, or 'unknown' (which makes raw output uncacheable)."""
+    java = _java_executable(config)
+    if java is None:
+        return 'unknown'
+    try:
+        result = run_process([java, '-version'], cwd=Path(config.ghidra_dir), env=_environment(config),
+                             cancel=cancel or threading.Event(), timeout_seconds=15, log_limit=4096)
+    except OSError:
+        return 'unknown'
+    if result.reason or result.returncode:
+        return 'unknown'
+    match = re.search(r'version "([A-Za-z0-9_.+-]{1,64})"', result.log_tail)
     return match.group(1) if match else 'unknown'
 
 
@@ -268,6 +303,49 @@ def quarantine_failed_run(root: Path, run: AnalysisRun, error: str) -> AnalysisR
     return run.model_copy(deep=True, update={'status': 'failed', 'error': message, 'raw_path': raw_path})
 
 
+RAW_ADAPTER_VERSION = 'patchtrace-ghidriff-adapter/1'
+
+
+def _open_raw_cache(config: BackendConfig, backend_version: str, settings: dict,
+                    cancel: threading.Event):
+    """(cache, fingerprint) for an eligible run, else (None, None); never raises."""
+    from .enrichment.cache import CacheConfig, DerivedCache, RuntimeFingerprint
+    from .enrichment.contracts import EnrichmentError
+    java_version = _java_version(config, cancel)
+    settings['java_runtime_version'] = java_version if java_version != 'unknown' else 'unverified'
+    symbols = 'disabled' if config.allow_symbol_downloads is False else 'online'
+    # Only probed values enter the key; any unprobed value is 'unknown' and ineligible.
+    fingerprint = RuntimeFingerprint(
+        engine='ghidriff', ghidriff_revision=backend_version,
+        ghidra_version=str(settings.get('ghidra_version', 'unknown')),
+        pyghidra_version=str(settings.get('pyghidra_version', 'unknown')),
+        python_version=str(settings.get('python_version', 'unknown')),
+        java_version=java_version, platform_arch=platform.machine().lower() or 'unknown',
+        loader_options='default', analysis_options='--no-symbols' if symbols == 'disabled' else 'symbols',
+        adapter_version=RAW_ADAPTER_VERSION, symbol_policy=symbols, symbol_input_digest='none')
+    if not fingerprint.eligible()[0]:
+        return None, None
+    try:
+        return DerivedCache(CacheConfig(root=Path(config.cache_dir),
+                                        refresh_stages=frozenset({'raw'}) if config.refresh
+                                        else frozenset())), fingerprint
+    except (OSError, EnrichmentError, ValueError):
+        return None, None
+
+
+def _read_raw_cache(cache, fingerprint, settings: dict) -> tuple[bytes, dict] | None:
+    try:
+        payload = cache.get_raw(fingerprint, settings['older_sha256'], settings['newer_sha256'])
+        if payload is None:
+            return None
+        key = fingerprint.raw_key(settings['older_sha256'], settings['newer_sha256'])
+        manifest = cache._entry('raw', key) / 'manifest.json'
+        created = json.loads(manifest.read_text(encoding='utf-8'))['created']
+        return payload, {'key': key, 'created': str(created)}
+    except Exception:  # noqa: BLE001 - any cache problem is a miss, never a failed run
+        return None
+
+
 def run_comparison(config: BackendConfig, project: ComparisonProject, root: Path,
                    cancel: threading.Event, on_event: Callable[[JobEvent], None]) -> tuple[Path, AnalysisRun]:
     """Return completed raw JSON and a new run, or a quarantined directory on failure.
@@ -291,6 +369,30 @@ def run_comparison(config: BackendConfig, project: ComparisonProject, root: Path
                 'older_sha256': next(a.sha256 for a in project.artifacts if a.side == 'older'),
                 'newer_sha256': next(a.sha256 for a in project.artifacts if a.side == 'newer')}
     backend_version = 'unknown'
+    raw_cache = None
+    fingerprint = None
+
+    def publish(source: Path, origin: dict | None = None) -> tuple[Path, AnalysisRun]:
+        # Fresh and cache-served output share this check and the same run layout.
+        if source.is_symlink() or not source.resolve().is_relative_to(raw.resolve()):
+            raise RuntimeError('PT-BACKEND: raw JSON path escapes the output directory')
+        with source.open('rb') as stream:
+            payload = stream.read(JSON_LIMIT + 1)
+        if len(payload) > JSON_LIMIT:
+            raise RuntimeError('PT-BACKEND: JSON output exceeds the 100 MiB limit')
+        document = json.loads(payload)
+        functions = document.get('functions') if isinstance(document, dict) else None
+        if (not isinstance(functions, dict)
+                or not all(isinstance(functions.get(key), list) for key in ('added', 'deleted', 'modified'))):
+            raise RuntimeError('PT-SCHEMA: unrecognized Ghidriff JSON; output quarantined')
+        relative = source.relative_to(quarantine)
+        destination = root / 'runs' / run_id
+        run_settings = dict(settings, cache_origin=origin) if origin else settings
+        quarantine.rename(destination)
+        json_path = destination / relative
+        return json_path, AnalysisRun(id=run_id, status='completed', backend_version=backend_version,
+                                      settings=run_settings, raw_path=json_path.relative_to(root).as_posix(),
+                                      raw_sha256=hashlib.sha256(payload).hexdigest())
 
     def event(stage: str, message: str):
         # Event delivery is informational; a UI listener cannot interrupt containment
@@ -319,6 +421,27 @@ def run_comparison(config: BackendConfig, project: ComparisonProject, root: Path
             event('identical', 'Copied binaries have identical SHA-256 hashes; analysis skipped')
             return destination, AnalysisRun(id=run_id, status='identical',
                                            backend_version=backend_version, settings=settings)
+        if config.cache_dir and not config.no_cache:
+            raw_cache, fingerprint = _open_raw_cache(config, backend_version, settings, cancel)
+        if raw_cache is not None and fingerprint is not None and not config.refresh:
+            hit = _read_raw_cache(raw_cache, fingerprint, settings)
+            if hit is not None:
+                payload, origin = hit
+                (raw / 'json').mkdir()
+                cached = raw / 'json' / 'result.ghidriff.json'
+                cached.write_bytes(payload)
+                (quarantine / 'analysis.log').write_text('Raw output reused from cache; Ghidriff not run\n',
+                                                         encoding='utf-8')
+                try:
+                    json_path, run = publish(cached, origin)
+                except (ValueError, RuntimeError):
+                    # A verified-but-unusable entry must not fail the run; analyse for real.
+                    shutil.rmtree(raw / 'json')
+                    raw_cache = None
+                else:
+                    event('cache', 'raw output reused from cache')
+                    event('completed', 'Raw static analysis saved; normalization is ready')
+                    return json_path, run
         # Ghidriff defaults its large, lock-heavy Ghidra projects under --output-path.
         # Keep those transient databases and GZF caches off OneDrive/network-backed
         # case directories. The project-owned JSON and analysis log stay under raw/.
@@ -364,25 +487,14 @@ def run_comparison(config: BackendConfig, project: ComparisonProject, root: Path
         candidates = list((raw / 'json').glob('*.ghidriff.json'))
         if len(candidates) != 1:
             raise RuntimeError('PT-BACKEND: expected exactly one Ghidriff PDiff JSON; check runtime compatibility')
-        source = candidates[0]
-        if source.is_symlink() or not source.resolve().is_relative_to(raw.resolve()):
-            raise RuntimeError('PT-BACKEND: raw JSON path escapes the output directory')
-        with source.open('rb') as stream:
-            payload = stream.read(JSON_LIMIT + 1)
-        if len(payload) > JSON_LIMIT:
-            raise RuntimeError('PT-BACKEND: JSON output exceeds the 100 MiB limit')
-        document = json.loads(payload)
-        functions = document.get('functions') if isinstance(document, dict) else None
-        if (not isinstance(functions, dict)
-                or not all(isinstance(functions.get(key), list) for key in ('added', 'deleted', 'modified'))):
-            raise RuntimeError('PT-SCHEMA: unrecognized Ghidriff JSON; output quarantined')
-        relative = source.relative_to(quarantine)
-        destination = root / 'runs' / run_id
-        quarantine.rename(destination)
-        json_path = destination / relative
-        run = AnalysisRun(id=run_id, status='completed', backend_version=backend_version,
-                          settings=settings, raw_path=json_path.relative_to(root).as_posix(),
-                          raw_sha256=hashlib.sha256(payload).hexdigest())
+        json_path, run = publish(candidates[0])
+        if raw_cache is not None and fingerprint is not None:
+            # Admission is best-effort: a cache failure must never fail a completed run.
+            try:
+                raw_cache.put_raw(fingerprint, settings['older_sha256'], settings['newer_sha256'],
+                                  json_path.read_bytes())
+            except Exception:  # noqa: BLE001 - see above
+                logging.getLogger(__name__).warning('Raw output cache admission failed')
         event('completed', 'Raw static analysis saved; normalization is ready')
         return json_path, run
     except (OSError, ValueError, RuntimeError) as error:
