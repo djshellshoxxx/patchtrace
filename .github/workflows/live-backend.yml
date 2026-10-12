@@ -15,7 +15,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        variant: [repro-plain-ghidriff, patchtrace-seeded-store, patchtrace-seeded-store-no-adjacent-pdb]
+        variant: [repro-plain-ghidriff, patchtrace-clean, patchtrace-seeded-store, patchtrace-seeded-store-no-adjacent-pdb]
     runs-on: windows-latest
     timeout-minutes: 25
     steps:
@@ -30,8 +30,8 @@ jobs:
       - uses: ilammy/msvc-dev-cmd@v1
       - shell: cmd
         run: |
-          cl /nologo /LD /Od /GS- /Zi tests\fixtures\old.c /Fdtests\fixtures\ /link /DEBUG /OUT:tests\fixtures\old.dll /PDB:tests\fixtures\old.pdb
-          cl /nologo /LD /Od /GS- /Zi tests\fixtures\new.c /Fdtests\fixtures\ /link /DEBUG /OUT:tests\fixtures\new.dll /PDB:tests\fixtures\new.pdb
+          cl /nologo /LD /Od /GS- /Zi tests\fixtures\old.c /Fdtests\fixtures\ /link /DEBUG /INCREMENTAL:NO /OUT:tests\fixtures\old.dll /PDB:tests\fixtures\old.pdb
+          cl /nologo /LD /Od /GS- /Zi tests\fixtures\new.c /Fdtests\fixtures\ /link /DEBUG /INCREMENTAL:NO /OUT:tests\fixtures\new.dll /PDB:tests\fixtures\new.pdb
       - shell: pwsh
         run: |
           Invoke-WebRequest 'https://github.com/NationalSecurityAgency/ghidra/releases/download/Ghidra_12.0.4_build/ghidra_12.0.4_PUBLIC_20260303.zip' -OutFile ghidra.zip
@@ -41,6 +41,7 @@ jobs:
           "GHIDRA_INSTALL_DIR=$ghidra" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
       - run: python -m pip install -e . 'ghidriff @ git+https://github.com/clearbluejar/ghidriff.git@4f5d895fcbb1eacd65efd81145922c15bb7e741d'
       - name: Persist a symbol store in global Ghidra preferences (symbol-enabled plain Ghidriff run)
+        if: matrix.variant != 'patchtrace-clean'
         shell: pwsh
         run: |
           $fx = "$PWD\tests\fixtures"
