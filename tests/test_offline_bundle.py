@@ -252,6 +252,7 @@ def test_rejects_symlink_member(tmp_path):
 
 def test_insufficient_disk_space_is_reported_before_install(tmp_path, monkeypatch):
     from collections import namedtuple
+
     from patchtrace import offline_bundle
 
     plan = inspect_offline_bundle(make_bundle(tmp_path))

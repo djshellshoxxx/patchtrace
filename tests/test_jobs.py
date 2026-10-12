@@ -459,3 +459,122 @@ def test_backend_private_java_home_changes_child_environment_only(tmp_path, monk
     assert os.environ['JAVA_HOME'] == 'parent-untouched'
     bad_config = BackendConfig(str(python), str(ghidra), java_home=str(tmp_path / 'missing'))
     assert any('Java' in item for item in _config_errors(bad_config))
+# Emulates pinned Ghidriff 1.0.0 setup_project()/get_pdb() symbol handling: Ghidra
+# resolves user settings from XDG_CONFIG_HOME, else %APPDATA% / ~/.config; a
+# symbol store persisted there by an earlier run is consulted even under
+# --no-symbols, and a matching PDB raises FileExistsError.
+_GHIDRIFF_SYMBOL_EMULATOR = '''
+def settings_root():
+    if os.environ.get("XDG_CONFIG_HOME"):
+        return pathlib.Path(os.environ["XDG_CONFIG_HOME"])
+    return pathlib.Path(os.environ["APPDATA"] if os.name == "nt" else pathlib.Path.home() / ".config")
+prefs = settings_root() / "ghidra" / "ghidra_12.1.4_PUBLIC" / "preferences"
+(out/"settings-root.txt").write_text(str(settings_root()))
+store = None
+if prefs.is_file():
+    for line in prefs.read_text().splitlines():
+        if line.startswith("PdbSymbolServerConfig="):
+            store = pathlib.Path(line.split("=", 1)[1])
+no_symbols = "--no-symbols" in sys.argv
+if not no_symbols:
+    symbols = out / "symbols"
+    symbols.mkdir(exist_ok=True)
+    prefs.parent.mkdir(parents=True, exist_ok=True)
+    prefs.write_text("PdbSymbolServerConfig=" + str(symbols) + "\\n")
+elif store is not None and store.is_dir():
+    pdbs = sorted(store.rglob("clfs.pdb"))
+    pdbs = [p for p in pdbs if p.is_file()]
+    if pdbs:
+        print("INFO | ghidriff | Pdb stored at: " + str(pdbs[0]))
+        print("ERROR | ghidriff | Symbols are disabled, but the symbol is already downloaded " + str(pdbs[0]))
+        raise FileExistsError("Symbols are disabled, but the symbol is already downloaded " + str(pdbs[0]))
+(out/"json"/"old-new.ghidriff.json").write_text(json.dumps({"functions":{"added":[],"deleted":[],"modified":[]}}))
+'''
+
+
+@pytest.fixture
+def persisted_symbol_cache(tmp_path, monkeypatch):
+    """A user profile whose global Ghidra prefs point at a populated PDB cache."""
+    home = tmp_path / 'userhome'
+    appdata = home / 'AppData'
+    cache = tmp_path / 'ghidriff-out' / 'symbols'
+    for guid, data in [('8534452A12A8D8DC1008FCBE61915A2F1', b'MSF pdb v1'),
+                       ('0000000000000000000000000000000002', b'corrupt\x00')]:
+        (cache / 'clfs.pdb' / guid).mkdir(parents=True)
+        (cache / 'clfs.pdb' / guid / 'clfs.pdb').write_bytes(data)
+    settings_root = appdata if os.name == 'nt' else home / '.config'
+    prefs = settings_root / 'ghidra' / 'ghidra_12.1.4_PUBLIC' / 'preferences'
+    prefs.parent.mkdir(parents=True)
+    prefs.write_text(f'PdbSymbolServerConfig={cache}\n')
+    monkeypatch.setenv('HOME', str(home))
+    monkeypatch.setenv('USERPROFILE', str(home))
+    monkeypatch.setenv('APPDATA', str(appdata))
+    monkeypatch.delenv('XDG_CONFIG_HOME', raising=False)
+    snapshot = {p: p.read_bytes() for p in [prefs, *cache.rglob('*.pdb')] if p.is_file()}
+    assert len(snapshot) == 3
+    return prefs, cache, snapshot
+
+
+def _assert_unchanged(snapshot):
+    for path, data in snapshot.items():
+        assert path.read_bytes() == data
+
+
+def test_emulator_reproduces_cached_pdb_failure_without_isolation(fake_runtime, persisted_symbol_cache):
+    """Guard: the emulator triggers the user's failure when global settings are visible."""
+    root, package, project, config = fake_runtime
+    write_backend(package, _GHIDRIFF_SYMBOL_EMULATOR)
+    out = root / 'manual-out'
+    env = backend._environment(config)  # no per-run settings directory
+    result = run_process([config.python_executable, '-m', 'ghidriff', 'a', 'b', '--output-path', str(out),
+                          '--no-symbols'], cwd=Path(config.ghidra_dir), env=env,
+                         cancel=threading.Event(), timeout_seconds=30)
+    assert result.returncode != 0
+    assert 'symbol is already downloaded' in result.log_tail
+
+
+def test_disabled_symbols_ignore_persisted_cached_pdbs(fake_runtime, persisted_symbol_cache):
+    root, package, project, config = fake_runtime
+    _prefs, _cache, snapshot = persisted_symbol_cache
+    write_backend(package, _GHIDRIFF_SYMBOL_EMULATOR)
+    path, run = run_comparison(config, project, root, threading.Event(), lambda _: None)
+    assert run.status == 'completed', run.error
+    assert run.settings['symbol_policy'] == 'disabled'
+    assert run.settings['ghidra_settings'] == 'isolated-per-run'
+    used = Path((path.parent.parent / 'settings-root.txt').read_text())
+    assert used.name == 'ghidra-settings' and not used.exists()  # scratch removed
+    _assert_unchanged(snapshot)
+
+
+def test_online_symbols_do_not_persist_into_global_ghidra_settings(fake_runtime, persisted_symbol_cache):
+    root, package, project, config = fake_runtime
+    _prefs, _cache, snapshot = persisted_symbol_cache
+    write_backend(package, _GHIDRIFF_SYMBOL_EMULATOR)
+    online = backend.BackendConfig(config.python_executable, config.ghidra_dir, allow_symbol_downloads=True)
+    _path, run = run_comparison(online, project, root, threading.Event(), lambda _: None)
+    assert run.status == 'completed', run.error
+    assert run.settings['symbol_policy'] == 'online'
+    _assert_unchanged(snapshot)
+    # A following offline run is unaffected by the symbol-enabled run.
+    _path, offline = run_comparison(config, project, root, threading.Event(), lambda _: None)
+    assert offline.status == 'completed', offline.error
+
+
+def test_cached_pdb_conflict_is_classified_and_run_preserved(fake_runtime):
+    root, package, project, config = fake_runtime
+    write_backend(package,
+        'print("Traceback (most recent call last):")\n'
+        'raise FileExistsError("Symbols are disabled, but the symbol is already downloaded C:/x/clfs.pdb")\n')
+    path, run = run_comparison(config, project, root, threading.Event(), lambda _: None)
+    assert run.status == 'failed'
+    assert 'cached-symbol conflict' in run.error
+    assert 'C:/x' not in run.error
+    assert 'FileExistsError' in (path / 'analysis.log').read_text()
+    assert (path / 'failure.txt').is_file()
+
+
+def test_cached_pdb_classifier_does_not_capture_unrelated_file_exists():
+    from patchtrace.diagnostics import describe_backend_exit
+
+    text = describe_backend_exit(1, 'FileExistsError: [Errno 17] File exists: out/json')
+    assert 'symbol' not in text.lower()
