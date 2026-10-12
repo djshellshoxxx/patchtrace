@@ -12,7 +12,7 @@ import sys
 import threading
 from pathlib import Path
 
-COMMANDS = ('rank', 'flags', 'correlate', 'cache', 'acquire', 'series')
+COMMANDS = ('rank', 'flags', 'correlate', 'cache', 'acquire', 'series', 'secondary')
 OK, ENVIRONMENT, RUNTIME, NO_RESULTS, CANCELLED = 0, 2, 3, 4, 5
 CLI_CONTRACT = 'enrichment-cli/1'
 
@@ -115,6 +115,17 @@ def _parser() -> argparse.ArgumentParser:
     create.add_argument('--ghidra-dir', default='', help='Ghidra installation root for --run')
     create.add_argument('--timeout', type=int, default=3600, help='per-pair analysis timeout seconds')
     create.add_argument('--cache-dir', type=Path, default=None, help='raw-output cache for --run')
+    secondary = sub.add_parser('secondary', help='second-opinion match sets: BinDiff import, rz-diff (SPEC-10/11)')
+    sec = secondary.add_subparsers(dest='action', required=True, parser_class=_Parser)
+    imp = common(sec.add_parser('import-bindiff', help='import a genuine .BinDiff result for this exact pair'))
+    imp.add_argument('project', type=Path)
+    imp.add_argument('bindiff', type=Path)
+    rz = common(sec.add_parser('rzdiff', help='run rz-diff on the project artifacts'))
+    rz.add_argument('project', type=Path)
+    rz.add_argument('--rz-diff', default='rz-diff', help='rz-diff executable (absolute path or on PATH)')
+    rz.add_argument('--timeout', type=int, default=1800)
+    rec = common(sec.add_parser('reconcile', help='compare stored secondary match sets with Ghidriff matches'))
+    rec.add_argument('project', type=Path)
     chains = common(ser.add_parser('chains', help='list chain hypotheses from series.json'))
     chains.add_argument('series_json', type=Path)
     which = chains.add_mutually_exclusive_group()
@@ -676,12 +687,76 @@ def cmd_series(args, cancel) -> int:
     return OK if rows or stale.reasons else NO_RESULTS
 
 
+def cmd_secondary(args, cancel) -> int:
+    import os
+    import shutil
+
+    from .enrichment.contracts import EnrichmentError
+    from .enrichment.storage import EnrichmentStore, Guard
+    from .secondary import load_secondary, publish_secondary
+    from .secondary.contracts import SecondaryError
+    from .secondary.reconcile import reconcile
+    service = _open(args.project)
+    try:
+        project = service.project
+        run = next((r for r in reversed(project.runs) if r.status == 'completed' and r.raw_sha256), None)
+        sides = {a.side: a for a in project.artifacts}
+        store = EnrichmentStore(service.store)
+        if args.action == 'reconcile':
+            sets = [m for e, m in load_secondary(store) if not e.stale]
+            if not sets:
+                _emit(args, 'secondary reconcile', 'complete', {'reports': []}, [], 'No secondary match sets stored.')
+                return NO_RESULTS
+            reports = [reconcile(project.matches, m) for m in sets]
+            result = {'reports': [{'engine': r.engine, 'engine_version': r.engine_version, 'counts': r.counts(),
+                                   'secondary_only': len(r.secondary_only), 'limitations': list(r.limitations)}
+                                  for r in reports]}
+            text = '\n'.join(f'{r.engine} {r.engine_version}: {r.counts()} secondary-only {len(r.secondary_only)}'
+                             for r in reports) + '\nAgreement is not independent proof or a probability.'
+            _emit(args, 'secondary reconcile', 'complete', result, [], text)
+            return OK
+        if run is None:
+            raise CliError(ENVIRONMENT, 'project has no completed analysis run to attach secondary matches to')
+        try:
+            if args.action == 'import-bindiff':
+                from .secondary.bindiff import import_bindiff
+                match_set = import_bindiff(args.bindiff, sides['older'].sha256, sides['newer'].sha256)
+            else:
+                from .secondary.rzdiff import probe, run_rzdiff
+                exe = shutil.which(args.rz_diff) or args.rz_diff
+                env = dict(os.environ)
+                capability = probe(Path(exe), env, cancel)
+                if not capability.supported:
+                    raise CliError(ENVIRONMENT, f'rz-diff unsupported: {capability.reason}')
+                match_set = run_rzdiff(capability, service.root / sides['older'].relative_path,
+                                       service.root / sides['newer'].relative_path, sides['older'].sha256,
+                                       sides['newer'].sha256, env=env, cancel=cancel, timeout_seconds=args.timeout)
+        except SecondaryError as exc:
+            code = CANCELLED if 'CANCEL' in exc.code else (
+                ENVIRONMENT if exc.code in {'PT-SECONDARY-INPUT', 'PT-SECONDARY-UNSUPPORTED', 'PT-SECONDARY-PAIR',
+                                            'PT-SECONDARY-ORIENTATION', 'PT-SECONDARY-FORMAT'} else RUNTIME)
+            raise CliError(code, str(exc)) from None
+        guard = Guard(project.id, run.id, run.raw_sha256, match_set.file_sha256)
+        try:
+            entry = publish_secondary(store, guard, guard, project.revision, match_set)
+        except EnrichmentError as exc:
+            raise CliError(RUNTIME, str(exc)) from None
+        report = reconcile(project.matches, match_set)
+        result = {'engine': match_set.engine, 'matches': len(match_set.matches), 'entry': entry.id,
+                  'counts': report.counts(), 'limitations': list(report.limitations)}
+        _emit(args, f'secondary {args.action}', 'complete', result, [],
+              f'{match_set.engine}: {len(match_set.matches)} matches stored; {report.counts()}')
+        return OK if match_set.matches else NO_RESULTS
+    finally:
+        service.close()
+
+
 HANDLERS = {'rank': cmd_rank, 'flags': cmd_flags, 'correlate': cmd_correlate, 'cache': cmd_cache,
-            'acquire': cmd_acquire, 'series': cmd_series}
+            'acquire': cmd_acquire, 'series': cmd_series, 'secondary': cmd_secondary}
 
 
 def _command_name(args) -> str:
-    return f'{args.command} {args.action}' if args.command in {'acquire', 'series'} else args.command
+    return f'{args.command} {args.action}' if args.command in {'acquire', 'series', 'secondary'} else args.command
 
 
 def main(argv: list[str] | None = None) -> int:
