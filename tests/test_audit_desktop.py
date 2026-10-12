@@ -104,3 +104,31 @@ def test_self_test_failure_releases_project(monkeypatch):
     with pytest.raises(RuntimeError, match='self-test'):
         entry.main()
     assert created and created[0].store.closed
+
+
+def test_corrupt_numeric_settings_fall_back_to_defaults(qtbot, tmp_path):
+    settings = QSettings(str(tmp_path / 'bad.ini'), QSettings.Format.IniFormat)
+    settings.setValue('desktop/font_size', 'huge')
+    settings.setValue('backend/timeout', '-5')
+    settings.setValue('provider/context_budget', 'abc')
+    assert ui.setting_int(settings, 'desktop/font_size', 11, 8, 28) == 11
+    assert ui.setting_int(settings, 'backend/timeout', 3600, 10, 86400) == 3600
+    service = ui.ProjectService.sample(tmp_path / 'case')
+    view = ui.MainWindow(service, settings)
+    qtbot.addWidget(view)
+
+
+def test_cancelled_ranking_is_not_published(tmp_path):
+    import threading
+
+    from patchtrace.enrichment import pipeline
+    from patchtrace.enrichment.storage import EnrichmentStore
+    service = ui.ProjectService.sample(tmp_path / 'case2')
+    try:
+        cancel = threading.Event()
+        cancel.set()
+        result = pipeline.run(service.project, None, cancel)
+        assert result.status.status == 'cancelled'
+        assert pipeline.publish(EnrichmentStore(service.store), service.project, result) == []
+    finally:
+        service.close()

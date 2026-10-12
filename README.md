@@ -263,7 +263,7 @@ A full endpoint ending in `/api/chat` or `/chat/completions` is also accepted. N
 
 Responses must satisfy PatchTrace's structured schema and cite evidence belonging to the selected context and appropriate match. Invalid/unknown citations or malformed output produce a failed attempt with retained response information rather than accepted findings. Valid schema and citations establish traceability, not factual correctness. Verification suggestions are text for the analyst; PatchTrace never executes model-suggested commands.
 
-Cancellation is cooperative. An active network read can remain blocked until its 120-second timeout, and cancellation cannot recall context already transmitted. Live local/remote provider acceptance remains an open beta check; mocked transport and validation tests have passed.
+Cancellation is cooperative: it is checked whenever data arrives, the whole request is limited to 120 seconds, and a connection that sends nothing can wait for that limit. Cancellation cannot recall context already transmitted. Live local/remote provider acceptance remains an open beta check; mocked transport and validation tests have passed.
 
 ## Export and share results
 

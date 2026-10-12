@@ -173,6 +173,11 @@ def _markdown_escape(value: str) -> str:
     return re.sub(r'([\\`*_{}\[\]()#+.!|>-])', r'\\\1', value)
 
 
+def _cell(value: str) -> str:
+    """Markdown table cell: escaped, with line breaks flattened so untrusted names cannot end the row."""
+    return _markdown_escape(' '.join(str(value).split()))
+
+
 def _render(data: dict, format: str) -> str:
     serialized = json.dumps(data, indent=2, sort_keys=True, ensure_ascii=False)
     if format == 'json':
@@ -211,8 +216,8 @@ def _render(data: dict, format: str) -> str:
         parts += ['## Change ranking (' + _markdown_escape(ranking['formula'])
                   + (', STALE' if ranking['stale'] else '') + ')', '', _markdown_escape(ranking['note']), '',
                   '| Rank | Score | Evidence | Functions |', '|---:|---:|---|---|']
-        parts += [f'| {e["rank"]} | {e["score"]} | {_markdown_escape(e["evidence"])} | '
-                  + _markdown_escape(', '.join(e['functions'])) + ' |' for e in ranking['entries']]
+        parts += [f'| {e["rank"]} | {e["score"]} | {_cell(e["evidence"])} | '
+                  + _cell(', '.join(e['functions'])) + ' |' for e in ranking['entries']]
         parts.append('')
     for run in data['interpretations']:
         for finding in run['findings']:

@@ -36,3 +36,9 @@ def test_total_deadline_bounds_slow_drip(monkeypatch):
     config = providers.ProviderConfig('ollama', 'http://127.0.0.1:11434', 'm')
     with pytest.raises(providers.ProviderError, match='timed out'):
         providers.request_completion(config, 's', 'c', threading.Event())
+
+
+def test_markdown_ranking_cell_cannot_break_row():
+    from patchtrace.reports import _cell
+    assert '\n' not in _cell('evil\n## heading\r\n| x |')
+    assert _cell('a | b').count('|') == _cell('a | b').count('\\|')

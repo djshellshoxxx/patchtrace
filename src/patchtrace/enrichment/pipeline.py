@@ -277,7 +277,10 @@ def run(project: ComparisonProject, options: PipelineOptions | None = None,
 
 
 def publish(store: EnrichmentStore, project: ComparisonProject, result: PipelineResult) -> list[Entry]:
-    """Owner-thread publication with an immediate currency recheck against the live project."""
+    """Owner-thread publication with an immediate currency recheck against the live project.
+    Cancelled results are never published: they would leave an incomplete profile row set."""
+    if result.status.status == 'cancelled':
+        return []
     try:
         current = guard_for(project, result.views.run_id)
     except EnrichmentError:

@@ -107,6 +107,16 @@ def plain_tip(text):
     return '<p style="white-space:pre-wrap">' + html.escape(text).replace('\n', '<br>') + '</p>'
 
 
+def setting_int(settings, key: str, default: int, low: int, high: int) -> int:
+    """Corrupt or out-of-range persisted values fall back to the default instead of
+    raising during window construction."""
+    try:
+        value = int(str(settings.value(key, default)).strip())
+    except (TypeError, ValueError):
+        return default
+    return value if low <= value <= high else default
+
+
 def plain_view(text='', parent=None):
     view = QPlainTextEdit(parent)
     view.setReadOnly(True)
@@ -249,15 +259,15 @@ class SetupDialog(QDialog):
         form.addRow(self.allow_symbol_downloads)
         self.timeout = QSpinBox()
         self.timeout.setRange(10, 86400)
-        self.timeout.setValue(int(settings.value('backend/timeout', 3600)))
+        self.timeout.setValue(setting_int(settings, 'backend/timeout', 3600, 10, 86400))
         form.addRow('Comparison timeout (seconds)', self.timeout)
         self.font_size = QSpinBox()
         self.font_size.setRange(8, 28)
-        self.font_size.setValue(int(settings.value('desktop/font_size', 11)))
+        self.font_size.setValue(setting_int(settings, 'desktop/font_size', 11, 8, 28))
         form.addRow('Code font size (points)', self.font_size)
         self.context_budget = QSpinBox()
         self.context_budget.setRange(512, 200000)
-        self.context_budget.setValue(int(settings.value('provider/context_budget', 24000)))
+        self.context_budget.setValue(setting_int(settings, 'provider/context_budget', 24000, 512, 200000))
         form.addRow('Interpretation context budget (characters)', self.context_budget)
         self.sync = QCheckBox('Synchronize code scrolling')
         self.sync.setChecked(settings.value('desktop/sync', True, type=bool))
@@ -1539,7 +1549,7 @@ class MainWindow(QMainWindow):
     def backend_config(self):
         return BackendConfig(python_executable=str(self.settings.value('backend/python', '')),
                              ghidra_dir=str(self.settings.value('backend/ghidra', '')),
-                             timeout_seconds=int(self.settings.value('backend/timeout', 3600)),
+                             timeout_seconds=setting_int(self.settings, 'backend/timeout', 3600, 10, 86400),
                              allow_symbol_downloads=self.settings.value('backend/allow_symbol_downloads', False,
                                                                          type=bool),
                              java_home=str(self.settings.value('backend/java_home', '')))
@@ -1624,7 +1634,7 @@ class MainWindow(QMainWindow):
         match_ids = [item.data(Qt.ItemDataRole.UserRole) for item in self.navigator.selectedItems()]
         if not match_ids:
             return
-        budget = int(self.settings.value('provider/context_budget', 24000))
+        budget = setting_int(self.settings, 'provider/context_budget', 24000, 512, 200000)
         context = self._guard(lambda: build_context(self.project, match_ids, max_chars=budget))
         if context is None:
             return
@@ -1814,7 +1824,7 @@ class MainWindow(QMainWindow):
             if state:
                 splitter.restoreState(state)
             splitter.setChildrenCollapsible(False)
-        self.apply_font(int(self.settings.value('desktop/font_size', 11)))
+        self.apply_font(setting_int(self.settings, 'desktop/font_size', 11, 8, 28))
         self.sync_scroll.setChecked(self.settings.value('desktop/sync', True, type=bool))
 
     def closeEvent(self, event):
