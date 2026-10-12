@@ -19,7 +19,7 @@ from dataclasses import dataclass
 
 from . import identity
 from .contracts import UINT32_MAX, ChangeSignal, FeatureSite, FeatureTransition, SourceLocation
-from .signals import edit_group_key
+from .signals import edit_group_key, normalized_text, semantic_hunk_ordinals
 from .views import FunctionView, MatchView
 
 DETECTOR_VERSION = 1
@@ -185,12 +185,12 @@ def find_sites(function: FunctionView) -> tuple[FeatureSite, ...]:
 
 
 def _changed(view: MatchView) -> list[tuple[int, tuple[int, int], tuple[int, int]]]:
-    """(ordinal, old 1-based half-open, new 1-based half-open) for non-equal hunks."""
-    out = []
-    for h in view.hunks:
-        if h.operation != 'equal':
-            out.append((len(out), (h.old_start + 1, h.old_end + 1), (h.new_start + 1, h.new_end + 1)))
-    return out
+    """(ordinal, old 1-based half-open, new 1-based half-open) for non-equal hunks that
+    carry a semantic edit (B1's noise rule: whitespace/comment/rename-only hunks never qualify)."""
+    changed = [h for h in view.hunks if h.operation != 'equal']
+    keep = semantic_hunk_ordinals(view) if changed else frozenset()
+    return [(i, (h.old_start + 1, h.old_end + 1), (h.new_start + 1, h.new_end + 1))
+            for i, h in enumerate(changed) if i in keep]
 
 
 def _hits(lo: int, hi: int, rng: tuple[int, int]) -> bool:
@@ -206,7 +206,8 @@ def _region(gate: _Gate) -> tuple[int, int]:
 def _cond_text(scan: _Scan, site: _Site) -> str:
     if site.gate is None:
         return ''
-    return _WS.sub(' ', scan.text[site.gate.cond_start:site.gate.cond_end]).strip()
+    # Temporaries are renumbered between builds; a rename alone is not a condition change.
+    return normalized_text(scan.text[site.gate.cond_start:site.gate.cond_end])
 
 
 def _loc_key(site: FeatureSite) -> dict:

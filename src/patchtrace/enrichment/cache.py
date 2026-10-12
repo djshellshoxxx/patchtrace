@@ -344,6 +344,13 @@ class DerivedCache:
         if nonce is None:
             return False
         try:
+            # Re-verify under the lock: a writer may have replaced the corrupt entry with a
+            # valid one between our failed read and acquiring the lock.
+            try:
+                if self._load(stage, key) is not None:
+                    return False
+            except _Corrupt:
+                pass
             qdir = self._base / 'quarantine'
             self._safe_dir(qdir, create=True)
             os.replace(self._entry(stage, key), qdir / f'{stage}-{key}-{uuid.uuid4().hex}')

@@ -241,7 +241,8 @@ def run(project: ComparisonProject, options: PipelineOptions | None = None,
                       'config': ranking.config_digest(options.config)})
     if cancel is not None and cancel.is_set():
         record('ranking', 'cancelled')
-    elif signal_sets:
+    elif stages[0].status in {'complete', 'partial'}:
+        # A run with zero pairings is complete evidence of nothing to rank (empty, not unavailable).
         certainty = {m.match_id: m.quality for m in views.matches}
         ranking_result = ranking.rank(signal_sets, options.config, certainty)
         record('ranking', ranking_result.status)
@@ -315,7 +316,10 @@ def load_default(store: EnrichmentStore, project: ComparisonProject):
                   if e.body.get('default_profile') is True and e.body.get('config_digest') == digest]
     current = next((e for e in candidates if not e.stale), None)
     if current is None:
-        stale = bool(candidates) or bool(store.entries('ranking'))
+        # Only say "stale" when a default-profile row exists for an older state; rows of
+        # other weight profiles are not evidence that the project changed.
+        stale = bool(candidates) or any(e.body.get('default_profile') is True
+                                        for e in store.entries('pipeline'))
         return None, (), ('Stored ranking is stale (project changed). Rank changes again.' if stale else '')
     rid = current.body['stage_ids']['ranking']
     rows = {e.kind: e for kind in ('ranking', 'signals') for e in store.entries(kind, guard)
