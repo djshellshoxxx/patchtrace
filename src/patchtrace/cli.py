@@ -12,7 +12,7 @@ import sys
 import threading
 from pathlib import Path
 
-COMMANDS = ('rank', 'flags', 'correlate', 'cache')
+COMMANDS = ('rank', 'flags', 'correlate', 'cache', 'acquire')
 OK, ENVIRONMENT, RUNTIME, NO_RESULTS, CANCELLED = 0, 2, 3, 4, 5
 CLI_CONTRACT = 'enrichment-cli/1'
 
@@ -76,6 +76,20 @@ def _parser() -> argparse.ArgumentParser:
     cache.add_argument('action', choices=['status', 'verify', 'prune'])
     cache.add_argument('--cache-dir', type=Path, required=True)
     cache.add_argument('--target-bytes', type=int, default=None)
+
+    acquire = sub.add_parser('acquire', help='download two builds from the Microsoft symbol server (SPEC-08)')
+    acq = acquire.add_subparsers(dest='action', required=True, parser_class=_Parser)
+    search = common(acq.add_parser('search', help='list Winbindex x64 build candidates (metadata only)'))
+    search.add_argument('name', help='lowercase file name, e.g. afd.sys')
+    search.add_argument('--consent-hosts', default='', help='must be exactly winbindex.m417z.com')
+    fetch = common(acq.add_parser('fetch', help='download, verify and create a two-artifact project'))
+    fetch.add_argument('name')
+    fetch.add_argument('--older', required=True, metavar='SHA256')
+    fetch.add_argument('--newer', required=True, metavar='SHA256')
+    fetch.add_argument('--project', type=Path, required=True, help='new project directory')
+    fetch.add_argument('--project-name', default='')
+    fetch.add_argument('--consent-hosts', default='',
+                       help='must be exactly winbindex.m417z.com,msdl.microsoft.com')
     return parser
 
 
@@ -217,6 +231,28 @@ def cmd_flags(args, cancel) -> int:
     return NO_RESULTS if not items else OK
 
 
+def _normalize_available(cve, cve_id: str, bodies: dict, now: str, warnings: list[str]) -> list:
+    """Normalize all bodies together; if that fails, keep each provider that is valid on its own,
+    so one malformed or wrong-ID response does not discard a valid one (partial semantics)."""
+    from .enrichment.contracts import EnrichmentError
+    try:
+        return [cve.normalize(cve_id, bodies, now)]
+    except EnrichmentError as combined:
+        if len(bodies) == 1:
+            raise
+        kept = {}
+        for provider, body in sorted(bodies.items()):
+            try:
+                cve.normalize(cve_id, {provider: body}, now)
+                kept[provider] = body
+            except EnrichmentError as exc:
+                warnings.append(f'{cve_id}: provider {provider} response rejected ({exc.code}); '
+                                'normalized the remaining provider responses')
+        if not kept:
+            raise combined
+        return [cve.normalize(cve_id, kept, now)]
+
+
 def cmd_correlate(args, cancel) -> int:
     import os
 
@@ -234,10 +270,11 @@ def cmd_correlate(args, cancel) -> int:
             # normalization never derives (feature IDs) and flag the snapshot as unverified.
             loaded = [CveSnapshot.model_validate_json(json.dumps(item)) for item in items]
             snapshots += [s.model_copy(update={'feature_ids': ()}) for s in loaded]
-            unverified.update(s.cve_id for s in loaded)
+            unverified.update(s.snapshot_id for s in loaded)
         except (OSError, ValueError) as exc:
             raise CliError(ENVIRONMENT, f'cannot load snapshot {path.name}: {exc}') from None
     warnings: list[str] = []
+    fetch_failed = False
     if args.fetch:
         from datetime import UTC, datetime
 
@@ -254,13 +291,21 @@ def cmd_correlate(args, cancel) -> int:
             print(f'request: {request.provider} {request.url}', file=sys.stderr)
         key = os.environ.get(args.api_key_env) if args.api_key_env else None
         try:
-            responses = intelligence.fetch(plan, intelligence.FetchConsent.for_plan(plan), api_key=key,
-                                           cancel=cancel)
+            responses, failures = intelligence.fetch_all(plan, intelligence.FetchConsent.for_plan(plan),
+                                                         api_key=key, cancel=cancel)
+            if failures and not responses:
+                raise next(iter(failures.values()))
+            for (cve_id, provider), exc in sorted(failures.items()):
+                fetch_failed = True
+                warnings.append(f'{cve_id}: provider {provider} failed ({exc.code}); '
+                                'normalized the remaining provider responses')
             now = datetime.now(UTC).isoformat()
             for cve_id in sorted(requested):
                 bodies = {provider: r.body for provider, r in responses.get(cve_id, {}).items()}
                 if bodies:
-                    snapshots.append(cve.normalize(cve_id, bodies, now))
+                    before = len(warnings)
+                    snapshots.extend(_normalize_available(cve, cve_id, bodies, now, warnings))
+                    fetch_failed = fetch_failed or len(warnings) > before
                 else:
                     warnings.append(f'{cve_id}: no provider response')
         except EnrichmentError as exc:
@@ -268,6 +313,13 @@ def cmd_correlate(args, cancel) -> int:
                 raise CliError(CANCELLED, str(exc)) from None
             raise CliError(RUNTIME, str(exc)) from None
     snapshots = [s for s in snapshots if s.cve_id in requested]
+    try:
+        kept, ignored = cve.select_latest(snapshots)
+    except EnrichmentError as exc:
+        raise CliError(ENVIRONMENT, f'invalid snapshot: {exc}') from None
+    snapshots = list(kept)
+    warnings += [f'{s.cve_id}: ignored older/duplicate snapshot retrieved {s.retrieved_at}; '
+                 'using the most recently retrieved one' for s in ignored]
     missing = requested - {s.cve_id for s in snapshots}
     warnings += [f'{c}: no snapshot available; base ranking retained' for c in sorted(missing)]
     if args.save_snapshot and snapshots:
@@ -275,14 +327,17 @@ def cmd_correlate(args, cancel) -> int:
                                       encoding='utf-8')
     result, more = _run_pipeline(args, cancel, PipelineOptions(run_id=args.run, snapshots=tuple(snapshots)))
     warnings += more + _stage_warnings(result)
+    if result.status.status == 'cancelled':
+        _emit(args, 'correlate', 'cancelled', None, warnings, '')
+        return CANCELLED
     if result.contextual is None:
         _emit(args, 'correlate', 'unavailable', None, warnings, 'Contextual ranking unavailable.')
         return RUNTIME if snapshots else NO_RESULTS
     warnings += [f'{c}: snapshot loaded from file is unverified (provider bodies unavailable); '
-                 'feature-ID claims ignored' for c in sorted(unverified & requested)]
+                 'feature-ID claims ignored' for c in sorted({s.cve_id for s in snapshots if s.snapshot_id in unverified})]
     warnings += [f'{c}: CVE snapshot is stale; check its retrieval date' for c in result.contextual.stale_snapshots]
-    status = 'partial' if result.contextual.stale_snapshots and result.contextual.status == 'complete' \
-        else result.contextual.status
+    status = 'partial' if (result.contextual.stale_snapshots or fetch_failed) \
+        and result.contextual.status == 'complete' else result.contextual.status
     names = {m.match_id: ' / '.join(sorted({f.name for f in m.older + m.newer})) for m in result.views.matches}
     text = '\n'.join(f'{e.context_rank:>4} ctx {e.context_score:>3} base {e.base_score:>3} (#{e.base_rank}) '
                      f'+{e.adjustment:<2} {names.get(e.match_id, "")}' for e in result.contextual.entries)
@@ -308,7 +363,122 @@ def cmd_cache(args, cancel) -> int:
     return OK
 
 
-HANDLERS = {'rank': cmd_rank, 'flags': cmd_flags, 'correlate': cmd_correlate, 'cache': cmd_cache}
+def _consent_hosts(args, required: set[str]) -> None:
+    given = {h.strip() for h in args.consent_hosts.split(',') if h.strip()}
+    if given != required:
+        raise CliError(ENVIRONMENT, f'--consent-hosts must name exactly: {",".join(sorted(required))}')
+
+
+def _acq_error(exc) -> CliError:
+    code = {'PT-ACQ-CANCEL': CANCELLED, 'PT-ACQ-NOTFOUND': NO_RESULTS, 'PT-ACQ-INPUT': ENVIRONMENT,
+            'PT-ACQ-CONFIG': ENVIRONMENT, 'PT-ACQ-UNSUPPORTED': ENVIRONMENT}.get(exc.code, RUNTIME)
+    return CliError(code, str(exc))
+
+
+def _candidates(args, transport, warnings: list[str]):
+    from .acquisition import winbindex
+    from .acquisition.transport import AcquisitionConsent
+    url = winbindex.metadata_url(args.name)
+    print(f'request: GET {url}', file=sys.stderr)
+    response = transport.fetch_metadata(args.name, AcquisitionConsent.for_urls([url]))
+    parsed = winbindex.parse(response.body, args.name, response.data_date)
+    warnings.extend(parsed.warnings)
+    if response.last_modified is None:
+        warnings.append('Winbindex data date unknown (no Last-Modified); retrieval date used')
+    return parsed.candidates
+
+
+def _acquire_transport(factory, cancel):
+    # Seam for tests to inject a fake opener; production always uses the hardened default.
+    return factory(cancel=cancel)
+
+
+def cmd_acquire(args, cancel) -> int:
+    from .acquisition.contracts import AUTHENTICITY_NOTE, AcquisitionError, validate_file_name
+    from .acquisition.transport import Transport
+    command = f'acquire {args.action}'
+    try:
+        validate_file_name(args.name)
+    except AcquisitionError as exc:
+        raise CliError(ENVIRONMENT, str(exc)) from None
+    transport = _acquire_transport(Transport, cancel)
+    warnings: list[str] = []
+    if args.action == 'search':
+        _consent_hosts(args, {'winbindex.m417z.com'})
+        try:
+            candidates = _candidates(args, transport, warnings)
+        except AcquisitionError as exc:
+            raise _acq_error(exc) from None
+        rows = [c.model_dump(mode='json') for c in candidates]
+        usable = [c for c in candidates if c.x64 and c.download != 'unavailable']
+        text = '\n'.join(f'{c.sha256[:16]} {c.version or "?":<44} '
+                         f'{",".join(k.kb for k in c.kbs) or "-":<24} '
+                         f'{min((k.release_date for k in c.kbs if k.release_date), default="-"):<10} '
+                         f'{c.download if c.x64 else "not-x64"}' for c in candidates) or 'No candidates.'
+        _emit(args, command, 'complete', {'candidates': rows, 'downloadable': len(usable)}, warnings, text)
+        return OK if usable else NO_RESULTS
+    _consent_hosts(args, {'winbindex.m417z.com', 'msdl.microsoft.com'})
+    older_sha, newer_sha = args.older.lower(), args.newer.lower()
+    if older_sha == newer_sha:
+        raise CliError(ENVIRONMENT, '--older and --newer must differ')
+    if (args.project / 'project.sqlite3').exists():
+        raise CliError(ENVIRONMENT, 'project directory already contains a project')
+    from .acquisition import quarantine, winbindex
+    from .acquisition.transport import AcquisitionConsent
+    staging = None
+    try:
+        by_sha = {c.sha256: c for c in _candidates(args, transport, warnings)}
+        chosen = []
+        for side, sha in (('older', older_sha), ('newer', newer_sha)):
+            if sha not in by_sha:
+                raise CliError(ENVIRONMENT, f'{side} SHA-256 is not in the Winbindex record for {args.name}')
+            chosen.append(by_sha[sha])
+        urls = []
+        for candidate in chosen:
+            if not candidate.x64:
+                raise CliError(ENVIRONMENT, f'{candidate.sha256[:12]} is not an x64 build')
+            if candidate.download == 'direct':
+                urls.append(winbindex.direct_url(candidate))
+            elif candidate.download == 'candidates':
+                probes = winbindex.candidate_urls(candidate)
+                for url in probes:
+                    print(f'request: HEAD {url}', file=sys.stderr)
+                urls.append(transport.resolve(probes, AcquisitionConsent.for_urls(probes)))
+            else:
+                raise AcquisitionError('PT-ACQ-NOTFOUND', f'{candidate.sha256[:12]} is update-package only')
+        plan = quarantine.make_plan(chosen[0], chosen[1], urls[0], urls[1])
+        consent = AcquisitionConsent.for_urls(d.url for d in plan.downloads)
+        staging = quarantine.create_staging()
+        acquired = []
+        for planned in plan.downloads:
+            print(f'request: GET {planned.url} (one redirect to *.blob.core.windows.net allowed)',
+                  file=sys.stderr)
+            acquired.append(quarantine.acquire(planned, consent, staging, transport))
+        try:
+            service = quarantine.promote(acquired[0], acquired[1], args.project_name or
+                                         f'{args.name} (symbol server)', args.project)
+        except ValueError as exc:
+            raise CliError(RUNTIME, str(exc)) from None
+        root = str(service.root)
+        service.close()
+    except AcquisitionError as exc:
+        raise _acq_error(exc) from None
+    finally:
+        if staging is not None:
+            quarantine.remove_staging(staging)
+    result = {'project': root, 'artifacts': [a.model_dump(mode='json', exclude={'path'}) for a in acquired],
+              'authenticity': AUTHENTICITY_NOTE}
+    text = '\n'.join(f'{a.side}: {a.file_name} {a.sha256} ({a.size} bytes) verified' for a in acquired)
+    _emit(args, command, 'complete', result, warnings, f'{text}\nproject: {root}\n{AUTHENTICITY_NOTE}')
+    return OK
+
+
+HANDLERS = {'rank': cmd_rank, 'flags': cmd_flags, 'correlate': cmd_correlate, 'cache': cmd_cache,
+            'acquire': cmd_acquire}
+
+
+def _command_name(args) -> str:
+    return f'acquire {args.action}' if args.command == 'acquire' else args.command
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -324,12 +494,15 @@ def main(argv: list[str] | None = None) -> int:
     except CliError as exc:
         print(f'error: {exc}', file=sys.stderr)
         if args is not None and getattr(args, 'json', False):
-            sys.stdout.write(json.dumps({'contract': CLI_CONTRACT, 'command': args.command, 'status': 'failed',
+            sys.stdout.write(json.dumps({'contract': CLI_CONTRACT, 'command': _command_name(args), 'status': 'failed',
                                          'result': None, 'warnings': [], 'error': str(exc)}, sort_keys=True) + '\n')
         return exc.code
     except KeyboardInterrupt:
         cancel.set()
         print('cancelled', file=sys.stderr)
+        if args is not None and getattr(args, 'json', False):
+            sys.stdout.write(json.dumps({'contract': CLI_CONTRACT, 'command': _command_name(args), 'status': 'cancelled',
+                                         'result': None, 'warnings': []}, sort_keys=True) + '\n')
         return CANCELLED
     except SystemExit as exc:  # --help
         return int(exc.code or 0)

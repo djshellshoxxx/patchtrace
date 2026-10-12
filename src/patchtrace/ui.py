@@ -1,6 +1,7 @@
 """Qt desktop. Workers produce values; project mutations stay on the GUI thread."""
 from __future__ import annotations
 
+import html
 import json
 import os
 import tempfile
@@ -99,6 +100,21 @@ class ArtifactPathEdit(QLineEdit):
         if len(urls) == 1 and urls[0].isLocalFile():
             self.setText(urls[0].toLocalFile())
             event.acceptProposedAction()
+
+
+def plain_tip(text):
+    """Tooltips auto-detect rich text (Qt::mightBeRichText); escape untrusted text so it renders literally."""
+    return '<p style="white-space:pre-wrap">' + html.escape(text).replace('\n', '<br>') + '</p>'
+
+
+def setting_int(settings, key: str, default: int, low: int, high: int) -> int:
+    """Corrupt or out-of-range persisted values fall back to the default instead of
+    raising during window construction."""
+    try:
+        value = int(str(settings.value(key, default)).strip())
+    except (TypeError, ValueError):
+        return default
+    return value if low <= value <= high else default
 
 
 def plain_view(text='', parent=None):
@@ -243,15 +259,15 @@ class SetupDialog(QDialog):
         form.addRow(self.allow_symbol_downloads)
         self.timeout = QSpinBox()
         self.timeout.setRange(10, 86400)
-        self.timeout.setValue(int(settings.value('backend/timeout', 3600)))
+        self.timeout.setValue(setting_int(settings, 'backend/timeout', 3600, 10, 86400))
         form.addRow('Comparison timeout (seconds)', self.timeout)
         self.font_size = QSpinBox()
         self.font_size.setRange(8, 28)
-        self.font_size.setValue(int(settings.value('desktop/font_size', 11)))
+        self.font_size.setValue(setting_int(settings, 'desktop/font_size', 11, 8, 28))
         form.addRow('Code font size (points)', self.font_size)
         self.context_budget = QSpinBox()
         self.context_budget.setRange(512, 200000)
-        self.context_budget.setValue(int(settings.value('provider/context_budget', 24000)))
+        self.context_budget.setValue(setting_int(settings, 'provider/context_budget', 24000, 512, 200000))
         form.addRow('Interpretation context budget (characters)', self.context_budget)
         self.sync = QCheckBox('Synchronize code scrolling')
         self.sync.setChecked(settings.value('desktop/sync', True, type=bool))
@@ -372,8 +388,8 @@ class SetupDialog(QDialog):
         self._pending_plan = None
         if plan is None:
             return
-        answer = QMessageBox.question(
-            self, 'Install verified offline backend?',
+        box = QMessageBox(
+            QMessageBox.Icon.Question, 'Install verified offline backend?',
             f'Bundle: {plan.archive.name}\nRuntime: {plan.runtime_id}\n'
             f'Files: {plan.file_count:,}; uncompressed: {plan.total_bytes:,} bytes\n'
             f'Archive SHA-256: {plan.sha256}\n\n'
@@ -381,8 +397,11 @@ class SetupDialog(QDialog):
             'Verify the archive checksum against a trusted source and review the included '
             'LICENSES/NOTICE.txt before relying on this software.\n\n'
             'Continue with private per-user installation?',
-            QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
-            QMessageBox.StandardButton.No)
+            QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No, self)
+        # Archive name and runtime ID come from an untrusted file; never interpret them as rich text.
+        box.setTextFormat(Qt.TextFormat.PlainText)
+        box.setDefaultButton(QMessageBox.StandardButton.No)
+        answer = box.exec()
         if answer != QMessageBox.StandardButton.Yes:
             self.diagnostics.setPlainText('Offline bundle checked; installation not authorized.')
             return
@@ -594,6 +613,8 @@ class ExportDialog(QDialog):
         self.refresh_preview()
 
     def change_format(self, value):
+        if not self.destination.text().strip():
+            return
         self.destination.setText(str(Path(self.destination.text()).with_suffix('.' + value)))
 
     def browse(self):
@@ -1044,7 +1065,7 @@ class MainWindow(QMainWindow):
             for side in ['older', 'newer']:
                 artifact = next(a for a in project.artifacts if a.side == side)
                 self.side_labels[side].setText(f'{side.upper()} · {artifact.name}\nSHA-256 {artifact.sha256[:16]}…')
-                self.side_labels[side].setToolTip(f'{artifact.name}\nSHA-256 {artifact.sha256}\n{artifact.size:,} bytes')
+                self.side_labels[side].setToolTip(plain_tip(f'{artifact.name}\nSHA-256 {artifact.sha256}\n{artifact.size:,} bytes'))
         else:
             self.project_label.setText('Open a project or load the synthetic sample to begin.')
         self._load_enrichment()
@@ -1091,7 +1112,7 @@ class MainWindow(QMainWindow):
             if entry:
                 tip += (f'\nAttention {entry.score}/100 (raw {entry.raw}/80, rank {entry.rank}, '
                         f'{len(entry.groups)} edit group(s), evidence {entry.evidence})')
-            item.setToolTip(tip)
+            item.setToolTip(plain_tip(tip))
             self.navigator.addItem(item)
             if match.id == selected_id:
                 self.navigator.setCurrentItem(item)
@@ -1274,7 +1295,7 @@ class MainWindow(QMainWindow):
                 item = QListWidgetItem(f'{"STALE · " if finding.stale else ""}{finding.summary}\n'
                                        f'{finding.category} · {finding.review}')
                 item.setData(Qt.ItemDataRole.UserRole, finding.id)
-                item.setToolTip(finding.summary)
+                item.setToolTip(plain_tip(finding.summary))
                 self.findings_list.addItem(item)
                 if finding.id == current_id:
                     self.findings_list.setCurrentItem(item)
@@ -1363,8 +1384,8 @@ class MainWindow(QMainWindow):
                 item = QListWidgetItem(f'{signal.detector} · {signal.confidence} · {first.side} '
                                        f'lines {first.start_line}-{first.end_line}')
                 item.setData(Qt.ItemDataRole.UserRole, signal.signal_id)
-                item.setToolTip(signal.rationale + ('\nLimitations: ' + ', '.join(signal.limitations)
-                                                    if signal.limitations else ''))
+                item.setToolTip(plain_tip(signal.rationale + ('\nLimitations: ' + ', '.join(signal.limitations)
+                                                               if signal.limitations else '')))
                 self.signal_list.addItem(item)
             unavailable = [o.detector for o in signal_set.outcomes if o.status == 'unavailable']
             if not signal_set.signals:
@@ -1528,7 +1549,7 @@ class MainWindow(QMainWindow):
     def backend_config(self):
         return BackendConfig(python_executable=str(self.settings.value('backend/python', '')),
                              ghidra_dir=str(self.settings.value('backend/ghidra', '')),
-                             timeout_seconds=int(self.settings.value('backend/timeout', 3600)),
+                             timeout_seconds=setting_int(self.settings, 'backend/timeout', 3600, 10, 86400),
                              allow_symbol_downloads=self.settings.value('backend/allow_symbol_downloads', False,
                                                                          type=bool),
                              java_home=str(self.settings.value('backend/java_home', '')))
@@ -1613,7 +1634,7 @@ class MainWindow(QMainWindow):
         match_ids = [item.data(Qt.ItemDataRole.UserRole) for item in self.navigator.selectedItems()]
         if not match_ids:
             return
-        budget = int(self.settings.value('provider/context_budget', 24000))
+        budget = setting_int(self.settings, 'provider/context_budget', 24000, 512, 200000)
         context = self._guard(lambda: build_context(self.project, match_ids, max_chars=budget))
         if context is None:
             return
@@ -1803,7 +1824,7 @@ class MainWindow(QMainWindow):
             if state:
                 splitter.restoreState(state)
             splitter.setChildrenCollapsible(False)
-        self.apply_font(int(self.settings.value('desktop/font_size', 11)))
+        self.apply_font(setting_int(self.settings, 'desktop/font_size', 11, 8, 28))
         self.sync_scroll.setChecked(self.settings.value('desktop/sync', True, type=bool))
 
     def closeEvent(self, event):

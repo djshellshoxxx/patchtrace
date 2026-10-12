@@ -19,7 +19,8 @@ from dataclasses import dataclass
 
 from . import identity
 from .contracts import UINT32_MAX, ChangeSignal, FeatureSite, FeatureTransition, SourceLocation
-from .signals import edit_group_key
+from .signals import _clean as clean_lines
+from .signals import edit_group_key, normalized_text, semantic_hunk_ordinals
 from .views import FunctionView, MatchView
 
 DETECTOR_VERSION = 1
@@ -144,7 +145,9 @@ def _scan(function: FunctionView) -> _Scan:
             break
         total += len(line) + 1
         kept.append(line)
-    lines = tuple(kept)
+    # Blank comments and string/char literal contents (line numbers kept) so a flag name
+    # quoted in a log message or comment is never a site; locations still hash raw lines.
+    lines = tuple(clean_lines(tuple(kept)))
     text = '\n'.join(lines)
     starts, pos = [], 0
     for line in lines:
@@ -185,12 +188,12 @@ def find_sites(function: FunctionView) -> tuple[FeatureSite, ...]:
 
 
 def _changed(view: MatchView) -> list[tuple[int, tuple[int, int], tuple[int, int]]]:
-    """(ordinal, old 1-based half-open, new 1-based half-open) for non-equal hunks."""
-    out = []
-    for h in view.hunks:
-        if h.operation != 'equal':
-            out.append((len(out), (h.old_start + 1, h.old_end + 1), (h.new_start + 1, h.new_end + 1)))
-    return out
+    """(ordinal, old 1-based half-open, new 1-based half-open) for non-equal hunks that
+    carry a semantic edit (B1's noise rule: whitespace/comment/rename-only hunks never qualify)."""
+    changed = [h for h in view.hunks if h.operation != 'equal']
+    keep = semantic_hunk_ordinals(view) if changed else frozenset()
+    return [(i, (h.old_start + 1, h.old_end + 1), (h.new_start + 1, h.new_end + 1))
+            for i, h in enumerate(changed) if i in keep]
 
 
 def _hits(lo: int, hi: int, rng: tuple[int, int]) -> bool:
@@ -206,7 +209,8 @@ def _region(gate: _Gate) -> tuple[int, int]:
 def _cond_text(scan: _Scan, site: _Site) -> str:
     if site.gate is None:
         return ''
-    return _WS.sub(' ', scan.text[site.gate.cond_start:site.gate.cond_end]).strip()
+    # Temporaries are renumbered between builds; a rename alone is not a condition change.
+    return normalized_text(scan.text[site.gate.cond_start:site.gate.cond_end])
 
 
 def _loc_key(site: FeatureSite) -> dict:
@@ -226,9 +230,11 @@ def _transition(view, feature_id, kind, older, newer, confidence, qualifies, sym
                              symbol_status=symbol_status, notes=tuple(sorted(set(notes))))
 
 
-def _qualifying_hunk(view: MatchView, older: list[_Site], newer: list[_Site]):
-    """First (ordinal, side, site, (lo, hi)) where a changed hunk lies in an enclosed region."""
-    for ordinal, old_rng, new_rng in _changed(view):
+def _qualifying_hunk(view: MatchView, older: list[_Site], newer: list[_Site], changed=None):
+    """First (ordinal, side, site, (lo, hi)) where a changed hunk lies in an enclosed region.
+    Pass `changed` (from _changed) when calling per transition: recomputing it re-parses
+    both functions and makes many-site functions quadratic."""
+    for ordinal, old_rng, new_rng in (_changed(view) if changed is None else changed):
         for side, sites, rng in (('newer', newer, new_rng), ('older', older, old_rng)):
             for s in sites:
                 if s.gate is not None and _hits(*_region(s.gate), rng):
@@ -322,7 +328,7 @@ def analyze(view: MatchView, symbol_status: str = 'absent') -> tuple[FeatureTran
             kind = 'unchanged-around-change'
             if not changed:
                 notes.append('no-changed-hunks')
-        qualifies = reliable and kind in QUALIFYING and _qualifying_hunk(view, olds, news) is not None
+        qualifies = reliable and kind in QUALIFYING and _qualifying_hunk(view, olds, news, changed) is not None
         if kind in QUALIFYING and reliable and not qualifies:
             notes.append('change-outside-enclosed-region')
         confidence = 'moderate' if qualifies and olds and news else 'weak'
@@ -350,10 +356,11 @@ def wil_signals(view: MatchView, transitions) -> tuple[ChangeSignal, ...]:
     if older_scan is None or newer_scan is None:
         return ()
     signals = []
+    changed = _changed(view)
     for t in qualifying:
         olds = [s for s in older_scan.sites if s.site.feature_id == t.feature_id]
         news = [s for s in newer_scan.sites if s.site.feature_id == t.feature_id]
-        hit = _qualifying_hunk(view, olds, news)
+        hit = _qualifying_hunk(view, olds, news, changed)
         if hit is None:
             continue
         ordinal, side, site, (lo, hi) = hit

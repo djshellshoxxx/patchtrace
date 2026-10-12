@@ -241,7 +241,8 @@ def run(project: ComparisonProject, options: PipelineOptions | None = None,
                       'config': ranking.config_digest(options.config)})
     if cancel is not None and cancel.is_set():
         record('ranking', 'cancelled')
-    elif signal_sets:
+    elif stages[0].status in {'complete', 'partial'}:
+        # A run with zero pairings is complete evidence of nothing to rank (empty, not unavailable).
         certainty = {m.match_id: m.quality for m in views.matches}
         ranking_result = ranking.rank(signal_sets, options.config, certainty)
         record('ranking', ranking_result.status)
@@ -256,7 +257,9 @@ def run(project: ComparisonProject, options: PipelineOptions | None = None,
         try:
             from datetime import UTC, datetime
             names = {m.pairing_id: tuple(f.name for f in m.older + m.newer) for m in views.matches}
-            contextual = cve.contextual_rank(ranking_result, signal_sets, transitions, options.snapshots,
+            # One snapshot per CVE so a duplicate can never double-count contributions.
+            latest, _ = cve.select_latest(options.snapshots)
+            contextual = cve.contextual_rank(ranking_result, signal_sets, transitions, latest,
                                              (views.older_name, views.newer_name), names,
                                              now=datetime.now(UTC), max_age_days=options.max_age_days)
             record('contextual', contextual.status)
@@ -274,7 +277,10 @@ def run(project: ComparisonProject, options: PipelineOptions | None = None,
 
 
 def publish(store: EnrichmentStore, project: ComparisonProject, result: PipelineResult) -> list[Entry]:
-    """Owner-thread publication with an immediate currency recheck against the live project."""
+    """Owner-thread publication with an immediate currency recheck against the live project.
+    Cancelled results are never published: they would leave an incomplete profile row set."""
+    if result.status.status == 'cancelled':
+        return []
     try:
         current = guard_for(project, result.views.run_id)
     except EnrichmentError:
@@ -315,7 +321,10 @@ def load_default(store: EnrichmentStore, project: ComparisonProject):
                   if e.body.get('default_profile') is True and e.body.get('config_digest') == digest]
     current = next((e for e in candidates if not e.stale), None)
     if current is None:
-        stale = bool(candidates) or bool(store.entries('ranking'))
+        # Only say "stale" when a default-profile row exists for an older state; rows of
+        # other weight profiles are not evidence that the project changed.
+        stale = bool(candidates) or any(e.body.get('default_profile') is True
+                                        for e in store.entries('pipeline'))
         return None, (), ('Stored ranking is stale (project changed). Rank changes again.' if stale else '')
     rid = current.body['stage_ids']['ranking']
     rows = {e.kind: e for kind in ('ranking', 'signals') for e in store.entries(kind, guard)

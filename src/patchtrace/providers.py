@@ -4,6 +4,7 @@ from __future__ import annotations
 import ipaddress
 import json
 import threading
+import time
 import urllib.error
 import urllib.parse
 import urllib.request
@@ -85,13 +86,18 @@ def request_completion(config: ProviderConfig, system_prompt: str, context_paylo
     request = urllib.request.Request(endpoint, json.dumps(payload).encode(), headers, method='POST')
     # Disable environment proxies so localhost code cannot be forwarded to a remote proxy.
     opener = urllib.request.build_opener(urllib.request.ProxyHandler({}), _NoRedirect())
+    # The socket timeout bounds each read only; the deadline bounds the whole exchange (spec: 120 s).
+    deadline = time.monotonic() + TIMEOUT_SECONDS
     try:
         with opener.open(request, timeout=TIMEOUT_SECONDS) as response:
             data = bytearray()
             while True:
                 if cancel.is_set():
                     raise ProviderCancelled('PT-CANCEL: interpretation cancelled')
-                chunk = response.read(min(65536, MAX_RESPONSE_BYTES + 1 - len(data)))
+                if time.monotonic() > deadline:
+                    raise ProviderError('PT-PROVIDER: connection failed or timed out; check endpoint and server')
+                # read1 returns available bytes so a slow-drip server cannot hold one read open.
+                chunk = response.read1(min(65536, MAX_RESPONSE_BYTES + 1 - len(data)))
                 if not chunk:
                     break
                 data.extend(chunk)

@@ -300,6 +300,11 @@ class _Side:
 
     def control(self, index: int) -> bool:
         toks = self.tokens[index]
+        # `} else if (...)` / `else if (...)`: the predicate is still a control predicate.
+        lead = 0
+        while lead < len(toks) - 1 and toks[lead] in ('}', 'else') and toks[lead + 1] in ('else', 'if'):
+            lead += 1
+        toks = toks[lead:]
         return bool(toks) and (toks[0] in _CONTROL or toks[0] in ('&&', '||', '(') or
                                (len(toks) > 1 and toks[0] == '}' and toks[1] == 'while'))
 
@@ -361,6 +366,17 @@ class _Context:
         if edit.new:
             return edit_group_key(self.view, edit.ordinal, 'newer', self.newer.raw[edit.new.start:edit.new.stop])
         return edit_group_key(self.view, edit.ordinal, 'older', self.older.raw[edit.old.start:edit.old.stop])
+
+
+def semantic_hunk_ordinals(view: MatchView) -> frozenset[int]:
+    """Ordinals (counting non-equal hunks from 0) of hunks that are not whitespace-,
+    comment-, rename- or reorder-only. Shared with B2 so both apply the same noise rule."""
+    return frozenset(e.ordinal for e in _Context(view, None).edits)
+
+
+def normalized_text(text: str) -> str:
+    """Cross-side comparable form: comments/strings blanked, whitespace and temporaries collapsed."""
+    return _join(_norm_token(t) for line in _clean(tuple(text.split('\n'))) for t in _TOKEN.findall(line))
 
 
 def edit_group_key(view: MatchView, hunk_ordinal: int, side: str, lines: Iterable[str]) -> str:
@@ -459,6 +475,9 @@ def _size_args(call: _Call) -> list[tuple[str, ...]]:
 
 def _indexed_uses(tokens: list[str], var: str) -> bool:
     """`var` inside `[...]`, or inside a `*( ... + ... )` dereference group."""
+    # Ghidra writes pointer arithmetic as `*(T *)(base + off)`; drop the cast so the
+    # dereference applies to the arithmetic group.
+    tokens = _strip_casts(tokens)[0]
     stack: list[tuple[str, bool, bool]] = []  # (open, is_deref, has_arith)
     for i, token in enumerate(tokens):
         if token in '([':
@@ -742,11 +761,34 @@ def _size(ctx: _Context) -> list[_Finding]:
             new_size = [_join(map(_norm_token, a)) for a in _size_args(new)]
             if not new_size or old_size == new_size:
                 continue
+            if _spilled_same(ctx, edit, new, old_size):
+                continue
             out.append(_Finding(ctx.group(edit, new.line), (_loc(ctx.older, old.line), _loc(ctx.newer, new.line)),
                                 f'size argument of `{name}` changed at the same call ordinal: '
                                 f'`{" , ".join(_join(a) for a in _size_args(old))}` -> '
                                 f'`{" , ".join(_join(a) for a in _size_args(new))}`'))
     return out
+
+
+def _spilled_same(ctx: _Context, edit: _Edit, call: _Call, old_size: list[str]) -> bool:
+    """`malloc(n + i)` -> `uVar1 = n + i; malloc(uVar1)` is a decompiler spill, not a size change."""
+    args = _size_args(call)
+    if len(args) != len(old_size):
+        return False
+    window = ctx.window(edit)
+    for arg, before in zip(args, old_size, strict=True):
+        if _join(map(_norm_token, arg)) == before:
+            continue
+        if len(arg) != 1 or not _TEMP.fullmatch(arg[0]):
+            return False
+        value = None  # nearest preceding assignment of the temporary inside the window
+        for j in range(window.start, call.line):
+            toks = ctx.newer.tokens[j]
+            if len(toks) > 3 and toks[0] == arg[0] and toks[1] == '=' and toks[-1] == ';':
+                value = _join(map(_norm_token, toks[2:-1]))
+        if value != before:
+            return False
+    return True
 
 
 def _zeroed_object(side: _Side, index: int) -> list[str]:

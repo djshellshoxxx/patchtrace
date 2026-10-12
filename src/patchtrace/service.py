@@ -75,6 +75,8 @@ class ProjectService:
         self.store.close()
 
     def backup(self, destination: Path) -> Path:
+        # load() may persist interrupted-run recovery; keep the service on the committed snapshot.
+        self.project = self.store.load()
         return self.store.backup(destination)
 
     @staticmethod
@@ -235,6 +237,8 @@ class ProjectService:
         self._commit(candidate)
 
     def annotate(self, target_id: str, text: str, kind: str = 'note') -> None:
+        if kind == 'match-override':
+            raise ValueError('PT-SCHEMA: match-override records are created only by manual correction')
         candidate = self.project.model_copy(deep=True)
         candidate.annotations.append(AnalystAnnotation(target_id=target_id, kind=kind, text=text))
         self._commit(candidate)

@@ -25,7 +25,9 @@ def _redact(text: str) -> str:
     text = re.sub(r'(?i)\b(?:api[_-]?key|password|secret|access[_-]?token)\s*[:=]\s*["\']?[^\s,;"\']+',
                   '[REDACTED]', text)
     text = re.sub(r'\bsk-[A-Za-z0-9_-]{8,}', '[REDACTED]', text)
-    text = re.sub(r'(?i)(?:[a-z]:[\\/]|\\\\)[^\s<>"\']+', '[PATH REDACTED]', text)
+    # Windows paths may contain spaces; keep consuming words while a later separator stays in the token.
+    text = re.sub(r'(?i)(?:[a-z]:[\\/]|\\\\)[^\s<>"\']*(?:[ \t]+[^\s<>"\'\\/]*[\\/][^\s<>"\']*)*',
+                  '[PATH REDACTED]', text)
     text = re.sub(r'(?<![\w:/<])/(?:[^\s/<>"\']+/)*[^\s<>"\']+', '[PATH REDACTED]', text)
     text = re.sub(r'https?://[^\s/@:]+:[^\s/@]+@[^\s]+', '[CREDENTIAL URL REDACTED]', text)
     return text
@@ -171,6 +173,11 @@ def _markdown_escape(value: str) -> str:
     return re.sub(r'([\\`*_{}\[\]()#+.!|>-])', r'\\\1', value)
 
 
+def _cell(value: str) -> str:
+    """Markdown table cell: escaped, with line breaks flattened so untrusted names cannot end the row."""
+    return _markdown_escape(' '.join(str(value).split()))
+
+
 def _render(data: dict, format: str) -> str:
     serialized = json.dumps(data, indent=2, sort_keys=True, ensure_ascii=False)
     if format == 'json':
@@ -209,8 +216,8 @@ def _render(data: dict, format: str) -> str:
         parts += ['## Change ranking (' + _markdown_escape(ranking['formula'])
                   + (', STALE' if ranking['stale'] else '') + ')', '', _markdown_escape(ranking['note']), '',
                   '| Rank | Score | Evidence | Functions |', '|---:|---:|---|---|']
-        parts += [f'| {e["rank"]} | {e["score"]} | {_markdown_escape(e["evidence"])} | '
-                  + _markdown_escape(', '.join(e['functions'])) + ' |' for e in ranking['entries']]
+        parts += [f'| {e["rank"]} | {e["score"]} | {_cell(e["evidence"])} | '
+                  + _cell(', '.join(e['functions'])) + ' |' for e in ranking['entries']]
         parts.append('')
     for run in data['interpretations']:
         for finding in run['findings']:

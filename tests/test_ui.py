@@ -392,8 +392,8 @@ def test_offline_bundle_explicit_import_updates_paths_only_after_accept(window, 
                           'ghidriff_revision': '4f5d895fcbb1eacd65efd81145922c15bb7e741d'},
                          archive)
     monkeypatch.setattr(QFileDialog, 'getOpenFileName', lambda *args: (str(archive), 'ZIP'))
-    monkeypatch.setattr(QMessageBox, 'question',
-                        lambda *args, **kwargs: QMessageBox.StandardButton.Yes)
+    # The consent prompt is an explicit plain-text QMessageBox (untrusted bundle names); confirm it.
+    monkeypatch.setattr(QMessageBox, 'exec', lambda *args, **kwargs: QMessageBox.StandardButton.Yes)
     dialog = SetupDialog(window.settings, window)
     qtbot.addWidget(dialog)
     assert not dialog.python.text()

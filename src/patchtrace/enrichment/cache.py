@@ -25,6 +25,7 @@ import socket
 import stat
 import threading
 import uuid
+from collections import Counter
 from collections.abc import Iterator
 from dataclasses import dataclass, field, fields
 from datetime import UTC, datetime
@@ -51,6 +52,7 @@ _REGISTRY_LOCK = threading.Lock()
 _HELD_LOCKS: set[str] = set()
 _ACTIVE_STAGING: set[str] = set()
 _HELD_LEASES: set[str] = set()
+_HELD_LEASE_KEYS: Counter[str] = Counter()  # 'stage/key' -> active in-process leases
 _HOST = socket.gethostname()
 
 
@@ -344,6 +346,13 @@ class DerivedCache:
         if nonce is None:
             return False
         try:
+            # Re-verify under the lock: a writer may have replaced the corrupt entry with a
+            # valid one between our failed read and acquiring the lock.
+            try:
+                if self._load(stage, key) is not None:
+                    return False
+            except _Corrupt:
+                pass
             qdir = self._base / 'quarantine'
             self._safe_dir(qdir, create=True)
             os.replace(self._entry(stage, key), qdir / f'{stage}-{key}-{uuid.uuid4().hex}')
@@ -457,6 +466,7 @@ class DerivedCache:
         path = self._shard(stage, key) / f'{key}.lease-{owner["nonce"]}'
         with _REGISTRY_LOCK:
             _HELD_LEASES.add(owner['nonce'])
+            _HELD_LEASE_KEYS[f'{stage}/{key}'] += 1
         created = False
         try:
             try:
@@ -472,6 +482,9 @@ class DerivedCache:
                     os.unlink(path)
             with _REGISTRY_LOCK:
                 _HELD_LEASES.discard(owner['nonce'])
+                _HELD_LEASE_KEYS[f'{stage}/{key}'] -= 1
+                if _HELD_LEASE_KEYS[f'{stage}/{key}'] <= 0:
+                    del _HELD_LEASE_KEYS[f'{stage}/{key}']
 
     def put_raw(self, fp: RuntimeFingerprint, older: str, newer: str, payload: bytes) -> bool:
         if not fp.eligible()[0]:
@@ -513,7 +526,9 @@ class DerivedCache:
 
     def _leased(self, stage: str, key: str) -> bool:
         shard = self._shard(stage, key)
-        leased = False
+        with _REGISTRY_LOCK:
+            # A lease of this process whose file could not be written is still a lease.
+            leased = f'{stage}/{key}' in _HELD_LEASE_KEYS
         for path in shard.glob(f'{key}.lease-*'):
             if _is_link_or_junction(path):
                 continue
@@ -629,6 +644,10 @@ class DerivedCache:
                     # Rename out of the layout first so a half-deleted entry is never visible.
                     trash = self._base / f'.staging-{uuid.uuid4().hex}'
                     os.replace(entry, trash)
+                    # Claimed by a dead-on-exit owner record so a partially failed discard is
+                    # reclaimed by a later verify/prune (staging dirs without one are kept).
+                    with contextlib.suppress(OSError):
+                        _write_file(trash / 'owner.json', json.dumps(_new_owner()).encode())
                     _discard_staging(trash)
                     total -= size
                     result['removed'] += 1

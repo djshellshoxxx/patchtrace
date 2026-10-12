@@ -1,0 +1,412 @@
+{
+ "6df5003f77eaa67ff27abe66711b65a7d837860e1f5ac590c4175e82b1c3dfb2": {
+  "fileInfo": {
+   "description": "Ancillary Function Driver for WinSock",
+   "machineType": 34404,
+   "md5": "eded8731548edb2b3cdf8ca5ae0b1236",
+   "sha1": "dfd64f2d74e3742ad1a6901cec3f79abf9ac878a",
+   "sha256": "6df5003f77eaa67ff27abe66711b65a7d837860e1f5ac590c4175e82b1c3dfb2",
+   "signatureType": "Overlay",
+   "signingDate": [
+    "2021-09-12T05:12:16.974000"
+   ],
+   "signingStatus": "Signed",
+   "size": 576792,
+   "timestamp": 1631413726,
+   "version": "10.0.10240.19060 (th1.210911-1603)",
+   "virtualSize": 598016
+  },
+  "windowsVersions": {
+   "1507": {
+    "KB5005569": {
+     "assemblies": {
+      "amd64_microsoft-windows-winsock-core_31bf3856ad364e35_10.0.10240.19060_none_dfc56996f93549e4": {
+       "assemblyIdentity": {
+        "buildType": "release",
+        "language": "neutral",
+        "name": "Microsoft-Windows-Winsock-Core",
+        "processorArchitecture": "amd64",
+        "publicKeyToken": "31bf3856ad364e35",
+        "version": "10.0.10240.19060",
+        "versionScope": "nonSxS"
+       },
+       "attributes": [
+        {
+         "destinationPath": "$(runtime.drivers)\\",
+         "importPath": "$(build.nttree)\\",
+         "name": "afd.sys",
+         "sourceName": "afd.sys",
+         "sourcePath": ".\\"
+        }
+       ]
+      }
+     },
+     "updateInfo": {
+      "heading": "September 14, 2021-KB5005569 (OS Build 10240.19060) - EXPIRED",
+      "releaseDate": "2021-09-14",
+      "releaseVersion": "10240.19060",
+      "updateUrl": "https://support.microsoft.com/help/5005569"
+     }
+    },
+    "KB5006675": {
+     "assemblies": {
+      "amd64_microsoft-windows-winsock-core_31bf3856ad364e35_10.0.10240.19060_none_dfc56996f93549e4": {
+       "assemblyIdentity": {
+        "buildType": "release",
+        "language": "neutral",
+        "name": "Microsoft-Windows-Winsock-Core",
+        "processorArchitecture": "amd64",
+        "publicKeyToken": "31bf3856ad364e35",
+        "version": "10.0.10240.19060",
+        "versionScope": "nonSxS"
+       },
+       "attributes": [
+        {
+         "destinationPath": "$(runtime.drivers)\\",
+         "importPath": "$(build.nttree)\\",
+         "name": "afd.sys",
+         "sourceName": "afd.sys",
+         "sourcePath": ".\\"
+        }
+       ]
+      }
+     },
+     "updateInfo": {
+      "heading": "October 12, 2021-KB5006675 (OS Build 10240.19086) - EXPIRED",
+      "releaseDate": "2021-10-12",
+      "releaseVersion": "10240.19086",
+      "updateUrl": "https://support.microsoft.com/help/5006675"
+     }
+    },
+    "KB5007207": {
+     "assemblies": {
+      "amd64_microsoft-windows-winsock-core_31bf3856ad364e35_10.0.10240.19060_none_dfc56996f93549e4": {
+       "assemblyIdentity": {
+        "buildType": "release",
+        "language": "neutral",
+        "name": "Microsoft-Windows-Winsock-Core",
+        "processorArchitecture": "amd64",
+        "publicKeyToken": "31bf3856ad364e35",
+        "version": "10.0.10240.19060",
+        "versionScope": "nonSxS"
+       },
+       "attributes": [
+        {
+         "destinationPath": "$(runtime.drivers)\\",
+         "importPath": "$(build.nttree)\\",
+         "name": "afd.sys",
+         "sourceName": "afd.sys",
+         "sourcePath": ".\\"
+        }
+       ]
+      }
+     },
+     "updateInfo": {
+      "heading": "November 9, 2021-KB5007207 (OS Build 10240.19119) - EXPIRED",
+      "releaseDate": "2021-11-09",
+      "releaseVersion": "10240.19119",
+      "updateUrl": "https://support.microsoft.com/help/5007207"
+     }
+    },
+    "KB5008230": {
+     "assemblies": {
+      "amd64_microsoft-windows-winsock-core_31bf3856ad364e35_10.0.10240.19060_none_dfc56996f93549e4": {
+       "assemblyIdentity": {
+        "buildType": "release",
+        "language": "neutral",
+        "name": "Microsoft-Windows-Winsock-Core",
+        "processorArchitecture": "amd64",
+        "publicKeyToken": "31bf3856ad364e35",
+        "version": "10.0.10240.19060",
+        "versionScope": "nonSxS"
+       },
+       "attributes": [
+        {
+         "destinationPath": "$(runtime.drivers)\\",
+         "importPath": "$(build.nttree)\\",
+         "name": "afd.sys",
+         "sourceName": "afd.sys",
+         "sourcePath": ".\\"
+        }
+       ]
+      }
+     },
+     "updateInfo": {
+      "heading": "December 14, 2021-KB5008230 (OS Build 10240.19145) - EXPIRED",
+      "releaseDate": "2021-12-14",
+      "releaseVersion": "10240.19145",
+      "updateUrl": "https://support.microsoft.com/help/5008230"
+     }
+    },
+    "KB5009585": {
+     "assemblies": {
+      "amd64_microsoft-windows-winsock-core_31bf3856ad364e35_10.0.10240.19060_none_dfc56996f93549e4": {
+       "assemblyIdentity": {
+        "buildType": "release",
+        "language": "neutral",
+        "name": "Microsoft-Windows-Winsock-Core",
+        "processorArchitecture": "amd64",
+        "publicKeyToken": "31bf3856ad364e35",
+        "version": "10.0.10240.19060",
+        "versionScope": "nonSxS"
+       },
+       "attributes": [
+        {
+         "destinationPath": "$(runtime.drivers)\\",
+         "importPath": "$(build.nttree)\\",
+         "name": "afd.sys",
+         "sourceName": "afd.sys",
+         "sourcePath": ".\\"
+        }
+       ]
+      }
+     },
+     "updateInfo": {
+      "heading": "January 11, 2022-KB5009585 (OS Build 10240.19177) - EXPIRED",
+      "releaseDate": "2022-01-11",
+      "releaseVersion": "10240.19177",
+      "updateUrl": "https://support.microsoft.com/help/5009585"
+     }
+    },
+    "KB5010358": {
+     "assemblies": {
+      "amd64_microsoft-windows-winsock-core_31bf3856ad364e35_10.0.10240.19060_none_dfc56996f93549e4": {
+       "assemblyIdentity": {
+        "buildType": "release",
+        "language": "neutral",
+        "name": "Microsoft-Windows-Winsock-Core",
+        "processorArchitecture": "amd64",
+        "publicKeyToken": "31bf3856ad364e35",
+        "version": "10.0.10240.19060",
+        "versionScope": "nonSxS"
+       },
+       "attributes": [
+        {
+         "destinationPath": "$(runtime.drivers)\\",
+         "importPath": "$(build.nttree)\\",
+         "name": "afd.sys",
+         "sourceName": "afd.sys",
+         "sourcePath": ".\\"
+        }
+       ]
+      }
+     },
+     "updateInfo": {
+      "heading": "February 8, 2022-KB5010358 (OS Build 10240.19204) - EXPIRED",
+      "releaseDate": "2022-02-08",
+      "releaseVersion": "10240.19204",
+      "updateUrl": "https://support.microsoft.com/help/5010358"
+     }
+    },
+    "KB5010789": {
+     "assemblies": {
+      "amd64_microsoft-windows-winsock-core_31bf3856ad364e35_10.0.10240.19060_none_dfc56996f93549e4": {
+       "assemblyIdentity": {
+        "buildType": "release",
+        "language": "neutral",
+        "name": "Microsoft-Windows-Winsock-Core",
+        "processorArchitecture": "amd64",
+        "publicKeyToken": "31bf3856ad364e35",
+        "version": "10.0.10240.19060",
+        "versionScope": "nonSxS"
+       },
+       "attributes": [
+        {
+         "destinationPath": "$(runtime.drivers)\\",
+         "importPath": "$(build.nttree)\\",
+         "name": "afd.sys",
+         "sourceName": "afd.sys",
+         "sourcePath": ".\\"
+        }
+       ]
+      }
+     },
+     "updateInfo": {
+      "heading": "January 17, 2022-KB5010789 (OS Build 10240.19179) Out-of-band",
+      "releaseDate": "2022-01-17",
+      "releaseVersion": "10240.19179",
+      "updateUrl": "https://support.microsoft.com/help/5010789"
+     }
+    },
+    "KB5011491": {
+     "assemblies": {
+      "amd64_microsoft-windows-winsock-core_31bf3856ad364e35_10.0.10240.19060_none_dfc56996f93549e4": {
+       "assemblyIdentity": {
+        "buildType": "release",
+        "language": "neutral",
+        "name": "Microsoft-Windows-Winsock-Core",
+        "processorArchitecture": "amd64",
+        "publicKeyToken": "31bf3856ad364e35",
+        "version": "10.0.10240.19060",
+        "versionScope": "nonSxS"
+       },
+       "attributes": [
+        {
+         "destinationPath": "$(runtime.drivers)\\",
+         "importPath": "$(build.nttree)\\",
+         "name": "afd.sys",
+         "sourceName": "afd.sys",
+         "sourcePath": ".\\"
+        }
+       ]
+      }
+     },
+     "updateInfo": {
+      "heading": "March 8, 2022-KB5011491 (OS Build 10240.19235) - EXPIRED",
+      "releaseDate": "2022-03-08",
+      "releaseVersion": "10240.19235",
+      "updateUrl": "https://support.microsoft.com/help/5011491"
+     }
+    }
+   }
+  }
+ },
+ "7f145acc6cd255c5b21b64c6e0f84c487738bacbc7a8e5f812bc40368e6d70eb": {
+  "fileInfo": {
+   "description": "Ancillary Function Driver for WinSock",
+   "machineType": 34404,
+   "md5": "4052a9d9ee6be1332e0807a35114ce30",
+   "sha1": "4837f57ee3817092cfb5fb4326ff01e3a8799644",
+   "sha256": "7f145acc6cd255c5b21b64c6e0f84c487738bacbc7a8e5f812bc40368e6d70eb",
+   "signatureType": "Overlay",
+   "signingDate": [
+    "2026-09-18T03:16:00"
+   ],
+   "signingStatus": "Signed",
+   "size": 744832,
+   "timestamp": 3547891873,
+   "version": "10.0.28000.3086 (WinBuild.160101.0800)",
+   "virtualSize": 729088
+  },
+  "windowsVersions": {
+   "11-26H1": {
+    "KB5124006": {
+     "assemblies": {
+      "amd64_microsoft-windows-winsock-core_31bf3856ad364e35_10.0.28000.3086_none_025401de4ebd31a4": {
+       "assemblyIdentity": {
+        "buildType": "release",
+        "language": "neutral",
+        "name": "Microsoft-Windows-Winsock-Core",
+        "processorArchitecture": "amd64",
+        "publicKeyToken": "31bf3856ad364e35",
+        "version": "10.0.28000.3086",
+        "versionScope": "nonSxS"
+       },
+       "attributes": [
+        {
+         "destinationPath": "$(runtime.drivers)\\",
+         "importPath": "$(build.nttree)\\",
+         "name": "afd.sys",
+         "sourceName": "afd.sys",
+         "sourcePath": ".\\"
+        }
+       ]
+      }
+     },
+     "updateInfo": {
+      "heading": "September 22, 2026\u2014KB5124006 (OS Build 28000.3086) Preview",
+      "releaseDate": "2026-09-22",
+      "releaseVersion": "28000.3086",
+      "updateUrl": "https://support.microsoft.com/help/5124006"
+     }
+    }
+   }
+  }
+ },
+ "a151f2258bf5d5748f1cd25b536dc5412e72a5418b319bfd01bc033c5225236a": {
+  "fileInfo": {
+   "lastSectionPointerToRawData": 700416,
+   "lastSectionVirtualAddress": 704512,
+   "machineType": 34404,
+   "sha256": "a151f2258bf5d5748f1cd25b536dc5412e72a5418b319bfd01bc033c5225236a",
+   "size": 734744,
+   "timestamp": 2985640243
+  },
+  "windowsVersions": {
+   "11-26H1": {
+    "KB5120996": {
+     "assemblies": {
+      "amd64_microsoft-windows-winsock-core_31bf3856ad364e35_10.0.28000.2804_none_01f5abd84f05160b": {
+       "assemblyIdentity": {
+        "buildType": "release",
+        "language": "neutral",
+        "name": "Microsoft-Windows-Winsock-Core",
+        "processorArchitecture": "amd64",
+        "publicKeyToken": "31bf3856ad364e35",
+        "version": "10.0.28000.2804",
+        "versionScope": "nonSxS"
+       },
+       "attributes": [
+        {
+         "destinationPath": "$(runtime.drivers)\\",
+         "importPath": "$(build.nttree)\\",
+         "name": "afd.sys",
+         "sourceName": "afd.sys",
+         "sourcePath": ".\\"
+        }
+       ]
+      }
+     },
+     "updateInfo": {
+      "heading": "August 27, 2026\u2014KB5120996 (OS Build 28000.2804) Preview",
+      "releaseDate": "2026-08-27",
+      "releaseVersion": "28000.2804",
+      "updateUrl": "https://support.microsoft.com/help/5120996"
+     }
+    }
+   }
+  }
+ },
+ "b15c7e83e6d085c626b0daca0c054f75832a4303d202a7c8b4071245d7ba2024": {
+  "fileInfo": {
+   "description": "Ancillary Function Driver for WinSock",
+   "machineType": 34404,
+   "md5": "d22bfbe513b128958fdaf21d8dfa7677",
+   "sha1": "27875f1501f8fc0cea49dd7afbb20bf37acecbb7",
+   "sha256": "b15c7e83e6d085c626b0daca0c054f75832a4303d202a7c8b4071245d7ba2024",
+   "signatureType": "Overlay",
+   "signingDate": [
+    "2025-07-01T08:29:35.373000"
+   ],
+   "signingStatus": "Unknown",
+   "size": 577504,
+   "timestamp": 1751348741,
+   "version": "10.0.10240.21072 (th1.250630-1851)",
+   "virtualSize": 598016
+  },
+  "windowsVersions": {
+   "1507": {
+    "KB5062561": {
+     "assemblies": {
+      "amd64_microsoft-windows-winsock-core_31bf3856ad364e35_10.0.10240.21072_none_e2024d94f61acae4": {
+       "assemblyIdentity": {
+        "buildType": "release",
+        "language": "neutral",
+        "name": "Microsoft-Windows-Winsock-Core",
+        "processorArchitecture": "amd64",
+        "publicKeyToken": "31bf3856ad364e35",
+        "version": "10.0.10240.21072",
+        "versionScope": "nonSxS"
+       },
+       "attributes": [
+        {
+         "destinationPath": "$(runtime.drivers)\\",
+         "importPath": "$(build.nttree)\\",
+         "name": "afd.sys",
+         "sourceName": "afd.sys",
+         "sourcePath": ".\\"
+        }
+       ]
+      }
+     },
+     "updateInfo": {
+      "heading": "July 8, 2025\u2014KB5062561 (OS Build 10240.21073)",
+      "releaseDate": "2025-07-08",
+      "releaseVersion": "10240.21073",
+      "updateUrl": "https://support.microsoft.com/help/5062561"
+     }
+    }
+   }
+  }
+ }
+}

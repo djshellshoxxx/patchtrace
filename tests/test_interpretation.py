@@ -264,6 +264,7 @@ def test_provider_transport_sends_exact_context_without_tools(project, monkeypat
         def read(self, count):
             data, self.data = self.data[:count], self.data[count:]
             return data
+        read1 = read
     class FakeOpener:
         def open(self, request, timeout):
             captured.append((request, timeout))

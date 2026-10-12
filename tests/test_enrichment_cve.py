@@ -329,3 +329,26 @@ def test_stale_snapshots_reported():
 def test_snapshot_round_trips_strictly():
     s = snap()
     assert CveSnapshot.model_validate_json(s.model_dump_json()) == s
+
+
+def test_cwe_conflict_blocks_only_disputed_values():
+    sets, ranking = scenario()
+    # synthetic: MSRC adds CWE-787, both providers report CWE-191
+    msrc = edited(MSRC, lambda d: d.update(cweList=['CWE-191: Integer Underflow', 'CWE-787: Out-of-bounds Write']))
+    s = snap(msrc=msrc)
+    assert any(c.startswith('cwe:') for c in s.conflicts)
+    by = {e.pairing_id: e for e in cve.contextual_rank(ranking, sets, [], [s], [], {}).entries}
+    beta = by[pid('beta')]  # OVF moderate aligns with agreed CWE-191
+    assert [c.kind for c in beta.contributions] == ['cwe'] and 'CWE-191' in beta.contributions[0].context_field
+    alpha = by[pid('alpha')]  # BND aligns only with disputed CWE-787
+    assert not alpha.contributions and alpha.blocked and 'CWE-787' in alpha.blocked[0]
+
+
+def test_select_latest_snapshot_per_cve():
+    a = cve.normalize(CVE_ID, {'nvd': NVD}, '2026-01-01T00:00:00Z')
+    b = cve.normalize(CVE_ID, {'msrc': MSRC}, '2026-02-01T00:00:00Z')
+    kept, ignored = cve.select_latest([b, a])
+    assert kept == (b,) and ignored == (a,)
+    c = cve.normalize(CVE_ID, {'nvd': NVD, 'msrc': MSRC}, '2026-02-01T00:00:00+00:00')  # same instant as b
+    kept, ignored = cve.select_latest([c, b])
+    assert kept[0].snapshot_id == min(b.snapshot_id, c.snapshot_id) and len(ignored) == 1

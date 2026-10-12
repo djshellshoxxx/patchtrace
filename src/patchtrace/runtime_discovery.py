@@ -44,15 +44,20 @@ def _safe_ghidra(path: Path) -> Path | None:
         return None
 
 
-def _children(root: Path):
-    """Inspect at most one bounded level, without following directory symlinks."""
+def _children(root: Path, prefix: str = ''):
+    """Inspect at most one bounded level, without following directory symlinks.
+
+    The name filter runs before the bound, so a crowded root such as Program
+    Files cannot push a ghidra_* directory past the first 64 directories.
+    """
     try:
         if root.is_symlink() or not root.is_dir():
             return ()
         with os.scandir(root) as entries:
             return tuple(
                 Path(entry.path) for entry in islice(
-                    (entry for entry in entries if entry.is_dir(follow_symlinks=False)),
+                    (entry for entry in entries if entry.name.casefold().startswith(prefix)
+                     and entry.is_dir(follow_symlinks=False)),
                     MAX_CHILDREN_PER_ROOT
                 )
             )
@@ -100,9 +105,8 @@ def discover_local_runtimes(
                 add_python(child / relative)
             add_ghidra(child)
             add_ghidra(child / 'payload' / 'ghidra')
-            for subdir in _children(child):
-                if subdir.name.casefold().startswith('ghidra_'):
-                    add_ghidra(subdir)
+            for subdir in _children(child, 'ghidra_'):
+                add_ghidra(subdir)
 
     roots = list(Path(root) for root in search_roots)
     if env.get('USERPROFILE'):
@@ -114,9 +118,8 @@ def discover_local_runtimes(
 
     for root in roots:
         add_ghidra(root)
-        for child in _children(root):
-            if child.name.casefold().startswith('ghidra_'):
-                add_ghidra(child)
+        for child in _children(root, 'ghidra_'):
+            add_ghidra(child)
 
     # A Windows filesystem may match two aliases with different case.
     return RuntimeCandidates(
