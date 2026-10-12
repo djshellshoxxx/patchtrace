@@ -46,7 +46,7 @@ Status: future milestones only. Do not start before SPEC-10/11/27 runner + recon
 - [ ] Gate 1: complete BinDiff actual CLI execution, BinExport input support, optional parallel scheduling, rz-diff stdout isolation, matching identity normalization and calibrated/ordinal evidence UI; Windows real fixture.
 - [ ] SPEC-28a: complete CSAF fixture corpus and versioned source schema; pin official source/index discovery, fetching, OASIS validation, product/VEX status contract; separate offline and consented network acceptance.
 - [ ] SPEC-28b: complete deterministic curated CWE language/rule pack, negation tests, product applicability and cross-revision conflict tests; explicit unknown output.
-- [ ] SPEC-29a: implement kapa/capa adapter with tested Ghidra backend and pinned rule pack, normalize rule scope and address references.
+- [ ] SPEC-29a: implement capa adapter with tested Ghidra backend and pinned rule pack, normalize rule scope and address references.
 - [ ] SPEC-29b: implement FLOSS adapter with exact JSON schema, recovered string provenance and deduplicated change records.
 - [ ] SPEC-29c: implement optional DiE console adapter for compiler/packer distortion alerts. Gate on measured usefulness, not marketing.
 - [ ] SPEC-30a: typed evidence graph, immutable lineage-group references, canonical address conversion and failed/abstained status.
