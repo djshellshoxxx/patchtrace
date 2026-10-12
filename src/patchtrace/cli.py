@@ -37,14 +37,21 @@ def _parser() -> argparse.ArgumentParser:
         p.add_argument('--json', action='store_true', help='emit exactly one JSON document on stdout')
         return p
 
+    def profiled(p):
+        p.add_argument('--profile', metavar='NAME|FILE',
+                       help='analysis profile name from the desktop profiles directory, or a profile JSON file')
+        return p
+
     def cached(p):
-        p.add_argument('--cache-dir', type=Path, help='global derived-stage cache (default: no cache)')
+        p.add_argument('--cache-dir', type=Path,
+                       help='global derived-stage cache (default: the profile cache_dir, else no cache)')
         p.add_argument('--refresh', action='store_true', help='recompute cached stages (no network implied)')
         return p
 
     rank = common(sub.add_parser('rank', help='rank changed functions by attention/1 change signals'))
     rank.add_argument('project', type=Path)
     cached(rank)
+    profiled(rank)
     rank.add_argument('--run', help='analysis run ID (default: latest completed)')
     rank.add_argument('--weights', type=Path, help='JSON object of detector weights (integers 0..100)')
     rank.add_argument('--disable', action='append', default=[], metavar='DETECTOR')
@@ -54,6 +61,7 @@ def _parser() -> argparse.ArgumentParser:
     flags = common(sub.add_parser('flags', help='list WIL feature-flag transitions'))
     flags.add_argument('project', type=Path)
     cached(flags)
+    profiled(flags)
     flags.add_argument('--run')
     flags.add_argument('--feature-id', type=int, action='append', default=None)
     flags.add_argument('--dry-run', action='store_true')
@@ -61,12 +69,13 @@ def _parser() -> argparse.ArgumentParser:
     corr = common(sub.add_parser('correlate', help='rerank with CVE context (base ranking unchanged)'))
     corr.add_argument('project', type=Path)
     cached(corr)
+    profiled(corr)
     corr.add_argument('--cve', action='append', required=True, metavar='CVE-YYYY-NNNN')
     corr.add_argument('--snapshot', type=Path, action='append', default=[],
                       help='previously saved CVE snapshot JSON (offline)')
     corr.add_argument('--fetch', action='store_true', help='retrieve from providers (requires consent)')
     corr.add_argument('--consent-providers', default='', help='comma list, e.g. nvd,msrc; must match --providers')
-    corr.add_argument('--providers', default='nvd,msrc')
+    corr.add_argument('--providers', default=None, help='comma list (default: profile cve_providers, else nvd,msrc)')
     corr.add_argument('--api-key-env', default='', help='environment variable holding an NVD API key')
     corr.add_argument('--save-snapshot', type=Path, help='write normalized snapshots to this JSON file')
     corr.add_argument('--run')
@@ -103,6 +112,31 @@ def _emit(args, command: str, status: str, result, warnings: list[str], text: st
         sys.stdout.write(text + ('\n' if text and not text.endswith('\n') else ''))
 
 
+def _profile(args):
+    """The selected AnalysisProfile, or None when --profile is absent. Explicit per-run options
+    that the profile also defines are rejected rather than silently merged."""
+    value = getattr(args, 'profile', None)
+    if value is None:
+        return None
+    conflicts = [flag for flag, given in (('--weights', getattr(args, 'weights', None)),
+                                          ('--disable', getattr(args, 'disable', None)),
+                                          ('--feature-id', getattr(args, 'feature_id', None))) if given]
+    if conflicts:
+        raise CliError(ENVIRONMENT, f'--profile cannot be combined with {", ".join(conflicts)}')
+    from .enrichment import profiles
+    try:
+        return profiles.resolve(value, profiles.ProfileStore(profiles.default_profiles_dir()))
+    except profiles.ProfileError as exc:
+        raise CliError(ENVIRONMENT, f'invalid profile: {exc}') from None
+
+
+def _profile_info(profile) -> dict | None:
+    if profile is None:
+        return None
+    from .enrichment.profiles import profile_digest
+    return {'name': profile.name, 'digest': profile_digest(profile)}
+
+
 def _config(args):
     from .enrichment.contracts import DEFAULT_WEIGHTS, DETECTOR_IDS, RankingConfig
     weights = dict(DEFAULT_WEIGHTS)
@@ -136,7 +170,13 @@ def _open(project: Path):
         raise CliError(ENVIRONMENT, str(exc)) from None
 
 
-def _with_cache(args, options):
+def _with_cache(args, options, profile=None):
+    budget = None
+    if not getattr(args, 'cache_dir', None) and profile is not None and profile.cache_dir:
+        args.cache_dir = Path(profile.cache_dir)
+        budget = profile.cache_budget_gib * 1024 ** 3
+    elif getattr(args, 'cache_dir', None) and profile is not None:
+        budget = profile.cache_budget_gib * 1024 ** 3
     if not getattr(args, 'cache_dir', None):
         if getattr(args, 'refresh', False):
             raise CliError(ENVIRONMENT, '--refresh requires --cache-dir')
@@ -147,15 +187,15 @@ def _with_cache(args, options):
     from .enrichment.contracts import EnrichmentError
     try:
         cache = DerivedCache(CacheConfig(root=args.cache_dir.resolve(), refresh_stages=frozenset(
-            {'signals', 'wil'} if args.refresh else ())))
+            {'signals', 'wil'} if args.refresh else ()), **({'budget_bytes': budget} if budget else {})))
     except EnrichmentError as exc:
         raise CliError(ENVIRONMENT, str(exc)) from None
     return dataclasses.replace(options, cache=cache)
 
 
-def _run_pipeline(args, cancel, options):
+def _run_pipeline(args, cancel, options, profile=None):
     from .enrichment import pipeline
-    options = _with_cache(args, options)
+    options = _with_cache(args, options, profile)
     from .enrichment.contracts import EnrichmentError
     from .enrichment.storage import EnrichmentStore
     service = _open(args.project)
@@ -187,7 +227,11 @@ def _stage_warnings(result) -> list[str]:
 
 def cmd_rank(args, cancel) -> int:
     from .enrichment.pipeline import PipelineOptions
-    result, warnings = _run_pipeline(args, cancel, PipelineOptions(config=_config(args), run_id=args.run))
+    profile = _profile(args)
+    options = PipelineOptions(config=_config(args), run_id=args.run) if profile is None else PipelineOptions(
+        config=profile.ranking_config(), feature_ids=profile.feature_filter(), run_id=args.run,
+        max_age_days=profile.snapshot_max_age_days)
+    result, warnings = _run_pipeline(args, cancel, options, profile)
     warnings += _stage_warnings(result)
     if result.status.status == 'cancelled':
         _emit(args, 'rank', 'cancelled', None, warnings, '')
@@ -199,9 +243,12 @@ def cmd_rank(args, cancel) -> int:
     names = {m.match_id: ' / '.join(sorted({f.name for f in m.older + m.newer})) for m in result.views.matches}
     payload = result.ranking.model_dump(mode='json')
     payload['entries'] = [e.model_dump(mode='json') | {'function': names.get(e.match_id, '')} for e in entries]
+    payload['profile'] = _profile_info(profile)
     lines = [f'{"rank":>4} {"score":>5} {"raw":>3} {"groups":>6} {"evidence":<11} function',
              *(f'{e.rank:>4} {e.score:>5} {e.raw:>3} {len(e.groups):>6} {e.evidence:<11} '
                f'{names.get(e.match_id, "")}' for e in entries)]
+    if profile is not None:
+        lines.append(f'profile {profile.name} ({_profile_info(profile)["digest"][:12]})')
     lines.append(f'formula {result.ranking.formula}; config {result.ranking.config_digest[:12]}; '
                  'attention scores prioritize research and do not establish exploitability.')
     status = result.status.status
@@ -213,17 +260,21 @@ def cmd_rank(args, cancel) -> int:
 
 def cmd_flags(args, cancel) -> int:
     from .enrichment.pipeline import PipelineOptions
+    profile = _profile(args)
     ids = frozenset(args.feature_id) if args.feature_id else None
     if ids and any(not 0 <= i <= 4_294_967_295 for i in ids):
         raise CliError(ENVIRONMENT, 'feature IDs must be unsigned 32-bit integers')
-    result, warnings = _run_pipeline(args, cancel, PipelineOptions(run_id=args.run, feature_ids=ids))
+    options = PipelineOptions(run_id=args.run, feature_ids=ids) if profile is None else PipelineOptions(
+        config=profile.ranking_config(), feature_ids=profile.feature_filter(), run_id=args.run,
+        max_age_days=profile.snapshot_max_age_days)
+    result, warnings = _run_pipeline(args, cancel, options, profile)
     warnings += _stage_warnings(result)
     wil_stage = next(s for s in result.status.stages if s.stage == 'wil')
     items = [t.model_dump(mode='json') for t in result.transitions]
     text = '\n'.join(f'Feature_{t.feature_id if t.feature_id is not None else "?"} {t.kind:<26} '
                      f'{t.confidence:<9} {"qualifies" if t.qualifies else "context only"}'
                      for t in result.transitions) or 'No feature-flag transitions found.'
-    _emit(args, 'flags', wil_stage.status, {'transitions': items}, warnings, text)
+    _emit(args, 'flags', wil_stage.status, {'transitions': items, 'profile': _profile_info(profile)}, warnings, text)
     if wil_stage.status == 'cancelled':
         return CANCELLED
     if wil_stage.status != 'complete':
@@ -259,6 +310,9 @@ def cmd_correlate(args, cancel) -> int:
     from .enrichment import cve
     from .enrichment.contracts import CveSnapshot, EnrichmentError
     from .enrichment.pipeline import PipelineOptions
+    profile = _profile(args)
+    if args.providers is None:
+        args.providers = ','.join(profile.cve_providers) if profile is not None else 'nvd,msrc'
     snapshots: list[CveSnapshot] = []
     unverified: set[str] = set()
     requested = set(args.cve)
@@ -325,7 +379,10 @@ def cmd_correlate(args, cancel) -> int:
     if args.save_snapshot and snapshots:
         args.save_snapshot.write_text(json.dumps([s.model_dump(mode='json') for s in snapshots], indent=2),
                                       encoding='utf-8')
-    result, more = _run_pipeline(args, cancel, PipelineOptions(run_id=args.run, snapshots=tuple(snapshots)))
+    options = PipelineOptions(run_id=args.run, snapshots=tuple(snapshots)) if profile is None else PipelineOptions(
+        config=profile.ranking_config(), feature_ids=profile.feature_filter(), run_id=args.run,
+        snapshots=tuple(snapshots), max_age_days=profile.snapshot_max_age_days)
+    result, more = _run_pipeline(args, cancel, options, profile)
     warnings += more + _stage_warnings(result)
     if result.status.status == 'cancelled':
         _emit(args, 'correlate', 'cancelled', None, warnings, '')
@@ -341,7 +398,8 @@ def cmd_correlate(args, cancel) -> int:
     names = {m.match_id: ' / '.join(sorted({f.name for f in m.older + m.newer})) for m in result.views.matches}
     text = '\n'.join(f'{e.context_rank:>4} ctx {e.context_score:>3} base {e.base_score:>3} (#{e.base_rank}) '
                      f'+{e.adjustment:<2} {names.get(e.match_id, "")}' for e in result.contextual.entries)
-    _emit(args, 'correlate', status, result.contextual.model_dump(mode='json'), warnings,
+    _emit(args, 'correlate', status, result.contextual.model_dump(mode='json') | {'profile': _profile_info(profile)},
+          warnings,
           text + '\nContext descriptions never prove code behavior; base scores are unchanged.')
     return OK
 

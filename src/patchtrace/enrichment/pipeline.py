@@ -334,3 +334,40 @@ def load_default(store: EnrichmentStore, project: ComparisonProject):
     result = RankingResult.model_validate_json(json.dumps(rows['ranking'].body['items'][0]))
     sets = tuple(SignalSet.model_validate_json(json.dumps(i)) for i in rows['signals'].body['items'])
     return result, sets, ''
+
+
+def wil_stage_id(input_digest_value: str, feature_ids: frozenset[int] | None) -> str:
+    """The `wil` stage identity `run` assigns; it is the only stored trace of the feature filter."""
+    return identity.stage_id('wil', STAGE_VERSIONS['wil'], {
+        'input': input_digest_value, 'rules': f'wil/{wil.DETECTOR_VERSION}',
+        'filter': ','.join(str(i) for i in sorted(feature_ids or ()))})
+
+
+def load_profile(store: EnrichmentStore, project: ComparisonProject, config_digest: str,
+                 feature_ids: frozenset[int] | None = None):
+    """Like `load_default` for a named profile: rows whose pipeline record carries this ranking
+    `config_digest` and whose WIL stage used the same feature filter. The config digest alone does
+    not cover the filter, so two profiles differing only in feature IDs never share rows."""
+    import json
+    try:
+        guard = guard_for(project)
+    except EnrichmentError:
+        return None, (), 'Ranking unavailable: no completed analysis run.'
+    wil_id = wil_stage_id(guard.input_digest, feature_ids)
+    candidates = [e for e in store.entries('pipeline', guard) if e.body.get('config_digest') == config_digest
+                  and e.body.get('stage_ids', {}).get('wil') == wil_id]
+    current = next((e for e in candidates if not e.stale), None)
+    if current is None:
+        stale = bool(candidates) or any(e.body.get('config_digest') == config_digest
+                                        for e in store.entries('pipeline'))
+        return None, (), ('Stored ranking is stale (project changed). Rank changes again.' if stale else '')
+    rid = current.body['stage_ids']['ranking']
+    rows = {e.kind: e for kind in ('ranking', 'signals') for e in store.entries(kind, guard)
+            if e.id == f'{kind}:{rid}' and not e.stale}
+    if set(rows) != {'ranking', 'signals'}:
+        return None, (), 'Stored ranking is incomplete. Rank changes again.'
+    result = RankingResult.model_validate_json(json.dumps(rows['ranking'].body['items'][0]))
+    if result.config_digest != config_digest:
+        return None, (), 'Stored ranking is inconsistent. Rank changes again.'
+    sets = tuple(SignalSet.model_validate_json(json.dumps(i)) for i in rows['signals'].body['items'])
+    return result, sets, ''

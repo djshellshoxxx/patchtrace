@@ -1,0 +1,141 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "contract": {
+      "const": "profile/1",
+      "default": "profile/1",
+      "title": "Contract",
+      "type": "string"
+    },
+    "name": {
+      "maxLength": 64,
+      "minLength": 1,
+      "pattern": "^[A-Za-z0-9](?:[A-Za-z0-9 _.-]{0,62}[A-Za-z0-9_-])?$",
+      "title": "Name",
+      "type": "string"
+    },
+    "weights": {
+      "additionalProperties": {
+        "type": "integer"
+      },
+      "propertyNames": {
+        "enum": [
+          "BND",
+          "INT",
+          "OVF",
+          "VAL",
+          "ERR",
+          "SIZE",
+          "WIL",
+          "SCRUB"
+        ]
+      },
+      "title": "Weights",
+      "type": "object"
+    },
+    "enabled": {
+      "default": [
+        "BND",
+        "INT",
+        "OVF",
+        "VAL",
+        "ERR",
+        "SIZE",
+        "WIL",
+        "SCRUB"
+      ],
+      "items": {
+        "enum": [
+          "BND",
+          "INT",
+          "OVF",
+          "VAL",
+          "ERR",
+          "SIZE",
+          "WIL",
+          "SCRUB"
+        ],
+        "type": "string"
+      },
+      "title": "Enabled",
+      "type": "array"
+    },
+    "feature_ids": {
+      "anyOf": [
+        {
+          "items": {
+            "maximum": 4294967295,
+            "minimum": 0,
+            "type": "integer"
+          },
+          "maxItems": 256,
+          "type": "array"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Feature Ids"
+    },
+    "symbol_policy": {
+      "default": "disabled",
+      "enum": [
+        "disabled",
+        "online"
+      ],
+      "title": "Symbol Policy",
+      "type": "string"
+    },
+    "cve_providers": {
+      "default": [
+        "nvd",
+        "msrc"
+      ],
+      "items": {
+        "enum": [
+          "nvd",
+          "msrc"
+        ],
+        "type": "string"
+      },
+      "title": "Cve Providers",
+      "type": "array"
+    },
+    "snapshot_max_age_days": {
+      "default": 30,
+      "maximum": 3650,
+      "minimum": 1,
+      "title": "Snapshot Max Age Days",
+      "type": "integer"
+    },
+    "cache_dir": {
+      "anyOf": [
+        {
+          "maxLength": 1024,
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Cache Dir"
+    },
+    "cache_budget_gib": {
+      "default": 20,
+      "maximum": 1024,
+      "minimum": 1,
+      "title": "Cache Budget Gib",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "name"
+  ],
+  "title": "AnalysisProfile",
+  "type": "object",
+  "$id": "https://patchtrace.local/schemas/profile/1/AnalysisProfile.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}
