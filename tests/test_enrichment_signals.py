@@ -304,9 +304,10 @@ def test_detectors_on_same_edit_share_group_and_distinct_edits_do_not():
     new = fn('  if (len <= idx) {', '    return -1;', '  }', '  return buf[idx];')
     sig = found(old, new)
     assert sorted(s.detector for s in sig) == ['BND', 'ERR'] and len({s.group_key for s in sig}) == 1
-    two = fn('  if (len <= idx) {', '    return -1;', '  }', '  x = 1;', '  if (idx < 0x100) {', '    return -2;',
+    # separate hunks (an unchanged line between them) are separate edits
+    two = fn('  if (len <= idx) {', '    return -1;', '  }', '  keep(buf);', '  if (idx < 0x100) {', '    return -2;',
              '  }', '  return buf[idx];')
-    groups = {s.group_key for s in found(fn('  x = 0;', '  return buf[idx];'), two)}
+    groups = {s.group_key for s in found(fn('  keep(buf);', '  return buf[idx];'), two)}
     assert len(groups) == 2
 
 
@@ -388,3 +389,19 @@ def test_signals_module_imports_no_qt_or_network():
     result = subprocess.run([sys.executable, '-c', code], capture_output=True, text=True, check=False,
                             env={'PYTHONPATH': str(Path(__file__).resolve().parents[1] / 'src')})
     assert result.returncode == 0, result.stdout + result.stderr
+
+
+def test_edit_group_key_shared_contract():
+    from patchtrace.enrichment.signals import edit_group_key
+    old = fn('  return buf[idx];')
+    new = fn('  if (len <= idx) {', '    return -1;', '  }', '  return buf[idx];')
+    v = view(old, new)
+    sig = found(old, new)
+    hunk = next(h for h in v.hunks if h.operation != 'equal')
+    expected = identity.domain_id('edit', 1, {
+        'pairing_id': v.pairing_id, 'hunk_ordinal': 0, 'side': 'newer',
+        'text': 'if (len <= idx) { return -1; }'})
+    assert edit_group_key(v, 0, 'newer', v.newer[0].code[hunk.new_start:hunk.new_end]) == expected
+    assert sorted(s.detector for s in sig) == ['BND', 'ERR'] and {s.group_key for s in sig} == {expected}
+    assert edit_group_key(v, 0, 'newer', ['if  (len <= idx)   {', '\treturn -1;', '}  ']) == expected
+    assert edit_group_key(v, 1, 'newer', ['if (len <= idx) {', 'return -1;', '}']) != expected

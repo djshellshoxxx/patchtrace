@@ -318,9 +318,8 @@ class _Context:
         self.newer = self._side(view.newer[0])
         self.truncated = view.older[0].truncated or view.newer[0].truncated
         edits = []
-        for ordinal, hunk in enumerate(view.hunks):
-            if hunk.operation == 'equal':
-                continue
+        changed = [h for h in view.hunks if h.operation != 'equal']
+        for ordinal, hunk in enumerate(changed):
             old, new = range(hunk.old_start, hunk.old_end), range(hunk.new_start, hunk.new_end)
             # Whitespace-, comment- and rename-only hunks, and pure reorderings inside a hunk,
             # carry no semantic edit and must not seed any signal.
@@ -359,8 +358,19 @@ class _Context:
         return bool(self.newer.norm[index]) and self.newer.norm[index] not in self.older.norm_set
 
     def group(self, edit: _Edit, newer_line: int) -> str:
-        text = self.newer.norm[newer_line]
-        return identity.domain_id('edit', 1, {'text': text, 'hunk': edit.ordinal})
+        if edit.new:
+            return edit_group_key(self.view, edit.ordinal, 'newer', self.newer.raw[edit.new.start:edit.new.stop])
+        return edit_group_key(self.view, edit.ordinal, 'older', self.older.raw[edit.old.start:edit.old.stop])
+
+
+def edit_group_key(view: MatchView, hunk_ordinal: int, side: str, lines: Iterable[str]) -> str:
+    """Shared B1/B2 edit identity: one key per changed hunk, so every signal on that hunk
+    (including WIL) counts as one group in ranking. `hunk_ordinal` counts non-equal hunks
+    from 0; `lines` are that side's raw changed lines. All whitespace runs (newlines
+    included) collapse to one space, so display-only reflow never changes the key."""
+    text = ' '.join('\n'.join(lines).split())
+    return identity.domain_id('edit', 1, {'pairing_id': view.pairing_id, 'hunk_ordinal': hunk_ordinal,
+                                          'side': side, 'text': text})
 
 
 @dataclass(frozen=True)
