@@ -230,9 +230,11 @@ def _transition(view, feature_id, kind, older, newer, confidence, qualifies, sym
                              symbol_status=symbol_status, notes=tuple(sorted(set(notes))))
 
 
-def _qualifying_hunk(view: MatchView, older: list[_Site], newer: list[_Site]):
-    """First (ordinal, side, site, (lo, hi)) where a changed hunk lies in an enclosed region."""
-    for ordinal, old_rng, new_rng in _changed(view):
+def _qualifying_hunk(view: MatchView, older: list[_Site], newer: list[_Site], changed=None):
+    """First (ordinal, side, site, (lo, hi)) where a changed hunk lies in an enclosed region.
+    Pass `changed` (from _changed) when calling per transition: recomputing it re-parses
+    both functions and makes many-site functions quadratic."""
+    for ordinal, old_rng, new_rng in (_changed(view) if changed is None else changed):
         for side, sites, rng in (('newer', newer, new_rng), ('older', older, old_rng)):
             for s in sites:
                 if s.gate is not None and _hits(*_region(s.gate), rng):
@@ -326,7 +328,7 @@ def analyze(view: MatchView, symbol_status: str = 'absent') -> tuple[FeatureTran
             kind = 'unchanged-around-change'
             if not changed:
                 notes.append('no-changed-hunks')
-        qualifies = reliable and kind in QUALIFYING and _qualifying_hunk(view, olds, news) is not None
+        qualifies = reliable and kind in QUALIFYING and _qualifying_hunk(view, olds, news, changed) is not None
         if kind in QUALIFYING and reliable and not qualifies:
             notes.append('change-outside-enclosed-region')
         confidence = 'moderate' if qualifies and olds and news else 'weak'
@@ -354,10 +356,11 @@ def wil_signals(view: MatchView, transitions) -> tuple[ChangeSignal, ...]:
     if older_scan is None or newer_scan is None:
         return ()
     signals = []
+    changed = _changed(view)
     for t in qualifying:
         olds = [s for s in older_scan.sites if s.site.feature_id == t.feature_id]
         news = [s for s in newer_scan.sites if s.site.feature_id == t.feature_id]
-        hit = _qualifying_hunk(view, olds, news)
+        hit = _qualifying_hunk(view, olds, news, changed)
         if hit is None:
             continue
         ordinal, side, site, (lo, hi) = hit

@@ -279,3 +279,37 @@ def test_correlate_duplicate_snapshots_uses_latest_and_warns(project, capsys, tm
     doc = json.loads(capsys.readouterr()[0])
     assert doc['result']['snapshot_ids'] == [new.snapshot_id]
     assert any('ignored' in w and '2026-01-01' in w for w in doc['warnings'])
+
+
+def test_correlate_rejected_provider_body_keeps_valid_provider(project, capsys, monkeypatch):
+    """A malformed/wrong-ID body from one provider must not discard another valid provider."""
+    from patchtrace.enrichment import intelligence
+    nvd = (FIXTURES / f'nvd_{CVE_ID}.json').read_bytes()
+    bad = json.dumps({'id': 'CVE-1999-0001'}).encode()
+
+    def fake(plan, consent, **_k):
+        return {CVE_ID: {'nvd': intelligence.RawResponse('nvd', CVE_ID, nvd, 'x', 'u', '2026-10-12T00:00:00Z'),
+                         'msrc': intelligence.RawResponse('msrc', CVE_ID, bad, 'y', 'v', '2026-10-12T00:00:00Z')}}, {}
+    monkeypatch.setattr(intelligence, 'fetch_all', fake)
+    code = cli.main(['correlate', str(project), '--cve', CVE_ID, '--fetch', '--providers', 'msrc,nvd',
+                     '--consent-providers', 'msrc,nvd', '--json', '--dry-run'])
+    doc = json.loads(capsys.readouterr()[0])
+    assert code == 0 and doc['status'] == 'partial'
+    assert any('msrc' in w and 'rejected' in w for w in doc['warnings'])
+
+
+def test_wil_many_sites_is_not_quadratic():
+    """Regression: per-transition re-parsing made 4,000-site functions take minutes."""
+    import time
+
+    from patchtrace.enrichment.views import FunctionView, Hunk, MatchView
+    from patchtrace.enrichment.wil import analyze, wil_signals
+    old = tuple(f'x = Feature_{i};' for i in range(2000))
+    new = tuple(f'if (Feature_{i}) {{ y = {i}; }}' for i in range(2000))
+    def fv(side, code):
+        return FunctionView(side[0], 'a-' + side, 'r', side, 'f', 0x1000, code, None, False)
+    view = MatchView('1' * 64, 'm', 'r', 'modified', False, 'high', (fv('older', old),), (fv('newer', new),),
+                     (Hunk('replace', 0, 2000, 0, 2000),))
+    start = time.perf_counter()
+    wil_signals(view, analyze(view))
+    assert time.perf_counter() - start < 20

@@ -217,6 +217,28 @@ def cmd_flags(args, cancel) -> int:
     return NO_RESULTS if not items else OK
 
 
+def _normalize_available(cve, cve_id: str, bodies: dict, now: str, warnings: list[str]) -> list:
+    """Normalize all bodies together; if that fails, keep each provider that is valid on its own,
+    so one malformed or wrong-ID response does not discard a valid one (partial semantics)."""
+    from .enrichment.contracts import EnrichmentError
+    try:
+        return [cve.normalize(cve_id, bodies, now)]
+    except EnrichmentError as combined:
+        if len(bodies) == 1:
+            raise
+        kept = {}
+        for provider, body in sorted(bodies.items()):
+            try:
+                cve.normalize(cve_id, {provider: body}, now)
+                kept[provider] = body
+            except EnrichmentError as exc:
+                warnings.append(f'{cve_id}: provider {provider} response rejected ({exc.code}); '
+                                'normalized the remaining provider responses')
+        if not kept:
+            raise combined
+        return [cve.normalize(cve_id, kept, now)]
+
+
 def cmd_correlate(args, cancel) -> int:
     import os
 
@@ -267,7 +289,9 @@ def cmd_correlate(args, cancel) -> int:
             for cve_id in sorted(requested):
                 bodies = {provider: r.body for provider, r in responses.get(cve_id, {}).items()}
                 if bodies:
-                    snapshots.append(cve.normalize(cve_id, bodies, now))
+                    before = len(warnings)
+                    snapshots.extend(_normalize_available(cve, cve_id, bodies, now, warnings))
+                    fetch_failed = fetch_failed or len(warnings) > before
                 else:
                     warnings.append(f'{cve_id}: no provider response')
         except EnrichmentError as exc:
