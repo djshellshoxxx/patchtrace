@@ -150,12 +150,19 @@ def _pid_alive(pid: int) -> bool:
         return True
     if os.name == 'nt':
         import ctypes
-        kernel32 = ctypes.windll.kernel32  # type: ignore[attr-defined]
+        from ctypes import wintypes
+        # use_last_error captures GetLastError immediately after each call; calling
+        # kernel32.GetLastError() separately can observe a value clobbered by ctypes itself.
+        kernel32 = ctypes.WinDLL('kernel32', use_last_error=True)  # type: ignore[attr-defined]
+        kernel32.OpenProcess.restype = wintypes.HANDLE
+        kernel32.OpenProcess.argtypes = (wintypes.DWORD, wintypes.BOOL, wintypes.DWORD)
+        kernel32.GetExitCodeProcess.argtypes = (wintypes.HANDLE, ctypes.POINTER(wintypes.DWORD))
+        kernel32.CloseHandle.argtypes = (wintypes.HANDLE,)
         handle = kernel32.OpenProcess(0x1000, False, pid)  # PROCESS_QUERY_LIMITED_INFORMATION
         if not handle:
-            return kernel32.GetLastError() != 87  # ERROR_INVALID_PARAMETER: no such pid
+            return ctypes.get_last_error() != 87  # ERROR_INVALID_PARAMETER: no such pid
         try:
-            code = ctypes.c_ulong()
+            code = wintypes.DWORD()
             if not kernel32.GetExitCodeProcess(handle, ctypes.byref(code)):
                 return True
             return code.value == 259  # STILL_ACTIVE
