@@ -25,7 +25,9 @@ def _redact(text: str) -> str:
     text = re.sub(r'(?i)\b(?:api[_-]?key|password|secret|access[_-]?token)\s*[:=]\s*["\']?[^\s,;"\']+',
                   '[REDACTED]', text)
     text = re.sub(r'\bsk-[A-Za-z0-9_-]{8,}', '[REDACTED]', text)
-    text = re.sub(r'(?i)(?:[a-z]:[\\/]|\\\\)[^\s<>"\']+', '[PATH REDACTED]', text)
+    # Windows paths may contain spaces; keep consuming words while a later separator stays in the token.
+    text = re.sub(r'(?i)(?:[a-z]:[\\/]|\\\\)[^\s<>"\']*(?:[ \t]+[^\s<>"\'\\/]*[\\/][^\s<>"\']*)*',
+                  '[PATH REDACTED]', text)
     text = re.sub(r'(?<![\w:/<])/(?:[^\s/<>"\']+/)*[^\s<>"\']+', '[PATH REDACTED]', text)
     text = re.sub(r'https?://[^\s/@:]+:[^\s/@]+@[^\s]+', '[CREDENTIAL URL REDACTED]', text)
     return text
