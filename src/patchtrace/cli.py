@@ -12,7 +12,7 @@ import sys
 import threading
 from pathlib import Path
 
-COMMANDS = ('rank', 'flags', 'correlate', 'cache', 'acquire')
+COMMANDS = ('rank', 'flags', 'correlate', 'cache', 'acquire', 'series', 'secondary')
 OK, ENVIRONMENT, RUNTIME, NO_RESULTS, CANCELLED = 0, 2, 3, 4, 5
 CLI_CONTRACT = 'enrichment-cli/1'
 
@@ -99,6 +99,38 @@ def _parser() -> argparse.ArgumentParser:
     fetch.add_argument('--project-name', default='')
     fetch.add_argument('--consent-hosts', default='',
                        help='must be exactly winbindex.m417z.com,msdl.microsoft.com')
+
+    series = sub.add_parser('series', help='N-way build series over adjacent pair projects (SPEC-09)')
+    ser = series.add_subparsers(dest='action', required=True, parser_class=_Parser)
+    create = common(ser.add_parser('create', help='create/reuse adjacent pair projects and write series.json'))
+    create.add_argument('--builds', type=Path, nargs='+', required=True, metavar='FILE',
+                        help='3-8 builds in analyst order, oldest first (order is never inferred)')
+    create.add_argument('--root', type=Path, required=True, help='directory holding series.json and pair projects')
+    create.add_argument('--labels', nargs='+', default=None, metavar='LABEL')
+    create.add_argument('--direct', action='store_true',
+                        help='also create a first-to-last pair project used to confirm/contradict chains')
+    create.add_argument('--run', action='store_true',
+                        help='run Ghidriff for pair projects without a completed run (otherwise none runs)')
+    create.add_argument('--python', default='', help='external Python executable for --run')
+    create.add_argument('--ghidra-dir', default='', help='Ghidra installation root for --run')
+    create.add_argument('--timeout', type=int, default=3600, help='per-pair analysis timeout seconds')
+    create.add_argument('--cache-dir', type=Path, default=None, help='raw-output cache for --run')
+    secondary = sub.add_parser('secondary', help='second-opinion match sets: BinDiff import, rz-diff (SPEC-10/11)')
+    sec = secondary.add_subparsers(dest='action', required=True, parser_class=_Parser)
+    imp = common(sec.add_parser('import-bindiff', help='import a genuine .BinDiff result for this exact pair'))
+    imp.add_argument('project', type=Path)
+    imp.add_argument('bindiff', type=Path)
+    rz = common(sec.add_parser('rzdiff', help='run rz-diff on the project artifacts'))
+    rz.add_argument('project', type=Path)
+    rz.add_argument('--rz-diff', default='rz-diff', help='rz-diff executable (absolute path or on PATH)')
+    rz.add_argument('--timeout', type=int, default=1800)
+    rec = common(sec.add_parser('reconcile', help='compare stored secondary match sets with Ghidriff matches'))
+    rec.add_argument('project', type=Path)
+    chains = common(ser.add_parser('chains', help='list chain hypotheses from series.json'))
+    chains.add_argument('series_json', type=Path)
+    which = chains.add_mutually_exclusive_group()
+    which.add_argument('--function', metavar='NAME')
+    which.add_argument('--address', metavar='HEX')
     return parser
 
 
@@ -531,12 +563,200 @@ def cmd_acquire(args, cancel) -> int:
     return OK
 
 
+def _nway_error(exc) -> CliError:
+    # Every PT-NWAY failure is an input/config/lock problem the analyst must correct.
+    return CliError(ENVIRONMENT, str(exc))
+
+
+def _run_pair(config, path: Path, cancel) -> str | None:
+    """Run one pair through the same backend/apply path the desktop uses; return an error or None."""
+    from .backend import quarantine_failed_run, run_comparison
+    service = _open(path)
+    try:
+        if any(run.status in {'completed', 'identical'} for run in service.project.runs):
+            return None  # reuse the existing directional result
+        snapshot = service.project.model_copy(deep=True)
+        raw_path, run = run_comparison(config, snapshot, service.root, cancel,
+                                       lambda event: print(f'{path.name}: {event.stage}: {event.message}',
+                                                           file=sys.stderr))
+        if run.status == 'completed':
+            try:
+                if cancel.is_set():
+                    raise ValueError('PT-CANCEL: cancelled before normalization')
+                service.apply_import(service.prepare_analysis(raw_path, run))
+                return None
+            except Exception as exc:
+                run = quarantine_failed_run(service.root, run, str(exc))
+                if cancel.is_set():
+                    run = run.model_copy(update={'status': 'cancelled'})
+        service.record_terminal_run(run)
+        return None if run.status == 'identical' else (run.error or f'comparison {run.status}')
+    finally:
+        service.close()
+
+
+def _chain_row(chain, series, stale) -> dict:
+    return chain.model_dump(mode='json') | {'stale': stale.chain_stale(chain, len(series.builds) - 1)}
+
+
+def cmd_series(args, cancel) -> int:
+    from .nway import series as store
+    from .nway.contracts import NwayError
+    command = f'series {args.action}'
+    warnings: list[str] = []
+    if args.action == 'create':
+        config = None
+        if args.run:
+            from .backend import BackendConfig
+            if not args.python or not args.ghidra_dir:
+                raise CliError(ENVIRONMENT, '--run requires --python and --ghidra-dir')
+            config = BackendConfig(python_executable=args.python, ghidra_dir=args.ghidra_dir,
+                                   timeout_seconds=args.timeout,
+                                   cache_dir=str(args.cache_dir.resolve()) if args.cache_dir else '')
+        elif args.python or args.ghidra_dir or args.cache_dir:
+            raise CliError(ENVIRONMENT, '--python/--ghidra-dir/--cache-dir apply only with --run')
+        try:
+            plan = store.prepare(args.builds, args.root, args.labels, args.direct)
+        except NwayError as exc:
+            raise _nway_error(exc) from None
+        failed = False
+        if config is not None:
+            for path in [*plan.pair_paths, *([plan.direct_path] if plan.direct_path else [])]:
+                if cancel.is_set():
+                    raise CliError(CANCELLED, 'cancelled; completed pair results are preserved')
+                error = _run_pair(config, path, cancel)
+                if error:
+                    failed = True
+                    warnings.append(f'{path.name}: {error}')
+            if cancel.is_set():
+                raise CliError(CANCELLED, 'cancelled; completed pair results are preserved')
+        try:
+            series = store.compute(plan)
+            target = plan.root / store.SERIES_FILE
+            store.save(series, target)
+        except NwayError as exc:
+            raise _nway_error(exc) from None
+        except OSError as exc:
+            raise CliError(RUNTIME, f'cannot write series.json: {exc}') from None
+        refs = [*series.pair_projects, *([series.direct_project] if series.direct_project else [])]
+        warnings += [f'{ref.path}: {note}' for ref in refs for note in ref.notes]
+        unrun = [p.path for p in series.pair_projects if p.run_id is None]
+        if unrun:
+            warnings.append(f'pair projects without a completed run (no edges): {", ".join(unrun)}; '
+                            're-run with --run')
+        result = {'series': str(target), 'series_id': series.series_id, 'created': [p.name for p in plan.created],
+                  'pair_projects': [p.model_dump(mode='json') for p in series.pair_projects],
+                  'direct_project': series.direct_project.model_dump(mode='json') if series.direct_project else None,
+                  'chains': len(series.chains), 'node_count': series.node_count}
+        text = (f'series {series.series_id[:12]}: {len(series.builds)} builds, {len(series.chains)} chains, '
+                f'{series.node_count} nodes\nwritten: {target}\n'
+                'Chains are inferred hypotheses across independent pairwise results.')
+        status = 'partial' if failed else 'complete'
+        _emit(args, command, status, result, warnings, text)
+        return RUNTIME if failed else OK
+    try:
+        series = store.load(args.series_json)
+        stale = store.staleness(series, args.series_json)
+    except NwayError as exc:
+        raise _nway_error(exc) from None
+    chains = list(series.chains)
+    if args.function is not None:
+        chains = [c for c in chains if any(n.name == args.function for n in c.nodes)]
+    if args.address is not None:
+        from .nway.graph import parse_address
+        address = parse_address(args.address.strip())
+        if address is None:
+            raise CliError(ENVIRONMENT, '--address must be a hexadecimal address')
+        chains = [c for c in chains if any(n.address == address for n in c.nodes)]
+    warnings += [f'stale: {reason}; re-run `series create` to recompute' for reason in stale.reasons]
+    rows = [_chain_row(c, series, stale) for c in chains]
+    labels = {b.ordinal: b.label for b in series.builds}
+    text = '\n'.join(
+        f'{c.status:<12} {"STALE " if r["stale"] else ""}{c.weakest_match_type:<28} '
+        + ' -> '.join(f'[{labels[n.ordinal]}] {n.name or "?"}' + (f'@{n.address:x}' if n.address is not None else '')
+                      for n in c.nodes)
+        + ''.join(f' ({e.kind}@{labels[e.ordinal]})' for e in c.events)
+        + (f' gaps:{",".join(labels[g] for g in c.gaps)}' if c.gaps else '')
+        for c, r in zip(chains, rows, strict=True)) or 'No chains.'
+    status = 'stale' if stale.reasons else 'complete'
+    _emit(args, command, status, {'series_id': series.series_id,
+                                  'builds': [b.model_dump(mode='json') for b in series.builds],
+                                  'stale_pairs': sorted(stale.pairs), 'direct_stale': stale.direct,
+                                  'chains': rows}, warnings,
+          text + '\nChains are inferred hypotheses unless confirmed by a direct first-to-last pair.')
+    return OK if rows or stale.reasons else NO_RESULTS
+
+
+def cmd_secondary(args, cancel) -> int:
+    import os
+    import shutil
+
+    from .enrichment.contracts import EnrichmentError
+    from .enrichment.storage import EnrichmentStore, Guard
+    from .secondary import load_secondary, publish_secondary
+    from .secondary.contracts import SecondaryError
+    from .secondary.reconcile import reconcile
+    service = _open(args.project)
+    try:
+        project = service.project
+        run = next((r for r in reversed(project.runs) if r.status == 'completed' and r.raw_sha256), None)
+        sides = {a.side: a for a in project.artifacts}
+        store = EnrichmentStore(service.store)
+        if args.action == 'reconcile':
+            sets = [m for e, m in load_secondary(store) if not e.stale]
+            if not sets:
+                _emit(args, 'secondary reconcile', 'complete', {'reports': []}, [], 'No secondary match sets stored.')
+                return NO_RESULTS
+            reports = [reconcile(project.matches, m) for m in sets]
+            result = {'reports': [{'engine': r.engine, 'engine_version': r.engine_version, 'counts': r.counts(),
+                                   'secondary_only': len(r.secondary_only), 'limitations': list(r.limitations)}
+                                  for r in reports]}
+            text = '\n'.join(f'{r.engine} {r.engine_version}: {r.counts()} secondary-only {len(r.secondary_only)}'
+                             for r in reports) + '\nAgreement is not independent proof or a probability.'
+            _emit(args, 'secondary reconcile', 'complete', result, [], text)
+            return OK
+        if run is None:
+            raise CliError(ENVIRONMENT, 'project has no completed analysis run to attach secondary matches to')
+        try:
+            if args.action == 'import-bindiff':
+                from .secondary.bindiff import import_bindiff
+                match_set = import_bindiff(args.bindiff, sides['older'].sha256, sides['newer'].sha256)
+            else:
+                from .secondary.rzdiff import probe, run_rzdiff
+                exe = shutil.which(args.rz_diff) or args.rz_diff
+                env = dict(os.environ)
+                capability = probe(Path(exe), env, cancel)
+                if not capability.supported:
+                    raise CliError(ENVIRONMENT, f'rz-diff unsupported: {capability.reason}')
+                match_set = run_rzdiff(capability, service.root / sides['older'].relative_path,
+                                       service.root / sides['newer'].relative_path, sides['older'].sha256,
+                                       sides['newer'].sha256, env=env, cancel=cancel, timeout_seconds=args.timeout)
+        except SecondaryError as exc:
+            code = CANCELLED if 'CANCEL' in exc.code else (
+                ENVIRONMENT if exc.code in {'PT-SECONDARY-INPUT', 'PT-SECONDARY-UNSUPPORTED', 'PT-SECONDARY-PAIR',
+                                            'PT-SECONDARY-ORIENTATION', 'PT-SECONDARY-FORMAT'} else RUNTIME)
+            raise CliError(code, str(exc)) from None
+        guard = Guard(project.id, run.id, run.raw_sha256, match_set.file_sha256)
+        try:
+            entry = publish_secondary(store, guard, guard, project.revision, match_set)
+        except EnrichmentError as exc:
+            raise CliError(RUNTIME, str(exc)) from None
+        report = reconcile(project.matches, match_set)
+        result = {'engine': match_set.engine, 'matches': len(match_set.matches), 'entry': entry.id,
+                  'counts': report.counts(), 'limitations': list(report.limitations)}
+        _emit(args, f'secondary {args.action}', 'complete', result, [],
+              f'{match_set.engine}: {len(match_set.matches)} matches stored; {report.counts()}')
+        return OK if match_set.matches else NO_RESULTS
+    finally:
+        service.close()
+
+
 HANDLERS = {'rank': cmd_rank, 'flags': cmd_flags, 'correlate': cmd_correlate, 'cache': cmd_cache,
-            'acquire': cmd_acquire}
+            'acquire': cmd_acquire, 'series': cmd_series, 'secondary': cmd_secondary}
 
 
 def _command_name(args) -> str:
-    return f'acquire {args.action}' if args.command == 'acquire' else args.command
+    return f'{args.command} {args.action}' if args.command in {'acquire', 'series', 'secondary'} else args.command
 
 
 def main(argv: list[str] | None = None) -> int:

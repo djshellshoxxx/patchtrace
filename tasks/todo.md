@@ -19,12 +19,12 @@
 - [ ] Reconcile SPEC-07 with the supplied handoff package and validate its 9 valid / 9 invalid examples (package not supplied)
 - [ ] Derived-cache hit objective 500 ms at 10,000 pairs (measured 3.1 s); UI responsiveness at 10,000 pairs unmeasured
 - [x] Analysis profiles (SPEC-07 §12): Setup Profiles tab, CLI --profile, exports record profile
-- [x] Raw Ghidriff output cache reuse (SPEC-07 §13), opt-in via profile cache_dir; native Ghidra/Java hit not yet exercised
+- [x] Raw Ghidriff output cache reuse (SPEC-07 §13), opt-in via profile cache_dir; native Windows hit verified (CI raw-cache-hit)
 - [ ] Live NVD/MSRC fetch through the CLI recorded as a separate probe
 - [x] Phase 3 contracts: SPEC-08 acquisition, SPEC-09 N-way, SPEC-10 BinExport/BinDiff, SPEC-11 rz-diff (tool research in docs/research/phase3)
-- [ ] 3a acquisition implementation (Winbindex parse, consented download, quarantine; Windows msdelta optional)
-- [ ] 3b N-way series implementation
-- [ ] 3c/3d secondary match import (BinDiff) and rz-diff runner; shared reconciliation view
+- [x] 3a acquisition: headless + CLI + desktop dialog (live afd.sys probe matched); [ ] msdelta on Windows; [ ] per-byte progress
+- [x] 3b N-way series + CLI, unchanged hops from preserved address_matches; [ ] Series window; [ ] native three-build CI; [ ] per-hop attention
+- [x] 3c/3d BinDiff import, rz-diff runner/parser, reconciliation, CLI; [ ] GUI reconciliation view; [ ] protobuf BinExport bindings; [ ] separate stdout capture for rz-diff; [ ] live BinDiff/rizin runs
 - [ ] Phase 4 deferred
 - [x] Full code audit (5 areas, 2026-10-12): see docs/qa.md
 - [ ] Assemble, license-audit and publish a **real relocatable offline Python 3.12 / ghidriff / pyghidra / Ghidra / JDK** payload. Validate from fully disconnected Windows 11 and known-patch fixture; currently only synthetic archive/import tests exist.

@@ -33,6 +33,8 @@ from PySide6.QtWidgets import (
     QScrollArea,
     QSpinBox,
     QSplitter,
+    QTableWidget,
+    QTableWidgetItem,
     QTabWidget,
     QTextEdit,
     QToolBar,
@@ -40,6 +42,9 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 
+from .acquisition import quarantine, winbindex
+from .acquisition.contracts import AUTHENTICITY_NOTE, AcquisitionError, validate_file_name
+from .acquisition.transport import BLOB_SUFFIX, METADATA_HOST, SYMBOL_HOST, AcquisitionConsent, Transport
 from .alignment import alignment_strategy, diff_hunks
 from .backend import BackendConfig, diagnose, quarantine_failed_run, run_comparison
 from .evidence import build_context, resolve_evidence
@@ -227,6 +232,395 @@ class NewProjectDialog(QDialog):
             self.error.setText('The project directory must be absent or empty.')
             return
         super().accept()
+
+
+class AcquisitionDialog(QDialog):
+    """SPEC-08 §5: name → consented metadata search → explicit older/newer → consented download.
+
+    Network work runs only on a Worker and only after the consent text naming the exact hosts
+    and URLs was accepted. Project creation happens in `complete_download` on the GUI thread via
+    `quarantine.promote`, the same path `acquire fetch` uses, so the SQLite connection is owned
+    by the GUI thread. The created service is left in `self.service` for the caller to adopt.
+    """
+    COLUMNS = ['Version', 'KB(s)', 'Release date', 'Download', 'SHA-256']
+
+    def __init__(self, parent=None, transport_factory: Callable = Transport):
+        super().__init__(parent)
+        self.transport_factory = transport_factory
+        self.worker = None
+        self.service = None
+        self.candidates = ()
+        self.older = None
+        self.newer = None
+        self._file_name = None
+        self._close_requested = False
+        self._pending = None
+        self.setWindowTitle('Download from Microsoft symbol server')
+        self.resize(980, 640)
+        layout = QVBoxLayout(self)
+        intro = PlainLabel('Name a Windows x64 file, search Winbindex for its builds, then pick the older and '
+                           'newer build explicitly. Nothing is contacted until you confirm each request.\n'
+                           + AUTHENTICITY_NOTE + '.')
+        intro.setWordWrap(True)
+        layout.addWidget(intro)
+        row = QHBoxLayout()
+        self.name = QLineEdit()
+        self.name.setPlaceholderText('e.g. clfs.sys')
+        self.search_button = QPushButton('Search Winbindex…')
+        self.search_button.clicked.connect(self.search)
+        row.addWidget(PlainLabel('File name'))
+        row.addWidget(self.name)
+        row.addWidget(self.search_button)
+        layout.addLayout(row)
+        self.table = QTableWidget(0, len(self.COLUMNS))
+        self.table.setHorizontalHeaderLabels(self.COLUMNS)
+        self.table.setSelectionBehavior(QTableWidget.SelectionBehavior.SelectRows)
+        self.table.setSelectionMode(QTableWidget.SelectionMode.SingleSelection)
+        self.table.setEditTriggers(QTableWidget.EditTrigger.NoEditTriggers)
+        self.table.itemSelectionChanged.connect(self.update_controls)
+        layout.addWidget(self.table, 1)
+        picks = QHBoxLayout()
+        self.older_button = QPushButton('Use as older')
+        self.newer_button = QPushButton('Use as newer')
+        self.swap_button = QPushButton('Swap older and newer')
+        self.older_button.clicked.connect(lambda: self.pick('older'))
+        self.newer_button.clicked.connect(lambda: self.pick('newer'))
+        self.swap_button.clicked.connect(self.swap)
+        for button in (self.older_button, self.newer_button, self.swap_button):
+            picks.addWidget(button)
+        layout.addLayout(picks)
+        form = QFormLayout()
+        self.older_label = PlainLabel('—')
+        self.newer_label = PlainLabel('—')
+        self.project_name = QLineEdit()
+        self.root = QLineEdit()
+        root_row = QWidget()
+        root_layout = QHBoxLayout(root_row)
+        root_layout.setContentsMargins(0, 0, 0, 0)
+        root_layout.addWidget(self.root)
+        browse = QPushButton('Browse…')
+        browse.clicked.connect(self.browse)
+        root_layout.addWidget(browse)
+        form.addRow('Older build', self.older_label)
+        form.addRow('Newer build', self.newer_label)
+        form.addRow('Project name', self.project_name)
+        form.addRow('New project directory', root_row)
+        layout.addLayout(form)
+        self.progress = QProgressBar()
+        self.progress.setVisible(False)
+        layout.addWidget(self.progress)
+        self.status = PlainLabel()
+        self.status.setObjectName('warning')
+        self.status.setWordWrap(True)
+        layout.addWidget(self.status)
+        self.log = plain_view()
+        self.log.setMaximumHeight(110)
+        layout.addWidget(self.log)
+        buttons = QHBoxLayout()
+        self.download_button = QPushButton('Download and create project…')
+        self.download_button.clicked.connect(self.download)
+        self.cancel_button = QPushButton('Cancel download')
+        self.cancel_button.clicked.connect(self.cancel)
+        close = QPushButton('Close')
+        close.clicked.connect(self.reject)
+        for button in (self.download_button, self.cancel_button, close):
+            buttons.addWidget(button)
+        layout.addLayout(buttons)
+        self.update_controls()
+
+    # -- consent -------------------------------------------------------------------------
+    def confirm(self, title: str, text: str) -> bool:
+        # The single consent gate; tests replace it. Text is plain so URLs render literally.
+        box = QMessageBox(QMessageBox.Icon.Question, title, text,
+                          QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No, self)
+        box.setTextFormat(Qt.TextFormat.PlainText)
+        box.setDefaultButton(QMessageBox.StandardButton.No)
+        return box.exec() == QMessageBox.StandardButton.Yes
+
+    @staticmethod
+    def search_consent_text(url: str) -> str:
+        return (f'PatchTrace will contact {METADATA_HOST} over HTTPS:\n\nGET {url}\n\n'
+                'Only the file name is sent. Nothing about your projects is sent. '
+                'Winbindex data is GPL-3 metadata, fetched for you and not stored.')
+
+    @staticmethod
+    def download_consent_text(requests: list[tuple[str, str]]) -> str:
+        lines = '\n'.join(f'{method} {url}' for method, url in requests)
+        return (f'PatchTrace will contact {SYMBOL_HOST} over HTTPS:\n\n{lines}\n\n'
+                f'Each download may follow exactly one redirect to a *{BLOB_SUFFIX} host '
+                '(Microsoft Azure blob storage). The signed redirect URL is not stored. '
+                'Files are verified against the Winbindex SHA-256 and size and are never executed.')
+
+    # -- worker plumbing -----------------------------------------------------------------
+    def _start(self, title, task, complete):
+        self.status.setText('')
+        self.log.appendPlainText(title)
+        self.progress.setRange(0, 0)
+        self.progress.setVisible(True)
+        worker = Worker(task, self)
+        self.worker = worker
+        worker.event_ready.connect(self._event)
+        worker.result_ready.connect(complete)
+        worker.failed.connect(self._failed)
+        worker.finished.connect(self._finished)
+        self.update_controls()
+        worker.start()
+
+    def _event(self, event):
+        message, value = event
+        self.log.appendPlainText(message)
+        if value is not None:
+            self.progress.setRange(0, 100)
+            self.progress.setValue(int(value * 100))
+
+    def _failed(self, message):
+        self.status.setText('Error · ' + message)
+        self.log.appendPlainText('ERROR: ' + message)
+
+    def _finished(self):
+        worker, self.worker = self.worker, None
+        self.progress.setVisible(False)
+        if worker:
+            worker.deleteLater()
+        self.update_controls()
+        if self.service is not None:
+            super().accept()
+        elif self._close_requested:
+            super().reject()
+
+    def cancel(self):
+        if self.worker:
+            self.worker.cancel.set()
+            self.status.setText('Cancelling · waiting for the current request to stop')
+            self.update_controls()
+
+    def reject(self):
+        # Closing never abandons a running thread or its staging directory; finish first.
+        if self.worker:
+            self._close_requested = True
+            self.cancel()
+            return
+        super().reject()
+
+    def closeEvent(self, event):
+        if self.worker:
+            self._close_requested = True
+            self.cancel()
+            event.ignore()
+            return
+        super().closeEvent(event)
+
+    def update_controls(self):
+        idle = self.worker is None
+        row = self.table.currentRow()
+        selectable = idle and bool(self.table.selectedItems()) and 0 <= row < len(self.candidates)
+        self.search_button.setEnabled(idle)
+        self.name.setEnabled(idle)
+        self.older_button.setEnabled(selectable)
+        self.newer_button.setEnabled(selectable)
+        self.swap_button.setEnabled(idle and (self.older is not None or self.newer is not None))
+        self.download_button.setEnabled(idle and self.older is not None and self.newer is not None)
+        self.cancel_button.setEnabled(not idle and not self.worker.cancel.is_set())
+
+    # -- search ----------------------------------------------------------------------------
+    def search(self):
+        if self.worker:
+            return
+        try:
+            name = validate_file_name(self.name.text().strip())
+        except AcquisitionError as exc:
+            self.status.setText(str(exc))
+            return
+        url = winbindex.metadata_url(name)
+        if not self.confirm('Consent · Winbindex metadata', self.search_consent_text(url)):
+            self.status.setText('Search not performed; consent declined.')
+            return
+        factory = self.transport_factory
+
+        def task(cancel, emit):
+            emit((f'GET {url}', None))
+            transport = factory(cancel=cancel)
+            try:
+                response = transport.fetch_metadata(name, AcquisitionConsent.for_urls([url]))
+            except AcquisitionError as exc:
+                if exc.code == 'PT-ACQ-NOTFOUND':
+                    return name, None, str(exc)
+                raise
+            parsed = winbindex.parse(response.body, name, response.data_date)
+            note = '; '.join(parsed.warnings + (() if response.last_modified else
+                             ('Winbindex data date unknown (no Last-Modified); retrieval date used',)))
+            return name, parsed.candidates, note
+        self._start('Searching Winbindex', task, self.complete_search)
+
+    def complete_search(self, result):
+        name, candidates, note = result
+        self._file_name = name
+        self.older = self.newer = None
+        self.candidates = candidates or ()
+        self.table.setRowCount(0)
+        if candidates is None:
+            self.status.setText(note)
+        else:
+            self._populate()
+            usable = sum(1 for c in self.candidates if self._eligible(c))
+            self.status.setText(f'{len(self.candidates)} builds, {usable} downloadable x64.'
+                                + (f' {note}' if note else ''))
+        if not self.project_name.text().strip():
+            self.project_name.setText(f'{name} (symbol server)')
+        self._show_picks()
+
+    @staticmethod
+    def _eligible(candidate) -> bool:
+        return candidate.x64 and candidate.download != 'unavailable'
+
+    @staticmethod
+    def _availability(candidate) -> str:
+        if not candidate.x64:
+            return f'not x64 (machine {candidate.machine_type:#06x})'
+        return {'direct': 'direct download', 'candidates': 'needs SizeOfImage probe (HEAD)',
+                'unavailable': 'update-package only'}[candidate.download]
+
+    def _populate(self):
+        self.table.setRowCount(len(self.candidates))
+        for row, candidate in enumerate(self.candidates):
+            dates = sorted({k.release_date for k in candidate.kbs if k.release_date})
+            values = [candidate.version or '?', ', '.join(k.kb for k in candidate.kbs) or '—',
+                      dates[0] if dates else '—', self._availability(candidate), candidate.sha256]
+            tip = (f'{candidate.file_name} {candidate.version or "?"}\nSHA-256 {candidate.sha256}\n'
+                   f'{candidate.size:,} bytes · {candidate.source}\n'
+                   + '\n'.join(f'{k.kb} {k.release_date or "?"} {k.release_version or ""}'.rstrip()
+                               for k in candidate.kbs)
+                   + ('\nWindows ' + ', '.join(candidate.windows_versions) if candidate.windows_versions else ''))
+            eligible = self._eligible(candidate)
+            for column, value in enumerate(values):
+                item = QTableWidgetItem(value)
+                item.setToolTip(plain_tip(tip))
+                # Visible for context, but neither selectable nor enabled when it cannot be downloaded.
+                item.setFlags(Qt.ItemFlag.ItemIsSelectable | Qt.ItemFlag.ItemIsEnabled if eligible
+                              else Qt.ItemFlag.NoItemFlags)
+                self.table.setItem(row, column, item)
+        self.table.resizeColumnsToContents()
+
+    # -- selection -------------------------------------------------------------------------
+    def pick(self, side):
+        row = self.table.currentRow()
+        if not self.table.selectedItems() or not 0 <= row < len(self.candidates):
+            return
+        candidate = self.candidates[row]
+        if not self._eligible(candidate):
+            return
+        setattr(self, side, candidate)
+        self._show_picks()
+
+    def swap(self):
+        self.older, self.newer = self.newer, self.older
+        self._show_picks()
+
+    def _show_picks(self):
+        for candidate, label in ((self.older, self.older_label), (self.newer, self.newer_label)):
+            label.setText('—' if candidate is None else
+                          f'{candidate.version or "?"} · {candidate.sha256[:16]}…')
+            label.setToolTip('' if candidate is None else plain_tip(f'{candidate.version or "?"}\n{candidate.sha256}'))
+        self.update_controls()
+
+    def browse(self):
+        parent = QFileDialog.getExistingDirectory(self, 'Choose parent directory')
+        if parent:
+            self.root.setText(str(Path(parent) / 'patchtrace-project'))
+
+    # -- download --------------------------------------------------------------------------
+    def download(self):
+        if self.worker:
+            return
+        older, newer = self.older, self.newer
+        if older is None or newer is None:
+            self.status.setText('Pick both an older and a newer build.')
+            return
+        if older.sha256 == newer.sha256:
+            self.status.setText('Older and newer must be different builds.')
+            return
+        name = self.project_name.text().strip()
+        if not name or not self.root.text().strip():
+            self.status.setText('Enter a project name and a new project directory.')
+            return
+        root = Path(self.root.text().strip())
+        if root.exists() and (not root.is_dir() or any(root.iterdir())):
+            self.status.setText('The project directory must be absent or empty.')
+            return
+        try:
+            urls = {}
+            requests = []
+            for candidate in (older, newer):
+                if candidate.download == 'direct':
+                    urls[candidate.sha256] = (winbindex.direct_url(candidate),)
+                    requests.append(('GET', urls[candidate.sha256][0]))
+                else:
+                    urls[candidate.sha256] = winbindex.candidate_urls(candidate)
+                    requests += [('HEAD', u) for u in urls[candidate.sha256]]
+                    requests.append(('GET', 'the one probed URL that answers 302'))
+        except AcquisitionError as exc:
+            self.status.setText(str(exc))
+            return
+        if not self.confirm('Consent · Microsoft symbol server', self.download_consent_text(requests)):
+            self.status.setText('Download not performed; consent declined.')
+            return
+        factory = self.transport_factory
+
+        def task(cancel, emit):
+            transport = factory(cancel=cancel)
+            staging = None
+            try:
+                chosen = []
+                for candidate in (older, newer):
+                    probes = urls[candidate.sha256]
+                    if candidate.download == 'direct':
+                        chosen.append(probes[0])
+                    else:
+                        emit((f'Probing {len(probes)} candidate URLs for {candidate.sha256[:12]}', None))
+                        chosen.append(transport.resolve(probes, AcquisitionConsent.for_urls(probes)))
+                plan = quarantine.make_plan(older, newer, chosen[0], chosen[1])
+                consent = AcquisitionConsent.for_urls(d.url for d in plan.downloads)
+                staging = quarantine.create_staging()
+                acquired = []
+                for index, planned in enumerate(plan.downloads):
+                    emit((f'GET {planned.url}', index / 2))
+                    acquired.append(quarantine.acquire(planned, consent, staging, transport))
+                    emit((f'{planned.side}: {planned.sha256} verified ({acquired[-1].format})', (index + 1) / 2))
+                if cancel.is_set():
+                    raise AcquisitionError('PT-ACQ-CANCEL', 'acquisition cancelled', recoverable=True)
+                return 'ok', (acquired, staging)
+            except AcquisitionError as exc:
+                if staging is not None:
+                    quarantine.remove_staging(staging)
+                if exc.code == 'PT-ACQ-NOTFOUND':
+                    return 'notfound', str(exc)
+                raise
+            except BaseException:
+                if staging is not None:
+                    quarantine.remove_staging(staging)
+                raise
+        self._pending = (name, root)
+        self._start('Downloading from the Microsoft symbol server', task, self.complete_download)
+
+    def complete_download(self, result):
+        kind, value = result
+        if kind == 'notfound':
+            self.status.setText(f'Not on symbol server · {value}')
+            self.log.appendPlainText(f'Not on symbol server: {value}')
+            return
+        (older, newer), staging = value
+        name, root = self._pending
+        try:
+            if self.worker and self.worker.cancel.is_set():
+                self.status.setText('Cancelled · downloads discarded, no project created')
+                return
+            self.service = quarantine.promote(older, newer, name, root)
+        except (AcquisitionError, ValueError) as exc:
+            self._failed(str(exc))
+            return
+        finally:
+            quarantine.remove_staging(staging)
+        self.log.appendPlainText(f'Project created: {self.service.root}')
 
 
 PROFILE_SETTING = 'analysis/profile'
@@ -932,6 +1326,7 @@ class MainWindow(QMainWindow):
 
     def _build_actions(self):
         self.new_action = self._action('New', self.new_project, 'Ctrl+N')
+        self.acquire_action = self._action('Download from Microsoft symbol server…', self.acquire_project)
         self.open_action = self._action('Open', self.open_project, 'Ctrl+O')
         self.sample_action = self._action('Sample', self.open_sample)
         self.import_action = self._action('Import JSON', self.import_diff)
@@ -954,7 +1349,7 @@ class MainWindow(QMainWindow):
                        self.setup_action]:
             toolbar.addAction(action)
         file_menu = self.menuBar().addMenu('Project')
-        for action in [self.new_action, self.open_action, self.sample_action, self.save_action,
+        for action in [self.new_action, self.acquire_action, self.open_action, self.sample_action, self.save_action,
                        self.import_action, self.export_action, self.swap_action]:
             file_menu.addAction(action)
         file_menu.addAction(self.backup_action)
@@ -1286,6 +1681,17 @@ class MainWindow(QMainWindow):
                 return
             self.set_service(ProjectService.open(root))
         self.start_job('Creating project', create, adopt)
+
+    def acquisition_dialog(self):
+        return AcquisitionDialog(self)
+
+    def acquire_project(self):
+        if self.worker:
+            return
+        dialog = self.acquisition_dialog()
+        dialog.exec()
+        if dialog.service is not None:
+            self.set_service(dialog.service)
 
     def open_project(self):
         path = QFileDialog.getExistingDirectory(self, 'Open PatchTrace project', self.settings.value('recent/project', ''))
@@ -2003,7 +2409,8 @@ class MainWindow(QMainWindow):
         idle = self.worker is None
         project = bool(self.service)
         match = self.current_match()
-        for action in [self.new_action, self.open_action, self.sample_action, self.setup_action]:
+        for action in [self.new_action, self.acquire_action, self.open_action, self.sample_action,
+                       self.setup_action]:
             action.setEnabled(idle)
         for action in [self.run_action, self.import_action, self.export_action, self.save_action, self.swap_action,
                        self.backup_action]:

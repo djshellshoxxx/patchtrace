@@ -240,6 +240,22 @@ PatchTrace cache {status,verify,prune} --cache-dir DIR [--target-bytes N] [--jso
 
 The optional global cache (`--cache-dir`) stores derived detector results keyed by content hashes; a hit returns identical results. It never stores analyst notes and can be deleted at any time.
 
+### Acquisition, build series and second-opinion engines (Phase 3 beta)
+
+```text
+PatchTrace acquire search NAME --consent-hosts winbindex.m417z.com [--json]
+PatchTrace acquire fetch NAME --older SHA256 --newer SHA256 --project DIR --consent-hosts winbindex.m417z.com,msdl.microsoft.com
+PatchTrace series create --builds B1 B2 B3 [...] --root DIR [--labels ...] [--direct] [--run --python P --ghidra-dir G]
+PatchTrace series chains DIR/series.json [--function NAME | --address HEX] [--json]
+PatchTrace secondary import-bindiff PROJECT_DIR RESULT.BinDiff
+PatchTrace secondary rzdiff PROJECT_DIR [--rz-diff PATH] [--timeout SECONDS]
+PatchTrace secondary reconcile PROJECT_DIR
+```
+
+- **Acquisition** (also **Project → Download from Microsoft symbol server…**) uses Winbindex metadata and downloads from `msdl.microsoft.com` only after you consent to the listed hosts and URLs. Each file's SHA-256 is checked against its Winbindex record. A match proves identity with that record, not vendor authenticity (Authenticode is not checked). Files that exist only inside update packages are shown as unavailable. Delta (PA30) reconstruction is a Windows-only module and is not exposed yet.
+- **Series** compares 3–8 builds you order explicitly, through one ordinary project per adjacent pair. A chain across builds is an *inferred hypothesis* unless a direct first→last pair (`--direct`) confirms it. Split, merged and ambiguous hops end chains explicitly.
+- **Secondary engines** store a genuine BinDiff result, or an rz-diff run, as a separate match set and report agreement, disagreement or absence per Ghidriff match. Agreement is not independent proof or a probability. rz-diff similarity is raw-byte Levenshtein. Validating `.BinExport` files needs protobuf bindings, which are not installed. BinDiff and rizin are external tools that you install yourself.
+
 ## Optional AI interpretation
 
 Comparison, manual review, notes, backups, and exports work without AI. Interpretation operates on the selected match records and bounded supplied context; it does not inspect arbitrary files or autonomously investigate the rest of your machine.

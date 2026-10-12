@@ -24,7 +24,7 @@ from .contracts import EnrichmentError
 EXTENSION_VERSION = 1
 MAX_ROW = 32 * 1024 * 1024
 MAX_TOTAL = 128 * 1024 * 1024
-KINDS = frozenset({'signals', 'ranking', 'wil', 'cve-snapshot', 'contextual', 'pipeline'})
+KINDS = frozenset({'signals', 'ranking', 'wil', 'cve-snapshot', 'contextual', 'pipeline', 'secondary-matches'})
 
 
 @dataclass(frozen=True)

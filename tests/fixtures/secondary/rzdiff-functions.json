@@ -1,0 +1,4 @@
+[{"similarity":1.0,"type":"COMPLETE","original":{"name":"fcn.140001000","addr":5368713216,"size":8},"modified":{"name":"fcn.140001000","addr":5368713216,"size":8}},
+{"similarity":0.962963,"type":"PARTIAL","original":{"name":"fcn.140001008","addr":5368713224,"size":54},"modified":{"name":"fcn.140001008","addr":5368713224,"size":54}},
+{"similarity":0.0,"type":"UNLIKE","original":{"name":"fcn.140002000","addr":5368717312,"size":120},"modified":null},
+{"similarity":0.0,"type":"UNLIKE","original":null,"modified":{"name":"fcn.140003000","addr":5368721408,"size":64}}]
