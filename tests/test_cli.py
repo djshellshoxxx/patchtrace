@@ -142,3 +142,22 @@ def test_keyboard_interrupt_exits_5(project, capsys, monkeypatch):
     monkeypatch.setattr(cli, 'cmd_rank', interrupt)
     monkeypatch.setitem(cli.HANDLERS, 'rank', interrupt)
     assert run(['rank', str(project)], capsys)[0] == 5
+
+
+def test_rank_with_cache_and_cache_commands(project, capsys, tmp_path):
+    cache = tmp_path / 'cache'
+    first = run(['rank', str(project), '--json', '--dry-run', '--cache-dir', str(cache)], capsys)
+    second = run(['rank', str(project), '--json', '--dry-run', '--cache-dir', str(cache)], capsys)
+    assert first[0] == second[0] == 0
+    assert json.loads(first[1])['result']['entries'] == json.loads(second[1])['result']['entries']
+    code, out, _ = run(['cache', 'status', '--cache-dir', str(cache), '--json'], capsys)
+    assert code == 0 and json.loads(out)['result']['entries'] >= 2
+    code, out, _ = run(['cache', 'verify', '--cache-dir', str(cache), '--json'], capsys)
+    assert code == 0
+    code, out, _ = run(['cache', 'prune', '--cache-dir', str(cache), '--target-bytes', '0', '--json'], capsys)
+    assert code == 0
+    assert json.loads(run(['cache', 'status', '--cache-dir', str(cache), '--json'], capsys)[1])['result']['entries'] == 0
+
+
+def test_refresh_without_cache_dir_is_invalid(project, capsys):
+    assert run(['rank', str(project), '--refresh', '--dry-run'], capsys)[0] == 2

@@ -49,6 +49,8 @@ Cancellation is checked at stage boundaries and at least every 256 functions. Pe
 | signal | `signal` v1 | `{pairing_id, detector, detector_version, group_key, locations}` |
 | stage | `stage` v1 | `{stage, stage_version, inputs: {name: digest}}` |
 | config | `ranking-config` v1 | semantic config only (weights, enabled detectors, formula) |
+| raw cache | `raw-cache` v1 | `{older_sha256, newer_sha256, fingerprint}` (ordered; full §9 runtime fingerprint) |
+| edit group | `edit` v1 | `{pairing_id, hunk_ordinal, side, text}` shared by B1 and B2 (`signals.edit_group_key`) |
 
 Timestamps, display preferences and absolute paths are never hashed. Existing project/run/function/match UUIDs are retained alongside. Manual rematching yields a new pairing identity (manual flag and membership change); dependent results become stale, history is kept. Identity equality is not authorization or semantic equivalence; ownership is validated separately.
 

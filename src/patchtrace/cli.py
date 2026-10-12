@@ -37,8 +37,14 @@ def _parser() -> argparse.ArgumentParser:
         p.add_argument('--json', action='store_true', help='emit exactly one JSON document on stdout')
         return p
 
+    def cached(p):
+        p.add_argument('--cache-dir', type=Path, help='global derived-stage cache (default: no cache)')
+        p.add_argument('--refresh', action='store_true', help='recompute cached stages (no network implied)')
+        return p
+
     rank = common(sub.add_parser('rank', help='rank changed functions by attention/1 change signals'))
     rank.add_argument('project', type=Path)
+    cached(rank)
     rank.add_argument('--run', help='analysis run ID (default: latest completed)')
     rank.add_argument('--weights', type=Path, help='JSON object of detector weights (integers 0..100)')
     rank.add_argument('--disable', action='append', default=[], metavar='DETECTOR')
@@ -47,12 +53,14 @@ def _parser() -> argparse.ArgumentParser:
 
     flags = common(sub.add_parser('flags', help='list WIL feature-flag transitions'))
     flags.add_argument('project', type=Path)
+    cached(flags)
     flags.add_argument('--run')
     flags.add_argument('--feature-id', type=int, action='append', default=None)
     flags.add_argument('--dry-run', action='store_true')
 
     corr = common(sub.add_parser('correlate', help='rerank with CVE context (base ranking unchanged)'))
     corr.add_argument('project', type=Path)
+    cached(corr)
     corr.add_argument('--cve', action='append', required=True, metavar='CVE-YYYY-NNNN')
     corr.add_argument('--snapshot', type=Path, action='append', default=[],
                       help='previously saved CVE snapshot JSON (offline)')
@@ -112,8 +120,26 @@ def _open(project: Path):
         raise CliError(ENVIRONMENT, str(exc)) from None
 
 
+def _with_cache(args, options):
+    if not getattr(args, 'cache_dir', None):
+        if getattr(args, 'refresh', False):
+            raise CliError(ENVIRONMENT, '--refresh requires --cache-dir')
+        return options
+    import dataclasses
+
+    from .enrichment.cache import CacheConfig, DerivedCache
+    from .enrichment.contracts import EnrichmentError
+    try:
+        cache = DerivedCache(CacheConfig(root=args.cache_dir.resolve(), refresh_stages=frozenset(
+            {'signals', 'wil'} if args.refresh else ())))
+    except EnrichmentError as exc:
+        raise CliError(ENVIRONMENT, str(exc)) from None
+    return dataclasses.replace(options, cache=cache)
+
+
 def _run_pipeline(args, cancel, options):
     from .enrichment import pipeline
+    options = _with_cache(args, options)
     from .enrichment.contracts import EnrichmentError
     from .enrichment.storage import EnrichmentStore
     service = _open(args.project)
