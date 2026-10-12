@@ -22,6 +22,18 @@ Stable IDs are independent of filenames. Public interfaces in SPEC-01 and schema
 | diagnostics | diagnostics.py | Dependency status, bounded redacted logs and pure fixed-text Ghidriff exit classification | stdlib | No credentials; redaction tests |
 | samples | sample.py | Representative synthetic ordinary fix with explicit sample identity | contracts | Never masquerades as real analysis |
 
+| enrichment.contracts | enrichment/contracts.py | Strict frozen enrichment/1 records, statuses, typed EnrichmentError (SPEC-07) | pydantic | Pure; contract tests |
+| enrichment.identity | enrichment/identity.py | Canonical JSON, domain-separated SHA-256 diff/occurrence/pairing/signal/stage IDs | stdlib | Pure; property tests |
+| enrichment.views | enrichment/views.py | Ownership-checked immutable run/match/function views with bounded code | contracts/alignment/models | Pure; forged-ownership tests |
+| enrichment.signals | enrichment/signals.py | B1 deterministic detectors BND/INT/OVF/VAL/ERR/SIZE/SCRUB | views/contracts | Pure; positive/negative fixtures |
+| enrichment.ranking | enrichment/ranking.py | Exact integer attention/1 scoring, grouping and ordering | contracts/identity | Pure; golden arithmetic |
+| enrichment.wil | enrichment/wil.py | B2 Feature_<uint32> sites, transitions and WIL signals | views/contracts | Pure; recognition/negative fixtures |
+| enrichment.cve | enrichment/cve.py | B3 pure CVE normalization, snapshots and contextual reranking | contracts/identity | Pure; redacted provider fixtures |
+| enrichment.intelligence | enrichment/intelligence.py | B3 consented, bounded HTTPS MSRC/NVD transport | stdlib urllib | Injected opener; no live calls in tests |
+| enrichment.cache | enrichment/cache.py | B4 content-addressed derived/raw cache, locks, leases, eviction | contracts/identity | Temp roots; crash-point tests |
+| enrichment.pipeline | enrichment/pipeline.py | Stage orchestration, cancellation, partial status | above (not transport) | Injected adapters |
+| enrichment.storage | enrichment/storage.py | Additive enrichment tables through ProjectStore/Service | persistence | v1 compatibility tests |
+| cli | cli.py | Headless commands rank/flags/correlate/cache; never imports Qt | enrichment/service | Subprocess import test; exit-code contract |
 | packaging | tools/build_windows.py; tools/build_linux.py; tools/pyinstaller_hooks/ | Frozen Windows/Linux runtimes, curated Qt desktop plugins, licenses, inventory and checksum | PyInstaller | Windows/Linux Actions and archive inspection |
 
 Every substantial future module must be added here before implementation. UI must not own analysis logic; provider must not own project state.

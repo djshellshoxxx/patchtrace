@@ -15,6 +15,12 @@
 - [x] Linux x86-64 onedir build (`tools/build_linux.py`, CI `linux-package`/`linux-smoke`); local offscreen + Xvfb self-test pass
 - [ ] Verify live Ghidriff analysis from frozen Linux build
 - [ ] Local-only symbol policy: needs PatchTrace-owned Ghidriff launcher (CLI cannot set empty symbol URLs)
-- [ ] BLOCKED Phase 2 (B1-B4) and contracts: extension spec package (PatchTrace-Extension-Specification-2026-10-11.md, Phase2 schema/examples) not present in repo or uploads
+- [x] Phase 2 B1-B4, storage, pipeline, CLI (rank/flags/correlate/cache), desktop Rank changes, report export (SPEC-07, PatchTrace-authored)
+- [ ] Reconcile SPEC-07 with the supplied handoff package and validate its 9 valid / 9 invalid examples (package not supplied)
+- [ ] Derived-cache hit objective 500 ms at 10,000 pairs (measured 3.1 s); UI responsiveness at 10,000 pairs unmeasured
+- [ ] Analysis profiles in Setup (detector weights, feature filters, CVE/provider choice, cache location); CLI flags only today
+- [ ] Raw Ghidriff output cache reuse (B4 raw API exists; pipeline/backend wiring and cross-project run creation pending)
+- [ ] Live NVD/MSRC fetch through the CLI recorded as a separate probe
+- [ ] Phase 3 (acquisition, N-way, BinExport/BinDiff, Rizin) not started; Phase 4 deferred
 - [ ] Assemble, license-audit and publish a **real relocatable offline Python 3.12 / ghidriff / pyghidra / Ghidra / JDK** payload. Validate from fully disconnected Windows 11 and known-patch fixture; currently only synthetic archive/import tests exist.
 - [ ] Add clean Windows disk-space, user-profile path-length, antivirus-lock and full-stack offline smoke checks before claiming no-setup beta.

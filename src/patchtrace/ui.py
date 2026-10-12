@@ -549,6 +549,7 @@ class ExportDialog(QDialog):
         self.project = project
         self.root = root
         self.selected_ids = selected_ids
+        self.enrichment = None
         self.setWindowTitle('Export report · review exact preview')
         self.resize(880, 700)
         layout = QVBoxLayout(self)
@@ -602,7 +603,8 @@ class ExportDialog(QDialog):
 
     def options(self):
         return dict(include_code=self.code.isChecked(), include_notes=self.notes.isChecked(),
-                    finding_ids=self.selected_ids if self.selection.isChecked() else None)
+                    finding_ids=self.selected_ids if self.selection.isChecked() else None,
+                    enrichment=self.enrichment)
 
     def refresh_preview(self, *_):
         try:
@@ -630,6 +632,11 @@ class MainWindow(QMainWindow):
         self.service = service
         self.worker = None
         self._updating = False
+        # Derived enrichment for the current run, keyed by match ID; never part of the project snapshot.
+        self._ranking = {}
+        self._signal_sets = {}
+        self._ranking_note = ''
+        self._ranking_result = None
         self._syncing = False
         self._close_requested = False
         self._job_started = 0.0
@@ -672,11 +679,13 @@ class MainWindow(QMainWindow):
         self.backup_action = self._action('Back up project…', self.backup_project)
         self.undo_match_action = self._action('Undo latest match correction', self.undo_match_correction)
         self.help_action = self._action('Workflow and dependencies', self.show_help, 'F1')
+        self.rank_action = self._action('Rank changes', self.rank_changes, 'Ctrl+R')
         toolbar = QToolBar('Project and analysis', self)
         toolbar.setMovable(False)
         self.addToolBar(toolbar)
         for action in [self.new_action, self.open_action, self.sample_action, self.import_action,
-                       self.run_action, self.cancel_action, self.interpret_action, self.export_action, self.setup_action]:
+                       self.run_action, self.rank_action, self.cancel_action, self.interpret_action, self.export_action,
+                       self.setup_action]:
             toolbar.addAction(action)
         file_menu = self.menuBar().addMenu('Project')
         for action in [self.new_action, self.open_action, self.sample_action, self.save_action,
@@ -687,7 +696,7 @@ class MainWindow(QMainWindow):
         self.recent_menu = file_menu.addMenu('Recent projects')
         self.refresh_recent()
         analysis = self.menuBar().addMenu('Analysis')
-        for action in [self.run_action, self.cancel_action, self.interpret_action, self.setup_action]:
+        for action in [self.run_action, self.rank_action, self.cancel_action, self.interpret_action, self.setup_action]:
             analysis.addAction(action)
         self.menuBar().addMenu('Help').addAction(self.help_action)
 
@@ -751,6 +760,12 @@ class MainWindow(QMainWindow):
         self.review_filter.addItems(['All review states', *REVIEWS])
         self.review_filter.setAccessibleName('Match review status filter')
         layout.addWidget(self.review_filter)
+        self.order = QComboBox()
+        self.order.addItems(['Project order', 'Attention score (research priority)'])
+        self.order.setAccessibleName('Match ordering')
+        self.order.setToolTip('Attention scores prioritize research; they do not establish exploitability.')
+        self.order.currentIndexChanged.connect(self.filter_matches)
+        layout.addWidget(self.order)
         self.manual_filter = QCheckBox('Manual corrections only')
         self.finding_match_filter = QCheckBox('Matches with findings only')
         self.manual_filter.toggled.connect(self.filter_matches)
@@ -766,6 +781,13 @@ class MainWindow(QMainWindow):
         self.navigator.currentItemChanged.connect(self.select_match)
         self.navigator.itemSelectionChanged.connect(self.update_controls)
         layout.addWidget(self.navigator, 1)
+        layout.addWidget(PlainLabel('CHANGE SIGNALS'))
+        self.signal_list = QListWidget()
+        self.signal_list.setAccessibleName('Deterministic change signals for the selected match; activate to show source')
+        self.signal_list.setMaximumHeight(130)
+        self.signal_list.itemActivated.connect(self.jump_signal)
+        self.signal_list.currentItemChanged.connect(lambda current, _previous: self.jump_signal(current))
+        layout.addWidget(self.signal_list)
         self.match_review = QComboBox()
         self.match_review.addItems(REVIEWS)
         self.match_review.setAccessibleName('Selected match review status')
@@ -1025,6 +1047,7 @@ class MainWindow(QMainWindow):
                 self.side_labels[side].setToolTip(f'{artifact.name}\nSHA-256 {artifact.sha256}\n{artifact.size:,} bytes')
         else:
             self.project_label.setText('Open a project or load the synthetic sample to begin.')
+        self._load_enrichment()
         self.filter_matches()
         self.refresh_findings()
         self._updating = False
@@ -1041,7 +1064,11 @@ class MainWindow(QMainWindow):
         total = len(self.project.matches) if self.project else 0
         findings_matches = {mid for run in self.project.interpretations for finding in run.findings
                             for mid in finding.match_ids} if self.project else set()
-        for match in self.project.matches if self.project else []:
+        matches = list(self.project.matches) if self.project else []
+        if self.order.currentIndex() == 1 and self._ranking:
+            # Unranked matches (other runs) keep project order after ranked ones.
+            matches.sort(key=lambda m: self._ranking[m.id].rank if m.id in self._ranking else 10**9)
+        for match in matches:
             if self.manual_filter.isChecked() and not match.manual:
                 continue
             if self.finding_match_filter.isChecked() and match.id not in findings_matches:
@@ -1055,9 +1082,16 @@ class MainWindow(QMainWindow):
                 continue
             old = ', '.join(f.name for f in match.older) or '—'
             new = ', '.join(f.name for f in match.newer) or '—'
-            item = QListWidgetItem(f'{old} → {new}\n{match.category} · {match.review}')
+            entry = self._ranking.get(match.id)
+            score = f'[{entry.score:>3}] ' if entry and entry.evidence != 'unavailable' else (
+                '[ — ] ' if entry else '')
+            item = QListWidgetItem(f'{score}{old} → {new}\n{match.category} · {match.review}')
             item.setData(Qt.ItemDataRole.UserRole, match.id)
-            item.setToolTip(f'Run {match.run_id}\nMatch quality: {match.quality} (not vulnerability confidence)')
+            tip = f'Run {match.run_id}\nMatch quality: {match.quality} (not vulnerability confidence)'
+            if entry:
+                tip += (f'\nAttention {entry.score}/100 (raw {entry.raw}/80, rank {entry.rank}, '
+                        f'{len(entry.groups)} edit group(s), evidence {entry.evidence})')
+            item.setToolTip(tip)
             self.navigator.addItem(item)
             if match.id == selected_id:
                 self.navigator.setCurrentItem(item)
@@ -1079,6 +1113,7 @@ class MainWindow(QMainWindow):
 
     def render_match(self, *_):
         match = self.current_match()
+        self._render_signals(match)
         self._function_offsets = {}
         self._hunks = []
         self._hunk_index = -1
@@ -1313,6 +1348,107 @@ class MainWindow(QMainWindow):
         text += '\nAnalyst annotations:\n' + ('\n\n'.join(
             f'{a.kind}{" [stale]" if a.stale else ""}: {a.text}' for a in notes) or 'No annotations yet.')
         self.finding_detail.setPlainText(text)
+
+    def _render_signals(self, match):
+        self.signal_list.blockSignals(True)
+        self.signal_list.clear()
+        signal_set = self._signal_sets.get(match.id) if match else None
+        if not match:
+            pass
+        elif signal_set is None:
+            self.signal_list.addItem(self._ranking_note or 'Not ranked yet. Use Rank changes (Ctrl+R).')
+        else:
+            for signal in signal_set.signals:
+                first = signal.locations[0]
+                item = QListWidgetItem(f'{signal.detector} · {signal.confidence} · {first.side} '
+                                       f'lines {first.start_line}-{first.end_line}')
+                item.setData(Qt.ItemDataRole.UserRole, signal.signal_id)
+                item.setToolTip(signal.rationale + ('\nLimitations: ' + ', '.join(signal.limitations)
+                                                    if signal.limitations else ''))
+                self.signal_list.addItem(item)
+            unavailable = [o.detector for o in signal_set.outcomes if o.status == 'unavailable']
+            if not signal_set.signals:
+                self.signal_list.addItem('No change signals (evidence complete).' if not unavailable else
+                                         'No change signals; evidence unavailable for: ' + ', '.join(unavailable))
+            elif unavailable:
+                self.signal_list.addItem('Unavailable detectors: ' + ', '.join(unavailable))
+        self.signal_list.blockSignals(False)
+
+    def jump_signal(self, current=None, *_):
+        if current is None or self.current_match() is None:
+            return
+        signal_set = self._signal_sets.get(self.current_match().id)
+        signal = next((s for s in (signal_set.signals if signal_set else ())
+                       if s.signal_id == current.data(Qt.ItemDataRole.UserRole)), None)
+        if signal is None:
+            return
+        location = signal.locations[0]
+        if location.function_id not in self._function_offsets:
+            return
+        if self.mode.currentIndex() != 0:
+            self.mode.setCurrentIndex(0)
+        side, offset = self._function_offsets[location.function_id]
+        start = self._line_maps[side].get(offset + location.start_line - 1)
+        end = self._line_maps[side].get(offset + location.end_line - 1)
+        if start is None or end is None:
+            return
+        view = self.views[side]
+        cursor = QTextCursor(view.document().findBlockByNumber(start))
+        block = view.document().findBlockByNumber(end)
+        cursor.setPosition(block.position() + block.length() - 1, QTextCursor.MoveMode.KeepAnchor)
+        view.setTextCursor(cursor)
+        view.centerCursor()
+
+    def _load_enrichment(self):
+        """Show the stored ranking only when it was computed from the current run and pairings."""
+        from .enrichment import pipeline
+        from .enrichment.contracts import EnrichmentError
+        from .enrichment.storage import EnrichmentStore
+        self._ranking, self._signal_sets, self._ranking_note = {}, {}, ''
+        self._ranking_result = None
+        if not self.service:
+            return
+        try:
+            ranking, sets, note = pipeline.load_default(EnrichmentStore(self.service.store), self.project)
+        except EnrichmentError as exc:
+            self._ranking_note = f'Stored ranking unreadable: {exc}'
+            return
+        self._ranking_note = note
+        if ranking is not None:
+            self._ranking_result = ranking
+            self._ranking = {e.match_id: e for e in ranking.entries}
+            self._signal_sets = {s.match_id: s for s in sets}
+
+    def _enrichment_export(self):
+        """The exact default-profile ranking shown in the navigator, for preview and report alike."""
+        if self._ranking_result is None:
+            return None
+        return {'ranking': self._ranking_result.model_dump(mode='json'), 'stale': False}
+
+    def rank_changes(self):
+        if not self.service or self.worker:
+            return
+        from .enrichment import pipeline
+        snapshot = self.project.model_copy(deep=True)
+
+        def task(cancel, event):
+            return pipeline.run(snapshot, pipeline.PipelineOptions(), cancel,
+                                lambda message: event(type('Event', (), {'message': message, 'stage': 'rank'})()))
+
+        def complete(result):
+            from .enrichment.storage import EnrichmentStore
+            written = pipeline.publish(EnrichmentStore(self.service.store), self.project, result)
+            stale = any(e.stale for e in written)
+            self._load_enrichment()
+            if stale:
+                self._ranking_note = 'Project changed while ranking; result stored as stale. Rank again.'
+            else:
+                self.order.setCurrentIndex(1)
+            self.logs.appendPlainText(f'Ranking {result.status.status}: ' + ', '.join(
+                f'{s.stage} {s.status}' for s in result.status.stages))
+            self.filter_matches()
+
+        self.start_job('Ranking changes', task, complete)
 
     def jump_evidence(self, current=None, *_):
         if not current:
@@ -1572,6 +1708,8 @@ class MainWindow(QMainWindow):
         self.undo_match_action.setEnabled(project and idle and any(
             a.kind == 'match-override' and not a.stale for a in self.project.annotations))
         self.interpret_action.setEnabled(project and idle and bool(self.navigator.selectedItems()))
+        self.rank_action.setEnabled(project and idle and any(r.status == "completed" and r.raw_sha256
+                                                              for r in self.project.runs))
         self.cancel_action.setEnabled(not idle and not self.worker.cancel.is_set())
         self.correct_button.setEnabled(bool(match) and idle)
         self.match_review.setEnabled(bool(match) and idle)
@@ -1609,6 +1747,8 @@ class MainWindow(QMainWindow):
             return
         selected = [item.data(Qt.ItemDataRole.UserRole) for item in self.findings_list.selectedItems()]
         dialog = ExportDialog(self.project, self.service.root, selected, self)
+        dialog.enrichment = self._enrichment_export()
+        dialog.refresh_preview()
         if dialog.exec() == QDialog.DialogCode.Accepted:
             output = Path(dialog.destination.text())
             result = self._guard(lambda: export_project(self.project, dialog.format.currentText(), output,

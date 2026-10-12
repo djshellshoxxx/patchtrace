@@ -1,0 +1,231 @@
+{
+  "$defs": {
+    "AttributedText": {
+      "additionalProperties": false,
+      "properties": {
+        "contract": {
+          "const": "enrichment/1",
+          "default": "enrichment/1",
+          "title": "Contract",
+          "type": "string"
+        },
+        "source": {
+          "maxLength": 32,
+          "minLength": 1,
+          "title": "Source",
+          "type": "string"
+        },
+        "lang": {
+          "default": "en",
+          "maxLength": 16,
+          "title": "Lang",
+          "type": "string"
+        },
+        "text": {
+          "maxLength": 20000,
+          "title": "Text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "source",
+        "text"
+      ],
+      "title": "AttributedText",
+      "type": "object"
+    },
+    "AttributedValue": {
+      "additionalProperties": false,
+      "properties": {
+        "contract": {
+          "const": "enrichment/1",
+          "default": "enrichment/1",
+          "title": "Contract",
+          "type": "string"
+        },
+        "source": {
+          "maxLength": 32,
+          "minLength": 1,
+          "title": "Source",
+          "type": "string"
+        },
+        "value": {
+          "maxLength": 2000,
+          "minLength": 1,
+          "title": "Value",
+          "type": "string"
+        }
+      },
+      "required": [
+        "source",
+        "value"
+      ],
+      "title": "AttributedValue",
+      "type": "object"
+    },
+    "CvssRecord": {
+      "additionalProperties": false,
+      "properties": {
+        "contract": {
+          "const": "enrichment/1",
+          "default": "enrichment/1",
+          "title": "Contract",
+          "type": "string"
+        },
+        "source": {
+          "title": "Source",
+          "type": "string"
+        },
+        "version": {
+          "maxLength": 8,
+          "title": "Version",
+          "type": "string"
+        },
+        "vector": {
+          "maxLength": 200,
+          "title": "Vector",
+          "type": "string"
+        },
+        "base_score_tenths": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Base Score Tenths"
+        },
+        "severity": {
+          "default": "",
+          "maxLength": 16,
+          "title": "Severity",
+          "type": "string"
+        }
+      },
+      "required": [
+        "source",
+        "version",
+        "vector"
+      ],
+      "title": "CvssRecord",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "contract": {
+      "const": "enrichment/1",
+      "default": "enrichment/1",
+      "title": "Contract",
+      "type": "string"
+    },
+    "snapshot_id": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Snapshot Id",
+      "type": "string"
+    },
+    "cve_id": {
+      "maxLength": 24,
+      "pattern": "^CVE-\\d{4}-\\d{4,19}$",
+      "title": "Cve Id",
+      "type": "string"
+    },
+    "normalization_version": {
+      "minimum": 1,
+      "title": "Normalization Version",
+      "type": "integer"
+    },
+    "response_digests": {
+      "additionalProperties": {
+        "pattern": "^[0-9a-f]{64}$",
+        "type": "string"
+      },
+      "title": "Response Digests",
+      "type": "object"
+    },
+    "retrieved_at": {
+      "title": "Retrieved At",
+      "type": "string"
+    },
+    "descriptions": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/AttributedText"
+      },
+      "title": "Descriptions",
+      "type": "array"
+    },
+    "cwes": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/AttributedValue"
+      },
+      "title": "Cwes",
+      "type": "array"
+    },
+    "cvss": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/CvssRecord"
+      },
+      "title": "Cvss",
+      "type": "array"
+    },
+    "products": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/AttributedValue"
+      },
+      "title": "Products",
+      "type": "array"
+    },
+    "advisories": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/AttributedValue"
+      },
+      "title": "Advisories",
+      "type": "array"
+    },
+    "feature_ids": {
+      "default": [],
+      "items": {
+        "type": "integer"
+      },
+      "title": "Feature Ids",
+      "type": "array"
+    },
+    "published": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/AttributedValue"
+      },
+      "title": "Published",
+      "type": "array"
+    },
+    "conflicts": {
+      "default": [],
+      "items": {
+        "type": "string"
+      },
+      "title": "Conflicts",
+      "type": "array"
+    }
+  },
+  "required": [
+    "snapshot_id",
+    "cve_id",
+    "normalization_version",
+    "response_digests",
+    "retrieved_at"
+  ],
+  "title": "CveSnapshot",
+  "type": "object",
+  "$id": "https://patchtrace.local/schemas/enrichment/1/CveSnapshot.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}

@@ -1,0 +1,54 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "contract": {
+      "const": "enrichment/1",
+      "default": "enrichment/1",
+      "title": "Contract",
+      "type": "string"
+    },
+    "key": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Key",
+      "type": "string"
+    },
+    "stage": {
+      "pattern": "^[a-z][a-z0-9-]{0,31}$",
+      "title": "Stage",
+      "type": "string"
+    },
+    "size": {
+      "minimum": 0,
+      "title": "Size",
+      "type": "integer"
+    },
+    "sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Sha256",
+      "type": "string"
+    },
+    "inputs": {
+      "additionalProperties": {
+        "type": "string"
+      },
+      "title": "Inputs",
+      "type": "object"
+    },
+    "created": {
+      "title": "Created",
+      "type": "string"
+    }
+  },
+  "required": [
+    "key",
+    "stage",
+    "size",
+    "sha256",
+    "inputs",
+    "created"
+  ],
+  "title": "CacheManifest",
+  "type": "object",
+  "$id": "https://patchtrace.local/schemas/enrichment/1/CacheManifest.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}

@@ -77,6 +77,9 @@ def main() -> None:
         raise RuntimeError('Frozen executable is not executable')
     env = {**os.environ, 'QT_QPA_PLATFORM': os.environ.get('QT_QPA_PLATFORM', 'offscreen')}
     subprocess.run([str(executable), '--self-test'], timeout=120, check=True, env=env)
+    cli = subprocess.run([str(executable), 'rank', '--help'], timeout=120, capture_output=True, text=True, env=env)
+    if cli.returncode != 0 or 'usage:' not in cli.stdout:
+        raise RuntimeError(f'Frozen CLI smoke failed ({cli.returncode}): {cli.stderr[-500:]}')
     archive = root / 'dist' / f'PatchTrace-{VERSION}-linux-x86_64.tar.gz'
     with tarfile.open(archive, 'w:gz') as tar:  # tar keeps executable bits; ZIP from shutil may not
         tar.add(package, arcname='PatchTrace')

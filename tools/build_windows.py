@@ -15,7 +15,10 @@ def main():
         raise SystemExit('Build on Windows: PyInstaller cannot cross-compile the Windows runtime.')
     root = Path(__file__).resolve().parents[1]
     subprocess.run([sys.executable, '-m', 'PyInstaller', '--noconfirm', '--clean',
-                    '--onedir', '--windowed', '--name', 'PatchTrace',
+                    # Console subsystem so headless commands return output and exit codes to the
+                    # invoking shell; the bootloader hides a console the process owns (double-click),
+                    # leaving an inherited terminal attached (PyInstaller >= 6, SPEC-05 §3.2).
+                    '--onedir', '--console', '--hide-console', 'hide-early', '--name', 'PatchTrace',
                     '--exclude-module', 'PySide6.QtWebEngineCore',
                     '--exclude-module', 'PySide6.QtWebEngineQuick',
                     '--exclude-module', 'PySide6.QtWebEngineWidgets',
@@ -75,6 +78,11 @@ def main():
         raise RuntimeError(f'Unexpected unused WebEngine/PDF binaries collected: {unexpected}')
     (package / 'file-inventory.json').write_text(json.dumps(inventory, indent=2), encoding='utf-8')
     subprocess.run([str(package / 'PatchTrace.exe'), '--self-test'], timeout=60, check=True)
+    # Frozen headless smoke: help must reach stdout and exit 0 without Qt.
+    cli = subprocess.run([str(package / 'PatchTrace.exe'), 'rank', '--help'], timeout=60,
+                         capture_output=True, text=True)
+    if cli.returncode != 0 or 'usage:' not in cli.stdout:
+        raise RuntimeError(f'Frozen CLI smoke failed ({cli.returncode}): {cli.stderr[-500:]}')
     archive = Path(shutil.make_archive(str(root / 'dist' / 'PatchTrace-0.1.0-windows-x64'),
                                      'zip', root_dir=root / 'dist', base_dir='PatchTrace'))
     with archive.open('rb') as stream:

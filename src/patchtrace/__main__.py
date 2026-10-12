@@ -8,6 +8,12 @@ def main() -> int:
     import tempfile
     from pathlib import Path
 
+    # Headless commands dispatch before any Qt import (SPEC-07 §11).
+    from .cli import COMMANDS
+    if len(sys.argv) > 1 and (sys.argv[1] in COMMANDS or (sys.argv[1] in {'-h', '--help'})):
+        from .cli import main as cli_main
+        return cli_main(sys.argv[1:])
+
     self_test = '--self-test' in sys.argv
     if self_test:
         os.environ.setdefault('QT_QPA_PLATFORM', 'offscreen')

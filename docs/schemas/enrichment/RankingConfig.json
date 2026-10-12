@@ -1,0 +1,67 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "contract": {
+      "const": "enrichment/1",
+      "default": "enrichment/1",
+      "title": "Contract",
+      "type": "string"
+    },
+    "formula": {
+      "const": "attention/1",
+      "default": "attention/1",
+      "title": "Formula",
+      "type": "string"
+    },
+    "weights": {
+      "additionalProperties": {
+        "type": "integer"
+      },
+      "propertyNames": {
+        "enum": [
+          "BND",
+          "INT",
+          "OVF",
+          "VAL",
+          "ERR",
+          "SIZE",
+          "WIL",
+          "SCRUB"
+        ]
+      },
+      "title": "Weights",
+      "type": "object"
+    },
+    "enabled": {
+      "default": [
+        "BND",
+        "INT",
+        "OVF",
+        "VAL",
+        "ERR",
+        "SIZE",
+        "WIL",
+        "SCRUB"
+      ],
+      "items": {
+        "enum": [
+          "BND",
+          "INT",
+          "OVF",
+          "VAL",
+          "ERR",
+          "SIZE",
+          "WIL",
+          "SCRUB"
+        ],
+        "type": "string"
+      },
+      "title": "Enabled",
+      "type": "array"
+    }
+  },
+  "title": "RankingConfig",
+  "type": "object",
+  "$id": "https://patchtrace.local/schemas/enrichment/1/RankingConfig.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}
