@@ -133,3 +133,21 @@ def test_stale_row_records_computed_revision(service):
     assert service.project.revision != 0
     written = pipeline.publish(EnrichmentStore(service.store), service.project, older)
     assert all(e.project_revision == 0 for e in written)
+
+
+def test_empty_wil_stage_is_a_cache_hit_and_status_complete(service, tmp_path, monkeypatch):
+    from patchtrace.enrichment import wil
+    cache = DerivedCache(CacheConfig(root=tmp_path / 'cache'))
+    options = pipeline.PipelineOptions(cache=cache)
+    first = pipeline.run(service.project, options)
+    assert first.transitions == () and first.status.status in {'complete', 'partial'}
+    monkeypatch.setattr(wil, 'analyze', lambda *_a, **_k: pytest.fail('WIL recomputed despite cache'))
+    pipeline.run(service.project, options)
+
+
+def test_unrequested_context_does_not_degrade_status(tmp_path):
+    import sys
+    sys.path.insert(0, str(__import__('pathlib').Path(__file__).parents[1] / 'tools'))
+    from bench_enrichment import build_project
+    result = pipeline.run(build_project(5, 50))
+    assert result.status.status == 'complete'

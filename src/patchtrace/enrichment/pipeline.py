@@ -78,7 +78,7 @@ def _check(cancel: threading.Event | None) -> None:
         raise EnrichmentError('PT-ENRICH-CANCEL', 'enrichment cancelled; completed stages were kept')
 
 
-def _locations_owned(views: RunView, items) -> bool:
+def _locations_owned(views: RunView, items, model) -> bool:
     """A cache entry is only trusted if every record belongs to a current pairing and every
     location re-derives to the same excerpt hash from the live views. The manifest hash only
     proves the file is self-consistent, not that it was produced from these inputs."""
@@ -106,7 +106,8 @@ def _locations_owned(views: RunView, items) -> bool:
                     return False
             except EnrichmentError:
                 return False
-    if all(isinstance(i, SignalSet) for i in items) and {i.pairing_id for i in items} != set(matches):
+    # Signal sets cover every pairing; transitions are legitimately sparse (often empty).
+    if model is SignalSet and {i.pairing_id for i in items} != set(matches):
         return False
     return True
 
@@ -123,9 +124,9 @@ def _cached(cache, stage: str, key: str, model, compute: Callable[[], tuple], vi
         if payload is not None:
             import json
             try:
-                items = json.loads(payload.decode('utf-8'))
-                value = tuple(model.model_validate_json(json.dumps(item)) for item in items)
-                if _locations_owned(views, value):
+                from pydantic import TypeAdapter
+                value = tuple(TypeAdapter(list[model]).validate_json(payload))
+                if _locations_owned(views, value, model):
                     return value, True
             except (ValueError, UnicodeError):
                 pass
@@ -143,11 +144,14 @@ def _cached(cache, stage: str, key: str, model, compute: Callable[[], tuple], vi
     return value, False
 
 
-def _overall(stages: list[StageResult]) -> Status:
+def _overall(stages: list[StageResult], requested_context: bool = False) -> Status:
+    """Contextual ranking is optional; when it was not requested its absence is not partial."""
     statuses = [s.status for s in stages]
     if 'cancelled' in statuses:
         return 'cancelled'
     if all(s == 'complete' for s in statuses):
+        return 'complete'
+    if all(s == 'complete' for s in statuses[:-1]) and statuses[-1] == 'unavailable' and not requested_context:
         return 'complete'
     if statuses and statuses[0] in {'failed', 'unavailable'}:
         return statuses[0]
@@ -262,7 +266,8 @@ def run(project: ComparisonProject, options: PipelineOptions | None = None,
         record('contextual', 'unavailable')
 
     status = PipelineStatus(project_id=views.project_id, revision=views.revision, run_id=views.run_id,
-                            raw_sha256=views.raw_sha256, stages=tuple(stages), status=_overall(stages))
+                            raw_sha256=views.raw_sha256, stages=tuple(stages),
+                            status=_overall(stages, bool(options.snapshots)))
     default = options.config == RankingConfig() and options.feature_ids is None
     return PipelineResult(views, guard, signal_sets, transitions, ranking_result, contextual, status, stage_ids,
                           ranking.config_digest(options.config), default)
