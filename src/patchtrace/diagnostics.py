@@ -5,8 +5,14 @@ import re
 
 _ASSIGNMENT = re.compile(
     r'''(?ix)(authorization["']?\s*[:=]\s*["']?\s*(?:(?:bearer|basic)\s+)?|
-    (?:api[_-]?key|token|password|secret)["']?\s*[:=]\s*["']?)([^\s,;"']+)'''
+    (?:api[_-]?key|token|password|secret)["']?\s*[:=]\s*)
+    (?:"[^"\n]*"|'[^'\n]*'|[^\s,;"']+)'''
 )
+# Conservative bare credential shapes: GitHub, AWS access key IDs, bearer, sk- keys.
+_BARE_TOKENS = re.compile(
+    r'\bgh[pousr]_[A-Za-z0-9]{36,}\b|\bAKIA[0-9A-Z]{16}\b|\bsk-[A-Za-z0-9_-]{8,}'
+)
+_BEARER = re.compile(r'\b(bearer\s+)[A-Za-z0-9._~+/=-]{8,}', re.IGNORECASE)
 # Greedy to the last '@' before the path: unencoded '@' in a password must not
 # leave its tail visible, and proxy schemes such as socks5:// carry credentials too.
 _URL_AUTH = re.compile(r'([a-z][a-z0-9+.-]*://)[^/\s]*@', re.IGNORECASE)
@@ -15,8 +21,8 @@ _URL_AUTH = re.compile(r'([a-z][a-z0-9+.-]*://)[^/\s]*@', re.IGNORECASE)
 def redact_log(text: str, limit: int = 2 * 1024 * 1024) -> str:
     text = _URL_AUTH.sub(r'\1[redacted]@', text)
     text = _ASSIGNMENT.sub(r'\1[redacted]', text)
-    # Publicly common key prefixes can occur without a field label.
-    text = re.sub(r'\bsk-[A-Za-z0-9_-]{8,}\b', '[redacted]', text)
+    text = _BEARER.sub(r'\1[redacted]', text)
+    text = _BARE_TOKENS.sub('[redacted]', text)
     return text[-limit:]
 
 

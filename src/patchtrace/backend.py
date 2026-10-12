@@ -10,6 +10,7 @@ import shutil
 import sys
 import tempfile
 import threading
+import time
 from collections.abc import Callable
 from dataclasses import dataclass
 from pathlib import Path
@@ -191,6 +192,14 @@ def _input_path(root: Path, relative: str, digest: str, cancel: threading.Event)
 
 
 def _output_error(directory: Path) -> str | None:
+    try:
+        return _output_scan(directory)
+    except OSError:
+        # An unreadable output tree cannot be bounded; stop and quarantine it.
+        return 'output-check-failed'
+
+
+def _output_scan(directory: Path) -> str | None:
     total = 0
     for path in directory.rglob('*.json'):
         if path.is_symlink() or not path.resolve().is_relative_to(directory.resolve()):
@@ -202,6 +211,26 @@ def _output_error(directory: Path) -> str | None:
         if total > JSON_LIMIT:
             return 'output-limit'
     return None
+
+
+def _remove_scratch(path: Path, attempts: int = 5) -> str | None:
+    """Remove private scratch, retrying briefly for Windows handle release.
+
+    Returns the leftover path on persistent failure instead of raising, so a
+    cleanup problem never changes a completed or failed run's real status.
+    """
+    delay = 0.1
+    for attempt in range(attempts):
+        try:
+            shutil.rmtree(path)
+            return None
+        except FileNotFoundError:
+            return None
+        except OSError:
+            if attempt + 1 < attempts:
+                time.sleep(delay)
+                delay *= 2  # 0.1 + 0.2 + 0.4 + 0.8 = 1.5 s total
+    return str(path)
 
 
 def quarantine_failed_run(root: Path, run: AnalysisRun, error: str) -> AnalysisRun:
@@ -296,8 +325,8 @@ def run_comparison(config: BackendConfig, project: ComparisonProject, root: Path
         # TemporaryDirectory has a randomized private name; no shared static workspace
         # is used between concurrent comparisons. Cleanup runs on success and failure.
         event('analysis', 'Ghidriff is performing static analysis; detailed counts are unavailable')
-        with tempfile.TemporaryDirectory(prefix='patchtrace-ghidra-') as scratch:
-            scratch_root = Path(scratch).resolve()
+        scratch_root = Path(tempfile.mkdtemp(prefix='patchtrace-ghidra-')).resolve()
+        try:
             engine_project = _validated_ghidra_output_path(scratch_root / 'projects')
             engine_gzfs = _validated_ghidra_output_path(scratch_root / 'gzfs')
             ghidra_settings = scratch_root / 'ghidra-settings'
@@ -312,6 +341,11 @@ def run_comparison(config: BackendConfig, project: ComparisonProject, root: Path
                                  cancel=cancel,
                                  timeout_seconds=config.timeout_seconds,
                                  check_output=lambda: _output_error(raw))
+        finally:
+            # run_process returns only after the contained tree is terminated.
+            leftover = _remove_scratch(scratch_root)
+            if leftover:
+                event('warning', f'Temporary Ghidra workspace could not be removed: {leftover}')
         sanitized_log = redact_log(result.log_tail)
         (quarantine / 'analysis.log').write_text(sanitized_log, encoding='utf-8')
         if sanitized_log:
@@ -321,6 +355,8 @@ def run_comparison(config: BackendConfig, project: ComparisonProject, root: Path
             raise RuntimeError('PT-CANCEL: analysis cancelled; partial output retained in quarantine')
         if result.reason == 'timeout':
             raise RuntimeError('PT-BACKEND: analysis timed out; increase the configured timeout and retry')
+        if result.reason == 'output-check-failed' or _output_error(raw) == 'output-check-failed':
+            raise RuntimeError('PT-BACKEND: output directory could not be inspected; partial output quarantined')
         if result.reason or _output_error(raw):
             raise RuntimeError('PT-BACKEND: unsafe or oversized JSON output; partial output quarantined')
         if result.returncode:

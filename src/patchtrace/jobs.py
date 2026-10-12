@@ -209,7 +209,10 @@ def run_process(argv: Sequence[str], *, cwd: Path, env: Mapping[str, str],
         # A successful parent may leave a descendant holding the output pipe.
         terminate()
         if os.name != 'nt':
-            returncode = child.wait(timeout=5)
+            try:
+                returncode = child.wait(timeout=5)
+            except subprocess.TimeoutExpired:
+                raise RuntimeError('PT-BACKEND: terminated child did not exit') from None
         else:
             deadline = time.monotonic() + 5
             while child.poll() is None and time.monotonic() < deadline:
@@ -224,7 +227,10 @@ def run_process(argv: Sequence[str], *, cwd: Path, env: Mapping[str, str],
     finally:
         terminate()
         if os.name != 'nt':
-            child.wait(timeout=5)
+            try:
+                child.wait(timeout=5)
+            except subprocess.TimeoutExpired:
+                pass  # Already reported above; do not mask the primary error.
         if os.name == 'nt':
             child.close()
         if not reader.is_alive():
