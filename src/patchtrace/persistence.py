@@ -7,6 +7,7 @@ import os
 import shutil
 import socket
 import sqlite3
+import stat
 import tempfile
 from pathlib import Path
 from uuid import uuid4
@@ -153,6 +154,25 @@ def validate_project(project: ComparisonProject) -> ComparisonProject:
     return project
 
 
+def _clear_readonly_and_retry(function, path, _exc):
+    # Copied artifacts/raw outputs are read-only; Windows refuses to delete them otherwise.
+    os.chmod(path, stat.S_IWRITE | stat.S_IREAD)
+    function(path)
+
+
+def _publish_no_replace(stage: Path, destination: Path) -> None:
+    """Move stage to an absent destination. POSIX os.replace would replace an empty dir."""
+    if os.name == 'nt':
+        os.replace(stage, destination)  # Windows refuses to replace an existing directory.
+        return
+    os.mkdir(destination)  # reservation: fails if anything appeared at destination
+    try:
+        os.rename(stage, destination)
+    except OSError:
+        os.rmdir(destination)
+        raise
+
+
 class ProjectLock:
     """Kernel-owned advisory lock; crashes release it without stealing a live lock file."""
     def __init__(self, root: Path):
@@ -293,6 +313,13 @@ class ProjectStore:
         sha = hashlib.sha256(payload.encode()).hexdigest()
         try:
             with self.connection:
+                self.connection.execute('BEGIN IMMEDIATE')
+                current = self.connection.execute(
+                    "SELECT json_extract(payload,'$.id'), json_extract(payload,'$.revision') "
+                    'FROM current_snapshot WHERE singleton=1').fetchone()
+                if current is not None and (current[0] != validated.id or current[1] > validated.revision):
+                    raise ValueError('PT-STORAGE: snapshot belongs to another project or is older than the '
+                                     'stored revision; reopen the project')
                 self.connection.execute('INSERT INTO history(revision,created,payload,sha256) VALUES(?,?,?,?)',
                                         (validated.revision, now(), payload, sha))
                 self.connection.execute('INSERT INTO current_snapshot(singleton,payload,sha256) VALUES(1,?,?) '
@@ -352,11 +379,11 @@ class ProjectStore:
                         if candidate.is_symlink():
                             raise ValueError('PT-STORAGE: backup contains a symlink')
                     shutil.copytree(source, stage / name)
-            os.replace(stage, destination)
+            _publish_no_replace(stage, destination)
             return destination
         finally:
             if stage.exists():
-                shutil.rmtree(stage)
+                shutil.rmtree(stage, onexc=_clear_readonly_and_retry)
 
     def close(self):
         if self.connection is not None:
