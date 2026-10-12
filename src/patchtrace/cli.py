@@ -722,11 +722,11 @@ def cmd_secondary(args, cancel) -> int:
                                           'explanation': e.explanation}
                                          for e in assessment.rows],
                       'evidence_warnings': list(assessment.warnings)}
-            text = '\\n'.join(f'{r.engine} {r.engine_version}: {r.counts()} secondary-only {len(r.secondary_only)}'
-                             for r in reports) + '\\n' + '\\n'.join(
+            text = '\n'.join(f'{r.engine} {r.engine_version}: {r.counts()} secondary-only {len(r.secondary_only)}'
+                             for r in reports) + '\n' + '\n'.join(
                                  f'{e.match_id[:12]}: {e.verdict} ({e.tier}; index {e.evidence_index})'
                                  for e in assessment.rows)
-            text += '\\nEvidence index is NOT a calibrated probability of match correctness or vulnerability.'
+            text += '\nEvidence index is NOT a calibrated probability of match correctness or vulnerability.'
             _emit(args, 'secondary reconcile', 'complete', result, [], text)
             return OK
         if run is None:
