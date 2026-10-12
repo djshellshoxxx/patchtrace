@@ -41,6 +41,7 @@ class PipelineOptions:
     run_id: str | None = None
     feature_ids: frozenset[int] | None = None
     snapshots: tuple[CveSnapshot, ...] = ()
+    max_age_days: int | None = 30
     cache: object | None = None  # enrichment.cache.DerivedCache; optional
 
 
@@ -156,7 +157,7 @@ def run(project: ComparisonProject, options: PipelineOptions | None = None,
     except EnrichmentError as exc:
         record('signals', 'cancelled' if exc.code == 'PT-ENRICH-CANCEL' else 'failed', exc)
 
-    wil_key = stage('wil', {'input': guard.input_digest, 'rules': f'wil/{wil.VERSION}',
+    wil_key = stage('wil', {'input': guard.input_digest, 'rules': f'wil/{wil.DETECTOR_VERSION}',
                             'filter': ','.join(str(i) for i in sorted(options.feature_ids or ()))})
     transitions: tuple[FeatureTransition, ...] = ()
     wil_status: Status = 'unavailable'
@@ -204,9 +205,11 @@ def run(project: ComparisonProject, options: PipelineOptions | None = None,
     if options.snapshots and ranking_result is not None:
         from . import cve  # pure; imported lazily to keep the base path minimal
         try:
-            names = {m.match_id: tuple(f.name for f in m.older + m.newer) for m in views.matches}
+            from datetime import UTC, datetime
+            names = {m.pairing_id: tuple(f.name for f in m.older + m.newer) for m in views.matches}
             contextual = cve.contextual_rank(ranking_result, signal_sets, transitions, options.snapshots,
-                                             (views.older_name, views.newer_name), names)
+                                             (views.older_name, views.newer_name), names,
+                                             now=datetime.now(UTC), max_age_days=options.max_age_days)
             record('contextual', contextual.status)
         except EnrichmentError as exc:
             record('contextual', 'failed', exc)

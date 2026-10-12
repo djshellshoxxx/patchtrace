@@ -225,7 +225,7 @@ def cmd_correlate(args, cancel) -> int:
                                            cancel=cancel)
             now = datetime.now(UTC).isoformat()
             for cve_id in sorted(requested):
-                bodies = {r.provider: r.body for r in responses.get(cve_id, ())}
+                bodies = {provider: r.body for provider, r in responses.get(cve_id, {}).items()}
                 if bodies:
                     snapshots.append(cve.normalize(cve_id, bodies, now))
                 else:

@@ -225,3 +225,19 @@ def test_uint32_round_trips(n):
 @given(st.integers(min_value=4294967296, max_value=10**30))
 def test_above_uint32_rejected(n):
     assert ids(f'Feature_{n}') == []
+
+
+def test_wil_and_b1_signals_on_same_hunk_share_group_key():
+    """Coordinator contract: B1 and B2 use signals.edit_group_key for the same edit."""
+    from patchtrace.enrichment.signals import edit_group_key
+    from patchtrace.enrichment.views import FunctionView, Hunk, MatchView
+    old = ('int f(int n) {', '  return g(n);', '}')
+    new = ('int f(int n) {', '  if (Feature_42__private_IsEnabledDeviceUsage()) {', '    if (n > 8) return -1;',
+           '  }', '  return g(n);', '}')
+    fv = lambda side, code: FunctionView(side[0], 'a-' + side, 'r', side, 'f', 0x1000, code, None, False)
+    view = MatchView('1' * 64, 'm', 'r', 'modified', False, 'high', (fv('older', old),), (fv('newer', new),),
+                     (Hunk('equal', 0, 1, 0, 1), Hunk('insert', 1, 1, 1, 4), Hunk('equal', 1, 3, 4, 6)))
+    transitions = analyze(view)
+    signals = wil_signals(view, transitions)
+    assert signals, transitions
+    assert signals[0].group_key == edit_group_key(view, 0, 'newer', new[1:4])

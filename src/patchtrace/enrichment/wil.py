@@ -19,6 +19,7 @@ from dataclasses import dataclass
 
 from . import identity
 from .contracts import UINT32_MAX, ChangeSignal, FeatureSite, FeatureTransition, SourceLocation
+from .signals import edit_group_key
 from .views import FunctionView, MatchView
 
 DETECTOR_VERSION = 1
@@ -357,9 +358,13 @@ def wil_signals(view: MatchView, transitions) -> tuple[ChangeSignal, ...]:
             continue
         ordinal, side, site, (lo, hi) = hit
         function = view.newer[0] if side == 'newer' else view.older[0]
-        text = _norm(function.code[lo - 1:hi])
-        group = identity.domain_id('edit', 1, {'pairing_id': view.pairing_id, 'hunk_ordinal': ordinal,
-                                               'side': side, 'text': text})
+        # Same edit identity as B1 (signals.edit_group_key): whole changed hunk, newer side
+        # preferred, so a WIL signal and a B1 signal on this hunk form one ranking group.
+        hunk = [h for h in view.hunks if h.operation != 'equal'][ordinal]
+        if hunk.new_end > hunk.new_start:
+            group = edit_group_key(view, ordinal, 'newer', view.newer[0].code[hunk.new_start:hunk.new_end])
+        else:
+            group = edit_group_key(view, ordinal, 'older', view.older[0].code[hunk.old_start:hunk.old_end])
         locations: list[SourceLocation] = [s.location for s in t.older_sites + t.newer_sites]
         locations.append(function.location(lo, hi))
         unique = {identity.canonical_json(loc.model_dump()): loc for loc in locations}
