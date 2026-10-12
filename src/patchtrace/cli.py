@@ -234,10 +234,11 @@ def cmd_correlate(args, cancel) -> int:
             # normalization never derives (feature IDs) and flag the snapshot as unverified.
             loaded = [CveSnapshot.model_validate_json(json.dumps(item)) for item in items]
             snapshots += [s.model_copy(update={'feature_ids': ()}) for s in loaded]
-            unverified.update(s.cve_id for s in loaded)
+            unverified.update(s.snapshot_id for s in loaded)
         except (OSError, ValueError) as exc:
             raise CliError(ENVIRONMENT, f'cannot load snapshot {path.name}: {exc}') from None
     warnings: list[str] = []
+    fetch_failed = False
     if args.fetch:
         from datetime import UTC, datetime
 
@@ -254,8 +255,14 @@ def cmd_correlate(args, cancel) -> int:
             print(f'request: {request.provider} {request.url}', file=sys.stderr)
         key = os.environ.get(args.api_key_env) if args.api_key_env else None
         try:
-            responses = intelligence.fetch(plan, intelligence.FetchConsent.for_plan(plan), api_key=key,
-                                           cancel=cancel)
+            responses, failures = intelligence.fetch_all(plan, intelligence.FetchConsent.for_plan(plan),
+                                                         api_key=key, cancel=cancel)
+            if failures and not responses:
+                raise next(iter(failures.values()))
+            for (cve_id, provider), exc in sorted(failures.items()):
+                fetch_failed = True
+                warnings.append(f'{cve_id}: provider {provider} failed ({exc.code}); '
+                                'normalized the remaining provider responses')
             now = datetime.now(UTC).isoformat()
             for cve_id in sorted(requested):
                 bodies = {provider: r.body for provider, r in responses.get(cve_id, {}).items()}
@@ -268,6 +275,13 @@ def cmd_correlate(args, cancel) -> int:
                 raise CliError(CANCELLED, str(exc)) from None
             raise CliError(RUNTIME, str(exc)) from None
     snapshots = [s for s in snapshots if s.cve_id in requested]
+    try:
+        kept, ignored = cve.select_latest(snapshots)
+    except EnrichmentError as exc:
+        raise CliError(ENVIRONMENT, f'invalid snapshot: {exc}') from None
+    snapshots = list(kept)
+    warnings += [f'{s.cve_id}: ignored older/duplicate snapshot retrieved {s.retrieved_at}; '
+                 'using the most recently retrieved one' for s in ignored]
     missing = requested - {s.cve_id for s in snapshots}
     warnings += [f'{c}: no snapshot available; base ranking retained' for c in sorted(missing)]
     if args.save_snapshot and snapshots:
@@ -275,14 +289,17 @@ def cmd_correlate(args, cancel) -> int:
                                       encoding='utf-8')
     result, more = _run_pipeline(args, cancel, PipelineOptions(run_id=args.run, snapshots=tuple(snapshots)))
     warnings += more + _stage_warnings(result)
+    if result.status.status == 'cancelled':
+        _emit(args, 'correlate', 'cancelled', None, warnings, '')
+        return CANCELLED
     if result.contextual is None:
         _emit(args, 'correlate', 'unavailable', None, warnings, 'Contextual ranking unavailable.')
         return RUNTIME if snapshots else NO_RESULTS
     warnings += [f'{c}: snapshot loaded from file is unverified (provider bodies unavailable); '
-                 'feature-ID claims ignored' for c in sorted(unverified & requested)]
+                 'feature-ID claims ignored' for c in sorted({s.cve_id for s in snapshots if s.snapshot_id in unverified})]
     warnings += [f'{c}: CVE snapshot is stale; check its retrieval date' for c in result.contextual.stale_snapshots]
-    status = 'partial' if result.contextual.stale_snapshots and result.contextual.status == 'complete' \
-        else result.contextual.status
+    status = 'partial' if (result.contextual.stale_snapshots or fetch_failed) \
+        and result.contextual.status == 'complete' else result.contextual.status
     names = {m.match_id: ' / '.join(sorted({f.name for f in m.older + m.newer})) for m in result.views.matches}
     text = '\n'.join(f'{e.context_rank:>4} ctx {e.context_score:>3} base {e.base_score:>3} (#{e.base_rank}) '
                      f'+{e.adjustment:<2} {names.get(e.match_id, "")}' for e in result.contextual.entries)
@@ -330,6 +347,9 @@ def main(argv: list[str] | None = None) -> int:
     except KeyboardInterrupt:
         cancel.set()
         print('cancelled', file=sys.stderr)
+        if args is not None and getattr(args, 'json', False):
+            sys.stdout.write(json.dumps({'contract': CLI_CONTRACT, 'command': args.command, 'status': 'cancelled',
+                                         'result': None, 'warnings': []}, sort_keys=True) + '\n')
         return CANCELLED
     except SystemExit as exc:  # --help
         return int(exc.code or 0)

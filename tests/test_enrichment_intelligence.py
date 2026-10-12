@@ -294,3 +294,32 @@ def test_default_sleep_is_cancellable():
 def test_transport_imports_no_qt():
     import sys
     assert 'PySide6' not in {m.split('.')[0] for m in sys.modules if m.startswith('patchtrace.enrichment.intel')}
+
+
+# --- partial results (audit round 3) ---------------------------------------
+
+def test_fetch_all_keeps_successful_provider_when_other_fails():
+    plan = it.plan_requests([CVE], ('msrc', 'nvd'))  # msrc first
+    clock = Clock()
+    results, errors = it.fetch_all(plan, it.FetchConsent.for_plan(plan), opener=Opener(Resp(404), Resp()),
+                                   clock=clock, sleep=clock.sleep)
+    assert set(results[CVE]) == {'nvd'} and results[CVE]['nvd'].body == BODY
+    assert set(errors) == {(CVE, 'msrc')} and errors[(CVE, 'msrc')].code == 'PT-ENRICH-PROVIDER'
+
+
+def test_fetch_all_cancellation_aborts_immediately():
+    plan = it.plan_requests([CVE], ('msrc', 'nvd'))
+    cancel = threading.Event()
+    cancel.set()
+    opener = Opener(Resp(), Resp())
+    with pytest.raises(EnrichmentError) as exc:
+        it.fetch_all(plan, it.FetchConsent.for_plan(plan), opener=opener, cancel=cancel)
+    assert code(exc) == 'PT-ENRICH-CANCEL' and opener.calls == []
+
+
+def test_fetch_remains_fail_fast():
+    plan = it.plan_requests([CVE], ('msrc', 'nvd'))
+    opener = Opener(Resp(404), Resp())
+    with pytest.raises(EnrichmentError):
+        it.fetch(plan, it.FetchConsent.for_plan(plan), opener=opener)
+    assert len(opener.calls) == 1

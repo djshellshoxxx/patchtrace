@@ -202,6 +202,49 @@ def fetch(plan: Iterable[PlannedRequest], consent: FetchConsent, *, api_key: str
     result[cve].items()}`` is the input to ``cve.normalize``.
     """
     plan = tuple(plan)
+    _validate(plan, consent, api_key)
+    results, _ = fetch_all(plan, consent, api_key=api_key, opener=opener, cancel=cancel, clock=clock,
+                           sleep=sleep, now=now, _validated=True, _fail_fast=True)
+    return results
+
+
+def fetch_all(plan: Iterable[PlannedRequest], consent: FetchConsent, *, api_key: str | None = None,
+              opener: Callable | None = None, cancel: threading.Event | None = None,
+              clock: Callable[[], float] = time.monotonic,
+              sleep: Callable[[float, threading.Event | None], None] = _default_sleep,
+              now: Callable[[], datetime] = lambda: datetime.now(UTC), _validated: bool = False,
+              _fail_fast: bool = False,
+              ) -> tuple[dict[str, dict[str, RawResponse]], dict[tuple[str, str], EnrichmentError]]:
+    """Like `fetch`, but one failing request does not discard the others.
+
+    Returns ``(responses, errors)`` with errors keyed by ``(cve_id, provider)``. Validation
+    failures of the plan/consent/key and cancellation still raise immediately.
+    """
+    plan = tuple(plan)
+    if not _validated:
+        _validate(plan, consent, api_key)
+    opener = opener or urllib_open
+    results: dict[str, dict[str, RawResponse]] = {}
+    errors: dict[tuple[str, str], EnrichmentError] = {}
+    for request in plan:
+        headers = dict(request.headers)
+        if api_key is not None and request.key_header:
+            headers[request.key_header] = api_key
+        try:
+            body, final_url = _fetch_one(request, headers, opener, cancel, clock, sleep, now)
+        except EnrichmentError as exc:
+            if _fail_fast or exc.code == 'PT-ENRICH-CANCEL':
+                raise
+            errors[(request.cve_id, request.provider)] = exc
+            continue
+        results.setdefault(request.cve_id, {})[request.provider] = RawResponse(
+            provider=request.provider, cve_id=request.cve_id, body=body,
+            sha256=hashlib.sha256(body).hexdigest(), url=final_url,
+            retrieved_at=now().astimezone(UTC).isoformat(timespec='seconds').replace('+00:00', 'Z'))
+    return results, errors
+
+
+def _validate(plan: tuple[PlannedRequest, ...], consent: FetchConsent, api_key: str | None) -> None:
     if not plan:
         raise EnrichmentError('PT-ENRICH-INPUT', 'empty request plan')
     for request in plan:
@@ -214,18 +257,6 @@ def fetch(plan: Iterable[PlannedRequest], consent: FetchConsent, *, api_key: str
     if api_key is not None and (type(api_key) is not str or not api_key or len(api_key) > 256
                                 or any(ord(c) < 33 or ord(c) > 126 for c in api_key)):
         raise EnrichmentError('PT-ENRICH-CONFIG', 'invalid API key')
-    opener = opener or urllib_open
-    results: dict[str, dict[str, RawResponse]] = {}
-    for request in plan:
-        headers = dict(request.headers)
-        if api_key is not None and request.key_header:
-            headers[request.key_header] = api_key
-        body, final_url = _fetch_one(request, headers, opener, cancel, clock, sleep, now)
-        results.setdefault(request.cve_id, {})[request.provider] = RawResponse(
-            provider=request.provider, cve_id=request.cve_id, body=body,
-            sha256=hashlib.sha256(body).hexdigest(), url=final_url,
-            retrieved_at=now().astimezone(UTC).isoformat(timespec='seconds').replace('+00:00', 'Z'))
-    return results
 
 
 def _cancelled(cancel: threading.Event | None) -> None:

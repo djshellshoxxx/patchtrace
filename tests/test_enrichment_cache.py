@@ -494,3 +494,25 @@ def test_cache_module_has_no_forbidden_imports():
     source = Path(cache_mod.__file__).read_text()
     for name in ('PySide6', 'subprocess', 'ssl', 'http.client', 'urllib.request'):
         assert f'import {name}' not in source and f'from {name}' not in source
+
+
+# ---- audit round 3 -------------------------------------------------------
+
+def test_in_process_lease_protects_even_without_lease_file(cache, monkeypatch):
+    assert cache.put('signals', KEY, PAYLOAD, {})
+
+    def no_write(path, data):
+        raise OSError(errno.ENOSPC, 'full')
+    monkeypatch.setattr(cache_mod, '_write_file', no_write)
+    with cache.lease('signals', KEY):
+        result = cache.prune(0)
+        assert result['skipped_leased'] == 1 and cache.get('signals', KEY) == PAYLOAD
+
+
+def test_partially_failed_prune_discard_is_reclaimable(cache, monkeypatch):
+    assert cache.put('signals', KEY, PAYLOAD, {})
+    monkeypatch.setattr(cache_mod, '_discard_staging', lambda path: None)  # simulate failed rmtree
+    assert cache.prune(0)['removed'] == 1
+    monkeypatch.undo()
+    assert len(staging_dirs(cache)) == 1
+    assert cache.verify()['staging_removed'] == 1 and staging_dirs(cache) == []
