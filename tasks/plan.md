@@ -18,7 +18,7 @@ Change signals, attention/1 ranking, WIL, CVE context, cache, storage, CLI, desk
 6. Reconcile SPEC-07 with the supplied handoff schema and validate its 9+9 examples — blocked: package not supplied.
 
 ## Phase 3 — later approved features — specification first
-Each slice gets a developer-ready contract and verified tool/provider behavior before code (SPEC-08..11). Order: 3a acquisition (candidate search, consented download, quarantine, PE/PA30 identification; MSDelta reconstruction Windows-only), 3b N-way comparison over adjacent pair projects, 3c BinExport/BinDiff adapter (genuine pinned tools only), 3d Rizin rz-diff secondary engine. The two-artifact project invariant is not changed; N-way composes pair projects.
+Contracts complete (SPEC-08..11, research in docs/research/phase3). Implementation order: Order: 3a acquisition (candidate search, consented download, quarantine, PE/PA30 identification; MSDelta reconstruction Windows-only), 3b N-way comparison over adjacent pair projects, 3c BinExport/BinDiff adapter (genuine pinned tools only), 3d Rizin rz-diff secondary engine. The two-artifact project invariant is not changed; N-way composes pair projects.
 
 ## Phase 4 — deferred design
 Semantic IR, capa/call graphs, further AI transports. Not in current scope; requires typed IR/capability schemas, benchmarks and privacy/citation rules first.

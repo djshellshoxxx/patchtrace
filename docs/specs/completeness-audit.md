@@ -19,7 +19,7 @@ Audit scope: the supplied brief plus subsequent authorization for modular implem
 | Symbol isolation | architecture.md (run_comparison) | Per-run XDG_CONFIG_HOME; native Windows matrix reproduces and passes | User's Ghidra 12.1.4 / clfs.sys case not available |
 | Phase 2 enrichment | enrichment.md §1–§11 | Detectors, ranking, WIL, CVE, cache, storage, pipeline, CLI, desktop, export; reviewed | Supplied-schema reconciliation; live CVE probe; cache-hit objective |
 | Analysis profiles / raw cache | enrichment.md §12–§13 | Specified only | Implementation and acceptance |
-| Phase 3 slices | acquisition/nway/binexport/secondary-engine specs | Specification in progress | Tool validation, implementation |
+| Phase 3 slices | acquisition.md, nway.md, bindiff-adapter.md, secondary-engine.md | Developer-ready contracts from verified tool research (docs/research/phase3/) | Implementation; live probes; Ghidra 12 BinExport exporter unreleased |
 | Milestones/tasks/risks/glossary | ../../tasks/plan.md, ../../tasks/todo.md, architecture.md, verification.md | Tracked gates, explicit failure/retry/status | Unverified checks stay open |
 
 ## Resolved contradictions

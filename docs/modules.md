@@ -34,6 +34,9 @@ Stable IDs are independent of filenames. Public interfaces in SPEC-01 and schema
 | enrichment.pipeline | enrichment/pipeline.py | Stage orchestration, cancellation, partial status | above (not transport) | Injected adapters |
 | enrichment.storage | enrichment/storage.py | Additive enrichment tables through ProjectStore/Service | persistence | v1 compatibility tests |
 | cli | cli.py | Headless commands rank/flags/correlate/cache; never imports Qt | enrichment/service | Subprocess import test; exit-code contract |
+| acquisition (planned) | acquisition/*.py | SPEC-08 Winbindex metadata, consented msdl download, quarantine, PE/PA30 identification, optional Windows msdelta | stdlib/ingestion/ctypes | Fake opener; live probe recorded separately |
+| nway (planned) | nway/*.py | SPEC-09 series of adjacent pair projects, 1:1 chain hypotheses | service/models | Synthetic pair fixtures |
+| secondary matches (planned) | secondary/*.py | SPEC-10 BinExport/BinDiff validation and import; SPEC-11 rz-diff runner/parser; reconciliation | protobuf (optional), jobs | Handcrafted files; optional live tools |
 | packaging | tools/build_windows.py; tools/build_linux.py; tools/pyinstaller_hooks/ | Frozen Windows/Linux runtimes, curated Qt desktop plugins, licenses, inventory and checksum | PyInstaller | Windows/Linux Actions and archive inspection |
 
 Every substantial future module must be added here before implementation. UI must not own analysis logic; provider must not own project state.
