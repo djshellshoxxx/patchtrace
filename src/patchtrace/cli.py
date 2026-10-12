@@ -12,7 +12,7 @@ import sys
 import threading
 from pathlib import Path
 
-COMMANDS = ('rank', 'flags', 'correlate', 'cache')
+COMMANDS = ('rank', 'flags', 'correlate', 'cache', 'acquire')
 OK, ENVIRONMENT, RUNTIME, NO_RESULTS, CANCELLED = 0, 2, 3, 4, 5
 CLI_CONTRACT = 'enrichment-cli/1'
 
@@ -76,6 +76,20 @@ def _parser() -> argparse.ArgumentParser:
     cache.add_argument('action', choices=['status', 'verify', 'prune'])
     cache.add_argument('--cache-dir', type=Path, required=True)
     cache.add_argument('--target-bytes', type=int, default=None)
+
+    acquire = sub.add_parser('acquire', help='download two builds from the Microsoft symbol server (SPEC-08)')
+    acq = acquire.add_subparsers(dest='action', required=True, parser_class=_Parser)
+    search = common(acq.add_parser('search', help='list Winbindex x64 build candidates (metadata only)'))
+    search.add_argument('name', help='lowercase file name, e.g. afd.sys')
+    search.add_argument('--consent-hosts', default='', help='must be exactly winbindex.m417z.com')
+    fetch = common(acq.add_parser('fetch', help='download, verify and create a two-artifact project'))
+    fetch.add_argument('name')
+    fetch.add_argument('--older', required=True, metavar='SHA256')
+    fetch.add_argument('--newer', required=True, metavar='SHA256')
+    fetch.add_argument('--project', type=Path, required=True, help='new project directory')
+    fetch.add_argument('--project-name', default='')
+    fetch.add_argument('--consent-hosts', default='',
+                       help='must be exactly winbindex.m417z.com,msdl.microsoft.com')
     return parser
 
 
@@ -349,7 +363,122 @@ def cmd_cache(args, cancel) -> int:
     return OK
 
 
-HANDLERS = {'rank': cmd_rank, 'flags': cmd_flags, 'correlate': cmd_correlate, 'cache': cmd_cache}
+def _consent_hosts(args, required: set[str]) -> None:
+    given = {h.strip() for h in args.consent_hosts.split(',') if h.strip()}
+    if given != required:
+        raise CliError(ENVIRONMENT, f'--consent-hosts must name exactly: {",".join(sorted(required))}')
+
+
+def _acq_error(exc) -> CliError:
+    code = {'PT-ACQ-CANCEL': CANCELLED, 'PT-ACQ-NOTFOUND': NO_RESULTS, 'PT-ACQ-INPUT': ENVIRONMENT,
+            'PT-ACQ-CONFIG': ENVIRONMENT, 'PT-ACQ-UNSUPPORTED': ENVIRONMENT}.get(exc.code, RUNTIME)
+    return CliError(code, str(exc))
+
+
+def _candidates(args, transport, warnings: list[str]):
+    from .acquisition import winbindex
+    from .acquisition.transport import AcquisitionConsent
+    url = winbindex.metadata_url(args.name)
+    print(f'request: GET {url}', file=sys.stderr)
+    response = transport.fetch_metadata(args.name, AcquisitionConsent.for_urls([url]))
+    parsed = winbindex.parse(response.body, args.name, response.data_date)
+    warnings.extend(parsed.warnings)
+    if response.last_modified is None:
+        warnings.append('Winbindex data date unknown (no Last-Modified); retrieval date used')
+    return parsed.candidates
+
+
+def _acquire_transport(factory, cancel):
+    # Seam for tests to inject a fake opener; production always uses the hardened default.
+    return factory(cancel=cancel)
+
+
+def cmd_acquire(args, cancel) -> int:
+    from .acquisition.contracts import AUTHENTICITY_NOTE, AcquisitionError, validate_file_name
+    from .acquisition.transport import Transport
+    command = f'acquire {args.action}'
+    try:
+        validate_file_name(args.name)
+    except AcquisitionError as exc:
+        raise CliError(ENVIRONMENT, str(exc)) from None
+    transport = _acquire_transport(Transport, cancel)
+    warnings: list[str] = []
+    if args.action == 'search':
+        _consent_hosts(args, {'winbindex.m417z.com'})
+        try:
+            candidates = _candidates(args, transport, warnings)
+        except AcquisitionError as exc:
+            raise _acq_error(exc) from None
+        rows = [c.model_dump(mode='json') for c in candidates]
+        usable = [c for c in candidates if c.x64 and c.download != 'unavailable']
+        text = '\n'.join(f'{c.sha256[:16]} {c.version or "?":<44} '
+                         f'{",".join(k.kb for k in c.kbs) or "-":<24} '
+                         f'{min((k.release_date for k in c.kbs if k.release_date), default="-"):<10} '
+                         f'{c.download if c.x64 else "not-x64"}' for c in candidates) or 'No candidates.'
+        _emit(args, command, 'complete', {'candidates': rows, 'downloadable': len(usable)}, warnings, text)
+        return OK if usable else NO_RESULTS
+    _consent_hosts(args, {'winbindex.m417z.com', 'msdl.microsoft.com'})
+    older_sha, newer_sha = args.older.lower(), args.newer.lower()
+    if older_sha == newer_sha:
+        raise CliError(ENVIRONMENT, '--older and --newer must differ')
+    if (args.project / 'project.sqlite3').exists():
+        raise CliError(ENVIRONMENT, 'project directory already contains a project')
+    from .acquisition import quarantine, winbindex
+    from .acquisition.transport import AcquisitionConsent
+    staging = None
+    try:
+        by_sha = {c.sha256: c for c in _candidates(args, transport, warnings)}
+        chosen = []
+        for side, sha in (('older', older_sha), ('newer', newer_sha)):
+            if sha not in by_sha:
+                raise CliError(ENVIRONMENT, f'{side} SHA-256 is not in the Winbindex record for {args.name}')
+            chosen.append(by_sha[sha])
+        urls = []
+        for candidate in chosen:
+            if not candidate.x64:
+                raise CliError(ENVIRONMENT, f'{candidate.sha256[:12]} is not an x64 build')
+            if candidate.download == 'direct':
+                urls.append(winbindex.direct_url(candidate))
+            elif candidate.download == 'candidates':
+                probes = winbindex.candidate_urls(candidate)
+                for url in probes:
+                    print(f'request: HEAD {url}', file=sys.stderr)
+                urls.append(transport.resolve(probes, AcquisitionConsent.for_urls(probes)))
+            else:
+                raise AcquisitionError('PT-ACQ-NOTFOUND', f'{candidate.sha256[:12]} is update-package only')
+        plan = quarantine.make_plan(chosen[0], chosen[1], urls[0], urls[1])
+        consent = AcquisitionConsent.for_urls(d.url for d in plan.downloads)
+        staging = quarantine.create_staging()
+        acquired = []
+        for planned in plan.downloads:
+            print(f'request: GET {planned.url} (one redirect to *.blob.core.windows.net allowed)',
+                  file=sys.stderr)
+            acquired.append(quarantine.acquire(planned, consent, staging, transport))
+        try:
+            service = quarantine.promote(acquired[0], acquired[1], args.project_name or
+                                         f'{args.name} (symbol server)', args.project)
+        except ValueError as exc:
+            raise CliError(RUNTIME, str(exc)) from None
+        root = str(service.root)
+        service.close()
+    except AcquisitionError as exc:
+        raise _acq_error(exc) from None
+    finally:
+        if staging is not None:
+            quarantine.remove_staging(staging)
+    result = {'project': root, 'artifacts': [a.model_dump(mode='json', exclude={'path'}) for a in acquired],
+              'authenticity': AUTHENTICITY_NOTE}
+    text = '\n'.join(f'{a.side}: {a.file_name} {a.sha256} ({a.size} bytes) verified' for a in acquired)
+    _emit(args, command, 'complete', result, warnings, f'{text}\nproject: {root}\n{AUTHENTICITY_NOTE}')
+    return OK
+
+
+HANDLERS = {'rank': cmd_rank, 'flags': cmd_flags, 'correlate': cmd_correlate, 'cache': cmd_cache,
+            'acquire': cmd_acquire}
+
+
+def _command_name(args) -> str:
+    return f'acquire {args.action}' if args.command == 'acquire' else args.command
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -365,14 +494,14 @@ def main(argv: list[str] | None = None) -> int:
     except CliError as exc:
         print(f'error: {exc}', file=sys.stderr)
         if args is not None and getattr(args, 'json', False):
-            sys.stdout.write(json.dumps({'contract': CLI_CONTRACT, 'command': args.command, 'status': 'failed',
+            sys.stdout.write(json.dumps({'contract': CLI_CONTRACT, 'command': _command_name(args), 'status': 'failed',
                                          'result': None, 'warnings': [], 'error': str(exc)}, sort_keys=True) + '\n')
         return exc.code
     except KeyboardInterrupt:
         cancel.set()
         print('cancelled', file=sys.stderr)
         if args is not None and getattr(args, 'json', False):
-            sys.stdout.write(json.dumps({'contract': CLI_CONTRACT, 'command': args.command, 'status': 'cancelled',
+            sys.stdout.write(json.dumps({'contract': CLI_CONTRACT, 'command': _command_name(args), 'status': 'cancelled',
                                          'result': None, 'warnings': []}, sort_keys=True) + '\n')
         return CANCELLED
     except SystemExit as exc:  # --help
