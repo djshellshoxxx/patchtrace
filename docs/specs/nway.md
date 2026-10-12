@@ -12,11 +12,14 @@ Ghidriff is pairwise: with >2 inputs it diffs adjacent pairs independently (plus
 
 - `BuildRef`: `ordinal` (0..7), `label` (≤ 64), `artifact_sha256`.
 - `Series`: `series_id = domain_id('series', 1, ordered sha256 list)`, `builds` (3–8, unique hashes, analyst order — never inferred from names/dates), `pair_projects` (one path per adjacent pair, each validated to contain exactly that ordered artifact pair).
-- `FunctionNode`: `(ordinal, address int|None, name)`; `PairEdge`: `(from_node, to_node, category, match_types, ratio_text|None, manual: bool)` taken from the pair project's current matches (manual corrections win over engine matches; one function may have several edges).
+- `FunctionNode`: `(ordinal, address int|None, name|None)`; `PairEdge`: `(from_node, to_node, category, match_types, ratio_text|None, manual: bool)` taken from the pair project's current matches (manual corrections win over engine matches; one function may have several edges).
 - `Chain` (hypothesis): ordered nodes across ≥ 3 builds where every hop is a 1:1 edge; `weakest_match_type`, `hops`, `status: Literal['inferred','confirmed','contradicted']`, `gaps` (ordinals with no edge), `events` (`added`, `removed`, `split`, `merged`, `reverted` — reverted = code text at Bk equals Bi for i < k−1 after a change).
 - Series file `series.json` stored next to (not inside) the pair projects, strict JSON, schema `nway/1`.
 
 ## 3. Rules
+
+- Edge sources per pair project, in precedence order: (1) manual corrections; (2) normalized matches (modified/added/removed/split/merged/ambiguous/unmatched); (3) engine `matches.address_matches` read from the run's preserved raw Ghidriff JSON after verifying `raw_sha256` — 1:1 entries only (one target, target not claimed by another source), category `unchanged`. Normalized projects contain only changed functions, so (3) is what lets a chain cross a pair where the function did not change. A raw file without `matches` adds no edges and is noted per pair.
+- Nodes in the shared build of two adjacent pairs are joined on address when both have one, else on exact (address, name). Addresses are never compared across different builds.
 
 - Only 1:1 hops extend a chain. split/merged/ambiguous/unmatched hops end the chain and are recorded as events; no many-to-many transitivity is inferred.
 - A chain is `confirmed` only when a direct first→last pair (optional, analyst-requested) has a 1:1 edge between its endpoints; `contradicted` if that direct pair maps the start elsewhere; otherwise `inferred`.
