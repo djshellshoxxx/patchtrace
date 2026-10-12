@@ -1,0 +1,158 @@
+{
+  "$defs": {
+    "SourceLocation": {
+      "additionalProperties": false,
+      "description": "Exact source excerpt. Lines are 1-based inclusive; address 0 is valid, None unknown.",
+      "properties": {
+        "contract": {
+          "const": "enrichment/1",
+          "default": "enrichment/1",
+          "title": "Contract",
+          "type": "string"
+        },
+        "side": {
+          "enum": [
+            "older",
+            "newer"
+          ],
+          "title": "Side",
+          "type": "string"
+        },
+        "artifact_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Artifact Id",
+          "type": "string"
+        },
+        "run_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Run Id",
+          "type": "string"
+        },
+        "function_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Function Id",
+          "type": "string"
+        },
+        "representation": {
+          "default": "decompiled",
+          "enum": [
+            "decompiled",
+            "assembly",
+            "metadata"
+          ],
+          "title": "Representation",
+          "type": "string"
+        },
+        "start_line": {
+          "minimum": 1,
+          "title": "Start Line",
+          "type": "integer"
+        },
+        "end_line": {
+          "minimum": 1,
+          "title": "End Line",
+          "type": "integer"
+        },
+        "excerpt_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Excerpt Sha256",
+          "type": "string"
+        },
+        "address": {
+          "anyOf": [
+            {
+              "maximum": 18446744073709551615,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Address"
+        }
+      },
+      "required": [
+        "side",
+        "artifact_id",
+        "run_id",
+        "function_id",
+        "start_line",
+        "end_line",
+        "excerpt_sha256"
+      ],
+      "title": "SourceLocation",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "contract": {
+      "const": "enrichment/1",
+      "default": "enrichment/1",
+      "title": "Contract",
+      "type": "string"
+    },
+    "identifier": {
+      "maxLength": 64,
+      "minLength": 1,
+      "title": "Identifier",
+      "type": "string"
+    },
+    "feature_id": {
+      "anyOf": [
+        {
+          "maximum": 4294967295,
+          "minimum": 0,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Feature Id"
+    },
+    "side": {
+      "enum": [
+        "older",
+        "newer"
+      ],
+      "title": "Side",
+      "type": "string"
+    },
+    "location": {
+      "$ref": "#/$defs/SourceLocation"
+    },
+    "control": {
+      "enum": [
+        "cfg-dominance",
+        "lexical-enclosure",
+        "adjacent",
+        "unknown"
+      ],
+      "title": "Control",
+      "type": "string"
+    },
+    "wrapper": {
+      "default": "",
+      "maxLength": 200,
+      "title": "Wrapper",
+      "type": "string"
+    }
+  },
+  "required": [
+    "identifier",
+    "side",
+    "location",
+    "control"
+  ],
+  "title": "FeatureSite",
+  "type": "object",
+  "$id": "https://patchtrace.local/schemas/enrichment/1/FeatureSite.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}

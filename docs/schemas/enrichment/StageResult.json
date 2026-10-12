@@ -1,0 +1,85 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "contract": {
+      "const": "enrichment/1",
+      "default": "enrichment/1",
+      "title": "Contract",
+      "type": "string"
+    },
+    "stage": {
+      "maxLength": 64,
+      "minLength": 1,
+      "title": "Stage",
+      "type": "string"
+    },
+    "stage_version": {
+      "minimum": 1,
+      "title": "Stage Version",
+      "type": "integer"
+    },
+    "stage_id": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Stage Id",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "complete",
+        "partial",
+        "unavailable",
+        "cancelled",
+        "failed"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "error_code": {
+      "anyOf": [
+        {
+          "enum": [
+            "PT-ENRICH-INPUT",
+            "PT-ENRICH-OWNERSHIP",
+            "PT-ENRICH-CONFIG",
+            "PT-ENRICH-LIMIT",
+            "PT-ENRICH-CANCEL",
+            "PT-ENRICH-STALE",
+            "PT-ENRICH-CACHE",
+            "PT-ENRICH-NETWORK",
+            "PT-ENRICH-PROVIDER"
+          ],
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Error Code"
+    },
+    "message": {
+      "default": "",
+      "maxLength": 2000,
+      "title": "Message",
+      "type": "string"
+    },
+    "limitations": {
+      "default": [],
+      "items": {
+        "type": "string"
+      },
+      "title": "Limitations",
+      "type": "array"
+    }
+  },
+  "required": [
+    "stage",
+    "stage_version",
+    "stage_id",
+    "status"
+  ],
+  "title": "StageResult",
+  "type": "object",
+  "$id": "https://patchtrace.local/schemas/enrichment/1/StageResult.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}

@@ -1,0 +1,196 @@
+{
+  "$defs": {
+    "ContextContribution": {
+      "additionalProperties": false,
+      "properties": {
+        "contract": {
+          "const": "enrichment/1",
+          "default": "enrichment/1",
+          "title": "Contract",
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "identifier",
+            "cwe",
+            "feature",
+            "product"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "points": {
+          "maximum": 30,
+          "minimum": 0,
+          "title": "Points",
+          "type": "integer"
+        },
+        "context_field": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Context Field",
+          "type": "string"
+        },
+        "binary_ref": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Binary Ref",
+          "type": "string"
+        },
+        "detail": {
+          "default": "",
+          "maxLength": 500,
+          "title": "Detail",
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind",
+        "points",
+        "context_field",
+        "binary_ref"
+      ],
+      "title": "ContextContribution",
+      "type": "object"
+    },
+    "ContextualEntry": {
+      "additionalProperties": false,
+      "properties": {
+        "contract": {
+          "const": "enrichment/1",
+          "default": "enrichment/1",
+          "title": "Contract",
+          "type": "string"
+        },
+        "pairing_id": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Pairing Id",
+          "type": "string"
+        },
+        "match_id": {
+          "title": "Match Id",
+          "type": "string"
+        },
+        "base_score": {
+          "maximum": 100,
+          "minimum": 0,
+          "title": "Base Score",
+          "type": "integer"
+        },
+        "base_rank": {
+          "minimum": 1,
+          "title": "Base Rank",
+          "type": "integer"
+        },
+        "adjustment": {
+          "maximum": 30,
+          "minimum": 0,
+          "title": "Adjustment",
+          "type": "integer"
+        },
+        "context_score": {
+          "maximum": 100,
+          "minimum": 0,
+          "title": "Context Score",
+          "type": "integer"
+        },
+        "context_rank": {
+          "minimum": 1,
+          "title": "Context Rank",
+          "type": "integer"
+        },
+        "contributions": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/ContextContribution"
+          },
+          "title": "Contributions",
+          "type": "array"
+        },
+        "blocked": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Blocked",
+          "type": "array"
+        }
+      },
+      "required": [
+        "pairing_id",
+        "match_id",
+        "base_score",
+        "base_rank",
+        "adjustment",
+        "context_score",
+        "context_rank"
+      ],
+      "title": "ContextualEntry",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "contract": {
+      "const": "enrichment/1",
+      "default": "enrichment/1",
+      "title": "Contract",
+      "type": "string"
+    },
+    "ranking_input": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Ranking Input",
+      "type": "string"
+    },
+    "snapshot_ids": {
+      "items": {
+        "pattern": "^[0-9a-f]{64}$",
+        "type": "string"
+      },
+      "title": "Snapshot Ids",
+      "type": "array"
+    },
+    "dictionary_version": {
+      "minimum": 1,
+      "title": "Dictionary Version",
+      "type": "integer"
+    },
+    "entries": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/ContextualEntry"
+      },
+      "title": "Entries",
+      "type": "array"
+    },
+    "status": {
+      "enum": [
+        "complete",
+        "partial",
+        "unavailable",
+        "cancelled",
+        "failed"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "stale_snapshots": {
+      "default": [],
+      "items": {
+        "type": "string"
+      },
+      "title": "Stale Snapshots",
+      "type": "array"
+    }
+  },
+  "required": [
+    "ranking_input",
+    "snapshot_ids",
+    "dictionary_version",
+    "status"
+  ],
+  "title": "ContextualRanking",
+  "type": "object",
+  "$id": "https://patchtrace.local/schemas/enrichment/1/ContextualRanking.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}

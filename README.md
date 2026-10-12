@@ -14,6 +14,7 @@ Start with an older and newer version of the same executable, DLL, or driver. Ru
 - [Compare your own binaries](#compare-your-own-binaries)
 - [Workspace and GUI controls](#workspace-and-gui-controls)
 - [Correct matches and record your review](#correct-matches-and-record-your-review)
+- [Rank changes, feature flags and CVE context](#rank-changes-feature-flags-and-cve-context)
 - [Optional AI interpretation](#optional-ai-interpretation)
 - [Export and share results](#export-and-share-results)
 - [Projects, backups, and data handling](#projects-backups-and-data-handling)
@@ -199,6 +200,45 @@ Ghidriff proposes function relationships. PatchTrace lets you record a different
 Review status belongs to your decision: **unreviewed** means no decision, **accepted** means you accept the match or finding, **rejected** records disagreement, and **needs-review** marks unresolved work. Match review and finding review are separate. Accepting a match does not automatically accept a finding, and accepting a model finding does not independently validate its conclusion.
 
 A new comparison/import, manual relationship correction, correction undo, or orientation swap can invalidate prior interpretations and mark findings/annotations **stale**. Historical material is retained with its original context; stale citations are not redirected into a different current run. Reinterpret the current selection when you need a current hypothesis.
+
+## Rank changes, feature flags and CVE context
+
+After a comparison, **Analysis → Rank changes** (**Ctrl+R**) runs deterministic detectors over the changed hunks of each 1:1 match and orders the list by an integer *attention* score. Change the order back with the ordering selector above the function list. Each ranked row shows `[score]`; `[ — ]` means the evidence a detector needed (for example decompiled code on both sides) was unavailable, which is not the same as "nothing changed". **CHANGE SIGNALS** lists the detector, confidence and exact lines for the selected match; select one to highlight those lines.
+
+| Detector | Weight | What it looks for in decompiled text |
+|---|---:|---|
+| BND | 30 | New bound comparison whose variable is used as an index, pointer offset or copy/alloc size nearby |
+| INT | 22 | Comparison strictness or cast change on the same operands |
+| OVF | 28 | New overflow guard or checked-arithmetic call feeding a size |
+| VAL | 20 | New probe/validation call, or a newly checked return value |
+| ERR | 12 | New predicate-controlled early error return |
+| SIZE | 24 | Changed size argument at the same call position |
+| WIL | 12 | Changed code enclosed by a `Feature_<id>` gate that was introduced, removed or changed |
+| SCRUB | 34 | Zeroing/masking of an object before it is copied out |
+
+Signals on the same edited hunk count as one group: score = `(min(80, Σ groups) × 100 + 40) // 80`, where each group adds its strongest adjusted weight plus a quarter of the second (≤ 40). Confidence multipliers are strong 100 %, moderate 70 %, weak 35 %. The arithmetic is exact integer math (SPEC-07 §6). Detectors work on decompiled text without typed IR, so they are deliberately conservative and their known false-positive/negative classes are documented in the source. **An attention score prioritizes research; it is not a vulnerability verdict, exploitability estimate or CVE match.** Results are stored in the project and marked stale after a new run or manual match correction.
+
+Exports include the same ranking values when a current ranking exists.
+
+### Command line
+
+The same executable runs headless commands without opening the desktop (no Qt is loaded):
+
+```text
+PatchTrace rank PROJECT_DIR [--json] [--limit N] [--weights weights.json] [--disable DETECTOR] [--dry-run] [--cache-dir DIR]
+PatchTrace flags PROJECT_DIR [--feature-id N]... [--json]
+PatchTrace correlate PROJECT_DIR --cve CVE-YYYY-NNNN [--snapshot saved.json] [--json]
+PatchTrace correlate PROJECT_DIR --cve CVE-YYYY-NNNN --fetch --consent-providers nvd,msrc [--api-key-env NVD_KEY] [--save-snapshot out.json]
+PatchTrace cache {status,verify,prune} --cache-dir DIR [--target-bytes N] [--json]
+```
+
+`--json` prints exactly one JSON document on stdout; progress and warnings go to stderr. Exit codes: 0 success, 2 invalid arguments/configuration/environment, 3 runtime failure, 4 legitimate no results, 5 cancelled. A weights file is a JSON object of whole-number weights 0–100 for the detector IDs above.
+
+`flags` lists WIL `Feature_<id>` transitions. Enclosure is a lexical heuristic (no control-flow graph); adjacent references are context only and never score.
+
+`correlate` reorders by CVE context without changing base scores. It works offline from a saved snapshot. **`--fetch` contacts NVD and/or MSRC only with matching `--consent-providers`, and sends only the CVE ID** (plus an NVD API key header if you name an environment variable holding it). No binary, code, path or note leaves the machine. The exact request URLs are printed to stderr first. Context contributions (identifier overlap, CWE aligned with an existing moderate/strong signal, feature ID, product module) are capped at +30 and each cites the binary evidence it relies on; descriptions never prove code behavior.
+
+The optional global cache (`--cache-dir`) stores derived detector results keyed by content hashes; a hit returns identical results. It never stores analyst notes and can be deleted at any time.
 
 ## Optional AI interpretation
 

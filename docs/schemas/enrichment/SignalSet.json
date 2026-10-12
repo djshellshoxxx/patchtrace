@@ -1,0 +1,307 @@
+{
+  "$defs": {
+    "ChangeSignal": {
+      "additionalProperties": false,
+      "properties": {
+        "contract": {
+          "const": "enrichment/1",
+          "default": "enrichment/1",
+          "title": "Contract",
+          "type": "string"
+        },
+        "signal_id": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Signal Id",
+          "type": "string"
+        },
+        "pairing_id": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Pairing Id",
+          "type": "string"
+        },
+        "match_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Match Id",
+          "type": "string"
+        },
+        "detector": {
+          "enum": [
+            "BND",
+            "INT",
+            "OVF",
+            "VAL",
+            "ERR",
+            "SIZE",
+            "WIL",
+            "SCRUB"
+          ],
+          "title": "Detector",
+          "type": "string"
+        },
+        "detector_version": {
+          "minimum": 1,
+          "title": "Detector Version",
+          "type": "integer"
+        },
+        "confidence": {
+          "enum": [
+            "strong",
+            "moderate",
+            "weak",
+            "unavailable"
+          ],
+          "title": "Confidence",
+          "type": "string"
+        },
+        "group_key": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Group Key",
+          "type": "string"
+        },
+        "locations": {
+          "items": {
+            "$ref": "#/$defs/SourceLocation"
+          },
+          "minItems": 1,
+          "title": "Locations",
+          "type": "array"
+        },
+        "rationale": {
+          "maxLength": 2000,
+          "minLength": 1,
+          "title": "Rationale",
+          "type": "string"
+        },
+        "limitations": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Limitations",
+          "type": "array"
+        },
+        "typed_evidence": {
+          "default": false,
+          "title": "Typed Evidence",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "signal_id",
+        "pairing_id",
+        "match_id",
+        "detector",
+        "detector_version",
+        "confidence",
+        "group_key",
+        "locations",
+        "rationale"
+      ],
+      "title": "ChangeSignal",
+      "type": "object"
+    },
+    "DetectorOutcome": {
+      "additionalProperties": false,
+      "description": "Per pairing and detector: `unavailable` means evidence missing, never 'no defect'.",
+      "properties": {
+        "contract": {
+          "const": "enrichment/1",
+          "default": "enrichment/1",
+          "title": "Contract",
+          "type": "string"
+        },
+        "pairing_id": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Pairing Id",
+          "type": "string"
+        },
+        "detector": {
+          "enum": [
+            "BND",
+            "INT",
+            "OVF",
+            "VAL",
+            "ERR",
+            "SIZE",
+            "WIL",
+            "SCRUB"
+          ],
+          "title": "Detector",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "complete",
+            "partial",
+            "unavailable",
+            "cancelled",
+            "failed"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "reason": {
+          "default": "",
+          "maxLength": 500,
+          "title": "Reason",
+          "type": "string"
+        }
+      },
+      "required": [
+        "pairing_id",
+        "detector",
+        "status"
+      ],
+      "title": "DetectorOutcome",
+      "type": "object"
+    },
+    "SourceLocation": {
+      "additionalProperties": false,
+      "description": "Exact source excerpt. Lines are 1-based inclusive; address 0 is valid, None unknown.",
+      "properties": {
+        "contract": {
+          "const": "enrichment/1",
+          "default": "enrichment/1",
+          "title": "Contract",
+          "type": "string"
+        },
+        "side": {
+          "enum": [
+            "older",
+            "newer"
+          ],
+          "title": "Side",
+          "type": "string"
+        },
+        "artifact_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Artifact Id",
+          "type": "string"
+        },
+        "run_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Run Id",
+          "type": "string"
+        },
+        "function_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Function Id",
+          "type": "string"
+        },
+        "representation": {
+          "default": "decompiled",
+          "enum": [
+            "decompiled",
+            "assembly",
+            "metadata"
+          ],
+          "title": "Representation",
+          "type": "string"
+        },
+        "start_line": {
+          "minimum": 1,
+          "title": "Start Line",
+          "type": "integer"
+        },
+        "end_line": {
+          "minimum": 1,
+          "title": "End Line",
+          "type": "integer"
+        },
+        "excerpt_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Excerpt Sha256",
+          "type": "string"
+        },
+        "address": {
+          "anyOf": [
+            {
+              "maximum": 18446744073709551615,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Address"
+        }
+      },
+      "required": [
+        "side",
+        "artifact_id",
+        "run_id",
+        "function_id",
+        "start_line",
+        "end_line",
+        "excerpt_sha256"
+      ],
+      "title": "SourceLocation",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "contract": {
+      "const": "enrichment/1",
+      "default": "enrichment/1",
+      "title": "Contract",
+      "type": "string"
+    },
+    "pairing_id": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Pairing Id",
+      "type": "string"
+    },
+    "match_id": {
+      "title": "Match Id",
+      "type": "string"
+    },
+    "category": {
+      "title": "Category",
+      "type": "string"
+    },
+    "signals": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/ChangeSignal"
+      },
+      "title": "Signals",
+      "type": "array"
+    },
+    "outcomes": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/DetectorOutcome"
+      },
+      "title": "Outcomes",
+      "type": "array"
+    },
+    "status": {
+      "enum": [
+        "complete",
+        "partial",
+        "unavailable",
+        "cancelled",
+        "failed"
+      ],
+      "title": "Status",
+      "type": "string"
+    }
+  },
+  "required": [
+    "pairing_id",
+    "match_id",
+    "category",
+    "status"
+  ],
+  "title": "SignalSet",
+  "type": "object",
+  "$id": "https://patchtrace.local/schemas/enrichment/1/SignalSet.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}

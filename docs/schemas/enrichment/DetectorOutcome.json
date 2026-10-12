@@ -1,0 +1,57 @@
+{
+  "additionalProperties": false,
+  "description": "Per pairing and detector: `unavailable` means evidence missing, never 'no defect'.",
+  "properties": {
+    "contract": {
+      "const": "enrichment/1",
+      "default": "enrichment/1",
+      "title": "Contract",
+      "type": "string"
+    },
+    "pairing_id": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Pairing Id",
+      "type": "string"
+    },
+    "detector": {
+      "enum": [
+        "BND",
+        "INT",
+        "OVF",
+        "VAL",
+        "ERR",
+        "SIZE",
+        "WIL",
+        "SCRUB"
+      ],
+      "title": "Detector",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "complete",
+        "partial",
+        "unavailable",
+        "cancelled",
+        "failed"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "reason": {
+      "default": "",
+      "maxLength": 500,
+      "title": "Reason",
+      "type": "string"
+    }
+  },
+  "required": [
+    "pairing_id",
+    "detector",
+    "status"
+  ],
+  "title": "DetectorOutcome",
+  "type": "object",
+  "$id": "https://patchtrace.local/schemas/enrichment/1/DetectorOutcome.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}

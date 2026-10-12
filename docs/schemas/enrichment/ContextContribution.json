@@ -1,0 +1,55 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "contract": {
+      "const": "enrichment/1",
+      "default": "enrichment/1",
+      "title": "Contract",
+      "type": "string"
+    },
+    "kind": {
+      "enum": [
+        "identifier",
+        "cwe",
+        "feature",
+        "product"
+      ],
+      "title": "Kind",
+      "type": "string"
+    },
+    "points": {
+      "maximum": 30,
+      "minimum": 0,
+      "title": "Points",
+      "type": "integer"
+    },
+    "context_field": {
+      "maxLength": 200,
+      "minLength": 1,
+      "title": "Context Field",
+      "type": "string"
+    },
+    "binary_ref": {
+      "maxLength": 200,
+      "minLength": 1,
+      "title": "Binary Ref",
+      "type": "string"
+    },
+    "detail": {
+      "default": "",
+      "maxLength": 500,
+      "title": "Detail",
+      "type": "string"
+    }
+  },
+  "required": [
+    "kind",
+    "points",
+    "context_field",
+    "binary_ref"
+  ],
+  "title": "ContextContribution",
+  "type": "object",
+  "$id": "https://patchtrace.local/schemas/enrichment/1/ContextContribution.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}

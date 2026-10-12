@@ -1,0 +1,198 @@
+{
+  "$defs": {
+    "GroupSubtotal": {
+      "additionalProperties": false,
+      "properties": {
+        "contract": {
+          "const": "enrichment/1",
+          "default": "enrichment/1",
+          "title": "Contract",
+          "type": "string"
+        },
+        "group_key": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Group Key",
+          "type": "string"
+        },
+        "a": {
+          "maximum": 100,
+          "minimum": 0,
+          "title": "A",
+          "type": "integer"
+        },
+        "b": {
+          "maximum": 100,
+          "minimum": 0,
+          "title": "B",
+          "type": "integer"
+        },
+        "points": {
+          "maximum": 40,
+          "minimum": 0,
+          "title": "Points",
+          "type": "integer"
+        },
+        "signal_ids": {
+          "items": {
+            "pattern": "^[0-9a-f]{64}$",
+            "type": "string"
+          },
+          "title": "Signal Ids",
+          "type": "array"
+        },
+        "strong": {
+          "title": "Strong",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "group_key",
+        "a",
+        "b",
+        "points",
+        "signal_ids",
+        "strong"
+      ],
+      "title": "GroupSubtotal",
+      "type": "object"
+    },
+    "RankingEntry": {
+      "additionalProperties": false,
+      "properties": {
+        "contract": {
+          "const": "enrichment/1",
+          "default": "enrichment/1",
+          "title": "Contract",
+          "type": "string"
+        },
+        "pairing_id": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Pairing Id",
+          "type": "string"
+        },
+        "match_id": {
+          "title": "Match Id",
+          "type": "string"
+        },
+        "rank": {
+          "minimum": 1,
+          "title": "Rank",
+          "type": "integer"
+        },
+        "score": {
+          "maximum": 100,
+          "minimum": 0,
+          "title": "Score",
+          "type": "integer"
+        },
+        "raw": {
+          "maximum": 80,
+          "minimum": 0,
+          "title": "Raw",
+          "type": "integer"
+        },
+        "groups": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/GroupSubtotal"
+          },
+          "title": "Groups",
+          "type": "array"
+        },
+        "strong_groups": {
+          "minimum": 0,
+          "title": "Strong Groups",
+          "type": "integer"
+        },
+        "evidence": {
+          "enum": [
+            "complete",
+            "partial",
+            "unavailable",
+            "cancelled",
+            "failed"
+          ],
+          "title": "Evidence",
+          "type": "string"
+        },
+        "match_certainty": {
+          "default": "unknown",
+          "title": "Match Certainty",
+          "type": "string"
+        },
+        "counterevidence": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Counterevidence",
+          "type": "array"
+        }
+      },
+      "required": [
+        "pairing_id",
+        "match_id",
+        "rank",
+        "score",
+        "raw",
+        "strong_groups",
+        "evidence"
+      ],
+      "title": "RankingEntry",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "contract": {
+      "const": "enrichment/1",
+      "default": "enrichment/1",
+      "title": "Contract",
+      "type": "string"
+    },
+    "formula": {
+      "const": "attention/1",
+      "default": "attention/1",
+      "title": "Formula",
+      "type": "string"
+    },
+    "config_digest": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Config Digest",
+      "type": "string"
+    },
+    "input_digest": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Input Digest",
+      "type": "string"
+    },
+    "entries": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/RankingEntry"
+      },
+      "title": "Entries",
+      "type": "array"
+    },
+    "status": {
+      "enum": [
+        "complete",
+        "partial",
+        "unavailable",
+        "cancelled",
+        "failed"
+      ],
+      "title": "Status",
+      "type": "string"
+    }
+  },
+  "required": [
+    "config_digest",
+    "input_digest",
+    "status"
+  ],
+  "title": "RankingResult",
+  "type": "object",
+  "$id": "https://patchtrace.local/schemas/enrichment/1/RankingResult.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}
