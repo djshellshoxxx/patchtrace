@@ -300,6 +300,11 @@ class _Side:
 
     def control(self, index: int) -> bool:
         toks = self.tokens[index]
+        # `} else if (...)` / `else if (...)`: the predicate is still a control predicate.
+        lead = 0
+        while lead < len(toks) - 1 and toks[lead] in ('}', 'else') and toks[lead + 1] in ('else', 'if'):
+            lead += 1
+        toks = toks[lead:]
         return bool(toks) and (toks[0] in _CONTROL or toks[0] in ('&&', '||', '(') or
                                (len(toks) > 1 and toks[0] == '}' and toks[1] == 'while'))
 
@@ -459,6 +464,9 @@ def _size_args(call: _Call) -> list[tuple[str, ...]]:
 
 def _indexed_uses(tokens: list[str], var: str) -> bool:
     """`var` inside `[...]`, or inside a `*( ... + ... )` dereference group."""
+    # Ghidra writes pointer arithmetic as `*(T *)(base + off)`; drop the cast so the
+    # dereference applies to the arithmetic group.
+    tokens = _strip_casts(tokens)[0]
     stack: list[tuple[str, bool, bool]] = []  # (open, is_deref, has_arith)
     for i, token in enumerate(tokens):
         if token in '([':

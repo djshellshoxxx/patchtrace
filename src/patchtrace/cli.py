@@ -275,6 +275,9 @@ def cmd_correlate(args, cancel) -> int:
                                       encoding='utf-8')
     result, more = _run_pipeline(args, cancel, PipelineOptions(run_id=args.run, snapshots=tuple(snapshots)))
     warnings += more + _stage_warnings(result)
+    if result.status.status == 'cancelled':
+        _emit(args, 'correlate', 'cancelled', None, warnings, '')
+        return CANCELLED
     if result.contextual is None:
         _emit(args, 'correlate', 'unavailable', None, warnings, 'Contextual ranking unavailable.')
         return RUNTIME if snapshots else NO_RESULTS
@@ -330,6 +333,9 @@ def main(argv: list[str] | None = None) -> int:
     except KeyboardInterrupt:
         cancel.set()
         print('cancelled', file=sys.stderr)
+        if args is not None and getattr(args, 'json', False):
+            sys.stdout.write(json.dumps({'contract': CLI_CONTRACT, 'command': args.command, 'status': 'cancelled',
+                                         'result': None, 'warnings': []}, sort_keys=True) + '\n')
         return CANCELLED
     except SystemExit as exc:  # --help
         return int(exc.code or 0)
