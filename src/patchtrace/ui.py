@@ -229,12 +229,255 @@ class NewProjectDialog(QDialog):
         super().accept()
 
 
+PROFILE_SETTING = 'analysis/profile'
+
+
+def profiles_dir(settings) -> Path:
+    """Profiles live beside an INI/file-backed QSettings; native Windows settings are in the
+    registry, so the headless default directory (shared with the CLI) is used instead."""
+    from .enrichment.profiles import default_profiles_dir
+    name = settings.fileName()
+    if settings.format() == QSettings.Format.IniFormat or (name and Path(name).is_absolute()
+                                                           and not name.startswith('\\HKEY')):
+        return Path(name).parent / 'profiles'
+    return default_profiles_dir()
+
+
+def selected_profile(settings, directory: Path):
+    """(profile, warning). A missing or invalid selected profile falls back to the default, loudly."""
+    from .enrichment.profiles import DEFAULT_PROFILE, ProfileError, ProfileStore
+    name = settings.value(PROFILE_SETTING, 'default')
+    if not isinstance(name, str) or name == 'default':
+        return DEFAULT_PROFILE, ''
+    try:
+        return ProfileStore(directory).get(name), ''
+    except ProfileError as exc:
+        return DEFAULT_PROFILE, f'Profile {name!r} unavailable ({exc}); using default.'
+
+
+class ProfilesPanel(QWidget):
+    """List, create, duplicate, edit and delete analysis profiles. The default is read-only."""
+
+    def __init__(self, directory: Path, selected: str = 'default', parent=None):
+        from .enrichment.contracts import DETECTOR_IDS
+        from .enrichment.profiles import ProfileStore
+        super().__init__(parent)
+        self.store = ProfileStore(directory)
+        self._editing: str | None = None
+        layout = QHBoxLayout(self)
+        left = QVBoxLayout()
+        self.list = QListWidget()
+        self.list.setAccessibleName('Analysis profiles')
+        self.list.currentItemChanged.connect(lambda *_: self._show_current())
+        left.addWidget(self.list)
+        buttons = QHBoxLayout()
+        self.new_button = QPushButton('New')
+        self.duplicate_button = QPushButton('Duplicate')
+        self.delete_button = QPushButton('Delete')
+        self.new_button.clicked.connect(self.new_profile)
+        self.duplicate_button.clicked.connect(self.duplicate_profile)
+        self.delete_button.clicked.connect(self.delete_profile)
+        for button in (self.new_button, self.duplicate_button, self.delete_button):
+            buttons.addWidget(button)
+        left.addLayout(buttons)
+        self.load_errors = PlainLabel('')
+        self.load_errors.setWordWrap(True)
+        left.addWidget(self.load_errors)
+        layout.addLayout(left, 1)
+        editor = QWidget()
+        form = QFormLayout(editor)
+        self.name = QLineEdit()
+        self.name.setMaxLength(64)
+        form.addRow('Name', self.name)
+        self.weights, self.enabled = {}, {}
+        for detector in DETECTOR_IDS:
+            row = QWidget()
+            horizontal = QHBoxLayout(row)
+            horizontal.setContentsMargins(0, 0, 0, 0)
+            check = QCheckBox('enabled')
+            spin = QSpinBox()
+            spin.setRange(0, 100)
+            horizontal.addWidget(spin)
+            horizontal.addWidget(check)
+            self.weights[detector], self.enabled[detector] = spin, check
+            form.addRow(f'{detector} weight', row)
+        self.feature_ids = QLineEdit()
+        self.feature_ids.setPlaceholderText('Empty = all features; else comma-separated uint32 IDs')
+        form.addRow('WIL feature filter', self.feature_ids)
+        self.symbol_policy = QComboBox()
+        self.symbol_policy.addItems(['disabled', 'online'])
+        form.addRow('Symbol policy', self.symbol_policy)
+        self.providers = {name: QCheckBox(name) for name in ('nvd', 'msrc')}
+        provider_row = QWidget()
+        provider_layout = QHBoxLayout(provider_row)
+        provider_layout.setContentsMargins(0, 0, 0, 0)
+        for check in self.providers.values():
+            provider_layout.addWidget(check)
+        form.addRow('CVE providers', provider_row)
+        self.max_age = QSpinBox()
+        self.max_age.setRange(1, 3650)
+        form.addRow('Snapshot max age (days)', self.max_age)
+        self.cache_dir = QLineEdit()
+        self.cache_dir.setPlaceholderText('Absolute path, or empty for no cache')
+        form.addRow('Cache directory', self.cache_dir)
+        self.cache_budget = QSpinBox()
+        self.cache_budget.setRange(1, 1024)
+        form.addRow('Cache budget (GiB)', self.cache_budget)
+        self.save_button = QPushButton('Save profile')
+        self.save_button.clicked.connect(self.save_profile)
+        form.addRow(self.save_button)
+        self.error = PlainLabel('')
+        self.error.setObjectName('error')
+        self.error.setWordWrap(True)
+        form.addRow(self.error)
+        layout.addWidget(editor, 2)
+        self.reload(selected)
+
+    def reload(self, select: str | None = None):
+        profiles, errors = self.store.list()
+        self.load_errors.setText('\n'.join(f'Skipped invalid file: {e}' for e in errors))
+        self.list.blockSignals(True)
+        self.list.clear()
+        for profile in profiles:
+            item = QListWidgetItem(profile.name + (' (built-in, read-only)' if profile.is_default else ''))
+            item.setData(Qt.ItemDataRole.UserRole, profile.name)
+            self.list.addItem(item)
+        self.list.blockSignals(False)
+        names = [p.name for p in profiles]
+        self.list.setCurrentRow(names.index(select) if select in names else 0)
+        self._show_current()
+
+    def selected_name(self) -> str:
+        item = self.list.currentItem()
+        return item.data(Qt.ItemDataRole.UserRole) if item else 'default'
+
+    def _show_current(self):
+        name = self.selected_name()
+        try:
+            profile = self.store.get(name)
+        except Exception as exc:  # noqa: BLE001 - shown inline; file may have changed on disk
+            self.error.setText(str(exc))
+            return
+        self._editing = None if profile.is_default else profile.name
+        self._fill(profile)
+        self.error.setText('')
+
+    def _fill(self, profile):
+        self.name.setText(profile.name)
+        for detector, spin in self.weights.items():
+            spin.setValue(profile.weights[detector])
+            self.enabled[detector].setChecked(detector in profile.enabled)
+        self.feature_ids.setText(', '.join(str(i) for i in profile.feature_ids or ()))
+        self.symbol_policy.setCurrentText(profile.symbol_policy)
+        for name, check in self.providers.items():
+            check.setChecked(name in profile.cve_providers)
+        self.max_age.setValue(profile.snapshot_max_age_days)
+        self.cache_dir.setText(profile.cache_dir or '')
+        self.cache_budget.setValue(profile.cache_budget_gib)
+        editable = not profile.is_default
+        for widget in (self.name, self.feature_ids, self.symbol_policy, self.max_age, self.cache_dir,
+                       self.cache_budget, self.save_button, self.delete_button,
+                       *self.weights.values(), *self.enabled.values(), *self.providers.values()):
+            widget.setEnabled(editable)
+
+    def _unique(self, base: str) -> str:
+        taken = {n.casefold() for n in self.store.names()} | {'default'}
+        candidate, index = base, 2
+        while candidate.casefold() in taken:
+            candidate, index = f'{base[:58]} {index}', index + 1
+        return candidate
+
+    def _create_from(self, profile, base: str):
+        from .enrichment.profiles import ProfileError, build
+        try:
+            new = build(profile.model_dump(mode='json') | {'name': self._unique(base)})
+            self.store.save(new)
+        except (OSError, ProfileError) as exc:
+            self.error.setText(str(exc))
+            return
+        self.reload(new.name)
+
+    def new_profile(self):
+        from .enrichment.profiles import DEFAULT_PROFILE
+        self._create_from(DEFAULT_PROFILE, 'profile')
+
+    def duplicate_profile(self):
+        from .enrichment.profiles import ProfileError
+        try:
+            source = self.store.get(self.selected_name())
+        except ProfileError as exc:
+            self.error.setText(str(exc))
+            return
+        self._create_from(source, f'{source.name[:59]} copy')
+
+    def editor_data(self) -> dict:
+        """Raw editor values; validation happens only in the strict profile model."""
+        text = self.feature_ids.text().strip()
+        ids = None
+        if text:
+            parts = [p.strip() for p in text.split(',')]
+            if not all(p.isascii() and p.isdigit() for p in parts):
+                raise ValueError('feature IDs must be comma-separated unsigned integers')
+            ids = tuple(int(p) for p in parts)
+        return {'name': self.name.text().strip(),
+                'weights': {d: spin.value() for d, spin in self.weights.items()},
+                'enabled': tuple(d for d, check in self.enabled.items() if check.isChecked()),
+                'feature_ids': ids, 'symbol_policy': self.symbol_policy.currentText(),
+                'cve_providers': tuple(n for n, check in self.providers.items() if check.isChecked()),
+                'snapshot_max_age_days': self.max_age.value(),
+                'cache_dir': self.cache_dir.text().strip() or None,
+                'cache_budget_gib': self.cache_budget.value()}
+
+    def save_profile(self) -> bool:
+        from .enrichment import profiles
+        if self._editing is None:
+            self.error.setText('The built-in default profile is read-only; duplicate it to edit.')
+            return False
+        try:
+            profile = profiles.build(self.editor_data())
+            self.store.save(profile, replaces=self._editing)
+        except (ValueError, OSError, profiles.ProfileError) as exc:
+            self.error.setText(f'Not saved: {exc}')
+            return False
+        self.reload(profile.name)
+        self.error.setText(f'Saved profile {profile.name}.')
+        return True
+
+    def confirm_delete(self, name: str) -> bool:
+        box = QMessageBox(QMessageBox.Icon.Question, 'Delete profile?', f'Delete analysis profile {name}?',
+                          QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No, self)
+        box.setTextFormat(Qt.TextFormat.PlainText)
+        box.setDefaultButton(QMessageBox.StandardButton.No)
+        return box.exec() == QMessageBox.StandardButton.Yes
+
+    def delete_profile(self):
+        from .enrichment.profiles import ProfileError
+        name = self.selected_name()
+        if name == 'default' or not self.confirm_delete(name):
+            return
+        try:
+            self.store.delete(name)
+        except (OSError, ProfileError) as exc:
+            self.error.setText(str(exc))
+            return
+        self.reload('default')
+
+
 class SetupDialog(QDialog):
-    def __init__(self, settings, parent=None):
+    def __init__(self, settings, parent=None, profile_directory: Path | None = None):
         super().__init__(parent)
         self.setWindowTitle('Backend and desktop setup')
         self.resize(720, 470)
-        layout = QVBoxLayout(self)
+        outer = QVBoxLayout(self)
+        self.tabs = QTabWidget()
+        backend_tab = QWidget()
+        layout = QVBoxLayout(backend_tab)
+        self.tabs.addTab(backend_tab, 'Backend and desktop')
+        current = settings.value(PROFILE_SETTING, 'default')
+        self.profiles = ProfilesPanel(profile_directory or profiles_dir(settings),
+                                      current if isinstance(current, str) else 'default')
+        self.tabs.addTab(self.profiles, 'Profiles')
+        outer.addWidget(self.tabs)
         intro = PlainLabel('Comparison needs Ghidriff, Ghidra and Java. You can use existing tools or import a prebuilt offline backend ZIP.\n'
                        'Import does not download or execute software; Diagnose dependencies is a separate explicit action.')
         intro.setWordWrap(True)
@@ -291,7 +534,7 @@ class SetupDialog(QDialog):
         self.check = QPushButton('Diagnose dependencies')
         self.check.clicked.connect(self.check_dependencies)
         layout.addWidget(self.check)
-        layout.addWidget(dialog_buttons(self, 'Save setup'))
+        outer.addWidget(dialog_buttons(self, 'Save setup'))
         self.worker = None
         self._pending_plan = None
         self.discover_existing()
@@ -647,9 +890,10 @@ class ExportDialog(QDialog):
 
 
 class MainWindow(QMainWindow):
-    def __init__(self, service=None, settings=None):
+    def __init__(self, service=None, settings=None, profile_directory: Path | None = None):
         super().__init__()
         self.settings = settings or QSettings('PatchTrace', 'PatchTrace')
+        self.profile_directory = profile_directory or profiles_dir(self.settings)
         self.service = service
         self.worker = None
         self._updating = False
@@ -658,6 +902,7 @@ class MainWindow(QMainWindow):
         self._signal_sets = {}
         self._ranking_note = ''
         self._ranking_result = None
+        self._ranking_profile = None
         self._syncing = False
         self._close_requested = False
         self._job_started = 0.0
@@ -787,6 +1032,10 @@ class MainWindow(QMainWindow):
         self.order.setToolTip('Attention scores prioritize research; they do not establish exploitability.')
         self.order.currentIndexChanged.connect(self.filter_matches)
         layout.addWidget(self.order)
+        self.profile_label = PlainLabel('')
+        self.profile_label.setAccessibleName('Analysis profile')
+        self.profile_label.setVisible(False)
+        layout.addWidget(self.profile_label)
         self.manual_filter = QCheckBox('Manual corrections only')
         self.finding_match_filter = QCheckBox('Matches with findings only')
         self.manual_filter.toggled.connect(self.filter_matches)
@@ -1427,33 +1676,56 @@ class MainWindow(QMainWindow):
         from .enrichment.storage import EnrichmentStore
         self._ranking, self._signal_sets, self._ranking_note = {}, {}, ''
         self._ranking_result = None
+        profile, warning = self.analysis_profile()
+        self.profile_label.setText(f'Profile: {profile.name}')
+        self.profile_label.setVisible(not profile.is_default)
         if not self.service:
             return
+        store = EnrichmentStore(self.service.store)
         try:
-            ranking, sets, note = pipeline.load_default(EnrichmentStore(self.service.store), self.project)
+            if profile.is_default:
+                ranking, sets, note = pipeline.load_default(store, self.project)
+            else:
+                from .enrichment.ranking import config_digest
+                ranking, sets, note = pipeline.load_profile(store, self.project,
+                                                            config_digest(profile.ranking_config()),
+                                                            profile.feature_filter())
         except EnrichmentError as exc:
             self._ranking_note = f'Stored ranking unreadable: {exc}'
             return
-        self._ranking_note = note
+        self._ranking_note = warning or note
         if ranking is not None:
+            self._ranking_profile = profile
             self._ranking_result = ranking
             self._ranking = {e.match_id: e for e in ranking.entries}
             self._signal_sets = {s.match_id: s for s in sets}
 
+    def analysis_profile(self):
+        """(selected profile, warning); re-read each time so Setup edits apply immediately."""
+        return selected_profile(self.settings, self.profile_directory)
+
     def _enrichment_export(self):
-        """The exact default-profile ranking shown in the navigator, for preview and report alike."""
+        """The exact ranking shown in the navigator, for preview and report alike, with its profile."""
+        from .enrichment.profiles import profile_digest
         if self._ranking_result is None:
             return None
-        return {'ranking': self._ranking_result.model_dump(mode='json'), 'stale': False}
+        profile = self._ranking_profile
+        return {'ranking': self._ranking_result.model_dump(mode='json'), 'stale': False,
+                'profile': {'name': profile.name, 'digest': profile_digest(profile)}}
 
     def rank_changes(self):
         if not self.service or self.worker:
             return
         from .enrichment import pipeline
         snapshot = self.project.model_copy(deep=True)
+        profile, warning = self.analysis_profile()
+        if warning:
+            self.logs.appendPlainText(warning)
+        options = pipeline.PipelineOptions(config=profile.ranking_config(), feature_ids=profile.feature_filter(),
+                                           max_age_days=profile.snapshot_max_age_days)
 
         def task(cancel, event):
-            return pipeline.run(snapshot, pipeline.PipelineOptions(), cancel,
+            return pipeline.run(snapshot, options, cancel,
                                 lambda message: event(type('Event', (), {'message': message, 'stage': 'rank'})()))
 
         def complete(result):
@@ -1465,7 +1737,7 @@ class MainWindow(QMainWindow):
                 self._ranking_note = 'Project changed while ranking; result stored as stale. Rank again.'
             else:
                 self.order.setCurrentIndex(1)
-            self.logs.appendPlainText(f'Ranking {result.status.status}: ' + ', '.join(
+            self.logs.appendPlainText(f'Ranking ({profile.name}) {result.status.status}: ' + ', '.join(
                 f'{s.stage} {s.status}' for s in result.status.stages))
             self.filter_matches()
 
@@ -1748,9 +2020,12 @@ class MainWindow(QMainWindow):
         self.raw_button.setEnabled(project and bool(self.project.interpretations))
 
     def setup(self):
-        dialog = SetupDialog(self.settings, self)
+        dialog = SetupDialog(self.settings, self, self.profile_directory)
         if dialog.exec() != QDialog.DialogCode.Accepted:
             return
+        self.settings.setValue(PROFILE_SETTING, dialog.profiles.selected_name())
+        self._load_enrichment()
+        self.filter_matches()
         self.settings.setValue('backend/python', dialog.python.text().strip())
         self.settings.setValue('backend/ghidra', dialog.ghidra.text().strip())
         self.settings.setValue('backend/java_home', dialog.java_home.text().strip())
