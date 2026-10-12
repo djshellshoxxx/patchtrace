@@ -18,8 +18,8 @@
 - [x] Phase 2 B1-B4, storage, pipeline, CLI (rank/flags/correlate/cache), desktop Rank changes, report export (SPEC-07, PatchTrace-authored)
 - [ ] Reconcile SPEC-07 with the supplied handoff package and validate its 9 valid / 9 invalid examples (package not supplied)
 - [ ] Derived-cache hit objective 500 ms at 10,000 pairs (measured 3.1 s); UI responsiveness at 10,000 pairs unmeasured
-- [ ] Analysis profiles in Setup (detector weights, feature filters, CVE/provider choice, cache location); CLI flags only today
-- [ ] Raw Ghidriff output cache reuse (B4 raw API exists; pipeline/backend wiring and cross-project run creation pending)
+- [x] Analysis profiles (SPEC-07 §12): Setup Profiles tab, CLI --profile, exports record profile
+- [x] Raw Ghidriff output cache reuse (SPEC-07 §13), opt-in via profile cache_dir; native Ghidra/Java hit not yet exercised
 - [ ] Live NVD/MSRC fetch through the CLI recorded as a separate probe
 - [x] Phase 3 contracts: SPEC-08 acquisition, SPEC-09 N-way, SPEC-10 BinExport/BinDiff, SPEC-11 rz-diff (tool research in docs/research/phase3)
 - [ ] 3a acquisition implementation (Winbindex parse, consented download, quarantine; Windows msdelta optional)

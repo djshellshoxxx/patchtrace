@@ -136,7 +136,7 @@ Additive tables in `project.sqlite3`: `enrichment_meta(key TEXT PRIMARY KEY, val
 
 ## 12. Analysis profiles (shared nonsecret settings)
 
-Status: specified, not yet implemented (CLI flags only in beta.80).
+Status: implemented 2026-10-12 (`enrichment/profiles.py`, Setup → Profiles, CLI `--profile` on rank/flags/correlate). Storage: `<settings-file dir>/profiles` for file-backed settings, otherwise `%APPDATA%\PatchTrace\profiles` (Windows), `~/Library/Preferences/PatchTrace/profiles` (macOS), `$XDG_CONFIG_HOME` or `~/.config/PatchTrace/profiles` (Linux). Profile rows are loaded by config digest **and** WIL stage ID (the config digest excludes the feature filter). Symbol policy: the Setup checkbox remains the explicit network consent; with the default profile it alone decides, with any other profile symbol downloads require both the checkbox and `symbol_policy: online` — a profile can narrow but never enable network use.
 
 `AnalysisProfile` (strict, versioned `profile/1`, stored as JSON in the desktop settings directory, never in the project and never containing secrets): `name` (1–64 chars), `weights` (exactly the eight detector IDs, integers 0–100), `enabled` (subset of the eight), `feature_ids` (≤ 256 uint32 or null), `symbol_policy` (`disabled|online`, maps to `BackendConfig.allow_symbol_downloads`), `cve_providers` (subset of `nvd,msrc`), `snapshot_max_age_days` (1–3650), `cache_dir` (absolute path or null), `cache_budget_gib` (1–1024). A built-in read-only `default` profile equals `RankingConfig()` with no feature filter. Identity: `profile_digest = domain_id('analysis-profile', 1, semantic fields)`; `name`, `cache_dir` and budget are presentation/operational and excluded. QSettings keeps only presentation preferences and the selected profile name.
 
@@ -144,7 +144,7 @@ Behavior: Setup gains a Profiles tab (create/duplicate/edit/delete non-default; 
 
 ## 13. Raw output cache integration
 
-Status: specified, not yet implemented (the B4 raw API exists).
+Status: implemented 2026-10-12 in `backend.run_comparison`; enabled only when the selected profile sets `cache_dir`. Java is now probed (`java -version` on the child's JDK); any unparseable version makes the run ineligible. Fingerprint `adapter_version` is `patchtrace-ghidriff-adapter/1` and must change whenever PatchTrace changes Ghidriff argv/options. Hits are labelled in the match tooltip.
 
 After a completed native run, if `RuntimeFingerprint.eligible()` (all versions known, symbol policy `disabled`, no symbol inputs), `backend` admits the raw JSON (≤ 100 MiB) with `put_raw`. Before launching Ghidriff, `run_comparison` computes the fingerprint and, unless `no_cache`/`refresh`, calls `get_raw`; on a hit it writes a new project-owned run directory with the copied bytes, records provenance `cache_origin = {key, created}` in `AnalysisRun.settings`, and continues through the existing normalization/service publication (identical validation to a fresh run). A hit never skips normalization or artifact identity checks; the case remains usable after the global cache is deleted. Fingerprint inputs come only from probed versions (`diagnose`), never from defaults; `unknown` makes the run ineligible. Acceptance: hit produces byte-identical raw JSON and identical matches; swapped orientation misses; any version change misses; corrupted entry falls back to a real run; GUI displays "from cache" in run details.
 

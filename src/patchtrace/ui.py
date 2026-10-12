@@ -1335,6 +1335,7 @@ class MainWindow(QMainWindow):
         findings_matches = {mid for run in self.project.interpretations for finding in run.findings
                             for mid in finding.match_ids} if self.project else set()
         matches = list(self.project.matches) if self.project else []
+        run_settings = {r.id: r.settings for r in self.project.runs} if self.project else {}
         if self.order.currentIndex() == 1 and self._ranking:
             # Unranked matches (other runs) keep project order after ranked ones.
             matches.sort(key=lambda m: self._ranking[m.id].rank if m.id in self._ranking else 10**9)
@@ -1358,6 +1359,10 @@ class MainWindow(QMainWindow):
             item = QListWidgetItem(f'{score}{old} → {new}\n{match.category} · {match.review}')
             item.setData(Qt.ItemDataRole.UserRole, match.id)
             tip = f'Run {match.run_id}\nMatch quality: {match.quality} (not vulnerability confidence)'
+            origin = (run_settings.get(match.run_id) or {}).get('cache_origin')
+            if isinstance(origin, dict):
+                tip += (f"\nRaw output reused from cache (entry {str(origin.get('key', ''))[:12]}, "
+                        f"created {origin.get('created', 'unknown')}); validated like a fresh run")
             if entry:
                 tip += (f'\nAttention {entry.score}/100 (raw {entry.raw}/80, rank {entry.rank}, '
                         f'{len(entry.groups)} edit group(s), evidence {entry.evidence})')
@@ -1819,12 +1824,18 @@ class MainWindow(QMainWindow):
         text_dialog(self, 'Retained interpretation responses · plain text', '\n\n'.join(records) or 'No interpretation attempts.')
 
     def backend_config(self):
+        profile = self.analysis_profile()[0]
+        consent = self.settings.value('backend/allow_symbol_downloads', False, type=bool)
+        # The Setup checkbox is the explicit network consent. A non-default profile can only
+        # narrow it (online requires both); it can never enable symbol downloads on its own.
+        allow_symbols = consent if profile.name == 'default' else (consent and profile.symbol_policy == 'online')
         return BackendConfig(python_executable=str(self.settings.value('backend/python', '')),
                              ghidra_dir=str(self.settings.value('backend/ghidra', '')),
                              timeout_seconds=setting_int(self.settings, 'backend/timeout', 3600, 10, 86400),
-                             allow_symbol_downloads=self.settings.value('backend/allow_symbol_downloads', False,
-                                                                         type=bool),
-                             java_home=str(self.settings.value('backend/java_home', '')))
+                             allow_symbol_downloads=allow_symbols,
+                             java_home=str(self.settings.value('backend/java_home', '')),
+                             # Raw-output reuse (SPEC-07 §13) is opt-in via the selected profile's cache_dir.
+                             cache_dir=str(profile.cache_dir or ''))
 
     def run_analysis(self):
         if not self.project:

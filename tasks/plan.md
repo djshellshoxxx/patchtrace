@@ -10,9 +10,9 @@ Dot-free Ghidra paths (PR #2), external scratch (#3), explicit symbol opt-in (#4
 
 ## Phase 2 — enrichment (SPEC-07) — implemented (PR #10), released beta.80
 Change signals, attention/1 ranking, WIL, CVE context, cache, storage, CLI, desktop and export wiring. Remaining Phase 2 work, in order:
-1. Code audit (5 areas) and repair — in progress.
-2. SPEC-07 §12 analysis profiles (Setup tab, `--profile`).
-3. SPEC-07 §13 raw output cache integration in the backend.
+1. ~~Code audit (5 areas) and repair~~ — done (PR #11).
+2. ~~SPEC-07 §12 analysis profiles~~ — done.
+3. ~~SPEC-07 §13 raw output cache integration~~ — done (native hit not yet exercised).
 4. Live NVD/MSRC probe recorded through the CLI.
 5. Cache-hit performance (objective 500 ms at 10k pairs; measured 3.1 s) and UI responsiveness measurement.
 6. Reconcile SPEC-07 with the supplied handoff schema and validate its 9+9 examples — blocked: package not supplied.

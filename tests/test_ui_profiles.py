@@ -160,3 +160,35 @@ def test_export_rejects_malformed_profile(window, qtbot, tmp_path):
     enrichment['profile'] = {'name': '<script>', 'digest': 'x'}
     with pytest.raises(ExportError, match='profile'):
         export_project(window.project, 'json', tmp_path / 'x.json', enrichment=enrichment)
+
+
+def _select(window, profile):
+    from patchtrace.enrichment.profiles import ProfileStore
+    ProfileStore(window.profile_directory).save(profile)
+    window.settings.setValue('analysis/profile', profile.name)
+
+
+def test_backend_config_symbol_consent_and_cache_dir_from_profile(window, tmp_path):
+    from patchtrace.enrichment.profiles import AnalysisProfile
+    window.settings.setValue('backend/allow_symbol_downloads', False)
+    assert window.backend_config().allow_symbol_downloads is False and window.backend_config().cache_dir == ''
+    window.settings.setValue('backend/allow_symbol_downloads', True)
+    assert window.backend_config().allow_symbol_downloads is True  # default profile: checkbox decides
+    _select(window, AnalysisProfile(name='narrow', symbol_policy='disabled', cache_dir=str(tmp_path / 'c')))
+    config = window.backend_config()
+    assert config.allow_symbol_downloads is False and config.cache_dir == str(tmp_path / 'c')
+    window.settings.setValue('backend/allow_symbol_downloads', False)
+    _select(window, AnalysisProfile(name='wide', symbol_policy='online'))
+    assert window.backend_config().allow_symbol_downloads is False  # profile alone never enables network
+
+
+def test_cached_run_is_labelled_in_match_tooltip(window):
+    project = window.service.project
+    run = next(r for r in project.runs if r.raw_sha256)
+    origin = {'key': 'a' * 64, 'created': '2026-10-12T00:00:00+00:00'}
+    window.service._commit(project.model_copy(update={'runs': [
+        r.model_copy(update={'settings': {**r.settings, 'cache_origin': origin}}) if r.id == run.id else r
+        for r in project.runs]}))
+    window.refresh()
+    tips = [window.navigator.item(i).toolTip() for i in range(window.navigator.count())]
+    assert any('reused from cache' in t and 'aaaaaaaaaaaa' in t for t in tips)
