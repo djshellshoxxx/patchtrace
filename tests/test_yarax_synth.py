@@ -359,6 +359,13 @@ def test_whitelisted_fields_reject_or_pass_inertly(field, value):
         assert code_of(lambda: synth.synthesize(whitelisted_spec(field, value))) == 'PT-RULE-INPUT'
 
 
+@pytest.mark.parametrize('char', [' ', '"', '\\', "'", '\n', '/', '*', '{', '}', ';', '(', ')', ',', '='],
+                         ids=['sp', 'dq', 'bs', 'sq', 'nl', 'sl', 'st', 'lb', 'rb', 'sc', 'lp', 'rp', 'cm', 'eq'])
+@pytest.mark.parametrize('field', ['dll', 'name', 'ordinal-dll', 'pin-dll', 'pin-name', 'api-gate'])
+def test_whitelists_are_tight_not_merely_escaped(field, char):
+    assert code_of(partial(synth.synthesize, whitelisted_spec(field, f'a{char}b'))) == 'PT-RULE-INPUT'
+
+
 @pytest.mark.parametrize('value', ['kernel32.dll', 'api-ms-win-core-file-l1-1-0.dll', 'A_b+c~d.sys'], ids=['k', 'api', 'sym'])
 def test_ordinary_dll_names_pass(value):
     assert_engine_clean(synth.synthesize(spec([imported(value, 'CreateFileW')])))

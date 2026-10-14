@@ -438,3 +438,5 @@ Automated: `tests/test_kev_*.py` (hermetic, no sockets); the full real catalog (
 
 ### [K4:kev-kb-adapter]
 Automated: `pytest tests/test_kev_synergy.py tests/test_kev_kb_integration.py` (22 tests). Open at the KB wave merge: synergy item 9 and the real KB view-model.
+### [R1:yarax-synth]
+Automated: goldens, `Formatter` fixed point, zero compile warnings (`text_as_hex` allowed) with `error_on_slow_pattern`, `Rules.imports() == ['pe']`, 256 single-byte literal checks and meta round trips against the real engine, a call pin and import gate scanned against the synthetic `capa_api_pair` image, hostile corpus (quote, backslash, CR/LF, comment openers, braces, NUL, bidi, line separators, surrogates, one sample per Unicode category, hex and regex metacharacters) over every field, hypothesis sweeps. Open (live): Windows CI run of the same tests (byte-identical goldens), not run here.
