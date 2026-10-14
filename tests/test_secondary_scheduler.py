@@ -111,16 +111,22 @@ def test_stderr_noise_does_not_corrupt_json(tmp_path):
 
 
 def test_timeout_maps_to_timeout_status_and_kills_tree(tmp_path):
-    pidfile = tmp_path / 'child.pid'
+    """Portable tree-kill proof: the grandchild's heartbeat file stops growing once run_engines returns."""
+    pidfile, beat = tmp_path / 'child.pid', tmp_path / 'child.beat'
+    grandchild = ("import sys,time\nf=open(sys.argv[1],'ab',buffering=0)\n"
+                  "while True:\n    f.write(b'x')\n    time.sleep(0.05)")
     code = ("import subprocess,sys,time\n"
-            "c=subprocess.Popen([sys.executable,'-c','import time;time.sleep(60)'])\n"
+            f"c=subprocess.Popen([sys.executable,'-c',{grandchild!r},{str(beat)!r}])\n"
             f"open({str(pidfile)!r},'w').write(str(c.pid))\ntime.sleep(60)")
-    [out] = go(tmp_path, {'rz-diff': PyEngine(code)}, ['rz-diff'], per_engine_timeout={'rz-diff': 1.5})
+    [out] = go(tmp_path, {'rz-diff': PyEngine(code)}, ['rz-diff'], per_engine_timeout={'rz-diff': 3.0})
     assert (out.run.status, out.run.error_code) == ('timeout', 'PT-SECONDARY-TIMEOUT')
-    if os.name != 'nt' and pidfile.exists():
-        pid = int(pidfile.read_text())
+    assert pidfile.exists() and beat.exists(), 'grandchild never started within the deadline'
+    size = beat.stat().st_size
+    time.sleep(0.5)  # run_process returns only after the whole tree (Job Object / killpg) is terminated
+    assert beat.stat().st_size == size
+    if os.name != 'nt':
         time.sleep(0.3)
-        assert not _alive(pid)
+        assert not _alive(int(pidfile.read_text()))
 
 
 def test_cancel_fan_out_stops_running_and_marks_unstarted_cancelled(tmp_path):
@@ -187,3 +193,29 @@ def test_bindiff_adapter_refuses_to_execute(tmp_path):
     job = None
     with pytest.raises(SecondaryError):
         BinDiffAdapter().run(BinDiffAdapter().probe({}, threading.Event()), job)  # type: ignore[arg-type]
+
+
+def test_on_outcome_delivers_each_finished_outcome_and_survives_interrupt(tmp_path):
+    """Ctrl+C while a later engine runs must not lose the outcome that already finished (SPEC-28 section 7)."""
+    import _thread
+    seen = []
+    reg = {'rz-diff': PyEngine(f'print({GOOD!r})'), 'bindiff': PyEngine('import time\ntime.sleep(60)', 'bindiff')}
+    timer = threading.Timer(4.0, _thread.interrupt_main)
+    timer.start()
+    started = time.monotonic()
+    try:
+        with pytest.raises(KeyboardInterrupt):
+            go(tmp_path, reg, ['rz-diff', 'bindiff'], on_outcome=seen.append)
+    finally:
+        timer.cancel()
+    assert time.monotonic() - started < 30
+    assert [o.run.engine for o in seen if o.run.status == 'ok'] == ['rz-diff']
+    assert all(o.run.engine != 'bindiff' or o.run.status == 'cancelled' for o in seen)
+
+
+def test_on_outcome_runs_on_caller_thread_in_completion_order(tmp_path):
+    threads = []
+    reg = {'rz-diff': PyEngine(ok_code(tmp_path, 'a', 0.1)), 'bindiff': PyEngine(ok_code(tmp_path, 'b', 0.0), 'bindiff')}
+    out = go(tmp_path, reg, ['rz-diff', 'bindiff'], on_outcome=lambda o: threads.append(threading.current_thread()))
+    assert [o.run.engine for o in out] == ['rz-diff', 'bindiff']  # return order stays plan order
+    assert threads == [threading.current_thread()] * 2

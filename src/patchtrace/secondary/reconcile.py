@@ -8,12 +8,12 @@ from __future__ import annotations
 
 from collections import defaultdict
 from collections.abc import Iterable
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from typing import Literal
 
 from ..enrichment.identity import parse_address
 from ..models import FunctionMatch
-from .contracts import SecondaryMatch, SecondaryMatchSet
+from .contracts import AlternativeMatch, SecondaryMatch, SecondaryMatchSet
 
 Status = Literal['agreement', 'disagreement', 'absent', 'not-comparable']
 
@@ -26,6 +26,10 @@ class Reconciliation:
     newer_address: int | None
     secondary: tuple[SecondaryMatch, ...]
     note: str
+    # Additive (SPEC-28 §6): alternatives anchored at this row's endpoints. They never change `status`.
+    alternatives: tuple[AlternativeMatch, ...] = ()
+    alternative_rank: int | None = None
+    disagreement_kind: str | None = None  # conflicting-endpoints | matches-alternative-rank-N
 
 
 @dataclass(frozen=True)
@@ -61,6 +65,9 @@ def reconcile(matches: Iterable[FunctionMatch], secondary: SecondaryMatchSet) ->
             by_older[record.older_address].append(record)
         if record.newer_address is not None:
             by_newer[record.newer_address].append(record)
+    anchored: dict[tuple[str, int], list[AlternativeMatch]] = defaultdict(list)
+    for alternative in secondary.alternatives:
+        anchored[(alternative.anchor_side, alternative.anchor_address)].append(alternative)
     used: set[int] = set()
     rows = []
     for match in matches:
@@ -72,6 +79,8 @@ def reconcile(matches: Iterable[FunctionMatch], secondary: SecondaryMatchSet) ->
         older, newer = ends
         related = {id(r): r for r in by_older.get(older, []) + by_newer.get(newer, [])}
         candidates = tuple(related.values())
+        alts = tuple(a for side, addr in (('older', older), ('newer', newer)) if addr is not None
+                     for a in anchored.get((side, addr), ()))
         used.update(related)
         if not candidates:
             rows.append(Reconciliation(match.id, 'absent', older, newer, (),
@@ -80,8 +89,16 @@ def reconcile(matches: Iterable[FunctionMatch], secondary: SecondaryMatchSet) ->
             rows.append(Reconciliation(match.id, 'agreement', older, newer, candidates,
                                        f'{secondary.engine} pairs the same endpoints (agreement, not proof)'))
         else:
-            rows.append(Reconciliation(match.id, 'disagreement', older, newer, candidates,
-                                       f'{secondary.engine} pairs at least one endpoint differently'))
+            rank = min((a.rank for a in alts if (a.candidate.older_address, a.candidate.newer_address) ==
+                        (older, newer)), default=None)
+            kind = 'conflicting-endpoints' if rank is None else f'matches-alternative-rank-{rank}'
+            note = f'{secondary.engine} pairs at least one endpoint differently'
+            if rank is not None:
+                note += f'; the Ghidriff pairing equals its alternative rank {rank}'
+            rows.append(Reconciliation(match.id, 'disagreement', older, newer, candidates, note,
+                                       alts, rank, kind))
+            continue
+        rows[-1] = replace(rows[-1], alternatives=alts)
     only = tuple(r for r in secondary.matches if id(r) not in used)
     limitations = secondary.limitations
     if secondary.image_base_subtracted != 'no':

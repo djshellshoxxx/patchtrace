@@ -53,3 +53,12 @@ def test_empty_is_explicitly_unassessed():
     result = assess_reports(())
     assert not result.rows
     assert result.warnings
+
+
+def test_alternative_rank_is_reported_but_stays_contested():
+    row = Reconciliation('m', 'disagreement', 1, 2, (), 'x', alternative_rank=2,
+                         disagreement_kind='matches-alternative-rank-2')
+    report = ReconciliationReport('rz-diff', 't', (row,), (), ())
+    result = assess_reports((report,)).rows[0]
+    assert (result.verdict, result.evidence_index) == ('contested', 0)
+    assert result.alternative_ranks == (('rz-diff', 2),) and 'alternative rank 2' in result.explanation
