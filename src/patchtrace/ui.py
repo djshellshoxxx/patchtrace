@@ -47,7 +47,7 @@ from .acquisition import quarantine, winbindex
 from .acquisition.contracts import AUTHENTICITY_NOTE, AcquisitionError, validate_file_name
 from .acquisition.transport import BLOB_SUFFIX, METADATA_HOST, SYMBOL_HOST, AcquisitionConsent, Transport
 from .alignment import alignment_strategy, diff_hunks
-from .backend import BackendConfig, diagnose, quarantine_failed_run, run_comparison
+from .backend import BackendConfig, diagnose, parse_env_passthrough, quarantine_failed_run, run_comparison
 from .evidence import build_context, resolve_evidence
 from .interpretation import interpret, system_prompt
 from .offline_bundle import inspect_offline_bundle, install_offline_bundle
@@ -972,6 +972,12 @@ class SetupDialog(QDialog):
         self.allow_symbol_downloads = QCheckBox('Allow Ghidriff symbol-server lookups (may access the Internet)')
         self.allow_symbol_downloads.setChecked(settings.value('backend/allow_symbol_downloads', False, type=bool))
         form.addRow(self.allow_symbol_downloads)
+        self.restrict_env = QCheckBox('Restrict backend environment to an allowlist (experimental)')
+        self.restrict_env.setChecked(settings.value('backend/restrict_env', False, type=bool))
+        form.addRow(self.restrict_env)
+        self.env_passthrough = QLineEdit(str(settings.value('backend/env_passthrough', '')))
+        self.env_passthrough.setPlaceholderText('Extra variable names kept when restricted, comma-separated')
+        form.addRow('Environment passthrough', self.env_passthrough)
         self.timeout = QSpinBox()
         self.timeout.setRange(10, 86400)
         self.timeout.setValue(setting_int(settings, 'backend/timeout', 3600, 10, 86400))
@@ -1009,6 +1015,7 @@ class SetupDialog(QDialog):
         apply_tooltips(self, {
             'python': 'setup.python', 'ghidra': 'setup.ghidra_dir', 'java_home': 'setup.java_home',
             'allow_symbol_downloads': 'setup.symbol_downloads', 'timeout': 'setup.timeout',
+            'restrict_env': 'setup.restrict_env', 'env_passthrough': 'setup.env_passthrough',
             'font_size': 'setup.font_size', 'context_budget': 'setup.context_budget', 'sync': 'setup.sync',
             'diagnostics': 'setup.diagnostics', 'find': 'setup.find', 'bundle_sha': 'setup.bundle_sha',
             'install': 'setup.install', 'cancel_install': 'setup.cancel_install',
@@ -1053,7 +1060,9 @@ class SetupDialog(QDialog):
         return BackendConfig(python_executable=self.python.text().strip(), ghidra_dir=self.ghidra.text().strip(),
                              timeout_seconds=self.timeout.value(),
                              allow_symbol_downloads=self.allow_symbol_downloads.isChecked(),
-                             java_home=self.java_home.text().strip())
+                             java_home=self.java_home.text().strip(),
+                             restrict_env=self.restrict_env.isChecked(),
+                             env_passthrough=parse_env_passthrough(self.env_passthrough.text()))
 
     def check_dependencies(self):
         if self.worker and self.worker.isRunning():
@@ -2451,6 +2460,8 @@ class MainWindow(QMainWindow):
                              timeout_seconds=setting_int(self.settings, 'backend/timeout', 3600, 10, 86400),
                              allow_symbol_downloads=allow_symbols,
                              java_home=str(self.settings.value('backend/java_home', '')),
+                             restrict_env=self.settings.value('backend/restrict_env', False, type=bool),
+                             env_passthrough=parse_env_passthrough(str(self.settings.value('backend/env_passthrough', ''))),
                              # Raw-output reuse (SPEC-07 §13) is opt-in via the selected profile's cache_dir.
                              cache_dir=str(profile.cache_dir or ''))
 
@@ -2912,6 +2923,8 @@ class MainWindow(QMainWindow):
         self.settings.setValue('backend/python', dialog.python.text().strip())
         self.settings.setValue('backend/ghidra', dialog.ghidra.text().strip())
         self.settings.setValue('backend/java_home', dialog.java_home.text().strip())
+        self.settings.setValue('backend/restrict_env', dialog.restrict_env.isChecked())
+        self.settings.setValue('backend/env_passthrough', dialog.env_passthrough.text().strip())
         self.settings.setValue('backend/timeout', dialog.timeout.value())
         self.settings.setValue('backend/allow_symbol_downloads', dialog.allow_symbol_downloads.isChecked())
         self.settings.setValue('desktop/font_size', dialog.font_size.value())
