@@ -504,3 +504,11 @@ Not verified here: Windows and GitHub Actions; any live Ollama or OpenAI-compati
 | Precision per pass and tier at 60k, against the generator's ground truth | S2 tier A 35,312 of 35,312 right; S2 tier B 21,894 of 21,896; S2 tier C 395 of 395; P16 tier C 162 of 162; P17 tier C 1 of 1; P18 tier C 1,213 of 1,214 (0.9992); P19 tier C 30 of 30. At 10k every pair right (P16 30, P18 178, P19 3). The stage adds 739 pairs at 60k (59,010 vs 58,271 for the S2 table alone on the same world) | REPORTED, not a claim: the generator keeps most of the layout (P18 contributes most pairs), edits whole functions at once, and has no hostile near-duplicates; the gate only asserts that the stage's own tier-B pairs are all right and that its pairs are >= 95 % right on this generator |
 | Determinism | `test_the_result_digest_is_stable_across_hash_seeds_and_processes` (3 interpreters, PYTHONHASHSEED 0/1/4242), row-order permutation, side-swap mirror and budget-prefix properties with the stage on; the MinHash golden vector was verified once against a naive loop sharing no code | identical digests |
 | Not verified here | Windows and the frozen EXE; Python 3.12 (CI pin); IR from real Ghidra or MSVC binaries (the mnemonic streams are synthetic); the cost of decoding real `ins` blobs; per-pass precision on Tier R (G-U3, S6); the spec constants (16 permutations, 4 x 4 bands, floor 0.6, margins 0.05, cosine 0.95, 1 nat) are untuned on real data | open, see tasks/todo.md [S5:residual] |
+
+### [GUI-F3:widgets] GUI framework F3 (2026-10-14, local Linux worktree, PySide6 offscreen)
+| Check | Evidence |
+|---|---|
+| Dark stylesheet equals ui.DARK_STYLE | tests/test_gui_theme.py golden; every dark token pair meets 4.5:1 text and 3:1 non-text (contrast_problems empty) |
+| State copy, precedence, actions, announcements, hostile text, a11y_audit in all 12 states | tests/test_gui_state_view.py |
+| qt_gate repeat 10 over the five F3 files | 1,770 passed, no abort or surviving thread |
+| Not verified here | Windows, real screen readers, high contrast, DPI scaling, the frozen build |
