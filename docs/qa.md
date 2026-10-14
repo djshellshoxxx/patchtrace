@@ -121,3 +121,16 @@ Acceptance automation added (verified locally on Linux against `python -m patcht
 - `tools/frozen_smoke.py` now also covers A5 (`rank --json --dry-run`: one JSON document, exit 0/4), A10 (spaces, Cyrillic, CJK, OneDrive-style and a 200-character path through the CLI; ranking equal to the ASCII baseline, compared on rank, pairing id, score, raw and function because match ids are random per project) and A6s (a 3-build series through `series create`/`series chains --json` with synthetic Ghidriff results imported, so no Ghidra runs). Not covered: A6 with a real `--run`, A7-A9, A11, A12, trailing-dot/space and reserved-name (`CON`, `NUL`) paths (Windows cannot create them through ordinary APIs).
 - `tests/test_acceptance_smoke.py` runs the same checks against the source CLI on every OS (so on `windows-latest` natively, without the frozen package) plus a no-Qt import check of every command's `--help`.
 - `tools/milestone_notes.py` renders spec section 4 release-notes text from supplied results only. Anything not supplied renders as not run or open; manual M01-M18 stay not-run without a pass and an evidence link. The `release` job now writes it to `body_path` (checkout with `persist-credentials: false` and a `qa-*` artifact download added; `permissions`, `needs` and gates unchanged; on generator failure the old static text is used). The qa job result is applied to both OS rows because the matrix reports one aggregate.
+
+
+## C6 multi-engine evidence panel (2026-10-14, builder worktree, Linux only)
+
+| Check | Evidence | Result |
+|---|---|---|
+| Full gate | `QT_QPA_PLATFORM=offscreen timeout 900 python -m pytest -q` run twice on the C6 branch | 1318 passed, 6 skipped, both runs |
+| Lint | `python -m ruff check src tests tools` | clean |
+| Qt flake / abort check | `tests/test_evidence_ui.py` + `tests/test_tooltips.py` run 20 times in a row with `PYTHONFAULTHANDLER=1` | 20/20 green (65 tests each), no SIGABRT |
+| Perf, pure build | `tests/test_evidence_perf.py`: 10k matches, 2 secondary engines, `build_view_model` | about 1.0 s locally (gate 7.5 s = 5x the 1.5 s target) |
+| Perf, Qt model | `test_large_models_stay_lazy_with_data_call_ceilings` (900x500 panel, offscreen, PySide6 6.12.0) | data() calls = visible cells (16) for first paint and filter, 0 for sort, at both 10k and 100k rows; 10k reset/sort/filter about 28/9/9 ms; 100k about 130/122/20 ms |
+
+Scope: offscreen Linux evidence only. Not covered and still open (C8): Windows runs of these tests, real screen-reader announcements (Qt offscreen reports `QAccessible.isActive()` False), 125/150/200% DPI rendering, glyph fonts on Windows, contrast against the live palette (only palette constants are checked), frozen-EXE dock smoke, and the GUI-thread cost of reading very large stored secondary sets (SQLite is thread-confined, so `load_secondary` stays on the GUI thread).

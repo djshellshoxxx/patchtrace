@@ -1,11 +1,11 @@
 # SPEC-28: Multi-engine evidence panel (Phase C, step C6)
 
-Status: developer-ready design, 2026-10-14. Implements plan item C6 of `docs/plans/phase-c-multi-engine-plan.md`. Relates to SPEC-04 (desktop), SPEC-10/11 (secondary engines), SPEC-26 A (tooltips), SPEC-27 (fusion, calibration). Contract changes: none to persisted data; one additive read helper (section 4.4). Read-only over stored reconciliation; engine runs go through the C1 scheduler.
+Status: developer-ready design, 2026-10-14; implemented in C6 with the deviations recorded in section 15 (measured research `docs/research/phase-c/multi-engine-evidence-ui.md`, plan `docs/plans/hard-problems/evidence-panel-plan.md`). Implements plan item C6 of `docs/plans/phase-c-multi-engine-plan.md`. Relates to SPEC-04 (desktop), SPEC-10/11 (secondary engines), SPEC-26 A (tooltips), SPEC-27 (fusion, calibration). Contract changes: none to persisted data; one additive read helper (section 4.4). Read-only over stored reconciliation; engine runs go through the C1 scheduler.
 
 ## 0. Non-negotiable presentation rules
 
 1. Native scores are shown per engine, in the engine's own units, in separate columns. They are NEVER summed, averaged, ranked against each other, colour-scaled on a shared axis, or merged into one number. No "overall", "combined" or "consensus" figure exists.
-2. No probability, percentage-of-confidence or "likelihood" wording anywhere. The SPEC-27 `evidence_index` (0..83, placeholder constants) is NOT shown by default and never as a percent. Default UI shows only the four verdict badges (3.3); the `high/moderate/low` tier is not displayed (strength words like "strong/weak" are forbidden). The index is shown only inside the detail pane as `Triage index 55 of 83 (uncalibrated, ordering aid only)` behind a "Show triage index" checkbox, default OFF, remembered per user. Decision D1 below.
+2. No probability, percentage-of-confidence or "likelihood" wording anywhere. The SPEC-27 `evidence_index` (0..83, placeholder constants) is NOT shown by default and never as a percent. Default UI shows only the four verdict badges (3.3); the `high/moderate/low` tier is not displayed (strength words like "strong/weak" are forbidden). The index is shown only inside the detail pane as `Triage index 55 (uncalibrated, ordering aid only)` (no denominator: '55 of 83' reads like a percentage; research flag F2) behind a "Show triage index" checkbox, default OFF, remembered per user. Decision D1 below.
 3. No vulnerability claims: the panel concerns whether two functions are the same function across builds, never whether a fix, bug, exploit or security impact exists. Banned strings (enforced by a test over every user-visible string produced by the view-model): `probab`, `likelihood`, `confidence %`, `vulnerab`, `exploit`, `safe`, `secure`, `fixed`, `verified`, `proven`, `certain`, `%` adjacent to a score label.
 4. Missing is not negative: `absent` and `not-comparable` render as "no record" / "not comparable", never as red, never as a "No" vote.
 5. Contested wins: any disagreement yields `contested` regardless of how many engines agree.
@@ -31,13 +31,13 @@ Inside the dock, a `QTabWidget` (`evidence_tabs`) with two tabs:
 | Summary: 5,214 matches - 4,801 agree - 37 contested - 212 single-engine - 164 unknown |
 | ------------------------------------------------------------------------------------ |
 | Match / function     | Verdict            | Ghidriff        | BinDiff         | rz-diff |
-|                      |                    | type / quality  | similarity/conf | byte sim|
+|                      |                    | match type      | sim / algorithm | byte sim|
 | ---------------------+--------------------+-----------------+-----------------+--------
-| ParseHeader          | [=] Agree          | Exact / high    | sim 0.97 conf 0.91| 0.88  |
+| ParseHeader          | [=] Agree          | Exact           | sim 0.97 algo name hash | byte sim 0.88 |
 | 0x1400A1F00>0x1400A2010                  |                 |                 |         |
 | ValidateBuf          | [!] Contested      | Instruction     | pairs elsewhere | no rec. |
 | 0x140011000>0x140011300 (2 alternatives)  |                 |                 |         |
-| InitTable            | [1] Single engine  | Exact / high    | no record       | n/c     |
+| InitTable            | [1] Single engine  | Exact           | no record       | n/c     |
 | FooThunk             | [?] Unknown        | n/c             | n/c             | n/c     |
 | ------------------------------------------------------------------------------------ |
 | Detail: ValidateBuf   (read-only, selectable)                                         |
@@ -55,9 +55,9 @@ Inside the dock, a `QTabWidget` (`evidence_tabs`) with two tabs:
 ```
 
 Column rules:
-- Fixed columns: 0 Match (function name, addresses on second line via delegate, elided middle), 1 Verdict, then one column per ENGINE_COLUMNS entry in this fixed order: Ghidriff, BinDiff, rz-diff. A two-line header: engine name, then unit caption (`type / quality`, `similarity / confidence`, `byte similarity`).
+- Fixed columns: 0 Match (function name, addresses on second line via delegate, elided middle), 1 Verdict, then one column per ENGINE_COLUMNS entry in this fixed order: Ghidriff, BinDiff, rz-diff. A two-line header: engine name, then unit caption (`match type (raw)`, `similarity / algorithm`, `byte similarity (raw bytes)`; the rz-diff caption names its mode so byte and function similarity never share a column, flag F7).
 - Engine columns not present for the project (engine never imported/run) are shown but each cell reads "not run" (muted); they are never hidden so the layout is stable and "absence" stays visible. `Hide columns` is not offered in v1.
-- Cell text per engine (see 3.2): Ghidriff: `<match_types joined ", "> / <quality>` (both upstream strings, no numbers invented). BinDiff: `sim 0.97  conf 0.91` using the stored `similarity_text`/`confidence_text` (upstream text preserved, not recomputed from milli), tooltip adds `milli` integers and algorithm id and flags. rz-diff: `byte sim 0.88` from `similarity_text`; tooltip repeats "raw-byte Levenshtein, not semantic". Units are always in the header AND in the cell prefix (`sim`, `conf`, `byte sim`) so a screenshot of one cell is self-describing.
+- Cell text per engine (see 3.2): Ghidriff: `<match_types joined ", ">` (raw upstream strings, no numbers invented; flag F3). PatchTrace's `FunctionMatch.quality` label is not a ghidriff field: when numeric it carries ghidriff's difflib text diff ratio over decompiled code of the already paired functions, so it is shown raw in the details with the label "text diff ratio ... not a match score", never under a match-quality header. BinDiff: `sim 0.97  algo <algorithm>` using the stored `similarity_text` and algorithm name (upstream text preserved, not recomputed from milli); BinDiff's confidence is algorithm-dependent and not documented as a probability, so it appears only in tooltip/details as `confidence value <upstream text> (milli N; algorithm-dependent, not a probability)` with flags (flag F1). rz-diff: `byte sim 0.88` from `similarity_text`; tooltip repeats "raw-byte Levenshtein, not semantic". Units are always in the header AND in the cell prefix (`sim`, `algo`, `byte sim`) so a screenshot of one cell is self-describing.
 - Disagreeing engines' cells read "pairs elsewhere" plus the alternative's address pair in the tooltip/detail, not in the cell (keeps the column scannable).
 - Sorting: clicking a score column sorts by that ONE engine's native integer milli (rows without a value last, stable tie-break by match id). The sort indicator states the engine. Default sort: verdict priority (contested, unknown, single-engine, agree) then Ghidriff order, so contested items surface first. Sorting is performed by the proxy over view-model keys, never by displayed strings.
 - Row keyboard: Up/Down, PageUp/PageDown, Home/End; Enter/Return = "Go to match" (emits `match_activated`); Ctrl+C copies the selected row's provenance text (7.5); Space toggles the detail pane focus. Tab order: filter combo, search, hide-agreed, Copy, table, detail text, Copy provenance, Go to match, Engines tab content.
@@ -99,14 +99,15 @@ Verdict combo: All, Contested, Unknown, Single engine, Agree, "Engine-only recor
 State precedence when several apply: E5 > E6 (stale shown over ready) > E4 > E3; E2 only while a load is in flight and no table has been shown yet (afterwards show previous table with a "refreshing..." status text, no flicker).
 
 ### 1.7 High DPI and layout
-No hard-coded pixel sizes except through `QFontMetrics`/`style().pixelMetric`; column widths from `fontMetrics().horizontalAdvance('M')*N` with N chosen per column (Match 28, Verdict 16, engine columns 18) and `Interactive` resize mode with `stretchLastSection=False`; header text elided with tooltip. Row height = `max(2*lineSpacing + 6, 28)` device-independent. Badge glyph and text drawn using the widget's current font and `devicePixelRatioF()`; no pixmaps (no blurry scaling). Must remain usable at 125/150/200% and at 1100x750 main window (dock floats or collapses). Text never relies on tiny fonts: minimum point size = view font (default 10pt).
+No hard-coded pixel sizes except through `QFontMetrics`/`style().pixelMetric`; column widths from `fontMetrics().horizontalAdvance('M')*N` with N chosen per column (Match 28, Verdict 16, engine columns 18) and `Interactive` resize mode with `stretchLastSection=False`; header text elided with tooltip. Row height = `max(2*lineSpacing + 6, 28)` device-independent, applied through `verticalHeader().setDefaultSectionSize(...)` with `Fixed` sections (QTableView does not ask the delegate's per-row `sizeHint` unless rows are resized to contents, which is forbidden); the vertical header is hidden. Badge glyph and text drawn using the widget's current font and `devicePixelRatioF()`; no pixmaps (no blurry scaling). Must remain usable at 125/150/200% and at 1100x750 main window (dock floats or collapses). Text never relies on tiny fonts: minimum point size = view font (default 10pt).
 
 ### 1.8 Accessibility
-- Every widget sets `setAccessibleName` and `setAccessibleDescription` (the latter automatically via `apply_tooltip`). Names (exact): dock "Engine evidence panel"; tabs "Engine evidence views"; table "Per-match engine evidence table"; filter "Filter by verdict"; search "Search matches by function name or address"; detail "Selected match engine evidence details"; copy button "Copy provenance of selected match"; goto "Go to selected match in navigator"; status "Engine evidence status".
+- Every widget sets `setAccessibleName` and `setAccessibleDescription` (the latter automatically via `apply_tooltip`). Names (exact): dock "Engine evidence panel"; tabs "Engine evidence views"; table "Per-match engine evidence table"; filter "Filter by verdict"; search "Search matches by function name or address"; detail "Selected match engine evidence details"; copy button "Copy provenance of selected match"; goto "Go to selected match in navigator"; status label: no fixed name (see the announcement rule below; its text is its name).
 - Item roles: each cell supplies `Qt.AccessibleTextRole` = "<Function name>, verdict <Agree>, Ghidriff <text>, BinDiff <text>, rz-diff <text>" for the Match column; engine cells supply "BinDiff similarity 0.97, confidence 0.91" etc. Units spoken.
 - Full keyboard operation (1.2); focus visible (existing style plus 2 px focus outline in the delegate); no hover-only information (tooltips duplicate content available in the detail pane).
 - Badge colour supplemented by glyph/text; the glyph is part of text for screen readers ("Contested").
-- State changes announced: `evidence_status` is a label with `QAccessible.Role.StaticText` and, on change, call `QAccessible.updateAccessibility(QAccessibleEvent(label, QAccessible.Event.NameChanged))` (guarded: `QAccessible.isActive()`).
+- State changes announced: `evidence_status` is a `StaticText` label whose accessible name is deliberately left EMPTY: `QLabel.setText` emits `NameChanged` itself only when no fixed accessible name is set, so a fixed name ("Engine evidence status") would suppress every announcement. The spoken name is the status text. Real screen-reader announcement (WCAG 4.1.3) stays a manual Windows UIA/NVDA gate (C8).
+- Non-text contrast (WCAG 1.4.11): badge borders and the 2 px focus ring need >= 3:1 against adjacent colours; the focus ring uses the theme text colour, badge fills are checked >= 4.5:1 against the badge text and >= 3:1 against the border and the dark theme background by a pure contrast-ratio test. Muted/stale cells keep the theme text colour and use italics (no low-contrast grey).
 
 ### 1.9 Copy provenance
 Button/Ctrl+C copies a deterministic plain-text block (no markup, `\n` newlines, LF only), per selected match:
@@ -114,7 +115,7 @@ Button/Ctrl+C copies a deterministic plain-text block (no markup, `\n` newlines,
 PatchTrace engine evidence (function pairing only; not a vulnerability assessment)
 Project: <project id> | Ghidriff run: <run id> | STALE: no
 Match: <match id> | older 0x.. <name> -> newer 0x.. <name>
-Verdict: Contested (code: contested) | Triage index: hidden by default [only if enabled: 0 of 83, uncalibrated]
+Verdict: Contested (code: contested) | Triage index: hidden by default [only if enabled: 0 (uncalibrated, ordering aid only)]
 Ghidriff: types=<..> quality=<..>
 BinDiff <ver>: older 0x.. -> newer 0x..  similarity <similarity_text>  confidence <confidence_text>  algorithm <..>  flags <..>  [set sha256 <file_sha256>]
 rz-diff <ver>: no record
@@ -134,7 +135,7 @@ secondary/{contracts,reconcile,evidence,scheduler}   pure, existing/C1
 evidence_view.py        NEW pure: typed view-model, mapping, filtering, formatting, provenance text (no Qt, no I/O)
 evidence_panel_service.py NEW pure orchestration (no Qt): load sets -> reconcile -> assess -> EvidenceViewModel; staleness; run requests
         v
-ui_evidence.py          NEW Qt widgets: EvidencePanel (dock content), EvidenceTableModel, EvidenceFilterProxy, VerdictBadgeDelegate, EngineStatusModel, EvidenceLoadThread, EngineRunThread
+ui_evidence.py          NEW Qt widgets: EvidencePanel (dock content), EvidenceTableModel (owns sort/filter order), EvidenceDelegate, EngineStatusModel, EvidenceLoadThread, EngineRunThread, EngineProbeThread
         v
 ui.py                   minimal seam (section 8)
 ```
@@ -142,7 +143,7 @@ ui.py                   minimal seam (section 8)
 
 ## 3. View-model layer (pure Python)
 
-### 3.1 Types (`src/patchtrace/evidence_view.py`)
+### 3.1 Types (`src/patchtrace/secondary/evidence_view.py`; service in `src/patchtrace/secondary/evidence_panel_service.py`)
 
 ```python
 from dataclasses import dataclass
@@ -308,7 +309,7 @@ A read-only `secondary.store.sets_for_project(store, guard)` wrapper around `loa
 
 ### 5.1 Classes and responsibilities
 - `EvidenceTableModel(QAbstractTableModel)`: holds `EvidenceViewModel.rows` (tuple) and column definitions (2 + len(ENGINE_COLUMNS)); `data()` for `DisplayRole` (cheap: precomputed strings), `ToolTipRole` (calls `format_cell_detail` lazily; escaped via `tooltips.clean_value`/plain registry template), `AccessibleTextRole`, `UserRole` (row object), `UserRole+1` (sort key). `rowCount` is O(1). `set_view_model` uses `beginResetModel/endResetModel` once per data load. `canFetchMore/fetchMore` NOT used (rows are in memory; the view is virtualised by Qt).
-- `EvidenceFilterProxy(QSortFilterProxyModel)`: `setDynamicSortFilter(False)`; `filterAcceptsRow` consults a precomputed `frozenset[int]` from `filter_rows`; `lessThan` uses UserRole+1 sort keys per column (only that column's engine). Filter recompute runs synchronously only if rows <= 20k (it is a tight index loop, measured < 30 ms at 10k); otherwise via the load thread (not needed in v1).
+- ~~`EvidenceFilterProxy(QSortFilterProxyModel)`~~ REPLACED (measured, PySide6 6.12 offscreen): a proxy sort calls `data()` per comparison (10k rows 1.6-2.3 s, 100k 20-30 s) and a sorted proxy re-sorts on every source reset even with `setDynamicSortFilter(False)`. `EvidenceTableModel` owns the order instead: `view: list[int]` indices into the immutable rows; filtering rebuilds the list from `filter_rows` with one reset; sorting is the model's `sort(column, order)` override over precomputed keys (stable on top of the default order, persistent indexes moved with `changePersistentIndexList`), driven by a header `sectionClicked` slot. No `lessThan`, no proxy, no `ResizeToContents` (grep test).
 - `VerdictBadgeDelegate(QStyledItemDelegate)`: paints badge (glyph + text) and the two-line Match cell (`sizeHint` from `QFontMetrics`); never uses rich text; `helpEvent` provides the tooltip from the model's ToolTipRole.
 - `EngineCellDelegate` (optional): muted style for `not-run/no-record/not-comparable`, amber outline for `pairs-elsewhere`.
 - `EngineStatusModel(QAbstractTableModel)`: columns Engine / State / Version / Detail / Input hashes for the Engines tab; ≤ 3 rows.
@@ -329,7 +330,7 @@ Slots on the panel/main thread apply results via `panel.set_view_model` etc.; ea
 3. Cancellation: `threading.Event`; `cancel_requested` sets it; the scheduler fans it to children (process-tree kill via `jobs.run_process`). Closing the window or switching project sets cancel and `wait(5000)`; if still running the thread is kept referenced until `finished` (no `terminate()`).
 4. One load thread and one run thread at a time per panel; starting a new load while one runs sets the old cancel event and uses generations to drop its result.
 5. Model mutations only on the GUI thread; `set_view_model` is called from the slot only.
-6. No QObject is parented across threads; threads are parented to the panel (as `InspectionThread` is to MainWindow) so they are destroyed with it; `closeEvent`/`hideEvent` do not stop a running engine run (the dock may be hidden while running).
+6. Threads have NO Qt parent (corrected: destroying a running `QThread`, whether by a deleted parent or by garbage collection of an unreferenced started thread, aborts the process with SIGABRT). Every started worker is held in the module registry `ui_evidence._LIVE_THREADS` until `finished`, then `deleteLater` (pattern of `ui_series.py`); `EvidenceController.shutdown()` (called from `MainWindow.closeEvent`) sets every cancel event and `wait()`s every worker; no `terminate()`. Hiding the dock does not stop a running engine run.
 
 ## 6. Engine-run launch UI (Engines tab)
 
@@ -409,7 +410,7 @@ Dynamic TEMPLATES (values passed through `clean_value`, escaped by `_rich`): `ev
 - Add `test_evidence_ids_prefix_complete`: every ID starting `evidence.` appears in the registry/templates and every widget with objectName `evidence.*` is in the registry (no orphan).
 
 ### 7.3 Delegate/item tooltips
-Item tooltips use `tooltips.template('evidence.row'|'evidence.cell', ...)` (escaped) exactly like `ui_inspection.fill_pe_table`. No `setToolTip(untrusted)`.
+Item tooltips use `tooltips.template('evidence.row'|'evidence.cell', ...)` (escaped) exactly like `ui_inspection.fill_pe_table`. No `setToolTip(untrusted)`. Escaping is a tested requirement, not a convenience: the tooltip widget (`QTipLabel`) auto-detects rich text, so `<b>x</b>` in a raw tool string would render; a test asserts that, after removing the registry's own `<p>`/`<br>` wrapper, no tooltip of any cell contains `<` or `>` for hostile names.
 
 ### 7.4 Untrusted text policy (`sanitize_text` in `evidence_view.py`)
 `sanitize_text(value, limit=200)`: coerce to str, strip C0/C1 controls, bidi overrides (U+202A..E, U+2066..9, U+200E/F), U+2028/9, NUL; collapse nothing else; truncate with an ellipsis; never HTML-escape here (Qt text roles and `QPlainTextEdit.setPlainText` do not interpret markup; escaping would show `&lt;` to users). Rules: all `DisplayRole` and detail text are plain; widgets set `setTextFormat(Qt.PlainText)` (use existing `PlainLabel`), `QPlainTextEdit` only; item delegates draw with `painter.drawText`, never `QTextDocument.setHtml`; tooltips pass through `clean_value` and `_rich` (escape). Function names that look like `<b>x</b>`, `{0}`, `%s`, `file:///`, or URLs must display literally and not become links.
@@ -428,7 +429,7 @@ Only `QGuiApplication.clipboard().setText(plain)` on the GUI thread, content fro
 `EvidenceController(window)` lives in `ui_evidence.py`; it holds the panel, dock, load/run threads, the generation counter, and reads project data via a narrow protocol (`ProjectPort`: `project_id`, `revision`, `run_id`, `matches()`, `artifact_hashes()`, `artifact_paths()`, `load_secondary()`, `publish_secondary(set)`, `busy()`) implemented by a small adapter class in `ui_evidence.py` over `window.service`. This keeps the seam about 25-40 lines in `ui.py`, with no evidence logic. Integration owner for `ui.py` is the C6 PR author alone (plan: single owner).
 
 ## 9. Performance bounds
-1. Target: 10,000 matches, 3 engines: load+assess+build view-model <= 1.5 s on a CI runner (off the GUI thread); first paint of table <= 200 ms after `model_ready`; filter/search change <= 100 ms; sort change <= 150 ms; scrolling 60 fps (cells are precomputed strings; no per-paint formatting beyond elision).
+1. Target: 10,000 matches, 3 engines: load+assess+build view-model <= 1.5 s on a CI runner (off the GUI thread); first paint of table <= 200 ms after `model_ready`; filter/search change <= 100 ms; sort change <= 150 ms; scrolling 60 fps (cells are precomputed strings; no per-paint formatting beyond elision). These hold only with the model-owned order of 5.1 (a proxy cannot meet them). Deterministic gate: `data()` calls for first paint, a sort and a filter change are each <= 7 x visible cells x 1.2 (+20) and independent of the row count, asserted at 10k and 100k rows; wall-clock bounds carry 5x slack.
 2. Lazy: rows are prebuilt with short strings; verbose `detail`/`provenance`/tooltip text is generated on demand from `raw` references (`format_cell_detail`, `format_provenance_block`); alternatives lists built only for rows with non-agreeing candidates. Memory budget <= 64 MiB for 10k rows.
 3. Hard caps (constants): display rows 100,000 (above: E8), alternatives per row 20 (then "+N more"), cell detail chars 2,000, log lines 200, clipboard 16 KiB, search key 512 chars per row. `Reconciliation` is O(n) via the existing address maps; the view-model builder must not do O(n^2) `next(row for row in report.rows if match_id)` lookups: index `report.rows` by `match_id` once per engine (dict) — the pseudocode above shows the semantic, the implementation must use the dict.
 4. `assess_reports` itself does a `next(...)` per match per report (quadratic); if the 10k benchmark fails, C6 PR 1 may refactor `evidence.assess_reports` to pre-index rows (behaviour-preserving, covered by existing `test_secondary_evidence.py`). Flag to the owner of `secondary/*`.
@@ -454,7 +455,7 @@ Only `QGuiApplication.clipboard().setText(plain)` on the GUI thread, content fro
 - `test_inconsistent_match_sets_yield_failed_model_not_exception`.
 - `test_evidence_view_has_no_qt` (subprocess import, blocks PySide6; also `evidence_panel_service`).
 
-### 10.2 Offscreen Qt tests `tests/test_ui_evidence.py` (`QT_QPA_PLATFORM=offscreen`, pytest-qt; build the panel standalone for speed and also one via `MainWindow`)
+### 10.2 Offscreen Qt tests `tests/test_evidence_ui.py` (file renamed to stay inside the C6 `tests/test_evidence_*.py` ownership) (`QT_QPA_PLATFORM=offscreen`, pytest-qt; build the panel standalone for speed and also one via `MainWindow`)
 Named per state:
 - `test_state_no_project_disables_everything` (E0)
 - `test_state_no_engines_shows_ghidriff_only_message` (E1; exact text; engines tab link enabled)
@@ -480,6 +481,7 @@ Named per state:
 - Frozen-EXE smoke of the dock is in C8; not here.
 
 ## 11. What NOT to claim (UI text, exports, docs)
+Ghidra's own Version Tracking help states the rule this panel follows: scores and confidence values "should NOT be compared between different correlator algorithms" (Ghidra VT Matches table help, quoted from the NationalSecurityAgency/ghidra source tree). Ghidriff does not create Version Tracking sessions, so there is no "accepted in Ghidra" state to show (research flag F6 dropped). Ghidriff's `ratio`/`i_ratio`/`m_ratio`/`b_ratio` are difflib ratios over decompiled text of already paired functions; if ever shown they are labelled "text diff ratio", never placed under a match-quality header.
 No probability, percent, "confidence %" or calibrated statement; not "AI-verified"; no "vulnerability found/likely fixed/security-relevant"; agreement is "pairs the same endpoints", not "correct"; do not describe Ghidriff as ground truth ("baseline" or "primary engine"); do not say an absent record "disagrees"; do not imply BinDiff/rz-diff scores are comparable to each other or to Ghidriff's quality; do not claim automatic parallel engine execution beyond the C1 scheduler's actual behaviour; do not claim BinDiff execution until C4 lands (import only); the always-visible footer reads: "Scores are engine-native, uncalibrated and not comparable across engines. This panel assesses function pairing only, not vulnerabilities or patch validity."
 
 ## 12. PR breakdown (each small, spec -> red tests -> code -> focused tests -> full gate -> CI)
@@ -507,3 +509,20 @@ Top-tier escalation only for: a demonstrated cross-thread Qt crash, or a nuanced
 ## 14. Decisions taken (defaults) and open questions
 Defaults chosen here: dock on the right, hidden by default, `Ctrl+Shift+E`; triage index hidden (opt-in); contested sorts first; Ghidriff column sorts alphabetically; columns for non-run engines remain visible as "not run"; parallelism default 1, timeout default 1800 s; BinDiff import only until C4; no confirm dialog for local runs; amber (not red) for contested.
 Open for the product owner: (D1) may the uncalibrated 0..83 triage index appear at all (even opt-in), or must it be removed from the UI until calibration (SPEC-27)? (D2) UI wording "Agree/Contested/Single engine/Unknown" vs the code names `corroborated/insufficient`: confirm the user-facing set. (D3) Whether Ghidriff `quality`/`match_types` should be shown raw (current) or mapped to a documented ordinal scale. (D4) Is a confirm dialog desired before running engines on large binaries (hours-long)? (D5) Should evidence status be included in exported reports (provenance export) in this slice or a follow-up?
+
+## 15. Build deviations and evidence (C6 implementation, 2026-10-14)
+
+Recorded by the C6 builder; inputs: `docs/plans/spec-decisions-20261014.md` (D1-D4), `docs/research/phase-c/multi-engine-evidence-ui.md` (measured, flags F1-F8), `docs/plans/hard-problems/evidence-panel-{plan,troubleshooting}.md`.
+
+- Files: `src/patchtrace/secondary/evidence_view.py`, `src/patchtrace/secondary/evidence_panel_service.py` (pure, no PySide6; subprocess import test), `src/patchtrace/ui_evidence.py`; tests `tests/test_evidence_{view,panel_service,ui,perf}.py` plus the `tests/test_tooltips.py` additions of 7.2.
+- `ui.py` seam is 8 lines: import; `self.evidence = EvidenceController(self)` after `_build_workspace()`; `project_changed()` at the end of `refresh()` (covers project set/clear, Ghidriff import/run, corrections and reviews, which all refresh); `update_controls()` in `MainWindow.update_controls` (Run disabled while a Ghidriff job runs); `follow_match()` in `select_match` (navigator -> panel); `shutdown()` in `closeEvent`. The action is the dock's `toggleViewAction()` (registry id `evidence.action`, Ctrl+Shift+E) placed in the existing Analysis menu (there is no View menu). Panel -> navigator selection goes through `WindowPort.select_match`, which reuses the navigator list; no new `MainWindow` method.
+- Refresh policy: when the dock is visible, a project key change (root, id, revision, run id, artifact SHA pair) reloads in the background while the previous table stays with "Refreshing engine evidence..." (no flicker); a hidden dock only marks itself dirty. E6 stale is therefore shown for stored sets made for another artifact pair or another Ghidriff run (detected in `load_evidence`), for a result discarded by the GUI-thread guard, or via `set_stale`. Run is not disabled by E6 because re-running the engines is what cures a run/pair mismatch.
+- Verdict names Agree / Contested / Single engine / Unknown (D2). Secondary-only records are rows with verdict `engine-only` shown only under the "Engine-only records" filter; they never enter the four verdict counts.
+- Ghidriff column: raw `match_types` only (F3); `quality` raw in details with the text-diff-ratio label (D3 raw values kept). BinDiff cell: similarity + algorithm (F1). rz-diff caption names its mode (F7). Rows without a value sort last by name/address in engine-column sorts (F8). Selection follows the match id through every reset, filter and sort (F5). F6 dropped (no acceptance state in ghidriff).
+- Triage index (D1): opt-in checkbox, default off, persisted in `evidence/show_index`; text `Triage index N (uncalibrated, ordering aid only)` without "of 83" (F2). Calibration display level: `patchtrace.calibration.policy.display_level()` when importable (guarded), else `'ordinal'`; it is printed in the details as "Calibration display level: ordinal (no calibrated values are shown)". No calibrated value is rendered by C6.
+- No confirm dialog before runs (D4); the Engines tab shows a one-line preview and a live elapsed timer with Cancel. BinDiff stays import-only until C4 (its probe reports unsupported, so its Run checkbox is disabled with the probe reason).
+- Banned-word sweep: the disclaimers that negate banned stems ("not a vulnerability assessment", the upstream `*_LIMITATIONS` "not calibrated probabilities") are whitelisted sentences; stems such as `probab`, `vulnerab`, `exploit` are otherwise matched as prefixes and `safe`, `secure`, `fixed`, `verified`, `proven`, `certain` as whole words (so "Provenance" is allowed).
+- Added registry ids beyond 7.1: `evidence.copy_error` (E5 Copy details) and `evidence.open_engines` (E1/E7 link button); template `evidence.engine_row` for the Engines table.
+- `secondary/evidence.py::assess_reports` now indexes each report once (behaviour-preserving; first row per match id wins as before).
+- Thread safety evidence: worker callables run off the GUI thread (asserted), `persist_outcome` runs on the GUI thread (asserted), a widget constructed on a worker thread fails a test, teardown matrix (close while loading x5, project switch mid-load, GC of an unreferenced started thread, dock deleted while a worker runs, shutdown during an engine run); the evidence UI + tooltip tests were run 20 times in a row without a failure or abort.
+- Not automatable here (manual / C8 gates): real screen-reader announcement (NVDA/Narrator), 125/150/200% DPI rendering and glyph fonts on Windows, contrast against the live palette, frozen-EXE dock smoke, GUI-thread cost of `load_secondary` for very large stored sets (it must stay on the GUI thread because the SQLite connection is thread-confined).

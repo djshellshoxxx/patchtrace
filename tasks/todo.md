@@ -48,7 +48,10 @@
 - [ ] Frozen EXE headless smoke A1-A5, A10, A6s (`tools/frozen_smoke.py`, `tests/test_acceptance_smoke.py`, `tools/milestone_notes.py` wired into the release body): awaiting Windows CI run; A6 native `--run`, A7-A9, A11, A12 of windows-acceptance spec section 2 still open
 
 ## C6 multi-engine evidence panel (2026-10-14)
-- [ ] C6-1 pure view-model + service (`secondary/evidence_view.py`, `secondary/evidence_panel_service.py`)
-- [ ] C6-2 `ui_evidence.py` Evidence tab, states E0-E8, tooltips, MainWindow seam
-- [ ] C6-3 Engines tab on the SPEC-28 scheduler (progress, cancel, per-engine failure)
-- [ ] C6-4 accessibility, high-DPI rules, 10k perf benchmark, QSettings persistence; manual DPI/screen-reader pass is a C8 gate
+- [x] C6-1 pure view-model + service (`secondary/evidence_view.py`, `secondary/evidence_panel_service.py`); `assess_reports` pre-indexed
+- [x] C6-2 `ui_evidence.py` Evidence tab, states E0-E8, 26 `evidence.*` tooltips + 4 templates, 8-line MainWindow seam
+- [x] C6-3 Engines tab on the SPEC-28 scheduler (probe, run, cancel, per-engine failure, GUI-thread persistence, .BinDiff import)
+- [x] C6-4 accessibility names/status rule, contrast test, font-metric row height, 10k/100k data()-call gates, QSettings persistence (local Linux evidence only)
+- [ ] C6 CI evidence on Linux + Windows runners (not run from the builder worktree)
+- [ ] C8 manual gates: NVDA/Narrator announcement of the status label, 125/150/200% DPI and glyph fonts on Windows, live-palette contrast, frozen-EXE dock smoke
+- [ ] Product decision D5 (evidence status in exported reports) - later slice
