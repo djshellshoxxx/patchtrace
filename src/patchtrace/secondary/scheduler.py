@@ -6,11 +6,12 @@ The scheduler never writes to a store and never spawns processes itself: adapter
 from __future__ import annotations
 
 import hashlib
+import sys
 import tempfile
 import threading
 import time
 from collections.abc import Callable, Mapping, Sequence
-from concurrent.futures import ThreadPoolExecutor
+from concurrent.futures import FIRST_COMPLETED, ThreadPoolExecutor, wait
 from dataclasses import dataclass
 from datetime import UTC, datetime
 from pathlib import Path
@@ -64,6 +65,7 @@ def run_engines(project: ProjectRef, engines: Sequence[EngineId], *, max_paralle
                 per_engine_timeout: Mapping[EngineId, float] | None = None, cancel: threading.Event,
                 cache: CacheLookup | None = None, env: Mapping[str, str],
                 on_event: Callable[[EngineEvent], None] | None = None,
+                on_outcome: Callable[[EngineOutcome], None] | None = None,
                 registry: Mapping[EngineId, EngineAdapter] = REGISTRY, runner: Callable = run_process,
                 stdout_limit: int = STDOUT_LIMIT) -> tuple[EngineOutcome, ...]:
     if isinstance(max_parallel, bool) or not isinstance(max_parallel, int) or not 1 <= max_parallel <= MAX_PARALLEL:
@@ -150,12 +152,35 @@ def run_engines(project: ProjectRef, engines: Sequence[EngineId], *, max_paralle
             return outcome(eid, 'failed', started, t0, cap=cap, digest=digest, key=key,
                            error=SecondaryError('PT-SECONDARY-RUN', type(exc).__name__))
 
+    # `on_outcome` runs on the caller's thread, once per finished engine, as each finishes. A caller that
+    # persists there keeps completed work when Ctrl+C (KeyboardInterrupt) interrupts the wait for later engines.
     pool = ThreadPoolExecutor(max_workers=max_parallel, thread_name_prefix='patchtrace-engine')
+    futures = {eid: pool.submit(work, eid) for eid in plan}
+    delivered: set[str] = set()
+
+    def deliver(eid) -> None:
+        delivered.add(eid)
+        if on_outcome:
+            on_outcome(futures[eid].result())
+
     try:
-        futures = {eid: pool.submit(work, eid) for eid in plan}
+        by_future = {future: eid for eid, future in futures.items()}
+        pending = set(futures.values())
+        while pending:  # short waits keep Ctrl+C responsive: a blocking lock wait is not interruptible on Windows
+            done, pending = wait(pending, timeout=0.2, return_when=FIRST_COMPLETED)
+            for future in sorted(done, key=lambda f: plan.index(by_future[f])):
+                deliver(by_future[future])
         return tuple(futures[eid].result() for eid in plan)
     except BaseException:
         cancel.set()
         raise
     finally:
         pool.shutdown(wait=True)  # workers are joined: no child process outlives this call
+        if sys.exc_info()[0] is not None:  # interrupted: still hand over everything that did finish
+            for eid in plan:
+                if eid not in delivered and futures[eid].done() and not futures[eid].cancelled() \
+                        and futures[eid].exception() is None:
+                    try:
+                        deliver(eid)
+                    except Exception:  # best effort while already unwinding
+                        pass
