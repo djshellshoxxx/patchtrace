@@ -331,3 +331,6 @@ Automated only: 400-trial differential vs NetworkX (SCC, ancestors, descendants,
 Not verified: the real Ghidriff `matches` label forms (live gate, owner or CI).
 ### [WB1-S0:search-foundation]
 Run `python tools/check_search_runtime.py` (add `--require-native-rapidfuzz` on release builds) on Linux and Windows CI; it must print `search-runtime: ok` with fts5, unicode61 and trigram true. UNVERIFIED on Windows until the first CI run.
+
+### [WB1-S1:search-query]
+No manual step. Automated: `pytest tests/test_search_query.py` (property test over arbitrary Unicode and grammar fragments against real FTS5 tables).

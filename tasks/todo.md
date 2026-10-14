@@ -225,3 +225,7 @@
 ### [WB1-S0:search-foundation]
 - [x] S0 capability probe, limits, errors, cache paths, bench and runtime-check tools (focused tests green on Linux)
 - [ ] Open gate: probe on `windows-latest` and the frozen Windows build (`check_search_runtime.py` and later `search --probe`)
+
+### [WB1-S1:search-query]
+- [x] S1 grammar, safe MATCH builders (hypothesis: no input raises OperationalError), 40+ name goldens, hostile list, frozen contracts
+- [ ] Integrator: add `tests/fixtures/search/*.json eol=lf` to `.gitattributes`

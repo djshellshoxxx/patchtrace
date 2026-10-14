@@ -336,3 +336,8 @@ K1 notes: plan 10.1 "4 edges, 1 mention-only" = 4 vendor-remediation edges + 1 m
 | Module | Files | Responsibility | Depends | Tests |
 |---|---|---|---|---|
 | search (S0) | src/patchtrace/search/{limits,errors,capability,paths}.py, tools/check_search_runtime.py, tools/bench_search.py | search limits, PT-SEARCH-* errors and exit codes, FTS5/trigram/RapidFuzz runtime probe, per-user cache layout refusing in-project roots | stdlib, optional_deps | `test_search_capability.py`, `test_search_paths.py` |
+
+### [WB1-S1:search-query]
+| Module | Files | Responsibility | Depends | Tests |
+|---|---|---|---|---|
+| search (S1) | src/patchtrace/search/{normalize,tokenize,query,contracts}.py | fold/sanitize, identifier splitter, `parse_query` grammar to `QueryPlan`, the only FTS5 MATCH builders, frozen `search/1` and `search-saved/1` contracts | search S0, enrichment.identity | `test_search_normalize.py`, `test_search_query.py`, `test_search_contracts.py` |
