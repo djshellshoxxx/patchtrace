@@ -10,7 +10,7 @@ from collections.abc import Mapping
 from dataclasses import dataclass
 from typing import Literal
 
-from .artifact import CalibrationArtifact, LoadResult, load_bundled
+from .artifact import CalibrationArtifact, LoadResult, load_bundled, windows_scope_ok
 from .features import FeatureRow
 from .predict import Prediction, predict
 
@@ -28,8 +28,8 @@ class PolicyResult:
 
 
 def artifact_display_level(artifact: CalibrationArtifact | None) -> DisplayLevel:
-    if artifact is None:
-        return 'ordinal'
+    if artifact is None or not windows_scope_ok(artifact):
+        return 'ordinal'  # synthetic (Tier R only) evidence can never raise the display level
     gates = artifact.evidence.gates
     if (artifact.status == 'numeric-ok' and artifact.policy.display == 'number'
             and all(gates.get(g) == 'pass' for g in ('G0', 'G2', 'G3'))):

@@ -319,3 +319,9 @@ K1 notes: plan 10.1 "4 edges, 1 mention-only" = 4 vendor-remediation edges + 1 m
 | report schemas | tools/calibration/tier_r/report_schemas.py | `tier-r-engine-output/1` schema, report examples (synthetic) into docs/schemas/corpus/ | tier_r.contracts, evaluate | test_tier_r_eval_report.py |
 | manifest / annotate | tools/calibration/tier_r/{manifest,annotate}.py | `calibration-corpus/1` manifest; labels -> hash-chained annotation log -> `calibration-labels/1` (`synthetic-exact`) | calibration.contracts, label, lineage | tests/test_tier_r_eval_corpus.py |
 | tier-r CLI | tools/calibration/tier_r/{cli,__main__}.py; hook in tools/calibration/corpus.py | `python -m tools.calibration.tier_r <cmd>` (exit 0/1/2/3), `corpus known-answer <cmd>` | factory, fetch, toolchain, evaluate, manifest, annotate | tests/test_tier_r_eval_cli.py |
+
+### LBL-17 honest scope (2026-10-14; synthetic fixtures only)
+| module | files | responsibility | depends on | tests |
+|---|---|---|---|---|
+| calibration scope | src/patchtrace/calibration/{scope,ledger,context}.py | closed `ScopeId` vocabulary, fixed copy, `TIER_R_CLAIM`; pure `notice(level, ledger, artifacts)` (untested / tested-synthetic / tested-windows / degraded / expired); strict `validation-ledger/1` loader (<= 64 KiB, <= 64 entries, digest, expiry; any problem degrades to all `unvalidated`, `PT-CALIB-LEDGER`); `context_from_tools` (signature-certain DiE toolchain only, else `unknown`) | calibration.artifact, features | tests/test_calibration_scope.py |
+| calibration domain scope | artifact.py `Domain.{evidence_tiers,windows_system_binaries,scope_ids}`, policy.py | additive fields; a non-`experimental` artifact needs `tier-w`, windows coverage and no `no-windows-system-binaries`; a Tier R-only artifact cannot be promoted and `artifact_display_level` stays `ordinal`; `ValidationLedger.json` schema via `tools/calibration/schemas.py` | - | test_tier_r_only_artifact_cannot_be_promoted, test_scope_copy_sweep |

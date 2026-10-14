@@ -18,6 +18,7 @@ from typing import Annotated, Literal
 from pydantic import BaseModel, ConfigDict, Field, ValidationError
 
 from .features import FEATURE_SCHEMA, PROFILES, SPEC_BY_NAME, feature_names
+from .scope import ScopeId
 
 CONTRACT = 'patchtrace-calibration-model/1'
 MAX_BYTES = 512 * 1024
@@ -118,6 +119,10 @@ class Domain(_Strict):
     n_lineages: int = Field(ge=0)
     prevalence: float = Field(ge=0, le=1)
     known_blind_spots: tuple[str, ...]
+    # Honest-scope fields (additive; defaults mean "synthetic/unknown, nothing claimed about Windows files").
+    evidence_tiers: tuple[Literal['synthetic', 'tier-r', 'tier-w'], ...] = ()
+    windows_system_binaries: Literal['none', 'local-measured', 'published-measured'] = 'none'
+    scope_ids: tuple[ScopeId, ...] = ()
 
 
 class Evidence(_Strict):
@@ -165,6 +170,13 @@ def _finite(value) -> bool:
     return not isinstance(value, float) or math.isfinite(value)
 
 
+def windows_scope_ok(a: CalibrationArtifact) -> bool:
+    """True only when the domain honestly covers Windows system files (Tier W evidence, no contrary scope)."""
+    d = a.calibration_domain
+    return ('tier-w' in d.evidence_tiers and d.windows_system_binaries != 'none'
+            and 'no-windows-system-binaries' not in d.scope_ids)
+
+
 def _semantic(a: CalibrationArtifact, today: dt.date) -> None:
     if a.feature_schema != FEATURE_SCHEMA:
         raise ArtifactError(f'feature schema {a.feature_schema!r} is not the installed {FEATURE_SCHEMA}')
@@ -206,6 +218,14 @@ def _semantic(a: CalibrationArtifact, today: dt.date) -> None:
         raise ArtifactError('numeric-ok requires report, preregistration and passing G0/G3 evidence')
     if a.status == 'bands-ok' and not (ev.report_sha256 and gates.get('G0') == gates.get('G2') == 'pass'):
         raise ArtifactError('bands-ok requires a report and passing G0/G2 evidence')
+    dom = a.calibration_domain
+    if len(set(dom.evidence_tiers)) != len(dom.evidence_tiers) or len(set(dom.scope_ids)) != len(dom.scope_ids):
+        raise ArtifactError('evidence_tiers and scope_ids must not repeat')
+    if dom.windows_system_binaries != 'none' and not windows_scope_ok(a):
+        raise ArtifactError('Windows coverage claim requires tier-w evidence and no contrary scope id')
+    if a.status != 'experimental' and not windows_scope_ok(a):
+        raise ArtifactError('a promoted artifact requires tier-w evidence on Windows system binaries '
+                            '(synthetic Tier R evidence alone cannot be promoted)')
     allowed = {'experimental': {'none'}, 'bands-ok': {'none', 'band'}, 'numeric-ok': {'none', 'band', 'number'}}
     if pol.display not in allowed[a.status]:
         raise ArtifactError('policy.display exceeds the artifact status')

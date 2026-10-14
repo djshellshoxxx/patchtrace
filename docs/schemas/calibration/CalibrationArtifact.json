@@ -128,6 +128,51 @@
           },
           "title": "Known Blind Spots",
           "type": "array"
+        },
+        "evidence_tiers": {
+          "default": [],
+          "items": {
+            "enum": [
+              "synthetic",
+              "tier-r",
+              "tier-w"
+            ],
+            "type": "string"
+          },
+          "title": "Evidence Tiers",
+          "type": "array"
+        },
+        "windows_system_binaries": {
+          "default": "none",
+          "enum": [
+            "none",
+            "local-measured",
+            "published-measured"
+          ],
+          "title": "Windows System Binaries",
+          "type": "string"
+        },
+        "scope_ids": {
+          "default": [],
+          "items": {
+            "enum": [
+              "no-windows-system-binaries",
+              "open-source-c-only",
+              "test-compilers-only",
+              "no-lto-pgo",
+              "no-cpp-heavy",
+              "x64-only",
+              "stripped-images-only",
+              "few-lineages",
+              "single-annotator",
+              "planted-changes-synthetic",
+              "symbols-hidden-only",
+              "engine-versions-pinned"
+            ],
+            "type": "string"
+          },
+          "title": "Scope Ids",
+          "type": "array"
         }
       },
       "required": [
