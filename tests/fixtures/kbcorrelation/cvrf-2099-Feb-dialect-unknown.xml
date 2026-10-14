@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- SYNTHETIC. Hand-written PatchTrace fixture (not Microsoft). A future dialect: the root element and the
+     remediation container are renamed. S11: the adapter must refuse it with an explicit "dialect unknown"
+     error and must not guess the structure. -->
+<SyntheticFutureCvrf version="9.0" release="2099-Feb">
+  <Catalog>
+    <Entry id="CVE-2099-20001" headline="Out-of-bounds read in the item reader">
+      <Fixes>
+        <Fix product="PT-CLIENT" kb="5099001" build="10.0.26100.9001"/>
+      </Fixes>
+    </Entry>
+  </Catalog>
+</SyntheticFutureCvrf>
