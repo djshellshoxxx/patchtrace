@@ -17,6 +17,8 @@ import tempfile
 from pathlib import Path
 from uuid import uuid4
 
+from pydantic import ValidationError
+
 from .ingestion import file_fingerprint, safe_path, sha256_file, verify_artifact
 from .models import ComparisonProject, now
 
@@ -185,6 +187,35 @@ def _publish_no_replace(stage: Path, destination: Path) -> None:
         raise
 
 
+def _error_location(exc: ValidationError) -> str:
+    """Field path of the first contract violation; never the offending value."""
+    return '.'.join(str(part) for part in exc.errors()[0]['loc']) or 'root'
+
+
+def _abandoned_creation(path: Path) -> bool:
+    """True for the database a creation leaves when it died before committing its first snapshot.
+
+    The caller holds the exclusive project lock, so no live creator owns the file. A database that holds
+    a snapshot, a history row or any foreign table is never treated as abandoned."""
+    try:
+        if path.stat().st_size == 0:
+            return True
+        probe = sqlite3.connect(path, timeout=5)
+        try:
+            if probe.execute('PRAGMA user_version').fetchone()[0] not in (0, SCHEMA_VERSION):
+                return False
+            tables = {row[0] for row in probe.execute("SELECT name FROM sqlite_master WHERE type='table'")
+                      if not row[0].startswith('sqlite_')}
+            if not tables:
+                return True
+            return tables == {'current_snapshot', 'history'} and not probe.execute(
+                'SELECT EXISTS(SELECT 1 FROM current_snapshot) OR EXISTS(SELECT 1 FROM history)').fetchone()[0]
+        finally:
+            probe.close()
+    except (sqlite3.Error, OSError):
+        return False
+
+
 class ProjectLock:
     """Kernel-owned advisory lock; crashes release it without stealing a live lock file."""
     def __init__(self, root: Path):
@@ -236,7 +267,10 @@ class ProjectStore:
         self.lock = None
         self._verified = {}
         if create:
-            self.root.mkdir(parents=True, exist_ok=True)
+            try:
+                self.root.mkdir(parents=True, exist_ok=True)
+            except OSError as exc:
+                raise ValueError(f'PT-STORAGE: project directory cannot be created: {exc.strerror or exc}') from exc
         if not self.root.is_dir():
             raise ValueError('PT-STORAGE: project directory does not exist')
         self.lock = ProjectLock(self.root)
@@ -244,7 +278,10 @@ class ProjectStore:
         try:
             path = safe_path(self.root, 'project.sqlite3')
             if create and path.exists():
-                raise ValueError('PT-STORAGE: project database already exists')
+                if not _abandoned_creation(path):
+                    raise ValueError('PT-STORAGE: project database already exists')
+                for suffix in ('', '-journal', '-wal', '-shm'):  # a killed creation left no snapshot to lose
+                    Path(f'{path}{suffix}').unlink(missing_ok=True)
             if not create and not path.is_file():
                 raise ValueError('PT-STORAGE: project database is missing')
             self.connection = sqlite3.connect(path, timeout=5)
@@ -322,6 +359,7 @@ class ProjectStore:
         payload = validated.model_dump_json()
         if len(payload.encode()) > MAX_SNAPSHOT_BYTES:
             raise ValueError('PT-STORAGE: project snapshot exceeds 256 MiB')
+        self._assert_reloadable(payload)
         sha = hashlib.sha256(payload.encode()).hexdigest()
         try:
             with self.connection:
@@ -344,6 +382,18 @@ class ProjectStore:
         except sqlite3.Error as exc:
             raise ValueError('PT-STORAGE: project save failed; prior snapshot retained') from exc
         return validated
+
+    @staticmethod
+    def _assert_reloadable(payload: str) -> None:
+        """Commit only what load() accepts. Non-finite floats serialise as null and oversized integers exceed
+        the parse limit; without this check such a save succeeds and the project can no longer be opened."""
+        try:
+            ComparisonProject.model_validate(strict_json(payload))
+        except ValidationError as exc:
+            raise ValueError(f'PT-SCHEMA: project snapshot would not reload (at {_error_location(exc)}); '
+                             'prior snapshot retained') from None
+        except ValueError as exc:
+            raise ValueError(f'{exc}; prior snapshot retained') from None
 
     def _prune_history(self, current_sha: str) -> None:
         """Bound the history table inside the caller's transaction (oldest rows first)."""
@@ -390,7 +440,11 @@ class ProjectStore:
             payload, sha = row
             if len(payload.encode()) > MAX_SNAPSHOT_BYTES or hashlib.sha256(payload.encode()).hexdigest() != sha:
                 raise ValueError('PT-STORAGE: project snapshot hash failed')
-            project = validate_project(ComparisonProject.model_validate(strict_json(payload)))
+            try:
+                project = validate_project(ComparisonProject.model_validate(strict_json(payload)))
+            except ValidationError as exc:
+                raise ValueError('PT-SCHEMA: stored project snapshot violates the v1 contract '
+                                 f'(at {_error_location(exc)})') from None
             self._verify_files(project)
             interrupted = [run for run in project.runs if run.status in {'queued', 'running'}]
             for run in interrupted:
@@ -414,8 +468,11 @@ class ProjectStore:
         destination = Path(destination).resolve()
         if destination.exists() or destination.is_relative_to(self.root):
             raise ValueError('PT-STORAGE: backup destination must be new and outside project')
-        destination.parent.mkdir(parents=True, exist_ok=True)
-        stage = Path(tempfile.mkdtemp(prefix='.patchtrace-backup-', dir=destination.parent))
+        try:
+            destination.parent.mkdir(parents=True, exist_ok=True)
+            stage = Path(tempfile.mkdtemp(prefix='.patchtrace-backup-', dir=destination.parent))
+        except OSError as exc:
+            raise ValueError(f'PT-STORAGE: backup destination is not writable: {exc.strerror or exc}') from exc
         try:
             backup_connection = sqlite3.connect(stage / 'project.sqlite3')
             try:
