@@ -202,3 +202,12 @@ Committed from this run: the real v8 `--help` text and the real v8 `.BinDiff` + 
 - Network: winbindex.m417z.com and msdl.microsoft.com BLOCKED from the build sandbox (egress proxy CONNECT 403, one attempt each); all network code is tested only against the recorded afd.sys fixture and fakes. No Microsoft binary or PDB was fetched, parsed or committed.
 - Real tools on self-made input (not Microsoft evidence): clang 18.1.3 + lld-link built the committed fixtures byte-reproducibly; `llvm-pdbutil` 18 output agrees with the stdlib MSF reader on names, RVAs, sizes and the ICF alias; a manual Ghidra 12.0.4 headless run (Jython 2.7.4, PDB force-loaded, no symbol server) gave function sizes equal to the PDB code sizes (not yet a committed live test).
 - Guard: the repository-wide Tier-W/Microsoft check runs in tests/test_tier_w_guard.py on every test run.
+### [T:core] SPEC-29 tools capa/FLOSS/diec (2026-10-14, builder worktree, Linux only)
+| Check | Evidence | Result |
+|---|---|---|
+| Upstream CLI/JSON verification | pinned source (PyPI sdists flare_capa 9.4.0 `c4f421ab…`, flare_floss 3.1.1 `4f74458b…`, digests equal PyPI's) + real `--help`/`--version` | flags and schemas in spec T1-T5 |
+| Real runs on SYNTHETIC PE pairs (Ubuntu 24.04, `unshare -rn`, private HOME/TMPDIR) | capa 9.4.0 linux, FLOSS 3.1.1 linux, diec 3.21 (24.04 deb + Qt 5.15.13 Core/Script) | goldens `tests/fixtures/intel_tools/` (manifest.json); not evidence about real binaries |
+| Asset SHA-256 (trust-on-first-use, one download, GitHub API 403) | capa linux zip 47,477,971 B `07800a1d…81e4`, windows zip 35,994,071 B `670ab1a5…3bb5`; FLOSS linux 40,571,555 B `40c05a86…2666`, windows 31,580,022 B `6c71089b…c2fb`; DiE 22.04 deb 11,806,884 B `c59e2fca…6007`, windows zip 25,197,854 B `078f2934…b3b9` | pin file not yet written (deferred) |
+| DiE databases (tree/1 digest) | linux deb `301b24a7…2b86`, windows zip `a862337e…dda` (CRLF-only differences, 1511 files) | in `diec.KNOWN_DATABASES` |
+| Unit tests | `tests/test_intel_tools_common.py`, `tests/test_intel_tools_parsers.py` | 30 passed |
+| Not run | fake-executable runner tests, CLI, provisioning, live workflow, Windows, Ghidra backend | BLOCKED/deferred (next wave) |

@@ -1,0 +1,40 @@
+Usage: <exe> [options] target
+Detect It Easy v3.21
+Copyright(C) 2006-2008 Hellsp@wn 2012-2026 hors<horsicq@gmail.com> Web: http://ntinfo.biz
+
+
+Options:
+  -h, --help                   Displays help on commandline options.
+  --help-all                   Displays help including Qt specific options.
+  -v, --version                Displays version information.
+  -r, --recursivescan          Scan directories recursively
+  -d, --deepscan               Enable deep scanning for thorough analysis
+  -u, --heuristicscan          Enable heuristic scanning methods
+  -b, --verbose                Show verbose output with detailed information
+  -g, --aggressivecscan        Enable aggressive scanning mode
+  -a, --alltypes               Scan all file types
+  -f, --format                 Format the output result
+  -l, --profiling              Profile signatures during scan
+  -M, --messages               Display scan messages and warnings
+  -U, --hideunknown            Hide unknown file types from results
+  -e, --entropy                Display file entropy information
+  -i, --info                   Display file information
+  -S, --struct <struct>        Show special file information using specified
+                               structure (e.g., 'Hash' or 'Hash#MD5')
+  -x, --xml                    Output results in XML format
+  -j, --json                   Output results in JSON format
+  -c, --csv                    Output results in CSV format
+  -t, --tsv                    Output results in TSV format
+  -p, --plaintext              Output results as plain text
+  -D, --database <path>        Set database path
+  -E, --extradatabase <path>   Set extra database path
+  -C, --customdatabase <path>  Set custom database path
+  -s, --showdatabase           Show database information
+  -w, --showstructs            Display all available special structures for the
+                               file
+  --test <directory>           Test signatures in specified directory
+  --addtest <filename>         Add test case with filename, detect string, and
+                               directory
+
+Arguments:
+  target                       The file or directory to open.

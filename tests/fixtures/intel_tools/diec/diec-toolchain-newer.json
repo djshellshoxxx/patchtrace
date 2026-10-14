@@ -1,0 +1,22 @@
+{
+    "detects": [
+        {
+            "filetype": "PE64",
+            "info": "",
+            "offset": "0",
+            "parentfilepart": "Header",
+            "size": "4096",
+            "values": [
+                {
+                    "info": "stripped",
+                    "name": "MinGW",
+                    "string": "Compiler: MinGW(GCC: (GNU) 10-win32 20220113)[stripped]",
+                    "type": "compiler",
+                    "version": "GCC: (GNU) 10-win32 20220113"
+                }
+            ]
+        }
+    ]
+}
+
+

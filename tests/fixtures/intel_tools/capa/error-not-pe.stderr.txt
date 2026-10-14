@@ -1,0 +1,3 @@
+ERROR    capa: Input file                                            main.py:734
+         '<scratch>/in/artifact.bin' is not a valid PE file: 'Unable to                
+         read the DOS Header, possibly a truncated file.'                       
