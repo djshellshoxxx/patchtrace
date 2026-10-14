@@ -2654,9 +2654,11 @@ class MainWindow(QMainWindow):
         artifacts = {artifact.side: artifact for artifact in self.project.artifacts}
         rows = overview_rows(artifacts['older'], artifacts['newer'])
         previous = getattr(self, '_preflight_dialog', None)
+        self._forget_overview_widgets()  # before close: a replaced dialog must not clear the new refs
         if previous is not None:
-            previous.close()
+            previous.close()  # WA_DeleteOnClose below releases it
         dialog = QDialog(self)
+        dialog.setAttribute(Qt.WidgetAttribute.WA_DeleteOnClose)
         dialog.setWindowTitle('Preliminary file comparison')
         dialog.setMinimumSize(900, 620)
         dialog.setModal(False)
@@ -2693,7 +2695,7 @@ class MainWindow(QMainWindow):
         self._preflight_dialog = dialog
         self._preflight_status = status
         self._preflight_pe_table = pe_table
-        dialog.destroyed.connect(lambda *_: self._forget_overview_widgets())
+        dialog.destroyed.connect(lambda *_: self._overview_destroyed(dialog))
         inspection = self._current_inspection()
         if inspection is not None:
             status.setText('File inspection complete · ' + side_summary(inspection))
@@ -2702,7 +2704,12 @@ class MainWindow(QMainWindow):
             self.start_inspection()
         dialog.show()
 
+    def _overview_destroyed(self, dialog):
+        if getattr(self, '_preflight_dialog', None) is dialog:
+            self._forget_overview_widgets()
+
     def _forget_overview_widgets(self):
+        self._preflight_dialog = None
         self._preflight_status = None
         self._preflight_pe_table = None
 
