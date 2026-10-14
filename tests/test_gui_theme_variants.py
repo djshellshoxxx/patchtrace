@@ -5,6 +5,7 @@ from __future__ import annotations
 from collections.abc import Callable
 
 import pytest
+from host_support import private_tooltip_registry  # noqa: F401
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QColor, QPalette
 from PySide6.QtWidgets import QApplication, QMainWindow, QMenu
@@ -20,6 +21,7 @@ from patchtrace.gui.qt.theme import (
     system_tokens,
 )
 from patchtrace.gui.state import CHIP_TOKENS
+from patchtrace.gui.tips import register_gui_tips
 
 
 def palette(window: str, text: str, base: str | None = None, highlight: str = '#3875d7',
@@ -63,6 +65,11 @@ class FakePrefs:
             setattr(self, name, value)
         for callback in self.callbacks:
             callback()
+
+
+@pytest.fixture(autouse=True)
+def tips(private_tooltip_registry):  # noqa: F811
+    register_gui_tips()
 
 
 @pytest.fixture

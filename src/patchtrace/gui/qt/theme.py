@@ -16,6 +16,7 @@ from PySide6.QtWidgets import QApplication, QMainWindow, QMenu
 
 from ..state import CHIP_TOKENS
 from ..theme_math import NON_TEXT_CONTRAST, TEXT_CONTRAST, contrast_ratio, ensure_contrast, relative_luminance
+from ..tips import apply_tip
 from .theme_stylesheet import build_stylesheet
 
 VARIANTS = ('dark', 'system')
@@ -279,18 +280,21 @@ def install_theme_menu(menu: QMenu, controller: ThemeController) -> QMenu:
     """The View > Theme submenu: one checked variant, and a disabled note while high contrast overrides it."""
     submenu = menu.addMenu('Theme')
     submenu.setObjectName('menu.view.theme')
+    apply_tip(submenu.menuAction(), 'menu.view.theme')
     group = QActionGroup(submenu)
     group.setExclusive(True)
     actions = {}
     for variant, label in _LABELS.items():
         action = submenu.addAction(label)
         action.setObjectName(f'gui.theme.{variant}')
+        apply_tip(action, f'gui.theme_{variant}')
         action.setCheckable(True)
         group.addAction(action)
         action.triggered.connect(lambda _checked=False, name=variant: controller.set_variant(name))
         actions[variant] = action
     note = submenu.addAction('High contrast is on: Windows settings decide the colours')
     note.setObjectName('gui.theme.note')
+    apply_tip(note, 'gui.theme_note')
     note.setEnabled(False)
 
     def sync(*_args: object) -> None:
