@@ -1,0 +1,33 @@
+name: Nightly BinExport2 fuzz (non-gating)
+on:
+  schedule:
+    - cron: '17 3 * * *'
+  workflow_dispatch:
+    inputs:
+      seconds:
+        description: 'Fuzz duration in seconds'
+        default: '900'
+jobs:
+  fuzz:
+    # Linux-only: atheris does not support Windows, so Windows relies on the hypothesis tests (SPEC-10b section 10.2).
+    runs-on: ubuntu-22.04
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: "python -m pip install --only-binary=:all: -e '.[dev]'"
+      - run: python tools/check_protobuf_runtime.py
+      - name: Fuzz inspect_bytes (seeded mutation loop; findings are saved under build/fuzz-crashes)
+        env:
+          FUZZ_SECONDS: ${{ github.event.inputs.seconds || '900' }}
+        run: |
+          case "$FUZZ_SECONDS" in ''|*[!0-9]*) echo "seconds must be an integer"; exit 2;; esac
+          python tools/fuzz_binexport.py --seconds "$FUZZ_SECONDS" --crashes build/fuzz-crashes
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: binexport-fuzz-crashes
+          path: build/fuzz-crashes
+          if-no-files-found: ignore
