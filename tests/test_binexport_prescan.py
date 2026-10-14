@@ -52,7 +52,7 @@ def test_minimal_counts_and_md_index_field():
     assert stats.bytes_by_field[9] == 3 * 5
 
 
-@pytest.mark.parametrize('data, expected', [
+WIRE_CASES = [
     (b'', ('PT-SECONDARY-INPUT', 'meta_missing')),
     (b'\x0a', ('PT-SECONDARY-INPUT', 'wire_truncated')),
     (META, ('PT-SECONDARY-INPUT', 'callgraph_missing')),
@@ -72,7 +72,13 @@ def test_minimal_counts_and_md_index_field():
     (META + CG + CG, ('PT-SECONDARY-INPUT', 'duplicate_singleton')),
     (META + CG + rec(99, b'x' * (64 * 1024)), ('PT-SECONDARY-INPUT', 'unknown_fields_excess')),
     (META + CG + rec(100000000, b'x' * (64 * 1024)), ('PT-SECONDARY-INPUT', 'unknown_fields_excess')),
-])
+]
+
+
+# Explicit short ids: the default id embeds the bytes, and pytest copies the node id into PYTEST_CURRENT_TEST, which
+# Windows rejects above 32767 characters (the 64 KiB cases failed at setup there).
+@pytest.mark.parametrize('data, expected', WIRE_CASES,
+                         ids=[f'{index:02d}-{case[1][1]}' for index, case in enumerate(WIRE_CASES)])
 def test_wire_rejections(data, expected):
     assert reason(data) == expected
 

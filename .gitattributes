@@ -1,3 +1,5 @@
 *.BinDiff binary
 *.BinExport binary
 tests/fixtures/secondary/bindiff-synthetic-stdout.txt text eol=lf
+tests/fixtures/binexport/PROVENANCE.json text eol=lf
+third_party/notices/binexport-2bff7af/binexport2.proto -text
