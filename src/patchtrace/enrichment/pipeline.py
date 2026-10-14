@@ -30,7 +30,7 @@ from .contracts import (
     Status,
 )
 from .storage import ORPHAN_GRACE, EnrichmentStore, Entry, Guard
-from .views import MatchView, RunView, build_views
+from .views import MatchView, RunView, build_views, location_problem
 
 STAGE_VERSIONS = {'signals': 2, 'wil': 2, 'ranking': 2, 'contextual': 2}
 CANCEL_EVERY = 256
@@ -103,16 +103,9 @@ def _locations_owned(views: RunView, items, model) -> bool:
         elif isinstance(item, FeatureTransition):
             sites = [site.location for site in item.older_sites + item.newer_sites]
         functions = {f.id: f for f in match.older + match.newer}
-        for loc in sites:
+        for loc in sites:  # SPEC-07 §4 `validate_location`, restricted to this pairing's functions
             function = functions.get(loc.function_id)
-            if function is None or function.side != loc.side or function.artifact_id != loc.artifact_id \
-                    or function.run_id != loc.run_id:
-                return False
-            try:
-                if function.location(loc.start_line, loc.end_line, loc.representation).excerpt_sha256 \
-                        != loc.excerpt_sha256:
-                    return False
-            except EnrichmentError:
+            if function is None or location_problem(function, loc) is not None:
                 return False
     # Signal sets cover every pairing; transitions are legitimately sparse (often empty).
     if model is SignalSet and {i.pairing_id for i in items} != set(matches):

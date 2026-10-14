@@ -473,6 +473,9 @@ class Detector:
     def _evaluate(self, ctx: _Context) -> tuple[DetectorOutcome, tuple[ChangeSignal, ...]]:
         view = ctx.view
         if not ctx.edits:
+            if ctx.truncated:  # the change may sit in the unscanned tail: unknown, never "nothing changed"
+                return _outcome(view, self.id, 'partial', f'{LIMIT} function-too-large: no non-noise changed hunk '
+                                f'in the scanned first {MAX_LINES} lines / {MAX_CHARS} chars'), ()
             return _outcome(view, self.id, 'complete', 'no non-noise changed hunk'), ()
         limitations = list(self.limitations)
         if view.category == 'ambiguous':

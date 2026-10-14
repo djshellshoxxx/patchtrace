@@ -119,6 +119,43 @@ def match_view(match: FunctionMatch, diff: str, artifacts: dict[str, str]) -> Ma
                      older, newer, hunks)
 
 
+def location_problem(function: FunctionView, loc: SourceLocation) -> str | None:
+    """Why `loc` does not describe `function`'s live code (None when it does). Pure; no model construction."""
+    if (function.id != loc.function_id or function.side != loc.side or function.artifact_id != loc.artifact_id
+            or function.run_id != loc.run_id or function.address != loc.address):
+        return 'PT-ENRICH-OWNERSHIP'
+    lines = function.code if loc.representation == 'decompiled' else function.assembly
+    if (lines is None or not 1 <= loc.start_line <= loc.end_line <= len(lines)
+            or identity.excerpt_sha256(lines[loc.start_line - 1:loc.end_line]) != loc.excerpt_sha256):
+        return 'PT-ENRICH-STALE'
+    return None
+
+
+def validate_location(subject: ComparisonProject | RunView, loc: SourceLocation) -> FunctionView:
+    """SPEC-07 §4: before navigation or save, check that `loc` names a function of the run's pairings that
+    belongs to its run, artifact and side (`PT-ENRICH-OWNERSHIP`) and that the lines still exist and hash to
+    the recorded excerpt (`PT-ENRICH-STALE`). Returns the live function view."""
+    if isinstance(subject, RunView):
+        run_view = subject
+    else:
+        try:
+            run_view = build_views(subject, loc.run_id)
+        except EnrichmentError:
+            raise EnrichmentError('PT-ENRICH-OWNERSHIP', 'location names a run that is not a completed run '
+                                  'of this project') from None
+    if loc.run_id != run_view.run_id:
+        raise EnrichmentError('PT-ENRICH-OWNERSHIP', 'location belongs to another analysis run')
+    function = next((f for m in run_view.matches for f in (*m.older, *m.newer) if f.id == loc.function_id), None)
+    if function is None:
+        raise EnrichmentError('PT-ENRICH-OWNERSHIP', 'location names a function outside this run')
+    problem = location_problem(function, loc)
+    if problem == 'PT-ENRICH-OWNERSHIP':
+        raise EnrichmentError(problem, 'location side, artifact, run or address does not match its function')
+    if problem is not None:
+        raise EnrichmentError(problem, 'location lines no longer match the decompiled code')
+    return function
+
+
 def build_views(project: ComparisonProject, run_id: str | None = None) -> RunView:
     """Views for the given (default: latest completed) run. Raises PT-ENRICH-INPUT if none."""
     completed = [r for r in project.runs if r.status == 'completed' and r.raw_sha256]

@@ -56,7 +56,7 @@ Timestamps, display preferences and absolute paths are never hashed. Existing pr
 
 ## 4. Evidence locations
 
-`SourceLocation`: `side`, `artifact_id`, `run_id`, `function_id`, `representation` (`decompiled|assembly|metadata`), `start_line`, `end_line` (1-based inclusive, `end >= start`), `excerpt_sha256` (SHA-256 of the exact UTF-8 lines joined by `\n`), optional `address` (int ≥ 0; 0 is valid; null = unknown). Before navigation or save, `validate_location(project, loc)` checks artifact/run/function ownership, side, line bounds and excerpt hash.
+`SourceLocation`: `side`, `artifact_id`, `run_id`, `function_id`, `representation` (`decompiled|assembly|metadata`), `start_line`, `end_line` (1-based inclusive, `end >= start`), `excerpt_sha256` (SHA-256 of the exact UTF-8 lines joined by `\n`), optional `address` (int ≥ 0; 0 is valid; null = unknown). Before navigation or save, `validate_location(project, loc)` checks artifact/run/function ownership, side, line bounds and excerpt hash. Implemented as `views.validate_location(project_or_run_view, loc)` (`PT-ENRICH-OWNERSHIP` / `PT-ENRICH-STALE`; SPEC-07h Phase D amendment).
 
 ## 5. B1 change signals (`signals.py`)
 
