@@ -14,6 +14,7 @@ The following companion documents are normative refinements of this feature and 
 2. [SPEC-32B: Pair lifecycle and crash recovery](kb-patch-search-pair-lifecycle.md) fixes the old/new identity decision table, companion SQLite sidecar and post-project-create recovery protocol. The previous phrase "all-or-nothing project creation" applies to both binary inputs before ProjectService.create; attachment to the companion database is separately recoverable.
 3. [SPEC-32C: GUI/CLI contract](kb-patch-search-ui-cli-contract.md) fixes concrete CLI syntax, no-network defaults, wizard state invalidation and GUI-thread database ownership.
 4. [SPEC-32D: QA and fixtures](kb-patch-search-qa-and-fixtures.md) fixes deterministic positive/negative cases, offline integration, crash injection and Windows release gates.
+5. [SPEC-32E: Python contract blueprint](kb-patch-search-contract-blueprint.md) fixes strict Pydantic DTO examples, truth-preserving validators, versioned result semantics, service ports, and a reproducible synthetic end-to-end scenario.
 
 Engineering defaults approved for initial MVP: x64 complete PE inputs, MSRC CVRF official-source corpus with explicit finite scope, one product variant, one analyst-selected file pair, offline-first, consented source/download operations, a separate optional project sidecar, and conservative contextual vulnerability hypotheses. Windows update-package/PSFX reconstruction remains a separately gated future feature. Source-derived KB/CVE association is never proof of a vulnerable function or definitive fixed binary.
 
