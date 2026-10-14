@@ -85,19 +85,19 @@ def fill_pe_table(table: QTableWidget, inspection: ProjectInspection) -> None:
                                      provenance='verified artifact inspection',
                                      reason=reasons))
             table.setItem(0, column, item)
-        return
-    table.setRowCount(len(rows))
-    for index, row in enumerate(rows):
-        values = (row.field, row.older, row.newer, row.status, row.provenance)
-        for column, value in enumerate(values):
-            item = QTableWidgetItem(str(value))
-            item.setToolTip(template('overview.pe_row', field=row.field, provenance=row.provenance,
-                                     reason=row.reason))
-            if row.status == 'changed':
-                font = QFont(item.font())
-                font.setBold(True)
-                item.setFont(font)
-            table.setItem(index, column, item)
+    else:
+        table.setRowCount(len(rows))
+        for index, row in enumerate(rows):
+            values = (row.field, row.older, row.newer, row.status, row.provenance)
+            for column, value in enumerate(values):
+                item = QTableWidgetItem(str(value))
+                item.setToolTip(template('overview.pe_row', field=row.field, provenance=row.provenance,
+                                         reason=row.reason))
+                if row.status == 'changed':
+                    font = QFont(item.font())
+                    font.setBold(True)
+                    item.setFont(font)
+                table.setItem(index, column, item)
     trust = {side: inspection.sides[side].trust for side in ('older', 'newer')}
     if any(trust.values()):
         index = table.rowCount()
