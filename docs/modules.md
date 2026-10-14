@@ -37,6 +37,10 @@ Stable IDs are independent of filenames. Public interfaces in SPEC-01 and schema
 | acquisition (planned) | acquisition/*.py | SPEC-08 Winbindex metadata, consented msdl download, quarantine, PE/PA30 identification, optional Windows msdelta | stdlib/ingestion/ctypes | Fake opener; live probe recorded separately |
 | nway (planned) | nway/*.py | SPEC-09 series of adjacent pair projects, 1:1 chain hypotheses | service/models | Synthetic pair fixtures |
 | secondary matches (planned) | secondary/*.py | SPEC-10 BinExport/BinDiff validation and import; SPEC-11 rz-diff runner/parser; reconciliation | protobuf (optional), jobs | Handcrafted files; optional live tools |
+| artifact bytes | artifact_bytes.py | SPEC-26 shared seam: `VerifiedArtifactReader.open_artifact/open_path`, bounded `read(offset,length,clip)` on a SHA-256-verified handle; change detection; `ArtifactBytesError.code` | ingestion/contracts | Pure IO, no Qt; tmp-file tests |
+| pe overview (alpha) | pe_overview/*.py | SPEC-26 D: bounded stdlib PE header/section/directory/import/export/entropy/overlay/certificate-table parsing, field-level old/new comparison; `inspect(reader) -> PeOverview`; Authenticode trust isolated in Windows-only `authenticode.py` | artifact bytes | Pure; synthetic/hostile PE fixtures; native Windows trust tests skip elsewhere |
+| byte representations (alpha) | representations/*.py | SPEC-26 B: paged Hex/Binary/Base64 rendering of exact verified bytes; whole-file/file-range/function-RVA scopes via injected section map | artifact bytes | Pure; boundary fixtures |
+| tooltip registry (alpha) | tooltips.py | SPEC-26 A: semantic-ID tooltip registry, safe templates, `apply_tooltips`; New/Open exempt | Qt (apply only) | Registry tests + widget enumeration test |
 | packaging | tools/build_windows.py; tools/build_linux.py; tools/pyinstaller_hooks/ | Frozen Windows/Linux runtimes, curated Qt desktop plugins, licenses, inventory and checksum | PyInstaller | Windows/Linux Actions and archive inspection |
 
 Every substantial future module must be added here before implementation. UI must not own analysis logic; provider must not own project state.
