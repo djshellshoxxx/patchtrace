@@ -153,6 +153,11 @@ def _parser() -> argparse.ArgumentParser:
     return parser
 
 
+def _api_key(env_name: str) -> str | None:
+    """NVD key from the named environment variable; unset, empty or blank means no key."""
+    return (os.environ.get(env_name, '').strip() or None) if env_name else None
+
+
 def _emit(args, command: str, status: str, result, warnings: list[str], text: str) -> None:
     if getattr(args, 'json', False):
         sys.stdout.write(json.dumps({'contract': CLI_CONTRACT, 'command': command, 'status': status,
@@ -394,7 +399,7 @@ def cmd_correlate(args, cancel) -> int:
             raise CliError(ENVIRONMENT, str(exc)) from None
         for request in plan:
             print(f'request: {request.provider} {request.url}', file=sys.stderr)
-        key = os.environ.get(args.api_key_env) if args.api_key_env else None
+        key = _api_key(args.api_key_env)
         duration = intelligence.describe_duration(plan, key is not None)
         if duration:
             print(duration, file=sys.stderr)

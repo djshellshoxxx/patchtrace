@@ -228,3 +228,13 @@ def test_run_record_failure_too_is_only_a_warning(tmp_path, capsys, monkeypatch)
     monkeypatch.setattr(cli_run, 'publish_run', boom)
     code, doc = _cli(_cli_project(tmp_path), fake_rz(tmp_path), capsys)
     assert code == 3 and doc['result']['runs'][0]['status'] == 'failed'
+
+
+def test_empty_nvd_key_env_is_no_key(monkeypatch):
+    from patchtrace import cli
+    monkeypatch.setenv('NVD_EMPTY', '')
+    monkeypatch.setenv('NVD_BLANK', '  \n')
+    monkeypatch.setenv('NVD_REAL', ' abc123 ')
+    monkeypatch.delenv('NVD_MISSING', raising=False)
+    assert [cli._api_key(n) for n in ('', 'NVD_EMPTY', 'NVD_BLANK', 'NVD_MISSING')] == [None] * 4
+    assert cli._api_key('NVD_REAL') == 'abc123'
