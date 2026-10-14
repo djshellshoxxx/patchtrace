@@ -1,0 +1,1275 @@
+{
+ "openapi": "3.0.1",
+ "info": {
+  "title": "MSRC CVRF API",
+  "version": "v3"
+ },
+ "paths": {
+  "/cvrf/{id}": {
+   "get": {
+    "tags": [
+     "Cvrf"
+    ],
+    "summary": "Get security update details in CVRF format",
+    "description": "Get detailed Microsoft security update, formatted according to the [Common Vulnerability Reporting\r\nFramework](http://www.icasi.org/cvrf/). MSRC investigates all reports of\r\nsecurity vulnerabilities affecting Microsoft products and services, and provides these updates as part of the\r\nongoing effort to help you manage security risks and help keep your systems protected.",
+    "parameters": [
+     {
+      "name": "id",
+      "in": "path",
+      "description": "CVRF document ID (yyyy-mmm)",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Success"
+     }
+    }
+   }
+  },
+  "/cvrf({id})": {
+   "get": {
+    "tags": [
+     "Cvrf"
+    ],
+    "summary": "Get security update details in CVRF format",
+    "description": "Get detailed Microsoft security update, formatted according to the [Common Vulnerability Reporting\r\nFramework](http://www.icasi.org/cvrf/). MSRC investigates all reports of\r\nsecurity vulnerabilities affecting Microsoft products and services, and provides these updates as part of the\r\nongoing effort to help you manage security risks and help keep your systems protected.",
+    "parameters": [
+     {
+      "name": "id",
+      "in": "path",
+      "description": "CVRF document ID (yyyy-mmm)",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Success"
+     }
+    }
+   }
+  },
+  "/updates": {
+   "get": {
+    "tags": [
+     "Updates"
+    ],
+    "summary": "Get all security update summaries",
+    "description": "Get a list of all Microsoft security updates. Each includes a link to the update details, formatted according to\r\nthe [Common Vulnerability Reporting Framework](https://www.icasi.org/cvrf). This list can be manipulated using\r\n[OData URL filtering](https://docs.oasis-open.org/odata/odata/v4.0/errata03/os/complete/part2-url-conventions/odata-v4.0-errata03-os-part2-url-conventions-complete.html#_Toc453752356)\r\non current and initial release dates.",
+    "parameters": [
+     {
+      "name": "options",
+      "in": "query",
+      "description": "OData query options",
+      "schema": {
+       "$ref": "#/components/schemas/UpdateODataQueryOptions"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Success",
+      "content": {
+       "application/json;odata.metadata=minimal;odata.streaming=true": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/Update"
+         }
+        }
+       },
+       "application/json;odata.metadata=minimal;odata.streaming=false": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/Update"
+         }
+        }
+       },
+       "application/json;odata.metadata=minimal": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/Update"
+         }
+        }
+       },
+       "application/json;odata.metadata=full;odata.streaming=true": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/Update"
+         }
+        }
+       },
+       "application/json;odata.metadata=full;odata.streaming=false": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/Update"
+         }
+        }
+       },
+       "application/json;odata.metadata=full": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/Update"
+         }
+        }
+       },
+       "application/json;odata.metadata=none;odata.streaming=true": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/Update"
+         }
+        }
+       },
+       "application/json;odata.metadata=none;odata.streaming=false": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/Update"
+         }
+        }
+       },
+       "application/json;odata.metadata=none": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/Update"
+         }
+        }
+       },
+       "application/json;odata.streaming=true": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/Update"
+         }
+        }
+       },
+       "application/json;odata.streaming=false": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/Update"
+         }
+        }
+       },
+       "application/json": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/Update"
+         }
+        }
+       },
+       "application/xml": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/Update"
+         }
+        }
+       },
+       "text/plain": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/Update"
+         }
+        }
+       },
+       "application/octet-stream": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/Update"
+         }
+        }
+       },
+       "text/xml": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/Update"
+         }
+        }
+       },
+       "text/json": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/Update"
+         }
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/Updates": {
+   "get": {
+    "tags": [
+     "Updates"
+    ],
+    "summary": "Get all security update summaries",
+    "description": "Get a list of all Microsoft security updates. Each includes a link to the update details, formatted according to\r\nthe [Common Vulnerability Reporting Framework](https://www.icasi.org/cvrf). This list can be manipulated using\r\n[OData URL filtering](https://docs.oasis-open.org/odata/odata/v4.0/errata03/os/complete/part2-url-conventions/odata-v4.0-errata03-os-part2-url-conventions-complete.html#_Toc453752356)\r\non current and initial release dates.",
+    "operationId": "Updates",
+    "parameters": [
+     {
+      "name": "options",
+      "in": "query",
+      "description": "OData query options",
+      "schema": {
+       "$ref": "#/components/schemas/UpdateODataQueryOptions"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Success",
+      "content": {
+       "application/json;odata.metadata=minimal;odata.streaming=true": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/Update"
+         }
+        }
+       },
+       "application/json;odata.metadata=minimal;odata.streaming=false": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/Update"
+         }
+        }
+       },
+       "application/json;odata.metadata=minimal": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/Update"
+         }
+        }
+       },
+       "application/json;odata.metadata=full;odata.streaming=true": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/Update"
+         }
+        }
+       },
+       "application/json;odata.metadata=full;odata.streaming=false": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/Update"
+         }
+        }
+       },
+       "application/json;odata.metadata=full": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/Update"
+         }
+        }
+       },
+       "application/json;odata.metadata=none;odata.streaming=true": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/Update"
+         }
+        }
+       },
+       "application/json;odata.metadata=none;odata.streaming=false": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/Update"
+         }
+        }
+       },
+       "application/json;odata.metadata=none": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/Update"
+         }
+        }
+       },
+       "application/json;odata.streaming=true": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/Update"
+         }
+        }
+       },
+       "application/json;odata.streaming=false": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/Update"
+         }
+        }
+       },
+       "application/json": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/Update"
+         }
+        }
+       },
+       "application/xml": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/Update"
+         }
+        }
+       },
+       "text/plain": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/Update"
+         }
+        }
+       },
+       "application/octet-stream": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/Update"
+         }
+        }
+       },
+       "text/xml": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/Update"
+         }
+        }
+       },
+       "text/json": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/Update"
+         }
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/Updates/$count": {
+   "get": {
+    "tags": [
+     "Updates"
+    ],
+    "summary": "Get all security update summaries",
+    "description": "Get a list of all Microsoft security updates. Each includes a link to the update details, formatted according to\r\nthe [Common Vulnerability Reporting Framework](https://www.icasi.org/cvrf). This list can be manipulated using\r\n[OData URL filtering](https://docs.oasis-open.org/odata/odata/v4.0/errata03/os/complete/part2-url-conventions/odata-v4.0-errata03-os-part2-url-conventions-complete.html#_Toc453752356)\r\non current and initial release dates.",
+    "operationId": "Updates/$count",
+    "parameters": [
+     {
+      "name": "options",
+      "in": "query",
+      "description": "OData query options",
+      "schema": {
+       "$ref": "#/components/schemas/UpdateODataQueryOptions"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Success",
+      "content": {
+       "application/json;odata.metadata=minimal;odata.streaming=true": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/Update"
+         }
+        }
+       },
+       "application/json;odata.metadata=minimal;odata.streaming=false": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/Update"
+         }
+        }
+       },
+       "application/json;odata.metadata=minimal": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/Update"
+         }
+        }
+       },
+       "application/json;odata.metadata=full;odata.streaming=true": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/Update"
+         }
+        }
+       },
+       "application/json;odata.metadata=full;odata.streaming=false": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/Update"
+         }
+        }
+       },
+       "application/json;odata.metadata=full": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/Update"
+         }
+        }
+       },
+       "application/json;odata.metadata=none;odata.streaming=true": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/Update"
+         }
+        }
+       },
+       "application/json;odata.metadata=none;odata.streaming=false": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/Update"
+         }
+        }
+       },
+       "application/json;odata.metadata=none": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/Update"
+         }
+        }
+       },
+       "application/json;odata.streaming=true": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/Update"
+         }
+        }
+       },
+       "application/json;odata.streaming=false": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/Update"
+         }
+        }
+       },
+       "application/json": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/Update"
+         }
+        }
+       },
+       "application/xml": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/Update"
+         }
+        }
+       },
+       "text/plain": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/Update"
+         }
+        }
+       },
+       "application/octet-stream": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/Update"
+         }
+        }
+       },
+       "text/xml": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/Update"
+         }
+        }
+       },
+       "text/json": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/Update"
+         }
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/updates({key})": {
+   "get": {
+    "tags": [
+     "Updates"
+    ],
+    "summary": "Get security update summaries by key",
+    "description": "Get a list of Microsoft security updates by update ID, vulnerability ID ([CVE](https://cve.mitre.org/about)), or\r\nyear. Each includes a link to the update details, formatted according to the [Common Vulnerability Reporting\r\nFramework](https://www.icasi.org/cvrf). This list can be manipulated using\r\n[OData URL filtering](https://docs.oasis-open.org/odata/odata/v4.0/errata03/os/complete/part2-url-conventions/odata-v4.0-errata03-os-part2-url-conventions-complete.html#_Toc453752356)\r\non current and initial release dates.",
+    "parameters": [
+     {
+      "name": "key",
+      "in": "query",
+      "description": "update ID (yyyy-mmm), vulnerability ID (CVE number), or year (yyyy)",
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "name": "options",
+      "in": "query",
+      "description": "OData query options",
+      "schema": {
+       "$ref": "#/components/schemas/UpdateODataQueryOptions"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Success",
+      "content": {
+       "application/json;odata.metadata=minimal;odata.streaming=true": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/Update"
+         }
+        }
+       },
+       "application/json;odata.metadata=minimal;odata.streaming=false": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/Update"
+         }
+        }
+       },
+       "application/json;odata.metadata=minimal": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/Update"
+         }
+        }
+       },
+       "application/json;odata.metadata=full;odata.streaming=true": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/Update"
+         }
+        }
+       },
+       "application/json;odata.metadata=full;odata.streaming=false": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/Update"
+         }
+        }
+       },
+       "application/json;odata.metadata=full": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/Update"
+         }
+        }
+       },
+       "application/json;odata.metadata=none;odata.streaming=true": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/Update"
+         }
+        }
+       },
+       "application/json;odata.metadata=none;odata.streaming=false": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/Update"
+         }
+        }
+       },
+       "application/json;odata.metadata=none": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/Update"
+         }
+        }
+       },
+       "application/json;odata.streaming=true": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/Update"
+         }
+        }
+       },
+       "application/json;odata.streaming=false": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/Update"
+         }
+        }
+       },
+       "application/json": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/Update"
+         }
+        }
+       },
+       "application/xml": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/Update"
+         }
+        }
+       },
+       "text/plain": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/Update"
+         }
+        }
+       },
+       "application/octet-stream": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/Update"
+         }
+        }
+       },
+       "text/xml": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/Update"
+         }
+        }
+       },
+       "text/json": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/Update"
+         }
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/updates/{key}": {
+   "get": {
+    "tags": [
+     "Updates"
+    ],
+    "summary": "Get security update summaries by key",
+    "description": "Get a list of Microsoft security updates by update ID, vulnerability ID ([CVE](https://cve.mitre.org/about)), or\r\nyear. Each includes a link to the update details, formatted according to the [Common Vulnerability Reporting\r\nFramework](https://www.icasi.org/cvrf). This list can be manipulated using\r\n[OData URL filtering](https://docs.oasis-open.org/odata/odata/v4.0/errata03/os/complete/part2-url-conventions/odata-v4.0-errata03-os-part2-url-conventions-complete.html#_Toc453752356)\r\non current and initial release dates.",
+    "parameters": [
+     {
+      "name": "key",
+      "in": "query",
+      "description": "update ID (yyyy-mmm), vulnerability ID (CVE number), or year (yyyy)",
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "name": "options",
+      "in": "query",
+      "description": "OData query options",
+      "schema": {
+       "$ref": "#/components/schemas/UpdateODataQueryOptions"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Success",
+      "content": {
+       "application/json;odata.metadata=minimal;odata.streaming=true": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/Update"
+         }
+        }
+       },
+       "application/json;odata.metadata=minimal;odata.streaming=false": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/Update"
+         }
+        }
+       },
+       "application/json;odata.metadata=minimal": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/Update"
+         }
+        }
+       },
+       "application/json;odata.metadata=full;odata.streaming=true": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/Update"
+         }
+        }
+       },
+       "application/json;odata.metadata=full;odata.streaming=false": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/Update"
+         }
+        }
+       },
+       "application/json;odata.metadata=full": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/Update"
+         }
+        }
+       },
+       "application/json;odata.metadata=none;odata.streaming=true": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/Update"
+         }
+        }
+       },
+       "application/json;odata.metadata=none;odata.streaming=false": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/Update"
+         }
+        }
+       },
+       "application/json;odata.metadata=none": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/Update"
+         }
+        }
+       },
+       "application/json;odata.streaming=true": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/Update"
+         }
+        }
+       },
+       "application/json;odata.streaming=false": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/Update"
+         }
+        }
+       },
+       "application/json": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/Update"
+         }
+        }
+       },
+       "application/xml": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/Update"
+         }
+        }
+       },
+       "text/plain": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/Update"
+         }
+        }
+       },
+       "application/octet-stream": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/Update"
+         }
+        }
+       },
+       "text/xml": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/Update"
+         }
+        }
+       },
+       "text/json": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/Update"
+         }
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/Updates({key})": {
+   "get": {
+    "tags": [
+     "Updates"
+    ],
+    "summary": "Get security update summaries by key",
+    "description": "Get a list of Microsoft security updates by update ID, vulnerability ID ([CVE](https://cve.mitre.org/about)), or\r\nyear. Each includes a link to the update details, formatted according to the [Common Vulnerability Reporting\r\nFramework](https://www.icasi.org/cvrf). This list can be manipulated using\r\n[OData URL filtering](https://docs.oasis-open.org/odata/odata/v4.0/errata03/os/complete/part2-url-conventions/odata-v4.0-errata03-os-part2-url-conventions-complete.html#_Toc453752356)\r\non current and initial release dates.",
+    "operationId": "Updates({key})",
+    "parameters": [
+     {
+      "name": "key",
+      "in": "query",
+      "description": "update ID (yyyy-mmm), vulnerability ID (CVE number), or year (yyyy)",
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "name": "options",
+      "in": "query",
+      "description": "OData query options",
+      "schema": {
+       "$ref": "#/components/schemas/UpdateODataQueryOptions"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Success",
+      "content": {
+       "application/json;odata.metadata=minimal;odata.streaming=true": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/Update"
+         }
+        }
+       },
+       "application/json;odata.metadata=minimal;odata.streaming=false": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/Update"
+         }
+        }
+       },
+       "application/json;odata.metadata=minimal": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/Update"
+         }
+        }
+       },
+       "application/json;odata.metadata=full;odata.streaming=true": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/Update"
+         }
+        }
+       },
+       "application/json;odata.metadata=full;odata.streaming=false": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/Update"
+         }
+        }
+       },
+       "application/json;odata.metadata=full": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/Update"
+         }
+        }
+       },
+       "application/json;odata.metadata=none;odata.streaming=true": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/Update"
+         }
+        }
+       },
+       "application/json;odata.metadata=none;odata.streaming=false": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/Update"
+         }
+        }
+       },
+       "application/json;odata.metadata=none": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/Update"
+         }
+        }
+       },
+       "application/json;odata.streaming=true": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/Update"
+         }
+        }
+       },
+       "application/json;odata.streaming=false": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/Update"
+         }
+        }
+       },
+       "application/json": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/Update"
+         }
+        }
+       },
+       "application/xml": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/Update"
+         }
+        }
+       },
+       "text/plain": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/Update"
+         }
+        }
+       },
+       "application/octet-stream": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/Update"
+         }
+        }
+       },
+       "text/xml": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/Update"
+         }
+        }
+       },
+       "text/json": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/Update"
+         }
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/Updates/{key}": {
+   "get": {
+    "tags": [
+     "Updates"
+    ],
+    "summary": "Get security update summaries by key",
+    "description": "Get a list of Microsoft security updates by update ID, vulnerability ID ([CVE](https://cve.mitre.org/about)), or\r\nyear. Each includes a link to the update details, formatted according to the [Common Vulnerability Reporting\r\nFramework](https://www.icasi.org/cvrf). This list can be manipulated using\r\n[OData URL filtering](https://docs.oasis-open.org/odata/odata/v4.0/errata03/os/complete/part2-url-conventions/odata-v4.0-errata03-os-part2-url-conventions-complete.html#_Toc453752356)\r\non current and initial release dates.",
+    "operationId": "Updates/{key}",
+    "parameters": [
+     {
+      "name": "key",
+      "in": "query",
+      "description": "update ID (yyyy-mmm), vulnerability ID (CVE number), or year (yyyy)",
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "name": "options",
+      "in": "query",
+      "description": "OData query options",
+      "schema": {
+       "$ref": "#/components/schemas/UpdateODataQueryOptions"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Success",
+      "content": {
+       "application/json;odata.metadata=minimal;odata.streaming=true": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/Update"
+         }
+        }
+       },
+       "application/json;odata.metadata=minimal;odata.streaming=false": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/Update"
+         }
+        }
+       },
+       "application/json;odata.metadata=minimal": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/Update"
+         }
+        }
+       },
+       "application/json;odata.metadata=full;odata.streaming=true": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/Update"
+         }
+        }
+       },
+       "application/json;odata.metadata=full;odata.streaming=false": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/Update"
+         }
+        }
+       },
+       "application/json;odata.metadata=full": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/Update"
+         }
+        }
+       },
+       "application/json;odata.metadata=none;odata.streaming=true": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/Update"
+         }
+        }
+       },
+       "application/json;odata.metadata=none;odata.streaming=false": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/Update"
+         }
+        }
+       },
+       "application/json;odata.metadata=none": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/Update"
+         }
+        }
+       },
+       "application/json;odata.streaming=true": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/Update"
+         }
+        }
+       },
+       "application/json;odata.streaming=false": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/Update"
+         }
+        }
+       },
+       "application/json": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/Update"
+         }
+        }
+       },
+       "application/xml": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/Update"
+         }
+        }
+       },
+       "text/plain": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/Update"
+         }
+        }
+       },
+       "application/octet-stream": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/Update"
+         }
+        }
+       },
+       "text/xml": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/Update"
+         }
+        }
+       },
+       "text/json": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/Update"
+         }
+        }
+       }
+      }
+     }
+    }
+   }
+  }
+ },
+ "components": {
+  "schemas": {
+   "Update": {
+    "required": [
+     "alias",
+     "currentReleaseDate",
+     "cvrfUrl",
+     "documentTitle",
+     "id",
+     "initialReleaseDate"
+    ],
+    "type": "object",
+    "properties": {
+     "id": {
+      "minLength": 1,
+      "type": "string"
+     },
+     "alias": {
+      "minLength": 1,
+      "type": "string"
+     },
+     "documentTitle": {
+      "minLength": 1,
+      "type": "string"
+     },
+     "severity": {
+      "type": "string",
+      "nullable": true
+     },
+     "initialReleaseDate": {
+      "type": "string",
+      "format": "date-time"
+     },
+     "currentReleaseDate": {
+      "type": "string",
+      "format": "date-time"
+     },
+     "cvrfUrl": {
+      "minLength": 1,
+      "type": "string"
+     }
+    },
+    "additionalProperties": false
+   }
+  }
+ }
+}

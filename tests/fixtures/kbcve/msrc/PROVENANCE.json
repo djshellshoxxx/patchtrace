@@ -1,0 +1,88 @@
+{
+ "contract": "kbcve-msrc-fixture-provenance/1",
+ "collected_by": "researcher RK1 (Claude Sonnet 5.5), docs/research/kbcve/msrc-sources.md",
+ "scope": "MIT-licensed files of microsoft/MSRC-Microsoft-Security-Updates-API only. NO MSRC data documents (CVRF, CSAF, SUG responses) are included: api.msrc.microsoft.com and msrc.microsoft.com were blocked by the egress proxy (403 on CONNECT) and the Microsoft website terms do not grant a redistribution licence for copied documents.",
+ "entries": [
+  {
+   "file": "LICENSE.msrc-api-repo.txt",
+   "source_url": "https://raw.githubusercontent.com/microsoft/MSRC-Microsoft-Security-Updates-API/main/LICENSE",
+   "retrieved_at": "2026-10-14T10:28:00Z",
+   "bytes": 1183,
+   "upstream_sha256": "dea9265341829002e2c23a7372393eb2ed6e26085fb623f38a4ba0af833f30a6",
+   "committed_sha256": "dea9265341829002e2c23a7372393eb2ed6e26085fb623f38a4ba0af833f30a6",
+   "transformation": "none (byte-exact copy; fixture dir sets -text so git does not change line endings)",
+   "licence": "MIT, Copyright (c) Microsoft Corporation (see LICENSE.msrc-api-repo.txt)"
+  },
+  {
+   "file": "Get-MsrcCvrfAffectedSoftware.ps1",
+   "source_url": "https://raw.githubusercontent.com/microsoft/MSRC-Microsoft-Security-Updates-API/main/src/MsrcSecurityUpdates/Public/Get-MsrcCvrfAffectedSoftware.ps1",
+   "retrieved_at": "2026-10-14T10:28:54Z",
+   "bytes": 4708,
+   "upstream_sha256": "11d3320000ce0e71d014bb4b111ada369d60c36bc4519a484919afdf64d3f84d",
+   "committed_sha256": "11d3320000ce0e71d014bb4b111ada369d60c36bc4519a484919afdf64d3f84d",
+   "transformation": "none (byte-exact copy; fixture dir sets -text so git does not change line endings)",
+   "licence": "MIT, Copyright (c) Microsoft Corporation (see LICENSE.msrc-api-repo.txt)"
+  },
+  {
+   "file": "Get-MsrcSecurityUpdate.ps1",
+   "source_url": "https://raw.githubusercontent.com/microsoft/MSRC-Microsoft-Security-Updates-API/main/src/MsrcSecurityUpdates/Public/Get-MsrcSecurityUpdate.ps1",
+   "retrieved_at": "2026-10-14T10:28:54Z",
+   "bytes": 5596,
+   "upstream_sha256": "ae7bbe26cdd382c0bc5cb5c95e20af4cc1c372c544bdb5a9596d8e8ec0d4f76e",
+   "committed_sha256": "ae7bbe26cdd382c0bc5cb5c95e20af4cc1c372c544bdb5a9596d8e8ec0d4f76e",
+   "transformation": "none (byte-exact copy; fixture dir sets -text so git does not change line endings)",
+   "licence": "MIT, Copyright (c) Microsoft Corporation (see LICENSE.msrc-api-repo.txt)"
+  },
+  {
+   "file": "Get-MsrcCvrfDocument.ps1",
+   "source_url": "https://raw.githubusercontent.com/microsoft/MSRC-Microsoft-Security-Updates-API/main/src/MsrcSecurityUpdates/Public/Get-MsrcCvrfDocument.ps1",
+   "retrieved_at": "2026-10-14T10:28:53Z",
+   "bytes": 2654,
+   "upstream_sha256": "976f3209e6254e78ab7353ffac273903a1bc0e42ba20158fae2fbdb45bcca435",
+   "committed_sha256": "976f3209e6254e78ab7353ffac273903a1bc0e42ba20158fae2fbdb45bcca435",
+   "transformation": "none (byte-exact copy; fixture dir sets -text so git does not change line endings)",
+   "licence": "MIT, Copyright (c) Microsoft Corporation (see LICENSE.msrc-api-repo.txt)"
+  },
+  {
+   "file": "Get-CVRFID.ps1",
+   "source_url": "https://raw.githubusercontent.com/microsoft/MSRC-Microsoft-Security-Updates-API/main/src/MsrcSecurityUpdates/Private/Get-CVRFID.ps1",
+   "retrieved_at": "2026-10-14T10:29:27Z",
+   "bytes": 1160,
+   "upstream_sha256": "0742a47297e7e746bc72f9e05ff4fe51abe343e49341093b1aa7c358a949cb53",
+   "committed_sha256": "0742a47297e7e746bc72f9e05ff4fe51abe343e49341093b1aa7c358a949cb53",
+   "transformation": "none (byte-exact copy; fixture dir sets -text so git does not change line endings)",
+   "licence": "MIT, Copyright (c) Microsoft Corporation (see LICENSE.msrc-api-repo.txt)"
+  },
+  {
+   "file": "Set-MSRCApiKey.ps1",
+   "source_url": "https://raw.githubusercontent.com/microsoft/MSRC-Microsoft-Security-Updates-API/main/src/MsrcSecurityUpdates/Public/Set-MSRCApiKey.ps1",
+   "retrieved_at": "2026-10-14T10:34:33Z",
+   "bytes": 1899,
+   "upstream_sha256": "712c122f42bd781cd3dd6ddeb9ed58fa86961a257e3005e48adc9ac908656623",
+   "committed_sha256": "712c122f42bd781cd3dd6ddeb9ed58fa86961a257e3005e48adc9ac908656623",
+   "transformation": "none (byte-exact copy; fixture dir sets -text so git does not change line endings)",
+   "licence": "MIT, Copyright (c) Microsoft Corporation (see LICENSE.msrc-api-repo.txt)"
+  },
+  {
+   "file": "MsrcSecurityUpdates.psd1",
+   "source_url": "https://raw.githubusercontent.com/microsoft/MSRC-Microsoft-Security-Updates-API/main/src/MsrcSecurityUpdates/MsrcSecurityUpdates.psd1",
+   "retrieved_at": "2026-10-14T10:28:25Z",
+   "bytes": 7338,
+   "upstream_sha256": "600aa08d47bf06675558fa2777ba5e1adc2dce8ba96f9d2d85e04f596a9c6d1d",
+   "committed_sha256": "600aa08d47bf06675558fa2777ba5e1adc2dce8ba96f9d2d85e04f596a9c6d1d",
+   "transformation": "none (byte-exact copy; fixture dir sets -text so git does not change line endings)",
+   "licence": "MIT, Copyright (c) Microsoft Corporation (see LICENSE.msrc-api-repo.txt)"
+  },
+  {
+   "file": "swagger-v3-excerpt.json",
+   "source_url": "https://raw.githubusercontent.com/microsoft/MSRC-Microsoft-Security-Updates-API/main/docs/swagger.json",
+   "retrieved_at": "2026-10-14T10:27:19Z",
+   "bytes": 33457,
+   "upstream_sha256": "1632aa08008963cead7902c0051fb2ac09ac67c75a27f973f3d7238755d3ef3f",
+   "upstream_bytes": 195539,
+   "committed_sha256": "5f6f48abc5e0dbacd28f5cf1eda2e32705de932e5c04414b6b15ae9ea2ac3ca5",
+   "transformation": "subset of the parsed upstream JSON (keys: openapi, info, paths, components.schemas.Update), re-serialized with indent=1, key order preserved; all other components.schemas (137 .NET/OData types) dropped; no value changed",
+   "licence": "MIT, Copyright (c) Microsoft Corporation (see LICENSE.msrc-api-repo.txt)"
+  }
+ ]
+}
