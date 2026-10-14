@@ -15,8 +15,9 @@ from pathlib import Path
 from ..enrichment.storage import EnrichmentStore, Guard
 from . import scheduler
 from .contracts import SecondaryMatchSet
+from .engine_env import engine_env
 from .reconcile import reconcile
-from .registry import REGISTRY, build_registry, safe_env
+from .registry import REGISTRY, build_registry
 from .runs import EngineId, EngineOutcome, EngineRun, argv_digest, as_v2, cache_key, new_run_id
 from .store import cache_snapshot, publish_engine_set, publish_run
 
@@ -56,7 +57,7 @@ def execute(service, store: EnrichmentStore, run, sides: dict, engines: Sequence
             cancel: threading.Event) -> RunReport:
     project = service.project
     registry = build_registry(rz_diff=rz_diff) if rz_diff != 'rz-diff' else REGISTRY
-    env = safe_env(os.environ)
+    env = engine_env(os.environ, 'rz-diff')  # the one shared allow-list; BinDiff builds its own from it
     if engines is None:
         engines = [e for e in DEFAULT_ENGINES if registry[e].probe(env, cancel).supported]
         if not engines:

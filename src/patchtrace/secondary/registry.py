@@ -15,13 +15,7 @@ from .contracts import Capability, SecondaryError, SecondaryMatchSet
 from .runs import EngineId
 
 DISPLAY_ORDER: tuple[EngineId, ...] = ('rz-diff', 'bindiff', 'ghidriff-baseline')
-ENV_ALLOWLIST = ('PATH', 'SYSTEMROOT', 'TEMP', 'TMP', 'HOME', 'USERPROFILE')
 BINDIFF_UNSUPPORTED = 'PT-SECONDARY-UNSUPPORTED: BinDiff execution not implemented (C4)'
-
-
-def safe_env(environ: Mapping[str, str]) -> dict[str, str]:
-    """Child environment allow-list: credentials and provider keys are never inherited."""
-    return {k: v for k, v in environ.items() if k.upper() in ENV_ALLOWLIST}
 
 
 @dataclass(frozen=True)
