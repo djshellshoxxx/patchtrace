@@ -213,7 +213,7 @@ patchtrace rules _rules-worker --request REQ.json        (hidden; request and re
 ```
 `propose` exits 4 when the pair is eligible but no candidate passes the gates; `test` exits 3 when any target is not scanned.
 
-GUI placement: page "Rules" in the shared Workbench dock (`ui_workbench.py`, registered through the GUI-track panel registry). Until that registry exists, `ui_rules.py` ships `RulesController` with the C6 seam (<= 8 lines in `ui.py`) and a dock `rules_dock` (`Ctrl+Shift+R`, hidden until a project is open) tabified with the evidence dock; migrating to the registry changes only the controller. Never a separate window.
+GUI placement: independent panel `rules` (GUI plan F5 registry), not a page of the shared Workbench dock. Until that registry exists, `ui_rules.py` ships `RulesController` with the C6 seam (<= 8 lines in `ui.py`) and a dock `rules.dock` (`Ctrl+Shift+R`, hidden until a project is open) tabified with the evidence dock; migrating to the registry changes only the controller. Never a separate window.
 ```
 +- Detection rules ---------------------------------------------------------[float][x]-+
 | Pair: ParseHeader 0x1400A1F00 > 0x1400A2010 (modified, accepted)  [Propose rules] [Cancel] |
@@ -238,7 +238,7 @@ Tabs and models:
 Keyboard and accessibility (Microsoft keyboard guidance: one tab stop per composite control, arrows inside, everything pointer-invokable also keyboard-invokable, visible focus; Qt ships UIA Grid/Table/TableItem providers, so the grid is a model-driven `QTableView` with no per-cell widgets [inferred from the provider list; confirm with NVDA/Narrator on Windows]):
 - Tab order: Propose, candidate list, feature table, checks, rule text, Copy, Accept, Reject, Defer, Open pair, tabs. Enter on a candidate = Open function pair; Ctrl+Enter = Accept dialog; Ctrl+C copies the stored rule text exactly; there is no Delete key action.
 - Every control sets `setAccessibleName` and `setAccessibleDescription` (via `apply_tooltip`): dock "Detection rules panel"; list "Proposed rules for the selected function pair"; features "Features of the selected rule, older and newer build"; checks "Rule checks"; text "Generated rule text, read-only"; accept "Accept the selected rule and give it a label"; grid "Rule test grid, builds by rules".
-- Grid cell `AccessibleTextRole` = "Build 3 of 8, KB5034123, rule PT_0123456789ab_older: No match, expected a match". The status label keeps an EMPTY accessible name so its text change is announced (C6 rule). Nothing is colour-only; the focus ring uses the theme text colour. Screen-reader and DPI behaviour stay a manual Windows gate.
+- Grid cell `AccessibleTextRole` = "Build 3 of 8, KB5034123, rule PT_0123456789ab_older: No match, expected a match". Status text is announced through `ctx.announce` (GUI plan F6), not by a name change on an empty accessible name (C6 rule). Nothing is colour-only; the focus ring uses the theme text colour. Screen-reader and DPI behaviour stay a manual Windows gate.
 - Tooltip ids (registry `rules.*`, unique What/Why/Effect, no angle brackets, Availability where relevant): `dock action pair propose cancel candidates features checks rule_text copy_text accept reject defer archive open_pair grid targets series extra clean run_test export include_names saved history stale_banner retry copy_error`; templates `rules.feature`, `rules.cell`, `rules.row` (values escaped via `clean_value`).
 
 States (exact text; each also drives a `Status` line):
@@ -259,7 +259,7 @@ Key copy:
 - "Not scanned" reasons (closed list): "file is larger than the limit", "file could not be read", "not a PE image", "file changed while reading", "run was cancelled". Check labels (gate ids `elig len wild uniq sep compile secret dist`): "Change reviewed as material", "Long enough", "Not mostly wildcards", "Appears in one place in its own build", "Does not appear in the other build", "Compiles with YARA-X", "No secret-looking strings", "Builds share one toolchain"; each shows its measured number, e.g. "Long enough: 20 literal bytes, longest run 15".
 - Accept dialog: "Accepting saves this rule version in the project. It does not publish or export anything." Required "Label"; optional CVE, KB, CWE, Note; button "Accept rule".
 - Export dialog: "This saves a .yar text file on this computer. PatchTrace does not upload it." Checklist (hard: separates the pair, compiles, no secret strings; informational: tested on builds, checked on clean files, unexpected matches, stale grid; informational failures need the box "Export with these warnings"). Option "Include function names (they may come from symbol files)", off. Warning: "The rule contains byte patterns copied from the analysed files. If those files are third-party software, check its licence before sharing the rule or committing it to a repository." For a Git path: "I understand and want to save it inside a Git working tree".
-- Teach hooks (`teach.rules.*`, each `meaning` + `next`, consumed by E-5): `candidate.separating`, `candidate.too_short`, `grid.unexpected_hit`, `grid.flip`, `grid.not_scanned`, `export.checklist`.
+- Teach hooks (`rules.*`, each `meaning` + `next`, consumed by E-5): `candidate.separating`, `candidate.too_short`, `grid.unexpected_hit`, `grid.flip`, `grid.not_scanned`, `export.checklist`.
 
 Qt (PySide6 6.12.0) pitfalls and test approach:
 - No widget or `QSettings` access in workers; no `terminate()`; settings reads wrapped in try/except; the menu action is the dock's `toggleViewAction`.
@@ -284,18 +284,18 @@ Qt (PySide6 6.12.0) pitfalls and test approach:
 | File and section | Change (integrator applies) |
 |---|---|
 | `src/patchtrace/enrichment/storage.py` `KINDS` | add `rule-candidate`, `rule-decision`, `rule-version`, `rule-test`, `rule-export` (not in `DERIVED_KINDS`) |
-| `src/patchtrace/cli.py` | `COMMANDS` += `rules`; `_command_name` set += `rules`; `HANDLERS` entry; `rules.cli.register` (<= 6 lines) |
+| `src/patchtrace/cli_commands/rules.py` | adapter file over `rules/cli.py` (<= 25 lines); no `cli.py`, `COMMANDS` or `HANDLERS` edit (GUI plan 8.12) |
 | `pyproject.toml` | `dependencies` += `yara-x==1.21.0`, `iced-x86==1.21.0` (exact pins, wheels only); CI `pip check`; bumps only in a dedicated PR that re-runs the Section 5 grid |
 | `tools/build_windows.py`, `tools/build_linux.py` | assert installed versions equal the pins; `REQUIRED_NOTICES` += `yara-x-1.21.0/LICENSE`, `iced-x86-1.21.0/LICENSE`; fail if `yara_x/yara_x.pyd` / `yara_x.abi3.so` is missing from the inventory; record both versions in `dependency-versions.json` |
 | `tools/pyinstaller_hooks/hook-patchtrace.rules.engine.py` (new) | `hiddenimports = ['yara_x', 'iced_x86', 'json', 'datetime', 'io']`; `datas = copy_metadata('yara-x') + copy_metadata('iced-x86')` (equivalent CLI flags verified with PyInstaller 6.22.3) |
 | `tools/frozen_smoke.py` | checks R1 (`rules probe`: versions equal pins, 15 modules) and R2 (worker scan of a built-in sample, exit 0, one JSON document) |
 | `third_party/notices/yara-x-1.21.0/`, `iced-x86-1.21.0/`, `docs/notices.md` | LICENSE, `MANIFEST.txt` with wheel SHA-256s, the wheel SBOM copy; rows for both; open item: per-crate licence texts |
-| `src/patchtrace/tooltips.py`, `tests/test_tooltips.py` | `rules.*` registry entries and templates; add `window.rules_dock` to the enumeration roots |
+| `src/patchtrace/tooltips.py`, `tests/test_tooltips.py` | `rules.*` registry entries and templates; add the `rules.dock` objectName to the enumeration roots |
 | `.gitattributes` | `tests/fixtures/rules/** text eol=lf`, `*.yar text eol=lf` |
 | `tools/calibration/tier_w/guard.py`, `tests/test_tier_w_guard.py` | fail when a tracked file contains the marker `patchtrace-rule-export/1` outside `tests/fixtures/rules/`, or a rule header with Microsoft vendor strings |
 | `docs/modules.md`, `tasks/todo.md`, `docs/qa.md` | append rows per slice and the live gates below |
 | `docs/specs/three-tool-evidence-adapters.md` (rejected list, YARA-X) and `docs/plans/csaf-patch-intelligence-implementation.md` line 62 | point to this plan: YARA-X is built as a derived-evidence consumer, not a new detection channel (their classification stands) |
-| `docs/specs/workbench/README.md`, `docs/plans/workbench-search-graph-floss-implementation.md` | add page "Rules" to the Workbench dock |
+| `docs/specs/workbench/README.md`, `docs/plans/workbench-search-graph-floss-implementation.md` | add independent panel `rules` (GUI plan F5), not a page of the Workbench dock |
 | `docs/specs/unified-engine/01-architecture.md` (S1 `ir/pe_tables.py`), `03-extraction.md` | reuse `pe_overview/tables.py` (R4); expose `FunctionMaskView(rva, size, extent_src, bytes, l1_mask)` from `ir/reader.py` so `adapters/mask_unified.py` can replace `mask_iced` |
 | `src/patchtrace/intelligence/contracts.py` `Anchor.kind` (FAB track) | add `rule`; optional later column in `nway/view_model.py` for release transitions |
 

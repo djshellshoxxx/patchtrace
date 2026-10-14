@@ -193,7 +193,7 @@ Compat-form folding (full-width, ligatures) applies to names only. Highlight spa
 - **Versioning**: additive only. New kinds/fields extend `search/1` readers; a changed segment schema or tokenizer changes the digest and the file is rebuilt (nothing migrates); `search-saved/1` rows are never rewritten; project contracts and `project.sqlite3` are untouched.
 
 ## 8. CLI and GUI
-**CLI** (`search/cli.py`, never imports Qt; hook in `cli.py`: `COMMANDS`, parser, `HANDLERS`; add `search` to `tools/frozen_smoke.py` `COMMANDS` so A1 covers `--help`):
+**CLI** (`search/cli.py`, never imports Qt; adapter `cli_commands/search.py` (<= 25 lines), no `cli.py` hook and no `tools/frozen_smoke.py` `COMMANDS` line, because the collect hook derives `names()` (GUI plan 8.12)):
 ```text
 patchtrace search PROJECT --query TEXT [--kind K]... [--side older|newer|both] [--scope indexed|changed] [--mode auto|words|exact|prefix|substring|similar]
                   [--sort relevance|change|name|address] [--limit N<=200] [--cursor C] [--no-group] [--no-expand] [--rebuild] [--no-index-build] [--cache-dir D] [--json]
@@ -205,9 +205,9 @@ patchtrace search PROJECT --anchors-from CVE-ID [--json]    # S10
 - Exit: 0 for `ok`, `too-broad`, `partial` with hits, or `stale` results served from an older index (status and a warning say so), and for `--probe` once it ran; 4 only for `no-results` with every requested group `indexed`; 2 for an invalid query or arguments, no FTS5, project locked (message: close the desktop) [F21]; 3 for runtime/store failure, no usable index under `--no-index-build`, or `partial` with zero hits (absence unproven); 5 cancelled.
 
 **Assumed panel interface** (the GUI-architecture worker owns the real one; `ui_search.py` imports only these):
-- `PanelHost.register(PanelSpec(id, title, area, shortcut, factory, needs_project, tooltip_prefix))`.
-- `ProjectPort` = today's `ui_evidence.WindowPort` (`service`, `project`, `key()`, `busy()`, `select_match(match_id)`) plus new `navigate(locator) -> NavResult(ok, reason)`.
-- `SettingsPort.get/set` (never raises); `ThreadRegistry.start(worker)`/`shutdown()` for unparented `QThread`s; `ShortcutPolicy.claim(sequence, owner)`; `apply_tooltip`.
+- `PANEL = PanelSpec(..., requires=('project',))` in `search/panel.py` (GUI plan F5 registry; replaces `PanelHost.register`).
+- `ProjectPort` = today's `ui_evidence.WindowPort` (`service`, `project`, `key()`, `busy()`, `select_match(match_id)`) plus `NavigationPort.navigate(AnchorRef) -> NavResult(ok, reason)` (replaces `ProjectPort.navigate(locator)`).
+- `SettingsPort.get/set` (never raises); `ctx.tasks.lane` replaces `ThreadRegistry.start(worker)`/`shutdown()`; `ShortcutPolicy.claim` is the manifest (`panel_manifest.py`); `apply_tooltip`.
 - If absent, S6/S7 ship `SearchController(window)` copying `EvidenceController` (dock, Analysis-menu action, `project_changed`/`shutdown` hooks); the registry shim later replaces only the controller. The `MainWindow` attribute is `global_search`, because `MainWindow.search` is the navigator `QLineEdit` (`ui.py:1613`).
 
 **Placement and widgets**
@@ -258,7 +258,7 @@ patchtrace search PROJECT --anchors-from CVE-ID [--json]    # S10
 
 **Tooltips and accessibility**
 - Registry ids (What/Why/Effect/Source/Availability, no `<` `>`): `search.dock`, `search.action`, `search.query`, `search.side`, `search.kinds`, `search.scope`, `search.mode`, `search.sort`, `search.save`, `search.saved`, `search.rebuild`, `search.coverage`, `search.table`, `search.detail`, `search.goto`, `search.other_side`, `search.copy`; templates `search.row`, `search.suggestion`, `search.coverage_row`.
-- Accessible names (short, localized [F25]): "Search query", "Search side", "Search kinds", "Search scope", "Search mode", "Search sort order", "Search results", "Selected result details"; `accessibleIdentifier` = tooltip id for UIA automation. Status label has an EMPTY accessible name so `setText` announces (C6 rule). `AccessibleTextRole` per row: "<kind> in <side>: <title>; <where>; <change>; <why>". 2 px focus ring; contrast test reused from `ui_evidence`.
+- Accessible names (short, localized [F25]): "Search query", "Search side", "Search kinds", "Search scope", "Search mode", "Search sort order", "Search results", "Selected result details"; `accessibleIdentifier` = tip id is rule R9 (GUI plan). Status text is announced through `ctx.announce` (GUI plan F6), not by `setText` on an empty accessible name (C6 rule). `AccessibleTextRole` per row: "<kind> in <side>: <title>; <where>; <change>; <why>". 2 px focus ring; contrast test reused from `ui_evidence`.
 - Windows exposure is UI Automation [F19]; Narrator/NVDA, 125/150/200% DPI and High Contrast are owner gates [unverified here; Microsoft Learn blocked].
 
 **Qt/PySide6 pitfalls**
@@ -280,7 +280,7 @@ Merge order: S0, S1, S2, S3, S4, then S5 and S6 in parallel, S7; S8, S9, S10 as 
 | S2 | Segment store: schema, staging build, publish, hardened open, GC, corruption handling | `search/segment.py`, `tests/test_search_segment.py` | S1 | sonnet (pattern exists in `bindiff.py`) | M ~600 | crash-point tests; authorizer allow-list test [F11]; immutable read-only open; replace-over-open-file on Windows CI | one file per project, rebuilt whole |
 | S3 | Sources v1 (`fn`, `raw`, `pe`, `ann`, `fnd`) and build orchestration (`build_request`, per-group digests, cancel, coverage) | `search/sources/{base,functions,raw,pe,notes}.py`, `search/build.py`, `tests/search_builders.py`, `tests/test_search_{sources,build}.py` | S2 | sonnet | L ~900 | determinism under permutation; incremental == from-scratch; exact coverage text | skip `raw` until a real Ghidriff golden exists |
 | S4 | Query engine, ranking, pair expansion, fuzzy, `SearchService` facade | `search/{service,rank,expand,fuzzy}.py`, `tests/search_synergy_builders.py`, `tests/test_search_{rank,expand,fuzzy,synergy}.py` | S3 | sonnet; opus review only if ordering is non-deterministic | L ~900 | synergy test green; 100k perf gates; RapidFuzz absent = `similar` reports unavailable, never zero | drop counterpart hints |
-| S5 | CLI (carries `--anchors-from`, importing `search.anchors` lazily; before S10 it exits 2 with `PT-SEARCH-CAPABILITY`) | `search/cli.py`, 6-line hook in `cli.py`, `tools/frozen_smoke.py` additions, `tests/test_search_cli.py` | S4 | haiku/sonnet (mechanical, exit-code table) | S ~300 | exit codes 0/2/3/4/5; one JSON document; frozen `--probe` | none |
+| S5 | CLI (carries `--anchors-from`, importing `search.anchors` lazily; before S10 it exits 2 with `PT-SEARCH-CAPABILITY`) | `search/cli.py`, adapter `cli_commands/search.py`, `tests/test_search_cli.py` | S4 | haiku/sonnet (mechanical, exit-code table) | S ~300 | exit codes 0/2/3/4/5; one JSON document; frozen `--probe` | none |
 | S6 | View model and Qt panel | `search/view_model.py`, `ui_search.py`, `tests/test_search_{view_model,ui,perf}.py`, `search.*` block appended to `tooltips.py` (integration owner serialises) | S4 | sonnet | L ~1,200 | offscreen states, keyboard, Esc, completer, 20x repeat | table without completer |
 | S7 | MainWindow seam, `reveal_lines` extracted from `jump_signal`, saved searches, `KINDS` line, tooltip audit roots | `ui.py` (<=25 lines), `search/saved.py`, `enrichment/storage.py` (1 line), `tests/test_tooltips.py`, `tests/test_search_saved.py` | S6 | sonnet (single owner of `ui.py` in the wave) | M ~400 | seam test (line growth); old-reader test for the new kind | recent queries only |
 | S8 | Tool, advisory, CVE sources | `search/sources/{tools,advisory}.py`, `tests/test_search_sources_tools.py` | S3 plus WB3/CAP/DIE stores, KB | sonnet | M ~500 | presence/delta semantics; secret redaction | advisory only |
@@ -296,7 +296,7 @@ Merge order: S0, S1, S2, S3, S4, then S5 and S6 in parallel, S7; S8, S9, S10 as 
 | `docs/modules.md` | new rows | `search.*` modules, `ui_search.py` |
 | `pyproject.toml`, `third_party/notices/rapidfuzz-3.14.6/{LICENSE,MANIFEST.txt}`, `docs/notices.md`, `tools/build_windows.py`, `tools/build_linux.py` | deps, notices, inventory | `rapidfuzz==3.14.6` in extra `search` and in `dev`; wheel SHA-256s in MANIFEST; builds list RapidFuzz in versions, require its notices, assert `rapidfuzz/fuzz_cpp*` in the inventory |
 | `.github/workflows/qa-windows.yml` | after `pip check` | `python tools/check_search_runtime.py` (FTS5, trigram, RapidFuzz backend), as `check_protobuf_runtime.py` does |
-| `src/patchtrace/cli.py`, `tools/frozen_smoke.py` | `COMMANDS`, parser, `HANDLERS`, A1 list | add `search` (S5); `tests/test_acceptance_smoke.py:56` equates the parser choices with `smoke.COMMANDS`, so both change together and merge in order with the other tracks' commands |
+| `src/patchtrace/cli_commands/search.py` | adapter file only (GUI plan 8.12); no `cli.py`, `COMMANDS` or frozen-smoke edit | add `search` (S5); `names()` feeds the A1 list and the parser choices, so no shared list is edited |
 | `src/patchtrace/enrichment/storage.py` | `KINDS` | add `'search-saved'` (one line; not in `DERIVED_KINDS`) |
 | `src/patchtrace/ui.py` | `__init__`, `refresh`, `update_controls`, `closeEvent`; `jump_signal` | `self.global_search` seam; extract `reveal_lines`; optional Esc `ShortcutOverride` guard for the existing navigator `self.search` |
 | `src/patchtrace/tooltips.py`, `tests/test_tooltips.py` | registry, `roots` | `search.*` block; add the dock to `test_every_registry_id_is_applied_somewhere` |

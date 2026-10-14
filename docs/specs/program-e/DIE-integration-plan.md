@@ -166,7 +166,7 @@ Package `src/patchtrace/buildenv/`: strict frozen Pydantic v2 (`extra='forbid'`)
 - `delta.quality_flags` uses the same `PACKED_TYPES` and `PROTECTED_TYPES` sets; installer and sfx become their own flag.
 
 ## 8. CLI and GUI
-**CLI** (`buildenv/cli.py`; hook of at most 6 lines in `cli.py`; envelope `enrichment-cli/1`; no Qt import):
+**CLI** (`buildenv/cli.py`; adapter `cli_commands/build_env.py` (<= 25 lines), no `cli.py` hook; envelope `enrichment-cli/1`; no Qt import):
 ```
 patchtrace build-env show     PROJECT [--side older|newer|both] [--technical] [--json]
 patchtrace build-env delta    PROJECT [--json]
@@ -177,9 +177,9 @@ patchtrace build-env timeline SERIES_DIR [--json]
 - Default output shows basenames only, no stderr excerpts or paths; `--technical` adds raw Rich entries, database digest and argv version.
 
 **GUI placement (one main window)**
-1. `BuildEnvCard(QGroupBox)` as the first block of the existing "Preliminary file comparison" dialog, below the explanation label (it opens on Run comparison). It is a plain widget, so the GUI track can move it into a dock tab unchanged.
-2. `PreflightBanner(QFrame)` notice bar at the top of the central workspace (seam in `_build_workspace`; use the GUI track's `notice` slot if it exists, local fallback otherwise) and the same class at the top of the dialog.
-3. Unified view: chip "Build differs" after the Change text, a "Build environment" section in the detail tab, filter checkbox "Group build-tagged rows last" (QSettings `buildenv/group_last`, default off). Primary navigator (Rank changes order): one notice line above the list, no per-item tag in v1 because the attention detectors have no measured build-cause rule.
+1. `BuildEnvCard(QGroupBox)` as the first block of the existing "Preliminary file comparison" dialog, below the explanation label (it opens on Run comparison). It is a plain widget: its `PANEL` keeps `area='none'` until the card moves into a dock (GUI plan F5), and then the GUI track moves it unchanged.
+2. `PreflightBanner(QFrame)` notice bar at the top of the central workspace (posts through `ctx.shell.notice`, GUI plan F5) and the same class at the top of the dialog.
+3. Unified view: chip "Build differs" after the Change text, a "Build environment" section in the detail tab, filter checkbox "Group build-tagged rows last" (QSettings `build_env/group_last`, default off). Primary navigator (Rank changes order): one notice line above the list, no per-item tag in v1 because the attention detectors have no measured build-cause rule.
 4. `BuildTimelineStrip(QTableView)` above the chain table of the existing Series window (no new window).
 ```
 +- Build environment ------------------------- [Read with Detect It Easy] [Set up...] -+
@@ -199,9 +199,9 @@ patchtrace build-env timeline SERIES_DIR [--json]
 
 **Keyboard and accessibility**
 - Tab order: card, table, buttons. Arrow keys in the table; Enter on a row focuses its line in Technical details; Ctrl+C copies the selected row; no new global shortcut.
-- Accessible names: "Build environment", "Build environment facts for the older and newer file", "Build environment notice". The status label keeps an EMPTY accessible name so `setText` announces. Glyph plus word, never colour only (`[!]` caution, `[i]` notice; ASCII only).
+- Accessible names: "Build environment", "Build environment facts for the older and newer file", "Build environment notice". Status text is announced through `ctx.announce` (GUI plan F6), not by `setText` on an empty accessible name. Glyph plus word, never colour only (`[!]` caution, `[i]` notice; ASCII only).
 - Pure contrast test with `ui_evidence.contrast_ratio` (text >= 4.5:1; border and 2 px focus ring >= 3:1); row height from font metrics.
-- Basis: Qt `QAccessible::Event::NameChanged` and `Alert`; WCAG 2.2 1.4.1, 1.4.3, 1.4.11, 4.1.3. Real screen-reader output is a manual gate (G-L4).
+- Basis: Qt `QAccessible::Event::NameChanged` (reaches UIA only when focused) and `Alert` (a sound only, GUI plan F7), so announcements go through `ctx.announce`; WCAG 2.2 1.4.1, 1.4.3, 1.4.11, 4.1.3. Real screen-reader output is a manual gate (G-L4).
 
 **States (exact copy; untrusted values pass `sanitize_text`)**
 | id | trigger | text |
@@ -237,14 +237,14 @@ Row chip detail: "This row's change classes ({classes}) can appear without a sou
 **Teach hooks** (`teach_id`, consumed by the E-5 guide; text in `buildenv/copy.py`)
 | id | meaning | next steps |
 |---|---|---|
-| `build.toolchain_differs` | "Code can differ because the build tools differ." | "Read rows marked Material first." "Open the Build environment card to see what changed." "If a pair built with the same toolchain exists, compare that pair too." |
-| `build.packed` | "A packed file stores its code in compressed or encrypted form." | "Treat function results as incomplete." "Look for unpacked builds of the same file; PatchTrace never runs or unpacks it." |
-| `build.managed` | "A .NET assembly holds intermediate language, not native code." | "Use a .NET-aware tool for the managed part." "Native results cover only the native part." |
-| `build.installer` | "An installer carries the program in a payload." | "Compare the installed files instead of the installer." |
-| `build.unknown` | "No toolchain information could be read for one side." | "Set up Detect It Easy for names." "Unknown is not a difference." |
-| `build.tool_missing` | "Names of compilers and packers come from Detect It Easy." | "Open Setup and choose the console program." |
+| `build_env.toolchain_differs` | "Code can differ because the build tools differ." | "Read rows marked Material first." "Open the Build environment card to see what changed." "If a pair built with the same toolchain exists, compare that pair too." |
+| `build_env.packed` | "A packed file stores its code in compressed or encrypted form." | "Treat function results as incomplete." "Look for unpacked builds of the same file; PatchTrace never runs or unpacks it." |
+| `build_env.managed` | "A .NET assembly holds intermediate language, not native code." | "Use a .NET-aware tool for the managed part." "Native results cover only the native part." |
+| `build_env.installer` | "An installer carries the program in a payload." | "Compare the installed files instead of the installer." |
+| `build_env.unknown` | "No toolchain information could be read for one side." | "Set up Detect It Easy for names." "Unknown is not a difference." |
+| `build_env.tool_missing` | "Names of compilers and packers come from Detect It Easy." | "Open Setup and choose the console program." |
 
-**Tooltips** (registry ids, each with What, Why, Effect, Source, Availability, no angle brackets; entries in `tooltips_buildenv.py`, merged by one line in `tooltips.py`): `build_env.card`, `.status`, `.table`, `.banner`, `.banner_details`, `.banner_dismiss`, `.setup`, `.read_die`, `.weak_hints`, `.copy`, `.technical`, `.reread`, `.group_last`, `.timeline`; templates `build_env.row`, `build_env.tag`, `build_env.timeline_cell`; `unified.build_section`. A prefix-completeness test mirrors `test_evidence_ids_prefix_complete`.
+**Tooltips** (registry ids, each with What, Why, Effect, Source, Availability, no angle brackets; entries in `PANEL.tips` (GUI plan F5; no `tooltips.py` line): `build_env.card`, `.status`, `.table`, `.banner`, `.banner_details`, `.banner_dismiss`, `.setup`, `.read_die`, `.weak_hints`, `.copy`, `.technical`, `.reread`, `.group_last`, `.timeline`; templates `build_env.row`, `build_env.tag`, `build_env.timeline_cell`; `unified.build_section`. A prefix-completeness test mirrors `test_evidence_ids_prefix_complete`.
 - `build_env.card`. What: "Compiler, linker, runtime and packaging signs read from the older and newer file." Why: "A different toolchain can change code without any source edit, and a packed file can make function results unreliable." Effect: "Read-only. Nothing is run from the files and nothing is sent anywhere." Source: "PatchTrace header checks on the hash-checked project copies and, if set up, stored Detect It Easy 3.21 results." Availability: "Needs an open project; names of compilers and packers need Detect It Easy."
 - `build_env.tag` (template). What: "Marks a change row whose change classes ({classes}) can appear without a source edit when the toolchain differs." Effect: "Read-only. The row stays listed and its verdict is unchanged." Availability: "Shown only when the toolchain is reported as different on both sides."
 - `build_env.setup`. Effect: "Probe runs only the program's version and help text, never your files. No download happens."
@@ -265,10 +265,10 @@ Row chip detail: "This row's change classes ({classes}) can appear without a sou
 | D1 | diec adapter hardening (section 7 list) | `intelligence/tools/diec.py`; the `EnvCategory`/`EnvironmentEvidence` hunk of `common.py`; the `process.execute` hunk; `tests/test_diec_adapter_hardening.py`; `tests/fixtures/intel_tools/diec/{nested-overlay,empty-result,vocabulary}.json` (hand-authored from the upstream writer, labelled "not captured") | none (before any stored row) | Sonnet (strict parsing, moderate) | M | the red tests of section 6 turn green; existing `test_intel_tools_*` green; ruff; full suite twice | flatten and category fixes only |
 | D2 | PE build facts: Rich (stdlib, bounded), header versions, debug entry types, LoadConfig fields, CLR header, runtime families | new `pe_overview/{rich_header,build_facts,clr_header,debug_entries}.py`; `tests/pe_build_fixtures.py`; `tests/test_pe_build_facts.py` (pefile 2024.8.26 pinned in the dev extra as oracle; optional runtime cross-check) | none | Sonnet (binary parsing) | M | oracle equality on generated headers; hypothesis never-raise; limit tests; zero edits to existing `pe_overview` files | ship Rich and header fields only |
 | D3 | `buildenv` core: contracts, fingerprint, delta, pre-flight, `noise_map`, anchors, copy, view model, schemas | `buildenv/{contracts,fingerprint,delta,preflight,noise_map,anchors,adapters,copy,view_model}.py`; `tools/generate_buildenv_schemas.py`; `docs/schemas/build-environment/*`; `tests/test_buildenv_*.py`; `tests/fixtures/buildenv/*` | D1 and D2 types (stubs allowed) | Sonnet (pure, spec-driven) | L | synergy test, delta and pre-flight tests, schema drift, banned-word sweep, `quality_flags` parity | defer anchors and teach hooks |
-| D4 | store, CLI, report, inspection seam | `buildenv/{store,cli,report}.py`; seams: `cli.py`, `KINDS`, `reports.py` extras, `artifact_inspection.py` side inspector | D3 | Sonnet | M | CLI exit-code tests; store round trip with `test_old_reader_ignores_build_env_kind`; report injection fixtures | CLI and JSON only |
-| D5 | GUI card, notice bar, controller, tooltips | `ui_build_env.py`; `tooltips_buildenv.py`; `tests/test_ui_build_env.py`; `ui.py` seam <= 12 lines | D3 | Sonnet | L | states B0-B9, tooltip audit, contrast, thread tests, 20x repeat without abort | card only, no workspace bar |
+| D4 | store, CLI, report, inspection seam | `buildenv/{store,cli,report}.py`; seams: `cli_commands/build_env.py` (adapter, no `cli.py` edit), `KINDS`, `reports.py` extras, `artifact_inspection.py` side inspector | D3 | Sonnet | M | CLI exit-code tests; store round trip with `test_old_reader_ignores_build_env_kind`; report injection fixtures | CLI and JSON only |
+| D5 | GUI card, notice bar, controller, tooltips | `ui_build_env.py`; `PANEL.tips` (replaces `tooltips_buildenv.py`); `tests/test_ui_build_env.py`; no `ui.py` seam (GUI plan F5) | D3 | Sonnet | L | states B0-B9, tooltip audit, contrast, thread tests, 20x repeat without abort | card only, no workspace bar |
 | D6 | overlay (pure now) and wiring later | `buildenv/overlay.py`; `tests/test_buildenv_overlay.py`; wiring in `unified/read_model.py` and `ui_unified.py` by the UE S4 owner | D3 (pure part); S4 (wiring) | Sonnet | M | overlay tests including 100k rows; S4 adds `build_tag` and the partition | navigator notice only |
-| D7 | series timeline | `buildenv/timeline.py`; `ui_build_timeline.py`; seams in `nway/pair_access.py`, `nway/view_model.py`, `ui_series.py` | D4 | Haiku to Sonnet (glue) | M | pure timeline tests; offscreen strip test | CLI and report only |
+| D7 | series timeline | `buildenv/timeline.py`; `ui_build_timeline.py`; seams in `nway/pair_access.py`, `nway/view_model.py`, `ui_series.py` (recorded exception until M3; `area='none'` until the strip moves into the `series` dock) | D4 | Haiku to Sonnet (glue) | M | pure timeline tests; offscreen strip test | CLI and report only |
 | D8 | live acceptance | `tests/test_live_buildenv.py`; one job in the T live workflow | T runner and provisioning | Sonnet | S | passed/failed/blocked status JSON; goldens captured | stays BLOCKED |
 | D9 | value gate G-DIE-1 | `tools/buildenv_value_gate.py` over Tier R M4 pairs | D6, UE S2/S3, known-answer factory | Sonnet (counts only) | M | report with tag coverage and leakage | publish raw counts only |
 | D10 | stretch: explain F10 edit groups by compiler-support callees (`__CheckForDebuggerJustMyCode` documented; GS and CFG helper names measured first) | `buildenv/support_callees.py` | D6, UE S3/S4 | Sonnet | S | names measured on Tier R builds | not built |
@@ -287,7 +287,7 @@ Order: D1 and D2 in parallel, then D3, then D4/D5/D6 in parallel, then D7, then 
 | `docs/specs/nway.md` / SPEC-09b s5 | timeline strip and optional `PairSnapshot.build_env` |
 | `enrichment/storage.py` `KINDS`; `docs/specs/enrichment.md` s10 | add `'build-env'` (one line; merge-prone, coordinate with KB, KEV, YRX) |
 | `artifact_inspection.py`, `ui_inspection.py` | one shared additive side-inspector seam (`SideInspection.extras`) used by DIE and WBQ; the first builder to land adds it, the other rebases |
-| `cli.py`, `reports.py`, `ui.py`, `tooltips.py`, `tools/frozen_smoke.py` | hook <= 6 lines; `extras` parameter; seam <= 12 lines; one merge line; import of the `patchtrace.buildenv` modules |
+| `cli_commands/build_env.py`, `reports.py`, `ui.py`, `tooltips.py`, `tools/frozen_smoke.py` | adapter file <= 25 lines (no `cli.py` hook); `extras` parameter; seam <= 12 lines; one merge line; import of the `patchtrace.buildenv` modules |
 | `docs/specs/known-answer-corpus.md` s9, s10 | the M4 evaluation reports build-environment tag coverage and leakage (G-DIE-1) |
 | `.gitattributes`, `docs/modules.md`, `docs/notices.md`, `docs/reuse-matrix.md`, `tasks/todo.md`, `docs/qa.md` | `tests/fixtures/buildenv/** text eol=lf`; module rows; DiE MIT, pefile MIT (test-only), LLVM constant names (Apache-2.0 WITH LLVM-exception, facts only); ledger and QA rows |
 

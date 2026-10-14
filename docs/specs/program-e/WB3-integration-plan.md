@@ -170,7 +170,7 @@ Consent text v2 (`EMULATION_CONSENT`, new sha recorded in options): keeps the ex
 | artifact changed or hash differs | failed `PT-TOOL-ARTIFACT` |
 
 ## 8. CLI and GUI
-CLI (`strings/cli.py`; hook in `cli.py`; envelope `enrichment-cli/1`; exits 0 results, 2 invalid input or nothing readable, 3 rejected or partial (basis, stale, truncated, source failed), 4 complete without results, 5 cancelled; offline; FLOSS is run only by `intel-tools run --engines floss`):
+CLI (`strings/cli.py`; adapter `cli_commands/strings.py`, no `cli.py` hook; envelope `enrichment-cli/1`; exits 0 results, 2 invalid input or nothing readable, 3 rejected or partial (basis, stale, truncated, source failed), 4 complete without results, 5 cancelled; offline; FLOSS is run only by `intel-tools run --engines floss`):
 ```
 patchtrace strings list    PROJECT [--side older|newer|both] [--change only-newer|only-older|edited|changed|all] [--type T..] [--function ID] [--cue K..] [--limit N] [--show-secrets] --json
 patchtrace strings delta   PROJECT [--source auto|floss|builtin] --json         # strings-delta/1; auto = newest complete part per side
@@ -229,10 +229,10 @@ Prerequisites owned by a tools-core builder, not WB3: TC-R runner+store, TC-C `i
 | A2 | `specs/workbench/03-floss-strings.md` s1-s9 | adapter landed; replace `StringObservation/StringRunResult` with the `strings-*` contracts; package `patchtrace.strings`; drop `--string-type` and Import JSON; reconcile budgets (T-track 600/3600 s, 10..86400 s); no hash validation for 3.1.1; add the xref and literal tiers |
 | A3 | `intelligence/tools/{floss,process,common}.py` | the S1b items; `execute(..., memory_limit_bytes)` |
 | A4 | `intelligence/tools/delta.py` `_strings` | no added/removed from a truncated side; encodings compared (or delegate floss to `strings.delta`) |
-| A5 | `ui.py`, `ui_evidence.py` | 8-line `StringsController` seam; `MainWindow.show_raw_offset(side, offset)` (refactor of `raw_goto_offset`); a line-reveal method; navigator context action "Strings in this function" |
+| A5 | F5 seam (`show_raw_offset` and the line reveal are in the F5 seam; this track does not edit `ui.py`) | 8-line `StringsController` seam; `MainWindow.show_raw_offset(side, offset)` (refactor of `raw_goto_offset`); a line-reveal method; navigator context action "Strings in this function" |
 | A6 | `enrichment/storage.py` | none: reuse `tool-run`, `tool-evidence`; confirm `KINDS` unchanged |
-| A7 | `tooltips.py` | `register_entries(dict)` and one call per panel module |
-| A8 | `cli.py` | add `strings` to `COMMANDS` and dispatch |
+| A7 | `PANEL.tips` (`strings/panel.py`) | the entries are declared in `PANEL` (GUI plan F5); `register_entries` is retired |
+| A8 | `cli_commands/strings.py` | adapter file over `strings/cli.py` (<= 25 lines); stays with the track; no `cli.py` edit (GUI plan 8.12) |
 | A9 | `docs/modules.md`, `tasks/todo.md`, roadmap ledger | WB3 rows before S0 code (AGENTS.md) |
 | A10 | `.gitattributes` | `tests/fixtures/strings/** text eol=lf` |
 | A11 | `specs/unified-engine/02-data-model.md` s2, `03-extraction.md` s4 | `str.sha` = SHA-256 of the UTF-8 (surrogatepass) Ghidra string value, same as `StringEvidence.value_hash`; min-length alignment |
@@ -257,5 +257,5 @@ Blocked external acceptance, reported separately and never counted as done: pinn
 | Q10 JSON import | defer: 3.1.1 JSON carries no hash, so provenance would be asserted, not checked |
 | Q11 rule seeds | WB3 emits facts only; YRX owns rule text |
 | Q12 master/3.2 adapter | wait for a tagged release; HEAD-probe monthly |
-| Q13 shortcut and who applies A5/A7/A8 | `Ctrl+Shift+T`; the integration owner in one seam commit |
+| Q13 shortcut and who applies A5/A7/A8 | `Ctrl+Shift+T`; A5 is in the F5 seam, A7 is `PANEL.tips`, A8 stays with the track as its adapter file |
 | Q14 series lifelines | later slice S11 |

@@ -11,6 +11,8 @@ Owner instructions (binding): create two more cloud instances (B, C) and spread 
 | Orchestrator model | Sonnet | Sonnet | Sonnet |
 | Max concurrent workers | 23 (owner order 2026-10-14) | 23 (owner order 2026-10-14) | 12 |
 
+**Instance D (owner order 2026-10-14 ~21:50Z):** branch `claude/instance-d-gui`, up to 23 workers, orchestrator Sonnet; GUI framework F2-F9, Qt panels, feature audits and migration readiness (`program-e-execution-plan.md` section 6.4). Session `session_01Mr844cQDLwXi9iMUoGmBXk`.
+
 ## 2. Rules for every instance
 
 - **Branches and merging.** Push only to your own branch. Open PRs to `main` (draft, ready when green), merge your own PRs (squash, `expectedHeadSha`) as soon as every check is green; then reset your branch to `main` (`git fetch origin main && git checkout -B <branch> origin/main`, force-with-lease only when the remote branch holds merged history only). Before every PR: fetch `main`, merge it into your branch, resolve (append-only docs `docs/modules.md`, `tasks/todo.md`, `docs/qa.md`: keep both sides; `cli.py` `COMMANDS`: union), run the full gate. Docs-only PRs: put `[skip ci]` in the squash commit message so no build or prerelease is produced.

@@ -42,7 +42,7 @@ def _non_negative(value: str) -> int:
     return number
 
 
-def _parser() -> argparse.ArgumentParser:
+def _parser(argv=()) -> argparse.ArgumentParser:
     parser = _Parser(prog='patchtrace', description='PatchTrace headless enrichment commands. '
                      'Launch without arguments to open the desktop.')
     sub = parser.add_subparsers(dest='command', required=True, parser_class=_Parser)
@@ -166,6 +166,8 @@ def _parser() -> argparse.ArgumentParser:
     cli_unified.register(sub, common, HANDLERS)
     intel_tools_cli.register(sub, common)
     register_backend(sub, common)
+    from .cli_commands import register_all  # GUI plan 8.12: a new verb is a file there, not an edit here
+    register_all(sub, argv[0] if argv else None)
     return parser
 
 
@@ -832,7 +834,8 @@ HANDLERS['intelligence'] = intelligence_cli.dispatch
 
 
 def _command_name(args) -> str:
-    return f'{args.command} {args.action}' if args.command in {'acquire', 'series', 'secondary', 'intelligence', 'unified', 'intel-tools', 'backend'} else args.command
+    base = f'{args.command} {args.action}' if args.command in {'acquire', 'series', 'secondary', 'intelligence', 'unified', 'intel-tools', 'backend'} else args.command
+    return getattr(args, 'command_label', None) or base
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -843,8 +846,8 @@ def main(argv: list[str] | None = None) -> int:
     cancel = threading.Event()
     args = None
     try:
-        args = _parser().parse_args(argv)
-        return HANDLERS[args.command](args, cancel)
+        args = _parser(argv).parse_args(argv)
+        return (getattr(args, 'handler', None) or HANDLERS[args.command])(args, cancel)
     except CliError as exc:
         print(f'error: {exc}', file=sys.stderr)
         if args is not None and getattr(args, 'json', False):
