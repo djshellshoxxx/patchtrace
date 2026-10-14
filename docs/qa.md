@@ -94,3 +94,11 @@ Provider cancellation is cooperative around network reads; an active read can wa
 
 ## 2026-10-14 full code audit
 See `docs/plans/audit-20261014-and-next-phase.md` for findings, fixes, deferred items and the next-phase plan. Local Linux: 1004 passed, 6 skipped; Ruff clean. Windows pytest, freeze and native Ghidriff results are those of the PR's CI run; clean-profile interactive GUI acceptance remains unverified.
+
+## 2026-10-14 enrichment hardening H7 / H2 / H8 / H9 / H10
+Local Linux automated evidence only (see PR checks for CI): new tests `test_child_env.py`, `test_history_bound.py`, `test_raw_single_copy.py`, `test_cancel_latency.py`, `test_nvd_pacing.py`; `test_enrichment_intelligence.py` re-baselined deliberately (NVD retry sleeps now include 6 s keyless pacing top-ups; keyed 403 is retried and ends as recoverable `PT-ENRICH-NETWORK`).
+- H7: `backend.build_child_env` + `BackendConfig.restrict_env` / `env_passthrough` (Setup: checkbox and field). **Default OFF**: the Windows variable list is unvalidated by a native run, so the allowlist stays opt-in; `PATCHTRACE_CHILD_ENV=inherit` overrides. Open gate: native Windows `raw-cache-hit` job with `restrict_env=True` and a seeded `JAVA_TOOL_OPTIONS`/fake token probe; flip the default only after it is green. rz-diff CLI path still inherits (builder supports `for_tool='rizin'`, not wired).
+- H2: history keeps newest 100 rows / 512 MiB, never the current snapshot or the newest row of each revision; identical-hash re-saves add no row. Not done: pre-prune verified backup.
+- H8: backend output inside `runs/<id>/` is reused in place; staged import copies are deleted on `discard_import`. Not done: startup cleanup of duplicate files in legacy projects.
+- H9: `netutil.interruptible` (daemon thread, cap of 4 abandoned) on CVE and LLM provider connects/reads; cancel observed in about 0.1 s in fake-blocker tests. Not verified on native Windows sockets.
+- H10: NVD spaced 6 s keyless / 0.6 s keyed, 403 from NVD retried with backoff, overall deadline (`expected + 120 s`), CLI consent preview prints the expected duration. NVD's real enforcement is unverified live.
