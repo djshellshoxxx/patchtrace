@@ -422,7 +422,8 @@ class AcquisitionDialog(QDialog):
 
     def _event(self, event):
         message, value = event
-        self.log.appendPlainText(message)
+        if message is not None:  # byte-progress events carry only a fraction
+            self.log.appendPlainText(message)
         if value is not None:
             self.progress.setRange(0, 100)
             self.progress.setValue(int(value * 100))
@@ -638,7 +639,9 @@ class AcquisitionDialog(QDialog):
                 acquired = []
                 for index, planned in enumerate(plan.downloads):
                     emit((f'GET {planned.url}', index / 2))
-                    acquired.append(quarantine.acquire(planned, consent, staging, transport))
+                    acquired.append(quarantine.acquire(
+                        planned, consent, staging, transport,
+                        lambda done, total, i=index: emit((None, (i + done / max(total, 1)) / 2))))
                     emit((f'{planned.side}: {planned.sha256} verified ({acquired[-1].format})', (index + 1) / 2))
                 if cancel.is_set():
                     raise AcquisitionError('PT-ACQ-CANCEL', 'acquisition cancelled', recoverable=True)

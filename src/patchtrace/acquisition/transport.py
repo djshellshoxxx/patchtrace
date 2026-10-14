@@ -266,15 +266,22 @@ class Transport:
         return valid[0]
 
     # -- download -----------------------------------------------------------------------
-    def download(self, planned: PlannedDownload, consent: AcquisitionConsent, directory: Path) -> Downloaded:
-        """Stream one planned file into `directory`, verifying size and SHA-256 against the plan."""
+    def download(self, planned: PlannedDownload, consent: AcquisitionConsent, directory: Path,
+                 progress: Callable[[int, int], None] | None = None) -> Downloaded:
+        """Stream one planned file into `directory`, verifying size and SHA-256 against the plan.
+
+        `progress(received, expected)` is observational only: it is called at 0 on every
+        attempt (so a retry restarts the bar), after each ~1% of the planned size, and at
+        completion. It never influences verification; a raising callback is not caught.
+        """
         _consented(planned.url, consent)
         if urllib.parse.urlsplit(planned.url).hostname != SYMBOL_HOST:
             raise AcquisitionError('PT-ACQ-CONFIG', 'downloads come only from the symbol server')
         cap = min(MAX_DOWNLOAD_BYTES, planned.size)
-        return self._with_retries(lambda: self._download_once(planned, Path(directory), cap))
+        return self._with_retries(lambda: self._download_once(planned, Path(directory), cap, progress))
 
-    def _download_once(self, planned: PlannedDownload, directory: Path, cap: int) -> Downloaded:
+    def _download_once(self, planned: PlannedDownload, directory: Path, cap: int,
+                       progress: Callable[[int, int], None] | None = None) -> Downloaded:
         url, redirect_host = planned.url, None
         response = self._open('GET', url)
         try:
@@ -296,15 +303,23 @@ class Transport:
             fd, name = tempfile.mkstemp(prefix='.download-', dir=directory)
             path = Path(name)
             digest = hashlib.sha256()
-            size = 0
+            size = reported = 0
+            step = max(planned.size // 100, 1)
             try:
+                if progress:
+                    progress(0, planned.size)
                 with os.fdopen(fd, 'wb') as out:
                     def sink(chunk: bytes) -> None:
-                        nonlocal size
+                        nonlocal size, reported
                         size += len(chunk)
                         digest.update(chunk)
                         out.write(chunk)
+                        if progress and size - reported >= step:
+                            reported = size
+                            progress(size, planned.size)
                     self._read(response, sink, cap, 'download')
+                    if progress and size != reported:
+                        progress(size, planned.size)
                     out.flush()
                     os.fsync(out.fileno())
                 if size != planned.size:
