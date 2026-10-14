@@ -333,7 +333,12 @@ def test_built_artifact_loads_in_shipped_runtime_and_only_promotes_on_passing_ga
         promote(res.artifact, tampered)
     gates = {'G0': {'status': 'pass'}, 'G1': {'status': 'pass'}, 'G2': {'status': 'pass'},
              'G3': {'status': 'fail'}}
-    bands = promote(res.artifact, res.report, profile_gates=gates)
+    with pytest.raises(PromotionError, match='Tier W'):  # passing gates do not rescue a Tier R-only domain
+        promote(res.artifact, res.report, profile_gates=gates)
+    windows = {**res.artifact, 'calibration_domain': {**res.artifact['calibration_domain'],
+                                                       'evidence_tiers': ['tier-r', 'tier-w'],
+                                                       'windows_system_binaries': 'local-measured'}}
+    bands = promote(windows, res.report, profile_gates=gates)
     loaded = parse_artifact(canonical_json(bands), today=CREATED)
     assert loaded.status == 'bands-ok' and artifact_display_level(loaded) == 'bands'
     assert math.isfinite(loaded.intercept)
