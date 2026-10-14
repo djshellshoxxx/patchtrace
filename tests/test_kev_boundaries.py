@@ -10,7 +10,7 @@ import pytest
 
 SRC = Path(__file__).resolve().parents[1] / 'src'
 KEV = SRC / 'patchtrace' / 'kev'
-PURE = ('contracts', 'limits', 'parse', 'join', 'view_model', 'ports', 'teach', 'tooltip_entries')
+PURE = ('contracts', 'limits', 'parse', 'join', 'view_model', 'ports', 'teach', 'tooltip_entries', 'kb_adapter')
 FORBIDDEN = ('PySide6', 'urllib', 'urllib.request', 'http.client', 'socket', 'sqlite3', 'ssl')
 
 
