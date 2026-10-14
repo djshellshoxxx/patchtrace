@@ -54,3 +54,13 @@ Stable IDs are independent of filenames. Public interfaces in SPEC-01 and schema
 | packaging | tools/build_windows.py; tools/build_linux.py; tools/pyinstaller_hooks/ | Frozen Windows/Linux runtimes, curated Qt desktop plugins, licenses, inventory and checksum | PyInstaller | Windows/Linux Actions and archive inspection |
 
 Every substantial future module must be added here before implementation. UI must not own analysis logic; provider must not own project state.
+
+## C4 BinDiff execution (SPEC-29, 2026-10-14)
+| Module | File | Responsibility | Depends on | Tests |
+|---|---|---|---|---|
+| bindiff probe | secondary/bindiff_probe.py | `--version`/`--help` capability probe (major >= 8, required options, untested newer majors, `bindiff_ui`/`bindiff_cli` refused, never PATH), cached per (path, mtime, size); `sanitize` | jobs.run_process, engine_env | `tests/test_bindiff_probe.py` (fake `bindiff`) |
+| bindiff inputs | secondary/bindiff_inputs.py | `AcceptedBinExportLike` Protocol (C3 seam), `bind_pair` (SHA-256 `executable_id` binding, orientation, explicit asserted override), `copy_and_hash` | contracts | `tests/test_bindiff_inputs.py` |
+| bindiff run | secondary/bindiff_run.py | private workdir, fixed argv, output guard, success = exit 0 + one `older_vs_newer.BinDiff`, raw preserved before hardened import, §6 kinds | bindiff_probe, bindiff_inputs, bindiff | `tests/test_bindiff_run.py` |
+| engine env | secondary/engine_env.py | single child-env allow-list for secondary engines (rz-diff via `backend.build_child_env`, BinDiff from scratch) | backend | `tests/test_engine_env.py`, `tests/test_live_rzdiff_check.py` |
+| bindiff CLI | secondary/cli_bindiff.py | `--older/--newer-binexport`, `--accept-unbound-binexport`, `PATCHTRACE_BINDIFF`, C3 acceptor wrapper | registry | `tests/test_cli_bindiff.py` |
+| live harness | tests/conftest.py, tests/test_live_bindiff.py, tools/{provision_bindiff,check_live_status,make_bindiff_fixtures}.py, tools/bindiff_pin.json, .github/workflows/live-bindiff.yml | never-silent live status (`passed/failed/blocked`), fail-closed pinned provisioning, synthetic goldens | - | `tests/test_live_harness.py`, `tests/test_bindiff_golden.py` |
