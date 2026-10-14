@@ -180,6 +180,10 @@ class EvidenceLink(_Strict):
     file_offset: int | None = Field(default=None, ge=0, lt=2**40)
     source_fragment: str | None = Field(default=None, max_length=200)
     attribution: Attribution = 'none'
+    # Additive (WB3-S1b): decoded strings only. `data_rva` = RVA of the decoded string's own address (GLOBAL),
+    # `site_rva` = RVA of the instruction where it was decoded.
+    data_rva: int | None = Field(default=None, ge=0, lt=2**32)
+    site_rva: int | None = Field(default=None, ge=0, lt=2**32)
 
     @model_validator(mode='after')
     def _consistent(self):
@@ -252,6 +256,8 @@ class ToolEvidenceSet(_Strict):
     strings: tuple[StringEvidence, ...] = ()
     environment: tuple[EnvironmentEvidence, ...] = ()
     truncated: bool = False
+    # Additive (WB3-S1b): string types cut at their quota; empty with `truncated` = unknown types (older rows).
+    truncated_types: tuple[StringType, ...] = ()
     counts: dict[Annotated[str, Field(max_length=32)], Annotated[int, Field(ge=0)]] = Field(default_factory=dict,
                                                                                           max_length=16)
     anomalies: tuple[_SHORT, ...] = Field(default=(), max_length=MAX_ANOMALIES)

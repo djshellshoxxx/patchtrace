@@ -218,11 +218,14 @@ def build_argv(config: CapaConfig, executable: str, scratch: Path, artifact: Pat
     return [*argv, str(artifact)]
 
 
-def classify_exit(returncode: int, stdout: str, stderr: str) -> tuple[str, str, str]:
+def classify_exit(returncode: int, stdout: str, stderr: str, *, memory_limit_bytes: int | None = None,
+                  peak_memory_bytes: int | None = None) -> tuple[str, str, str]:
     """(status, error code, message) for a non-zero exit (T4)."""
     line = process.first_error_line(stderr, stdout)
     if returncode in EXIT_UNSUPPORTED:
         return 'unsupported', 'PT-TOOL-UNSUPPORTED', f'capa: {EXIT_UNSUPPORTED[returncode]} ({line or "no detail"})'
+    if process.memory_exhausted(stderr, returncode, peak_memory_bytes, memory_limit_bytes):
+        return 'failed', 'PT-TOOL-LIMIT', 'capa stopped at the memory limit (memory)'
     if returncode in EXIT_INPUT:
         return 'failed', 'PT-TOOL-INPUT', f'capa: {EXIT_INPUT[returncode]} ({line or "no detail"})'
     return 'failed', 'PT-TOOL-RUN', f'capa failed ({process.exit_text(returncode)}): {line or "no message"}'

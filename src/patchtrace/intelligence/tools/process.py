@@ -320,6 +320,22 @@ def execute(argv: list[str], *, scratch: Path, env: Mapping[str, str], cancel: t
                      result.peak_memory_bytes)
 
 
+_MEMORY_TEXT = ('MemoryError', 'Cannot allocate memory', 'std::bad_alloc', 'out of memory', 'Out of memory')
+
+
+def memory_exhausted(stderr: str, returncode: int | None, peak_memory_bytes: int | None = None,
+                     memory_limit_bytes: int | None = None) -> bool:
+    """True when a failed run looks like it hit the memory cap (`PT-TOOL-LIMIT`, 'memory'): allocation failure text
+    on stderr, STATUS_NO_MEMORY (0xC0000017), or a Job Object peak at the cap. Only meaningful with a cap set."""
+    if memory_limit_bytes is None:
+        return False
+    if returncode is not None and (returncode & 0xFFFFFFFF) == 0xC0000017:
+        return True
+    if peak_memory_bytes is not None and peak_memory_bytes >= 0.95 * memory_limit_bytes:
+        return True
+    return any(text in stderr for text in _MEMORY_TEXT)
+
+
 def describe_failure(run: Execution, what: str) -> str:
     """One sanitised sentence for a run that did not finish normally (probe messages; TA-10)."""
     if run.spawn_error:

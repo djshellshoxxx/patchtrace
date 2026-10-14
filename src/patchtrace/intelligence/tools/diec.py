@@ -193,8 +193,11 @@ def build_argv(config: DiecConfig, executable: str, scratch: Path, artifact: Pat
             str(scratch / 'empty'), str(artifact)]
 
 
-def classify_exit(returncode: int, stdout: str, stderr: str) -> tuple[str, str, str]:
+def classify_exit(returncode: int, stdout: str, stderr: str, *, memory_limit_bytes: int | None = None,
+                  peak_memory_bytes: int | None = None) -> tuple[str, str, str]:
     line = process.first_error_line(stdout, stderr)  # diec prints `Cannot find:` and usage errors on stdout
+    if process.memory_exhausted(stderr, returncode, peak_memory_bytes, memory_limit_bytes):
+        return 'failed', 'PT-TOOL-LIMIT', 'diec stopped at the memory limit (memory)'
     return 'failed', 'PT-TOOL-RUN', f'diec failed ({process.exit_text(returncode)}): {line or "no message"}'
 
 

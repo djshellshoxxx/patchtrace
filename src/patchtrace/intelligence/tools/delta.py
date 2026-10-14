@@ -60,6 +60,8 @@ class StringChange(_Strict):
     change: Literal['added', 'removed', 'unchanged', 'representation-changed', 'indeterminate']
     older_types: tuple[str, ...] = ()
     newer_types: tuple[str, ...] = ()
+    older_encodings: tuple[str, ...] = ()
+    newer_encodings: tuple[str, ...] = ()
     older: tuple[EvidenceLink, ...] = Field(default=(), max_length=MAX_LOCATIONS)
     newer: tuple[EvidenceLink, ...] = Field(default=(), max_length=MAX_LOCATIONS)
 
@@ -217,6 +219,11 @@ def _capabilities(older: ToolEvidenceSet, newer: ToolEvidenceSet,
     return changes
 
 
+def _cut(evidence: ToolEvidenceSet, types: Sequence[str]) -> bool:
+    """True when `evidence` lost items of one of `types` to truncation (legacy sets without types: any type)."""
+    return evidence.truncated and (not evidence.truncated_types or bool(set(evidence.truncated_types) & set(types)))
+
+
 def _strings(older: ToolEvidenceSet, newer: ToolEvidenceSet, show_secrets: bool,
              include_unchanged: bool) -> tuple[list[StringChange], int, bool]:
     groups: dict[str, dict[str, list[StringEvidence]]] = defaultdict(lambda: {'older': [], 'newer': []})
@@ -227,12 +234,14 @@ def _strings(older: ToolEvidenceSet, newer: ToolEvidenceSet, show_secrets: bool,
     for value_hash in sorted(groups):
         old, new = groups[value_hash]['older'], groups[value_hash]['newer']
         old_types, new_types = tuple(sorted({s.type for s in old})), tuple(sorted({s.type for s in new}))
+        old_enc, new_enc = tuple(sorted({s.encoding for s in old})), tuple(sorted({s.encoding for s in new}))
         if old and new:
-            change = 'unchanged' if old_types == new_types else 'representation-changed'
-        elif new:  # absent from a truncated older side proves nothing (TA-3)
-            change = 'indeterminate' if older.truncated else 'added'
+            same = old_types == new_types and old_enc == new_enc   # an ASCII -> UTF-16LE move is a change (F21)
+            change = 'unchanged' if same else 'representation-changed'
+        elif new:  # absent from a side cut in a type it could have had proves nothing (TA-3)
+            change = 'indeterminate' if _cut(older, new_types) else 'added'
         else:
-            change = 'indeterminate' if newer.truncated else 'removed'
+            change = 'indeterminate' if _cut(newer, old_types) else 'removed'
         if change == 'unchanged':
             unchanged += 1
             if not include_unchanged:
@@ -241,7 +250,8 @@ def _strings(older: ToolEvidenceSet, newer: ToolEvidenceSet, show_secrets: bool,
         display = sample.display_value if show_secrets else redacted_display(sample.display_value, sample.secret_kind)
         changes.append(StringChange(
             value_hash=value_hash, display_value=display, secret_kind=sample.secret_kind, length=sample.length,
-            change=change, older_types=old_types, newer_types=new_types,
+            change=change, older_types=old_types, newer_types=new_types, older_encodings=old_enc,
+            newer_encodings=new_enc,
             older=tuple(s.source_location for s in old[:MAX_LOCATIONS]),
             newer=tuple(s.source_location for s in new[:MAX_LOCATIONS])))
     truncated = len(changes) > MAX_STRING_CHANGES
