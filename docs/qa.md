@@ -388,3 +388,5 @@ Synthetic project (tests/search_builders.py: invented names, bytes-only PE files
 Automated only, on the SYNTHETIC pair of `tests/strings_pe.py` and a hand-written Ghidriff-shaped document (not Ghidriff output). F13 escape behaviour is checked against a reference encoder written from the spec, not against a real Ghidra decompile; the hex-escape width rule is a heuristic until a real decompile is compared.
 ### [G2:callgraph-snapshot]
 Automated: tests/test_callgraph_{input,pairing,snapshot}.py (raw missing, reader failure, malformed tables, ladder rungs, count-suffix, ambiguity, pair precedence, claim cap, cancel, key sensitivity, hash-seed byte identity, import boundary). Open: real Ghidriff `name_matches` shape and `EXTERNAL:` label forms on a synthetic PE pair (CI or owner).
+### [G7:callgraph-evolution]
+Automated: tests/test_callgraph_evolution.py (4-build matrix with dropped and reverted, rename lineage, missing pair and missing record = unknown, same-build inconsistency, deleted callee, no raw matches, hostile labels, limits, cancel). Open: read-only open and close of real pair projects (composition, with the CLI/tab); real Ghidriff name_matches shape.

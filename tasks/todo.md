@@ -274,3 +274,5 @@
 - [ ] Not built here: edited-pair detection (belongs with the S5 delta), L2/L3/L6 tiers (need IR or capa), Ghidriff `strings` loader wiring in the service layer
 ### [G2:callgraph-snapshot]
 - [x] Contracts, project input, raw matches, resolver, pair map, snapshot (GL-01 enforced), bounded queries; G0 fixtures moved to the repo's list-of-targets `matches` shape. [ ] Live gate: one real Ghidriff JSON must confirm `name_matches` (only `address_matches` is read by other repo code). [ ] G3 deltas, noise, hints; G4 CLI/DOT.
+### [G7:callgraph-evolution]
+- [x] Pure evolution model, pair view and lineage builder. [ ] CLI `graph series`, composition (read pair projects read-only via nway PairReader, close each) and `ui_calls_evolution.py` tab wait for G4 and the GUI panel registry.
