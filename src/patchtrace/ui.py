@@ -1319,6 +1319,26 @@ class MainWindow(QMainWindow):
 
     def _action(self, title, callback, shortcut=None):
         action = QAction(title, self)
+        # Actions share the same tooltip in menus and in the toolbar.
+        descriptions = {
+            'Sample': 'Create a separate synthetic comparison project. It demonstrates code, evidence and reviews without analyzing actual binaries.',
+            'Import JSON': 'Load raw Ghidriff JSON from a comparison of this exact binary pair. PatchTrace validates orientation and artifact identity before committing results.',
+            'Run comparison': 'Run an external Ghidriff/Ghidra static comparison of the project-owned older and newer PE x64 files. Results come from Ghidriff, not live execution. An external backend must be configured.',
+            'Cancel job': 'Request cancellation of the active comparison, import or analysis job. Previous committed results are retained.',
+            'Interpret selection': 'Send selected function differences and evidence to the configured AI provider after showing the exact context. AI conclusions are unverified hypotheses.',
+            'Export': 'Preview and export a report containing analysis provenance, reviews and optionally notes or code. The report is based on saved project data.',
+            'Setup': 'Configure local Python/Ghidra backends, preferences, optional offline runtime and AI provider settings. This does not automatically install external tools.',
+            'Swap orientation': 'Exchange older and newer binaries for the project. Existing interpretations may become stale because patch direction changes.',
+            'Save': 'Persist the current project snapshot and review state to its local SQLite history.',
+            'Back up project…': 'Create a complete separate backup with SQLite database, stored binaries and analysis outputs.',
+            'Undo latest match correction': 'Undo the most recent eligible manual function relationship correction while retaining provenance.',
+            'Workflow and dependencies': 'Explain how analysis, external dependencies, projects, findings and reports work.',
+            'Rank changes': 'Apply PatchTrace heuristic signals to changed Ghidriff decompiled code and order functions by attention score. This score is not vulnerability likelihood.',
+            'Download from Microsoft symbol server…': 'Search Winbindex metadata and, after explicit host consent, download exact-hash Microsoft binaries for comparison. Availability and signature authenticity are separate questions.',
+        }
+        if title in descriptions:
+            action.setToolTip(descriptions[title])
+            action.setStatusTip(descriptions[title])
         action.triggered.connect(callback)
         if shortcut:
             action.setShortcut(QKeySequence(shortcut))
@@ -1475,18 +1495,20 @@ class MainWindow(QMainWindow):
         row = QHBoxLayout()
         self.mode = QComboBox()
         self.mode.addItems(['Decompiled code', 'Assembly', 'Metadata'])
+        self.mode.setToolTip('Select the representation of the selected Ghidriff function records: decompiled C-like text, actual assembly when available, or preserved metadata. The source is the imported or freshly generated Ghidriff JSON; unavailable representations are not reconstructed.')
         self.mode.currentTextChanged.connect(self.render_match)
         row.addWidget(self.mode)
         self.sync_scroll = QCheckBox('Sync scroll')
         self.sync_scroll.setChecked(True)
+        self.sync_scroll.setToolTip('Synchronize older and newer code-pane vertical scroll positions so matched lines can be compared. The pane text comes from the current Ghidriff result, padded with alignment gaps for display.')
         row.addWidget(self.sync_scroll)
         row.addStretch()
         self.previous_diff = QPushButton('Previous diff')
-        self.previous_diff.setToolTip('Previous changed hunk · Alt+Up')
+        self.previous_diff.setToolTip('Moves to the preceding changed region. At the beginning of a function, moves to the previous visible function in the filtered match list. Source: the line alignment of the currently displayed Ghidriff function records. Shortcut: Alt+Up.')
         self.previous_diff.clicked.connect(lambda: self.navigate_hunk(-1))
         row.addWidget(self.previous_diff)
         self.next_diff = QPushButton('Next diff')
-        self.next_diff.setToolTip('Next changed hunk · Alt+Down')
+        self.next_diff.setToolTip('Moves to the next changed region. At the end of a function, moves to the next visible function in the filtered match list. Source: the line alignment of the currently displayed Ghidriff function records. Shortcut: Alt+Down.')
         self.next_diff.clicked.connect(lambda: self.navigate_hunk(1))
         row.addWidget(self.next_diff)
         self.addAction(self._action('Next difference', lambda: self.navigate_hunk(1), 'Alt+Down'))
@@ -1513,6 +1535,7 @@ class MainWindow(QMainWindow):
             side_layout.addLayout(header)
             view = plain_view('No project open.')
             view.setAccessibleName(f'{side.title()} artifact code')
+            view.setToolTip(f'Read-only {side} function representation from the current Ghidriff comparison JSON. Decompiled text and actual assembly are upstream analysis outputs, not original source or raw file bytes. Metadata is preserved match/function data. Blank alignment rows are display-only.')
             self.views[side] = view
             view.verticalScrollBar().valueChanged.connect(lambda value, s=side: self.scroll_other(s, value))
             side_layout.addWidget(view, 1)
@@ -1520,6 +1543,7 @@ class MainWindow(QMainWindow):
         layout.addWidget(self.code_split, 1)
         self.hunk_list = QComboBox()
         self.hunk_list.setAccessibleName('Changed hunks')
+        self.hunk_list.setToolTip('Jump to a particular inserted, removed or replaced region in the selected function. Entries are derived from PatchTrace line alignment of the code or metadata currently displayed, not source-level line numbers.')
         self.hunk_list.currentIndexChanged.connect(self.select_hunk)
         layout.addWidget(self.hunk_list)
         self.workspace.addWidget(pane)
@@ -1878,8 +1902,31 @@ class MainWindow(QMainWindow):
         view.setExtraSelections(selections)
 
     def navigate_hunk(self, step):
+        """Navigate changed regions, crossing function boundaries at the ends.
+
+        A one-hunk function must not silently reselect the same hunk. If the
+        current function is exhausted, continue to the next visible match.
+        """
+        if not self.project or not self.current_match():
+            return
+        target = self._hunk_index + step
+        if self._hunks and 0 <= target < len(self._hunks):
+            self.hunk_list.setCurrentIndex(target)
+            self.select_hunk(target)  # also scroll when the index did not change
+            return
+        row = self.navigator.currentRow()
+        if row < 0:
+            return
+        direction = 1 if step > 0 else -1
+        next_row = row + direction
+        if not 0 <= next_row < self.navigator.count():
+            self.statusBar().showMessage('No further changed functions in the current filtered list.')
+            return
+        self.navigator.setCurrentRow(next_row)
+        # Selection changes rebuild the hunks. Land on the first/last hunk.
         if self._hunks:
-            self.hunk_list.setCurrentIndex((max(0, self._hunk_index) + step) % len(self._hunks))
+            self.hunk_list.setCurrentIndex(0 if step > 0 else len(self._hunks) - 1)
+            self.select_hunk(0 if step > 0 else len(self._hunks) - 1)
 
     def select_hunk(self, index):
         if not 0 <= index < len(self._hunks):
