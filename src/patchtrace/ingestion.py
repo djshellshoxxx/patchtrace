@@ -31,6 +31,11 @@ def safe_path(root: Path, relative: str) -> Path:
     return candidate
 
 
+def display_text(text: str) -> str:
+    """Keep code units UTF-8 cannot encode (invalid file-name bytes, lone surrogates) visible and storable."""
+    return text.encode('utf-8', 'backslashreplace').decode('utf-8')
+
+
 def file_fingerprint(path: Path) -> tuple:
     if os.name == 'nt':
         # Python 3.12 Windows st_ctime is creation time, not metadata/content change time.
@@ -156,7 +161,7 @@ def inspect_artifact(path: Path, side: str, root: Path) -> Artifact:
             os.replace(stage, destination)
             destination.chmod(stat.S_IREAD | stat.S_IRGRP | stat.S_IROTH)
         stage = None
-        return Artifact(side=side, name=source.name, sha256=sha, size=copied, relative_path=relative)
+        return Artifact(side=side, name=display_text(source.name), sha256=sha, size=copied, relative_path=relative)
     except OSError as exc:
         raise ValueError(f'PT-INPUT: cannot read or preserve input: {exc.strerror or exc}') from exc
     finally:
