@@ -184,6 +184,10 @@ def main(argv: Sequence[str] | None = None) -> int:
         if importlib.util.find_spec(f'{__package__}.tier_r.cli') is None:
             return print('known-answer: tier_r.cli is not available', file=sys.stderr) or 2
         return importlib.import_module(f'{__package__}.tier_r.cli').main(args_in[1:])
+    argv = list(sys.argv[1:] if argv is None else argv)
+    if argv[:1] == ['known-answer']:  # SPEC-32 s12 hook (known-answer owner): `corpus known-answer <cmd>`
+        from .tier_r.cli import main as known_answer_main
+        return known_answer_main(argv[1:])
     parser = argparse.ArgumentParser(description='Calibration corpus manifest tooling (dev-only).')
     sub = parser.add_subparsers(dest='cmd', required=True)
     p_init = sub.add_parser('init')

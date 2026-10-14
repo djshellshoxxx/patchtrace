@@ -1,0 +1,83 @@
+{
+ "contract": "tier-r-report/1",
+ "engines": [
+  {
+   "engine": "ida",
+   "failures": 0,
+   "reason": null,
+   "runs": 1,
+   "status": "ok",
+   "version": "0.9.1"
+  }
+ ],
+ "inputs": [
+  {
+   "labels_digest": "f02a706c338a4ae00e52b413698c9c4a04c7f365ecfd1fa128d97c32a9fef747",
+   "pair_id": "ours-template-tiny-v1-v2",
+   "stratum": "authored"
+  }
+ ],
+ "notes": [
+  "SYNTHETIC example: mocked engine output, not live evidence"
+ ],
+ "pairs": [
+  {
+   "engine": "rz-diff",
+   "metrics": {
+    "ambiguous_records": 0,
+    "changed_fn": 0,
+    "changed_fp": 1,
+    "changed_precision": 0.5,
+    "changed_recall": 1.0,
+    "changed_tp": 1,
+    "changed_truth": 1,
+    "cosmetic_flagged": 1,
+    "cosmetic_matched": 1,
+    "fp_rate": 0.5,
+    "identity_fn": 0,
+    "identity_fp": 0,
+    "identity_precision": 1.0,
+    "identity_recall": 1.0,
+    "identity_tp": 3,
+    "ignored_predictions": 0,
+    "matched_negatives": 2,
+    "pairs": 1,
+    "truth_same": 3
+   },
+   "output_sha256": "aa32f7d62637e6665a706ee3b29f92278889192e51e12791acb3d5045458a2ba",
+   "pair_id": "ours-template-tiny-v1-v2",
+   "reason": null,
+   "status": "ok",
+   "stratum": "authored"
+  }
+ ],
+ "report_sha256": "6f501f05f7eb2a2ccb536f08123bd1527bf98d4c86d7ce18d6a75c443987eb38",
+ "strata": {
+  "authored": {
+   "rz-diff": {
+    "ambiguous_records": 0,
+    "changed_fn": 0,
+    "changed_fp": 1,
+    "changed_precision": 0.5,
+    "changed_recall": 1.0,
+    "changed_tp": 1,
+    "changed_truth": 1,
+    "cosmetic_flagged": 1,
+    "cosmetic_matched": 1,
+    "fp_rate": 0.5,
+    "identity_fn": 0,
+    "identity_fp": 0,
+    "identity_precision": 1.0,
+    "identity_recall": 1.0,
+    "identity_tp": 3,
+    "ignored_predictions": 0,
+    "matched_negatives": 2,
+    "pairs": 1,
+    "truth_same": 3
+   }
+  }
+ },
+ "symbols": "hidden",
+ "wrong_matches": [],
+ "wrong_matches_truncated": 0
+}

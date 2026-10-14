@@ -312,3 +312,10 @@ K1 notes: plan 10.1 "4 edges, 1 mention-only" = 4 vendor-remediation edges + 1 m
 | cli | intelligence/tools/cli.py | `intel-tools probe|run|delta`, envelope `enrichment-cli/1`, exit 0/2/3/4/5; `cli.py` holds a 5-line hook | runner, store, delta | `test_intel_tools_cli.py` |
 | schemas | tools/generate_intel_tools_schemas.py, docs/schemas/intel-tools/ | `tool-evidence/1` JSON Schemas + examples, regenerate-and-compare | tools.* | `test_intel_tools_schemas.py` |
 | provisioning | tools/provision_intel_tools.py, tools/intel_tools_pin.json, .github/workflows/live-intel-tools.yml | download + verify + safe extract of the pinned releases (never executed); advisory live workflow | stdlib | `test_provision_intel_tools.py`, `test_live_intel_tools.py` |
+### [D:known-answer-eval] SPEC-32 s10-s12 (2026-10-14, dev-only, `tools/` is not packaged)
+| Module | Files | Responsibility | Depends on | Tests |
+|---|---|---|---|---|
+| tier-r evaluator | tools/calibration/tier_r/evaluate.py | per-engine, per-stratum identity and changed-set precision/recall, FP rate, wrong-match list; engine front ends (rz-diff via production registry/scheduler, `.BinDiff` and Ghidriff JSON imports; absent = BLOCKED); deterministic `tier-r-report/1` + Markdown | secondary registry/scheduler/bindiff, normalization, tier_r.contracts | tests/test_tier_r_eval_metrics.py, test_tier_r_eval_engines.py, test_tier_r_eval_report.py |
+| report schemas | tools/calibration/tier_r/report_schemas.py | `tier-r-engine-output/1` schema, report examples (synthetic) into docs/schemas/corpus/ | tier_r.contracts, evaluate | test_tier_r_eval_report.py |
+| manifest / annotate | tools/calibration/tier_r/{manifest,annotate}.py | `calibration-corpus/1` manifest; labels -> hash-chained annotation log -> `calibration-labels/1` (`synthetic-exact`) | calibration.contracts, label, lineage | tests/test_tier_r_eval_corpus.py |
+| tier-r CLI | tools/calibration/tier_r/{cli,__main__}.py; hook in tools/calibration/corpus.py | `python -m tools.calibration.tier_r <cmd>` (exit 0/1/2/3), `corpus known-answer <cmd>` | factory, fetch, toolchain, evaluate, manifest, annotate | tests/test_tier_r_eval_cli.py |
