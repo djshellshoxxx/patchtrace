@@ -10,9 +10,11 @@ from __future__ import annotations
 import hashlib
 import json
 import os
+import sqlite3
 import tempfile
 from dataclasses import dataclass, field
 from pathlib import Path
+from typing import Literal
 
 from ..models import ComparisonProject
 from ..persistence import strict_json
@@ -41,6 +43,9 @@ def read_project(path: Path) -> ComparisonProject:
         service = ProjectService.open(path)
     except ValueError as exc:
         raise NwayError('PT-NWAY-PAIR', f'cannot open pair project {Path(path).name}: {exc}') from None
+    except (sqlite3.Error, OSError):
+        raise NwayError('PT-NWAY-PAIR',
+                        f'cannot open pair project {Path(path).name}: database cannot be read') from None
     try:
         return service.project.model_copy(deep=True)
     finally:
@@ -98,18 +103,43 @@ def pair_ref(root: Path, path: Path, project: ComparisonProject, from_ordinal: i
                    project_id=project.id, revision=project.revision, run_id=current_run_id(project), notes=notes)
 
 
-def discover_pairs(root: Path, wanted: dict[tuple[str, str], tuple[int, int]]) -> dict[tuple[int, int], Path]:
-    """Map wanted ordered hash pairs to the unique project directory below root holding each."""
+@dataclass(frozen=True)
+class Skipped:
+    name: str
+    code: Literal['unreadable', 'locked', 'not-a-project']
+    reason: str
+
+
+@dataclass(frozen=True)
+class Discovery:
+    found: dict[tuple[int, int], Path]
+    skipped: tuple[Skipped, ...] = ()
+
+
+def discover_pairs(root: Path, wanted: dict[tuple[str, str], tuple[int, int]]) -> Discovery:
+    """Map wanted ordered hash pairs to the unique project directory below root holding each.
+
+    A sibling that cannot be read (damaged, locked, foreign) is skipped and reported, never fatal.
+    """
     found: dict[tuple[int, int], list[Path]] = {}
+    skipped: list[Skipped] = []
     root = Path(root)
     if not root.is_dir():
-        return {}
+        return Discovery({})
     for child in sorted(root.iterdir(), key=lambda p: p.name):
         if child.is_symlink() or not child.is_dir() or not (child / PROJECT_FILE).is_file():
             continue
-        project = read_project(child)
-        sides = {a.side: a.sha256 for a in project.artifacts}
-        ordinals = wanted.get((sides['older'], sides['newer']))
+        try:
+            project = read_project(child)
+            sides = {a.side: a.sha256 for a in project.artifacts}
+            ordinals = wanted.get((sides['older'], sides['newer']))
+        except NwayError as exc:
+            reason = str(exc).removeprefix('PT-NWAY-PAIR: ')
+            skipped.append(Skipped(child.name, 'locked' if 'locked' in reason.lower() else 'unreadable', reason))
+            continue
+        except (KeyError, ValueError, sqlite3.Error, OSError):
+            skipped.append(Skipped(child.name, 'not-a-project', 'not a readable two-artifact project'))
+            continue
         if ordinals is not None:
             found.setdefault(ordinals, []).append(child)
     duplicates = {k: v for k, v in found.items() if len(v) > 1}
@@ -117,7 +147,7 @@ def discover_pairs(root: Path, wanted: dict[tuple[str, str], tuple[int, int]]) -
         (i, j), paths = sorted(duplicates.items())[0]
         raise NwayError('PT-NWAY-PAIR', f'builds {i}→{j} have several pair projects '
                         f'({", ".join(p.name for p in paths)}); keep exactly one')
-    return {k: v[0] for k, v in found.items()}
+    return Discovery({k: v[0] for k, v in found.items()}, tuple(skipped))
 
 
 @dataclass
@@ -128,6 +158,7 @@ class SeriesPlan:
     pair_paths: list[Path]
     direct_path: Path | None = None
     created: list[Path] = field(default_factory=list)
+    skipped: tuple[Skipped, ...] = ()
 
 
 def prepare(files: list[Path], root: Path, labels: list[str] | None = None, direct: bool = False) -> SeriesPlan:
@@ -147,12 +178,18 @@ def prepare(files: list[Path], root: Path, labels: list[str] | None = None, dire
     wanted = {(hashes[i], hashes[i + 1]): (i, i + 1) for i in range(len(hashes) - 1)}
     if direct:
         wanted[(hashes[0], hashes[-1])] = (0, len(hashes) - 1)
-    existing = discover_pairs(root, wanted)
-    plan = SeriesPlan(root, hashes, labels, [])
+    discovery = discover_pairs(root, wanted)
+    existing = discovery.found
+    unreadable = {s.name: s for s in discovery.skipped}
+    plan = SeriesPlan(root, hashes, labels, [], skipped=discovery.skipped)
     for (older, newer), (i, j) in wanted.items():
         path = existing.get((i, j))
         if path is None:
             path = root / f'pair-{i}-{j}-{older[:12]}-{newer[:12]}'
+            if path.name in unreadable:
+                why = unreadable[path.name]
+                raise NwayError('PT-NWAY-PAIR', f'{path.name} exists but cannot be read ({why.code}: {why.reason}); '
+                                'repair or remove it')
             if path.exists():
                 raise NwayError('PT-NWAY-PAIR', f'{path.name} exists but does not hold builds {i}→{j}')
             try:
@@ -191,11 +228,33 @@ def dumps(series: Series) -> str:
                       ensure_ascii=False, allow_nan=False) + '\n'
 
 
-def save(series: Series, path: Path) -> None:
+def _keep_corrupt_copy(path: Path) -> None:
+    data = path.read_bytes()
+    copy = path.with_name(f'{path.name}.corrupt-{hashlib.sha256(data).hexdigest()[:8]}')
+    try:
+        fd = os.open(copy, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
+    except FileExistsError:
+        return  # these exact damaged bytes were already preserved; never overwrite a copy
+    with os.fdopen(fd, 'wb') as stream:
+        stream.write(data)
+        stream.flush()
+        os.fsync(stream.fileno())
+
+
+def save(series: Series, path: Path, *, replace_corrupt: bool = False) -> None:
     path = Path(path)
     if path.exists():
-        previous = load(path)
-        if previous.series_id != series.series_id:
+        previous = None
+        try:
+            previous = load(path)
+        except NwayError as exc:
+            if exc.code != 'PT-NWAY-STORAGE':
+                raise
+            if not replace_corrupt:
+                raise NwayError('PT-NWAY-STORAGE', f'{str(exc).removeprefix("PT-NWAY-STORAGE: ")}; '
+                                'use --replace-corrupt to keep a copy and replace it') from None
+            _keep_corrupt_copy(path)
+        if previous is not None and previous.series_id != series.series_id:
             raise NwayError('PT-NWAY-STORAGE', f'{path.name} belongs to another series; use a different --root')
     fd, temporary = tempfile.mkstemp(prefix='.series-', dir=path.parent)
     stage = Path(temporary)
@@ -255,7 +314,9 @@ def staleness(series: Series, series_path: Path) -> Staleness:
                 elif (project.revision, current_run_id(project)) != (ref.revision, ref.run_id):
                     reason = f'{label}: project changed (revision {ref.revision}→{project.revision})'
             except NwayError as exc:
-                reason = f'{label}: {exc}'
+                reason = f'{label}: {str(exc).removeprefix("PT-NWAY-PAIR: ")}'
+            except (ValueError, OSError, sqlite3.Error):
+                reason = f'{label}: project cannot be read'
         if reason:
             reasons.append(reason)
             if series.direct_project is ref:

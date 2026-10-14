@@ -116,6 +116,8 @@ def _parser() -> argparse.ArgumentParser:
     create.add_argument('--labels', nargs='+', default=None, metavar='LABEL')
     create.add_argument('--direct', action='store_true',
                         help='also create a first-to-last pair project used to confirm/contradict chains')
+    create.add_argument('--replace-corrupt', action='store_true',
+                        help='if series.json is damaged, keep a series.json.corrupt-* copy and replace it')
     create.add_argument('--run', action='store_true',
                         help='run Ghidriff for pair projects without a completed run (otherwise none runs)')
     create.add_argument('--python', default='', help='external Python executable for --run')
@@ -627,6 +629,7 @@ def cmd_series(args, cancel) -> int:
         except NwayError as exc:
             raise _nway_error(exc) from None
         failed = False
+        warnings += [f'skipped sibling {s.name}: {s.reason}' for s in plan.skipped]
         if config is not None:
             for path in [*plan.pair_paths, *([plan.direct_path] if plan.direct_path else [])]:
                 if cancel.is_set():
@@ -640,7 +643,7 @@ def cmd_series(args, cancel) -> int:
         try:
             series = store.compute(plan)
             target = plan.root / store.SERIES_FILE
-            store.save(series, target)
+            store.save(series, target, replace_corrupt=args.replace_corrupt)
         except NwayError as exc:
             raise _nway_error(exc) from None
         except OSError as exc:
