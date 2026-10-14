@@ -13,6 +13,7 @@ ever implied. Runtime is O(matches + functions).
 """
 from __future__ import annotations
 
+import re
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass, field
 
@@ -91,25 +92,45 @@ def _key_parts(key: Key) -> tuple[int | None, str | None]:
     return (key, None) if isinstance(key, int) else (None, key[1])
 
 
+_EXTERNAL = re.compile(r'EXTERNAL:[0-9A-Fa-f]+')
+
+
+def _is_external(text: object) -> bool:
+    """Ghidra's placeholder for an imported (external) location: real Ghidriff output keys it `EXTERNAL:<hex>`."""
+    return isinstance(text, str) and _EXTERNAL.fullmatch(text.strip()) is not None
+
+
 def _raw_relations(raw: Mapping, run_id: str, taken_old: set, taken_new: set) -> list[RawRelation]:
-    """Engine relations from Ghidriff address_matches for endpoints no normalized match touches."""
+    """Engine relations from Ghidriff address_matches for endpoints no normalized match touches.
+
+    Entries whose source or any target is an `EXTERNAL:<hex>` import location are skipped: they are not
+    functions of either image and have no address to chain. Any other unparsable address is still an error.
+    """
     table = raw.get('address_matches')
     if not isinstance(table, Mapping):
         raise NwayError('PT-NWAY-PAIR', 'raw matches.address_matches must be an object')
     parsed: dict[int, list[tuple[int, list[str]]]] = {}
     for old_text, targets in table.items():
+        if _is_external(old_text):
+            continue
         old = parse_address(old_text)
         if old is None or not isinstance(targets, list):
             raise NwayError('PT-NWAY-PAIR', 'raw address_matches has an invalid address or target list')
         entries = []
+        touches_external = False
         for target in targets:
             if (not isinstance(target, list) or len(target) != 2 or not isinstance(target[0], str)
                     or not isinstance(target[1], list) or not all(isinstance(t, str) for t in target[1])):
                 raise NwayError('PT-NWAY-PAIR', 'raw address_matches target must be [address, [match types]]')
+            if _is_external(target[0]):
+                touches_external = True
+                continue
             new = parse_address(target[0])
             if new is None:
                 raise NwayError('PT-NWAY-PAIR', 'raw address_matches has an invalid target address')
             entries.append((new, target[1]))
+        if touches_external:  # a partial 1:N relation would look 1:1 and chain a wrong hop
+            continue
         if old in parsed:
             raise NwayError('PT-NWAY-PAIR', 'raw address_matches repeats a source address')
         parsed[old] = entries
