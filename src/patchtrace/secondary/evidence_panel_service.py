@@ -17,6 +17,7 @@ from ..enrichment.storage import EnrichmentStore, Entry, Guard
 from ..models import FunctionMatch
 from . import load_secondary, scheduler
 from .contracts import Capability, SecondaryMatchSet
+from .engine_env import engine_env
 from .evidence_view import (
     CALIBRATION_FALLBACK,
     LOG_LINES,
@@ -31,7 +32,7 @@ from .evidence_view import (
     failed_model,
     sanitize_text,
 )
-from .registry import REGISTRY, EngineAdapter, safe_env
+from .registry import REGISTRY, EngineAdapter
 from .runs import EngineOutcome
 from .store import cache_snapshot, publish_engine_set, publish_run, select_current
 
@@ -182,7 +183,7 @@ def capability_view(cap: Capability) -> EngineOutcomeView | None:
 def probe_engines(cancel: threading.Event, *, registry: Mapping[str, EngineAdapter] = REGISTRY,
                   env: Mapping[str, str] | None = None) -> dict[str, Capability]:
     """Capability probes only; nothing is run on the binaries. A probe that raises is unsupported."""
-    env = safe_env(os.environ) if env is None else env
+    env = engine_env(os.environ, 'rz-diff') if env is None else env
     found: dict[str, Capability] = {}
     for engine in SECONDARY_ENGINES:
         adapter = registry.get(engine)
@@ -212,7 +213,7 @@ def execute_run(request: RunRequest, cancel: threading.Event, *,
     return scheduler.run_engines(
         ref, list(request.engines), max_parallel=request.max_parallel,
         per_engine_timeout=dict.fromkeys(request.engines, float(request.timeout_s)), cancel=cancel,
-        cache=Snapshot(), env=safe_env(os.environ) if env is None else env, on_event=on_event,
+        cache=Snapshot(), env=engine_env(os.environ, 'rz-diff') if env is None else env, on_event=on_event,
         on_outcome=on_outcome, registry=registry, **extra)
 
 
