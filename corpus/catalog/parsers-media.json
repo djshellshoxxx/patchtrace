@@ -1,0 +1,1806 @@
+[
+ {
+  "contract": "case-card/1",
+  "id": "cjson-1.7.16-to-1.7.17",
+  "project": "cJSON",
+  "upstream_git": "https://github.com/DaveGamble/cJSON.git",
+  "license_spdx": "MIT",
+  "license_evidence": "LICENSE at 87d8f0961a01bf09bef98ff89bae9fdec42181ee: 'Permission is hereby granted, free of charge, to any person obtaining a copy of this software'",
+  "old": {
+   "ref": "v1.7.16",
+   "commit": "cb8693b058ba302f4829ec6d03f609ac6f848546"
+  },
+  "new": {
+   "ref": "v1.7.17",
+   "commit": "87d8f0961a01bf09bef98ff89bae9fdec42181ee"
+  },
+  "kind": "cve-fix",
+  "cve": [
+   "CVE-2023-50471",
+   "CVE-2023-50472"
+  ],
+  "semantic_change": true,
+  "changed_functions": [
+   {
+    "name": "cJSON_SetValuestring",
+    "file": "cJSON.c",
+    "change": "NULL check on object added to the type test, plus a new early return NULL when object->valuestring is NULL (corrupted object). CHANGELOG 1.7.17: CVE-2023-50472, see #809"
+   },
+   {
+    "name": "cJSON_InsertItemInArray",
+    "file": "cJSON.c",
+    "change": "newitem == NULL now rejected (which < 0 || newitem == NULL), plus a new early return false when after_inserted is a corrupted array item (prev == NULL although not the head). CHANGELOG 1.7.17: CVE-2023-50471, see #809 and #810"
+   }
+  ],
+  "unchanged_controls": [
+   "parse_string",
+   "cJSON_Compare",
+   "print_string_ptr",
+   "cJSON_CreateRaw",
+   "skip_utf8_bom"
+  ],
+  "build": {
+   "system": "cmake",
+   "recipe_notes": "Probe at 87d8f0961a01: build files present: CMakeLists.txt, Makefile; CMakeLists.txt has 3 WIN32/MINGW/MSVC references.  Not built in this session.",
+   "mingw_ok": "likely"
+  },
+  "verification": {
+   "method": "git clone --filter=blob:none --no-checkout https://github.com/DaveGamble/cJSON.git; git rev-parse v1.7.16^{commit} v1.7.17^{commit}; git show 87d8f0961a01bf09bef98ff89bae9fdec42181ee:LICENSE; git diff --stat v1.7.16..v1.7.17 -- '*.c' '*.h' [3 files; 3 files changed, 35 insertions(+), 4 deletions(-)]; git diff -U0 v1.7.16..v1.7.17 and the changed hunks read by hand; a throwaway brace-matching C script (not committed) compared every function old vs new by exact text and by comment/whitespace-free token stream, and listed token differences outside functions; declared changed functions equal the computed set and every control is text-identical in both versions. Scope: 1 test/example/tool files excluded from changed_functions (tests/misc_tests.c). All files changed in the pair, any type (6): CHANGELOG.md, CMakeLists.txt, Makefile, cJSON.c, cJSON.h, tests/misc_tests.c. changed_functions[].change prefixes ADDED/REMOVED/COSMETIC/MACRO-DRIVEN mark non-body-change entries; unprefixed means the body differs.",
+   "files_changed": 3,
+   "functions_changed_count": 2,
+   "verified_by_agent_run": true
+  },
+  "sources": [
+   "https://github.com/DaveGamble/cJSON/blob/v1.7.17/CHANGELOG.md",
+   "https://github.com/DaveGamble/cJSON/commit/60ff122ef5862d04b39b150541459e7f5e35add8",
+   "https://github.com/DaveGamble/cJSON/commit/f66cbab4bfb3926ffd4c5e13f9fb6d506ee0241d",
+   "https://github.com/DaveGamble/cJSON/tree/v1.7.17",
+   "https://nvd.nist.gov/vuln/detail/CVE-2023-50471",
+   "https://nvd.nist.gov/vuln/detail/CVE-2023-50472"
+  ],
+  "risks": [
+   "nvd.nist.gov and cve.org were not reachable from the session (egress policy), so the NVD/CVE record text was not read; CVE ids come from the upstream changelog/commit text cited in sources.",
+   "cJSON.h CJSON_VERSION_PATCH 16->17 and the matching #if version check in cJSON.c change outside any function (constants only).",
+   "tests/misc_tests.c cjson_functions_should_not_crash_with_null_pointers was extended (test only, excluded from changed_functions)."
+  ]
+ },
+ {
+  "contract": "case-card/1",
+  "id": "expat-2.6.2-to-2.6.3",
+  "project": "expat",
+  "upstream_git": "https://github.com/libexpat/libexpat.git",
+  "license_spdx": "MIT",
+  "license_evidence": "COPYING at 88b3ed553d8ad335559254863a33360d55b9f1d6: 'Permission is hereby granted, free of charge, to any person obtaining a copy of this software'",
+  "old": {
+   "ref": "R_2_6_2",
+   "commit": "fa75b96546c069d17b8f80d91e0f4ef0cde3790d"
+  },
+  "new": {
+   "ref": "R_2_6_3",
+   "commit": "88b3ed553d8ad335559254863a33360d55b9f1d6"
+  },
+  "kind": "cve-fix",
+  "cve": [
+   "CVE-2024-45490",
+   "CVE-2024-45491",
+   "CVE-2024-45492"
+  ],
+  "semantic_change": true,
+  "changed_functions": [
+   {
+    "name": "XML_ParseBuffer",
+    "file": "expat/lib/xmlparse.c",
+    "change": "len < 0 now rejected with XML_ERROR_INVALID_ARGUMENT before parsing (bounds check added). Changes 2.6.3: CVE-2024-45490"
+   },
+   {
+    "name": "dtdCopy",
+    "file": "expat/lib/xmlparse.c",
+    "change": "integer-overflow guard on nDefaultAtts * sizeof(DEFAULT_ATTRIBUTE) before malloc, inside #if UINT_MAX >= SIZE_MAX (compiled out on 64-bit targets). Changes 2.6.3: CVE-2024-45491"
+   },
+   {
+    "name": "nextScaffoldPart",
+    "file": "expat/lib/xmlparse.c",
+    "change": "integer-overflow guard on m_groupSize * sizeof(int) before MALLOC, inside #if UINT_MAX >= SIZE_MAX (compiled out on 64-bit targets). Changes 2.6.3: CVE-2024-45492"
+   },
+   {
+    "name": "processInternalEntity",
+    "file": "expat/lib/xmlparse.c",
+    "change": "refactor (#886 in Changes): the #ifdef XML_DTD guards around the is_param branch are removed and the if/else is restructured; same behaviour when XML_DTD is defined"
+   },
+   {
+    "name": "internalEntityProcessor",
+    "file": "expat/lib/xmlparse.c",
+    "change": "refactor (#886 in Changes): same XML_DTD guard removal in two places; same behaviour when XML_DTD is defined"
+   }
+  ],
+  "unchanged_controls": [
+   "doProlog",
+   "unsignedCharToPrintable",
+   "doContent",
+   "normalizePublicId",
+   "copyString"
+  ],
+  "build": {
+   "system": "cmake",
+   "recipe_notes": "Probe at 88b3ed553d8a: build files present: CMakeLists.txt, configure.ac, Makefile.am, win32; CMakeLists.txt has 55 WIN32/MINGW/MSVC references.  Not built in this session.",
+   "mingw_ok": "likely"
+  },
+  "verification": {
+   "method": "git clone --filter=blob:none --no-checkout https://github.com/libexpat/libexpat.git; git rev-parse R_2_6_2^{commit} R_2_6_3^{commit}; git show 88b3ed553d8ad335559254863a33360d55b9f1d6:COPYING; git diff --stat R_2_6_2..R_2_6_3 -- '*.c' '*.h' [6 files; 6 files changed, 95 insertions(+), 18 deletions(-)]; git diff -U0 R_2_6_2..R_2_6_3 and the changed hunks read by hand; a throwaway brace-matching C script (not committed) compared every function old vs new by exact text and by comment/whitespace-free token stream, and listed token differences outside functions; declared changed functions equal the computed set and every control is text-identical in both versions. Scope: 3 test/example/tool files excluded from changed_functions (expat/gennmtab/gennmtab.c, expat/tests/basic_tests.c, expat/tests/misc_tests.c). All files changed in the pair, any type (49): .ci.sh, .github/workflows/autotools-cmake.yml, .github/workflows/clang-format.yml, .github/workflows/clang-tidy.yml, .github/workflows/cmake-required-version.yml, .github/workflows/codespell.yml, .github/workflows/coverage.yml, .github/workflows/cppcheck.yml, .github/workflows/data/expat_config_h_cmake__expected.txt, .github/workflows/data/expat_config_h_in__expected.txt, .... changed_functions[].change prefixes ADDED/REMOVED/COSMETIC/MACRO-DRIVEN mark non-body-change entries; unprefixed means the body differs.",
+   "files_changed": 6,
+   "functions_changed_count": 5,
+   "verified_by_agent_run": true
+  },
+  "sources": [
+   "https://github.com/libexpat/libexpat/blob/R_2_6_3/expat/Changes",
+   "https://github.com/libexpat/libexpat/tree/R_2_6_3",
+   "https://nvd.nist.gov/vuln/detail/CVE-2024-45490",
+   "https://nvd.nist.gov/vuln/detail/CVE-2024-45491",
+   "https://nvd.nist.gov/vuln/detail/CVE-2024-45492",
+   "https://github.com/libexpat/libexpat/commit/f9cfbb7fcedabc40326dc287ed35f83de406224d",
+   "https://github.com/libexpat/libexpat/commit/8707e02e1f20d5a4bb9101773b7b8736303cc029",
+   "https://github.com/libexpat/libexpat/commit/8e439a9947e9dc80a395c0c7456545d8d9d9e421",
+   "https://github.com/libexpat/libexpat/commit/5c1a31642e243f4870c0bd1f2afc7597976521bf",
+   "https://github.com/libexpat/libexpat/commit/9bf0f2c16ee86f644dd1432507edff94c08dc232",
+   "https://github.com/libexpat/libexpat/commit/c158a62e57f6b2e8c61a7735dc458a22181ca0d7"
+  ],
+  "risks": [
+   "nvd.nist.gov and cve.org were not reachable from the session (egress policy), so the NVD/CVE record text was not read; CVE ids come from the upstream changelog/commit text cited in sources.",
+   "dtdCopy and nextScaffoldPart guards sit inside #if UINT_MAX >= SIZE_MAX, so on 64-bit targets (Windows x64) the preprocessor removes them: expect NO machine-code change for those two functions even though their source changed.",
+   "processInternalEntity and internalEntityProcessor are refactors, not CVE fixes; behaviour is identical in the default XML_DTD configuration.",
+   "expat/lib/expat.h XML_MICRO_VERSION 2->3 and a siphash.h SIPHASH_INITIALIZER spacing change are outside functions."
+  ]
+ },
+ {
+  "contract": "case-card/1",
+  "id": "libpng-1.6.54-to-1.6.55",
+  "project": "libpng",
+  "upstream_git": "https://github.com/pnggroup/libpng.git",
+  "license_spdx": "Libpng-2.0",
+  "license_evidence": "LICENSE at c3e304954a9cfd154bc0dfbfea2b01cd61d6546d: 'PNG Reference Library License version 2'",
+  "old": {
+   "ref": "v1.6.54",
+   "commit": "02f2b4f4699f0ef9111a6534f093b53732df4452"
+  },
+  "new": {
+   "ref": "v1.6.55",
+   "commit": "c3e304954a9cfd154bc0dfbfea2b01cd61d6546d"
+  },
+  "kind": "cve-fix",
+  "cve": [
+   "CVE-2026-25646"
+  ],
+  "semantic_change": true,
+  "changed_functions": [
+   {
+    "name": "png_set_quantize",
+    "file": "pngrtran.c",
+    "change": "hash entries now store png_ptr->palette_to_index[i] / [j] instead of the truncating casts (png_byte)i / (png_byte)j (2 lines). CHANGES 1.6.55: CVE-2026-25646, heap buffer overflow in png_set_quantize"
+   },
+   {
+    "name": "png_get_copyright",
+    "file": "png.c",
+    "change": "version string constant \"libpng version 1.6.54\" -> \"1.6.55\""
+   }
+  ],
+  "unchanged_controls": [
+   "png_do_compose",
+   "png_init_read_transformations",
+   "png_ascii_from_fp",
+   "png_reciprocal2",
+   "png_gamma_16bit_correct"
+  ],
+  "build": {
+   "system": "cmake",
+   "recipe_notes": "Probe at c3e304954a9c: build files present: CMakeLists.txt, configure.ac, Makefile.am, projects, scripts; CMakeLists.txt has 20 WIN32/MINGW/MSVC references.  Not built in this session.",
+   "mingw_ok": "likely"
+  },
+  "verification": {
+   "method": "git clone --filter=blob:none --no-checkout https://github.com/pnggroup/libpng.git; git rev-parse v1.6.54^{commit} v1.6.55^{commit}; git show c3e304954a9cfd154bc0dfbfea2b01cd61d6546d:LICENSE; git diff --stat v1.6.54..v1.6.55 -- '*.c' '*.h' [5 files; 5 files changed, 14 insertions(+), 14 deletions(-)]; git diff -U0 v1.6.54..v1.6.55 and the changed hunks read by hand; a throwaway brace-matching C script (not committed) compared every function old vs new by exact text and by comment/whitespace-free token stream, and listed token differences outside functions; declared changed functions equal the computed set and every control is text-identical in both versions. Scope: 1 test/example/tool files excluded from changed_functions (pngtest.c). All files changed in the pair, any type (24): .markdownlint.yml, ANNOUNCE, AUTHORS, CHANGES, CMakeLists.txt, README, TODO, ci/README.md, configure, configure.ac, .... changed_functions[].change prefixes ADDED/REMOVED/COSMETIC/MACRO-DRIVEN mark non-body-change entries; unprefixed means the body differs.",
+   "files_changed": 5,
+   "functions_changed_count": 2,
+   "verified_by_agent_run": true
+  },
+  "sources": [
+   "https://github.com/pnggroup/libpng/blob/v1.6.55/CHANGES",
+   "https://github.com/pnggroup/libpng/tree/v1.6.55",
+   "https://nvd.nist.gov/vuln/detail/CVE-2026-25646",
+   "https://github.com/pnggroup/libpng/commit/01d03b8453eb30ade759cd45c707e5a1c7277d88"
+  ],
+  "risks": [
+   "nvd.nist.gov and cve.org were not reachable from the session (egress policy), so the NVD/CVE record text was not read; CVE ids come from the upstream changelog/commit text cited in sources.",
+   "png.h PNG_LIBPNG_VER_* macros and the png_libpng_version_* typedef names change with the version (outside functions); pngconf.h differs only in comments.",
+   "png_set_quantize is ~390 lines; the real change is two lines (tiny change in a large function)."
+  ]
+ },
+ {
+  "contract": "case-card/1",
+  "id": "libwebp-1.3.1-to-1.3.2",
+  "project": "libwebp",
+  "upstream_git": "https://github.com/webmproject/libwebp.git",
+  "license_spdx": "BSD-3-Clause",
+  "license_evidence": "COPYING at ca332209cb5567c9b249c86788cb2dbf8847e760: 'Redistribution and use in source and binary forms, with or without modification, are permitted'",
+  "old": {
+   "ref": "v1.3.1",
+   "commit": "fd7bb21c0cb56e8a82e9bfa376164b842f433f3b"
+  },
+  "new": {
+   "ref": "v1.3.2",
+   "commit": "ca332209cb5567c9b249c86788cb2dbf8847e760"
+  },
+  "kind": "cve-fix",
+  "cve": [
+   "CVE-2023-4863"
+  ],
+  "semantic_change": true,
+  "changed_functions": [
+   {
+    "name": "BuildHuffmanTable",
+    "file": "src/utils/huffman_utils.c",
+    "change": "table writes are now guarded by root_table != NULL so the same code can run as a sizing pass (root_table == NULL) without writing; part of the OOB-write fix"
+   },
+   {
+    "name": "VP8LBuildHuffmanTable",
+    "file": "src/utils/huffman_utils.c",
+    "change": "takes HuffmanTables* (segment list) instead of a flat table: sizes the table first with a NULL pass, and allocates an extra segment when the table does not fit in the current one (core of \"Fix OOB write in BuildHuffmanTable\")"
+   },
+   {
+    "name": "VP8LHuffmanTablesAllocate",
+    "file": "src/utils/huffman_utils.c",
+    "change": "ADDED: new: allocates the root segment of a HuffmanTables list"
+   },
+   {
+    "name": "VP8LHuffmanTablesDeallocate",
+    "file": "src/utils/huffman_utils.c",
+    "change": "ADDED: new: frees the root segment and all following segments"
+   },
+   {
+    "name": "ReadHuffmanCodeLengths",
+    "file": "src/dec/vp8l_dec.c",
+    "change": "fixed stack array HuffmanCode table[1 << LENGTHS_TABLE_BITS] replaced by a HuffmanTables allocated/deallocated around the use"
+   },
+   {
+    "name": "ReadHuffmanCode",
+    "file": "src/dec/vp8l_dec.c",
+    "change": "parameter changed from HuffmanCode* table to HuffmanTables* table (signature only)"
+   },
+   {
+    "name": "ReadHuffmanCodes",
+    "file": "src/dec/vp8l_dec.c",
+    "change": "single WebPSafeMalloc(num_htree_groups * table_size) replaced by VP8LHuffmanTablesAllocate on hdr->huffman_tables_; htrees[j] now point into curr_segment->curr_table; asserts the tables start zero-initialised"
+   },
+   {
+    "name": "ClearMetadata",
+    "file": "src/dec/vp8l_dec.c",
+    "change": "WebPSafeFree(hdr->huffman_tables_) replaced by VP8LHuffmanTablesDeallocate(&hdr->huffman_tables_)"
+   },
+   {
+    "name": "VP8LDecodeImage",
+    "file": "src/dec/vp8l_dec.c",
+    "change": "only an assert() changed (huffman_tables_ != NULL -> huffman_tables_.root.start != NULL); no code change when NDEBUG is defined"
+   }
+  ],
+  "unchanged_controls": [
+   "DecodeImageData",
+   "ParseVP8XChunks",
+   "DecodeImageStream",
+   "WebPImportGray",
+   "CopySmallPattern32b"
+  ],
+  "build": {
+   "system": "cmake",
+   "recipe_notes": "Probe at ca332209cb55: build files present: CMakeLists.txt, configure.ac, Makefile.am, makefile.unix, Makefile.vc; CMakeLists.txt has 8 WIN32/MINGW/MSVC references.  Not built in this session.",
+   "mingw_ok": "likely"
+  },
+  "verification": {
+   "method": "git clone --filter=blob:none --no-checkout https://github.com/webmproject/libwebp.git; git rev-parse v1.3.1^{commit} v1.3.2^{commit}; git show ca332209cb5567c9b249c86788cb2dbf8847e760:COPYING; git diff --stat v1.3.1..v1.3.2 -- '*.c' '*.h' [9 files; 9 files changed, 134 insertions(+), 48 deletions(-)]; git diff -U0 v1.3.1..v1.3.2 and the changed hunks read by hand; a throwaway brace-matching C script (not committed) compared every function old vs new by exact text and by comment/whitespace-free token stream, and listed token differences outside functions; declared changed functions equal the computed set and every control is text-identical in both versions. All files changed in the pair, any type (20): ChangeLog, NEWS, README.md, configure.ac, extras/extras.c, src/Makefile.am, src/dec/vp8i_dec.h, src/dec/vp8l_dec.c, src/dec/vp8li_dec.h, src/demux/Makefile.am, .... changed_functions[].change prefixes ADDED/REMOVED/COSMETIC/MACRO-DRIVEN mark non-body-change entries; unprefixed means the body differs.",
+   "files_changed": 9,
+   "functions_changed_count": 9,
+   "verified_by_agent_run": true
+  },
+  "sources": [
+   "https://github.com/webmproject/libwebp/blob/v1.3.2/NEWS",
+   "https://github.com/webmproject/libwebp/commit/2af26267cdfcb63a88e5c74a85927a12d6ca1d76",
+   "https://github.com/webmproject/libwebp/tree/v1.3.2",
+   "https://nvd.nist.gov/vuln/detail/CVE-2023-4863"
+  ],
+  "risks": [
+   "nvd.nist.gov and cve.org were not reachable from the session (egress policy), so the NVD/CVE record text was not read; CVE ids come from the upstream changelog/commit text cited in sources.",
+   "Canonical upstream is chromium.googlesource.com/webm/libwebp (not reachable from this session: egress policy); the webmproject/libwebp GitHub mirror was cloned instead.",
+   "The pair is the tag pair v1.3.1..v1.3.2 = fix commit 2af26267 plus version/NEWS/ChangeLog bump commits; version macros (DEC/ENC/MUX/DMUX/XTRA_REV_VERSION 1->2) change outside functions.",
+   "huffman_utils.h gains the HuffmanTablesSegment/HuffmanTables types and vp8li_dec.h changes HuffmanCode* huffman_tables_ to HuffmanTables (struct layout change)."
+  ]
+ },
+ {
+  "contract": "case-card/1",
+  "id": "pcre2-10.45-to-10.46",
+  "project": "pcre2",
+  "upstream_git": "https://github.com/PCRE2Project/pcre2.git",
+  "license_spdx": "BSD-3-Clause",
+  "license_evidence": "LICENCE.md at b2bd4254b379b9d7dc9a3dda060a7e27009ccdff: 'BSD-3-Clause WITH PCRE2-exception'",
+  "old": {
+   "ref": "pcre2-10.45",
+   "commit": "2dce7761b1831fd3f82a9c2bd5476259d945da4d"
+  },
+  "new": {
+   "ref": "pcre2-10.46",
+   "commit": "b2bd4254b379b9d7dc9a3dda060a7e27009ccdff"
+  },
+  "kind": "cve-fix",
+  "cve": [
+   "CVE-2025-58050"
+  ],
+  "semantic_change": true,
+  "changed_functions": [
+   {
+    "name": "match",
+    "file": "src/pcre2_match.c",
+    "change": "three assignments added in the assertion-ACCEPT path: mb->end_subject = Lsaved_end_subject; mb->true_end_subject = mb->end_subject + Ltrue_end_extra; mb->moptions = Lsaved_moptions. ChangeLog 10.46 (#771): CVE-2025-58050, read-past-the-end triggered by (*ACCEPT) together with (*scs:)"
+   }
+  ],
+  "unchanged_controls": [
+   "pcre2_match",
+   "match_ref",
+   "do_callout",
+   "display_frames"
+  ],
+  "build": {
+   "system": "cmake",
+   "recipe_notes": "Probe at b2bd4254b379: build files present: CMakeLists.txt, configure.ac, Makefile.am, BUILD.bazel, build.zig; CMakeLists.txt has 33 WIN32/MINGW/MSVC references.  Not built in this session.",
+   "mingw_ok": "likely"
+  },
+  "verification": {
+   "method": "git clone --filter=blob:none --no-checkout https://github.com/PCRE2Project/pcre2.git; git rev-parse pcre2-10.45^{commit} pcre2-10.46^{commit}; git show b2bd4254b379b9d7dc9a3dda060a7e27009ccdff:LICENCE.md; git diff --stat pcre2-10.45..pcre2-10.46 -- '*.c' '*.h' [1 files; 1 file changed, 3 insertions(+)]; git diff -U0 pcre2-10.45..pcre2-10.46 and the changed hunks read by hand; a throwaway brace-matching C script (not committed) compared every function old vs new by exact text and by comment/whitespace-free token stream, and listed token differences outside functions; declared changed functions equal the computed set and every control is text-identical in both versions. All files changed in the pair, any type (116): ChangeLog, MODULE.bazel, NEWS, SECURITY.md, configure, configure.ac, doc/pcre2-config.1, doc/pcre2-config.txt, doc/pcre2.3, doc/pcre2.txt, .... changed_functions[].change prefixes ADDED/REMOVED/COSMETIC/MACRO-DRIVEN mark non-body-change entries; unprefixed means the body differs.",
+   "files_changed": 1,
+   "functions_changed_count": 1,
+   "verified_by_agent_run": true
+  },
+  "sources": [
+   "https://github.com/PCRE2Project/pcre2/blob/pcre2-10.46/ChangeLog",
+   "https://github.com/PCRE2Project/pcre2/tree/pcre2-10.46",
+   "https://nvd.nist.gov/vuln/detail/CVE-2025-58050",
+   "https://github.com/PCRE2Project/pcre2/commit/a141712e5967d448c7ce13090ab530c8e3d82254"
+  ],
+  "risks": [
+   "nvd.nist.gov and cve.org were not reachable from the session (egress policy), so the NVD/CVE record text was not read; CVE ids come from the upstream changelog/commit text cited in sources.",
+   "match() is ~6,200 lines: the whole semantic change is three added lines (needle in a haystack for a diff engine).",
+   "LICENCE.md declares \"BSD-3-Clause WITH PCRE2-exception\"; the exception only relaxes binary-redistribution terms, so BSD-3-Clause is used as the card SPDX id.",
+   "Only 1 *.c/*.h file differs; docs/ChangeLog/NEWS changes are not C."
+  ]
+ },
+ {
+  "contract": "case-card/1",
+  "id": "stb-vorbis-cve-2019-13217-to-13223",
+  "project": "stb",
+  "upstream_git": "https://github.com/nothings/stb.git",
+  "license_spdx": "MIT",
+  "license_evidence": "stb_vorbis.c at 98fdfc6df88b1e34a736d5e126e6c8139c8de1a6: 'This software is available under 2 licenses -- choose whichever you prefer.' / 'ALTERNATIVE A - MIT License'",
+  "old": {
+   "ref": "98fdfc6^ (parent)",
+   "commit": "c72a95d766b8cbf5514e68d3ddbf6437ac9425b1"
+  },
+  "new": {
+   "ref": "98fdfc6",
+   "commit": "98fdfc6df88b1e34a736d5e126e6c8139c8de1a6"
+  },
+  "kind": "cve-fix",
+  "cve": [
+   "CVE-2019-13217",
+   "CVE-2019-13218",
+   "CVE-2019-13219",
+   "CVE-2019-13220",
+   "CVE-2019-13221",
+   "CVE-2019-13222",
+   "CVE-2019-13223"
+  ],
+  "semantic_change": true,
+  "changed_functions": [
+   {
+    "name": "lookup1_values",
+    "file": "stb_vorbis.c",
+    "change": "two assert()s replaced by runtime checks returning -1 when pow(r+1,dim) <= entries or floor(pow(r,dim)) > entries (commit message: CVE-2019-13221, large 1D codebooks)"
+   },
+   {
+    "name": "draw_line",
+    "file": "stb_vorbis.c",
+    "change": "inverse_db_table index masked with &255 at both LINE_OP uses (commit message: CVE-2019-13220, out-of-range read)"
+   },
+   {
+    "name": "get_window",
+    "file": "stb_vorbis.c",
+    "change": "assert(0) removed so an unknown window length simply returns NULL"
+   },
+   {
+    "name": "vorbis_finish_frame",
+    "file": "stb_vorbis.c",
+    "change": "new \"if (w == NULL) return 0;\" after get_window() (commit message: CVE-2019-13222, unchecked NULL returned by get_window)"
+   },
+   {
+    "name": "start_decoder",
+    "file": "stb_vorbis.c",
+    "change": "six validation checks added: codeword length >= 32 rejected; lookup1_values() < 0 rejected and result cast to uint32; duplicate floor1 x positions rejected after qsort; coupling_steps > channels rejected (the commit message attributes CVE-2019-13217/-13218/-13219/-13223 to start_decoder, compute_codewords, vorbis_decode_packet_rest and predict_point; which check closes which CVE is not stated upstream)"
+   }
+  ],
+  "unchanged_controls": [
+   "vorbis_decode_packet_rest",
+   "decode_residue",
+   "seek_to_sample_coarse",
+   "go_to_page_before",
+   "stb_vorbis_open_file_section"
+  ],
+  "build": {
+   "system": "single",
+   "recipe_notes": "Probe at 98fdfc6df88b: build files present: none of . Single-file C library (stb_vorbis.c), no build system; the source itself mentions MinGW (comment \"cast for MinGW warning\" in lookup1_values). Not built in this session.",
+   "mingw_ok": "likely"
+  },
+  "verification": {
+   "method": "git clone --filter=blob:none --no-checkout https://github.com/nothings/stb.git; git rev-parse 98fdfc6^^{commit} 98fdfc6^{commit}; git show 98fdfc6df88b1e34a736d5e126e6c8139c8de1a6:stb_vorbis.c; git diff --stat 98fdfc6^..98fdfc6 -- '*.c' '*.h' [1 files; 1 file changed, 22 insertions(+), 6 deletions(-)]; git diff -U0 98fdfc6^..98fdfc6 and the changed hunks read by hand; a throwaway brace-matching C script (not committed) compared every function old vs new by exact text and by comment/whitespace-free token stream, and listed token differences outside functions; declared changed functions equal the computed set and every control is text-identical in both versions. All files changed in the pair, any type (1): stb_vorbis.c. changed_functions[].change prefixes ADDED/REMOVED/COSMETIC/MACRO-DRIVEN mark non-body-change entries; unprefixed means the body differs.",
+   "files_changed": 1,
+   "functions_changed_count": 5,
+   "verified_by_agent_run": true
+  },
+  "sources": [
+   "https://github.com/nothings/stb/commit/98fdfc6df88b1e34a736d5e126e6c8139c8de1a6",
+   "https://github.com/nothings/stb/blob/98fdfc6df88b1e34a736d5e126e6c8139c8de1a6/stb_vorbis.c",
+   "https://nvd.nist.gov/vuln/detail/CVE-2019-13217",
+   "https://nvd.nist.gov/vuln/detail/CVE-2019-13218",
+   "https://nvd.nist.gov/vuln/detail/CVE-2019-13219",
+   "https://nvd.nist.gov/vuln/detail/CVE-2019-13220",
+   "https://nvd.nist.gov/vuln/detail/CVE-2019-13221",
+   "https://nvd.nist.gov/vuln/detail/CVE-2019-13222",
+   "https://nvd.nist.gov/vuln/detail/CVE-2019-13223"
+  ],
+  "risks": [
+   "nvd.nist.gov and cve.org were not reachable from the session (egress policy), so the NVD/CVE record text was not read; CVE ids come from the upstream changelog/commit text cited in sources.",
+   "The commit message names compute_codewords, vorbis_decode_packet_rest and predict_point as crash sites, but their bodies are UNCHANGED (verified identical); the fixes landed in callers/validators.",
+   "stb has no root LICENSE file at this commit; the dual MIT / public-domain notice at the end of stb_vorbis.c is the licence evidence.",
+   "Version-history comment lines in stb_vorbis.c also changed (outside functions). stb_vorbis.c is a single translation unit; later stb layouts differ."
+  ]
+ },
+ {
+  "contract": "case-card/1",
+  "id": "cjson-parse-object-bounds-3ef4e4e",
+  "project": "cJSON",
+  "upstream_git": "https://github.com/DaveGamble/cJSON.git",
+  "license_spdx": "MIT",
+  "license_evidence": "LICENSE at 3ef4e4e730e5efd381be612df41e1ff3f5bb3c32: 'Permission is hereby granted, free of charge, to any person obtaining a copy of this software'",
+  "old": {
+   "ref": "3ef4e4e^ (parent)",
+   "commit": "826cd6f842ae7e46ee38bbc097f9a34f2947388d"
+  },
+  "new": {
+   "ref": "3ef4e4e",
+   "commit": "3ef4e4e730e5efd381be612df41e1ff3f5bb3c32"
+  },
+  "kind": "bounds-only",
+  "cve": [],
+  "semantic_change": true,
+  "changed_functions": [
+   {
+    "name": "parse_object",
+    "file": "cJSON.c",
+    "change": "5 lines added after the comma handling: if (cannot_access_at_index(input_buffer, 1)) goto fail; /* nothing comes after the comma */ (bounds check before reading the next byte)"
+   }
+  ],
+  "unchanged_controls": [
+   "parse_string",
+   "cJSON_Compare",
+   "print_string_ptr",
+   "cJSON_CreateRaw",
+   "skip_utf8_bom"
+  ],
+  "build": {
+   "system": "cmake",
+   "recipe_notes": "Probe at 3ef4e4e730e5: build files present: CMakeLists.txt, Makefile; CMakeLists.txt has 3 WIN32/MINGW/MSVC references.  Not built in this session.",
+   "mingw_ok": "likely"
+  },
+  "verification": {
+   "method": "git clone --filter=blob:none --no-checkout https://github.com/DaveGamble/cJSON.git; git rev-parse 3ef4e4e^^{commit} 3ef4e4e^{commit}; git show 3ef4e4e730e5efd381be612df41e1ff3f5bb3c32:LICENSE; git diff --stat 3ef4e4e^..3ef4e4e -- '*.c' '*.h' [1 files; 1 file changed, 5 insertions(+)]; git diff -U0 3ef4e4e^..3ef4e4e and the changed hunks read by hand; a throwaway brace-matching C script (not committed) compared every function old vs new by exact text and by comment/whitespace-free token stream, and listed token differences outside functions; declared changed functions equal the computed set and every control is text-identical in both versions. All files changed in the pair, any type (1): cJSON.c. changed_functions[].change prefixes ADDED/REMOVED/COSMETIC/MACRO-DRIVEN mark non-body-change entries; unprefixed means the body differs.",
+   "files_changed": 1,
+   "functions_changed_count": 1,
+   "verified_by_agent_run": true
+  },
+  "sources": [
+   "https://github.com/DaveGamble/cJSON/commit/3ef4e4e730e5efd381be612df41e1ff3f5bb3c32"
+  ],
+  "risks": [
+   "Commit subject is \"Fix heap buffer overflow\"; no CVE id appears in the commit, so the card is not labelled cve-fix."
+  ]
+ },
+ {
+  "contract": "case-card/1",
+  "id": "cjson-pointer-index-bounds-74e1ff4",
+  "project": "cJSON",
+  "upstream_git": "https://github.com/DaveGamble/cJSON.git",
+  "license_spdx": "MIT",
+  "license_evidence": "LICENSE at 74e1ff4994aa4139126967f6d289b675b4b36fef: 'Permission is hereby granted, free of charge, to any person obtaining a copy of this software'",
+  "old": {
+   "ref": "74e1ff4^ (parent)",
+   "commit": "8f2beb57ddad1f94bed899790b00f46df893ccac"
+  },
+  "new": {
+   "ref": "74e1ff4",
+   "commit": "74e1ff4994aa4139126967f6d289b675b4b36fef"
+  },
+  "kind": "bounds-only",
+  "cve": [],
+  "semantic_change": true,
+  "changed_functions": [
+   {
+    "name": "decode_array_index_from_pointer",
+    "file": "cJSON_Utils.c",
+    "change": "loop condition (pointer[position] >= '0') && (pointer[0] <= '9') corrected to pointer[position] <= '9': the upper digit bound was only applied to the first character (1 line)"
+   }
+  ],
+  "unchanged_controls": [
+   "apply_patch",
+   "create_patches",
+   "sort_list",
+   "detach_item_from_array",
+   "decode_pointer_inplace"
+  ],
+  "build": {
+   "system": "cmake",
+   "recipe_notes": "Probe at 74e1ff4994aa: build files present: CMakeLists.txt, Makefile; CMakeLists.txt has 3 WIN32/MINGW/MSVC references.  Not built in this session.",
+   "mingw_ok": "likely"
+  },
+  "verification": {
+   "method": "git clone --filter=blob:none --no-checkout https://github.com/DaveGamble/cJSON.git; git rev-parse 74e1ff4^^{commit} 74e1ff4^{commit}; git show 74e1ff4994aa4139126967f6d289b675b4b36fef:LICENSE; git diff --stat 74e1ff4^..74e1ff4 -- '*.c' '*.h' [1 files; 1 file changed, 1 insertion(+), 1 deletion(-)]; git diff -U0 74e1ff4^..74e1ff4 and the changed hunks read by hand; a throwaway brace-matching C script (not committed) compared every function old vs new by exact text and by comment/whitespace-free token stream, and listed token differences outside functions; declared changed functions equal the computed set and every control is text-identical in both versions. All files changed in the pair, any type (1): cJSON_Utils.c. changed_functions[].change prefixes ADDED/REMOVED/COSMETIC/MACRO-DRIVEN mark non-body-change entries; unprefixed means the body differs.",
+   "files_changed": 1,
+   "functions_changed_count": 1,
+   "verified_by_agent_run": true
+  },
+  "sources": [
+   "https://github.com/DaveGamble/cJSON/commit/74e1ff4994aa4139126967f6d289b675b4b36fef"
+  ],
+  "risks": [
+   "Commit subject: \"fix the incorrect check in decode_array_index_from_pointer (#957)\"; no CVE id in the commit."
+  ]
+ },
+ {
+  "contract": "case-card/1",
+  "id": "pcre2-10.48-to-10.49",
+  "project": "pcre2",
+  "upstream_git": "https://github.com/PCRE2Project/pcre2.git",
+  "license_spdx": "BSD-3-Clause",
+  "license_evidence": "LICENCE.md at 6f9d7c1373262c541324a16a358785b33ef116cf: 'BSD-3-Clause WITH PCRE2-exception'",
+  "old": {
+   "ref": "pcre2-10.48",
+   "commit": "7978954dbd2efc6f2196869290553cf1871b4ce6"
+  },
+  "new": {
+   "ref": "pcre2-10.49",
+   "commit": "6f9d7c1373262c541324a16a358785b33ef116cf"
+  },
+  "kind": "bounds-only",
+  "cve": [],
+  "semantic_change": true,
+  "changed_functions": [
+   {
+    "name": "allocate_stack",
+    "file": "src/pcre2_jit_compile.c",
+    "change": "2 lines added: sets common->large_stack_allocation when one allocation exceeds STACK_GROWTH_RATE / (SSIZE_OF(sw) * 2)"
+   },
+   {
+    "name": "jit_compile",
+    "file": "src/pcre2_jit_compile.c",
+    "change": "when large_stack_allocation is set, the growable-stack limit is computed by rounding to a multiple of STACK_GROWTH_RATE (power-of-two compile assert) instead of subtracting one fixed STACK_GROWTH_RATE (14 lines added, 1 replaced)"
+   }
+  ],
+  "unchanged_controls": [
+   "compile_iterator_matchingpath",
+   "compile_bracket_matchingpath",
+   "compile_bracket_backtrackingpath",
+   "compile_bracketpos_backtrackingpath",
+   "check_fast_forward_char_pair_simd"
+  ],
+  "build": {
+   "system": "cmake",
+   "recipe_notes": "Probe at 6f9d7c137326: build files present: CMakeLists.txt, configure.ac, Makefile.am, BUILD.bazel, build.zig; CMakeLists.txt has 30 WIN32/MINGW/MSVC references.  Not built in this session.",
+   "mingw_ok": "likely"
+  },
+  "verification": {
+   "method": "git clone --filter=blob:none --no-checkout https://github.com/PCRE2Project/pcre2.git; git rev-parse pcre2-10.48^{commit} pcre2-10.49^{commit}; git show 6f9d7c1373262c541324a16a358785b33ef116cf:LICENCE.md; git diff --stat pcre2-10.48..pcre2-10.49 -- '*.c' '*.h' [1 files; 1 file changed, 19 insertions(+), 2 deletions(-)]; git diff -U0 pcre2-10.48..pcre2-10.49 and the changed hunks read by hand; a throwaway brace-matching C script (not committed) compared every function old vs new by exact text and by comment/whitespace-free token stream, and listed token differences outside functions; declared changed functions equal the computed set and every control is text-identical in both versions. All files changed in the pair, any type (129): ChangeLog, MODULE.bazel, Makefile.am, Makefile.in, NEWS, SUPPORT-LIFECYCLE.md, build.zig.zon, configure, configure.ac, doc/pcre2-config.1, .... changed_functions[].change prefixes ADDED/REMOVED/COSMETIC/MACRO-DRIVEN mark non-body-change entries; unprefixed means the body differs.",
+   "files_changed": 1,
+   "functions_changed_count": 2,
+   "verified_by_agent_run": true
+  },
+  "sources": [
+   "https://github.com/PCRE2Project/pcre2/blob/pcre2-10.49/ChangeLog",
+   "https://github.com/PCRE2Project/pcre2/tree/pcre2-10.49",
+   "https://github.com/PCRE2Project/pcre2/security/advisories/GHSA-r9hj-j2rw-4q3m"
+  ],
+  "risks": [
+   "ChangeLog 10.49 cites advisory GHSA-r9hj-j2rw-4q3m (out-of-bounds write with a growable JIT stack) and gives no CVE id, so the card is bounds-only, not cve-fix; the advisory page itself was not fetched.",
+   "Outside functions: STACK_GROWTH_RATE gains an (sljit_sw) cast and struct compiler_common gains a BOOL large_stack_allocation field.",
+   "JIT code is generated at run time; the machine code of the library functions changes only by the added branch, the emitted JIT code differs."
+  ]
+ },
+ {
+  "contract": "case-card/1",
+  "id": "libpng-1.6.41-to-1.6.42",
+  "project": "libpng",
+  "upstream_git": "https://github.com/pnggroup/libpng.git",
+  "license_spdx": "Libpng-2.0",
+  "license_evidence": "LICENSE at 35d9f5ea523cb4f9d677af4705e00ddd185ed10e: 'PNG Reference Library License version 2'",
+  "old": {
+   "ref": "v1.6.41",
+   "commit": "ba980b8f0cfbc270ba1c4a663455e2fe8bad91d2"
+  },
+  "new": {
+   "ref": "v1.6.42",
+   "commit": "35d9f5ea523cb4f9d677af4705e00ddd185ed10e"
+  },
+  "kind": "constant-only",
+  "cve": [],
+  "semantic_change": true,
+  "changed_functions": [
+   {
+    "name": "png_get_copyright",
+    "file": "png.c",
+    "change": "version string constant \"libpng version 1.6.41\" -> \"1.6.42\" (the only function whose compiled code changes)"
+   }
+  ],
+  "unchanged_controls": [
+   "png_ascii_from_fp",
+   "png_XYZ_from_xy",
+   "png_free_data",
+   "png_reciprocal2",
+   "png_gamma_16bit_correct"
+  ],
+  "build": {
+   "system": "cmake",
+   "recipe_notes": "Probe at 35d9f5ea523c: build files present: CMakeLists.txt, configure.ac, Makefile.am, projects, scripts; CMakeLists.txt has 20 WIN32/MINGW/MSVC references.  Not built in this session.",
+   "mingw_ok": "likely"
+  },
+  "verification": {
+   "method": "git clone --filter=blob:none --no-checkout https://github.com/pnggroup/libpng.git; git rev-parse v1.6.41^{commit} v1.6.42^{commit}; git show 35d9f5ea523cb4f9d677af4705e00ddd185ed10e:LICENSE; git diff --stat v1.6.41..v1.6.42 -- '*.c' '*.h' [5 files; 5 files changed, 18 insertions(+), 16 deletions(-)]; git diff -U0 v1.6.41..v1.6.42 and the changed hunks read by hand; a throwaway brace-matching C script (not committed) compared every function old vs new by exact text and by comment/whitespace-free token stream, and listed token differences outside functions; declared changed functions equal the computed set and every control is text-identical in both versions. Scope: 1 test/example/tool files excluded from changed_functions (pngtest.c). All files changed in the pair, any type (17): ANNOUNCE, CHANGES, README, configure, configure.ac, libpng-manual.txt, libpng.3, libpngpf.3, png.5, png.c, .... changed_functions[].change prefixes ADDED/REMOVED/COSMETIC/MACRO-DRIVEN mark non-body-change entries; unprefixed means the body differs.",
+   "files_changed": 5,
+   "functions_changed_count": 1,
+   "verified_by_agent_run": true
+  },
+  "sources": [
+   "https://github.com/pnggroup/libpng/blob/v1.6.42/CHANGES",
+   "https://github.com/pnggroup/libpng/commit/ac944e2b364cff96e8458110c2ad06a63f8543b3",
+   "https://github.com/pnggroup/libpng/tree/v1.6.42"
+  ],
+  "risks": [
+   "png.h deprecated macro png_check_sig(sig, n) flips from (png_sig_cmp(...) != 0) to (... == 0) (CHANGES 1.6.42: API regression fix); git grep at v1.6.42 finds no use of the macro in libpng sources, so only external callers are affected.",
+   "PNG_LIBPNG_VER_* macros and png_libpng_version_* typedef names change with the version (outside functions); pngconf.h/pngpriv.h differ only in comments/whitespace."
+  ]
+ },
+ {
+  "contract": "case-card/1",
+  "id": "jansson-2.13-to-2.13.1",
+  "project": "jansson",
+  "upstream_git": "https://github.com/akheron/jansson.git",
+  "license_spdx": "MIT",
+  "license_evidence": "LICENSE at e9ebfa7e77a6bee77df44e096b100e7131044059: 'Permission is hereby granted, free of charge, to any person obtaining a copy of this software'",
+  "old": {
+   "ref": "v2.13",
+   "commit": "2882ead5bb90cf12a01b07b2c2361e24960fae02"
+  },
+  "new": {
+   "ref": "v2.13.1",
+   "commit": "e9ebfa7e77a6bee77df44e096b100e7131044059"
+  },
+  "kind": "constant-only",
+  "cve": [],
+  "semantic_change": true,
+  "changed_functions": [
+   {
+    "name": "jansson_version_str",
+    "file": "src/version.c",
+    "change": "MACRO-DRIVEN (function source text unchanged, compiled value changes): returns JANSSON_VERSION; src/jansson.h changes it from \"2.13\" to \"2.13.1\""
+   },
+   {
+    "name": "jansson_version_cmp",
+    "file": "src/version.c",
+    "change": "MACRO-DRIVEN (function source text unchanged, compiled value changes): compares against JANSSON_MICRO_VERSION; src/jansson.h changes it from 0 to 1"
+   }
+  ],
+  "unchanged_controls": [
+   "json_incref",
+   "json_decref",
+   "json_decrefp"
+  ],
+  "build": {
+   "system": "cmake",
+   "recipe_notes": "Probe at e9ebfa7e77a6: build files present: CMakeLists.txt, configure.ac, Makefile.am, appveyor.yml; CMakeLists.txt has 8 WIN32/MINGW/MSVC references.  Not built in this session.",
+   "mingw_ok": "likely"
+  },
+  "verification": {
+   "method": "git clone --filter=blob:none --no-checkout https://github.com/akheron/jansson.git; git rev-parse v2.13^{commit} v2.13.1^{commit}; git show e9ebfa7e77a6bee77df44e096b100e7131044059:LICENSE; git diff --stat v2.13..v2.13.1 -- '*.c' '*.h' [1 files; 1 file changed, 2 insertions(+), 2 deletions(-)]; git diff -U0 v2.13..v2.13.1 and the changed hunks read by hand; a throwaway brace-matching C script (not committed) compared every function old vs new by exact text and by comment/whitespace-free token stream, and listed token differences outside functions; declared changed functions equal the computed set and every control is text-identical in both versions. All files changed in the pair, any type (8): CHANGES, CMakeLists.txt, Makefile.am, configure.ac, doc/conf.py, src/Makefile.am, src/jansson.h, test/suites/api/check-exports. changed_functions[].change prefixes ADDED/REMOVED/COSMETIC/MACRO-DRIVEN mark non-body-change entries; unprefixed means the body differs.",
+   "files_changed": 1,
+   "functions_changed_count": 2,
+   "verified_by_agent_run": true
+  },
+  "sources": [
+   "https://github.com/akheron/jansson/blob/v2.13.1/CHANGES",
+   "https://github.com/akheron/jansson/tree/v2.13.1"
+  ],
+  "risks": [
+   "The only *.c/*.h file in the diff is src/jansson.h (two version macros); NO function body text differs anywhere, the two listed functions change only through macro values.",
+   "Build-only changes in the same pair: src/Makefile.am export regex widened to ^json_|^jansson_ and libtool -version-info 16:0:12 -> 17:0:13; CMakeLists.txt JANSSON_VERSION 4.12.0 -> 4.13.0."
+  ]
+ },
+ {
+  "contract": "case-card/1",
+  "id": "cjson-print-number-indent-8a334b0",
+  "project": "cJSON",
+  "upstream_git": "https://github.com/DaveGamble/cJSON.git",
+  "license_spdx": "MIT",
+  "license_evidence": "LICENSE at 8a334b014038ef02065fcd41e6096c99102bcc36: 'Permission is hereby granted, free of charge, to any person obtaining a copy of this software'",
+  "old": {
+   "ref": "8a334b0^ (parent)",
+   "commit": "acc76239bee01d8e9c858ae2cab296704e52d916"
+  },
+  "new": {
+   "ref": "8a334b0",
+   "commit": "8a334b014038ef02065fcd41e6096c99102bcc36"
+  },
+  "kind": "refactor-control",
+  "cve": [],
+  "semantic_change": false,
+  "changed_functions": [
+   {
+    "name": "print_number",
+    "file": "cJSON.c",
+    "change": "COSMETIC (no semantic change): tabs replaced by spaces in the else-if(d == (double)item->valueint) branch (4 lines replaced by 4 lines); token stream identical"
+   }
+  ],
+  "unchanged_controls": [
+   "parse_string",
+   "cJSON_Compare",
+   "print_string_ptr",
+   "cJSON_CreateRaw",
+   "skip_utf8_bom"
+  ],
+  "build": {
+   "system": "cmake",
+   "recipe_notes": "Probe at 8a334b014038: build files present: CMakeLists.txt, Makefile; CMakeLists.txt has 3 WIN32/MINGW/MSVC references.  Not built in this session.",
+   "mingw_ok": "likely"
+  },
+  "verification": {
+   "method": "git clone --filter=blob:none --no-checkout https://github.com/DaveGamble/cJSON.git; git rev-parse 8a334b0^^{commit} 8a334b0^{commit}; git show 8a334b014038ef02065fcd41e6096c99102bcc36:LICENSE; git diff --stat 8a334b0^..8a334b0 -- '*.c' '*.h' [1 files; 1 file changed, 4 insertions(+), 4 deletions(-)]; git diff -U0 8a334b0^..8a334b0 and the changed hunks read by hand; a throwaway brace-matching C script (not committed) compared every function old vs new by exact text and by comment/whitespace-free token stream, and listed token differences outside functions; declared changed functions equal the computed set and every control is text-identical in both versions. All files changed in the pair, any type (1): cJSON.c. changed_functions[].change prefixes ADDED/REMOVED/COSMETIC/MACRO-DRIVEN mark non-body-change entries; unprefixed means the body differs.",
+   "files_changed": 1,
+   "functions_changed_count": 1,
+   "verified_by_agent_run": true
+  },
+  "sources": [
+   "https://github.com/DaveGamble/cJSON/commit/8a334b014038ef02065fcd41e6096c99102bcc36"
+  ],
+  "risks": [
+   "Same line count before and after, so even __LINE__-dependent code would not shift."
+  ]
+ },
+ {
+  "contract": "case-card/1",
+  "id": "cjson-spelling-tests-only-3249730",
+  "project": "cJSON",
+  "upstream_git": "https://github.com/DaveGamble/cJSON.git",
+  "license_spdx": "MIT",
+  "license_evidence": "LICENSE at 324973008ced4ea03d1626a00915d0399ecbd9db: 'Permission is hereby granted, free of charge, to any person obtaining a copy of this software'",
+  "old": {
+   "ref": "3249730^ (parent)",
+   "commit": "8a334b014038ef02065fcd41e6096c99102bcc36"
+  },
+  "new": {
+   "ref": "3249730",
+   "commit": "324973008ced4ea03d1626a00915d0399ecbd9db"
+  },
+  "kind": "no-op",
+  "cve": [],
+  "semantic_change": false,
+  "changed_functions": [],
+  "unchanged_controls": [
+   "apply_patch",
+   "create_patches",
+   "parse_string",
+   "overwrite_item",
+   "minify_string"
+  ],
+  "build": {
+   "system": "cmake",
+   "recipe_notes": "Probe at 324973008ced: build files present: CMakeLists.txt, Makefile; CMakeLists.txt has 3 WIN32/MINGW/MSVC references.  Not built in this session.",
+   "mingw_ok": "likely"
+  },
+  "verification": {
+   "method": "git clone --filter=blob:none --no-checkout https://github.com/DaveGamble/cJSON.git; git rev-parse 3249730^^{commit} 3249730^{commit}; git show 324973008ced4ea03d1626a00915d0399ecbd9db:LICENSE; git diff --stat 3249730^..3249730 -- '*.c' '*.h' [3 files; 3 files changed, 3 insertions(+), 3 deletions(-)]; git diff -U0 3249730^..3249730 and the changed hunks read by hand; a throwaway brace-matching C script (not committed) compared every function old vs new by exact text and by comment/whitespace-free token stream, and listed token differences outside functions; declared changed functions equal the computed set and every control is text-identical in both versions. Scope: 3 test/example/tool files excluded from changed_functions (tests/cjson_add.c, tests/print_object.c, tests/unity/src/unity.c). All files changed in the pair, any type (7): tests/cjson_add.c, tests/print_object.c, tests/unity/auto/parse_output.rb, tests/unity/docs/UnityGettingStartedGuide.md, tests/unity/extras/eclipse/error_parsers.txt, tests/unity/src/unity.c, tests/unity/test/rakefile. changed_functions[].change prefixes ADDED/REMOVED/COSMETIC/MACRO-DRIVEN mark non-body-change entries; unprefixed means the body differs. -U0 diff read: two comment typo fixes (tests/cjson_add.c \"dillimport\"->\"dllimport\", tests/unity/src/unity.c \"overrideable\"->\"overridable\") and one test message string (tests/print_object.c \"ojbect\"->\"object\"); no library file touched.",
+   "files_changed": 3,
+   "functions_changed_count": 0,
+   "verified_by_agent_run": true
+  },
+  "sources": [
+   "https://github.com/DaveGamble/cJSON/commit/324973008ced4ea03d1626a00915d0399ecbd9db"
+  ],
+  "risks": [
+   "The three changed files are all under tests/; the library sources are byte-identical, so the library binary should be identical."
+  ]
+ },
+ {
+  "contract": "case-card/1",
+  "id": "stb-vorbis-doc-typo-5c98e65",
+  "project": "stb",
+  "upstream_git": "https://github.com/nothings/stb.git",
+  "license_spdx": "MIT",
+  "license_evidence": "stb_vorbis.c at 5c98e6564ba74d5a6e97004dd8730a69e9e7b6e6: 'This software is available under 2 licenses -- choose whichever you prefer.' / 'ALTERNATIVE A - MIT License'",
+  "old": {
+   "ref": "5c98e65^ (parent)",
+   "commit": "130f28df68c3fdbf043c4275260ba1c870495b5b"
+  },
+  "new": {
+   "ref": "5c98e65",
+   "commit": "5c98e6564ba74d5a6e97004dd8730a69e9e7b6e6"
+  },
+  "kind": "no-op",
+  "cve": [],
+  "semantic_change": false,
+  "changed_functions": [],
+  "unchanged_controls": [
+   "start_decoder",
+   "vorbis_decode_packet_rest",
+   "decode_residue",
+   "next_segment",
+   "go_to_page_before"
+  ],
+  "build": {
+   "system": "single",
+   "recipe_notes": "Probe at 5c98e6564ba7: build files present: none of . Single-file C library (stb_vorbis.c), no build system; the source itself mentions MinGW (comment \"cast for MinGW warning\" in lookup1_values). Not built in this session.",
+   "mingw_ok": "likely"
+  },
+  "verification": {
+   "method": "git clone --filter=blob:none --no-checkout https://github.com/nothings/stb.git; git rev-parse 5c98e65^^{commit} 5c98e65^{commit}; git show 5c98e6564ba74d5a6e97004dd8730a69e9e7b6e6:stb_vorbis.c; git diff --stat 5c98e65^..5c98e65 -- '*.c' '*.h' [1 files; 1 file changed, 1 insertion(+), 1 deletion(-)]; git diff -U0 5c98e65^..5c98e65 and the changed hunks read by hand; a throwaway brace-matching C script (not committed) compared every function old vs new by exact text and by comment/whitespace-free token stream, and listed token differences outside functions; declared changed functions equal the computed set and every control is text-identical in both versions. All files changed in the pair, any type (1): stb_vorbis.c. changed_functions[].change prefixes ADDED/REMOVED/COSMETIC/MACRO-DRIVEN mark non-body-change entries; unprefixed means the body differs. -U0 diff read: one comment line in the version-history block changed (\"-13223, -13223\" -> \"-13222, -13223\"); token stream of stb_vorbis.c identical, all 110 functions text-identical.",
+   "files_changed": 1,
+   "functions_changed_count": 0,
+   "verified_by_agent_run": true
+  },
+  "sources": [
+   "https://github.com/nothings/stb/commit/5c98e6564ba74d5a6e97004dd8730a69e9e7b6e6"
+  ],
+  "risks": [
+   "Single comment line outside any function; one line replaced by one line, no line shifts."
+  ]
+ },
+ {
+  "contract": "case-card/1",
+  "id": "cjson-readme-docs-a3f3d6c",
+  "project": "cJSON",
+  "upstream_git": "https://github.com/DaveGamble/cJSON.git",
+  "license_spdx": "MIT",
+  "license_evidence": "LICENSE at a3f3d6c7843f3021b648623d13bc4fbca0084838: 'Permission is hereby granted, free of charge, to any person obtaining a copy of this software'",
+  "old": {
+   "ref": "a3f3d6c^ (parent)",
+   "commit": "5cc0e39f42dfe28cb8541f95fa2c513f0d550210"
+  },
+  "new": {
+   "ref": "a3f3d6c",
+   "commit": "a3f3d6c7843f3021b648623d13bc4fbca0084838"
+  },
+  "kind": "no-op",
+  "cve": [],
+  "semantic_change": false,
+  "changed_functions": [],
+  "unchanged_controls": [
+   "apply_patch",
+   "create_patches",
+   "parse_string",
+   "overwrite_item",
+   "minify_string"
+  ],
+  "build": {
+   "system": "cmake",
+   "recipe_notes": "Probe at a3f3d6c7843f: build files present: CMakeLists.txt, Makefile; CMakeLists.txt has 3 WIN32/MINGW/MSVC references.  Not built in this session.",
+   "mingw_ok": "likely"
+  },
+  "verification": {
+   "method": "git clone --filter=blob:none --no-checkout https://github.com/DaveGamble/cJSON.git; git rev-parse a3f3d6c^^{commit} a3f3d6c^{commit}; git show a3f3d6c7843f3021b648623d13bc4fbca0084838:LICENSE; git diff --stat a3f3d6c^..a3f3d6c -- '*.c' '*.h' [0 files; (no *.c/*.h changes)]; git diff -U0 a3f3d6c^..a3f3d6c and the changed hunks read by hand; a throwaway brace-matching C script (not committed) compared every function old vs new by exact text and by comment/whitespace-free token stream, and listed token differences outside functions; declared changed functions equal the computed set and every control is text-identical in both versions. All files changed in the pair, any type (2): README.md, library_config/uninstall.cmake. changed_functions[].change prefixes ADDED/REMOVED/COSMETIC/MACRO-DRIVEN mark non-body-change entries; unprefixed means the body differs.",
+   "files_changed": 0,
+   "functions_changed_count": 0,
+   "verified_by_agent_run": true
+  },
+  "sources": [
+   "https://github.com/DaveGamble/cJSON/commit/a3f3d6c7843f3021b648623d13bc4fbca0084838"
+  ],
+  "risks": [
+   "Subject: \"docs: fix outdated CMake version requirement in README (#990)\"; no *.c/*.h file changes, see the all-files list in verification.method."
+  ]
+ },
+ {
+  "contract": "case-card/1",
+  "id": "cjson-cmake-minimum-a29814f",
+  "project": "cJSON",
+  "upstream_git": "https://github.com/DaveGamble/cJSON.git",
+  "license_spdx": "MIT",
+  "license_evidence": "LICENSE at a29814f285cc531c00223743ad3c55cd38c0dc56: 'Permission is hereby granted, free of charge, to any person obtaining a copy of this software'",
+  "old": {
+   "ref": "a29814f^ (parent)",
+   "commit": "c859b25da02955fef659d658b8f324b5cde87be3"
+  },
+  "new": {
+   "ref": "a29814f",
+   "commit": "a29814f285cc531c00223743ad3c55cd38c0dc56"
+  },
+  "kind": "build-system-only",
+  "cve": [],
+  "semantic_change": false,
+  "changed_functions": [],
+  "unchanged_controls": [
+   "apply_patch",
+   "create_patches",
+   "parse_string",
+   "overwrite_item",
+   "minify_string"
+  ],
+  "build": {
+   "system": "cmake",
+   "recipe_notes": "Probe at a29814f285cc: build files present: CMakeLists.txt, Makefile; CMakeLists.txt has 3 WIN32/MINGW/MSVC references.  Not built in this session.",
+   "mingw_ok": "likely"
+  },
+  "verification": {
+   "method": "git clone --filter=blob:none --no-checkout https://github.com/DaveGamble/cJSON.git; git rev-parse a29814f^^{commit} a29814f^{commit}; git show a29814f285cc531c00223743ad3c55cd38c0dc56:LICENSE; git diff --stat a29814f^..a29814f -- '*.c' '*.h' [0 files; (no *.c/*.h changes)]; git diff -U0 a29814f^..a29814f and the changed hunks read by hand; a throwaway brace-matching C script (not committed) compared every function old vs new by exact text and by comment/whitespace-free token stream, and listed token differences outside functions; declared changed functions equal the computed set and every control is text-identical in both versions. All files changed in the pair, any type (1): CMakeLists.txt. changed_functions[].change prefixes ADDED/REMOVED/COSMETIC/MACRO-DRIVEN mark non-body-change entries; unprefixed means the body differs.",
+   "files_changed": 0,
+   "functions_changed_count": 0,
+   "verified_by_agent_run": true
+  },
+  "sources": [
+   "https://github.com/DaveGamble/cJSON/commit/a29814f285cc531c00223743ad3c55cd38c0dc56"
+  ],
+  "risks": [
+   "Subject: \"upgrade version of cmake_minimum_required (#986)\"; no *.c/*.h file changes, see the all-files list in verification.method."
+  ]
+ },
+ {
+  "contract": "case-card/1",
+  "id": "libyaml-0.2.3-to-0.2.4",
+  "project": "libyaml",
+  "upstream_git": "https://github.com/yaml/libyaml.git",
+  "license_spdx": "MIT",
+  "license_evidence": "License at 72e2f75277ff88ad1fb8a81cf422df06bf371578: 'Permission is hereby granted, free of charge, to any person obtaining a copy of this software'",
+  "old": {
+   "ref": "0.2.3",
+   "commit": "bf5290289996338dcba9471b839013068d9e9ae8"
+  },
+  "new": {
+   "ref": "0.2.4",
+   "commit": "72e2f75277ff88ad1fb8a81cf422df06bf371578"
+  },
+  "kind": "release",
+  "cve": [],
+  "semantic_change": true,
+  "changed_functions": [
+   {
+    "name": "yaml_emitter_emit_stream_start",
+    "file": "src/emitter.c",
+    "change": "emitter->open_ended = 0 added at stream start"
+   },
+   {
+    "name": "yaml_emitter_emit_document_start",
+    "file": "src/emitter.c",
+    "change": "open_ended reset moved after the \"...\" marker block; %YAML directive now writes \"1.2\" when version_directive->minor != 1 (was always \"1.1\"); the final \"...\" test becomes open_ended == 2"
+   },
+   {
+    "name": "yaml_emitter_emit_document_end",
+    "file": "src/emitter.c",
+    "change": "else-if branch added: sets open_ended = 1 when not already open-ended"
+   },
+   {
+    "name": "yaml_emitter_write_block_scalar_hints",
+    "file": "src/emitter.c",
+    "change": "keep-chomp \"+\" hint now sets open_ended = 2 (was 1) in two places"
+   }
+  ],
+  "unchanged_controls": [
+   "yaml_emitter_analyze_scalar",
+   "yaml_emitter_write_double_quoted_scalar",
+   "yaml_emitter_analyze_event",
+   "yaml_emitter_process_tag",
+   "yaml_emitter_emit_block_sequence_item"
+  ],
+  "build": {
+   "system": "cmake",
+   "recipe_notes": "Probe at 72e2f75277ff: build files present: CMakeLists.txt, configure.ac, Makefile.am, .appveyor.yml; CMakeLists.txt has 1 WIN32/MINGW/MSVC references.  Not built in this session.",
+   "mingw_ok": "likely"
+  },
+  "verification": {
+   "method": "git clone --filter=blob:none --no-checkout https://github.com/yaml/libyaml.git; git rev-parse 0.2.3^{commit} 0.2.4^{commit}; git show 72e2f75277ff88ad1fb8a81cf422df06bf371578:License; git diff --stat 0.2.3..0.2.4 -- '*.c' '*.h' [2 files; 2 files changed, 57 insertions(+), 14 deletions(-)]; git diff -U0 0.2.3..0.2.4 and the changed hunks read by hand; a throwaway brace-matching C script (not committed) compared every function old vs new by exact text and by comment/whitespace-free token stream, and listed token differences outside functions; declared changed functions equal the computed set and every control is text-identical in both versions. Scope: 1 test/example/tool files excluded from changed_functions (tests/run-emitter-test-suite.c). All files changed in the pair, any type (9): .appveyor.yml, .gitignore, CMakeLists.txt, Changes, Makefile.am, announcement.msg, configure.ac, src/emitter.c, tests/run-emitter-test-suite.c. changed_functions[].change prefixes ADDED/REMOVED/COSMETIC/MACRO-DRIVEN mark non-body-change entries; unprefixed means the body differs.",
+   "files_changed": 2,
+   "functions_changed_count": 4,
+   "verified_by_agent_run": true
+  },
+  "sources": [
+   "https://github.com/yaml/libyaml/blob/0.2.4/Changes",
+   "https://github.com/yaml/libyaml/pull/174",
+   "https://github.com/yaml/libyaml/tree/0.2.4"
+  ],
+  "risks": [
+   "Changes 0.2.4 lists #143 (packaging) and #174 \"Fix logic for document end before directive\"; the %YAML 1.2 emission is in the same diff but its PR is not named upstream.",
+   "tests/run-emitter-test-suite.c also changed (test program, excluded from changed_functions)."
+  ]
+ },
+ {
+  "contract": "case-card/1",
+  "id": "libpng-1.6.42-to-1.6.43",
+  "project": "libpng",
+  "upstream_git": "https://github.com/pnggroup/libpng.git",
+  "license_spdx": "Libpng-2.0",
+  "license_evidence": "LICENSE at ed217e3e601d8e462f7fd1e04bed43ac42212429: 'PNG Reference Library License version 2'",
+  "old": {
+   "ref": "v1.6.42",
+   "commit": "35d9f5ea523cb4f9d677af4705e00ddd185ed10e"
+  },
+  "new": {
+   "ref": "v1.6.43",
+   "commit": "ed217e3e601d8e462f7fd1e04bed43ac42212429"
+  },
+  "kind": "release",
+  "cve": [],
+  "semantic_change": true,
+  "changed_functions": [
+   {
+    "name": "png_get_copyright",
+    "file": "png.c",
+    "change": "version string constant \"libpng version 1.6.42\" -> \"1.6.43\""
+   },
+   {
+    "name": "png_check_IHDR",
+    "file": "png.c",
+    "change": "row-width overflow check rewritten: png_gt(((width + 7) & (~7U)), ...) becomes ((width + 7) & ~(png_alloc_size_t)7) > (...), so the mask is at least as wide as png_uint_32 on 16-bit targets (CHANGES 1.6.43: \"Fixed the row width check in png_check_IHDR()\")"
+   },
+   {
+    "name": "png_gt",
+    "file": "png.c",
+    "change": "REMOVED: static helper png_gt(size_t a, size_t b) removed together with its macro fallback outside functions"
+   },
+   {
+    "name": "png_icc_profile_error",
+    "file": "png.c",
+    "change": "COSMETIC (no semantic change): brace/indent reformat of the #ifdef PNG_WARNINGS_SUPPORTED else-block; token stream identical"
+   },
+   {
+    "name": "png_push_read_chunk",
+    "file": "pngpread.c",
+    "change": "push-mode reader gains an eXIf branch (#ifdef PNG_READ_eXIf_SUPPORTED: PNG_PUSH_SAVE_BUFFER_IF_FULL then png_handle_eXIf); CHANGES 1.6.43: eXIf support in pngpread.c"
+   },
+   {
+    "name": "png_read_row",
+    "file": "pngread.c",
+    "change": "the png_ptr->num_palette_max >= 0 test is now compiled only under PNG_CHECK_FOR_INVALID_INDEX_SUPPORTED (CHANGES 1.6.43: fixed a preprocessor condition in pngread.c)"
+   },
+   {
+    "name": "png_set_quantize",
+    "file": "pngrtran.c",
+    "change": "allocation-size expressions simplified in five places, e.g. (png_alloc_size_t)((png_uint_32)num_palette * sizeof(png_byte)) -> (png_alloc_size_t)num_palette and memset(distance, 0xff, num_entries); sizeof(png_byte) is 1 so the values are equal (refactor)"
+   },
+   {
+    "name": "png_set_alpha_mode_fixed",
+    "file": "pngrtran.c",
+    "change": "COSMETIC (no semantic change): comment text rewritten only; token stream identical"
+   }
+  ],
+  "unchanged_controls": [
+   "png_image_read_colormap",
+   "png_do_compose",
+   "png_init_read_transformations",
+   "png_pow10",
+   "png_process_some_data"
+  ],
+  "build": {
+   "system": "cmake",
+   "recipe_notes": "Probe at ed217e3e601d: build files present: CMakeLists.txt, configure.ac, Makefile.am, projects, scripts; CMakeLists.txt has 20 WIN32/MINGW/MSVC references.  Not built in this session.",
+   "mingw_ok": "likely"
+  },
+  "verification": {
+   "method": "git clone --filter=blob:none --no-checkout https://github.com/pnggroup/libpng.git; git rev-parse v1.6.42^{commit} v1.6.43^{commit}; git show ed217e3e601d8e462f7fd1e04bed43ac42212429:LICENSE; git diff --stat v1.6.42..v1.6.43 -- '*.c' '*.h' [12 files; 12 files changed, 275 insertions(+), 309 deletions(-)]; git diff -U0 v1.6.42..v1.6.43 and the changed hunks read by hand; a throwaway brace-matching C script (not committed) compared every function old vs new by exact text and by comment/whitespace-free token stream, and listed token differences outside functions; declared changed functions equal the computed set and every control is text-identical in both versions. Scope: 6 test/example/tool files excluded from changed_functions (contrib/examples/iccfrompng.c, contrib/gregbook/rpng-x.c, contrib/gregbook/rpng2-x.c, contrib/libtests/pngvalid.c, contrib/tools/pngfix.c, pngtest.c). All files changed in the pair, any type (92): .appveyor.yml, .editorconfig, .github/workflows/lint.yml, .travis.yml, .yamllint.yml, ANNOUNCE, AUTHORS, CHANGES, CMakeLists.txt, README, .... changed_functions[].change prefixes ADDED/REMOVED/COSMETIC/MACRO-DRIVEN mark non-body-change entries; unprefixed means the body differs.",
+   "files_changed": 12,
+   "functions_changed_count": 8,
+   "verified_by_agent_run": true
+  },
+  "sources": [
+   "https://github.com/pnggroup/libpng/blob/v1.6.43/CHANGES",
+   "https://github.com/pnggroup/libpng/tree/v1.6.43"
+  ],
+  "risks": [
+   "png.h version macros change and PNG_LIBPNG_VER_SONUM/DLLNUM are now defined through the new PNG_LIBPNG_VER_SHAREDLIB macro (outside functions); pngconf.h differs only in comments.",
+   "Six contrib/example/test files (contrib/*, pngtest.c) also changed and are excluded from changed_functions; the CHANGES 1.6.43 build items (CMake LoongArch LSX, system headers) are not C."
+  ]
+ },
+ {
+  "contract": "case-card/1",
+  "id": "libpng-1.6.46-to-1.6.47",
+  "project": "libpng",
+  "upstream_git": "https://github.com/pnggroup/libpng.git",
+  "license_spdx": "Libpng-2.0",
+  "license_evidence": "LICENSE at 872555f4ba910252783af1507f9e7fe1653be252: 'PNG Reference Library License version 2'",
+  "old": {
+   "ref": "v1.6.46",
+   "commit": "0024abd279d3a06435c0309a3f4172eed7c7a19a"
+  },
+  "new": {
+   "ref": "v1.6.47",
+   "commit": "872555f4ba910252783af1507f9e7fe1653be252"
+  },
+  "kind": "large-rewrite",
+  "cve": [],
+  "semantic_change": true,
+  "changed_functions": [
+   {
+    "name": "icc_check_length",
+    "file": "png.c",
+    "change": "body modified (+3/-4 lines in the unified diff)"
+   },
+   {
+    "name": "png_XYZ_from_xy",
+    "file": "png.c",
+    "change": "body modified (+2/-1 lines in the unified diff)"
+   },
+   {
+    "name": "png_build_gamma_table",
+    "file": "png.c",
+    "change": "body modified (+45/-28 lines in the unified diff)"
+   },
+   {
+    "name": "png_create_png_struct",
+    "file": "png.c",
+    "change": "body modified (+8/-6 lines in the unified diff)"
+   },
+   {
+    "name": "png_free_data",
+    "file": "png.c",
+    "change": "body modified (+0/-7 lines in the unified diff)"
+   },
+   {
+    "name": "png_get_copyright",
+    "file": "png.c",
+    "change": "body modified (+1/-1 lines in the unified diff)"
+   },
+   {
+    "name": "png_icc_check_header",
+    "file": "png.c",
+    "change": "body modified (+18/-18 lines in the unified diff)"
+   },
+   {
+    "name": "png_icc_check_length",
+    "file": "png.c",
+    "change": "body modified (+6/-18 lines in the unified diff)"
+   },
+   {
+    "name": "png_icc_check_tag_table",
+    "file": "png.c",
+    "change": "body modified (+5/-5 lines in the unified diff)"
+   },
+   {
+    "name": "png_icc_profile_error",
+    "file": "png.c",
+    "change": "body modified (+3/-12 lines in the unified diff)"
+   },
+   {
+    "name": "png_xy_from_XYZ",
+    "file": "png.c",
+    "change": "body modified (+2/-1 lines in the unified diff)"
+   },
+   {
+    "name": "png_safe_execute",
+    "file": "pngerror.c",
+    "change": "body modified (+20/-6 lines in the unified diff)"
+   },
+   {
+    "name": "png_fixed_inches_from_microns",
+    "file": "pngget.c",
+    "change": "body modified (+7/-1 lines in the unified diff)"
+   },
+   {
+    "name": "png_get_cHRM",
+    "file": "pngget.c",
+    "change": "body modified (+20/-33 lines in the unified diff)"
+   },
+   {
+    "name": "png_get_cHRM_XYZ",
+    "file": "pngget.c",
+    "change": "body modified (+12/-19 lines in the unified diff)"
+   },
+   {
+    "name": "png_get_cHRM_XYZ_fixed",
+    "file": "pngget.c",
+    "change": "body modified (+12/-19 lines in the unified diff)"
+   },
+   {
+    "name": "png_get_cHRM_fixed",
+    "file": "pngget.c",
+    "change": "body modified (+13/-20 lines in the unified diff)"
+   },
+   {
+    "name": "png_get_gAMA",
+    "file": "pngget.c",
+    "change": "body modified (+5/-4 lines in the unified diff)"
+   },
+   {
+    "name": "png_get_gAMA_fixed",
+    "file": "pngget.c",
+    "change": "body modified (+3/-3 lines in the unified diff)"
+   },
+   {
+    "name": "png_get_sRGB",
+    "file": "pngget.c",
+    "change": "body modified (+3/-2 lines in the unified diff)"
+   },
+   {
+    "name": "png_malloc_base",
+    "file": "pngmem.c",
+    "change": "body modified (+18/-19 lines in the unified diff)"
+   },
+   {
+    "name": "png_push_read_chunk",
+    "file": "pngpread.c",
+    "change": "body modified (+4/-188 lines in the unified diff)"
+   },
+   {
+    "name": "png_gamma_not_sRGB",
+    "file": "pngread.c",
+    "change": "body modified (+4/-9 lines in the unified diff)"
+   },
+   {
+    "name": "png_image_read_colormap",
+    "file": "pngread.c",
+    "change": "body modified (+18/-19 lines in the unified diff)"
+   },
+   {
+    "name": "png_image_read_direct",
+    "file": "pngread.c",
+    "change": "body modified (+9/-2 lines in the unified diff)"
+   },
+   {
+    "name": "png_image_read_header",
+    "file": "pngread.c",
+    "change": "body modified (+5/-9 lines in the unified diff)"
+   },
+   {
+    "name": "png_image_skip_unused_chunks",
+    "file": "pngread.c",
+    "change": "body modified (+4/-7 lines in the unified diff)"
+   },
+   {
+    "name": "png_read_end",
+    "file": "pngread.c",
+    "change": "body modified (+3/-111 lines in the unified diff)"
+   },
+   {
+    "name": "png_read_info",
+    "file": "pngread.c",
+    "change": "body modified (+3/-114 lines in the unified diff)"
+   },
+   {
+    "name": "set_file_encoding",
+    "file": "pngread.c",
+    "change": "body modified (+9/-1 lines in the unified diff)"
+   },
+   {
+    "name": "png_init_read_transformations",
+    "file": "pngrtran.c",
+    "change": "body modified (+21/-58 lines in the unified diff)"
+   },
+   {
+    "name": "png_read_transform_info",
+    "file": "pngrtran.c",
+    "change": "body modified (+4/-4 lines in the unified diff)"
+   },
+   {
+    "name": "png_set_alpha_mode_fixed",
+    "file": "pngrtran.c",
+    "change": "body modified (+15/-27 lines in the unified diff)"
+   },
+   {
+    "name": "png_set_gamma_fixed",
+    "file": "pngrtran.c",
+    "change": "body modified (+12/-10 lines in the unified diff)"
+   },
+   {
+    "name": "png_set_rgb_to_gray_fixed",
+    "file": "pngrtran.c",
+    "change": "body modified (+3/-20 lines in the unified diff)"
+   },
+   {
+    "name": "translate_gamma_flags",
+    "file": "pngrtran.c",
+    "change": "body modified (+1/-10 lines in the unified diff)"
+   },
+   {
+    "name": "png_cache_unknown_chunk",
+    "file": "pngrutil.c",
+    "change": "body modified (+1/-11 lines in the unified diff)"
+   },
+   {
+    "name": "png_crc_error",
+    "file": "pngrutil.c",
+    "change": "body modified (+29/-3 lines in the unified diff)"
+   },
+   {
+    "name": "png_crc_finish",
+    "file": "pngrutil.c",
+    "change": "body modified (+1/-32 lines in the unified diff)"
+   },
+   {
+    "name": "png_decompress_chunk",
+    "file": "pngrutil.c",
+    "change": "body modified (+1/-10 lines in the unified diff)"
+   },
+   {
+    "name": "png_handle_IEND",
+    "file": "pngrutil.c",
+    "change": "body modified (+4/-7 lines in the unified diff)"
+   },
+   {
+    "name": "png_handle_IHDR",
+    "file": "pngrutil.c",
+    "change": "body modified (+9/-7 lines in the unified diff)"
+   },
+   {
+    "name": "png_handle_PLTE",
+    "file": "pngrutil.c",
+    "change": "body modified (+90/-165 lines in the unified diff)"
+   },
+   {
+    "name": "png_handle_bKGD",
+    "file": "pngrutil.c",
+    "change": "body modified (+16/-25 lines in the unified diff)"
+   },
+   {
+    "name": "png_handle_cHRM",
+    "file": "pngrutil.c",
+    "change": "body modified (+33/-52 lines in the unified diff)"
+   },
+   {
+    "name": "png_handle_cICP",
+    "file": "pngrutil.c",
+    "change": "body modified (+22/-26 lines in the unified diff)"
+   },
+   {
+    "name": "png_handle_cLLI",
+    "file": "pngrutil.c",
+    "change": "body modified (+4/-26 lines in the unified diff)"
+   },
+   {
+    "name": "png_handle_eXIf",
+    "file": "pngrutil.c",
+    "change": "body modified (+22/-44 lines in the unified diff)"
+   },
+   {
+    "name": "png_handle_gAMA",
+    "file": "pngrutil.c",
+    "change": "body modified (+22/-23 lines in the unified diff)"
+   },
+   {
+    "name": "png_handle_hIST",
+    "file": "pngrutil.c",
+    "change": "body modified (+11/-22 lines in the unified diff)"
+   },
+   {
+    "name": "png_handle_iCCP",
+    "file": "pngrutil.c",
+    "change": "body modified (+16/-72 lines in the unified diff)"
+   },
+   {
+    "name": "png_handle_iTXt",
+    "file": "pngrutil.c",
+    "change": "body modified (+12/-11 lines in the unified diff)"
+   },
+   {
+    "name": "png_handle_mDCV",
+    "file": "pngrutil.c",
+    "change": "body modified (+24/-34 lines in the unified diff)"
+   },
+   {
+    "name": "png_handle_oFFs",
+    "file": "pngrutil.c",
+    "change": "body modified (+4/-26 lines in the unified diff)"
+   },
+   {
+    "name": "png_handle_pCAL",
+    "file": "pngrutil.c",
+    "change": "body modified (+15/-26 lines in the unified diff)"
+   },
+   {
+    "name": "png_handle_pHYs",
+    "file": "pngrutil.c",
+    "change": "body modified (+4/-26 lines in the unified diff)"
+   },
+   {
+    "name": "png_handle_sBIT",
+    "file": "pngrutil.c",
+    "change": "body modified (+8/-24 lines in the unified diff)"
+   },
+   {
+    "name": "png_handle_sCAL",
+    "file": "pngrutil.c",
+    "change": "body modified (+11/-32 lines in the unified diff)"
+   },
+   {
+    "name": "png_handle_sPLT",
+    "file": "pngrutil.c",
+    "change": "body modified (+11/-55 lines in the unified diff)"
+   },
+   {
+    "name": "png_handle_sRGB",
+    "file": "pngrutil.c",
+    "change": "body modified (+25/-32 lines in the unified diff)"
+   },
+   {
+    "name": "png_handle_tEXt",
+    "file": "pngrutil.c",
+    "change": "body modified (+13/-20 lines in the unified diff)"
+   },
+   {
+    "name": "png_handle_tIME",
+    "file": "pngrutil.c",
+    "change": "body modified (+8/-19 lines in the unified diff)"
+   },
+   {
+    "name": "png_handle_tRNS",
+    "file": "pngrutil.c",
+    "change": "body modified (+8/-25 lines in the unified diff)"
+   },
+   {
+    "name": "png_handle_unknown",
+    "file": "pngrutil.c",
+    "change": "body modified (+8/-6 lines in the unified diff)"
+   },
+   {
+    "name": "png_handle_zTXt",
+    "file": "pngrutil.c",
+    "change": "body modified (+15/-14 lines in the unified diff)"
+   },
+   {
+    "name": "png_read_IDAT_data",
+    "file": "pngrutil.c",
+    "change": "body modified (+9/-1 lines in the unified diff)"
+   },
+   {
+    "name": "png_read_buffer",
+    "file": "pngrutil.c",
+    "change": "body modified (+6/-11 lines in the unified diff)"
+   },
+   {
+    "name": "png_read_chunk_header",
+    "file": "pngrutil.c",
+    "change": "body modified (+16/-13 lines in the unified diff)"
+   },
+   {
+    "name": "png_ITU_fixed_16",
+    "file": "pngset.c",
+    "change": "body modified (+5/-7 lines in the unified diff)"
+   },
+   {
+    "name": "png_set_cHRM_XYZ_fixed",
+    "file": "pngset.c",
+    "change": "body modified (+8/-4 lines in the unified diff)"
+   },
+   {
+    "name": "png_set_cHRM_fixed",
+    "file": "pngset.c",
+    "change": "body modified (+9/-15 lines in the unified diff)"
+   },
+   {
+    "name": "png_set_chunk_malloc_max",
+    "file": "pngset.c",
+    "change": "body modified (+17/-1 lines in the unified diff)"
+   },
+   {
+    "name": "png_set_gAMA_fixed",
+    "file": "pngset.c",
+    "change": "body modified (+2/-2 lines in the unified diff)"
+   },
+   {
+    "name": "png_set_iCCP",
+    "file": "pngset.c",
+    "change": "body modified (+0/-21 lines in the unified diff)"
+   },
+   {
+    "name": "png_set_mDCV_fixed",
+    "file": "pngset.c",
+    "change": "body modified (+18/-8 lines in the unified diff)"
+   },
+   {
+    "name": "png_set_sRGB",
+    "file": "pngset.c",
+    "change": "body modified (+2/-2 lines in the unified diff)"
+   },
+   {
+    "name": "png_set_sRGB_gAMA_and_cHRM",
+    "file": "pngset.c",
+    "change": "body modified (+13/-8 lines in the unified diff)"
+   },
+   {
+    "name": "png_write_info_before_PLTE",
+    "file": "pngwrite.c",
+    "change": "body modified (+8/-31 lines in the unified diff)"
+   },
+   {
+    "name": "png_write_iCCP",
+    "file": "pngwutil.c",
+    "change": "CHANGES 1.6.47: fixed a latent read-beyond-end-of-malloc bug in png_write_iCCP"
+   },
+   {
+    "name": "png_gamma_significant",
+    "file": "png.c",
+    "change": "COSMETIC (no semantic change): comments/whitespace only; token stream identical"
+   },
+   {
+    "name": "png_muldiv",
+    "file": "png.c",
+    "change": "COSMETIC (no semantic change): comments/whitespace only; token stream identical"
+   },
+   {
+    "name": "png_product2",
+    "file": "png.c",
+    "change": "COSMETIC (no semantic change): comments/whitespace only; token stream identical"
+   },
+   {
+    "name": "have_chromaticities",
+    "file": "png.c",
+    "change": "ADDED: new function in the new version"
+   },
+   {
+    "name": "png_set_rgb_coefficients",
+    "file": "png.c",
+    "change": "ADDED: new function in the new version"
+   },
+   {
+    "name": "chromaticities_match_sRGB",
+    "file": "pngread.c",
+    "change": "ADDED: new function in the new version"
+   },
+   {
+    "name": "png_image_is_not_sRGB",
+    "file": "pngread.c",
+    "change": "ADDED: new function in the new version"
+   },
+   {
+    "name": "png_init_gamma_values",
+    "file": "pngrtran.c",
+    "change": "ADDED: new function in the new version"
+   },
+   {
+    "name": "png_resolve_file_gamma",
+    "file": "pngrtran.c",
+    "change": "ADDED: new function in the new version"
+   },
+   {
+    "name": "unsupported_gamma",
+    "file": "pngrtran.c",
+    "change": "ADDED: new function in the new version"
+   },
+   {
+    "name": "check_chunk_name",
+    "file": "pngrutil.c",
+    "change": "ADDED: new function in the new version"
+   },
+   {
+    "name": "png_chunk_index_from_name",
+    "file": "pngrutil.c",
+    "change": "ADDED: new function in the new version"
+   },
+   {
+    "name": "png_crc_finish_critical",
+    "file": "pngrutil.c",
+    "change": "ADDED: new function in the new version"
+   },
+   {
+    "name": "png_get_int_32_checked",
+    "file": "pngrutil.c",
+    "change": "ADDED: new function in the new version"
+   },
+   {
+    "name": "png_handle_chunk",
+    "file": "pngrutil.c",
+    "change": "ADDED: new function in the new version"
+   },
+   {
+    "name": "png_XYZ_normalize",
+    "file": "png.c",
+    "change": "REMOVED: function absent from the new version"
+   },
+   {
+    "name": "png_colorspace_check_XYZ",
+    "file": "png.c",
+    "change": "REMOVED: function absent from the new version"
+   },
+   {
+    "name": "png_colorspace_check_gamma",
+    "file": "png.c",
+    "change": "REMOVED: function absent from the new version"
+   },
+   {
+    "name": "png_colorspace_check_xy",
+    "file": "png.c",
+    "change": "REMOVED: function absent from the new version"
+   },
+   {
+    "name": "png_colorspace_endpoints_match",
+    "file": "png.c",
+    "change": "REMOVED: function absent from the new version"
+   },
+   {
+    "name": "png_colorspace_set_ICC",
+    "file": "png.c",
+    "change": "REMOVED: function absent from the new version"
+   },
+   {
+    "name": "png_colorspace_set_chromaticities",
+    "file": "png.c",
+    "change": "REMOVED: function absent from the new version"
+   },
+   {
+    "name": "png_colorspace_set_endpoints",
+    "file": "png.c",
+    "change": "REMOVED: function absent from the new version"
+   },
+   {
+    "name": "png_colorspace_set_gamma",
+    "file": "png.c",
+    "change": "REMOVED: function absent from the new version"
+   },
+   {
+    "name": "png_colorspace_set_rgb_coefficients",
+    "file": "png.c",
+    "change": "REMOVED: function absent from the new version"
+   },
+   {
+    "name": "png_colorspace_set_sRGB",
+    "file": "png.c",
+    "change": "REMOVED: function absent from the new version"
+   },
+   {
+    "name": "png_colorspace_set_xy_and_XYZ",
+    "file": "png.c",
+    "change": "REMOVED: function absent from the new version"
+   },
+   {
+    "name": "png_colorspace_sync",
+    "file": "png.c",
+    "change": "REMOVED: function absent from the new version"
+   },
+   {
+    "name": "png_colorspace_sync_info",
+    "file": "png.c",
+    "change": "REMOVED: function absent from the new version"
+   },
+   {
+    "name": "png_compare_ICC_profile_with_sRGB",
+    "file": "png.c",
+    "change": "REMOVED: function absent from the new version"
+   },
+   {
+    "name": "png_icc_set_sRGB",
+    "file": "png.c",
+    "change": "REMOVED: function absent from the new version"
+   },
+   {
+    "name": "png_muldiv_warn",
+    "file": "png.c",
+    "change": "REMOVED: function absent from the new version"
+   },
+   {
+    "name": "png_check_chunk_length",
+    "file": "pngrutil.c",
+    "change": "REMOVED: function absent from the new version"
+   },
+   {
+    "name": "png_check_chunk_name",
+    "file": "pngrutil.c",
+    "change": "REMOVED: function absent from the new version"
+   },
+   {
+    "name": "png_get_fixed_point",
+    "file": "pngrutil.c",
+    "change": "REMOVED: function absent from the new version"
+   }
+  ],
+  "unchanged_controls": [
+   "png_do_compose",
+   "png_combine_row",
+   "png_set_quantize",
+   "png_read_update_info",
+   "png_write_tIME"
+  ],
+  "build": {
+   "system": "cmake",
+   "recipe_notes": "Probe at 872555f4ba91: build files present: CMakeLists.txt, configure.ac, Makefile.am, projects, scripts; CMakeLists.txt has 19 WIN32/MINGW/MSVC references.  Not built in this session.",
+   "mingw_ok": "likely"
+  },
+  "verification": {
+   "method": "git clone --filter=blob:none --no-checkout https://github.com/pnggroup/libpng.git; git rev-parse v1.6.46^{commit} v1.6.47^{commit}; git show 872555f4ba910252783af1507f9e7fe1653be252:LICENSE; git diff --stat v1.6.46..v1.6.47 -- '*.c' '*.h' [18 files; 18 files changed, 1889 insertions(+), 2998 deletions(-)]; git diff -U0 v1.6.46..v1.6.47 and the changed hunks read by hand; a throwaway brace-matching C script (not committed) compared every function old vs new by exact text and by comment/whitespace-free token stream, and listed token differences outside functions; declared changed functions equal the computed set and every control is text-identical in both versions. Scope: 2 test/example/tool files excluded from changed_functions (contrib/libtests/pngimage.c, pngtest.c). All files changed in the pair, any type (40): ANNOUNCE, CHANGES, CMakeLists.txt, README, ci/ci_verify_cmake.sh, ci/ci_verify_configure.sh, ci/ci_verify_makefiles.sh, ci/lib/ci.lib.sh, configure, configure.ac, .... changed_functions[].change prefixes ADDED/REMOVED/COSMETIC/MACRO-DRIVEN mark non-body-change entries; unprefixed means the body differs.",
+   "files_changed": 18,
+   "functions_changed_count": 114,
+   "verified_by_agent_run": true
+  },
+  "sources": [
+   "https://github.com/pnggroup/libpng/blob/v1.6.47/CHANGES",
+   "https://github.com/pnggroup/libpng/tree/v1.6.47"
+  ],
+  "risks": [
+   "changed_functions is a complete machine-generated enumeration (every function whose token stream differs, plus added/removed/cosmetic ones); descriptions are generic line counts except where CHANGES names the function.",
+   "CHANGES 1.6.47: colorspace chunk handling was reworked to follow the new precedence rules of the PNG specification draft (png_colorspace_* helpers removed, new gamma/chromaticity helpers added), so many callers changed too.",
+   "The analysis includes the SIMD directories (arm, intel, mips, powerpc, loongarch, riscv); only part of that code compiles for Windows x64."
+  ]
+ },
+ {
+  "contract": "case-card/1",
+  "id": "libyaml-0.2.4-to-0.2.5",
+  "project": "libyaml",
+  "upstream_git": "https://github.com/yaml/libyaml.git",
+  "license_spdx": "MIT",
+  "license_evidence": "License at 2c891fc7a770e8ba2fec34fc6b545c672beb37e6: 'Permission is hereby granted, free of charge, to any person obtaining a copy of this software'",
+  "old": {
+   "ref": "0.2.4",
+   "commit": "72e2f75277ff88ad1fb8a81cf422df06bf371578"
+  },
+  "new": {
+   "ref": "0.2.5",
+   "commit": "2c891fc7a770e8ba2fec34fc6b545c672beb37e6"
+  },
+  "kind": "release",
+  "cve": [],
+  "semantic_change": true,
+  "changed_functions": [
+   {
+    "name": "yaml_emitter_emit_alias",
+    "file": "src/emitter.c",
+    "change": "writes a space after an alias used as a simple mapping key (Changes 0.2.5 #185)"
+   },
+   {
+    "name": "yaml_emitter_write_plain_scalar",
+    "file": "src/emitter.c",
+    "change": "leading space is no longer written for an empty plain scalar unless in flow context (\"(length || emitter->flow_level)\"; Changes 0.2.5 #186)"
+   },
+   {
+    "name": "yaml_parser_scan_tag_directive_value",
+    "file": "src/scanner.c",
+    "change": "call updated for the new uri_char parameter of yaml_parser_scan_tag_uri"
+   },
+   {
+    "name": "yaml_parser_scan_tag",
+    "file": "src/scanner.c",
+    "change": "passes the new uri_char argument in four calls; the \"expected whitespace or line break\" error is skipped when a comma follows the tag inside a flow collection"
+   },
+   {
+    "name": "yaml_parser_scan_tag_uri",
+    "file": "src/scanner.c",
+    "change": "new parameter uri_char: flow indicators , [ ] are accepted in a tag URI only inside a verbatim tag; \",\", \"[\" and \"]\" no longer unconditionally accepted"
+   },
+   {
+    "name": "yaml_parser_scan_plain_scalar",
+    "file": "src/scanner.c",
+    "change": "'?' removed from the characters that end a plain scalar in a flow collection (Changes 0.2.5 #105: allow question marks in plain scalars in flow collections)"
+   }
+  ],
+  "unchanged_controls": [
+   "yaml_parser_scan_flow_scalar",
+   "yaml_parser_scan_block_scalar",
+   "yaml_emitter_analyze_scalar",
+   "yaml_parser_stale_simple_keys",
+   "yaml_emitter_append_tag_directive"
+  ],
+  "build": {
+   "system": "cmake",
+   "recipe_notes": "Probe at 2c891fc7a770: build files present: CMakeLists.txt, configure.ac, Makefile.am, .appveyor.yml; CMakeLists.txt has 1 WIN32/MINGW/MSVC references.  Not built in this session.",
+   "mingw_ok": "likely"
+  },
+  "verification": {
+   "method": "git clone --filter=blob:none --no-checkout https://github.com/yaml/libyaml.git; git rev-parse 0.2.4^{commit} 0.2.5^{commit}; git show 2c891fc7a770e8ba2fec34fc6b545c672beb37e6:License; git diff --stat 0.2.4..0.2.5 -- '*.c' '*.h' [5 files; 5 files changed, 126 insertions(+), 29 deletions(-)]; git diff -U0 0.2.4..0.2.5 and the changed hunks read by hand; a throwaway brace-matching C script (not committed) compared every function old vs new by exact text and by comment/whitespace-free token stream, and listed token differences outside functions; declared changed functions equal the computed set and every control is text-identical in both versions. Scope: 2 test/example/tool files excluded from changed_functions (tests/run-emitter-test-suite.c, tests/run-parser-test-suite.c). All files changed in the pair, any type (15): .appveyor.yml, .github/workflows/main.yml, .gitignore, .travis.yml, CMakeLists.txt, Changes, Makefile.am, announcement.msg, configure.ac, include/yaml.h, .... changed_functions[].change prefixes ADDED/REMOVED/COSMETIC/MACRO-DRIVEN mark non-body-change entries; unprefixed means the body differs.",
+   "files_changed": 5,
+   "functions_changed_count": 6,
+   "verified_by_agent_run": true
+  },
+  "sources": [
+   "https://github.com/yaml/libyaml/blob/0.2.5/Changes",
+   "https://github.com/yaml/libyaml/pull/105",
+   "https://github.com/yaml/libyaml/pull/185",
+   "https://github.com/yaml/libyaml/pull/186",
+   "https://github.com/yaml/libyaml/tree/0.2.5"
+  ],
+  "risks": [
+   "include/yaml.h differs only in comments (token stream identical); tests/run-*-test-suite.c also changed (test programs, excluded).",
+   "PR numbers come from the Changes text; function-to-PR mapping beyond the three quoted titles is not stated upstream."
+  ]
+ }
+]
