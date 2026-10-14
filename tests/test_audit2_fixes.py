@@ -27,3 +27,24 @@ def test_passthrough_denylist(name):
 
 def test_passthrough_allows_ordinary_names():
     assert not _passthrough_error('HTTPS_PROXY') and not _passthrough_error('ENVIRONMENT_X')
+
+
+def test_stage_version_bump_makes_stored_pipeline_stale(tmp_path):
+    from patchtrace.enrichment import pipeline
+    from patchtrace.enrichment.storage import EnrichmentStore
+    from patchtrace.sample import create_sample
+    svc = create_sample(tmp_path / 'p')
+    store = EnrichmentStore(svc.store)
+    orig = dict(pipeline.STAGE_VERSIONS)
+    try:
+        pipeline.STAGE_VERSIONS.update({k: 1 for k in orig})
+        res1 = pipeline.run(svc.project, pipeline.PipelineOptions())
+        pipeline.publish(store, svc.project, res1)
+        assert pipeline.load_default(store, svc.project)[0] is not None  # same version still served
+    finally:
+        pipeline.STAGE_VERSIONS.update(orig)
+    ranking, sets, note = pipeline.load_default(store, svc.project)
+    assert ranking is None and sets == () and 'stale' in note
+    from patchtrace.enrichment import ranking as rk
+    profile = pipeline.load_profile(store, svc.project, rk.config_digest(rk.RankingConfig()))
+    assert profile[0] is None
