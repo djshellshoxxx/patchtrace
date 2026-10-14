@@ -18,7 +18,12 @@ DEFAULT_PIN = Path(__file__).resolve().parent / 'backend_pin.json'
 SCHEMA = 'patchtrace-backend-pin/1'
 PLACEHOLDER = 'PLACEHOLDER-UNRESOLVED'
 COMPONENTS = ('python-windows', 'python-linux', 'ghidra', 'jdk-windows', 'jdk-linux')
-DIGEST_SOURCES = ('vendor-file', 'vendor-listing', 'pypi-json', 'tofu', 'none')
+DIGEST_SOURCES = ('vendor-file', 'vendor-listing', 'pypi-json', 'sigstore-verified', 'gpg-verified', 'git-rebuilt', 'none')
+# No trust on first use ('tofu' is refused everywhere): a digest without a vendor digest is accepted only after a
+# verification, and only for the component the verification applies to.
+PYTHON_WINDOWS_SOURCES = ('sigstore-verified', 'gpg-verified')
+TARBALL_SOURCES = ('git-rebuilt',)
+VERIFIED_ONLY = ('sigstore-verified', 'gpg-verified', 'git-rebuilt')
 KINDS = ('wheel', 'sdist-built-to-wheel')
 REQUIRED_DISTRIBUTIONS = ('jpype1', 'pyghidra', 'packaging', 'mdutils')
 PLATFORM_SECTIONS = {'windows': ('windows', 'any'), 'linux': ('linux', 'any')}
@@ -60,6 +65,17 @@ def _check_digest(where: str, entry: dict, problems: list[str], *, allow_placeho
     return False
 
 
+def _restrict_source(where: str, entry: dict, allowed: tuple, problems: list[str]) -> None:
+    """A pinned entry must use one of `allowed` sources; verification-only sources fit nowhere else."""
+    if entry.get('status', 'pinned') != 'pinned':
+        return
+    source = entry.get('digest_source')
+    if allowed and source not in allowed:
+        problems.append(f'{where}: a pinned digest here needs digest_source in {allowed} (no trust on first use)')
+    if not allowed and source in VERIFIED_ONLY:
+        problems.append(f'{where}: digest_source {source} is not valid for this component')
+
+
 def _check_spdx(where: str, entry: dict, problems: list[str]) -> None:
     spdx = entry.get('spdx')
     if not isinstance(spdx, str) or not spdx.strip():
@@ -98,6 +114,7 @@ def validate_pin(data: object) -> list[str]:
             continue
         where = f'components.{name}'
         _check_digest(where, entry, problems, allow_placeholder=True)
+        _restrict_source(where, entry, PYTHON_WINDOWS_SOURCES if name == 'python-windows' else (), problems)
         _check_spdx(where, entry, problems)
         if not isinstance(entry.get('version'), str) or not entry.get('version'):
             problems.append(f'{where}: version is required')
@@ -186,6 +203,7 @@ def validate_pin(data: object) -> list[str]:
             problems.append('ghidriff.source_tarball must be an object')
         else:
             _check_digest('ghidriff.source_tarball', tarball, problems, allow_placeholder=True)
+            _restrict_source('ghidriff.source_tarball', tarball, TARBALL_SOURCES, problems)
             if isinstance(ghidriff.get('sha'), str) and ghidriff['sha'] not in str(tarball.get('url')):
                 problems.append('ghidriff.source_tarball: url does not name the pinned commit')
     offer = data.get('jdk_source_offer')

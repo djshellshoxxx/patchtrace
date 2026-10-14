@@ -1010,6 +1010,39 @@ def join_parts(parts: Sequence[Path], destination: Path, expected_sha256: str | 
     return Path(destination)
 
 
+# ----- Ghidriff source tarball: rebuilt from the pinned commit, never downloaded -------------------------
+SourceBuilder = Callable[[str, str, Path], Path]
+
+
+def _default_source_builder(repo: str, commit: str, work: Path) -> Path:
+    """Fetch exactly `commit` and write the deterministic tarball (tools/verify_backend_pins.py recipe)."""
+    recipe = _load_sibling('verify_backend_pins')
+    try:
+        path, _info = recipe.rebuild_tarball(repo, commit, work)
+    except recipe.VerifyError as error:
+        raise BundleBuildError('PT-BUNDLE-FETCH', f'cannot rebuild the Ghidriff source tarball: {error}') from None
+    return path
+
+
+def rebuild_ghidriff_tarball(ghidriff: Mapping, work: Path, source_builder: SourceBuilder | None = None) -> Path:
+    """Produce the source tarball from the pinned commit and check it against the pinned sha256/size."""
+    entry = ghidriff['source_tarball']
+    if entry.get('digest_source') != 'git-rebuilt':
+        _fail('PT-BUNDLE-PIN', 'ghidriff.source_tarball: digest_source must be git-rebuilt')
+    if not _HEX64.match(str(entry.get('sha256'))) or not isinstance(entry.get('size'), int) or entry['size'] <= 0:
+        _fail('PT-BUNDLE-PIN', 'ghidriff.source_tarball: pin entry is not resolved')
+    work.mkdir(parents=True, exist_ok=True)
+    path = Path((source_builder or _default_source_builder)(ghidriff['repo'], ghidriff['sha'], work))
+    try:
+        size, actual = path.stat().st_size, sha256_file(path)
+    except OSError:
+        _fail('PT-BUNDLE-FETCH', 'ghidriff.source_tarball: nothing was rebuilt')
+    if size != entry['size'] or actual != entry['sha256']:
+        _fail('PT-BUNDLE-PIN-MISMATCH', f'ghidriff.source_tarball: rebuilt {size} bytes sha256 {actual}, '
+                                        f'pinned {entry["size"]} bytes sha256 {entry["sha256"]}')
+    return path
+
+
 # ----- the build -----------------------------------------------------------------------------------------
 @dataclass
 class BuildResult:
@@ -1051,7 +1084,7 @@ def build_backend(pin_path: Path, platform: str, out_dir: Path, *, cache_dir: Pa
                   python: str | None = None, clock: Callable[[], datetime.datetime] | None = None,
                   git_commit: str | None = None, compile_bytecode: bool = True,
                   asset_limit: int = ASSET_LIMIT, split: bool = False,
-                  progress: Progress | None = None) -> BuildResult:
+                  progress: Progress | None = None, source_builder: SourceBuilder | None = None) -> BuildResult:
     """Build `<out_dir>/backend/{manifest.json,payload/}` plus the SPEC-06 importer ZIP for one platform."""
     if platform not in PLATFORMS:
         raise ValueError('platform must be windows or linux')
@@ -1084,7 +1117,7 @@ def build_backend(pin_path: Path, platform: str, out_dir: Path, *, cache_dir: Pa
         downloads = {key: fetch_verified(components[key], cache, fetcher, key)
                      for key in (f'python-{platform}', 'ghidra', f'jdk-{platform}')}
         tarball_entry = pin['ghidriff']['source_tarball']
-        ghidriff_tar = fetch_verified(tarball_entry, cache, fetcher, 'ghidriff.source_tarball')
+        ghidriff_tar = rebuild_ghidriff_tarball(pin['ghidriff'], work / 'ghidriff-src', source_builder)
         wheelhouse = work / 'wheelhouse'
         wheelhouse.mkdir()
         locked: list[WheelRequirement] = []
