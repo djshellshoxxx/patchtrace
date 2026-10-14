@@ -40,6 +40,22 @@ class PyEngine(RzDiffAdapter):
         return (sys.executable, '-c', self.code)
 
 
+def interrupt_main_when(event: threading.Event) -> tuple[threading.Event, threading.Thread]:
+    """Interrupt the main thread (a Ctrl+C) once `event` is set; `stop` cancels the watcher without interrupting."""
+    import _thread
+    stop = threading.Event()
+
+    def watch() -> None:
+        while not stop.is_set():
+            if event.wait(0.05):
+                _thread.interrupt_main()
+                return
+
+    thread = threading.Thread(target=watch, daemon=True)
+    thread.start()
+    return stop, thread
+
+
 class Boom(PyEngine):
     def run(self, cap, job):
         raise RuntimeError('secret-token-should-not-leak')
@@ -199,17 +215,23 @@ def test_bindiff_adapter_refuses_to_execute(tmp_path):
 
 def test_on_outcome_delivers_each_finished_outcome_and_survives_interrupt(tmp_path):
     """Ctrl+C while a later engine runs must not lose the outcome that already finished (SPEC-28 section 7)."""
-    import _thread
     seen = []
     reg = {'rz-diff': PyEngine(f'print({GOOD!r})'), 'bindiff': PyEngine('import time\ntime.sleep(60)', 'bindiff')}
-    timer = threading.Timer(4.0, _thread.interrupt_main)
-    timer.start()
+    first_done = threading.Event()
+
+    def on_outcome(outcome):
+        seen.append(outcome)
+        if outcome.run.engine == 'rz-diff':
+            first_done.set()
+
+    stop, watcher = interrupt_main_when(first_done)  # deterministic: not a fixed delay (slow runners start children late)
     started = time.monotonic()
     try:
         with pytest.raises(KeyboardInterrupt):
-            go(tmp_path, reg, ['rz-diff', 'bindiff'], on_outcome=seen.append)
+            go(tmp_path, reg, ['rz-diff', 'bindiff'], on_outcome=on_outcome)
     finally:
-        timer.cancel()
+        stop.set()
+        watcher.join(5)
     assert time.monotonic() - started < 30
     assert [o.run.engine for o in seen if o.run.status == 'ok'] == ['rz-diff']
     assert all(o.run.engine != 'bindiff' or o.run.status == 'cancelled' for o in seen)

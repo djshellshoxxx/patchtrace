@@ -1,0 +1,13 @@
+{
+  "site_title": "PatchTrace",
+  "page_title": "PatchTrace — Compare binaries. Trace fixes. | Circuit Drift Labs",
+  "description": "Alpha, vibe-coded Windows tool from Circuit Drift Labs that compares unpatched and patched binaries offline to show what a patch really changed.",
+  "canonical_url": "https://djshellshoxxx.github.io/patchtrace/",
+  "repo_url": "https://github.com/djshellshoxxx/patchtrace",
+  "releases_url": "https://github.com/djshellshoxxx/patchtrace/releases",
+  "license_url": "https://github.com/djshellshoxxx/patchtrace/blob/main/LICENSE",
+  "cdl_name": "Circuit Drift Labs",
+  "cdl_url": "https://djshellshoxxx.github.io/circuitdriftlabs/",
+  "copyright_year": "2026",
+  "monero_address": ""
+}

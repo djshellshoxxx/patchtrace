@@ -519,7 +519,9 @@ class ProjectStore:
                 self.connection.backup(backup_connection)
             finally:
                 backup_connection.close()
-            for name in ('artifacts', 'runs', 'exports'):
+            # Unified, secondary and raw sidecars live under runs/ and enrichment rows in the database;
+            # `kb/` and `intelligence/` (CSAF advisories) are top-level sidecars (KB plan A-6).
+            for name in ('artifacts', 'runs', 'exports', 'kb', 'intelligence'):
                 source = safe_path(self.root, name)
                 if source.exists():
                     # Refuse arbitrary worker-created symlinks; backup cannot escape the case.

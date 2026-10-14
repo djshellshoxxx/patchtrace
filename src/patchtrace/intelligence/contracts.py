@@ -18,10 +18,11 @@ CONTRACT = 'intelligence/1'
 MAX_TEXT = 1_048_576  # matches the validator's string cap
 MAX_PRODUCTS = 100_000
 MAX_VULNERABILITIES = 10_000
+MAX_POINTER = 4096
 
 Sha256 = Annotated[str, Field(pattern=r'^[0-9a-f]{64}$')]
 # RFC 6901 JSON pointer; "" addresses the whole document.
-Pointer = Annotated[str, Field(max_length=4096, pattern=r'^(/([^/~]|~[01])*)*$')]
+Pointer = Annotated[str, Field(max_length=MAX_POINTER, pattern=r'^(/([^/~]|~[01])*)*$')]
 CveId = Annotated[str, Field(max_length=24, pattern=r'^CVE-[0-9]{4}-[0-9]{4,19}$')]
 CweId = Annotated[str, Field(pattern=r'^CWE-[1-9][0-9]{0,5}$')]
 Timestamp = Annotated[str, Field(max_length=40, pattern=r'^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}'
@@ -544,8 +545,9 @@ class Anchor(Record):
     anchor_id: Sha256
     kind: Literal['module', 'api', 'string', 'feature', 'component', 'pdb']
     value: str = Field(min_length=1, max_length=512)
+    # The `cvrf-*` values were appended for the KB track (KB plan A-10); the earlier values are unchanged.
     source: Literal['csaf-title', 'csaf-note', 'csaf-product', 'csaf-remediation', 'hypothesis-rule',
-                    'artifact-identity']
+                    'artifact-identity', 'cvrf-title', 'cvrf-note', 'cvrf-tag']
     pointer: Pointer | None = None
     quality: Literal['explicit', 'derived', 'rule', 'verified-bytes']
     label: str = Field(min_length=1, max_length=300)
