@@ -46,3 +46,9 @@
 - [x] H7 builder + opt-in `restrict_env`/`env_passthrough`; [ ] native Windows `raw-cache-hit` with restriction, then flip default; [ ] wire rz-diff CLI to `for_tool='rizin'`
 - [ ] H2 pre-prune verified backup; [ ] H8 legacy duplicate cleanup on open; [ ] H10 live NVD probe fixture
 - [ ] Frozen EXE headless smoke A1-A5, A10, A6s (`tools/frozen_smoke.py`, `tests/test_acceptance_smoke.py`, `tools/milestone_notes.py` wired into the release body): awaiting Windows CI run; A6 native `--run`, A7-A9, A11, A12 of windows-acceptance spec section 2 still open
+
+## C6 multi-engine evidence panel (2026-10-14)
+- [ ] C6-1 pure view-model + service (`secondary/evidence_view.py`, `secondary/evidence_panel_service.py`)
+- [ ] C6-2 `ui_evidence.py` Evidence tab, states E0-E8, tooltips, MainWindow seam
+- [ ] C6-3 Engines tab on the SPEC-28 scheduler (progress, cancel, per-engine failure)
+- [ ] C6-4 accessibility, high-DPI rules, 10k perf benchmark, QSettings persistence; manual DPI/screen-reader pass is a C8 gate

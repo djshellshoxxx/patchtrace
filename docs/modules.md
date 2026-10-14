@@ -54,3 +54,11 @@ Stable IDs are independent of filenames. Public interfaces in SPEC-01 and schema
 | packaging | tools/build_windows.py; tools/build_linux.py; tools/pyinstaller_hooks/ | Frozen Windows/Linux runtimes, curated Qt desktop plugins, licenses, inventory and checksum | PyInstaller | Windows/Linux Actions and archive inspection |
 
 Every substantial future module must be added here before implementation. UI must not own analysis logic; provider must not own project state.
+
+## Phase C6 evidence panel modules (SPEC-28 evidence panel, owner C6)
+
+| Module | Files | Responsibility | Depends on | Tests |
+|---|---|---|---|---|
+| evidence view | secondary/evidence_view.py | Pure typed view-model (`EvidenceViewModel`, `EvidenceRow`, `EngineCell`, `EngineInfo`, `Alternative`), verdict mapping Agree/Contested/Single engine/Unknown, per-engine native cell text (never combined), `sanitize_text`, `filter_rows`, `format_provenance_block`, state precedence E0-E8 | secondary.reconcile/evidence | Pure table-driven tests, banned-string sweep, no-Qt subprocess import |
+| evidence panel service | secondary/evidence_panel_service.py | Pure orchestration: immutable `EvidenceRequest` -> `load_evidence` (newest set per engine, reconcile, assess, build), `detect_stale`, `EngineOutcomeView` adapter over SPEC-28 `EngineOutcome`, `RunRequest` + `execute_run` over `scheduler.run_engines` | evidence view, secondary scheduler | Pure tests with injected fake registry |
+| evidence UI | ui_evidence.py | Qt adapter: `EvidenceController` (dock, generation counter, GUI-thread persistence), `EvidencePanel`, table/filter-proxy/engine-status models, badge delegate, `EvidenceLoadThread`/`EngineRunThread` (workers see immutable requests only) | Qt, evidence panel service | pytest-qt offscreen per state E0-E8, hostile strings, thread tests, tooltip audit |
