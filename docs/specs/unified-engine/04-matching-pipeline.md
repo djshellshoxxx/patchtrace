@@ -42,19 +42,19 @@ def run_ladder(older, newer, *, anchors, limits, budget, passes=PASSES):
     groups = build_groups(st)                                  # s7: duplicates, ICF, inline/outline hints
     return st.to_correspondence(groups)
 
-def find(st, p, pool_a, pool_b, tail, rnd, budget):
+def find(st, p, pool_a, pool_b, tail, rnd, budget, cap='A', chain=()):
     a_by, b_by = bucket(pool_a, p.key, p.gate), bucket(pool_b, p.key, p.gate)   # dict key -> sorted fids
     for k in sorted(a_by.keys() & b_by.keys()):               # sorted: determinism
         budget.tick()
         A, B = unmatched(st, a_by[k]), unmatched(st, b_by[k])
         if len(A) == 1 and len(B) == 1:
-            st.accept(CorrPair(A[0], B[0], pass_id=p.id, tier=p.tier, round=rnd))
+            st.accept(CorrPair(A[0], B[0], pass_id=p.id, tier=weaker(cap, p.tier), round=rnd, via=chain))
         elif A and B and tail:                                 # ambiguity: drill down with the next keys INSIDE the bucket
-            find(st, tail[0], A, B, tail[1:], rnd, budget)     # resulting tier = min(p.tier, tail[0].tier)
+            find(st, tail[0], A, B, tail[1:], rnd, budget, cap=weaker(cap, p.tier), chain=(*chain, p.id))
         elif A and B:
             st.note_ambiguous(p.id, A, B)                       # abstain; may become a group (s7)
 ```
-`unmatched()` re-reads the pools because a drill-down may have consumed members. Recursion depth <= number of passes (< 20). Provenance per pair: pass id, tier, round, and for propagated pairs the anchor pair(s) that created the neighbour set (`via`).
+`unmatched()` re-reads the pools because a drill-down may have consumed members. Recursion depth <= number of passes (< 20). A drill-down pair never gets a stronger tier than any key of its chain (`weaker` = lower of two tiers) and records the chain (`via`). Provenance per pair: pass id, tier, round, chain, and for propagated pairs the anchor pair(s) that created the neighbour set. A pass commits its accepts only at its end (all-or-nothing on budget expiry, s8).
 
 ## 4. Pass table (function level; order = execution order; all keys over UNMATCHED functions only)
 
@@ -80,35 +80,37 @@ def find(st, p, pool_a, pool_b, tail, rnd, budget):
 | P17 bb-vote | rare block `h1` votes (L-25) | blocks >= 4 instructions | C | F-PT-STRUCT | O(blocks) | DarunGrim/binkit idea |
 | P18 layout-gap | singleton gap between monotone anchors (L-26) | size ratio L-21 | C | F-PT-STRUCT | O(n) | BinDiff address sequence, Diaphora local affinity |
 | P19 assignment | LAP with reject cost on blocked buckets (s6.4) | bucket <= L-24 | C | F-PT-STRUCT | O(k^3) per bucket | QBinDiff/BinSlayer idea |
-Stages: T0 = P00-P03, T1 = P04-P05, T2 = P06-P11, T3 = P12-P14, then P15; T4/T5 = P16-P19 (S5 only). Basic-block matching inside accepted pairs is NOT part of L1 (it is L2 alignment, 05 s2), unlike BinDiff.
+Stages: T0 = P00-P03, T1 = P04-P05, T2 = P06-P11, T3 = P12-P14, then P15; T4/T5 = P16-P19 (S5 only). Basic-block matching inside accepted pairs is NOT part of L1 (it is L2 alignment, 05 s2), unlike BinDiff. Each pass also carries an evidence class (05 s1.1: P01-P03 E-NAME, P04-P09 E-BODY, P10 E-CFG, P11/P13/P15 E-CALL, P12/P14 E-DATA, P16/P17/P19 E-RESID, P18 E-LAYOUT); tier-B corroboration needs two classes and two components. P02 export names are symbols in Ghidra's table (source IMPORTED [own]), so P02 and P03 never corroborate each other.
 
 ## 5. Propagation to a fixpoint (`ladder/propagate.py`)
 ```python
 def propagate_to_fixpoint(st, limits, budget, rnd):
-    work = deque(sorted(st.new_pairs_since_last_call()))           # sorted by (older rva, newer rva)
-    while work:
-        budget.tick()
-        a, b = work.popleft()
-        for rel in ('callees', 'callers'):                        # BinDiff: callees then callers; D&R alternate up/down
-            Na = [x for x in st.rel(a, rel) if st.is_unmatched_a(x) and not st.is_hub_a(x)][:limits.l18]
-            Nb = [y for y in st.rel(b, rel) if st.is_unmatched_b(y) and not st.is_hub_b(y)][:limits.l18]
-            if Na and Nb:
-                for p in NEIGHBOUR_PASSES:                         # P04-P14 keys evaluated inside the neighbour sets
-                    for pair in find_local(st, p, Na, Nb):         # uniqueness RELATIVE to the neighbour sets
-                        tier = p.tier if p.id in ('P04', 'P05') else demote(p.tier)   # B -> C unless a 2nd key agrees (C-18)
-                        if accept_local(st, pair, tier, via=(a, b), rnd=rnd): work.append(pair)
-        for pair in implied_from_call_sites(st, a, b):             # s5.1
-            if st.votes(pair) >= limits.l19_votes and st.conflicts(pair) == 0 and accept_local(st, pair, 'B', ...):
-                work.append(pair)
-        for pair in thunk_targets(st, a, b): ...                   # thunk pairs whose targets matched: tier = target tier
+    wave = sorted(st.new_pairs_since_last_call())                  # sorted by (older rva, newer rva)
+    while wave:                                                    # deterministic waves: no decision depends on queue order
+        nxt, votes = [], VoteTable()                               # votes: (x, y) -> set of anchor pairs (s5.1)
+        for a, b in wave:
+            budget.tick()
+            for rel in ('callees', 'callers'):                    # BinDiff: callees then callers; D&R alternate up/down
+                Na = [x for x in st.rel(a, rel) if st.is_unmatched_a(x) and not st.is_hub_a(x)][:limits.l18]
+                Nb = [y for y in st.rel(b, rel) if st.is_unmatched_b(y) and not st.is_hub_b(y)][:limits.l18]
+                if Na and Nb:
+                    for p in NEIGHBOUR_PASSES:                     # P04-P14 keys evaluated inside the neighbour sets
+                        for pair in find_local(st, p, Na, Nb):     # uniqueness RELATIVE to the neighbour sets
+                            tier = p.tier if p.id in ('P04', 'P05') else demote(p.tier)   # B -> C unless a 2nd key agrees (C-18)
+                            if accept_local(st, pair, tier, via=(a, b), rnd=rnd): nxt.append(pair)
+            votes.add_call_site_votes(st, a, b)                    # s5.1: collect only, never accept here
+            nxt += thunk_targets(st, a, b)                         # thunk pairs whose targets matched: tier = target tier
+        for pair, tier in votes.decide(st, limits):                # after the whole wave: >= L-19 votes, 0 conflicts on EITHER endpoint
+            if accept_local(st, pair, tier, via=votes.anchors(pair), rnd=rnd): nxt.append(pair)
+        wave = sorted(set(nxt))
 ```
 Hubs: callees with fan-in > L-17 (CRT, `__security_check_cookie`, CFG dispatch, R04 s6) are excluded from neighbour sets and from votes; they can only match by P01-P05. Neighbour lists are truncated deterministically (sorted by rva) at L-18 and the truncation is recorded (`limits_hit`).
 
 ### 5.1 Implied matches (VT clean-room; votes and conflicts, R03 s1)
-For an accepted pair (a, b) align their call-site sequences (callee keys in site order; import keys and already-matched pair ids as tokens) with a bounded LCS (sequences <= 512; longer -> skip, recorded). Each aligned position whose callees (x, y) are both unmatched casts one vote for (x, y) from anchor (a, b); a vote for (x, z) with z != y from another anchor is a conflict for both. Decision (after the worklist drains, so votes from all anchors are counted): >= 2 votes and 0 conflicts -> tier B; exactly 1 vote, 0 conflicts -> tier C candidate; any conflict -> no pair, recorded as `implied-conflict` hint. BinDiff "call reference matching" (positional callees of matched blocks, conf 0.75) is subsumed: it is the same alignment restricted to equal call counts and yields only tier C.
+For an accepted pair (a, b) align their call-site sequences (callee keys in site order; import keys and already-matched pair ids as tokens) with a bounded LCS (sequences <= 512; longer -> skip, recorded). Each aligned position whose callees (x, y) are both unmatched casts one vote for (x, y) from anchor (a, b) (one vote per anchor, however many call sites agree). Conflicts are symmetric: a vote for (x, z) with z != y OR for (w, y) with w != x from any anchor is a conflict for every pair sharing exactly one endpoint. Decision only after the whole wave was collected (the earlier draft accepted inside the worklist with partial counts, which made the result order-dependent, R-06): >= 2 votes and 0 conflicts -> tier B (class E-CALL); exactly 1 vote, 0 conflicts -> tier C candidate; any conflict -> no pair, hint `implied-conflict`. Votes and conflicts persist across waves, so a later wave can only add conflicts, never erase one. BinDiff "call reference matching" (positional callees of matched blocks, conf 0.75) is subsumed: it is the same alignment restricted to equal call counts and yields only tier C.
 
 ### 5.2 Complexity and memory
-Global passes: 15 dict passes x 2 sides x n -> ~7.5 M dict operations at n = 250,000 (L-01). Propagation: each pair processed once; per pair O(L-18 x passes) = O(64 x 11); worst case 60,000 pairs -> ~42 M operations, typical patch pairs (99 % matched by T0/T1, R04 s0.3) touch < 5 % of that. Memory: `FunctionTable` columns 30 x 8 B x n (= 60 MB at L-01) + CSR call adjacency 16 B x E + transient buckets; no per-instruction objects (R04 s7). Budget targets: L-35.
+Global passes: 15 dict passes x 2 sides x n -> ~7.5 M dict operations at n = 250,000 (L-01). Propagation: each pair processed once; per pair O(L-18 x passes) = O(64 x 11); worst case 60,000 pairs -> ~42 M operations, typical patch pairs (99 % matched by T0/T1, R04 s0.3) touch < 5 % of that. Memory: `FunctionTable` columns 30 x 8 B x n (= 60 MB at L-01) + CSR call adjacency 16 B x E + transient buckets; no per-instruction objects (R04 s7). Budget targets: L-35. Prototype [own, synthetic]: global unique-key passes with drill-down plus neighbour propagation over a power-law call graph took 0.4 s / 93 MiB at 60k functions and 2.2 s / 362 MiB at 250k, so the ladder core is not the bottleneck; P15 (re-hash from instruction blobs), alignment and residual LAP are, and are bench-gated separately.
 
 ## 6. Residual stage (S5; only on functions still unmatched after s3-s5)
 ### 6.1 Blocked candidate generation (`ladder/blocking.py`)
@@ -144,7 +146,7 @@ Within one blocked bucket (<= L-24 functions per side): in-house similarity `s(a
 - `test_unique_key_matches_and_duplicate_bucket_abstains`; `test_drill_down_uses_next_key_inside_bucket`; `test_accepted_pair_never_reopened`; `test_tiny_and_thunk_never_content_matched`.
 - `test_md_index_diamond_vector` (0.277559753195558); `test_md_index_plain_loop_not_compensated_sum` (planted sum where `sum()` and the loop differ); `test_md_null_below_min_blocks`.
 - `test_name_pass_body_mismatch_becomes_tier_c_hint`; `test_icf_alias_group_not_added_removed`.
-- `test_propagation_hub_excluded`; `test_neighbour_truncation_is_deterministic_and_recorded`; `test_implied_two_votes_zero_conflicts_tier_b`; `test_implied_conflict_produces_no_pair`.
+- `test_propagation_hub_excluded`; `test_neighbour_truncation_is_deterministic_and_recorded`; `test_implied_two_votes_zero_conflicts_tier_b`; `test_implied_conflict_produces_no_pair`; `test_implied_conflict_on_newer_endpoint_blocks_pair`; `test_implied_decision_independent_of_anchor_order` (shuffle the wave); `test_drill_down_tier_never_exceeds_chain`.
 - `test_rehash_exact_matches_function_with_moved_callee`.
 - `test_refvector_mutual_best_with_margin`; `test_lap_reject_cost_leaves_function_unmatched`; `test_blocking_never_builds_full_matrix` (counter on pair evaluations <= K x n).
 - Properties (hypothesis): permutation of input order -> identical correspondence; swapping sides -> mirrored correspondence; adding an unrelated function never changes existing tier-A pairs; budget expiry yields a prefix of the full run's accepted pairs.
