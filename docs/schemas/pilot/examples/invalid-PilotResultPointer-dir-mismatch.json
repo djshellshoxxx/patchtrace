@@ -1,0 +1,15 @@
+{
+  "config_digest": "072408975528a26f2b9e06628fe5349a1e1d560b46f988c773959f1522bf5666",
+  "contract": "pilot-ptr/1",
+  "counts": {
+    "code": 0,
+    "fit": 1,
+    "partial": 0,
+    "queue": 1,
+    "review": 1
+  },
+  "manifest_sha256": "0359d8910e13afe1719713cfe956e9a5de1aa25cc74611de89de185d741a2814",
+  "relative_dir": "intelligence/pilot/0000000000000000",
+  "result_id": "bdf06e96a53785c25f472041faa7c9ce8a3247b824838bf1e6f574d43d0693d8",
+  "status": "complete"
+}

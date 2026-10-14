@@ -24,7 +24,7 @@ from pathlib import Path
 from ...enrichment.identity import canonical_json
 from ...jobs import run_process
 from ...secondary.engine_env import engine_env
-from .common import STDERR_EXCERPT, ToolError, ToolLimits
+from .common import STDERR_EXCERPT, ToolError, ToolLimits, display_text
 
 INPUT_NAME = 'artifact.bin'
 MAX_INPUT_PATH = 200
@@ -38,12 +38,20 @@ _PATHISH = re.compile(r'(?:[A-Za-z]:)?(?:[\\/][^\\/\s\'"<>|]+)+[\\/]?')
 
 
 def sanitize(text: str, limit: int = 200) -> str:
-    """One line of tool text that is safe to show: ANSI/control characters removed, paths reduced to their last
-    component (no local paths or user names), whitespace collapsed, length capped."""
+    """One line of tool STDERR/ERROR text that is safe to show: ANSI/control characters removed, paths reduced to
+    their last component (no local paths or user names), whitespace collapsed, length capped. Not for names the
+    tool reports about the file (use `tool_text`): the path scrubber would mangle `C/C++` or `UPX/LZMA`."""
     text = _ANSI.sub('', text)
     text = ''.join(c if c == '\t' or (ord(c) >= 32 and ord(c) != 127) else ' ' for c in text)
     text = _PATHISH.sub(lambda m: ntpath.basename(m.group(0).rstrip('\\/')) or '<path>', text)
     return ' '.join(text.split())[:limit]
+
+
+def tool_text(text: str, limit: int = 200) -> str:
+    """A name or label the tool reported (compiler, packer, detection string): ANSI sequences dropped, whitespace
+    collapsed, then control, format (bidi, zero-width) and unassigned characters escaped by `display_text`. Slashes
+    and every other printable character are kept, so distinct detections stay distinct."""
+    return display_text(' '.join(_ANSI.sub('', text).split()), limit)
 
 
 def excerpt(text: str) -> str:
@@ -84,6 +92,23 @@ def sha256_file(path: Path, limit: int = MAX_EXECUTABLE_BYTES) -> str:
                 raise ToolError('PT-TOOL-LIMIT', 'file is larger than the hashing limit')
             digest.update(chunk)
     return digest.hexdigest()
+
+
+def verify_executable(path: Path, expected_sha256: str) -> Path:
+    """Re-hash the executable immediately before it is spawned (TA-6). The probe hashed it once; a binary swapped
+    in a user-writable folder afterwards, with size and mtime restored, would otherwise run under the pinned
+    identity. Returns the resolved path to spawn; `PT-TOOL-STALE` when it is gone or differs. The window between
+    this hash and the spawn is not zero (a hash cannot be bound to an exec on every OS)."""
+    resolved = regular_file(Path(path))
+    if resolved is None:
+        raise ToolError('PT-TOOL-STALE', 'the tool executable is no longer available at the probed path')
+    try:
+        actual = sha256_file(resolved)
+    except (OSError, ToolError):
+        raise ToolError('PT-TOOL-STALE', 'the tool executable can no longer be read') from None
+    if actual != expected_sha256:
+        raise ToolError('PT-TOOL-STALE', 'the tool executable changed since it was probed; probe it again')
+    return resolved
 
 
 def regular_file(path: Path) -> Path | None:
@@ -246,47 +271,106 @@ def tool_env(executable: Path, scratch: Path, *, extra: Mapping[str, str] | None
 
 @dataclass(frozen=True)
 class Execution:
+    """Outcome of one supervised run. `stdout_raw`/`stderr_raw` are the exact bytes captured (stdout complete when
+    `oversize` is false); `stdout`/`stderr` are their lossy text, for classification and messages only."""
     returncode: int | None
-    reason: str | None          # 'cancelled' | 'timeout' | None
+    reason: str | None          # 'cancelled' | 'timeout' | 'output-limit' | None
     stdout: str
     stderr: str
     oversize: bool
     elapsed_ms: int
     spawn_error: str | None = None
+    stdout_raw: bytes = b''
+    stderr_raw: bytes = b''
+    peak_memory_bytes: int | None = None
 
     @property
     def stdout_bytes(self) -> bytes:
-        return self.stdout.encode('utf-8')
+        return self.stdout_raw
 
     def digests(self) -> tuple[str | None, str | None]:
-        out = hashlib.sha256(self.stdout_bytes).hexdigest() if self.stdout else None
-        err = hashlib.sha256(self.stderr.encode('utf-8')).hexdigest() if self.stderr else None
+        out = hashlib.sha256(self.stdout_raw).hexdigest() if self.stdout_raw else None
+        err = hashlib.sha256(self.stderr_raw).hexdigest() if self.stderr_raw else None
         return out, err
 
 
 def execute(argv: list[str], *, scratch: Path, env: Mapping[str, str], cancel: threading.Event, timeout: float,
-            limits: ToolLimits, runner: Callable = run_process) -> Execution:
-    """Run once with separated, bounded streams. Captured stdout above the limit is reported as `oversize`
-    (run_process keeps a bounded tail; the limit is passed + 1 so overflow is detectable)."""
+            limits: ToolLimits, runner: Callable = run_process, memory_limit_bytes: int | None = None) -> Execution:
+    """Run once with separated, bounded streams. The child is stopped as soon as its stdout passes the limit
+    (`max_output_bytes`), so a flood costs seconds, not the whole timeout; stdout is kept as the exact bytes
+    written (TA-4) and `oversize` is decided on byte counts. `memory_limit_bytes` is passed to `run_process`
+    (Job Object per-process cap on Windows, RLIMIT_AS on POSIX); None leaves memory unlimited."""
     started = time.monotonic()
+    kwargs: dict = {}
+    if memory_limit_bytes is not None:
+        kwargs['memory_limit_bytes'] = memory_limit_bytes
     try:
         result = runner(argv, cwd=scratch / 'cwd', env=dict(env), cancel=cancel, timeout_seconds=timeout,
-                        log_limit=limits.stdout_bytes + 1, separate_streams=True, stderr_limit=limits.stderr_bytes)
+                        log_limit=limits.stdout_bytes + 1, separate_streams=True, stderr_limit=limits.stderr_bytes,
+                        max_output_bytes=limits.stdout_bytes, **kwargs)
     except (OSError, ValueError, RuntimeError) as exc:
         return Execution(None, None, '', '', False, int((time.monotonic() - started) * 1000), type(exc).__name__)
     elapsed = int((time.monotonic() - started) * 1000)
-    oversize = len(result.log_tail.encode('utf-8')) > limits.stdout_bytes
-    return Execution(result.returncode, result.reason, result.log_tail, result.stderr_tail, oversize, elapsed)
+    out_raw = result.log_bytes if result.log_bytes is not None else result.log_tail.encode('utf-8')
+    err_raw = result.stderr_bytes if result.stderr_bytes is not None else result.stderr_tail.encode('utf-8')
+    total = max(result.stdout_total, len(out_raw))
+    oversize = total > limits.stdout_bytes or result.reason == 'output-limit'
+    return Execution(result.returncode, result.reason, out_raw.decode('utf-8', errors='replace'),
+                     err_raw.decode('utf-8', errors='replace'), oversize, elapsed, None, out_raw, err_raw,
+                     result.peak_memory_bytes)
+
+
+_MEMORY_TEXT = ('MemoryError', 'Cannot allocate memory', 'std::bad_alloc', 'out of memory', 'Out of memory')
+
+
+def memory_exhausted(stderr: str, returncode: int | None, peak_memory_bytes: int | None = None,
+                     memory_limit_bytes: int | None = None) -> bool:
+    """True when a failed run looks like it hit the memory cap (`PT-TOOL-LIMIT`, 'memory'): allocation failure text
+    on stderr, STATUS_NO_MEMORY (0xC0000017), or a Job Object peak at the cap. Only meaningful with a cap set."""
+    if memory_limit_bytes is None:
+        return False
+    if returncode is not None and (returncode & 0xFFFFFFFF) == 0xC0000017:
+        return True
+    if peak_memory_bytes is not None and peak_memory_bytes >= 0.95 * memory_limit_bytes:
+        return True
+    return any(text in stderr for text in _MEMORY_TEXT)
+
+
+def describe_failure(run: Execution, what: str) -> str:
+    """One sanitised sentence for a run that did not finish normally (probe messages; TA-10)."""
+    if run.spawn_error:
+        return f'{what} could not be started ({run.spawn_error})'
+    if run.reason == 'timeout':
+        return f'{what} timed out'
+    if run.reason == 'cancelled':
+        return f'{what} was cancelled'
+    if run.reason == 'output-limit':
+        return f'{what} printed more output than allowed'
+    return f'{what} failed ({exit_text(run.returncode)})'
+
+
+def is_transient(*runs: Execution) -> bool:
+    """True when a probe outcome says nothing stable about the tool (timeout, cancel, spawn failure): it must not
+    be cached for the process lifetime (a cold PyInstaller start can exceed the probe timeout once)."""
+    return any(r.reason in ('timeout', 'cancelled') or r.spawn_error for r in runs)
 
 
 def run_version_probe(executable: Path, args: list[str], *, cancel: threading.Event, runner: Callable,
                       environ: Mapping[str, str] | None = None, extra: Mapping[str, str] | None = None,
                       timeout: float = 60) -> Execution:
-    """`--version`/`--help` style probe in a throw-away scratch (never touches inputs)."""
-    scratch = make_scratch('probe')
+    """`--version`/`--help` style probe in a throw-away scratch (never touches inputs). Never raises: an unusable
+    environment (Windows without SystemRoot) or a scratch failure becomes an Execution with `spawn_error`."""
+    started = time.monotonic()
+    try:
+        scratch = make_scratch('probe')
+    except ToolError as exc:
+        return Execution(None, None, '', '', False, 0, exc.message)
     try:
         env = tool_env(executable, scratch, extra=extra, environ=environ)
         return execute([str(executable), *args], scratch=scratch, env=env, cancel=cancel, timeout=timeout,
                        limits=ToolLimits(256 * 1024, 64 * 1024), runner=runner)
+    except (OSError, ToolError) as exc:
+        return Execution(None, None, '', '', False, int((time.monotonic() - started) * 1000), getattr(
+            exc, 'message', type(exc).__name__))
     finally:
         remove_tree(scratch)

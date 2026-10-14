@@ -137,6 +137,32 @@ def test_candidates_that_fail_validation_or_lack_the_cve_are_reported_and_skippe
     assert any('duplicate key' in w for w in warnings) and any('does not list CVE-2099-10001' in w for w in warnings)
 
 
+def test_an_unexpected_validator_failure_rejects_only_its_candidate(monkeypatch):
+    """Audit C-01/C-02: one hostile candidate must never abort the batch, whatever the validator raises."""
+    real = dc.load_document
+
+    def flaky(raw, **kwargs):
+        if b'"PT-SYNTH-VEX' in raw:
+            raise TypeError("unhashable type: 'list'")
+        return real(raw, **kwargs)
+    monkeypatch.setattr(dc, 'load_document', flaky)
+    transport, _ = client(server_routes())
+    found = dc.discover(transport, 'CVE-2099-10001')
+    documents, warnings = dc.fetch_documents(transport, found, 'CVE-2099-10001')
+    assert [d.url for d in documents] == [ADV]
+    assert any('pt-synth-vex' in w and 'rejected' in w and 'TypeError' in w for w in warnings)
+
+
+def test_cancellation_still_stops_the_whole_fetch(monkeypatch):
+    def cancelled(raw, **kwargs):
+        raise IntelError('PT-INTEL-CANCEL', 'validation cancelled', recoverable=True)
+    monkeypatch.setattr(dc, 'load_document', cancelled)
+    transport, _ = client(server_routes())
+    with pytest.raises(IntelError) as info:
+        dc.fetch_documents(transport, dc.discover(transport, 'CVE-2099-10001'), 'CVE-2099-10001')
+    assert info.value.code == 'PT-INTEL-CANCEL'
+
+
 def test_too_many_candidates_is_a_limit():
     lines = '\n'.join(f'2099/doc{i}_cve-2099-10001.json' for i in range(dc.MAX_CANDIDATES + 1)).encode()
     transport, _ = client(server_routes(**{f'{BASE}/advisories/index.txt': (200, lines)}))

@@ -170,7 +170,9 @@ class OfflineCache:
             return {}
         return data if isinstance(data, dict) else {}
 
-    def get(self, url: str) -> Fetched | None:
+    def get(self, url: str, limit: int | None = None) -> Fetched | None:
+        """The cached body of ``url`` or None. A body larger than ``limit`` bytes is refused with PT-INTEL-LIMIT
+        before it is read, so a planted file cannot exhaust memory."""
         entry = self._map().get(url)
         if not isinstance(entry, dict) or not isinstance(entry.get('sha256'), str):
             return None
@@ -178,7 +180,10 @@ class OfflineCache:
         if len(sha) != 64 or any(c not in '0123456789abcdef' for c in sha):
             return None
         try:
-            body = (self.root / 'bodies' / sha).read_bytes()
+            path = self.root / 'bodies' / sha
+            if limit is not None and path.stat().st_size > limit:
+                raise IntelError('PT-INTEL-LIMIT', f'the cached body exceeds its {limit}-byte cap')
+            body = path.read_bytes()
         except OSError:
             return None
         if hashlib.sha256(body).hexdigest() != sha:
@@ -245,7 +250,7 @@ class CsafTransport:
         check_url(url, None if self.offline else self.consent)
         self._cancelled()
         if self.offline:
-            cached = self.cache.get(url)
+            cached = self.cache.get(url, CAPS[kind])
             if cached is None:
                 if allow_404:
                     return None
@@ -269,7 +274,11 @@ class CsafTransport:
                 self.sleep(wait, self.cancel)
                 continue
             if result is not None and self.cache is not None:
-                self.cache.put(result)
+                try:
+                    self.cache.put(result)
+                except OSError as exc:  # the cache is best-effort: a full disk or a locked file must not lose the fetch
+                    if self.announce is not None:
+                        self.announce(f'cache not updated ({exc.strerror or type(exc).__name__})')
             return result
         raise AssertionError('unreachable')
 

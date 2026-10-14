@@ -1,0 +1,4 @@
+# Build-time dependencies of the site tooling only. They are NOT dependencies of the PatchTrace app
+# (pyproject.toml) and are never imported by src/patchtrace.
+segno==1.6.6
+pillow==12.3.0

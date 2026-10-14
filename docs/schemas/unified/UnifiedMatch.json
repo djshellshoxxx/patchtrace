@@ -236,6 +236,7 @@
   "$id": "https://patchtrace.local/schemas/unified-match/1/UnifiedMatch.json",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "additionalProperties": false,
+  "description": "One pairing row (02 s4). Invariants beyond the field types: sides are unique and sorted by rva; one-sided\ndecisions have one side and materiality not-applicable/unknown; pairing decisions need both sides; `contested`\nneeds a contest, a contest appears only on contested or manual matched rows and is strong iff an against-atom\nhas tier M, A or B; `support` points at an atom of the same tier. Text fields are sanitised (02 s9.1).",
   "properties": {
     "atoms": {
       "items": {

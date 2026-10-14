@@ -41,7 +41,14 @@ KINDS = frozenset({'signals', 'ranking', 'wil', 'cve-snapshot', 'contextual', 'p
                    # Reserved for Phase D (docs/plans/phase-d-build-coordination.md); none is in DERIVED_KINDS,
                    # so retention never deletes them: SPEC-31 unified-*, CSAF advisory-*, SPEC-29 tool-*, SPEC-30.
                    'unified-run', 'unified-result', 'advisory-source', 'advisory-facts', 'tool-run', 'tool-evidence',
-                   'patch-intent'})
+                   'patch-intent',
+                   # Program E (KB integration plan A-5, KEV plan A4): append-only KB investigation revisions
+                   # and the Guard-stale KB / KEV context pointers. Again none is in DERIVED_KINDS.
+                   'kb-investigation', 'kb-context', 'kev-context',
+                   # Program E (integration owner, AM1): saved searches and the rule-authoring rows. Same rule:
+                   # none is in DERIVED_KINDS, so retention never deletes them.
+                   'search-saved', 'rule-candidate', 'rule-decision', 'rule-version', 'rule-test',
+                   'rule-export'})
 
 # Retention (SPEC-07h H1). Only recomputable derived kinds are ever deleted; imported evidence
 # (`secondary-matches`), `cve-snapshot` and unknown kinds are never evicted.

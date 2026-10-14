@@ -1,0 +1,121 @@
+{
+  "$id": "https://patchtrace.local/schemas/intel-tools/1/EnvironmentEvidence.json",
+  "additionalProperties": false,
+  "properties": {
+    "category": {
+      "enum": [
+        "compiler",
+        "linker",
+        "tool",
+        "packer",
+        "protector",
+        "cryptor",
+        "installer",
+        "sfx",
+        "library",
+        "format",
+        "overlay",
+        "other",
+        "unknown"
+      ],
+      "title": "Category",
+      "type": "string"
+    },
+    "certainty": {
+      "enum": [
+        "signature",
+        "heuristic",
+        "unknown"
+      ],
+      "title": "Certainty",
+      "type": "string"
+    },
+    "detect_string": {
+      "default": "",
+      "maxLength": 200,
+      "title": "Detect String",
+      "type": "string"
+    },
+    "detector_rule": {
+      "maxLength": 200,
+      "title": "Detector Rule",
+      "type": "string"
+    },
+    "filetype": {
+      "default": "",
+      "maxLength": 32,
+      "title": "Filetype",
+      "type": "string"
+    },
+    "heuristic": {
+      "title": "Heuristic",
+      "type": "boolean"
+    },
+    "packer": {
+      "anyOf": [
+        {
+          "maxLength": 200,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Packer"
+    },
+    "protector": {
+      "anyOf": [
+        {
+          "maxLength": 200,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Protector"
+    },
+    "source": {
+      "const": "diec",
+      "default": "diec",
+      "title": "Source",
+      "type": "string"
+    },
+    "source_run_id": {
+      "maxLength": 128,
+      "minLength": 1,
+      "title": "Source Run Id",
+      "type": "string"
+    },
+    "toolchain": {
+      "anyOf": [
+        {
+          "maxLength": 200,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Toolchain"
+    },
+    "version": {
+      "default": "",
+      "maxLength": 120,
+      "title": "Version",
+      "type": "string"
+    }
+  },
+  "required": [
+    "category",
+    "detector_rule",
+    "heuristic",
+    "certainty",
+    "source_run_id"
+  ],
+  "title": "EnvironmentEvidence",
+  "type": "object"
+}

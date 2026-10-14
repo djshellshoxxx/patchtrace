@@ -64,6 +64,11 @@
     "model": "UnifiedResultPointer",
     "valid": false
   },
+  "invalid-UnifiedResultPointerV2-without-pair.json": {
+    "expect": "newer_sha256",
+    "model": "UnifiedResultPointerV2",
+    "valid": false
+  },
   "invalid-UnifiedRun-ok-without-result.json": {
     "expect": "needs a result",
     "model": "UnifiedRun",
@@ -112,6 +117,11 @@
   "valid-UnifiedResultPointer.json": {
     "expect": null,
     "model": "UnifiedResultPointer",
+    "valid": true
+  },
+  "valid-UnifiedResultPointerV2.json": {
+    "expect": null,
+    "model": "UnifiedResultPointerV2",
     "valid": true
   },
   "valid-UnifiedRun-ok.json": {

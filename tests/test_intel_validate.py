@@ -372,3 +372,121 @@ def test_provider_metadata_schema_check():
     meta['canonical_url'] = 'https://msrc.microsoft.com/csaf/other.json'
     pointers = {f.pointer for f in v.provider_metadata_errors(meta)}
     assert pointers == {'', '/canonical_url'}
+
+
+# ---- audit C: hostile input ends in a typed error, never in a raw exception --------------------------------------
+
+@pytest.mark.parametrize('severity', [['HIGH'], {'a': 1}, 5, None, True], ids=['list', 'dict', 'int', 'null', 'bool'])
+def test_c01_mistyped_base_severity_is_a_schema_error_not_a_crash(severity):
+    doc = fixture()
+    doc['vulnerabilities'][0]['scores'][0]['cvss_v3']['baseSeverity'] = severity
+    report = failing(doc)
+    assert '/vulnerabilities/0/scores/0/cvss_v3' in {f.pointer for f in report.errors}
+
+
+@pytest.mark.parametrize('extension', [5, None, True, 'PT-100-1', ['PT-404'], [['a']], {'a': 1}],
+                         ids=['int', 'null', 'bool', 'string', 'undefined-id', 'nested-list', 'object'])
+def test_c02_product_status_extensions_are_warned_about_and_never_interpreted(extension):
+    doc = fixture()
+    doc['vulnerabilities'][0]['product_status']['x_extension'] = extension
+    _, report = v.load_document(encode(doc))
+    assert report.valid
+    assert ('6.2.20', '/vulnerabilities/0/product_status/x_extension') in {(w.test, w.pointer) for w in report.warnings}
+
+
+def test_oversized_version_numbers_are_a_limit_finding_not_a_crash():
+    doc = fixture()
+    tracking = doc['document']['tracking']
+    tracking['version'] = '1' + '0' * 5000  # int() refuses more than 4300 digits
+    tracking['revision_history'][-1]['number'] = tracking['version']
+    pointers = {f.pointer for f in failing(doc).errors if f.test == 'limit'}
+    assert '/document/tracking/version' in pointers
+    doc = fixture()
+    tracking = doc['document']['tracking']
+    tracking['version'] = '1.0.0-' + '9' * 5000
+    tracking['revision_history'][-1]['number'] = tracking['version']
+    assert 'limit' in failed_tests(failing(doc))
+
+
+def test_over_long_property_names_cannot_break_the_report():
+    doc = fixture()
+    doc['vulnerabilities'][0]['x' * 5000] = 1  # a pointer longer than the Finding contract allows
+    _, report = v.load_document(encode(doc))
+    (warning,) = [w for w in report.warnings if w.test == '6.2.20']
+    assert warning.pointer == '/vulnerabilities/0'  # reported at the parent; the message names the property
+    assert len(warning.message) <= 500 and 'x' * 100 not in warning.message
+
+
+@pytest.mark.parametrize('where', ['value', 'key'])
+def test_c13_unpaired_surrogate_escapes_are_a_format_error(where):
+    doc = fixture()
+    if where == 'value':
+        doc['document']['title'] = 'bad \ud800 text'
+    else:
+        doc['vulnerabilities'][0]['\udc00'] = 1
+    with pytest.raises(IntelError) as info:
+        v.load_document(encode(doc))  # json.dumps writes the lone surrogate as a \ud800 escape
+    assert info.value.code == 'PT-INTEL-FORMAT' and 'surrogate' in info.value.message
+
+
+def test_paired_surrogates_and_escaped_backslashes_are_valid_text():
+    doc = fixture()
+    doc['document']['title'] = 'Emoji \U0001f600 and a literal \\ud800 sequence'
+    raw = encode(doc)
+    assert b'\\ud83d\\ude00' in raw and b'\\\\ud800' in raw
+    assert v.load_document(raw)[1].valid
+
+
+def test_c08_node_limit_is_enforced_before_the_full_parse(monkeypatch):
+    monkeypatch.setattr(v, '_strict_loads', lambda *a, **k: pytest.fail('json.loads ran on a hostile document'))
+    raw = b'[' + b'{},' * 2_100_000 + b'{}]'  # 6 MB, 2.1 million values
+    with pytest.raises(IntelError) as info:
+        v.parse_json(raw)
+    assert info.value.code == 'PT-INTEL-LIMIT' and 'more than 2000000 JSON values' in info.value.message
+
+
+def test_c08_text_heavy_documents_are_not_mistaken_for_node_floods():
+    commas = ',' * 1_000_000  # three million commas inside strings are not three million values
+    value = {'a': commas, 'b': commas, 'c': commas}
+    assert v.parse_json(json.dumps(value).encode()) == value
+
+
+def test_c08_empty_containers_are_counted_once_so_conventional_json_is_never_refused_early():
+    limits = v.Limits(max_nodes=1000)
+    assert len(v.parse_json(json.dumps([{}] * 900).encode(), limits=limits)) == 900  # 901 values, 1802 raw tokens
+    assert len(v.parse_json(json.dumps([[], {}, []] * 300).encode(), limits=limits)) == 900
+    with pytest.raises(IntelError, match='more than 1000 JSON values'):
+        v.parse_json(json.dumps([{}] * 1000).encode(), limits=limits)  # 1001 values
+
+
+def test_c08_string_contents_and_escapes_are_skipped_when_counting_values():
+    limits = v.Limits(max_nodes=3)
+    tricky = b'{"k": "[,,,,{{{ \\" ,,, \\\\", "j": 1}'  # content ends in an escaped quote and an escaped backslash
+    assert v.parse_json(tricky, limits=limits) == {'k': '[,,,,{{{ " ,,, \\', 'j': 1}
+    with pytest.raises(IntelError, match='more than 3 JSON values'):
+        v.parse_json(b'{"k": "[,,", "j": 1, "m": 2}', limits=limits)
+
+
+class CancelAfter:
+    """Event-like object that reports cancellation from its n-th poll on."""
+
+    def __init__(self, polls: int):
+        self.polls, self.calls = polls, 0
+
+    def is_set(self) -> bool:
+        self.calls += 1
+        return self.calls >= self.polls
+
+
+@pytest.mark.parametrize('value', [list(range(30_000)), [{'a': i} for i in range(20_000)]], ids=['numbers', 'objects'])
+def test_c08_cancellation_is_polled_while_parsing_and_checking_shape(value):
+    cancel = CancelAfter(2)  # poll 1 is the entry check; poll 2 must come from inside the work
+    with pytest.raises(IntelError) as info:
+        v.parse_json(json.dumps(value).encode(), cancel=cancel)
+    assert info.value.code == 'PT-INTEL-CANCEL' and info.value.recoverable
+
+
+def test_c08_load_document_passes_cancellation_into_the_parse():
+    with pytest.raises(IntelError) as info:
+        v.load_document(json.dumps({'a': list(range(30_000))}).encode(), cancel=CancelAfter(3))
+    assert info.value.code == 'PT-INTEL-CANCEL'

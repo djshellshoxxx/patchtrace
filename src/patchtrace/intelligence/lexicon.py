@@ -5,8 +5,10 @@ Order of evidence: the CSAF ``cwe`` field (an advisory claim) first, CWE identif
 text second, then curated vocabulary. Matching works on tokens (NFKC, casefolded, HTML entities decoded and
 tags removed for matching only), so "use-after-free", "use after free" and "<b>use</b>-after-free" agree and
 "freeing" never matches "free". A hit is negated when a cue (``not``, ``no``, ``cannot``, ``n't``, ``free of``,
-...) precedes it within 4 tokens or follows it within 3 tokens in the same clause with no scope terminator in
-between. Only ``weakness`` terms derive a CWE; impact words such as "remote code execution" are effects, and
+...) precedes it within 4 tokens in the same clause with no scope terminator in between, or when it is followed by
+a negated existence predicate ("is not present", "cannot occur", "is no longer possible"); "requires no user
+interaction" or "does not require authentication" negate a requirement, not the weakness. Only ``weakness``
+terms derive a CWE; impact words such as "remote code execution" are effects, and
 generic phrases ("memory corruption", "improper input validation") are weak at best. Vague text is never
 classified confidently. CWE names below were transcribed without live access to cwe.mitre.org and are
 display labels only.
@@ -46,6 +48,8 @@ FAMILIES: dict[str, tuple[str, ...]] = {
     'deserialization': ('CWE-502',),
     'search-path': ('CWE-426', 'CWE-427'),
     'crypto-verify': ('CWE-295', 'CWE-347'),
+    'format-string': ('CWE-134',),
+    'off-by-one': ('CWE-193',),
 }
 _FAMILY_OF = {cwe: name for name, members in FAMILIES.items() for cwe in members}
 
@@ -59,8 +63,10 @@ CWE_NAMES: dict[str, str] = {
     'CWE-122': 'Heap-based Buffer Overflow', 'CWE-123': 'Write-what-where Condition',
     'CWE-125': 'Out-of-bounds Read', 'CWE-126': 'Buffer Over-read', 'CWE-127': 'Buffer Under-read',
     'CWE-129': 'Improper Validation of Array Index', 'CWE-131': 'Incorrect Calculation of Buffer Size',
+    'CWE-134': 'Use of Externally-Controlled Format String',
     'CWE-190': 'Integer Overflow or Wraparound', 'CWE-191': 'Integer Underflow (Wrap or Wraparound)',
-    'CWE-197': 'Numeric Truncation Error', 'CWE-200': 'Exposure of Sensitive Information',
+    'CWE-193': 'Off-by-one Error', 'CWE-197': 'Numeric Truncation Error',
+    'CWE-200': 'Exposure of Sensitive Information',
     'CWE-209': 'Information Exposure Through an Error Message', 'CWE-269': 'Improper Privilege Management',
     'CWE-284': 'Improper Access Control', 'CWE-285': 'Improper Authorization',
     'CWE-287': 'Improper Authentication', 'CWE-290': 'Authentication Bypass by Spoofing',
@@ -126,6 +132,12 @@ TERMS: tuple[Term, ...] = (
     _w('integer-underflow', ('integer underflow',), 'CWE-191'),
     _w('numeric-truncation', ('numeric truncation',), 'CWE-197'),
     _w('numeric-conversion', ('incorrect conversion between numeric types',), 'CWE-681'),
+    _w('format-string', ('uncontrolled format string', 'externally controlled format string',
+                         'format string vulnerability', 'format string injection', 'format string bug'), 'CWE-134'),
+    _w('format-string-weak', ('format string',), 'CWE-134', 'weak'),
+    _w('off-by-one', ('off by one error', 'off by one bug', 'off by one vulnerability', 'off by one condition'),
+       'CWE-193'),
+    _w('off-by-one-weak', ('off by one',), 'CWE-193', 'weak'),
     _w('null-deref', ('null pointer dereference', 'null pointer deref', 'null dereference'), 'CWE-476'),
     _w('untrusted-pointer', ('untrusted pointer dereference',), 'CWE-822'),
     _w('uninitialized-pointer', ('uninitialized pointer',), 'CWE-824'),
@@ -180,7 +192,17 @@ NEGATION_TOKENS = frozenset({'not', 'no', 'never', 'cannot', 'without', 'neither
 NEGATION_PAIRS = frozenset({('free', 'of'), ('rather', 'than'), ('instead', 'of'), ('no', 'longer')})
 TERMINATORS = frozenset({',', ';', ':', '(', ')', 'but', 'however', 'although', 'though', 'which', 'that', 'because',
                          'leading', 'resulting', 'allowing', 'causing', 'and', 'whereas', 'while', 'so', 'who'})
-BEFORE, AFTER = 4, 3
+BEFORE = 4
+# A cue after the phrase negates the weakness only as a predicate of its existence: "is not present", "cannot occur",
+# "is no longer possible". "requires no user interaction", "without authentication" and "does not require/allow/need"
+# describe an attack condition or a capability of a weakness that is there (audit C-07), so they are not cues.
+AFTER_CUES = frozenset({'not', 'never', 'cannot', 'impossible'})  # also any "...n't" contraction and "no longer"
+AFTER_AUXILIARIES = frozenset({'is', 'are', 'was', 'were', 'be', 'been', 'does', 'do', 'did', 'can', 'could', 'will',
+                               'would', 'may', 'might', 'should', 'has', 'have', 'had'})
+AFTER_BE = frozenset({'be', 'been', 'being'})
+EXISTENCE = frozenset({'present', 'possible', 'occur', 'occurs', 'occurred', 'exist', 'exists', 'existed', 'happen',
+                       'happens', 'arise', 'arises', 'found', 'detected', 'observed', 'reproducible', 'reproduced',
+                       'applicable', 'relevant', 'vulnerable', 'affected'})
 _TOKEN = re.compile(r"[a-z0-9]+(?:'[a-z]+)?|[,;:()]")
 _SENTENCE = re.compile(r'(?<=[.!?])\s+|\n+')
 _TAG = re.compile(r'<[^<>]{0,200}>')
@@ -196,7 +218,9 @@ def lexicon_digest() -> str:
               'strength': t.strength} for t in TERMS]
     return domain_id('cwe-lexicon', 1, {'terms': table, 'families': {k: list(v) for k, v in FAMILIES.items()},
                                         'negation': sorted(NEGATION_TOKENS), 'pairs': sorted(map(list, NEGATION_PAIRS)),
-                                        'terminators': sorted(TERMINATORS), 'window': [BEFORE, AFTER]})
+                                        'terminators': sorted(TERMINATORS), 'window': BEFORE,
+                                        'after': {'cues': sorted(AFTER_CUES), 'auxiliaries': sorted(AFTER_AUXILIARIES),
+                                                  'be': sorted(AFTER_BE), 'existence': sorted(EXISTENCE)}})
 
 
 def _canonical(text: str) -> str:
@@ -225,13 +249,29 @@ def _negation(tokens: list[str], start: int, end: int) -> str | None:
             return token
         if i > 0 and (tokens[i - 1], token) in NEGATION_PAIRS:
             return f'{tokens[i - 1]} {token}'
-    for distance in range(AFTER):
-        i = end + distance
-        if i >= len(tokens) or tokens[i] in TERMINATORS:
-            break
-        if tokens[i] in NEGATION_TOKENS or tokens[i].endswith("n't"):
-            return tokens[i]
-    return None
+    return _after_cue(tokens, end)
+
+
+def _after_cue(tokens: list[str], end: int) -> str | None:
+    """The cue of ``[auxiliary] cue [be] predicate`` right after the phrase, where the predicate states that the
+    weakness exists or occurs ("is not present", "cannot occur", "was not found", "is no longer possible")."""
+    i = end
+    if i < len(tokens) and tokens[i] in AFTER_AUXILIARIES:
+        i += 1
+    if i >= len(tokens):
+        return None
+    cue = tokens[i]
+    if cue == 'impossible':
+        return cue
+    if cue in AFTER_CUES or cue.endswith("n't"):
+        i += 1
+    elif cue == 'no' and tokens[i + 1:i + 2] == ['longer']:
+        cue, i = 'no longer', i + 2
+    else:
+        return None
+    if i < len(tokens) and tokens[i] in AFTER_BE:
+        i += 1
+    return cue if i < len(tokens) and tokens[i] in EXISTENCE else None
 
 
 def _match(tokens: list[str], phrase: tuple[str, ...], at: int) -> bool:

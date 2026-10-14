@@ -1,0 +1,41 @@
+{
+  "applicability": {
+    "contradictions": 0,
+    "newer": "fixed",
+    "newer_mapping": "verified",
+    "older": "affected",
+    "older_mapping": "verified"
+  },
+  "confounding": {
+    "cves": [
+      "CVE-2099-20001"
+    ],
+    "state": "yes"
+  },
+  "counts": {
+    "code": 0,
+    "fit": 1,
+    "partial": 0,
+    "queue": 1,
+    "review": 1
+  },
+  "cve": "CVE-2099-20001",
+  "cwe": {
+    "ids": [
+      "CWE-787"
+    ],
+    "status": "explicit"
+  },
+  "gate": "applies",
+  "kev": {
+    "date_added": "2099-02-10",
+    "snapshot_id": "8c1d9e232ce32f82d451197822b1539f6f283fe013fcce3865a4bc3eb5eb95f4",
+    "state": "listed"
+  },
+  "limitations": [
+    "capa and FLOSS were not run"
+  ],
+  "source_ids": [
+    "9bc3a08a1412cca6d3cbdf3dbb2d0100dbdcca183a8710790383e47eb932307d"
+  ]
+}

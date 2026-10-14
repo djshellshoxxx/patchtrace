@@ -1,0 +1,765 @@
+{
+  "anchors": {
+    "anchors": [
+      {
+        "anchor_id": "32a7f5191f0f6f7440ef085064eb150555af24afeaed73ff60585bbc06ddbfeb",
+        "assessment": "search-hint",
+        "kind": "api",
+        "label": "API often involved in memory-write fixes (R-MEMORY-WRITE)",
+        "pointer": null,
+        "quality": "rule",
+        "source": "hypothesis-rule",
+        "value": "ExAllocatePool2"
+      },
+      {
+        "anchor_id": "436cc02fabf75584f084ab2fd237c7bfa61561bbede675f0b2350b18068743a0",
+        "assessment": "search-hint",
+        "kind": "api",
+        "label": "API often involved in memory-write fixes (R-MEMORY-WRITE)",
+        "pointer": null,
+        "quality": "rule",
+        "source": "hypothesis-rule",
+        "value": "ExAllocatePoolWithTag"
+      },
+      {
+        "anchor_id": "9417d1692a7ef88df0e101b689d0f41b4f37006b397ecce01b84919e77b25b61",
+        "assessment": "search-hint",
+        "kind": "api",
+        "label": "API often involved in memory-write fixes (R-MEMORY-WRITE)",
+        "pointer": null,
+        "quality": "rule",
+        "source": "hypothesis-rule",
+        "value": "RtlCopyMemory"
+      },
+      {
+        "anchor_id": "656bdac01d149da57ba61ff65aba09b999b394c281daec59ab699f47f1573e12",
+        "assessment": "search-hint",
+        "kind": "api",
+        "label": "API often involved in memory-write fixes (R-MEMORY-WRITE)",
+        "pointer": null,
+        "quality": "rule",
+        "source": "hypothesis-rule",
+        "value": "RtlMoveMemory"
+      },
+      {
+        "anchor_id": "ad14573d059220d328dc07ddf25cdb2fcef969bb764e5779ffc150d07566ea6a",
+        "assessment": "search-hint",
+        "kind": "api",
+        "label": "API often involved in integer fixes (R-INTEGER)",
+        "pointer": null,
+        "quality": "rule",
+        "source": "hypothesis-rule",
+        "value": "RtlSizeTAdd"
+      },
+      {
+        "anchor_id": "5ca40d75a265a8b469f97c5323cf63b117efaf069909bbbfa4a042108b613c8e",
+        "assessment": "search-hint",
+        "kind": "api",
+        "label": "API often involved in integer fixes (R-INTEGER)",
+        "pointer": null,
+        "quality": "rule",
+        "source": "hypothesis-rule",
+        "value": "RtlSizeTMult"
+      },
+      {
+        "anchor_id": "2f91f8ddbdf8fa1674913e87f67dc296f2f20a5d23abc88b0bfd92bd638d8976",
+        "assessment": "search-hint",
+        "kind": "api",
+        "label": "API often involved in integer fixes (R-INTEGER)",
+        "pointer": null,
+        "quality": "rule",
+        "source": "hypothesis-rule",
+        "value": "RtlULongAdd"
+      },
+      {
+        "anchor_id": "cd5331cec995314ec46f5c21dd745815b5ee48427cd4c850fbd588d169660c4f",
+        "assessment": "search-hint",
+        "kind": "api",
+        "label": "API often involved in integer fixes (R-INTEGER)",
+        "pointer": null,
+        "quality": "rule",
+        "source": "hypothesis-rule",
+        "value": "RtlULongMult"
+      },
+      {
+        "anchor_id": "fe29cf711a2eac441db20f418859716fbe6a3ffb1539f7c016f32eec5296cc96",
+        "assessment": "search-hint",
+        "kind": "api",
+        "label": "API often involved in integer fixes (R-INTEGER)",
+        "pointer": null,
+        "quality": "rule",
+        "source": "hypothesis-rule",
+        "value": "RtlULongSub"
+      },
+      {
+        "anchor_id": "0bba6d6d11d009f1193c4546846536208fd62f2ccec66b2eb3438f31cc808532",
+        "assessment": "search-hint",
+        "kind": "api",
+        "label": "API often involved in integer fixes (R-INTEGER)",
+        "pointer": null,
+        "quality": "rule",
+        "source": "hypothesis-rule",
+        "value": "SizeTMult"
+      },
+      {
+        "anchor_id": "114da2ee5fe3e43be9ba21b7b9948b301304813b5a8c847b286ea8804ead332b",
+        "assessment": "search-hint",
+        "kind": "api",
+        "label": "API often involved in integer fixes (R-INTEGER)",
+        "pointer": null,
+        "quality": "rule",
+        "source": "hypothesis-rule",
+        "value": "UIntAdd"
+      },
+      {
+        "anchor_id": "125faf2b98163a78559d077fd4dfd4624e3d6f9058cb3b7bb66fb0701fa6f328",
+        "assessment": "search-hint",
+        "kind": "api",
+        "label": "API often involved in integer fixes (R-INTEGER)",
+        "pointer": null,
+        "quality": "rule",
+        "source": "hypothesis-rule",
+        "value": "ULongAdd"
+      },
+      {
+        "anchor_id": "e1aabeb4d143586a8338fdc10f52568562c02239c7207ef86f6f896ed85148b7",
+        "assessment": "search-hint",
+        "kind": "api",
+        "label": "API often involved in memory-write fixes (R-MEMORY-WRITE)",
+        "pointer": null,
+        "quality": "rule",
+        "source": "hypothesis-rule",
+        "value": "memcpy"
+      },
+      {
+        "anchor_id": "1690d4ec99286bce39e60a56f01889b1b33c9e7dc942d0861d72d0b73510ec65",
+        "assessment": "search-hint",
+        "kind": "api",
+        "label": "API often involved in memory-write fixes (R-MEMORY-WRITE)",
+        "pointer": null,
+        "quality": "rule",
+        "source": "hypothesis-rule",
+        "value": "memcpy_s"
+      },
+      {
+        "anchor_id": "8245a9d7558c00b6214d48c604772eb3dd9756b2e47aa9ece1ad5bc37bf51f9d",
+        "assessment": "search-hint",
+        "kind": "api",
+        "label": "API often involved in memory-write fixes (R-MEMORY-WRITE)",
+        "pointer": null,
+        "quality": "rule",
+        "source": "hypothesis-rule",
+        "value": "memmove"
+      },
+      {
+        "anchor_id": "de9aae66ad6268f6284bacd760130f44003ab35f6056e8548ca8cfe9f48a7a28",
+        "assessment": "search-hint",
+        "kind": "component",
+        "label": "component part of a \"<component> <impact> Vulnerability\" title",
+        "pointer": "/vulnerabilities/0/title",
+        "quality": "derived",
+        "source": "csaf-title",
+        "value": "SYNTHETIC Example OS netstack"
+      },
+      {
+        "anchor_id": "461fe4aced44e83ff65ad0d98f2106b5f01d9621e086357f4996b4ecff0e3f1e",
+        "assessment": "search-hint",
+        "kind": "feature",
+        "label": "feature or protocol named in the advisory",
+        "pointer": "/vulnerabilities/0/notes/0",
+        "quality": "derived",
+        "source": "csaf-note",
+        "value": "IPv6"
+      },
+      {
+        "anchor_id": "344dece0745ea7138a0abed48bf521b2fcd3c18bff8bb1af67fbcb9980be1118",
+        "assessment": "search-hint",
+        "kind": "feature",
+        "label": "feature or protocol named in the advisory",
+        "pointer": "/vulnerabilities/0/notes/1",
+        "quality": "derived",
+        "source": "csaf-note",
+        "value": "IPv6"
+      },
+      {
+        "anchor_id": "9c451df81dba6ba4a24b90302379d7b82ef30ab98163a85609ee6b1d943e6ecf",
+        "assessment": "search-hint",
+        "kind": "module",
+        "label": "module named in the advisory",
+        "pointer": "/vulnerabilities/0/notes/0",
+        "quality": "explicit",
+        "source": "csaf-note",
+        "value": "netstack.sys"
+      },
+      {
+        "anchor_id": "99b877ca13916a065b86b549ad2bbda633b7c4090f0ac02503c2799fb0c63255",
+        "assessment": "search-hint",
+        "kind": "module",
+        "label": "module named in the advisory",
+        "pointer": "/product_tree/relationships/0/full_product_name/name",
+        "quality": "explicit",
+        "source": "csaf-product",
+        "value": "netstack.sys"
+      },
+      {
+        "anchor_id": "9824d5160705df672e0028b1aa6b60fc5f22a9eec843134f68381f625ab7e161",
+        "assessment": "search-hint",
+        "kind": "module",
+        "label": "module named in the advisory",
+        "pointer": "/product_tree/relationships/1/full_product_name/name",
+        "quality": "explicit",
+        "source": "csaf-product",
+        "value": "netstack.sys"
+      }
+    ],
+    "contract": "intelligence/1",
+    "cve": "CVE-2099-10001",
+    "limitations": [
+      "Anchors are search hints labelled with source and quality; they are never linked to diff results or functions.",
+      "Module and feature names come from advisory text and may describe the product, not this file."
+    ]
+  },
+  "applicability": {
+    "contract": "intelligence/1",
+    "contradictions": [],
+    "cve": "CVE-2099-10001",
+    "limitations": [
+      "Applicability restates vendor claims for products tied to each artifact; it is not a binary verification.",
+      "File versions are matched to product_version names by exact equality only; product_version_range entries are not evaluated because a Windows file version is not an operating-system build.",
+      "CSAF document signatures are not checked; fetched documents are tied to an allowlisted HTTPS host only."
+    ],
+    "newer": {
+      "assessment": "advisory-claim",
+      "identity": {
+        "asserted_product_ids": [],
+        "contract": "intelligence/1",
+        "facts_state": "verified-bytes",
+        "file_version": null,
+        "notes": [
+          "no resource directory",
+          "no CodeView PDB identity"
+        ],
+        "pdb_identity": null,
+        "product_version": null,
+        "sha256": "4af23bcb773054ad469c57363d50e2b53a6590bfba2286f16a06b4fb1440a168",
+        "side": "newer"
+      },
+      "mappings": [
+        {
+          "basis": "advisory-file-hash",
+          "detail": "artifact SHA-256 equals a file hash in the advisory product identification helper",
+          "product_id": "PT-900",
+          "product_name": "Example netstack.sys 10.0.22621.4036 (synthetic build)",
+          "source_id": "f91e5c16ff213ff09990e0e50204f3e17795ba4bee3f0f2ccbad5d5fadd059f0",
+          "status": "verified"
+        },
+        {
+          "basis": "relationship-from-verified-component",
+          "detail": "default_component_of of Example OS 22H2 for x64-based Systems 10.0.22621.4037; the platform itself is not verified",
+          "product_id": "PT-901",
+          "product_name": "Example netstack.sys 10.0.22621.4036 as part of Example OS 22H2 for x64-based Systems 10.0.22621.4037",
+          "source_id": "f91e5c16ff213ff09990e0e50204f3e17795ba4bee3f0f2ccbad5d5fadd059f0",
+          "status": "candidate"
+        }
+      ],
+      "product_mapping_status": "candidate",
+      "recommended": false,
+      "resolution": "fixed",
+      "side": "newer",
+      "statuses": [
+        {
+          "assessment": "advisory-claim",
+          "document_category": "csaf_security_advisory",
+          "pointer": "/vulnerabilities/0/product_status/fixed/3",
+          "product_id": "PT-901",
+          "product_name": "Example netstack.sys 10.0.22621.4036 as part of Example OS 22H2 for x64-based Systems 10.0.22621.4037",
+          "revision": "1",
+          "source_id": "f91e5c16ff213ff09990e0e50204f3e17795ba4bee3f0f2ccbad5d5fadd059f0",
+          "status": "fixed",
+          "status_class": "fixed",
+          "superseded": false,
+          "tracking_id": "PT-SYNTH_CVE-2099-10001"
+        }
+      ],
+      "why": [
+        "mapping verified: PT-900 in PT-SYNTH_CVE-2099-10001 r1 (advisory-file-hash)",
+        "mapping candidate: PT-901 in PT-SYNTH_CVE-2099-10001 r1 (relationship-from-verified-component)",
+        "status: PT-901 fixed in PT-SYNTH_CVE-2099-10001 r1 at /vulnerabilities/0/product_status/fixed/3"
+      ]
+    },
+    "older": {
+      "assessment": "advisory-claim",
+      "identity": {
+        "asserted_product_ids": [],
+        "contract": "intelligence/1",
+        "facts_state": "verified-bytes",
+        "file_version": null,
+        "notes": [
+          "no resource directory",
+          "no CodeView PDB identity"
+        ],
+        "pdb_identity": null,
+        "product_version": null,
+        "sha256": "dc71b8420acc68418eaebfb8a4848cd2f63626125868e9977f017010c8d30215",
+        "side": "older"
+      },
+      "mappings": [
+        {
+          "basis": "advisory-file-hash",
+          "detail": "artifact SHA-256 equals a file hash in the advisory product identification helper",
+          "product_id": "PT-800",
+          "product_name": "Example netstack.sys 10.0.22621.3958 (synthetic build)",
+          "source_id": "f91e5c16ff213ff09990e0e50204f3e17795ba4bee3f0f2ccbad5d5fadd059f0",
+          "status": "verified"
+        },
+        {
+          "basis": "relationship-from-verified-component",
+          "detail": "default_component_of of Example OS 22H2 for x64-based Systems <10.0.22621.4037; the platform itself is not verified",
+          "product_id": "PT-801",
+          "product_name": "Example netstack.sys 10.0.22621.3958 as part of Example OS 22H2 for x64-based Systems <10.0.22621.4037",
+          "source_id": "f91e5c16ff213ff09990e0e50204f3e17795ba4bee3f0f2ccbad5d5fadd059f0",
+          "status": "candidate"
+        }
+      ],
+      "product_mapping_status": "candidate",
+      "recommended": false,
+      "resolution": "affected",
+      "side": "older",
+      "statuses": [
+        {
+          "assessment": "advisory-claim",
+          "document_category": "csaf_security_advisory",
+          "pointer": "/vulnerabilities/0/product_status/known_affected/3",
+          "product_id": "PT-801",
+          "product_name": "Example netstack.sys 10.0.22621.3958 as part of Example OS 22H2 for x64-based Systems <10.0.22621.4037",
+          "revision": "1",
+          "source_id": "f91e5c16ff213ff09990e0e50204f3e17795ba4bee3f0f2ccbad5d5fadd059f0",
+          "status": "known_affected",
+          "status_class": "affected",
+          "superseded": false,
+          "tracking_id": "PT-SYNTH_CVE-2099-10001"
+        }
+      ],
+      "why": [
+        "mapping verified: PT-800 in PT-SYNTH_CVE-2099-10001 r1 (advisory-file-hash)",
+        "mapping candidate: PT-801 in PT-SYNTH_CVE-2099-10001 r1 (relationship-from-verified-component)",
+        "status: PT-801 known_affected in PT-SYNTH_CVE-2099-10001 r1 at /vulnerabilities/0/product_status/known_affected/3"
+      ]
+    },
+    "sources": [
+      "f91e5c16ff213ff09990e0e50204f3e17795ba4bee3f0f2ccbad5d5fadd059f0"
+    ],
+    "superseded_sources": []
+  },
+  "contract": "intelligence/1",
+  "cve": "CVE-2099-10001",
+  "cwe_profile": {
+    "classifications": [
+      {
+        "assessment": "advisory-claim",
+        "basis": "explicit-csaf-cwe",
+        "confidence": "explicit",
+        "cwe_id": "CWE-191",
+        "family": "integer",
+        "hits": [
+          {
+            "cwe_ids": [
+              "CWE-191"
+            ],
+            "excerpt": "synthetic: an integer underflow in the ipv6 fragment reassembly path of netstack.sys can lead to a heap-based buffer overflow when the driver processes crafted packets.",
+            "negated": false,
+            "negation_cue": null,
+            "phrase": "integer underflow",
+            "pointer": "/vulnerabilities/0/notes/0",
+            "scope": "weakness",
+            "strength": "strong",
+            "term_id": "integer-underflow"
+          }
+        ],
+        "pointers": [
+          "/vulnerabilities/0/cwe",
+          "/vulnerabilities/0/notes/0"
+        ]
+      },
+      {
+        "assessment": "rule-hypothesis",
+        "basis": "curated-vocabulary",
+        "confidence": "phrase-match",
+        "cwe_id": "CWE-122",
+        "family": "memory-write",
+        "hits": [
+          {
+            "cwe_ids": [
+              "CWE-122"
+            ],
+            "excerpt": "synthetic: an integer underflow in the ipv6 fragment reassembly path of netstack.sys can lead to a heap-based buffer overflow when the driver processes crafted packets.",
+            "negated": false,
+            "negation_cue": null,
+            "phrase": "heap based buffer overflow",
+            "pointer": "/vulnerabilities/0/notes/0",
+            "scope": "weakness",
+            "strength": "strong",
+            "term_id": "heap-overflow"
+          }
+        ],
+        "pointers": [
+          "/vulnerabilities/0/notes/0"
+        ]
+      }
+    ],
+    "contract": "intelligence/1",
+    "cve": "CVE-2099-10001",
+    "disagreements": [
+      "explicit CWE-191 (integer) and curated-vocabulary CWE-122 (memory-write) differ; both are kept and neither is resolved"
+    ],
+    "effect_hits": [
+      {
+        "cwe_ids": [],
+        "excerpt": "remote code execution",
+        "negated": false,
+        "negation_cue": null,
+        "phrase": "remote code execution",
+        "pointer": "/vulnerabilities/0/threats/0/details",
+        "scope": "effect",
+        "strength": "weak",
+        "term_id": "effect-rce"
+      },
+      {
+        "cwe_ids": [],
+        "excerpt": "synthetic example os netstack remote code execution vulnerability",
+        "negated": false,
+        "negation_cue": null,
+        "phrase": "remote code execution",
+        "pointer": "/vulnerabilities/0/title",
+        "scope": "effect",
+        "strength": "weak",
+        "term_id": "effect-rce"
+      }
+    ],
+    "lexicon_digest": "a56c967518c2df8c8097f934542cf969a4cf057c8c636b518641da072cdba71a",
+    "lexicon_version": "cwe-lexicon/1",
+    "limitations": [],
+    "negated_hits": [],
+    "status": "explicit"
+  },
+  "facts": [
+    {
+      "assessment": "advisory-claim",
+      "contract": "intelligence/1",
+      "cve": "CVE-2099-10001",
+      "cwe": {
+        "id": "CWE-191",
+        "name": "Integer Underflow (Wrap or Wraparound)",
+        "pointer": "/vulnerabilities/0/cwe"
+      },
+      "flags": [],
+      "ids": [],
+      "notes": [
+        {
+          "audience": null,
+          "category": "description",
+          "pointer": "/vulnerabilities/0/notes/0",
+          "text": "SYNTHETIC: An integer underflow in the IPv6 fragment reassembly path of netstack.sys can lead to a heap-based buffer overflow when the driver processes crafted packets.",
+          "title": "Description"
+        },
+        {
+          "audience": null,
+          "category": "faq",
+          "pointer": "/vulnerabilities/0/notes/1",
+          "text": "An unauthenticated attacker could repeatedly send IPv6 packets, including specially crafted packets, to a machine. Systems with IPv6 disabled are not affected.",
+          "title": "How could an attacker exploit this vulnerability?"
+        },
+        {
+          "audience": null,
+          "category": "general",
+          "pointer": "/vulnerabilities/0/notes/2",
+          "text": "PatchTrace synthetic fixture",
+          "title": "Assigning CNA"
+        }
+      ],
+      "pointer": "/vulnerabilities/0",
+      "product_status": [
+        {
+          "pointer": "/vulnerabilities/0/product_status/known_affected/0",
+          "product_id": "PT-100-1",
+          "status": "known_affected"
+        },
+        {
+          "pointer": "/vulnerabilities/0/product_status/fixed/0",
+          "product_id": "PT-100-2",
+          "status": "fixed"
+        },
+        {
+          "pointer": "/vulnerabilities/0/product_status/known_affected/1",
+          "product_id": "PT-101-1",
+          "status": "known_affected"
+        },
+        {
+          "pointer": "/vulnerabilities/0/product_status/fixed/1",
+          "product_id": "PT-101-2",
+          "status": "fixed"
+        },
+        {
+          "pointer": "/vulnerabilities/0/product_status/known_affected/2",
+          "product_id": "PT-200-1",
+          "status": "known_affected"
+        },
+        {
+          "pointer": "/vulnerabilities/0/product_status/fixed/2",
+          "product_id": "PT-200-2",
+          "status": "fixed"
+        },
+        {
+          "pointer": "/vulnerabilities/0/product_status/known_affected/3",
+          "product_id": "PT-801",
+          "status": "known_affected"
+        },
+        {
+          "pointer": "/vulnerabilities/0/product_status/fixed/3",
+          "product_id": "PT-901",
+          "status": "fixed"
+        }
+      ],
+      "remediations": [
+        {
+          "category": "vendor_fix",
+          "date": "2099-01-10T08:00:00.000Z",
+          "details": "Install synthetic update PT5041585",
+          "group_ids": [
+            "PT-G-22H2-BEFORE-FIX"
+          ],
+          "pointer": "/vulnerabilities/0/remediations/0",
+          "product_ids": [
+            "PT-801"
+          ],
+          "restart_required": "machine",
+          "url": "https://example.invalid/patchtrace-synthetic/updates/PT5041585",
+          "via_groups": [
+            "PT-100-1",
+            "PT-101-1"
+          ]
+        },
+        {
+          "category": "vendor_fix",
+          "date": "2099-01-10T08:00:00.000Z",
+          "details": "Install synthetic update PT5041160",
+          "group_ids": [],
+          "pointer": "/vulnerabilities/0/remediations/1",
+          "product_ids": [
+            "PT-200-1"
+          ],
+          "restart_required": null,
+          "url": "https://example.invalid/patchtrace-synthetic/updates/PT5041160",
+          "via_groups": []
+        }
+      ],
+      "scores": [
+        {
+          "base_score": "9.8",
+          "base_severity": "CRITICAL",
+          "cvss_version": "3.1",
+          "pointer": "/vulnerabilities/0/scores/0/cvss_v3",
+          "products": [
+            "PT-100-1",
+            "PT-101-1",
+            "PT-200-1"
+          ],
+          "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H"
+        }
+      ],
+      "source_id": "f91e5c16ff213ff09990e0e50204f3e17795ba4bee3f0f2ccbad5d5fadd059f0",
+      "threats": [
+        {
+          "category": "impact",
+          "date": null,
+          "details": "Remote Code Execution",
+          "group_ids": [],
+          "pointer": "/vulnerabilities/0/threats/0",
+          "product_ids": [
+            "PT-100-1",
+            "PT-101-1",
+            "PT-200-1"
+          ],
+          "via_groups": []
+        },
+        {
+          "category": "exploit_status",
+          "date": null,
+          "details": "Publicly Disclosed:No;Exploited:No;Latest Software Release:Exploitation More Likely",
+          "group_ids": [],
+          "pointer": "/vulnerabilities/0/threats/1",
+          "product_ids": [],
+          "via_groups": []
+        }
+      ],
+      "title": "SYNTHETIC Example OS netstack Remote Code Execution Vulnerability"
+    }
+  ],
+  "hypotheses": {
+    "contract": "intelligence/1",
+    "cve": "CVE-2099-10001",
+    "hypotheses": [
+      {
+        "api_hints": [
+          "RtlULongAdd",
+          "RtlULongSub",
+          "RtlULongMult",
+          "RtlSizeTAdd",
+          "RtlSizeTMult",
+          "ULongAdd",
+          "SizeTMult",
+          "UIntAdd"
+        ],
+        "assessment": "rule-hypothesis",
+        "basis": "explicit-csaf-cwe",
+        "caveat": "Patches need not follow common motifs: absence of these operations neither refutes the advisory nor the product mapping, and their presence does not establish the weakness in a function.",
+        "contradictions": [],
+        "counterexamples": [
+          "type change for an unrelated API signature",
+          "existing check moved or duplicated by refactoring, inlining or compiler reordering"
+        ],
+        "cwe_id": "CWE-191",
+        "expected_operations": [
+          "overflow-checked arithmetic replaces plain addition, subtraction or multiplication",
+          "range check before the arithmetic",
+          "operand type widened",
+          "subtraction guarded against underflow"
+        ],
+        "family": "integer",
+        "guards": [
+          "overflow-checked arithmetic helpers",
+          "comparison of operands before subtraction"
+        ],
+        "hypothesis_id": "2a6da6680ae8a41472fc19fb38ee6b25f4e35f257c7205bb00617d962af1b7e8",
+        "required_observations": [
+          "new arithmetic check whose result guards a size, bound or index"
+        ],
+        "rule_id": "R-INTEGER",
+        "rule_revision": 1,
+        "sinks": [
+          "allocation size",
+          "loop bound",
+          "copy length",
+          "array index"
+        ],
+        "sources": [
+          "counts, lengths and offsets from input"
+        ]
+      },
+      {
+        "api_hints": [
+          "memcpy",
+          "memmove",
+          "memcpy_s",
+          "RtlCopyMemory",
+          "RtlMoveMemory",
+          "RtlSizeTAdd",
+          "RtlULongMult",
+          "ExAllocatePool2",
+          "ExAllocatePoolWithTag"
+        ],
+        "assessment": "rule-hypothesis",
+        "basis": "curated-vocabulary",
+        "caveat": "Patches need not follow common motifs: absence of these operations neither refutes the advisory nor the product mapping, and their presence does not establish the weakness in a function.",
+        "contradictions": [
+          "the changed function performs no memory writes",
+          "only constants, strings or logging changed"
+        ],
+        "counterexamples": [
+          "check added only for telemetry or logging",
+          "existing check moved or duplicated by refactoring, inlining or compiler reordering"
+        ],
+        "cwe_id": "CWE-122",
+        "expected_operations": [
+          "new comparison of an index, length or count against the destination capacity before a copy, index or store",
+          "copy length clamped or recomputed from the destination size",
+          "allocation size recomputed with checked arithmetic",
+          "early error return added before the write"
+        ],
+        "family": "memory-write",
+        "guards": [
+          "bounds check: index < capacity, offset + length <= size",
+          "checked arithmetic before the size is used",
+          "error status returned for oversize input"
+        ],
+        "hypothesis_id": "4ddd1b7b3c9e591735869bfbc9acecd252402689aa222ed74114ad4524f46f93",
+        "required_observations": [
+          "new or tightened comparison dominating a write in the changed function",
+          "value flow from the compared quantity to the write size or index"
+        ],
+        "rule_id": "R-MEMORY-WRITE",
+        "rule_revision": 1,
+        "sinks": [
+          "memory copy into a fixed or computed buffer",
+          "indexed array store",
+          "pointer-arithmetic write"
+        ],
+        "sources": [
+          "length, count or offset fields parsed from input",
+          "sizes supplied by user mode or the network"
+        ]
+      }
+    ],
+    "limitations": [
+      "Hypotheses describe common fix shapes for a weakness class; they are search guidance only.",
+      "Advisory CWE values and vocabulary matches are claims or interpretations, not binary observations."
+    ],
+    "rules_digest": "cf3c05fa31e825f4895d333e030cfe6dda2d9fde7b39f1e18b8534e0486b5cc5",
+    "rules_version": "patch-rules/1",
+    "unknowns": []
+  },
+  "limitations": [
+    "This report restates vendor claims and PatchTrace rule hypotheses with their sources; it does not show that this CVE is present in, or fixed by, any function or binary.",
+    "Applicability restates vendor claims for products tied to each artifact; it is not a binary verification.",
+    "File versions are matched to product_version names by exact equality only; product_version_range entries are not evaluated because a Windows file version is not an operating-system build.",
+    "CSAF document signatures are not checked; fetched documents are tied to an allowlisted HTTPS host only.",
+    "Hypotheses describe common fix shapes for a weakness class; they are search guidance only.",
+    "Advisory CWE values and vocabulary matches are claims or interpretations, not binary observations.",
+    "Anchors are search hints labelled with source and quality; they are never linked to diff results or functions.",
+    "Module and feature names come from advisory text and may describe the product, not this file."
+  ],
+  "sources": [
+    {
+      "cves": [
+        "CVE-2099-10001",
+        "CVE-2099-10002"
+      ],
+      "facts_id": "3e4ea7d5231a259895a7cdaef51b66d6f7b43ae5d273363b9b9a4c04097d85dd",
+      "source": {
+        "authenticity_state": "unverified-local-file",
+        "contract": "intelligence/1",
+        "current_release_date": "2099-01-10T08:00:00.000Z",
+        "document_category": "csaf_security_advisory",
+        "file_name": "synthetic-advisory-rev1.json",
+        "filename_matches_tracking_id": null,
+        "initial_release_date": "2099-01-10T08:00:00.000Z",
+        "origin": "local-import",
+        "publisher_category": "vendor",
+        "publisher_name": "PatchTrace Synthetic Fixture Vendor (not Microsoft)",
+        "publisher_namespace": "https://example.invalid/patchtrace-synthetic",
+        "raw_path": "intelligence/csaf/sources/f91e5c16ff213ff09990e0e50204f3e17795ba4bee3f0f2ccbad5d5fadd059f0.json",
+        "retrieval_id": "9dcb67e32f13ec32d482cb00999c1e8d2da79fa3e4f18602ebef4ae838b7797e",
+        "retrieved_at": "2099-03-01T00:00:00Z",
+        "revision": "1",
+        "schema_version": "2.0",
+        "self_urls": [
+          "https://example.invalid/patchtrace-synthetic/csaf/2099/pt-synth_cve-2099-10001.json"
+        ],
+        "sha256": "f91e5c16ff213ff09990e0e50204f3e17795ba4bee3f0f2ccbad5d5fadd059f0",
+        "signature_state": "not-checked",
+        "size": 10880,
+        "source_id": "f91e5c16ff213ff09990e0e50204f3e17795ba4bee3f0f2ccbad5d5fadd059f0",
+        "tracking_id": "PT-SYNTH_CVE-2099-10001",
+        "tracking_status": "final",
+        "uri": null
+      },
+      "superseded": false,
+      "validation_warnings": 0
+    }
+  ],
+  "unknowns": [
+    "advisory authenticity is unverified: a local file was imported and signatures are not checked",
+    "newer artifact: the product mapping is a candidate, not verified",
+    "older artifact: the product mapping is a candidate, not verified"
+  ]
+}

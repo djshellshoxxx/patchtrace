@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import re
 from pathlib import Path
 
 import pytest
@@ -88,6 +89,28 @@ def test_rules_are_valid_versioned_and_cover_every_family():
         assert all(lx.family(c) == rule.family for c in rule.cwe_patterns)
     assert hy.rules_digest() == hy.rules_digest() and len(hy.rules_digest()) == 64
     assert json.loads(hy.RULES[0].model_dump_json())['contract'] == 'intelligence/1'
+
+
+@pytest.mark.parametrize('cwe, family, words, apis', [
+    ('CWE-134', 'format-string', ('format', 'constant'), {'printf', 'snprintf'}),
+    ('CWE-193', 'off-by-one', ('comparison', 'one'), {'memcpy', 'strncpy'}),
+], ids=['format-string', 'off-by-one'])
+def test_additive_rules_for_format_string_and_off_by_one(cwe, family, words, apis):
+    (h,) = build(cwe=cwe).hypotheses
+    assert (h.cwe_id, h.family, h.basis, h.assessment) == (cwe, family, 'explicit-csaf-cwe', 'rule-hypothesis')
+    blob = ' '.join(h.expected_operations + h.guards + h.sinks).lower()
+    assert all(word in blob for word in words), blob
+    assert apis <= set(h.api_hints) and h.counterexamples and 'need not follow' in h.caveat
+
+
+def test_every_cwe_class_of_the_known_answer_corpus_has_a_family_and_a_rule():
+    table = (Path(__file__).resolve().parents[1] / 'corpus' / 'ours' / 'cwe-patterns' / 'README.md').read_text(
+        encoding='utf-8')
+    planted = {f'CWE-{number}' for number in re.findall(r'^\| `[a-z0-9]+` \| (\d+)', table, flags=re.MULTILINE)}
+    assert {'CWE-134', 'CWE-193', 'CWE-787', 'CWE-416'} <= planted  # the table was read
+    for cwe in sorted(planted):
+        assert lx.family(cwe), f'{cwe} has no lexicon family'
+        assert any(cwe in rule.cwe_patterns for rule in hy.RULES), f'{cwe} has no patch rule'
 
 
 def test_no_rule_text_claims_verification():

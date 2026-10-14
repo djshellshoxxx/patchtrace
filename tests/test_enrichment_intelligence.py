@@ -79,7 +79,9 @@ def test_plan_exact_urls_and_headers_without_secret():
 
 
 @pytest.mark.parametrize('bad', ['CVE-2024-123', 'CVE-2024-38063\n', 'CVE-2024-38063/../x', 'cve-2024-38063',
-                                 'CVE-2024-' + '1' * 20, 'CVE-2024-38063?x=1', None, 20243806])
+                                 'CVE-2024-' + '1' * 20, 'CVE-2024-38063?x=1', None, 20243806,
+                                 'CVE-\uff12\uff10\uff12\uff14-\uff13\uff18\uff10\uff16\uff13',
+                                 'CVE-2024-\u0663\u0668\u0660\u0666\u0663'])  # non-ASCII digits
 def test_invalid_cve_rejected_before_any_io(bad):
     opener = Opener()
     with pytest.raises(EnrichmentError) as exc:

@@ -3,6 +3,7 @@ redirect, size, retry, deadline, cancellation and offline-cache behaviour."""
 from __future__ import annotations
 
 import hashlib
+import json
 import threading
 from datetime import UTC, datetime
 
@@ -198,3 +199,29 @@ def test_default_opener_ignores_environment_proxies(monkeypatch):
     director = tr.build_director()  # an explicit empty ProxyHandler suppresses the environment-driven default
     assert not any(getattr(h, 'proxies', None) for h in director.handlers)
     assert not any(hasattr(h, 'https_open') and h.__class__.__name__ == 'ProxyHandler' for h in director.handlers)
+
+
+# ---- audit C-22: the cache is best-effort and bounded ---------------------------------------------------------------
+
+def test_c22_a_failing_cache_write_does_not_fail_a_successful_fetch(tmp_path):
+    blocker = tmp_path / 'cache'
+    blocker.write_bytes(b'a file where the cache directory should be')  # mkdir fails on Linux and Windows
+    seen = []
+    client, _ = transport({DOC: (200, b'{"x": 1}')}, cache=tr.OfflineCache(blocker), announce=seen.append)
+    fetched = client.get(DOC, 'document')
+    assert fetched.body == b'{"x": 1}' and not fetched.from_cache
+    assert any('cache' in line and 'not updated' in line for line in seen), seen
+
+
+def test_c22_cached_bodies_are_capped_per_resource_kind(tmp_path):
+    body = b'x' * (tr.CAPS['hash'] + 1)  # larger than any .sha256 file may be
+    sha = hashlib.sha256(body).hexdigest()
+    (tmp_path / 'cache' / 'bodies').mkdir(parents=True)
+    (tmp_path / 'cache' / 'bodies' / sha).write_bytes(body)
+    (tmp_path / 'cache' / 'urls.json').write_text(
+        json.dumps({DOC: {'sha256': sha, 'retrieved_at': '2099-03-01T00:00:00Z', 'final_url': DOC}}), encoding='utf-8')
+    offline = tr.CsafTransport(None, opener=FakeServer({}), cache=tr.OfflineCache(tmp_path / 'cache'), offline=True)
+    with pytest.raises(IntelError) as info:
+        offline.get(DOC, 'hash')
+    assert info.value.code == 'PT-INTEL-LIMIT'
+    assert offline.get(DOC, 'document').body == body  # the same entry is fine for a kind with a larger cap

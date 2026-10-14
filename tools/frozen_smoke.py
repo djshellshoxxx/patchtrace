@@ -17,6 +17,15 @@ Checks (each prints PASS/FAIL; any FAIL gives exit 1):
       protobuf with upb in the worker (SPEC-10b §9.3). The program under test spawns its own worker child
       (frozen: the exe itself) through run_process and the Job Object memory cap, so this is the production route.
   B2  a JSON lookalike and a structurally invalid export exit 2 with their reason slugs and no traceback.
+  C1-C4 `intelligence import` and `explain` on the sample project and the SYNTHETIC CSAF fixture: one JSON document,
+      the report contract and applicability, an escaped LF-only Markdown export, and exit 2 for a document that
+      lacks the CVE. No network: `fetch` is covered by tests with a fake opener, never by this smoke.
+  U1  SPEC-31 S1: the Ghidra extractor script is in the frozen package exactly once and byte-identical to the source
+      tree's copy, and the BinDiff v8 notice ships (frozen only; the script runs in the user's external Python, so
+      it must travel as a data file, 03 s3).
+  U2  once S0b's `src/patchtrace/unified/cli.py` exists in the tree: `unified --help` exits 0 with `usage:` and
+      `unified _worker --self-check` exits 0 (reads the packaged script through importlib.resources in the frozen
+      process). Until then it prints SKIP, which is neither a pass nor a failure.
 
 Project and series fixtures are written by the host interpreter (the source tree, `pip install -e`); only the
 program under test is launched as a subprocess. `run_checks` is also used by tests/test_acceptance_smoke.py
@@ -25,6 +34,7 @@ frozen package: only the Windows CI step does.
 """
 from __future__ import annotations
 
+import hashlib
 import json
 import os
 import shutil
@@ -34,7 +44,7 @@ import tempfile
 from collections.abc import Callable, Sequence
 from pathlib import Path
 
-COMMANDS = ('rank', 'flags', 'correlate', 'cache', 'acquire', 'series', 'secondary', 'backend')
+COMMANDS = ('rank', 'flags', 'correlate', 'cache', 'acquire', 'series', 'secondary', 'intelligence', 'unified', 'intel-tools', 'backend')
 BASELINE_KEYS = ('rank', 'pairing_id', 'score', 'raw', 'function')  # match_id is random per project
 
 
@@ -190,6 +200,8 @@ def run_checks(launcher: Sequence[str], *, frozen: bool, emit: Callable[[str], N
                 pass
         shutil.rmtree(scratch, ignore_errors=True)
     binexport_checks(launcher, frozen=frozen, check=check)
+    intelligence_checks(launcher, frozen=frozen, check=check)
+    unified_checks(launcher, frozen=frozen, check=check, emit=emit)
     return failures
 
 
@@ -231,6 +243,74 @@ def binexport_checks(launcher: Sequence[str], *, frozen: bool, check: Callable[.
             check(f'B2 binexport-check {label}: exit 2 [{slug}], no traceback',
                   r.returncode == 2 and f'[{slug}]' in r.stderr and 'Traceback' not in r.stderr,
                   f'rc={r.returncode} {r.stderr}')
+
+
+def intelligence_checks(launcher: Sequence[str], *, frozen: bool, check: Callable[..., None]) -> None:
+    root = Path(__file__).resolve().parents[1]
+    advisory = root / 'tests' / 'fixtures' / 'csaf' / 'synthetic-advisory-rev1.json'
+    cve = 'CVE-2099-10001'
+    # From source, the child must import this tree (an editable install elsewhere could shadow it).
+    env = None if frozen else dict(os.environ, PYTHONPATH=str(root / 'src'))
+    scratch = Path(tempfile.mkdtemp(prefix='pt-smoke-intel-'))
+    try:
+        project = _sample_project(scratch / 'case')
+        r = run(launcher, 'intelligence', 'import', project, advisory, '--cve', cve, '--json', env=env)
+        doc = _json_doc(r.stdout)
+        check('C1 intelligence import: exit 0, one JSON document', r.returncode == 0 and doc is not None
+              and doc.get('command') == 'intelligence import' and 'Traceback' not in r.stderr,
+              f'rc={r.returncode} {r.stdout[-300:]} {r.stderr}')
+        exported = scratch / 'report.md'
+        r = run(launcher, 'intelligence', 'explain', project, '--cve', cve, '--export', exported, '--json', env=env)
+        doc = _json_doc(r.stdout)
+        report = ((doc or {}).get('result') or {}).get('report') or {}
+        sides = report.get('applicability') or {}
+        check('C2 intelligence explain --json: report intelligence/1, older affected, newer fixed',
+              r.returncode == 0 and report.get('contract') == 'intelligence/1' and report.get('cve') == cve
+              and (sides.get('older') or {}).get('resolution') == 'affected'
+              and (sides.get('newer') or {}).get('resolution') == 'fixed' and 'Traceback' not in r.stderr,
+              f'rc={r.returncode} {r.stdout[-300:]} {r.stderr}')
+        data = exported.read_bytes() if exported.is_file() else b''
+        check('C3 explain --export .md: escaped, LF only, no raw HTML',
+              data.startswith(b'# Advisory report for `CVE-2099-10001`\n') and b'\r' not in data and b'<' not in data,
+              f'{len(data)} bytes {data[:120]!r}')
+        r = run(launcher, 'intelligence', 'import', project, advisory, '--cve', 'CVE-2099-99999', env=env)
+        check('C4 intelligence import without the CVE: exit 2, no traceback',
+              r.returncode == 2 and 'does not list' in r.stderr and 'Traceback' not in r.stderr,
+              f'rc={r.returncode} {r.stderr}')
+    finally:
+        for p in scratch.rglob('*'):  # copied artifacts are read-only; Windows cannot remove them otherwise
+            try:
+                if p.is_file():
+                    p.chmod(0o600)
+            except OSError:
+                pass
+        shutil.rmtree(scratch, ignore_errors=True)
+EXTRACTOR_SCRIPT = 'patchtrace/unified/extract/ghidra_script.py'
+BINDIFF_NOTICE = 'licenses/upstream/bindiff-v8-aecc14d/LICENSE'
+
+
+def unified_checks(launcher: Sequence[str], *, frozen: bool, check: Callable[..., None],
+                   emit: Callable[[str], None] = print, source_root: Path | None = None) -> None:
+    """U1: file-level checks of the frozen onedir (the launcher's directory); U2: the unified CLI, when it exists."""
+    if not frozen:
+        return
+    package = Path(launcher[0]).resolve().parent
+    found = sorted(p for p in package.rglob('ghidra_script.py') if p.as_posix().endswith('/' + EXTRACTOR_SCRIPT))
+    check('U1 extractor script is in the package exactly once', len(found) == 1, str([str(p) for p in found]))
+    if len(found) == 1:
+        expected = Path(__file__).resolve().parents[1] / 'src' / EXTRACTOR_SCRIPT
+        same = hashlib.sha256(found[0].read_bytes()).hexdigest() == hashlib.sha256(expected.read_bytes()).hexdigest()
+        check('U1 packaged extractor script equals the source tree copy', same, str(found[0]))
+    check('U1 BinDiff v8 notice ships with the package', (package / BINDIFF_NOTICE).is_file(), BINDIFF_NOTICE)
+    root = source_root if source_root is not None else Path(__file__).resolve().parents[1]
+    if not (root / 'src' / 'patchtrace' / 'unified' / 'cli.py').is_file():
+        emit('SKIP U2 unified --help / unified _worker --self-check (src/patchtrace/unified/cli.py does not exist yet)')
+        return
+    r = run(launcher, 'unified', '--help')
+    check('U2 unified --help', r.returncode == 0 and 'usage:' in r.stdout, f'rc={r.returncode} {r.stderr}')
+    r = run(launcher, 'unified', '_worker', '--self-check', timeout=240)
+    check('U2 unified _worker --self-check', r.returncode == 0 and 'Traceback' not in r.stderr,
+          f'rc={r.returncode} {r.stdout[-200:]} {r.stderr}')
 
 
 def main() -> int:

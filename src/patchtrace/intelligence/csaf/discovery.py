@@ -182,6 +182,9 @@ def fetch_documents(transport: CsafTransport, discovery: Discovery, cve: str,
                 raise
             warnings.append(f'{entry.path}: rejected ({exc.code}: {exc.message})')
             continue
+        except Exception as exc:  # defence in depth: a validator bug on one hostile candidate must not abort the batch
+            warnings.append(f'{entry.path}: rejected (unexpected {type(exc).__name__} while validating)')
+            continue
         if not any(v.get('cve') == cve for v in parsed.get('vulnerabilities') or ()):
             warnings.append(f'{entry.path}: the document does not list {cve}; discarded (file names are hints only)')
             continue

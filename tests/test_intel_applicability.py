@@ -160,3 +160,42 @@ def test_cve_must_be_present_and_report_is_deterministic():
     second = resolve([VEX, REV2, REV1], ident('older', OLD_SHA), ident('newer', NEW_SHA))
     assert first == second
     assert ApplicabilityReport.model_validate_json(first.model_dump_json()) == first
+
+
+# ---- audit C ------------------------------------------------------------------------------------------------------
+
+def withdrawn_rev2():
+    """Revision 2 of the same tracking id, with CVE-2099-10001 removed (the vendor withdrew the entry)."""
+    doc = json.loads((FIXTURES / 'synthetic-advisory-rev2.json').read_text(encoding='utf-8'))
+    doc['vulnerabilities'] = [v for v in doc['vulnerabilities'] if v['cve'] != 'CVE-2099-10001']
+    return facts(doc=doc)
+
+
+def test_c03_a_newer_revision_that_drops_the_cve_supersedes_the_older_claims():
+    newer = withdrawn_rev2()
+    report = resolve([REV1, newer], ident('older', asserted=['PT-101-1']), ident('newer'))
+    assert report.superseded_sources == (REV1.source_id,) and newer.source_id not in report.sources
+    assert report.older.statuses and {e.superseded for e in report.older.statuses} == {True}
+    assert (report.older.resolution, report.older.assessment) == ('unknown', 'unknown')  # never "still affected"
+    notes = [*report.limitations, *report.older.why]
+    assert any('revision 2' in note and 'no longer lists CVE-2099-10001' in note for note in notes), notes
+
+
+def test_c03_the_store_wide_supersession_can_be_passed_in():
+    report = ap.resolve('CVE-2099-10001', [REV1], ident('older', asserted=['PT-101-1']), ident('newer'),
+                        superseded={REV1.facts_id: True})
+    assert report.superseded_sources == (REV1.source_id,) and report.older.resolution == 'unknown'
+    assert any('no longer lists CVE-2099-10001' in note for note in (*report.limitations, *report.older.why))
+
+
+def test_c03_a_current_revision_that_still_lists_the_cve_is_unchanged():
+    report = resolve([REV1, REV2], ident('older', asserted=['PT-101-1']), ident('newer'))
+    assert not any('no longer lists' in note for note in (*report.limitations, *report.older.why))
+
+
+def test_c12_a_very_long_product_id_cannot_overflow_the_mapping_detail():
+    long_id = 'PT-LONG-' + 'x' * 900
+    text = (FIXTURES / 'synthetic-advisory-rev1.json').read_text(encoding='utf-8').replace('PT-100-2', long_id)
+    renamed = facts(doc=json.loads(text))
+    report = resolve([renamed, REV2], ident('older', asserted=[long_id]), ident('newer'))
+    assert any(m.basis == 'same-product-name' and len(m.detail) <= 500 for m in report.older.mappings)

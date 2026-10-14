@@ -12,7 +12,7 @@ from __future__ import annotations
 
 import re
 from collections import defaultdict
-from collections.abc import Iterable, Sequence
+from collections.abc import Iterable, Mapping, Sequence
 
 from ..contracts import (
     STATUS_CLASS,
@@ -129,7 +129,7 @@ def _name_mappings(side: _Side, documents: Sequence[AdvisoryFacts]) -> None:
                 side.add(ProductMapping(
                     source_id=doc.source_id, product_id=product.product_id, product_name=product.name,
                     status='candidate', basis='same-product-name',
-                    detail=f'same product name as {origin.product_id} in another document ({origin.basis})'))
+                    detail=f'same product name as {origin.product_id} in another document ({origin.basis})'[:500]))
 
 
 def _evidence(doc: AdvisoryFacts, cve: str, superseded: bool, product_ids: Iterable[str] | None = None
@@ -207,8 +207,30 @@ def _contradictions(cve: str, documents: Sequence[AdvisoryFacts], superseded: di
     return sorted(out, key=lambda c: (c.kind, c.product_name or '', c.explanation))
 
 
+def _withdrawals(cve: str, relevant: Sequence[AdvisoryFacts], documents: Sequence[AdvisoryFacts],
+                 superseded: dict[str, bool]) -> dict[str, str]:
+    """facts_id -> note, for documents that list ``cve`` although every current revision of their tracking id no
+    longer does: the vendor dropped the entry, so its earlier statements are superseded and nothing replaces them
+    (audit C-03). The cause is a missing statement, reported as unknown, never as a status."""
+    groups: dict[tuple[str, str], list[AdvisoryFacts]] = defaultdict(list)
+    for doc in relevant:
+        groups[(doc.publisher_namespace, doc.tracking_id)].append(doc)
+    notes: dict[str, str] = {}
+    for (namespace, tracking_id), docs in groups.items():
+        if not all(superseded[d.facts_id] for d in docs):
+            continue
+        heads = sorted({d.revision for d in documents if (d.publisher_namespace, d.tracking_id) == (namespace, tracking_id)
+                        and not superseded.get(d.facts_id, True)})
+        replaced_by = f'revision {", ".join(heads)}' if heads else 'a newer revision'
+        text = (f'{tracking_id}: {replaced_by} no longer lists {cve}; the statements of revision '
+                f'{", ".join(sorted({d.revision for d in docs}))} are superseded and nothing replaces them')[:300]
+        notes.update({d.facts_id: text for d in docs})
+    return notes
+
+
 def _side_result(side: _Side, cve: str, documents: Sequence[AdvisoryFacts], superseded: dict[str, bool],
-                 contradictions: list[Contradiction], known_ids: set[str]) -> SideApplicability:
+                 contradictions: list[Contradiction], known_ids: set[str],
+                 withdrawn: dict[str, str]) -> SideApplicability:
     identity = side.identity
     why = list(side.why)
     for pid in identity.asserted_product_ids:
@@ -226,6 +248,8 @@ def _side_result(side: _Side, cve: str, documents: Sequence[AdvisoryFacts], supe
         doc = by_doc[mapping.source_id]
         why.append(f'mapping {mapping.status}: {mapping.product_id} in {doc.tracking_id} r{doc.revision} '
                    f'({mapping.basis})'[:300])
+        if doc.facts_id in withdrawn and withdrawn[doc.facts_id] not in why:
+            why.append(withdrawn[doc.facts_id])
         statuses += _evidence(doc, cve, superseded[doc.facts_id], [mapping.product_id])
     statuses.sort(key=_evidence_key)
     carrying = {(e.source_id, e.product_id) for e in statuses}
@@ -257,17 +281,23 @@ def _side_result(side: _Side, cve: str, documents: Sequence[AdvisoryFacts], supe
                              assessment='unknown' if resolution == 'unknown' else 'advisory-claim')
 
 
-def resolve(cve: str, documents: Sequence[AdvisoryFacts], older: ArtifactIdentity,
-            newer: ArtifactIdentity) -> ApplicabilityReport:
-    """Applicability of ``cve`` for both sides over every stored document that lists the CVE."""
+def resolve(cve: str, documents: Sequence[AdvisoryFacts], older: ArtifactIdentity, newer: ArtifactIdentity, *,
+            superseded: Mapping[str, bool] | None = None) -> ApplicabilityReport:
+    """Applicability of ``cve`` for both sides over every stored document that lists the CVE.
+
+    Pass every stored document, not only those that list the CVE: a newer revision that no longer lists it still
+    supersedes the older one, and its absence is reported instead of the older claims staying current (audit C-03).
+    A caller that holds only the documents listing the CVE can pass the store-wide ``superseded`` map
+    (``facts_id`` to flag, as ``AdvisoryStore.advisories`` derives it), which then decides for the ids it names."""
     if older.side != 'older' or newer.side != 'newer':
         raise IntelError('PT-INTEL-INPUT', 'identities must be (older, newer)')
     relevant = sorted((d for d in documents if d.vulnerability(cve) is not None),
                       key=lambda d: (d.tracking_id, d.current_release_date, d.revision, d.source_id))
     if not relevant:
         raise IntelError('PT-INTEL-NOTFOUND', f'no stored advisory lists {cve}')
-    superseded = supersession(relevant)
-    contradictions = _contradictions(cve, relevant, superseded)
+    state = {**supersession(list(documents)), **(superseded or {})}
+    withdrawn = _withdrawals(cve, relevant, documents, state)
+    contradictions = _contradictions(cve, relevant, state)
     known_ids = {p.product_id for d in relevant for p in d.products}
     sides = []
     for identity in (older, newer):
@@ -275,7 +305,7 @@ def resolve(cve: str, documents: Sequence[AdvisoryFacts], older: ArtifactIdentit
         for doc in relevant:
             _direct_mappings(side, doc)
         _name_mappings(side, relevant)
-        sides.append(_side_result(side, cve, relevant, superseded, contradictions, known_ids))
+        sides.append(_side_result(side, cve, relevant, state, contradictions, known_ids, withdrawn))
     old, new = sides
     if old.resolution in ('fixed', 'not_affected') and new.resolution == 'affected':
         contradictions.append(Contradiction(
@@ -286,6 +316,6 @@ def resolve(cve: str, documents: Sequence[AdvisoryFacts], older: ArtifactIdentit
         cve=cve, older=old, newer=new,
         contradictions=tuple(sorted(contradictions, key=lambda c: (c.kind, c.product_name or '', c.explanation))),
         sources=tuple(sorted({d.source_id for d in relevant})),
-        superseded_sources=tuple(sorted({d.source_id for d in relevant if superseded[d.facts_id]})),
-        limitations=LIMITATIONS)
+        superseded_sources=tuple(sorted({d.source_id for d in relevant if state[d.facts_id]})),
+        limitations=(*LIMITATIONS, *sorted(set(withdrawn.values()))))
 

@@ -1,0 +1,285 @@
+{
+  "$defs": {
+    "ApplicabilitySummary": {
+      "additionalProperties": false,
+      "description": "What the advisory says about the two builds (from the intelligence/1 ApplicabilityReport).",
+      "properties": {
+        "contradictions": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Contradictions",
+          "type": "integer"
+        },
+        "newer": {
+          "enum": [
+            "affected",
+            "not_affected",
+            "fixed",
+            "under_investigation",
+            "contradictory",
+            "ambiguous",
+            "unknown"
+          ],
+          "title": "Newer",
+          "type": "string"
+        },
+        "newer_mapping": {
+          "enum": [
+            "verified",
+            "candidate",
+            "unknown"
+          ],
+          "title": "Newer Mapping",
+          "type": "string"
+        },
+        "older": {
+          "enum": [
+            "affected",
+            "not_affected",
+            "fixed",
+            "under_investigation",
+            "contradictory",
+            "ambiguous",
+            "unknown"
+          ],
+          "title": "Older",
+          "type": "string"
+        },
+        "older_mapping": {
+          "enum": [
+            "verified",
+            "candidate",
+            "unknown"
+          ],
+          "title": "Older Mapping",
+          "type": "string"
+        }
+      },
+      "required": [
+        "older",
+        "newer",
+        "older_mapping",
+        "newer_mapping"
+      ],
+      "title": "ApplicabilitySummary",
+      "type": "object"
+    },
+    "Confounding": {
+      "additionalProperties": false,
+      "description": "Whether several CVEs are fixed on the newer build, so that shape alone cannot isolate one of them.",
+      "properties": {
+        "cves": {
+          "default": [],
+          "items": {
+            "maxLength": 24,
+            "pattern": "^CVE-[0-9]{4}-[0-9]{4,19}$",
+            "type": "string"
+          },
+          "maxItems": 1024,
+          "title": "Cves",
+          "type": "array"
+        },
+        "state": {
+          "enum": [
+            "yes",
+            "no",
+            "unknown"
+          ],
+          "title": "State",
+          "type": "string"
+        }
+      },
+      "required": [
+        "state"
+      ],
+      "title": "Confounding",
+      "type": "object"
+    },
+    "CweSummary": {
+      "additionalProperties": false,
+      "properties": {
+        "ids": {
+          "default": [],
+          "items": {
+            "pattern": "^CWE-[1-9][0-9]{0,5}$",
+            "type": "string"
+          },
+          "maxItems": 16,
+          "title": "Ids",
+          "type": "array"
+        },
+        "status": {
+          "enum": [
+            "explicit",
+            "derived",
+            "weak",
+            "vague",
+            "none"
+          ],
+          "title": "Status",
+          "type": "string"
+        }
+      },
+      "required": [
+        "status"
+      ],
+      "title": "CweSummary",
+      "type": "object"
+    },
+    "Kev": {
+      "additionalProperties": false,
+      "description": "CISA KEV context for a CVE: ordering of CVEs only, never evidence about a function. Absence says nothing.",
+      "properties": {
+        "date_added": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Date Added"
+        },
+        "snapshot_id": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Snapshot Id"
+        },
+        "state": {
+          "enum": [
+            "listed",
+            "not-in-snapshot",
+            "unknown"
+          ],
+          "title": "State",
+          "type": "string"
+        }
+      },
+      "required": [
+        "state"
+      ],
+      "title": "Kev",
+      "type": "object"
+    },
+    "LeadCounts": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "minimum": 0,
+          "title": "Code",
+          "type": "integer"
+        },
+        "fit": {
+          "minimum": 0,
+          "title": "Fit",
+          "type": "integer"
+        },
+        "partial": {
+          "minimum": 0,
+          "title": "Partial",
+          "type": "integer"
+        },
+        "queue": {
+          "minimum": 0,
+          "title": "Queue",
+          "type": "integer"
+        },
+        "review": {
+          "minimum": 0,
+          "title": "Review",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "fit",
+        "review",
+        "partial",
+        "code",
+        "queue"
+      ],
+      "title": "LeadCounts",
+      "type": "object"
+    }
+  },
+  "$id": "https://patchtrace.local/schemas/pilot/1/CveContext.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "Per-CVE context of an assessment: the applicability gate, CWE profile, KEV state, window and lead counts.",
+  "properties": {
+    "applicability": {
+      "$ref": "#/$defs/ApplicabilitySummary"
+    },
+    "confounding": {
+      "$ref": "#/$defs/Confounding"
+    },
+    "counts": {
+      "$ref": "#/$defs/LeadCounts"
+    },
+    "cve": {
+      "maxLength": 24,
+      "pattern": "^CVE-[0-9]{4}-[0-9]{4,19}$",
+      "title": "Cve",
+      "type": "string"
+    },
+    "cwe": {
+      "$ref": "#/$defs/CweSummary"
+    },
+    "gate": {
+      "enum": [
+        "applies",
+        "asserted",
+        "unverified",
+        "conflict",
+        "not-applicable"
+      ],
+      "title": "Gate",
+      "type": "string"
+    },
+    "kev": {
+      "$ref": "#/$defs/Kev"
+    },
+    "limitations": {
+      "default": [],
+      "items": {
+        "maxLength": 300,
+        "minLength": 1,
+        "type": "string"
+      },
+      "maxItems": 64,
+      "title": "Limitations",
+      "type": "array"
+    },
+    "source_ids": {
+      "default": [],
+      "items": {
+        "pattern": "^[0-9a-f]{64}$",
+        "type": "string"
+      },
+      "maxItems": 64,
+      "title": "Source Ids",
+      "type": "array"
+    }
+  },
+  "required": [
+    "cve",
+    "gate",
+    "applicability",
+    "cwe",
+    "kev",
+    "confounding",
+    "counts"
+  ],
+  "title": "CveContext",
+  "type": "object"
+}

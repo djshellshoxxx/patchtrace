@@ -15,8 +15,11 @@ from pathlib import Path
 
 from .backend_cli import cmd_backend
 from .backend_cli import register as register_backend
+from .intelligence import cli as intelligence_cli
+from .intelligence.tools import cli as intel_tools_cli  # SPEC-29 tools dispatcher (cheap import)
 
-COMMANDS = ('rank', 'flags', 'correlate', 'cache', 'acquire', 'series', 'secondary', 'backend')
+COMMANDS = ('rank', 'flags', 'correlate', 'cache', 'acquire', 'series', 'secondary', 'intelligence', 'unified',
+            'intel-tools', 'backend')
 OK, ENVIRONMENT, RUNTIME, NO_RESULTS, CANCELLED = 0, 2, 3, 4, 5
 CLI_CONTRACT = 'enrichment-cli/1'
 
@@ -158,6 +161,10 @@ def _parser() -> argparse.ArgumentParser:
     which = chains.add_mutually_exclusive_group()
     which.add_argument('--function', metavar='NAME')
     which.add_argument('--address', metavar='HEX')
+    intelligence_cli.register(sub, common)
+    from .unified import cli as cli_unified  # SPEC-31 S0b: run/show/explain/status + the hidden worker
+    cli_unified.register(sub, common, HANDLERS)
+    intel_tools_cli.register(sub, common)
     register_backend(sub, common)
     return parser
 
@@ -382,14 +389,13 @@ def cmd_correlate(args, cancel) -> int:
     requested = set(args.cve)
     for path in args.snapshot:
         try:
-            data = json.loads(path.read_text(encoding='utf-8'))
-            items = data if isinstance(data, list) else [data]
+            with path.open('rb') as handle:  # never read more than the cap, whatever the file claims to be
+                loaded = cve.parse_snapshots(handle.read(cve.MAX_SNAPSHOT_BYTES + 1))
             # A saved file cannot be re-verified against provider bodies: drop claims that
             # normalization never derives (feature IDs) and flag the snapshot as unverified.
-            loaded = [CveSnapshot.model_validate_json(json.dumps(item)) for item in items]
             snapshots += [s.model_copy(update={'feature_ids': ()}) for s in loaded]
             unverified.update(s.snapshot_id for s in loaded)
-        except (OSError, ValueError) as exc:
+        except (OSError, ValueError, EnrichmentError) as exc:
             raise CliError(ENVIRONMENT, f'cannot load snapshot {path.name}: {exc}') from None
     warnings: list[str] = []
     fetch_failed = False
@@ -820,11 +826,13 @@ def cmd_secondary(args, cancel) -> int:
 
 HANDLERS = {'rank': cmd_rank, 'flags': cmd_flags, 'correlate': cmd_correlate, 'cache': cmd_cache,
             'acquire': cmd_acquire, 'series': cmd_series, 'secondary': cmd_secondary,
+            'intel-tools': intel_tools_cli.dispatch,
             'backend': cmd_backend}
+HANDLERS['intelligence'] = intelligence_cli.dispatch
 
 
 def _command_name(args) -> str:
-    return f'{args.command} {args.action}' if args.command in {'acquire', 'series', 'secondary', 'backend'} else args.command
+    return f'{args.command} {args.action}' if args.command in {'acquire', 'series', 'secondary', 'intelligence', 'unified', 'intel-tools', 'backend'} else args.command
 
 
 def main(argv: list[str] | None = None) -> int:

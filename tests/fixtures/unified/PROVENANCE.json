@@ -1,0 +1,50 @@
+{
+ "mingw_old": {
+  "artifact_sha256": "27562c4a2c68ed3c19119634a0a6e7ec149be973d46d714779aa8f7a8ebf8780",
+  "built_with": "x86_64-w64-mingw32-gcc (GCC) 13-win32 -shared -O0 -o <dll> tests/fixtures/old.c (new: tests/fixtures/new.c); links the MinGW CRT, so the image has many compiler-generated functions and .pdata",
+  "bytes": 90915,
+  "content_digest": "c3f699099feac41f5f261f1831a055fc732b928294c4c876ddda58c6caaf36f9",
+  "mode": "analyze",
+  "probe": {
+   "ghidra": "12.0.4",
+   "java": "21.0.12.1",
+   "pyghidra": "3.0.2",
+   "python": "3.13.16",
+   "script_sha256": "8e21a0b1e4251e58b35a6087b7c742a353d36d8c01b0f03bdea46717943efb58"
+  },
+  "recorded_utc": "2026-10-14T16:55:50Z",
+  "script_sha256": "8e21a0b1e4251e58b35a6087b7c742a353d36d8c01b0f03bdea46717943efb58"
+ },
+ "probe_new": {
+  "artifact_sha256": "b1bf2e3d925a6671b4dc9632f523e2856fa98212387748ddaa50a30f69dec790",
+  "built_with": "clang 18.1.3 --target=x86_64-pc-windows-msvc -O2 -ffreestanding -fno-stack-protector -fno-asynchronous-unwind-tables -c; lld-link 18.1.3 /dll /noentry /nodefaultlib /machine:x64 /base:0x180000000 /brepro <exports> kernel32.lib user32.lib (import libraries from llvm-dlltool .def files: kernel32 GetTickCount, user32 MessageBoxA); source tests/fixtures/unified/probe_old.c and probe_new.c",
+  "bytes": 3072,
+  "content_digest": "39cb60c036fabfb142cb991cbfd349e83af1083a45ad2ab7bec9cca8b17cdb86",
+  "mode": "analyze",
+  "probe": {
+   "ghidra": "12.0.4",
+   "java": "21.0.12.1",
+   "pyghidra": "3.0.2",
+   "python": "3.13.16",
+   "script_sha256": "8e21a0b1e4251e58b35a6087b7c742a353d36d8c01b0f03bdea46717943efb58"
+  },
+  "recorded_utc": "2026-10-14T16:54:19Z",
+  "script_sha256": "8e21a0b1e4251e58b35a6087b7c742a353d36d8c01b0f03bdea46717943efb58"
+ },
+ "probe_old": {
+  "artifact_sha256": "30c0175e354478273c924843720ff1953f7bcdf5ca2c8264a8a4d347f76a3e85",
+  "built_with": "clang 18.1.3 --target=x86_64-pc-windows-msvc -O2 -ffreestanding -fno-stack-protector -fno-asynchronous-unwind-tables -c; lld-link 18.1.3 /dll /noentry /nodefaultlib /machine:x64 /base:0x180000000 /brepro <exports> kernel32.lib user32.lib (import libraries from llvm-dlltool .def files: kernel32 GetTickCount, user32 MessageBoxA); source tests/fixtures/unified/probe_old.c and probe_new.c",
+  "bytes": 3072,
+  "content_digest": "7478a7a9b609593460880be2b279f82d121f5f79af7ab3cf0b4695597896e40d",
+  "mode": "analyze",
+  "probe": {
+   "ghidra": "12.0.4",
+   "java": "21.0.12.1",
+   "pyghidra": "3.0.2",
+   "python": "3.13.16",
+   "script_sha256": "8e21a0b1e4251e58b35a6087b7c742a353d36d8c01b0f03bdea46717943efb58"
+  },
+  "recorded_utc": "2026-10-14T16:54:19Z",
+  "script_sha256": "8e21a0b1e4251e58b35a6087b7c742a353d36d8c01b0f03bdea46717943efb58"
+ }
+}

@@ -151,3 +151,72 @@ def test_every_term_maps_to_known_families():
             assert not term.cwe_ids, term
     assert lx.family('CWE-787') == 'memory-write' and lx.family('CWE-416') == 'lifetime'
     assert lx.family('CWE-1021') is None
+
+
+# ---- audit C-07: a cue that follows the phrase negates the weakness only as a predicate of its existence ---------
+
+@pytest.mark.parametrize('text, expected', [
+    ('Heap-based buffer overflow requires no user interaction.', 'CWE-122'),
+    ('A heap-based buffer overflow without authentication allows code execution.', 'CWE-122'),
+    ('The heap overflow does not require user interaction.', 'CWE-122'),
+    ("The use after free doesn't require any privileges.", 'CWE-416'),
+    ('This stack buffer overflow does not need valid credentials.', 'CWE-121'),
+    ('The integer overflow does not allow remote code execution.', 'CWE-190'),
+    ('The heap overflow never requires authentication.', 'CWE-122'),
+    ('The double free has not been fixed in older builds.', 'CWE-415'),
+], ids=['requires-no', 'without', 'does-not-require', 'doesnt-require', 'does-not-need', 'does-not-allow',
+        'never-requires', 'not-been-fixed'])
+def test_c07_negated_requirements_and_capabilities_leave_the_weakness_standing(text, expected):
+    p = profile(text)
+    assert expected in cwes(p, 'phrase-match'), p
+    assert all(hit.scope != 'weakness' for hit in p.negated_hits), p
+
+
+@pytest.mark.parametrize('text, cue', [
+    ('The heap overflow does not occur in the fixed build.', 'not'),
+    ('A buffer overflow is not present in this version.', 'not'),
+    ('A buffer overflow is no longer possible after the update.', 'no longer'),
+    ('The use after free cannot occur on this path.', 'cannot'),
+    ('A double free never occurs on this path.', 'never'),
+    ("The heap overflow isn't present.", "isn't"),
+    ('Out of bounds write could not be reproduced.', 'not'),
+    ('A heap overflow is impossible here.', 'impossible'),
+], ids=['does-not-occur', 'is-not-present', 'no-longer', 'cannot-occur', 'never-occurs', 'isnt', 'could-not',
+        'impossible'])
+def test_c07_existence_negations_after_the_phrase_still_negate(text, cue):
+    p = profile(text)
+    assert not any(c.basis == 'curated-vocabulary' for c in p.classifications), p
+    assert {hit.negation_cue for hit in p.negated_hits if hit.scope == 'weakness'} == {cue}, p
+
+
+# ---- additive terms for the two weakness classes of the known-answer corpus that had none ------------------------
+
+@pytest.mark.parametrize('text, cwe, family', [
+    ('A format string vulnerability in the logging routine lets a peer read the stack.', 'CWE-134', 'format-string'),
+    ('Use of Externally-Controlled Format String in the diagnostics service.', 'CWE-134', 'format-string'),
+    ('The service passes an uncontrolled format string to the formatter.', 'CWE-134', 'format-string'),
+    ('An off-by-one error in the name length check allows a one byte overwrite.', 'CWE-193', 'off-by-one'),
+    ('The loop contains an off by one bug at the table bound.', 'CWE-193', 'off-by-one'),
+], ids=['format-string-vulnerability', 'cwe-title', 'uncontrolled', 'off-by-one-error', 'off-by-one-bug'])
+def test_format_string_and_off_by_one_are_confident_vocabulary_matches(text, cwe, family):
+    p = profile(text)
+    assert cwe in cwes(p, 'phrase-match'), p
+    classification = next(c for c in p.classifications if c.cwe_id == cwe)
+    assert (classification.family, classification.basis, classification.assessment) == (
+        family, 'curated-vocabulary', 'rule-hypothesis')
+    assert lx.family(cwe) == family and lx.CWE_NAMES[cwe]
+
+
+@pytest.mark.parametrize('text, cwe', [
+    ('The routine builds a format string from the request buffer.', 'CWE-134'),
+    ('An off-by-one in the length check.', 'CWE-193'),
+], ids=['bare-format-string', 'bare-off-by-one'])
+def test_bare_phrases_are_weak_and_never_confident(text, cwe):
+    p = profile(text)
+    assert cwes(p, 'weak') == {cwe} and not cwes(p, 'phrase-match') and p.status == 'weak', p
+
+
+def test_ordinary_english_and_negations_do_not_classify_the_new_classes():
+    assert not cwes(profile('The setting can be switched off by one of the administrators.'), 'phrase-match')
+    assert not cwes(profile('There is no format string vulnerability in this code path.'))
+    assert not cwes(profile('An off-by-one error is not present in the fixed build.'))

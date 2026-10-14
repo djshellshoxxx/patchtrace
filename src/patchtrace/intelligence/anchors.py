@@ -33,37 +33,60 @@ _TITLE = re.compile(r'^(?P<component>.+?)\s+(?:' + '|'.join(_IMPACTS) + r')\s+vu
 LIMITATIONS = ('Anchors are search hints labelled with source and quality; they are never linked to diff results '
                'or functions.',
                'Module and feature names come from advisory text and may describe the product, not this file.')
+# Sources `text_anchors` reads advisory free text from: CSAF, and CVRF for the KB track (KB plan A-10).
+# `hypothesis-rule` and `artifact-identity` anchors are not read from text, so `text_anchors` refuses them.
+TEXT_SOURCES: tuple[str, ...] = ('csaf-title', 'csaf-note', 'csaf-product', 'csaf-remediation',
+                                 'cvrf-title', 'cvrf-note', 'cvrf-tag')
+# Only free-text notes get quoted-string hints: a quoted phrase in a note may be a string in the binary.
+_QUOTED_SOURCES = frozenset({'csaf-note', 'cvrf-note'})
 
 
-def _anchor(kind: str, value: str, source: str, pointer: str | None, quality: str, label: str) -> Anchor:
+def _anchor(kind: str, value: str, source: str, pointer: str | None, quality: str, label: str) -> Anchor | None:
     value = ' '.join(value.split())[:512]
+    if not value:  # markup or whitespace only: there is nothing to search for (audit C-06)
+        return None
     return Anchor(anchor_id=domain_id('anchor', 1, {'kind': kind, 'value': value, 'source': source,
                                                     'pointer': pointer}),
                   kind=kind, value=value, source=source, pointer=pointer, quality=quality, label=label[:300])
 
 
-def _text_anchors(text: str, source: str, pointer: str) -> Iterable[Anchor]:
+def _text_anchors(text: str, source: str, pointer: str) -> list[Anchor]:
     plain = _TAG.sub(' ', text)  # markup is never an anchor; matching only
-    for match in _MODULE.finditer(plain):
-        yield _anchor('module', match.group(1).lower(), source, pointer, 'explicit', 'module named in the advisory')
-    for name, pattern in _FEATURES:
-        if pattern.search(plain):
-            yield _anchor('feature', name, source, pointer, 'derived', 'feature or protocol named in the advisory')
-    if source == 'csaf-note':
-        for match in _QUOTED.finditer(plain):
-            quoted = (match.group(1) or match.group(2)).strip()
-            if quoted:
-                yield _anchor('string', quoted, source, pointer, 'derived',
-                              'quoted text in the advisory; it may or may not occur in the binary')
+    made = [_anchor('module', match.group(1).lower(), source, pointer, 'explicit', 'module named in the advisory')
+            for match in _MODULE.finditer(plain)]
+    made += [_anchor('feature', name, source, pointer, 'derived', 'feature or protocol named in the advisory')
+             for name, pattern in _FEATURES if pattern.search(plain)]
+    if source in _QUOTED_SOURCES:
+        made += [_anchor('string', (match.group(1) or match.group(2)).strip(), source, pointer, 'derived',
+                         'quoted text in the advisory; it may or may not occur in the binary')
+                 for match in _QUOTED.finditer(plain)]
+    return [anchor for anchor in made if anchor is not None]
+
+
+def text_anchors(text: str, source: str, pointer: str) -> tuple[Anchor, ...]:
+    """Module, feature and (notes only) quoted-string anchors found in one piece of advisory free text.
+
+    The single text-to-anchor rule set, public so another advisory format reuses it instead of copying it:
+    `anchors_for` applies it to CSAF and the KB track applies it to CVRF titles, notes and tags. `source` must
+    be one of `TEXT_SOURCES` and `pointer` is the RFC 6901 pointer of `text`; both are recorded on every
+    anchor (no anchor without provenance). Markup is never an anchor. The result is deduplicated and in
+    canonical (kind, value, source, pointer) order, so equal input gives an equal tuple. Raises ValueError
+    for any other source and `pydantic.ValidationError` (also a ValueError) for a malformed pointer.
+    """
+    if source not in TEXT_SOURCES:
+        raise ValueError(f'{source!r} is not a text anchor source')
+    unique = {a.anchor_id: a for a in _text_anchors(text, source, pointer)}
+    return tuple(sorted(unique.values(), key=lambda a: (a.kind, a.value, a.source, a.pointer or '')))
 
 
 def anchors_for(cve: str, documents: Sequence[AdvisoryFacts], identities: Sequence[ArtifactIdentity] = (),
                 hypotheses: HypothesisSet | None = None) -> AnchorSet:
     found: dict[tuple, Anchor] = {}
 
-    def add(items: Iterable[Anchor]) -> None:
+    def add(items: Iterable[Anchor | None]) -> None:
         for item in items:
-            found.setdefault((item.kind, item.value, item.source, item.pointer or ''), item)
+            if item is not None:
+                found.setdefault((item.kind, item.value, item.source, item.pointer or ''), item)
 
     for facts in documents:
         item = facts.vulnerability(cve)
@@ -71,21 +94,21 @@ def anchors_for(cve: str, documents: Sequence[AdvisoryFacts], identities: Sequen
             continue
         if item.title:
             title_pointer = f'{item.pointer}/title'
-            add(_text_anchors(item.title, 'csaf-title', title_pointer))
-            match = _TITLE.match(_TAG.sub(' ', item.title))
+            add(text_anchors(item.title, 'csaf-title', title_pointer))
+            match = _TITLE.match(' '.join(_TAG.sub(' ', item.title).split()))  # tags may leave only blanks in front
             if match:
                 add([_anchor('component', match.group('component'), 'csaf-title', title_pointer, 'derived',
                              'component part of a "<component> <impact> Vulnerability" title')])
         for note in item.notes:
             if note.category != 'legal_disclaimer':
-                add(_text_anchors(note.text, 'csaf-note', note.pointer))
+                add(text_anchors(note.text, 'csaf-note', note.pointer))
         for remediation in item.remediations:
-            add(a for a in _text_anchors(remediation.details, 'csaf-remediation', f'{remediation.pointer}/details')
+            add(a for a in text_anchors(remediation.details, 'csaf-remediation', f'{remediation.pointer}/details')
                 if a.kind == 'module')
         named = {claim.product_id for claim in item.product_status}
         for product in facts.products:
             if product.product_id in named:
-                add(a for a in _text_anchors(product.name, 'csaf-product', f'{product.pointer}/name')
+                add(a for a in text_anchors(product.name, 'csaf-product', f'{product.pointer}/name')
                     if a.kind == 'module')
     for identity in identities:
         if identity.pdb_identity is not None:

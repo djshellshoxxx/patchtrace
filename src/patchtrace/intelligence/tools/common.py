@@ -32,12 +32,13 @@ DISPLAY_LIMIT = 256
 ERROR_LIMIT = 500
 STDERR_EXCERPT = 4 * 1024
 MAX_ANOMALIES = 64
+MAX_ADDRESS = 2**64 - 1
 
 Engine = Literal['capa', 'floss', 'diec']
 Side = Literal['older', 'newer']
 Profile = Literal['basic', 'context', 'full']
 Sha256 = Annotated[str, Field(pattern=r'^[0-9a-f]{64}$')]
-Address = Annotated[int, Field(ge=0, le=2**64 - 1)]
+Address = Annotated[int, Field(ge=0, le=MAX_ADDRESS)]
 RunStatus = Literal['ok', 'none-found', 'failed', 'timeout', 'cancelled', 'unsupported', 'absent']
 ErrorCode = Literal['PT-TOOL-ABSENT', 'PT-TOOL-UNSUPPORTED', 'PT-TOOL-INPUT', 'PT-TOOL-ARTIFACT', 'PT-TOOL-OUTPUT',
                     'PT-TOOL-LIMIT', 'PT-TOOL-RUN', 'PT-TOOL-TIMEOUT', 'PT-TOOL-CANCEL', 'PT-TOOL-ADDRESS',
@@ -99,6 +100,8 @@ class ToolManifest(_Strict):
     untested_version: bool = False
     supported: bool
     reason: str | None = Field(default=None, max_length=ERROR_LIMIT)
+    # Additive (TA-6): 'pinned' = the executable digest equals a release listed in `pins.PINNED_EXECUTABLES`.
+    pin_status: Literal['pinned', 'unpinned'] = 'unpinned'
 
     @model_validator(mode='after')
     def _consistent(self):
@@ -177,6 +180,10 @@ class EvidenceLink(_Strict):
     file_offset: int | None = Field(default=None, ge=0, lt=2**40)
     source_fragment: str | None = Field(default=None, max_length=200)
     attribution: Attribution = 'none'
+    # Additive (WB3-S1b): decoded strings only. `data_rva` = RVA of the decoded string's own address (GLOBAL),
+    # `site_rva` = RVA of the instruction where it was decoded.
+    data_rva: int | None = Field(default=None, ge=0, lt=2**32)
+    site_rva: int | None = Field(default=None, ge=0, lt=2**32)
 
     @model_validator(mode='after')
     def _consistent(self):
@@ -249,6 +256,8 @@ class ToolEvidenceSet(_Strict):
     strings: tuple[StringEvidence, ...] = ()
     environment: tuple[EnvironmentEvidence, ...] = ()
     truncated: bool = False
+    # Additive (WB3-S1b): string types cut at their quota; empty with `truncated` = unknown types (older rows).
+    truncated_types: tuple[StringType, ...] = ()
     counts: dict[Annotated[str, Field(max_length=32)], Annotated[int, Field(ge=0)]] = Field(default_factory=dict,
                                                                                           max_length=16)
     anomalies: tuple[_SHORT, ...] = Field(default=(), max_length=MAX_ANOMALIES)
@@ -322,6 +331,13 @@ def _reject_constant(name: str):
     raise ValueError(f'non-finite number {name}')
 
 
+def _finite_float(text: str) -> float:
+    value = float(text)
+    if value != value or value in (float('inf'), float('-inf')):  # `1e999` parses to inf (TA-16)
+        raise ValueError(f'non-finite number {text[:20]}')
+    return value
+
+
 def _no_duplicates(pairs: list[tuple[str, object]]) -> dict:
     out: dict = {}
     for key, value in pairs:
@@ -357,7 +373,8 @@ def load_json_strict(data: bytes, *, max_bytes: int, max_depth: int = 96) -> obj
     if not text.strip():
         raise ToolError('PT-TOOL-OUTPUT', 'tool output is empty')
     try:
-        value = json.loads(text, object_pairs_hook=_no_duplicates, parse_constant=_reject_constant)
+        value = json.loads(text, object_pairs_hook=_no_duplicates, parse_constant=_reject_constant,
+                           parse_float=_finite_float)
     except RecursionError:
         raise ToolError('PT-TOOL-OUTPUT', 'tool output nests too deeply') from None
     except ValueError as exc:
