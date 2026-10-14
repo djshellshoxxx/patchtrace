@@ -16,6 +16,9 @@ where = ["src"]
 [tool.pytest.ini_options]
 pythonpath = ["src"]
 testpaths = ["tests"]
+markers = [
+    "live_bindiff: real BinDiff acceptance (SPEC-29); records passed/failed/blocked, never skips silently",
+]
 [tool.ruff]
 line-length = 110
 [tool.ruff.lint]
