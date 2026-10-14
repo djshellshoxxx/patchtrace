@@ -197,3 +197,4 @@ Committed from this run: the real v8 `--help` text and the real v8 `.BinDiff` + 
 ### [S0a:contracts-store] SPEC-31 S0a (2026-10-14, Linux container, Python 3.13.16; synthetic data only)
 - `tests/test_unified_{contracts,keys,store}.py`: 82 passed; `ruff check src tests tools` clean. Covers schema round trips, every invalid example (02 s8 list plus extras) rejected for its reason, regenerate-and-compare of all generated schemas (pre-SPEC-31 schemas byte-identical: additive only), key determinism across processes and hash seeds, `test_unified_rows_survive_enrichment_retention`, `test_old_reader_ignores_unified_kinds` (no `extension_version` bump).
 - Not verified here: Windows (CI) and Python 3.12 (CI pin); no live data involved.
+- Full gate once on 420e9f2: `QT_QPA_PLATFORM=offscreen python -m pytest -q` 1908 passed, 6 skipped (live BinDiff BLOCKED: not installed), 160 s.
