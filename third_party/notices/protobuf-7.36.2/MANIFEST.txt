@@ -1,0 +1,12 @@
+protobuf 7.36.2 (PyPI, released 2026-09-17), license "3-Clause BSD License", Requires-Python >=3.10, no dependencies.
+LICENSE in this directory is protobuf-7.36.2.dist-info/LICENSE from the manylinux2014_x86_64 wheel
+(SHA-256 6e5e117324afd944dcf67f36cf329843bc1a92229a8cd9bb573d7a83130fea7d).
+
+Wheel SHA-256 (pypi.org/pypi/protobuf/json, checked 2026-10-14):
+  protobuf-7.36.2-cp310-abi3-win_amd64.whl              456514 B  a300819d441e078a5608c0d3c709796bb548136058fda017ae51d425b44fd353
+  protobuf-7.36.2-cp310-abi3-manylinux2014_x86_64.whl   343223 B  89f23aa53c24553a2416fd4fd1ec06f74fa42b14b546d8883128813f775bbfd2
+  protobuf-7.36.2-py3-none-any.whl (pure Python; must NOT be installed: refused at runtime)
+                                                        179806 B  bdb3a345d48db958e6ce1f18e508beb0cc981d64f24088427549c866cd039f1e
+
+Install with --only-binary=:all: so an sdist never builds on a runner. Re-pin only in a dedicated PR that re-runs
+the SPEC-10b §9 gates.
