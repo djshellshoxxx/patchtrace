@@ -1,6 +1,6 @@
-# Non-goals and recorded decisions (SPEC-41)
+# Non-goals and recorded decisions (SPEC-55)
 
-Status: draft, 2026-10-14. Owner: integration owner (proposed; the user ratifies). Documents: deliberate exclusions and decisions on `main` at fd6cdba, plus the planned items they bound (PR #43 workbench branch, `docs/specs/program-e/`). No code. The number SPEC-41 is the next free number in `docs/specs/REGISTRY.md` section 1, item 4; the integrator registers it.
+Status: draft, 2026-10-14. Owner: integration owner (proposed; the user ratifies). Documents: deliberate exclusions and decisions on `main` at fd6cdba, plus the planned items they bound (PR #43 workbench branch, `docs/specs/program-e/`). No code. Number SPEC-55 allocated by the integration owner (2026-10-14).
 
 ## 1. Scope and purpose
 
@@ -73,7 +73,7 @@ Status: draft, 2026-10-14. Owner: integration owner (proposed; the user ratifies
 
 - **Decision.** No spec file uses these numbers. They are held for the planning package.
 - **Evidence.** `docs/specs/REGISTRY.md` section 1, item 4, and section 3 (collisions table). `ghidra-semantic-runtime-roadmap.md:98` ("Specification production process") says to reserve SPEC-12 onward only after checking files.
-- **Rule.** A new spec takes the next free number (SPEC-41 today). A retired number is never reused.
+- **Rule.** A new spec takes the next free number (SPEC-56 today). A retired number is never reused.
 - **Revisit when.** The roadmap's step 2 (SPEC-12, 13, 15) is approved. Then the owner assigns the numbers in REGISTRY.
 
 ### N-09 qbindiff, radiff2 and Diaphora decisions
@@ -110,12 +110,12 @@ Owner-only and Windows-only gates are listed separately and are not counted as d
 
 1. **Ratify N-09.** Default: accept the ledger's drop of QB-02 and RD-02 and the defer of DA-01 Mode A, recorded by the user in `tasks/todo.md`. Owner: user.
 2. **SeriesWindow.** Default: convert to a dock in the E-2 panel-registry work and amend `docs/specs/series-window.md` section 6 in that PR. Owner: B.
-3. **Number SPEC-41.** Default: register it in REGISTRY with status draft. Owner: integrator.
+3. **Number SPEC-55.** Allocated; registered in REGISTRY with status draft.
 4. **Graph diagram.** Default: keep the ego-graph diagram planned behind the text table, with the 2,000-node limit from WB2. Owner: B.
 5. **Architecture label.** Default: keep ARM64 only as a display label in `pe_overview`, and say so in the UI footer if it is shown. Owner: B.
 
 ## 6. Integrator asks
 
 - Add a row for `docs/specs/non-goals.md` to `docs/specs/REGISTRY.md` (Table A: status draft, owner integration owner, basis: this file). The registry test requires the citation.
-- Advance REGISTRY's next free number from SPEC-41 to SPEC-42 once this file is registered.
+- REGISTRY next free number advances past SPEC-55 when this file is registered.
 - No shared-file change is requested.
