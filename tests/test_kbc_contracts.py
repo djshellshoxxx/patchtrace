@@ -371,7 +371,8 @@ ALLOWED_FORBIDDEN = {'store.py': {'sqlite3'}, 'recovery.py': {'sqlite3'}}  # K2 
 # context.py reads the reused intelligence contract types (CweProfile, HypothesisSet); wiring.py is the composition root
 # and the only module that binds sibling behaviour (plan section 9).
 ALLOWED_SIBLINGS = {'contracts.py': {'acquisition', 'enrichment', 'intelligence'}, 'context.py': {'intelligence'},
-                    'wiring.py': SIBLINGS | {'service'}}
+                    'wiring.py': SIBLINGS | {'service'},
+                    'cli_leads.py': {'enrichment', 'service'}}  # RealEngine moves to adapters/engine.py in K8
 
 
 def _imports(path):
