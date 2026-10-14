@@ -123,7 +123,7 @@ Dependency pinning: no unconditional new heavy packages. FTS5 is built-in if ava
 
 ## 5. CLI integration and versioned error surface
 
-Reserve commands `search`, `graph`, and `strings` only after verifying current `cli.COMMANDS` and open PR ownership. If `intel-tools` canonical FLOSS engine command exists, reuse it and make `strings` read-only; no duplicate execution CLI.
+Reserve commands `search`, `graph` and `strings` by adding their adapter files `cli_commands/{search,graph,strings}.py` (GUI plan 8.12), only after verifying open PR ownership; no `cli.COMMANDS` edit is needed. If `intel-tools` canonical FLOSS engine command exists, reuse it and make `strings` read-only; no duplicate execution CLI.
 
 Common statuses: `ok`, `partial`, `no-results` (complete observed scope only), `unsupported`, `stale`, `cancelled`, `error`.
 Error family: `PT-WB-INPUT`, `PT-WB-CAPABILITY`, `PT-WB-SOURCE`, `PT-WB-STALE`, `PT-WB-LIMIT`, `PT-WB-FORMAT`, `PT-WB-TIMEOUT`, `PT-WB-CANCEL`, `PT-WB-STORE`.

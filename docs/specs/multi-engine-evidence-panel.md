@@ -106,7 +106,7 @@ No hard-coded pixel sizes except through `QFontMetrics`/`style().pixelMetric`; c
 - Item roles: each cell supplies `Qt.AccessibleTextRole` = "<Function name>, verdict <Agree>, Ghidriff <text>, BinDiff <text>, rz-diff <text>" for the Match column; engine cells supply "BinDiff similarity 0.97, confidence 0.91" etc. Units spoken.
 - Full keyboard operation (1.2); focus visible (existing style plus 2 px focus outline in the delegate); no hover-only information (tooltips duplicate content available in the detail pane).
 - Badge colour supplemented by glyph/text; the glyph is part of text for screen readers ("Contested").
-- State changes announced: `evidence_status` is a `StaticText` label whose accessible name is deliberately left EMPTY: `QLabel.setText` emits `NameChanged` itself only when no fixed accessible name is set, so a fixed name ("Engine evidence status") would suppress every announcement. The spoken name is the status text. Real screen-reader announcement (WCAG 4.1.3) stays a manual Windows UIA/NVDA gate (C8).
+- State changes announced: `evidence_status` is a `StaticText` label whose accessible name is deliberately left EMPTY: `QLabel.setText` emits `NameChanged` itself only when no fixed accessible name is set, so a fixed name ("Engine evidence status") would suppress every announcement. The spoken name is the status text. Real screen-reader announcement (WCAG 4.1.3) stays a manual Windows UIA/NVDA gate (C8). Status rule (GUI plan F6): a label's name-change event reaches UIA only when the label is focused, so from F6 every asynchronous status message goes through `StatusAnnouncer` (`ctx.announce`, Polite, target = status bar) instead of relying on `setText` alone.
 - Non-text contrast (WCAG 1.4.11): badge borders and the 2 px focus ring need >= 3:1 against adjacent colours; the focus ring uses the theme text colour, badge fills are checked >= 4.5:1 against the badge text and >= 3:1 against the border and the dark theme background by a pure contrast-ratio test. Muted/stale cells keep the theme text colour and use italics (no low-contrast grey).
 
 ### 1.9 Copy provenance
@@ -330,7 +330,7 @@ Slots on the panel/main thread apply results via `panel.set_view_model` etc.; ea
 3. Cancellation: `threading.Event`; `cancel_requested` sets it; the scheduler fans it to children (process-tree kill via `jobs.run_process`). Closing the window or switching project sets cancel and `wait(5000)`; if still running the thread is kept referenced until `finished` (no `terminate()`).
 4. One load thread and one run thread at a time per panel; starting a new load while one runs sets the old cancel event and uses generations to drop its result.
 5. Model mutations only on the GUI thread; `set_view_model` is called from the slot only.
-6. Threads have NO Qt parent (corrected: destroying a running `QThread`, whether by a deleted parent or by garbage collection of an unreferenced started thread, aborts the process with SIGABRT). Every started worker is held in the module registry `ui_evidence._LIVE_THREADS` until `finished`, then `deleteLater` (pattern of `ui_series.py`); `EvidenceController.shutdown()` (called from `MainWindow.closeEvent`) sets every cancel event and `wait()`s every worker; no `terminate()`. Hiding the dock does not stop a running engine run.
+6. Threads have NO Qt parent (corrected: destroying a running `QThread`, whether by a deleted parent or by garbage collection of an unreferenced started thread, aborts the process with SIGABRT). Every started worker is held in the module registry `ui_evidence._LIVE_THREADS` (the thread registry is `gui.qt.tasks` from GUI plan F2) until `finished`, then `deleteLater` (pattern of `ui_series.py`); `EvidenceController.shutdown()` (called from `MainWindow.closeEvent`) sets every cancel event and `wait()`s every worker; no `terminate()`. Hiding the dock does not stop a running engine run.
 
 ## 6. Engine-run launch UI (Engines tab)
 
@@ -419,6 +419,8 @@ Item tooltips use `tooltips.template('evidence.row'|'evidence.cell', ...)` (esca
 Only `QGuiApplication.clipboard().setText(plain)` on the GUI thread, content from `format_provenance_block`.
 
 ## 8. MainWindow integration seam (the ONLY edits to ui.py)
+
+From GUI plan slice F5 the seam is `PanelHost` (`gui/qt/host.py`): `EvidenceController` is registered through one `PanelSpec` and the steps below are retired. Until F5 they stand.
 
 1. Import: `from .ui_evidence import EvidenceController` (one line).
 2. In `MainWindow.__init__` after `_build_workspace()`: `self.evidence = EvidenceController(self)` (stores no state in MainWindow beyond this attribute).
@@ -527,6 +529,8 @@ Recorded by the C6 builder; inputs: `docs/plans/spec-decisions-20261014.md` (D1-
 - Thread safety evidence: worker callables run off the GUI thread (asserted), `persist_outcome` runs on the GUI thread (asserted), a widget constructed on a worker thread fails a test, teardown matrix (close while loading x5, project switch mid-load, GC of an unreferenced started thread, dock deleted while a worker runs, shutdown during an engine run); the evidence UI + tooltip tests were run 20 times in a row without a failure or abort.
 - Not automatable here (manual / C8 gates): real screen-reader announcement (NVDA/Narrator), 125/150/200% DPI rendering and glyph fonts on Windows, contrast against the live palette, frozen-EXE dock smoke, GUI-thread cost of `load_secondary` for very large stored sets (it must stay on the GUI thread because the SQLite connection is thread-confined).
 
+- Superseded by GUI plan F5: the 8-line `ui.py` seam above is replaced by `PanelHost`, and the thread registry is `gui.qt.tasks` (F2). The C6 record above stays true for the shipped C6 code.
+
 ## 16. Track G (Phase D): BinDiff + BinExport setup and run inside the Engines tab
 
 Status: built 2026-10-14 (Phase D wave 0, track G; `docs/plans/phase-d-build-coordination.md`). Turns the CLI-only BinDiff execution (SPEC-29, `secondary run --engine bindiff`) and BinExport2 acceptance (SPEC-10b, `secondary binexport-check`) into a GUI flow inside the EXISTING C6 dock. One comparison window: no new top-level window and no new dock tab (the planned SPEC-31 `[Unified]` tab stays the only planned addition). Contract changes: none to persisted data; additive fields on the in-memory `RunRequest` (16.6).
@@ -621,3 +625,7 @@ Registry ids (WHAT/WHY/EFFECT plus SOURCE/Availability, unique, no `<`/`>`): `en
 ### 16.9 Tests (offscreen pytest-qt + pure; mocked unless stated)
 `tests/test_ui_engine_setup_service.py` (pure): message table for every kind/slug, banned-word sweep, pin status and pin constant equal to `tools/bindiff_pin.json`, probe with a fake `bindiff` (ok, version 7, missing option, no version, newer major, relative path), REAL `accept_binexport` on `tests/fixtures/binexport` (valid pair, swapped, foreign SHA-256, MD5 id with and without the override, same file, oversized, architecture mismatch, pre-set cancel), adapter reuse equal to `adapter_from_args`, `execute_run` registry selection. `tests/test_ui_engine_setup.py` (Qt): probe states, discovery prefill without execution and without PATH, validation flow with progress and cancel, override provenance equal to the CLI, end-to-end GUI run with a fake `bindiff` and persistence on the GUI thread, project switch drops results, shutdown joins threads, GUI-thread heartbeat during a real validation, slot time ceilings, tooltips/accessibility/tab order, the regression baseline of 16.1. The new Qt tests run 20 times in one session without an abort.
 Manual / Windows-only gates: a real BinDiff 8 `bindiff.exe` from `%ProgramFiles%` through the GUI, native file dialogs, 125/150/200% DPI layout of the section, NVDA/Narrator announcement of the two status labels, a keyboard-only walk through the section.
+
+## 17. Migration M1 (GUI framework, GUI plan slice F8)
+
+Migration M1 moves the evidence panel (`secondary/evidence_panel.py`, `ui_evidence.py`) and the engine setup (`ui_engine_setup.py`) onto the GUI framework and removes their lines from the `ui.py` seam of section 8. Slice F8 carries M1 and M2 together (GUI plan section 9). The C6 and G suites stay unchanged otherwise, and both code paths are kept for one release (the F8 fallback). The status rule of 1.8 (`StatusAnnouncer`) and the thread rule of 5.3.6 (`gui.qt.tasks`) apply to the moved code. Until F8 merges, sections 1 to 16 describe the shipped C6 code.
