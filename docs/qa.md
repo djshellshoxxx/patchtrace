@@ -362,3 +362,11 @@ No manual step. Windows CI must run `tests/test_search_segment.py`; Linux eviden
 | plan section 5 expectation (2 gained, 1 lost, 2 unchanged, 0 moved, 2 unattributed) on REAL capa output | `test_pair_delta_equals_the_committed_golden`, `test_the_combined_channel_names_four_changes_and_two_unplaced_behaviours` |
 | moved, detection noise, library, unrecovered, orientation swap, control pair | `tests/test_capa_synergy.py` (moved and library cases use DERIVED variants) |
 | not verified here: capa-move on REAL capa output, coverage against Ghidriff function starts (live gate L2) | needs the pinned capa and Ghidriff |
+
+### [CAP-3:capa-view]
+| check | evidence |
+|---|---|
+| exact state copy C0-C13, footer, accessible names and texts | `tests/test_capa_view.py` |
+| banned stems and words absent from every UI-authored string | `test_banned_strings_never_appear` |
+| badge contrast (text >= 4.5:1, fill >= 3:1 on the dark theme) | `test_badges_are_neutral_with_enough_contrast` |
+| not verified here: NVDA/Narrator output, glyph fonts, DPI, the Qt `data()` cost budgets (CAP-6a) | manual gate L7 |

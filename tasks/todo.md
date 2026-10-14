@@ -249,3 +249,7 @@
 - [x] Pair groups, pair delta, synergy golden `tests/fixtures/intel_tools/expected-pairs-capa-api.json`, properties, 20,000-item bound, no-Qt import test
 - [ ] Not done: `tests/capa_pairs_pe.py` and REAL `capa-move-*` goldens need the pinned capa (not in this container); the DERIVED `capa-move-derived-newer.json` stands in (labelled in `MANIFEST.capa-v2.json`)
 - [ ] Integrator: generate a `capa-pairs/1` JSON Schema in `tools/generate_intel_tools_schemas.py` (its test pins 9 outputs); hypothesis-context leg of the synergy test is CAP-7
+
+### [CAP-3:capa-view]
+- [x] View-model, banned-wording sweep, 100,000-row build and re-arrange budget, no-Qt import test (`tests/test_capa_view.py`)
+- [ ] Not done here (CAP-6a, needs the GUI registry): Qt model/view with the `data()`-call budgets, tooltips, offscreen state tests, 20x repeat

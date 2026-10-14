@@ -371,3 +371,8 @@ Status column: each row is built by the slice named in `docs/specs/program-e/CAP
 | module | files | purpose | depends on | tests |
 |---|---|---|---|---|
 | capa pairs | intelligence/tools/capa_pairs.py | `capa-pairs/1`, derived and never persisted: pair groups from the project matches, per-pair capability cells (present, absent, not-evaluated, no-function), gained/lost/moved/unchanged/not-compared, detection-difference noise, unattributed matches, coverage summary; no score, rank or confidence | tools.common, tools.delta (flags), tools.normalize | `test_capa_pairs.py`, `test_capa_synergy.py` |
+
+### [CAP-3:capa-view]
+| module | files | purpose | depends on | tests |
+|---|---|---|---|---|
+| capa view | intelligence/tools/capa_view.py | Qt-free view-model of the capability changes: prebuilt rows, filters, grouping (namespace, pair, ATT&CK/MBC label), search, state texts C0-C13, detail pane text, deterministic provenance block, teach hooks `cap.*`, accessible names and texts, neutral badge colours, `rules_label` | tools.capa_pairs, tools.common | `test_capa_view.py` |
