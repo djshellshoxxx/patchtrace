@@ -128,9 +128,12 @@ class SearchOutcome(PatchRecord):
         if self.status == "complete":
             if self.coverage.state != "complete_in_scope":
                 raise ValueError("cannot claim complete with incomplete scope")
-            if (not self.coverage.inspected_document_ids
-                    and not self.coverage.requested_document_ids):
-                raise ValueError("complete search requires explicit evaluated corpus")
+            requested = set(self.coverage.requested_document_ids)
+            inspected = set(self.coverage.inspected_document_ids)
+            if not requested or requested != inspected:
+                raise ValueError("complete search requires all declared documents inspected")
+            if self.coverage.failed_document_ids:
+                raise ValueError("complete search cannot contain source failures")
         return self
 ~~~
 
