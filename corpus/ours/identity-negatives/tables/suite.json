@@ -1,0 +1,85 @@
+{
+  "contract": "suite/1",
+  "suite": "identity-negatives",
+  "project": "tables",
+  "license_spdx": "MIT",
+  "summary": "N11 switch and table dominated code: a stack-machine interpreter whose opcode length/cost/name functions, ALU, step function, system-call pointer table and tokenizer DFA are almost pure tables. v2 adds one opcode (a new case in five functions); v3 changes one DFA transition entry (code-identical, only the read-only table differs), flips one ALU comparison and appends one system-call table entry.",
+  "versions": ["v1", "v2", "v3"],
+  "build": {"kind": "freestanding-dll", "defines": []},
+  "pairs": [
+    {
+      "old": "v1",
+      "new": "v2",
+      "intent": "A new opcode, OP_MIN, is added to every switch and table that enumerates opcodes: four table-like functions and the step function each gain a case. The lookup-table-lowered functions grow by one entry and their range checks move, the jump tables get longer. Everything that merely calls them (validator, run loop, system calls, tokenizer) is untouched, and so is every other case of the changed functions.",
+      "truth": [
+        {"function": "vm_op_len", "label": "changed", "kind": "other", "taxonomy": ["N11"], "notes": "case for the new opcode OP_MIN added (length 1); the lowered lookup table grows by one entry and its range check moves from 19 to 20"},
+        {"function": "vm_op_cost", "label": "changed", "kind": "other", "taxonomy": ["N11"], "notes": "case for the new opcode OP_MIN added (cost 3); lookup table and range check follow"},
+        {"function": "vm_op_name", "label": "changed", "kind": "other", "taxonomy": ["N11"], "notes": "case for the new opcode OP_MIN added (string \"min\"); the pointer table and its range check follow"},
+        {"function": "vm_binop", "label": "changed", "kind": "other", "taxonomy": ["N11"], "notes": "case for the new opcode OP_MIN added (a < b ? a : b); the jump table grows by one entry"},
+        {"function": "vm_step", "label": "changed", "kind": "other", "taxonomy": ["N11"], "notes": "OP_MIN joins the binary-operator case group; the dispatch jump table covers one more opcode"},
+        {"function": "lex_classify", "label": "same", "taxonomy": ["N11"], "notes": "text identical; table or switch dominated body that did not change"},
+        {"function": "lex_step", "label": "same", "taxonomy": ["N11"], "notes": "text identical; table or switch dominated body that did not change"},
+        {"function": "sys_yield", "label": "same", "notes": "text identical; system-call handler, reached only through the pointer table"},
+        {"function": "sys_putc", "label": "same", "notes": "text identical; system-call handler, reached only through the pointer table"},
+        {"function": "sys_time", "label": "same", "notes": "text identical; system-call handler, reached only through the pointer table"},
+        {"function": "sys_rand", "label": "same", "notes": "text identical; system-call handler, reached only through the pointer table"},
+        {"function": "sys_abort", "label": "same", "notes": "text identical; system-call handler, reached only through the pointer table"},
+        {"function": "vm_syscall", "label": "same", "taxonomy": ["N11"], "notes": "text identical; table or switch dominated body that did not change"},
+        {"function": "vm_rd32", "label": "same", "notes": "text identical"},
+        {"function": "vm_run", "label": "same", "notes": "text identical"},
+        {"function": "vm_validate", "label": "same", "notes": "text identical"},
+        {"function": "lex_count_tokens", "label": "same", "notes": "text identical"}
+      ]
+    },
+    {
+      "old": "v2",
+      "new": "v3",
+      "intent": "Three edits of different visibility. One transition entry of the tokenizer DFA changes: lex_step compiles to the same bytes, only its read-only table differs. The ALU turns OP_LT signed: a single condition code differs inside a jump-table arm. The system-call pointer table gains an entry, which moves a bound check and adds a handler. A byte-level matcher sees two of the three and none of the first.",
+      "truth": [
+        {"function": "lex_step", "label": "changed", "kind": "constant-change", "taxonomy": ["N11"], "notes": "one table entry changed: row STRING, column EOL goes from LS_STRING to LS_ERROR, so a string left open at the end of a line is now an error. The machine code of lex_step is byte-identical to v2; only its read-only table differs, which a comparison of code bytes cannot see"},
+        {"function": "vm_binop", "label": "changed", "kind": "comparison-change", "taxonomy": ["N11"], "notes": "OP_LT compares as signed 32-bit instead of unsigned: one setcc differs inside a jump-table arm"},
+        {"function": "vm_syscall", "label": "changed", "kind": "other", "taxonomy": ["N11"], "notes": "the handler pointer table gains a sixth entry (sys_exit); its bound check moves from 5 to 6 and the table in .rdata grows"},
+        {"function": "sys_exit", "label": "added", "notes": "new handler for the new table entry; pops the exit code and halts"},
+        {"function": "vm_op_len", "label": "same", "taxonomy": ["N11"], "notes": "text identical; table or switch dominated body that did not change"},
+        {"function": "vm_op_cost", "label": "same", "taxonomy": ["N11"], "notes": "text identical; table or switch dominated body that did not change"},
+        {"function": "vm_op_name", "label": "same", "taxonomy": ["N11"], "notes": "text identical; table or switch dominated body that did not change"},
+        {"function": "lex_classify", "label": "same", "taxonomy": ["N11"], "notes": "text identical; table or switch dominated body that did not change"},
+        {"function": "sys_yield", "label": "same", "notes": "text identical; system-call handler, reached only through the pointer table"},
+        {"function": "sys_putc", "label": "same", "notes": "text identical; system-call handler, reached only through the pointer table"},
+        {"function": "sys_time", "label": "same", "notes": "text identical; system-call handler, reached only through the pointer table"},
+        {"function": "sys_rand", "label": "same", "notes": "text identical; system-call handler, reached only through the pointer table"},
+        {"function": "sys_abort", "label": "same", "notes": "text identical; system-call handler, reached only through the pointer table"},
+        {"function": "vm_rd32", "label": "same", "notes": "text identical"},
+        {"function": "vm_step", "label": "same", "taxonomy": ["N11"], "notes": "text identical; table or switch dominated body that did not change"},
+        {"function": "vm_run", "label": "same", "notes": "text identical"},
+        {"function": "vm_validate", "label": "same", "notes": "text identical"},
+        {"function": "lex_count_tokens", "label": "same", "notes": "text identical"}
+      ]
+    },
+    {
+      "old": "v1",
+      "new": "v3",
+      "intent": "Cumulative: the OP_MIN case everywhere, the DFA entry, the signed OP_LT and the extra system-call entry with its handler. lex_step is the one changed function whose code bytes did not change.",
+      "truth": [
+        {"function": "vm_op_len", "label": "changed", "kind": "other", "taxonomy": ["N11"], "notes": "case for the new opcode OP_MIN added (length 1); the lowered lookup table grows by one entry and its range check moves from 19 to 20"},
+        {"function": "vm_op_cost", "label": "changed", "kind": "other", "taxonomy": ["N11"], "notes": "case for the new opcode OP_MIN added (cost 3); lookup table and range check follow"},
+        {"function": "vm_op_name", "label": "changed", "kind": "other", "taxonomy": ["N11"], "notes": "case for the new opcode OP_MIN added (string \"min\"); the pointer table and its range check follow"},
+        {"function": "vm_binop", "label": "changed", "kind": "other", "taxonomy": ["N11"], "notes": "case for OP_MIN added in v2 and OP_LT turned into a signed comparison in v3"},
+        {"function": "vm_step", "label": "changed", "kind": "other", "taxonomy": ["N11"], "notes": "OP_MIN joins the binary-operator case group; the dispatch jump table covers one more opcode"},
+        {"function": "lex_step", "label": "changed", "kind": "constant-change", "taxonomy": ["N11"], "notes": "one table entry changed: row STRING, column EOL goes from LS_STRING to LS_ERROR, so a string left open at the end of a line is now an error. The machine code of lex_step is byte-identical to v2; only its read-only table differs, which a comparison of code bytes cannot see"},
+        {"function": "vm_syscall", "label": "changed", "kind": "other", "taxonomy": ["N11"], "notes": "the handler pointer table gains a sixth entry (sys_exit); its bound check moves from 5 to 6 and the table in .rdata grows"},
+        {"function": "sys_exit", "label": "added", "notes": "new handler for the new table entry; pops the exit code and halts"},
+        {"function": "lex_classify", "label": "same", "taxonomy": ["N11"], "notes": "text identical; table or switch dominated body that did not change"},
+        {"function": "sys_yield", "label": "same", "notes": "text identical; system-call handler, reached only through the pointer table"},
+        {"function": "sys_putc", "label": "same", "notes": "text identical; system-call handler, reached only through the pointer table"},
+        {"function": "sys_time", "label": "same", "notes": "text identical; system-call handler, reached only through the pointer table"},
+        {"function": "sys_rand", "label": "same", "notes": "text identical; system-call handler, reached only through the pointer table"},
+        {"function": "sys_abort", "label": "same", "notes": "text identical; system-call handler, reached only through the pointer table"},
+        {"function": "vm_rd32", "label": "same", "notes": "text identical"},
+        {"function": "vm_run", "label": "same", "notes": "text identical"},
+        {"function": "vm_validate", "label": "same", "notes": "text identical"},
+        {"function": "lex_count_tokens", "label": "same", "notes": "text identical"}
+      ]
+    }
+  ]
+}
