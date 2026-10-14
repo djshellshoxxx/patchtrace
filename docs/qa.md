@@ -128,3 +128,15 @@ Acceptance automation added (verified locally on Linux against `python -m patcht
 - `extension_version` 2 is understood; stores are still created at 1 and stamped 2 only when the first `engine-run` or `secondary/2` row is written, so v1 clients keep full access to projects that never used SPEC-28. `load_secondary` skips an invalid or hash-corrupt row with a warning; `cache_snapshot` treats a corrupt engine-run row as a miss.
 - `engine-run` rows are pruned to the newest 8 per engine/pair after each run (rows tied to a stored set are kept) and are the first thing the 128 MiB cap fallback evicts; `secondary-matches` is never evicted. `secondary run` records a storage failure (row over 32 MiB, cap) as a failed EngineRun plus warning for that engine only (exit 3); `PT-SECONDARY-INPUT` from engine output is exit 3.
 - Rank: `pipeline.prepare_publish` makes the verified pre-enrichment/pre-retention backup on the worker thread (own read-only connection, `.part` then rename); the owner-thread backup is skipped only when a backup of the identical snapshot exists, otherwise it still runs. Not done: the publish itself still runs on the GUI thread (it must use the owner connection); an empty NVD key variable is now no key.
+
+## C6 multi-engine evidence panel (2026-10-14, builder worktree, Linux only)
+
+| Check | Evidence | Result |
+|---|---|---|
+| Full gate | `QT_QPA_PLATFORM=offscreen timeout 900 python -m pytest -q` run twice on the C6 branch | 1318 passed, 6 skipped, both runs |
+| Lint | `python -m ruff check src tests tools` | clean |
+| Qt flake / abort check | `tests/test_evidence_ui.py` + `tests/test_tooltips.py` run 20 times in a row with `PYTHONFAULTHANDLER=1` | 20/20 green (65 tests each), no SIGABRT |
+| Perf, pure build | `tests/test_evidence_perf.py`: 10k matches, 2 secondary engines, `build_view_model` | about 1.0 s locally (gate 7.5 s = 5x the 1.5 s target) |
+| Perf, Qt model | `test_large_models_stay_lazy_with_data_call_ceilings` (900x500 panel, offscreen, PySide6 6.12.0) | data() calls = visible cells (16) for first paint and filter, 0 for sort, at both 10k and 100k rows; 10k reset/sort/filter about 28/9/9 ms; 100k about 130/122/20 ms |
+
+Scope: offscreen Linux evidence only. Not covered and still open (C8): Windows runs of these tests, real screen-reader announcements (Qt offscreen reports `QAccessible.isActive()` False), 125/150/200% DPI rendering, glyph fonts on Windows, contrast against the live palette (only palette constants are checked), frozen-EXE dock smoke, and the GUI-thread cost of reading very large stored secondary sets (SQLite is thread-confined, so `load_secondary` stays on the GUI thread).

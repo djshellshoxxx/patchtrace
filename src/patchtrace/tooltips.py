@@ -776,6 +776,120 @@ REGISTRY: dict[str, TooltipEntry] = {
         'Warnings about the stored series: out-of-date chains, unreadable pairs or a truncated list.',
         'Scores for affected hops are not available and say why.',
         'Nothing is changed; re-run `patchtrace series create` to refresh chains.'),
+    # ---- C6 multi-engine evidence panel (docs/specs/multi-engine-evidence-panel.md 7.1) ---------------
+    'evidence.dock': _e(
+        'Panel comparing function-pairing evidence from several diff engines side by side.',
+        'Shows where engines agree or conflict about which functions correspond across builds.',
+        'Read-only; opening or closing it changes no project data.',
+        'Stored Ghidriff results plus imported or locally run secondary engine results; uncalibrated.',
+        'Needs an open project.'),
+    'evidence.action': _e(
+        'Show or hide the engine evidence panel.',
+        'Opens per-engine function-pairing evidence next to the workspace.',
+        'Toggles the dock; shortcut Ctrl+Shift+E.', availability='Needs an open project for content.'),
+    'evidence.tabs': _e(
+        'Switch between the evidence table and the engine run controls.',
+        'Keeps reviewing results separate from launching engines.', 'Changes the visible tab only.'),
+    'evidence.filter': _e(
+        'Show only matches with the chosen engine verdict, or the engine-only records.',
+        'Focus review on conflicts first, then unknown and single-engine matches.',
+        'Filters the table; remembered for next time.', availability='Needs loaded evidence.'),
+    'evidence.search': _e(
+        'Find evidence rows by function name or hexadecimal address (0x is optional).',
+        'Jump to a function you already care about.', 'Filters the table as you type.',
+        availability='Needs loaded evidence.'),
+    'evidence.hide_agreed': _e(
+        'Hide matches where every comparable engine pairs the same endpoints.',
+        'Leaves the rows that need a human decision.', 'Filters the table; remembered for next time.'),
+    'evidence.show_index': _e(
+        'Also show the uncalibrated triage index in the detail pane.',
+        'Some reviewers use it to order work; it is not a measure of correctness.',
+        'Adds one line to details and to copied provenance; off by default; remembered.',
+        'SPEC-27 placeholder constants; an ordering aid only, not a probability.'),
+    'evidence.table': _e(
+        'Per-match list of engine verdicts with one column per engine in its own units.',
+        'Compare engines without merging their scales; each engine column is that engine alone.',
+        'Selecting a row shows details; Enter goes to the match; Ctrl+C copies provenance.',
+        'Ghidriff results plus stored BinDiff and rz-diff sets; values are never combined.',
+        'Needs loaded evidence.'),
+    'evidence.detail': _e(
+        'Read-only per-engine native values, alternatives, limitations and provenance of the selected row.',
+        'Explains why the verdict was reached and which engine said what.',
+        'Plain text you can select and copy; nothing is edited.', availability='Needs a selected row.'),
+    'evidence.copy': _e(
+        'Copy plain-text provenance of the selected evidence rows to the clipboard.',
+        'Paste an auditable record of engine values, versions and artifact hashes into notes or tickets.',
+        'Writes text to the clipboard only (capped at 16 KiB and 200 rows).',
+        availability='Needs a selected row.'),
+    'evidence.goto': _e(
+        'Select the same function match in the navigator on the left.',
+        'Inspect the code of a contested or unknown match.',
+        'Changes the navigator selection; nothing is modified.',
+        availability='Needs a selected row; disabled while evidence is stale.'),
+    'evidence.refresh': _e(
+        'Reload engine evidence from the stored Ghidriff and secondary engine results.',
+        'Brings the panel up to date after the project changed.',
+        'Recomputes the table on a background thread; nothing is written.',
+        availability='Needs an open project.'),
+    'evidence.retry': _e(
+        'Try assembling engine evidence again after a failure.',
+        'A transient read problem may have caused the failure.',
+        'Reloads on a background thread; stored results are unchanged.',
+        availability='Shown after a failure.'),
+    'evidence.copy_error': _e(
+        'Copy the evidence assembly error text to the clipboard.',
+        'Lets you report the failure precisely.', 'Writes plain text to the clipboard only.',
+        availability='Shown after a failure.'),
+    'evidence.open_engines': _e(
+        'Open the Engines tab to import a BinDiff file or run rz-diff.',
+        'Cross-engine comparison needs at least one secondary engine result.',
+        'Switches to the Engines tab; nothing runs yet.', availability='Needs an open project.'),
+    'evidence.import_bindiff': _e(
+        'Import a .BinDiff result file for this older/newer pair.',
+        'Adds BinDiff as a second opinion on function pairing.',
+        'Validates the file against both artifact hashes and stores it as the BinDiff set.',
+        'A file you produced with BinDiff; PatchTrace does not run BinDiff.',
+        'Needs an open project with a completed run and no running job.'),
+    'evidence.engine_table': _e(
+        'State, version and input hashes of each engine for this project.',
+        'Shows which engines produced results and why others did not.',
+        'Selecting a row shows its output below.'),
+    'evidence.engine_check': _e(
+        'Include this secondary engine in the next run.',
+        'Choose which engines to spend time on.', 'Takes effect when you press Run selected engines.',
+        availability='Needs a successful engine probe.'),
+    'evidence.parallel': _e(
+        'How many engines may run at the same time (1 or 2).',
+        'Two in parallel finish sooner but use more memory.', 'Applies to the next run.'),
+    'evidence.timeout': _e(
+        'Wall-clock limit per engine run, from 60 to 86400 seconds.',
+        'Stops an engine that hangs on a large pair.', 'Applies to the next run; a timed-out engine stores nothing.'),
+    'evidence.probe': _e(
+        'Check which engines are installed and supported.',
+        'Engine runs need a supported version (rz-diff 0.9.0 or newer).',
+        'Runs only version checks of the tools; nothing is run on the binaries.'),
+    'evidence.run': _e(
+        'Run the selected engines on the stored artifact copies.',
+        'Produces second-opinion function pairings for this pair.',
+        'Each engine runs in its own process; finished results are stored even if another engine fails.',
+        'External user-installed tools; the binaries are read as data and never executed; nothing is uploaded.',
+        'Needs an idle project, a completed Ghidriff run and a supported, selected engine.'),
+    'evidence.cancel': _e(
+        'Stop the running engines.',
+        'Abandon a run that takes too long.', 'Kills the engine processes; partial output is discarded.',
+        availability='Needs a running engine job.'),
+    'evidence.engine_log': _e(
+        'Last lines of the selected engine output, shown as plain text.',
+        'Helps diagnose a failed or slow engine.', 'Read-only; at most 200 lines are kept.'),
+    'evidence.copy_details': _e(
+        'Copy the selected engine failure details to the clipboard.',
+        'Report a failed engine with its error code, version, hashes and output tail.',
+        'Writes plain text to the clipboard only.',
+        availability='Needs a failed or cancelled engine.'),
+    'evidence.stale_banner': _e(
+        'Explains that the shown evidence describes a different artifact pair, run or revision.',
+        'Stale values must not be read as describing the current comparison.',
+        'Row activation is disabled until you refresh; copying provenance marks the text STALE.'),
 }
 
 # Tooltips for items that depend on untrusted or dynamic values.
@@ -807,6 +921,18 @@ TEMPLATES: dict[str, TooltipEntry] = {
         'Turn detector {detector} on or off for this profile.', 'Lets you drop signals you do not trust.',
         'Saved with the profile; disabled detectors do not contribute to ranking.',
         availability=_DEFAULT_RO),
+    'evidence.row': _e(
+        'Engine evidence for {function}.', 'Review {verdict} and per-engine native values.',
+        'Read-only.', 'Engines: {engines}.', 'Addresses: {reason}.'),
+    'evidence.cell': _e(
+        '{engine} native value {value} in {unit}.',
+        'Different engines use different scales and are never combined.', 'Read-only.',
+        '{provenance}.', 'Details: {reason}.'),
+    'evidence.badge': _e(
+        '{verdict}: {meaning}', 'Verdicts concern function pairing only.', 'Read-only.',
+        availability='Reason: {reason}'),
+    'evidence.engine_row': _e(
+        '{engine} state: {state}.', 'Detail: {detail}.', 'Read-only.', 'Input hashes: {hashes}.'),
 }
 
 

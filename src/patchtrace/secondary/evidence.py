@@ -10,7 +10,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Literal
 
-from .reconcile import ReconciliationReport
+from .reconcile import Reconciliation, ReconciliationReport
 
 Verdict = Literal['corroborated', 'contested', 'single-engine', 'insufficient']
 Tier = Literal['high', 'moderate', 'low', 'unassessed']
@@ -56,10 +56,17 @@ def assess_reports(reports: tuple[ReconciliationReport, ...]) -> EvidenceAssessm
     for report in reports[1:]:
         if {row.match_id for row in report.rows} != row_ids:
             raise ValueError('secondary reports must describe the same Ghidriff match set')
+    # Pre-index once per report: a per-match `next(...)` scan is quadratic at 10k matches (C6 9.4).
+    # The first row per match id wins, exactly as the former linear scan did.
+    indexed = []
+    for report in reports:
+        index: dict[str, Reconciliation] = {}
+        for row in report.rows:
+            index.setdefault(row.match_id, row)
+        indexed.append((report.engine, index))
     rows = []
     for match_id in sorted(row_ids):
-        selected = [(report.engine, next(row for row in report.rows if row.match_id == match_id))
-                    for report in reports]
+        selected = [(engine, index[match_id]) for engine, index in indexed]
         support = tuple(engine for engine, row in selected if row.status == 'agreement')
         conflict = tuple(engine for engine, row in selected if row.status == 'disagreement')
         missing = tuple(engine for engine, row in selected if row.status in ('absent', 'not-comparable'))
