@@ -330,3 +330,6 @@
 - [x] Hint table + `capability_context`; inventory extractor; tests `tests/test_capa_hints.py`.
 - [ ] Open: `rules-inventory-9.4.0.json` is DERIVED/UNVERIFIED (7 matched rules from the real goldens). Regenerate from the pinned capa-rules 9.4.0 with `--rules-dir`, then re-resolve the removed candidates (process-launch, privilege-identity, crypto-primitive, `load-code/*`) and restore only those that resolve.
 - [ ] Open: `--hypothesis CVE-ID` in `intel-tools pairs` (not on the CAP-7 card; integrator or CAP-5 follow-up) can call `capability_context`.
+### [K7:acquire-workflow]
+- [x] Non-UI K7: `acquisition/workflow.py`, `kbcorrelation/acquire.py`, `tests/test_acquisition_workflow.py`.
+- [ ] K7 UI (instance D): `ui_kb_online.py`, `tooltips_kb_online.py`; `kb acquire` CLI verb and `wiring` binding of `Acquirer` (integrator); dialog refactor onto the workflow (last).

@@ -425,3 +425,5 @@ Automated: `tests/test_kbc_{leads,view_model,synergy}.py` (sockets denied; real 
 
 ### [CAP-7:capa-hints] capability hints QA (2026-10-14, local Linux worktree; synthetic and derived only)
 Automated: `tests/test_capa_hints.py`. Not verified: any hint against the real capa-rules pack (not obtainable offline); hint semantics are unvalidated by design.
+### [K7:acquire-workflow]
+Automated: `tests/test_acquisition_workflow.py` (25 tests; fake opener, no sockets): pair acquired and imported, consent equality, cancel leaves no project or staging, hash mismatch discarded. Not verified: a live symbol-server download, Windows run.
