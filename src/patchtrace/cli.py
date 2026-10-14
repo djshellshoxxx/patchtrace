@@ -135,7 +135,9 @@ def _parser() -> argparse.ArgumentParser:
     run.add_argument('--engine', action='append', choices=('rz-diff', 'bindiff'), default=None,
                      help='repeatable; default: every engine that probes as supported')
     run.add_argument('--rz-diff', default='rz-diff', help='rz-diff executable (absolute path or on PATH)')
-    run.add_argument('--bindiff', default=None, help='BinDiff executable (execution not implemented yet)')
+    run.add_argument('--bindiff', default=None, help='absolute path of the BinDiff 8 `bindiff` executable')
+    from .secondary.cli_bindiff import add_arguments as add_bindiff_arguments
+    add_bindiff_arguments(run)
     run.add_argument('--max-parallel', type=int, choices=(1, 2), default=1)
     run.add_argument('--timeout', type=int, default=1800, help='per-engine seconds (60..86400)')
     run.add_argument('--no-cache', action='store_true', help='ignore stored engine runs')
@@ -720,13 +722,14 @@ def cmd_series(args, cancel) -> int:
 
 def _secondary_run(args, cancel, service, store, run, sides) -> int:
     from .enrichment.contracts import EnrichmentError
-    from .secondary import cli_run
+    from .secondary import cli_bindiff, cli_run
+    bindiff = cli_bindiff.adapter_from_args(args, service.root / 'runs' / run.id / 'raw' / 'secondary')
     if not cli_run.TIMEOUT_RANGE[0] <= args.timeout <= cli_run.TIMEOUT_RANGE[1]:
         raise CliError(ENVIRONMENT, '--timeout must be between 60 and 86400 seconds')
     try:
         report = cli_run.execute(service, store, run, sides, args.engine, rz_diff=args.rz_diff,
                                  max_parallel=args.max_parallel, timeout=args.timeout,
-                                 use_cache=not args.no_cache, cancel=cancel)
+                                 use_cache=not args.no_cache, cancel=cancel, bindiff=bindiff)
     except EnrichmentError as exc:
         raise CliError(RUNTIME, str(exc)) from None
     _emit(args, f'secondary {args.action}', report.status, report.result, report.warnings, report.text)

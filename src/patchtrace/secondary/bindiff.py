@@ -1,8 +1,12 @@
-"""Read-only `.BinDiff` (SQLite) validator and importer (SPEC-10 §2-3).
+"""Read-only `.BinDiff` (SQLite) validator and importer (SPEC-10 §2-3, hardened per SPEC-29 §7.2).
 
 The database is untrusted input: it is opened through a read-only, immutable URI so
 neither a journal nor a WAL file is created next to it, and every structural property
-the importer relies on is checked before any row is turned into a record.
+the importer relies on is checked before any row is turned into a record. Callers that
+run BinDiff pass a private preserved copy (immutable is only safe if nothing can change
+the file). Layers: `trusted_schema=OFF`, defensive mode, `query_only`, an authorizer that
+allows only SELECT/READ of the fixed tables, and rejection of any trigger, view or virtual
+table in `sqlite_master` (a view named like a required table is never read).
 """
 from __future__ import annotations
 
@@ -37,6 +41,32 @@ REQUIRED = {
 }
 
 
+_SCHEMA_TABLES = frozenset({'sqlite_master', 'sqlite_schema', 'sqlite_temp_master'})
+_READABLE = frozenset(REQUIRED) | _SCHEMA_TABLES
+_FUNCTIONS = frozenset({'count'})
+
+
+def _authorizer(action: int, arg1, arg2, dbname, source) -> int:
+    """Fail-closed whitelist: SELECT, reads of the fixed tables, `PRAGMA table_info` on them, COUNT()."""
+    if action == sqlite3.SQLITE_SELECT:
+        return sqlite3.SQLITE_OK
+    if action == sqlite3.SQLITE_READ and isinstance(arg1, str) and arg1.lower() in _READABLE:
+        return sqlite3.SQLITE_OK
+    if action == sqlite3.SQLITE_FUNCTION and isinstance(arg2, str) and arg2.lower() in _FUNCTIONS:
+        return sqlite3.SQLITE_OK
+    if action == sqlite3.SQLITE_PRAGMA and arg1 == 'table_info' and isinstance(arg2, str) and arg2 in REQUIRED:
+        return sqlite3.SQLITE_OK
+    return sqlite3.SQLITE_DENY
+
+
+def _harden(db: sqlite3.Connection) -> None:
+    db.execute('PRAGMA trusted_schema=OFF')
+    db.execute('PRAGMA query_only=1')
+    if hasattr(db, 'setconfig') and hasattr(sqlite3, 'SQLITE_DBCONFIG_DEFENSIVE'):
+        db.setconfig(sqlite3.SQLITE_DBCONFIG_DEFENSIVE, True)
+    db.set_authorizer(_authorizer)
+
+
 def _fail(message: str) -> SecondaryError:
     return SecondaryError('PT-SECONDARY-INPUT', message)
 
@@ -54,7 +84,10 @@ def _name(value: object) -> str | None:
     raise _fail('function name is not text')
 
 
-def import_bindiff(path: Path, older_sha256: str, newer_sha256: str) -> SecondaryMatchSet:
+def import_bindiff(path: Path, older_sha256: str, newer_sha256: str, *,
+                   expected_hashes: tuple[str, str] | None = None) -> SecondaryMatchSet:
+    """`expected_hashes` (SPEC-29 §3): the `file.hash` pair to require when the BinExport inputs were bound
+    by an explicit user assertion rather than a SHA-256 `executable_id`; default = the artifact hashes."""
     path = Path(path).resolve()
     try:
         size = path.stat().st_size
@@ -75,16 +108,36 @@ def import_bindiff(path: Path, older_sha256: str, newer_sha256: str) -> Secondar
     except sqlite3.Error:
         raise _fail('cannot open BinDiff database read-only') from None
     try:
-        db.execute('PRAGMA query_only=1')
-        return _read(db, older_sha256, newer_sha256, digest.hexdigest())
-    except sqlite3.Error as exc:
+        _harden(db)
+        return _read(db, older_sha256, newer_sha256, digest.hexdigest(), expected_hashes)
+    except (sqlite3.Error, UnicodeDecodeError, OverflowError) as exc:  # corrupt text/varints, not just pages
         raise _fail(f'malformed BinDiff database: {type(exc).__name__}') from None
     finally:
         db.close()
 
 
-def _read(db: sqlite3.Connection, older_sha256: str, newer_sha256: str, file_sha256: str) -> SecondaryMatchSet:
-    tables = {row[0] for row in db.execute("SELECT name FROM sqlite_master WHERE type='table'")}
+def _check_schema_objects(db: sqlite3.Connection) -> set[str]:
+    """Only plain tables and their indexes are acceptable; anything executable or indirect is refused."""
+    tables: set[str] = set()
+    entries = db.execute('SELECT type, name, tbl_name, sql FROM sqlite_master').fetchall()
+    for kind, name, _table, sql in entries:
+        if kind in ('trigger', 'view'):
+            raise _fail(f'BinDiff database contains a {kind}; refusing to read it')
+        if kind == 'table':
+            if isinstance(sql, str) and sql.lstrip()[:20].upper().replace(' ', '').startswith('CREATEVIRTUAL'):
+                raise _fail('BinDiff database contains a virtual table; refusing to read it')
+            tables.add(name)
+        elif kind != 'index':
+            raise _fail(f'BinDiff database contains an unexpected schema object type {str(kind)[:20]!r}')
+    for kind, _name, table, _sql in entries:
+        if kind == 'index' and table not in tables:
+            raise _fail('BinDiff database index refers to a non-table object')
+    return tables
+
+
+def _read(db: sqlite3.Connection, older_sha256: str, newer_sha256: str, file_sha256: str,
+          expected_hashes: tuple[str, str] | None = None) -> SecondaryMatchSet:
+    tables = _check_schema_objects(db)
     for table, columns in REQUIRED.items():
         if table not in tables:
             raise _fail(f'required table {table!r} missing')
@@ -106,7 +159,8 @@ def _read(db: sqlite3.Connection, older_sha256: str, newer_sha256: str, file_sha
         raise _fail('file table must contain exactly ids 1 and 2')
     if not all(isinstance(files[i], str) for i in (1, 2)):
         raise _fail('file.hash must be text')
-    check_pair(files[1], files[2], older_sha256, newer_sha256)
+    want_older, want_newer = expected_hashes or (older_sha256, newer_sha256)
+    check_pair(files[1], files[2], want_older.strip().lower(), want_newer.strip().lower())
     algorithms = {}
     for ident, name in db.execute('SELECT id, name FROM functionalgorithm'):
         if not isinstance(name, str) or not name.strip():

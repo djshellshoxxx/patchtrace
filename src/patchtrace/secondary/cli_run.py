@@ -16,8 +16,9 @@ from ..enrichment.contracts import EnrichmentError
 from ..enrichment.storage import EnrichmentStore, Guard
 from . import scheduler
 from .contracts import SecondaryMatchSet
+from .engine_env import engine_env
 from .reconcile import reconcile
-from .registry import REGISTRY, build_registry, safe_env
+from .registry import REGISTRY, BinDiffAdapter, build_registry
 from .runs import (
     EngineId,
     EngineOutcome,
@@ -64,16 +65,16 @@ def classify(outcomes: Sequence[EngineOutcome], cancelled: bool) -> tuple[str, i
 
 def execute(service, store: EnrichmentStore, run, sides: dict, engines: Sequence[EngineId] | None, *,
             rz_diff: str, max_parallel: int, timeout: int, use_cache: bool,
-            cancel: threading.Event) -> RunReport:
+            cancel: threading.Event, bindiff: BinDiffAdapter | None = None) -> RunReport:
     project = service.project
-    registry = build_registry(rz_diff=rz_diff) if rz_diff != 'rz-diff' else REGISTRY
-    env = safe_env(os.environ)
+    registry = build_registry(rz_diff=rz_diff, bindiff=bindiff) if rz_diff != 'rz-diff' or bindiff else REGISTRY
+    env = engine_env(os.environ, 'rz-diff')  # the one shared allow-list; BinDiff builds its own from it
     if engines is None:
         engines = [e for e in DEFAULT_ENGINES if registry[e].probe(env, cancel).supported]
         if not engines:
             return RunReport('failed', ENVIRONMENT, {'runs': [], 'reconciliation': {'reports': []}}, [],
                              'No runnable secondary engine found (rz-diff >= 0.9.0 is required; '
-                             'BinDiff execution is not implemented).')
+                             'BinDiff 8 needs --bindiff and both --older-binexport/--newer-binexport).')
     older, newer = (Path(service.root / sides[s].relative_path).resolve() for s in ('older', 'newer'))
     ref = scheduler.ProjectRef(older, newer, sides['older'].sha256, sides['newer'].sha256)
     snapshot = cache_snapshot(store, ref.older_sha256, ref.newer_sha256) if use_cache else {}

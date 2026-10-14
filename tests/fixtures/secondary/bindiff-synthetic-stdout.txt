@@ -1,0 +1,3 @@
+BinDiff 8 (synthetic fixture)
+matched: 5 of 7/8 (primary/secondary, 6/7 non-library)
+Similarity: 61.4% (Confidence: 83.7%)

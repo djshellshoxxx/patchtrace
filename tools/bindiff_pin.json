@@ -1,0 +1,24 @@
+{
+  "contract": "bindiff-pin/1",
+  "version": "8",
+  "release_page": "https://github.com/google/bindiff/releases/tag/v8",
+  "licence": "Apache-2.0",
+  "verified": false,
+  "gap": "Asset names, sizes and SHA-256 of the v8 release could not be obtained on 2026-10-14 (release page lists six assets whose names did not render; GitHub API access to google/bindiff was not enabled for the authoring session). Provisioning fails closed until a human records verified values from a real download.",
+  "assets": {
+    "linux": {
+      "candidate_name": "bindiff_8_amd64.deb",
+      "url": null,
+      "sha256": null,
+      "size": null,
+      "extract": "dpkg-deb -x"
+    },
+    "windows": {
+      "candidate_name": "bindiff8.msi",
+      "url": null,
+      "sha256": null,
+      "size": null,
+      "extract": "msiexec /a"
+    }
+  }
+}

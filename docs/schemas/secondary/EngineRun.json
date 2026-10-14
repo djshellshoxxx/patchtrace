@@ -144,6 +144,13 @@
       "default": null,
       "title": "Superseded By",
       "type": "null"
+    },
+    "provenance": {
+      "additionalProperties": {
+        "type": "string"
+      },
+      "title": "Provenance",
+      "type": "object"
     }
   },
   "required": [
