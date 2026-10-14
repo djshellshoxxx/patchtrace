@@ -1,6 +1,7 @@
 # KB integration plan: one KB -> CVE -> product -> binaries workflow (track KB)
 
 Status: Program E research plan, 2026-10-14, base `prep/program-e` d972125. Documents only; nothing here is built.
+K2 (workspace store, attach, reducer, recovery) built 2026-10-14 in `kbcorrelation/{store,workflow,recovery}.py`.
 Merges **SPEC-34** (KBC: `docs/specs/kb-cve-correlation-and-acquisition.md` + `kb-cve/31-A..H`, self-numbered "SPEC-31") and **SPEC-37** (KPS: `docs/specs/kb-patch-search-*.md` + `docs/plans/kb-patch-search-*.md`, self-numbered "SPEC-32"). The self-numbers collide with real SPEC-31 (unified engine) and SPEC-32 (known-answer corpus).
 External-source facts are verified by worker KB2 in `docs/specs/program-e/KB2-source-facts.md` (parallel, not awaited) and earlier in `docs/research/kbcve/{msrc-sources,winbindex-servicing-catalog}.md` (RK1, RK2). Tags: [own] read or measured by me on 2026-10-14; [unverified] not confirmed (host blocked or not testable here).
 

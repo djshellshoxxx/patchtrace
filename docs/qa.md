@@ -337,3 +337,8 @@ No manual step. Automated: `pytest tests/test_search_query.py` (property test ov
 
 ### [WB1-S2:search-segment]
 No manual step. Windows CI must run `tests/test_search_segment.py`; Linux evidence: 100k names build in about 2.7 s (30 MB), hardened open in 0.36 s.
+### [K2:kbcorrelation-store] KB correlator K2 crash consistency (2026-10-14, local Linux worktree; synthetic only)
+| Check | Method | Result |
+|---|---|---|
+| Hard kill at 8 crash points | child process SIGKILLs itself (os._exit(137) where SIGKILL is missing) at `index_after_doc`, `index_before_commit`, `after_project_create`, `before_cas` 1 and 2, `after_sidecar_write`, `attach_before_row` 1 and 2; parent opens the project with `ProjectService.open`, repairs twice, then with a rebuilt context | all valid; second repair changes no revision or attempt |
+| Not verified | Windows (file replace, SQLite WAL) and a real power loss (fsync is requested, not provable here) | open |

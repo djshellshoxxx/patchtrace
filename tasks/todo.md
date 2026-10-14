@@ -233,3 +233,6 @@
 ### [WB1-S2:search-segment]
 - [x] S2 segment store (crash-point, corruption, authorizer allow-list, replace-over-open-file tests; Linux green)
 - [ ] Open gate: the replace-over-open-file and URI-open tests on `windows-latest`
+### [K2:kbcorrelation-store] KB-CVE correlator K2 (2026-10-14)
+- [x] workspace store, two-phase attach, reducer, recovery; subprocess hard-kill (SIGKILL) at `index_after_doc`, `index_before_commit`, `after_project_create`, `before_cas` (x2), `after_sidecar_write`, `attach_before_row` (x2) leaves a valid project and workspace; repair idempotent; newer store fails closed; project backup keeps the `kb` sidecars
+- [ ] NOT done / open: K3 binds `ProjectPort` (`create_project` must return the existing project for the same bytes; `put_row` has no directory, so the binding needs a project registry) and replaces the interim `cli_index` files with `WorkspaceStore`; `kb attach --repair` verb; workspace object eviction (only `unreferenced_objects()` lists candidates); `tests/test_kbc_contracts.py` must exempt `store.py` from its sqlite3 ban; Windows run of the kill tests (CI) not yet seen
