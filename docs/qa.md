@@ -402,3 +402,6 @@ Automated: `tests/test_kbc_{components,pairs,context,service,cli,e0_e2e}.py` (so
 Synthetic known-answer project (tests/search_synergy_builders.py: invented names; FLOSS-shaped and advisory segments injected through `extra_specs`). Open gates: 100k-function project latency on the owner machine through the real build path (the test uses a 100k-document segment); Windows CI; real tool and advisory sources (S8).
 ### [D4:buildenv-store-cli-report]
 Automated only: tests/test_buildenv_store.py (round trip, republish, unknown kind refused, size limit, corrupt row skipped, other project ignored, old reader), tests/test_buildenv_cli.py (exit codes 0/2/3/4/5 per verb, envelope, basenames only, stale and one-sided DiE rows, read-only project, hostile text, no Qt import), tests/test_buildenv_report.py (orientation guard, size cap, redaction, Markdown and HTML injection, banned words). Manual and live gates unchanged (G-L1 to G-L4, G-DIE-1).
+
+### [WB3-S7a:strings-view-model]
+Automated only (`tests/test_strings_{view_model,copy}.py`, hand-built StringChange rows): filters, review order, hostile-text escaping, banned-word sweep over all visible text, one teach entry per id, tooltip ids equal the card list. Screen-reader wording is not verified.

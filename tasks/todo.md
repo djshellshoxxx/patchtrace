@@ -295,3 +295,6 @@
 ### [D4:buildenv-store-cli-report] (2026-10-14, Sonnet 5.5, worktree)
 - [x] `build-env` store with `test_old_reader_ignores_build_env_kind`; CLI `show`, `delta`, `timeline` (mounted on a local parser in tests); report section with injection fixtures.
 - [ ] Not done, integrator seams: `KINDS += 'build-env'`, the <= 6 line `cli.py` hook and `_command_name`, `reports.py` extras parameter that calls `buildenv.report`, `artifact_inspection.py` side-inspector seam. CLI does not persist fingerprints (the GUI card writes them, D5). Timeline verb reports per-hop toolchain only; the strip model is D7.
+
+### [WB3-S7a:strings-view-model]
+- [x] View-model, copy and tooltip entries with tests. [ ] S7b Qt panel (needs the GUI registry); [ ] `tooltips.register_entries()` hook (A7).

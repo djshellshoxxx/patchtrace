@@ -426,3 +426,6 @@ K3 notes: `workflow.py` now also allows `pair_proposed` from the searched states
 | Module | Files | Responsibility | Depends on | Tests |
 |---|---|---|---|---|
 | buildenv.store / cli / report | src/patchtrace/buildenv/{store,cli,report}.py | `BuildEnvStore` keeps `BuildFingerprint` rows as the additive enrichment kind `build-env` (inline body <= 64 KiB, guard `(project, 'build-env', artifact, entry id)`, invalid rows skipped); `patchtrace build-env show\|delta\|timeline` (Qt-free, read-only, `enrichment-cli/1`, exits 0/2/3/4/5, DiE only from stored `tool-evidence`); `build_section` plus `section_data`, `render_markdown`, `render_html` for the report section (<= 64 KiB, redacted and escaped) | buildenv core, intelligence.tools.store, enrichment.storage, nway.series | tests/test_buildenv_{store,cli,report}.py |
+
+### [WB3-S7a:strings-view-model]
+`strings/view_model.py` (rows in review order, `StringsFilter`/`apply_filter`, states, escaped copy, reselect), `strings/copy.py` (labels, exact state text, `TEACH` ids `strings.{cue,reason,link,state}.*`), `strings/tooltip_entries.py` (plain 5-tuples for the `strings.*` tooltip ids; merged by the integrator via `tooltips.register_entries()`). No Qt. The button label is "Copy escaped" (the banned-word sweep rejects "safe").
