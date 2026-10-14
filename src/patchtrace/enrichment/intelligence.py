@@ -31,7 +31,9 @@ import urllib.request
 from collections.abc import Callable, Iterable, Mapping
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
+from functools import partial
 
+from ..netutil import Cancelled, TooManyAbandoned, interruptible
 from .contracts import EnrichmentError
 
 CVE_PATTERN = re.compile(r'CVE-\d{4}-\d{4,19}')
@@ -295,7 +297,12 @@ def _attempt(url, headers, opener, cancel, clock, deadline, now) -> tuple[bytes,
         try:
             # urllib timeouts are per socket operation, so the connect bound is passed per call
             # and the 30 s total is enforced by the deadline checks around each read.
-            response = opener(url, headers, min(CONNECT_TIMEOUT, remaining))
+            timeout = min(CONNECT_TIMEOUT, remaining)
+            response = interruptible(partial(opener, url, headers, timeout), cancel, cleanup=lambda r: r.close())
+        except Cancelled:
+            raise EnrichmentError('PT-ENRICH-CANCEL', 'CVE fetch cancelled', recoverable=True) from None
+        except TooManyAbandoned:
+            raise EnrichmentError('PT-ENRICH-NETWORK', 'previous requests still closing', recoverable=True) from None
         except TimeoutError:
             raise _Retry(None) from None
         except (OSError, http.client.HTTPException):
@@ -326,7 +333,13 @@ def _attempt(url, headers, opener, cancel, clock, deadline, now) -> tuple[bytes,
                 if clock() >= deadline:
                     raise EnrichmentError('PT-ENRICH-NETWORK', 'total timeout exceeded', recoverable=True)
                 try:
-                    chunk = response.read(min(_CHUNK, MAX_RESPONSE_BYTES + 1 - len(data)))
+                    size = min(_CHUNK, MAX_RESPONSE_BYTES + 1 - len(data))
+                    chunk = interruptible(partial(response.read, size), cancel)
+                except Cancelled:
+                    raise EnrichmentError('PT-ENRICH-CANCEL', 'CVE fetch cancelled', recoverable=True) from None
+                except TooManyAbandoned:
+                    raise EnrichmentError('PT-ENRICH-NETWORK', 'previous requests still closing',
+                                          recoverable=True) from None
                 except TimeoutError:
                     raise _Retry(None) from None
                 except (OSError, http.client.HTTPException):
