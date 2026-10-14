@@ -244,3 +244,8 @@
 ### [CAP-1:capa-parser-v2]
 - [x] Contracts and parser: coverage, features, labels, exit 11/13, Ghidra >= 12.0 probe, memory-cap option, in-memory re-parse (`tests/test_capa_parser_v2.py`)
 - [ ] Integrator: `runner.py` passes `CapaConfig.effective_memory_limit()` for capa (today only FLOSS); `intel-tools probe` rules label and `PT-TOOL-PAIRING` exit mapping (CAP-5)
+
+### [CAP-2:capa-pairs]
+- [x] Pair groups, pair delta, synergy golden `tests/fixtures/intel_tools/expected-pairs-capa-api.json`, properties, 20,000-item bound, no-Qt import test
+- [ ] Not done: `tests/capa_pairs_pe.py` and REAL `capa-move-*` goldens need the pinned capa (not in this container); the DERIVED `capa-move-derived-newer.json` stands in (labelled in `MANIFEST.capa-v2.json`)
+- [ ] Integrator: generate a `capa-pairs/1` JSON Schema in `tools/generate_intel_tools_schemas.py` (its test pins 9 outputs); hypothesis-context leg of the synergy test is CAP-7

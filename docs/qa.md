@@ -355,3 +355,10 @@ No manual step. Windows CI must run `tests/test_search_segment.py`; Linux eviden
 | coverage, features and labels on REAL capa 9.4.0 output (synthetic PEs) and DERIVED library/unrecovered variants | `tests/test_capa_parser_v2.py`; derived files labelled in `tests/fixtures/intel_tools/capa/MANIFEST.capa-v2.json` |
 | rows stored before CAP-1 stay readable and keep their content ids | `test_records_stored_before_cap1_stay_readable_and_keep_their_ids` |
 | not verified here: memory cap against a real capa run (RLIMIT_AS counts virtual memory), Ghidra 12.0.4 backend (live gate L3, L4) | CAP plan section 10 |
+
+### [CAP-2:capa-pairs]
+| check | evidence |
+|---|---|
+| plan section 5 expectation (2 gained, 1 lost, 2 unchanged, 0 moved, 2 unattributed) on REAL capa output | `test_pair_delta_equals_the_committed_golden`, `test_the_combined_channel_names_four_changes_and_two_unplaced_behaviours` |
+| moved, detection noise, library, unrecovered, orientation swap, control pair | `tests/test_capa_synergy.py` (moved and library cases use DERIVED variants) |
+| not verified here: capa-move on REAL capa output, coverage against Ghidriff function starts (live gate L2) | needs the pinned capa and Ghidriff |

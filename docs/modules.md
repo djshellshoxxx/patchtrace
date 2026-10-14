@@ -366,3 +366,8 @@ Status column: each row is built by the slice named in `docs/specs/program-e/CAP
 | module | files | purpose | depends on | tests |
 |---|---|---|---|---|
 | capa parser v2 | intelligence/tools/common.py, intelligence/tools/capa.py | additive `FeatureRef`, `TaxonomyLabel`, `FunctionCoverage`; coverage (evaluated and library function starts), matched leaf features and ATT&CK/MBC labels per capability; exits 11/13 are `PT-TOOL-INPUT`; Ghidra backend needs 12.0+; `CapaConfig.memory_limit_bytes` (8 GiB default, 0 off); `reparse` of a stored raw sidecar | tools.process, tools.normalize | `test_capa_parser_v2.py` |
+
+### [CAP-2:capa-pairs]
+| module | files | purpose | depends on | tests |
+|---|---|---|---|---|
+| capa pairs | intelligence/tools/capa_pairs.py | `capa-pairs/1`, derived and never persisted: pair groups from the project matches, per-pair capability cells (present, absent, not-evaluated, no-function), gained/lost/moved/unchanged/not-compared, detection-difference noise, unattributed matches, coverage summary; no score, rank or confidence | tools.common, tools.delta (flags), tools.normalize | `test_capa_pairs.py`, `test_capa_synergy.py` |
