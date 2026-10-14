@@ -1,0 +1,26 @@
+{
+ "attempts": 1,
+ "base": {
+  "license_spdx": "MIT",
+  "suite": "_template/tiny",
+  "version": "v1"
+ },
+ "case_id": "tiny-cmp-flip-7",
+ "contract": "mutation-case/1",
+ "helper": null,
+ "kind": "semantic",
+ "moved_function": null,
+ "operator": "cmp-flip",
+ "patch_sha256": "5e919ffeccad458cb3862c27d396cfc1083297e8764aa0d9e609e3bef162fcc7",
+ "rejected": [],
+ "seed": 7,
+ "site": {
+  "after": ">=",
+  "before": ">",
+  "column": 11,
+  "file": "tiny.c",
+  "line": 6
+ },
+ "target_file": "tiny.c",
+ "target_function": "tiny_clamp"
+}

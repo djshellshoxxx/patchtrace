@@ -1,0 +1,430 @@
+{
+  "$defs": {
+    "CopyRule": {
+      "additionalProperties": false,
+      "properties": {
+        "dst": {
+          "maxLength": 512,
+          "minLength": 1,
+          "pattern": "^[^\\\\:*?\"<>|\\x00]+$",
+          "title": "Dst",
+          "type": "string"
+        },
+        "src": {
+          "maxLength": 512,
+          "minLength": 1,
+          "pattern": "^[^\\\\:*?\"<>|\\x00]+$",
+          "title": "Src",
+          "type": "string"
+        }
+      },
+      "required": [
+        "src",
+        "dst"
+      ],
+      "title": "CopyRule",
+      "type": "object"
+    },
+    "Dependency": {
+      "additionalProperties": false,
+      "properties": {
+        "commit": {
+          "pattern": "^[0-9a-f]{40}$",
+          "title": "Commit",
+          "type": "string"
+        },
+        "project": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,95}$",
+          "title": "Project",
+          "type": "string"
+        },
+        "ref": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Ref",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project",
+        "ref",
+        "commit"
+      ],
+      "title": "Dependency",
+      "type": "object"
+    },
+    "Pin": {
+      "additionalProperties": false,
+      "properties": {
+        "commit": {
+          "pattern": "^[0-9a-f]{40}$",
+          "title": "Commit",
+          "type": "string"
+        },
+        "date": {
+          "default": "",
+          "maxLength": 32,
+          "title": "Date",
+          "type": "string"
+        },
+        "license_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "License Sha256",
+          "type": "string"
+        },
+        "ref": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Ref",
+          "type": "string"
+        }
+      },
+      "required": [
+        "ref",
+        "commit",
+        "license_sha256"
+      ],
+      "title": "Pin",
+      "type": "object"
+    },
+    "Recipe": {
+      "additionalProperties": false,
+      "properties": {
+        "cflags": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Cflags",
+          "type": "array"
+        },
+        "contract": {
+          "const": "tier-r-recipe/1",
+          "title": "Contract",
+          "type": "string"
+        },
+        "copy_files": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/CopyRule"
+          },
+          "title": "Copy Files",
+          "type": "array"
+        },
+        "defines": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Defines",
+          "type": "array"
+        },
+        "depends": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/Dependency"
+          },
+          "title": "Depends",
+          "type": "array"
+        },
+        "exclude": {
+          "default": [],
+          "items": {
+            "maxLength": 256,
+            "minLength": 1,
+            "pattern": "^[A-Za-z0-9_./*?\\[\\]-]+$",
+            "type": "string"
+          },
+          "title": "Exclude",
+          "type": "array"
+        },
+        "family": {
+          "pattern": "^[a-z0-9-]{1,64}$",
+          "title": "Family",
+          "type": "string"
+        },
+        "include_dirs": {
+          "default": [],
+          "items": {
+            "maxLength": 512,
+            "minLength": 1,
+            "pattern": "^[^\\\\:*?\"<>|\\x00]+$",
+            "type": "string"
+          },
+          "title": "Include Dirs",
+          "type": "array"
+        },
+        "libc": {
+          "enum": [
+            "mingw",
+            "freestanding"
+          ],
+          "title": "Libc",
+          "type": "string"
+        },
+        "license_evidence": {
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "License Evidence",
+          "type": "string"
+        },
+        "license_file": {
+          "maxLength": 512,
+          "minLength": 1,
+          "pattern": "^[^\\\\:*?\"<>|\\x00]+$",
+          "title": "License File",
+          "type": "string"
+        },
+        "license_spdx": {
+          "title": "License Spdx",
+          "type": "string"
+        },
+        "notes": {
+          "default": "",
+          "maxLength": 1000,
+          "title": "Notes",
+          "type": "string"
+        },
+        "output": {
+          "pattern": "^[A-Za-z0-9._+-]+\\.dll$",
+          "title": "Output",
+          "type": "string"
+        },
+        "pins": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/Pin"
+          },
+          "title": "Pins",
+          "type": "array"
+        },
+        "project": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,95}$",
+          "title": "Project",
+          "type": "string"
+        },
+        "sources": {
+          "items": {
+            "maxLength": 256,
+            "minLength": 1,
+            "pattern": "^[A-Za-z0-9_./*?\\[\\]-]+$",
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Sources",
+          "type": "array"
+        },
+        "upstream_git": {
+          "pattern": "^https://github\\.com/[A-Za-z0-9._-]+/[A-Za-z0-9._-]+(\\.git)?$",
+          "title": "Upstream Git",
+          "type": "string"
+        },
+        "variants": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/RecipeVariant"
+          },
+          "title": "Variants",
+          "type": "array"
+        },
+        "write": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/WriteRule"
+          },
+          "title": "Write",
+          "type": "array"
+        }
+      },
+      "required": [
+        "contract",
+        "project",
+        "family",
+        "upstream_git",
+        "license_spdx",
+        "license_file",
+        "license_evidence",
+        "libc",
+        "output",
+        "sources"
+      ],
+      "title": "Recipe",
+      "type": "object"
+    },
+    "RecipeVariant": {
+      "additionalProperties": false,
+      "description": "Overrides for some pins (matched by ref or commit); lists replace the base lists when given.",
+      "properties": {
+        "copy_files": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/CopyRule"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Copy Files"
+        },
+        "defines": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Defines"
+        },
+        "exclude": {
+          "anyOf": [
+            {
+              "items": {
+                "maxLength": 256,
+                "minLength": 1,
+                "pattern": "^[A-Za-z0-9_./*?\\[\\]-]+$",
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Exclude"
+        },
+        "include_dirs": {
+          "anyOf": [
+            {
+              "items": {
+                "maxLength": 512,
+                "minLength": 1,
+                "pattern": "^[^\\\\:*?\"<>|\\x00]+$",
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Include Dirs"
+        },
+        "match": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Match",
+          "type": "array"
+        },
+        "sources": {
+          "anyOf": [
+            {
+              "items": {
+                "maxLength": 256,
+                "minLength": 1,
+                "pattern": "^[A-Za-z0-9_./*?\\[\\]-]+$",
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sources"
+        },
+        "write": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/WriteRule"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Write"
+        }
+      },
+      "required": [
+        "match"
+      ],
+      "title": "RecipeVariant",
+      "type": "object"
+    },
+    "WriteRule": {
+      "additionalProperties": false,
+      "properties": {
+        "path": {
+          "maxLength": 512,
+          "minLength": 1,
+          "pattern": "^[^\\\\:*?\"<>|\\x00]+$",
+          "title": "Path",
+          "type": "string"
+        },
+        "text": {
+          "maxLength": 65536,
+          "title": "Text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "path",
+        "text"
+      ],
+      "title": "WriteRule",
+      "type": "object"
+    }
+  },
+  "$id": "https://patchtrace.local/schemas/tier-r-recipes/1/RecipeBook.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "contract": {
+      "const": "tier-r-recipes/1",
+      "title": "Contract",
+      "type": "string"
+    },
+    "excluded": {
+      "default": [],
+      "items": {
+        "additionalProperties": {
+          "type": "string"
+        },
+        "type": "object"
+      },
+      "title": "Excluded",
+      "type": "array"
+    },
+    "recipes": {
+      "items": {
+        "$ref": "#/$defs/Recipe"
+      },
+      "title": "Recipes",
+      "type": "array"
+    }
+  },
+  "required": [
+    "contract",
+    "recipes"
+  ],
+  "title": "RecipeBook",
+  "type": "object"
+}

@@ -1,0 +1,297 @@
+{
+  "$defs": {
+    "MutationSite": {
+      "additionalProperties": false,
+      "properties": {
+        "after": {
+          "maxLength": 2000,
+          "title": "After",
+          "type": "string"
+        },
+        "before": {
+          "maxLength": 2000,
+          "title": "Before",
+          "type": "string"
+        },
+        "column": {
+          "minimum": 1,
+          "title": "Column",
+          "type": "integer"
+        },
+        "file": {
+          "maxLength": 512,
+          "minLength": 1,
+          "pattern": "^[^\\\\:*?\"<>|\\x00]+$",
+          "title": "File",
+          "type": "string"
+        },
+        "line": {
+          "minimum": 1,
+          "title": "Line",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "file",
+        "line",
+        "column",
+        "before",
+        "after"
+      ],
+      "title": "MutationSite",
+      "type": "object"
+    },
+    "Rejection": {
+      "additionalProperties": false,
+      "properties": {
+        "column": {
+          "minimum": 1,
+          "title": "Column",
+          "type": "integer"
+        },
+        "line": {
+          "minimum": 1,
+          "title": "Line",
+          "type": "integer"
+        },
+        "reason": {
+          "maxLength": 300,
+          "title": "Reason",
+          "type": "string"
+        }
+      },
+      "required": [
+        "line",
+        "column",
+        "reason"
+      ],
+      "title": "Rejection",
+      "type": "object"
+    },
+    "SourceRef": {
+      "additionalProperties": false,
+      "properties": {
+        "commit": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{40}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Commit"
+        },
+        "git": {
+          "anyOf": [
+            {
+              "pattern": "^https://[A-Za-z0-9.-]+/[A-Za-z0-9._/-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Git"
+        },
+        "license_spdx": {
+          "maxLength": 64,
+          "minLength": 1,
+          "title": "License Spdx",
+          "type": "string"
+        },
+        "mutation": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9._-]{1,96}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Mutation"
+        },
+        "ref": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Ref"
+        },
+        "suite": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9._-]+/[A-Za-z0-9._-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Suite"
+        },
+        "version": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9._-]{1,64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Version"
+        }
+      },
+      "required": [
+        "license_spdx"
+      ],
+      "title": "SourceRef",
+      "type": "object"
+    }
+  },
+  "$id": "https://patchtrace.local/schemas/mutation-case/1/MutationCase.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "attempts": {
+      "maximum": 1000,
+      "minimum": 1,
+      "title": "Attempts",
+      "type": "integer"
+    },
+    "base": {
+      "$ref": "#/$defs/SourceRef"
+    },
+    "case_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,95}$",
+      "title": "Case Id",
+      "type": "string"
+    },
+    "contract": {
+      "const": "mutation-case/1",
+      "title": "Contract",
+      "type": "string"
+    },
+    "helper": {
+      "anyOf": [
+        {
+          "maxLength": 128,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Helper"
+    },
+    "kind": {
+      "enum": [
+        "semantic",
+        "cosmetic"
+      ],
+      "title": "Kind",
+      "type": "string"
+    },
+    "moved_function": {
+      "anyOf": [
+        {
+          "maxLength": 256,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Moved Function"
+    },
+    "operator": {
+      "enum": [
+        "cmp-flip",
+        "const-change",
+        "bounds-check-insert",
+        "bounds-check-remove",
+        "call-add",
+        "call-remove",
+        "arg-swap",
+        "loop-bound",
+        "off-by-one",
+        "int-width",
+        "ws-comment",
+        "dead-code",
+        "reorder-defs",
+        "local-rename",
+        "macro-rewrite",
+        "inline-toggle"
+      ],
+      "title": "Operator",
+      "type": "string"
+    },
+    "patch_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Patch Sha256",
+      "type": "string"
+    },
+    "rejected": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/Rejection"
+      },
+      "maxItems": 200,
+      "title": "Rejected",
+      "type": "array"
+    },
+    "seed": {
+      "maximum": 9223372036854775807,
+      "minimum": 0,
+      "title": "Seed",
+      "type": "integer"
+    },
+    "site": {
+      "$ref": "#/$defs/MutationSite"
+    },
+    "target_file": {
+      "maxLength": 512,
+      "minLength": 1,
+      "pattern": "^[^\\\\:*?\"<>|\\x00]+$",
+      "title": "Target File",
+      "type": "string"
+    },
+    "target_function": {
+      "maxLength": 256,
+      "minLength": 1,
+      "title": "Target Function",
+      "type": "string"
+    }
+  },
+  "required": [
+    "contract",
+    "case_id",
+    "base",
+    "operator",
+    "kind",
+    "seed",
+    "target_file",
+    "target_function",
+    "site",
+    "attempts",
+    "patch_sha256"
+  ],
+  "title": "MutationCase",
+  "type": "object"
+}
