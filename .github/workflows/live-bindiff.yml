@@ -27,11 +27,15 @@ jobs:
     timeout-minutes: 45
     env:
       PATCHTRACE_LIVE_STATUS_DIR: ${{ github.workspace }}/build/live-status
+      QT_QPA_PLATFORM: offscreen
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+      - name: Qt runtime libraries (the pytest-qt plugin imports Qt even for this non-GUI test)
+        if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install -y libegl1 libopengl0 libgl1
       - run: python -m pip install -e .[dev]
       - name: Pin digest for the cache key
         id: pin
