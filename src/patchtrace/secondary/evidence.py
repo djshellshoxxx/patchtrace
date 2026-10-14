@@ -27,6 +27,8 @@ class MatchEvidence:
     missing_engines: tuple[str, ...]
     limitations: tuple[str, ...]
     explanation: str
+    # (engine, rank): Ghidriff's pairing equals that engine's alternative candidate; verdict is unchanged.
+    alternative_ranks: tuple[tuple[str, int], ...] = ()
 
 
 @dataclass(frozen=True)
@@ -63,9 +65,13 @@ def assess_reports(reports: tuple[ReconciliationReport, ...]) -> EvidenceAssessm
         missing = tuple(engine for engine, row in selected if row.status in ('absent', 'not-comparable'))
         limitations = tuple(f'{engine}: {row.note}' for engine, row in selected
                             if row.status != 'agreement')
+        ranks = tuple((engine, row.alternative_rank) for engine, row in selected
+                      if row.status == 'disagreement' and row.alternative_rank is not None)
         if conflict:
             verdict, tier, index = 'contested', 'low', 0
             reason = 'At least one engine proposes conflicting endpoints. Review identities manually before interpreting a patch.'
+            if ranks:
+                reason += ' ' + '; '.join(f'Ghidriff matches {e} alternative rank {r}' for e, r in ranks) + '.'
         elif support:
             index = min(83, 55 + (20 if 'bindiff' in support else 0) +
                         (8 if 'rz-diff' in support else 0))
@@ -79,7 +85,7 @@ def assess_reports(reports: tuple[ReconciliationReport, ...]) -> EvidenceAssessm
             verdict, tier, index = 'single-engine', 'low', 55
             reason = 'Only Ghidriff has an address-comparable match; absence is not contradiction.'
         rows.append(MatchEvidence(match_id, verdict, tier, index, support, conflict, missing,
-                                  limitations, reason))
+                                  limitations, reason, ranks))
     return EvidenceAssessment(
         tuple(rows),
         tuple(f'{r.engine} {r.engine_version}' for r in reports),
