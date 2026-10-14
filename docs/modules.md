@@ -71,6 +71,7 @@ Every substantial future module must be added here before implementation. UI mus
 | engine env | secondary/engine_env.py | single child-env allow-list for secondary engines (rz-diff via `backend.build_child_env`, BinDiff from scratch) | backend | `tests/test_engine_env.py`, `tests/test_live_rzdiff_check.py` |
 | bindiff CLI | secondary/cli_bindiff.py | `--older/--newer-binexport`, `--accept-unbound-binexport`, `PATCHTRACE_BINDIFF`, C3 acceptor wrapper | registry | `tests/test_cli_bindiff.py` |
 | live harness | tests/conftest.py, tests/test_live_bindiff.py, tools/{provision_bindiff,check_live_status,make_bindiff_fixtures}.py, tools/bindiff_pin.json, .github/workflows/live-bindiff.yml | never-silent live status (`passed/failed/blocked`), fail-closed pinned provisioning, synthetic goldens | - | `tests/test_live_harness.py`, `tests/test_bindiff_golden.py` |
+| live pair + real golden (C4 follow-up) | tests/bindiff_live_pair.py, tests/fixtures/secondary/bindiff-v8-real-on-synthetic.* , bindiff-8-help.txt | stdlib BinExport2 encoder for the SYNTHETIC live pair; real v8 output/help used as goldens; provisioning now extracts the `.deb` with stdlib ar+tar and verifies the pinned executable | patchtrace.sample | `tests/test_bindiff_live_pair.py`, `tests/test_bindiff_real_golden.py`, `tests/test_provision_bindiff.py` |
 ### C9 calibration (2026-10-14; synthetic validation only)
 | Module | Files | Responsibility | Depends on | Verification |
 |---|---|---|---|---|

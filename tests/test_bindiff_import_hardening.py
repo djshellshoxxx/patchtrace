@@ -50,6 +50,9 @@ def test_connection_is_hardened(tmp_path, monkeypatch):
     def spy(db, *args, **kwargs):
         seen['trusted_schema'] = db.execute('PRAGMA trusted_schema').fetchone()[0]
         seen['query_only'] = db.execute('PRAGMA query_only').fetchone()[0]
+        seen['cell_size_check'] = db.execute('PRAGMA cell_size_check').fetchone()[0]
+        seen['max_page_count'] = db.execute('PRAGMA max_page_count').fetchone()[0]
+        seen['page_count'] = db.execute('PRAGMA page_count').fetchone()[0]
         if hasattr(db, 'getconfig') and hasattr(sqlite3, 'SQLITE_DBCONFIG_DEFENSIVE'):
             seen['defensive'] = db.getconfig(sqlite3.SQLITE_DBCONFIG_DEFENSIVE)
         return real(db, *args, **kwargs)
@@ -59,6 +62,28 @@ def test_connection_is_hardened(tmp_path, monkeypatch):
     import_bindiff(build(tmp_path / 'x.BinDiff'), OLD, NEW)
     assert seen['trusted_schema'] == 0 and seen['query_only'] == 1
     assert seen.get('defensive', True) in (True, 1)
+    assert seen['cell_size_check'] == 1
+    assert seen['max_page_count'] == seen['page_count']  # capped at the file's own size (cannot go lower)
+
+
+def test_import_deadline_interrupts_runaway_queries_as_limit(tmp_path, monkeypatch):
+    path = build(tmp_path / 'x.BinDiff', functions=[
+        (i, 0x140000000 + i * 16, f'f{i}', 0x150000000 + i * 16, f'f{i}', 0.5, 0.5, 0, 7) for i in range(1, 400)])
+    assert len(import_bindiff(path, OLD, NEW).matches) == 399  # default deadline: fine
+    monkeypatch.setattr(bindiff, 'PROGRESS_STEPS', 1)
+    with pytest.raises(SecondaryError, match='time limit') as info:
+        import_bindiff(path, OLD, NEW, deadline_seconds=0.0)
+    assert info.value.code == 'PT-SECONDARY-LIMIT'
+
+
+def test_real_bindiff8_schema_shape_is_accepted(tmp_path):
+    # Shape of a database written by the real BinDiff 8 (SPEC-29 §7 [M]): seven tables, autoindexes only.
+    path = build(tmp_path / 'x.BinDiff', version='BinDiff 8 (@568181968, Sep 25 2023)')
+    db = sqlite3.connect(path)
+    kinds = sorted({row[0] for row in db.execute('SELECT type FROM sqlite_master')})
+    db.close()
+    assert kinds == ['index', 'table']
+    assert import_bindiff(path, OLD, NEW).engine_version == '8 (@568181968, Sep 25 2023)'
 
 
 @pytest.mark.parametrize('action, args', [

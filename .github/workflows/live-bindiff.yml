@@ -1,15 +1,19 @@
 name: Live BinDiff acceptance
 # Real pinned BinDiff 8, not mocked (SPEC-29 section 10). Not a required check until stable for >= 10 runs.
-# The tool is downloaded from the upstream release, verified against tools/bindiff_pin.json and extracted
-# without installing or executing it. While the pin has no verified URL/size/SHA-256 (see the pin's "gap"),
-# provisioning records `blocked` and the job summary says LIVE ACCEPTANCE BLOCKED: it never skips silently.
+# The tool is downloaded from the upstream release, verified against tools/bindiff_pin.json (trust-on-first-use
+# values) and extracted without installing or executing it; the live test then probes and runs it on a
+# SYNTHETIC BinExport2 pair (tests/bindiff_live_pair.py). Linux runs in required mode. Windows is advisory:
+# msiexec /a and bindiff.exe are unverified, so extraction problems are recorded as blocked (unverified) and a
+# failing live test is recorded as failed in the status JSON without failing the job. Integrity failures
+# (download, size or SHA-256 mismatch) fail on both OSes. Nothing is ever skipped silently.
 on:
   workflow_dispatch:
   schedule:
     - cron: '17 4 * * 1'
   pull_request:
     paths: ['src/patchtrace/secondary/bindiff*', 'tools/bindiff_pin.json', 'tools/provision_bindiff.py',
-            'tools/check_live_status.py', 'tests/test_live_bindiff.py', '.github/workflows/live-bindiff.yml']
+            'tools/check_live_status.py', 'tests/test_live_bindiff.py', 'tests/bindiff_live_pair.py',
+            '.github/workflows/live-bindiff.yml']
 permissions:
   contents: read
 jobs:
@@ -21,12 +25,17 @@ jobs:
         include:
           - os: ubuntu-22.04
             pin_os: linux
+            advisory: false
+            provision_flags: ''
           - os: windows-latest
             pin_os: windows
+            advisory: true
+            provision_flags: '--advisory'
     runs-on: ${{ matrix.os }}
     timeout-minutes: 45
     env:
       PATCHTRACE_LIVE_STATUS_DIR: ${{ github.workspace }}/build/live-status
+      PATCHTRACE_LIVE_SYNTHETIC_PAIR: '1'
       QT_QPA_PLATFORM: offscreen
     steps:
       - uses: actions/checkout@v4
@@ -48,8 +57,9 @@ jobs:
           key: bindiff-${{ matrix.pin_os }}-${{ steps.pin.outputs.key }}
       - name: Provision pinned BinDiff (download + verify + extract; never executes it)
         shell: bash
-        run: python tools/provision_bindiff.py --os ${{ matrix.pin_os }} --github-env "$GITHUB_ENV"
+        run: python tools/provision_bindiff.py --os ${{ matrix.pin_os }} ${{ matrix.provision_flags }} --github-env "$GITHUB_ENV"
       - name: Live BinDiff tests (records passed / failed / blocked)
+        continue-on-error: ${{ matrix.advisory }}
         shell: bash
         run: python -m pytest -m live_bindiff -rA tests/test_live_bindiff.py
       - name: Live status summary

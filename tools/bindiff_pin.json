@@ -1,24 +1,43 @@
 {
   "contract": "bindiff-pin/1",
   "version": "8",
+  "version_text": "BinDiff 8 (@568181968, Sep 25 2023)",
   "release_page": "https://github.com/google/bindiff/releases/tag/v8",
   "licence": "Apache-2.0",
   "verified": false,
-  "gap": "Asset names, sizes and SHA-256 of the v8 release could not be obtained on 2026-10-14 (release page lists six assets whose names did not render; GitHub API access to google/bindiff was not enabled for the authoring session). Provisioning fails closed until a human records verified values from a real download.",
+  "trust": "trust-on-first-use: upstream publishes no per-asset digest and the GitHub release API returned HTTP 403 through the egress proxy, so these values were computed from downloads of the official release assets, twice on 2026-10-14 (research session and C4 follow-up session, same egress proxy, identical results). Not independently verified: re-hash from an independent network path and verify the .asc before beta.",
+  "signature": {
+    "asset": "bindiff_8_amd64.deb.asc",
+    "url": "https://github.com/google/bindiff/releases/download/v8/bindiff_8_amd64.deb.asc",
+    "size": 819,
+    "sha256": "1efbb4c656b97c4a2a73c4193b512546799d08683c8ff9ff2ae79d88ccdef0f5",
+    "issuer_key_id": "4EB27DB2A3B88B8B",
+    "verified": false,
+    "signature_verified_by": null
+  },
   "assets": {
     "linux": {
-      "candidate_name": "bindiff_8_amd64.deb",
-      "url": null,
-      "sha256": null,
-      "size": null,
-      "extract": "dpkg-deb -x"
+      "name": "bindiff_8_amd64.deb",
+      "url": "https://github.com/google/bindiff/releases/download/v8/bindiff_8_amd64.deb",
+      "size": 62663460,
+      "sha256": "821990e3974a9df6733794370e485486ac276ba5d777a06b4ebe575f092f4dda",
+      "extract": "stdlib ar+tar (equivalent to dpkg-deb -x; regular files and directories only)",
+      "executable": "opt/bindiff/bin/bindiff",
+      "executable_size": 3894808,
+      "executable_sha256": "eb0a88eb6518e000bc3c4eef66c22db7ace197173eb933ea5d1c8ac3f7d8d0fb",
+      "advisory": false
     },
     "windows": {
-      "candidate_name": "bindiff8.msi",
-      "url": null,
-      "sha256": null,
-      "size": null,
-      "extract": "msiexec /a"
+      "name": "bindiff8.msi",
+      "url": "https://github.com/google/bindiff/releases/download/v8/bindiff8.msi",
+      "size": 72237056,
+      "sha256": "688831e490bef8a20c9917048b693bad591f346b3b96489fc79ad8d20d7cb15f",
+      "extract": "msiexec /a (administrative extract; live-only, unverified)",
+      "executable": "ProgramFiles/BinDiff/bin/bindiff.exe",
+      "executable_size": 3396896,
+      "executable_sha256": "b1d4844d7c7f1ca7f9684e280e0807668633e1b2410b31beca5c9ace79b747dd",
+      "executable_source": "static inspection with msiextract 2026-10-14 (PE32+ x86-64, console subsystem); the msiexec /a layout is located by search",
+      "advisory": true
     }
   }
 }

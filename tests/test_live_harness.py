@@ -26,12 +26,12 @@ def pin(tmp_path: Path, **asset) -> Path:
     return path
 
 
-def test_committed_pin_is_unverified_and_provisioning_records_blocked(tmp_path):
-    committed = json.loads((ROOT / 'tools' / 'bindiff_pin.json').read_text())
-    assert committed['verified'] is False and committed['assets']['linux']['sha256'] is None
+def test_unpinned_asset_records_blocked_and_downloads_nothing(tmp_path):
+    # The committed pin now holds the measured v8 values (tests/test_provision_bindiff.py); a pin without
+    # URL/size/SHA-256 must still fail closed without any download.
     status = tmp_path / 'status'
-    assert provision_bindiff.main(['--os', 'linux', '--status-dir', str(status), '--cache', str(tmp_path / 'c'),
-                                   '--dest', str(tmp_path / 'd')]) == 0
+    assert provision_bindiff.main(['--os', 'linux', '--pin', str(pin(tmp_path)), '--status-dir', str(status),
+                                   '--cache', str(tmp_path / 'c'), '--dest', str(tmp_path / 'd')]) == 0
     record = json.loads((status / 'bindiff-provision.json').read_text())
     assert record['status'] == 'blocked' and record['reason'].startswith('pin-missing')
     assert not (tmp_path / 'c').exists()  # nothing downloaded on trust

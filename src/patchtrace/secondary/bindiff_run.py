@@ -23,7 +23,7 @@ from pathlib import Path
 from ..jobs import run_process
 from .bindiff import import_bindiff
 from .bindiff_inputs import BoundPair, copy_and_hash
-from .bindiff_probe import build_env, first_error_line, make_private_dirs, sanitize
+from .bindiff_probe import build_env, exit_text, first_error_line, make_private_dirs, sanitize
 from .contracts import Capability, SecondaryError, SecondaryMatchSet
 
 DEFAULT_TIMEOUT = 1800
@@ -35,7 +35,15 @@ STDERR_LIMIT = 256 * 1024
 CONFIG_BYTES = b'{}'
 CONFIG_SHA256 = hashlib.sha256(CONFIG_BYTES).hexdigest()
 EXPECTED_NAME = 'older_vs_newer.BinDiff'
-FORBIDDEN_FLAGS = ('--ui', '--export', '--ls', '--md_index', '--print_config')
+MAX_OUTPUT_PATH = 250   # BinDiff truncates the name parts when output_dir + name exceeds this (SPEC-29 §3)
+USAGE_BANNER = 'bindiff: Find similarities'
+# Never passed (SPEC-29 §4.1): UI/IDA/batch modes, config dumps, and the absl flags that would let a file or
+# the environment inject arbitrary flags (`--flagfile`, `--fromenv`, `--tryfromenv`) or hide typos (`--undefok`).
+FORBIDDEN_FLAGS = ('--ui', '--export', '--ls', '--md_index', '--print_config', '--flagfile', '--fromenv',
+                   '--tryfromenv', '--undefok', '--help', '--helpfull', '--helpshort', '--helppackage', '--helpon',
+                   '--helpmatch', '--only_check_args', '--version')
+_ARGV_FIXED = ('--nologo', '--output_format=bin')
+_ARGV_VALUED = ('--output_dir', '--config', '--primary', '--secondary')
 _MATCHED = re.compile(r'^matched:\s*(\d{1,9}) of (\d{1,9})/(\d{1,9})', re.MULTILINE)
 _SIMILARITY = re.compile(r'^Similarity:\s*([0-9]{1,3}(?:\.[0-9]{1,6})?)%\s*\(Confidence:\s*'
                          r'([0-9]{1,3}(?:\.[0-9]{1,6})?)%\)', re.MULTILINE)
@@ -52,11 +60,25 @@ def validate_timeout(value: object) -> int:
     return value
 
 
+def check_argv(argv: list[str]) -> list[str]:
+    """Allow-list of the run argv after argv[0]: exactly `--nologo`, `--output_format=bin` and one non-empty
+    `--output_dir=`, `--config=`, `--primary=`, `--secondary=` each. Raises ValueError otherwise."""
+    names = []
+    for arg in argv[1:]:
+        name, _, value = arg.partition('=')
+        if name in FORBIDDEN_FLAGS or not (arg in _ARGV_FIXED or (name in _ARGV_VALUED and value)):
+            raise ValueError(f'BinDiff argument {name[:40]!r} is not allowed')
+        names.append(name)
+    if sorted(names) != sorted(('--nologo', '--output_format', *_ARGV_VALUED)):
+        raise ValueError('BinDiff argument set is not allowed (each option exactly once)')
+    return argv
+
+
 def build_argv(executable: str | Path, workdir: Path) -> list[str]:
     """§4.1: named `=`-joined flags only; user filenames never reach argv (inputs have fixed names)."""
-    return [str(executable), '--nologo', '--output_format=bin', f'--output_dir={workdir / "out"}',
-            f'--config={workdir / "bindiff.json"}', f'--primary={workdir / "in" / "older.BinExport"}',
-            f'--secondary={workdir / "in" / "newer.BinExport"}']
+    return check_argv([str(executable), '--nologo', '--output_format=bin', f'--output_dir={workdir / "out"}',
+                       f'--config={workdir / "bindiff.json"}', f'--primary={workdir / "in" / "older.BinExport"}',
+                       f'--secondary={workdir / "in" / "newer.BinExport"}'])
 
 
 def argv_template(executable: str | Path) -> tuple[str, ...]:
@@ -66,8 +88,18 @@ def argv_template(executable: str | Path) -> tuple[str, ...]:
             '--primary=<workdir>/in/<older>', '--secondary=<workdir>/in/<newer>')
 
 
+def output_path_fits(workdir: Path) -> bool:
+    """True if `<workdir>/out/older_vs_newer.BinDiff` stays within BinDiff's 250-character cap (encoded bytes,
+    conservative on Windows), so BinDiff writes exactly the expected name instead of a truncated one."""
+    return len(os.fsencode(str(workdir / 'out' / EXPECTED_NAME))) <= MAX_OUTPUT_PATH
+
+
 def out_guard(out_dir: Path, *, max_bytes: int = OUTPUT_LIMIT, max_files: int = MAX_OUTPUT_FILES) -> str | None:
-    """Polled by `run_process`: size/count -> 'output-limit'; a symlink or directory -> 'output-unexpected'."""
+    """Polled by `run_process`: size/count -> 'output-limit'; a symlink or directory -> 'output-unexpected'.
+
+    While BinDiff writes, `out/` legitimately holds the database plus a transient SQLite rollback journal
+    (`older_vs_newer.BinDiff-journal`, measured); both are regular files and are tolerated here. Only a clean
+    exit 0 with exactly the database (no journal) is accepted afterwards (`execute`)."""
     total = count = 0
     try:
         with os.scandir(out_dir) as entries:
@@ -162,6 +194,9 @@ def execute(cap: Capability, pair: BoundPair, raw_dir: Path, *, cancel: threadin
         raise _err('PT-SECONDARY-RUN', 'workdir-error', f'Could not prepare a private working folder '
                    f'({type(exc).__name__}).') from None
     try:
+        if not output_path_fits(workdir):
+            raise _err('PT-SECONDARY-RUN', 'workdir-error', 'Could not prepare a private working folder (its path '
+                       "exceeds BinDiff's 250-character output path limit).")
         try:
             make_private_dirs(workdir)
             for part in ('in', 'out'):
@@ -175,8 +210,8 @@ def execute(cap: Capability, pair: BoundPair, raw_dir: Path, *, cancel: threadin
         if (h_old, h_new) != (pair.older.file_sha256, pair.newer.file_sha256):  # validate -> use window
             raise _err('PT-SECONDARY-RUN', 'workdir-error', 'Could not prepare a private working folder '
                        '(input changed after validation).')
-        argv = build_argv(cap.path, workdir)
         try:
+            argv = build_argv(cap.path, workdir)
             env = build_env(Path(cap.path), workdir, environ=environ)
             result = runner(argv, cwd=workdir / 'cwd', env=env, cancel=cancel, timeout_seconds=timeout_seconds,
                             check_output=lambda: out_guard(workdir / 'out', max_bytes=output_limit),
@@ -185,6 +220,9 @@ def execute(cap: Capability, pair: BoundPair, raw_dir: Path, *, cancel: threadin
             raise _err('PT-SECONDARY-RUN', 'spawn-failed', f'Could not start BinDiff ({type(exc).__name__}); the '
                        'process could not be contained.') from None
         stdout, stderr = result.log_tail, result.stderr_tail
+        # Any non-clean stop discards out/ unread (SPEC-29 §4.4): a kill during the write phase leaves a valid
+        # looking .BinDiff with an empty `function` table (measured), so nothing below runs unless the process
+        # ended by itself with exit 0. The `finally` removes the whole workdir.
         if result.reason in ('cancelled', 'timeout'):
             return BindiffRaw(result.returncode, stdout, stderr, result.reason)
         if result.reason == 'output-limit':
@@ -195,14 +233,20 @@ def execute(cap: Capability, pair: BoundPair, raw_dir: Path, *, cancel: threadin
                        'files; the result was discarded.')
         if result.reason:
             raise _err('PT-SECONDARY-RUN', 'stopped', f'BinDiff was stopped ({sanitize(result.reason, 40)}).')
+        if result.returncode < 0:
+            raise _err('PT-SECONDARY-RUN', 'nonzero-exit', f'BinDiff terminated abnormally ('
+                       f'{exit_text(result.returncode)}); its partial output was discarded.')
         if result.returncode != 0:
             line = sanitize(first_error_line(stderr or stdout))
             raise _err('PT-SECONDARY-RUN', 'nonzero-exit', f'BinDiff reported an error: {line or "no message"} '
-                       f'(exit {result.returncode}).')
+                       f'({exit_text(result.returncode)}).')
         out = workdir / 'out'
         entries = sorted(out.iterdir())
         expected = out / EXPECTED_NAME
         if not entries:
+            if stdout.lstrip().startswith(USAGE_BANNER):  # exit 0 + usage text: inputs were not diffed
+                raise _err('PT-SECONDARY-RUN', 'output-missing', 'BinDiff printed its usage text instead of '
+                           'comparing the inputs and wrote no result file.')
             raise _err('PT-SECONDARY-RUN', 'output-missing', 'BinDiff finished without writing a result file.')
         if entries != [expected] or expected.is_symlink() or not expected.is_file():
             raise _err('PT-SECONDARY-RUN', 'output-ambiguous', 'BinDiff produced an unexpected set of output '
