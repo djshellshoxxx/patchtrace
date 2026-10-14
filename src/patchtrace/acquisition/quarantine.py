@@ -13,6 +13,7 @@ import stat
 import struct
 import tempfile
 import zlib
+from collections.abc import Callable
 from pathlib import Path
 
 from ..ingestion import validate_pe
@@ -94,12 +95,12 @@ def identify(path: Path) -> tuple[str, int | None]:
 
 
 def acquire(planned: PlannedDownload, consent: AcquisitionConsent, staging: Path,
-            transport: Transport) -> AcquiredArtifact:
+            transport: Transport, progress: Callable[[int, int], None] | None = None) -> AcquiredArtifact:
     """Download, verify and identify one planned file into `staging/<side>/<file_name>`."""
     name = validate_file_name(planned.file_name)
     side_dir = Path(staging) / planned.side
     side_dir.mkdir(mode=0o700, exist_ok=False)
-    got = transport.download(planned, consent, side_dir)
+    got = transport.download(planned, consent, side_dir, progress)
     final = side_dir / name
     os.replace(got.path, final)
     final.chmod(stat.S_IREAD)

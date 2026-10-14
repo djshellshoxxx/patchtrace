@@ -269,3 +269,23 @@ def test_connection_errors_and_timeouts(tmp_path):
     with pytest.raises(AcquisitionError) as err:
         t.download(planned(), consent(URL), tmp_path)
     assert err.value.code == 'PT-ACQ-NETWORK'
+
+
+def test_download_reports_monotonic_byte_progress_ending_at_total(tmp_path, monkeypatch):
+    monkeypatch.setattr(tr, '_CHUNK', 10)
+    body = bytes(range(250)) * 2
+    t, _ = make(Opener(Resp(200, body)))
+    seen = []
+    got = t.download(planned(body), consent(URL), tmp_path, lambda done, total: seen.append((done, total)))
+    assert got.size == len(body)
+    assert seen[0] == (0, len(body)) and seen[-1] == (len(body), len(body))
+    assert [d for d, _ in seen] == sorted(d for d, _ in seen) and {t for _, t in seen} == {len(body)}
+
+
+def test_progress_restarts_at_zero_on_retry_and_is_optional(tmp_path):
+    t, sleeps = make(Opener(Resp(503), Resp(200, BODY)))
+    seen = []
+    t.download(planned(), consent(URL), tmp_path, lambda done, total: seen.append(done))
+    assert seen[0] == 0 and seen[-1] == len(BODY) and sleeps
+    t2, _ = make(Opener(Resp(200, BODY)))
+    assert t2.download(planned(), consent(URL), tmp_path / '.', None).size == len(BODY)
