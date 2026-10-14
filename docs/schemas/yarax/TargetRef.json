@@ -1,0 +1,98 @@
+{
+  "$id": "https://patchtrace.local/schemas/yarax/1/TargetRef.json",
+  "additionalProperties": false,
+  "properties": {
+    "advisory_says": {
+      "default": "",
+      "maxLength": 512,
+      "title": "Advisory Says",
+      "type": "string"
+    },
+    "expect": {
+      "default": "unknown",
+      "enum": [
+        "hit",
+        "no-hit",
+        "unknown"
+      ],
+      "title": "Expect",
+      "type": "string"
+    },
+    "file_version": {
+      "default": "",
+      "maxLength": 64,
+      "title": "File Version",
+      "type": "string"
+    },
+    "kb": {
+      "default": [],
+      "items": {
+        "pattern": "^KB\\d{6,8}$",
+        "type": "string"
+      },
+      "title": "Kb",
+      "type": "array"
+    },
+    "label": {
+      "default": "",
+      "maxLength": 120,
+      "title": "Label",
+      "type": "string"
+    },
+    "ordinal": {
+      "anyOf": [
+        {
+          "minimum": 0,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Ordinal"
+    },
+    "role": {
+      "enum": [
+        "older-anchor",
+        "newer-anchor",
+        "series",
+        "extra",
+        "clean",
+        "control"
+      ],
+      "title": "Role",
+      "type": "string"
+    },
+    "sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Sha256",
+      "type": "string"
+    },
+    "size": {
+      "maximum": 134217728,
+      "minimum": 0,
+      "title": "Size",
+      "type": "integer"
+    },
+    "target_id": {
+      "maxLength": 128,
+      "minLength": 1,
+      "title": "Target Id",
+      "type": "string"
+    },
+    "toolchain_flag": {
+      "default": false,
+      "title": "Toolchain Flag",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "target_id",
+    "role",
+    "sha256",
+    "size"
+  ],
+  "title": "TargetRef",
+  "type": "object"
+}

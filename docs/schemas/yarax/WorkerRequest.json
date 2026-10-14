@@ -1,0 +1,119 @@
+{
+  "$defs": {
+    "RuleText": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "pattern": "^PT_[0-9a-f]{12}_(older|newer)$",
+          "title": "Name",
+          "type": "string"
+        },
+        "text": {
+          "maxLength": 65536,
+          "minLength": 1,
+          "title": "Text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "text"
+      ],
+      "title": "RuleText",
+      "type": "object"
+    },
+    "WorkerTarget": {
+      "additionalProperties": false,
+      "properties": {
+        "path": {
+          "maxLength": 1024,
+          "minLength": 1,
+          "title": "Path",
+          "type": "string"
+        },
+        "sha256": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Sha256"
+        },
+        "size": {
+          "maximum": 134217728,
+          "minimum": 0,
+          "title": "Size",
+          "type": "integer"
+        },
+        "target_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Target Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "target_id",
+        "path",
+        "sha256",
+        "size"
+      ],
+      "title": "WorkerTarget",
+      "type": "object"
+    }
+  },
+  "$id": "https://patchtrace.local/schemas/yarax/1/WorkerRequest.json",
+  "additionalProperties": false,
+  "properties": {
+    "limits": {
+      "additionalProperties": {
+        "type": "integer"
+      },
+      "title": "Limits",
+      "type": "object"
+    },
+    "op": {
+      "enum": [
+        "probe",
+        "lint",
+        "scan"
+      ],
+      "title": "Op",
+      "type": "string"
+    },
+    "result": {
+      "maxLength": 1024,
+      "minLength": 1,
+      "title": "Result",
+      "type": "string"
+    },
+    "rules": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/RuleText"
+      },
+      "maxItems": 50,
+      "title": "Rules",
+      "type": "array"
+    },
+    "targets": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/WorkerTarget"
+      },
+      "title": "Targets",
+      "type": "array"
+    }
+  },
+  "required": [
+    "op",
+    "limits",
+    "result"
+  ],
+  "title": "WorkerRequest",
+  "type": "object"
+}

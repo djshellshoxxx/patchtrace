@@ -1,0 +1,748 @@
+{
+  "CellResult": {
+    "invalid": [
+      {
+        "label": "timeout carrying a verdict",
+        "value": {
+          "elapsed_ms": 12,
+          "hits": 0,
+          "offsets": [],
+          "reason": "",
+          "rule_name": "PT_aaaaaaaaaaaa_older",
+          "rvas": [],
+          "state": "timeout",
+          "target_id": "t-1",
+          "verdict": "as-expected"
+        }
+      },
+      {
+        "label": "hit without hits",
+        "value": {
+          "elapsed_ms": 12,
+          "hits": 0,
+          "offsets": [
+            1101
+          ],
+          "reason": "",
+          "rule_name": "PT_aaaaaaaaaaaa_older",
+          "rvas": [
+            4173
+          ],
+          "state": "hit",
+          "target_id": "t-1",
+          "verdict": "as-expected"
+        }
+      }
+    ],
+    "valid": [
+      {
+        "elapsed_ms": 12,
+        "hits": 1,
+        "offsets": [
+          1101
+        ],
+        "reason": "",
+        "rule_name": "PT_aaaaaaaaaaaa_older",
+        "rvas": [
+          4173
+        ],
+        "state": "hit",
+        "target_id": "t-1",
+        "verdict": "as-expected"
+      }
+    ]
+  },
+  "EngineStamp": {
+    "invalid": [],
+    "valid": [
+      {
+        "decoder": "iced-x86",
+        "decoder_version": "1.21.0",
+        "engine": "yara-x",
+        "grammar": "yrx-gen/1",
+        "version": "1.21.0",
+        "version_source": "metadata",
+        "worker": "rules-worker/1"
+      }
+    ]
+  },
+  "ExportRecord": {
+    "invalid": [],
+    "valid": [
+      {
+        "basename": "PT_aaaaaaaaaaaa_older.yar",
+        "export_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "exported_at": "2026-01-02T03:04:07Z",
+        "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "version_id": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "warnings": []
+      }
+    ]
+  },
+  "MatrixRun": {
+    "invalid": [],
+    "valid": [
+      {
+        "anomalies": [],
+        "cache_key": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "cells": [
+          {
+            "elapsed_ms": 12,
+            "hits": 1,
+            "offsets": [
+              1101
+            ],
+            "reason": "",
+            "rule_name": "PT_aaaaaaaaaaaa_older",
+            "rvas": [
+              4173
+            ],
+            "state": "hit",
+            "target_id": "t-1",
+            "verdict": "as-expected"
+          }
+        ],
+        "engine": {
+          "decoder": "iced-x86",
+          "decoder_version": "1.21.0",
+          "engine": "yara-x",
+          "grammar": "yrx-gen/1",
+          "version": "1.21.0",
+          "version_source": "metadata",
+          "worker": "rules-worker/1"
+        },
+        "limits": {
+          "cells": 105000
+        },
+        "run_id": "run-2",
+        "status": "complete",
+        "targets": [
+          {
+            "advisory_says": "",
+            "expect": "hit",
+            "file_version": "",
+            "kb": [],
+            "label": "older anchor",
+            "ordinal": null,
+            "role": "older-anchor",
+            "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "size": 4096,
+            "target_id": "t-1",
+            "toolchain_flag": false
+          }
+        ]
+      }
+    ]
+  },
+  "PairSource": {
+    "invalid": [
+      {
+        "label": "extra field",
+        "value": {
+          "analyst_confirmed_material": false,
+          "category": "removed",
+          "cwe": [],
+          "finding_id": null,
+          "match_id": "m-1",
+          "materiality": "material",
+          "newer": null,
+          "newer_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "older": {
+            "extent": "pdata",
+            "name": "",
+            "rva": 4173,
+            "size": 96
+          },
+          "older_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "project_id": "proj-1",
+          "review": "accepted",
+          "revision": 3,
+          "run_id": "run-1",
+          "surprise": 1
+        }
+      },
+      {
+        "label": "unreviewed pair",
+        "value": {
+          "analyst_confirmed_material": false,
+          "category": "removed",
+          "cwe": [],
+          "finding_id": null,
+          "match_id": "m-1",
+          "materiality": "material",
+          "newer": null,
+          "newer_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "older": {
+            "extent": "pdata",
+            "name": "",
+            "rva": 4173,
+            "size": 96
+          },
+          "older_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "project_id": "proj-1",
+          "review": "pending",
+          "revision": 3,
+          "run_id": "run-1"
+        }
+      },
+      {
+        "label": "removed pair with a newer body",
+        "value": {
+          "analyst_confirmed_material": false,
+          "category": "removed",
+          "cwe": [],
+          "finding_id": null,
+          "match_id": "m-1",
+          "materiality": "material",
+          "newer": {
+            "extent": "pdata",
+            "name": "",
+            "rva": 4173,
+            "size": 96
+          },
+          "newer_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "older": {
+            "extent": "pdata",
+            "name": "",
+            "rva": 4173,
+            "size": 96
+          },
+          "older_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "project_id": "proj-1",
+          "review": "accepted",
+          "revision": 3,
+          "run_id": "run-1"
+        }
+      }
+    ],
+    "valid": [
+      {
+        "analyst_confirmed_material": false,
+        "category": "removed",
+        "cwe": [],
+        "finding_id": null,
+        "match_id": "m-1",
+        "materiality": "material",
+        "newer": null,
+        "newer_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "older": {
+          "extent": "pdata",
+          "name": "",
+          "rva": 4173,
+          "size": 96
+        },
+        "older_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "project_id": "proj-1",
+        "review": "accepted",
+        "revision": 3,
+        "run_id": "run-1"
+      }
+    ]
+  },
+  "RuleCandidate": {
+    "invalid": [
+      {
+        "label": "rule text does not match its hash",
+        "value": {
+          "candidate_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "compile_warnings": [],
+          "direction": "older",
+          "engine": {
+            "decoder": "iced-x86",
+            "decoder_version": "1.21.0",
+            "engine": "yara-x",
+            "grammar": "yrx-gen/1",
+            "version": "1.21.0",
+            "version_source": "metadata",
+            "worker": "rules-worker/1"
+          },
+          "features": [
+            {
+              "included": true,
+              "kind": "bytes",
+              "length": 16,
+              "literal": 8,
+              "longest_run": 1,
+              "mask": [
+                "rip-disp"
+              ],
+              "mask_source": "iced-x86",
+              "other_hits": 0,
+              "pattern": "48 8B ?? ?? 48 8B ?? ?? 48 8B ?? ?? 48 8B ?? ??",
+              "pins": [
+                {
+                  "disp_offset": 3,
+                  "dll": "kernel32.dll",
+                  "end_offset": 7,
+                  "name": "TerminateProcess"
+                }
+              ],
+              "separation": "older-only",
+              "side": "older",
+              "source_hits": 1,
+              "window_rva": 4173
+            }
+          ],
+          "gates": [
+            {
+              "detail": "",
+              "gate_id": "sep",
+              "measured": 1,
+              "state": "pass"
+            }
+          ],
+          "lineage_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "rule_name": "PT_aaaaaaaaaaaa_older",
+          "rule_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "rule_text": "rule PT_aaaaaaaaaaaa_older : patchtrace older_side\n{\n  condition:\n    uint16(0) == 0x5A4D\n}\n",
+          "source": {
+            "analyst_confirmed_material": false,
+            "category": "removed",
+            "cwe": [],
+            "finding_id": null,
+            "match_id": "m-1",
+            "materiality": "material",
+            "newer": null,
+            "newer_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "older": {
+              "extent": "pdata",
+              "name": "",
+              "rva": 4173,
+              "size": 96
+            },
+            "older_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "project_id": "proj-1",
+            "review": "accepted",
+            "revision": 3,
+            "run_id": "run-1"
+          },
+          "unvetted": false
+        }
+      },
+      {
+        "label": "rule name for the other direction",
+        "value": {
+          "candidate_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "compile_warnings": [],
+          "direction": "newer",
+          "engine": {
+            "decoder": "iced-x86",
+            "decoder_version": "1.21.0",
+            "engine": "yara-x",
+            "grammar": "yrx-gen/1",
+            "version": "1.21.0",
+            "version_source": "metadata",
+            "worker": "rules-worker/1"
+          },
+          "features": [
+            {
+              "included": true,
+              "kind": "bytes",
+              "length": 16,
+              "literal": 8,
+              "longest_run": 1,
+              "mask": [
+                "rip-disp"
+              ],
+              "mask_source": "iced-x86",
+              "other_hits": 0,
+              "pattern": "48 8B ?? ?? 48 8B ?? ?? 48 8B ?? ?? 48 8B ?? ??",
+              "pins": [
+                {
+                  "disp_offset": 3,
+                  "dll": "kernel32.dll",
+                  "end_offset": 7,
+                  "name": "TerminateProcess"
+                }
+              ],
+              "separation": "older-only",
+              "side": "older",
+              "source_hits": 1,
+              "window_rva": 4173
+            }
+          ],
+          "gates": [
+            {
+              "detail": "",
+              "gate_id": "sep",
+              "measured": 1,
+              "state": "pass"
+            }
+          ],
+          "lineage_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "rule_name": "PT_aaaaaaaaaaaa_older",
+          "rule_sha256": "35b5e94fd11f516c5a5264737591d097f08c8ae31c07552689ad7450e36c8a66",
+          "rule_text": "rule PT_aaaaaaaaaaaa_older : patchtrace older_side\n{\n  condition:\n    uint16(0) == 0x5A4D\n}\n",
+          "source": {
+            "analyst_confirmed_material": false,
+            "category": "removed",
+            "cwe": [],
+            "finding_id": null,
+            "match_id": "m-1",
+            "materiality": "material",
+            "newer": null,
+            "newer_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "older": {
+              "extent": "pdata",
+              "name": "",
+              "rva": 4173,
+              "size": 96
+            },
+            "older_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "project_id": "proj-1",
+            "review": "accepted",
+            "revision": 3,
+            "run_id": "run-1"
+          },
+          "unvetted": false
+        }
+      }
+    ],
+    "valid": [
+      {
+        "candidate_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "compile_warnings": [],
+        "direction": "older",
+        "engine": {
+          "decoder": "iced-x86",
+          "decoder_version": "1.21.0",
+          "engine": "yara-x",
+          "grammar": "yrx-gen/1",
+          "version": "1.21.0",
+          "version_source": "metadata",
+          "worker": "rules-worker/1"
+        },
+        "features": [
+          {
+            "included": true,
+            "kind": "bytes",
+            "length": 16,
+            "literal": 8,
+            "longest_run": 1,
+            "mask": [
+              "rip-disp"
+            ],
+            "mask_source": "iced-x86",
+            "other_hits": 0,
+            "pattern": "48 8B ?? ?? 48 8B ?? ?? 48 8B ?? ?? 48 8B ?? ??",
+            "pins": [
+              {
+                "disp_offset": 3,
+                "dll": "kernel32.dll",
+                "end_offset": 7,
+                "name": "TerminateProcess"
+              }
+            ],
+            "separation": "older-only",
+            "side": "older",
+            "source_hits": 1,
+            "window_rva": 4173
+          }
+        ],
+        "gates": [
+          {
+            "detail": "",
+            "gate_id": "sep",
+            "measured": 1,
+            "state": "pass"
+          }
+        ],
+        "lineage_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "rule_name": "PT_aaaaaaaaaaaa_older",
+        "rule_sha256": "35b5e94fd11f516c5a5264737591d097f08c8ae31c07552689ad7450e36c8a66",
+        "rule_text": "rule PT_aaaaaaaaaaaa_older : patchtrace older_side\n{\n  condition:\n    uint16(0) == 0x5A4D\n}\n",
+        "source": {
+          "analyst_confirmed_material": false,
+          "category": "removed",
+          "cwe": [],
+          "finding_id": null,
+          "match_id": "m-1",
+          "materiality": "material",
+          "newer": null,
+          "newer_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "older": {
+            "extent": "pdata",
+            "name": "",
+            "rva": 4173,
+            "size": 96
+          },
+          "older_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "project_id": "proj-1",
+          "review": "accepted",
+          "revision": 3,
+          "run_id": "run-1"
+        },
+        "unvetted": false
+      }
+    ]
+  },
+  "RuleDecision": {
+    "invalid": [
+      {
+        "label": "accept without a label",
+        "value": {
+          "action": "accept",
+          "analyst_label": "",
+          "candidate_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "cve": [
+            "CVE-2026-0001"
+          ],
+          "cwe": [
+            "CWE-416"
+          ],
+          "decided_at": "2026-01-02T03:04:05Z",
+          "decision_id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "kb": [
+            "KB5000001"
+          ],
+          "note": ""
+        }
+      },
+      {
+        "label": "malformed CVE",
+        "value": {
+          "action": "accept",
+          "analyst_label": "older-build removal",
+          "candidate_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "cve": [
+            "CVE-26-1"
+          ],
+          "cwe": [
+            "CWE-416"
+          ],
+          "decided_at": "2026-01-02T03:04:05Z",
+          "decision_id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "kb": [
+            "KB5000001"
+          ],
+          "note": ""
+        }
+      }
+    ],
+    "valid": [
+      {
+        "action": "accept",
+        "analyst_label": "older-build removal",
+        "candidate_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "cve": [
+          "CVE-2026-0001"
+        ],
+        "cwe": [
+          "CWE-416"
+        ],
+        "decided_at": "2026-01-02T03:04:05Z",
+        "decision_id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "kb": [
+          "KB5000001"
+        ],
+        "note": ""
+      }
+    ]
+  },
+  "RuleVersion": {
+    "invalid": [
+      {
+        "label": "first version with a predecessor",
+        "value": {
+          "candidate_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "created_at": "2026-01-02T03:04:06Z",
+          "decision_id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "engine": {
+            "decoder": "iced-x86",
+            "decoder_version": "1.21.0",
+            "engine": "yara-x",
+            "grammar": "yrx-gen/1",
+            "version": "1.21.0",
+            "version_source": "metadata",
+            "worker": "rules-worker/1"
+          },
+          "lineage_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "rule_sha256": "35b5e94fd11f516c5a5264737591d097f08c8ae31c07552689ad7450e36c8a66",
+          "rule_text": "rule PT_aaaaaaaaaaaa_older : patchtrace older_side\n{\n  condition:\n    uint16(0) == 0x5A4D\n}\n",
+          "source": {
+            "analyst_confirmed_material": false,
+            "category": "removed",
+            "cwe": [],
+            "finding_id": null,
+            "match_id": "m-1",
+            "materiality": "material",
+            "newer": null,
+            "newer_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "older": {
+              "extent": "pdata",
+              "name": "",
+              "rva": 4173,
+              "size": 96
+            },
+            "older_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "project_id": "proj-1",
+            "review": "accepted",
+            "revision": 3,
+            "run_id": "run-1"
+          },
+          "supersedes": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "version": 1,
+          "version_id": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+        }
+      }
+    ],
+    "valid": [
+      {
+        "candidate_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "created_at": "2026-01-02T03:04:06Z",
+        "decision_id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "engine": {
+          "decoder": "iced-x86",
+          "decoder_version": "1.21.0",
+          "engine": "yara-x",
+          "grammar": "yrx-gen/1",
+          "version": "1.21.0",
+          "version_source": "metadata",
+          "worker": "rules-worker/1"
+        },
+        "lineage_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "rule_sha256": "35b5e94fd11f516c5a5264737591d097f08c8ae31c07552689ad7450e36c8a66",
+        "rule_text": "rule PT_aaaaaaaaaaaa_older : patchtrace older_side\n{\n  condition:\n    uint16(0) == 0x5A4D\n}\n",
+        "source": {
+          "analyst_confirmed_material": false,
+          "category": "removed",
+          "cwe": [],
+          "finding_id": null,
+          "match_id": "m-1",
+          "materiality": "material",
+          "newer": null,
+          "newer_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "older": {
+            "extent": "pdata",
+            "name": "",
+            "rva": 4173,
+            "size": 96
+          },
+          "older_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "project_id": "proj-1",
+          "review": "accepted",
+          "revision": 3,
+          "run_id": "run-1"
+        },
+        "supersedes": null,
+        "version": 1,
+        "version_id": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+      }
+    ]
+  },
+  "TargetRef": {
+    "invalid": [],
+    "valid": [
+      {
+        "advisory_says": "",
+        "expect": "hit",
+        "file_version": "",
+        "kb": [],
+        "label": "older anchor",
+        "ordinal": null,
+        "role": "older-anchor",
+        "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "size": 4096,
+        "target_id": "t-1",
+        "toolchain_flag": false
+      }
+    ]
+  },
+  "WorkerRequest": {
+    "invalid": [],
+    "valid": [
+      {
+        "limits": {
+          "target_timeout_s": 30
+        },
+        "op": "scan",
+        "result": "result.json",
+        "rules": [
+          {
+            "name": "PT_aaaaaaaaaaaa_older",
+            "text": "rule PT_aaaaaaaaaaaa_older : patchtrace older_side\n{\n  condition:\n    uint16(0) == 0x5A4D\n}\n"
+          }
+        ],
+        "targets": [
+          {
+            "path": "sample.bin",
+            "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "size": 4096,
+            "target_id": "t-1"
+          }
+        ]
+      }
+    ]
+  },
+  "WorkerResult": {
+    "invalid": [
+      {
+        "label": "ok without an engine stamp",
+        "value": {
+          "cells": [
+            {
+              "elapsed_ms": 12,
+              "hits": 1,
+              "offsets": [
+                1101
+              ],
+              "reason": "",
+              "rule_name": "PT_aaaaaaaaaaaa_older",
+              "rvas": [
+                4173
+              ],
+              "state": "hit",
+              "target_id": "t-1",
+              "verdict": "as-expected"
+            }
+          ],
+          "engine": null,
+          "error_code": null,
+          "kind": "ok",
+          "lint": [],
+          "message": ""
+        }
+      },
+      {
+        "label": "error without a code",
+        "value": {
+          "kind": "error"
+        }
+      }
+    ],
+    "valid": [
+      {
+        "cells": [
+          {
+            "elapsed_ms": 12,
+            "hits": 1,
+            "offsets": [
+              1101
+            ],
+            "reason": "",
+            "rule_name": "PT_aaaaaaaaaaaa_older",
+            "rvas": [
+              4173
+            ],
+            "state": "hit",
+            "target_id": "t-1",
+            "verdict": "as-expected"
+          }
+        ],
+        "engine": {
+          "decoder": "iced-x86",
+          "decoder_version": "1.21.0",
+          "engine": "yara-x",
+          "grammar": "yrx-gen/1",
+          "version": "1.21.0",
+          "version_source": "metadata",
+          "worker": "rules-worker/1"
+        },
+        "error_code": null,
+        "kind": "ok",
+        "lint": [],
+        "message": ""
+      }
+    ]
+  }
+}

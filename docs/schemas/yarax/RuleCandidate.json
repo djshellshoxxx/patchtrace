@@ -1,0 +1,815 @@
+{
+  "$defs": {
+    "BytesFeature": {
+      "additionalProperties": false,
+      "properties": {
+        "included": {
+          "default": true,
+          "title": "Included",
+          "type": "boolean"
+        },
+        "kind": {
+          "const": "bytes",
+          "default": "bytes",
+          "title": "Kind",
+          "type": "string"
+        },
+        "length": {
+          "maximum": 512,
+          "minimum": 16,
+          "title": "Length",
+          "type": "integer"
+        },
+        "literal": {
+          "maximum": 512,
+          "minimum": 0,
+          "title": "Literal",
+          "type": "integer"
+        },
+        "longest_run": {
+          "maximum": 512,
+          "minimum": 0,
+          "title": "Longest Run",
+          "type": "integer"
+        },
+        "mask": {
+          "default": [],
+          "items": {
+            "enum": [
+              "rip-disp",
+              "branch-ext",
+              "reloc",
+              "addr-ref"
+            ],
+            "type": "string"
+          },
+          "title": "Mask",
+          "type": "array"
+        },
+        "mask_source": {
+          "enum": [
+            "iced-x86",
+            "unified-ir"
+          ],
+          "title": "Mask Source",
+          "type": "string"
+        },
+        "other_hits": {
+          "minimum": 0,
+          "title": "Other Hits",
+          "type": "integer"
+        },
+        "pattern": {
+          "pattern": "^([0-9A-F]{2}|\\?\\?)( ([0-9A-F]{2}|\\?\\?))*$",
+          "title": "Pattern",
+          "type": "string"
+        },
+        "pins": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/CallPin"
+          },
+          "maxItems": 4,
+          "title": "Pins",
+          "type": "array"
+        },
+        "separation": {
+          "enum": [
+            "older-only",
+            "newer-only",
+            "both",
+            "neither",
+            "unknown"
+          ],
+          "title": "Separation",
+          "type": "string"
+        },
+        "side": {
+          "enum": [
+            "older",
+            "newer"
+          ],
+          "title": "Side",
+          "type": "string"
+        },
+        "source_hits": {
+          "minimum": 0,
+          "title": "Source Hits",
+          "type": "integer"
+        },
+        "window_rva": {
+          "maximum": 4294967295,
+          "minimum": 0,
+          "title": "Window Rva",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "side",
+        "window_rva",
+        "length",
+        "pattern",
+        "literal",
+        "longest_run",
+        "mask_source",
+        "source_hits",
+        "other_hits",
+        "separation"
+      ],
+      "title": "BytesFeature",
+      "type": "object"
+    },
+    "CallPin": {
+      "additionalProperties": false,
+      "properties": {
+        "disp_offset": {
+          "exclusiveMaximum": 512,
+          "minimum": 0,
+          "title": "Disp Offset",
+          "type": "integer"
+        },
+        "dll": {
+          "maxLength": 256,
+          "title": "Dll",
+          "type": "string"
+        },
+        "end_offset": {
+          "maximum": 512,
+          "minimum": 0,
+          "title": "End Offset",
+          "type": "integer"
+        },
+        "name": {
+          "maxLength": 256,
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "disp_offset",
+        "end_offset",
+        "dll",
+        "name"
+      ],
+      "title": "CallPin",
+      "type": "object"
+    },
+    "CapabilityFeature": {
+      "additionalProperties": false,
+      "properties": {
+        "api_gates": {
+          "default": [],
+          "items": {
+            "maxLength": 256,
+            "type": "string"
+          },
+          "title": "Api Gates",
+          "type": "array"
+        },
+        "attack": {
+          "default": [],
+          "items": {
+            "maxLength": 256,
+            "type": "string"
+          },
+          "title": "Attack",
+          "type": "array"
+        },
+        "classification": {
+          "default": "",
+          "maxLength": 512,
+          "title": "Classification",
+          "type": "string"
+        },
+        "included": {
+          "default": false,
+          "title": "Included",
+          "type": "boolean"
+        },
+        "kind": {
+          "const": "capability",
+          "default": "capability",
+          "title": "Kind",
+          "type": "string"
+        },
+        "namespace": {
+          "maxLength": 256,
+          "title": "Namespace",
+          "type": "string"
+        },
+        "rule_id": {
+          "maxLength": 256,
+          "title": "Rule Id",
+          "type": "string"
+        },
+        "separation": {
+          "enum": [
+            "older-only",
+            "newer-only",
+            "both",
+            "neither",
+            "unknown"
+          ],
+          "title": "Separation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "rule_id",
+        "namespace",
+        "separation"
+      ],
+      "title": "CapabilityFeature",
+      "type": "object"
+    },
+    "EngineStamp": {
+      "additionalProperties": false,
+      "properties": {
+        "decoder": {
+          "maxLength": 32,
+          "minLength": 1,
+          "title": "Decoder",
+          "type": "string"
+        },
+        "decoder_version": {
+          "maxLength": 32,
+          "minLength": 1,
+          "title": "Decoder Version",
+          "type": "string"
+        },
+        "engine": {
+          "const": "yara-x",
+          "default": "yara-x",
+          "title": "Engine",
+          "type": "string"
+        },
+        "grammar": {
+          "const": "yrx-gen/1",
+          "default": "yrx-gen/1",
+          "title": "Grammar",
+          "type": "string"
+        },
+        "version": {
+          "maxLength": 32,
+          "minLength": 1,
+          "title": "Version",
+          "type": "string"
+        },
+        "version_source": {
+          "enum": [
+            "metadata",
+            "pin"
+          ],
+          "title": "Version Source",
+          "type": "string"
+        },
+        "worker": {
+          "const": "rules-worker/1",
+          "default": "rules-worker/1",
+          "title": "Worker",
+          "type": "string"
+        }
+      },
+      "required": [
+        "version",
+        "version_source",
+        "decoder",
+        "decoder_version"
+      ],
+      "title": "EngineStamp",
+      "type": "object"
+    },
+    "FunctionRef": {
+      "additionalProperties": false,
+      "properties": {
+        "extent": {
+          "enum": [
+            "pdata",
+            "unified-ir",
+            "unknown"
+          ],
+          "title": "Extent",
+          "type": "string"
+        },
+        "name": {
+          "default": "",
+          "maxLength": 256,
+          "title": "Name",
+          "type": "string"
+        },
+        "rva": {
+          "maximum": 4294967295,
+          "minimum": 0,
+          "title": "Rva",
+          "type": "integer"
+        },
+        "size": {
+          "maximum": 65536,
+          "minimum": 0,
+          "title": "Size",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "rva",
+        "size",
+        "extent"
+      ],
+      "title": "FunctionRef",
+      "type": "object"
+    },
+    "Gate": {
+      "additionalProperties": false,
+      "properties": {
+        "detail": {
+          "default": "",
+          "maxLength": 512,
+          "title": "Detail",
+          "type": "string"
+        },
+        "gate_id": {
+          "enum": [
+            "elig",
+            "len",
+            "wild",
+            "uniq",
+            "sep",
+            "compile",
+            "secret",
+            "dist"
+          ],
+          "title": "Gate Id",
+          "type": "string"
+        },
+        "measured": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Measured"
+        },
+        "state": {
+          "enum": [
+            "pass",
+            "fail",
+            "unknown",
+            "waived"
+          ],
+          "title": "State",
+          "type": "string"
+        }
+      },
+      "required": [
+        "gate_id",
+        "state"
+      ],
+      "title": "Gate",
+      "type": "object"
+    },
+    "ImportFeature": {
+      "additionalProperties": false,
+      "properties": {
+        "delay": {
+          "default": false,
+          "title": "Delay",
+          "type": "boolean"
+        },
+        "dll": {
+          "maxLength": 256,
+          "title": "Dll",
+          "type": "string"
+        },
+        "included": {
+          "default": false,
+          "title": "Included",
+          "type": "boolean"
+        },
+        "kind": {
+          "const": "import",
+          "default": "import",
+          "title": "Kind",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 256,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "ordinal": {
+          "anyOf": [
+            {
+              "maximum": 65535,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Ordinal"
+        },
+        "origin": {
+          "enum": [
+            "pe-imports",
+            "capa-api"
+          ],
+          "title": "Origin",
+          "type": "string"
+        },
+        "separation": {
+          "enum": [
+            "older-only",
+            "newer-only",
+            "both",
+            "neither",
+            "unknown"
+          ],
+          "title": "Separation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "dll",
+        "origin",
+        "separation"
+      ],
+      "title": "ImportFeature",
+      "type": "object"
+    },
+    "LintFinding": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "maxLength": 64,
+          "minLength": 1,
+          "title": "Code",
+          "type": "string"
+        },
+        "message": {
+          "maxLength": 512,
+          "title": "Message",
+          "type": "string"
+        },
+        "rule_name": {
+          "maxLength": 256,
+          "title": "Rule Name",
+          "type": "string"
+        },
+        "severity": {
+          "enum": [
+            "warning",
+            "error"
+          ],
+          "title": "Severity",
+          "type": "string"
+        }
+      },
+      "required": [
+        "rule_name",
+        "code",
+        "severity",
+        "message"
+      ],
+      "title": "LintFinding",
+      "type": "object"
+    },
+    "PairSource": {
+      "additionalProperties": false,
+      "properties": {
+        "analyst_confirmed_material": {
+          "default": false,
+          "title": "Analyst Confirmed Material",
+          "type": "boolean"
+        },
+        "category": {
+          "enum": [
+            "modified",
+            "added",
+            "removed"
+          ],
+          "title": "Category",
+          "type": "string"
+        },
+        "cwe": {
+          "default": [],
+          "items": {
+            "pattern": "^CWE-\\d{1,5}$",
+            "type": "string"
+          },
+          "title": "Cwe",
+          "type": "array"
+        },
+        "finding_id": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Finding Id"
+        },
+        "match_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Match Id",
+          "type": "string"
+        },
+        "materiality": {
+          "maxLength": 512,
+          "title": "Materiality",
+          "type": "string"
+        },
+        "newer": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/FunctionRef"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "newer_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Newer Sha256",
+          "type": "string"
+        },
+        "older": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/FunctionRef"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "older_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Older Sha256",
+          "type": "string"
+        },
+        "project_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Project Id",
+          "type": "string"
+        },
+        "review": {
+          "const": "accepted",
+          "default": "accepted",
+          "title": "Review",
+          "type": "string"
+        },
+        "revision": {
+          "minimum": 0,
+          "title": "Revision",
+          "type": "integer"
+        },
+        "run_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Run Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_id",
+        "revision",
+        "run_id",
+        "older_sha256",
+        "newer_sha256",
+        "match_id",
+        "category",
+        "materiality"
+      ],
+      "title": "PairSource",
+      "type": "object"
+    },
+    "StringFeature": {
+      "additionalProperties": false,
+      "properties": {
+        "encoding": {
+          "enum": [
+            "ascii",
+            "wide",
+            "ascii-wide"
+          ],
+          "title": "Encoding",
+          "type": "string"
+        },
+        "evidence_run_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Evidence Run Id",
+          "type": "string"
+        },
+        "included": {
+          "default": false,
+          "title": "Included",
+          "type": "boolean"
+        },
+        "kind": {
+          "const": "string",
+          "default": "string",
+          "title": "Kind",
+          "type": "string"
+        },
+        "length": {
+          "maximum": 256,
+          "minimum": 1,
+          "title": "Length",
+          "type": "integer"
+        },
+        "linked_by": {
+          "enum": [
+            "xref",
+            "file-level"
+          ],
+          "title": "Linked By",
+          "type": "string"
+        },
+        "offset": {
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "separation": {
+          "enum": [
+            "older-only",
+            "newer-only",
+            "both",
+            "neither",
+            "unknown"
+          ],
+          "title": "Separation",
+          "type": "string"
+        },
+        "side": {
+          "enum": [
+            "older",
+            "newer"
+          ],
+          "title": "Side",
+          "type": "string"
+        },
+        "text": {
+          "maxLength": 1024,
+          "title": "Text",
+          "type": "string"
+        },
+        "value_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Value Sha256",
+          "type": "string"
+        }
+      },
+      "required": [
+        "side",
+        "value_sha256",
+        "length",
+        "text",
+        "encoding",
+        "offset",
+        "evidence_run_id",
+        "linked_by",
+        "separation"
+      ],
+      "title": "StringFeature",
+      "type": "object"
+    }
+  },
+  "$id": "https://patchtrace.local/schemas/yarax/1/RuleCandidate.json",
+  "additionalProperties": false,
+  "properties": {
+    "candidate_id": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Candidate Id",
+      "type": "string"
+    },
+    "compile_warnings": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/LintFinding"
+      },
+      "maxItems": 64,
+      "title": "Compile Warnings",
+      "type": "array"
+    },
+    "direction": {
+      "enum": [
+        "older",
+        "newer"
+      ],
+      "title": "Direction",
+      "type": "string"
+    },
+    "engine": {
+      "$ref": "#/$defs/EngineStamp"
+    },
+    "features": {
+      "items": {
+        "discriminator": {
+          "mapping": {
+            "bytes": "#/$defs/BytesFeature",
+            "capability": "#/$defs/CapabilityFeature",
+            "import": "#/$defs/ImportFeature",
+            "string": "#/$defs/StringFeature"
+          },
+          "propertyName": "kind"
+        },
+        "oneOf": [
+          {
+            "$ref": "#/$defs/BytesFeature"
+          },
+          {
+            "$ref": "#/$defs/StringFeature"
+          },
+          {
+            "$ref": "#/$defs/ImportFeature"
+          },
+          {
+            "$ref": "#/$defs/CapabilityFeature"
+          }
+        ]
+      },
+      "maxItems": 24,
+      "title": "Features",
+      "type": "array"
+    },
+    "gates": {
+      "items": {
+        "$ref": "#/$defs/Gate"
+      },
+      "maxItems": 8,
+      "title": "Gates",
+      "type": "array"
+    },
+    "lineage_id": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Lineage Id",
+      "type": "string"
+    },
+    "rule_name": {
+      "pattern": "^PT_[0-9a-f]{12}_(older|newer)$",
+      "title": "Rule Name",
+      "type": "string"
+    },
+    "rule_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Rule Sha256",
+      "type": "string"
+    },
+    "rule_text": {
+      "maxLength": 65536,
+      "minLength": 1,
+      "title": "Rule Text",
+      "type": "string"
+    },
+    "source": {
+      "$ref": "#/$defs/PairSource"
+    },
+    "unvetted": {
+      "default": false,
+      "title": "Unvetted",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "candidate_id",
+    "lineage_id",
+    "direction",
+    "source",
+    "features",
+    "rule_name",
+    "rule_text",
+    "rule_sha256",
+    "gates",
+    "engine"
+  ],
+  "title": "RuleCandidate",
+  "type": "object"
+}
