@@ -4,12 +4,13 @@ from __future__ import annotations
 import hashlib
 import ntpath
 import posixpath
+import re
 from collections.abc import Sequence
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Literal
 
-from pydantic import Field
+from pydantic import Field, field_validator, model_serializer
 
 from ..enrichment.identity import canonical_json, domain_id
 from .contracts import SecondaryError, SecondaryMatchSet, Sha256, _Strict
@@ -19,6 +20,9 @@ EngineId = Literal['ghidriff-baseline', 'bindiff', 'rz-diff']
 Status = Literal['ok', 'failed', 'cancelled', 'unsupported', 'timeout', 'cached']
 Orientation = Literal['older->newer']
 STDERR_STORED = 64 * 1024
+PROVENANCE_MAX_KEYS = 16
+PROVENANCE_MAX_CHARS = 256
+_PROVENANCE_KEY = re.compile(r'^[a-z0-9_]{1,64}$')
 
 
 class EngineRun(_Strict):
@@ -42,6 +46,27 @@ class EngineRun(_Strict):
     output_sha256: Sha256 | None
     match_set_id: str | None
     superseded_by: None = None
+    # SPEC-29 §5 append-only addition: bounded engine-specific provenance (e.g. BinExport input hashes,
+    # failure_kind). Omitted from serialised output when empty, so engine-run/1 rows written before it
+    # round-trip byte-identically.
+    provenance: dict[str, str] = Field(default_factory=dict)
+
+    @field_validator('provenance')
+    @classmethod
+    def _bounded(cls, value: dict[str, str]) -> dict[str, str]:
+        if len(value) > PROVENANCE_MAX_KEYS:
+            raise ValueError(f'provenance has more than {PROVENANCE_MAX_KEYS} keys')
+        for key, text in value.items():
+            if not _PROVENANCE_KEY.match(key) or len(text) > PROVENANCE_MAX_CHARS:
+                raise ValueError('provenance key must be [a-z0-9_]{1,64} and values at most 256 characters')
+        return value
+
+    @model_serializer(mode='wrap')
+    def _omit_empty(self, handler):
+        data = handler(self)
+        if not data.get('provenance'):
+            data.pop('provenance', None)
+        return data
 
 
 @dataclass(frozen=True)
@@ -64,9 +89,13 @@ def argv_digest(argv: Sequence[str], older: Path | str | None = None, newer: Pat
 
 
 def cache_key(engine: str, engine_version: str | None, argv_digest_hex: str, older_sha256: str,
-              newer_sha256: str, orientation: str = 'older->newer') -> str:
-    return hashlib.sha256(canonical_json([engine, engine_version, argv_digest_hex, older_sha256, newer_sha256,
-                                          orientation])).hexdigest()
+              newer_sha256: str, orientation: str = 'older->newer', *, extra: Sequence[str] = ()) -> str:
+    """`extra` (SPEC-29 §5): further inputs that determine the output, e.g. the two `.BinExport` file
+    hashes. Empty `extra` yields exactly the SPEC-28 key, so existing cache rows stay valid."""
+    items: list = [engine, engine_version, argv_digest_hex, older_sha256, newer_sha256, orientation]
+    if extra:
+        items.append(list(extra))
+    return hashlib.sha256(canonical_json(items)).hexdigest()
 
 
 def path_sha256(path: str) -> str:
