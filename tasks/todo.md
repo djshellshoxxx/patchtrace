@@ -314,3 +314,7 @@
 [x] S5 search CLI and S6 view model (no widgets). [ ] Open: integrator hooks (cli.py, frozen_smoke COMMANDS, tooltips merge); Qt panel `ui_search.py` and `test_search_{ui,perf}.py` (instance D); `HitDelegate` highlight uses `ResultRowView.spans`.
 ### [G4:callgraph-cli]
 - [x] CLI dispatcher, DOT and JSON export, schemas and drift test; G7 `graph series` verb (read-only pair projects, missing pair = unknown, exit 3). [ ] `cli.py` hook (`COMMANDS`, `_command_name`, `register` call) and a `cli_commands/graph.py` adapter once F1b lands. [ ] Live gate: DOT opened in a real Graphviz (never executed here); real Ghidriff label forms.
+
+### [K5:kbc-lineage-resolver] KB-CVE correlator K5 (2026-10-14)
+- [x] additive `winbindex.parse_rows` (md5-only and shared-KB rows kept, BASE, heading class), `kbcorrelation/{lineage,resolver}.py`, synthetic fixtures, tests incl. the grade property
+- [ ] open: wiring `IndexPort` and `kb pairs`/`kb plan` to `resolve` (integrator, K7); live check of the heading classes and `otherWindowsVersions` on a fresh record (needs the Winbindex host)
