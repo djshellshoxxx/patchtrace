@@ -1,100 +1,69 @@
 # Phase C research: calibrated function-match confidence and reproducible ground truth
 
-Date: 2026-10-14. Scope: how other projects handle binary function-similarity benchmarks, Windows coverage, calibration with grouped CV, and reusable fitters. Input spec: `docs/specs/calibration-corpus-and-model.md` (SPEC-28 draft).
+Revised 2026-10-14 (second pass, replaces the first draft). Input: `docs/specs/calibration-corpus-and-model.md` (SPEC-28 draft), `docs/specs/multi-engine-evidence-calibration.md` (SPEC-27). Plan: `docs/plans/hard-problems/calibration-plan.md`; fixes: `docs/plans/hard-problems/calibration-troubleshooting.md`.
 
-Method and limits: about 13 sources, skimmed. arxiv.org was unreachable from this sandbox (DNS failure), so every arXiv claim below is either from a search-result snippet or marked unverified. No code was run and no repository was cloned.
+## 0. Method and honest limits
+Reachable route this pass: **web search result snippets only** (publisher/proceedings/aggregator metadata). arxiv.org, export.arxiv.org, Semantic Scholar, OpenReview, ACL, PMLR, USENIX, ACM, GitHub web/API (repo not in session allow-list) and raw.githubusercontent were all blocked (DNS failure or proxy 403). No PDF or LICENSE file was read.
+Status tags: **V** = confirmed by a search snippet of a primary or publisher page on 2026-10-14; **V2** = confirmed only by a secondary listing; **M** = from memory/derivation, not checked; **X** = contradicted. The first draft's "verified on repo page" tags for Winbindex GPL-3.0 and scikit-learn COPYING were not reproducible (no repo access); they are downgraded to **M**. Every licence below is therefore **unconfirmed until a human reads the LICENSE file** (plan step 0).
 
-## 1. Findings table
+## 1. Datasets and licences
+| Dataset | Facts | Licence | Use here |
+|---|---|---|---|
+| REFuSe-Bench, Saul, Liu, Fleischmann, Zak, Micinski, Raff, Holt; "Is Function Similarity Over-Engineered? Building a Benchmark", NeurIPS 2024 Datasets & Benchmarks, arXiv 2410.22677 | **V** 2026-10-14: addresses data duplication and labelling accuracy, uses real malware, claims the first serious evaluation of ML function-similarity models on **Windows** data; a raw-bytes-only baseline reaches state of the art in several settings; argues each binary/project must lie wholly in train or test (prior work often split one binary across both) | Not found. Read the data card before use. Whether the PE binaries are redistributable is unknown (malware and third-party code likely restrict it) | Windows comparison point, dedup protocol, raw-bytes control. **X: SPEC-28 sect. 15/17 "no Windows benchmark" is wrong** |
+| Assemblage, Liu et al., NeurIPS 2024 D&B, arXiv 2405.03991 | **V**: crawls GitHub, builds Windows PE with Visual Studio toolchain; reported 890k PE + 428k ELF over 29 configs; HF sets `changliu8541/Assemblage_PE` (~100k), `_vcpkgDLL` (~130k), `_LinuxELF` (~250k). Likely the source of REFuSe's Windows data (**M**) | Not found. Sources are arbitrary GitHub repos, so binaries carry per-repo licences | Best existing PE+PDB-derived corpus; also the recipe pattern for Tier R |
+| FuncPEval, "Padding Matters", arXiv 2504.21520 | **V**: stripped chrome.dll x86/x64, ~549k/543k function starts, ground truth from PDB via DIA | Not found | Shows PDB/DIA truth is accepted practice; boundaries only, not matching |
+| Assemblage-DeepHistory, arXiv 2605.21615 | **V**: 42,188 PE (MSVC Debug and RelWithDebInfo, external PDBs) + 31,422 ELF, cross-build temporal coverage | Release status unknown | Candidate for cross-version lineage design; check availability |
+| BinKit / TikNib, Kim, Kim, Cha, Son, Kim, IEEE TSE 2022, doi 10.1109/TSE.2022.3187689, arXiv 2011.10749 | **V**: paper introduces both BinKit (benchmark + build scripts) and TikNib (interpretable-feature tool). **X: the first draft said the paper is not about BinKit; it is.** ELF only (51 GNU packages, many compile options: **M** counts) | TikNib MIT (**V2** snippet); **BinKit licence not found** | Compile-option grid pattern; not Windows evidence |
+| BinaryCorp, jTrans, Wang et al., arXiv 2205.12713 (ISSTA 2022 is **M**) | **V**: BinaryCorp-3M = 10,265 binaries, ~3.6M functions, from ArchLinux official repos and AUR, gcc/g++, several -O levels; BinaryCorp-26M ~26M functions. Code: github.com/vul337/jTrans | Not found; Arch packages are mixed-licence sources, so binary redistribution is per-package | Method reference only (ELF) |
+| Marcelli et al., "How machine learning is solving the binary function similarity problem", USENIX Security 2022, pp. 2099-2116 | **V** venue/pages/authors (Marcelli, Graziano, Ugarte-Pedrero, Fratantonio, Mansouri, Balzarotti). Repo Cisco-Talos/binary_function_similarity ships binaries, IDA DBs, selected functions + features, 10 re-implemented approaches | Not found | Reproducibility baseline. **Could not verify any leakage critique in it** (it is a reproducibility/comparison paper). Cite REFuSe-Bench for split/dedup critique instead |
+| Winbindex (m417z) | **V**: index of metadata and download links; files fetched from Microsoft public symbol server; DB hosted in the GitHub repo | GPL-3.0 is **M**, unconfirmed | Metadata-only acquisition (already in `acquisition/winbindex.py`); reimplement, do not copy |
+| Microsoft public symbol server | **V**: docs page has a "Microsoft license terms - Microsoft symbol server" section and describes use as download into a local cache; wording not retrieved | Unread | Legal review before any bulk PDB use (decision O1). Never redistribute PE or PDB |
 
-Status key: **V** = checked in this session (page or search snippet); **U** = not verified, from memory or spec only.
+## 2. Reproducible Windows-PE recipes (legal: publish source pin + recipe + expected hash, never binaries of Microsoft code)
+Ranked by value for MSVC-like fidelity versus legal safety. Licences of upstreams are **M** and must be checked per pin.
+1. **Microsoft-authored open source built locally with MSVC**: dotnet/runtime native parts (coreclr, clrjit), microsoft/terminal, WIL, MS STL, Detours, Windows-driver-samples. Real MSVC code generation and idioms, permissive licences (**M**). We publish pins and build scripts; each user builds.
+2. **Patch-pair tags of permissive C libraries** (zlib, libpng, sqlite, lua, mbedTLS, curl, expat, libxml2): build adjacent release tags and CVE-fix commits with MSVC, clang-cl or mingw-w64. Gives *real* small patches with source-level truth (`git diff -M`, symbol tables). Closest in distribution to the product (patch diffing).
+3. **vcpkg ports** (vcpkg is MIT, **M**; each port keeps its upstream licence): a large, scripted source of PE/DLL builds with a lockable baseline commit; Assemblage already used it.
+4. **ReactOS and Wine PE modules**: Windows-API-shaped system DLL code (kernel32/ntdll analogues) buildable with GCC or MSVC; GPL/LGPL (**M**), so publish recipes only. Weakness: not Microsoft code.
+5. **Winbindex metadata** for Tier W (local-only): hashes, timestamp, virtual size, KB; fetch recipe; labels local. Never mixed into CI.
+Compiler matrix: MSVC (`/Zi /O2 /Gy /GL` variants), clang-cl (`-Z7`/`-gcodeview`, lld-link `/DEBUG`), mingw-w64 (DWARF inside PE). Pin toolchain digests; MSVC redistribution is not allowed, so CI uses the runner's installed version and records it in `EngineRun`/features (drift risk; see troubleshooting).
 
-| # | Source | Link | License | Status | Relevance to PatchTrace |
-|---|---|---|---|---|---|
-| 1 | BinKit (SoftSec-KAIST) | https://github.com/SoftSec-KAIST/BinKit | Not confirmed (read LICENSE before reuse) | V (coverage via jTrans snippet), U (license) | 51 GNU packages, 1,352 compile options, about 243k binaries, about 36M functions, ELF/Linux. No Windows. Useful as a compiler-option grid for profile strata, not as a Windows truth set. |
-| 2 | jTrans / BinaryCorp, arXiv 2205.12713 (ISSTA 2022) | https://arxiv.org/abs/2205.12713 | Unknown (check repo) | V (title), U (venue, dataset details) | BinaryCorp is the usual large function-pair corpus. Check how its train/test split groups functions. Its split is likely function-level, which is the leakage pattern section 4.1 of the spec warns about. |
-| 3 | REFuSe-Bench, "Is Function Similarity Over-Engineered? Building a Benchmark" (Saul et al.), arXiv 2410.22677, NeurIPS 2024 poster | https://arxiv.org/html/2410.22677v1 | Unknown | V (abstract via search snippet) | Explicitly targets Windows data, deduplication and labelling problems, and includes real malware. Its raw-bytes baseline is competitive. Use it as (a) a calibration control model, and (b) a dedup protocol reference. This contradicts the spec's "no Windows benchmark" claim (section 17). |
-| 4 | Winbindex | https://github.com/m417z/winbindex | GPL-3.0 (verified on repo page) | V | Indexes metadata and download links only. Binaries are served from the Microsoft public symbol server (msdl.microsoft.com). Matches the spec's Tier W design (manifest of hashes plus fetch recipe). Copying its code into a non-GPL tree would be a license decision. |
-| 5 | scikit-learn | https://github.com/scikit-learn/scikit-learn | BSD-3-Clause (verified, COPYING) | V | Dev-only cross-check for LR, isotonic and Platt, as the spec's optional `calibration-dev` extra proposes. Its isotonic code is Cython, not pure Python. |
-| 6 | Niculescu-Mizil & Caruana, "Predicting Good Probabilities with Supervised Learning", ICML 2005, pp. 625-632, doi:10.1145/1102351.1102430 | https://mlanthology.org/icml/2005/niculescumizil2005icml-predicting | Paper (no code license) | V (metadata, abstract summary) | Isotonic beats Platt when data is plentiful; Platt is better with little data. Supports choosing a calibrator by sample size. The 1000/1000 threshold in spec section 8 is a project heuristic, not a number from this paper. |
-| 7 | Angelopoulos, Bates, Candès, Jordan, Lei, "Learn then Test: Calibrating Predictive Algorithms to Achieve Risk Control", arXiv 2110.01052 | https://arxiv.org/abs/2110.01052 | Paper | V (authors, title, content via search snippet) | Treats a risk target (for example precision >= 0.95 on a threshold grid) as multiple hypothesis tests on a held-out set, with finite-sample guarantees. This is the cleanest way to pick the tau in spec section 9 with a stated error rate. |
-| 8 | Angelopoulos & Bates, "A gentle introduction to conformal prediction...", arXiv 2107.07511 | https://arxiv.org/abs/2107.07511 | Paper | U (fetch failed) | Standard reference for split conformal and its exchangeability assumption. Relevant to the spec's conformal cross-check (section 9.4). |
-| 9 | Pure-Python isotonic options | (search) | Not found | V (negative result) | No permissively licensed, maintained pure-Python PyPI isotonic package was found. R `isotone` is GPL-2. sklearn is BSD-3 but Cython. PAVA is about 40 lines, so writing it in-repo, as the spec decides in section 7.1, is the right call. |
-| 10 | Haq & Caballero, "A Survey of Binary Code Similarity", arXiv 1909.11424 (ACM CSUR 2021) | https://ar5iv.labs.arxiv.org/html/1909.11424 | Paper | V (existence and title via search) | Survey of the benchmark landscape. Use it to map which corpora cover PE. |
-| 11 | Kim et al., "Revisiting binary code similarity analysis using interpretable feature engineering and lessons learned", arXiv 2011.10749 | (arXiv, mirror via search) | Paper | V (title via search), U (body) | Argues that simple, interpretable features are competitive. Supports the spec's per-engine feature-family approach (section 6). |
-| 12 | Diaphora | https://github.com/joxeankoret/diaphora | GPL-2.0 (U, check repo) | U | Practical diff engine. Its match-quality heuristics are a useful reference for the feature-family schema, but there is no published calibration. |
-| 13 | BinDiff concepts doc | https://github.com/google/bindiff/blob/main/docs/concepts.md | Apache-2.0 (U) | U | Reference for what the engine's similarity and confidence fields actually mean. Spec section 1 relies on this. |
+## 3. Ground-truth methods (function identity, target A)
+1. **PDB/debug-info labels** (S_GPROC32/S_LPROC32 via `llvm-pdbutil`, DIA SDK, or DWARF `.debug_info`): section:offset to RVA, size, name, and for C++ the mangled name. Pitfalls (all **M**, standard linker behaviour): (a) `static`/anonymous-namespace names repeat across TUs, so key on (name, source file, line) from line info, not name alone; (b) `/OPT:ICF` folds identical functions to one address, so truth is many-to-one, label them `different`-by-address subtype or drop with a counted rule; (c) `/INCREMENTAL` and import thunks create jump stubs; build with `/INCREMENTAL:NO`; (d) `/LTCG`/PGO inline and split (`$cold` chunks), producing N4/N10; (e) compiler-generated functions (CFG dispatch, `__security_check_cookie`) have no source identity; (f) compiler generated names differ between versions (lambdas, `` `dynamic initializer` ``).
+2. **Source-level correspondence for pairs**: join old/new symbols by (qualified name, signature); detect renames/moves with `git diff -M`/`-C` plus ctags; treat unmatched as `no-counterpart`. Label strength = `synthetic-exact` only when the key is unique on both sides and the function is not ICF-folded.
+3. **Compiler-controlled synthetic pairs**: same source, vary only (opt level, compiler version, `/GL`, strip) or apply a scripted source edit (flip comparison, add bounds check, change constant). Truth is exact by construction; use for positives under distribution change and for N6 (similar CFG, different semantics) by adding a *different* function. Weakness: engine score distributions are unlike real patches.
+4. **Symbol-hidden evaluation**: build with PDB, record truth, then run engines on images with the PDB unavailable (SPEC-28 sect. 5.2). Confirm that `symbol_provenance=none` actually holds (Ghidra auto-loads adjacent PDBs; test by deleting them).
+5. **Human labels** only for what 1-4 cannot decide; blind to engine output (SPEC-28 sect. 5.2 stands).
+Residual: truth from debug info says "same source function", not "same behaviour"; label disagreement is expected in refactors (see troubleshooting).
 
-Not found within budget: a verified public source for ground truth from PDB/debug symbols on PE binaries, and for a Diaphora-style evaluation protocol. Both stay open (see section 5).
+## 4. Leakage in binary-similarity benchmarks
+- **V** (REFuSe-Bench snippet): train/test must be disjoint by binary/project; prior work often splits functions of one binary across both; duplicates and labelling errors are common. Dedup must be on function bodies.
+- **M, reasoned, check against papers**: the same source function compiled at several -O levels or toolchains is one *identity*; if variants land in both folds, retrieval metrics inflate. Pool-size and negative-sampling choices set the difficulty of the benchmark; random negatives are mostly trivial. Reported AUC of ELF benchmarks says little about near-duplicate hard negatives.
+- Generic ML-leakage taxonomy: Kapoor & Narayanan, Patterns 2023 (**V**: eight leakage types, 17 fields, 294 papers; per-paper counts differ between versions). Allamanis, Onward! 2019 on code duplication is **M** (search returned nothing).
+- PatchTrace-specific: group by lineage **and** by function identity (union-find over function endpoints); dedup key = relocation-masked body hash; report "seen-body" stratum; keep the leakage simulation test (SPEC-28 sect. 13b).
 
-## 2. Ideas worth adopting
+## 5. Calibration methodology notes
+- **ECE is a biased, binning-dependent estimator.** Kumar, Liang, Ma, NeurIPS 2019 (**V**): plug-in l1 calibration error is biased; they give a debiased estimator and show it is closer to truth when B is large or n small. Nixon et al., CVPR-W 2019 pp. 38-41 (**V**): adaptive binning (ACE) and norm choice matter. Under perfect calibration the plug-in value is about `sum_b (n_b/n) * sqrt(2/pi) * sqrt(p_b(1-p_b)/n_b)` (**M**, derived), which is *not zero*; set the ECE gate against a null simulation, not against 0.03 in the abstract. With weights, use effective n = (sum w)^2 / sum w^2 per bin. Equal-width bins put nearly all mass in the top bins when precision is high; add an equal-mass ECE and the slope/intercept (Van Calster 2019, **M**) as co-primary.
+- **Platt vs isotonic by sample size.** Niculescu-Mizil & Caruana ICML 2005 (**V** abstract: they quantify data needs; isotonic better when data is plentiful). **V (negative)**: no snippet states a 1000-sample cutoff, so SPEC-28's 1000/1000 is a project heuristic. Isotonic is a step function: it produces exact 0/1 plateaus (infinite log-loss), ties at the threshold, and high variance in sparse score regions. Mitigate: Platt first, isotonic only with one-SE gain, EPS shrink, Venn-Abers (Vovk & Petej, UAI 2014, **M**) as the principled small-n isotonic variant.
+- **Selective classification.** Geifman & El-Yaniv NeurIPS 2017 pp. 4878-4887 (**V**): choose the confidence threshold so that, with probability 1-delta, risk is at most r*, via a bound on a held-out set; i.i.d. assumption. Choosing tau on the same data you report is optimistic (winner's curse). El-Yaniv & Wiener JMLR 2010 (**M**) is the theory.
+- **Learn-then-Test.** Angelopoulos, Bates, Candes, Jordan, Lei: arXiv 2110.01052 (**V**); Ann. Appl. Stat. 2025, doi 10.1214/24-AOAS1998, pp. 1641-1662 (**V2**). Each threshold is a null "risk > alpha"; rejecting certifies it. Use fixed-sequence testing from strict to loose thresholds with exact binomial p-values, stop at first failure; family-wise error is controlled without a union penalty. With alpha=0.05, delta=0.05 and zero errors you need at least `ceil(ln 0.05 / ln 0.95)` = 59 accepted items; with k errors the minimum n rises quickly. Guarantee needs exchangeable data: across lineages use effective n = n / (1 + (m-1) rho) (design effect, **M**) or lineage-level blocks.
+- **Conformal.** Conformal risk control, ICLR 2024 spotlight, arXiv 2208.02814 (**V**; SPEC-28 S16 says 2022, update); guarantee is on *expected* risk of a monotone loss, within O(1/n), not high-probability. Gentle intro arXiv 2107.07511 (**V**: listed in search; text unread). Barber, Candes, Ramdas, Tibshirani, Ann. Stat. 51(2):816-845, 2023, doi 10.1214/23-AOS2276 (**V**) handles drift with weights; coverage is marginal, not per stratum, and does not fix lineage shift on its own.
+- **Cluster bootstrap.** Cameron, Gelbach, Miller 2008 (**M**): few clusters make percentile intervals too narrow; keep G0 >= 30 and add jackknife and Clopper-Pearson with design-effect n.
+- Calibration set vs gate set: calibrator fitting needs its own OOF scores; thresholds from dev OOF; locked-test only evaluates (SPEC-28 as written is correct).
 
-1. **Dedup before splitting (REFuSe-Bench, row 3).** Identical bodies across lineages are the main leakage route. The spec's 4.5 already counts them in a "seen-body" stratum. Make the dedup key relocation-masked body hash, and report pairs removed by dedup separately from pairs removed by label rules.
-2. **Raw-bytes baseline as a control (row 3).** Add a model that only uses function bytes (or a normalized byte n-gram) as M0 next to the spec's M0/M1/M2. If the engine-feature model cannot beat it under grouped CV, the calibrated confidence adds little.
-3. **Fixed-sequence risk control for tau (row 7).** Sort candidate thresholds from strict to loose, and test each on the locked-test set at level alpha. Stop at the first failure. This gives the spec's "precision >= 0.95" target a stated error rate and replaces ad hoc threshold search. Keep it dev-only for choosing the grid.
-4. **Calibrator choice by sample size (row 6).** Keep the spec's rule but record the cutoffs as project constants with a sensitivity table (for example 300, 1000, 3000 effective positives), not as literature facts.
-5. **Compiler-option grid as a stratum (row 1).** BinKit's design (many compile options from the same sources) maps to the spec's profile axis. Build Tier R strata the same way, and never mix profiles inside one lineage.
-6. **Metadata-only corpus (row 4).** Keep the Winbindex model: publish hashes, identity and a fetch recipe, never binaries or PDBs. This is what section 3.4 requires.
+## 6. Stdlib-only implementation notes
+- `sigmoid(z)`: branch on sign (`1/(1+exp(-z))` if z>=0 else `e=exp(z); e/(1+e)`). Log-loss via softplus `max(z,0)+log1p(exp(-abs(z)))`; never `log(p)` of a clipped sigmoid.
+- IRLS logistic: unpenalised intercept; ridge on slopes only; standardise first; weighted Hessian `sum w p(1-p) u u^T + lambda I`; Cholesky with a failure that raises; add **step-halving** on non-decreasing penalised loss (full Newton can overshoot on near-separable data); iterate to `max|step|<1e-10` or 50; `math.fsum` for dot products and gradient components. Perfect separation is bounded by lambda>0; report it.
+- PAVA: stack of blocks `[x_max, sum_wy, sum_w]`; merge equal-score points first (weighted mean); compare block means by cross-multiplication `a.wy*b.w >= b.wy*a.w` (no division, exact tie behaviour); weights must be positive, drop zero-weight rows. Predict by bisect; interpolate between block midpoints (not block right edges, which biases upward) or use step form; clamp outside; cap p to [EPS, 1-EPS] with `EPS=1/(sum_w+2)`.
+- Platt: Newton on `(a,b)` with Platt's soft targets `(N+ +1)/(N+ +2)` and `1/(N- +2)`; backtracking line search; start `a=0,b=log((N+ +1)/(N- +1))`; guard Hessian determinant.
+- Cluster bootstrap: precompute per-lineage sufficient statistics (sum w, sum wy, accepted counts at tau) so each of B=2000 resamples is O(G), not O(n). `det_uniform` bug: `int(h[:16],16)/2**64` can round to exactly 1.0 (float has 53 bits); use `int(h[:13],16)/2**52` (exact, in [0,1)). Index `int(u*G)`.
+- Determinism: fixed iteration orders, sorted ids, no threads, `repr`-rounded floats in artifacts; cross-check against scikit-learn in a dev-only test (tolerances in SPEC-28 sect. 7.1).
 
-## 3. Pitfalls
+## 7. Corrections to SPEC-28/SPEC-27 (summary; edit the specs in C9-0)
+1. Sect. 15/17: replace "none supplies Windows" by "REFuSe-Bench (arXiv 2410.22677), Assemblage (2405.03991) and FuncPEval (2504.21520) supply Windows PE data; none found with patch-pair match labels for calibration; licences unverified".
+2. S4: 1000/1000 is a project heuristic. 3. S16: conformal risk control is ICLR 2024; Learn-then-Test is AoAS 2025. 4. BinKit/TikNib: one paper (IEEE TSE 2022) introduces both; BinKit licence unverified.
+5. Add Assemblage and the patch-tag recipe to Tier R; add raw-bytes baseline M0b; add function-identity grouping; fixed-sequence Learn-then-Test for tau; null-simulated ECE gate and debiased ECE; effective-n for weighted bins; `det_uniform` 53-bit fix; ICF/static-name pitfalls in guideline g1; Winbindex GPL-3.0 listed as unverified.
+6. Marcelli et al. USENIX Sec '22: keep as reproducibility reference only; the leakage critique belongs to REFuSe-Bench.
 
-1. **Function-level splits in disguise.** A function appears in several candidate pairs (many-to-one, one-to-many). If the group is the lineage but not the function, one function can sit in both train and test through a different pair. Group by lineage AND union the function identities that link candidates (union-find over function endpoints, not just binaries).
-2. **Lineage collapse.** Shared CRT and statically linked code can merge all Windows system DLLs into one component (spec section 4.2 already flags this). A single giant component gives one fold and makes grouped CV unusable. Report the component size distribution before any threshold is chosen.
-3. **Few-group bootstrap.** Cluster bootstrap with few lineages is anti-conservative (spec section 15). The spec's G0 of 30 is a reasonable floor. Also report the jackknife, as it does.
-4. **Calibration on symbol-derived labels.** If PDB-derived labels coexist with features computed from the same symbols (names, types), the model learns the labeller, not the function. Spec section 4.5 covers this. Keep a symbol-free feature set for the headline.
-5. **Exchangeability breaks under lineage shift.** Split conformal (row 8) assumes exchangeable data. Lineage-level shift breaks that, so conformal coverage on the locked test does not carry over. Treat conformal as a cross-check only, as the spec says, or use weighted variants (Tibshirani et al. 2019, Barber et al. 2023; spec S17, unverified).
-6. **Selective classification on the test set.** Choosing the abstention rule after seeing risk-coverage curves on the locked test is the same error as choosing tau there. The spec's section 2.6 forbids it; keep it in code review.
-7. **Benchmark numbers on ELF are not Windows evidence.** BinKit and BinaryCorp results (rows 1-2) do not transfer to PE with MSVC or clang-cl code. Use them only as method references.
-8. **Engine version drift.** The model's `calibration_domain` (spec section 10) must include engine versions. A BinDiff or rz-diff update changes scores without changing the code.
-
-## 4. Citation verification (spec section 17)
-
-| Spec ref | Claimed | Status |
-|---|---|---|
-| S1 | BinDiff concepts doc and differ.cc | Concepts doc URL is plausible (U). differ.cc not checked. |
-| S3 | Platt 1999, "Probabilistic outputs for SVMs..." | U. Believed correct (Advances in Large Margin Classifiers, 1999). |
-| S4 | Niculescu-Mizil & Caruana, ICML 2005 | **V** (title, venue, pages). Zadrozny & Elkan KDD 2002 is U; the isotonic paper is "Transforming classifier scores into accurate multiclass probability estimates". Spec lacks the title. |
-| S5 | Brier 1950; Murphy 1973; DeGroot & Fienberg 1983 | U. Believed correct. |
-| S6 | Naeini et al. AAAI 2015 (ECE) | U. Believed correct. |
-| S7 | Guo et al. ICML 2017 | U. Believed correct. |
-| S8 | Nixon et al. CVPR-W 2019; Kull et al. 2017; Van Calster et al. 2019 | U. Believed correct. Venue details unchecked. |
-| S9 | El-Yaniv & Wiener JMLR 2010 | U. Believed correct. |
-| S10 | Geifman & El-Yaniv NeurIPS 2017 | U. Believed correct. |
-| S11 | Cameron, Gelbach, Miller 2008; Efron & Tibshirani 1993 | U. Believed correct. |
-| S12 | Roberts et al. Ecography 2017 | U. Believed correct. |
-| S13 | Kapoor & Narayanan, Patterns 2023; Allamanis, Onward! 2019 | U. Believed correct. |
-| S14 | Vovk, Gammerman, Shafer 2005 | U. Believed correct. |
-| S15 | Angelopoulos & Bates 2021 | Title matches arXiv 2107.07511 per memory (U, fetch failed). |
-| S16 | Learn then Test (2021); conformal risk control (2022) | **V** for Learn then Test (authors, arXiv 2110.01052, 2021). Conformal risk control is U. |
-| S17 | Barber et al. Ann. Stat. 2023; Tibshirani et al. NeurIPS 2019 | U. Believed correct. |
-| S18 | Lee et al. NeurIPS 2018; Hendrycks & Gimpel 2017 | U. Believed correct. |
-| Binary | Flake DIMVA 2004; Dullien & Rolles SSTIC 2005; Diaphora | U. Believed correct. |
-| Binary | Haq & Caballero, CSUR 2021 | **V** (exists, arXiv 1909.11424). |
-| Binary | Kim et al. arXiv 2011.10749 | **V** (title matches). The spec calls it "BinKit/TikNib"; the paper is about interpretable features, and BinKit is the dataset. Reword. |
-| Binary | jTrans / BinaryCorp arXiv 2205.12713 | **V** (title). Spec's ISSTA 2022 venue is U. |
-| Binary | Marcelli et al. USENIX Security 2022 | U. Believed correct. |
-| Binary | "Is function similarity over-engineered?" arXiv 2410.22677 | **V** ID is right, but the full title is "...Building a Benchmark" (REFuSe-Bench, Saul et al.). |
-
-**Wrong or misleading in the spec:**
-- Section 15 and 17 say published benchmarks "none supplies ... Windows". REFuSe-Bench (2410.22677) does use Windows data. The lesson must be narrowed to "no public corpus with Windows patch-pair labels for calibration was found" (not verified beyond row 3).
-- Section 8 attributes the 1000/1000 isotonic threshold to [S4]. S4 does not state that number. Mark it as a project heuristic.
-- Section 15 says BinKit "has no Windows binaries". Consistent with jTrans's description (GNU packages), but the license is not confirmed. Mark as unverified.
-- Section 4.1 cites S12 for "block/cluster CV is the standard remedy". Roberts et al. is an ecology paper. It supports the idea, but a binary-similarity or ML-leakage source (S13) is the stronger citation.
-
-## 5. Ideas the spec should change
-
-1. Group by function identity as well as by lineage (pitfall 1).
-2. Add a raw-bytes baseline (adopt idea 2).
-3. Replace the open-ended tau search with a fixed-sequence test (adopt idea 3), and cite row 7.
-4. Add the REFuSe-Bench reference as a Windows comparison point, and cite it for dedup.
-5. Add the Winbindex license (GPL-3.0) to the legal section (O1), since the spec's Tier W tool depends on its approach.
-6. Replace "none on Windows" with a narrower claim.
-
-## 6. Open questions
-
-1. Read the LICENSE and README of SoftSec-KAIST/BinKit and the jTrans/BinaryCorp repository. Does either allow redistribution of derived labels?
-2. Read REFuSe-Bench's data license and whether its Windows binaries are redistributable. Check whether its dedup key matches spec section 4.5.
-3. Is PatchTrace's own license compatible with reusing Winbindex code (GPL-3.0)? Current plan is to reimplement, not copy. Confirm this with the owner (O5 area).
-4. Verify the arXiv citations (2107.07511, 2208.02814, 2205.12713, 2011.10749) from a reachable mirror or export.arxiv.org in PR C9-0.
-5. Is there a verified public PE ground truth built from PDB/debug info? Not found in this pass. Needs a dedicated search.
-6. Does a PE/Windows-specific calibration result exist that supports the 1000/1000 cutoff? Probably not. Treat as a parameter.
-7. Engine versions: BinDiff and rz-diff version pinning (spec section 10) should be checked against the Windows test set before C9-6.
+## 8. Sources (primary or publisher pages located via search; text not fully read)
+1 arXiv 2410.22677 and NeurIPS 2024 poster 97742. 2 arXiv 2405.03991; Assemblage docs `assemblagedocs.readthedocs.io`. 3 arXiv 2504.21520. 4 arXiv 2605.21615. 5 arXiv 2011.10749, IEEE TSE doi 10.1109/TSE.2022.3187689. 6 arXiv 2205.12713. 7 usenix.org/conference/usenixsecurity22/presentation/marcelli. 8 github.com/m417z/winbindex. 9 learn.microsoft.com/windows-hardware/drivers/debugger/microsoft-public-symbols. 10 Kumar et al., arXiv 1909.10155 / NeurIPS 2019. 11 Nixon et al., arXiv 1904.01685 / CVPR-W 2019. 12 Niculescu-Mizil & Caruana, ICML 2005 (mlanthology). 13 Guo et al., PMLR 70:1321-1330. 14 Naeini et al., AAAI 2015 (ojs.aaai.org 9602). 15 Geifman & El-Yaniv, arXiv 1705.08500. 16 Angelopoulos et al., arXiv 2110.01052. 17 arXiv 2208.02814. 18 Barber et al., arXiv 2202.13415. 19 Kapoor & Narayanan, PMC10499856. 20 arXiv 2107.07511.

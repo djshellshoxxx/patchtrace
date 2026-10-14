@@ -1,50 +1,87 @@
 # BinExport2 hostile-input research (Phase C, SPEC-10b)
 
-Date: 2026-10-14. Scope: how other open-source projects handle the pieces of accepting untrusted `.BinExport` (BinExport2 protobuf) files. Read-only research; no code changed. Companion to `docs/specs/binexport2-support.md` (SPEC-10b, referred to as "the spec").
+Last validated: 2026-10-14 (second pass, primary sources + local measurement). Companion to `docs/specs/binexport2-support.md` (the spec). Plan: `docs/plans/hard-problems/binexport2-plan.md`; triage: `docs/plans/hard-problems/binexport2-troubleshooting.md`.
 
-Evidence labels: [src] read from a fetched primary page, [sum] read through a fetch summary (verify the raw page before relying on a quoted string), [srch] search-result snippet only (page not opened), [inf] inference.
+Evidence labels: [src] raw primary file read this pass; [run] measured locally this pass (Linux x86_64, CPython 3.13, protobuf 7.36.2 abi3 wheel, upb); [unv] could not be verified (github.com HTML/API return 403 in this session, only raw.githubusercontent.com works); [inf] inference. "validated 2026-10-14" = the line was re-checked on that date.
 
-## Findings table
+## A. Validation of the earlier note (row by row)
 
-| # | Project / source | License | Concrete idea | How it applies to PatchTrace |
-|---|---|---|---|---|
-| 1 | google/binexport, https://github.com/google/binexport | Apache-2.0 [src] | Exporter for IDA (9.4+ only) and Ghidra (GUI and headless). Headless Ghidra is run through `analyzeHeadless` with `-preScript BinExport.java`, configured by `BinExport.properties` or command-line arguments [sum] | Confirms the Phase E path exists upstream. **Contradiction:** spec §8 says `-postScript BinExport.java <out> "<choices>"`; the README summary says `-preScript` plus a properties file. Re-check the raw README before writing the Phase E spec. |
-| 2 | google/bindiff, https://github.com/google/bindiff | Apache-2.0 [src] | BinDiff is the companion consumer of BinExport 12 files. The repo has an `ida` directory and a Java visual diff UI [sum] | Confirms the BinDiff consumer side. The input-format and version-matching rules were not documented on the page, so U12 (BinDiff acceptance parity) stays open. |
-| 3 | joxeankoret/diaphora, https://github.com/joxeankoret/diaphora | AGPL-3.0 since v2.0; GPL-3.0 up to 1.2.4 [sum] | Independent IDA-based diffing tool. It does not appear to read BinExport at all, and the fetched page shows no standalone file format [sum] | Not a parser reference. **Warning:** AGPL-3.0 is incompatible with copying code into PatchTrace. Use it only as a design reference for diff workflow. |
-| 4 | google/atheris, https://github.com/google/atheris | Apache-2.0 [src] | Coverage-guided fuzzer for Python on libFuzzer. Supports pure Python and native extensions, with `instrument_imports()` and `@instrument_func`. Versions 3.11 to 3.14 in the current source; 3.10 and older only from PyPI [src] | Matches spec §10.2 "nightly/offline" plan. Instrument only the `binexport_*` modules to keep throughput up. Pin the nightly job to Python 3.11+ because the project is on `>=3.10`. |
-| 5 | protocolbuffers/protobuf python README, https://github.com/protocolbuffers/protobuf/blob/main/python/README.md | BSD-3 (spec §1; LICENSE not re-fetched) | `PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION` accepts `upb`, `cpp`, `python`. upb is the default since 4.21. `api_implementation.Type()` reports the backend but is **unofficial** [src] | Supports spec DR-C3-1 (upb plus env var). The env var is belt-and-braces, since upb is already the default. Because `Type()` is not a public API, keep the assertion in one module with a test that breaks loudly on upgrade. |
-| 6 | protobuf GHSA-8qvm-5x2c-j2w7, https://github.com/protocolbuffers/protobuf/security/advisories/GHSA-8qvm-5x2c-j2w7 | GitHub advisory (CC-BY 4.0 text) [srch] | Advisory for a denial of service in protobuf-python. Search summary says CVE-2025-4565 affects only the pure-Python backend [srch] | Strengthens the rule "never fall back to pure Python" (spec T4, §4 `unsupported(reason=protobuf_not_upb)`). Confirm affected and fixed versions on the advisory page before quoting them. |
-| 7 | protobuf issue #26437, https://github.com/protocolbuffers/protobuf/issues/26437 | BSD-3 (repo) [srch] | Reported recursion-depth bypass: MessageSet decoding can reset the depth counter, so nesting can exceed the 100 default. Reported for the protobuf runtime, not confirmed fixed here [srch] | BinExport2 has no MessageSet, so this does not hit the schema directly. It does show the runtime's recursion limit is not a full guarantee. Keep the spec's wire pre-scan, which bounds unknown-group depth itself, and do not depend on the runtime limit alone. |
-| 8 | protobuf issue #28864, https://github.com/protocolbuffers/protobuf/issues/28864 | BSD-3 (repo) [srch] | Quadratic-time `text_format.Parse` through recursive map fields; the report says upb and C++ are not affected, but pure Python is [srch] | Not used by PatchTrace (binary parsing only). Supports the same rule: stay on upb. |
-| 9 | grpc issue #9160, https://github.com/grpc/grpc/issues/9160 | Apache-2.0 (repo) [srch] | Shows that message-size limits are a per-application setting, not a library default; the discussion is about max receive size [srch] | Confirms that `max_file_bytes` and `max_record_bytes` belong to our code, not to protobuf. Spec §5 already does this. |
-| 10 | libprotobuf-mutator, issue #143 https://github.com/google/libprotobuf-mutator/issues/143 | Apache-2.0 (repo) [srch] | Shows that protobuf-structured fuzzers hit recursion depth on `Struct` values. Mutator-style generation needs its own depth cap [srch] | Relevant to spec §10.2 property strategies: the hypothesis generator must cap nesting, which the spec already does with bounded sizes. A mutator library is an option if hypothesis coverage is weak; not evaluated here. |
-| 11 | Python `resource` module docs, https://docs.python.org/3/library/resource.html (raw CPython source, https://raw.githubusercontent.com/python/cpython/main/Doc/library/resource.rst) | PSF [sum] | `RLIMIT_AS` caps address space in bytes; `RLIMIT_DATA` caps heap; `RLIMIT_CPU` sends SIGXCPU. Limits apply to the current process; `prlimit` can target another PID on Linux (kernel 2.6.36+, glibc 2.13+). Unix-only, no Windows [sum] | Basis for the POSIX half of `memory_limit_bytes` (spec §6.1, §11 PR-6). Setting limits from the parent with `prlimit` on Linux avoids `preexec_fn` in a threaded GUI process. |
-| 12 | MicrosoftDocs/win32, Job objects, https://raw.githubusercontent.com/MicrosoftDocs/win32/docs/desktop-src/ProcThread/job-objects.md (learn.microsoft.com is unreachable from this session) | CC-BY 4.0 (docs) [sum] | `JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE` terminates all processes when the last handle closes [sum]. Working-set changes beyond the job limit "succeed but are silently ignored" [sum] | Confirms spec's existing `KILL_ON_JOB_CLOSE`. **Gap:** the page does not document what happens to a process over `ProcessMemoryLimit` (fail allocation vs terminate). Spec U7 must be settled by measurement, not by this page. |
+| # | Earlier claim | Verdict (validated 2026-10-14) |
+|---|---|---|
+| 1 | Headless Ghidra uses `-preScript BinExport.java` + `BinExport.properties`; spec §8 says `-postScript` | **Note right, spec wrong** [src README "Scripting"]. Exact recipe in §B1. Menu label also differs between docs (§B1). |
+| 2 | BinDiff is the companion consumer; input rules undocumented | Confirmed, rules still not documented in bindiff README [src]. U12 stays open. |
+| 3 | Diaphora AGPL, not a parser reference | [unv] licence not re-fetched; keep as design-only. No code reuse regardless. |
+| 4 | atheris: py 3.11-3.14, instrument_imports | Confirmed [src atheris README] **plus a gap**: supports "Linux (32- and 64-bit) and Mac OS X" only, no Windows. Fuzz job must be Linux (or WSL). |
+| 5 | env var `PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION` is "belt-and-braces"; `Type()` unofficial | `Type()` unofficial: confirmed [src README: "not an officially-supported or stable API"]. **Env var correction** [src api_implementation.py]: setting it to `upb` does NOT prevent fallback. If `google._upb._message` fails to import, the code only emits a `warnings.warn` and sets type `python`; it raises only when the *internal* var `PROTOCOL_BUFFERS_PYTHON_INTERNAL_FORCE_IMPLEMENTATION` is set (unsupported). So the post-import `Type()=='upb'` assertion is the only real guard, not optional. |
+| 6 | GHSA-8qvm-5x2c-j2w7 / CVE-2025-4565 pure-Python only | [unv] advisory page 403. Keep as "reported"; do not quote versions. Pure Python is a DoS vector regardless: measured 85x RSS / 16 s (spec §1). |
+| 7 | Issue #26437 MessageSet depth reset | [unv] page 403. Not schema relevant. Local check [run]: unknown-group nesting 99 OK, 101 `DecodeError` (limit 100 holds for groups in upb 7.36.2). |
+| 8 | Issue #28864 text_format quadratic | [unv]. Irrelevant (binary only). |
+| 9 | grpc #9160 size limits are app-level | [unv]. Principle stands (protobuf itself has no default size cap in Python). |
+| 10 | libprotobuf-mutator depth issue #143 | [unv] issue; README fetched [src]: it is a libFuzzer C++ mutator, not usable from Python. Hypothesis remains the Python option. |
+| 11 | `resource`: RLIMIT_AS bytes of address space, RLIMIT_DATA heap, `prlimit` Linux>=2.6.36/glibc>=2.13, Unix-only | Confirmed [src resource.rst]. `RLIMIT_CPU` sends SIGXCPU. |
+| 12 | Job docs: KILL_ON_JOB_CLOSE; "silently ignored" | Quote is real [src job-objects.md] but it is about **working-set/priority changes**, not memory commit. **Gap closed** [src JOBOBJECT_BASIC_LIMIT_INFORMATION]: `JOB_OBJECT_LIMIT_PROCESS_MEMORY` (0x100) -> "When a process attempts to commit memory that would exceed the per-process limit, it fails" (allocation fails, process is not terminated by the system); `JOB_OBJECT_LIMIT_JOB_MEMORY` (0x200) same for job-wide sum. See §B3. |
+| - | "RLIMIT_AS limits VM not RSS, upb reserves more; a 14x formula could fail at startup" [inf] | **Mostly wrong for upb on Linux** [run]: Python+upb imports under a 64 MiB AS cap; a 10 MB / 2 M-record parse had VmPeak 115 MB vs VmHWM 107 MB. AS ~= RSS + ~10-60 MiB here. Windows commit limit is a different metric (§B3). |
+| - | Spec §1 "protobuf 7.36.2, no deps, upb wheel" | Re-confirmed [run]: `pip download protobuf==7.36.2` gives `cp310-abi3-manylinux2014_x86_64`; version 7.36.2 imports as upb. |
 
-## Ideas worth adopting
+## B. Deeper findings
 
-1. **Keep the wire pre-scan as the first line of defence.** Runtime recursion limits differ by backend and have had bypasses (rows 6, 7). A pre-scan that counts top-level records, rejects groups, and bounds unknown bytes (spec §6.4) does not depend on those internals.
-2. **Fuzz the whole `inspect_binexport` path nightly with atheris (Apache-2.0).** Instrument only the `binexport_*` modules, seed with the committed goldens, and triage crashes into hypothesis regression tests (spec §10.2 already sets this up; this adds the instrumentation choice).
-3. **Set memory limits per platform, verified by experiment.** On Linux, apply `RLIMIT_AS` from the parent with `prlimit` (row 11) or from a small launcher, not `preexec_fn`. On Windows, add `JOB_OBJECT_LIMIT_PROCESS_MEMORY` and measure the exit code and behaviour on a child that allocates past the limit (spec U7). Keep `KILL_ON_JOB_CLOSE` for cleanup (row 12).
-4. **Treat the protobuf backend as a supply-chain input.** Use an exact pin (spec DR-C3-1), zero transitive deps, and a CI assertion on the backend that fails the build if pure Python is active (rows 5, 6).
-5. **Use Apache-2.0 upstream code only as reference.** BinExport (row 1) and BinDiff (row 2) are Apache-2.0, so the proto and notices plan in spec §2.4 stays valid. Do not copy Diaphora code (row 3).
+### B1. Producing BinExport files (google/binexport README + java/README, [src], validated 2026-10-14)
+- Tools: IDA Pro **9.4+ only** (8.x dropped), **Binary Ninja** (minimal UI: Tools > Plugins > BinExport; file placed next to the database; spec/earlier note omit Binary Ninja), Ghidra extension. Ghidra extension builds against **Ghidra 11.0.3**, OpenJDK 21, Gradle 8.7; java/README calls it "experimental" and "no operand trees" (supports spec tier-2 warn on operand shape).
+- Ghidra GUI label: main README says "Binary Export (v2) for BinDiff", java/README says "Binary BinExport (v2) for BinDiff". The two upstream docs disagree; do not hard-code either in UI copy or detection, resolve on a live install.
+- Ghidra headless (exact, from README): project must exist with the binary imported (`analyzeHeadless <loc> <proj> -import <file>`), then
+  `analyzeHeadless <loc> <proj> -process <file> -propertiesPath <dir> -preScript BinExport.java -noanalysis` with `BinExport.properties` containing
+  `Choose export file Export = test.BinExport` and `Choose options IDA Pro Compatibility = "Subtract Imagebase;Remap mnemonics;Prepend Namespace to Function Names"` (option list is semicolon separated);
+  or positional args `-preScript BinExport.java test.BinExport "Prepend Namespace to Function Names" -noanalysis`. So the script runs as a **pre**-script of `-process`, on an already analyzed program (`-noanalysis`), not as post-script after import. Auto-appended `.BinExport` extension [src].
+- IDA headless [src]: `idat -A -OBinExportAutoAction:<ACTION> -OBinExportModule:<PARAM> [-OBinExportLogFile:<f> -OBinExportAlsoLogToStdErr:TRUE] <file>` (options must precede file names); IDC functions `BinExportBinary(filename)`, `BinExportText`, `BinExportStatistics`; alternative `load_and_run_plugin("binexport12_ida", 2)` which ignores the filename and writes `<database stem>.BinExport`. Exact `BinExportAutoAction` value spelling for binary export is not in the README table [unv].
+- Not verifiable this pass: the `BinExport.java` source (path 404 on `main`), its failure signalling ("Export failed" without throwing, spec §8(2)), and the latest release tag (API 403). Keep spec U11 open.
+- Exporter id/arch details in spec §1 (executable_id sources) were read by the spec author from source; not re-read here [unv].
 
-## Warnings and pitfalls
+### B2. Protobuf runtime behaviour on hostile input ([run], protobuf 7.36.2 upb, validated 2026-10-14)
+- **U4 resolved (Linux/upb)**: a proto2 `repeated string` field containing invalid UTF-8 (`b'\xff\xfe'`) **parses without error and the element is returned as `bytes`**, valid ones as `str`. Pure Python backend raises `UnicodeDecodeError` instead. Consequences: spec §6.5 `s.encode(...)` on a `bytes` element would raise `AttributeError` (an uncaught non-`SecondaryError` crash); backends disagree, another reason to assert upb. Check `isinstance(s, bytes)` -> `utf8_invalid`.
+- **Memory cap failure shape**: under `RLIMIT_AS`, a too-small cap during `ParseFromString` raised `google.protobuf.message.DecodeError: ... Arena alloc failed` (not `MemoryError`) and Python exit code 1. A naive worker maps this to `parse_failed` (INPUT, "bad file") instead of `worker_oom`. Worker must treat "parse failed AND cap-sized process" as ambiguous: re-run once with a larger/no cap is wrong; instead compare `resource` peak (`ru_maxrss`/`VmPeak`) with the cap and report `memory_cap_suspected`.
+- Plain Python allocation under the cap raised catchable `MemoryError` [run].
+- Backend selection logic [src api_implementation.py]: default order upb > cpp > python; silent warn-and-fallback described in A5.
+- Unknown-field/recursion limit 100 confirmed for groups [run]; spec's top-level wire pre-scan remains the right first gate.
 
-- **Do not rely on `api_implementation.Type()` as a public contract.** The protobuf README calls it unofficial (row 5). The spec's assertion is fine as a guard, but a protobuf upgrade may rename it. The test that fails on upgrade is the real protection.
-- **RLIMIT_AS limits virtual address space, not RSS** [inf]. Python, upb, and shared libraries reserve more virtual memory than they touch. A cap sized from the measured 11x RSS ratio (spec §5 `memory_bytes`) could fail at startup. Measure both RSS and VM size in the worker, and set AS with headroom.
-- **Windows job memory failure mode is unknown** (row 12). Do not assume a process over the limit is terminated or that its allocation fails. Record the observed behaviour as a QA row before the worker's exit-code table (spec §7) is treated as final.
-- **Pure-Python fallback is an active DoS path** (rows 6, 8). The spec's inventory check (§9.4) is the right control; keep it blocking.
-- **Do not trust the runtime recursion limit for the design** (row 7). The spec should keep its own depth caps (`max_expr_depth`, pre-scan group rejection).
-- **Headless Ghidra is a second hostile parser** (spec §8 items 3-4). Upstream documents headless use [sum], but the `-preScript` vs `-postScript` discrepancy (row 1) means the spec's argument list must be verified before implementation.
-- **AGPL-3.0 (Diaphora)** is incompatible with copying into PatchTrace. Keep it out of the code path.
+### B3. Windows Job Object memory semantics [src MicrosoftDocs/sdk-api, validated 2026-10-14]
+- `JOBOBJECT_EXTENDED_LIMIT_INFORMATION.ProcessMemoryLimit` applies when `LimitFlags` has `JOB_OBJECT_LIMIT_PROCESS_MEMORY (0x100)`; `JobMemoryLimit` with `JOB_OBJECT_LIMIT_JOB_MEMORY (0x200)`. Both limit **committed (virtual) memory**, not working set/RSS; exceeding makes the commit attempt **fail** (no automatic kill). Optional completion-port message `JOB_OBJECT_MSG_PROCESS_MEMORY_LIMIT` / `JOB_OBJECT_MSG_JOB_MEMORY_LIMIT`. Nested jobs: the most restrictive wins; since Windows 8 a process may be in several jobs (AssignProcessToJobObject doc), so being inside a CI/parent job is not fatal.
+- `PeakProcessMemoryUsed` / `PeakJobMemoryUsed` exist on the same structure: the doc says use them to calibrate limits. Query after exit via `QueryInformationJobObject` before closing the handle. This gives a measurable "peak committed" number per run.
+- Existing code (`src/patchtrace/jobs.py`) creates the child suspended (flag 0x4), sets only `KILL_ON_JOB_CLOSE`, assigns, then resumes; the ctypes struct already has `process_memory`/`job_memory` fields. Adding the limit is a flag (0x2000 | 0x100) and one field; the suspended-start makes the cap race-free.
+- **What the child sees is NOT documented**: [unv] exit code and whether CPython surfaces `MemoryError`, a fatal "Failed to allocate" abort, or a `DecodeError` as on Linux. Must be measured (plan step W1). Treat Windows `exit != 0` with `PeakProcessMemoryUsed >= 0.9 * limit` as `worker_oom`.
+- Commit-vs-RSS mismatch: committed memory on Windows includes reserved-and-committed heap and each DLL's private data; the 14x-file formula was RSS-based [run] and must be re-derived from `PeakProcessMemoryUsed` on a Windows runner.
 
-## Open questions
+### B4. POSIX caps [src resource.rst + subprocess.rst, validated 2026-10-14]
+- `preexec_fn` is documented "NOT SAFE to use in the presence of threads" (deadlock before exec) -> in the Qt GUI process use a tiny launcher (`python -c` setting `RLIMIT_AS` then `os.execv`) or `prlimit(pid, ...)` from the parent right after spawn (small race window before the worker reads input; make the worker block on stdin until the parent signals "limits applied"). `prlimit` is Linux-only (>=2.6.36, glibc>=2.13); macOS would need the launcher.
+- `RLIMIT_CPU` -> SIGXCPU gives a second, independent CPU bound (belt to the wall-clock kill).
 
-1. **Raw README check:** Does the google/binexport README use `-preScript` with `BinExport.properties` (fetch summary) or `-postScript BinExport.java <out> "<choices>"` (spec §8)? Fetch the raw README and the `ghidra/` directory before writing Phase E.
-2. **Job Object per-process memory:** What is the exit code and allocation behaviour of a Windows child over `ProcessMemoryLimit` when run via `jobs.run_process`? Needs a measurement on a Windows runner (spec U7).
-3. **RLIMIT_AS sizing:** What AS limit is needed for an upb worker that parses a 14 MB file (VM size vs RSS)? Needs a Linux measurement; the 14x formula in spec §5 is RSS-based.
-4. **Runtime depth-limit status:** Has the MessageSet depth reset (row 7) been fixed in the protobuf version pinned for PatchTrace (7.36.2)? Needs the release notes or the issue page opened directly.
-5. **GHSA and CVE details:** Affected and fixed versions for GHSA-8qvm-5x2c-j2w7 (row 6) need the advisory page opened; only the search snippet was read.
-6. **BinDiff acceptance parity:** Does BinDiff reject any file the spec's validator accepts? Still open (spec U12); the BinDiff README did not document input rules.
-7. **Mutator vs hypothesis:** Would a structure-aware mutator (row 10) find more bugs than hypothesis strategies in spec §10.2? Not evaluated; a short spike would answer it.
+### B5. Prior art on bounding untrusted structured input (design references only)
+- google/atheris [src]: instrument just the modules under test (`atheris.instrument_imports()`); Python-level uncaught exception = finding; Linux/macOS only.
+- libprotobuf-mutator [src README]: structure-aware mutation exists only for C++ libFuzzer; there is no Python binding. Substitute: hypothesis mutation table (spec §10.2) or atheris with seed corpus from goldens and custom mutator that edits at the wire level (re-encode with the descriptor).
+- BinDiff reads BinExport natively in C++ (google/bindiff); its acceptance rules are undocumented, so differential testing is the only way to learn them (spec U12).
+
+## C. Corrections the spec should absorb
+1. Spec §8 item 2: replace `-postScript BinExport.java <out> "<choices>"` with the README headless recipe (B1); script runs as `-preScript` of `-process` with `-noanalysis`.
+2. Spec §2 rule 1: the env var does not enforce upb; keep the assertion and drop "belt-and-braces" wording. Add a note that the fallback is a warning, not an error.
+3. Spec §6.5 string check: handle `bytes` elements returned by upb for invalid UTF-8 (U4 resolved).
+4. Spec §7 / §6.1 exit-code table: add the "DecodeError under memory cap" ambiguity; decide cap-hit detection by peak memory, not exception type.
+5. Spec §5 `memory_bytes` and U7: on Linux AS ~= RSS + ~60 MiB (measured); on Windows the metric is committed memory, to be measured via `PeakProcessMemoryUsed`.
+6. Spec §10.2 nightly fuzz: Linux only (atheris); Windows relies on hypothesis.
+7. Spec §8: mention Binary Ninja exporter and 'Ghidra extension built for 11.0.3' as a version-lock; Ghidra menu label differs between upstream docs.
+
+## D. Still open (needs live runs or unreachable pages)
+GHSA/CVE details and issue #26437 status (github.com 403); BinExport.java source and latest release; Windows child failure shape under `ProcessMemoryLimit`; real-export VM/RSS ratios; BinDiff acceptance parity.
+
+## E. Sources (primary, fetched 2026-10-14 unless noted)
+1. github.com/google/binexport README.md and java/README.md (raw)
+2. github.com/google/bindiff README.md (raw)
+3. protocolbuffers/protobuf python/README.md (raw)
+4. protocolbuffers/protobuf python/google/protobuf/internal/api_implementation.py (raw)
+5. CPython Doc/library/resource.rst and Doc/library/subprocess.rst (raw)
+6. MicrosoftDocs/win32 desktop-src/ProcThread/job-objects.md (raw)
+7. MicrosoftDocs/sdk-api ns-winnt-jobobject_basic_limit_information.md, ..._extended_limit_information.md, ..._notification_limit_information.md (raw)
+8. MicrosoftDocs/sdk-api nf-jobapi2-assignprocesstojobobject.md, nf-jobapi2-setinformationjobobject.md (raw)
+9. google/atheris README.md (raw)
+10. google/libprotobuf-mutator README.md (raw)
+11. Local measurements: protobuf 7.36.2 upb, CPython 3.13, Linux (scripts not committed; reproducible from B2 text)
+12. In-repo: `src/patchtrace/jobs.py` (Windows Job Object code, read-only)
+Unreachable this session: github.com HTML pages/advisories/issues, learn.microsoft.com, Ghidra repo help pages.
