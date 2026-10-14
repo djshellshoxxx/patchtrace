@@ -26,7 +26,7 @@ EXCLUDED = ['PySide6.QtWebEngineCore', 'PySide6.QtWebEngineQuick', 'PySide6.QtWe
             'PySide6.QtPdf', 'PySide6.QtPdfWidgets']
 DISTRIBUTIONS = ['PySide6', 'PySide6_Essentials', 'PySide6_Addons', 'shiboken6', 'pydantic', 'pydantic_core',
                  'PyInstaller', 'annotated-types', 'typing_extensions', 'typing-inspection', 'protobuf']
-OPTIONAL_DISTRIBUTIONS = ['rapidfuzz', 'yara-x']  # B-0 extras: bundled and licensed when installed
+OPTIONAL_DISTRIBUTIONS = ['rapidfuzz', 'yara-x', 'iced-x86']  # B-0 extras: bundled and licensed when installed
 
 
 def _installed(name: str) -> bool:

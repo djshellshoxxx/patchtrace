@@ -17,6 +17,12 @@ except ImportError as exc:  # pragma: no cover - exercised through _IMPORT_ERROR
 else:
     _rf_error = ''
 try:
+    import iced_x86  # noqa: F401
+except ImportError as exc:  # pragma: no cover
+    iced_x86, _ix_error = None, repr(exc)
+else:
+    _ix_error = ''
+try:
     import yara_x  # noqa: F401
 except ImportError as exc:  # pragma: no cover
     yara_x, _yx_error = None, repr(exc)
@@ -27,6 +33,7 @@ else:
 _REGISTRY: dict[str, tuple[str, str, object, str]] = {
     'rapidfuzz': ('search', 'rapidfuzz', rapidfuzz, _rf_error),
     'yara-x': ('rules', 'yara-x', yara_x, _yx_error),
+    'iced-x86': ('rules', 'iced-x86', iced_x86, _ix_error),
 }
 NAMES = tuple(_REGISTRY)
 

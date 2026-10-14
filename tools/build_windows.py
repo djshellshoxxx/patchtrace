@@ -84,7 +84,7 @@ def main(argv=None):
     shutil.copytree(bundled_notices, notices / 'upstream', dirs_exist_ok=True)
     for name in ['PySide6', 'PySide6_Essentials', 'PySide6_Addons', 'PySide6_WebEngine', 'PySide6_Pdf', 'shiboken6', 'pydantic',
                  'pydantic_core', 'PyInstaller', 'annotated-types', 'typing_extensions', 'typing-inspection',
-                 'protobuf', *[n for n in ('rapidfuzz', 'yara-x') if _installed(n)]]:
+                 'protobuf', *[n for n in ('rapidfuzz', 'yara-x', 'iced-x86') if _installed(n)]]:
         dist = importlib.metadata.distribution(name)
         versions[name] = dist.version
         for file in dist.files or []:
