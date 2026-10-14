@@ -1,0 +1,550 @@
+{
+  "$defs": {
+    "CapabilityChange": {
+      "additionalProperties": false,
+      "properties": {
+        "change": {
+          "enum": [
+            "added",
+            "removed",
+            "unchanged"
+          ],
+          "title": "Change",
+          "type": "string"
+        },
+        "classification": {
+          "enum": [
+            "newly-introduced",
+            "newly-detectable",
+            "removed-with-code",
+            "no-longer-detected",
+            "unlocalized",
+            "unknown",
+            "unchanged"
+          ],
+          "title": "Classification",
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "capability",
+            "library"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "namespace": {
+          "anyOf": [
+            {
+              "maxLength": 256,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Namespace"
+        },
+        "newer": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/EvidenceLink"
+          },
+          "maxItems": 16,
+          "title": "Newer",
+          "type": "array"
+        },
+        "newer_matches": {
+          "default": 0,
+          "title": "Newer Matches",
+          "type": "integer"
+        },
+        "notes": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Notes",
+          "type": "array"
+        },
+        "older": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/EvidenceLink"
+          },
+          "maxItems": 16,
+          "title": "Older",
+          "type": "array"
+        },
+        "older_matches": {
+          "default": 0,
+          "title": "Older Matches",
+          "type": "integer"
+        },
+        "rule_id": {
+          "maxLength": 256,
+          "title": "Rule Id",
+          "type": "string"
+        },
+        "scope": {
+          "maxLength": 16,
+          "title": "Scope",
+          "type": "string"
+        }
+      },
+      "required": [
+        "rule_id",
+        "scope",
+        "kind",
+        "change",
+        "classification"
+      ],
+      "title": "CapabilityChange",
+      "type": "object"
+    },
+    "EnvironmentChange": {
+      "additionalProperties": false,
+      "properties": {
+        "category": {
+          "title": "Category",
+          "type": "string"
+        },
+        "certainty": {
+          "title": "Certainty",
+          "type": "string"
+        },
+        "change": {
+          "enum": [
+            "added",
+            "removed",
+            "unchanged",
+            "indeterminate"
+          ],
+          "title": "Change",
+          "type": "string"
+        },
+        "detect_string": {
+          "default": "",
+          "maxLength": 200,
+          "title": "Detect String",
+          "type": "string"
+        },
+        "heuristic": {
+          "title": "Heuristic",
+          "type": "boolean"
+        },
+        "label": {
+          "maxLength": 200,
+          "title": "Label",
+          "type": "string"
+        }
+      },
+      "required": [
+        "category",
+        "label",
+        "certainty",
+        "heuristic",
+        "change"
+      ],
+      "title": "EnvironmentChange",
+      "type": "object"
+    },
+    "EvidenceLink": {
+      "additionalProperties": false,
+      "description": "Where an evidence item sits in one artifact, in canonical module-relative terms (T2, T5.3).",
+      "properties": {
+        "artifact_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Artifact Sha256",
+          "type": "string"
+        },
+        "attribution": {
+          "default": "none",
+          "enum": [
+            "function-start",
+            "basic-block-in-function",
+            "decoding-routine",
+            "stack-frame",
+            "none"
+          ],
+          "title": "Attribution",
+          "type": "string"
+        },
+        "data_rva": {
+          "anyOf": [
+            {
+              "exclusiveMaximum": 4294967296,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Data Rva"
+        },
+        "file_offset": {
+          "anyOf": [
+            {
+              "exclusiveMaximum": 1099511627776,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "File Offset"
+        },
+        "function_id": {
+          "anyOf": [
+            {
+              "maxLength": 24,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Function Id"
+        },
+        "project_function_id": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Project Function Id"
+        },
+        "rva": {
+          "anyOf": [
+            {
+              "exclusiveMaximum": 4294967296,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Rva"
+        },
+        "site_rva": {
+          "anyOf": [
+            {
+              "exclusiveMaximum": 4294967296,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Site Rva"
+        },
+        "source_fragment": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source Fragment"
+        },
+        "tool_run_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Tool Run Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "tool_run_id",
+        "artifact_sha256"
+      ],
+      "title": "EvidenceLink",
+      "type": "object"
+    },
+    "QualityFlag": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "enum": [
+            "toolchain-changed",
+            "packed",
+            "protected",
+            "heuristic-only",
+            "environment-unknown",
+            "capa-limitation",
+            "function-recovery-shift"
+          ],
+          "title": "Code",
+          "type": "string"
+        },
+        "detail": {
+          "maxLength": 500,
+          "title": "Detail",
+          "type": "string"
+        },
+        "source": {
+          "enum": [
+            "capa",
+            "floss",
+            "diec"
+          ],
+          "title": "Source",
+          "type": "string"
+        }
+      },
+      "required": [
+        "code",
+        "detail",
+        "source"
+      ],
+      "title": "QualityFlag",
+      "type": "object"
+    },
+    "StringChange": {
+      "additionalProperties": false,
+      "properties": {
+        "change": {
+          "enum": [
+            "added",
+            "removed",
+            "unchanged",
+            "representation-changed",
+            "indeterminate"
+          ],
+          "title": "Change",
+          "type": "string"
+        },
+        "display_value": {
+          "maxLength": 256,
+          "title": "Display Value",
+          "type": "string"
+        },
+        "length": {
+          "title": "Length",
+          "type": "integer"
+        },
+        "newer": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/EvidenceLink"
+          },
+          "maxItems": 16,
+          "title": "Newer",
+          "type": "array"
+        },
+        "newer_encodings": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Newer Encodings",
+          "type": "array"
+        },
+        "newer_types": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Newer Types",
+          "type": "array"
+        },
+        "older": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/EvidenceLink"
+          },
+          "maxItems": 16,
+          "title": "Older",
+          "type": "array"
+        },
+        "older_encodings": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Older Encodings",
+          "type": "array"
+        },
+        "older_types": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Older Types",
+          "type": "array"
+        },
+        "secret_kind": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Secret Kind"
+        },
+        "value_hash": {
+          "title": "Value Hash",
+          "type": "string"
+        }
+      },
+      "required": [
+        "value_hash",
+        "display_value",
+        "length",
+        "change"
+      ],
+      "title": "StringChange",
+      "type": "object"
+    }
+  },
+  "$id": "https://patchtrace.local/schemas/intel-tools/1/ToolDelta.json",
+  "additionalProperties": false,
+  "properties": {
+    "capabilities": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/CapabilityChange"
+      },
+      "title": "Capabilities",
+      "type": "array"
+    },
+    "comparable": {
+      "title": "Comparable",
+      "type": "boolean"
+    },
+    "contract": {
+      "const": "tool-evidence/1",
+      "default": "tool-evidence/1",
+      "title": "Contract",
+      "type": "string"
+    },
+    "counts": {
+      "additionalProperties": {
+        "type": "integer"
+      },
+      "title": "Counts",
+      "type": "object"
+    },
+    "engine": {
+      "enum": [
+        "capa",
+        "floss",
+        "diec"
+      ],
+      "title": "Engine",
+      "type": "string"
+    },
+    "environment": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/EnvironmentChange"
+      },
+      "title": "Environment",
+      "type": "array"
+    },
+    "flags": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/QualityFlag"
+      },
+      "title": "Flags",
+      "type": "array"
+    },
+    "newer_run_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Newer Run Id"
+    },
+    "notes": {
+      "default": [],
+      "items": {
+        "type": "string"
+      },
+      "title": "Notes",
+      "type": "array"
+    },
+    "older_run_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Older Run Id"
+    },
+    "pairing": {
+      "default": "unavailable",
+      "enum": [
+        "available",
+        "unavailable"
+      ],
+      "title": "Pairing",
+      "type": "string"
+    },
+    "reasons": {
+      "default": [],
+      "items": {
+        "type": "string"
+      },
+      "title": "Reasons",
+      "type": "array"
+    },
+    "strings": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/StringChange"
+      },
+      "title": "Strings",
+      "type": "array"
+    },
+    "truncated": {
+      "default": false,
+      "title": "Truncated",
+      "type": "boolean"
+    },
+    "value_gate": {
+      "const": "unvalidated",
+      "default": "unvalidated",
+      "title": "Value Gate",
+      "type": "string"
+    }
+  },
+  "required": [
+    "engine",
+    "older_run_id",
+    "newer_run_id",
+    "comparable"
+  ],
+  "title": "ToolDelta",
+  "type": "object"
+}
