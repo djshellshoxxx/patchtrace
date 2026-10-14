@@ -71,3 +71,15 @@
 - [ ] Labelling HTML front-end on 127.0.0.1 (terminal mode exists); C9-10 labelling campaign blocked on USER decisions O1, O2, O4
 - [ ] Cross-platform report determinism (Linux vs Windows byte-identical report SHA) - only verifiable in CI; package-data + PyInstaller datas entry when the first artifact ships
 - [ ] C9-12 GUI L1/L2 via C6 only after a locked-test pass (C6 imports `display_level()` guarded; currently always 'ordinal')
+## SPEC-31 unified diff engine (planned 2026-10-14; docs/specs/unified-engine, docs/plans/unified-engine-plan.md)
+- [x] Spec + plan + backups + troubleshooting (docs only; this PR)
+- [ ] P1 Windows spawn lock in `jobs._windows_process` (pipe write ends inheritable during concurrent `CreateProcessW`) - red test on Windows CI first
+- [ ] P2 nway raw `address_matches`: skip `EXTERNAL:`/unparsable keys with a count instead of `PT-NWAY-PAIR`
+- [ ] S0a contracts/limits/keys/registry/store + schemas + doc status lines (10-amendments rows marked S0a)
+- [ ] S0b sources, fusion, S0 facts, pipeline, worker, CLI `unified run/show/explain/status --no-extract`
+- [ ] S1 extraction (GZF reuse + analyze fallback), ingest, MD index port with notices, live-unified workflow (Windows + Linux)
+- [ ] S2 ladder MVP + parity harness; S5 residual (blocking, vectors, votes, LAP)
+- [ ] S3 IR change channels and proofs (+ optional S3b on-demand decompile)
+- [ ] S4 read model + `ui_unified.py` (single window: view switch + dock tab), tooltips, accessibility
+- [ ] S6 Tier R / A/A / planted-mutation corpus, gates G-U1..G-U8, flag default decision (USER U-05)
+- [ ] USER decisions U-01..U-10 (defaults in docs/specs/unified-engine/00-decisions.md s4)
