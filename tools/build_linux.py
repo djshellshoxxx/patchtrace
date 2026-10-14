@@ -36,7 +36,11 @@ PROTOBUF_PIN = '7.36.2'
 # SPEC-10b §2/§9: notices that must ship; the build refuses to publish without them.
 REQUIRED_NOTICES = ['qtbase-6.12.0/LICENSES/LGPL-3.0-only.txt', f'protobuf-{PROTOBUF_PIN}/LICENSE',
                     'binexport-2bff7af/LICENSE', 'binexport-2bff7af/binexport2.proto',
-                    'binexport-2bff7af/PROVENANCE.txt']
+                    'binexport-2bff7af/PROVENANCE.txt',
+                    # SPEC-31 s9: the unified engine's MD index re-expresses BinDiff v8 (Apache-2.0)
+                    'bindiff-v8-aecc14d/LICENSE', 'bindiff-v8-aecc14d/PROVENANCE.txt']
+# SPEC-31 03 s3: the Ghidra extractor script runs in the user's external Python, so it travels as a data file.
+EXTRACTOR_SCRIPT = 'patchtrace/unified/extract/ghidra_script.py'
 
 
 def require_upb_protobuf() -> None:
@@ -99,6 +103,10 @@ def main() -> None:
     # A missing upb extension means a silent pure-Python protobuf fallback (85x memory): never publish that.
     if not any(item.startswith(('google/_upb/_message.', '_internal/google/_upb/_message.')) for item in inventory):
         raise RuntimeError('google/_upb/_message extension missing from the frozen package')
+    # The extractor script must be in the package and byte-identical to the source tree's copy.
+    packaged = [item for item in inventory if item.endswith('/' + EXTRACTOR_SCRIPT)]
+    if len(packaged) != 1 or (package / packaged[0]).read_bytes() != (root / 'src' / EXTRACTOR_SCRIPT).read_bytes():
+        raise RuntimeError('Extractor script data file is missing or differs from the source tree')
     (package / 'file-inventory.json').write_text(json.dumps(inventory, indent=2), encoding='utf-8')
     executable = package / 'PatchTrace'
     if not os.access(executable, os.X_OK):

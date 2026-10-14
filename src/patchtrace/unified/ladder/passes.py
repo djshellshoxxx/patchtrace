@@ -8,22 +8,22 @@ research note R02 s12 reports for tag v8 and must be re-checked against the pinn
 Ghidra-VT-style ideas (implied matches, reference vectors) are clean-room from the VT help text (09 s2).
 Nothing from Diaphora (AGPL), PatchDiff2, Turbodiff or Ghidriff (GPL) is used.
 
-A pass is data: `keys(side, limits)` returns one hashable key (or None) per function; a function whose key is
-None is not eligible. Static gates (size, tiny, thunk, hub, ICF suspect) are folded into the key (None). The
-engine owns uniqueness: a pair needs a key that is unique on both sides among the unmatched functions of the pool
-the key was evaluated in. A `guard` may veto a unique pair or cap its tier (P03, P12-P14); a `run` hook replaces
-the key mechanics for passes that are not "bucket by key" (P15, and the residual passes of slice S5).
+A pass is data (`passspec.PassSpec`, re-exported here): `keys(side, limits)` returns one hashable key (or None) per
+function; a function whose key is None is not eligible. Static gates (size, tiny, thunk, hub, ICF suspect) are folded
+into the key (None). The engine owns uniqueness: a pair needs a key that is unique on both sides among the unmatched
+functions of the pool the key was evaluated in. A `guard` may veto a unique pair or cap its tier (P03, P12-P14); a
+`run` hook replaces the key mechanics for passes that are not "bucket by key" (P15, and the residual passes of slice
+S5).
 """
 from __future__ import annotations
 
 import math
 from collections import Counter
-from collections.abc import Callable, Sequence
-from dataclasses import dataclass
-from typing import NamedTuple
+from collections.abc import Sequence
 
 from ...enrichment.identity import domain_id
 from ..limits import UnifiedLimits
+from .passspec import PassSpec, Verdict
 from .side import K_EXTERNAL, SideData
 from .state import State
 from .types import FAMILY_BYTES, TIER_RANK
@@ -32,32 +32,6 @@ LADDER_VERSION = 'ladder/1'
 FAMILY_STRUCT = 'F-PT-STRUCT'
 P15_MAX_WAVES = 8
 _SQ = (math.sqrt(2), math.sqrt(3), math.sqrt(5), math.sqrt(7), math.sqrt(11), math.sqrt(13))
-
-
-class Verdict(NamedTuple):
-    """A guard's answer for a pair whose key was unique on both sides: the tier cap and hints for the pair."""
-    tier: str
-    hints: tuple[str, ...] = ()
-
-
-@dataclass(frozen=True)
-class PassSpec:
-    id: str
-    name: str
-    stage: int                     # T0 = 0 (P00-P03), T1 = 1 (P04-P05), T2 = 2 (P06-P11), T3 = 3 (P12-P14), P15 = 4
-    tier: str
-    family: str                    # family when the bytes family does not apply (04 s4, 05 s1.1)
-    cls: str                       # evidence class (05 s1.1)
-    keys: Callable[[SideData, UnifiedLimits], list] | None = None
-    guard: Callable[[State, int, int, object], Verdict | None] | None = None
-    hubs: bool = False             # may match hubs (fan-in > L-17): only P01-P05 may
-    neighbour: bool = False        # evaluated inside neighbour sets by propagation (P04-P14)
-    bytes_family: bool = False     # F-PT-BYTES when both functions are .pdata-confirmed
-    run: Callable[[State, int], None] | None = None
-
-    @property
-    def step(self) -> str:
-        return f'{self.id}-{self.name}'
 
 
 # ---- helpers -----------------------------------------------------------------------------------------------------------------

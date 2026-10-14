@@ -1,0 +1,8 @@
+{
+  "action": "verify",
+  "candidate_key": "27d79b26d404b2a686cd1ec0731958b28dc84a7f745b198e1280b175e555a0f3",
+  "contract": "pilot-review/1",
+  "created_utc": "2099-03-01T13:00:00+00:00",
+  "cve": "CVE-2099-20001",
+  "text": ""
+}

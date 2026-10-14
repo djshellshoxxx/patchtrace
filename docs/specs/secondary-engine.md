@@ -20,6 +20,8 @@ Optionally run rz-diff on the project's artifact pair to obtain a second, indepe
 
 ## 5. Interpretation limits (shown in UI/exports)
 
+> SPEC-31 amendment A-17 (2026-10-14): in the SPEC-31 unified engine every rz-diff row is tier-W evidence (never accepting), flagged `non-exclusive` when its newer endpoint is shared by two or more rows (rizin 0.9.1 keeps the last candidate and never consumes B), and its similarity never selects, ranks or decides: it is carried as upstream text only.
+
 Similarity is raw-byte Levenshtein: not semantic, sensitive to relocations and address shifts; no per-match confidence; no symbol names. Agreement with Ghidriff is not independent proof or a probability. Resource guidance: ~90 s and ~235 MB for two small drivers on 4 cores; large binaries can take hours — the default timeout bounds this.
 
 ## 6. Acceptance

@@ -1,0 +1,39 @@
+{
+  "applicability": {
+    "contradictions": 0,
+    "newer": "not_affected",
+    "newer_mapping": "verified",
+    "older": "not_affected",
+    "older_mapping": "verified"
+  },
+  "confounding": {
+    "cves": [],
+    "state": "no"
+  },
+  "counts": {
+    "code": 0,
+    "fit": 0,
+    "partial": 0,
+    "queue": 0,
+    "review": 0
+  },
+  "cve": "CVE-2099-20003",
+  "cwe": {
+    "ids": [
+      "CWE-125"
+    ],
+    "status": "derived"
+  },
+  "gate": "not-applicable",
+  "kev": {
+    "date_added": null,
+    "snapshot_id": "8c1d9e232ce32f82d451197822b1539f6f283fe013fcce3865a4bc3eb5eb95f4",
+    "state": "not-in-snapshot"
+  },
+  "limitations": [
+    "The advisory says these builds are not affected by CVE-2099-20003"
+  ],
+  "source_ids": [
+    "9bc3a08a1412cca6d3cbdf3dbb2d0100dbdcca183a8710790383e47eb932307d"
+  ]
+}

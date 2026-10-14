@@ -1,0 +1,26 @@
+{
+  "anchor_ids": [],
+  "channel": "code",
+  "detail": "fix\u202eevil",
+  "evidence_class": "E-DECOMP",
+  "kind": "b1:BND",
+  "nav": {
+    "end_line": 14,
+    "rva": 4544,
+    "side": "newer",
+    "start_line": 14
+  },
+  "obligations": [],
+  "obs_id": "142b5de2d7088fd3e6c55943fa7bf9f8c210a9b102e6299faf163592f2217a4f",
+  "origins": [
+    "D_ghidra"
+  ],
+  "ref": {
+    "id": "1266440cfb175e966c227da73b64ff7f63b39fc6c903e4b9bc05a2a12f96af3e",
+    "kind": "b1-signal",
+    "pointer": null,
+    "sha256": null
+  },
+  "role": "shape",
+  "verification": "tool-reported"
+}

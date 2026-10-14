@@ -10,14 +10,11 @@ from __future__ import annotations
 from collections import Counter
 from collections.abc import Sequence
 from dataclasses import dataclass
-from typing import TYPE_CHECKING
 
 from ..limits import Budget, UnifiedLimits
+from .passspec import PassSpec
 from .side import SideData
 from .types import CorrPair
-
-if TYPE_CHECKING:
-    from .passes import PassSpec
 
 
 @dataclass(slots=True)

@@ -1,0 +1,41 @@
+{
+  "alternative_ids": [],
+  "assessment": "unknown",
+  "candidate_key": "488e940a0db40145c8adcf7c67c69309862363e038eae4b7d0bdab5d7ba2a332",
+  "caps": [],
+  "components": {
+    "count": 0,
+    "tags": []
+  },
+  "counter_ids": [],
+  "cve": null,
+  "depth": "none",
+  "fits": [],
+  "gate": "none",
+  "identity": "unassessed",
+  "lead_class": "code",
+  "local_hits": 0,
+  "mechanism": "not-assessed",
+  "newer": [
+    {
+      "name": "Ipv6pDispatch",
+      "rva": 6464
+    }
+  ],
+  "older": [
+    {
+      "name": "Ipv6pDispatch",
+      "rva": 6400
+    }
+  ],
+  "rank": 1,
+  "support_ids": [
+    "b4516620e63621b454c445985631110e09ead1c0354e60aa00e67cb347a3f5b2"
+  ],
+  "tie": {
+    "first": 1,
+    "last": 1,
+    "size": 1
+  },
+  "unknown_ids": []
+}

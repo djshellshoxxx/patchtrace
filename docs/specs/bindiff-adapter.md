@@ -17,6 +17,8 @@ Tool facts that constrain the design: the latest BinExport release (v12-20240417
 
 ## 3. Records and storage
 
+> SPEC-31 amendment A-16 (2026-10-14): BinDiff writes imports and stubs like any match with `function.basicblocks = 0` (similarity 1.0 by shortcut), so such rows are import/stub matches, not code matches (R02 s15); the SPEC-31 unified engine tiers them as tier A only when both ends are imports in its ProgramIR, else tier C. The importer and `SecondaryMatch` are UNCHANGED and do not store `basicblocks`, so the unified engine cannot recognise stub rows today and records the limitation `bindiff-stub-rows-not-identified`; an additive `secondary/2` field would close that gap. The unified address basis is auto-detected per set (`va`, `rva` or not comparable) with the same rule as `detect_address_basis` (SPEC-31 06 s1, s10).
+
 `SecondaryMatch` (strict): `engine: 'bindiff'`, `engine_version` (from metadata), `older_address`, `newer_address`, `older_name`, `newer_name`, `similarity_milli` and `confidence_milli` (integers 0..1000, from upstream doubles via `round(x*1000)`; upstream values preserved as text), `flags` (bitmask names G/I/O/J/E/L/C), `algorithm` (joined by name, never by id). Stored as an enrichment entry kind `secondary-matches` keyed by `domain_id('secondary', 1, {engine, file_sha256, older, newer})`. Unmatched functions are derived from the BinExport call graph, not from BinDiff.
 
 ## 4. Running the tools (optional convenience)

@@ -1,0 +1,26 @@
+{
+  "anchor_ids": [],
+  "channel": "code",
+  "detail": "proof COS-LAYOUT/1 holds: the old check was only moved",
+  "evidence_class": "E-LAYOUT",
+  "kind": "cf:cosmetic",
+  "nav": {
+    "end_line": 22,
+    "rva": 5184,
+    "side": "newer",
+    "start_line": 22
+  },
+  "obligations": [],
+  "obs_id": "604af375ac0c0637aa5ea4af5c3f25a3fb59bd6825909dab4ad3b69d7d96884b",
+  "origins": [
+    "D_ghidra"
+  ],
+  "ref": {
+    "id": "35e8b076543394688d3e4a09926e42fe10e4edc9ef66061c5343aab259804db8",
+    "kind": "change-facts",
+    "pointer": null,
+    "sha256": null
+  },
+  "role": "conflict",
+  "verification": "tool-reported"
+}

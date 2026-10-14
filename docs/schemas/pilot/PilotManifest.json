@@ -1,0 +1,372 @@
+{
+  "$defs": {
+    "LeadCounts": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "minimum": 0,
+          "title": "Code",
+          "type": "integer"
+        },
+        "fit": {
+          "minimum": 0,
+          "title": "Fit",
+          "type": "integer"
+        },
+        "partial": {
+          "minimum": 0,
+          "title": "Partial",
+          "type": "integer"
+        },
+        "queue": {
+          "minimum": 0,
+          "title": "Queue",
+          "type": "integer"
+        },
+        "review": {
+          "minimum": 0,
+          "title": "Review",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "fit",
+        "review",
+        "partial",
+        "code",
+        "queue"
+      ],
+      "title": "LeadCounts",
+      "type": "object"
+    },
+    "PilotConfig": {
+      "additionalProperties": false,
+      "description": "Knobs of the tier derivation. `limits_digest` pins the P-xx numbers the result was computed under.",
+      "properties": {
+        "confounded_min_cves": {
+          "default": 2,
+          "maximum": 1024,
+          "minimum": 2,
+          "title": "Confounded Min Cves",
+          "type": "integer"
+        },
+        "lexical_moderate": {
+          "default": true,
+          "title": "Lexical Moderate",
+          "type": "boolean"
+        },
+        "limits_digest": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Limits Digest",
+          "type": "string"
+        },
+        "locality_min_tokens": {
+          "default": 2,
+          "maximum": 8,
+          "minimum": 1,
+          "title": "Locality Min Tokens",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "limits_digest"
+      ],
+      "title": "PilotConfig",
+      "type": "object"
+    },
+    "PilotInputs": {
+      "additionalProperties": false,
+      "description": "The `result_id` payload (s7), stored verbatim so the UI can name a changed input. Reviews, timestamps and\npaths are never part of it.",
+      "properties": {
+        "advisory_facts_ids": {
+          "default": [],
+          "items": {
+            "pattern": "^[0-9a-f]{64}$",
+            "type": "string"
+          },
+          "maxItems": 64,
+          "title": "Advisory Facts Ids",
+          "type": "array"
+        },
+        "asserted_gates": {
+          "default": [],
+          "items": {
+            "maxLength": 24,
+            "pattern": "^CVE-[0-9]{4}-[0-9]{4,19}$",
+            "type": "string"
+          },
+          "maxItems": 64,
+          "title": "Asserted Gates",
+          "type": "array"
+        },
+        "config_digest": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Config Digest",
+          "type": "string"
+        },
+        "ghidriff_run_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+          "title": "Ghidriff Run Id",
+          "type": "string"
+        },
+        "kb_link_digest": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Kb Link Digest"
+        },
+        "kev_snapshot_id": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Kev Snapshot Id"
+        },
+        "lexicon_digest": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Lexicon Digest",
+          "type": "string"
+        },
+        "newer_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Newer Sha256",
+          "type": "string"
+        },
+        "older_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Older Sha256",
+          "type": "string"
+        },
+        "orientation": {
+          "const": "older->newer",
+          "default": "older->newer",
+          "title": "Orientation",
+          "type": "string"
+        },
+        "origins_digest": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Origins Digest",
+          "type": "string"
+        },
+        "pilot_rules_digest": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Pilot Rules Digest",
+          "type": "string"
+        },
+        "raw_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Raw Sha256",
+          "type": "string"
+        },
+        "rules_digest": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Rules Digest",
+          "type": "string"
+        },
+        "secondary_set_ids": {
+          "default": [],
+          "items": {
+            "pattern": "^[0-9a-f]{64}$",
+            "type": "string"
+          },
+          "maxItems": 16,
+          "title": "Secondary Set Ids",
+          "type": "array"
+        },
+        "tiers_version": {
+          "minimum": 1,
+          "title": "Tiers Version",
+          "type": "integer"
+        },
+        "tool_keys": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/ToolKey"
+          },
+          "maxItems": 6,
+          "title": "Tool Keys",
+          "type": "array"
+        },
+        "unified_result_id": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Unified Result Id"
+        }
+      },
+      "required": [
+        "older_sha256",
+        "newer_sha256",
+        "ghidriff_run_id",
+        "raw_sha256",
+        "lexicon_digest",
+        "rules_digest",
+        "pilot_rules_digest",
+        "origins_digest",
+        "tiers_version",
+        "config_digest"
+      ],
+      "title": "PilotInputs",
+      "type": "object"
+    },
+    "PilotPart": {
+      "additionalProperties": false,
+      "description": "`sha256` and `bytes` describe the DECOMPRESSED canonical JSON (gzip is written with mtime 0, never hashed).",
+      "properties": {
+        "bytes": {
+          "minimum": 0,
+          "title": "Bytes",
+          "type": "integer"
+        },
+        "name": {
+          "const": "assessment.json.gz",
+          "title": "Name",
+          "type": "string"
+        },
+        "sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Sha256",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "sha256",
+        "bytes"
+      ],
+      "title": "PilotPart",
+      "type": "object"
+    },
+    "ToolKey": {
+      "additionalProperties": false,
+      "description": "The cache key of one tool result (intelligence/tools ToolRun.cache_key) for one side.",
+      "properties": {
+        "cache_key": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Cache Key",
+          "type": "string"
+        },
+        "engine": {
+          "enum": [
+            "capa",
+            "floss",
+            "diec"
+          ],
+          "title": "Engine",
+          "type": "string"
+        },
+        "side": {
+          "enum": [
+            "older",
+            "newer"
+          ],
+          "title": "Side",
+          "type": "string"
+        }
+      },
+      "required": [
+        "engine",
+        "side",
+        "cache_key"
+      ],
+      "title": "ToolKey",
+      "type": "object"
+    }
+  },
+  "$id": "https://patchtrace.local/schemas/pilot-manifest/1/PilotManifest.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "Sidecar `manifest.json`: certifies its own `result_id` (it holds the whole identity payload and the config).",
+  "properties": {
+    "config": {
+      "$ref": "#/$defs/PilotConfig"
+    },
+    "contract": {
+      "const": "pilot-manifest/1",
+      "default": "pilot-manifest/1",
+      "title": "Contract",
+      "type": "string"
+    },
+    "counts": {
+      "$ref": "#/$defs/LeadCounts"
+    },
+    "created_utc": {
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]{1,6})?(\\+00:00|Z)$",
+      "title": "Created Utc",
+      "type": "string"
+    },
+    "inputs": {
+      "$ref": "#/$defs/PilotInputs"
+    },
+    "limitations": {
+      "default": [],
+      "items": {
+        "maxLength": 300,
+        "minLength": 1,
+        "type": "string"
+      },
+      "maxItems": 64,
+      "title": "Limitations",
+      "type": "array"
+    },
+    "parts": {
+      "items": {
+        "$ref": "#/$defs/PilotPart"
+      },
+      "maxItems": 4,
+      "title": "Parts",
+      "type": "array"
+    },
+    "queue_count": {
+      "default": 0,
+      "minimum": 0,
+      "title": "Queue Count",
+      "type": "integer"
+    },
+    "result_id": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Result Id",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "complete",
+        "partial",
+        "abstained"
+      ],
+      "title": "Status",
+      "type": "string"
+    }
+  },
+  "required": [
+    "result_id",
+    "inputs",
+    "config",
+    "status",
+    "counts",
+    "parts",
+    "created_utc"
+  ],
+  "title": "PilotManifest",
+  "type": "object"
+}
