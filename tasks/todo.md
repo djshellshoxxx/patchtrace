@@ -390,3 +390,8 @@
 - [ ] Open for PIL-A3 and PIL-B2: the carrier of `Evidence.level` (B1 signal confidence) and `Evidence.subject` (API name, capability namespace) on an `Observation` (A1 has no field for either); the 14 rows with `PilotRule.detectors == ()` are the ones plan s7 holds at tentative unless two components agree; B2 reads `Evaluation.conflict_ids` to force `contested`
 - [ ] Owner: the plan s9 PIL-B1 card still says "20 K rules" and asks for K edits that audit C already made (CWE-193 lives in its own family `off-by-one`, not under `bounds`); the two extra rows (R-FORMAT-STRING, R-OFF-BY-ONE) and INPUT's `BND` leaf are decisions beyond the draft table; `next_step` sentences are not part of the table (read model, C2); A1's `keys.DOMAINS` does not list `pilot-rules`
 - [ ] Not done: capa namespace rows (empty in v1 until CAP validates its tags; a later additive revision changes the digest and makes stored results stale); Windows and Python 3.12 CI for `tests/test_pilot_rules.py` (3.12.3 verified locally in a venv)
+### [K1b:kev-store]
+- [x] K1b snapshot store `kev/store.py`, tests `tests/test_kev_store.py`.
+### [K2:kev-transport-cli]
+- [x] K2 transport, service and Qt-free CLI `kev/{transport,service,cli}.py`, tests `tests/test_kev_{transport,service,cli}.py`.
+- [ ] Integrator: `kev` hook in `cli.py` (see docstring of `kev/cli.py`); K6 live gate must verify the canonical CISA URL and User-Agent acceptance before it is called verified.
