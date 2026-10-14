@@ -39,7 +39,7 @@ else:
 
 # capability name -> (extra, distribution name, module object or None, import error)
 _REGISTRY: dict[str, tuple[str, str, object, str]] = {
-    'rapidfuzz': ('workbench', 'rapidfuzz', rapidfuzz, _rf_error),
+    'rapidfuzz': ('search', 'rapidfuzz', rapidfuzz, _rf_error),
     'pygments': ('workbench', 'Pygments', pygments, _pg_error),
     'pefile': ('workbench', 'pefile', pefile, _pe_error),
     'yara-x': ('rules', 'yara-x', yara_x, _yx_error),
