@@ -12,6 +12,7 @@ The implementation plan has four detailed normative companion specs, and all cod
 - [SPEC-32B pair/lifecycle](../specs/kb-patch-search-pair-lifecycle.md) for exact PE compatibility, independent pre-fix boundary, optional companion database and interrupted-attachment repair.
 - [SPEC-32C GUI/CLI](../specs/kb-patch-search-ui-cli-contract.md) for final command syntax, Qt state machine and consent/worker behavior.
 - [SPEC-32D fixtures and QA](../specs/kb-patch-search-qa-and-fixtures.md) for tests and release gates.
+- [SPEC-32E concrete contracts and examples](../specs/kb-patch-search-contract-blueprint.md) for Python 3.12 / Pydantic 2.13 strict DTOs, validated results, typed service ports and schema regression.
 
 **Important correction:** The existing ProjectStore validates its fixed schema version; therefore do not alter project.sqlite3 or ComparisonProject in SPEC-32. Add a separate optional, project-root/patch_search.sqlite3 store with its own schema. Project creation and patch context attachment are independent commits: a failure after ProjectService.create must leave the project usable and provide idempotent context-attach retry. A session that only has a source association can still produce meaningful offline results without a downloadable file.
 
