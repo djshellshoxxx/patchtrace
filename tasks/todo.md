@@ -354,3 +354,7 @@
 ### [R3:yarax-candidates]
 - [x] R3 candidates without bytes (strings, imports, capabilities), gates, adapters; tests `tests/test_yarax_candidates.py`, fixtures `tests/yarax_fixtures.py`.
 - [ ] R4 hook-ups: `linked_by='xref'` promotion of strings, bytes windows, `RuleWriter` bound to R1 `synth.py`; R5 feeds lint and scan cells to `gates.with_compile` / `gates.with_scan`.
+### [R4:yarax-bytes]
+- [x] Byte windows, masks, iced adapter, `.pdata`/`.reloc` table reader, synergy grid; tests `tests/test_yarax_{masks,synergy}.py`.
+- [ ] R5: build the candidate from `window.propose_windows` and persist it with `window.to_bytes_feature` (YARA-X accepts leading and trailing `??` in a hex pattern, measured).
+- [ ] Unified S1 owner: replace `mask_iced` with `adapters/mask_unified.py` via the `FunctionMaskView` port; `pe_overview/tables.py` stays the `.pdata`/`.reloc` source until then.

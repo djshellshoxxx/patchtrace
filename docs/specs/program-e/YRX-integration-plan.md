@@ -2,6 +2,7 @@
 
 Status: E-1 research plan, 2026-10-14 (worker YRX, Sonnet 5.5). Slice R1 (synthesis) built in `yarax/synth.py`. No ChatGPT spec exists for YRX; this is the draft the integration owner reconciles.
 Status: E-1 research plan, 2026-10-14 (worker YRX, Sonnet 5.5); R0-R3 built (R3: candidates without bytes, `yarax/{features,gates,candidates}.py`). No ChatGPT spec exists for YRX; this is the draft the integration owner reconciles.
+Status: E-1 research plan, 2026-10-14 (worker YRX, Sonnet 5.5). No ChatGPT spec exists for YRX; this is the draft the integration owner reconciles. Built so far: R0, R2, R4 (byte windows and masks, 2026-10-14).
 Conventions: every source was retrieved 2026-10-14. `[measured]` = produced in the research sandbox (Linux x86-64, Python 3.12.3, yara-x 1.21.0, iced-x86 1.21.0, PyInstaller 6.22.3) by throwaway scripts that are NOT committed, on the repo's SYNTHETIC images (`tests/test_intel_tools_pe.py`). `[unverified]` = not confirmable here.
 Hosts blocked from this sandbox: virustotal.github.io, pyo3.rs, doc.qt.io, learn.microsoft.com, api.github.com (403). Upstream sources were read from raw.githubusercontent.com and github.com instead.
 
