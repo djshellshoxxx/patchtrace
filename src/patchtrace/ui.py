@@ -2946,8 +2946,13 @@ class MainWindow(QMainWindow):
             self.show_error(run.error or 'Interpretation failed. Inspect the retained raw response; no findings were promoted.')
         elif run.status == 'cancelled':
             self.job_label.setText('Interpretation cancelled')
-        elif run.findings:
-            self.findings_list.setCurrentRow(self.findings_list.count() - len(run.findings))
+        else:
+            if run.error:  # a partial quarantine is a completed run with a note; the analyst must see it
+                self.job_label.setText('Note · ' + run.error)
+                self.logs.appendPlainText('NOTE: ' + run.error)
+                self.statusBar().showMessage(run.error)
+            if run.findings:
+                self.findings_list.setCurrentRow(self.findings_list.count() - len(run.findings))
 
     def start_job(self, title, task, complete):
         if self.worker:
@@ -2993,7 +2998,7 @@ class MainWindow(QMainWindow):
         self.worker = None
         self.timer.stop()
         self.progress.setVisible(False)
-        if not self.job_label.text().startswith(('Error', 'Cancelled', 'Interpretation cancelled')):
+        if not self.job_label.text().startswith(('Error', 'Cancelled', 'Interpretation cancelled', 'Note')):
             self.job_label.setText(f'Finished · {int(time.monotonic() - self._job_started)} seconds')
         if worker:
             worker.deleteLater()
