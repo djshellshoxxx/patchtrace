@@ -21,8 +21,10 @@ from dataclasses import dataclass, field
 from pathlib import Path
 
 from .artifact_bytes import ArtifactBytesError, VerifiedArtifactReader
+from .ingestion import safe_path
 from .models import Artifact
 from .pe_overview import FieldComparison, PeOverview, compare_overviews, inspect_pe
+from .pe_overview.authenticode import TrustResult, verify_authenticode
 
 SIDES = ('older', 'newer')
 
@@ -34,6 +36,7 @@ class SideInspection:
     overview: PeOverview | None = None
     error_code: str | None = None
     error: str | None = None
+    trust: TrustResult | None = None
 
 
 @dataclass(slots=True)
@@ -54,7 +57,11 @@ class ProjectInspection:
 
 
 def inspect_project_artifacts(project_id: str, artifacts: Iterable[Artifact], root: Path,
-                              cancel: Callable[[], bool] | None = None) -> ProjectInspection:
+                              cancel: Callable[[], bool] | None = None,
+                              verify_trust: Callable[[Path], TrustResult] = verify_authenticode,
+                              ) -> ProjectInspection:
+    """Inspect both sides. ``verify_trust`` is the platform Authenticode probe (Windows only,
+    embedded signatures, no revocation, no network); it runs only on hash-verified copies."""
     by_side = {artifact.side: artifact for artifact in artifacts}
     missing = [side for side in SIDES if side not in by_side]
     if missing:
@@ -85,7 +92,13 @@ def inspect_project_artifacts(project_id: str, artifacts: Iterable[Artifact], ro
                                          error=f'{type(exc).__name__}: {exc}')
             continue
         cancelled = cancelled or overview.status == 'cancelled'
-        sides[side] = SideInspection(side, artifact.sha256, overview=overview)
+        trust = None
+        if not cancelled and overview.status != 'not_pe':
+            try:
+                trust = verify_trust(safe_path(Path(root), artifact.relative_path))
+            except Exception as exc:  # noqa: BLE001 - trust probe failure is reported, never fatal
+                trust = TrustResult('unavailable', None, f'Authenticode probe failed: {type(exc).__name__}')
+        sides[side] = SideInspection(side, artifact.sha256, overview=overview, trust=trust)
     older, newer = sides['older'].overview, sides['newer'].overview
     comparisons = compare_overviews(older, newer) if older is not None and newer is not None else ()
     return ProjectInspection(project_id, sides, comparisons, cancelled, readers)

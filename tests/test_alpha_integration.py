@@ -217,3 +217,46 @@ def test_text_modes_still_work_after_raw(window, qtbot):
     window.mode.setCurrentIndex(0)
     assert not window.raw_scope.isVisibleTo(window)
     assert 'return' in window.views['older'].toPlainText()
+
+
+# ---- Authenticode surfacing --------------------------------------------------------------------
+
+def test_trust_probe_runs_only_on_verified_pe_and_failures_are_reported(tmp_path):
+    from patchtrace.pe_overview.authenticode import TrustResult
+    older = store(tmp_path, 'older', build_pe())
+    newer = store(tmp_path, 'newer', build_pe(PeSpec(timestamp=7)))
+    (tmp_path / newer.relative_path).write_bytes(b'MZ' + b'\x00' * (newer.size - 2))
+    calls = []
+
+    def fake(path):
+        calls.append(path.name)
+        return TrustResult('trusted_no_revocation_check', 0, 'fake')
+    result = inspect_project_artifacts('p', [older, newer], tmp_path, verify_trust=fake)
+    result.close()
+    assert calls == [f'{older.sha256}.bin']
+    assert result.sides['older'].trust.status == 'trusted_no_revocation_check'
+    assert result.sides['newer'].trust is None
+
+    def broken(path):
+        raise OSError('boom')
+    older2 = store(tmp_path, 'newer', build_pe(PeSpec(timestamp=8)))
+    result = inspect_project_artifacts('p', [older, older2], tmp_path, verify_trust=broken)
+    result.close()
+    assert result.sides['older'].trust.status == 'unavailable'
+
+
+def test_trust_labels_never_claim_full_validity():
+    from patchtrace.pe_overview.authenticode import STATUSES
+    from patchtrace.ui_inspection import TRUST_LABELS
+    assert set(TRUST_LABELS) == set(STATUSES)
+    assert 'revocation NOT checked' in TRUST_LABELS['trusted_no_revocation_check']
+    assert not any(label.lower().startswith('valid') for label in TRUST_LABELS.values())
+
+
+def test_overview_table_has_authenticode_row(window, qtbot):
+    window.show_file_overview()
+    qtbot.waitUntil(lambda: window._current_inspection() is not None, timeout=10000)
+    table = window._preflight_pe_table
+    fields = [table.item(i, 0).text() for i in range(table.rowCount())]
+    assert 'Authenticode (embedded, offline)' in fields
+    window._preflight_dialog.close()

@@ -65,6 +65,19 @@ Phase 3a acquisition (SPEC-08, headless): Winbindex parsing, consented msdl down
 - Phase 3 (PR #13): N-way series, acquisition dialog, BinDiff/rz-diff secondary engines. Windows CI ran the msdelta `CreateDeltaB` → `ApplyDeltaB` round trip successfully. Two Windows-only test defects found by per-test CI jobs and fixed: a 64 MiB pytest parameter id stalled the Windows console (QA hung 18+ minutes), and a POSIX path literal in an rz-diff probe test. QA jobs are now capped at 30 minutes.
 - Release `v0.1.0-beta.90` built from `7eea001` (tag verified): Windows ZIP 47,861,849 bytes, Linux tar.gz 74,215,035 bytes, both sidecar checksums verified after download; extracted Linux artifact passes `--self-test` and every headless command answers `--help` with exit 0. No live BinDiff/rizin run, no hands-on Windows GUI session.
 
+## 2026-10-13 SPEC-26 alpha session (Claude Code)
+
+Merged: #19 (recorded file overview), #20 (handoff docs), #21 (verified artifact byte seam), #22 (PE overview + Authenticode probe), #23 (Hex/Binary/Base64 providers), #24 (tooltip registry). Each merged only after its own green GitHub Actions run: Ubuntu and Windows pytest + Ruff, Windows onedir freeze, Linux package + 22.04/24.04 smoke, and the native Windows Ghidriff matrix.
+
+Automated evidence (actual results):
+- Baseline main `f0086f7` before work: Linux local 774 passed / 5 skipped, Ruff clean.
+- PR #22 Windows `qa (windows-latest)`: 875 passed / 10 skipped. JUnit shows `test_native_unsigned_file_does_not_raise` **passed** on the Windows runner, i.e. a real `WinVerifyTrust` call on an unsigned temp file returned without error. This is not acceptance of signed/trusted/revoked samples.
+- Integration branch (PE comparison in File overview, raw views, Authenticode row): Linux local 973 passed / 6 skipped, Ruff clean. Windows result: see the integration PR checks.
+
+Release publication (handoff B1) root cause: run 38492874312 (commit `64fda061`) built and tested successfully but `softprops/action-gh-release` got HTTP 403 `Resource not accessible by integration` although the job token had `contents: write`. That commit added `.github/workflows/import-agent-skills-once.yml`. GitHub refuses to let `GITHUB_TOKEN` create refs/tags on a commit whose diff adds or changes workflow files (the token can never hold the `workflows` permission). The next main runs 101 and 103 published `v0.1.0-beta.101` and `v0.1.0-beta.103` normally, and the repository has no rulesets. Conclusion: not a standing permission problem; no settings change required. Expect the same 403 on any future main push whose head commit edits `.github/workflows/*`; that run's ZIP stays available as an Actions artifact. A maintainer PAT with `workflow` scope would avoid it but is not recommended for an automated job.
+
+Not performed in this session: interactive clean-Windows GUI walk-through, DPI/theme checks, signed/trusted/revoked Authenticode samples, fuzzing beyond the synthetic hostile-PE fixtures, live Ghidriff on new inputs beyond the CI fixture matrix.
+
 ## Acceptance gates
 - Windows unit/Qt suite: 93 passed; Ruff passed ([run](https://github.com/djshellshoxxx/patchtrace/actions/runs/38126515355)). Frozen desktop smoke passed on the final curated package ([run](https://github.com/djshellshoxxx/patchtrace/actions/runs/38127040440)). That run repeats 93 Windows passes and 91 Linux passes with 2 Windows-only skips.
 - Real native Ghidriff known bounds-check DLL patch: passed ([run](https://github.com/djshellshoxxx/patchtrace/actions/runs/38126512208)). Python 3.12.10, Ghidra 12.0.4, Temurin Java 25; pinned Ghidriff revision from research. Both MSVC-built DLLs were statically analyzed, never executed. One modified change record contains the expected check. This single fixture does not establish general matching accuracy.

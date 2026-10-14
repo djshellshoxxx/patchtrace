@@ -16,6 +16,16 @@ from PySide6.QtWidgets import QAbstractItemView, QTableWidget, QTableWidgetItem
 
 from .artifact_inspection import ProjectInspection, inspect_project_artifacts
 
+# Never say "valid" or "fully trusted": revocation is not checked and catalog signatures are out of scope.
+TRUST_LABELS = {
+    'trusted_no_revocation_check': 'embedded signature chains to a trusted root (revocation NOT checked)',
+    'unsigned': 'no embedded signature (catalog signing not checked)',
+    'untrusted': 'signature present but not trusted',
+    'invalid': 'signature present but digest/format invalid',
+    'unknown': 'result unknown',
+    'unavailable': 'not checked on this platform',
+}
+
 
 class InspectionThread(QThread):
     """Bounded read-only inspection of both artifacts; never mutates the project."""
@@ -49,8 +59,9 @@ def side_summary(inspection: ProjectInspection) -> str:
             parts.append(f'{side.upper()}: unavailable ({info.error_code})')
             continue
         warnings = len(info.overview.warnings)
+        trust = f', Authenticode {TRUST_LABELS.get(info.trust.status, info.trust.status)}' if info.trust else ''
         parts.append(f'{side.upper()}: PE inspection {info.overview.status}'
-                     + (f', {warnings} parser warning(s)' if warnings else ''))
+                     + (f', {warnings} parser warning(s)' if warnings else '') + trust)
     return ' · '.join(parts)
 
 
@@ -79,5 +90,18 @@ def fill_pe_table(table: QTableWidget, inspection: ProjectInspection) -> None:
                 font = QFont(item.font())
                 font.setBold(True)
                 item.setFont(font)
+            table.setItem(index, column, item)
+    trust = {side: inspection.sides[side].trust for side in ('older', 'newer')}
+    if any(trust.values()):
+        index = table.rowCount()
+        table.setRowCount(index + 1)
+        texts = [TRUST_LABELS.get(t.status, t.status) if t else 'not run' for t in trust.values()]
+        status = 'unavailable' if not all(trust.values()) else (
+            'unchanged' if trust['older'].status == trust['newer'].status else 'changed')
+        values = ('Authenticode (embedded, offline)', *texts, status, 'WinVerifyTrust, no revocation, no network')
+        detail = ' | '.join(f'{s}: {t.detail}' for s, t in trust.items() if t)
+        for column, value in enumerate(values):
+            item = QTableWidgetItem(value)
+            item.setToolTip(detail or 'Authenticode probe did not run.')
             table.setItem(index, column, item)
     table.resizeColumnsToContents()
