@@ -57,7 +57,7 @@ MAX_FEATURES = 16
 MAX_LABELS = 32
 StringType = Literal['static', 'stack', 'tight', 'decoded', 'language']
 EnvCategory = Literal['compiler', 'linker', 'tool', 'packer', 'protector', 'cryptor', 'installer', 'sfx', 'library',
-                      'format', 'overlay', 'other', 'unknown']
+                      'format', 'overlay', 'other', 'unknown', 'language', 'os', 'archive', 'signtool', 'petool']
 _FUNCTION_ID = re.compile(r'^rva:0x[0-9a-f]{1,16}$')
 _SHORT = Annotated[str, Field(max_length=256)]
 
@@ -280,6 +280,9 @@ class EnvironmentEvidence(_Strict):
     detect_string: str = Field(default='', max_length=200)
     filetype: str = Field(default='', max_length=32)
     source_run_id: str = Field(min_length=1, max_length=128)
+    # Additive (DIE-D1): the tool's own type name (lower case) and the file-part path of the detection.
+    raw_type: str = Field(default='', max_length=64)
+    part_path: str = Field(default='', max_length=200)
 
 
 class ToolEvidenceSet(_Strict):

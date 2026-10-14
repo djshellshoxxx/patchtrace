@@ -376,3 +376,6 @@ Status column: each row is built by the slice named in `docs/specs/program-e/CAP
 | module | files | purpose | depends on | tests |
 |---|---|---|---|---|
 | capa view | intelligence/tools/capa_view.py | Qt-free view-model of the capability changes: prebuilt rows, filters, grouping (namespace, pair, ATT&CK/MBC label), search, state texts C0-C13, detail pane text, deterministic provenance block, teach hooks `cap.*`, accessible names and texts, neutral badge colours, `rules_label` | tools.capa_pairs, tools.common | `test_capa_view.py` |
+
+### [D1:diec-hardening]
+`intelligence/tools/diec.py` parses nested file-part nodes (path `filetype@offset/...`, depth cap 8), the empty-result document (`analysis.result = none-found`), `!` and `(A-Heur)` as heuristic, and a total table over the 57 upstream type names (`TYPE_CATEGORY`, `PACKED_TYPES`, `PROTECTED_TYPES`, `INSTALLER_TYPES`, `NEUTRAL_TYPES`, `raw_type` kept, drift counted). `EnvironmentEvidence` gains `raw_type`, `part_path` and categories language, os, archive, signtool, petool (additive). `delta.quality_flags` uses the shared sets; `installer` is its own flag. `DiecConfig.effective_memory_limit()` = min(4 GiB, 50 % of RAM) via `process.total_ram_bytes()`. Tests: `test_diec_adapter_hardening.py`.

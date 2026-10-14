@@ -370,3 +370,6 @@ No manual step. Windows CI must run `tests/test_search_segment.py`; Linux eviden
 | banned stems and words absent from every UI-authored string | `test_banned_strings_never_appear` |
 | badge contrast (text >= 4.5:1, fill >= 3:1 on the dark theme) | `test_badges_are_neutral_with_enough_contrast` |
 | not verified here: NVDA/Narrator output, glyph fonts, DPI, the Qt `data()` cost budgets (CAP-6a) | manual gate L7 |
+
+### [D1:diec-hardening]
+Fixtures `nested-overlay`, `empty-result`, `vocabulary` are hand-authored from the upstream writer, not captured. G-L1 must confirm both shapes with real diec 3.21 and replace them.

@@ -4,7 +4,7 @@ Verified against diec 3.21 (`--help`, `--version`, JSON output of real runs on S
 that DiE's GUI and CLI have differed, so results are accepted only from the tested version with a known signature
 database digest unless the caller explicitly accepts an untested combination. The database is copied into the
 scratch (`-D`), extra and custom databases are empty folders (`-E`, `-C`) so user-writable signature folders cannot
-change the result. Heuristic detections (`type` prefixed `~`, string prefixed `(Heur)`) are weak and labelled;
+change the result. Heuristic detections (`type` prefixed `~` or `!`, string prefixed `(Heur)` or `(A-Heur)`) are weak and labelled;
 `Unknown` is unknown. DiE output is environment evidence about toolchain and packing, never positive evidence for a
 security mechanism, and no false-lead reduction is claimed (value gate unvalidated).
 """
@@ -41,8 +41,45 @@ DEFAULT_TIMEOUT = 120
 REQUIRED_OPTIONS = ('-j', '--json', '-D', '--database', '-E', '--extradatabase', '-C', '--customdatabase', '-d',
                     '--deepscan', '-u', '--heuristicscan')
 _VERSION = re.compile(r'^die (\d+)\.(\d+)\s*$', re.MULTILINE)
-CATEGORIES = {'compiler', 'linker', 'tool', 'packer', 'protector', 'cryptor', 'installer', 'sfx', 'library',
-              'format', 'overlay'}
+MAX_NESTING = 8
+MIN_MEMORY_LIMIT = 256 * 1024 ** 2
+MEMORY_CEILING = 4 * 1024 ** 3
+_HEURISTIC_MARKS = '~!'
+_HEURISTIC_STRINGS = ('(Heur)', '(A-Heur)')
+# The 57 RECORD_TYPE names of XScanEngine (lower case, as scripts emit them) -> normalised category; the raw name
+# is always kept on the evidence. Anything else is `other` and counted as vocabulary drift.
+TYPE_CATEGORY = {
+    'unknown': 'unknown', 'apk obfuscator': 'other', 'apk tool': 'other', 'archive': 'archive', 'author': 'other',
+    'certificate': 'other', 'compiler': 'compiler', 'compressor': 'packer', 'converter': 'other',
+    'corrupted data': 'other', 'creator': 'other', 'crypter': 'cryptor', 'cryptor': 'cryptor', 'data': 'other',
+    'database': 'other', 'debug data': 'other', 'document': 'other', 'dongle protection': 'other',
+    'dos extender': 'other', 'format': 'format', 'generic': 'other', 'image': 'other', 'installer': 'installer',
+    'installer data': 'installer', 'jar obfuscator': 'other', 'joiner': 'other', 'language': 'language',
+    'library': 'library', 'licensing': 'other', 'linker': 'linker', 'loader': 'other', 'malware': 'other',
+    '.net compressor': 'packer', '.net obfuscator': 'protector', 'obfuscator': 'protector',
+    'operation system': 'os', 'overlay': 'overlay', 'package': 'other', 'packer': 'packer', 'personal data': 'other',
+    'pe tool': 'petool', 'platform': 'other', 'player': 'other', 'producer': 'other', 'protection': 'protector',
+    'protector': 'protector', 'protector data': 'other', 'rom': 'other', 'sfx': 'sfx', 'sfx data': 'sfx',
+    'sign tool': 'signtool', 'source code': 'other', 'stub': 'other', 'tool': 'tool', 'trojan': 'other',
+    'virtual machine': 'other', 'virus': 'other'}
+# Warning sets shared with `delta.quality_flags`; every table name is in exactly one set or is listed as neutral.
+PACKED_TYPES = frozenset({'packer', 'compressor', '.net compressor', 'cryptor', 'crypter'})
+PROTECTED_TYPES = frozenset({'protector', 'protection', 'obfuscator', '.net obfuscator'})
+INSTALLER_TYPES = frozenset({'installer', 'installer data', 'sfx', 'sfx data'})
+NEUTRAL_TYPES = frozenset({
+    'unknown', 'apk obfuscator', 'apk tool', 'archive', 'author', 'certificate', 'compiler', 'converter',
+    'corrupted data', 'creator', 'data', 'database', 'debug data', 'document', 'dongle protection', 'dos extender',
+    'format', 'generic', 'image', 'jar obfuscator', 'joiner', 'language', 'library', 'licensing', 'linker', 'loader',
+    'malware', 'operation system', 'overlay', 'package', 'personal data', 'pe tool', 'platform', 'player',
+    'producer', 'protector data', 'rom', 'sign tool', 'source code', 'stub', 'tool', 'trojan', 'virtual machine',
+    'virus'})
+
+
+def memory_cap(total_ram_bytes: int | None) -> int:
+    """min(4 GiB, 50 % of RAM); 4 GiB when the machine does not report its memory (as UE L-42)."""
+    if not total_ram_bytes or total_ram_bytes <= 0:
+        return MEMORY_CEILING
+    return min(MEMORY_CEILING, total_ram_bytes // 2)
 
 
 @dataclass(frozen=True)
@@ -53,6 +90,15 @@ class DiecConfig:
     heuristic: bool = False
     accept_untested: bool = False
     timeout: int = DEFAULT_TIMEOUT
+    memory_limit_bytes: int | None = None   # None: min(4 GiB, 50 % of RAM)
+
+    def effective_memory_limit(self) -> int:
+        limit = self.memory_limit_bytes
+        if limit is None:
+            return memory_cap(process.total_ram_bytes())
+        if limit < MIN_MEMORY_LIMIT:
+            raise ToolError('PT-TOOL-INPUT', 'the diec memory limit must be at least 256 MiB')
+        return limit
 
 
 def default_database(executable: Path) -> Path | None:
@@ -214,12 +260,13 @@ class Value(_Model):
 
 
 class Detect(_Model):
+    """A file-part node; `values` holds leaves and further nodes (upstream `ScanItemModel::_toJSON`)."""
     filetype: str
     info: str
     offset: str
     parentfilepart: str
     size: str
-    values: list[Value]
+    values: list[Detect | Value]
 
 
 class Document(_Model):
@@ -236,11 +283,11 @@ class ParseContext:
     limits: ToolLimits
 
 
-def _evidence(value: Value, filetype: str, run_id: str) -> EnvironmentEvidence:
-    heuristic = value.type.startswith('~') or value.string.startswith('(Heur)')
-    kind = value.type.lstrip('~').strip().lower()
+def _evidence(value: Value, filetype: str, path: str, run_id: str) -> EnvironmentEvidence:
+    heuristic = value.type.startswith(tuple(_HEURISTIC_MARKS)) or value.string.startswith(_HEURISTIC_STRINGS)
+    kind = value.type.lstrip(_HEURISTIC_MARKS).strip().lower()
     unknown = kind == 'unknown' or value.name.strip().lower() == 'unknown'
-    category = 'unknown' if unknown else kind if kind in CATEGORIES else 'other'
+    category = 'unknown' if unknown else TYPE_CATEGORY.get(kind, 'other')
     name, version = process.tool_text(value.name, 200), process.tool_text(value.version, 120)
     label = process.tool_text(' '.join(part for part in (value.name.strip(), value.version.strip()) if part), 200)
     certainty = 'unknown' if unknown else 'heuristic' if heuristic else 'signature'
@@ -250,7 +297,30 @@ def _evidence(value: Value, filetype: str, run_id: str) -> EnvironmentEvidence:
         protector=label if category == 'protector' else None, detector_rule=name,
         heuristic=heuristic, certainty=certainty, version=version,
         detect_string=process.tool_text(value.string, 200), filetype=process.tool_text(filetype, 32),
-        source_run_id=run_id)
+        source_run_id=run_id, raw_type=process.tool_text(kind, 64), part_path=process.tool_text(path, 200))
+
+
+def _flatten(nodes: list, parent_path: str = '', depth: int = 1) -> list[tuple[str, str, Value]]:
+    """(filetype, path, leaf) for every leaf under `nodes`; a path segment is `filetype@offset`."""
+    if depth > MAX_NESTING:
+        raise ToolError('PT-TOOL-OUTPUT', f'diec output nests file parts deeper than {MAX_NESTING}')
+    found: list[tuple[str, str, Value]] = []
+    for node in nodes:
+        path = f'{parent_path}/{node.filetype}@{node.offset}' if parent_path else f'{node.filetype}@{node.offset}'
+        for child in node.values:
+            if isinstance(child, Value):
+                found.append((node.filetype, path, child))
+            else:
+                found.extend(_flatten([child], path, depth + 1))
+    return found
+
+
+def _filetypes(nodes: list) -> set[str]:
+    types: set[str] = set()
+    for node in nodes:
+        types.add(process.tool_text(node.filetype, 32))
+        types |= _filetypes([child for child in node.values if isinstance(child, Detect)])
+    return types
 
 
 def parse(raw: bytes, ctx: ParseContext) -> ToolEvidenceSet:
@@ -262,21 +332,39 @@ def parse(raw: bytes, ctx: ParseContext) -> ToolEvidenceSet:
         raise ToolError('PT-TOOL-OUTPUT', 'diec output holds a value outside the evidence contract') from None
 
 
+def _is_empty_result(data: object) -> bool:
+    """A childless root is a leaf whose `string` is "Result" (no detections at all)."""
+    if not isinstance(data, dict) or 'detects' in data:
+        return False
+    try:
+        return Value.model_validate(data).string == 'Result'
+    except ValidationError:
+        return False
+
+
 def _parse(raw: bytes, ctx: ParseContext) -> ToolEvidenceSet:
     data = load_json_strict(raw, max_bytes=ctx.limits.stdout_bytes, max_depth=ctx.limits.json_depth)
+    if _is_empty_result(data):
+        return _evidence_set(ctx, [], 0, set(), {'result': 'none-found'})
     try:
         doc = Document.model_validate(data)
     except ValidationError as exc:
         where = '.'.join(str(p) for p in exc.errors()[0]['loc'])[:80] if exc.errors() else '?'
         raise ToolError('PT-TOOL-OUTPUT', f'diec output violates the 3.21 JSON contract at {where}') from None
-    pairs = [(detect.filetype, value) for detect in doc.detects for value in detect.values]
-    total = len(pairs)
+    leaves = _flatten(doc.detects)
+    total = len(leaves)
     # A truncated set is a stable prefix of the sorted detections, not of the tool's order (TA-3).
-    pairs.sort(key=lambda p: (p[0], p[1].type, p[1].name, p[1].version, p[1].string, p[1].info))
-    items = [_evidence(value, filetype, ctx.run_id) for filetype, value in pairs[:ctx.limits.max_environment]]
-    filetypes = sorted({process.tool_text(d.filetype, 32) for d in doc.detects})
+    leaves.sort(key=lambda p: (p[0], p[2].type, p[2].name, p[2].version, p[2].string, p[2].info, p[1]))
+    kept = leaves[:ctx.limits.max_environment]
+    items = [_evidence(value, filetype, path, ctx.run_id) for filetype, path, value in kept]
+    drift = sum(1 for item in items if item.category == 'other' and item.raw_type not in TYPE_CATEGORY)
+    return _evidence_set(ctx, items, total, _filetypes(doc.detects), {'vocabulary_drift': drift} if drift else {})
+
+
+def _evidence_set(ctx: ParseContext, items: list[EnvironmentEvidence], total: int, filetypes: set[str],
+                  extra: dict) -> ToolEvidenceSet:
     return ToolEvidenceSet(
         run_id=ctx.run_id, engine=ENGINE, side=ctx.side, artifact_sha256=ctx.artifact_sha256, cache_key=ctx.cache_key,
-        config_digest=ctx.config_digest, analysis={'filetypes': ','.join(filetypes)[:200]},
+        config_digest=ctx.config_digest, analysis={'filetypes': ','.join(sorted(filetypes))[:200], **extra},
         environment=tuple(items), truncated=total > len(items),
         counts={'environment': len(items), 'environment_total': total})

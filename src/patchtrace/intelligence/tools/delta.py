@@ -27,6 +27,7 @@ from .common import (
     _Strict,
     redacted_display,
 )
+from .diec import INSTALLER_TYPES, PACKED_TYPES, PROTECTED_TYPES
 from .normalize import FunctionPairing, comparability
 
 MAX_LOCATIONS = 16
@@ -34,7 +35,7 @@ MAX_STRING_CHANGES = 10_000
 DISTORTION_NOTE = 'comparison may be distorted by a toolchain change or packing (see flags)'
 Classification = Literal['newly-introduced', 'newly-detectable', 'removed-with-code', 'no-longer-detected',
                          'unlocalized', 'unknown', 'unchanged']
-FlagCode = Literal['toolchain-changed', 'packed', 'protected', 'heuristic-only', 'environment-unknown',
+FlagCode = Literal['toolchain-changed', 'packed', 'protected', 'installer', 'heuristic-only', 'environment-unknown',
                    'capa-limitation', 'function-recovery-shift']
 
 
@@ -297,10 +298,11 @@ def quality_flags(diec: tuple[ToolEvidenceSet | None, ToolEvidenceSet | None] = 
             for item in evidence.environment:
                 if item.certainty != 'signature':
                     continue
-                if item.category in ('packer', 'cryptor', 'sfx', 'installer'):
-                    flags.append(QualityFlag(code='packed', source='diec', detail=f'{side}: {item.detect_string}'))
-                elif item.category == 'protector':
-                    flags.append(QualityFlag(code='protected', source='diec', detail=f'{side}: {item.detect_string}'))
+                kind = item.raw_type or item.category  # rows stored before raw_type carry the category only
+                for code, types in (('packed', PACKED_TYPES), ('protected', PROTECTED_TYPES),
+                                    ('installer', INSTALLER_TYPES)):
+                    if kind in types:
+                        flags.append(QualityFlag(code=code, source='diec', detail=f'{side}: {item.detect_string}'))
         weak = [f'{side}: {e.detect_string}' for side, s in (('older', old_env), ('newer', new_env))
                 for e in s.environment if e.certainty == 'heuristic']
         if weak:
@@ -353,7 +355,7 @@ def compute(older_run: ToolRun | None, older: ToolEvidenceSet | None, newer_run:
         return ToolDelta(comparable=False, reasons=tuple(reasons), **base)
     notes: set[str] = set()
     capabilities = _capabilities(older, newer, pairing, notes)
-    distorted = any(f.code in ('toolchain-changed', 'packed', 'protected') for f in flags)
+    distorted = any(f.code in ('toolchain-changed', 'packed', 'protected', 'installer') for f in flags)
     if distorted:
         capabilities = [c.model_copy(update={'notes': (*c.notes, DISTORTION_NOTE)})
                         if c.classification in ('newly-introduced', 'removed-with-code') else c for c in capabilities]

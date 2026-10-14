@@ -253,3 +253,6 @@
 ### [CAP-3:capa-view]
 - [x] View-model, banned-wording sweep, 100,000-row build and re-arrange budget, no-Qt import test (`tests/test_capa_view.py`)
 - [ ] Not done here (CAP-6a, needs the GUI registry): Qt model/view with the `data()`-call budgets, tooltips, offscreen state tests, 20x repeat
+
+### [D1:diec-hardening]
+- Done: adapter hardening (nested, empty result, heuristic marks, 57-name table, installer flag, memory cap function). Open: runner wiring of the diec memory cap (integrator), live goldens replace the hand-authored fixtures (G-L1).

@@ -164,7 +164,12 @@
             "format",
             "overlay",
             "other",
-            "unknown"
+            "unknown",
+            "language",
+            "os",
+            "archive",
+            "signtool",
+            "petool"
           ],
           "title": "Category",
           "type": "string"
@@ -212,6 +217,12 @@
           "default": null,
           "title": "Packer"
         },
+        "part_path": {
+          "default": "",
+          "maxLength": 200,
+          "title": "Part Path",
+          "type": "string"
+        },
         "protector": {
           "anyOf": [
             {
@@ -224,6 +235,12 @@
           ],
           "default": null,
           "title": "Protector"
+        },
+        "raw_type": {
+          "default": "",
+          "maxLength": 64,
+          "title": "Raw Type",
+          "type": "string"
         },
         "source": {
           "const": "diec",

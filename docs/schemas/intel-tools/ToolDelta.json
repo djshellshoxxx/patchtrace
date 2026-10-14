@@ -289,6 +289,7 @@
             "toolchain-changed",
             "packed",
             "protected",
+            "installer",
             "heuristic-only",
             "environment-unknown",
             "capa-limitation",
