@@ -1,0 +1,288 @@
+{
+  "$defs": {
+    "AlternativeMatch": {
+      "additionalProperties": false,
+      "description": "A further candidate an engine proposed for one anchor; never merged across engines or re-scored.",
+      "properties": {
+        "anchor_side": {
+          "enum": [
+            "older",
+            "newer"
+          ],
+          "title": "Anchor Side",
+          "type": "string"
+        },
+        "anchor_address": {
+          "maximum": 18446744073709551615,
+          "minimum": 0,
+          "title": "Anchor Address",
+          "type": "integer"
+        },
+        "candidate": {
+          "$ref": "#/$defs/SecondaryMatch"
+        },
+        "source": {
+          "enum": [
+            "rz-diff",
+            "bindiff",
+            "ghidriff-baseline"
+          ],
+          "title": "Source",
+          "type": "string"
+        },
+        "rank": {
+          "minimum": 1,
+          "title": "Rank",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "anchor_side",
+        "anchor_address",
+        "candidate",
+        "source",
+        "rank"
+      ],
+      "title": "AlternativeMatch",
+      "type": "object"
+    },
+    "SecondaryMatch": {
+      "additionalProperties": false,
+      "properties": {
+        "engine": {
+          "enum": [
+            "bindiff",
+            "rz-diff"
+          ],
+          "title": "Engine",
+          "type": "string"
+        },
+        "engine_version": {
+          "minLength": 1,
+          "title": "Engine Version",
+          "type": "string"
+        },
+        "older_address": {
+          "anyOf": [
+            {
+              "maximum": 18446744073709551615,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Older Address"
+        },
+        "newer_address": {
+          "anyOf": [
+            {
+              "maximum": 18446744073709551615,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Newer Address"
+        },
+        "older_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Older Name"
+        },
+        "newer_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Newer Name"
+        },
+        "similarity_milli": {
+          "maximum": 1000,
+          "minimum": 0,
+          "title": "Similarity Milli",
+          "type": "integer"
+        },
+        "similarity_text": {
+          "minLength": 1,
+          "title": "Similarity Text",
+          "type": "string"
+        },
+        "confidence_milli": {
+          "anyOf": [
+            {
+              "maximum": 1000,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Confidence Milli"
+        },
+        "confidence_text": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Confidence Text"
+        },
+        "flags": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Flags",
+          "type": "array"
+        },
+        "algorithm": {
+          "minLength": 1,
+          "title": "Algorithm",
+          "type": "string"
+        },
+        "match_type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Match Type"
+        }
+      },
+      "required": [
+        "engine",
+        "engine_version",
+        "older_address",
+        "newer_address",
+        "older_name",
+        "newer_name",
+        "similarity_milli",
+        "similarity_text",
+        "confidence_milli",
+        "confidence_text",
+        "flags",
+        "algorithm"
+      ],
+      "title": "SecondaryMatch",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "contract": {
+      "default": "secondary/1",
+      "enum": [
+        "secondary/1",
+        "secondary/2"
+      ],
+      "title": "Contract",
+      "type": "string"
+    },
+    "engine": {
+      "enum": [
+        "bindiff",
+        "rz-diff"
+      ],
+      "title": "Engine",
+      "type": "string"
+    },
+    "engine_version": {
+      "minLength": 1,
+      "title": "Engine Version",
+      "type": "string"
+    },
+    "older_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Older Sha256",
+      "type": "string"
+    },
+    "newer_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Newer Sha256",
+      "type": "string"
+    },
+    "file_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "File Sha256",
+      "type": "string"
+    },
+    "image_base_subtracted": {
+      "default": "unknown",
+      "enum": [
+        "yes",
+        "no",
+        "unknown"
+      ],
+      "title": "Image Base Subtracted",
+      "type": "string"
+    },
+    "matches": {
+      "items": {
+        "$ref": "#/$defs/SecondaryMatch"
+      },
+      "title": "Matches",
+      "type": "array"
+    },
+    "limitations": {
+      "default": [],
+      "items": {
+        "type": "string"
+      },
+      "title": "Limitations",
+      "type": "array"
+    },
+    "alternatives": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/AlternativeMatch"
+      },
+      "title": "Alternatives",
+      "type": "array"
+    },
+    "run_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Run Id"
+    }
+  },
+  "required": [
+    "engine",
+    "engine_version",
+    "older_sha256",
+    "newer_sha256",
+    "file_sha256",
+    "matches"
+  ],
+  "title": "SecondaryMatchSet",
+  "type": "object",
+  "$id": "https://patchtrace.local/schemas/secondary/2/SecondaryMatchSet.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}

@@ -15,8 +15,9 @@ from __future__ import annotations
 import hashlib
 import json
 import sqlite3
+from collections.abc import Collection, Iterable
 from dataclasses import dataclass
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
 
 from ..persistence import ProjectStore, safe_path
 from .contracts import EnrichmentError
@@ -24,7 +25,16 @@ from .contracts import EnrichmentError
 EXTENSION_VERSION = 1
 MAX_ROW = 32 * 1024 * 1024
 MAX_TOTAL = 128 * 1024 * 1024
-KINDS = frozenset({'signals', 'ranking', 'wil', 'cve-snapshot', 'contextual', 'pipeline', 'secondary-matches'})
+KINDS = frozenset({'signals', 'ranking', 'wil', 'cve-snapshot', 'contextual', 'pipeline', 'secondary-matches',
+                   'engine-run'})
+
+# Retention (SPEC-07h H1). Only recomputable derived kinds are ever deleted; imported evidence
+# (`secondary-matches`), `cve-snapshot` and unknown kinds are never evicted.
+DERIVED_KINDS = ('signals', 'ranking', 'wil', 'contextual', 'pipeline')
+KEEP_CURRENT = 8
+KEEP_STALE = 2
+ORPHAN_GRACE = timedelta(minutes=5)
+_RETENTION_META_SQL = "INSERT OR IGNORE INTO enrichment_meta(key, value) VALUES('retention_version', '1')"
 
 
 @dataclass(frozen=True)
@@ -76,11 +86,11 @@ class EnrichmentStore:
     def _tables(self) -> set[str]:
         return {row[0] for row in self._db.execute("SELECT name FROM sqlite_master WHERE type='table'")}
 
-    def _backup_before_create(self) -> None:
+    def _backup_before_create(self, label: str = 'enrichment') -> None:
         directory = safe_path(self.store.root, 'backups')
         directory.mkdir(exist_ok=True)
         stamp = datetime.now(UTC).strftime('%Y%m%dT%H%M%S%fZ')
-        target = safe_path(self.store.root, f'backups/project-pre-enrichment-{stamp}.sqlite3')
+        target = safe_path(self.store.root, f'backups/project-pre-{label}-{stamp}.sqlite3')
         expected = self._db.execute('SELECT sha256 FROM current_snapshot WHERE singleton=1').fetchone()
         copy = sqlite3.connect(target)
         try:
@@ -91,7 +101,7 @@ class EnrichmentStore:
             copy.close()
         if not ok or got != expected:
             target.unlink(missing_ok=True)
-            raise EnrichmentError('PT-ENRICH-INPUT', 'pre-extension database backup failed verification')
+            raise EnrichmentError('PT-ENRICH-INPUT', f'pre-{label} database backup failed verification')
 
     def ensure(self) -> None:
         """Create tables on first use; detect newer extension versions (read-only)."""
@@ -120,8 +130,9 @@ class EnrichmentStore:
         self._ready = True
 
     def publish(self, kind: str, guard: Guard, current: Guard, revision: int, status: str,
-                body: dict, entry_id: str) -> Entry:
-        """Store a result; `current` is the guard recomputed from the live project right now."""
+                body: dict, entry_id: str, protect: Collection[str] = ()) -> Entry:
+        """Store a result; `current` is the guard recomputed from the live project right now.
+        `protect` lists the row ids of the generation being written; the cap fallback never evicts them."""
         if kind not in KINDS:
             raise EnrichmentError('PT-ENRICH-INPUT', f'unknown enrichment kind {kind!r}')
         self.ensure()
@@ -134,8 +145,12 @@ class EnrichmentStore:
         used = self._db.execute('SELECT COALESCE(SUM(LENGTH(CAST(body AS BLOB))),0) FROM enrichment_entries '
                                 'WHERE id != ?', (entry_id,)).fetchone()[0]
         if used + size > MAX_TOTAL:
-            raise EnrichmentError('PT-ENRICH-LIMIT', 'project enrichment data would exceed 128 MiB',
-                                  recoverable=True)
+            self.make_room(used + size - MAX_TOTAL, current, {entry_id, *protect})
+            used = self._db.execute('SELECT COALESCE(SUM(LENGTH(CAST(body AS BLOB))),0) FROM enrichment_entries '
+                                    'WHERE id != ?', (entry_id,)).fetchone()[0]
+            if used + size > MAX_TOTAL:
+                raise EnrichmentError('PT-ENRICH-LIMIT', 'project enrichment data would exceed 128 MiB',
+                                      recoverable=True)
         stale = guard != current
         created = datetime.now(UTC).isoformat()
         with self._db:
@@ -166,3 +181,149 @@ class EnrichmentStore:
 
     def current(self, kind: str, guard: Guard) -> Entry | None:
         return next((e for e in self.entries(kind, guard) if not e.stale), None)
+
+    # --- retention (SPEC-07h H1) -------------------------------------------------
+
+    @staticmethod
+    def _refs(entry: Entry) -> set[str]:
+        """Row ids of one generation: the pipeline row plus the rows its body references."""
+        stage_ids = entry.body.get('stage_ids') if isinstance(entry.body, dict) else None
+        refs = {entry.id}
+        if isinstance(stage_ids, dict):
+            rid = stage_ids.get('ranking')
+            for kind, key in (('signals', rid), ('ranking', rid), ('wil', stage_ids.get('wil')),
+                              ('contextual', stage_ids.get('contextual'))):
+                if isinstance(key, str) and key:
+                    refs.add(f'{kind}:{key}')
+        return refs
+
+    def _derived_rows(self) -> dict[str, tuple[str, int]]:
+        marks = ','.join('?' * len(DERIVED_KINDS))
+        rows = self._db.execute(
+            f'SELECT id, created, LENGTH(CAST(body AS BLOB)) FROM enrichment_entries WHERE kind IN ({marks})',
+            DERIVED_KINDS).fetchall()
+        return {r[0]: (r[1], r[2]) for r in rows}
+
+    def _generations(self, current: Guard) -> tuple[list[Entry], list[Entry]]:
+        """(current generations, stale generations), each newest first."""
+        pipes = self.entries('pipeline')
+        live = [p for p in pipes if not p.stale and p.guard == current]
+        return live, [p for p in pipes if p not in live]
+
+    def _retained(self, live: list[Entry], stale: list[Entry]) -> list[Entry]:
+        kept_stale: list[Entry] = []
+        per_config: dict[object, int] = {}
+        for p in stale:
+            digest = p.body.get('config_digest') if isinstance(p.body, dict) else None
+            if per_config.get(digest, 0) < KEEP_STALE:
+                per_config[digest] = per_config.get(digest, 0) + 1
+                kept_stale.append(p)
+        keep = live[:KEEP_CURRENT]
+        # The newest live default-profile generation is what `load_default` serves: never evicted.
+        default = next((p for p in live if p.body.get('default_profile') is True), None)
+        if default is not None and default not in keep:
+            keep.append(default)
+        return keep + kept_stale
+
+    def _orphans(self, rows: dict[str, tuple[str, int]], pipes: Iterable[Entry], older_than: str) -> set[str]:
+        referenced = {i for p in pipes for i in self._refs(p)}
+        return {i for i, (created, _) in rows.items() if i not in referenced and created < older_than}
+
+    def _has_retention_backup(self) -> bool:
+        directory = safe_path(self.store.root, 'backups')
+        return directory.exists() and any(directory.glob('project-pre-retention-*.sqlite3'))
+
+    def _delete(self, ids: Collection[str]) -> int:
+        """Delete rows and record `retention_version` in one transaction, after a verified backup."""
+        ids = sorted(ids)
+        if not ids:
+            return 0
+        if not self._has_retention_backup():
+            self._backup_before_create('retention')
+        db = self._db
+        marks = ','.join('?' * len(DERIVED_KINDS))
+        db.execute('BEGIN IMMEDIATE')
+        try:
+            for start in range(0, len(ids), 400):
+                chunk = ids[start:start + 400]
+                db.execute(f'DELETE FROM enrichment_entries WHERE id IN ({",".join("?" * len(chunk))}) '
+                           f'AND kind IN ({marks})', (*chunk, *DERIVED_KINDS))
+            db.execute(_RETENTION_META_SQL)
+        except BaseException:
+            db.execute('ROLLBACK')
+            raise
+        db.execute('COMMIT')
+        return len(ids)
+
+    def apply_retention(self, current: Guard, protect: Collection[str] = (), started: str | None = None) -> int:
+        """Best-effort garbage collection after a publish; returns the number of rows deleted.
+
+        Keeps the newest KEEP_CURRENT current generations and KEEP_STALE stale generations per
+        `config_digest`; shared `wil`/`contextual` rows are reference counted through the retained
+        pipeline rows. Orphans (no pipeline row references them) are deleted only when created
+        before `started`. Never touches a read-only (newer extension) store, `secondary-matches`,
+        `cve-snapshot` or unknown kinds. Any failure rolls back and leaves every row in place."""
+        try:
+            self.ensure()
+            if self.read_only:
+                return 0
+            rows = self._derived_rows()
+            live, stale = self._generations(current)
+            keep_ids = {i for p in self._retained(live, stale) for i in self._refs(p)} | set(protect)
+            pipes = live + stale
+            referenced = {i for p in pipes for i in self._refs(p)}
+            orphans = self._orphans(rows, pipes, started) if started else set()
+            doomed = {i for i in rows if i not in keep_ids and (i in referenced or i in orphans)}
+            return self._delete(doomed)
+        except (EnrichmentError, sqlite3.Error):
+            return 0
+
+    def make_room(self, need_bytes: int, current: Guard, protect: Collection[str] = ()) -> int:
+        """Cap fallback: free at least `need_bytes` by deleting stale generations (oldest first), then
+        current generations beyond the newest one per `config_digest`. Never touches `protect` or the
+        newest live default-profile generation. Nothing is deleted unless the need can be met;
+        otherwise raises the recoverable PT-ENRICH-LIMIT."""
+        mib = 1024 * 1024
+
+        def limit(freed: int) -> EnrichmentError:
+            return EnrichmentError(
+                'PT-ENRICH-LIMIT', f'project enrichment data would exceed 128 MiB '
+                f'({freed // mib} MiB freed, {max(need_bytes - freed, 0) // mib + 1} MiB still needed)',
+                recoverable=True)
+        if self.read_only:
+            raise limit(0)
+        try:
+            rows = self._derived_rows()
+            live, stale = self._generations(current)
+            pipes = live + stale
+            newest_default = next((p for p in live if p.body.get('default_profile') is True), None)
+            protected = set(protect) | (self._refs(newest_default) if newest_default else set())
+            seen: set[object] = set()
+            newest_per_config: set[str] = set()
+            for p in live:  # newest first: the first live generation of each config stays
+                if p.body.get('config_digest') not in seen:
+                    seen.add(p.body.get('config_digest'))
+                    newest_per_config.add(p.id)
+            order = list(reversed(stale)) + [p for p in reversed(live) if p.id not in newest_per_config]
+            cutoff = (datetime.now(UTC) - ORPHAN_GRACE).isoformat()
+            doomed = self._orphans(rows, pipes, cutoff) - protected
+            freed = sum(rows[i][1] for i in doomed)
+            remaining = list(pipes)
+            for gen in order:
+                if freed >= need_bytes:
+                    break
+                if gen.id in protected:
+                    continue
+                remaining = [p for p in remaining if p.id != gen.id]
+                still = {i for p in remaining for i in self._refs(p)} | protected
+                for row_id in self._refs(gen):
+                    if row_id not in still and row_id in rows and row_id not in doomed:
+                        doomed.add(row_id)
+                        freed += rows[row_id][1]
+            if freed < need_bytes:
+                raise limit(0)
+            self._delete(doomed)
+            return freed
+        except sqlite3.Error as exc:
+            raise EnrichmentError('PT-ENRICH-LIMIT', 'project enrichment data would exceed 128 MiB '
+                                  f'(retention failed: {exc.__class__.__name__})', recoverable=True) from None

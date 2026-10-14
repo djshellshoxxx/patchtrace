@@ -149,23 +149,34 @@ def run_rzdiff(capability: Capability, older: Path, newer: Path, older_sha256: s
     for item in (older, newer):
         if not item.is_file():
             raise SecondaryError('PT-SECONDARY-INPUT', f'artifact {item.name} is not a readable file')
-    argv = [capability.path, '-C', '-j', '-t', 'functions', str(older), str(newer)]
+    argv = list(rzdiff_argv(capability.path, older, newer))
     with tempfile.TemporaryDirectory(prefix='patchtrace-rzdiff-') as cwd:
         # One byte over the limit lets truncation be detected rather than silently parsed.
         result = runner(argv, cwd=Path(cwd), env=env, cancel=cancel, timeout_seconds=timeout_seconds,
                         log_limit=STDOUT_LIMIT + 1, separate_streams=True, stderr_limit=STDERR_TAIL)
-    output = result.log_tail
     if result.reason == 'cancelled':
         raise SecondaryError('PT-SECONDARY-CANCEL', 'rz-diff was cancelled')
     if result.reason == 'timeout':
         raise SecondaryError('PT-SECONDARY-RUN', f'rz-diff exceeded the {timeout_seconds} s timeout')
     if result.reason:
         raise SecondaryError('PT-SECONDARY-RUN', f'rz-diff stopped: {result.reason}')
-    if result.returncode != 0:
-        tail = (result.stderr_tail or output).encode('utf-8')[-STDERR_TAIL:].decode('utf-8', errors='replace')
-        raise SecondaryError('PT-SECONDARY-RUN', f'rz-diff exited with {result.returncode}: {tail}')
-    if len(output.encode('utf-8')) > STDOUT_LIMIT:
+    return interpret(result.returncode, result.log_tail, result.stderr_tail, capability.version,
+                     older_sha256, newer_sha256)
+
+
+def rzdiff_argv(executable: str, older: Path, newer: Path) -> tuple[str, ...]:
+    """Flags frozen for rizin 0.9.x (SPEC-28 C2 re-verifies them on the pinned release)."""
+    return (executable, '-C', '-j', '-t', 'functions', str(older), str(newer))
+
+
+def interpret(returncode: int, output: str, stderr_tail: str, version: str, older_sha256: str,
+              newer_sha256: str, stdout_limit: int = STDOUT_LIMIT) -> SecondaryMatchSet:
+    """Turn a finished rz-diff process (no cancel/timeout) into a strict match set."""
+    if returncode != 0:
+        tail = (stderr_tail or output).encode('utf-8')[-STDERR_TAIL:].decode('utf-8', errors='replace')
+        raise SecondaryError('PT-SECONDARY-RUN', f'rz-diff exited with {returncode}: {tail}')
+    if len(output.encode('utf-8')) > stdout_limit:
         raise SecondaryError('PT-SECONDARY-LIMIT', 'rz-diff output exceeds 64 MiB')
     if '\ufffd' in output:
         raise SecondaryError('PT-SECONDARY-INPUT', 'rz-diff output is not valid UTF-8')
-    return parse_output(output, capability.version, older_sha256, newer_sha256)
+    return parse_output(output, version, older_sha256, newer_sha256)

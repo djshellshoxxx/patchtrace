@@ -38,3 +38,14 @@ profile_schema['$id'] = 'https://patchtrace.local/schemas/profile/1/AnalysisProf
 profile_schema['$schema'] = 'https://json-schema.org/draft/2020-12/schema'
 (root / 'profile').mkdir(exist_ok=True)
 (root / 'profile' / 'AnalysisProfile.json').write_text(json.dumps(profile_schema, indent=2) + '\n', encoding='utf-8')
+
+# SPEC-28 secondary/2 match sets and engine-run/1 attempt records.
+from patchtrace.secondary.contracts import SecondaryMatchSet  # noqa: E402
+from patchtrace.secondary.runs import EngineRun  # noqa: E402
+
+(root / 'secondary').mkdir(exist_ok=True)
+for model, ident in ((SecondaryMatchSet, 'secondary/2'), (EngineRun, 'engine-run/1')):
+    schema = model.model_json_schema()
+    schema['$id'] = f'https://patchtrace.local/schemas/{ident}/{model.__name__}.json'
+    schema['$schema'] = 'https://json-schema.org/draft/2020-12/schema'
+    (root / 'secondary' / f'{model.__name__}.json').write_text(json.dumps(schema, indent=2) + '\n', encoding='utf-8')
