@@ -1,0 +1,100 @@
+{
+  "contract": "intel-tools-pin/1",
+  "verified": false,
+  "trust": "trust-on-first-use: the upstream release API and release pages return HTTP 403 through the egress proxy and upstream publishes no per-asset digest, so every value below was computed by this tool-core builder on 2026-10-14 from one download of the official release asset (executable members hashed from the archive without being executed). capa and FLOSS asset digests equal the values recorded earlier in docs/qa.md and the WB3 plan. Not independently verified: re-hash from a second network path before beta. A value that could not be measured would be the string UNMEASURED and is never trusted by the provisioning script.",
+  "engines": {
+    "capa": {
+      "version": "9.4.0",
+      "licence": "Apache-2.0",
+      "release_page": "https://github.com/mandiant/capa/releases/tag/v9.4.0",
+      "assets": {
+        "linux": {
+          "name": "capa-v9.4.0-linux.zip",
+          "url": "https://github.com/mandiant/capa/releases/download/v9.4.0/capa-v9.4.0-linux.zip",
+          "format": "zip",
+          "size": 47477971,
+          "sha256": "07800a1d20a21eb18fc98716e2ae81b668e0c9a04defd588c8aa17ea3d3281e4",
+          "executable": "capa",
+          "executable_size": 47976360,
+          "executable_sha256": "cb57c9ea27dda4a6aefb368caca35c3177495e611ad9af64c801d51561035218",
+          "advisory": false
+        },
+        "windows": {
+          "name": "capa-v9.4.0-windows.zip",
+          "url": "https://github.com/mandiant/capa/releases/download/v9.4.0/capa-v9.4.0-windows.zip",
+          "format": "zip",
+          "size": 35994071,
+          "sha256": "670ab1a58b81f59cb57533bf4021ac1e7033fbe9b5d5cc180f796976081e3bb5",
+          "executable": "capa.exe",
+          "executable_size": 36616388,
+          "executable_sha256": "356db59a7f0d22b00ee63bda6ebb5b05149530eec5dd84101caef6d6bae94dfd",
+          "advisory": true
+        }
+      }
+    },
+    "floss": {
+      "version": "3.1.1",
+      "licence": "Apache-2.0",
+      "release_page": "https://github.com/mandiant/flare-floss/releases/tag/v3.1.1",
+      "assets": {
+        "linux": {
+          "name": "floss-v3.1.1-linux.zip",
+          "url": "https://github.com/mandiant/flare-floss/releases/download/v3.1.1/floss-v3.1.1-linux.zip",
+          "format": "zip",
+          "size": 40571555,
+          "sha256": "40c05a869f34f7e2417b17ca290cc54bd3671ee1f0a2d9bd5103284c01a54666",
+          "executable": "floss",
+          "executable_size": 40885080,
+          "executable_sha256": "d71b9ea4fe3b2de974dc1ae3c5d0f67569921bc118dcb02ed72e905a662411cb",
+          "advisory": false
+        },
+        "windows": {
+          "name": "floss-v3.1.1-windows.zip",
+          "url": "https://github.com/mandiant/flare-floss/releases/download/v3.1.1/floss-v3.1.1-windows.zip",
+          "format": "zip",
+          "size": 31580022,
+          "sha256": "6c71089b8c629c69424b042769f1565f71adc6cd24b2f8d3713c96fa7fdac2fb",
+          "executable": "floss.exe",
+          "executable_size": 31866819,
+          "executable_sha256": "3a208ab834b4791e81592d66e91a7f07b3458504484d87c44ed32bc7384df7ef",
+          "advisory": true
+        }
+      }
+    },
+    "diec": {
+      "version": "3.21",
+      "licence": "MIT",
+      "release_page": "https://github.com/horsicq/DIE-engine/releases/tag/3.21",
+      "assets": {
+        "linux": {
+          "name": "die_3.21_Ubuntu_22.04_amd64.deb",
+          "url": "https://github.com/horsicq/DIE-engine/releases/download/3.21/die_3.21_Ubuntu_22.04_amd64.deb",
+          "format": "deb",
+          "size": 11806884,
+          "sha256": "c59e2fcab4203eac44fc172a2209ebb209b27c4d2e883f9830ac42583f186007",
+          "executable": "usr/bin/diec",
+          "executable_size": 6322856,
+          "executable_sha256": "35e4cfa45de2c1299933444673feea474ed9ad17f2368e68fce43a64d8bdab15",
+          "database": "usr/lib/die/db",
+          "database_tree_sha256": "301b24a78ffb8491c377bd8d6a08a24d9faf6374f29fb072ea528596d2bc2b86",
+          "system_packages": ["libqt5core5a", "libqt5script5"],
+          "advisory": false
+        },
+        "windows": {
+          "name": "die_win64_portable_3.21_x64.zip",
+          "url": "https://github.com/horsicq/DIE-engine/releases/download/3.21/die_win64_portable_3.21_x64.zip",
+          "format": "zip",
+          "size": 25197854,
+          "sha256": "078f2934f267392247f9c7b759a1c2457a48bc2000b25b80c2f129955ee4a3b9",
+          "executable": "die/diec.exe",
+          "executable_size": 3187712,
+          "executable_sha256": "dda171a904f6dc3a2c414e99e9d718c8d7500bc26c3dcdc1a72ec0e7d718cfe7",
+          "database": "die/db",
+          "database_tree_sha256": "a862337efa9558e1c52608fdbd8c25b1537a2a11d62a38acbb9c6b9bcb39adda",
+          "extract_all": true,
+          "advisory": true
+        }
+      }
+    }
+  }
+}

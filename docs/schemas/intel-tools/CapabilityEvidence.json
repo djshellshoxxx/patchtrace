@@ -1,0 +1,262 @@
+{
+  "$defs": {
+    "EvidenceLink": {
+      "additionalProperties": false,
+      "description": "Where an evidence item sits in one artifact, in canonical module-relative terms (T2, T5.3).",
+      "properties": {
+        "artifact_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Artifact Sha256",
+          "type": "string"
+        },
+        "attribution": {
+          "default": "none",
+          "enum": [
+            "function-start",
+            "basic-block-in-function",
+            "decoding-routine",
+            "stack-frame",
+            "none"
+          ],
+          "title": "Attribution",
+          "type": "string"
+        },
+        "data_rva": {
+          "anyOf": [
+            {
+              "exclusiveMaximum": 4294967296,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Data Rva"
+        },
+        "file_offset": {
+          "anyOf": [
+            {
+              "exclusiveMaximum": 1099511627776,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "File Offset"
+        },
+        "function_id": {
+          "anyOf": [
+            {
+              "maxLength": 24,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Function Id"
+        },
+        "project_function_id": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Project Function Id"
+        },
+        "rva": {
+          "anyOf": [
+            {
+              "exclusiveMaximum": 4294967296,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Rva"
+        },
+        "site_rva": {
+          "anyOf": [
+            {
+              "exclusiveMaximum": 4294967296,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Site Rva"
+        },
+        "source_fragment": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source Fragment"
+        },
+        "tool_run_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Tool Run Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "tool_run_id",
+        "artifact_sha256"
+      ],
+      "title": "EvidenceLink",
+      "type": "object"
+    }
+  },
+  "$id": "https://patchtrace.local/schemas/intel-tools/1/CapabilityEvidence.json",
+  "additionalProperties": false,
+  "properties": {
+    "address": {
+      "anyOf": [
+        {
+          "maximum": 18446744073709551615,
+          "minimum": 0,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Address"
+    },
+    "address_space": {
+      "enum": [
+        "absolute",
+        "relative",
+        "file",
+        "no address"
+      ],
+      "title": "Address Space",
+      "type": "string"
+    },
+    "attack": {
+      "default": [],
+      "items": {
+        "maxLength": 32,
+        "type": "string"
+      },
+      "maxItems": 32,
+      "title": "Attack",
+      "type": "array"
+    },
+    "feature_count": {
+      "default": 0,
+      "minimum": 0,
+      "title": "Feature Count",
+      "type": "integer"
+    },
+    "feature_rvas": {
+      "default": [],
+      "items": {
+        "exclusiveMaximum": 4294967296,
+        "minimum": 0,
+        "type": "integer"
+      },
+      "maxItems": 64,
+      "title": "Feature Rvas",
+      "type": "array"
+    },
+    "kind": {
+      "enum": [
+        "capability",
+        "library",
+        "limitation"
+      ],
+      "title": "Kind",
+      "type": "string"
+    },
+    "location": {
+      "$ref": "#/$defs/EvidenceLink"
+    },
+    "mbc": {
+      "default": [],
+      "items": {
+        "maxLength": 32,
+        "type": "string"
+      },
+      "maxItems": 32,
+      "title": "Mbc",
+      "type": "array"
+    },
+    "namespace": {
+      "anyOf": [
+        {
+          "maxLength": 256,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Namespace"
+    },
+    "rule_id": {
+      "maxLength": 256,
+      "minLength": 1,
+      "title": "Rule Id",
+      "type": "string"
+    },
+    "rule_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Rule Sha256",
+      "type": "string"
+    },
+    "scope": {
+      "enum": [
+        "file",
+        "function",
+        "basic block",
+        "instruction"
+      ],
+      "title": "Scope",
+      "type": "string"
+    },
+    "source_run_id": {
+      "maxLength": 128,
+      "minLength": 1,
+      "title": "Source Run Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "rule_id",
+    "rule_sha256",
+    "scope",
+    "address_space",
+    "location",
+    "kind",
+    "source_run_id"
+  ],
+  "title": "CapabilityEvidence",
+  "type": "object"
+}

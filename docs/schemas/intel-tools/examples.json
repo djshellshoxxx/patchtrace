@@ -1,0 +1,485 @@
+{
+  "CapabilityEvidence": {
+    "invalid": [],
+    "valid": [
+      {
+        "address": 5368713264,
+        "address_space": "absolute",
+        "attack": [],
+        "feature_count": 0,
+        "feature_rvas": [],
+        "kind": "capability",
+        "location": {
+          "artifact_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "attribution": "function-start",
+          "data_rva": null,
+          "file_offset": null,
+          "function_id": "rva:0x1030",
+          "project_function_id": null,
+          "rva": 4144,
+          "site_rva": null,
+          "source_fragment": null,
+          "tool_run_id": "run-1"
+        },
+        "mbc": [],
+        "namespace": "host-interaction/os/hostname",
+        "rule_id": "get hostname",
+        "rule_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "scope": "function",
+        "source_run_id": "run-1"
+      }
+    ]
+  },
+  "EnvironmentEvidence": {
+    "invalid": [],
+    "valid": [
+      {
+        "category": "compiler",
+        "certainty": "signature",
+        "detect_string": "",
+        "detector_rule": "Example C",
+        "filetype": "",
+        "heuristic": false,
+        "packer": null,
+        "protector": null,
+        "source": "diec",
+        "source_run_id": "run-1",
+        "toolchain": "Example C 1.0",
+        "version": ""
+      }
+    ]
+  },
+  "EvidenceLink": {
+    "invalid": [
+      {
+        "label": "localized without an RVA",
+        "value": {
+          "artifact_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "attribution": "function-start",
+          "tool_run_id": "r"
+        }
+      },
+      {
+        "label": "file offset beyond 2^40",
+        "value": {
+          "artifact_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "file_offset": 2199023255552,
+          "tool_run_id": "r"
+        }
+      }
+    ],
+    "valid": [
+      {
+        "artifact_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "attribution": "function-start",
+        "data_rva": null,
+        "file_offset": null,
+        "function_id": "rva:0x1030",
+        "project_function_id": null,
+        "rva": 4144,
+        "site_rva": null,
+        "source_fragment": null,
+        "tool_run_id": "run-1"
+      }
+    ]
+  },
+  "StringEvidence": {
+    "invalid": [],
+    "valid": [
+      {
+        "confidence_class": "verified-bytes",
+        "display_value": "hello",
+        "encoding": "ASCII",
+        "extraction_method": "floss-static",
+        "length": 5,
+        "secret_kind": null,
+        "source_location": {
+          "artifact_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "attribution": "none",
+          "data_rva": null,
+          "file_offset": 1536,
+          "function_id": null,
+          "project_function_id": null,
+          "rva": 8192,
+          "site_rva": null,
+          "source_fragment": null,
+          "tool_run_id": "run-1"
+        },
+        "source_run_id": "run-1",
+        "type": "static",
+        "value_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      }
+    ]
+  },
+  "ToolDelta": {
+    "invalid": [],
+    "valid": [
+      {
+        "capabilities": [],
+        "comparable": false,
+        "contract": "tool-evidence/1",
+        "counts": {},
+        "engine": "capa",
+        "environment": [],
+        "flags": [],
+        "newer_run_id": "run-2",
+        "notes": [],
+        "older_run_id": "run-1",
+        "pairing": "unavailable",
+        "reasons": [
+          "no stored run for the newer artifact"
+        ],
+        "strings": [],
+        "truncated": false,
+        "value_gate": "unvalidated"
+      }
+    ]
+  },
+  "ToolEvidenceSet": {
+    "invalid": [],
+    "valid": [
+      {
+        "analysis": {},
+        "anomalies": [],
+        "artifact_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "cache_key": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "capabilities": [
+          {
+            "address": 5368713264,
+            "address_space": "absolute",
+            "attack": [],
+            "feature_count": 0,
+            "feature_rvas": [],
+            "kind": "capability",
+            "location": {
+              "artifact_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+              "attribution": "function-start",
+              "data_rva": null,
+              "file_offset": null,
+              "function_id": "rva:0x1030",
+              "project_function_id": null,
+              "rva": 4144,
+              "site_rva": null,
+              "source_fragment": null,
+              "tool_run_id": "run-1"
+            },
+            "mbc": [],
+            "namespace": "host-interaction/os/hostname",
+            "rule_id": "get hostname",
+            "rule_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "scope": "function",
+            "source_run_id": "run-1"
+          }
+        ],
+        "config_digest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "contract": "tool-evidence/1",
+        "counts": {
+          "capabilities": 1
+        },
+        "engine": "capa",
+        "environment": [],
+        "image_base": 5368709120,
+        "run_id": "run-1",
+        "side": "older",
+        "strings": [],
+        "truncated": false,
+        "truncated_types": []
+      }
+    ]
+  },
+  "ToolManifest": {
+    "invalid": [
+      {
+        "label": "supported without a digest",
+        "value": {
+          "engine": "capa",
+          "license": "MIT",
+          "supported": true
+        }
+      }
+    ],
+    "valid": [
+      {
+        "backend": "vivisect",
+        "backend_version": null,
+        "capabilities": [
+          "backend:vivisect",
+          "json"
+        ],
+        "cli_path": "/opt/capa/capa",
+        "contract": "tool-evidence/1",
+        "engine": "capa",
+        "executable_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "license": "Apache-2.0",
+        "pin_status": "pinned",
+        "reason": null,
+        "rules_sha256": null,
+        "rules_source": "embedded",
+        "signatures_sha256": null,
+        "supported": true,
+        "untested_version": false,
+        "version": "9.4.0",
+        "version_text": "capa 9.4.0"
+      }
+    ]
+  },
+  "ToolRun": {
+    "invalid": [
+      {
+        "label": "extra field",
+        "value": {
+          "anomalies": [],
+          "cache_hit": false,
+          "cache_key": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+          "config_digest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+          "contract": "tool-evidence/1",
+          "elapsed": 1200,
+          "engine": "capa",
+          "error": null,
+          "error_code": null,
+          "evidence_count": 1,
+          "input_artifact_hash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "manifest": {
+            "backend": "vivisect",
+            "backend_version": null,
+            "capabilities": [
+              "backend:vivisect",
+              "json"
+            ],
+            "cli_path": "/opt/capa/capa",
+            "contract": "tool-evidence/1",
+            "engine": "capa",
+            "executable_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "license": "Apache-2.0",
+            "pin_status": "pinned",
+            "reason": null,
+            "rules_sha256": null,
+            "rules_source": "embedded",
+            "signatures_sha256": null,
+            "supported": true,
+            "untested_version": false,
+            "version": "9.4.0",
+            "version_text": "capa 9.4.0"
+          },
+          "options": {
+            "argv": "capa/1"
+          },
+          "profile": "basic",
+          "raw_sidecar": null,
+          "returncode": 0,
+          "run_id": "run-1",
+          "side": "older",
+          "started_at": "2099-01-01T00:00:00+00:00",
+          "status": "ok",
+          "stderr_digest": null,
+          "stderr_excerpt": "",
+          "stdout_digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "surprise": 1
+        }
+      },
+      {
+        "label": "unknown status",
+        "value": {
+          "anomalies": [],
+          "cache_hit": false,
+          "cache_key": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+          "config_digest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+          "contract": "tool-evidence/1",
+          "elapsed": 1200,
+          "engine": "capa",
+          "error": null,
+          "error_code": null,
+          "evidence_count": 1,
+          "input_artifact_hash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "manifest": {
+            "backend": "vivisect",
+            "backend_version": null,
+            "capabilities": [
+              "backend:vivisect",
+              "json"
+            ],
+            "cli_path": "/opt/capa/capa",
+            "contract": "tool-evidence/1",
+            "engine": "capa",
+            "executable_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "license": "Apache-2.0",
+            "pin_status": "pinned",
+            "reason": null,
+            "rules_sha256": null,
+            "rules_source": "embedded",
+            "signatures_sha256": null,
+            "supported": true,
+            "untested_version": false,
+            "version": "9.4.0",
+            "version_text": "capa 9.4.0"
+          },
+          "options": {
+            "argv": "capa/1"
+          },
+          "profile": "basic",
+          "raw_sidecar": null,
+          "returncode": 0,
+          "run_id": "run-1",
+          "side": "older",
+          "started_at": "2099-01-01T00:00:00+00:00",
+          "status": "done",
+          "stderr_digest": null,
+          "stderr_excerpt": "",
+          "stdout_digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        }
+      },
+      {
+        "label": "failure without an error code",
+        "value": {
+          "anomalies": [],
+          "cache_hit": false,
+          "cache_key": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+          "config_digest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+          "contract": "tool-evidence/1",
+          "elapsed": 1200,
+          "engine": "capa",
+          "error": null,
+          "error_code": null,
+          "evidence_count": 1,
+          "input_artifact_hash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "manifest": {
+            "backend": "vivisect",
+            "backend_version": null,
+            "capabilities": [
+              "backend:vivisect",
+              "json"
+            ],
+            "cli_path": "/opt/capa/capa",
+            "contract": "tool-evidence/1",
+            "engine": "capa",
+            "executable_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "license": "Apache-2.0",
+            "pin_status": "pinned",
+            "reason": null,
+            "rules_sha256": null,
+            "rules_source": "embedded",
+            "signatures_sha256": null,
+            "supported": true,
+            "untested_version": false,
+            "version": "9.4.0",
+            "version_text": "capa 9.4.0"
+          },
+          "options": {
+            "argv": "capa/1"
+          },
+          "profile": "basic",
+          "raw_sidecar": null,
+          "returncode": 0,
+          "run_id": "run-1",
+          "side": "older",
+          "started_at": "2099-01-01T00:00:00+00:00",
+          "status": "failed",
+          "stderr_digest": null,
+          "stderr_excerpt": "",
+          "stdout_digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        }
+      },
+      {
+        "label": "none-found with evidence",
+        "value": {
+          "anomalies": [],
+          "cache_hit": false,
+          "cache_key": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+          "config_digest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+          "contract": "tool-evidence/1",
+          "elapsed": 1200,
+          "engine": "capa",
+          "error": null,
+          "error_code": null,
+          "evidence_count": 1,
+          "input_artifact_hash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "manifest": {
+            "backend": "vivisect",
+            "backend_version": null,
+            "capabilities": [
+              "backend:vivisect",
+              "json"
+            ],
+            "cli_path": "/opt/capa/capa",
+            "contract": "tool-evidence/1",
+            "engine": "capa",
+            "executable_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "license": "Apache-2.0",
+            "pin_status": "pinned",
+            "reason": null,
+            "rules_sha256": null,
+            "rules_source": "embedded",
+            "signatures_sha256": null,
+            "supported": true,
+            "untested_version": false,
+            "version": "9.4.0",
+            "version_text": "capa 9.4.0"
+          },
+          "options": {
+            "argv": "capa/1"
+          },
+          "profile": "basic",
+          "raw_sidecar": null,
+          "returncode": 0,
+          "run_id": "run-1",
+          "side": "older",
+          "started_at": "2099-01-01T00:00:00+00:00",
+          "status": "none-found",
+          "stderr_digest": null,
+          "stderr_excerpt": "",
+          "stdout_digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        }
+      }
+    ],
+    "valid": [
+      {
+        "anomalies": [],
+        "cache_hit": false,
+        "cache_key": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "config_digest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "contract": "tool-evidence/1",
+        "elapsed": 1200,
+        "engine": "capa",
+        "error": null,
+        "error_code": null,
+        "evidence_count": 1,
+        "input_artifact_hash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "manifest": {
+          "backend": "vivisect",
+          "backend_version": null,
+          "capabilities": [
+            "backend:vivisect",
+            "json"
+          ],
+          "cli_path": "/opt/capa/capa",
+          "contract": "tool-evidence/1",
+          "engine": "capa",
+          "executable_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "license": "Apache-2.0",
+          "pin_status": "pinned",
+          "reason": null,
+          "rules_sha256": null,
+          "rules_source": "embedded",
+          "signatures_sha256": null,
+          "supported": true,
+          "untested_version": false,
+          "version": "9.4.0",
+          "version_text": "capa 9.4.0"
+        },
+        "options": {
+          "argv": "capa/1"
+        },
+        "profile": "basic",
+        "raw_sidecar": null,
+        "returncode": 0,
+        "run_id": "run-1",
+        "side": "older",
+        "started_at": "2099-01-01T00:00:00+00:00",
+        "status": "ok",
+        "stderr_digest": null,
+        "stderr_excerpt": "",
+        "stdout_digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      }
+    ]
+  }
+}

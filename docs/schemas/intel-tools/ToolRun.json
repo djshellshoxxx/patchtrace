@@ -1,0 +1,415 @@
+{
+  "$defs": {
+    "ToolManifest": {
+      "additionalProperties": false,
+      "description": "What the probe verified about one configured tool (T2).",
+      "properties": {
+        "backend": {
+          "anyOf": [
+            {
+              "maxLength": 32,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Backend"
+        },
+        "backend_version": {
+          "anyOf": [
+            {
+              "maxLength": 64,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Backend Version"
+        },
+        "capabilities": {
+          "default": [],
+          "items": {
+            "maxLength": 64,
+            "type": "string"
+          },
+          "maxItems": 32,
+          "title": "Capabilities",
+          "type": "array"
+        },
+        "cli_path": {
+          "default": "",
+          "maxLength": 4096,
+          "title": "Cli Path",
+          "type": "string"
+        },
+        "contract": {
+          "const": "tool-evidence/1",
+          "default": "tool-evidence/1",
+          "title": "Contract",
+          "type": "string"
+        },
+        "engine": {
+          "enum": [
+            "capa",
+            "floss",
+            "diec"
+          ],
+          "title": "Engine",
+          "type": "string"
+        },
+        "executable_sha256": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Executable Sha256"
+        },
+        "license": {
+          "maxLength": 32,
+          "title": "License",
+          "type": "string"
+        },
+        "pin_status": {
+          "default": "unpinned",
+          "enum": [
+            "pinned",
+            "unpinned"
+          ],
+          "title": "Pin Status",
+          "type": "string"
+        },
+        "reason": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reason"
+        },
+        "rules_sha256": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Rules Sha256"
+        },
+        "rules_source": {
+          "default": "none",
+          "enum": [
+            "directory",
+            "embedded",
+            "none"
+          ],
+          "title": "Rules Source",
+          "type": "string"
+        },
+        "signatures_sha256": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signatures Sha256"
+        },
+        "supported": {
+          "title": "Supported",
+          "type": "boolean"
+        },
+        "untested_version": {
+          "default": false,
+          "title": "Untested Version",
+          "type": "boolean"
+        },
+        "version": {
+          "anyOf": [
+            {
+              "maxLength": 64,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Version"
+        },
+        "version_text": {
+          "anyOf": [
+            {
+              "maxLength": 120,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Version Text"
+        }
+      },
+      "required": [
+        "engine",
+        "license",
+        "supported"
+      ],
+      "title": "ToolManifest",
+      "type": "object"
+    }
+  },
+  "$id": "https://patchtrace.local/schemas/intel-tools/1/ToolRun.json",
+  "additionalProperties": false,
+  "description": "One attempt for one engine and one side; written once, never updated.",
+  "properties": {
+    "anomalies": {
+      "default": [],
+      "items": {
+        "maxLength": 256,
+        "type": "string"
+      },
+      "maxItems": 64,
+      "title": "Anomalies",
+      "type": "array"
+    },
+    "cache_hit": {
+      "default": false,
+      "title": "Cache Hit",
+      "type": "boolean"
+    },
+    "cache_key": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Cache Key",
+      "type": "string"
+    },
+    "config_digest": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Config Digest",
+      "type": "string"
+    },
+    "contract": {
+      "const": "tool-evidence/1",
+      "default": "tool-evidence/1",
+      "title": "Contract",
+      "type": "string"
+    },
+    "elapsed": {
+      "minimum": 0,
+      "title": "Elapsed",
+      "type": "integer"
+    },
+    "engine": {
+      "enum": [
+        "capa",
+        "floss",
+        "diec"
+      ],
+      "title": "Engine",
+      "type": "string"
+    },
+    "error": {
+      "anyOf": [
+        {
+          "maxLength": 500,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Error"
+    },
+    "error_code": {
+      "anyOf": [
+        {
+          "enum": [
+            "PT-TOOL-ABSENT",
+            "PT-TOOL-UNSUPPORTED",
+            "PT-TOOL-INPUT",
+            "PT-TOOL-ARTIFACT",
+            "PT-TOOL-OUTPUT",
+            "PT-TOOL-LIMIT",
+            "PT-TOOL-RUN",
+            "PT-TOOL-TIMEOUT",
+            "PT-TOOL-CANCEL",
+            "PT-TOOL-ADDRESS",
+            "PT-TOOL-STALE",
+            "PT-TOOL-MISMATCH",
+            "PT-TOOL-STORE",
+            "PT-TOOL-CONSENT"
+          ],
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Error Code"
+    },
+    "evidence_count": {
+      "default": 0,
+      "minimum": 0,
+      "title": "Evidence Count",
+      "type": "integer"
+    },
+    "input_artifact_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Input Artifact Hash",
+      "type": "string"
+    },
+    "manifest": {
+      "$ref": "#/$defs/ToolManifest"
+    },
+    "options": {
+      "additionalProperties": {
+        "maxLength": 256,
+        "type": "string"
+      },
+      "maxProperties": 16,
+      "propertyNames": {
+        "maxLength": 64
+      },
+      "title": "Options",
+      "type": "object"
+    },
+    "profile": {
+      "enum": [
+        "basic",
+        "context",
+        "full"
+      ],
+      "title": "Profile",
+      "type": "string"
+    },
+    "raw_sidecar": {
+      "anyOf": [
+        {
+          "maxLength": 256,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Raw Sidecar"
+    },
+    "returncode": {
+      "anyOf": [
+        {
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Returncode"
+    },
+    "run_id": {
+      "maxLength": 128,
+      "minLength": 1,
+      "title": "Run Id",
+      "type": "string"
+    },
+    "side": {
+      "enum": [
+        "older",
+        "newer"
+      ],
+      "title": "Side",
+      "type": "string"
+    },
+    "started_at": {
+      "maxLength": 64,
+      "title": "Started At",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "ok",
+        "none-found",
+        "failed",
+        "timeout",
+        "cancelled",
+        "unsupported",
+        "absent"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "stderr_digest": {
+      "anyOf": [
+        {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Stderr Digest"
+    },
+    "stderr_excerpt": {
+      "default": "",
+      "maxLength": 4096,
+      "title": "Stderr Excerpt",
+      "type": "string"
+    },
+    "stdout_digest": {
+      "anyOf": [
+        {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Stdout Digest"
+    }
+  },
+  "required": [
+    "run_id",
+    "engine",
+    "side",
+    "input_artifact_hash",
+    "config_digest",
+    "cache_key",
+    "started_at",
+    "elapsed",
+    "status",
+    "profile",
+    "manifest"
+  ],
+  "title": "ToolRun",
+  "type": "object"
+}

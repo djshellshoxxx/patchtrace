@@ -1,0 +1,638 @@
+{
+  "$defs": {
+    "CapabilityEvidence": {
+      "additionalProperties": false,
+      "properties": {
+        "address": {
+          "anyOf": [
+            {
+              "maximum": 18446744073709551615,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Address"
+        },
+        "address_space": {
+          "enum": [
+            "absolute",
+            "relative",
+            "file",
+            "no address"
+          ],
+          "title": "Address Space",
+          "type": "string"
+        },
+        "attack": {
+          "default": [],
+          "items": {
+            "maxLength": 32,
+            "type": "string"
+          },
+          "maxItems": 32,
+          "title": "Attack",
+          "type": "array"
+        },
+        "feature_count": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Feature Count",
+          "type": "integer"
+        },
+        "feature_rvas": {
+          "default": [],
+          "items": {
+            "exclusiveMaximum": 4294967296,
+            "minimum": 0,
+            "type": "integer"
+          },
+          "maxItems": 64,
+          "title": "Feature Rvas",
+          "type": "array"
+        },
+        "kind": {
+          "enum": [
+            "capability",
+            "library",
+            "limitation"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "location": {
+          "$ref": "#/$defs/EvidenceLink"
+        },
+        "mbc": {
+          "default": [],
+          "items": {
+            "maxLength": 32,
+            "type": "string"
+          },
+          "maxItems": 32,
+          "title": "Mbc",
+          "type": "array"
+        },
+        "namespace": {
+          "anyOf": [
+            {
+              "maxLength": 256,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Namespace"
+        },
+        "rule_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Rule Id",
+          "type": "string"
+        },
+        "rule_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Rule Sha256",
+          "type": "string"
+        },
+        "scope": {
+          "enum": [
+            "file",
+            "function",
+            "basic block",
+            "instruction"
+          ],
+          "title": "Scope",
+          "type": "string"
+        },
+        "source_run_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Source Run Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "rule_id",
+        "rule_sha256",
+        "scope",
+        "address_space",
+        "location",
+        "kind",
+        "source_run_id"
+      ],
+      "title": "CapabilityEvidence",
+      "type": "object"
+    },
+    "EnvironmentEvidence": {
+      "additionalProperties": false,
+      "properties": {
+        "category": {
+          "enum": [
+            "compiler",
+            "linker",
+            "tool",
+            "packer",
+            "protector",
+            "cryptor",
+            "installer",
+            "sfx",
+            "library",
+            "format",
+            "overlay",
+            "other",
+            "unknown"
+          ],
+          "title": "Category",
+          "type": "string"
+        },
+        "certainty": {
+          "enum": [
+            "signature",
+            "heuristic",
+            "unknown"
+          ],
+          "title": "Certainty",
+          "type": "string"
+        },
+        "detect_string": {
+          "default": "",
+          "maxLength": 200,
+          "title": "Detect String",
+          "type": "string"
+        },
+        "detector_rule": {
+          "maxLength": 200,
+          "title": "Detector Rule",
+          "type": "string"
+        },
+        "filetype": {
+          "default": "",
+          "maxLength": 32,
+          "title": "Filetype",
+          "type": "string"
+        },
+        "heuristic": {
+          "title": "Heuristic",
+          "type": "boolean"
+        },
+        "packer": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Packer"
+        },
+        "protector": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Protector"
+        },
+        "source": {
+          "const": "diec",
+          "default": "diec",
+          "title": "Source",
+          "type": "string"
+        },
+        "source_run_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Source Run Id",
+          "type": "string"
+        },
+        "toolchain": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Toolchain"
+        },
+        "version": {
+          "default": "",
+          "maxLength": 120,
+          "title": "Version",
+          "type": "string"
+        }
+      },
+      "required": [
+        "category",
+        "detector_rule",
+        "heuristic",
+        "certainty",
+        "source_run_id"
+      ],
+      "title": "EnvironmentEvidence",
+      "type": "object"
+    },
+    "EvidenceLink": {
+      "additionalProperties": false,
+      "description": "Where an evidence item sits in one artifact, in canonical module-relative terms (T2, T5.3).",
+      "properties": {
+        "artifact_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Artifact Sha256",
+          "type": "string"
+        },
+        "attribution": {
+          "default": "none",
+          "enum": [
+            "function-start",
+            "basic-block-in-function",
+            "decoding-routine",
+            "stack-frame",
+            "none"
+          ],
+          "title": "Attribution",
+          "type": "string"
+        },
+        "data_rva": {
+          "anyOf": [
+            {
+              "exclusiveMaximum": 4294967296,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Data Rva"
+        },
+        "file_offset": {
+          "anyOf": [
+            {
+              "exclusiveMaximum": 1099511627776,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "File Offset"
+        },
+        "function_id": {
+          "anyOf": [
+            {
+              "maxLength": 24,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Function Id"
+        },
+        "project_function_id": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Project Function Id"
+        },
+        "rva": {
+          "anyOf": [
+            {
+              "exclusiveMaximum": 4294967296,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Rva"
+        },
+        "site_rva": {
+          "anyOf": [
+            {
+              "exclusiveMaximum": 4294967296,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Site Rva"
+        },
+        "source_fragment": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source Fragment"
+        },
+        "tool_run_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Tool Run Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "tool_run_id",
+        "artifact_sha256"
+      ],
+      "title": "EvidenceLink",
+      "type": "object"
+    },
+    "StringEvidence": {
+      "additionalProperties": false,
+      "properties": {
+        "confidence_class": {
+          "enum": [
+            "verified-bytes",
+            "tool-reported",
+            "unverified-location"
+          ],
+          "title": "Confidence Class",
+          "type": "string"
+        },
+        "display_value": {
+          "maxLength": 256,
+          "title": "Display Value",
+          "type": "string"
+        },
+        "encoding": {
+          "enum": [
+            "ASCII",
+            "UTF-16LE",
+            "UTF-8"
+          ],
+          "title": "Encoding",
+          "type": "string"
+        },
+        "extraction_method": {
+          "enum": [
+            "floss-static",
+            "floss-stack",
+            "floss-tight",
+            "floss-decoded",
+            "floss-language"
+          ],
+          "title": "Extraction Method",
+          "type": "string"
+        },
+        "length": {
+          "minimum": 0,
+          "title": "Length",
+          "type": "integer"
+        },
+        "secret_kind": {
+          "anyOf": [
+            {
+              "maxLength": 32,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Secret Kind"
+        },
+        "source_location": {
+          "$ref": "#/$defs/EvidenceLink"
+        },
+        "source_run_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Source Run Id",
+          "type": "string"
+        },
+        "type": {
+          "enum": [
+            "static",
+            "stack",
+            "tight",
+            "decoded",
+            "language"
+          ],
+          "title": "Type",
+          "type": "string"
+        },
+        "value_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Value Hash",
+          "type": "string"
+        }
+      },
+      "required": [
+        "value_hash",
+        "length",
+        "display_value",
+        "encoding",
+        "type",
+        "source_location",
+        "confidence_class",
+        "extraction_method",
+        "source_run_id"
+      ],
+      "title": "StringEvidence",
+      "type": "object"
+    }
+  },
+  "$id": "https://patchtrace.local/schemas/intel-tools/1/ToolEvidenceSet.json",
+  "additionalProperties": false,
+  "description": "Normalised evidence of one run (row body of kind `tool-evidence`, or its sidecar).",
+  "properties": {
+    "analysis": {
+      "additionalProperties": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "integer"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "maxProperties": 16,
+      "propertyNames": {
+        "maxLength": 32
+      },
+      "title": "Analysis",
+      "type": "object"
+    },
+    "anomalies": {
+      "default": [],
+      "items": {
+        "maxLength": 256,
+        "type": "string"
+      },
+      "maxItems": 64,
+      "title": "Anomalies",
+      "type": "array"
+    },
+    "artifact_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Artifact Sha256",
+      "type": "string"
+    },
+    "cache_key": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Cache Key",
+      "type": "string"
+    },
+    "capabilities": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/CapabilityEvidence"
+      },
+      "title": "Capabilities",
+      "type": "array"
+    },
+    "config_digest": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Config Digest",
+      "type": "string"
+    },
+    "contract": {
+      "const": "tool-evidence/1",
+      "default": "tool-evidence/1",
+      "title": "Contract",
+      "type": "string"
+    },
+    "counts": {
+      "additionalProperties": {
+        "minimum": 0,
+        "type": "integer"
+      },
+      "maxProperties": 16,
+      "propertyNames": {
+        "maxLength": 32
+      },
+      "title": "Counts",
+      "type": "object"
+    },
+    "engine": {
+      "enum": [
+        "capa",
+        "floss",
+        "diec"
+      ],
+      "title": "Engine",
+      "type": "string"
+    },
+    "environment": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/EnvironmentEvidence"
+      },
+      "title": "Environment",
+      "type": "array"
+    },
+    "image_base": {
+      "anyOf": [
+        {
+          "maximum": 18446744073709551615,
+          "minimum": 0,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Image Base"
+    },
+    "run_id": {
+      "maxLength": 128,
+      "minLength": 1,
+      "title": "Run Id",
+      "type": "string"
+    },
+    "side": {
+      "enum": [
+        "older",
+        "newer"
+      ],
+      "title": "Side",
+      "type": "string"
+    },
+    "strings": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/StringEvidence"
+      },
+      "title": "Strings",
+      "type": "array"
+    },
+    "truncated": {
+      "default": false,
+      "title": "Truncated",
+      "type": "boolean"
+    },
+    "truncated_types": {
+      "default": [],
+      "items": {
+        "enum": [
+          "static",
+          "stack",
+          "tight",
+          "decoded",
+          "language"
+        ],
+        "type": "string"
+      },
+      "title": "Truncated Types",
+      "type": "array"
+    }
+  },
+  "required": [
+    "run_id",
+    "engine",
+    "side",
+    "artifact_sha256",
+    "cache_key",
+    "config_digest"
+  ],
+  "title": "ToolEvidenceSet",
+  "type": "object"
+}

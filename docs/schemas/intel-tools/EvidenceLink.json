@@ -1,0 +1,131 @@
+{
+  "$id": "https://patchtrace.local/schemas/intel-tools/1/EvidenceLink.json",
+  "additionalProperties": false,
+  "description": "Where an evidence item sits in one artifact, in canonical module-relative terms (T2, T5.3).",
+  "properties": {
+    "artifact_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Artifact Sha256",
+      "type": "string"
+    },
+    "attribution": {
+      "default": "none",
+      "enum": [
+        "function-start",
+        "basic-block-in-function",
+        "decoding-routine",
+        "stack-frame",
+        "none"
+      ],
+      "title": "Attribution",
+      "type": "string"
+    },
+    "data_rva": {
+      "anyOf": [
+        {
+          "exclusiveMaximum": 4294967296,
+          "minimum": 0,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Data Rva"
+    },
+    "file_offset": {
+      "anyOf": [
+        {
+          "exclusiveMaximum": 1099511627776,
+          "minimum": 0,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "File Offset"
+    },
+    "function_id": {
+      "anyOf": [
+        {
+          "maxLength": 24,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Function Id"
+    },
+    "project_function_id": {
+      "anyOf": [
+        {
+          "maxLength": 128,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Project Function Id"
+    },
+    "rva": {
+      "anyOf": [
+        {
+          "exclusiveMaximum": 4294967296,
+          "minimum": 0,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Rva"
+    },
+    "site_rva": {
+      "anyOf": [
+        {
+          "exclusiveMaximum": 4294967296,
+          "minimum": 0,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Site Rva"
+    },
+    "source_fragment": {
+      "anyOf": [
+        {
+          "maxLength": 200,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Source Fragment"
+    },
+    "tool_run_id": {
+      "maxLength": 128,
+      "minLength": 1,
+      "title": "Tool Run Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "tool_run_id",
+    "artifact_sha256"
+  ],
+  "title": "EvidenceLink",
+  "type": "object"
+}
