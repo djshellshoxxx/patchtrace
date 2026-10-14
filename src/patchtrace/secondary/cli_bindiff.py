@@ -30,10 +30,10 @@ def add_arguments(parser: argparse.ArgumentParser) -> None:
 
 
 def c3_acceptor(private_dir: Path) -> Callable[..., AcceptedBinExportLike] | None:
-    """Wrap C3 `accept_binexport` (binexport2-support.md §4) if it is installed; None otherwise."""
+    """Wrap C3 `accept_binexport` (binexport2-support.md §4); None only if the BinExport2 runtime is unavailable."""
     try:
-        from . import binexport_run  # type: ignore[attr-defined]  # C3 module, absent until C3 merges
-    except ImportError:
+        from . import binexport_run
+    except ImportError:  # defensive: a build without the protobuf runtime keeps BinDiff `unsupported`
         return None
     accept = getattr(binexport_run, 'accept_binexport', None)
     if accept is None:
@@ -41,7 +41,13 @@ def c3_acceptor(private_dir: Path) -> Callable[..., AcceptedBinExportLike] | Non
 
     def acceptor(path: Path, *, artifact_sha256: str, role: str, accept_unbound: bool, cancel: threading.Event,
                  other_sha256: str | None = None):
-        kwargs = dict(role=role, private_dir=private_dir / 'inputs', cancel=cancel, accept_unbound=accept_unbound)
+        inputs = private_dir / 'inputs'  # C3 creates its snapshot folder inside an existing private_dir
+        try:
+            inputs.mkdir(parents=True, exist_ok=True)
+        except OSError as exc:
+            raise SecondaryError('PT-SECONDARY-RUN', f'Could not prepare a private working folder '
+                                 f'({type(exc).__name__}).', kind='workdir-error') from None
+        kwargs = dict(role=role, private_dir=inputs, cancel=cancel, accept_unbound=accept_unbound)
         try:
             return accept(path, artifact_sha256=artifact_sha256, **kwargs)
         except SecondaryError as exc:

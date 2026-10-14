@@ -13,6 +13,7 @@ import pytest
 from fake_bindiff import launcher_names, make_fake_bindiff, spy_calls
 from test_bindiff_inputs import Accepted, Summary, accepted
 
+from patchtrace.jobs import run_process
 from patchtrace.secondary import bindiff_probe, bindiff_run
 from patchtrace.secondary.contracts import Capability, SecondaryError
 from patchtrace.secondary.registry import BinDiffAdapter
@@ -21,7 +22,8 @@ from patchtrace.secondary.scheduler import ProjectRef, run_engines
 
 OLD, NEW = 'a' * 64, 'b' * 64
 SECRETS = {'AWS_SECRET_ACCESS_KEY': 'sentinel-secret', 'JAVA_TOOL_OPTIONS': '-javaagent:evil.jar',
-           'LD_PRELOAD': '/evil.so', 'HTTPS_PROXY': 'http://proxy', 'GITHUB_TOKEN': 'ghp_sentinel'}
+           'LD_PRELOAD': '/evil.so', 'HTTPS_PROXY': 'http://proxy', 'GITHUB_TOKEN': 'ghp_sentinel',
+           'FLAGS_ui': 'true', 'FLAGS_flagfile': '/evil/flags', 'FLAGS_output_dir': '/evil'}
 
 
 @pytest.fixture(autouse=True)
@@ -67,6 +69,7 @@ def test_ok_run_end_to_end(tmp_path):
                             f'--config={workdir / "bindiff.json"}', f'--primary={workdir / "in" / "older.BinExport"}',
                             f'--secondary={workdir / "in" / "newer.BinExport"}']
     assert not any(a.split('=')[0] in bindiff_run.FORBIDDEN_FLAGS for a in call['argv'])
+    assert call['config'] == '{}'  # exactly the two bytes, no BOM: resets user and machine config (§4.1)
     assert Path(call['cwd']).name == 'cwd' and workdir.name.startswith('patchtrace-bindiff-')
     expected_env = bindiff_probe.build_env(Path(adapter._report.capability.path), workdir)
     if os.name == 'nt':
@@ -82,6 +85,45 @@ def test_ok_run_end_to_end(tmp_path):
     assert prov['binexport_binding'] == 'sha256' and prov['config_sha256'] == bindiff_run.CONFIG_SHA256
     assert prov['older_binexport_sha256'] == adapter._pair.older.file_sha256
     assert 'matched=2' in prov['bindiff_summary'] and 'failure_kind' not in prov
+
+
+def test_argv_allowlist_rejects_forbidden_unknown_and_positional_arguments(tmp_path):
+    argv = bindiff_run.build_argv('/opt/bindiff/bin/bindiff', tmp_path)
+    assert bindiff_run.check_argv(argv) == argv
+    for flag in ('--flagfile', '--fromenv', '--tryfromenv', '--undefok', '--ui', '--export', '--ls', '--md_index',
+                 '--print_config', '--helpfull', '--version', '--help'):
+        assert flag in bindiff_run.FORBIDDEN_FLAGS
+        for bad in (flag, f'{flag}=x'):
+            with pytest.raises(ValueError, match='not allowed'):
+                bindiff_run.check_argv([*argv, bad])
+    for bad in ('--output_format=log', '--secondary_dir=x', 'positional.BinExport', '-v', '--nologo=false'):
+        with pytest.raises(ValueError, match='not allowed'):
+            bindiff_run.check_argv([*argv, bad])
+
+
+def test_run_executes_the_resolved_executable_path(tmp_path):
+    inputs = tmp_path / 'inputs'
+    inputs.mkdir()
+    real = make_fake_bindiff(tmp_path / 'bd')
+    link = tmp_path / 'links' / real.name
+    link.parent.mkdir()
+    try:
+        link.symlink_to(real)
+        selected = link
+    except (OSError, NotImplementedError):  # no symlink privilege: the selected path is the real file
+        selected = real
+    calls: list = []
+
+    def recording(argv, **kwargs):
+        calls.append(list(argv))
+        return run_process(argv, **kwargs)
+
+    adapter = BinDiffAdapter(selected, older=accepted(inputs, 'o', OLD), newer=accepted(inputs, 'n', NEW),
+                             raw_dir=tmp_path / 'raw', probe_runner=recording)
+    (out,) = run_engines(project(tmp_path), ['bindiff'], cancel=threading.Event(), env={},
+                         registry={'bindiff': adapter}, runner=recording)
+    assert out.run.status == 'ok' and len(calls) == 3  # --version, --help, the diff
+    assert {c[0] for c in calls} == {str(real.resolve())}
 
 
 def test_cache_key_depends_on_binexport_hashes(tmp_path):
@@ -273,6 +315,126 @@ def test_out_guard(tmp_path):
     assert bindiff_run.out_guard(other, max_bytes=50) == 'output-limit'
     (other / 'sub').mkdir()
     assert bindiff_run.out_guard(other) == 'output-unexpected'
+
+
+def test_transient_journal_is_tolerated_while_running(tmp_path):
+    out = tmp_path / 'out'
+    out.mkdir()
+    (out / bindiff_run.EXPECTED_NAME).write_bytes(b'SQLite format 3\x00')
+    (out / f'{bindiff_run.EXPECTED_NAME}-journal').write_bytes(b'\xd9\xd5\x05\xf9')
+    assert bindiff_run.out_guard(out) is None
+    ok, _ = go(tmp_path / 'run', 'journal-transient')
+    assert ok.run.status == 'ok' and len(ok.match_set.matches) == 2
+
+
+def test_journal_left_after_exit_0_is_ambiguous(tmp_path):
+    out, _ = go(tmp_path, 'journal-left')
+    assert out.run.status == 'failed' and out.error.kind == 'output-ambiguous'
+    assert not list((tmp_path / 'raw').rglob('*.BinDiff'))
+
+
+def test_exit_0_with_usage_text_is_output_missing(tmp_path):
+    out, _ = go(tmp_path, 'usage-exit-0')
+    assert out.run.status == 'failed' and out.error.kind == 'output-missing'
+    assert 'usage text' in out.error.message
+
+
+def _spy_import(monkeypatch) -> list:
+    calls: list = []
+    real = bindiff_run.import_bindiff
+
+    def spy(*args, **kwargs):
+        calls.append(args)
+        return real(*args, **kwargs)
+
+    monkeypatch.setattr(bindiff_run, 'import_bindiff', spy)
+    return calls
+
+
+def _cancel_when_partial_output_appears(spy_dir: Path, cancel: threading.Event, seen: list) -> threading.Thread:
+    def watch():
+        deadline = time.monotonic() + 30
+        while time.monotonic() < deadline and not cancel.is_set():
+            runs = [c for c in spy_calls(spy_dir) if c['argv'] not in (['--version'], ['--nologo', '--help'])]
+            if runs:
+                out = Path(runs[0]['cwd']).parent / 'out'
+                if (out / bindiff_run.EXPECTED_NAME).exists() and (out / f'{bindiff_run.EXPECTED_NAME}-journal').exists():
+                    seen.append(sorted(p.name for p in out.iterdir()))
+                    cancel.set()
+                    return
+            time.sleep(0.02)
+    thread = threading.Thread(target=watch, daemon=True)
+    thread.start()
+    return thread
+
+
+def test_cancel_after_partial_output_discards_it_unread(tmp_path, monkeypatch):
+    imported = _spy_import(monkeypatch)
+    cancel, seen = threading.Event(), []
+    watcher = _cancel_when_partial_output_appears(tmp_path / 'bd', cancel, seen)
+    out, _ = go(tmp_path, 'partial-then-hang', cancel=cancel)
+    watcher.join(5)
+    assert seen and seen[0] == [bindiff_run.EXPECTED_NAME, f'{bindiff_run.EXPECTED_NAME}-journal']
+    assert out.run.status == 'cancelled' and out.match_set is None and out.run.output_sha256 is None
+    assert imported == [] and not list(tmp_path.joinpath('raw').rglob('*.BinDiff'))
+    assert not Path(run_calls(tmp_path)[0]['cwd']).parent.exists()
+
+
+def test_timeout_after_partial_output_discards_it_unread(tmp_path, monkeypatch):
+    imported = _spy_import(monkeypatch)
+    out, _ = go(tmp_path, 'partial-then-hang', timeout=3.0)
+    assert out.run.status == 'timeout' and out.match_set is None
+    assert imported == [] and not list(tmp_path.joinpath('raw').rglob('*.BinDiff'))
+    assert not Path(run_calls(tmp_path)[0]['cwd']).parent.exists()
+
+
+def test_abnormal_exit_after_partial_output_discards_it_unread(tmp_path, monkeypatch):
+    imported = _spy_import(monkeypatch)
+    out, _ = go(tmp_path, 'partial-then-kill')
+    assert out.run.status == 'failed' and out.error.kind == 'nonzero-exit' and out.match_set is None
+    if os.name != 'nt':
+        assert 'signal 9' in out.error.message
+    assert imported == [] and not list(tmp_path.joinpath('raw').rglob('*.BinDiff'))
+    assert not Path(run_calls(tmp_path)[0]['cwd']).parent.exists()
+
+
+def test_output_path_over_250_characters_fails_closed_before_spawn(tmp_path):
+    # <workdir>/out/older_vs_newer.BinDiff adds 27 characters to the workdir path; BinDiff's cap is 250.
+    assert bindiff_run.output_path_fits(Path('/tmp/patchtrace-bindiff-x'))
+    assert bindiff_run.output_path_fits(Path('/' + 'd' * 222))
+    assert not bindiff_run.output_path_fits(Path('/' + 'd' * 223))
+    assert not bindiff_run.output_path_fits(Path('/' + 'é' * 120))  # measured in encoded bytes
+    inputs = tmp_path / 'inputs'
+    inputs.mkdir()
+    from patchtrace.secondary.bindiff_inputs import bind_pair
+    pair = bind_pair(accepted(inputs, 'o', OLD), accepted(inputs, 'n', NEW), OLD, NEW)
+    cap = Capability(engine='bindiff', supported=True, version='8', path=str(tmp_path / 'bindiff'),
+                     supports_json=False)
+    deep = tmp_path / ('p' * max(1, 236 - len(str(tmp_path))))
+    try:
+        deep.mkdir()
+    except OSError:  # a host path limit already prevents it; the guard is covered by the pure checks above
+        pass
+    called = []
+    with pytest.raises(SecondaryError) as info:
+        bindiff_run.execute(cap, pair, tmp_path / 'raw', cancel=threading.Event(), timeout_seconds=5,
+                            runner=lambda *a, **k: called.append(a), parent_dir=deep)
+    assert info.value.kind == 'workdir-error' and not called
+    assert not deep.exists() or not list(deep.glob('patchtrace-bindiff-*'))
+
+
+def test_windows_status_exit_code_is_reported_in_hex(tmp_path):
+    from patchtrace.jobs import ProcessResult
+    from patchtrace.secondary.bindiff_inputs import bind_pair
+    inputs = tmp_path / 'inputs'
+    inputs.mkdir()
+    pair = bind_pair(accepted(inputs, 'o', OLD), accepted(inputs, 'n', NEW), OLD, NEW)
+    cap = Capability(engine='bindiff', supported=True, version='8', path=str(tmp_path / 'bindiff'),
+                     supports_json=False)
+    with pytest.raises(SecondaryError) as info:
+        bindiff_run.execute(cap, pair, tmp_path / 'raw', cancel=threading.Event(), timeout_seconds=5,
+                            runner=lambda *a, **k: ProcessResult(0xC0000409, '', None, ''), parent_dir=tmp_path)
+    assert info.value.kind == 'nonzero-exit' and '0xC0000409' in info.value.message
 
 
 def test_stored_stderr_is_sanitized(tmp_path):

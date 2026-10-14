@@ -4,7 +4,10 @@ The database is untrusted input: it is opened through a read-only, immutable URI
 neither a journal nor a WAL file is created next to it, and every structural property
 the importer relies on is checked before any row is turned into a record. Callers that
 run BinDiff pass a private preserved copy (immutable is only safe if nothing can change
-the file). Layers: `trusted_schema=OFF`, defensive mode, `query_only`, an authorizer that
+the file), and only after BinDiff exited cleanly: a killed run can leave a valid-looking
+file with an empty `function` table (SPEC-29 §4.4). Layers: `trusted_schema=OFF`,
+`query_only`, defensive mode, `cell_size_check=ON`, `max_page_count` capped at the file's
+own page count, a progress-handler deadline (`PT-SECONDARY-LIMIT`), an authorizer that
 allows only SELECT/READ of the fixed tables, and rejection of any trigger, view or virtual
 table in `sqlite_master` (a view named like a required table is never read).
 """
@@ -12,6 +15,7 @@ from __future__ import annotations
 
 import hashlib
 import sqlite3
+import time
 from pathlib import Path
 
 from .contracts import (
@@ -27,6 +31,8 @@ from .contracts import (
 MAGIC = b'SQLite format 3\x00'
 MAX_SIZE = 512 * 1024 * 1024
 MASK = 0xFFFF_FFFF_FFFF_FFFF
+DEFAULT_DEADLINE = 120.0     # seconds of wall clock for the whole import, checked by the progress handler
+PROGRESS_STEPS = 10_000      # SQLite VM instructions between deadline checks
 REQUIRED = {
     'basicblockalgorithm': {'id', 'name'},
     'functionalgorithm': {'id', 'name'},
@@ -59,9 +65,14 @@ def _authorizer(action: int, arg1, arg2, dbname, source) -> int:
     return sqlite3.SQLITE_DENY
 
 
-def _harden(db: sqlite3.Connection) -> None:
+def _harden(db: sqlite3.Connection, file_size: int) -> None:
     db.execute('PRAGMA trusted_schema=OFF')
     db.execute('PRAGMA query_only=1')
+    db.execute('PRAGMA cell_size_check=ON')
+    page_size = db.execute('PRAGMA page_size').fetchone()[0]
+    if not isinstance(page_size, int) or page_size < 512 or page_size > 65536 or page_size & (page_size - 1):
+        raise _fail('malformed BinDiff database: invalid page size')
+    db.execute(f'PRAGMA max_page_count={max(1, -(-file_size // page_size))}')  # SQLite keeps >= current size
     if hasattr(db, 'setconfig') and hasattr(sqlite3, 'SQLITE_DBCONFIG_DEFENSIVE'):
         db.setconfig(sqlite3.SQLITE_DBCONFIG_DEFENSIVE, True)
     db.set_authorizer(_authorizer)
@@ -85,9 +96,11 @@ def _name(value: object) -> str | None:
 
 
 def import_bindiff(path: Path, older_sha256: str, newer_sha256: str, *,
-                   expected_hashes: tuple[str, str] | None = None) -> SecondaryMatchSet:
+                   expected_hashes: tuple[str, str] | None = None,
+                   deadline_seconds: float = DEFAULT_DEADLINE) -> SecondaryMatchSet:
     """`expected_hashes` (SPEC-29 §3): the `file.hash` pair to require when the BinExport inputs were bound
-    by an explicit user assertion rather than a SHA-256 `executable_id`; default = the artifact hashes."""
+    by an explicit user assertion rather than a SHA-256 `executable_id`; default = the artifact hashes.
+    `deadline_seconds` bounds the whole import (SPEC-29 §7.2); expiry raises `PT-SECONDARY-LIMIT`."""
     path = Path(path).resolve()
     try:
         size = path.stat().st_size
@@ -107,10 +120,24 @@ def import_bindiff(path: Path, older_sha256: str, newer_sha256: str, *,
         db = sqlite3.connect(f'{path.as_uri()}?mode=ro&immutable=1', uri=True)
     except sqlite3.Error:
         raise _fail('cannot open BinDiff database read-only') from None
+    expired = False
+    limit = time.monotonic() + deadline_seconds
+
+    def progress() -> int:
+        nonlocal expired
+        if time.monotonic() >= limit:  # >=: Windows' monotonic clock ticks every ~15.6 ms, so a zero deadline ties
+            expired = True
+            return 1  # interrupts the running statement
+        return 0
+
     try:
-        _harden(db)
+        db.set_progress_handler(progress, PROGRESS_STEPS)
+        _harden(db, size)
         return _read(db, older_sha256, newer_sha256, digest.hexdigest(), expected_hashes)
     except (sqlite3.Error, UnicodeDecodeError, OverflowError) as exc:  # corrupt text/varints, not just pages
+        if expired:
+            raise SecondaryError('PT-SECONDARY-LIMIT', f'BinDiff database import exceeded the '
+                                 f'{deadline_seconds:g} s time limit') from None
         raise _fail(f'malformed BinDiff database: {type(exc).__name__}') from None
     finally:
         db.close()

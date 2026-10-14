@@ -220,6 +220,24 @@ def test_normalized_and_manual_relations_override_raw():
     assert chain.nodes[-1].name == 'right' and chain.edges[-1].manual
 
 
+def test_raw_ghidra_external_locations_are_skipped_not_fatal():
+    """Real Ghidriff output keys imports as `EXTERNAL:<hex>` (research note 03 s2); they are no image functions."""
+    ps = pairs(3)
+    ps[1].one(fn('f', 0x20, 'b'), fn('f', 0x30, 'c'))
+    table = {'10': [['20', ['SymbolsHash']]],
+             'EXTERNAL:0000000c': [['EXTERNAL:0000000d', ['SymbolsHash']]],   # external -> external
+             '11': [['EXTERNAL:0000000e', ['SymbolsHash']], ['21', ['X']]]}  # a source touching an external target
+    [chain] = extract_chains(H[:3], [p.build() for p in ps], raw_matches=[{'address_matches': table}, None])[0]
+    assert [(n.address, n.name) for n in chain.nodes] == [(0x10, None), (0x20, 'f'), (0x30, 'f')]
+
+
+def test_other_unparsable_raw_addresses_are_still_rejected():
+    for bad in ('EXTERNAL:', 'EXTERNALISH:0c', 'EXTERNAL:0c garbage', 'zz'):
+        with pytest.raises(NwayError, match='invalid address'):
+            extract_chains(H[:3], [p.build() for p in straight()],
+                           raw_matches=[{'address_matches': {bad: [['20', []]]}}, None])
+
+
 def test_malformed_raw_matches_rejected():
     with pytest.raises(NwayError, match='address_matches'):
         extract_chains(H[:3], [p.build() for p in straight()], raw_matches=[{'address_matches': []}, None])

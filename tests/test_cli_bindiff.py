@@ -148,9 +148,12 @@ def test_c3_wrapper_turns_mismatch_matching_other_artifact_into_orientation(tmp_
             raise error
         return 'accepted'
 
+    import patchtrace.secondary as secondary_package
+
     fake = types.ModuleType('patchtrace.secondary.binexport_run')
     fake.accept_binexport = accept_binexport
     monkeypatch.setitem(sys.modules, 'patchtrace.secondary.binexport_run', fake)
+    monkeypatch.setattr(secondary_package, 'binexport_run', fake, raising=False)  # `from . import` prefers the attribute
     acceptor = REAL_C3_ACCEPTOR(tmp_path)
     kwargs = dict(role='older', accept_unbound=False, cancel=threading.Event())
     with pytest.raises(SecondaryError) as info:

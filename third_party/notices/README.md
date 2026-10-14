@@ -37,3 +37,8 @@ These files are verbatim license texts from upstream source revisions. They are 
 ## Scope
 
 These are upstream license texts and source references, not a complete SBOM. PySide6 6.12.0 metadata in the inspected environment also required `PySide6_WebEngine==6.12.0.140` and `PySide6_Pdf==6.12.0.140`; the final PyInstaller inventory excludes their binaries. The inventory includes Qt Network and its TLS/network-information plugins. Reconcile future package changes against their exact DLL dependencies and distribution metadata before deciding whether additional third-party notices are needed.
+
+## BinExport2 schema and protobuf runtime (SPEC-10b)
+
+- `binexport-2bff7af/`: `binexport2.proto` and `LICENSE` (Apache-2.0) from [google/binexport](https://github.com/google/binexport) commit `2bff7af27af206354b2a90a9de566dc6bbae3e1b`, copied unmodified; `PROVENANCE.txt` records URLs, SHA-256s and the tool that compiled the shipped descriptor set (an Apache-2.0 derivative of the .proto). The repository has no NOTICE file.
+- `protobuf-7.36.2/`: BSD-3-Clause `LICENSE` from the `protobuf` 7.36.2 wheel's `dist-info`; `MANIFEST.txt` records the wheel SHA-256s. The build scripts also copy the installed distribution's license files.

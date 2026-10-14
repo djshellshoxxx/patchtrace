@@ -1,9 +1,11 @@
 """BinDiff capability probe and child environment (SPEC-29 §2, §4.2). No Qt; spawns only via `runner`.
 
-Nothing about the CLI is assumed: the version text, the major version and every option PatchTrace passes
-are verified at runtime with `--version` and `--help` (the upstream flag list was not re-verified against
-`main_portable.cc` by research, see docs/research/phase-c/bindiff-automation.md). The probe never
-installs anything, never launches the UI and never touches inputs.
+The version text, the major version and every option PatchTrace passes are verified at runtime with
+`--version` and `--nologo --help`. Measured on the real BinDiff 8 (2026-10-14): `--version` prints
+`BinDiff 8 (@568181968, Sep 25 2023)` and exits 0; `--help` prints the flag list on stdout and exits 1
+(tests/fixtures/secondary/bindiff-8-help.txt). Symlinks are resolved and the resolved path is what runs,
+because argv[0]'s basename selects UI mode (`bin/bindiff_ui` is a symlink to `bindiff` in the `.deb`).
+The probe never installs anything, never launches the UI and never touches inputs.
 """
 from __future__ import annotations
 
@@ -24,7 +26,8 @@ MIN_MAJOR = 8
 TESTED_MAJOR = 8
 PROBE_TIMEOUT = 30
 PROBE_LOG_LIMIT = 64 * 1024
-REQUIRED_OPTIONS = ('--output_dir', '--output_format', '--primary', '--secondary', '--logo')
+# `--config` is required: with `{}` it is what neutralises user and machine config (SPEC-29 §4.1).
+REQUIRED_OPTIONS = ('--output_dir', '--output_format', '--primary', '--secondary', '--logo', '--config')
 EXECUTABLE_NAMES = frozenset({'bindiff', 'bindiff.exe'})
 WORKDIR_PARTS = ('cwd', 'home', 'tmp', 'programdata')
 _VERSION = re.compile(r'^BinDiff (\d+)(.*)$')
@@ -53,6 +56,14 @@ def sanitize(text: str, limit: int = 200) -> str:
     text = ''.join(c if c in '\t' or (ord(c) >= 32 and ord(c) != 127) else ' ' for c in text)
     text = _PATHISH.sub(lambda m: ntpath.basename(m.group(0).rstrip('\\/')) or '<path>', text)
     return text.strip()[:limit]
+
+
+def exit_text(code: int) -> str:
+    """`exit N`, `signal N` (POSIX, negative) or `exit 0xC0000135` (Windows NTSTATUS-sized codes, e.g. a
+    missing VC++ runtime DLL), so a probe or run failure says how the process ended."""
+    if code < 0:
+        return f'signal {-code}'
+    return f'exit 0x{code & 0xFFFFFFFF:08X}' if code > 255 else f'exit {code}'
 
 
 def first_error_line(text: str) -> str:
@@ -168,7 +179,11 @@ def _probe(exe: Path, cancel: threading.Event, runner: Callable, environ: Mappin
         if version_run.reason == 'cancelled':
             return _unsupported(path, 'probe-cancelled', 'BinDiff probe was cancelled.')
         parsed = parse_version(f'{version_run.log_tail}\n{version_run.stderr_tail}')
-        if version_run.reason or version_run.returncode != 0 or parsed is None:
+        if not version_run.reason and version_run.returncode != 0:
+            ended = exit_text(version_run.returncode)
+            return _unsupported(path, 'probe-failed', f'BinDiff did not report a version ({ended}); it may be '
+                                'damaged or need a missing runtime library.')
+        if version_run.reason or parsed is None:
             return _unsupported(path, 'probe-failed', MESSAGES['probe-failed'])
         major, detail = parsed
         version = f'{major}{detail}'
@@ -182,7 +197,7 @@ def _probe(exe: Path, cancel: threading.Event, runner: Callable, environ: Mappin
             return _unsupported(path, 'probe-failed', MESSAGES['probe-failed'], version, major)
         if help_run.reason == 'cancelled':
             return _unsupported(path, 'probe-cancelled', 'BinDiff probe was cancelled.', version, major)
-        if help_run.reason or help_run.returncode not in (0, 1):  # absl may exit 1 after --help
+        if help_run.reason or help_run.returncode not in (0, 1):  # BinDiff 8 exits 1 after --help (measured)
             return _unsupported(path, 'probe-failed', MESSAGES['probe-failed'], version, major)
         text = f'{help_run.log_tail}\n{help_run.stderr_tail}'
         for option in REQUIRED_OPTIONS:

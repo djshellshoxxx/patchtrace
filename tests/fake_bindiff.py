@@ -16,17 +16,10 @@ from pathlib import Path
 from fake_exe import make_fake_exe
 
 TESTS = Path(__file__).resolve().parent
-VERSION_LINE = 'BinDiff 8 (@568181968, Sep 25 2023), (c)2004-2011 zynamics GmbH, (c)2011-2023 Google LLC.'
-FULL_HELP = '''bindiff: Find similarities and differences in disassembled code.
-
-  Flags from main_portable.cc:
-    --config (Path to a JSON config file); default: "";
-    --logo (Display version/copyright information); default: true;
-    --output_dir (Output path, defaults to current directory); default: "";
-    --output_format (Comma-separated list of output formats: "bin" (default), "log"); default: "bin";
-    --primary (Primary input file or path in batch mode (.BinExport)); default: "";
-    --secondary (Secondary input file (optional)); default: "";
-'''
+# Real BinDiff 8 texts (measured 2026-10-14, SPEC-29 §2): `--version` prints exactly this line (exit 0) and
+# `--nologo --help` prints the committed fixture on stdout and exits 1.
+VERSION_LINE = 'BinDiff 8 (@568181968, Sep 25 2023)'
+FULL_HELP = (TESTS / 'fixtures' / 'secondary' / 'bindiff-8-help.txt').read_text(encoding='utf-8')
 
 _SOURCE = r'''
 import json, os, sys, time, subprocess
@@ -34,8 +27,13 @@ sys.path.insert(0, TESTS)
 MODE = MODE_VALUE
 args = sys.argv[1:]
 here = os.path.dirname(os.path.abspath(__file__))
+opts = dict(a[2:].split('=', 1) for a in args if a.startswith('--') and '=' in a)
+config = None
+if opts.get('config') and os.path.isfile(opts['config']):
+    with open(opts['config'], 'rb') as handle:
+        config = handle.read().decode('latin-1')
 with open(os.path.join(here, 'spy.jsonl'), 'a', encoding='utf-8') as spy:
-    spy.write(json.dumps({'argv': args, 'cwd': os.getcwd(), 'env': dict(os.environ)}) + '\n')
+    spy.write(json.dumps({'argv': args, 'cwd': os.getcwd(), 'env': dict(os.environ), 'config': config}) + '\n')
 if args == ['--version']:
     if MODE == 'no-version':
         print('hello'); sys.exit(0)
@@ -46,9 +44,13 @@ if args == ['--nologo', '--help']:
     text = HELP
     if MODE == 'missing-option':
         text = text.replace('--logo', '--nothing')
-    print(text)
-    sys.exit(1 if MODE == 'help-exit-1' else 0)
-opts = dict(a[2:].split('=', 1) for a in args if a.startswith('--') and '=' in a)
+    if MODE == 'missing-config':
+        text = text.replace('--config', '--konfig')
+    sys.stdout.write(text)
+    sys.exit(0 if MODE == 'help-exit-0' else 1)
+if MODE == 'usage-exit-0':  # measured: --primary without --secondary prints usage on stdout and exits 0
+    sys.stdout.write(HELP)
+    sys.exit(0)
 out = opts.get('output_dir', '')
 def ident(path):
     with open(path, encoding='utf-8') as handle:
@@ -80,6 +82,23 @@ if MODE == 'wrong-hashes':
     hashes = ('c' * 64, secondary)
 if MODE == 'reversed-hashes':
     hashes = (secondary, primary)
+journal = target + '-journal'
+def write_journal():  # after the database is closed: SQLite deletes a stale journal when it creates a file
+    with open(journal, 'wb') as handle:  # rollback-journal magic, as BinDiff leaves it while writing
+        handle.write(bytes.fromhex('d9d505f920a163d7') + bytes(504))
+if MODE in ('partial-then-hang', 'partial-then-kill'):
+    # Measured with the real BinDiff 8: a kill during the write phase leaves a valid SQLite file with every
+    # table but an empty `function` table (plus the journal). It must never be preserved or imported.
+    build(target, hashes=hashes, functions=[])
+    write_journal()
+    sys.stdout.write('Writing results\n')
+    sys.stdout.flush()
+    if MODE == 'partial-then-hang':
+        time.sleep(120)
+    import signal
+    if hasattr(signal, 'SIGKILL'):
+        os.kill(os.getpid(), signal.SIGKILL)
+    os._exit(137)
 extra = ('CREATE TRIGGER t AFTER INSERT ON file BEGIN DELETE FROM function; END',) if MODE == 'trigger-in-db' else ()
 functions = [] if MODE in ('empty', 'claims-matches-empty-db') else None
 if MODE == 'symlink-output':
@@ -94,6 +113,11 @@ if MODE == 'two-files':
     build(os.path.join(out, 'extra.BinDiff'), hashes=hashes)
 if MODE == 'zero-size':
     open(target, 'wb').close()
+if MODE in ('journal-transient', 'journal-left'):
+    write_journal()
+if MODE == 'journal-transient':  # the guard polls every 50 ms: let it see the journal, then finish cleanly
+    time.sleep(0.4)
+    os.remove(journal)
 matched = 5 if MODE == 'claims-matches-empty-db' else (0 if functions == [] else 2)
 print('matched: %d of 3/3 (primary/secondary, 3/3 non-library)' % matched)
 print('Similarity: 81.2% (Confidence: 95.0%)')

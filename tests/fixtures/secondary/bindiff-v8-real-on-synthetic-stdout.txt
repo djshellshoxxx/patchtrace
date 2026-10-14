@@ -1,0 +1,9 @@
+Setup: 0.0s
+primary:   older: 20 functions, 19 calls
+secondary: newer: 21 functions, 20 calls
+Matching: 0.0s
+matched: 20 of 20/21 (primary/secondary, 20/21 non-library)
+call graph MD index: primary   0.418236
+                     secondary 0.425207
+Similarity: 97.1948% (Confidence: 99.2608%)
+Writing results: 0.2s

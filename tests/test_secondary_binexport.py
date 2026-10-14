@@ -95,10 +95,13 @@ def test_missing_bindings_report_unsupported(tmp_path, monkeypatch):
     assert (result.status, result.reason) == ('unsupported', 'protobuf bindings not installed')
 
 
-def test_real_bindings_absent_in_this_build(tmp_path):
+def test_real_runtime_present_rejects_empty_file(tmp_path):
+    # SPEC-10b: the pinned upb runtime now ships, so an empty file is rejected instead of 'unsupported'.
     path = tmp_path / 'x.BinExport'
     path.write_bytes(b'')
-    assert validate_binexport(path, SHA).status == 'unsupported'
+    with pytest.raises(SecondaryError) as info:
+        validate_binexport(path, SHA)
+    assert info.value.reason == 'empty_file'
 
 
 def test_injected_bindings_parse_failure_and_success(tmp_path):
@@ -120,8 +123,10 @@ def test_size_limit(tmp_path, monkeypatch):
     monkeypatch.setattr(binexport, 'MAX_SIZE', 3)
     path = tmp_path / 'x.BinExport'
     path.write_bytes(b'1234')
-    with pytest.raises(SecondaryError, match='512 MiB'):
+    with pytest.raises(SecondaryError, match='exceeds 3 bytes') as info:  # SPEC-10b: default cap 256 MiB
         validate_binexport(path, SHA)
+    assert info.value.code == 'PT-SECONDARY-LIMIT' and info.value.reason == 'too_large'
+    assert binexport.BinExportLimits().max_file_bytes == 256 * 1024 * 1024
 
 
 def test_unmatched_derived_from_call_graph():

@@ -151,3 +151,45 @@ No real-data claim: every number below comes from generated worlds with known gr
 - scikit-learn 1.9.1 (optional `calibration-dev` extra, installed locally only): weighted L2 logistic within 1e-4 relative at C in {0.05, 1, 100}, isotonic knots equal, Platt within 1e-3. Without scikit-learn these 3 tests skip (CI default).
 - Simulations: well-specified world OOF ECE excess over null within 0.02, slope/intercept CIs contain 1/0, LTT-certified tau has true precision >= 0.95; planted lineage leakage: random-split AUC exceeds grouped by > 0.15 (observed 0.825 vs 0.511); lineage shift fails the shift criterion; overconfident model fails H1 (ECE excess and slope); inverse-probability weights recover population precision; pipeline artifact/report byte-identical on rerun and under row permutation (same platform).
 - Not verified here (CI/Windows/real data only): cross-platform byte-identical report SHA; Windows run of the calibration tests; frozen-EXE loading of a bundled artifact (none exists); any Tier R or Tier W result; G0-G3 on real data (all `insufficient-data`).
+## 2026-10-14 C3 BinExport2 support (SPEC-10b) - automated evidence (Linux only) and open gates
+- Re-verified pin: `protobuf` 7.36.2 is still the latest release on PyPI (2026-09-17). Wheel SHA-256s: win_amd64 `a300819d...d353`, manylinux2014_x86_64 `89f23aa5...bfd2`; full list in `third_party/notices/protobuf-7.36.2/MANIFEST.txt`. Installed with `--only-binary=:all:`; `api_implementation.Type()` reports `upb`.
+- Measured on Linux x86-64 (CPython 3.13.16):
+
+| Measurement | Result |
+|---|---|
+| 13.35 MiB / 2 M-record DoS-shaped file | Pre-scan 1.34 s, parse 0.08 s, checker 0.78 s. VmPeak 137 MiB, RSS 126 MiB. |
+| Worker caps (`tools/qa_binexport_memcap.py`, `accept_binexport`) | 48-120 MiB give `worker_oom`; 140 MiB and above succeed. |
+| upb under a cap | Raises `DecodeError("Arena alloc failed")`, not `MemoryError`. |
+| pydantic-core under a cap | Aborts with SIGABRT. Classified as `worker_oom` from its stderr text. |
+| `bytearray` child under the cap | Gets `MemoryError`. |
+
+- Linux frozen build: the `_upb/_message.abi3.so` inventory guard passed (412 KiB delta). Frozen smoke: 30/30 PASS, including B1/B2 through the frozen self-spawned worker.
+- Tests added: 8 descriptor, 25 pre-scan, 48 checker (one per reason slug), 26 pipeline/snapshot/identity, 28 isolation, 3 CLI, 9 property/boundary (hypothesis 2000 + 1000 + 150-example runs), 7 fixtures.
+- Fuzz: `tools/fuzz_binexport.py`, 60 s random-mutation run: 1.6 M inputs, 0 findings. Atheris was not installed.
+- All goldens are synthetic: 4 files bound to `synthetic_pe()` hashes, with `PROVENANCE.json`. None of this is live-compatibility evidence.
+- Open: the Windows CI run (U7 child behaviour at `ProcessMemoryLimit`, `PeakProcessMemoryUsed`, idle commit of the frozen worker, frozen `PatchTrace.exe` B1/B2, size delta, AV). Also open: real Ghidra/IDA goldens (U1, U3, U5, U6, U9, U12) and the CI workflow steps (`pip check`, pin + upb assertion step, nightly Linux fuzz).
+- Unreproduced fatal interpreter error. One of 15 full `pytest -q` runs on this branch ended in a Python fatal error: the faulthandler `Extension modules: shiboken6, PySide6.QtCore/QtGui/QtWidgets/QtTest, google._upb._message` line was the last output. The traceback was lost because the output was piped through `tail -1`. Attempts to reproduce found no crash:
+  - 13 further full runs of this branch;
+  - 40 runs of the in-process BinExport tests (about 126 k hypothesis inputs);
+  - a 7.44 M-input in-process `inspect_bytes` stress with the input recorded before each parse;
+  - 8 full runs of the base commit `29a4d3f`.
+
+  Cause unknown, whether Qt teardown flakiness or upb (T3). Production parsing runs only in the capped worker, where a crash surfaces as `worker_crash`. Re-run CI with `python -X faulthandler -m pytest` and keep full logs.
+
+## 2026-10-14 C4 follow-up: real BinDiff 8 measured and run (Linux, local container; not a CI run)
+Real tool, not mocked, but only in this session's Linux container (uid 65534, environment built from scratch). Every input pair is SYNTHETIC (the stdlib encoder `tests/bindiff_live_pair.py`, or C3's committed synthetic fixtures), so this is real-tool behaviour on synthetic input, not real-driver (Ghidra/IDA export) evidence. Nothing ran on Windows. Supersedes the "Live BinDiff: blocked" line of the C4 block above for Linux only.
+
+| What ran | How | Result |
+|---|---|---|
+| Asset re-verification | fresh downloads of `bindiff_8_amd64.deb`, `bindiff8.msi`, `bindiff_8_amd64.deb.asc` from the v8 release into a new directory | 62,663,460 B `821990e3…4dda`, 72,237,056 B `688831e4…b15f`, 819 B `1efbb4c6…f0f5`: identical to the research note. Same egress proxy, GitHub API 403, no upstream digest, `.asc` not verified: trust-on-first-use |
+| Provisioning | `tools/provision_bindiff.py --os linux` (its own download, stdlib ar+tar, outside the repo tree) | passed: 117 files, 50 dirs, 3 links skipped; regular-file tree byte-identical to `dpkg-deb -x`; `opt/bindiff/bin/bindiff` `eb0a88eb…d0fb` equals the pin |
+| CLI contract | direct runs | `--version` exit 0 `BinDiff 8 (@568181968, Sep 25 2023)`; `--nologo --help` exit 1, stdout only; no `--primary` exit 1 `Need primary input`; `--primary` alone prints usage and exits 0 with no file; non-database file at the target name exit 1 `file is not a database` |
+| Config isolation | one-step `function_matching` list as user config (`$HOME/.bindiff/bindiff.json`) and as machine config (`/etc/opt/bindiff/bindiff.json` in a private mount namespace; host `/etc/opt` untouched) | without `--config`: 19 matches, 85.34% in both cases; with `--config` `{}`: 20 matches, 97.19% = baseline in both cases. A user `log.to_file` config wrote nothing in either case |
+| Environment / network | strace, `unshare -n`, no `HOME` | zero socket/connect calls from bindiff; identical result in an empty network namespace and without `HOME`; `$HOME/.bindiff` created (empty) |
+| Kill hazard | SIGKILL about 50 ms after the output appeared (100k-function pair) | 53,248-byte file, valid header, 7 tables, 0 `function` rows (no journal left in that run) |
+| Live harness | `tests/test_live_bindiff.py` with `PATCHTRACE_REQUIRE_LIVE_BINDIFF=1`, `PATCHTRACE_LIVE_SYNTHETIC_PAIR=1`, pinned version text; after rebasing onto the C3 integration head the synthetic files go through C3 `accept_binexport` inside `BinDiffAdapter` (production path) | passed (four runs, the last on the rebased head with C3 acceptance): probe and pinned version; reversed pair refused before spawn; end-to-end through `run_engines` + `BinDiffAdapter` 20 of 20/21 matched, similarity 97.19%, raw `.BinDiff` preserved once, the two patched functions flagged; cancel at the first output byte (out/ held the 0-byte database and a 512-byte journal) and a 0.5 s timeout both discarded the output unread and removed the workdir; `unshare -rn` gave the same 20 matches |
+| C3 fixtures | C3 branch's committed `synthetic-{older,newer}.BinExport` through `BinDiffAdapter` | ok, 3 of 3/4 matched, similarity 87.47% |
+| Resources (synthetic) | wall clock and peak RSS | 2k functions 0.08 s / 17.6 MiB; 20k 0.9 s / 77 MiB; 50k 2.7 s (first output after 1.9 s) |
+| MSI static inspection | `msiextract`, PE header and import parse (no execution) | `ProgramFiles/BinDiff/bin/bindiff.exe` 3,396,896 B `b1d4844d…47dd`, PE32+ x86-64 console; imports `VCRUNTIME140_1.dll`, which the MSI does not ship |
+
+Committed from this run: the real v8 `--help` text and the real v8 `.BinDiff` + stdout produced on the synthetic pair (`tests/fixtures/secondary/bindiff-8-help.txt`, `bindiff-v8-real-on-synthetic.*`, provenance JSON). Still live-only/open: the GitHub `live-bindiff` run (Linux required leg and the advisory Windows leg: `msiexec /a` layout, `bindiff.exe` start, VC++ runtime on `windows-latest`, Windows config paths and network), real-driver runtime/memory and `executable_id` formats (U8/U9), and the independent pin re-hash plus `.asc` verification.
