@@ -12,16 +12,18 @@ from dataclasses import dataclass
 from datetime import UTC, datetime
 from pathlib import Path
 
+from ..enrichment.contracts import EnrichmentError
 from ..enrichment.storage import EnrichmentStore, Guard
 from . import scheduler
 from .contracts import SecondaryMatchSet
 from .reconcile import reconcile
 from .registry import REGISTRY, build_registry, safe_env
-from .runs import EngineId, EngineOutcome, EngineRun, argv_digest, as_v2, cache_key, new_run_id
+from .runs import EngineId, EngineOutcome, EngineRun, argv_digest, as_v2, cache_key, new_run_id, sanitize_stderr
 from .store import cache_snapshot, publish_engine_set, publish_run
 
 OK, ENVIRONMENT, RUNTIME, NO_RESULTS, CANCELLED = 0, 2, 3, 4, 5
-ENV_CODES = frozenset({'PT-SECONDARY-INPUT', 'PT-SECONDARY-UNSUPPORTED', 'PT-SECONDARY-PAIR',
+# PT-SECONDARY-INPUT raised while parsing engine output is a runtime failure (3), not an environment one.
+ENV_CODES = frozenset({'PT-SECONDARY-UNSUPPORTED', 'PT-SECONDARY-PAIR',
                        'PT-SECONDARY-ORIENTATION', 'PT-SECONDARY-FORMAT'})
 DEFAULT_ENGINES: tuple[EngineId, ...] = ('rz-diff', 'bindiff')
 TIMEOUT_RANGE = (60, 86_400)
@@ -73,15 +75,30 @@ def execute(service, store: EnrichmentStore, run, sides: dict, engines: Sequence
 
     warnings: list[str] = []
     rows, reports = [], []
+    persist_failed: dict[str, EngineRun] = {}
 
     def persist(outcome: EngineOutcome) -> None:
-        """Runs on this thread as each engine finishes, so Ctrl+C never loses a completed outcome."""
+        """Runs on this thread as each engine finishes, so Ctrl+C never loses a completed outcome.
+        A storage failure (row over 32 MiB, 128 MiB cap) fails only this engine: the failure is
+        recorded as a failed EngineRun and a warning, never raised into the scheduler."""
         record, match_set = outcome.run, outcome.match_set
         digest = match_set.file_sha256 if match_set else record.cache_key
         guard = Guard(project.id, run.id, run.raw_sha256, digest)
-        if match_set is not None and record.status == 'ok':  # a cache hit never rewrites the set
-            publish_engine_set(store, guard, guard, project.revision, match_set)
-        publish_run(store, guard, guard, project.revision, record)
+        try:
+            if match_set is not None and record.status == 'ok':  # a cache hit never rewrites the set
+                publish_engine_set(store, guard, guard, project.revision, match_set)
+            publish_run(store, guard, guard, project.revision, record)
+        except EnrichmentError as exc:
+            warnings.append(f'{record.engine}: result not stored ({exc.code}): {exc.message}')
+            record = record.model_copy(update={
+                'status': 'failed', 'error_code': exc.code, 'output_sha256': None, 'match_set_id': None,
+                'stderr_tail': sanitize_stderr(f'{exc.code}: {exc.message}')})
+            match_set = None
+            persist_failed[record.run_id] = record
+            try:
+                publish_run(store, guard, guard, project.revision, record)
+            except EnrichmentError as again:
+                warnings.append(f'{record.engine}: failure record not stored ({again.code})')
         if match_set is not None:
             reports.append(reconcile(project.matches, match_set))
         rows.append({'engine': record.engine, 'status': record.status, 'error_code': record.error_code,
@@ -99,6 +116,8 @@ def execute(service, store: EnrichmentStore, run, sides: dict, engines: Sequence
     order = {e: i for i, e in enumerate(o.run.engine for o in outcomes)}
     rows.sort(key=lambda r: order[r['engine']])
     reports.sort(key=lambda r: order[r.engine])
+    outcomes = [EngineOutcome(persist_failed[o.run.run_id], None, None) if o.run.run_id in persist_failed else o
+                for o in outcomes]
     status, code = classify(outcomes, cancel.is_set())
     result = {'runs': rows,
               'reconciliation': {'reports': [{'engine': r.engine, 'engine_version': r.engine_version,

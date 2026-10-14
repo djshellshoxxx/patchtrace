@@ -161,3 +161,70 @@ def test_make_room_can_evict_engine_runs(tmp_path, monkeypatch):
     freed = store.make_room(1, g)
     assert freed >= 1 and len(store.entries('engine-run')) == 3  # only as much as needed, oldest first
     assert 'r0' not in {e.id for e in store.entries('engine-run')}
+
+
+# --- secondary run CLI (items 6, 13) --------------------------------------------------------------
+
+def _cli_project(tmp_path):
+    from patchtrace.service import ProjectService
+    service = ProjectService.sample(tmp_path / 'case')
+    root = service.root
+    service.close()
+    return root
+
+
+def _cli(root, exe, capsys):
+    import json
+
+    from patchtrace import cli
+    code = cli.main(['secondary', 'run', str(root), '--json', '--rz-diff', exe, '--engine', 'rz-diff',
+                     '--no-cache'])
+    return code, json.loads(capsys.readouterr().out)
+
+
+def test_adapter_parse_input_error_is_runtime_exit_3(tmp_path, capsys):
+    from fake_exe import make_fake_exe
+    source = ("import sys\nif sys.argv[1:] == ['-v']:\n    print('rz-diff 0.9.1')\n    sys.exit(0)\n"
+              "print('this is not json')\n")
+    exe = str(make_fake_exe(tmp_path / 'bin', 'rz-diff', source))
+    code, doc = _cli(_cli_project(tmp_path), exe, capsys)
+    assert doc['result']['runs'][0]['error_code'] == 'PT-SECONDARY-INPUT'
+    assert code == 3
+
+
+def test_persistence_failure_is_recorded_not_fatal(tmp_path, capsys, monkeypatch):
+    from test_cli_secondary_run import fake_rz
+
+    from patchtrace.enrichment.contracts import EnrichmentError
+    from patchtrace.secondary import cli_run
+
+    def boom(*args, **kwargs):
+        raise EnrichmentError('PT-ENRICH-LIMIT', 'enrichment result exceeds 32 MiB row limit')
+    monkeypatch.setattr(cli_run, 'publish_engine_set', boom)
+    root = _cli_project(tmp_path)
+    code, doc = _cli(root, fake_rz(tmp_path), capsys)
+    [row] = doc['result']['runs']
+    assert row['status'] == 'failed' and row['error_code'] == 'PT-ENRICH-LIMIT' and row['matches'] == 0
+    assert code == 3 and any('PT-ENRICH-LIMIT' in w for w in doc['warnings'])
+    from patchtrace.enrichment.storage import EnrichmentStore
+    from patchtrace.service import ProjectService
+    service = ProjectService.open(root)
+    try:
+        [stored] = EnrichmentStore(service.store).entries('engine-run')
+        assert stored.body['status'] == 'failed' and stored.body['error_code'] == 'PT-ENRICH-LIMIT'
+    finally:
+        service.close()
+
+
+def test_run_record_failure_too_is_only_a_warning(tmp_path, capsys, monkeypatch):
+    from test_cli_secondary_run import fake_rz
+
+    from patchtrace.enrichment.contracts import EnrichmentError
+    from patchtrace.secondary import cli_run
+
+    def boom(*args, **kwargs):
+        raise EnrichmentError('PT-ENRICH-LIMIT', 'cap')
+    monkeypatch.setattr(cli_run, 'publish_engine_set', boom)
+    monkeypatch.setattr(cli_run, 'publish_run', boom)
+    code, doc = _cli(_cli_project(tmp_path), fake_rz(tmp_path), capsys)
+    assert code == 3 and doc['result']['runs'][0]['status'] == 'failed'
