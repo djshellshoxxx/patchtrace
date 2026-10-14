@@ -267,3 +267,5 @@
 ### [CAP-5:capa-cli]
 - [x] `intel-tools pairs` (--engine, --change, --namespace, --include-noise, --include-library, --show-features, --show-secrets, --json), probe rules label, `PT-TOOL-PAIRING` exit mapping, `capa-pairs/1` schema entry.
 - [ ] Not done: `--hypothesis CVE-ID` (needs CAP-7 `capa_hints`); `cli_commands/pairs.py` adapter and `frozen_smoke.py` import (integrator).
+### [WB1:S3:sources-build]
+- [x] Sources v1 (`fn`, `raw`, `pe:<side>`, `ann`, `fnd`) and build orchestration; determinism under permutation and incremental == from-scratch tested. [ ] Live gate: the `strings`/`symbols` shape of a real Ghidriff JSON (the `raw` reader fails closed on any other shape); `name_matches` of unchanged functions stay unindexed until then.
