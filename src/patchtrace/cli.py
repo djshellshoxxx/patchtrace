@@ -13,7 +13,10 @@ import sys
 import threading
 from pathlib import Path
 
-COMMANDS = ('rank', 'flags', 'correlate', 'cache', 'acquire', 'series', 'secondary')
+from .backend_cli import cmd_backend
+from .backend_cli import register as register_backend
+
+COMMANDS = ('rank', 'flags', 'correlate', 'cache', 'acquire', 'series', 'secondary', 'backend')
 OK, ENVIRONMENT, RUNTIME, NO_RESULTS, CANCELLED = 0, 2, 3, 4, 5
 CLI_CONTRACT = 'enrichment-cli/1'
 
@@ -155,6 +158,7 @@ def _parser() -> argparse.ArgumentParser:
     which = chains.add_mutually_exclusive_group()
     which.add_argument('--function', metavar='NAME')
     which.add_argument('--address', metavar='HEX')
+    register_backend(sub, common)
     return parser
 
 
@@ -815,11 +819,12 @@ def cmd_secondary(args, cancel) -> int:
 
 
 HANDLERS = {'rank': cmd_rank, 'flags': cmd_flags, 'correlate': cmd_correlate, 'cache': cmd_cache,
-            'acquire': cmd_acquire, 'series': cmd_series, 'secondary': cmd_secondary}
+            'acquire': cmd_acquire, 'series': cmd_series, 'secondary': cmd_secondary,
+            'backend': cmd_backend}
 
 
 def _command_name(args) -> str:
-    return f'{args.command} {args.action}' if args.command in {'acquire', 'series', 'secondary'} else args.command
+    return f'{args.command} {args.action}' if args.command in {'acquire', 'series', 'secondary', 'backend'} else args.command
 
 
 def main(argv: list[str] | None = None) -> int:

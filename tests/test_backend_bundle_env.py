@@ -89,8 +89,9 @@ def test_workdir_inside_backend_is_rejected(layout, monkeypatch):
 def test_diagnose_reports_bundle_line(layout, monkeypatch):
     _tmp, _payload, config = layout
     monkeypatch.setattr(backend, '_probe_backend', lambda *_: PROBE)
-    assert any(s.startswith('Bundled runtime') for s in diagnose(config))
-    assert not any(s.startswith('Bundled runtime') for s in diagnose(dataclasses.replace(config, bundle=False)))
+    # B7: the generic line became the real fast check; this layout has no manifest, so it is a PT-BUNDLE problem
+    assert any(s.startswith('PT-BUNDLE-MISSING') for s in diagnose(config))
+    assert not any('Bundled runtime' in s for s in diagnose(dataclasses.replace(config, bundle=False)))
 
 
 def test_run_comparison_argv_is_isolated(layout, monkeypatch):

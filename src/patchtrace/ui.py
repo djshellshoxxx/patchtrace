@@ -56,9 +56,16 @@ from .providers import ProviderConfig
 from .raw_view import SCOPES, RawSide, build_side, differing_lines
 from .reports import export_project
 from .representations import DEFAULT_PAGE_SIZE, Representation
-from .runtime_discovery import discover_local_runtimes
+from .runtime_discovery import (
+    bundle_config,
+    check_bundle,
+    discover_local_runtimes,
+    exclude_bundle,
+    require_bundle_ok,
+)
 from .service import ProjectService
 from .tooltips import apply_tooltip, apply_tooltips
+from .ui_bundle_setup import BundleSetup
 from .ui_evidence import EvidenceController
 from .ui_inspection import InspectionThread, fill_pe_table, side_summary
 
@@ -963,6 +970,13 @@ def _release_thread(holder: set, thread) -> None:
     thread.deleteLater()
 
 
+def _discover_task(cancel, event):
+    found = discover_local_runtimes()
+    roots = getattr(found, 'bundle_roots', ())  # tests substitute plain candidate objects
+    state = check_bundle(roots[0].parent, cancel=cancel) if roots else None
+    return (found if state is None or state.ok else exclude_bundle(found)), state
+
+
 class SetupDialog(QDialog):
     def __init__(self, settings, parent=None, profile_directory: Path | None = None):
         super().__init__(parent)
@@ -1025,6 +1039,7 @@ class SetupDialog(QDialog):
         self.sync.setChecked(settings.value('desktop/sync', True, type=bool))
         form.addRow(self.sync)
         layout.addLayout(form)
+        self.bundle = BundleSetup(self, layout)
         self.diagnostics = plain_view('Configure paths, then diagnose dependencies.')
         layout.addWidget(self.diagnostics)
         self.find = QPushButton('Find existing installations')
@@ -1068,7 +1083,7 @@ class SetupDialog(QDialog):
         self.diagnostics.setPlainText('Searching for existing installations (local discovery only)…')
         # Unparented and module-held until finished: the dialog may be destroyed mid-scan, and destroying
         # a running QThread aborts the process. Bound-method connections drop when the dialog is deleted.
-        thread = Worker(lambda cancel, event: discover_local_runtimes())
+        thread = Worker(_discover_task)
         _DISCOVERY_THREADS.add(thread)
         thread.result_ready.connect(self._apply_discovery)
         thread.failed.connect(self._discovery_failed)
@@ -1085,8 +1100,11 @@ class SetupDialog(QDialog):
         if not self._busy_kind:
             self.find.setEnabled(True)
 
-    def _apply_discovery(self, found):
+    def _apply_discovery(self, result):
+        found, bundle_state = result
         notes = ['Local discovery only: nothing downloaded or executed.']
+        if bundle_note := self.bundle.discovered(bundle_state):
+            notes.append(bundle_note)
         for label, edit, paths in (
             ('External Python', self.python, found.python_executables),
             ('Ghidra', self.ghidra, found.ghidra_roots),
@@ -1128,8 +1146,9 @@ class SetupDialog(QDialog):
         config = self.config()
         self._busy_kind = 'diagnosis'
         self.check.setEnabled(False)
+        self.bundle.refresh()
         self.diagnostics.setPlainText('Checking external dependencies…')
-        self.worker = Worker(lambda cancel, event: diagnose(config), self)
+        self.worker = Worker(lambda cancel, event: diagnose(bundle_config(config)), self)
         self.worker.result_ready.connect(lambda result: self.diagnostics.setPlainText('\n'.join(result)))
         self.worker.failed.connect(self.diagnostics.setPlainText)
         self.worker.finished.connect(self._finish_diagnosis)
@@ -1140,6 +1159,7 @@ class SetupDialog(QDialog):
         self._busy_kind = None
         self.check.setEnabled(True)
         self.find.setEnabled(self._discovery is None)
+        self.bundle.refresh()
 
     def _offline_busy(self, active):
         self._busy_kind = 'offline' if active else None
@@ -1149,6 +1169,7 @@ class SetupDialog(QDialog):
         self.cancel_install.setEnabled(active)
         for edit in (self.python, self.ghidra, self.java_home):
             edit.setReadOnly(active)
+        self.bundle.refresh()
 
     def cancel_offline_install(self):
         if self.worker and self.worker.isRunning():
@@ -2542,7 +2563,7 @@ class MainWindow(QMainWindow):
         # The Setup checkbox is the explicit network consent. A non-default profile can only
         # narrow it (online requires both); it can never enable symbol downloads on its own.
         allow_symbols = consent if profile.name == 'default' else (consent and profile.symbol_policy == 'online')
-        return BackendConfig(python_executable=str(self.settings.value('backend/python', '')),
+        config = BackendConfig(python_executable=str(self.settings.value('backend/python', '')),
                              ghidra_dir=str(self.settings.value('backend/ghidra', '')),
                              timeout_seconds=setting_int(self.settings, 'backend/timeout', 3600, 10, 86400),
                              allow_symbol_downloads=allow_symbols,
@@ -2551,6 +2572,7 @@ class MainWindow(QMainWindow):
                              env_passthrough=parse_env_passthrough(str(self.settings.value('backend/env_passthrough', ''))),
                              # Raw-output reuse (SPEC-07 §13) is opt-in via the selected profile's cache_dir.
                              cache_dir=str(profile.cache_dir or ''))
+        return bundle_config(config)  # first launch (empty paths) or bundle paths -> isolated bundle mode
 
     # ---- SPEC-26 B: raw byte representations ------------------------------------------------
     RAW_MODES = {3: Representation.HEX, 4: Representation.BINARY, 5: Representation.BASE64}
@@ -2830,6 +2852,7 @@ class MainWindow(QMainWindow):
         self.show_file_overview()
         snapshot, root, service = self.project.model_copy(deep=True), self.service.root, self.service
         def compare(cancel, event):
+            require_bundle_ok(config, cancel)  # fast file check of a bundled runtime; ValueError blocks the run
             raw_path, run = run_comparison(config, snapshot, root, cancel, event)
             prepared = None
             if run.status == 'completed':

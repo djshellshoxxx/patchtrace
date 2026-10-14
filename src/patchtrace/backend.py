@@ -290,6 +290,18 @@ def _probe_backend(config: BackendConfig, cancel: threading.Event | None = None)
         raise RuntimeError('PT-BACKEND: install ghidriff in the selected Python 3.10+ environment') from None
 
 
+def _bundle_line(config: BackendConfig) -> str:
+    """`Bundled runtime <id>: fast check ok` or the PT-BUNDLE-* problem (blocking walk; run in a worker)."""
+    from .runtime_discovery import check_bundle
+    try:  # config.ghidra_dir is <exe dir>/backend/payload/ghidra
+        status = check_bundle(Path(config.ghidra_dir).resolve().parents[2])
+    except (OSError, IndexError):
+        status = None
+    if status is None:
+        return 'PT-BUNDLE-MISSING: no bundled runtime at this location - extract the complete ZIP again'
+    return status.line()
+
+
 def diagnose(config: BackendConfig) -> list[str]:
     """Actionable, credential-free configuration and dependency summaries."""
     errors = _config_errors(config)
@@ -302,7 +314,7 @@ def diagnose(config: BackendConfig) -> list[str]:
     statuses = ['Python executable: configured external interpreter',
                 f'Ghidra installation: root verified; version {ghidra_version}']
     if config.bundle:
-        statuses.append('Bundled runtime: isolated mode (python -I, JAVA_HOME_OVERRIDE, scratch-only writes)')
+        statuses.append(_bundle_line(config))
     statuses.append('Ghidriff symbol-server lookup: enabled by analyst' if config.allow_symbol_downloads
                     else 'Ghidriff symbol-server lookup: disabled (local/offline option)')
     try:
