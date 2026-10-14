@@ -1,0 +1,440 @@
+name: Backend bundle (zero-download full build)
+# BUNDLE-integration-plan slice B5b. Not on every merge: the lite build stays in qa-windows.yml.
+# Triggers: manual dispatch, release tags, and milestone calls from other workflows (workflow_call).
+# A tag push builds and runs acceptance but never publishes; only publish_prerelease=true attaches assets, and
+# only to a PRERELEASE (never a final release, never a draft).
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Release version used in archive names (empty means the tag without v, else 0.1.0)
+        type: string
+        default: ''
+      platforms:
+        description: both, windows or linux
+        type: string
+        default: both
+      publish_prerelease:
+        description: Attach the accepted full assets to a prerelease (needs contents write on the token)
+        type: boolean
+        default: false
+      pin_report_only:
+        description: Print and upload resolved digests of pin placeholders, then stop (no build, no release)
+        type: boolean
+        default: false
+  workflow_call:
+    inputs:
+      version:
+        type: string
+        default: ''
+      platforms:
+        type: string
+        default: both
+      publish_prerelease:
+        type: boolean
+        default: false
+      pin_report_only:
+        type: boolean
+        default: false
+  push:
+    tags: ['v*']
+permissions:
+  contents: read
+concurrency:
+  group: backend-bundle-${{ github.ref }}
+  cancel-in-progress: false
+defaults:
+  run:
+    shell: bash
+jobs:
+  pin:
+    name: pin-resolves-and-plan
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    outputs:
+      build: ${{ steps.plan.outputs.build }}
+      version: ${{ steps.plan.outputs.version }}
+      win: ${{ steps.plan.outputs.win }}
+      lin: ${{ steps.plan.outputs.lin }}
+      publish: ${{ steps.plan.outputs.publish }}
+      tag: ${{ steps.plan.outputs.tag }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - id: plan
+        name: Validate inputs and plan the run
+        env:
+          IN_VERSION: ${{ inputs.version }}
+          IN_PLATFORMS: ${{ inputs.platforms }}
+          IN_PUBLISH: ${{ inputs.publish_prerelease }}
+          IN_REPORT: ${{ inputs.pin_report_only }}
+          REF_TYPE: ${{ github.ref_type }}
+          REF_NAME: ${{ github.ref_name }}
+          RUN_NUMBER: ${{ github.run_number }}
+        run: |
+          version="$IN_VERSION"
+          if [ -z "$version" ] && [ "$REF_TYPE" = tag ]; then version="${REF_NAME#v}"; fi
+          if [ -z "$version" ]; then version=0.1.0; fi
+          if ! printf '%s' "$version" | grep -Eq '^[0-9A-Za-z][0-9A-Za-z.+_-]{0,31}$'; then
+            echo "::error::invalid version"; exit 1
+          fi
+          platforms="${IN_PLATFORMS:-both}"
+          win=false; lin=false
+          case "$platforms" in
+            both|windows,linux|linux,windows) win=true; lin=true ;;
+            windows) win=true ;;
+            linux) lin=true ;;
+            *) echo "::error::platforms must be both, windows or linux"; exit 1 ;;
+          esac
+          report=false; [ "$IN_REPORT" = true ] && report=true
+          publish=false; [ "$IN_PUBLISH" = true ] && [ "$report" = false ] && publish=true
+          if [ "$REF_TYPE" = tag ]; then
+            tag="$REF_NAME"
+          else
+            tag="v${version}-bundle.${RUN_NUMBER}"
+          fi
+          if ! printf '%s' "$tag" | grep -Eq '^[0-9A-Za-z][0-9A-Za-z._+-]{0,63}$'; then
+            echo "::error::invalid release tag"; exit 1
+          fi
+          build=true; [ "$report" = true ] && build=false
+          {
+            echo "build=$build"; echo "version=$version"; echo "win=$win"; echo "lin=$lin"
+            echo "publish=$publish"; echo "tag=$tag"
+          } >> "$GITHUB_OUTPUT"
+      - name: Pin release gate (placeholders must be resolved)
+        if: steps.plan.outputs.build == 'true'
+        run: python tools/check_backend_pin.py --release
+      - name: Pin report (placeholders only, no build)
+        if: steps.plan.outputs.build != 'true'
+        run: |
+          python tools/check_backend_pin.py || true
+          python - <<'PY'
+          import hashlib, json, urllib.request
+          pin = json.load(open('tools/backend_pin.json', encoding='utf-8'))
+          found = []
+          def walk(node, where):
+              if isinstance(node, dict):
+                  if node.get('status') == 'placeholder' and node.get('url'):
+                      found.append((where, node['url']))
+                  for key, value in node.items():
+                      walk(value, where + '.' + key)
+              elif isinstance(node, list):
+                  for index, value in enumerate(node):
+                      walk(value, where + '[' + str(index) + ']')
+          walk(pin, '')
+          report = []
+          for where, url in found:
+              digest, size = hashlib.sha256(), 0
+              with urllib.request.urlopen(url, timeout=120) as response:
+                  while True:
+                      chunk = response.read(1 << 20)
+                      if not chunk:
+                          break
+                      digest.update(chunk)
+                      size += len(chunk)
+              report.append({'component': where, 'url': url, 'sha256': digest.hexdigest(), 'size': size})
+              print(where, digest.hexdigest(), size)
+          json.dump(report, open('pin-report.json', 'w', encoding='utf-8'), indent=2)
+          PY
+      - uses: actions/upload-artifact@v4
+        if: steps.plan.outputs.build != 'true'
+        with:
+          name: pin-report
+          path: pin-report.json
+          retention-days: 7
+
+  bld-win:
+    name: build-windows-full-bundle
+    needs: pin
+    if: needs.pin.outputs.build == 'true' && needs.pin.outputs.win == 'true'
+    runs-on: windows-latest
+    timeout-minutes: 60
+    env:
+      QT_QPA_PLATFORM: offscreen
+      VERSION: ${{ needs.pin.outputs.version }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: "python -m pip install --only-binary=:all: -e '.[dev,search,rules]'"
+      - run: python tools/check_protobuf_runtime.py
+      - uses: actions/cache@v4
+        with:
+          path: .bundle-cache
+          key: bundle-dl-windows-${{ hashFiles('tools/backend_pin.json') }}
+      - name: Build the backend payload (pinned, hash-checked downloads)
+        run: >-
+          python tools/build_backend_bundle.py build --platform windows --out bundle-out
+          --cache-dir .bundle-cache --version "$VERSION" --split --json | tee bundle-build.json
+      - name: Lite build smoke then full build
+        run: python tools/build_windows.py --full --backend-payload bundle-out/backend --version "$VERSION"
+      - name: Check release sidecars
+        working-directory: dist
+        run: |
+          sha256sum -c "PatchTrace-${VERSION}-windows-x64-full.zip.sha256"
+          sha256sum -c "PatchTrace-${VERSION}-windows-x64.zip.sha256"
+      - name: Collect assets and evidence
+        run: |
+          mkdir assets evidence
+          cp "dist/PatchTrace-${VERSION}-windows-x64-full.zip" "dist/PatchTrace-${VERSION}-windows-x64-full.zip.sha256" assets/
+          cp bundle-out/PatchTrace-"${VERSION}"-backend-windows-amd64.zip* assets/
+          cp bundle-out/ghidriff-*-source.tar.gz* assets/
+          cp bundle-out/THIRD-PARTY.json assets/THIRD-PARTY.json
+          cp bundle-out/build-report.json bundle-build.json evidence/
+          cp dist/PatchTrace/SHA256SUMS.txt dist/PatchTrace/build-provenance.json evidence/
+          cp dist/PatchTrace/backend/manifest.json evidence/backend-manifest.json
+          cp bundle-out/THIRD-PARTY.json evidence/
+          cp -r dist/PatchTrace/backend/payload/LICENSES evidence/LICENSES
+          if find assets -type f -size +2147483647c | grep -q .; then
+            echo "::error::an asset exceeds the 2 GiB release limit"; exit 1
+          fi
+          ls -l assets
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: evidence-windows
+          if-no-files-found: ignore
+          path: evidence
+          retention-days: 7
+      - uses: actions/upload-artifact@v4
+        with:
+          name: bundle-windows-assets
+          path: assets
+          compression-level: 0
+          retention-days: 7
+
+  acc-win:
+    name: accept-windows-no-network-readonly
+    needs: [pin, bld-win]
+    runs-on: windows-latest
+    timeout-minutes: 60
+    env:
+      VERSION: ${{ needs.pin.outputs.version }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/download-artifact@v4
+        with:
+          name: bundle-windows-assets
+          path: assets
+      - uses: ilammy/msvc-dev-cmd@v1
+      - name: Compile the benign sample pair (never executed)
+        shell: cmd
+        run: |
+          mkdir samples
+          cd samples
+          cl /nologo /LD /Od /GS- /Zi ..\tests\fixtures\old.c /Fdold.pdb /link /DEBUG /INCREMENTAL:NO /OUT:old.dll /PDB:old.pdb
+          cl /nologo /LD /Od /GS- /Zi ..\tests\fixtures\new.c /Fdnew.pdb /link /DEBUG /INCREMENTAL:NO /OUT:new.dll /PDB:new.pdb
+      - name: Verify sidecar, extract to a hostile path, run acceptance (firewall block with positive control)
+        run: |
+          (cd assets && sha256sum -c "PatchTrace-${VERSION}-windows-x64-full.zip.sha256")
+          python - <<'PY'
+          import os, pathlib, sys, zipfile
+          sys.path.insert(0, 'tools')
+          import bundle_acceptance as ba
+          version = os.environ['VERSION']
+          archive = pathlib.Path('assets') / f'PatchTrace-{version}-windows-x64-full.zip'
+          dest = pathlib.Path(os.environ['RUNNER_TEMP']) / ba.UNICODE_DIRNAME
+          dest.mkdir(parents=True)
+          with zipfile.ZipFile(archive) as bundle:
+              bundle.extractall(dest)
+          root = dest / 'PatchTrace'
+          sys.exit(ba.main([str(root), '--older', str(pathlib.Path('samples/old.dll').resolve()),
+                            '--newer', str(pathlib.Path('samples/new.dll').resolve()),
+                            '--expect-function', 'read_item', '--launcher', str(root / 'PatchTrace.exe'),
+                            '--evidence', 'acceptance-windows.json']))
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: acceptance-windows
+          if-no-files-found: ignore
+          path: acceptance-windows.json
+          retention-days: 7
+
+  bld-lin:
+    name: build-linux-full-bundle
+    needs: pin
+    if: needs.pin.outputs.build == 'true' && needs.pin.outputs.lin == 'true'
+    runs-on: ubuntu-22.04
+    timeout-minutes: 60
+    env:
+      QT_QPA_PLATFORM: offscreen
+      VERSION: ${{ needs.pin.outputs.version }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: sudo apt-get update && sudo apt-get install -y libegl1 libopengl0 libgl1 libxcb-cursor0 libxkbcommon-x11-0 xvfb
+      - run: "python -m pip install --only-binary=:all: -e '.[dev,search,rules]'"
+      - run: python tools/check_protobuf_runtime.py
+      - uses: actions/cache@v4
+        with:
+          path: .bundle-cache
+          key: bundle-dl-linux-${{ hashFiles('tools/backend_pin.json') }}
+      - name: Build the backend payload (pinned, hash-checked downloads)
+        run: >-
+          python tools/build_backend_bundle.py build --platform linux --out bundle-out
+          --cache-dir .bundle-cache --version "$VERSION" --split --json | tee bundle-build.json
+      - name: Lite build smoke then full build
+        run: python tools/build_linux.py --full --backend-payload bundle-out/backend --version "$VERSION"
+      - name: Check release sidecars
+        working-directory: dist
+        run: |
+          sha256sum -c "PatchTrace-${VERSION}-linux-x86_64-full.tar.gz.sha256"
+          sha256sum -c "PatchTrace-${VERSION}-linux-x86_64.tar.gz.sha256"
+      - name: Collect assets and evidence
+        run: |
+          mkdir assets evidence
+          cp "dist/PatchTrace-${VERSION}-linux-x86_64-full.tar.gz" "dist/PatchTrace-${VERSION}-linux-x86_64-full.tar.gz.sha256" assets/
+          cp bundle-out/ghidriff-*-source.tar.gz* assets/
+          cp bundle-out/THIRD-PARTY.json assets/THIRD-PARTY-linux.json
+          cp bundle-out/build-report.json bundle-build.json evidence/
+          cp dist/PatchTrace/SHA256SUMS.txt dist/PatchTrace/build-provenance.json evidence/
+          cp dist/PatchTrace/backend/manifest.json evidence/backend-manifest.json
+          cp bundle-out/THIRD-PARTY.json evidence/
+          cp -r dist/PatchTrace/backend/payload/LICENSES evidence/LICENSES
+          if find assets -type f -size +2147483647c | grep -q .; then
+            echo "::error::an asset exceeds the 2 GiB release limit"; exit 1
+          fi
+          ls -l assets
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: evidence-linux
+          if-no-files-found: ignore
+          path: evidence
+          retention-days: 7
+      - uses: actions/upload-artifact@v4
+        with:
+          name: bundle-linux-assets
+          path: assets
+          compression-level: 0
+          retention-days: 7
+
+  acc-lin:
+    name: accept-linux-no-network-readonly (${{ matrix.os }})
+    needs: [pin, bld-lin]
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-22.04, ubuntu-24.04]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 60
+    env:
+      VERSION: ${{ needs.pin.outputs.version }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/download-artifact@v4
+        with:
+          name: bundle-linux-assets
+          path: assets
+      - run: >-
+          sudo apt-get update && sudo apt-get install -y libegl1 libopengl0 libgl1 libfontconfig1 libdbus-1-3
+          libxkbcommon0 libxkbcommon-x11-0 libxcb-cursor0 libxcb-icccm4 libxcb-image0 libxcb-keysyms1
+          libxcb-randr0 libxcb-render-util0 libxcb-shape0 libxcb-xinerama0 libxcb-xkb1 libxcb-xfixes0
+      - name: Compile the benign sample pair (never executed)
+        run: |
+          mkdir -p /tmp/pt-samples
+          for name in old new; do
+            gcc -shared -fPIC -O0 -g -fno-stack-protector -D'__declspec(x)=__attribute__((visibility("default")))' \
+              -o "/tmp/pt-samples/$name.so" "tests/fixtures/$name.c"
+          done
+          chmod -R a+rX /tmp/pt-samples
+      - name: Verify sidecar, extract to a hostile path, run acceptance (network namespace with positive control)
+        run: |
+          (cd assets && sha256sum -c "PatchTrace-${VERSION}-linux-x86_64-full.tar.gz.sha256")
+          export LANG=C.UTF-8
+          python - <<'PY'
+          import os, pathlib, subprocess, sys
+          sys.path.insert(0, 'tools')
+          import bundle_acceptance as ba
+          version = os.environ['VERSION']
+          archive = pathlib.Path('assets').resolve() / f'PatchTrace-{version}-linux-x86_64-full.tar.gz'
+          base = pathlib.Path('/tmp/pt-accept')
+          base.mkdir(mode=0o755)
+          dest = base / ba.UNICODE_DIRNAME
+          dest.mkdir(mode=0o755)
+          os.umask(0o022)
+          subprocess.run(['tar', '-xzf', str(archive), '-C', str(dest)], check=True)
+          root = dest / 'PatchTrace'
+          sys.exit(ba.main([str(root), '--older', '/tmp/pt-samples/old.so', '--newer', '/tmp/pt-samples/new.so',
+                            '--expect-function', 'read_item', '--launcher', str(root / 'PatchTrace'),
+                            '--run-uid', '65534', '--run-gid', '65534',
+                            '--evidence', 'acceptance-linux.json']))
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: acceptance-linux-${{ matrix.os }}
+          if-no-files-found: ignore
+          path: acceptance-linux.json
+          retention-days: 7
+
+  pub:
+    name: publish-prerelease-assets
+    needs: [pin, acc-win, acc-lin]
+    if: >-
+      ${{ !cancelled() && needs.pin.outputs.publish == 'true'
+      && (needs.pin.outputs.win != 'true' || needs.acc-win.result == 'success')
+      && (needs.pin.outputs.lin != 'true' || needs.acc-lin.result == 'success') }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    permissions:
+      contents: write
+    env:
+      TAG: ${{ needs.pin.outputs.tag }}
+      VERSION: ${{ needs.pin.outputs.version }}
+      GH_REPO: ${{ github.repository }}
+      TARGET_SHA: ${{ github.sha }}
+      RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: bundle-*-assets
+          path: staged
+      - name: Prepare the asset list
+        run: |
+          mkdir release
+          find staged -type f -exec cp -n {} release/ \;
+          ls -l release
+          test -n "$(ls release)"
+      - name: Create or reuse the PRERELEASE and attach assets
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          fail() { echo "::error::$1"; exit 1; }
+          if gh release view "$TAG" --json isPrerelease,isDraft -q '[.isPrerelease,.isDraft]|@csv' > state.txt 2> state.err; then
+            [ "$(cat state.txt)" = "true,false" ] || fail "release $TAG exists but is not a published prerelease; refusing to touch it"
+          else
+            gh release create "$TAG" --prerelease --target "$TARGET_SHA" \
+              --title "PatchTrace full bundle $VERSION (prerelease)" \
+              --notes "Automated full-bundle assets from $RUN_URL. Prerelease only; acceptance evidence is attached to that run." \
+              || fail "could not create prerelease $TAG; the workflow token lacks contents write permission or the tag is invalid. Nothing was published."
+          fi
+          gh release upload "$TAG" release/* --clobber \
+            || fail "asset upload to $TAG failed (token permission or asset limit). Nothing is claimed as published."
+          gh release view "$TAG" --json assets -q '.assets[].name' | sort > remote.txt
+          ls release | sort > local.txt
+          missing=$(comm -13 remote.txt local.txt)
+          [ -z "$missing" ] || fail "assets missing on the release after upload"
+          echo "Attached $(wc -l < local.txt) assets to prerelease $TAG"
