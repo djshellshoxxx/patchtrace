@@ -193,20 +193,18 @@ def _probe(args, cancel: threading.Event) -> int:
 
 # ---- propose ----------------------------------------------------------------------------------------------------------
 
-def _pair_source(session: _Session, match, bases: dict, confirm: bool):
+def _pair_source(session: _Session, match, overviews: dict, confirm: bool):
     from ..intelligence.tools.normalize import _record_rva
     from .contracts import FunctionRef, PairSource
     project = session.service.project
-    if match.review != 'accepted':
-        raise RulesError('PT-RULE-INPUT', 'Select a function pair you have accepted. Rules are only proposed for '
-                         'pairs you have reviewed.')
     if match.category not in ('modified', 'added', 'removed') or len(match.older) > 1 or len(match.newer) > 1:
         raise RulesError('PT-RULE-INPUT', 'Rules are proposed for one modified, added or removed function.')
     refs = {}
     for side in ('older', 'newer'):
         records = getattr(match, side)
         if records:
-            rva = _record_rva(records[0], bases[side], None)
+            overview = overviews[side]
+            rva = _record_rva(records[0], overview.image_base, overview.size_of_image) if overview.image_base else None
             if rva is None:
                 raise RulesError('PT-RULE-INPUT', 'The function address cannot be placed in its build.')
             refs[side] = FunctionRef(name=records[0].name[:256], rva=rva, size=0, extent='unknown')
@@ -217,15 +215,13 @@ def _pair_source(session: _Session, match, bases: dict, confirm: bool):
                       older=refs.get('older'), newer=refs.get('newer'))
 
 
-def _sources(session: _Session, pair, cancel: threading.Event):
+def _sources(session: _Session, pair, readers: dict, overviews: dict):
     """(strings, capabilities, imports, flag codes, secrets left out) from stored evidence; missing is fewer features."""
-    from ..artifact_bytes import VerifiedArtifactReader
     from ..intelligence.tools import capa_pairs
     from ..intelligence.tools import delta as delta_mod
     from ..intelligence.tools.cli import _groups
     from ..intelligence.tools.normalize import FunctionPairing
     from ..intelligence.tools.store import ToolStore
-    from ..pe_overview import inspect_pe
     from .adapters import pe_imports, tools_delta
     service, project = session.service, session.service.project
     tools = ToolStore(session.store.enrichment, service.root, project.id, project.revision)
@@ -243,20 +239,12 @@ def _sources(session: _Session, pair, cancel: threading.Event):
                                                 newer_base=bases['newer'])
                    if project.matches and all(bases.values()) else FunctionPairing.empty())
         floss_delta = delta_mod.compute(*floss['older'], *floss['newer'], pairing=pairing)
-    readers = {s: VerifiedArtifactReader.open_artifact(session.artifact(getattr(pair, f'{s}_sha256')), service.root,
-                                                       cancel.is_set) for s in sides}
-    try:
-        overviews = {s: inspect_pe(readers[s], cancel=cancel.is_set) for s in sides}
-        capabilities = tools_delta.CapaCapabilitySource(capa_delta)
-        strings = tools_delta.FlossStringSource(floss_delta, readers)
-        imports = pe_imports.PeImportSource(overviews['older'], overviews['newer'], capabilities)
-        # the adapters read lazily, so build the features while the readers are open
-        return (_Fixed(strings.string_features(pair)), _Fixed(capabilities.capability_features(pair)),
-                _Fixed(imports.import_features(pair)), tools_delta.quality_flag_codes(floss_delta, capa_delta),
-                tools_delta.secrets_excluded(floss_delta))
-    finally:
-        for reader in readers.values():
-            reader.close()
+    capabilities = tools_delta.CapaCapabilitySource(capa_delta)
+    strings = tools_delta.FlossStringSource(floss_delta, readers)
+    imports = pe_imports.PeImportSource(overviews['older'], overviews['newer'], capabilities)
+    return (_Fixed(strings.string_features(pair)), _Fixed(capabilities.capability_features(pair)),
+            _Fixed(imports.import_features(pair)), tools_delta.quality_flag_codes(floss_delta, capa_delta),
+            tools_delta.secrets_excluded(floss_delta))
 
 
 class _Fixed:
@@ -271,18 +259,32 @@ class _Fixed:
     capability_features = import_features = string_features
 
 
-def _image_bases(session: _Session) -> dict:
-    from ..intelligence.tools.store import ToolStore
-    project = session.service.project
-    tools = ToolStore(session.store.enrichment, session.service.root, project.id, project.revision)
-    bases = {}
-    for side in ('older', 'newer'):
-        found = next((f for f in (tools.latest(e, side) for e in ('capa', 'floss')) if f is not None), None)
-        if found is None or not found[1].image_base:
-            raise RulesError('PT-RULE-INPUT', 'Stored tool evidence is needed to place function addresses: run '
-                             '`intel-tools run` first.')
-        bases[side] = found[1].image_base
-    return bases
+def _open_builds(session: _Session, cancel: threading.Event):
+    """(readers, overviews) of the project's two verified artifact copies; the caller closes the readers."""
+    from ..artifact_bytes import VerifiedArtifactReader
+    from ..pe_overview import inspect_pe
+    readers: dict = {}
+    try:
+        for artifact in session.service.project.artifacts:
+            readers[artifact.side] = VerifiedArtifactReader.open_artifact(artifact, session.service.root, cancel.is_set)
+        return readers, {side: inspect_pe(reader, cancel=cancel.is_set) for side, reader in readers.items()}
+    except BaseException:
+        for reader in readers.values():
+            reader.close()
+        raise
+
+
+def _eligible_match(session: _Session, args):
+    match = next((m for m in session.service.project.matches if m.id == args.match), None)
+    if match is None:
+        raise RulesError('PT-RULE-INPUT', 'No function pair with this id in the project.')
+    if match.review != 'accepted':
+        raise RulesError('PT-RULE-INPUT', 'Select a function pair you have accepted. Rules are only proposed for '
+                         'pairs you have reviewed.')
+    if not args.confirm_material:   # no stored material verdict is wired in yet: the analyst's word is recorded
+        raise RulesError('PT-RULE-INPUT', 'The pair has no recorded material verdict here; confirm the change is '
+                         'material with --confirm-material (the rule is then marked unvetted).')
+    return match
 
 
 def _propose(args, cancel: threading.Event) -> int:
@@ -290,17 +292,14 @@ def _propose(args, cancel: threading.Event) -> int:
     from . import candidates, gates
     from .matrix import evaluate, synth_writer
     session = _Session(args.project, cancel)
+    readers: dict = {}
     try:
-        match = next((m for m in session.service.project.matches if m.id == args.match), None)
-        if match is None:
-            raise RulesError('PT-RULE-INPUT', 'No function pair with this id in the project.')
-        pair = _pair_source(session, match, _image_bases(session), args.confirm_material)
-        if not pair.analyst_confirmed_material:
-            raise RulesError('PT-RULE-INPUT', 'The pair has no recorded material verdict here; confirm the change is '
-                             'material with --confirm-material (the rule is then marked unvetted).')
+        match = _eligible_match(session, args)
         engine = session.engine()
         stamp = engine.probe()
-        strings, capabilities, imports, flag_codes, secrets = _sources(session, pair, cancel)
+        readers, overviews = _open_builds(session, cancel)
+        pair = _pair_source(session, match, overviews, args.confirm_material)
+        strings, capabilities, imports, flag_codes, secrets = _sources(session, pair, readers, overviews)
         found = candidates.propose(pair, writer=synth_writer(), engine=stamp, strings=strings,
                                    capabilities=capabilities, imports=imports, flag_codes=flag_codes,
                                    secrets_excluded=secrets)
@@ -325,6 +324,8 @@ def _propose(args, cancel: threading.Event) -> int:
             status='complete' if passing else 'empty')
         return OK if passing else NO_RESULTS
     finally:
+        for reader in readers.values():
+            reader.close()
         session.close()
 
 

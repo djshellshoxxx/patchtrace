@@ -395,3 +395,8 @@
 ### [K2:kev-transport-cli]
 - [x] K2 transport, service and Qt-free CLI `kev/{transport,service,cli}.py`, tests `tests/test_kev_{transport,service,cli}.py`.
 - [ ] Integrator: `kev` hook in `cli.py` (see docstring of `kev/cli.py`); K6 live gate must verify the canonical CISA URL and User-Agent acceptance before it is called verified.
+
+### [R5:yarax-matrix-store-export-cli]
+- [x] R5 matrix, store, export, CLI; real-engine gates (`sep`, `compile`, `uniq`), grid verdicts, resume, append-only rows, export golden.
+- [ ] Integrator: `cli.py` hook (`COMMANDS += 'rules'`, `_command_name` set, `yarax_cli.register(sub, common, HANDLERS)`), frozen argv `rules _worker` is registered by `register`.
+- [ ] Material verdict source: `propose` takes `--confirm-material` (rules are `unvetted`) until a stored per-pair materiality is wired; R4 adds bytes windows (`uniq`/`sep` by RVA are ready).

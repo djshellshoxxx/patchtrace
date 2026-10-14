@@ -1,4 +1,5 @@
 """R5 export: exact header, hard gates, warnings, destination policy, and that accepting never exports."""
+# ruff: noqa: F811  (the imported `project` fixture is re-declared as a test argument)
 from __future__ import annotations
 
 import threading
