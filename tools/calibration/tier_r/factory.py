@@ -32,6 +32,10 @@ class FactoryError(RuntimeError):
     pass
 
 
+class IdenticalImages(FactoryError):
+    """Old and new engine images are byte-identical (e.g. a comment-only commit): there is no pair to label."""
+
+
 def store_dir(environ=None, worktree: Path | None = None) -> Path:
     root = corpus.calib_root(environ)
     tree = Path(worktree or Path(__file__).resolve().parents[3])
@@ -219,6 +223,9 @@ def run_card(session: Session, book: C.RecipeBook, card: C.CaseCard, *, method: 
     new_base = recipe_base(book, recipe, card.new.ref, card.new.commit, session.store)
     old_b = session.build(old_base.spec(opt=opt, variant='old'))
     new_b = session.build(new_base.spec(opt=opt, variant='new'))
+    if old_b.sha256 == new_b.sha256:
+        raise IdenticalImages(f'{card.id}: old and new build to byte-identical engine images (source-only change); '
+                              'no discriminating pair exists, so none is emitted (it is not an A/A pair either)')
     old, new = session.side(old_b, old_base.root), session.side(new_b, new_base.root)
     stratum = card.stratum
     source = 'source-diff' if stratum == 'release' else 'fix-diff'
@@ -312,3 +319,47 @@ def run_noise(session: Session, base: BaseSource, variants: Sequence[tuple[str, 
                              functions=label_construction(sa, sb, label_source='same-source', semantic=False),
                              case={'kind': 'toolchain', 'older': f'{pa}/{oa}', 'newer': f'{pb}/{ob}'}))
     return docs, skipped
+
+
+# ---- I5 planted mutations ------------------------------------------------------------------------------------------
+
+def read_sources(root: Path) -> dict[str, str]:
+    """Every regular text source/header under `root` as {posix relative path: text} (symlinks are refused)."""
+    files = {}
+    for path in sorted(Path(root).rglob('*')):
+        if path.is_symlink():
+            raise FactoryError(f'{path} is a symbolic link; mutation inputs must be plain files')
+        if path.is_file() and path.suffix in ('.c', '.h'):
+            files[path.relative_to(root).as_posix()] = path.read_text(encoding='utf-8')
+    return files
+
+
+def run_mutation(session: Session, base: BaseSource, operator: str, seed: int, *, opt: str = 'O2') -> dict:
+    """Plant one `operator` mutation (deterministic in `seed`), build base and mutant, label by SPEC-32 s7 row 3."""
+    from ..mutations import engine as M
+    from ..mutations import labels as ML
+    files = read_sources(base.root)
+    ref = C.SourceRef(**base.source)
+    outcome = M.apply_case(files, operator, seed=seed, base=ref, tools=session.tools)
+    case = outcome.case
+    mut_root = Path(session.store) / 'mutants' / case.case_id
+    for rel, text in outcome.files.items():
+        target = mut_root / rel
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_text(text, encoding='utf-8', newline='\n')
+    new_base = replace(base, root=mut_root, tag=f'{base.tag}-{case.case_id}'[:64],
+                       source={**base.source, 'mutation': case.case_id})
+    old_b = session.build(base.spec(opt=opt, variant='base'))
+    new_b = session.build(new_base.spec(opt=opt, variant=case.case_id[:32].lower()))
+    if old_b.sha256 == new_b.sha256:
+        raise IdenticalImages(f'{case.case_id}: the mutant builds to a byte-identical engine image')
+    old, new = session.side(old_b, base.root), session.side(new_b, mut_root)
+    label, kind = ML.target_label(operator)
+    helpers = (case.helper,) if case.helper else ()
+    functions = label_construction(old, new, label_source='planted-mutation', semantic=case.kind == 'semantic',
+                                   declared={case.target_function: (label, kind)}, helpers=helpers)
+    disagree = sum(1 for f in functions if f['check'] == 'disagree')
+    info = {'kind': 'mutation', 'mutation_case': case.model_dump(mode='json'), 'opt': opt, 'disagreements': disagree}
+    return finalize(pid=pair_id('mutation', base.project, base.tag, operator, str(seed), opt),
+                    stratum='mutation', method='mutation', base_old=base, base_new=new_base, old=old, new=new,
+                    label_source='planted-mutation', functions=functions, case=info)

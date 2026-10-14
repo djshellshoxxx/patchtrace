@@ -1,0 +1,384 @@
+[
+ {
+  "contract": "case-card/1",
+  "id": "libpng-v1.6.37-to-v1.6.38",
+  "project": "libpng",
+  "upstream_git": "https://github.com/pnggroup/libpng.git",
+  "license_spdx": "Libpng-2.0",
+  "license_evidence": "LICENSE at 0a158f3506502dfa23edfc42790dfaed82efba17: PNG Reference Library License version 2 / Permission is hereby granted to use, copy, modify, and distribute this software ... without fee (sha256 dfe5a536...9960; read at a40189cf too, sha256 bf5e22b9...ea9b)",
+  "old": {
+   "ref": "v1.6.37",
+   "commit": "a40189cf881e9f0db80511c382292a5604c3c3d1"
+  },
+  "new": {
+   "ref": "v1.6.38",
+   "commit": "0a158f3506502dfa23edfc42790dfaed82efba17"
+  },
+  "kind": "release",
+  "cve": [],
+  "semantic_change": true,
+  "changed_functions": [
+   {
+    "name": "png_read_buffer",
+    "file": "pngrutil.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "png_handle_eXIf",
+    "file": "pngrutil.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "png_handle_hIST",
+    "file": "pngrutil.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "png_read_start_row",
+    "file": "pngrutil.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "png_set_tRNS",
+    "file": "pngset.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "png_convert_from_time_t",
+    "file": "pngwrite.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   }
+  ],
+  "unchanged_controls": [
+   "png_colorspace_endpoints_match",
+   "png_reset_crc",
+   "png_calculate_crc"
+  ],
+  "build": {
+   "system": "single",
+   "mingw_ok": "yes",
+   "recipe_notes": "tier_r recipe libpng (mingw-gcc 13-win32 -O2 -g, explicit file list from recipes.json, libpng16.dll)"
+  },
+  "verification": {
+   "method": "tools.calibration.tier_r factory.run_card on fetched pins (mingw-gcc 13-win32 O2): 460 project functions, 361 unchanged, 6 changed, 89 ambiguous, 1 no-counterpart (bodies: 148 identical, 220 address-only, 91 different); git diff --numstat v1.6.37..v1.6.38 -- '*.c' '*.h': 28 files, +504/-416",
+   "files_changed": 28,
+   "functions_changed_count": 6,
+   "verified_by_agent_run": true
+  },
+  "sources": [
+   "https://github.com/pnggroup/libpng/releases/tag/v1.6.38",
+   "https://github.com/pnggroup/libpng/blob/v1.6.38/CHANGES"
+  ],
+  "risks": [
+   "89 ambiguous record(s) (source changed with identical code, or induced by macro/header/inlining) are excluded from changed-set scoring by design."
+  ]
+ },
+ {
+  "contract": "case-card/1",
+  "id": "libpng-v1.6.43-to-v1.6.44",
+  "project": "libpng",
+  "upstream_git": "https://github.com/pnggroup/libpng.git",
+  "license_spdx": "Libpng-2.0",
+  "license_evidence": "LICENSE at f5e92d76973a7a53f517579bc95d61483bf108c0: PNG Reference Library License version 2 / Permission is hereby granted to use, copy, modify, and distribute this software ... without fee (sha256 7317e078...143e; read at ed217e3e too, sha256 7317e078...143e)",
+  "old": {
+   "ref": "v1.6.43",
+   "commit": "ed217e3e601d8e462f7fd1e04bed43ac42212429"
+  },
+  "new": {
+   "ref": "v1.6.44",
+   "commit": "f5e92d76973a7a53f517579bc95d61483bf108c0"
+  },
+  "kind": "release",
+  "cve": [],
+  "semantic_change": true,
+  "changed_functions": [
+   {
+    "name": "png_xy_from_XYZ",
+    "file": "png.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "png_XYZ_from_xy",
+    "file": "png.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   }
+  ],
+  "unchanged_controls": [
+   "png_colorspace_endpoints_match",
+   "png_pow10",
+   "png_muldiv"
+  ],
+  "build": {
+   "system": "single",
+   "mingw_ok": "yes",
+   "recipe_notes": "tier_r recipe libpng (mingw-gcc 13-win32 -O2 -g, explicit file list from recipes.json, libpng16.dll)"
+  },
+  "verification": {
+   "method": "tools.calibration.tier_r factory.run_card on fetched pins (mingw-gcc 13-win32 O2): 460 project functions, 453 unchanged, 2 changed, 5 ambiguous, 0 no-counterpart (bodies: 184 identical, 272 address-only, 4 different); git diff --numstat v1.6.43..v1.6.44 -- '*.c' '*.h': 6 files, +85/-118",
+   "files_changed": 6,
+   "functions_changed_count": 2,
+   "verified_by_agent_run": true
+  },
+  "sources": [
+   "https://github.com/pnggroup/libpng/releases/tag/v1.6.44",
+   "https://github.com/pnggroup/libpng/blob/v1.6.44/CHANGES"
+  ],
+  "risks": [
+   "5 ambiguous record(s) (source changed with identical code, or induced by macro/header/inlining) are excluded from changed-set scoring by design."
+  ]
+ },
+ {
+  "contract": "case-card/1",
+  "id": "libpng-v1.6.50-to-v1.6.51",
+  "project": "libpng",
+  "upstream_git": "https://github.com/pnggroup/libpng.git",
+  "license_spdx": "Libpng-2.0",
+  "license_evidence": "LICENSE at 49363adcfaf098748d7a4c8c624ad8c45a8c3a86: PNG Reference Library License version 2 / Permission is hereby granted to use, copy, modify, and distribute this software ... without fee (sha256 16d9daaa...c49a; read at 2b978915 too, sha256 16d9daaa...c49a)",
+  "old": {
+   "ref": "v1.6.50",
+   "commit": "2b978915d82377df13fcbb1fb56660195ded868a"
+  },
+  "new": {
+   "ref": "v1.6.51",
+   "commit": "49363adcfaf098748d7a4c8c624ad8c45a8c3a86"
+  },
+  "kind": "cve-fix",
+  "cve": [
+   "CVE-2025-64505",
+   "CVE-2025-64506",
+   "CVE-2025-64720",
+   "CVE-2025-65018"
+  ],
+  "semantic_change": true,
+  "changed_functions": [
+   {
+    "name": "png_warning",
+    "file": "pngerror.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "png_image_read_direct",
+    "file": "pngread.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "png_set_quantize",
+    "file": "pngrtran.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "png_init_read_transformations",
+    "file": "pngrtran.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "png_do_read_transformations",
+    "file": "pngrtran.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "png_image_write_main",
+    "file": "pngwrite.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   }
+  ],
+  "unchanged_controls": [
+   "png_fp_sub",
+   "png_pow10",
+   "png_zfree"
+  ],
+  "build": {
+   "system": "single",
+   "mingw_ok": "yes",
+   "recipe_notes": "tier_r recipe libpng (mingw-gcc 13-win32 -O2 -g, explicit file list from recipes.json, libpng16.dll)"
+  },
+  "verification": {
+   "method": "tools.calibration.tier_r factory.run_card on fetched pins (mingw-gcc 13-win32 O2): 468 project functions, 396 unchanged, 6 changed, 65 ambiguous, 1 no-counterpart (bodies: 197 identical, 206 address-only, 64 different); git diff --numstat v1.6.50..v1.6.51 -- '*.c' '*.h': 17 files, +197/-440",
+   "files_changed": 17,
+   "functions_changed_count": 6,
+   "verified_by_agent_run": true,
+   "cve_source": "CHANGES (v1.6.51)"
+  },
+  "sources": [
+   "https://github.com/pnggroup/libpng/releases/tag/v1.6.51",
+   "https://github.com/pnggroup/libpng/blob/v1.6.51/CHANGES"
+  ],
+  "risks": [
+   "65 ambiguous record(s) (source changed with identical code, or induced by macro/header/inlining) are excluded from changed-set scoring by design.",
+   "The release diff bundles every change between the pins, not only the CVE fixes; the CVE ids come from the project changelog section of the new release."
+  ]
+ },
+ {
+  "contract": "case-card/1",
+  "id": "libpng-v1.6.53-to-v1.6.54",
+  "project": "libpng",
+  "upstream_git": "https://github.com/pnggroup/libpng.git",
+  "license_spdx": "Libpng-2.0",
+  "license_evidence": "LICENSE at 02f2b4f4699f0ef9111a6534f093b53732df4452: PNG Reference Library License version 2 / Permission is hereby granted to use, copy, modify, and distribute this software ... without fee (sha256 bdb0a645...a526; read at 4e3f57d5 too, sha256 16d9daaa...c49a)",
+  "old": {
+   "ref": "v1.6.53",
+   "commit": "4e3f57d50f552841550a36eabbb3fbcecacb7750"
+  },
+  "new": {
+   "ref": "v1.6.54",
+   "commit": "02f2b4f4699f0ef9111a6534f093b53732df4452"
+  },
+  "kind": "cve-fix",
+  "cve": [
+   "CVE-2026-22695",
+   "CVE-2026-22801"
+  ],
+  "semantic_change": true,
+  "changed_functions": [
+   {
+    "name": "png_image_read_direct_scaled",
+    "file": "pngread.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "png_write_image_8bit",
+    "file": "pngwrite.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "png_write_image_16bit",
+    "file": "pngwrite.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "png_image_write_main",
+    "file": "pngwrite.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   }
+  ],
+  "unchanged_controls": [
+   "png_fp_sub",
+   "png_pow10",
+   "png_zfree"
+  ],
+  "build": {
+   "system": "single",
+   "mingw_ok": "yes",
+   "recipe_notes": "tier_r recipe libpng (mingw-gcc 13-win32 -O2 -g, explicit file list from recipes.json, libpng16.dll)"
+  },
+  "verification": {
+   "method": "tools.calibration.tier_r factory.run_card on fetched pins (mingw-gcc 13-win32 O2): 468 project functions, 424 unchanged, 4 changed, 11 ambiguous, 0 no-counterpart (bodies: 229 identical, 234 address-only, 5 different); git diff --numstat v1.6.53..v1.6.54 -- '*.c' '*.h': 28 files, +1627/-1145",
+   "files_changed": 28,
+   "functions_changed_count": 4,
+   "verified_by_agent_run": true,
+   "cve_source": "CHANGES (v1.6.54)"
+  },
+  "sources": [
+   "https://github.com/pnggroup/libpng/releases/tag/v1.6.54",
+   "https://github.com/pnggroup/libpng/blob/v1.6.54/CHANGES"
+  ],
+  "risks": [
+   "11 ambiguous record(s) (source changed with identical code, or induced by macro/header/inlining) are excluded from changed-set scoring by design.",
+   "The release diff bundles every change between the pins, not only the CVE fixes; the CVE ids come from the project changelog section of the new release."
+  ]
+ },
+ {
+  "contract": "case-card/1",
+  "id": "libpng-v1.6.55-to-v1.6.56",
+  "project": "libpng",
+  "upstream_git": "https://github.com/pnggroup/libpng.git",
+  "license_spdx": "Libpng-2.0",
+  "license_evidence": "LICENSE at d5515b5b8be3901aac04e5bd8bd5c89f287bcd33: PNG Reference Library License version 2 / Permission is hereby granted to use, copy, modify, and distribute this software ... without fee (sha256 bdb0a645...a526; read at c3e30495 too, sha256 bdb0a645...a526)",
+  "old": {
+   "ref": "v1.6.55",
+   "commit": "c3e304954a9cfd154bc0dfbfea2b01cd61d6546d"
+  },
+  "new": {
+   "ref": "v1.6.56",
+   "commit": "d5515b5b8be3901aac04e5bd8bd5c89f287bcd33"
+  },
+  "kind": "cve-fix",
+  "cve": [
+   "CVE-2026-33416",
+   "CVE-2026-33636"
+  ],
+  "semantic_change": true,
+  "changed_functions": [
+   {
+    "name": "png_image_read_colormap",
+    "file": "pngread.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "png_image_read_and_map",
+    "file": "pngread.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "png_image_finish_read",
+    "file": "pngread.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "png_set_quantize",
+    "file": "pngrtran.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "png_read_transform_info",
+    "file": "pngrtran.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "png_set_eXIf_1",
+    "file": "pngset.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "png_set_hIST",
+    "file": "pngset.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "png_set_PLTE",
+    "file": "pngset.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "png_set_tRNS",
+    "file": "pngset.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "png_set_shift",
+    "file": "pngtrans.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "png_image_write_main",
+    "file": "pngwrite.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   }
+  ],
+  "unchanged_controls": [
+   "png_fp_sub",
+   "png_zalloc",
+   "png_zfree"
+  ],
+  "build": {
+   "system": "single",
+   "mingw_ok": "yes",
+   "recipe_notes": "tier_r recipe libpng (mingw-gcc 13-win32 -O2 -g, explicit file list from recipes.json, libpng16.dll)"
+  },
+  "verification": {
+   "method": "tools.calibration.tier_r factory.run_card on fetched pins (mingw-gcc 13-win32 O2): 468 project functions, 429 unchanged, 11 changed, 13 ambiguous, 0 no-counterpart (bodies: 178 identical, 276 address-only, 14 different); git diff --numstat v1.6.55..v1.6.56 -- '*.c' '*.h': 19 files, +294/-244",
+   "files_changed": 19,
+   "functions_changed_count": 11,
+   "verified_by_agent_run": true,
+   "cve_source": "CHANGES (v1.6.56)"
+  },
+  "sources": [
+   "https://github.com/pnggroup/libpng/releases/tag/v1.6.56",
+   "https://github.com/pnggroup/libpng/blob/v1.6.56/CHANGES"
+  ],
+  "risks": [
+   "13 ambiguous record(s) (source changed with identical code, or induced by macro/header/inlining) are excluded from changed-set scoring by design.",
+   "The release diff bundles every change between the pins, not only the CVE fixes; the CVE ids come from the project changelog section of the new release."
+  ]
+ }
+]

@@ -1,0 +1,85 @@
+{
+ "contract": "tier-r-recipes/1",
+ "excluded": [],
+ "recipes": [
+  {
+   "contract": "tier-r-recipe/1",
+   "project": "libyaml",
+   "family": "parser",
+   "upstream_git": "https://github.com/yaml/libyaml.git",
+   "license_spdx": "MIT",
+   "license_file": "License",
+   "license_evidence": "License read at all 3 pins (first bf529028), 1 distinct SHA-256: License: Copyright Ingy dot Net / Kirill Simonov. Permission is hereby granted, free of charge, to any person obtaining a copy of this software (MIT)",
+   "libc": "mingw",
+   "output": "yaml.dll",
+   "sources": [
+    "src/api.c",
+    "src/dumper.c",
+    "src/emitter.c",
+    "src/loader.c",
+    "src/parser.c",
+    "src/reader.c",
+    "src/scanner.c",
+    "src/writer.c"
+   ],
+   "include_dirs": [
+    "include",
+    "src"
+   ],
+   "defines": [
+    "HAVE_CONFIG_H=1"
+   ],
+   "write": [
+    {
+     "path": "src/config.h",
+     "text": "#define YAML_VERSION_MAJOR 0\n#define YAML_VERSION_MINOR 2\n#define YAML_VERSION_PATCH 5\n#define YAML_VERSION_STRING \"0.2.5\"\n#define YAML_DECLARE_STATIC 1\n"
+    }
+   ],
+   "variants": [
+    {
+     "match": [
+      "0.2.3"
+     ],
+     "write": [
+      {
+       "path": "src/config.h",
+       "text": "#define YAML_VERSION_MAJOR 0\n#define YAML_VERSION_MINOR 2\n#define YAML_VERSION_PATCH 3\n#define YAML_VERSION_STRING \"0.2.3\"\n#define YAML_DECLARE_STATIC 1\n"
+      }
+     ]
+    },
+    {
+     "match": [
+      "0.2.4"
+     ],
+     "write": [
+      {
+       "path": "src/config.h",
+       "text": "#define YAML_VERSION_MAJOR 0\n#define YAML_VERSION_MINOR 2\n#define YAML_VERSION_PATCH 4\n#define YAML_VERSION_STRING \"0.2.4\"\n#define YAML_DECLARE_STATIC 1\n"
+      }
+     ]
+    }
+   ],
+   "pins": [
+    {
+     "ref": "0.2.3",
+     "commit": "bf5290289996338dcba9471b839013068d9e9ae8",
+     "license_sha256": "c40112449f254b9753045925248313e9270efa36d226b22d82d4cc6c43c57f29",
+     "date": "2020-04-11"
+    },
+    {
+     "ref": "0.2.4",
+     "commit": "72e2f75277ff88ad1fb8a81cf422df06bf371578",
+     "license_sha256": "c40112449f254b9753045925248313e9270efa36d226b22d82d4cc6c43c57f29",
+     "date": "2020-04-19"
+    },
+    {
+     "ref": "0.2.5",
+     "commit": "2c891fc7a770e8ba2fec34fc6b545c672beb37e6",
+     "license_sha256": "c40112449f254b9753045925248313e9270efa36d226b22d82d4cc6c43c57f29",
+     "date": "2020-06-01"
+    }
+   ],
+   "notes": "Eight src files; src/config.h (cmake output upstream) is authored per version with YAML_VERSION_* and YAML_DECLARE_STATIC. The licence file is named License only from 0.2.3 on (LICENSE before), so earlier tags are not pinned."
+  }
+ ]
+}

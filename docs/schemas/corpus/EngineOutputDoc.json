@@ -1,0 +1,174 @@
+{
+  "$defs": {
+    "PredictionDoc": {
+      "additionalProperties": false,
+      "properties": {
+        "changed": {
+          "title": "Changed",
+          "type": "boolean"
+        },
+        "new_name": {
+          "anyOf": [
+            {
+              "maxLength": 512,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "New Name"
+        },
+        "new_rva": {
+          "maximum": 4294967295,
+          "minimum": 0,
+          "title": "New Rva",
+          "type": "integer"
+        },
+        "old_name": {
+          "anyOf": [
+            {
+              "maxLength": 512,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Old Name"
+        },
+        "old_rva": {
+          "maximum": 4294967295,
+          "minimum": 0,
+          "title": "Old Rva",
+          "type": "integer"
+        },
+        "similarity_milli": {
+          "anyOf": [
+            {
+              "maximum": 1000,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Similarity Milli"
+        }
+      },
+      "required": [
+        "old_rva",
+        "new_rva",
+        "changed"
+      ],
+      "title": "PredictionDoc",
+      "type": "object"
+    }
+  },
+  "$id": "https://patchtrace.local/schemas/tier-r-engine-output/1/EngineOutputDoc.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "One engine's answer for one pair, reduced to RVAs: the only thing the scorer reads.",
+  "properties": {
+    "contract": {
+      "const": "tier-r-engine-output/1",
+      "title": "Contract",
+      "type": "string"
+    },
+    "engine": {
+      "enum": [
+        "rz-diff",
+        "bindiff",
+        "ghidriff"
+      ],
+      "title": "Engine",
+      "type": "string"
+    },
+    "ignored_unaddressed": {
+      "default": 0,
+      "minimum": 0,
+      "title": "Ignored Unaddressed",
+      "type": "integer"
+    },
+    "implicit_unchanged": {
+      "default": false,
+      "title": "Implicit Unchanged",
+      "type": "boolean"
+    },
+    "new_only_rvas": {
+      "default": [],
+      "items": {
+        "maximum": 4294967295,
+        "minimum": 0,
+        "type": "integer"
+      },
+      "maxItems": 1000000,
+      "title": "New Only Rvas",
+      "type": "array"
+    },
+    "newer_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Newer Sha256",
+      "type": "string"
+    },
+    "old_only_rvas": {
+      "default": [],
+      "items": {
+        "maximum": 4294967295,
+        "minimum": 0,
+        "type": "integer"
+      },
+      "maxItems": 1000000,
+      "title": "Old Only Rvas",
+      "type": "array"
+    },
+    "older_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Older Sha256",
+      "type": "string"
+    },
+    "predictions": {
+      "items": {
+        "$ref": "#/$defs/PredictionDoc"
+      },
+      "maxItems": 1000000,
+      "title": "Predictions",
+      "type": "array"
+    },
+    "symbols": {
+      "enum": [
+        "hidden",
+        "visible"
+      ],
+      "title": "Symbols",
+      "type": "string"
+    },
+    "version": {
+      "anyOf": [
+        {
+          "maxLength": 200,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Version"
+    }
+  },
+  "required": [
+    "contract",
+    "engine",
+    "symbols",
+    "older_sha256",
+    "newer_sha256",
+    "predictions"
+  ],
+  "title": "EngineOutputDoc",
+  "type": "object"
+}

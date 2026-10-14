@@ -1,0 +1,204 @@
+{
+  "$defs": {
+    "LedgerEntry": {
+      "additionalProperties": false,
+      "properties": {
+        "channel": {
+          "enum": [
+            "ghidriff",
+            "rz-diff",
+            "bindiff",
+            "unified",
+            "attention",
+            "capa",
+            "floss",
+            "diec",
+            "yara-x"
+          ],
+          "title": "Channel",
+          "type": "string"
+        },
+        "facet": {
+          "enum": [
+            "pairing",
+            "materiality",
+            "lead-list",
+            "capability-delta",
+            "string-delta",
+            "environment-flag",
+            "rule-match"
+          ],
+          "title": "Facet",
+          "type": "string"
+        },
+        "state": {
+          "enum": [
+            "unvalidated",
+            "synthetic-validated",
+            "windows-validated"
+          ],
+          "title": "State",
+          "type": "string"
+        },
+        "evidence_tiers": {
+          "default": [],
+          "items": {
+            "enum": [
+              "synthetic",
+              "tier-r",
+              "tier-w"
+            ],
+            "type": "string"
+          },
+          "title": "Evidence Tiers",
+          "type": "array"
+        },
+        "report_sha256": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Report Sha256"
+        },
+        "prereg_sha256": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Prereg Sha256"
+        },
+        "corpus_id": {
+          "default": "",
+          "maxLength": 120,
+          "title": "Corpus Id",
+          "type": "string"
+        },
+        "n_lineages": {
+          "default": 0,
+          "minimum": 0,
+          "title": "N Lineages",
+          "type": "integer"
+        },
+        "n_pairs": {
+          "default": 0,
+          "minimum": 0,
+          "title": "N Pairs",
+          "type": "integer"
+        },
+        "tool_versions": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "maxProperties": 16,
+          "title": "Tool Versions",
+          "type": "object"
+        },
+        "scope_ids": {
+          "default": [],
+          "items": {
+            "enum": [
+              "no-windows-system-binaries",
+              "open-source-c-only",
+              "test-compilers-only",
+              "no-lto-pgo",
+              "no-cpp-heavy",
+              "x64-only",
+              "stripped-images-only",
+              "few-lineages",
+              "single-annotator",
+              "planted-changes-synthetic",
+              "symbols-hidden-only",
+              "engine-versions-pinned"
+            ],
+            "type": "string"
+          },
+          "title": "Scope Ids",
+          "type": "array"
+        },
+        "measured_on": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Measured On"
+        },
+        "expires": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Expires"
+        }
+      },
+      "required": [
+        "channel",
+        "facet",
+        "state"
+      ],
+      "title": "LedgerEntry",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "contract": {
+      "const": "validation-ledger/1",
+      "title": "Contract",
+      "type": "string"
+    },
+    "entries": {
+      "items": {
+        "$ref": "#/$defs/LedgerEntry"
+      },
+      "maxItems": 64,
+      "title": "Entries",
+      "type": "array"
+    },
+    "created": {
+      "title": "Created",
+      "type": "string"
+    },
+    "expires": {
+      "title": "Expires",
+      "type": "string"
+    },
+    "digest_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Digest Sha256",
+      "type": "string"
+    }
+  },
+  "required": [
+    "contract",
+    "entries",
+    "created",
+    "expires",
+    "digest_sha256"
+  ],
+  "title": "ValidationLedger",
+  "type": "object",
+  "$id": "https://patchtrace.local/schemas/validation-ledger/1/ValidationLedger.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}

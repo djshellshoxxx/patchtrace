@@ -358,8 +358,10 @@ def _cancel_when_partial_output_appears(spy_dir: Path, cancel: threading.Event, 
             runs = [c for c in spy_calls(spy_dir) if c['argv'] not in (['--version'], ['--nologo', '--help'])]
             if runs:
                 out = Path(runs[0]['cwd']).parent / 'out'
-                if (out / bindiff_run.EXPECTED_NAME).exists() and (out / f'{bindiff_run.EXPECTED_NAME}-journal').exists():
-                    seen.append(sorted(p.name for p in out.iterdir()))
+                names = sorted(p.name for p in out.iterdir()) if out.is_dir() else []
+                # one listing decides both the condition and the evidence (a second listing raced the journal's removal)
+                if bindiff_run.EXPECTED_NAME in names and f'{bindiff_run.EXPECTED_NAME}-journal' in names:
+                    seen.append(names)
                     cancel.set()
                     return
             time.sleep(0.02)

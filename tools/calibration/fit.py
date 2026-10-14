@@ -67,6 +67,10 @@ def promote(artifact: Mapping, report: Mapping, *, profile_gates: Mapping[str, M
     """Raise status only on matching, passing report evidence; never edits a report."""
     if not verify_report(report):
         raise PromotionError('report SHA does not verify')
+    dom = artifact['calibration_domain']
+    if ('tier-w' not in dom.get('evidence_tiers', ()) or dom.get('windows_system_binaries', 'none') == 'none'
+            or 'no-windows-system-binaries' in dom.get('scope_ids', ())):
+        raise PromotionError('Tier R-only (synthetic) evidence cannot be promoted: Tier W domain required')
     gates = profile_gates or report['per_profile'].get(artifact['profile'], {}).get('gates') or {}
     status = {k: v['status'] for k, v in gates.items()}
     if status.get('G0') == status.get('G2') == status.get('G3') == 'pass':

@@ -1,0 +1,201 @@
+name: Corpus Tier R (sharded)
+# SPEC-32 s13. Heavy known-answer corpus work (compilers, pinned rizin, optional Ghidra/Ghidriff) runs here, not in agent
+# loops. plan -> matrix of shards -> merge. Artifacts hold labels metadata, feature tables and aggregate metrics only.
+# Never uploads images or binaries. Tier W (Microsoft-derived) data is local-only and refused by tools/calibration/tier_r/shard.py.
+on:
+  workflow_dispatch:
+    inputs:
+      shards:
+        description: Number of shards (1-256)
+        default: '4'
+      seed:
+        description: Integer seed for deterministic sharding and mutation sites
+        default: '1'
+      engines:
+        description: Comma list of engines (rz-diff, ghidriff, bindiff)
+        default: rz-diff
+      subset:
+        description: smoke, suites, cards, mutations, noise or full
+        default: smoke
+  push:
+    branches: [main]
+    paths: ['tools/calibration/**', 'corpus/ours/**', '.github/workflows/corpus-tier-r.yml']
+  pull_request:
+    paths: ['tools/calibration/**', 'corpus/ours/**', '.github/workflows/corpus-tier-r.yml']
+permissions:
+  contents: read
+env:
+  RIZIN_VERSION: '0.9.1'
+  RIZIN_ASSET: rizin-v0.9.1-static-x86_64.tar.xz
+  # Same pin and digest as live-rizin.yml (computed by streaming the official asset; not an upstream-published digest).
+  RIZIN_SHA256: 9102249a9f0b6319c5334a2e5cf8d9cc3f2035e1d3def027c41f6a90f647e8cf
+  GHIDRA_URL: https://github.com/NationalSecurityAgency/ghidra/releases/download/Ghidra_12.0.4_build/ghidra_12.0.4_PUBLIC_20260303.zip
+  GHIDRA_SHA256: c3b458661d69e26e203d739c0c82d143cc8a4a29d9e571f099c2cf4bda62a120
+  GHIDRIFF_PIN: 'ghidriff @ git+https://github.com/clearbluejar/ghidriff.git@4f5d895fcbb1eacd65efd81145922c15bb7e741d'
+  SHARDS: ${{ inputs.shards || '2' }}
+  SEED: ${{ inputs.seed || '1' }}
+  ENGINES: ${{ inputs.engines || 'rz-diff' }}
+  SUBSET: ${{ inputs.subset || 'smoke' }}
+jobs:
+  plan:
+    name: plan
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    outputs:
+      matrix: ${{ steps.plan.outputs.matrix }}
+      plan_sha256: ${{ steps.plan.outputs.plan_sha256 }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install -e .
+      - name: Emit shard matrix
+        id: plan
+        run: >-
+          python -m tools.calibration.tier_r.shard plan
+          --seed "$SEED" --shards "$SHARDS" --engines "$ENGINES" --subset "$SUBSET" --plan-out plan.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: tier-r-plan
+          path: plan.json
+          if-no-files-found: error
+  shard:
+    name: shard ${{ matrix.shard }} of ${{ matrix.of }}
+    needs: plan
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJSON(needs.plan.outputs.matrix) }}
+    env:
+      SHARD_CASES: ${{ toJSON(matrix.cases) }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install -e .
+      - name: Install compilers (mingw-w64, LLVM)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gcc-mingw-w64-x86-64 llvm lld clang
+      - name: Restore pinned rizin
+        id: rizin-cache
+        uses: actions/cache@v4
+        with:
+          path: rizin
+          key: rizin-${{ env.RIZIN_SHA256 }}
+      - name: Install pinned rizin (fail closed on missing or mismatched SHA-256)
+        if: steps.rizin-cache.outputs.cache-hit != 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          [[ "$RIZIN_SHA256" =~ ^[0-9a-f]{64}$ ]] || { echo "::error::missing or malformed pinned SHA-256"; exit 1; }
+          curl -fsSL -o "$RIZIN_ASSET" "https://github.com/rizinorg/rizin/releases/download/v${RIZIN_VERSION}/${RIZIN_ASSET}"
+          echo "${RIZIN_SHA256}  ${RIZIN_ASSET}" | sha256sum -c -
+          mkdir -p rizin
+          tar -xJf "$RIZIN_ASSET" -C rizin
+          rm -f "$RIZIN_ASSET"
+      - name: Point at rizin
+        run: echo "RZ_DIFF=$PWD/rizin/bin/rz-diff" >> "$GITHUB_ENV"
+      - name: Java for Ghidra (only when ghidriff is requested)
+        if: contains(env.ENGINES, 'ghidriff')
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '25'
+      - name: Restore Ghidra
+        id: ghidra-cache
+        if: contains(env.ENGINES, 'ghidriff')
+        uses: actions/cache@v4
+        with:
+          path: ghidra-runtime
+          key: ghidra-${{ env.GHIDRA_SHA256 }}
+      - name: Install Ghidra and Ghidriff (fail closed on digest mismatch)
+        if: contains(env.ENGINES, 'ghidriff')
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ "${{ steps.ghidra-cache.outputs.cache-hit }}" != "true" ]; then
+            curl -fsSL -o ghidra.zip "$GHIDRA_URL"
+            echo "${GHIDRA_SHA256}  ghidra.zip" | sha256sum -c -
+            mkdir -p ghidra-runtime
+            unzip -q ghidra.zip -d ghidra-runtime
+            rm -f ghidra.zip
+          fi
+          echo "GHIDRA_INSTALL_DIR=$(find "$PWD/ghidra-runtime" -mindepth 1 -maxdepth 1 -type d | head -n 1)" >> "$GITHUB_ENV"
+          python -m pip install "$GHIDRIFF_PIN"
+      - name: Run shard
+        shell: bash
+        run: >-
+          python -m tools.calibration.tier_r.shard run-shard
+          --shard "${{ matrix.shard }}" --of "${{ matrix.of }}" --seed "$SEED" --plan-sha256 "${{ matrix.plan }}"
+          --cases "$SHARD_CASES" --engines "$ENGINES" --subset "$SUBSET" --out shard-out --timeout 1800
+      - name: Step summary
+        if: always()
+        shell: bash
+        run: |
+          { echo "### Tier R shard ${{ matrix.shard }} of ${{ matrix.of }}"; echo '```'; ls -l shard-out 2>/dev/null || echo "no shard file"; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: tier-r-shard-${{ matrix.shard }}
+          path: shard-out/shard-*.json
+          if-no-files-found: warn
+  merge:
+    name: merge
+    needs: [plan, shard]
+    if: always() && needs.plan.result == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install -e .
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: tier-r-shard-*
+          path: shards
+          merge-multiple: true
+      - uses: actions/download-artifact@v4
+        with:
+          name: tier-r-plan
+          path: plan
+      - name: Merge (fails on missing, duplicate or foreign shards)
+        run: python -m tools.calibration.tier_r.shard merge --in shards --plan plan/plan.json --out merged
+      - name: Step summary
+        if: always()
+        run: |
+          if [ -f merged/tier-r-report.md ]; then cat merged/tier-r-report.md >> "$GITHUB_STEP_SUMMARY"; else echo "merge produced no report" >> "$GITHUB_STEP_SUMMARY"; fi
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: tier-r-aggregate
+          path: merged/
+          if-no-files-found: warn
+  windows-advisory:
+    # Advisory leg: the runner's LLVM clang and lld-link build freestanding suites; missing tools are BLOCKED, not fatal.
+    name: windows advisory (smoke)
+    runs-on: windows-latest
+    continue-on-error: true
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install -e .
+      - name: Plan and run the smoke subset as one shard
+        shell: bash
+        run: |
+          python -m tools.calibration.tier_r.shard plan --seed "$SEED" --shards 1 --subset smoke --plan-out plan.json
+          python -m tools.calibration.tier_r.shard run-shard --plan plan.json --shard 0 --out shard-out --timeout 1200
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: tier-r-windows-advisory
+          path: shard-out/shard-*.json
+          if-no-files-found: warn

@@ -1,0 +1,62 @@
+{
+ "contract": "tier-r-recipes/1",
+ "excluded": [],
+ "recipes": [
+  {
+   "contract": "tier-r-recipe/1",
+   "project": "zstd",
+   "family": "compression",
+   "upstream_git": "https://github.com/facebook/zstd.git",
+   "license_spdx": "BSD-3-Clause",
+   "license_file": "LICENSE",
+   "license_evidence": "LICENSE read at all 5 pins (first e4558ffd), 2 distinct SHA-256: BSD License / For Zstandard software / Redistribution and use in source and binary forms, with or without modification, are permitted",
+   "libc": "mingw",
+   "output": "libzstd.dll",
+   "sources": [
+    "lib/common/*.c",
+    "lib/compress/*.c",
+    "lib/decompress/*.c"
+   ],
+   "include_dirs": [
+    "lib",
+    "lib/common"
+   ],
+   "defines": [
+    "ZSTD_DISABLE_ASM=1"
+   ],
+   "pins": [
+    {
+     "ref": "v1.4.9",
+     "commit": "e4558ffd1dc49399faf4ee5d85abed4386b4dcf5",
+     "license_sha256": "2c1a7fa704df8f3a606f6fc010b8b5aaebf403f3aeec339a12048f1ba7331a0b",
+     "date": "2021-03-02"
+    },
+    {
+     "ref": "v1.5.0",
+     "commit": "a488ba114ec17ea1054b9057c26a046fc122b3b6",
+     "license_sha256": "2c1a7fa704df8f3a606f6fc010b8b5aaebf403f3aeec339a12048f1ba7331a0b",
+     "date": "2021-05-14"
+    },
+    {
+     "ref": "v1.5.5",
+     "commit": "63779c798237346c2b245c546c40b72a5a5913fe",
+     "license_sha256": "7055266497633c9025b777c78eb7235af13922117480ed5c674677adc381c9d8",
+     "date": "2023-04-04"
+    },
+    {
+     "ref": "v1.5.6",
+     "commit": "794ea1b0afca0f020f4e57b6732332231fb23c70",
+     "license_sha256": "7055266497633c9025b777c78eb7235af13922117480ed5c674677adc381c9d8",
+     "date": "2024-03-21"
+    },
+    {
+     "ref": "v1.5.7",
+     "commit": "f8745da6ff1ad1e7bab384bd1f9d742439278e99",
+     "license_sha256": "7055266497633c9025b777c78eb7235af13922117480ed5c674677adc381c9d8",
+     "date": "2025-02-18"
+    }
+   ],
+   "notes": "zstd is dual BSD-3-Clause / GPL-2.0; the BSD option (LICENSE, not COPYING) is the one recorded. common+compress+decompress only (no dictBuilder/legacy/threading); the amd64 assembly Huffman decoder is disabled with ZSTD_DISABLE_ASM."
+  }
+ ]
+}

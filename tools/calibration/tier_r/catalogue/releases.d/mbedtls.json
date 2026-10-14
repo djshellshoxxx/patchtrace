@@ -1,0 +1,499 @@
+[
+ {
+  "contract": "case-card/1",
+  "id": "mbedtls-v3.6.2-to-v3.6.3",
+  "project": "mbedtls",
+  "upstream_git": "https://github.com/Mbed-TLS/mbedtls.git",
+  "license_spdx": "Apache-2.0",
+  "license_evidence": "LICENSE at 22098d41c6620ce07cf8a0134d37302355e1e5ef: LICENSE: Mbed TLS files are provided under a dual Apache-2.0 OR GPL-2.0-or-later license; users may choose which (Apache-2.0 recorded) (sha256 9b405ef4...d09b; read at 107ea89d too, sha256 9b405ef4...d09b)",
+  "old": {
+   "ref": "v3.6.2",
+   "commit": "107ea89daaefb9867ea9121002fbbdf926780e98"
+  },
+  "new": {
+   "ref": "v3.6.3",
+   "commit": "22098d41c6620ce07cf8a0134d37302355e1e5ef"
+  },
+  "kind": "cve-fix",
+  "cve": [
+   "CVE-2025-27809",
+   "CVE-2025-27810"
+  ],
+  "semantic_change": true,
+  "changed_functions": [
+   {
+    "name": "mbedtls_aesni_crypt_ecb",
+    "file": "library/aesni.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "mbedtls_mpi_core_exp_mod_optionally_safe",
+    "file": "library/bignum_core.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ccm_calculate_first_block_if_ready",
+    "file": "library/ccm.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "mbedtls_ecp_check_privkey",
+    "file": "library/ecp.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "mbedtls_high_level_strerr",
+    "file": "library/error.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "psa_import_key",
+    "file": "library/psa_crypto.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "mbedtls_psa_sign_hash_start",
+    "file": "library/psa_crypto.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "mbedtls_psa_verify_hash_start",
+    "file": "library/psa_crypto.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "psa_key_derivation_input_internal",
+    "file": "library/psa_crypto.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "psa_generate_derived_key_internal",
+    "file": "library/psa_crypto.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "psa_generate_key_custom",
+    "file": "library/psa_crypto.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "psa_crypto_local_input_free",
+    "file": "library/psa_crypto.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "psa_crypto_local_output_free",
+    "file": "library/psa_crypto.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "mbedtls_psa_ecp_generate_key",
+    "file": "library/psa_crypto_ecp.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "mbedtls_ecdsa_raw_to_der",
+    "file": "library/psa_util.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "mbedtls_ecdsa_der_to_raw",
+    "file": "library/psa_util.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "mbedtls_ssl_update_in_pointers",
+    "file": "library/ssl_msg.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "mbedtls_ssl_prepare_handshake_record",
+    "file": "library/ssl_msg.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "mbedtls_ssl_handle_message_type",
+    "file": "library/ssl_msg.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "mbedtls_ssl_session_reset_msg_layer",
+    "file": "library/ssl_tls.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "mbedtls_ssl_set_hostname",
+    "file": "library/ssl_tls.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "mbedtls_ssl_free",
+    "file": "library/ssl_tls.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "mbedtls_ssl_setup",
+    "file": "library/ssl_tls.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "mbedtls_ssl_context_save",
+    "file": "library/ssl_tls.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "mbedtls_ssl_write_finished",
+    "file": "library/ssl_tls.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   }
+  ],
+  "unchanged_controls": [
+   "mbedtls_aes_init",
+   "mbedtls_aes_xts_init",
+   "mbedtls_aes_xts_setkey_enc"
+  ],
+  "build": {
+   "system": "single",
+   "mingw_ok": "yes",
+   "recipe_notes": "tier_r recipe mbedtls (mingw-gcc 13-win32 -O2 -g, explicit file list from recipes.json, mbedtls.dll)"
+  },
+  "verification": {
+   "method": "tools.calibration.tier_r factory.run_card on fetched pins (mingw-gcc 13-win32 O2): 1573 project functions, 1382 unchanged, 29 changed, 156 ambiguous, 6 no-counterpart (bodies: 579 identical, 828 address-only, 148 different); git diff --numstat v3.6.2..v3.6.3 -- '*.c' '*.h': 136 files, +3438/-624; changed_functions lists the first 25 of 29 (sorted by file, name)",
+   "files_changed": 136,
+   "functions_changed_count": 29,
+   "verified_by_agent_run": true,
+   "cve_source": "ChangeLog (v3.6.3)"
+  },
+  "sources": [
+   "https://github.com/Mbed-TLS/mbedtls/releases/tag/v3.6.3",
+   "https://github.com/Mbed-TLS/mbedtls/blob/v3.6.3/ChangeLog"
+  ],
+  "risks": [
+   "156 ambiguous record(s) (source changed with identical code, or induced by macro/header/inlining) are excluded from changed-set scoring by design.",
+   "The release diff bundles every change between the pins, not only the CVE fixes; the CVE ids come from the project changelog section of the new release."
+  ]
+ },
+ {
+  "contract": "case-card/1",
+  "id": "mbedtls-v3.6.3-to-v3.6.4",
+  "project": "mbedtls",
+  "upstream_git": "https://github.com/Mbed-TLS/mbedtls.git",
+  "license_spdx": "Apache-2.0",
+  "license_evidence": "LICENSE at c765c831e5c2a0971410692f92f7a81d6ec65ec2: LICENSE: Mbed TLS files are provided under a dual Apache-2.0 OR GPL-2.0-or-later license; users may choose which (Apache-2.0 recorded) (sha256 9b405ef4...d09b; read at 22098d41 too, sha256 9b405ef4...d09b)",
+  "old": {
+   "ref": "v3.6.3",
+   "commit": "22098d41c6620ce07cf8a0134d37302355e1e5ef"
+  },
+  "new": {
+   "ref": "v3.6.4",
+   "commit": "c765c831e5c2a0971410692f92f7a81d6ec65ec2"
+  },
+  "kind": "cve-fix",
+  "cve": [
+   "CVE-2025-47917",
+   "CVE-2025-48965",
+   "CVE-2025-49087",
+   "CVE-2025-49600",
+   "CVE-2025-49601",
+   "CVE-2025-52496",
+   "CVE-2025-52497"
+  ],
+  "semantic_change": true,
+  "changed_functions": [
+   {
+    "name": "mbedtls_aesni_has_support",
+    "file": "library/aesni.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "mbedtls_asn1_write_raw_buffer",
+    "file": "library/asn1write.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "mbedtls_asn1_store_named_data",
+    "file": "library/asn1write.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "mbedtls_base64_decode",
+    "file": "library/base64.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "mbedtls_lmots_import_public_key",
+    "file": "library/lmots.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "mbedtls_lms_import_public_key",
+    "file": "library/lms.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "mbedtls_lms_verify",
+    "file": "library/lms.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "psa_key_derivation_start_hmac",
+    "file": "library/psa_crypto.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "psa_cipher_setup",
+    "file": "library/psa_crypto.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "psa_mac_setup",
+    "file": "library/psa_crypto.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "psa_aead_setup",
+    "file": "library/psa_crypto.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "psa_hash_clone",
+    "file": "library/psa_crypto.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "psa_key_derivation_tls12_prf_generate_next_block",
+    "file": "library/psa_crypto.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "psa_sign_hash_start",
+    "file": "library/psa_crypto.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "psa_verify_hash_start",
+    "file": "library/psa_crypto.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "psa_pake_setup",
+    "file": "library/psa_crypto.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ssl_parse_record_header",
+    "file": "library/ssl_msg.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "mbedtls_ssl_write_change_cipher_spec",
+    "file": "library/ssl_msg.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "mbedtls_ssl_parse_change_cipher_spec",
+    "file": "library/ssl_msg.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "tls_prf_generic",
+    "file": "library/ssl_tls.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "tls_prf_sha256",
+    "file": "library/ssl_tls.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "tls_prf_sha384",
+    "file": "library/ssl_tls.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ssl_tls12_populate_transform",
+    "file": "library/ssl_tls.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "mbedtls_ssl_handshake_step",
+    "file": "library/ssl_tls.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "mbedtls_ssl_session_reset_int",
+    "file": "library/ssl_tls.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   }
+  ],
+  "unchanged_controls": [
+   "mbedtls_aes_init",
+   "mbedtls_aes_xts_init",
+   "mbedtls_aes_xts_setkey_enc"
+  ],
+  "build": {
+   "system": "single",
+   "mingw_ok": "yes",
+   "recipe_notes": "tier_r recipe mbedtls (mingw-gcc 13-win32 -O2 -g, explicit file list from recipes.json, mbedtls.dll)"
+  },
+  "verification": {
+   "method": "tools.calibration.tier_r factory.run_card on fetched pins (mingw-gcc 13-win32 O2): 1576 project functions, 1441 unchanged, 40 changed, 88 ambiguous, 6 no-counterpart (bodies: 565 identical, 900 address-only, 93 different); git diff --numstat v3.6.3..v3.6.4 -- '*.c' '*.h': 125 files, +1317/-12903; changed_functions lists the first 25 of 40 (sorted by file, name)",
+   "files_changed": 125,
+   "functions_changed_count": 40,
+   "verified_by_agent_run": true,
+   "cve_source": "ChangeLog (v3.6.4)"
+  },
+  "sources": [
+   "https://github.com/Mbed-TLS/mbedtls/releases/tag/v3.6.4",
+   "https://github.com/Mbed-TLS/mbedtls/blob/v3.6.4/ChangeLog"
+  ],
+  "risks": [
+   "88 ambiguous record(s) (source changed with identical code, or induced by macro/header/inlining) are excluded from changed-set scoring by design.",
+   "The release diff bundles every change between the pins, not only the CVE fixes; the CVE ids come from the project changelog section of the new release."
+  ]
+ },
+ {
+  "contract": "case-card/1",
+  "id": "mbedtls-v3.6.4-to-v3.6.5",
+  "project": "mbedtls",
+  "upstream_git": "https://github.com/Mbed-TLS/mbedtls.git",
+  "license_spdx": "Apache-2.0",
+  "license_evidence": "LICENSE at e185d7fd85499c8ce5ca2a54f5cf8fe7dbe3f8df: LICENSE: Mbed TLS files are provided under a dual Apache-2.0 OR GPL-2.0-or-later license; users may choose which (Apache-2.0 recorded) (sha256 9b405ef4...d09b; read at c765c831 too, sha256 9b405ef4...d09b)",
+  "old": {
+   "ref": "v3.6.4",
+   "commit": "c765c831e5c2a0971410692f92f7a81d6ec65ec2"
+  },
+  "new": {
+   "ref": "v3.6.5",
+   "commit": "e185d7fd85499c8ce5ca2a54f5cf8fe7dbe3f8df"
+  },
+  "kind": "cve-fix",
+  "cve": [
+   "CVE-2025-54764",
+   "CVE-2025-59438"
+  ],
+  "semantic_change": true,
+  "changed_functions": [
+   {
+    "name": "mbedtls_mpi_gcd",
+    "file": "library/bignum.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "mbedtls_mpi_inv_mod",
+    "file": "library/bignum.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "mbedtls_get_pkcs_padding",
+    "file": "library/cipher.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "get_one_and_zeros_padding",
+    "file": "library/cipher.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "get_zeros_and_len_padding",
+    "file": "library/cipher.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "get_zeros_padding",
+    "file": "library/cipher.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "get_no_padding",
+    "file": "library/cipher.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "mbedtls_cipher_finish",
+    "file": "library/cipher.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "mbedtls_cipher_crypt",
+    "file": "library/cipher.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "mbedtls_ecdsa_sign_restartable",
+    "file": "library/ecdsa.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "mbedtls_ecdsa_verify_restartable",
+    "file": "library/ecdsa.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ecp_mul_comb_after_precomp",
+    "file": "library/ecp.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "psa_cipher_finish",
+    "file": "library/psa_crypto.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "psa_cipher_decrypt",
+    "file": "library/psa_crypto.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "mbedtls_psa_cipher_finish",
+    "file": "library/psa_crypto_cipher.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "mbedtls_psa_cipher_decrypt",
+    "file": "library/psa_crypto_cipher.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "mbedtls_rsa_gen_key",
+    "file": "library/rsa.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "mbedtls_rsa_deduce_primes",
+    "file": "library/rsa_alt_helpers.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "mbedtls_rsa_deduce_private_exponent",
+    "file": "library/rsa_alt_helpers.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   }
+  ],
+  "unchanged_controls": [
+   "mbedtls_aes_init",
+   "mbedtls_aes_xts_init",
+   "mbedtls_aes_xts_setkey_enc"
+  ],
+  "build": {
+   "system": "single",
+   "mingw_ok": "yes",
+   "recipe_notes": "tier_r recipe mbedtls (mingw-gcc 13-win32 -O2 -g, explicit file list from recipes.json, mbedtls.dll)"
+  },
+  "verification": {
+   "method": "tools.calibration.tier_r factory.run_card on fetched pins (mingw-gcc 13-win32 O2): 1582 project functions, 1505 unchanged, 19 changed, 49 ambiguous, 8 no-counterpart (bodies: 506 identical, 1021 address-only, 33 different); git diff --numstat v3.6.4..v3.6.5 -- '*.c' '*.h': 29 files, +970/-369",
+   "files_changed": 29,
+   "functions_changed_count": 19,
+   "verified_by_agent_run": true,
+   "cve_source": "ChangeLog (v3.6.5)"
+  },
+  "sources": [
+   "https://github.com/Mbed-TLS/mbedtls/releases/tag/v3.6.5",
+   "https://github.com/Mbed-TLS/mbedtls/blob/v3.6.5/ChangeLog"
+  ],
+  "risks": [
+   "49 ambiguous record(s) (source changed with identical code, or induced by macro/header/inlining) are excluded from changed-set scoring by design.",
+   "The release diff bundles every change between the pins, not only the CVE fixes; the CVE ids come from the project changelog section of the new release."
+  ]
+ }
+]

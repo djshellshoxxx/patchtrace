@@ -29,8 +29,9 @@ def pin() -> dict:
 def resolved(data: dict) -> dict:
     """A copy of the pin with every placeholder replaced by a well-formed digest (as B10 will do)."""
     data = copy.deepcopy(data)
-    for entry in (data['components']['python-windows'], data['ghidriff']['source_tarball']):
-        entry.update(status='pinned', sha256='ab' * 32, size=1234, digest_source='tofu')
+    for entry, source in ((data['components']['python-windows'], 'sigstore-verified'),
+                          (data['ghidriff']['source_tarball'], 'git-rebuilt')):
+        entry.update(status='pinned', sha256='ab' * 32, size=1234, digest_source=source)
     return data
 
 

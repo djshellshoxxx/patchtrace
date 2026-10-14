@@ -1,0 +1,58 @@
+{
+ "contract": "tier-r-recipes/1",
+ "excluded": [],
+ "recipes": [
+  {
+   "contract": "tier-r-recipe/1",
+   "project": "brotli",
+   "family": "compression",
+   "upstream_git": "https://github.com/google/brotli.git",
+   "license_spdx": "MIT",
+   "license_file": "LICENSE",
+   "license_evidence": "LICENSE read at all 5 pins (first d6d98957), 1 distinct SHA-256: Copyright (c) the Brotli Authors. Permission is hereby granted, free of charge, to any person obtaining a copy of this software (MIT)",
+   "libc": "mingw",
+   "output": "brotli.dll",
+   "sources": [
+    "c/common/*.c",
+    "c/dec/*.c",
+    "c/enc/*.c"
+   ],
+   "include_dirs": [
+    "c/include"
+   ],
+   "pins": [
+    {
+     "ref": "v1.0.7",
+     "commit": "d6d98957ca8ccb1ef45922e978bb10efca0ea541",
+     "license_sha256": "3d180008e36922a4e8daec11c34c7af264fed5962d07924aea928c38e8663c94",
+     "date": "2018-10-23"
+    },
+    {
+     "ref": "v1.0.8",
+     "commit": "db361a0bb901d6a71c7cbf1370d97b3703482e3b",
+     "license_sha256": "3d180008e36922a4e8daec11c34c7af264fed5962d07924aea928c38e8663c94",
+     "date": "2020-08-27"
+    },
+    {
+     "ref": "v1.0.9",
+     "commit": "e61745a6b7add50d380cfd7d3883dd6c62fc2c71",
+     "license_sha256": "3d180008e36922a4e8daec11c34c7af264fed5962d07924aea928c38e8663c94",
+     "date": "2020-08-27"
+    },
+    {
+     "ref": "v1.1.0",
+     "commit": "ed738e842d2fbdf2d6459e39267a633c4a9b2f5d",
+     "license_sha256": "3d180008e36922a4e8daec11c34c7af264fed5962d07924aea928c38e8663c94",
+     "date": "2023-08-29"
+    },
+    {
+     "ref": "v1.2.0",
+     "commit": "028fb5a23661f123017c060daa546b55cf4bde29",
+     "license_sha256": "3d180008e36922a4e8daec11c34c7af264fed5962d07924aea928c38e8663c94",
+     "date": "2025-10-27"
+    }
+   ],
+   "notes": "Common, decoder and encoder C sources; the command-line tool is not built."
+  }
+ ]
+}

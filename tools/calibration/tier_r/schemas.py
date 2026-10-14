@@ -99,6 +99,47 @@ def example_report() -> dict:
     return report
 
 
+def example_recipes_libs() -> dict:
+    doc = example_recipes()
+    recipe = doc['recipes'][0]
+    recipe.update(project='mbedtls', libs=['bcrypt', 'ws2_32'], output='mbedtls.dll')
+    recipe['variants'] = [{'match': ['v1.3'], 'libs': ['bcrypt']}]
+    return doc
+
+
+def example_mutation_opt() -> dict:
+    doc = example_mutation()
+    doc.update(case_id='tiny-mergefunc-3', operator='mergefunc', layer='opt', kind='cosmetic', seed=3)
+    return doc
+
+
+def _interval(point: float | None, lo: float | None = None, hi: float | None = None, **flags) -> dict:
+    return {'point': point, 'lo': lo, 'hi': hi, 'undefined': point is None, 'anti_conservative': False, **flags}
+
+
+def example_report_extended() -> dict:
+    doc = example_report()
+    cell = {'paired_correct': 1, 'paired_wrong': 0, 'unpaired': 0, 'abstained': 0, 'flagged': 1,
+            'rate': _interval(1.0, 0.5, 1.0, anti_conservative=True)}
+    rank = {'population': 'planted', 'pairs': 1, 'lineages': 1, 'pool_median': 3.0, 'found_in_pool': 1,
+            'hit_at': {k: _interval(1.0, anti_conservative=True) for k in C.HIT_KS},
+            'mrr': _interval(1.0, anti_conservative=True), 'mean_rank': 1.0,
+            'ndcg10': _interval(1.0, anti_conservative=True), 'tie_rule': 'midrank'}
+    doc['engines'].append({'engine': 'unified', 'status': 'blocked', 'version': None,
+                           'reason': 'example: no unified-result rows', 'runs': 0, 'failures': 0})
+    doc.update(
+        labels={'authored': {'rz-diff': {'changed': cell}}}, rank={'authored': {'attention': rank}},
+        curves=[{'kind': 'native-precision', 'engine': 'rz-diff',
+                 'bins': [{'lo': 0.0, 'hi': 0.5, 'n': 2, 'precision': 0.5}, {'lo': 0.5, 'hi': 1.0, 'n': 0,
+                                                                              'precision': None}]}],
+        shift={'descriptors': {'function_size': {'n': 5, 'q05': 16.0, 'q25': 16.0, 'q50': 16.0, 'q75': 32.0,
+                                                 'q95': 64.0}}, 'shares': {'thunk': 0.0}, 'n_lineages': 1},
+        coverage=[{'engine': 'rz-diff', 'stratum': 'authored', 'attempted': 1, 'completed': 1, 'blocked': 0,
+                   'failed': 0}], lineages=1, scope_ids=['tier-r-synthetic'])
+    doc['report_sha256'] = digest(doc, 'report_sha256')
+    return doc
+
+
 def _invalid(base: dict, mutate: Callable[[dict], None], *, redigest: str | None = 'digest_sha256') -> dict:
     doc = copy.deepcopy(base)
     mutate(doc)
@@ -108,12 +149,16 @@ def _invalid(base: dict, mutate: Callable[[dict], None], *, redigest: str | None
 
 
 def examples() -> dict[str, dict | list]:
-    labels, report = example_labels(), example_report()
+    labels, report, extended = example_labels(), example_report(), example_report_extended()
+    mutation_opt = example_mutation_opt()
     return {
         'valid-labels-template.json': labels,
         'valid-recipes-zlib.json': example_recipes(),
         'valid-mutation-cmp-flip.json': example_mutation(),
         'valid-report-template.json': report,
+        'valid-report-extended.json': extended,
+        'valid-recipes-libs.json': example_recipes_libs(),
+        'valid-mutation-opt-mergefunc.json': mutation_opt,
         'invalid-labels-tampered.json': _invalid(labels, lambda d: d['functions'][0].update(notes='edited'),
                                                  redigest=None),
         'invalid-labels-nocounterpart-two-sides.json': _invalid(
@@ -127,6 +172,18 @@ def examples() -> dict[str, dict | list]:
         'invalid-recipes-shell-define.json': _invalid(example_recipes(), lambda d: d['recipes'][0].update(
             defines=['X=`id`']), redigest=None),
         'invalid-mutation-kind.json': _invalid(example_mutation(), lambda d: d.update(kind='cosmetic'), redigest=None),
+        'invalid-recipes-lib-path.json': _invalid(
+            example_recipes_libs(), lambda d: d['recipes'][0].update(libs=['../evil.lib']), redigest=None),
+        'invalid-mutation-layer-mismatch.json': _invalid(mutation_opt, lambda d: d.update(layer='source'),
+                                                         redigest=None),
+        'invalid-mutation-new-operator-kind.json': _invalid(
+            example_mutation(), lambda d: d.update(operator='signedness-flip', kind='cosmetic'), redigest=None),
+        'invalid-report-engine.json': _invalid(extended, lambda d: d['rank']['authored'].update(
+            ensemble=d['rank']['authored']['attention']), redigest='report_sha256'),
+        'invalid-report-hitat-keys.json': _invalid(extended, lambda d: d['rank']['authored']['attention'][
+            'hit_at'].pop('20'), redigest='report_sha256'),
+        'invalid-report-interval.json': _invalid(extended, lambda d: d['labels']['authored']['rz-diff']['changed'][
+            'rate'].update(undefined=True), redigest='report_sha256'),
         'invalid-report-digest.json': _invalid(report, lambda d: d.update(symbols='visible'), redigest=None),
     }
 

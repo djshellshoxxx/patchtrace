@@ -1,0 +1,372 @@
+[
+ {
+  "contract": "case-card/1",
+  "id": "zlib-v1.3-to-v1.3.1",
+  "project": "zlib",
+  "upstream_git": "https://github.com/madler/zlib.git",
+  "license_spdx": "Zlib",
+  "license_evidence": "LICENSE at 51b7f2abdade71cd9bb0e7a373ef2610ec6f9daf: 'This software is provided 'as-is', without any express or implied warranty.' (sha256 845efc77...3243, identical at v1.3)",
+  "old": {
+   "ref": "v1.3",
+   "commit": "09155eaa2f9270dc4ed1fa13e2b4b2613e6e4851"
+  },
+  "new": {
+   "ref": "v1.3.1",
+   "commit": "51b7f2abdade71cd9bb0e7a373ef2610ec6f9daf"
+  },
+  "kind": "release",
+  "cve": [],
+  "semantic_change": true,
+  "changed_functions": [
+   {
+    "name": "inflateSync",
+    "file": "inflate.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "deflateCopy",
+    "file": "deflate.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   }
+  ],
+  "unchanged_controls": [
+   "adler32",
+   "crc32"
+  ],
+  "build": {
+   "system": "single",
+   "recipe_notes": "tier_r recipe zlib (mingw-gcc -O2 -g, top-level *.c, zlib1.dll)",
+   "mingw_ok": "yes"
+  },
+  "verification": {
+   "method": "tools.calibration.tier_r factory.run_card on fetched pins (mingw-gcc 13-win32 O2): 128 project functions, 60 identical, 62 address-only, 2 changed, 9 ambiguous (LIT_MEM #ifdef edits, ERR_MSG macro, constprop clones), 1 added (gz_intmax)",
+   "functions_changed_count": 2,
+   "verified_by_agent_run": true
+  },
+  "sources": [
+   "https://github.com/madler/zlib/releases/tag/v1.3.1",
+   "https://github.com/madler/zlib/blob/v1.3.1/ChangeLog"
+  ],
+  "risks": [
+   "Ambiguous records (inactive #ifdef LIT_MEM edits, ERR_MSG bounds macro in zutil.h) are excluded from changed-set scoring by design."
+  ]
+ },
+ {
+  "contract": "case-card/1",
+  "id": "zlib-v1.3.1-to-v1.3.1.2",
+  "project": "zlib",
+  "upstream_git": "https://github.com/madler/zlib.git",
+  "license_spdx": "Zlib",
+  "license_evidence": "LICENSE at 570720b0c24f9686c33f35a1b3165c1f568b96be: '(C) 1995-2022 Jean-loup Gailly and Mark Adler / This software is provided 'as-is', without any express or implied warranty.' (sha256 db87e854...3628; read at 51b7f2ab too, sha256 845efc77...3243)",
+  "old": {
+   "ref": "v1.3.1",
+   "commit": "51b7f2abdade71cd9bb0e7a373ef2610ec6f9daf"
+  },
+  "new": {
+   "ref": "v1.3.1.2",
+   "commit": "570720b0c24f9686c33f35a1b3165c1f568b96be"
+  },
+  "kind": "release",
+  "cve": [],
+  "semantic_change": true,
+  "changed_functions": [
+   {
+    "name": "deflate_stored",
+    "file": "deflate.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "deflateBound",
+    "file": "deflate.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "gz_open",
+    "file": "gzlib.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "gzseek64",
+    "file": "gzlib.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "gztell64",
+    "file": "gzlib.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "gz_error",
+    "file": "gzlib.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "gz_load",
+    "file": "gzread.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "gz_avail",
+    "file": "gzread.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "gz_look",
+    "file": "gzread.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "gz_decomp",
+    "file": "gzread.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "gz_read",
+    "file": "gzread.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "gzread",
+    "file": "gzread.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "gzfread",
+    "file": "gzread.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "gzgetc",
+    "file": "gzread.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "gzungetc",
+    "file": "gzread.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "gzgets",
+    "file": "gzread.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "gzdirect",
+    "file": "gzread.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "gz_comp",
+    "file": "gzwrite.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "gz_write",
+    "file": "gzwrite.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "gzwrite",
+    "file": "gzwrite.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "gzfwrite",
+    "file": "gzwrite.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "gzputc",
+    "file": "gzwrite.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "gzputs",
+    "file": "gzwrite.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "gzvprintf",
+    "file": "gzwrite.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "gzflush",
+    "file": "gzwrite.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   }
+  ],
+  "unchanged_controls": [
+   "adler32_z",
+   "adler32",
+   "compress"
+  ],
+  "build": {
+   "system": "single",
+   "mingw_ok": "yes",
+   "recipe_notes": "tier_r recipe zlib (mingw-gcc 13-win32 -O2 -g, explicit file list from recipes.json, zlib1.dll)"
+  },
+  "verification": {
+   "method": "tools.calibration.tier_r factory.run_card on fetched pins (mingw-gcc 13-win32 O2): 132 project functions, 69 unchanged, 31 changed, 24 ambiguous, 6 no-counterpart (bodies: 36 identical, 40 address-only, 50 different); git diff --numstat v1.3.1..v1.3.1.2 -- '*.c' '*.h': 39 files, +1742/-785; changed_functions lists the first 25 of 31 (sorted by file, name)",
+   "files_changed": 39,
+   "functions_changed_count": 31,
+   "verified_by_agent_run": true
+  },
+  "sources": [
+   "https://github.com/madler/zlib/releases/tag/v1.3.1.2",
+   "https://github.com/madler/zlib/compare/v1.3.1...v1.3.1.2"
+  ],
+  "risks": [
+   "24 ambiguous record(s) (source changed with identical code, or induced by macro/header/inlining) are excluded from changed-set scoring by design."
+  ]
+ },
+ {
+  "contract": "case-card/1",
+  "id": "zlib-v1.3.1.2-to-v1.3.2",
+  "project": "zlib",
+  "upstream_git": "https://github.com/madler/zlib.git",
+  "license_spdx": "Zlib",
+  "license_evidence": "LICENSE at da607da739fa6047df13e66a2af6b8bec7c2a498: '(C) 1995-2022 Jean-loup Gailly and Mark Adler / This software is provided 'as-is', without any express or implied warranty.' (sha256 e32ff4e0...45a2; read at 570720b0 too, sha256 db87e854...3628)",
+  "old": {
+   "ref": "v1.3.1.2",
+   "commit": "570720b0c24f9686c33f35a1b3165c1f568b96be"
+  },
+  "new": {
+   "ref": "v1.3.2",
+   "commit": "da607da739fa6047df13e66a2af6b8bec7c2a498"
+  },
+  "kind": "release",
+  "cve": [],
+  "semantic_change": true,
+  "changed_functions": [
+   {
+    "name": "compress2",
+    "file": "compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "compressBound",
+    "file": "compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "crc32_combine64",
+    "file": "crc32.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "crc32_combine_op",
+    "file": "crc32.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "slide_hash",
+    "file": "deflate.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "flush_pending",
+    "file": "deflate.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "deflate_stored",
+    "file": "deflate.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "deflatePending",
+    "file": "deflate.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "deflateBound",
+    "file": "deflate.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "deflate",
+    "file": "deflate.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "deflateInit2_",
+    "file": "deflate.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "deflateCopy",
+    "file": "deflate.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "gz_open",
+    "file": "gzlib.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "gz_fetch",
+    "file": "gzread.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "inflateBack",
+    "file": "infback.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "inflateInit2_",
+    "file": "inflate.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "inflate",
+    "file": "inflate.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "inflateCopy",
+    "file": "inflate.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "inflate_table",
+    "file": "inftrees.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "uncompress2",
+    "file": "uncompr.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "uncompress",
+    "file": "uncompr.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   }
+  ],
+  "unchanged_controls": [
+   "adler32_z",
+   "adler32",
+   "adler32_combine"
+  ],
+  "build": {
+   "system": "single",
+   "mingw_ok": "yes",
+   "recipe_notes": "tier_r recipe zlib (mingw-gcc 13-win32 -O2 -g, explicit file list from recipes.json, zlib1.dll)"
+  },
+  "verification": {
+   "method": "tools.calibration.tier_r factory.run_card on fetched pins (mingw-gcc 13-win32 O2): 138 project functions, 87 unchanged, 21 changed, 22 ambiguous, 8 no-counterpart (bodies: 38 identical, 65 address-only, 27 different); git diff --numstat v1.3.1.2..v1.3.2 -- '*.c' '*.h': 48 files, +1456/-1662",
+   "files_changed": 48,
+   "functions_changed_count": 21,
+   "verified_by_agent_run": true
+  },
+  "sources": [
+   "https://github.com/madler/zlib/releases/tag/v1.3.2",
+   "https://github.com/madler/zlib/compare/v1.3.1.2...v1.3.2"
+  ],
+  "risks": [
+   "22 ambiguous record(s) (source changed with identical code, or induced by macro/header/inlining) are excluded from changed-set scoring by design."
+  ]
+ }
+]

@@ -1,0 +1,336 @@
+[
+ {
+  "contract": "case-card/1",
+  "id": "jansson-v2.12-to-v2.13",
+  "project": "jansson",
+  "upstream_git": "https://github.com/akheron/jansson.git",
+  "license_spdx": "MIT",
+  "license_evidence": "LICENSE at 2882ead5bb90cf12a01b07b2c2361e24960fae02: Copyright (c) Petri Lehtinen. Permission is hereby granted, free of charge, to any person obtaining a copy of this software (MIT) (sha256 1fff7d37...0da0; read at 71c4e8ec too, sha256 f0a0c95c...adc2)",
+  "old": {
+   "ref": "v2.12",
+   "commit": "71c4e8ec215afa225ac20eed269a14963cd37b50"
+  },
+  "new": {
+   "ref": "v2.13",
+   "commit": "2882ead5bb90cf12a01b07b2c2361e24960fae02"
+  },
+  "kind": "release",
+  "cve": [],
+  "semantic_change": true,
+  "changed_functions": [
+   {
+    "name": "do_dump",
+    "file": "src/dump.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "json_deep_copy",
+    "file": "src/value.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "do_dump",
+    "file": "src/dump.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   }
+  ],
+  "unchanged_controls": [
+   "json_sprintf"
+  ],
+  "build": {
+   "system": "single",
+   "mingw_ok": "yes",
+   "recipe_notes": "tier_r recipe jansson (mingw-gcc 13-win32 -O2 -g, explicit file list from recipes.json, jansson.dll)"
+  },
+  "verification": {
+   "method": "tools.calibration.tier_r factory.run_card on fetched pins (mingw-gcc 13-win32 O2): 146 project functions, 3 unchanged, 3 changed, 9 ambiguous, 6 no-counterpart (bodies: 44 identical, 84 address-only, 8 different); git diff --numstat v2.12..v2.13 -- '*.c' '*.h': 40 files, +2749/-2760",
+   "files_changed": 40,
+   "functions_changed_count": 3,
+   "verified_by_agent_run": true
+  },
+  "sources": [
+   "https://github.com/akheron/jansson/releases/tag/v2.13",
+   "https://github.com/akheron/jansson/compare/v2.12...v2.13"
+  ],
+  "risks": [
+   "9 ambiguous record(s) (source changed with identical code, or induced by macro/header/inlining) are excluded from changed-set scoring by design."
+  ]
+ },
+ {
+  "contract": "case-card/1",
+  "id": "jansson-v2.13.1-to-v2.14",
+  "project": "jansson",
+  "upstream_git": "https://github.com/akheron/jansson.git",
+  "license_spdx": "MIT",
+  "license_evidence": "LICENSE at 684e18c927e89615c2d501737e90018f4930d6c5: Copyright (c) Petri Lehtinen. Permission is hereby granted, free of charge, to any person obtaining a copy of this software (MIT) (sha256 1fff7d37...0da0; read at e9ebfa7e too, sha256 1fff7d37...0da0)",
+  "old": {
+   "ref": "v2.13.1",
+   "commit": "e9ebfa7e77a6bee77df44e096b100e7131044059"
+  },
+  "new": {
+   "ref": "v2.14",
+   "commit": "684e18c927e89615c2d501737e90018f4930d6c5"
+  },
+  "kind": "release",
+  "cve": [],
+  "semantic_change": true,
+  "changed_functions": [
+   {
+    "name": "compare_keys",
+    "file": "src/dump.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "do_dump",
+    "file": "src/dump.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "hashtable_set",
+    "file": "src/hashtable.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "hashtable_get",
+    "file": "src/hashtable.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "hashtable_del",
+    "file": "src/hashtable.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "hashtable_iter_at",
+    "file": "src/hashtable.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "jsonp_loop_check",
+    "file": "src/value.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "json_object_get",
+    "file": "src/value.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "json_object_del",
+    "file": "src/value.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "json_object_iter_at",
+    "file": "src/value.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "json_vsprintf",
+    "file": "src/value.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "json_object_set_new_nocheck",
+    "file": "src/value.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "json_object_set_new",
+    "file": "src/value.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "json_object_update_existing",
+    "file": "src/value.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "do_object_update_recursive",
+    "file": "src/value.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "do_dump",
+    "file": "src/dump.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   }
+  ],
+  "unchanged_controls": [
+   "dump_to_fd",
+   "jsonp_error_init",
+   "hashtable_iter"
+  ],
+  "build": {
+   "system": "single",
+   "mingw_ok": "yes",
+   "recipe_notes": "tier_r recipe jansson (mingw-gcc 13-win32 -O2 -g, explicit file list from recipes.json, jansson.dll)"
+  },
+  "verification": {
+   "method": "tools.calibration.tier_r factory.run_card on fetched pins (mingw-gcc 13-win32 O2): 153 project functions, 115 unchanged, 16 changed, 15 ambiguous, 7 no-counterpart (bodies: 35 identical, 80 address-only, 27 different); git diff --numstat v2.13.1..v2.14 -- '*.c' '*.h': 12 files, +438/-93",
+   "files_changed": 12,
+   "functions_changed_count": 16,
+   "verified_by_agent_run": true
+  },
+  "sources": [
+   "https://github.com/akheron/jansson/releases/tag/v2.14",
+   "https://github.com/akheron/jansson/compare/v2.13.1...v2.14"
+  ],
+  "risks": [
+   "15 ambiguous record(s) (source changed with identical code, or induced by macro/header/inlining) are excluded from changed-set scoring by design."
+  ]
+ },
+ {
+  "contract": "case-card/1",
+  "id": "jansson-v2.14-to-v2.14.1",
+  "project": "jansson",
+  "upstream_git": "https://github.com/akheron/jansson.git",
+  "license_spdx": "MIT",
+  "license_evidence": "LICENSE at ed5cae4ed0621ef409510f94270c9f8f263736d0: Copyright (c) Petri Lehtinen. Permission is hereby granted, free of charge, to any person obtaining a copy of this software (MIT) (sha256 150d9090...cda2; read at 684e18c9 too, sha256 1fff7d37...0da0)",
+  "old": {
+   "ref": "v2.14",
+   "commit": "684e18c927e89615c2d501737e90018f4930d6c5"
+  },
+  "new": {
+   "ref": "v2.14.1",
+   "commit": "ed5cae4ed0621ef409510f94270c9f8f263736d0"
+  },
+  "kind": "release",
+  "cve": [],
+  "semantic_change": true,
+  "changed_functions": [
+   {
+    "name": "jsonp_strtod",
+    "file": "src/strconv.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "jsonp_dtostr",
+    "file": "src/strconv.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "do_object_update_recursive",
+    "file": "src/value.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "json_object_update",
+    "file": "src/value.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "json_object_update_missing",
+    "file": "src/value.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   }
+  ],
+  "unchanged_controls": [
+   "dump_to_fd",
+   "json_dump_callback",
+   "json_dumpb"
+  ],
+  "build": {
+   "system": "single",
+   "mingw_ok": "yes",
+   "recipe_notes": "tier_r recipe jansson (mingw-gcc 13-win32 -O2 -g, explicit file list from recipes.json, jansson.dll)"
+  },
+  "verification": {
+   "method": "tools.calibration.tier_r factory.run_card on fetched pins (mingw-gcc 13-win32 O2): 173 project functions, 138 unchanged, 5 changed, 10 ambiguous, 20 no-counterpart (bodies: 47 identical, 91 address-only, 11 different); git diff --numstat v2.14..v2.14.1 -- '*.c' '*.h': 11 files, +6465/-173",
+   "files_changed": 11,
+   "functions_changed_count": 5,
+   "verified_by_agent_run": true
+  },
+  "sources": [
+   "https://github.com/akheron/jansson/releases/tag/v2.14.1",
+   "https://github.com/akheron/jansson/compare/v2.14...v2.14.1"
+  ],
+  "risks": [
+   "10 ambiguous record(s) (source changed with identical code, or induced by macro/header/inlining) are excluded from changed-set scoring by design."
+  ]
+ },
+ {
+  "contract": "case-card/1",
+  "id": "jansson-v2.14.1-to-v2.15.0",
+  "project": "jansson",
+  "upstream_git": "https://github.com/akheron/jansson.git",
+  "license_spdx": "MIT",
+  "license_evidence": "LICENSE at 4a9a6db73d5dc553164992e87426502ab2d54512: Copyright (c) Petri Lehtinen. Permission is hereby granted, free of charge, to any person obtaining a copy of this software (MIT) (sha256 150d9090...cda2; read at ed5cae4e too, sha256 150d9090...cda2)",
+  "old": {
+   "ref": "v2.14.1",
+   "commit": "ed5cae4ed0621ef409510f94270c9f8f263736d0"
+  },
+  "new": {
+   "ref": "v2.15.0",
+   "commit": "4a9a6db73d5dc553164992e87426502ab2d54512"
+  },
+  "kind": "release",
+  "cve": [],
+  "semantic_change": true,
+  "changed_functions": [
+   {
+    "name": "do_dump",
+    "file": "src/dump.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "json_dumps",
+    "file": "src/dump.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "json_set_alloc_funcs",
+    "file": "src/memory.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "strbuffer_append_bytes",
+    "file": "src/strbuffer.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "json_array_extend",
+    "file": "src/value.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "json_array_append_new",
+    "file": "src/value.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "json_array_insert_new",
+    "file": "src/value.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "do_dump",
+    "file": "src/dump.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   }
+  ],
+  "unchanged_controls": [
+   "dump_to_fd",
+   "dump_indent",
+   "jsonp_error_init"
+  ],
+  "build": {
+   "system": "single",
+   "mingw_ok": "yes",
+   "recipe_notes": "tier_r recipe jansson (mingw-gcc 13-win32 -O2 -g, explicit file list from recipes.json, jansson.dll)"
+  },
+  "verification": {
+   "method": "tools.calibration.tier_r factory.run_card on fetched pins (mingw-gcc 13-win32 O2): 176 project functions, 135 unchanged, 8 changed, 29 ambiguous, 4 no-counterpart (bodies: 52 identical, 103 address-only, 13 different); git diff --numstat v2.14.1..v2.15.0 -- '*.c' '*.h': 12 files, +421/-57",
+   "files_changed": 12,
+   "functions_changed_count": 8,
+   "verified_by_agent_run": true
+  },
+  "sources": [
+   "https://github.com/akheron/jansson/releases/tag/v2.15.0",
+   "https://github.com/akheron/jansson/compare/v2.14.1...v2.15.0"
+  ],
+  "risks": [
+   "29 ambiguous record(s) (source changed with identical code, or induced by macro/header/inlining) are excluded from changed-set scoring by design."
+  ]
+ }
+]

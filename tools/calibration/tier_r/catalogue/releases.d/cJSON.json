@@ -1,0 +1,203 @@
+[
+ {
+  "contract": "case-card/1",
+  "id": "cjson-v1.7.14-to-v1.7.15",
+  "project": "cJSON",
+  "upstream_git": "https://github.com/DaveGamble/cJSON.git",
+  "license_spdx": "MIT",
+  "license_evidence": "LICENSE at d348621ca93571343a56862df7de4ff3bc9b5667: Copyright (c) Dave Gamble and cJSON contributors. Permission is hereby granted, free of charge, to any person obtaining a copy of this software (MIT) (sha256 a36dda20...6d5c; read at d2735278 too, sha256 a36dda20...6d5c)",
+  "old": {
+   "ref": "v1.7.14",
+   "commit": "d2735278ed1c2e4556f53a7a782063b31331dbf7"
+  },
+  "new": {
+   "ref": "v1.7.15",
+   "commit": "d348621ca93571343a56862df7de4ff3bc9b5667"
+  },
+  "kind": "release",
+  "cve": [],
+  "semantic_change": true,
+  "changed_functions": [
+   {
+    "name": "cJSON_CreateIntArray",
+    "file": "cJSON.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "cJSON_CreateFloatArray",
+    "file": "cJSON.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "cJSON_CreateDoubleArray",
+    "file": "cJSON.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "cJSON_CreateStringArray",
+    "file": "cJSON.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "cJSON_Compare",
+    "file": "cJSON.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "generate_merge_patch",
+    "file": "cJSON_Utils.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "apply_patch",
+    "file": "cJSON_Utils.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   }
+  ],
+  "unchanged_controls": [
+   "parse_hex4",
+   "parse_string",
+   "buffer_skip_whitespace"
+  ],
+  "build": {
+   "system": "single",
+   "mingw_ok": "yes",
+   "recipe_notes": "tier_r recipe cJSON (mingw-gcc 13-win32 -O2 -g, explicit file list from recipes.json, cjson.dll)"
+  },
+  "verification": {
+   "method": "tools.calibration.tier_r factory.run_card on fetched pins (mingw-gcc 13-win32 O2): 114 project functions, 105 unchanged, 7 changed, 2 ambiguous, 0 no-counterpart (bodies: 65 identical, 41 address-only, 8 different); git diff --numstat v1.7.14..v1.7.15 -- '*.c' '*.h': 6 files, +86/-16",
+   "files_changed": 6,
+   "functions_changed_count": 7,
+   "verified_by_agent_run": true
+  },
+  "sources": [
+   "https://github.com/DaveGamble/cJSON/releases/tag/v1.7.15",
+   "https://github.com/DaveGamble/cJSON/blob/v1.7.15/CHANGELOG.md"
+  ],
+  "risks": [
+   "2 ambiguous record(s) (source changed with identical code, or induced by macro/header/inlining) are excluded from changed-set scoring by design."
+  ]
+ },
+ {
+  "contract": "case-card/1",
+  "id": "cjson-v1.7.18-to-v1.7.19",
+  "project": "cJSON",
+  "upstream_git": "https://github.com/DaveGamble/cJSON.git",
+  "license_spdx": "MIT",
+  "license_evidence": "LICENSE at c859b25da02955fef659d658b8f324b5cde87be3: Copyright (c) Dave Gamble and cJSON contributors. Permission is hereby granted, free of charge, to any person obtaining a copy of this software (MIT) (sha256 a36dda20...6d5c; read at acc76239 too, sha256 a36dda20...6d5c)",
+  "old": {
+   "ref": "v1.7.18",
+   "commit": "acc76239bee01d8e9c858ae2cab296704e52d916"
+  },
+  "new": {
+   "ref": "v1.7.19",
+   "commit": "c859b25da02955fef659d658b8f324b5cde87be3"
+  },
+  "kind": "release",
+  "cve": [],
+  "semantic_change": true,
+  "changed_functions": [
+   {
+    "name": "cJSON_SetValuestring",
+    "file": "cJSON.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "cJSON_DetachItemViaPointer",
+    "file": "cJSON.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "cJSON_Duplicate",
+    "file": "cJSON.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "decode_array_index_from_pointer",
+    "file": "cJSON_Utils.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   }
+  ],
+  "unchanged_controls": [
+   "parse_hex4",
+   "parse_string",
+   "buffer_skip_whitespace"
+  ],
+  "build": {
+   "system": "single",
+   "mingw_ok": "yes",
+   "recipe_notes": "tier_r recipe cJSON (mingw-gcc 13-win32 -O2 -g, explicit file list from recipes.json, cjson.dll)"
+  },
+  "verification": {
+   "method": "tools.calibration.tier_r factory.run_card on fetched pins (mingw-gcc 13-win32 O2): 114 project functions, 105 unchanged, 4 changed, 4 ambiguous, 1 no-counterpart (bodies: 33 identical, 72 address-only, 8 different); git diff --numstat v1.7.18..v1.7.19 -- '*.c' '*.h': 8 files, +159/-33",
+   "files_changed": 8,
+   "functions_changed_count": 4,
+   "verified_by_agent_run": true
+  },
+  "sources": [
+   "https://github.com/DaveGamble/cJSON/releases/tag/v1.7.19",
+   "https://github.com/DaveGamble/cJSON/blob/v1.7.19/CHANGELOG.md"
+  ],
+  "risks": [
+   "4 ambiguous record(s) (source changed with identical code, or induced by macro/header/inlining) are excluded from changed-set scoring by design."
+  ]
+ },
+ {
+  "contract": "case-card/1",
+  "id": "cjson-v1.7.17-to-v1.7.18",
+  "project": "cJSON",
+  "upstream_git": "https://github.com/DaveGamble/cJSON.git",
+  "license_spdx": "MIT",
+  "license_evidence": "LICENSE at acc76239bee01d8e9c858ae2cab296704e52d916: Copyright (c) Dave Gamble and cJSON contributors. Permission is hereby granted, free of charge, to any person obtaining a copy of this software (MIT) (sha256 a36dda20...6d5c; read at 87d8f096 too, sha256 a36dda20...6d5c)",
+  "old": {
+   "ref": "v1.7.17",
+   "commit": "87d8f0961a01bf09bef98ff89bae9fdec42181ee"
+  },
+  "new": {
+   "ref": "v1.7.18",
+   "commit": "acc76239bee01d8e9c858ae2cab296704e52d916"
+  },
+  "kind": "cve-fix",
+  "cve": [
+   "CVE-2024-31755"
+  ],
+  "semantic_change": true,
+  "changed_functions": [
+   {
+    "name": "cJSON_Delete",
+    "file": "cJSON.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "cJSON_SetValuestring",
+    "file": "cJSON.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   }
+  ],
+  "unchanged_controls": [
+   "parse_hex4",
+   "buffer_skip_whitespace",
+   "cJSON_GetErrorPtr"
+  ],
+  "build": {
+   "system": "single",
+   "mingw_ok": "yes",
+   "recipe_notes": "tier_r recipe cJSON (mingw-gcc 13-win32 -O2 -g, explicit file list from recipes.json, cjson.dll)"
+  },
+  "verification": {
+   "method": "tools.calibration.tier_r factory.run_card on fetched pins (mingw-gcc 13-win32 O2): 113 project functions, 105 unchanged, 2 changed, 6 ambiguous, 0 no-counterpart (bodies: 40 identical, 69 address-only, 4 different); git diff --numstat v1.7.17..v1.7.18 -- '*.c' '*.h': 4 files, +65/-4",
+   "files_changed": 4,
+   "functions_changed_count": 2,
+   "verified_by_agent_run": true,
+   "cve_source": "CHANGELOG.md (v1.7.18)"
+  },
+  "sources": [
+   "https://github.com/DaveGamble/cJSON/releases/tag/v1.7.18",
+   "https://github.com/DaveGamble/cJSON/blob/v1.7.18/CHANGELOG.md"
+  ],
+  "risks": [
+   "6 ambiguous record(s) (source changed with identical code, or induced by macro/header/inlining) are excluded from changed-set scoring by design.",
+   "The release diff bundles every change between the pins, not only the CVE fixes; the CVE ids come from the project changelog section of the new release."
+  ]
+ }
+]
