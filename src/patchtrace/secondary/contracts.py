@@ -33,10 +33,11 @@ BINDIFF_LIMITATIONS = (
 
 
 class SecondaryError(Exception):
-    def __init__(self, code: ErrorCode, message: str):
+    def __init__(self, code: ErrorCode, message: str, *, reason: str | None = None):
         super().__init__(f'{code}: {message}')
         self.code = code
         self.message = message
+        self.reason = reason  # optional machine slug (SPEC-10b §7); additive, None for older callers
 
 
 class _Strict(BaseModel):
