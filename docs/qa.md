@@ -504,3 +504,10 @@ Not verified here: Windows and GitHub Actions; any live Ollama or OpenAI-compati
 | Precision per pass and tier at 60k, against the generator's ground truth | S2 tier A 35,312 of 35,312 right; S2 tier B 21,894 of 21,896; S2 tier C 395 of 395; P16 tier C 162 of 162; P17 tier C 1 of 1; P18 tier C 1,213 of 1,214 (0.9992); P19 tier C 30 of 30. At 10k every pair right (P16 30, P18 178, P19 3). The stage adds 739 pairs at 60k (59,010 vs 58,271 for the S2 table alone on the same world) | REPORTED, not a claim: the generator keeps most of the layout (P18 contributes most pairs), edits whole functions at once, and has no hostile near-duplicates; the gate only asserts that the stage's own tier-B pairs are all right and that its pairs are >= 95 % right on this generator |
 | Determinism | `test_the_result_digest_is_stable_across_hash_seeds_and_processes` (3 interpreters, PYTHONHASHSEED 0/1/4242), row-order permutation, side-swap mirror and budget-prefix properties with the stage on; the MinHash golden vector was verified once against a naive loop sharing no code | identical digests |
 | Not verified here | Windows and the frozen EXE; Python 3.12 (CI pin); IR from real Ghidra or MSVC binaries (the mnemonic streams are synthetic); the cost of decoding real `ins` blobs; per-pass precision on Tier R (G-U3, S6); the spec constants (16 permutations, 4 x 4 bands, floor 0.6, margins 0.05, cosine 0.95, 1 nat) are untuned on real data | open, see tasks/todo.md [S5:residual] |
+
+### [F4:virtual-table] VirtualTable gates
+| Check | Method | Result |
+|---|---|---|
+| `data()` calls independent of N | `assert_lazy_model` at 10k and 100k, plus reset, sort and filter ceilings of 7 x visible cells x 1.2 + 20 | 462 calls at both sizes (ceiling about 725) |
+| Time | reset, sort, filter after processEvents, ceilings 0.5 s (10k) and 1.5 s (100k) | 7 to 39 ms measured on Linux |
+| Not verified here | Windows timings, real UI Automation output for the table | open |
