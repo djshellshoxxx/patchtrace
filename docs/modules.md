@@ -312,3 +312,8 @@ K1 notes: plan 10.1 "4 edges, 1 mention-only" = 4 vendor-remediation edges + 1 m
 | cli | intelligence/tools/cli.py | `intel-tools probe|run|delta`, envelope `enrichment-cli/1`, exit 0/2/3/4/5; `cli.py` holds a 5-line hook | runner, store, delta | `test_intel_tools_cli.py` |
 | schemas | tools/generate_intel_tools_schemas.py, docs/schemas/intel-tools/ | `tool-evidence/1` JSON Schemas + examples, regenerate-and-compare | tools.* | `test_intel_tools_schemas.py` |
 | provisioning | tools/provision_intel_tools.py, tools/intel_tools_pin.json, .github/workflows/live-intel-tools.yml | download + verify + safe extract of the pinned releases (never executed); advisory live workflow | stdlib | `test_provision_intel_tools.py`, `test_live_intel_tools.py` |
+
+### [F2:qt-runtime]
+| module | files | purpose | deps | tests |
+|---|---|---|---|---|
+| gui.qt runtime | src/patchtrace/gui/qt/{tasks,settings,announce,metrics,runtime}.py, tools/qt_gate.py, tests/qt_support.py | `TaskRunner` (channels with generations, 10 Hz progress, lanes, shutdown joins and adopts the legacy `_LIVE_THREADS`), `CancelToken`, `PanelSettings`, `StatusAnnouncer`, `Metrics`, 1 ms switch interval; shared Qt test fixtures; repeat gate | PySide6 | `test_gui_tasks.py`, `test_gui_announce.py`, `test_gui_settings.py` |

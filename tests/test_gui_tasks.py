@@ -7,6 +7,7 @@ import sys
 import threading
 import time
 import types
+from pathlib import Path
 
 import pytest
 from PySide6.QtCore import QAbstractTableModel, QModelIndex, Qt, QThread
@@ -449,3 +450,37 @@ def test_legacy_registries_are_adopted_into_shutdown(monkeypatch, qtbot):
     local = TaskRunner()
     assert local.shutdown(timeout=5) == []
     assert not thread.isRunning() and tasks.legacy_threads() == []
+
+
+# ---- tools/qt_gate.py -----------------------------------------------------------------------------
+
+
+def _qt_gate():
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'tools'))
+    try:
+        import qt_gate
+    finally:
+        sys.path.pop(0)
+    return qt_gate
+
+
+def test_qt_gate_lists_the_files_repeat_times_in_one_session():
+    gate = _qt_gate()
+    command = gate.build_command(['tests/a.py', 'tests/b.py'], 3, python='py')
+    assert command[:4] == ['py', '-m', 'pytest', '-q'] and '--keep-duplicates' in command
+    assert command[-6:] == ['tests/a.py', 'tests/b.py'] * 3
+    for bad in ((['tests/a.py'], 0), ([], 5)):
+        with pytest.raises(ValueError):
+            gate.build_command(*bad)
+
+
+def test_qt_gate_environment_enables_faulthandler_and_offscreen():
+    env = _qt_gate().environment({})
+    assert env == {'QT_QPA_PLATFORM': 'offscreen', 'PYTHONFAULTHANDLER': '1'}
+    assert _qt_gate().environment({'QT_QPA_PLATFORM': 'minimal'})['QT_QPA_PLATFORM'] == 'minimal'
+
+
+def test_qt_gate_default_files_cover_the_gui_tests_and_this_file():
+    files = _qt_gate().default_files()
+    assert 'tests/test_gui_tasks.py' in files and 'tests/test_evidence_ui.py' in files
+    assert 'tests/qt_support.py' not in files and files == sorted(files)

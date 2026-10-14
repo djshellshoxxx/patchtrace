@@ -208,3 +208,7 @@
 - [x] Real pinned capa 9.4.0 and FLOSS 3.1.1 (Linux) probed pinned, run through the runner on the SYNTHETIC pairs and equal to the goldens (`tests/test_live_intel_tools.py`)
 - [ ] BLOCKED: diec live leg (no Qt5 Core/Script libs in this container), all Windows legs, first GitHub run of `live-intel-tools.yml`, Ghidra backend, independent re-hash of the pins from a second network path, executable-swap window between re-hash and spawn is narrowed not closed
 - [ ] Not done: `intel-tools pairs` (CAP), capa `memory_limit_bytes` option and `contained-in-function` (CAP-1), DiE vocabulary (DIE D1), `tools/frozen_smoke.py`/`build_windows.py` pin packaging, docs/qa.md rows (integrator)
+
+### [F2:qt-runtime]
+- [x] F2 Qt runtime built (tasks, settings, announce, metrics, runtime, qt_support, qt_gate); 20x gate green on Linux
+- [ ] F2 open: Windows 5x gate and the integrator full-suite runs; `gui/__init__.py` is F1-owned (F2 relies on a namespace package until F1 lands)
