@@ -131,7 +131,9 @@ def run_engines(project: ProjectRef, engines: Sequence[EngineId], *, max_paralle
                 return outcome(eid, 'unsupported', started, t0, cap=cap, error=SecondaryError(
                     'PT-SECONDARY-UNSUPPORTED', (cap.reason or 'engine unsupported').removeprefix(
                         'PT-SECONDARY-UNSUPPORTED: ')))
-            with tempfile.TemporaryDirectory(prefix='patchtrace-engine-') as workdir:
+            # Best-effort removal: on Windows a scanner or lingering handle can make the delete fail, and that must
+            # not turn a finished run into 'failed' (or emit a second 'finished' event for it).
+            with tempfile.TemporaryDirectory(prefix='patchtrace-engine-', ignore_cleanup_errors=True) as workdir:
                 job = EngineJob(project.older, project.newer, project.older_sha256, project.newer_sha256, env,
                                 Path(workdir), cancel, float(deadlines.get(eid, DEFAULT_DEADLINE)), runner,
                                 stdout_limit)

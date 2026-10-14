@@ -1,0 +1,198 @@
+{
+  "$defs": {
+    "PatchHypothesis": {
+      "additionalProperties": false,
+      "properties": {
+        "api_hints": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 64,
+          "title": "Api Hints",
+          "type": "array"
+        },
+        "assessment": {
+          "const": "rule-hypothesis",
+          "default": "rule-hypothesis",
+          "title": "Assessment",
+          "type": "string"
+        },
+        "basis": {
+          "enum": [
+            "explicit-csaf-cwe",
+            "cwe-id-in-text",
+            "curated-vocabulary"
+          ],
+          "title": "Basis",
+          "type": "string"
+        },
+        "caveat": {
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Caveat",
+          "type": "string"
+        },
+        "contradictions": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 64,
+          "title": "Contradictions",
+          "type": "array"
+        },
+        "counterexamples": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 64,
+          "title": "Counterexamples",
+          "type": "array"
+        },
+        "cwe_id": {
+          "pattern": "^CWE-[1-9][0-9]{0,5}$",
+          "title": "Cwe Id",
+          "type": "string"
+        },
+        "expected_operations": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 64,
+          "title": "Expected Operations",
+          "type": "array"
+        },
+        "family": {
+          "maxLength": 40,
+          "minLength": 1,
+          "title": "Family",
+          "type": "string"
+        },
+        "guards": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 64,
+          "title": "Guards",
+          "type": "array"
+        },
+        "hypothesis_id": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Hypothesis Id",
+          "type": "string"
+        },
+        "required_observations": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 64,
+          "title": "Required Observations",
+          "type": "array"
+        },
+        "rule_id": {
+          "pattern": "^R-[A-Z0-9-]{1,40}$",
+          "title": "Rule Id",
+          "type": "string"
+        },
+        "rule_revision": {
+          "minimum": 1,
+          "title": "Rule Revision",
+          "type": "integer"
+        },
+        "sinks": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 64,
+          "title": "Sinks",
+          "type": "array"
+        },
+        "sources": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 64,
+          "title": "Sources",
+          "type": "array"
+        }
+      },
+      "required": [
+        "hypothesis_id",
+        "cwe_id",
+        "family",
+        "rule_id",
+        "rule_revision",
+        "basis",
+        "expected_operations",
+        "counterexamples",
+        "caveat"
+      ],
+      "title": "PatchHypothesis",
+      "type": "object"
+    }
+  },
+  "$id": "https://patchtrace.local/schemas/intelligence/1/HypothesisSet.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "contract": {
+      "const": "intelligence/1",
+      "default": "intelligence/1",
+      "title": "Contract",
+      "type": "string"
+    },
+    "cve": {
+      "maxLength": 24,
+      "pattern": "^CVE-[0-9]{4}-[0-9]{4,19}$",
+      "title": "Cve",
+      "type": "string"
+    },
+    "hypotheses": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/PatchHypothesis"
+      },
+      "title": "Hypotheses",
+      "type": "array"
+    },
+    "limitations": {
+      "default": [],
+      "items": {
+        "type": "string"
+      },
+      "title": "Limitations",
+      "type": "array"
+    },
+    "rules_digest": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Rules Digest",
+      "type": "string"
+    },
+    "rules_version": {
+      "maxLength": 40,
+      "minLength": 1,
+      "title": "Rules Version",
+      "type": "string"
+    },
+    "unknowns": {
+      "default": [],
+      "items": {
+        "type": "string"
+      },
+      "title": "Unknowns",
+      "type": "array"
+    }
+  },
+  "required": [
+    "cve",
+    "rules_version",
+    "rules_digest"
+  ],
+  "title": "HypothesisSet",
+  "type": "object"
+}

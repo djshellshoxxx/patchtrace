@@ -1,0 +1,79 @@
+usage: floss [-h] [-H] [-n MIN_LENGTH]
+             [--no {static,stack,tight,decoded} [{static,stack,tight,decoded} ...]]
+             [--only {static,stack,tight,decoded} [{static,stack,tight,decoded} ...]]
+             [-f {auto,pe,sc32,sc64}] [--language {go,rust,dotnet,none}] [-l]
+             [--functions FUNCTIONS [FUNCTIONS ...]] [--disable-progress]
+             [--signatures SIGNATURES] [-L] [--version] [-j] [-v] [-d] [-q]
+             [--color {auto,always,never}]
+             sample
+
+The FLARE team's open-source tool to extract ALL strings from malware.
+  floss v3.1.1-0-g3cd3ee6 - https://github.com/mandiant/flare-floss/
+
+FLOSS extracts the following string types:
+ 1. static strings:  "regular" ASCII and UTF-16LE strings
+ 2. stack strings:   strings constructed on the stack at run-time
+ 3. tight strings:   special form of stack strings, decoded on the stack
+ 4. decoded strings: strings decoded in a function
+
+Language-specific strings:
+ 1. Go:   strings from binaries written in Go
+ 2. Rust: strings from binaries written in Rust
+
+positional arguments:
+  sample                path to sample to analyze
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -H                    show advanced options and exit
+  -n MIN_LENGTH, --minimum-length MIN_LENGTH
+                        minimum string length
+
+analysis arguments:
+  --no {static,stack,tight,decoded} [{static,stack,tight,decoded} ...]
+                        do not extract specified string type(s)
+  --only {static,stack,tight,decoded} [{static,stack,tight,decoded} ...]
+                        only extract specified string type(s)
+
+advanced arguments:
+  -f {auto,pe,sc32,sc64}, --format {auto,pe,sc32,sc64}
+                        select sample format, auto: (default) detect file type
+                        automatically, pe: Windows PE file, sc32: 32-bit
+                        shellcode, sc64: 64-bit shellcode
+  --language {go,rust,dotnet,none}
+                        use language-specific string extraction, auto-detect
+                        language by default, disable using 'none'
+  -l, --load            load from existing FLOSS results document
+  --functions FUNCTIONS [FUNCTIONS ...]
+                        only analyze the specified functions, hex-encoded like
+                        0x401000, space-separate multiple functions
+  --disable-progress    disable all progress bars
+  --signatures SIGNATURES
+                        path to .sig/.pat file or directory used to identify
+                        library functions, use embedded signatures by default
+  -L, --large-file      allow processing files larger than 16 MB
+  --version             show program's version number and exit
+
+rendering arguments:
+  -j, --json            emit JSON instead of text
+  -v, --verbose         enable verbose results, e.g. including function
+                        offsets (does not affect JSON output)
+
+logging arguments:
+  -d, --debug           enable debugging output on STDERR, specify multiple
+                        times to increase verbosity
+  -q, --quiet           disable all status output on STDOUT except fatal
+                        errors
+  --color {auto,always,never}
+                        enable ANSI color codes in results, default: only
+                        during interactive session
+
+examples:
+  extract all strings from 32-bit shellcode
+    floss -f sc32 shellcode.bin
+
+  only decode strings from the specified functions
+    floss --functions 0x401000 0x401100 suspicious.exe
+
+  extract strings from a binary written in Go (if automatic language identification fails)
+    floss --language go program.exe

@@ -1,0 +1,407 @@
+{
+  "$defs": {
+    "Atom": {
+      "additionalProperties": false,
+      "description": "One piece of pairing evidence from one source.",
+      "properties": {
+        "cardinality": {
+          "enum": [
+            "1:1",
+            "1:N",
+            "N:1",
+            "N:M",
+            "non-exclusive"
+          ],
+          "title": "Cardinality",
+          "type": "string"
+        },
+        "cls": {
+          "enum": [
+            "E-NAME",
+            "E-BODY",
+            "E-CFG",
+            "E-CALL",
+            "E-DATA",
+            "E-DECOMP",
+            "E-LAYOUT",
+            "E-RESID",
+            "E-MANUAL",
+            "E-UNKNOWN"
+          ],
+          "title": "Cls",
+          "type": "string"
+        },
+        "native": {
+          "default": [],
+          "items": {
+            "maxItems": 2,
+            "minItems": 2,
+            "prefixItems": [
+              {
+                "maxLength": 32,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "maxLength": 120,
+                "minLength": 0,
+                "type": "string"
+              }
+            ],
+            "type": "array"
+          },
+          "maxItems": 4,
+          "title": "Native",
+          "type": "array"
+        },
+        "newer_rva": {
+          "anyOf": [
+            {
+              "maximum": 4294967295,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Newer Rva"
+        },
+        "older_rva": {
+          "anyOf": [
+            {
+              "maximum": 4294967295,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Older Rva"
+        },
+        "ref": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Ref"
+        },
+        "source": {
+          "pattern": "^[a-z][a-z0-9-]{1,31}$",
+          "title": "Source",
+          "type": "string"
+        },
+        "step": {
+          "maxLength": 64,
+          "minLength": 1,
+          "title": "Step",
+          "type": "string"
+        },
+        "tier": {
+          "enum": [
+            "M",
+            "A",
+            "B",
+            "C",
+            "W"
+          ],
+          "title": "Tier",
+          "type": "string"
+        }
+      },
+      "required": [
+        "source",
+        "step",
+        "tier",
+        "cardinality",
+        "cls",
+        "older_rva",
+        "newer_rva"
+      ],
+      "title": "Atom",
+      "type": "object"
+    },
+    "Contest": {
+      "additionalProperties": false,
+      "properties": {
+        "against": {
+          "items": {
+            "minimum": 0,
+            "type": "integer"
+          },
+          "minItems": 1,
+          "title": "Against",
+          "type": "array"
+        },
+        "strength": {
+          "enum": [
+            "strong",
+            "weak"
+          ],
+          "title": "Strength",
+          "type": "string"
+        }
+      },
+      "required": [
+        "strength",
+        "against"
+      ],
+      "title": "Contest",
+      "type": "object"
+    },
+    "SideRef": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "enum": [
+            "function",
+            "thunk",
+            "import",
+            "external",
+            "unknown"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 256,
+              "minLength": 0,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "rva": {
+          "maximum": 4294967295,
+          "minimum": 0,
+          "title": "Rva",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "rva",
+        "kind"
+      ],
+      "title": "SideRef",
+      "type": "object"
+    },
+    "Support": {
+      "additionalProperties": false,
+      "properties": {
+        "atom_index": {
+          "minimum": 0,
+          "title": "Atom Index",
+          "type": "integer"
+        },
+        "component": {
+          "pattern": "^K[0-9]{1,2}$",
+          "title": "Component",
+          "type": "string"
+        },
+        "tier": {
+          "enum": [
+            "M",
+            "A",
+            "B",
+            "C",
+            "W"
+          ],
+          "title": "Tier",
+          "type": "string"
+        }
+      },
+      "required": [
+        "component",
+        "tier",
+        "atom_index"
+      ],
+      "title": "Support",
+      "type": "object"
+    }
+  },
+  "$id": "https://patchtrace.local/schemas/unified-match/1/UnifiedMatch.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "atoms": {
+      "items": {
+        "$ref": "#/$defs/Atom"
+      },
+      "maxItems": 64,
+      "title": "Atoms",
+      "type": "array"
+    },
+    "change_classes": {
+      "default": [],
+      "items": {
+        "enum": [
+          "constant",
+          "comparison",
+          "condition",
+          "callee",
+          "call-added",
+          "call-removed",
+          "data-ref",
+          "struct-offset",
+          "cfg",
+          "block-added",
+          "block-removed",
+          "string",
+          "size-only",
+          "refcount-only",
+          "address-only",
+          "register-only",
+          "layout-only",
+          "name-only",
+          "frame",
+          "eh",
+          "unknown"
+        ],
+        "type": "string"
+      },
+      "title": "Change Classes",
+      "type": "array"
+    },
+    "contest": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Contest"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "contract": {
+      "const": "unified-match/1",
+      "default": "unified-match/1",
+      "title": "Contract",
+      "type": "string"
+    },
+    "decision": {
+      "enum": [
+        "matched",
+        "tentative",
+        "candidate",
+        "contested",
+        "ambiguous",
+        "older-only",
+        "newer-only",
+        "unknown"
+      ],
+      "title": "Decision",
+      "type": "string"
+    },
+    "flags": {
+      "default": [],
+      "items": {
+        "enum": [
+          "tiny",
+          "thunk",
+          "import",
+          "hub",
+          "icf",
+          "oversize",
+          "truncated",
+          "ir-missing",
+          "pdata-confirmed",
+          "library",
+          "mask-missing",
+          "mask-unlocated"
+        ],
+        "type": "string"
+      },
+      "title": "Flags",
+      "type": "array"
+    },
+    "ghidriff_match_id": {
+      "anyOf": [
+        {
+          "maxLength": 128,
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Ghidriff Match Id"
+    },
+    "hints": {
+      "default": [],
+      "items": {
+        "maxLength": 200,
+        "minLength": 1,
+        "type": "string"
+      },
+      "maxItems": 32,
+      "title": "Hints",
+      "type": "array"
+    },
+    "materiality": {
+      "default": "unknown",
+      "enum": [
+        "unchanged",
+        "cosmetic",
+        "material",
+        "review",
+        "unknown",
+        "not-applicable"
+      ],
+      "title": "Materiality",
+      "type": "string"
+    },
+    "newer": {
+      "items": {
+        "$ref": "#/$defs/SideRef"
+      },
+      "title": "Newer",
+      "type": "array"
+    },
+    "older": {
+      "items": {
+        "$ref": "#/$defs/SideRef"
+      },
+      "title": "Older",
+      "type": "array"
+    },
+    "row_id": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Row Id",
+      "type": "string"
+    },
+    "support": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/Support"
+      },
+      "title": "Support",
+      "type": "array"
+    }
+  },
+  "required": [
+    "row_id",
+    "older",
+    "newer",
+    "decision",
+    "atoms"
+  ],
+  "title": "UnifiedMatch",
+  "type": "object"
+}

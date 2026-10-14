@@ -1,0 +1,86 @@
+{
+  "contract": "suite/1",
+  "suite": "identity-negatives",
+  "project": "lookalike",
+  "license_spdx": "MIT",
+  "summary": "N6 same CFG, different semantics: ascending/descending and min-heap/max-heap twins built from one template, plus three token-bucket refills that differ only in two constants. v2 flips exactly one comparison operator in one twin; v3 changes exactly one constant in one refill. Control flow graphs stay identical, only a condition code or an immediate changes.",
+  "versions": ["v1", "v2", "v3"],
+  "build": {"kind": "freestanding-dll", "defines": []},
+  "pairs": [
+    {
+      "old": "v1",
+      "new": "v2",
+      "intent": "Exactly one comparison operator flips, in lbound_desc (> becomes >=). The function keeps its control flow graph, block count, size and almost every instruction; a matcher that scores structure sees a perfect match. Meanwhile its twin lbound_asc and the other twin pairs have the same shape and must not be swapped with it.",
+      "truth": [
+        {"function": "lbound_desc", "label": "changed", "kind": "comparison-change", "taxonomy": ["N6"], "notes": "a[mid] > key became a[mid] >= key: the lower-bound search of a descending array turns into an upper-bound search and differs only for keys equal to an element. CFG and block count are unchanged; one condition code differs"},
+        {"function": "isort_asc", "label": "same", "taxonomy": ["N6"], "notes": "text identical; twin of isort_desc: same CFG and instruction shapes, opposite comparison direction, so it is a different function and must not be matched to it"},
+        {"function": "isort_desc", "label": "same", "taxonomy": ["N6"], "notes": "text identical; twin of isort_asc: same CFG and instruction shapes, opposite comparison direction, so it is a different function and must not be matched to it"},
+        {"function": "lbound_asc", "label": "same", "taxonomy": ["N6"], "notes": "text identical; twin of lbound_desc: same CFG and instruction shapes, opposite comparison direction, so it is a different function and must not be matched to it"},
+        {"function": "sorted_asc", "label": "same", "taxonomy": ["N6"], "notes": "text identical; twin of sorted_desc: same CFG and instruction shapes, opposite comparison direction, so it is a different function and must not be matched to it"},
+        {"function": "sorted_desc", "label": "same", "taxonomy": ["N6"], "notes": "text identical; twin of sorted_asc: same CFG and instruction shapes, opposite comparison direction, so it is a different function and must not be matched to it"},
+        {"function": "pq_init", "label": "same", "notes": "text identical"},
+        {"function": "pq_siftup_min", "label": "same", "taxonomy": ["N6"], "notes": "text identical; twin of pq_siftup_max: same CFG and instruction shapes, opposite comparison direction, so it is a different function and must not be matched to it"},
+        {"function": "pq_siftup_max", "label": "same", "taxonomy": ["N6"], "notes": "text identical; twin of pq_siftup_min: same CFG and instruction shapes, opposite comparison direction, so it is a different function and must not be matched to it"},
+        {"function": "pq_siftdown_min", "label": "same", "taxonomy": ["N6"], "notes": "text identical; twin of pq_siftdown_max: same CFG and instruction shapes, opposite comparison direction, so it is a different function and must not be matched to it"},
+        {"function": "pq_siftdown_max", "label": "same", "taxonomy": ["N6"], "notes": "text identical; twin of pq_siftdown_min: same CFG and instruction shapes, opposite comparison direction, so it is a different function and must not be matched to it"},
+        {"function": "pq_push_min", "label": "same", "taxonomy": ["N6"], "notes": "text identical; twin of pq_push_max: same CFG and instruction shapes, opposite comparison direction, so it is a different function and must not be matched to it"},
+        {"function": "pq_push_max", "label": "same", "taxonomy": ["N6"], "notes": "text identical; twin of pq_push_min: same CFG and instruction shapes, opposite comparison direction, so it is a different function and must not be matched to it"},
+        {"function": "pq_pop_min", "label": "same", "taxonomy": ["N6"], "notes": "text identical; twin of pq_pop_max: same CFG and instruction shapes, opposite comparison direction, so it is a different function and must not be matched to it"},
+        {"function": "pq_pop_max", "label": "same", "taxonomy": ["N6"], "notes": "text identical; twin of pq_pop_min: same CFG and instruction shapes, opposite comparison direction, so it is a different function and must not be matched to it"},
+        {"function": "tb_refill_net", "label": "same", "taxonomy": ["N6"], "notes": "text identical; same CFG as the other two refills, differs from them only in the shift and bucket-size constants"},
+        {"function": "tb_refill_disk", "label": "same", "taxonomy": ["N6"], "notes": "text identical; same CFG as the other two refills, differs from them only in the shift and bucket-size constants"},
+        {"function": "tb_refill_api", "label": "same", "taxonomy": ["N6"], "notes": "text identical; same CFG as the other two refills, differs from them only in the shift and bucket-size constants"}
+      ]
+    },
+    {
+      "old": "v2",
+      "new": "v3",
+      "intent": "Exactly one constant changes, in tb_refill_disk (bucket size 64 -> 96). The three refills share one CFG and differ only in immediates, so the changed one is indistinguishable from its two siblings by structure alone, and the earlier lbound_desc change now sits in the unchanged baseline.",
+      "truth": [
+        {"function": "tb_refill_disk", "label": "changed", "kind": "constant-change", "taxonomy": ["N6"], "notes": "bucket size 64 -> 96: the cap immediate and the two derived comparisons change; CFG and block count are unchanged"},
+        {"function": "isort_asc", "label": "same", "taxonomy": ["N6"], "notes": "text identical; twin of isort_desc: same CFG and instruction shapes, opposite comparison direction, so it is a different function and must not be matched to it"},
+        {"function": "isort_desc", "label": "same", "taxonomy": ["N6"], "notes": "text identical; twin of isort_asc: same CFG and instruction shapes, opposite comparison direction, so it is a different function and must not be matched to it"},
+        {"function": "lbound_asc", "label": "same", "taxonomy": ["N6"], "notes": "text identical; twin of lbound_desc: same CFG and instruction shapes, opposite comparison direction, so it is a different function and must not be matched to it"},
+        {"function": "lbound_desc", "label": "same", "taxonomy": ["N6"], "notes": "text identical; twin of lbound_asc: same CFG and instruction shapes, opposite comparison direction, so it is a different function and must not be matched to it"},
+        {"function": "sorted_asc", "label": "same", "taxonomy": ["N6"], "notes": "text identical; twin of sorted_desc: same CFG and instruction shapes, opposite comparison direction, so it is a different function and must not be matched to it"},
+        {"function": "sorted_desc", "label": "same", "taxonomy": ["N6"], "notes": "text identical; twin of sorted_asc: same CFG and instruction shapes, opposite comparison direction, so it is a different function and must not be matched to it"},
+        {"function": "pq_init", "label": "same", "notes": "text identical"},
+        {"function": "pq_siftup_min", "label": "same", "taxonomy": ["N6"], "notes": "text identical; twin of pq_siftup_max: same CFG and instruction shapes, opposite comparison direction, so it is a different function and must not be matched to it"},
+        {"function": "pq_siftup_max", "label": "same", "taxonomy": ["N6"], "notes": "text identical; twin of pq_siftup_min: same CFG and instruction shapes, opposite comparison direction, so it is a different function and must not be matched to it"},
+        {"function": "pq_siftdown_min", "label": "same", "taxonomy": ["N6"], "notes": "text identical; twin of pq_siftdown_max: same CFG and instruction shapes, opposite comparison direction, so it is a different function and must not be matched to it"},
+        {"function": "pq_siftdown_max", "label": "same", "taxonomy": ["N6"], "notes": "text identical; twin of pq_siftdown_min: same CFG and instruction shapes, opposite comparison direction, so it is a different function and must not be matched to it"},
+        {"function": "pq_push_min", "label": "same", "taxonomy": ["N6"], "notes": "text identical; twin of pq_push_max: same CFG and instruction shapes, opposite comparison direction, so it is a different function and must not be matched to it"},
+        {"function": "pq_push_max", "label": "same", "taxonomy": ["N6"], "notes": "text identical; twin of pq_push_min: same CFG and instruction shapes, opposite comparison direction, so it is a different function and must not be matched to it"},
+        {"function": "pq_pop_min", "label": "same", "taxonomy": ["N6"], "notes": "text identical; twin of pq_pop_max: same CFG and instruction shapes, opposite comparison direction, so it is a different function and must not be matched to it"},
+        {"function": "pq_pop_max", "label": "same", "taxonomy": ["N6"], "notes": "text identical; twin of pq_pop_min: same CFG and instruction shapes, opposite comparison direction, so it is a different function and must not be matched to it"},
+        {"function": "tb_refill_net", "label": "same", "taxonomy": ["N6"], "notes": "text identical; same CFG as the other two refills, differs from them only in the shift and bucket-size constants"},
+        {"function": "tb_refill_api", "label": "same", "taxonomy": ["N6"], "notes": "text identical; same CFG as the other two refills, differs from them only in the shift and bucket-size constants"}
+      ]
+    },
+    {
+      "old": "v1",
+      "new": "v3",
+      "intent": "Cumulative: the lbound_desc comparison flip and the tb_refill_disk constant change; sixteen look-alikes stay unchanged.",
+      "truth": [
+        {"function": "lbound_desc", "label": "changed", "kind": "comparison-change", "taxonomy": ["N6"], "notes": "a[mid] > key became a[mid] >= key: the lower-bound search of a descending array turns into an upper-bound search and differs only for keys equal to an element. CFG and block count are unchanged; one condition code differs"},
+        {"function": "tb_refill_disk", "label": "changed", "kind": "constant-change", "taxonomy": ["N6"], "notes": "bucket size 64 -> 96: the cap immediate and the two derived comparisons change; CFG and block count are unchanged"},
+        {"function": "isort_asc", "label": "same", "taxonomy": ["N6"], "notes": "text identical; twin of isort_desc: same CFG and instruction shapes, opposite comparison direction, so it is a different function and must not be matched to it"},
+        {"function": "isort_desc", "label": "same", "taxonomy": ["N6"], "notes": "text identical; twin of isort_asc: same CFG and instruction shapes, opposite comparison direction, so it is a different function and must not be matched to it"},
+        {"function": "lbound_asc", "label": "same", "taxonomy": ["N6"], "notes": "text identical; twin of lbound_desc: same CFG and instruction shapes, opposite comparison direction, so it is a different function and must not be matched to it"},
+        {"function": "sorted_asc", "label": "same", "taxonomy": ["N6"], "notes": "text identical; twin of sorted_desc: same CFG and instruction shapes, opposite comparison direction, so it is a different function and must not be matched to it"},
+        {"function": "sorted_desc", "label": "same", "taxonomy": ["N6"], "notes": "text identical; twin of sorted_asc: same CFG and instruction shapes, opposite comparison direction, so it is a different function and must not be matched to it"},
+        {"function": "pq_init", "label": "same", "notes": "text identical"},
+        {"function": "pq_siftup_min", "label": "same", "taxonomy": ["N6"], "notes": "text identical; twin of pq_siftup_max: same CFG and instruction shapes, opposite comparison direction, so it is a different function and must not be matched to it"},
+        {"function": "pq_siftup_max", "label": "same", "taxonomy": ["N6"], "notes": "text identical; twin of pq_siftup_min: same CFG and instruction shapes, opposite comparison direction, so it is a different function and must not be matched to it"},
+        {"function": "pq_siftdown_min", "label": "same", "taxonomy": ["N6"], "notes": "text identical; twin of pq_siftdown_max: same CFG and instruction shapes, opposite comparison direction, so it is a different function and must not be matched to it"},
+        {"function": "pq_siftdown_max", "label": "same", "taxonomy": ["N6"], "notes": "text identical; twin of pq_siftdown_min: same CFG and instruction shapes, opposite comparison direction, so it is a different function and must not be matched to it"},
+        {"function": "pq_push_min", "label": "same", "taxonomy": ["N6"], "notes": "text identical; twin of pq_push_max: same CFG and instruction shapes, opposite comparison direction, so it is a different function and must not be matched to it"},
+        {"function": "pq_push_max", "label": "same", "taxonomy": ["N6"], "notes": "text identical; twin of pq_push_min: same CFG and instruction shapes, opposite comparison direction, so it is a different function and must not be matched to it"},
+        {"function": "pq_pop_min", "label": "same", "taxonomy": ["N6"], "notes": "text identical; twin of pq_pop_max: same CFG and instruction shapes, opposite comparison direction, so it is a different function and must not be matched to it"},
+        {"function": "pq_pop_max", "label": "same", "taxonomy": ["N6"], "notes": "text identical; twin of pq_pop_min: same CFG and instruction shapes, opposite comparison direction, so it is a different function and must not be matched to it"},
+        {"function": "tb_refill_net", "label": "same", "taxonomy": ["N6"], "notes": "text identical; same CFG as the other two refills, differs from them only in the shift and bucket-size constants"},
+        {"function": "tb_refill_api", "label": "same", "taxonomy": ["N6"], "notes": "text identical; same CFG as the other two refills, differs from them only in the shift and bucket-size constants"}
+      ]
+    }
+  ]
+}

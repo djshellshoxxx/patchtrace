@@ -1,0 +1,380 @@
+{
+  "$defs": {
+    "Counts": {
+      "additionalProperties": false,
+      "description": "One int per Decision and per Materiality value (`-` spelled `_`); both sums equal the row count.",
+      "properties": {
+        "decisions": {
+          "$ref": "#/$defs/DecisionCounts"
+        },
+        "materiality": {
+          "$ref": "#/$defs/MaterialityCounts"
+        }
+      },
+      "required": [
+        "decisions",
+        "materiality"
+      ],
+      "title": "Counts",
+      "type": "object"
+    },
+    "DecisionCounts": {
+      "additionalProperties": false,
+      "properties": {
+        "ambiguous": {
+          "minimum": 0,
+          "title": "Ambiguous",
+          "type": "integer"
+        },
+        "candidate": {
+          "minimum": 0,
+          "title": "Candidate",
+          "type": "integer"
+        },
+        "contested": {
+          "minimum": 0,
+          "title": "Contested",
+          "type": "integer"
+        },
+        "matched": {
+          "minimum": 0,
+          "title": "Matched",
+          "type": "integer"
+        },
+        "newer_only": {
+          "minimum": 0,
+          "title": "Newer Only",
+          "type": "integer"
+        },
+        "older_only": {
+          "minimum": 0,
+          "title": "Older Only",
+          "type": "integer"
+        },
+        "tentative": {
+          "minimum": 0,
+          "title": "Tentative",
+          "type": "integer"
+        },
+        "unknown": {
+          "minimum": 0,
+          "title": "Unknown",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "matched",
+        "tentative",
+        "candidate",
+        "contested",
+        "ambiguous",
+        "older_only",
+        "newer_only",
+        "unknown"
+      ],
+      "title": "DecisionCounts",
+      "type": "object"
+    },
+    "IrRef": {
+      "additionalProperties": false,
+      "properties": {
+        "content_digest": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Content Digest",
+          "type": "string"
+        },
+        "functions": {
+          "minimum": 0,
+          "title": "Functions",
+          "type": "integer"
+        },
+        "ir_key": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Ir Key",
+          "type": "string"
+        },
+        "producer_mode": {
+          "enum": [
+            "gzf",
+            "analyze",
+            "binexport",
+            "rizin"
+          ],
+          "title": "Producer Mode",
+          "type": "string"
+        }
+      },
+      "required": [
+        "ir_key",
+        "content_digest",
+        "producer_mode",
+        "functions"
+      ],
+      "title": "IrRef",
+      "type": "object"
+    },
+    "MaterialityCounts": {
+      "additionalProperties": false,
+      "properties": {
+        "cosmetic": {
+          "minimum": 0,
+          "title": "Cosmetic",
+          "type": "integer"
+        },
+        "material": {
+          "minimum": 0,
+          "title": "Material",
+          "type": "integer"
+        },
+        "not_applicable": {
+          "minimum": 0,
+          "title": "Not Applicable",
+          "type": "integer"
+        },
+        "review": {
+          "minimum": 0,
+          "title": "Review",
+          "type": "integer"
+        },
+        "unchanged": {
+          "minimum": 0,
+          "title": "Unchanged",
+          "type": "integer"
+        },
+        "unknown": {
+          "minimum": 0,
+          "title": "Unknown",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "unchanged",
+        "cosmetic",
+        "material",
+        "review",
+        "unknown",
+        "not_applicable"
+      ],
+      "title": "MaterialityCounts",
+      "type": "object"
+    },
+    "Part": {
+      "additionalProperties": false,
+      "description": "`sha256`, `bytes` and `records` describe the DECOMPRESSED JSON Lines content (02 s9).",
+      "properties": {
+        "bytes": {
+          "minimum": 0,
+          "title": "Bytes",
+          "type": "integer"
+        },
+        "name": {
+          "enum": [
+            "rows.jsonl.gz",
+            "facts.jsonl.gz",
+            "decomp.jsonl.gz"
+          ],
+          "title": "Name",
+          "type": "string"
+        },
+        "records": {
+          "minimum": 0,
+          "title": "Records",
+          "type": "integer"
+        },
+        "sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Sha256",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "sha256",
+        "bytes",
+        "records"
+      ],
+      "title": "Part",
+      "type": "object"
+    },
+    "SourceRef": {
+      "additionalProperties": false,
+      "properties": {
+        "entry_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Entry Id",
+          "type": "string"
+        },
+        "file_sha256": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "File Sha256"
+        },
+        "source": {
+          "pattern": "^[a-z][a-z0-9-]{1,31}$",
+          "title": "Source",
+          "type": "string"
+        },
+        "version": {
+          "maxLength": 64,
+          "minLength": 0,
+          "title": "Version",
+          "type": "string"
+        }
+      },
+      "required": [
+        "source",
+        "entry_id",
+        "file_sha256",
+        "version"
+      ],
+      "title": "SourceRef",
+      "type": "object"
+    }
+  },
+  "$id": "https://patchtrace.local/schemas/unified-result/1/UnifiedResultManifest.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "config_digest": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Config Digest",
+      "type": "string"
+    },
+    "contract": {
+      "const": "unified-result/1",
+      "default": "unified-result/1",
+      "title": "Contract",
+      "type": "string"
+    },
+    "counts": {
+      "$ref": "#/$defs/Counts"
+    },
+    "created_utc": {
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{1,6})?(\\+00:00|Z)$",
+      "title": "Created Utc",
+      "type": "string"
+    },
+    "engine_version": {
+      "const": "ude/1",
+      "title": "Engine Version",
+      "type": "string"
+    },
+    "ghidriff_raw_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Ghidriff Raw Sha256",
+      "type": "string"
+    },
+    "ghidriff_run_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+      "title": "Ghidriff Run Id",
+      "type": "string"
+    },
+    "ir_newer": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/IrRef"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "ir_older": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/IrRef"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "limitations": {
+      "items": {
+        "maxLength": 200,
+        "minLength": 1,
+        "type": "string"
+      },
+      "maxItems": 64,
+      "title": "Limitations",
+      "type": "array"
+    },
+    "manual_digest": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Manual Digest",
+      "type": "string"
+    },
+    "newer_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Newer Sha256",
+      "type": "string"
+    },
+    "older_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Older Sha256",
+      "type": "string"
+    },
+    "orientation": {
+      "const": "older->newer",
+      "title": "Orientation",
+      "type": "string"
+    },
+    "parts": {
+      "items": {
+        "$ref": "#/$defs/Part"
+      },
+      "title": "Parts",
+      "type": "array"
+    },
+    "result_id": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Result Id",
+      "type": "string"
+    },
+    "sources": {
+      "items": {
+        "$ref": "#/$defs/SourceRef"
+      },
+      "maxItems": 64,
+      "title": "Sources",
+      "type": "array"
+    },
+    "status": {
+      "enum": [
+        "complete",
+        "partial"
+      ],
+      "title": "Status",
+      "type": "string"
+    }
+  },
+  "required": [
+    "result_id",
+    "older_sha256",
+    "newer_sha256",
+    "orientation",
+    "ghidriff_run_id",
+    "ghidriff_raw_sha256",
+    "ir_older",
+    "ir_newer",
+    "sources",
+    "manual_digest",
+    "config_digest",
+    "engine_version",
+    "status",
+    "limitations",
+    "counts",
+    "parts",
+    "created_utc"
+  ],
+  "title": "UnifiedResultManifest",
+  "type": "object"
+}

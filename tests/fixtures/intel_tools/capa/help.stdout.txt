@@ -1,0 +1,86 @@
+usage: capa [-h] [--version] [-v] [-vv] [-d] [-q]
+            [--color {auto,always,never}]
+            [-f {auto,pe,dotnet,elf,sc32,sc64,cape,drakvuf,vmray,freeze,binexport2,binja_database}]
+            [-b {auto,vivisect,ida,pefile,binja,dotnet,binexport2,ghidra,freeze,cape,drakvuf,vmray}]
+            [--restrict-to-functions RESTRICT_TO_FUNCTIONS]
+            [--restrict-to-processes RESTRICT_TO_PROCESSES]
+            [--os {auto,linux,macos,windows}] [-r RULES] [-s SIGNATURES]
+            [-t TAG] [-j]
+            input_file
+
+The FLARE team's open-source tool to identify capabilities in executable files.
+
+positional arguments:
+  input_file            path to file to analyze
+
+options:
+  -h, --help            show this help message and exit
+  --version             show program's version number and exit
+  -v, --verbose         enable verbose result document (no effect with --json)
+  -vv, --vverbose       enable very verbose result document (no effect with
+                        --json)
+  -d, --debug           enable debugging output on STDERR
+  -q, --quiet           disable all output but errors
+  --color {auto,always,never}
+                        enable ANSI color codes in results, default: only
+                        during interactive session
+  -f {auto,pe,dotnet,elf,sc32,sc64,cape,drakvuf,vmray,freeze,binexport2,binja_database}, --format {auto,pe,dotnet,elf,sc32,sc64,cape,drakvuf,vmray,freeze,binexport2,binja_database}
+                        select input format, auto: (default) detect file type
+                        automatically, pe: Windows PE file, dotnet: .NET PE
+                        file, elf: Executable and Linkable Format, sc32:
+                        32-bit shellcode, sc64: 64-bit shellcode, cape: CAPE
+                        sandbox report, drakvuf: DRAKVUF sandbox report,
+                        vmray: VMRay sandbox report, freeze: features
+                        previously frozen by capa, binexport2: BinExport2,
+                        binja_database: Binary Ninja Database
+  -b {auto,vivisect,ida,pefile,binja,dotnet,binexport2,ghidra,freeze,cape,drakvuf,vmray}, --backend {auto,vivisect,ida,pefile,binja,dotnet,binexport2,ghidra,freeze,cape,drakvuf,vmray}
+                        select backend, auto: (default) detect appropriate
+                        backend automatically, vivisect: vivisect, ida: IDA
+                        via idalib, pefile: pefile (file features only),
+                        binja: Binary Ninja, dotnet: .NET, binexport2:
+                        BinExport2, ghidra: Ghidra, freeze: capa freeze, cape:
+                        CAPE, drakvuf: DRAKVUF, vmray: VMRay
+  --restrict-to-functions RESTRICT_TO_FUNCTIONS
+                        provide a list of comma-separated function virtual
+                        addresses to analyze (static analysis).
+  --restrict-to-processes RESTRICT_TO_PROCESSES
+                        provide a list of comma-separated process IDs to
+                        analyze (dynamic analysis).
+  --os {auto,linux,macos,windows}
+                        select sample OS: auto (detect OS automatically -
+                        default), linux, macos, windows
+  -r RULES, --rules RULES
+                        path to rule file or directory, use embedded rules by
+                        default
+  -s SIGNATURES, --signatures SIGNATURES
+                        path to .sig/.pat file or directory used to identify
+                        library functions, use embedded signatures by default
+  -t TAG, --tag TAG     filter on rule meta field values
+  -j, --json            emit JSON instead of text
+
+By default, capa uses a default set of embedded rules.
+You can see the rule set here:
+  https://github.com/mandiant/capa-rules
+
+You can load capa JSON output to capa Explorer Web:
+  https://github.com/mandiant/capa/explorer
+
+To provide your own rule set, use the `-r` flag:
+  capa  --rules /path/to/rules  suspicious.exe
+  capa  -r      /path/to/rules  suspicious.exe
+
+examples:
+  identify capabilities in a binary
+    capa suspicious.exe
+
+  identify capabilities in 32-bit shellcode, see `-f` for all supported formats
+    capa -f sc32 shellcode.bin
+
+  report match locations
+    capa -v suspicious.exe
+
+  report all feature match details
+    capa -vv suspicious.exe
+
+  filter rules by meta fields, e.g. rule name or namespace
+    capa -t "create TCP socket" suspicious.exe

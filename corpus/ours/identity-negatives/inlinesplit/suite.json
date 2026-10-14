@@ -1,0 +1,102 @@
+{
+  "contract": "suite/1",
+  "suite": "identity-negatives",
+  "project": "inlinesplit",
+  "license_spdx": "MIT",
+  "summary": "N4 split, merge and inline: a link-layer packet decoder refactored in three steps. v2 splits the option walk out of pk_decode, v3 merges two small header checks into one function, v4 folds a single-use helper into pk_decode by hand. A static inline helper that the compiler removes on its own is kept throughout as the contrast.",
+  "versions": ["v1", "v2", "v3", "v4"],
+  "build": {"kind": "freestanding-dll", "defines": []},
+  "pairs": [
+    {
+      "old": "v1",
+      "new": "v2",
+      "intent": "Extract-function refactor: pk_decode keeps its name but its option-walking loop moves into the new pk_decode_options. The old function is now spread over two functions, and the new small function is a tempting but wrong partner for any other loop.",
+      "truth": [
+        {"from": "pk_decode", "to": ["pk_decode", "pk_decode_options"], "label": "split", "taxonomy": ["N4"], "notes": "the option walk moves from pk_decode into the new pk_decode_options; pk_decode keeps its name and the pair together behaves exactly like the old pk_decode"},
+        {"function": "pk_min_u32", "label": "same", "taxonomy": ["N4"], "notes": "static inline, text identical; the compiler folds it into pk_decode and pk_peek_length on its own, so it has no standalone symbol in the image"},
+        {"function": "pk_check_version", "label": "same", "taxonomy": ["N4"], "notes": "text identical; small helper called from pk_decode"},
+        {"function": "pk_check_flags", "label": "same", "taxonomy": ["N4"], "notes": "text identical; small helper called from pk_decode"},
+        {"function": "pk_parse_flags", "label": "same", "taxonomy": ["N4"], "notes": "text identical; small helper called from pk_decode"},
+        {"function": "pk_peek_length", "label": "same", "notes": "text identical"},
+        {"function": "pk_encode_header", "label": "same", "notes": "text identical"},
+        {"function": "pk_opt_find", "label": "same", "notes": "text identical"},
+        {"function": "pk_seq_next", "label": "same", "notes": "text identical"},
+        {"function": "pk_seq_before", "label": "same", "notes": "text identical"},
+        {"function": "pk_be16", "label": "same", "notes": "text identical"},
+        {"function": "pk_be32", "label": "same", "notes": "text identical"},
+        {"function": "pk_put_be16", "label": "same", "notes": "text identical"},
+        {"function": "pk_put_be32", "label": "same", "notes": "text identical"},
+        {"function": "pk_crc16", "label": "same", "notes": "text identical"},
+        {"function": "pk_reset", "label": "same", "notes": "text identical"}
+      ]
+    },
+    {
+      "old": "v2",
+      "new": "v3",
+      "intent": "Two tiny functions (pk_check_version, pk_check_flags) disappear and one function with their combined logic appears; the only caller changes from two calls to one. Matching either old function to the new one is half right, and the caller looks changed although behaviour is identical.",
+      "truth": [
+        {"from": ["pk_check_version", "pk_check_flags"], "to": "pk_check_header_bits", "label": "merged", "taxonomy": ["N4"], "notes": "both checks now live in one function and run in the same order, so every input gets the same result"},
+        {"function": "pk_decode", "label": "cosmetic", "taxonomy": ["N4"], "notes": "two check calls replaced by one call to pk_check_header_bits; behaviour identical, but the merged checks fold differently, so the compiled code is not byte-identical"},
+        {"function": "pk_min_u32", "label": "same", "taxonomy": ["N4"], "notes": "static inline, text identical; the compiler folds it into pk_decode and pk_peek_length on its own, so it has no standalone symbol in the image"},
+        {"function": "pk_parse_flags", "label": "same", "taxonomy": ["N4"], "notes": "text identical; small helper called from pk_decode"},
+        {"function": "pk_decode_options", "label": "same", "taxonomy": ["N4"], "notes": "text identical"},
+        {"function": "pk_peek_length", "label": "same", "notes": "text identical"},
+        {"function": "pk_encode_header", "label": "same", "notes": "text identical"},
+        {"function": "pk_opt_find", "label": "same", "notes": "text identical"},
+        {"function": "pk_seq_next", "label": "same", "notes": "text identical"},
+        {"function": "pk_seq_before", "label": "same", "notes": "text identical"},
+        {"function": "pk_be16", "label": "same", "notes": "text identical"},
+        {"function": "pk_be32", "label": "same", "notes": "text identical"},
+        {"function": "pk_put_be16", "label": "same", "notes": "text identical"},
+        {"function": "pk_put_be32", "label": "same", "notes": "text identical"},
+        {"function": "pk_crc16", "label": "same", "notes": "text identical"},
+        {"function": "pk_reset", "label": "same", "notes": "text identical"}
+      ]
+    },
+    {
+      "old": "v3",
+      "new": "v4",
+      "intent": "A single-use helper is folded into its only caller by hand: the helper vanishes and pk_decode gains its body. At -O2 the compiler had already inlined the helper, so pk_decode compiles to the same machine code as before, while the helper loses its standalone symbol.",
+      "truth": [
+        {"function": "pk_parse_flags", "into": "pk_decode", "label": "inlined", "taxonomy": ["N4"], "notes": "the four flag assignments are pasted into pk_decode by hand and the helper is deleted; unlike pk_min_u32 this is a source-level fold, not a compiler decision"},
+        {"function": "pk_decode", "label": "cosmetic", "taxonomy": ["N4"], "notes": "the body of pk_parse_flags is written out in place of the call; behaviour identical (the compiler had already inlined the helper, so the machine code does not change either)"},
+        {"function": "pk_min_u32", "label": "same", "taxonomy": ["N4"], "notes": "static inline, text identical; the compiler folds it into pk_decode and pk_peek_length on its own, so it has no standalone symbol in the image"},
+        {"function": "pk_check_header_bits", "label": "same", "taxonomy": ["N4"], "notes": "text identical"},
+        {"function": "pk_decode_options", "label": "same", "taxonomy": ["N4"], "notes": "text identical"},
+        {"function": "pk_peek_length", "label": "same", "notes": "text identical"},
+        {"function": "pk_encode_header", "label": "same", "notes": "text identical"},
+        {"function": "pk_opt_find", "label": "same", "notes": "text identical"},
+        {"function": "pk_seq_next", "label": "same", "notes": "text identical"},
+        {"function": "pk_seq_before", "label": "same", "notes": "text identical"},
+        {"function": "pk_be16", "label": "same", "notes": "text identical"},
+        {"function": "pk_be32", "label": "same", "notes": "text identical"},
+        {"function": "pk_put_be16", "label": "same", "notes": "text identical"},
+        {"function": "pk_put_be32", "label": "same", "notes": "text identical"},
+        {"function": "pk_crc16", "label": "same", "notes": "text identical"},
+        {"function": "pk_reset", "label": "same", "notes": "text identical"}
+      ]
+    },
+    {
+      "old": "v1",
+      "new": "v4",
+      "intent": "Cumulative: pk_decode is split (option walk extracted), the two header checks are merged and the flag helper is folded in by hand. pk_decode ends up with a different internal structure but the same name.",
+      "truth": [
+        {"from": "pk_decode", "to": ["pk_decode", "pk_decode_options"], "label": "split", "taxonomy": ["N4"], "notes": "the option walk moves from pk_decode into the new pk_decode_options; pk_decode keeps its name and the pair together behaves exactly like the old pk_decode"},
+        {"from": ["pk_check_version", "pk_check_flags"], "to": "pk_check_header_bits", "label": "merged", "taxonomy": ["N4"], "notes": "both checks now live in one function and run in the same order, so every input gets the same result"},
+        {"function": "pk_parse_flags", "into": "pk_decode", "label": "inlined", "taxonomy": ["N4"], "notes": "the four flag assignments are pasted into pk_decode by hand and the helper is deleted; unlike pk_min_u32 this is a source-level fold, not a compiler decision"},
+        {"function": "pk_min_u32", "label": "same", "taxonomy": ["N4"], "notes": "static inline, text identical; the compiler folds it into pk_decode and pk_peek_length on its own, so it has no standalone symbol in the image"},
+        {"function": "pk_peek_length", "label": "same", "notes": "text identical"},
+        {"function": "pk_encode_header", "label": "same", "notes": "text identical"},
+        {"function": "pk_opt_find", "label": "same", "notes": "text identical"},
+        {"function": "pk_seq_next", "label": "same", "notes": "text identical"},
+        {"function": "pk_seq_before", "label": "same", "notes": "text identical"},
+        {"function": "pk_be16", "label": "same", "notes": "text identical"},
+        {"function": "pk_be32", "label": "same", "notes": "text identical"},
+        {"function": "pk_put_be16", "label": "same", "notes": "text identical"},
+        {"function": "pk_put_be32", "label": "same", "notes": "text identical"},
+        {"function": "pk_crc16", "label": "same", "notes": "text identical"},
+        {"function": "pk_reset", "label": "same", "notes": "text identical"}
+      ]
+    }
+  ]
+}

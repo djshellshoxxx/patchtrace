@@ -68,7 +68,7 @@ class DiskPairReader:
         if not target.is_relative_to(root) or not (target / PROJECT_FILE).is_file():
             return PairSnapshot('missing', 'pair project is missing')
         try:
-            service = ProjectService.open(target)
+            service = ProjectService.open(target, maintenance=False)
         except ValueError as exc:
             if 'locked' in str(exc).lower():
                 return PairSnapshot('locked', 'locked by another PatchTrace window')

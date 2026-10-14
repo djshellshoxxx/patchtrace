@@ -1,0 +1,128 @@
+{
+  "$defs": {
+    "Anchor": {
+      "additionalProperties": false,
+      "properties": {
+        "anchor_id": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Anchor Id",
+          "type": "string"
+        },
+        "assessment": {
+          "const": "search-hint",
+          "default": "search-hint",
+          "title": "Assessment",
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "module",
+            "api",
+            "string",
+            "feature",
+            "component",
+            "pdb"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "label": {
+          "maxLength": 300,
+          "minLength": 1,
+          "title": "Label",
+          "type": "string"
+        },
+        "pointer": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "pattern": "^(/([^/~]|~[01])*)*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Pointer"
+        },
+        "quality": {
+          "enum": [
+            "explicit",
+            "derived",
+            "rule",
+            "verified-bytes"
+          ],
+          "title": "Quality",
+          "type": "string"
+        },
+        "source": {
+          "enum": [
+            "csaf-title",
+            "csaf-note",
+            "csaf-product",
+            "csaf-remediation",
+            "hypothesis-rule",
+            "artifact-identity"
+          ],
+          "title": "Source",
+          "type": "string"
+        },
+        "value": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Value",
+          "type": "string"
+        }
+      },
+      "required": [
+        "anchor_id",
+        "kind",
+        "value",
+        "source",
+        "quality",
+        "label"
+      ],
+      "title": "Anchor",
+      "type": "object"
+    }
+  },
+  "$id": "https://patchtrace.local/schemas/intelligence/1/AnchorSet.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "anchors": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/Anchor"
+      },
+      "title": "Anchors",
+      "type": "array"
+    },
+    "contract": {
+      "const": "intelligence/1",
+      "default": "intelligence/1",
+      "title": "Contract",
+      "type": "string"
+    },
+    "cve": {
+      "maxLength": 24,
+      "pattern": "^CVE-[0-9]{4}-[0-9]{4,19}$",
+      "title": "Cve",
+      "type": "string"
+    },
+    "limitations": {
+      "default": [],
+      "items": {
+        "type": "string"
+      },
+      "title": "Limitations",
+      "type": "array"
+    }
+  },
+  "required": [
+    "cve"
+  ],
+  "title": "AnchorSet",
+  "type": "object"
+}

@@ -1,0 +1,142 @@
+{
+  "$defs": {
+    "IrExtractProducer": {
+      "additionalProperties": false,
+      "properties": {
+        "analysis_options_digest": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Analysis Options Digest",
+          "type": "string"
+        },
+        "analyzed": {
+          "title": "Analyzed",
+          "type": "boolean"
+        },
+        "ghidra": {
+          "maxLength": 64,
+          "minLength": 0,
+          "title": "Ghidra",
+          "type": "string"
+        },
+        "java": {
+          "maxLength": 64,
+          "minLength": 0,
+          "title": "Java",
+          "type": "string"
+        },
+        "mode": {
+          "enum": [
+            "gzf",
+            "analyze"
+          ],
+          "title": "Mode",
+          "type": "string"
+        },
+        "pyghidra": {
+          "maxLength": 64,
+          "minLength": 0,
+          "title": "Pyghidra",
+          "type": "string"
+        },
+        "python": {
+          "maxLength": 64,
+          "minLength": 0,
+          "title": "Python",
+          "type": "string"
+        },
+        "script_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Script Sha256",
+          "type": "string"
+        },
+        "symbols": {
+          "enum": [
+            "primary",
+            "none"
+          ],
+          "title": "Symbols",
+          "type": "string"
+        }
+      },
+      "required": [
+        "mode",
+        "ghidra",
+        "pyghidra",
+        "java",
+        "python",
+        "script_sha256",
+        "analysis_options_digest",
+        "analyzed",
+        "symbols"
+      ],
+      "title": "IrExtractProducer",
+      "type": "object"
+    }
+  },
+  "$id": "https://patchtrace.local/schemas/ir-extract/1/IrExtractHeader.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "First line of `ir.jsonl` (UNTRUSTED); every line carries `type` = header | fn | footer.",
+  "properties": {
+    "artifact_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Artifact Sha256",
+      "type": "string"
+    },
+    "compiler": {
+      "maxLength": 64,
+      "minLength": 0,
+      "title": "Compiler",
+      "type": "string"
+    },
+    "contract": {
+      "const": "ir-extract/1",
+      "title": "Contract",
+      "type": "string"
+    },
+    "image_base": {
+      "maximum": 18446744073709551615,
+      "minimum": 0,
+      "title": "Image Base",
+      "type": "integer"
+    },
+    "language": {
+      "maxLength": 64,
+      "minLength": 1,
+      "title": "Language",
+      "type": "string"
+    },
+    "producer": {
+      "$ref": "#/$defs/IrExtractProducer"
+    },
+    "program_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Program Sha256",
+      "type": "string"
+    },
+    "size_of_image": {
+      "maximum": 4294967295,
+      "minimum": 1,
+      "title": "Size Of Image",
+      "type": "integer"
+    },
+    "type": {
+      "const": "header",
+      "title": "Type",
+      "type": "string"
+    }
+  },
+  "required": [
+    "type",
+    "contract",
+    "artifact_sha256",
+    "program_sha256",
+    "image_base",
+    "size_of_image",
+    "language",
+    "compiler",
+    "producer"
+  ],
+  "title": "IrExtractHeader",
+  "type": "object"
+}

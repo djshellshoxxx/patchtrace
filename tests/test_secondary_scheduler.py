@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import json
 import os
+import shutil
 import sys
 import threading
 import time
@@ -220,3 +221,25 @@ def test_on_outcome_runs_on_caller_thread_in_completion_order(tmp_path):
     out = go(tmp_path, reg, ['rz-diff', 'bindiff'], on_outcome=lambda o: threads.append(threading.current_thread()))
     assert [o.run.engine for o in out] == ['rz-diff', 'bindiff']  # return order stays plan order
     assert threads == [threading.current_thread()] * 2
+
+
+def test_workdir_cleanup_failure_does_not_discard_a_finished_run(tmp_path):
+    """Windows can refuse to delete a just-written file (scanner, lingering handle): the finished run stands."""
+    leftovers = []
+
+    class Sabotaged(PyEngine):
+        def run(self, cap, job):
+            raw = super().run(cap, job)
+            shutil.rmtree(job.workdir)
+            job.workdir.write_text('x')  # TemporaryDirectory cleanup now fails (NotADirectoryError)
+            leftovers.append(job.workdir)
+            return raw
+
+    events = []
+    try:
+        [out] = go(tmp_path, {'rz-diff': Sabotaged(f'print({GOOD!r})')}, ['rz-diff'], on_event=events.append)
+    finally:
+        for path in leftovers:
+            path.unlink(missing_ok=True)
+    assert (out.run.status, out.run.error_code) == ('ok', None) and out.match_set is not None
+    assert [e.phase for e in events] == ['started', 'finished']

@@ -8,7 +8,7 @@ import tempfile
 from dataclasses import dataclass
 from pathlib import Path
 
-from .ingestion import inspect_artifact, safe_path
+from .ingestion import display_text, inspect_artifact, safe_path
 from .models import AnalysisRun, AnalystAnnotation, ComparisonProject, FunctionMatch, InterpretationRun
 from .normalization import normalize_ghidriff, verify_diff_identity
 from .persistence import ProjectStore, strict_json
@@ -38,26 +38,36 @@ class ProjectService:
         store = ProjectStore(root, create=True)
         try:
             artifacts = [inspect_artifact(older, 'older', root), inspect_artifact(newer, 'newer', root)]
-            project = ComparisonProject(name=name.strip() or 'Untitled comparison', artifacts=artifacts)
+            project = ComparisonProject(name=display_text(name.strip()) or 'Untitled comparison',
+                                        artifacts=artifacts)
             if artifacts[0].sha256 == artifacts[1].sha256:
                 project.runs.append(AnalysisRun(status='identical', backend='none', backend_version='none',
                                                 settings={'reason': 'Input SHA-256 hashes are identical'}))
             project = store.save(project)
             return cls(root, project, store)
-        except Exception:
+        except BaseException:  # Ctrl+C and SystemExit must not leave a snapshot-less database behind either
             store.close()
-            # No snapshot was committed; permit retry without presenting a corrupt project.
-            (root / 'project.sqlite3').unlink(missing_ok=True)
+            # No snapshot was committed; permit retry without presenting a corrupt project. A leftover
+            # that cannot be removed now (antivirus hold, kill) is recycled by the next create().
+            try:
+                (root / 'project.sqlite3').unlink(missing_ok=True)
+            except OSError:
+                pass
             raise
 
     @classmethod
-    def open(cls, root: Path) -> ProjectService:
+    def open(cls, root: Path, *, maintenance: bool = True) -> ProjectService:
+        """`maintenance=False` for read-only readers (series): skips the H8 legacy raw cleanup."""
         store = ProjectStore(root)
         try:
-            return cls(store.root, store.load(), store)
+            service = cls(store.root, store.load(), store)
         except Exception:
             store.close()
             raise
+        if maintenance:  # SPEC-07h H8: journalled, verified, best effort; never raises
+            from .raw_cleanup import cleanup_legacy_raw_duplicates
+            cleanup_legacy_raw_duplicates(service.root, service.project)
+        return service
 
     @classmethod
     def sample(cls, root: Path) -> ProjectService:
@@ -192,7 +202,7 @@ class ProjectService:
             raise ValueError('PT-SCHEMA: import was not prepared by this project service')
         owned_run, owned_matches = owned[1], owned[2]
         if prepared.project_id != self.project.id or prepared.revision != self.project.revision:
-            self._prepared.pop(prepared.run.id, None)
+            self.discard_import(prepared)  # also removes the staged raw copy, which nothing else would
             raise ValueError('PT-SCHEMA: project changed during import; prepare the import again')
         path = safe_path(self.root, owned_run.raw_path)
         if self.store.file_fingerprint(path) != prepared.fingerprint:

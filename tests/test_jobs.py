@@ -598,3 +598,66 @@ def test_merged_default_is_unchanged(tmp_path):
     result = run_process([str(Path(sys.executable).resolve()), '-c', code], cwd=tmp_path, env=dict(os.environ),
                          cancel=threading.Event(), timeout_seconds=30)
     assert sorted(result.log_tail) == ['e', 'o'] and result.stderr_tail == ''
+
+
+def _heartbeat_child(beat: Path) -> str:
+    """A child that appends to `beat` every 50 ms for 20 s: self-limiting even if containment regresses."""
+    return (f'import time\nf=open({str(beat)!r},"ab",buffering=0)\n'
+            'for _ in range(400):\n    f.write(b"x")\n    time.sleep(0.05)\n')
+
+
+def _stops_growing(beat: Path) -> bool:
+    time.sleep(1.0)  # a surviving child starts, imports and appends within this window
+    size = beat.stat().st_size if beat.exists() else 0
+    time.sleep(0.5)
+    return (beat.stat().st_size if beat.exists() else 0) == size
+
+
+def test_failure_between_spawn_and_supervision_still_kills_the_child(tmp_path, monkeypatch):
+    """Thread exhaustion after the spawn must not orphan the child tree (audit PS-1)."""
+    beat = tmp_path / 'beat'
+    real_start = threading.Thread.start
+
+    def start(self):
+        if self.name == 'patchtrace-log':
+            raise RuntimeError("can't start new thread")
+        real_start(self)
+
+    monkeypatch.setattr(threading.Thread, 'start', start)
+    with pytest.raises(RuntimeError, match="can't start new thread"):
+        execute(tmp_path, _heartbeat_child(beat), timeout=30)
+    monkeypatch.undo()
+    assert _stops_growing(beat), 'the child kept running after run_process raised'
+
+
+@pytest.mark.parametrize('limit', [1 << 62, 1 << 64, 1 << 80])
+def test_memory_limit_outside_the_rlimit_range_is_rejected_before_spawn(tmp_path, limit):
+    """prlimit() raises OverflowError (not OSError) for huge values, after the child is already running."""
+    marker = tmp_path / 'started'
+    with pytest.raises(ValueError, match='memory limit'):
+        execute(tmp_path, f'import pathlib;pathlib.Path({str(marker)!r}).write_text("x")', memory_limit_bytes=limit)
+    time.sleep(0.5)
+    assert not marker.exists()
+
+
+@pytest.mark.skipif(os.name == 'nt', reason='SIGCHLD is POSIX')
+def test_ignored_sigchld_fails_closed_instead_of_reporting_exit_zero(tmp_path):
+    """With SIGCHLD ignored the kernel reaps the child itself and Popen reports every exit status as 0 (PS-5)."""
+    import signal
+    marker = tmp_path / 'started'
+    previous = signal.signal(signal.SIGCHLD, signal.SIG_IGN)
+    try:
+        with pytest.raises(OSError, match='SIGCHLD'):
+            execute(tmp_path, f'import pathlib;pathlib.Path({str(marker)!r}).write_text("x")')
+    finally:
+        signal.signal(signal.SIGCHLD, previous)
+    time.sleep(0.3)
+    assert not marker.exists()
+
+
+@pytest.mark.parametrize('bound', [{'timeout': float('nan')}, {'log_limit': 10.5}, {'stderr_limit': 2.5},
+                                   {'log_limit': True}])
+def test_nan_timeout_and_non_integer_limits_are_rejected(tmp_path, bound):
+    """NaN never compares >= elapsed (no deadline); a float limit kills the reader thread (the pipe stops draining)."""
+    with pytest.raises(ValueError, match='PT-BACKEND'):
+        execute(tmp_path, 'pass', **bound)

@@ -1,0 +1,594 @@
+{
+  "$defs": {
+    "CweRef": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "pattern": "^CWE-[1-9][0-9]{0,5}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "pointer": {
+          "maxLength": 4096,
+          "pattern": "^(/([^/~]|~[01])*)*$",
+          "title": "Pointer",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "pointer"
+      ],
+      "title": "CweRef",
+      "type": "object"
+    },
+    "Flag": {
+      "additionalProperties": false,
+      "properties": {
+        "date": {
+          "anyOf": [
+            {
+              "maxLength": 40,
+              "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]{1,9})?(Z|[+-][0-9]{2}:[0-9]{2})$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Date"
+        },
+        "group_ids": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Group Ids",
+          "type": "array"
+        },
+        "label": {
+          "enum": [
+            "component_not_present",
+            "inline_mitigations_already_exist",
+            "vulnerable_code_cannot_be_controlled_by_adversary",
+            "vulnerable_code_not_in_execute_path",
+            "vulnerable_code_not_present"
+          ],
+          "title": "Label",
+          "type": "string"
+        },
+        "pointer": {
+          "maxLength": 4096,
+          "pattern": "^(/([^/~]|~[01])*)*$",
+          "title": "Pointer",
+          "type": "string"
+        },
+        "product_ids": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Product Ids",
+          "type": "array"
+        },
+        "via_groups": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Via Groups",
+          "type": "array"
+        }
+      },
+      "required": [
+        "pointer",
+        "label"
+      ],
+      "title": "Flag",
+      "type": "object"
+    },
+    "Note": {
+      "additionalProperties": false,
+      "properties": {
+        "audience": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Audience"
+        },
+        "category": {
+          "enum": [
+            "description",
+            "details",
+            "faq",
+            "general",
+            "legal_disclaimer",
+            "other",
+            "summary"
+          ],
+          "title": "Category",
+          "type": "string"
+        },
+        "pointer": {
+          "maxLength": 4096,
+          "pattern": "^(/([^/~]|~[01])*)*$",
+          "title": "Pointer",
+          "type": "string"
+        },
+        "text": {
+          "maxLength": 1048576,
+          "title": "Text",
+          "type": "string"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Title"
+        }
+      },
+      "required": [
+        "category",
+        "text",
+        "pointer"
+      ],
+      "title": "Note",
+      "type": "object"
+    },
+    "Remediation": {
+      "additionalProperties": false,
+      "properties": {
+        "category": {
+          "enum": [
+            "mitigation",
+            "no_fix_planned",
+            "none_available",
+            "vendor_fix",
+            "workaround"
+          ],
+          "title": "Category",
+          "type": "string"
+        },
+        "date": {
+          "anyOf": [
+            {
+              "maxLength": 40,
+              "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]{1,9})?(Z|[+-][0-9]{2}:[0-9]{2})$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Date"
+        },
+        "details": {
+          "maxLength": 1048576,
+          "title": "Details",
+          "type": "string"
+        },
+        "group_ids": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Group Ids",
+          "type": "array"
+        },
+        "pointer": {
+          "maxLength": 4096,
+          "pattern": "^(/([^/~]|~[01])*)*$",
+          "title": "Pointer",
+          "type": "string"
+        },
+        "product_ids": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Product Ids",
+          "type": "array"
+        },
+        "restart_required": {
+          "anyOf": [
+            {
+              "maxLength": 50,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Restart Required"
+        },
+        "url": {
+          "anyOf": [
+            {
+              "maxLength": 20000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Url"
+        },
+        "via_groups": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Via Groups",
+          "type": "array"
+        }
+      },
+      "required": [
+        "pointer",
+        "category",
+        "details"
+      ],
+      "title": "Remediation",
+      "type": "object"
+    },
+    "Score": {
+      "additionalProperties": false,
+      "description": "Severity context only (never a vulnerability probability). The score is kept as a decimal string.",
+      "properties": {
+        "base_score": {
+          "pattern": "^(10(\\.0)?|[0-9](\\.[0-9])?)$",
+          "title": "Base Score",
+          "type": "string"
+        },
+        "base_severity": {
+          "anyOf": [
+            {
+              "maxLength": 50,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Base Severity"
+        },
+        "cvss_version": {
+          "enum": [
+            "2.0",
+            "3.0",
+            "3.1"
+          ],
+          "title": "Cvss Version",
+          "type": "string"
+        },
+        "pointer": {
+          "maxLength": 4096,
+          "pattern": "^(/([^/~]|~[01])*)*$",
+          "title": "Pointer",
+          "type": "string"
+        },
+        "products": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Products",
+          "type": "array"
+        },
+        "vector": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Vector"
+        }
+      },
+      "required": [
+        "cvss_version",
+        "base_score",
+        "products",
+        "pointer"
+      ],
+      "title": "Score",
+      "type": "object"
+    },
+    "StatusClaim": {
+      "additionalProperties": false,
+      "properties": {
+        "pointer": {
+          "maxLength": 4096,
+          "pattern": "^(/([^/~]|~[01])*)*$",
+          "title": "Pointer",
+          "type": "string"
+        },
+        "product_id": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Product Id",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "first_affected",
+            "first_fixed",
+            "fixed",
+            "known_affected",
+            "known_not_affected",
+            "last_affected",
+            "recommended",
+            "under_investigation"
+          ],
+          "title": "Status",
+          "type": "string"
+        }
+      },
+      "required": [
+        "product_id",
+        "status",
+        "pointer"
+      ],
+      "title": "StatusClaim",
+      "type": "object"
+    },
+    "Threat": {
+      "additionalProperties": false,
+      "properties": {
+        "category": {
+          "enum": [
+            "exploit_status",
+            "impact",
+            "target_set"
+          ],
+          "title": "Category",
+          "type": "string"
+        },
+        "date": {
+          "anyOf": [
+            {
+              "maxLength": 40,
+              "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]{1,9})?(Z|[+-][0-9]{2}:[0-9]{2})$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Date"
+        },
+        "details": {
+          "maxLength": 1048576,
+          "title": "Details",
+          "type": "string"
+        },
+        "group_ids": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Group Ids",
+          "type": "array"
+        },
+        "pointer": {
+          "maxLength": 4096,
+          "pattern": "^(/([^/~]|~[01])*)*$",
+          "title": "Pointer",
+          "type": "string"
+        },
+        "product_ids": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Product Ids",
+          "type": "array"
+        },
+        "via_groups": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Via Groups",
+          "type": "array"
+        }
+      },
+      "required": [
+        "pointer",
+        "category",
+        "details"
+      ],
+      "title": "Threat",
+      "type": "object"
+    },
+    "VulnerabilityId": {
+      "additionalProperties": false,
+      "properties": {
+        "pointer": {
+          "maxLength": 4096,
+          "pattern": "^(/([^/~]|~[01])*)*$",
+          "title": "Pointer",
+          "type": "string"
+        },
+        "system_name": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "System Name",
+          "type": "string"
+        },
+        "text": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "system_name",
+        "text",
+        "pointer"
+      ],
+      "title": "VulnerabilityId",
+      "type": "object"
+    }
+  },
+  "$id": "https://patchtrace.local/schemas/intelligence/1/CVEFact.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "One ``/vulnerabilities[]`` item exactly as the vendor states it (an advisory claim, never verified).",
+  "properties": {
+    "assessment": {
+      "const": "advisory-claim",
+      "default": "advisory-claim",
+      "title": "Assessment",
+      "type": "string"
+    },
+    "contract": {
+      "const": "intelligence/1",
+      "default": "intelligence/1",
+      "title": "Contract",
+      "type": "string"
+    },
+    "cve": {
+      "anyOf": [
+        {
+          "maxLength": 24,
+          "pattern": "^CVE-[0-9]{4}-[0-9]{4,19}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Cve"
+    },
+    "cwe": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/CweRef"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "flags": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/Flag"
+      },
+      "title": "Flags",
+      "type": "array"
+    },
+    "ids": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/VulnerabilityId"
+      },
+      "title": "Ids",
+      "type": "array"
+    },
+    "notes": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/Note"
+      },
+      "title": "Notes",
+      "type": "array"
+    },
+    "pointer": {
+      "maxLength": 4096,
+      "pattern": "^(/([^/~]|~[01])*)*$",
+      "title": "Pointer",
+      "type": "string"
+    },
+    "product_status": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/StatusClaim"
+      },
+      "title": "Product Status",
+      "type": "array"
+    },
+    "remediations": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/Remediation"
+      },
+      "title": "Remediations",
+      "type": "array"
+    },
+    "scores": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/Score"
+      },
+      "title": "Scores",
+      "type": "array"
+    },
+    "source_id": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Source Id",
+      "type": "string"
+    },
+    "threats": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/Threat"
+      },
+      "title": "Threats",
+      "type": "array"
+    },
+    "title": {
+      "anyOf": [
+        {
+          "maxLength": 1000,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Title"
+    }
+  },
+  "required": [
+    "source_id",
+    "pointer"
+  ],
+  "title": "CVEFact",
+  "type": "object"
+}

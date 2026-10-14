@@ -20,7 +20,7 @@ from dataclasses import dataclass
 from . import identity
 from .contracts import UINT32_MAX, ChangeSignal, FeatureSite, FeatureTransition, SourceLocation
 from .signals import _clean as clean_lines
-from .signals import edit_group_key, normalized_text, semantic_hunk_ordinals
+from .signals import edit_group_key, normalized_text
 from .views import FunctionView, MatchView
 
 DETECTOR_VERSION = 1
@@ -145,6 +145,10 @@ def _scan(function: FunctionView) -> _Scan:
             break
         total += len(line) + 1
         kept.append(line)
+    if not any('Feature' in line for line in kept):
+        # Every recognized spelling contains `Feature` and blanking comments/literals never creates text,
+        # so a function without it has no site: skip the gate scan entirely (P2 "wil gate scan performance").
+        return _Scan((), '', truncated, False)
     # Blank comments and string/char literal contents (line numbers kept) so a flag name
     # quoted in a log message or comment is never a site; locations still hash raw lines.
     lines = tuple(clean_lines(tuple(kept)))
@@ -191,7 +195,7 @@ def _changed(view: MatchView) -> list[tuple[int, tuple[int, int], tuple[int, int
     """(ordinal, old 1-based half-open, new 1-based half-open) for non-equal hunks that
     carry a semantic edit (B1's noise rule: whitespace/comment/rename-only hunks never qualify)."""
     changed = [h for h in view.hunks if h.operation != 'equal']
-    keep = semantic_hunk_ordinals(view) if changed else frozenset()
+    keep = view.semantic_ordinals if changed else frozenset()  # same rule as semantic_hunk_ordinals, cached
     return [(i, (h.old_start + 1, h.old_end + 1), (h.new_start + 1, h.new_end + 1))
             for i, h in enumerate(changed) if i in keep]
 
@@ -286,6 +290,8 @@ def analyze(view: MatchView, symbol_status: str = 'absent') -> tuple[FeatureTran
     reliable = view.two_sided and one_to_one and not unavailable and not view.manual
 
     ids = sorted({s.site.feature_id for s in older_sites + newer_sites}, key=lambda v: (v is None, v or 0))
+    if not ids:  # no site on either side: nothing to classify, so the hunk noise filter is never needed
+        return ()
     shared = set()
     for sites in (older_sites, newer_sites):
         per_gate: dict[int, set] = {}

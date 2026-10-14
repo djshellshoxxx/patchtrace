@@ -1,0 +1,482 @@
+{
+  "$defs": {
+    "ArtifactIdentity": {
+      "additionalProperties": false,
+      "description": "Identity facts for one side. Bytes-derived fields come only from verified bytes; the file name is\nnever an identity fact. ``asserted_product_ids`` are analyst input and stay labelled as such.",
+      "properties": {
+        "asserted_product_ids": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 64,
+          "title": "Asserted Product Ids",
+          "type": "array"
+        },
+        "contract": {
+          "const": "intelligence/1",
+          "default": "intelligence/1",
+          "title": "Contract",
+          "type": "string"
+        },
+        "facts_state": {
+          "enum": [
+            "verified-bytes",
+            "record-only"
+          ],
+          "title": "Facts State",
+          "type": "string"
+        },
+        "file_version": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9]{1,5}\\.[0-9]{1,5}\\.[0-9]{1,5}\\.[0-9]{1,5}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "File Version"
+        },
+        "notes": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 32,
+          "title": "Notes",
+          "type": "array"
+        },
+        "pdb_identity": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PdbIdentity"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "product_version": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9]{1,5}\\.[0-9]{1,5}\\.[0-9]{1,5}\\.[0-9]{1,5}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Product Version"
+        },
+        "sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Sha256",
+          "type": "string"
+        },
+        "side": {
+          "enum": [
+            "older",
+            "newer"
+          ],
+          "title": "Side",
+          "type": "string"
+        }
+      },
+      "required": [
+        "side",
+        "sha256",
+        "facts_state"
+      ],
+      "title": "ArtifactIdentity",
+      "type": "object"
+    },
+    "Contradiction": {
+      "additionalProperties": false,
+      "properties": {
+        "claims": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/StatusEvidence"
+          },
+          "title": "Claims",
+          "type": "array"
+        },
+        "explanation": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Explanation",
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "cross-revision",
+            "vex-vs-advisory",
+            "cross-document",
+            "orientation"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "product_name": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Product Name"
+        }
+      },
+      "required": [
+        "kind",
+        "explanation"
+      ],
+      "title": "Contradiction",
+      "type": "object"
+    },
+    "PdbIdentity": {
+      "additionalProperties": false,
+      "properties": {
+        "age": {
+          "maximum": 4294967295,
+          "minimum": 0,
+          "title": "Age",
+          "type": "integer"
+        },
+        "guid": {
+          "pattern": "^[0-9A-F]{32}$",
+          "title": "Guid",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 260,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "guid",
+        "age"
+      ],
+      "title": "PdbIdentity",
+      "type": "object"
+    },
+    "ProductMapping": {
+      "additionalProperties": false,
+      "properties": {
+        "basis": {
+          "enum": [
+            "advisory-file-hash",
+            "relationship-from-verified-component",
+            "asserted-product-id",
+            "file-version-equals-product-version",
+            "same-product-name"
+          ],
+          "title": "Basis",
+          "type": "string"
+        },
+        "detail": {
+          "maxLength": 500,
+          "title": "Detail",
+          "type": "string"
+        },
+        "product_id": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Product Id",
+          "type": "string"
+        },
+        "product_name": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Product Name",
+          "type": "string"
+        },
+        "source_id": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Source Id",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "verified",
+            "candidate"
+          ],
+          "title": "Status",
+          "type": "string"
+        }
+      },
+      "required": [
+        "source_id",
+        "product_id",
+        "product_name",
+        "status",
+        "basis",
+        "detail"
+      ],
+      "title": "ProductMapping",
+      "type": "object"
+    },
+    "SideApplicability": {
+      "additionalProperties": false,
+      "properties": {
+        "assessment": {
+          "enum": [
+            "advisory-claim",
+            "unknown"
+          ],
+          "title": "Assessment",
+          "type": "string"
+        },
+        "identity": {
+          "$ref": "#/$defs/ArtifactIdentity"
+        },
+        "mappings": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/ProductMapping"
+          },
+          "title": "Mappings",
+          "type": "array"
+        },
+        "product_mapping_status": {
+          "enum": [
+            "verified",
+            "candidate",
+            "unknown"
+          ],
+          "title": "Product Mapping Status",
+          "type": "string"
+        },
+        "recommended": {
+          "default": false,
+          "title": "Recommended",
+          "type": "boolean"
+        },
+        "resolution": {
+          "enum": [
+            "affected",
+            "not_affected",
+            "fixed",
+            "under_investigation",
+            "contradictory",
+            "ambiguous",
+            "unknown"
+          ],
+          "title": "Resolution",
+          "type": "string"
+        },
+        "side": {
+          "enum": [
+            "older",
+            "newer"
+          ],
+          "title": "Side",
+          "type": "string"
+        },
+        "statuses": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/StatusEvidence"
+          },
+          "title": "Statuses",
+          "type": "array"
+        },
+        "why": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Why",
+          "type": "array"
+        }
+      },
+      "required": [
+        "side",
+        "identity",
+        "product_mapping_status",
+        "resolution",
+        "why",
+        "assessment"
+      ],
+      "title": "SideApplicability",
+      "type": "object"
+    },
+    "StatusEvidence": {
+      "additionalProperties": false,
+      "properties": {
+        "assessment": {
+          "const": "advisory-claim",
+          "default": "advisory-claim",
+          "title": "Assessment",
+          "type": "string"
+        },
+        "document_category": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Document Category",
+          "type": "string"
+        },
+        "pointer": {
+          "maxLength": 4096,
+          "pattern": "^(/([^/~]|~[01])*)*$",
+          "title": "Pointer",
+          "type": "string"
+        },
+        "product_id": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Product Id",
+          "type": "string"
+        },
+        "product_name": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Product Name",
+          "type": "string"
+        },
+        "revision": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Revision",
+          "type": "string"
+        },
+        "source_id": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Source Id",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "first_affected",
+            "first_fixed",
+            "fixed",
+            "known_affected",
+            "known_not_affected",
+            "last_affected",
+            "recommended",
+            "under_investigation"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "status_class": {
+          "anyOf": [
+            {
+              "enum": [
+                "affected",
+                "not_affected",
+                "fixed",
+                "under_investigation"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Status Class"
+        },
+        "superseded": {
+          "title": "Superseded",
+          "type": "boolean"
+        },
+        "tracking_id": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Tracking Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "source_id",
+        "tracking_id",
+        "revision",
+        "document_category",
+        "product_id",
+        "product_name",
+        "status",
+        "status_class",
+        "pointer",
+        "superseded"
+      ],
+      "title": "StatusEvidence",
+      "type": "object"
+    }
+  },
+  "$id": "https://patchtrace.local/schemas/intelligence/1/ApplicabilityReport.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "contract": {
+      "const": "intelligence/1",
+      "default": "intelligence/1",
+      "title": "Contract",
+      "type": "string"
+    },
+    "contradictions": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/Contradiction"
+      },
+      "title": "Contradictions",
+      "type": "array"
+    },
+    "cve": {
+      "maxLength": 24,
+      "pattern": "^CVE-[0-9]{4}-[0-9]{4,19}$",
+      "title": "Cve",
+      "type": "string"
+    },
+    "limitations": {
+      "default": [],
+      "items": {
+        "type": "string"
+      },
+      "title": "Limitations",
+      "type": "array"
+    },
+    "newer": {
+      "$ref": "#/$defs/SideApplicability"
+    },
+    "older": {
+      "$ref": "#/$defs/SideApplicability"
+    },
+    "sources": {
+      "default": [],
+      "items": {
+        "pattern": "^[0-9a-f]{64}$",
+        "type": "string"
+      },
+      "title": "Sources",
+      "type": "array"
+    },
+    "superseded_sources": {
+      "default": [],
+      "items": {
+        "pattern": "^[0-9a-f]{64}$",
+        "type": "string"
+      },
+      "title": "Superseded Sources",
+      "type": "array"
+    }
+  },
+  "required": [
+    "cve",
+    "older",
+    "newer"
+  ],
+  "title": "ApplicabilityReport",
+  "type": "object"
+}

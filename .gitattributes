@@ -5,3 +5,10 @@ tests/fixtures/binexport/PROVENANCE.json text eol=lf
 third_party/notices/binexport-2bff7af/binexport2.proto -text
 tests/fixtures/secondary/*.txt text eol=lf
 tests/fixtures/secondary/*.json text eol=lf
+corpus/** text eol=lf
+docs/schemas/**/*.json text eol=lf
+docs/schemas/**/*.md text eol=lf
+docs/schemas/intelligence/oasis-csaf-2.0/** -text
+tests/fixtures/csaf/** text eol=lf
+tests/fixtures/intel_tools/** text eol=lf
+tests/fixtures/tier_w/** -text

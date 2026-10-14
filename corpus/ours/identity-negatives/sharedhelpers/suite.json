@@ -1,0 +1,89 @@
+{
+  "contract": "suite/1",
+  "suite": "identity-negatives",
+  "project": "sharedhelpers",
+  "license_spdx": "MIT",
+  "summary": "N3 shared helper code: five support helpers in util.c are called by fourteen unrelated parsers in three other files. v2 adds an overflow check to the most widely shared helper (ut_parse_u32); v3 rewrites it cosmetically, fixes another shared helper (ut_eq_nocase) and gives one unrelated caller its own change. Callers never change textually just because a helper does.",
+  "versions": ["v1", "v2", "v3"],
+  "build": {"kind": "freestanding-dll", "defines": []},
+  "pairs": [
+    {
+      "old": "v1",
+      "new": "v2",
+      "intent": "A helper shared by twelve unrelated callers across three parsers gains an overflow check. None of the callers changes textually, yet all of them behave differently on overflowing input. A matcher that propagates change along call edges, or that compares callers by what they call, flags eleven or twelve unchanged functions; the callers share nothing with each other except the callee.",
+      "truth": [
+        {"function": "ut_parse_u32", "label": "changed", "kind": "bounds-check-added", "taxonomy": ["N3"], "notes": "overflow check added: a digit that would overflow 32 bits now returns UT_E_RANGE instead of wrapping"},
+        {"function": "cfg_read_timeout_ms", "label": "same", "taxonomy": ["N3"], "notes": "text identical; calls the shared ut_parse_u32, so its behaviour on overflowing input changes with the helper while its own text does not"},
+        {"function": "cfg_read_retries", "label": "same", "taxonomy": ["N3"], "notes": "text identical; calls the shared ut_parse_u32, so its behaviour on overflowing input changes with the helper while its own text does not"},
+        {"function": "cfg_read_bufsize", "label": "same", "taxonomy": ["N3"], "notes": "text identical; calls the shared ut_parse_u32, so its behaviour on overflowing input changes with the helper while its own text does not"},
+        {"function": "cfg_read_loglevel", "label": "same", "taxonomy": ["N3"], "notes": "text identical; calls the shared ut_parse_u32, so its behaviour on overflowing input changes with the helper while its own text does not"},
+        {"function": "cfg_read_bool", "label": "same", "notes": "text identical; does not call the changed helper"},
+        {"function": "net_parse_port", "label": "same", "taxonomy": ["N3"], "notes": "text identical; calls the shared ut_parse_u32, so its behaviour on overflowing input changes with the helper while its own text does not"},
+        {"function": "net_parse_mtu", "label": "same", "taxonomy": ["N3"], "notes": "text identical; calls the shared ut_parse_u32, so its behaviour on overflowing input changes with the helper while its own text does not"},
+        {"function": "net_parse_vlan", "label": "same", "taxonomy": ["N3"], "notes": "text identical; calls the shared ut_parse_u32, so its behaviour on overflowing input changes with the helper while its own text does not"},
+        {"function": "net_parse_ipv4", "label": "same", "taxonomy": ["N3"], "notes": "text identical; calls the shared ut_parse_u32, so its behaviour on overflowing input changes with the helper while its own text does not"},
+        {"function": "net_parse_prefix_len", "label": "same", "taxonomy": ["N3"], "notes": "text identical; calls the shared ut_parse_u32, so its behaviour on overflowing input changes with the helper while its own text does not"},
+        {"function": "pro_content_length", "label": "same", "taxonomy": ["N3"], "notes": "text identical; calls the shared ut_parse_u32, so its behaviour on overflowing input changes with the helper while its own text does not"},
+        {"function": "pro_status_code", "label": "same", "taxonomy": ["N3"], "notes": "text identical; calls the shared ut_parse_u32, so its behaviour on overflowing input changes with the helper while its own text does not"},
+        {"function": "pro_version_triplet", "label": "same", "taxonomy": ["N3"], "notes": "text identical; calls the shared ut_parse_u32, so its behaviour on overflowing input changes with the helper while its own text does not"},
+        {"function": "pro_chunk_size", "label": "same", "notes": "text identical; does not call the changed helper"},
+        {"function": "ut_digit_value", "label": "same", "notes": "text identical; shared helper that did not change"},
+        {"function": "ut_skip_ws", "label": "same", "notes": "text identical; shared helper that did not change"},
+        {"function": "ut_eq_nocase", "label": "same", "notes": "text identical; shared helper that did not change"},
+        {"function": "ut_find_char", "label": "same", "notes": "text identical; shared helper that did not change"}
+      ]
+    },
+    {
+      "old": "v2",
+      "new": "v3",
+      "intent": "Three independent edits in one step: the shared parser is only rewritten cosmetically (locals renamed, identical machine code), the shared case-folding comparison is fixed, and one unrelated caller gets its own error-handling change. The other callers of the two touched helpers stay text-identical, so the one real caller change has to be told apart from twelve look-alike callers that merely sit on changed code.",
+      "truth": [
+        {"function": "ut_parse_u32", "label": "cosmetic", "taxonomy": ["N3"], "notes": "locals renamed (i->pos, base->radix, value->acc, digits->ndig, d->dv); same code, same behaviour"},
+        {"function": "ut_eq_nocase", "label": "changed", "kind": "comparison-change", "taxonomy": ["N3"], "notes": "OR-folding with 0x20 replaced by explicit A-Z folding; '@' vs '`' and '[' vs '{' no longer compare equal"},
+        {"function": "pro_content_length", "label": "changed", "kind": "error-handling-change", "taxonomy": ["N3"], "notes": "trailing characters after the number are now rejected with PRO_E_HEADER"},
+        {"function": "cfg_read_timeout_ms", "label": "same", "taxonomy": ["N3"], "notes": "text identical; calls both rewritten shared helpers (ut_parse_u32, ut_eq_nocase)"},
+        {"function": "cfg_read_retries", "label": "same", "taxonomy": ["N3"], "notes": "text identical; calls the cosmetically rewritten ut_parse_u32"},
+        {"function": "cfg_read_bufsize", "label": "same", "taxonomy": ["N3"], "notes": "text identical; calls both rewritten shared helpers (ut_parse_u32, ut_eq_nocase)"},
+        {"function": "cfg_read_loglevel", "label": "same", "taxonomy": ["N3"], "notes": "text identical; calls both rewritten shared helpers (ut_parse_u32, ut_eq_nocase)"},
+        {"function": "cfg_read_bool", "label": "same", "taxonomy": ["N3"], "notes": "text identical; calls ut_eq_nocase, whose case folding was fixed"},
+        {"function": "net_parse_port", "label": "same", "taxonomy": ["N3"], "notes": "text identical; calls the cosmetically rewritten ut_parse_u32"},
+        {"function": "net_parse_mtu", "label": "same", "taxonomy": ["N3"], "notes": "text identical; calls the cosmetically rewritten ut_parse_u32"},
+        {"function": "net_parse_vlan", "label": "same", "taxonomy": ["N3"], "notes": "text identical; calls the cosmetically rewritten ut_parse_u32"},
+        {"function": "net_parse_ipv4", "label": "same", "taxonomy": ["N3"], "notes": "text identical; calls the cosmetically rewritten ut_parse_u32"},
+        {"function": "net_parse_prefix_len", "label": "same", "taxonomy": ["N3"], "notes": "text identical; calls the cosmetically rewritten ut_parse_u32"},
+        {"function": "pro_status_code", "label": "same", "taxonomy": ["N3"], "notes": "text identical; calls both rewritten shared helpers (ut_parse_u32, ut_eq_nocase)"},
+        {"function": "pro_version_triplet", "label": "same", "taxonomy": ["N3"], "notes": "text identical; calls the cosmetically rewritten ut_parse_u32"},
+        {"function": "pro_chunk_size", "label": "same", "notes": "text identical; does not call a changed helper"},
+        {"function": "ut_digit_value", "label": "same", "notes": "text identical; shared helper that did not change"},
+        {"function": "ut_skip_ws", "label": "same", "notes": "text identical; shared helper that did not change"},
+        {"function": "ut_find_char", "label": "same", "notes": "text identical; shared helper that did not change"}
+      ]
+    },
+    {
+      "old": "v1",
+      "new": "v3",
+      "intent": "Cumulative: overflow check in ut_parse_u32 (with later cosmetic renames), the ut_eq_nocase fix and the pro_content_length change.",
+      "truth": [
+        {"function": "ut_parse_u32", "label": "changed", "kind": "bounds-check-added", "taxonomy": ["N3"], "notes": "overflow check added: a digit that would overflow 32 bits now returns UT_E_RANGE instead of wrapping; locals were also renamed afterwards"},
+        {"function": "ut_eq_nocase", "label": "changed", "kind": "comparison-change", "taxonomy": ["N3"], "notes": "OR-folding with 0x20 replaced by explicit A-Z folding; '@' vs '`' and '[' vs '{' no longer compare equal"},
+        {"function": "pro_content_length", "label": "changed", "kind": "error-handling-change", "taxonomy": ["N3"], "notes": "trailing characters after the number are now rejected with PRO_E_HEADER"},
+        {"function": "cfg_read_timeout_ms", "label": "same", "taxonomy": ["N3"], "notes": "text identical; calls both rewritten shared helpers (ut_parse_u32, ut_eq_nocase)"},
+        {"function": "cfg_read_retries", "label": "same", "taxonomy": ["N3"], "notes": "text identical; calls the cosmetically rewritten ut_parse_u32"},
+        {"function": "cfg_read_bufsize", "label": "same", "taxonomy": ["N3"], "notes": "text identical; calls both rewritten shared helpers (ut_parse_u32, ut_eq_nocase)"},
+        {"function": "cfg_read_loglevel", "label": "same", "taxonomy": ["N3"], "notes": "text identical; calls both rewritten shared helpers (ut_parse_u32, ut_eq_nocase)"},
+        {"function": "cfg_read_bool", "label": "same", "taxonomy": ["N3"], "notes": "text identical; calls ut_eq_nocase, whose case folding was fixed"},
+        {"function": "net_parse_port", "label": "same", "taxonomy": ["N3"], "notes": "text identical; calls the cosmetically rewritten ut_parse_u32"},
+        {"function": "net_parse_mtu", "label": "same", "taxonomy": ["N3"], "notes": "text identical; calls the cosmetically rewritten ut_parse_u32"},
+        {"function": "net_parse_vlan", "label": "same", "taxonomy": ["N3"], "notes": "text identical; calls the cosmetically rewritten ut_parse_u32"},
+        {"function": "net_parse_ipv4", "label": "same", "taxonomy": ["N3"], "notes": "text identical; calls the cosmetically rewritten ut_parse_u32"},
+        {"function": "net_parse_prefix_len", "label": "same", "taxonomy": ["N3"], "notes": "text identical; calls the cosmetically rewritten ut_parse_u32"},
+        {"function": "pro_status_code", "label": "same", "taxonomy": ["N3"], "notes": "text identical; calls both rewritten shared helpers (ut_parse_u32, ut_eq_nocase)"},
+        {"function": "pro_version_triplet", "label": "same", "taxonomy": ["N3"], "notes": "text identical; calls the cosmetically rewritten ut_parse_u32"},
+        {"function": "pro_chunk_size", "label": "same", "notes": "text identical; does not call a changed helper"},
+        {"function": "ut_digit_value", "label": "same", "notes": "text identical; shared helper that did not change"},
+        {"function": "ut_skip_ws", "label": "same", "notes": "text identical; shared helper that did not change"},
+        {"function": "ut_find_char", "label": "same", "notes": "text identical; shared helper that did not change"}
+      ]
+    }
+  ]
+}

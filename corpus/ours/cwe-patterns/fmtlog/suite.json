@@ -1,0 +1,70 @@
+{
+  "contract": "suite/1",
+  "suite": "cwe-patterns",
+  "project": "fmtlog",
+  "license_spdx": "MIT",
+  "summary": "Length-prefixed (Pascal-style) strings, a small printf-like formatter and a line logger over a caller-provided byte array. In v1 lf_log_event hands an untrusted peer message to lf_format as the format string, so '%x' and '%s' in the message consume arguments that were never passed and leak stack or register contents or dereference junk pointers (uncontrolled format string, CWE-134); v2 renders the message through a constant '%s' format; v3 is a behaviour-preserving refactor of v2.",
+  "versions": ["v1", "v2", "v3"],
+  "build": {"kind": "freestanding-dll", "defines": []},
+  "pairs": [
+    {
+      "old": "v1",
+      "new": "v2",
+      "intent": "CWE-134 fix: lf_log_event formats its message with the constant pstring \"%s\" instead of using the message as the format; the deprecated alias lf_log_msg is removed and lf_count_directives is added so callers can lint their own formats.",
+      "truth": [
+        {"function": "lf_log_event", "label": "changed", "kind": "format-string-fix", "notes": "CWE-134: lf_format(line, sizeof line, msg) used attacker data as the format; v2 calls lf_format(line, sizeof line, plain, msg) with plain = \"%s\" (as a pstring)."},
+        {"function": "lf_count_directives", "label": "added", "taxonomy": ["N7"], "notes": "new helper counting the conversion directives in a pstring format"},
+        {"function": "lf_log_msg", "label": "removed", "taxonomy": ["N2"], "notes": "deprecated alias that forwarded to the vulnerable lf_log_event"},
+        {"function": "lf_str_len", "label": "same", "taxonomy": ["N1"]},
+        {"function": "lf_str_data", "label": "same", "taxonomy": ["N1"]},
+        {"function": "lf_pack", "label": "same"},
+        {"function": "lf_hex_digit", "label": "same"},
+        {"function": "lf_put", "label": "same"},
+        {"function": "lf_emit_ps", "label": "same"},
+        {"function": "lf_emit_u32", "label": "same"},
+        {"function": "lf_emit_i32", "label": "same"},
+        {"function": "lf_vformat", "label": "same", "taxonomy": ["N11"]},
+        {"function": "lf_format", "label": "same"},
+        {"function": "lf_log_init", "label": "same"},
+        {"function": "lf_log_append", "label": "same"},
+        {"function": "lf_log_fmt", "label": "same", "taxonomy": ["N6"]},
+        {"function": "lf_log_u32", "label": "same", "taxonomy": ["N2"]},
+        {"function": "lf_log_count", "label": "same", "taxonomy": ["N1"]},
+        {"function": "lf_log_read", "label": "same"},
+        {"function": "lf_log_clear", "label": "same"},
+        {"function": "lf_log_bytes", "label": "same", "taxonomy": ["N1"]},
+        {"function": "lf_stat_dropped", "label": "same", "taxonomy": ["N1"]},
+        {"function": "lf_level_name", "label": "same", "taxonomy": ["N11"]}
+      ]
+    },
+    {
+      "old": "v2",
+      "new": "v3",
+      "intent": "Behaviour-preserving refactor of v2: loop forms, renames, early return in place of if/else, switch case order, and the counter getters moved up next to lf_log_init.",
+      "truth": [
+        {"function": "lf_pack", "label": "cosmetic", "notes": "n->len, for loop rewritten as while"},
+        {"function": "lf_hex_digit", "label": "cosmetic", "notes": "conditional expression rewritten as if/return"},
+        {"function": "lf_put", "label": "cosmetic", "notes": "if/else inverted into a guard clause"},
+        {"function": "lf_emit_ps", "label": "cosmetic", "notes": "unrolled \"(null)\" puts replaced by a loop over a string literal"},
+        {"function": "lf_emit_u32", "label": "cosmetic", "notes": "n->count"},
+        {"function": "lf_emit_i32", "label": "cosmetic", "notes": "branches folded into one magnitude variable"},
+        {"function": "lf_vformat", "label": "cosmetic", "taxonomy": ["N11"], "notes": "sink->dst, c->ch, switch cases listed in reverse order"},
+        {"function": "lf_log_init", "label": "cosmetic", "notes": "field stores emitted in reverse order"},
+        {"function": "lf_log_append", "label": "cosmetic", "notes": "write offset hoisted into a local, i->k"},
+        {"function": "lf_log_read", "label": "cosmetic", "notes": "counters renamed (i->line, len->size, j->k)"},
+        {"function": "lf_log_clear", "label": "cosmetic", "notes": "stores swapped"},
+        {"function": "lf_level_name", "label": "cosmetic", "taxonomy": ["N11"], "notes": "case labels listed in reverse order"},
+        {"function": "lf_str_len", "label": "same"},
+        {"function": "lf_str_data", "label": "same"},
+        {"function": "lf_format", "label": "same"},
+        {"function": "lf_count_directives", "label": "same"},
+        {"function": "lf_log_event", "label": "same"},
+        {"function": "lf_log_fmt", "label": "same"},
+        {"function": "lf_log_u32", "label": "same"},
+        {"function": "lf_log_count", "label": "same", "taxonomy": ["N1", "N5"]},
+        {"function": "lf_log_bytes", "label": "same", "taxonomy": ["N1", "N5"]},
+        {"function": "lf_stat_dropped", "label": "same", "taxonomy": ["N1", "N5"]}
+      ]
+    }
+  ]
+}

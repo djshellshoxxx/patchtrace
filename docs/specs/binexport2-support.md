@@ -1,6 +1,6 @@
 # SPEC-10b: BinExport2 support (Phase C, step C3)
 
-Status: implementation-ready draft, 2026-10-14. Extends SPEC-10 (`bindiff-adapter.md` §2) and plan item C3 in `../plans/phase-c-multi-engine-plan.md`. Owner of files: `secondary/binexport*.py`, `pyproject.toml` dependency line, `tools/build_*.py` notice lists, `third_party/notices/binexport-*`, one CI workflow step. Contract-visible changes: `SecondaryError.reason` (additive), SPEC-10 §2 size cap 512 -> 256 MiB default (see §5).
+Status: implementation-ready draft, 2026-10-14; GUI wiring (older/newer pickers, validation through `accept_binexport` on a worker with progress/cancel, plain-language §7 reasons) built in Phase D track G, see `multi-engine-evidence-panel.md` §16. Extends SPEC-10 (`bindiff-adapter.md` §2) and plan item C3 in `../plans/phase-c-multi-engine-plan.md`. Owner of files: `secondary/binexport*.py`, `pyproject.toml` dependency line, `tools/build_*.py` notice lists, `third_party/notices/binexport-*`, one CI workflow step. Contract-visible changes: `SecondaryError.reason` (additive), SPEC-10 §2 size cap 512 -> 256 MiB default (see §5).
 
 Goal: take a user-supplied `.BinExport` for one project artifact, prove it is a genuine, well-formed, bounded BinExport2 message that belongs to that artifact and orientation, and hand BinDiff (C4) a private immutable snapshot. Never execute targets, never upload, never trust field values from the file.
 

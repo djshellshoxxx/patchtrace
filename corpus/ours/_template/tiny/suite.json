@@ -1,0 +1,23 @@
+{
+  "contract": "suite/1",
+  "suite": "_template",
+  "project": "tiny",
+  "license_spdx": "MIT",
+  "summary": "Template and validator fixture: one changed, one cosmetic, one unchanged, one added, one removed function.",
+  "versions": ["v1", "v2"],
+  "build": {"kind": "freestanding-dll", "defines": []},
+  "pairs": [
+    {
+      "old": "v1",
+      "new": "v2",
+      "intent": "Add a negative-bound guard to tiny_clamp; rename locals in tiny_sum_to; replace tiny_old_only by tiny_new_only.",
+      "truth": [
+        {"function": "tiny_add", "label": "same"},
+        {"function": "tiny_clamp", "label": "changed", "kind": "bounds-check-added", "notes": "new early return for hi < 0"},
+        {"function": "tiny_sum_to", "label": "cosmetic", "notes": "locals renamed total->acc, i->k"},
+        {"function": "tiny_old_only", "label": "removed"},
+        {"function": "tiny_new_only", "label": "added"}
+      ]
+    }
+  ]
+}

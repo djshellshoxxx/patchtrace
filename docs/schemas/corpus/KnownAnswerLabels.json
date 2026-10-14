@@ -1,0 +1,654 @@
+{
+  "$defs": {
+    "BuildInfo": {
+      "additionalProperties": false,
+      "properties": {
+        "compiler": {
+          "maxLength": 64,
+          "minLength": 1,
+          "title": "Compiler",
+          "type": "string"
+        },
+        "compiler_version": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Compiler Version",
+          "type": "string"
+        },
+        "link_order": {
+          "default": "sorted",
+          "enum": [
+            "sorted",
+            "reversed",
+            "rotated"
+          ],
+          "title": "Link Order",
+          "type": "string"
+        },
+        "opt": {
+          "enum": [
+            "O0",
+            "O1",
+            "O2",
+            "O3",
+            "Os"
+          ],
+          "title": "Opt",
+          "type": "string"
+        },
+        "profile": {
+          "enum": [
+            "msvc-free",
+            "mingw-gcc",
+            "mingw-clang",
+            "clang-cl",
+            "msvc"
+          ],
+          "title": "Profile",
+          "type": "string"
+        },
+        "recipe_digest": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Recipe Digest",
+          "type": "string"
+        },
+        "variant": {
+          "default": "",
+          "maxLength": 64,
+          "pattern": "^[a-z0-9-]*$",
+          "title": "Variant",
+          "type": "string"
+        }
+      },
+      "required": [
+        "profile",
+        "compiler",
+        "compiler_version",
+        "opt",
+        "recipe_digest"
+      ],
+      "title": "BuildInfo",
+      "type": "object"
+    },
+    "FunctionLabel": {
+      "additionalProperties": false,
+      "properties": {
+        "body": {
+          "enum": [
+            "identical",
+            "address-only",
+            "different",
+            "n/a"
+          ],
+          "title": "Body",
+          "type": "string"
+        },
+        "change_kind": {
+          "anyOf": [
+            {
+              "pattern": "^[a-z0-9][a-z0-9-]{0,47}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Change Kind"
+        },
+        "check": {
+          "default": "unchecked",
+          "enum": [
+            "ok",
+            "disagree",
+            "unchecked"
+          ],
+          "title": "Check",
+          "type": "string"
+        },
+        "file": {
+          "anyOf": [
+            {
+              "maxLength": 512,
+              "minLength": 1,
+              "pattern": "^[^\\\\:*?\"<>|\\x00]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "File"
+        },
+        "identity": {
+          "enum": [
+            "same",
+            "no-counterpart",
+            "ambiguous"
+          ],
+          "title": "Identity",
+          "type": "string"
+        },
+        "label": {
+          "enum": [
+            "unchanged",
+            "changed",
+            "cosmetic",
+            "no-counterpart",
+            "ambiguous"
+          ],
+          "title": "Label",
+          "type": "string"
+        },
+        "label_source": {
+          "enum": [
+            "source-diff",
+            "fix-diff",
+            "planted-mutation",
+            "same-source",
+            "authored-truth"
+          ],
+          "title": "Label Source",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "new_rva": {
+          "anyOf": [
+            {
+              "maximum": 4294967295,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "New Rva"
+        },
+        "new_size": {
+          "anyOf": [
+            {
+              "maximum": 67108864,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "New Size"
+        },
+        "notes": {
+          "default": "",
+          "maxLength": 500,
+          "title": "Notes",
+          "type": "string"
+        },
+        "old_rva": {
+          "anyOf": [
+            {
+              "maximum": 4294967295,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Old Rva"
+        },
+        "old_size": {
+          "anyOf": [
+            {
+              "maximum": 67108864,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Old Size"
+        },
+        "taxonomy": {
+          "default": [],
+          "items": {
+            "enum": [
+              "N1",
+              "N2",
+              "N3",
+              "N4",
+              "N5",
+              "N6",
+              "N7",
+              "N8",
+              "N9",
+              "N10",
+              "N11",
+              "N12"
+            ],
+            "type": "string"
+          },
+          "title": "Taxonomy",
+          "type": "array"
+        },
+        "variant": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9._$-]{1,64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Variant"
+        }
+      },
+      "required": [
+        "name",
+        "file",
+        "old_rva",
+        "new_rva",
+        "identity",
+        "label",
+        "body",
+        "label_source"
+      ],
+      "title": "FunctionLabel",
+      "type": "object"
+    },
+    "ImageSide": {
+      "additionalProperties": false,
+      "properties": {
+        "build": {
+          "$ref": "#/$defs/BuildInfo"
+        },
+        "debug_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Debug Sha256",
+          "type": "string"
+        },
+        "file_name": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9._+-]+\\.(dll|exe)$",
+          "title": "File Name",
+          "type": "string"
+        },
+        "image_base": {
+          "maximum": 18446744073709551615,
+          "minimum": 0,
+          "title": "Image Base",
+          "type": "integer"
+        },
+        "pdb_sha256": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Pdb Sha256"
+        },
+        "sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Sha256",
+          "type": "string"
+        },
+        "size": {
+          "maximum": 67108864,
+          "minimum": 64,
+          "title": "Size",
+          "type": "integer"
+        },
+        "source": {
+          "$ref": "#/$defs/SourceRef"
+        }
+      },
+      "required": [
+        "sha256",
+        "debug_sha256",
+        "size",
+        "file_name",
+        "image_base",
+        "source",
+        "build"
+      ],
+      "title": "ImageSide",
+      "type": "object"
+    },
+    "Reproducibility": {
+      "additionalProperties": false,
+      "properties": {
+        "byte_identical": {
+          "title": "Byte Identical",
+          "type": "boolean"
+        },
+        "detail": {
+          "default": "",
+          "maxLength": 500,
+          "title": "Detail",
+          "type": "string"
+        },
+        "differing_bytes": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Differing Bytes",
+          "type": "integer"
+        },
+        "differing_sections": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Differing Sections",
+          "type": "array"
+        }
+      },
+      "required": [
+        "byte_identical"
+      ],
+      "title": "Reproducibility",
+      "type": "object"
+    },
+    "SourceRef": {
+      "additionalProperties": false,
+      "properties": {
+        "commit": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{40}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Commit"
+        },
+        "git": {
+          "anyOf": [
+            {
+              "pattern": "^https://[A-Za-z0-9.-]+/[A-Za-z0-9._/-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Git"
+        },
+        "license_spdx": {
+          "maxLength": 64,
+          "minLength": 1,
+          "title": "License Spdx",
+          "type": "string"
+        },
+        "mutation": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9._-]{1,96}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Mutation"
+        },
+        "ref": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Ref"
+        },
+        "suite": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9._-]+/[A-Za-z0-9._-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Suite"
+        },
+        "version": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9._-]{1,64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Version"
+        }
+      },
+      "required": [
+        "license_spdx"
+      ],
+      "title": "SourceRef",
+      "type": "object"
+    },
+    "Summary": {
+      "additionalProperties": false,
+      "properties": {
+        "absent_functions": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Absent Functions",
+          "type": "integer"
+        },
+        "by_body": {
+          "additionalProperties": {
+            "type": "integer"
+          },
+          "title": "By Body",
+          "type": "object"
+        },
+        "by_identity": {
+          "additionalProperties": {
+            "type": "integer"
+          },
+          "title": "By Identity",
+          "type": "object"
+        },
+        "by_label": {
+          "additionalProperties": {
+            "type": "integer"
+          },
+          "title": "By Label",
+          "type": "object"
+        },
+        "disagreements": {
+          "minimum": 0,
+          "title": "Disagreements",
+          "type": "integer"
+        },
+        "functions": {
+          "minimum": 0,
+          "title": "Functions",
+          "type": "integer"
+        },
+        "runtime_functions": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Runtime Functions",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "functions",
+        "by_label",
+        "by_identity",
+        "by_body",
+        "disagreements"
+      ],
+      "title": "Summary",
+      "type": "object"
+    }
+  },
+  "$id": "https://patchtrace.local/schemas/known-answer-labels/1/KnownAnswerLabels.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "case": {
+      "additionalProperties": true,
+      "title": "Case",
+      "type": "object"
+    },
+    "contract": {
+      "const": "known-answer-labels/1",
+      "title": "Contract",
+      "type": "string"
+    },
+    "digest_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Digest Sha256",
+      "type": "string"
+    },
+    "family": {
+      "maxLength": 64,
+      "minLength": 1,
+      "pattern": "^[a-z0-9-]+$",
+      "title": "Family",
+      "type": "string"
+    },
+    "functions": {
+      "items": {
+        "$ref": "#/$defs/FunctionLabel"
+      },
+      "maxItems": 200000,
+      "title": "Functions",
+      "type": "array"
+    },
+    "label_source": {
+      "enum": [
+        "source-diff",
+        "fix-diff",
+        "planted-mutation",
+        "same-source",
+        "authored-truth"
+      ],
+      "title": "Label Source",
+      "type": "string"
+    },
+    "lineage": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,95}$",
+      "title": "Lineage",
+      "type": "string"
+    },
+    "method": {
+      "enum": [
+        "release-pair",
+        "cve-pair",
+        "case-card",
+        "mutation",
+        "aa-rebuild",
+        "aa-layout",
+        "toolchain-noise",
+        "suite"
+      ],
+      "title": "Method",
+      "type": "string"
+    },
+    "newer": {
+      "$ref": "#/$defs/ImageSide"
+    },
+    "notes": {
+      "default": [],
+      "items": {
+        "maxLength": 500,
+        "type": "string"
+      },
+      "maxItems": 64,
+      "title": "Notes",
+      "type": "array"
+    },
+    "older": {
+      "$ref": "#/$defs/ImageSide"
+    },
+    "pair_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,95}$",
+      "title": "Pair Id",
+      "type": "string"
+    },
+    "project": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,95}$",
+      "title": "Project",
+      "type": "string"
+    },
+    "reproducibility": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Reproducibility"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "stratum": {
+      "enum": [
+        "release",
+        "cve",
+        "control",
+        "mutation",
+        "aa",
+        "noise",
+        "authored"
+      ],
+      "title": "Stratum",
+      "type": "string"
+    },
+    "summary": {
+      "$ref": "#/$defs/Summary"
+    }
+  },
+  "required": [
+    "contract",
+    "pair_id",
+    "stratum",
+    "method",
+    "project",
+    "lineage",
+    "family",
+    "older",
+    "newer",
+    "label_source",
+    "functions",
+    "summary",
+    "digest_sha256"
+  ],
+  "title": "KnownAnswerLabels",
+  "type": "object"
+}

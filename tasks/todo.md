@@ -88,13 +88,55 @@
 - [ ] C4: swap the `bindiff_inputs` Protocol for the real `AcceptedBinExport`. GUI wiring of BinExport selection.
 ## SPEC-31 unified diff engine (planned 2026-10-14; docs/specs/unified-engine, docs/plans/unified-engine-plan.md)
 - [x] Spec + plan + backups + troubleshooting (docs only; this PR)
-- [ ] P1 Windows spawn lock in `jobs._windows_process` (pipe write ends inheritable during concurrent `CreateProcessW`) - red test on Windows CI first
-- [ ] P2 nway raw `address_matches`: skip `EXTERNAL:`/unparsable keys with a count instead of `PT-NWAY-PAIR`
+- [x] Independent review of the spec (docs/specs/unified-engine/11-review-log.md): 30 findings fixed in place (R-01..R-32), residual risks and USER decisions U-11/U-12 added
+- [x] P1 Windows spawn lock in `jobs._windows_process` (merged with C3; `test_concurrent_run_process_calls_do_not_cross_pipes_or_leak_threads`)
+- [x] P2 nway raw `address_matches`: skip `EXTERNAL:<hex>` entries instead of `PT-NWAY-PAIR` (ce108cd)
+- [ ] P2b count the skipped `EXTERNAL:` entries in the series limitations; SPEC-09/SPEC-28 status lines (A-05, A-06)
 - [ ] S0a contracts/limits/keys/registry/store + schemas + doc status lines (10-amendments rows marked S0a)
 - [ ] S0b sources, fusion, S0 facts, pipeline, worker, CLI `unified run/show/explain/status --no-extract`
 - [ ] S1 extraction (GZF reuse + analyze fallback), ingest, MD index port with notices, live-unified workflow (Windows + Linux)
 - [ ] S2 ladder MVP + parity harness; S5 residual (blocking, vectors, votes, LAP)
-- [ ] S3 IR change channels and proofs (+ optional S3b on-demand decompile)
+- [ ] S3 IR change channels, DATA-MAP/1 target consistency, proofs UNCH/COS-ADDR/COS-LAYOUT with EH-EQ, MAT-ANCHOR, S3b on-demand decompile
 - [ ] S4 read model + `ui_unified.py` (single window: view switch + dock tab), tooltips, accessibility
 - [ ] S6 Tier R / A/A / planted-mutation corpus, gates G-U1..G-U8, flag default decision (USER U-05)
+- [ ] USER decisions U-01..U-12 (defaults in docs/specs/unified-engine/00-decisions.md s4)
 - [ ] USER decisions U-01..U-10 (defaults in docs/specs/unified-engine/00-decisions.md s4)
+
+### [K:28a-28b] CSAF engine (track K, 2026-10-14)
+- [x] SPEC-28a: contracts + generated schemas/examples, discovery, transport, stdlib validator, normalization, storage (synthetic fixtures; fake opener)
+- [x] SPEC-28b: CWE lexicon (negation/scopes), hypothesis rules, anchors, verified-bytes identity, OLD/NEW applicability with contradictions and explicit unknowns
+- [ ] Deferred: `intelligence/reports.py` (JSON/MD, escaping), `intelligence/cli.py` + `cli.py` hook + `tools/frozen_smoke.py` entry (spec section J)
+- [ ] Live (BLOCKED here): MSRC provider-metadata location and directory layout, real Microsoft CSAF documents through the validator (policy if they fail mandatory tests), `.sha256` availability, consented fetch on Linux/Windows; re-verify OASIS schema hashes on docs.oasis-open.org and CWE names on cwe.mitre.org
+### [W:tier-w-w1] Tier W local-only corpus (SPEC-33, 2026-10-14)
+- [x] Spec; layout/contracts; Winbindex catalogue + resolve + pair/manifest builder; stdlib MSF reader; PE tables + masked body hash; repository guard (O1) with self-made PDB allow-list; reproducible self-made fixtures
+- [ ] Next wave: `fetch` (binaries via quarantine.acquire, PDBs via a Transport subclass, throttle/resume/disk/cancel), Ghidra/PyGhidra exporter + `symbol-map/1` writer + optional llvm-pdbutil adapter, labels + N2/N3/N9/N10 tags, audit queue + error rate, runner (symbols hidden/visible), `evaluate`, CLI, docs/plans/tier-w-runbook.md
+- [ ] Owner machine only: Winbindex/msdl access (BLOCKED here: proxy CONNECT 403), real Microsoft PE/PDB parsing (OMAP, stripped publics), Ghidra time per family, symbol-label error rate
+### [T:core] SPEC-29 tools capa/FLOSS/diec (2026-10-14)
+- [x] Spec T1-T10 (`tool-evidence/1`); pinned capa 9.4.0, FLOSS 3.1.1, diec 3.21 verified from upstream source + real Linux runs
+- [x] Contracts, strict parsers/probes, scratch/env helpers, normalize (RVA, verified offsets, attribution, pairing), delta (newly-introduced vs newly-detectable, unlocalized, flags, value gate unvalidated); real goldens on SYNTHETIC pairs
+- [ ] Runner/scheduler + store (draft exists outside the repo, untested), CLI `intel-tools` + 6-line hook, schema generator + regenerate test
+- [ ] Fake-executable tests (missing exe, timeout, cancel, oversize, stderr noise, stale cache, Windows paths, airgap)
+- [ ] Provisioning + `tools/intel_tools_pin.json` (asset SHA-256 measured, see qa.md), live test, `live-intel-tools.yml`; Windows runs; Ghidra-backend fixture; DiE value-gate benchmark
+### [D:known-answer-factory] SPEC-32 known-answer corpus factory (builder D, 2026-10-14)
+- [x] Spec `docs/specs/known-answer-corpus.md`; label contract + schemas/examples; C locator; reproducible msvc-free/mingw builds; PDB/DWARF inventory; masked hashes; decision-table labeller; authored-suite cross-check (I4); case cards (I2/I3); A/A rebuild + layout and toolchain-noise pairs (M4); pinned fetch; zlib v1.3 -> v1.3.1 card verified by a real build
+- [ ] M1 catalogue to >= 14 projects x 3 consecutive pairs (only zlib, 1 pair, committed); M2 >= 15 CVE cases + >= 3 bounds/constant-only + >= 3 controls (sources: CVE List V5 raw records, oss-fuzz-vulns; NVD/OSV hosts blocked here)
+- [ ] M3 planted mutations (`tools/calibration/mutations/`, 16 operators designed in spec s8; not built)
+- [ ] M5 `tier_r/evaluate.py` (rz-diff via registry/scheduler, BinDiff/Ghidriff import, per-stratum metrics, report) and `annotate.py`/`manifest.py` conversions
+- [ ] CLI (`python -m tools.calibration.tier_r`), `corpus.py known-answer` hook, `.github/workflows/corpus-tier-r.yml` (Linux + advisory Windows); optional manifest-only `public-datasets` importer (DeepHistory pins, oss-fuzz-vulns, CVE List V5)
+### [B:hardening] Phase D track B (2026-10-14, builder worktree; local Linux evidence, CI pending)
+- [x] H2 pre-prune verified backup: no history prune, retention, `make_room` or engine-run deletion without a re-opened, integrity-checked backup (`verified_backup.py`); failure keeps every row (supersedes the "[ ] H2 pre-prune verified backup" line above)
+- [x] H8 legacy duplicate raw cleanup on open: journalled (`backups/raw-duplicates.jsonl`), hash-verified, reversible (`raw_cleanup.restore_raw_duplicates`), series readers never clean (supersedes "[ ] H8 legacy duplicate cleanup on open")
+- [x] rz-diff CLI allow-list: already wired via `engine_env` (C4); now pinned end to end by `tests/test_rzdiff_cli_env.py` (supersedes "[ ] wire rz-diff CLI to for_tool='rizin'")
+- [x] H3 gaps: truncated pairings are `partial` in B1 and WIL even without a visible edit; [x] SPEC-07 §4 `views.validate_location` (GUI navigation wiring left to the UI owner)
+- [x] Derived-cache algorithm digests in stage ids and pipeline rows (older rows recomputed once); [x] P2 WIL gate-scan performance; [ ] derived-cache hit 500 ms at 10,000 pairs: improved, still NOT met (see docs/qa.md [B:hardening])
+- [x] H10 live probe tool + advisory workflow + recorded-fixture tests; [ ] first live run on GitHub (`live-nvd` workflow; this container has no direct egress: recorded BLOCKED)
+- [ ] Deferred to the next wave: P2 `nondeterministic now` (injectable clock in `PipelineOptions`), `function_rva` reader identity, offline bundle ratio (outside track B files), GUI use of `validate_location`
+### [G:bindiff-gui-setup] Phase D track G: BinDiff + BinExport GUI setup (2026-10-14)
+- [x] Engines-tab "BinDiff setup" section (`ui_engine_setup.py`): executable field + Browse + Probe (discovery prefill, never PATH, never run by discovery), pin status, older/newer `.BinExport` pickers, validation through the CLI's C3 acceptor on a worker with progress/cancel, plain-language SPEC-29/SPEC-10b messages with technical details on demand, explicit unbound confirmation recorded in provenance as the CLI does, run through the C6 scheduler flow with `cli_bindiff.adapter_from_args`; 15 `engine_setup.*` tooltip ids; C6 regression baseline test
+- [ ] Windows desktop: real BinDiff 8 `bindiff.exe` through the GUI, native file dialogs, 125/150/200% DPI layout of the section, NVDA/Narrator announcement of the two status lines, keyboard-only walk (manual, C8)
+- [ ] Real Ghidra/IDA `.BinExport` pair through the GUI (only synthetic fixtures so far; C3-7)
+- [ ] Optional: remember `.BinExport` paths per project; auto-probe a previously configured executable (both deliberately not done: explicit actions only)
+### [S0a:contracts-store] SPEC-31 S0a (2026-10-14)
+- [x] limits, contracts, keys, store, `docs/schemas/unified/` + examples via tools/generate_schemas.py, drift test; 02 s9 freeze notes
+- [ ] DEFERRED: `unified/registry.py`, `place_ir`/`find_ir`, orphan result-dir sweep, spec status lines A-01/A-01b/A-03/A-06/A-08/A-09/A-10/A-11/A-14, `.gitattributes` for tests/fixtures/unified
+- [ ] Windows CI: unified tests (paths, os.replace retry, CRLF checkout of docs/schemas/unified examples) and Python 3.12

@@ -1,0 +1,17 @@
+{
+  "analysis_options": {},
+  "artifact_path": "/work/pt-ir-1/input/older.bin",
+  "artifact_sha256": "d6a914df2da752f3444b4a98be2488484c153d5bd5853eb7793bc787c24596b6",
+  "contract": "ir-extract-request/1",
+  "decompile_rvas": [],
+  "gzf_path": "/work/pt-ir-1/input/older.gzf",
+  "gzf_sha256": "ab5a722b15a725792bd140ae4b795b3f46971f8593bff4b9f2e0456e0904ced0",
+  "limits": {
+    "l01_functions_per_side": 250000
+  },
+  "max_heap_mb": 4096,
+  "mode": "gzf",
+  "out_dir": "out",
+  "side": "older",
+  "work_dir": "/work/pt-ir-1/ghidra"
+}

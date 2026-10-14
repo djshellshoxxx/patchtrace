@@ -1,6 +1,6 @@
 # SPEC-31 / 06 Adapters: external engines and stored outputs as evidence sources
 
-Every external result enters the unified engine only as `Atom`s (02 s4) plus groups and limitations, through one adapter per source. Adapters are pure readers of STORED data (they never run tools; engines keep running through the SPEC-28 scheduler, the Ghidriff backend or the DA-01 importer). Owner slice S0b (Ghidriff, secondary, manual); Diaphora adapter: trigger DA-01 D3 merged, owner DA-01 integration owner; BinExport2 producer: trigger C3 merged, owner of the S1 follow-up. Tier maps: 05 s1.2.
+Every external result enters the unified engine only as `Atom`s (02 s4) plus groups and limitations, through one adapter per source. Adapters are pure readers of STORED data (they never run tools; engines keep running through the SPEC-28 scheduler, the Ghidriff backend or the DA-01 importer). Owner slice S0b (Ghidriff, secondary, manual); Diaphora adapter: trigger DA-01 D3 merged, owner DA-01 integration owner; BinExport2 producer: C3 is merged, so the trigger is a C3 worker mode `ir-export` (A-18), owner of the S1 follow-up. Tier maps: 05 s1.2.
 
 ## 1. Common contract
 ```python
@@ -22,7 +22,7 @@ class SourceSpec:                           # registry row (D-08); adding a sour
     tooltip_id: str                         # tooltips.REGISTRY id 'unified.source.<id>'
     licence_note: str                       # shown in provenance ("external process, GPL-3.0" ...)
 ```
-`AddressMap` (`addressing.py`) per side: `image_base`, `size_of_image` from `pe_overview` (stdlib, verified bytes), `to_rva(value, basis)` with basis `va|rva|auto`; `auto` decides per SET: all addresses inside [image_base, image_base + size_of_image) -> VA; all < size_of_image -> RVA; otherwise `not-comparable` for the set plus a limitation (fixes R01 s3 limit 1, where an image-base mismatch silently became "absent"). Ghidriff `EXTERNAL:<hex>` keys never raise: they are skipped and counted (imports are matched by P01) (D-17, D-28b).
+`AddressMap` (`addressing.py`) per side: `image_base`, `size_of_image` from `pe_overview` (stdlib, verified bytes), `to_rva(value, basis)` with basis `va|rva|auto`; `auto` decides per SET with the same rule as C3's `secondary.binexport_identity.detect_address_basis` (reuse it, do not re-implement): all addresses inside [image_base, image_base + size_of_image) -> VA; all < size_of_image -> RVA; otherwise `not-comparable` for the set plus a limitation (fixes R01 s3 limit 1, where an image-base mismatch silently became "absent"). Ghidriff `EXTERNAL:<hex>` keys never raise: they are skipped and counted (imports are matched by P01 when IR exists; S0 has no import rows) (D-17; same skip rule as nway/graph.py `_is_external`, ce108cd).
 
 ## 2. Ghidriff (primary engine; baseline and regression oracle; run as is)
 
@@ -68,7 +68,7 @@ class SourceSpec:                           # registry row (D-08); adding a sour
 |---|---|
 | Inputs | DA-01 kinds `diaphora-matches` (`diaphora/1` sets) produced by DA-01's hardened importer; the unified adapter never opens `.diaphora` SQLite itself |
 | Address basis | only rows whose DA-01 address status is `verified-rva`; `external-ea-only`/`ambiguous` -> skipped and counted |
-| Atoms | `best` -> B, `partial`/`unreliable` -> C, `multimatch` -> N:M group, unmatched -> W observations; sets with provenance `user-attested` (unverified) are capped at C and never make a row `matched` (DA-01 anti-misattribution rule) |
+| Atoms | `best` -> B, `partial`/`unreliable` -> C, `multimatch` -> N:M group, unmatched -> W observations; sets with provenance `user-attested` (unverified) produce display-only W atoms flagged `unverified` that neither support nor contest any row (DA-01: "EXCLUDE from ... auto-corroboration until verified"; a misattributed set must not mark every row contested, R-15) |
 | Taken | category, heuristic description (as `step`, sanitized), ratio text (native; may exceed 1.0 with the 0.01 bonus) |
 | Not taken | ratios for decisions; pseudocode/microcode (C6 stays Ghidra-decompiler based; mixing IR dialects is out of scope) |
 | Licence | AGPL-3.0: no code, no SQL, no thresholds copied; ideas only (09) |
@@ -80,7 +80,7 @@ class SourceSpec:                           # registry row (D-08); adding a sour
 
 | Producer | Mapping into `ir-extract/1` | Limits |
 |---|---|---|
-| BinExport2 (after C3 merges `accept_binexport`) | `call_graph.vertex` -> functions (THUNK/IMPORTED types -> kind), `flow_graph` -> blocks, `instruction` -> raw bytes + mnemonic, `call_target` -> calls (Ghidra exporter also emits jumps to function entries here, R02 s2), string table refs -> strings | no operand masks: `h1..h3` NULL, P05-P07 and C1/C2 unavailable; both sides must come from the same exporter and version (F1) |
+| BinExport2 (C3 merged: `accept_binexport` validates in a capped worker but returns only `BinExportSummary` + a snapshot path) | a new C3 worker mode `ir-export` (A-18) maps the validated message inside the worker: `call_graph.vertex` -> functions (THUNK/IMPORTED types -> kind), `flow_graph` -> blocks, `instruction` -> raw bytes + mnemonic, `call_target` -> calls (Ghidra exporter also emits jumps to function entries here, R02 s2), string table refs -> strings; output = `ir-extract/1` JSONL, ingested as usual | no operand masks: `h1..h3` NULL, P05-P07, C1/C2 and every cosmetic proof except COS-PSEUDO unavailable; both sides must come from the same exporter and version (F1) |
 | rizin (`aflj`, `afbj`, `pdfj`) | functions, blocks, instruction bytes/opcodes, call and data refs | reachability-bound discovery (`coverage-partial` flag); x86 operand types from `pdfj` are not SLEIGH masks -> `h1..h3` NULL in v1; backup only (B-02) |
 
 ## 8. Engines considered and not adapted (why)
@@ -94,4 +94,4 @@ class SourceSpec:                           # registry row (D-08); adding a sour
 | neural embeddings (Gemini, Asm2Vec, SAFE, PalmTree, jTrans) | rejected for the core (size, licences, fit: R05 s6) |
 
 ## 9. Tests (named)
-`test_ghidriff_adapter_maps_modified_unchanged_added_deleted`; `test_ghidriff_one_to_many_becomes_group_not_cross_product`; `test_external_keys_are_imports_not_errors`; `test_raw_hash_mismatch_drops_raw_with_limitation`; `test_address_basis_auto_va_rva_mixed`; `test_bindiff_algorithm_tier_map_and_basicblocks_zero`; `test_bindiff_alternatives_become_rank_atoms`; `test_rzdiff_shared_newer_endpoint_is_non_exclusive`; `test_rzdiff_similarity_never_read_by_rules` (mutation test: changing every similarity text changes no decision or verdict); `test_diaphora_unverified_capped_at_c` (with a fake `diaphora-matches` row); `test_manual_correction_changes_result_key`; `test_unknown_source_id_renders_generically`.
+`test_ghidriff_adapter_maps_modified_unchanged_added_deleted`; `test_ghidriff_one_to_many_becomes_group_not_cross_product`; `test_external_keys_skipped_and_counted`; `test_diaphora_unverified_never_supports_or_contests`; `test_raw_hash_mismatch_drops_raw_with_limitation`; `test_address_basis_auto_va_rva_mixed`; `test_bindiff_algorithm_tier_map_and_basicblocks_zero`; `test_bindiff_alternatives_become_rank_atoms`; `test_rzdiff_shared_newer_endpoint_is_non_exclusive`; `test_rzdiff_similarity_never_read_by_rules` (mutation test: changing every similarity text changes no decision or verdict); `test_diaphora_verified_best_is_tier_b` (with a fake `diaphora-matches` row); `test_manual_correction_changes_result_key`; `test_unknown_source_id_renders_generically`.

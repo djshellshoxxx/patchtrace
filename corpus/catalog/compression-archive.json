@@ -1,0 +1,896 @@
+[
+  {
+    "contract": "case-card/1",
+    "id": "libarchive-zip-mac-metadata-cve-2016-1541",
+    "project": "libarchive",
+    "upstream_git": "https://github.com/libarchive/libarchive.git",
+    "license_spdx": "BSD-2-Clause",
+    "license_evidence": "COPYING at d0331e8e5b05b475f20b1f3101fe1ad772d7e7e7: 'Except as listed below, all C sources (including .c and .h files) and documentation files are subject to the copyright notice reproduced at the bottom of this file.' | COPYING at d0331e8e5b05b475f20b1f3101fe1ad772d7e7e7: '2. Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.' | same notice found in the file headers (first 8000 bytes) of: libarchive/archive_read_support_format_zip.c | COPYING exempts only the files it names (UC Regents 3-clause, public domain, CC0/OpenSSL/Apache blake2 files); none of the changed files is named there, so the default 2-clause BSD notice applies (SPDX BSD-2-Clause)",
+    "old": {
+      "ref": "d0331e8e^",
+      "commit": "11855358b842491568afd3e37203e4879c351c47"
+    },
+    "new": {
+      "ref": "d0331e8e",
+      "commit": "d0331e8e5b05b475f20b1f3101fe1ad772d7e7e7"
+    },
+    "kind": "cve-fix",
+    "cve": [
+      "CVE-2016-1541"
+    ],
+    "semantic_change": true,
+    "changed_functions": [
+      {
+        "name": "zip_read_mac_metadata",
+        "file": "libarchive/archive_read_support_format_zip.c",
+        "change": "three bounds checks added (+13 lines): stored (method 0) OS X metadata is rejected when compressed and uncompressed sizes differ; compressed_size > 4 MiB is rejected like uncompressed_size already was; in the stored case bytes_avail is clamped to metadata_bytes before the memcpy into the malloc(uncompressed_size) buffer"
+      }
+    ],
+    "unchanged_controls": [
+      "process_extra",
+      "slurp_central_directory",
+      "zip_read_data_deflate",
+      "zip_read_data_none",
+      "archive_read_format_zip_read_data"
+    ],
+    "build": {
+      "system": "cmake",
+      "recipe_notes": "CMakeLists.txt (also autotools: build/autogen.sh + configure). Library target archive; optional deps (zlib, bzip2, xz, zstd, lz4, openssl, expat) can be disabled with the ENABLE_* options. bsdtar/bsdunzip are separate executables built from tar/ and unzip/.",
+      "mingw_ok": "unknown: 2016 commit, not built here (later libarchive trees show an IF(MINGW) CMake branch and a mingw-gcc CI job)"
+    },
+    "verification": {
+      "method": "git clone --filter=blob:none --no-checkout https://github.com/libarchive/libarchive.git; git rev-parse 'd0331e8e5b05b475f20b1f3101fe1ad772d7e7e7~1^{commit}' 'd0331e8e5b05b475f20b1f3101fe1ad772d7e7e7^{commit}' -> 11855358b842491568afd3e37203e4879c351c47 d0331e8e5b05b475f20b1f3101fe1ad772d7e7e7; git diff --stat 11855358b842..d0331e8e5b05 -- '*.c' '*.h' -> 1 files changed; git diff -U0 11855358b842..d0331e8e5b05 -- '*.c' '*.h' (3 hunks in 1 files; each hunk read); function definitions extracted from both blobs (git cat-file blob <commit>:<path>) with a C function scanner (session helper, not shipped) and compared by exact text and by comment-free token stream: 1 changed, 0 added, 0 removed, 0 cosmetic-only; controls checked byte-identical in both blobs and free of changed identifiers; license read with git cat-file blob d0331e8e5b05:<path>",
+      "files_changed": 1,
+      "functions_changed_count": 1,
+      "verified_by_agent_run": true
+    },
+    "sources": [
+      "https://github.com/libarchive/libarchive/commit/d0331e8e5b05b475f20b1f3101fe1ad772d7e7e7",
+      "https://github.com/libarchive/libarchive/compare/11855358b842...d0331e8e5b05"
+    ],
+    "risks": [
+      "NVD, MITRE, OSV and cve.org were unreachable from the collection sandbox (egress policy, HTTP 403 on CONNECT), so the CVE record itself was not read; the CVE id and the vulnerability description come from the fixing commit message in the upstream repository.",
+      "Commit message (Issue #656) describes the flaw as a heap overflow: uncompressed size used to allocate, compressed size used to bound the copy.",
+      "zip_read_mac_metadata is a single non-static function in a 2016 tree; the pair is a normal mid-history commit pair, build at the old commit not attempted."
+    ]
+  },
+  {
+    "contract": "case-card/1",
+    "id": "libarchive-rar-run-filters-cve-2024-26256",
+    "project": "libarchive",
+    "upstream_git": "https://github.com/libarchive/libarchive.git",
+    "license_spdx": "BSD-2-Clause",
+    "license_evidence": "COPYING at b7b0c7c4379531206a53634a12a02a8d45b28a2f: 'Except as listed below, all C sources (including .c and .h files) and documentation files are subject to the copyright notice reproduced at the bottom of this file.' | COPYING at b7b0c7c4379531206a53634a12a02a8d45b28a2f: '2. Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.' | same notice found in the file headers (first 8000 bytes) of: libarchive/archive_read_support_format_rar.c | COPYING exempts only the files it names (UC Regents 3-clause, public domain, CC0/OpenSSL/Apache blake2 files); none of the changed files is named there, so the default 2-clause BSD notice applies (SPDX BSD-2-Clause)",
+    "old": {
+      "ref": "b7b0c7c4^",
+      "commit": "13e8fc669bc53b563109e85515160d0a6f245e6c"
+    },
+    "new": {
+      "ref": "b7b0c7c4",
+      "commit": "b7b0c7c4379531206a53634a12a02a8d45b28a2f"
+    },
+    "kind": "cve-fix",
+    "cve": [
+      "CVE-2024-26256"
+    ],
+    "semantic_change": true,
+    "changed_functions": [
+      {
+        "name": "run_filters",
+        "file": "libarchive/archive_read_support_format_rar.c",
+        "change": "bounds check added (+6 lines) before copy_from_lzss_window(): filter->blocklength > VM_MEMORY_SIZE now sets \"Bad RAR file data\" and returns 0"
+      }
+    ],
+    "unchanged_controls": [
+      "parse_codes",
+      "expand",
+      "parse_filter",
+      "read_exttime",
+      "read_next_symbol"
+    ],
+    "build": {
+      "system": "cmake",
+      "recipe_notes": "CMakeLists.txt (also autotools: build/autogen.sh + configure). Library target archive; optional deps (zlib, bzip2, xz, zstd, lz4, openssl, expat) can be disabled with the ENABLE_* options. bsdtar/bsdunzip are separate executables built from tar/ and unzip/.",
+      "mingw_ok": "likely: CMakeLists.txt has an IF(MINGW) branch and .github/workflows/ci.yml builds a 'mingw-gcc' matrix entry (read at ecce4674); not built here"
+    },
+    "verification": {
+      "method": "git clone --filter=blob:none --no-checkout https://github.com/libarchive/libarchive.git; git rev-parse 'b7b0c7c4379531206a53634a12a02a8d45b28a2f~1^{commit}' 'b7b0c7c4379531206a53634a12a02a8d45b28a2f^{commit}' -> 13e8fc669bc53b563109e85515160d0a6f245e6c b7b0c7c4379531206a53634a12a02a8d45b28a2f; git diff --stat 13e8fc669bc5..b7b0c7c43795 -- '*.c' '*.h' -> 1 files changed; git diff -U0 13e8fc669bc5..b7b0c7c43795 -- '*.c' '*.h' (1 hunks in 1 files; each hunk read); function definitions extracted from both blobs (git cat-file blob <commit>:<path>) with a C function scanner (session helper, not shipped) and compared by exact text and by comment-free token stream: 1 changed, 0 added, 0 removed, 0 cosmetic-only; controls checked byte-identical in both blobs and free of changed identifiers; license read with git cat-file blob b7b0c7c43795:<path>",
+      "files_changed": 1,
+      "functions_changed_count": 1,
+      "verified_by_agent_run": true
+    },
+    "sources": [
+      "https://github.com/libarchive/libarchive/commit/b7b0c7c4379531206a53634a12a02a8d45b28a2f",
+      "https://github.com/libarchive/libarchive/compare/13e8fc669bc5...b7b0c7c43795"
+    ],
+    "risks": [
+      "NVD, MITRE, OSV and cve.org were unreachable from the collection sandbox (egress policy, HTTP 403 on CONNECT), so the CVE record itself was not read; the CVE id and the vulnerability description come from the fixing commit message in the upstream repository.",
+      "Commit message says only \"Opening a manipulated RAR archive could lead to remote code execution / Security: CVE-2024-26256\".",
+      "run_filters is static: an optimizing build may inline it into its caller, so the observable binary change can sit in the caller."
+    ]
+  },
+  {
+    "contract": "case-card/1",
+    "id": "libarchive-rar-lzss-copy-cve-2024-20696",
+    "project": "libarchive",
+    "upstream_git": "https://github.com/libarchive/libarchive.git",
+    "license_spdx": "BSD-2-Clause",
+    "license_evidence": "COPYING at eac15e252010c1189a5c0f461364dbe2cd2a68b1: 'Except as listed below, all C sources (including .c and .h files) and documentation files are subject to the copyright notice reproduced at the bottom of this file.' | COPYING at eac15e252010c1189a5c0f461364dbe2cd2a68b1: '2. Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.' | same notice found in the file headers (first 8000 bytes) of: libarchive/archive_read_support_format_rar.c | COPYING exempts only the files it names (UC Regents 3-clause, public domain, CC0/OpenSSL/Apache blake2 files); none of the changed files is named there, so the default 2-clause BSD notice applies (SPDX BSD-2-Clause)",
+    "old": {
+      "ref": "eac15e25^",
+      "commit": "576a24205050a0ce5f8209f13bc1d94912797883"
+    },
+    "new": {
+      "ref": "eac15e25",
+      "commit": "eac15e252010c1189a5c0f461364dbe2cd2a68b1"
+    },
+    "kind": "cve-fix",
+    "cve": [
+      "CVE-2024-20696"
+    ],
+    "semantic_change": true,
+    "changed_functions": [
+      {
+        "name": "copy_from_lzss_window_to_unp",
+        "file": "libarchive/archive_read_support_format_rar.c",
+        "change": "length parameter widened from int to size_t; new up-front check length > rar->unp_buffer_size jumps to a shared fatal label (\"Bad RAR file data\"); lzss_size() comparisons cast to size_t; the duplicated error return is replaced by the fatal label"
+      },
+      {
+        "name": "read_data_compressed",
+        "file": "libarchive/archive_read_support_format_rar.c",
+        "change": "both call sites drop the (int) cast of bs now that the callee takes size_t"
+      }
+    ],
+    "unchanged_controls": [
+      "membr_next_rarvm_number",
+      "ppmd_read",
+      "free_codes",
+      "delete_program_code",
+      "delete_filter"
+    ],
+    "build": {
+      "system": "cmake",
+      "recipe_notes": "CMakeLists.txt (also autotools: build/autogen.sh + configure). Library target archive; optional deps (zlib, bzip2, xz, zstd, lz4, openssl, expat) can be disabled with the ENABLE_* options. bsdtar/bsdunzip are separate executables built from tar/ and unzip/.",
+      "mingw_ok": "likely: CMakeLists.txt has an IF(MINGW) branch and .github/workflows/ci.yml builds a 'mingw-gcc' matrix entry (read at ecce4674); not built here"
+    },
+    "verification": {
+      "method": "git clone --filter=blob:none --no-checkout https://github.com/libarchive/libarchive.git; git rev-parse 'eac15e252010c1189a5c0f461364dbe2cd2a68b1~1^{commit}' 'eac15e252010c1189a5c0f461364dbe2cd2a68b1^{commit}' -> 576a24205050a0ce5f8209f13bc1d94912797883 eac15e252010c1189a5c0f461364dbe2cd2a68b1; git diff --stat 576a24205050..eac15e252010 -- '*.c' '*.h' -> 1 files changed; git diff -U0 576a24205050..eac15e252010 -- '*.c' '*.h' (10 hunks in 1 files; each hunk read); function definitions extracted from both blobs (git cat-file blob <commit>:<path>) with a C function scanner (session helper, not shipped) and compared by exact text and by comment-free token stream: 2 changed, 0 added, 0 removed, 0 cosmetic-only; controls checked byte-identical in both blobs and free of changed identifiers; license read with git cat-file blob eac15e252010:<path>",
+      "files_changed": 1,
+      "functions_changed_count": 2,
+      "verified_by_agent_run": true
+    },
+    "sources": [
+      "https://github.com/libarchive/libarchive/commit/eac15e252010c1189a5c0f461364dbe2cd2a68b1",
+      "https://github.com/libarchive/libarchive/compare/576a24205050...eac15e252010"
+    ],
+    "risks": [
+      "NVD, MITRE, OSV and cve.org were unreachable from the collection sandbox (egress policy, HTTP 403 on CONNECT), so the CVE record itself was not read; the CVE id and the vulnerability description come from the fixing commit message in the upstream repository.",
+      "Commit message: an lzss opcode chain could produce a negative copy length which becomes a very large size_t in memcpy; line \"Security: CVE-2024-20696\".",
+      "The static prototype line of copy_from_lzss_window_to_unp also changed (non-function hunk).",
+      "copy_from_lzss_window_to_unp is static and small: it may be inlined into read_data_compressed in optimized builds."
+    ]
+  },
+  {
+    "contract": "case-card/1",
+    "id": "libarchive-tar-unzip-null-cve-2025-1632",
+    "project": "libarchive",
+    "upstream_git": "https://github.com/libarchive/libarchive.git",
+    "license_spdx": "BSD-2-Clause",
+    "license_evidence": "COPYING at c9bc934e7e91d302e0feca6e713ccc38d6d01532: 'Except as listed below, all C sources (including .c and .h files) and documentation files are subject to the copyright notice reproduced at the bottom of this file.' | COPYING at c9bc934e7e91d302e0feca6e713ccc38d6d01532: '2. Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.' | same notice found in the file headers (first 8000 bytes) of: tar/util.c, unzip/bsdunzip.c | COPYING exempts only the files it names (UC Regents 3-clause, public domain, CC0/OpenSSL/Apache blake2 files); none of the changed files is named there, so the default 2-clause BSD notice applies (SPDX BSD-2-Clause)",
+    "old": {
+      "ref": "c9bc934e^",
+      "commit": "52e0bfd750cb8ae7b7c7656c35020118efa28427"
+    },
+    "new": {
+      "ref": "c9bc934e",
+      "commit": "c9bc934e7e91d302e0feca6e713ccc38d6d01532"
+    },
+    "kind": "cve-fix",
+    "cve": [
+      "CVE-2025-1632",
+      "CVE-2025-25724"
+    ],
+    "semantic_change": true,
+    "changed_functions": [
+      {
+        "name": "list_item_verbose",
+        "file": "tar/util.c",
+        "change": "NULL guard (+5/-1 lines): when localtime()/localtime_r() returns NULL, strftime() is skipped and the date buffer is set to \"-- -- ----\" instead of dereferencing the NULL struct tm"
+      },
+      {
+        "name": "list",
+        "file": "unzip/bsdunzip.c",
+        "change": "NULL guard: archive_entry_pathname() is stored in a local that falls back to \"\" and is used by all printf calls instead of passing a possibly NULL pointer"
+      }
+    ],
+    "unchanged_controls": [
+      "safe_fprintf",
+      "edit_pathname",
+      "strip_absolute_path",
+      "extract_file",
+      "extract2fd"
+    ],
+    "build": {
+      "system": "cmake",
+      "recipe_notes": "CMakeLists.txt (also autotools: build/autogen.sh + configure). Library target archive; optional deps (zlib, bzip2, xz, zstd, lz4, openssl, expat) can be disabled with the ENABLE_* options. bsdtar/bsdunzip are separate executables built from tar/ and unzip/. This pair changes the bsdtar (tar/) and bsdunzip (unzip/) programs, not libarchive.so itself.",
+      "mingw_ok": "likely: CMakeLists.txt has an IF(MINGW) branch and .github/workflows/ci.yml builds a 'mingw-gcc' matrix entry (read at ecce4674); not built here"
+    },
+    "verification": {
+      "method": "git clone --filter=blob:none --no-checkout https://github.com/libarchive/libarchive.git; git rev-parse 'c9bc934e7e91d302e0feca6e713ccc38d6d01532~1^{commit}' 'c9bc934e7e91d302e0feca6e713ccc38d6d01532^{commit}' -> 52e0bfd750cb8ae7b7c7656c35020118efa28427 c9bc934e7e91d302e0feca6e713ccc38d6d01532; git diff --stat 52e0bfd750cb..c9bc934e7e91 -- '*.c' '*.h' -> 2 files changed; git diff -U0 52e0bfd750cb..c9bc934e7e91 -- '*.c' '*.h' (6 hunks in 2 files; each hunk read); function definitions extracted from both blobs (git cat-file blob <commit>:<path>) with a C function scanner (session helper, not shipped) and compared by exact text and by comment-free token stream: 2 changed, 0 added, 0 removed, 0 cosmetic-only; controls checked byte-identical in both blobs and free of changed identifiers; license read with git cat-file blob c9bc934e7e91:<path>",
+      "files_changed": 2,
+      "functions_changed_count": 2,
+      "verified_by_agent_run": true
+    },
+    "sources": [
+      "https://github.com/libarchive/libarchive/commit/c9bc934e7e91d302e0feca6e713ccc38d6d01532",
+      "https://github.com/libarchive/libarchive/compare/52e0bfd750cb...c9bc934e7e91"
+    ],
+    "risks": [
+      "NVD, MITRE, OSV and cve.org were unreachable from the collection sandbox (egress policy, HTTP 403 on CONNECT), so the CVE record itself was not read; the CVE id and the vulnerability description come from the fixing commit message in the upstream repository.",
+      "Commit message: both cases triggered a NULL pointer dereference and are fixed by substituting a predefined invalid string; it names both CVEs for the combined change.",
+      "Both changed files are command-line programs (bsdtar, bsdunzip); list_item_verbose lives in a separate tar/util.c object linked only into bsdtar.",
+      "The same tar/util.c function was modified again later by ecce4674 (CVE-2025-25724 strftime result check), which is not part of this pair."
+    ]
+  },
+  {
+    "contract": "case-card/1",
+    "id": "zlib-minizip-miniunz-zip-slip-cve-2014-9485",
+    "project": "zlib-contrib-minizip",
+    "upstream_git": "https://github.com/madler/zlib.git",
+    "license_spdx": "Zlib",
+    "license_evidence": "zlib.h at 14a5f8f266c16c87ab6c086fc52b770b27701e01: 'This software is provided 'as-is', without any express or implied warranty.' | contrib/minizip/unzip.h at 14a5f8f266c16c87ab6c086fc52b770b27701e01: 'Condition of use and distribution are the same than zlib' | contrib/minizip/zip.h at 14a5f8f266c16c87ab6c086fc52b770b27701e01: 'Condition of use and distribution are the same than zlib' | LICENSE at 14a5f8f266c16c87ab6c086fc52b770b27701e01: 'This software is provided 'as-is', without any express or implied warranty.' | miniunz.c itself carries no license sentence; the minizip package states \"Condition of use and distribution are the same than zlib\" in zip.h/unzip.h",
+    "old": {
+      "ref": "14a5f8f^",
+      "commit": "44dc43ab047d65febed972a17b0e3bf7e994e8f2"
+    },
+    "new": {
+      "ref": "14a5f8f",
+      "commit": "14a5f8f266c16c87ab6c086fc52b770b27701e01"
+    },
+    "kind": "cve-fix",
+    "cve": [
+      "CVE-2014-9485"
+    ],
+    "semantic_change": true,
+    "changed_functions": [
+      {
+        "name": "do_extract_currentfile",
+        "file": "contrib/minizip/miniunz.c",
+        "change": "path sanitization added (+14 lines) before unzOpenCurrentFilePassword(): write_filename is moved to the last \"..\" sequence found in the member name, then leading \"/\" and \".\" characters are skipped, neutralizing absolute and parent-relative member names (zip slip)"
+      }
+    ],
+    "unchanged_controls": [
+      "do_list",
+      "makedir",
+      "change_file_date",
+      "Display64BitsSize",
+      "mymkdir"
+    ],
+    "build": {
+      "system": "make",
+      "recipe_notes": "contrib/minizip has its own Makefile (and Makefile.am/configure.ac); no CMake. Compile ioapi.c unzip.c zip.c iowin32.c (+ mztools.c) against zlib; miniunz.c and minizip.c are the command-line programs.",
+      "mingw_ok": "yes: 7/7 contrib/minizip sources (ioapi, unzip, zip, iowin32, miniunz, minizip, mztools) compile with x86_64-w64-mingw32-gcc 13-win32 -c at the new commit (4 warnings, compile only)"
+    },
+    "verification": {
+      "method": "git clone --filter=blob:none --no-checkout https://github.com/madler/zlib.git; git rev-parse '14a5f8f266c16c87ab6c086fc52b770b27701e01~1^{commit}' '14a5f8f266c16c87ab6c086fc52b770b27701e01^{commit}' -> 44dc43ab047d65febed972a17b0e3bf7e994e8f2 14a5f8f266c16c87ab6c086fc52b770b27701e01; git diff --stat 44dc43ab047d..14a5f8f266c1 -- '*.c' '*.h' -> 1 files changed; git diff -U0 44dc43ab047d..14a5f8f266c1 -- '*.c' '*.h' (1 hunks in 1 files; each hunk read); function definitions extracted from both blobs (git cat-file blob <commit>:<path>) with a C function scanner (session helper, not shipped) and compared by exact text and by comment-free token stream: 1 changed, 0 added, 0 removed, 0 cosmetic-only; controls checked byte-identical in both blobs and free of changed identifiers; license read with git cat-file blob 14a5f8f266c1:<path>",
+      "files_changed": 1,
+      "functions_changed_count": 1,
+      "verified_by_agent_run": true
+    },
+    "sources": [
+      "https://github.com/madler/zlib/commit/14a5f8f266c16c87ab6c086fc52b770b27701e01",
+      "https://github.com/madler/zlib/compare/44dc43ab047d...14a5f8f266c1"
+    ],
+    "risks": [
+      "NVD, MITRE, OSV and cve.org were unreachable from the collection sandbox (egress policy, HTTP 403 on CONNECT), so the CVE record itself was not read; the CVE id and the vulnerability description come from the fixing commit message in the upstream repository.",
+      "Commit message: the Debian project requested CVE-2014-9485 for the first identified weakness; the first fix was incomplete, so this revised patch is meant to cover both issues.",
+      "Dated 2024-01-17 although the CVE is from 2014; the code is contrib (unsupported by the zlib authors) and not part of libz."
+    ]
+  },
+  {
+    "contract": "case-card/1",
+    "id": "zlib-gzwrite-nonblocking-overflow-cve-2026-85091",
+    "project": "zlib",
+    "upstream_git": "https://github.com/madler/zlib.git",
+    "license_spdx": "Zlib",
+    "license_evidence": "zlib.h at df84af25dc1942490e1d1c899a07619152a46148: 'This software is provided 'as-is', without any express or implied warranty.' | LICENSE at df84af25dc1942490e1d1c899a07619152a46148: 'This software is provided 'as-is', without any express or implied warranty.'",
+    "old": {
+      "ref": "df84af2^",
+      "commit": "bbc2ccf3d0de267576b524b875c769a724a513b0"
+    },
+    "new": {
+      "ref": "df84af2",
+      "commit": "df84af25dc1942490e1d1c899a07619152a46148"
+    },
+    "kind": "cve-fix",
+    "cve": [
+      "CVE-2026-85091"
+    ],
+    "semantic_change": true,
+    "changed_functions": [
+      {
+        "name": "gz_write",
+        "file": "gzwrite.c",
+        "change": "error path of the large-write loop (+4/-1 lines): when gz_comp() returns -1 the stream is reset (state->strm.avail_in = 0; state->strm.next_in = state->in) before the early return for non-blocking I/O"
+      }
+    ],
+    "unchanged_controls": [
+      "gz_comp",
+      "gz_init",
+      "gzsetparams",
+      "gz_zero",
+      "gzclose_w"
+    ],
+    "build": {
+      "system": "cmake",
+      "recipe_notes": "cmake -S . -B build (target zlib, no third-party deps); alternatives in the same tree: ./configure && make, win32/Makefile.gcc (mingw). Library = the *.c files in the repository root; test/, examples/ and contrib/ are not part of libz.",
+      "mingw_ok": "yes: 15/15 root library sources compile with x86_64-w64-mingw32-gcc 13-win32 -c at the new commit (compile only, not linked or run)"
+    },
+    "verification": {
+      "method": "git clone --filter=blob:none --no-checkout https://github.com/madler/zlib.git; git rev-parse 'df84af25dc1942490e1d1c899a07619152a46148~1^{commit}' 'df84af25dc1942490e1d1c899a07619152a46148^{commit}' -> bbc2ccf3d0de267576b524b875c769a724a513b0 df84af25dc1942490e1d1c899a07619152a46148; git diff --stat bbc2ccf3d0de..df84af25dc19 -- '*.c' '*.h' -> 1 files changed; git diff -U0 bbc2ccf3d0de..df84af25dc19 -- '*.c' '*.h' (2 hunks in 1 files; each hunk read); function definitions extracted from both blobs (git cat-file blob <commit>:<path>) with a C function scanner (session helper, not shipped) and compared by exact text and by comment-free token stream: 1 changed, 0 added, 0 removed, 0 cosmetic-only; controls checked byte-identical in both blobs and free of changed identifiers; license read with git cat-file blob df84af25dc19:<path>",
+      "files_changed": 1,
+      "functions_changed_count": 1,
+      "verified_by_agent_run": true
+    },
+    "sources": [
+      "https://github.com/madler/zlib/commit/df84af25dc1942490e1d1c899a07619152a46148",
+      "https://github.com/madler/zlib/compare/bbc2ccf3d0de...df84af25dc19"
+    ],
+    "risks": [
+      "NVD, MITRE, OSV and cve.org were unreachable from the collection sandbox (egress policy, HTTP 403 on CONNECT), so the CVE record itself was not read; the CVE id and the vulnerability description come from the fixing commit message in the upstream repository.",
+      "The commit message is only \"Fix buffer overflow bug in non-blocking gzwrite. This addresses CVE-2026-85091.\"; the mechanism described here is read from the diff, not from an advisory.",
+      "A post-v1.3.2 development commit (v1.3.2-87-gdf84af2), not part of a tagged release at the time of collection."
+    ]
+  },
+  {
+    "contract": "case-card/1",
+    "id": "miniz-tinfl-code-len-cve-2018-12913",
+    "project": "miniz",
+    "upstream_git": "https://github.com/richgel999/miniz.git",
+    "license_spdx": "MIT",
+    "license_evidence": "LICENSE at 384a12dea47068e712a52a4d516e8f013644a965: 'Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files'",
+    "old": {
+      "ref": "384a12d^",
+      "commit": "d10b03cc73475af673df40f06e5cefd1d5f940d9"
+    },
+    "new": {
+      "ref": "384a12d",
+      "commit": "384a12dea47068e712a52a4d516e8f013644a965"
+    },
+    "kind": "cve-fix",
+    "cve": [
+      "CVE-2018-12913"
+    ],
+    "semantic_change": true,
+    "changed_functions": [
+      {
+        "name": "tinfl_decompress",
+        "file": "miniz_tinfl.c",
+        "change": "two failure guards added (+8 lines) right after each Huffman symbol decode: if (code_len == 0) TINFL_CR_RETURN_FOREVER(40 / 54, TINFL_STATUS_FAILED), so a zero-length code can no longer spin forever"
+      }
+    ],
+    "unchanged_controls": [
+      "tinfl_clear_tree",
+      "tinfl_decompressor_alloc",
+      "tinfl_decompress_mem_to_heap",
+      "tinfl_decompress_mem_to_callback"
+    ],
+    "build": {
+      "system": "cmake",
+      "recipe_notes": "CMakeLists.txt (generates miniz_export.h); sources miniz.c miniz_tdef.c miniz_tinfl.c miniz_zip.c. The mingw check used a stub miniz_export.h defining MINIZ_EXPORT empty.",
+      "mingw_ok": "yes: 4/4 library sources compile with x86_64-w64-mingw32-gcc 13-win32 -c at the new commit (compile only; stub miniz_export.h)"
+    },
+    "verification": {
+      "method": "git clone --filter=blob:none --no-checkout https://github.com/richgel999/miniz.git; git rev-parse '384a12dea47068e712a52a4d516e8f013644a965~1^{commit}' '384a12dea47068e712a52a4d516e8f013644a965^{commit}' -> d10b03cc73475af673df40f06e5cefd1d5f940d9 384a12dea47068e712a52a4d516e8f013644a965; git diff --stat d10b03cc7347..384a12dea470 -- '*.c' '*.h' -> 1 files changed; git diff -U0 d10b03cc7347..384a12dea470 -- '*.c' '*.h' (2 hunks in 1 files; each hunk read); function definitions extracted from both blobs (git cat-file blob <commit>:<path>) with a C function scanner (session helper, not shipped) and compared by exact text and by comment-free token stream: 1 changed, 0 added, 0 removed, 0 cosmetic-only; controls checked byte-identical in both blobs and free of changed identifiers; license read with git cat-file blob 384a12dea470:<path>",
+      "files_changed": 1,
+      "functions_changed_count": 1,
+      "verified_by_agent_run": true
+    },
+    "sources": [
+      "https://github.com/richgel999/miniz/commit/384a12dea47068e712a52a4d516e8f013644a965",
+      "https://github.com/richgel999/miniz/compare/d10b03cc7347...384a12dea470"
+    ],
+    "risks": [
+      "NVD, MITRE, OSV and cve.org were unreachable from the collection sandbox (egress policy, HTTP 403 on CONNECT), so the CVE record itself was not read; the CVE id and the vulnerability description come from the fixing commit message in the upstream repository.",
+      "History around this CVE: e680017 (2024-12-18) added a first guard citing CVE-2018-12913, ae07a36 (2025-03-09) reverted it, and this commit (2026-02-07, \"Fix CVE-2018-12913 regression\") re-fixes it differently.",
+      "tinfl_decompress is one very large function built from coroutine macros; binary-level change is confined to it.",
+      "tinfl_decompress_mem_to_heap and tinfl_decompress_mem_to_callback call the changed function; their own text is unchanged (control only at the source level)."
+    ]
+  },
+  {
+    "contract": "case-card/1",
+    "id": "lz4-decompress-generic-negative-size-check",
+    "project": "lz4",
+    "upstream_git": "https://github.com/lz4/lz4.git",
+    "license_spdx": "BSD-2-Clause",
+    "license_evidence": "lib/LICENSE at 8301a21773ef61656225e264f4f06ae14462bca7: 'Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met' | LICENSE at 8301a21773ef61656225e264f4f06ae14462bca7: 'all files in the `lib` directory use a BSD 2-Clause license' | same notice found in the file headers (first 8000 bytes) of: lib/lz4.c | top-level LICENSE gives GPLv2 to every file outside lib/; this card changes only lib/lz4.c",
+    "old": {
+      "ref": "8301a21^",
+      "commit": "1d58f77818f2ac8c18e89a884826c9fa8acba295"
+    },
+    "new": {
+      "ref": "8301a21",
+      "commit": "8301a21773ef61656225e264f4f06ae14462bca7"
+    },
+    "kind": "bounds-only",
+    "cve": [],
+    "semantic_change": true,
+    "changed_functions": [
+      {
+        "name": "LZ4_decompress_generic",
+        "file": "lib/lz4.c",
+        "change": "entry guard widened (+1/-1 line) from (src == NULL) to ((src == NULL) || (outputSize < 0)); a negative output size now returns -1 (commit title: potential memory corruption with negative memmove() size)"
+      }
+    ],
+    "unchanged_controls": [
+      "LZ4_compress_fast_continue",
+      "LZ4_loadDict",
+      "LZ4_compress_fast_extState_fastReset",
+      "LZ4_attach_dictionary"
+    ],
+    "build": {
+      "system": "make",
+      "recipe_notes": "lib/Makefile (also build/cmake and meson); sources lib/lz4.c lib/lz4hc.c lib/lz4frame.c lib/xxhash.c. Only lib/ is BSD-2-Clause; programs/ and tests/ are GPLv2 and are not part of this card.",
+      "mingw_ok": "yes: 4/4 lib sources compile with x86_64-w64-mingw32-gcc 13-win32 -c at the new commit (compile only)"
+    },
+    "verification": {
+      "method": "git clone --filter=blob:none --no-checkout https://github.com/lz4/lz4.git; git rev-parse '8301a21773ef61656225e264f4f06ae14462bca7~1^{commit}' '8301a21773ef61656225e264f4f06ae14462bca7^{commit}' -> 1d58f77818f2ac8c18e89a884826c9fa8acba295 8301a21773ef61656225e264f4f06ae14462bca7; git diff --stat 1d58f77818f2..8301a21773ef -- 'lib/*.c' 'lib/*.h' -> 1 files changed; git diff -U0 1d58f77818f2..8301a21773ef -- 'lib/*.c' 'lib/*.h' (1 hunks in 1 files; each hunk read); function definitions extracted from both blobs (git cat-file blob <commit>:<path>) with a C function scanner (session helper, not shipped) and compared by exact text and by comment-free token stream: 1 changed, 0 added, 0 removed, 0 cosmetic-only; controls checked byte-identical in both blobs and free of changed identifiers; license read with git cat-file blob 8301a21773ef:<path>",
+      "files_changed": 1,
+      "functions_changed_count": 1,
+      "verified_by_agent_run": true
+    },
+    "sources": [
+      "https://github.com/lz4/lz4/commit/8301a21773ef61656225e264f4f06ae14462bca7",
+      "https://github.com/lz4/lz4/compare/1d58f77818f2...8301a21773ef"
+    ],
+    "risks": [
+      "No CVE id is named by the commit message, the project's changelog or its tests, and NVD could not be reached, so no CVE is claimed for this fix.",
+      "LZ4_decompress_generic is LZ4_FORCE_INLINE: it is inlined into LZ4_decompress_safe, LZ4_decompress_safe_partial, LZ4_decompress_fast and the dictionary/prefix wrappers (call sites at lib/lz4.c lines 2173-2249), so the observable binary change is in those wrappers, not in a standalone symbol.",
+      "Controls are deliberately taken from the compression side, which shares no code with the inlined decoder."
+    ]
+  },
+  {
+    "contract": "case-card/1",
+    "id": "zlib-deflateprime-bits-range-check",
+    "project": "zlib",
+    "upstream_git": "https://github.com/madler/zlib.git",
+    "license_spdx": "Zlib",
+    "license_evidence": "zlib.h at 4346a16853e19b45787ce933666026903fb8f3f8: 'This software is provided 'as-is', without any express or implied warranty.' | the license notice quoted is the header of zlib.h",
+    "old": {
+      "ref": "4346a16^",
+      "commit": "5c44459c3b28a9bd3283aaceab7c615f8020c531"
+    },
+    "new": {
+      "ref": "4346a16",
+      "commit": "4346a16853e19b45787ce933666026903fb8f3f8"
+    },
+    "kind": "bounds-only",
+    "cve": [],
+    "semantic_change": true,
+    "changed_functions": [
+      {
+        "name": "deflatePrime",
+        "file": "deflate.c",
+        "change": "condition extended (+2/-1 lines): returns Z_BUF_ERROR when bits < 0 || bits > 16, in addition to the existing sym_buf / pending_out space check (commit title: assure that the number of bits for deflatePrime() is valid)"
+      }
+    ],
+    "unchanged_controls": [
+      "deflateSetDictionary",
+      "deflateBound",
+      "deflate_fast",
+      "deflate_slow",
+      "deflate_stored"
+    ],
+    "build": {
+      "system": "cmake",
+      "recipe_notes": "cmake -S . -B build (target zlib, no third-party deps); alternatives in the same tree: ./configure && make, win32/Makefile.gcc (mingw). Library = the *.c files in the repository root; test/, examples/ and contrib/ are not part of libz.",
+      "mingw_ok": "yes: 15/15 root library sources compile with x86_64-w64-mingw32-gcc 13-win32 -c at the new commit (compile only)"
+    },
+    "verification": {
+      "method": "git clone --filter=blob:none --no-checkout https://github.com/madler/zlib.git; git rev-parse '4346a16853e19b45787ce933666026903fb8f3f8~1^{commit}' '4346a16853e19b45787ce933666026903fb8f3f8^{commit}' -> 5c44459c3b28a9bd3283aaceab7c615f8020c531 4346a16853e19b45787ce933666026903fb8f3f8; git diff --stat 5c44459c3b28..4346a16853e1 -- ':(glob)*.c' ':(glob)*.h' -> 1 files changed; git diff -U0 5c44459c3b28..4346a16853e1 -- ':(glob)*.c' ':(glob)*.h' (1 hunks in 1 files; each hunk read); function definitions extracted from both blobs (git cat-file blob <commit>:<path>) with a C function scanner (session helper, not shipped) and compared by exact text and by comment-free token stream: 1 changed, 0 added, 0 removed, 0 cosmetic-only; controls checked byte-identical in both blobs and free of changed identifiers; license read with git cat-file blob 4346a16853e1:<path>",
+      "files_changed": 1,
+      "functions_changed_count": 1,
+      "verified_by_agent_run": true
+    },
+    "sources": [
+      "https://github.com/madler/zlib/commit/4346a16853e19b45787ce933666026903fb8f3f8",
+      "https://github.com/madler/zlib/compare/5c44459c3b28...4346a16853e1"
+    ],
+    "risks": [
+      "No CVE id is named by the commit message, the project's changelog or its tests, and NVD could not be reached, so no CVE is claimed for this fix.",
+      "Scope of the diff stat is the library root only (:(glob)*.c :(glob)*.h); contrib/, examples/ and test/ are excluded."
+    ]
+  },
+  {
+    "contract": "case-card/1",
+    "id": "zlib-minizip-zip-header-length-checks",
+    "project": "zlib-contrib-minizip",
+    "upstream_git": "https://github.com/madler/zlib.git",
+    "license_spdx": "Zlib",
+    "license_evidence": "zlib.h at 73331a6a0481067628f065ffe87bb1d8f787d10c: 'This software is provided 'as-is', without any express or implied warranty.' | contrib/minizip/unzip.h at 73331a6a0481067628f065ffe87bb1d8f787d10c: 'Condition of use and distribution are the same than zlib' | contrib/minizip/zip.h at 73331a6a0481067628f065ffe87bb1d8f787d10c: 'Condition of use and distribution are the same than zlib' | zip.c itself carries no license sentence; the minizip package states \"Condition of use and distribution are the same than zlib\" in zip.h/unzip.h",
+    "old": {
+      "ref": "73331a6^",
+      "commit": "726e18943df8c3bd75e6fa91f2ff24ba956a4f95"
+    },
+    "new": {
+      "ref": "73331a6",
+      "commit": "73331a6a0481067628f065ffe87bb1d8f787d10c"
+    },
+    "kind": "bounds-only",
+    "cve": [],
+    "semantic_change": true,
+    "changed_functions": [
+      {
+        "name": "zipOpenNewFileInZip4_64",
+        "file": "contrib/minizip/zip.c",
+        "change": "parameter validation added (+11 lines): returns ZIP_PARAMERROR when strlen(filename) or strlen(comment) exceeds 0xffff, or when size_extrafield_local / size_extrafield_global exceeds 0xffff (zip header fields are 16 bits)"
+      }
+    ],
+    "unchanged_controls": [
+      "zipWriteInFileInZip",
+      "zip64local_SearchCentralDir64",
+      "Write_LocalFileHeader",
+      "zipOpen3",
+      "zipClose"
+    ],
+    "build": {
+      "system": "make",
+      "recipe_notes": "contrib/minizip has its own Makefile (and Makefile.am/configure.ac); no CMake. Compile ioapi.c unzip.c zip.c iowin32.c (+ mztools.c) against zlib.",
+      "mingw_ok": "yes: 7/7 contrib/minizip sources compile with x86_64-w64-mingw32-gcc 13-win32 -c at the new commit (4 warnings, compile only)"
+    },
+    "verification": {
+      "method": "git clone --filter=blob:none --no-checkout https://github.com/madler/zlib.git; git rev-parse '73331a6a0481067628f065ffe87bb1d8f787d10c~1^{commit}' '73331a6a0481067628f065ffe87bb1d8f787d10c^{commit}' -> 726e18943df8c3bd75e6fa91f2ff24ba956a4f95 73331a6a0481067628f065ffe87bb1d8f787d10c; git diff --stat 726e18943df8..73331a6a0481 -- '*.c' '*.h' -> 1 files changed; git diff -U0 726e18943df8..73331a6a0481 -- '*.c' '*.h' (1 hunks in 1 files; each hunk read); function definitions extracted from both blobs (git cat-file blob <commit>:<path>) with a C function scanner (session helper, not shipped) and compared by exact text and by comment-free token stream: 1 changed, 0 added, 0 removed, 0 cosmetic-only; controls checked byte-identical in both blobs and free of changed identifiers; license read with git cat-file blob 73331a6a0481:<path>",
+      "files_changed": 1,
+      "functions_changed_count": 1,
+      "verified_by_agent_run": true
+    },
+    "sources": [
+      "https://github.com/madler/zlib/commit/73331a6a0481067628f065ffe87bb1d8f787d10c",
+      "https://github.com/madler/zlib/compare/726e18943df8...73331a6a0481"
+    ],
+    "risks": [
+      "No CVE id is named by the commit message, the project's changelog or its tests, and NVD could not be reached, so no CVE is claimed for this fix.",
+      "Commit message: the checks also avoid possible buffer overflows if the provided fields are too long.",
+      "Callers zipOpenNewFileInZip3/4 forward to the changed function; they are intentionally not used as controls."
+    ]
+  },
+  {
+    "contract": "case-card/1",
+    "id": "libarchive-rar4-filter-channel-bounds",
+    "project": "libarchive",
+    "upstream_git": "https://github.com/libarchive/libarchive.git",
+    "license_spdx": "BSD-2-Clause",
+    "license_evidence": "COPYING at d24fd56cbc9870ba30b43454afe00b77a49202c1: 'Except as listed below, all C sources (including .c and .h files) and documentation files are subject to the copyright notice reproduced at the bottom of this file.' | COPYING at d24fd56cbc9870ba30b43454afe00b77a49202c1: '2. Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.' | same notice found in the file headers (first 8000 bytes) of: libarchive/archive_read_support_format_rar.c | COPYING exempts only the files it names (UC Regents 3-clause, public domain, CC0/OpenSSL/Apache blake2 files); none of the changed files is named there, so the default 2-clause BSD notice applies (SPDX BSD-2-Clause)",
+    "old": {
+      "ref": "d24fd56c^",
+      "commit": "9aa710d571dc30d7345683b2c705f33b675263a6"
+    },
+    "new": {
+      "ref": "d24fd56c",
+      "commit": "d24fd56cbc9870ba30b43454afe00b77a49202c1"
+    },
+    "kind": "bounds-only",
+    "cve": [],
+    "semantic_change": true,
+    "changed_functions": [
+      {
+        "name": "execute_filter_delta",
+        "file": "libarchive/archive_read_support_format_rar.c",
+        "change": "channel-count bound added (+3/-1 lines): returns 0 when numchannels == 0 or numchannels > 128, besides the existing length > PROGRAM_WORK_SIZE / 2 test"
+      },
+      {
+        "name": "execute_filter_audio",
+        "file": "libarchive/archive_read_support_format_rar.c",
+        "change": "same channel-count bound added (+3/-1 lines): numchannels == 0 or numchannels > 128 returns 0"
+      }
+    ],
+    "unchanged_controls": [
+      "parse_codes",
+      "expand",
+      "parse_filter",
+      "add_value",
+      "archive_read_format_rar_seek_data"
+    ],
+    "build": {
+      "system": "cmake",
+      "recipe_notes": "CMakeLists.txt (also autotools: build/autogen.sh + configure). Library target archive; optional deps (zlib, bzip2, xz, zstd, lz4, openssl, expat) can be disabled with the ENABLE_* options. bsdtar/bsdunzip are separate executables built from tar/ and unzip/.",
+      "mingw_ok": "likely: CMakeLists.txt has an IF(MINGW) branch and .github/workflows/ci.yml builds a 'mingw-gcc' matrix entry (read at ecce4674); not built here"
+    },
+    "verification": {
+      "method": "git clone --filter=blob:none --no-checkout https://github.com/libarchive/libarchive.git; git rev-parse 'd24fd56cbc9870ba30b43454afe00b77a49202c1~1^{commit}' 'd24fd56cbc9870ba30b43454afe00b77a49202c1^{commit}' -> 9aa710d571dc30d7345683b2c705f33b675263a6 d24fd56cbc9870ba30b43454afe00b77a49202c1; git diff --stat 9aa710d571dc..d24fd56cbc98 -- '*.c' '*.h' -> 1 files changed; git diff -U0 9aa710d571dc..d24fd56cbc98 -- '*.c' '*.h' (2 hunks in 1 files; each hunk read); function definitions extracted from both blobs (git cat-file blob <commit>:<path>) with a C function scanner (session helper, not shipped) and compared by exact text and by comment-free token stream: 2 changed, 0 added, 0 removed, 0 cosmetic-only; controls checked byte-identical in both blobs and free of changed identifiers; license read with git cat-file blob d24fd56cbc98:<path>",
+      "files_changed": 1,
+      "functions_changed_count": 2,
+      "verified_by_agent_run": true
+    },
+    "sources": [
+      "https://github.com/libarchive/libarchive/commit/d24fd56cbc9870ba30b43454afe00b77a49202c1",
+      "https://github.com/libarchive/libarchive/compare/9aa710d571dc...d24fd56cbc98"
+    ],
+    "risks": [
+      "No CVE id is named by the commit message, the project's changelog or its tests, and NVD could not be reached, so no CVE is claimed for this fix.",
+      "The commit has only a title (\"RAR4: bound delta and audio filter channel counts\"), no body.",
+      "Both functions are static and are reached through execute_filter, which is unchanged but calls them; they may be inlined in optimized builds."
+    ]
+  },
+  {
+    "contract": "case-card/1",
+    "id": "libdeflate-levels-11-12-optim-passes",
+    "project": "libdeflate",
+    "upstream_git": "https://github.com/ebiggers/libdeflate.git",
+    "license_spdx": "MIT",
+    "license_evidence": "COPYING at ec03d361f2ece6058b7d1f594f4e7d3c78cfd80f: 'Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files'",
+    "old": {
+      "ref": "ec03d361^",
+      "commit": "84a60c514ab81d74ed809cb6c15317e91a87196a"
+    },
+    "new": {
+      "ref": "ec03d361",
+      "commit": "ec03d361f2ece6058b7d1f594f4e7d3c78cfd80f"
+    },
+    "kind": "constant-only",
+    "cve": [],
+    "semantic_change": true,
+    "changed_functions": [
+      {
+        "name": "libdeflate_alloc_compressor",
+        "file": "lib/deflate_compress.c",
+        "change": "two tuning literals changed (+2/-2 lines): c->p.n.max_optim_passes 3 -> 4 at compression level 11 and 4 -> 10 at level 12 (the default branch); no other token changes"
+      }
+    ],
+    "unchanged_controls": [
+      "deflate_make_huffman_code",
+      "deflate_compute_precode_items",
+      "deflate_compress_greedy",
+      "deflate_compress_fastest",
+      "deflate_find_min_cost_path"
+    ],
+    "build": {
+      "system": "cmake",
+      "recipe_notes": "CMakeLists.txt (library target libdeflate, programs optional). Sources lib/*.c plus lib/x86/cpu_features.c on x86; no external dependencies.",
+      "mingw_ok": "yes: 10/10 library sources compile with x86_64-w64-mingw32-gcc 13-win32 -c at the new commit (compile only)"
+    },
+    "verification": {
+      "method": "git clone --filter=blob:none --no-checkout https://github.com/ebiggers/libdeflate.git; git rev-parse 'ec03d361f2ece6058b7d1f594f4e7d3c78cfd80f~1^{commit}' 'ec03d361f2ece6058b7d1f594f4e7d3c78cfd80f^{commit}' -> 84a60c514ab81d74ed809cb6c15317e91a87196a ec03d361f2ece6058b7d1f594f4e7d3c78cfd80f; git diff --stat 84a60c514ab8..ec03d361f2ec -- '*.c' '*.h' -> 1 files changed; git diff -U0 84a60c514ab8..ec03d361f2ec -- '*.c' '*.h' (2 hunks in 1 files; each hunk read); function definitions extracted from both blobs (git cat-file blob <commit>:<path>) with a C function scanner (session helper, not shipped) and compared by exact text and by comment-free token stream: 1 changed, 0 added, 0 removed, 0 cosmetic-only; controls checked byte-identical in both blobs and free of changed identifiers; license read with git cat-file blob ec03d361f2ec:<path>",
+      "files_changed": 1,
+      "functions_changed_count": 1,
+      "verified_by_agent_run": true
+    },
+    "sources": [
+      "https://github.com/ebiggers/libdeflate/commit/ec03d361f2ece6058b7d1f594f4e7d3c78cfd80f",
+      "https://github.com/ebiggers/libdeflate/compare/84a60c514ab8...ec03d361f2ec"
+    ],
+    "risks": [
+      "Pure tuning change: output size/ratio at levels 11-12 changes, no memory-safety fix.",
+      "Most functions in lib/deflate_compress.c are static; whether a control or the changed function survives as a separate symbol depends on optimization and inlining."
+    ]
+  },
+  {
+    "contract": "case-card/1",
+    "id": "libdeflate-levels-5-6-search-depth",
+    "project": "libdeflate",
+    "upstream_git": "https://github.com/ebiggers/libdeflate.git",
+    "license_spdx": "MIT",
+    "license_evidence": "COPYING at 057cb92782b5107beb3f7738c4544ce84de653e1: 'Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files'",
+    "old": {
+      "ref": "057cb927^",
+      "commit": "193dedc73fb1401be8835f4c37eff9603ea3052c"
+    },
+    "new": {
+      "ref": "057cb927",
+      "commit": "057cb92782b5107beb3f7738c4544ce84de653e1"
+    },
+    "kind": "constant-only",
+    "cve": [],
+    "semantic_change": true,
+    "changed_functions": [
+      {
+        "name": "libdeflate_alloc_compressor",
+        "file": "lib/deflate_compress.c",
+        "change": "two tuning literals changed (+2/-2 lines): c->max_search_depth 20 -> 16 at compression level 5 and 40 -> 35 at level 6; no other token changes"
+      }
+    ],
+    "unchanged_controls": [
+      "deflate_write_sequences",
+      "sort_symbols",
+      "compute_length_counts",
+      "make_canonical_huffman_code",
+      "deflate_compute_precode_items"
+    ],
+    "build": {
+      "system": "make",
+      "recipe_notes": "Makefile (GNU make; Makefile.msc for MSVC) at this December 2021 commit; the CMake build arrived in September 2022. Sources lib/*.c plus lib/x86/cpu_features.c; no external dependencies.",
+      "mingw_ok": "yes: 10/10 library sources compile with x86_64-w64-mingw32-gcc 13-win32 -c at the new commit (compile only)"
+    },
+    "verification": {
+      "method": "git clone --filter=blob:none --no-checkout https://github.com/ebiggers/libdeflate.git; git rev-parse '057cb92782b5107beb3f7738c4544ce84de653e1~1^{commit}' '057cb92782b5107beb3f7738c4544ce84de653e1^{commit}' -> 193dedc73fb1401be8835f4c37eff9603ea3052c 057cb92782b5107beb3f7738c4544ce84de653e1; git diff --stat 193dedc73fb1..057cb92782b5 -- '*.c' '*.h' -> 1 files changed; git diff -U0 193dedc73fb1..057cb92782b5 -- '*.c' '*.h' (2 hunks in 1 files; each hunk read); function definitions extracted from both blobs (git cat-file blob <commit>:<path>) with a C function scanner (session helper, not shipped) and compared by exact text and by comment-free token stream: 1 changed, 0 added, 0 removed, 0 cosmetic-only; controls checked byte-identical in both blobs and free of changed identifiers; license read with git cat-file blob 057cb92782b5:<path>",
+      "files_changed": 1,
+      "functions_changed_count": 1,
+      "verified_by_agent_run": true
+    },
+    "sources": [
+      "https://github.com/ebiggers/libdeflate/commit/057cb92782b5107beb3f7738c4544ce84de653e1",
+      "https://github.com/ebiggers/libdeflate/compare/193dedc73fb1...057cb92782b5"
+    ],
+    "risks": [
+      "Pure tuning change: compression speed/ratio at levels 5-6 changes, no memory-safety fix.",
+      "Most functions in lib/deflate_compress.c are static; whether a control or the changed function survives as a separate symbol depends on optimization and inlining."
+    ]
+  },
+  {
+    "contract": "case-card/1",
+    "id": "zlib-typo-fixes-no-code-change-2022-08",
+    "project": "zlib",
+    "upstream_git": "https://github.com/madler/zlib.git",
+    "license_spdx": "Zlib",
+    "license_evidence": "zlib.h at 5752b171fd4cc96b8d1f9526ec1940199c6e9740: 'This software is provided 'as-is', without any express or implied warranty.' | the license notice quoted is the header of zlib.h",
+    "old": {
+      "ref": "5752b171^",
+      "commit": "1eb7682f845ac9e9bf9ae35bbfb3bad5dacbd91d"
+    },
+    "new": {
+      "ref": "5752b171",
+      "commit": "5752b171fd4cc96b8d1f9526ec1940199c6e9740"
+    },
+    "kind": "no-op",
+    "cve": [],
+    "semantic_change": false,
+    "changed_functions": [
+      {
+        "name": "main",
+        "file": "contrib/puff/pufftest.c",
+        "change": "cosmetic only: text differs but comment-free token stream is identical (2 diff lines overlap the function)"
+      },
+      {
+        "name": "crc32_z",
+        "file": "crc32.c",
+        "change": "cosmetic only: text differs but comment-free token stream is identical (4 diff lines overlap the function)"
+      },
+      {
+        "name": "recompress",
+        "file": "examples/fitblk.c",
+        "change": "cosmetic only: text differs but comment-free token stream is identical (2 diff lines overlap the function)"
+      }
+    ],
+    "unchanged_controls": [
+      "deflate",
+      "deflate_slow",
+      "deflate_fast",
+      "_tr_flush_block",
+      "build_tree"
+    ],
+    "build": {
+      "system": "cmake",
+      "recipe_notes": "cmake -S . -B build (target zlib, no third-party deps); alternatives in the same tree: ./configure && make, win32/Makefile.gcc (mingw). Library = the *.c files in the repository root; test/, examples/ and contrib/ are not part of libz.",
+      "mingw_ok": "yes: 15/15 root library sources compile with x86_64-w64-mingw32-gcc 13-win32 -c at the new commit (compile only)"
+    },
+    "verification": {
+      "method": "git clone --filter=blob:none --no-checkout https://github.com/madler/zlib.git; git rev-parse '5752b171fd4cc96b8d1f9526ec1940199c6e9740~1^{commit}' '5752b171fd4cc96b8d1f9526ec1940199c6e9740^{commit}' -> 1eb7682f845ac9e9bf9ae35bbfb3bad5dacbd91d 5752b171fd4cc96b8d1f9526ec1940199c6e9740; git diff --stat 1eb7682f845a..5752b171fd4c -- '*.c' '*.h' -> 14 files changed; git diff -U0 1eb7682f845a..5752b171fd4c -- '*.c' '*.h' (21 hunks in 14 files; the head of the diff was read and every changed C/H file was then proven token-identical mechanically, see below); function definitions extracted from both blobs (git cat-file blob <commit>:<path>) with a C function scanner (session helper, not shipped) and compared by exact text and by comment-free token stream: 0 changed, 0 added, 0 removed, 3 cosmetic-only; controls checked byte-identical in both blobs; license read with git cat-file blob 5752b171fd4c:<path>",
+      "files_changed": 14,
+      "functions_changed_count": 3,
+      "verified_by_agent_run": true
+    },
+    "sources": [
+      "https://github.com/madler/zlib/commit/5752b171fd4cc96b8d1f9526ec1940199c6e9740",
+      "https://github.com/madler/zlib/compare/1eb7682f845a...5752b171fd4c"
+    ],
+    "risks": [
+      "Commit message: \"Fix some typos. No code changes.\" The diff also touches ChangeLog and contrib/puff/README (non-C files).",
+      "Control by token identity: every changed C/H file in the diff stat has an identical comment-free token stream in both versions (checked mechanically; the hunks were read)."
+    ]
+  },
+  {
+    "contract": "case-card/1",
+    "id": "lz4-hc-optimal-reindent-whitespace-only",
+    "project": "lz4",
+    "upstream_git": "https://github.com/lz4/lz4.git",
+    "license_spdx": "BSD-2-Clause",
+    "license_evidence": "lib/LICENSE at 63b89affd09d0881944ec7dfb2a69c76f6327c9b: 'Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met' | LICENSE at 63b89affd09d0881944ec7dfb2a69c76f6327c9b: 'all files in the `lib` directory use a BSD 2-Clause license' | same notice found in the file headers (first 8000 bytes) of: lib/lz4hc.c | top-level LICENSE gives GPLv2 to every file outside lib/; this card changes only lib/lz4hc.c",
+    "old": {
+      "ref": "63b89aff^",
+      "commit": "25ae65810f95eeca929b365fc1a3d06dc3e6998f"
+    },
+    "new": {
+      "ref": "63b89aff",
+      "commit": "63b89affd09d0881944ec7dfb2a69c76f6327c9b"
+    },
+    "kind": "refactor-control",
+    "cve": [],
+    "semantic_change": false,
+    "changed_functions": [
+      {
+        "name": "LZ4HC_compress_optimal",
+        "file": "lib/lz4hc.c",
+        "change": "cosmetic only: text differs but comment-free token stream is identical (222 diff lines overlap the function)"
+      }
+    ],
+    "unchanged_controls": [
+      "LZ4HC_InsertAndGetWiderMatch",
+      "LZ4HC_compress_hashChain",
+      "LZ4MID_compress",
+      "LZ4HC_encodeSequence",
+      "LZ4HC_compress_generic_internal",
+      "LZ4_loadDictHC"
+    ],
+    "build": {
+      "system": "make",
+      "recipe_notes": "lib/Makefile (also build/cmake and meson); sources lib/lz4.c lib/lz4hc.c lib/lz4frame.c lib/xxhash.c. Only lib/ is BSD-2-Clause; programs/ and tests/ are GPLv2 and are not part of this card.",
+      "mingw_ok": "yes: 4/4 lib sources compile with x86_64-w64-mingw32-gcc 13-win32 -c at the new commit (compile only)"
+    },
+    "verification": {
+      "method": "git clone --filter=blob:none --no-checkout https://github.com/lz4/lz4.git; git rev-parse '63b89affd09d0881944ec7dfb2a69c76f6327c9b~1^{commit}' '63b89affd09d0881944ec7dfb2a69c76f6327c9b^{commit}' -> 25ae65810f95eeca929b365fc1a3d06dc3e6998f 63b89affd09d0881944ec7dfb2a69c76f6327c9b; git diff --stat 25ae65810f95..63b89affd09d -- '*.c' '*.h' -> 1 files changed; git diff -U0 25ae65810f95..63b89affd09d -- '*.c' '*.h' (7 hunks in 1 files; the head of the diff was read and every changed C/H file was then proven token-identical mechanically, see below); function definitions extracted from both blobs (git cat-file blob <commit>:<path>) with a C function scanner (session helper, not shipped) and compared by exact text and by comment-free token stream: 0 changed, 0 added, 0 removed, 1 cosmetic-only; controls checked byte-identical in both blobs; license read with git cat-file blob 63b89affd09d:<path>",
+      "files_changed": 1,
+      "functions_changed_count": 1,
+      "verified_by_agent_run": true
+    },
+    "sources": [
+      "https://github.com/lz4/lz4/commit/63b89affd09d0881944ec7dfb2a69c76f6327c9b",
+      "https://github.com/lz4/lz4/compare/25ae65810f95...63b89affd09d"
+    ],
+    "risks": [
+      "Commit message: the body of LZ4HC_compress_optimal() was indented by 5/9/13 spaces instead of 4/8/12; \"git diff -w is empty\". 111 lines changed in one function, all whitespace.",
+      "Control by token identity (comment-free token streams equal in both blobs, checked mechanically and the hunk head read). Line numbers do not move (111 lines replaced by 111 lines)."
+    ]
+  },
+  {
+    "contract": "case-card/1",
+    "id": "miniz-endif-comments-only-2026-08",
+    "project": "miniz",
+    "upstream_git": "https://github.com/richgel999/miniz.git",
+    "license_spdx": "MIT",
+    "license_evidence": "LICENSE at 4987e1a4d7ffd4d11b8d69f1e4c28d2b1e4ce8b8: 'Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files'",
+    "old": {
+      "ref": "4987e1a4^",
+      "commit": "4d16829c01388bea97963ccd443151a03654192c"
+    },
+    "new": {
+      "ref": "4987e1a4",
+      "commit": "4987e1a4d7ffd4d11b8d69f1e4c28d2b1e4ce8b8"
+    },
+    "kind": "no-op",
+    "cve": [],
+    "semantic_change": false,
+    "changed_functions": [
+      {
+        "name": "tdefl_compress",
+        "file": "miniz_tdef.c",
+        "change": "cosmetic only: text differs but comment-free token stream is identical (2 diff lines overlap the function)"
+      },
+      {
+        "name": "tdefl_compress_fast",
+        "file": "miniz_tdef.c",
+        "change": "cosmetic only: text differs but comment-free token stream is identical (2 diff lines overlap the function)"
+      },
+      {
+        "name": "tinfl_decompress",
+        "file": "miniz_tinfl.c",
+        "change": "cosmetic only: text differs but comment-free token stream is identical (8 diff lines overlap the function)"
+      }
+    ],
+    "unchanged_controls": [
+      "mz_adler32",
+      "mz_free",
+      "mz_version",
+      "mz_compressBound",
+      "mz_deflateEnd"
+    ],
+    "build": {
+      "system": "cmake",
+      "recipe_notes": "CMakeLists.txt (generates miniz_export.h); sources miniz.c miniz_tdef.c miniz_tinfl.c miniz_zip.c. The mingw check used a stub miniz_export.h defining MINIZ_EXPORT empty.",
+      "mingw_ok": "yes: 4/4 library sources compile with x86_64-w64-mingw32-gcc 13-win32 -c at the new commit (compile only; stub miniz_export.h)"
+    },
+    "verification": {
+      "method": "git clone --filter=blob:none --no-checkout https://github.com/richgel999/miniz.git; git rev-parse '4987e1a4d7ffd4d11b8d69f1e4c28d2b1e4ce8b8~1^{commit}' '4987e1a4d7ffd4d11b8d69f1e4c28d2b1e4ce8b8^{commit}' -> 4d16829c01388bea97963ccd443151a03654192c 4987e1a4d7ffd4d11b8d69f1e4c28d2b1e4ce8b8; git diff --stat 4d16829c0138..4987e1a4d7ff -- '*.c' '*.h' -> 9 files changed; git diff -U0 4d16829c0138..4987e1a4d7ff -- '*.c' '*.h' (77 hunks in 9 files; the head of the diff was read and every changed C/H file was then proven token-identical mechanically, see below); function definitions extracted from both blobs (git cat-file blob <commit>:<path>) with a C function scanner (session helper, not shipped) and compared by exact text and by comment-free token stream: 0 changed, 0 added, 0 removed, 3 cosmetic-only; controls checked byte-identical in both blobs; license read with git cat-file blob 4987e1a4d7ff:<path>",
+      "files_changed": 9,
+      "functions_changed_count": 3,
+      "verified_by_agent_run": true
+    },
+    "sources": [
+      "https://github.com/richgel999/miniz/commit/4987e1a4d7ffd4d11b8d69f1e4c28d2b1e4ce8b8",
+      "https://github.com/richgel999/miniz/compare/4d16829c0138...4987e1a4d7ff"
+    ],
+    "risks": [
+      "Commit message: annotates and standardizes #endif comments across headers, sources, examples and tests. Every hunk read in the head of the diff is \"#endif\" -> \"#endif /* condition */\".",
+      "Control by token identity: all changed C/H files have identical comment-free token streams in both versions (checked mechanically)."
+    ]
+  }
+]

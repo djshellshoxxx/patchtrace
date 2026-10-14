@@ -3,7 +3,9 @@
 `user_version` stays 1: v1 code only reads `current_snapshot`/`history`, so extra
 tables are invisible to it (covered by tests that open/save/backup with them present).
 Before the tables are first created, a SQLite backup of the database is written
-inside the case and verified, so the pre-extension state is recoverable.
+inside the case and verified, so the pre-extension state is recoverable. No retention
+deletion runs before a re-opened, integrity-checked pre-retention backup is trusted
+(`verified_backup.py`, SPEC-07h H1/H2 Phase D amendment); without one nothing is deleted.
 
 Thread ownership: every method uses the ProjectStore connection and must run on
 the thread that created it (the service/GUI owner thread). Workers compute results
@@ -21,6 +23,7 @@ from dataclasses import dataclass
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
 
+from .. import verified_backup
 from ..persistence import ProjectStore, safe_path
 from .contracts import EnrichmentError
 
@@ -34,7 +37,11 @@ RUN_KEEP = 8  # newest engine-run rows kept per (engine, older, newer) group
 MAX_ROW = 32 * 1024 * 1024
 MAX_TOTAL = 128 * 1024 * 1024
 KINDS = frozenset({'signals', 'ranking', 'wil', 'cve-snapshot', 'contextual', 'pipeline', 'secondary-matches',
-                   'engine-run'})
+                   'engine-run',
+                   # Reserved for Phase D (docs/plans/phase-d-build-coordination.md); none is in DERIVED_KINDS,
+                   # so retention never deletes them: SPEC-31 unified-*, CSAF advisory-*, SPEC-29 tool-*, SPEC-30.
+                   'unified-run', 'unified-result', 'advisory-source', 'advisory-facts', 'tool-run', 'tool-evidence',
+                   'patch-intent'})
 
 # Retention (SPEC-07h H1). Only recomputable derived kinds are ever deleted; imported evidence
 # (`secondary-matches`), `cve-snapshot` and unknown kinds are never evicted.
@@ -43,6 +50,9 @@ KEEP_CURRENT = 8
 KEEP_STALE = 2
 ORPHAN_GRACE = timedelta(minutes=5)
 _RETENTION_META_SQL = "INSERT OR IGNORE INTO enrichment_meta(key, value) VALUES('retention_version', '1')"
+RETENTION_LABEL = 'retention'
+_ENTRY_COUNT = 'SELECT COUNT(*) FROM enrichment_entries'
+_BACKUP_COMPARE = {RETENTION_LABEL: (_ENTRY_COUNT,)}
 
 
 @dataclass(frozen=True)
@@ -71,25 +81,13 @@ def _snapshot_sha(db: sqlite3.Connection):
 
 
 def _write_backup(root, db: sqlite3.Connection, label: str) -> None:
-    """Verified SQLite backup of `db` into `<root>/backups`. The copy is written under a `.part` name and
-    renamed only after `quick_check` and the snapshot hash match, so a crash never leaves a half-trusted file."""
-    directory = safe_path(root, 'backups')
-    directory.mkdir(exist_ok=True)
-    stamp = datetime.now(UTC).strftime('%Y%m%dT%H%M%S%fZ')
-    target = safe_path(root, f'backups/project-pre-{label}-{stamp}.sqlite3')
-    part = safe_path(root, f'backups/project-pre-{label}-{stamp}.sqlite3.part')
-    expected = _snapshot_sha(db)
-    copy = sqlite3.connect(part)
+    """Verified SQLite backup of `db` into `<root>/backups` (`verified_backup.write_verified_backup`): written
+    under a `.part` name, closed, re-opened read-only, integrity-checked and compared with the live database
+    before it is renamed, so a crash or a bad copy never leaves a half-trusted file."""
     try:
-        db.backup(copy)
-        ok = copy.execute('PRAGMA quick_check').fetchone()[0] == 'ok'
-        got = _snapshot_sha(copy)
-    finally:
-        copy.close()
-    if not ok or got != expected:
-        part.unlink(missing_ok=True)
-        raise EnrichmentError('PT-ENRICH-INPUT', f'pre-{label} database backup failed verification')
-    part.replace(target)
+        verified_backup.write_verified_backup(Path(root), db, label, compare=_BACKUP_COMPARE.get(label, ()))
+    except verified_backup.BackupError as exc:
+        raise EnrichmentError('PT-ENRICH-INPUT', f'pre-{label} database backup failed verification') from exc
 
 
 def prepare_backups(root) -> None:
@@ -120,7 +118,11 @@ def prepare_backups(root) -> None:
 
 
 def _retention_likely(db: sqlite3.Connection, root: Path, tables: set[str]) -> bool:
-    if 'enrichment_entries' not in tables or any((root / 'backups').glob('project-pre-retention-*.sqlite3')):
+    if 'enrichment_entries' not in tables:
+        return False
+    # Re-verifying an existing backup here (worker thread) caches the verdict for the owner thread.
+    if verified_backup.find_verified_backup(root, RETENTION_LABEL, project_id=verified_backup.live_project_id(db),
+                                            require_tables=('enrichment_entries',)) is not None:
         return False
     count = db.execute("SELECT COUNT(*) FROM enrichment_entries WHERE kind='pipeline'").fetchone()[0]
     return count >= KEEP_CURRENT
@@ -157,24 +159,22 @@ class EnrichmentStore:
     def _backup_before_create(self, label: str = 'enrichment') -> None:
         _write_backup(self.store.root, self._db, label)
 
+    def _project_id(self) -> str | None:
+        """The live project id: known by the ProjectStore after load/save (parsing the snapshot otherwise)."""
+        known = getattr(self.store, 'project_id', None)
+        return known if isinstance(known, str) else verified_backup.live_project_id(self._db)
+
     def _has_current_backup(self, label: str) -> bool:
-        """True when a verified `project-pre-<label>-*` backup (e.g. made by `prepare_backups` on a worker
-        thread) holds exactly the snapshot the live database holds now. One-row read per candidate."""
-        directory = safe_path(self.store.root, 'backups')
-        if not directory.is_dir():
-            return False
+        """True when a trusted `project-pre-<label>-*` backup (e.g. made by `prepare_backups` on a worker
+        thread) holds exactly the snapshot the live database holds now: re-opened read-only and
+        `quick_check`ed once per file version (`verified_backup.find_verified_backup`)."""
         live = _snapshot_sha(self._db)
-        for candidate in sorted(directory.glob(f'project-pre-{label}-*.sqlite3'), reverse=True):
-            try:
-                copy = sqlite3.connect(f'{candidate.as_uri()}?mode=ro', uri=True, timeout=5)
-                try:
-                    if _snapshot_sha(copy) == live:
-                        return True
-                finally:
-                    copy.close()
-            except (sqlite3.Error, OSError, ValueError):
-                continue
-        return False
+        try:
+            return verified_backup.find_verified_backup(
+                self.store.root, label, project_id=self._project_id(),
+                snapshot_sha=live[0] if live else None) is not None
+        except verified_backup.BackupError:
+            return False
 
     def ensure(self) -> None:
         """Create tables on first use; detect newer extension versions (read-only)."""
@@ -313,17 +313,22 @@ class EnrichmentStore:
         referenced = {i for p in pipes for i in self._refs(p)}
         return {i for i, (created, _) in rows.items() if i not in referenced and created < older_than}
 
-    def _has_retention_backup(self) -> bool:
-        directory = safe_path(self.store.root, 'backups')
-        return directory.exists() and any(directory.glob('project-pre-retention-*.sqlite3'))
+    def _ensure_retention_backup(self) -> None:
+        """No trusted pre-retention backup, no deletion (SPEC-07h H2 amendment): reuse a verified one of this
+        project or write and verify a new one; raises PT-ENRICH-INPUT when neither is possible."""
+        try:
+            verified_backup.ensure_verified_backup(
+                self.store.root, self._db, RETENTION_LABEL, project_id=self._project_id(),
+                compare=_BACKUP_COMPARE[RETENTION_LABEL], require_tables=('enrichment_entries',))
+        except verified_backup.BackupError as exc:
+            raise EnrichmentError('PT-ENRICH-INPUT', 'pre-retention database backup failed verification') from exc
 
     def _delete(self, ids: Collection[str], kinds: tuple[str, ...] = DERIVED_KINDS) -> int:
         """Delete rows and record `retention_version` in one transaction, after a verified backup."""
         ids = sorted(ids)
         if not ids:
             return 0
-        if not self._has_retention_backup():
-            self._backup_before_create('retention')
+        self._ensure_retention_backup()
         db = self._db
         marks = ','.join('?' * len(kinds))
         db.execute('BEGIN IMMEDIATE')
@@ -462,7 +467,11 @@ class EnrichmentStore:
                         freed += rows[row_id][1]
             if freed < need_bytes:
                 raise limit(0)
-            self._delete(doomed | runs, (*DERIVED_KINDS, RUN_KIND))
+            try:
+                self._delete(doomed | runs, (*DERIVED_KINDS, RUN_KIND))
+            except EnrichmentError:  # no trusted pre-retention backup: nothing was deleted
+                raise EnrichmentError('PT-ENRICH-LIMIT', 'project enrichment data would exceed 128 MiB '
+                                      '(retention backup failed; nothing was deleted)', recoverable=True) from None
             return freed
         except sqlite3.Error as exc:
             raise EnrichmentError('PT-ENRICH-LIMIT', 'project enrichment data would exceed 128 MiB '

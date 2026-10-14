@@ -120,6 +120,15 @@ def _clean(lines: tuple[str, ...]) -> list[str]:
     """Blank comment bodies and string/char literal contents, keeping line numbering."""
     out, in_block = [], False
     for line in lines:
+        # Fast paths (identical output, see tests/test_identity_equivalence.py): most decompiled lines hold
+        # no comment or literal delimiter, and a line inside a block comment without `*/` blanks entirely.
+        if in_block:
+            if '*/' not in line:
+                out.append('')
+                continue
+        elif '/' not in line and '"' not in line and "'" not in line:
+            out.append(line)
+            continue
         buf, i, n = [], 0, len(line)
         while i < n:
             c = line[i]
@@ -473,6 +482,9 @@ class Detector:
     def _evaluate(self, ctx: _Context) -> tuple[DetectorOutcome, tuple[ChangeSignal, ...]]:
         view = ctx.view
         if not ctx.edits:
+            if ctx.truncated:  # the change may sit in the unscanned tail: unknown, never "nothing changed"
+                return _outcome(view, self.id, 'partial', f'{LIMIT} function-too-large: no non-noise changed hunk '
+                                f'in the scanned first {MAX_LINES} lines / {MAX_CHARS} chars'), ()
             return _outcome(view, self.id, 'complete', 'no non-noise changed hunk'), ()
         limitations = list(self.limitations)
         if view.category == 'ambiguous':
@@ -987,7 +999,10 @@ def detect(view: MatchView, enabled: Iterable[str] | None = None,
             outcomes.append(_outcome(view, detector.id, 'unavailable', reason))
             continue
         try:
-            ctx = ctx or _Context(view, cancel)
+            if ctx is None:
+                ctx = _Context(view, cancel)
+                # Prime MatchView.semantic_ordinals (cached_property storage) so B2 reuses this context's work.
+                view.__dict__.setdefault('semantic_ordinals', frozenset(e.ordinal for e in ctx.edits))
             outcome, found = detector._evaluate(ctx)
         except _Cancelled:
             cancelled = True
