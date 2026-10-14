@@ -2,7 +2,7 @@
 
 Status: draft spec, 2026-10-14. Sections marked **(new)** are not implemented; everything else describes current behaviour.
 
-Observed state (read-only GitHub REST, 2026-10-14; re-check before acting): `main` = `4985132535`; open PRs = 0; latest prerelease `v0.1.0-beta.131` targets `b7e819a`. The `main` push run 135 at `4985132` **failed in `qa (ubuntu-latest)`** at the `pytest` step, so `release` was skipped and no prerelease exists for that commit. The run log was not retrievable from this session, so the failing test is unknown.
+Observed state (read-only GitHub REST, 2026-10-14; re-check before acting): remote `main` = `4985132535` (local HEAD `c0df3ad` adds this file and is unpushed); open PRs = 0; latest prerelease `v0.1.0-beta.131` targets `b7e819a`. The `main` push run 135 at `4985132` **failed in `qa (ubuntu-latest)`** at the `pytest` step, so `release` was skipped and no prerelease exists for that commit. The run log was not retrievable from this session, so the failing test is unknown.
 
 ---
 
@@ -21,9 +21,8 @@ From `.github/workflows/qa-windows.yml`:
 - `live-backend.yml` (native Ghidriff matrix) never publishes. It is a gate for the same SHA.
 - The `release` job has no `paths` filter, so docs-only merges to `main` also publish. Decide whether this is wanted (open decision).
 - `run_number` counts every run of the workflow, including PR and failed runs. Observed tags therefore have gaps (beta.118, .120, .127, .129, .131).
-- Release body text is hard-coded in the workflow and says "beta". `target_commitish` is `github.sha`.
+- Release body is hard-coded and says "beta"; `target_commitish` is `github.sha`.
 - Uploaded release assets (`release/*`): `PatchTrace-0.1.0-windows-x64.zip`, `PatchTrace-0.1.0-windows-x64.zip.sha256`, `PatchTrace-0.1.0-linux-x86_64.tar.gz`, `PatchTrace-0.1.0-linux-x86_64.tar.gz.sha256`. The version `0.1.0` is hard-coded in `pyproject.toml`, both build scripts and the workflow, so the tag is not in the filenames.
-- Sidecar format is `<64-hex-sha256>  <filename>` (two spaces, `sha256sum -c` compatible).
 - Known failure mode: publishing returns HTTP 403 `Resource not accessible by integration` when the head commit adds or changes `.github/workflows/*` (see `docs/plans/phase-c-multi-engine-plan.md`, handoff B1). The build is green but no release exists. The ZIP and tarball remain as Actions artifacts `PatchTrace-windows-x64` and `PatchTrace-linux-x86_64`. Report such a run as "build green, publish failed", never as a release.
 
 ### 1.2 Which commits are milestone candidates
@@ -59,7 +58,7 @@ gh release download "<TAG>" --repo djshellshoxxx/patchtrace --dir "<EMPTY_DIR>"
 cd "<EMPTY_DIR>" && sha256sum -c PatchTrace-0.1.0-windows-x64.zip.sha256
 ```
 
-PowerShell equivalent for the ZIP:
+PowerShell (sidecar is `<sha256>  <name>`, two spaces):
 
 ```powershell
 $zip = 'PatchTrace-0.1.0-windows-x64.zip'
@@ -78,7 +77,7 @@ Then compare the digest with the Actions artifact of the same run (`gh run downl
 
 Existing: `tools/build_windows.py` runs the frozen `--self-test` and `rank --help` after freezing. Windows-only Job Object tests in `tests/test_jobs.py` are skipped on Linux. The native Ghidriff matrix covers the known DLL patch and raw cache hit.
 
-Exit codes (`src/patchtrace/cli.py`): 0 success, 2 invalid arguments, config or environment, 3 runtime failure, 4 legitimate no-results, 5 cancelled. Unknown first arguments are routed to the CLI and must exit 2 (`tools/desktop_entry.py`).
+Exit codes (`src/patchtrace/cli.py`): 0 success, 2 invalid arguments or environment, 3 runtime failure, 4 no results, 5 cancelled. Unknown first arguments reach the CLI and must exit 2 (`tools/desktop_entry.py`).
 
 | ID | Status | Test | Command or method | Pass criterion |
 |---|---|---|---|---|
@@ -157,13 +156,11 @@ Record table (copy per test run; one row per check):
 | M17 | not-run | | | | | |
 | M18 | not-run | | | | | |
 
-Rules: a `fail` links to an issue and states observed behaviour. A check not performed stays `not-run` with the reason in notes. Never copy a result from an earlier build to a new SHA.
+A `fail` links to an issue and states observed behaviour. A check not performed stays `not-run` with the reason. Never copy a result to a new SHA.
 
 ---
 
-## 4. Release-notes template
-
-Copy into the release body, or into the GitHub release notes, for every milestone. Keep it factual. Do not write "production ready".
+## 4. Release-notes template (every milestone; never write "production ready")
 
 ```markdown
 ## PatchTrace <TAG> - <one-line purpose>
@@ -189,7 +186,7 @@ Verify: `sha256sum -c <file>.sha256`. Extract the whole ZIP before running Patch
 | Native Ghidriff matrix (5 variants) | pass / fail | <run> |
 
 ### Manual evidence
-Clean Windows 11 checklist (section 3): <n> pass, <n> fail, <n> not-run. Record: <link or file path in docs/qa.md>.
+Clean Windows 11 checklist (section 3): <n> pass, <n> fail, <n> not-run. Record: <link or path in docs/qa.md>. A gate leaves "Open" only with a recorded pass and evidence link.
 
 ### Open gates (not passed in this build)
 - Clean Windows GUI acceptance M01-M18 (unless listed as pass above)
@@ -201,5 +198,3 @@ Clean Windows 11 checklist (section 3): <n> pass, <n> fail, <n> not-run. Record:
 
 - Limitations: unsigned beta; Ghidra, Java and Ghidriff external. Release publication: <published | not published (403), Actions artifact only>.
 ```
-
-Rule: a gate is removed from "Open" only by a recorded pass with its evidence link. A failing or skipped CI job is never described as passing in notes.
