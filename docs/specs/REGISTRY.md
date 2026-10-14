@@ -53,6 +53,10 @@ Cite a spec as **repository path plus canonical alias**, for example `docs/specs
 | `docs/specs/radiff2-modular-integration.md` | SPEC-RD-02 | SPEC-RD-02 | draft | none on main | Proposed companion to SPEC-RD-01 |
 | `docs/specs/windows-acceptance-and-milestone-builds.md` | none (self-described "draft spec") | SPEC-40 (proposed; unnumbered) | draft | packaging: tools/build_windows.py, tools/build_linux.py, tools/frozen_smoke.py | Sections marked (new) not implemented |
 | `docs/specs/completeness-audit.md` | none (cites SPEC-05, SPEC-07) | none (audit; cite by path) | n/a | none | Audit; its per-row statuses are stale (handoff B4) |
+| `docs/specs/kev-exploitation-context.md` | SPEC-46 (title) | SPEC-46 | draft | planned enrichment/kev (KEV-integration-plan) | Draft written 2026-10-14; nothing implemented |
+| `docs/specs/yara-x-rule-workflow.md` | SPEC-47 (title) | SPEC-47 | draft | planned rules/ (YRX-integration-plan) | Draft written 2026-10-14; nothing implemented |
+| `docs/specs/binexport-producer-ghidra-host.md` | SPEC-49 (title) | SPEC-49 | draft | src/patchtrace/unified/extract/ (S1 extractor), secondary/binexport*.py | ADR draft: who produces BinExport2 |
+| `docs/specs/non-goals.md` | SPEC-55 (title) | SPEC-55 | draft | none (decision record) | Non-goals and deferred decisions; ratification by the owner open |
 | `docs/specs/unified-engine/README.md` | SPEC-31 (title) | SPEC-31 | draft | planned src/patchtrace/unified/, ui_unified.py | Contract freeze pending; USER decisions U-01 to U-10 open |
 | `docs/specs/unified-engine/00-decisions.md` | SPEC-31 / 00 | SPEC-31/00 | draft | planned unified/ | Contract-freeze draft; base cb25132 |
 | `docs/specs/unified-engine/01-architecture.md` | SPEC-31 / 01 | SPEC-31/01 | draft | planned unified/ (layers, import DAG) | Nothing implemented |
