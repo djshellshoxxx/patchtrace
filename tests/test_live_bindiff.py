@@ -7,9 +7,11 @@ verified provisioning) an unavailable or unsupported tool FAILS.
 Input pair, in order of preference:
 - `PATCHTRACE_LIVE_BINEXPORT_DIR` with older.BinExport, newer.BinExport and pair.json
   {"older_sha256", "newer_sha256"}: real exports, accepted through C3's `accept_binexport` (`blocked` without C3);
-- `PATCHTRACE_LIVE_SYNTHETIC_PAIR=1`: the SYNTHETIC pair of tests/bindiff_live_pair.py (ids known by
-  construction; the C3 validator is not exercised). Results on it are real-tool behaviour on synthetic input,
-  never real-driver evidence; the status JSON says which input ran.
+- `PATCHTRACE_LIVE_SYNTHETIC_PAIR=1`: the SYNTHETIC pair of tests/bindiff_live_pair.py. When C3 is in the
+  build the files go through C3's `accept_binexport` inside `BinDiffAdapter`, exactly as `secondary run
+  --engine bindiff` does (production path); otherwise their ids are used as known by construction. Results on
+  it are real-tool behaviour on synthetic input, never real-driver evidence; the status JSON says which input
+  and which acceptance route ran.
 Checks: probe (+ pinned version text when PATCHTRACE_BINDIFF_EXPECTED_VERSION is set), reversed pair refused
 before spawn, end-to-end through `run_engines` + `BinDiffAdapter`, and on the synthetic route also cancel as
 soon as the output file appears and a sub-second timeout (the partial-file hazard of SPEC-29 §4.4), plus the
@@ -23,6 +25,7 @@ import os
 import shutil
 import threading
 import time
+from collections.abc import Callable
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -53,34 +56,49 @@ class Inputs:
     label: str
     acceptance: str
     synthetic: bool
+    paths: tuple[Path, Path] | None = None   # with `acceptor`: the adapter accepts these itself (CLI wiring)
+    acceptor: Callable | None = None
 
 
 def _check(status: str, reason: str, **details) -> dict:
     return {'status': status, 'reason': reason, **details}
 
 
+def _accept_both(acceptor: Callable, older: Path, newer: Path, older_sha: str, newer_sha: str):
+    cancel = threading.Event()
+    return (acceptor(older, artifact_sha256=older_sha, role='older', accept_unbound=False, cancel=cancel,
+                     other_sha256=newer_sha),
+            acceptor(newer, artifact_sha256=newer_sha, role='newer', accept_unbound=False, cancel=cancel,
+                     other_sha256=older_sha))
+
+
 def _inputs(tmp_path: Path) -> tuple[Inputs | None, str]:
+    """Raises SecondaryError when C3 rejects an input (recorded by the caller as a failed check)."""
+    acceptor = c3_acceptor(tmp_path / 'accepted')
     pair_dir = os.environ.get('PATCHTRACE_LIVE_BINEXPORT_DIR')
     if pair_dir:
-        acceptor = c3_acceptor(tmp_path / 'accepted')
         if acceptor is None:
             return None, 'real .BinExport pair given but C3 BinExport acceptance is not in this build'
         root = Path(pair_dir)
         hashes = json.loads((root / 'pair.json').read_text(encoding='utf-8'))
         older_sha, newer_sha = hashes['older_sha256'], hashes['newer_sha256']
-        cancel = threading.Event()
-        older = acceptor(root / 'older.BinExport', artifact_sha256=older_sha, role='older', accept_unbound=False,
-                         cancel=cancel, other_sha256=newer_sha)
-        newer = acceptor(root / 'newer.BinExport', artifact_sha256=newer_sha, role='newer', accept_unbound=False,
-                         cancel=cancel, other_sha256=older_sha)
+        paths = (root / 'older.BinExport', root / 'newer.BinExport')
+        older, newer = _accept_both(acceptor, *paths, older_sha, newer_sha)
         return Inputs(older, newer, older_sha, newer_sha, root / 'older.artifact', root / 'newer.artifact',
-                      f'real exports from {root.name}', 'C3 accept_binexport', False), ''
+                      f'real exports from {root.name}', 'C3 accept_binexport', False, paths, acceptor), ''
     if os.environ.get('PATCHTRACE_LIVE_SYNTHETIC_PAIR') == '1':
         pair = write_pair(tmp_path / 'pair')
-        return Inputs(pair.older, pair.newer, pair.older_sha256, pair.newer_sha256, pair.older_artifact,
-                      pair.newer_artifact, f'SYNTHETIC tests/bindiff_live_pair.py ({pair.functions}/'
-                      f'{pair.functions + 1} functions; not real-driver evidence)',
-                      'ids known by construction (C3 validator not exercised)', True), ''
+        label = (f'SYNTHETIC tests/bindiff_live_pair.py ({pair.functions}/{pair.functions + 1} functions; '
+                 'not real-driver evidence)')
+        if acceptor is None:
+            return Inputs(pair.older, pair.newer, pair.older_sha256, pair.newer_sha256, pair.older_artifact,
+                          pair.newer_artifact, label, 'ids known by construction (C3 not in this build)',
+                          True), ''
+        paths = (pair.older.snapshot_path, pair.newer.snapshot_path)
+        older, newer = _accept_both(acceptor, *paths, pair.older_sha256, pair.newer_sha256)
+        return Inputs(older, newer, pair.older_sha256, pair.newer_sha256, pair.older_artifact, pair.newer_artifact,
+                      label, 'C3 accept_binexport inside BinDiffAdapter (production path)', True, paths,
+                      acceptor), ''
     return None, ('no .BinExport pair: set PATCHTRACE_LIVE_BINEXPORT_DIR (real exports) or '
                   'PATCHTRACE_LIVE_SYNTHETIC_PAIR=1 (synthetic pair)')
 
@@ -97,7 +115,8 @@ def _reversed_refused(inputs: Inputs) -> dict:
 
 def _end_to_end(exe: str, inputs: Inputs, tmp_path: Path, expected_version: str | None) -> dict:
     raw_dir = tmp_path / 'raw'
-    adapter = BinDiffAdapter(exe, older=inputs.older, newer=inputs.newer, raw_dir=raw_dir)
+    older, newer = inputs.paths if inputs.paths else (inputs.older, inputs.newer)
+    adapter = BinDiffAdapter(exe, older=older, newer=newer, raw_dir=raw_dir, acceptor=inputs.acceptor)
     project = ProjectRef(inputs.older_artifact, inputs.newer_artifact, inputs.older_sha256, inputs.newer_sha256)
     (out,) = run_engines(project, ['bindiff'], cancel=threading.Event(), env={}, registry={'bindiff': adapter},
                          per_engine_timeout={'bindiff': 1800.0})
@@ -232,7 +251,11 @@ def test_live_bindiff_status(record_live_status, tmp_path):
     if expected_version:
         checks['pinned_version'] = _check('passed' if cap.version == expected_version else 'failed',
                                           f'probe version {cap.version!r}, pin {expected_version!r}')
-    inputs, why = _inputs(tmp_path)
+    try:
+        inputs, why = _inputs(tmp_path)
+    except SecondaryError as exc:  # C3 refused an input BinDiff would be given: an integration failure
+        inputs, why = None, f'C3 accept_binexport refused the input: {exc.code} ({exc.kind}): {exc.message}'
+        checks['acceptance'] = _check('failed', why)
     extra: dict = {}
     if inputs is None:
         checks['end_to_end'] = _check('blocked', why)
@@ -243,7 +266,12 @@ def test_live_bindiff_status(record_live_status, tmp_path):
         pair = bind_pair(inputs.older, inputs.newer, inputs.older_sha256, inputs.newer_sha256)
         if inputs.synthetic:
             large = write_pair(tmp_path / 'large', LARGE_FUNCTIONS)
-            big = bind_pair(large.older, large.newer, large.older_sha256, large.newer_sha256)
+            big_older, big_newer = large.older, large.newer
+            if inputs.acceptor is not None:
+                big_older, big_newer = _accept_both(inputs.acceptor, large.older.snapshot_path,
+                                                    large.newer.snapshot_path, large.older_sha256,
+                                                    large.newer_sha256)
+            big = bind_pair(big_older, big_newer, large.older_sha256, large.newer_sha256)
             checks['cancel_at_first_output'] = _stopped_run(cap, big, tmp_path, 'cancel', timeout=600,
                                                             cancel_on_output=True)
             checks['timeout_mid_run'] = _stopped_run(cap, big, tmp_path, 'timeout', timeout=0.5,

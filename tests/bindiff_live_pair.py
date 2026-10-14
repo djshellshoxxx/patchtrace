@@ -3,8 +3,9 @@
 A tiny protobuf wire encoder for the subset of `binexport2.proto` (google/binexport, Apache-2.0) that BinDiff
 reads: meta information, mnemonics, instructions, basic blocks, flow graphs and the call graph. The pair is
 bound to project-owned synthetic PEs: each `executable_id` is the SHA-256 of `patchtrace.sample.synthetic_pe(0)`
-(older) or `synthetic_pe(1)` (newer), so the ids are known by construction and no BinExport validator (C3) is
-involved. The newer side patches two functions and adds one, so BinDiff reports similarity below 100 %.
+(older) or `synthetic_pe(1)` (newer), so the ids are known by construction (`Accepted`); the live test still
+routes the files through C3's `accept_binexport` when C3 is present, which accepts them (measured). The newer
+side patches two functions and adds one, so BinDiff reports similarity below 100 %.
 
 The real BinDiff 8 CLI accepts this shape and matched 20 of 20/21 functions (measured 2026-10-14). It is not
 real-driver evidence: never describe results on it as compatibility with Ghidra/IDA exports.

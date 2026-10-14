@@ -68,7 +68,7 @@
 - [x] Plan section 4 items 1-9 applied to SPEC-29, code and tests (probe/argv, `--config` isolation incl. machine config, journal, usage exit 0, non-clean stop, importer layers, 250-char output path, MSI/redist facts, D1)
 - [x] `tools/bindiff_pin.json` real v8 values (deb 62,663,460 B, msi 72,237,056 B; re-hashed by a second download, identical), trust-on-first-use
 - [x] Stdlib `.deb` provisioning (byte-identical to `dpkg-deb -x`); Windows `--advisory` leg with `redist` preflight
-- [x] Linux live run, local only (uid 65534): probe, pinned version, end-to-end via `run_engines` + `BinDiffAdapter`, cancel at first output, 0.5 s timeout, `unshare -rn`; real v8 golden on the SYNTHETIC pair committed
+- [x] Linux live run, local only (uid 65534): probe, pinned version, end-to-end via C3 `accept_binexport` + `run_engines` + `BinDiffAdapter`, cancel at first output, 0.5 s timeout, `unshare -rn`; real v8 golden on the SYNTHETIC pair committed
 - [ ] First green `live-bindiff` run on GitHub (Linux required leg) and the advisory Windows record (msiexec /a layout, bindiff.exe start, VC++ runtime on windows-latest)
 - [ ] Real-driver `.BinExport` pair (Ghidra/IDA) for U8 runtime/memory and U9 `executable_id` formats; zero-match behaviour on a real pair
 - [ ] Independent re-hash of the pinned assets from a second network path and `.asc` verification (key id `4EB27DB2A3B88B8B`) before beta
