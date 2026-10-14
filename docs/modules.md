@@ -173,3 +173,8 @@ Built: common, process, capa, floss, diec, normalize, delta (tests: `tests/test_
 | Module | Files | Responsibility | Depends on | Tests |
 |---|---|---|---|---|
 | backend pin | tools/backend_pin.json (`patchtrace-backend-pin/1`, LF via .gitattributes), tools/check_backend_pin.py | single source of pins for the full bundle: Python 3.12.10, Ghidra 12.0.4, Temurin 21.0.12.1+1, hash-locked jpype1/pyghidra/packaging wheels and the mdutils sdist, Ghidriff commit, safe strips; every digest names its `digest_source`; two digests are explicit `PLACEHOLDER-UNRESOLVED` (python.org embeddable zip, Ghidriff source tarball: hosts blocked, [unverified]); `check_backend_pin.py --release` exits 3 while any placeholder remains | stdlib | tests/test_backend_pin.py |
+### [B2:bundle-check] Backend bundle payload spike (2026-10-14; BUNDLE slice B2)
+| Module | Files | Responsibility | Depends on | Tests |
+|---|---|---|---|---|
+| build_backend_bundle (check only) | tools/build_backend_bundle.py | `check TREE [--prefix ghidra\|jdk\|python] [--json]`: read-only lstat inventory of an extracted Ghidra/JDK/Python tree against the SPEC-06 path policy (reserved device names, trailing dot/space, forbidden chars, NFC/casefold collisions, symlinks, special files, path <= 150 under `backend/`, member/size caps); exit 0 clean, 1 offenders, 2 usage. Real result 2026-10-14: Ghidra 12.0.4 (sha256 matches live-backend.yml) 6506 files and Temurin 21.0.8+9 Windows JDK (sha256 matches vendor sidecar) 490 files: zero offenders; Python embeddable `[unverified]` (python.org blocked). | `patchtrace.offline_bundle` policy constants | tests/test_build_backend_bundle_check.py |
+>>>>>>> c39f0e4 (B2: build_backend_bundle check subcommand (payload path-policy dry-run))
