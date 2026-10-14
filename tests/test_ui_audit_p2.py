@@ -57,3 +57,15 @@ def test_refresh_keeps_note_target_unless_finding_changes(window):
     window.select_finding()
     window.findings_list.setCurrentRow(0)  # a (re)selected finding resets the target
     assert window.note_target.currentIndex() == 1
+
+
+def test_raw_page_clamp_is_reported_in_match_label(window, qtbot):
+    window.mode.setCurrentIndex(3)
+    qtbot.waitUntil(lambda: window._raw_sides.get('older') is not None, timeout=10000)
+    window.raw_page.setMaximum(9)
+    window.raw_page.setValue(5)  # e.g. a go-to offset computed against a larger side that cannot be read
+    qtbot.waitUntil(lambda: 'requested page 5' in window.match_label.text(), timeout=5000)
+    assert window.raw_page.value() == 1 and 'showing last page 1' in window.match_label.text()
+    assert 'past the end of this side' not in window.views['older'].toPlainText()
+    window.render_match()
+    assert 'requested page' not in window.match_label.text()

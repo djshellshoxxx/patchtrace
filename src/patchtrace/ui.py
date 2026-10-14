@@ -2550,7 +2550,7 @@ class MainWindow(QMainWindow):
             return self._inspection
         return None
 
-    def _render_raw(self, match):
+    def _render_raw(self, match, clamped_from: int | None = None):
         self._hunks = []
         self._hunk_index = -1
         inspection = self._current_inspection()
@@ -2592,6 +2592,10 @@ class MainWindow(QMainWindow):
         self.raw_page.blockSignals(True)
         self.raw_page.setMaximum(pages)
         self.raw_page.blockSignals(False)
+        if clamped_from is None and self.raw_page.value() - 1 != page_index:
+            # The requested page is past the longest readable side: show the last page, not a page-less message.
+            self._render_raw(match, clamped_from=page_index + 1)
+            return
         diff = differing_lines(sides['older'], sides['newer'], representation)
         for side, raw in sides.items():
             view = self.views[side]
@@ -2614,6 +2618,8 @@ class MainWindow(QMainWindow):
             summary += f' · {len(diff)} line(s) with differing bytes at equal offsets'
         if notes:
             summary += ' · ' + '; '.join(notes)
+        if clamped_from is not None:
+            summary += f' · requested page {clamped_from} is past the end; showing last page {pages}'
         self.match_label.setText(summary)
         self.match_label.setToolTip('\n\n'.join(captions) or 'No raw bytes displayed.')
 
