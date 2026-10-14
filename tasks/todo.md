@@ -298,3 +298,7 @@
 
 ### [WB3-S7a:strings-view-model]
 - [x] View-model, copy and tooltip entries with tests. [ ] S7b Qt panel (needs the GUI registry); [ ] `tooltips.register_entries()` hook (A7).
+
+### [G5:view-model]
+- [x] Pure view models and tests (`tests/test_callgraph_view_model.py`).
+- [ ] `ui_calls.py`, `ui_calls_tips.py`, `tests/test_ui_calls.py` after F5.

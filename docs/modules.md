@@ -429,3 +429,6 @@ K3 notes: `workflow.py` now also allows `pair_proposed` from the searched states
 
 ### [WB3-S7a:strings-view-model]
 `strings/view_model.py` (rows in review order, `StringsFilter`/`apply_filter`, states, escaped copy, reselect), `strings/copy.py` (labels, exact state text, `TEACH` ids `strings.{cue,reason,link,state}.*`), `strings/tooltip_entries.py` (plain 5-tuples for the `strings.*` tooltip ids; merged by the integrator via `tooltips.register_entries()`). No Qt. The button label is "Copy escaped" (the banned-word sweep rejects "safe").
+
+### [G5:view-model]
+- `callgraph/view_model.py`: Qt-free Changes/Neighbours/Tree rows, E0-E12 status copy, detail and clipboard text, local `graph.*` tooltip table (`GRAPH_TIPS`). Widgets (`ui_calls.py`, `ui_calls_tips.py`) wait for the panel registry (F5).
