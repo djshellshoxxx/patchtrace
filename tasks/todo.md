@@ -285,3 +285,5 @@
 
 ### [D6:overlay]
 - [x] Pure overlay and tests (100k rows). [ ] S4 wiring: `build_tag` on `UnifiedRowView`, partition, navigator notice.
+### [G3:callgraph-deltas]
+- [x] Deltas, hub registry, API hints, groups, blast/entry, paths, leads; section 5 known answer reproduced (P first, L hub-only, 3 of 5 `called` flags cleared). [ ] Live gate: real Ghidriff label forms (`name_matches`, import labels) still unconfirmed; fixtures are synthetic. [ ] G4 CLI/JSON/DOT and a composition-root `EntryPort`/hint source.
