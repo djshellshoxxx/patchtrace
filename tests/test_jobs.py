@@ -580,3 +580,21 @@ def test_backend_private_java_home_changes_child_environment_only(tmp_path, monk
     assert os.environ['JAVA_HOME'] == 'parent-untouched'
     bad_config = BackendConfig(str(python), str(ghidra), java_home=str(tmp_path / 'missing'))
     assert any('Java' in item for item in _config_errors(bad_config))
+
+
+def test_separate_streams_are_independent_and_bounded(tmp_path):
+    code = ('import sys\nsys.stderr.write("E" * 5000)\nsys.stdout.write("out-" + "S" * 5000)\n'
+            'sys.stderr.write("tail-err")\n')
+    result = run_process([str(Path(sys.executable).resolve()), '-c', code], cwd=tmp_path, env=dict(os.environ),
+                         cancel=threading.Event(), timeout_seconds=30, log_limit=100, separate_streams=True,
+                         stderr_limit=50)
+    assert result.returncode == 0 and result.log_tail == 'S' * 100
+    assert len(result.stderr_tail) == 50 and result.stderr_tail.endswith('tail-err')
+    assert 'E' not in result.log_tail and 'S' not in result.stderr_tail
+
+
+def test_merged_default_is_unchanged(tmp_path):
+    code = 'import sys\nsys.stderr.write("e")\nsys.stderr.flush()\nsys.stdout.write("o")\n'
+    result = run_process([str(Path(sys.executable).resolve()), '-c', code], cwd=tmp_path, env=dict(os.environ),
+                         cancel=threading.Event(), timeout_seconds=30)
+    assert sorted(result.log_tail) == ['e', 'o'] and result.stderr_tail == ''

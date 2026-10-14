@@ -215,3 +215,32 @@ def test_fake_timeout(tmp_path, monkeypatch):
     with pytest.raises(SecondaryError, match='timeout'):
         run_rzdiff(cap(exe), older, newer, OLD, NEW, env=dict(os.environ), cancel=threading.Event(),
                    timeout_seconds=1)
+
+
+@posix
+def test_stderr_diagnostics_do_not_corrupt_json(tmp_path):
+    older, newer = artifacts(tmp_path)
+    exe = fake(tmp_path, f'''
+sys.stderr.write("WARNING: rz-diff: symbol table missing\\n")
+sys.stdout.write(open({str(FIXTURE)!r}).read())
+sys.stderr.write("INFO: done\\n")
+''')
+    result = run_rzdiff(cap(exe), older, newer, OLD, NEW, env=dict(os.environ), cancel=threading.Event())
+    assert len(result.matches) == 4
+
+
+@posix
+def test_nonzero_exit_reports_stderr_not_stdout(tmp_path):
+    older, newer = artifacts(tmp_path)
+    exe = fake(tmp_path, 'sys.stdout.write("partial"); sys.stderr.write("ERROR: cannot open file"); sys.exit(1)')
+    with pytest.raises(SecondaryError) as info:
+        run_rzdiff(cap(exe), older, newer, OLD, NEW, env=dict(os.environ), cancel=threading.Event())
+    assert info.value.code == 'PT-SECONDARY-RUN' and 'cannot open file' in info.value.message
+
+
+def test_run_requests_separate_streams(tmp_path):
+    older, newer = artifacts(tmp_path)
+    seen = []
+    run_rzdiff(cap(), older, newer, OLD, NEW, env={}, cancel=threading.Event(),
+               runner=runner_returning(FIXTURE.read_text(), seen=seen))
+    assert seen[0][1]['separate_streams'] is True
