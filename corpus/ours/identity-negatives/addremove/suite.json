@@ -1,0 +1,83 @@
+{
+  "contract": "suite/1",
+  "suite": "identity-negatives",
+  "project": "addremove",
+  "license_spdx": "MIT",
+  "summary": "N7 added/removed look-alikes: a checksum registry whose algorithms are one-loop functions of the same shape. v2 removes CRC-16/CCITT and djb2 and adds CRC-16/MODBUS and sdbm in the same places; v3 swaps parity for LRC and Fletcher-16 for Fletcher-32 and brings back the name ck_crc16_ccitt with a different initial value. Removed and added functions are never renames of each other.",
+  "versions": ["v1", "v2", "v3"],
+  "build": {"kind": "freestanding-dll", "defines": []},
+  "pairs": [
+    {
+      "old": "v1",
+      "new": "v2",
+      "intent": "Two algorithms are removed and two new ones with the same loop shape appear at the same places: CRC-16/CCITT-FALSE becomes CRC-16/MODBUS and djb2 becomes sdbm. The CFGs of removed and added functions are isomorphic and the sizes are close, so a matcher pairs each removed function with its new look-alike; that is wrong, they compute different things. The two registry functions that name them do change.",
+      "truth": [
+        {"function": "ck_crc16_ccitt", "label": "removed", "taxonomy": ["N7"], "notes": "removed; not renamed to ck_crc16_modbus: polynomial 0x1021 MSB first (CCITT-FALSE) versus reflected 0xA001 (MODBUS), different results, merely the same byte loop plus 8-step bit loop"},
+        {"function": "ck_crc16_modbus", "label": "added", "taxonomy": ["N7"], "notes": "new, not a rename of ck_crc16_ccitt: same CFG shape and almost the same size, but a different algorithm (reflected 0xA001, no byte shift)"},
+        {"function": "ck_djb2", "label": "removed", "taxonomy": ["N7"], "notes": "removed; not renamed to ck_sdbm: h*33+c versus h*65599+c, same loop skeleton, different hash"},
+        {"function": "ck_sdbm", "label": "added", "taxonomy": ["N7"], "notes": "new, not a rename of ck_djb2: the loop skeleton is identical but the update step and results differ"},
+        {"function": "ck_compute", "label": "changed", "kind": "other", "notes": "the CK_CRC16 and CK_STRHASH arms call ck_crc16_modbus and ck_sdbm instead of ck_crc16_ccitt and ck_djb2"},
+        {"function": "ck_selftest", "label": "changed", "kind": "other", "notes": "two checks swapped to the new algorithms with their own expected values (0x4B37, 0x68A07035)"},
+        {"function": "ck_xor8", "label": "same", "taxonomy": ["N7"], "notes": "text identical; one of the look-alike byte-loop algorithms, unrelated to the functions added or removed around it"},
+        {"function": "ck_sum16", "label": "same", "taxonomy": ["N7"], "notes": "text identical; one of the look-alike byte-loop algorithms, unrelated to the functions added or removed around it"},
+        {"function": "ck_fletcher16", "label": "same", "taxonomy": ["N7"], "notes": "text identical; one of the look-alike byte-loop algorithms, unrelated to the functions added or removed around it"},
+        {"function": "ck_adler32", "label": "same", "taxonomy": ["N7"], "notes": "text identical; one of the look-alike byte-loop algorithms, unrelated to the functions added or removed around it"},
+        {"function": "ck_crc32_ieee", "label": "same", "taxonomy": ["N7"], "notes": "text identical; one of the look-alike byte-loop algorithms, unrelated to the functions added or removed around it"},
+        {"function": "ck_fnv1a32", "label": "same", "taxonomy": ["N7"], "notes": "text identical; one of the look-alike byte-loop algorithms, unrelated to the functions added or removed around it"},
+        {"function": "ck_inet16", "label": "same", "taxonomy": ["N7"], "notes": "text identical; one of the look-alike byte-loop algorithms, unrelated to the functions added or removed around it"},
+        {"function": "ck_width_bits", "label": "same", "notes": "text identical"},
+        {"function": "ck_verify", "label": "same", "notes": "text identical"},
+        {"function": "ck_is_crc", "label": "same", "notes": "text identical"}
+      ]
+    },
+    {
+      "old": "v2",
+      "new": "v3",
+      "intent": "More removals and additions of look-alikes (xor8 -> lrc8, fletcher16 -> fletcher32) plus a function that reuses a removed name: ck_crc16_ccitt comes back with init 0x0000 next to ck_crc16_modbus, which it resembles. Between these two versions it is simply an added function; name equality with v1 and shape similarity with ck_crc16_modbus point in different directions.",
+      "truth": [
+        {"function": "ck_xor8", "label": "removed", "taxonomy": ["N7"], "notes": "removed; not renamed to ck_lrc8: XOR parity versus two's complement of the byte sum, same one-loop shape"},
+        {"function": "ck_lrc8", "label": "added", "taxonomy": ["N7"], "notes": "new, not a rename of ck_xor8: same loop skeleton and result width, different fold"},
+        {"function": "ck_fletcher16", "label": "removed", "taxonomy": ["N7"], "notes": "removed; not renamed to ck_fletcher32: byte-wise mod 255 with a 16-bit result versus word-wise mod 65535 with a 32-bit result"},
+        {"function": "ck_fletcher32", "label": "added", "taxonomy": ["N7"], "notes": "new, not a rename of ck_fletcher16: two accumulators like before but different modulus, word size and width"},
+        {"function": "ck_crc16_ccitt", "label": "added", "taxonomy": ["N7"], "notes": "name reuse: a function called ck_crc16_ccitt returns with init 0x0000 (XMODEM) and the new id CK_CRC16X. It is not the ck_crc16_modbus of v2 that it resembles, and not v1's function either as far as v2 is concerned"},
+        {"function": "ck_compute", "label": "changed", "kind": "other", "notes": "CK_PARITY and CK_FLETCHER arms retargeted to ck_lrc8 and ck_fletcher32; new CK_CRC16X arm calls ck_crc16_ccitt"},
+        {"function": "ck_width_bits", "label": "changed", "kind": "constant-change", "notes": "CK_FLETCHER now reports 32 bits (was 16); CK_CRC16X added to the 16-bit group"},
+        {"function": "ck_is_crc", "label": "changed", "kind": "comparison-change", "notes": "an extra comparison accepts the new id CK_CRC16X"},
+        {"function": "ck_selftest", "label": "changed", "kind": "other", "notes": "checks lrc8 and fletcher32 instead of xor8 and fletcher16 and adds the XMODEM vector (0x31C3)"},
+        {"function": "ck_sum16", "label": "same", "taxonomy": ["N7"], "notes": "text identical; one of the look-alike byte-loop algorithms, unrelated to the functions added or removed around it"},
+        {"function": "ck_adler32", "label": "same", "taxonomy": ["N7"], "notes": "text identical; one of the look-alike byte-loop algorithms, unrelated to the functions added or removed around it"},
+        {"function": "ck_crc16_modbus", "label": "same", "taxonomy": ["N7"], "notes": "text identical; one of the look-alike byte-loop algorithms, unrelated to the functions added or removed around it"},
+        {"function": "ck_crc32_ieee", "label": "same", "taxonomy": ["N7"], "notes": "text identical; one of the look-alike byte-loop algorithms, unrelated to the functions added or removed around it"},
+        {"function": "ck_sdbm", "label": "same", "taxonomy": ["N7"], "notes": "text identical; one of the look-alike byte-loop algorithms, unrelated to the functions added or removed around it"},
+        {"function": "ck_fnv1a32", "label": "same", "taxonomy": ["N7"], "notes": "text identical; one of the look-alike byte-loop algorithms, unrelated to the functions added or removed around it"},
+        {"function": "ck_inet16", "label": "same", "taxonomy": ["N7"], "notes": "text identical; one of the look-alike byte-loop algorithms, unrelated to the functions added or removed around it"},
+        {"function": "ck_verify", "label": "same", "notes": "text identical"}
+      ]
+    },
+    {
+      "old": "v1",
+      "new": "v3",
+      "intent": "Cumulative. ck_crc16_ccitt exists in both versions under one name with a changed initial value, so here it is a (constant) change, not an add/remove; the other three removed algorithms and four added ones stay unpaired.",
+      "truth": [
+        {"function": "ck_crc16_ccitt", "label": "changed", "kind": "constant-change", "taxonomy": ["N7"], "notes": "same name in v1 and v3 with the initial value changed from 0xFFFF (CCITT-FALSE) to 0x0000 (XMODEM); its algorithm id moved from CK_CRC16 to CK_CRC16X meanwhile"},
+        {"function": "ck_djb2", "label": "removed", "taxonomy": ["N7"], "notes": "removed; not renamed to ck_sdbm: h*33+c versus h*65599+c, same loop skeleton, different hash"},
+        {"function": "ck_xor8", "label": "removed", "taxonomy": ["N7"], "notes": "removed; not renamed to ck_lrc8: XOR parity versus two's complement of the byte sum, same one-loop shape"},
+        {"function": "ck_fletcher16", "label": "removed", "taxonomy": ["N7"], "notes": "removed; not renamed to ck_fletcher32: byte-wise mod 255 with a 16-bit result versus word-wise mod 65535 with a 32-bit result"},
+        {"function": "ck_crc16_modbus", "label": "added", "taxonomy": ["N7"], "notes": "new; resembles ck_crc16_ccitt in shape, but that function still exists in v3 (with a different init), so this is not its rename"},
+        {"function": "ck_sdbm", "label": "added", "taxonomy": ["N7"], "notes": "new, not a rename of ck_djb2: the loop skeleton is identical but the update step and results differ"},
+        {"function": "ck_lrc8", "label": "added", "taxonomy": ["N7"], "notes": "new, not a rename of ck_xor8: same loop skeleton and result width, different fold"},
+        {"function": "ck_fletcher32", "label": "added", "taxonomy": ["N7"], "notes": "new, not a rename of ck_fletcher16: two accumulators like before but different modulus, word size and width"},
+        {"function": "ck_compute", "label": "changed", "kind": "other", "notes": "four arms retargeted (CK_PARITY, CK_FLETCHER, CK_CRC16, CK_STRHASH) and a new CK_CRC16X arm"},
+        {"function": "ck_width_bits", "label": "changed", "kind": "constant-change", "notes": "CK_FLETCHER now reports 32 bits (was 16); CK_CRC16X added to the 16-bit group"},
+        {"function": "ck_is_crc", "label": "changed", "kind": "comparison-change", "notes": "an extra comparison accepts the new id CK_CRC16X"},
+        {"function": "ck_selftest", "label": "changed", "kind": "other", "notes": "expected values and called functions changed for six algorithms, one vector added"},
+        {"function": "ck_sum16", "label": "same", "taxonomy": ["N7"], "notes": "text identical; one of the look-alike byte-loop algorithms, unrelated to the functions added or removed around it"},
+        {"function": "ck_adler32", "label": "same", "taxonomy": ["N7"], "notes": "text identical; one of the look-alike byte-loop algorithms, unrelated to the functions added or removed around it"},
+        {"function": "ck_crc32_ieee", "label": "same", "taxonomy": ["N7"], "notes": "text identical; one of the look-alike byte-loop algorithms, unrelated to the functions added or removed around it"},
+        {"function": "ck_fnv1a32", "label": "same", "taxonomy": ["N7"], "notes": "text identical; one of the look-alike byte-loop algorithms, unrelated to the functions added or removed around it"},
+        {"function": "ck_inet16", "label": "same", "taxonomy": ["N7"], "notes": "text identical; one of the look-alike byte-loop algorithms, unrelated to the functions added or removed around it"},
+        {"function": "ck_verify", "label": "same", "notes": "text identical"}
+      ]
+    }
+  ]
+}
