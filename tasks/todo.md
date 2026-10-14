@@ -351,3 +351,6 @@
 ### [R1:yarax-synth]
 - [x] R1 closed-grammar synthesis, strict re-parse, goldens, Formatter fixed point, hostile-input sweeps (`tests/test_yarax_synth.py`).
 - [ ] Integrator: `.gitattributes` `*.yar text eol=lf` and `tests/fixtures/yarax/** text eol=lf`; `yara-x==1.21.0` pin (the synth tests import `yara_x` as an oracle).
+### [R3:yarax-candidates]
+- [x] R3 candidates without bytes (strings, imports, capabilities), gates, adapters; tests `tests/test_yarax_candidates.py`, fixtures `tests/yarax_fixtures.py`.
+- [ ] R4 hook-ups: `linked_by='xref'` promotion of strings, bytes windows, `RuleWriter` bound to R1 `synth.py`; R5 feeds lint and scan cells to `gates.with_compile` / `gates.with_scan`.
