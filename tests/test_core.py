@@ -398,6 +398,7 @@ def test_strict_json_rejects_unpaired_surrogate_but_accepts_pairs():
     assert strict_json('{"code": "\\ud83d\\ude00"}') == {'code': '\U0001F600'}
 
 
+@pytest.mark.skipif(not hasattr(__import__('os'), 'mkfifo'), reason='FIFOs are POSIX-only')
 def test_verified_reader_refuses_non_regular_file(tmp_path):
     import os
 
