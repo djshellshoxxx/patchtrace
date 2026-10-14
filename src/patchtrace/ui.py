@@ -67,6 +67,7 @@ MAX_VIEW_CHARS = 200_000
 ACTION_TIPS = {
     'Download from Microsoft symbol server…': 'action.acquire',
     'Sample': 'action.sample',
+    'Series window…': 'action.series',
     'Import JSON': 'action.import_json',
     'File overview': 'action.file_overview',
     'Run comparison': 'action.run_comparison',
@@ -1509,6 +1510,7 @@ class MainWindow(QMainWindow):
         self.acquire_action = self._action('Download from Microsoft symbol server…', self.acquire_project)
         self.open_action = self._action('Open', self.open_project, 'Ctrl+O')
         self.sample_action = self._action('Sample', self.open_sample)
+        self.series_action = self._action('Series window…', self.open_series)
         self.import_action = self._action('Import JSON', self.import_diff)
         self.overview_action = self._action('File overview', self.show_file_overview)
         self.run_action = self._action('Run comparison', self.run_analysis, 'F5')
@@ -1536,6 +1538,7 @@ class MainWindow(QMainWindow):
             file_menu.addAction(action)
         file_menu.addAction(self.backup_action)
         file_menu.addAction(self.undo_match_action)
+        file_menu.addAction(self.series_action)
         self.recent_menu = file_menu.addMenu('Recent projects')
         apply_tooltip(self.recent_menu.menuAction(), 'action.recent_projects')
         self.refresh_recent()
@@ -1929,6 +1932,10 @@ class MainWindow(QMainWindow):
         path = QFileDialog.getExistingDirectory(self, 'Open PatchTrace project', self.settings.value('recent/project', ''))
         if path:
             self._guard(lambda: self.set_service(ProjectService.open(Path(path))))
+
+    def open_series(self):
+        from .ui_series import show_series_window  # lazy: keeps ui import cheap and avoids a cycle
+        show_series_window(self)
 
     def open_sample(self):
         parent = QFileDialog.getExistingDirectory(self, 'Choose directory for a new synthetic sample project')
