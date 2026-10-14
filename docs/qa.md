@@ -429,3 +429,5 @@ Automated: `tests/test_capa_hints.py`. Not verified: any hint against the real c
 Automated: `tests/test_acquisition_workflow.py` (25 tests; fake opener, no sockets): pair acquired and imported, consent equality, cancel leaves no project or staging, hash mismatch discarded. Not verified: a live symbol-server download, Windows run.
 ### [S8:search-tool-advisory-sources]
 Automated: tests/test_search_sources_tools.py (presence absent/present/unknown through the real `SearchService`, secret redaction in segment bytes, advisory markup, supersession flags, permutation-stable docs and digests). Owner gate: none beyond the integrator wiring above.
+### [R2:yarax-engine-worker] Rule engine worker QA (2026-10-14, Linux, yara-x 1.21.0; synthetic PE only)
+Automated: `tests/test_yarax_engine.py` (real engine and real child: golden grid, memory cap stops a 100 MiB scan at a 128 MiB cap), `tests/test_yarax_worker.py` (fake child: timeout, cancel, panic, out-of-memory, invalid results). Not verified: Windows Job Object cap behaviour, frozen worker, per-target timeout against a real slow rule.

@@ -336,3 +336,6 @@
 ### [S8:search-tool-advisory-sources]
 - [x] WB1 S8: `search/sources/{tools,advisory}.py` (tool, advisory, CVE groups behind ports) with tests.
 - [ ] Integrator: bind `extra_specs`, `comparable`, and a `cve-snapshot` reader to the real stores.
+### [R2:yarax-engine-worker]
+- [x] R2 engine facade, hidden worker, runner; tests `tests/test_yarax_{engine,worker}.py`.
+- [ ] R7: `rules _worker` CLI verb for the frozen exe, PyInstaller hook, frozen smoke scan (`--request` with result path `-` prints the one JSON document).
