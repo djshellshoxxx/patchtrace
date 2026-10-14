@@ -1,10 +1,15 @@
 """Collect the dynamically loaded parts of the optional Program E dependencies (B-0).
 
-rapidfuzz selects its C++/Python backends by name at import time, which is not visible to static analysis. Missing packages are
-simply skipped (collect_submodules returns an empty list), so a build without the extras still works.
+rapidfuzz selects its C++/Python backends by name at import time, which is not visible to static
+analysis. Missing packages are skipped (collect_submodules returns an empty list and copy_metadata is
+guarded), so a build without the extras still works. Metadata makes the self-test report versions.
 """
-from PyInstaller.utils.hooks import collect_submodules
+from PyInstaller.utils.hooks import collect_submodules, copy_metadata
 
-hiddenimports = (collect_submodules('rapidfuzz') + collect_submodules('pygments.lexers')
-                 + collect_submodules('pygments.formatters') + collect_submodules('pygments.styles')
-                 + ['yara_x', 'pefile'])
+hiddenimports = collect_submodules('rapidfuzz') + ['yara_x']
+datas = []
+for _dist in ('rapidfuzz', 'yara-x'):
+    try:
+        datas += copy_metadata(_dist)
+    except Exception:  # extra not installed
+        pass
