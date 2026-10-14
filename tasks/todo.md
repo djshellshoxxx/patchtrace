@@ -282,3 +282,6 @@
 ### [WB3-S5:strings-delta]
 - [x] WB3-S5 basis rules, delta, edited pairs, review tiers (`strings/{basis,delta,edits,rank}.py`); `SYN-WB3-1` on SYNTHETIC inputs (`tests/fixtures/strings/synergy/`)
 - [ ] Not built here: anchor join (`StringsDelta.anchors`, S6), `format-spec` as an `EditRef.kind` value (reported as a reason instead; needs a contracts addition), real FLOSS/Ghidriff goldens (S9)
+
+### [D6:overlay]
+- [x] Pure overlay and tests (100k rows). [ ] S4 wiring: `build_tag` on `UnifiedRowView`, partition, navigator notice.

@@ -408,3 +408,6 @@ Status column: each row is built by the slice named in `docs/specs/program-e/CAP
 | module | files | role | tests |
 |---|---|---|---|
 | strings delta | `strings/{basis,delta,edits,rank}.py` | `compare_bases` applies the 7.1 rules (harmonized min length, type intersection, same-executable/consent for emulation and language, truncated or failed stage gives `?`, different semantics blocks); `compute_delta` groups rows by value hash (relocation is "in both", encodings compared), attaches S4 links, redacts secrets, pairs edits (look-alike globally, other edits only inside one matched function, mutual best, ties pair nothing, 64x64 cap) and ranks R1-R7 with fixed-vocabulary reasons | `test_strings_{basis,delta,edits,rank,synergy}.py` |
+
+### [D6:overlay]
+`buildenv/overlay.py`: pure row overlay over `noise_map` (`build_overlay`, `RowOverlay`, `chip_detail`); tags only for a comparable `differs` delta of the same pair and orientation. Wiring into `unified/read_model.py` and `ui_unified.py` is pending (UE S4).
