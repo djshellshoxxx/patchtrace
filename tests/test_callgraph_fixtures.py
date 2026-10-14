@@ -62,7 +62,7 @@ def test_svc_pair_has_the_known_answer_shape():
     assert added == {'FUN_140001f00', 'ntoskrnl.exe::ProbeForRead', 'ntoskrnl.exe::EtwWriteTransfer'}
     externals = [record for record in raw['functions']['added'] if record['external']]
     assert len(externals) == 2 and all(record['address'].startswith('EXTERNAL:') for record in externals)
-    assert raw['matches']['name_matches']['FUN_140001200'] == 'FUN_140001340'
+    assert raw['matches']['name_matches']['FUN_140001200'] == [['FUN_140001340', ['ExactBytesFunctionHasher']]]
     assert 'FUN_140001200' not in {record['name'] for record in side_records(raw, 'older')}
 
 

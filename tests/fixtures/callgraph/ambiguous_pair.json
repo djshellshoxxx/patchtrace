@@ -95,8 +95,22 @@
   "md_credits": "SYNTHETIC call-graph fixture; not output from Ghidriff or a real build",
   "matches": {
     "name_matches": {
-      "Dispatch": "Dispatch",
-      "parser.dll::Parse": "parser.dll::Parse"
+      "Dispatch": [
+        [
+          "Dispatch",
+          [
+            "ExactBytesFunctionHasher"
+          ]
+        ]
+      ],
+      "parser.dll::Parse": [
+        [
+          "parser.dll::Parse",
+          [
+            "ExactBytesFunctionHasher"
+          ]
+        ]
+      ]
     },
     "address_matches": {}
   }

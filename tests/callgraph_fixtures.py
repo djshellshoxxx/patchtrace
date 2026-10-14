@@ -1,8 +1,10 @@
 """Synthetic Ghidriff-shaped PDiff fixtures for the WB2 call-graph tracks (slice G0).
 
 Every label, address and hash is invented: no Microsoft binary, PDB or Winbindex label. Each raw dict is
-read by normalize_ghidriff; the `matches` section is not read there, so its shape (name_matches and
-address_matches as label maps) is the only part the live Ghidriff gate must still confirm.
+read by normalize_ghidriff. The `matches` section follows the shape the repo's own readers accept
+(nway.graph, unified ghidriff adapter): each table maps a key to a list of [target, [match types]] pairs.
+`name_matches` is the one table those readers never parse, so its use of that shape is still an assumption
+for the live Ghidriff gate to confirm.
 
 Regenerate the committed JSON with: python tests/callgraph_fixtures.py
 """
@@ -36,13 +38,20 @@ def _modified(old: dict, new: dict, diff_types=('called',), ratio: float = 0.5) 
             'match_types': ['Symbols']}
 
 
+MATCH_TYPE = 'ExactBytesFunctionHasher'
+
+
+def _targets(table: dict) -> dict:
+    return {key: [[value, [MATCH_TYPE]]] for key, value in table.items()}
+
+
 def _raw(added=(), deleted=(), modified=(), matches: dict | None = None) -> dict:
     raw = {'old_meta': {'Executable SHA256': OLDER_SHA256, 'Synthetic sample': True},
            'new_meta': {'Executable SHA256': NEWER_SHA256, 'Synthetic sample': True},
            'functions': {'added': list(added), 'deleted': list(deleted), 'modified': list(modified)},
            'md_credits': SYNTHETIC_CREDIT}
     if matches is not None:
-        raw['matches'] = matches
+        raw['matches'] = {name: _targets(table) for name, table in matches.items()}
     return raw
 
 

@@ -411,17 +411,94 @@
   "md_credits": "SYNTHETIC call-graph fixture; not output from Ghidriff or a real build",
   "matches": {
     "name_matches": {
-      "Dispatch": "Dispatch",
-      "Parse\u202eRecord": "Parse\u202eRecord",
-      "Quote\"Back\\slash": "Quote\"Back\\slash",
-      "Esc\\N\\G\\n\\l": "Esc\\N\\G\\n\\l",
-      "Line\nBreak\rCarriage": "Line\nBreak\rCarriage",
-      "Ctl\u0001\u007fDelete": "Ctl\u0001\u007fDelete",
-      "Sep\u2028Para\u2029Sep": "Sep\u2028Para\u2029Sep",
-      "Longxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx": "Longxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
-      "<img src=x onerror=alert(1)>": "<img src=x onerror=alert(1)>",
-      "..\\..\\evil.dll::Run": "..\\..\\evil.dll::Run",
-      "Nul\u0000Byte": "Nul\u0000Byte"
+      "Dispatch": [
+        [
+          "Dispatch",
+          [
+            "ExactBytesFunctionHasher"
+          ]
+        ]
+      ],
+      "Parse\u202eRecord": [
+        [
+          "Parse\u202eRecord",
+          [
+            "ExactBytesFunctionHasher"
+          ]
+        ]
+      ],
+      "Quote\"Back\\slash": [
+        [
+          "Quote\"Back\\slash",
+          [
+            "ExactBytesFunctionHasher"
+          ]
+        ]
+      ],
+      "Esc\\N\\G\\n\\l": [
+        [
+          "Esc\\N\\G\\n\\l",
+          [
+            "ExactBytesFunctionHasher"
+          ]
+        ]
+      ],
+      "Line\nBreak\rCarriage": [
+        [
+          "Line\nBreak\rCarriage",
+          [
+            "ExactBytesFunctionHasher"
+          ]
+        ]
+      ],
+      "Ctl\u0001\u007fDelete": [
+        [
+          "Ctl\u0001\u007fDelete",
+          [
+            "ExactBytesFunctionHasher"
+          ]
+        ]
+      ],
+      "Sep\u2028Para\u2029Sep": [
+        [
+          "Sep\u2028Para\u2029Sep",
+          [
+            "ExactBytesFunctionHasher"
+          ]
+        ]
+      ],
+      "Longxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx": [
+        [
+          "Longxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+          [
+            "ExactBytesFunctionHasher"
+          ]
+        ]
+      ],
+      "<img src=x onerror=alert(1)>": [
+        [
+          "<img src=x onerror=alert(1)>",
+          [
+            "ExactBytesFunctionHasher"
+          ]
+        ]
+      ],
+      "..\\..\\evil.dll::Run": [
+        [
+          "..\\..\\evil.dll::Run",
+          [
+            "ExactBytesFunctionHasher"
+          ]
+        ]
+      ],
+      "Nul\u0000Byte": [
+        [
+          "Nul\u0000Byte",
+          [
+            "ExactBytesFunctionHasher"
+          ]
+        ]
+      ]
     },
     "address_matches": {}
   }

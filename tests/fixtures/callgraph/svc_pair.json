@@ -246,22 +246,120 @@
   "md_credits": "SYNTHETIC call-graph fixture; not output from Ghidriff or a real build",
   "matches": {
     "name_matches": {
-      "DriverEntry": "DriverEntry",
-      "FUN_140001500": "FUN_140001640",
-      "FUN_140001600": "FUN_140001740",
-      "FUN_140001800": "FUN_1400018c0",
-      "FUN_140001c00": "FUN_140001d40",
-      "FUN_140001200": "FUN_140001340",
-      "ntoskrnl.exe::ExAllocatePool2": "ntoskrnl.exe::ExAllocatePool2",
-      "ntoskrnl.exe::EtwWrite": "ntoskrnl.exe::EtwWrite"
+      "DriverEntry": [
+        [
+          "DriverEntry",
+          [
+            "ExactBytesFunctionHasher"
+          ]
+        ]
+      ],
+      "FUN_140001500": [
+        [
+          "FUN_140001640",
+          [
+            "ExactBytesFunctionHasher"
+          ]
+        ]
+      ],
+      "FUN_140001600": [
+        [
+          "FUN_140001740",
+          [
+            "ExactBytesFunctionHasher"
+          ]
+        ]
+      ],
+      "FUN_140001800": [
+        [
+          "FUN_1400018c0",
+          [
+            "ExactBytesFunctionHasher"
+          ]
+        ]
+      ],
+      "FUN_140001c00": [
+        [
+          "FUN_140001d40",
+          [
+            "ExactBytesFunctionHasher"
+          ]
+        ]
+      ],
+      "FUN_140001200": [
+        [
+          "FUN_140001340",
+          [
+            "ExactBytesFunctionHasher"
+          ]
+        ]
+      ],
+      "ntoskrnl.exe::ExAllocatePool2": [
+        [
+          "ntoskrnl.exe::ExAllocatePool2",
+          [
+            "ExactBytesFunctionHasher"
+          ]
+        ]
+      ],
+      "ntoskrnl.exe::EtwWrite": [
+        [
+          "ntoskrnl.exe::EtwWrite",
+          [
+            "ExactBytesFunctionHasher"
+          ]
+        ]
+      ]
     },
     "address_matches": {
-      "140001000": "140001000",
-      "140001500": "140001640",
-      "140001600": "140001740",
-      "140001800": "1400018c0",
-      "140001c00": "140001d40",
-      "140001200": "140001340"
+      "140001000": [
+        [
+          "140001000",
+          [
+            "ExactBytesFunctionHasher"
+          ]
+        ]
+      ],
+      "140001500": [
+        [
+          "140001640",
+          [
+            "ExactBytesFunctionHasher"
+          ]
+        ]
+      ],
+      "140001600": [
+        [
+          "140001740",
+          [
+            "ExactBytesFunctionHasher"
+          ]
+        ]
+      ],
+      "140001800": [
+        [
+          "1400018c0",
+          [
+            "ExactBytesFunctionHasher"
+          ]
+        ]
+      ],
+      "140001c00": [
+        [
+          "140001d40",
+          [
+            "ExactBytesFunctionHasher"
+          ]
+        ]
+      ],
+      "140001200": [
+        [
+          "140001340",
+          [
+            "ExactBytesFunctionHasher"
+          ]
+        ]
+      ]
     }
   }
 }

@@ -144,9 +144,30 @@
   "md_credits": "SYNTHETIC call-graph fixture; not output from Ghidriff or a real build",
   "matches": {
     "name_matches": {
-      "Dispatch": "Dispatch",
-      "ReadBuffer": "ReadBuffer",
-      "ReadBuffer-2": "ReadBuffer-2"
+      "Dispatch": [
+        [
+          "Dispatch",
+          [
+            "ExactBytesFunctionHasher"
+          ]
+        ]
+      ],
+      "ReadBuffer": [
+        [
+          "ReadBuffer",
+          [
+            "ExactBytesFunctionHasher"
+          ]
+        ]
+      ],
+      "ReadBuffer-2": [
+        [
+          "ReadBuffer-2",
+          [
+            "ExactBytesFunctionHasher"
+          ]
+        ]
+      ]
     },
     "address_matches": {}
   }

@@ -2369,73 +2369,542 @@
   "md_credits": "SYNTHETIC call-graph fixture; not output from Ghidriff or a real build",
   "matches": {
     "name_matches": {
-      "CycleA": "CycleA",
-      "CycleB": "CycleB",
-      "TraceMessageHub": "TraceMessageHub",
-      "Caller000": "Caller000",
-      "Caller001": "Caller001",
-      "Caller002": "Caller002",
-      "Caller003": "Caller003",
-      "Caller004": "Caller004",
-      "Caller005": "Caller005",
-      "Caller006": "Caller006",
-      "Caller007": "Caller007",
-      "Caller008": "Caller008",
-      "Caller009": "Caller009",
-      "Caller010": "Caller010",
-      "Caller011": "Caller011",
-      "Caller012": "Caller012",
-      "Caller013": "Caller013",
-      "Caller014": "Caller014",
-      "Caller015": "Caller015",
-      "Caller016": "Caller016",
-      "Caller017": "Caller017",
-      "Caller018": "Caller018",
-      "Caller019": "Caller019",
-      "Caller020": "Caller020",
-      "Caller021": "Caller021",
-      "Caller022": "Caller022",
-      "Caller023": "Caller023",
-      "Caller024": "Caller024",
-      "Caller025": "Caller025",
-      "Caller026": "Caller026",
-      "Caller027": "Caller027",
-      "Caller028": "Caller028",
-      "Caller029": "Caller029",
-      "Caller030": "Caller030",
-      "Caller031": "Caller031",
-      "Caller032": "Caller032",
-      "Caller033": "Caller033",
-      "Caller034": "Caller034",
-      "Caller035": "Caller035",
-      "Caller036": "Caller036",
-      "Caller037": "Caller037",
-      "Caller038": "Caller038",
-      "Caller039": "Caller039",
-      "Caller040": "Caller040",
-      "Caller041": "Caller041",
-      "Caller042": "Caller042",
-      "Caller043": "Caller043",
-      "Caller044": "Caller044",
-      "Caller045": "Caller045",
-      "Caller046": "Caller046",
-      "Caller047": "Caller047",
-      "Caller048": "Caller048",
-      "Caller049": "Caller049",
-      "Caller050": "Caller050",
-      "Caller051": "Caller051",
-      "Caller052": "Caller052",
-      "Caller053": "Caller053",
-      "Caller054": "Caller054",
-      "Caller055": "Caller055",
-      "Caller056": "Caller056",
-      "Caller057": "Caller057",
-      "Caller058": "Caller058",
-      "Caller059": "Caller059",
-      "Caller060": "Caller060",
-      "Caller061": "Caller061",
-      "Caller062": "Caller062",
-      "Caller063": "Caller063"
+      "CycleA": [
+        [
+          "CycleA",
+          [
+            "ExactBytesFunctionHasher"
+          ]
+        ]
+      ],
+      "CycleB": [
+        [
+          "CycleB",
+          [
+            "ExactBytesFunctionHasher"
+          ]
+        ]
+      ],
+      "TraceMessageHub": [
+        [
+          "TraceMessageHub",
+          [
+            "ExactBytesFunctionHasher"
+          ]
+        ]
+      ],
+      "Caller000": [
+        [
+          "Caller000",
+          [
+            "ExactBytesFunctionHasher"
+          ]
+        ]
+      ],
+      "Caller001": [
+        [
+          "Caller001",
+          [
+            "ExactBytesFunctionHasher"
+          ]
+        ]
+      ],
+      "Caller002": [
+        [
+          "Caller002",
+          [
+            "ExactBytesFunctionHasher"
+          ]
+        ]
+      ],
+      "Caller003": [
+        [
+          "Caller003",
+          [
+            "ExactBytesFunctionHasher"
+          ]
+        ]
+      ],
+      "Caller004": [
+        [
+          "Caller004",
+          [
+            "ExactBytesFunctionHasher"
+          ]
+        ]
+      ],
+      "Caller005": [
+        [
+          "Caller005",
+          [
+            "ExactBytesFunctionHasher"
+          ]
+        ]
+      ],
+      "Caller006": [
+        [
+          "Caller006",
+          [
+            "ExactBytesFunctionHasher"
+          ]
+        ]
+      ],
+      "Caller007": [
+        [
+          "Caller007",
+          [
+            "ExactBytesFunctionHasher"
+          ]
+        ]
+      ],
+      "Caller008": [
+        [
+          "Caller008",
+          [
+            "ExactBytesFunctionHasher"
+          ]
+        ]
+      ],
+      "Caller009": [
+        [
+          "Caller009",
+          [
+            "ExactBytesFunctionHasher"
+          ]
+        ]
+      ],
+      "Caller010": [
+        [
+          "Caller010",
+          [
+            "ExactBytesFunctionHasher"
+          ]
+        ]
+      ],
+      "Caller011": [
+        [
+          "Caller011",
+          [
+            "ExactBytesFunctionHasher"
+          ]
+        ]
+      ],
+      "Caller012": [
+        [
+          "Caller012",
+          [
+            "ExactBytesFunctionHasher"
+          ]
+        ]
+      ],
+      "Caller013": [
+        [
+          "Caller013",
+          [
+            "ExactBytesFunctionHasher"
+          ]
+        ]
+      ],
+      "Caller014": [
+        [
+          "Caller014",
+          [
+            "ExactBytesFunctionHasher"
+          ]
+        ]
+      ],
+      "Caller015": [
+        [
+          "Caller015",
+          [
+            "ExactBytesFunctionHasher"
+          ]
+        ]
+      ],
+      "Caller016": [
+        [
+          "Caller016",
+          [
+            "ExactBytesFunctionHasher"
+          ]
+        ]
+      ],
+      "Caller017": [
+        [
+          "Caller017",
+          [
+            "ExactBytesFunctionHasher"
+          ]
+        ]
+      ],
+      "Caller018": [
+        [
+          "Caller018",
+          [
+            "ExactBytesFunctionHasher"
+          ]
+        ]
+      ],
+      "Caller019": [
+        [
+          "Caller019",
+          [
+            "ExactBytesFunctionHasher"
+          ]
+        ]
+      ],
+      "Caller020": [
+        [
+          "Caller020",
+          [
+            "ExactBytesFunctionHasher"
+          ]
+        ]
+      ],
+      "Caller021": [
+        [
+          "Caller021",
+          [
+            "ExactBytesFunctionHasher"
+          ]
+        ]
+      ],
+      "Caller022": [
+        [
+          "Caller022",
+          [
+            "ExactBytesFunctionHasher"
+          ]
+        ]
+      ],
+      "Caller023": [
+        [
+          "Caller023",
+          [
+            "ExactBytesFunctionHasher"
+          ]
+        ]
+      ],
+      "Caller024": [
+        [
+          "Caller024",
+          [
+            "ExactBytesFunctionHasher"
+          ]
+        ]
+      ],
+      "Caller025": [
+        [
+          "Caller025",
+          [
+            "ExactBytesFunctionHasher"
+          ]
+        ]
+      ],
+      "Caller026": [
+        [
+          "Caller026",
+          [
+            "ExactBytesFunctionHasher"
+          ]
+        ]
+      ],
+      "Caller027": [
+        [
+          "Caller027",
+          [
+            "ExactBytesFunctionHasher"
+          ]
+        ]
+      ],
+      "Caller028": [
+        [
+          "Caller028",
+          [
+            "ExactBytesFunctionHasher"
+          ]
+        ]
+      ],
+      "Caller029": [
+        [
+          "Caller029",
+          [
+            "ExactBytesFunctionHasher"
+          ]
+        ]
+      ],
+      "Caller030": [
+        [
+          "Caller030",
+          [
+            "ExactBytesFunctionHasher"
+          ]
+        ]
+      ],
+      "Caller031": [
+        [
+          "Caller031",
+          [
+            "ExactBytesFunctionHasher"
+          ]
+        ]
+      ],
+      "Caller032": [
+        [
+          "Caller032",
+          [
+            "ExactBytesFunctionHasher"
+          ]
+        ]
+      ],
+      "Caller033": [
+        [
+          "Caller033",
+          [
+            "ExactBytesFunctionHasher"
+          ]
+        ]
+      ],
+      "Caller034": [
+        [
+          "Caller034",
+          [
+            "ExactBytesFunctionHasher"
+          ]
+        ]
+      ],
+      "Caller035": [
+        [
+          "Caller035",
+          [
+            "ExactBytesFunctionHasher"
+          ]
+        ]
+      ],
+      "Caller036": [
+        [
+          "Caller036",
+          [
+            "ExactBytesFunctionHasher"
+          ]
+        ]
+      ],
+      "Caller037": [
+        [
+          "Caller037",
+          [
+            "ExactBytesFunctionHasher"
+          ]
+        ]
+      ],
+      "Caller038": [
+        [
+          "Caller038",
+          [
+            "ExactBytesFunctionHasher"
+          ]
+        ]
+      ],
+      "Caller039": [
+        [
+          "Caller039",
+          [
+            "ExactBytesFunctionHasher"
+          ]
+        ]
+      ],
+      "Caller040": [
+        [
+          "Caller040",
+          [
+            "ExactBytesFunctionHasher"
+          ]
+        ]
+      ],
+      "Caller041": [
+        [
+          "Caller041",
+          [
+            "ExactBytesFunctionHasher"
+          ]
+        ]
+      ],
+      "Caller042": [
+        [
+          "Caller042",
+          [
+            "ExactBytesFunctionHasher"
+          ]
+        ]
+      ],
+      "Caller043": [
+        [
+          "Caller043",
+          [
+            "ExactBytesFunctionHasher"
+          ]
+        ]
+      ],
+      "Caller044": [
+        [
+          "Caller044",
+          [
+            "ExactBytesFunctionHasher"
+          ]
+        ]
+      ],
+      "Caller045": [
+        [
+          "Caller045",
+          [
+            "ExactBytesFunctionHasher"
+          ]
+        ]
+      ],
+      "Caller046": [
+        [
+          "Caller046",
+          [
+            "ExactBytesFunctionHasher"
+          ]
+        ]
+      ],
+      "Caller047": [
+        [
+          "Caller047",
+          [
+            "ExactBytesFunctionHasher"
+          ]
+        ]
+      ],
+      "Caller048": [
+        [
+          "Caller048",
+          [
+            "ExactBytesFunctionHasher"
+          ]
+        ]
+      ],
+      "Caller049": [
+        [
+          "Caller049",
+          [
+            "ExactBytesFunctionHasher"
+          ]
+        ]
+      ],
+      "Caller050": [
+        [
+          "Caller050",
+          [
+            "ExactBytesFunctionHasher"
+          ]
+        ]
+      ],
+      "Caller051": [
+        [
+          "Caller051",
+          [
+            "ExactBytesFunctionHasher"
+          ]
+        ]
+      ],
+      "Caller052": [
+        [
+          "Caller052",
+          [
+            "ExactBytesFunctionHasher"
+          ]
+        ]
+      ],
+      "Caller053": [
+        [
+          "Caller053",
+          [
+            "ExactBytesFunctionHasher"
+          ]
+        ]
+      ],
+      "Caller054": [
+        [
+          "Caller054",
+          [
+            "ExactBytesFunctionHasher"
+          ]
+        ]
+      ],
+      "Caller055": [
+        [
+          "Caller055",
+          [
+            "ExactBytesFunctionHasher"
+          ]
+        ]
+      ],
+      "Caller056": [
+        [
+          "Caller056",
+          [
+            "ExactBytesFunctionHasher"
+          ]
+        ]
+      ],
+      "Caller057": [
+        [
+          "Caller057",
+          [
+            "ExactBytesFunctionHasher"
+          ]
+        ]
+      ],
+      "Caller058": [
+        [
+          "Caller058",
+          [
+            "ExactBytesFunctionHasher"
+          ]
+        ]
+      ],
+      "Caller059": [
+        [
+          "Caller059",
+          [
+            "ExactBytesFunctionHasher"
+          ]
+        ]
+      ],
+      "Caller060": [
+        [
+          "Caller060",
+          [
+            "ExactBytesFunctionHasher"
+          ]
+        ]
+      ],
+      "Caller061": [
+        [
+          "Caller061",
+          [
+            "ExactBytesFunctionHasher"
+          ]
+        ]
+      ],
+      "Caller062": [
+        [
+          "Caller062",
+          [
+            "ExactBytesFunctionHasher"
+          ]
+        ]
+      ],
+      "Caller063": [
+        [
+          "Caller063",
+          [
+            "ExactBytesFunctionHasher"
+          ]
+        ]
+      ]
     },
     "address_matches": {}
   }
