@@ -511,3 +511,10 @@ Not verified here: Windows and GitHub Actions; any live Ollama or OpenAI-compati
 | `data()` calls independent of N | `assert_lazy_model` at 10k and 100k, plus reset, sort and filter ceilings of 7 x visible cells x 1.2 + 20 | 462 calls at both sizes (ceiling about 725) |
 | Time | reset, sort, filter after processEvents, ceilings 0.5 s (10k) and 1.5 s (100k) | 7 to 39 ms measured on Linux |
 | Not verified here | Windows timings, real UI Automation output for the table | open |
+### [GUI-F3:widgets] GUI framework F3 (2026-10-14, local Linux worktree, PySide6 offscreen)
+| Check | Evidence |
+|---|---|
+| Dark stylesheet equals ui.DARK_STYLE | tests/test_gui_theme.py golden; every dark token pair meets 4.5:1 text and 3:1 non-text (contrast_problems empty) |
+| State copy, precedence, actions, announcements, hostile text, a11y_audit in all 12 states | tests/test_gui_state_view.py |
+| qt_gate repeat 10 over the five F3 files | 1,770 passed, no abort or surviving thread |
+| Not verified here | Windows, real screen readers, high contrast, DPI scaling, the frozen build |

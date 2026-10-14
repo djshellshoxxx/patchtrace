@@ -332,3 +332,8 @@
 ### [F4:virtual-table] VirtualTable
 - [x] `gui/table_spec.py` (pure) and `gui/qt/table.py`; 10k and 100k `data()` and time gates, selection, sort, filter, keyboard, copy cap (`tests/test_gui_table.py`, `tests/test_gui_table_spec.py`).
 - [ ] Integrator: re-measure the time ceilings on Windows CI; add a panel-level sort command and a status announcement from `counts_changed` and `copied`; chips delegate (F3) reads `CHIP_ROLE`.
+### [GUI-F3:widgets] GUI framework F3: shared widgets (2026-10-14)
+- [x] labels, state_view (StateView, NoticeStrip), chips, theme (dark tokens, stylesheet equal to DARK_STYLE), gui/tips.py with tests/test_gui_{labels,state_view,chips,theme,tips}.py; qt_gate repeat 10: 1,770 passed.
+- [ ] Integrator (F5): call register_gui_tips() in the host and in the test fixture; wrap the central widget with NoticeStrip; have tooltips.py delegate apply_tooltip(accessible=) to gui.tips.apply_tip or adopt it.
+- [ ] F7: high-contrast chip drawing, system variant, ThemeTokens from QPalette.
+- [ ] BLOCKED (manual): real Narrator or NVDA output for the status strip and notice strip, Windows rendering of chip shapes at 100-200 percent DPI.
