@@ -419,3 +419,6 @@ Automated: tests/test_callgraph_{cli,dot,schemas}.py through the dispatcher over
 
 ### [K5:kbc-lineage-resolver]
 Automated: `tests/test_acquisition_winbindex_rows.py`, `tests/test_kbc_{lineage,resolver}.py` on synthetic Winbindex-shaped records (no network, no Microsoft data). Open gate: parse a freshly fetched real record once on the owner's machine and compare the row counts with `parse` (expect rows for every 64-hex key).
+
+### [K4a:kbcorrelation-leads] KB correlator K4a QA (2026-10-14, local Linux worktree; synthetic only)
+Automated: `tests/test_kbc_{leads,view_model,synergy}.py` (sockets denied; real `ProjectService`, `rank`, `correlate --dry-run` for the baseline). Not verified: Windows run; a real MSRC document; the dock (K4b) on top of the view model.

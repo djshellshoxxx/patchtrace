@@ -318,3 +318,7 @@
 ### [K5:kbc-lineage-resolver] KB-CVE correlator K5 (2026-10-14)
 - [x] additive `winbindex.parse_rows` (md5-only and shared-KB rows kept, BASE, heading class), `kbcorrelation/{lineage,resolver}.py`, synthetic fixtures, tests incl. the grade property
 - [ ] open: wiring `IndexPort` and `kb pairs`/`kb plan` to `resolve` (integrator, K7); live check of the heading classes and `otherWindowsVersions` on a fresh record (needs the Winbindex host)
+
+### [K4a:kbcorrelation-leads] KB-CVE correlator K4a (2026-10-14)
+- [x] `leads`, `cli_leads` (`kb leads PROJECT [--cve] [--limit]`), `view_model`; E0 synergy golden `tests/fixtures/kbcorrelation/expected/synergy-leads.json` (baseline scores 26/25, 36/25, 36/35 reproduced); KEV never reorders functions; contested stays contested; stale on swapped orientation; lineage counts once.
+- [ ] NOT done / open: `patchtrace/cli.py` `kb` hook (integrator, see K3); run id in the stale fingerprint (needs the context row to record it); KEV, unified and secondary adapters (K8: `RealEngine` moves to `adapters/engine.py`); unified MAT-ANCHOR and anchor-coincidence membership; `.gitattributes` line for `tests/fixtures/kbcorrelation/expected/*.json`.

@@ -1,8 +1,7 @@
 """`kb` command assembler (KB-integration-plan 8.1; slice K3). Qt-free; offline.
 
 ``main(argv)`` takes the arguments after ``kb``. ``kb index ...`` goes to ``cli_index``; the pair verbs live in
-``cli_pairs``; this module adds ``search``, ``attach``, ``explain`` and ``export``. Slice K4a adds ``leads`` with one
-import of ``cli_leads`` here and one entry each in ``REGISTRARS`` and ``HANDLERS``.
+``cli_pairs``; this module adds ``search``, ``attach``, ``explain`` and ``export``; ``cli_leads`` adds ``leads`` (slice K4a).
 
 Hook for ``patchtrace/cli.py`` (A-8; 4 lines, applied by the integrator; ``kb`` parses its own arguments, so no
 argparse entry is needed and the command-name set of the failure envelope is untouched):
@@ -20,7 +19,7 @@ import sys
 from dataclasses import dataclass
 from pathlib import Path
 
-from . import cli_index, cli_online, cli_pairs
+from . import cli_index, cli_leads, cli_online, cli_pairs
 from .cli_index import IndexPorts, Parser, add_common, present, run_cli, workspace_root
 
 
@@ -28,6 +27,8 @@ from .cli_index import IndexPorts, Parser, add_common, present, run_cli, workspa
 class Context:
     """Builds the production service lazily so ``--help`` and argument errors never import ``intelligence``."""
     env: object | None = None
+    engine: object | None = None  # EngineEvidence for ``kb leads`` (default: the stored ranking of the project)
+    kev: object | None = None  # ExploitationLookup (K8); default: KEV not loaded
 
     def _env(self):
         if self.env is None:
@@ -88,8 +89,8 @@ def cmd_export(args, context, out) -> int:
 
 
 HANDLERS = {'search': cmd_search, 'attach': cmd_attach, 'explain': cmd_explain, 'export': cmd_export,
-            **cli_pairs.HANDLERS}
-REGISTRARS = [_register_core, cli_pairs.register]
+            **cli_pairs.HANDLERS, **cli_leads.HANDLERS}
+REGISTRARS = [_register_core, cli_pairs.register, cli_leads.register]
 
 
 def build_parser() -> Parser:
@@ -101,10 +102,10 @@ def build_parser() -> Parser:
     return parser
 
 
-def main(argv: list[str] | None = None, *, env=None, stdout=None, stderr=None) -> int:
-    """Run ``kb <verb> ...``. ``env`` replaces the production ports (tests)."""
+def main(argv: list[str] | None = None, *, env=None, engine=None, kev=None, stdout=None, stderr=None) -> int:
+    """Run ``kb <verb> ...``. ``env``, ``engine`` and ``kev`` replace the production ports (tests)."""
     argv = list(sys.argv[1:] if argv is None else argv)
-    context = Context(env)
+    context = Context(env, engine, kev)
     if argv[:2] == ['index', 'sync'] and not ({'-h', '--help'} & set(argv[2:])):
         return cli_online.main(argv[2:], ports=cli_online.OnlinePorts(context.index_ports()), stdout=stdout,
                                stderr=stderr)
