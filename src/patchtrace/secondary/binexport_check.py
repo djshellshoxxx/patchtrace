@@ -305,14 +305,21 @@ def check_message(msg, limits: BinExportLimits | None = None, budget: Budget | N
     # --- references: per-instruction local operand/expression indexes (defaults 0 are effective) ---
     instructions, operands, n_str = tables['instruction'], tables['operand'], n['string_table']
 
-    def local(ref, label: str) -> None:
+    def local(ref, label: str, strict: bool) -> None:
+        """Local operand/expression indexes; their defaults (0) are effective. Non-strict (comments): the proto
+        documents them as operand-level markup only, so an ABSENT index on an instruction (or operand) with
+        nothing to point at is a plain instruction comment, not an error; an explicit index must be in range."""
         i = ref.instruction_index
         _one(i, n_ins, f'{label}.instruction')
         ops = getattr(instructions[i], 'operand_index', ())
+        if not (strict or len(ops) or _has(ref, 'instruction_operand_index')):
+            return
         op = _opt(ref, 'instruction_operand_index', 0)
         _one(op, len(ops), f'{label}.operand')
-        ex = _opt(ref, 'operand_expression_index', 0)
-        _one(ex, len(operands[ops[op]].expression_index), f'{label}.expression')
+        exprs = operands[ops[op]].expression_index
+        if not (strict or len(exprs) or _has(ref, 'operand_expression_index')):
+            return
+        _one(_opt(ref, 'operand_expression_index', 0), len(exprs), f'{label}.expression')
 
     for label, refs, need_string in (('string_reference', tables['string_reference'], True),
                                      ('expression_substitution', tables['expression_substitution'], True),
@@ -320,7 +327,7 @@ def check_message(msg, limits: BinExportLimits | None = None, budget: Budget | N
         for ref in refs:
             if not _has(ref, 'instruction_index'):
                 raise _input('reference_incomplete', f'{label} lacks instruction_index')
-            local(ref, label)
+            local(ref, label, need_string)
             if _has(ref, 'string_table_index'):
                 _one(ref.string_table_index, n_str, f'{label}.string_table')
             elif need_string:
@@ -328,7 +335,7 @@ def check_message(msg, limits: BinExportLimits | None = None, budget: Budget | N
             tick()
     for c in tables['comment']:
         if _has(c, 'instruction_index'):
-            local(c, 'comment')
+            local(c, 'comment', False)
         if not _has(c, 'string_table_index'):
             raise _input('reference_incomplete', 'comment lacks string_table_index')
         _one(c.string_table_index, n_str, 'comment.string_table')

@@ -167,6 +167,25 @@ def test_flow_graph_amplification_and_reference_defaults():
     assert failure(m).reason == 'index_oob:address_comment.operand'
 
 
+def test_instruction_comment_on_operandless_instruction():
+    """Proto: Comment operand/expression indexes are operand-level markup; absent on a `ret` is legitimate."""
+    m = valid()
+    ret = m.instruction.add(mnemonic_index=1)
+    m.basic_block[-1].instruction_index[0].end_index = len(m.instruction)
+    m.comment.add(instruction_index=len(m.instruction) - 1, string_table_index=1, type=1)
+    check_message(m, TIGHT, Budget())
+    m.comment[-1].instruction_operand_index = 0  # explicit pointer to an operand that does not exist
+    assert failure(m).reason == 'index_oob:comment.operand'
+    m = valid()
+    m.string_reference.add(instruction_index=len(m.instruction) - 1, string_table_index=0)  # strict: needs operand
+    check_message(m, TIGHT, Budget())  # last instruction has an operand (default 0 resolves)
+    m.instruction.add(mnemonic_index=1)
+    m.basic_block[-1].instruction_index[0].end_index = len(m.instruction)
+    m.string_reference.add(instruction_index=len(m.instruction) - 1, string_table_index=0)
+    assert failure(m).reason == 'index_oob:string_reference.operand'
+    assert ret.mnemonic_index == 1
+
+
 def test_section_boundary():
     m = valid()
     m.section[0].address, m.section[0].size = 2**64 - 0x1000, 0x1000  # ends exactly at 2**64: allowed

@@ -30,7 +30,7 @@ from patchtrace.secondary.contracts import SecondaryError
 src, snap, cap = sys.argv[1], sys.argv[2], int(sys.argv[3])
 start = time.perf_counter()
 try:
-    s = inspect_binexport(src, snap, artifact_sha256='%s', role='older', budget=Budget(),
+    s = inspect_binexport(src, snap, artifact_sha256='SHA_HEX', role='older', budget=Budget(),
                           limits=BinExportLimits(memory_bytes=cap))
     outcome = 'ok'
 except SecondaryError as exc:
@@ -38,7 +38,7 @@ except SecondaryError as exc:
 except MemoryError:
     outcome = 'MemoryError'
 print(json.dumps({'outcome': outcome, 'peak': peak_memory_bytes(), 'seconds': round(time.perf_counter() - start, 2)}))
-''' % SHA
+'''.replace('SHA_HEX', SHA)
 
 ALLOC_CHILD = r'''
 import json, sys

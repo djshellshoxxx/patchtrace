@@ -161,8 +161,8 @@ def test_fake_worker_error_document_passes_through(monkeypatch, export, private)
 
 def test_lying_worker_is_caught_by_parent_rehash(monkeypatch, export, private, tmp_path):
     """Worker claims success with a summary that does not describe the snapshot it left behind."""
-    from patchtrace.secondary.binexport_pipeline import inspect_binexport
     from patchtrace.secondary.binexport_limits import Budget
+    from patchtrace.secondary.binexport_pipeline import inspect_binexport
     summary = inspect_binexport(export, tmp_path / 'ref', artifact_sha256=SHA, role='older',
                                 limits=BinExportLimits(), budget=Budget())
     doc = {'kind': 'ok', 'summary': json.loads(summary.model_dump_json())}
