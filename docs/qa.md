@@ -193,3 +193,13 @@ Real tool, not mocked, but only in this session's Linux container (uid 65534, en
 | MSI static inspection | `msiextract`, PE header and import parse (no execution) | `ProgramFiles/BinDiff/bin/bindiff.exe` 3,396,896 B `b1d4844d…47dd`, PE32+ x86-64 console; imports `VCRUNTIME140_1.dll`, which the MSI does not ship |
 
 Committed from this run: the real v8 `--help` text and the real v8 `.BinDiff` + stdout produced on the synthetic pair (`tests/fixtures/secondary/bindiff-8-help.txt`, `bindiff-v8-real-on-synthetic.*`, provenance JSON). Still live-only/open: the GitHub `live-bindiff` run (Linux required leg and the advisory Windows leg: `msiexec /a` layout, `bindiff.exe` start, VC++ runtime on `windows-latest`, Windows config paths and network), real-driver runtime/memory and `executable_id` formats (U8/U9), and the independent pin re-hash plus `.asc` verification.
+
+### [T:core] SPEC-29 tools capa/FLOSS/diec (2026-10-14, builder worktree, Linux only)
+| Check | Evidence | Result |
+|---|---|---|
+| Upstream CLI/JSON verification | pinned source (PyPI sdists flare_capa 9.4.0 `c4f421ab…`, flare_floss 3.1.1 `4f74458b…`, digests equal PyPI's) + real `--help`/`--version` | flags and schemas in spec T1-T5 |
+| Real runs on SYNTHETIC PE pairs (Ubuntu 24.04, `unshare -rn`, private HOME/TMPDIR) | capa 9.4.0 linux, FLOSS 3.1.1 linux, diec 3.21 (24.04 deb + Qt 5.15.13 Core/Script) | goldens `tests/fixtures/intel_tools/` (manifest.json); not evidence about real binaries |
+| Asset SHA-256 (trust-on-first-use, one download, GitHub API 403) | capa linux zip 47,477,971 B `07800a1d…81e4`, windows zip 35,994,071 B `670ab1a5…3bb5`; FLOSS linux 40,571,555 B `40c05a86…2666`, windows 31,580,022 B `6c71089b…c2fb`; DiE 22.04 deb 11,806,884 B `c59e2fca…6007`, windows zip 25,197,854 B `078f2934…b3b9` | pin file not yet written (deferred) |
+| DiE databases (tree/1 digest) | linux deb `301b24a7…2b86`, windows zip `a862337e…dda` (CRLF-only differences, 1511 files) | in `diec.KNOWN_DATABASES` |
+| Unit tests | `tests/test_intel_tools_common.py`, `tests/test_intel_tools_parsers.py` | 30 passed |
+| Not run | fake-executable runner tests, CLI, provisioning, live workflow, Windows, Ghidra backend | BLOCKED/deferred (next wave) |
