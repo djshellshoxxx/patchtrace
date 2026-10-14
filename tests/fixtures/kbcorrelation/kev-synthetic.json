@@ -1,0 +1,19 @@
+{
+  "catalog_version": "2099.02.14-synthetic",
+  "contract": "synthetic-kev-snapshot/0",
+  "count": 1,
+  "snapshot_retrieved_at": "2099-02-14T00:00:00Z",
+  "synthetic": true,
+  "vulnerabilities": [
+    {
+      "cveID": "CVE-2099-20001",
+      "dateAdded": "2099-02-12",
+      "dueDate": "2099-03-05",
+      "knownRansomwareCampaignUse": "Unknown",
+      "product": "Example OS",
+      "requiredAction": "Synthetic fixture: no action",
+      "vendorProject": "Example Vendor",
+      "vulnerabilityName": "Synthetic out-of-bounds read"
+    }
+  ]
+}

@@ -1,0 +1,121 @@
+{
+  "contract": "kbcorrelation-fixtures/1",
+  "created": "2026-10-14T12:20:00Z",
+  "files": {
+    "csaf-kb.json": {
+      "bytes": 3901,
+      "created": "2026-10-14T12:20:00Z",
+      "generator": "tests/kbc_helpers.py::baseline_csaf",
+      "licence": "MIT (repository LICENSE); synthetic test data, no third-party content",
+      "origin": "synthetic, hand-written PatchTrace fixture; not Microsoft-derived or copied. CSAF 2.0 shape with a vendor_fix KB token (S12 negative with no KB), group expansion (S13), known_not_affected (S14, NEG-08).",
+      "path": "csaf-kb.json",
+      "sha256": "1f470bf81592b5c1a506f741f0bc3c1ddfa7bdeb17fefd05bdb219779ab3b3ad",
+      "used_by": [
+        "tests/test_kbc_fixtures.py (builder parity)",
+        "planned K1 tests/test_kbc_csaf_bridge.py (S05, S12, S13, S14, NEG-08)"
+      ]
+    },
+    "cvrf-2099-Feb-dialect-unknown.xml": {
+      "bytes": 601,
+      "created": "2026-10-14T12:20:00Z",
+      "licence": "MIT (repository LICENSE); synthetic test data, no third-party content",
+      "origin": "synthetic, hand-written PatchTrace fixture; not Microsoft-derived or copied. Future dialect with renamed root and containers (S11).",
+      "path": "cvrf-2099-Feb-dialect-unknown.xml",
+      "sha256": "62a28c7296434134a8f5d320596326ebf540de2a3325f04e679216f1f2e8b2d3",
+      "used_by": [
+        "tests/test_kbc_fixtures.py (well-formed XML, root not a known dialect)",
+        "planned K1 tests/test_kbc_cvrf.py (S11 \"dialect unknown\")"
+      ]
+    },
+    "cvrf-2099-Feb-duplicate-key.json": {
+      "bytes": 859,
+      "created": "2026-10-14T12:20:00Z",
+      "licence": "MIT (repository LICENSE); synthetic test data, no third-party content",
+      "origin": "synthetic, hand-written PatchTrace fixture; not Microsoft-derived or copied. Duplicate keys on purpose (NEG-07); json.loads keeps the last value, strict parsing must refuse.",
+      "path": "cvrf-2099-Feb-duplicate-key.json",
+      "sha256": "79f9f5ad6aa170b4d64a3f2f4f4bdb7aefeabeccdb44300c93ef19d21d4d87fa",
+      "used_by": [
+        "tests/test_kbc_fixtures.py (strict loader raises)",
+        "planned K1 tests/test_kbc_cvrf.py (NEG-07, S08 of the source matrix)"
+      ]
+    },
+    "cvrf-2099-Feb-empty.xml": {
+      "bytes": 799,
+      "created": "2026-10-14T12:20:00Z",
+      "licence": "MIT (repository LICENSE); synthetic test data, no third-party content",
+      "origin": "synthetic, hand-written PatchTrace fixture; not Microsoft-derived or copied. Valid XML month with no vulnerabilities (S07 empty index).",
+      "path": "cvrf-2099-Feb-empty.xml",
+      "sha256": "ab29e5661e259a8193556142e91f90b6177e973b959558ef81c1d3f0130be030",
+      "used_by": [
+        "tests/test_kbc_fixtures.py (well-formed XML, zero vulnerabilities)",
+        "planned K1 tests/test_kbc_cvrf.py (S07)"
+      ]
+    },
+    "cvrf-2099-Feb-neg.json": {
+      "bytes": 5453,
+      "created": "2026-10-14T12:20:00Z",
+      "generator": "tests/kbc_helpers.py::neg_cvrf",
+      "licence": "MIT (repository LICENSE); synthetic test data, no third-party content",
+      "origin": "synthetic, hand-written PatchTrace fixture; not Microsoft-derived or copied. Negative cases: S03, S04, S05, S06, S07, S08, S09, S19, NEG-01, NEG-06, NEG-24, NEG-25.",
+      "path": "cvrf-2099-Feb-neg.json",
+      "sha256": "677aaf61899eeb213de58e89bf04d5237c66f092dc1ab1d6ef3e99f72d0e221e",
+      "used_by": [
+        "tests/test_kbc_fixtures.py (builder parity)",
+        "planned K1 tests/test_kbc_cvrf.py (S05-S09, NEG-01, NEG-06, NEG-24, NEG-25)"
+      ]
+    },
+    "cvrf-2099-Feb-reordered.json": {
+      "bytes": 2875,
+      "created": "2026-10-14T12:20:00Z",
+      "generator": "tests/kbc_helpers.py::reordered(baseline_cvrf)",
+      "licence": "MIT (repository LICENSE); synthetic test data, no third-party content",
+      "origin": "synthetic, hand-written PatchTrace fixture; not Microsoft-derived or copied. Derived from cvrf-2099-Feb.json by reversing every array (order-invariance only).",
+      "path": "cvrf-2099-Feb-reordered.json",
+      "sha256": "2adfcbfdc27e0c1d939b55fb16c8a98c614d4af7baf0202b9c495d335bb7b191",
+      "used_by": [
+        "tests/test_kbc_fixtures.py (builder parity)",
+        "planned K1 tests/test_kbc_cvrf.py (reorder-invariance property)"
+      ]
+    },
+    "cvrf-2099-Feb.json": {
+      "bytes": 2875,
+      "created": "2026-10-14T12:20:00Z",
+      "generator": "tests/kbc_helpers.py::baseline_cvrf",
+      "licence": "MIT (repository LICENSE); synthetic test data, no third-party content",
+      "origin": "synthetic, hand-written PatchTrace fixture; not Microsoft-derived or copied. Two-CVE month of plan s3.1/s5: KB5099001 (client, ARM64), KB5099002 (server), one Type 5 mention.",
+      "path": "cvrf-2099-Feb.json",
+      "sha256": "c3a00df3b523dc83df962523974cb762084c356c3b8de8d787709a8eb596acb8",
+      "used_by": [
+        "tests/test_kbc_fixtures.py (builder parity, two_cve_project)",
+        "planned K1 tests/test_kbc_cvrf.py, tests/test_kbc_scope.py (S01, S02, S03, S04)",
+        "planned K4a tests/test_kbc_synergy.py (s5 baseline)"
+      ]
+    },
+    "identifiers.json": {
+      "bytes": 9178,
+      "created": "2026-10-14T12:20:00Z",
+      "generator": "tests/kbc_helpers.py::identifier_matrix",
+      "licence": "MIT (repository LICENSE); synthetic test data, no third-party content",
+      "origin": "synthetic, hand-written PatchTrace fixture; not Microsoft-derived or copied. KB and CVE syntax matrix (kb-syntax/1 and the CVE edge rule); rows checked against ids.py.",
+      "path": "identifiers.json",
+      "sha256": "1ac9cb047b9ecc6145d09c7a24a83fcffb6186fdbb53092c10edf641ffe28100",
+      "used_by": [
+        "tests/test_kbc_fixtures.py (every row against patchtrace.kbcorrelation.ids)"
+      ]
+    },
+    "kev-synthetic.json": {
+      "bytes": 546,
+      "created": "2026-10-14T12:20:00Z",
+      "generator": "tests/kbc_helpers.py::kev_snapshot",
+      "licence": "MIT (repository LICENSE); synthetic test data, no third-party content",
+      "origin": "synthetic, hand-written PatchTrace fixture; not Microsoft-derived or copied. One listed CVE (CVE-2099-20001); field names follow the public KEV shape, values invented.",
+      "path": "kev-synthetic.json",
+      "sha256": "20df97782079b2f7a304846e1841cba4a171cc0e50a22c1411d6d6c1f1fe60f8",
+      "used_by": [
+        "tests/test_kbc_fixtures.py (builder parity)",
+        "planned K4a tests/test_kbc_synergy.py (KEV \"listed\" and \"not loaded\")"
+      ]
+    }
+  },
+  "synthetic": true
+}
