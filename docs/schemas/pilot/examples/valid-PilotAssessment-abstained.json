@@ -1,0 +1,76 @@
+{
+  "channels": [
+    {
+      "channel": "advisory",
+      "reason": null,
+      "state": "not-run"
+    },
+    {
+      "channel": "code",
+      "reason": null,
+      "state": "not-run"
+    },
+    {
+      "channel": "calls",
+      "reason": null,
+      "state": "not-run"
+    },
+    {
+      "channel": "strings",
+      "reason": null,
+      "state": "not-run"
+    },
+    {
+      "channel": "capa",
+      "reason": null,
+      "state": "not-run"
+    },
+    {
+      "channel": "build",
+      "reason": null,
+      "state": "not-run"
+    },
+    {
+      "channel": "pairing",
+      "reason": "No comparison result yet",
+      "state": "not-run"
+    }
+  ],
+  "contract": "pilot/1",
+  "created_utc": "2099-03-01T12:00:00+00:00",
+  "cves": [],
+  "inputs": {
+    "advisory_facts_ids": [],
+    "asserted_gates": [],
+    "config_digest": "072408975528a26f2b9e06628fe5349a1e1d560b46f988c773959f1522bf5666",
+    "ghidriff_run_id": "run-1",
+    "kb_link_digest": null,
+    "kev_snapshot_id": null,
+    "lexicon_digest": "aeb6cc4914b1424c52119fa306a62b8a0e1dbcb111966e16effa4f27aaef06e1",
+    "newer_sha256": "abb9217eed7137d324f2a600aa1c1088b57457e52508f2ee5b9653e7f5be0edc",
+    "older_sha256": "89a5e4c3f884296324348679045c40a624e05a991ba3110449aba9aeb1e3cf88",
+    "orientation": "older->newer",
+    "origins_digest": "affccb01cfc3893d0eab9ae54a594a20b19e1a9eeade8179082bec3e3721c12f",
+    "pilot_rules_digest": "9771f4daf1b22861b29c1f5d9591e95b26ab7892ab0b49eb16399b8b001890df",
+    "raw_sha256": "8e64bd08859f7cf56743db177a7399fd72f36cf19c03abd57b3b05a1c1093fd8",
+    "rules_digest": "a36b6c5cd4085f71935142cb374233ecb6ba3076d0b67ed886ca0645c5698ba4",
+    "secondary_set_ids": [],
+    "tiers_version": 1,
+    "tool_keys": [],
+    "unified_result_id": null
+  },
+  "leads": [],
+  "limitations": [
+    "No comparison result yet: leads are computed from stored results only"
+  ],
+  "limits_hit": [],
+  "newer_sha256": "abb9217eed7137d324f2a600aa1c1088b57457e52508f2ee5b9653e7f5be0edc",
+  "observations": [],
+  "older_sha256": "89a5e4c3f884296324348679045c40a624e05a991ba3110449aba9aeb1e3cf88",
+  "orientation": "older->newer",
+  "project_id": "4f1c2a7e-0b6d-4c1e-9a52-2d7d5a3a9c10",
+  "queue_count": 0,
+  "result_id": "537c70aabe8356fc4cfabf2f4648638338fdd899886f4166eb74fe763a275d0f",
+  "revision": 1,
+  "status": "abstained"
+}

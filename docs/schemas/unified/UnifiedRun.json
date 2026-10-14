@@ -52,7 +52,7 @@
   "$id": "https://patchtrace.local/schemas/unified-run/1/UnifiedRun.json",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "additionalProperties": false,
-  "description": "Body of the `unified-run` enrichment row (entry id = run_id = keys.unified_run_id(result_key, started_utc)).",
+  "description": "Body of the `unified-run` enrichment row (entry id = run_id = keys.unified_run_id(result_key, started_utc)).\nInvariants: ok/cached name a result and no error code; partial names a result, is neither cancelled nor\nunsupported and has a cause (an error code or a stage that is not ok); cancelled/timeout/unsupported carry their\nown code and no result; failed carries any other code and no result. `provenance` values and `stderr_tail` are\nsanitised (02 s9.1); `stderr_tail` also folds CRLF/CR to LF and stays within 32 KiB of UTF-8.",
   "properties": {
     "contract": {
       "const": "unified-run/1",
@@ -138,7 +138,7 @@
       "type": "array"
     },
     "started_utc": {
-      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{1,6})?(\\+00:00|Z)$",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]{1,6})?(\\+00:00|Z)$",
       "title": "Started Utc",
       "type": "string"
     },

@@ -1,0 +1,86 @@
+{
+  "alternative_ids": [],
+  "assessment": "rule-hypothesis",
+  "candidate_key": "27d79b26d404b2a686cd1ec0731958b28dc84a7f745b198e1280b175e555a0f3",
+  "caps": [],
+  "components": {
+    "count": 2,
+    "tags": [
+      "D_ghidra",
+      "D_vendor_text"
+    ]
+  },
+  "counter_ids": [],
+  "cve": "CVE-2099-20001",
+  "depth": "typed",
+  "fits": [
+    {
+      "basis": "explicit-csaf-cwe",
+      "cwe_id": "CWE-787",
+      "expected_changes": [
+        {
+          "id": "guard-added",
+          "observation_ids": [
+            "142b5de2d7088fd3e6c55943fa7bf9f8c210a9b102e6299faf163592f2217a4f",
+            "9f70fcd7f4f939b26ce61bb0adce582886b95d2ca081433f4e316fbeb1830c54"
+          ],
+          "required": true,
+          "state": "met",
+          "teach_id": "pilot.change.guard-added"
+        },
+        {
+          "id": "size-recomputed",
+          "observation_ids": [],
+          "required": false,
+          "state": "not-observed",
+          "teach_id": "pilot.change.size-recomputed"
+        },
+        {
+          "id": "checked-arithmetic",
+          "observation_ids": [
+            "f97f9086db7721956bcd8bcb74f464be7dac063488b219462ee51a3e57762033"
+          ],
+          "required": false,
+          "state": "met",
+          "teach_id": "pilot.change.checked-arithmetic"
+        }
+      ],
+      "hypothesis_id": "8ebba9443db8c19f48a9a0a3323b87963a0a4410b9a2b4b6097e543019fb2ae0",
+      "met": 2,
+      "rule_id": "R-MEMORY-WRITE",
+      "rule_revision": 1,
+      "total": 3
+    }
+  ],
+  "gate": "applies",
+  "identity": "contested",
+  "lead_class": "fit",
+  "local_hits": 2,
+  "mechanism": "moderate",
+  "newer": [
+    {
+      "name": "Ipv6pReassembleFragment",
+      "rva": 4544
+    }
+  ],
+  "older": [
+    {
+      "name": "Ipv6pReassembleFragment",
+      "rva": 4480
+    }
+  ],
+  "rank": 1,
+  "support_ids": [
+    "142b5de2d7088fd3e6c55943fa7bf9f8c210a9b102e6299faf163592f2217a4f",
+    "9f70fcd7f4f939b26ce61bb0adce582886b95d2ca081433f4e316fbeb1830c54",
+    "a1e7fc8985591a803f957d741da855ad1f410eed79b1cbb9d8b7bb1c1d661c62",
+    "b68e19e38249425c63ba8dee4db090487d7b4579eba2f40901eaf434ec80411a",
+    "f97f9086db7721956bcd8bcb74f464be7dac063488b219462ee51a3e57762033"
+  ],
+  "tie": {
+    "first": 1,
+    "last": 1,
+    "size": 1
+  },
+  "unknown_ids": []
+}

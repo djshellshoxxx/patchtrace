@@ -1,0 +1,549 @@
+{
+  "channels": [
+    {
+      "channel": "advisory",
+      "reason": null,
+      "state": "available"
+    },
+    {
+      "channel": "code",
+      "reason": null,
+      "state": "available"
+    },
+    {
+      "channel": "calls",
+      "reason": "Ghidriff call labels only; no import delta",
+      "state": "partial"
+    },
+    {
+      "channel": "strings",
+      "reason": "FLOSS has not been run",
+      "state": "not-run"
+    },
+    {
+      "channel": "capa",
+      "reason": "capa has not been run",
+      "state": "not-run"
+    },
+    {
+      "channel": "build",
+      "reason": "Detect It Easy has not been run",
+      "state": "not-run"
+    },
+    {
+      "channel": "pairing",
+      "reason": null,
+      "state": "available"
+    }
+  ],
+  "contract": "pilot/1",
+  "created_utc": "2099-03-01T12:00:00+00:00",
+  "cves": [
+    {
+      "applicability": {
+        "contradictions": 0,
+        "newer": "fixed",
+        "newer_mapping": "verified",
+        "older": "affected",
+        "older_mapping": "verified"
+      },
+      "confounding": {
+        "cves": [
+          "CVE-2099-20001",
+          "CVE-2099-20002"
+        ],
+        "state": "yes"
+      },
+      "counts": {
+        "code": 0,
+        "fit": 1,
+        "partial": 0,
+        "queue": 1,
+        "review": 1
+      },
+      "cve": "CVE-2099-20001",
+      "cwe": {
+        "ids": [
+          "CWE-787"
+        ],
+        "status": "explicit"
+      },
+      "gate": "applies",
+      "kev": {
+        "date_added": "2099-02-10",
+        "snapshot_id": "8c1d9e232ce32f82d451197822b1539f6f283fe013fcce3865a4bc3eb5eb95f4",
+        "state": "listed"
+      },
+      "limitations": [
+        "capa and FLOSS were not run"
+      ],
+      "source_ids": [
+        "9bc3a08a1412cca6d3cbdf3dbb2d0100dbdcca183a8710790383e47eb932307d"
+      ]
+    }
+  ],
+  "inputs": {
+    "advisory_facts_ids": [
+      "4796dc8c518e4731f740844c07d35e224e35e46562fc529bdd2e071aa6b08187"
+    ],
+    "asserted_gates": [],
+    "config_digest": "072408975528a26f2b9e06628fe5349a1e1d560b46f988c773959f1522bf5666",
+    "ghidriff_run_id": "run-1",
+    "kb_link_digest": null,
+    "kev_snapshot_id": "8c1d9e232ce32f82d451197822b1539f6f283fe013fcce3865a4bc3eb5eb95f4",
+    "lexicon_digest": "aeb6cc4914b1424c52119fa306a62b8a0e1dbcb111966e16effa4f27aaef06e1",
+    "newer_sha256": "abb9217eed7137d324f2a600aa1c1088b57457e52508f2ee5b9653e7f5be0edc",
+    "older_sha256": "89a5e4c3f884296324348679045c40a624e05a991ba3110449aba9aeb1e3cf88",
+    "orientation": "older->newer",
+    "origins_digest": "affccb01cfc3893d0eab9ae54a594a20b19e1a9eeade8179082bec3e3721c12f",
+    "pilot_rules_digest": "9771f4daf1b22861b29c1f5d9591e95b26ab7892ab0b49eb16399b8b001890df",
+    "raw_sha256": "8e64bd08859f7cf56743db177a7399fd72f36cf19c03abd57b3b05a1c1093fd8",
+    "rules_digest": "a36b6c5cd4085f71935142cb374233ecb6ba3076d0b67ed886ca0645c5698ba4",
+    "secondary_set_ids": [
+      "2bae2d75a23e338ba5e0a043e8f37d8c0f9e5c64ec48217a7d83b6d755d592e2"
+    ],
+    "tiers_version": 1,
+    "tool_keys": [],
+    "unified_result_id": "5733a785c336c46edc754cb1ebcb670d79fe1605b417960df971c8b3dcfd7978"
+  },
+  "leads": [
+    {
+      "alternative_ids": [],
+      "assessment": "rule-hypothesis",
+      "candidate_key": "27d79b26d404b2a686cd1ec0731958b28dc84a7f745b198e1280b175e555a0f3",
+      "caps": [],
+      "components": {
+        "count": 2,
+        "tags": [
+          "D_ghidra",
+          "D_vendor_text"
+        ]
+      },
+      "counter_ids": [],
+      "cve": "CVE-2099-20001",
+      "depth": "typed",
+      "fits": [
+        {
+          "basis": "explicit-csaf-cwe",
+          "cwe_id": "CWE-787",
+          "expected_changes": [
+            {
+              "id": "guard-added",
+              "observation_ids": [
+                "142b5de2d7088fd3e6c55943fa7bf9f8c210a9b102e6299faf163592f2217a4f",
+                "9f70fcd7f4f939b26ce61bb0adce582886b95d2ca081433f4e316fbeb1830c54"
+              ],
+              "required": true,
+              "state": "met",
+              "teach_id": "pilot.change.guard-added"
+            },
+            {
+              "id": "size-recomputed",
+              "observation_ids": [],
+              "required": false,
+              "state": "not-observed",
+              "teach_id": "pilot.change.size-recomputed"
+            },
+            {
+              "id": "checked-arithmetic",
+              "observation_ids": [
+                "f97f9086db7721956bcd8bcb74f464be7dac063488b219462ee51a3e57762033"
+              ],
+              "required": false,
+              "state": "met",
+              "teach_id": "pilot.change.checked-arithmetic"
+            }
+          ],
+          "hypothesis_id": "8ebba9443db8c19f48a9a0a3323b87963a0a4410b9a2b4b6097e543019fb2ae0",
+          "met": 2,
+          "rule_id": "R-MEMORY-WRITE",
+          "rule_revision": 1,
+          "total": 3
+        }
+      ],
+      "gate": "applies",
+      "identity": "corroborated",
+      "lead_class": "fit",
+      "local_hits": 2,
+      "mechanism": "moderate",
+      "newer": [
+        {
+          "name": "Ipv6pReassembleFragment",
+          "rva": 4544
+        }
+      ],
+      "older": [
+        {
+          "name": "Ipv6pReassembleFragment",
+          "rva": 4480
+        }
+      ],
+      "rank": 1,
+      "support_ids": [
+        "142b5de2d7088fd3e6c55943fa7bf9f8c210a9b102e6299faf163592f2217a4f",
+        "9f70fcd7f4f939b26ce61bb0adce582886b95d2ca081433f4e316fbeb1830c54",
+        "a1e7fc8985591a803f957d741da855ad1f410eed79b1cbb9d8b7bb1c1d661c62",
+        "b68e19e38249425c63ba8dee4db090487d7b4579eba2f40901eaf434ec80411a",
+        "f97f9086db7721956bcd8bcb74f464be7dac063488b219462ee51a3e57762033"
+      ],
+      "tie": {
+        "first": 1,
+        "last": 1,
+        "size": 1
+      },
+      "unknown_ids": []
+    },
+    {
+      "alternative_ids": [],
+      "assessment": "rule-hypothesis",
+      "candidate_key": "35e8b076543394688d3e4a09926e42fe10e4edc9ef66061c5343aab259804db8",
+      "caps": [],
+      "components": {
+        "count": 2,
+        "tags": [
+          "D_ghidra",
+          "D_vendor_text"
+        ]
+      },
+      "counter_ids": [
+        "604af375ac0c0637aa5ea4af5c3f25a3fb59bd6825909dab4ad3b69d7d96884b"
+      ],
+      "cve": "CVE-2099-20001",
+      "depth": "lexical",
+      "fits": [
+        {
+          "basis": "explicit-csaf-cwe",
+          "cwe_id": "CWE-787",
+          "expected_changes": [
+            {
+              "id": "guard-added",
+              "observation_ids": [
+                "71a04043c7e48b9ed431cf5276b0a0934369fd3cde9cc19ae7f8bfec80ebc0bf"
+              ],
+              "required": true,
+              "state": "met",
+              "teach_id": "pilot.change.guard-added"
+            },
+            {
+              "id": "size-recomputed",
+              "observation_ids": [],
+              "required": false,
+              "state": "not-observed",
+              "teach_id": "pilot.change.size-recomputed"
+            },
+            {
+              "id": "checked-arithmetic",
+              "observation_ids": [],
+              "required": false,
+              "state": "not-observed",
+              "teach_id": "pilot.change.checked-arithmetic"
+            }
+          ],
+          "hypothesis_id": "8ebba9443db8c19f48a9a0a3323b87963a0a4410b9a2b4b6097e543019fb2ae0",
+          "met": 1,
+          "rule_id": "R-MEMORY-WRITE",
+          "rule_revision": 1,
+          "total": 3
+        }
+      ],
+      "gate": "applies",
+      "identity": "corroborated",
+      "lead_class": "review",
+      "local_hits": 2,
+      "mechanism": "contested",
+      "newer": [
+        {
+          "name": "Ipv6pReassembleFragmentTail",
+          "rva": 5184
+        }
+      ],
+      "older": [
+        {
+          "name": "Ipv6pReassembleFragmentTail",
+          "rva": 5120
+        }
+      ],
+      "rank": 2,
+      "support_ids": [
+        "71a04043c7e48b9ed431cf5276b0a0934369fd3cde9cc19ae7f8bfec80ebc0bf",
+        "b68e19e38249425c63ba8dee4db090487d7b4579eba2f40901eaf434ec80411a",
+        "cf47c57d751563e2af9036c6582f07c718d801ec28acebb8394f7e51bb9e9b1e"
+      ],
+      "tie": {
+        "first": 2,
+        "last": 2,
+        "size": 1
+      },
+      "unknown_ids": []
+    },
+    {
+      "alternative_ids": [],
+      "assessment": "unknown",
+      "candidate_key": "488e940a0db40145c8adcf7c67c69309862363e038eae4b7d0bdab5d7ba2a332",
+      "caps": [],
+      "components": {
+        "count": 0,
+        "tags": []
+      },
+      "counter_ids": [],
+      "cve": "CVE-2099-20001",
+      "depth": "none",
+      "fits": [],
+      "gate": "applies",
+      "identity": "corroborated",
+      "lead_class": "queue",
+      "local_hits": 0,
+      "mechanism": "unexplained",
+      "newer": [
+        {
+          "name": "Ipv6pDispatch",
+          "rva": 6464
+        }
+      ],
+      "older": [
+        {
+          "name": "Ipv6pDispatch",
+          "rva": 6400
+        }
+      ],
+      "rank": 3,
+      "support_ids": [
+        "b4516620e63621b454c445985631110e09ead1c0354e60aa00e67cb347a3f5b2"
+      ],
+      "tie": {
+        "first": 3,
+        "last": 3,
+        "size": 1
+      },
+      "unknown_ids": []
+    }
+  ],
+  "limitations": [],
+  "limits_hit": [],
+  "newer_sha256": "abb9217eed7137d324f2a600aa1c1088b57457e52508f2ee5b9653e7f5be0edc",
+  "observations": [
+    {
+      "anchor_ids": [],
+      "channel": "code",
+      "detail": "bounds check added before the copy",
+      "evidence_class": "E-DECOMP",
+      "kind": "b1:BND",
+      "nav": {
+        "end_line": 14,
+        "rva": 4544,
+        "side": "newer",
+        "start_line": 14
+      },
+      "obligations": [],
+      "obs_id": "142b5de2d7088fd3e6c55943fa7bf9f8c210a9b102e6299faf163592f2217a4f",
+      "origins": [
+        "D_ghidra"
+      ],
+      "ref": {
+        "id": "1266440cfb175e966c227da73b64ff7f63b39fc6c903e4b9bc05a2a12f96af3e",
+        "kind": "b1-signal",
+        "pointer": null,
+        "sha256": null
+      },
+      "role": "shape",
+      "verification": "tool-reported"
+    },
+    {
+      "anchor_ids": [],
+      "channel": "code",
+      "detail": "proof COS-LAYOUT/1 holds: the old check was only moved",
+      "evidence_class": "E-LAYOUT",
+      "kind": "cf:cosmetic",
+      "nav": {
+        "end_line": 22,
+        "rva": 5184,
+        "side": "newer",
+        "start_line": 22
+      },
+      "obligations": [],
+      "obs_id": "604af375ac0c0637aa5ea4af5c3f25a3fb59bd6825909dab4ad3b69d7d96884b",
+      "origins": [
+        "D_ghidra"
+      ],
+      "ref": {
+        "id": "35e8b076543394688d3e4a09926e42fe10e4edc9ef66061c5343aab259804db8",
+        "kind": "change-facts",
+        "pointer": null,
+        "sha256": null
+      },
+      "role": "conflict",
+      "verification": "tool-reported"
+    },
+    {
+      "anchor_ids": [],
+      "channel": "code",
+      "detail": "bounds check added before the copy",
+      "evidence_class": "E-DECOMP",
+      "kind": "b1:BND",
+      "nav": {
+        "end_line": 22,
+        "rva": 5184,
+        "side": "newer",
+        "start_line": 22
+      },
+      "obligations": [],
+      "obs_id": "71a04043c7e48b9ed431cf5276b0a0934369fd3cde9cc19ae7f8bfec80ebc0bf",
+      "origins": [
+        "D_ghidra"
+      ],
+      "ref": {
+        "id": "d3214fd6184b911d7f4b4382275ee2fc94dfd21b435be69b88987ea13f9f88e8",
+        "kind": "b1-signal",
+        "pointer": null,
+        "sha256": null
+      },
+      "role": "shape",
+      "verification": "tool-reported"
+    },
+    {
+      "anchor_ids": [],
+      "channel": "code",
+      "detail": "new comparison against the fragment length",
+      "evidence_class": "E-BODY",
+      "kind": "cf:comparison",
+      "nav": {
+        "end_line": 14,
+        "rva": 4544,
+        "side": "newer",
+        "start_line": 14
+      },
+      "obligations": [],
+      "obs_id": "9f70fcd7f4f939b26ce61bb0adce582886b95d2ca081433f4e316fbeb1830c54",
+      "origins": [
+        "D_ghidra"
+      ],
+      "ref": {
+        "id": "27d79b26d404b2a686cd1ec0731958b28dc84a7f745b198e1280b175e555a0f3",
+        "kind": "change-facts",
+        "pointer": null,
+        "sha256": null
+      },
+      "role": "shape",
+      "verification": "tool-reported"
+    },
+    {
+      "anchor_ids": [],
+      "channel": "code",
+      "detail": "Ipv6pReassembleFragment shares fragment and reassemble with the advisory title",
+      "evidence_class": "E-NAME",
+      "kind": "loc:names",
+      "nav": null,
+      "obligations": [],
+      "obs_id": "a1e7fc8985591a803f957d741da855ad1f410eed79b1cbb9d8b7bb1c1d661c62",
+      "origins": [
+        "D_symbols"
+      ],
+      "ref": {
+        "id": "fragment+reassemble",
+        "kind": "name-tokens",
+        "pointer": null,
+        "sha256": null
+      },
+      "role": "local",
+      "verification": "label-only"
+    },
+    {
+      "anchor_ids": [],
+      "channel": "code",
+      "detail": "callee of one call replaced",
+      "evidence_class": "E-CALL",
+      "kind": "cf:callee",
+      "nav": {
+        "end_line": null,
+        "rva": 6464,
+        "side": "newer",
+        "start_line": null
+      },
+      "obligations": [],
+      "obs_id": "b4516620e63621b454c445985631110e09ead1c0354e60aa00e67cb347a3f5b2",
+      "origins": [
+        "D_ghidra"
+      ],
+      "ref": {
+        "id": "488e940a0db40145c8adcf7c67c69309862363e038eae4b7d0bdab5d7ba2a332",
+        "kind": "change-facts",
+        "pointer": null,
+        "sha256": null
+      },
+      "role": "context",
+      "verification": "tool-reported"
+    },
+    {
+      "anchor_ids": [],
+      "channel": "advisory",
+      "detail": "CWE-787 as stated by the advisory",
+      "evidence_class": "E-TEXT",
+      "kind": "adv:cwe-stated",
+      "nav": null,
+      "obligations": [],
+      "obs_id": "b68e19e38249425c63ba8dee4db090487d7b4579eba2f40901eaf434ec80411a",
+      "origins": [
+        "D_vendor_text"
+      ],
+      "ref": {
+        "id": "CVE-2099-20001",
+        "kind": "csaf-fact",
+        "pointer": "/vulnerabilities/0/cwe",
+        "sha256": "9bc3a08a1412cca6d3cbdf3dbb2d0100dbdcca183a8710790383e47eb932307d"
+      },
+      "role": "context",
+      "verification": "advisory-claim"
+    },
+    {
+      "anchor_ids": [],
+      "channel": "code",
+      "detail": "Ipv6pReassembleFragmentTail shares fragment and reassemble with the advisory title",
+      "evidence_class": "E-NAME",
+      "kind": "loc:names",
+      "nav": null,
+      "obligations": [],
+      "obs_id": "cf47c57d751563e2af9036c6582f07c718d801ec28acebb8394f7e51bb9e9b1e",
+      "origins": [
+        "D_symbols"
+      ],
+      "ref": {
+        "id": "fragment+reassemble",
+        "kind": "name-tokens",
+        "pointer": null,
+        "sha256": null
+      },
+      "role": "local",
+      "verification": "label-only"
+    },
+    {
+      "anchor_ids": [
+        "api:RtlSizeTAdd"
+      ],
+      "channel": "calls",
+      "detail": "call to RtlSizeTAdd added (label only)",
+      "evidence_class": "E-CALL",
+      "kind": "call:added",
+      "nav": null,
+      "obligations": [],
+      "obs_id": "f97f9086db7721956bcd8bcb74f464be7dac063488b219462ee51a3e57762033",
+      "origins": [
+        "D_ghidra"
+      ],
+      "ref": {
+        "id": "RtlSizeTAdd",
+        "kind": "call-label",
+        "pointer": null,
+        "sha256": null
+      },
+      "role": "shape",
+      "verification": "label-only"
+    }
+  ],
+  "older_sha256": "89a5e4c3f884296324348679045c40a624e05a991ba3110449aba9aeb1e3cf88",
+  "orientation": "older->newer",
+  "project_id": "4f1c2a7e-0b6d-4c1e-9a52-2d7d5a3a9c10",
+  "queue_count": 1,
+  "result_id": "bdf06e96a53785c25f472041faa7c9ce8a3247b824838bf1e6f574d43d0693d8",
+  "revision": 3,
+  "status": "partial"
+}

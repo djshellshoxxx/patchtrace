@@ -2,5 +2,6 @@
 
 Pure Python, stdlib only, no Qt/network/process code. Entry points: `engine.run_ladder` (rows of an `IrSide` port)
 and `engine.run_ladder_data` (prepared `side.SideData`). Layering inside the package:
-`ports` <- `side` <- `types` <- `state` <- `passes` <- `propagate` <- `groups` <- `engine`.
+`ports` <- `side` <- `types` <- `passspec` <- `state` <- `passes` <- `propagate` <- `groups` <- `engine`
+(`passspec` is the leaf that keeps `state` and `passes` from importing each other).
 """

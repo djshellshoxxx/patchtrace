@@ -219,8 +219,8 @@ def _imports(path: Path):
 
 def test_ladder_imports_only_pure_modules():
     modules = sorted(LADDER.glob('*.py'))
-    assert {m.name for m in modules} >= {'engine.py', 'passes.py', 'propagate.py', 'groups.py', 'ports.py', 'side.py',
-                                         'state.py', 'types.py', '__init__.py'}
+    assert {m.name for m in modules} >= {'engine.py', 'passes.py', 'passspec.py', 'propagate.py', 'groups.py', 'ports.py',
+                                         'side.py', 'state.py', 'types.py', '__init__.py'}
     for path in modules:
         for module, level in _imports(path):
             top = module.split('.')[0]

@@ -1,0 +1,97 @@
+{
+  "$defs": {
+    "LeadCounts": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "minimum": 0,
+          "title": "Code",
+          "type": "integer"
+        },
+        "fit": {
+          "minimum": 0,
+          "title": "Fit",
+          "type": "integer"
+        },
+        "partial": {
+          "minimum": 0,
+          "title": "Partial",
+          "type": "integer"
+        },
+        "queue": {
+          "minimum": 0,
+          "title": "Queue",
+          "type": "integer"
+        },
+        "review": {
+          "minimum": 0,
+          "title": "Review",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "fit",
+        "review",
+        "partial",
+        "code",
+        "queue"
+      ],
+      "title": "LeadCounts",
+      "type": "object"
+    }
+  },
+  "$id": "https://patchtrace.local/schemas/pilot-ptr/1/PilotResultPointer.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "Body of the `patch-intent` enrichment row `pilot-result:<result_id>` (tiny; the data lives in the sidecar).",
+  "properties": {
+    "config_digest": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Config Digest",
+      "type": "string"
+    },
+    "contract": {
+      "const": "pilot-ptr/1",
+      "default": "pilot-ptr/1",
+      "title": "Contract",
+      "type": "string"
+    },
+    "counts": {
+      "$ref": "#/$defs/LeadCounts"
+    },
+    "manifest_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Manifest Sha256",
+      "type": "string"
+    },
+    "relative_dir": {
+      "pattern": "^intelligence/pilot/[0-9a-f]{16}$",
+      "title": "Relative Dir",
+      "type": "string"
+    },
+    "result_id": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Result Id",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "complete",
+        "partial",
+        "abstained"
+      ],
+      "title": "Status",
+      "type": "string"
+    }
+  },
+  "required": [
+    "result_id",
+    "relative_dir",
+    "manifest_sha256",
+    "status",
+    "counts",
+    "config_digest"
+  ],
+  "title": "PilotResultPointer",
+  "type": "object"
+}

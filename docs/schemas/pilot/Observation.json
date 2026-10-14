@@ -1,0 +1,226 @@
+{
+  "$defs": {
+    "Nav": {
+      "additionalProperties": false,
+      "description": "Where to look: a side, a module-relative address and optional 1-based inclusive lines.",
+      "properties": {
+        "end_line": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "End Line"
+        },
+        "rva": {
+          "maximum": 4294967295,
+          "minimum": 0,
+          "title": "Rva",
+          "type": "integer"
+        },
+        "side": {
+          "enum": [
+            "older",
+            "newer"
+          ],
+          "title": "Side",
+          "type": "string"
+        },
+        "start_line": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Start Line"
+        }
+      },
+      "required": [
+        "side",
+        "rva"
+      ],
+      "title": "Nav",
+      "type": "object"
+    },
+    "ObsRef": {
+      "additionalProperties": false,
+      "description": "What the observation was read from: a source kind and id, an optional RFC 6901 pointer and content digest.",
+      "properties": {
+        "id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "kind": {
+          "pattern": "^[a-z0-9-]{1,48}$",
+          "title": "Kind",
+          "type": "string"
+        },
+        "pointer": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "pattern": "^(/([^/~]|~[01])*)*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Pointer"
+        },
+        "sha256": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sha256"
+        }
+      },
+      "required": [
+        "kind",
+        "id"
+      ],
+      "title": "ObsRef",
+      "type": "object"
+    }
+  },
+  "$id": "https://patchtrace.local/schemas/pilot/1/Observation.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "One flat ledger entry; `obs_id` is the content id (keys.observation_id), so duplicates collapse.",
+  "properties": {
+    "anchor_ids": {
+      "default": [],
+      "items": {
+        "pattern": "^[a-z][a-z0-9_-]{0,15}:[\\x21-\\x7e]{1,200}$",
+        "type": "string"
+      },
+      "maxItems": 16,
+      "title": "Anchor Ids",
+      "type": "array"
+    },
+    "channel": {
+      "enum": [
+        "advisory",
+        "code",
+        "calls",
+        "strings",
+        "capa",
+        "build",
+        "pairing"
+      ],
+      "title": "Channel",
+      "type": "string"
+    },
+    "detail": {
+      "maxLength": 300,
+      "minLength": 1,
+      "title": "Detail",
+      "type": "string"
+    },
+    "evidence_class": {
+      "pattern": "^E-[A-Z][A-Z0-9]{1,11}$",
+      "title": "Evidence Class",
+      "type": "string"
+    },
+    "kind": {
+      "pattern": "^[a-z][a-z0-9]{0,11}:[A-Za-z0-9][A-Za-z0-9_.-]{0,63}$",
+      "title": "Kind",
+      "type": "string"
+    },
+    "nav": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Nav"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "obligations": {
+      "default": [],
+      "items": {
+        "pattern": "^[a-z0-9-]{1,48}$",
+        "type": "string"
+      },
+      "maxItems": 16,
+      "title": "Obligations",
+      "type": "array"
+    },
+    "obs_id": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Obs Id",
+      "type": "string"
+    },
+    "origins": {
+      "items": {
+        "pattern": "^D_[a-z0-9_]{1,32}$",
+        "type": "string"
+      },
+      "maxItems": 8,
+      "minItems": 1,
+      "title": "Origins",
+      "type": "array"
+    },
+    "ref": {
+      "$ref": "#/$defs/ObsRef"
+    },
+    "role": {
+      "enum": [
+        "shape",
+        "local",
+        "counter",
+        "conflict",
+        "context"
+      ],
+      "title": "Role",
+      "type": "string"
+    },
+    "verification": {
+      "enum": [
+        "verified-bytes",
+        "tool-reported",
+        "label-only",
+        "advisory-claim",
+        "rule-hypothesis",
+        "analyst-assertion"
+      ],
+      "title": "Verification",
+      "type": "string"
+    }
+  },
+  "required": [
+    "obs_id",
+    "channel",
+    "kind",
+    "role",
+    "verification",
+    "origins",
+    "evidence_class",
+    "ref",
+    "detail"
+  ],
+  "title": "Observation",
+  "type": "object"
+}

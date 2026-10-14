@@ -113,6 +113,7 @@
   "$id": "https://patchtrace.local/schemas/change-facts/1/ChangeFacts.json",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "additionalProperties": false,
+  "description": "Change facts of one row (02 s4, 05 s2.5). Invariants: all nine channels in order; a proof iff the verdict is\nunchanged/cosmetic (UNCH/1 only for unchanged), a second channel iff material; a proof needs every address\ntarget mapped, the proof's channel equal (UNCH/1 C0, COS-ADDR/1 C1, COS-PSEUDO/1 C6), EH-EQ for structural\nproofs and no semantic delta, no `cfg`/`unknown` delta, and block deltas only under COS-LAYOUT/1; a material\nverdict needs a semantic or block delta and a differing second channel outside the bytes group.",
   "properties": {
     "channels": {
       "items": {
@@ -165,6 +166,7 @@
     },
     "deltas_omitted": {
       "default": 0,
+      "maximum": 800000,
       "minimum": 0,
       "title": "Deltas Omitted",
       "type": "integer"

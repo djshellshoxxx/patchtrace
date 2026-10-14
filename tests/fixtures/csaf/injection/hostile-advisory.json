@@ -1,0 +1,357 @@
+{
+ "document": {
+  "aggregate_severity": {
+   "namespace": "https://example.invalid/patchtrace-synthetic/severity",
+   "text": "Critical"
+  },
+  "category": "csaf_security_advisory",
+  "csaf_version": "2.0",
+  "distribution": {
+   "text": "SYNTHETIC injection fixture for PatchTrace tests. Not a real advisory.",
+   "tlp": {
+    "label": "WHITE",
+    "url": "https://www.first.org/tlp/"
+   }
+  },
+  "lang": "en-US",
+  "notes": [
+   {
+    "category": "legal_disclaimer",
+    "text": "SYNTHETIC CSAF 2.0 injection fixture written for PatchTrace tests. No vendor published it and it describes no real vulnerability, product or update.",
+    "title": "Synthetic fixture"
+   },
+   {
+    "category": "general",
+    "text": "<script>alert(1)</script> **bold** [click](javascript:alert(1)) | a | b |\n# heading\n\u202eevil\u202c \u00dcn\u00efc\u00f6d\u00e9 \u2014 \u6f0f\u6d1e `code` <img src=x onerror=alert(1)>",
+    "title": "Markup and Unicode <b>title</b>"
+   }
+  ],
+  "publisher": {
+   "category": "vendor",
+   "contact_details": "none (synthetic fixture)",
+   "name": "Hostile Vendor <i>Evil</i> \u202egnirts\u202c (not Microsoft)",
+   "namespace": "https://example.invalid/patchtrace-synthetic"
+  },
+  "references": [
+   {
+    "category": "self",
+    "summary": "Synthetic self reference",
+    "url": "https://example.invalid/patchtrace-synthetic/csaf/2099/pt-hostile.json"
+   }
+  ],
+  "title": "SYNTHETIC hostile advisory <script>alert(1)</script> | document title",
+  "tracking": {
+   "current_release_date": "2099-01-10T08:00:00.000Z",
+   "generator": {
+    "date": "2099-01-10T08:00:00.000Z",
+    "engine": {
+     "name": "PatchTrace fixture author",
+     "version": "1"
+    }
+   },
+   "id": "PT-HOSTILE-10001 <b>x</b> | ![img](javascript:alert(1))",
+   "initial_release_date": "2099-01-10T08:00:00.000Z",
+   "revision_history": [
+    {
+     "date": "2099-01-10T08:00:00.000Z",
+     "number": "1",
+     "summary": "Initial synthetic release."
+    }
+   ],
+   "status": "final",
+   "version": "1"
+  }
+ },
+ "product_tree": {
+  "branches": [
+   {
+    "branches": [
+     {
+      "branches": [
+       {
+        "branches": [
+         {
+          "category": "product_version_range",
+          "name": "<10.0.22621.4037",
+          "product": {
+           "name": "Example OS 22H2 for x64-based Systems <10.0.22621.4037",
+           "product_id": "PT-100-1"
+          }
+         },
+         {
+          "category": "product_version",
+          "name": "10.0.22621.4037",
+          "product": {
+           "name": "Example OS 22H2 for x64-based Systems 10.0.22621.4037",
+           "product_id": "PT-100-2"
+          }
+         }
+        ],
+        "category": "product_name",
+        "name": "Example OS 22H2 for x64-based Systems"
+       },
+       {
+        "branches": [
+         {
+          "category": "product_version_range",
+          "name": "<10.0.22621.4037",
+          "product": {
+           "name": "Example OS 22H2 for ARM64-based Systems <10.0.22621.4037",
+           "product_id": "PT-101-1"
+          }
+         },
+         {
+          "category": "product_version",
+          "name": "10.0.22621.4037",
+          "product": {
+           "name": "Example OS 22H2 for ARM64-based Systems 10.0.22621.4037",
+           "product_id": "PT-101-2"
+          }
+         }
+        ],
+        "category": "product_name",
+        "name": "Example OS 22H2 for ARM64-based Systems"
+       },
+       {
+        "branches": [
+         {
+          "category": "product_version_range",
+          "name": "<10.0.20348.2655",
+          "product": {
+           "name": "Example Server 2022 <10.0.20348.2655",
+           "product_id": "PT-200-1"
+          }
+         },
+         {
+          "category": "product_version",
+          "name": "10.0.20348.2655",
+          "product": {
+           "name": "Example Server 2022 10.0.20348.2655",
+           "product_id": "PT-200-2"
+          }
+         }
+        ],
+        "category": "product_name",
+        "name": "Example Server 2022"
+       }
+      ],
+      "category": "product_family",
+      "name": "Example OS"
+     }
+    ],
+    "category": "vendor",
+    "name": "PatchTrace Synthetic Fixture Vendor"
+   }
+  ],
+  "full_product_names": [
+   {
+    "name": "Long xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+    "product_id": "PT-800",
+    "product_identification_helper": {
+     "hashes": [
+      {
+       "file_hashes": [
+        {
+         "algorithm": "sha256",
+         "value": "dc71b8420acc68418eaebfb8a4848cd2f63626125868e9977f017010c8d30215"
+        }
+       ],
+       "filename": "netstack.sys"
+      }
+     ]
+    }
+   },
+   {
+    "name": "Example netstack.sys | <b>bold</b>\nsecond line \u202e javascript:alert(1)",
+    "product_id": "PT-900",
+    "product_identification_helper": {
+     "hashes": [
+      {
+       "file_hashes": [
+        {
+         "algorithm": "sha256",
+         "value": "4af23bcb773054ad469c57363d50e2b53a6590bfba2286f16a06b4fb1440a168"
+        }
+       ],
+       "filename": "netstack.sys"
+      }
+     ]
+    }
+   }
+  ],
+  "product_groups": [
+   {
+    "group_id": "PT-G-22H2-BEFORE-FIX",
+    "product_ids": [
+     "PT-100-1",
+     "PT-101-1"
+    ],
+    "summary": "Example OS 22H2 builds before the synthetic fix"
+   }
+  ],
+  "relationships": [
+   {
+    "category": "default_component_of",
+    "full_product_name": {
+     "name": "Rel <i>801</i> | pipe\ttab **bold** [x](javascript:alert(1))",
+     "product_id": "PT-801"
+    },
+    "product_reference": "PT-800",
+    "relates_to_product_reference": "PT-100-1"
+   },
+   {
+    "category": "default_component_of",
+    "full_product_name": {
+     "name": "Rel 901 \u202eRTL\u202c C0\u0001\u0002 end",
+     "product_id": "PT-901"
+    },
+    "product_reference": "PT-900",
+    "relates_to_product_reference": "PT-100-2"
+   }
+  ]
+ },
+ "vulnerabilities": [
+  {
+   "cve": "CVE-2099-10001",
+   "cwe": {
+    "id": "CWE-191",
+    "name": "Integer <b>Underflow</b> | (Wrap or Wraparound)"
+   },
+   "ids": [
+    {
+     "system_name": "Internal <b>tracker</b>",
+     "text": "EVIL|1 [x](javascript:alert(1))"
+    }
+   ],
+   "notes": [
+    {
+     "category": "description",
+     "text": "HOSTILE: An integer underflow in the IPv6 fragment reassembly path can lead to a heap-based buffer overflow. <script>alert(1)</script> <img src=x onerror=alert(1)> **bold** _under_ `code` ~~strike~~ [click](javascript:alert(1)) ![pixel](https://evil.example/p.png) <https://evil.example/auto> https://evil.example/path?a=1&b=2 www.evil.example evil@evil.example javascript:alert(document.cookie) | col | col |\n# fake heading\n- fake bullet\n1. fake item\n> fake quote\n---\n```\nfence\n```\n\u202eevil\u202c \u2066isolate\u2069 zero\u200bwidth\u200djoiner\ufeffbom soft\u00adhyphen tag\udb40\udc41\udb40\udc42 private\ue000use esc\u001b[31mred\u001b[0m nul\u0000byte bell\u0007 csi\u009b31m c1\u0080\u009f del\u007f nel\u0085next line\u2028sep para\u2029sep tab\there cr\rhere \u00dcn\u00efc\u00f6d\u00e9 \u2014 \u6f0f\u6d1e &amp; &lt;b&gt; \"quoted\" 'single' $100 @mention #123 C:\\Windows\\System32 filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler",
+     "title": "Description <h1>title</h1> | with pipe"
+    },
+    {
+     "category": "faq",
+     "text": "An unauthenticated attacker could send packets. <b>Bold FAQ</b> | cell\ncontinued line. See https://evil.example/faq and javascript:void(0).",
+     "title": "How could an attacker exploit this vulnerability?"
+    },
+    {
+     "category": "general",
+     "text": "PatchTrace synthetic fixture",
+     "title": "Assigning CNA"
+    }
+   ],
+   "product_status": {
+    "fixed": [
+     "PT-100-2",
+     "PT-101-2",
+     "PT-200-2",
+     "PT-901"
+    ],
+    "known_affected": [
+     "PT-100-1",
+     "PT-101-1",
+     "PT-200-1",
+     "PT-801"
+    ]
+   },
+   "remediations": [
+    {
+     "category": "vendor_fix",
+     "date": "2099-01-10T08:00:00.000Z",
+     "details": "Install <a href=\"javascript:alert(1)\">update</a> | now **today**",
+     "group_ids": [
+      "PT-G-22H2-BEFORE-FIX"
+     ],
+     "product_ids": [
+      "PT-801"
+     ],
+     "restart_required": {
+      "category": "machine"
+     },
+     "url": "javascript:alert(document.cookie)"
+    },
+    {
+     "category": "vendor_fix",
+     "date": "2099-01-10T08:00:00.000Z",
+     "details": "Install update \u202e\u001b]0;pwned\u0007 | second",
+     "product_ids": [
+      "PT-200-1"
+     ],
+     "url": "https://example.invalid/patchtrace-synthetic/updates/PT5041160?a=1&b=<2>"
+    }
+   ],
+   "scores": [
+    {
+     "cvss_v3": {
+      "baseScore": 9.8,
+      "baseSeverity": "CRITICAL",
+      "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+      "version": "3.1"
+     },
+     "products": [
+      "PT-100-1",
+      "PT-101-1",
+      "PT-200-1"
+     ]
+    }
+   ],
+   "threats": [
+    {
+     "category": "impact",
+     "details": "Remote Code Execution\u001b]0;pwned\u0007<script>x</script>",
+     "product_ids": [
+      "PT-100-1",
+      "PT-101-1",
+      "PT-200-1"
+     ]
+    },
+    {
+     "category": "exploit_status",
+     "details": "Publicly Disclosed:No;Exploited:No;Latest Software Release:Exploitation More Likely | zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz"
+    }
+   ],
+   "title": "Hostile <img src=x onerror=alert(1)> **bold** [click](javascript:alert(1)) \u202eevil\u202c | netstack Remote Code Execution Vulnerability"
+  },
+  {
+   "cve": "CVE-2099-10002",
+   "notes": [
+    {
+     "category": "description",
+     "text": "SYNTHETIC: A use-after-free in the Example OS print spooler service (spoolsv.exe) allows a local attacker to gain SYSTEM privileges. This vulnerability does not allow remote code execution.",
+     "title": "Description"
+    }
+   ],
+   "product_status": {
+    "fixed": [
+     "PT-200-2"
+    ],
+    "known_affected": [
+     "PT-200-1"
+    ],
+    "known_not_affected": [
+     "PT-100-1",
+     "PT-100-2"
+    ]
+   },
+   "remediations": [
+    {
+     "category": "vendor_fix",
+     "details": "Install synthetic update PT5041160",
+     "product_ids": [
+      "PT-200-1"
+     ]
+    }
+   ],
+   "threats": [
+    {
+     "category": "impact",
+     "details": "Elevation of Privilege",
+     "product_ids": [
+      "PT-200-1"
+     ]
+    }
+   ],
+   "title": "SYNTHETIC Example OS Print Spooler Elevation of Privilege Vulnerability"
+  }
+ ]
+}

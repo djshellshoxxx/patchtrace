@@ -13,9 +13,11 @@ import sys
 import threading
 from pathlib import Path
 
+from .intelligence import cli as intelligence_cli
 from .intelligence.tools import cli as intel_tools_cli  # SPEC-29 tools dispatcher (cheap import)
 
-COMMANDS = ('rank', 'flags', 'correlate', 'cache', 'acquire', 'series', 'secondary', 'intel-tools')
+COMMANDS = ('rank', 'flags', 'correlate', 'cache', 'acquire', 'series', 'secondary', 'intelligence', 'unified',
+            'intel-tools')
 OK, ENVIRONMENT, RUNTIME, NO_RESULTS, CANCELLED = 0, 2, 3, 4, 5
 CLI_CONTRACT = 'enrichment-cli/1'
 
@@ -157,6 +159,9 @@ def _parser() -> argparse.ArgumentParser:
     which = chains.add_mutually_exclusive_group()
     which.add_argument('--function', metavar='NAME')
     which.add_argument('--address', metavar='HEX')
+    intelligence_cli.register(sub, common)
+    from .unified import cli as cli_unified  # SPEC-31 S0b: run/show/explain/status + the hidden worker
+    cli_unified.register(sub, common, HANDLERS)
     intel_tools_cli.register(sub, common)
     return parser
 
@@ -819,10 +824,11 @@ def cmd_secondary(args, cancel) -> int:
 HANDLERS = {'rank': cmd_rank, 'flags': cmd_flags, 'correlate': cmd_correlate, 'cache': cmd_cache,
             'acquire': cmd_acquire, 'series': cmd_series, 'secondary': cmd_secondary,
             'intel-tools': intel_tools_cli.dispatch}
+HANDLERS['intelligence'] = intelligence_cli.dispatch
 
 
 def _command_name(args) -> str:
-    return f'{args.command} {args.action}' if args.command in {'acquire', 'series', 'secondary', 'intel-tools'} else args.command
+    return f'{args.command} {args.action}' if args.command in {'acquire', 'series', 'secondary', 'intelligence', 'unified', 'intel-tools'} else args.command
 
 
 def main(argv: list[str] | None = None) -> int:

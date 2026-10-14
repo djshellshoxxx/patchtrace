@@ -1,0 +1,21 @@
+{
+  "anchor_ids": [],
+  "channel": "build",
+  "detail": "The compiler or linker version differs between the builds",
+  "evidence_class": "E-BUILD",
+  "kind": "die:toolchain-changed",
+  "nav": null,
+  "obligations": [],
+  "obs_id": "d4649cc57f86eb9b4b4e51bbdb1849851335d2a3ee968c085727a6a531632f2a",
+  "origins": [
+    "D_compiler"
+  ],
+  "ref": {
+    "id": "toolchain-changed",
+    "kind": "die-flag",
+    "pointer": null,
+    "sha256": null
+  },
+  "role": "shape",
+  "verification": "tool-reported"
+}

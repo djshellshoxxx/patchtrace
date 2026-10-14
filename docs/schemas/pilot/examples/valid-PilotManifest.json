@@ -1,0 +1,54 @@
+{
+  "config": {
+    "confounded_min_cves": 2,
+    "lexical_moderate": true,
+    "limits_digest": "7d4d3d58f44d4f0ddcfff964f3d0dbadfe0fdf178acc79de282df05847c62bfa",
+    "locality_min_tokens": 2
+  },
+  "contract": "pilot-manifest/1",
+  "counts": {
+    "code": 0,
+    "fit": 1,
+    "partial": 0,
+    "queue": 1,
+    "review": 1
+  },
+  "created_utc": "2099-03-01T12:00:05+00:00",
+  "inputs": {
+    "advisory_facts_ids": [
+      "4796dc8c518e4731f740844c07d35e224e35e46562fc529bdd2e071aa6b08187"
+    ],
+    "asserted_gates": [],
+    "config_digest": "072408975528a26f2b9e06628fe5349a1e1d560b46f988c773959f1522bf5666",
+    "ghidriff_run_id": "run-1",
+    "kb_link_digest": null,
+    "kev_snapshot_id": "8c1d9e232ce32f82d451197822b1539f6f283fe013fcce3865a4bc3eb5eb95f4",
+    "lexicon_digest": "aeb6cc4914b1424c52119fa306a62b8a0e1dbcb111966e16effa4f27aaef06e1",
+    "newer_sha256": "abb9217eed7137d324f2a600aa1c1088b57457e52508f2ee5b9653e7f5be0edc",
+    "older_sha256": "89a5e4c3f884296324348679045c40a624e05a991ba3110449aba9aeb1e3cf88",
+    "orientation": "older->newer",
+    "origins_digest": "affccb01cfc3893d0eab9ae54a594a20b19e1a9eeade8179082bec3e3721c12f",
+    "pilot_rules_digest": "9771f4daf1b22861b29c1f5d9591e95b26ab7892ab0b49eb16399b8b001890df",
+    "raw_sha256": "8e64bd08859f7cf56743db177a7399fd72f36cf19c03abd57b3b05a1c1093fd8",
+    "rules_digest": "a36b6c5cd4085f71935142cb374233ecb6ba3076d0b67ed886ca0645c5698ba4",
+    "secondary_set_ids": [
+      "2bae2d75a23e338ba5e0a043e8f37d8c0f9e5c64ec48217a7d83b6d755d592e2"
+    ],
+    "tiers_version": 1,
+    "tool_keys": [],
+    "unified_result_id": "5733a785c336c46edc754cb1ebcb670d79fe1605b417960df971c8b3dcfd7978"
+  },
+  "limitations": [
+    "capa and FLOSS were not run: missing evidence is unknown, not a negative result"
+  ],
+  "parts": [
+    {
+      "bytes": 10774,
+      "name": "assessment.json.gz",
+      "sha256": "b065ae63b62f07aa34b78005ca5e8e21498723d2d0e669a804dd3bcbe78b036e"
+    }
+  ],
+  "queue_count": 1,
+  "result_id": "bdf06e96a53785c25f472041faa7c9ce8a3247b824838bf1e6f574d43d0693d8",
+  "status": "complete"
+}

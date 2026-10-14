@@ -65,6 +65,8 @@ class BackendConfig:
     # extra names kept when restricted (proxies, custom JDK helpers).
     restrict_env: bool = False
     env_passthrough: tuple[str, ...] = ()
+    # SPEC-31 D-05: keep the two analysed GZFs Ghidriff writes (off by default; argv and cache fingerprint unchanged).
+    retain_gzf: bool = False
 
 
 _PASSTHROUGH_NAME = re.compile(r'^[A-Za-z_][A-Za-z0-9_()]*$')
@@ -120,6 +122,8 @@ def _config_errors(config: BackendConfig) -> list[str]:
         errors.append('PT-BACKEND: no_cache and refresh are mutually exclusive')
     if not isinstance(config.restrict_env, bool):
         errors.append('PT-BACKEND: restrict_env must be a boolean')
+    if not isinstance(config.retain_gzf, bool):
+        errors.append('PT-BACKEND: retain_gzf must be a boolean')
     if not isinstance(config.env_passthrough, tuple) or any(_passthrough_error(n) for n in config.env_passthrough):
         errors.append('PT-BACKEND: env_passthrough must list plain variable names, excluding PYTHONPATH, '
                       'PYTHONHOME, PYTHON*, LD_*, DYLD_*, BASH_ENV, ENV and *_OPTIONS')
@@ -544,6 +548,9 @@ def run_comparison(config: BackendConfig, project: ComparisonProject, root: Path
                                  cancel=cancel,
                                  timeout_seconds=config.timeout_seconds,
                                  check_output=lambda: _output_error(raw))
+            if config.retain_gzf and result.returncode == 0 and not result.reason and not cancel.is_set():
+                from .unified.extract.retain import retain_run_gzfs  # lazy: the unified engine stays optional
+                retain_run_gzfs(engine_gzfs, quarantine, paths, settings, event)
         finally:
             # run_process returns only after the contained tree is terminated.
             leftover = _remove_scratch(scratch_root)
