@@ -491,7 +491,10 @@ def build_offline_bundle(source_payload: Path, runtime_id: str, versions: Mappin
         inspect_offline_bundle(stage)
         if destination.exists():
             _fail('archive already exists; refused to overwrite')
-        os.replace(stage, destination)
+        # Atomic no-replace publication: os.replace() could overwrite a file
+        # created by another process after the existence check above.
+        # The temporary file and destination share a directory/filesystem.
+        os.link(stage, destination)
         return destination
     finally:
         stage.unlink(missing_ok=True)

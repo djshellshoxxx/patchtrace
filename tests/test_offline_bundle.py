@@ -372,3 +372,27 @@ def test_plan_and_installed_runtime_expose_parsed_manifest(tmp_path):
     assert installed.manifest == plan.manifest
     assert installed.manifest_path.read_bytes() == plan.manifest_bytes
     assert installed.python_executable == installed.root / plan.python_relative
+
+
+def test_producer_does_not_overwrite_archive_created_during_publish(tmp_path, monkeypatch):
+    from patchtrace import offline_bundle
+
+    source = tmp_path / 'payload'
+    for name, content in FILES.items():
+        target = source / name
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_bytes(content)
+    destination = tmp_path / 'publish.zip'
+    versions = {'python': '3.12.10', 'ghidra': '12.0.4', 'jdk': '25',
+                'ghidriff_revision': '4f5d895fcbb1eacd65efd81145922c15bb7e741d'}
+    real_link = offline_bundle.os.link
+
+    def competing_publisher(src, dst, *args, **kwargs):
+        destination.write_bytes(b'other publisher')
+        return real_link(src, dst, *args, **kwargs)
+
+    monkeypatch.setattr(offline_bundle.os, 'link', competing_publisher)
+    with pytest.raises(FileExistsError):
+        offline_bundle.build_offline_bundle(source, RUNTIME_ID, versions, destination)
+    assert destination.read_bytes() == b'other publisher'
+    assert not list(tmp_path.glob('.offline-pack-*'))
