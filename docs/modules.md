@@ -95,3 +95,14 @@ Every substantial future module must be added here before implementation. UI mus
 | unified pipeline | src/patchtrace/unified/{pipeline,worker,cli,read_model}.py | stage orchestration, hidden `_worker`, `unified` CLI verbs, Qt-free view model | all unified modules | planned, S0b/S4 |
 | unified UI | src/patchtrace/ui_unified.py | navigator view switch + dock tab in the single MainWindow; threads per C6 rules | Qt, read_model | planned, S4 |
 | prerequisites | jobs.py (spawn lock), nway/graph.py (`EXTERNAL:` keys) | latent defects found while grounding SPEC-31 | - | planned, P1/P2 |
+
+### [K:28a-28b] CSAF CVE interpretation engine (SPEC-28 csaf-cve-interpretation-engine.md, track K, 2026-10-14)
+| Module | Files | Responsibility | Depends on | Verification |
+|---|---|---|---|---|
+| intelligence contracts | src/patchtrace/intelligence/contracts.py | strict frozen `intelligence/1` records (sources, products, CVE facts, identity, applicability, CWE profile, rules, hypotheses, anchors, report), `IntelError` `PT-INTEL-*` | pydantic | tests/test_intel_schemas.py (regenerate-and-compare, examples) |
+| CSAF validation | intelligence/csaf/{validate,schema_data}.py | strict JSON + limits, stdlib interpreter of the official schema keywords (table generated from the vendored OASIS schema), mandatory tests 6.1.x | stdlib | tests/test_intel_validate.py |
+| CSAF normalization/identity/applicability | intelligence/csaf/{normalize,identity,applicability}.py | product graph + pointered claims; verified-bytes identity (VS_FIXEDFILEINFO, CodeView); OLD/NEW resolution with explicit unknowns and reported contradictions | enrichment.identity, pe_overview, artifact_bytes | tests/test_intel_{normalize,identity,applicability}.py |
+| CSAF transport/discovery | intelligence/csaf/{transport,discovery}.py | consented msrc.microsoft.com-only HTTPS, bounds, offline cache; provider metadata -> index.txt -> CVE-token candidates, .sha256 check | netutil | fake opener only: tests/test_intel_{transport,discovery}.py; live MSRC BLOCKED |
+| lexicon/hypotheses/anchors | intelligence/{lexicon,hypotheses,anchors}.py | `cwe-lexicon/1` (negation, scopes, vagueness), `patch-rules/1` per CWE family, labelled search anchors | enrichment.identity | tests/test_intel_{lexicon,hypotheses,anchors}.py |
+| advisory storage | intelligence/storage.py | append-only `advisory-source`/`advisory-facts` pointer rows + hash-verified sidecars under `intelligence/csaf/` | enrichment.storage (public API only) | tests/test_intel_storage.py |
+| deferred | intelligence/{reports,cli}.py, cli.py hook | JSON/MD export and `intelligence import/fetch/explain` (contract in spec section J) | - | next wave |

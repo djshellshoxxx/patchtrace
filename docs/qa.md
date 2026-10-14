@@ -193,3 +193,8 @@ Real tool, not mocked, but only in this session's Linux container (uid 65534, en
 | MSI static inspection | `msiextract`, PE header and import parse (no execution) | `ProgramFiles/BinDiff/bin/bindiff.exe` 3,396,896 B `b1d4844d…47dd`, PE32+ x86-64 console; imports `VCRUNTIME140_1.dll`, which the MSI does not ship |
 
 Committed from this run: the real v8 `--help` text and the real v8 `.BinDiff` + stdout produced on the synthetic pair (`tests/fixtures/secondary/bindiff-8-help.txt`, `bindiff-v8-real-on-synthetic.*`, provenance JSON). Still live-only/open: the GitHub `live-bindiff` run (Linux required leg and the advisory Windows leg: `msiexec /a` layout, `bindiff.exe` start, VC++ runtime on `windows-latest`, Windows config paths and network), real-driver runtime/memory and `executable_id` formats (U8/U9), and the independent pin re-hash plus `.asc` verification.
+
+### [K:28a-28b] CSAF engine QA (2026-10-14, local Linux worktree; synthetic only)
+- Automated: 188 `tests/test_intel_*.py` tests (validator, normalization, lexicon, hypotheses, anchors, identity, applicability, transport, discovery, storage, schemas), all on SYNTHETIC fixtures; every network test uses a fake opener. These are not live evidence.
+- BLOCKED live sources (egress policy 403): msrc.microsoft.com, docs.oasis-open.org, cwe.mitre.org. OASIS normative text and schemas came from the OASIS TC repository (hashes in docs/schemas/intelligence/oasis-csaf-2.0/NOTICE.md).
+- Known gaps: CVSS (6.1.8-6.1.10), CWE catalog (6.1.11), language registry (6.1.12), PURL (6.1.13), optional tests other than 6.2.1/6.2.20, OpenPGP signatures, ROLIE feeds; Windows runs not performed.
