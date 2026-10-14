@@ -1,0 +1,928 @@
+[
+  {
+    "contract": "case-card/1",
+    "id": "curl-socks5-long-hostname-cve-2023-38545",
+    "project": "curl",
+    "upstream_git": "https://github.com/curl/curl.git",
+    "license_spdx": "curl",
+    "license_evidence": "COPYING at fb4415d8aee6: 'Permission to use, copy, modify, and distribute this software for any purpose with or without fee is hereby granted'",
+    "old": {
+      "ref": "fb4415d8aee6~1",
+      "commit": "09e25b9d94f4106eac8ca3a43b221bdc66f405e4"
+    },
+    "new": {
+      "ref": "fb4415d8aee6",
+      "commit": "fb4415d8aee6c1045be932a34fe6107c2f5ed147"
+    },
+    "kind": "cve-fix",
+    "cve": [
+      "CVE-2023-38545"
+    ],
+    "semantic_change": true,
+    "changed_functions": [
+      {
+        "name": "do_SOCKS5",
+        "file": "lib/socks.c",
+        "change": "hostname longer than 255 bytes with remote (proxy-side) resolve: the old code logged an info message and set the local variable socks5_resolve_local = TRUE (the commit message says this switch \"did not work as intended\"; the CVE record says the variable could get the wrong value during a slow handshake); the new code failf()s and returns CURLPX_LONG_HOSTNAME. The one-byte length written into the request is also cast through unsigned char."
+      }
+    ],
+    "unchanged_controls": [
+      "Curl_blockread_all",
+      "Curl_cf_socks_proxy_insert_after",
+      "do_SOCKS4",
+      "socks_proxy_cf_connect",
+      "connect_SOCKS"
+    ],
+    "build": {
+      "system": "cmake",
+      "recipe_notes": "cmake -S . -B build -DBUILD_SHARED_LIBS=ON -DCURL_USE_SCHANNEL=ON (Windows-native TLS, no OpenSSL needed; both options exist in CMakeLists.txt at this commit). autotools (configure.ac) and winbuild/ nmake files also exist.",
+      "mingw_ok": "yes: .azure-pipelines.yml has msys2 mingw32/mingw64 jobs (configure --host=*-w64-mingw32) and CMakeLists.txt handles MINGW; not built by this agent"
+    },
+    "verification": {
+      "method": "git clone --filter=blob:none --no-checkout https://github.com/curl/curl.git; git rev-parse --verify fb4415d8aee6c1045be932a34fe6107c2f5ed147~1^{commit} fb4415d8aee6c1045be932a34fe6107c2f5ed147^{commit}; git diff --stat 09e25b9d94f4..fb4415d8aee6 -- '*.c' '*.h'; git diff -U0 09e25b9d94f4..fb4415d8aee6 -- '*.c' '*.h' (every hunk read; enclosing functions taken from universal-ctags function spans of both revisions); unchanged controls checked byte-identical at both revisions with the same ctags spans; git show fb4415d8aee6:COPYING; git show -s fb4415d8aee6 (message cites https://curl.se/docs/CVE-2023-38545.html); git tag --contains fb4415d8aee6 --sort=creatordate (first: curl-8_4_0) and git merge-base --is-ancestor fb4415d8aee6 curl-8_3_0 (not an ancestor); curl -sS https://raw.githubusercontent.com/CVEProject/cvelistV5/main/cves/2023/38xxx/CVE-2023-38545.json | jq (CVE Program record; NVD, cve.org and the MITRE API are blocked by the sandbox egress policy, so this JSON is the CVE source)",
+      "files_changed": 1,
+      "functions_changed_count": 1,
+      "verified_by_agent_run": true
+    },
+    "sources": [
+      "https://www.cve.org/CVERecord?id=CVE-2023-38545",
+      "https://raw.githubusercontent.com/CVEProject/cvelistV5/main/cves/2023/38xxx/CVE-2023-38545.json",
+      "https://github.com/curl/curl/commit/fb4415d8aee6c1045be932a34fe6107c2f5ed147",
+      "https://curl.se/docs/CVE-2023-38545.html"
+    ],
+    "risks": [
+      "do_SOCKS5 is a 500-line static function called from connect_SOCKS; an optimising compiler may inline it, so it may not survive as a separate symbol in a release binary",
+      "single fix commit only; curl-8.4.0 contains other unrelated changes"
+    ]
+  },
+  {
+    "contract": "case-card/1",
+    "id": "libsodium-ed25519-main-subgroup-cve-2025-69277",
+    "project": "libsodium",
+    "upstream_git": "https://github.com/jedisct1/libsodium.git",
+    "license_spdx": "ISC",
+    "license_evidence": "LICENSE at ad3004ec8731: 'Permission to use, copy, modify, and/or distribute this software for any purpose with or without fee is hereby granted'",
+    "old": {
+      "ref": "ad3004ec8731~1",
+      "commit": "ff06acd20dfc0cde134e73a78d03da4921989306"
+    },
+    "new": {
+      "ref": "ad3004ec8731",
+      "commit": "ad3004ec8731730e93fcfbbc824e67eadc1c1bae"
+    },
+    "kind": "cve-fix",
+    "cve": [
+      "CVE-2025-69277"
+    ],
+    "semantic_change": true,
+    "changed_functions": [
+      {
+        "name": "ge25519_is_on_main_subgroup",
+        "file": "src/libsodium/crypto_core/ed25519/ref10/ed25519_ref10.c",
+        "change": "the main-subgroup test used by crypto_core_ed25519_is_valid_point now also requires Y == Z: it computes t = pl.Y - pl.Z (fe25519_sub) and returns fe25519_iszero(pl.X) & fe25519_iszero(t) instead of fe25519_iszero(pl.X) alone"
+      }
+    ],
+    "unchanged_controls": [
+      "ge25519_scalarmult",
+      "ge25519_double_scalarmult_vartime",
+      "sc25519_reduce",
+      "sc25519_muladd",
+      "ristretto255_p3_tobytes"
+    ],
+    "build": {
+      "system": "autotools",
+      "recipe_notes": "./configure --host=x86_64-w64-mingw32 && make (see dist-build/msys2-win64.sh); also builds/msvc project files and build.zig. The test change in test/default/core_ed25519.c is not part of the library.",
+      "mingw_ok": "yes: dist-build/msys2-win64.sh calls x86_64-w64-mingw32-gcc and azure-pipelines.yml has a mingw64 job; not built by this agent"
+    },
+    "verification": {
+      "method": "git clone --filter=blob:none --no-checkout https://github.com/jedisct1/libsodium.git; git rev-parse --verify ad3004ec8731730e93fcfbbc824e67eadc1c1bae~1^{commit} ad3004ec8731730e93fcfbbc824e67eadc1c1bae^{commit}; git diff --stat ff06acd20dfc..ad3004ec8731 -- '*.c' '*.h'; git diff -U0 ff06acd20dfc..ad3004ec8731 -- '*.c' '*.h' (every hunk read; enclosing functions taken from universal-ctags function spans of both revisions); unchanged controls checked byte-identical at both revisions with the same ctags spans; git show ad3004ec8731:LICENSE; git show -s ad3004ec8731 (subject: core_ed25519_is_valid_point: check Y==Z in addition to X==0); curl -sS https://raw.githubusercontent.com/CVEProject/cvelistV5/main/cves/2025/69xxx/CVE-2025-69277.json | jq (CVE Program record; NVD, cve.org and the MITRE API are blocked by the sandbox egress policy, so this JSON is the CVE source) (record references commit ad3004ec... directly); functions_changed_count counts only functions under src/",
+      "files_changed": 2,
+      "functions_changed_count": 1,
+      "verified_by_agent_run": true
+    },
+    "sources": [
+      "https://www.cve.org/CVERecord?id=CVE-2025-69277",
+      "https://raw.githubusercontent.com/CVEProject/cvelistV5/main/cves/2025/69xxx/CVE-2025-69277.json",
+      "https://github.com/jedisct1/libsodium/commit/ad3004ec8731730e93fcfbbc824e67eadc1c1bae"
+    ],
+    "risks": [
+      "ge25519_is_on_main_subgroup is an internal (not sodium_-prefixed) function, so it may not be exported from a DLL build even though it has external linkage; the PDB / symbol table still names it",
+      "the commit also edits test/default/core_ed25519.c (main), which is not library code"
+    ]
+  },
+  {
+    "contract": "case-card/1",
+    "id": "c-ares-read-line-embedded-nul-cve-2024-25629",
+    "project": "c-ares",
+    "upstream_git": "https://github.com/c-ares/c-ares.git",
+    "license_spdx": "MIT",
+    "license_evidence": "LICENSE.md at a804c04ddc82: 'Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files' (LICENSE.md was changed from the 1989 MIT-CMU style text to this modern MIT text on 2023-10-04, commit 6d07783; older c-ares commits were therefore not used.)",
+    "old": {
+      "ref": "a804c04ddc82^1",
+      "commit": "035c4c3776ee0d04a9db97213891367b7998de55"
+    },
+    "new": {
+      "ref": "a804c04ddc82",
+      "commit": "a804c04ddc8245fc8adf0e92368709639125e183"
+    },
+    "kind": "cve-fix",
+    "cve": [
+      "CVE-2024-25629"
+    ],
+    "semantic_change": true,
+    "changed_functions": [
+      {
+        "name": "ares__read_line",
+        "file": "src/lib/ares__read_line.c",
+        "change": "new guard after fgets: if len == 0 (an embedded NUL was the first character of the line) reset offset to 0 and continue, discarding the line; before, (*buf)[len - 1] was indexed with len == 0 and read one byte before the buffer"
+      }
+    ],
+    "unchanged_controls": [
+      "src/lib/ares_strerror.c:ares_strerror",
+      "src/lib/ares_destroy.c:ares_destroy",
+      "src/lib/ares_destroy.c:ares__destroy_server",
+      "src/lib/ares__close_sockets.c:ares__close_connection",
+      "src/lib/ares__close_sockets.c:ares__check_cleanup_conn"
+    ],
+    "build": {
+      "system": "cmake",
+      "recipe_notes": "cmake -S . -B build -DCARES_STATIC=ON (or default shared) ; autotools, Makefile.msvc, Makefile.m32 and README.msvc also exist. Fix commit is the first-parent diff of the GHSA merge a804c04.",
+      "mingw_ok": "yes: appveyor.yml has MinGW gcc (MSYS2, cmake and autotools), MinGW clang UBSAN, and 32-bit MinGW makefile jobs; not built by this agent"
+    },
+    "verification": {
+      "method": "git clone --filter=blob:none --no-checkout https://github.com/c-ares/c-ares.git; git rev-parse --verify a804c04ddc8245fc8adf0e92368709639125e183^1^{commit} a804c04ddc8245fc8adf0e92368709639125e183^{commit}; git diff --stat 035c4c3776ee..a804c04ddc82 -- '*.c' '*.h'; git diff -U0 035c4c3776ee..a804c04ddc82 -- '*.c' '*.h' (every hunk read; enclosing functions taken from universal-ctags function spans of both revisions); unchanged controls checked byte-identical at both revisions with the same ctags spans; git show a804c04ddc82:LICENSE.md; git log a804c04^1..a804c04; git show -s a804c04 (Merge pull request from GHSA-mg26-v6qh-x48q); curl -sS https://raw.githubusercontent.com/CVEProject/cvelistV5/main/cves/2024/25xxx/CVE-2024-25629.json | jq (CVE Program record; NVD, cve.org and the MITRE API are blocked by the sandbox egress policy, so this JSON is the CVE source) (record references commit a804c04 and the GHSA advisory); git show a804c04:src/lib/ares__read_line.c (read the whole function to confirm the len-1 index)",
+      "files_changed": 1,
+      "functions_changed_count": 1,
+      "verified_by_agent_run": true
+    },
+    "sources": [
+      "https://www.cve.org/CVERecord?id=CVE-2024-25629",
+      "https://raw.githubusercontent.com/CVEProject/cvelistV5/main/cves/2024/25xxx/CVE-2024-25629.json",
+      "https://github.com/c-ares/c-ares/commit/a804c04ddc8245fc8adf0e92368709639125e183",
+      "https://github.com/c-ares/c-ares/security/advisories/GHSA-mg26-v6qh-x48q"
+    ],
+    "risks": [
+      "ares__read_line.c defines only this one function, so every control function comes from neighbouring files in src/lib",
+      "the pair is the first-parent diff of a merge commit (the security advisory branch merge), not a single author commit"
+    ]
+  },
+  {
+    "contract": "case-card/1",
+    "id": "libssh2-transport-padding-length-cve-2019-3861",
+    "project": "libssh2",
+    "upstream_git": "https://github.com/libssh2/libssh2.git",
+    "license_spdx": "BSD-3-Clause",
+    "license_evidence": "COPYING at 8690f0e04166: 'Neither the name of the copyright holder nor the names of any other contributors may be used to endorse or promote products derived from this software without specific prior written permission'",
+    "old": {
+      "ref": "8690f0e04166~1",
+      "commit": "634444a34899b8353f1959d73cf3594569e53b97"
+    },
+    "new": {
+      "ref": "8690f0e04166",
+      "commit": "8690f0e04166f7e8f1c881f4730facde0b17fbe1"
+    },
+    "kind": "cve-fix",
+    "cve": [
+      "CVE-2019-3861"
+    ],
+    "semantic_change": true,
+    "changed_functions": [
+      {
+        "name": "_libssh2_transport_read",
+        "file": "src/transport.c",
+        "change": "new check before the padding is subtracted from the packet length: if (p->padding_length > p->packet_length - 1) return LIBSSH2_ERROR_DECRYPT; prevents the size_t underflow and out-of-bounds read when a server sends an oversized padding_length"
+      }
+    ],
+    "unchanged_controls": [
+      "_libssh2_transport_send",
+      "fullpacket",
+      "send_existing",
+      "debugdump",
+      "decrypt"
+    ],
+    "build": {
+      "system": "autotools",
+      "recipe_notes": "configure.ac has a wincng crypto backend; win32/GNUmakefile (mingw-style) supports WITH_WINCNG=1 so no OpenSSL is required; CMakeLists.txt (BUILD_SHARED_LIBS) also exists.",
+      "mingw_ok": "plausible: configure.ac has a *-mingw*) case and win32/GNUmakefile defines LIBSSH2_WINCNG; a grep for mingw/msys finds no CI or doc mention at this commit; not built by this agent"
+    },
+    "verification": {
+      "method": "git clone --filter=blob:none --no-checkout https://github.com/libssh2/libssh2.git; git rev-parse --verify 8690f0e04166f7e8f1c881f4730facde0b17fbe1~1^{commit} 8690f0e04166f7e8f1c881f4730facde0b17fbe1^{commit}; git diff --stat 634444a34899..8690f0e04166 -- '*.c' '*.h'; git diff -U0 634444a34899..8690f0e04166 -- '*.c' '*.h' (every hunk read; enclosing functions taken from universal-ctags function spans of both revisions); unchanged controls checked byte-identical at both revisions with the same ctags spans; git show 8690f0e04166:COPYING; git show -s 8690f0e04166 (message cites https://libssh2.org/CVE-2019-3861.html); git tag --contains 8690f0e04166 --sort=creatordate (first: libssh2-1.9.0; the 1.8.1 fix was a separate squashed backport, dc109a7); curl -sS https://raw.githubusercontent.com/CVEProject/cvelistV5/main/cves/2019/3xxx/CVE-2019-3861.json | jq (CVE Program record; NVD, cve.org and the MITRE API are blocked by the sandbox egress policy, so this JSON is the CVE source)",
+      "files_changed": 1,
+      "functions_changed_count": 1,
+      "verified_by_agent_run": true
+    },
+    "sources": [
+      "https://www.cve.org/CVERecord?id=CVE-2019-3861",
+      "https://raw.githubusercontent.com/CVEProject/cvelistV5/main/cves/2019/3xxx/CVE-2019-3861.json",
+      "https://github.com/libssh2/libssh2/commit/8690f0e04166f7e8f1c881f4730facde0b17fbe1",
+      "https://www.libssh2.org/CVE-2019-3861.html"
+    ],
+    "risks": [
+      "the CVE record text says \"before 1.8.1\"; the 1.8.1 release carried a squashed backport of this and other fixes (dc109a7), so this master-branch commit is the cleanest single-function form of the fix",
+      "src/transport.c has only 5 other function definitions; controls are all of them"
+    ]
+  },
+  {
+    "contract": "case-card/1",
+    "id": "openssl-punycode-off-by-one-cve-2022-3602",
+    "project": "openssl",
+    "upstream_git": "https://github.com/openssl/openssl.git",
+    "license_spdx": "Apache-2.0",
+    "license_evidence": "LICENSE.txt at fe3b639dc19b: 'Apache License Version 2.0, January 2004'",
+    "old": {
+      "ref": "fe3b639dc19b~1",
+      "commit": "4bae06d47ae26b37a948d31f11884e1813f6d669"
+    },
+    "new": {
+      "ref": "fe3b639dc19b",
+      "commit": "fe3b639dc19b325846f4f6801f2f4604f56e3de3"
+    },
+    "kind": "cve-fix",
+    "cve": [
+      "CVE-2022-3602"
+    ],
+    "semantic_change": true,
+    "changed_functions": [
+      {
+        "name": "ossl_punycode_decode",
+        "file": "crypto/punycode.c",
+        "change": "bounds comparison made strict: if (written_out > max_out) became if (written_out >= max_out), fixing an off-by-one that let a 4-byte unsigned int be written one slot past the output buffer"
+      }
+    ],
+    "unchanged_controls": [
+      "ossl_a2ulabel",
+      "ossl_a2ucompare",
+      "codepoint2utf8",
+      "adapt",
+      "digit_decoded"
+    ],
+    "build": {
+      "system": "other",
+      "recipe_notes": "perl Configure mingw64 (or VC-WIN64A) then make (nmake for MSVC); NOTES-WINDOWS.md documents native MinGW builds; add no-asm no-shared as needed. Branch openssl-3.0, first released in openssl-3.0.7.",
+      "mingw_ok": "yes: NOTES-WINDOWS.md has a \"Native builds using MinGW\" section (./Configure mingw64) and INSTALL.md documents x86_64-w64-mingw32- cross builds; not built by this agent"
+    },
+    "verification": {
+      "method": "git clone --filter=blob:none --no-checkout https://github.com/openssl/openssl.git; git rev-parse --verify fe3b639dc19b325846f4f6801f2f4604f56e3de3~1^{commit} fe3b639dc19b325846f4f6801f2f4604f56e3de3^{commit}; git diff --stat 4bae06d47ae2..fe3b639dc19b -- '*.c' '*.h'; git diff -U0 4bae06d47ae2..fe3b639dc19b -- '*.c' '*.h' (every hunk read; enclosing functions taken from universal-ctags function spans of both revisions); unchanged controls checked byte-identical at both revisions with the same ctags spans; git show fe3b639dc19b:LICENSE.txt; git show -s fe3b639dc19b (message: Fix CVE-2022-3602 in punycode decoder); git tag --contains fe3b639dc19b --sort=creatordate (first: openssl-3.0.7) and merge-base --is-ancestor against openssl-3.0.6 (not an ancestor); curl -sS https://raw.githubusercontent.com/CVEProject/cvelistV5/main/cves/2022/3xxx/CVE-2022-3602.json | jq (CVE Program record; NVD, cve.org and the MITRE API are blocked by the sandbox egress policy, so this JSON is the CVE source) (record references fe3b639dc19b325846f4f6801f2f4604f56e3de3 on git.openssl.org)",
+      "files_changed": 1,
+      "functions_changed_count": 1,
+      "verified_by_agent_run": true
+    },
+    "sources": [
+      "https://www.cve.org/CVERecord?id=CVE-2022-3602",
+      "https://raw.githubusercontent.com/CVEProject/cvelistV5/main/cves/2022/3xxx/CVE-2022-3602.json",
+      "https://github.com/openssl/openssl/commit/fe3b639dc19b325846f4f6801f2f4604f56e3de3",
+      "https://www.openssl.org/news/secadv/20221101.txt"
+    ],
+    "risks": [
+      "the same fix exists as separate public commits on master (3b421ebc64) and openssl-3.1 (0d50c5e288); this card uses the openssl-3.0 commit that the CVE record cites",
+      "crypto/punycode.c is small; in libcrypto the function is linked among thousands of others"
+    ]
+  },
+  {
+    "contract": "case-card/1",
+    "id": "mbedtls-pem-padding-underflow-cve-2025-52497",
+    "project": "mbedtls",
+    "upstream_git": "https://github.com/Mbed-TLS/mbedtls.git",
+    "license_spdx": "Apache-2.0",
+    "license_evidence": "LICENSE at 6165e715899a: 'Mbed TLS files are provided under a dual [Apache-2.0](https://spdx.org/licenses/Apache-2.0.html) OR [GPL-2.0-or-later](https://spdx.org/licenses/GPL-2.0-or-later.html) license. This means that users may choose which of these licenses they take the code under.' PatchTrace elects the Apache-2.0 option; the GPL-2.0-or-later alternative is not used.",
+    "old": {
+      "ref": "6165e7158~1",
+      "commit": "9325883d9fb270cae63af5a254eb6a855813a189"
+    },
+    "new": {
+      "ref": "6165e7158",
+      "commit": "6165e715899a9b370851e2868fe312d7e0a2cb83"
+    },
+    "kind": "cve-fix",
+    "cve": [
+      "CVE-2025-52497"
+    ],
+    "semantic_change": true,
+    "changed_functions": [
+      {
+        "name": "pem_check_pkcs_padding",
+        "file": "library/pem.c",
+        "change": "new guard if (input_len < 1) return MBEDTLS_ERR_PEM_INVALID_DATA before the last byte is read as the padding length, and the comment \"input_len > 0 is guaranteed\" is corrected; removes the one-byte underflow on an empty decrypted PEM body"
+      }
+    ],
+    "unchanged_controls": [
+      "mbedtls_pem_read_buffer",
+      "mbedtls_pem_write_buffer",
+      "mbedtls_pem_free",
+      "mbedtls_pem_init",
+      "pem_pbkdf1",
+      "pem_get_iv"
+    ],
+    "build": {
+      "system": "cmake",
+      "recipe_notes": "cmake -S . -B build -DENABLE_TESTING=OFF -DENABLE_PROGRAMS=OFF -DUSE_SHARED_MBEDTLS_LIBRARY=ON (options defined in CMakeLists.txt and library/CMakeLists.txt; branch mbedtls-3.6); also a plain Makefile with WINDOWS_BUILD=1 for mingw builds",
+      "mingw_ok": "yes: tests/scripts/components-compiler.sh defines component_build_mingw and README.md documents WINDOWS_BUILD=1; not built by this agent"
+    },
+    "verification": {
+      "method": "git clone --filter=blob:none --no-checkout https://github.com/Mbed-TLS/mbedtls.git; git rev-parse --verify 6165e715899a9b370851e2868fe312d7e0a2cb83~1^{commit} 6165e715899a9b370851e2868fe312d7e0a2cb83^{commit}; git diff --stat 9325883d9fb2..6165e715899a -- '*.c' '*.h'; git diff -U0 9325883d9fb2..6165e715899a -- '*.c' '*.h' (every hunk read; enclosing functions taken from universal-ctags function spans of both revisions); unchanged controls checked byte-identical at both revisions with the same ctags spans; git show 6165e715899a:LICENSE; git show -s 6165e7158; git tag --contains 6165e7158 --sort=creatordate (first: mbedtls-3.6.4) and merge-base --is-ancestor against mbedtls-3.6.3 (not an ancestor); git show mbedtls-3.6.4:ChangeLog (Security: 'integer underflow ... malformed PEM keys' CVE-2025-52497); curl -sS https://raw.githubusercontent.com/CVEProject/cvelistV5/main/cves/2025/52xxx/CVE-2025-52497.json | jq (CVE Program record; NVD, cve.org and the MITRE API are blocked by the sandbox egress policy, so this JSON is the CVE source)",
+      "files_changed": 1,
+      "functions_changed_count": 1,
+      "verified_by_agent_run": true
+    },
+    "sources": [
+      "https://www.cve.org/CVERecord?id=CVE-2025-52497",
+      "https://raw.githubusercontent.com/CVEProject/cvelistV5/main/cves/2025/52xxx/CVE-2025-52497.json",
+      "https://github.com/Mbed-TLS/mbedtls/commit/6165e715899a9b370851e2868fe312d7e0a2cb83",
+      "https://github.com/Mbed-TLS/mbedtls-docs/blob/main/security-advisories/mbedtls-security-advisory-2025-06-2.md"
+    ],
+    "risks": [
+      "dual-licensed Apache-2.0 OR GPL-2.0-or-later: only the Apache-2.0 option may be used",
+      "the CVE record does not cite a commit; the association is the mbedtls-3.6.4 ChangeLog entry plus the fact that this is the first commit in mbedtls-3.6.4 touching the PEM padding check (tag containment)",
+      "pem_check_pkcs_padding is static and may be inlined into mbedtls_pem_read_buffer"
+    ]
+  },
+  {
+    "contract": "case-card/1",
+    "id": "nghttp2-continuation-limit-cve-2024-28182",
+    "project": "nghttp2",
+    "upstream_git": "https://github.com/nghttp2/nghttp2.git",
+    "license_spdx": "MIT",
+    "license_evidence": "COPYING at d71a4668c6be: 'Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files'",
+    "old": {
+      "ref": "00201ecd8f98~1",
+      "commit": "605d9fdd6845e984ee2d1d39f14905d9b61ac04e"
+    },
+    "new": {
+      "ref": "d71a4668c6be",
+      "commit": "d71a4668c6bead55805d18810d633fbb98315af9"
+    },
+    "kind": "cve-fix",
+    "cve": [
+      "CVE-2024-28182"
+    ],
+    "semantic_change": true,
+    "changed_functions": [
+      {
+        "name": "nghttp2_session_mem_recv2",
+        "file": "lib/nghttp2_session.c",
+        "change": "in the inbound state machine: session->num_continuations is reset to 0 when a header block completes, and in the NGHTTP2_IB_EXPECT_CONTINUATION / NGHTTP2_IB_IGN_CONTINUATION states every CONTINUATION frame increments it and returns NGHTTP2_ERR_TOO_MANY_CONTINUATIONS once it exceeds session->max_continuations"
+      },
+      {
+        "name": "session_new",
+        "file": "lib/nghttp2_session.c",
+        "change": "initialises max_continuations to NGHTTP2_DEFAULT_MAX_CONTINUATIONS (8) and applies an NGHTTP2_OPT_MAX_CONTINUATIONS override from the option object"
+      },
+      {
+        "name": "nghttp2_strerror",
+        "file": "lib/nghttp2_helper.c",
+        "change": "new case NGHTTP2_ERR_TOO_MANY_CONTINUATIONS returning \"Too many CONTINUATION frames following a HEADER frame\""
+      },
+      {
+        "name": "nghttp2_option_set_max_continuations",
+        "file": "lib/nghttp2_option.c",
+        "change": "new public API function (added): sets opt_set_mask |= NGHTTP2_OPT_MAX_CONTINUATIONS and option->max_continuations"
+      }
+    ],
+    "unchanged_controls": [
+      "nghttp2_session_on_settings_received",
+      "nghttp2_session_open_stream",
+      "nghttp2_session_pack_data",
+      "nghttp2_session_add_settings",
+      "nghttp2_session_on_request_headers_received",
+      "nghttp2_session_add_item"
+    ],
+    "build": {
+      "system": "cmake",
+      "recipe_notes": "cmake -S . -B build -DENABLE_LIB_ONLY=ON (option present in CMakeLists.txt at this commit; builds only lib/); autotools (configure.ac) also exists. The pair spans two consecutive commits (00201ecd8f98 and d71a4668c6be) that the CVE record lists together; header changes (error code -905, struct fields, default 8) are not functions.",
+      "mingw_ok": "yes: .github/workflows/build.yml has a job with host: [x86_64-w64-mingw32, i686-w64-mingw32]; README.rst has a Mingw/Cygwin section; not built by this agent"
+    },
+    "verification": {
+      "method": "git clone --filter=blob:none --no-checkout https://github.com/nghttp2/nghttp2.git; git rev-parse --verify 00201ecd8f982da3b67d4f6868af72a1b03b14e0~1^{commit} d71a4668c6bead55805d18810d633fbb98315af9^{commit}; git diff --stat 605d9fdd6845..d71a4668c6be -- '*.c' '*.h'; git diff -U0 605d9fdd6845..d71a4668c6be -- '*.c' '*.h' (every hunk read; enclosing functions taken from universal-ctags function spans of both revisions); unchanged controls checked byte-identical at both revisions with the same ctags spans; git show d71a4668c6be:COPYING; git show -s 00201ecd8f98 d71a4668c6be (subjects: Limit CONTINUATION frames following an incoming HEADER frame; Add nghttp2_option_set_max_continuations; d71a4668c6be's parent is 00201ecd8f98); curl -sS https://raw.githubusercontent.com/CVEProject/cvelistV5/main/cves/2024/28xxx/CVE-2024-28182.json | jq (CVE Program record; NVD, cve.org and the MITRE API are blocked by the sandbox egress policy, so this JSON is the CVE source) (record references both commits); functions_changed_count counts only functions under lib/",
+      "files_changed": 6,
+      "functions_changed_count": 4,
+      "verified_by_agent_run": true
+    },
+    "sources": [
+      "https://www.cve.org/CVERecord?id=CVE-2024-28182",
+      "https://raw.githubusercontent.com/CVEProject/cvelistV5/main/cves/2024/28xxx/CVE-2024-28182.json",
+      "https://github.com/nghttp2/nghttp2/commit/00201ecd8f982da3b67d4f6868af72a1b03b14e0",
+      "https://github.com/nghttp2/nghttp2/commit/d71a4668c6bead55805d18810d633fbb98315af9",
+      "https://github.com/nghttp2/nghttp2/security/advisories/GHSA-x6x3-gv8h-m57q"
+    ],
+    "risks": [
+      "nghttp2_session_mem_recv2 is a 1,490-line function, so its binary will show many unrelated address shifts",
+      "session_new is static and may be inlined into nghttp2_session_client_new3 / nghttp2_session_server_new3",
+      "the old side is a merge commit (605d9fdd6845) because the fix was committed on top of the PR #2134 merge"
+    ]
+  },
+  {
+    "contract": "case-card/1",
+    "id": "libuv-idna-zero-terminate-cve-2024-24806",
+    "project": "libuv",
+    "upstream_git": "https://github.com/libuv/libuv.git",
+    "license_spdx": "MIT",
+    "license_evidence": "LICENSE at c858a147643d: 'Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files' (LICENSE-extra lists bundled third-party files under BSD-2-Clause/ISC/BSD-3-Clause style licences.)",
+    "old": {
+      "ref": "0f2d7e784a25~1",
+      "commit": "bb6fbcf6e75201cebac30220366d4aff620b8765"
+    },
+    "new": {
+      "ref": "c858a147643d",
+      "commit": "c858a147643de38a09dd4164758ae5b685f2b488"
+    },
+    "kind": "cve-fix",
+    "cve": [
+      "CVE-2024-24806"
+    ],
+    "semantic_change": true,
+    "changed_functions": [
+      {
+        "name": "uv__idna_toascii",
+        "file": "src/idna.c",
+        "change": "three changes: an empty input (s == se) now returns UV_EINVAL; when the output buffer is full (d >= de) it now returns UV_EINVAL instead of silently skipping the terminator; and the NUL terminator is written unconditionally afterwards (*d++ = 0), so the output is always zero-terminated"
+      }
+    ],
+    "unchanged_controls": [
+      "uv_utf16_to_wtf8",
+      "uv_utf16_length_as_wtf8",
+      "uv_wtf8_to_utf16",
+      "uv_wtf8_length_as_utf16",
+      "uv__utf8_decode1"
+    ],
+    "build": {
+      "system": "cmake",
+      "recipe_notes": "cmake -S . -B build -DLIBUV_BUILD_SHARED=ON (option at CMakeLists.txt:27); autotools (configure.ac) also exists. The pair spans the four commits of the GHSA branch (0f2d7e784a25 .. c858a147643d), which the CVE record lists; test/test-idna.c also changed and is not library code.",
+      "mingw_ok": "yes: .github/workflows/CI-win.yml has a build-mingw job, cmake-toolchains/cross-mingw32.cmake exists and SUPPORTED_PLATFORMS.md lists MinGW (Tier 3); not built by this agent"
+    },
+    "verification": {
+      "method": "git clone --filter=blob:none --no-checkout https://github.com/libuv/libuv.git; git rev-parse --verify 0f2d7e784a256b54b2385043438848047bc2a629~1^{commit} c858a147643de38a09dd4164758ae5b685f2b488^{commit}; git diff --stat bb6fbcf6e752..c858a147643d -- '*.c' '*.h'; git diff -U0 bb6fbcf6e752..c858a147643d -- '*.c' '*.h' (every hunk read; enclosing functions taken from universal-ctags function spans of both revisions); unchanged controls checked byte-identical at both revisions with the same ctags spans; git show c858a147643d:LICENSE; git log --format='%h %p %s' 0f2d7e784a25~1..c858a147643d (four commits: always zero-terminate idna output; reject zero-length idna inputs; test; merge); curl -sS https://raw.githubusercontent.com/CVEProject/cvelistV5/main/cves/2024/24xxx/CVE-2024-24806.json | jq (CVE Program record; NVD, cve.org and the MITRE API are blocked by the sandbox egress policy, so this JSON is the CVE source) (record references 0f2d7e78, 3530bcc3, e0327e1d and c858a147); functions_changed_count counts only functions under src/",
+      "files_changed": 2,
+      "functions_changed_count": 1,
+      "verified_by_agent_run": true
+    },
+    "sources": [
+      "https://www.cve.org/CVERecord?id=CVE-2024-24806",
+      "https://raw.githubusercontent.com/CVEProject/cvelistV5/main/cves/2024/24xxx/CVE-2024-24806.json",
+      "https://github.com/libuv/libuv/commit/c858a147643de38a09dd4164758ae5b685f2b488",
+      "https://github.com/libuv/libuv/commit/0f2d7e784a256b54b2385043438848047bc2a629",
+      "https://github.com/libuv/libuv/security/advisories/GHSA-f74f-cvh7-c6q6"
+    ],
+    "risks": [
+      "uv__idna_toascii has external linkage but is internal to libuv (uv__ prefix) and not exported from a DLL",
+      "uv__idna_toascii_label is static (164 lines) and is called by the changed function"
+    ]
+  },
+  {
+    "contract": "case-card/1",
+    "id": "lua-getlocal-negation-overflow-cve-2020-24370",
+    "project": "lua",
+    "upstream_git": "https://github.com/lua/lua.git",
+    "license_spdx": "MIT",
+    "license_evidence": "lua.h at a585eae6e7ad: 'Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the \"Software\"), to deal in the Software without restriction' (the lua/lua mirror has no separate LICENSE file at this commit; the MIT notice is at the end of lua.h.)",
+    "old": {
+      "ref": "a585eae6e7ad~1",
+      "commit": "d2c2e32e8a0f649099de0e9d04b5a72037b7b138"
+    },
+    "new": {
+      "ref": "a585eae6e7ad",
+      "commit": "a585eae6e7ada1ca9271607a4f48dfb17868ab7b"
+    },
+    "kind": "cve-fix",
+    "cve": [
+      "CVE-2020-24370"
+    ],
+    "semantic_change": true,
+    "changed_functions": [
+      {
+        "name": "findvararg",
+        "file": "ldebug.c",
+        "change": "vararg index is now passed in negative form and tested as n >= -nextra, computing the stack slot as ci->func - nextra - (n + 1); this avoids negating INT_MIN"
+      },
+      {
+        "name": "luaG_findlocal",
+        "file": "ldebug.c",
+        "change": "passes n (negative) to findvararg instead of -n, removing the negation overflow for getlocal(3, 2^31)"
+      }
+    ],
+    "unchanged_controls": [
+      "luaG_traceexec",
+      "lua_getinfo",
+      "lua_getstack",
+      "luaG_getfuncline",
+      "luaG_runerror"
+    ],
+    "build": {
+      "system": "make",
+      "recipe_notes": "the mirror root holds only the C sources and a developer makefile (gcc oriented, no mingw target); for Windows compile l*.c (minus lua.c/luac.c for the library) with -DLUA_BUILD_AS_DLL; luaconf.h defines LUA_USE_WINDOWS under _WIN32.",
+      "mingw_ok": "plausible: ANSI C with _WIN32 / LUA_USE_WINDOWS / LUA_BUILD_AS_DLL handling in luaconf.h; no mingw target or CI at this commit; not built by this agent"
+    },
+    "verification": {
+      "method": "git clone --filter=blob:none --no-checkout https://github.com/lua/lua.git; git rev-parse --verify a585eae6e7ada1ca9271607a4f48dfb17868ab7b~1^{commit} a585eae6e7ada1ca9271607a4f48dfb17868ab7b^{commit}; git diff --stat d2c2e32e8a0f..a585eae6e7ad -- '*.c' '*.h'; git diff -U0 d2c2e32e8a0f..a585eae6e7ad -- '*.c' '*.h' (every hunk read; enclosing functions taken from universal-ctags function spans of both revisions); unchanged controls checked byte-identical at both revisions with the same ctags spans; git show a585eae6e7ad:lua.h; git show -s a585eae6e7ad (Fixed bug: Negation overflow in getlocal/setlocal); curl -sS https://raw.githubusercontent.com/CVEProject/cvelistV5/main/cves/2020/24xxx/CVE-2020-24370.json | jq (CVE Program record; NVD, cve.org and the MITRE API are blocked by the sandbox egress policy, so this JSON is the CVE source) (record references commit a585eae6e7ad...); git tag --contains a585eae6e7ad (first: v5.4.1)",
+      "files_changed": 1,
+      "functions_changed_count": 2,
+      "verified_by_agent_run": true
+    },
+    "sources": [
+      "https://www.cve.org/CVERecord?id=CVE-2020-24370",
+      "https://raw.githubusercontent.com/CVEProject/cvelistV5/main/cves/2020/24xxx/CVE-2020-24370.json",
+      "https://github.com/lua/lua/commit/a585eae6e7ada1ca9271607a4f48dfb17868ab7b"
+    ],
+    "risks": [
+      "findvararg is static and may be inlined into luaG_findlocal",
+      "lua_getlocal / lua_setlocal call luaG_findlocal and were deliberately not used as controls"
+    ]
+  },
+  {
+    "contract": "case-card/1",
+    "id": "postgresql-libpq-untrusted-error-cve-2024-10977",
+    "project": "postgresql-libpq",
+    "upstream_git": "https://github.com/postgres/postgres.git",
+    "license_spdx": "PostgreSQL",
+    "license_evidence": "COPYRIGHT at bf8835ea9717: 'Permission to use, copy, modify, and distribute this software and its documentation for any purpose, without fee, and without a written agreement is hereby granted'",
+    "old": {
+      "ref": "bf8835ea9717~1",
+      "commit": "5d4298e75f252b162008ad0475f29349023573cb"
+    },
+    "new": {
+      "ref": "bf8835ea9717",
+      "commit": "bf8835ea9717df50230c12133cff1b486dcc57be"
+    },
+    "kind": "cve-fix",
+    "cve": [
+      "CVE-2024-10977"
+    ],
+    "semantic_change": true,
+    "changed_functions": [
+      {
+        "name": "PQconnectPoll",
+        "file": "src/interfaces/libpq/fe-connect.c",
+        "change": "SSL and GSS negotiation error handling: a server \"E\" reply during the SSL exchange no longer flips into CONNECTION_AWAITING_RESPONSE to read the (unauthenticated) message but appends \"server sent an error response during SSL exchange\" and goes to error_return; the GSS encryption case likewise appends \"server sent an error response during GSS encryption exchange\" and uses CONNECTION_FAILED(); the old plaintext fallback bookkeeping (failed_enc_methods) for the SSL case is removed"
+      }
+    ],
+    "unchanged_controls": [
+      "pqConnectOptions2",
+      "PQsetdbLogin",
+      "pqConnectDBComplete",
+      "pqMakeEmptyPGconn",
+      "pqDropConnection",
+      "pqConnectDBStart"
+    ],
+    "build": {
+      "system": "meson",
+      "recipe_notes": "meson setup build && ninja -C build (src/interfaces/libpq/meson.build builds libpq); autotools (configure.ac) also exists; only libpq (src/interfaces/libpq) is of interest.",
+      "mingw_ok": "plausible: configure.ac maps mingw*) to the win32 template and libpq has win32.c / pthread-win32.c; .cirrus.tasks.yml has Windows CI tasks; not built by this agent"
+    },
+    "verification": {
+      "method": "git clone --filter=blob:none --no-checkout https://github.com/postgres/postgres.git; git rev-parse --verify bf8835ea9717df50230c12133cff1b486dcc57be~1^{commit} bf8835ea9717df50230c12133cff1b486dcc57be^{commit}; git diff --stat 5d4298e75f25..bf8835ea9717 -- '*.c' '*.h'; git diff -U0 5d4298e75f25..bf8835ea9717 -- '*.c' '*.h' (every hunk read; enclosing functions taken from universal-ctags function spans of both revisions); unchanged controls checked byte-identical at both revisions with the same ctags spans; git show bf8835ea9717:COPYRIGHT; git show -s bf8835ea9717 (trailer: Security: CVE-2024-10977); curl -sS https://raw.githubusercontent.com/CVEProject/cvelistV5/main/cves/2024/10xxx/CVE-2024-10977.json | jq (CVE Program record; NVD, cve.org and the MITRE API are blocked by the sandbox egress policy, so this JSON is the CVE source)",
+      "files_changed": 1,
+      "functions_changed_count": 1,
+      "verified_by_agent_run": true
+    },
+    "sources": [
+      "https://www.cve.org/CVERecord?id=CVE-2024-10977",
+      "https://raw.githubusercontent.com/CVEProject/cvelistV5/main/cves/2024/10xxx/CVE-2024-10977.json",
+      "https://github.com/postgres/postgres/commit/bf8835ea9717df50230c12133cff1b486dcc57be",
+      "https://www.postgresql.org/support/security/CVE-2024-10977/"
+    ],
+    "risks": [
+      "PQconnectPoll is a 1,700-line extern function, so unrelated code in it shifts in a binary",
+      "commit is on PostgreSQL master; the same fix was back-patched to stable branches as separate commits"
+    ]
+  },
+  {
+    "contract": "case-card/1",
+    "id": "libevent-dnsname-to-labels-oob-write",
+    "project": "libevent",
+    "upstream_git": "https://github.com/libevent/libevent.git",
+    "license_spdx": "BSD-3-Clause",
+    "license_evidence": "LICENSE at 9877a7205ea0: 'Libevent is available for use under the following license, commonly known as the 3-clause (or \"modified\") BSD license'",
+    "old": {
+      "ref": "9877a7205ea0~1",
+      "commit": "4df63044206cee1bc6009e94f6eaebee87aa4724"
+    },
+    "new": {
+      "ref": "9877a7205ea0",
+      "commit": "9877a7205ea024d0120effb040e1b8e034435407"
+    },
+    "kind": "bounds-only",
+    "cve": [],
+    "semantic_change": true,
+    "changed_functions": [
+      {
+        "name": "dnsname_to_labels",
+        "file": "evdns.c",
+        "change": "new bounds check before the terminating zero byte is written: if ((size_t)j >= buf_len) return -2; (previously buf[j++] = 0 could write one byte past the end of the buffer when the response was exactly 2^16 + 1 bytes); the conditional NUL write is otherwise unchanged and re-wrapped over two lines"
+      }
+    ],
+    "unchanged_controls": [
+      "evdns_get_global_base",
+      "evdns_set_log_fn",
+      "name_parse",
+      "reply_parse",
+      "request_parse",
+      "nameserver_pick"
+    ],
+    "build": {
+      "system": "cmake",
+      "recipe_notes": "cmake -S . -B build -DEVENT__LIBRARY_TYPE=SHARED (cache variable at CMakeLists.txt:41); autotools (configure.ac) also exists; evdns.c is part of event_core/extras. evthread_win32.c and win32select.c are the Windows backends.",
+      "mingw_ok": "yes: .github/workflows/build.yml has a mingw-autotools-job and CMakeLists.txt has an if (MINGW OR CYGWIN) branch; not built by this agent"
+    },
+    "verification": {
+      "method": "git clone --filter=blob:none --no-checkout https://github.com/libevent/libevent.git; git rev-parse --verify 9877a7205ea024d0120effb040e1b8e034435407~1^{commit} 9877a7205ea024d0120effb040e1b8e034435407^{commit}; git diff --stat 4df63044206c..9877a7205ea0 -- '*.c' '*.h'; git diff -U0 4df63044206c..9877a7205ea0 -- '*.c' '*.h' (every hunk read; enclosing functions taken from universal-ctags function spans of both revisions); unchanged controls checked byte-identical at both revisions with the same ctags spans; git show 9877a7205ea0:LICENSE; git show -s 9877a7205ea0 (message: write a single 0 byte off the end of a stack buffer; Resolves issue GHSA-58rx-7448-jw47); no CVE id was verified, so cve is left empty",
+      "files_changed": 1,
+      "functions_changed_count": 1,
+      "verified_by_agent_run": true
+    },
+    "sources": [
+      "https://github.com/libevent/libevent/commit/9877a7205ea024d0120effb040e1b8e034435407"
+    ],
+    "risks": [
+      "the commit message cites GHSA-58rx-7448-jw47 (advisory not fetched; a CVE id may exist but was not verified)"
+    ]
+  },
+  {
+    "contract": "case-card/1",
+    "id": "libevent-expand-singlechain-overflow-check",
+    "project": "libevent",
+    "upstream_git": "https://github.com/libevent/libevent.git",
+    "license_spdx": "BSD-3-Clause",
+    "license_evidence": "LICENSE at a3f4ccd1a16d: 'Libevent is available for use under the following license, commonly known as the 3-clause (or \"modified\") BSD license'",
+    "old": {
+      "ref": "a3f4ccd1a16d~1",
+      "commit": "48dab7aa3327e137174a058fd020ba89fd45a0e8"
+    },
+    "new": {
+      "ref": "a3f4ccd1a16d",
+      "commit": "a3f4ccd1a16d855353c9f555f15111c9186facc2"
+    },
+    "kind": "bounds-only",
+    "cve": [],
+    "semantic_change": true,
+    "changed_functions": [
+      {
+        "name": "evbuffer_expand_singlechain",
+        "file": "buffer.c",
+        "change": "overflow guard rewritten: the old test (datlen < EVBUFFER_CHAIN_MAX && EVBUFFER_CHAIN_MAX - datlen >= chain->off) is replaced by datlen >= (EVBUFFER_CHAIN_MAX - chain->off), i.e. the \"do not resize this chain\" branch is now taken exactly when datlen + chain->off would exceed EVBUFFER_CHAIN_MAX"
+      }
+    ],
+    "unchanged_controls": [
+      "evbuffer_drain",
+      "evbuffer_remove",
+      "evbuffer_copyout",
+      "evbuffer_remove_buffer",
+      "evbuffer_add_buffer_reference"
+    ],
+    "build": {
+      "system": "autotools",
+      "recipe_notes": "configure.ac / Makefile.am; CMakeLists.txt and Makefile.nmake (MSVC) also exist at this commit; WIN32-Code/ and win32select.c are the Windows backends.",
+      "mingw_ok": "plausible: appveyor.yml configures a MinGW/MSYS environment (CYG_ROOT: C:/MinGW/msys/1.0); not built by this agent"
+    },
+    "verification": {
+      "method": "git clone --filter=blob:none --no-checkout https://github.com/libevent/libevent.git; git rev-parse --verify a3f4ccd1a16d855353c9f555f15111c9186facc2~1^{commit} a3f4ccd1a16d855353c9f555f15111c9186facc2^{commit}; git diff --stat 48dab7aa3327..a3f4ccd1a16d -- '*.c' '*.h'; git diff -U0 48dab7aa3327..a3f4ccd1a16d -- '*.c' '*.h' (every hunk read; enclosing functions taken from universal-ctags function spans of both revisions); unchanged controls checked byte-identical at both revisions with the same ctags spans; git show a3f4ccd1a16d:LICENSE; git show -s a3f4ccd1a16d (message: buffer: fix overflow check in evbuffer_expand_singlechain(); Refs #306, Fixes #340)",
+      "files_changed": 1,
+      "functions_changed_count": 1,
+      "verified_by_agent_run": true
+    },
+    "sources": [
+      "https://github.com/libevent/libevent/commit/a3f4ccd1a16d855353c9f555f15111c9186facc2"
+    ],
+    "risks": [
+      "commit predates 2.1.6; no CVE id was verified for this fix (cve left empty)",
+      "evbuffer_expand_singlechain is a non-inline internal function called from evbuffer_expand_fast_ and evbuffer_expand_ paths; callers were avoided as controls"
+    ]
+  },
+  {
+    "contract": "case-card/1",
+    "id": "lua-packsize-max-size-bound",
+    "project": "lua",
+    "upstream_git": "https://github.com/lua/lua.git",
+    "license_spdx": "MIT",
+    "license_evidence": "lua.h at 45c7ae5b1b05: 'Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the \"Software\"), to deal in the Software without restriction' (the lua/lua mirror has no LICENSE file at this commit; the MIT notice is at the end of lua.h.)",
+    "old": {
+      "ref": "45c7ae5b1b05~1",
+      "commit": "962f444a755882ecfc24ca7e96ffe193d64ed12d"
+    },
+    "new": {
+      "ref": "45c7ae5b1b05",
+      "commit": "45c7ae5b1b05069543fe1710454c651350bc1c42"
+    },
+    "kind": "bounds-only",
+    "cve": [],
+    "semantic_change": true,
+    "changed_functions": [
+      {
+        "name": "str_packsize",
+        "file": "lstrlib.c",
+        "change": "size limit in the \"format result too large\" argument check changed from LUA_MAXINTEGER - size to MAX_SIZE - size (the commit message: LUA_MAXINTEGER may not fit into size_t on 32-bit machines using 64-bit integers)"
+      }
+    ],
+    "unchanged_controls": [
+      "luaopen_string",
+      "str_format",
+      "str_pack",
+      "match",
+      "str_unpack",
+      "str_find_aux"
+    ],
+    "build": {
+      "system": "make",
+      "recipe_notes": "root developer makefile (gcc oriented); for Windows compile l*.c with -DLUA_BUILD_AS_DLL; no mingw target in the mirror.",
+      "mingw_ok": "plausible: luaconf.h has _WIN32 and LUA_BUILD_AS_DLL handling at this commit (grepped); no mingw target or CI in the mirror; not built by this agent"
+    },
+    "verification": {
+      "method": "git clone --filter=blob:none --no-checkout https://github.com/lua/lua.git; git rev-parse --verify 45c7ae5b1b05069543fe1710454c651350bc1c42~1^{commit} 45c7ae5b1b05069543fe1710454c651350bc1c42^{commit}; git diff --stat 962f444a7558..45c7ae5b1b05 -- '*.c' '*.h'; git diff -U0 962f444a7558..45c7ae5b1b05 -- '*.c' '*.h' (every hunk read; enclosing functions taken from universal-ctags function spans of both revisions); unchanged controls checked byte-identical at both revisions with the same ctags spans; git show 45c7ae5b1b05:lua.h; git show -s 45c7ae5b1b05 (BUG: Possible overflow in 'string.packsize')",
+      "files_changed": 1,
+      "functions_changed_count": 1,
+      "verified_by_agent_run": true
+    },
+    "sources": [
+      "https://github.com/lua/lua/commit/45c7ae5b1b05069543fe1710454c651350bc1c42"
+    ],
+    "risks": [
+      "str_packsize is static but referenced from the strlib registration table, so it should keep a symbol"
+    ]
+  },
+  {
+    "contract": "case-card/1",
+    "id": "curl-psl-comment-only-no-op",
+    "project": "curl",
+    "upstream_git": "https://github.com/curl/curl.git",
+    "license_spdx": "curl",
+    "license_evidence": "COPYING at a478393759f3: 'Permission to use, copy, modify, and distribute this software for any purpose with or without fee is hereby granted'",
+    "old": {
+      "ref": "a478393759f3~1",
+      "commit": "b5716286e9a6064ad202c653c0cc7fb8077418a1"
+    },
+    "new": {
+      "ref": "a478393759f3",
+      "commit": "a478393759f302d3a55e62094ceb61e64ca610f4"
+    },
+    "kind": "no-op",
+    "cve": [],
+    "semantic_change": false,
+    "changed_functions": [
+      {
+        "name": "Curl_psl_use",
+        "file": "lib/psl.c",
+        "change": "cosmetic: one comment inside the function reworded ('Let a chance to other threads to do the job: avoids deadlock.' became a two-line comment); token stream identical"
+      }
+    ],
+    "unchanged_controls": [
+      "Curl_psl_destroy",
+      "Curl_psl_release",
+      "lib/url.c:Curl_close",
+      "lib/url.c:Curl_open"
+    ],
+    "build": {
+      "system": "cmake",
+      "recipe_notes": "cmake -S . -B build -DBUILD_SHARED_LIBS=ON -DCURL_USE_SCHANNEL=ON; see the curl CVE card for the evidence behind these options (checked there at a different commit).",
+      "mingw_ok": "yes (evidence checked at fb4415d8aee6, 2023: msys2 mingw jobs in .azure-pipelines.yml); not re-checked at this commit; not built by this agent"
+    },
+    "verification": {
+      "method": "git clone --filter=blob:none --no-checkout https://github.com/curl/curl.git; git rev-parse --verify a478393759f302d3a55e62094ceb61e64ca610f4~1^{commit} a478393759f302d3a55e62094ceb61e64ca610f4^{commit}; git diff --stat b5716286e9a6..a478393759f3 -- '*.c' '*.h'; git diff -U0 b5716286e9a6..a478393759f3 -- '*.c' '*.h' (every hunk read; enclosing functions taken from universal-ctags function spans of both revisions); unchanged controls checked byte-identical at both revisions with the same ctags spans; git show a478393759f3:COPYING; python tokenizer comparison of lib/psl.c at both revisions: token streams identical (comments and whitespace stripped); the whole diff is one comment hunk; functions_changed_count counts changed/added/removed definitions only; functions whose text differs but whose comment/whitespace-stripped token stream is identical (python tokenizer over both revisions) are listed in changed_functions with a 'cosmetic:' prefix and are not counted",
+      "files_changed": 1,
+      "functions_changed_count": 0,
+      "verified_by_agent_run": true
+    },
+    "sources": [
+      "https://github.com/curl/curl/commit/a478393759f302d3a55e62094ceb61e64ca610f4"
+    ],
+    "risks": [
+      "pure comment change: expect byte-identical object code apart from possible debug-info line numbers",
+      "build options were verified at an older curl commit, not at this one"
+    ]
+  },
+  {
+    "contract": "case-card/1",
+    "id": "curl-tidy-comments-formatting-refactor-control",
+    "project": "curl",
+    "upstream_git": "https://github.com/curl/curl.git",
+    "license_spdx": "curl",
+    "license_evidence": "COPYING at da04aa96abc0: 'Permission to use, copy, modify, and distribute this software for any purpose with or without fee is hereby granted'",
+    "old": {
+      "ref": "da04aa96abc0~1",
+      "commit": "943ac04fc4d7d554d9064c7cd03fbe1830ff25d4"
+    },
+    "new": {
+      "ref": "da04aa96abc0",
+      "commit": "da04aa96abc0b9b5700e1146edb613d8ceb1b6e0"
+    },
+    "kind": "refactor-control",
+    "cve": [],
+    "semantic_change": false,
+    "changed_functions": [
+      {
+        "name": "Curl_auth_decode_spnego_message",
+        "file": "lib/vauth/spnego_sspi.c",
+        "change": "cosmetic: a documentation URL inside a comment lost its /en-us locale segment"
+      },
+      {
+        "name": "udp_resp_create",
+        "file": "tests/server/dnsd.c",
+        "change": "cosmetic: declaration re-wrapped onto one return-type line plus aligned parameters, and one comment re-indented (test server, not library code)"
+      },
+      {
+        "name": "initiate_exit",
+        "file": "tests/server/util.c",
+        "change": "cosmetic: trailing comment 'stay signal-safe' became 'keep signal-safe' (test server)"
+      },
+      {
+        "name": "exit_signal_handler",
+        "file": "tests/server/util.c",
+        "change": "cosmetic: trailing comment 'stay signal-safe' became 'keep signal-safe' (test server)"
+      },
+      {
+        "name": "ctrl_event_handler",
+        "file": "tests/server/util.c",
+        "change": "cosmetic: trailing comment 'stay signal-safe' became 'keep signal-safe' (test server)"
+      },
+      {
+        "name": "open_stream_sock",
+        "file": "tests/server/util.c",
+        "change": "cosmetic: one blank line added (test server)"
+      }
+    ],
+    "unchanged_controls": [
+      "lib/url.c:Curl_init_userdefined",
+      "lib/url.c:Curl_close",
+      "lib/url.c:Curl_parse_login_details",
+      "lib/url.c:Curl_connect",
+      "lib/url.c:Curl_open",
+      "lib/vauth/spnego_sspi.c:Curl_auth_cleanup_spnego"
+    ],
+    "build": {
+      "system": "cmake",
+      "recipe_notes": "cmake -S . -B build -DBUILD_SHARED_LIBS=ON -DCURL_USE_SCHANNEL=ON (options verified at fb4415d8aee6, not re-checked here). lib/vauth/spnego_sspi.c is compiled only with SSPI (Windows), so it is a Windows-relevant control.",
+      "mingw_ok": "yes (evidence checked at fb4415d8aee6, 2023); not re-checked at this commit; not built by this agent"
+    },
+    "verification": {
+      "method": "git clone --filter=blob:none --no-checkout https://github.com/curl/curl.git; git rev-parse --verify da04aa96abc0b9b5700e1146edb613d8ceb1b6e0~1^{commit} da04aa96abc0b9b5700e1146edb613d8ceb1b6e0^{commit}; git diff --stat 943ac04fc4d7..da04aa96abc0 -- '*.c' '*.h'; git diff -U0 943ac04fc4d7..da04aa96abc0 -- '*.c' '*.h' (every hunk read; enclosing functions taken from universal-ctags function spans of both revisions); unchanged controls checked byte-identical at both revisions with the same ctags spans; git show da04aa96abc0:COPYING; python tokenizer comparison of all four changed C files at both revisions: every token stream identical (comments and whitespace stripped); the two lib/url.c hunks are blank-line removals outside any function; every hunk read; functions_changed_count counts changed/added/removed definitions only; functions whose text differs but whose comment/whitespace-stripped token stream is identical (python tokenizer over both revisions) are listed in changed_functions with a 'cosmetic:' prefix and are not counted",
+      "files_changed": 4,
+      "functions_changed_count": 0,
+      "verified_by_agent_run": true
+    },
+    "sources": [
+      "https://github.com/curl/curl/commit/da04aa96abc0b9b5700e1146edb613d8ceb1b6e0"
+    ],
+    "risks": [
+      "the five test-server functions are not part of libcurl; only Curl_auth_decode_spnego_message and the two lib/url.c blank-line removals touch library files",
+      "lib/url.c has no function with changed text in this commit, so its controls are simply untouched functions"
+    ]
+  },
+  {
+    "contract": "case-card/1",
+    "id": "libsodium-test-comment-typos-no-op",
+    "project": "libsodium",
+    "upstream_git": "https://github.com/jedisct1/libsodium.git",
+    "license_spdx": "ISC",
+    "license_evidence": "LICENSE at 75c6d5520a3b: 'Permission to use, copy, modify, and/or distribute this software for any purpose with or without fee is hereby granted'",
+    "old": {
+      "ref": "75c6d552~1",
+      "commit": "c960b3b0c6e430ff2dfdb776bf1c990e62f3f18b"
+    },
+    "new": {
+      "ref": "75c6d552",
+      "commit": "75c6d5520a3b99790696d98b554673697c71c5cc"
+    },
+    "kind": "no-op",
+    "cve": [],
+    "semantic_change": false,
+    "changed_functions": [
+      {
+        "name": "main",
+        "file": "test/default/secretstream_xchacha20poly1305.c",
+        "change": "cosmetic: comment 'Force a counter overflow, check that ...' reworded to '... and check that ...'"
+      },
+      {
+        "name": "main",
+        "file": "test/default/xof_shake128.c",
+        "change": "cosmetic: comment 'Test custom domain byte ...' reworded to 'Test that a custom domain byte ...'"
+      },
+      {
+        "name": "main",
+        "file": "test/default/xof_shake256.c",
+        "change": "cosmetic: comment 'Test custom domain byte ...' reworded to 'Test that a custom domain byte ...'"
+      }
+    ],
+    "unchanged_controls": [
+      "src/libsodium/crypto_secretstream/xchacha20poly1305/secretstream_xchacha20poly1305.c:crypto_secretstream_xchacha20poly1305_push",
+      "src/libsodium/crypto_secretstream/xchacha20poly1305/secretstream_xchacha20poly1305.c:crypto_secretstream_xchacha20poly1305_pull",
+      "src/libsodium/crypto_secretstream/xchacha20poly1305/secretstream_xchacha20poly1305.c:crypto_secretstream_xchacha20poly1305_init_push",
+      "src/libsodium/crypto_secretstream/xchacha20poly1305/secretstream_xchacha20poly1305.c:crypto_secretstream_xchacha20poly1305_init_pull",
+      "src/libsodium/crypto_secretstream/xchacha20poly1305/secretstream_xchacha20poly1305.c:crypto_secretstream_xchacha20poly1305_rekey"
+    ],
+    "build": {
+      "system": "autotools",
+      "recipe_notes": "./configure --host=x86_64-w64-mingw32 && make (dist-build/msys2-win64.sh); the library sources are untouched by this commit, only three test programs differ.",
+      "mingw_ok": "yes (evidence checked at ad3004ec8731: dist-build/msys2-win64.sh, azure-pipelines.yml mingw64 job); not built by this agent"
+    },
+    "verification": {
+      "method": "git clone --filter=blob:none --no-checkout https://github.com/jedisct1/libsodium.git; git rev-parse --verify 75c6d552~1^{commit} 75c6d552^{commit}; git diff --stat c960b3b0c6e4..75c6d5520a3b -- '*.c' '*.h'; git diff -U0 c960b3b0c6e4..75c6d5520a3b -- '*.c' '*.h' (every hunk read; enclosing functions taken from universal-ctags function spans of both revisions); unchanged controls checked byte-identical at both revisions with the same ctags spans; git show 75c6d5520a3b:LICENSE; python tokenizer comparison of the three test files at both revisions: token streams identical; the whole diff is three one-line comment edits in test/default/*.c; functions_changed_count counts changed/added/removed definitions only; functions whose text differs but whose comment/whitespace-stripped token stream is identical (python tokenizer over both revisions) are listed in changed_functions with a 'cosmetic:' prefix and are not counted",
+      "files_changed": 3,
+      "functions_changed_count": 0,
+      "verified_by_agent_run": true
+    },
+    "sources": [
+      "https://github.com/jedisct1/libsodium/commit/75c6d5520a3b99790696d98b554673697c71c5cc"
+    ],
+    "risks": [
+      "no library file changes at all: a build of the library at the two commits should be identical; the only changed definitions are the test programs' main() functions",
+      "controls come from the secretstream library file because the changed files are test programs"
+    ]
+  }
+]
