@@ -42,7 +42,7 @@ Make the code look like real code (parsers, allocators, checksums, state machine
 ```
 Truth labels (EVERY function defined in either version appears exactly once per pair):
 `same` (source text identical), `changed` (semantics differ; give `kind`), `cosmetic` (text differs, semantics identical),
-`moved` (same function in another file), `added`, `removed`, `renamed` (`from`, `to`), `split` (`from`, `to`: list),
+`moved` (same function relocated to another file; its text may also have changed), `added`, `removed`, `renamed` (`from`, `to`), `split` (`from`, `to`: list),
 `merged` (`from`: list, `to`), `inlined` (`function` folded into `into`). The checker enforces text-identical for `same` and
 text-different for `cosmetic`/`changed`.
 `kind` for `changed`: bounds-check-added | bounds-check-removed | constant-change | comparison-change | call-added |

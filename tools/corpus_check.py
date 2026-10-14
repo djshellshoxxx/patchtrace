@@ -245,9 +245,9 @@ def check_suite(directory: Path) -> list[str]:
                 if text_old and text_new:
                     same_text = text_old == text_new
                     moved_file = Path(file_old).name != Path(file_new).name
-                    # same = identical text in the same file; moved = identical text in a different file;
-                    # cosmetic/changed = the text differs
-                    expected = {'same': same_text and not moved_file, 'moved': same_text and moved_file,
+                    # same = identical text in the same file; moved = relocated to a different file (text may also have
+                    # changed); cosmetic/changed = the text differs
+                    expected = {'same': same_text and not moved_file, 'moved': moved_file,
                                 'cosmetic': not same_text, 'changed': not same_text}[label]
                     _need(expected, findings, pwhere,
                           f"{entry['function']}: labelled {label} but the source text is "

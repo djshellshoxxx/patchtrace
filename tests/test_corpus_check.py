@@ -80,7 +80,7 @@ def test_committed_corpus_is_valid():
 
 
 @needs_clang
-def test_moved_means_identical_text_in_another_file(tmp_path):
+def test_moved_means_another_file_and_same_label_needs_the_same_file(tmp_path):
     copy = tmp_path / 'tiny'
     shutil.copytree(TEMPLATE, copy)
     old = (copy / 'v1' / 'tiny.c').read_text(encoding='utf-8')
