@@ -135,7 +135,14 @@ Acceptance automation added (verified locally on Linux against `python -m patcht
 | `bytearray` child under the cap | Gets `MemoryError`. |
 
 - Linux frozen build: the `_upb/_message.abi3.so` inventory guard passed (412 KiB delta). Frozen smoke: 30/30 PASS, including B1/B2 through the frozen self-spawned worker.
-- Tests added: 8 descriptor, 25 pre-scan, 48 checker (one per reason slug), 26 pipeline/snapshot/identity, 27 isolation, 3 CLI, 9 property/boundary (hypothesis 2000 + 1000 + 150-example runs), 7 fixtures.
+- Tests added: 8 descriptor, 25 pre-scan, 48 checker (one per reason slug), 26 pipeline/snapshot/identity, 28 isolation, 3 CLI, 9 property/boundary (hypothesis 2000 + 1000 + 150-example runs), 7 fixtures.
 - Fuzz: `tools/fuzz_binexport.py`, 60 s random-mutation run: 1.6 M inputs, 0 findings. Atheris was not installed.
 - All goldens are synthetic: 4 files bound to `synthetic_pe()` hashes, with `PROVENANCE.json`. None of this is live-compatibility evidence.
 - Open: the Windows CI run (U7 child behaviour at `ProcessMemoryLimit`, `PeakProcessMemoryUsed`, idle commit of the frozen worker, frozen `PatchTrace.exe` B1/B2, size delta, AV). Also open: real Ghidra/IDA goldens (U1, U3, U5, U6, U9, U12) and the CI workflow steps (`pip check`, pin + upb assertion step, nightly Linux fuzz).
+- Unreproduced fatal interpreter error. One of 15 full `pytest -q` runs on this branch ended in a Python fatal error: the faulthandler `Extension modules: shiboken6, PySide6.QtCore/QtGui/QtWidgets/QtTest, google._upb._message` line was the last output. The traceback was lost because the output was piped through `tail -1`. Attempts to reproduce found no crash:
+  - 13 further full runs of this branch;
+  - 40 runs of the in-process BinExport tests (about 126 k hypothesis inputs);
+  - a 7.44 M-input in-process `inspect_bytes` stress with the input recorded before each parse;
+  - 8 full runs of the base commit `29a4d3f`.
+
+  Cause unknown, whether Qt teardown flakiness or upb (T3). Production parsing runs only in the capped worker, where a crash surfaces as `worker_crash`. Re-run CI with `python -X faulthandler -m pytest` and keep full logs.
