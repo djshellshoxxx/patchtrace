@@ -35,6 +35,8 @@ STDERR_LIMIT = 256 * 1024
 CONFIG_BYTES = b'{}'
 CONFIG_SHA256 = hashlib.sha256(CONFIG_BYTES).hexdigest()
 EXPECTED_NAME = 'older_vs_newer.BinDiff'
+MAX_OUTPUT_PATH = 250   # BinDiff truncates the name parts when output_dir + name exceeds this (SPEC-29 §3)
+USAGE_BANNER = 'bindiff: Find similarities'
 # Never passed (SPEC-29 §4.1): UI/IDA/batch modes, config dumps, and the absl flags that would let a file or
 # the environment inject arbitrary flags (`--flagfile`, `--fromenv`, `--tryfromenv`) or hide typos (`--undefok`).
 FORBIDDEN_FLAGS = ('--ui', '--export', '--ls', '--md_index', '--print_config', '--flagfile', '--fromenv',
@@ -86,8 +88,18 @@ def argv_template(executable: str | Path) -> tuple[str, ...]:
             '--primary=<workdir>/in/<older>', '--secondary=<workdir>/in/<newer>')
 
 
+def output_path_fits(workdir: Path) -> bool:
+    """True if `<workdir>/out/older_vs_newer.BinDiff` stays within BinDiff's 250-character cap (encoded bytes,
+    conservative on Windows), so BinDiff writes exactly the expected name instead of a truncated one."""
+    return len(os.fsencode(str(workdir / 'out' / EXPECTED_NAME))) <= MAX_OUTPUT_PATH
+
+
 def out_guard(out_dir: Path, *, max_bytes: int = OUTPUT_LIMIT, max_files: int = MAX_OUTPUT_FILES) -> str | None:
-    """Polled by `run_process`: size/count -> 'output-limit'; a symlink or directory -> 'output-unexpected'."""
+    """Polled by `run_process`: size/count -> 'output-limit'; a symlink or directory -> 'output-unexpected'.
+
+    While BinDiff writes, `out/` legitimately holds the database plus a transient SQLite rollback journal
+    (`older_vs_newer.BinDiff-journal`, measured); both are regular files and are tolerated here. Only a clean
+    exit 0 with exactly the database (no journal) is accepted afterwards (`execute`)."""
     total = count = 0
     try:
         with os.scandir(out_dir) as entries:
@@ -182,6 +194,9 @@ def execute(cap: Capability, pair: BoundPair, raw_dir: Path, *, cancel: threadin
         raise _err('PT-SECONDARY-RUN', 'workdir-error', f'Could not prepare a private working folder '
                    f'({type(exc).__name__}).') from None
     try:
+        if not output_path_fits(workdir):
+            raise _err('PT-SECONDARY-RUN', 'workdir-error', 'Could not prepare a private working folder (its path '
+                       "exceeds BinDiff's 250-character output path limit).")
         try:
             make_private_dirs(workdir)
             for part in ('in', 'out'):
@@ -205,6 +220,9 @@ def execute(cap: Capability, pair: BoundPair, raw_dir: Path, *, cancel: threadin
             raise _err('PT-SECONDARY-RUN', 'spawn-failed', f'Could not start BinDiff ({type(exc).__name__}); the '
                        'process could not be contained.') from None
         stdout, stderr = result.log_tail, result.stderr_tail
+        # Any non-clean stop discards out/ unread (SPEC-29 §4.4): a kill during the write phase leaves a valid
+        # looking .BinDiff with an empty `function` table (measured), so nothing below runs unless the process
+        # ended by itself with exit 0. The `finally` removes the whole workdir.
         if result.reason in ('cancelled', 'timeout'):
             return BindiffRaw(result.returncode, stdout, stderr, result.reason)
         if result.reason == 'output-limit':
@@ -215,6 +233,9 @@ def execute(cap: Capability, pair: BoundPair, raw_dir: Path, *, cancel: threadin
                        'files; the result was discarded.')
         if result.reason:
             raise _err('PT-SECONDARY-RUN', 'stopped', f'BinDiff was stopped ({sanitize(result.reason, 40)}).')
+        if result.returncode < 0:
+            raise _err('PT-SECONDARY-RUN', 'nonzero-exit', f'BinDiff terminated abnormally (signal '
+                       f'{-result.returncode}); its partial output was discarded.')
         if result.returncode != 0:
             line = sanitize(first_error_line(stderr or stdout))
             raise _err('PT-SECONDARY-RUN', 'nonzero-exit', f'BinDiff reported an error: {line or "no message"} '
@@ -223,6 +244,9 @@ def execute(cap: Capability, pair: BoundPair, raw_dir: Path, *, cancel: threadin
         entries = sorted(out.iterdir())
         expected = out / EXPECTED_NAME
         if not entries:
+            if stdout.lstrip().startswith(USAGE_BANNER):  # exit 0 + usage text: inputs were not diffed
+                raise _err('PT-SECONDARY-RUN', 'output-missing', 'BinDiff printed its usage text instead of '
+                           'comparing the inputs and wrote no result file.')
             raise _err('PT-SECONDARY-RUN', 'output-missing', 'BinDiff finished without writing a result file.')
         if entries != [expected] or expected.is_symlink() or not expected.is_file():
             raise _err('PT-SECONDARY-RUN', 'output-ambiguous', 'BinDiff produced an unexpected set of output '

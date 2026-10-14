@@ -48,6 +48,9 @@ if args == ['--nologo', '--help']:
         text = text.replace('--config', '--konfig')
     sys.stdout.write(text)
     sys.exit(0 if MODE == 'help-exit-0' else 1)
+if MODE == 'usage-exit-0':  # measured: --primary without --secondary prints usage on stdout and exits 0
+    sys.stdout.write(HELP)
+    sys.exit(0)
 out = opts.get('output_dir', '')
 def ident(path):
     with open(path, encoding='utf-8') as handle:
@@ -79,6 +82,23 @@ if MODE == 'wrong-hashes':
     hashes = ('c' * 64, secondary)
 if MODE == 'reversed-hashes':
     hashes = (secondary, primary)
+journal = target + '-journal'
+def write_journal():  # after the database is closed: SQLite deletes a stale journal when it creates a file
+    with open(journal, 'wb') as handle:  # rollback-journal magic, as BinDiff leaves it while writing
+        handle.write(bytes.fromhex('d9d505f920a163d7') + bytes(504))
+if MODE in ('partial-then-hang', 'partial-then-kill'):
+    # Measured with the real BinDiff 8: a kill during the write phase leaves a valid SQLite file with every
+    # table but an empty `function` table (plus the journal). It must never be preserved or imported.
+    build(target, hashes=hashes, functions=[])
+    write_journal()
+    sys.stdout.write('Writing results\n')
+    sys.stdout.flush()
+    if MODE == 'partial-then-hang':
+        time.sleep(120)
+    import signal
+    if hasattr(signal, 'SIGKILL'):
+        os.kill(os.getpid(), signal.SIGKILL)
+    os._exit(137)
 extra = ('CREATE TRIGGER t AFTER INSERT ON file BEGIN DELETE FROM function; END',) if MODE == 'trigger-in-db' else ()
 functions = [] if MODE in ('empty', 'claims-matches-empty-db') else None
 if MODE == 'symlink-output':
@@ -93,6 +113,11 @@ if MODE == 'two-files':
     build(os.path.join(out, 'extra.BinDiff'), hashes=hashes)
 if MODE == 'zero-size':
     open(target, 'wb').close()
+if MODE in ('journal-transient', 'journal-left'):
+    write_journal()
+if MODE == 'journal-transient':  # the guard polls every 50 ms: let it see the journal, then finish cleanly
+    time.sleep(0.4)
+    os.remove(journal)
 matched = 5 if MODE == 'claims-matches-empty-db' else (0 if functions == [] else 2)
 print('matched: %d of 3/3 (primary/secondary, 3/3 non-library)' % matched)
 print('Similarity: 81.2% (Confidence: 95.0%)')

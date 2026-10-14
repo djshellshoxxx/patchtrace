@@ -317,6 +317,112 @@ def test_out_guard(tmp_path):
     assert bindiff_run.out_guard(other) == 'output-unexpected'
 
 
+def test_transient_journal_is_tolerated_while_running(tmp_path):
+    out = tmp_path / 'out'
+    out.mkdir()
+    (out / bindiff_run.EXPECTED_NAME).write_bytes(b'SQLite format 3\x00')
+    (out / f'{bindiff_run.EXPECTED_NAME}-journal').write_bytes(b'\xd9\xd5\x05\xf9')
+    assert bindiff_run.out_guard(out) is None
+    ok, _ = go(tmp_path / 'run', 'journal-transient')
+    assert ok.run.status == 'ok' and len(ok.match_set.matches) == 2
+
+
+def test_journal_left_after_exit_0_is_ambiguous(tmp_path):
+    out, _ = go(tmp_path, 'journal-left')
+    assert out.run.status == 'failed' and out.error.kind == 'output-ambiguous'
+    assert not list((tmp_path / 'raw').rglob('*.BinDiff'))
+
+
+def test_exit_0_with_usage_text_is_output_missing(tmp_path):
+    out, _ = go(tmp_path, 'usage-exit-0')
+    assert out.run.status == 'failed' and out.error.kind == 'output-missing'
+    assert 'usage text' in out.error.message
+
+
+def _spy_import(monkeypatch) -> list:
+    calls: list = []
+    real = bindiff_run.import_bindiff
+
+    def spy(*args, **kwargs):
+        calls.append(args)
+        return real(*args, **kwargs)
+
+    monkeypatch.setattr(bindiff_run, 'import_bindiff', spy)
+    return calls
+
+
+def _cancel_when_partial_output_appears(spy_dir: Path, cancel: threading.Event, seen: list) -> threading.Thread:
+    def watch():
+        deadline = time.monotonic() + 30
+        while time.monotonic() < deadline and not cancel.is_set():
+            runs = [c for c in spy_calls(spy_dir) if c['argv'] not in (['--version'], ['--nologo', '--help'])]
+            if runs:
+                out = Path(runs[0]['cwd']).parent / 'out'
+                if (out / bindiff_run.EXPECTED_NAME).exists() and (out / f'{bindiff_run.EXPECTED_NAME}-journal').exists():
+                    seen.append(sorted(p.name for p in out.iterdir()))
+                    cancel.set()
+                    return
+            time.sleep(0.02)
+    thread = threading.Thread(target=watch, daemon=True)
+    thread.start()
+    return thread
+
+
+def test_cancel_after_partial_output_discards_it_unread(tmp_path, monkeypatch):
+    imported = _spy_import(monkeypatch)
+    cancel, seen = threading.Event(), []
+    watcher = _cancel_when_partial_output_appears(tmp_path / 'bd', cancel, seen)
+    out, _ = go(tmp_path, 'partial-then-hang', cancel=cancel)
+    watcher.join(5)
+    assert seen and seen[0] == [bindiff_run.EXPECTED_NAME, f'{bindiff_run.EXPECTED_NAME}-journal']
+    assert out.run.status == 'cancelled' and out.match_set is None and out.run.output_sha256 is None
+    assert imported == [] and not list(tmp_path.joinpath('raw').rglob('*.BinDiff'))
+    assert not Path(run_calls(tmp_path)[0]['cwd']).parent.exists()
+
+
+def test_timeout_after_partial_output_discards_it_unread(tmp_path, monkeypatch):
+    imported = _spy_import(monkeypatch)
+    out, _ = go(tmp_path, 'partial-then-hang', timeout=3.0)
+    assert out.run.status == 'timeout' and out.match_set is None
+    assert imported == [] and not list(tmp_path.joinpath('raw').rglob('*.BinDiff'))
+    assert not Path(run_calls(tmp_path)[0]['cwd']).parent.exists()
+
+
+def test_abnormal_exit_after_partial_output_discards_it_unread(tmp_path, monkeypatch):
+    imported = _spy_import(monkeypatch)
+    out, _ = go(tmp_path, 'partial-then-kill')
+    assert out.run.status == 'failed' and out.error.kind == 'nonzero-exit' and out.match_set is None
+    if os.name != 'nt':
+        assert 'signal 9' in out.error.message
+    assert imported == [] and not list(tmp_path.joinpath('raw').rglob('*.BinDiff'))
+    assert not Path(run_calls(tmp_path)[0]['cwd']).parent.exists()
+
+
+def test_output_path_over_250_characters_fails_closed_before_spawn(tmp_path):
+    # <workdir>/out/older_vs_newer.BinDiff adds 27 characters to the workdir path; BinDiff's cap is 250.
+    assert bindiff_run.output_path_fits(Path('/tmp/patchtrace-bindiff-x'))
+    assert bindiff_run.output_path_fits(Path('/' + 'd' * 222))
+    assert not bindiff_run.output_path_fits(Path('/' + 'd' * 223))
+    assert not bindiff_run.output_path_fits(Path('/' + 'é' * 120))  # measured in encoded bytes
+    inputs = tmp_path / 'inputs'
+    inputs.mkdir()
+    from patchtrace.secondary.bindiff_inputs import bind_pair
+    pair = bind_pair(accepted(inputs, 'o', OLD), accepted(inputs, 'n', NEW), OLD, NEW)
+    cap = Capability(engine='bindiff', supported=True, version='8', path=str(tmp_path / 'bindiff'),
+                     supports_json=False)
+    deep = tmp_path / ('p' * max(1, 236 - len(str(tmp_path))))
+    try:
+        deep.mkdir()
+    except OSError:  # a host path limit already prevents it; the guard is covered by the pure checks above
+        pass
+    called = []
+    with pytest.raises(SecondaryError) as info:
+        bindiff_run.execute(cap, pair, tmp_path / 'raw', cancel=threading.Event(), timeout_seconds=5,
+                            runner=lambda *a, **k: called.append(a), parent_dir=deep)
+    assert info.value.kind == 'workdir-error' and not called
+    assert not deep.exists() or not list(deep.glob('patchtrace-bindiff-*'))
+
+
 def test_stored_stderr_is_sanitized(tmp_path):
     out, _ = go(tmp_path, 'exit-1-error')
     assert out.run.stderr_tail == sanitize_stderr(out.run.stderr_tail)
