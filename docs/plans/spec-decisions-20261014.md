@@ -16,7 +16,7 @@ Defaults chosen so building is not blocked. Each is reversible before the corres
 
 ## BinDiff (C4)
 - BinDiff is never bundled in the ZIP; explicit absolute path, discovery only pre-fills.
-- `.BinExport` without a 64-hex SHA-256 `executable_id` is refused (orientation integrity); revisit only if real IDA exports force an explicit "unverified" override with a red label.
+- `.BinExport` without a 64-hex SHA-256 `executable_id` is refused by default; an explicit "I confirm this belongs to this artifact" override is allowed and recorded in provenance (same rule as BinExport2 spec).
 - `live-bindiff` workflow is not a required check; a maintainer-generated `.BinExport` pair may be committed only if built from repo-owned synthetic sources.
 
 ## Calibration (C9)
@@ -33,3 +33,9 @@ Defaults chosen so building is not blocked. Each is reversible before the corres
 - Environment allowlist: ship behind a green native Windows run, with a visible `env_passthrough` setting for proxy/custom-JDK users.
 - NVD pacing: consent preview states the expected duration for keyless use.
 - Merged CVE snapshots (H13): use the oldest contributing `retrieved_at` (no contract change).
+
+## BinExport2 (C3)
+- Accept `protobuf` as a core pinned dependency (upb C parser required; pure-Python fallback rejected as a DoS risk); the Fable build agent must re-verify the exact pin and the Windows frozen run.
+- `.BinExport` size cap lowered from 512 MiB to 256 MiB until live data exists.
+- MD5-only/empty `executable_id`: reject by default, explicit confirmation override recorded.
+- Golden files: first, repo-generated synthetic exports; real Ghidra-plugin exports are produced by a CI step on the native Windows runner where Ghidra is already provisioned (**USER** may supply IDA-produced samples later).
