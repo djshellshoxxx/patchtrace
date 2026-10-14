@@ -26,6 +26,7 @@ from .contracts import ErrorCode, SecondaryError
 __all__ = ['AcceptedBinExport', 'BinExportSummary', 'accept_binexport', 'accept_pair', 'worker_argv']
 
 STREAM_LIMIT = 64 * 1024
+DIAGNOSTIC_CHARS = 4000
 TIMEOUT_GRACE = 30.0
 ENV_ALLOWLIST = ('PATH', 'SYSTEMROOT', 'WINDIR', 'TEMP', 'TMP', 'HOME', 'USERPROFILE', 'LANG', 'LC_ALL')
 _CODES = frozenset(get_args(ErrorCode))
@@ -64,7 +65,8 @@ def _sha256(path: Path) -> str:
 
 
 def _tail(text: str) -> str:
-    return ''.join(ch if ch.isprintable() else ' ' for ch in text[-400:])
+    """Sanitised stderr tail for diagnostics: control, format (bidi) and separator characters blanked."""
+    return ''.join(ch if ch.isprintable() else ' ' for ch in text[-DIAGNOSTIC_CHARS:])
 
 
 def _remove(work: Path) -> None:
@@ -139,8 +141,9 @@ def accept_binexport(path: Path, *, artifact_sha256: str, role: Literal['older',
             raise err('PT-SECONDARY-RUN', 'worker_timeout', 'BinExport worker exceeded its time limit')
         if res.returncode not in (0, 20) or not result.is_file():
             reason = 'worker_oom' if _out_of_memory(res, memory) else 'worker_crash'
-            raise err('PT-SECONDARY-RUN', reason, f'BinExport worker failed (exit {res.returncode}): '
-                      f'{_tail(res.stderr_tail)}')
+            error = err('PT-SECONDARY-RUN', reason, f'BinExport worker failed (exit {res.returncode})')
+            error.diagnostics = _tail(res.stderr_tail)  # diagnostics only, never the message (T6)
+            raise error
         doc = _read_result(result, limits)
         if doc.kind == 'error':
             e = doc.error

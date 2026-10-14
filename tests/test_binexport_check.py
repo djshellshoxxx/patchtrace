@@ -186,6 +186,12 @@ def test_instruction_comment_on_operandless_instruction():
     assert ret.mnemonic_index == 1
 
 
+def test_vertex_name_nul_rejected():
+    m = valid()
+    m.call_graph.vertex[0].demangled_name = 'f\x00g'
+    assert failure(m).reason == 'name_invalid'
+
+
 def test_section_boundary():
     m = valid()
     m.section[0].address, m.section[0].size = 2**64 - 0x1000, 0x1000  # ends exactly at 2**64: allowed

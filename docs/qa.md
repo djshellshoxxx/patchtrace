@@ -135,7 +135,7 @@ Acceptance automation added (verified locally on Linux against `python -m patcht
 | `bytearray` child under the cap | Gets `MemoryError`. |
 
 - Linux frozen build: the `_upb/_message.abi3.so` inventory guard passed (412 KiB delta). Frozen smoke: 30/30 PASS, including B1/B2 through the frozen self-spawned worker.
-- Tests added: 8 descriptor, 25 pre-scan, 47 checker (one per reason slug), 26 pipeline/snapshot/identity, 26 isolation, 3 CLI, 9 property/boundary (hypothesis 2000 + 1000 + 150-example runs), 7 fixtures.
+- Tests added: 8 descriptor, 25 pre-scan, 48 checker (one per reason slug), 26 pipeline/snapshot/identity, 27 isolation, 3 CLI, 9 property/boundary (hypothesis 2000 + 1000 + 150-example runs), 7 fixtures.
 - Fuzz: `tools/fuzz_binexport.py`, 60 s random-mutation run: 1.6 M inputs, 0 findings. Atheris was not installed.
 - All goldens are synthetic: 4 files bound to `synthetic_pe()` hashes, with `PROVENANCE.json`. None of this is live-compatibility evidence.
 - Open: the Windows CI run (U7 child behaviour at `ProcessMemoryLimit`, `PeakProcessMemoryUsed`, idle commit of the frozen worker, frozen `PatchTrace.exe` B1/B2, size delta, AV). Also open: real Ghidra/IDA goldens (U1, U3, U5, U6, U9, U12) and the CI workflow steps (`pip check`, pin + upb assertion step, nightly Linux fuzz).

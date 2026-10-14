@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import argparse
 import re
+import sys
 import tempfile
 import threading
 from pathlib import Path
@@ -59,6 +60,8 @@ def _check(args, cancel: threading.Event) -> int:
             code = CANCELLED if exc.code == 'PT-SECONDARY-CANCEL' else (
                 RUNTIME if exc.code == 'PT-SECONDARY-RUN' else ENVIRONMENT)
             suffix = f' [{exc.reason}]' if exc.reason else ''
+            if getattr(exc, 'diagnostics', ''):  # sanitised worker stderr, kept off stdout/JSON
+                print(f'diagnostics: {exc.diagnostics}', file=sys.stderr)
             raise CliError(code, f'{exc}{suffix}') from None
         finally:
             for p in Path(tmp).rglob('*'):  # snapshots are read-only; allow cleanup on Windows

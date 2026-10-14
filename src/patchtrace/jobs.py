@@ -202,7 +202,10 @@ def _posix_prlimit(child, memory_limit_bytes: int) -> None:
     if not hasattr(resource, 'prlimit'):
         return  # applied by preexec_fn
     try:
-        resource.prlimit(child.pid, resource.RLIMIT_AS, (memory_limit_bytes, memory_limit_bytes))
+        _, hard = resource.prlimit(child.pid, resource.RLIMIT_AS)
+        # Never raise an inherited lower hard limit (needs privilege); lowering is always allowed.
+        cap = memory_limit_bytes if hard == resource.RLIM_INFINITY else min(hard, memory_limit_bytes)
+        resource.prlimit(child.pid, resource.RLIMIT_AS, (cap, cap))
     except ProcessLookupError:
         pass  # exited before the cap applied: nothing left to cap
     except OSError:

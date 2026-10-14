@@ -158,7 +158,7 @@ def check_message(msg, limits: BinExportLimits | None = None, budget: Budget | N
             if name:
                 _text_bytes(name, f'vertex.{field}', max_name)
                 if '\x00' in name:
-                    raise _input('meta_field_invalid', f'vertex.{field} contains NUL')
+                    raise _input('name_invalid', f'vertex.{field} contains NUL')
         prev = a
         addrs.append(a)
         types.append(int(t))

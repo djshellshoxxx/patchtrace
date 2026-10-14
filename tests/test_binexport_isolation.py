@@ -152,6 +152,14 @@ def test_fake_worker_results_mapped(monkeypatch, export, private, body, reason):
     assert list(private.iterdir()) == []
 
 
+def test_worker_stderr_is_diagnostics_only(monkeypatch, export, private):
+    """T6: stderr may echo input-derived text, so it never becomes the user-facing message."""
+    fake_worker(monkeypatch, 'sys.stderr.write("SECRET-NAME \\u202e evil\\n"); sys.exit(21)')
+    error = failure(export, private)
+    assert error.reason == 'worker_crash' and 'SECRET' not in error.message and 'SECRET' not in str(error)
+    assert 'SECRET-NAME' in error.diagnostics and '\u202e' not in error.diagnostics
+
+
 def test_fake_worker_error_document_passes_through(monkeypatch, export, private):
     fake_worker(monkeypatch, 'open(req["result"], "w").write(json.dumps({"kind": "error", "error": {"code": '
                              '"PT-SECONDARY-INPUT", "message": "bad", "reason": "parse_failed"}})); sys.exit(20)')
@@ -289,3 +297,19 @@ def test_concurrent_run_process_calls_do_not_cross_pipes_or_leak_threads(tmp_pat
     while threading.active_count() > baseline and time.monotonic() < deadline:
         time.sleep(0.05)
     assert threading.active_count() <= baseline
+
+
+@pytest.mark.skipif(os.name == 'nt', reason='RLIMIT_AS/prlimit are POSIX; Windows uses the Job Object limit')
+def test_memory_cap_never_raises_an_inherited_lower_hard_limit(tmp_path):
+    """A parent already under `ulimit -v` must still start capped children (no EPERM), at the lower limit."""
+    code = ('import os, resource, sys, threading\n'
+            'from pathlib import Path\n'
+            'from patchtrace.jobs import run_process\n'
+            'resource.setrlimit(resource.RLIMIT_AS, (2 << 30, 2 << 30))\n'
+            'r = run_process([sys.executable, "-c", "import resource; print(resource.getrlimit(resource.RLIMIT_AS)[1])"],'
+            ' cwd=Path.cwd(), env=dict(os.environ), cancel=threading.Event(), timeout_seconds=30,'
+            ' memory_limit_bytes=8 << 30)\n'
+            'print(r.returncode, r.log_tail.strip())\n')
+    env = dict(os.environ, PYTHONPATH=str(Path(run.__file__).resolve().parents[2]))
+    out = subprocess.run([PY, '-c', code], capture_output=True, text=True, env=env, cwd=tmp_path, timeout=60)
+    assert out.stdout.split() == ['0', str(2 << 30)], (out.stdout, out.stderr[-500:])
