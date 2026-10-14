@@ -11,6 +11,7 @@ import hashlib
 import importlib.util
 import io
 import json
+import os
 import re
 import shutil
 import stat
@@ -632,6 +633,23 @@ def test_zip_traversal_is_refused(tmp_path, name):
     with pytest.raises(tool.BundleBuildError, match='PT-BUNDLE-ARCHIVE'):
         tool.extract_component(archive, tmp_path / 'dest', strip_top=False)
     assert not (tmp_path / 'evil').exists()
+
+
+def test_zip_backslash_name_is_refused_even_when_zipfile_rewrites_separators(tmp_path, monkeypatch):
+    # Simulate Windows: zipfile then turns '\\' into '/' while reading, which hid the name from the check.
+    archive = tmp_path / 'a.zip'
+    archive.write_bytes(make_zip({'top/a\\b': b'x'}))
+    class WindowsOs:
+        sep, altsep = '\\', '/'
+
+        def __getattr__(self, name):
+            return getattr(os, name)
+
+    shim = WindowsOs()
+    monkeypatch.setattr(zipfile, 'os', shim)
+    assert zipfile.ZipFile(archive).namelist() == ['top/a/b']  # the premise: zipfile hides the backslash
+    with pytest.raises(tool.BundleBuildError, match='PT-BUNDLE-ARCHIVE'):
+        tool.extract_component(archive, tmp_path / 'dest', strip_top=True)
 
 
 @pytest.mark.parametrize('entries', [

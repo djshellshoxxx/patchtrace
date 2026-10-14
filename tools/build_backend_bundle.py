@@ -26,6 +26,7 @@ import py_compile
 import re
 import shutil
 import stat
+import struct
 import subprocess
 import sys
 import tarfile
@@ -439,8 +440,28 @@ def extract_component(archive: Path, dest: Path, *, strip_top: bool) -> dict[str
     return extractor.modes
 
 
+def _reject_raw_backslash_names(zf: zipfile.ZipFile) -> None:
+    """Refuse backslash member names from the raw central directory.
+
+    `zipfile` rewrites os.sep to '/' while reading (ZipInfo.__init__ -> _sanitize_filename), so on Windows a
+    name like 'a\\b' would silently become 'a/b' and pass the name check that Linux hosts apply.
+    """
+    zf.fp.seek(zf.start_dir)
+    directory = zf.fp.read()
+    pos = 0
+    for _ in range(len(zf.infolist())):
+        if directory[pos:pos + 4] != b'PK\x01\x02':
+            break
+        name_len, extra_len, comment_len = struct.unpack_from('<HHH', directory, pos + 28)
+        name = directory[pos + 46:pos + 46 + name_len]
+        if b'\\' in name:
+            _fail('PT-BUNDLE-ARCHIVE', f'unsafe archive member name {name.decode("utf-8", "replace")!r}')
+        pos += 46 + name_len + extra_len + comment_len
+
+
 def _extract_zip(archive: Path, extractor: _Extractor) -> None:
     with zipfile.ZipFile(archive) as zf:
+        _reject_raw_backslash_names(zf)
         for info in zf.infolist():
             relative = extractor.relative(info.filename)
             if relative is None:
