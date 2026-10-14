@@ -15,6 +15,12 @@ LOG_LIMIT = 2 * 1024 * 1024
 # CreateProcessW(bInheritHandles=True). Serialising that window stops a concurrent run_process child from
 # inheriting another run's pipe write end (which would keep that reader from ever seeing EOF).
 _WINDOWS_SPAWN_LOCK = threading.Lock()
+# prlimit()/setrlimit() raise OverflowError (not OSError) beyond the rlim_t range; no real cap is this large.
+MEMORY_LIMIT_CEILING = 1 << 62
+
+
+def _positive_int(value: object) -> bool:
+    return isinstance(value, int) and not isinstance(value, bool) and value >= 1
 
 
 @dataclass(frozen=True)
@@ -236,23 +242,26 @@ def run_process(argv: Sequence[str], *, cwd: Path, env: Mapping[str, str],
     """
     if not argv or not Path(argv[0]).is_absolute():
         raise ValueError('PT-BACKEND: configure an absolute executable path')
-    if timeout_seconds <= 0 or log_limit < 1 or stderr_limit < 1:
+    # `not x > 0` rejects NaN (which never reaches a deadline); a float limit would kill the reader thread.
+    if not timeout_seconds > 0 or not _positive_int(log_limit) or not _positive_int(stderr_limit):
         raise ValueError('PT-BACKEND: timeout and log limit must be positive')
-    if memory_limit_bytes is not None and (isinstance(memory_limit_bytes, bool)
-                                           or not isinstance(memory_limit_bytes, int) or memory_limit_bytes < 1):
+    if memory_limit_bytes is not None and not (_positive_int(memory_limit_bytes)
+                                               and memory_limit_bytes < MEMORY_LIMIT_CEILING):
         raise ValueError('PT-BACKEND: memory limit must be a positive integer')
     if cancel.is_set():
         return ProcessResult(-1, '', 'cancelled')
     if os.name == 'nt':
         child = _windows_process(argv, cwd, env, separate_streams, memory_limit_bytes)
     else:
+        if signal.getsignal(signal.SIGCHLD) == signal.SIG_IGN:
+            # The kernel then reaps children itself and Popen reports every exit status (even a crash) as 0.
+            raise OSError('PT-BACKEND: SIGCHLD is ignored by this process, so child exit statuses would be lost; '
+                          'restore it with signal.signal(signal.SIGCHLD, signal.SIG_DFL)')
         child = subprocess.Popen(list(argv), cwd=cwd, env=dict(env), shell=False,
                                  stdin=subprocess.DEVNULL, stdout=subprocess.PIPE,
                                  stderr=subprocess.PIPE if separate_streams else subprocess.STDOUT,
                                  start_new_session=True, bufsize=0,
                                  preexec_fn=_posix_preexec(memory_limit_bytes))
-        if memory_limit_bytes is not None:
-            _posix_prlimit(child, memory_limit_bytes)
     tail, err_tail = bytearray(), bytearray()
     lock = threading.Lock()
 
@@ -271,10 +280,6 @@ def run_process(argv: Sequence[str], *, cwd: Path, env: Mapping[str, str],
     if separate_streams:
         readers.append(threading.Thread(target=collect, args=(child.stderr, err_tail, stderr_limit),
                                         name='patchtrace-err', daemon=True))
-    for reader in readers:
-        reader.start()
-    started, reason = time.monotonic(), None
-
     def terminate():
         if os.name == 'nt':
             child.kill_tree()
@@ -285,6 +290,13 @@ def run_process(argv: Sequence[str], *, cwd: Path, env: Mapping[str, str],
                 pass
 
     try:
+        # Everything after the spawn is covered by the `finally`: a failed memory cap, a reader thread that
+        # cannot start (thread exhaustion) or an interrupt must not leave the child tree running or its pipes open.
+        if os.name != 'nt' and memory_limit_bytes is not None:
+            _posix_prlimit(child, memory_limit_bytes)
+        for reader in readers:
+            reader.start()
+        started, reason = time.monotonic(), None
         while child.poll() is None:
             if cancel.is_set():
                 reason = 'cancelled'
