@@ -21,6 +21,7 @@ from __future__ import annotations
 
 import email.utils
 import hashlib
+import http.client
 import re
 import threading
 import time
@@ -168,7 +169,7 @@ def _retry_after(value: str | None, now: datetime) -> int | None:
     if value is None:
         return None
     value = value.strip()
-    if value.isdigit():
+    if value.isascii() and value.isdigit() and len(value) < 10:
         return int(value)
     try:
         when = email.utils.parsedate_to_datetime(value)
@@ -297,7 +298,7 @@ def _attempt(url, headers, opener, cancel, clock, deadline, now) -> tuple[bytes,
             response = opener(url, headers, min(CONNECT_TIMEOUT, remaining))
         except TimeoutError:
             raise _Retry(None) from None
-        except OSError:
+        except (OSError, http.client.HTTPException):
             raise EnrichmentError('PT-ENRICH-NETWORK', 'connection failed', recoverable=True) from None
         try:
             status = response.status
@@ -316,7 +317,8 @@ def _attempt(url, headers, opener, cancel, clock, deadline, now) -> tuple[bytes,
             if status != 200:
                 raise EnrichmentError('PT-ENRICH-PROVIDER', f'provider returned HTTP {status}')
             length = response.headers.get('Content-Length')
-            if length is not None and length.strip().isdigit() and int(length) > MAX_RESPONSE_BYTES:
+            digits = length.strip() if length is not None else ''
+            if digits.isascii() and digits.isdigit() and (len(digits) > 12 or int(digits) > MAX_RESPONSE_BYTES):
                 raise EnrichmentError('PT-ENRICH-LIMIT', 'provider response exceeds 4 MiB')
             data = bytearray()
             while True:
@@ -327,7 +329,7 @@ def _attempt(url, headers, opener, cancel, clock, deadline, now) -> tuple[bytes,
                     chunk = response.read(min(_CHUNK, MAX_RESPONSE_BYTES + 1 - len(data)))
                 except TimeoutError:
                     raise _Retry(None) from None
-                except OSError:
+                except (OSError, http.client.HTTPException):
                     raise EnrichmentError('PT-ENRICH-NETWORK', 'connection failed while reading',
                                           recoverable=True) from None
                 if not chunk:

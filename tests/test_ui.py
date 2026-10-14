@@ -417,3 +417,17 @@ def test_setup_persists_manual_private_java_home(window, monkeypatch):
     monkeypatch.setattr(SetupDialog, 'exec', accept)
     window.setup()
     assert window.backend_config().java_home == '/custom/Java Home'
+
+
+def test_new_project_dialog_rejects_directory_that_is_a_file(qtbot, tmp_path):
+    from patchtrace.ui import NewProjectDialog
+    binary = tmp_path / 'a.bin'
+    binary.write_bytes(b'MZ')
+    dialog = NewProjectDialog()
+    qtbot.addWidget(dialog)
+    dialog.name.setText('p')
+    dialog.older.setText(str(binary))
+    dialog.newer.setText(str(binary))
+    dialog.root.setText(str(binary))
+    dialog.accept()
+    assert 'absent or empty' in dialog.error.text()

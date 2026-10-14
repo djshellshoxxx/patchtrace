@@ -111,3 +111,26 @@ def test_open_project_artifact_and_reject_traversal(tmp_path):
     with pytest.raises(ArtifactBytesError) as exc:
         VerifiedArtifactReader.open_artifact(bad, tmp_path)
     assert exc.value.code == 'unreadable'
+
+
+def test_in_place_edit_with_restored_mtime_is_detected(tmp_path):
+    import hashlib
+    import os
+    import sys
+
+    import pytest
+
+    from patchtrace.artifact_bytes import ArtifactBytesError, VerifiedArtifactReader
+    if sys.platform == 'win32':
+        pytest.skip('Windows st_ctime is creation time; documented residual risk')
+    path = tmp_path / 'a.bin'
+    path.write_bytes(b'AAAA')
+    stamp = path.stat().st_mtime_ns
+    reader = VerifiedArtifactReader.open_path(path, hashlib.sha256(b'AAAA').hexdigest())
+    with path.open('r+b') as handle:
+        handle.write(b'BBBB')
+    os.utime(path, ns=(stamp, stamp))
+    with pytest.raises(ArtifactBytesError) as info:
+        reader.read(0, 4)
+    assert info.value.code == 'artifact_changed'
+    reader.close()

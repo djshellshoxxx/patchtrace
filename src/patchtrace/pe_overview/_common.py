@@ -42,10 +42,14 @@ class Ctx:
             return b''
         return self.reader.read(offset, min(length, MAX_STRUCT_READ))
 
-    def cstring(self, offset: int) -> tuple[str, bool] | None:
-        """Bounded NUL-terminated string at a file offset: (text, truncated) or None if unreadable."""
+    def cstring(self, offset: int, limit: int | None = None) -> tuple[str, bool] | None:
+        """Bounded NUL-terminated string at a file offset: (text, truncated) or None if unreadable.
+
+        `limit` bounds the read to the bytes that are contiguously mapped at the string's RVA,
+        so a string cannot run into unrelated file data after its section ends.
+        """
         cap = self.limits.max_name_length
-        data = self.read(offset, cap + 1)
+        data = self.read(offset, cap + 1 if limit is None else min(cap + 1, limit))
         if not data:
             return None
         end = data.find(b'\0')

@@ -20,11 +20,18 @@ class ExportError(ValueError):
     pass
 
 
-def _redact(text: str) -> str:
+class _Verbatim(str):
+    """Decompiled code, assembly or evidence text: credentials are redacted but paths and URLs are
+    not, because rewriting `a /b; // c:/x` would make exported evidence disagree with the source."""
+
+
+def _redact(text: str, verbatim: bool = False) -> str:
     text = re.sub(r'(?i)\b(?:authorization\s*:\s*bearer|bearer)\s+[^\s,;"\']+', '[REDACTED]', text)
     text = re.sub(r'(?i)\b(?:api[_-]?key|password|secret|access[_-]?token)\s*[:=]\s*["\']?[^\s,;"\']+',
                   '[REDACTED]', text)
     text = re.sub(r'\bsk-[A-Za-z0-9_-]{8,}', '[REDACTED]', text)
+    if verbatim:
+        return text
     # Windows paths may contain spaces; keep consuming words while a later separator stays in the token.
     text = re.sub(r'(?i)(?:[a-z]:[\\/]|\\\\)[^\s<>"\']*(?:[ \t]+[^\s<>"\'\\/]*[\\/][^\s<>"\']*)*',
                   '[PATH REDACTED]', text)
@@ -34,6 +41,8 @@ def _redact(text: str) -> str:
 
 
 def _clean(value):
+    if isinstance(value, _Verbatim):
+        return _redact(str(value), verbatim=True)
     if isinstance(value, str):
         return _redact(value)
     if isinstance(value, list):
@@ -100,6 +109,19 @@ def _ranking_section(project: ComparisonProject, enrichment: dict | None, select
             'entries': entries}
 
 
+def _annotation(annotation, include_code: bool) -> dict:
+    """A match override embeds full previous matches (code, assembly); without code export keep only ids."""
+    data = annotation.model_dump()
+    if annotation.kind == 'match-override' and not include_code:
+        try:
+            record = json.loads(annotation.text)
+            data['text'] = json.dumps({k: record.get(k) for k in ('category', 'reason', 'older_ids', 'newer_ids')},
+                                      ensure_ascii=False, sort_keys=True)
+        except (ValueError, AttributeError):
+            data['text'] = ''
+    return data
+
+
 def _snapshot(project: ComparisonProject, include_code: bool, include_notes: bool,
               finding_ids: list[str] | None, enrichment: dict | None = None) -> dict:
     project = ComparisonProject.model_validate(project.model_dump())
@@ -122,8 +144,8 @@ def _snapshot(project: ComparisonProject, include_code: bool, include_notes: boo
                 function_ids.add(f.id)
                 function = f.model_dump(exclude={'code', 'assembly', 'metadata'})
                 if include_code:
-                    function['code'] = f.code
-                    function['assembly'] = f.assembly
+                    function['code'] = _Verbatim(f.code)
+                    function['assembly'] = _Verbatim(f.assembly)
                 data[side].append(function)
         matches.append(data)
     interpretations = []
@@ -138,7 +160,10 @@ def _snapshot(project: ComparisonProject, include_code: bool, include_notes: boo
         for ref in sorted(run.context.evidence, key=lambda e: e.id):
             if finding_ids is not None and ref.id not in citations:
                 continue
-            context['evidence'].append(ref.model_dump(exclude=set() if include_code else {'text'}))
+            item = ref.model_dump(exclude=set() if include_code else {'text'})
+            if isinstance(item.get('text'), str):
+                item['text'] = _Verbatim(item['text'])
+            context['evidence'].append(item)
         # Omission strings describe untrusted input names and may contain source/code fragments.
         context['omitted'] = [f'{len(run.context.omitted)} omitted or unavailable context entries']
         context['stale'] = run.context.stale or run.context.revision != project.revision
@@ -170,7 +195,7 @@ def _snapshot(project: ComparisonProject, include_code: bool, include_notes: boo
                           for r in sorted(project.runs, key=lambda r: r.id)],
         'matches': matches, 'interpretations': interpretations,
         'change_ranking': _ranking_section(project, enrichment, selected_matches),
-        'annotations': [a.model_dump() for a in sorted(project.annotations, key=lambda a: a.id)
+        'annotations': [_annotation(a, include_code) for a in sorted(project.annotations, key=lambda a: a.id)
                         if include_notes and (finding_ids is None or a.target_id in relevant)],
     }
     return _clean(result)
@@ -178,7 +203,7 @@ def _snapshot(project: ComparisonProject, include_code: bool, include_notes: boo
 
 def _markdown_escape(value: str) -> str:
     value = html.escape(value, quote=False)
-    return re.sub(r'([\\`*_{}\[\]()#+.!|>-])', r'\\\1', value)
+    return re.sub(r'([\\`*_{}\[\]()#+.!|>~:-])', r'\\\1', value)
 
 
 def _cell(value: str) -> str:

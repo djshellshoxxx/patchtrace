@@ -161,3 +161,29 @@ def test_rank_with_cache_and_cache_commands(project, capsys, tmp_path):
 
 def test_refresh_without_cache_dir_is_invalid(project, capsys):
     assert run(['rank', str(project), '--refresh', '--dry-run'], capsys)[0] == 2
+
+
+def test_unknown_first_argument_is_a_cli_usage_error_not_a_gui_launch(monkeypatch, capsys):
+    import sys
+
+    from patchtrace.__main__ import main
+    monkeypatch.setattr(sys, 'argv', ['patchtrace', 'rnak', 'x'])
+    assert main() == 2
+
+
+def test_rank_limit_rejects_negative(capsys):
+    from patchtrace import cli
+    assert cli.main(['rank', '--limit', '-1', 'x']) == 2
+
+
+def test_unexpected_exception_maps_to_runtime_exit_with_json(monkeypatch, capsys):
+    import json
+
+    from patchtrace import cli
+
+    def boom(args, cancel):
+        raise ValueError('boom')
+    monkeypatch.setitem(cli.HANDLERS, 'rank', boom)
+    assert cli.main(['rank', '--json', 'x']) == 3
+    document = json.loads(capsys.readouterr().out)
+    assert document['status'] == 'failed' and 'boom' in document['error']

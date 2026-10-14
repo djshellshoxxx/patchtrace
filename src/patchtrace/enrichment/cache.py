@@ -207,9 +207,9 @@ def _new_owner() -> dict:
 
 
 def _check_args(stage: str, key: str) -> None:
-    if not isinstance(stage, str) or not _STAGE_RE.match(stage) or stage in _RESERVED:
+    if not isinstance(stage, str) or not _STAGE_RE.fullmatch(stage) or stage in _RESERVED:
         raise _config_error('invalid cache stage name')
-    if not isinstance(key, str) or not _KEY_RE.match(key):
+    if not isinstance(key, str) or not _KEY_RE.fullmatch(key):
         raise _config_error('cache key must be lowercase SHA-256 hex')
 
 

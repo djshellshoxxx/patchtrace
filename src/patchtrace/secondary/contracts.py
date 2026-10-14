@@ -108,7 +108,10 @@ def to_milli(value: object, label: str) -> tuple[int, str]:
     """Upstream double → (integer milli, upstream text). Rejects bools, NaN and out-of-range."""
     if isinstance(value, bool) or not isinstance(value, int | float):
         raise SecondaryError('PT-SECONDARY-INPUT', f'{label} is not a number')
-    number = float(value)
+    try:
+        number = float(value)
+    except OverflowError:
+        raise SecondaryError('PT-SECONDARY-INPUT', f'{label} is outside 0..1') from None
     if not math.isfinite(number) or not 0.0 <= number <= 1.0:
         raise SecondaryError('PT-SECONDARY-INPUT', f'{label} {value!r} is outside 0..1')
     return round(number * 1000), repr(value)

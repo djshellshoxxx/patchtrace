@@ -410,3 +410,20 @@ def test_byte_diff_mask_capped_at_page_size():
     assert byte_diff_mask(b'a' * MAX_PAGE_SIZE, b'a' * MAX_PAGE_SIZE) == ()
     with pytest.raises(ValueError):
         byte_diff_mask(b'a' * (MAX_PAGE_SIZE + 1), b'')
+
+
+def test_page_past_end_of_shorter_side_is_not_clamped_to_its_last_page(tmp_path):
+    import hashlib
+
+    from patchtrace.artifact_bytes import VerifiedArtifactReader
+    from patchtrace.raw_view import build_side
+    from patchtrace.representations import Representation
+    short, long_ = b'A' * 100, b'B' * 100_000
+    paths = []
+    for name, data in (('s.bin', short), ('l.bin', long_)):
+        path = tmp_path / name
+        path.write_bytes(data)
+        paths.append((path, hashlib.sha256(data).hexdigest()))
+    with VerifiedArtifactReader.open_path(*paths[0]) as reader:
+        side = build_side('older', reader, None, None, 'whole', Representation.HEX, 1, 4096)
+    assert side.page is None and 'past the end' in side.message

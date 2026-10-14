@@ -244,3 +244,10 @@ def test_run_requests_separate_streams(tmp_path):
     run_rzdiff(cap(), older, newer, OLD, NEW, env={}, cancel=threading.Event(),
                runner=runner_returning(FIXTURE.read_text(), seen=seen))
     assert seen[0][1]['separate_streams'] is True
+
+
+@pytest.mark.parametrize('over', [{'type': ['COMPLETE']}, {'type': {'a': 1}}, {'similarity': 10 ** 400}],
+                         ids=['type-array', 'type-object', 'huge-int'])
+def test_malformed_entries_raise_structured_error(over):
+    with pytest.raises(SecondaryError):
+        parse_output(variant(**over), '0.9.1', OLD, NEW)

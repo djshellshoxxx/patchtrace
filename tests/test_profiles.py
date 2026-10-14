@@ -215,3 +215,14 @@ def test_profile_model_is_frozen():
     with pytest.raises(ValueError):
         DEFAULT_PROFILE.name = 'x'  # type: ignore[misc]
     assert isinstance(DEFAULT_PROFILE, AnalysisProfile)
+
+
+def test_profile_store_rejects_path_traversal_names(tmp_path):
+    from patchtrace.enrichment.profiles import ProfileError, ProfileStore
+    victim = tmp_path / 'victim.json'
+    victim.write_text('{}')
+    store = ProfileStore(tmp_path / 'profiles')
+    for bad in ('../victim', 'a/b', '..', 'x\n'):
+        with pytest.raises(ProfileError):
+            store.delete(bad)
+    assert victim.exists()

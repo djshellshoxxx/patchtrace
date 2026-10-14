@@ -405,3 +405,17 @@ def test_edit_group_key_shared_contract():
     assert sorted(s.detector for s in sig) == ['BND', 'ERR'] and {s.group_key for s in sig} == {expected}
     assert edit_group_key(v, 0, 'newer', ['if  (len <= idx)   {', '\treturn -1;', '}  ']) == expected
     assert edit_group_key(v, 1, 'newer', ['if (len <= idx) {', 'return -1;', '}']) != expected
+
+
+def test_leading_zero_and_octal_like_literals_do_not_crash_detectors():
+    result = detect(view(fn('return 0;'), fn('if (len > 8) {', 'return 01;', '}', 'return 0;')))
+    assert result is not None
+    result = detect(view(fn('return 0;'), fn('if (len > 8) {', 'return -08;', '}', 'return 0;')))
+    assert result is not None
+
+
+def test_comment_only_and_blank_hunks_are_not_semantic_edits():
+    old = fn('if (len > 8) {', 'return -1;', '}', 'return 0;')
+    new = fn('if (len > 8) {', '/* WARNING: note */', '', 'return -1;', '}', 'return 0;')
+    v = view(old, new)
+    assert detect(v).signals == ()

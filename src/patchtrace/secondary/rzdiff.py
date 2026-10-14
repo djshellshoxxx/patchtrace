@@ -115,7 +115,7 @@ def parse_output(stdout: str, version: str, older_sha256: str, newer_sha256: str
     for index, entry in enumerate(document):
         if not isinstance(entry, dict) or set(entry) != ENTRY_KEYS:
             raise _fail(f'entry {index}: expected keys similarity, type, original, modified')
-        if entry['type'] not in TYPES:
+        if not isinstance(entry['type'], str) or entry['type'] not in TYPES:
             raise _fail(f'entry {index}: unknown type {entry["type"]!r}')
         try:
             milli, text = to_milli(entry['similarity'], f'entry {index}: similarity')

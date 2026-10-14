@@ -87,7 +87,7 @@ def main():
                                      'zip', root_dir=root / 'dist', base_dir='PatchTrace'))
     with archive.open('rb') as stream:
         digest = hashlib.file_digest(stream, 'sha256').hexdigest()
-    archive.with_suffix('.zip.sha256').write_text(f'{digest}  {archive.name}\n', encoding='ascii')
+    archive.with_suffix('.zip.sha256').write_bytes(f'{digest}  {archive.name}\n'.encode('ascii'))
     print(archive)
 
 

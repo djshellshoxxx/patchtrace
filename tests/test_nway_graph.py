@@ -226,3 +226,16 @@ def test_malformed_raw_matches_rejected():
     with pytest.raises(NwayError, match='target'):
         extract_chains(H[:3], [p.build() for p in straight()],
                        raw_matches=[{'address_matches': {'10': [['zz', []]]}}, None])
+
+
+def test_overridden_engine_edge_does_not_create_a_second_chain_through_the_node():
+    from patchtrace.nway.graph import extract_chains
+    from tests.test_nway_support import HASHES as H
+    from tests.test_nway_support import PairBuilder, fn
+    pairs = [PairBuilder(H[0], H[1]), PairBuilder(H[1], H[2])]
+    pairs[0].one(fn('a', 0x10), fn('n', 0x20), match_types=('NameParamHash',))
+    pairs[0].one(fn('b', 0x11), fn('n', 0x20), match_types=('manual',), manual=True)
+    pairs[1].one(fn('n', 0x20), fn('z', 0x30))
+    chains, _ = extract_chains(H[:3], [p.build() for p in pairs])
+    through_n = [c for c in chains if any(n.name == 'n' for n in c.nodes)]
+    assert len(through_n) == 1 and all(e.manual for e in through_n[0].edges[:1])

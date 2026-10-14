@@ -28,6 +28,13 @@ class _Parser(argparse.ArgumentParser):
         raise CliError(ENVIRONMENT, f'{self.prog}: {message}')
 
 
+def _non_negative(value: str) -> int:
+    number = int(value)
+    if number < 0:
+        raise argparse.ArgumentTypeError('must be 0 or greater')
+    return number
+
+
 def _parser() -> argparse.ArgumentParser:
     parser = _Parser(prog='patchtrace', description='PatchTrace headless enrichment commands. '
                      'Launch without arguments to open the desktop.')
@@ -55,7 +62,7 @@ def _parser() -> argparse.ArgumentParser:
     rank.add_argument('--run', help='analysis run ID (default: latest completed)')
     rank.add_argument('--weights', type=Path, help='JSON object of detector weights (integers 0..100)')
     rank.add_argument('--disable', action='append', default=[], metavar='DETECTOR')
-    rank.add_argument('--limit', type=int, default=0, help='show at most N entries (0 = all)')
+    rank.add_argument('--limit', type=_non_negative, default=0, help='show at most N entries (0 = all)')
     rank.add_argument('--dry-run', action='store_true', help='do not persist results in the project')
 
     flags = common(sub.add_parser('flags', help='list WIL feature-flag transitions'))
@@ -798,3 +805,10 @@ def main(argv: list[str] | None = None) -> int:
         return CANCELLED
     except SystemExit as exc:  # --help
         return int(exc.code or 0)
+    except Exception as exc:  # contract: unexpected failures are runtime errors (3), never a bare traceback
+        print(f'error: {type(exc).__name__}: {exc}', file=sys.stderr)
+        if args is not None and getattr(args, 'json', False):
+            sys.stdout.write(json.dumps({'contract': CLI_CONTRACT, 'command': _command_name(args), 'status': 'failed',
+                                         'result': None, 'warnings': [], 'error': f'{type(exc).__name__}: {exc}'},
+                                        sort_keys=True) + '\n')
+        return RUNTIME

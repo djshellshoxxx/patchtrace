@@ -139,7 +139,8 @@ class ProjectService:
         # A fresh owned path also protects against malicious caller-supplied run IDs/path traversal.
         from uuid import UUID
         try:
-            UUID(run.id)
+            if str(UUID(run.id)) != run.id:
+                raise ValueError(run.id)
         except ValueError as exc:
             raise ValueError('PT-SCHEMA: analysis run ID must be a UUID') from exc
         relative = f'runs/{run.id}/raw/result.ghidriff.json'

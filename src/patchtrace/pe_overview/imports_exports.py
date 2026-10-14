@@ -7,15 +7,38 @@ from ._common import Ctx
 from .models import ExportsInfo, ImportDll, ImportsInfo, SectionMap
 
 
-def _u32(ctx: Ctx, smap: SectionMap, rva: int) -> int | None:
-    off = smap.rva_to_offset(rva)
-    data = ctx.read(off, 4) if off is not None else b''
-    return struct.unpack('<I', data)[0] if len(data) == 4 else None
+def _span(smap: SectionMap, rva: int, length: int) -> int | None:
+    """File offset of `length` bytes at `rva`, only if the whole span is one contiguous backed range."""
+    ranges = smap.rva_to_file_ranges(rva, length)
+    if ranges and len(ranges) == 1 and ranges[0].length == length:
+        return ranges[0].file_offset
+    return None
+
+
+def _readable(smap: SectionMap, rva: int, want: int) -> int:
+    """Largest n <= want such that [rva, rva+n) is contiguously backed (0 if none)."""
+    if _span(smap, rva, want) is not None:
+        return want
+    low, high = 0, want - 1
+    while low < high:
+        mid = (low + high + 1) // 2
+        if _span(smap, rva, mid) is not None:
+            low = mid
+        else:
+            high = mid - 1
+    return low
 
 
 def _name_at(ctx: Ctx, smap: SectionMap, rva: int) -> tuple[str, bool] | None:
-    off = smap.rva_to_offset(rva)
-    return ctx.cstring(off) if off is not None else None
+    available = _readable(smap, rva, ctx.limits.max_name_length + 1)
+    if not available:
+        return None
+    return ctx.cstring(_span(smap, rva, available), available)
+
+
+def _read_span(ctx: Ctx, smap: SectionMap, rva: int, length: int) -> bytes:
+    off = _span(smap, rva, length)
+    return ctx.read(off, length) if off is not None else b''
 
 
 def parse_imports(ctx: Ctx, smap: SectionMap, rva: int, plus: bool) -> ImportsInfo | None:
@@ -34,8 +57,7 @@ def parse_imports(ctx: Ctx, smap: SectionMap, rva: int, plus: bool) -> ImportsIn
             ctx.warn('import_dlls_over_cap', f'more than {lim.max_import_dlls} import descriptors; stopped')
             truncated = True
             break
-        off = smap.rva_to_offset(rva + index * 20)
-        raw = ctx.read(off, 20) if off is not None else b''
+        raw = _read_span(ctx, smap, rva + index * 20, 20)
         if len(raw) < 20:
             ctx.warn('import_rva_out_of_file', 'import descriptor table is not (fully) backed by file data')
             if index == 0:
@@ -74,8 +96,7 @@ def parse_imports(ctx: Ctx, smap: SectionMap, rva: int, plus: bool) -> ImportsIn
                 ctx.warn('import_names_over_cap', f'more than {lim.max_total_names} imported names in total')
                 dll_trunc = truncated = True
                 break
-            toff = smap.rva_to_offset(thunk_rva + count * entry)
-            traw = ctx.read(toff, entry) if toff is not None else b''
+            traw = _read_span(ctx, smap, thunk_rva + count * entry, entry)
             if len(traw) < entry:
                 ctx.warn('import_rva_out_of_file', 'an import thunk table is not backed by file data')
                 dll_trunc = True
@@ -85,8 +106,14 @@ def parse_imports(ctx: Ctx, smap: SectionMap, rva: int, plus: bool) -> ImportsIn
                 break
             if value & ordinal_flag:
                 funcs.append(f'#{value & 0xFFFF}')
+            elif value >> 31:
+                # PE32+ requires bits 62..31 of a by-name thunk to be zero; masking would show another RVA's name.
+                ctx.warn('import_thunk_reserved_bits', f'import thunk {value:#x} has reserved high bits set')
+                funcs.append(f'<invalid thunk {value:#x}>')
+                dll_trunc = True
+                break
             else:
-                name_ptr = value & 0x7FFFFFFF
+                name_ptr = value
                 if name_ptr in seen_names:
                     ctx.warn('import_name_pointer_loop', 'repeated import name pointer; stopped')
                     dll_trunc = True
@@ -106,8 +133,7 @@ def parse_imports(ctx: Ctx, smap: SectionMap, rva: int, plus: bool) -> ImportsIn
 
 def parse_exports(ctx: Ctx, smap: SectionMap, rva: int) -> ExportsInfo | None:
     lim = ctx.limits
-    off = smap.rva_to_offset(rva)
-    raw = ctx.read(off, 40) if off is not None else b''
+    raw = _read_span(ctx, smap, rva, 40)
     if len(raw) < 40:
         ctx.warn('export_rva_out_of_file', 'export directory is not backed by file data')
         return None
@@ -127,8 +153,7 @@ def parse_exports(ctx: Ctx, smap: SectionMap, rva: int) -> ExportsInfo | None:
     while i < to_read:
         ctx.check()
         batch = min(1024, to_read - i)
-        toff = smap.rva_to_offset(aon + i * 4)
-        traw = ctx.read(toff, batch * 4) if toff is not None else b''
+        traw = _read_span(ctx, smap, aon + i * 4, _readable(smap, aon + i * 4, batch * 4) // 4 * 4)
         if len(traw) < 4:
             ctx.warn('export_rva_out_of_file', 'export name pointer table is not backed by file data')
             truncated = True

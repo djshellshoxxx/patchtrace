@@ -42,3 +42,38 @@ def test_markdown_ranking_cell_cannot_break_row():
     from patchtrace.reports import _cell
     assert '\n' not in _cell('evil\n## heading\r\n| x |')
     assert _cell('a | b').count('|') == _cell('a | b').count('\\|')
+
+
+def _override_export(tmp_path, include_code):
+    import json
+
+    from patchtrace.reports import export_project
+    from patchtrace.sample import create_sample
+    service = create_sample(tmp_path / 'p')
+    match = next(m for m in service.project.matches if m.category == 'modified' and m.newer[0].name == 'read_item')
+    service.correct_match(match.id, [match.older[0].id], [match.newer[0].id], 'modified', 'test reason')
+    out = tmp_path / 'r.json'
+    export_project(service.project, 'json', out, include_code=include_code)
+    return json.loads(out.read_text()), service
+
+
+def test_code_free_export_omits_code_embedded_in_match_override(tmp_path):
+    data, service = _override_export(tmp_path, False)
+    text = str(data)
+    assert 'return buffer[index]' not in text and 'previous_matches' not in text
+    assert 'test reason' in text
+    assert 'previous_matches' in service.project.annotations[-1].text  # revert data stays in the project
+
+
+def test_code_export_keeps_code_text_verbatim(tmp_path):
+    from patchtrace.reports import _clean, _Verbatim
+    source = 'x = a /b; /* note */ // c:/foo http://h/p'
+    assert _clean({'code': _Verbatim(source)})['code'] == source
+    assert '[PATH REDACTED]' in _clean({'name': source})['name']
+    assert _clean(_Verbatim('password=hunter2 ok')) == '[REDACTED] ok'
+
+
+def test_redact_log_hides_whole_authorization_value():
+    from patchtrace.diagnostics import redact_log
+    for line in ('Authorization: Token abcdefghijk123', 'Authorization: ApiKey abc123def456'):
+        assert redact_log(line) == 'Authorization: [redacted]'

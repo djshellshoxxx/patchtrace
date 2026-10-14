@@ -34,7 +34,7 @@ def main() -> int:
     with archive.open('rb') as stream:
         digest = hashlib.file_digest(stream, 'sha256').hexdigest()
     sidecar = archive.with_suffix(archive.suffix + '.sha256')
-    sidecar.write_text(f'{digest}  {archive.name}\n', encoding='ascii')
+    sidecar.write_bytes(f'{digest}  {archive.name}\n'.encode('ascii'))
     print(f'Packed {archive.name} SHA-256 {digest}')
     print('Not a full runtime acceptance test; test in fresh disconnected Windows first.')
     return 0
