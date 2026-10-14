@@ -2,11 +2,14 @@
 
 History is append-only per save but pruned in the same transaction (SPEC-07h H2): the newest
 HISTORY_KEEP rows and at most HISTORY_MAX_BYTES of payload are kept; the current snapshot and the
-newest snapshot of every revision (revision-bump snapshots) are never pruned.
+newest snapshot of every revision (revision-bump snapshots) are never pruned. No history row is
+deleted before a re-opened, integrity-checked `backups/project-pre-history-prune-*` backup exists
+(`verified_backup.py`); when it cannot be made, the save still commits and every row is kept.
 """
 from __future__ import annotations
 
 import json
+import logging
 import math
 import os
 import shutil
@@ -17,6 +20,7 @@ import tempfile
 from pathlib import Path
 from uuid import uuid4
 
+from . import verified_backup
 from .ingestion import file_fingerprint, safe_path, sha256_file, verify_artifact
 from .models import ComparisonProject, now
 
@@ -24,6 +28,8 @@ SCHEMA_VERSION = 1
 MAX_SNAPSHOT_BYTES = 256 * 1024 * 1024
 HISTORY_KEEP = 100
 HISTORY_MAX_BYTES = 512 * 1024 * 1024
+HISTORY_BACKUP_LABEL = 'history-prune'
+_HISTORY_STATS = 'SELECT COUNT(*), MAX(sequence) FROM history'
 
 
 def strict_json(text: str) -> dict:
@@ -235,6 +241,9 @@ class ProjectStore:
         self.connection = None
         self.lock = None
         self._verified = {}
+        self.project_id: str | None = None  # known after the first load/save; never changes for a database
+        self._prune_deferred = False
+        self._prune_blocked = False  # a pre-prune backup failed in this session: keep every row
         if create:
             self.root.mkdir(parents=True, exist_ok=True)
         if not self.root.is_dir():
@@ -323,6 +332,7 @@ class ProjectStore:
         if len(payload.encode()) > MAX_SNAPSHOT_BYTES:
             raise ValueError('PT-STORAGE: project snapshot exceeds 256 MiB')
         sha = hashlib.sha256(payload.encode()).hexdigest()
+        self._prune_deferred = False
         try:
             with self.connection:
                 self.connection.execute('BEGIN IMMEDIATE')
@@ -340,13 +350,36 @@ class ProjectStore:
                 self.connection.execute('INSERT INTO current_snapshot(singleton,payload,sha256) VALUES(1,?,?) '
                                         'ON CONFLICT(singleton) DO UPDATE SET payload=excluded.payload, '
                                         'sha256=excluded.sha256', (payload, sha))
-                self._prune_history(sha)
+                self._prune_history(sha, validated.id)
         except sqlite3.Error as exc:
             raise ValueError('PT-STORAGE: project save failed; prior snapshot retained') from exc
+        self.project_id = validated.id
+        if self._prune_deferred:
+            self._deferred_prune(sha, validated.id)
         return validated
 
-    def _prune_history(self, current_sha: str) -> None:
-        """Bound the history table inside the caller's transaction (oldest rows first)."""
+    def _deferred_prune(self, current_sha: str, project_id: str) -> None:
+        """First prune of a session without a trusted backup (SPEC-07h H2): the save is committed; take and
+        verify the backup outside any transaction, then prune in a second transaction. Any failure keeps
+        every history row; a failed backup is not retried in this session (it copies the whole database)."""
+        try:
+            verified_backup.ensure_verified_backup(
+                self.root, self.connection, HISTORY_BACKUP_LABEL, project_id=project_id,
+                compare=(_HISTORY_STATS,), require_tables=('history',))
+        except verified_backup.BackupError as exc:
+            self._prune_blocked = True
+            logging.getLogger(__name__).warning('History not pruned; every row kept (pre-prune backup: %s)', exc)
+            return
+        try:
+            with self.connection:
+                self.connection.execute('BEGIN IMMEDIATE')
+                self._prune_history(current_sha, project_id)
+        except sqlite3.Error as exc:
+            logging.getLogger(__name__).warning('History prune failed; every row kept (%s)', type(exc).__name__)
+
+    def _prune_history(self, current_sha: str, project_id: str | None = None) -> None:
+        """Bound the history table inside the caller's transaction (oldest rows first). Deletes only while
+        a verified pre-prune backup is trusted; otherwise flags the prune as deferred and deletes nothing."""
         rows = self.connection.execute(
             'SELECT sequence,revision,sha256,length(CAST(payload AS BLOB)) FROM history '
             'ORDER BY sequence DESC').fetchall()
@@ -376,6 +409,12 @@ class ProjectStore:
                 if sequence not in hard and sequence not in gone:
                     delete.append(sequence)
                     total -= size
+        if not delete or self._prune_blocked:
+            return
+        if verified_backup.trusted_backup(self.root, HISTORY_BACKUP_LABEL, project_id=project_id,
+                                          require_tables=('history',)) is None:
+            self._prune_deferred = True
+            return
         for start in range(0, len(delete), 500):
             chunk = delete[start:start + 500]
             self.connection.execute(f'DELETE FROM history WHERE sequence IN ({",".join("?" * len(chunk))})', chunk)
@@ -392,6 +431,7 @@ class ProjectStore:
                 raise ValueError('PT-STORAGE: project snapshot hash failed')
             project = validate_project(ComparisonProject.model_validate(strict_json(payload)))
             self._verify_files(project)
+            self.project_id = project.id
             interrupted = [run for run in project.runs if run.status in {'queued', 'running'}]
             for run in interrupted:
                 run.status = 'failed'

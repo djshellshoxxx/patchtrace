@@ -95,3 +95,7 @@ Every substantial future module must be added here before implementation. UI mus
 | unified pipeline | src/patchtrace/unified/{pipeline,worker,cli,read_model}.py | stage orchestration, hidden `_worker`, `unified` CLI verbs, Qt-free view model | all unified modules | planned, S0b/S4 |
 | unified UI | src/patchtrace/ui_unified.py | navigator view switch + dock tab in the single MainWindow; threads per C6 rules | Qt, read_model | planned, S4 |
 | prerequisites | jobs.py (spawn lock), nway/graph.py (`EXTERNAL:` keys) | latent defects found while grounding SPEC-31 | - | planned, P1/P2 |
+## Phase D track B hardening (2026-10-14)
+| Module | File | Responsibility | Depends on | Tests |
+|---|---|---|---|---|
+| verified backup | verified_backup.py | SPEC-07h H1/H2 amendment: `write_verified_backup` (backup API -> `.part` -> close -> read-only re-open -> `integrity_check` + identity queries -> rename), `find_verified_backup`/`trusted_backup` (read-only `quick_check`, project id, required table; verdict cached per process by path+size+mtime), `ensure_verified_backup`; used before every history prune and enrichment retention/`make_room`/engine-run deletion | stdlib, ingestion.safe_path | `tests/test_prune_backup.py` |
