@@ -11,7 +11,7 @@ from pathlib import Path
 import pytest
 
 from patchtrace.enrichment.storage import KINDS, EnrichmentStore, Guard
-from patchtrace.intelligence.contracts import IntelError
+from patchtrace.intelligence.contracts import ArtifactIdentity, IntelError
 from patchtrace.intelligence.storage import FACTS_KIND, SOURCE_KIND, AdvisoryStore
 from patchtrace.service import ProjectService
 
@@ -140,3 +140,35 @@ def test_facts_sidecar_is_deterministic(service, tmp_path):
         path = f'intelligence/csaf/facts/{first.facts.facts_id}.json'
         assert (service.root / path).read_bytes() == (other.root / path).read_bytes()
     assert first.facts == second.facts
+
+
+# ---- audit C ------------------------------------------------------------------------------------------------------
+
+def test_c21_a_facts_row_pointing_at_another_sources_facts_is_never_served(service):
+    store = store_for(service)
+    first = add(store, REV1)
+    second = add(store, REV2, stamp='2099-03-02T00:00:00Z')
+    rev1_row = next(e for e in rows(service, FACTS_KIND) if e.id == f'{FACTS_KIND}:{first.facts.facts_id}')
+    forged = dict(rev1_row.body, facts_id=second.facts.facts_id, source_id=second.source.sha256)
+    guard = Guard(service.project.id, rev1_row.guard.run_id, second.source.sha256, rev1_row.guard.input_digest)
+    EnrichmentStore(service.store).publish(FACTS_KIND, guard, guard, service.project.revision, 'complete', forged,
+                                           f'{FACTS_KIND}:{second.facts.facts_id}')  # valid path, valid hash, wrong file
+    advisories, warnings = store.advisories()
+    served = next(a for a in advisories if a.source.sha256 == second.source.sha256)
+    assert served.facts == second.facts and served.facts.revision == '2'
+    assert any('recomputed' in w for w in warnings)
+
+
+def test_c03_store_applicability_sees_a_newer_revision_that_dropped_the_cve(service):
+    store = store_for(service)
+    add(store, REV1)
+    doc = json.loads(REV2)
+    doc['vulnerabilities'] = [v for v in doc['vulnerabilities'] if v['cve'] != 'CVE-2099-10001']
+    add(store, json.dumps(doc).encode(), stamp='2099-03-02T00:00:00Z')
+    assert [a.facts.revision for a in store.for_cve('CVE-2099-10001')[0]] == ['1']  # only the older one lists it
+    older = ArtifactIdentity(side='older', sha256='e' * 64, asserted_product_ids=('PT-101-1',),
+                             facts_state='verified-bytes')
+    newer = ArtifactIdentity(side='newer', sha256='f' * 64, facts_state='verified-bytes')
+    report, warnings = store.applicability('CVE-2099-10001', older, newer)
+    assert warnings == [] and report.older.resolution == 'unknown' and len(report.superseded_sources) == 1
+    assert any('no longer lists CVE-2099-10001' in note for note in (*report.limitations, *report.older.why))

@@ -381,14 +381,13 @@ def cmd_correlate(args, cancel) -> int:
     requested = set(args.cve)
     for path in args.snapshot:
         try:
-            data = json.loads(path.read_text(encoding='utf-8'))
-            items = data if isinstance(data, list) else [data]
+            with path.open('rb') as handle:  # never read more than the cap, whatever the file claims to be
+                loaded = cve.parse_snapshots(handle.read(cve.MAX_SNAPSHOT_BYTES + 1))
             # A saved file cannot be re-verified against provider bodies: drop claims that
             # normalization never derives (feature IDs) and flag the snapshot as unverified.
-            loaded = [CveSnapshot.model_validate_json(json.dumps(item)) for item in items]
             snapshots += [s.model_copy(update={'feature_ids': ()}) for s in loaded]
             unverified.update(s.snapshot_id for s in loaded)
-        except (OSError, ValueError) as exc:
+        except (OSError, ValueError, EnrichmentError) as exc:
             raise CliError(ENVIRONMENT, f'cannot load snapshot {path.name}: {exc}') from None
     warnings: list[str] = []
     fetch_failed = False

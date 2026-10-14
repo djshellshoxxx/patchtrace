@@ -111,7 +111,8 @@ def test_non_tenth_scores_rejected(score):
         snap(nvd=None, msrc=edited(MSRC, lambda d: d.update(baseScore=score)))
 
 
-@pytest.mark.parametrize('bad', ['CVE-2024-123', 'cve-2024-38063', 'CVE-2024-38063\n', 'CVE-2024-' + '9' * 20, 1])
+@pytest.mark.parametrize('bad', ['CVE-2024-123', 'cve-2024-38063', 'CVE-2024-38063\n', 'CVE-2024-' + '9' * 20, 1,
+                                 'CVE-\uff12\uff10\uff12\uff14-\uff13\uff18\uff10\uff16\uff13'])
 def test_invalid_cve_id_and_inputs(bad):
     with pytest.raises(EnrichmentError):
         cve.normalize(bad, {'nvd': NVD}, WHEN)

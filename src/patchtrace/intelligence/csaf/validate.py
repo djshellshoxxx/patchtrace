@@ -1,14 +1,17 @@
 """CSAF 2.0 document validation (SPEC-28 section E). Pure stdlib; never executes or renders advisory content.
 
 Three layers, in order:
-1. ``parse_json``: strict UTF-8 JSON (no BOM, no duplicate keys, no NaN/Infinity, bounded integers) and the
-   processing limits (bytes, depth, nodes, string length);
+1. ``parse_json``: strict UTF-8 JSON (no BOM, no duplicate keys, no NaN/Infinity, no unpaired surrogate escapes,
+   bounded integers) and the processing limits (bytes, depth, nodes, string length). The node limit is checked
+   from the text before ``json.loads`` builds anything, and cancellation is polled while parsing;
 2. the official CSAF 2.0 JSON Schema's validation keywords, interpreted over ``schema_data.CSAF_SCHEMA`` (generated
    from the vendored OASIS schema; ECMA-262 patterns translated to Python ``re``);
 3. the implemented mandatory tests of CSAF 2.0 §6.1 plus optional tests 6.2.1 and 6.2.20 (warnings).
 
 Any error rejects the document; nothing is ever partially accepted. Findings never quote advisory text beyond
-short, sanitized identifiers.
+short, sanitized identifiers. Whatever the bytes contain, ``load_document`` ends in a result, a
+``ValidationFailed`` or an ``IntelError``: values outside the schema (additional properties) are never
+interpreted, and every advisory-controlled string that reaches a finding is bounded and made encodable.
 """
 from __future__ import annotations
 
@@ -21,7 +24,7 @@ from collections.abc import Iterator
 from dataclasses import dataclass
 from datetime import datetime, timedelta, timezone
 
-from ..contracts import Finding, IntelError, ValidationReport
+from ..contracts import MAX_POINTER, PRODUCT_STATUSES, Finding, IntelError, ValidationReport
 from . import schema_data
 
 VALIDATOR_VERSION = 1
@@ -40,6 +43,7 @@ VEX_LABELS = frozenset({'component_not_present', 'inline_mitigations_already_exi
                         'vulnerable_code_cannot_be_controlled_by_adversary', 'vulnerable_code_not_in_execute_path',
                         'vulnerable_code_not_present'})
 RANGE_WORDS = ('<', '<=', '>', '>=', 'after', 'all', 'before', 'earlier', 'later', 'prior', 'versions')
+MAX_VERSION_CHARS = 1000  # CSAF sets no bound; the normalized contract does (``Short``), and int() stops at 4300 digits
 _CANCEL_EVERY = 4096
 
 
@@ -87,8 +91,18 @@ def safe_label(value: object, limit: int = 60) -> str:
 
 # ---------------------------------------------------------------------------------------------- 1. strict JSON
 
-def _strict_loads(text: str):
+def _strict_loads(text: str, cancel: threading.Event | None = None):
+    calls = 0
+
+    def poll() -> None:
+        # The C scanner has no cancellation point of its own; every hook call is one (object or number).
+        nonlocal calls
+        calls += 1
+        if cancel is not None and calls % _CANCEL_EVERY == 0:
+            _cancelled(cancel)
+
     def pairs(items):
+        poll()
         value = {}
         for key, item in items:
             if key in value:
@@ -100,12 +114,14 @@ def _strict_loads(text: str):
         raise _BadNumber(name)
 
     def finite(value: str):
+        poll()
         number = float(value)
         if not math.isfinite(number):  # 1e999 parses to inf without reaching parse_constant
             raise _BadNumber(value[:20])
         return number
 
     def bounded(value: str):
+        poll()
         if len(value) > 4300:
             raise _BadNumber('integer with more than 4300 digits')
         return int(value)
@@ -124,8 +140,10 @@ class _BadNumber(ValueError):
     pass
 
 
-def parse_json(raw: bytes, *, limits: Limits = LIMITS, what: str = 'CSAF document', max_bytes: int | None = None):
-    """Strict JSON parse with processing limits. Raises IntelError (FORMAT or LIMIT); never returns partial data."""
+def parse_json(raw: bytes, *, limits: Limits = LIMITS, what: str = 'CSAF document', max_bytes: int | None = None,
+               cancel: threading.Event | None = None):
+    """Strict JSON parse with processing limits. Raises IntelError (FORMAT, LIMIT or CANCEL); never returns partial
+    data. The value count is bounded from the text before ``json.loads`` allocates anything."""
     if type(raw) is not bytes:
         raise IntelError('PT-INTEL-INPUT', f'{what} must be bytes')
     cap = limits.max_bytes if max_bytes is None else max_bytes
@@ -137,8 +155,10 @@ def parse_json(raw: bytes, *, limits: Limits = LIMITS, what: str = 'CSAF documen
         text = raw.decode('utf-8', errors='strict')
     except UnicodeDecodeError as exc:
         raise IntelError('PT-INTEL-FORMAT', f'{what} is not valid UTF-8 (byte {exc.start})') from None
+    _cancelled(cancel)
+    _precheck_values(text, limits, what, cancel)
     try:
-        value = _strict_loads(text)
+        value = _strict_loads(text, cancel)
     except _DuplicateKey as exc:
         raise IntelError('PT-INTEL-FORMAT', f'{what} has an ambiguous duplicate key {safe_label(exc.key)!s}') from None
     except _BadNumber as exc:
@@ -147,11 +167,70 @@ def parse_json(raw: bytes, *, limits: Limits = LIMITS, what: str = 'CSAF documen
         raise IntelError('PT-INTEL-LIMIT', f'{what} nesting exceeds the parser limit') from None
     except ValueError as exc:
         raise IntelError('PT-INTEL-FORMAT', f'{what} is not valid JSON ({safe_label(str(exc), 80)})') from None
-    _check_shape(value, limits, what)
+    # UTF-8 cannot carry a lone surrogate, but a \ud800 escape is legal JSON text: look for the escape in the text
+    # first, so the per-string check below only runs for the rare document that contains one.
+    _check_shape(value, limits, what, cancel, _SURROGATE_ESCAPE.search(text) is not None)
     return value
 
 
-def _check_shape(value, limits: Limits, what: str) -> None:
+_SURROGATE_ESCAPE = re.compile(r'\\u[dD][89a-fA-F][0-9a-fA-F]{2}')
+
+
+def _precheck_values(text: str, limits: Limits, what: str, cancel: threading.Event | None) -> None:
+    """Refuse a document that cannot fit the value limit before ``json.loads`` builds it (a 15 MB ``[{},{},...]``
+    would otherwise take seconds and hundreds of MiB first). Every value is the root, the first member of a
+    container or follows a comma, so ``1 + count('{') + count('[') + count(',')`` bounds the values from above.
+    Commas inside long text inflate that bound, so only a document that exceeds it is scanned again with the
+    string literals skipped (and every empty ``{}`` or ``[]`` counted once)."""
+    if 1 + text.count('{') + text.count('[') + text.count(',') <= limits.max_nodes:
+        return
+    if _structural_values(text, limits.max_nodes, cancel) > limits.max_nodes:
+        raise IntelError('PT-INTEL-LIMIT', f'{what} has more than {limits.max_nodes} JSON values')
+
+
+def _structural_values(text: str, limit: int, cancel: threading.Event | None) -> int:
+    """Upper bound of the values outside string literals (``1 + '{' + '[' + ','``, an adjacent ``{}`` or ``[]``
+    being an empty container that holds no first member), stopping once it passes ``limit``. Linear time: strings
+    are skipped with ``str.find``; a quote closes its string unless an odd number of backslashes precedes it."""
+    total, pos, size, steps = 1, 0, len(text), 0
+    while pos < size:
+        quote = text.find('"', pos)
+        stop = size if quote < 0 else quote
+        total += (text.count('{', pos, stop) + text.count('[', pos, stop) + text.count(',', pos, stop)
+                  - text.count('{}', pos, stop) - text.count('[]', pos, stop))
+        if quote < 0 or total > limit:
+            return total
+        pos = quote + 1
+        while True:
+            close = text.find('"', pos)
+            if close < 0:
+                return total  # unterminated string: the parser reports it
+            run = close
+            while run > quote + 1 and text[run - 1] == '\\':
+                run -= 1
+            if (close - run) % 2 == 0:
+                break
+            pos = close + 1
+            steps += 1
+            if steps % _CANCEL_EVERY == 0:
+                _cancelled(cancel)
+        pos = close + 1
+        steps += 1
+        if steps % _CANCEL_EVERY == 0:
+            _cancelled(cancel)
+    return total
+
+
+def _unpaired_surrogate(text: str) -> bool:
+    try:
+        text.encode('utf-8')
+    except UnicodeEncodeError:
+        return True
+    return False
+
+
+def _check_shape(value, limits: Limits, what: str, cancel: threading.Event | None = None,
+                 check_text: bool = False) -> None:
     """Iterative depth/node/string bounds (no recursion: the input is hostile until proven otherwise)."""
     nodes = 0
     stack = [(value, 1)]
@@ -160,19 +239,30 @@ def _check_shape(value, limits: Limits, what: str) -> None:
         nodes += 1
         if nodes > limits.max_nodes:
             raise IntelError('PT-INTEL-LIMIT', f'{what} has more than {limits.max_nodes} JSON values')
+        if nodes % _CANCEL_EVERY == 0:
+            _cancelled(cancel)
         if isinstance(item, dict):
             if depth > limits.max_depth:
                 raise IntelError('PT-INTEL-LIMIT', f'{what} nesting exceeds {limits.max_depth} levels')
             for key, sub in item.items():
                 if len(key) > limits.max_string:
                     raise IntelError('PT-INTEL-LIMIT', f'{what} has a key longer than {limits.max_string} characters')
+                if check_text and _unpaired_surrogate(key):
+                    raise _surrogate_error(what)
                 stack.append((sub, depth + 1))
         elif isinstance(item, list):
             if depth > limits.max_depth:
                 raise IntelError('PT-INTEL-LIMIT', f'{what} nesting exceeds {limits.max_depth} levels')
             stack.extend((sub, depth + 1) for sub in item)
-        elif isinstance(item, str) and len(item) > limits.max_string:
-            raise IntelError('PT-INTEL-LIMIT', f'{what} has a string longer than {limits.max_string} characters')
+        elif isinstance(item, str):
+            if len(item) > limits.max_string:
+                raise IntelError('PT-INTEL-LIMIT', f'{what} has a string longer than {limits.max_string} characters')
+            if check_text and _unpaired_surrogate(item):
+                raise _surrogate_error(what)
+
+
+def _surrogate_error(what: str) -> IntelError:
+    return IntelError('PT-INTEL-FORMAT', f'{what} contains an unpaired UTF-16 surrogate escape, which is not text')
 
 
 # ---------------------------------------------------------------------------------------------- 2. schema keywords
@@ -263,6 +353,26 @@ _CVSS = {'cvss-v2.0': (('2.0',), False), 'cvss-v3.0': (('3.0',), True), 'cvss-v3
 _SEVERITIES = frozenset({'NONE', 'LOW', 'MEDIUM', 'HIGH', 'CRITICAL'})
 
 
+def _encodable(text: str) -> str:
+    """``text`` that UTF-8 can carry: an unpaired surrogate (only reachable through ``validate_document`` on a
+    hand-built object; ``parse_json`` rejects it) is shown as an escape instead of breaking the contract model."""
+    try:
+        text.encode('utf-8')
+    except UnicodeEncodeError:
+        return text.encode('utf-8', 'backslashreplace').decode('utf-8')
+    return text
+
+
+def _finding_pointer(pointer: str) -> str:
+    """A pointer the ``Finding`` contract accepts. Property names are advisory-controlled and can be longer than
+    the contract bound, so an over-long pointer is reported at the longest parent that fits (the message names
+    the property)."""
+    pointer = _encodable(pointer)
+    if len(pointer) > MAX_POINTER:
+        pointer = pointer[:max(pointer.rfind('/', 0, MAX_POINTER + 1), 0)]
+    return pointer
+
+
 class _Collector:
     def __init__(self, limits: Limits, cancel: threading.Event | None):
         self.errors: list[Finding] = []
@@ -277,7 +387,8 @@ class _Collector:
         if len(bucket) >= self.limits.max_findings:
             self.truncated = True
             return
-        bucket.append(Finding(test=test, severity=severity, pointer=pointer, message=message[:500]))
+        bucket.append(Finding(test=test, severity=severity, pointer=_finding_pointer(pointer),
+                              message=_encodable(message)[:500]))
 
     def tick(self) -> None:
         self.steps += 1
@@ -371,7 +482,8 @@ class _Schema:
         score = value.get('baseScore')
         if isinstance(score, bool) or not isinstance(score, (int, float)) or not 0 <= score <= 10:
             self.c.add('schema', f'{pointer}/baseScore', f'{kind} requires a baseScore between 0 and 10')
-        if severity and value.get('baseSeverity') not in _SEVERITIES:
+        rating = value.get('baseSeverity')
+        if severity and not (isinstance(rating, str) and rating in _SEVERITIES):  # a list or object is unhashable
             self.c.add('schema', f'{pointer}/baseSeverity', f'{kind} requires a baseSeverity')
 
 
@@ -425,6 +537,8 @@ _SEMVER = re.compile(r'(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)(?:-([0-
 
 
 def _version(text: str) -> _Version | None:
+    if len(text) > MAX_VERSION_CHARS:  # int() would refuse a component of more than 4300 digits
+        return None
     if re.fullmatch(r'0|[1-9][0-9]*', text):
         return _Version(True, int(text), 0, 0, (), text)
     m = _SEMVER.fullmatch(text)
@@ -479,6 +593,17 @@ def iter_branches(doc: dict) -> Iterator[tuple[dict, str, tuple]]:
                 queue.append((branch['branches'], f'{pointer}/branches', here))
 
 
+def _status_lists(vuln: dict) -> Iterator[tuple[str, list]]:
+    """(status, product ids) of the ``product_status`` keys CSAF defines. Any other key is only a 6.2.20 warning
+    and its value is arbitrary JSON, so it is never interpreted (audit C-02)."""
+    block = vuln.get('product_status')
+    if isinstance(block, dict):
+        for status in PRODUCT_STATUSES:
+            ids = block.get(status)
+            if isinstance(ids, list):
+                yield status, ids
+
+
 def _references(doc: dict) -> Iterator[tuple[str, str]]:
     """(product_id, pointer) of every §6.1.1 product reference."""
     tree = doc.get('product_tree') or {}
@@ -489,7 +614,7 @@ def _references(doc: dict) -> Iterator[tuple[str, str]]:
         yield rel['product_reference'], f'/product_tree/relationships/{r}/product_reference'
         yield rel['relates_to_product_reference'], f'/product_tree/relationships/{r}/relates_to_product_reference'
     for v, vuln in enumerate(doc.get('vulnerabilities') or ()):
-        for status, ids in (vuln.get('product_status') or {}).items():
+        for status, ids in _status_lists(vuln):
             for i, pid in enumerate(ids):
                 yield pid, f'/vulnerabilities/{v}/product_status/{status}/{i}'
         for name, key in (('remediations', 'product_ids'), ('scores', 'products'), ('threats', 'product_ids')):
@@ -594,7 +719,7 @@ class _Tests:
     def t_6_1_6(self) -> None:
         for v, vuln in enumerate(self.vulns):
             seen: dict[str, str] = {}
-            for status, ids in sorted((vuln.get('product_status') or {}).items()):
+            for status, ids in _status_lists(vuln):
                 group = STATUS_GROUPS.get(status)
                 if group is None:
                     continue
@@ -625,6 +750,14 @@ class _Tests:
         tracking = self.doc['document']['tracking']
         status = tracking['status']
         base = '/document/tracking/revision_history'
+        oversized = [pointer for pointer, text in (
+            ('/document/tracking/version', tracking['version']),
+            *((f'{base}/{index}/number', item['number']) for index, item in enumerate(tracking['revision_history'])))
+            if len(text) > MAX_VERSION_CHARS]
+        for pointer in oversized:  # CSAF sets no bound; a version this long is no version (and int() would refuse it)
+            self.c.add('limit', pointer, f'version is longer than {MAX_VERSION_CHARS} characters')
+        if oversized:
+            return
         items = []
         for index, item in enumerate(tracking['revision_history']):
             items.append((parse_date_time(item['date']), index, _version(item['number']), item['number']))
@@ -839,7 +972,7 @@ def validate_document(doc, *, limits: Limits = LIMITS, cancel: threading.Event |
     _Schema(schema_data.CSAF_SCHEMA, collector).check(schema_data.CSAF_SCHEMA, doc, '')
     if not collector.errors:
         _Tests(doc, collector).run()
-    category = document.get('category') if isinstance(document.get('category'), str) else ''
+    category = _encodable(document['category']) if isinstance(document.get('category'), str) else ''
     key = _finding_key
     return ValidationReport(validator_version=VALIDATOR_VERSION, document_category=category[:1000],
                             errors=tuple(sorted(collector.errors, key=key)),
@@ -856,7 +989,7 @@ def load_document(raw: bytes, *, limits: Limits = LIMITS,
     """Parse and validate exact bytes. Returns (document, report) only for an accepted document; otherwise
     raises ``IntelError`` (FORMAT/LIMIT/UNSUPPORTED/CANCEL) or ``ValidationFailed`` (with the full report)."""
     _cancelled(cancel)
-    doc = parse_json(raw, limits=limits)
+    doc = parse_json(raw, limits=limits, cancel=cancel)
     report = validate_document(doc, limits=limits, cancel=cancel)
     if report.errors:
         raise ValidationFailed(report)

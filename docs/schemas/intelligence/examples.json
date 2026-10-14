@@ -3791,7 +3791,7 @@
               "term_id": "effect-rce"
             }
           ],
-          "lexicon_digest": "1e79e38ae699da1901cfb817ec37147deb3fe597f3442f9699b13bdfd6e3ec3d",
+          "lexicon_digest": "a56c967518c2df8c8097f934542cf969a4cf057c8c636b518641da072cdba71a",
           "lexicon_version": "cwe-lexicon/1",
           "limitations": [],
           "negated_hits": [],
@@ -3884,7 +3884,7 @@
               "term_id": "effect-rce"
             }
           ],
-          "lexicon_digest": "1e79e38ae699da1901cfb817ec37147deb3fe597f3442f9699b13bdfd6e3ec3d",
+          "lexicon_digest": "a56c967518c2df8c8097f934542cf969a4cf057c8c636b518641da072cdba71a",
           "lexicon_version": "cwe-lexicon/1",
           "limitations": [],
           "negated_hits": [],
@@ -3976,7 +3976,7 @@
               "term_id": "effect-rce"
             }
           ],
-          "lexicon_digest": "1e79e38ae699da1901cfb817ec37147deb3fe597f3442f9699b13bdfd6e3ec3d",
+          "lexicon_digest": "a56c967518c2df8c8097f934542cf969a4cf057c8c636b518641da072cdba71a",
           "lexicon_version": "cwe-lexicon/1",
           "limitations": [],
           "negated_hits": [],
@@ -4068,7 +4068,7 @@
           "term_id": "effect-rce"
         }
       ],
-      "lexicon_digest": "1e79e38ae699da1901cfb817ec37147deb3fe597f3442f9699b13bdfd6e3ec3d",
+      "lexicon_digest": "a56c967518c2df8c8097f934542cf969a4cf057c8c636b518641da072cdba71a",
       "lexicon_version": "cwe-lexicon/1",
       "limitations": [],
       "negated_hits": [],
@@ -4187,7 +4187,7 @@
             "Hypotheses describe common fix shapes for a weakness class; they are search guidance only.",
             "Advisory CWE values and vocabulary matches are claims or interpretations, not binary observations."
           ],
-          "rules_digest": "300d2aecd4d57b93a962b078636abaf4aae1a45995015a7f9b1f05c7aa74a411",
+          "rules_digest": "cf3c05fa31e825f4895d333e030cfe6dda2d9fde7b39f1e18b8534e0486b5cc5",
           "rules_version": "patch-rules/1",
           "unexpected_field": 1,
           "unknowns": []
@@ -4304,7 +4304,7 @@
             "Hypotheses describe common fix shapes for a weakness class; they are search guidance only.",
             "Advisory CWE values and vocabulary matches are claims or interpretations, not binary observations."
           ],
-          "rules_digest": "300d2aecd4d57b93a962b078636abaf4aae1a45995015a7f9b1f05c7aa74a411",
+          "rules_digest": "cf3c05fa31e825f4895d333e030cfe6dda2d9fde7b39f1e18b8534e0486b5cc5",
           "rules_version": "patch-rules/1",
           "unknowns": []
         },
@@ -4319,7 +4319,7 @@
             "Hypotheses describe common fix shapes for a weakness class; they are search guidance only.",
             "Advisory CWE values and vocabulary matches are claims or interpretations, not binary observations."
           ],
-          "rules_digest": "300d2aecd4d57b93a962b078636abaf4aae1a45995015a7f9b1f05c7aa74a411",
+          "rules_digest": "cf3c05fa31e825f4895d333e030cfe6dda2d9fde7b39f1e18b8534e0486b5cc5",
           "rules_version": "patch-rules/1",
           "unknowns": []
         },
@@ -4435,7 +4435,7 @@
         "Hypotheses describe common fix shapes for a weakness class; they are search guidance only.",
         "Advisory CWE values and vocabulary matches are claims or interpretations, not binary observations."
       ],
-      "rules_digest": "300d2aecd4d57b93a962b078636abaf4aae1a45995015a7f9b1f05c7aa74a411",
+      "rules_digest": "cf3c05fa31e825f4895d333e030cfe6dda2d9fde7b39f1e18b8534e0486b5cc5",
       "rules_version": "patch-rules/1",
       "unknowns": []
     }
@@ -4875,7 +4875,7 @@
                 "term_id": "effect-rce"
               }
             ],
-            "lexicon_digest": "1e79e38ae699da1901cfb817ec37147deb3fe597f3442f9699b13bdfd6e3ec3d",
+            "lexicon_digest": "a56c967518c2df8c8097f934542cf969a4cf057c8c636b518641da072cdba71a",
             "lexicon_version": "cwe-lexicon/1",
             "limitations": [],
             "negated_hits": [],
@@ -5143,7 +5143,7 @@
               "Hypotheses describe common fix shapes for a weakness class; they are search guidance only.",
               "Advisory CWE values and vocabulary matches are claims or interpretations, not binary observations."
             ],
-            "rules_digest": "300d2aecd4d57b93a962b078636abaf4aae1a45995015a7f9b1f05c7aa74a411",
+            "rules_digest": "cf3c05fa31e825f4895d333e030cfe6dda2d9fde7b39f1e18b8534e0486b5cc5",
             "rules_version": "patch-rules/1",
             "unknowns": []
           },
@@ -5627,7 +5627,7 @@
                 "term_id": "effect-rce"
               }
             ],
-            "lexicon_digest": "1e79e38ae699da1901cfb817ec37147deb3fe597f3442f9699b13bdfd6e3ec3d",
+            "lexicon_digest": "a56c967518c2df8c8097f934542cf969a4cf057c8c636b518641da072cdba71a",
             "lexicon_version": "cwe-lexicon/1",
             "limitations": [],
             "negated_hits": [],
@@ -5895,7 +5895,7 @@
               "Hypotheses describe common fix shapes for a weakness class; they are search guidance only.",
               "Advisory CWE values and vocabulary matches are claims or interpretations, not binary observations."
             ],
-            "rules_digest": "300d2aecd4d57b93a962b078636abaf4aae1a45995015a7f9b1f05c7aa74a411",
+            "rules_digest": "cf3c05fa31e825f4895d333e030cfe6dda2d9fde7b39f1e18b8534e0486b5cc5",
             "rules_version": "patch-rules/1",
             "unknowns": []
           },
@@ -6378,7 +6378,7 @@
             "term_id": "effect-rce"
           }
         ],
-        "lexicon_digest": "1e79e38ae699da1901cfb817ec37147deb3fe597f3442f9699b13bdfd6e3ec3d",
+        "lexicon_digest": "a56c967518c2df8c8097f934542cf969a4cf057c8c636b518641da072cdba71a",
         "lexicon_version": "cwe-lexicon/1",
         "limitations": [],
         "negated_hits": [],
@@ -6646,7 +6646,7 @@
           "Hypotheses describe common fix shapes for a weakness class; they are search guidance only.",
           "Advisory CWE values and vocabulary matches are claims or interpretations, not binary observations."
         ],
-        "rules_digest": "300d2aecd4d57b93a962b078636abaf4aae1a45995015a7f9b1f05c7aa74a411",
+        "rules_digest": "cf3c05fa31e825f4895d333e030cfe6dda2d9fde7b39f1e18b8534e0486b5cc5",
         "rules_version": "patch-rules/1",
         "unknowns": []
       },

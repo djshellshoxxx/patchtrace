@@ -1,0 +1,57 @@
+{
+  "schema": "patchtrace-site-screens/1",
+  "source": "Real GUI rendered offscreen from ProjectService.sample (synthetic; no Microsoft binaries, no Ghidra, no model).",
+  "patchtrace_version": "0.1.0",
+  "shots": [
+    {
+      "id": "workspace",
+      "title": "Paired code and analyst review",
+      "alt": "PatchTrace main window on the synthetic bounds-check sample. Left: a list of four function matches (added, removed and two modified). Centre: the older and newer decompiled read_item function side by side, with the inserted null and index check highlighted in the newer pane and a blank gap in the older pane. Right: a finding about a guard added before an indexed buffer access, its explanation, evidence list and analyst review controls.",
+      "caption": "The workspace: function matches, older and newer code side by side with the changed region highlighted, and the review panel.",
+      "width": 1440,
+      "height": 900,
+      "png_bytes": 197592,
+      "webp_bytes": 84388
+    },
+    {
+      "id": "ranked",
+      "title": "Ranked changes with change signals",
+      "alt": "The same window after Rank changes. The function list now begins with read_item scored 26 in square brackets, followed by report_invalid_index with a dash instead of a score, get_version scored 0 and debug_dump with a dash. The change signals list shows one bounds-check detector hit on newer lines 2 to 5, which are highlighted in the newer code pane.",
+      "caption": "Deterministic detectors order functions by research priority. The number is an ordinal attention score, not a vulnerability verdict, and a dash means the evidence needed was unavailable.",
+      "width": 1440,
+      "height": 900,
+      "png_bytes": 216523,
+      "webp_bytes": 93512
+    },
+    {
+      "id": "hex",
+      "title": "Raw bytes view",
+      "alt": "The code panes switched to Hex (raw bytes): offset-addressed hexadecimal dumps of the older and newer files side by side, with whole-file scope, page and go-to-offset controls above them and a status line reporting that one line differs at equal offsets; that line is highlighted in both panes.",
+      "caption": "Raw Hex, Binary and Base64 views of the verified original bytes, with differing lines highlighted.",
+      "width": 1440,
+      "height": 900,
+      "png_bytes": 252913,
+      "webp_bytes": 198652
+    },
+    {
+      "id": "overview",
+      "title": "PE file overview",
+      "alt": "The File overview dialog. A first table lists recorded fields for the older and newer files (name, size, size change, SHA-256, hash comparison, format). A status line reads file inspection complete. A second, longer table lists parsed PE fields for both files, such as machine type AMD64, characteristics, entry point, image base, alignment and subsystem.",
+      "caption": "File overview: recorded metadata plus a bounded, read-only PE comparison that works before any analysis is run.",
+      "width": 1180,
+      "height": 960,
+      "png_bytes": 148252,
+      "webp_bytes": 75138
+    },
+    {
+      "id": "export",
+      "title": "Report export preview",
+      "alt": "The Export dialog. A format selector set to md, a destination field, a checkbox to include function code (off), one to include analyst notes (on), a note that absolute paths are redacted and raw provider responses are excluded, and an exact Markdown preview of the report beginning with the change ranking table.",
+      "caption": "Exports show the exact report first. Function code is opt-in, analyst notes are opt-out, and absolute paths are redacted.",
+      "width": 1100,
+      "height": 760,
+      "png_bytes": 94883,
+      "webp_bytes": 36932
+    }
+  ]
+}

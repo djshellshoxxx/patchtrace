@@ -263,7 +263,10 @@
             "csaf-product",
             "csaf-remediation",
             "hypothesis-rule",
-            "artifact-identity"
+            "artifact-identity",
+            "cvrf-title",
+            "cvrf-note",
+            "cvrf-tag"
           ],
           "title": "Source",
           "type": "string"

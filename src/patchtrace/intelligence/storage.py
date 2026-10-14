@@ -25,9 +25,9 @@ from pydantic import ValidationError
 from ..enrichment.contracts import EnrichmentError
 from ..enrichment.storage import EnrichmentStore, Guard
 from ..ingestion import safe_path
-from .contracts import AdvisoryFacts, AdvisorySource, IntelError
+from .contracts import AdvisoryFacts, AdvisorySource, ApplicabilityReport, ArtifactIdentity, IntelError
 from .csaf import normalize as norm
-from .csaf.applicability import supersession
+from .csaf.applicability import resolve, supersession
 from .csaf.validate import VALIDATOR_VERSION, load_document
 
 SOURCE_KIND = 'advisory-source'
@@ -140,7 +140,10 @@ class AdvisoryStore:
         if row is not None and row.get('normalizer_version') == norm.NORMALIZER_VERSION:
             try:
                 data = self.read_verified(row['path'], row['sha256'])
-                return AdvisoryFacts.model_validate_json(data)
+                facts = AdvisoryFacts.model_validate_json(data)
+                if facts.source_id != source.sha256 or facts.facts_id != facts_id:  # a valid file of another source
+                    raise IntelError('PT-INTEL-INTEGRITY', f'{row["path"]} does not describe this source')
+                return facts
             except (IntelError, ValidationError, KeyError, TypeError):
                 warnings.append(f'{source.tracking_id} r{source.revision}: stored facts unusable; recomputed from '
                                 'the verified source bytes')
@@ -186,6 +189,14 @@ class AdvisoryStore:
     def for_cve(self, cve: str) -> tuple[list[StoredAdvisory], list[str]]:
         advisories, warnings = self.advisories()
         return [a for a in advisories if a.facts.vulnerability(cve) is not None], warnings
+
+    def applicability(self, cve: str, older: ArtifactIdentity,
+                      newer: ArtifactIdentity) -> tuple[ApplicabilityReport, list[str]]:
+        """OLD/NEW applicability of ``cve`` over *every* stored document. A newer revision that no longer lists the
+        CVE therefore supersedes the older claims instead of leaving them current (audit C-03), which the documents
+        returned by ``for_cve`` alone cannot show. Raises PT-INTEL-NOTFOUND when no document lists the CVE."""
+        advisories, warnings = self.advisories()
+        return resolve(cve, [a.facts for a in advisories], older, newer), warnings
 
 
 def _json(value) -> str:

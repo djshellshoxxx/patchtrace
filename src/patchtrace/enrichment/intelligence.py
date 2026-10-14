@@ -36,7 +36,7 @@ from functools import partial
 from ..netutil import Cancelled, TooManyAbandoned, interruptible
 from .contracts import EnrichmentError
 
-CVE_PATTERN = re.compile(r'CVE-\d{4}-\d{4,19}')
+CVE_PATTERN = re.compile(r'CVE-\d{4}-\d{4,19}', re.ASCII)  # ASCII digits only: \d alone also matches Unicode digits
 CVE_MAX_LENGTH = 24
 MAX_CVES = 64
 MAX_RESPONSE_BYTES = 4 * 1024 * 1024

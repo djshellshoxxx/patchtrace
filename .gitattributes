@@ -13,3 +13,14 @@ tests/fixtures/csaf/** text eol=lf
 tests/fixtures/intel_tools/** text eol=lf
 tests/fixtures/kbcorrelation/** text eol=lf
 tests/fixtures/tier_w/** -text
+tests/fixtures/kbcorrelation/** text eol=lf
+docs/schemas/kbcorrelation/** text eol=lf
+site/** text eol=lf
+site/**/*.png binary
+site/**/*.webp binary
+site/**/*.ico binary
+site/**/*.jpg binary
+tools/site/** text eol=lf
+tests/site_claims.md text eol=lf
+tests/fixtures/cve/*.json text eol=lf
+tests/fixtures/winbindex/*.json text eol=lf

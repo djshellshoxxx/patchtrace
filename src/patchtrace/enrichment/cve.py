@@ -19,6 +19,8 @@ from collections.abc import Iterable, Mapping, Sequence
 from datetime import UTC, datetime
 from decimal import Decimal, InvalidOperation
 
+from pydantic import ValidationError
+
 from . import identity
 from .contracts import (
     AttributedText,
@@ -37,12 +39,16 @@ from .contracts import (
 
 NORMALIZATION_VERSION = 1
 DICTIONARY_VERSION = 1
-CVE_PATTERN = re.compile(r'CVE-\d{4}-\d{4,19}')
+CVE_PATTERN = re.compile(r'CVE-\d{4}-\d{4,19}', re.ASCII)  # ASCII digits only: \d alone also matches Unicode digits
 MAX_RESPONSE_BYTES = 4 * 1024 * 1024
+MAX_SNAPSHOT_BYTES = 32 * 1024 * 1024
 MAX_TERMS = 256
 MAX_LIST = 64
 PROVIDERS = ('msrc', 'nvd')
-_CWE = re.compile(r'CWE-(\d{1,6})')
+# "CWE-787" or "CWE-787: Out-of-bounds Write"; the number must end at a token boundary, or "CWE-1234567" and
+# "CWE-787-foo" would turn into identifiers the provider never wrote (audit C-10).
+_CWE = re.compile(r'CWE-([0-9]{1,6})(?![\w-])')
+_SURROGATE_ESCAPE = re.compile(rb'\\u[dD][89a-fA-F][0-9a-fA-F]{2}')
 _TOKEN = re.compile(r'[A-Za-z_][A-Za-z0-9_]{2,}')
 _CAMEL = re.compile(r'[A-Z]?[a-z0-9]+|[A-Z]+(?![a-z])')
 
@@ -94,6 +100,34 @@ def _pairs(pairs):
     return out
 
 
+def _has_unpaired_surrogate(value) -> bool:
+    stack = [value]
+    while stack:
+        item = stack.pop()
+        if isinstance(item, str):
+            try:
+                item.encode('utf-8')
+            except UnicodeEncodeError:
+                return True
+        elif isinstance(item, dict):
+            stack.extend(item)
+            stack.extend(item.values())
+        elif isinstance(item, list):
+            stack.extend(item)
+    return False
+
+
+def _parse_strict(data: bytes, parse_float):
+    """Strict JSON: UTF-8, no duplicate keys, no NaN/Infinity, no unpaired surrogate escape (``"\\ud800"`` is legal
+    JSON but not text, and the strict models cannot hold it). Raises ValueError, UnicodeDecodeError or
+    RecursionError."""
+    text = data.decode('utf-8')
+    value = json.loads(text, parse_float=parse_float, parse_constant=_reject_constant, object_pairs_hook=_pairs)
+    if _SURROGATE_ESCAPE.search(data) and _has_unpaired_surrogate(value):
+        raise ValueError('unpaired surrogate')
+    return value
+
+
 def _strict_json(data: bytes, provider: str):
     if type(data) is not bytes:
         raise EnrichmentError('PT-ENRICH-INPUT', f'{provider} response must be bytes')
@@ -101,10 +135,39 @@ def _strict_json(data: bytes, provider: str):
         raise EnrichmentError('PT-ENRICH-LIMIT', f'{provider} response exceeds 4 MiB')
     try:
         # Decimal keeps CVSS scores exact (9.8 → 98 tenths) without binary float drift.
-        return json.loads(data.decode('utf-8'), parse_float=Decimal, parse_constant=_reject_constant,
-                          object_pairs_hook=_pairs)
+        return _parse_strict(data, Decimal)
     except (UnicodeDecodeError, ValueError, RecursionError):
         raise _err(f'{provider} response is not strict JSON') from None
+
+
+def _reject_float(text: str):
+    raise ValueError('a snapshot holds no floating-point number')
+
+
+def parse_snapshots(data: bytes) -> list[CveSnapshot]:
+    """Snapshots from a saved file (one object or an array of them), imported as strict, bounded JSON like every
+    other PatchTrace import (AGENTS.md; audit C-09). The file cannot be re-verified against provider bodies, so the
+    caller still treats the result as unverified. Raises EnrichmentError (INPUT or LIMIT)."""
+    if type(data) is not bytes:
+        raise EnrichmentError('PT-ENRICH-INPUT', 'snapshot file must be bytes')
+    if len(data) > MAX_SNAPSHOT_BYTES:
+        raise EnrichmentError('PT-ENRICH-LIMIT', f'snapshot file exceeds {MAX_SNAPSHOT_BYTES} bytes')
+    try:
+        value = _parse_strict(data, _reject_float)
+    except (UnicodeDecodeError, ValueError, RecursionError):
+        raise EnrichmentError('PT-ENRICH-INPUT', 'snapshot file is not strict JSON') from None
+    snapshots = []
+    for index, item in enumerate(value if isinstance(value, list) else [value]):
+        if not isinstance(item, dict):
+            raise EnrichmentError('PT-ENRICH-INPUT', f'snapshot {index} is not an object')
+        try:
+            snapshots.append(CveSnapshot.model_validate_json(json.dumps(item)))
+        except ValidationError as exc:
+            problem = exc.errors()[0]
+            where = '.'.join(str(part) for part in problem.get('loc', ()))
+            raise EnrichmentError('PT-ENRICH-INPUT', f'snapshot {index} is not an enrichment/1 record '
+                                  f'({where}: {problem.get("msg", "invalid")})'[:300]) from None
+    return snapshots
 
 
 def _tenths(value) -> int | None:
@@ -278,6 +341,13 @@ def normalize(cve_id: str, responses: Mapping[str, bytes], retrieved_at: str) ->
     _timestamp(retrieved_at)
     if not responses or any(p not in _PARSERS for p in responses):
         raise EnrichmentError('PT-ENRICH-INPUT', 'responses must be a non-empty mapping of msrc/nvd bytes')
+    try:
+        return _snapshot(cve_id, responses, retrieved_at)
+    except ValidationError:  # a value the strict snapshot models refuse (empty, over-long): never a raw pydantic error
+        raise _err('a provider value does not fit the enrichment/1 snapshot contract') from None
+
+
+def _snapshot(cve_id: str, responses: Mapping[str, bytes], retrieved_at: str) -> CveSnapshot:
     parsed = {p: _PARSERS[p](cve_id, _strict_json(responses[p], p)) for p in sorted(responses)}
     digests = {p: hashlib.sha256(responses[p]).hexdigest() for p in sorted(responses)}
 
@@ -489,16 +559,20 @@ def contextual_rank(ranking: RankingResult, signal_sets: Iterable[SignalSet],
                                                 binary_ref=evidence_ref[:200], detail=f'name:{hits[term]}'[:200]))
             points += 12
         cwe_points = 0
+        credited: set[str] = set()  # edit groups already credited to a CWE (audit C-04)
         for cwe in sorted(cwe_sources):
             if cwe_points >= 20:
                 break
             detectors = CWE_DETECTORS.get(cwe, ())
-            match = next((s for s in pairing_signals
-                          if s.detector in detectors and s.confidence in ALIGNING_CONFIDENCE), None)
+            # Sibling CWEs (787 and 125, 190 and 191) share detectors, and signals of one underlying edit share a
+            # group: one observation counts once, however many CWE labels the advisory attaches to it.
+            match = next((s for s in pairing_signals if s.detector in detectors
+                          and s.confidence in ALIGNING_CONFIDENCE and s.group_key not in credited), None)
             if match is not None:
                 contribs.append(ContextContribution(
                     kind='cwe', points=10, context_field=f'{cwe} {",".join(sorted(cwe_sources[cwe]))}'[:200],
                     binary_ref=f'signal:{match.signal_id}', detail=f'{match.detector} {match.confidence}'))
+                credited.add(match.group_key)
                 cwe_points += 10
         blocked = [] if evidence_ref or not hits else ['no-binary-evidence']
         for cve_id, cwes in sorted(cwe_blocked.items()):
