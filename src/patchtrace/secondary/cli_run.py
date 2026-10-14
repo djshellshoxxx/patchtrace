@@ -18,7 +18,16 @@ from . import scheduler
 from .contracts import SecondaryMatchSet
 from .reconcile import reconcile
 from .registry import REGISTRY, build_registry, safe_env
-from .runs import EngineId, EngineOutcome, EngineRun, argv_digest, as_v2, cache_key, new_run_id, sanitize_stderr
+from .runs import (
+    EngineId,
+    EngineOutcome,
+    EngineRun,
+    argv_digest,
+    as_v2,
+    cache_key,
+    new_run_id,
+    sanitize_stderr,
+)
 from .store import cache_snapshot, publish_engine_set, publish_run
 
 OK, ENVIRONMENT, RUNTIME, NO_RESULTS, CANCELLED = 0, 2, 3, 4, 5

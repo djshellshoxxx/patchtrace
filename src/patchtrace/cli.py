@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import sys
 import threading
 from pathlib import Path
@@ -361,7 +362,6 @@ def _normalize_available(cve, cve_id: str, bodies: dict, now: str, warnings: lis
 
 
 def cmd_correlate(args, cancel) -> int:
-    import os
 
     from .enrichment import cve
     from .enrichment.contracts import CveSnapshot, EnrichmentError
