@@ -59,6 +59,20 @@ def quick_grace(monkeypatch):
     monkeypatch.setattr(runner, 'TIMEOUT_GRACE', 0.5)
 
 
+@pytest.fixture(autouse=True)
+def keep_the_address_space_limit():
+    """`worker.run` lowers RLIMIT_AS of its own process (in production that process is the child). Called in process by
+    these tests it would cap pytest itself, and every later thread start in the session (a reader thread of
+    `run_process`) then hangs with the main thread waiting for a thread that died: restore the limit after each test."""
+    if os.name == 'nt':
+        yield
+        return
+    import resource
+    saved = resource.getrlimit(resource.RLIMIT_AS)
+    yield
+    resource.setrlimit(resource.RLIMIT_AS, saved)
+
+
 PRELUDE = '''
 import json, os, subprocess, sys, time
 req = json.load(open(sys.argv[-1], encoding="utf-8"))
