@@ -15,6 +15,7 @@ from PySide6.QtGui import QFont
 from PySide6.QtWidgets import QAbstractItemView, QTableWidget, QTableWidgetItem
 
 from .artifact_inspection import ProjectInspection, inspect_project_artifacts
+from .tooltips import template
 
 # Never say "valid" or "fully trusted": revocation is not checked and catalog signatures are out of scope.
 TRUST_LABELS = {
@@ -76,21 +77,27 @@ def fill_pe_table(table: QTableWidget, inspection: ProjectInspection) -> None:
         table.setRowCount(1)
         reasons = '; '.join(f'{s}: {i.error or i.error_code}' for s, i in inspection.sides.items()
                             if i.overview is None) or 'No comparable PE fields.'
-        item = QTableWidgetItem('PE comparison unavailable')
-        table.setItem(0, 0, item)
-        table.setItem(0, 1, QTableWidgetItem(reasons))
-        return
-    table.setRowCount(len(rows))
-    for index, row in enumerate(rows):
-        values = (row.field, row.older, row.newer, row.status, row.provenance)
+        values = ('PE comparison unavailable', reasons, 'unavailable', 'unavailable',
+                  'Verified project artifacts; no comparable PE records')
         for column, value in enumerate(values):
-            item = QTableWidgetItem(str(value))
-            item.setToolTip(f'{row.provenance}. {row.reason}'.strip())
-            if row.status == 'changed':
-                font = QFont(item.font())
-                font.setBold(True)
-                item.setFont(font)
-            table.setItem(index, column, item)
+            item = QTableWidgetItem(value)
+            item.setToolTip(template('overview.pe_row', field='PE comparison unavailable',
+                                     provenance='verified artifact inspection',
+                                     reason=reasons))
+            table.setItem(0, column, item)
+    else:
+        table.setRowCount(len(rows))
+        for index, row in enumerate(rows):
+            values = (row.field, row.older, row.newer, row.status, row.provenance)
+            for column, value in enumerate(values):
+                item = QTableWidgetItem(str(value))
+                item.setToolTip(template('overview.pe_row', field=row.field, provenance=row.provenance,
+                                         reason=row.reason))
+                if row.status == 'changed':
+                    font = QFont(item.font())
+                    font.setBold(True)
+                    item.setFont(font)
+                table.setItem(index, column, item)
     trust = {side: inspection.sides[side].trust for side in ('older', 'newer')}
     if any(trust.values()):
         index = table.rowCount()
@@ -102,6 +109,8 @@ def fill_pe_table(table: QTableWidget, inspection: ProjectInspection) -> None:
         detail = ' | '.join(f'{s}: {t.detail}' for s, t in trust.items() if t)
         for column, value in enumerate(values):
             item = QTableWidgetItem(value)
-            item.setToolTip(detail or 'Authenticode probe did not run.')
+            item.setToolTip(template('overview.pe_row', field='Authenticode trust status',
+                                     provenance='WinVerifyTrust, embedded signatures only, no revocation',
+                                     reason=detail or 'Authenticode probe did not run.'))
             table.setItem(index, column, item)
     table.resizeColumnsToContents()

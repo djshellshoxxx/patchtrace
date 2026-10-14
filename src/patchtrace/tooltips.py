@@ -696,6 +696,12 @@ REGISTRY: dict[str, TooltipEntry] = {
 
 # Tooltips for items that depend on untrusted or dynamic values.
 TEMPLATES: dict[str, TooltipEntry] = {
+    'overview.pe_row': _e(
+        'Inspect the recorded PE overview field {field} for both artifacts.',
+        'Review a structural or trust difference with its limitations visible.',
+        'Read-only display; this does not change the binary or validate an exploit.',
+        'Information origin: {provenance}.',
+        'Interpretation or availability: {reason}.'),
     'action.recent_project': _e(
         'Open the recent project at {path}.', 'Resume earlier work in one step.',
         'Replaces the project shown in the window.', 'Path stored in local desktop settings.',
