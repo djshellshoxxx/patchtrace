@@ -46,3 +46,11 @@
 - [x] H7 builder + opt-in `restrict_env`/`env_passthrough`; [ ] native Windows `raw-cache-hit` with restriction, then flip default; [ ] wire rz-diff CLI to `for_tool='rizin'`
 - [ ] H2 pre-prune verified backup; [ ] H8 legacy duplicate cleanup on open; [ ] H10 live NVD probe fixture
 - [ ] Frozen EXE headless smoke A1-A5, A10, A6s (`tools/frozen_smoke.py`, `tests/test_acceptance_smoke.py`, `tools/milestone_notes.py` wired into the release body): awaiting Windows CI run; A6 native `--run`, A7-A9, A11, A12 of windows-acceptance spec section 2 still open
+
+## C9 calibration build (2026-10-14)
+- [x] C9-1/2/4/5/6/7/8/9 code on synthetic data: contracts + schemas, corpus guard/verify/fetch, lineage + identity grouping, sampling, labelling log (terminal mode), kappa, features/1, stdlib fitters (+ optional sklearn cross-check), grouped nested CV, metrics, lineage bootstrap, fixed-sequence LTT tau, null-simulated ECE gate, OOD validation, ablations, M0b raw-bytes baseline, gates, report, locked-test runner, shipped artifact/predict/ood/policy (`display_level()` stays 'ordinal')
+- [ ] C9-0 ratify spec section 18 amendments; citation check (all sources "verify before ratification"); draft `docs/plans/c9-preregistration-v1.md`
+- [ ] C9-3 Tier R recipes (patch-tag builds, clang-cl/mingw; Microsoft open-source MSVC builds) and the end-to-end Tier R run (< 60 s); read every licence first (BinKit, BinaryCorp, REFuSe-Bench, Assemblage, Winbindex: UNCONFIRMED)
+- [ ] Labelling HTML front-end on 127.0.0.1 (terminal mode exists); C9-10 labelling campaign blocked on USER decisions O1, O2, O4
+- [ ] Cross-platform report determinism (Linux vs Windows byte-identical report SHA) - only verifiable in CI; package-data + PyInstaller datas entry when the first artifact ships
+- [ ] C9-12 GUI L1/L2 via C6 only after a locked-test pass (C6 imports `display_level()` guarded; currently always 'ordinal')

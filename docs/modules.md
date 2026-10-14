@@ -54,3 +54,9 @@ Stable IDs are independent of filenames. Public interfaces in SPEC-01 and schema
 | packaging | tools/build_windows.py; tools/build_linux.py; tools/pyinstaller_hooks/ | Frozen Windows/Linux runtimes, curated Qt desktop plugins, licenses, inventory and checksum | PyInstaller | Windows/Linux Actions and archive inspection |
 
 Every substantial future module must be added here before implementation. UI must not own analysis logic; provider must not own project state.
+
+### C9 calibration (2026-10-14; synthetic validation only)
+| Module | Files | Responsibility | Depends on | Verification |
+|---|---|---|---|---|
+| calibration runtime (ships, pure) | src/patchtrace/calibration/{features,artifact,predict,ood,policy}.py | `features/1` extraction from stored Ghidriff + `Reconciliation` rows (families G,B,R,S,P,X, dependency table, profiles); strict `patchtrace-calibration-model/1` loader (size cap, strict JSON, digest, schema/semantic checks, no pickle) that degrades to no-model; predict + provenance; OOD flags; policy order; `display_level()` = 'ordinal' unless a valid artifact carries passing gates | models, secondary.reconcile (read-only) | tests/test_calibration_runtime.py (golden vectors, loader negatives, policy table, no forbidden imports) |
+| calibration dev pipeline (never ships) | tools/calibration/*.py, tools/calibration/guidelines/g1.md | contracts (corpus/labels/report), corpus verify/fetch + no-PE/Tier-W guard, lineage union-find + identity grouping + roles, sampling, blind labelling log, kappa, stdlib IRLS/Platt/PAV, grouped nested CV, metrics, lineage bootstrap, Learn-then-Test thresholds, null-simulated ECE, OOD validation, ablations, baselines (M0, M0b raw bytes, M1, M2), gates, deterministic report, single-use locked test, synthetic worlds, schema generation | patchtrace.calibration, acquisition.contracts | tests/test_calibration_{math,metrics,cv,tools}.py; optional scikit-learn cross-check (`calibration-dev` extra) |
