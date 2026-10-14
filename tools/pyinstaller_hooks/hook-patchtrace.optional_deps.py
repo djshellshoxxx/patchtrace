@@ -8,4 +8,4 @@ from PyInstaller.utils.hooks import collect_submodules
 
 hiddenimports = (collect_submodules('rapidfuzz') + collect_submodules('pygments.lexers')
                  + collect_submodules('pygments.formatters') + collect_submodules('pygments.styles')
-                 + ['yara_x', 'pefile', 'networkx'])
+                 + ['yara_x', 'pefile'])

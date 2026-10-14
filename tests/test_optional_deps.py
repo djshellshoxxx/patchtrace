@@ -8,7 +8,7 @@ from patchtrace import optional_deps
 
 def test_probe_covers_every_registered_name():
     caps = optional_deps.probe()
-    assert tuple(caps) == optional_deps.NAMES == ('rapidfuzz', 'pygments', 'networkx', 'pefile', 'yara-x')
+    assert tuple(caps) == optional_deps.NAMES == ('rapidfuzz', 'pygments', 'pefile', 'yara-x')
     assert {c.extra for c in caps.values()} == {'workbench', 'rules'}
 
 

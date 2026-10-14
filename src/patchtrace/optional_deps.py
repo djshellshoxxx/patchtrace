@@ -25,12 +25,6 @@ except ImportError as exc:  # pragma: no cover
 else:
     _pg_error = ''
 try:
-    import networkx  # noqa: F401
-except ImportError as exc:  # pragma: no cover
-    networkx, _nx_error = None, repr(exc)
-else:
-    _nx_error = ''
-try:
     import pefile  # noqa: F401
 except ImportError as exc:  # pragma: no cover
     pefile, _pe_error = None, repr(exc)
@@ -47,7 +41,6 @@ else:
 _REGISTRY: dict[str, tuple[str, str, object, str]] = {
     'rapidfuzz': ('workbench', 'rapidfuzz', rapidfuzz, _rf_error),
     'pygments': ('workbench', 'Pygments', pygments, _pg_error),
-    'networkx': ('workbench', 'networkx', networkx, _nx_error),
     'pefile': ('workbench', 'pefile', pefile, _pe_error),
     'yara-x': ('rules', 'yara-x', yara_x, _yx_error),
 }
