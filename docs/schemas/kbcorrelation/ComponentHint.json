@@ -1,0 +1,112 @@
+{
+  "$defs": {
+    "SourceRef": {
+      "additionalProperties": false,
+      "properties": {
+        "assertion": {
+          "enum": [
+            "advisory_fact",
+            "index_claim",
+            "binary_observation",
+            "rule_hypothesis",
+            "analyst_statement"
+          ],
+          "title": "Assertion",
+          "type": "string"
+        },
+        "doc_id": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Doc Id",
+          "type": "string"
+        },
+        "pointer": {
+          "maxLength": 4096,
+          "pattern": "^(/([^/~]|~[01])*)*$",
+          "title": "Pointer",
+          "type": "string"
+        }
+      },
+      "required": [
+        "doc_id",
+        "pointer",
+        "assertion"
+      ],
+      "title": "SourceRef",
+      "type": "object"
+    }
+  },
+  "$id": "https://patchtrace.local/schemas/kbcorrelation/1/ComponentHint.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "basename": {
+      "maxLength": 1000,
+      "minLength": 1,
+      "title": "Basename",
+      "type": "string"
+    },
+    "changed_in_kb": {
+      "default": "unknown",
+      "enum": [
+        "yes",
+        "no",
+        "unknown"
+      ],
+      "title": "Changed In Kb",
+      "type": "string"
+    },
+    "claim_refs": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/SourceRef"
+      },
+      "title": "Claim Refs",
+      "type": "array"
+    },
+    "contract": {
+      "const": "kbcorrelation/1",
+      "default": "kbcorrelation/1",
+      "title": "Contract",
+      "type": "string"
+    },
+    "hint_id": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Hint Id",
+      "type": "string"
+    },
+    "reasons": {
+      "default": [],
+      "items": {
+        "maxLength": 1000,
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Reasons",
+      "type": "array"
+    },
+    "scope_id": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Scope Id",
+      "type": "string"
+    },
+    "tier": {
+      "enum": [
+        "A",
+        "B",
+        "C",
+        "D",
+        "E"
+      ],
+      "title": "Tier",
+      "type": "string"
+    }
+  },
+  "required": [
+    "hint_id",
+    "basename",
+    "scope_id",
+    "tier"
+  ],
+  "title": "ComponentHint",
+  "type": "object"
+}

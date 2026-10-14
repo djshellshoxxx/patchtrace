@@ -155,3 +155,15 @@ Built: common, process, capa, floss, diec, normalize, delta (tests: `tests/test_
 | unified contracts | src/patchtrace/unified/contracts.py | strict frozen records of 02 (rows, facts, manifest, pointer, run, program-ir, extract request/header/footer, key inputs) | pydantic, limits | tests/test_unified_contracts.py; docs/schemas/unified/ (+ examples/index.json) |
 | unified keys | src/patchtrace/unified/keys.py | ir_key, result_key, row_id, config/limits/manual/source digests, run id | enrichment.identity | tests/test_unified_keys.py |
 | unified store | src/patchtrace/unified/store.py | result sidecars (decompressed-content hashes), pointer rows `unified-result`/`unified-run`, cache misses, own retention, `backup_once`/`delete_own` | enrichment.storage (public API), ingestion | tests/test_unified_store.py |
+### [B-0:optional-deps] Program E dependency enablement (2026-10-14; instance B)
+| Module | Files | Responsibility | Depends on | Tests |
+|---|---|---|---|---|
+<<<<<<< HEAD
+| optional deps | src/patchtrace/optional_deps.py, tools/pyinstaller_hooks/hook-patchtrace.optional_deps.py | guarded static imports of rapidfuzz, yara_x (extras `search`, `rules` in pyproject; pefile/pygments/networkx are dev test oracles only, wheels only); `probe()`/`available()`/`summary_line()` never raise; `--self-test` prints `optional-deps:` and `tools/frozen_smoke.py` requires `missing=none` in the frozen EXE; `.github/workflows/optional-deps.yml` installs the extras wheels-only on ubuntu and windows | stdlib | `tests/test_optional_deps.py` |
+=======
+| optional deps | src/patchtrace/optional_deps.py, tools/pyinstaller_hooks/hook-patchtrace.optional_deps.py | guarded static imports of rapidfuzz, pygments, networkx, pefile, yara_x (extras `workbench`, `rules` in pyproject, wheels only); `probe()`/`available()`/`summary_line()` never raise; `--self-test` prints `optional-deps:` and `tools/frozen_smoke.py` requires `missing=none` in the frozen EXE; `.github/workflows/optional-deps.yml` installs the extras wheels-only on ubuntu and windows | stdlib | `tests/test_optional_deps.py` |
+### [K0:kbcorrelation-contracts] KB-CVE correlator contracts (2026-10-14; KB-integration-plan slice K0)
+| Module | Files | Responsibility | Depends on | Tests |
+|---|---|---|---|---|
+| kbcorrelation contracts | src/patchtrace/kbcorrelation/{__init__ (empty),contracts,limits,ids,errors,ports}.py | strict frozen `kbcorrelation/1` records (7.2), `KbcLimits` (7.4), `kb-syntax/1` ids (canonical `KB`+4-10 ASCII digits, bare digits only via `normalise_kb_edge`, no numeric cast), `PT-KBC-*` + `KbcIssue`/`OperationResult`, sibling-call Protocol ports; no Qt, urllib, sqlite3 | pydantic, `intelligence.contracts` types, `enrichment.identity.domain_id`, `acquisition.contracts.validate_file_name` (contracts.py only) | tests/test_kbc_contracts.py, test_kbc_ids.py, test_kbc_schemas.py; docs/schemas/kbcorrelation/ via tools/generate_kbc_schemas.py |
+>>>>>>> worktree-agent-a382eefdbdbec2cd6

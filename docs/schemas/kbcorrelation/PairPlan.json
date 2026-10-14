@@ -1,0 +1,145 @@
+{
+  "$defs": {
+    "ExpectedFile": {
+      "additionalProperties": false,
+      "properties": {
+        "sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Sha256",
+          "type": "string"
+        },
+        "size": {
+          "minimum": 0,
+          "title": "Size",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "sha256",
+        "size"
+      ],
+      "title": "ExpectedFile",
+      "type": "object"
+    },
+    "PlanRequest": {
+      "additionalProperties": false,
+      "properties": {
+        "bytes": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Bytes"
+        },
+        "method": {
+          "enum": [
+            "GET",
+            "HEAD"
+          ],
+          "title": "Method",
+          "type": "string"
+        },
+        "url": {
+          "maxLength": 2048,
+          "minLength": 1,
+          "title": "Url",
+          "type": "string"
+        },
+        "why": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Why",
+          "type": "string"
+        }
+      },
+      "required": [
+        "method",
+        "url",
+        "why"
+      ],
+      "title": "PlanRequest",
+      "type": "object"
+    }
+  },
+  "$id": "https://patchtrace.local/schemas/kbcorrelation/1/PairPlan.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "The exact request preview a consent is bound to. Absent for local files.",
+  "properties": {
+    "acquisition_plan_sha": {
+      "anyOf": [
+        {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Acquisition Plan Sha"
+    },
+    "contract": {
+      "const": "kbcorrelation/1",
+      "default": "kbcorrelation/1",
+      "title": "Contract",
+      "type": "string"
+    },
+    "destination_policy": {
+      "maxLength": 1000,
+      "minLength": 1,
+      "title": "Destination Policy",
+      "type": "string"
+    },
+    "expected": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/ExpectedFile"
+      },
+      "title": "Expected",
+      "type": "array"
+    },
+    "hosts": {
+      "items": {
+        "maxLength": 1000,
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Hosts",
+      "type": "array"
+    },
+    "pair_id": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Pair Id",
+      "type": "string"
+    },
+    "plan_sha": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Plan Sha",
+      "type": "string"
+    },
+    "requests": {
+      "items": {
+        "$ref": "#/$defs/PlanRequest"
+      },
+      "minItems": 1,
+      "title": "Requests",
+      "type": "array"
+    }
+  },
+  "required": [
+    "plan_sha",
+    "pair_id",
+    "requests",
+    "hosts",
+    "destination_policy"
+  ],
+  "title": "PairPlan",
+  "type": "object"
+}

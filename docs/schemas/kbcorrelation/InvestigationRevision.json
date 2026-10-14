@@ -1,0 +1,180 @@
+{
+  "$defs": {
+    "Lead": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "enum": [
+            "kb",
+            "cve",
+            "file",
+            "pair"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "raw": {
+          "maxLength": 200,
+          "title": "Raw",
+          "type": "string"
+        },
+        "value": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Value",
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind",
+        "value",
+        "raw"
+      ],
+      "title": "Lead",
+      "type": "object"
+    }
+  },
+  "$id": "https://patchtrace.local/schemas/kbcorrelation/1/InvestigationRevision.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "contract": {
+      "const": "kbcorrelation/1",
+      "default": "kbcorrelation/1",
+      "title": "Contract",
+      "type": "string"
+    },
+    "coverage_ids": {
+      "default": [],
+      "items": {
+        "pattern": "^[0-9a-f]{64}$",
+        "type": "string"
+      },
+      "title": "Coverage Ids",
+      "type": "array"
+    },
+    "investigation_id": {
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+      "title": "Investigation Id",
+      "type": "string"
+    },
+    "lead": {
+      "$ref": "#/$defs/Lead"
+    },
+    "parent": {
+      "anyOf": [
+        {
+          "minimum": 1,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Parent"
+    },
+    "plan_sha": {
+      "anyOf": [
+        {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Plan Sha"
+    },
+    "revision": {
+      "minimum": 1,
+      "title": "Revision",
+      "type": "integer"
+    },
+    "scope_ids": {
+      "default": [],
+      "items": {
+        "pattern": "^[0-9a-f]{64}$",
+        "type": "string"
+      },
+      "title": "Scope Ids",
+      "type": "array"
+    },
+    "selected_pair_id": {
+      "anyOf": [
+        {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Selected Pair Id"
+    },
+    "selected_scope_id": {
+      "anyOf": [
+        {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Selected Scope Id"
+    },
+    "state": {
+      "enum": [
+        "NEW",
+        "LEAD_PARSED",
+        "SEARCHED",
+        "METADATA_READY",
+        "METADATA_PARTIAL",
+        "NOT_OBSERVED",
+        "SCOPE_REQUIRED",
+        "PRODUCT_SELECTED",
+        "NEEDS_PRODUCT",
+        "COMPONENTS_READY",
+        "NEEDS_FILENAME",
+        "PAIR_PROPOSED",
+        "NEEDS_OLDER",
+        "NEEDS_NEWER",
+        "LINEAGE_BLOCKED",
+        "NEEDS_PAIR_SELECTION",
+        "PAIR_APPROVED",
+        "PLAN_READY",
+        "ACQUIRING",
+        "BYTES_VERIFIED",
+        "PROJECT_CREATED",
+        "CONTEXT_PENDING",
+        "CONTEXT_ATTACHED",
+        "COMPARISON_PENDING",
+        "ANALYZED",
+        "LEADS_READY"
+      ],
+      "title": "State",
+      "type": "string"
+    },
+    "warnings": {
+      "default": [],
+      "items": {
+        "maxLength": 500,
+        "type": "string"
+      },
+      "title": "Warnings",
+      "type": "array"
+    }
+  },
+  "required": [
+    "investigation_id",
+    "revision",
+    "lead",
+    "state"
+  ],
+  "title": "InvestigationRevision",
+  "type": "object"
+}

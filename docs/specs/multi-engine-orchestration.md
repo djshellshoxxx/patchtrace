@@ -1,6 +1,6 @@
 # SPEC-28: Multi-engine orchestration (Phase C: C0, C1, C2, C5)
 
-Status: implemented (P1-P5) with the deviations recorded in section 15; developer-ready draft 2026-10-14. Contract versions `engine-run/1`, `secondary/2` (reads `secondary/1`). Extends SPEC-10 (BinDiff), SPEC-11 (rz-diff), SPEC-27 (calibration). Plan: `../plans/phase-c-multi-engine-plan.md`.
+Status: implemented (P1-P5) with the deviations recorded in section 15; developer-ready draft 2026-10-14. Contract versions `engine-run/1`, `secondary/2` (reads `secondary/1`). Extends SPEC-10 (BinDiff), SPEC-11 (rz-diff), SPEC-27 (calibration). Plan: `../plans/phase-c-multi-engine-plan.md`. Amendment A-06 (Windows spawn lock, unified-engine slice P1) is implemented: `_WINDOWS_SPAWN_LOCK` in `jobs.py`, merged 2026-10-14 (C3, PR #38), so `max_parallel = 2` is safe.
 
 ## 1. Outcome
 
