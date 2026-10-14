@@ -13,7 +13,8 @@ from patchtrace.tooltips import TooltipEntry
 @pytest.fixture(autouse=True)
 def private_registry(monkeypatch):
     """Registrations must not leak into the tooltip tests that enumerate the registry."""
-    monkeypatch.setattr(tooltips, 'REGISTRY', dict(tooltips.REGISTRY))
+    # A MainWindow built earlier in the process has registered the framework tips; these tests start without them.
+    monkeypatch.setattr(tooltips, 'REGISTRY', {k: v for k, v in tooltips.REGISTRY.items() if k not in tips.GUI_TIP_IDS})
     monkeypatch.setattr(tooltips, 'TEMPLATES', dict(tooltips.TEMPLATES))
 
 
@@ -73,7 +74,7 @@ def test_the_framework_tips_are_complete_plain_and_unique():
     existing = {item.what for item in tooltips.REGISTRY.values()}
     assert len(set(whats)) == len(whats) and not set(whats) & existing
     for tip_id, item in found.items():
-        assert tip_id.startswith('gui.')
+        assert tip_id.startswith(('gui.', 'panels.', 'menu.'))
         assert item.what and item.why and item.effect
         assert len(item.what) <= DESCRIPTION_LIMIT
         assert not any(char in text for text in (item.what, item.why, item.effect, item.source, item.availability)

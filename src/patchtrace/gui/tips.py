@@ -13,7 +13,8 @@ from collections.abc import Mapping
 from .registry import DESCRIPTION_LIMIT, TIPS_CODE
 
 GUI_TIP_IDS = ('gui.state_retry', 'gui.state_copy', 'gui.state_setup', 'gui.state_refresh', 'gui.notice',
-               'gui.notice_details', 'gui.notice_dismiss')
+               'gui.notice_details', 'gui.notice_dismiss', 'gui.notice_text', 'gui.palette', 'gui.palette_list', 'gui.reset_layout',
+               'gui.cycle_panels', 'gui.navigate', 'panels.dock_tabs', 'menu.view')
 
 
 class TipError(ValueError):
@@ -55,6 +56,40 @@ def gui_tips() -> dict:
             'Hide this notice.', 'Removes a note you have read.',
             'The notice stays hidden for this project or session and returns only if its text changes.',
             availability='Shown only for notices that can be dismissed.'),
+        'gui.notice_text': TooltipEntry(
+            'The full text of the notice above the workspace.', 'Long notes do not fit on the one-line strip.',
+            'Read-only; select and copy the text if you need it in a report.',
+            availability='Shown only after Details is chosen.'),
+        'gui.palette': TooltipEntry(
+            'Search every command of the window and of the open panels by name.',
+            'Reaches any command from the keyboard without hunting through menus.',
+            'Typing filters the list; Enter runs the chosen command and Escape closes the palette.',
+            availability='Opens with Ctrl+Shift+P.'),
+        'gui.palette_list': TooltipEntry(
+            'The commands that match the search text.',
+            'Unavailable commands stay listed with the reason they cannot run now.',
+            'Enter runs the selected command; unavailable commands only report their reason.'),
+        'gui.reset_layout': TooltipEntry(
+            'Put every panel back at its default place and size.',
+            'Recovers a window layout that was dragged somewhere unusable.',
+            'Forgets the saved panel layout; panel contents and the project are untouched.'),
+        'gui.cycle_panels': TooltipEntry(
+            'Move keyboard focus to the next region of the window, or the previous one with Shift.',
+            'Gets between the navigator, code, findings, open panels and the log without a mouse.',
+            'Changes the focused region only; nothing is edited.', availability='F6 and Shift+F6.'),
+        'gui.navigate': TooltipEntry(
+            'Go back to the previous place you opened from a link, or forward again.',
+            'Links between panels and the code views leave a trail, like a browser history.',
+            'Reopens an earlier place; nothing is edited. The trail keeps the last 50 places.',
+            availability='Alt+Left and Alt+Right.'),
+        'panels.dock_tabs': TooltipEntry(
+            'Tabs that switch between panels docked in the same place.',
+            'Several panels share one area and only one shows at a time.',
+            'Choosing a tab shows that panel; nothing is closed.'),
+        'menu.view': TooltipEntry(
+            'Show or hide panels, reset the layout and open the command palette.',
+            'Collects the window layout controls in one menu.',
+            'Only changes which panels are visible; analysis results are untouched.'),
     }
 
 
@@ -96,15 +131,27 @@ def what_line(tip_id: str, **values: object) -> str:
 
 def apply_tip(target: object, tip_id: str, *, accessible: str = 'what', name: str | None = None,
               **values: object) -> None:
-    """`tooltips.apply_tooltip` plus the accessibility contract: with `accessible='what'` the description is the
-    What line (the full text stays in what's-this and the tooltip), and the UIA automation id is `name` or the tip
-    id (unique per window, which is why a state button passes its per-panel name)."""
+    """Apply a registry entry to a widget or action (`tooltips.apply_tooltip` delegates here): tooltip, what's-this,
+    status tip, accessible description and, only while it is still empty, the object name. With `accessible='what'`
+    the description is the What line (the full text stays in what's-this and the tooltip); `'full'` keeps the old
+    flattened whole text. The UIA automation id is `name` or the tip id (unique per window, which is why a state
+    button passes its per-panel name). Dynamic ids (templates) take their values as keywords."""
     from .. import tooltips
     if accessible not in ('what', 'full'):
         raise ValueError(f'accessible must be "what" or "full": {accessible!r:.20}')
-    tooltips.apply_tooltip(target, tip_id, name=name, **values)
-    if accessible == 'what' and hasattr(target, 'setAccessibleDescription'):
-        target.setAccessibleDescription(what_line(tip_id, **values))
+    if tip_id in tooltips.TEMPLATES:
+        rich, plain = tooltips.template(tip_id, **values), tooltips.template_description(tip_id, **values)
+    else:
+        rich, plain = tooltips.tooltip(tip_id), tooltips.plain_description(tip_id)
+    flat = plain.replace('\n', ' ')
+    target.setToolTip(rich)
+    target.setWhatsThis(plain)
+    if hasattr(target, 'setStatusTip'):
+        target.setStatusTip(flat)
+    if hasattr(target, 'setAccessibleDescription'):
+        target.setAccessibleDescription(what_line(tip_id, **values) if accessible == 'what' else flat)
+    if not target.objectName():
+        target.setObjectName(name or tip_id)
     if hasattr(target, 'setAccessibleIdentifier'):
         target.setAccessibleIdentifier(name or tip_id)
 

@@ -162,6 +162,7 @@ class NoticeStrip(QWidget):
         apply_tip(self._details_button, 'gui.notice_details', name='gui.notice_details')
         apply_tip(self._dismiss_button, 'gui.notice_dismiss', name='gui.notice_dismiss')
         self._details = SafeTextView('Notice details', wrap=True)
+        apply_tip(self._details, 'gui.notice_text', name='gui.notice_text')
         self._details.setMaximumHeight(self.fontMetrics().lineSpacing() * 8)
         self._details.hide()
         top = QHBoxLayout()

@@ -1085,26 +1085,16 @@ def _rich(text: str) -> str:
     return '<p style="white-space:pre-wrap">' + html.escape(text).replace('\n', '<br>') + '</p>'
 
 
-def apply_tooltip(target, tip_id: str, *, name: str | None = None, **values: object) -> None:
-    """Apply a registry entry to a QWidget or QAction.
+def apply_tooltip(target, tip_id: str, *, name: str | None = None, accessible: str = 'full', **values: object) -> None:
+    """Apply a registry entry to a QWidget or QAction (the work is `gui.tips.apply_tip`).
 
-    Sets toolTip and whatsThis on both, plus statusTip on actions and accessibleDescription on
-    widgets. ``objectName`` is set to ``name`` (default: the ID) only when still empty. Dynamic IDs
-    (those in TEMPLATES) take their values as keyword arguments.
+    Sets toolTip and whatsThis on both, plus statusTip on actions and accessibleDescription on widgets. The legacy
+    description is the whole flattened text; panels pass ``accessible='what'`` for the short What line.
+    ``objectName`` is set to ``name`` (default: the ID) only when still empty. Dynamic IDs (those in TEMPLATES)
+    take their values as keyword arguments.
     """
-    if tip_id in TEMPLATES:
-        rich, plain = template(tip_id, **values), template_description(tip_id, **values)
-    else:
-        rich, plain = tooltip(tip_id), plain_description(tip_id)
-    flat = plain.replace('\n', ' ')
-    target.setToolTip(rich)
-    target.setWhatsThis(plain)
-    if hasattr(target, 'setStatusTip'):
-        target.setStatusTip(flat)
-    if hasattr(target, 'setAccessibleDescription'):
-        target.setAccessibleDescription(flat)
-    if not target.objectName():
-        target.setObjectName(name or tip_id)
+    from .gui.tips import apply_tip
+    apply_tip(target, tip_id, accessible=accessible, name=name, **values)
 
 
 def apply_tooltips(owner, mapping: dict[str, str]) -> None:
