@@ -1,0 +1,736 @@
+{
+  "KevCatalog": {
+    "invalid": [
+      {
+        "example": {
+          "contract": "kev/1",
+          "entries": [
+            {
+              "contract": "kev/1",
+              "cve_id": "CVE-2099-10001",
+              "cwes": [
+                "CWE-416"
+              ],
+              "date_added": "2099-02-10",
+              "due_date": "2099-03-03",
+              "entry_digest": "1512059d95c7d33dec42c14a6b3a5847bf305df7253aa7ce93eb34060ffe273f",
+              "forensic_triage": "no",
+              "name": "Example Windows Component Elevation of Privilege Vulnerability",
+              "notes": "https://example.invalid/advisory/10001 ; https://example.invalid/nvd/CVE-2099-10001",
+              "product": "Example Windows Component",
+              "ransomware_use": "known",
+              "required_action": "Synthetic required action. Apply updates per vendor instructions.",
+              "short_description": "Synthetic entry for tests. Not a real vulnerability.",
+              "vendor_project": "Example Corp"
+            },
+            {
+              "contract": "kev/1",
+              "cve_id": "CVE-2099-10002",
+              "cwes": [],
+              "date_added": "2099-02-20",
+              "due_date": "2099-02-23",
+              "entry_digest": "f0e3c58752ed1c70515bdf1a327cf54103580003a766d0bae15fd3683d6bdc4e",
+              "forensic_triage": "yes",
+              "name": "Example Gateway Authentication Bypass Vulnerability",
+              "notes": "",
+              "product": "Example Gateway",
+              "ransomware_use": "unknown",
+              "required_action": "Synthetic required action.",
+              "short_description": "Synthetic entry with forensic triage required.",
+              "vendor_project": "Example Corp"
+            },
+            {
+              "contract": "kev/1",
+              "cve_id": "CVE-2099-10003",
+              "cwes": [
+                "CWE-20",
+                "CWE-787"
+              ],
+              "date_added": "2099-01-05",
+              "due_date": "2099-01-26",
+              "entry_digest": "357dd2e2c0c3d876d350c1b2544c0d61ae16f99487487415b2e3b77755398202",
+              "forensic_triage": "no",
+              "name": "<script>alert(1)</script> Synthetic Hostile Text Vulnerability",
+              "notes": "file:///C:/Windows/System32/cmd.exe; not a url; https://example.invalid/x",
+              "product": "Product ‮evil‬ \u001b[31mred",
+              "ransomware_use": "unknown",
+              "required_action": "Synthetic required action | with pipe and `backtick`.",
+              "short_description": "Synthetic hostile text with <img src=x> and file:///etc/passwd.",
+              "vendor_project": "Hostile <b>Vendor</b>"
+            },
+            {
+              "contract": "kev/1",
+              "cve_id": "CVE-2099-10004",
+              "cwes": [
+                "CWE-125"
+              ],
+              "date_added": "2099-03-01",
+              "due_date": "2099-03-22",
+              "entry_digest": "dc4cdfa0edb0dae41e4b76d7838ad4932c6ecfea988e7362f49ad788e138dea9",
+              "forensic_triage": "no",
+              "name": "Example Reader Memory Corruption Vulnerability",
+              "notes": "",
+              "product": "Example Reader",
+              "ransomware_use": "unknown",
+              "required_action": "Synthetic required action.",
+              "short_description": "Synthetic entry added on the release day.",
+              "vendor_project": "Example Corp"
+            }
+          ],
+          "meta": {
+            "authenticity": "unverified-local-file",
+            "catalog_version": "2099.03.01",
+            "consent": null,
+            "content_digest": "7813ee190792440518886285267a11c0bb35bec91e2f19dbf01d62388d1ef187",
+            "contract": "kev/1",
+            "count": 4,
+            "date_released": "2099-03-01T12:00:00Z",
+            "entry_count": 3,
+            "file_name": "kev-synthetic-2099.json",
+            "final_url": null,
+            "license": "CC0-1.0",
+            "parser_version": 1,
+            "raw_sha256": "a8315f6df29ecf96cfcbcce5f122597df677bc8ee1038ca4ceea58c96bcb59a9",
+            "raw_size": 3000,
+            "retrieved_at": "2099-03-01T13:00:00Z",
+            "skipped_entries": 0,
+            "snapshot_id": "1ced333d1b57e9abdec429cd9402fd97fa72969beeb9777ba61efc88530a87cf",
+            "source": "local-import",
+            "source_url": null,
+            "unknown_fields": [],
+            "warnings": []
+          }
+        },
+        "why": "entry count differs from metadata"
+      }
+    ],
+    "valid": {
+      "contract": "kev/1",
+      "entries": [
+        {
+          "contract": "kev/1",
+          "cve_id": "CVE-2099-10001",
+          "cwes": [
+            "CWE-416"
+          ],
+          "date_added": "2099-02-10",
+          "due_date": "2099-03-03",
+          "entry_digest": "1512059d95c7d33dec42c14a6b3a5847bf305df7253aa7ce93eb34060ffe273f",
+          "forensic_triage": "no",
+          "name": "Example Windows Component Elevation of Privilege Vulnerability",
+          "notes": "https://example.invalid/advisory/10001 ; https://example.invalid/nvd/CVE-2099-10001",
+          "product": "Example Windows Component",
+          "ransomware_use": "known",
+          "required_action": "Synthetic required action. Apply updates per vendor instructions.",
+          "short_description": "Synthetic entry for tests. Not a real vulnerability.",
+          "vendor_project": "Example Corp"
+        },
+        {
+          "contract": "kev/1",
+          "cve_id": "CVE-2099-10002",
+          "cwes": [],
+          "date_added": "2099-02-20",
+          "due_date": "2099-02-23",
+          "entry_digest": "f0e3c58752ed1c70515bdf1a327cf54103580003a766d0bae15fd3683d6bdc4e",
+          "forensic_triage": "yes",
+          "name": "Example Gateway Authentication Bypass Vulnerability",
+          "notes": "",
+          "product": "Example Gateway",
+          "ransomware_use": "unknown",
+          "required_action": "Synthetic required action.",
+          "short_description": "Synthetic entry with forensic triage required.",
+          "vendor_project": "Example Corp"
+        },
+        {
+          "contract": "kev/1",
+          "cve_id": "CVE-2099-10003",
+          "cwes": [
+            "CWE-20",
+            "CWE-787"
+          ],
+          "date_added": "2099-01-05",
+          "due_date": "2099-01-26",
+          "entry_digest": "357dd2e2c0c3d876d350c1b2544c0d61ae16f99487487415b2e3b77755398202",
+          "forensic_triage": "no",
+          "name": "<script>alert(1)</script> Synthetic Hostile Text Vulnerability",
+          "notes": "file:///C:/Windows/System32/cmd.exe; not a url; https://example.invalid/x",
+          "product": "Product ‮evil‬ \u001b[31mred",
+          "ransomware_use": "unknown",
+          "required_action": "Synthetic required action | with pipe and `backtick`.",
+          "short_description": "Synthetic hostile text with <img src=x> and file:///etc/passwd.",
+          "vendor_project": "Hostile <b>Vendor</b>"
+        },
+        {
+          "contract": "kev/1",
+          "cve_id": "CVE-2099-10004",
+          "cwes": [
+            "CWE-125"
+          ],
+          "date_added": "2099-03-01",
+          "due_date": "2099-03-22",
+          "entry_digest": "dc4cdfa0edb0dae41e4b76d7838ad4932c6ecfea988e7362f49ad788e138dea9",
+          "forensic_triage": "no",
+          "name": "Example Reader Memory Corruption Vulnerability",
+          "notes": "",
+          "product": "Example Reader",
+          "ransomware_use": "unknown",
+          "required_action": "Synthetic required action.",
+          "short_description": "Synthetic entry added on the release day.",
+          "vendor_project": "Example Corp"
+        }
+      ],
+      "meta": {
+        "authenticity": "unverified-local-file",
+        "catalog_version": "2099.03.01",
+        "consent": null,
+        "content_digest": "7813ee190792440518886285267a11c0bb35bec91e2f19dbf01d62388d1ef187",
+        "contract": "kev/1",
+        "count": 4,
+        "date_released": "2099-03-01T12:00:00Z",
+        "entry_count": 4,
+        "file_name": "kev-synthetic-2099.json",
+        "final_url": null,
+        "license": "CC0-1.0",
+        "parser_version": 1,
+        "raw_sha256": "a8315f6df29ecf96cfcbcce5f122597df677bc8ee1038ca4ceea58c96bcb59a9",
+        "raw_size": 3000,
+        "retrieved_at": "2099-03-01T13:00:00Z",
+        "skipped_entries": 0,
+        "snapshot_id": "1ced333d1b57e9abdec429cd9402fd97fa72969beeb9777ba61efc88530a87cf",
+        "source": "local-import",
+        "source_url": null,
+        "unknown_fields": [],
+        "warnings": []
+      }
+    }
+  },
+  "KevCatalogMeta": {
+    "invalid": [
+      {
+        "example": {
+          "authenticity": "unverified-local-file",
+          "catalog_version": "2099.03.01",
+          "consent": null,
+          "content_digest": "7813ee190792440518886285267a11c0bb35bec91e2f19dbf01d62388d1ef187",
+          "contract": "kev/1",
+          "count": 4,
+          "date_released": "2099-03-01T12:00:00Z",
+          "entry_count": 4,
+          "file_name": "kev-synthetic-2099.json",
+          "final_url": null,
+          "license": "CC0-1.0",
+          "parser_version": 1,
+          "raw_sha256": "a8315f6df29ecf96cfcbcce5f122597df677bc8ee1038ca4ceea58c96bcb59a9",
+          "raw_size": 3000,
+          "retrieved_at": "2099-03-01T13:00:00Z",
+          "skipped_entries": 3,
+          "snapshot_id": "1ced333d1b57e9abdec429cd9402fd97fa72969beeb9777ba61efc88530a87cf",
+          "source": "local-import",
+          "source_url": null,
+          "unknown_fields": [],
+          "warnings": []
+        },
+        "why": "counts do not add up"
+      },
+      {
+        "example": {
+          "authenticity": "unverified-local-file",
+          "catalog_version": "2099.03.01",
+          "consent": null,
+          "content_digest": "7813ee190792440518886285267a11c0bb35bec91e2f19dbf01d62388d1ef187",
+          "contract": "kev/1",
+          "count": 4,
+          "date_released": "2099-03-01T12:00:00Z",
+          "entry_count": 4,
+          "file_name": "a/b.json",
+          "final_url": null,
+          "license": "CC0-1.0",
+          "parser_version": 1,
+          "raw_sha256": "a8315f6df29ecf96cfcbcce5f122597df677bc8ee1038ca4ceea58c96bcb59a9",
+          "raw_size": 3000,
+          "retrieved_at": "2099-03-01T13:00:00Z",
+          "skipped_entries": 0,
+          "snapshot_id": "1ced333d1b57e9abdec429cd9402fd97fa72969beeb9777ba61efc88530a87cf",
+          "source": "local-import",
+          "source_url": null,
+          "unknown_fields": [],
+          "warnings": []
+        },
+        "why": "path in file name"
+      }
+    ],
+    "valid": {
+      "authenticity": "unverified-local-file",
+      "catalog_version": "2099.03.01",
+      "consent": null,
+      "content_digest": "7813ee190792440518886285267a11c0bb35bec91e2f19dbf01d62388d1ef187",
+      "contract": "kev/1",
+      "count": 4,
+      "date_released": "2099-03-01T12:00:00Z",
+      "entry_count": 4,
+      "file_name": "kev-synthetic-2099.json",
+      "final_url": null,
+      "license": "CC0-1.0",
+      "parser_version": 1,
+      "raw_sha256": "a8315f6df29ecf96cfcbcce5f122597df677bc8ee1038ca4ceea58c96bcb59a9",
+      "raw_size": 3000,
+      "retrieved_at": "2099-03-01T13:00:00Z",
+      "skipped_entries": 0,
+      "snapshot_id": "1ced333d1b57e9abdec429cd9402fd97fa72969beeb9777ba61efc88530a87cf",
+      "source": "local-import",
+      "source_url": null,
+      "unknown_fields": [],
+      "warnings": []
+    }
+  },
+  "KevContext": {
+    "invalid": [
+      {
+        "example": {
+          "catalog_version": "2099.03.01",
+          "content_digest": "7813ee190792440518886285267a11c0bb35bec91e2f19dbf01d62388d1ef187",
+          "context_id": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+          "contract": "kev/1",
+          "created_at": "2099-03-02T12:00:00Z",
+          "date_released": "2099-03-01T12:00:00Z",
+          "join_version": 1,
+          "kb": null,
+          "lookups": [
+            {
+              "age_days": 1,
+              "contract": "kev/1",
+              "cve_id": "CVE-2099-10001",
+              "entry": {
+                "contract": "kev/1",
+                "cve_id": "CVE-2099-10001",
+                "cwes": [
+                  "CWE-416"
+                ],
+                "date_added": "2099-02-10",
+                "due_date": "2099-03-03",
+                "entry_digest": "1512059d95c7d33dec42c14a6b3a5847bf305df7253aa7ce93eb34060ffe273f",
+                "forensic_triage": "no",
+                "name": "Example Windows Component Elevation of Privilege Vulnerability",
+                "product": "Example Windows Component",
+                "ransomware_use": "known",
+                "vendor_project": "Example Corp"
+              },
+              "freshness": "fresh",
+              "notes": [],
+              "snapshot_id": "1ced333d1b57e9abdec429cd9402fd97fa72969beeb9777ba61efc88530a87cf",
+              "status": "listed"
+            },
+            {
+              "age_days": 1,
+              "contract": "kev/1",
+              "cve_id": "CVE-2099-99999",
+              "entry": null,
+              "freshness": "fresh",
+              "notes": [],
+              "snapshot_id": "1ced333d1b57e9abdec429cd9402fd97fa72969beeb9777ba61efc88530a87cf",
+              "status": "not-listed"
+            }
+          ],
+          "orientation_verified": false,
+          "release_date": null,
+          "snapshot_id": "1ced333d1b57e9abdec429cd9402fd97fa72969beeb9777ba61efc88530a87cf",
+          "source": "local-import"
+        },
+        "why": "identity does not match CVEs"
+      }
+    ],
+    "valid": {
+      "catalog_version": "2099.03.01",
+      "content_digest": "7813ee190792440518886285267a11c0bb35bec91e2f19dbf01d62388d1ef187",
+      "context_id": "31bd91ccb01001bec675f415918469b143a47a5d670b989deff9d1aa42135ebe",
+      "contract": "kev/1",
+      "created_at": "2099-03-02T12:00:00Z",
+      "date_released": "2099-03-01T12:00:00Z",
+      "join_version": 1,
+      "kb": null,
+      "lookups": [
+        {
+          "age_days": 1,
+          "contract": "kev/1",
+          "cve_id": "CVE-2099-10001",
+          "entry": {
+            "contract": "kev/1",
+            "cve_id": "CVE-2099-10001",
+            "cwes": [
+              "CWE-416"
+            ],
+            "date_added": "2099-02-10",
+            "due_date": "2099-03-03",
+            "entry_digest": "1512059d95c7d33dec42c14a6b3a5847bf305df7253aa7ce93eb34060ffe273f",
+            "forensic_triage": "no",
+            "name": "Example Windows Component Elevation of Privilege Vulnerability",
+            "product": "Example Windows Component",
+            "ransomware_use": "known",
+            "vendor_project": "Example Corp"
+          },
+          "freshness": "fresh",
+          "notes": [],
+          "snapshot_id": "1ced333d1b57e9abdec429cd9402fd97fa72969beeb9777ba61efc88530a87cf",
+          "status": "listed"
+        },
+        {
+          "age_days": 1,
+          "contract": "kev/1",
+          "cve_id": "CVE-2099-99999",
+          "entry": null,
+          "freshness": "fresh",
+          "notes": [],
+          "snapshot_id": "1ced333d1b57e9abdec429cd9402fd97fa72969beeb9777ba61efc88530a87cf",
+          "status": "not-listed"
+        }
+      ],
+      "orientation_verified": false,
+      "release_date": null,
+      "snapshot_id": "1ced333d1b57e9abdec429cd9402fd97fa72969beeb9777ba61efc88530a87cf",
+      "source": "local-import"
+    }
+  },
+  "KevDelta": {
+    "invalid": [
+      {
+        "example": {
+          "added": [],
+          "added_count": -1,
+          "changed": [
+            {
+              "after": {
+                "cwes": [
+                  "CWE-416"
+                ],
+                "due_date": "2099-03-03",
+                "forensic_triage": "no",
+                "ransomware_use": "unknown"
+              },
+              "before": {
+                "cwes": [
+                  "CWE-416"
+                ],
+                "due_date": "2099-03-03",
+                "forensic_triage": "no",
+                "ransomware_use": "known"
+              },
+              "cve_id": "CVE-2099-10001"
+            }
+          ],
+          "changed_count": 1,
+          "contract": "kev/1",
+          "from_catalog_version": "2099.03.01",
+          "from_snapshot_id": "1ced333d1b57e9abdec429cd9402fd97fa72969beeb9777ba61efc88530a87cf",
+          "removed": [],
+          "removed_count": 0,
+          "to_catalog_version": "2099.03.01",
+          "to_snapshot_id": "e6e491c0f5d09705121ade22593522cb223a61eac8c8d275ebe9797b77d71664"
+        },
+        "why": "negative count"
+      }
+    ],
+    "valid": {
+      "added": [],
+      "added_count": 0,
+      "changed": [
+        {
+          "after": {
+            "cwes": [
+              "CWE-416"
+            ],
+            "due_date": "2099-03-03",
+            "forensic_triage": "no",
+            "ransomware_use": "unknown"
+          },
+          "before": {
+            "cwes": [
+              "CWE-416"
+            ],
+            "due_date": "2099-03-03",
+            "forensic_triage": "no",
+            "ransomware_use": "known"
+          },
+          "cve_id": "CVE-2099-10001"
+        }
+      ],
+      "changed_count": 1,
+      "contract": "kev/1",
+      "from_catalog_version": "2099.03.01",
+      "from_snapshot_id": "1ced333d1b57e9abdec429cd9402fd97fa72969beeb9777ba61efc88530a87cf",
+      "removed": [],
+      "removed_count": 0,
+      "to_catalog_version": "2099.03.01",
+      "to_snapshot_id": "e6e491c0f5d09705121ade22593522cb223a61eac8c8d275ebe9797b77d71664"
+    }
+  },
+  "KevEntry": {
+    "invalid": [
+      {
+        "example": {
+          "contract": "kev/1",
+          "cve_id": "CVE-２０９９-１０００１",
+          "cwes": [
+            "CWE-416"
+          ],
+          "date_added": "2099-02-10",
+          "due_date": "2099-03-03",
+          "entry_digest": "1512059d95c7d33dec42c14a6b3a5847bf305df7253aa7ce93eb34060ffe273f",
+          "forensic_triage": "no",
+          "name": "Example Windows Component Elevation of Privilege Vulnerability",
+          "notes": "https://example.invalid/advisory/10001 ; https://example.invalid/nvd/CVE-2099-10001",
+          "product": "Example Windows Component",
+          "ransomware_use": "known",
+          "required_action": "Synthetic required action. Apply updates per vendor instructions.",
+          "short_description": "Synthetic entry for tests. Not a real vulnerability.",
+          "vendor_project": "Example Corp"
+        },
+        "why": "fullwidth CVE ID"
+      },
+      {
+        "example": {
+          "contract": "kev/1",
+          "cve_id": "CVE-2099-10001",
+          "cwes": [
+            "CWE-416"
+          ],
+          "date_added": "2099-02-10",
+          "due_date": "2099-01-01",
+          "entry_digest": "1512059d95c7d33dec42c14a6b3a5847bf305df7253aa7ce93eb34060ffe273f",
+          "forensic_triage": "no",
+          "name": "Example Windows Component Elevation of Privilege Vulnerability",
+          "notes": "https://example.invalid/advisory/10001 ; https://example.invalid/nvd/CVE-2099-10001",
+          "product": "Example Windows Component",
+          "ransomware_use": "known",
+          "required_action": "Synthetic required action. Apply updates per vendor instructions.",
+          "short_description": "Synthetic entry for tests. Not a real vulnerability.",
+          "vendor_project": "Example Corp"
+        },
+        "why": "due date before added"
+      },
+      {
+        "example": {
+          "contract": "kev/1",
+          "cve_id": "CVE-2099-10001",
+          "cwes": [
+            "CWE-416"
+          ],
+          "date_added": "2099-02-10",
+          "due_date": "2099-03-03",
+          "entry_digest": "1512059d95c7d33dec42c14a6b3a5847bf305df7253aa7ce93eb34060ffe273f",
+          "extra": 1,
+          "forensic_triage": "no",
+          "name": "Example Windows Component Elevation of Privilege Vulnerability",
+          "notes": "https://example.invalid/advisory/10001 ; https://example.invalid/nvd/CVE-2099-10001",
+          "product": "Example Windows Component",
+          "ransomware_use": "known",
+          "required_action": "Synthetic required action. Apply updates per vendor instructions.",
+          "short_description": "Synthetic entry for tests. Not a real vulnerability.",
+          "vendor_project": "Example Corp"
+        },
+        "why": "unknown field"
+      }
+    ],
+    "valid": {
+      "contract": "kev/1",
+      "cve_id": "CVE-2099-10001",
+      "cwes": [
+        "CWE-416"
+      ],
+      "date_added": "2099-02-10",
+      "due_date": "2099-03-03",
+      "entry_digest": "1512059d95c7d33dec42c14a6b3a5847bf305df7253aa7ce93eb34060ffe273f",
+      "forensic_triage": "no",
+      "name": "Example Windows Component Elevation of Privilege Vulnerability",
+      "notes": "https://example.invalid/advisory/10001 ; https://example.invalid/nvd/CVE-2099-10001",
+      "product": "Example Windows Component",
+      "ransomware_use": "known",
+      "required_action": "Synthetic required action. Apply updates per vendor instructions.",
+      "short_description": "Synthetic entry for tests. Not a real vulnerability.",
+      "vendor_project": "Example Corp"
+    }
+  },
+  "KevEntrySlim": {
+    "invalid": [
+      {
+        "example": {
+          "contract": "kev/1",
+          "cve_id": "CVE-2099-10001",
+          "cwes": [
+            "CWE-x"
+          ],
+          "date_added": "2099-02-10",
+          "due_date": "2099-03-03",
+          "entry_digest": "1512059d95c7d33dec42c14a6b3a5847bf305df7253aa7ce93eb34060ffe273f",
+          "forensic_triage": "no",
+          "name": "Example Windows Component Elevation of Privilege Vulnerability",
+          "product": "Example Windows Component",
+          "ransomware_use": "known",
+          "vendor_project": "Example Corp"
+        },
+        "why": "bad CWE token"
+      },
+      {
+        "example": {
+          "contract": "kev/2",
+          "cve_id": "CVE-2099-10001",
+          "cwes": [
+            "CWE-416"
+          ],
+          "date_added": "2099-02-10",
+          "due_date": "2099-03-03",
+          "entry_digest": "1512059d95c7d33dec42c14a6b3a5847bf305df7253aa7ce93eb34060ffe273f",
+          "forensic_triage": "no",
+          "name": "Example Windows Component Elevation of Privilege Vulnerability",
+          "product": "Example Windows Component",
+          "ransomware_use": "known",
+          "vendor_project": "Example Corp"
+        },
+        "why": "wrong contract"
+      }
+    ],
+    "valid": {
+      "contract": "kev/1",
+      "cve_id": "CVE-2099-10001",
+      "cwes": [
+        "CWE-416"
+      ],
+      "date_added": "2099-02-10",
+      "due_date": "2099-03-03",
+      "entry_digest": "1512059d95c7d33dec42c14a6b3a5847bf305df7253aa7ce93eb34060ffe273f",
+      "forensic_triage": "no",
+      "name": "Example Windows Component Elevation of Privilege Vulnerability",
+      "product": "Example Windows Component",
+      "ransomware_use": "known",
+      "vendor_project": "Example Corp"
+    }
+  },
+  "KevLookup": {
+    "invalid": [
+      {
+        "example": {
+          "age_days": 1,
+          "contract": "kev/1",
+          "cve_id": "CVE-2099-10001",
+          "entry": null,
+          "freshness": "fresh",
+          "notes": [],
+          "snapshot_id": "1ced333d1b57e9abdec429cd9402fd97fa72969beeb9777ba61efc88530a87cf",
+          "status": "listed"
+        },
+        "why": "listed without entry"
+      },
+      {
+        "example": {
+          "age_days": 1,
+          "contract": "kev/1",
+          "cve_id": "CVE-2099-10001",
+          "entry": {
+            "contract": "kev/1",
+            "cve_id": "CVE-2099-10001",
+            "cwes": [
+              "CWE-416"
+            ],
+            "date_added": "2099-02-10",
+            "due_date": "2099-03-03",
+            "entry_digest": "1512059d95c7d33dec42c14a6b3a5847bf305df7253aa7ce93eb34060ffe273f",
+            "forensic_triage": "no",
+            "name": "Example Windows Component Elevation of Privilege Vulnerability",
+            "notes": "https://example.invalid/advisory/10001 ; https://example.invalid/nvd/CVE-2099-10001",
+            "product": "Example Windows Component",
+            "ransomware_use": "known",
+            "required_action": "Synthetic required action. Apply updates per vendor instructions.",
+            "short_description": "Synthetic entry for tests. Not a real vulnerability.",
+            "vendor_project": "Example Corp"
+          },
+          "freshness": "fresh",
+          "notes": [],
+          "snapshot_id": "1ced333d1b57e9abdec429cd9402fd97fa72969beeb9777ba61efc88530a87cf",
+          "status": "maybe"
+        },
+        "why": "unknown status"
+      }
+    ],
+    "valid": {
+      "age_days": 1,
+      "contract": "kev/1",
+      "cve_id": "CVE-2099-10001",
+      "entry": {
+        "contract": "kev/1",
+        "cve_id": "CVE-2099-10001",
+        "cwes": [
+          "CWE-416"
+        ],
+        "date_added": "2099-02-10",
+        "due_date": "2099-03-03",
+        "entry_digest": "1512059d95c7d33dec42c14a6b3a5847bf305df7253aa7ce93eb34060ffe273f",
+        "forensic_triage": "no",
+        "name": "Example Windows Component Elevation of Privilege Vulnerability",
+        "notes": "https://example.invalid/advisory/10001 ; https://example.invalid/nvd/CVE-2099-10001",
+        "product": "Example Windows Component",
+        "ransomware_use": "known",
+        "required_action": "Synthetic required action. Apply updates per vendor instructions.",
+        "short_description": "Synthetic entry for tests. Not a real vulnerability.",
+        "vendor_project": "Example Corp"
+      },
+      "freshness": "fresh",
+      "notes": [],
+      "snapshot_id": "1ced333d1b57e9abdec429cd9402fd97fa72969beeb9777ba61efc88530a87cf",
+      "status": "listed"
+    }
+  },
+  "KevPlan": {
+    "invalid": [
+      {
+        "example": {
+          "contract": "kev/1",
+          "expected_bytes_hint": 1800000,
+          "headers": {
+            "accept": "application/json",
+            "user_agent": "PatchTrace"
+          },
+          "host": "example.invalid",
+          "max_bytes": 16777216,
+          "method": "GET",
+          "operation": "fetch-kev-catalog",
+          "plan_sha": "373a646e259269a48a4b00b63b8f154bbe63ec7216abc4cf99c65e761ea1fabf",
+          "source": "cisa-github",
+          "url": "https://raw.githubusercontent.com/cisagov/kev-data/main/known_exploited_vulnerabilities.json"
+        },
+        "why": "host is not the fixed host"
+      },
+      {
+        "example": {
+          "contract": "kev/1",
+          "expected_bytes_hint": 1800000,
+          "headers": {
+            "accept": "application/json",
+            "user_agent": "PatchTrace"
+          },
+          "host": "raw.githubusercontent.com",
+          "max_bytes": 16777216,
+          "method": "POST",
+          "operation": "fetch-kev-catalog",
+          "plan_sha": "373a646e259269a48a4b00b63b8f154bbe63ec7216abc4cf99c65e761ea1fabf",
+          "source": "cisa-github",
+          "url": "https://raw.githubusercontent.com/cisagov/kev-data/main/known_exploited_vulnerabilities.json"
+        },
+        "why": "unknown method"
+      }
+    ],
+    "valid": {
+      "contract": "kev/1",
+      "expected_bytes_hint": 1800000,
+      "headers": {
+        "accept": "application/json",
+        "user_agent": "PatchTrace"
+      },
+      "host": "raw.githubusercontent.com",
+      "max_bytes": 16777216,
+      "method": "GET",
+      "operation": "fetch-kev-catalog",
+      "plan_sha": "373a646e259269a48a4b00b63b8f154bbe63ec7216abc4cf99c65e761ea1fabf",
+      "source": "cisa-github",
+      "url": "https://raw.githubusercontent.com/cisagov/kev-data/main/known_exploited_vulnerabilities.json"
+    }
+  }
+}

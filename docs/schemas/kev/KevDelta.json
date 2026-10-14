@@ -1,0 +1,169 @@
+{
+  "$defs": {
+    "KevChange": {
+      "additionalProperties": false,
+      "properties": {
+        "after": {
+          "$ref": "#/$defs/KevFacts"
+        },
+        "before": {
+          "$ref": "#/$defs/KevFacts"
+        },
+        "cve_id": {
+          "maxLength": 24,
+          "pattern": "^CVE-[0-9]{4}-[0-9]{4,19}$",
+          "title": "Cve Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "cve_id",
+        "before",
+        "after"
+      ],
+      "title": "KevChange",
+      "type": "object"
+    },
+    "KevFacts": {
+      "additionalProperties": false,
+      "description": "The entry fields whose change between snapshots is reported.",
+      "properties": {
+        "cwes": {
+          "items": {
+            "pattern": "^CWE-[0-9]{1,6}$",
+            "type": "string"
+          },
+          "maxItems": 16,
+          "title": "Cwes",
+          "type": "array"
+        },
+        "due_date": {
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$",
+          "title": "Due Date",
+          "type": "string"
+        },
+        "forensic_triage": {
+          "enum": [
+            "yes",
+            "no",
+            "absent",
+            "unrecognized"
+          ],
+          "title": "Forensic Triage",
+          "type": "string"
+        },
+        "ransomware_use": {
+          "enum": [
+            "known",
+            "unknown",
+            "absent",
+            "unrecognized"
+          ],
+          "title": "Ransomware Use",
+          "type": "string"
+        }
+      },
+      "required": [
+        "ransomware_use",
+        "due_date",
+        "forensic_triage",
+        "cwes"
+      ],
+      "title": "KevFacts",
+      "type": "object"
+    }
+  },
+  "$id": "https://patchtrace.local/schemas/kev/1/KevDelta.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "added": {
+      "items": {
+        "maxLength": 24,
+        "pattern": "^CVE-[0-9]{4}-[0-9]{4,19}$",
+        "type": "string"
+      },
+      "maxItems": 500,
+      "title": "Added",
+      "type": "array"
+    },
+    "added_count": {
+      "maximum": 20000,
+      "minimum": 0,
+      "title": "Added Count",
+      "type": "integer"
+    },
+    "changed": {
+      "items": {
+        "$ref": "#/$defs/KevChange"
+      },
+      "maxItems": 500,
+      "title": "Changed",
+      "type": "array"
+    },
+    "changed_count": {
+      "maximum": 20000,
+      "minimum": 0,
+      "title": "Changed Count",
+      "type": "integer"
+    },
+    "contract": {
+      "const": "kev/1",
+      "default": "kev/1",
+      "title": "Contract",
+      "type": "string"
+    },
+    "from_catalog_version": {
+      "maxLength": 32,
+      "minLength": 1,
+      "title": "From Catalog Version",
+      "type": "string"
+    },
+    "from_snapshot_id": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "From Snapshot Id",
+      "type": "string"
+    },
+    "removed": {
+      "items": {
+        "maxLength": 24,
+        "pattern": "^CVE-[0-9]{4}-[0-9]{4,19}$",
+        "type": "string"
+      },
+      "maxItems": 500,
+      "title": "Removed",
+      "type": "array"
+    },
+    "removed_count": {
+      "maximum": 20000,
+      "minimum": 0,
+      "title": "Removed Count",
+      "type": "integer"
+    },
+    "to_catalog_version": {
+      "maxLength": 32,
+      "minLength": 1,
+      "title": "To Catalog Version",
+      "type": "string"
+    },
+    "to_snapshot_id": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "To Snapshot Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "from_snapshot_id",
+    "to_snapshot_id",
+    "from_catalog_version",
+    "to_catalog_version",
+    "added",
+    "removed",
+    "changed",
+    "added_count",
+    "removed_count",
+    "changed_count"
+  ],
+  "title": "KevDelta",
+  "type": "object"
+}

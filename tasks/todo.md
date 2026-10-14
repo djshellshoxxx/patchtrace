@@ -341,3 +341,6 @@
 - [ ] R7: `rules _worker` CLI verb for the frozen exe, PyInstaller hook, frozen smoke scan (`--request` with result path `-` prints the one JSON document).
 ### [K7v:kb-acquire-cli]
 - [x] `kb acquire` verb, `Acquirer` binding in `wiring`, `kb index import --winbindex`. Integrator: hook `kb` in `patchtrace/cli.py` (see `kbcorrelation/cli.py`) if not yet applied.
+### [K1a:kev-core]
+- [x] K0 fixtures and vendored schema; K1a pure core, tests `tests/test_kev_{contracts,parse,join,view_model,boundaries,schemas}.py`.
+- [ ] K1b store, K2 transport/service/CLI, K3 GUI, K4 KB adapter, K5 project row/report, K6 live probe; A0 spec, A1-A12 integrator amendments (plan section 10).
