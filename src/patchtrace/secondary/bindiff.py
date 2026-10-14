@@ -125,7 +125,7 @@ def import_bindiff(path: Path, older_sha256: str, newer_sha256: str, *,
 
     def progress() -> int:
         nonlocal expired
-        if time.monotonic() > limit:
+        if time.monotonic() >= limit:  # >=: Windows' monotonic clock ticks every ~15.6 ms, so a zero deadline ties
             expired = True
             return 1  # interrupts the running statement
         return 0
