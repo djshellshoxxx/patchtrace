@@ -1,0 +1,80 @@
+{
+  "$defs": {
+    "Opinion": {
+      "additionalProperties": false,
+      "description": "One engine's statement about a function's partners.",
+      "properties": {
+        "partners": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Partners",
+          "type": "array"
+        },
+        "via": {
+          "title": "Via",
+          "type": "string"
+        }
+      },
+      "required": [
+        "via",
+        "partners"
+      ],
+      "title": "Opinion",
+      "type": "object"
+    }
+  },
+  "$id": "https://patchtrace.local/schemas/callgraph/1/Pairing.json",
+  "additionalProperties": false,
+  "properties": {
+    "contract": {
+      "const": "workbench-graph-pairing/1",
+      "default": "workbench-graph-pairing/1",
+      "title": "Contract",
+      "type": "string"
+    },
+    "engines": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/Opinion"
+      },
+      "title": "Engines",
+      "type": "array"
+    },
+    "inferred": {
+      "default": false,
+      "title": "Inferred",
+      "type": "boolean"
+    },
+    "kind": {
+      "enum": [
+        "one",
+        "many",
+        "removed",
+        "added",
+        "unknown",
+        "contested"
+      ],
+      "title": "Kind",
+      "type": "string"
+    },
+    "partners": {
+      "default": [],
+      "items": {
+        "type": "string"
+      },
+      "title": "Partners",
+      "type": "array"
+    },
+    "via": {
+      "default": "",
+      "title": "Via",
+      "type": "string"
+    }
+  },
+  "required": [
+    "kind"
+  ],
+  "title": "Pairing",
+  "type": "object"
+}

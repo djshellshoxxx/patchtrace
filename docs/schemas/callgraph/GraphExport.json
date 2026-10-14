@@ -1,0 +1,459 @@
+{
+  "$defs": {
+    "GraphEdge": {
+      "additionalProperties": false,
+      "properties": {
+        "contract": {
+          "const": "workbench-graph-edge/1",
+          "default": "workbench-graph-edge/1",
+          "title": "Contract",
+          "type": "string"
+        },
+        "dst": {
+          "title": "Dst",
+          "type": "string"
+        },
+        "flags": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Flags",
+          "type": "array"
+        },
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "side": {
+          "enum": [
+            "older",
+            "newer"
+          ],
+          "title": "Side",
+          "type": "string"
+        },
+        "src": {
+          "title": "Src",
+          "type": "string"
+        },
+        "support": {
+          "items": {
+            "enum": [
+              "called",
+              "calling"
+            ],
+            "type": "string"
+          },
+          "title": "Support",
+          "type": "array"
+        }
+      },
+      "required": [
+        "id",
+        "src",
+        "dst",
+        "side",
+        "support"
+      ],
+      "title": "GraphEdge",
+      "type": "object"
+    },
+    "GraphNode": {
+      "additionalProperties": false,
+      "properties": {
+        "address": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Address"
+        },
+        "candidates": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Candidates",
+          "type": "array"
+        },
+        "contract": {
+          "const": "workbench-graph-node/1",
+          "default": "workbench-graph-node/1",
+          "title": "Contract",
+          "type": "string"
+        },
+        "flags": {
+          "default": [],
+          "items": {
+            "enum": [
+              "import",
+              "hub",
+              "thunk-suspect",
+              "api-hint",
+              "newly-imported",
+              "trace-helper",
+              "inferred-count-suffix"
+            ],
+            "type": "string"
+          },
+          "title": "Flags",
+          "type": "array"
+        },
+        "function_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Function Id"
+        },
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "function",
+            "paired-unchanged",
+            "external",
+            "label-only",
+            "ambiguous"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "label": {
+          "maxLength": 512,
+          "title": "Label",
+          "type": "string"
+        },
+        "match_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Match Id"
+        },
+        "reason": {
+          "default": "",
+          "title": "Reason",
+          "type": "string"
+        },
+        "side": {
+          "enum": [
+            "older",
+            "newer"
+          ],
+          "title": "Side",
+          "type": "string"
+        },
+        "tier": {
+          "enum": [
+            "record",
+            "pairing",
+            "label"
+          ],
+          "title": "Tier",
+          "type": "string"
+        },
+        "via": {
+          "enum": [
+            "emitted-record",
+            "name-match",
+            "address-match",
+            "external",
+            "thunk",
+            "count-suffix",
+            "unresolved"
+          ],
+          "title": "Via",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "side",
+        "kind",
+        "label",
+        "via",
+        "tier"
+      ],
+      "title": "GraphNode",
+      "type": "object"
+    },
+    "GraphView": {
+      "additionalProperties": false,
+      "properties": {
+        "completeness": {
+          "enum": [
+            "changed-set-lists",
+            "whole-program",
+            "unknown"
+          ],
+          "title": "Completeness",
+          "type": "string"
+        },
+        "contract": {
+          "const": "workbench-graph/1",
+          "default": "workbench-graph/1",
+          "title": "Contract",
+          "type": "string"
+        },
+        "correspondence": {
+          "default": [],
+          "items": {
+            "maxItems": 2,
+            "minItems": 2,
+            "prefixItems": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "type": "array"
+          },
+          "title": "Correspondence",
+          "type": "array"
+        },
+        "edges": {
+          "items": {
+            "$ref": "#/$defs/GraphEdge"
+          },
+          "title": "Edges",
+          "type": "array"
+        },
+        "limitations": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Limitations",
+          "type": "array"
+        },
+        "more": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/MoreMarker"
+          },
+          "title": "More",
+          "type": "array"
+        },
+        "newer_sha256": {
+          "title": "Newer Sha256",
+          "type": "string"
+        },
+        "nodes": {
+          "items": {
+            "$ref": "#/$defs/GraphNode"
+          },
+          "title": "Nodes",
+          "type": "array"
+        },
+        "older_sha256": {
+          "title": "Older Sha256",
+          "type": "string"
+        },
+        "orientation": {
+          "const": "older->newer",
+          "default": "older->newer",
+          "title": "Orientation",
+          "type": "string"
+        },
+        "project_id": {
+          "title": "Project Id",
+          "type": "string"
+        },
+        "run_id": {
+          "title": "Run Id",
+          "type": "string"
+        },
+        "side": {
+          "enum": [
+            "older",
+            "newer"
+          ],
+          "title": "Side",
+          "type": "string"
+        },
+        "source": {
+          "$ref": "#/$defs/SourceInfo"
+        },
+        "truncated": {
+          "default": false,
+          "title": "Truncated",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "project_id",
+        "run_id",
+        "older_sha256",
+        "newer_sha256",
+        "side",
+        "nodes",
+        "edges",
+        "completeness",
+        "source"
+      ],
+      "title": "GraphView",
+      "type": "object"
+    },
+    "MoreMarker": {
+      "additionalProperties": false,
+      "properties": {
+        "count": {
+          "minimum": 1,
+          "title": "Count",
+          "type": "integer"
+        },
+        "node": {
+          "title": "Node",
+          "type": "string"
+        }
+      },
+      "required": [
+        "node",
+        "count"
+      ],
+      "title": "MoreMarker",
+      "type": "object"
+    },
+    "SourceInfo": {
+      "additionalProperties": false,
+      "properties": {
+        "source_id": {
+          "title": "Source Id",
+          "type": "string"
+        },
+        "tier": {
+          "enum": [
+            "labels",
+            "addresses"
+          ],
+          "title": "Tier",
+          "type": "string"
+        },
+        "version": {
+          "title": "Version",
+          "type": "string"
+        }
+      },
+      "required": [
+        "source_id",
+        "version",
+        "tier"
+      ],
+      "title": "SourceInfo",
+      "type": "object"
+    }
+  },
+  "$id": "https://patchtrace.local/schemas/callgraph/1/GraphExport.json",
+  "additionalProperties": false,
+  "properties": {
+    "contract": {
+      "const": "workbench-graph-export/1",
+      "default": "workbench-graph-export/1",
+      "title": "Contract",
+      "type": "string"
+    },
+    "correspondence": {
+      "default": [],
+      "items": {
+        "maxItems": 2,
+        "minItems": 2,
+        "prefixItems": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "string"
+          }
+        ],
+        "type": "array"
+      },
+      "title": "Correspondence",
+      "type": "array"
+    },
+    "limitations": {
+      "default": [],
+      "items": {
+        "type": "string"
+      },
+      "title": "Limitations",
+      "type": "array"
+    },
+    "match_id": {
+      "title": "Match Id",
+      "type": "string"
+    },
+    "newer": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/GraphView"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "newer_sha256": {
+      "title": "Newer Sha256",
+      "type": "string"
+    },
+    "older": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/GraphView"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "older_sha256": {
+      "title": "Older Sha256",
+      "type": "string"
+    },
+    "project_id": {
+      "title": "Project Id",
+      "type": "string"
+    },
+    "run_id": {
+      "title": "Run Id",
+      "type": "string"
+    },
+    "truncated": {
+      "default": false,
+      "title": "Truncated",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "project_id",
+    "run_id",
+    "match_id",
+    "older_sha256",
+    "newer_sha256"
+  ],
+  "title": "GraphExport",
+  "type": "object"
+}

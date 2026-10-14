@@ -1,0 +1,60 @@
+{
+  "$id": "https://patchtrace.local/schemas/callgraph/1/GraphEdge.json",
+  "additionalProperties": false,
+  "properties": {
+    "contract": {
+      "const": "workbench-graph-edge/1",
+      "default": "workbench-graph-edge/1",
+      "title": "Contract",
+      "type": "string"
+    },
+    "dst": {
+      "title": "Dst",
+      "type": "string"
+    },
+    "flags": {
+      "default": [],
+      "items": {
+        "type": "string"
+      },
+      "title": "Flags",
+      "type": "array"
+    },
+    "id": {
+      "title": "Id",
+      "type": "string"
+    },
+    "side": {
+      "enum": [
+        "older",
+        "newer"
+      ],
+      "title": "Side",
+      "type": "string"
+    },
+    "src": {
+      "title": "Src",
+      "type": "string"
+    },
+    "support": {
+      "items": {
+        "enum": [
+          "called",
+          "calling"
+        ],
+        "type": "string"
+      },
+      "title": "Support",
+      "type": "array"
+    }
+  },
+  "required": [
+    "id",
+    "src",
+    "dst",
+    "side",
+    "support"
+  ],
+  "title": "GraphEdge",
+  "type": "object"
+}
