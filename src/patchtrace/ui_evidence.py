@@ -45,7 +45,6 @@ from PySide6.QtWidgets import (
     QComboBox,
     QDockWidget,
     QFileDialog,
-    QFrame,
     QHBoxLayout,
     QHeaderView,
     QLabel,
@@ -53,7 +52,6 @@ from PySide6.QtWidgets import (
     QPlainTextEdit,
     QProgressBar,
     QPushButton,
-    QScrollArea,
     QSpinBox,
     QSplitter,
     QStackedWidget,
@@ -104,7 +102,7 @@ from .secondary.evidence_view import (
     state_text,
 )
 from .tooltips import apply_tooltip, template
-from .ui_engine_setup import BinDiffSetupController, BinDiffSetupPanel
+from .ui_engine_setup import BinDiffSetupController, BinDiffSetupPanel, SectionScrollArea
 
 ADDRESS_ROLE = Qt.ItemDataRole.UserRole + 2
 SORT_ROLE = Qt.ItemDataRole.UserRole + 1
@@ -589,6 +587,7 @@ class EvidencePanel(QWidget):
         # Track G (§16): the BinDiff run setup section; False builds the exact C6 panel (regression baseline).
         self._with_bindiff_setup = bindiff_setup
         self.bindiff_setup: BinDiffSetupPanel | None = None
+        self.bindiff_scroll: SectionScrollArea | None = None
         self.vm: EvidenceViewModel = empty_model('no-project')
         self.loading = False
         self.has_project = False
@@ -842,13 +841,16 @@ class EvidencePanel(QWidget):
         self.run_progress.setRange(0, 0)
         self.run_progress.setAccessibleName('Engine run progress')
         self.run_progress.setVisible(False)
-        if self._with_bindiff_setup:  # track G: toggle after Import, section right below this row (§16.1)
-            self.bindiff_setup = BinDiffSetupPanel(self.settings)
-            controls.addWidget(self.bindiff_setup.toggle_button)
         controls.addWidget(self.run_progress, 1)
         layout.addLayout(controls)
-        if self.bindiff_setup is not None:
-            layout.addWidget(self.bindiff_setup)
+        if self._with_bindiff_setup:  # track G (§16.1): own toggle row below the run controls, section below it
+            self.bindiff_setup = BinDiffSetupPanel(self.settings)
+            toggle_row = QHBoxLayout()
+            toggle_row.addWidget(self.bindiff_setup.toggle_button)
+            toggle_row.addStretch(1)
+            layout.addLayout(toggle_row)
+            self.bindiff_scroll = SectionScrollArea(self.bindiff_setup)  # only the open section ever scrolls
+            layout.addWidget(self.bindiff_scroll, 2)
         self.run_status = PlainLabel('')
         self.run_status.setObjectName('evidence_run_status')
         self.run_status.setWordWrap(True)
@@ -875,21 +877,13 @@ class EvidencePanel(QWidget):
         note.setObjectName('evidence_run_note')
         note.setWordWrap(True)
         layout.addWidget(note)
-        if self.bindiff_setup is None:
-            self.tabs.addTab(page, 'Engines')
-            return
-        chain = [self.import_button, self.bindiff_setup.toggle_button, *self.bindiff_setup.focus_chain(),
-                 self.engine_log, self.copy_details_button]
-        for first, second in zip(chain, chain[1:], strict=False):
-            QWidget.setTabOrder(first, second)
-        # A frameless resizable scroll area: the open section never forces the dock taller than the window.
-        scroll = QScrollArea()
-        scroll.setObjectName('evidence_engines_scroll')
-        scroll.setFrameShape(QFrame.Shape.NoFrame)
-        scroll.setWidgetResizable(True)
-        scroll.setWidget(page)
-        self.tabs.addTab(scroll, 'Engines')
-        self.bindiff_setup.attach()
+        self.tabs.addTab(page, 'Engines')
+        if self.bindiff_setup is not None:
+            chain = [self.import_button, self.bindiff_setup.toggle_button, *self.bindiff_setup.focus_chain(),
+                     self.engine_log, self.copy_details_button]
+            for first, second in zip(chain, chain[1:], strict=False):
+                QWidget.setTabOrder(first, second)
+            self.bindiff_setup.attach(self.bindiff_scroll)
 
     def _apply_metrics(self):
         """Column widths and row height from font metrics only (high-DPI rule §1.7)."""
@@ -1546,13 +1540,15 @@ class EvidenceController(QObject):
         return self.bindiff.run_setup() if self.bindiff is not None else None
 
     def _bindiff_changed(self) -> None:
+        """The setup's capability changed (probe or validation finished, an input was edited)."""
         self.capabilities = self._with_bindiff(self.capabilities)
         self.panel.set_capabilities(self.capabilities)
         self._refresh_engine_rows()
         self.update_controls()
-        if self.panel.vm.state in ('no-engines', 'unsupported') and self.port.project is not None:
+        if self.port.project is not None:
+            # Engine rows, the E1/E7 reasons and the E4 count are built from capability views at load time.
             if self.dock.isVisible():
-                self.reload()  # E1/E7 list per-engine reasons taken at load time
+                self.reload()
             else:
                 self.dirty = True
 

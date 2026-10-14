@@ -119,16 +119,16 @@ def wait_idle(qtbot, timeout=10000):
 def test_section_hidden_until_toggled_and_remembered(make_host, settings):
     host = make_host()
     panel = host.panel
-    assert panel.isHidden() and not panel.toggle_button.isChecked()
+    assert not panel.shown() and not panel.toggle_button.isChecked()
     assert not panel.toggle_button.isEnabled() and not panel.path.isEnabled()  # E0: no project, all disabled
     host.open_project()
     assert panel.toggle_button.isEnabled()
     panel.toggle_button.click()
-    assert not panel.isHidden() and settings.value(ui_engine_setup.SETTING_OPEN) in (True, 'true')
+    assert panel.shown() and settings.value(ui_engine_setup.SETTING_OPEN) in (True, 'true')
     again = make_host()
-    assert again.panel.toggle_button.isChecked() and not again.panel.isHidden()
+    assert again.panel.toggle_button.isChecked() and again.panel.shown()
     panel.toggle_button.click()
-    assert panel.isHidden()
+    assert not panel.shown()
 
 
 def test_probe_states_and_capability(make_host, tmp_path, qtbot, settings):
@@ -552,7 +552,8 @@ def test_unconfigured_panel_matches_c6_baseline(qtbot, tmp_path):
     baseline = EvidencePanel(QSettings(str(tmp_path / 'b.ini'), QSettings.Format.IniFormat), bindiff_setup=False)
     for panel in (current, baseline):
         qtbot.addWidget(panel)
-    assert baseline.bindiff_setup is None and current.bindiff_setup.isHidden()
+    assert baseline.bindiff_setup is None and not current.bindiff_setup.shown()
+    assert current.bindiff_scroll.isHidden()  # the closed section takes no space
     states = [
         lambda p: p.set_project(False),                                  # E0
         lambda p: (p.set_project(True), p.set_view_model(build(sets=()))),  # E1
@@ -573,6 +574,38 @@ def test_unconfigured_panel_matches_c6_baseline(qtbot, tmp_path):
     extra = {w.objectName() for w in controls(current)} - {w.objectName() for w in controls(baseline)}
     assert extra == {name for name in extra if name.startswith('engine_setup.')} and len(extra) == 13
     assert {w.objectName() for w in controls(baseline)} <= {w.objectName() for w in controls(current)}
+
+
+ENGINE_ROW_WIDGETS = ('engine_table', 'parallel', 'timeout', 'run_button', 'cancel_button', 'probe_button',
+                      'import_button', 'engine_log', 'copy_details_button')
+
+
+@pytest.mark.parametrize('size', [(680, 600), (460, 420)], ids=['wide', 'narrow'])
+def test_unconfigured_layout_keeps_c6_geometry(qtbot, tmp_path, size):
+    """Closed, the section adds one toggle row: no C6 widget gets narrower, moves sideways or is clipped."""
+    panels = []
+    for name, flag in (('a', True), ('b', False)):
+        panel = EvidencePanel(QSettings(str(tmp_path / f'{name}.ini'), QSettings.Format.IniFormat),
+                              bindiff_setup=flag)
+        qtbot.addWidget(panel)
+        panel.set_project(True)
+        panel.tabs.setCurrentIndex(1)
+        panel.resize(*size)
+        panel.show()
+        panels.append(panel)
+    QApplication.processEvents()
+    current, baseline = panels
+    page, base_page = current.tabs.widget(1), baseline.tabs.widget(1)
+    assert page.minimumSizeHint().width() == base_page.minimumSizeHint().width()
+    assert current.tabs.minimumSizeHint().width() == baseline.tabs.minimumSizeHint().width()
+    assert page.size() == base_page.size()
+    for name in ENGINE_ROW_WIDGETS:
+        mine, theirs = getattr(current, name).geometry(), getattr(baseline, name).geometry()
+        assert (mine.x(), mine.width()) == (theirs.x(), theirs.width()), name
+        assert mine.bottom() < page.height(), name  # nothing pushed off the page
+    for box in current.engine_checks:
+        mine, theirs = current.engine_checks[box].geometry(), baseline.engine_checks[box].geometry()
+        assert (mine.x(), mine.width()) == (theirs.x(), theirs.width()), box
 
 
 @pytest.fixture
@@ -633,7 +666,7 @@ def test_gui_bindiff_run_matches_cli_provenance(window, qtbot, tmp_path, monkeyp
     open_dock(window, qtbot)
     setup = controller.panel.bindiff_setup
     setup.toggle_button.click()
-    assert not setup.isHidden()
+    assert setup.shown() and not controller.panel.bindiff_scroll.isHidden()
     setup.set_executable(str(exe))
     setup.probe_button.click()
     qtbot.waitUntil(lambda: setup.probe_status.text().startswith('Usable'), timeout=20000)
@@ -692,12 +725,18 @@ def test_bindiff_checkbox_follows_setup(window, qtbot):
     setup.set_executable('/x/bindiff')
     setup.probe_button.click()
     qtbot.waitUntil(lambda: controller.bindiff.current_probe() is not None, timeout=5000)
-    rows = {r.engine: r for r in controller.panel.engine_model.rows}
-    assert not box.isEnabled() and 'choose and validate both .BinExport files' in rows['bindiff'].detail
+    assert not box.isEnabled()
+
+    def bindiff_row():
+        return next(r for r in controller.panel.engine_model.rows if r.engine == 'bindiff')
+    qtbot.waitUntil(lambda: 'choose and validate both .BinExport files' in bindiff_row().detail, timeout=5000)
+    assert bindiff_row().state == 'unsupported'  # refreshed by the reload, not the stale "not configured"
     setup.older.setText(str(OLDER))
     setup.newer.setText(str(NEWER))
     setup.validate_button.click()
     qtbot.waitUntil(box.isEnabled, timeout=5000)
+    qtbot.waitUntil(lambda: bindiff_row().state == 'not run' and controller.panel.vm.engine('bindiff').state ==
+                    'not-run', timeout=5000)  # the Evidence tab no longer counts BinDiff as unsupported
     box.setChecked(True)
     controller.update_controls()
     assert svc.RUN_PREVIEW_BINDIFF in controller.panel.preview.text()

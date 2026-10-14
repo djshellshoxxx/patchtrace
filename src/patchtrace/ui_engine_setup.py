@@ -22,11 +22,12 @@ from collections.abc import Callable, Sequence
 from dataclasses import dataclass
 from pathlib import Path
 
-from PySide6.QtCore import QObject, Qt, QThread, Signal
+from PySide6.QtCore import QObject, QSize, Qt, QThread, Signal
 from PySide6.QtWidgets import (
     QCheckBox,
     QComboBox,
     QFileDialog,
+    QFrame,
     QGridLayout,
     QGroupBox,
     QHBoxLayout,
@@ -35,6 +36,7 @@ from PySide6.QtWidgets import (
     QPlainTextEdit,
     QProgressBar,
     QPushButton,
+    QScrollArea,
     QWidget,
 )
 from shiboken6 import isValid
@@ -186,11 +188,39 @@ class TaskThread(QThread):
             self.done.emit(result, generation)
 
 
+class SectionScrollArea(QScrollArea):
+    """Frameless vertical-only scroll container for the open section (§16.1): in a short dock the section
+    scrolls inside itself, so the C6 rows around it keep their layout. Never a focus stop of its own."""
+    MIN_LINES = 6
+
+    def __init__(self, section: QWidget):
+        super().__init__()
+        self.setObjectName('engine_setup_scroll')
+        self.setFrameShape(QFrame.Shape.NoFrame)
+        self.setWidgetResizable(True)
+        self.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+        self.setFocusPolicy(Qt.FocusPolicy.NoFocus)  # keyboard focus goes to the controls inside
+        self.setWidget(section)
+
+    def minimumSizeHint(self):
+        section, bar = self.widget(), self.verticalScrollBar().sizeHint().width()
+        width = (section.minimumSizeHint().width() if section is not None else 0) + bar
+        return QSize(width, self.fontMetrics().lineSpacing() * self.MIN_LINES)
+
+    def sizeHint(self):
+        section = self.widget()
+        if section is None:
+            return super().sizeHint()
+        hint = section.sizeHint()
+        return QSize(hint.width() + self.verticalScrollBar().sizeHint().width(), hint.height())
+
+
 class BinDiffSetupPanel(QGroupBox):
     """The "BinDiff run setup" section. Widgets only: no project, service, thread or tool logic.
 
-    ``toggle_button`` is created here but placed by the host (C6: the Engines tab controls row); it shows and
-    hides this section. The host must give the section a parent before it is shown."""
+    ``toggle_button`` is created here but placed by the host (C6: its own row below the run controls); it shows
+    and hides the section, or the container the host passes to :meth:`attach` (C6: a
+    :class:`SectionScrollArea`). The host must parent the section before it is shown."""
     probe_requested = Signal(str)
     validate_requested = Signal()
     cancel_requested = Signal()
@@ -205,6 +235,7 @@ class BinDiffSetupPanel(QGroupBox):
         self.locked = False
         self.probing = False
         self.validating = False
+        self.container: QWidget = self  # the widget the toggle shows and hides (see attach)
         apply_tooltip(self, 'engine_setup.section')
         self.setAccessibleName(ACCESSIBLE_NAMES['section'])
         self.toggle_button = QPushButton('BinDiff setup')
@@ -212,11 +243,14 @@ class BinDiffSetupPanel(QGroupBox):
         self._control(self.toggle_button, 'toggle')
         grid = QGridLayout(self)
         grid.setContentsMargins(6, 6, 6, 6)
-        grid.setColumnStretch(1, 1)
+        grid.setColumnStretch(0, 1)
         self.path = QComboBox()
         self.path.setEditable(True)
         self.path.setInsertPolicy(QComboBox.InsertPolicy.NoInsert)
         self.path.setCompleter(None)  # no inline completion: the text is exactly what the user typed or picked
+        # Long discovered paths must not widen the dock: the field scrolls its text instead.
+        self.path.setSizeAdjustPolicy(QComboBox.SizeAdjustPolicy.AdjustToMinimumContentsLengthWithIcon)
+        self.path.setMinimumContentsLength(16)
         self.path.lineEdit().setMaxLength(PATH_LIMIT)
         self.path.lineEdit().setPlaceholderText('absolute path of bindiff (bindiff.exe on Windows)')
         self._control(self.path, 'bindiff_path')
@@ -255,34 +289,35 @@ class BinDiffSetupPanel(QGroupBox):
         self.help = _PlainLabel(HELP_TEXT)
         self.help.setObjectName('engine_setup_help')
         labels = []
-        for text, buddy in (('BinDiff executable:', self.path), ('Older .BinExport:', self.older),
-                            ('Newer .BinExport:', self.newer)):
+        for text, buddy in (('BinDiff executable (absolute path):', self.path),
+                            ('Older .BinExport (BinDiff primary):', self.older),
+                            ('Newer .BinExport (BinDiff secondary):', self.newer)):
             label = _PlainLabel(text)
-            label.setWordWrap(False)
-            label.setBuddy(buddy)
+            label.setBuddy(buddy)  # labelled-by relation for screen readers
             labels.append(label)
-        grid.addWidget(labels[0], 0, 0)
-        grid.addWidget(self.path, 0, 1)
-        grid.addWidget(self.browse_exe, 0, 2)
-        grid.addWidget(self.probe_button, 0, 3)
-        grid.addWidget(self.probe_status, 1, 0, 1, 4)
-        grid.addWidget(labels[1], 2, 0)
-        grid.addWidget(self.older, 2, 1)
-        grid.addWidget(self.older_browse, 2, 2)
-        grid.addWidget(labels[2], 3, 0)
-        grid.addWidget(self.newer, 3, 1)
-        grid.addWidget(self.newer_browse, 3, 2)
-        grid.addWidget(self.accept_box, 4, 0, 1, 4)
-        grid.addWidget(self.warning, 5, 0, 1, 4)
+        # Stacked form (label above field) keeps the section no wider than the C6 Engines rows.
+        grid.addWidget(labels[0], 0, 0, 1, 3)
+        grid.addWidget(self.path, 1, 0)
+        grid.addWidget(self.browse_exe, 1, 1)
+        grid.addWidget(self.probe_button, 1, 2)
+        grid.addWidget(self.probe_status, 2, 0, 1, 3)
+        grid.addWidget(labels[1], 3, 0, 1, 3)
+        grid.addWidget(self.older, 4, 0)
+        grid.addWidget(self.older_browse, 4, 1)
+        grid.addWidget(labels[2], 5, 0, 1, 3)
+        grid.addWidget(self.newer, 6, 0)
+        grid.addWidget(self.newer_browse, 6, 1)
+        grid.addWidget(self.accept_box, 7, 0, 1, 3)
+        grid.addWidget(self.warning, 8, 0, 1, 3)
         actions = QHBoxLayout()
         actions.addWidget(self.validate_button)
         actions.addWidget(self.cancel_button)
         actions.addWidget(self.progress, 1)
-        grid.addLayout(actions, 6, 0, 1, 4)
-        grid.addWidget(self.validation_status, 7, 0, 1, 4)
-        grid.addWidget(self.show_details, 8, 0, 1, 4)
-        grid.addWidget(self.details, 9, 0, 1, 4)
-        grid.addWidget(self.help, 10, 0, 1, 4)
+        grid.addLayout(actions, 9, 0, 1, 3)
+        grid.addWidget(self.validation_status, 10, 0, 1, 3)
+        grid.addWidget(self.show_details, 11, 0, 1, 3)
+        grid.addWidget(self.details, 12, 0, 1, 3)
+        grid.addWidget(self.help, 13, 0, 1, 3)
         self.details.setMinimumHeight(self.details.fontMetrics().lineSpacing() * 6)
         chain = self.focus_chain()
         for first, second in zip(chain, chain[1:], strict=False):
@@ -336,10 +371,14 @@ class BinDiffSetupPanel(QGroupBox):
     def set_open(self, value: bool) -> None:
         self.toggle_button.setChecked(value)  # emits toggled -> _toggled
 
-    def attach(self) -> None:
-        """Called by the host once the section has a parent: apply the remembered open state."""
-        if self.parentWidget() is not None:
-            self.setVisible(self.is_open())
+    def attach(self, container: QWidget | None = None) -> None:
+        """Called by the host once the section (or its ``container``) has a parent: from then on the toggle shows
+        and hides the container, and the remembered open state is applied."""
+        if container is not None:
+            self.container = container
+            self.setVisible(True)  # always shown inside its container; the container follows the toggle
+        if self.container.parentWidget() is not None:
+            self.container.setVisible(self.is_open())
 
     def set_executable(self, text: str) -> None:
         self.path.setEditText(text)
@@ -389,9 +428,14 @@ class BinDiffSetupPanel(QGroupBox):
     # -- behaviour --
     def _toggled(self, checked: bool) -> None:
         _save(self.settings, SETTING_OPEN, bool(checked))
-        if self.parentWidget() is not None:
-            self.setVisible(checked)
+        if self.container.parentWidget() is not None:
+            self.container.setVisible(checked)
         self.opened.emit(bool(checked))
+
+    def shown(self) -> bool:
+        """True when the section is open and on screen in its host (independent of the container choice)."""
+        host = self.container.parentWidget()
+        return host is not None and self.isVisibleTo(host)
 
     def _executable_changed(self, _text: str) -> None:
         self._update_enabled()
