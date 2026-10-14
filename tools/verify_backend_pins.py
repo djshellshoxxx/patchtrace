@@ -50,7 +50,7 @@ def _run(argv: Sequence[str], cwd: Path | None = None) -> subprocess.CompletedPr
 
 
 def _git(args: Sequence[str], cwd: Path, run: Run) -> str:
-    result = run(['git', *args], cwd)
+    result = run(['git', '-c', 'core.autocrlf=false', *args], cwd)
     if result.returncode != 0:
         raise VerifyError(f'git {" ".join(args[:3])} failed: {(result.stderr or "").strip()[-400:]}')
     return result.stdout.strip()
@@ -107,7 +107,7 @@ def build_tarball(repo_dir: Path, commit: str, out: Path, run: Run = _run) -> di
     """Write the deterministic `.tar.gz` of `commit` from `repo_dir`; returns tree hash, sha256 and size."""
     tree = _git(['rev-parse', f'{commit}^{{tree}}'], repo_dir, run)
     prefix = f'ghidriff-{commit[:7]}/'
-    proc = subprocess.run(['git', 'archive', '--format=tar', f'--prefix={prefix}', commit], cwd=repo_dir,
+    proc = subprocess.run(['git', '-c', 'core.autocrlf=false', '-c', 'core.eol=lf', 'archive', '--format=tar', f'--prefix={prefix}', commit], cwd=repo_dir,
                           capture_output=True, check=False, timeout=900)
     if proc.returncode != 0:
         raise VerifyError(f'git archive failed: {proc.stderr.decode(errors="replace")[-400:]}')

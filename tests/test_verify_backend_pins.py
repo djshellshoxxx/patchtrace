@@ -37,15 +37,15 @@ def make_repo(path: Path, date: str = '2020-01-01T00:00:00Z') -> str:
            'GIT_AUTHOR_EMAIL': 'a@x', 'GIT_COMMITTER_NAME': 'a', 'GIT_COMMITTER_EMAIL': 'a@x'}
 
     def run_git(*args):
-        return subprocess.run(['git', *args], cwd=path, env=env, check=True, capture_output=True, text=True).stdout.strip()
+        # no line-ending conversion and no filesystem mode: bytes and modes come from what we stage
+        return subprocess.run(['git', '-c', 'core.autocrlf=false', '-c', 'core.filemode=false', *args], cwd=path,
+                              env=env, check=True, capture_output=True, text=True).stdout.strip()
 
     run_git('init', '-q')
     (path / 'pkg').mkdir()
-    (path / 'pkg' / 'mod.py').write_text('x = 1\n')
-    (path / 'LICENSE').write_text('GPL\n')
-    script = path / 'run.sh'
-    script.write_text('#!/bin/sh\n')
-    script.chmod(0o755)
+    (path / 'pkg' / 'mod.py').write_bytes(b'x = 1\n')  # bytes: text mode would write CRLF on Windows
+    (path / 'LICENSE').write_bytes(b'GPL\n')
+    (path / 'run.sh').write_bytes(b'#!/bin/sh\n')
     run_git('add', '-A')
     run_git('update-index', '--chmod=+x', 'run.sh')
     run_git('commit', '-q', '-m', 'c')
