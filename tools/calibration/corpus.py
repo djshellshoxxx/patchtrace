@@ -84,7 +84,8 @@ def guard(worktree: Path, manifest: CorpusManifest | None = None, files: Iterabl
     """Problems that must block a commit/CI run. Empty list means clean."""
     problems = []
     tier_w = {b.sha256: b.id for b in manifest.binaries if b.tier == 'W'} if manifest else {}
-    for rel in files if files is not None else candidate_files(worktree):
+    files = list(files if files is not None else candidate_files(worktree))
+    for rel in files:
         path = worktree / rel
         if not path.is_file() or path.is_symlink():
             continue
@@ -101,6 +102,8 @@ def guard(worktree: Path, manifest: CorpusManifest | None = None, files: Iterabl
     root = calib_root()
     if _inside(root, worktree):
         problems.append(f'{ROOT_ENV} ({root}) is inside the work tree')
+    from .tier_w.guard import tier_w_problems  # SPEC-33 s12 hook (Tier-W owner)
+    problems += tier_w_problems(worktree, files)
     return problems
 
 

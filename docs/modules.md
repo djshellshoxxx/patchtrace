@@ -95,3 +95,11 @@ Every substantial future module must be added here before implementation. UI mus
 | unified pipeline | src/patchtrace/unified/{pipeline,worker,cli,read_model}.py | stage orchestration, hidden `_worker`, `unified` CLI verbs, Qt-free view model | all unified modules | planned, S0b/S4 |
 | unified UI | src/patchtrace/ui_unified.py | navigator view switch + dock tab in the single MainWindow; threads per C6 rules | Qt, read_model | planned, S4 |
 | prerequisites | jobs.py (spawn lock), nway/graph.py (`EXTERNAL:` keys) | latent defects found while grounding SPEC-31 | - | planned, P1/P2 |
+### [W:tier-w-w1] Tier W local-only corpus (SPEC-33 `specs/tier-w-local-corpus.md`, 2026-10-14; dev-only, never shipped)
+| Module | Files | Responsibility | Depends on | Verification |
+|---|---|---|---|---|
+| tier-w foundations | tools/calibration/tier_w/{paths,contracts}.py | local layout under PATCHTRACE_CALIB_ROOT (refused in-tree), `tier: W` markers, strict bounded contracts | tools.calibration | tests/test_tier_w_corpus.py |
+| tier-w catalogue + pairs | tier_w/{catalogue,pairs}.py | Winbindex per-line KB catalogue, optional HEAD `resolve`, adjacent + cross-version pairs, `calibration-corpus/1` manifest + `tier-w-pairs/1` | acquisition.winbindex, lineage | afd.sys fixture + synthetic documents |
+| tier-w PDB/PE readers | tier_w/{msf,pe_tables}.py | stdlib MSF 7.00 reader (identity, publics, procs, OMAP); `.pdata`, base relocations, export RVAs, relocation-masked body hash | pe_overview, artifact_bytes | real self-made DLL+PDB fixtures, synthetic MSF/PE, hypothesis fuzz |
+| tier-w guard | tier_w/guard.py (+4-line hook in corpus.guard) | O1: blocks Microsoft images, PDBs (except SHA-listed self-made fixtures), Tier-W manifests/derived files/labels in git | corpus, msf | tests/test_tier_w_guard.py (repository-wide on every run) |
+| tier-w fixtures | tier_w/make_fixtures.py, tests/fixtures/tier_w/ | MIT freestanding C/C++ -> clang 18 + lld-link /Brepro, path-neutral, byte-reproducible | jobs.run_process | SELF_MADE.json SHA-256 inventory |

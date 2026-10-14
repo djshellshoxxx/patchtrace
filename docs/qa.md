@@ -193,3 +193,8 @@ Real tool, not mocked, but only in this session's Linux container (uid 65534, en
 | MSI static inspection | `msiextract`, PE header and import parse (no execution) | `ProgramFiles/BinDiff/bin/bindiff.exe` 3,396,896 B `b1d4844d…47dd`, PE32+ x86-64 console; imports `VCRUNTIME140_1.dll`, which the MSI does not ship |
 
 Committed from this run: the real v8 `--help` text and the real v8 `.BinDiff` + stdout produced on the synthetic pair (`tests/fixtures/secondary/bindiff-8-help.txt`, `bindiff-v8-real-on-synthetic.*`, provenance JSON). Still live-only/open: the GitHub `live-bindiff` run (Linux required leg and the advisory Windows leg: `msiexec /a` layout, `bindiff.exe` start, VC++ runtime on `windows-latest`, Windows config paths and network), real-driver runtime/memory and `executable_id` formats (U8/U9), and the independent pin re-hash plus `.asc` verification.
+
+### [W:tier-w-w1] Tier W local-only corpus (SPEC-33), 2026-10-14 - synthetic/self-made evidence only
+- Network: winbindex.m417z.com and msdl.microsoft.com BLOCKED from the build sandbox (egress proxy CONNECT 403, one attempt each); all network code is tested only against the recorded afd.sys fixture and fakes. No Microsoft binary or PDB was fetched, parsed or committed.
+- Real tools on self-made input (not Microsoft evidence): clang 18.1.3 + lld-link built the committed fixtures byte-reproducibly; `llvm-pdbutil` 18 output agrees with the stdlib MSF reader on names, RVAs, sizes and the ICF alias; a manual Ghidra 12.0.4 headless run (Jython 2.7.4, PDB force-loaded, no symbol server) gave function sizes equal to the PDB code sizes (not yet a committed live test).
+- Guard: the repository-wide Tier-W/Microsoft check runs in tests/test_tier_w_guard.py on every test run.
