@@ -42,12 +42,13 @@ def mark_interrupted(workspace: WorkspaceStore) -> tuple[str, ...]:
     return tuple(marked)
 
 
-def repair(workspace: WorkspaceStore, project: ProjectPort, *,
-           context_for: ContextFor | None = None) -> OperationResult[tuple[ProjectLink, ...]]:
+def repair(workspace: WorkspaceStore, project: ProjectPort, *, context_for: ContextFor | None = None,
+           only: Callable[[dict], bool] | None = None) -> OperationResult[tuple[ProjectLink, ...]]:
     """Finish every unfinished attach and, when ``context_for`` can rebuild a context, every pending one.
 
     ``context_for(op_id, journal_body)`` returns ``(key, body)`` rows for ``kb-context``; without it a repaired
-    attach stays ``context-pending`` (honest, and still a valid project)."""
+    attach stays ``context-pending`` (honest, and still a valid project). ``only(journal_body)`` limits the repair
+    to the operations the caller names (the CLI passes one project and investigation)."""
     attachment = ProjectAttachment(workspace, project)
     mark_interrupted(workspace)
     links: list[ProjectLink] = []
@@ -55,6 +56,8 @@ def repair(workspace: WorkspaceStore, project: ProjectPort, *,
     warnings: list[str] = []
     for op in (*open_operations(workspace), *pending_context(workspace)):
         body = workspace.journal_get(op)[1]  # type: ignore[index]
+        if only is not None and not only(body):
+            continue
         context = context_for(op, body) if context_for else ()
         result = attachment.resume(op, context)
         if result.value is not None:

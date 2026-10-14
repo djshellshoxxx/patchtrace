@@ -150,8 +150,9 @@ RULES: dict[str, tuple[tuple[str, ...], Handler]] = {
                           'PAIR_APPROVED'), _product_selected),
     'components_ready': (('PRODUCT_SELECTED', *COMPONENT_STATES), _components),
     'needs_filename': (('PRODUCT_SELECTED', *COMPONENT_STATES), _needs_filename),
-    # a file or pair lead (manual pair, E0) skips the KB search and product steps
-    'pair_proposed': (('LEAD_PARSED', 'PRODUCT_SELECTED', *COMPONENT_STATES, *PAIR_STATES), _pair_proposed),
+    # a manual pair (E0) skips the product steps, with or without a KB search before it
+    'pair_proposed': (('LEAD_PARSED', *SEARCHED, 'PRODUCT_SELECTED', *COMPONENT_STATES, *PAIR_STATES),
+                      _pair_proposed),
     'pair_approved': (('PAIR_PROPOSED',), _pair_approved),
     'plan_ready': (('PAIR_APPROVED',), _plan_ready),
     'acquire_started': (('PLAN_READY',), _acquire_started),

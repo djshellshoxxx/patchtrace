@@ -368,7 +368,10 @@ def test_ports_are_protocols_without_default_behaviour():
 FORBIDDEN = {'PySide6', 'PyQt5', 'PyQt6', 'urllib', 'http', 'socket', 'sqlite3', 'requests', 'ssl'}
 SIBLINGS = {'acquisition', 'enrichment', 'intelligence', 'unified', 'secondary', 'ui', 'backend', 'cli', 'jobs'}
 ALLOWED_FORBIDDEN = {'store.py': {'sqlite3'}, 'recovery.py': {'sqlite3'}}  # K2 owns the workspace database
-ALLOWED_SIBLINGS = {'contracts.py': {'acquisition', 'enrichment', 'intelligence'}}
+# context.py reads the reused intelligence contract types (CweProfile, HypothesisSet); wiring.py is the composition root
+# and the only module that binds sibling behaviour (plan section 9).
+ALLOWED_SIBLINGS = {'contracts.py': {'acquisition', 'enrichment', 'intelligence'}, 'context.py': {'intelligence'},
+                    'wiring.py': SIBLINGS | {'service'}}
 
 
 def _imports(path):
