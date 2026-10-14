@@ -39,3 +39,7 @@ Run pytest + Ruff and Qt offscreen interactive tests; manually test Windows nati
 * BinDiff algorithms: https://github.com/google/bindiff/blob/main/docs/concepts.md
 * Rizin rz-diff types: https://book.rizin.re/src/tools/rz-diff/intro.html
 * WinVerifyTrust: https://learn.microsoft.com/en-us/windows/win32/api/wintrust/nf-wintrust-winverifytrust
+
+## Alpha preview slice: recorded artifact overview (PR #19)
+
+The first GUI slice provides a nonmodal **File overview** action. It shows old/new filenames, byte sizes, size delta, recorded SHA-256 hashes, same/different hash relation, and the validated stored PE/x86-64 input classification. It is available on sample or real projects without a configured analysis backend, and automatically opens before a configured native comparison starts. Values come from the project snapshot recorded during initial ingestion. There is no new disk reading, PE disassembly, entrypoint extraction, signature trust check, or implicit network operation. Plain-text cells isolate untrusted filenames. This slice is a UI alpha, not acceptance of requirements B, D's full PE detail, or E. All detailed fields, async inspection, whole-file paging, verifiable signatures, and broader tooltips remain open.
