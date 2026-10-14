@@ -178,3 +178,9 @@ Built: common, process, capa, floss, diec, normalize, delta (tests: `tests/test_
 |---|---|---|---|---|
 | build_backend_bundle (check only) | tools/build_backend_bundle.py | `check TREE [--prefix ghidra\|jdk\|python] [--json]`: read-only lstat inventory of an extracted Ghidra/JDK/Python tree against the SPEC-06 path policy (reserved device names, trailing dot/space, forbidden chars, NFC/casefold collisions, symlinks, special files, path <= 150 under `backend/`, member/size caps); exit 0 clean, 1 offenders, 2 usage. Real result 2026-10-14: Ghidra 12.0.4 (sha256 matches live-backend.yml) 6506 files and Temurin 21.0.8+9 Windows JDK (sha256 matches vendor sidecar) 490 files: zero offenders; Python embeddable `[unverified]` (python.org blocked). | `patchtrace.offline_bundle` policy constants | tests/test_build_backend_bundle_check.py |
 >>>>>>> c39f0e4 (B2: build_backend_bundle check subcommand (payload path-policy dry-run))
+
+### [B6:backend-bundle-env] BUNDLE slice B6 (2026-10-14; BUNDLE-integration-plan section 7.6, backend part)
+| Module | Files | Responsibility | Depends on | Tests |
+|---|---|---|---|---|
+| backend bundle mode | src/patchtrace/backend.py (`BackendConfig.bundle`, `_bundle_errors`, `_apply_bundle_env`) | `bundle=True`: argv `python -I -X utf8 -m ghidriff`; restricted env forced (ignores `PATCHTRACE_CHILD_ENV=inherit`); restricted child env adds `JAVA_HOME_OVERRIDE` (any private java_home), `PYTHONDONTWRITEBYTECODE`, `XDG_CACHE_HOME`/`TEMP`/`TMP`/`TMPDIR` = per-run scratch; config errors for missing java_home and `PT-BUNDLE-WORKDIR` (cache or temp dir inside the install `backend/`); diagnose line `Bundled runtime: ...` (file verification belongs to backend_bundle, B3b) | existing backend only | tests/test_backend_bundle_env.py |
+>>>>>>> 5ba13c9 (BUNDLE B6: backend bundle flag, isolated argv, child env and diagnose line)
