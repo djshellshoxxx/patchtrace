@@ -172,7 +172,8 @@ In-memory only (frozen dataclasses, never persisted): `IrReader` / `FunctionTabl
 | `limits_digest` | canonical JSON of `UnifiedLimits` | |
 Timestamps, absolute paths and display preferences are never hashed (SPEC-07 s3 rule).
 
-## 6. Limits (single source of numbers; `UnifiedLimits` defaults; measured by the named bench or test)
+## 6. Limits (single source of numbers)
+Defaults of `UnifiedLimits`; each is enforced or measured by the named code, bench or test. Other files repeat a number only next to its L-id.
 
 | ID | Limit | Default | Measured / enforced by |
 |---|---|---|---|

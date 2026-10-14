@@ -1,6 +1,6 @@
 # SPEC-31 / 06 Adapters: external engines and stored outputs as evidence sources
 
-Every external result enters the unified engine only as `Atom`s (02 s4) plus groups and limitations, through one adapter per source. Adapters are pure readers of STORED data (they never run tools; engines keep running through the SPEC-28 scheduler, the Ghidriff backend or the DA-01 importer). Owner slice S0b (Ghidriff, secondary, manual), later slices for Diaphora/BinExport2. Tier maps: 05 s1.2.
+Every external result enters the unified engine only as `Atom`s (02 s4) plus groups and limitations, through one adapter per source. Adapters are pure readers of STORED data (they never run tools; engines keep running through the SPEC-28 scheduler, the Ghidriff backend or the DA-01 importer). Owner slice S0b (Ghidriff, secondary, manual); Diaphora adapter: trigger DA-01 D3 merged, owner DA-01 integration owner; BinExport2 producer: trigger C3 merged, owner of the S1 follow-up. Tier maps: 05 s1.2.
 
 ## 1. Common contract
 ```python
@@ -89,7 +89,7 @@ class SourceSpec:                           # registry row (D-08); adding a sour
 |---|---|
 | QBinDiff (Apache-2.0) | ideas only (P19 assignment with rejection); dependency rejected (dense matrices, memory warning above ~10k functions, R04 s1 #11) |
 | radiff2 (LGPL) | no adapter (D-26); file-level byte/layout features belong to SPEC-26 |
-| Ghidra AutoVT headless | deferred; possible conservative oracle later (R03 s7), no slice in v1 |
+| Ghidra AutoVT headless | deferred, no slice in v1; trigger: G-U3 shows Ghidriff-only parity is insufficient; owner S6 (R03 s7) |
 | PatchDiff2 (GPL-2.0), Turbodiff (GPL-3.0), DarunGrim/binkit | ideas only (R04 s2) |
 | neural embeddings (Gemini, Asm2Vec, SAFE, PalmTree, jTrans) | rejected for the core (size, licences, fit: R05 s6) |
 

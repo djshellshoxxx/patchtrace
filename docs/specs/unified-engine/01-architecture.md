@@ -5,7 +5,7 @@ Scope: static comparison of two explicit artifacts (older -> newer), Windows PE 
 ## 1. Layers
 
 ```text
- artifacts (verified bytes)   primary Ghidriff run (raw JSON + FunctionMatch)   stored secondary sets (rz-diff, BinDiff, later Diaphora)
+ artifacts (verified bytes)   primary Ghidriff run (raw JSON + FunctionMatch)   stored secondary sets (rz-diff, BinDiff; Diaphora after DA-01 D3)
         |                              |                                                  |
  E1 ProgramIR per side  <-- GZF reuse / headless analysis (external Python, D-04/D-05)   |
         |                              |                                                  |
@@ -34,7 +34,7 @@ Without E1 (no Ghidra configured, or extraction failed) the pipeline still runs 
 | `sources/ghidriff.py` | `FunctionMatch` + verified raw JSON (`address_matches`, `match_types`, `diff_type`, ratios) -> atoms | models, addressing, contracts | S0b |
 | `sources/secondary.py` | `secondary.store.current_sets()` rows -> atoms (rz-diff tier W, BinDiff algorithm -> tier) | `secondary.store`, `secondary.contracts`, addressing | S0b |
 | `sources/manual.py` | manual corrections -> tier-M atoms | models | S0b |
-| `sources/diaphora.py` | DA-01 `diaphora-matches` rows -> atoms (after DA-01 D3 merges) | its contracts (read-only) | later |
+| `sources/diaphora.py` | DA-01 `diaphora-matches` rows -> atoms | its contracts (read-only) | trigger: DA-01 D3 merged; owner: DA-01 integration owner |
 | `fusion/components.py` | union-find over joining D-tags -> components | registry | S0b |
 | `fusion/arbiter.py` | atoms -> `UnifiedMatch` decisions, contests, groups | components, contracts | S0b |
 | `facts/pseudo.py` | C6 canonical pseudo-code over stored Ghidriff code (alpha-rename, L1-id substitution) | contracts | S0b |
@@ -78,22 +78,29 @@ Tests: `test_unified_import_dag` (AST walk of `src/patchtrace/unified`, allow-li
 | Owner thread (GUI thread or CLI main) | PatchTrace process | builds immutable `UnifiedRequest`, reads project/store, validates worker output, moves sidecars into `runs/<run_id>/unified/`, publishes pointer rows | heavy computation; touching worker objects |
 | `UnifiedRunThread` (QThread, no Qt parent, `_LIVE_THREADS` registry) | PatchTrace process | calls `pipeline.execute(request, cancel)` which spawns children and waits; emits stage events | SQLite access, widgets |
 | Extractor child (one per side, sequential default) | external Python + JVM | dumps IR facts to a private dir; writes `progress.json` | network, PDB download, writing outside its private dirs |
-| Worker child `patchtrace unified _worker` | `sys.executable` (frozen EXE or python) | E2..E5 pure computation from request + IR + snapshot files -> result parts | SQLite project DB access, publishing |
+| Worker child `patchtrace unified _worker` | `sys.executable` (frozen EXE or python) | mode `ingest`: extractor JSONL -> IR sidecar; mode `compute`: E2..E5 from request + IR + snapshot files -> result parts | SQLite project DB access, publishing |
 | CLI | PatchTrace process | same pipeline in-process OR via worker (`--isolate`, default on Windows frozen) | Qt import |
 Rules: one analysis job per window (C-11): the unified run is disabled while a Ghidriff job runs and vice versa. Cancellation: shared `threading.Event` -> `run_process` kills the Job Object / process group; the owner discards partial output; the previous result row stays current. Progress: children write `progress.json` atomically (`.part` + replace); the parent polls it through `run_process(check_output=...)` (already polled every 50 ms, jobs.py:223-233) and emits events; absent file = indeterminate. Memory: the JVM gets `-Xmx` from L-03; the worker has no hard cap in v1 (U-09).
 
 ## 5. Data flow (normative pseudocode)
 
 ```python
-def execute(req: UnifiedRequest, cancel: Event, emit: Callable[[StageEvent], None]) -> WorkerOutput:
+def execute(req: UnifiedRequest, cancel: Event, emit: Callable[[StageEvent], None]) -> WorkerOutput:   # UnifiedRunThread
     budget = Budget(req.deadline, cancel)
-    ir = {}
+    ir_dirs = {}
     for side in ('older', 'newer'):                       # sequential: two JVMs may exhaust RAM (L-03)
         if not req.extract:                                # S0 mode or extraction unsupported
-            ir[side] = None; continue
-        ir[side] = store.find_ir(req.ir_keys[side]) or extract.runner.extract_side(req, side, budget, emit)
-    if (ir['older'] is None) != (ir['newer'] is None):    # F1 symmetry: never mix IR and no-IR sides
-        ir = {'older': None, 'newer': None}; limitation('ir-asymmetric')
+            ir_dirs[side] = None; continue
+        ir_dirs[side] = store.find_ir(req.ir_keys[side])   # verified, content-addressed, idempotent
+        if ir_dirs[side] is None:
+            jsonl = extract.runner.extract_side(req, side, budget, emit)          # external Python child
+            built = run_worker('ingest', req, jsonl, budget)                       # PatchTrace child (CPU-heavy)
+            ir_dirs[side] = store.place_ir(built)          # atomic rename; no SQLite row, found by ir_key
+    if (ir_dirs['older'] is None) != (ir_dirs['newer'] is None):   # F1 symmetry: never mix IR and no-IR sides
+        ir_dirs = {'older': None, 'newer': None}; limitation('ir-asymmetric')
+    return run_worker('compute', req, ir_dirs, budget)     # result parts in a private dir; the OWNER publishes
+
+def compute(req, ir, budget) -> ResultParts:                # runs inside the worker child (pure, no project DB)
     atoms = [*sources.ghidriff.atoms(req.snapshot, req.raw), *sources.secondary.atoms(req.sets),
              *sources.manual.atoms(req.snapshot)]          # all addresses normalised to RVA (D-17)
     if ir['older']:
@@ -103,9 +110,9 @@ def execute(req: UnifiedRequest, cancel: Event, emit: Callable[[StageEvent], Non
     for row in result.rows_needing_facts():                # matched, tentative, candidate, contested pairs
         budget.tick()
         row.facts = facts.verdict.judge(facts.channels.collect(row, ir, req.snapshot, result))
-    return write_parts(result, req.private_dir)            # rows/atoms/facts JSONL.gz + manifest; owner publishes
+    return write_parts(result, req.private_dir)            # rows/facts JSONL.gz + manifest
 ```
-Owner side: `store.publish_result(output, guard)` re-hashes every part, checks the manifest against `result_key`, moves the directory with `os.replace`, then writes the pointer row through `EnrichmentStore.publish` (stale if the guard moved). Any failure leaves the previous pointer row current.
+`run_worker(mode, ...)` spawns `patchtrace unified _worker` (01 s4) with a request file, or calls the same function in process for `--in-process`/tests (B-20). The run thread may place immutable, content-addressed IR directories; it never touches SQLite. Owner side: `store.publish_result(output, guard)` re-hashes every part, checks the manifest against `result_key`, moves the directory with `os.replace`, then writes the pointer row through `EnrichmentStore.publish` (stale if the guard moved). Any failure leaves the previous pointer row current.
 
 ## 6. Error taxonomy `PT-UNIFIED-*`
 

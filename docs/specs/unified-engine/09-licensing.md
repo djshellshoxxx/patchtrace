@@ -29,7 +29,7 @@ PatchTrace is MIT (`LICENSE`). Not legal advice; U-01 asks for a review before t
 | rz-diff / rizin | rizinorg/rizin | LGPL-3.0-only (+ GPL-2.0+ plugins) | runtime use (external process); never link `librz` | existing SPEC-11 notes |
 | BinDiff CLI (oracle) | google/bindiff | Apache-2.0 | runtime use (SPEC-29); never bundled | existing |
 | Diaphora results | joxeankoret/diaphora | AGPL-3.0 | data import of user-produced files only (DA-01) | DA-01 owns it |
-| Windows ABI facts (RTTI, XFG, DVRT) for later slices | LLVM, System Informer, angr | Apache-2.0-LLVM / MIT / BSD-2 | facts only (not used in v1) | none |
+| Windows ABI facts (RTTI, XFG, DVRT), only if B-11 is lifted | LLVM, System Informer, angr | Apache-2.0-LLVM / MIT / BSD-2 | facts only (not used in v1) | none |
 | capstone, pyvex/angr, z3, torch | - | BSD / GPL(libVEX) / MIT / BSD | not used (no new dependency, D-20; pyvex excluded by licence, R05 s6) | none |
 
 ## 3. Notices and build

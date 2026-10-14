@@ -125,7 +125,7 @@ Within one blocked bucket (<= L-24 functions per side): in-house similarity `s(a
 
 ## 7. Groups and leftovers (`ladder/groups.py`)
 - Duplicates: content-identical buckets (`h0`/`h1`) with |A| > 1 or |B| > 1 that drill-down and propagation did not resolve -> group `duplicate` (cardinality from sizes), never cross-multiplied (R03 s7.2; contrast Ghidriff pass 11, 1:N cross products, R03 s1).
-- ICF: one function carrying several alias names on one side whose names map to several functions on the other -> group `icf` (N:1); materiality later `review` ("fold set changed"), never added/removed (R04 s6).
+- ICF: one function carrying several alias names on one side whose names map to several functions on the other -> group `icf` (N:1); materiality (05) `review` ("fold set changed"), never added/removed (R04 s6).
 - Inline/outline hints (R05 F11): an older-only function whose >= 2 rare blocks (`h1`, >= 4 instructions) all occur inside one matched newer function -> group `inlined-into` (tier C); symmetric `outlined-from`. Partial containment -> hint `moved-or-inlined` only.
 - Leftovers: `older-only` / `newer-only` with reason `no-unique-evidence` (default), `tiny`, `oversize`, `thunk-unresolved`.
 

@@ -24,11 +24,11 @@ Rule: each amendment is applied in the PR of the slice named in the last column,
 | A-15 | `bindiff-execution.md` (SPEC-29) s9.4, s10 | the live workflow additionally stores `bindiff --md_index` dumps for both inputs as parity oracle (G-U3); BinDiff remains never bundled | D-21 | S2 |
 | A-16 | `bindiff-adapter.md` (SPEC-10) s2-s3 | record: rows with `function.basicblocks = 0` are import/stub matches (R02 s15); unified address basis is auto-detected (06 s1); importer unchanged | R02 s15 | S0b |
 | A-17 | `secondary-engine.md` (SPEC-11) s5 | add: in SPEC-31 rz-diff rows are tier-W evidence, `non-exclusive` when the newer endpoint is shared; similarity never decides | D-23 | S0b |
-| A-18 | `binexport2-support.md` (SPEC-10b) s3 | later producer: `extract/binexport.py` maps an accepted BinExport2 file to `ir-extract/1` (06 s7); no change to C3 contracts | 06 s7 | later |
+| A-18 | `binexport2-support.md` (SPEC-10b) s3 | additional IR producer: `extract/binexport.py` maps an accepted BinExport2 file to `ir-extract/1` (06 s7); no change to C3 contracts | 06 s7 | S1 follow-up; trigger: C3 merged |
 | A-19 | `verification.md` (SPEC-03) | add unified gates G-U1..G-U8 as P1 gates of the opt-in feature (not beta P0); flag stays off until they pass | D-27, U-05 | S6 |
 | A-20 | `windows-acceptance-and-milestone-builds.md` s2 | frozen smoke adds `unified --help`, `unified _worker --self-check` and presence of the extractor script data file in the onedir | D-20 | S1 |
 | A-21 | `enrichment-hardening-backlog.md` (SPEC-07h) H7 | the extractor child uses the same environment builder (`backend._environment` / `build_child_env(for_tool='ghidra')`), so the H7 allow-list decision applies to it unchanged | 03 s3 | S1 |
-| A-22 | `patch-intent-localization-engine.md` (SPEC-30) | future consumer: SPEC-31 `ChangeFacts` deltas are typed evidence for the intent rules; no dependency today | - | later |
+| A-22 | `patch-intent-localization-engine.md` (SPEC-30) | future consumer: SPEC-31 `ChangeFacts` deltas are typed evidence for the intent rules; no dependency today | - | SPEC-30 owner; trigger: SPEC-30 work starts |
 | A-23 | `three-tool-evidence-adapters.md` (SPEC-29 tools), `csaf-cve-interpretation-engine.md`, `offline-backend-installer.md` (SPEC-06) | no change: capa/FLOSS/DiE are not SPEC-31 sources; pyghidra is already required by Ghidriff in the external environment | - | none |
 | A-24 | `docs/notices.md`, `docs/reuse-matrix.md` | BinDiff-derived modules row, `third_party/notices/bindiff-v8/` (09 s3) | D-21 | S1/S2 (first ported module) |
 | A-25 | `docs/modules.md`, `tasks/todo.md` | planned modules and slices appended | AGENTS.md | this PR |

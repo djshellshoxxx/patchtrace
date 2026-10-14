@@ -37,7 +37,7 @@ Inputs: one project with a unified result, optional `.BinDiff` + `bindiff --md_i
 | Module | Tests (red first, then green) |
 |---|---|
 | contracts / keys / limits | schema round trip and strictness; invalid examples of 02 s8 rejected; `result_key` changes with each input (parametrised over every payload field); swapped orientation -> different key; limits digest stable |
-| store | publish requires verified parts; crash between dir move and row publish leaves an orphan GC'd later; retention keeps L-32 and never touches other kinds; `test_unified_rows_survive_enrichment_retention`; `test_old_reader_ignores_unified_kinds`; missing sidecar -> U6 not a crash |
+| store | publish requires verified parts; crash between dir move and row publish leaves an orphan removed by the next publish; retention keeps L-32 and never touches other kinds; `test_unified_rows_survive_enrichment_retention`; `test_old_reader_ignores_unified_kinds`; missing sidecar -> U6 not a crash |
 | addressing | VA/RVA/auto/mixed; `EXTERNAL:` keys; address outside image dropped and counted |
 | extract/runner, ir/* | 03 s10 list |
 | sources/* | 06 s9 list |

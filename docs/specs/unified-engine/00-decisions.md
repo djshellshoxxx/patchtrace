@@ -57,7 +57,7 @@ Status: contract-freeze draft, 2026-10-14, base `main` = `cb25132`. Number check
 | C-06 | SPEC-QB-02 new SQLite tables `matching_*` | SPEC-07 additive kinds, single writer | no new tables; enrichment kinds + sidecar files | 10 row A-10 |
 | C-07 | SPEC-RD-01/02 `comparison/*` + tables `comparison_*` | SPEC-26 already owns raw/PE layout views | re-home file-level layers to SPEC-26; function-level opcode/operand delta into L2 | section 3.1 |
 | C-08 | R02 tier B "accept when a second key or another engine agrees" | R05 s3.3 "hard accept only exact/masked/name" | `matched` = tier A, or tier B confirmed by a second INDEPENDENT component; tier B alone = `tentative` | 05 s1.3 |
-| C-09 | R05 s3.4 learned weights + calibration | hard rule: ordinal until validated artifact | rule-based ordinal decisions now; feature family proposal for C9 later (`features/2`) | 05 s1.5 |
+| C-09 | R05 s3.4 learned weights + calibration | hard rule: ordinal until validated artifact | rule-based ordinal decisions now; `features/2` family proposal handed to the C9 owner in S6 (A-07) | 05 s1.5 |
 | C-10 | SPEC-01 DEC-02 "do not fork matching" | in-house ladder | DEC-02 reworded: never fork Ghidriff; a separate derived engine may match | 10 row A-01 |
 | C-11 | SPEC-01 "one active job per window" | extraction + worker jobs | unified run counts as THE analysis job: disabled while Ghidriff runs and vice versa | 10 row A-01 |
 | C-12 | R02 s14 "build a BinExport writer in the extractor" | no protobuf in the external env, token budget | no BinExport writer in v1; parity uses the official exporter when present (backup B-04) | 03 s7 |
