@@ -47,7 +47,7 @@ Cancellation is checked at stage boundaries and at least every 256 functions. Pe
 | occurrence | `occurrence` v1 | `{diff_id, side, address, name, ordinal}` (address int or null; 0 valid) |
 | pairing | `pairing` v1 | `{diff_id, category, manual, older: [occurrence...], newer: [occurrence...]}` (lists sorted) |
 | signal | `signal` v1 | `{pairing_id, detector, detector_version, group_key, locations}` |
-| stage | `stage` v1 | `{stage, stage_version, inputs: {name: digest}}` |
+| stage | `stage` v1 | `{stage, stage_version, inputs: {name: digest}}`; since SPEC-07h Phase D every derived stage's `inputs` include `algorithm` = `pipeline.algorithm_digests()[stage]` |
 | config | `ranking-config` v1 | semantic config only (weights, enabled detectors, formula) |
 | raw cache | `raw-cache` v1 | `{older_sha256, newer_sha256, fingerprint}` (ordered; full §9 runtime fingerprint) |
 | edit group | `edit` v1 | `{pairing_id, hunk_ordinal, side, text}` shared by B1 and B2 (`signals.edit_group_key`) |

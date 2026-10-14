@@ -7,12 +7,15 @@ passed in; the caller decides what is semantic.
 """
 from __future__ import annotations
 
+import dataclasses
 import hashlib
 import json
+import re
 import unicodedata
 from collections.abc import Iterable, Mapping
 
 _PREFIX = b'patchtrace\x00'
+_SKIP = object()
 
 
 def _normalize(value):
@@ -82,6 +85,61 @@ def signal_id(pairing: str, detector: str, version: int, group_key: str, locatio
 
 def stage_id(stage: str, version: int, inputs: Mapping[str, str]) -> str:
     return domain_id('stage', 1, {'stage': stage, 'stage_version': version, 'inputs': dict(inputs)})
+
+
+def _plain(value, depth: int = 0):
+    """Canonical-JSON-able form of a plain-data constant, or _SKIP for code, types and other objects."""
+    if depth > 32:
+        return _SKIP
+    if value is None or isinstance(value, (bool, int, str)):
+        return value
+    if isinstance(value, float):
+        return {'float': repr(value)}
+    if isinstance(value, re.Pattern):
+        pattern = value.pattern if isinstance(value.pattern, str) else value.pattern.hex()
+        return {'re': pattern, 'flags': int(value.flags)}
+    if isinstance(value, (tuple, list, set, frozenset)):
+        items = [_plain(item, depth + 1) for item in value]
+        if any(item is _SKIP for item in items):
+            return _SKIP
+        return sorted_unique(items) if isinstance(value, (set, frozenset)) else items
+    if isinstance(value, Mapping):
+        out = {}
+        for key, item in value.items():
+            plain_key, plain_item = _plain(key, depth + 1), _plain(item, depth + 1)
+            if plain_key is _SKIP or plain_item is _SKIP:
+                return _SKIP
+            out[plain_key if isinstance(plain_key, str) else canonical_json(plain_key).decode('utf-8')] = plain_item
+        return out
+    if dataclasses.is_dataclass(value) and not isinstance(value, type):
+        out = {'__dataclass__': type(value).__qualname__}
+        for item in dataclasses.fields(value):
+            plain_item = _plain(getattr(value, item.name), depth + 1)
+            if plain_item is not _SKIP:  # callables (detector rules) are code, not data
+                out[item.name] = plain_item
+        return out
+    return _SKIP
+
+
+def constants_digest(domain: str, version: int, namespaces: Iterable[Mapping[str, object]],
+                     exclude: Iterable[str] = ()) -> str:
+    """Digest of the plain-data module constants that define an algorithm (SPEC-07h Phase D).
+
+    Every non-dunder global whose value is plain data (see `_plain`) is included under
+    `<module>:<name>`, so editing a regex, table, limit or detector declaration changes the digest
+    without anyone bumping a version. Functions, classes, modules and other objects are skipped:
+    logic changes still need an explicit version bump."""
+    skip = set(exclude)
+    payload: dict[str, object] = {}
+    for namespace in namespaces:
+        module = str(namespace.get('__name__', ''))
+        for name in sorted(namespace):
+            if name.startswith('__') or name in skip:
+                continue
+            value = _plain(namespace[name])
+            if value is not _SKIP:
+                payload[f'{module}:{name}'] = value
+    return domain_id(domain, version, payload)
 
 
 def parse_address(text: str | None) -> int | None:

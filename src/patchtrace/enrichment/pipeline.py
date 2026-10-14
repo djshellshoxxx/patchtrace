@@ -34,6 +34,26 @@ from .views import MatchView, RunView, build_views, location_problem
 
 STAGE_VERSIONS = {'signals': 2, 'wil': 2, 'ranking': 2, 'contextual': 2}
 CANCEL_EVERY = 256
+# Cancellation granularity changes no result, so it never invalidates a cache entry or stored row.
+_DIGEST_EXCLUDE = frozenset({'CANCEL_EVERY'})
+OLDER_ALGORITHM_NOTE = ('Stored ranking is stale (computed by an older PatchTrace version). '
+                        'Rank changes again.')
+
+
+def algorithm_digests() -> dict[str, str]:
+    """Per-stage digest of the constants that define each algorithm (SPEC-07h Phase D). Part of every
+    stage id and recorded in the pipeline row, so derived caches and stored rows self-invalidate when a
+    regex, table, limit or detector declaration changes. Computed on demand (never cached), so it always
+    describes the code that runs."""
+    from .. import alignment
+    from . import cve, views
+
+    def digest(stage: str, modules) -> str:
+        return identity.constants_digest(f'algorithm-{stage}', 1, [vars(m) for m in modules],
+                                         exclude=_DIGEST_EXCLUDE)
+    detection = (signals, views, alignment)
+    return {'signals': digest('signals', detection), 'wil': digest('wil', (wil, *detection)),
+            'ranking': digest('ranking', (ranking,)), 'contextual': digest('contextual', (cve,))}
 
 
 @dataclass(frozen=True)
@@ -58,6 +78,7 @@ class PipelineResult:
     stage_ids: dict[str, str]
     config_digest: str = ''
     default_profile: bool = False
+    algorithms: dict[str, str] = field(default_factory=dict)
 
 
 def _filter_text(feature_ids) -> str:
@@ -202,10 +223,12 @@ def run(project: ComparisonProject, options: PipelineOptions | None = None,
                                   status=status, error_code=error.code if error else None,
                                   message=error.message if error else '', limitations=tuple(limitations)))
 
+    digests = algorithm_digests()
     detector_versions = {d.id: d.version for d in signals.DETECTORS}
     signals_key = stage('signals', {'input': guard.input_digest,
                                     'detectors': identity.domain_id('detectors', 1, {
-                                        'enabled': sorted(enabled), 'versions': detector_versions})})
+                                        'enabled': sorted(enabled), 'versions': detector_versions}),
+                                    'algorithm': digests['signals']})
     signal_sets: tuple[SignalSet, ...] = ()
     try:
         def compute_signals():
@@ -226,7 +249,7 @@ def run(project: ComparisonProject, options: PipelineOptions | None = None,
         record('signals', 'cancelled' if exc.code == 'PT-ENRICH-CANCEL' else 'failed', exc)
 
     wil_key = stage('wil', {'input': guard.input_digest, 'rules': f'wil/{wil.DETECTOR_VERSION}',
-                            'filter': _filter_text(options.feature_ids)})
+                            'filter': _filter_text(options.feature_ids), 'algorithm': digests['wil']})
     transitions: tuple[FeatureTransition, ...] = ()
     wil_status: Status = 'unavailable'
     if stages[-1].status in {'complete', 'partial'}:
@@ -262,7 +285,7 @@ def run(project: ComparisonProject, options: PipelineOptions | None = None,
 
     ranking_result: RankingResult | None = None
     stage('ranking', {'signals': signals_key, 'wil': wil_key,
-                      'config': ranking.config_digest(options.config)})
+                      'config': ranking.config_digest(options.config), 'algorithm': digests['ranking']})
     if cancel is not None and cancel.is_set():
         record('ranking', 'cancelled')
     elif stages[0].status in {'complete', 'partial'}:
@@ -275,7 +298,8 @@ def run(project: ComparisonProject, options: PipelineOptions | None = None,
 
     contextual: ContextualRanking | None = None
     snapshot_ids = ','.join(sorted(s.snapshot_id for s in options.snapshots))
-    stage('contextual', {'ranking': stage_ids['ranking'], 'snapshots': snapshot_ids or 'none'})
+    stage('contextual', {'ranking': stage_ids['ranking'], 'snapshots': snapshot_ids or 'none',
+                         'algorithm': digests['contextual']})
     if options.snapshots and ranking_result is not None:
         from . import cve  # pure; imported lazily to keep the base path minimal
         try:
@@ -297,7 +321,7 @@ def run(project: ComparisonProject, options: PipelineOptions | None = None,
                             status=_overall(stages, bool(options.snapshots)))
     default = options.config == RankingConfig() and options.feature_ids is None
     return PipelineResult(views, guard, signal_sets, transitions, ranking_result, contextual, status, stage_ids,
-                          ranking.config_digest(options.config), default)
+                          ranking.config_digest(options.config), default, digests)
 
 
 def prepare_publish(root) -> None:
@@ -343,18 +367,20 @@ def publish(store: EnrichmentStore, project: ComparisonProject, result: Pipeline
         put('contextual', (result.contextual,), result.contextual.status, result.stage_ids['contextual'])
     put('pipeline', (result.status,), result.status.status, rid,
         {'stage_ids': dict(result.stage_ids), 'config_digest': result.config_digest,
-         'default_profile': result.default_profile})
+         'default_profile': result.default_profile, 'algorithms': dict(result.algorithms)})
     store.apply_retention(current, protect=generation, started=started)
     return written
 
 
-def _versions_current(entry) -> bool:
-    """A stored pipeline row is served only if every recorded stage ran at today's stage version."""
+def _versions_current(entry, digests: dict[str, str] | None = None) -> bool:
+    """A stored pipeline row is served only if every recorded stage ran at today's stage version and
+    with today's algorithm digests (rows without the additive `algorithms` record are older)."""
     try:
         stages = entry.body['items'][0]['stages']
-        return bool(stages) and all(STAGE_VERSIONS.get(s['stage']) == s['stage_version'] for s in stages)
+        versions = bool(stages) and all(STAGE_VERSIONS.get(s['stage']) == s['stage_version'] for s in stages)
     except (KeyError, IndexError, TypeError):
         return False
+    return versions and entry.body.get('algorithms') == (algorithm_digests() if digests is None else digests)
 
 
 def load_default(store: EnrichmentStore, project: ComparisonProject):
@@ -368,8 +394,11 @@ def load_default(store: EnrichmentStore, project: ComparisonProject):
     digest = ranking.config_digest(RankingConfig())
     candidates = [e for e in store.entries('pipeline', guard)
                   if e.body.get('default_profile') is True and e.body.get('config_digest') == digest]
-    current = next((e for e in candidates if not e.stale and _versions_current(e)), None)
+    digests = algorithm_digests()
+    current = next((e for e in candidates if not e.stale and _versions_current(e, digests)), None)
     if current is None:
+        if any(not e.stale for e in candidates):  # same inputs, computed by an older algorithm/version
+            return None, (), OLDER_ALGORITHM_NOTE
         # Only say "stale" when a default-profile row exists for an older state; rows of
         # other weight profiles are not evidence that the project changed.
         stale = bool(candidates) or any(e.body.get('default_profile') is True
@@ -389,7 +418,7 @@ def wil_stage_id(input_digest_value: str, feature_ids: frozenset[int] | None) ->
     """The `wil` stage identity `run` assigns; it is the only stored trace of the feature filter."""
     return identity.stage_id('wil', STAGE_VERSIONS['wil'], {
         'input': input_digest_value, 'rules': f'wil/{wil.DETECTOR_VERSION}',
-        'filter': _filter_text(feature_ids)})
+        'filter': _filter_text(feature_ids), 'algorithm': algorithm_digests()['wil']})
 
 
 def load_profile(store: EnrichmentStore, project: ComparisonProject, config_digest: str,
@@ -403,10 +432,15 @@ def load_profile(store: EnrichmentStore, project: ComparisonProject, config_dige
     except EnrichmentError:
         return None, (), 'Ranking unavailable: no completed analysis run.'
     wil_id = wil_stage_id(guard.input_digest, feature_ids)
-    candidates = [e for e in store.entries('pipeline', guard) if e.body.get('config_digest') == config_digest
+    rows = store.entries('pipeline', guard)
+    candidates = [e for e in rows if e.body.get('config_digest') == config_digest
                   and e.body.get('stage_ids', {}).get('wil') == wil_id]
-    current = next((e for e in candidates if not e.stale and _versions_current(e)), None)
+    digests = algorithm_digests()
+    current = next((e for e in candidates if not e.stale and _versions_current(e, digests)), None)
     if current is None:
+        if any(not e.stale and e.body.get('config_digest') == config_digest and not _versions_current(e, digests)
+               for e in rows):  # the WIL id embeds the digest, so older rows are found by config only
+            return None, (), OLDER_ALGORITHM_NOTE
         stale = bool(candidates) or any(e.body.get('config_digest') == config_digest
                                         for e in store.entries('pipeline'))
         return None, (), ('Stored ranking is stale (project changed). Rank changes again.' if stale else '')
