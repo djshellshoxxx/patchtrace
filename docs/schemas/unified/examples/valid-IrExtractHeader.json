@@ -1,0 +1,21 @@
+{
+  "artifact_sha256": "d6a914df2da752f3444b4a98be2488484c153d5bd5853eb7793bc787c24596b6",
+  "compiler": "windows",
+  "contract": "ir-extract/1",
+  "image_base": 5368709120,
+  "language": "x86:LE:64:default",
+  "producer": {
+    "analysis_options_digest": "b879f4c66151e4904400b399f0d818e7cc3583e5f4ace3dd73a05f950ee7a756",
+    "analyzed": true,
+    "ghidra": "12.0.4",
+    "java": "21",
+    "mode": "gzf",
+    "pyghidra": "3.0.2",
+    "python": "3.12.10",
+    "script_sha256": "8129b40079cef7a05617b41cd32203070c3172674355e85ed3053f147b8548f0",
+    "symbols": "none"
+  },
+  "program_sha256": "d6a914df2da752f3444b4a98be2488484c153d5bd5853eb7793bc787c24596b6",
+  "size_of_image": 1048576,
+  "type": "header"
+}

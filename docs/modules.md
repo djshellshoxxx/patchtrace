@@ -95,3 +95,10 @@ Every substantial future module must be added here before implementation. UI mus
 | unified pipeline | src/patchtrace/unified/{pipeline,worker,cli,read_model}.py | stage orchestration, hidden `_worker`, `unified` CLI verbs, Qt-free view model | all unified modules | planned, S0b/S4 |
 | unified UI | src/patchtrace/ui_unified.py | navigator view switch + dock tab in the single MainWindow; threads per C6 rules | Qt, read_model | planned, S4 |
 | prerequisites | jobs.py (spawn lock), nway/graph.py (`EXTERNAL:` keys) | latent defects found while grounding SPEC-31 | - | done (C3 merge, ce108cd); P2b skip count planned |
+### [S0a:contracts-store] SPEC-31 S0a built (2026-10-14)
+| Module | Files | Responsibility | Depends on | Verification |
+|---|---|---|---|---|
+| unified limits | src/patchtrace/unified/limits.py | every L-xx number (`UnifiedLimits`), `UnifiedError` + codes, cooperative `Budget` | stdlib | tests/test_unified_contracts.py |
+| unified contracts | src/patchtrace/unified/contracts.py | strict frozen records of 02 (rows, facts, manifest, pointer, run, program-ir, extract request/header/footer, key inputs) | pydantic, limits | tests/test_unified_contracts.py; docs/schemas/unified/ (+ examples/index.json) |
+| unified keys | src/patchtrace/unified/keys.py | ir_key, result_key, row_id, config/limits/manual/source digests, run id | enrichment.identity | tests/test_unified_keys.py |
+| unified store | src/patchtrace/unified/store.py | result sidecars (decompressed-content hashes), pointer rows `unified-result`/`unified-run`, cache misses, own retention, `backup_once`/`delete_own` | enrichment.storage (public API), ingestion | tests/test_unified_store.py |

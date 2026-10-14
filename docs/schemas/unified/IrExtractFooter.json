@@ -1,0 +1,49 @@
+{
+  "$id": "https://patchtrace.local/schemas/ir-extract/1/IrExtractFooter.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "functions": {
+      "minimum": 0,
+      "title": "Functions",
+      "type": "integer"
+    },
+    "instructions": {
+      "minimum": 0,
+      "title": "Instructions",
+      "type": "integer"
+    },
+    "status": {
+      "enum": [
+        "complete",
+        "partial"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "type": {
+      "const": "footer",
+      "title": "Type",
+      "type": "string"
+    },
+    "warnings": {
+      "default": [],
+      "items": {
+        "maxLength": 200,
+        "minLength": 1,
+        "type": "string"
+      },
+      "maxItems": 64,
+      "title": "Warnings",
+      "type": "array"
+    }
+  },
+  "required": [
+    "type",
+    "functions",
+    "instructions",
+    "status"
+  ],
+  "title": "IrExtractFooter",
+  "type": "object"
+}

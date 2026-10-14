@@ -1,0 +1,22 @@
+{
+  "contract": "unified-run/1",
+  "duration_ms": 1500,
+  "error_code": null,
+  "peak_rss_bytes": 104857600,
+  "provenance": {
+    "worker": "in-process"
+  },
+  "result_id": null,
+  "run_id": "7929a5a665dd2c613e6516f6a0fb388ef87b2880c0c90644a5b705e2db35c207",
+  "stages": [
+    {
+      "duration_ms": 1200,
+      "reason": null,
+      "stage": "match",
+      "status": "ok"
+    }
+  ],
+  "started_utc": "2026-10-14T12:00:00+00:00",
+  "status": "ok",
+  "stderr_tail": ""
+}

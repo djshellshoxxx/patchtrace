@@ -1,0 +1,63 @@
+{
+  "channels": [
+    [
+      "C0",
+      "equal"
+    ],
+    [
+      "C1",
+      "equal"
+    ],
+    [
+      "C2",
+      "equal"
+    ],
+    [
+      "C3",
+      "equal"
+    ],
+    [
+      "C4",
+      "equal"
+    ],
+    [
+      "C5",
+      "equal"
+    ],
+    [
+      "C6",
+      "equal"
+    ],
+    [
+      "C7",
+      "equal"
+    ],
+    [
+      "C8",
+      "equal"
+    ]
+  ],
+  "contract": "change-facts/1",
+  "deltas": [
+    {
+      "channel": "C2",
+      "cls": "constant",
+      "new": "cmp esi, 0x200",
+      "newer_rva": 4402,
+      "old": "cmp esi, 0x100",
+      "older_rva": 4130
+    }
+  ],
+  "deltas_omitted": 0,
+  "eh": "equal",
+  "limits_hit": [],
+  "proof": "COS-PSEUDO/1",
+  "row_id": "e985f2c135feb8094a1f225a55d8228f93deff08d65a4d2d22c86ccca4475f07",
+  "second_channel": null,
+  "targets": [
+    3,
+    0,
+    0
+  ],
+  "verdict": "cosmetic"
+}

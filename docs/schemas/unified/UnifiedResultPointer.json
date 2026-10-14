@@ -1,0 +1,177 @@
+{
+  "$defs": {
+    "Counts": {
+      "additionalProperties": false,
+      "description": "One int per Decision and per Materiality value (`-` spelled `_`); both sums equal the row count.",
+      "properties": {
+        "decisions": {
+          "$ref": "#/$defs/DecisionCounts"
+        },
+        "materiality": {
+          "$ref": "#/$defs/MaterialityCounts"
+        }
+      },
+      "required": [
+        "decisions",
+        "materiality"
+      ],
+      "title": "Counts",
+      "type": "object"
+    },
+    "DecisionCounts": {
+      "additionalProperties": false,
+      "properties": {
+        "ambiguous": {
+          "minimum": 0,
+          "title": "Ambiguous",
+          "type": "integer"
+        },
+        "candidate": {
+          "minimum": 0,
+          "title": "Candidate",
+          "type": "integer"
+        },
+        "contested": {
+          "minimum": 0,
+          "title": "Contested",
+          "type": "integer"
+        },
+        "matched": {
+          "minimum": 0,
+          "title": "Matched",
+          "type": "integer"
+        },
+        "newer_only": {
+          "minimum": 0,
+          "title": "Newer Only",
+          "type": "integer"
+        },
+        "older_only": {
+          "minimum": 0,
+          "title": "Older Only",
+          "type": "integer"
+        },
+        "tentative": {
+          "minimum": 0,
+          "title": "Tentative",
+          "type": "integer"
+        },
+        "unknown": {
+          "minimum": 0,
+          "title": "Unknown",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "matched",
+        "tentative",
+        "candidate",
+        "contested",
+        "ambiguous",
+        "older_only",
+        "newer_only",
+        "unknown"
+      ],
+      "title": "DecisionCounts",
+      "type": "object"
+    },
+    "MaterialityCounts": {
+      "additionalProperties": false,
+      "properties": {
+        "cosmetic": {
+          "minimum": 0,
+          "title": "Cosmetic",
+          "type": "integer"
+        },
+        "material": {
+          "minimum": 0,
+          "title": "Material",
+          "type": "integer"
+        },
+        "not_applicable": {
+          "minimum": 0,
+          "title": "Not Applicable",
+          "type": "integer"
+        },
+        "review": {
+          "minimum": 0,
+          "title": "Review",
+          "type": "integer"
+        },
+        "unchanged": {
+          "minimum": 0,
+          "title": "Unchanged",
+          "type": "integer"
+        },
+        "unknown": {
+          "minimum": 0,
+          "title": "Unknown",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "unchanged",
+        "cosmetic",
+        "material",
+        "review",
+        "unknown",
+        "not_applicable"
+      ],
+      "title": "MaterialityCounts",
+      "type": "object"
+    }
+  },
+  "$id": "https://patchtrace.local/schemas/unified-result-ptr/1/UnifiedResultPointer.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "Body of the `unified-result` enrichment row (entry id = result_id).",
+  "properties": {
+    "config_digest": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Config Digest",
+      "type": "string"
+    },
+    "contract": {
+      "const": "unified-result-ptr/1",
+      "default": "unified-result-ptr/1",
+      "title": "Contract",
+      "type": "string"
+    },
+    "counts": {
+      "$ref": "#/$defs/Counts"
+    },
+    "manifest_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Manifest Sha256",
+      "type": "string"
+    },
+    "relative_dir": {
+      "pattern": "^runs/[A-Za-z0-9][A-Za-z0-9._-]{0,127}/unified/results/[0-9a-f]{16}$",
+      "title": "Relative Dir",
+      "type": "string"
+    },
+    "result_id": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Result Id",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "complete",
+        "partial"
+      ],
+      "title": "Status",
+      "type": "string"
+    }
+  },
+  "required": [
+    "result_id",
+    "relative_dir",
+    "manifest_sha256",
+    "status",
+    "counts",
+    "config_digest"
+  ],
+  "title": "UnifiedResultPointer",
+  "type": "object"
+}

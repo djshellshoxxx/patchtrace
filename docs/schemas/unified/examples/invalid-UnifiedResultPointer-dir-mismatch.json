@@ -1,0 +1,28 @@
+{
+  "config_digest": "776202cb9fdc3914b95dab8a3596f8810b887bed6e570c610bd42013ce04074b",
+  "contract": "unified-result-ptr/1",
+  "counts": {
+    "decisions": {
+      "ambiguous": 0,
+      "candidate": 0,
+      "contested": 0,
+      "matched": 1,
+      "newer_only": 0,
+      "older_only": 0,
+      "tentative": 0,
+      "unknown": 0
+    },
+    "materiality": {
+      "cosmetic": 0,
+      "material": 1,
+      "not_applicable": 0,
+      "review": 0,
+      "unchanged": 0,
+      "unknown": 0
+    }
+  },
+  "manifest_sha256": "1e18c986fbea93aac8a896c5d9804c8563d32e649020601b9af215c292d24973",
+  "relative_dir": "runs/run-1/unified/results/0000000000000000",
+  "result_id": "cabf4547e8fd32dab7c1225f33b3ac5decb22b28a577764ba5d98a9f92a84e9e",
+  "status": "complete"
+}

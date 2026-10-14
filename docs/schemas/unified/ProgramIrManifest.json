@@ -1,0 +1,291 @@
+{
+  "$defs": {
+    "IrCounts": {
+      "additionalProperties": false,
+      "properties": {
+        "blocks": {
+          "minimum": 0,
+          "title": "Blocks",
+          "type": "integer"
+        },
+        "call_edges": {
+          "minimum": 0,
+          "title": "Call Edges",
+          "type": "integer"
+        },
+        "consts": {
+          "minimum": 0,
+          "title": "Consts",
+          "type": "integer"
+        },
+        "functions": {
+          "minimum": 0,
+          "title": "Functions",
+          "type": "integer"
+        },
+        "imports": {
+          "minimum": 0,
+          "title": "Imports",
+          "type": "integer"
+        },
+        "instructions": {
+          "minimum": 0,
+          "title": "Instructions",
+          "type": "integer"
+        },
+        "mask_unlocated": {
+          "minimum": 0,
+          "title": "Mask Unlocated",
+          "type": "integer"
+        },
+        "pdata_confirmed": {
+          "minimum": 0,
+          "title": "Pdata Confirmed",
+          "type": "integer"
+        },
+        "refs": {
+          "minimum": 0,
+          "title": "Refs",
+          "type": "integer"
+        },
+        "strings": {
+          "minimum": 0,
+          "title": "Strings",
+          "type": "integer"
+        },
+        "thunks": {
+          "minimum": 0,
+          "title": "Thunks",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "functions",
+        "blocks",
+        "instructions",
+        "call_edges",
+        "strings",
+        "consts",
+        "refs",
+        "thunks",
+        "imports",
+        "pdata_confirmed",
+        "mask_unlocated"
+      ],
+      "title": "IrCounts",
+      "type": "object"
+    },
+    "IrProducer": {
+      "additionalProperties": false,
+      "properties": {
+        "analysis_options_digest": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Analysis Options Digest"
+        },
+        "ghidra": {
+          "maxLength": 64,
+          "minLength": 0,
+          "title": "Ghidra",
+          "type": "string"
+        },
+        "gzf_sha256": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Gzf Sha256"
+        },
+        "java": {
+          "maxLength": 64,
+          "minLength": 0,
+          "title": "Java",
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "ghidra",
+            "binexport",
+            "rizin"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "mode": {
+          "enum": [
+            "gzf",
+            "analyze",
+            "binexport",
+            "rizin"
+          ],
+          "title": "Mode",
+          "type": "string"
+        },
+        "pyghidra": {
+          "maxLength": 64,
+          "minLength": 0,
+          "title": "Pyghidra",
+          "type": "string"
+        },
+        "python": {
+          "maxLength": 64,
+          "minLength": 0,
+          "title": "Python",
+          "type": "string"
+        },
+        "script_sha256": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Script Sha256"
+        },
+        "symbols": {
+          "enum": [
+            "primary",
+            "none"
+          ],
+          "title": "Symbols",
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind",
+        "mode",
+        "ghidra",
+        "pyghidra",
+        "java",
+        "python",
+        "script_sha256",
+        "analysis_options_digest",
+        "symbols"
+      ],
+      "title": "IrProducer",
+      "type": "object"
+    }
+  },
+  "$id": "https://patchtrace.local/schemas/program-ir/1/ProgramIrManifest.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "artifact_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Artifact Sha256",
+      "type": "string"
+    },
+    "content_digest": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Content Digest",
+      "type": "string"
+    },
+    "contract": {
+      "const": "program-ir/1",
+      "default": "program-ir/1",
+      "title": "Contract",
+      "type": "string"
+    },
+    "counts": {
+      "$ref": "#/$defs/IrCounts"
+    },
+    "created_utc": {
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{1,6})?(\\+00:00|Z)$",
+      "title": "Created Utc",
+      "type": "string"
+    },
+    "file_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "File Sha256",
+      "type": "string"
+    },
+    "image_base": {
+      "maximum": 18446744073709551615,
+      "minimum": 0,
+      "title": "Image Base",
+      "type": "integer"
+    },
+    "ingest_version": {
+      "const": "ir-ingest/1",
+      "title": "Ingest Version",
+      "type": "string"
+    },
+    "ir_key": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Ir Key",
+      "type": "string"
+    },
+    "limits_hit": {
+      "default": [],
+      "items": {
+        "pattern": "^[a-z0-9-]{1,48}$",
+        "type": "string"
+      },
+      "maxItems": 64,
+      "title": "Limits Hit",
+      "type": "array"
+    },
+    "norm_version": {
+      "const": "norm/1",
+      "title": "Norm Version",
+      "type": "string"
+    },
+    "producer": {
+      "$ref": "#/$defs/IrProducer"
+    },
+    "program_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Program Sha256",
+      "type": "string"
+    },
+    "size_of_image": {
+      "maximum": 4294967295,
+      "minimum": 1,
+      "title": "Size Of Image",
+      "type": "integer"
+    },
+    "warnings": {
+      "default": [],
+      "items": {
+        "maxLength": 200,
+        "minLength": 1,
+        "type": "string"
+      },
+      "maxItems": 64,
+      "title": "Warnings",
+      "type": "array"
+    }
+  },
+  "required": [
+    "ir_key",
+    "content_digest",
+    "artifact_sha256",
+    "program_sha256",
+    "image_base",
+    "size_of_image",
+    "producer",
+    "ingest_version",
+    "norm_version",
+    "counts",
+    "file_sha256",
+    "created_utc"
+  ],
+  "title": "ProgramIrManifest",
+  "type": "object"
+}

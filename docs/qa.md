@@ -193,3 +193,7 @@ Real tool, not mocked, but only in this session's Linux container (uid 65534, en
 | MSI static inspection | `msiextract`, PE header and import parse (no execution) | `ProgramFiles/BinDiff/bin/bindiff.exe` 3,396,896 B `b1d4844d…47dd`, PE32+ x86-64 console; imports `VCRUNTIME140_1.dll`, which the MSI does not ship |
 
 Committed from this run: the real v8 `--help` text and the real v8 `.BinDiff` + stdout produced on the synthetic pair (`tests/fixtures/secondary/bindiff-8-help.txt`, `bindiff-v8-real-on-synthetic.*`, provenance JSON). Still live-only/open: the GitHub `live-bindiff` run (Linux required leg and the advisory Windows leg: `msiexec /a` layout, `bindiff.exe` start, VC++ runtime on `windows-latest`, Windows config paths and network), real-driver runtime/memory and `executable_id` formats (U8/U9), and the independent pin re-hash plus `.asc` verification.
+
+### [S0a:contracts-store] SPEC-31 S0a (2026-10-14, Linux container, Python 3.13.16; synthetic data only)
+- `tests/test_unified_{contracts,keys,store}.py`: 82 passed; `ruff check src tests tools` clean. Covers schema round trips, every invalid example (02 s8 list plus extras) rejected for its reason, regenerate-and-compare of all generated schemas (pre-SPEC-31 schemas byte-identical: additive only), key determinism across processes and hash seeds, `test_unified_rows_survive_enrichment_retention`, `test_old_reader_ignores_unified_kinds` (no `extension_version` bump).
+- Not verified here: Windows (CI) and Python 3.12 (CI pin); no live data involved.
