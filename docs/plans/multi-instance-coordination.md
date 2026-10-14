@@ -9,7 +9,7 @@ Owner instructions (binding): create two more cloud instances (B, C) and spread 
 | Session | `session_01WUziRNgNiy3umAsePrnNZ1` | `session_01CRxHqXZw1qxT3e17yvwgwE` | `session_012UcSEzaTyz5Pp8jj4C78Hj` |
 | Branch (push only here) | `claude/clever-clarke-s4nhi6` | `claude/instance-b-features` | `claude/instance-c-research` |
 | Orchestrator model | Sonnet | Sonnet | Sonnet |
-| Max concurrent workers | 12 | 12 | 12 |
+| Max concurrent workers | 23 (owner order 2026-10-14) | 23 (owner order 2026-10-14) | 12 |
 
 ## 2. Rules for every instance
 
