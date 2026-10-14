@@ -27,9 +27,16 @@ FROZEN_FLAGS = ('-C', '-j', '-t')
 _OPTION = re.compile(r'^\s*(-[A-Za-z0-9])(?![A-Za-z0-9-])', re.MULTILINE)
 
 
+_ANSI = re.compile(r'\x1b\[[0-9;]*[A-Za-z]')
+
+
 def help_options(text: str) -> set[str]:
-    """Options declared at the start of a help line (`  -C   ...`), not any substring of the text."""
-    return set(_OPTION.findall(text))
+    """Options declared at the start of a help line (`  -C   ...`), not any substring of the text.
+
+    rz-diff colours its `-h` output even when stdout is a pipe (`\x1b[32m-C\x1b[0m ...`), so escape
+    sequences are removed before the line-start match (found by the first live CI run of this parser).
+    """
+    return set(_OPTION.findall(_ANSI.sub('', text)))
 
 
 def sha256(path: Path) -> str:
