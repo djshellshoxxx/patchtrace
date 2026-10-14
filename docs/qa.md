@@ -556,3 +556,7 @@ CI job text for the integration owner (`.github/workflows/qa-windows.yml`, after
 2. Turn on a Windows high-contrast theme (Alt+Left Shift+PrtScn): the stylesheet is gone, chips are outlined text with a 2 px edge and no fill, diff hunks are underlined, the focus ring is visible on every control; the Theme submenu shows the disabled note. Turn it off: the chosen variant returns.
 3. Settings > Accessibility > Visual effects > Animation effects off: menus and tooltips appear without fade or slide.
 Automated evidence uses a simulated provider only; no test touches real OS settings.
+
+### [F9:series-files-docks]
+- Automated: tests/test_ui_m3_docks.py, test_ui_series.py, test_alpha_integration.py, test_preflight_overview.py, test_ui_audit_p2.py, test_tooltips.py, test_gui_host_seam.py (incl. `test_no_new_top_level_window`); `python tools/qt_gate.py --repeat 5` over the default GUI set: 6,260 passed.
+- Manual, not run: Series tabs (open two files, close with the tab button and the keyboard) and the Files dock in the saved layout, floating and docked, on Windows.

@@ -7,7 +7,7 @@ os.environ.setdefault('QT_QPA_PLATFORM', 'offscreen')
 
 import pytest
 from PySide6.QtCore import QSettings
-from PySide6.QtWidgets import QApplication, QDialog
+from PySide6.QtWidgets import QDialog
 
 from patchtrace.service import ProjectService
 from patchtrace.ui import MainWindow
@@ -27,22 +27,14 @@ def window(qtbot, tmp_path):
     view.close()
 
 
-def test_overview_dialogs_are_deleted_not_accumulated(window, qtbot):
+def test_file_overview_is_one_dock_not_an_accumulating_dialog(window, qtbot):
     window.show_file_overview()
-    first = window._preflight_dialog
     window.show_file_overview()
-    second = window._preflight_dialog
-    assert second is not first
-    QApplication.sendPostedEvents(None, 0)  # DeferredDelete
-    QApplication.processEvents()
-    qtbot.waitUntil(lambda: len([d for d in window.findChildren(QDialog)
-                                 if d.windowTitle() == 'Preliminary file comparison']) == 1)
-    # the surviving dialog's refs must not have been nulled by the old dialog's destruction
-    assert window._preflight_dialog is second and window._preflight_status is not None
-    assert window._preflight_pe_table is not None
-    second.close()
-    qtbot.waitUntil(lambda: window._preflight_dialog is None)
-    assert window._preflight_status is None and window._preflight_pe_table is None
+    files = window.panels.controller('files')
+    assert files is not None and window.panels.is_shown('files')
+    assert not [d for d in window.findChildren(QDialog) if d.windowTitle() == 'Preliminary file comparison']
+    assert window.panels.controller('files') is files
+    qtbot.waitUntil(lambda: window._current_inspection() is not None, timeout=10000)
 
 
 def test_refresh_keeps_note_target_unless_finding_changes(window):

@@ -362,3 +362,8 @@
 - [x] system variant, automatic high contrast, chip HC drawing, reduced motion (Qt animation effects), View > Theme, hunk tints as ThemeTokens, focused tests.
 - [ ] Integrator: a tip id for the Theme submenu (tooltips.py is frozen for F7); panels with their own painting should handle `theme_changed` and use `tokens.high_contrast`; legacy ui.py widget-level stylesheets (code font size) are unaffected.
 - [ ] BLOCKED (manual M22): real Windows high-contrast themes (Aquatic, Desert, Dusk, Night sky), Settings > Accessibility > Visual effects (animations off), light/dark OS switch with the System variant, chip and hunk legibility at 100-200 percent DPI.
+
+### [F9:series-files-docks] Series and files docks (2026-10-14)
+- [x] M3 done: both former exceptions to "one main window" are docks; ui.py 3,092 lines, `UI_TRANSITIONAL_CEILING` lowered 17 -> -50.
+- [ ] Integrator: `tooltips.py` still says "Opens a non-modal Series window" in `action.series` and describes `series.window` as a window; reword when F7 releases the file.
+- [ ] BLOCKED (manual): keyboard and screen-reader walk of the tab close buttons and both docks on Windows.

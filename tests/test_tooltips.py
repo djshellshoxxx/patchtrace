@@ -206,15 +206,15 @@ def test_every_registry_id_is_applied_somewhere(window, qtbot, tmp_path, setting
     for root in roots[1:]:
         qtbot.addWidget(root)
     window.show_file_overview()
-    roots.append(window._preflight_dialog)
-    from patchtrace.ui_series import SeriesWindow
-    series = SeriesWindow(tmp_path / 'no-series.json', None, SimpleNamespace(read=lambda *a: None), window)
-    qtbot.addWidget(series)
+    series = window.panels.show_panel('series') and window.panels.controller('series').open_series(
+        tmp_path / 'no-series.json')
     qtbot.waitUntil(lambda: series.loaded is not None, timeout=5000)
     roots.append(series)
     names |= {series.objectName(), series.banner.objectName()}
     # C6: the dock and stale banner are containers/labels, not focusable controls.
     names |= {window.panels.controller('evidence').dock.objectName(), window.panels.controller('evidence').panel.stale_banner.objectName()}
+    # M3: the series and files docks are containers too.
+    names |= {window.panels.panels[panel_id].dock.objectName() for panel_id in ('series', 'files')}
     # Track G: the BinDiff setup group and its warning label are a container and a label.
     setup = window.panels.controller('evidence').panel.bindiff_setup
     names |= {setup.objectName(), setup.warning.objectName()}
@@ -329,12 +329,11 @@ def test_export_dialog(qtbot, window):
     assert 'Needs findings selected' in plain(dialog.selection.toolTip())
 
 
-def test_file_overview_dialog(qtbot, window):
+def test_files_panel(qtbot, window):
     window.show_file_overview()
-    dialog = window._preflight_dialog
-    qtbot.addWidget(dialog)
-    audit(dialog)
-    assert len(controls(dialog)) >= 1
+    files = window.panels.controller('files').widget()
+    audit(files)
+    assert len(controls(files)) >= 1
 
 
 def test_text_dialogs_and_confirmation_boxes(qtbot, window, monkeypatch):

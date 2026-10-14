@@ -20,9 +20,10 @@ from patchtrace.ui import MainWindow
 SRC = Path(__file__).resolve().parents[1] / 'src' / 'patchtrace'
 # ui.py was 3,142 lines when F5 started (3,119 at d972125 plus the zero-download bundle work). F5 alone kept the
 # evidence hooks (+25); F8 removed them (M1, M2). The plan's final seam is +15 over d972125 (3,134 = 3,142 - 8);
-# F9 removes the series and files code, which closes the remaining gap.
+# F9 removed the series and files code (M3: -50 lines net), which closed the gap and went below it; the ceiling
+# only goes down from here.
 UI_LINES_BEFORE_F5 = 3142
-UI_TRANSITIONAL_CEILING = 17
+UI_TRANSITIONAL_CEILING = -50
 
 
 def test_ui_seam_budget():
@@ -54,9 +55,8 @@ FORBIDDEN = {
 # Where the API is the framework's own business.
 ALLOWED_IN = {'updateAccessibility': 'announce.py', 'setswitchinterval': 'runtime.py'}
 # Legacy files may only shrink: counted occurrences at F5 (the two content-sized column calls and three QTableWidget
-# constructors of ui.py, one content-sized call of ui_inspection.py).
-LEGACY_BASELINE = {('ui.py', 'content-sized columns'): 1, ('ui_inspection.py', 'content-sized columns'): 1,
-                   ('ui.py', 'item widgets'): 3}
+# constructors of ui.py, one content-sized call of ui_inspection.py). F9 moved the two overview tables to models.
+LEGACY_BASELINE = {('ui.py', 'content-sized columns'): 1, ('ui.py', 'item widgets'): 1}
 NEW_CODE = [*(SRC / 'gui').rglob('*.py'), SRC / 'panel_manifest.py']
 LEGACY = [path for path in SRC.glob('ui*.py')]
 
@@ -110,11 +110,12 @@ def test_host_owned_widgets_pass_the_accessibility_audit(qtbot, settings):
 # ---- the real manifest and the legacy evidence dock ---------------------------------------------------------------
 
 
-def test_the_shipped_manifest_builds_only_evidence_and_has_no_problem(main_window):
+def test_the_shipped_manifest_builds_only_the_migrated_panels_and_has_no_problem(main_window):
     host = main_window.panels
-    assert set(host.panels) == {'evidence'} and host.problems == []
-    assert set(host.not_built) == {entry.id for entry in MANIFEST} - {'evidence'}
-    assert host.self_check() == [] and set(host.build_all_for_test()) == {'evidence'}
+    built = {'evidence', 'series', 'files'}
+    assert set(host.panels) == built and host.problems == []
+    assert set(host.not_built) == {entry.id for entry in MANIFEST} - built
+    assert host.self_check() == [] and set(host.build_all_for_test()) == built
 
 
 def test_building_the_host_is_cheap(qtbot, settings):
