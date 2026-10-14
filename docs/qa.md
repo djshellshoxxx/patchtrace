@@ -422,3 +422,6 @@ Automated: `tests/test_acquisition_winbindex_rows.py`, `tests/test_kbc_{lineage,
 
 ### [K4a:kbcorrelation-leads] KB correlator K4a QA (2026-10-14, local Linux worktree; synthetic only)
 Automated: `tests/test_kbc_{leads,view_model,synergy}.py` (sockets denied; real `ProjectService`, `rank`, `correlate --dry-run` for the baseline). Not verified: Windows run; a real MSRC document; the dock (K4b) on top of the view model.
+
+### [CAP-7:capa-hints] capability hints QA (2026-10-14, local Linux worktree; synthetic and derived only)
+Automated: `tests/test_capa_hints.py`. Not verified: any hint against the real capa-rules pack (not obtainable offline); hint semantics are unvalidated by design.

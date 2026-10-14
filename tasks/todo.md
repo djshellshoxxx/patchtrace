@@ -325,3 +325,8 @@
 ### [K5w:pairs-plan-glue]
 - [x] K3/K5 glue: `kb pairs` / `kb plan` over the offline file index; tests `tests/test_kbc_pairs_index.py`.
 - [ ] `kb index import` accepting a Winbindex record (today the file is placed in `<workspace>/winbindex/` by hand); E1 network `PairPlan`.
+
+### [CAP-7:capa-hints]
+- [x] Hint table + `capability_context`; inventory extractor; tests `tests/test_capa_hints.py`.
+- [ ] Open: `rules-inventory-9.4.0.json` is DERIVED/UNVERIFIED (7 matched rules from the real goldens). Regenerate from the pinned capa-rules 9.4.0 with `--rules-dir`, then re-resolve the removed candidates (process-launch, privilege-identity, crypto-primitive, `load-code/*`) and restore only those that resolve.
+- [ ] Open: `--hypothesis CVE-ID` in `intel-tools pairs` (not on the CAP-7 card; integrator or CAP-5 follow-up) can call `capability_context`.

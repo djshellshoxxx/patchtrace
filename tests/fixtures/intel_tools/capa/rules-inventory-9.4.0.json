@@ -1,0 +1,87 @@
+{
+  "capa_version": "9.4.0",
+  "contract": "capa-rules-inventory/1",
+  "provenance": "real capa 9.4.0 results on a synthetic PE pair: capa-api-older.json, capa-api-newer.json",
+  "rules": [
+    {
+      "lib": false,
+      "name": "contain a thread local storage (.tls) section",
+      "namespace": "executable/pe/section/tls",
+      "rule_sha256": "e9cb0187bf8f80890a3ed1d7b7bd2981bcfd981af0f7b2e22f395e67302ade69",
+      "scopes": {
+        "dynamic": "file",
+        "static": "file"
+      }
+    },
+    {
+      "lib": true,
+      "name": "contain loop",
+      "namespace": null,
+      "rule_sha256": "c7d81e2f34eb368cd749d53b639a7252e9d345cb856dce5f91ed19b9d26e5e7e",
+      "scopes": {
+        "static": "function"
+      }
+    },
+    {
+      "lib": false,
+      "name": "encode data using XOR",
+      "namespace": "data-manipulation/encoding/xor",
+      "rule_sha256": "6a75390f0df356dcdfaf55194910a9e8bb6195489dc39f21c12741bd642f6aa3",
+      "scopes": {
+        "static": "basic block"
+      }
+    },
+    {
+      "lib": false,
+      "name": "get hostname",
+      "namespace": "host-interaction/os/hostname",
+      "rule_sha256": "7da3d6a1104fe8d1a64632c1bed902ca178c339cebe8bbb928cc0dff82e25ea9",
+      "scopes": {
+        "dynamic": "call",
+        "static": "function"
+      }
+    },
+    {
+      "lib": false,
+      "name": "link function at runtime on Windows",
+      "namespace": "linking/runtime-linking",
+      "rule_sha256": "e404e2868fccc8da02386b0322fe2df4ffe31222e6cd7eaf570dd54c3d3ec3ce",
+      "scopes": {
+        "dynamic": "call",
+        "static": "instruction"
+      }
+    },
+    {
+      "lib": false,
+      "name": "query environment variable",
+      "namespace": "host-interaction/environment-variable",
+      "rule_sha256": "f80ba67c75d54e65a8cf30166ccde8e818a14012adc31738beecd70d641bc861",
+      "scopes": {
+        "dynamic": "call",
+        "static": "function"
+      }
+    },
+    {
+      "lib": false,
+      "name": "terminate process",
+      "namespace": "host-interaction/process/terminate",
+      "rule_sha256": "452816eac7a0b2f84642ad55054266a7c8b07bedc6a870a00ec29e31f85f2e8e",
+      "scopes": {
+        "dynamic": "span of calls",
+        "static": "function"
+      }
+    },
+    {
+      "lib": false,
+      "name": "write file on Windows",
+      "namespace": "host-interaction/file-system/write",
+      "rule_sha256": "0be61378999bdb7ea27d661ee731bfc5f45e1284408176578a461c9e4a4fd846",
+      "scopes": {
+        "dynamic": "call",
+        "static": "function"
+      }
+    }
+  ],
+  "status": "derived-unverified",
+  "warning": "DERIVED/UNVERIFIED: only rules that matched in the listed capa results; the capa-rules pack was not available, so absence here does not mean a rule does not exist."
+}
