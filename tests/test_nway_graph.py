@@ -231,6 +231,20 @@ def test_raw_ghidra_external_locations_are_skipped_not_fatal():
     assert [(n.address, n.name) for n in chain.nodes] == [(0x10, None), (0x20, 'f'), (0x30, 'f')]
 
 
+def test_nway_external_skips_are_counted():
+    """Each raw entry skipped as an EXTERNAL:<hex> location is counted in the limitation; zero adds no text."""
+    from patchtrace.nway.graph import external_limitations
+    table = {'10': [['20', ['SymbolsHash']]],  # ordinary entry, not counted
+             'EXTERNAL:0000000c': [['21', ['SymbolsHash']]],  # external source
+             '11': [['EXTERNAL:0000000e', ['SymbolsHash']], ['22', ['X']]],  # external target among others
+             '12': [['EXTERNAL:00000010', ['SymbolsHash']]]}  # external-only target
+    assert external_limitations({'address_matches': table}) == (
+        '3 raw address_matches entries at EXTERNAL:<hex> import locations skipped: '
+        'not functions of either build, so no edges',)
+    assert external_limitations({'address_matches': {'10': [['20', ['SymbolsHash']]]}}) == ()
+    assert external_limitations({'address_matches': {}}) == ()
+
+
 def test_other_unparsable_raw_addresses_are_still_rejected():
     for bad in ('EXTERNAL:', 'EXTERNALISH:0c', 'EXTERNAL:0c garbage', 'zz'):
         with pytest.raises(NwayError, match='invalid address'):

@@ -19,7 +19,7 @@ from typing import Literal
 from ..models import ComparisonProject
 from ..persistence import strict_json
 from .contracts import MAX_BUILDS, BuildRef, Chain, NwayError, PairRef, Series
-from .graph import extract_chains, series_id, validate_builds, validate_pair
+from .graph import external_limitations, extract_chains, series_id, validate_builds, validate_pair
 
 SERIES_FILE = 'series.json'
 MAX_SERIES_BYTES = 256 * 1024 * 1024
@@ -62,6 +62,7 @@ def read_raw_matches(path: Path, project: ComparisonProject) -> tuple[dict | Non
 
     The preserved file is verified against the run's recorded SHA-256 before it is trusted;
     a missing `matches` key only means no unchanged-pair edges, which is noted, not fatal.
+    Entries at `EXTERNAL:<hex>` import locations are skipped by the chain reader and counted in the notes.
     """
     from ..ingestion import safe_path
     from ..service import MAX_RAW_BYTES
@@ -93,7 +94,7 @@ def read_raw_matches(path: Path, project: ComparisonProject) -> tuple[dict | Non
         return None, ('raw output has no matches section; unchanged functions have no edges',)
     if not isinstance(matches, dict):
         raise NwayError('PT-NWAY-PAIR', f'{Path(path).name}: raw matches section must be an object')
-    return matches, ()
+    return matches, external_limitations(matches)
 
 
 def pair_ref(root: Path, path: Path, project: ComparisonProject, from_ordinal: int, to_ordinal: int,
