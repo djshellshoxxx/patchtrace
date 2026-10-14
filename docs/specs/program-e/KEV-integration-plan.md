@@ -1,5 +1,7 @@
 # KEV integration plan: CISA Known Exploited Vulnerabilities as an explained exploitation-context channel
 
+> Status (2026-10-14, worker KEV chain K0, K1a): A0 (`docs/specs/kev-exploitation-context.md`) is absent on this base, so K0 and K1a are built from this plan (sections 7-9) as the contract. K0 fixtures are real CC0 data fetched 2026-10-14 (provenance in `tests/fixtures/kev/README.md`). When A0 lands it supersedes this block.
+
 Program E track KEV, research plan written 2026-10-14 (documents only, no code). Source for the future spec `docs/specs/kev-exploitation-context.md` (integration owner assigns the SPEC number; contract `kev/1`). The worktree branch was fast-forwarded to d972125 to obtain the brief; this commit adds only this file.
 Source tags (every URL is `https://raw.githubusercontent.com/` + tag): R = `cisagov/kev-data/main/` (CISA's own repository), V = `cisagov/vulnrichment/develop/`, Q = `qt/qtbase/v6.12.0/`, W = `w3c/wcag/main/understanding/`, M = `MicrosoftDocs/win32/docs/desktop-src/WinAuto/`, S = `CERTCC/SSVC/main/docs/reference/decision_points/`. Confidence: verified (read or executed this session), inferred (derived from verified data), [unverified] (host blocked or not confirmable).
 

@@ -1,0 +1,71 @@
+{
+    "title": "CISA Catalog of Known Exploited Vulnerabilities",
+    "catalogVersion": "2099.03.01",
+    "dateReleased": "2099-03-01T12:00:00.0000Z",
+    "count": 4,
+    "vulnerabilities": [
+        {
+            "cveID": "CVE-2099-10001",
+            "vendorProject": "Example Corp",
+            "product": "Example Windows Component",
+            "vulnerabilityName": "Example Windows Component Elevation of Privilege Vulnerability",
+            "dateAdded": "2099-02-10",
+            "shortDescription": "Synthetic entry for tests. Not a real vulnerability.",
+            "requiredAction": "Synthetic required action. Apply updates per vendor instructions.",
+            "dueDate": "2099-03-03",
+            "knownRansomwareCampaignUse": "Known",
+            "forensicTriage": "No",
+            "notes": "https://example.invalid/advisory/10001 ; https://example.invalid/nvd/CVE-2099-10001",
+            "cwes": [
+                "CWE-416"
+            ]
+        },
+        {
+            "cveID": "CVE-2099-10002",
+            "vendorProject": "Example Corp",
+            "product": "Example Gateway",
+            "vulnerabilityName": "Example Gateway Authentication Bypass Vulnerability",
+            "dateAdded": "2099-02-20",
+            "shortDescription": "Synthetic entry with forensic triage required.",
+            "requiredAction": "Synthetic required action.",
+            "dueDate": "2099-02-23",
+            "knownRansomwareCampaignUse": "Unknown",
+            "forensicTriage": "Yes",
+            "notes": "",
+            "cwes": []
+        },
+        {
+            "cveID": "CVE-2099-10003",
+            "vendorProject": "Hostile <b>Vendor</b>",
+            "product": "Product \u202eevil\u202c \u001b[31mred",
+            "vulnerabilityName": "<script>alert(1)</script> Synthetic Hostile Text Vulnerability",
+            "dateAdded": "2099-01-05",
+            "shortDescription": "Synthetic hostile text with <img src=x> and file:///etc/passwd.",
+            "requiredAction": "Synthetic required action | with pipe and `backtick`.",
+            "dueDate": "2099-01-26",
+            "knownRansomwareCampaignUse": "Unknown",
+            "forensicTriage": "No",
+            "notes": "file:///C:/Windows/System32/cmd.exe; not a url; https://example.invalid/x",
+            "cwes": [
+                "CWE-20",
+                "CWE-787"
+            ]
+        },
+        {
+            "cveID": "CVE-2099-10004",
+            "vendorProject": "Example Corp",
+            "product": "Example Reader ",
+            "vulnerabilityName": "Example Reader Memory Corruption Vulnerability",
+            "dateAdded": "2099-03-01",
+            "shortDescription": "Synthetic entry added on the release day.",
+            "requiredAction": "Synthetic required action.",
+            "dueDate": "2099-03-22",
+            "knownRansomwareCampaignUse": "Unknown",
+            "forensicTriage": "No",
+            "notes": "",
+            "cwes": [
+                "CWE-125"
+            ]
+        }
+    ]
+}
