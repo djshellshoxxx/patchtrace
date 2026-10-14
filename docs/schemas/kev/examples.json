@@ -1,0 +1,831 @@
+{
+  "KevCatalogMeta": {
+    "invalid": [
+      {
+        "example": {
+          "authenticity": "unverified-local-file",
+          "catalog_version": "2099.03.01",
+          "consent": null,
+          "content_digest": "8e8fb9aaed686894dc0733624df5701856a7dd5775b8d489082d0a1c4c6b8586",
+          "contract": "kev/1",
+          "count": 4,
+          "date_released": "2099-03-01T18:00:00Z",
+          "entry_count": 4,
+          "file_name": "kev-synthetic-2099.json",
+          "final_url": null,
+          "license": "CC0-1.0",
+          "parser_version": 1,
+          "raw_sha256": "55828190427ce880d3588070910f7be74427d364d3640facd6a66bf0ba80f247",
+          "raw_size": 3121,
+          "retrieved_at": "2099-03-02T08:00:00Z",
+          "skipped_entries": 0,
+          "snapshot_id": "b2ddf93ad2d0003cbfdddee39be7f58157ec5233a9775b35787434bcc7b8c4b8",
+          "source": "local-import",
+          "source_url": null,
+          "unexpected_field": 1,
+          "unknown_fields": [],
+          "warnings": []
+        },
+        "reason": "extra fields are forbidden"
+      },
+      {
+        "example": {
+          "authenticity": "unverified-local-file",
+          "catalog_version": "2099.03.01",
+          "consent": null,
+          "content_digest": "8e8fb9aaed686894dc0733624df5701856a7dd5775b8d489082d0a1c4c6b8586",
+          "contract": "kev/2",
+          "count": 4,
+          "date_released": "2099-03-01T18:00:00Z",
+          "entry_count": 4,
+          "file_name": "kev-synthetic-2099.json",
+          "final_url": null,
+          "license": "CC0-1.0",
+          "parser_version": 1,
+          "raw_sha256": "55828190427ce880d3588070910f7be74427d364d3640facd6a66bf0ba80f247",
+          "raw_size": 3121,
+          "retrieved_at": "2099-03-02T08:00:00Z",
+          "skipped_entries": 0,
+          "snapshot_id": "b2ddf93ad2d0003cbfdddee39be7f58157ec5233a9775b35787434bcc7b8c4b8",
+          "source": "local-import",
+          "source_url": null,
+          "unknown_fields": [],
+          "warnings": []
+        },
+        "reason": "unsupported future contract version"
+      },
+      {
+        "example": {
+          "authenticity": "tls-allowlisted-host",
+          "catalog_version": "2099.03.01",
+          "consent": null,
+          "content_digest": "8e8fb9aaed686894dc0733624df5701856a7dd5775b8d489082d0a1c4c6b8586",
+          "contract": "kev/1",
+          "count": 4,
+          "date_released": "2099-03-01T18:00:00Z",
+          "entry_count": 4,
+          "file_name": "kev-synthetic-2099.json",
+          "final_url": null,
+          "license": "CC0-1.0",
+          "parser_version": 1,
+          "raw_sha256": "55828190427ce880d3588070910f7be74427d364d3640facd6a66bf0ba80f247",
+          "raw_size": 3121,
+          "retrieved_at": "2099-03-02T08:00:00Z",
+          "skipped_entries": 0,
+          "snapshot_id": "b2ddf93ad2d0003cbfdddee39be7f58157ec5233a9775b35787434bcc7b8c4b8",
+          "source": "local-import",
+          "source_url": null,
+          "unknown_fields": [],
+          "warnings": []
+        },
+        "reason": "a local import is unverified-local-file"
+      }
+    ],
+    "valid": {
+      "authenticity": "unverified-local-file",
+      "catalog_version": "2099.03.01",
+      "consent": null,
+      "content_digest": "8e8fb9aaed686894dc0733624df5701856a7dd5775b8d489082d0a1c4c6b8586",
+      "contract": "kev/1",
+      "count": 4,
+      "date_released": "2099-03-01T18:00:00Z",
+      "entry_count": 4,
+      "file_name": "kev-synthetic-2099.json",
+      "final_url": null,
+      "license": "CC0-1.0",
+      "parser_version": 1,
+      "raw_sha256": "55828190427ce880d3588070910f7be74427d364d3640facd6a66bf0ba80f247",
+      "raw_size": 3121,
+      "retrieved_at": "2099-03-02T08:00:00Z",
+      "skipped_entries": 0,
+      "snapshot_id": "b2ddf93ad2d0003cbfdddee39be7f58157ec5233a9775b35787434bcc7b8c4b8",
+      "source": "local-import",
+      "source_url": null,
+      "unknown_fields": [],
+      "warnings": []
+    }
+  },
+  "KevContext": {
+    "invalid": [
+      {
+        "example": {
+          "catalog_version": "2099.03.01",
+          "content_digest": "8e8fb9aaed686894dc0733624df5701856a7dd5775b8d489082d0a1c4c6b8586",
+          "context_id": "7f1535e26b879880b11e56001bb70775119ab1633095d8be309772c8a3666a47",
+          "contract": "kev/1",
+          "created_at": "2099-03-02T08:00:00Z",
+          "date_released": "2099-03-01T18:00:00Z",
+          "join_version": 1,
+          "kb": "KB5000001",
+          "lookups": [
+            {
+              "age_days": 1,
+              "contract": "kev/1",
+              "cve_id": "CVE-2099-10001",
+              "entry": {
+                "contract": "kev/1",
+                "cve_id": "CVE-2099-10001",
+                "cwes": [
+                  "CWE-787"
+                ],
+                "date_added": "2099-02-10",
+                "due_date": "2099-02-13",
+                "entry_digest": "b3f14832f42c3a49b6c7a0ba122dca8fc879b8b61d27e0cb86bceab1ee3b66bb",
+                "forensic_triage": "yes",
+                "name": "Microsoft Windows Synthetic Heap Buffer Overflow Vulnerability",
+                "product": "Windows",
+                "ransomware_use": "known",
+                "vendor_project": "Microsoft"
+              },
+              "freshness": "fresh",
+              "notes": [],
+              "snapshot_id": "b2ddf93ad2d0003cbfdddee39be7f58157ec5233a9775b35787434bcc7b8c4b8",
+              "status": "listed"
+            },
+            {
+              "age_days": 1,
+              "contract": "kev/1",
+              "cve_id": "CVE-2099-10002",
+              "entry": null,
+              "freshness": "fresh",
+              "notes": [],
+              "snapshot_id": "b2ddf93ad2d0003cbfdddee39be7f58157ec5233a9775b35787434bcc7b8c4b8",
+              "status": "not-listed"
+            }
+          ],
+          "orientation_verified": true,
+          "release_date": "2099-02-11",
+          "snapshot_id": "b2ddf93ad2d0003cbfdddee39be7f58157ec5233a9775b35787434bcc7b8c4b8",
+          "source": "local-import",
+          "unexpected_field": 1
+        },
+        "reason": "extra fields are forbidden"
+      },
+      {
+        "example": {
+          "catalog_version": "2099.03.01",
+          "content_digest": "8e8fb9aaed686894dc0733624df5701856a7dd5775b8d489082d0a1c4c6b8586",
+          "context_id": "7f1535e26b879880b11e56001bb70775119ab1633095d8be309772c8a3666a47",
+          "contract": "kev/2",
+          "created_at": "2099-03-02T08:00:00Z",
+          "date_released": "2099-03-01T18:00:00Z",
+          "join_version": 1,
+          "kb": "KB5000001",
+          "lookups": [
+            {
+              "age_days": 1,
+              "contract": "kev/1",
+              "cve_id": "CVE-2099-10001",
+              "entry": {
+                "contract": "kev/1",
+                "cve_id": "CVE-2099-10001",
+                "cwes": [
+                  "CWE-787"
+                ],
+                "date_added": "2099-02-10",
+                "due_date": "2099-02-13",
+                "entry_digest": "b3f14832f42c3a49b6c7a0ba122dca8fc879b8b61d27e0cb86bceab1ee3b66bb",
+                "forensic_triage": "yes",
+                "name": "Microsoft Windows Synthetic Heap Buffer Overflow Vulnerability",
+                "product": "Windows",
+                "ransomware_use": "known",
+                "vendor_project": "Microsoft"
+              },
+              "freshness": "fresh",
+              "notes": [],
+              "snapshot_id": "b2ddf93ad2d0003cbfdddee39be7f58157ec5233a9775b35787434bcc7b8c4b8",
+              "status": "listed"
+            },
+            {
+              "age_days": 1,
+              "contract": "kev/1",
+              "cve_id": "CVE-2099-10002",
+              "entry": null,
+              "freshness": "fresh",
+              "notes": [],
+              "snapshot_id": "b2ddf93ad2d0003cbfdddee39be7f58157ec5233a9775b35787434bcc7b8c4b8",
+              "status": "not-listed"
+            }
+          ],
+          "orientation_verified": true,
+          "release_date": "2099-02-11",
+          "snapshot_id": "b2ddf93ad2d0003cbfdddee39be7f58157ec5233a9775b35787434bcc7b8c4b8",
+          "source": "local-import"
+        },
+        "reason": "unsupported future contract version"
+      },
+      {
+        "example": {
+          "catalog_version": "2099.03.01",
+          "content_digest": "8e8fb9aaed686894dc0733624df5701856a7dd5775b8d489082d0a1c4c6b8586",
+          "context_id": "7f1535e26b879880b11e56001bb70775119ab1633095d8be309772c8a3666a47",
+          "contract": "kev/1",
+          "created_at": "2099-03-02T08:00:00Z",
+          "date_released": "2099-03-01T18:00:00Z",
+          "join_version": 1,
+          "kb": "KB5000001",
+          "lookups": [],
+          "orientation_verified": true,
+          "release_date": "2099-02-11",
+          "snapshot_id": "b2ddf93ad2d0003cbfdddee39be7f58157ec5233a9775b35787434bcc7b8c4b8",
+          "source": "local-import"
+        },
+        "reason": "a row needs at least one lookup"
+      }
+    ],
+    "valid": {
+      "catalog_version": "2099.03.01",
+      "content_digest": "8e8fb9aaed686894dc0733624df5701856a7dd5775b8d489082d0a1c4c6b8586",
+      "context_id": "7f1535e26b879880b11e56001bb70775119ab1633095d8be309772c8a3666a47",
+      "contract": "kev/1",
+      "created_at": "2099-03-02T08:00:00Z",
+      "date_released": "2099-03-01T18:00:00Z",
+      "join_version": 1,
+      "kb": "KB5000001",
+      "lookups": [
+        {
+          "age_days": 1,
+          "contract": "kev/1",
+          "cve_id": "CVE-2099-10001",
+          "entry": {
+            "contract": "kev/1",
+            "cve_id": "CVE-2099-10001",
+            "cwes": [
+              "CWE-787"
+            ],
+            "date_added": "2099-02-10",
+            "due_date": "2099-02-13",
+            "entry_digest": "b3f14832f42c3a49b6c7a0ba122dca8fc879b8b61d27e0cb86bceab1ee3b66bb",
+            "forensic_triage": "yes",
+            "name": "Microsoft Windows Synthetic Heap Buffer Overflow Vulnerability",
+            "product": "Windows",
+            "ransomware_use": "known",
+            "vendor_project": "Microsoft"
+          },
+          "freshness": "fresh",
+          "notes": [],
+          "snapshot_id": "b2ddf93ad2d0003cbfdddee39be7f58157ec5233a9775b35787434bcc7b8c4b8",
+          "status": "listed"
+        },
+        {
+          "age_days": 1,
+          "contract": "kev/1",
+          "cve_id": "CVE-2099-10002",
+          "entry": null,
+          "freshness": "fresh",
+          "notes": [],
+          "snapshot_id": "b2ddf93ad2d0003cbfdddee39be7f58157ec5233a9775b35787434bcc7b8c4b8",
+          "status": "not-listed"
+        }
+      ],
+      "orientation_verified": true,
+      "release_date": "2099-02-11",
+      "snapshot_id": "b2ddf93ad2d0003cbfdddee39be7f58157ec5233a9775b35787434bcc7b8c4b8",
+      "source": "local-import"
+    }
+  },
+  "KevCurrent": {
+    "invalid": [
+      {
+        "example": {
+          "contract": "kev/1",
+          "date_released": "2099-03-01T18:00:00Z",
+          "raw_sha256": "55828190427ce880d3588070910f7be74427d364d3640facd6a66bf0ba80f247",
+          "set_at": "2099-03-02T08:00:00Z",
+          "snapshot_id": "b2ddf93ad2d0003cbfdddee39be7f58157ec5233a9775b35787434bcc7b8c4b8",
+          "unexpected_field": 1
+        },
+        "reason": "extra fields are forbidden"
+      },
+      {
+        "example": {
+          "contract": "kev/2",
+          "date_released": "2099-03-01T18:00:00Z",
+          "raw_sha256": "55828190427ce880d3588070910f7be74427d364d3640facd6a66bf0ba80f247",
+          "set_at": "2099-03-02T08:00:00Z",
+          "snapshot_id": "b2ddf93ad2d0003cbfdddee39be7f58157ec5233a9775b35787434bcc7b8c4b8"
+        },
+        "reason": "unsupported future contract version"
+      },
+      {
+        "example": {
+          "contract": "kev/1",
+          "date_released": "2099-03-01T18:00:00Z",
+          "raw_sha256": "not-a-hash",
+          "set_at": "2099-03-02T08:00:00Z",
+          "snapshot_id": "b2ddf93ad2d0003cbfdddee39be7f58157ec5233a9775b35787434bcc7b8c4b8"
+        },
+        "reason": "a SHA-256 is 64 lower-case hex digits"
+      }
+    ],
+    "valid": {
+      "contract": "kev/1",
+      "date_released": "2099-03-01T18:00:00Z",
+      "raw_sha256": "55828190427ce880d3588070910f7be74427d364d3640facd6a66bf0ba80f247",
+      "set_at": "2099-03-02T08:00:00Z",
+      "snapshot_id": "b2ddf93ad2d0003cbfdddee39be7f58157ec5233a9775b35787434bcc7b8c4b8"
+    }
+  },
+  "KevDelta": {
+    "invalid": [
+      {
+        "example": {
+          "added": [],
+          "added_count": 0,
+          "changed": [
+            {
+              "after": {
+                "cwes": [
+                  "CWE-416"
+                ],
+                "due_date": "2099-03-13",
+                "forensic_triage": "no",
+                "ransomware_use": "known"
+              },
+              "before": {
+                "cwes": [
+                  "CWE-416"
+                ],
+                "due_date": "2099-03-13",
+                "forensic_triage": "no",
+                "ransomware_use": "unknown"
+              },
+              "cve_id": "CVE-2099-10004"
+            }
+          ],
+          "changed_count": 1,
+          "contract": "kev/1",
+          "from_snapshot_id": "b2ddf93ad2d0003cbfdddee39be7f58157ec5233a9775b35787434bcc7b8c4b8",
+          "removed": [
+            "CVE-2099-10009"
+          ],
+          "removed_count": 1,
+          "to_snapshot_id": "c852366d20bbd441b7639ed6a48109de08da85e3517bb40ce4fa699e7a58c2ef",
+          "unexpected_field": 1
+        },
+        "reason": "extra fields are forbidden"
+      },
+      {
+        "example": {
+          "added": [],
+          "added_count": 0,
+          "changed": [
+            {
+              "after": {
+                "cwes": [
+                  "CWE-416"
+                ],
+                "due_date": "2099-03-13",
+                "forensic_triage": "no",
+                "ransomware_use": "known"
+              },
+              "before": {
+                "cwes": [
+                  "CWE-416"
+                ],
+                "due_date": "2099-03-13",
+                "forensic_triage": "no",
+                "ransomware_use": "unknown"
+              },
+              "cve_id": "CVE-2099-10004"
+            }
+          ],
+          "changed_count": 1,
+          "contract": "kev/2",
+          "from_snapshot_id": "b2ddf93ad2d0003cbfdddee39be7f58157ec5233a9775b35787434bcc7b8c4b8",
+          "removed": [
+            "CVE-2099-10009"
+          ],
+          "removed_count": 1,
+          "to_snapshot_id": "c852366d20bbd441b7639ed6a48109de08da85e3517bb40ce4fa699e7a58c2ef"
+        },
+        "reason": "unsupported future contract version"
+      },
+      {
+        "example": {
+          "added": [],
+          "added_count": 0,
+          "changed": [
+            {
+              "after": {
+                "cwes": [
+                  "CWE-416"
+                ],
+                "due_date": "2099-03-13",
+                "forensic_triage": "no",
+                "ransomware_use": "known"
+              },
+              "before": {
+                "cwes": [
+                  "CWE-416"
+                ],
+                "due_date": "2099-03-13",
+                "forensic_triage": "no",
+                "ransomware_use": "unknown"
+              },
+              "cve_id": "CVE-2099-10004"
+            }
+          ],
+          "changed_count": 1,
+          "contract": "kev/1",
+          "from_snapshot_id": "b2ddf93ad2d0003cbfdddee39be7f58157ec5233a9775b35787434bcc7b8c4b8",
+          "removed": [
+            "CVE-2099-10009"
+          ],
+          "removed_count": 0,
+          "to_snapshot_id": "c852366d20bbd441b7639ed6a48109de08da85e3517bb40ce4fa699e7a58c2ef"
+        },
+        "reason": "a count below the length of its list"
+      }
+    ],
+    "valid": {
+      "added": [],
+      "added_count": 0,
+      "changed": [
+        {
+          "after": {
+            "cwes": [
+              "CWE-416"
+            ],
+            "due_date": "2099-03-13",
+            "forensic_triage": "no",
+            "ransomware_use": "known"
+          },
+          "before": {
+            "cwes": [
+              "CWE-416"
+            ],
+            "due_date": "2099-03-13",
+            "forensic_triage": "no",
+            "ransomware_use": "unknown"
+          },
+          "cve_id": "CVE-2099-10004"
+        }
+      ],
+      "changed_count": 1,
+      "contract": "kev/1",
+      "from_snapshot_id": "b2ddf93ad2d0003cbfdddee39be7f58157ec5233a9775b35787434bcc7b8c4b8",
+      "removed": [
+        "CVE-2099-10009"
+      ],
+      "removed_count": 1,
+      "to_snapshot_id": "c852366d20bbd441b7639ed6a48109de08da85e3517bb40ce4fa699e7a58c2ef"
+    }
+  },
+  "KevEntry": {
+    "invalid": [
+      {
+        "example": {
+          "contract": "kev/1",
+          "cve_id": "CVE-2099-10001",
+          "cwes": [
+            "CWE-787"
+          ],
+          "date_added": "2099-02-10",
+          "due_date": "2099-02-13",
+          "entry_digest": "b3f14832f42c3a49b6c7a0ba122dca8fc879b8b61d27e0cb86bceab1ee3b66bb",
+          "forensic_triage": "yes",
+          "name": "Microsoft Windows Synthetic Heap Buffer Overflow Vulnerability",
+          "notes": "https://example.invalid/advisory/CVE-2099-10001 ; https://example.invalid/vendor/microsoft",
+          "product": "Windows",
+          "ransomware_use": "known",
+          "required_action": "SYNTHETIC: no action, this entry is test data.",
+          "short_description": "SYNTHETIC: Microsoft Windows contains a made-up heap buffer overflow weakness used only as test data.",
+          "unexpected_field": 1,
+          "vendor_project": "Microsoft"
+        },
+        "reason": "extra fields are forbidden"
+      },
+      {
+        "example": {
+          "contract": "kev/2",
+          "cve_id": "CVE-2099-10001",
+          "cwes": [
+            "CWE-787"
+          ],
+          "date_added": "2099-02-10",
+          "due_date": "2099-02-13",
+          "entry_digest": "b3f14832f42c3a49b6c7a0ba122dca8fc879b8b61d27e0cb86bceab1ee3b66bb",
+          "forensic_triage": "yes",
+          "name": "Microsoft Windows Synthetic Heap Buffer Overflow Vulnerability",
+          "notes": "https://example.invalid/advisory/CVE-2099-10001 ; https://example.invalid/vendor/microsoft",
+          "product": "Windows",
+          "ransomware_use": "known",
+          "required_action": "SYNTHETIC: no action, this entry is test data.",
+          "short_description": "SYNTHETIC: Microsoft Windows contains a made-up heap buffer overflow weakness used only as test data.",
+          "vendor_project": "Microsoft"
+        },
+        "reason": "unsupported future contract version"
+      },
+      {
+        "example": {
+          "contract": "kev/1",
+          "cve_id": "CVE-２０９９-10001",
+          "cwes": [
+            "CWE-787"
+          ],
+          "date_added": "2099-02-10",
+          "due_date": "2099-02-13",
+          "entry_digest": "b3f14832f42c3a49b6c7a0ba122dca8fc879b8b61d27e0cb86bceab1ee3b66bb",
+          "forensic_triage": "yes",
+          "name": "Microsoft Windows Synthetic Heap Buffer Overflow Vulnerability",
+          "notes": "https://example.invalid/advisory/CVE-2099-10001 ; https://example.invalid/vendor/microsoft",
+          "product": "Windows",
+          "ransomware_use": "known",
+          "required_action": "SYNTHETIC: no action, this entry is test data.",
+          "short_description": "SYNTHETIC: Microsoft Windows contains a made-up heap buffer overflow weakness used only as test data.",
+          "vendor_project": "Microsoft"
+        },
+        "reason": "CVE IDs are ASCII digits only"
+      }
+    ],
+    "valid": {
+      "contract": "kev/1",
+      "cve_id": "CVE-2099-10001",
+      "cwes": [
+        "CWE-787"
+      ],
+      "date_added": "2099-02-10",
+      "due_date": "2099-02-13",
+      "entry_digest": "b3f14832f42c3a49b6c7a0ba122dca8fc879b8b61d27e0cb86bceab1ee3b66bb",
+      "forensic_triage": "yes",
+      "name": "Microsoft Windows Synthetic Heap Buffer Overflow Vulnerability",
+      "notes": "https://example.invalid/advisory/CVE-2099-10001 ; https://example.invalid/vendor/microsoft",
+      "product": "Windows",
+      "ransomware_use": "known",
+      "required_action": "SYNTHETIC: no action, this entry is test data.",
+      "short_description": "SYNTHETIC: Microsoft Windows contains a made-up heap buffer overflow weakness used only as test data.",
+      "vendor_project": "Microsoft"
+    }
+  },
+  "KevEntrySlim": {
+    "invalid": [
+      {
+        "example": {
+          "contract": "kev/1",
+          "cve_id": "CVE-2099-10001",
+          "cwes": [
+            "CWE-787"
+          ],
+          "date_added": "2099-02-10",
+          "due_date": "2099-02-13",
+          "entry_digest": "b3f14832f42c3a49b6c7a0ba122dca8fc879b8b61d27e0cb86bceab1ee3b66bb",
+          "forensic_triage": "yes",
+          "name": "Microsoft Windows Synthetic Heap Buffer Overflow Vulnerability",
+          "product": "Windows",
+          "ransomware_use": "known",
+          "unexpected_field": 1,
+          "vendor_project": "Microsoft"
+        },
+        "reason": "extra fields are forbidden"
+      },
+      {
+        "example": {
+          "contract": "kev/2",
+          "cve_id": "CVE-2099-10001",
+          "cwes": [
+            "CWE-787"
+          ],
+          "date_added": "2099-02-10",
+          "due_date": "2099-02-13",
+          "entry_digest": "b3f14832f42c3a49b6c7a0ba122dca8fc879b8b61d27e0cb86bceab1ee3b66bb",
+          "forensic_triage": "yes",
+          "name": "Microsoft Windows Synthetic Heap Buffer Overflow Vulnerability",
+          "product": "Windows",
+          "ransomware_use": "known",
+          "vendor_project": "Microsoft"
+        },
+        "reason": "unsupported future contract version"
+      },
+      {
+        "example": {
+          "contract": "kev/1",
+          "cve_id": "CVE-2099-10001",
+          "cwes": [
+            "CWE-787"
+          ],
+          "date_added": "2099-02-10",
+          "due_date": "2099-02-09",
+          "entry_digest": "b3f14832f42c3a49b6c7a0ba122dca8fc879b8b61d27e0cb86bceab1ee3b66bb",
+          "forensic_triage": "yes",
+          "name": "Microsoft Windows Synthetic Heap Buffer Overflow Vulnerability",
+          "product": "Windows",
+          "ransomware_use": "known",
+          "vendor_project": "Microsoft"
+        },
+        "reason": "the due date cannot be before the date added"
+      }
+    ],
+    "valid": {
+      "contract": "kev/1",
+      "cve_id": "CVE-2099-10001",
+      "cwes": [
+        "CWE-787"
+      ],
+      "date_added": "2099-02-10",
+      "due_date": "2099-02-13",
+      "entry_digest": "b3f14832f42c3a49b6c7a0ba122dca8fc879b8b61d27e0cb86bceab1ee3b66bb",
+      "forensic_triage": "yes",
+      "name": "Microsoft Windows Synthetic Heap Buffer Overflow Vulnerability",
+      "product": "Windows",
+      "ransomware_use": "known",
+      "vendor_project": "Microsoft"
+    }
+  },
+  "KevLookup": {
+    "invalid": [
+      {
+        "example": {
+          "age_days": 1,
+          "contract": "kev/1",
+          "cve_id": "CVE-2099-10001",
+          "entry": {
+            "contract": "kev/1",
+            "cve_id": "CVE-2099-10001",
+            "cwes": [
+              "CWE-787"
+            ],
+            "date_added": "2099-02-10",
+            "due_date": "2099-02-13",
+            "entry_digest": "b3f14832f42c3a49b6c7a0ba122dca8fc879b8b61d27e0cb86bceab1ee3b66bb",
+            "forensic_triage": "yes",
+            "name": "Microsoft Windows Synthetic Heap Buffer Overflow Vulnerability",
+            "notes": "https://example.invalid/advisory/CVE-2099-10001 ; https://example.invalid/vendor/microsoft",
+            "product": "Windows",
+            "ransomware_use": "known",
+            "required_action": "SYNTHETIC: no action, this entry is test data.",
+            "short_description": "SYNTHETIC: Microsoft Windows contains a made-up heap buffer overflow weakness used only as test data.",
+            "vendor_project": "Microsoft"
+          },
+          "freshness": "fresh",
+          "notes": [],
+          "snapshot_id": "b2ddf93ad2d0003cbfdddee39be7f58157ec5233a9775b35787434bcc7b8c4b8",
+          "status": "listed",
+          "unexpected_field": 1
+        },
+        "reason": "extra fields are forbidden"
+      },
+      {
+        "example": {
+          "age_days": 1,
+          "contract": "kev/2",
+          "cve_id": "CVE-2099-10001",
+          "entry": {
+            "contract": "kev/1",
+            "cve_id": "CVE-2099-10001",
+            "cwes": [
+              "CWE-787"
+            ],
+            "date_added": "2099-02-10",
+            "due_date": "2099-02-13",
+            "entry_digest": "b3f14832f42c3a49b6c7a0ba122dca8fc879b8b61d27e0cb86bceab1ee3b66bb",
+            "forensic_triage": "yes",
+            "name": "Microsoft Windows Synthetic Heap Buffer Overflow Vulnerability",
+            "notes": "https://example.invalid/advisory/CVE-2099-10001 ; https://example.invalid/vendor/microsoft",
+            "product": "Windows",
+            "ransomware_use": "known",
+            "required_action": "SYNTHETIC: no action, this entry is test data.",
+            "short_description": "SYNTHETIC: Microsoft Windows contains a made-up heap buffer overflow weakness used only as test data.",
+            "vendor_project": "Microsoft"
+          },
+          "freshness": "fresh",
+          "notes": [],
+          "snapshot_id": "b2ddf93ad2d0003cbfdddee39be7f58157ec5233a9775b35787434bcc7b8c4b8",
+          "status": "listed"
+        },
+        "reason": "unsupported future contract version"
+      },
+      {
+        "example": {
+          "age_days": 1,
+          "contract": "kev/1",
+          "cve_id": "CVE-2099-10001",
+          "entry": {
+            "contract": "kev/1",
+            "cve_id": "CVE-2099-10001",
+            "cwes": [
+              "CWE-787"
+            ],
+            "date_added": "2099-02-10",
+            "due_date": "2099-02-13",
+            "entry_digest": "b3f14832f42c3a49b6c7a0ba122dca8fc879b8b61d27e0cb86bceab1ee3b66bb",
+            "forensic_triage": "yes",
+            "name": "Microsoft Windows Synthetic Heap Buffer Overflow Vulnerability",
+            "notes": "https://example.invalid/advisory/CVE-2099-10001 ; https://example.invalid/vendor/microsoft",
+            "product": "Windows",
+            "ransomware_use": "known",
+            "required_action": "SYNTHETIC: no action, this entry is test data.",
+            "short_description": "SYNTHETIC: Microsoft Windows contains a made-up heap buffer overflow weakness used only as test data.",
+            "vendor_project": "Microsoft"
+          },
+          "freshness": "fresh",
+          "notes": [],
+          "snapshot_id": "b2ddf93ad2d0003cbfdddee39be7f58157ec5233a9775b35787434bcc7b8c4b8",
+          "status": "not-listed"
+        },
+        "reason": "a not-listed lookup carries no entry"
+      }
+    ],
+    "valid": {
+      "age_days": 1,
+      "contract": "kev/1",
+      "cve_id": "CVE-2099-10001",
+      "entry": {
+        "contract": "kev/1",
+        "cve_id": "CVE-2099-10001",
+        "cwes": [
+          "CWE-787"
+        ],
+        "date_added": "2099-02-10",
+        "due_date": "2099-02-13",
+        "entry_digest": "b3f14832f42c3a49b6c7a0ba122dca8fc879b8b61d27e0cb86bceab1ee3b66bb",
+        "forensic_triage": "yes",
+        "name": "Microsoft Windows Synthetic Heap Buffer Overflow Vulnerability",
+        "notes": "https://example.invalid/advisory/CVE-2099-10001 ; https://example.invalid/vendor/microsoft",
+        "product": "Windows",
+        "ransomware_use": "known",
+        "required_action": "SYNTHETIC: no action, this entry is test data.",
+        "short_description": "SYNTHETIC: Microsoft Windows contains a made-up heap buffer overflow weakness used only as test data.",
+        "vendor_project": "Microsoft"
+      },
+      "freshness": "fresh",
+      "notes": [],
+      "snapshot_id": "b2ddf93ad2d0003cbfdddee39be7f58157ec5233a9775b35787434bcc7b8c4b8",
+      "status": "listed"
+    }
+  },
+  "KevPlan": {
+    "invalid": [
+      {
+        "example": {
+          "contract": "kev/1",
+          "expected_bytes_hint": 1800000,
+          "headers": {
+            "Accept": "application/json",
+            "User-Agent": "PatchTrace"
+          },
+          "host": "www.cisa.gov",
+          "max_bytes": 16777216,
+          "method": "GET",
+          "operation": "fetch-kev-catalog",
+          "plan_sha": "73137cf184f4c827e996e90ddb89b7f3fdfc570cab2bee0d788fcfb73c158da5",
+          "source": "cisa-site",
+          "unexpected_field": 1,
+          "url": "https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json"
+        },
+        "reason": "extra fields are forbidden"
+      },
+      {
+        "example": {
+          "contract": "kev/2",
+          "expected_bytes_hint": 1800000,
+          "headers": {
+            "Accept": "application/json",
+            "User-Agent": "PatchTrace"
+          },
+          "host": "www.cisa.gov",
+          "max_bytes": 16777216,
+          "method": "GET",
+          "operation": "fetch-kev-catalog",
+          "plan_sha": "73137cf184f4c827e996e90ddb89b7f3fdfc570cab2bee0d788fcfb73c158da5",
+          "source": "cisa-site",
+          "url": "https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json"
+        },
+        "reason": "unsupported future contract version"
+      },
+      {
+        "example": {
+          "contract": "kev/1",
+          "expected_bytes_hint": 1800000,
+          "headers": {
+            "Accept": "application/json",
+            "User-Agent": "PatchTrace"
+          },
+          "host": "www.cisa.gov",
+          "max_bytes": 16777216,
+          "method": "GET",
+          "operation": "fetch-kev-catalog",
+          "plan_sha": "73137cf184f4c827e996e90ddb89b7f3fdfc570cab2bee0d788fcfb73c158da5",
+          "source": "cisa-site",
+          "url": "https://www.cisa.gov/other.json"
+        },
+        "reason": "a plan names only the fixed URL of its source"
+      }
+    ],
+    "valid": {
+      "contract": "kev/1",
+      "expected_bytes_hint": 1800000,
+      "headers": {
+        "Accept": "application/json",
+        "User-Agent": "PatchTrace"
+      },
+      "host": "www.cisa.gov",
+      "max_bytes": 16777216,
+      "method": "GET",
+      "operation": "fetch-kev-catalog",
+      "plan_sha": "73137cf184f4c827e996e90ddb89b7f3fdfc570cab2bee0d788fcfb73c158da5",
+      "source": "cisa-site",
+      "url": "https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json"
+    }
+  }
+}

@@ -1,6 +1,8 @@
 # Patch Intent Localization and Triage Engine (SPEC-30)
 
 Status: developer design, deferred until Phase 3 diff engines and calibration have passed QA. The intended measurable benefit is improved precision of true patch-bearing function discovery at fixed analyst review time. No increase in accuracy is claimed without held-out evaluation.
+- PIL-B1 (30b rule table) built 2026-10-14: `src/patchtrace/pilot/rules/{contracts,data,evaluate}.py` replace the `intelligence/rules/` and predicate-DAG wording of "Pure modules" below (plan amendment 1 is still open). Expected changes are three-valued leaf tables keyed by K rule id and revision; build notes in `docs/modules.md` [PIL-B1:rules].
+Status update 2026-10-14 (PIL-A2): the advisory-side adapters of the amended design are built in `src/patchtrace/pilot/sources/{advisory,identity,kev,window,snapshot}.py` over the `pilot/1` contract (CVE gate, KEV as CVE context, confounded-window count, pairing verdict map, B3 snapshot and CVE-record excerpt as K facts; plan `docs/specs/program-e/PIL-integration-plan.md` s4, s7, s9). Fusion, ranking, the rule table, the code-side adapters, the store and the UI are not built, and the plan's s10 amendments to this document are still open.
 
 ## Inputs and processing
 Accept only validated advisory facts (SPEC-28), artifact-hash-matched and orientation-checked Ghidriff/BinDiff/rz-diff evidence, plus versioned capa/FLOSS/DiE results (SPEC-29), and optional future Ghidra p-code/CFG data. Invalid pair or stale run => abstain. Merge by canonical artifact + module-relative address and verified function ID, never names alone. Resolve competing matches first; classify contests as review-required, not wrong by majority.

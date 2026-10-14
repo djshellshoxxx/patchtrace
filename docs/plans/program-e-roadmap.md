@@ -66,7 +66,7 @@ Spec numbers are reconciled in `specs/REGISTRY.md`.
 
 - Worker: ruff clean, new tests red then green, full suite twice, schema drift check, no stray files.
 - Wave (integration owner): merge in dependency order, full gate twice locally, one PR, Linux + Windows QA + native matrix + live checks green, squash merge, reset the designated branch to main, ledger updated.
-- Feature done: charter items 1-9 evidenced, GUI offscreen tests (20x repeat without abort), tooltips and accessibility names registered, docs and `docs/modules.md` updated, frozen smoke covers the feature's import.
+- Feature done: charter items 1-9 evidenced, GUI offscreen tests (20x repeat without abort), tooltips and accessibility names registered (`panels check` and `a11y_audit` pass), docs and `docs/modules.md` updated, frozen smoke covers the feature's import.
 - Blocked external acceptance (Windows desktop DPI and screen reader, Microsoft hosts, Tier W on the owner's machine, real third-party executables in the GUI) is reported separately and never counted as done.
 
 ## 6. Check protocol (every 12 hours until complete)

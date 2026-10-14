@@ -1,6 +1,10 @@
 # AI provider and interpretation contract (SPEC-41)
 
+<<<<<<< HEAD
 Status: draft, 2026-10-14, documents existing behaviour of `src/patchtrace/providers.py`, `interpretation.py`, `evidence.py` and states proposals separately. Basis: worktree HEAD `fd6cdba`; GitHub was not queried; registry snapshot `main` 1560531 (`docs/specs/REGISTRY.md:5`). Citations are `path:line` at that basis. **[proposal]** marks a recommended default that the code does not decide and that the owner must approve. **[unverified]** marks a fact not confirmed (section 10). Probes P1 to P5 (section 9) were run offline on 2026-10-14 with a scratch script that is not committed.
+=======
+Status: draft, 2026-10-14, documents existing behaviour of `src/patchtrace/providers.py`, `interpretation.py`, `evidence.py` and states proposals separately. Basis: worktree HEAD `fd6cdba`; GitHub was not queried; registry snapshot `main` 1560531 (`docs/specs/REGISTRY.md:5`). Citations are `path:line` at that basis. **[proposal]** marks a recommended default that the code does not decide and that the owner must approve. **[unverified]** marks a fact not confirmed (section 10). Probes P1 to P5 (section 9) were run offline on 2026-10-14 with a scratch script that is not committed. **Amended by slice AI-FIX (2026-10-14):** R11, R14, R18 (as printable ASCII, stricter than the Latin-1 it proposed, per audit RA-7), R29 and R33 are implemented (new error texts and the claim rule are listed in `docs/modules.md` under `[AI-FIX:ai-provider-fixes]`), gaps G1 to G10, G12 and G17 now have tests, and probes P1 (mapped loopback) and P3 (BadStatusLine) no longer reproduce; sections 2 to 8 below still describe the earlier basis. Still open: R12, R15, R25, R26, R35 to R37, gaps G11, G13 to G16 and G18 to G20, and live acceptance.
+>>>>>>> origin/claude/clever-clarke-s4nhi6
 
 Process: a red test before each [proposal] change; spec first for any contract change (`AGENTS.md:5`); regenerate schemas when a persisted field is added (`AGENTS.md:7`). Mocked provider tests are not live compatibility evidence (`AGENTS.md:7`).
 

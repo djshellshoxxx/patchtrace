@@ -1,0 +1,125 @@
+{
+  "$defs": {
+    "Diagnostic": {
+      "additionalProperties": false,
+      "description": "A compiler error or warning, reduced to what is safe to keep: engine rule text and source excerpts are dropped.",
+      "properties": {
+        "code": {
+          "pattern": "^(?:E[0-9]{3}|[A-Za-z][A-Za-z0-9_]{1,63})$",
+          "title": "Code",
+          "type": "string"
+        },
+        "column": {
+          "anyOf": [
+            {
+              "exclusiveMaximum": 2147483648,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Column"
+        },
+        "line": {
+          "anyOf": [
+            {
+              "exclusiveMaximum": 2147483648,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Line"
+        },
+        "title": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        }
+      },
+      "required": [
+        "code",
+        "title"
+      ],
+      "title": "Diagnostic",
+      "type": "object"
+    }
+  },
+  "$id": "https://patchtrace.local/schemas/rules/1/LintResult.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "Compiling one rule text with the PatchTrace linters (required provenance metadata, rule-name regex, tag whitelist,\nno includes, slow patterns are errors). ``ok`` also requires exactly one rule, ``import \"pe\"`` as the only import and\nat most ``patterns_per_rule`` patterns. ``formatter_stable`` (the text equals YARA-X's own formatting) is reported\nseparately: it pins the grammar, but a formatter change in a newer YARA-X must not invalidate stored rules.",
+  "properties": {
+    "errors": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/Diagnostic"
+      },
+      "maxItems": 16,
+      "title": "Errors",
+      "type": "array"
+    },
+    "formatter_stable": {
+      "default": false,
+      "title": "Formatter Stable",
+      "type": "boolean"
+    },
+    "identifiers": {
+      "default": [],
+      "items": {
+        "pattern": "^[A-Za-z_][A-Za-z0-9_]{0,127}$",
+        "type": "string"
+      },
+      "maxItems": 16,
+      "title": "Identifiers",
+      "type": "array"
+    },
+    "imports": {
+      "default": [],
+      "items": {
+        "pattern": "^[a-z][a-z0-9_]{0,31}$",
+        "type": "string"
+      },
+      "maxItems": 16,
+      "title": "Imports",
+      "type": "array"
+    },
+    "name": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+      "title": "Name",
+      "type": "string"
+    },
+    "ok": {
+      "title": "Ok",
+      "type": "boolean"
+    },
+    "patterns": {
+      "default": 0,
+      "minimum": 0,
+      "title": "Patterns",
+      "type": "integer"
+    },
+    "warnings": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/Diagnostic"
+      },
+      "maxItems": 16,
+      "title": "Warnings",
+      "type": "array"
+    }
+  },
+  "required": [
+    "name",
+    "ok"
+  ],
+  "title": "LintResult",
+  "type": "object"
+}

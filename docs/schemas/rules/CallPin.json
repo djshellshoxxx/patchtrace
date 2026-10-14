@@ -1,0 +1,40 @@
+{
+  "$id": "https://patchtrace.local/schemas/rules/1/CallPin.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "Ties a masked ``call [rip+disp32]`` inside a bytes window to the import slot it goes through. Offsets are inside the\nwindow; ``end_offset`` is where the instruction ends (the base of the RIP-relative displacement).",
+  "properties": {
+    "disp_offset": {
+      "exclusiveMaximum": 512,
+      "minimum": 0,
+      "title": "Disp Offset",
+      "type": "integer"
+    },
+    "dll": {
+      "maxLength": 256,
+      "minLength": 1,
+      "title": "Dll",
+      "type": "string"
+    },
+    "end_offset": {
+      "maximum": 512,
+      "minimum": 4,
+      "title": "End Offset",
+      "type": "integer"
+    },
+    "name": {
+      "maxLength": 256,
+      "minLength": 1,
+      "title": "Name",
+      "type": "string"
+    }
+  },
+  "required": [
+    "disp_offset",
+    "end_offset",
+    "dll",
+    "name"
+  ],
+  "title": "CallPin",
+  "type": "object"
+}

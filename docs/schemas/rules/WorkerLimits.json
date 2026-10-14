@@ -1,0 +1,59 @@
+{
+  "$id": "https://patchtrace.local/schemas/rules/1/WorkerLimits.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "The caps the child enforces itself (the parent also enforces the process memory cap and the wall clock).",
+  "properties": {
+    "diagnostics_per_rule": {
+      "default": 16,
+      "maximum": 16,
+      "minimum": 1,
+      "title": "Diagnostics Per Rule",
+      "type": "integer"
+    },
+    "file_bytes": {
+      "default": 134217728,
+      "maximum": 134217728,
+      "minimum": 1,
+      "title": "File Bytes",
+      "type": "integer"
+    },
+    "max_matches_per_pattern": {
+      "default": 64,
+      "maximum": 64,
+      "minimum": 1,
+      "title": "Max Matches Per Pattern",
+      "type": "integer"
+    },
+    "memory_bytes": {
+      "default": 1073741824,
+      "maximum": 2147483648,
+      "minimum": 16777216,
+      "title": "Memory Bytes",
+      "type": "integer"
+    },
+    "offsets_per_cell": {
+      "default": 8,
+      "maximum": 8,
+      "minimum": 1,
+      "title": "Offsets Per Cell",
+      "type": "integer"
+    },
+    "patterns_per_rule": {
+      "default": 12,
+      "maximum": 12,
+      "minimum": 1,
+      "title": "Patterns Per Rule",
+      "type": "integer"
+    },
+    "target_timeout_s": {
+      "default": 30,
+      "maximum": 300,
+      "minimum": 1,
+      "title": "Target Timeout S",
+      "type": "integer"
+    }
+  },
+  "title": "WorkerLimits",
+  "type": "object"
+}

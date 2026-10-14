@@ -11,7 +11,7 @@ Owner instructions (binding): create two more cloud instances (B, C) and spread 
 | Orchestrator model | Sonnet | Sonnet | Sonnet |
 | Max concurrent workers | 23 (owner order 2026-10-14) | 23 (owner order 2026-10-14) | 12 |
 
-**Instance D (owner order 2026-10-14 ~21:50Z):** branch `claude/instance-d-gui`, up to 23 workers, orchestrator Sonnet; GUI framework F2-F9, Qt panels, feature audits and migration readiness (`program-e-execution-plan.md` section 6.4). Session id: see `ledger-A.md`.
+**Instance D (owner order 2026-10-14 ~21:50Z):** branch `claude/instance-d-gui`, up to 23 workers, orchestrator Sonnet; GUI framework F2-F9, Qt panels, feature audits and migration readiness (`program-e-execution-plan.md` section 6.4). Session `session_01Mr844cQDLwXi9iMUoGmBXk`.
 
 ## 2. Rules for every instance
 
@@ -40,10 +40,12 @@ Owner instructions (binding): create two more cloud instances (B, C) and spread 
 | Interface | Producer | Consumers | Until it lands |
 |---|---|---|---|
 | Panel registry and shared widgets | A | B, C | build services and CLI only |
-| Anchor fabric (`AnchorSink` and reader) | A | B, C | no-op `AnchorSink` Protocol |
+| Anchor fabric (`AnchorSink` and reader) | A | B, C | no-op `AnchorSink` (`fabric.memory.NullAnchorSink`) |
 | Optional dependencies | B-0 | A, C | do not add dependencies |
 | Calibration artifact and metrics | C | A (Leads ranking), reports | display level stays `ordinal` |
 | Guide hooks (charter item 8) | every plan | C | none; C adds hooks late |
+
+Amended by FAB-0 (2026-10-14): `enrichment/storage.py` `KINDS` gains `anchor-batch` at FAB-1 and `anchor-pin` at FAB-4; the integrator makes that edit.
 
 ## 5. Start-up checklist (B and C)
 

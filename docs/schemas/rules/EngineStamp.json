@@ -1,0 +1,68 @@
+{
+  "$id": "https://patchtrace.local/schemas/rules/1/EngineStamp.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "What produced a result. A change of ``version``, ``grammar`` or ``worker`` marks stored grids stale; the rule text\nis kept. ``decoder`` is ``none`` for a stamp that has no byte-feature step (scan-only work, decoder not installed).",
+  "properties": {
+    "decoder": {
+      "default": "none",
+      "enum": [
+        "iced-x86",
+        "unified-ir",
+        "none"
+      ],
+      "title": "Decoder",
+      "type": "string"
+    },
+    "decoder_version": {
+      "anyOf": [
+        {
+          "pattern": "^[0-9A-Za-z][0-9A-Za-z.+_-]{0,39}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Decoder Version"
+    },
+    "engine": {
+      "const": "yara-x",
+      "default": "yara-x",
+      "title": "Engine",
+      "type": "string"
+    },
+    "grammar": {
+      "const": "yrx-gen/1",
+      "default": "yrx-gen/1",
+      "title": "Grammar",
+      "type": "string"
+    },
+    "version": {
+      "pattern": "^[0-9A-Za-z][0-9A-Za-z.+_-]{0,39}$",
+      "title": "Version",
+      "type": "string"
+    },
+    "version_source": {
+      "enum": [
+        "metadata",
+        "pin"
+      ],
+      "title": "Version Source",
+      "type": "string"
+    },
+    "worker": {
+      "const": "rules-worker/1",
+      "default": "rules-worker/1",
+      "title": "Worker",
+      "type": "string"
+    }
+  },
+  "required": [
+    "version",
+    "version_source"
+  ],
+  "title": "EngineStamp",
+  "type": "object"
+}

@@ -57,7 +57,7 @@ Without E1 (no Ghidra configured, or extraction failed) the pipeline still runs 
 | `ladder/groups.py` | N:M duplicate and ICF alias groups | ir.reader | S2 |
 | `ladder/blocking.py` | candidate generation for 60k images (size/token/MinHash buckets) | ir.reader | S5 |
 | `ladder/residual.py` | P16 reference vectors, P17 BB votes, P18 layout gaps, P19 assignment with rejection | blocking, assign | S5 |
-| `ladder/assign.py` | pure-Python LAP (Jonker-Volgenant style) with reject cost, bucket cap L-31 | stdlib | S5 |
+| `ladder/assign.py` | pure-Python LAP (Jonker-Volgenant style) with reject cost, bucket cap L-24 | stdlib | S5 |
 | `pipeline.py` | stage orchestration (inputs -> result), cancel, partial status | everything above except UI | S0b..S5 |
 | `worker.py` | hidden `_worker` entry: request JSON -> result files in a private dir; spawned with `secondary.binexport_run.worker_argv()` (or a shared helper lifted from it in S0b, same tests) | pipeline | S0b |
 | `read_model.py` | Qt-free `UnifiedViewModel`, filters, sort keys, detail/provenance text | contracts, store, `secondary.evidence_view.sanitize_text` | S4 |
@@ -159,7 +159,7 @@ Messages are fixed templates with labels and numbers only; untrusted text (names
 | `jobs.py` | used as is (the D-28a spawn lock is already merged, jobs.py:14-17) |
 | `secondary/binexport_run.py` | `worker_argv()` / `worker_env()` pattern reused for the unified worker (D-15) |
 | `ui.py` | seam <= 25 lines (07 s2: `current_match` override + `show_external_pair`); `ui_evidence.py` gains a tab through its controller |
-| `cli.py` | `COMMANDS` gains `unified` and one dispatch line |
+| `cli_commands/unified.py` | adapter file (GUI plan 8.12); a temporary `cli.py` `COMMANDS` line may merge first and move later |
 
 ## 9. Security invariants (each has a named test in 08 s6)
 1. Targets are never executed; Ghidra loads them as data; no emulation, debugger or scripts from the project. 2. No network: extractor runs with symbol downloads disabled and a private `XDG_CONFIG_HOME` (same isolation as backend.py:533-546); the engine imports no network module. 3. Every child: absolute argv[0], `shell=False`, private cwd, `stdin=DEVNULL`, bounded streams, env from the existing builders (`backend.build_child_env` / `_environment`), tree kill. 4. Extractor output, secondary sets and Ghidriff JSON are untrusted: strict parsers, size caps (L-xx), no `eval`/pickle, names rendered as plain text (C6 `sanitize_text`). 5. The extractor script is copied into an empty private directory before it runs, so no planted module next to it can be imported. 6. Paths given to Ghidra contain no dot-prefixed component and stay below 240 characters on Windows (backend.py `_validated_ghidra_output_path` rule); sidecar directories under `runs/` use 16-hex short ids (02 s3, s4). 7. Results are published only after every part hash verifies; a failure never deletes the previous result.

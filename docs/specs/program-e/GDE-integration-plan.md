@@ -149,12 +149,12 @@ Obligations on a feature track (charter 8; added to every track's "done" checkli
 ### 7.6 Anchor port
 
 ```
-class AnchorSink(Protocol):
-    def resolve(self, kind: str, value: str | None, side: str) -> AnchorResolution: ...
+class AnchorReader(Protocol):
+    def resolve(self, project_key: str, kind: str, value: str | None, side: str) -> AnchorResolution: ...
 @dataclass(frozen=True) class AnchorResolution { status: "found"|"absent"|"unknown"|"unsupported", location: str|None, label: str|None }
 ```
 
-`absent` is only returned when the source is complete; incomplete sources return `unknown`. The guide never calls `emit`; the name `AnchorSink` is kept because the FAB contract is where it will converge (open question 3: FAB may rename it; only `anchors.py` changes). Interim `MatchAnchorSink` (in `ui_guide.py`'s adapter module, not in `guide/`): `function` -> a match id by exact symbol name in the open project; other kinds -> `unsupported`. A step whose target kind is `unsupported` is `blocked` with copy "This step needs a feature that is not available in this build." Highlight target resolution order: `tooltip_id` -> `objectName` lookup in the main window; failing that, `blocked`. Never by position or visible text.
+`absent` is unavailable in v1 (FAB has no absent verdict); incomplete sources and FAB `ambiguous` return `unknown`. The guide never calls `emit`. Amended by FAB-0 (2026-10-14): the port is `AnchorReader.resolve(project_key, ...)`, the FAB read port that replaces the provisional `AnchorSink` name (open question 3; only `anchors.py` changes). Interim `MatchAnchorSink` (in `ui_guide.py`'s adapter module, not in `guide/`): `function` -> a match id by exact symbol name in the open project; other kinds -> `unsupported`. A step whose target kind is `unsupported` is `blocked` with copy "This step needs a feature that is not available in this build." Highlight target resolution order: `tooltip_id` -> `objectName` lookup in the main window; failing that, `blocked`. Never by position or visible text.
 
 ### 7.7 Step state machine and statuses
 
@@ -276,7 +276,7 @@ Order: G0 -> G1 -> G2 -> G3 -> G4 (G5 and G6 wait for the GUI panel registry; G1
 
 1. Progress storage: per-user JSON under app data (default) vs inside the project file. Default: per-user, because lessons are not project evidence; revisit when FAB storage lands.
 2. User-importable packs: default ship-only in v1; later import via the same validator with a consent step.
-3. Anchor port name: default `AnchorSink` until the FAB contract names it; only `guide/anchors.py` changes.
+3. Anchor port name: default `AnchorReader`, the name the FAB contract gives the read port; only `guide/anchors.py` changes. Amended by FAB-0 (2026-10-14): the port is `AnchorReader.resolve(project_key, ...)`, and `absent` is unavailable in v1.
 4. Mandatory rungs: default rungs 1, 2, 4 for `worked`/`completion`, all four for `task`.
 5. Card `means` reuses the tooltip entry `why` when the hook sets `means_from_tooltip`: default yes, to avoid divergent explanations.
 6. Localisation: English only; `locale` reserved.

@@ -1,0 +1,68 @@
+# ms_kat.tsv: MSVC decoration known answers for the symbols package (WBQ S10). UTF-8, LF, tab separated, no quoting.
+# mangled and demangled are pairs from the LLVM Project's llvm/test/Demangle/ms-*.test at tag llvmorg-23.1.0;
+# see ms_kat.NOTICE (Apache-2.0 WITH LLVM-exception, verbatim text in ms_kat.LICENSE.TXT).
+# demangled is the full output of LLVM's Microsoft demangler (pydemumble 0.1.3); every FileCheck line of the
+# source test is a substring of it. kind, qualified_name, tail and complex are PatchTrace's expectations:
+# qualified_name is the decoder's own rendering of the name part (decode of '?<name part>3HA' without 'int '),
+# tail is the rest of the mangled name, complex=1 marks templates, operators, special names and local or
+# anonymous scopes (no name is derived), and an empty cell means not derived. source is file:line in the tests.
+mangled	demangled	kind	qualified_name	tail	complex	source
+?x@@3HA	int x	msvc	x	3HA	0	ms-basic.test:5
+?x@ns@@3HA	int ns::x	msvc	ns::x	3HA	0	ms-basic.test:56
+?b@N@@3HA	int N::b	msvc	N::b	3HA	0	ms-mangle.test:9
+?instance@@3Vklass@@A	class klass instance	msvc	instance	3Vklass@@A	0	ms-basic.test:98
+?x@@3PEAV?$tmpl@H@@EA	class tmpl<int> *x	msvc	x	3PEAV?$tmpl@H@@EA	0	ms-basic.test:89
+?x@ns@@3PEAV?$klass@HH@1@EA	class ns::klass<int, int> *ns::x	msvc	ns::x	3PEAV?$klass@HH@1@EA	0	ms-basic.test:113
+?d@foo@@0FB	private: static short const foo::d	msvc	foo::d	0FB	0	ms-mangle.test:23
+?$RT1@NeedsReferenceTemporary@@3AEBHEB	int const &NeedsReferenceTemporary::$RT1	msvc	NeedsReferenceTemporary::$RT1	3AEBHEB	0	ms-mangle.test:17
+?instance$initializer$@@3P6AXXZEA	void (__cdecl *instance$initializer$)(void)	msvc	instance$initializer$	3P6AXXZEA	0	ms-basic.test:101
+?array2d@@3PAY09HA	int (*array2d)[10]	msvc	array2d	3PAY09HA	0	ms-options.test:18
+?a@abc@@3PAY09HA	int (*abc::a)[10]	msvc	abc::a	3PAY09HA	0	ms-options.test:27
+?NN@0XX@@3HA	int XX::NN::NN	msvc	XX::NN::NN	3HA	0	ms-nested-scopes.test:64
+?MM@0NN@XX@@3HA	int XX::NN::MM::MM	msvc	XX::NN::MM::MM	3HA	0	ms-nested-scopes.test:67
+?OO@0NN@01XX@@3HA	int XX::NN::OO::NN::OO::OO	msvc	XX::NN::OO::NN::OO::OO	3HA	0	ms-nested-scopes.test:73
+?x@@3PEAY02$$CBHEA	int const (*x)[3]	msvc	x	3PEAY02$$CBHEA	0	ms-basic.test:23
+?x@@YAXMH@Z	void __cdecl x(float, int)	msvc	x	YAXMH@Z	0	ms-basic.test:38
+?x@@YAXMHZZ	void __cdecl x(float, int, ...)	msvc	x	YAXMHZZ	0	ms-basic.test:41
+?_c@@YAHXZ	int __cdecl _c(void)	msvc	_c	YAHXZ	0	ms-mangle.test:20
+?x@@YAHPEAVklass@@AEAV1@@Z	int __cdecl x(class klass *, class klass &)	msvc	x	YAHPEAVklass@@AEAV1@@Z	0	ms-basic.test:110
+?f1@@YGXXZ	void __stdcall f1(void)	msvc	f1	YGXXZ	0	ms-windows.test:16
+?bar@Foo@@SGXXZ	public: static void __stdcall Foo::bar(void)	msvc	Foo::bar	SGXXZ	0	ms-windows.test:7
+?func@MyClass@@UEAAHHH@Z	public: virtual int __cdecl MyClass::func(int, int)	msvc	MyClass::func	UEAAHHH@Z	0	ms-options.test:9
+?f@C@@WBA@EAAHXZ	[thunk]: public: virtual int __cdecl C::f`adjustor{16}'(void)	msvc	C::f	WBA@EAAHXZ	0	ms-thunks.test:5
+?foo@A@PR19361@@QIGAEXXZ	public: void __thiscall PR19361::A::foo(void) __restrict &	msvc	PR19361::A::foo	QIGAEXXZ	0	ms-cxx11.test:77
+?zeta@@YAXP6AHHH@Z@Z	void __cdecl zeta(int (__cdecl *)(int, int))	msvc	zeta	YAXP6AHHH@Z@Z	0	ms-mangle.test:160
+?overloaded_fn@@$$J0YAXXZ	extern "C" void __cdecl overloaded_fn(void)	msvc	overloaded_fn	$$J0YAXXZ	0	ms-mangle.test:350
+??0klass@@QEAA@XZ	public: __cdecl klass::klass(void)	msvc	klass::klass	QEAA@XZ	0	ms-basic.test:104
+??1klass@@QEAA@XZ	public: __cdecl klass::~klass(void)	msvc	klass::~klass	QEAA@XZ	0	ms-basic.test:107
+??0foo@@QAE@H@Z	public: __thiscall foo::foo(int)	msvc	foo::foo	QAE@H@Z	0	ms-mangle.test:44
+??1foo@@QAE@XZ	public: __thiscall foo::~foo(void)	msvc	foo::~foo	QAE@XZ	0	ms-mangle.test:38
+??0Bar@Foo@@QEAA@XZ	public: __cdecl Foo::Bar::Bar(void)	msvc	Foo::Bar::Bar	QEAA@XZ	0	ms-mangle.test:402
+??1Base@@UEAA@XZ	public: virtual __cdecl Base::~Base(void)	msvc	Base::~Base	UEAA@XZ	0	ms-operators.test:8
+??4klass@@QEAAAEBV0@AEBV0@@Z	public: class klass const & __cdecl klass::operator=(class klass const &)	msvc			1	ms-basic.test:120
+??Aklass@@QEAAH_K@Z	public: int __cdecl klass::operator[](unsigned __int64)	msvc			1	ms-basic.test:132
+??Rklass@@QEAAHH@Z	public: int __cdecl klass::operator()(int)	msvc			1	ms-basic.test:183
+??BOps@@QAEHXZ	public: int __thiscall Ops::operator int(void)	msvc			1	ms-conversion-operators.test:8
+??2@YAPEAX_KAEAVklass@@@Z	void * __cdecl operator new(unsigned __int64, class klass &)	msvc			1	ms-basic.test:231
+??_0klass@@QEAAHH@Z	public: int __cdecl klass::operator/=(int)	msvc			1	ms-basic.test:210
+??_UOverloadedNewDelete@@SAPEAX_K@Z	public: static void * __cdecl OverloadedNewDelete::operator new[](unsigned __int64)	msvc			1	ms-mangle.test:311
+??_7Base@@6B@	const Base::`vftable'	msvc			1	ms-operators.test:140
+??_7A@B@@6BC@D@@@	const B::A::`vftable'{for `D::C'}	msvc			1	ms-operators.test:143
+??_8Middle2@@7B@	const Middle2::`vbtable'	msvc			1	ms-operators.test:152
+??_EDerived@@$4PPPPPPPM@A@EAAPEAXI@Z	[thunk]: public: virtual void * __cdecl Derived::`vector deleting dtor'`vtordisp{-4, 0}'(unsigned int)	msvc			1	ms-thunks.test:8
+??_9Base@@$B7AA	[thunk]: __cdecl Base::`vcall'{8, {flat}}	msvc			1	ms-operators.test:164
+??_R0?AUBase@@@8	struct Base `RTTI Type Descriptor'	msvc			1	ms-operators.test:224
+??_R1A@?0A@EA@Base@@8	Base::`RTTI Base Class Descriptor at (0, -1, 0, 64)'	msvc			1	ms-operators.test:230
+??_R3Base@@8	Base::`RTTI Class Hierarchy Descriptor'	msvc			1	ms-operators.test:236
+??_B?1??getS@@YAAAUS@@XZ@51	`struct S & __cdecl getS(void)'::`2'::`local static guard'{2}	msvc			1	ms-operators.test:167
+??$variadic_fn_template@HHHH@@YAXABH000@Z	void __cdecl variadic_fn_template<int, int, int, int>(int const &, int const &, int const &, int const &)	msvc			1	ms-templates.test:164
+?fn@?$klass@H@ns@@QEBAIXZ	public: unsigned int __cdecl ns::klass<int>::fn(void) const	msvc			1	ms-basic.test:116
+??0?$AutoNTTPClass@$0A@@@QEAA@XZ	public: __cdecl AutoNTTPClass<0>::AutoNTTPClass<0>(void)	msvc			1	ms-auto-templates.test:47
+?anonymous@?A@N@@3HA	int N::`anonymous namespace'::anonymous	msvc			1	ms-mangle.test:12
+?A@?A0x43583946@@3VB@@B	class B const `anonymous namespace'::A	msvc			1	ms-basic.test:243
+?M@?1??L@@YAHXZ@4HA	int `int __cdecl L(void)'::`2'::M	msvc			1	ms-nested-scopes.test:12
+?local@?1??extern_c_func@@9@4HA	int `extern "C" extern_c_func'::`2'::local	msvc			1	ms-mangle.test:279
+??@a6a285da2eea70dba6b578022be61d81@	??@a6a285da2eea70dba6b578022be61d81@	msvc			1	ms-md5.test:9
+??_C@_02PCEFGMJL@hi?$AA@	"hi"	string-literal			0	ms-operators.test:170
+??_C@_13COJANIEC@?$AA0?$AA?$AA@	L"0"	string-literal			0	ms-string-literals.test:545
+.?AUBase@@	struct Base `RTTI Type Descriptor Name'	rtti			0	ms-operators.test:227

@@ -1,0 +1,66 @@
+{
+    "title": "SYNTHETIC test catalog shaped like the CISA KEV catalog (PatchTrace fixture, not CISA data)",
+    "catalogVersion": "2099.03.01",
+    "dateReleased": "2099-03-01T18:00:00.0000Z",
+    "count": 4,
+    "vulnerabilities": [
+        {
+            "cveID": "CVE-2099-10010",
+            "vendorProject": "Example Networks",
+            "product": "Router ",
+            "vulnerabilityName": "Example Networks Router Synthetic Hard-Coded Credential Vulnerability",
+            "dateAdded": "2099-02-27",
+            "shortDescription": "SYNTHETIC: Example Networks routers contain a made-up weakness used only to test padded text and absent optional fields.",
+            "requiredAction": "SYNTHETIC: no action, this entry is test data.",
+            "dueDate": "2099-03-13"
+        },
+        {
+            "cveID": "CVE-2099-10004",
+            "vendorProject": "Microsoft",
+            "product": "Windows",
+            "vulnerabilityName": "Microsoft Windows Synthetic Use-After-Free Vulnerability",
+            "dateAdded": "2099-02-20",
+            "shortDescription": "SYNTHETIC: Microsoft Windows contains a made-up use-after-free weakness used only as test data.",
+            "requiredAction": "SYNTHETIC: no action, this entry is test data.",
+            "dueDate": "2099-03-13",
+            "knownRansomwareCampaignUse": "Unknown",
+            "forensicTriage": "No",
+            "notes": "https://example.invalid/advisory/CVE-2099-10004",
+            "cwes": [
+                "CWE-416"
+            ]
+        },
+        {
+            "cveID": "CVE-2099-10009",
+            "vendorProject": "Adobe",
+            "product": "Reader",
+            "vulnerabilityName": "Adobe Reader Synthetic Out-of-Bounds Read Vulnerability",
+            "dateAdded": "2099-02-15",
+            "shortDescription": "SYNTHETIC: Adobe Reader contains a made-up out-of-bounds read weakness used only as a decoy that no KB lists.",
+            "requiredAction": "SYNTHETIC: no action, this entry is test data.",
+            "dueDate": "2099-03-08",
+            "knownRansomwareCampaignUse": "Unknown",
+            "forensicTriage": "No",
+            "notes": "https://example.invalid/advisory/CVE-2099-10009 ; https://example.invalid/vendor/adobe",
+            "cwes": [
+                "CWE-125"
+            ]
+        },
+        {
+            "cveID": "CVE-2099-10001",
+            "vendorProject": "Microsoft",
+            "product": "Windows",
+            "vulnerabilityName": "Microsoft Windows Synthetic Heap Buffer Overflow Vulnerability",
+            "dateAdded": "2099-02-10",
+            "shortDescription": "SYNTHETIC: Microsoft Windows contains a made-up heap buffer overflow weakness used only as test data.",
+            "requiredAction": "SYNTHETIC: no action, this entry is test data.",
+            "dueDate": "2099-02-13",
+            "knownRansomwareCampaignUse": "Known",
+            "forensicTriage": "Yes",
+            "notes": "https://example.invalid/advisory/CVE-2099-10001 ; https://example.invalid/vendor/microsoft",
+            "cwes": [
+                "CWE-787"
+            ]
+        }
+    ]
+}

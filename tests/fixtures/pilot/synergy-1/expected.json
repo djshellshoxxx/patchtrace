@@ -1,0 +1,582 @@
+{
+  "arm_table": [
+    {
+      "arm": "Full",
+      "f1_rank": "1",
+      "fits": "F1",
+      "short_of": "none"
+    },
+    {
+      "arm": "Advisory text only",
+      "f1_rank": "1-3 (with F9, F5)",
+      "fits": "none",
+      "short_of": "names cannot separate, no code evidence"
+    },
+    {
+      "arm": "B1 signals only",
+      "f1_rank": "1-5",
+      "fits": "n/a",
+      "short_of": "guard shape fits five pairs"
+    },
+    {
+      "arm": "ChangeFacts only",
+      "f1_rank": "3-5, top is F5/F7",
+      "fits": "n/a",
+      "short_of": "severity order favours callee changes"
+    },
+    {
+      "arm": "FLOSS strings only",
+      "f1_rank": "2-8, top is F2",
+      "fits": "n/a",
+      "short_of": "the new string is the logging decoy"
+    },
+    {
+      "arm": "Advisory + B1, no ChangeFacts",
+      "f1_rank": "1-2 (with F9)",
+      "fits": "F1, F9",
+      "short_of": "no cosmetic proof, decompiler churn passes as a fit"
+    },
+    {
+      "arm": "Advisory + ChangeFacts, no B1",
+      "f1_rank": "1",
+      "fits": "F1",
+      "short_of": "B1 shares `D_ghidra`, so it adds no independence"
+    },
+    {
+      "arm": "Full minus name locality",
+      "f1_rank": "1",
+      "fits": "none",
+      "short_of": "confounded window: shape alone cannot isolate; F1 still first on expected changes"
+    },
+    {
+      "arm": "Full, window unknown",
+      "f1_rank": "1",
+      "fits": "F1, F6",
+      "short_of": "F6 listed second; the caption says the window is unknown"
+    }
+  ],
+  "arms": {
+    "adv": {
+      "code_only": false,
+      "f1_rank": [
+        1,
+        3
+      ],
+      "fit_leads": [],
+      "label": "Advisory text only",
+      "names": true,
+      "sources": [
+        "advisory",
+        "die",
+        "pairing"
+      ],
+      "ties_with": [
+        "F5",
+        "F9"
+      ],
+      "top": [],
+      "window": "yes"
+    },
+    "adv-b1": {
+      "code_only": false,
+      "f1_rank": [
+        1,
+        2
+      ],
+      "fit_leads": [
+        "F1",
+        "F9"
+      ],
+      "label": "Advisory + B1, no ChangeFacts",
+      "names": true,
+      "sources": [
+        "advisory",
+        "b1",
+        "die",
+        "pairing"
+      ],
+      "ties_with": [
+        "F9"
+      ],
+      "top": [],
+      "window": "yes"
+    },
+    "adv-cf": {
+      "code_only": false,
+      "f1_rank": [
+        1,
+        1
+      ],
+      "fit_leads": [
+        "F1"
+      ],
+      "label": "Advisory + ChangeFacts, no B1",
+      "names": true,
+      "sources": [
+        "advisory",
+        "cf",
+        "die",
+        "pairing"
+      ],
+      "ties_with": [],
+      "top": [],
+      "window": "yes"
+    },
+    "b1": {
+      "code_only": true,
+      "f1_rank": [
+        1,
+        5
+      ],
+      "fit_leads": null,
+      "label": "B1 signals only",
+      "names": true,
+      "sources": [
+        "b1",
+        "die",
+        "pairing"
+      ],
+      "ties_with": [],
+      "top": [],
+      "window": "yes"
+    },
+    "cf": {
+      "code_only": true,
+      "f1_rank": [
+        3,
+        5
+      ],
+      "fit_leads": null,
+      "label": "ChangeFacts only",
+      "names": true,
+      "sources": [
+        "cf",
+        "die",
+        "pairing"
+      ],
+      "ties_with": [],
+      "top": [
+        "F5",
+        "F7"
+      ],
+      "window": "yes"
+    },
+    "floss": {
+      "code_only": true,
+      "f1_rank": [
+        2,
+        8
+      ],
+      "fit_leads": null,
+      "label": "FLOSS strings only",
+      "names": true,
+      "sources": [
+        "floss",
+        "die",
+        "pairing"
+      ],
+      "ties_with": [],
+      "top": [
+        "F2"
+      ],
+      "window": "yes"
+    },
+    "full": {
+      "code_only": false,
+      "f1_rank": [
+        1,
+        1
+      ],
+      "fit_leads": [
+        "F1"
+      ],
+      "label": "Full",
+      "names": true,
+      "sources": [
+        "advisory",
+        "b1",
+        "cf",
+        "calls",
+        "floss",
+        "capa",
+        "die",
+        "pairing"
+      ],
+      "ties_with": [],
+      "top": [],
+      "window": "yes"
+    },
+    "no-names": {
+      "code_only": false,
+      "f1_rank": [
+        1,
+        1
+      ],
+      "fit_leads": [],
+      "label": "Full minus name locality",
+      "names": false,
+      "sources": [
+        "advisory",
+        "b1",
+        "cf",
+        "calls",
+        "floss",
+        "capa",
+        "die",
+        "pairing"
+      ],
+      "ties_with": [],
+      "top": [],
+      "window": "yes"
+    },
+    "window-unknown": {
+      "code_only": false,
+      "f1_rank": [
+        1,
+        1
+      ],
+      "fit_leads": [
+        "F1",
+        "F6"
+      ],
+      "label": "Full, window unknown",
+      "names": true,
+      "sources": [
+        "advisory",
+        "b1",
+        "cf",
+        "calls",
+        "floss",
+        "capa",
+        "die",
+        "pairing"
+      ],
+      "ties_with": [],
+      "top": [],
+      "window": "unknown"
+    }
+  },
+  "badges": {
+    "code": "CODE CHANGE",
+    "fit": "FITS ADVISORY",
+    "partial": "PARTIAL FIT",
+    "queue": "CHANGED, NO FIT",
+    "review": "NEEDS REVIEW"
+  },
+  "full": {
+    "CVE-2099-20001": {
+      "counts": {
+        "code": 0,
+        "fit": 1,
+        "partial": 3,
+        "queue": 3,
+        "review": 2
+      },
+      "fit_leads": [
+        "F1"
+      ],
+      "leads": {
+        "F1": {
+          "badge": "FITS ADVISORY",
+          "basis": "explicit-csaf-cwe",
+          "caps": [],
+          "class": "fit",
+          "components": 2,
+          "cwe": "CWE-787",
+          "depth": "typed",
+          "identity": "corroborated",
+          "local_hits": 2,
+          "mechanism": "moderate",
+          "met": 2,
+          "rank": [
+            1,
+            1
+          ],
+          "rule": "R-MEMORY-WRITE",
+          "tie_size": 1,
+          "total": 3
+        },
+        "F2": {
+          "badge": "CHANGED, NO FIT",
+          "class": "queue",
+          "rank": [
+            7,
+            9
+          ]
+        },
+        "F3": {
+          "badge": "CHANGED, NO FIT",
+          "class": "queue",
+          "rank": [
+            7,
+            9
+          ]
+        },
+        "F4": {
+          "badge": "PARTIAL FIT",
+          "class": "partial",
+          "identity": "corroborated",
+          "mechanism": "tentative",
+          "met": 1,
+          "rank": [
+            4,
+            6
+          ],
+          "total": 3
+        },
+        "F5": {
+          "badge": "PARTIAL FIT",
+          "class": "partial",
+          "identity": "corroborated",
+          "mechanism": "tentative",
+          "rank": [
+            4,
+            6
+          ]
+        },
+        "F6": {
+          "badge": "PARTIAL FIT",
+          "caps": [
+            "confounded-window-needs-locality"
+          ],
+          "class": "partial",
+          "components": 2,
+          "identity": "corroborated",
+          "mechanism": "tentative",
+          "met": 1,
+          "rank": [
+            4,
+            6
+          ],
+          "total": 3
+        },
+        "F7": {
+          "badge": "CHANGED, NO FIT",
+          "class": "queue",
+          "rank": [
+            7,
+            9
+          ]
+        },
+        "F8": {
+          "badge": "NEEDS REVIEW",
+          "class": "review",
+          "components": 2,
+          "depth": "typed",
+          "identity": "contested",
+          "mechanism": "contested",
+          "met": 1,
+          "rank": [
+            3,
+            3
+          ],
+          "total": 3
+        },
+        "F9": {
+          "badge": "NEEDS REVIEW",
+          "class": "review",
+          "components": 2,
+          "depth": "lexical",
+          "identity": "corroborated",
+          "mechanism": "contested",
+          "met": 1,
+          "rank": [
+            2,
+            2
+          ],
+          "total": 3
+        }
+      },
+      "window": "yes"
+    },
+    "CVE-2099-20002": {
+      "fit_leads": [
+        "F6"
+      ],
+      "leads": {
+        "F1": {
+          "badge": "PARTIAL FIT",
+          "caps": [
+            "confounded-window-needs-locality"
+          ],
+          "class": "partial",
+          "mechanism": "tentative"
+        },
+        "F6": {
+          "badge": "FITS ADVISORY",
+          "basis": "explicit-csaf-cwe",
+          "caps": [],
+          "class": "fit",
+          "components": 2,
+          "cwe": "CWE-125",
+          "depth": "typed",
+          "identity": "corroborated",
+          "local_hits": 2,
+          "mechanism": "moderate",
+          "met": 1,
+          "rank": [
+            1,
+            1
+          ],
+          "rule": "R-MEMORY-READ",
+          "tie_size": 1,
+          "total": 3
+        }
+      },
+      "window": "yes"
+    }
+  },
+  "function_table": [
+    {
+      "evidence": "B1 BND, ChangeFacts comparison (material, C6-anchored), call added RtlSizeTAdd (label), names fragment+reassemble",
+      "function": "Ipv6pReassembleFragment",
+      "id": "F1"
+    },
+    {
+      "evidence": "same guard shape, names options+parse",
+      "function": "Ipv6pParseOptions",
+      "id": "F6"
+    },
+    {
+      "evidence": "same shape and names, pairing contested (Ghidriff versus BinDiff)",
+      "function": "Ipv6pFragmentListReassemble",
+      "id": "F8"
+    },
+    {
+      "evidence": "B1 BND but ChangeFacts cosmetic COS-LAYOUT/1 (decompiler moved an old check), names match",
+      "function": "Ipv6pReassembleFragmentTail",
+      "id": "F9"
+    },
+    {
+      "evidence": "B1 SIZE (allocation 0x40 to 0x80), no guard",
+      "function": "Ipv6pFragmentInit",
+      "id": "F4"
+    },
+    {
+      "evidence": "call added to a counter, names match, no shape",
+      "function": "Ipv6pFragmentReassemblyStats",
+      "id": "F5"
+    },
+    {
+      "evidence": "new string \"Dropped oversize fragment\" (FLOSS) and a ChangeFacts string delta",
+      "function": "Ipv6pLogFragmentDrop",
+      "id": "F2"
+    },
+    {
+      "evidence": "register-only and address-only churn, DiE toolchain-changed",
+      "function": "Ipv6pChecksumFragment",
+      "id": "F3"
+    },
+    {
+      "evidence": "callee swapped (top ChangeFacts severity)",
+      "function": "Ipv6pDispatch",
+      "id": "F7"
+    }
+  ],
+  "kev": {
+    "picker_order": [
+      "CVE-2099-20001",
+      "CVE-2099-20002"
+    ],
+    "snapshot_id": "6427dbcdeef8591d5ff11932091498479fdfad1a0f5c3c2513a2a97fc7e084f2",
+    "states": {
+      "CVE-2099-20001": {
+        "date_added": "2099-02-10",
+        "state": "listed"
+      },
+      "CVE-2099-20002": {
+        "state": "not-in-snapshot"
+      }
+    }
+  },
+  "plan": "docs/specs/program-e/PIL-integration-plan.md",
+  "quotes": [
+    "F1 rank 1, FITS ADVISORY (expected changes 2 of 3, components 2, locality 2, tie size 1).",
+    "F9 and F8 NEEDS REVIEW.",
+    "F6 PARTIAL FIT (cap `confounded-window-needs-locality`).",
+    "F4 and F5 PARTIAL FIT.",
+    "F7, F2, F3 CHANGED, NO FIT.",
+    "For CVE-2099-20002, F6 is the only FITS lead and F1 is capped.",
+    "KEV only places CVE-2099-20001 first in the picker."
+  ],
+  "scenario": "synergy-1",
+  "why_f1": {
+    "against": [],
+    "alternatives": [
+      {
+        "class": "partial",
+        "cve": "CVE-2099-20002"
+      }
+    ],
+    "expected_changes": [
+      {
+        "go_to": {
+          "line": 14,
+          "side": "newer"
+        },
+        "id": "guard-added",
+        "kinds": [
+          "b1:BND",
+          "cf:comparison"
+        ],
+        "state": "met"
+      },
+      {
+        "api": "RtlSizeTAdd",
+        "id": "checked-arithmetic",
+        "kinds": [
+          "call:added"
+        ],
+        "state": "met",
+        "verification": "label-only"
+      },
+      {
+        "id": "size-recomputed",
+        "kinds": [],
+        "state": "not-observed"
+      }
+    ],
+    "independent_evidence": [
+      {
+        "advisory_sources": [
+          "kev",
+          "msrc",
+          "nvd",
+          "stated"
+        ],
+        "origin": "D_vendor_text"
+      },
+      {
+        "kinds": [
+          "b1:BND",
+          "call:added",
+          "cf:comparison"
+        ],
+        "origin": "D_ghidra"
+      }
+    ],
+    "summary": {
+      "class": "fit",
+      "depth": "typed",
+      "expected_changes_seen": 2,
+      "expected_changes_total": 3,
+      "independent_groups": 2,
+      "required_seen": 1,
+      "required_total": 1
+    },
+    "unknown_when_tools_not_run": [
+      "capa",
+      "strings"
+    ],
+    "window": {
+      "cves": [
+        "CVE-2099-20001",
+        "CVE-2099-20002"
+      ],
+      "names_matched": [
+        "fragment",
+        "reassemble"
+      ]
+    }
+  }
+}

@@ -2,6 +2,8 @@
 
 Purpose: from two `IrReader`s produce a `Correspondence` (1:1 pairs with per-pair provenance, N:M groups, one-sided leftovers) with precision first and abstention on ambiguity. It produces atoms of sources `pt-ladder` and `pt-bytes`; it never sees other engines' output except tier-M manual anchors (fusion happens later, 05). Owner slices S2 (ladder MVP, propagation, groups) and S5 (residual). Numbers: L-xx (02 s6). Sources of the ideas: R02 s3-s6 (BinDiff), R03 s1 (Ghidriff/VT), R04 s1-s5 (prior art).
 
+**S5 status (2026-10-14):** s6 (residual) is BUILT in `ladder/{blocking,assign,residual}.py` as `PassSpec.run` rows at stages 5 (P16-P18) and 6 (P19); `pass_table(residual=False)` is the B-07 fallback and equals the S2 table. Synthetic evidence only; the choices the text leaves open (token vocabulary, split chain, exact integer arithmetic, majority and margin rules, P19 buckets) are listed in `docs/modules.md` [S5:residual]. The assignment bucket cap is L-24 (01 s2 says L-31). Open: per-pass precision on real IR (G-U3) and G-U5 on Windows.
+
 ## 1. Contract
 ```python
 def run_ladder(older: IrReader, newer: IrReader, *, anchors: Sequence[CorrPair], limits: UnifiedLimits,
