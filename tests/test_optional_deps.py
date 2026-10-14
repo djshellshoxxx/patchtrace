@@ -8,17 +8,17 @@ from patchtrace import optional_deps
 
 def test_probe_covers_every_registered_name():
     caps = optional_deps.probe()
-    assert tuple(caps) == optional_deps.NAMES == ('rapidfuzz', 'pygments', 'pefile', 'yara-x')
-    assert {c.extra for c in caps.values()} == {'search', 'workbench', 'rules'}
+    assert tuple(caps) == optional_deps.NAMES == ('rapidfuzz', 'yara-x')
+    assert {c.extra for c in caps.values()} == {'search', 'rules'}
 
 
 def test_missing_capability_is_actionable(monkeypatch):
-    extra, dist, _module, _error = optional_deps._REGISTRY['pefile']
-    monkeypatch.setitem(optional_deps._REGISTRY, 'pefile', (extra, dist, None, "ImportError('x')"))
-    cap = optional_deps.probe(('pefile',))['pefile']
-    assert not cap.available and cap.version == '' and 'patchtrace[workbench]' in cap.detail
-    assert not optional_deps.available('pefile')
-    assert 'missing=pefile' in optional_deps.summary_line()
+    extra, dist, _module, _error = optional_deps._REGISTRY['rapidfuzz']
+    monkeypatch.setitem(optional_deps._REGISTRY, 'rapidfuzz', (extra, dist, None, "ImportError('x')"))
+    cap = optional_deps.probe(('rapidfuzz',))['rapidfuzz']
+    assert not cap.available and cap.version == '' and 'patchtrace[search]' in cap.detail
+    assert not optional_deps.available('rapidfuzz')
+    assert 'missing=rapidfuzz' in optional_deps.summary_line()
 
 
 def test_unknown_name_raises():

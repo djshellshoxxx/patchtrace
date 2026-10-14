@@ -17,20 +17,6 @@ except ImportError as exc:  # pragma: no cover - exercised through _IMPORT_ERROR
 else:
     _rf_error = ''
 try:
-    import pygments  # noqa: F401
-    import pygments.formatters  # noqa: F401
-    import pygments.lexers  # noqa: F401
-except ImportError as exc:  # pragma: no cover
-    pygments, _pg_error = None, repr(exc)
-else:
-    _pg_error = ''
-try:
-    import pefile  # noqa: F401
-except ImportError as exc:  # pragma: no cover
-    pefile, _pe_error = None, repr(exc)
-else:
-    _pe_error = ''
-try:
     import yara_x  # noqa: F401
 except ImportError as exc:  # pragma: no cover
     yara_x, _yx_error = None, repr(exc)
@@ -40,8 +26,6 @@ else:
 # capability name -> (extra, distribution name, module object or None, import error)
 _REGISTRY: dict[str, tuple[str, str, object, str]] = {
     'rapidfuzz': ('search', 'rapidfuzz', rapidfuzz, _rf_error),
-    'pygments': ('workbench', 'Pygments', pygments, _pg_error),
-    'pefile': ('workbench', 'pefile', pefile, _pe_error),
     'yara-x': ('rules', 'yara-x', yara_x, _yx_error),
 }
 NAMES = tuple(_REGISTRY)
