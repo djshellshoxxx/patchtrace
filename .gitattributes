@@ -40,3 +40,4 @@ tests/fixtures/callgraph/** text eol=lf
 tests/fixtures/strings/** text eol=lf
 tests/fixtures/search/*.json text eol=lf
 tests/fixtures/intel_tools/** text eol=lf
+tests/fixtures/buildenv/** text eol=lf
