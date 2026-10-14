@@ -386,3 +386,7 @@ Status column: each row is built by the slice named in `docs/specs/program-e/CAP
 
 ### [CAP-4:capa-cache]
 | capa cache | raw-first capa output cache on `DerivedCache` stage `capa-raw` (zlib stdout, key = `cache_key`); bounded inflate, corrupt or refused entries are soft misses; a hit re-parses without spawning | tools/capa_cache | tests/test_capa_cache.py |
+### [CAP-5:capa-cli]
+| Module | Files | Responsibility | Depends on | Tests |
+|---|---|---|---|---|
+| capa cli | src/patchtrace/intelligence/tools/cli.py | `intel-tools pairs` (stored evidence, never runs a tool, `capa-pairs/1` inside `enrichment-cli/1`; exit 0/4 comparable with/without gained, lost, moved rows, 2 missing evidence or no completed analysis (`PT-TOOL-PAIRING`), 3 rejected, 5 cancelled); `_error_exit` maps tool error codes to exit codes; `probe` prints and returns `rules_label`; schema `PairCapabilityDelta.json` generated | capa_pairs, capa_view | tests/test_capa_cli.py |

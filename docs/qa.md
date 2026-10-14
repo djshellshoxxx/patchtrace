@@ -380,3 +380,5 @@ Profile (10,000 pairs, Linux, cProfile): payload parse 0.82 s, build_views 0.73 
 
 ### [CAP-4:capa-cache]
 Hermetic: 17 tests in tests/test_capa_cache.py (hit does not spawn, corrupt/bomb/trailing/key-change are misses, private cache dir). Real-binary cache timing not measured.
+### [CAP-5:capa-cli]
+Automated only: fake capa executables printing committed real output on synthetic PE pairs, project matches added in-test (`tests/test_capa_cli.py`). Not verified: a real capa run, Windows.

@@ -87,6 +87,30 @@
       }
     ]
   },
+  "PairCapabilityDelta": {
+    "invalid": [],
+    "valid": [
+      {
+        "changes": [],
+        "comparable": false,
+        "contract": "capa-pairs/1",
+        "counts": {},
+        "coverage": null,
+        "engine": "capa",
+        "flags": [],
+        "newer_run_id": null,
+        "notes": [],
+        "older_run_id": "run-1",
+        "pairing": "unavailable",
+        "reasons": [
+          "no stored run for the newer artifact"
+        ],
+        "truncated": false,
+        "unattributed": [],
+        "value_gate": "unvalidated"
+      }
+    ]
+  },
   "StringEvidence": {
     "invalid": [],
     "valid": [

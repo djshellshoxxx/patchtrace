@@ -12,8 +12,9 @@ import os
 import threading
 from pathlib import Path
 
-ACTIONS = ('probe', 'run', 'delta')
+ACTIONS = ('probe', 'run', 'delta', 'pairs')
 ENGINES = ('capa', 'floss', 'diec')
+CHANGES = ('gained', 'lost', 'moved', 'unchanged', 'not-compared')
 ENV = {'capa': 'PATCHTRACE_CAPA', 'floss': 'PATCHTRACE_FLOSS', 'diec': 'PATCHTRACE_DIEC',
        'diec_db': 'PATCHTRACE_DIEC_DB', 'diec_lib': 'PATCHTRACE_DIEC_LIB', 'capa_rules': 'PATCHTRACE_CAPA_RULES',
        'capa_sigs': 'PATCHTRACE_CAPA_SIGS'}
@@ -23,6 +24,13 @@ def _engines(value: str) -> tuple[str, ...]:
     items = tuple(part.strip() for part in value.split(',') if part.strip())
     if not items or any(item not in ENGINES for item in items):
         raise argparse.ArgumentTypeError(f'must be a comma list of {",".join(ENGINES)}')
+    return items
+
+
+def _changes(value: str) -> tuple[str, ...]:
+    items = tuple(part.strip() for part in value.split(',') if part.strip())
+    if not items or any(item not in CHANGES for item in items):
+        raise argparse.ArgumentTypeError(f'must be a comma list of {",".join(CHANGES)}')
     return items
 
 
@@ -67,6 +75,24 @@ def register(sub, common) -> None:
     delta.add_argument('project', type=Path)
     delta.add_argument('--engines', type=_engines, default=None)
     delta.add_argument('--show-secrets', action='store_true')
+    pairs = common(act.add_parser('pairs', help='capa capability changes per matched function pair (stored evidence; '
+                                  'never runs a tool)'))
+    pairs.add_argument('project', type=Path)
+    pairs.add_argument('--engine', choices=('capa',), default='capa')
+    pairs.add_argument('--change', type=_changes, default=None,
+                       help=f'comma list of {",".join(CHANGES)} (default gained,lost,moved)')
+    pairs.add_argument('--namespace', metavar='PREFIX', help='keep rules whose namespace starts with PREFIX')
+    pairs.add_argument('--include-noise', action='store_true', help='also list differences in unchanged pairs')
+    pairs.add_argument('--include-library', action='store_true', help='also list building-block rules')
+    pairs.add_argument('--show-features', action='store_true')
+    pairs.add_argument('--show-secrets', action='store_true')
+
+
+def _error_exit(code: str) -> int:
+    """Unusable input, missing consent or no completed analysis is an environment problem (2); any other tool error
+    is a rejected or failed operation (3)."""
+    from ...cli import ENVIRONMENT, RUNTIME
+    return ENVIRONMENT if code in ('PT-TOOL-INPUT', 'PT-TOOL-CONSENT', 'PT-TOOL-PAIRING') else RUNTIME
 
 
 def _path(args, name: str, env_key: str) -> Path | None:
@@ -102,10 +128,12 @@ def build_setup(args):
 
 
 def _manifest_row(manifest) -> dict:
+    from .capa_view import rules_label
     return {'engine': manifest.engine, 'supported': manifest.supported, 'version': manifest.version,
             'pin_status': manifest.pin_status, 'untested_version': manifest.untested_version,
             'executable': Path(manifest.cli_path).name if manifest.cli_path else None,
-            'rules_source': manifest.rules_source, 'capabilities': list(manifest.capabilities),
+            'rules_source': manifest.rules_source,
+            'rules_label': rules_label(manifest) if manifest.engine == 'capa' else None, 'capabilities': list(manifest.capabilities),
             'reason': manifest.reason}
 
 
@@ -117,7 +145,9 @@ def _probe(args, cancel: threading.Event) -> int:
     manifests = [probe_engine(e, setup.config(e), cancel, _runner()) for e in configured]
     rows = [_manifest_row(m) for m in manifests]
     text = '\n'.join(f'{r["engine"]}: ' + (f'supported {r["version"]} ({r["pin_status"]})' if r['supported']
-                                           else f'not usable - {r["reason"]}') for r in rows)
+                                           else f'not usable - {r["reason"]}')
+                     + (f'\n  rules: {r["rules_label"]}' if r['supported'] and r['rules_label'] else '')
+                     for r in rows)
     _emit(args, 'intel-tools probe', 'complete', {'engines': rows}, [], text)
     return OK if any(m.supported for m in manifests) else ENVIRONMENT
 
@@ -147,7 +177,7 @@ def _run_exit(results, cancelled: bool) -> tuple[int, str]:
 
 
 def _run(args, cancel: threading.Event) -> int:
-    from ...cli import ENVIRONMENT, RUNTIME, CliError, _emit, _open
+    from ...cli import ENVIRONMENT, CliError, _emit, _open
     from ...enrichment.storage import EnrichmentStore
     from . import floss
     from .common import ToolError
@@ -170,8 +200,7 @@ def _run(args, cancel: threading.Event) -> int:
         try:
             results = run_tools(request, ts, cancel)
         except ToolError as exc:
-            raise CliError(ENVIRONMENT if exc.code in ('PT-TOOL-INPUT', 'PT-TOOL-CONSENT') else RUNTIME,
-                           str(exc)) from None
+            raise CliError(_error_exit(exc.code), str(exc)) from None
         code, status = _run_exit(results, cancel.is_set())
         rows = [{'engine': r.run.engine, 'side': r.run.side, 'status': r.run.status, 'error_code': r.run.error_code,
                  'error': r.run.error, 'run_id': r.run.run_id, 'cache_hit': r.run.cache_hit,
@@ -250,5 +279,102 @@ def _delta(args, cancel: threading.Event) -> int:
         service.close()
 
 
+def _present_row(row: dict, *, features: bool, show_secrets: bool) -> dict:
+    """A change row as printed: features only on request, secret-looking values redacted unless `--show-secrets`."""
+    from .common import redacted_display, secret_kind
+    for side in ('older', 'newer'):
+        cell = row[side]
+        if not features:
+            cell['features'] = []
+        elif not show_secrets:
+            for feature in cell['features']:
+                feature['value'] = redacted_display(feature['value'], secret_kind(feature['value']))
+    return row
+
+
+def _groups(service, latest):
+    """The pair groups of the current completed analysis, or None when there is none (pairing unavailable)."""
+    from ...nway.contracts import NwayError
+    from ...nway.series import current_run_id, read_raw_matches
+    from .capa_pairs import groups_from_project
+    from .common import ToolError
+    project = service.project
+    bases = tuple(latest[side][1].image_base for side in ('older', 'newer'))
+    if current_run_id(project) is None or not all(bases):
+        return None
+    try:
+        raw, _notes = read_raw_matches(service.root, project)
+    except NwayError as exc:
+        raise ToolError('PT-TOOL-STORE', str(exc)) from None
+    return groups_from_project(project.matches, raw, bases)
+
+
+def _pairs_text(result: dict) -> str:
+    from .common import display_text
+    counts = result['counts']
+    lines = ['  '.join(f'{name} {counts[name]}' for name in CHANGES if name in counts) or 'no pair rows']
+    lines += [f'{row["change"]:<12} {display_text(row["rule_id"], 120)}  [{display_text(row["namespace"] or "-", 80)}]'
+              f'  {display_text(row["group_id"], 80)}' for row in result['changes']]
+    lines += [f'note: {display_text(note, 200)}' for note in result['notes']]
+    return '\n'.join(lines)
+
+
+def _pairs(args, cancel: threading.Event) -> int:
+    import sys
+
+    from ...cli import CANCELLED, NO_RESULTS, OK, CliError, _emit, _open
+    from ...enrichment.storage import EnrichmentStore
+    from . import capa_pairs
+    from . import delta as delta_mod
+    from .common import ToolError
+    from .store import ToolStore
+    service = _open(args.project)
+    try:
+        project = service.project
+        ts = ToolStore(EnrichmentStore(service.store), service.root, project.id, project.revision)
+        latest = {side: ts.latest('capa', side) for side in ('older', 'newer')}
+        missing = [side for side, found in latest.items() if found is None]
+        if missing:
+            print('evidence missing for the ' + ' and '.join(missing) + ' artifact: run `intel-tools run` first',
+                  file=sys.stderr)
+            _emit(args, 'intel-tools pairs', 'failed', {'contract': capa_pairs.CONTRACT, 'missing': missing}, [],
+                  'No stored capa evidence for a side.')
+            return _error_exit('PT-TOOL-INPUT')
+        wanted = set(args.change or ('gained', 'lost', 'moved'))
+
+        def stored(engine, side):
+            found = ts.latest(engine, side)
+            return found[1] if found else None
+        try:
+            flags = delta_mod.quality_flags((stored('diec', 'older'), stored('diec', 'newer')),
+                                            (latest['older'][1], latest['newer'][1]))
+            delta = capa_pairs.compute_pairs(*latest['older'], *latest['newer'], _groups(service, latest),
+                                             flags=flags, include_unchanged='unchanged' in wanted)
+        except ToolError as exc:
+            raise CliError(_error_exit(exc.code), str(exc)) from None
+        if cancel.is_set():
+            return CANCELLED
+        result = delta.model_dump(mode='json')
+        result['changes'] = [
+            _present_row(row, features=args.show_features, show_secrets=args.show_secrets)
+            for row in result['changes']
+            if row['change'] in wanted and (args.include_noise or row['noise'] == 'none')
+            and (args.include_library or row['kind'] == 'capability')
+            and (row['namespace'] or '').startswith(args.namespace or '')]
+        if not delta.comparable:
+            print('not comparable: ' + '; '.join(delta.reasons), file=sys.stderr)
+            _emit(args, 'intel-tools pairs', 'failed', result, [], _pairs_text(result))
+            return _error_exit('PT-TOOL-MISMATCH')
+        if delta.pairing == 'unavailable':
+            print('no completed analysis run: function pairs are unavailable', file=sys.stderr)
+            result['error_code'] = 'PT-TOOL-PAIRING'
+            _emit(args, 'intel-tools pairs', 'partial', result, [], _pairs_text(result))
+            return _error_exit('PT-TOOL-PAIRING')
+        _emit(args, 'intel-tools pairs', 'complete', result, [], _pairs_text(result))
+        return OK if any(delta.counts.get(name) for name in ('gained', 'lost', 'moved')) else NO_RESULTS
+    finally:
+        service.close()
+
+
 def dispatch(args, cancel: threading.Event) -> int:
-    return {'probe': _probe, 'run': _run, 'delta': _delta}[args.action](args, cancel)
+    return {'probe': _probe, 'run': _run, 'delta': _delta, 'pairs': _pairs}[args.action](args, cancel)

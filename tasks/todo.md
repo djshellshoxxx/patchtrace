@@ -264,3 +264,6 @@
 
 ### [CAP-4:capa-cache]
 - [x] `intelligence/tools/capa_cache.py` (lookup, store, fetch_or_run) with tests. [ ] Runner wiring (profile `cache_dir`, `capa_cache.fetch_or_run` around the spawn) is an integrator ask.
+### [CAP-5:capa-cli]
+- [x] `intel-tools pairs` (--engine, --change, --namespace, --include-noise, --include-library, --show-features, --show-secrets, --json), probe rules label, `PT-TOOL-PAIRING` exit mapping, `capa-pairs/1` schema entry.
+- [ ] Not done: `--hypothesis CVE-ID` (needs CAP-7 `capa_hints`); `cli_commands/pairs.py` adapter and `frozen_smoke.py` import (integrator).
