@@ -1,6 +1,6 @@
 # PT-WB-03: FLOSS Versioned String Extraction and Side-by-Side Investigation
 
-**Status:** Developer-ready integration spec, unimplemented. **Contract:** `workbench-strings/1`. **Parent:** [integration index](README.md). **External project:** https://github.com/mandiant/flare-floss (Apache-2.0). **Depends on:** existing verified artifact reader, supervised subprocess, optional PT-WB-01 Search, PT-WB-02 graph. **Date:** 2026-10-14.
+**Status:** Developer-ready integration spec; WB3-S0 (contracts and table) implemented in `patchtrace.strings`. **Contract:** `workbench-strings/1`. **Parent:** [integration index](README.md). **External project:** https://github.com/mandiant/flare-floss (Apache-2.0). **Depends on:** existing verified artifact reader, supervised subprocess, optional PT-WB-01 Search, PT-WB-02 graph. **Date:** 2026-10-14.
 
 ## 1. Goals
 

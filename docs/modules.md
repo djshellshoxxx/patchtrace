@@ -312,3 +312,9 @@ K1 notes: plan 10.1 "4 edges, 1 mention-only" = 4 vendor-remediation edges + 1 m
 | cli | intelligence/tools/cli.py | `intel-tools probe|run|delta`, envelope `enrichment-cli/1`, exit 0/2/3/4/5; `cli.py` holds a 5-line hook | runner, store, delta | `test_intel_tools_cli.py` |
 | schemas | tools/generate_intel_tools_schemas.py, docs/schemas/intel-tools/ | `tool-evidence/1` JSON Schemas + examples, regenerate-and-compare | tools.* | `test_intel_tools_schemas.py` |
 | provisioning | tools/provision_intel_tools.py, tools/intel_tools_pin.json, .github/workflows/live-intel-tools.yml | download + verify + safe extract of the pinned releases (never executed); advisory live workflow | stdlib | `test_provision_intel_tools.py`, `test_live_intel_tools.py` |
+
+### [WB3-S0:strings-core] pair-aware strings contracts and table (2026-10-14)
+| Module | Files | Responsibility | Depends on | Tests |
+|---|---|---|---|---|
+| strings core | strings/{limits,contracts,keys,table}.py | strict `strings-basis/1`, `strings-delta/1`, `strings-anchor-hit/1` records; columnar `strings-table/1` (hand-validated, ~85 B/row); cache keys for stages `strings-table` and `strings-delta` | enrichment.identity | `test_strings_{contracts,table,schemas}.py` |
+| schemas | tools/generate_strings_schemas.py, docs/schemas/strings/ | JSON Schemas + synthetic examples, regenerate-and-compare | strings.contracts | `test_strings_schemas.py` |
