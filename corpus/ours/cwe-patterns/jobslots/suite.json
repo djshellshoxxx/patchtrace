@@ -1,0 +1,70 @@
+{
+  "contract": "suite/1",
+  "suite": "cwe-patterns",
+  "project": "jobslots",
+  "license_spdx": "MIT",
+  "summary": "Fixed-size job table (submit / run / cancel / collect) with payloads in a caller-provided byte array. In v1 js_cancel frees a slot even while its callback is executing, so a re-entrant or interrupt-level cancel races the runner: the slot can be reused by a new submit and then overwritten by the old run (race condition, CWE-362); v2 locks the slot for the duration of the callback and defers a cancel that arrives meanwhile; v3 is a behaviour-preserving refactor of v2.",
+  "versions": ["v1", "v2", "v3"],
+  "build": {"kind": "freestanding-dll", "defines": []},
+  "pairs": [
+    {
+      "old": "v1",
+      "new": "v2",
+      "intent": "CWE-362 fix: js_run sets JS_FLAG_LOCKED around the callback and honours a pending JS_FLAG_CANCEL afterwards; js_cancel refuses to free a locked slot (returns JS_ERR_BUSY and records the request) using the new js_is_locked predicate; the unconditional js_force_free helper is removed.",
+      "truth": [
+        {"function": "js_run", "label": "changed", "kind": "lock-added", "notes": "CWE-362: no lock around the callback; after it returned the runner wrote result and JS_DONE into a slot that a concurrent cancel/submit might already have recycled. v2 locks the slot and releases it itself if a cancel was requested."},
+        {"function": "js_cancel", "label": "changed", "kind": "lock-added", "notes": "CWE-362: freed a RUNNING slot immediately; v2 checks the lock flag first and defers the cancel to the runner (JS_ERR_BUSY)."},
+        {"function": "js_is_locked", "label": "added", "taxonomy": ["N7"], "notes": "new predicate: slot has JS_FLAG_LOCKED set"},
+        {"function": "js_force_free", "label": "removed", "taxonomy": ["N2"], "notes": "unconditional slot release that js_cancel used in v1"},
+        {"function": "js_copy", "label": "same"},
+        {"function": "js_job_at", "label": "same"},
+        {"function": "js_payload_ptr", "label": "same"},
+        {"function": "js_clear_slot", "label": "same"},
+        {"function": "js_find_free", "label": "same"},
+        {"function": "js_next_queued", "label": "same"},
+        {"function": "js_init", "label": "same"},
+        {"function": "js_submit", "label": "same"},
+        {"function": "js_run_next", "label": "same", "taxonomy": ["N2"]},
+        {"function": "js_drain", "label": "same", "taxonomy": ["N2"]},
+        {"function": "js_collect", "label": "same", "taxonomy": ["N6"]},
+        {"function": "js_reap", "label": "same", "taxonomy": ["N6"]},
+        {"function": "js_state", "label": "same"},
+        {"function": "js_pending", "label": "same", "taxonomy": ["N1"]},
+        {"function": "js_free_slots", "label": "same", "taxonomy": ["N1"]},
+        {"function": "js_is_busy", "label": "same", "taxonomy": ["N1"]},
+        {"function": "js_stat_submitted", "label": "same", "taxonomy": ["N1"]},
+        {"function": "js_stat_completed", "label": "same", "taxonomy": ["N1"]},
+        {"function": "js_stat_cancelled", "label": "same", "taxonomy": ["N1"]}
+      ]
+    },
+    {
+      "old": "v2",
+      "new": "v3",
+      "intent": "Behaviour-preserving refactor of v2: loop forms, renames, De Morgan form of a range test, independent stores reordered, and the statistics getters moved above the lifecycle code.",
+      "truth": [
+        {"function": "js_copy", "label": "cosmetic", "notes": "for loop rewritten as a decrementing pointer walk"},
+        {"function": "js_job_at", "label": "cosmetic", "notes": "rejecting condition rewritten in its De Morgan form"},
+        {"function": "js_clear_slot", "label": "cosmetic", "notes": "field stores emitted in reverse order"},
+        {"function": "js_find_free", "label": "cosmetic", "notes": "i->k"},
+        {"function": "js_next_queued", "label": "cosmetic", "notes": "i->k"},
+        {"function": "js_init", "label": "cosmetic", "notes": "counter resets reversed, for loop rewritten as while"},
+        {"function": "js_submit", "label": "cosmetic", "notes": "fn/ctx/len stores reordered (state is still set last)"},
+        {"function": "js_run_next", "label": "cosmetic", "notes": "id->next"},
+        {"function": "js_drain", "label": "cosmetic", "notes": "while condition rewritten as for(;;) with break"},
+        {"function": "js_reap", "label": "cosmetic", "notes": "for loop rewritten as while over ids"},
+        {"function": "js_state", "label": "cosmetic", "notes": "ternary rewritten as an if"},
+        {"function": "js_pending", "label": "cosmetic", "taxonomy": ["N1"], "notes": "for loop rewritten as while"},
+        {"function": "js_free_slots", "label": "cosmetic", "taxonomy": ["N1"], "notes": "for loop rewritten as while"},
+        {"function": "js_payload_ptr", "label": "same"},
+        {"function": "js_is_locked", "label": "same"},
+        {"function": "js_run", "label": "same"},
+        {"function": "js_cancel", "label": "same"},
+        {"function": "js_collect", "label": "same"},
+        {"function": "js_is_busy", "label": "same"},
+        {"function": "js_stat_submitted", "label": "same", "taxonomy": ["N1", "N5"]},
+        {"function": "js_stat_completed", "label": "same", "taxonomy": ["N1", "N5"]},
+        {"function": "js_stat_cancelled", "label": "same", "taxonomy": ["N1", "N5"]}
+      ]
+    }
+  ]
+}

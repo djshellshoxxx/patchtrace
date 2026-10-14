@@ -1,0 +1,72 @@
+{
+  "contract": "suite/1",
+  "suite": "cwe-patterns",
+  "project": "symtab",
+  "license_spdx": "MIT",
+  "summary": "String interner whose nodes come from a bump allocator over a caller-provided byte array. In v1 sy_intern uses the result of sy_alloc without checking it, so exhausting the arena dereferences NULL, and sy_ref dereferences the result of a lookup through the 'must find' wrapper even for unknown names (NULL pointer dereference, CWE-476); v2 adds both checks; v3 is a behaviour-preserving refactor of v2.",
+  "versions": ["v1", "v2", "v3"],
+  "build": {"kind": "freestanding-dll", "defines": []},
+  "pairs": [
+    {
+      "old": "v1",
+      "new": "v2",
+      "intent": "CWE-476 fix: sy_intern returns NULL when sy_alloc fails, sy_ref returns 0 for an unknown symbol; the misleading sy_must_find wrapper is removed and sy_is_full is added for callers that want to check headroom.",
+      "truth": [
+        {"function": "sy_intern", "label": "changed", "kind": "null-check-added", "notes": "CWE-476: node = sy_alloc(...) was dereferenced (node->hash = h) without a NULL test, crashing as soon as the arena was exhausted; v2 returns NULL."},
+        {"function": "sy_ref", "label": "changed", "kind": "null-check-added", "notes": "CWE-476: node came from sy_must_find, which returns NULL for unknown names; v2 uses sy_find and returns 0 when the lookup fails."},
+        {"function": "sy_is_full", "label": "added", "taxonomy": ["N7"], "notes": "new predicate: fewer than 32 arena bytes left"},
+        {"function": "sy_must_find", "label": "removed", "taxonomy": ["N2"], "notes": "thin wrapper over sy_find whose name promised a non-NULL result"},
+        {"function": "sy_hash", "label": "same"},
+        {"function": "sy_align8", "label": "same"},
+        {"function": "sy_name_eq", "label": "same"},
+        {"function": "sy_init", "label": "same"},
+        {"function": "sy_alloc", "label": "same"},
+        {"function": "sy_clear", "label": "same"},
+        {"function": "sy_find", "label": "same"},
+        {"function": "sy_intern_cstr", "label": "same"},
+        {"function": "sy_unref", "label": "same", "taxonomy": ["N6"]},
+        {"function": "sy_id_of", "label": "same", "taxonomy": ["N6"]},
+        {"function": "sy_name_of", "label": "same"},
+        {"function": "sy_count", "label": "same", "taxonomy": ["N1"]},
+        {"function": "sy_used", "label": "same", "taxonomy": ["N1"]},
+        {"function": "sy_free_bytes", "label": "same", "taxonomy": ["N1"]},
+        {"function": "sy_stat_lookups", "label": "same", "taxonomy": ["N1"]},
+        {"function": "sy_stat_failures", "label": "same", "taxonomy": ["N1"]},
+        {"function": "sy_dump_ids", "label": "same", "taxonomy": ["N1"]},
+        {"function": "sy_longest", "label": "same", "taxonomy": ["N1"]},
+        {"function": "sy_total_refs", "label": "same", "taxonomy": ["N1"]},
+        {"function": "sy_bucket_len", "label": "same", "taxonomy": ["N1"]}
+      ]
+    },
+    {
+      "old": "v2",
+      "new": "v3",
+      "intent": "Behaviour-preserving refactor of v2: loop forms, renames, independent stores reordered, ternary in place of an early return.",
+      "truth": [
+        {"function": "sy_hash", "label": "cosmetic", "notes": "for loop rewritten as while"},
+        {"function": "sy_align8", "label": "cosmetic", "notes": "alignment mask hoisted into a local"},
+        {"function": "sy_name_eq", "label": "cosmetic", "notes": "i->k"},
+        {"function": "sy_init", "label": "cosmetic", "notes": "field stores emitted in reverse order, bucket loop rewritten as while"},
+        {"function": "sy_alloc", "label": "cosmetic", "notes": "start->offset"},
+        {"function": "sy_clear", "label": "cosmetic", "notes": "stores reordered, for loop rewritten as while"},
+        {"function": "sy_find", "label": "cosmetic", "notes": "for loop over the chain rewritten as while; bucket read hoisted above the counter"},
+        {"function": "sy_intern", "label": "cosmetic", "notes": "node field stores emitted in a different order"},
+        {"function": "sy_intern_cstr", "label": "cosmetic", "notes": "length scan rewritten as an empty-bodied for loop"},
+        {"function": "sy_unref", "label": "cosmetic", "taxonomy": ["N6"], "notes": "refs > 0 -> refs != 0"},
+        {"function": "sy_id_of", "label": "cosmetic", "taxonomy": ["N6"], "notes": "early return folded into a ternary"},
+        {"function": "sy_name_of", "label": "cosmetic", "notes": "b->bucket, node->cur"},
+        {"function": "sy_total_refs", "label": "cosmetic", "taxonomy": ["N1"], "notes": "total->sum"},
+        {"function": "sy_bucket_len", "label": "cosmetic", "taxonomy": ["N1"], "notes": "for loop over the chain rewritten as while"},
+        {"function": "sy_is_full", "label": "same"},
+        {"function": "sy_ref", "label": "same"},
+        {"function": "sy_count", "label": "same"},
+        {"function": "sy_used", "label": "same"},
+        {"function": "sy_free_bytes", "label": "same"},
+        {"function": "sy_stat_lookups", "label": "same"},
+        {"function": "sy_stat_failures", "label": "same"},
+        {"function": "sy_dump_ids", "label": "same"},
+        {"function": "sy_longest", "label": "same"}
+      ]
+    }
+  ]
+}

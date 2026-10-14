@@ -1,0 +1,90 @@
+{
+  "contract": "suite/1",
+  "suite": "cwe-patterns",
+  "project": "pathnorm",
+  "license_spdx": "MIT",
+  "summary": "Path join/normalise/confine library on caller-provided buffers (both '/' and '\\\\' separate segments). v1 keeps '..' segments in the normalised result, guards only against the literal spelling '../' and checks containment with a raw string prefix, so a client path such as '..\\\\..\\\\etc\\\\passwd' or a sibling directory named '/srv/data-old' escapes the root (path traversal, CWE-22); v2 resolves '..' with a bounded segment stack, rejects climbing above the top, and requires a whole-segment prefix; v3 is a behaviour-preserving refactor of v2; v2c lowers the segment-stack depth constant.",
+  "versions": ["v1", "v2", "v3", "v2c"],
+  "build": {"kind": "freestanding-dll", "defines": []},
+  "pairs": [
+    {
+      "old": "v1",
+      "new": "v2",
+      "intent": "CWE-22 fix: pn_normalize resolves '..' against the preceding segment (bounded stack, new pn_segment_is_dotdot helper) and fails with PN_ERR_ESCAPE when it would climb above the top; pn_is_under compares whole segments; pn_resolve stops relying on the blacklist helper pn_looks_unsafe, which is removed.",
+      "truth": [
+        {"function": "pn_normalize", "label": "changed", "kind": "path-normalization", "notes": "CWE-22: only \".\" and empty segments were dropped; \"..\" survived into the result. v2 pops the previous segment (stack of 16) and returns PN_ERR_ESCAPE for a \"..\" with nothing to pop."},
+        {"function": "pn_is_under", "label": "changed", "kind": "path-normalization", "notes": "CWE-22: bare string prefix, so \"/srv/data-old/x\" counted as under \"/srv/data\"; v2 also requires the next character to be a separator or the end of the path."},
+        {"function": "pn_resolve", "label": "changed", "kind": "call-removed", "notes": "the pn_looks_unsafe(\"../\") blacklist call is dropped now that pn_normalize and pn_is_under enforce containment (the blacklist missed \"..\\\\\" and a trailing \"..\")."},
+        {"function": "pn_segment_is_dotdot", "label": "added", "taxonomy": ["N7"], "notes": "new predicate for the \"..\" segment used by pn_normalize"},
+        {"function": "pn_looks_unsafe", "label": "removed", "taxonomy": ["N7"], "notes": "substring blacklist for \"../\" removed; it never saw backslashes"},
+        {"function": "pn_is_sep", "label": "same"},
+        {"function": "pn_lower", "label": "same"},
+        {"function": "pn_len", "label": "same"},
+        {"function": "pn_eq", "label": "same"},
+        {"function": "pn_copy", "label": "same"},
+        {"function": "pn_has_prefix", "label": "same", "taxonomy": ["N3"]},
+        {"function": "pn_next_segment", "label": "same", "taxonomy": ["N3"]},
+        {"function": "pn_depth", "label": "same"},
+        {"function": "pn_is_absolute", "label": "same"},
+        {"function": "pn_join", "label": "same", "taxonomy": ["N6"]},
+        {"function": "pn_basename", "label": "same", "taxonomy": ["N1"]},
+        {"function": "pn_dirname", "label": "same", "taxonomy": ["N1"]},
+        {"function": "pn_extension", "label": "same"},
+        {"function": "pn_has_ext", "label": "same"},
+        {"function": "pn_is_hidden", "label": "same", "taxonomy": ["N2"]}
+      ]
+    },
+    {
+      "old": "v2",
+      "new": "v3",
+      "intent": "Behaviour-preserving refactor of v2: operand order, loop forms, renames, early returns, and pn_depth/pn_is_absolute moved below pn_resolve.",
+      "truth": [
+        {"function": "pn_is_sep", "label": "cosmetic", "notes": "operands of || swapped"},
+        {"function": "pn_lower", "label": "cosmetic", "notes": "conditional expression rewritten as if/return"},
+        {"function": "pn_len", "label": "cosmetic", "notes": "index counter replaced by an end pointer"},
+        {"function": "pn_eq", "label": "cosmetic", "notes": "i->k"},
+        {"function": "pn_copy", "label": "cosmetic", "notes": "for loop rewritten as while"},
+        {"function": "pn_has_prefix", "label": "cosmetic", "taxonomy": ["N3"], "notes": "while loop rewritten as for"},
+        {"function": "pn_next_segment", "label": "cosmetic", "taxonomy": ["N3"], "notes": "i->p"},
+        {"function": "pn_normalize", "label": "cosmetic", "taxonomy": ["N6"], "notes": "w->o, i->k"},
+        {"function": "pn_join", "label": "cosmetic", "notes": "n->base_len, redundant initialiser of i dropped"},
+        {"function": "pn_basename", "label": "cosmetic", "notes": "last_start/last_len -> tail_start/tail_len"},
+        {"function": "pn_extension", "label": "cosmetic", "notes": "dot->ext"},
+        {"function": "pn_has_ext", "label": "cosmetic", "notes": "found/ext -> have/want"},
+        {"function": "pn_is_hidden", "label": "cosmetic", "notes": "negated early return rewritten as a positive branch"},
+        {"function": "pn_depth", "label": "same", "taxonomy": ["N5"]},
+        {"function": "pn_is_absolute", "label": "same", "taxonomy": ["N5"]},
+        {"function": "pn_segment_is_dotdot", "label": "same"},
+        {"function": "pn_is_under", "label": "same"},
+        {"function": "pn_resolve", "label": "same"},
+        {"function": "pn_dirname", "label": "same"}
+      ]
+    },
+    {
+      "old": "v2",
+      "new": "v2c",
+      "intent": "Constant-only variant of the fix: the segment stack in pn_normalize is 8 deep instead of 16 (array bound and overflow test). Everything else is text-identical to v2.",
+      "truth": [
+        {"function": "pn_normalize", "label": "changed", "kind": "constant-change", "taxonomy": ["N6"], "notes": "literals 16 -> 8 in \"uint32_t starts[16]\" and \"if (depth == 16)\"; paths deeper than 8 segments now fail with PN_ERR_DEPTH"},
+        {"function": "pn_is_sep", "label": "same"},
+        {"function": "pn_lower", "label": "same"},
+        {"function": "pn_len", "label": "same"},
+        {"function": "pn_eq", "label": "same"},
+        {"function": "pn_copy", "label": "same"},
+        {"function": "pn_has_prefix", "label": "same"},
+        {"function": "pn_next_segment", "label": "same"},
+        {"function": "pn_depth", "label": "same"},
+        {"function": "pn_is_absolute", "label": "same"},
+        {"function": "pn_segment_is_dotdot", "label": "same"},
+        {"function": "pn_join", "label": "same"},
+        {"function": "pn_is_under", "label": "same"},
+        {"function": "pn_resolve", "label": "same"},
+        {"function": "pn_basename", "label": "same"},
+        {"function": "pn_dirname", "label": "same"},
+        {"function": "pn_extension", "label": "same"},
+        {"function": "pn_has_ext", "label": "same"},
+        {"function": "pn_is_hidden", "label": "same"}
+      ]
+    }
+  ]
+}
