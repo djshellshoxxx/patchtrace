@@ -256,3 +256,6 @@
 
 ### [D1:diec-hardening]
 - Done: adapter hardening (nested, empty result, heuristic marks, 57-name table, installer flag, memory cap function). Open: runner wiring of the diec memory cap (integrator), live goldens replace the hand-authored fixtures (G-L1).
+### [D2:pe-build-facts] PE build facts (2026-10-14, Sonnet 5.5, worktree)
+- [x] Rich (stdlib, bounded, equals pefile 2024.8.26 on generated headers), header version fields, debug entry types, LoadConfig GuardFlags/cookie, CLR header, runtime families, `collect_build_facts`; hypothesis never-raise
+- [ ] Not done: 2 s per-side wall-clock budget (reads are small and bounded; cancel is polled per stage); `docs/specs/pe-overview.md` "Build facts" section and "Not done" update (D-amendments, integrator); WBQ S3 consumers
