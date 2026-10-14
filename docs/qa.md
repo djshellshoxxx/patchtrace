@@ -427,3 +427,5 @@ Automated: `tests/test_kbc_{leads,view_model,synergy}.py` (sockets denied; real 
 Automated: `tests/test_capa_hints.py`. Not verified: any hint against the real capa-rules pack (not obtainable offline); hint semantics are unvalidated by design.
 ### [K7:acquire-workflow]
 Automated: `tests/test_acquisition_workflow.py` (25 tests; fake opener, no sockets): pair acquired and imported, consent equality, cancel leaves no project or staging, hash mismatch discarded. Not verified: a live symbol-server download, Windows run.
+### [S8:search-tool-advisory-sources]
+Automated: tests/test_search_sources_tools.py (presence absent/present/unknown through the real `SearchService`, secret redaction in segment bytes, advisory markup, supersession flags, permutation-stable docs and digests). Owner gate: none beyond the integrator wiring above.

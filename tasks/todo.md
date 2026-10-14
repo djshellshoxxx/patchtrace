@@ -333,3 +333,6 @@
 ### [K7:acquire-workflow]
 - [x] Non-UI K7: `acquisition/workflow.py`, `kbcorrelation/acquire.py`, `tests/test_acquisition_workflow.py`.
 - [ ] K7 UI (instance D): `ui_kb_online.py`, `tooltips_kb_online.py`; `kb acquire` CLI verb and `wiring` binding of `Acquirer` (integrator); dialog refactor onto the workflow (last).
+### [S8:search-tool-advisory-sources]
+- [x] WB1 S8: `search/sources/{tools,advisory}.py` (tool, advisory, CVE groups behind ports) with tests.
+- [ ] Integrator: bind `extra_specs`, `comparable`, and a `cve-snapshot` reader to the real stores.
