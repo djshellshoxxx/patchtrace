@@ -31,7 +31,9 @@ import urllib.request
 from collections.abc import Callable, Iterable, Mapping
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
+from functools import partial
 
+from ..netutil import Cancelled, TooManyAbandoned, interruptible
 from .contracts import EnrichmentError
 
 CVE_PATTERN = re.compile(r'CVE-\d{4}-\d{4,19}')
@@ -44,6 +46,10 @@ MAX_ATTEMPTS = 3
 MAX_REDIRECTS = 3
 MAX_RETRY_AFTER = 60
 RETRYABLE_STATUS = frozenset({429, 502, 503, 504})
+# H10: NVD pacing (token bucket of one: minimum spacing between request starts) and 403 handling.
+NVD_HOST = 'services.nvd.nist.gov'
+NVD_INTERVAL = {False: 6.0, True: 0.6}  # keyed by "an API key is in use"
+OVERALL_SLACK = 120.0
 ALLOWED_HOSTS = frozenset({'api.msrc.microsoft.com', 'services.nvd.nist.gov'})
 PROVIDERS: dict[str, str] = {
     'msrc': 'https://api.msrc.microsoft.com/sug/v2.0/en-US/vulnerability/{cve}',
@@ -180,6 +186,52 @@ def _retry_after(value: str | None, now: datetime) -> int | None:
     return max(0, int((when - now).total_seconds()) + 1)
 
 
+def pacing_interval(provider: str, has_key: bool) -> float:
+    return NVD_INTERVAL[bool(has_key)] if provider == 'nvd' else 0.0
+
+
+def expected_duration(plan: Iterable[PlannedRequest], has_key: bool) -> float:
+    """Minimum seconds the pacing alone will take (NVD only; other providers are unpaced)."""
+    nvd = sum(1 for request in plan if request.provider == 'nvd')
+    return max(0, nvd - 1) * pacing_interval('nvd', has_key)
+
+
+def describe_duration(plan: Iterable[PlannedRequest], has_key: bool) -> str:
+    """Consent-preview sentence about NVD pacing; empty when NVD is not requested."""
+    plan = tuple(plan)
+    nvd = sum(1 for request in plan if request.provider == 'nvd')
+    if nvd == 0:
+        return ''
+    seconds = expected_duration(plan, has_key)
+    spacing = pacing_interval('nvd', has_key)
+    span = f'about {round(seconds)} seconds' if seconds < 90 else f'about {round(seconds / 60)} minutes'
+    return (f'{nvd} NVD request(s) are spaced {spacing:g} s apart ({"with" if has_key else "without"} an API '
+            f'key): expect {span}.')
+
+
+class Pacer:
+    """Minimum spacing between request starts for one provider; waits are cancellable."""
+
+    def __init__(self, interval: float, clock: Callable[[], float], sleep: Callable, cancel, plan_deadline: float):
+        self.interval, self.clock, self.sleep, self.cancel = interval, clock, sleep, cancel
+        self.plan_deadline = plan_deadline
+        self.next_slot = 0.0
+
+    def acquire(self) -> None:
+        while True:
+            _cancelled(self.cancel)
+            now = self.clock()
+            if now >= self.plan_deadline:
+                raise EnrichmentError('PT-ENRICH-NETWORK', 'overall fetch deadline exceeded', recoverable=True)
+            if now >= self.next_slot:
+                break
+            if self.next_slot > self.plan_deadline:
+                raise EnrichmentError('PT-ENRICH-NETWORK', 'overall fetch deadline exceeded', recoverable=True)
+            self.sleep(self.next_slot - now, self.cancel)
+        _cancelled(self.cancel)
+        self.next_slot = self.clock() + self.interval
+
+
 def _default_sleep(seconds: float, cancel: threading.Event | None) -> None:
     if cancel is None:
         time.sleep(seconds)
@@ -188,8 +240,9 @@ def _default_sleep(seconds: float, cancel: threading.Event | None) -> None:
 
 
 class _Retry(Exception):
-    def __init__(self, wait: float | None):
+    def __init__(self, wait: float | None, status: int | None = None):
         self.wait = wait
+        self.status = status
 
 
 def fetch(plan: Iterable[PlannedRequest], consent: FetchConsent, *, api_key: str | None = None,
@@ -214,7 +267,7 @@ def fetch_all(plan: Iterable[PlannedRequest], consent: FetchConsent, *, api_key:
               clock: Callable[[], float] = time.monotonic,
               sleep: Callable[[float, threading.Event | None], None] = _default_sleep,
               now: Callable[[], datetime] = lambda: datetime.now(UTC), _validated: bool = False,
-              _fail_fast: bool = False,
+              _fail_fast: bool = False, overall_timeout: float | None = None,
               ) -> tuple[dict[str, dict[str, RawResponse]], dict[tuple[str, str], EnrichmentError]]:
     """Like `fetch`, but one failing request does not discard the others.
 
@@ -227,12 +280,21 @@ def fetch_all(plan: Iterable[PlannedRequest], consent: FetchConsent, *, api_key:
     opener = opener or urllib_open
     results: dict[str, dict[str, RawResponse]] = {}
     errors: dict[tuple[str, str], EnrichmentError] = {}
+    plan_deadline = clock() + (overall_timeout if overall_timeout is not None
+                               else expected_duration(plan, api_key is not None) + OVERALL_SLACK)
+    pacers: dict[str, Pacer] = {}
     for request in plan:
         headers = dict(request.headers)
         if api_key is not None and request.key_header:
             headers[request.key_header] = api_key
+        interval = pacing_interval(request.provider, api_key is not None)
+        pacer = None
+        if interval > 0:
+            pacer = pacers.setdefault(request.provider, Pacer(interval, clock, sleep, cancel, plan_deadline))
         try:
-            body, final_url = _fetch_one(request, headers, opener, cancel, clock, sleep, now)
+            if clock() >= plan_deadline:
+                raise EnrichmentError('PT-ENRICH-NETWORK', 'overall fetch deadline exceeded', recoverable=True)
+            body, final_url = _fetch_one(request, headers, opener, cancel, clock, sleep, now, pacer)
         except EnrichmentError as exc:
             if _fail_fast or exc.code == 'PT-ENRICH-CANCEL':
                 raise
@@ -265,14 +327,22 @@ def _cancelled(cancel: threading.Event | None) -> None:
         raise EnrichmentError('PT-ENRICH-CANCEL', 'CVE fetch cancelled', recoverable=True)
 
 
-def _fetch_one(request, headers, opener, cancel, clock, sleep, now) -> tuple[bytes, str]:
-    deadline = clock() + TOTAL_TIMEOUT
+def _fetch_one(request, headers, opener, cancel, clock, sleep, now, pacer=None) -> tuple[bytes, str]:
+    deadline = None
     for attempt in range(1, MAX_ATTEMPTS + 1):
         _cancelled(cancel)
+        if pacer is not None:
+            pacer.acquire()
+        if deadline is None:
+            deadline = clock() + TOTAL_TIMEOUT  # the 30 s budget starts at the actual send, not at pacing waits
         try:
             return _attempt(request.url, headers, opener, cancel, clock, deadline, now)
         except _Retry as retry:
             if attempt == MAX_ATTEMPTS:
+                if retry.status == 403:
+                    raise EnrichmentError('PT-ENRICH-NETWORK', 'NVD returned HTTP 403 (rate limit or rejected '
+                                          'API key) after retries; wait and retry, or check the API key',
+                                          recoverable=True) from None
                 raise EnrichmentError('PT-ENRICH-NETWORK', 'provider unavailable after retries',
                                       recoverable=True) from None
             wait = float(2 ** (attempt - 1)) if retry.wait is None else float(retry.wait)
@@ -295,7 +365,12 @@ def _attempt(url, headers, opener, cancel, clock, deadline, now) -> tuple[bytes,
         try:
             # urllib timeouts are per socket operation, so the connect bound is passed per call
             # and the 30 s total is enforced by the deadline checks around each read.
-            response = opener(url, headers, min(CONNECT_TIMEOUT, remaining))
+            timeout = min(CONNECT_TIMEOUT, remaining)
+            response = interruptible(partial(opener, url, headers, timeout), cancel, cleanup=lambda r: r.close())
+        except Cancelled:
+            raise EnrichmentError('PT-ENRICH-CANCEL', 'CVE fetch cancelled', recoverable=True) from None
+        except TooManyAbandoned:
+            raise EnrichmentError('PT-ENRICH-NETWORK', 'previous requests still closing', recoverable=True) from None
         except TimeoutError:
             raise _Retry(None) from None
         except (OSError, http.client.HTTPException):
@@ -313,7 +388,10 @@ def _attempt(url, headers, opener, cancel, clock, deadline, now) -> tuple[bytes,
                 url = target
                 continue
             if status in RETRYABLE_STATUS:
-                raise _Retry(_retry_after(response.headers.get('Retry-After'), now()))
+                raise _Retry(_retry_after(response.headers.get('Retry-After'), now()), status)
+            if status == 403 and urllib.parse.urlsplit(url).hostname == NVD_HOST:
+                # NVD answers throttling with 403 as well as 429; back off instead of failing at once.
+                raise _Retry(_retry_after(response.headers.get('Retry-After'), now()), 403)
             if status != 200:
                 raise EnrichmentError('PT-ENRICH-PROVIDER', f'provider returned HTTP {status}')
             length = response.headers.get('Content-Length')
@@ -326,7 +404,13 @@ def _attempt(url, headers, opener, cancel, clock, deadline, now) -> tuple[bytes,
                 if clock() >= deadline:
                     raise EnrichmentError('PT-ENRICH-NETWORK', 'total timeout exceeded', recoverable=True)
                 try:
-                    chunk = response.read(min(_CHUNK, MAX_RESPONSE_BYTES + 1 - len(data)))
+                    size = min(_CHUNK, MAX_RESPONSE_BYTES + 1 - len(data))
+                    chunk = interruptible(partial(response.read, size), cancel)
+                except Cancelled:
+                    raise EnrichmentError('PT-ENRICH-CANCEL', 'CVE fetch cancelled', recoverable=True) from None
+                except TooManyAbandoned:
+                    raise EnrichmentError('PT-ENRICH-NETWORK', 'previous requests still closing',
+                                          recoverable=True) from None
                 except TimeoutError:
                     raise _Retry(None) from None
                 except (OSError, http.client.HTTPException):

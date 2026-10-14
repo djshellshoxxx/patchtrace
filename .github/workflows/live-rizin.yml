@@ -1,0 +1,97 @@
+name: Live rizin rz-diff acceptance
+# Real pinned rizin, not mocked. Results are reported separately from pytest counts (SPEC-28 section 11).
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['src/patchtrace/secondary/**', 'tools/live_rzdiff_check.py', 'tests/fixtures/old.c', 'tests/fixtures/new.c', '.github/workflows/live-rizin.yml']
+  pull_request:
+    paths: ['src/patchtrace/secondary/**', 'tools/live_rzdiff_check.py', 'tests/fixtures/old.c', 'tests/fixtures/new.c', '.github/workflows/live-rizin.yml']
+permissions:
+  contents: read
+env:
+  RIZIN_VERSION: '0.9.1'
+jobs:
+  live-rizin:
+    name: live rz-diff (${{ matrix.os }})
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            asset: rizin-v0.9.1-static-x86_64.tar.xz
+            # Computed 2026-10-14 by streaming the official release asset; not cross-checked against an upstream-published digest.
+            sha256: 9102249a9f0b6319c5334a2e5cf8d9cc3f2035e1d3def027c41f6a90f647e8cf
+          - os: windows-latest
+            asset: rizin-windows-static-v0.9.1.zip
+            sha256: 2d14e0a6ecba1196dcd742d63de83bbaffed2a7a78ef5a0a9b4e92a0f73d1d28
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 20
+    env:
+      RIZIN_ASSET: ${{ matrix.asset }}
+      RIZIN_SHA256: ${{ matrix.sha256 }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install -e .
+      - name: Install pinned rizin (fail closed on missing or mismatched SHA-256)
+        if: runner.os == 'Linux'
+        shell: bash
+        run: |
+          set -euo pipefail
+          [[ "$RIZIN_SHA256" =~ ^[0-9a-f]{64}$ ]] || { echo "::error::missing or malformed pinned SHA-256"; exit 1; }
+          curl -fsSL -o "$RIZIN_ASSET" "https://github.com/rizinorg/rizin/releases/download/v${RIZIN_VERSION}/${RIZIN_ASSET}"
+          echo "${RIZIN_SHA256}  ${RIZIN_ASSET}" | sha256sum -c -
+          mkdir rizin
+          tar -xJf "$RIZIN_ASSET" -C rizin
+          echo "RZ_DIFF=$PWD/rizin/bin/rz-diff" >> "$GITHUB_ENV"
+      - name: Install pinned rizin (fail closed on missing or mismatched SHA-256)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          if ($env:RIZIN_SHA256 -notmatch '^[0-9a-f]{64}$') { throw 'missing or malformed pinned SHA-256' }
+          Invoke-WebRequest "https://github.com/rizinorg/rizin/releases/download/v$($env:RIZIN_VERSION)/$($env:RIZIN_ASSET)" -OutFile $env:RIZIN_ASSET
+          $actual = (Get-FileHash $env:RIZIN_ASSET -Algorithm SHA256).Hash.ToLower()
+          if ($actual -ne $env:RIZIN_SHA256) { throw "rizin archive digest mismatch: $actual" }
+          Expand-Archive $env:RIZIN_ASSET -DestinationPath rizin
+          $exe = (Get-ChildItem rizin -Recurse -Filter rz-diff.exe | Select-Object -First 1).FullName
+          if (-not $exe) { throw 'rz-diff.exe not found in archive' }
+          "RZ_DIFF=$exe" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
+      # Synthetic PE pair built from repo-owned tests/fixtures/{old,new}.c. No Microsoft binaries.
+      - name: Build PE pair (MinGW)
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gcc-mingw-w64-x86-64
+          mkdir pe
+          x86_64-w64-mingw32-gcc -shared -O0 -o pe/old.dll tests/fixtures/old.c
+          x86_64-w64-mingw32-gcc -shared -O0 -o pe/new.dll tests/fixtures/new.c
+      - uses: ilammy/msvc-dev-cmd@v1
+        if: runner.os == 'Windows'
+      - name: Build PE pair (MSVC)
+        if: runner.os == 'Windows'
+        shell: cmd
+        run: |
+          mkdir pe
+          cl /nologo /LD /Od /GS- tests\fixtures\old.c /Fo:pe\ /Fe:pe\old.dll
+          cl /nologo /LD /Od /GS- tests\fixtures\new.c /Fo:pe\ /Fe:pe\new.dll
+      - name: Run live rz-diff check
+        shell: bash
+        run: >-
+          python tools/live_rzdiff_check.py "$RZ_DIFF" pe/old.dll pe/new.dll "live-rzdiff-${{ runner.os }}.json"
+          --pin "$RIZIN_VERSION" --archive-sha256 "$RIZIN_SHA256" --os "${{ runner.os }}"
+      - name: Step summary
+        if: always()
+        shell: bash
+        run: |
+          f="live-rzdiff-${{ runner.os }}.json"
+          { echo "### Live rz-diff (${{ runner.os }}, not mocked)"; echo '```json'; cat "$f" 2>/dev/null || echo '{"status":"no result file"}'; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: live-rzdiff-${{ runner.os }}
+          path: live-rzdiff-${{ runner.os }}.json
+          if-no-files-found: warn

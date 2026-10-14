@@ -250,7 +250,8 @@ def test_run_options_require_run(builds, tmp_path, capsys):
 
 
 def test_pure_modules_import_no_qt_or_network():
-    code = ('import sys, patchtrace.nway.graph, patchtrace.nway.contracts, patchtrace.nway.series;'
+    code = ('import sys, patchtrace.nway.graph, patchtrace.nway.contracts, patchtrace.nway.series, '
+            'patchtrace.nway.pair_access, patchtrace.nway.view_model;'
             'bad = {"PySide6", "subprocess", "ssl", "http.client", "urllib.request"} & set(sys.modules);'
             'print(sorted(bad))')
     result = subprocess.run([sys.executable, '-c', code], capture_output=True, text=True,

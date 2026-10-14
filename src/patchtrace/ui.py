@@ -47,7 +47,7 @@ from .acquisition import quarantine, winbindex
 from .acquisition.contracts import AUTHENTICITY_NOTE, AcquisitionError, validate_file_name
 from .acquisition.transport import BLOB_SUFFIX, METADATA_HOST, SYMBOL_HOST, AcquisitionConsent, Transport
 from .alignment import alignment_strategy, diff_hunks
-from .backend import BackendConfig, diagnose, quarantine_failed_run, run_comparison
+from .backend import BackendConfig, diagnose, parse_env_passthrough, quarantine_failed_run, run_comparison
 from .evidence import build_context, resolve_evidence
 from .interpretation import interpret, system_prompt
 from .offline_bundle import inspect_offline_bundle, install_offline_bundle
@@ -67,6 +67,7 @@ MAX_VIEW_CHARS = 200_000
 ACTION_TIPS = {
     'Download from Microsoft symbol server…': 'action.acquire',
     'Sample': 'action.sample',
+    'Series window…': 'action.series',
     'Import JSON': 'action.import_json',
     'File overview': 'action.file_overview',
     'Run comparison': 'action.run_comparison',
@@ -719,6 +720,7 @@ class ProfilesPanel(QWidget):
         super().__init__(parent)
         self.store = ProfileStore(directory)
         self._editing: str | None = None
+        self._baseline: dict | None = None
         layout = QHBoxLayout(self)
         left = QVBoxLayout()
         self.list = QListWidget()
@@ -828,7 +830,27 @@ class ProfilesPanel(QWidget):
             return
         self._editing = None if profile.is_default else profile.name
         self._fill(profile)
+        self._baseline = self.editor_data()
         self.error.setText('')
+
+    def is_dirty(self) -> bool:
+        """True when the editor differs from the loaded, editable profile."""
+        if self._editing is None or self._baseline is None:
+            return False
+        try:
+            return self.editor_data() != self._baseline
+        except ValueError:
+            return True
+
+    def confirm_save(self, name: str) -> bool:
+        box = QMessageBox(QMessageBox.Icon.Question, 'Unsaved profile changes',
+                          f'Profile {name} has unsaved changes.\n\nYes saves them and continues; '
+                          'No returns to the editor.',
+                          QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No, self)
+        box.setTextFormat(Qt.TextFormat.PlainText)
+        box.setDefaultButton(QMessageBox.StandardButton.Yes)
+        confirm_tips(box)
+        return box.exec() == QMessageBox.StandardButton.Yes
 
     def _fill(self, profile):
         self.name.setText(profile.name)
@@ -932,6 +954,14 @@ class ProfilesPanel(QWidget):
         self.reload('default')
 
 
+_DISCOVERY_THREADS: set = set()
+
+
+def _release_thread(holder: set, thread) -> None:
+    holder.discard(thread)
+    thread.deleteLater()
+
+
 class SetupDialog(QDialog):
     def __init__(self, settings, parent=None, profile_directory: Path | None = None):
         super().__init__(parent)
@@ -972,6 +1002,12 @@ class SetupDialog(QDialog):
         self.allow_symbol_downloads = QCheckBox('Allow Ghidriff symbol-server lookups (may access the Internet)')
         self.allow_symbol_downloads.setChecked(settings.value('backend/allow_symbol_downloads', False, type=bool))
         form.addRow(self.allow_symbol_downloads)
+        self.restrict_env = QCheckBox('Restrict backend environment to an allowlist (experimental)')
+        self.restrict_env.setChecked(settings.value('backend/restrict_env', False, type=bool))
+        form.addRow(self.restrict_env)
+        self.env_passthrough = QLineEdit(str(settings.value('backend/env_passthrough', '')))
+        self.env_passthrough.setPlaceholderText('Extra variable names kept when restricted, comma-separated')
+        form.addRow('Environment passthrough', self.env_passthrough)
         self.timeout = QSpinBox()
         self.timeout.setRange(10, 86400)
         self.timeout.setValue(setting_int(settings, 'backend/timeout', 3600, 10, 86400))
@@ -1009,6 +1045,7 @@ class SetupDialog(QDialog):
         apply_tooltips(self, {
             'python': 'setup.python', 'ghidra': 'setup.ghidra_dir', 'java_home': 'setup.java_home',
             'allow_symbol_downloads': 'setup.symbol_downloads', 'timeout': 'setup.timeout',
+            'restrict_env': 'setup.restrict_env', 'env_passthrough': 'setup.env_passthrough',
             'font_size': 'setup.font_size', 'context_budget': 'setup.context_budget', 'sync': 'setup.sync',
             'diagnostics': 'setup.diagnostics', 'find': 'setup.find', 'bundle_sha': 'setup.bundle_sha',
             'install': 'setup.install', 'cancel_install': 'setup.cancel_install',
@@ -1017,12 +1054,37 @@ class SetupDialog(QDialog):
         apply_tooltip(self.tabs.tabBar(), 'setup.tabs')
         outer.addWidget(dialog_buttons(self, 'Save setup', 'setup'))
         self.worker = None
+        self._discovery = None
+        self._busy_kind = None  # 'diagnosis' | 'offline' while self.worker is running
         self._pending_plan = None
         self.discover_existing()
 
     def discover_existing(self):
-        """Suggest known local installations without executing or installing tools."""
-        found = discover_local_runtimes()
+        """Suggest known local installations without executing or installing tools (background scan)."""
+        if self._discovery is not None:
+            return
+        self.find.setEnabled(False)
+        self.diagnostics.setPlainText('Searching for existing installations (local discovery only)…')
+        # Unparented and module-held until finished: the dialog may be destroyed mid-scan, and destroying
+        # a running QThread aborts the process. Bound-method connections drop when the dialog is deleted.
+        thread = Worker(lambda cancel, event: discover_local_runtimes())
+        _DISCOVERY_THREADS.add(thread)
+        thread.result_ready.connect(self._apply_discovery)
+        thread.failed.connect(self._discovery_failed)
+        thread.finished.connect(self._finish_discovery)
+        thread.finished.connect(lambda t=thread: _release_thread(_DISCOVERY_THREADS, t))
+        self._discovery = thread
+        thread.start()
+
+    def _discovery_failed(self, message):
+        self.diagnostics.setPlainText(f'Local discovery failed: {message}')
+
+    def _finish_discovery(self):
+        self._discovery = None
+        if not self._busy_kind:
+            self.find.setEnabled(True)
+
+    def _apply_discovery(self, found):
         notes = ['Local discovery only: nothing downloaded or executed.']
         for label, edit, paths in (
             ('External Python', self.python, found.python_executables),
@@ -1039,6 +1101,8 @@ class SetupDialog(QDialog):
             else:
                 notes.append(f'{label}: not found; use Browse after installing')
         notes.append('Detected paths require Diagnose dependencies and a real comparison to verify.')
+        if self._busy_kind:  # never overwrite progress text of a running diagnosis or offline install
+            return
         self.diagnostics.setPlainText('\n'.join(notes))
 
     def browse(self, edit, directory):
@@ -1053,12 +1117,15 @@ class SetupDialog(QDialog):
         return BackendConfig(python_executable=self.python.text().strip(), ghidra_dir=self.ghidra.text().strip(),
                              timeout_seconds=self.timeout.value(),
                              allow_symbol_downloads=self.allow_symbol_downloads.isChecked(),
-                             java_home=self.java_home.text().strip())
+                             java_home=self.java_home.text().strip(),
+                             restrict_env=self.restrict_env.isChecked(),
+                             env_passthrough=parse_env_passthrough(self.env_passthrough.text()))
 
     def check_dependencies(self):
         if self.worker and self.worker.isRunning():
             return
         config = self.config()
+        self._busy_kind = 'diagnosis'
         self.check.setEnabled(False)
         self.diagnostics.setPlainText('Checking external dependencies…')
         self.worker = Worker(lambda cancel, event: diagnose(config), self)
@@ -1069,11 +1136,13 @@ class SetupDialog(QDialog):
 
     def _finish_diagnosis(self):
         self.worker = None
+        self._busy_kind = None
         self.check.setEnabled(True)
 
     def _offline_busy(self, active):
+        self._busy_kind = 'offline' if active else None
         self.install.setEnabled(not active)
-        self.find.setEnabled(not active)
+        self.find.setEnabled(not active and self._discovery is None)
         self.check.setEnabled(not active)
         self.cancel_install.setEnabled(active)
         for edit in (self.python, self.ghidra, self.java_home):
@@ -1161,13 +1230,22 @@ class SetupDialog(QDialog):
 
     def reject(self):
         if self.worker and self.worker.isRunning():
-            self.diagnostics.appendPlainText('Wait for dependency diagnosis to finish before closing setup.')
+            self.tabs.setCurrentIndex(0)
+            if self._busy_kind == 'offline':
+                self.cancel_offline_install()
+                self.diagnostics.appendPlainText('Close setup again once the operation has stopped.')
+            else:
+                self.diagnostics.appendPlainText('Wait for dependency diagnosis to finish before closing setup.')
             return
         super().reject()
 
     def accept(self):
         if self.worker and self.worker.isRunning():
             return
+        if self.profiles.is_dirty():
+            self.tabs.setCurrentWidget(self.profiles)
+            if not self.profiles.confirm_save(self.profiles.selected_name()) or not self.profiles.save_profile():
+                return
         super().accept()
 
 
@@ -1441,6 +1519,7 @@ class MainWindow(QMainWindow):
         self.acquire_action = self._action('Download from Microsoft symbol server…', self.acquire_project)
         self.open_action = self._action('Open', self.open_project, 'Ctrl+O')
         self.sample_action = self._action('Sample', self.open_sample)
+        self.series_action = self._action('Series window…', self.open_series)
         self.import_action = self._action('Import JSON', self.import_diff)
         self.overview_action = self._action('File overview', self.show_file_overview)
         self.run_action = self._action('Run comparison', self.run_analysis, 'F5')
@@ -1468,6 +1547,7 @@ class MainWindow(QMainWindow):
             file_menu.addAction(action)
         file_menu.addAction(self.backup_action)
         file_menu.addAction(self.undo_match_action)
+        file_menu.addAction(self.series_action)
         self.recent_menu = file_menu.addMenu('Recent projects')
         apply_tooltip(self.recent_menu.menuAction(), 'action.recent_projects')
         self.refresh_recent()
@@ -1862,6 +1942,10 @@ class MainWindow(QMainWindow):
         if path:
             self._guard(lambda: self.set_service(ProjectService.open(Path(path))))
 
+    def open_series(self):
+        from .ui_series import show_series_window  # lazy: keeps ui import cheap and avoids a cycle
+        show_series_window(self)
+
     def open_sample(self):
         parent = QFileDialog.getExistingDirectory(self, 'Choose directory for a new synthetic sample project')
         if not parent:
@@ -2184,11 +2268,14 @@ class MainWindow(QMainWindow):
         self.evidence_list.clear()
         self.conclusion.clear()
         if not self._finding:
+            self._noted_finding_id = None
             self.show_match_annotations()
             self.update_controls()
             return
         finding = self._finding
-        self.note_target.setCurrentIndex(1)
+        if getattr(self, '_noted_finding_id', None) != finding.id:
+            self.note_target.setCurrentIndex(1)  # only when the selection changes, never on refresh
+            self._noted_finding_id = finding.id
         hypothesis = finding.hypothesis
         detail = ('STALE: retained context no longer describes the current project.\n\n' if finding.stale else '')
         detail += f'{finding.summary}\n\nFix purpose: {finding.fix_purpose}\nCategory: {finding.category}\n'
@@ -2451,6 +2538,8 @@ class MainWindow(QMainWindow):
                              timeout_seconds=setting_int(self.settings, 'backend/timeout', 3600, 10, 86400),
                              allow_symbol_downloads=allow_symbols,
                              java_home=str(self.settings.value('backend/java_home', '')),
+                             restrict_env=self.settings.value('backend/restrict_env', False, type=bool),
+                             env_passthrough=parse_env_passthrough(str(self.settings.value('backend/env_passthrough', ''))),
                              # Raw-output reuse (SPEC-07 §13) is opt-in via the selected profile's cache_dir.
                              cache_dir=str(profile.cache_dir or ''))
 
@@ -2479,7 +2568,7 @@ class MainWindow(QMainWindow):
             return self._inspection
         return None
 
-    def _render_raw(self, match):
+    def _render_raw(self, match, clamped_from: int | None = None):
         self._hunks = []
         self._hunk_index = -1
         inspection = self._current_inspection()
@@ -2521,6 +2610,10 @@ class MainWindow(QMainWindow):
         self.raw_page.blockSignals(True)
         self.raw_page.setMaximum(pages)
         self.raw_page.blockSignals(False)
+        if clamped_from is None and self.raw_page.value() - 1 != page_index:
+            # The requested page is past the longest readable side: show the last page, not a page-less message.
+            self._render_raw(match, clamped_from=page_index + 1)
+            return
         diff = differing_lines(sides['older'], sides['newer'], representation)
         for side, raw in sides.items():
             view = self.views[side]
@@ -2543,6 +2636,8 @@ class MainWindow(QMainWindow):
             summary += f' · {len(diff)} line(s) with differing bytes at equal offsets'
         if notes:
             summary += ' · ' + '; '.join(notes)
+        if clamped_from is not None:
+            summary += f' · requested page {clamped_from} is past the end; showing last page {pages}'
         self.match_label.setText(summary)
         self.match_label.setToolTip('\n\n'.join(captions) or 'No raw bytes displayed.')
 
@@ -2654,9 +2749,11 @@ class MainWindow(QMainWindow):
         artifacts = {artifact.side: artifact for artifact in self.project.artifacts}
         rows = overview_rows(artifacts['older'], artifacts['newer'])
         previous = getattr(self, '_preflight_dialog', None)
+        self._forget_overview_widgets()  # before close: a replaced dialog must not clear the new refs
         if previous is not None:
-            previous.close()
+            previous.close()  # WA_DeleteOnClose below releases it
         dialog = QDialog(self)
+        dialog.setAttribute(Qt.WidgetAttribute.WA_DeleteOnClose)
         dialog.setWindowTitle('Preliminary file comparison')
         dialog.setMinimumSize(900, 620)
         dialog.setModal(False)
@@ -2693,7 +2790,7 @@ class MainWindow(QMainWindow):
         self._preflight_dialog = dialog
         self._preflight_status = status
         self._preflight_pe_table = pe_table
-        dialog.destroyed.connect(lambda *_: self._forget_overview_widgets())
+        dialog.destroyed.connect(lambda *_: self._overview_destroyed(dialog))
         inspection = self._current_inspection()
         if inspection is not None:
             status.setText('File inspection complete · ' + side_summary(inspection))
@@ -2702,7 +2799,12 @@ class MainWindow(QMainWindow):
             self.start_inspection()
         dialog.show()
 
+    def _overview_destroyed(self, dialog):
+        if getattr(self, '_preflight_dialog', None) is dialog:
+            self._forget_overview_widgets()
+
     def _forget_overview_widgets(self):
+        self._preflight_dialog = None
         self._preflight_status = None
         self._preflight_pe_table = None
 
@@ -2912,6 +3014,8 @@ class MainWindow(QMainWindow):
         self.settings.setValue('backend/python', dialog.python.text().strip())
         self.settings.setValue('backend/ghidra', dialog.ghidra.text().strip())
         self.settings.setValue('backend/java_home', dialog.java_home.text().strip())
+        self.settings.setValue('backend/restrict_env', dialog.restrict_env.isChecked())
+        self.settings.setValue('backend/env_passthrough', dialog.env_passthrough.text().strip())
         self.settings.setValue('backend/timeout', dialog.timeout.value())
         self.settings.setValue('backend/allow_symbol_downloads', dialog.allow_symbol_downloads.isChecked())
         self.settings.setValue('desktop/font_size', dialog.font_size.value())

@@ -12,7 +12,7 @@ import sys
 import tempfile
 import threading
 import time
-from collections.abc import Callable
+from collections.abc import Callable, Mapping
 from dataclasses import dataclass
 from pathlib import Path
 from uuid import UUID
@@ -60,6 +60,36 @@ class BackendConfig:
     cache_dir: str = ''
     no_cache: bool = False
     refresh: bool = False
+    # H7: child processes inherit the full environment unless restrict_env is set (default OFF until
+    # the allowlist is validated by a native Windows run; see docs/qa.md). env_passthrough lists
+    # extra names kept when restricted (proxies, custom JDK helpers).
+    restrict_env: bool = False
+    env_passthrough: tuple[str, ...] = ()
+
+
+_PASSTHROUGH_NAME = re.compile(r'^[A-Za-z_][A-Za-z0-9_()]*$')
+_PASSTHROUGH_DENY = ('PYTHONPATH', 'PYTHONHOME', 'LD_PRELOAD', 'DYLD_INSERT_LIBRARIES')
+_WINDOWS_ENV = frozenset(n.lower() for n in (
+    'SystemRoot', 'SystemDrive', 'windir', 'ComSpec', 'PATH', 'PATHEXT', 'TEMP', 'TMP', 'USERPROFILE',
+    'HOMEDRIVE', 'HOMEPATH', 'APPDATA', 'LOCALAPPDATA', 'ProgramData', 'ProgramFiles', 'ProgramFiles(x86)',
+    'ProgramW6432', 'CommonProgramFiles', 'NUMBER_OF_PROCESSORS', 'PROCESSOR_ARCHITECTURE', 'OS', 'USERNAME',
+    'USERDOMAIN'))
+_POSIX_ENV = frozenset(('PATH', 'HOME', 'USER', 'LOGNAME', 'LANG', 'TMPDIR', 'TZ', 'SHELL', 'XDG_RUNTIME_DIR',
+                        'XDG_DATA_HOME', 'XDG_CACHE_HOME'))
+_NETWORK_ENV = frozenset(n.lower() for n in ('HTTP_PROXY', 'HTTPS_PROXY', 'NO_PROXY', 'SSL_CERT_FILE',
+                                              'SSL_CERT_DIR', 'REQUESTS_CA_BUNDLE'))
+_RIZIN_ENV = frozenset(('RZ_PREFIX', 'RZ_LIBR_PLUGINS'))
+
+
+def parse_env_passthrough(text: str) -> tuple[str, ...]:
+    return tuple(dict.fromkeys(part.strip() for part in text.replace(';', ',').split(',') if part.strip()))
+
+
+def _passthrough_error(name: object) -> bool:
+    if not isinstance(name, str) or not _PASSTHROUGH_NAME.fullmatch(name):
+        return True
+    upper = name.upper()
+    return upper in _PASSTHROUGH_DENY or upper.endswith('_OPTIONS')
 
 
 def _config_errors(config: BackendConfig) -> list[str]:
@@ -86,6 +116,11 @@ def _config_errors(config: BackendConfig) -> list[str]:
         errors.append('PT-BACKEND: no_cache and refresh must be booleans')
     elif config.no_cache and config.refresh:
         errors.append('PT-BACKEND: no_cache and refresh are mutually exclusive')
+    if not isinstance(config.restrict_env, bool):
+        errors.append('PT-BACKEND: restrict_env must be a boolean')
+    if not isinstance(config.env_passthrough, tuple) or any(_passthrough_error(n) for n in config.env_passthrough):
+        errors.append('PT-BACKEND: env_passthrough must list plain variable names, excluding PYTHONPATH, '
+                      'PYTHONHOME, LD_PRELOAD and *_OPTIONS')
     if not isinstance(config.java_home, str):
         errors.append('PT-BACKEND: Java home must be a directory path')
     elif config.java_home:
@@ -96,7 +131,48 @@ def _config_errors(config: BackendConfig) -> list[str]:
     return errors
 
 
+def build_child_env(base: Mapping[str, str], config: BackendConfig, settings_dir: Path | None, *,
+                    symbol_downloads: bool, for_tool: str, windows: bool | None = None) -> dict[str, str]:
+    """Pure allowlist environment for a child process (no I/O). SPEC-07h H7."""
+    if for_tool not in ('ghidra', 'rizin'):
+        raise ValueError('PT-BACKEND: unknown child tool')
+    if any(_passthrough_error(n) for n in config.env_passthrough):
+        raise ValueError('PT-BACKEND: env_passthrough contains a forbidden or invalid variable name')
+    windows = os.name == 'nt' if windows is None else windows
+    private_java = bool(config.java_home)
+    extra = {n.lower() for n in config.env_passthrough} if windows else set(config.env_passthrough)
+    env: dict[str, str] = {}
+    for name in sorted(base):
+        key = name.lower() if windows else name
+        keep = key in (_WINDOWS_ENV if windows else _POSIX_ENV) or key in extra
+        if not windows:
+            keep = keep or name.startswith('LC_')
+            keep = keep or (name == 'LD_LIBRARY_PATH' and not private_java and bool(base[name]))
+        if symbol_downloads and for_tool == 'ghidra':
+            keep = keep or name.lower() in _NETWORK_ENV
+        if for_tool == 'rizin' and name in _RIZIN_ENV:
+            keep = True
+        if keep:
+            env[name] = base[name]
+    if for_tool == 'rizin':
+        return env
+    env['GHIDRA_INSTALL_DIR'] = str(Path(config.ghidra_dir).resolve())
+    if private_java:
+        java_home = str(Path(config.java_home).resolve())
+        env['JAVA_HOME'] = java_home
+        path_key = next((k for k in env if k.lower() == 'path'), 'PATH')
+        env[path_key] = str(Path(java_home) / 'bin') + os.pathsep + env.get(path_key, '')
+    env['PYTHONIOENCODING'] = 'utf-8'
+    env['PYTHONNOUSERSITE'] = '1'
+    if settings_dir is not None:
+        env['XDG_CONFIG_HOME'] = str(settings_dir)
+    return env
+
+
 def _environment(config: BackendConfig, settings_dir: Path | None = None) -> dict[str, str]:
+    if config.restrict_env and os.environ.get('PATCHTRACE_CHILD_ENV') != 'inherit':
+        return build_child_env(os.environ, config, settings_dir, symbol_downloads=config.allow_symbol_downloads,
+                               for_tool='ghidra')
     env = os.environ.copy()
     # A case directory or inherited development path must not supply Python modules.
     env.pop('PYTHONPATH', None)

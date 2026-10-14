@@ -1,4 +1,9 @@
-"""Validated SQLite snapshots, append-only history, writer ownership and backups."""
+"""Validated SQLite snapshots, bounded history, writer ownership and backups.
+
+History is append-only per save but pruned in the same transaction (SPEC-07h H2): the newest
+HISTORY_KEEP rows and at most HISTORY_MAX_BYTES of payload are kept; the current snapshot and the
+newest snapshot of every revision (revision-bump snapshots) are never pruned.
+"""
 from __future__ import annotations
 
 import json
@@ -17,6 +22,8 @@ from .models import ComparisonProject, now
 
 SCHEMA_VERSION = 1
 MAX_SNAPSHOT_BYTES = 256 * 1024 * 1024
+HISTORY_KEEP = 100
+HISTORY_MAX_BYTES = 512 * 1024 * 1024
 
 
 def strict_json(text: str) -> dict:
@@ -325,14 +332,53 @@ class ProjectStore:
                 if current is not None and (current[0] != validated.id or current[1] > validated.revision):
                     raise ValueError('PT-STORAGE: snapshot belongs to another project or is older than the '
                                      'stored revision; reopen the project')
-                self.connection.execute('INSERT INTO history(revision,created,payload,sha256) VALUES(?,?,?,?)',
-                                        (validated.revision, now(), payload, sha))
+                newest = self.connection.execute(
+                    'SELECT sha256 FROM history ORDER BY sequence DESC LIMIT 1').fetchone()
+                if newest is None or newest[0] != sha:
+                    self.connection.execute('INSERT INTO history(revision,created,payload,sha256) VALUES(?,?,?,?)',
+                                            (validated.revision, now(), payload, sha))
                 self.connection.execute('INSERT INTO current_snapshot(singleton,payload,sha256) VALUES(1,?,?) '
                                         'ON CONFLICT(singleton) DO UPDATE SET payload=excluded.payload, '
                                         'sha256=excluded.sha256', (payload, sha))
+                self._prune_history(sha)
         except sqlite3.Error as exc:
             raise ValueError('PT-STORAGE: project save failed; prior snapshot retained') from exc
         return validated
+
+    def _prune_history(self, current_sha: str) -> None:
+        """Bound the history table inside the caller's transaction (oldest rows first)."""
+        rows = self.connection.execute(
+            'SELECT sequence,revision,sha256,length(CAST(payload AS BLOB)) FROM history '
+            'ORDER BY sequence DESC').fetchall()
+        total = sum(row[3] for row in rows)
+        if len(rows) <= HISTORY_KEEP and total <= HISTORY_MAX_BYTES:
+            return
+        hard: set[int] = set()
+        seen_revisions: set[int] = set()
+        current_seen = False
+        for sequence, revision, sha, _size in rows:  # newest first
+            if revision not in seen_revisions:
+                seen_revisions.add(revision)
+                hard.add(sequence)
+            if sha == current_sha and not current_seen:
+                current_seen = True
+                hard.add(sequence)
+        delete: list[int] = []
+        for index, (sequence, _revision, _sha, size) in enumerate(rows):
+            if index >= HISTORY_KEEP and sequence not in hard:
+                delete.append(sequence)
+                total -= size
+        if total > HISTORY_MAX_BYTES:
+            gone = set(delete)
+            for sequence, _revision, _sha, size in reversed(rows):  # oldest first
+                if total <= HISTORY_MAX_BYTES:
+                    break
+                if sequence not in hard and sequence not in gone:
+                    delete.append(sequence)
+                    total -= size
+        for start in range(0, len(delete), 500):
+            chunk = delete[start:start + 500]
+            self.connection.execute(f'DELETE FROM history WHERE sequence IN ({",".join("?" * len(chunk))})', chunk)
 
     def load(self) -> ComparisonProject:
         import hashlib

@@ -139,7 +139,7 @@ def test_key_absent_without_key_and_never_in_errors():
     run(opener)
     assert 'apiKey' not in opener.calls[0][1]
     with pytest.raises(EnrichmentError) as exc:
-        run(Opener(Resp(status=403)), api_key=KEY)
+        run(Opener(Resp(status=403), Resp(status=403), Resp(status=403)), api_key=KEY)
     assert KEY not in str(exc.value) and exc.value.__cause__ is None
     with pytest.raises(EnrichmentError):
         run(Opener(), api_key='bad key\n')
@@ -226,7 +226,8 @@ def test_retry_on_503_then_success_with_backoff():
     clock = Clock()
     opener = Opener(Resp(status=503), TimeoutError(), Resp())
     run(opener, clock=clock)
-    assert len(opener.calls) == 3 and clock.sleeps == [1.0, 2.0]
+    # H10: NVD pacing tops each backoff up to the 6 s keyless spacing (deliberate re-baseline).
+    assert len(opener.calls) == 3 and clock.sleeps == [1.0, 5.0, 2.0, 4.0]
 
 
 def test_retry_after_honoured_and_attempts_capped():
@@ -235,7 +236,7 @@ def test_retry_after_honoured_and_attempts_capped():
     with pytest.raises(EnrichmentError) as exc:
         run(opener, clock=clock)
     assert code(exc) == 'PT-ENRICH-NETWORK' and exc.value.recoverable
-    assert len(opener.calls) == 3 and clock.sleeps == [5.0, 5.0]
+    assert len(opener.calls) == 3 and clock.sleeps == [5.0, 1.0, 5.0, 1.0]
 
 
 def test_retry_after_over_60_not_waited():

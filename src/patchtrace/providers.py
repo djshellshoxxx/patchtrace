@@ -9,6 +9,9 @@ import urllib.error
 import urllib.parse
 import urllib.request
 from dataclasses import dataclass, field
+from functools import partial
+
+from .netutil import Cancelled, TooManyAbandoned, interruptible
 
 MAX_RESPONSE_BYTES = 2 * 1024 * 1024
 TIMEOUT_SECONDS = 120
@@ -89,7 +92,16 @@ def request_completion(config: ProviderConfig, system_prompt: str, context_paylo
     # The socket timeout bounds each read only; the deadline bounds the whole exchange (spec: 120 s).
     deadline = time.monotonic() + TIMEOUT_SECONDS
     try:
-        with opener.open(request, timeout=TIMEOUT_SECONDS) as response:
+        # H9: connect and each read run through `interruptible`, so cancel is observed within ~0.1 s
+        # even while the socket call blocks; the connection is closed on cancel.
+        try:
+            response = interruptible(lambda: opener.open(request, timeout=TIMEOUT_SECONDS), cancel,
+                                     cleanup=lambda r: r.close())
+        except Cancelled:
+            raise ProviderCancelled('PT-CANCEL: interpretation cancelled') from None
+        except TooManyAbandoned:
+            raise ProviderError('PT-PROVIDER: previous requests are still closing; retry shortly') from None
+        with response:
             data = bytearray()
             while True:
                 if cancel.is_set():
@@ -97,7 +109,13 @@ def request_completion(config: ProviderConfig, system_prompt: str, context_paylo
                 if time.monotonic() > deadline:
                     raise ProviderError('PT-PROVIDER: connection failed or timed out; check endpoint and server')
                 # read1 returns available bytes so a slow-drip server cannot hold one read open.
-                chunk = response.read1(min(65536, MAX_RESPONSE_BYTES + 1 - len(data)))
+                size = min(65536, MAX_RESPONSE_BYTES + 1 - len(data))
+                try:
+                    chunk = interruptible(partial(response.read1, size), cancel)
+                except Cancelled:
+                    raise ProviderCancelled('PT-CANCEL: interpretation cancelled') from None
+                except TooManyAbandoned:
+                    raise ProviderError('PT-PROVIDER: previous requests are still closing; retry shortly') from None
                 if not chunk:
                     break
                 data.extend(chunk)

@@ -29,6 +29,9 @@ jobs:
       - run: python -m ruff check src tests tools
       - if: runner.os == 'Windows'
         run: python tools/build_windows.py
+      - name: Frozen EXE headless smoke (A1-A4) and self-test
+        if: runner.os == 'Windows'
+        run: python tools/frozen_smoke.py dist/PatchTrace/PatchTrace.exe
       - uses: actions/upload-artifact@v4
         if: always()
         with:

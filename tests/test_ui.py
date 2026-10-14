@@ -333,7 +333,7 @@ def test_symbol_server_policy_disabled_by_default_and_persisted(window, monkeypa
     assert window.backend_config().allow_symbol_downloads
 
 
-def test_setup_prefills_unique_existing_tools_without_overwriting_manual_paths(window, tmp_path, monkeypatch):
+def test_setup_prefills_unique_existing_tools_without_overwriting_manual_paths(window, qtbot, tmp_path, monkeypatch):
     from patchtrace.runtime_discovery import RuntimeCandidates
     from patchtrace.ui import SetupDialog
 
@@ -342,18 +342,19 @@ def test_setup_prefills_unique_existing_tools_without_overwriting_manual_paths(w
     candidates = RuntimeCandidates((python,), (ghidra,))
     monkeypatch.setattr('patchtrace.ui.discover_local_runtimes', lambda: candidates)
     dialog = SetupDialog(window.settings, window)
-    assert dialog.python.text() == str(python)
+    qtbot.waitUntil(lambda: dialog.python.text() == str(python), timeout=5000)
     assert dialog.ghidra.text() == str(ghidra)
 
     window.settings.setValue('backend/python', '/manual/python.exe')
     extra = RuntimeCandidates((python, tmp_path / "other-python.exe"), (ghidra,))
     monkeypatch.setattr('patchtrace.ui.discover_local_runtimes', lambda: extra)
     second = SetupDialog(window.settings, window)
+    qtbot.waitUntil(lambda: 'retaining' in second.diagnostics.toPlainText(), timeout=5000)
     assert second.python.text() == '/manual/python.exe'
     assert second.ghidra.text() == str(ghidra)
 
 
-def test_setup_does_not_choose_ambiguous_runtime_automatically(window, tmp_path, monkeypatch):
+def test_setup_does_not_choose_ambiguous_runtime_automatically(window, qtbot, tmp_path, monkeypatch):
     from patchtrace.runtime_discovery import RuntimeCandidates
     from patchtrace.ui import SetupDialog
 
@@ -362,8 +363,8 @@ def test_setup_does_not_choose_ambiguous_runtime_automatically(window, tmp_path,
     monkeypatch.setattr('patchtrace.ui.discover_local_runtimes',
                         lambda: RuntimeCandidates((python_a, python_b), ()))
     dialog = SetupDialog(window.settings, window)
+    qtbot.waitUntil(lambda: 'multiple' in dialog.diagnostics.toPlainText().lower(), timeout=5000)
     assert dialog.python.text() == ''
-    assert 'multiple' in dialog.diagnostics.toPlainText().lower()
 
 
 def test_offline_bundle_explicit_import_updates_paths_only_after_accept(window, tmp_path, monkeypatch, qtbot):

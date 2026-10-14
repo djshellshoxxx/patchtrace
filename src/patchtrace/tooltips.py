@@ -489,6 +489,15 @@ REGISTRY: dict[str, TooltipEntry] = {
     'setup.java_browse': _e(
         'Choose the Java folder in a file picker.', 'Avoids typing a long path.',
         'Fills the Java directory field.'),
+    'setup.restrict_env': _e(
+        'Run Ghidra and Java with only an allowlisted set of environment variables.',
+        'Keeps credentials and JVM or Python injection variables away from the process that loads binaries.',
+        'Saved with Save setup. Off by default until validated on your machine.',
+        availability='Experimental. Set PATCHTRACE_CHILD_ENV=inherit to override.'),
+    'setup.env_passthrough': _e(
+        'Extra environment variable names to keep when the allowlist is on, separated by commas.',
+        'Corporate proxy or custom JDK setups may need extra variables.', 'Saved with Save setup.',
+        availability='PYTHONPATH, PYTHONHOME, LD_PRELOAD and names ending in _OPTIONS are rejected.'),
     'setup.symbol_downloads': _e(
         'Allow Ghidriff to look up symbols on the Internet.',
         'Symbols improve names but contact a symbol server.',
@@ -692,6 +701,81 @@ REGISTRY: dict[str, TooltipEntry] = {
         'The described action proceeds.'),
     'confirm.no': _e(
         'Decline and stop.', 'Leaves things as they are.', 'The described action does not happen.'),
+    # ---- Series window (SPEC-09b) ------------------------------------------------------------
+    'action.series': _e(
+        'Open a read-only window over a stored series.json of three or more builds of one binary.',
+        'Follow one function across several builds and see which hops deserve attention first.',
+        'Opens a non-modal Series window. Nothing is computed, run or written, and pair projects are only read.',
+        'The series.json written by `patchtrace series create` and the pair projects next to it.'),
+    'series.window': _e(
+        'Read-only view of the chain hypotheses stored in one series.json.',
+        'Compares a function across builds without opening each pair project by hand.',
+        'Nothing is changed. Chains are labelled hypotheses assembled from independent pairwise results.',
+        'series.json (nway/1) and each pair project\'s stored results.'),
+    'series.reload': _e(
+        'Read series.json and the pair projects again.', 'Picks up pair results changed since the window opened.',
+        'Cancels a load in progress and starts a new read. Nothing is written.',
+        availability='Always available.'),
+    'series.cancel_load': _e(
+        'Stop reading the series.', 'A large series can take several seconds to read.',
+        'The load is abandoned and what was shown before stays. Nothing is written.',
+        availability='Enabled only while loading.'),
+    'series.filter_text': _e(
+        'Show only chains whose function names, addresses, build labels or chain ID contain this text.',
+        'Narrows a long list to the function you are following.',
+        'Filters the table in the window only; case-insensitive, up to 200 characters.'),
+    'series.filter_status': _e(
+        'Show only chains with this status: inferred, confirmed or contradicted.',
+        'Confirmed and contradicted come from an optional direct first-to-last pair; inferred does not.',
+        'Filters the table in the window only.'),
+    'series.filter_event': _e(
+        'Show only chains with this event: added, removed, split, merged, ambiguous, unmatched or reverted.',
+        'Events mark where a function appeared, disappeared or changed shape between builds.',
+        'Filters the table in the window only.'),
+    'series.only_stale': _e(
+        'Show only chains passing through a pair project that changed since the series was computed.',
+        'Tells you which chains need `patchtrace series create` to be re-run.',
+        'Filters the table in the window only.'),
+    'series.only_scored': _e(
+        'Show only chains with at least one hop that has a stored attention score.',
+        'Hides chains that no ranking has covered yet.', 'Filters the table in the window only.'),
+    'series.min_score': _e(
+        'Show only chains whose highest hop score is at least this value (0 to 100).',
+        'Focuses on the hops that research prioritization ranked highest.',
+        'Filters the table in the window only; 0 disables the filter and chains without any score are hidden above 0.',
+        'Attention score from the pair project\'s stored default-profile ranking (research prioritization, '
+        'not exploitability). Not combined across pairs.'),
+    'series.sort': _e(
+        'Order the chains by highest hop, sum of hops, hop count, name or chain ID.',
+        'Puts the most interesting chains first; ties are broken by chain ID so the order is stable.',
+        'Reorders the table only. Highest hop and sum of hops are display aids, never a chain-level score.',
+        'Attention score from the pair project\'s stored default-profile ranking (research prioritization, '
+        'not exploitability). Not combined across pairs.'),
+    'series.chain_table': _e(
+        'One row per chain hypothesis across three or more builds.',
+        'Shows where a function is followed through every adjacent pair and how hot its hops are.',
+        'Selecting a row shows its hops. Nothing is changed.',
+        'A chain is a labelled hypothesis from independent pairwise results, not a fact. Scores come from '
+        'each pair project\'s stored default-profile ranking and are not combined across pairs.'),
+    'series.hop_table': _e(
+        'One row per hop (adjacent build pair) of the selected chain.',
+        'Shows the match category, upstream match types, ratio and attention score of each step.',
+        'Selecting a hop enables opening its pair project. Nothing is changed.',
+        'Attention score from the pair project\'s stored default-profile ranking (research prioritization, '
+        'not exploitability). Not combined across pairs. Ratios are upstream text.'),
+    'series.open_pair': _e(
+        'Open the pair project of the selected hop at this function.',
+        'Lets you read the code difference behind the score.',
+        'Asks the main window to open that pair project; the series window itself changes nothing.',
+        availability='Needs a selected hop whose pair project is readable. Unchanged hops have no match to open.'),
+    'series.copy_chain': _e(
+        'Copy the selected chain as plain text.', 'Share or note a chain with its builds and hops.',
+        'Puts text with labels, ordinals and the first 12 hex digits of each build hash on the clipboard.',
+        availability='Needs a selected chain.'),
+    'series.banner': _e(
+        'Warnings about the stored series: out-of-date chains, unreadable pairs or a truncated list.',
+        'Scores for affected hops are not available and say why.',
+        'Nothing is changed; re-run `patchtrace series create` to refresh chains.'),
 }
 
 # Tooltips for items that depend on untrusted or dynamic values.
@@ -710,6 +794,15 @@ TEMPLATES: dict[str, TooltipEntry] = {
         'Ranking weight of detector {detector}, a whole number from 0 to 100.',
         'Higher weights raise the attention score of matching functions.',
         'Saved with the profile.', availability=_DEFAULT_RO),
+    'series.score_cell': _e(
+        'Attention score state for this hop: {state}.', 'Reason: {reason}.',
+        'Read-only display; nothing is recomputed.',
+        'Attention score from the pair project\'s stored default-profile ranking (research prioritization, '
+        'not exploitability). Not combined across pairs.'),
+    'series.pair_state': _e(
+        'Pair project state: {state}.', 'Reason: {reason}.',
+        'Read-only display; the pair project is only read and never written.',
+        'Observed when this window last read the pair project.'),
     'profile.detector_enabled': _e(
         'Turn detector {detector} on or off for this profile.', 'Lets you drop signals you do not trust.',
         'Saved with the profile; disabled detectors do not contribute to ranking.',

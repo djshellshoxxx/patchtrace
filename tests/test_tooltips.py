@@ -207,6 +207,12 @@ def test_every_registry_id_is_applied_somewhere(window, qtbot, tmp_path, setting
         qtbot.addWidget(root)
     window.show_file_overview()
     roots.append(window._preflight_dialog)
+    from patchtrace.ui_series import SeriesWindow
+    series = SeriesWindow(tmp_path / 'no-series.json', None, SimpleNamespace(read=lambda *a: None), window)
+    qtbot.addWidget(series)
+    qtbot.waitUntil(lambda: series.loaded is not None, timeout=5000)
+    roots.append(series)
+    names |= {series.objectName(), series.banner.objectName()}
     for root in roots:
         names |= {w.objectName() for w in controls(root)}
         names |= {a.objectName() for a in actions(root)}
