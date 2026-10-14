@@ -310,6 +310,10 @@ def fetch_verified(entry: Mapping, cache_dir: Path, fetcher: Fetcher, label: str
 
 
 # ----- safe extraction -----------------------------------------------------------------------------------
+def _windows_host() -> bool:
+    return os.name == 'nt'
+
+
 def _member_parts(name: str) -> list[str]:
     if (not isinstance(name, str) or not name or name.startswith('/') or '\\' in name
             or re.match(r'^[A-Za-z]:', name) or '\x00' in name):
@@ -329,7 +333,22 @@ class _Extractor:
         self.modes: dict[str, int] = {}
         self.links: list[tuple[str, str]] = []
         self.count = 0
+        self.folded: dict[str, str] = {}
         dest.mkdir(parents=True, exist_ok=True)
+
+    def _guard_host_fs(self, relative: str) -> None:
+        """On a Windows host NTFS mangles hostile names ('x.' -> 'x', 'a:b' -> stream, case-insensitive
+        collisions overwrite) the moment they are written, so refuse them before touching the disk. On other
+        hosts the same names are caught later by `check_tree`."""
+        if not _windows_host():
+            return
+        reasons = path_reasons(relative)
+        canonical = unicodedata.normalize('NFC', relative).casefold()
+        previous = self.folded.setdefault(canonical, relative)
+        if previous != relative:
+            reasons.append(f'collides-with:{previous}')
+        if reasons:
+            _fail('PT-BUNDLE-PATH', f'archive member {relative!r} is not safe on a Windows file system: {reasons[0]}')
 
     def relative(self, name: str) -> str | None:
         """Destination-relative POSIX path for an archive member (None: the top directory itself)."""
@@ -351,10 +370,12 @@ class _Extractor:
 
     def directory(self, relative: str) -> None:
         self._count()
+        self._guard_host_fs(relative)
         (self.dest / relative).mkdir(parents=True, exist_ok=True)
 
     def file(self, relative: str, stream, mode: int) -> None:
         self._count()
+        self._guard_host_fs(relative)
         target = self.dest / relative
         target.parent.mkdir(parents=True, exist_ok=True)
         if target.exists():

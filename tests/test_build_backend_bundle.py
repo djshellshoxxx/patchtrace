@@ -42,7 +42,8 @@ def make_zip(entries: dict[str, bytes | tuple[bytes, int]]) -> bytes:
     with zipfile.ZipFile(buffer, 'w', zipfile.ZIP_DEFLATED) as zf:
         for name, value in entries.items():
             body, mode = value if isinstance(value, tuple) else (value, 0o644)
-            info = zipfile.ZipInfo(name, date_time=(2020, 1, 1, 0, 0, 0))
+            info = zipfile.ZipInfo('member', date_time=(2020, 1, 1, 0, 0, 0))
+            info.filename = name  # ZipInfo.__init__ rewrites os.sep (a backslash on Windows) to '/'
             info.create_system = 3
             info.external_attr = (0o100000 | mode) << 16
             zf.writestr(info, body)
@@ -497,6 +498,18 @@ def test_casefold_collision_fails(tmp_path):
     world = World(tmp_path, 'linux', extra_ghidra={'Ghidra/Features/Read.me': b'a', 'Ghidra/Features/read.ME': b'b'})
     with pytest.raises(tool.BundleBuildError) as caught:
         build(world, tmp_path)
+    assert caught.value.code == 'PT-BUNDLE-PATH'
+
+
+@pytest.mark.parametrize('names', [['top/trail.'], ['top/a:b'], ['top/Read.me', 'top/read.ME']],
+                         ids=['dot', 'colon', 'casefold'])
+def test_windows_host_extraction_refuses_names_ntfs_would_mangle(tmp_path, monkeypatch, names):
+    # Pure-logic twin of the real-filesystem tests above: simulate a Windows host on any OS.
+    monkeypatch.setattr(tool, '_windows_host', lambda: True)
+    archive = tmp_path / 'a.zip'
+    archive.write_bytes(make_zip({name: b'x' for name in names}))
+    with pytest.raises(tool.BundleBuildError) as caught:
+        tool.extract_component(archive, tmp_path / 'dest', strip_top=True)
     assert caught.value.code == 'PT-BUNDLE-PATH'
 
 

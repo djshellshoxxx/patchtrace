@@ -37,6 +37,7 @@ WINDOWS_FILES = {
     'ghidra/Ghidra/application.properties': b'application.version=12.0.4',
     'jdk/bin/java.exe': b'fake-java',
     'LICENSES/NOTICE.txt': b'stub notice',
+    'ghidra/docs/a.txt': b'0123456789',
 }
 PLATFORMS = {
     'linux': ('python/bin/python3', LINUX_FILES),

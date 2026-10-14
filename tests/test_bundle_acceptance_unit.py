@@ -6,6 +6,7 @@ denial; it is NOT evidence about the real Ghidra/JDK payload or the Windows fire
 from __future__ import annotations
 
 import importlib.util
+import os
 import socket
 import subprocess
 import sys
@@ -55,7 +56,7 @@ def test_path_tool_hits_on_real_minimal_path_is_empty():
 
 
 def test_run_path_puts_jdk_first():
-    assert ba.run_path('linux', '/jdk/bin', '/nonexistent').split(':')[0] == '/jdk/bin'
+    assert ba.run_path('linux', '/jdk/bin', '/nonexistent').split(os.pathsep)[0] == '/jdk/bin'
     assert ba.run_path('linux', None, '/nonexistent') == '/nonexistent'
 
 

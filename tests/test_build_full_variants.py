@@ -5,6 +5,7 @@ import gzip
 import hashlib
 import importlib.util
 import json
+import os
 import sys
 import tarfile
 from pathlib import Path
@@ -164,11 +165,22 @@ def test_tar_gz_modes_owners_and_determinism(tmp_path):
     assert first.read_bytes() == second.read_bytes()
     with tarfile.open(first) as tar:
         members = {m.name: m for m in tar.getmembers()}
-    assert members['PatchTrace/backend/bin/java'].mode == 0o755
+    # NTFS has no exec bit, so chmod(0o775) cannot survive on a Windows host (the Linux archive is built on
+    # Linux in CI); the mode rule itself is covered platform-independently by test_tar_filter_mode_rule.
+    assert members['PatchTrace/backend/bin/java'].mode == (0o644 if os.name == 'nt' else 0o755)
     assert members['PatchTrace/data.txt'].mode == 0o644
     assert members['PatchTrace'].isdir() and members['PatchTrace'].mode == 0o755
     assert all(m.uid == 0 and m.gid == 0 and m.uname == '' for m in members.values())
     assert gzip.decompress(first.read_bytes())[:1]  # valid gzip stream
+
+
+@pytest.mark.parametrize(('mode', 'expected'), [(0o775, 0o755), (0o100, 0o755), (0o666, 0o644), (0o600, 0o644)],
+                         ids=['group-exec', 'owner-exec', 'rw-all', 'owner-rw'])
+def test_tar_filter_mode_rule(mode, expected):
+    info = tarfile.TarInfo('PatchTrace/f')
+    info.mode = mode
+    out = linux.tar_filter(info)
+    assert out.mode == expected and out.uid == out.gid == 0 and out.uname == out.gname == ''
 
 
 def test_size_limit(tmp_path, monkeypatch):
