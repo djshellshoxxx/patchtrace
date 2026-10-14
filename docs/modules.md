@@ -95,7 +95,7 @@ Every substantial future module must be added here before implementation. UI mus
 | unified pipeline | src/patchtrace/unified/{pipeline,worker,cli,read_model}.py | stage orchestration, hidden `_worker`, `unified` CLI verbs, Qt-free view model | all unified modules | planned, S0b/S4 |
 | unified UI | src/patchtrace/ui_unified.py | navigator view switch + dock tab in the single MainWindow; threads per C6 rules | Qt, read_model | planned, S4 |
 | prerequisites | jobs.py (spawn lock), nway/graph.py (`EXTERNAL:` keys) | latent defects found while grounding SPEC-31 | - | planned, P1/P2 |
-## Phase D track G: BinDiff + BinExport GUI setup (2026-10-14; spec `docs/specs/multi-engine-evidence-panel.md` §16)
+### [G:bindiff-gui-setup] Phase D track G: BinDiff + BinExport GUI setup (2026-10-14; spec `docs/specs/multi-engine-evidence-panel.md` §16)
 | Module | Files | Responsibility | Depends on | Tests |
 |---|---|---|---|---|
 | engine setup UI | src/patchtrace/ui_engine_setup.py | `BinDiffSetupPanel` (widgets only: executable combo + Browse + Probe, older/newer `.BinExport` pickers, unbound confirmation with warning, Validate/Cancel, plain status lines, technical details) and `BinDiffSetupController` (discovery/probe/validation on unparented `TaskThread`s in `_LIVE_THREADS`, generations, capability + `BinDiffSetup` for runs, shutdown joins); embedded in the C6 Engines tab, reusable by the SPEC-31 dock tab | Qt, evidence panel service, runtime_discovery | `tests/test_ui_engine_setup.py` (offscreen, fakes + real C3 acceptance) |
