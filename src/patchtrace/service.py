@@ -143,14 +143,30 @@ class ProjectService:
                 raise ValueError(run.id)
         except ValueError as exc:
             raise ValueError('PT-SCHEMA: analysis run ID must be a UUID') from exc
-        relative = f'runs/{run.id}/raw/result.ghidriff.json'
-        destination = safe_path(self.root, relative)
-        destination.parent.mkdir(parents=True, exist_ok=True)
         digest = hashlib.sha256(raw_bytes).hexdigest()
-        if destination.exists():
+        run_dir = (self.root / 'runs' / run.id).resolve()
+        in_place = (not source.is_symlink() and source.resolve().is_relative_to(run_dir)
+                    and run.raw_path is not None and safe_path(self.root, run.raw_path) == source.resolve())
+        staged: Path | None = None
+        if in_place:
+            # H8: the backend already published the bytes inside this run's directory; keep one copy.
+            relative = run.raw_path
+            destination = source.resolve()
+            try:
+                destination.chmod(0o444)
+            except OSError:
+                pass
+        else:
+            relative = f'runs/{run.id}/raw/result.ghidriff.json'
+            destination = safe_path(self.root, relative)
+            destination.parent.mkdir(parents=True, exist_ok=True)
+        if in_place:
+            pass
+        elif destination.exists():
             if destination.read_bytes() != raw_bytes:
                 raise ValueError('PT-STORAGE: preserved raw output cannot be replaced')
         else:
+            staged = destination
             fd, temporary = tempfile.mkstemp(prefix='.raw-', dir=destination.parent)
             stage = Path(temporary)
             try:
@@ -166,7 +182,7 @@ class ProjectService:
         prepared = PreparedImport(candidate.id, candidate.revision, owned_run, tuple(normalized),
                                   self.store.file_fingerprint(destination))
         self._prepared[run.id] = (prepared, owned_run.model_copy(deep=True),
-                                  tuple(match.model_copy(deep=True) for match in normalized))
+                                  tuple(match.model_copy(deep=True) for match in normalized), staged)
         return prepared
 
     def apply_import(self, prepared: PreparedImport) -> None:
@@ -193,6 +209,17 @@ class ProjectService:
         owned = self._prepared.get(prepared.run.id)
         if owned is not None and owned[0] is prepared:
             self._prepared.pop(prepared.run.id, None)
+            staged = owned[3]
+            committed = any(item.id == prepared.run.id for item in self.project.runs)
+            if staged is not None and not committed:
+                # H8: a staged copy that never became part of the project snapshot is removed.
+                try:
+                    staged.chmod(0o644)
+                    staged.unlink(missing_ok=True)
+                    for parent in (staged.parent, staged.parent.parent):
+                        parent.rmdir()
+                except OSError:
+                    pass
 
     def record_terminal_run(self, run: AnalysisRun) -> None:
         if run.status not in {'failed', 'cancelled', 'identical'}:
