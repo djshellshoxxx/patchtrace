@@ -348,3 +348,6 @@
 ### [K4:kev-kb-adapter]
 - [x] `kev/kb_adapter.py`, `tests/test_kev_synergy.py` (items 1-8), `tests/test_kev_kb_integration.py` (fake edges).
 - [ ] Open until KB K8: item 9 (`test_three_lanes_stay_separate_for_cve_2024_38063`), real KB view-model run, contextual_rank byte-identity.
+### [R1:yarax-synth]
+- [x] R1 closed-grammar synthesis, strict re-parse, goldens, Formatter fixed point, hostile-input sweeps (`tests/test_yarax_synth.py`).
+- [ ] Integrator: `.gitattributes` `*.yar text eol=lf` and `tests/fixtures/yarax/** text eol=lf`; `yara-x==1.21.0` pin (the synth tests import `yara_x` as an oracle).
