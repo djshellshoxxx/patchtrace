@@ -14,7 +14,8 @@ from .registry import DESCRIPTION_LIMIT, TIPS_CODE
 
 GUI_TIP_IDS = ('gui.state_retry', 'gui.state_copy', 'gui.state_setup', 'gui.state_refresh', 'gui.notice',
                'gui.notice_details', 'gui.notice_dismiss', 'gui.notice_text', 'gui.palette', 'gui.palette_list', 'gui.reset_layout',
-               'gui.cycle_panels', 'gui.navigate', 'panels.dock_tabs', 'menu.view')
+               'gui.cycle_panels', 'gui.navigate', 'panels.dock_tabs', 'menu.view', 'menu.view.theme', 'gui.theme_dark',
+               'gui.theme_system', 'gui.theme_note')
 
 
 class TipError(ValueError):
@@ -90,6 +91,22 @@ def gui_tips() -> dict:
             'Show or hide panels, reset the layout and open the command palette.',
             'Collects the window layout controls in one menu.',
             'Only changes which panels are visible; analysis results are untouched.'),
+        'menu.view.theme': TooltipEntry(
+            'Choose the colours of the window: the dark look, or the colours of your system.',
+            'Lets the window match your desktop, and follows high contrast automatically.',
+            'Only changes colours; the choice is remembered and analysis results are untouched.'),
+        'gui.theme_dark': TooltipEntry(
+            'Use the dark colours of PatchTrace.',
+            'The default look, tuned for reading code and diffs.',
+            'Only changes colours; takes effect at once.'),
+        'gui.theme_system': TooltipEntry(
+            'Use the colours and style of your operating system.',
+            'Follows a light or dark desktop where the platform style supports it.',
+            'Only changes colours; takes effect at once.'),
+        'gui.theme_note': TooltipEntry(
+            'Windows high contrast is on, so the colours come from your Windows theme.',
+            'High contrast is automatic and overrides the chosen theme while it is on.',
+            'Nothing to change here; turn high contrast off in Windows settings to use the choice again.'),
     }
 
 

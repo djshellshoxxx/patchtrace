@@ -551,3 +551,8 @@ CI job text for the integration owner (`.github/workflows/qa-windows.yml`, after
 ### [F8:evidence-migration]
 - Automated: tests/test_evidence_host.py, the C6 suites (test_evidence_ui.py, test_ui_engine_setup.py), test_tooltips.py, test_gui_host_seam.py; Qt gate `python tools/qt_gate.py --repeat 5` over them.
 - Manual, not run: the evidence panel as a dock in the saved layout on Windows (shortcut Ctrl+Shift+E, dock tabs with Unified later, floating on a second monitor), part of M23.
+### [F7:theme] Theme variants (manual M22 on Windows)
+1. View > Theme > System, then switch Windows between light and dark: window, tables, chips and code panes follow without restart; text stays readable.
+2. Turn on a Windows high-contrast theme (Alt+Left Shift+PrtScn): the stylesheet is gone, chips are outlined text with a 2 px edge and no fill, diff hunks are underlined, the focus ring is visible on every control; the Theme submenu shows the disabled note. Turn it off: the chosen variant returns.
+3. Settings > Accessibility > Visual effects > Animation effects off: menus and tooltips appear without fade or slide.
+Automated evidence uses a simulated provider only; no test touches real OS settings.

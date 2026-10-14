@@ -43,9 +43,6 @@ TRUNCATION_NOTICE = '[View truncated at 200,000 characters; provenance copy uses
 SIDES = ('older', 'newer')
 PANE_NAMES = {'older': 'Older artifact code', 'newer': 'Newer artifact code'}
 PROVENANCE_LIMIT = 400
-# Hunk tints: the existing look of ui.py (`replace` bluish, the rest greenish). They are guarded at runtime.
-_HUNK_FILL = {'replace': '#263a43'}
-_HUNK_FILL_OTHER = '#33392b'
 
 _layers: WeakKeyDictionary[QPlainTextEdit, dict[str, list[QTextEdit.ExtraSelection]]] = WeakKeyDictionary()
 
@@ -69,12 +66,14 @@ def clear_selections(view: QPlainTextEdit, *layers: str) -> None:
 def hunk_background(operation: str, tokens: ThemeTokens) -> str:
     """The tint of a hunk, or the plain pane colour when the text would fall below 4.5:1 on it (a palette that
     makes the fixed tint unreadable must never hide code)."""
-    fill = _HUNK_FILL.get(operation, _HUNK_FILL_OTHER)
+    fill = tokens.hunk_replace if operation == 'replace' else tokens.hunk_other
     return ensure_contrast(fill, tokens.text, tokens.surface_alt, TEXT_CONTRAST)
 
 
-def _row_selection(view: QPlainTextEdit, first_row: int, last_row: int, color: str) -> QTextEdit.ExtraSelection | None:
-    """A full-width background over aligned rows, or None when a row is not in the document."""
+def _row_selection(view: QPlainTextEdit, first_row: int, last_row: int, color: str,
+                   underline: str | None = None) -> QTextEdit.ExtraSelection | None:
+    """A full-width background over aligned rows (underlined in ``underline`` when given: high contrast drops
+    the tint, so the mark must not be colour alone), or None when a row is not in the document."""
     document = view.document()
     first, last = document.findBlockByNumber(first_row), document.findBlockByNumber(last_row)
     if not first.isValid() or not last.isValid():
@@ -83,6 +82,9 @@ def _row_selection(view: QPlainTextEdit, first_row: int, last_row: int, color: s
     selection.cursor = QTextCursor(first)
     selection.cursor.setPosition(last.position() + last.length() - 1, QTextCursor.MoveMode.KeepAnchor)
     selection.format.setBackground(QColor(color))
+    if underline:
+        selection.format.setFontUnderline(True)
+        selection.format.setUnderlineColor(QColor(underline))
     selection.format.setProperty(QTextCharFormat.Property.FullWidthSelection, True)
     return selection
 
@@ -204,8 +206,9 @@ class CodeDiffView(QWidget):
 
     def _paint_hunks(self) -> None:
         for pane in self.panes.values():
-            selections = (_row_selection(pane, h.start, h.start + h.length - 1, hunk_background(h.operation, self._tokens))
-                          for h in self._hunks)
+            mark = self._tokens.text if self._tokens.high_contrast else None
+            selections = (_row_selection(pane, h.start, h.start + h.length - 1,
+                                         hunk_background(h.operation, self._tokens), mark) for h in self._hunks)
             compose_selections(pane, 'diff', [item for item in selections if item is not None])
 
     # --- hunks ---

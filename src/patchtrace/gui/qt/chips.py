@@ -2,19 +2,30 @@
 
 ``paint_chip`` is the one drawing routine; ``ChipLabel`` (a widget) and ``ChipDelegate`` (a table column) share
 it. A model hands the delegate a ``ChipSpec`` under ``CHIP_ROLE`` and keeps the plain text under the display and
-accessible-text roles, so sorting, copying and screen readers never depend on the drawing. High-contrast drawing
-(system colours, border style, no fill) is slice F7; here the colours come from ``ThemeTokens``.
+accessible-text roles, so sorting, copying and screen readers never depend on the drawing. In high contrast
+(``tokens.high_contrast``) the fill is dropped, the edge is two pixels of the palette text colour and the state is
+carried by the glyph, the words and the shape; widgets then read the live palette, not stored colours.
 """
 from __future__ import annotations
 
 from PySide6.QtCore import QModelIndex, QPointF, QRect, QRectF, QSize, Qt
-from PySide6.QtGui import QColor, QFont, QFontMetrics, QPainter, QPainterPath, QPaintEvent, QPen, QPolygonF
+from PySide6.QtGui import (
+    QColor,
+    QFont,
+    QFontMetrics,
+    QPainter,
+    QPainterPath,
+    QPaintEvent,
+    QPalette,
+    QPen,
+    QPolygonF,
+)
 from PySide6.QtWidgets import QSizePolicy, QStyle, QStyledItemDelegate, QStyleOptionViewItem, QWidget
 
 from ..state import ChipSpec
 from ..text import sanitize_text
 from ..tips import apply_tip
-from .theme import DARK, ThemeTokens, chip_text_color
+from .theme import DARK, ThemeTokens, chip_text_color, system_tokens
 
 CHIP_ROLE = Qt.ItemDataRole.UserRole + 41
 
@@ -69,19 +80,27 @@ def paint_chip(painter: QPainter, rect: QRect, spec: ChipSpec, tokens: ThemeToke
     chip_font = _font_for(font, spec)
     painter.save()
     painter.setRenderHint(QPainter.RenderHint.Antialiasing)
-    path = _outline(spec.shape, QRectF(rect).adjusted(0.5, 0.5, -0.5, -0.5))
-    if spec.token != 'plain':
+    inset = 1.0 if tokens.high_contrast else 0.5  # the wider pen must stay inside the rectangle
+    path = _outline(spec.shape, QRectF(rect).adjusted(inset, inset, -inset, -inset))
+    if spec.token != 'plain' and not tokens.high_contrast:
         painter.fillPath(path, QColor(colors.fill))
-    pen = QPen(QColor(colors.edge), 1.0)
+    pen = QPen(QColor(colors.edge), 2.0 if tokens.high_contrast else 1.0)
     pen.setStyle(Qt.PenStyle.DashLine if spec.shape == 'dashed' else Qt.PenStyle.SolidLine)
     painter.setPen(pen)
     painter.setBrush(Qt.BrushStyle.NoBrush)
     painter.drawPath(path)
     painter.setFont(chip_font)
-    painter.setPen(QColor(tokens.text if spec.token == 'plain' else chip_text_color(tokens, spec.token)))
+    plain_text = spec.token == 'plain' or tokens.high_contrast
+    painter.setPen(QColor(tokens.text if plain_text else chip_text_color(tokens, spec.token)))
     pad = _padding(QFontMetrics(chip_font), spec.shape, rect.height())
     painter.drawText(rect.adjusted(pad, 0, -pad, 0), Qt.AlignmentFlag.AlignCenter, chip_text(spec))
     painter.restore()
+
+
+def _live(tokens: ThemeTokens, palette: QPalette) -> ThemeTokens:
+    """In high contrast the widget's own palette is the truth (it follows the platform per widget); otherwise the
+    theme's tokens."""
+    return system_tokens(palette, high_contrast=True) if tokens.high_contrast else tokens
 
 
 class ChipLabel(QWidget):
@@ -119,7 +138,7 @@ class ChipLabel(QWidget):
 
     def paintEvent(self, event: QPaintEvent) -> None:  # noqa: N802
         painter = QPainter(self)
-        paint_chip(painter, self.rect(), self._spec, self._tokens, self.font())
+        paint_chip(painter, self.rect(), self._spec, _live(self._tokens, self.palette()), self.font())
         painter.end()
 
 
@@ -149,7 +168,7 @@ class ChipDelegate(QStyledItemDelegate):
         margin = max(1, (option.rect.height() - size.height()) // 2)
         area = QRect(option.rect.left() + margin, option.rect.top() + margin,
                      min(size.width(), option.rect.width() - 2 * margin), size.height())
-        paint_chip(painter, area, spec, self._tokens, option.font)
+        paint_chip(painter, area, spec, _live(self._tokens, option.palette), option.font)
 
     def sizeHint(self, option: QStyleOptionViewItem, index: QModelIndex) -> QSize:  # noqa: N802
         spec = index.data(CHIP_ROLE)

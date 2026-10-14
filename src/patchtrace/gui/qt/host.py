@@ -45,7 +45,7 @@ from .palette import CommandPalette, PaletteEntry
 from .settings import PanelSettings
 from .state_view import NoticeStrip
 from .tasks import TaskRunner
-from .theme import DARK, ThemeTokens
+from .theme import DARK, ThemeController, ThemeTokens, install_theme_menu
 
 log = logging.getLogger('patchtrace.gui')
 CODE_TARGET = '@code'  # the pseudo panel that function and match anchors open: the main window's code panes
@@ -226,6 +226,7 @@ class PanelHost(QObject):
         self.window = window
         self.entries = entries
         self.tokens = DARK
+        self.theme_controller: ThemeController | None = None
         self.index_cache = MatchIndexCache()
         self.closed = False
         register_gui_tips()
@@ -307,6 +308,10 @@ class PanelHost(QObject):
         layout.name_window_parts(window)
         self._wrap_central()
         self.view_menu, self._toggles = install_view_menu(window, self)
+        self.theme_controller = ThemeController(window, window.settings, parent=self)
+        self.theme_controller.theme_changed.connect(self._theme_changed)
+        install_theme_menu(self.view_menu, self.theme_controller)
+        self.theme_controller.refresh()
         saved = layout.stored_state(window.settings) is not None
         message = layout.restore_layout(window, window.settings)
         if message:
@@ -319,6 +324,12 @@ class PanelHost(QObject):
             if panel.spec.eager:
                 self._construct(panel)
         name_tab_bars(window)
+
+    def _theme_changed(self, tokens: ThemeTokens) -> None:
+        self.tokens = tokens
+        for panel in self.panels.values():
+            if panel.controller is not None:
+                self._call(panel, 'theme_changed', tokens)
 
     def _wrap_central(self) -> None:
         """The notice strip sits above the workspace; `takeCentralWidget` first so that nothing is deleted."""
