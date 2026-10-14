@@ -1,0 +1,25 @@
+{
+  "contract": "bindiff-golden-provenance/1",
+  "file": "bindiff-v8-real-on-synthetic.BinDiff",
+  "sha256": "88a4d055a1427cf9910cb0073a8c05afd44f1b91859f12e143bbe920984ce72f",
+  "size": 53248,
+  "stdout_file": "bindiff-v8-real-on-synthetic-stdout.txt",
+  "stdout_sha256": "e4457f2c86a3642fd661c727ff149eee10cbc2d54a542e85329236efc39dc094",
+  "produced_by": "the REAL BinDiff 8 Linux CLI, run by tests/test_live_bindiff.py (end_to_end: run_engines + BinDiffAdapter, preserved raw copy) as uid 65534 with an environment built from scratch",
+  "tool_version": "BinDiff 8 (@568181968, Sep 25 2023)",
+  "tool_package": "bindiff_8_amd64.deb sha256 821990e3974a9df6733794370e485486ac276ba5d777a06b4ebe575f092f4dda (tools/bindiff_pin.json, trust-on-first-use)",
+  "tool_executable_sha256": "eb0a88eb6518e000bc3c4eef66c22db7ace197173eb933ea5d1c8ac3f7d8d0fb",
+  "argv": ["<bindiff>", "--nologo", "--output_format=bin", "--output_dir=<workdir>/out", "--config=<workdir>/bindiff.json", "--primary=<workdir>/in/older.BinExport", "--secondary=<workdir>/in/newer.BinExport"],
+  "config_bytes": "{}",
+  "inputs": {
+    "generator": "tests/bindiff_live_pair.py write_pair(functions=20) (SYNTHETIC; stdlib BinExport2 encoder)",
+    "older_binexport_sha256": "499c08889264b04094840f491eb0cf61b605bb08c59a782e830aff045a080f8b",
+    "newer_binexport_sha256": "d7f6ce0fea2aae714565bf0735e09bee296b18449adbeb148318b8e53f04afcb",
+    "older_sha256": "dc71b8420acc68418eaebfb8a4848cd2f63626125868e9977f017010c8d30215",
+    "newer_sha256": "4af23bcb773054ad469c57363d50e2b53a6590bfba2286f16a06b4fb1440a168",
+    "artifacts": "patchtrace.sample.synthetic_pe(0) and synthetic_pe(1) (project-owned, never executed)"
+  },
+  "produced_on": "2026-10-14, Linux x86-64 container (C4 follow-up session)",
+  "live_compatibility_evidence": "real BinDiff 8 behaviour on SYNTHETIC input; not real-driver (Ghidra/IDA export) evidence",
+  "licence": "result data produced by BinDiff (Apache-2.0) from project-owned synthetic inputs; no upstream code"
+}
