@@ -1138,6 +1138,7 @@ class SetupDialog(QDialog):
         self.worker = None
         self._busy_kind = None
         self.check.setEnabled(True)
+        self.find.setEnabled(self._discovery is None)
 
     def _offline_busy(self, active):
         self._busy_kind = 'offline' if active else None
