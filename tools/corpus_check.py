@@ -240,13 +240,19 @@ def check_suite(directory: Path) -> list[str]:
             seen_old += old_side
             seen_new += new_side
             if label in {'same', 'changed', 'cosmetic', 'moved'} and entry.get('function') in old_names & new_names:
-                text_old = functions[old][entry['function']][1]
-                text_new = functions[new][entry['function']][1]
+                file_old, text_old = functions[old][entry['function']]
+                file_new, text_new = functions[new][entry['function']]
                 if text_old and text_new:
                     same_text = text_old == text_new
-                    _need(same_text == (label == 'same'), findings, pwhere,
+                    moved_file = Path(file_old).name != Path(file_new).name
+                    # same = identical text in the same file; moved = identical text in a different file;
+                    # cosmetic/changed = the text differs
+                    expected = {'same': same_text and not moved_file, 'moved': same_text and moved_file,
+                                'cosmetic': not same_text, 'changed': not same_text}[label]
+                    _need(expected, findings, pwhere,
                           f"{entry['function']}: labelled {label} but the source text is "
-                          f"{'identical' if same_text else 'different'}")
+                          f"{'identical' if same_text else 'different'} and the file is "
+                          f"{'different' if moved_file else 'the same'}")
         for side, names, seen in (('old', old_names, seen_old), ('new', new_names, seen_new)):
             for name in seen:
                 _need(name in names, findings, pwhere, f'truth names {name!r} which is not defined in the {side} version')

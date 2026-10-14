@@ -77,3 +77,23 @@ def test_authoring_mistakes_are_caught(tmp_path):
 @needs_clang
 def test_committed_corpus_is_valid():
     assert corpus_check.check_all(ROOT) == []
+
+
+@needs_clang
+def test_moved_means_identical_text_in_another_file(tmp_path):
+    copy = tmp_path / 'tiny'
+    shutil.copytree(TEMPLATE, copy)
+    old = (copy / 'v1' / 'tiny.c').read_text(encoding='utf-8')
+    (copy / 'v1' / 'extra.c').write_text('int32_t tiny_extra(int32_t x) { return x + 7; }\n', encoding='utf-8')
+    (copy / 'v1' / 'extra.c').write_text('#include <stdint.h>\nint32_t tiny_extra(int32_t x) { return x + 7; }\n',
+                                         encoding='utf-8')
+    (copy / 'v2' / 'moved.c').write_text('#include <stdint.h>\nint32_t tiny_extra(int32_t x) { return x + 7; }\n',
+                                         encoding='utf-8')
+    assert old
+    suite = json.loads((copy / 'suite.json').read_text(encoding='utf-8'))
+    suite['pairs'][0]['truth'].append({'function': 'tiny_extra', 'label': 'moved'})
+    (copy / 'suite.json').write_text(json.dumps(suite), encoding='utf-8')
+    assert corpus_check.check_suite(copy) == []
+    suite['pairs'][0]['truth'][-1]['label'] = 'same'
+    (copy / 'suite.json').write_text(json.dumps(suite), encoding='utf-8')
+    assert any('labelled same' in line for line in corpus_check.check_suite(copy))
