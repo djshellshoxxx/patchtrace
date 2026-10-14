@@ -9,11 +9,13 @@ from collections.abc import Sequence
 from dataclasses import dataclass, field
 
 from .common import Row, det_uniform
+from .guards import validate_rows
 from .mathcore import (
     apply_isotonic,
     fit_isotonic,
     fit_logistic_l2,
     fit_platt,
+    logit,
     logit_score,
     sigmoid,
     standardise_apply,
@@ -23,6 +25,7 @@ from .metrics import logloss
 from .ood_fit import apply_spec, ood_fit
 
 K_NEG = 1.0
+PLATT_MIN_SLOPE = 1e-6
 WEIGHT_CLIP = 20.0
 # PROJECT HEURISTIC, not from any source: isotonic is only considered with >= 1000 effective positives AND
 # negatives. Niculescu-Mizil & Caruana (ICML 2005) only report that isotonic needs more data than Platt;
@@ -128,7 +131,13 @@ def fit_calibrator(kind: str, rows: Sequence[Row], scores: dict[str, float]) -> 
     rows = sorted((r for r in rows if r.stratum == 'natural'), key=lambda r: r.id)
     s, y, w = [scores[r.id] for r in rows], [r.y for r in rows], [r.w for r in rows]
     if kind == 'platt':
-        return ('platt',) + fit_platt(s, y, w)
+        a, b = fit_platt(s, y, w)
+        if a < PLATT_MIN_SLOPE:
+            # No usable signal (or an anti-informative score): a calibrator must be monotone, so fall back to the
+            # flat prevalence predictor instead of a negative slope that the shipped loader rightly rejects.
+            prev = math.fsum(wi * yi for wi, yi in zip(w, y, strict=True)) / math.fsum(w)
+            return ('platt', PLATT_MIN_SLOPE, logit(min(max(prev, 1e-6), 1 - 1e-6)))
+        return ('platt', a, b)
     return ('isotonic', tuple(fit_isotonic(s, y, w)))
 
 
@@ -195,6 +204,7 @@ class NestedResult:
 def nested_cv(rows: Sequence[Row], cfg: CVConfig, *, ood_columns: Sequence[int] = ()) -> NestedResult:
     """Outer grouped folds give honest OOF predictions. With `ood_columns`, the OOD spec is also fitted on
     each outer-train part only and applied to the held-out lineages, to validate the flags (spec §9.6)."""
+    validate_rows(rows)
     rows = sorted(rows, key=lambda r: r.id)
     outer = grouped_kfold(rows, cfg.k_outer, cfg.seed)
     result = NestedResult({}, outer)

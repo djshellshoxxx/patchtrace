@@ -322,7 +322,7 @@ def test_pipeline_is_deterministic_and_order_free():
     assert 'SYNTHETIC' in first.report['claim']
 
 
-def test_built_artifact_loads_in_shipped_runtime_and_only_promotes_on_passing_gates(well_specified):
+def test_built_artifact_loads_in_shipped_runtime_and_only_promotes_on_passing_gates(well_specified, monkeypatch):
     _, res = well_specified
     art = parse_artifact(canonical_json(res.artifact), today=CREATED)
     assert art.status == 'experimental' and artifact_display_level(art) == 'ordinal'
@@ -338,7 +338,18 @@ def test_built_artifact_loads_in_shipped_runtime_and_only_promotes_on_passing_ga
     windows = {**res.artifact, 'calibration_domain': {**res.artifact['calibration_domain'],
                                                        'evidence_tiers': ['tier-r', 'tier-w'],
                                                        'windows_system_binaries': 'local-measured'}}
+    with pytest.raises(PromotionError, match='synthetic'):  # forged Windows domain + forged gates still refused
+        promote(windows, res.report, profile_gates=gates)
+    # Isolate the status-raising path from the two new report checks (covered in test_calibration_hardening).
+    from tools.calibration import fit as fit_module
+    monkeypatch.setattr(fit_module, 'SYNTHETIC_CLAIM', 'x')
+    monkeypatch.setattr(fit_module, '_reproduce_gates', lambda *a: None)
     bands = promote(windows, res.report, profile_gates=gates)
     loaded = parse_artifact(canonical_json(bands), today=CREATED)
-    assert loaded.status == 'bands-ok' and artifact_display_level(loaded) == 'bands'
+    assert loaded.status == 'bands-ok' and artifact_display_level(loaded) == 'ordinal'  # too few lineages
+    big = {**bands, 'calibration_domain': {**bands['calibration_domain'], 'n_lineages': 40}}
+    from patchtrace.calibration.artifact import digest
+    big['digest_sha256'] = digest(big)
+    loaded = parse_artifact(canonical_json(big), today=CREATED)
+    assert artifact_display_level(loaded) == 'bands'
     assert math.isfinite(loaded.intercept)

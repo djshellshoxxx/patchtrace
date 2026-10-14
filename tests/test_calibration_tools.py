@@ -309,7 +309,7 @@ def test_consolidate_agreement_disagreement_adjudication():
     records, stats = consolidate(ev, meta)
     assert [(r['match_id'], r['A'], r['adjudicated']) for r in records] == [('m0', 'same', False),
                                                                            ('m2', 'different', True)]
-    assert stats == {'pending': [('p', 'm1')], 'reveal_changes': 1}
+    assert stats == {'pending': [('p', 'm1')], 'reveal_changes': 1, 'rejected_adjudications': []}
     load_labels(b'\n'.join(json.dumps(r).encode() for r in records))  # valid calibration-labels/1
 
 
