@@ -30,11 +30,13 @@ TRUST_LABELS = {
 
 class InspectionThread(QThread):
     """Bounded read-only inspection of both artifacts; never mutates the project."""
-    inspection_ready = Signal(object)
-    inspection_failed = Signal(str)
+    # Both signals carry the identity key so slots can be plain bound methods (queued onto the GUI thread).
+    inspection_ready = Signal(object, object)
+    inspection_failed = Signal(str, object)
 
-    def __init__(self, project_id: str, artifacts, root: Path, parent=None):
+    def __init__(self, project_id: str, artifacts, root: Path, parent=None, key=None):
         super().__init__(parent)
+        self.key = key
         self.project_id = project_id
         self.artifacts = tuple(artifacts)
         self.root = Path(root)
@@ -44,12 +46,12 @@ class InspectionThread(QThread):
         try:
             result = inspect_project_artifacts(self.project_id, self.artifacts, self.root, self.cancel.is_set)
         except Exception as exc:  # noqa: BLE001 - surfaced to the user as text
-            self.inspection_failed.emit(f'{type(exc).__name__}: {exc}')
+            self.inspection_failed.emit(f'{type(exc).__name__}: {exc}', self.key)
             return
         if self.cancel.is_set():
             result.close()
             return
-        self.inspection_ready.emit(result)
+        self.inspection_ready.emit(result, self.key)
 
 
 def side_summary(inspection: ProjectInspection) -> str:

@@ -1398,6 +1398,7 @@ class MainWindow(QMainWindow):
         self._inspection_key = None
         self._inspection_error = None  # (key, message) of the last failed inspection
         self._inspection_thread = None
+        self._inspection_threads = []
         self._raw_sides = {}
         # Derived enrichment for the current run, keyed by match ID; never part of the project snapshot.
         self._ranking = {}
@@ -2588,10 +2589,12 @@ class MainWindow(QMainWindow):
             if thread.key == key:
                 return
             thread.cancel.set()
-        thread = InspectionThread(self.project.id, self.project.artifacts, self.service.root, self)
-        thread.key = key
-        thread.inspection_ready.connect(lambda result, k=key: self._inspection_ready(result, k))
-        thread.inspection_failed.connect(lambda message, k=key: self._inspection_failed(message, k))
+        thread = InspectionThread(self.project.id, self.project.artifacts, self.service.root, self, key)
+        queued = Qt.ConnectionType.QueuedConnection  # bound-method slots, always delivered on the GUI thread
+        thread.inspection_ready.connect(self._inspection_ready, queued)
+        thread.inspection_failed.connect(self._inspection_failed, queued)
+        thread.finished.connect(self._reap_inspection_threads, queued)
+        self._inspection_threads.append(thread)  # a replaced (cancelled) thread must never be dropped while running
         self._inspection_thread = thread
         self._set_overview_status('File inspection running: verifying hashes and parsing PE headers…')
         thread.start()
@@ -2625,12 +2628,23 @@ class MainWindow(QMainWindow):
         self._inspection, self._inspection_key, self._raw_sides = None, None, {}
         self._inspection_error = None
 
+    def _reap_inspection_threads(self):
+        alive = []
+        for thread in self._inspection_threads:
+            if thread.isRunning():
+                alive.append(thread)
+            else:
+                thread.deleteLater()
+        self._inspection_threads = alive
+
     def _stop_inspection(self):
-        thread = self._inspection_thread
-        if thread is not None:
+        # Every started thread is cancelled and joined: destroying a running QThread aborts the process.
+        for thread in self._inspection_threads:
             thread.cancel.set()
-            thread.wait(10000)
-            self._inspection_thread = None
+        for thread in self._inspection_threads:
+            thread.wait()
+        self._inspection_threads = []
+        self._inspection_thread = None
         self._clear_inspection()
 
     def show_file_overview(self):
