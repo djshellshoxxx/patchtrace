@@ -340,3 +340,8 @@
 ### [F6b:graph-canvas]
 - [x] GraphCanvas and gui/graph_view.py with focused tests.
 - [ ] BLOCKED (manual): Windows timings of the 500/2,000 and 2,000/8,000 budgets, real screen reader output for node announcements.
+
+### [F6a:codediff]
+- [ ] Integrator (M4): move the four ui.py setExtraSelections sites (render_match, _highlight_hunks, raw view, raw clear) to compose_selections; adopt CodeDiffView in ui.py when M4 lands.
+- [ ] WBQ S9: attach the windowed CodeHighlighter through CodeDiffView.attach_highlighter before set_pair.
+- [ ] F7: hunk tints come from the ui.py literals (#263a43, #33392b) guarded by ensure_contrast; move them to ThemeTokens with the system and high-contrast variants.

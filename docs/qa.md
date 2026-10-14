@@ -523,3 +523,9 @@ Not verified here: Windows and GitHub Actions; any live Ollama or OpenAI-compati
 |---|---|
 | test_gui_graph_view.py and test_gui_qt_canvas.py, qt_gate repeat 5 | 295 passed, no abort or surviving thread |
 | Not verified here | Windows timings, real screen readers, DPI scaling |
+
+### [F6a:codediff]
+| Check | Evidence |
+|---|---|
+| Layers, hunk API, caps, truncation, hostile text, scroll sync, stub windowed highlighter survives set_pair | tests/test_gui_codediff.py, tests/test_gui_pair_text.py |
+| Not verified here | Windows rendering, screen readers, high contrast, highlighter cost at 65k lines |
