@@ -1,0 +1,748 @@
+"""Declarative tooltip registry (SPEC-26 requirement A).
+
+Every functional control is keyed by a stable semantic ID, never by visible text or position. The
+table itself is pure data; PySide6 is never imported here, so the registry can be validated without a
+Qt runtime. The ``apply_*`` helpers only call setter methods on the widget or action they are given.
+
+Static controls use :func:`tooltip`. Dynamic items (detector IDs, recent paths) use
+:func:`template`, which strips control characters, caps the length and escapes every interpolated
+value so untrusted names can never be interpreted as markup.
+"""
+from __future__ import annotations
+
+import html
+import re
+from dataclasses import dataclass
+
+VALUE_LIMIT = 200
+EXEMPT_IDS = frozenset({'action.new', 'action.open'})
+_CONTROL = re.compile(r'[\x00-\x08\x0b-\x1f\x7f-\x9f\u2028\u2029]')
+
+
+@dataclass(frozen=True)
+class TooltipEntry:
+    what: str
+    why: str
+    effect: str
+    source: str = ''
+    availability: str = ''
+
+    def lines(self) -> list[str]:
+        pairs = [('What', self.what), ('Why', self.why), ('Effect', self.effect),
+                 ('Source', self.source), ('Availability', self.availability)]
+        return [f'{label}: {text}' for label, text in pairs if text]
+
+    def render(self) -> str:
+        """Readable plain text, one 'Label: text' line per field. Not markup."""
+        return '\n'.join(self.lines())
+
+
+def _e(what: str, why: str, effect: str, source: str = '', availability: str = '') -> TooltipEntry:
+    return TooltipEntry(what, why, effect, source, availability)
+
+
+_CODE_SOURCE = (
+    'Decompiled code is C-like decompiler output produced by Ghidra via Ghidriff, not original source code. '
+    'Assembly is shown only when the upstream Ghidriff result retained it. Metadata comes from the saved '
+    'normalized or raw analysis. Blank rows are PatchTrace display alignment only. No text view implies '
+    'that bytes were extracted from this function.')
+
+
+def _code_pane(side: str, other: str) -> TooltipEntry:
+    return _e(
+        f'Read-only {side} function representation for the selected match, in the mode chosen in the '
+        'representation selector.',
+        f'Lets you read the {side} side next to the {other} side without altering either.',
+        'Nothing changes. Selecting text and copying is safe; edits are not possible.',
+        _CODE_SOURCE,
+        'Needs a selected function match. Unavailable representations are shown as unavailable, never '
+        'reconstructed.')
+
+
+_DEFAULT_RO = 'The default profile is read-only.'
+
+REGISTRY: dict[str, TooltipEntry] = {
+    # ---- main window actions -------------------------------------------------------------------
+    'action.new': _e('Create a new comparison project from two PE x64 files.',
+                     'Starts a project with explicit older and newer artifacts.',
+                     'Opens the New comparison dialog.'),
+    'action.open': _e('Open an existing PatchTrace project folder.',
+                      'Resume earlier work.', 'Replaces the project shown in the window.'),
+    'action.acquire': _e(
+        'Search Winbindex metadata and download exact-hash Microsoft binaries for comparison.',
+        'Obtains an older and a newer build of a Windows file without hunting for them by hand.',
+        'Opens the acquisition dialog. Nothing is contacted until you confirm each request, and a new '
+        'project is created from the downloaded files.',
+        'Winbindex metadata and the Microsoft symbol server. Availability and signature authenticity are '
+        'separate questions.',
+        'Disabled while a job is running.'),
+    'action.sample': _e(
+        'Create a separate synthetic comparison project.',
+        'Demonstrates code, evidence and reviews without analyzing actual binaries.',
+        'Opens a new sample project; your current project is not modified.',
+        'Built-in synthetic fixture data, not real binaries.',
+        'Disabled while a job is running.'),
+    'action.import_json': _e(
+        'Load raw Ghidriff JSON from a comparison of this exact binary pair.',
+        'Lets you reuse a comparison produced elsewhere instead of running one here.',
+        'PatchTrace validates orientation and artifact identity before committing results; failures keep '
+        'the earlier results.',
+        'A Ghidriff JSON file you choose.',
+        'Needs an open project and no running job.'),
+    'action.file_overview': _e(
+        'View older/newer names, sizes and saved SHA-256 values immediately.',
+        'Gives a quick sanity check of the pair before any slow analysis.',
+        'Opens a non-modal, read-only table. No PE headers or signatures are inspected yet.',
+        'Metadata recorded in the project when it was created; nothing is read from disk again.',
+        'Needs an open project; works without a configured backend.'),
+    'action.run_comparison': _e(
+        'Run an external Ghidriff/Ghidra static comparison of the project-owned older and newer PE x64 '
+        'files.',
+        'Produces the function matches and decompiled differences you review.',
+        'Starts a background job and opens the file overview first. Results are committed only on '
+        'success; earlier results are kept on failure. Neither binary is executed.',
+        'Ghidriff and Ghidra output, not live execution.',
+        'Needs an open project, no running job, and a configured backend (see Setup).'),
+    'action.rank_changes': _e(
+        'Apply PatchTrace heuristic signals to changed Ghidriff decompiled code and order functions by '
+        'attention score.',
+        'Helps decide where to read first.',
+        'Adds derived signals and an attention ordering. The score is not vulnerability likelihood.',
+        'The saved raw Ghidriff result of the latest completed run and the selected analysis profile.',
+        'Needs a completed run with a saved raw result and no running job.'),
+    'action.cancel_job': _e(
+        'Request cancellation of the active comparison, import or analysis job.',
+        'Stops long work you no longer want.',
+        'The job stops cooperatively. Previously committed results are retained.',
+        availability='Only enabled while a job is running and not already being cancelled.'),
+    'action.interpret': _e(
+        'Send selected function differences and evidence to the configured AI provider after showing '
+        'the exact context.',
+        'Gets an optional second opinion on what a change might mean.',
+        'Opens a preview. Nothing is transmitted until you accept. AI conclusions are unverified '
+        'hypotheses.',
+        'Selected matches and their evidence from the saved project.',
+        'Needs an open project, one or more selected matches and no running job.'),
+    'action.export': _e(
+        'Preview and export a report containing analysis provenance, reviews and optionally notes or code.',
+        'Produces a shareable record of your analysis.',
+        'Opens the export dialog; a file is written only after you review the preview and confirm.',
+        'Saved project data.',
+        'Needs an open project and no running job.'),
+    'action.setup': _e(
+        'Configure local Python/Ghidra backends, preferences, the optional offline runtime and analysis '
+        'profiles.',
+        'Comparison cannot run until its external tools are located.',
+        'Opens the setup dialog. Saved paths and preferences apply after Save setup. Nothing is '
+        'installed automatically.',
+        availability='Disabled while a job is running.'),
+    'action.swap_orientation': _e(
+        'Exchange the older and newer binaries of the project.',
+        'Corrects a project that was created with the files reversed.',
+        'Reverses patch direction after confirmation; existing interpretations may become stale.',
+        availability='Needs an open project and no running job.'),
+    'action.save': _e(
+        'Persist the current project snapshot and review state.',
+        'Keeps your reviews and notes.',
+        'Writes to the project local SQLite history.',
+        availability='Needs an open project and no running job.'),
+    'action.backup': _e(
+        'Create a complete separate backup of the project.',
+        'Protects the database, stored binaries and analysis outputs before risky changes.',
+        'Copies everything into a folder you choose; the project itself is unchanged.',
+        availability='Needs an open project and no running job.'),
+    'action.undo_match_correction': _e(
+        'Undo the most recent eligible manual function relationship correction.',
+        'Reverts a correction made by mistake while keeping its provenance.',
+        'Marks the latest non-stale override as undone and restores the earlier relationship.',
+        availability='Needs a previous manual correction that is not stale, and no running job.'),
+    'action.help': _e(
+        'Explain how analysis, external dependencies, projects, findings and reports work.',
+        'First-time orientation without leaving the application.',
+        'Opens a read-only help window.',
+        'Static text shipped with PatchTrace.'),
+    'action.next_difference': _e(
+        'Move to the next changed region, continuing into the next visible function at the end.',
+        'Keyboard route (Alt+Down) for stepping through a patch.',
+        'Moves the selection and scrolls both panes; analysis data is unchanged.',
+        'Line alignment of the currently displayed function records.',
+        'Needs a selected match containing changed regions.'),
+    'action.previous_difference': _e(
+        'Move to the preceding changed region, continuing into the previous visible function at the start.',
+        'Keyboard route (Alt+Up) for stepping back through a patch.',
+        'Moves the selection and scrolls both panes; analysis data is unchanged.',
+        'Line alignment of the currently displayed function records.',
+        'Needs a selected match containing changed regions.'),
+    'action.recent_projects': _e(
+        'Submenu listing recently opened projects.',
+        'Reopen earlier work in one step.',
+        'Choosing an entry replaces the project shown in the window.',
+        'Paths stored in your local desktop settings.',
+        'Disabled when no recent projects exist or while a job is running.'),
+    'menu.project': _e('Project menu: create, open, import, export, back up and reorient projects.',
+                       'Groups project-level commands.', 'Opens the menu; nothing changes by itself.'),
+    'menu.analysis': _e('Analysis menu: run, rank, cancel, interpret and set up analysis.',
+                        'Groups analysis commands.', 'Opens the menu; nothing changes by itself.'),
+    'menu.help': _e('Help menu: workflow and dependency guidance.', 'Groups help commands.',
+                    'Opens the menu; nothing changes by itself.'),
+    # ---- navigator ---------------------------------------------------------------------------
+    'nav.search': _e(
+        'Filter the function list by name or address text, for example CreateFileW or 0x180001000.',
+        'Finds one function quickly in a large comparison.',
+        'Narrows the visible matches only; no data is changed.',
+        'Names and addresses recorded in the saved Ghidriff matches.'),
+    'nav.category_filter': _e(
+        'Show only matches of one relationship category such as modified, added or removed.',
+        'Focuses review on the kind of change you care about.',
+        'Narrows the visible list only.',
+        'Categories assigned by Ghidriff or by a manual correction.'),
+    'nav.review_filter': _e(
+        'Show only matches with one analyst review status.',
+        'Tracks what you have and have not looked at.',
+        'Narrows the visible list only.',
+        'Review states saved in this project.'),
+    'nav.order': _e(
+        'Choose project order or attention-score order for the match list.',
+        'Attention scores prioritize research; they do not establish exploitability.',
+        'Reorders the visible list only.',
+        'Scores come from the Rank changes action.',
+        'Attention order is meaningful only after Rank changes has produced scores.'),
+    'nav.manual_filter': _e(
+        'Show only matches whose function relationship was corrected manually.',
+        'Audits your own overrides.', 'Narrows the visible list only.',
+        'Manual correction annotations saved in this project.'),
+    'nav.finding_filter': _e(
+        'Show only matches referenced by at least one finding.',
+        'Jumps to functions an interpretation has already discussed.', 'Narrows the visible list only.',
+        'Interpretation findings saved in this project.',
+        'Empty until an interpretation has been run.'),
+    'nav.matches': _e(
+        'List of function matches; select one to inspect, or several to interpret together.',
+        'It is the main way to choose which function to read.',
+        'Selecting shows both sides in the code panes. Multi-selection feeds Interpret selection.',
+        'Function matches from the saved Ghidriff comparison.',
+        'Empty until a comparison has run, a JSON was imported or the sample was opened.'),
+    'nav.signals': _e(
+        'Deterministic change signals for the selected match; activate one to jump to its source.',
+        'Shows why a function ranked high so you can verify it in code.',
+        'Selecting an entry scrolls the code pane to the supporting lines.',
+        'Heuristic detectors run over Ghidriff decompiled code. Signals are hints, not findings.',
+        'Needs a selected match and a completed Rank changes.'),
+    'nav.match_review': _e(
+        'Set the analyst review status of the selected match.',
+        'Records your progress through the list.',
+        'Saves the new status to the project. It does not establish vulnerability validity.',
+        availability='Needs a selected match and no running job.'),
+    'nav.correct_match': _e(
+        'Correct which older and newer function records belong to the selected match.',
+        'Fixes wrong pairings made by automatic matching.',
+        'Opens a dialog; saving adds a provenance-tracked override and invalidates dependent findings.',
+        availability='Needs a selected match and no running job.'),
+    # ---- code viewer -------------------------------------------------------------------------
+    'viewer.mode': _e(
+        'Choose the representation of the selected function: decompiled C-like text, actual assembly, '
+        'or preserved metadata.',
+        'Different views answer different questions about the same change.',
+        'Redraws both panes. Unavailable representations are not reconstructed.',
+        'The imported or freshly generated Ghidriff JSON.'),
+    'viewer.sync_scroll': _e(
+        'Synchronize older and newer code-pane vertical scroll positions.',
+        'Keeps matched lines level while you read.',
+        'Scrolling one pane moves the other. Only the view position is affected.',
+        'Pane text comes from the current Ghidriff result, padded with alignment gaps for display.'),
+    'nav.previous_hunk': _e(
+        'Move to the preceding changed region; at the start of a function, go to the previous visible '
+        'function in the filtered list.',
+        'Steps through a patch without scrolling by hand. Shortcut: Alt+Up.',
+        'Moves the selection and scroll position; data is unchanged.',
+        'Line alignment of the displayed Ghidriff function records.',
+        'Needs a selected match containing changed regions.'),
+    'nav.next_hunk': _e(
+        'Move to the next changed region; at the end of a function, go to the next visible function in '
+        'the filtered list.',
+        'Steps through a patch without scrolling by hand. Shortcut: Alt+Down.',
+        'Moves the selection and scroll position; data is unchanged.',
+        'Line alignment of the displayed Ghidriff function records.',
+        'Needs a selected match containing changed regions.'),
+    'viewer.copy_older': _e(
+        'Copy the full text of the older code pane to the clipboard.',
+        'Lets you paste the older representation into notes or other tools.',
+        'Places plain text on the clipboard; the project is unchanged.',
+        'Exactly what the older pane shows, including display-only alignment gaps.',
+        'Needs a selected match with text shown.'),
+    'viewer.copy_newer': _e(
+        'Copy the full text of the newer code pane to the clipboard.',
+        'Lets you paste the newer representation into notes or other tools.',
+        'Places plain text on the clipboard; the project is unchanged.',
+        'Exactly what the newer pane shows, including display-only alignment gaps.',
+        'Needs a selected match with text shown.'),
+    'viewer.older_code': _code_pane('older', 'newer'),
+    'viewer.newer_code': _code_pane('newer', 'older'),
+    'nav.hunk_list': _e(
+        'Jump to a particular inserted, removed or replaced region in the selected function.',
+        'Gives a table of contents for the differences.',
+        'Scrolls both panes to the chosen region.',
+        'Derived from PatchTrace line alignment of the text currently displayed, not source-level line '
+        'numbers.',
+        'Needs a selected match containing changed regions.'),
+    # ---- findings ----------------------------------------------------------------------------
+    'findings.search': _e(
+        'Search interpretation findings by text, for example integer overflow.',
+        'Finds a finding in a long list.', 'Narrows the visible findings only.',
+        'Finding summaries saved from earlier interpretations.'),
+    'findings.review_filter': _e(
+        'Show only findings with one review status.', 'Tracks which findings still need your decision.',
+        'Narrows the visible findings only.', 'Review states saved in this project.'),
+    'findings.stale_filter': _e(
+        'Choose between current findings, stale findings or both.',
+        'Stale findings were produced for an analysis that has since changed.',
+        'Narrows the visible findings only. Stale findings cannot navigate into a different run.',
+        'Staleness flags saved in this project.'),
+    'findings.list': _e(
+        'List of AI-assisted findings; select one to read its details.',
+        'Lets you audit each hypothesis independently.',
+        'Selecting shows details and evidence. Model output is an unverified hypothesis.',
+        'Interpretation runs saved in this project.',
+        'Empty until an interpretation has been run.'),
+    'findings.detail': _e(
+        'Read-only detail of the selected finding: summary, hypothesis and alternatives.',
+        'Keeps model content separate from your own conclusion.',
+        'Nothing changes; select text to copy it.',
+        'Model output stored with the interpretation run. Treat it as unverified.',
+        'Shows a hint until a finding is selected.'),
+    'findings.evidence': _e(
+        'Evidence records cited by the selected finding; select one to navigate to its code.',
+        'Lets you verify claims against the real function text.',
+        'Selecting jumps the code panes to the cited lines when the run is still current.',
+        'Evidence references resolved against the saved analysis.',
+        'Needs a selected finding.'),
+    'findings.bookmark': _e(
+        'Bookmark the selected evidence record.', 'Marks proof you want to find again.',
+        'Adds a bookmark annotation to the project.',
+        availability='Needs a selected evidence record and no running job.'),
+    'findings.review_status': _e(
+        'Set the review status for the selected finding.', 'Records whether you accept the hypothesis.',
+        'Applied when you choose Save finding review.',
+        availability='Needs a selected finding and no running job.'),
+    'findings.conclusion': _e(
+        'Type your own conclusion about the selected finding, for example Confirmed: bounds check added.',
+        'Keeps analyst judgement separate from model content.',
+        'Saved with the review when you choose Save finding review.',
+        availability='Needs a selected finding and no running job.'),
+    'findings.save_review': _e(
+        'Save the review status and conclusion for the selected finding.',
+        'Commits your decision.', 'Writes to the project.',
+        availability='Needs a selected finding and no running job.'),
+    'findings.note_target': _e(
+        'Choose whether a new note attaches to the selected match or the selected finding.',
+        'Keeps notes next to what they describe.', 'Changes only where Save note will attach the text.',
+        availability='Needs an open project and no running job.'),
+    'findings.notes': _e(
+        'Type an analyst note, free text.', 'Records observations without involving AI.',
+        'Saved to the chosen target when you choose Save note.',
+        availability='Needs an open project and no running job.'),
+    'findings.save_note': _e(
+        'Save the typed note to the selected match or finding.', 'Keeps your reasoning with the data.',
+        'Adds a note annotation to the project.',
+        availability='Needs a selected target matching the note target, and no running job.'),
+    'findings.inspect_responses': _e(
+        'Inspect the raw responses returned by the interpretation provider.',
+        'Lets you audit exactly what the model said.',
+        'Opens a read-only window; nothing is sent or changed.',
+        'Provider responses stored with each interpretation run.',
+        'Needs an interpretation to exist.'),
+    'job.log': _e(
+        'Read-only log of job progress, warnings and export messages.',
+        'Shows why a comparison or import succeeded or failed.',
+        'Nothing changes; select text to copy it.',
+        'Messages emitted by PatchTrace and the external backend. Capped at 2000 lines.'),
+    # ---- New project dialog ----------------------------------------------------------------
+    'new_project.name': _e(
+        'Name of the new project, for example Patch comparison.', 'Identifies the project in menus.',
+        'Used as the project title.', availability='Required.'),
+    'new_project.older': _e(
+        'Path of the older PE x64 file, for example C:\\samples\\app_1.0.dll. You can drop a file here.',
+        'Defines the baseline side of the patch.',
+        'The file is copied into the project; the original is preserved and never executed.',
+        'Format and architecture are validated on creation.', 'Required; must be an existing file.'),
+    'new_project.newer': _e(
+        'Path of the newer PE x64 file, for example C:\\samples\\app_1.1.dll. You can drop a file here.',
+        'Defines the patched side.',
+        'The file is copied into the project; the original is preserved and never executed.',
+        'Format and architecture are validated on creation.', 'Required; must be an existing file.'),
+    'new_project.root': _e(
+        'Folder that will hold the new project, for example D:\\work\\patchtrace-project.',
+        'Everything PatchTrace stores for this comparison lives there.',
+        'The folder is created and filled on creation.', availability='Must be absent or empty.'),
+    'new_project.older_browse': _e(
+        'Choose the older PE file in a file picker.', 'Avoids typing a long path.',
+        'Fills the older path field.'),
+    'new_project.newer_browse': _e(
+        'Choose the newer PE file in a file picker.', 'Avoids typing a long path.',
+        'Fills the newer path field.'),
+    'new_project.root_browse': _e(
+        'Choose a parent folder for the new project.', 'Avoids typing a long path.',
+        'Fills the project directory field with a new patchtrace-project folder inside it.'),
+    'new_project.swap': _e(
+        'Exchange the older and newer paths.', 'Fixes a reversed selection before creation.',
+        'Swaps the two path fields only; nothing is created yet.'),
+    'new_project.accept': _e(
+        'Create the project from the entered files.', 'Finishes setup of a new comparison.',
+        'Validates the inputs, copies the files and opens the new project.',
+        availability='Needs a name, two existing files and an absent or empty folder.'),
+    'new_project.cancel': _e(
+        'Close this dialog without creating a project.', 'Backs out safely.', 'Nothing is created.'),
+    # ---- Acquisition dialog ----------------------------------------------------------------
+    'acquire.name': _e(
+        'Windows x64 file name to look up, for example clfs.sys.', 'Winbindex is searched by file name.',
+        'Used by Search Winbindex; nothing is contacted until you confirm.',
+        availability='Disabled while a download or search runs.'),
+    'acquire.search': _e(
+        'Search Winbindex for builds of the named file.', 'Lists the versions you can compare.',
+        'After you confirm the exact host, fills the table with candidate builds.',
+        'Winbindex metadata over the network.', 'Needs a file name; disabled while a job runs.'),
+    'acquire.table': _e(
+        'Candidate builds: version, KB numbers, release date, download availability and SHA-256.',
+        'Lets you pick two builds with full knowledge of what they are.',
+        'Selecting a row enables Use as older and Use as newer.',
+        'Winbindex metadata; authenticity of the files is a separate question.',
+        'Empty until a search completes.'),
+    'acquire.use_older': _e(
+        'Use the selected build as the older side.', 'Orientation must be explicit.',
+        'Fills the Older build line below.', availability='Needs a selected row that is downloadable.'),
+    'acquire.use_newer': _e(
+        'Use the selected build as the newer side.', 'Orientation must be explicit.',
+        'Fills the Newer build line below.', availability='Needs a selected row that is downloadable.'),
+    'acquire.swap': _e(
+        'Exchange the chosen older and newer builds.', 'Fixes a reversed choice.',
+        'Swaps the two picks only.', availability='Needs at least one pick.'),
+    'acquire.project_name': _e(
+        'Name for the project created from the download, for example clfs.sys patch.',
+        'Identifies the project afterwards.', 'Used as the project title.'),
+    'acquire.root': _e(
+        'Folder for the new project, for example D:\\work\\clfs-project.',
+        'Downloads are stored inside the project.', 'The folder is created on download.',
+        availability='Must be absent or empty.'),
+    'acquire.browse': _e(
+        'Choose the project folder in a file picker.', 'Avoids typing a long path.',
+        'Fills the project directory field.'),
+    'acquire.log': _e(
+        'Read-only log of search and download steps.', 'Shows exactly which requests were made.',
+        'Nothing changes; select text to copy it.', 'Events reported by the acquisition transport.'),
+    'acquire.download': _e(
+        'Download both builds and create a project.', 'Fetches the exact-hash binaries.',
+        'After you confirm each host and URL, files are verified, quarantined and promoted into a new '
+        'project.', 'Microsoft symbol server.', 'Needs both an older and a newer build picked.'),
+    'acquire.cancel': _e(
+        'Cancel the running search or download.', 'Stops network work you no longer want.',
+        'The request stops cooperatively; no project is created.',
+        availability='Only enabled while a job is running.'),
+    'acquire.close': _e(
+        'Close this dialog.', 'Leave acquisition.',
+        'A running job is cancelled first; nothing else changes.'),
+    # ---- Setup dialog ----------------------------------------------------------------------
+    'setup.tabs': _e(
+        'Switch between backend and desktop settings and analysis profiles.',
+        'Keeps related settings together.', 'Changes the visible page only.'),
+    'setup.python': _e(
+        'Path of the external Python executable that has Ghidriff installed, for example '
+        'C:\\ghidriff\\Scripts\\python.exe.',
+        'Comparison runs Ghidriff in this separate environment.',
+        'Saved with Save setup and used by Run comparison. It is not run until you diagnose or compare.',
+        availability='Read-only during offline installation.'),
+    'setup.python_browse': _e(
+        'Choose the Python executable in a file picker.', 'Avoids typing a long path.',
+        'Fills the Python field.'),
+    'setup.ghidra_dir': _e(
+        'Folder of the unpacked Ghidra installation, for example C:\\tools\\ghidra_11.3.',
+        'Ghidriff needs Ghidra for decompilation.', 'Saved with Save setup.',
+        availability='Read-only during offline installation.'),
+    'setup.ghidra_browse': _e(
+        'Choose the Ghidra folder in a file picker.', 'Avoids typing a long path.',
+        'Fills the Ghidra directory field.'),
+    'setup.java_home': _e(
+        'Optional private Java folder, for example C:\\tools\\jdk-21. Leave empty to use the system Java.',
+        'Ghidra needs a compatible Java runtime.', 'Saved with Save setup.',
+        availability='Optional. Read-only during offline installation.'),
+    'setup.java_browse': _e(
+        'Choose the Java folder in a file picker.', 'Avoids typing a long path.',
+        'Fills the Java directory field.'),
+    'setup.symbol_downloads': _e(
+        'Allow Ghidriff to look up symbols on the Internet.',
+        'Symbols improve names but contact a symbol server.',
+        'When on, comparison may make network requests. When off, none are made.',
+        'Applies to Ghidriff symbol lookups only.'),
+    'setup.timeout': _e(
+        'Seconds a comparison may run before it is stopped, a whole number from 10 to 86400.',
+        'Prevents a stuck backend from running forever.', 'Saved with Save setup.'),
+    'setup.font_size': _e(
+        'Code font size in points, a whole number from 8 to 28.', 'Adjusts readability of the code panes.',
+        'Applied when you save setup.'),
+    'setup.context_budget': _e(
+        'Maximum characters of context sent for interpretation, a whole number from 512 to 200000.',
+        'Bounds the size and cost of what leaves the machine.',
+        'Larger budgets include more records; omitted ones are listed in the preview.'),
+    'setup.sync': _e(
+        'Default for synchronized code scrolling.', 'Remembers your preferred reading mode.',
+        'Applied to the Sync scroll option when you save setup.'),
+    'setup.diagnostics': _e(
+        'Read-only output of discovery and dependency diagnosis.', 'Explains what is missing.',
+        'Nothing changes; select text to copy it.',
+        'Results of local checks. No target binary is run.'),
+    'setup.find': _e(
+        'Look for existing Python and Ghidra installations on this computer.',
+        'Saves hunting for paths.', 'Fills empty path fields with what it finds.',
+        'Local folders only; no network access.', 'Disabled during offline installation.'),
+    'setup.bundle_sha': _e(
+        'Optional SHA-256 of the offline ZIP from a trusted source, 64 lowercase hex characters.',
+        'Proves the archive matches what the publisher advertises.',
+        'Compared with the ZIP before you are asked to install.', availability='Optional.'),
+    'setup.install': _e(
+        'Install a prebuilt offline backend ZIP.', 'Provides Ghidriff, Ghidra and Java without Internet.',
+        'Inspects the ZIP, shows its details and asks before a private per-user installation. Nothing '
+        'is executed or downloaded.', 'A ZIP file you choose.', 'Disabled while another operation runs.'),
+    'setup.cancel_install': _e(
+        'Cancel the running offline installation check.', 'Stops a long extraction.',
+        'The operation stops cooperatively.', availability='Only enabled while an installation runs.'),
+    'setup.diagnose': _e(
+        'Check that Python, Ghidriff, Ghidra and Java are usable.', 'Finds problems before a long run.',
+        'Reports results in the output area. Neither target artifact is run.',
+        'Local checks of the configured paths.', 'Disabled during offline installation.'),
+    'setup.accept': _e(
+        'Save the backend, desktop and profile settings.', 'Makes the changes take effect.',
+        'Writes preferences to local desktop settings. API keys are never saved.'),
+    'setup.cancel': _e(
+        'Close setup without saving.', 'Backs out safely.', 'Discards unsaved edits.'),
+    # ---- Profiles panel --------------------------------------------------------------------
+    'profile.list': _e(
+        'List of analysis profiles; select one to view or edit it.',
+        'Profiles control which detectors rank changes and how.',
+        'Selecting loads the profile into the editor.',
+        'Profile files in your profile folder. The default profile is read-only.'),
+    'profile.new': _e(
+        'Create a new profile from the default settings.', 'Start a custom ranking setup.',
+        'Adds a profile you can edit and save.'),
+    'profile.duplicate': _e(
+        'Copy the selected profile under a new name.', 'Tweak a profile without losing the original.',
+        'Adds a copy to the list.', availability='Needs a selected profile.'),
+    'profile.delete': _e(
+        'Delete the selected profile.', 'Removes one you no longer need.',
+        'Asks for confirmation, then removes its file.',
+        availability='Needs a selected profile; the default cannot be deleted.'),
+    'profile.name': _e(
+        'Profile name, up to 64 characters, for example strict-bounds.', 'Identifies the profile in lists.',
+        'Used as the profile name when saved.', availability=_DEFAULT_RO),
+    'profile.feature_ids': _e(
+        'Windows Feature IDs to consider, comma-separated whole numbers from 0 to 4294967295 such as '
+        '1234, 5678. Empty means all features.',
+        'Restricts the WIL detector to features you care about.',
+        'Saved with the profile.', availability=_DEFAULT_RO),
+    'profile.symbol_policy': _e(
+        'Symbol policy: disabled or online.', 'Controls whether symbol lookups may use the network.',
+        'Saved with the profile; online permits network lookups.',
+        availability=_DEFAULT_RO),
+    'profile.max_age': _e(
+        'Maximum age in days of enrichment snapshots, a whole number from 1 to 3650.',
+        'Avoids relying on stale advisory data.', 'Saved with the profile.',
+        availability=_DEFAULT_RO),
+    'profile.cache_dir': _e(
+        'Absolute folder for the enrichment cache, for example D:\\patchtrace-cache. Empty means no cache.',
+        'A cache avoids repeating downloads.', 'Saved with the profile.',
+        availability=_DEFAULT_RO),
+    'profile.cache_budget': _e(
+        'Cache size limit in GiB, a whole number from 1 to 1024.', 'Stops the cache growing unbounded.',
+        'Saved with the profile.', availability=_DEFAULT_RO),
+    'profile.save': _e(
+        'Save the edited profile.', 'Makes the weights and options available for ranking.',
+        'Validates then writes the profile file; errors are shown below.',
+        availability=_DEFAULT_RO),
+    'profile.provider_nvd': _e(
+        'Use NVD as a CVE provider for this profile.', 'Adds advisory context from NVD.',
+        'Saved with the profile; network use is still explicit.',
+        availability=_DEFAULT_RO),
+    'profile.provider_msrc': _e(
+        'Use MSRC as a CVE provider for this profile.', 'Adds advisory context from Microsoft.',
+        'Saved with the profile; network use is still explicit.',
+        availability=_DEFAULT_RO),
+    # ---- Interpretation context dialog -------------------------------------------------------
+    'context.tabs': _e(
+        'Switch between the exact context, the exact system prompt and omitted records.',
+        'You can see everything that would be sent.', 'Changes the visible page only.'),
+    'context.exact_context': _e(
+        'Exact payload that will be sent to the provider.', 'Transmission must be explicit and reviewable.',
+        'Read-only; nothing is sent until you choose Send context.',
+        'Built from the selected matches and evidence in the saved project.'),
+    'context.system_prompt': _e(
+        'Exact system prompt that will accompany the context.', 'Shows the instructions given to the model.',
+        'Read-only; nothing changes.', 'The prompt shipped with PatchTrace.'),
+    'context.omitted': _e(
+        'Records left out of the context, with reasons.', 'Shows what the model will not see.',
+        'Read-only; nothing changes.', 'Budget and availability decisions made while building the context.'),
+    'context.kind': _e(
+        'Provider type: ollama (local) or openai (OpenAI-compatible).', 'Selects the protocol used.',
+        'Changes which endpoint rules apply; Ollama must use a loopback endpoint.'),
+    'context.endpoint': _e(
+        'Provider URL, for example http://127.0.0.1:11434 for Ollama or https://api.example.com/v1.',
+        'Tells PatchTrace where to send the context.',
+        'Used only after you choose Send context. OpenAI-compatible providers require HTTPS.'),
+    'context.model': _e(
+        'Model name to request, for example llama3 or gpt-4o.', 'Chooses which model answers.',
+        'Sent with the request.', availability='Required.'),
+    'context.key': _e(
+        'API key for the provider. Optional for local Ollama.', 'Authenticates the request.',
+        'Kept in memory for this request only and never saved.'),
+    'context.accept': _e(
+        'Send the exact context shown to the configured provider.', 'This is the explicit consent step.',
+        'The context leaves this computer and a response is stored as an unverified hypothesis.',
+        availability='Needs a model name and a valid endpoint.'),
+    'context.cancel': _e(
+        'Close without sending anything.', 'Backs out safely.', 'Nothing is transmitted.'),
+    # ---- Correct match dialog ---------------------------------------------------------------
+    'correct.older_list': _e(
+        'Older function records; tick the ones that belong to this match.',
+        'Defines the older side of the corrected relationship.',
+        'Applied when you save the correction.', 'Records from the saved comparison.'),
+    'correct.newer_list': _e(
+        'Newer function records; tick the ones that belong to this match.',
+        'Defines the newer side of the corrected relationship.',
+        'Applied when you save the correction.', 'Records from the saved comparison.'),
+    'correct.category': _e(
+        'Relationship category such as modified, added or removed.', 'Describes how the sides relate.',
+        'Saved with the correction.'),
+    'correct.reason': _e(
+        'Analyst reason for the correction, free text such as Same function after inlining.',
+        'Provenance for later audit.', 'Stored with the correction.', availability='Required.'),
+    'correct.accept': _e(
+        'Save the corrected relationship.', 'Applies your override.',
+        'Retains provenance and invalidates findings that depended on the old pairing.',
+        availability='Needs a reason.'),
+    'correct.cancel': _e(
+        'Close without changing the match.', 'Backs out safely.', 'Nothing is changed.'),
+    # ---- Export dialog ---------------------------------------------------------------------
+    'export.format': _e(
+        'Report format: md (Markdown), html or json.', 'Choose what suits the reader or tool.',
+        'Changes the preview and the file extension.'),
+    'export.destination': _e(
+        'Output file path, for example D:\\reports\\report.md.', 'Where the report will be written.',
+        'The file is written only when you choose Write report.'),
+    'export.browse': _e(
+        'Choose the output file in a file picker.', 'Avoids typing a long path.',
+        'Fills the destination field.'),
+    'export.include_code': _e(
+        'Include function code in the report.', 'Code is excluded by default to limit what is shared.',
+        'Adds decompiled or assembly text from the saved analysis.',
+        'Ghidriff output, not original source.'),
+    'export.include_notes': _e(
+        'Include analyst notes in the report.', 'Shares your reasoning along with results.',
+        'Adds saved notes to the report.', 'Notes stored in this project.'),
+    'export.selected_only': _e(
+        'Restrict the report to the findings currently selected.', 'Produces a focused report.',
+        'Excludes other findings.', availability='Needs findings selected in the main window.'),
+    'export.preview': _e(
+        'Read-only preview of the exact report.', 'You review what will be written.',
+        'Nothing changes. Absolute source paths are redacted and raw provider responses excluded.',
+        'Generated from saved project data.'),
+    'export.accept': _e(
+        'Write the report to the chosen destination.', 'Produces the file you previewed.',
+        'Creates or overwrites the destination file.', availability='Needs a destination.'),
+    'export.cancel': _e(
+        'Close without writing a report.', 'Backs out safely.', 'Nothing is written.'),
+    # ---- other dialogs ---------------------------------------------------------------------
+    'overview.table': _e(
+        'Recorded file fields for the older and newer artifacts.', 'A fast sanity check before analysis.',
+        'Read-only; nothing is executed, parsed or re-read from disk.',
+        'Metadata recorded when the project was created. No signature verification is performed.'),
+    'dialog.text_view': _e(
+        'Read-only text.', 'Presents information without allowing edits.',
+        'Select text to copy it; nothing else changes.'),
+    'dialog.close': _e(
+        'Close this window.', 'Return to the main window.', 'Nothing is changed.'),
+    'confirm.yes': _e(
+        'Confirm and continue with the action described.', 'The action requires your explicit consent.',
+        'The described action proceeds.'),
+    'confirm.no': _e(
+        'Decline and stop.', 'Leaves things as they are.', 'The described action does not happen.'),
+}
+
+# Tooltips for items that depend on untrusted or dynamic values.
+TEMPLATES: dict[str, TooltipEntry] = {
+    'action.recent_project': _e(
+        'Open the recent project at {path}.', 'Resume earlier work in one step.',
+        'Replaces the project shown in the window.', 'Path stored in local desktop settings.',
+        'Disabled while a job is running.'),
+    'profile.detector_weight': _e(
+        'Ranking weight of detector {detector}, a whole number from 0 to 100.',
+        'Higher weights raise the attention score of matching functions.',
+        'Saved with the profile.', availability=_DEFAULT_RO),
+    'profile.detector_enabled': _e(
+        'Turn detector {detector} on or off for this profile.', 'Lets you drop signals you do not trust.',
+        'Saved with the profile; disabled detectors do not contribute to ranking.',
+        availability=_DEFAULT_RO),
+}
+
+
+def tooltip(tip_id: str) -> str:
+    """Wrapped, escaped tooltip for a static control. Unknown IDs raise KeyError."""
+    return _rich(REGISTRY[tip_id].render())
+
+
+def plain_description(tip_id: str) -> str:
+    """Unwrapped plain text for accessible descriptions and status tips."""
+    return REGISTRY[tip_id].render()
+
+
+def clean_value(value: object) -> str:
+    text = _CONTROL.sub('', str(value))
+    return text[:VALUE_LIMIT] + ('...' if len(text) > VALUE_LIMIT else '')
+
+
+def _fill(tip_id: str, values: dict[str, object]) -> TooltipEntry:
+    entry = TEMPLATES[tip_id]
+    safe = {key: clean_value(value) for key, value in values.items()}
+
+    def fill(text: str) -> str:
+        return text.format(**safe) if text else text
+    return TooltipEntry(fill(entry.what), fill(entry.why), fill(entry.effect), fill(entry.source),
+                        fill(entry.availability))
+
+
+def template(tip_id: str, **values: object) -> str:
+    """Escaped tooltip for a dynamic item. Every value is control-stripped, capped and escaped."""
+    return _rich(_fill(tip_id, values).render())
+
+
+def template_description(tip_id: str, **values: object) -> str:
+    return _fill(tip_id, values).render()
+
+
+def _rich(text: str) -> str:
+    """Plain text as sanctioned rich text so Qt wraps long lines. All content is escaped once."""
+    return '<p style="white-space:pre-wrap">' + html.escape(text).replace('\n', '<br>') + '</p>'
+
+
+def apply_tooltip(target, tip_id: str, *, name: str | None = None, **values: object) -> None:
+    """Apply a registry entry to a QWidget or QAction.
+
+    Sets toolTip and whatsThis on both, plus statusTip on actions and accessibleDescription on
+    widgets. ``objectName`` is set to ``name`` (default: the ID) only when still empty. Dynamic IDs
+    (those in TEMPLATES) take their values as keyword arguments.
+    """
+    if tip_id in TEMPLATES:
+        rich, plain = template(tip_id, **values), template_description(tip_id, **values)
+    else:
+        rich, plain = tooltip(tip_id), plain_description(tip_id)
+    flat = plain.replace('\n', ' ')
+    target.setToolTip(rich)
+    target.setWhatsThis(plain)
+    if hasattr(target, 'setStatusTip'):
+        target.setStatusTip(flat)
+    if hasattr(target, 'setAccessibleDescription'):
+        target.setAccessibleDescription(flat)
+    if not target.objectName():
+        target.setObjectName(name or tip_id)
+
+
+def apply_tooltips(owner, mapping: dict[str, str]) -> None:
+    """Apply many static entries: ``{attribute_name_on_owner: tip_id}``."""
+    for attribute, tip_id in mapping.items():
+        apply_tooltip(getattr(owner, attribute), tip_id)

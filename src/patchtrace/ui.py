@@ -56,10 +56,30 @@ from .providers import ProviderConfig
 from .reports import export_project
 from .runtime_discovery import discover_local_runtimes
 from .service import ProjectService
+from .tooltips import apply_tooltip, apply_tooltips
 
 REVIEWS = ['unreviewed', 'accepted', 'rejected', 'needs-review']
 CATEGORIES = ['modified', 'added', 'removed', 'ambiguous', 'split', 'merged', 'unmatched', 'unchanged']
 MAX_VIEW_CHARS = 200_000
+ACTION_TIPS = {
+    'Download from Microsoft symbol server…': 'action.acquire',
+    'Sample': 'action.sample',
+    'Import JSON': 'action.import_json',
+    'File overview': 'action.file_overview',
+    'Run comparison': 'action.run_comparison',
+    'Rank changes': 'action.rank_changes',
+    'Cancel job': 'action.cancel_job',
+    'Interpret selection': 'action.interpret',
+    'Export': 'action.export',
+    'Setup': 'action.setup',
+    'Swap orientation': 'action.swap_orientation',
+    'Save': 'action.save',
+    'Back up project…': 'action.backup',
+    'Undo latest match correction': 'action.undo_match_correction',
+    'Workflow and dependencies': 'action.help',
+    'Next difference': 'action.next_difference',
+    'Previous difference': 'action.previous_difference',
+}
 DARK_STYLE = """
 QWidget { background: #161b22; color: #d9e1ec; font-size: 12px; }
 QMainWindow, QDialog { background: #10151c; }
@@ -132,12 +152,24 @@ def plain_view(text='', parent=None):
     return view
 
 
-def dialog_buttons(dialog, accepted='OK'):
+def dialog_buttons(dialog, accepted='OK', scope=None):
     buttons = QDialogButtonBox(QDialogButtonBox.StandardButton.Ok | QDialogButtonBox.StandardButton.Cancel)
     buttons.button(QDialogButtonBox.StandardButton.Ok).setText(accepted)
+    if scope:
+        apply_tooltip(buttons.button(QDialogButtonBox.StandardButton.Ok), f'{scope}.accept')
+        apply_tooltip(buttons.button(QDialogButtonBox.StandardButton.Cancel), f'{scope}.cancel')
     buttons.accepted.connect(dialog.accept)
     buttons.rejected.connect(dialog.reject)
     return buttons
+
+
+def confirm_tips(box):
+    """Registry tooltips for the Yes/No buttons of a confirmation message box."""
+    for standard, tip_id in ((QMessageBox.StandardButton.Yes, 'confirm.yes'),
+                             (QMessageBox.StandardButton.No, 'confirm.no')):
+        button = box.button(standard)
+        if button is not None:
+            apply_tooltip(button, tip_id)
 
 
 def text_dialog(parent, title, text):
@@ -145,8 +177,11 @@ def text_dialog(parent, title, text):
     dialog.setWindowTitle(title)
     dialog.resize(800, 560)
     layout = QVBoxLayout(dialog)
-    layout.addWidget(plain_view(text))
+    view = plain_view(text)
+    apply_tooltip(view, 'dialog.text_view')
+    layout.addWidget(view)
     close = QDialogButtonBox(QDialogButtonBox.StandardButton.Close)
+    apply_tooltip(close.button(QDialogButtonBox.StandardButton.Close), 'dialog.close')
     close.rejected.connect(dialog.reject)
     layout.addWidget(close)
     dialog.exec()
@@ -186,14 +221,16 @@ class NewProjectDialog(QDialog):
         self.newer = ArtifactPathEdit()
         self.root = QLineEdit()
         form.addRow('Project name', self.name)
-        for title, edit, directory in [('Older PE x64', self.older, False),
-                                       ('Newer PE x64', self.newer, False),
-                                       ('New project directory', self.root, True)]:
+        for title, edit, directory, browse_tip in [
+                ('Older PE x64', self.older, False, 'new_project.older_browse'),
+                ('Newer PE x64', self.newer, False, 'new_project.newer_browse'),
+                ('New project directory', self.root, True, 'new_project.root_browse')]:
             row = QWidget()
             horizontal = QHBoxLayout(row)
             horizontal.setContentsMargins(0, 0, 0, 0)
             horizontal.addWidget(edit)
             choose = QPushButton('Browse…')
+            apply_tooltip(choose, browse_tip)
             choose.clicked.connect(lambda checked=False, e=edit, d=directory: self.browse(e, d))
             horizontal.addWidget(choose)
             form.addRow(title, row)
@@ -205,7 +242,10 @@ class NewProjectDialog(QDialog):
         self.error.setObjectName('warning')
         self.error.setWordWrap(True)
         layout.addWidget(self.error)
-        layout.addWidget(dialog_buttons(self, 'Create project'))
+        apply_tooltips(self, {'name': 'new_project.name', 'older': 'new_project.older',
+                              'newer': 'new_project.newer', 'root': 'new_project.root'})
+        apply_tooltip(swap, 'new_project.swap')
+        layout.addWidget(dialog_buttons(self, 'Create project', 'new_project'))
 
     def browse(self, edit, directory):
         if directory:
@@ -301,6 +341,7 @@ class AcquisitionDialog(QDialog):
         root_layout.setContentsMargins(0, 0, 0, 0)
         root_layout.addWidget(self.root)
         browse = QPushButton('Browse…')
+        apply_tooltip(browse, 'acquire.browse')
         browse.clicked.connect(self.browse)
         root_layout.addWidget(browse)
         form.addRow('Older build', self.older_label)
@@ -328,6 +369,13 @@ class AcquisitionDialog(QDialog):
         for button in (self.download_button, self.cancel_button, close):
             buttons.addWidget(button)
         layout.addLayout(buttons)
+        apply_tooltips(self, {
+            'name': 'acquire.name', 'search_button': 'acquire.search', 'table': 'acquire.table',
+            'older_button': 'acquire.use_older', 'newer_button': 'acquire.use_newer',
+            'swap_button': 'acquire.swap', 'project_name': 'acquire.project_name',
+            'root': 'acquire.root', 'log': 'acquire.log', 'download_button': 'acquire.download',
+            'cancel_button': 'acquire.cancel'})
+        apply_tooltip(close, 'acquire.close')
         self.update_controls()
 
     # -- consent -------------------------------------------------------------------------
@@ -337,6 +385,7 @@ class AcquisitionDialog(QDialog):
                           QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No, self)
         box.setTextFormat(Qt.TextFormat.PlainText)
         box.setDefaultButton(QMessageBox.StandardButton.No)
+        confirm_tips(box)
         return box.exec() == QMessageBox.StandardButton.Yes
 
     @staticmethod
@@ -664,6 +713,7 @@ class ProfilesPanel(QWidget):
         left = QVBoxLayout()
         self.list = QListWidget()
         self.list.setAccessibleName('Analysis profiles')
+        apply_tooltip(self.list, 'profile.list')
         self.list.currentItemChanged.connect(lambda *_: self._show_current())
         left.addWidget(self.list)
         buttons = QHBoxLayout()
@@ -696,6 +746,10 @@ class ProfilesPanel(QWidget):
             horizontal.addWidget(spin)
             horizontal.addWidget(check)
             self.weights[detector], self.enabled[detector] = spin, check
+            apply_tooltip(spin, 'profile.detector_weight', name=f'profile.detector_weight.{detector}',
+                          detector=detector)
+            apply_tooltip(check, 'profile.detector_enabled', name=f'profile.detector_enabled.{detector}',
+                          detector=detector)
             form.addRow(f'{detector} weight', row)
         self.feature_ids = QLineEdit()
         self.feature_ids.setPlaceholderText('Empty = all features; else comma-separated uint32 IDs')
@@ -727,6 +781,14 @@ class ProfilesPanel(QWidget):
         self.error.setWordWrap(True)
         form.addRow(self.error)
         layout.addWidget(editor, 2)
+        apply_tooltips(self, {
+            'new_button': 'profile.new', 'duplicate_button': 'profile.duplicate',
+            'delete_button': 'profile.delete', 'name': 'profile.name', 'feature_ids': 'profile.feature_ids',
+            'symbol_policy': 'profile.symbol_policy', 'max_age': 'profile.max_age',
+            'cache_dir': 'profile.cache_dir', 'cache_budget': 'profile.cache_budget',
+            'save_button': 'profile.save'})
+        apply_tooltip(self.providers['nvd'], 'profile.provider_nvd')
+        apply_tooltip(self.providers['msrc'], 'profile.provider_msrc')
         self.reload(selected)
 
     def reload(self, select: str | None = None):
@@ -844,6 +906,7 @@ class ProfilesPanel(QWidget):
                           QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No, self)
         box.setTextFormat(Qt.TextFormat.PlainText)
         box.setDefaultButton(QMessageBox.StandardButton.No)
+        confirm_tips(box)
         return box.exec() == QMessageBox.StandardButton.Yes
 
     def delete_profile(self):
@@ -882,14 +945,17 @@ class SetupDialog(QDialog):
         self.python = QLineEdit(settings.value('backend/python', ''))
         self.ghidra = QLineEdit(settings.value('backend/ghidra', ''))
         self.java_home = QLineEdit(settings.value('backend/java_home', ''))
-        for name, edit, directory in [('External Python executable', self.python, False),
-                                       ('Ghidra installation directory', self.ghidra, True),
-                                       ('Private Java installation directory (optional)', self.java_home, True)]:
+        for name, edit, directory, browse_tip in [
+                ('External Python executable', self.python, False, 'setup.python_browse'),
+                ('Ghidra installation directory', self.ghidra, True, 'setup.ghidra_browse'),
+                ('Private Java installation directory (optional)', self.java_home, True,
+                 'setup.java_browse')]:
             row = QWidget()
             horizontal = QHBoxLayout(row)
             horizontal.setContentsMargins(0, 0, 0, 0)
             horizontal.addWidget(edit)
             button = QPushButton('Browse…')
+            apply_tooltip(button, browse_tip)
             button.clicked.connect(lambda checked=False, e=edit, d=directory: self.browse(e, d))
             horizontal.addWidget(button)
             form.addRow(name, row)
@@ -930,7 +996,16 @@ class SetupDialog(QDialog):
         self.check = QPushButton('Diagnose dependencies')
         self.check.clicked.connect(self.check_dependencies)
         layout.addWidget(self.check)
-        outer.addWidget(dialog_buttons(self, 'Save setup'))
+        apply_tooltips(self, {
+            'python': 'setup.python', 'ghidra': 'setup.ghidra_dir', 'java_home': 'setup.java_home',
+            'allow_symbol_downloads': 'setup.symbol_downloads', 'timeout': 'setup.timeout',
+            'font_size': 'setup.font_size', 'context_budget': 'setup.context_budget', 'sync': 'setup.sync',
+            'diagnostics': 'setup.diagnostics', 'find': 'setup.find', 'bundle_sha': 'setup.bundle_sha',
+            'install': 'setup.install', 'cancel_install': 'setup.cancel_install',
+            'check': 'setup.diagnose'})
+        self.tabs.tabBar().setObjectName('setup.tabs')
+        apply_tooltip(self.tabs.tabBar(), 'setup.tabs')
+        outer.addWidget(dialog_buttons(self, 'Save setup', 'setup'))
         self.worker = None
         self._pending_plan = None
         self.discover_existing()
@@ -1040,6 +1115,7 @@ class SetupDialog(QDialog):
         # Archive name and runtime ID come from an untrusted file; never interpret them as rich text.
         box.setTextFormat(Qt.TextFormat.PlainText)
         box.setDefaultButton(QMessageBox.StandardButton.No)
+        confirm_tips(box)
         answer = box.exec()
         if answer != QMessageBox.StandardButton.Yes:
             self.diagnostics.setPlainText('Offline bundle checked; installation not authorized.')
@@ -1099,9 +1175,15 @@ class ContextDialog(QDialog):
         info.setWordWrap(True)
         layout.addWidget(info)
         tabs = QTabWidget()
-        tabs.addTab(plain_view(context.payload), 'Exact context')
-        tabs.addTab(plain_view(system_prompt()), 'Exact system prompt')
-        tabs.addTab(plain_view('\n'.join(context.omitted) or 'No omitted records.'), 'Omitted / unavailable')
+        for view, title, tip_id in [
+                (plain_view(context.payload), 'Exact context', 'context.exact_context'),
+                (plain_view(system_prompt()), 'Exact system prompt', 'context.system_prompt'),
+                (plain_view('\n'.join(context.omitted) or 'No omitted records.'),
+                 'Omitted / unavailable', 'context.omitted')]:
+            apply_tooltip(view, tip_id)
+            tabs.addTab(view, title)
+        tabs.tabBar().setObjectName('context.tabs')
+        apply_tooltip(tabs.tabBar(), 'context.tabs')
         layout.addWidget(tabs, 1)
         form = QFormLayout()
         self.kind = QComboBox()
@@ -1122,7 +1204,9 @@ class ContextDialog(QDialog):
         self.error.setObjectName('warning')
         self.error.setWordWrap(True)
         layout.addWidget(self.error)
-        layout.addWidget(dialog_buttons(self, 'Send context'))
+        apply_tooltips(self, {'kind': 'context.kind', 'endpoint': 'context.endpoint',
+                              'model': 'context.model', 'key': 'context.key'})
+        layout.addWidget(dialog_buttons(self, 'Send context', 'context'))
 
     def provider_changed(self, kind):
         self.endpoint.setText('http://127.0.0.1:11434' if kind == 'ollama' else 'https://api.openai.com/v1')
@@ -1159,6 +1243,7 @@ class CorrectMatchDialog(QDialog):
             box.addWidget(PlainLabel(side.title()))
             listing = QListWidget()
             self.sides[side] = listing
+            apply_tooltip(listing, f'correct.{side}_list')
             selected = {f.id for f in getattr(match, side)}
             records = {f.id: f for m in project.matches for f in getattr(m, side)}
             for record in records.values():
@@ -1182,7 +1267,8 @@ class CorrectMatchDialog(QDialog):
         self.error = PlainLabel()
         self.error.setObjectName('warning')
         layout.addWidget(self.error)
-        layout.addWidget(dialog_buttons(self, 'Save correction'))
+        apply_tooltips(self, {'category': 'correct.category', 'reason': 'correct.reason'})
+        layout.addWidget(dialog_buttons(self, 'Save correction', 'correct'))
 
     def selected(self, side):
         listing = self.sides[side]
@@ -1221,6 +1307,7 @@ class ExportDialog(QDialog):
         horizontal.setContentsMargins(0, 0, 0, 0)
         horizontal.addWidget(self.destination)
         browse = QPushButton('Browse…')
+        apply_tooltip(browse, 'export.browse')
         browse.clicked.connect(self.browse)
         horizontal.addWidget(browse)
         form.addRow('Format', self.format)
@@ -1244,8 +1331,11 @@ class ExportDialog(QDialog):
         self.error.setObjectName('warning')
         self.error.setWordWrap(True)
         layout.addWidget(self.error)
-        self.buttons = dialog_buttons(self, 'Write report')
+        self.buttons = dialog_buttons(self, 'Write report', 'export')
         layout.addWidget(self.buttons)
+        apply_tooltips(self, {'format': 'export.format', 'destination': 'export.destination',
+                              'code': 'export.include_code', 'notes': 'export.include_notes',
+                              'selection': 'export.selected_only', 'preview': 'export.preview'})
         for control in [self.code, self.notes, self.selection]:
             control.toggled.connect(self.refresh_preview)
         self.format.currentTextChanged.connect(self.refresh_preview)
@@ -1321,26 +1411,9 @@ class MainWindow(QMainWindow):
 
     def _action(self, title, callback, shortcut=None):
         action = QAction(title, self)
-        # Actions share the same tooltip in menus and in the toolbar.
-        descriptions = {
-            'Sample': 'Create a separate synthetic comparison project. It demonstrates code, evidence and reviews without analyzing actual binaries.',
-            'Import JSON': 'Load raw Ghidriff JSON from a comparison of this exact binary pair. PatchTrace validates orientation and artifact identity before committing results.',
-            'Run comparison': 'Run an external Ghidriff/Ghidra static comparison of the project-owned older and newer PE x64 files. Results come from Ghidriff, not live execution. An external backend must be configured.',
-            'Cancel job': 'Request cancellation of the active comparison, import or analysis job. Previous committed results are retained.',
-            'Interpret selection': 'Send selected function differences and evidence to the configured AI provider after showing the exact context. AI conclusions are unverified hypotheses.',
-            'Export': 'Preview and export a report containing analysis provenance, reviews and optionally notes or code. The report is based on saved project data.',
-            'Setup': 'Configure local Python/Ghidra backends, preferences, optional offline runtime and AI provider settings. This does not automatically install external tools.',
-            'Swap orientation': 'Exchange older and newer binaries for the project. Existing interpretations may become stale because patch direction changes.',
-            'Save': 'Persist the current project snapshot and review state to its local SQLite history.',
-            'Back up project…': 'Create a complete separate backup with SQLite database, stored binaries and analysis outputs.',
-            'Undo latest match correction': 'Undo the most recent eligible manual function relationship correction while retaining provenance.',
-            'Workflow and dependencies': 'Explain how analysis, external dependencies, projects, findings and reports work.',
-            'Rank changes': 'Apply PatchTrace heuristic signals to changed Ghidriff decompiled code and order functions by attention score. This score is not vulnerability likelihood.',
-            'Download from Microsoft symbol server…': 'Search Winbindex metadata and, after explicit host consent, download exact-hash Microsoft binaries for comparison. Availability and signature authenticity are separate questions.',
-        }
-        if title in descriptions:
-            action.setToolTip(descriptions[title])
-            action.setStatusTip(descriptions[title])
+        # Actions share one registry tooltip in menus and in the toolbar (New and Open are exempt).
+        if title in ACTION_TIPS:
+            apply_tooltip(action, ACTION_TIPS[title])
         action.triggered.connect(callback)
         if shortcut:
             action.setShortcut(QKeySequence(shortcut))
@@ -1353,7 +1426,6 @@ class MainWindow(QMainWindow):
         self.sample_action = self._action('Sample', self.open_sample)
         self.import_action = self._action('Import JSON', self.import_diff)
         self.overview_action = self._action('File overview', self.show_file_overview)
-        self.overview_action.setToolTip('View older/newer names, sizes and saved SHA-256 values immediately. This read-only preview uses recorded project metadata; PE headers and signatures are not yet inspected.')
         self.run_action = self._action('Run comparison', self.run_analysis, 'F5')
         self.cancel_action = self._action('Cancel job', self.cancel_job, 'Escape')
         self.interpret_action = self._action('Interpret selection', self.preview_interpretation, 'Ctrl+I')
@@ -1373,17 +1445,22 @@ class MainWindow(QMainWindow):
                        self.setup_action]:
             toolbar.addAction(action)
         file_menu = self.menuBar().addMenu('Project')
+        apply_tooltip(file_menu.menuAction(), 'menu.project')
         for action in [self.new_action, self.acquire_action, self.open_action, self.sample_action, self.save_action,
                        self.import_action, self.overview_action, self.export_action, self.swap_action]:
             file_menu.addAction(action)
         file_menu.addAction(self.backup_action)
         file_menu.addAction(self.undo_match_action)
         self.recent_menu = file_menu.addMenu('Recent projects')
+        apply_tooltip(self.recent_menu.menuAction(), 'action.recent_projects')
         self.refresh_recent()
         analysis = self.menuBar().addMenu('Analysis')
+        apply_tooltip(analysis.menuAction(), 'menu.analysis')
         for action in [self.run_action, self.rank_action, self.cancel_action, self.interpret_action, self.setup_action]:
             analysis.addAction(action)
-        self.menuBar().addMenu('Help').addAction(self.help_action)
+        help_menu = self.menuBar().addMenu('Help')
+        apply_tooltip(help_menu.menuAction(), 'menu.help')
+        help_menu.addAction(self.help_action)
 
     def _build_workspace(self):
         central = QWidget()
@@ -1419,6 +1496,7 @@ class MainWindow(QMainWindow):
         diag_layout.addLayout(status)
         self.logs = plain_view('No analysis has been started. Configure dependencies in Setup or import a Ghidriff JSON.')
         self.logs.document().setMaximumBlockCount(2000)
+        apply_tooltip(self.logs, 'job.log')
         diag_layout.addWidget(self.logs)
         self.vertical.addWidget(diagnostics)
         self.vertical.setSizes([700, 120])
@@ -1448,7 +1526,6 @@ class MainWindow(QMainWindow):
         self.order = QComboBox()
         self.order.addItems(['Project order', 'Attention score (research priority)'])
         self.order.setAccessibleName('Match ordering')
-        self.order.setToolTip('Attention scores prioritize research; they do not establish exploitability.')
         self.order.currentIndexChanged.connect(self.filter_matches)
         layout.addWidget(self.order)
         self.profile_label = PlainLabel('')
@@ -1490,6 +1567,12 @@ class MainWindow(QMainWindow):
                 control.textChanged.connect(self.filter_matches)
             else:
                 control.currentTextChanged.connect(self.filter_matches)
+        apply_tooltips(self, {
+            'search': 'nav.search', 'category_filter': 'nav.category_filter',
+            'review_filter': 'nav.review_filter', 'order': 'nav.order', 'manual_filter': 'nav.manual_filter',
+            'finding_match_filter': 'nav.finding_filter', 'navigator': 'nav.matches',
+            'signal_list': 'nav.signals', 'match_review': 'nav.match_review',
+            'correct_button': 'nav.correct_match'})
         self.workspace.addWidget(pane)
 
     def _build_code(self):
@@ -1499,20 +1582,16 @@ class MainWindow(QMainWindow):
         row = QHBoxLayout()
         self.mode = QComboBox()
         self.mode.addItems(['Decompiled code', 'Assembly', 'Metadata'])
-        self.mode.setToolTip('Select the representation of the selected Ghidriff function records: decompiled C-like text, actual assembly when available, or preserved metadata. The source is the imported or freshly generated Ghidriff JSON; unavailable representations are not reconstructed.')
         self.mode.currentTextChanged.connect(self.render_match)
         row.addWidget(self.mode)
         self.sync_scroll = QCheckBox('Sync scroll')
         self.sync_scroll.setChecked(True)
-        self.sync_scroll.setToolTip('Synchronize older and newer code-pane vertical scroll positions so matched lines can be compared. The pane text comes from the current Ghidriff result, padded with alignment gaps for display.')
         row.addWidget(self.sync_scroll)
         row.addStretch()
         self.previous_diff = QPushButton('Previous diff')
-        self.previous_diff.setToolTip('Moves to the preceding changed region. At the beginning of a function, moves to the previous visible function in the filtered match list. Source: the line alignment of the currently displayed Ghidriff function records. Shortcut: Alt+Up.')
         self.previous_diff.clicked.connect(lambda: self.navigate_hunk(-1))
         row.addWidget(self.previous_diff)
         self.next_diff = QPushButton('Next diff')
-        self.next_diff.setToolTip('Moves to the next changed region. At the end of a function, moves to the next visible function in the filtered match list. Source: the line alignment of the currently displayed Ghidriff function records. Shortcut: Alt+Down.')
         self.next_diff.clicked.connect(lambda: self.navigate_hunk(1))
         row.addWidget(self.next_diff)
         self.addAction(self._action('Next difference', lambda: self.navigate_hunk(1), 'Alt+Down'))
@@ -1534,12 +1613,13 @@ class MainWindow(QMainWindow):
             self.side_labels[side] = label
             header.addWidget(label, 1)
             copy = QPushButton('Copy')
+            apply_tooltip(copy, f'viewer.copy_{side}')
             copy.clicked.connect(lambda checked=False, s=side: self.copy_code(s))
             header.addWidget(copy)
             side_layout.addLayout(header)
             view = plain_view('No project open.')
             view.setAccessibleName(f'{side.title()} artifact code')
-            view.setToolTip(f'Read-only {side} function representation from the current Ghidriff comparison JSON. Decompiled text and actual assembly are upstream analysis outputs, not original source or raw file bytes. Metadata is preserved match/function data. Blank alignment rows are display-only.')
+            apply_tooltip(view, f'viewer.{side}_code')
             self.views[side] = view
             view.verticalScrollBar().valueChanged.connect(lambda value, s=side: self.scroll_other(s, value))
             side_layout.addWidget(view, 1)
@@ -1547,9 +1627,11 @@ class MainWindow(QMainWindow):
         layout.addWidget(self.code_split, 1)
         self.hunk_list = QComboBox()
         self.hunk_list.setAccessibleName('Changed hunks')
-        self.hunk_list.setToolTip('Jump to a particular inserted, removed or replaced region in the selected function. Entries are derived from PatchTrace line alignment of the code or metadata currently displayed, not source-level line numbers.')
         self.hunk_list.currentIndexChanged.connect(self.select_hunk)
         layout.addWidget(self.hunk_list)
+        apply_tooltips(self, {'mode': 'viewer.mode', 'sync_scroll': 'viewer.sync_scroll',
+                              'previous_diff': 'nav.previous_hunk', 'next_diff': 'nav.next_hunk',
+                              'hunk_list': 'nav.hunk_list'})
         self.workspace.addWidget(pane)
 
     def _build_findings(self):
@@ -1617,6 +1699,14 @@ class MainWindow(QMainWindow):
         self.raw_button = QPushButton('Inspect interpretation responses…')
         self.raw_button.clicked.connect(self.inspect_responses)
         layout.addWidget(self.raw_button)
+        apply_tooltips(self, {
+            'finding_search': 'findings.search', 'finding_review_filter': 'findings.review_filter',
+            'finding_stale_filter': 'findings.stale_filter', 'findings_list': 'findings.list',
+            'finding_detail': 'findings.detail', 'evidence_list': 'findings.evidence',
+            'bookmark_button': 'findings.bookmark', 'finding_review': 'findings.review_status',
+            'conclusion': 'findings.conclusion', 'review_button': 'findings.save_review',
+            'note_target': 'findings.note_target', 'notes': 'findings.notes',
+            'note_button': 'findings.save_note', 'raw_button': 'findings.inspect_responses'})
         scroll = QScrollArea()
         scroll.setWidgetResizable(True)
         scroll.setFrameShape(QScrollArea.Shape.NoFrame)
@@ -1664,6 +1754,7 @@ class MainWindow(QMainWindow):
         self.recent_menu.clear()
         for path in self.settings.value('recent/projects', [], type=list):
             action = self._action(str(path), lambda checked=False, p=path: self.open_recent(p))
+            apply_tooltip(action, 'action.recent_project', path=path)
             self.recent_menu.addAction(action)
         self.recent_menu.setEnabled(bool(self.recent_menu.actions()))
 
@@ -2325,6 +2416,7 @@ class MainWindow(QMainWindow):
                 item = QTableWidgetItem(value)
                 item.setToolTip('Saved project artifact metadata; no executable content is run or parsed.')
                 table.setItem(index, column, item)
+        apply_tooltip(table, 'overview.table')
         layout.addWidget(table)
         self._preflight_dialog = dialog
         dialog.show()
