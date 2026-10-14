@@ -1,0 +1,103 @@
+{
+  "old_meta": {
+    "Executable SHA256": "c0ab62f3ac74f3513f3af72bf1b0bd4386356c85d3b3e0f0078317757c9abc64",
+    "Synthetic sample": true
+  },
+  "new_meta": {
+    "Executable SHA256": "7ce7faa1104fe24ca39194f4533f03267563de51c11a87eaa36797b16a723ac0",
+    "Synthetic sample": true
+  },
+  "functions": {
+    "added": [
+      {
+        "name": "parser.dll::Parse",
+        "fullname": "parser.dll::Parse",
+        "address": "140005400",
+        "code": null,
+        "calling": [
+          "Dispatch"
+        ],
+        "called": [],
+        "sym_type": "FUNCTION",
+        "external": false
+      }
+    ],
+    "deleted": [],
+    "modified": [
+      {
+        "old": {
+          "name": "Dispatch",
+          "fullname": "Dispatch",
+          "address": "140005000",
+          "code": null,
+          "calling": [],
+          "called": [
+            "parser.dll::Parse"
+          ],
+          "sym_type": "FUNCTION",
+          "external": false
+        },
+        "new": {
+          "name": "Dispatch",
+          "fullname": "Dispatch",
+          "address": "140005100",
+          "code": null,
+          "calling": [],
+          "called": [
+            "parser.dll::Parse"
+          ],
+          "sym_type": "FUNCTION",
+          "external": false
+        },
+        "diff_type": [
+          "called"
+        ],
+        "ratio": 0.5,
+        "match_types": [
+          "Symbols"
+        ]
+      },
+      {
+        "old": {
+          "name": "parser.dll::Parse",
+          "fullname": "parser.dll::Parse",
+          "address": "140005200",
+          "code": null,
+          "calling": [
+            "Dispatch"
+          ],
+          "called": [],
+          "sym_type": "FUNCTION",
+          "external": false
+        },
+        "new": {
+          "name": "parser.dll::Parse",
+          "fullname": "parser.dll::Parse",
+          "address": "140005300",
+          "code": null,
+          "calling": [
+            "Dispatch"
+          ],
+          "called": [],
+          "sym_type": "FUNCTION",
+          "external": false
+        },
+        "diff_type": [
+          "code"
+        ],
+        "ratio": 0.5,
+        "match_types": [
+          "Symbols"
+        ]
+      }
+    ]
+  },
+  "md_credits": "SYNTHETIC call-graph fixture; not output from Ghidriff or a real build",
+  "matches": {
+    "name_matches": {
+      "Dispatch": "Dispatch",
+      "parser.dll::Parse": "parser.dll::Parse"
+    },
+    "address_matches": {}
+  }
+}

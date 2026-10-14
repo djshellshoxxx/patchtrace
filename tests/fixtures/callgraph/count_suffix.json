@@ -1,0 +1,153 @@
+{
+  "old_meta": {
+    "Executable SHA256": "c0ab62f3ac74f3513f3af72bf1b0bd4386356c85d3b3e0f0078317757c9abc64",
+    "Synthetic sample": true
+  },
+  "new_meta": {
+    "Executable SHA256": "7ce7faa1104fe24ca39194f4533f03267563de51c11a87eaa36797b16a723ac0",
+    "Synthetic sample": true
+  },
+  "functions": {
+    "added": [
+      {
+        "name": "Write",
+        "fullname": "Write",
+        "address": "140006600",
+        "code": null,
+        "calling": [
+          "Dispatch"
+        ],
+        "called": [],
+        "sym_type": "FUNCTION",
+        "external": false
+      },
+      {
+        "name": "Write",
+        "fullname": "Write",
+        "address": "140006700",
+        "code": null,
+        "calling": [
+          "Dispatch"
+        ],
+        "called": [],
+        "sym_type": "FUNCTION",
+        "external": false
+      }
+    ],
+    "deleted": [],
+    "modified": [
+      {
+        "old": {
+          "name": "Dispatch",
+          "fullname": "Dispatch",
+          "address": "140006000",
+          "code": null,
+          "calling": [],
+          "called": [
+            "ReadBuffer",
+            "ReadBuffer-2"
+          ],
+          "sym_type": "FUNCTION",
+          "external": false
+        },
+        "new": {
+          "name": "Dispatch",
+          "fullname": "Dispatch",
+          "address": "140006100",
+          "code": null,
+          "calling": [],
+          "called": [
+            "ReadBuffer",
+            "ReadBuffer-2",
+            "ReadBuffer-3",
+            "Write-2"
+          ],
+          "sym_type": "FUNCTION",
+          "external": false
+        },
+        "diff_type": [
+          "called"
+        ],
+        "ratio": 0.5,
+        "match_types": [
+          "Symbols"
+        ]
+      },
+      {
+        "old": {
+          "name": "ReadBuffer",
+          "fullname": "ReadBuffer",
+          "address": "140006200",
+          "code": null,
+          "calling": [
+            "Dispatch"
+          ],
+          "called": [],
+          "sym_type": "FUNCTION",
+          "external": false
+        },
+        "new": {
+          "name": "ReadBuffer",
+          "fullname": "ReadBuffer",
+          "address": "140006300",
+          "code": null,
+          "calling": [
+            "Dispatch"
+          ],
+          "called": [],
+          "sym_type": "FUNCTION",
+          "external": false
+        },
+        "diff_type": [
+          "code"
+        ],
+        "ratio": 0.5,
+        "match_types": [
+          "Symbols"
+        ]
+      },
+      {
+        "old": {
+          "name": "ReadBuffer-2",
+          "fullname": "ReadBuffer-2",
+          "address": "140006400",
+          "code": null,
+          "calling": [
+            "Dispatch"
+          ],
+          "called": [],
+          "sym_type": "FUNCTION",
+          "external": false
+        },
+        "new": {
+          "name": "ReadBuffer-2",
+          "fullname": "ReadBuffer-2",
+          "address": "140006500",
+          "code": null,
+          "calling": [
+            "Dispatch"
+          ],
+          "called": [],
+          "sym_type": "FUNCTION",
+          "external": false
+        },
+        "diff_type": [
+          "code"
+        ],
+        "ratio": 0.5,
+        "match_types": [
+          "Symbols"
+        ]
+      }
+    ]
+  },
+  "md_credits": "SYNTHETIC call-graph fixture; not output from Ghidriff or a real build",
+  "matches": {
+    "name_matches": {
+      "Dispatch": "Dispatch",
+      "ReadBuffer": "ReadBuffer",
+      "ReadBuffer-2": "ReadBuffer-2"
+    },
+    "address_matches": {}
+  }
+}

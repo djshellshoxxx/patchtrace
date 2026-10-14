@@ -218,3 +218,7 @@
 ### [G1:callgraph-kernel]
 - [x] Kernel (limits, text, labels, CSR, algo) with NetworkX 3.7 differential oracle (dev only, skipped when absent) and PYTHONHASHSEED 0/1 determinism test
 - [ ] Next: G2 contracts, input, pairing, resolver, snapshot, query
+### [G0:fixtures] WB2 G0 synthetic call-graph fixtures (2026-10-14, Haiku 5.5, worktree)
+- [x] Red tests first (`tests/test_callgraph_fixtures.py`), then builder `tests/callgraph_fixtures.py` and six committed fixtures in `tests/fixtures/callgraph/`; 24 focused tests pass; ruff clean
+- [ ] Integrator: add `.gitattributes` line `tests/fixtures/callgraph/** text eol=lf`
+- [ ] Live gate (WB2 section 5): confirm the real Ghidriff `matches` label forms against one real synthetic-PE JSON before trusting hub registry and import keys; the fixture's `name_matches`/`address_matches` shape is an assumption until then

@@ -328,3 +328,7 @@ K1 notes: plan 10.1 "4 edges, 1 mention-only" = 4 vendor-remediation edges + 1 m
 | module | files | purpose | deps | tests |
 |---|---|---|---|---|
 | callgraph kernel | src/patchtrace/callgraph/{limits,text,labels,csr,algo}.py | label parsing, untrusted-text sanitizer, immutable CSR digraph, SCC/reach/ancestors/bidirectional distance/bounded simple paths (stdlib only, no runtime NetworkX) | stdlib | `test_callgraph_labels.py`, `test_callgraph_csr.py`, `test_callgraph_algo.py` |
+### [G0:fixtures] WB2 call-graph synthetic fixtures (2026-10-14, Haiku 5.5, worktree)
+| module | path | responsibility | depends on | tests |
+|---|---|---|---|---|
+| callgraph fixtures | tests/callgraph_fixtures.py, tests/fixtures/callgraph/*.json | six SYNTHETIC Ghidriff-shaped PDiff inputs (svc_pair, hostile_names, ambiguous_pair, no_matches, count_suffix, cycle_hub) built from a builder; regenerate with `python tests/callgraph_fixtures.py` | normalization (test only), models | `test_callgraph_fixtures.py` |

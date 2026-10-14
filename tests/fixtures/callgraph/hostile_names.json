@@ -1,0 +1,428 @@
+{
+  "old_meta": {
+    "Executable SHA256": "c0ab62f3ac74f3513f3af72bf1b0bd4386356c85d3b3e0f0078317757c9abc64",
+    "Synthetic sample": true
+  },
+  "new_meta": {
+    "Executable SHA256": "7ce7faa1104fe24ca39194f4533f03267563de51c11a87eaa36797b16a723ac0",
+    "Synthetic sample": true
+  },
+  "functions": {
+    "added": [
+      {
+        "name": "ntoskrnl.exe::Pwn\"));DROP",
+        "fullname": "ntoskrnl.exe::Pwn\"));DROP",
+        "address": "EXTERNAL:3f0100",
+        "code": null,
+        "calling": [
+          "Dispatch"
+        ],
+        "called": [],
+        "sym_type": "EXTERNAL",
+        "external": true
+      }
+    ],
+    "deleted": [],
+    "modified": [
+      {
+        "old": {
+          "name": "Dispatch",
+          "fullname": "Dispatch",
+          "address": "140002000",
+          "code": null,
+          "calling": [],
+          "called": [
+            "Parse\u202eRecord",
+            "Quote\"Back\\slash",
+            "Esc\\N\\G\\n\\l",
+            "Line\nBreak\rCarriage",
+            "Ctl\u0001\u007fDelete",
+            "Sep\u2028Para\u2029Sep",
+            "Longxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+            "<img src=x onerror=alert(1)>",
+            "..\\..\\evil.dll::Run",
+            "Nul\u0000Byte"
+          ],
+          "sym_type": "FUNCTION",
+          "external": false
+        },
+        "new": {
+          "name": "Dispatch",
+          "fullname": "Dispatch",
+          "address": "140002100",
+          "code": null,
+          "calling": [],
+          "called": [
+            "Parse\u202eRecord",
+            "Quote\"Back\\slash",
+            "Esc\\N\\G\\n\\l",
+            "Line\nBreak\rCarriage",
+            "Ctl\u0001\u007fDelete",
+            "Sep\u2028Para\u2029Sep",
+            "Longxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+            "<img src=x onerror=alert(1)>",
+            "..\\..\\evil.dll::Run",
+            "Nul\u0000Byte",
+            "ntoskrnl.exe::Pwn\"));DROP"
+          ],
+          "sym_type": "FUNCTION",
+          "external": false
+        },
+        "diff_type": [
+          "called"
+        ],
+        "ratio": 0.5,
+        "match_types": [
+          "Symbols"
+        ]
+      },
+      {
+        "old": {
+          "name": "Parse\u202eRecord",
+          "fullname": "Parse\u202eRecord",
+          "address": "140003000",
+          "code": "void f0(void) { return; }",
+          "calling": [
+            "Dispatch"
+          ],
+          "called": [],
+          "sym_type": "FUNCTION",
+          "external": false
+        },
+        "new": {
+          "name": "Parse\u202eRecord",
+          "fullname": "Parse\u202eRecord",
+          "address": "140004000",
+          "code": "void f0(void) { return; }",
+          "calling": [
+            "Dispatch"
+          ],
+          "called": [],
+          "sym_type": "FUNCTION",
+          "external": false
+        },
+        "diff_type": [
+          "code"
+        ],
+        "ratio": 0.5,
+        "match_types": [
+          "Symbols"
+        ]
+      },
+      {
+        "old": {
+          "name": "Quote\"Back\\slash",
+          "fullname": "Quote\"Back\\slash",
+          "address": "140003100",
+          "code": "void f1(void) { return; }",
+          "calling": [
+            "Dispatch"
+          ],
+          "called": [],
+          "sym_type": "FUNCTION",
+          "external": false
+        },
+        "new": {
+          "name": "Quote\"Back\\slash",
+          "fullname": "Quote\"Back\\slash",
+          "address": "140004100",
+          "code": "void f1(void) { return; }",
+          "calling": [
+            "Dispatch"
+          ],
+          "called": [],
+          "sym_type": "FUNCTION",
+          "external": false
+        },
+        "diff_type": [
+          "code"
+        ],
+        "ratio": 0.5,
+        "match_types": [
+          "Symbols"
+        ]
+      },
+      {
+        "old": {
+          "name": "Esc\\N\\G\\n\\l",
+          "fullname": "Esc\\N\\G\\n\\l",
+          "address": "140003200",
+          "code": "void f2(void) { return; }",
+          "calling": [
+            "Dispatch"
+          ],
+          "called": [],
+          "sym_type": "FUNCTION",
+          "external": false
+        },
+        "new": {
+          "name": "Esc\\N\\G\\n\\l",
+          "fullname": "Esc\\N\\G\\n\\l",
+          "address": "140004200",
+          "code": "void f2(void) { return; }",
+          "calling": [
+            "Dispatch"
+          ],
+          "called": [],
+          "sym_type": "FUNCTION",
+          "external": false
+        },
+        "diff_type": [
+          "code"
+        ],
+        "ratio": 0.5,
+        "match_types": [
+          "Symbols"
+        ]
+      },
+      {
+        "old": {
+          "name": "Line\nBreak\rCarriage",
+          "fullname": "Line\nBreak\rCarriage",
+          "address": "140003300",
+          "code": "void f3(void) { return; }",
+          "calling": [
+            "Dispatch"
+          ],
+          "called": [],
+          "sym_type": "FUNCTION",
+          "external": false
+        },
+        "new": {
+          "name": "Line\nBreak\rCarriage",
+          "fullname": "Line\nBreak\rCarriage",
+          "address": "140004300",
+          "code": "void f3(void) { return; }",
+          "calling": [
+            "Dispatch"
+          ],
+          "called": [],
+          "sym_type": "FUNCTION",
+          "external": false
+        },
+        "diff_type": [
+          "code"
+        ],
+        "ratio": 0.5,
+        "match_types": [
+          "Symbols"
+        ]
+      },
+      {
+        "old": {
+          "name": "Ctl\u0001\u007fDelete",
+          "fullname": "Ctl\u0001\u007fDelete",
+          "address": "140003400",
+          "code": "void f4(void) { return; }",
+          "calling": [
+            "Dispatch"
+          ],
+          "called": [],
+          "sym_type": "FUNCTION",
+          "external": false
+        },
+        "new": {
+          "name": "Ctl\u0001\u007fDelete",
+          "fullname": "Ctl\u0001\u007fDelete",
+          "address": "140004400",
+          "code": "void f4(void) { return; }",
+          "calling": [
+            "Dispatch"
+          ],
+          "called": [],
+          "sym_type": "FUNCTION",
+          "external": false
+        },
+        "diff_type": [
+          "code"
+        ],
+        "ratio": 0.5,
+        "match_types": [
+          "Symbols"
+        ]
+      },
+      {
+        "old": {
+          "name": "Sep\u2028Para\u2029Sep",
+          "fullname": "Sep\u2028Para\u2029Sep",
+          "address": "140003500",
+          "code": "void f5(void) { return; }",
+          "calling": [
+            "Dispatch"
+          ],
+          "called": [],
+          "sym_type": "FUNCTION",
+          "external": false
+        },
+        "new": {
+          "name": "Sep\u2028Para\u2029Sep",
+          "fullname": "Sep\u2028Para\u2029Sep",
+          "address": "140004500",
+          "code": "void f5(void) { return; }",
+          "calling": [
+            "Dispatch"
+          ],
+          "called": [],
+          "sym_type": "FUNCTION",
+          "external": false
+        },
+        "diff_type": [
+          "code"
+        ],
+        "ratio": 0.5,
+        "match_types": [
+          "Symbols"
+        ]
+      },
+      {
+        "old": {
+          "name": "Longxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+          "fullname": "Longxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+          "address": "140003600",
+          "code": "void f6(void) { return; }",
+          "calling": [
+            "Dispatch"
+          ],
+          "called": [],
+          "sym_type": "FUNCTION",
+          "external": false
+        },
+        "new": {
+          "name": "Longxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+          "fullname": "Longxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+          "address": "140004600",
+          "code": "void f6(void) { return; }",
+          "calling": [
+            "Dispatch"
+          ],
+          "called": [],
+          "sym_type": "FUNCTION",
+          "external": false
+        },
+        "diff_type": [
+          "code"
+        ],
+        "ratio": 0.5,
+        "match_types": [
+          "Symbols"
+        ]
+      },
+      {
+        "old": {
+          "name": "<img src=x onerror=alert(1)>",
+          "fullname": "<img src=x onerror=alert(1)>",
+          "address": "140003700",
+          "code": "void f7(void) { return; }",
+          "calling": [
+            "Dispatch"
+          ],
+          "called": [],
+          "sym_type": "FUNCTION",
+          "external": false
+        },
+        "new": {
+          "name": "<img src=x onerror=alert(1)>",
+          "fullname": "<img src=x onerror=alert(1)>",
+          "address": "140004700",
+          "code": "void f7(void) { return; }",
+          "calling": [
+            "Dispatch"
+          ],
+          "called": [],
+          "sym_type": "FUNCTION",
+          "external": false
+        },
+        "diff_type": [
+          "code"
+        ],
+        "ratio": 0.5,
+        "match_types": [
+          "Symbols"
+        ]
+      },
+      {
+        "old": {
+          "name": "..\\..\\evil.dll::Run",
+          "fullname": "..\\..\\evil.dll::Run",
+          "address": "140003800",
+          "code": "void f8(void) { return; }",
+          "calling": [
+            "Dispatch"
+          ],
+          "called": [],
+          "sym_type": "FUNCTION",
+          "external": false
+        },
+        "new": {
+          "name": "..\\..\\evil.dll::Run",
+          "fullname": "..\\..\\evil.dll::Run",
+          "address": "140004800",
+          "code": "void f8(void) { return; }",
+          "calling": [
+            "Dispatch"
+          ],
+          "called": [],
+          "sym_type": "FUNCTION",
+          "external": false
+        },
+        "diff_type": [
+          "code"
+        ],
+        "ratio": 0.5,
+        "match_types": [
+          "Symbols"
+        ]
+      },
+      {
+        "old": {
+          "name": "Nul\u0000Byte",
+          "fullname": "Nul\u0000Byte",
+          "address": "140003900",
+          "code": "void f9(void) { return; }",
+          "calling": [
+            "Dispatch"
+          ],
+          "called": [],
+          "sym_type": "FUNCTION",
+          "external": false
+        },
+        "new": {
+          "name": "Nul\u0000Byte",
+          "fullname": "Nul\u0000Byte",
+          "address": "140004900",
+          "code": "void f9(void) { return; }",
+          "calling": [
+            "Dispatch"
+          ],
+          "called": [],
+          "sym_type": "FUNCTION",
+          "external": false
+        },
+        "diff_type": [
+          "code"
+        ],
+        "ratio": 0.5,
+        "match_types": [
+          "Symbols"
+        ]
+      }
+    ]
+  },
+  "md_credits": "SYNTHETIC call-graph fixture; not output from Ghidriff or a real build",
+  "matches": {
+    "name_matches": {
+      "Dispatch": "Dispatch",
+      "Parse\u202eRecord": "Parse\u202eRecord",
+      "Quote\"Back\\slash": "Quote\"Back\\slash",
+      "Esc\\N\\G\\n\\l": "Esc\\N\\G\\n\\l",
+      "Line\nBreak\rCarriage": "Line\nBreak\rCarriage",
+      "Ctl\u0001\u007fDelete": "Ctl\u0001\u007fDelete",
+      "Sep\u2028Para\u2029Sep": "Sep\u2028Para\u2029Sep",
+      "Longxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx": "Longxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+      "<img src=x onerror=alert(1)>": "<img src=x onerror=alert(1)>",
+      "..\\..\\evil.dll::Run": "..\\..\\evil.dll::Run",
+      "Nul\u0000Byte": "Nul\u0000Byte"
+    },
+    "address_matches": {}
+  }
+}
