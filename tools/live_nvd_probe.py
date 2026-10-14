@@ -159,8 +159,11 @@ def make_project(work: Path) -> Path:
 
 
 def probe(cves: Sequence[str], providers: Sequence[str], work: Path, timeout: float, *,
-          check_host: Callable[[str], tuple[bool, str]] = reachable,
-          runner: Callable[[Sequence[str], float], CliRun] = run_cli) -> dict:
+          check_host: Callable[[str], tuple[bool, str]] | None = None,
+          runner: Callable[[Sequence[str], float], CliRun] | None = None) -> dict:
+    # Resolved per call (not bound as default arguments) so callers and tests can replace the module functions.
+    check_host = check_host or reachable
+    runner = runner or run_cli
     unreachable = {}
     for p in providers:
         ok, why = check_host(HOSTS[p])
