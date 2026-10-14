@@ -70,6 +70,7 @@ class PairHealth:
     to_ordinal: int
     state: PairState
     reason: str
+    path: str = ''  # relative POSIX path below the series root, from series.json
 
 
 @dataclass(frozen=True)
@@ -204,7 +205,7 @@ def load_view(series_path: Path, reader: PairReader, cancel: threading.Event) ->
                                    for edge in chain.edges), effective.chain_stale(chain, last))
                  for chain in series.chains)
     pairs = tuple(PairHealth(r.from_ordinal, r.to_ordinal, snapshots[r.from_ordinal].state,
-                             snapshots[r.from_ordinal].reason) for r in series.pair_projects)
+                             snapshots[r.from_ordinal].reason, r.path) for r in series.pair_projects)
     state, message = _derive_state(series, pairs, effective.reasons, rows)
     return LoadedSeries(state, message, series.builds, pairs, rows, effective.reasons)
 
@@ -250,3 +251,15 @@ def apply_query(loaded: LoadedSeries, query: ViewQuery) -> SeriesView:
         rows=tuple(ordered[:MAX_ROWS]), total_chains=len(loaded.rows),
         hidden_by_filter=len(loaded.rows) - len(matched), truncated=len(ordered) > MAX_ROWS,
         warnings=loaded.warnings)
+
+
+def chain_text(row: ChainRow, builds: tuple[BuildRef, ...]) -> str:
+    """Plain-text copy of one chain: labels, ordinals and the first 12 hex of each build hash."""
+    lines = [f'Chain {row.chain_id[:12]} ({row.status}{", stale" if row.stale else ""}); '
+             'inferred hypothesis across independent pairwise results']
+    lines += [f'  build {b.ordinal}: {b.label} sha256:{b.artifact_sha256[:12]}' for b in builds]
+    for hop in row.hops:
+        score = f'attention {hop.score}' if hop.score is not None else hop.score_state
+        lines.append(f'  {hop.from_ordinal}->{hop.to_ordinal} {hop.label}: {hop.from_name} -> {hop.to_name} '
+                     f'[{hop.category}; {score}]')
+    return '\n'.join(lines)
