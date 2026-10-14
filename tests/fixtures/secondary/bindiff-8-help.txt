@@ -1,0 +1,41 @@
+bindiff: Find similarities and differences in disassembled code.
+Usage: bindiff [OPTION] DIRECTORY
+  or:  bindiff [OPTION] PRIMARY SECONDARY
+  or:  bindiff [OPTION] --primary=PRIMARY [--secondary=SECONDARY]
+  or:  bindiff --ui [UIOPTION...]
+In the 1st form, diff all files in a directory against each other. If
+the directory contains IDA Pro databases these will be exported first.
+In the 2nd and 3rd form, diff two previously exported binaries.
+In the 4th form, launch the BinDiff UI.
+
+  Flags from this binary:
+    --config (specify config file name); default: "";
+    --export (batch export .idb files from input directory to BinExport format);
+      default: false;
+    --flagfile (comma-separated list of files to load flags from); default: ;
+    --fromenv (comma-separated list of flags to set from the environment [use
+      'export FLAGS_flag1=value']); default: ;
+    --logo (display version/copyright information); default: true;
+      currently: false;
+    --ls (list hash/filenames for all .BinExport files in input directory);
+      default: false;
+    --md_index (dump MD indices (will not diff anything)); default: false;
+    --output_dir (output path, defaults to current directory); default: "";
+    --output_format (comma-separated list of output formats: log (text file),
+      bin[ary] (BinDiff database loadable by the disassembler plugins). An empty
+      value or using 'none' will disable writing to disk completely.);
+      default: bin;
+    --primary (primary input file or path in batch mode); default: "";
+    --print_config (print parsed configuration to stdout and exit);
+      default: false;
+    --secondary (secondary input file (optional)); default: "";
+    --tryfromenv (comma-separated list of flags to try to set from the
+      environment if present); default: ;
+    --ui (launch the BinDiff UI); default: false;
+    --undefok (comma-separated list of flag names that it is okay to specify on
+      the command line even if the program does not define a flag with that
+      name); default: ;
+
+Try --helpfull to get a list of all flags or --help=substring shows help for
+flags which include specified substring in either in the name, or description or
+path.

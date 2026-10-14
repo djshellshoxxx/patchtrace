@@ -35,7 +35,13 @@ STDERR_LIMIT = 256 * 1024
 CONFIG_BYTES = b'{}'
 CONFIG_SHA256 = hashlib.sha256(CONFIG_BYTES).hexdigest()
 EXPECTED_NAME = 'older_vs_newer.BinDiff'
-FORBIDDEN_FLAGS = ('--ui', '--export', '--ls', '--md_index', '--print_config')
+# Never passed (SPEC-29 §4.1): UI/IDA/batch modes, config dumps, and the absl flags that would let a file or
+# the environment inject arbitrary flags (`--flagfile`, `--fromenv`, `--tryfromenv`) or hide typos (`--undefok`).
+FORBIDDEN_FLAGS = ('--ui', '--export', '--ls', '--md_index', '--print_config', '--flagfile', '--fromenv',
+                   '--tryfromenv', '--undefok', '--help', '--helpfull', '--helpshort', '--helppackage', '--helpon',
+                   '--helpmatch', '--only_check_args', '--version')
+_ARGV_FIXED = ('--nologo', '--output_format=bin')
+_ARGV_VALUED = ('--output_dir', '--config', '--primary', '--secondary')
 _MATCHED = re.compile(r'^matched:\s*(\d{1,9}) of (\d{1,9})/(\d{1,9})', re.MULTILINE)
 _SIMILARITY = re.compile(r'^Similarity:\s*([0-9]{1,3}(?:\.[0-9]{1,6})?)%\s*\(Confidence:\s*'
                          r'([0-9]{1,3}(?:\.[0-9]{1,6})?)%\)', re.MULTILINE)
@@ -52,11 +58,25 @@ def validate_timeout(value: object) -> int:
     return value
 
 
+def check_argv(argv: list[str]) -> list[str]:
+    """Allow-list of the run argv after argv[0]: exactly `--nologo`, `--output_format=bin` and one non-empty
+    `--output_dir=`, `--config=`, `--primary=`, `--secondary=` each. Raises ValueError otherwise."""
+    names = []
+    for arg in argv[1:]:
+        name, _, value = arg.partition('=')
+        if name in FORBIDDEN_FLAGS or not (arg in _ARGV_FIXED or (name in _ARGV_VALUED and value)):
+            raise ValueError(f'BinDiff argument {name[:40]!r} is not allowed')
+        names.append(name)
+    if sorted(names) != sorted(('--nologo', '--output_format', *_ARGV_VALUED)):
+        raise ValueError('BinDiff argument set is not allowed (each option exactly once)')
+    return argv
+
+
 def build_argv(executable: str | Path, workdir: Path) -> list[str]:
     """§4.1: named `=`-joined flags only; user filenames never reach argv (inputs have fixed names)."""
-    return [str(executable), '--nologo', '--output_format=bin', f'--output_dir={workdir / "out"}',
-            f'--config={workdir / "bindiff.json"}', f'--primary={workdir / "in" / "older.BinExport"}',
-            f'--secondary={workdir / "in" / "newer.BinExport"}']
+    return check_argv([str(executable), '--nologo', '--output_format=bin', f'--output_dir={workdir / "out"}',
+                       f'--config={workdir / "bindiff.json"}', f'--primary={workdir / "in" / "older.BinExport"}',
+                       f'--secondary={workdir / "in" / "newer.BinExport"}'])
 
 
 def argv_template(executable: str | Path) -> tuple[str, ...]:
@@ -175,8 +195,8 @@ def execute(cap: Capability, pair: BoundPair, raw_dir: Path, *, cancel: threadin
         if (h_old, h_new) != (pair.older.file_sha256, pair.newer.file_sha256):  # validate -> use window
             raise _err('PT-SECONDARY-RUN', 'workdir-error', 'Could not prepare a private working folder '
                        '(input changed after validation).')
-        argv = build_argv(cap.path, workdir)
         try:
+            argv = build_argv(cap.path, workdir)
             env = build_env(Path(cap.path), workdir, environ=environ)
             result = runner(argv, cwd=workdir / 'cwd', env=env, cancel=cancel, timeout_seconds=timeout_seconds,
                             check_output=lambda: out_guard(workdir / 'out', max_bytes=output_limit),

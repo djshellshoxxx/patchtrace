@@ -7,21 +7,39 @@ from pathlib import Path
 import pytest
 from fake_bindiff import FULL_HELP, launcher_names, make_fake_bindiff, spy_calls
 
-from patchtrace.jobs import ProcessResult
+from patchtrace.jobs import ProcessResult, run_process
 from patchtrace.secondary import bindiff_probe
 from patchtrace.secondary.bindiff_probe import parse_version, probe, probe_report, sanitize
+
+SENTINELS = {'AWS_SECRET_ACCESS_KEY': 'sentinel-secret', 'JAVA_TOOL_OPTIONS': '-javaagent:evil.jar',
+             'LD_PRELOAD': '/evil.so', 'HTTPS_PROXY': 'http://proxy', 'FLAGS_ui': 'true',
+             'FLAGS_flagfile': '/evil/flags', 'FLAGS_config': '/evil/bindiff.json'}
 
 
 @pytest.fixture(autouse=True)
 def _fresh(monkeypatch):
     bindiff_probe.clear_probe_cache()
     monkeypatch.setattr(bindiff_probe, 'EXECUTABLE_NAMES', bindiff_probe.EXECUTABLE_NAMES | launcher_names())
-    monkeypatch.setenv('AWS_SECRET_ACCESS_KEY', 'sentinel-secret')
-    monkeypatch.setenv('JAVA_TOOL_OPTIONS', '-javaagent:evil.jar')
-    monkeypatch.setenv('LD_PRELOAD', '/evil.so')
-    monkeypatch.setenv('HTTPS_PROXY', 'http://proxy')
+    for name, value in SENTINELS.items():
+        monkeypatch.setenv(name, value)
     yield
     bindiff_probe.clear_probe_cache()
+
+
+def recording_runner(calls: list):
+    def runner(argv, **kwargs):
+        calls.append(list(argv))
+        return run_process(argv, **kwargs)
+    return runner
+
+
+def try_symlink(link: Path, target: Path) -> bool:
+    try:
+        link.parent.mkdir(parents=True, exist_ok=True)
+        link.symlink_to(target)
+        return True
+    except (OSError, NotImplementedError):  # e.g. Windows without the symlink privilege
+        return False
 
 
 @pytest.mark.parametrize('text, expected', [
@@ -43,12 +61,58 @@ def test_supported_v8_probe_uses_private_cwd_and_allowlisted_env(tmp_path):
     cap = report.capability
     assert cap.supported and cap.engine == 'bindiff' and cap.version.startswith('8 (@568181968')
     assert report.major == 8 and not report.untested_version and not cap.supports_json
+    assert cap.version == '8 (@568181968, Sep 25 2023)'  # the real v8 --version text
     calls = spy_calls(tmp_path / 'bd')
     assert [c['argv'] for c in calls] == [['--version'], ['--nologo', '--help']]
     for call in calls:
-        assert not {'AWS_SECRET_ACCESS_KEY', 'JAVA_TOOL_OPTIONS', 'LD_PRELOAD', 'HTTPS_PROXY'} & set(call['env'])
+        assert not set(SENTINELS) & set(call['env'])  # incl. FLAGS_* (absl --fromenv inputs)
         assert Path(call['cwd']).name == 'cwd' and 'patchtrace-bindiff-probe-' in call['cwd']
     assert not Path(calls[0]['cwd']).exists()  # private probe dir removed
+
+
+def test_real_v8_help_fixture_lists_required_and_forbidden_flags():
+    from patchtrace.secondary.bindiff_run import FORBIDDEN_FLAGS
+    for option in bindiff_probe.REQUIRED_OPTIONS:
+        assert f'    {option} (' in FULL_HELP
+    for flag in ('--flagfile', '--fromenv', '--tryfromenv', '--undefok', '--ui', '--export', '--ls',
+                 '--md_index', '--print_config'):
+        assert f'    {flag} (' in FULL_HELP and flag in FORBIDDEN_FLAGS
+
+
+def test_help_exit_0_is_still_accepted(tmp_path):
+    assert probe_report(make_fake_bindiff(tmp_path / 'bd', 'help-exit-0')).capability.supported
+
+
+def test_help_without_config_option_is_unsupported(tmp_path):
+    # --config is what neutralises user/machine config (SPEC-29 §4.1): a build without it cannot be driven safely.
+    report = probe_report(make_fake_bindiff(tmp_path / 'bd', 'missing-config'))
+    assert report.kind == 'missing-option' and '--config' in report.capability.reason
+
+
+def test_symlinked_selection_is_resolved_and_the_resolved_path_is_executed(tmp_path):
+    real = make_fake_bindiff(tmp_path / 'opt' / 'bindiff' / 'bin')
+    link = tmp_path / 'usr' / 'bin' / real.name
+    if not try_symlink(link, real):  # no symlink privilege: the regular-file path is covered elsewhere
+        assert probe_report(real).capability.path == str(real.resolve())
+        return
+    calls: list = []
+    report = probe_report(link, runner=recording_runner(calls))
+    assert report.capability.supported and report.capability.path == str(real.resolve())
+    assert [c[0] for c in calls] == [str(real.resolve())] * 2  # argv[0] is the resolved target, never the link
+
+
+@pytest.mark.parametrize('link_name, target_name', [('bindiff_ui', 'bindiff'), ('bindiff', 'bindiff_ui'),
+                                                    ('bindiff', 'python3')])
+def test_links_involving_the_ui_launcher_or_foreign_targets_are_refused(tmp_path, link_name, target_name):
+    target = tmp_path / 'bin' / target_name
+    target.parent.mkdir()
+    target.write_text('must never run')
+    link = tmp_path / 'sel' / link_name
+    if not try_symlink(link, target):
+        return  # no symlink privilege on this host; the name rules are covered by the regular-file test below
+    called = []
+    report = probe_report(link, runner=lambda *a, **k: called.append(a))
+    assert not report.capability.supported and report.kind == 'not-found' and not called
 
 
 def test_probe_result_is_cached_per_path_mtime_size(tmp_path):
@@ -70,6 +134,7 @@ def test_unsupported_modes(tmp_path, mode, kind):
 
 
 def test_help_exit_1_is_accepted(tmp_path):
+    # Measured: real BinDiff 8 exits 1 after printing --help on stdout (the fake's default, too).
     assert probe_report(make_fake_bindiff(tmp_path / 'bd', 'help-exit-1')).capability.supported
 
 

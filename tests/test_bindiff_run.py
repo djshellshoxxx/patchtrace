@@ -13,6 +13,7 @@ import pytest
 from fake_bindiff import launcher_names, make_fake_bindiff, spy_calls
 from test_bindiff_inputs import Accepted, Summary, accepted
 
+from patchtrace.jobs import run_process
 from patchtrace.secondary import bindiff_probe, bindiff_run
 from patchtrace.secondary.contracts import Capability, SecondaryError
 from patchtrace.secondary.registry import BinDiffAdapter
@@ -21,7 +22,8 @@ from patchtrace.secondary.scheduler import ProjectRef, run_engines
 
 OLD, NEW = 'a' * 64, 'b' * 64
 SECRETS = {'AWS_SECRET_ACCESS_KEY': 'sentinel-secret', 'JAVA_TOOL_OPTIONS': '-javaagent:evil.jar',
-           'LD_PRELOAD': '/evil.so', 'HTTPS_PROXY': 'http://proxy', 'GITHUB_TOKEN': 'ghp_sentinel'}
+           'LD_PRELOAD': '/evil.so', 'HTTPS_PROXY': 'http://proxy', 'GITHUB_TOKEN': 'ghp_sentinel',
+           'FLAGS_ui': 'true', 'FLAGS_flagfile': '/evil/flags', 'FLAGS_output_dir': '/evil'}
 
 
 @pytest.fixture(autouse=True)
@@ -67,6 +69,7 @@ def test_ok_run_end_to_end(tmp_path):
                             f'--config={workdir / "bindiff.json"}', f'--primary={workdir / "in" / "older.BinExport"}',
                             f'--secondary={workdir / "in" / "newer.BinExport"}']
     assert not any(a.split('=')[0] in bindiff_run.FORBIDDEN_FLAGS for a in call['argv'])
+    assert call['config'] == '{}'  # exactly the two bytes, no BOM: resets user and machine config (§4.1)
     assert Path(call['cwd']).name == 'cwd' and workdir.name.startswith('patchtrace-bindiff-')
     expected_env = bindiff_probe.build_env(Path(adapter._report.capability.path), workdir)
     if os.name == 'nt':
@@ -82,6 +85,45 @@ def test_ok_run_end_to_end(tmp_path):
     assert prov['binexport_binding'] == 'sha256' and prov['config_sha256'] == bindiff_run.CONFIG_SHA256
     assert prov['older_binexport_sha256'] == adapter._pair.older.file_sha256
     assert 'matched=2' in prov['bindiff_summary'] and 'failure_kind' not in prov
+
+
+def test_argv_allowlist_rejects_forbidden_unknown_and_positional_arguments(tmp_path):
+    argv = bindiff_run.build_argv('/opt/bindiff/bin/bindiff', tmp_path)
+    assert bindiff_run.check_argv(argv) == argv
+    for flag in ('--flagfile', '--fromenv', '--tryfromenv', '--undefok', '--ui', '--export', '--ls', '--md_index',
+                 '--print_config', '--helpfull', '--version', '--help'):
+        assert flag in bindiff_run.FORBIDDEN_FLAGS
+        for bad in (flag, f'{flag}=x'):
+            with pytest.raises(ValueError, match='not allowed'):
+                bindiff_run.check_argv([*argv, bad])
+    for bad in ('--output_format=log', '--secondary_dir=x', 'positional.BinExport', '-v', '--nologo=false'):
+        with pytest.raises(ValueError, match='not allowed'):
+            bindiff_run.check_argv([*argv, bad])
+
+
+def test_run_executes_the_resolved_executable_path(tmp_path):
+    inputs = tmp_path / 'inputs'
+    inputs.mkdir()
+    real = make_fake_bindiff(tmp_path / 'bd')
+    link = tmp_path / 'links' / real.name
+    link.parent.mkdir()
+    try:
+        link.symlink_to(real)
+        selected = link
+    except (OSError, NotImplementedError):  # no symlink privilege: the selected path is the real file
+        selected = real
+    calls: list = []
+
+    def recording(argv, **kwargs):
+        calls.append(list(argv))
+        return run_process(argv, **kwargs)
+
+    adapter = BinDiffAdapter(selected, older=accepted(inputs, 'o', OLD), newer=accepted(inputs, 'n', NEW),
+                             raw_dir=tmp_path / 'raw', probe_runner=recording)
+    (out,) = run_engines(project(tmp_path), ['bindiff'], cancel=threading.Event(), env={},
+                         registry={'bindiff': adapter}, runner=recording)
+    assert out.run.status == 'ok' and len(calls) == 3  # --version, --help, the diff
+    assert {c[0] for c in calls} == {str(real.resolve())}
 
 
 def test_cache_key_depends_on_binexport_hashes(tmp_path):
