@@ -1,0 +1,40 @@
+{
+  "artifact_sha256": "d6a914df2da752f3444b4a98be2488484c153d5bd5853eb7793bc787c24596b6",
+  "content_digest": "bd7f5b2826dc502689356fe10e4ab9cce47ff5cc5a3554ca3d7ec275648569a1",
+  "contract": "program-ir/1",
+  "counts": {
+    "blocks": 18833,
+    "call_edges": 7120,
+    "consts": 2210,
+    "functions": 1210,
+    "imports": 312,
+    "instructions": 201544,
+    "mask_unlocated": 0,
+    "pdata_confirmed": 1004,
+    "refs": 30411,
+    "strings": 904,
+    "thunks": 88
+  },
+  "created_utc": "2026-10-14T12:00:00+00:00",
+  "file_sha256": "92f136731d2f8c678fd7b5f3fbd8f80fbc5ac60f9d4eccf7279f17de993caabe",
+  "image_base": 5368709120,
+  "ingest_version": "ir-ingest/1",
+  "ir_key": "b77451bd6e36722bd904f5d04aaac69a4443d548ffbe7ad471cfb7f818b853ae",
+  "limits_hit": [],
+  "norm_version": "norm/1",
+  "producer": {
+    "analysis_options_digest": "b879f4c66151e4904400b399f0d818e7cc3583e5f4ace3dd73a05f950ee7a756",
+    "ghidra": "12.0.4",
+    "gzf_sha256": "ab5a722b15a725792bd140ae4b795b3f46971f8593bff4b9f2e0456e0904ced0",
+    "java": "21",
+    "kind": "ghidra",
+    "mode": "gzf",
+    "pyghidra": "3.0.2",
+    "python": "3.12.10",
+    "script_sha256": "8129b40079cef7a05617b41cd32203070c3172674355e85ed3053f147b8548f0",
+    "symbols": "none"
+  },
+  "program_sha256": "d6a914df2da752f3444b4a98be2488484c153d5bd5853eb7793bc787c24596b6",
+  "size_of_image": 1048576,
+  "warnings": []
+}

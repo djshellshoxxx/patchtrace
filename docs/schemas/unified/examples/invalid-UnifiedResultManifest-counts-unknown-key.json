@@ -1,0 +1,60 @@
+{
+  "config_digest": "776202cb9fdc3914b95dab8a3596f8810b887bed6e570c610bd42013ce04074b",
+  "contract": "unified-result/1",
+  "counts": {
+    "decisions": {
+      "ambiguous": 0,
+      "candidate": 0,
+      "contested": 0,
+      "matched": 1,
+      "newer_only": 0,
+      "older_only": 0,
+      "removed": 0,
+      "tentative": 0,
+      "unknown": 0
+    },
+    "materiality": {
+      "cosmetic": 0,
+      "material": 1,
+      "not_applicable": 0,
+      "review": 0,
+      "unchanged": 0,
+      "unknown": 0
+    }
+  },
+  "created_utc": "2026-10-14T12:00:00+00:00",
+  "engine_version": "ude/1",
+  "ghidriff_raw_sha256": "649ce4d57899f730e329c84d4dfeb98a724d0d8ebc027fa008d98d937aa90732",
+  "ghidriff_run_id": "run-1",
+  "ir_newer": null,
+  "ir_older": null,
+  "limitations": [],
+  "manual_digest": "a9adbdc4d34f2c90e9f3672b7e6bff65fe419699a061e2bb54c61b9bc41a7505",
+  "newer_sha256": "c6ba0acb3c069e88d7ae5b354c9cf7cc0f86d6728fd36572b5df133b4fb182c4",
+  "older_sha256": "d6a914df2da752f3444b4a98be2488484c153d5bd5853eb7793bc787c24596b6",
+  "orientation": "older->newer",
+  "parts": [
+    {
+      "bytes": 400,
+      "name": "facts.jsonl.gz",
+      "records": 1,
+      "sha256": "ce12238101869cad5752ef03e46fe556c3c3d257fa5f800aec92e28a767a2b30"
+    },
+    {
+      "bytes": 900,
+      "name": "rows.jsonl.gz",
+      "records": 1,
+      "sha256": "9e26624325ace7ce534d2f8805e75f1f15cc0e3c0b251394ad7e94aec060b59b"
+    }
+  ],
+  "result_id": "cabf4547e8fd32dab7c1225f33b3ac5decb22b28a577764ba5d98a9f92a84e9e",
+  "sources": [
+    {
+      "entry_id": "run-1",
+      "file_sha256": "649ce4d57899f730e329c84d4dfeb98a724d0d8ebc027fa008d98d937aa90732",
+      "source": "ghidriff",
+      "version": "1.0.0"
+    }
+  ],
+  "status": "complete"
+}

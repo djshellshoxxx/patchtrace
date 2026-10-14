@@ -1,0 +1,173 @@
+{
+  "$defs": {
+    "StageRecord": {
+      "additionalProperties": false,
+      "properties": {
+        "duration_ms": {
+          "minimum": 0,
+          "title": "Duration Ms",
+          "type": "integer"
+        },
+        "reason": {
+          "anyOf": [
+            {
+              "pattern": "^[a-z0-9-]{1,48}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reason"
+        },
+        "stage": {
+          "pattern": "^[a-z0-9-]{1,48}$",
+          "title": "Stage",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "ok",
+            "partial",
+            "failed",
+            "cancelled",
+            "timeout",
+            "skipped",
+            "unsupported"
+          ],
+          "title": "Status",
+          "type": "string"
+        }
+      },
+      "required": [
+        "stage",
+        "status",
+        "duration_ms"
+      ],
+      "title": "StageRecord",
+      "type": "object"
+    }
+  },
+  "$id": "https://patchtrace.local/schemas/unified-run/1/UnifiedRun.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "Body of the `unified-run` enrichment row (entry id = run_id = keys.unified_run_id(result_key, started_utc)).",
+  "properties": {
+    "contract": {
+      "const": "unified-run/1",
+      "default": "unified-run/1",
+      "title": "Contract",
+      "type": "string"
+    },
+    "duration_ms": {
+      "minimum": 0,
+      "title": "Duration Ms",
+      "type": "integer"
+    },
+    "error_code": {
+      "anyOf": [
+        {
+          "enum": [
+            "PT-UNIFIED-INPUT",
+            "PT-UNIFIED-PAIR",
+            "PT-UNIFIED-ORIENTATION",
+            "PT-UNIFIED-UNSUPPORTED",
+            "PT-UNIFIED-EXTRACT",
+            "PT-UNIFIED-IR",
+            "PT-UNIFIED-LIMIT",
+            "PT-UNIFIED-TIMEOUT",
+            "PT-UNIFIED-CANCEL",
+            "PT-UNIFIED-STALE",
+            "PT-UNIFIED-STORE",
+            "PT-UNIFIED-INTERNAL"
+          ],
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Error Code"
+    },
+    "peak_rss_bytes": {
+      "anyOf": [
+        {
+          "minimum": 0,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Peak Rss Bytes"
+    },
+    "provenance": {
+      "additionalProperties": {
+        "type": "string"
+      },
+      "title": "Provenance",
+      "type": "object"
+    },
+    "result_id": {
+      "anyOf": [
+        {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Result Id"
+    },
+    "run_id": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Run Id",
+      "type": "string"
+    },
+    "stages": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/StageRecord"
+      },
+      "maxItems": 16,
+      "title": "Stages",
+      "type": "array"
+    },
+    "started_utc": {
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{1,6})?(\\+00:00|Z)$",
+      "title": "Started Utc",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "ok",
+        "partial",
+        "failed",
+        "cancelled",
+        "timeout",
+        "unsupported",
+        "cached"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "stderr_tail": {
+      "default": "",
+      "title": "Stderr Tail",
+      "type": "string"
+    }
+  },
+  "required": [
+    "run_id",
+    "result_id",
+    "status",
+    "started_utc",
+    "duration_ms"
+  ],
+  "title": "UnifiedRun",
+  "type": "object"
+}

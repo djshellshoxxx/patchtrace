@@ -1,0 +1,64 @@
+{
+  "atoms": [
+    {
+      "cardinality": "1:1",
+      "native": [],
+      "newer_rva": 4368,
+      "older_rva": 4096,
+      "ref": "m-17",
+      "source": "ghidriff",
+      "step": "SymbolsHash",
+      "tier": "A"
+    },
+    {
+      "cardinality": "1:1",
+      "cls": "E-BODY",
+      "native": [],
+      "newer_rva": 4368,
+      "older_rva": 4096,
+      "ref": null,
+      "source": "pt-bytes",
+      "step": "P06-operand-class",
+      "tier": "B"
+    }
+  ],
+  "change_classes": [
+    "constant"
+  ],
+  "contest": null,
+  "contract": "unified-match/1",
+  "decision": "matched",
+  "flags": [
+    "pdata-confirmed"
+  ],
+  "ghidriff_match_id": "m-17",
+  "hints": [],
+  "materiality": "material",
+  "newer": [
+    {
+      "kind": "function",
+      "name": "ParseHeader",
+      "rva": 4368
+    }
+  ],
+  "older": [
+    {
+      "kind": "function",
+      "name": "ParseHeader",
+      "rva": 4096
+    }
+  ],
+  "row_id": "e985f2c135feb8094a1f225a55d8228f93deff08d65a4d2d22c86ccca4475f07",
+  "support": [
+    {
+      "atom_index": 0,
+      "component": "K1",
+      "tier": "A"
+    },
+    {
+      "atom_index": 1,
+      "component": "K2",
+      "tier": "B"
+    }
+  ]
+}

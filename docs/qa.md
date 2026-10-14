@@ -232,3 +232,7 @@ Toolchain: Ubuntu clang/lld 18.1.3, LLVM 18 tools, mingw-w64 gcc 13-win32 (apt),
 | Regression | unconfigured panel vs `EvidencePanel(bindiff_setup=False)`: identical widget states through E0-E6/run; same Engines page minimum width; C6 widgets keep width and x position at 680x600 and 460x420 | passed |
 
 Found and fixed while building: a toggle in the run-controls row widened the Engines page minimum (440 to 533 px); a page-level scroll area clipped the bottom rows (Qt height-for-width); the BinDiff engine row kept a stale "not configured" reason until a reload; a late worker result after the dock was deleted raised in a Qt slot (red test first). Not verifiable here: Windows runs, real BinDiff/Ghidra exports through the GUI, DPI rendering, screen-reader output.
+### [S0a:contracts-store] SPEC-31 S0a (2026-10-14, Linux container, Python 3.13.16; synthetic data only)
+- `tests/test_unified_{contracts,keys,store}.py`: 82 passed; `ruff check src tests tools` clean. Covers schema round trips, every invalid example (02 s8 list plus extras) rejected for its reason, regenerate-and-compare of all generated schemas (pre-SPEC-31 schemas byte-identical: additive only), key determinism across processes and hash seeds, `test_unified_rows_survive_enrichment_retention`, `test_old_reader_ignores_unified_kinds` (no `extension_version` bump).
+- Not verified here: Windows (CI) and Python 3.12 (CI pin); no live data involved.
+- Full gate once on 420e9f2: `QT_QPA_PLATFORM=offscreen python -m pytest -q` 1908 passed, 6 skipped (live BinDiff BLOCKED: not installed), 160 s.

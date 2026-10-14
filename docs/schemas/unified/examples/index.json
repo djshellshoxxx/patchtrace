@@ -1,0 +1,122 @@
+{
+  "invalid-ChangeFacts-cosmetic-with-semantic-delta.json": {
+    "expect": "no semantic delta",
+    "model": "ChangeFacts",
+    "valid": false
+  },
+  "invalid-ChangeFacts-cosmetic-without-proof.json": {
+    "expect": "proof is required",
+    "model": "ChangeFacts",
+    "valid": false
+  },
+  "invalid-ChangeFacts-material-anchored-in-bytes-group.json": {
+    "expect": "anchored second channel",
+    "model": "ChangeFacts",
+    "valid": false
+  },
+  "invalid-ChangeFacts-material-without-second-channel.json": {
+    "expect": "second channel is required",
+    "model": "ChangeFacts",
+    "valid": false
+  },
+  "invalid-ChangeFacts-unchanged-without-proof.json": {
+    "expect": "proof is required",
+    "model": "ChangeFacts",
+    "valid": false
+  },
+  "invalid-ExtractRequest-relative-path.json": {
+    "expect": "absolute",
+    "model": "ExtractRequest",
+    "valid": false
+  },
+  "invalid-IrExtractHeader-unknown-key.json": {
+    "expect": "extra",
+    "model": "IrExtractHeader",
+    "valid": false
+  },
+  "invalid-UnifiedMatch-atom-without-cls.json": {
+    "expect": "cls",
+    "model": "UnifiedMatch",
+    "valid": false
+  },
+  "invalid-UnifiedMatch-decision-removed.json": {
+    "expect": "decision",
+    "model": "UnifiedMatch",
+    "valid": false
+  },
+  "invalid-UnifiedMatch-negative-rva.json": {
+    "expect": "older_rva",
+    "model": "UnifiedMatch",
+    "valid": false
+  },
+  "invalid-UnifiedMatch-tier-a-non-exclusive.json": {
+    "expect": "non-exclusive",
+    "model": "UnifiedMatch",
+    "valid": false
+  },
+  "invalid-UnifiedResultManifest-counts-unknown-key.json": {
+    "expect": "removed",
+    "model": "UnifiedResultManifest",
+    "valid": false
+  },
+  "invalid-UnifiedResultPointer-dir-mismatch.json": {
+    "expect": "relative_dir",
+    "model": "UnifiedResultPointer",
+    "valid": false
+  },
+  "invalid-UnifiedRun-ok-without-result.json": {
+    "expect": "needs a result",
+    "model": "UnifiedRun",
+    "valid": false
+  },
+  "valid-ChangeFacts-cosmetic-pseudo.json": {
+    "expect": null,
+    "model": "ChangeFacts",
+    "valid": true
+  },
+  "valid-ChangeFacts-material.json": {
+    "expect": null,
+    "model": "ChangeFacts",
+    "valid": true
+  },
+  "valid-ExtractRequest-gzf.json": {
+    "expect": null,
+    "model": "ExtractRequest",
+    "valid": true
+  },
+  "valid-IrExtractFooter.json": {
+    "expect": null,
+    "model": "IrExtractFooter",
+    "valid": true
+  },
+  "valid-IrExtractHeader.json": {
+    "expect": null,
+    "model": "IrExtractHeader",
+    "valid": true
+  },
+  "valid-ProgramIrManifest.json": {
+    "expect": null,
+    "model": "ProgramIrManifest",
+    "valid": true
+  },
+  "valid-UnifiedMatch-matched.json": {
+    "expect": null,
+    "model": "UnifiedMatch",
+    "valid": true
+  },
+  "valid-UnifiedResultManifest.json": {
+    "expect": null,
+    "model": "UnifiedResultManifest",
+    "valid": true
+  },
+  "valid-UnifiedResultPointer.json": {
+    "expect": null,
+    "model": "UnifiedResultPointer",
+    "valid": true
+  },
+  "valid-UnifiedRun-ok.json": {
+    "expect": null,
+    "model": "UnifiedRun",
+    "valid": true
+  }
+}

@@ -1,0 +1,284 @@
+{
+  "$defs": {
+    "Delta": {
+      "additionalProperties": false,
+      "properties": {
+        "channel": {
+          "enum": [
+            "C0",
+            "C1",
+            "C2",
+            "C3",
+            "C4",
+            "C5",
+            "C6",
+            "C7",
+            "C8"
+          ],
+          "title": "Channel",
+          "type": "string"
+        },
+        "cls": {
+          "enum": [
+            "constant",
+            "comparison",
+            "condition",
+            "callee",
+            "call-added",
+            "call-removed",
+            "data-ref",
+            "struct-offset",
+            "cfg",
+            "block-added",
+            "block-removed",
+            "string",
+            "size-only",
+            "refcount-only",
+            "address-only",
+            "register-only",
+            "layout-only",
+            "name-only",
+            "frame",
+            "eh",
+            "unknown"
+          ],
+          "title": "Cls",
+          "type": "string"
+        },
+        "new": {
+          "anyOf": [
+            {
+              "maxLength": 120,
+              "minLength": 0,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "New"
+        },
+        "newer_rva": {
+          "anyOf": [
+            {
+              "maximum": 4294967295,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Newer Rva"
+        },
+        "old": {
+          "anyOf": [
+            {
+              "maxLength": 120,
+              "minLength": 0,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Old"
+        },
+        "older_rva": {
+          "anyOf": [
+            {
+              "maximum": 4294967295,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Older Rva"
+        }
+      },
+      "required": [
+        "cls",
+        "channel",
+        "older_rva",
+        "newer_rva"
+      ],
+      "title": "Delta",
+      "type": "object"
+    }
+  },
+  "$id": "https://patchtrace.local/schemas/change-facts/1/ChangeFacts.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "channels": {
+      "items": {
+        "maxItems": 2,
+        "minItems": 2,
+        "prefixItems": [
+          {
+            "enum": [
+              "C0",
+              "C1",
+              "C2",
+              "C3",
+              "C4",
+              "C5",
+              "C6",
+              "C7",
+              "C8"
+            ],
+            "type": "string"
+          },
+          {
+            "enum": [
+              "equal",
+              "differs",
+              "unavailable",
+              "not-applicable"
+            ],
+            "type": "string"
+          }
+        ],
+        "type": "array"
+      },
+      "title": "Channels",
+      "type": "array"
+    },
+    "contract": {
+      "const": "change-facts/1",
+      "default": "change-facts/1",
+      "title": "Contract",
+      "type": "string"
+    },
+    "deltas": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/Delta"
+      },
+      "maxItems": 64,
+      "title": "Deltas",
+      "type": "array"
+    },
+    "deltas_omitted": {
+      "default": 0,
+      "minimum": 0,
+      "title": "Deltas Omitted",
+      "type": "integer"
+    },
+    "eh": {
+      "default": "unavailable",
+      "enum": [
+        "equal",
+        "differs",
+        "absent",
+        "unavailable"
+      ],
+      "title": "Eh",
+      "type": "string"
+    },
+    "limits_hit": {
+      "default": [],
+      "items": {
+        "pattern": "^[a-z0-9-]{1,48}$",
+        "type": "string"
+      },
+      "maxItems": 64,
+      "title": "Limits Hit",
+      "type": "array"
+    },
+    "proof": {
+      "anyOf": [
+        {
+          "enum": [
+            "UNCH/1",
+            "COS-ADDR/1",
+            "COS-LAYOUT/1",
+            "COS-PSEUDO/1"
+          ],
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Proof"
+    },
+    "row_id": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Row Id",
+      "type": "string"
+    },
+    "second_channel": {
+      "anyOf": [
+        {
+          "enum": [
+            "C0",
+            "C1",
+            "C2",
+            "C3",
+            "C4",
+            "C5",
+            "C6",
+            "C7",
+            "C8"
+          ],
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Second Channel"
+    },
+    "targets": {
+      "default": [
+        0,
+        0,
+        0
+      ],
+      "maxItems": 3,
+      "minItems": 3,
+      "prefixItems": [
+        {
+          "minimum": 0,
+          "type": "integer"
+        },
+        {
+          "minimum": 0,
+          "type": "integer"
+        },
+        {
+          "minimum": 0,
+          "type": "integer"
+        }
+      ],
+      "title": "Targets",
+      "type": "array"
+    },
+    "verdict": {
+      "enum": [
+        "unchanged",
+        "cosmetic",
+        "material",
+        "review",
+        "unknown",
+        "not-applicable"
+      ],
+      "title": "Verdict",
+      "type": "string"
+    }
+  },
+  "required": [
+    "row_id",
+    "verdict",
+    "channels"
+  ],
+  "title": "ChangeFacts",
+  "type": "object"
+}
