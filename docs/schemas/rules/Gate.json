@@ -1,0 +1,62 @@
+{
+  "$id": "https://patchtrace.local/schemas/rules/1/Gate.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "One check with its measured number (a count, a size or short text), never combined into a score.",
+  "properties": {
+    "detail": {
+      "default": "",
+      "maxLength": 300,
+      "title": "Detail",
+      "type": "string"
+    },
+    "gate_id": {
+      "enum": [
+        "elig",
+        "len",
+        "wild",
+        "uniq",
+        "sep",
+        "compile",
+        "secret",
+        "dist"
+      ],
+      "title": "Gate Id",
+      "type": "string"
+    },
+    "measured": {
+      "anyOf": [
+        {
+          "minimum": 0,
+          "type": "integer"
+        },
+        {
+          "maxLength": 64,
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Measured"
+    },
+    "state": {
+      "enum": [
+        "pass",
+        "fail",
+        "unknown",
+        "waived"
+      ],
+      "title": "State",
+      "type": "string"
+    }
+  },
+  "required": [
+    "gate_id",
+    "state"
+  ],
+  "title": "Gate",
+  "type": "object"
+}

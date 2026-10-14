@@ -356,6 +356,61 @@ def test_xml_node_and_depth_limits():
     assert info.value.code == 'PT-KBC-LIMIT'
 
 
+# --------------------------------------------------------------------------------------------- XML containers, types
+
+def xml_statuses(*kinds: str) -> str:
+    """One ProductStatuses container with a Status per kind, each naming PT-CLIENT."""
+    inner = ''.join(f'<cvrf:Status Type="{kind}"><cvrf:ProductID>PT-CLIENT</cvrf:ProductID></cvrf:Status>'
+                    for kind in kinds)
+    return f'<cvrf:ProductStatuses>{inner}</cvrf:ProductStatuses>'
+
+
+def vuln_with(*extra: str) -> bytes:
+    """The XML month with ``extra`` appended inside its one Vulnerability."""
+    return xml_doc(XML_VULN.replace('</cvrf:Vulnerability>', ''.join(extra) + '</cvrf:Vulnerability>'))
+
+
+def month_with(extra: str) -> bytes:
+    """The XML month with ``extra`` appended as a further child of the root."""
+    return xml_doc(XML_VULN).replace(b'</cvrf:CvrfDoc>', extra.encode() + b'</cvrf:CvrfDoc>')
+
+
+@pytest.mark.parametrize('raw', [
+    month_with('<cvrf:Vulnerabilities>' + XML_VULN.replace('30002', '30003') + '</cvrf:Vulnerabilities>'),
+    month_with('<cvrf:ProductTree/>'),
+    month_with('<cvrf:DocumentTracking Identification="Y" Version="2"/>'),
+    vuln_with(xml_statuses('Fixed'), xml_statuses('Not affected')),
+    vuln_with(xml_statuses('Not affected'), xml_statuses('Fixed')),
+    vuln_with('<cvrf:Remediations/>'),
+    vuln_with('<cvrf:CWE ID="CWE-79"/>'),
+], ids=['vulnerabilities', 'product-tree', 'tracking', 'statuses-fixed-first', 'statuses-negative-first',
+        'remediations', 'cwe'])
+def test_ra2_a_repeated_xml_container_is_ambiguous_and_refuses_the_source(raw):
+    """RA-2, the XML twin of NEG-07: a container occurring twice under one parent was last-wins, so the order of two
+    ProductStatuses flipped disputed and vendor-remediation and a second Vulnerabilities replaced the first."""
+    with pytest.raises(SourceError, match='ambiguous duplicate element') as info:
+        import_bytes(raw, now=NOW)
+    assert info.value.code == 'PT-KBC-SOURCE'
+
+
+def test_ra2_many_entries_in_one_container_are_not_duplicates():
+    """The rule is about a container repeated under one parent, not the entries inside one: a single
+    ProductStatuses holding Fixed and Not affected still disputes the fix."""
+    (edge,) = import_bytes(vuln_with(xml_statuses('Fixed', 'Not affected')), now=NOW).edges
+    assert edge.relation == 'disputed' and edge.product_status.value == 'Not affected'
+
+
+@pytest.mark.parametrize('kind', ['\N{ARABIC-INDIC DIGIT TWO}', '\N{FULLWIDTH DIGIT TWO}', ' 2 ', '+2', '0_2', '-2',
+                                  '1000', '2.0', ''],
+                         ids=['arabic-indic', 'full-width', 'padded', 'plus', 'underscore', 'minus', 'four-digits',
+                              'decimal', 'empty'])
+def test_ra5_xml_remediation_type_is_one_to_three_ascii_digits(kind):
+    """RA-5: int() alone read U+0662, U+FF12, ' 2 ', '+2' and '0_2' as the vendor-fix type 2; the JSON dialect needs
+    a real integer, so the XML twin accepts nothing but [0-9]{1,3}."""
+    doc = import_bytes(xml_doc(XML_VULN.replace('Type="2"', f'Type="{kind}"')), now=NOW)
+    assert doc.edges == () and [p.code for p in doc.problems] == ['TYPE_INVALID']
+
+
 # --------------------------------------------------------------------------------------------- size limits
 
 def test_cap_32_mib_boundary_and_gzip_bomb():
@@ -420,6 +475,33 @@ def test_oversized_field_values_become_problems_not_crashes():
         {**h.remediation(2, '5099401', [h.PRODUCT_CLIENT]), 'sub_type': 'T' * 5000}])
     doc = import_doc(h.cvrf_document([long_sub]))
     assert doc.edges[0].sub_type == 'T' * 1000
+
+
+@pytest.mark.parametrize('length,kept', [(200, True), (201, False), (5000, False)],
+                         ids=['200-kept', '201-dropped', '5000-dropped'])
+def test_ra6_xml_status_type_guard_is_the_json_guard(length, kept):
+    """RA-6: a status Type over 200 characters (the JSON guard) is one STATUS_SHAPE problem. It used to overflow the
+    pointer bound of ProductStatus and refuse the whole month; the remediation edge and the next row survive."""
+    first = XML_VULN.replace('</cvrf:Vulnerability>', xml_statuses('S' * length) + '</cvrf:Vulnerability>')
+    second = XML_VULN.replace('30002', '30003').replace('5099001', '5099002')
+    doc = import_bytes(xml_doc(first + second), now=NOW)
+    assert sorted((e.cve, e.kb, e.relation) for e in doc.edges) == [
+        ('CVE-2099-30002', 'KB5099001', 'vendor-remediation'), ('CVE-2099-30003', 'KB5099002', 'vendor-remediation')]
+    assert [p.code for p in doc.problems] == ([] if kept else ['STATUS_SHAPE'])
+    assert len(doc.statuses) == (1 if kept else 0)
+
+
+def test_ra6_a_status_that_breaks_its_contract_costs_only_its_row(monkeypatch):
+    """RA-6: ProductStatus is built inside the row-level try, so whatever its contract refuses is one ROW_SHAPE problem
+    and no edge for that remediation, never a refused month."""
+    real = cvrf.ProductStatus
+    monkeypatch.setattr(cvrf, 'ProductStatus', lambda **kwargs: real(value='', pointer=kwargs['pointer']))
+    rows = [h.vulnerability('CVE-2099-30030', 'with a status', product_statuses={'Fixed': [h.PRODUCT_CLIENT]},
+                            remediations=[h.remediation(2, '5099030', [h.PRODUCT_CLIENT])]),
+            h.vulnerability('CVE-2099-30031', 'without', remediations=[h.remediation(2, '5099031', [h.PRODUCT_CLIENT])])]
+    doc = import_doc(h.cvrf_document(rows))
+    assert [(e.cve, e.kb) for e in doc.edges] == [('CVE-2099-30031', 'KB5099031')]
+    assert [(p.code, p.pointer) for p in doc.problems] == [('ROW_SHAPE', '/vulnerabilities/0/remediations/0')]
 
 
 # --------------------------------------------------------------------------------------------- row rules

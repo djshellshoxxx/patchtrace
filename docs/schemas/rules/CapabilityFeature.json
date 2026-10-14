@@ -1,0 +1,109 @@
+{
+  "$defs": {
+    "ApiRef": {
+      "additionalProperties": false,
+      "properties": {
+        "dll": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Dll",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "dll",
+        "name"
+      ],
+      "title": "ApiRef",
+      "type": "object"
+    }
+  },
+  "$id": "https://patchtrace.local/schemas/rules/1/CapabilityFeature.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "A capa capability that appeared or disappeared with the changed code. It contributes metadata and API gates; it is\nnever a rule condition by itself.",
+  "properties": {
+    "api_gates": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/ApiRef"
+      },
+      "maxItems": 8,
+      "title": "Api Gates",
+      "type": "array"
+    },
+    "attack": {
+      "default": [],
+      "items": {
+        "maxLength": 64,
+        "minLength": 1,
+        "type": "string"
+      },
+      "maxItems": 16,
+      "title": "Attack",
+      "type": "array"
+    },
+    "classification": {
+      "enum": [
+        "newly-introduced",
+        "removed-with-code"
+      ],
+      "title": "Classification",
+      "type": "string"
+    },
+    "included": {
+      "title": "Included",
+      "type": "boolean"
+    },
+    "kind": {
+      "const": "capability",
+      "default": "capability",
+      "title": "Kind",
+      "type": "string"
+    },
+    "namespace": {
+      "anyOf": [
+        {
+          "maxLength": 256,
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Namespace"
+    },
+    "rule_id": {
+      "maxLength": 256,
+      "minLength": 1,
+      "title": "Rule Id",
+      "type": "string"
+    },
+    "separation": {
+      "enum": [
+        "older-only",
+        "newer-only",
+        "both-sides",
+        "unknown"
+      ],
+      "title": "Separation",
+      "type": "string"
+    }
+  },
+  "required": [
+    "included",
+    "rule_id",
+    "classification",
+    "separation"
+  ],
+  "title": "CapabilityFeature",
+  "type": "object"
+}

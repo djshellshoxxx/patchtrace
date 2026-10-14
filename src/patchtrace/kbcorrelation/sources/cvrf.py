@@ -7,11 +7,11 @@ whose shape follows RK1 section 3 (``Remediations[Type==2]`` carries the KB, ``T
 MSRC CVRF JSON shape is unobserved until live probe L1, so a document in any other shape is refused with
 ``PT-KBC-SOURCE`` ("dialect unknown"); a parser never guesses, and an unknown dialect is never read as an empty month.
 
-Safety: duplicate JSON keys, non-finite numbers, byte-order marks and invalid UTF-8 are refused; nesting, node and
-string sizes are bounded (`KbcLimits`); XML containing any markup declaration (DOCTYPE, ENTITY, ...) or a non-UTF-8
-encoding is refused before the parser sees it, so no entity is ever expanded and nothing external is read. Advisory
-text is untrusted data: it is cleaned of controls and bidirectional marks, kept as plain text, never used to build a
-URL, and never placed in an error message.
+Safety: duplicate JSON keys (in XML, a container repeated under one parent), non-finite numbers, byte-order marks and
+invalid UTF-8 are refused; nesting, node and string sizes are bounded (`KbcLimits`); XML containing any markup
+declaration (DOCTYPE, ENTITY, ...) or a non-UTF-8 encoding is refused before the parser sees it, so no entity is ever
+expanded and nothing external is read. Advisory text is untrusted data: it is cleaned of controls and bidirectional
+marks, kept as plain text, never used to build a URL, and never placed in an error message.
 
 Edge rules (guards of plan section 6)
 -------------------------------------
@@ -33,6 +33,7 @@ import json
 import math
 import re
 import xml.etree.ElementTree as ET
+from collections.abc import Iterable
 from dataclasses import dataclass
 
 from pydantic import ValidationError
@@ -56,6 +57,7 @@ DIALECT_XML = 'cvrf-xml/0'
 DIALECTS = (DIALECT_JSON, DIALECT_XML)
 XML_NS = 'https://example.invalid/synthetic-cvrf/1'  # synthetic placeholder namespace (fixtures, not Microsoft)
 MAX_STRING = 1_048_576
+MAX_STATUS_NAME = 200
 REMEDIATION_VENDOR_FIX = 2
 
 _RELEASE_ID = re.compile(r'^[0-9]{4}-(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)$')
@@ -64,6 +66,7 @@ _STAMP = re.compile(r'^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\.[
 _BUILD2 = re.compile(r'^([0-9]{1,6})\.([0-9]{1,6})$')
 _BUILD4 = re.compile(r'^[0-9]{1,6}\.[0-9]{1,6}\.([0-9]{1,6})\.([0-9]{1,6})$')
 _CWE = re.compile(r'^CWE-[1-9][0-9]{0,5}$')
+_TYPE_NUMBER = re.compile(r'^[0-9]{1,3}$')
 _MARKUP_DECL = re.compile(r'<!(?!--|\[CDATA\[)')
 _XML_DECL_ENCODING = re.compile(r'^<\?xml[^>]*\bencoding\s*=\s*["\']([^"\']+)["\']', re.IGNORECASE)
 _NEGATIVE = frozenset({'not affected', 'known not affected'})
@@ -192,6 +195,16 @@ def status_class(value: str) -> str:
     if key in ('under investigation', 'recommended'):
         return 'investigating'
     return 'unknown'
+
+
+def _status_name_fits(name: str, index: int, problems: list[Problem]) -> bool:
+    """The one length guard of a status name (a JSON key, an XML Type), which becomes part of a pointer. A longer name
+    is one row problem and its members are skipped; it never reaches a contract bound that would refuse the month."""
+    if len(name) <= MAX_STATUS_NAME:
+        return True
+    problems.append(Problem('STATUS_SHAPE', pointer('vulnerabilities', index, 'product_statuses'),
+                            f'a status name is longer than {MAX_STATUS_NAME} characters'))
+    return False
 
 
 def parse_fixed_build(text: object) -> str | None:
@@ -437,11 +450,9 @@ def _json_vulnerability(index: int, item, problems: list[Problem], limits: KbcLi
                                 'product_statuses is not an object'))
         raw_status = {}
     for name, members in raw_status.items():
-        sat = pointer('vulnerabilities', index, 'product_statuses', name)
-        if len(name) > 200:
-            problems.append(Problem('STATUS_SHAPE', pointer('vulnerabilities', index, 'product_statuses'),
-                                    'a status name is longer than 200 characters'))
+        if not _status_name_fits(name, index, problems):
             continue
+        sat = pointer('vulnerabilities', index, 'product_statuses', name)
         pids = _string_list(members)
         if pids is None:
             problems.append(Problem('STATUS_SHAPE', sat, 'status members are not a list of product ids'))
@@ -499,6 +510,18 @@ def _local(tag: str) -> str:
     return tag.rsplit('}', 1)[-1]
 
 
+def _slots(children: Iterable[ET.Element]) -> dict[str, ET.Element]:
+    """Local name -> element for the children one parent may hold once. A name that occurs twice is ambiguous (the XML
+    twin of the duplicate-key rule, NEG-07): neither occurrence is chosen and the source is refused."""
+    slots: dict[str, ET.Element] = {}
+    for child in children:
+        name = _local(child.tag)
+        if name in slots:
+            raise SourceError('PT-KBC-SOURCE', f'the document has an ambiguous duplicate element {safe_label(name)}')
+        slots[name] = child
+    return slots
+
+
 def _xml_root(raw: bytes, limits: KbcLimits) -> ET.Element:
     if len(raw) > limits.cvrf_doc_bytes:
         raise SourceError('PT-KBC-LIMIT', f'the document is {len(raw)} bytes; the limit is {limits.cvrf_doc_bytes}')
@@ -537,7 +560,7 @@ def _parse_xml(raw: bytes, limits: KbcLimits) -> CvrfDocument:
     release = root.get('ReleaseId')
     if not release or not _RELEASE_ID.fullmatch(release):
         raise _shape('the root ReleaseId is missing or not yyyy-Mmm')
-    kids = {_local(c.tag): c for c in root if c.tag.startswith('{' + XML_NS + '}')}
+    kids = _slots(c for c in root if c.tag.startswith('{' + XML_NS + '}'))
     container = kids.get('Vulnerabilities')
     if container is None:
         raise _shape('the Vulnerabilities container is missing')
@@ -584,17 +607,17 @@ def _xml_vulnerability(index: int, el, problems: list[Problem], limits: KbcLimit
     if not cve or not is_cve(cve):
         problems.append(Problem('CVE_INVALID', at, f'not a CVE id: {safe_label(cve)}'))
         return None
-    kids = {_local(c.tag): c for c in el}
+    kids = _slots(el)
     cwe = kids.get('CWE')
     cwe_id = cwe.get('ID') if cwe is not None else None
     rems = []
     for ri, rem in enumerate(_children(kids.get('Remediations'))):
         rat = pointer('vulnerabilities', index, 'remediations', ri)
-        try:
-            kind = int(rem.get('Type', ''))
-        except ValueError:
+        text = rem.get('Type', '')
+        if not _TYPE_NUMBER.fullmatch(text):  # int() alone reads Unicode digits, signs, padding and underscores
             problems.append(Problem('TYPE_INVALID', rat, 'remediation type is not an integer'))
             continue
+        kind = int(text)
         desc = next((c.text or '' for c in rem if _local(c.tag) == 'Description'), '')
         pids = tuple(c.text or '' for c in rem if _local(c.tag) == 'ProductID')
         rems.append(RawRemediation(ri, rat, kind, desc[:limits.text_field_bytes], pids, rem.get('FixedBuild'),
@@ -602,9 +625,12 @@ def _xml_vulnerability(index: int, el, problems: list[Problem], limits: KbcLimit
                                    clean_text(rem.get('SubType')) or None))
     statuses = []
     for status in _children(kids.get('ProductStatuses')):
-        sat = pointer('vulnerabilities', index, 'product_statuses', status.get('Type', ''))
+        name = status.get('Type', '')
+        if not _status_name_fits(name, index, problems):
+            continue
+        sat = pointer('vulnerabilities', index, 'product_statuses', name)
         for k, member in enumerate(c for c in status if _local(c.tag) == 'ProductID'):
-            statuses.append(RawStatus(clean_text(status.get('Type', '')), member.text or '', f'{sat}/{k}'))
+            statuses.append(RawStatus(clean_text(name), member.text or '', f'{sat}/{k}'))
     return RawVulnerability(index, at, cve, clean_text(el.get('Title')) or None,
                             cwe_id if cwe_id and _CWE.fullmatch(cwe_id) else None, tuple(rems), tuple(statuses))
 
@@ -706,8 +732,8 @@ def _edges_for_remediation(document, doc_id, vuln, rem, scope_by_pid, by_pid, ed
                                     'the vulnerability lists statuses but none for this product', 'info'))
         negative = next((s for s in statuses if status_class(s.value) == 'not_affected'), None)
         shown = negative or (statuses[0] if statuses else None)
-        status = ProductStatus(value=shown.value or 'unnamed', pointer=shown.pointer) if shown else None
         try:
+            status = ProductStatus(value=shown.value or 'unnamed', pointer=shown.pointer) if shown else None
             for kb in sorted(set(kbs)):
                 relation = 'disputed' if negative is not None else 'vendor-remediation'
                 edge = make_edge(kb=kb, cve=vuln.cve, scope_id=scope.scope_id, relation=relation, doc_id=doc_id,

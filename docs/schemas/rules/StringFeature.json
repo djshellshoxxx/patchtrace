@@ -1,0 +1,96 @@
+{
+  "$id": "https://patchtrace.local/schemas/rules/1/StringFeature.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "A static string the changed code references. ``text`` is the escaped form exactly as the rule emits it (exact bytes\nwere re-read from the verified artifact; the display form is never used); ``length`` is the byte count it stands for.",
+  "properties": {
+    "encoding": {
+      "enum": [
+        "ascii",
+        "wide",
+        "ascii-wide"
+      ],
+      "title": "Encoding",
+      "type": "string"
+    },
+    "evidence_run_id": {
+      "maxLength": 200,
+      "minLength": 1,
+      "title": "Evidence Run Id",
+      "type": "string"
+    },
+    "included": {
+      "title": "Included",
+      "type": "boolean"
+    },
+    "kind": {
+      "const": "string",
+      "default": "string",
+      "title": "Kind",
+      "type": "string"
+    },
+    "length": {
+      "maximum": 256,
+      "minimum": 1,
+      "title": "Length",
+      "type": "integer"
+    },
+    "linked_by": {
+      "enum": [
+        "xref",
+        "file-level"
+      ],
+      "title": "Linked By",
+      "type": "string"
+    },
+    "offset": {
+      "exclusiveMaximum": 1099511627776,
+      "minimum": 0,
+      "title": "Offset",
+      "type": "integer"
+    },
+    "separation": {
+      "enum": [
+        "older-only",
+        "newer-only",
+        "both-sides",
+        "unknown"
+      ],
+      "title": "Separation",
+      "type": "string"
+    },
+    "side": {
+      "enum": [
+        "older",
+        "newer"
+      ],
+      "title": "Side",
+      "type": "string"
+    },
+    "text": {
+      "maxLength": 1024,
+      "pattern": "^(?:[ !#-\\[\\]-~]|\\\\(?:[\"\\\\nrt]|x[0-9A-Fa-f]{2}))+$",
+      "title": "Text",
+      "type": "string"
+    },
+    "value_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Value Sha256",
+      "type": "string"
+    }
+  },
+  "required": [
+    "included",
+    "side",
+    "value_sha256",
+    "length",
+    "text",
+    "encoding",
+    "offset",
+    "evidence_run_id",
+    "linked_by",
+    "separation"
+  ],
+  "title": "StringFeature",
+  "type": "object"
+}

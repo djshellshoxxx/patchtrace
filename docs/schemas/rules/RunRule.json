@@ -1,0 +1,23 @@
+{
+  "$id": "https://patchtrace.local/schemas/rules/1/RunRule.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "rule_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Rule Sha256",
+      "type": "string"
+    },
+    "version_id": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Version Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "version_id",
+    "rule_sha256"
+  ],
+  "title": "RunRule",
+  "type": "object"
+}

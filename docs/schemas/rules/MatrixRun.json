@@ -1,0 +1,413 @@
+{
+  "$defs": {
+    "CellResult": {
+      "additionalProperties": false,
+      "description": "One rule against one target. ``hits`` counts the matches of the first rule pattern that matched (capped by the\nengine at ``max_matches_per_pattern``), or is 1 for a rule that matched without a pattern; ``offsets`` are the first\nfile offsets (ascending) and ``rvas`` their module-relative addresses (``None`` outside every section). A file that\nwas not scanned, timed out or errored has ``hits is None``: unknown is never zero.",
+      "properties": {
+        "elapsed_ms": {
+          "default": 0,
+          "exclusiveMaximum": 1099511627776,
+          "minimum": 0,
+          "title": "Elapsed Ms",
+          "type": "integer"
+        },
+        "hits": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Hits"
+        },
+        "offsets": {
+          "default": [],
+          "items": {
+            "exclusiveMaximum": 1099511627776,
+            "minimum": 0,
+            "type": "integer"
+          },
+          "maxItems": 8,
+          "title": "Offsets",
+          "type": "array"
+        },
+        "reason": {
+          "anyOf": [
+            {
+              "pattern": "^[a-z0-9-]{1,48}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reason"
+        },
+        "rvas": {
+          "default": [],
+          "items": {
+            "anyOf": [
+              {
+                "maximum": 4294967295,
+                "minimum": 0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "maxItems": 8,
+          "title": "Rvas",
+          "type": "array"
+        },
+        "state": {
+          "enum": [
+            "hit",
+            "no-hit",
+            "not-scanned",
+            "timeout",
+            "error"
+          ],
+          "title": "State",
+          "type": "string"
+        },
+        "verdict": {
+          "default": "unscored",
+          "enum": [
+            "as-expected",
+            "unexpected-hit",
+            "unexpected-miss",
+            "unscored"
+          ],
+          "title": "Verdict",
+          "type": "string"
+        }
+      },
+      "required": [
+        "state"
+      ],
+      "title": "CellResult",
+      "type": "object"
+    },
+    "EngineStamp": {
+      "additionalProperties": false,
+      "description": "What produced a result. A change of ``version``, ``grammar`` or ``worker`` marks stored grids stale; the rule text\nis kept. ``decoder`` is ``none`` for a stamp that has no byte-feature step (scan-only work, decoder not installed).",
+      "properties": {
+        "decoder": {
+          "default": "none",
+          "enum": [
+            "iced-x86",
+            "unified-ir",
+            "none"
+          ],
+          "title": "Decoder",
+          "type": "string"
+        },
+        "decoder_version": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9A-Za-z][0-9A-Za-z.+_-]{0,39}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Decoder Version"
+        },
+        "engine": {
+          "const": "yara-x",
+          "default": "yara-x",
+          "title": "Engine",
+          "type": "string"
+        },
+        "grammar": {
+          "const": "yrx-gen/1",
+          "default": "yrx-gen/1",
+          "title": "Grammar",
+          "type": "string"
+        },
+        "version": {
+          "pattern": "^[0-9A-Za-z][0-9A-Za-z.+_-]{0,39}$",
+          "title": "Version",
+          "type": "string"
+        },
+        "version_source": {
+          "enum": [
+            "metadata",
+            "pin"
+          ],
+          "title": "Version Source",
+          "type": "string"
+        },
+        "worker": {
+          "const": "rules-worker/1",
+          "default": "rules-worker/1",
+          "title": "Worker",
+          "type": "string"
+        }
+      },
+      "required": [
+        "version",
+        "version_source"
+      ],
+      "title": "EngineStamp",
+      "type": "object"
+    },
+    "RunRule": {
+      "additionalProperties": false,
+      "properties": {
+        "rule_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Rule Sha256",
+          "type": "string"
+        },
+        "version_id": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Version Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "version_id",
+        "rule_sha256"
+      ],
+      "title": "RunRule",
+      "type": "object"
+    },
+    "TargetRef": {
+      "additionalProperties": false,
+      "description": "One scanned build. Records keep hashes and a display label, never a path. ``expect`` is the analyst's expectation\n(``unknown`` until set); ``advisory_says`` is shown beside the rule's own result and never merged with it.",
+      "properties": {
+        "advisory_says": {
+          "default": "unknown",
+          "enum": [
+            "affected",
+            "not_affected",
+            "fixed",
+            "under_investigation",
+            "contradictory",
+            "ambiguous",
+            "unknown"
+          ],
+          "title": "Advisory Says",
+          "type": "string"
+        },
+        "expect": {
+          "default": "unknown",
+          "enum": [
+            "hit",
+            "no-hit",
+            "unknown"
+          ],
+          "title": "Expect",
+          "type": "string"
+        },
+        "file_version": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9]{1,5}(\\.[0-9]{1,5}){3}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "File Version"
+        },
+        "kb": {
+          "anyOf": [
+            {
+              "pattern": "^KB[0-9]{4,10}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Kb"
+        },
+        "label": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Label",
+          "type": "string"
+        },
+        "ordinal": {
+          "anyOf": [
+            {
+              "maximum": 8,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Ordinal"
+        },
+        "role": {
+          "enum": [
+            "older-anchor",
+            "newer-anchor",
+            "series",
+            "extra",
+            "clean",
+            "control"
+          ],
+          "title": "Role",
+          "type": "string"
+        },
+        "sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Sha256",
+          "type": "string"
+        },
+        "size": {
+          "exclusiveMaximum": 1099511627776,
+          "minimum": 0,
+          "title": "Size",
+          "type": "integer"
+        },
+        "target_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Target Id",
+          "type": "string"
+        },
+        "toolchain_flag": {
+          "default": "unknown",
+          "enum": [
+            "none",
+            "toolchain-changed",
+            "packed",
+            "protected",
+            "unknown"
+          ],
+          "title": "Toolchain Flag",
+          "type": "string"
+        }
+      },
+      "required": [
+        "target_id",
+        "label",
+        "role",
+        "sha256",
+        "size"
+      ],
+      "title": "TargetRef",
+      "type": "object"
+    }
+  },
+  "$id": "https://patchtrace.local/schemas/rules/1/MatrixRun.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "A grid of rule versions (columns) against builds (rows). ``cells`` is row-major: ``cells[i * len(rules) + j]`` is\ntarget ``i`` against rule ``j``. ``failed`` runs keep no cells.",
+  "properties": {
+    "anomalies": {
+      "default": [],
+      "items": {
+        "maxLength": 256,
+        "minLength": 1,
+        "type": "string"
+      },
+      "maxItems": 64,
+      "title": "Anomalies",
+      "type": "array"
+    },
+    "cache_key": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Cache Key",
+      "type": "string"
+    },
+    "cells": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/CellResult"
+      },
+      "maxItems": 105000,
+      "title": "Cells",
+      "type": "array"
+    },
+    "contract": {
+      "const": "yara-rules/1",
+      "default": "yara-rules/1",
+      "title": "Contract",
+      "type": "string"
+    },
+    "engine": {
+      "$ref": "#/$defs/EngineStamp"
+    },
+    "finished_at": {
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]{1,6})?(\\+00:00|Z)$",
+      "title": "Finished At",
+      "type": "string"
+    },
+    "limits": {
+      "maxProperties": 64,
+      "patternProperties": {
+        "^[a-z][a-z0-9_]{0,47}$": {
+          "exclusiveMaximum": 9223372036854775808,
+          "minimum": 0,
+          "type": "integer"
+        }
+      },
+      "title": "Limits",
+      "type": "object"
+    },
+    "rules": {
+      "items": {
+        "$ref": "#/$defs/RunRule"
+      },
+      "maxItems": 50,
+      "minItems": 1,
+      "title": "Rules",
+      "type": "array"
+    },
+    "run_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+      "title": "Run Id",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "complete",
+        "partial",
+        "cancelled",
+        "failed"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "targets": {
+      "items": {
+        "$ref": "#/$defs/TargetRef"
+      },
+      "maxItems": 2072,
+      "minItems": 1,
+      "title": "Targets",
+      "type": "array"
+    }
+  },
+  "required": [
+    "run_id",
+    "cache_key",
+    "engine",
+    "status",
+    "rules",
+    "targets",
+    "limits",
+    "finished_at"
+  ],
+  "title": "MatrixRun",
+  "type": "object"
+}

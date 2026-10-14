@@ -1,0 +1,189 @@
+{
+  "document": {
+    "category": "csaf_security_advisory",
+    "csaf_version": "2.0",
+    "distribution": {
+      "text": "SYNTHETIC test fixture for PatchTrace. Not a real advisory.",
+      "tlp": {
+        "label": "WHITE",
+        "url": "https://www.first.org/tlp/"
+      }
+    },
+    "lang": "en-US",
+    "notes": [
+      {
+        "category": "legal_disclaimer",
+        "text": "SYNTHETIC CSAF 2.0 fixture written for PatchTrace tests. No vendor published it and it describes no real vulnerability, product or update.",
+        "title": "Synthetic fixture"
+      }
+    ],
+    "publisher": {
+      "category": "vendor",
+      "contact_details": "none (synthetic fixture)",
+      "name": "PatchTrace Synthetic Fixture Vendor (not Microsoft)",
+      "namespace": "https://example.invalid/patchtrace-synthetic"
+    },
+    "references": [
+      {
+        "category": "self",
+        "summary": "Synthetic self reference",
+        "url": "https://example.invalid/patchtrace-synthetic/csaf/2099/pt-synth-pilot-sample_2099-001.json"
+      }
+    ],
+    "title": "SYNTHETIC Example item library advisory",
+    "tracking": {
+      "current_release_date": "2099-02-10T08:00:00.000Z",
+      "generator": {
+        "date": "2099-02-10T08:00:00.000Z",
+        "engine": {
+          "name": "PatchTrace fixture author",
+          "version": "1"
+        }
+      },
+      "id": "PT-SYNTH-PILOT-SAMPLE_2099-001",
+      "initial_release_date": "2099-02-10T08:00:00.000Z",
+      "revision_history": [
+        {
+          "date": "2099-02-10T08:00:00.000Z",
+          "number": "1",
+          "summary": "Initial synthetic release."
+        }
+      ],
+      "status": "final",
+      "version": "1"
+    }
+  },
+  "product_tree": {
+    "branches": [
+      {
+        "branches": [
+          {
+            "branches": [
+              {
+                "branches": [
+                  {
+                    "category": "product_version_range",
+                    "name": "<1.1.0",
+                    "product": {
+                      "name": "Example Item Library 1.x <1.1.0",
+                      "product_id": "PTS-100-1"
+                    }
+                  },
+                  {
+                    "category": "product_version",
+                    "name": "1.1.0",
+                    "product": {
+                      "name": "Example Item Library 1.x 1.1.0",
+                      "product_id": "PTS-100-2"
+                    }
+                  }
+                ],
+                "category": "product_name",
+                "name": "Example Item Library 1.x"
+              }
+            ],
+            "category": "product_family",
+            "name": "Example Item Library"
+          }
+        ],
+        "category": "vendor",
+        "name": "PatchTrace Synthetic Fixture Vendor"
+      }
+    ],
+    "full_product_names": [
+      {
+        "name": "Example item library older_sample.dll 1.0.9 (synthetic build)",
+        "product_id": "PTS-800",
+        "product_identification_helper": {
+          "hashes": [
+            {
+              "file_hashes": [
+                {
+                  "algorithm": "sha256",
+                  "value": "dc71b8420acc68418eaebfb8a4848cd2f63626125868e9977f017010c8d30215"
+                }
+              ],
+              "filename": "sample.dll"
+            }
+          ]
+        }
+      },
+      {
+        "name": "Example item library newer_sample.dll 1.1.0 (synthetic build)",
+        "product_id": "PTS-900",
+        "product_identification_helper": {
+          "hashes": [
+            {
+              "file_hashes": [
+                {
+                  "algorithm": "sha256",
+                  "value": "4af23bcb773054ad469c57363d50e2b53a6590bfba2286f16a06b4fb1440a168"
+                }
+              ],
+              "filename": "sample.dll"
+            }
+          ]
+        }
+      }
+    ],
+    "relationships": [
+      {
+        "category": "default_component_of",
+        "full_product_name": {
+          "name": "Example item library older_sample.dll 1.0.9 (synthetic build) as part of Example Item Library 1.x <1.1.0",
+          "product_id": "PTS-801"
+        },
+        "product_reference": "PTS-800",
+        "relates_to_product_reference": "PTS-100-1"
+      },
+      {
+        "category": "default_component_of",
+        "full_product_name": {
+          "name": "Example item library newer_sample.dll 1.1.0 (synthetic build) as part of Example Item Library 1.x 1.1.0",
+          "product_id": "PTS-901"
+        },
+        "product_reference": "PTS-900",
+        "relates_to_product_reference": "PTS-100-2"
+      }
+    ]
+  },
+  "vulnerabilities": [
+    {
+      "cve": "CVE-2099-30001",
+      "cwe": {
+        "id": "CWE-125",
+        "name": "Out-of-bounds Read"
+      },
+      "notes": [
+        {
+          "category": "description",
+          "text": "SYNTHETIC: An out-of-bounds read in the indexed item reader lets a caller read past the end of a buffer when the index is not checked against the length.",
+          "title": "Description"
+        }
+      ],
+      "product_status": {
+        "fixed": [
+          "PTS-100-2",
+          "PTS-900",
+          "PTS-901"
+        ],
+        "known_affected": [
+          "PTS-100-1",
+          "PTS-800",
+          "PTS-801"
+        ]
+      },
+      "remediations": [
+        {
+          "category": "vendor_fix",
+          "details": "Install synthetic update PT6000002",
+          "product_ids": [
+            "PTS-801"
+          ],
+          "url": "https://example.invalid/patchtrace-synthetic/updates/PT6000002"
+        }
+      ],
+      "title": "SYNTHETIC Example Item Library Indexed Read Out-of-Bounds Read Vulnerability"
+    }
+  ]
+}

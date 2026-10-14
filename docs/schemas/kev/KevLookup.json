@@ -1,0 +1,307 @@
+{
+  "$defs": {
+    "KevEntry": {
+      "additionalProperties": false,
+      "description": "One catalog entry in CISA's own words (cleaned to one line each), with the identity of its content.",
+      "properties": {
+        "contract": {
+          "const": "kev/1",
+          "default": "kev/1",
+          "title": "Contract",
+          "type": "string"
+        },
+        "cve_id": {
+          "pattern": "^CVE-[0-9]{4}-[0-9]{4,19}$",
+          "title": "Cve Id",
+          "type": "string"
+        },
+        "cwes": {
+          "default": [],
+          "items": {
+            "pattern": "^CWE-[0-9]{1,6}$",
+            "type": "string"
+          },
+          "maxItems": 16,
+          "title": "Cwes",
+          "type": "array"
+        },
+        "date_added": {
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$",
+          "title": "Date Added",
+          "type": "string"
+        },
+        "due_date": {
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$",
+          "title": "Due Date",
+          "type": "string"
+        },
+        "entry_digest": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Entry Digest",
+          "type": "string"
+        },
+        "forensic_triage": {
+          "enum": [
+            "yes",
+            "no",
+            "absent",
+            "unrecognized"
+          ],
+          "title": "Forensic Triage",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 256,
+          "minLength": 0,
+          "title": "Name",
+          "type": "string"
+        },
+        "notes": {
+          "default": "",
+          "maxLength": 4096,
+          "minLength": 0,
+          "title": "Notes",
+          "type": "string"
+        },
+        "product": {
+          "maxLength": 256,
+          "minLength": 0,
+          "title": "Product",
+          "type": "string"
+        },
+        "ransomware_use": {
+          "enum": [
+            "known",
+            "unknown",
+            "absent",
+            "unrecognized"
+          ],
+          "title": "Ransomware Use",
+          "type": "string"
+        },
+        "required_action": {
+          "maxLength": 2048,
+          "minLength": 0,
+          "title": "Required Action",
+          "type": "string"
+        },
+        "short_description": {
+          "maxLength": 4096,
+          "minLength": 0,
+          "title": "Short Description",
+          "type": "string"
+        },
+        "vendor_project": {
+          "maxLength": 128,
+          "minLength": 0,
+          "title": "Vendor Project",
+          "type": "string"
+        }
+      },
+      "required": [
+        "cve_id",
+        "vendor_project",
+        "product",
+        "name",
+        "date_added",
+        "due_date",
+        "ransomware_use",
+        "forensic_triage",
+        "short_description",
+        "required_action",
+        "entry_digest"
+      ],
+      "title": "KevEntry",
+      "type": "object"
+    },
+    "KevEntrySlim": {
+      "additionalProperties": false,
+      "description": "An entry without its three long texts: what a project row keeps. ``entry_digest`` is the full entry's.",
+      "properties": {
+        "contract": {
+          "const": "kev/1",
+          "default": "kev/1",
+          "title": "Contract",
+          "type": "string"
+        },
+        "cve_id": {
+          "pattern": "^CVE-[0-9]{4}-[0-9]{4,19}$",
+          "title": "Cve Id",
+          "type": "string"
+        },
+        "cwes": {
+          "default": [],
+          "items": {
+            "pattern": "^CWE-[0-9]{1,6}$",
+            "type": "string"
+          },
+          "maxItems": 16,
+          "title": "Cwes",
+          "type": "array"
+        },
+        "date_added": {
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$",
+          "title": "Date Added",
+          "type": "string"
+        },
+        "due_date": {
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$",
+          "title": "Due Date",
+          "type": "string"
+        },
+        "entry_digest": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Entry Digest",
+          "type": "string"
+        },
+        "forensic_triage": {
+          "enum": [
+            "yes",
+            "no",
+            "absent",
+            "unrecognized"
+          ],
+          "title": "Forensic Triage",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 256,
+          "minLength": 0,
+          "title": "Name",
+          "type": "string"
+        },
+        "product": {
+          "maxLength": 256,
+          "minLength": 0,
+          "title": "Product",
+          "type": "string"
+        },
+        "ransomware_use": {
+          "enum": [
+            "known",
+            "unknown",
+            "absent",
+            "unrecognized"
+          ],
+          "title": "Ransomware Use",
+          "type": "string"
+        },
+        "vendor_project": {
+          "maxLength": 128,
+          "minLength": 0,
+          "title": "Vendor Project",
+          "type": "string"
+        }
+      },
+      "required": [
+        "cve_id",
+        "vendor_project",
+        "product",
+        "name",
+        "date_added",
+        "due_date",
+        "ransomware_use",
+        "forensic_triage",
+        "entry_digest"
+      ],
+      "title": "KevEntrySlim",
+      "type": "object"
+    }
+  },
+  "$id": "https://patchtrace.local/schemas/kev/1/KevLookup.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "What one catalog says about one CVE ID. ``not-listed`` is never evidence of safety; ``unavailable`` and\n``invalid-id`` say nothing about the CVE at all.",
+  "properties": {
+    "age_days": {
+      "anyOf": [
+        {
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Age Days"
+    },
+    "contract": {
+      "const": "kev/1",
+      "default": "kev/1",
+      "title": "Contract",
+      "type": "string"
+    },
+    "cve_id": {
+      "maxLength": 64,
+      "title": "Cve Id",
+      "type": "string"
+    },
+    "entry": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/KevEntry"
+        },
+        {
+          "$ref": "#/$defs/KevEntrySlim"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Entry"
+    },
+    "freshness": {
+      "default": "unknown",
+      "enum": [
+        "fresh",
+        "aging",
+        "stale",
+        "future",
+        "unknown"
+      ],
+      "title": "Freshness",
+      "type": "string"
+    },
+    "notes": {
+      "default": [],
+      "items": {
+        "maxLength": 200,
+        "minLength": 0,
+        "type": "string"
+      },
+      "maxItems": 8,
+      "title": "Notes",
+      "type": "array"
+    },
+    "snapshot_id": {
+      "anyOf": [
+        {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Snapshot Id"
+    },
+    "status": {
+      "enum": [
+        "listed",
+        "not-listed",
+        "unavailable",
+        "invalid-id"
+      ],
+      "title": "Status",
+      "type": "string"
+    }
+  },
+  "required": [
+    "cve_id",
+    "status"
+  ],
+  "title": "KevLookup",
+  "type": "object"
+}

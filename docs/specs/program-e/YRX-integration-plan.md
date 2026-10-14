@@ -1,6 +1,6 @@
 # YRX integration plan: analyst-reviewed discoveries to tested YARA-X rules
 
-Status: E-1 research plan, 2026-10-14 (worker YRX, Sonnet 5.5). No ChatGPT spec exists for YRX; this is the draft the integration owner reconciles.
+Status: E-1 research plan, 2026-10-14 (worker YRX, Sonnet 5.5). No ChatGPT spec exists for YRX; this is the draft the integration owner reconciles. R0 (contracts, limits, errors, ports, 26 schemas) and R2 (engine facade, hidden capped worker, runner) built 2026-10-14: see `docs/modules.md` [R0:rules-contracts] and [R2:rules-engine]; R1 (synthesis) is next and must emit the metadata, rule name and tags that the R2 compile policy enforces.
 Conventions: every source was retrieved 2026-10-14. `[measured]` = produced in the research sandbox (Linux x86-64, Python 3.12.3, yara-x 1.21.0, iced-x86 1.21.0, PyInstaller 6.22.3) by throwaway scripts that are NOT committed, on the repo's SYNTHETIC images (`tests/test_intel_tools_pe.py`). `[unverified]` = not confirmable here.
 Hosts blocked from this sandbox: virustotal.github.io, pyo3.rs, doc.qt.io, learn.microsoft.com, api.github.com (403). Upstream sources were read from raw.githubusercontent.com and github.com instead.
 
@@ -295,7 +295,7 @@ Qt (PySide6 6.12.0) pitfalls and test approach:
 | `docs/specs/three-tool-evidence-adapters.md` (rejected list, YARA-X) and `docs/plans/csaf-patch-intelligence-implementation.md` line 62 | point to this plan: YARA-X is built as a derived-evidence consumer, not a new detection channel (their classification stands) |
 | `docs/specs/workbench/README.md`, `docs/plans/workbench-search-graph-floss-implementation.md` | add independent panel `rules` (GUI plan F5), not a page of the Workbench dock |
 | `docs/specs/unified-engine/01-architecture.md` (S1 `ir/pe_tables.py`), `03-extraction.md` | reuse `pe_overview/tables.py` (R4); expose `FunctionMaskView(rva, size, extent_src, bytes, l1_mask)` from `ir/reader.py` so `adapters/mask_unified.py` can replace `mask_iced` |
-| `src/patchtrace/intelligence/contracts.py` `Anchor.kind` (FAB track) | add `rule`; optional later column in `nway/view_model.py` for release transitions |
+| ~~`src/patchtrace/intelligence/contracts.py` `Anchor.kind` (FAB track)~~ | ~~add `rule`;~~ optional later column in `nway/view_model.py` for release transitions. Amended by FAB-0 (2026-10-14): the `Anchor.kind` edit is deleted; K stays a search-hint contract and YRX uses the fabric `rule` kind |
 
 Claims checked against code and sources: confirmed that SPEC-29 classes YARA-X as derived evidence. Thin: `StringEvidence.display_value` is escaped and cannot seed a pattern (exact bytes are re-read instead). Wrong or stale: the YARA-X docs list one `Compiler` parameter (the wheel has four) and `pe.offset_to_rva` (absent in 1.21.0).
 

@@ -1,0 +1,339 @@
+{
+  "$defs": {
+    "EngineStamp": {
+      "additionalProperties": false,
+      "description": "What produced a result. A change of ``version``, ``grammar`` or ``worker`` marks stored grids stale; the rule text\nis kept. ``decoder`` is ``none`` for a stamp that has no byte-feature step (scan-only work, decoder not installed).",
+      "properties": {
+        "decoder": {
+          "default": "none",
+          "enum": [
+            "iced-x86",
+            "unified-ir",
+            "none"
+          ],
+          "title": "Decoder",
+          "type": "string"
+        },
+        "decoder_version": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9A-Za-z][0-9A-Za-z.+_-]{0,39}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Decoder Version"
+        },
+        "engine": {
+          "const": "yara-x",
+          "default": "yara-x",
+          "title": "Engine",
+          "type": "string"
+        },
+        "grammar": {
+          "const": "yrx-gen/1",
+          "default": "yrx-gen/1",
+          "title": "Grammar",
+          "type": "string"
+        },
+        "version": {
+          "pattern": "^[0-9A-Za-z][0-9A-Za-z.+_-]{0,39}$",
+          "title": "Version",
+          "type": "string"
+        },
+        "version_source": {
+          "enum": [
+            "metadata",
+            "pin"
+          ],
+          "title": "Version Source",
+          "type": "string"
+        },
+        "worker": {
+          "const": "rules-worker/1",
+          "default": "rules-worker/1",
+          "title": "Worker",
+          "type": "string"
+        }
+      },
+      "required": [
+        "version",
+        "version_source"
+      ],
+      "title": "EngineStamp",
+      "type": "object"
+    },
+    "FunctionRef": {
+      "additionalProperties": false,
+      "description": "One side's function. ``size`` is known only with a verified extent (``.pdata`` or the unified IR); a leaf function\nwithout exception data has ``extent == 'unknown'`` and no size, so no bytes feature can be built from it.",
+      "properties": {
+        "extent": {
+          "enum": [
+            "pdata",
+            "unified-ir",
+            "unknown"
+          ],
+          "title": "Extent",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 256,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "rva": {
+          "maximum": 4294967295,
+          "minimum": 0,
+          "title": "Rva",
+          "type": "integer"
+        },
+        "size": {
+          "anyOf": [
+            {
+              "exclusiveMaximum": 4294967296,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Size"
+        }
+      },
+      "required": [
+        "rva",
+        "extent"
+      ],
+      "title": "FunctionRef",
+      "type": "object"
+    },
+    "PairSource": {
+      "additionalProperties": false,
+      "description": "The analyst-accepted changed-function pair. Eligibility (``materiality == 'material'`` or analyst confirmation) is a\ngate of the candidate, not a property of this fact record.",
+      "properties": {
+        "analyst_confirmed_material": {
+          "title": "Analyst Confirmed Material",
+          "type": "boolean"
+        },
+        "category": {
+          "enum": [
+            "modified",
+            "added",
+            "removed"
+          ],
+          "title": "Category",
+          "type": "string"
+        },
+        "cwe": {
+          "anyOf": [
+            {
+              "pattern": "^CWE-[1-9][0-9]{0,5}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cwe"
+        },
+        "finding_id": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Finding Id"
+        },
+        "match_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+          "title": "Match Id",
+          "type": "string"
+        },
+        "materiality": {
+          "enum": [
+            "unchanged",
+            "cosmetic",
+            "material",
+            "review",
+            "unknown"
+          ],
+          "title": "Materiality",
+          "type": "string"
+        },
+        "newer": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/FunctionRef"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "newer_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Newer Sha256",
+          "type": "string"
+        },
+        "older": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/FunctionRef"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "older_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Older Sha256",
+          "type": "string"
+        },
+        "project_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+          "title": "Project Id",
+          "type": "string"
+        },
+        "review": {
+          "const": "accepted",
+          "title": "Review",
+          "type": "string"
+        },
+        "revision": {
+          "minimum": 0,
+          "title": "Revision",
+          "type": "integer"
+        },
+        "run_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+          "title": "Run Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_id",
+        "revision",
+        "run_id",
+        "older_sha256",
+        "newer_sha256",
+        "match_id",
+        "category",
+        "review",
+        "materiality",
+        "analyst_confirmed_material"
+      ],
+      "title": "PairSource",
+      "type": "object"
+    }
+  },
+  "$id": "https://patchtrace.local/schemas/rules/1/RuleVersion.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "An accepted, immutable rule text. A revision is a new version that supersedes the previous one.",
+  "properties": {
+    "candidate_id": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Candidate Id",
+      "type": "string"
+    },
+    "contract": {
+      "const": "yara-rules/1",
+      "default": "yara-rules/1",
+      "title": "Contract",
+      "type": "string"
+    },
+    "created_at": {
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]{1,6})?(\\+00:00|Z)$",
+      "title": "Created At",
+      "type": "string"
+    },
+    "decision_id": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Decision Id",
+      "type": "string"
+    },
+    "engine": {
+      "$ref": "#/$defs/EngineStamp"
+    },
+    "lineage_id": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Lineage Id",
+      "type": "string"
+    },
+    "rule_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Rule Sha256",
+      "type": "string"
+    },
+    "rule_text": {
+      "maxLength": 65536,
+      "minLength": 1,
+      "title": "Rule Text",
+      "type": "string"
+    },
+    "source": {
+      "$ref": "#/$defs/PairSource"
+    },
+    "supersedes": {
+      "anyOf": [
+        {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Supersedes"
+    },
+    "version": {
+      "maximum": 50,
+      "minimum": 1,
+      "title": "Version",
+      "type": "integer"
+    },
+    "version_id": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Version Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "version_id",
+    "lineage_id",
+    "version",
+    "candidate_id",
+    "decision_id",
+    "rule_text",
+    "rule_sha256",
+    "source",
+    "engine",
+    "created_at"
+  ],
+  "title": "RuleVersion",
+  "type": "object"
+}

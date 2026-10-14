@@ -1,0 +1,82 @@
+{
+  "$id": "https://patchtrace.local/schemas/kev/1/KevPlan.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "The exact request a person is asked to allow. ``expected_bytes_hint`` is display only and not hashed.",
+  "properties": {
+    "contract": {
+      "const": "kev/1",
+      "default": "kev/1",
+      "title": "Contract",
+      "type": "string"
+    },
+    "expected_bytes_hint": {
+      "anyOf": [
+        {
+          "minimum": 0,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Expected Bytes Hint"
+    },
+    "headers": {
+      "additionalProperties": {
+        "type": "string"
+      },
+      "title": "Headers",
+      "type": "object"
+    },
+    "host": {
+      "title": "Host",
+      "type": "string"
+    },
+    "max_bytes": {
+      "title": "Max Bytes",
+      "type": "integer"
+    },
+    "method": {
+      "const": "GET",
+      "title": "Method",
+      "type": "string"
+    },
+    "operation": {
+      "const": "fetch-kev-catalog",
+      "title": "Operation",
+      "type": "string"
+    },
+    "plan_sha": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Plan Sha",
+      "type": "string"
+    },
+    "source": {
+      "enum": [
+        "cisa-site",
+        "cisa-github"
+      ],
+      "title": "Source",
+      "type": "string"
+    },
+    "url": {
+      "maxLength": 512,
+      "title": "Url",
+      "type": "string"
+    }
+  },
+  "required": [
+    "operation",
+    "source",
+    "url",
+    "host",
+    "method",
+    "headers",
+    "max_bytes",
+    "plan_sha"
+  ],
+  "title": "KevPlan",
+  "type": "object"
+}

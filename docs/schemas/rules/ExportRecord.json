@@ -1,0 +1,59 @@
+{
+  "$id": "https://patchtrace.local/schemas/rules/1/ExportRecord.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "That an analyst saved a rule as a local ``.yar`` file: a basename and the file's hash, never a path.",
+  "properties": {
+    "basename": {
+      "maxLength": 128,
+      "minLength": 1,
+      "title": "Basename",
+      "type": "string"
+    },
+    "contract": {
+      "const": "yara-rules/1",
+      "default": "yara-rules/1",
+      "title": "Contract",
+      "type": "string"
+    },
+    "export_id": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Export Id",
+      "type": "string"
+    },
+    "exported_at": {
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]{1,6})?(\\+00:00|Z)$",
+      "title": "Exported At",
+      "type": "string"
+    },
+    "sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Sha256",
+      "type": "string"
+    },
+    "version_id": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Version Id",
+      "type": "string"
+    },
+    "warnings": {
+      "default": [],
+      "items": {
+        "pattern": "^[a-z0-9-]{1,48}$",
+        "type": "string"
+      },
+      "maxItems": 16,
+      "title": "Warnings",
+      "type": "array"
+    }
+  },
+  "required": [
+    "export_id",
+    "version_id",
+    "basename",
+    "sha256",
+    "exported_at"
+  ],
+  "title": "ExportRecord",
+  "type": "object"
+}

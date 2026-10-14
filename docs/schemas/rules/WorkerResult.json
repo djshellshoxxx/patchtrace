@@ -1,0 +1,421 @@
+{
+  "$defs": {
+    "CellResult": {
+      "additionalProperties": false,
+      "description": "One rule against one target. ``hits`` counts the matches of the first rule pattern that matched (capped by the\nengine at ``max_matches_per_pattern``), or is 1 for a rule that matched without a pattern; ``offsets`` are the first\nfile offsets (ascending) and ``rvas`` their module-relative addresses (``None`` outside every section). A file that\nwas not scanned, timed out or errored has ``hits is None``: unknown is never zero.",
+      "properties": {
+        "elapsed_ms": {
+          "default": 0,
+          "exclusiveMaximum": 1099511627776,
+          "minimum": 0,
+          "title": "Elapsed Ms",
+          "type": "integer"
+        },
+        "hits": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Hits"
+        },
+        "offsets": {
+          "default": [],
+          "items": {
+            "exclusiveMaximum": 1099511627776,
+            "minimum": 0,
+            "type": "integer"
+          },
+          "maxItems": 8,
+          "title": "Offsets",
+          "type": "array"
+        },
+        "reason": {
+          "anyOf": [
+            {
+              "pattern": "^[a-z0-9-]{1,48}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reason"
+        },
+        "rvas": {
+          "default": [],
+          "items": {
+            "anyOf": [
+              {
+                "maximum": 4294967295,
+                "minimum": 0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "maxItems": 8,
+          "title": "Rvas",
+          "type": "array"
+        },
+        "state": {
+          "enum": [
+            "hit",
+            "no-hit",
+            "not-scanned",
+            "timeout",
+            "error"
+          ],
+          "title": "State",
+          "type": "string"
+        },
+        "verdict": {
+          "default": "unscored",
+          "enum": [
+            "as-expected",
+            "unexpected-hit",
+            "unexpected-miss",
+            "unscored"
+          ],
+          "title": "Verdict",
+          "type": "string"
+        }
+      },
+      "required": [
+        "state"
+      ],
+      "title": "CellResult",
+      "type": "object"
+    },
+    "Diagnostic": {
+      "additionalProperties": false,
+      "description": "A compiler error or warning, reduced to what is safe to keep: engine rule text and source excerpts are dropped.",
+      "properties": {
+        "code": {
+          "pattern": "^(?:E[0-9]{3}|[A-Za-z][A-Za-z0-9_]{1,63})$",
+          "title": "Code",
+          "type": "string"
+        },
+        "column": {
+          "anyOf": [
+            {
+              "exclusiveMaximum": 2147483648,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Column"
+        },
+        "line": {
+          "anyOf": [
+            {
+              "exclusiveMaximum": 2147483648,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Line"
+        },
+        "title": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        }
+      },
+      "required": [
+        "code",
+        "title"
+      ],
+      "title": "Diagnostic",
+      "type": "object"
+    },
+    "EngineStamp": {
+      "additionalProperties": false,
+      "description": "What produced a result. A change of ``version``, ``grammar`` or ``worker`` marks stored grids stale; the rule text\nis kept. ``decoder`` is ``none`` for a stamp that has no byte-feature step (scan-only work, decoder not installed).",
+      "properties": {
+        "decoder": {
+          "default": "none",
+          "enum": [
+            "iced-x86",
+            "unified-ir",
+            "none"
+          ],
+          "title": "Decoder",
+          "type": "string"
+        },
+        "decoder_version": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9A-Za-z][0-9A-Za-z.+_-]{0,39}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Decoder Version"
+        },
+        "engine": {
+          "const": "yara-x",
+          "default": "yara-x",
+          "title": "Engine",
+          "type": "string"
+        },
+        "grammar": {
+          "const": "yrx-gen/1",
+          "default": "yrx-gen/1",
+          "title": "Grammar",
+          "type": "string"
+        },
+        "version": {
+          "pattern": "^[0-9A-Za-z][0-9A-Za-z.+_-]{0,39}$",
+          "title": "Version",
+          "type": "string"
+        },
+        "version_source": {
+          "enum": [
+            "metadata",
+            "pin"
+          ],
+          "title": "Version Source",
+          "type": "string"
+        },
+        "worker": {
+          "const": "rules-worker/1",
+          "default": "rules-worker/1",
+          "title": "Worker",
+          "type": "string"
+        }
+      },
+      "required": [
+        "version",
+        "version_source"
+      ],
+      "title": "EngineStamp",
+      "type": "object"
+    },
+    "LintResult": {
+      "additionalProperties": false,
+      "description": "Compiling one rule text with the PatchTrace linters (required provenance metadata, rule-name regex, tag whitelist,\nno includes, slow patterns are errors). ``ok`` also requires exactly one rule, ``import \"pe\"`` as the only import and\nat most ``patterns_per_rule`` patterns. ``formatter_stable`` (the text equals YARA-X's own formatting) is reported\nseparately: it pins the grammar, but a formatter change in a newer YARA-X must not invalidate stored rules.",
+      "properties": {
+        "errors": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/Diagnostic"
+          },
+          "maxItems": 16,
+          "title": "Errors",
+          "type": "array"
+        },
+        "formatter_stable": {
+          "default": false,
+          "title": "Formatter Stable",
+          "type": "boolean"
+        },
+        "identifiers": {
+          "default": [],
+          "items": {
+            "pattern": "^[A-Za-z_][A-Za-z0-9_]{0,127}$",
+            "type": "string"
+          },
+          "maxItems": 16,
+          "title": "Identifiers",
+          "type": "array"
+        },
+        "imports": {
+          "default": [],
+          "items": {
+            "pattern": "^[a-z][a-z0-9_]{0,31}$",
+            "type": "string"
+          },
+          "maxItems": 16,
+          "title": "Imports",
+          "type": "array"
+        },
+        "name": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Name",
+          "type": "string"
+        },
+        "ok": {
+          "title": "Ok",
+          "type": "boolean"
+        },
+        "patterns": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Patterns",
+          "type": "integer"
+        },
+        "warnings": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/Diagnostic"
+          },
+          "maxItems": 16,
+          "title": "Warnings",
+          "type": "array"
+        }
+      },
+      "required": [
+        "name",
+        "ok"
+      ],
+      "title": "LintResult",
+      "type": "object"
+    },
+    "WorkerError": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "enum": [
+            "PT-RULE-INPUT",
+            "PT-RULE-LIMIT",
+            "PT-RULE-STALE",
+            "PT-RULE-INTEGRITY",
+            "PT-RULE-UNAVAILABLE",
+            "PT-RULE-ENGINE",
+            "PT-RULE-TIMEOUT",
+            "PT-RULE-CANCEL",
+            "PT-RULE-MASK",
+            "PT-RULE-DECODE",
+            "PT-RULE-COMPILE",
+            "PT-RULE-GATE",
+            "PT-RULE-STORAGE",
+            "PT-RULE-EXPORT"
+          ],
+          "title": "Code",
+          "type": "string"
+        },
+        "message": {
+          "maxLength": 400,
+          "minLength": 1,
+          "title": "Message",
+          "type": "string"
+        },
+        "reason": {
+          "anyOf": [
+            {
+              "pattern": "^[a-z0-9-]{1,48}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reason"
+        }
+      },
+      "required": [
+        "code",
+        "message"
+      ],
+      "title": "WorkerError",
+      "type": "object"
+    }
+  },
+  "$id": "https://patchtrace.local/schemas/rules/1/WorkerResult.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "One strict JSON document per run. ``cells`` is row-major over the request's targets and rules; every verdict is\n``unscored`` because the child knows no expectations (the matrix layer scores against the analyst's).",
+  "properties": {
+    "cells": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/CellResult"
+      },
+      "maxItems": 105000,
+      "title": "Cells",
+      "type": "array"
+    },
+    "contract": {
+      "const": "rules-worker/1",
+      "default": "rules-worker/1",
+      "title": "Contract",
+      "type": "string"
+    },
+    "engine": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/EngineStamp"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "error": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/WorkerError"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "kind": {
+      "enum": [
+        "ok",
+        "error"
+      ],
+      "title": "Kind",
+      "type": "string"
+    },
+    "lint": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/LintResult"
+      },
+      "maxItems": 50,
+      "title": "Lint",
+      "type": "array"
+    },
+    "modules": {
+      "default": [],
+      "items": {
+        "pattern": "^[a-z][a-z0-9_]{0,31}$",
+        "type": "string"
+      },
+      "maxItems": 64,
+      "title": "Modules",
+      "type": "array"
+    },
+    "op": {
+      "enum": [
+        "probe",
+        "lint",
+        "scan"
+      ],
+      "title": "Op",
+      "type": "string"
+    }
+  },
+  "required": [
+    "op",
+    "kind"
+  ],
+  "title": "WorkerResult",
+  "type": "object"
+}

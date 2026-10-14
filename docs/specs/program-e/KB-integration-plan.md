@@ -89,7 +89,7 @@ Ports (Protocols in `kbcorrelation/ports.py`, bound only in `wiring.py`; each ha
 - `AdvisoryFactsPort.facts_for(cve) -> tuple[AdvisoryFacts]` (workspace copy, or project `AdvisoryStore`).
 - `ExploitationLookup.status(cve) -> KevFact | 'not-listed' | 'no-snapshot'`; `KevFact(cve, date_added, snapshot_sha256, snapshot_retrieved_at, vendor_product_text)` (KEV plan owns the real fields).
 - `EngineEvidence.read(project) -> EngineView`: rows `(match_id, names, older_sha, newer_sha, rvas, attention_rank?, signals[(detector, confidence, group_key, lineage)], unified_decision?, secondary_verdict?)`, bound to `enrichment.pipeline.load_default`, `secondary.evidence_panel_service.load_evidence`, later `unified.read_model`.
-- `AdvisoryTextSource.documents(project) -> Iterable[AdvisoryText(doc_id, title, body<=64 KiB, ref)]` (KB provides, WB1 consumes); `AnchorSink.publish(project_key, anchors)` (FAB); `WinbindexRows`, `Transport`, `ProjectCreator`, `Clock`.
+- `AdvisoryTextSource.documents(project) -> Iterable[AdvisoryText(doc_id, title, body<=64 KiB, ref)]` (KB provides, WB1 consumes); `AnchorSink.publish(project_key, anchors)` (FAB; `anchors` are fabric `Anchor`s); `WinbindexRows`, `Transport`, `ProjectCreator`, `Clock`. Amended by FAB-0 (2026-10-14): `AnchorSink.publish` takes fabric `Anchor`s; use the kind table in `docs/specs/program-e/FAB-integration-plan.md` s4.
 
 ## 5. Synergy test: `tests/test_kbc_synergy.py` (E0 form in K4a; KEV, WB1, FAB form in K8)
 All inputs synthetic, test hermetic (socket denied).
@@ -377,7 +377,7 @@ E0 = K0, K0f, K1, K2, K3, K4a, K4b (K1 and K2 in parallel, K4a and K4b in parall
 6. Curated title->file catalog (tier D): default none shipped until reviewed, cited data exists.
 7. Files per KB: default up to 5, one project each, sequential.
 8. Refactor `AcquisitionDialog` onto `acquisition/workflow.py`: default after E1 merges, its tests untouched.
-9. Anchor kind names until the FAB contract lands: default the table in section 4; KB adapts.
+9. Anchor kind names: use the FAB kind table (`docs/specs/program-e/FAB-integration-plan.md` s4); KB adapts. Amended by FAB-0 (2026-10-14): the FAB contract is built (FAB-0), so its table replaces the provisional default in section 4 of this plan.
 10. Authenticode and catalog verification: default embedded via `pe_overview` on Windows only, otherwise `signature-unknown`.
 11. Auto-create a Series for confounded windows: default offer only.
 12. Dock vs central view: default dock; revisit when the GUI-track panel registry lands.
