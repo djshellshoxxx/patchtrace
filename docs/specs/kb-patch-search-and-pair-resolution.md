@@ -5,6 +5,18 @@ Contract: patch-search/1. Owner: PatchTrace acquisition/intelligence integration
 Related: SPEC-08 acquisition, SPEC-07 enrichment, SPEC-28 CSAF, SPEC-30 patch-intent localization, SPEC-09 N-way, current multi-engine evidence and unified-engine plans.
 Companion: docs/plans/kb-patch-search-implementation.md and docs/plans/kb-patch-search-integration-notes.md.
 
+
+## Implementation precedence and detailed annexes (2026-10-14)
+
+The following companion documents are normative refinements of this feature and supersede conflicting shorthand in the original broad SPEC-32 text:
+
+1. [SPEC-32A: Provider and source correlation contracts](kb-patch-search-source-adapters.md) fixes the MSRC CVRF Type-2 per-product join, bounded CVRF search scope, CSAF mapping distinctions and provenance.
+2. [SPEC-32B: Pair lifecycle and crash recovery](kb-patch-search-pair-lifecycle.md) fixes the old/new identity decision table, companion SQLite sidecar and post-project-create recovery protocol. The previous phrase "all-or-nothing project creation" applies to both binary inputs before ProjectService.create; attachment to the companion database is separately recoverable.
+3. [SPEC-32C: GUI/CLI contract](kb-patch-search-ui-cli-contract.md) fixes concrete CLI syntax, no-network defaults, wizard state invalidation and GUI-thread database ownership.
+4. [SPEC-32D: QA and fixtures](kb-patch-search-qa-and-fixtures.md) fixes deterministic positive/negative cases, offline integration, crash injection and Windows release gates.
+
+Engineering defaults approved for initial MVP: x64 complete PE inputs, MSRC CVRF official-source corpus with explicit finite scope, one product variant, one analyst-selected file pair, offline-first, consented source/download operations, a separate optional project sidecar, and conservative contextual vulnerability hypotheses. Windows update-package/PSFX reconstruction remains a separately gated future feature. Source-derived KB/CVE association is never proof of a vulnerable function or definitive fixed binary.
+
 ## 1. User story and business outcome
 
 An analyst searches for a Microsoft KB, selects the actual affected product/build/architecture, reviews the associated CVEs, identifies a plausible pre-fix and post-fix pair of the same binary, downloads or imports both with verification, creates a normal PatchTrace comparison project, and sees a concise advisory-derived "What to look for" explanation before analysis and an evidence-linked candidate-changes explanation after analysis.
@@ -273,6 +285,8 @@ No data from a low-trust advisory, catalog title, downloaded manifest or filenam
 
 ## 9. Reporting, cache, and staleness
 
+**Storage clarification:** The optional `patch_search.sqlite3` companion store is separate from `project.sqlite3` because current `ProjectStore` strictly validates its schema version. Existing ComparisonProject remains unchanged. Two-phase attach and idempotent recovery in SPEC-32B supersede any implied cross-database atomic transaction here. A successful project create cannot be deleted or declared corrupt merely because attaching patch context failed; display CONTEXT_PENDING and provide retry.
+
 Persist an append-only reference to SourceSnapshot and PatchSearchSession in a separate versioned table/namespace; do not modify ComparisonProject.artifacts shape or its exactly-two-artifact constraint. Write per-operation source/object bytes atomically with a bounded content-addressed cache and verification on read. Record actual source digest, parser and rule versions, selected product, exact filename and pair hashes. Do not persist signed redirect URLs, private tokens or full absolute paths in exports.
 
 Dependency fingerprint for a localization result:
@@ -284,17 +298,11 @@ When any dependency changes: mark localization stale, keep audit history, comput
 
 ## 10. CLI contract, additive
 
-Do not rename existing acquire or correlate commands.
+CLI syntax, defaults, error codes and exact JSON envelopes are now fixed in [SPEC-32C](kb-patch-search-ui-cli-contract.md). The earlier placeholder command list has been superseded.
 
-  patchtrace patch search KB503XXXX --json
-  patchtrace patch search KB503XXXX --offline --snapshot advisory.json --json
-  patchtrace patch variants KB503XXXX --snapshot advisory.json --json
-  patchtrace patch components KB503XXXX --product-id ID --json
-  patchtrace patch pairs KB503XXXX --product-id ID --file clfs.sys --json
-  patchtrace patch fetch --session session.json --pair-id ID --project PATH --consent-hosts HOSTS --json
-  patchtrace patch explain PROJECT --cve CVE-YYYY-NNNN --json
+Illustrative valid end-to-end commands: local `patchtrace patch search KB5012345 --scope-file corpus.json --json`; `patchtrace patch pairs --session session.json --product-id P-CLIENT --file clfs.sys --json`; `patchtrace patch fetch --session session.json --pair-id ID --project DIRECTORY --consent-hosts winbindex.m417z.com,msdl.microsoft.com --json`; and offline `patchtrace patch explain DIRECTORY --cve CVE-2024-12345 --json`. Any actual fetched source requires an explicit scope, consent and validated supported origin. Bare search never connects to a network.
 
-Syntax is proposed: first implement parser tests and approve exact names. Online mode requires explicit --fetch-metadata plus consent declarations; a plain search MUST remain cache-only and never contact the network. Explain must work on a fully disconnected host. --json stdout exactly one bounded, versioned JSON document; stderr human diagnostics. Adopt existing exit codes 0 success, 2 invalid config/input, 3 runtime or partial provider error, 4 no results, 5 cancelled; report ordinary incomplete mapping as partial status within a successful search rather than throwing.
+Existing `acquire` and `correlate` subcommands and global `enrichment-cli/1` outer JSON envelope stay backward compatible.
 
 ## 11. Acceptance criteria (hard gates)
 
