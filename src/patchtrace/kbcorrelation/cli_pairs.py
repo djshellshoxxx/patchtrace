@@ -5,7 +5,6 @@ builds the :class:`~.service.KbService`. Offline: nothing here can fetch.
 from __future__ import annotations
 
 from .cli_index import add_common, present
-from .store import KbcStoreError
 
 
 def _investigation(parser) -> None:
@@ -19,7 +18,7 @@ def register(sub) -> None:
     _investigation(comp)
     comp.add_argument('--product', metavar='ID', help='product scope id; chooses the product when none is chosen')
     comp.add_argument('--file', action='append', default=[], metavar='NAME', help='a file name you know (repeatable)')
-    pairs = add_common(sub.add_parser('pairs', help='pair candidates (need the file index; none offline)'))
+    pairs = add_common(sub.add_parser('pairs', help='pair candidates from the saved Winbindex records'))
     _investigation(pairs)
     pairs.add_argument('--product', metavar='ID')
     pairs.add_argument('--file', action='append', default=[], metavar='NAME')
@@ -32,9 +31,11 @@ def register(sub) -> None:
     imp.add_argument('--confirm-same-component', action='store_true',
                      help='the two differently named files are the same component')
     imp.add_argument('--dry-run', action='store_true', help='show the local plan and grade; create nothing')
-    plan = add_common(sub.add_parser('plan', help='network plan for a pair (needs the file index)'))
+    plan = add_common(sub.add_parser('plan', help='preview what a file-index pair needs; makes no request'))
     _investigation(plan)
-    plan.add_argument('--pair', metavar='ID')
+    plan.add_argument('--pair', metavar='ID', help='pair id (or its first characters) from "kb pairs"')
+    plan.add_argument('--product', metavar='ID')
+    plan.add_argument('--file', action='append', default=[], metavar='NAME')
 
 
 def cmd_products(args, context, out) -> int:
@@ -47,7 +48,8 @@ def cmd_components(args, context, out) -> int:
 
 
 def cmd_pairs(args, context, out) -> int:
-    return present(out, 'kb pairs', args, context.service(args).pairs(args.investigation))
+    return present(out, 'kb pairs', args,
+                   context.service(args).pairs(args.investigation, product=args.product, files=args.file))
 
 
 def cmd_import_pair(args, context, out) -> int:
@@ -58,8 +60,8 @@ def cmd_import_pair(args, context, out) -> int:
 
 
 def cmd_plan(args, context, out) -> int:
-    raise KbcStoreError('PT-KBC-UNSUPPORTED', 'a network plan needs the Windows file index (a later slice); '
-                        'use "kb import-pair --dry-run" to see the local plan for two files you hold')
+    return present(out, 'kb plan', args, context.service(args).plan(
+        args.investigation, pair_id=args.pair, product=args.product, files=args.file))
 
 
 HANDLERS = {'products': cmd_products, 'components': cmd_components, 'pairs': cmd_pairs,

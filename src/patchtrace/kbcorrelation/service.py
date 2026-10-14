@@ -13,7 +13,7 @@ from __future__ import annotations
 import hashlib
 import json
 import uuid
-from collections.abc import Callable, Iterable, Mapping
+from collections.abc import Callable, Iterable, Mapping, Sequence
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Protocol
@@ -22,9 +22,11 @@ from pydantic import ValidationError
 
 from . import components as comp
 from . import pairs as pr
+from . import resolver
 from .cli_index import IndexPorts, load_index
 from .context import ContextBundle, RulesPort, build_bundle, vulnerability_pointer
 from .contracts import (
+    HARD_BLOCKS,
     AnalystDecision,
     Coverage,
     CveCard,
@@ -38,8 +40,9 @@ from .export import EXTENSIONS, to_json, to_markdown
 from .ids import KbSyntaxError, normalise_cve, normalise_kb_edge
 from .index import Lookup, ReverseIndex
 from .limits import MAX_SEARCH_MONTHS
+from .lineage import IndexRow
 from .pairs import LocalFile
-from .plan import local_plan
+from .plan import index_plan, local_plan
 from .ports import AdvisoryPort, ClockPort, ProjectPort
 from .products import clean_text
 from .recovery import repair
@@ -70,6 +73,15 @@ TEXT_PAIRS_E0 = ('Pair candidates need the Windows file index, which is not avai
                  'already have with "kb import-pair".')
 
 
+class FileIndex(Protocol):
+    """The offline Windows file index: rows of one file name plus how many index entries could not become rows;
+    bound by ``wiring.WorkspaceFileIndex``."""
+
+    def available(self) -> bool: ...
+
+    def rows(self, file_name: str, winbindex_key: str) -> tuple[Sequence[IndexRow], int]: ...
+
+
 class ProjectAccess(ProjectPort, Protocol):
     """``ProjectPort`` plus the two reads and the lookup the service needs; bound by ``wiring.RealProjectPort``."""
 
@@ -87,6 +99,7 @@ class Env:
     escape: Callable[[str], str]
     project: Callable[[WorkspaceStore | None, str], ProjectAccess]
     fault: Fault | None = None
+    file_index: Callable[[Path], FileIndex] | None = None
 
 
 @dataclass
@@ -353,12 +366,129 @@ class KbService:
             return (lead.value,), (), coverage
         return (), (), coverage
 
-    def pairs(self, investigation: str) -> Outcome:
+    def _lead_kbs(self, index: ReverseIndex, rev: InvestigationRevision) -> dict[str, str | None]:
+        """KB ids the lead leads to under the selected product, each with its one vendor-stated fixed build (or None
+        when the documents state none or disagree)."""
+        lead, scope_id, now = rev.lead, rev.selected_scope_id, self._now()
+        if lead.kind == 'kb':
+            look = index.lookup_kb(lead.value, scope_id=scope_id, now=now)
+            kbs = {lead.value}
+        elif lead.kind == 'cve':
+            look = index.lookup_cve(lead.value, scope_id=scope_id, now=now)
+            kbs = {e.kb for e in look.edges}
+        else:
+            raise _fail('PT-KBC-INPUT', 'this investigation started from two files and has no KB to look up')
+        fixed = {kb: {e.fixed_build for e in look.edges if e.kb == kb and e.fixed_build} for kb in kbs}
+        return {kb: next(iter(builds)) if len(builds) == 1 else None for kb, builds in sorted(fixed.items())}
+
+    def _unanswered(self, rev: InvestigationRevision, reason: str, text: str) -> Outcome:
+        result = {'contract': 'kbcorrelation/1', 'investigation_id': rev.investigation_id, 'pairs': [],
+                  'reason': reason}
+        return Outcome(4, 'unavailable', result, text)
+
+    def _resolve_pairs(self, investigation: str, product: str | None, files: Iterable[str]):
+        """``(revision, resolutions, skipped_rows, files_without_record)``, or ``(revision, Outcome)`` when the
+        offline file index cannot answer. Read-only: the investigation is not advanced."""
+        try:
+            names = [comp.normalise_name(f) for f in files]
+        except ValueError as exc:
+            raise _fail('PT-KBC-INPUT', str(exc)) from None
+        file_index = self.env.file_index(self.root) if self.env.file_index else None
         with self._open() as ws:
             rev = self._get(ws, investigation)
-        result = {'contract': 'kbcorrelation/1', 'investigation_id': rev.investigation_id, 'pairs': [],
-                  'reason': 'file index not available offline'}
-        return Outcome(4, 'unavailable', result, TEXT_PAIRS_E0)
+            if file_index is None or not file_index.available():
+                return rev, self._unanswered(rev, 'file index not available offline', TEXT_PAIRS_E0)
+            scope_id = product or rev.selected_scope_id
+            if scope_id is None:
+                raise _fail('PT-KBC-INPUT', TEXT_KB6)
+            if scope_id not in rev.scope_ids:
+                raise _fail('PT-KBC-INPUT', 'that product is not one of the products listed for the lead')
+            rev = rev.model_copy(update={'selected_scope_id': scope_id})
+            index, _ = load_index(ws, self.ports)
+            scope = next(s for s in index.scopes() if s.scope_id == scope_id)
+            entered = sorted({*names, *(d.next for d in ws.decisions(rev.investigation_id)
+                                        if d.op == 'component-name')})
+            cards, refs = self._lead_cards(index, rev, ws)
+            hints, _ = comp.hints_for(cards, refs, entered, scope_id)
+            chosen = sorted({h.basename for h in hints if h.tier in comp.SELECTING_TIERS})
+            kbs = self._lead_kbs(index, rev)
+        if not chosen:
+            return rev, self._unanswered(rev, 'no file name', TEXT_KB7)
+        covered = scope.family != 'windows-server' and scope.winbindex_key is not None
+        found, skipped, missing = [], 0, []
+        for name in chosen:  # the index is consulted only where it can answer; the resolver states why otherwise
+            rows, gap = file_index.rows(name, scope.winbindex_key) if covered else ((), 0)
+            if covered and not rows and not gap:
+                missing.append(name)
+                continue
+            skipped = max(skipped, gap)
+            found += [resolver.resolve(rows, kb=kb, scope=scope, file_name=name, fixed_build=fixed,
+                                       skipped_rows=gap) for kb, fixed in kbs.items()]
+        return rev, found, skipped, missing
+
+    @staticmethod
+    def _candidate_dict(res: resolver.Resolution, pair) -> dict:
+        return {**KbService._pair_dict(pair), 'kb': res.kb, 'file_name': res.file_name,
+                'changed_in_kb': res.changed_in_kb, 'window': list(pair.window),
+                'older_availability': pair.older.availability, 'newer_availability': pair.newer.availability}
+
+    @staticmethod
+    def _resolution_dict(res: resolver.Resolution) -> dict:
+        return {'kb': res.kb, 'file_name': res.file_name, 'version_key': res.version_key,
+                'changed_in_kb': res.changed_in_kb, 'last_changed_in': res.last_changed_in,
+                'blockers': list(res.blockers), 'note': res.note, 'skipped_rows': res.skipped_rows,
+                'truncated': res.truncated}
+
+    def pairs(self, investigation: str, *, product: str | None = None, files: Iterable[str] = ()) -> Outcome:
+        got = self._resolve_pairs(investigation, product, files)
+        if isinstance(got[1], Outcome):
+            return got[1]
+        rev, found, skipped, missing = got
+        candidates = [self._candidate_dict(res, pair) for res in found for pair in res.pairs]
+        result = {'contract': 'kbcorrelation/1', 'investigation_id': rev.investigation_id,
+                  'scope_id': rev.selected_scope_id, 'pairs': candidates,
+                  'resolutions': [self._resolution_dict(r) for r in found], 'files_without_record': missing,
+                  'skipped_rows': skipped}
+        lines = [f'{c["grade"]}/{c["tier"]}  {c["file_name"]}  {c["kb"]}  older {c["older_sha256"][:12]} -> newer '
+                 f'{c["newer_sha256"][:12]}  [{", ".join(c["reason_codes"]) or "no flags"}]  {c["pair_id"][:12]}'
+                 for c in candidates]
+        lines += [f'{r.file_name}  {r.kb}: {r.note}' for r in found if not r.pairs and r.note]
+        lines += [f'{name}: no Winbindex record is saved in this workspace.' for name in missing]
+        text = '\n'.join(lines)
+        if skipped:  # an index with unreadable entries cannot say the newest builds are absent
+            return Outcome(3, 'partial', result, text,
+                           [f'{skipped} file-index entries could not be read, so newer builds may be missing.'])
+        return Outcome(0, 'complete', result, text) if candidates else Outcome(4, 'unavailable', result, text)
+
+    @staticmethod
+    def _block_text(pair) -> str:
+        arch = next((f.machine for f in (pair.older, pair.newer) if f.machine != pr.SUPPORTED_ARCH), 'not AMD64')
+        blocking = [c for c in pair.reason_codes if c in HARD_BLOCKS or c == 'ORDER_UNVERIFIED']
+        return ' '.join(pr.reason_text(code, arch=arch, k=len(pair.window)) for code in blocking)
+
+    def plan(self, investigation: str, *, pair_id: str | None = None, product: str | None = None,
+             files: Iterable[str] = ()) -> Outcome:
+        got = self._resolve_pairs(investigation, product, files)
+        if isinstance(got[1], Outcome):
+            return got[1]
+        rev, found, _, _ = got
+        every = [pair for res in found for pair in res.pairs]
+        if pair_id is None:
+            pair = next((p for p in every if p.grade != 'X'), None)
+        else:
+            pair = next((p for p in every if p.pair_id.startswith(pair_id)), None)
+            if pair is None:
+                raise _fail('PT-KBC-INPUT', 'that pair is not a candidate for this lead; list them with "kb pairs"')
+        result = {'contract': 'kbcorrelation/1', 'investigation_id': rev.investigation_id, 'plan': None, 'pair': None}
+        if pair is None:
+            return Outcome(4, 'unavailable', result, 'There is no pair candidate to plan; see "kb pairs".')
+        result['pair'] = self._pair_dict(pair)
+        if pair.grade == 'X':
+            text = self._block_text(pair)
+            return Outcome(2, 'failed', result, text, error=f'{", ".join(pair.reason_codes)}: {text}')
+        plan = index_plan(pair)
+        result['plan'] = plan.as_dict()
+        return Outcome(0, 'complete', result, plan.text)
 
     # ------------------------------------------------------------------------------------------ import-pair
 

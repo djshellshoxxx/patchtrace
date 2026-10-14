@@ -84,7 +84,7 @@ def test_products_components_pairs_and_plan_verbs(kb):
     code, doc, _ = kb('components', inv, '--file', 'bad/name.sys')
     assert code == 2
     code, doc, _ = kb('plan', inv)
-    assert code == 2 and 'PT-KBC-UNSUPPORTED' in doc['error']
+    assert code == 4 and doc['status'] == 'unavailable'  # no Winbindex record is saved in this workspace
 
 
 def test_import_pair_dry_run_and_text_mode(kb, tmp_path):

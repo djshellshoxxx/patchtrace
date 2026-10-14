@@ -41,3 +41,31 @@ def local_plan(pair: PairProposal) -> LocalPlan:
     sha = domain_id('kbc.localplan', 1, {'pair_id': pair.pair_id, 'older': pair.older.sha256,
                                          'newer': pair.newer.sha256})
     return LocalPlan(plan_sha=sha, pair_id=pair.pair_id, older_sha=pair.older.sha256, newer_sha=pair.newer.sha256)
+
+
+@dataclass(frozen=True)
+class IndexPlan:
+    """What a file-index pair would need before any fetch. No request is listed: the exact request list, hosts and
+    consent-bound ``plan_sha`` belong to the acquisition step (E1), so this is a preview and carries no consent."""
+    pair_id: str
+    older_sha: str
+    newer_sha: str
+    older_availability: str
+    newer_availability: str
+    network_requests: int = 0
+
+    def as_dict(self) -> dict:
+        return {'pair_id': self.pair_id, 'older_sha256': self.older_sha, 'newer_sha256': self.newer_sha,
+                'older_availability': self.older_availability, 'newer_availability': self.newer_availability,
+                'network_requests': self.network_requests, 'consent_required': True}
+
+    @property
+    def text(self) -> str:
+        return (f'Index pair {self.pair_id[:12]}: older file {self.older_availability}, newer file '
+                f'{self.newer_availability}. No request is planned or made here; fetching needs the acquisition step '
+                'with your consent, and a file is checked against its expected SHA-256 and never run.')
+
+
+def index_plan(pair: PairProposal) -> IndexPlan:
+    return IndexPlan(pair_id=pair.pair_id, older_sha=pair.older.sha256, newer_sha=pair.newer.sha256,
+                     older_availability=pair.older.availability, newer_availability=pair.newer.availability)

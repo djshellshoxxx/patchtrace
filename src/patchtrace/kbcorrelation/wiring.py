@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import re
 import struct
 from collections.abc import Mapping
 from pathlib import Path
@@ -19,12 +20,69 @@ from typing import Any
 
 from .components import normalise_name
 from .contracts import Arch, CveCard
+from .lineage import IndexRow, index_rows
 from .pairs import LocalFile
 from .service import Env, KbService
 from .store import Fault, KbcStoreError, SystemClock, WorkspaceStore
 
+INDEX_DIR = 'winbindex'
+INDEX_RECORD = re.compile(r'(?P<name>[a-z0-9._-]+)@(?P<date>\d{4}-\d{2}-\d{2})\.json(?P<gz>\.gz)?')
 MACHINES: dict[int, Arch] = {0x8664: 'amd64', 0xAA64: 'arm64', 0x14C: 'x86'}
 HEADER_BYTES = 4096
+
+
+class WorkspaceFileIndex:
+    """``IndexPort`` over Winbindex records saved in the offline workspace as ``winbindex/<name>@YYYY-MM-DD.json[.gz]``
+    (the date is the record's data date; the newest record of a name wins). Never fetches."""
+
+    def __init__(self, root: Path):
+        self.directory = Path(root) / INDEX_DIR
+        self._skipped: dict[str, int] = {}
+
+    def _record(self, file_name: str) -> tuple[Path, str, bool] | None:
+        found = []
+        if self.directory.is_dir():
+            for path in self.directory.iterdir():
+                match = INDEX_RECORD.fullmatch(path.name)
+                if match and match['name'] == file_name and path.is_file():
+                    found.append((match['date'], path, bool(match['gz'])))
+        if not found:
+            return None
+        date, path, gz = max(found, key=lambda f: f[0])
+        return path, date, gz
+
+    def available(self) -> bool:
+        return self.directory.is_dir() and any(INDEX_RECORD.fullmatch(p.name) for p in self.directory.iterdir())
+
+    def rows_for(self, file_name: str, winbindex_key: str) -> list[dict]:
+        """Every row of the file's record; ``winbindex_key`` is applied later by ``lineage.timeline`` because shared
+        rows are copied between keys. A missing record is no rows."""
+        from ..acquisition.contracts import AcquisitionError
+        from ..acquisition.winbindex import MAX_COMPRESSED, parse_rows
+        found = self._record(file_name)
+        if found is None:
+            return []
+        path, date, compressed = found
+        try:
+            if path.stat().st_size > MAX_COMPRESSED:
+                raise KbcStoreError('PT-KBC-LIMIT', 'a Winbindex record in the workspace exceeds its size limit')
+            parsed = parse_rows(path.read_bytes(), file_name, date, compressed=compressed)
+        except OSError:
+            raise KbcStoreError('PT-KBC-INPUT', 'a Winbindex record in the workspace cannot be read') from None
+        except AcquisitionError as exc:
+            raise KbcStoreError('PT-KBC-SOURCE', f'a Winbindex record in the workspace is unusable: {exc.message}'
+                                ) from None
+        self._skipped[file_name] = parsed.skipped
+        return [row.as_mapping() for row in parsed.rows]
+
+    def has_record(self, file_name: str) -> bool:
+        return self._record(file_name) is not None
+
+    def rows(self, file_name: str, winbindex_key: str) -> tuple[tuple[IndexRow, ...], int]:
+        """Index rows and the number of index entries that could not become rows (a gap in coverage)."""
+        mappings = self.rows_for(file_name, winbindex_key)
+        rows, rejected = index_rows(mappings, file_name=file_name)
+        return rows, self._skipped.get(file_name, 0) + rejected
 
 
 class IntelligenceAdvisory:
@@ -178,7 +236,8 @@ def _project_factory(workspace: WorkspaceStore | None, name: str) -> RealProject
 def build_env(*, clock=None, fault: Fault | None = None, advisory=None) -> Env:
     """The production ports; ``clock`` and ``fault`` (a crash-point seam) exist for tests."""
     return Env(advisory=advisory or IntelligenceAdvisory(), clock=clock or SystemClock(), rules=IntelligenceRules(),
-               inspect=inspect_local_file, escape=escape_markdown, project=_project_factory, fault=fault)
+               inspect=inspect_local_file, escape=escape_markdown, project=_project_factory, fault=fault,
+               file_index=WorkspaceFileIndex)
 
 
 def build_service(workspace: Path, **options) -> KbService:
