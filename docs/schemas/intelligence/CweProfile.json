@@ -1,0 +1,243 @@
+{
+  "$defs": {
+    "CweClassification": {
+      "additionalProperties": false,
+      "properties": {
+        "assessment": {
+          "enum": [
+            "advisory-claim",
+            "rule-hypothesis"
+          ],
+          "title": "Assessment",
+          "type": "string"
+        },
+        "basis": {
+          "enum": [
+            "explicit-csaf-cwe",
+            "cwe-id-in-text",
+            "curated-vocabulary"
+          ],
+          "title": "Basis",
+          "type": "string"
+        },
+        "confidence": {
+          "enum": [
+            "explicit",
+            "phrase-match",
+            "weak"
+          ],
+          "title": "Confidence",
+          "type": "string"
+        },
+        "cwe_id": {
+          "pattern": "^CWE-[1-9][0-9]{0,5}$",
+          "title": "Cwe Id",
+          "type": "string"
+        },
+        "family": {
+          "maxLength": 40,
+          "minLength": 1,
+          "title": "Family",
+          "type": "string"
+        },
+        "hits": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/TermHit"
+          },
+          "title": "Hits",
+          "type": "array"
+        },
+        "pointers": {
+          "default": [],
+          "items": {
+            "maxLength": 4096,
+            "pattern": "^(/([^/~]|~[01])*)*$",
+            "type": "string"
+          },
+          "title": "Pointers",
+          "type": "array"
+        }
+      },
+      "required": [
+        "cwe_id",
+        "family",
+        "basis",
+        "confidence",
+        "assessment"
+      ],
+      "title": "CweClassification",
+      "type": "object"
+    },
+    "TermHit": {
+      "additionalProperties": false,
+      "properties": {
+        "cwe_ids": {
+          "default": [],
+          "items": {
+            "pattern": "^CWE-[1-9][0-9]{0,5}$",
+            "type": "string"
+          },
+          "title": "Cwe Ids",
+          "type": "array"
+        },
+        "excerpt": {
+          "maxLength": 300,
+          "title": "Excerpt",
+          "type": "string"
+        },
+        "negated": {
+          "default": false,
+          "title": "Negated",
+          "type": "boolean"
+        },
+        "negation_cue": {
+          "anyOf": [
+            {
+              "maxLength": 40,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Negation Cue"
+        },
+        "phrase": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Phrase",
+          "type": "string"
+        },
+        "pointer": {
+          "maxLength": 4096,
+          "pattern": "^(/([^/~]|~[01])*)*$",
+          "title": "Pointer",
+          "type": "string"
+        },
+        "scope": {
+          "enum": [
+            "weakness",
+            "effect",
+            "component",
+            "primitive"
+          ],
+          "title": "Scope",
+          "type": "string"
+        },
+        "strength": {
+          "enum": [
+            "strong",
+            "weak"
+          ],
+          "title": "Strength",
+          "type": "string"
+        },
+        "term_id": {
+          "maxLength": 64,
+          "minLength": 1,
+          "title": "Term Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "term_id",
+        "phrase",
+        "scope",
+        "strength",
+        "pointer",
+        "excerpt"
+      ],
+      "title": "TermHit",
+      "type": "object"
+    }
+  },
+  "$id": "https://patchtrace.local/schemas/intelligence/1/CweProfile.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "classifications": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/CweClassification"
+      },
+      "title": "Classifications",
+      "type": "array"
+    },
+    "contract": {
+      "const": "intelligence/1",
+      "default": "intelligence/1",
+      "title": "Contract",
+      "type": "string"
+    },
+    "cve": {
+      "maxLength": 24,
+      "pattern": "^CVE-[0-9]{4}-[0-9]{4,19}$",
+      "title": "Cve",
+      "type": "string"
+    },
+    "disagreements": {
+      "default": [],
+      "items": {
+        "type": "string"
+      },
+      "title": "Disagreements",
+      "type": "array"
+    },
+    "effect_hits": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/TermHit"
+      },
+      "title": "Effect Hits",
+      "type": "array"
+    },
+    "lexicon_digest": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Lexicon Digest",
+      "type": "string"
+    },
+    "lexicon_version": {
+      "maxLength": 40,
+      "minLength": 1,
+      "title": "Lexicon Version",
+      "type": "string"
+    },
+    "limitations": {
+      "default": [],
+      "items": {
+        "type": "string"
+      },
+      "title": "Limitations",
+      "type": "array"
+    },
+    "negated_hits": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/TermHit"
+      },
+      "title": "Negated Hits",
+      "type": "array"
+    },
+    "status": {
+      "enum": [
+        "explicit",
+        "derived",
+        "weak",
+        "vague",
+        "none"
+      ],
+      "title": "Status",
+      "type": "string"
+    }
+  },
+  "required": [
+    "cve",
+    "lexicon_version",
+    "lexicon_digest",
+    "status"
+  ],
+  "title": "CweProfile",
+  "type": "object"
+}

@@ -1,0 +1,108 @@
+{
+  "$defs": {
+    "Finding": {
+      "additionalProperties": false,
+      "description": "One validation result. ``test`` is a CSAF 2.0 section id (``6.1.1``), ``schema``, ``json`` or ``limit``.",
+      "properties": {
+        "message": {
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Message",
+          "type": "string"
+        },
+        "pointer": {
+          "maxLength": 4096,
+          "pattern": "^(/([^/~]|~[01])*)*$",
+          "title": "Pointer",
+          "type": "string"
+        },
+        "severity": {
+          "enum": [
+            "error",
+            "warning"
+          ],
+          "title": "Severity",
+          "type": "string"
+        },
+        "test": {
+          "maxLength": 32,
+          "minLength": 1,
+          "title": "Test",
+          "type": "string"
+        }
+      },
+      "required": [
+        "test",
+        "severity",
+        "pointer",
+        "message"
+      ],
+      "title": "Finding",
+      "type": "object"
+    }
+  },
+  "$id": "https://patchtrace.local/schemas/intelligence/1/ValidationReport.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "contract": {
+      "const": "intelligence/1",
+      "default": "intelligence/1",
+      "title": "Contract",
+      "type": "string"
+    },
+    "document_category": {
+      "maxLength": 1000,
+      "title": "Document Category",
+      "type": "string"
+    },
+    "errors": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/Finding"
+      },
+      "title": "Errors",
+      "type": "array"
+    },
+    "tests_not_implemented": {
+      "default": [],
+      "items": {
+        "type": "string"
+      },
+      "title": "Tests Not Implemented",
+      "type": "array"
+    },
+    "tests_run": {
+      "default": [],
+      "items": {
+        "type": "string"
+      },
+      "title": "Tests Run",
+      "type": "array"
+    },
+    "truncated": {
+      "default": false,
+      "title": "Truncated",
+      "type": "boolean"
+    },
+    "validator_version": {
+      "minimum": 1,
+      "title": "Validator Version",
+      "type": "integer"
+    },
+    "warnings": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/Finding"
+      },
+      "title": "Warnings",
+      "type": "array"
+    }
+  },
+  "required": [
+    "validator_version",
+    "document_category"
+  ],
+  "title": "ValidationReport",
+  "type": "object"
+}

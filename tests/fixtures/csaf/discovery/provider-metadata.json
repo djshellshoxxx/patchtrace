@@ -1,0 +1,32 @@
+{
+  "canonical_url": "https://msrc.microsoft.com/csaf/provider-metadata.json",
+  "distributions": [
+    {
+      "directory_url": "https://msrc.microsoft.com/csaf/advisories"
+    },
+    {
+      "directory_url": "https://msrc.microsoft.com/csaf/vex/"
+    },
+    {
+      "rolie": {
+        "feeds": [
+          {
+            "summary": "SYNTHETIC ROLIE feed entry (ignored by PatchTrace 28a)",
+            "tlp_label": "WHITE",
+            "url": "https://msrc.microsoft.com/csaf/feed-tlp-white.json"
+          }
+        ]
+      }
+    }
+  ],
+  "last_updated": "2099-01-20T08:00:00.000Z",
+  "list_on_CSAF_aggregators": true,
+  "metadata_version": "2.0",
+  "mirror_on_CSAF_aggregators": true,
+  "publisher": {
+    "category": "vendor",
+    "name": "SYNTHETIC provider metadata (not Microsoft)",
+    "namespace": "https://example.invalid/patchtrace-synthetic"
+  },
+  "role": "csaf_provider"
+}
