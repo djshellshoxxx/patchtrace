@@ -1,0 +1,13 @@
+{
+  "_label": "SYNTHETIC, hand-authored for the DIE synergy test; a subset of unified-match/1 and change-facts/1 fields (row_id, materiality group, verdict, change classes, deltas_omitted, limits_hit) in engine order",
+  "rows": [
+    {"row_id": "r-init", "name": "Init", "group": "material", "truth": "changed", "verdict": "material", "classes": ["call-added"], "deltas_omitted": 0, "limits_hit": []},
+    {"row_id": "r-parse-header", "name": "ParseHeader", "group": "material", "truth": "changed", "verdict": "material", "classes": ["constant"], "deltas_omitted": 0, "limits_hit": []},
+    {"row_id": "r-validate-len", "name": "ValidateLen", "group": "review", "truth": "changed", "verdict": "review", "classes": ["comparison"], "deltas_omitted": 0, "limits_hit": []},
+    {"row_id": "r-crc32-update", "name": "Crc32Update", "group": "review", "truth": "cosmetic", "verdict": "review", "classes": ["cfg", "block-added"], "deltas_omitted": 0, "limits_hit": []},
+    {"row_id": "r-log-message", "name": "LogMessage", "group": "review", "truth": "cosmetic", "verdict": "review", "classes": ["eh"], "deltas_omitted": 0, "limits_hit": []},
+    {"row_id": "r-build-message", "name": "BuildMessage", "group": "review", "truth": "changed", "verdict": "review", "classes": ["constant"], "deltas_omitted": 0, "limits_hit": []},
+    {"row_id": "r-copy-buf", "name": "CopyBuf", "group": "review", "truth": "cosmetic", "verdict": "review", "classes": ["frame", "register-only"], "deltas_omitted": 0, "limits_hit": []},
+    {"row_id": "r-main", "name": "Main", "group": "unchanged", "truth": "same", "verdict": "unchanged", "classes": [], "deltas_omitted": 0, "limits_hit": []}
+  ]
+}

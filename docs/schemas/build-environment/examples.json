@@ -1,0 +1,728 @@
+{
+  "BuildChange": {
+    "invalid": [
+      {
+        "label": "unchanged with different values",
+        "value": {
+          "basis": [
+            "diec"
+          ],
+          "change": "unchanged",
+          "key": "compiler",
+          "kind": "toolchain",
+          "newer": "MinGW 19.38",
+          "older": "Microsoft Visual C/C++ 19.38",
+          "strength": "strong"
+        }
+      }
+    ],
+    "valid": [
+      {
+        "basis": [
+          "diec"
+        ],
+        "change": "changed",
+        "key": "compiler",
+        "kind": "toolchain",
+        "newer": "MinGW 19.38",
+        "older": "Microsoft Visual C/C++ 19.38",
+        "strength": "strong"
+      }
+    ]
+  },
+  "BuildEnvDelta": {
+    "invalid": [
+      {
+        "label": "verdict without comparable inputs",
+        "value": {
+          "changes": [
+            {
+              "basis": [
+                "diec"
+              ],
+              "change": "changed",
+              "key": "compiler",
+              "kind": "toolchain",
+              "newer": "MinGW 19.38",
+              "older": "Microsoft Visual C/C++ 19.38",
+              "strength": "strong"
+            },
+            {
+              "basis": [
+                "pe-header"
+              ],
+              "change": "unchanged",
+              "key": "linker_field",
+              "kind": "toolchain",
+              "newer": "14.36",
+              "older": "14.36",
+              "strength": "weak"
+            }
+          ],
+          "comparable": false,
+          "contract": "build-environment/1",
+          "counts": {
+            "added": 0,
+            "changed": 1,
+            "removed": 0,
+            "unchanged": 1,
+            "unknown": 0
+          },
+          "delta_id": "64d9c6918cda2e8c4cb955d877e5a6fa64e2aa6e9a288d4b9bb1b4f8d790cac6",
+          "limits_hit": [],
+          "map_version": "noise-map/1",
+          "newer_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "noise": [
+            {
+              "classes": [
+                "eh",
+                "frame",
+                "register-only",
+                "address-only",
+                "layout-only",
+                "size-only",
+                "refcount-only",
+                "name-only"
+              ],
+              "code": "toolchain-differs",
+              "effect": "order",
+              "why": "Change classes that often come from register allocation, layout or unwind data when the toolchain differs; the row may be listed after rows without such a cause."
+            },
+            {
+              "classes": [
+                "cfg",
+                "block-added",
+                "block-removed"
+              ],
+              "code": "toolchain-differs",
+              "effect": "tag",
+              "why": "Change classes that can come from code generation when the toolchain differs; the row is only marked."
+            }
+          ],
+          "older_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "options_changed": [],
+          "orientation": "older->newer",
+          "preflight": [
+            {
+              "basis": [
+                "diec"
+              ],
+              "code": "toolchain-differs",
+              "detail": "Some code differences may come from the build, not from source edits.",
+              "severity": "notice",
+              "side": "both",
+              "summary": "[i] Notice: the toolchain differs between OLDER and NEWER (Microsoft Visual C/C++ 19.38 -> MinGW 19.38).",
+              "teach_id": "build.toolchain_differs"
+            }
+          ],
+          "reasons": [],
+          "toolchain": "differs",
+          "toolchain_corroborated": false
+        }
+      },
+      {
+        "label": "noise attribution without a difference",
+        "value": {
+          "changes": [
+            {
+              "basis": [
+                "diec"
+              ],
+              "change": "changed",
+              "key": "compiler",
+              "kind": "toolchain",
+              "newer": "MinGW 19.38",
+              "older": "Microsoft Visual C/C++ 19.38",
+              "strength": "strong"
+            },
+            {
+              "basis": [
+                "pe-header"
+              ],
+              "change": "unchanged",
+              "key": "linker_field",
+              "kind": "toolchain",
+              "newer": "14.36",
+              "older": "14.36",
+              "strength": "weak"
+            }
+          ],
+          "comparable": true,
+          "contract": "build-environment/1",
+          "counts": {
+            "added": 0,
+            "changed": 1,
+            "removed": 0,
+            "unchanged": 1,
+            "unknown": 0
+          },
+          "delta_id": "64d9c6918cda2e8c4cb955d877e5a6fa64e2aa6e9a288d4b9bb1b4f8d790cac6",
+          "limits_hit": [],
+          "map_version": "noise-map/1",
+          "newer_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "noise": [
+            {
+              "classes": [
+                "eh",
+                "frame",
+                "register-only",
+                "address-only",
+                "layout-only",
+                "size-only",
+                "refcount-only",
+                "name-only"
+              ],
+              "code": "toolchain-differs",
+              "effect": "order",
+              "why": "Change classes that often come from register allocation, layout or unwind data when the toolchain differs; the row may be listed after rows without such a cause."
+            },
+            {
+              "classes": [
+                "cfg",
+                "block-added",
+                "block-removed"
+              ],
+              "code": "toolchain-differs",
+              "effect": "tag",
+              "why": "Change classes that can come from code generation when the toolchain differs; the row is only marked."
+            }
+          ],
+          "older_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "options_changed": [],
+          "orientation": "older->newer",
+          "preflight": [
+            {
+              "basis": [
+                "diec"
+              ],
+              "code": "toolchain-differs",
+              "detail": "Some code differences may come from the build, not from source edits.",
+              "severity": "notice",
+              "side": "both",
+              "summary": "[i] Notice: the toolchain differs between OLDER and NEWER (Microsoft Visual C/C++ 19.38 -> MinGW 19.38).",
+              "teach_id": "build.toolchain_differs"
+            }
+          ],
+          "reasons": [],
+          "toolchain": "same",
+          "toolchain_corroborated": false
+        }
+      },
+      {
+        "label": "wrong orientation",
+        "value": {
+          "changes": [
+            {
+              "basis": [
+                "diec"
+              ],
+              "change": "changed",
+              "key": "compiler",
+              "kind": "toolchain",
+              "newer": "MinGW 19.38",
+              "older": "Microsoft Visual C/C++ 19.38",
+              "strength": "strong"
+            },
+            {
+              "basis": [
+                "pe-header"
+              ],
+              "change": "unchanged",
+              "key": "linker_field",
+              "kind": "toolchain",
+              "newer": "14.36",
+              "older": "14.36",
+              "strength": "weak"
+            }
+          ],
+          "comparable": true,
+          "contract": "build-environment/1",
+          "counts": {
+            "added": 0,
+            "changed": 1,
+            "removed": 0,
+            "unchanged": 1,
+            "unknown": 0
+          },
+          "delta_id": "64d9c6918cda2e8c4cb955d877e5a6fa64e2aa6e9a288d4b9bb1b4f8d790cac6",
+          "limits_hit": [],
+          "map_version": "noise-map/1",
+          "newer_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "noise": [
+            {
+              "classes": [
+                "eh",
+                "frame",
+                "register-only",
+                "address-only",
+                "layout-only",
+                "size-only",
+                "refcount-only",
+                "name-only"
+              ],
+              "code": "toolchain-differs",
+              "effect": "order",
+              "why": "Change classes that often come from register allocation, layout or unwind data when the toolchain differs; the row may be listed after rows without such a cause."
+            },
+            {
+              "classes": [
+                "cfg",
+                "block-added",
+                "block-removed"
+              ],
+              "code": "toolchain-differs",
+              "effect": "tag",
+              "why": "Change classes that can come from code generation when the toolchain differs; the row is only marked."
+            }
+          ],
+          "older_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "options_changed": [],
+          "orientation": "newer->older",
+          "preflight": [
+            {
+              "basis": [
+                "diec"
+              ],
+              "code": "toolchain-differs",
+              "detail": "Some code differences may come from the build, not from source edits.",
+              "severity": "notice",
+              "side": "both",
+              "summary": "[i] Notice: the toolchain differs between OLDER and NEWER (Microsoft Visual C/C++ 19.38 -> MinGW 19.38).",
+              "teach_id": "build.toolchain_differs"
+            }
+          ],
+          "reasons": [],
+          "toolchain": "differs",
+          "toolchain_corroborated": false
+        }
+      }
+    ],
+    "valid": [
+      {
+        "changes": [
+          {
+            "basis": [
+              "diec"
+            ],
+            "change": "changed",
+            "key": "compiler",
+            "kind": "toolchain",
+            "newer": "MinGW 19.38",
+            "older": "Microsoft Visual C/C++ 19.38",
+            "strength": "strong"
+          },
+          {
+            "basis": [
+              "pe-header"
+            ],
+            "change": "unchanged",
+            "key": "linker_field",
+            "kind": "toolchain",
+            "newer": "14.36",
+            "older": "14.36",
+            "strength": "weak"
+          }
+        ],
+        "comparable": true,
+        "contract": "build-environment/1",
+        "counts": {
+          "added": 0,
+          "changed": 1,
+          "removed": 0,
+          "unchanged": 1,
+          "unknown": 0
+        },
+        "delta_id": "64d9c6918cda2e8c4cb955d877e5a6fa64e2aa6e9a288d4b9bb1b4f8d790cac6",
+        "limits_hit": [],
+        "map_version": "noise-map/1",
+        "newer_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "noise": [
+          {
+            "classes": [
+              "eh",
+              "frame",
+              "register-only",
+              "address-only",
+              "layout-only",
+              "size-only",
+              "refcount-only",
+              "name-only"
+            ],
+            "code": "toolchain-differs",
+            "effect": "order",
+            "why": "Change classes that often come from register allocation, layout or unwind data when the toolchain differs; the row may be listed after rows without such a cause."
+          },
+          {
+            "classes": [
+              "cfg",
+              "block-added",
+              "block-removed"
+            ],
+            "code": "toolchain-differs",
+            "effect": "tag",
+            "why": "Change classes that can come from code generation when the toolchain differs; the row is only marked."
+          }
+        ],
+        "older_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "options_changed": [],
+        "orientation": "older->newer",
+        "preflight": [
+          {
+            "basis": [
+              "diec"
+            ],
+            "code": "toolchain-differs",
+            "detail": "Some code differences may come from the build, not from source edits.",
+            "severity": "notice",
+            "side": "both",
+            "summary": "[i] Notice: the toolchain differs between OLDER and NEWER (Microsoft Visual C/C++ 19.38 -> MinGW 19.38).",
+            "teach_id": "build.toolchain_differs"
+          }
+        ],
+        "reasons": [],
+        "toolchain": "differs",
+        "toolchain_corroborated": false
+      }
+    ]
+  },
+  "BuildFact": {
+    "invalid": [
+      {
+        "label": "extra field",
+        "value": {
+          "certainty": "signature",
+          "key": "compiler",
+          "raw": [
+            [
+              "raw_type",
+              "compiler"
+            ]
+          ],
+          "ref": "run-1",
+          "source": "diec",
+          "surprise": 1,
+          "value": "Microsoft Visual C/C++",
+          "version": "19.38"
+        }
+      },
+      {
+        "label": "key outside the closed set",
+        "value": {
+          "certainty": "signature",
+          "key": "verdict",
+          "raw": [
+            [
+              "raw_type",
+              "compiler"
+            ]
+          ],
+          "ref": "run-1",
+          "source": "diec",
+          "value": "Microsoft Visual C/C++",
+          "version": "19.38"
+        }
+      },
+      {
+        "label": "certainty outside the vocabulary",
+        "value": {
+          "certainty": "certain",
+          "key": "compiler",
+          "raw": [
+            [
+              "raw_type",
+              "compiler"
+            ]
+          ],
+          "ref": "run-1",
+          "source": "diec",
+          "value": "Microsoft Visual C/C++",
+          "version": "19.38"
+        }
+      }
+    ],
+    "valid": [
+      {
+        "certainty": "signature",
+        "key": "compiler",
+        "raw": [
+          [
+            "raw_type",
+            "compiler"
+          ]
+        ],
+        "ref": "run-1",
+        "source": "diec",
+        "value": "Microsoft Visual C/C++",
+        "version": "19.38"
+      }
+    ]
+  },
+  "BuildFactAnchor": {
+    "invalid": [],
+    "valid": [
+      {
+        "anchor_id": "7edff854858310475dfe7d84583fa809e33e33cd799fdb31dd535c7947476740",
+        "artifact_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "certainty": "signature",
+        "key": "compiler",
+        "side": "older",
+        "source": "diec",
+        "value": "Microsoft Visual C/C++"
+      }
+    ]
+  },
+  "BuildFingerprint": {
+    "invalid": [],
+    "valid": [
+      {
+        "anomalies": [],
+        "artifact_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "built_from": {
+          "die_cache_key": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+          "fingerprint_version": "buildenv/1",
+          "pe_facts_version": "pe-build-facts/1"
+        },
+        "contract": "build-environment/1",
+        "die": {
+          "argv_version": "diec/1",
+          "cache_key": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+          "db_label": "3.21 linux deb",
+          "db_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "heuristics": false,
+          "run_id": "run-1",
+          "status": "ok",
+          "tool_version": "3.21"
+        },
+        "facts": [
+          {
+            "certainty": "signature",
+            "key": "compiler",
+            "raw": [
+              [
+                "raw_type",
+                "compiler"
+              ]
+            ],
+            "ref": "run-1",
+            "source": "diec",
+            "value": "Microsoft Visual C/C++",
+            "version": "19.38"
+          },
+          {
+            "certainty": "exact-field",
+            "key": "linker_field",
+            "raw": [],
+            "ref": "",
+            "source": "pe-header",
+            "value": "14.36",
+            "version": ""
+          }
+        ],
+        "pe": {
+          "anomalies": [],
+          "clr": null,
+          "debug_entry_types": [
+            2
+          ],
+          "dll_characteristics": [
+            "DYNAMIC_BASE"
+          ],
+          "entropy_exec_max": 5.5,
+          "facts_version": "pe-build-facts/1",
+          "guard_flags": null,
+          "image_field": [
+            0,
+            0
+          ],
+          "linker_field": [
+            14,
+            36
+          ],
+          "os_field": [
+            6,
+            0
+          ],
+          "overlay_entropy": null,
+          "overlay_size": 0,
+          "repro": false,
+          "rich": {
+            "checksum_ok": true,
+            "entries": [
+              {
+                "build": 33134,
+                "count": 12,
+                "product_id": 261
+              }
+            ],
+            "key": 4660,
+            "offset": 128,
+            "signature": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+            "truncated": false
+          },
+          "runtime_families": [
+            "msvc-crt-14"
+          ],
+          "sampled": false,
+          "security_cookie_set": null,
+          "subsystem": "WINDOWS_CUI",
+          "subsystem_field": [
+            6,
+            0
+          ]
+        },
+        "side": "older"
+      }
+    ]
+  },
+  "DieSummary": {
+    "invalid": [
+      {
+        "label": "unknown status",
+        "value": {
+          "argv_version": "diec/1",
+          "cache_key": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+          "db_label": "3.21 linux deb",
+          "db_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "heuristics": false,
+          "run_id": "run-1",
+          "status": "passed",
+          "tool_version": "3.21"
+        }
+      }
+    ],
+    "valid": [
+      {
+        "argv_version": "diec/1",
+        "cache_key": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "db_label": "3.21 linux deb",
+        "db_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "heuristics": false,
+        "run_id": "run-1",
+        "status": "ok",
+        "tool_version": "3.21"
+      }
+    ]
+  },
+  "NoiseReason": {
+    "invalid": [],
+    "valid": [
+      {
+        "classes": [
+          "eh",
+          "frame",
+          "register-only",
+          "address-only",
+          "layout-only",
+          "size-only",
+          "refcount-only",
+          "name-only"
+        ],
+        "code": "toolchain-differs",
+        "effect": "order",
+        "why": "Change classes that often come from register allocation, layout or unwind data when the toolchain differs; the row may be listed after rows without such a cause."
+      }
+    ]
+  },
+  "PeBuildFacts": {
+    "invalid": [],
+    "valid": [
+      {
+        "anomalies": [],
+        "clr": null,
+        "debug_entry_types": [
+          2
+        ],
+        "dll_characteristics": [
+          "DYNAMIC_BASE"
+        ],
+        "entropy_exec_max": 5.5,
+        "facts_version": "pe-build-facts/1",
+        "guard_flags": null,
+        "image_field": [
+          0,
+          0
+        ],
+        "linker_field": [
+          14,
+          36
+        ],
+        "os_field": [
+          6,
+          0
+        ],
+        "overlay_entropy": null,
+        "overlay_size": 0,
+        "repro": false,
+        "rich": {
+          "checksum_ok": true,
+          "entries": [
+            {
+              "build": 33134,
+              "count": 12,
+              "product_id": 261
+            }
+          ],
+          "key": 4660,
+          "offset": 128,
+          "signature": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+          "truncated": false
+        },
+        "runtime_families": [
+          "msvc-crt-14"
+        ],
+        "sampled": false,
+        "security_cookie_set": null,
+        "subsystem": "WINDOWS_CUI",
+        "subsystem_field": [
+          6,
+          0
+        ]
+      }
+    ]
+  },
+  "PreflightWarning": {
+    "invalid": [
+      {
+        "label": "severity outside the vocabulary",
+        "value": {
+          "basis": [
+            "diec"
+          ],
+          "code": "toolchain-differs",
+          "detail": "Some code differences may come from the build, not from source edits.",
+          "severity": "alarm",
+          "side": "both",
+          "summary": "[i] Notice: the toolchain differs between OLDER and NEWER (Microsoft Visual C/C++ 19.38 -> MinGW 19.38).",
+          "teach_id": "build.toolchain_differs"
+        }
+      }
+    ],
+    "valid": [
+      {
+        "basis": [
+          "diec"
+        ],
+        "code": "toolchain-differs",
+        "detail": "Some code differences may come from the build, not from source edits.",
+        "severity": "notice",
+        "side": "both",
+        "summary": "[i] Notice: the toolchain differs between OLDER and NEWER (Microsoft Visual C/C++ 19.38 -> MinGW 19.38).",
+        "teach_id": "build.toolchain_differs"
+      }
+    ]
+  },
+  "TeachHook": {
+    "invalid": [],
+    "valid": [
+      {
+        "id": "build.toolchain_differs",
+        "meaning": "Code can differ because the build tools differ.",
+        "next_steps": [
+          "Read rows marked Material first.",
+          "Open the Build environment card to see what changed.",
+          "If a pair built with the same toolchain exists, compare that pair too."
+        ]
+      }
+    ]
+  }
+}

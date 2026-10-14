@@ -276,3 +276,6 @@
 - [x] Contracts, project input, raw matches, resolver, pair map, snapshot (GL-01 enforced), bounded queries; G0 fixtures moved to the repo's list-of-targets `matches` shape. [ ] Live gate: one real Ghidriff JSON must confirm `name_matches` (only `address_matches` is read by other repo code). [ ] G3 deltas, noise, hints; G4 CLI/DOT.
 ### [G7:callgraph-evolution]
 - [x] Pure evolution model, pair view and lineage builder. [ ] CLI `graph series`, composition (read pair projects read-only via nway PairReader, close each) and `ui_calls_evolution.py` tab wait for G4 and the GUI panel registry.
+### [D3:buildenv-core] Build-environment core (2026-10-14, Sonnet 5.5, worktree)
+- [x] Contracts, fingerprint, delta, pre-flight, `noise-map/1`, anchors, copy deck, view model, schemas in `docs/schemas/build-environment/`, synergy test on the committed real diec 3.21 goldens, `quality_flags` parity.
+- [ ] Not done: store, CLI, report (D4); card, controller, tooltips (D5); overlay wiring (D6, reuses `noise_map.row_effect`/`order_rows`); timeline (D7); DiE golden for the UPX image (live gate D8); G-DIE-1 (D9). `buildenv/auto_diec` and `confirm_before_run` settings belong to D5.

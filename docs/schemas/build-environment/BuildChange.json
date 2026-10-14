@@ -1,0 +1,119 @@
+{
+  "$id": "https://patchtrace.local/schemas/build-environment/1/BuildChange.json",
+  "additionalProperties": false,
+  "properties": {
+    "basis": {
+      "items": {
+        "enum": [
+          "pe-header",
+          "rich-header",
+          "debug-directory",
+          "load-config",
+          "imports",
+          "clr-header",
+          "sections",
+          "diec"
+        ],
+        "type": "string"
+      },
+      "maxItems": 4,
+      "title": "Basis",
+      "type": "array"
+    },
+    "change": {
+      "enum": [
+        "added",
+        "removed",
+        "changed",
+        "unchanged",
+        "one-sided-unknown"
+      ],
+      "title": "Change",
+      "type": "string"
+    },
+    "key": {
+      "enum": [
+        "compiler",
+        "compiler_version",
+        "linker",
+        "linker_field",
+        "linker_rich",
+        "build_tool",
+        "runtime_family",
+        "language",
+        "target_os",
+        "subsystem",
+        "os_version_field",
+        "subsystem_version_field",
+        "image_version_field",
+        "rich_signature",
+        "packer",
+        "protector",
+        "installer",
+        "obfuscator",
+        "managed",
+        "gs_cookie",
+        "cfg",
+        "aslr",
+        "repro",
+        "debug_entry_types",
+        "entropy_exec",
+        "overlay"
+      ],
+      "title": "Key",
+      "type": "string"
+    },
+    "kind": {
+      "enum": [
+        "toolchain",
+        "option",
+        "descriptive"
+      ],
+      "title": "Kind",
+      "type": "string"
+    },
+    "newer": {
+      "anyOf": [
+        {
+          "maxLength": 200,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Newer"
+    },
+    "older": {
+      "anyOf": [
+        {
+          "maxLength": 200,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Older"
+    },
+    "strength": {
+      "enum": [
+        "strong",
+        "weak"
+      ],
+      "title": "Strength",
+      "type": "string"
+    }
+  },
+  "required": [
+    "key",
+    "older",
+    "newer",
+    "change",
+    "kind",
+    "strength",
+    "basis"
+  ],
+  "title": "BuildChange",
+  "type": "object"
+}
