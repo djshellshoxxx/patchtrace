@@ -145,6 +145,8 @@ def _parser() -> argparse.ArgumentParser:
     rz.set_defaults(engine=['rz-diff'], bindiff=None, max_parallel=1, no_cache=False)
     rec = common(sec.add_parser('reconcile', help='compare stored secondary match sets with Ghidriff matches'))
     rec.add_argument('project', type=Path)
+    from .secondary import cli_binexport  # SPEC-10b: binexport-check + hidden worker
+    cli_binexport.register(sec, common)
     chains = common(ser.add_parser('chains', help='list chain hypotheses from series.json'))
     chains.add_argument('series_json', type=Path)
     which = chains.add_mutually_exclusive_group()
@@ -729,6 +731,9 @@ def _secondary_run(args, cancel, service, store, run, sides) -> int:
 
 
 def cmd_secondary(args, cancel) -> int:
+    from .secondary import cli_binexport
+    if args.action in cli_binexport.ACTIONS:
+        return cli_binexport.dispatch(args, cancel)
     from .enrichment.contracts import EnrichmentError
     from .enrichment.storage import EnrichmentStore, Guard
     from .secondary import load_secondary
