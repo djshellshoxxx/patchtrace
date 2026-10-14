@@ -12,8 +12,15 @@ Per side (each line prints PASS/FAIL, any FAIL exits 1; results go to OUT/live-u
   L4  (unless --no-ghidriff) a real Ghidriff run with `BackendConfig.retain_gzf` retains exactly two GZFs under the
       run directory, and `gzf` extraction of each gives the `content_digest` of the own analysis (informational line
       if it differs: Ghidriff's analysis options are not under our control)
-  L5  (unless --no-hashers) h0 / h3 / hm induce the same function equivalence classes as Ghidra's own
-      ExactBytes / ExactInstructions / ExactMnemonics hashers over the same analysed program
+  L5  (unless --no-hashers) against Ghidra's own ExactBytes / ExactInstructions / ExactMnemonics hashers over the same
+      analysed program (their classes are compared, never the hash values):
+        h0 induces the same classes (both read every byte of the body);
+        what the extractor exports (masked instruction bytes; mnemonics with operand counts) induces the same classes
+        when read the way Ghidra reads it (every instruction, nothing skipped), and the bytes outside the exported
+        instructions are exactly Ghidra's non-instruction code units;
+        the stored h3 / hm never separate what Ghidra equates, and h3 equals Ghidra's classes on every function without
+        a skipped NOP or INT3-padding instruction (those two keys skip them by design, 03 s12.5, so they are coarser
+        on the other functions; hm also leaves out Ghidra's operand counts)
   L6  (with --other-results, the JSON of the other OS for the SAME DLL bytes) `content_digest` equal across OSes
 The recorded test fixtures (tests/fixtures/unified/*.ir.jsonl, *.pe.json, PROVENANCE.json) are produced with
 `--record`, so a maintainer can refresh them from the sources without scratch scripts.
@@ -43,10 +50,10 @@ from patchtrace.service import ProjectService
 from patchtrace.unified import extract
 from patchtrace.unified.extract import runner
 from patchtrace.unified.ir import schema
+from patchtrace.unified.ir.features import is_nop, padding_start
 from patchtrace.unified.ir.ingest import ExpectedSide, ingest
 from patchtrace.unified.ir.pe_tables import read_pe_tables
 
-HASHER_PAIRS = (('ExactBytes', 'bytes', 'h0'), ('ExactInstructions', 'insns', 'h3'), ('ExactMnemonics', 'mnem', 'hm'))
 EXTRACT_TIMEOUT_S = 1200
 
 # Runs inside the external Python (pyghidra + Ghidra); stdlib otherwise. Hashes every non-external function of a GZF with
@@ -70,6 +77,7 @@ program = project.importProgram(java.io.File(gzf))
 base = program.getImageBase().getOffset()
 hashers = {'bytes': ExactBytesFunctionHasher.INSTANCE, 'insns': ExactInstructionsFunctionHasher.INSTANCE,
            'mnem': ExactMnemonicsFunctionHasher.INSTANCE}
+listing = program.getListing()
 result = {}
 for function in program.getFunctionManager().getFunctions(True):
     if function.isExternal():
@@ -80,6 +88,9 @@ for function in program.getFunctionManager().getFunctions(True):
             row[key] = int(hasher.hash(function, TaskMonitor.DUMMY))
         except Exception:
             row[key] = None
+    # Ghidra's hashers walk getCodeUnits(): instructions AND data units of the body; `data` counts the latter
+    body = function.getBody()
+    row['data'] = sum(1 for _ in listing.getCodeUnits(body, True)) - sum(1 for _ in listing.getInstructions(body, True))
     result[str(int(function.getEntryPoint().getOffset() - base))] = row
 Path(out).write_text(json.dumps(result), encoding='utf-8')
 project.close()
@@ -124,6 +135,132 @@ def compare_hasher_classes(ghidra_rows: dict, ir_rows: dict[int, dict], ghidra_k
     return {'functions': len(left), 'classes_ghidra': len(a), 'classes_ir': len(b),
             'only_ghidra': sorted(a - b, key=lambda g: (len(g), g))[:5], 'only_ir': sorted(b - a, key=lambda g: (len(g), g))[:5],
             'equal': a == b}
+
+
+def compare_refinement(ghidra_rows: dict, ir_rows: dict[int, dict], ghidra_key: str, ir_key: str) -> dict:
+    """Does the IR key ever separate functions that Ghidra's hasher equates? `refines`: every Ghidra class lies inside
+    one IR class (the IR key may be coarser, never finer)."""
+    ir_value: dict[int, object] = {}
+    left = []
+    for rva_text, entry in ghidra_rows.items():
+        rva = int(rva_text)
+        if rva in ir_rows and entry.get(ghidra_key) is not None and ir_rows[rva].get(ir_key) is not None:
+            left.append((rva, entry[ghidra_key]))
+            ir_value[rva] = ir_rows[rva][ir_key]
+    classes = equivalence_classes(left)
+    straddling = sorted((group for group in classes if len({ir_value[rva] for rva in group}) > 1),
+                        key=lambda g: (len(g), g))
+    return {'functions': len(left), 'classes_ghidra': len(classes), 'classes_ir': len(set(ir_value.values())),
+            'straddling': straddling[:5], 'refines': not straddling}
+
+
+def exported_keys(records: Sequence[dict]) -> tuple[dict[int, dict], dict[int, dict]]:
+    """(keys, facts) per function record of the extractor output, by function RVA.
+
+    keys   what Ghidra's ExactInstructions / ExactMnemonics hashers read from the record: EVERY instruction, none skipped;
+           `h3x` the instruction bytes under the SLEIGH mask (raw bytes when there is no mask), `hmx` the (mnemonic,
+           operand count) sequence. Only for functions whose body is exactly its instructions: Ghidra also hashes the
+           data units of a body and the record does not say where those end.
+    facts  name, instruction count, `skipped` (instructions the stored h1..h3 / hm leave out: NOP and INT3 padding) and
+           `gap` (body bytes outside the instructions): they explain every legitimate difference between the key families.
+    """
+    keys, facts = {}, {}
+    for record in records:
+        if record.get('type') != 'fn' or record.get('raw') is None:
+            continue
+        raw, insns = bytes.fromhex(record['raw']), record['insns']
+        mnemonics = [item[2] for item in insns]
+        padding = padding_start(mnemonics)
+        covered = sum(item[1] for item in insns)
+        facts[record['rva']] = {'name': record['name'], 'insns': len(insns), 'gap': len(raw) - covered,
+                                'skipped': sum(1 for i, text in enumerate(mnemonics) if is_nop(text) or i >= padding)}
+        if covered != len(raw):
+            continue
+        masked, counted = bytearray(), []
+        for offset, length, mnemonic, imask, operands, _flow in insns:
+            chunk = raw[offset:offset + length]
+            if imask is not None:
+                chunk = bytes(b & m for b, m in zip(chunk, bytes.fromhex(imask), strict=True))
+            masked += chunk
+            counted.append((mnemonic, len(operands)))
+        keys[record['rva']] = {'h3x': bytes(masked), 'hmx': tuple(counted)}
+    return keys, facts
+
+
+def explain_groups(groups: Sequence[Sequence[int]], facts: dict[int, dict]) -> str:
+    """The functions of the first mismatching groups with the facts that usually explain a difference."""
+    parts = []
+    for group in list(groups)[:4]:
+        named = []
+        for rva in list(group)[:3]:
+            fact = facts.get(rva)
+            named.append(f'{rva}:{fact["name"]}(insns={fact["insns"]},skipped={fact["skipped"]},gap={fact["gap"]})'
+                         if fact else str(rva))
+        parts.append('[' + ' '.join(named) + (' ...' if len(group) > 3 else '') + ']')
+    return ' '.join(parts)
+
+
+def l5_report(label: str, ghidra_rows: dict, rows: dict[int, dict], records: Sequence[dict], checks: Checks) -> dict:
+    """The L5 checks of one side: `ghidra_rows` is the hasher child's output {rva text: {bytes, insns, mnem, data}},
+    `rows` the stored `fn` rows by RVA, `records` the extractor's function lines."""
+    exported, facts = exported_keys(records)
+
+    def shape(compared: dict) -> dict:
+        return {k: compared[k] for k in ('functions', 'classes_ghidra', 'classes_ir', 'equal')}
+
+    def classes(compared: dict) -> str:
+        return f'{compared["functions"]} functions, {compared["classes_ir"]} classes'
+
+    def difference(compared: dict) -> str:
+        return json.dumps({k: compared[k] for k in ('only_ghidra', 'only_ir')})
+
+    report: dict = {}
+    compared = compare_hasher_classes(ghidra_rows, rows, 'bytes', 'h0')
+    checks.check(f'L5 {label}: h0 classes equal Ghidra ExactBytes classes ({classes(compared)})', compared['equal'],
+                 difference(compared))
+    report['h0'] = shape(compared)
+    for name, ghidra_key, key, what in (('ExactInstructions', 'insns', 'h3x', 'masked instruction bytes'),
+                                        ('ExactMnemonics', 'mnem', 'hmx', 'mnemonics with operand counts')):
+        compared = compare_hasher_classes(ghidra_rows, exported, ghidra_key, key)
+        if not checks.check(f'L5 {label}: exported {what} induce Ghidra {name} classes ({classes(compared)})',
+                            compared['equal'], difference(compared)):
+            checks.info(f'L5 {label}: {name} groups', explain_groups(compared['only_ghidra'] + compared['only_ir'], facts))
+        report[key] = shape(compared)
+    outside = sorted(rva for rva, fact in facts.items()
+                     if isinstance(ghidra_rows.get(str(rva), {}).get('data'), int)
+                     and (fact['gap'] > 0) != (ghidra_rows[str(rva)]['data'] > 0))
+    checks.check(f"L5 {label}: bytes outside the exported instructions are exactly Ghidra's data units", not outside,
+                 explain_groups([outside], facts))
+    skipping = sum(1 for fact in facts.values() if fact['skipped'])
+    with_data = sum(1 for fact in facts.values() if fact['gap'])
+    checks.info(f'L5 {label}: {skipping} of {len(facts)} functions contain NOP or INT3 padding instructions that h1..h3 '
+                f'and hm skip, {with_data} contain bytes that are not instructions; the stored keys are coarser than '
+                "Ghidra's there by design")
+    clean = {rva for rva, fact in facts.items() if not fact['skipped'] and not fact['gap']}
+    clean_rows = {rva: row for rva, row in rows.items() if rva in clean}
+    for name, ghidra_key, key in (('ExactInstructions', 'insns', 'h3'), ('ExactMnemonics', 'mnem', 'hm')):
+        refined = compare_refinement(ghidra_rows, rows, ghidra_key, key)
+        on_clean = compare_hasher_classes(ghidra_rows, clean_rows, ghidra_key, key)
+        detail = {'straddling': refined['straddling']}
+        if key == 'h3':
+            # h3 reads the same masked bytes as Ghidra: it must equal Ghidra's classes wherever nothing is skipped
+            ok = refined['refines'] and on_clean['equal']
+            detail.update(only_ghidra=on_clean['only_ghidra'], only_ir=on_clean['only_ir'])
+            title = (f'{key} never separates what Ghidra {name} equates and equals it on the {on_clean["functions"]} '
+                     'functions without skipped instructions')
+        else:
+            # hm leaves out Ghidra's operand counts, so it is coarser than Ghidra's even without skipped instructions
+            ok = refined['refines']
+            title = f'{key} never separates what Ghidra {name} equates ({refined["functions"]} functions)'
+            checks.info(f'L5 {label}: {key} on the {on_clean["functions"]} functions without skipped instructions is '
+                        f'{"equal to" if on_clean["equal"] else "coarser than"} Ghidra {name} ({on_clean["classes_ir"]} '
+                        f'vs {on_clean["classes_ghidra"]} classes)')
+        if not checks.check(f'L5 {label}: {title}', ok, json.dumps(detail)):
+            checks.info(f'L5 {label}: {key} groups',
+                        explain_groups(refined['straddling'] + on_clean['only_ghidra'] + on_clean['only_ir'], facts))
+        report[key] = {**shape(on_clean), 'refines': refined['refines'], 'functions_all': refined['functions']}
+    report.update(functions=len(facts), skipping=skipping, with_data=with_data)
+    return report
 
 
 def compare_with_other(own: dict, other: dict) -> list[str]:
@@ -254,7 +391,7 @@ def check_side(side: Side, checks: Checks, args: argparse.Namespace) -> tuple[di
     rows = side.function_rows(first['directory'])
     hashers = None
     if not args.no_hashers and first['gzf'] is not None:
-        hashers = hasher_check(side, first['gzf'], rows, checks)
+        hashers = hasher_check(side, first['gzf'], rows, function_lines(first['jsonl']), checks)
     public = {'artifact_sha256': side.sha256, 'ir_key': manifest.ir_key, 'content_digest': manifest.content_digest,
               'counts': json.loads(manifest.counts.model_dump_json()), 'warnings': list(manifest.warnings),
               'probe': first['probe'], 'seconds': {'extract': first['extract_seconds'], 'ingest': first['ingest_seconds']},
@@ -270,7 +407,7 @@ def file_sha256(path: Path) -> str:
     return digest.hexdigest()
 
 
-def hasher_check(side: Side, gzf: Path, rows: dict[int, dict], checks: Checks) -> dict:
+def hasher_check(side: Side, gzf: Path, rows: dict[int, dict], records: Sequence[dict], checks: Checks) -> dict:
     script = side.work / f'{side.label}-hashers.py'
     script.write_text(HASHER_SCRIPT, encoding='utf-8', newline='\n')
     out = side.work / f'{side.label}-hashers.json'
@@ -283,15 +420,7 @@ def hasher_check(side: Side, gzf: Path, rows: dict[int, dict], checks: Checks) -
     if not checks.check(f'L5 {side.label}: Ghidra hasher child ran', result.returncode == 0 and out.is_file(),
                         result.stderr_tail):
         return {'error': 'hasher child failed'}
-    ghidra_rows = json.loads(out.read_text(encoding='utf-8'))
-    report = {}
-    for name, ghidra_key, ir_key in HASHER_PAIRS:
-        compared = compare_hasher_classes(ghidra_rows, rows, ghidra_key, ir_key)
-        checks.check(f'L5 {side.label}: {ir_key} classes equal Ghidra {name} classes '
-                     f'({compared["functions"]} functions, {compared["classes_ir"]} classes)', compared['equal'],
-                     json.dumps({k: compared[k] for k in ('only_ghidra', 'only_ir')}))
-        report[ir_key] = {k: compared[k] for k in ('functions', 'classes_ghidra', 'classes_ir', 'equal')}
-    return report
+    return l5_report(side.label, json.loads(out.read_text(encoding='utf-8')), rows, records, checks)
 
 
 def ghidriff_check(args, backend: BackendConfig, sides: dict[str, Side], results: dict, checks: Checks,

@@ -74,7 +74,7 @@ Key columns (computed by `ir/features.py`, all 64-bit `blake2b(digest_size=8)` s
 | `h0` | L0 | raw body bytes in range order |
 | `h1` | L1 | bytes with the located address FIELD of each `address` operand zeroed (03 s6): relative branch/call targets, RIP-relative and RVA-form displacements, in-image absolute values, relocated values; SIB/ModRM register bits never |
 | `h2` | L2 | L1 plus every immediate and every stack/memory displacement field zeroed (opcode and register fields kept) |
-| `h3` | L3 | SLEIGH instruction mask applied (all operand fields zeroed; = Ghidra ExactInstructions) |
+| `h3` | L3 | SLEIGH instruction mask applied (all operand fields zeroed; the bytes Ghidra's ExactInstructions hashes, over the non-NOP instructions only: its classes equal that hasher's on every function without a skipped NOP or INT3-padding instruction and are coarser, never finer, on the others; A-27) |
 | `hm` / `hms` | M / MS | ordered mnemonic sequence / sorted mnemonic multiset (exact, not a prime product: R02 s6) |
 | `md_td`, `md_bu` | topology | BinDiff-style flow-graph MD index top-down / bottom-up, `round(md * 10**12)` (D-16); NULL when `n_bb < L-11` |
 | `extent_src` | | 0 = Ghidra function body, 1 = confirmed by a `.pdata` RUNTIME_FUNCTION with the same begin/end, 2 = conflict (flag) |
