@@ -159,3 +159,7 @@ Built: common, process, capa, floss, diec, normalize, delta (tests: `tests/test_
 | Module | Files | Responsibility | Depends on | Tests |
 |---|---|---|---|---|
 | optional deps | src/patchtrace/optional_deps.py, tools/pyinstaller_hooks/hook-patchtrace.optional_deps.py | guarded static imports of rapidfuzz, pygments, networkx, pefile, yara_x (extras `workbench`, `rules` in pyproject, wheels only); `probe()`/`available()`/`summary_line()` never raise; `--self-test` prints `optional-deps:` and `tools/frozen_smoke.py` requires `missing=none` in the frozen EXE; `.github/workflows/optional-deps.yml` installs the extras wheels-only on ubuntu and windows | stdlib | `tests/test_optional_deps.py` |
+### [K0:kbcorrelation-contracts] KB-CVE correlator contracts (2026-10-14; KB-integration-plan slice K0)
+| Module | Files | Responsibility | Depends on | Tests |
+|---|---|---|---|---|
+| kbcorrelation contracts | src/patchtrace/kbcorrelation/{__init__ (empty),contracts,limits,ids,errors,ports}.py | strict frozen `kbcorrelation/1` records (7.2), `KbcLimits` (7.4), `kb-syntax/1` ids (canonical `KB`+4-10 ASCII digits, bare digits only via `normalise_kb_edge`, no numeric cast), `PT-KBC-*` + `KbcIssue`/`OperationResult`, sibling-call Protocol ports; no Qt, urllib, sqlite3 | pydantic, `intelligence.contracts` types, `enrichment.identity.domain_id`, `acquisition.contracts.validate_file_name` (contracts.py only) | tests/test_kbc_contracts.py, test_kbc_ids.py, test_kbc_schemas.py; docs/schemas/kbcorrelation/ via tools/generate_kbc_schemas.py |
