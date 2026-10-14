@@ -70,14 +70,13 @@ Expand-Archive $zip -DestinationPath .\extract
 Test-Path .\extract\PatchTrace\PatchTrace.exe, .\extract\PatchTrace\file-inventory.json, .\extract\PatchTrace\dependency-versions.json
 ```
 
-Then compare the digest with the Actions artifact of the same run (`gh run download <RUN_ID> -n PatchTrace-windows-x64`).
-2. Record in `docs/qa.md`: tag, peeled SHA, run URL and number, both sizes, both SHA-256 values. If publishing returned 403, record the Actions artifact and "release not published".
+Then compare the digest with the Actions artifact of the same run (`gh run download <RUN_ID> -n PatchTrace-windows-x64`), and record in `docs/qa.md`: tag, peeled SHA, run URL and number, both sizes, both SHA-256 values. If publishing returned 403, record the Actions artifact and "release not published".
 
 ---
 
 ## 2. Automated Windows acceptance additions
 
-Current automated Windows coverage: `tools/build_windows.py` runs `PatchTrace.exe --self-test` (exit 0) and `PatchTrace.exe rank --help` (exit 0 and `usage:` on stdout) after freezing. The Windows-only tests in `tests/test_jobs.py` (for example `test_windows_containment_failure_fails_closed`, `test_windows_assignment_denial_terminates_suspended_child`) are skipped on Linux. The native Ghidriff matrix covers the known DLL patch and raw cache hit.
+Existing: `tools/build_windows.py` runs the frozen `--self-test` and `rank --help` after freezing. Windows-only Job Object tests in `tests/test_jobs.py` are skipped on Linux. The native Ghidriff matrix covers the known DLL patch and raw cache hit.
 
 Exit codes (`src/patchtrace/cli.py`): 0 success, 2 invalid arguments, config or environment, 3 runtime failure, 4 legitimate no-results, 5 cancelled. Unknown first arguments are routed to the CLI and must exit 2 (`tools/desktop_entry.py`).
 
@@ -104,7 +103,7 @@ A7 must drive the real `jobs.run_process` path and write the grandchild PID to a
 
 ## 3. Manual acceptance checklist (clean Windows 11 profile)
 
-Not automatable here. Nothing in this table counts as passed until a named tester records it.
+Not automatable here. Nothing counts as passed until a named tester records it.
 
 Setup:
 
@@ -112,7 +111,7 @@ Setup:
 2. Record `winver` build, display scale, theme, ZIP SHA-256, tester, date. Keep Defender real-time protection on.
 3. Extract the ZIP to `%USERPROFILE%\Downloads\PatchTrace`; repeat M03, M04 and M18 from a OneDrive-synced folder if available.
 
-Expected results are stated per check. Result is `pass`, `fail` or `not-run`. Default is `not-run`.
+Result is `pass`, `fail` or `not-run`; default `not-run`.
 
 | ID | Check | Steps | Expected result |
 |---|---|---|---|
@@ -158,7 +157,7 @@ Record table (copy per test run; one row per check):
 | M17 | not-run | | | | | |
 | M18 | not-run | | | | | |
 
-Rules: a `fail` links to an issue and states the observed behaviour. A check that was skipped or could not be performed stays `not-run` with the reason in notes. Do not copy a result from an earlier build to a new SHA.
+Rules: a `fail` links to an issue and states observed behaviour. A check not performed stays `not-run` with the reason in notes. Never copy a result from an earlier build to a new SHA.
 
 ---
 
@@ -200,9 +199,7 @@ Clean Windows 11 checklist (section 3): <n> pass, <n> fail, <n> not-run. Record:
 - rz-diff and BinDiff live runs
 - Matching accuracy and performance: unmeasured, no claim made
 
-### Limitations
-- Unsigned beta package. Ghidra, Java and Ghidriff are external.
-- Release publication: <published | not published (403) - Actions artifact only>.
+- Limitations: unsigned beta; Ghidra, Java and Ghidriff external. Release publication: <published | not published (403), Actions artifact only>.
 ```
 
 Rule: a gate is removed from "Open" only by a recorded pass with its evidence link. A failing or skipped CI job is never described as passing in notes.
