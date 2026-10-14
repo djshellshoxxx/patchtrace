@@ -27,7 +27,7 @@ from .paths import REPO_ROOT
 FIXTURES = REPO_ROOT / 'tests' / 'fixtures' / 'tier_w'
 VERSIONS = ('v1', 'v2')
 CFLAGS = ('--target=x86_64-pc-windows-msvc', '-ffreestanding', '-O2', '-g', '-gcodeview', '-ffunction-sections',
-          '-fdebug-compilation-dir=.', '-gno-codeview-command-line')
+          '-funwind-tables', '-fdebug-compilation-dir=.', '-gno-codeview-command-line')
 LANG = {'.c': ('-std=c11',), '.cpp': ('-std=c++17', '-fno-exceptions', '-fno-rtti')}
 LDFLAGS = ('/dll', '/noentry', '/nodefaultlib', '/debug', '/opt:ref', '/opt:icf', '/brepro', '/pdbaltpath:%_PDB%',
            '/pdbsourcepath:C:\\src')

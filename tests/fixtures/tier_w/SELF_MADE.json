@@ -6,6 +6,7 @@
   "-g",
   "-gcodeview",
   "-ffunction-sections",
+  "-funwind-tables",
   "-fdebug-compilation-dir=.",
   "-gno-codeview-command-line"
  ],
@@ -14,28 +15,28 @@
   {
    "kind": "pe",
    "path": "tests/fixtures/tier_w/tiny_v1.pe",
-   "sha256": "a13f8fd4fdc4b0034f2746a82c80dc3686df29a0e22d22e1e25ced71b6dccbc6",
-   "size": 4096,
+   "sha256": "b69e9b090dd6406eadc734f005513432503652b55cbd70bb2370b10ea018cd41",
+   "size": 4608,
    "source": "tests/fixtures/tier_w/src/v1"
   },
   {
    "kind": "pdb",
    "path": "tests/fixtures/tier_w/tiny_v1.pdb",
-   "sha256": "22b84be460b5184d5d638fe1ea6f79d250065fd674c1b8aca9be5f570c01737d",
+   "sha256": "a06cd2e297c9b027afc78c9ed055011b5f0846fbe830a39f7def7a6100900573",
    "size": 86016,
    "source": "tests/fixtures/tier_w/src/v1"
   },
   {
    "kind": "pe",
    "path": "tests/fixtures/tier_w/tiny_v2.pe",
-   "sha256": "84ec51a409370ceac939466654c0f9aa368f6866bcee260179cbea3f24840aac",
-   "size": 4608,
+   "sha256": "c2e70030a16b5b9b075b9686ebfa9c7bda389743222e98a373369865e0e015ea",
+   "size": 5120,
    "source": "tests/fixtures/tier_w/src/v2"
   },
   {
    "kind": "pdb",
    "path": "tests/fixtures/tier_w/tiny_v2.pdb",
-   "sha256": "187d10a2337196ef62720f51614319f0cb92bb4bde396b481b00a59a80164d2a",
+   "sha256": "1bbc5ad518a63965cd1cbe37195699874989799d193a760b5e247b4db305fb65",
    "size": 86016,
    "source": "tests/fixtures/tier_w/src/v2"
   }
