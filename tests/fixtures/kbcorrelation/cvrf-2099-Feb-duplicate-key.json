@@ -1,0 +1,26 @@
+{
+  "dialect": "cvrf-json/0",
+  "synthetic": true,
+  "document": {
+    "tracking_id": "PT-CVRF-2099-Feb",
+    "release_id": "2099-Feb",
+    "release_id": "2099-Mar",
+    "current_release_date": "2099-02-13",
+    "publisher": "PatchTrace synthetic fixture"
+  },
+  "product_tree": [
+    {"product_id": "PT-CLIENT", "name": "Example OS 24H2 x64", "family": "windows-client", "architecture": "amd64"}
+  ],
+  "vulnerabilities": [
+    {
+      "cve": "CVE-2099-20001",
+      "cve": "CVE-2099-20002",
+      "title": "Out-of-bounds read in the item reader",
+      "description": "Synthetic: NEG-07 duplicate-key fixture. A parser must reject the whole source.",
+      "remediations": [
+        {"type": 2, "description": "5099001", "product_ids": ["PT-CLIENT"], "fixed_build": "10.0.26100.9001"}
+      ],
+      "product_statuses": {"Fixed": ["PT-CLIENT"]}
+    }
+  ]
+}

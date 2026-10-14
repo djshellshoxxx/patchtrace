@@ -1,0 +1,228 @@
+{
+  "dialect": "cvrf-json/0",
+  "document": {
+    "current_release_date": "2099-02-13",
+    "publisher": "PatchTrace synthetic fixture",
+    "release_id": "2099-Feb",
+    "title": "Synthetic monthly bulletin 2099-Feb (PatchTrace fixture, not Microsoft)",
+    "tracking_id": "PT-CVRF-2099-Feb"
+  },
+  "product_tree": [
+    {
+      "architecture": "amd64",
+      "family": "windows-client",
+      "name": "Example OS 24H2 x64",
+      "product_id": "PT-CLIENT"
+    },
+    {
+      "architecture": "arm64",
+      "family": "windows-client",
+      "name": "Example OS 24H2 ARM64",
+      "product_id": "PT-CLIENT-ARM"
+    },
+    {
+      "architecture": "amd64",
+      "family": "windows-server",
+      "name": "Example Server 2099 x64",
+      "product_id": "PT-SERVER"
+    },
+    {
+      "architecture": "amd64",
+      "family": "windows-server",
+      "name": "Example Server 2099 Core x64",
+      "product_id": "PT-SERVER-CORE"
+    }
+  ],
+  "synthetic": true,
+  "vulnerabilities": [
+    {
+      "cve": "CVE-2099-20004",
+      "description": "",
+      "product_statuses": {},
+      "remediations": [
+        {
+          "description": "5099003",
+          "fixed_build": "10.0.26100.9003",
+          "product_ids": [
+            "PT-SERVER-CORE"
+          ],
+          "type": 2
+        },
+        {
+          "description": "5099003",
+          "fixed_build": "10.0.26100.9003",
+          "product_ids": [
+            "PT-SERVER-CORE"
+          ],
+          "type": 2
+        }
+      ],
+      "title": "Use-after-free in the session cache"
+    },
+    {
+      "cve": "CVE-2099-20005",
+      "description": "",
+      "product_statuses": {},
+      "remediations": [
+        {
+          "description": "5099004",
+          "fixed_build": "10.0.26100.9004",
+          "product_ids": [
+            "PT-SERVER",
+            "PT-SERVER-CORE"
+          ],
+          "type": 2
+        }
+      ],
+      "title": "Heap overflow in the rendering helper"
+    },
+    {
+      "cve": "CVE-2099-20006",
+      "description": "",
+      "product_statuses": {},
+      "remediations": [
+        {
+          "description": "5099005",
+          "fixed_build": "10.0.26100.9005",
+          "product_ids": [
+            "PT-NOPE"
+          ],
+          "type": 2
+        }
+      ],
+      "title": "Denial of service in the name parser"
+    },
+    {
+      "cve": "CVE-2099-20007",
+      "description": "",
+      "product_statuses": {},
+      "remediations": [
+        {
+          "description": "Known issue KB5099006 (synthetic): no fix ships in this row.",
+          "product_ids": [
+            "PT-CLIENT"
+          ],
+          "type": 5
+        }
+      ],
+      "title": "Elevation of privilege in the token broker"
+    },
+    {
+      "cve": "CVE-2099-20008",
+      "description": "",
+      "product_statuses": {
+        "Not affected": [
+          "PT-CLIENT"
+        ]
+      },
+      "remediations": [
+        {
+          "description": "5099008",
+          "fixed_build": "10.0.26100.9008",
+          "product_ids": [
+            "PT-CLIENT"
+          ],
+          "type": 2
+        }
+      ],
+      "title": "Spoofing in the update helper"
+    },
+    {
+      "cve": "CVE-2099-20009",
+      "description": "",
+      "product_statuses": {},
+      "remediations": [
+        {
+          "description": "build 19045 reference, not a KB",
+          "product_ids": [
+            "PT-CLIENT"
+          ],
+          "type": 2
+        }
+      ],
+      "title": "Tampering in the settings reader"
+    },
+    {
+      "cve": "CVE-2099-20010",
+      "description": "",
+      "product_statuses": {},
+      "remediations": [
+        {
+          "description": "5099010/../x\u0007",
+          "product_ids": [
+            "PT-CLIENT"
+          ],
+          "type": 2
+        }
+      ],
+      "title": "Information disclosure in the cache index"
+    },
+    {
+      "cve": "CVE-2099-20011",
+      "description": "Click [here](https://evil.example.invalid/redirect?to=//x) <script>alert(1)</script>",
+      "product_statuses": {},
+      "remediations": [
+        {
+          "description": "5099011",
+          "fixed_build": "10.0.26100.9011",
+          "product_ids": [
+            "PT-CLIENT"
+          ],
+          "type": 2
+        }
+      ],
+      "title": "Spoofing in the preview pane <img src=x onerror=alert(1)> \u202eplain"
+    },
+    {
+      "cve": "CVE-2099-20012",
+      "description": "",
+      "product_statuses": {},
+      "remediations": [
+        {
+          "description": "5099007",
+          "fixed_build": "10.0.26100.9007",
+          "product_ids": [
+            "PT-CLIENT",
+            "PT-CLIENT-ARM"
+          ],
+          "type": 2
+        }
+      ],
+      "title": "Shared parser flaw A"
+    },
+    {
+      "cve": "CVE-2099-20013",
+      "description": "",
+      "product_statuses": {},
+      "remediations": [
+        {
+          "description": "5099007",
+          "fixed_build": "10.0.26100.9007",
+          "product_ids": [
+            "PT-CLIENT",
+            "PT-CLIENT-ARM"
+          ],
+          "type": 2
+        }
+      ],
+      "title": "Shared parser flaw B"
+    },
+    {
+      "cve": "CVE-2099-20014",
+      "description": "",
+      "product_statuses": {},
+      "remediations": [
+        {
+          "description": "5099007",
+          "fixed_build": "10.0.26100.9007",
+          "product_ids": [
+            "PT-CLIENT",
+            "PT-CLIENT-ARM"
+          ],
+          "type": 2
+        }
+      ],
+      "title": "Shared parser flaw C"
+    }
+  ]
+}

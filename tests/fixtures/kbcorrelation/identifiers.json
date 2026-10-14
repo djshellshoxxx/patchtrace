@@ -1,0 +1,428 @@
+{
+  "contract": "kb-syntax-matrix/1",
+  "rows": [
+    {
+      "expect": "ok",
+      "id": "K01",
+      "input": "KB5099001",
+      "note": "",
+      "op": "canonical_kb",
+      "output": "KB5099001"
+    },
+    {
+      "expect": "ok",
+      "id": "K02",
+      "input": "KB1234",
+      "note": "lower bound: 4 digits",
+      "op": "canonical_kb",
+      "output": "KB1234"
+    },
+    {
+      "expect": "ok",
+      "id": "K03",
+      "input": "KB0001234",
+      "note": "leading zeros are kept",
+      "op": "canonical_kb",
+      "output": "KB0001234"
+    },
+    {
+      "expect": "ok",
+      "id": "K04",
+      "input": "KB1234567890",
+      "note": "upper bound: 10 digits",
+      "op": "canonical_kb",
+      "output": "KB1234567890"
+    },
+    {
+      "expect": "reject",
+      "id": "K05",
+      "input": "KB123",
+      "note": "3 digits",
+      "op": "canonical_kb"
+    },
+    {
+      "expect": "reject",
+      "id": "K06",
+      "input": "KB12345678901",
+      "note": "11 digits",
+      "op": "canonical_kb"
+    },
+    {
+      "expect": "reject",
+      "id": "K07",
+      "input": "kb5099001",
+      "note": "lower-case prefix is edge-only",
+      "op": "canonical_kb"
+    },
+    {
+      "expect": "reject",
+      "id": "K08",
+      "input": "KB 5099001",
+      "note": "space is edge-only",
+      "op": "canonical_kb"
+    },
+    {
+      "expect": "reject",
+      "id": "K09",
+      "input": "5099001",
+      "note": "bare digits are edge-only",
+      "op": "canonical_kb"
+    },
+    {
+      "expect": "reject",
+      "id": "K10",
+      "input": "KB5099001 ",
+      "note": "trailing space",
+      "op": "canonical_kb"
+    },
+    {
+      "expect": "reject",
+      "id": "K11",
+      "input": "KB-5099001",
+      "note": "dash is edge-only",
+      "op": "canonical_kb"
+    },
+    {
+      "expect": "reject",
+      "id": "K12",
+      "input": "KB\u0665\u0660\u0669\u0669\u0660\u0660\u0661",
+      "note": "Arabic-Indic digits are not ASCII",
+      "op": "canonical_kb"
+    },
+    {
+      "expect": "reject",
+      "id": "K13",
+      "input": "KB\uff15\uff10\uff19\uff19\uff10\uff10\uff11",
+      "note": "full-width digits are not ASCII",
+      "op": "canonical_kb"
+    },
+    {
+      "expect": "reject",
+      "id": "K14",
+      "input": "KB5099001\n",
+      "note": "newline suffix",
+      "op": "canonical_kb"
+    },
+    {
+      "expect": "reject",
+      "id": "K15",
+      "input": "KB/5099001",
+      "note": "slash (NEG-01)",
+      "op": "canonical_kb"
+    },
+    {
+      "expect": "reject",
+      "id": "K16",
+      "input": "KB5099001\u0007",
+      "note": "control character (NEG-01)",
+      "op": "canonical_kb"
+    },
+    {
+      "expect": "reject",
+      "id": "K17",
+      "input": "XKB5099001",
+      "note": "glued prefix",
+      "op": "canonical_kb"
+    },
+    {
+      "expect": "reject",
+      "id": "K18",
+      "input": "KB",
+      "note": "no digits",
+      "op": "canonical_kb"
+    },
+    {
+      "expect": "reject",
+      "id": "K19",
+      "input": "",
+      "note": "empty",
+      "op": "canonical_kb"
+    },
+    {
+      "expect": "ok",
+      "id": "E01",
+      "input": "kb5099001",
+      "note": "lower-case prefix",
+      "op": "edge_kb",
+      "output": "KB5099001"
+    },
+    {
+      "expect": "ok",
+      "id": "E02",
+      "input": "KB 5099001",
+      "note": "one space",
+      "op": "edge_kb",
+      "output": "KB5099001"
+    },
+    {
+      "expect": "ok",
+      "id": "E03",
+      "input": "kb-5099001",
+      "note": "one dash",
+      "op": "edge_kb",
+      "output": "KB5099001"
+    },
+    {
+      "expect": "ok",
+      "id": "E04",
+      "input": "5099001",
+      "note": "bare digits",
+      "op": "edge_kb",
+      "output": "KB5099001"
+    },
+    {
+      "expect": "ok",
+      "id": "E05",
+      "input": " KB5099001\t",
+      "note": "outer spaces and tabs are trimmed",
+      "op": "edge_kb",
+      "output": "KB5099001"
+    },
+    {
+      "expect": "ok",
+      "id": "E06",
+      "input": "KB\t5099001",
+      "note": "one tab",
+      "op": "edge_kb",
+      "output": "KB5099001"
+    },
+    {
+      "expect": "ok",
+      "id": "E07",
+      "input": "0005099001",
+      "note": "bare 10 digits keep leading zeros",
+      "op": "edge_kb",
+      "output": "KB0005099001"
+    },
+    {
+      "expect": "ok",
+      "id": "E08",
+      "input": "0001234",
+      "note": "bare 7 digits keep leading zeros",
+      "op": "edge_kb",
+      "output": "KB0001234"
+    },
+    {
+      "expect": "reject",
+      "id": "E09",
+      "input": "KB12",
+      "note": "2 digits (kb12 in the search matrix)",
+      "op": "edge_kb"
+    },
+    {
+      "expect": "reject",
+      "id": "E10",
+      "input": "123",
+      "note": "bare, 3 digits",
+      "op": "edge_kb"
+    },
+    {
+      "expect": "reject",
+      "id": "E11",
+      "input": "KB5099001x",
+      "note": "trailing letter",
+      "op": "edge_kb"
+    },
+    {
+      "expect": "reject",
+      "id": "E12",
+      "input": "KB\t\t5099001",
+      "note": "two separators",
+      "op": "edge_kb"
+    },
+    {
+      "expect": "reject",
+      "id": "E13",
+      "input": "5099001 KB",
+      "note": "suffix prefix",
+      "op": "edge_kb"
+    },
+    {
+      "expect": "reject",
+      "id": "E14",
+      "input": "KB/5099001",
+      "note": "slash (NEG-01)",
+      "op": "edge_kb"
+    },
+    {
+      "expect": "reject",
+      "id": "E15",
+      "input": "KB5099001\n",
+      "note": "newline is not trimmed",
+      "op": "edge_kb"
+    },
+    {
+      "expect": "reject",
+      "id": "E16",
+      "input": "KB12345678901",
+      "note": "11 digits",
+      "op": "edge_kb"
+    },
+    {
+      "expect": "reject",
+      "id": "E17",
+      "input": "KB\u0665\u0660\u0669\u0669\u0660\u0660\u0661",
+      "note": "non-ASCII digits",
+      "op": "edge_kb"
+    },
+    {
+      "expect": "reject",
+      "id": "E18",
+      "input": "",
+      "note": "empty",
+      "op": "edge_kb"
+    },
+    {
+      "expect": "ok",
+      "id": "C01",
+      "input": "CVE-2099-20001",
+      "note": "",
+      "op": "edge_cve",
+      "output": "CVE-2099-20001"
+    },
+    {
+      "expect": "ok",
+      "id": "C02",
+      "input": "cve-2099-20001",
+      "note": "prefix is upper-cased",
+      "op": "edge_cve",
+      "output": "CVE-2099-20001"
+    },
+    {
+      "expect": "ok",
+      "id": "C03",
+      "input": " CVE-2099-0001 ",
+      "note": "trimmed; 4-digit lower bound",
+      "op": "edge_cve",
+      "output": "CVE-2099-0001"
+    },
+    {
+      "expect": "ok",
+      "id": "C04",
+      "input": "CVE-2099-1234567890123456789",
+      "note": "upper bound: 19 digits",
+      "op": "edge_cve",
+      "output": "CVE-2099-1234567890123456789"
+    },
+    {
+      "expect": "reject",
+      "id": "C05",
+      "input": "CVE-2099-123",
+      "note": "3 digits",
+      "op": "edge_cve"
+    },
+    {
+      "expect": "reject",
+      "id": "C06",
+      "input": "CVE-99-20001",
+      "note": "2-digit year",
+      "op": "edge_cve"
+    },
+    {
+      "expect": "reject",
+      "id": "C07",
+      "input": "CVE_2099_20001",
+      "note": "underscore",
+      "op": "edge_cve"
+    },
+    {
+      "expect": "reject",
+      "id": "C08",
+      "input": "CVE-2099-12345678901234567890",
+      "note": "20 digits",
+      "op": "edge_cve"
+    },
+    {
+      "expect": "reject",
+      "id": "C09",
+      "input": "CVE-2099-\uff12\uff10\uff10\uff10\uff11",
+      "note": "full-width digits",
+      "op": "edge_cve"
+    },
+    {
+      "expect": "reject",
+      "id": "C10",
+      "input": "CVE-2099-20001\n",
+      "note": "newline is not trimmed",
+      "op": "edge_cve"
+    },
+    {
+      "expect": "ok",
+      "id": "T01",
+      "input": "Fixed by KB5099001 and KB5099002.",
+      "note": "two exact tokens",
+      "op": "kb_tokens",
+      "output": [
+        "KB5099001",
+        "KB5099002"
+      ]
+    },
+    {
+      "expect": "ok",
+      "id": "T02",
+      "input": "kb5099001 is lower case",
+      "note": "lower case is not a token",
+      "op": "kb_tokens",
+      "output": []
+    },
+    {
+      "expect": "ok",
+      "id": "T03",
+      "input": "XKB5099001 and KB5099001x",
+      "note": "glued to letters",
+      "op": "kb_tokens",
+      "output": []
+    },
+    {
+      "expect": "ok",
+      "id": "T04",
+      "input": "KB123 and KB12345678901",
+      "note": "digit count out of range",
+      "op": "kb_tokens",
+      "output": []
+    },
+    {
+      "expect": "ok",
+      "id": "T05",
+      "input": "KB0001234 KB1234",
+      "note": "sorted by digit count, not by number",
+      "op": "kb_tokens",
+      "output": [
+        "KB1234",
+        "KB0001234"
+      ]
+    },
+    {
+      "expect": "ok",
+      "id": "T06",
+      "input": "Build 19045 (not a KB) and KB5099001.",
+      "note": "build number is not a token",
+      "op": "kb_tokens",
+      "output": [
+        "KB5099001"
+      ]
+    },
+    {
+      "expect": "ok",
+      "id": "T07",
+      "input": "KB5099001 KB5099001",
+      "note": "duplicates collapse",
+      "op": "kb_tokens",
+      "output": [
+        "KB5099001"
+      ]
+    },
+    {
+      "expect": "ok",
+      "id": "T08",
+      "input": "KB5099001/KB5099002",
+      "note": "slash is a boundary",
+      "op": "kb_tokens",
+      "output": [
+        "KB5099001",
+        "KB5099002"
+      ]
+    }
+  ],
+  "synthetic": true
+}

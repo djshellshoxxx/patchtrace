@@ -1,0 +1,1584 @@
+{
+  "AnalystDecision": {
+    "invalid": [
+      {
+        "example": {
+          "contract": "kbcorrelation/1",
+          "created_at": "2099-03-01T00:00:00Z",
+          "next": "PRODUCT_SELECTED",
+          "op": "choose-product",
+          "prior": "NEEDS_PRODUCT",
+          "reason": "only one scope fits",
+          "refs": [],
+          "unexpected_field": 1
+        },
+        "reason": "extra fields are forbidden"
+      },
+      {
+        "example": {
+          "contract": "kbcorrelation/2",
+          "created_at": "2099-03-01T00:00:00Z",
+          "next": "PRODUCT_SELECTED",
+          "op": "choose-product",
+          "prior": "NEEDS_PRODUCT",
+          "reason": "only one scope fits",
+          "refs": []
+        },
+        "reason": "unsupported future contract version"
+      }
+    ],
+    "valid": {
+      "contract": "kbcorrelation/1",
+      "created_at": "2099-03-01T00:00:00Z",
+      "next": "PRODUCT_SELECTED",
+      "op": "choose-product",
+      "prior": "NEEDS_PRODUCT",
+      "reason": "only one scope fits",
+      "refs": []
+    }
+  },
+  "Attempt": {
+    "invalid": [
+      {
+        "example": {
+          "code": null,
+          "contract": "kbcorrelation/1",
+          "created_at": "2099-03-01T00:00:00Z",
+          "op": "plan",
+          "plan_sha": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+          "result": "ok",
+          "stage": "preview",
+          "unexpected_field": 1
+        },
+        "reason": "extra fields are forbidden"
+      },
+      {
+        "example": {
+          "code": null,
+          "contract": "kbcorrelation/2",
+          "created_at": "2099-03-01T00:00:00Z",
+          "op": "plan",
+          "plan_sha": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+          "result": "ok",
+          "stage": "preview"
+        },
+        "reason": "unsupported future contract version"
+      }
+    ],
+    "valid": {
+      "code": null,
+      "contract": "kbcorrelation/1",
+      "created_at": "2099-03-01T00:00:00Z",
+      "op": "plan",
+      "plan_sha": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+      "result": "ok",
+      "stage": "preview"
+    }
+  },
+  "BinaryRef": {
+    "invalid": [
+      {
+        "example": {
+          "authenticity": "hash-matched-to-index",
+          "availability": "direct",
+          "basename": "examplesvc.dll",
+          "build_ubr": "26100.5000",
+          "contract": "kbcorrelation/1",
+          "file_version": "10.0.26100.5000",
+          "machine": "amd64",
+          "origin": "index-row",
+          "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "size": 1000,
+          "unexpected_field": 1
+        },
+        "reason": "extra fields are forbidden"
+      },
+      {
+        "example": {
+          "authenticity": "hash-matched-to-index",
+          "availability": "direct",
+          "basename": "examplesvc.dll",
+          "build_ubr": "26100.5000",
+          "contract": "kbcorrelation/2",
+          "file_version": "10.0.26100.5000",
+          "machine": "amd64",
+          "origin": "index-row",
+          "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "size": 1000
+        },
+        "reason": "unsupported future contract version"
+      }
+    ],
+    "valid": {
+      "authenticity": "hash-matched-to-index",
+      "availability": "direct",
+      "basename": "examplesvc.dll",
+      "build_ubr": "26100.5000",
+      "contract": "kbcorrelation/1",
+      "file_version": "10.0.26100.5000",
+      "machine": "amd64",
+      "origin": "index-row",
+      "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "size": 1000
+    }
+  },
+  "BuildRow": {
+    "invalid": [
+      {
+        "example": {
+          "contract": "kbcorrelation/1",
+          "data_date": null,
+          "download": "https://example.invalid/examplesvc.dll",
+          "file_name": "examplesvc.dll",
+          "heading_class": "standard",
+          "kb": "KB5099001",
+          "record_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "release_date": "2099-03-01T00:00:00Z",
+          "release_version": "5001",
+          "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "shared_with": [],
+          "unexpected_field": 1,
+          "variant": "full",
+          "version_key": "10.0.26100"
+        },
+        "reason": "extra fields are forbidden"
+      },
+      {
+        "example": {
+          "contract": "kbcorrelation/2",
+          "data_date": null,
+          "download": "https://example.invalid/examplesvc.dll",
+          "file_name": "examplesvc.dll",
+          "heading_class": "standard",
+          "kb": "KB5099001",
+          "record_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "release_date": "2099-03-01T00:00:00Z",
+          "release_version": "5001",
+          "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "shared_with": [],
+          "variant": "full",
+          "version_key": "10.0.26100"
+        },
+        "reason": "unsupported future contract version"
+      }
+    ],
+    "valid": {
+      "contract": "kbcorrelation/1",
+      "data_date": null,
+      "download": "https://example.invalid/examplesvc.dll",
+      "file_name": "examplesvc.dll",
+      "heading_class": "standard",
+      "kb": "KB5099001",
+      "record_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "release_date": "2099-03-01T00:00:00Z",
+      "release_version": "5001",
+      "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "shared_with": [],
+      "variant": "full",
+      "version_key": "10.0.26100"
+    }
+  },
+  "ComponentHint": {
+    "invalid": [
+      {
+        "example": {
+          "basename": "examplesvc.dll",
+          "changed_in_kb": "unknown",
+          "claim_refs": [
+            {
+              "assertion": "advisory_fact",
+              "doc_id": "2d6e91fb134ee72cd6b745a5f08c41309401294173ff9388a272a1256db3c5c0",
+              "pointer": "/Vulnerability/0/Remediations/0"
+            }
+          ],
+          "contract": "kbcorrelation/1",
+          "hint_id": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+          "reasons": [
+            "named-in-title"
+          ],
+          "scope_id": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+          "tier": "B",
+          "unexpected_field": 1
+        },
+        "reason": "extra fields are forbidden"
+      },
+      {
+        "example": {
+          "basename": "examplesvc.dll",
+          "changed_in_kb": "unknown",
+          "claim_refs": [
+            {
+              "assertion": "advisory_fact",
+              "doc_id": "2d6e91fb134ee72cd6b745a5f08c41309401294173ff9388a272a1256db3c5c0",
+              "pointer": "/Vulnerability/0/Remediations/0"
+            }
+          ],
+          "contract": "kbcorrelation/2",
+          "hint_id": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+          "reasons": [
+            "named-in-title"
+          ],
+          "scope_id": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+          "tier": "B"
+        },
+        "reason": "unsupported future contract version"
+      },
+      {
+        "example": {
+          "basename": "../evil.dll",
+          "changed_in_kb": "unknown",
+          "claim_refs": [
+            {
+              "assertion": "advisory_fact",
+              "doc_id": "2d6e91fb134ee72cd6b745a5f08c41309401294173ff9388a272a1256db3c5c0",
+              "pointer": "/Vulnerability/0/Remediations/0"
+            }
+          ],
+          "contract": "kbcorrelation/1",
+          "hint_id": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+          "reasons": [
+            "named-in-title"
+          ],
+          "scope_id": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+          "tier": "B"
+        },
+        "reason": "basename must be a lowercase PE basename"
+      }
+    ],
+    "valid": {
+      "basename": "examplesvc.dll",
+      "changed_in_kb": "unknown",
+      "claim_refs": [
+        {
+          "assertion": "advisory_fact",
+          "doc_id": "2d6e91fb134ee72cd6b745a5f08c41309401294173ff9388a272a1256db3c5c0",
+          "pointer": "/Vulnerability/0/Remediations/0"
+        }
+      ],
+      "contract": "kbcorrelation/1",
+      "hint_id": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+      "reasons": [
+        "named-in-title"
+      ],
+      "scope_id": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+      "tier": "B"
+    }
+  },
+  "ContextReport": {
+    "invalid": [
+      {
+        "example": {
+          "cards": [
+            {
+              "applicability": null,
+              "cve": "CVE-2099-10001",
+              "kev": "not-loaded",
+              "severity_context": null,
+              "source_kind": "cvrf",
+              "stated_cwe": null,
+              "title": "Synthetic issue"
+            }
+          ],
+          "contract": "kbcorrelation/1",
+          "coverage": [
+            {
+              "contract": "kbcorrelation/1",
+              "coverage_id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+              "exhaustive_for_history": false,
+              "failed": [],
+              "inspected_ids": [
+                "2099-Feb",
+                "2099-Mar"
+              ],
+              "requested_ids": [
+                "2099-Feb",
+                "2099-Mar"
+              ],
+              "retrieved_at": "2099-03-01T00:00:00Z",
+              "scope": {
+                "corpus_digest": null,
+                "doc_ids": [],
+                "kind": "selected_months",
+                "months": [
+                  "2099-Feb",
+                  "2099-Mar"
+                ]
+              },
+              "source_kind": "cvrf-month",
+              "state": "complete_in_scope",
+              "unfetchable_ids": [],
+              "watermark_current_release_date": null
+            }
+          ],
+          "hooks": [
+            "kb.meaning.coverage",
+            "kb.next.run_comparison"
+          ],
+          "intelligence": [],
+          "limitations": [
+            "documents are claims, not verification"
+          ],
+          "unexpected_field": 1,
+          "unknowns": [
+            "no binary comparison has run"
+          ]
+        },
+        "reason": "extra fields are forbidden"
+      },
+      {
+        "example": {
+          "cards": [
+            {
+              "applicability": null,
+              "cve": "CVE-2099-10001",
+              "kev": "not-loaded",
+              "severity_context": null,
+              "source_kind": "cvrf",
+              "stated_cwe": null,
+              "title": "Synthetic issue"
+            }
+          ],
+          "contract": "kbcorrelation/2",
+          "coverage": [
+            {
+              "contract": "kbcorrelation/1",
+              "coverage_id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+              "exhaustive_for_history": false,
+              "failed": [],
+              "inspected_ids": [
+                "2099-Feb",
+                "2099-Mar"
+              ],
+              "requested_ids": [
+                "2099-Feb",
+                "2099-Mar"
+              ],
+              "retrieved_at": "2099-03-01T00:00:00Z",
+              "scope": {
+                "corpus_digest": null,
+                "doc_ids": [],
+                "kind": "selected_months",
+                "months": [
+                  "2099-Feb",
+                  "2099-Mar"
+                ]
+              },
+              "source_kind": "cvrf-month",
+              "state": "complete_in_scope",
+              "unfetchable_ids": [],
+              "watermark_current_release_date": null
+            }
+          ],
+          "hooks": [
+            "kb.meaning.coverage",
+            "kb.next.run_comparison"
+          ],
+          "intelligence": [],
+          "limitations": [
+            "documents are claims, not verification"
+          ],
+          "unknowns": [
+            "no binary comparison has run"
+          ]
+        },
+        "reason": "unsupported future contract version"
+      }
+    ],
+    "valid": {
+      "cards": [
+        {
+          "applicability": null,
+          "cve": "CVE-2099-10001",
+          "kev": "not-loaded",
+          "severity_context": null,
+          "source_kind": "cvrf",
+          "stated_cwe": null,
+          "title": "Synthetic issue"
+        }
+      ],
+      "contract": "kbcorrelation/1",
+      "coverage": [
+        {
+          "contract": "kbcorrelation/1",
+          "coverage_id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "exhaustive_for_history": false,
+          "failed": [],
+          "inspected_ids": [
+            "2099-Feb",
+            "2099-Mar"
+          ],
+          "requested_ids": [
+            "2099-Feb",
+            "2099-Mar"
+          ],
+          "retrieved_at": "2099-03-01T00:00:00Z",
+          "scope": {
+            "corpus_digest": null,
+            "doc_ids": [],
+            "kind": "selected_months",
+            "months": [
+              "2099-Feb",
+              "2099-Mar"
+            ]
+          },
+          "source_kind": "cvrf-month",
+          "state": "complete_in_scope",
+          "unfetchable_ids": [],
+          "watermark_current_release_date": null
+        }
+      ],
+      "hooks": [
+        "kb.meaning.coverage",
+        "kb.next.run_comparison"
+      ],
+      "intelligence": [],
+      "limitations": [
+        "documents are claims, not verification"
+      ],
+      "unknowns": [
+        "no binary comparison has run"
+      ]
+    }
+  },
+  "Coverage": {
+    "invalid": [
+      {
+        "example": {
+          "contract": "kbcorrelation/1",
+          "coverage_id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "exhaustive_for_history": false,
+          "failed": [],
+          "inspected_ids": [
+            "2099-Feb",
+            "2099-Mar"
+          ],
+          "requested_ids": [
+            "2099-Feb",
+            "2099-Mar"
+          ],
+          "retrieved_at": "2099-03-01T00:00:00Z",
+          "scope": {
+            "corpus_digest": null,
+            "doc_ids": [],
+            "kind": "selected_months",
+            "months": [
+              "2099-Feb",
+              "2099-Mar"
+            ]
+          },
+          "source_kind": "cvrf-month",
+          "state": "complete_in_scope",
+          "unexpected_field": 1,
+          "unfetchable_ids": [],
+          "watermark_current_release_date": null
+        },
+        "reason": "extra fields are forbidden"
+      },
+      {
+        "example": {
+          "contract": "kbcorrelation/2",
+          "coverage_id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "exhaustive_for_history": false,
+          "failed": [],
+          "inspected_ids": [
+            "2099-Feb",
+            "2099-Mar"
+          ],
+          "requested_ids": [
+            "2099-Feb",
+            "2099-Mar"
+          ],
+          "retrieved_at": "2099-03-01T00:00:00Z",
+          "scope": {
+            "corpus_digest": null,
+            "doc_ids": [],
+            "kind": "selected_months",
+            "months": [
+              "2099-Feb",
+              "2099-Mar"
+            ]
+          },
+          "source_kind": "cvrf-month",
+          "state": "complete_in_scope",
+          "unfetchable_ids": [],
+          "watermark_current_release_date": null
+        },
+        "reason": "unsupported future contract version"
+      },
+      {
+        "example": {
+          "contract": "kbcorrelation/1",
+          "coverage_id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "exhaustive_for_history": false,
+          "failed": [],
+          "inspected_ids": [
+            "2099-Mar"
+          ],
+          "requested_ids": [
+            "2099-Feb",
+            "2099-Mar"
+          ],
+          "retrieved_at": "2099-03-01T00:00:00Z",
+          "scope": {
+            "corpus_digest": null,
+            "doc_ids": [],
+            "kind": "selected_months",
+            "months": [
+              "2099-Feb",
+              "2099-Mar"
+            ]
+          },
+          "source_kind": "cvrf-month",
+          "state": "complete_in_scope",
+          "unfetchable_ids": [],
+          "watermark_current_release_date": null
+        },
+        "reason": "complete_in_scope needs requested == inspected"
+      }
+    ],
+    "valid": {
+      "contract": "kbcorrelation/1",
+      "coverage_id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "exhaustive_for_history": false,
+      "failed": [],
+      "inspected_ids": [
+        "2099-Feb",
+        "2099-Mar"
+      ],
+      "requested_ids": [
+        "2099-Feb",
+        "2099-Mar"
+      ],
+      "retrieved_at": "2099-03-01T00:00:00Z",
+      "scope": {
+        "corpus_digest": null,
+        "doc_ids": [],
+        "kind": "selected_months",
+        "months": [
+          "2099-Feb",
+          "2099-Mar"
+        ]
+      },
+      "source_kind": "cvrf-month",
+      "state": "complete_in_scope",
+      "unfetchable_ids": [],
+      "watermark_current_release_date": null
+    }
+  },
+  "InvestigationRevision": {
+    "invalid": [
+      {
+        "example": {
+          "contract": "kbcorrelation/1",
+          "coverage_ids": [
+            "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+          ],
+          "investigation_id": "12345678-1234-4234-8234-123456789abc",
+          "lead": {
+            "kind": "kb",
+            "raw": "kb5099001",
+            "value": "KB5099001"
+          },
+          "parent": 1,
+          "plan_sha": null,
+          "revision": 2,
+          "scope_ids": [
+            "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+          ],
+          "selected_pair_id": null,
+          "selected_scope_id": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+          "state": "PRODUCT_SELECTED",
+          "unexpected_field": 1,
+          "warnings": []
+        },
+        "reason": "extra fields are forbidden"
+      },
+      {
+        "example": {
+          "contract": "kbcorrelation/2",
+          "coverage_ids": [
+            "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+          ],
+          "investigation_id": "12345678-1234-4234-8234-123456789abc",
+          "lead": {
+            "kind": "kb",
+            "raw": "kb5099001",
+            "value": "KB5099001"
+          },
+          "parent": 1,
+          "plan_sha": null,
+          "revision": 2,
+          "scope_ids": [
+            "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+          ],
+          "selected_pair_id": null,
+          "selected_scope_id": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+          "state": "PRODUCT_SELECTED",
+          "warnings": []
+        },
+        "reason": "unsupported future contract version"
+      },
+      {
+        "example": {
+          "contract": "kbcorrelation/1",
+          "coverage_ids": [
+            "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+          ],
+          "investigation_id": "12345678-1234-4234-8234-123456789abc",
+          "lead": {
+            "kind": "kb",
+            "raw": "kb5099001",
+            "value": "KB5099001"
+          },
+          "parent": null,
+          "plan_sha": null,
+          "revision": 2,
+          "scope_ids": [
+            "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+          ],
+          "selected_pair_id": null,
+          "selected_scope_id": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+          "state": "PRODUCT_SELECTED",
+          "warnings": []
+        },
+        "reason": "a later revision needs a parent"
+      }
+    ],
+    "valid": {
+      "contract": "kbcorrelation/1",
+      "coverage_ids": [
+        "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+      ],
+      "investigation_id": "12345678-1234-4234-8234-123456789abc",
+      "lead": {
+        "kind": "kb",
+        "raw": "kb5099001",
+        "value": "KB5099001"
+      },
+      "parent": 1,
+      "plan_sha": null,
+      "revision": 2,
+      "scope_ids": [
+        "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+      ],
+      "selected_pair_id": null,
+      "selected_scope_id": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+      "state": "PRODUCT_SELECTED",
+      "warnings": []
+    }
+  },
+  "KbCveEdge": {
+    "invalid": [
+      {
+        "example": {
+          "conflict_ids": [],
+          "contract": "kbcorrelation/1",
+          "cve": "CVE-2099-10001",
+          "edge_id": "05c93de30a49468e6c9ed14d37393c157731123ff3cd52a62a56d26d6609325d",
+          "fixed_build": "26100.5001",
+          "kb": "KB5099001",
+          "lineage": "msrc",
+          "product_status": null,
+          "ref": {
+            "assertion": "advisory_fact",
+            "doc_id": "2d6e91fb134ee72cd6b745a5f08c41309401294173ff9388a272a1256db3c5c0",
+            "pointer": "/Vulnerability/0/Remediations/0"
+          },
+          "relation": "vendor-remediation",
+          "release_id": "2099-Mar",
+          "scope_id": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+          "sub_type": null,
+          "supersedes": [
+            "KB5098000"
+          ],
+          "unexpected_field": 1
+        },
+        "reason": "extra fields are forbidden"
+      },
+      {
+        "example": {
+          "conflict_ids": [],
+          "contract": "kbcorrelation/2",
+          "cve": "CVE-2099-10001",
+          "edge_id": "05c93de30a49468e6c9ed14d37393c157731123ff3cd52a62a56d26d6609325d",
+          "fixed_build": "26100.5001",
+          "kb": "KB5099001",
+          "lineage": "msrc",
+          "product_status": null,
+          "ref": {
+            "assertion": "advisory_fact",
+            "doc_id": "2d6e91fb134ee72cd6b745a5f08c41309401294173ff9388a272a1256db3c5c0",
+            "pointer": "/Vulnerability/0/Remediations/0"
+          },
+          "relation": "vendor-remediation",
+          "release_id": "2099-Mar",
+          "scope_id": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+          "sub_type": null,
+          "supersedes": [
+            "KB5098000"
+          ]
+        },
+        "reason": "unsupported future contract version"
+      },
+      {
+        "example": {
+          "conflict_ids": [],
+          "contract": "kbcorrelation/1",
+          "cve": "CVE-2099-10001",
+          "edge_id": "05c93de30a49468e6c9ed14d37393c157731123ff3cd52a62a56d26d6609325d",
+          "fixed_build": "26100.5001",
+          "kb": "KB123",
+          "lineage": "msrc",
+          "product_status": null,
+          "ref": {
+            "assertion": "advisory_fact",
+            "doc_id": "2d6e91fb134ee72cd6b745a5f08c41309401294173ff9388a272a1256db3c5c0",
+            "pointer": "/Vulnerability/0/Remediations/0"
+          },
+          "relation": "vendor-remediation",
+          "release_id": "2099-Mar",
+          "scope_id": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+          "sub_type": null,
+          "supersedes": [
+            "KB5098000"
+          ]
+        },
+        "reason": "KB syntax is KB + 4-10 ASCII digits"
+      }
+    ],
+    "valid": {
+      "conflict_ids": [],
+      "contract": "kbcorrelation/1",
+      "cve": "CVE-2099-10001",
+      "edge_id": "05c93de30a49468e6c9ed14d37393c157731123ff3cd52a62a56d26d6609325d",
+      "fixed_build": "26100.5001",
+      "kb": "KB5099001",
+      "lineage": "msrc",
+      "product_status": null,
+      "ref": {
+        "assertion": "advisory_fact",
+        "doc_id": "2d6e91fb134ee72cd6b745a5f08c41309401294173ff9388a272a1256db3c5c0",
+        "pointer": "/Vulnerability/0/Remediations/0"
+      },
+      "relation": "vendor-remediation",
+      "release_id": "2099-Mar",
+      "scope_id": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+      "sub_type": null,
+      "supersedes": [
+        "KB5098000"
+      ]
+    }
+  },
+  "KbcIssue": {
+    "invalid": [
+      {
+        "example": {
+          "code": "PT-KBC-SCOPE",
+          "contract": "kbcorrelation/1",
+          "details": null,
+          "message": "a finite search scope is required",
+          "recoverable": true,
+          "source_id": null,
+          "unexpected_field": 1
+        },
+        "reason": "extra fields are forbidden"
+      },
+      {
+        "example": {
+          "code": "PT-KBC-SCOPE",
+          "contract": "kbcorrelation/2",
+          "details": null,
+          "message": "a finite search scope is required",
+          "recoverable": true,
+          "source_id": null
+        },
+        "reason": "unsupported future contract version"
+      }
+    ],
+    "valid": {
+      "code": "PT-KBC-SCOPE",
+      "contract": "kbcorrelation/1",
+      "details": null,
+      "message": "a finite search scope is required",
+      "recoverable": true,
+      "source_id": null
+    }
+  },
+  "LeadRow": {
+    "invalid": [
+      {
+        "example": {
+          "chips": [
+            {
+              "channel": "documentary",
+              "ref": {
+                "assertion": "advisory_fact",
+                "doc_id": "2d6e91fb134ee72cd6b745a5f08c41309401294173ff9388a272a1256db3c5c0",
+                "pointer": "/Vulnerability/0/Remediations/0"
+              },
+              "state": "supports",
+              "text": "named in the advisory"
+            },
+            {
+              "channel": "code-change",
+              "ref": null,
+              "state": "not-run",
+              "text": "no comparison yet"
+            }
+          ],
+          "contract": "kbcorrelation/1",
+          "group": "CVE-2099-10001",
+          "hooks": [
+            "kb.next.run_comparison"
+          ],
+          "lead_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "level": "component",
+          "nav": {
+            "match_id": null,
+            "project_revision": 0,
+            "run_id": null
+          },
+          "rank_basis": "documentary tier, then name",
+          "stale": false,
+          "subject": "examplesvc.dll",
+          "unexpected_field": 1
+        },
+        "reason": "extra fields are forbidden"
+      },
+      {
+        "example": {
+          "chips": [
+            {
+              "channel": "documentary",
+              "ref": {
+                "assertion": "advisory_fact",
+                "doc_id": "2d6e91fb134ee72cd6b745a5f08c41309401294173ff9388a272a1256db3c5c0",
+                "pointer": "/Vulnerability/0/Remediations/0"
+              },
+              "state": "supports",
+              "text": "named in the advisory"
+            },
+            {
+              "channel": "code-change",
+              "ref": null,
+              "state": "not-run",
+              "text": "no comparison yet"
+            }
+          ],
+          "contract": "kbcorrelation/2",
+          "group": "CVE-2099-10001",
+          "hooks": [
+            "kb.next.run_comparison"
+          ],
+          "lead_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "level": "component",
+          "nav": {
+            "match_id": null,
+            "project_revision": 0,
+            "run_id": null
+          },
+          "rank_basis": "documentary tier, then name",
+          "stale": false,
+          "subject": "examplesvc.dll"
+        },
+        "reason": "unsupported future contract version"
+      }
+    ],
+    "valid": {
+      "chips": [
+        {
+          "channel": "documentary",
+          "ref": {
+            "assertion": "advisory_fact",
+            "doc_id": "2d6e91fb134ee72cd6b745a5f08c41309401294173ff9388a272a1256db3c5c0",
+            "pointer": "/Vulnerability/0/Remediations/0"
+          },
+          "state": "supports",
+          "text": "named in the advisory"
+        },
+        {
+          "channel": "code-change",
+          "ref": null,
+          "state": "not-run",
+          "text": "no comparison yet"
+        }
+      ],
+      "contract": "kbcorrelation/1",
+      "group": "CVE-2099-10001",
+      "hooks": [
+        "kb.next.run_comparison"
+      ],
+      "lead_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "level": "component",
+      "nav": {
+        "match_id": null,
+        "project_revision": 0,
+        "run_id": null
+      },
+      "rank_basis": "documentary tier, then name",
+      "stale": false,
+      "subject": "examplesvc.dll"
+    }
+  },
+  "OperationResult": {
+    "invalid": [
+      {
+        "example": {
+          "contract": "kbcorrelation/1",
+          "issues": [
+            {
+              "code": "PT-KBC-SCOPE",
+              "contract": "kbcorrelation/1",
+              "details": null,
+              "message": "a finite search scope is required",
+              "recoverable": true,
+              "source_id": null
+            }
+          ],
+          "status": "partial",
+          "unexpected_field": 1,
+          "value": null,
+          "warnings": [
+            "2 of 24 documents unreadable"
+          ]
+        },
+        "reason": "extra fields are forbidden"
+      },
+      {
+        "example": {
+          "contract": "kbcorrelation/2",
+          "issues": [
+            {
+              "code": "PT-KBC-SCOPE",
+              "contract": "kbcorrelation/1",
+              "details": null,
+              "message": "a finite search scope is required",
+              "recoverable": true,
+              "source_id": null
+            }
+          ],
+          "status": "partial",
+          "value": null,
+          "warnings": [
+            "2 of 24 documents unreadable"
+          ]
+        },
+        "reason": "unsupported future contract version"
+      },
+      {
+        "example": {
+          "contract": "kbcorrelation/1",
+          "issues": [
+            {
+              "code": "PT-KBC-SCOPE",
+              "contract": "kbcorrelation/1",
+              "details": null,
+              "message": "a finite search scope is required",
+              "recoverable": true,
+              "source_id": null
+            }
+          ],
+          "status": "ok",
+          "value": null,
+          "warnings": [
+            "2 of 24 documents unreadable"
+          ]
+        },
+        "reason": "an ok result carries no issues"
+      }
+    ],
+    "valid": {
+      "contract": "kbcorrelation/1",
+      "issues": [
+        {
+          "code": "PT-KBC-SCOPE",
+          "contract": "kbcorrelation/1",
+          "details": null,
+          "message": "a finite search scope is required",
+          "recoverable": true,
+          "source_id": null
+        }
+      ],
+      "status": "partial",
+      "value": null,
+      "warnings": [
+        "2 of 24 documents unreadable"
+      ]
+    }
+  },
+  "PairPlan": {
+    "invalid": [
+      {
+        "example": {
+          "acquisition_plan_sha": null,
+          "contract": "kbcorrelation/1",
+          "destination_policy": "private-staging",
+          "expected": [
+            {
+              "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "size": 1000
+            }
+          ],
+          "hosts": [
+            "example.invalid"
+          ],
+          "pair_id": "a7a3329407a3bf24243eb883d56482357491a35d32c9c3e14bcb60dd77343af6",
+          "plan_sha": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+          "requests": [
+            {
+              "bytes": 1000,
+              "method": "GET",
+              "url": "https://example.invalid/examplesvc.dll",
+              "why": "older binary"
+            }
+          ],
+          "unexpected_field": 1
+        },
+        "reason": "extra fields are forbidden"
+      },
+      {
+        "example": {
+          "acquisition_plan_sha": null,
+          "contract": "kbcorrelation/2",
+          "destination_policy": "private-staging",
+          "expected": [
+            {
+              "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "size": 1000
+            }
+          ],
+          "hosts": [
+            "example.invalid"
+          ],
+          "pair_id": "a7a3329407a3bf24243eb883d56482357491a35d32c9c3e14bcb60dd77343af6",
+          "plan_sha": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+          "requests": [
+            {
+              "bytes": 1000,
+              "method": "GET",
+              "url": "https://example.invalid/examplesvc.dll",
+              "why": "older binary"
+            }
+          ]
+        },
+        "reason": "unsupported future contract version"
+      },
+      {
+        "example": {
+          "acquisition_plan_sha": null,
+          "contract": "kbcorrelation/1",
+          "destination_policy": "private-staging",
+          "expected": [
+            {
+              "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "size": 1000
+            }
+          ],
+          "hosts": [
+            "other.invalid"
+          ],
+          "pair_id": "a7a3329407a3bf24243eb883d56482357491a35d32c9c3e14bcb60dd77343af6",
+          "plan_sha": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+          "requests": [
+            {
+              "bytes": 1000,
+              "method": "GET",
+              "url": "https://example.invalid/examplesvc.dll",
+              "why": "older binary"
+            }
+          ]
+        },
+        "reason": "hosts must equal the planned request hosts"
+      }
+    ],
+    "valid": {
+      "acquisition_plan_sha": null,
+      "contract": "kbcorrelation/1",
+      "destination_policy": "private-staging",
+      "expected": [
+        {
+          "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "size": 1000
+        }
+      ],
+      "hosts": [
+        "example.invalid"
+      ],
+      "pair_id": "a7a3329407a3bf24243eb883d56482357491a35d32c9c3e14bcb60dd77343af6",
+      "plan_sha": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+      "requests": [
+        {
+          "bytes": 1000,
+          "method": "GET",
+          "url": "https://example.invalid/examplesvc.dll",
+          "why": "older binary"
+        }
+      ]
+    }
+  },
+  "PairProposal": {
+    "invalid": [
+      {
+        "example": {
+          "bytes_state": "pending",
+          "contract": "kbcorrelation/1",
+          "fix_boundary": "source-supported",
+          "grade": "A",
+          "lineage_state": "index-adjacent",
+          "newer": {
+            "authenticity": "hash-matched-to-index",
+            "availability": "direct",
+            "basename": "examplesvc.dll",
+            "build_ubr": "26100.5001",
+            "contract": "kbcorrelation/1",
+            "file_version": "10.0.26100.5001",
+            "machine": "amd64",
+            "origin": "index-row",
+            "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "size": 1000
+          },
+          "older": {
+            "authenticity": "hash-matched-to-index",
+            "availability": "direct",
+            "basename": "examplesvc.dll",
+            "build_ubr": "26100.5000",
+            "contract": "kbcorrelation/1",
+            "file_version": "10.0.26100.5000",
+            "machine": "amd64",
+            "origin": "index-row",
+            "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "size": 1000
+          },
+          "pair_id": "a7a3329407a3bf24243eb883d56482357491a35d32c9c3e14bcb60dd77343af6",
+          "reason_codes": [],
+          "scope_id": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+          "tier": "B",
+          "unexpected_field": 1,
+          "window": [
+            "KB5099001"
+          ],
+          "window_complete": true,
+          "window_id": "w1"
+        },
+        "reason": "extra fields are forbidden"
+      },
+      {
+        "example": {
+          "bytes_state": "pending",
+          "contract": "kbcorrelation/2",
+          "fix_boundary": "source-supported",
+          "grade": "A",
+          "lineage_state": "index-adjacent",
+          "newer": {
+            "authenticity": "hash-matched-to-index",
+            "availability": "direct",
+            "basename": "examplesvc.dll",
+            "build_ubr": "26100.5001",
+            "contract": "kbcorrelation/1",
+            "file_version": "10.0.26100.5001",
+            "machine": "amd64",
+            "origin": "index-row",
+            "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "size": 1000
+          },
+          "older": {
+            "authenticity": "hash-matched-to-index",
+            "availability": "direct",
+            "basename": "examplesvc.dll",
+            "build_ubr": "26100.5000",
+            "contract": "kbcorrelation/1",
+            "file_version": "10.0.26100.5000",
+            "machine": "amd64",
+            "origin": "index-row",
+            "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "size": 1000
+          },
+          "pair_id": "a7a3329407a3bf24243eb883d56482357491a35d32c9c3e14bcb60dd77343af6",
+          "reason_codes": [],
+          "scope_id": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+          "tier": "B",
+          "window": [
+            "KB5099001"
+          ],
+          "window_complete": true,
+          "window_id": "w1"
+        },
+        "reason": "unsupported future contract version"
+      },
+      {
+        "example": {
+          "bytes_state": "pending",
+          "contract": "kbcorrelation/1",
+          "fix_boundary": "source-supported",
+          "grade": "X",
+          "lineage_state": "index-adjacent",
+          "newer": {
+            "authenticity": "hash-matched-to-index",
+            "availability": "direct",
+            "basename": "examplesvc.dll",
+            "build_ubr": "26100.5001",
+            "contract": "kbcorrelation/1",
+            "file_version": "10.0.26100.5001",
+            "machine": "amd64",
+            "origin": "index-row",
+            "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "size": 1000
+          },
+          "older": {
+            "authenticity": "hash-matched-to-index",
+            "availability": "direct",
+            "basename": "examplesvc.dll",
+            "build_ubr": "26100.5000",
+            "contract": "kbcorrelation/1",
+            "file_version": "10.0.26100.5000",
+            "machine": "amd64",
+            "origin": "index-row",
+            "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "size": 1000
+          },
+          "pair_id": "a7a3329407a3bf24243eb883d56482357491a35d32c9c3e14bcb60dd77343af6",
+          "reason_codes": [],
+          "scope_id": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+          "tier": "B",
+          "window": [
+            "KB5099001"
+          ],
+          "window_complete": true,
+          "window_id": "w1"
+        },
+        "reason": "grade X needs a hard block"
+      }
+    ],
+    "valid": {
+      "bytes_state": "pending",
+      "contract": "kbcorrelation/1",
+      "fix_boundary": "source-supported",
+      "grade": "A",
+      "lineage_state": "index-adjacent",
+      "newer": {
+        "authenticity": "hash-matched-to-index",
+        "availability": "direct",
+        "basename": "examplesvc.dll",
+        "build_ubr": "26100.5001",
+        "contract": "kbcorrelation/1",
+        "file_version": "10.0.26100.5001",
+        "machine": "amd64",
+        "origin": "index-row",
+        "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "size": 1000
+      },
+      "older": {
+        "authenticity": "hash-matched-to-index",
+        "availability": "direct",
+        "basename": "examplesvc.dll",
+        "build_ubr": "26100.5000",
+        "contract": "kbcorrelation/1",
+        "file_version": "10.0.26100.5000",
+        "machine": "amd64",
+        "origin": "index-row",
+        "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "size": 1000
+      },
+      "pair_id": "a7a3329407a3bf24243eb883d56482357491a35d32c9c3e14bcb60dd77343af6",
+      "reason_codes": [],
+      "scope_id": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+      "tier": "B",
+      "window": [
+        "KB5099001"
+      ],
+      "window_complete": true,
+      "window_id": "w1"
+    }
+  },
+  "ProductScope": {
+    "invalid": [
+      {
+        "example": {
+          "alias_catalog_version": 1,
+          "architecture": "amd64",
+          "build": null,
+          "channel": null,
+          "contract": "kbcorrelation/1",
+          "display_name": "Example OS 24H2 amd64",
+          "edition": null,
+          "family": "windows-client",
+          "mapping": "candidate",
+          "release": "24H2",
+          "scope_id": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+          "source_product_ids": [
+            {
+              "doc_id": "2d6e91fb134ee72cd6b745a5f08c41309401294173ff9388a272a1256db3c5c0",
+              "product_id": "99001"
+            }
+          ],
+          "unexpected_field": 1,
+          "winbindex_key": null
+        },
+        "reason": "extra fields are forbidden"
+      },
+      {
+        "example": {
+          "alias_catalog_version": 1,
+          "architecture": "amd64",
+          "build": null,
+          "channel": null,
+          "contract": "kbcorrelation/2",
+          "display_name": "Example OS 24H2 amd64",
+          "edition": null,
+          "family": "windows-client",
+          "mapping": "candidate",
+          "release": "24H2",
+          "scope_id": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+          "source_product_ids": [
+            {
+              "doc_id": "2d6e91fb134ee72cd6b745a5f08c41309401294173ff9388a272a1256db3c5c0",
+              "product_id": "99001"
+            }
+          ],
+          "winbindex_key": null
+        },
+        "reason": "unsupported future contract version"
+      },
+      {
+        "example": {
+          "alias_catalog_version": 1,
+          "architecture": "amd64",
+          "build": null,
+          "channel": null,
+          "contract": "kbcorrelation/1",
+          "display_name": "Example OS 24H2 amd64",
+          "edition": null,
+          "family": "windows-client",
+          "mapping": "verified",
+          "release": "24H2",
+          "scope_id": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+          "source_product_ids": [
+            {
+              "doc_id": "2d6e91fb134ee72cd6b745a5f08c41309401294173ff9388a272a1256db3c5c0",
+              "product_id": "99001"
+            }
+          ],
+          "winbindex_key": null
+        },
+        "reason": "string-derived scopes are never verified"
+      }
+    ],
+    "valid": {
+      "alias_catalog_version": 1,
+      "architecture": "amd64",
+      "build": null,
+      "channel": null,
+      "contract": "kbcorrelation/1",
+      "display_name": "Example OS 24H2 amd64",
+      "edition": null,
+      "family": "windows-client",
+      "mapping": "candidate",
+      "release": "24H2",
+      "scope_id": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+      "source_product_ids": [
+        {
+          "doc_id": "2d6e91fb134ee72cd6b745a5f08c41309401294173ff9388a272a1256db3c5c0",
+          "product_id": "99001"
+        }
+      ],
+      "winbindex_key": null
+    }
+  },
+  "ProjectLink": {
+    "invalid": [
+      {
+        "example": {
+          "contract": "kbcorrelation/1",
+          "investigation_id": "12345678-1234-4234-8234-123456789abc",
+          "newer_sha": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "older_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "pair_id": "a7a3329407a3bf24243eb883d56482357491a35d32c9c3e14bcb60dd77343af6",
+          "project_id": "project-1",
+          "project_revision": 3,
+          "revision": 2,
+          "stale_reasons": [],
+          "state": "attached",
+          "unexpected_field": 1
+        },
+        "reason": "extra fields are forbidden"
+      },
+      {
+        "example": {
+          "contract": "kbcorrelation/2",
+          "investigation_id": "12345678-1234-4234-8234-123456789abc",
+          "newer_sha": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "older_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "pair_id": "a7a3329407a3bf24243eb883d56482357491a35d32c9c3e14bcb60dd77343af6",
+          "project_id": "project-1",
+          "project_revision": 3,
+          "revision": 2,
+          "stale_reasons": [],
+          "state": "attached"
+        },
+        "reason": "unsupported future contract version"
+      },
+      {
+        "example": {
+          "contract": "kbcorrelation/1",
+          "investigation_id": "12345678-1234-4234-8234-123456789abc",
+          "newer_sha": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "older_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "pair_id": "a7a3329407a3bf24243eb883d56482357491a35d32c9c3e14bcb60dd77343af6",
+          "project_id": "project-1",
+          "project_revision": 3,
+          "revision": 2,
+          "stale_reasons": [],
+          "state": "stale"
+        },
+        "reason": "stale needs stale_reasons"
+      }
+    ],
+    "valid": {
+      "contract": "kbcorrelation/1",
+      "investigation_id": "12345678-1234-4234-8234-123456789abc",
+      "newer_sha": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "older_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "pair_id": "a7a3329407a3bf24243eb883d56482357491a35d32c9c3e14bcb60dd77343af6",
+      "project_id": "project-1",
+      "project_revision": 3,
+      "revision": 2,
+      "stale_reasons": [],
+      "state": "attached"
+    }
+  },
+  "SearchScope": {
+    "invalid": [
+      {
+        "example": {
+          "corpus_digest": null,
+          "doc_ids": [],
+          "kind": "selected_months",
+          "months": [
+            "2099-Feb",
+            "2099-Mar"
+          ],
+          "unexpected_field": 1
+        },
+        "reason": "extra fields are forbidden"
+      },
+      {
+        "example": {
+          "corpus_digest": null,
+          "doc_ids": [],
+          "kind": "selected_months",
+          "months": []
+        },
+        "reason": "selected_months needs at least one month"
+      }
+    ],
+    "valid": {
+      "corpus_digest": null,
+      "doc_ids": [],
+      "kind": "selected_months",
+      "months": [
+        "2099-Feb",
+        "2099-Mar"
+      ]
+    }
+  },
+  "SourceDoc": {
+    "invalid": [
+      {
+        "example": {
+          "authenticity": "unverified-local-file",
+          "contract": "kbcorrelation/1",
+          "current_release_date": null,
+          "dialect": "cvrf-1.2-synthetic",
+          "doc_id": "2d6e91fb134ee72cd6b745a5f08c41309401294173ff9388a272a1256db3c5c0",
+          "kind": "cvrf-month",
+          "lineage": "msrc",
+          "object_path": "objects/aa/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.gz",
+          "origin": "local-import",
+          "parser_version": 1,
+          "release_id": "2099-Mar",
+          "retrieved_at": "2099-03-01T00:00:00Z",
+          "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "size": 1234,
+          "unexpected_field": 1,
+          "uri": null
+        },
+        "reason": "extra fields are forbidden"
+      },
+      {
+        "example": {
+          "authenticity": "unverified-local-file",
+          "contract": "kbcorrelation/2",
+          "current_release_date": null,
+          "dialect": "cvrf-1.2-synthetic",
+          "doc_id": "2d6e91fb134ee72cd6b745a5f08c41309401294173ff9388a272a1256db3c5c0",
+          "kind": "cvrf-month",
+          "lineage": "msrc",
+          "object_path": "objects/aa/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.gz",
+          "origin": "local-import",
+          "parser_version": 1,
+          "release_id": "2099-Mar",
+          "retrieved_at": "2099-03-01T00:00:00Z",
+          "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "size": 1234,
+          "uri": null
+        },
+        "reason": "unsupported future contract version"
+      },
+      {
+        "example": {
+          "authenticity": "unverified-local-file",
+          "contract": "kbcorrelation/1",
+          "current_release_date": null,
+          "dialect": "cvrf-1.2-synthetic",
+          "doc_id": "2d6e91fb134ee72cd6b745a5f08c41309401294173ff9388a272a1256db3c5c0",
+          "kind": "cvrf-month",
+          "lineage": "msrc",
+          "object_path": "objects/aa/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.gz",
+          "origin": "https-fetch",
+          "parser_version": 1,
+          "release_id": "2099-Mar",
+          "retrieved_at": "2099-03-01T00:00:00Z",
+          "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "size": 1234,
+          "uri": null
+        },
+        "reason": "a fetched document needs an https URI and a TLS authenticity"
+      }
+    ],
+    "valid": {
+      "authenticity": "unverified-local-file",
+      "contract": "kbcorrelation/1",
+      "current_release_date": null,
+      "dialect": "cvrf-1.2-synthetic",
+      "doc_id": "2d6e91fb134ee72cd6b745a5f08c41309401294173ff9388a272a1256db3c5c0",
+      "kind": "cvrf-month",
+      "lineage": "msrc",
+      "object_path": "objects/aa/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.gz",
+      "origin": "local-import",
+      "parser_version": 1,
+      "release_id": "2099-Mar",
+      "retrieved_at": "2099-03-01T00:00:00Z",
+      "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "size": 1234,
+      "uri": null
+    }
+  },
+  "SourceRef": {
+    "invalid": [
+      {
+        "example": {
+          "assertion": "advisory_fact",
+          "doc_id": "2d6e91fb134ee72cd6b745a5f08c41309401294173ff9388a272a1256db3c5c0",
+          "pointer": "/Vulnerability/0/Remediations/0",
+          "unexpected_field": 1
+        },
+        "reason": "extra fields are forbidden"
+      }
+    ],
+    "valid": {
+      "assertion": "advisory_fact",
+      "doc_id": "2d6e91fb134ee72cd6b745a5f08c41309401294173ff9388a272a1256db3c5c0",
+      "pointer": "/Vulnerability/0/Remediations/0"
+    }
+  }
+}

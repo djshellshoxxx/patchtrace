@@ -140,3 +140,6 @@
 - [x] limits, contracts, keys, store, `docs/schemas/unified/` + examples via tools/generate_schemas.py, drift test; 02 s9 freeze notes
 - [ ] DEFERRED: `unified/registry.py`, `place_ir`/`find_ir`, orphan result-dir sweep, spec status lines A-01/A-01b/A-03/A-06/A-08/A-09/A-10/A-11/A-14, `.gitattributes` for tests/fixtures/unified
 - [ ] Windows CI: unified tests (paths, os.replace retry, CRLF checkout of docs/schemas/unified examples) and Python 3.12
+### [K0:kbcorrelation-contracts] KB-CVE correlator K0 (2026-10-14)
+- [x] contracts, limits, ids, errors, ports, `tools/generate_kbc_schemas.py` + `docs/schemas/kbcorrelation/` (+ examples), regenerate-and-compare test, KB syntax matrix, Coverage `complete_in_scope` invariant
+- [ ] DEFERRED to later slices: K0f fixtures, A-5/A-6 (KINDS, backup), A-8 `cli.py` hook, A-12 (`.gitattributes` LF for docs/schemas/kbcorrelation, frozen smoke import, `live_kbc` marker); live probe L1 confirms provisional `KbcLimits`

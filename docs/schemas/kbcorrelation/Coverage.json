@@ -1,0 +1,195 @@
+{
+  "$defs": {
+    "Failure": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "reason": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Reason",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "reason"
+      ],
+      "title": "Failure",
+      "type": "object"
+    },
+    "SearchScope": {
+      "additionalProperties": false,
+      "properties": {
+        "corpus_digest": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Corpus Digest"
+        },
+        "doc_ids": {
+          "default": [],
+          "items": {
+            "pattern": "^[0-9a-f]{64}$",
+            "type": "string"
+          },
+          "title": "Doc Ids",
+          "type": "array"
+        },
+        "kind": {
+          "enum": [
+            "selected_months",
+            "cached_corpus",
+            "provided_files",
+            "mixed"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "months": {
+          "default": [],
+          "items": {
+            "pattern": "^[0-9]{4}-(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)$",
+            "type": "string"
+          },
+          "maxItems": 24,
+          "title": "Months",
+          "type": "array"
+        }
+      },
+      "required": [
+        "kind"
+      ],
+      "title": "SearchScope",
+      "type": "object"
+    }
+  },
+  "$id": "https://patchtrace.local/schemas/kbcorrelation/1/Coverage.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "What was actually inspected. ``exhaustive_for_history`` is the constant False: a scope is never all of history.",
+  "properties": {
+    "contract": {
+      "const": "kbcorrelation/1",
+      "default": "kbcorrelation/1",
+      "title": "Contract",
+      "type": "string"
+    },
+    "coverage_id": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Coverage Id",
+      "type": "string"
+    },
+    "exhaustive_for_history": {
+      "const": false,
+      "default": false,
+      "title": "Exhaustive For History",
+      "type": "boolean"
+    },
+    "failed": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/Failure"
+      },
+      "title": "Failed",
+      "type": "array"
+    },
+    "inspected_ids": {
+      "default": [],
+      "items": {
+        "maxLength": 1000,
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Inspected Ids",
+      "type": "array"
+    },
+    "requested_ids": {
+      "default": [],
+      "items": {
+        "maxLength": 1000,
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Requested Ids",
+      "type": "array"
+    },
+    "retrieved_at": {
+      "maxLength": 40,
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]{1,9})?(Z|[+-][0-9]{2}:[0-9]{2})$",
+      "title": "Retrieved At",
+      "type": "string"
+    },
+    "scope": {
+      "$ref": "#/$defs/SearchScope"
+    },
+    "source_kind": {
+      "enum": [
+        "cvrf-month",
+        "csaf",
+        "sug-cve",
+        "winbindex-file",
+        "kev",
+        "local-note"
+      ],
+      "title": "Source Kind",
+      "type": "string"
+    },
+    "state": {
+      "enum": [
+        "complete_in_scope",
+        "partial_in_scope",
+        "stale_cache",
+        "unknown_scope",
+        "not_searched"
+      ],
+      "title": "State",
+      "type": "string"
+    },
+    "unfetchable_ids": {
+      "default": [],
+      "items": {
+        "maxLength": 1000,
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Unfetchable Ids",
+      "type": "array"
+    },
+    "watermark_current_release_date": {
+      "anyOf": [
+        {
+          "maxLength": 40,
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]{1,9})?(Z|[+-][0-9]{2}:[0-9]{2})$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Watermark Current Release Date"
+    }
+  },
+  "required": [
+    "coverage_id",
+    "source_kind",
+    "scope",
+    "state",
+    "retrieved_at"
+  ],
+  "title": "Coverage",
+  "type": "object"
+}
