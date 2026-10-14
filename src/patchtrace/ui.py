@@ -719,6 +719,7 @@ class ProfilesPanel(QWidget):
         super().__init__(parent)
         self.store = ProfileStore(directory)
         self._editing: str | None = None
+        self._baseline: dict | None = None
         layout = QHBoxLayout(self)
         left = QVBoxLayout()
         self.list = QListWidget()
@@ -828,7 +829,27 @@ class ProfilesPanel(QWidget):
             return
         self._editing = None if profile.is_default else profile.name
         self._fill(profile)
+        self._baseline = self.editor_data()
         self.error.setText('')
+
+    def is_dirty(self) -> bool:
+        """True when the editor differs from the loaded, editable profile."""
+        if self._editing is None or self._baseline is None:
+            return False
+        try:
+            return self.editor_data() != self._baseline
+        except ValueError:
+            return True
+
+    def confirm_save(self, name: str) -> bool:
+        box = QMessageBox(QMessageBox.Icon.Question, 'Unsaved profile changes',
+                          f'Profile {name} has unsaved changes.\n\nYes saves them and continues; '
+                          'No returns to the editor.',
+                          QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No, self)
+        box.setTextFormat(Qt.TextFormat.PlainText)
+        box.setDefaultButton(QMessageBox.StandardButton.Yes)
+        confirm_tips(box)
+        return box.exec() == QMessageBox.StandardButton.Yes
 
     def _fill(self, profile):
         self.name.setText(profile.name)
@@ -1168,6 +1189,10 @@ class SetupDialog(QDialog):
     def accept(self):
         if self.worker and self.worker.isRunning():
             return
+        if self.profiles.is_dirty():
+            self.tabs.setCurrentWidget(self.profiles)
+            if not self.profiles.confirm_save(self.profiles.selected_name()) or not self.profiles.save_profile():
+                return
         super().accept()
 
 
