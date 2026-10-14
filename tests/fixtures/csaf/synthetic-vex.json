@@ -1,0 +1,90 @@
+{
+  "document": {
+    "category": "csaf_vex",
+    "csaf_version": "2.0",
+    "distribution": {
+      "text": "SYNTHETIC test fixture for PatchTrace. Not a real VEX document.",
+      "tlp": {
+        "label": "WHITE",
+        "url": "https://www.first.org/tlp/"
+      }
+    },
+    "lang": "en-US",
+    "notes": [
+      {
+        "category": "legal_disclaimer",
+        "text": "SYNTHETIC CSAF 2.0 VEX fixture written for PatchTrace tests. No vendor published it.",
+        "title": "Synthetic fixture"
+      }
+    ],
+    "publisher": {
+      "category": "vendor",
+      "name": "PatchTrace Synthetic Fixture Vendor (not Microsoft)",
+      "namespace": "https://example.invalid/patchtrace-synthetic"
+    },
+    "title": "SYNTHETIC VEX statement for CVE-2099-10001",
+    "tracking": {
+      "current_release_date": "2099-01-20T08:00:00.000Z",
+      "id": "PT-SYNTH-VEX_CVE-2099-10001",
+      "initial_release_date": "2099-01-20T08:00:00.000Z",
+      "revision_history": [
+        {
+          "date": "2099-01-20T08:00:00.000Z",
+          "number": "1",
+          "summary": "Initial synthetic VEX statement."
+        }
+      ],
+      "status": "final",
+      "version": "1"
+    }
+  },
+  "product_tree": {
+    "full_product_names": [
+      {
+        "name": "Example OS 22H2 for x64-based Systems <10.0.22621.4037",
+        "product_id": "VEX-1"
+      },
+      {
+        "name": "Example Server 2022 <10.0.20348.2655",
+        "product_id": "VEX-2"
+      }
+    ]
+  },
+  "vulnerabilities": [
+    {
+      "cve": "CVE-2099-10001",
+      "flags": [
+        {
+          "label": "vulnerable_code_not_present",
+          "product_ids": [
+            "VEX-1"
+          ]
+        }
+      ],
+      "notes": [
+        {
+          "category": "description",
+          "text": "SYNTHETIC VEX: the vulnerable reassembly code is not present in the x64 22H2 builds named here.",
+          "title": "VEX justification"
+        }
+      ],
+      "product_status": {
+        "known_affected": [
+          "VEX-2"
+        ],
+        "known_not_affected": [
+          "VEX-1"
+        ]
+      },
+      "remediations": [
+        {
+          "category": "vendor_fix",
+          "details": "Install synthetic update PT5041160",
+          "product_ids": [
+            "VEX-2"
+          ]
+        }
+      ]
+    }
+  ]
+}
