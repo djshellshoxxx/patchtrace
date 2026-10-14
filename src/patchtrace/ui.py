@@ -49,6 +49,7 @@ from .acquisition.transport import BLOB_SUFFIX, METADATA_HOST, SYMBOL_HOST, Acqu
 from .alignment import alignment_strategy, diff_hunks
 from .backend import BackendConfig, diagnose, parse_env_passthrough, quarantine_failed_run, run_comparison
 from .evidence import build_context, resolve_evidence
+from .gui.qt.host import PanelHost
 from .interpretation import interpret, system_prompt
 from .offline_bundle import inspect_offline_bundle, install_offline_bundle
 from .preflight import overview_rows
@@ -1520,6 +1521,7 @@ class MainWindow(QMainWindow):
         self.resize(1440, 900)
         self.setMinimumSize(960, 640)
         self.setStyleSheet(DARK_STYLE)
+        self.panels = PanelHost(self)  # dock shells only; panels are built when first shown
         self._build_actions()
         self._build_workspace()
         self.evidence = EvidenceController(self)  # C6 engine evidence dock (ui_evidence.py)
@@ -2003,6 +2005,7 @@ class MainWindow(QMainWindow):
         self.update_controls()
         if hasattr(self, 'evidence'):
             self.evidence.project_changed()
+        self.panels.project_changed()
 
     def filter_matches(self, *_):
         previous = self.navigator.currentItem()
@@ -2066,6 +2069,7 @@ class MainWindow(QMainWindow):
             self.render_match()
             self.update_controls()
             self.evidence.follow_match(self.current_match())
+            self.panels.selection_changed(self.current_match())
 
     def render_match(self, *_):
         match = self.current_match()
@@ -2387,19 +2391,34 @@ class MainWindow(QMainWindow):
         location = signal.locations[0]
         if self.mode.currentIndex() != 0:
             self.mode.setCurrentIndex(0)  # rebuilds the text-mode offsets that raw modes empty
-        if location.function_id not in self._function_offsets:
-            return
-        side, offset = self._function_offsets[location.function_id]
-        start = self._line_maps[side].get(offset + location.start_line - 1)
-        end = self._line_maps[side].get(offset + location.end_line - 1)
+        self.reveal_lines(location.function_id, location.start_line, location.end_line)
+
+    def reveal_lines(self, function_id, start_line, end_line):
+        """Select original lines of a function in its pane (the function id fixes the side); the pane, or None."""
+        if function_id not in self._function_offsets:
+            return None
+        side, offset = self._function_offsets[function_id]
+        start = self._line_maps[side].get(offset + start_line - 1)
+        end = self._line_maps[side].get(offset + end_line - 1)
         if start is None or end is None:
-            return
+            return None
         view = self.views[side]
         cursor = QTextCursor(view.document().findBlockByNumber(start))
         block = view.document().findBlockByNumber(end)
         cursor.setPosition(block.position() + block.length() - 1, QTextCursor.MoveMode.KeepAnchor)
         view.setTextCursor(cursor)
         view.centerCursor()
+        return view
+
+    def show_external_pair(self, older_text, newer_text, label):
+        """Show two texts from a panel in the code panes; no match, hunk or line map belongs to them."""
+        self._function_offsets, self._hunks, self._hunk_index = {}, [], -1
+        self._line_maps = {'older': {}, 'newer': {}}
+        self.hunk_list.clear()
+        self.match_label.setText(label)
+        for side, text in (('older', older_text), ('newer', newer_text)):
+            self.views[side].setExtraSelections([])
+            self.views[side].setPlainText(text[:MAX_VIEW_CHARS])
 
     def _load_enrichment(self):
         """Show the stored ranking only when it was computed from the current run and pairings."""
@@ -2513,18 +2532,10 @@ class MainWindow(QMainWindow):
                 break
         self.mode.setCurrentIndex(0)
         self.render_match()
-        side, offset = self._function_offsets[evidence.function_id]
-        start = self._line_maps[side].get(offset + evidence.start_line - 1)
-        end = self._line_maps[side].get(offset + evidence.end_line - 1)
-        if start is None or end is None:
+        view = self.reveal_lines(evidence.function_id, evidence.start_line, evidence.end_line)
+        if view is None:
             text_dialog(self, 'Evidence beyond displayed code · retained context', evidence.text)
             return
-        view = self.views[side]
-        cursor = QTextCursor(view.document().findBlockByNumber(start))
-        block = view.document().findBlockByNumber(end)
-        cursor.setPosition(block.position() + block.length() - 1, QTextCursor.MoveMode.KeepAnchor)
-        view.setTextCursor(cursor)
-        view.centerCursor()
         view.setFocus()
         self.update_controls()
 
@@ -2685,7 +2696,13 @@ class MainWindow(QMainWindow):
         if inspection is None:
             self.statusBar().showMessage('File inspection has not finished; try again in a moment.')
             return
-        sizes = [reader.size for reader in inspection.readers.values()]
+        self.show_raw_offset(None, offset)
+
+    def show_raw_offset(self, side, offset):
+        """Page the raw byte view to a file offset (`side` None or 'both' = either artifact's size bounds it)."""
+        inspection = self._current_inspection()
+        sizes = [reader.size for name, reader in (inspection.readers.items() if inspection else ())
+                 if side in (None, 'both', name)]
         if not sizes or offset < 0 or offset >= max(sizes):
             self.statusBar().showMessage('Offset is outside the verified artifact bytes.')
             return
@@ -2946,8 +2963,13 @@ class MainWindow(QMainWindow):
             self.show_error(run.error or 'Interpretation failed. Inspect the retained raw response; no findings were promoted.')
         elif run.status == 'cancelled':
             self.job_label.setText('Interpretation cancelled')
-        elif run.findings:
-            self.findings_list.setCurrentRow(self.findings_list.count() - len(run.findings))
+        else:
+            if run.error:  # a partial quarantine is a completed run with a note; the analyst must see it
+                self.job_label.setText('Note · ' + run.error)
+                self.logs.appendPlainText('NOTE: ' + run.error)
+                self.statusBar().showMessage(run.error)
+            if run.findings:
+                self.findings_list.setCurrentRow(self.findings_list.count() - len(run.findings))
 
     def start_job(self, title, task, complete):
         if self.worker:
@@ -2993,7 +3015,7 @@ class MainWindow(QMainWindow):
         self.worker = None
         self.timer.stop()
         self.progress.setVisible(False)
-        if not self.job_label.text().startswith(('Error', 'Cancelled', 'Interpretation cancelled')):
+        if not self.job_label.text().startswith(('Error', 'Cancelled', 'Interpretation cancelled', 'Note')):
             self.job_label.setText(f'Finished · {int(time.monotonic() - self._job_started)} seconds')
         if worker:
             worker.deleteLater()
@@ -3006,6 +3028,7 @@ class MainWindow(QMainWindow):
             return
         if hasattr(self, 'evidence'):
             self.evidence.update_controls()
+        self.panels.update_controls()
         idle = self.worker is None
         project = bool(self.service)
         match = self.current_match()
@@ -3122,6 +3145,7 @@ class MainWindow(QMainWindow):
             splitter.setChildrenCollapsible(False)
         self.apply_font(setting_int(self.settings, 'desktop/font_size', 11, 8, 28))
         self.sync_scroll.setChecked(self.settings.value('desktop/sync', True, type=bool))
+        self.panels.restore_layout()
 
     def closeEvent(self, event):
         if self.worker:
@@ -3134,6 +3158,7 @@ class MainWindow(QMainWindow):
             self.settings.setValue('desktop/' + name, splitter.saveState())
         self.settings.setValue('desktop/sync', self.sync_scroll.isChecked())
         self.evidence.shutdown()
+        self.panels.shutdown()
         self.settings.sync()
         self._stop_inspection()
         if self.service:

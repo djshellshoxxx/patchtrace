@@ -13,7 +13,8 @@ from patchtrace.tooltips import TooltipEntry
 @pytest.fixture(autouse=True)
 def private_registry(monkeypatch):
     """Registrations must not leak into the tooltip tests that enumerate the registry."""
-    monkeypatch.setattr(tooltips, 'REGISTRY', dict(tooltips.REGISTRY))
+    # A MainWindow built earlier in the process has registered the framework tips; these tests start without them.
+    monkeypatch.setattr(tooltips, 'REGISTRY', {k: v for k, v in tooltips.REGISTRY.items() if k not in tips.GUI_TIP_IDS})
     monkeypatch.setattr(tooltips, 'TEMPLATES', dict(tooltips.TEMPLATES))
 
 
@@ -73,7 +74,7 @@ def test_the_framework_tips_are_complete_plain_and_unique():
     existing = {item.what for item in tooltips.REGISTRY.values()}
     assert len(set(whats)) == len(whats) and not set(whats) & existing
     for tip_id, item in found.items():
-        assert tip_id.startswith('gui.')
+        assert tip_id.startswith(('gui.', 'panels.', 'menu.'))
         assert item.what and item.why and item.effect
         assert len(item.what) <= DESCRIPTION_LIMIT
         assert not any(char in text for text in (item.what, item.why, item.effect, item.source, item.availability)
@@ -138,3 +139,15 @@ def test_applied_to_a_real_widget(qtbot):
     assert button.accessibleDescription() == 'Load this panel again.'
     assert button.accessibleIdentifier() == 'search.state_retry'
     assert button.objectName() == 'search.state_retry'
+
+
+def test_legacy_apply_tooltip_delegates_and_keeps_the_full_description():
+    tips.register_tips({'zz.one': TooltipEntry('Do the thing.', 'Because.', 'Nothing changes.', 'src', 'avail')})
+    legacy, short = Target(), Target()
+    tooltips.apply_tooltip(legacy, 'zz.one')
+    tooltips.apply_tooltip(short, 'zz.one', accessible='what', name='panel.one')
+    full = legacy.values['setAccessibleDescription']
+    assert full.startswith('What: Do the thing. Why: Because. Effect: Nothing changes.') and 'avail' in full
+    assert legacy.values['setAccessibleIdentifier'] == 'zz.one' and legacy.values['setObjectName'] == 'zz.one'
+    assert short.values['setAccessibleDescription'] == 'Do the thing.'
+    assert short.values['setAccessibleIdentifier'] == 'panel.one'
