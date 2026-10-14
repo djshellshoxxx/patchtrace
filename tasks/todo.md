@@ -279,3 +279,6 @@
 ### [D3:buildenv-core] Build-environment core (2026-10-14, Sonnet 5.5, worktree)
 - [x] Contracts, fingerprint, delta, pre-flight, `noise-map/1`, anchors, copy deck, view model, schemas in `docs/schemas/build-environment/`, synergy test on the committed real diec 3.21 goldens, `quality_flags` parity.
 - [ ] Not done: store, CLI, report (D4); card, controller, tooltips (D5); overlay wiring (D6, reuses `noise_map.row_effect`/`order_rows`); timeline (D7); DiE golden for the UPX image (live gate D8); G-DIE-1 (D9). `buildenv/auto_diec` and `confirm_before_run` settings belong to D5.
+### [WB3-S5:strings-delta]
+- [x] WB3-S5 basis rules, delta, edited pairs, review tiers (`strings/{basis,delta,edits,rank}.py`); `SYN-WB3-1` on SYNTHETIC inputs (`tests/fixtures/strings/synergy/`)
+- [ ] Not built here: anchor join (`StringsDelta.anchors`, S6), `format-spec` as an `EditRef.kind` value (reported as a reason instead; needs a contracts addition), real FLOSS/Ghidriff goldens (S9)

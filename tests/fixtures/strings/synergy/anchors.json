@@ -1,0 +1,7 @@
+{
+  "_provenance": "SYNTHETIC, hand-written for SYN-WB3-1 (WB3 plan section 5); not advisory data. Cue context for the synergy pair of tests/strings_pe.py.",
+  "advisory_phrases": ["exceeds length"],
+  "api_hints": ["RtlULongAdd"],
+  "modules": ["exampledrv.sys"],
+  "imports": {"older": ["OutputDebugStringA"], "newer": ["OutputDebugStringA"]}
+}
