@@ -1,0 +1,189 @@
+{
+  "_comment": "Single source for the claims on the page. 'evidence' lists repository files that prove a claim; tests/test_site_claims.py checks that every path exists and regenerates tests/site_claims.md from this file. When unsure, use status 'in-progress', never 'working'.",
+  "review": "Reviewed 2026-10-14 against base commit 67e5a6c (merge of PR #42) by reading README.md, docs/modules.md, docs/qa.md, tasks/todo.md and the cited files. At that commit the Linux offscreen suite passed (2368 passed, 6 skipped). Statements about live runs are copied from docs/qa.md and tasks/todo.md and were not re-run by this review.",
+  "works_today": [
+    {
+      "id": "projects",
+      "title": "Projects from two PE files",
+      "text": "Pick an older and a newer Windows x64 PE (EXE, DLL or SYS). Headers and architecture are validated, both files are hashed, and the project keeps its own copies. You choose the orientation; nothing is inferred from file names.",
+      "evidence": ["src/patchtrace/ingestion.py", "src/patchtrace/service.py", "tests/test_core.py"]
+    },
+    {
+      "id": "ghidriff",
+      "title": "Ghidra and Ghidriff comparison",
+      "text": "Run a supervised Ghidriff comparison with Ghidra (you install Ghidra, a JDK and Ghidriff), or import a raw Ghidriff JSON. Output is validated and normalised, and a failed or cancelled run never overwrites earlier results. A known bounds-check fixture has passed on native Windows.",
+      "evidence": ["src/patchtrace/backend.py", "src/patchtrace/jobs.py", "src/patchtrace/normalization.py", "tools/live_backend_check.py", ".github/workflows/live-backend.yml", "tests/test_core.py"]
+    },
+    {
+      "id": "views",
+      "title": "Function matches and paired code",
+      "text": "Search and filter matches by category and review state, read older and newer decompiled code or assembly side by side, step through changed hunks (also across functions) and copy code with its provenance.",
+      "evidence": ["src/patchtrace/ui.py", "src/patchtrace/alignment.py", "tests/test_ui.py", "tests/test_diff_navigation_extra.py"]
+    },
+    {
+      "id": "review",
+      "title": "Analyst review",
+      "text": "Review status per match and per finding, notes, bookmarks, and manual match corrections with a required reason and an undo. The original backend output is never rewritten.",
+      "evidence": ["src/patchtrace/service.py", "tests/test_core.py"]
+    },
+    {
+      "id": "rank",
+      "title": "Rank changes",
+      "text": "Eight deterministic detectors (bounds, integer, overflow, validation, error path, size argument, feature flag, scrubbing) order changed functions by an integer attention score and cite the exact lines. The score is an ordinal research priority, not a verdict.",
+      "evidence": ["src/patchtrace/enrichment/signals.py", "src/patchtrace/enrichment/ranking.py", "src/patchtrace/enrichment/wil.py", "tests/test_enrichment_signals.py", "tests/test_enrichment_wil.py"]
+    },
+    {
+      "id": "cve-offline",
+      "title": "CVE context from saved snapshots",
+      "text": "Reorder the ranking by CVE context from a saved NVD or MSRC snapshot, fully offline. The contribution is capped, never changes the base scores and cites the binary evidence it relies on.",
+      "evidence": ["src/patchtrace/enrichment/cve.py", "src/patchtrace/cli.py", "tests/test_enrichment_cve.py"]
+    },
+    {
+      "id": "series",
+      "title": "N-way build series",
+      "text": "Order 3 to 8 builds yourself and compare each adjacent pair as an ordinary project. A chain across builds is labelled an inferred hypothesis unless a direct first-to-last comparison confirms it. A read-only Series window and a command line are included.",
+      "evidence": ["src/patchtrace/nway/series.py", "src/patchtrace/nway/graph.py", "src/patchtrace/ui_series.py", "tests/test_nway_series.py", "tests/test_ui_series.py"]
+    },
+    {
+      "id": "pe",
+      "title": "PE overview and raw bytes",
+      "text": "Bounded, read-only parsing of headers, sections, imports, exports, entropy, overlay, certificate table and debug info, compared field by field, plus Hex, Binary and Base64 views of the verified original bytes. Nothing is executed.",
+      "evidence": ["src/patchtrace/pe_overview/inspect.py", "src/patchtrace/representations/render.py", "src/patchtrace/raw_view.py", "tests/test_pe_overview.py", "tests/test_representations.py", "tests/test_alpha_integration.py"]
+    },
+    {
+      "id": "engines",
+      "title": "Evidence panel with second-opinion engines",
+      "text": "Import a BinDiff result or run rizin's rz-diff, then see each Ghidriff match reconciled as Agree, Contested, Single engine or Unknown. Engines are shown side by side and never averaged into one number. BinDiff and rizin are external programs you install yourself.",
+      "evidence": ["src/patchtrace/secondary/evidence_view.py", "src/patchtrace/secondary/reconcile.py", "src/patchtrace/secondary/rzdiff.py", "src/patchtrace/secondary/bindiff.py", "src/patchtrace/ui_evidence.py", "tests/test_evidence_ui.py", "tests/test_secondary_rzdiff.py", "tests/test_secondary_bindiff.py", "tests/test_secondary_reconcile.py"]
+    },
+    {
+      "id": "winbindex",
+      "title": "Winbindex acquisition",
+      "text": "Look up Windows binaries on Winbindex and download both builds from the Microsoft symbol server, only after you consent to the listed hosts. Each file's SHA-256 is checked against Winbindex's record, which proves identity with that record, not vendor authenticity.",
+      "evidence": ["src/patchtrace/acquisition/winbindex.py", "src/patchtrace/acquisition/transport.py", "tests/test_acquisition_winbindex.py", "tests/test_acquisition_transport.py", "tasks/todo.md"]
+    },
+    {
+      "id": "reports",
+      "title": "Reports",
+      "text": "Export Markdown, self-contained HTML (no scripts) or JSON after an exact preview. Function code is opt-in, analyst notes are opt-out, and absolute paths are redacted.",
+      "evidence": ["src/patchtrace/reports.py", "tests/test_audit_ai_reports.py"]
+    },
+    {
+      "id": "storage",
+      "title": "Careful project storage",
+      "text": "SQLite projects with a single-writer lock, revision history, strict versioned records and full project backups, plus a verified backup before any history is pruned. Backends run in supervised processes with bounded logs, and failed output is quarantined.",
+      "evidence": ["src/patchtrace/persistence.py", "src/patchtrace/verified_backup.py", "src/patchtrace/jobs.py", "tests/test_core.py", "tests/test_prune_backup.py"]
+    },
+    {
+      "id": "cli",
+      "title": "Headless commands",
+      "text": "rank, flags, correlate, cache, acquire, series and secondary run without Qt, print one JSON document with --json and use documented exit codes.",
+      "evidence": ["src/patchtrace/cli.py", "tests/test_cli.py", "tests/test_acceptance_smoke.py"]
+    },
+    {
+      "id": "builds",
+      "title": "Windows and Linux builds, plus a sample",
+      "text": "A Windows x64 portable ZIP built on Windows CI (unsigned alpha) and a Linux x86-64 build. A synthetic sample project needs no Ghidra and no AI model: click Sample.",
+      "evidence": ["tools/build_windows.py", "tools/build_linux.py", ".github/workflows/qa-windows.yml", "src/patchtrace/sample.py", "tests/test_acceptance_smoke.py"]
+    }
+  ],
+  "not_verified": [
+    "Optional AI interpretation is tested with mocked transports only; live Ollama and OpenAI-compatible runs are still open.",
+    "Fetching CVE data live from NVD and MSRC is implemented behind consent but has not been verified against the real services.",
+    "BinDiff execution has been verified on Linux only, and BinExport2 only on synthetic files.",
+    "A hands-on acceptance pass of the Windows ZIP on a clean machine, including screen readers and display scaling, has not been done."
+  ],
+  "features": [
+    {"id": "ghidra", "name": "Ghidra and Ghidriff", "role": "Comparison engine (external)", "status": "working",
+     "note": "Supervised run or JSON import. Tested combination: Ghidra 12.0.4, Temurin Java 25 and a pinned Ghidriff revision. Ghidriff is GPL-licensed and stays a separate program.",
+     "evidence": ["src/patchtrace/backend.py", "tools/live_backend_check.py", "tests/test_core.py"]},
+    {"id": "rank", "name": "Change ranking", "role": "Built-in detectors", "status": "working",
+     "note": "Eight deterministic detectors and an ordinal attention score. Not a vulnerability verdict.",
+     "evidence": ["src/patchtrace/enrichment/signals.py", "src/patchtrace/enrichment/ranking.py", "tests/test_enrichment_signals.py"]},
+    {"id": "rzdiff", "name": "Rizin rz-diff", "role": "Second-opinion engine", "status": "working",
+     "note": "rizin 0.9.1 is recorded as passing a live check on a synthetic fixture pair on Linux and Windows CI. Its similarity is raw-byte, not semantic.",
+     "evidence": ["src/patchtrace/secondary/rzdiff.py", "tools/live_rzdiff_check.py", "tests/test_secondary_rzdiff.py", "docs/qa.md"]},
+    {"id": "bindiff-import", "name": "BinDiff results", "role": "Second-opinion engine (import)", "status": "working",
+     "note": "Hardened importer for finished .BinDiff files, checked against real BinDiff 8 output for a synthetic pair.",
+     "evidence": ["src/patchtrace/secondary/bindiff.py", "tests/test_secondary_bindiff.py", "tests/test_bindiff_real_golden.py"]},
+    {"id": "winbindex", "name": "Winbindex", "role": "Build lookup and consented download", "status": "working",
+     "note": "Live check matched one real driver. Delta (PA30) reconstruction is not exposed yet.",
+     "evidence": ["src/patchtrace/acquisition/winbindex.py", "tests/test_acquisition_winbindex.py", "tasks/todo.md"]},
+    {"id": "builds", "name": "Windows and Linux builds", "role": "Packaging", "status": "working",
+     "note": "The Windows ZIP is an unsigned alpha and clean-machine GUI acceptance is still open. The Linux build is a developer build.",
+     "evidence": ["tools/build_windows.py", "tools/build_linux.py", ".github/workflows/qa-windows.yml"]},
+    {"id": "bindiff-run", "name": "BinDiff execution", "role": "Second-opinion engine (run)", "status": "in-progress",
+     "note": "Implemented with a probe, pinned provisioning and a setup panel. Verified on Linux only; Windows runs and real-driver BinExport pairs are pending.",
+     "evidence": ["src/patchtrace/secondary/bindiff_run.py", "src/patchtrace/ui_engine_setup.py", "tests/test_bindiff_run.py"]},
+    {"id": "binexport", "name": "BinExport2", "role": "Input format for BinDiff", "status": "in-progress",
+     "note": "Strict, memory-capped validator built and tested on synthetic files. Real Ghidra or IDA exports have not been checked yet.",
+     "evidence": ["src/patchtrace/secondary/binexport.py", "src/patchtrace/secondary/binexport_pipeline.py", "tests/test_binexport_pipeline.py"]},
+    {"id": "nvd", "name": "NVD", "role": "CVE metadata, with consent", "status": "in-progress",
+     "note": "Saved snapshots work offline. Live fetch sends only the CVE ID after consent; verified with recorded responses, not the live service.",
+     "evidence": ["src/patchtrace/enrichment/cve.py", "src/patchtrace/enrichment/intelligence.py", "tests/test_enrichment_cve.py"]},
+    {"id": "msrc", "name": "MSRC", "role": "Microsoft advisory data, with consent", "status": "in-progress",
+     "note": "Same state as NVD: snapshots work offline; the live fetch is implemented but unverified.",
+     "evidence": ["src/patchtrace/enrichment/cve.py", "src/patchtrace/enrichment/intelligence.py", "tests/test_enrichment_cve.py"]},
+    {"id": "csaf", "name": "CSAF advisories", "role": "Machine-readable vendor advisories", "status": "in-progress",
+     "note": "Validator, normaliser, CWE hypotheses and OLD/NEW applicability are built on synthetic fixtures. There is no command, report or window yet, and real Microsoft CSAF documents have not been tried.",
+     "evidence": ["src/patchtrace/intelligence/csaf/validate.py", "src/patchtrace/intelligence/csaf/applicability.py", "tests/test_intel_validate.py"]},
+    {"id": "capa", "name": "capa", "role": "Capability delta", "status": "in-progress",
+     "note": "Adapter, strict parser and delta logic are built on goldens from synthetic PEs. The runner, command and window are not built yet.",
+     "evidence": ["src/patchtrace/intelligence/tools/capa.py", "src/patchtrace/intelligence/tools/delta.py", "tests/test_intel_tools_parsers.py"]},
+    {"id": "floss", "name": "FLOSS", "role": "Recovered strings", "status": "in-progress",
+     "note": "Adapter and strict parser are built. Extraction runs, the per-side strings delta and the window are not.",
+     "evidence": ["src/patchtrace/intelligence/tools/floss.py", "tests/test_intel_tools_parsers.py"]},
+    {"id": "die", "name": "Detect It Easy", "role": "Build-environment fingerprint", "status": "in-progress",
+     "note": "Adapter and strict parser are built. Running it, the environment card and noise attribution are not.",
+     "evidence": ["src/patchtrace/intelligence/tools/diec.py", "tests/test_intel_tools_parsers.py"]},
+    {"id": "unified", "name": "Unified diff engine", "role": "One fused view of every engine", "status": "in-progress",
+     "note": "Contracts and storage are built. Extraction, matching, change facts and the window are not.",
+     "evidence": ["src/patchtrace/unified/contracts.py", "src/patchtrace/unified/store.py", "tests/test_unified_store.py"]},
+    {"id": "ai", "name": "Optional AI interpretation", "role": "Hypotheses with cited evidence", "status": "in-progress",
+     "note": "Local Ollama or an HTTPS OpenAI-compatible endpoint, only after an exact preview. Tested with mocked transports; live provider acceptance is pending.",
+     "evidence": ["src/patchtrace/interpretation.py", "src/patchtrace/providers.py", "tests/test_audit_ai_reports.py"]},
+    {"id": "yarax", "name": "YARA-X", "role": "Rule workbench", "status": "planned",
+     "note": "Turn analyst-reviewed discoveries into tested rules that carry their provenance. The specification is not written yet.",
+     "evidence": [], "basis": "Program E roadmap, track YRX"},
+    {"id": "kev", "name": "CISA KEV", "role": "Known-exploited context", "status": "planned",
+     "note": "Verified exploitation badges for CVE-driven triage. The specification is not written yet.",
+     "evidence": [], "basis": "Program E roadmap, track KEV"},
+    {"id": "fts5", "name": "SQLite FTS5 search", "role": "Global search", "status": "planned",
+     "note": "Indexed search over functions, strings and notes with exact navigation. Designed, not built.",
+     "evidence": [], "basis": "Workbench specification PT-WB-01"},
+    {"id": "callgraph", "name": "Call graph", "role": "Caller and callee explorer", "status": "planned",
+     "note": "Ghidriff already supplies the caller and callee names and PatchTrace stores them. The explorer and graph canvas are designed, not built.",
+     "evidence": ["src/patchtrace/models.py"], "basis": "Workbench specification PT-WB-02"},
+    {"id": "calibrated", "name": "Calibrated ranking", "role": "Honest confidence", "status": "planned",
+     "note": "Training and evaluation tooling exists and is tested on synthetic data. No trained model ships, so ranks stay ordinal and are labelled uncalibrated.",
+     "evidence": ["src/patchtrace/calibration/policy.py", "tests/test_calibration_runtime.py"]}
+  ],
+  "previews": [
+    {"id": "leads", "title": "Ranked leads with evidence chips", "basis": "Program E roadmap: anchor fabric (FAB), patch-intent localisation (PIL) and the integration charter, section 3 (triage value)"},
+    {"id": "unified", "title": "Unified old/new comparison with change facts", "basis": "docs/specs/unified-engine/ (SPEC-31)"},
+    {"id": "search", "title": "Global search", "basis": "Workbench specification PT-WB-01 (SQLite FTS5, optional RapidFuzz)"},
+    {"id": "graph", "title": "Call-graph explorer", "basis": "Workbench specification PT-WB-02 (caller and callee navigation)"},
+    {"id": "strings", "title": "Strings delta", "basis": "Workbench specification PT-WB-03 and docs/specs/three-tool-evidence-adapters.md (FLOSS)"},
+    {"id": "capa", "title": "Capability delta", "basis": "docs/specs/three-tool-evidence-adapters.md (capa)"},
+    {"id": "die", "title": "Build-environment card", "basis": "docs/specs/three-tool-evidence-adapters.md (Detect It Easy)"},
+    {"id": "kb", "title": "KB to CVE to binary workflow", "basis": "Program E roadmap: KB-CVE correlator, KB patch search and CISA KEV tracks"},
+    {"id": "yara", "title": "YARA-X rule workbench", "basis": "Program E roadmap: YRX track (no specification yet)"},
+    {"id": "teacher", "title": "Guided reverse-engineering teacher", "basis": "Program E roadmap: GDE track and phase E-5"}
+  ],
+  "roadmap": [
+    {"phase": "E-0", "title": "Ship the current alpha",
+     "text": "Publish the merged work as a Windows prerelease and verify it. Done when the Linux, Windows and live checks are green and the ZIP and its SHA-256 have been checked."},
+    {"phase": "E-1", "title": "Plan every integration",
+     "text": "Write one integration plan per feature so the tools add up to more than their parts: each must compare old against new, report what changed rather than an inventory, share anchors such as functions, strings, APIs, capabilities and CVEs, and take you to the code in one click."},
+    {"phase": "E-2", "title": "Build the shared frameworks",
+     "text": "A panel registry and shared widgets for a single main window, the anchor layer that links findings across features, dependency and packaging groundwork, and offscreen test helpers, so features can be built side by side."},
+    {"phase": "E-3", "title": "Build the features",
+     "text": "The unified diff engine, KB to CVE correlation and KB patch search, label training, indexed search, call graph, strings, capa, Detect It Easy, YARA-X, CISA KEV and patch-intent localisation, in waves. Each wave is reviewed, passes the full CI and QA gates, and only then merges."},
+    {"phase": "E-4", "title": "Audit and harden",
+     "text": "Read-only code and feature audits, bug hunting, extensive QA and fixes, then Windows and Linux prerelease builds."},
+    {"phase": "E-5", "title": "Guided reverse engineering",
+     "text": "A deterministic teacher, explicitly not AI-assisted, that walks a person through using the finished tool. Every lesson step links to a real feature."},
+    {"phase": "E-6", "title": "Final checks",
+     "text": "A last feature audit and bug check, scripted beta scenarios, a performance check and a Windows prerelease build. Acceptance on real Windows hardware is reported separately and never counted as done by automation."}
+  ]
+}

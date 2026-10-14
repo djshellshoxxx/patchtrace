@@ -1,0 +1,189 @@
+<div class="pv-grid">
+
+  <article class="pv" aria-labelledby="pv-leads-t">
+    <header class="pv-head"><span class="pv-track">Leads / triage</span><span class="pv-flag">Design preview · not implemented</span></header>
+    <h3 id="pv-leads-t">Ranked leads with evidence chips</h3>
+    <p class="pv-lede">One list that answers &ldquo;where do I look first?&rdquo; Every lead shows which independent channels back it, and a missing channel is never counted as a vote against.</p>
+    <div class="mock" role="group" aria-label="Illustration with invented example data">
+      <ol class="leads">
+        <li><span class="lead-rank">1</span><div><b class="mono">copy_item</b><span class="muted"> &middot; 3 independent channels</span>
+          <div class="chips"><span class="chip c-teal">bounds check added</span><span class="chip c-teal">size argument changed</span><span class="chip c-orange">advisory phrase: &ldquo;out-of-bounds&rdquo;</span><span class="chip c-warn">KEV listed</span></div></div></li>
+        <li><span class="lead-rank">2</span><div><b class="mono">parse_header</b><span class="muted"> &middot; 2 independent channels</span>
+          <div class="chips"><span class="chip c-teal">validation call added</span><span class="chip c-orange">KB match</span><span class="chip c-dim">strings: not assessed</span></div></div></li>
+        <li><span class="lead-rank">3</span><div><b class="mono">log_state</b><span class="muted"> &middot; 1 channel</span>
+          <div class="chips"><span class="chip c-dim">layout-only change (proved)</span></div></div></li>
+      </ol>
+    </div>
+    <p class="pv-foot">Order is ordinal research priority. It is never shown as a probability.</p>
+  </article>
+
+  <article class="pv" aria-labelledby="pv-unified-t">
+    <header class="pv-head"><span class="pv-track">Unified engine</span><span class="pv-flag">Design preview · not implemented</span></header>
+    <h3 id="pv-unified-t">Unified old/new comparison with change facts</h3>
+    <p class="pv-lede">All engines fused into one old/new view. Alongside the diff, plain-language facts say what kind of change each hunk is, and how it was established.</p>
+    <div class="mock" role="group" aria-label="Illustration with invented example data">
+      <div class="diff2">
+        <pre class="code" role="group" aria-label="Older code"><span class="ln">1</span>int copy_item(buf, len, i) {
+<span class="ln">2</span>  return buf[i];
+<span class="ln">3</span>}</pre>
+        <pre class="code" role="group" aria-label="Newer code"><span class="ln">1</span>int copy_item(buf, len, i) {
+<span class="ln add">2</span><span class="add">  if (i &gt;= len) return -1;</span>
+<span class="ln">3</span>  return buf[i];
+<span class="ln">4</span>}</pre>
+      </div>
+      <ul class="facts">
+        <li><span class="chip c-teal">semantic</span> A guard now compares the index with the length before the read.</li>
+        <li><span class="chip c-dim">layout only</span> 11 other functions moved by a fixed offset; proved identical after masking addresses.</li>
+        <li><span class="chip c-orange">new callee</span> <span class="mono">report_invalid_index</span> exists only in the newer build.</li>
+      </ul>
+    </div>
+    <p class="pv-foot">Facts carry their proof tier; engines are never averaged.</p>
+  </article>
+
+  <article class="pv" aria-labelledby="pv-search-t">
+    <header class="pv-head"><span class="pv-track">Workbench</span><span class="pv-flag">Design preview · not implemented</span></header>
+    <h3 id="pv-search-t">Global search</h3>
+    <p class="pv-lede">Search functions, strings, notes and binary context from one box, with fuzzy matching on names and a jump straight to the exact code in either build.</p>
+    <div class="mock" role="group" aria-label="Illustration with invented example data">
+      <div class="searchbox mono"><span class="muted">Search</span> <span>bound</span><span class="caret" aria-hidden="true"></span></div>
+      <dl class="results">
+        <dt>Functions</dt><dd><span class="mono">check_bounds</span> <span class="chip c-dim">both</span> <span class="chip c-dim">fuzzy</span></dd>
+        <dd><span class="mono">copy_item</span> <span class="chip c-teal">newer</span> <span class="muted">&ldquo;bounds check&rdquo; in a note</span></dd>
+        <dt>Strings</dt><dd><span class="mono">&ldquo;index out of bounds&rdquo;</span> <span class="chip c-teal">newer only</span></dd>
+        <dt>Annotations</dt><dd class="muted">Your note on <span class="mono">copy_item</span>: &ldquo;guard before read&rdquo;</dd>
+      </dl>
+    </div>
+    <p class="pv-foot">Built on SQLite full-text search; an optional fuzzy matcher suggests names.</p>
+  </article>
+
+  <article class="pv" aria-labelledby="pv-graph-t">
+    <header class="pv-head"><span class="pv-track">Workbench</span><span class="pv-flag">Design preview · not implemented</span></header>
+    <h3 id="pv-graph-t">Call-graph explorer</h3>
+    <p class="pv-lede">Follow callers and callees from any function and see what the patch added, removed or left unresolved, with a jump to the code behind every node.</p>
+    <div class="mock" role="group" aria-label="Illustration with invented example data">
+      <svg class="graph" viewBox="0 0 420 190" role="img" aria-labelledby="graph-title graph-desc">
+        <title id="graph-title">Example call graph</title>
+        <desc id="graph-desc">The function dispatch calls copy_item, which is changed. In the newer build copy_item also calls report_invalid_index, which is new. The older build called debug_dump, which was removed. One callee is unresolved.</desc>
+        <g class="g-edges" fill="none" stroke-width="1.6">
+          <path d="M80 36 L190 80" stroke="#8a929e"/>
+          <path d="M240 98 L330 40" stroke="#e8532a"/>
+          <path d="M240 108 L330 108" stroke="#8a929e" stroke-dasharray="5 4"/>
+          <path d="M215 124 L215 158" stroke="#8a929e" stroke-dasharray="2 4"/>
+        </g>
+        <g class="g-nodes" font-size="12" text-anchor="middle">
+          <rect x="20" y="18" width="120" height="34" rx="4" fill="#171b22" stroke="#4fb6c4"/><text x="80" y="40" fill="#e6e8ec">dispatch</text>
+          <rect x="160" y="82" width="110" height="44" rx="4" fill="#171b22" stroke="#e8532a" stroke-width="2"/><text x="215" y="102" fill="#e6e8ec">copy_item</text><text x="215" y="117" fill="#8a929e" font-size="10">changed</text>
+          <rect x="300" y="18" width="110" height="44" rx="4" fill="#171b22" stroke="#e8532a"/><text x="355" y="38" fill="#e6e8ec" font-size="11">report_invalid_index</text><text x="355" y="53" fill="#e8532a" font-size="10">new</text>
+          <rect x="300" y="86" width="110" height="44" rx="4" fill="#171b22" stroke="#8a929e" stroke-dasharray="5 4"/><text x="355" y="106" fill="#e6e8ec">debug_dump</text><text x="355" y="121" fill="#8a929e" font-size="10">removed</text>
+          <rect x="165" y="158" width="100" height="28" rx="4" fill="#171b22" stroke="#8a929e" stroke-dasharray="2 4"/><text x="215" y="176" fill="#8a929e">unresolved</text>
+        </g>
+      </svg>
+    </div>
+    <p class="pv-foot">Unknown names are shown as unresolved, never as removed.</p>
+  </article>
+
+  <article class="pv" aria-labelledby="pv-strings-t">
+    <header class="pv-head"><span class="pv-track">Workbench &middot; FLOSS</span><span class="pv-flag">Design preview · not implemented</span></header>
+    <h3 id="pv-strings-t">Strings delta</h3>
+    <p class="pv-lede">Recovered strings compared per side, with where each came from and whether it is genuinely new or only newly detectable.</p>
+    <div class="mock" role="group" aria-label="Illustration with invented example data">
+      <div class="scroll-x" role="region" aria-label="Strings delta example table" tabindex="0">
+      <table class="mini">
+        <thead><tr><th scope="col">String</th><th scope="col">Source</th><th scope="col">Older</th><th scope="col">Newer</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">&ldquo;invalid index %zu&rdquo;</td><td>static</td><td>&ndash;</td><td><span class="chip c-teal">added</span></td></tr>
+          <tr><td class="mono">&ldquo;debug: %s&rdquo;</td><td>static</td><td><span class="chip c-dim">present</span></td><td>&ndash;</td></tr>
+          <tr><td class="mono">&ldquo;config.ini&rdquo;</td><td>decoded</td><td>&ndash;</td><td><span class="chip c-warn">newly detectable</span></td></tr>
+        </tbody>
+      </table>
+      </div>
+    </div>
+    <p class="pv-foot">&ldquo;Newly detectable&rdquo; is never reported as a confirmed fix.</p>
+  </article>
+
+  <article class="pv" aria-labelledby="pv-capa-t">
+    <header class="pv-head"><span class="pv-track">Workbench &middot; capa</span><span class="pv-flag">Design preview · not implemented</span></header>
+    <h3 id="pv-capa-t">Capability delta</h3>
+    <p class="pv-lede">What a matched function pair can newly do or no longer do, according to capa rules, with the rule pack version recorded and gaps stated.</p>
+    <div class="mock" role="group" aria-label="Illustration with invented example data">
+      <ul class="facts">
+        <li><span class="chip c-teal">+ introduced</span> validate input length <span class="muted">in</span> <span class="mono">copy_item</span></li>
+        <li><span class="chip c-warn">newly detectable</span> encode data using Base64 <span class="muted">(rule pack updated)</span></li>
+        <li><span class="chip c-dim">not assessed</span> 2 functions could not be analysed; absence is not a negative vote</li>
+      </ul>
+    </div>
+    <p class="pv-foot">Capabilities are hints for triage, not proof of behaviour.</p>
+  </article>
+
+  <article class="pv" aria-labelledby="pv-die-t">
+    <header class="pv-head"><span class="pv-track">Workbench &middot; Detect It Easy</span><span class="pv-flag">Design preview · not implemented</span></header>
+    <h3 id="pv-die-t">Build-environment card</h3>
+    <p class="pv-lede">A fingerprint of how each build was made, so toolchain noise is attributed to the toolchain instead of being read as a fix.</p>
+    <div class="mock" role="group" aria-label="Illustration with invented example data">
+      <div class="envcard">
+        <dl>
+          <dt>Older</dt><dd class="mono">compiler: MSVC family <span class="chip c-dim">heuristic</span></dd>
+          <dt>Newer</dt><dd class="mono">compiler: MSVC family <span class="chip c-dim">heuristic</span> &middot; linker version changed</dd>
+          <dt>Packer</dt><dd class="mono">none detected on either side</dd>
+        </dl>
+        <p class="note">Toolchain changed: some layout-only differences are likely build noise.</p>
+      </div>
+    </div>
+    <p class="pv-foot">Detections say how sure they are: signature, heuristic or unknown.</p>
+  </article>
+
+  <article class="pv" aria-labelledby="pv-kb-t">
+    <header class="pv-head"><span class="pv-track">KB &middot; CVE &middot; KEV</span><span class="pv-flag">Design preview · not implemented</span></header>
+    <h3 id="pv-kb-t">KB to CVE to binary workflow</h3>
+    <p class="pv-lede">Start from an update, see the CVEs it claims to fix with CISA KEV badges, and land on the functions in your two binaries that most plausibly match.</p>
+    <div class="mock" role="group" aria-label="Illustration with invented example data">
+      <div class="flow">
+        <div class="flow-col"><span class="flow-h">Update</span><span class="chip c-dim mono">KB0000001</span></div>
+        <span class="flow-arrow" aria-hidden="true">&rarr;</span>
+        <div class="flow-col"><span class="flow-h">CVEs</span><span class="chip c-warn mono">CVE-2099-00001 &middot; KEV</span><span class="chip c-dim mono">CVE-2099-00002</span></div>
+        <span class="flow-arrow" aria-hidden="true">&rarr;</span>
+        <div class="flow-col"><span class="flow-h">Functions</span><span class="chip c-teal mono">copy_item</span><span class="chip c-dim mono">parse_header</span></div>
+      </div>
+    </div>
+    <p class="pv-foot">All identifiers here are invented. A KEV badge is context, never proof for a function.</p>
+  </article>
+
+  <article class="pv" aria-labelledby="pv-yara-t">
+    <header class="pv-head"><span class="pv-track">YARA-X</span><span class="pv-flag">Design preview · not implemented</span></header>
+    <h3 id="pv-yara-t">YARA-X rule workbench</h3>
+    <p class="pv-lede">Turn a reviewed finding into a rule, test it against both builds and a clean set you choose, and keep its provenance with it.</p>
+    <div class="mock" role="group" aria-label="Illustration with invented example data">
+      <pre class="code yara" role="group" aria-label="Example rule"><span class="kw">rule</span> demo_guard_added {
+  <span class="kw">meta:</span>
+    source = "finding reviewed by analyst"
+  <span class="kw">strings:</span>
+    $a = { 48 3B ?? 72 }
+  <span class="kw">condition:</span>
+    $a
+}</pre>
+      <div class="chips"><span class="chip c-dim">older: 0 hits</span><span class="chip c-teal">newer: 1 hit</span><span class="chip c-dim">clean set: 0 hits</span></div>
+    </div>
+    <p class="pv-foot">Rules are suggestions you review and edit.</p>
+  </article>
+
+  <article class="pv" aria-labelledby="pv-teacher-t">
+    <header class="pv-head"><span class="pv-track">Guide</span><span class="pv-flag">Design preview · not implemented</span></header>
+    <h3 id="pv-teacher-t">Guided reverse-engineering teacher</h3>
+    <p class="pv-lede">A step-by-step lesson inside the tool that explains what you are looking at and what to try next. It follows fixed rules and is not AI-assisted.</p>
+    <div class="mock" role="group" aria-label="Illustration with invented example data">
+      <div class="lesson">
+        <p class="lesson-h mono">Lesson 2 of 6 &middot; Start with the top lead</p>
+        <ol class="steps">
+          <li class="done">Open the sample project</li>
+          <li class="now">Select the top-ranked function</li>
+          <li>Read the highlighted change</li>
+        </ol>
+        <p><b>What this means:</b> the list is ordered by research priority, not by danger.</p>
+        <p><b>What to do next:</b> compare the two sides, then record your own conclusion.</p>
+        <span class="chip c-orange">Take me there</span>
+      </div>
+    </div>
+    <p class="pv-foot">Every lesson step links to a real feature.</p>
+  </article>
+
+</div>

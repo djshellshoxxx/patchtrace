@@ -4,6 +4,10 @@ Owner directive (user, 2026-10-14, binding): integrate the high-value tools so t
 
 Standing rules still in force: `AGENTS.md`, `CLAUDE.md`, `phase-d-build-coordination.md` sections 2-4 (frozen seams, builder protocol, integration protocol). Prereleases only: **no final (non-prerelease) release without an explicit owner instruction**. Microsoft-derived data (binaries, PDBs, Winbindex-derived labels) stays on the owner's machine and is never committed. Primary-source research only (vendor/standard/upstream docs and papers; no blogs, videos or AI summaries). No GPL/AGPL code is copied (Ghidriff, Diaphora, PatchDiff2, Turbodiff are references only).
 
+## 0. Owner sequencing (2026-10-14, binding)
+
+ESSENTIAL PRIORITY: integrate Ghidra, Ghidriff and Java (and the private Python) into PatchTrace so no external dependency has to be downloaded (full Windows zip and Linux tar.gz; SPEC-06 consumer and `tools/make_offline_bundle.py` producer exist, the real payload and the integration are open). Owner: instance C. Everything else continues only after it is done: in-flight workers finish (never cancelled), no new slices or waves start until the bundle is announced done. Then the phases below resume in order.
+
 ## 1. Phases and exit gates
 
 | Phase | Scope | Exit gate |

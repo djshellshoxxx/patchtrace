@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0e1116">
+  <title>{{page_title}}</title>
+  <meta name="description" content="{{description}}">
+  <meta name="robots" content="index,follow">
+  <link rel="canonical" href="{{canonical_url}}">
+{{head_extra}}
+  <link rel="stylesheet" href="styles.css">
+  <script src="site.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <div class="site-shell">
+    <header class="site-header" id="top">
+      <a class="brand" href="#top">
+        <img src="assets/cdl-mark.svg" alt="" aria-hidden="true" width="34" height="34">
+        <span>PATCH<b>TRACE</b> <small>BY {{cdl_name_upper}}</small></span>
+      </a>
+      <nav class="main-nav" aria-label="Main navigation">
+{{nav_links}}
+      </nav>
+      <a class="header-link" href="{{cdl_url}}" rel="noopener noreferrer">{{cdl_name}} <span aria-hidden="true">&nearr;</span></a>
+    </header>
+
+    <main id="main" tabindex="-1">
+      <section class="hero" aria-labelledby="hero-title">
+        <div class="hero-copy">
+          <div class="eyebrow"><span class="signal-dot" aria-hidden="true"></span> BINARY PATCH ANALYSIS / ALPHA</div>
+          <h1 id="hero-title">Patch<em>Trace</em></h1>
+          <p class="hero-lede">Find what a patch really changed: compare the unpatched and patched binary, and the patch itself, offline.</p>
+          <ul class="badges" aria-label="Project status">
+            <li><a class="badge badge-alpha" href="#status">Alpha</a></li>
+            <li><a class="badge badge-vibe" href="#status">Vibe coded</a></li>
+          </ul>
+          <p class="hero-note">Comparing two binaries works today. Analysing the patch package itself is still on the roadmap.</p>
+          <div class="hero-actions">
+            <a class="button button-primary" href="{{repo_url}}" rel="noopener noreferrer">View on GitHub <span aria-hidden="true">&nearr;</span></a>
+            <a class="button button-outline" href="{{releases_url}}" rel="noopener noreferrer">Latest prerelease <span aria-hidden="true">&nearr;</span></a>
+            <a class="text-link" href="{{cdl_url}}" rel="noopener noreferrer">{{cdl_name}} <span aria-hidden="true">&nearr;</span></a>
+          </div>
+          <ul class="hero-meta" aria-label="Design principles"><li>OFFLINE-FIRST</li><li>STATIC ANALYSIS ONLY</li><li>NEVER RUNS THE TARGET</li><li>MIT LICENSED</li></ul>
+        </div>
+        <div class="hero-art">
+{{hero_art}}
+          <div class="readout readout-top" aria-hidden="true"><span>{{cdl_name_upper}}</span><span class="on-air"><i></i> ALPHA</span></div>
+          <div class="readout readout-bottom" aria-hidden="true"><span>OLD &rarr; NEW</span><span>PATCHTRACE</span></div>
+        </div>
+      </section>
+
+      <div class="section-rule" aria-hidden="true"><span>COMPARE BINARIES</span><span>TRACE FIXES</span></div>
+
+      <section class="section-space" id="status" aria-labelledby="status-title">
+        <div class="section-heading"><div><span class="kicker">01 / HONEST STATUS</span><h2 id="status-title">Early, vibe coded, and upfront about it.</h2></div><p>What you are looking at, in plain terms.</p></div>
+        <div class="status-grid">
+          <article class="card">
+            <span class="card-kicker">VIBE CODED</span>
+            <h3>Built with AI assistance</h3>
+            <p>PatchTrace was vibe coded by {{cdl_name}}: AI coding agents wrote much of the code and the tests under the owner&rsquo;s direction. Automated tests and CI back it, but the audits recorded in the repository were AI-assisted too, and no third-party security audit is recorded. Read before you trust.</p>
+          </article>
+          <article class="card">
+            <span class="card-kicker">ALPHA</span>
+            <h3>Expect rough edges</h3>
+            <p>Features are missing, interfaces can change and the Windows build is an unsigned, portable ZIP. Several checks are still open, listed below. It is provided as is, without warranty, under the MIT licence.</p>
+          </article>
+          <article class="card">
+            <span class="card-kicker">ANALYST-CONTROLLED</span>
+            <h3>Offline-first, nothing silent</h3>
+            <p>It analyses files statically and never runs, loads or installs the binaries you give it. Nothing is uploaded silently: downloads, CVE lookups and optional AI providers happen only after you consent and see exactly what will be sent. Credentials stay in memory for the request.</p>
+          </article>
+          <article class="card">
+            <span class="card-kicker">NOT CLAIMED</span>
+            <h3>No calibrated confidence</h3>
+            <p>Rankings are ordinal. An attention score suggests where to look first; it is not a probability, a vulnerability verdict or an exploitability estimate. Calibration tooling exists for research, but no trained model ships and scores are labelled uncalibrated.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section-space tinted" id="works" aria-labelledby="works-title">
+        <div class="section-heading"><div><span class="kicker">02 / WORKS TODAY</span><h2 id="works-title">What you can do right now.</h2></div><p>Each item was checked against the current source tree and its automated tests. Most of that evidence comes from synthetic or recorded fixtures rather than live runs; what is not yet verified is listed below the cards.</p></div>
+        <ul class="works-grid">
+{{works_list}}
+        </ul>
+        <div class="callout" role="note">
+          <h3>Implemented, but not yet verified</h3>
+          <ul>
+{{not_verified_list}}
+          </ul>
+        </div>
+      </section>
+
+{{screens_section}}
+      <section class="section-space tinted" id="preview" aria-labelledby="preview-title">
+        <div class="section-heading"><div><span class="kicker">{{preview_number}} / DESIGN PREVIEW</span><h2 id="preview-title">What it is meant to do when it is finished.</h2></div><p>Drawn from the Program E roadmap and the workbench specifications.</p></div>
+        <p class="banner" role="note"><strong>Illustrations, not screenshots.</strong> Everything in this section is a design preview with invented example data. None of it is implemented yet, and it may change before it is.</p>
+{{previews}}
+      </section>
+
+      <section class="section-space" id="features" aria-labelledby="features-title">
+        <div class="section-heading"><div><span class="kicker">{{features_number}} / FEATURES &amp; INTEGRATIONS</span><h2 id="features-title">What it connects to, and how far along each piece is.</h2></div><p>External tools are installed and licensed separately; PatchTrace talks to them through their own interfaces.</p></div>
+        <p class="legend"><span class="tag tag-working"><span aria-hidden="true">&check;</span> Working</span> is in the current code and covered by automated tests, with caveats noted. <span class="tag tag-progress"><span aria-hidden="true">&#9680;</span> In progress</span> is partly built, or not yet verified against the real tool or service. <span class="tag tag-planned"><span aria-hidden="true">&#9675;</span> Planned</span> is designed but not built.</p>
+{{features_table}}
+      </section>
+
+      <section class="section-space tinted" id="roadmap" aria-labelledby="roadmap-title">
+        <div class="section-heading"><div><span class="kicker">{{roadmap_number}} / GAME PLAN</span><h2 id="roadmap-title">Where this is going.</h2></div><p>The current roadmap is called Program E. It runs in phases, each with an exit gate. No dates are promised.</p></div>
+        <ol class="roadmap">
+{{roadmap_list}}
+        </ol>
+        <p class="banner" role="note"><strong>Prereleases only.</strong> There will be no final, non-prerelease version until the owner explicitly decides otherwise. Checks that need real Windows hardware or Microsoft-hosted services are reported separately and are never counted as done by automation.</p>
+      </section>
+
+{{donate_section}}
+    </main>
+
+    <footer class="site-footer">
+      <div class="footer-mark"><img src="assets/cdl-mark.svg" alt="" aria-hidden="true" width="32" height="32"><span>PATCHTRACE</span></div>
+      <p>An alpha, vibe-coded project from <a href="{{cdl_url}}" rel="noopener noreferrer">{{cdl_name}}</a>. Provided as is, without warranty.</p>
+      <div class="footer-links">
+        <a href="{{cdl_url}}" rel="noopener noreferrer">{{cdl_name}}</a>
+        <a href="{{repo_url}}" rel="noopener noreferrer">GitHub repository</a>
+        <a href="{{license_url}}" rel="noopener noreferrer">MIT licence</a>
+        <a href="#top">Back to top <span aria-hidden="true">&uarr;</span></a>
+        <span>&copy; {{copyright_year}} {{cdl_name}}</span>
+      </div>
+    </footer>
+  </div>
+</body>
+</html>

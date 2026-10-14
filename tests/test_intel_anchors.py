@@ -85,3 +85,20 @@ def test_anchor_set_is_deterministic_bounded_and_never_names_matches():
     assert keys == sorted(keys) and len({a.anchor_id for a in first.anchors}) == len(first.anchors)
     assert len(first.anchors) <= an.MAX_ANCHORS
     assert 'match' not in json.dumps(json.loads(first.model_dump_json())).lower().replace('no match', '')
+
+
+def retitled(title: str) -> AnchorSet:
+    doc = json.loads((FIXTURES / 'synthetic-advisory-rev1.json').read_text(encoding='utf-8'))
+    doc['vulnerabilities'][0]['title'] = title
+    return anchors('CVE-2099-10001', docs=[load(json.dumps(doc).encode())])
+
+
+def test_c06_markup_only_component_cannot_produce_an_empty_anchor():
+    result = retitled('<i></i> Remote Code Execution Vulnerability')
+    assert find(result, 'component') == {}
+    assert all(a.value.strip() for a in result.anchors)
+
+
+def test_c06_markup_around_the_component_is_stripped_before_matching():
+    (component,) = find(retitled('<b></b> Contoso Print Remote Code Execution Vulnerability'), 'component')
+    assert component == 'Contoso Print'
