@@ -339,3 +339,5 @@
 ### [R2:yarax-engine-worker]
 - [x] R2 engine facade, hidden worker, runner; tests `tests/test_yarax_{engine,worker}.py`.
 - [ ] R7: `rules _worker` CLI verb for the frozen exe, PyInstaller hook, frozen smoke scan (`--request` with result path `-` prints the one JSON document).
+### [K7v:kb-acquire-cli]
+- [x] `kb acquire` verb, `Acquirer` binding in `wiring`, `kb index import --winbindex`. Integrator: hook `kb` in `patchtrace/cli.py` (see `kbcorrelation/cli.py`) if not yet applied.

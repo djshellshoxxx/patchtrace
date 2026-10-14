@@ -23,6 +23,8 @@ from pydantic import ValidationError
 from . import components as comp
 from . import pairs as pr
 from . import resolver
+from .acquire import AcquirePort, build_plan, row_for, verify_consent
+from .acquire import acquire_pair as run_acquire
 from .cli_index import IndexPorts, load_index
 from .context import ContextBundle, RulesPort, build_bundle, vulnerability_pointer
 from .contracts import (
@@ -81,6 +83,9 @@ class FileIndex(Protocol):
 
     def rows(self, file_name: str, winbindex_key: str) -> tuple[Sequence[IndexRow], int]: ...
 
+    def rows_for(self, file_name: str, winbindex_key: str) -> list[dict]:
+        """The record's rows as mappings, the shape the acquisition port downloads from."""
+
 
 class ProjectAccess(ProjectPort, Protocol):
     """``ProjectPort`` plus the two reads and the lookup the service needs; bound by ``wiring.RealProjectPort``."""
@@ -100,6 +105,8 @@ class Env:
     project: Callable[[WorkspaceStore | None, str], ProjectAccess]
     fault: Fault | None = None
     file_index: Callable[[Path], FileIndex] | None = None
+    acquirer: AcquirePort | None = None
+    winbindex_import: Callable[[Path, Path, str, str], dict] | None = None  # (root, file, name, date) -> summary
 
 
 @dataclass
@@ -466,19 +473,24 @@ class KbService:
         blocking = [c for c in pair.reason_codes if c in HARD_BLOCKS or c == 'ORDER_UNVERIFIED']
         return ' '.join(pr.reason_text(code, arch=arch, k=len(pair.window)) for code in blocking)
 
+    @staticmethod
+    def _pick_pair(found, pair_id: str | None):
+        """The pair named by ``pair_id`` (a prefix), else the first unblocked candidate, else None."""
+        every = [pair for res in found for pair in res.pairs]
+        if pair_id is None:
+            return next((p for p in every if p.grade != 'X'), None)
+        pair = next((p for p in every if p.pair_id.startswith(pair_id)), None)
+        if pair is None:
+            raise _fail('PT-KBC-INPUT', 'that pair is not a candidate for this lead; list them with "kb pairs"')
+        return pair
+
     def plan(self, investigation: str, *, pair_id: str | None = None, product: str | None = None,
              files: Iterable[str] = ()) -> Outcome:
         got = self._resolve_pairs(investigation, product, files)
         if isinstance(got[1], Outcome):
             return got[1]
         rev, found, _, _ = got
-        every = [pair for res in found for pair in res.pairs]
-        if pair_id is None:
-            pair = next((p for p in every if p.grade != 'X'), None)
-        else:
-            pair = next((p for p in every if p.pair_id.startswith(pair_id)), None)
-            if pair is None:
-                raise _fail('PT-KBC-INPUT', 'that pair is not a candidate for this lead; list them with "kb pairs"')
+        pair = self._pick_pair(found, pair_id)
         result = {'contract': 'kbcorrelation/1', 'investigation_id': rev.investigation_id, 'plan': None, 'pair': None}
         if pair is None:
             return Outcome(4, 'unavailable', result, 'There is no pair candidate to plan; see "kb pairs".')
@@ -489,6 +501,51 @@ class KbService:
         plan = index_plan(pair)
         result['plan'] = plan.as_dict()
         return Outcome(0, 'complete', result, plan.text)
+
+    # ------------------------------------------------------------------------------------------ acquire
+
+    def acquire(self, investigation: str, directory: str, *, pair_id: str | None = None, product: str | None = None,
+                files: Iterable[str] = (), name: str | None = None, consent_hosts: Sequence[str] = (),
+                consent_plan: str = '', offline: bool = False) -> Outcome:
+        """Plan the file-index pair, and fetch it only for consent naming exactly the planned hosts and ``plan_sha``.
+        Without matching consent the exact plan is returned with exit 2 and nothing is requested."""
+        if self.env.acquirer is None or self.env.file_index is None:
+            raise _fail('PT-KBC-UNSUPPORTED', 'downloading is not available in this build')
+        got = self._resolve_pairs(investigation, product, files)
+        if isinstance(got[1], Outcome):
+            return got[1]
+        rev, found, _, _ = got
+        pair = self._pick_pair(found, pair_id)
+        result = {'contract': 'kbcorrelation/1', 'investigation_id': rev.investigation_id, 'plan': None, 'pair': None}
+        if pair is None:
+            return Outcome(4, 'unavailable', result, 'There is no pair candidate to acquire; see "kb pairs".')
+        result['pair'] = self._pair_dict(pair)
+        # the key only selects among shared copies of one record; row_for matches by SHA-256 and name
+        rows = self.env.file_index(self.root).rows_for(pair.older.basename, '')
+        older_row = row_for(rows, pair.older.sha256, pair.older.basename)
+        newer_row = row_for(rows, pair.newer.sha256, pair.newer.basename)
+        try:
+            plan = build_plan(pair, older_row, newer_row, self.env.acquirer)
+            result['plan'] = plan.as_dict()
+            verify_consent(plan, consent_hosts=consent_hosts, consent_plan=consent_plan, offline=offline)
+        except KbcStoreError as exc:
+            if result['plan'] is None and exc.code != 'PT-KBC-UNSUPPORTED':
+                raise
+            text = plan.text if result['plan'] else exc.message
+            return Outcome(2, 'failed', result, text, error=f'{exc.code}: {exc.message}')
+        try:
+            done = run_acquire(
+                plan, older_row, newer_row, port=self.env.acquirer, directory=directory, consent_hosts=consent_hosts,
+                consent_plan=consent_plan, offline=offline,
+                import_pair=lambda o, n, d: self.import_pair(rev.investigation_id, o, n, d, name=name))
+        except KbcStoreError as exc:
+            if exc.code != 'PT-KBC-CANCEL':
+                raise
+            return Outcome(5, 'cancelled', result, exc.message)
+        return Outcome(done.outcome.exit, done.outcome.status,
+                       {**done.outcome.result, 'acquisition': {'plan_sha': done.plan_sha,
+                                                               'downloads': list(done.downloads)}},
+                       done.outcome.text, done.outcome.warnings, done.outcome.error)
 
     # ------------------------------------------------------------------------------------------ import-pair
 

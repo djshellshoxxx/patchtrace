@@ -61,6 +61,7 @@ class IndexPorts:
     """Sibling-package behaviour bound by the caller. Both are optional; the defaults are safe."""
     advisory: AdvisoryPort | None = None
     clock: ClockPort | None = None
+    winbindex: Callable[[Path, Path, str, str], dict] | None = None  # (workspace, file, name, date) -> summary
 
     def now(self) -> str:
         return (self.clock or _SystemClock()).now_utc()
@@ -85,6 +86,9 @@ def build_parser(prog: str = 'patchtrace kb index') -> argparse.ArgumentParser:
     sub = parser.add_subparsers(dest='action', required=True, parser_class=Parser)
     imp = add_common(sub.add_parser('import', help='import saved CVRF month or CSAF JSON files (all or nothing)'))
     imp.add_argument('files', nargs='+', type=Path, metavar='FILE')
+    imp.add_argument('--winbindex', metavar='NAME', help='FILE is a saved Winbindex record of this file name (for '
+                     'example afd.sys), stored for "kb pairs"; one file, .json or .json.gz')
+    imp.add_argument('--data-date', metavar='YYYY-MM-DD', help='data date of the Winbindex record (default: today)')
     add_common(sub.add_parser('status', help='list the loaded documents and their coverage'))
     add_common(sub.add_parser('verify', help='re-hash and re-parse every stored document'))
     plan = add_common(sub.add_parser('plan', help='preview the exact requests of a sync (no network)'))
@@ -223,7 +227,32 @@ def coverage_block(index: ReverseIndex, now: str) -> dict:
 
 # ---------------------------------------------------------------------------------------------- verbs
 
+def _import_winbindex(args, ports: IndexPorts, out) -> int:
+    if ports.winbindex is None:
+        raise CliError(ENVIRONMENT, 'Winbindex records are not supported by this build')
+    if len(args.files) != 1:
+        raise CliError(ENVIRONMENT, '--winbindex takes exactly one record file')
+    try:
+        summary = ports.winbindex(workspace_root(args), args.files[0], args.winbindex,
+                                  args.data_date or ports.now()[:10])
+    except KbcStoreError as exc:
+        _emit(out, args, 'failed', {'contract': CONTRACT, 'winbindex': None, 'index_changed': False}, [],
+              f'rejected {clean_text(args.files[0].name, 200)}: {exc.code}: {exc.message}\nThe index is unchanged.',
+              error=f'{exc.code}: {exc.message}')
+        print(f'error: {exc.code}: {exc.message}', file=sys.stderr)
+        return ENVIRONMENT if exc.code in (*ARGUMENT_CODES, 'PT-KBC-LIMIT') else RUNTIME
+    text = (f'{summary["stored_as"]}: {summary["rows"]} build row(s), {summary["skipped"]} entr(ies) skipped'
+            + (' (replaced)' if summary['replaced'] else '') + '.')
+    _emit(out, args, 'complete', {'contract': CONTRACT, 'winbindex': summary, 'index_changed': True},
+          summary['warnings'], text)
+    return OK
+
+
 def cmd_import(args, ports: IndexPorts, out) -> int:
+    if args.winbindex:
+        return _import_winbindex(args, ports, out)
+    if args.data_date:
+        raise CliError(ENVIRONMENT, '--data-date applies only with --winbindex')
     root = workspace_root(args)
     now = ports.now()
     parsed: list[tuple[ImportedDocument, bytes, str]] = []

@@ -19,7 +19,7 @@ import sys
 from dataclasses import dataclass
 from pathlib import Path
 
-from . import cli_index, cli_leads, cli_online, cli_pairs
+from . import cli_acquire, cli_index, cli_leads, cli_online, cli_pairs
 from .cli_index import IndexPorts, Parser, add_common, present, run_cli, workspace_root
 
 
@@ -42,7 +42,7 @@ class Context:
 
     def index_ports(self) -> IndexPorts:
         env = self._env()
-        return IndexPorts(advisory=env.advisory, clock=env.clock)
+        return IndexPorts(advisory=env.advisory, clock=env.clock, winbindex=env.winbindex_import)
 
 
 def _register_core(sub) -> None:
@@ -89,8 +89,9 @@ def cmd_export(args, context, out) -> int:
 
 
 HANDLERS = {'search': cmd_search, 'attach': cmd_attach, 'explain': cmd_explain, 'export': cmd_export,
-            **cli_pairs.HANDLERS, **cli_leads.HANDLERS}
-REGISTRARS = [_register_core, cli_pairs.register, cli_leads.register]
+            **cli_pairs.HANDLERS, **cli_leads.HANDLERS,
+            **cli_acquire.HANDLERS}
+REGISTRARS = [_register_core, cli_pairs.register, cli_leads.register, cli_acquire.register]
 
 
 def build_parser() -> Parser:

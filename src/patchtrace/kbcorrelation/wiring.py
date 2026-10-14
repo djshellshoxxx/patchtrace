@@ -85,6 +85,46 @@ class WorkspaceFileIndex:
         return rows, self._skipped.get(file_name, 0) + rejected
 
 
+def save_winbindex_record(root: Path, source: Path, file_name: str, data_date: str) -> dict:
+    """Validate one Winbindex record file and store it as ``winbindex/<name>@<date>.json[.gz]`` for the file index.
+
+    Nothing is written unless ``parse_rows`` accepts it within its size bounds; a record of the same name and date is
+    replaced (the same record or a corrected one). The file is data and is never executed.
+    """
+    from ..acquisition.contracts import AcquisitionError
+    from ..acquisition.winbindex import MAX_COMPRESSED, parse_rows
+    name = normalise_file(file_name)
+    try:
+        with open(source, 'rb') as handle:
+            raw = handle.read(MAX_COMPRESSED + 1)
+    except OSError:
+        raise KbcStoreError('PT-KBC-INPUT', 'the Winbindex record cannot be read') from None
+    if len(raw) > MAX_COMPRESSED:
+        raise KbcStoreError('PT-KBC-LIMIT', 'the Winbindex record exceeds its size limit')
+    gz = raw[:2] == b'\x1f\x8b'
+    try:
+        parsed = parse_rows(raw, name, data_date, compressed=gz)
+    except AcquisitionError as exc:
+        code = 'PT-KBC-LIMIT' if exc.code == 'PT-ACQ-LIMIT' else 'PT-KBC-INPUT'
+        raise KbcStoreError(code, f'the file is not a usable Winbindex record: {exc.message}') from None
+    if not parsed.rows:
+        raise KbcStoreError('PT-KBC-INPUT', 'the Winbindex record has no usable build rows')
+    target = Path(root) / INDEX_DIR / f'{name}@{data_date}.json{".gz" if gz else ""}'
+    other = target.with_name(target.name[:-3] if gz else target.name + '.gz')
+    try:
+        target.parent.mkdir(parents=True, exist_ok=True)
+        replaced = target.is_file() or other.is_file()
+        staging = target.with_name(target.name + '.tmp')
+        staging.write_bytes(raw)
+        staging.replace(target)
+        other.unlink(missing_ok=True)  # one record per name and date, in either form
+    except OSError:
+        raise KbcStoreError('PT-KBC-STORAGE', 'the workspace cannot be written') from None
+    return {'file_name': name, 'data_date': data_date, 'stored_as': f'{INDEX_DIR}/{target.name}',
+            'sha256': hashlib.sha256(raw).hexdigest(), 'bytes': len(raw), 'rows': len(parsed.rows),
+            'skipped': parsed.skipped, 'warnings': list(parsed.warnings), 'replaced': replaced}
+
+
 class IntelligenceAdvisory:
     """``AdvisoryPort`` over the offline CSAF validator and normaliser of ``intelligence``."""
 
@@ -233,11 +273,14 @@ def _project_factory(workspace: WorkspaceStore | None, name: str) -> RealProject
     return RealProjectPort(workspace, name)
 
 
-def build_env(*, clock=None, fault: Fault | None = None, advisory=None) -> Env:
-    """The production ports; ``clock`` and ``fault`` (a crash-point seam) exist for tests."""
+def build_env(*, clock=None, fault: Fault | None = None, advisory=None, acquirer=None) -> Env:
+    """The production ports; ``clock``, ``fault`` (a crash-point seam) and ``acquirer`` (a fake transport) exist for
+    tests. The default ``Acquirer`` opens a socket only inside a consented ``kb acquire``."""
+    from ..acquisition.workflow import Acquirer
     return Env(advisory=advisory or IntelligenceAdvisory(), clock=clock or SystemClock(), rules=IntelligenceRules(),
                inspect=inspect_local_file, escape=escape_markdown, project=_project_factory, fault=fault,
-               file_index=WorkspaceFileIndex)
+               file_index=WorkspaceFileIndex,
+               acquirer=acquirer or Acquirer(), winbindex_import=save_winbindex_record)
 
 
 def build_service(workspace: Path, **options) -> KbService:
