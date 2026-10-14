@@ -53,8 +53,8 @@ Spec numbers are reconciled in `specs/REGISTRY.md`.
 ## 4. Worker protocol and model ladder
 
 - Protocol: `phase-d-build-coordination.md` section 3 (isolated worktree, local commits, no push, exclusive files, red/green tests, ruff + full suite twice, report at most 250 words). Research workers write only their own files.
-- Models: Haiku for fixtures, registries, cross-reference scans, lint; Sonnet for research, frameworks, most builders, QA and bug hunters; Opus for hard algorithmic or security-nuanced builds and the synergy contract; Fable only for a demonstrated hard blocker or a failed lower-cost approach (CLAUDE.md cost discipline).
-- Concurrency: at most 20 workers at once; the integration owner is the only merger and pusher.
+- Models: Haiku for fixtures, registries, cross-reference scans, lint; Sonnet for research, frameworks, most builders, QA and bug hunters; Opus only after two serious Sonnet attempts failed on one problem or for a slice a plan flags as hard. **Fable is never used** (owner instruction 2026-10-14). Be patient: never cancel a worker that is making progress.
+- Concurrency and instances: three instances (A, B, C) per `multi-instance-coordination.md`, at most 12 workers each (4 CPUs per container); each instance pushes only to its own branch and merges its own PRs.
 - Modularity: pure domain models and adapters separate from Qt; one package per feature; every cross-feature call goes through a Protocol (port) or the anchor fabric; no feature imports another feature's internals.
 - Windows pitfalls checklist for every builder: CRLF (`.gitattributes` for pinned/generated files), 32767-character `PYTEST_CURRENT_TEST` (short explicit parametrize ids), coarse `time.monotonic()` (`>=`), YAML plain scalars with `: `, wheels-only installs (`--only-binary=:all:`), tests must be hermetic (never touch the network unless the test is a declared live test).
 
@@ -73,5 +73,5 @@ A recurring routine wakes this session. On each wake: list workers and open PRs;
 
 | Item | State | Evidence |
 |---|---|---|
-| E-0 PR #42 | CI running on 2a5b2fb | see PR |
+| E-0 PR #42 | merged 67e5a6c; prerelease v0.1.0-beta.202 pending verification | release job run 38558039288 |
 | E-1 research | not started | |
