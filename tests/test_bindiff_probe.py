@@ -188,6 +188,20 @@ def test_spawn_error_and_cancel_are_unsupported_not_raised(tmp_path):
     assert cancelled.kind == 'probe-cancelled'
 
 
+@pytest.mark.parametrize('code, text', [(1, 'exit 1'), (-9, 'signal 9'), (0xC0000135, 'exit 0xC0000135'),
+                                        (3221226505, 'exit 0xC0000409')])
+def test_exit_text_renders_windows_status_codes_in_hex(code, text):
+    assert bindiff_probe.exit_text(code) == text
+
+
+def test_probe_failure_reports_the_exit_code(tmp_path):
+    # e.g. STATUS_DLL_NOT_FOUND when the VC++ runtime is missing on Windows (SPEC-29 D5)
+    exe = make_fake_bindiff(tmp_path / 'bd')
+    report = probe_report(exe, runner=lambda *a, **k: ProcessResult(0xC0000135, '', None, ''), use_cache=False)
+    assert report.kind == 'probe-failed' and '0xC0000135' in report.capability.reason
+    assert 'runtime library' in report.capability.reason
+
+
 def test_sanitize_strips_ansi_controls_and_paths():
     text = '\x1b[31mError: could not load /secret/home/user/older.BinExport: C:\\Users\\bob\\x.BinExport\x07 bad'
     clean = sanitize(text)

@@ -423,6 +423,20 @@ def test_output_path_over_250_characters_fails_closed_before_spawn(tmp_path):
     assert not deep.exists() or not list(deep.glob('patchtrace-bindiff-*'))
 
 
+def test_windows_status_exit_code_is_reported_in_hex(tmp_path):
+    from patchtrace.jobs import ProcessResult
+    from patchtrace.secondary.bindiff_inputs import bind_pair
+    inputs = tmp_path / 'inputs'
+    inputs.mkdir()
+    pair = bind_pair(accepted(inputs, 'o', OLD), accepted(inputs, 'n', NEW), OLD, NEW)
+    cap = Capability(engine='bindiff', supported=True, version='8', path=str(tmp_path / 'bindiff'),
+                     supports_json=False)
+    with pytest.raises(SecondaryError) as info:
+        bindiff_run.execute(cap, pair, tmp_path / 'raw', cancel=threading.Event(), timeout_seconds=5,
+                            runner=lambda *a, **k: ProcessResult(0xC0000409, '', None, ''), parent_dir=tmp_path)
+    assert info.value.kind == 'nonzero-exit' and '0xC0000409' in info.value.message
+
+
 def test_stored_stderr_is_sanitized(tmp_path):
     out, _ = go(tmp_path, 'exit-1-error')
     assert out.run.stderr_tail == sanitize_stderr(out.run.stderr_tail)

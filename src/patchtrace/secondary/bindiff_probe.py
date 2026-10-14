@@ -58,6 +58,14 @@ def sanitize(text: str, limit: int = 200) -> str:
     return text.strip()[:limit]
 
 
+def exit_text(code: int) -> str:
+    """`exit N`, `signal N` (POSIX, negative) or `exit 0xC0000135` (Windows NTSTATUS-sized codes, e.g. a
+    missing VC++ runtime DLL), so a probe or run failure says how the process ended."""
+    if code < 0:
+        return f'signal {-code}'
+    return f'exit 0x{code & 0xFFFFFFFF:08X}' if code > 255 else f'exit {code}'
+
+
 def first_error_line(text: str) -> str:
     lines = [line.strip() for line in text.splitlines() if line.strip()]
     for line in lines:
@@ -171,7 +179,11 @@ def _probe(exe: Path, cancel: threading.Event, runner: Callable, environ: Mappin
         if version_run.reason == 'cancelled':
             return _unsupported(path, 'probe-cancelled', 'BinDiff probe was cancelled.')
         parsed = parse_version(f'{version_run.log_tail}\n{version_run.stderr_tail}')
-        if version_run.reason or version_run.returncode != 0 or parsed is None:
+        if not version_run.reason and version_run.returncode != 0:
+            ended = exit_text(version_run.returncode)
+            return _unsupported(path, 'probe-failed', f'BinDiff did not report a version ({ended}); it may be '
+                                'damaged or need a missing runtime library.')
+        if version_run.reason or parsed is None:
             return _unsupported(path, 'probe-failed', MESSAGES['probe-failed'])
         major, detail = parsed
         version = f'{major}{detail}'

@@ -23,7 +23,7 @@ from pathlib import Path
 from ..jobs import run_process
 from .bindiff import import_bindiff
 from .bindiff_inputs import BoundPair, copy_and_hash
-from .bindiff_probe import build_env, first_error_line, make_private_dirs, sanitize
+from .bindiff_probe import build_env, exit_text, first_error_line, make_private_dirs, sanitize
 from .contracts import Capability, SecondaryError, SecondaryMatchSet
 
 DEFAULT_TIMEOUT = 1800
@@ -234,12 +234,12 @@ def execute(cap: Capability, pair: BoundPair, raw_dir: Path, *, cancel: threadin
         if result.reason:
             raise _err('PT-SECONDARY-RUN', 'stopped', f'BinDiff was stopped ({sanitize(result.reason, 40)}).')
         if result.returncode < 0:
-            raise _err('PT-SECONDARY-RUN', 'nonzero-exit', f'BinDiff terminated abnormally (signal '
-                       f'{-result.returncode}); its partial output was discarded.')
+            raise _err('PT-SECONDARY-RUN', 'nonzero-exit', f'BinDiff terminated abnormally ('
+                       f'{exit_text(result.returncode)}); its partial output was discarded.')
         if result.returncode != 0:
             line = sanitize(first_error_line(stderr or stdout))
             raise _err('PT-SECONDARY-RUN', 'nonzero-exit', f'BinDiff reported an error: {line or "no message"} '
-                       f'(exit {result.returncode}).')
+                       f'({exit_text(result.returncode)}).')
         out = workdir / 'out'
         entries = sorted(out.iterdir())
         expected = out / EXPECTED_NAME
