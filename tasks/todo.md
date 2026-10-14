@@ -337,3 +337,8 @@
 - [ ] Integrator (F5): call register_gui_tips() in the host and in the test fixture; wrap the central widget with NoticeStrip; have tooltips.py delegate apply_tooltip(accessible=) to gui.tips.apply_tip or adopt it.
 - [ ] F7: high-contrast chip drawing, system variant, ThemeTokens from QPalette.
 - [ ] BLOCKED (manual): real Narrator or NVDA output for the status strip and notice strip, Windows rendering of chip shapes at 100-200 percent DPI.
+
+### [F6a:codediff]
+- [ ] Integrator (M4): move the four ui.py setExtraSelections sites (render_match, _highlight_hunks, raw view, raw clear) to compose_selections; adopt CodeDiffView in ui.py when M4 lands.
+- [ ] WBQ S9: attach the windowed CodeHighlighter through CodeDiffView.attach_highlighter before set_pair.
+- [ ] F7: hunk tints come from the ui.py literals (#263a43, #33392b) guarded by ensure_contrast; move them to ThemeTokens with the system and high-contrast variants.
