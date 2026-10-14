@@ -155,3 +155,7 @@ Built: common, process, capa, floss, diec, normalize, delta (tests: `tests/test_
 | unified contracts | src/patchtrace/unified/contracts.py | strict frozen records of 02 (rows, facts, manifest, pointer, run, program-ir, extract request/header/footer, key inputs) | pydantic, limits | tests/test_unified_contracts.py; docs/schemas/unified/ (+ examples/index.json) |
 | unified keys | src/patchtrace/unified/keys.py | ir_key, result_key, row_id, config/limits/manual/source digests, run id | enrichment.identity | tests/test_unified_keys.py |
 | unified store | src/patchtrace/unified/store.py | result sidecars (decompressed-content hashes), pointer rows `unified-result`/`unified-run`, cache misses, own retention, `backup_once`/`delete_own` | enrichment.storage (public API), ingestion | tests/test_unified_store.py |
+### [B-0:optional-deps] Program E dependency enablement (2026-10-14; instance B)
+| Module | Files | Responsibility | Depends on | Tests |
+|---|---|---|---|---|
+| optional deps | src/patchtrace/optional_deps.py, tools/pyinstaller_hooks/hook-patchtrace.optional_deps.py | guarded static imports of rapidfuzz, pygments, networkx, pefile, yara_x (extras `workbench`, `rules` in pyproject, wheels only); `probe()`/`available()`/`summary_line()` never raise; `--self-test` prints `optional-deps:` and `tools/frozen_smoke.py` requires `missing=none` in the frozen EXE; `.github/workflows/optional-deps.yml` installs the extras wheels-only on ubuntu and windows | stdlib | `tests/test_optional_deps.py` |

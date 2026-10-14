@@ -27,7 +27,9 @@ def main() -> int:
     if self_test:
         from PySide6.QtCore import QSettings
 
+        from .optional_deps import summary_line
         from .service import ProjectService
+        print(summary_line())  # frozen_smoke asserts the guarded imports survive PyInstaller
         with tempfile.TemporaryDirectory(prefix='patchtrace-self-test-') as directory:
             root = Path(directory)
             service = ProjectService.sample(root / 'sample')

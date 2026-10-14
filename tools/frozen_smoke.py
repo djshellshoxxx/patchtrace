@@ -123,6 +123,9 @@ def run_checks(launcher: Sequence[str], *, frozen: bool, emit: Callable[[str], N
             env = dict(os.environ, QT_QPA_PLATFORM='offscreen', TMP=str(temp), TEMP=str(temp), TMPDIR=str(temp))
             r = run(launcher, '--self-test', env=env, timeout=240)
             check('A4 --self-test exits 0', r.returncode == 0, f'rc={r.returncode} {r.stdout} {r.stderr}')
+            line = next((x for x in r.stdout.splitlines() if x.startswith('optional-deps:')), '')
+            check('A4 self-test reports every optional dependency present', bool(line) and 'missing=none' in line,
+                  line or r.stdout[-300:])
             left = [p.name for p in temp.glob('patchtrace-self-test-*')]
             check('A4 self-test temp directory removed', not left, str(left))
 
