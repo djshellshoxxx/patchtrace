@@ -10,7 +10,8 @@ Session `session_01Mr844cQDLwXi9iMUoGmBXk`; branch `claude/instance-d-gui`; pare
 | F4 VirtualTable | built, in branch (bbb92ad,f1d23cc); 47 tests, qt_gate 5x ok; open: TSV formula-prefix neutralisation, sort command for panels | |
 | F3 | built, in branch (a98bf40..1784c44); 177 tests, 10x gate ok | dark stylesheet == DARK_STYLE |
 | F6b GraphCanvas | built, in branch (a512c67); 59 tests, 5x gate ok; minimap not built | |
-| F5, F6a | workers running | |
+| F6a CodeDiffView | built, in branch (d9ccfb6); 105 tests, 5x gate ok; ui.py M4 selection sites move in F8 | |
+| F5 | worker running | |
 | F5, F6a/b, F7, F8, F9 | waiting on deps | GUI plan section 9 |
 | Panel wave | waits for F5 + feature view-models | |
 | Audits + `migration-readiness.md` | waits for features | |
