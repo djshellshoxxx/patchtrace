@@ -470,6 +470,7 @@ class CweProfile(Contract):
     negated_hits: tuple[TermHit, ...] = ()
     effect_hits: tuple[TermHit, ...] = ()
     disagreements: tuple[str, ...] = ()
+    limitations: tuple[str, ...] = ()
 
     @model_validator(mode='after')
     def _status(self):
@@ -498,6 +499,7 @@ class Rule(Contract):
     sources: Phrases = ()
     sinks: Phrases = ()
     guards: Phrases = ()
+    api_hints: tuple[Annotated[str, Field(pattern=r'^[A-Za-z_][A-Za-z0-9_]{0,63}$')], ...] = Field(default=(), max_length=64)
     counterexamples: Phrases = Field(min_length=1)
     caveat: str = Field(min_length=1, max_length=500)
 
@@ -513,6 +515,7 @@ class PatchHypothesis(Record):
     sources: Phrases = ()
     sinks: Phrases = ()
     guards: Phrases = ()
+    api_hints: tuple[str, ...] = Field(default=(), max_length=64)
     counterexamples: Phrases
     required_observations: Phrases = ()
     contradictions: Phrases = ()
