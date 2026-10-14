@@ -1,0 +1,107 @@
+{
+  "$id": "https://patchtrace.local/schemas/kbcorrelation/1/BinaryRef.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "authenticity": {
+      "enum": [
+        "hash-matched-to-index",
+        "signature-unknown",
+        "embedded-signature-valid",
+        "unverified-local-file",
+        "hash-mismatch"
+      ],
+      "title": "Authenticity",
+      "type": "string"
+    },
+    "availability": {
+      "enum": [
+        "local",
+        "direct",
+        "candidates",
+        "delta-only",
+        "unavailable"
+      ],
+      "title": "Availability",
+      "type": "string"
+    },
+    "basename": {
+      "maxLength": 1000,
+      "minLength": 1,
+      "title": "Basename",
+      "type": "string"
+    },
+    "build_ubr": {
+      "anyOf": [
+        {
+          "pattern": "^[0-9]{1,6}\\.[0-9]{1,6}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Build Ubr"
+    },
+    "contract": {
+      "const": "kbcorrelation/1",
+      "default": "kbcorrelation/1",
+      "title": "Contract",
+      "type": "string"
+    },
+    "file_version": {
+      "anyOf": [
+        {
+          "pattern": "^[0-9]{1,5}(\\.[0-9]{1,5}){3}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "File Version"
+    },
+    "machine": {
+      "enum": [
+        "amd64",
+        "arm64",
+        "x86",
+        "unknown"
+      ],
+      "title": "Machine",
+      "type": "string"
+    },
+    "origin": {
+      "enum": [
+        "index-row",
+        "local-file",
+        "download"
+      ],
+      "title": "Origin",
+      "type": "string"
+    },
+    "sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Sha256",
+      "type": "string"
+    },
+    "size": {
+      "minimum": 0,
+      "title": "Size",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "sha256",
+    "size",
+    "basename",
+    "machine",
+    "origin",
+    "availability",
+    "authenticity"
+  ],
+  "title": "BinaryRef",
+  "type": "object"
+}

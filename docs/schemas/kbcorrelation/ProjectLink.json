@@ -1,0 +1,80 @@
+{
+  "$id": "https://patchtrace.local/schemas/kbcorrelation/1/ProjectLink.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "contract": {
+      "const": "kbcorrelation/1",
+      "default": "kbcorrelation/1",
+      "title": "Contract",
+      "type": "string"
+    },
+    "investigation_id": {
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+      "title": "Investigation Id",
+      "type": "string"
+    },
+    "newer_sha": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Newer Sha",
+      "type": "string"
+    },
+    "older_sha": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Older Sha",
+      "type": "string"
+    },
+    "pair_id": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Pair Id",
+      "type": "string"
+    },
+    "project_id": {
+      "maxLength": 1000,
+      "minLength": 1,
+      "title": "Project Id",
+      "type": "string"
+    },
+    "project_revision": {
+      "minimum": 0,
+      "title": "Project Revision",
+      "type": "integer"
+    },
+    "revision": {
+      "minimum": 1,
+      "title": "Revision",
+      "type": "integer"
+    },
+    "stale_reasons": {
+      "default": [],
+      "items": {
+        "maxLength": 1000,
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Stale Reasons",
+      "type": "array"
+    },
+    "state": {
+      "enum": [
+        "attached",
+        "context-pending",
+        "stale"
+      ],
+      "title": "State",
+      "type": "string"
+    }
+  },
+  "required": [
+    "project_id",
+    "project_revision",
+    "older_sha",
+    "newer_sha",
+    "investigation_id",
+    "revision",
+    "pair_id",
+    "state"
+  ],
+  "title": "ProjectLink",
+  "type": "object"
+}

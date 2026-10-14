@@ -1,0 +1,250 @@
+{
+  "$defs": {
+    "BinaryRef": {
+      "additionalProperties": false,
+      "properties": {
+        "authenticity": {
+          "enum": [
+            "hash-matched-to-index",
+            "signature-unknown",
+            "embedded-signature-valid",
+            "unverified-local-file",
+            "hash-mismatch"
+          ],
+          "title": "Authenticity",
+          "type": "string"
+        },
+        "availability": {
+          "enum": [
+            "local",
+            "direct",
+            "candidates",
+            "delta-only",
+            "unavailable"
+          ],
+          "title": "Availability",
+          "type": "string"
+        },
+        "basename": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Basename",
+          "type": "string"
+        },
+        "build_ubr": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9]{1,6}\\.[0-9]{1,6}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Build Ubr"
+        },
+        "contract": {
+          "const": "kbcorrelation/1",
+          "default": "kbcorrelation/1",
+          "title": "Contract",
+          "type": "string"
+        },
+        "file_version": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9]{1,5}(\\.[0-9]{1,5}){3}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "File Version"
+        },
+        "machine": {
+          "enum": [
+            "amd64",
+            "arm64",
+            "x86",
+            "unknown"
+          ],
+          "title": "Machine",
+          "type": "string"
+        },
+        "origin": {
+          "enum": [
+            "index-row",
+            "local-file",
+            "download"
+          ],
+          "title": "Origin",
+          "type": "string"
+        },
+        "sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Sha256",
+          "type": "string"
+        },
+        "size": {
+          "minimum": 0,
+          "title": "Size",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "sha256",
+        "size",
+        "basename",
+        "machine",
+        "origin",
+        "availability",
+        "authenticity"
+      ],
+      "title": "BinaryRef",
+      "type": "object"
+    }
+  },
+  "$id": "https://patchtrace.local/schemas/kbcorrelation/1/PairProposal.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "A proposed older/newer pair. Three orthogonal proofs (bytes, lineage, fix boundary) plus reason codes; the\ngrade is derived from them and never exceeds what they support.",
+  "properties": {
+    "bytes_state": {
+      "enum": [
+        "verified",
+        "pending",
+        "mismatch",
+        "incompatible"
+      ],
+      "title": "Bytes State",
+      "type": "string"
+    },
+    "contract": {
+      "const": "kbcorrelation/1",
+      "default": "kbcorrelation/1",
+      "title": "Contract",
+      "type": "string"
+    },
+    "fix_boundary": {
+      "enum": [
+        "source-supported",
+        "unverified",
+        "contradicted"
+      ],
+      "title": "Fix Boundary",
+      "type": "string"
+    },
+    "grade": {
+      "enum": [
+        "A",
+        "B",
+        "X"
+      ],
+      "title": "Grade",
+      "type": "string"
+    },
+    "lineage_state": {
+      "enum": [
+        "index-adjacent",
+        "compatible-branch",
+        "user-asserted",
+        "unverified",
+        "incompatible"
+      ],
+      "title": "Lineage State",
+      "type": "string"
+    },
+    "newer": {
+      "$ref": "#/$defs/BinaryRef"
+    },
+    "older": {
+      "$ref": "#/$defs/BinaryRef"
+    },
+    "pair_id": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Pair Id",
+      "type": "string"
+    },
+    "reason_codes": {
+      "default": [],
+      "items": {
+        "enum": [
+          "IDENTICAL_CONTENT",
+          "DELTA_ONLY",
+          "ARCH",
+          "CROSS_PRODUCT",
+          "ORDER_UNVERIFIED",
+          "DIGEST_MISMATCH",
+          "NO_OLDER",
+          "NO_NEWER",
+          "WINDOW_CONFOUNDED",
+          "SERVER_NOT_COVERED",
+          "NAME_MISMATCH",
+          "INDEX_GAP"
+        ],
+        "type": "string"
+      },
+      "title": "Reason Codes",
+      "type": "array"
+    },
+    "scope_id": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Scope Id",
+      "type": "string"
+    },
+    "tier": {
+      "enum": [
+        "A",
+        "B",
+        "C",
+        "D",
+        "E"
+      ],
+      "title": "Tier",
+      "type": "string"
+    },
+    "window": {
+      "default": [],
+      "items": {
+        "pattern": "^KB[0-9]{4,10}$",
+        "type": "string"
+      },
+      "title": "Window",
+      "type": "array"
+    },
+    "window_complete": {
+      "anyOf": [
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Window Complete"
+    },
+    "window_id": {
+      "maxLength": 1000,
+      "minLength": 1,
+      "title": "Window Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "pair_id",
+    "older",
+    "newer",
+    "scope_id",
+    "window_id",
+    "bytes_state",
+    "lineage_state",
+    "fix_boundary",
+    "grade",
+    "tier"
+  ],
+  "title": "PairProposal",
+  "type": "object"
+}

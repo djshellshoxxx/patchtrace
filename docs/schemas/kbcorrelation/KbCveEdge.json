@@ -1,0 +1,193 @@
+{
+  "$defs": {
+    "ProductStatus": {
+      "additionalProperties": false,
+      "properties": {
+        "pointer": {
+          "maxLength": 4096,
+          "pattern": "^(/([^/~]|~[01])*)*$",
+          "title": "Pointer",
+          "type": "string"
+        },
+        "value": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Value",
+          "type": "string"
+        }
+      },
+      "required": [
+        "value",
+        "pointer"
+      ],
+      "title": "ProductStatus",
+      "type": "object"
+    },
+    "SourceRef": {
+      "additionalProperties": false,
+      "properties": {
+        "assertion": {
+          "enum": [
+            "advisory_fact",
+            "index_claim",
+            "binary_observation",
+            "rule_hypothesis",
+            "analyst_statement"
+          ],
+          "title": "Assertion",
+          "type": "string"
+        },
+        "doc_id": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Doc Id",
+          "type": "string"
+        },
+        "pointer": {
+          "maxLength": 4096,
+          "pattern": "^(/([^/~]|~[01])*)*$",
+          "title": "Pointer",
+          "type": "string"
+        }
+      },
+      "required": [
+        "doc_id",
+        "pointer",
+        "assertion"
+      ],
+      "title": "SourceRef",
+      "type": "object"
+    }
+  },
+  "$id": "https://patchtrace.local/schemas/kbcorrelation/1/KbCveEdge.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "conflict_ids": {
+      "default": [],
+      "items": {
+        "pattern": "^[0-9a-f]{64}$",
+        "type": "string"
+      },
+      "title": "Conflict Ids",
+      "type": "array"
+    },
+    "contract": {
+      "const": "kbcorrelation/1",
+      "default": "kbcorrelation/1",
+      "title": "Contract",
+      "type": "string"
+    },
+    "cve": {
+      "maxLength": 24,
+      "pattern": "^CVE-[0-9]{4}-[0-9]{4,19}$",
+      "title": "Cve",
+      "type": "string"
+    },
+    "edge_id": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Edge Id",
+      "type": "string"
+    },
+    "fixed_build": {
+      "anyOf": [
+        {
+          "pattern": "^[0-9]{1,6}\\.[0-9]{1,6}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Fixed Build"
+    },
+    "kb": {
+      "pattern": "^KB[0-9]{4,10}$",
+      "title": "Kb",
+      "type": "string"
+    },
+    "lineage": {
+      "const": "msrc",
+      "default": "msrc",
+      "title": "Lineage",
+      "type": "string"
+    },
+    "product_status": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ProductStatus"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "ref": {
+      "$ref": "#/$defs/SourceRef"
+    },
+    "relation": {
+      "enum": [
+        "vendor-remediation",
+        "vendor-association",
+        "mention-only",
+        "package-contains",
+        "analyst-asserted",
+        "disputed"
+      ],
+      "title": "Relation",
+      "type": "string"
+    },
+    "release_id": {
+      "anyOf": [
+        {
+          "pattern": "^[0-9]{4}-(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Release Id"
+    },
+    "scope_id": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Scope Id",
+      "type": "string"
+    },
+    "sub_type": {
+      "anyOf": [
+        {
+          "maxLength": 1000,
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Sub Type"
+    },
+    "supersedes": {
+      "default": [],
+      "items": {
+        "pattern": "^KB[0-9]{4,10}$",
+        "type": "string"
+      },
+      "title": "Supersedes",
+      "type": "array"
+    }
+  },
+  "required": [
+    "edge_id",
+    "kb",
+    "cve",
+    "scope_id",
+    "relation",
+    "ref"
+  ],
+  "title": "KbCveEdge",
+  "type": "object"
+}

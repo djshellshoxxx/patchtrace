@@ -1,0 +1,2305 @@
+{
+  "$defs": {
+    "AdvisorySource": {
+      "additionalProperties": false,
+      "description": "One acquisition of exact bytes. ``source_id`` is the content SHA-256; ``retrieval_id`` the event.",
+      "properties": {
+        "authenticity_state": {
+          "enum": [
+            "unverified-local-file",
+            "tls-allowlisted-host",
+            "tls-allowlisted-host-hash-match"
+          ],
+          "title": "Authenticity State",
+          "type": "string"
+        },
+        "contract": {
+          "const": "intelligence/1",
+          "default": "intelligence/1",
+          "title": "Contract",
+          "type": "string"
+        },
+        "current_release_date": {
+          "maxLength": 40,
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]{1,9})?(Z|[+-][0-9]{2}:[0-9]{2})$",
+          "title": "Current Release Date",
+          "type": "string"
+        },
+        "document_category": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Document Category",
+          "type": "string"
+        },
+        "file_name": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "File Name",
+          "type": "string"
+        },
+        "filename_matches_tracking_id": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Filename Matches Tracking Id"
+        },
+        "initial_release_date": {
+          "maxLength": 40,
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]{1,9})?(Z|[+-][0-9]{2}:[0-9]{2})$",
+          "title": "Initial Release Date",
+          "type": "string"
+        },
+        "origin": {
+          "enum": [
+            "local-import",
+            "https-fetch"
+          ],
+          "title": "Origin",
+          "type": "string"
+        },
+        "publisher_category": {
+          "enum": [
+            "coordinator",
+            "discoverer",
+            "other",
+            "translator",
+            "user",
+            "vendor"
+          ],
+          "title": "Publisher Category",
+          "type": "string"
+        },
+        "publisher_name": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Publisher Name",
+          "type": "string"
+        },
+        "publisher_namespace": {
+          "maxLength": 2048,
+          "minLength": 1,
+          "title": "Publisher Namespace",
+          "type": "string"
+        },
+        "raw_path": {
+          "maxLength": 255,
+          "minLength": 1,
+          "pattern": "^intelligence/csaf/sources/[0-9a-f]{64}\\.json$",
+          "title": "Raw Path",
+          "type": "string"
+        },
+        "retrieval_id": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Retrieval Id",
+          "type": "string"
+        },
+        "retrieved_at": {
+          "maxLength": 40,
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]{1,9})?(Z|[+-][0-9]{2}:[0-9]{2})$",
+          "title": "Retrieved At",
+          "type": "string"
+        },
+        "revision": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Revision",
+          "type": "string"
+        },
+        "schema_version": {
+          "const": "2.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "self_urls": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 64,
+          "title": "Self Urls",
+          "type": "array"
+        },
+        "sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Sha256",
+          "type": "string"
+        },
+        "signature_state": {
+          "const": "not-checked",
+          "default": "not-checked",
+          "title": "Signature State",
+          "type": "string"
+        },
+        "size": {
+          "maximum": 16777216,
+          "minimum": 1,
+          "title": "Size",
+          "type": "integer"
+        },
+        "source_id": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Source Id",
+          "type": "string"
+        },
+        "tracking_id": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Tracking Id",
+          "type": "string"
+        },
+        "tracking_status": {
+          "enum": [
+            "draft",
+            "final",
+            "interim"
+          ],
+          "title": "Tracking Status",
+          "type": "string"
+        },
+        "uri": {
+          "anyOf": [
+            {
+              "maxLength": 2048,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Uri"
+        }
+      },
+      "required": [
+        "source_id",
+        "retrieval_id",
+        "origin",
+        "file_name",
+        "retrieved_at",
+        "sha256",
+        "size",
+        "tracking_id",
+        "revision",
+        "tracking_status",
+        "initial_release_date",
+        "current_release_date",
+        "schema_version",
+        "document_category",
+        "publisher_name",
+        "publisher_namespace",
+        "publisher_category",
+        "authenticity_state",
+        "raw_path"
+      ],
+      "title": "AdvisorySource",
+      "type": "object"
+    },
+    "Anchor": {
+      "additionalProperties": false,
+      "properties": {
+        "anchor_id": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Anchor Id",
+          "type": "string"
+        },
+        "assessment": {
+          "const": "search-hint",
+          "default": "search-hint",
+          "title": "Assessment",
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "module",
+            "api",
+            "string",
+            "feature",
+            "component",
+            "pdb"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "label": {
+          "maxLength": 300,
+          "minLength": 1,
+          "title": "Label",
+          "type": "string"
+        },
+        "pointer": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "pattern": "^(/([^/~]|~[01])*)*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Pointer"
+        },
+        "quality": {
+          "enum": [
+            "explicit",
+            "derived",
+            "rule",
+            "verified-bytes"
+          ],
+          "title": "Quality",
+          "type": "string"
+        },
+        "source": {
+          "enum": [
+            "csaf-title",
+            "csaf-note",
+            "csaf-product",
+            "csaf-remediation",
+            "hypothesis-rule",
+            "artifact-identity"
+          ],
+          "title": "Source",
+          "type": "string"
+        },
+        "value": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Value",
+          "type": "string"
+        }
+      },
+      "required": [
+        "anchor_id",
+        "kind",
+        "value",
+        "source",
+        "quality",
+        "label"
+      ],
+      "title": "Anchor",
+      "type": "object"
+    },
+    "AnchorSet": {
+      "additionalProperties": false,
+      "properties": {
+        "anchors": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/Anchor"
+          },
+          "title": "Anchors",
+          "type": "array"
+        },
+        "contract": {
+          "const": "intelligence/1",
+          "default": "intelligence/1",
+          "title": "Contract",
+          "type": "string"
+        },
+        "cve": {
+          "maxLength": 24,
+          "pattern": "^CVE-[0-9]{4}-[0-9]{4,19}$",
+          "title": "Cve",
+          "type": "string"
+        },
+        "limitations": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Limitations",
+          "type": "array"
+        }
+      },
+      "required": [
+        "cve"
+      ],
+      "title": "AnchorSet",
+      "type": "object"
+    },
+    "ApplicabilityReport": {
+      "additionalProperties": false,
+      "properties": {
+        "contract": {
+          "const": "intelligence/1",
+          "default": "intelligence/1",
+          "title": "Contract",
+          "type": "string"
+        },
+        "contradictions": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/Contradiction"
+          },
+          "title": "Contradictions",
+          "type": "array"
+        },
+        "cve": {
+          "maxLength": 24,
+          "pattern": "^CVE-[0-9]{4}-[0-9]{4,19}$",
+          "title": "Cve",
+          "type": "string"
+        },
+        "limitations": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Limitations",
+          "type": "array"
+        },
+        "newer": {
+          "$ref": "#/$defs/SideApplicability"
+        },
+        "older": {
+          "$ref": "#/$defs/SideApplicability"
+        },
+        "sources": {
+          "default": [],
+          "items": {
+            "pattern": "^[0-9a-f]{64}$",
+            "type": "string"
+          },
+          "title": "Sources",
+          "type": "array"
+        },
+        "superseded_sources": {
+          "default": [],
+          "items": {
+            "pattern": "^[0-9a-f]{64}$",
+            "type": "string"
+          },
+          "title": "Superseded Sources",
+          "type": "array"
+        }
+      },
+      "required": [
+        "cve",
+        "older",
+        "newer"
+      ],
+      "title": "ApplicabilityReport",
+      "type": "object"
+    },
+    "ArtifactIdentity": {
+      "additionalProperties": false,
+      "description": "Identity facts for one side. Bytes-derived fields come only from verified bytes; the file name is\nnever an identity fact. ``asserted_product_ids`` are analyst input and stay labelled as such.",
+      "properties": {
+        "asserted_product_ids": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 64,
+          "title": "Asserted Product Ids",
+          "type": "array"
+        },
+        "contract": {
+          "const": "intelligence/1",
+          "default": "intelligence/1",
+          "title": "Contract",
+          "type": "string"
+        },
+        "facts_state": {
+          "enum": [
+            "verified-bytes",
+            "record-only"
+          ],
+          "title": "Facts State",
+          "type": "string"
+        },
+        "file_version": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9]{1,5}\\.[0-9]{1,5}\\.[0-9]{1,5}\\.[0-9]{1,5}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "File Version"
+        },
+        "notes": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 32,
+          "title": "Notes",
+          "type": "array"
+        },
+        "pdb_identity": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PdbIdentity"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "product_version": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9]{1,5}\\.[0-9]{1,5}\\.[0-9]{1,5}\\.[0-9]{1,5}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Product Version"
+        },
+        "sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Sha256",
+          "type": "string"
+        },
+        "side": {
+          "enum": [
+            "older",
+            "newer"
+          ],
+          "title": "Side",
+          "type": "string"
+        }
+      },
+      "required": [
+        "side",
+        "sha256",
+        "facts_state"
+      ],
+      "title": "ArtifactIdentity",
+      "type": "object"
+    },
+    "CVEFact": {
+      "additionalProperties": false,
+      "description": "One ``/vulnerabilities[]`` item exactly as the vendor states it (an advisory claim, never verified).",
+      "properties": {
+        "assessment": {
+          "const": "advisory-claim",
+          "default": "advisory-claim",
+          "title": "Assessment",
+          "type": "string"
+        },
+        "contract": {
+          "const": "intelligence/1",
+          "default": "intelligence/1",
+          "title": "Contract",
+          "type": "string"
+        },
+        "cve": {
+          "anyOf": [
+            {
+              "maxLength": 24,
+              "pattern": "^CVE-[0-9]{4}-[0-9]{4,19}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cve"
+        },
+        "cwe": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CweRef"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "flags": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/Flag"
+          },
+          "title": "Flags",
+          "type": "array"
+        },
+        "ids": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/VulnerabilityId"
+          },
+          "title": "Ids",
+          "type": "array"
+        },
+        "notes": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/Note"
+          },
+          "title": "Notes",
+          "type": "array"
+        },
+        "pointer": {
+          "maxLength": 4096,
+          "pattern": "^(/([^/~]|~[01])*)*$",
+          "title": "Pointer",
+          "type": "string"
+        },
+        "product_status": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/StatusClaim"
+          },
+          "title": "Product Status",
+          "type": "array"
+        },
+        "remediations": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/Remediation"
+          },
+          "title": "Remediations",
+          "type": "array"
+        },
+        "scores": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/Score"
+          },
+          "title": "Scores",
+          "type": "array"
+        },
+        "source_id": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Source Id",
+          "type": "string"
+        },
+        "threats": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/Threat"
+          },
+          "title": "Threats",
+          "type": "array"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Title"
+        }
+      },
+      "required": [
+        "source_id",
+        "pointer"
+      ],
+      "title": "CVEFact",
+      "type": "object"
+    },
+    "Contradiction": {
+      "additionalProperties": false,
+      "properties": {
+        "claims": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/StatusEvidence"
+          },
+          "title": "Claims",
+          "type": "array"
+        },
+        "explanation": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Explanation",
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "cross-revision",
+            "vex-vs-advisory",
+            "cross-document",
+            "orientation"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "product_name": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Product Name"
+        }
+      },
+      "required": [
+        "kind",
+        "explanation"
+      ],
+      "title": "Contradiction",
+      "type": "object"
+    },
+    "Coverage": {
+      "additionalProperties": false,
+      "description": "What was actually inspected. ``exhaustive_for_history`` is the constant False: a scope is never all of history.",
+      "properties": {
+        "contract": {
+          "const": "kbcorrelation/1",
+          "default": "kbcorrelation/1",
+          "title": "Contract",
+          "type": "string"
+        },
+        "coverage_id": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Coverage Id",
+          "type": "string"
+        },
+        "exhaustive_for_history": {
+          "const": false,
+          "default": false,
+          "title": "Exhaustive For History",
+          "type": "boolean"
+        },
+        "failed": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/Failure"
+          },
+          "title": "Failed",
+          "type": "array"
+        },
+        "inspected_ids": {
+          "default": [],
+          "items": {
+            "maxLength": 1000,
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Inspected Ids",
+          "type": "array"
+        },
+        "requested_ids": {
+          "default": [],
+          "items": {
+            "maxLength": 1000,
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Requested Ids",
+          "type": "array"
+        },
+        "retrieved_at": {
+          "maxLength": 40,
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]{1,9})?(Z|[+-][0-9]{2}:[0-9]{2})$",
+          "title": "Retrieved At",
+          "type": "string"
+        },
+        "scope": {
+          "$ref": "#/$defs/SearchScope"
+        },
+        "source_kind": {
+          "enum": [
+            "cvrf-month",
+            "csaf",
+            "sug-cve",
+            "winbindex-file",
+            "kev",
+            "local-note"
+          ],
+          "title": "Source Kind",
+          "type": "string"
+        },
+        "state": {
+          "enum": [
+            "complete_in_scope",
+            "partial_in_scope",
+            "stale_cache",
+            "unknown_scope",
+            "not_searched"
+          ],
+          "title": "State",
+          "type": "string"
+        },
+        "unfetchable_ids": {
+          "default": [],
+          "items": {
+            "maxLength": 1000,
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Unfetchable Ids",
+          "type": "array"
+        },
+        "watermark_current_release_date": {
+          "anyOf": [
+            {
+              "maxLength": 40,
+              "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]{1,9})?(Z|[+-][0-9]{2}:[0-9]{2})$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Watermark Current Release Date"
+        }
+      },
+      "required": [
+        "coverage_id",
+        "source_kind",
+        "scope",
+        "state",
+        "retrieved_at"
+      ],
+      "title": "Coverage",
+      "type": "object"
+    },
+    "CveCard": {
+      "additionalProperties": false,
+      "properties": {
+        "applicability": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Applicability"
+        },
+        "cve": {
+          "maxLength": 24,
+          "pattern": "^CVE-[0-9]{4}-[0-9]{4,19}$",
+          "title": "Cve",
+          "type": "string"
+        },
+        "kev": {
+          "default": "not-loaded",
+          "enum": [
+            "listed",
+            "not-in-snapshot",
+            "not-loaded"
+          ],
+          "title": "Kev",
+          "type": "string"
+        },
+        "severity_context": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Severity Context"
+        },
+        "source_kind": {
+          "enum": [
+            "cvrf",
+            "csaf"
+          ],
+          "title": "Source Kind",
+          "type": "string"
+        },
+        "stated_cwe": {
+          "anyOf": [
+            {
+              "pattern": "^CWE-[1-9][0-9]{0,5}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Stated Cwe"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Title"
+        }
+      },
+      "required": [
+        "cve",
+        "source_kind"
+      ],
+      "title": "CveCard",
+      "type": "object"
+    },
+    "CweClassification": {
+      "additionalProperties": false,
+      "properties": {
+        "assessment": {
+          "enum": [
+            "advisory-claim",
+            "rule-hypothesis"
+          ],
+          "title": "Assessment",
+          "type": "string"
+        },
+        "basis": {
+          "enum": [
+            "explicit-csaf-cwe",
+            "cwe-id-in-text",
+            "curated-vocabulary"
+          ],
+          "title": "Basis",
+          "type": "string"
+        },
+        "confidence": {
+          "enum": [
+            "explicit",
+            "phrase-match",
+            "weak"
+          ],
+          "title": "Confidence",
+          "type": "string"
+        },
+        "cwe_id": {
+          "pattern": "^CWE-[1-9][0-9]{0,5}$",
+          "title": "Cwe Id",
+          "type": "string"
+        },
+        "family": {
+          "maxLength": 40,
+          "minLength": 1,
+          "title": "Family",
+          "type": "string"
+        },
+        "hits": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/TermHit"
+          },
+          "title": "Hits",
+          "type": "array"
+        },
+        "pointers": {
+          "default": [],
+          "items": {
+            "maxLength": 4096,
+            "pattern": "^(/([^/~]|~[01])*)*$",
+            "type": "string"
+          },
+          "title": "Pointers",
+          "type": "array"
+        }
+      },
+      "required": [
+        "cwe_id",
+        "family",
+        "basis",
+        "confidence",
+        "assessment"
+      ],
+      "title": "CweClassification",
+      "type": "object"
+    },
+    "CweProfile": {
+      "additionalProperties": false,
+      "properties": {
+        "classifications": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/CweClassification"
+          },
+          "title": "Classifications",
+          "type": "array"
+        },
+        "contract": {
+          "const": "intelligence/1",
+          "default": "intelligence/1",
+          "title": "Contract",
+          "type": "string"
+        },
+        "cve": {
+          "maxLength": 24,
+          "pattern": "^CVE-[0-9]{4}-[0-9]{4,19}$",
+          "title": "Cve",
+          "type": "string"
+        },
+        "disagreements": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Disagreements",
+          "type": "array"
+        },
+        "effect_hits": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/TermHit"
+          },
+          "title": "Effect Hits",
+          "type": "array"
+        },
+        "lexicon_digest": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Lexicon Digest",
+          "type": "string"
+        },
+        "lexicon_version": {
+          "maxLength": 40,
+          "minLength": 1,
+          "title": "Lexicon Version",
+          "type": "string"
+        },
+        "limitations": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Limitations",
+          "type": "array"
+        },
+        "negated_hits": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/TermHit"
+          },
+          "title": "Negated Hits",
+          "type": "array"
+        },
+        "status": {
+          "enum": [
+            "explicit",
+            "derived",
+            "weak",
+            "vague",
+            "none"
+          ],
+          "title": "Status",
+          "type": "string"
+        }
+      },
+      "required": [
+        "cve",
+        "lexicon_version",
+        "lexicon_digest",
+        "status"
+      ],
+      "title": "CweProfile",
+      "type": "object"
+    },
+    "CweRef": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "pattern": "^CWE-[1-9][0-9]{0,5}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "pointer": {
+          "maxLength": 4096,
+          "pattern": "^(/([^/~]|~[01])*)*$",
+          "title": "Pointer",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "pointer"
+      ],
+      "title": "CweRef",
+      "type": "object"
+    },
+    "Failure": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "reason": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Reason",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "reason"
+      ],
+      "title": "Failure",
+      "type": "object"
+    },
+    "Flag": {
+      "additionalProperties": false,
+      "properties": {
+        "date": {
+          "anyOf": [
+            {
+              "maxLength": 40,
+              "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]{1,9})?(Z|[+-][0-9]{2}:[0-9]{2})$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Date"
+        },
+        "group_ids": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Group Ids",
+          "type": "array"
+        },
+        "label": {
+          "enum": [
+            "component_not_present",
+            "inline_mitigations_already_exist",
+            "vulnerable_code_cannot_be_controlled_by_adversary",
+            "vulnerable_code_not_in_execute_path",
+            "vulnerable_code_not_present"
+          ],
+          "title": "Label",
+          "type": "string"
+        },
+        "pointer": {
+          "maxLength": 4096,
+          "pattern": "^(/([^/~]|~[01])*)*$",
+          "title": "Pointer",
+          "type": "string"
+        },
+        "product_ids": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Product Ids",
+          "type": "array"
+        },
+        "via_groups": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Via Groups",
+          "type": "array"
+        }
+      },
+      "required": [
+        "pointer",
+        "label"
+      ],
+      "title": "Flag",
+      "type": "object"
+    },
+    "HypothesisSet": {
+      "additionalProperties": false,
+      "properties": {
+        "contract": {
+          "const": "intelligence/1",
+          "default": "intelligence/1",
+          "title": "Contract",
+          "type": "string"
+        },
+        "cve": {
+          "maxLength": 24,
+          "pattern": "^CVE-[0-9]{4}-[0-9]{4,19}$",
+          "title": "Cve",
+          "type": "string"
+        },
+        "hypotheses": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/PatchHypothesis"
+          },
+          "title": "Hypotheses",
+          "type": "array"
+        },
+        "limitations": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Limitations",
+          "type": "array"
+        },
+        "rules_digest": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Rules Digest",
+          "type": "string"
+        },
+        "rules_version": {
+          "maxLength": 40,
+          "minLength": 1,
+          "title": "Rules Version",
+          "type": "string"
+        },
+        "unknowns": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Unknowns",
+          "type": "array"
+        }
+      },
+      "required": [
+        "cve",
+        "rules_version",
+        "rules_digest"
+      ],
+      "title": "HypothesisSet",
+      "type": "object"
+    },
+    "IntelligenceReport": {
+      "additionalProperties": false,
+      "description": "``intelligence explain`` result: claims with provenance, hypotheses and explicit unknowns.",
+      "properties": {
+        "anchors": {
+          "$ref": "#/$defs/AnchorSet"
+        },
+        "applicability": {
+          "$ref": "#/$defs/ApplicabilityReport"
+        },
+        "contract": {
+          "const": "intelligence/1",
+          "default": "intelligence/1",
+          "title": "Contract",
+          "type": "string"
+        },
+        "cve": {
+          "maxLength": 24,
+          "pattern": "^CVE-[0-9]{4}-[0-9]{4,19}$",
+          "title": "Cve",
+          "type": "string"
+        },
+        "cwe_profile": {
+          "$ref": "#/$defs/CweProfile"
+        },
+        "facts": {
+          "items": {
+            "$ref": "#/$defs/CVEFact"
+          },
+          "minItems": 1,
+          "title": "Facts",
+          "type": "array"
+        },
+        "hypotheses": {
+          "$ref": "#/$defs/HypothesisSet"
+        },
+        "limitations": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Limitations",
+          "type": "array"
+        },
+        "sources": {
+          "items": {
+            "$ref": "#/$defs/SourceSummary"
+          },
+          "minItems": 1,
+          "title": "Sources",
+          "type": "array"
+        },
+        "unknowns": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Unknowns",
+          "type": "array"
+        }
+      },
+      "required": [
+        "cve",
+        "sources",
+        "facts",
+        "applicability",
+        "cwe_profile",
+        "hypotheses",
+        "anchors",
+        "limitations"
+      ],
+      "title": "IntelligenceReport",
+      "type": "object"
+    },
+    "Note": {
+      "additionalProperties": false,
+      "properties": {
+        "audience": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Audience"
+        },
+        "category": {
+          "enum": [
+            "description",
+            "details",
+            "faq",
+            "general",
+            "legal_disclaimer",
+            "other",
+            "summary"
+          ],
+          "title": "Category",
+          "type": "string"
+        },
+        "pointer": {
+          "maxLength": 4096,
+          "pattern": "^(/([^/~]|~[01])*)*$",
+          "title": "Pointer",
+          "type": "string"
+        },
+        "text": {
+          "maxLength": 1048576,
+          "title": "Text",
+          "type": "string"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Title"
+        }
+      },
+      "required": [
+        "category",
+        "text",
+        "pointer"
+      ],
+      "title": "Note",
+      "type": "object"
+    },
+    "PatchHypothesis": {
+      "additionalProperties": false,
+      "properties": {
+        "api_hints": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 64,
+          "title": "Api Hints",
+          "type": "array"
+        },
+        "assessment": {
+          "const": "rule-hypothesis",
+          "default": "rule-hypothesis",
+          "title": "Assessment",
+          "type": "string"
+        },
+        "basis": {
+          "enum": [
+            "explicit-csaf-cwe",
+            "cwe-id-in-text",
+            "curated-vocabulary"
+          ],
+          "title": "Basis",
+          "type": "string"
+        },
+        "caveat": {
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Caveat",
+          "type": "string"
+        },
+        "contradictions": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 64,
+          "title": "Contradictions",
+          "type": "array"
+        },
+        "counterexamples": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 64,
+          "title": "Counterexamples",
+          "type": "array"
+        },
+        "cwe_id": {
+          "pattern": "^CWE-[1-9][0-9]{0,5}$",
+          "title": "Cwe Id",
+          "type": "string"
+        },
+        "expected_operations": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 64,
+          "title": "Expected Operations",
+          "type": "array"
+        },
+        "family": {
+          "maxLength": 40,
+          "minLength": 1,
+          "title": "Family",
+          "type": "string"
+        },
+        "guards": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 64,
+          "title": "Guards",
+          "type": "array"
+        },
+        "hypothesis_id": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Hypothesis Id",
+          "type": "string"
+        },
+        "required_observations": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 64,
+          "title": "Required Observations",
+          "type": "array"
+        },
+        "rule_id": {
+          "pattern": "^R-[A-Z0-9-]{1,40}$",
+          "title": "Rule Id",
+          "type": "string"
+        },
+        "rule_revision": {
+          "minimum": 1,
+          "title": "Rule Revision",
+          "type": "integer"
+        },
+        "sinks": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 64,
+          "title": "Sinks",
+          "type": "array"
+        },
+        "sources": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 64,
+          "title": "Sources",
+          "type": "array"
+        }
+      },
+      "required": [
+        "hypothesis_id",
+        "cwe_id",
+        "family",
+        "rule_id",
+        "rule_revision",
+        "basis",
+        "expected_operations",
+        "counterexamples",
+        "caveat"
+      ],
+      "title": "PatchHypothesis",
+      "type": "object"
+    },
+    "PdbIdentity": {
+      "additionalProperties": false,
+      "properties": {
+        "age": {
+          "maximum": 4294967295,
+          "minimum": 0,
+          "title": "Age",
+          "type": "integer"
+        },
+        "guid": {
+          "pattern": "^[0-9A-F]{32}$",
+          "title": "Guid",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 260,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "guid",
+        "age"
+      ],
+      "title": "PdbIdentity",
+      "type": "object"
+    },
+    "ProductMapping": {
+      "additionalProperties": false,
+      "properties": {
+        "basis": {
+          "enum": [
+            "advisory-file-hash",
+            "relationship-from-verified-component",
+            "asserted-product-id",
+            "file-version-equals-product-version",
+            "same-product-name"
+          ],
+          "title": "Basis",
+          "type": "string"
+        },
+        "detail": {
+          "maxLength": 500,
+          "title": "Detail",
+          "type": "string"
+        },
+        "product_id": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Product Id",
+          "type": "string"
+        },
+        "product_name": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Product Name",
+          "type": "string"
+        },
+        "source_id": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Source Id",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "verified",
+            "candidate"
+          ],
+          "title": "Status",
+          "type": "string"
+        }
+      },
+      "required": [
+        "source_id",
+        "product_id",
+        "product_name",
+        "status",
+        "basis",
+        "detail"
+      ],
+      "title": "ProductMapping",
+      "type": "object"
+    },
+    "Remediation": {
+      "additionalProperties": false,
+      "properties": {
+        "category": {
+          "enum": [
+            "mitigation",
+            "no_fix_planned",
+            "none_available",
+            "vendor_fix",
+            "workaround"
+          ],
+          "title": "Category",
+          "type": "string"
+        },
+        "date": {
+          "anyOf": [
+            {
+              "maxLength": 40,
+              "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]{1,9})?(Z|[+-][0-9]{2}:[0-9]{2})$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Date"
+        },
+        "details": {
+          "maxLength": 1048576,
+          "title": "Details",
+          "type": "string"
+        },
+        "group_ids": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Group Ids",
+          "type": "array"
+        },
+        "pointer": {
+          "maxLength": 4096,
+          "pattern": "^(/([^/~]|~[01])*)*$",
+          "title": "Pointer",
+          "type": "string"
+        },
+        "product_ids": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Product Ids",
+          "type": "array"
+        },
+        "restart_required": {
+          "anyOf": [
+            {
+              "maxLength": 50,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Restart Required"
+        },
+        "url": {
+          "anyOf": [
+            {
+              "maxLength": 20000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Url"
+        },
+        "via_groups": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Via Groups",
+          "type": "array"
+        }
+      },
+      "required": [
+        "pointer",
+        "category",
+        "details"
+      ],
+      "title": "Remediation",
+      "type": "object"
+    },
+    "Score": {
+      "additionalProperties": false,
+      "description": "Severity context only (never a vulnerability probability). The score is kept as a decimal string.",
+      "properties": {
+        "base_score": {
+          "pattern": "^(10(\\.0)?|[0-9](\\.[0-9])?)$",
+          "title": "Base Score",
+          "type": "string"
+        },
+        "base_severity": {
+          "anyOf": [
+            {
+              "maxLength": 50,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Base Severity"
+        },
+        "cvss_version": {
+          "enum": [
+            "2.0",
+            "3.0",
+            "3.1"
+          ],
+          "title": "Cvss Version",
+          "type": "string"
+        },
+        "pointer": {
+          "maxLength": 4096,
+          "pattern": "^(/([^/~]|~[01])*)*$",
+          "title": "Pointer",
+          "type": "string"
+        },
+        "products": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Products",
+          "type": "array"
+        },
+        "vector": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Vector"
+        }
+      },
+      "required": [
+        "cvss_version",
+        "base_score",
+        "products",
+        "pointer"
+      ],
+      "title": "Score",
+      "type": "object"
+    },
+    "SearchScope": {
+      "additionalProperties": false,
+      "properties": {
+        "corpus_digest": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Corpus Digest"
+        },
+        "doc_ids": {
+          "default": [],
+          "items": {
+            "pattern": "^[0-9a-f]{64}$",
+            "type": "string"
+          },
+          "title": "Doc Ids",
+          "type": "array"
+        },
+        "kind": {
+          "enum": [
+            "selected_months",
+            "cached_corpus",
+            "provided_files",
+            "mixed"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "months": {
+          "default": [],
+          "items": {
+            "pattern": "^[0-9]{4}-(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)$",
+            "type": "string"
+          },
+          "maxItems": 24,
+          "title": "Months",
+          "type": "array"
+        }
+      },
+      "required": [
+        "kind"
+      ],
+      "title": "SearchScope",
+      "type": "object"
+    },
+    "SideApplicability": {
+      "additionalProperties": false,
+      "properties": {
+        "assessment": {
+          "enum": [
+            "advisory-claim",
+            "unknown"
+          ],
+          "title": "Assessment",
+          "type": "string"
+        },
+        "identity": {
+          "$ref": "#/$defs/ArtifactIdentity"
+        },
+        "mappings": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/ProductMapping"
+          },
+          "title": "Mappings",
+          "type": "array"
+        },
+        "product_mapping_status": {
+          "enum": [
+            "verified",
+            "candidate",
+            "unknown"
+          ],
+          "title": "Product Mapping Status",
+          "type": "string"
+        },
+        "recommended": {
+          "default": false,
+          "title": "Recommended",
+          "type": "boolean"
+        },
+        "resolution": {
+          "enum": [
+            "affected",
+            "not_affected",
+            "fixed",
+            "under_investigation",
+            "contradictory",
+            "ambiguous",
+            "unknown"
+          ],
+          "title": "Resolution",
+          "type": "string"
+        },
+        "side": {
+          "enum": [
+            "older",
+            "newer"
+          ],
+          "title": "Side",
+          "type": "string"
+        },
+        "statuses": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/StatusEvidence"
+          },
+          "title": "Statuses",
+          "type": "array"
+        },
+        "why": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Why",
+          "type": "array"
+        }
+      },
+      "required": [
+        "side",
+        "identity",
+        "product_mapping_status",
+        "resolution",
+        "why",
+        "assessment"
+      ],
+      "title": "SideApplicability",
+      "type": "object"
+    },
+    "SourceSummary": {
+      "additionalProperties": false,
+      "properties": {
+        "cves": {
+          "default": [],
+          "items": {
+            "maxLength": 24,
+            "pattern": "^CVE-[0-9]{4}-[0-9]{4,19}$",
+            "type": "string"
+          },
+          "title": "Cves",
+          "type": "array"
+        },
+        "facts_id": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Facts Id",
+          "type": "string"
+        },
+        "source": {
+          "$ref": "#/$defs/AdvisorySource"
+        },
+        "superseded": {
+          "title": "Superseded",
+          "type": "boolean"
+        },
+        "validation_warnings": {
+          "minimum": 0,
+          "title": "Validation Warnings",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "source",
+        "facts_id",
+        "superseded",
+        "validation_warnings"
+      ],
+      "title": "SourceSummary",
+      "type": "object"
+    },
+    "StatusClaim": {
+      "additionalProperties": false,
+      "properties": {
+        "pointer": {
+          "maxLength": 4096,
+          "pattern": "^(/([^/~]|~[01])*)*$",
+          "title": "Pointer",
+          "type": "string"
+        },
+        "product_id": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Product Id",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "first_affected",
+            "first_fixed",
+            "fixed",
+            "known_affected",
+            "known_not_affected",
+            "last_affected",
+            "recommended",
+            "under_investigation"
+          ],
+          "title": "Status",
+          "type": "string"
+        }
+      },
+      "required": [
+        "product_id",
+        "status",
+        "pointer"
+      ],
+      "title": "StatusClaim",
+      "type": "object"
+    },
+    "StatusEvidence": {
+      "additionalProperties": false,
+      "properties": {
+        "assessment": {
+          "const": "advisory-claim",
+          "default": "advisory-claim",
+          "title": "Assessment",
+          "type": "string"
+        },
+        "document_category": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Document Category",
+          "type": "string"
+        },
+        "pointer": {
+          "maxLength": 4096,
+          "pattern": "^(/([^/~]|~[01])*)*$",
+          "title": "Pointer",
+          "type": "string"
+        },
+        "product_id": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Product Id",
+          "type": "string"
+        },
+        "product_name": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Product Name",
+          "type": "string"
+        },
+        "revision": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Revision",
+          "type": "string"
+        },
+        "source_id": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Source Id",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "first_affected",
+            "first_fixed",
+            "fixed",
+            "known_affected",
+            "known_not_affected",
+            "last_affected",
+            "recommended",
+            "under_investigation"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "status_class": {
+          "anyOf": [
+            {
+              "enum": [
+                "affected",
+                "not_affected",
+                "fixed",
+                "under_investigation"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Status Class"
+        },
+        "superseded": {
+          "title": "Superseded",
+          "type": "boolean"
+        },
+        "tracking_id": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Tracking Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "source_id",
+        "tracking_id",
+        "revision",
+        "document_category",
+        "product_id",
+        "product_name",
+        "status",
+        "status_class",
+        "pointer",
+        "superseded"
+      ],
+      "title": "StatusEvidence",
+      "type": "object"
+    },
+    "TermHit": {
+      "additionalProperties": false,
+      "properties": {
+        "cwe_ids": {
+          "default": [],
+          "items": {
+            "pattern": "^CWE-[1-9][0-9]{0,5}$",
+            "type": "string"
+          },
+          "title": "Cwe Ids",
+          "type": "array"
+        },
+        "excerpt": {
+          "maxLength": 300,
+          "title": "Excerpt",
+          "type": "string"
+        },
+        "negated": {
+          "default": false,
+          "title": "Negated",
+          "type": "boolean"
+        },
+        "negation_cue": {
+          "anyOf": [
+            {
+              "maxLength": 40,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Negation Cue"
+        },
+        "phrase": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Phrase",
+          "type": "string"
+        },
+        "pointer": {
+          "maxLength": 4096,
+          "pattern": "^(/([^/~]|~[01])*)*$",
+          "title": "Pointer",
+          "type": "string"
+        },
+        "scope": {
+          "enum": [
+            "weakness",
+            "effect",
+            "component",
+            "primitive"
+          ],
+          "title": "Scope",
+          "type": "string"
+        },
+        "strength": {
+          "enum": [
+            "strong",
+            "weak"
+          ],
+          "title": "Strength",
+          "type": "string"
+        },
+        "term_id": {
+          "maxLength": 64,
+          "minLength": 1,
+          "title": "Term Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "term_id",
+        "phrase",
+        "scope",
+        "strength",
+        "pointer",
+        "excerpt"
+      ],
+      "title": "TermHit",
+      "type": "object"
+    },
+    "Threat": {
+      "additionalProperties": false,
+      "properties": {
+        "category": {
+          "enum": [
+            "exploit_status",
+            "impact",
+            "target_set"
+          ],
+          "title": "Category",
+          "type": "string"
+        },
+        "date": {
+          "anyOf": [
+            {
+              "maxLength": 40,
+              "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]{1,9})?(Z|[+-][0-9]{2}:[0-9]{2})$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Date"
+        },
+        "details": {
+          "maxLength": 1048576,
+          "title": "Details",
+          "type": "string"
+        },
+        "group_ids": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Group Ids",
+          "type": "array"
+        },
+        "pointer": {
+          "maxLength": 4096,
+          "pattern": "^(/([^/~]|~[01])*)*$",
+          "title": "Pointer",
+          "type": "string"
+        },
+        "product_ids": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Product Ids",
+          "type": "array"
+        },
+        "via_groups": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Via Groups",
+          "type": "array"
+        }
+      },
+      "required": [
+        "pointer",
+        "category",
+        "details"
+      ],
+      "title": "Threat",
+      "type": "object"
+    },
+    "VulnerabilityId": {
+      "additionalProperties": false,
+      "properties": {
+        "pointer": {
+          "maxLength": 4096,
+          "pattern": "^(/([^/~]|~[01])*)*$",
+          "title": "Pointer",
+          "type": "string"
+        },
+        "system_name": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "System Name",
+          "type": "string"
+        },
+        "text": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "system_name",
+        "text",
+        "pointer"
+      ],
+      "title": "VulnerabilityId",
+      "type": "object"
+    }
+  },
+  "$id": "https://patchtrace.local/schemas/kbcorrelation/1/ContextReport.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "Documentary context per CVE; ``intelligence`` embeds the reused ``intelligence/1`` report where CSAF exists.",
+  "properties": {
+    "cards": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/CveCard"
+      },
+      "title": "Cards",
+      "type": "array"
+    },
+    "contract": {
+      "const": "kbcorrelation/1",
+      "default": "kbcorrelation/1",
+      "title": "Contract",
+      "type": "string"
+    },
+    "coverage": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/Coverage"
+      },
+      "title": "Coverage",
+      "type": "array"
+    },
+    "hooks": {
+      "default": [],
+      "items": {
+        "enum": [
+          "kb.next.import_documents",
+          "kb.next.choose_product",
+          "kb.next.enter_filename",
+          "kb.next.supply_pair",
+          "kb.next.run_comparison",
+          "kb.next.review_lead",
+          "kb.next.widen_window",
+          "kb.meaning.coverage",
+          "kb.meaning.relation",
+          "kb.meaning.tier",
+          "kb.meaning.grade",
+          "kb.meaning.kev",
+          "kb.meaning.hypothesis"
+        ],
+        "type": "string"
+      },
+      "title": "Hooks",
+      "type": "array"
+    },
+    "intelligence": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/IntelligenceReport"
+      },
+      "title": "Intelligence",
+      "type": "array"
+    },
+    "limitations": {
+      "default": [],
+      "items": {
+        "maxLength": 1000,
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Limitations",
+      "type": "array"
+    },
+    "unknowns": {
+      "default": [],
+      "items": {
+        "maxLength": 1000,
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Unknowns",
+      "type": "array"
+    }
+  },
+  "title": "ContextReport",
+  "type": "object"
+}
