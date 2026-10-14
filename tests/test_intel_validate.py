@@ -55,7 +55,7 @@ def test_synthetic_fixtures_are_valid_csaf(name):
     (b'{"a": ' + b'9' * 5000 + b'}', 'PT-INTEL-FORMAT', 'invalid number'),
     (b'{"a": ', 'PT-INTEL-FORMAT', 'not valid JSON'),
     (b'[' * 100_000 + b']' * 100_000, 'PT-INTEL-LIMIT', 'nesting'),
-])
+], ids=['duplicate-key', 'bom', 'bad-utf8', 'nan', 'huge-exponent', 'long-integer', 'truncated', 'deep-nesting'])
 def test_malformed_json_is_rejected_with_a_typed_error(raw, code, needle):
     with pytest.raises(IntelError) as info:
         v.parse_json(raw)
