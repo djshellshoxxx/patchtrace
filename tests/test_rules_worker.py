@@ -513,8 +513,14 @@ def test_a_missing_engine_in_a_real_child_is_unavailable(monkeypatch, tmp_path, 
     assert list(scratch.iterdir()) == []
 
 
+# RLIMIT_AS counts address space, so on Linux caps up to 192 MiB are below the engine's footprint. The Windows job limit
+# counts committed memory only (CI measured 2026-10-14: the same 33.5 MiB scan completes under 64, 128 and 192 MiB), so
+# the Windows caps sit below the size of the target itself: reading it cannot fit, whatever the interpreter's base commit.
+OOM_CAPS_MIB = (16, 24, 32) if os.name == 'nt' else (64, 128, 192)
+
+
 @needs_engine
-@pytest.mark.parametrize('cap_mib', [64, 128, 192], ids=['cap-64', 'cap-128', 'cap-192'])
+@pytest.mark.parametrize('cap_mib', OOM_CAPS_MIB, ids=[f'cap-{cap}' for cap in OOM_CAPS_MIB])
 def test_real_worker_out_of_memory_is_classified_as_a_limit_not_a_crash(tmp_path, scratch, cap_mib):
     """Linux measured: RLIMIT_AS below the engine's footprint ends as a Rust allocation abort (64), an ENOMEM panic caught
     as BaseException (128) or a MemoryError (192, exit 22); all three are `worker-oom`. Windows (U7): the job limit counts
@@ -529,5 +535,5 @@ def test_real_worker_out_of_memory_is_classified_as_a_limit_not_a_crash(tmp_path
     error = failure(runner.scan, [valid], [target], limits=limits, scratch_dir=scratch)
     assert error.reason == 'worker-oom' or (os.name == 'nt' and error.reason == 'worker-crash'), error
     assert error.code in ('PT-RULE-LIMIT', 'PT-RULE-ENGINE') and list(scratch.iterdir()) == []
-    if cap_mib < 192:  # too small to even start: the probe says the engine is unavailable
+    if os.name != 'nt' and cap_mib < 192:  # too small to even start: the probe says the engine is unavailable
         assert failure(runner.probe, limits=limits, scratch_dir=scratch).code == 'PT-RULE-UNAVAILABLE'
