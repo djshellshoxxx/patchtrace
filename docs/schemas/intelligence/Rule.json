@@ -1,0 +1,137 @@
+{
+  "$id": "https://patchtrace.local/schemas/intelligence/1/Rule.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "api_hints": {
+      "default": [],
+      "items": {
+        "pattern": "^[A-Za-z_][A-Za-z0-9_]{0,63}$",
+        "type": "string"
+      },
+      "maxItems": 64,
+      "title": "Api Hints",
+      "type": "array"
+    },
+    "caveat": {
+      "maxLength": 500,
+      "minLength": 1,
+      "title": "Caveat",
+      "type": "string"
+    },
+    "contract": {
+      "const": "intelligence/1",
+      "default": "intelligence/1",
+      "title": "Contract",
+      "type": "string"
+    },
+    "contradictions": {
+      "default": [],
+      "items": {
+        "type": "string"
+      },
+      "maxItems": 64,
+      "title": "Contradictions",
+      "type": "array"
+    },
+    "counterexamples": {
+      "items": {
+        "type": "string"
+      },
+      "maxItems": 64,
+      "minItems": 1,
+      "title": "Counterexamples",
+      "type": "array"
+    },
+    "cwe_patterns": {
+      "items": {
+        "pattern": "^CWE-[1-9][0-9]{0,5}$",
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Cwe Patterns",
+      "type": "array"
+    },
+    "expected_operations": {
+      "items": {
+        "type": "string"
+      },
+      "maxItems": 64,
+      "minItems": 1,
+      "title": "Expected Operations",
+      "type": "array"
+    },
+    "family": {
+      "maxLength": 40,
+      "minLength": 1,
+      "title": "Family",
+      "type": "string"
+    },
+    "guards": {
+      "default": [],
+      "items": {
+        "type": "string"
+      },
+      "maxItems": 64,
+      "title": "Guards",
+      "type": "array"
+    },
+    "id": {
+      "pattern": "^R-[A-Z0-9-]{1,40}$",
+      "title": "Id",
+      "type": "string"
+    },
+    "negations": {
+      "default": [],
+      "items": {
+        "type": "string"
+      },
+      "maxItems": 64,
+      "title": "Negations",
+      "type": "array"
+    },
+    "required_observations": {
+      "default": [],
+      "items": {
+        "type": "string"
+      },
+      "maxItems": 64,
+      "title": "Required Observations",
+      "type": "array"
+    },
+    "revision": {
+      "minimum": 1,
+      "title": "Revision",
+      "type": "integer"
+    },
+    "sinks": {
+      "default": [],
+      "items": {
+        "type": "string"
+      },
+      "maxItems": 64,
+      "title": "Sinks",
+      "type": "array"
+    },
+    "sources": {
+      "default": [],
+      "items": {
+        "type": "string"
+      },
+      "maxItems": 64,
+      "title": "Sources",
+      "type": "array"
+    }
+  },
+  "required": [
+    "id",
+    "revision",
+    "family",
+    "cwe_patterns",
+    "expected_operations",
+    "counterexamples",
+    "caveat"
+  ],
+  "title": "Rule",
+  "type": "object"
+}

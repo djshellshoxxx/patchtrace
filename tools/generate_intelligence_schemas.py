@@ -156,8 +156,57 @@ def render_examples() -> str:
     return json.dumps(build_examples(), indent=2, sort_keys=True, ensure_ascii=False) + '\n'
 
 
+def _valid_records() -> dict:
+    """One valid record per contract, produced by the real pipeline from the SYNTHETIC rev1 fixture."""
+    from patchtrace.intelligence import anchors, hypotheses, lexicon
+    from patchtrace.intelligence.contracts import ArtifactIdentity, IntelligenceReport, SourceSummary
+    from patchtrace.intelligence.csaf import applicability, normalize, validate
+    raw = (ROOT / 'tests' / 'fixtures' / 'csaf' / 'synthetic-advisory-rev1.json').read_bytes()
+    doc, report = validate.load_document(raw)
+    facts = normalize.normalize(doc, report, hashlib.sha256(raw).hexdigest())
+    source = normalize.make_source(doc, raw, origin='local-import', uri=None, file_name='synthetic-advisory-rev1.json',
+                                   retrieved_at='2099-03-01T00:00:00Z')
+    cve = 'CVE-2099-10001'
+    fact = facts.vulnerability(cve)
+    profile = lexicon.classify(fact)
+    hyps = hypotheses.hypotheses_for(profile)
+    older = ArtifactIdentity(side='older', sha256='dc71b8420acc68418eaebfb8a4848cd2f63626125868e9977f017010c8d30215',
+                             facts_state='verified-bytes')
+    newer = ArtifactIdentity(side='newer', sha256='4af23bcb773054ad469c57363d50e2b53a6590bfba2286f16a06b4fb1440a168',
+                             facts_state='verified-bytes')
+    applies = applicability.resolve(cve, [facts], older, newer)
+    hints = anchors.anchors_for(cve, [facts], (older, newer), hyps)
+    summary = SourceSummary(source=source, facts_id=facts.facts_id, superseded=False, cves=facts.cves(),
+                            validation_warnings=len(report.warnings))
+    full = IntelligenceReport(cve=cve, sources=(summary,), facts=(fact,), applicability=applies, cwe_profile=profile,
+                              hypotheses=hyps, anchors=hints,
+                              limitations=('SYNTHETIC example generated from tests/fixtures/csaf',))
+    return {'ValidationReport': report, 'AdvisorySource': source, 'AdvisoryFacts': facts, 'CVEFact': fact,
+            'ArtifactIdentity': older, 'ApplicabilityReport': applies, 'CweProfile': profile,
+            'Rule': hypotheses.RULES[0], 'HypothesisSet': hyps, 'AnchorSet': hints, 'IntelligenceReport': full}
+
+
+SPECIFIC_INVALID = {
+    'AdvisorySource': ({'uri': 'https://example.invalid/x.json'}, 'a local import never carries a URI'),
+    'ArtifactIdentity': ({'facts_state': 'record-only', 'file_version': '1.2.3.4'},
+                         'bytes-derived identity facts require verified bytes'),
+    'CweProfile': ({'status': 'vague'}, 'vague text never carries a confident classification'),
+    'CVEFact': ({'assessment': 'verified'}, 'an advisory fact is a claim, never a verification'),
+    'HypothesisSet': ({'hypotheses': [], 'unknowns': []}, 'an empty hypothesis set must state an explicit unknown'),
+}
+
+
 def build_examples() -> dict:
-    raise NotImplementedError('examples are added once the pipeline exists')
+    out = {}
+    for name, record in _valid_records().items():
+        valid = json.loads(record.model_dump_json())
+        invalid = [{'example': valid | {'unexpected_field': 1}, 'reason': 'extra fields are forbidden'},
+                   {'example': valid | {'contract': 'intelligence/2'}, 'reason': 'unsupported future contract version'}]
+        if name in SPECIFIC_INVALID:
+            patch, reason = SPECIFIC_INVALID[name]
+            invalid.append({'example': valid | patch, 'reason': reason})
+        out[name] = {'valid': valid, 'invalid': invalid}
+    return out
 
 
 def render() -> dict[Path, str]:

@@ -1,0 +1,128 @@
+{
+  "$defs": {
+    "PdbIdentity": {
+      "additionalProperties": false,
+      "properties": {
+        "age": {
+          "maximum": 4294967295,
+          "minimum": 0,
+          "title": "Age",
+          "type": "integer"
+        },
+        "guid": {
+          "pattern": "^[0-9A-F]{32}$",
+          "title": "Guid",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 260,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "guid",
+        "age"
+      ],
+      "title": "PdbIdentity",
+      "type": "object"
+    }
+  },
+  "$id": "https://patchtrace.local/schemas/intelligence/1/ArtifactIdentity.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "Identity facts for one side. Bytes-derived fields come only from verified bytes; the file name is\nnever an identity fact. ``asserted_product_ids`` are analyst input and stay labelled as such.",
+  "properties": {
+    "asserted_product_ids": {
+      "default": [],
+      "items": {
+        "type": "string"
+      },
+      "maxItems": 64,
+      "title": "Asserted Product Ids",
+      "type": "array"
+    },
+    "contract": {
+      "const": "intelligence/1",
+      "default": "intelligence/1",
+      "title": "Contract",
+      "type": "string"
+    },
+    "facts_state": {
+      "enum": [
+        "verified-bytes",
+        "record-only"
+      ],
+      "title": "Facts State",
+      "type": "string"
+    },
+    "file_version": {
+      "anyOf": [
+        {
+          "pattern": "^[0-9]{1,5}\\.[0-9]{1,5}\\.[0-9]{1,5}\\.[0-9]{1,5}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "File Version"
+    },
+    "notes": {
+      "default": [],
+      "items": {
+        "type": "string"
+      },
+      "maxItems": 32,
+      "title": "Notes",
+      "type": "array"
+    },
+    "pdb_identity": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/PdbIdentity"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "product_version": {
+      "anyOf": [
+        {
+          "pattern": "^[0-9]{1,5}\\.[0-9]{1,5}\\.[0-9]{1,5}\\.[0-9]{1,5}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Product Version"
+    },
+    "sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Sha256",
+      "type": "string"
+    },
+    "side": {
+      "enum": [
+        "older",
+        "newer"
+      ],
+      "title": "Side",
+      "type": "string"
+    }
+  },
+  "required": [
+    "side",
+    "sha256",
+    "facts_state"
+  ],
+  "title": "ArtifactIdentity",
+  "type": "object"
+}
