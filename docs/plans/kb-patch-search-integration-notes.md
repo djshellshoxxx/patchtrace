@@ -8,7 +8,7 @@ This change is documentation only. Do not report any of the feature as implement
 
 ## 0. Expanded integration ownership (2026-10-14)
 
-Use the four new detailed specifications as implementation contracts, not merely further reading: [provider source adapters](../specs/kb-patch-search-source-adapters.md), [pair/lifecycle](../specs/kb-patch-search-pair-lifecycle.md), [UI/CLI](../specs/kb-patch-search-ui-cli-contract.md) and [QA/fixtures](../specs/kb-patch-search-qa-and-fixtures.md). The core SPEC-32 document points to their normative precedence when older shorthand differs.
+Use the four new detailed specifications as implementation contracts, not merely further reading: [provider source adapters](../specs/kb-patch-search-source-adapters.md), [pair/lifecycle](../specs/kb-patch-search-pair-lifecycle.md), [UI/CLI](../specs/kb-patch-search-ui-cli-contract.md) , [QA/fixtures](../specs/kb-patch-search-qa-and-fixtures.md), and [typed Python contracts](../specs/kb-patch-search-contract-blueprint.md). The core SPEC-32 document points to their normative precedence when older shorthand differs.
 
 Key checked repository issue: ProjectStore accepts only its own fixed PRAGMA user_version; changing core SQLite schema would introduce an avoidable incompatible migration. SPEC-32 instead attaches optional metadata through a separate patch_search.sqlite3 companion store and retries attaching a completed normal project idempotently if the attach is interrupted. Core ProjectService and its artifact ownership stay unchanged.
 
