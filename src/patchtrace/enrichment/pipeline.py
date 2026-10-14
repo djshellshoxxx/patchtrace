@@ -307,6 +307,13 @@ def run(project: ComparisonProject, options: PipelineOptions | None = None,
                           ranking.config_digest(options.config), default)
 
 
+def prepare_publish(root) -> None:
+    """Worker-thread step before `publish`: take the verified pre-extension/retention backups off the
+    owner (GUI) thread. Best effort; `publish` still takes any backup that is missing."""
+    from .storage import prepare_backups
+    prepare_backups(root)
+
+
 def publish(store: EnrichmentStore, project: ComparisonProject, result: PipelineResult) -> list[Entry]:
     """Owner-thread publication with an immediate currency recheck against the live project.
     Cancelled results are never published: they would leave an incomplete profile row set."""

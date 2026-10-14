@@ -14,10 +14,12 @@ from __future__ import annotations
 
 import hashlib
 import json
+import logging
 import sqlite3
 from collections.abc import Callable, Collection, Iterable
 from dataclasses import dataclass
 from datetime import UTC, datetime, timedelta
+from pathlib import Path
 
 from ..persistence import ProjectStore, safe_path
 from .contracts import EnrichmentError
@@ -64,6 +66,66 @@ class Entry:
     body: dict
 
 
+def _snapshot_sha(db: sqlite3.Connection):
+    return db.execute('SELECT sha256 FROM current_snapshot WHERE singleton=1').fetchone()
+
+
+def _write_backup(root, db: sqlite3.Connection, label: str) -> None:
+    """Verified SQLite backup of `db` into `<root>/backups`. The copy is written under a `.part` name and
+    renamed only after `quick_check` and the snapshot hash match, so a crash never leaves a half-trusted file."""
+    directory = safe_path(root, 'backups')
+    directory.mkdir(exist_ok=True)
+    stamp = datetime.now(UTC).strftime('%Y%m%dT%H%M%S%fZ')
+    target = safe_path(root, f'backups/project-pre-{label}-{stamp}.sqlite3')
+    part = safe_path(root, f'backups/project-pre-{label}-{stamp}.sqlite3.part')
+    expected = _snapshot_sha(db)
+    copy = sqlite3.connect(part)
+    try:
+        db.backup(copy)
+        ok = copy.execute('PRAGMA quick_check').fetchone()[0] == 'ok'
+        got = _snapshot_sha(copy)
+    finally:
+        copy.close()
+    if not ok or got != expected:
+        part.unlink(missing_ok=True)
+        raise EnrichmentError('PT-ENRICH-INPUT', f'pre-{label} database backup failed verification')
+    part.replace(target)
+
+
+def prepare_backups(root) -> None:
+    """Make the verified pre-extension / pre-retention backups a publish would otherwise take synchronously.
+
+    Thread-safe and best-effort: call it from a worker thread before the owner thread publishes. It opens its
+    own read-only connection (never the owner's), so a failure here only means the owner thread falls back to
+    taking the same backup itself; nothing about the safety checks is skipped."""
+    try:
+        root = Path(root).resolve()
+        database = safe_path(root, 'project.sqlite3')
+        if not database.is_file():
+            return
+        db = sqlite3.connect(f'{database.as_uri()}?mode=ro', uri=True, timeout=5)
+        try:
+            tables = {r[0] for r in db.execute("SELECT name FROM sqlite_master WHERE type='table'")}
+            if 'enrichment_meta' not in tables:
+                label = 'enrichment'
+            elif _retention_likely(db, root, tables):
+                label = 'retention'
+            else:
+                return
+            _write_backup(root, db, label)
+        finally:
+            db.close()
+    except Exception:  # noqa: BLE001 - best effort: the owner thread repeats the work if this fails
+        logging.getLogger(__name__).debug('Background pre-publish backup skipped', exc_info=True)
+
+
+def _retention_likely(db: sqlite3.Connection, root: Path, tables: set[str]) -> bool:
+    if 'enrichment_entries' not in tables or any((root / 'backups').glob('project-pre-retention-*.sqlite3')):
+        return False
+    count = db.execute("SELECT COUNT(*) FROM enrichment_entries WHERE kind='pipeline'").fetchone()[0]
+    return count >= KEEP_CURRENT
+
+
 class EnrichmentStore:
     def __init__(self, store: ProjectStore):
         self.store = store
@@ -93,21 +155,26 @@ class EnrichmentStore:
         return {row[0] for row in self._db.execute("SELECT name FROM sqlite_master WHERE type='table'")}
 
     def _backup_before_create(self, label: str = 'enrichment') -> None:
+        _write_backup(self.store.root, self._db, label)
+
+    def _has_current_backup(self, label: str) -> bool:
+        """True when a verified `project-pre-<label>-*` backup (e.g. made by `prepare_backups` on a worker
+        thread) holds exactly the snapshot the live database holds now. One-row read per candidate."""
         directory = safe_path(self.store.root, 'backups')
-        directory.mkdir(exist_ok=True)
-        stamp = datetime.now(UTC).strftime('%Y%m%dT%H%M%S%fZ')
-        target = safe_path(self.store.root, f'backups/project-pre-{label}-{stamp}.sqlite3')
-        expected = self._db.execute('SELECT sha256 FROM current_snapshot WHERE singleton=1').fetchone()
-        copy = sqlite3.connect(target)
-        try:
-            self._db.backup(copy)
-            ok = copy.execute('PRAGMA quick_check').fetchone()[0] == 'ok'
-            got = copy.execute('SELECT sha256 FROM current_snapshot WHERE singleton=1').fetchone()
-        finally:
-            copy.close()
-        if not ok or got != expected:
-            target.unlink(missing_ok=True)
-            raise EnrichmentError('PT-ENRICH-INPUT', f'pre-{label} database backup failed verification')
+        if not directory.is_dir():
+            return False
+        live = _snapshot_sha(self._db)
+        for candidate in sorted(directory.glob(f'project-pre-{label}-*.sqlite3'), reverse=True):
+            try:
+                copy = sqlite3.connect(f'{candidate.as_uri()}?mode=ro', uri=True, timeout=5)
+                try:
+                    if _snapshot_sha(copy) == live:
+                        return True
+                finally:
+                    copy.close()
+            except (sqlite3.Error, OSError, ValueError):
+                continue
+        return False
 
     def ensure(self) -> None:
         """Create tables on first use; detect newer extension versions (read-only)."""
@@ -115,7 +182,8 @@ class EnrichmentStore:
             return
         tables = self._tables()
         if 'enrichment_meta' not in tables:
-            self._backup_before_create()
+            if not self._has_current_backup('enrichment'):
+                self._backup_before_create()
             self._ddl_transaction([
                 ('CREATE TABLE enrichment_meta (key TEXT PRIMARY KEY, value TEXT NOT NULL)', ()),
                 ('CREATE TABLE enrichment_entries (id TEXT PRIMARY KEY, kind TEXT NOT NULL, '

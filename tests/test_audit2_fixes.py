@@ -238,3 +238,58 @@ def test_empty_nvd_key_env_is_no_key(monkeypatch):
     monkeypatch.delenv('NVD_MISSING', raising=False)
     assert [cli._api_key(n) for n in ('', 'NVD_EMPTY', 'NVD_BLANK', 'NVD_MISSING')] == [None] * 4
     assert cli._api_key('NVD_REAL') == 'abc123'
+
+
+# --- backups off the GUI thread (item 11) ---------------------------------------------------------
+
+def test_prepared_backup_made_off_thread_skips_synchronous_backup(tmp_path, monkeypatch):
+    import threading
+
+    from patchtrace.enrichment.storage import EnrichmentStore, prepare_backups
+    from patchtrace.sample import create_sample
+    svc = create_sample(tmp_path / 'p')
+    root = svc.store.root
+    worker = threading.Thread(target=prepare_backups, args=(root,))
+    worker.start()
+    worker.join(30)
+    assert len(list((root / 'backups').glob('project-pre-enrichment-*.sqlite3'))) == 1
+    assert not list((root / 'backups').glob('*.part'))
+    store = EnrichmentStore(svc.store)
+    monkeypatch.setattr(store, '_backup_before_create',
+                        lambda *a, **k: (_ for _ in ()).throw(AssertionError('synchronous backup on owner thread')))
+    store.ensure()  # a fresh verified backup of the same snapshot exists: nothing to copy on this thread
+    assert 'enrichment_meta' in store._tables()
+
+
+def test_stale_prepared_backup_is_not_trusted(tmp_path):
+    from patchtrace.enrichment.storage import EnrichmentStore, prepare_backups
+    from patchtrace.sample import create_sample
+    svc = create_sample(tmp_path / 'p')
+    prepare_backups(svc.store.root)
+    svc.store.connection.execute("update current_snapshot set sha256=? where singleton=1", ('f' * 64,))
+    svc.store.connection.commit()
+    EnrichmentStore(svc.store).ensure()
+    assert len(list((svc.store.root / 'backups').glob('project-pre-enrichment-*.sqlite3'))) == 2
+
+
+def test_prepare_backups_never_raises(tmp_path):
+    from patchtrace.enrichment.storage import prepare_backups
+    prepare_backups(tmp_path / 'does-not-exist')
+
+
+def test_rank_changes_prepares_backups_on_the_worker_thread(qtbot, tmp_path, monkeypatch):
+    import threading
+
+    from PySide6.QtCore import QSettings
+
+    from patchtrace.enrichment import pipeline
+    from patchtrace.service import ProjectService
+    from patchtrace.ui import MainWindow
+    window = MainWindow(ProjectService.sample(tmp_path / 's'),
+                        QSettings(str(tmp_path / 'ui.ini'), QSettings.Format.IniFormat))
+    qtbot.addWidget(window)
+    threads = []
+    monkeypatch.setattr(pipeline, 'prepare_publish', lambda root: threads.append(threading.current_thread()))
+    window.rank_action.trigger()
+    qtbot.waitUntil(lambda: window.worker is None, timeout=10000)
+    assert threads and threads[0] is not threading.main_thread()
