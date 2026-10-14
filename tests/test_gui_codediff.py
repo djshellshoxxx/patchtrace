@@ -270,3 +270,20 @@ def test_a_highlighter_not_parented_to_the_document_is_refused(diff):
     with pytest.raises(ValueError):
         diff.attach_highlighter('older', lambda _document: WindowedStub(holder))
     assert 'older' not in diff._highlighters
+
+
+# --- hunk tints are tokens, high contrast underlines (slice F7) ---
+
+def test_hunk_tints_are_read_from_the_tokens():
+    tokens = replace(DARK, hunk_replace='#112233', hunk_other='#223311')
+    assert hunk_background('replace', tokens) == '#112233' and hunk_background('insert', tokens) == '#223311'
+
+
+def test_high_contrast_marks_hunks_by_underline_not_by_tint(diff):
+    diff.set_pair(SAMPLE)
+    diff.set_tokens(replace(DARK, high_contrast=True, hunk_replace=DARK.surface_alt, hunk_other=DARK.surface_alt))
+    marks = diff.pane('older').extraSelections()
+    assert marks and all(item.format.fontUnderline() for item in marks)
+    assert set(colors(diff.pane('older'))) == {DARK.surface_alt}
+    diff.set_tokens(DARK)
+    assert not any(item.format.fontUnderline() for item in diff.pane('older').extraSelections())

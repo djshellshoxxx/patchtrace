@@ -1,13 +1,15 @@
 """Status chips: ChipLabel, ChipDelegate and the shared painter (GUI plan 8.4, 8.6; slice F3). Offscreen, hermetic."""
 from __future__ import annotations
 
+from dataclasses import replace
+
 import pytest
 from PySide6.QtCore import QRect, Qt
 from PySide6.QtGui import QColor, QFont, QImage, QPainter, QStandardItem, QStandardItemModel
 from PySide6.QtWidgets import QStyleOptionViewItem, QTableView
 from qt_support import HOSTILE_PARAMS, join_gui_threads  # noqa: F401
 
-from patchtrace.gui.qt import chips
+from patchtrace.gui.qt import chips, theme
 from patchtrace.gui.qt.chips import (
     CHIP_ROLE,
     ChipDelegate,
@@ -166,3 +168,27 @@ def test_the_delegate_survives_a_selected_row_and_new_tokens(table):
     table.itemDelegateForColumn(0).set_tokens(DARK)
     assert not table.viewport().grab().toImage().isNull()
     assert table.model().index(0, 0).data(Qt.ItemDataRole.DisplayRole) == 'Agree'
+
+
+# --- high contrast (slice F7) ---
+
+def _high_contrast_tokens():
+    return replace(DARK, high_contrast=True, surface='#000000', text='#ffffff',
+                   chips=tuple((name, theme.ChipColors('#000000', '#ffffff')) for name, _ in DARK.chips))
+
+
+def test_high_contrast_draws_an_outline_without_a_fill_and_keeps_the_shape_difference():
+    tokens = _high_contrast_tokens()
+    image = render(spec('ok'), tokens)
+    middle = image.width() // 2
+    assert {image.pixelColor(middle, y).name() for y in range(3)} <= {'#000000', '#ffffff'}  # no fill colour, no tint
+    assert image.pixelColor(middle, 0).name() == '#ffffff' and image.pixelColor(middle, 1).name() == '#ffffff'
+    shapes = [render(spec('ok', shape), tokens) for shape in CHIP_SHAPES]
+    assert len({bytes(image.constBits()) for image in shapes}) == len(CHIP_SHAPES)
+
+
+def test_high_contrast_widgets_paint_from_their_own_palette(qtbot):
+    widget = ChipLabel(spec('ok'), tokens=_high_contrast_tokens())
+    qtbot.addWidget(widget)
+    widget.resize(widget.sizeHint())
+    assert not widget.grab().toImage().isNull()

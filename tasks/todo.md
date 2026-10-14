@@ -344,7 +344,7 @@
 ### [F6a:codediff]
 - [ ] Integrator (M4): move the four ui.py setExtraSelections sites (render_match, _highlight_hunks, raw view, raw clear) to compose_selections; adopt CodeDiffView in ui.py when M4 lands.
 - [ ] WBQ S9: attach the windowed CodeHighlighter through CodeDiffView.attach_highlighter before set_pair.
-- [ ] F7: hunk tints come from the ui.py literals (#263a43, #33392b) guarded by ensure_contrast; move them to ThemeTokens with the system and high-contrast variants.
+- [x] F7: hunk tints are ThemeTokens (hunk_replace, hunk_other) with system and high-contrast variants.
 
 ### [GUI-F5:host] GUI framework F5: panel host and seam (2026-10-14)
 - [x] PanelHost, docks, layout persistence, View menu, command palette, F6 cycle, anchors, MainWindowPort, ui.py seam, tooltips delegation, `--self-test` panel check, seam budget and forbidden-API tests; AI-FIX: completed interpretation runs show `run.error`.
@@ -352,3 +352,8 @@
 - [ ] F8: evidence migration (`secondary/evidence_panel.py`; remove the `hasattr(self, 'evidence')` hooks and the menu lookup by 'Analysis'); then lower `UI_TRANSITIONAL_CEILING` in tests/test_gui_host_seam.py to the final +15.
 - [ ] F7: Theme submenu, `theme_changed` on palette change, reduced motion.
 - [ ] BLOCKED (manual): palette, F6 order, dock tab names and notice strip with real Narrator or NVDA on Windows; layout restore across DPI changes.
+
+### [F7:theme]
+- [x] system variant, automatic high contrast, chip HC drawing, reduced motion (Qt animation effects), View > Theme, hunk tints as ThemeTokens, focused tests.
+- [ ] Integrator: a tip id for the Theme submenu (tooltips.py is frozen for F7); panels with their own painting should handle `theme_changed` and use `tokens.high_contrast`; legacy ui.py widget-level stylesheets (code font size) are unaffected.
+- [ ] BLOCKED (manual M22): real Windows high-contrast themes (Aquatic, Desert, Dusk, Night sky), Settings > Accessibility > Visual effects (animations off), light/dark OS switch with the System variant, chip and hunk legibility at 100-200 percent DPI.

@@ -547,3 +547,9 @@ CI job text for the integration owner (`.github/workflows/qa-windows.yml`, after
         env:
           QT_QPA_PLATFORM: offscreen
 ```
+
+### [F7:theme] Theme variants (manual M22 on Windows)
+1. View > Theme > System, then switch Windows between light and dark: window, tables, chips and code panes follow without restart; text stays readable.
+2. Turn on a Windows high-contrast theme (Alt+Left Shift+PrtScn): the stylesheet is gone, chips are outlined text with a 2 px edge and no fill, diff hunks are underlined, the focus ring is visible on every control; the Theme submenu shows the disabled note. Turn it off: the chosen variant returns.
+3. Settings > Accessibility > Visual effects > Animation effects off: menus and tooltips appear without fade or slide.
+Automated evidence uses a simulated provider only; no test touches real OS settings.
