@@ -36,3 +36,7 @@ tests/fixtures/unified/*.jsonl text eol=lf
 tests/fixtures/unified/*.c text eol=lf
 tests/fixtures/unified/*.bin binary
 src/patchtrace/unified/extract/ghidra_script.py text eol=lf
+tests/fixtures/callgraph/** text eol=lf
+tests/fixtures/strings/** text eol=lf
+tests/fixtures/search/*.json text eol=lf
+tests/fixtures/intel_tools/** text eol=lf

@@ -367,6 +367,7 @@ def test_ports_are_protocols_without_default_behaviour():
 
 FORBIDDEN = {'PySide6', 'PyQt5', 'PyQt6', 'urllib', 'http', 'socket', 'sqlite3', 'requests', 'ssl'}
 SIBLINGS = {'acquisition', 'enrichment', 'intelligence', 'unified', 'secondary', 'ui', 'backend', 'cli', 'jobs'}
+ALLOWED_FORBIDDEN = {'store.py': {'sqlite3'}, 'recovery.py': {'sqlite3'}}  # K2 owns the workspace database
 ALLOWED_SIBLINGS = {'contracts.py': {'acquisition', 'enrichment', 'intelligence'}}
 
 
@@ -386,7 +387,7 @@ def test_domain_modules_import_no_qt_network_or_database(path):
     for level, module in _imports(path):
         top = module.split('.')[0]
         if level == 0:
-            assert top not in FORBIDDEN, f'{path.name} imports {module}'
+            assert top not in FORBIDDEN - ALLOWED_FORBIDDEN.get(path.name, set()), f'{path.name} imports {module}'
             assert top != 'patchtrace', f'{path.name} must use relative imports'
         elif level == 2:  # `..x` is a sibling package
             assert top in sibling_ok, f'{path.name} imports sibling {module}'
