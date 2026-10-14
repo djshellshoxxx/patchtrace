@@ -383,6 +383,9 @@ def cmd_correlate(args, cancel) -> int:
         for request in plan:
             print(f'request: {request.provider} {request.url}', file=sys.stderr)
         key = os.environ.get(args.api_key_env) if args.api_key_env else None
+        duration = intelligence.describe_duration(plan, key is not None)
+        if duration:
+            print(duration, file=sys.stderr)
         try:
             responses, failures = intelligence.fetch_all(plan, intelligence.FetchConsent.for_plan(plan),
                                                          api_key=key, cancel=cancel)
