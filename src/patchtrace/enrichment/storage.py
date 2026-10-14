@@ -48,7 +48,9 @@ KINDS = frozenset({'signals', 'ranking', 'wil', 'cve-snapshot', 'contextual', 'p
                    # Program E (integration owner, AM1): saved searches and the rule-authoring rows. Same rule:
                    # none is in DERIVED_KINDS, so retention never deletes them.
                    'search-saved', 'rule-candidate', 'rule-decision', 'rule-version', 'rule-test',
-                   'rule-export'})
+                   'rule-export',
+                   # Program E (DIE D4): build-environment fingerprints and deltas; never in DERIVED_KINDS.
+                   'build-env'})
 
 # Retention (SPEC-07h H1). Only recomputable derived kinds are ever deleted; imported evidence
 # (`secondary-matches`), `cve-snapshot` and unknown kinds are never evicted.
