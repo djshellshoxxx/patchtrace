@@ -24,7 +24,7 @@ jobs:
         with:
           python-version: '3.12'
       - name: Install the site build tools (never the app dependencies)
-        run: python -m pip install --only-binary=:all: -r tools/site/requirements.txt pytest
+        run: "python -m pip install --only-binary=:all: -r tools/site/requirements.txt pytest"
       - name: Site tests (links, alt text, privacy allow-list, address validator, logo, QR)
         run: python -m pytest -q tests/test_site_*.py
       - name: Build the site into site/dist

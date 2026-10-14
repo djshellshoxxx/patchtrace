@@ -133,6 +133,8 @@ _FOOTER = {'type': 'footer', 'functions': 1210, 'instructions': 201544, 'status'
 _POINTER = {'contract': 'unified-result-ptr/1', 'result_id': _RID,
             'relative_dir': f'runs/run-1/unified/results/{_RID[:16]}', 'manifest_sha256': _h('manifest'),
             'status': 'complete', 'counts': _COUNTS, 'config_digest': _h('config')}
+# S0a-FIX: /2 adds the pair identity (02 s9.1); the /1 example above stays as the version-gated legacy reader's input.
+_POINTER2 = {**_POINTER, 'contract': 'unified-result-ptr/2', 'older_sha256': _OLD, 'newer_sha256': _NEW}
 
 
 def _mut(doc: dict, path: tuple, value=None, *, drop: bool = False) -> dict:
@@ -156,6 +158,7 @@ UNIFIED_EXAMPLES = {
                                                None),
     'valid-UnifiedResultManifest.json': ('UnifiedResultManifest', _MANIFEST, None),
     'valid-UnifiedResultPointer.json': ('UnifiedResultPointer', _POINTER, None),
+    'valid-UnifiedResultPointerV2.json': ('UnifiedResultPointerV2', _POINTER2, None),
     'valid-UnifiedRun-ok.json': ('UnifiedRun', _RUN, None),
     'valid-ProgramIrManifest.json': ('ProgramIrManifest', _IR, None),
     'valid-ExtractRequest-gzf.json': ('ExtractRequest', _REQUEST, None),
@@ -186,6 +189,8 @@ UNIFIED_EXAMPLES = {
     'invalid-UnifiedResultPointer-dir-mismatch.json': (
         'UnifiedResultPointer', _mut(_POINTER, ('relative_dir',), 'runs/run-1/unified/results/0000000000000000'),
         'relative_dir'),
+    'invalid-UnifiedResultPointerV2-without-pair.json': (
+        'UnifiedResultPointerV2', _mut(_POINTER2, ('newer_sha256',), drop=True), 'newer_sha256'),
     'invalid-ExtractRequest-relative-path.json': ('ExtractRequest', _mut(_REQUEST, ('out_dir',), 'out'), 'absolute'),
     'invalid-IrExtractHeader-unknown-key.json': ('IrExtractHeader', _mut(_HEADER, ('extra',), 1), 'extra'),
 }

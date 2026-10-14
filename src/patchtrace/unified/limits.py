@@ -18,6 +18,8 @@ ERROR_CODES = ('PT-UNIFIED-INPUT', 'PT-UNIFIED-PAIR', 'PT-UNIFIED-ORIENTATION', 
 EXIT_CODES = {code: 2 for code in ERROR_CODES[:4]} | {code: 3 for code in ERROR_CODES[4:]} | {'PT-UNIFIED-CANCEL': 5}
 _REASON = re.compile(r'^[a-z0-9-]{1,48}$')
 KIB, MIB, GIB = 1024, 1024 ** 2, 1024 ** 3
+MIN_HEAP_MIB = 512  # JVM heap floor (`ExtractRequest.max_heap_mb`, `jvm_heap_mib`)
+UNIT_INTERVAL_MILLI = ('l20_cosine_min_milli', 'l20_margin_milli', 'l24_score_floor_milli', 'l24_margin_milli')
 
 
 class UnifiedError(Exception):
@@ -44,7 +46,12 @@ class UnifiedError(Exception):
 
 
 class BudgetExhausted(UnifiedError):
-    """Raised by `Budget` on cancel (`PT-UNIFIED-CANCEL`) or deadline (`PT-UNIFIED-TIMEOUT`)."""
+    """Raised by `Budget` on cancel (`PT-UNIFIED-CANCEL`) or deadline (`PT-UNIFIED-TIMEOUT`) and by nothing else."""
+
+    def __init__(self, code: str, message: str, *, reason: str | None = None):
+        if code not in ('PT-UNIFIED-CANCEL', 'PT-UNIFIED-TIMEOUT'):
+            raise ValueError('a spent budget is a cancel or a timeout')
+        super().__init__(code, message, reason=reason)
 
 
 @dataclass(frozen=True)
@@ -136,12 +143,20 @@ class UnifiedLimits:
                    ('l04_analyze_timeout_s', 'l04_timeout_max_s'), ('l21_size_ratio_min_milli',
                                                                      'l21_size_ratio_max_milli'),
                    ('l34_timeout_min_s', 'l34_worker_timeout_s'), ('l34_worker_timeout_s', 'l34_timeout_max_s'),
-                   ('l31_stderr_tail_bytes', 'l31_pointer_body_bytes'), ('l30_part_bytes', 'l30_dir_bytes'))
+                   ('l31_stderr_tail_bytes', 'l31_pointer_body_bytes'), ('l30_part_bytes', 'l30_dir_bytes'),
+                   ('l24_assign_bucket_cap', 'l23_bucket_cap'))  # assignment buckets are drawn from blocking buckets
         for low, high in ordered:
             if getattr(self, low) > getattr(self, high):
                 raise ValueError(f'{low} must not exceed {high}')
         if self.l03_heap_percent_of_ram > 100 or self.l42_worker_mem_percent_of_ram > 100:
             raise ValueError('percent-of-RAM limits must be <= 100')
+        for name in UNIT_INTERVAL_MILLI:  # a similarity, margin or score above 1.0 can never be met
+            if getattr(self, name) > 1000:
+                raise ValueError(f'{name} is a fraction in milli units and must not exceed 1000')
+        if self.l03_heap_max_mib < MIN_HEAP_MIB:
+            raise ValueError(f'l03_heap_max_mib must be at least {MIN_HEAP_MIB} (the ExtractRequest heap floor)')
+        if not self.l21_size_ratio_min_milli <= 1000 <= self.l21_size_ratio_max_milli:
+            raise ValueError('the size-ratio guard must contain 1.0')
 
     @property
     def l38_rows_per_result(self) -> int:
@@ -150,6 +165,10 @@ class UnifiedLimits:
 
     def as_dict(self) -> dict[str, int]:
         return dataclasses.asdict(self)
+
+    def content_dict(self) -> dict[str, int]:
+        """The limits that can change a result (everything except `OPERATIONAL_LIMIT_FIELDS`); `limits_digest`."""
+        return {name: getattr(self, name) for name in CONTENT_LIMIT_FIELDS}
 
     def ingest_dict(self) -> dict[str, int]:
         """The limits that change IR content (L-01, L-02, L-05, L-06, L-07, L-11; 02 s5 `ingest_limits_digest`)."""
@@ -164,11 +183,14 @@ class UnifiedLimits:
     def jvm_heap_mib(self, total_ram_bytes: int | None) -> int:
         """L-03: 50 % of RAM, at most 16 GiB, at least 512 MiB (ExtractRequest.max_heap_mb floor)."""
         if not total_ram_bytes or total_ram_bytes <= 0:
-            return 512
-        return max(512, min(self.l03_heap_max_mib, total_ram_bytes * self.l03_heap_percent_of_ram // 100 // MIB))
+            return MIN_HEAP_MIB
+        return max(MIN_HEAP_MIB, min(self.l03_heap_max_mib,
+                                     total_ram_bytes * self.l03_heap_percent_of_ram // 100 // MIB))
 
     def checked_timeout(self, seconds: int, *, kind: str = 'extract') -> int:
-        """L-04 / L-34 ranges (60..86,400 s); out of range -> PT-UNIFIED-INPUT."""
+        """L-04 / L-34 ranges (60..86,400 s); out of range -> PT-UNIFIED-INPUT. `kind` is 'extract' or 'worker'."""
+        if kind not in ('extract', 'worker'):
+            raise ValueError("timeout kind is 'extract' or 'worker'")
         low, high = ((self.l04_timeout_min_s, self.l04_timeout_max_s) if kind == 'extract'
                      else (self.l34_timeout_min_s, self.l34_timeout_max_s))
         if type(seconds) is not int or not low <= seconds <= high:
@@ -180,6 +202,20 @@ class UnifiedLimits:
 INGEST_LIMIT_FIELDS = ('l01_functions_per_side', 'l02_instructions_per_side', 'l05_output_bytes', 'l05_line_bytes',
                        'l05_string_bytes', 'l06_fn_raw_bytes', 'l06_fn_instructions', 'l07_ir_file_bytes',
                        'l11_md_min_blocks')
+# Limits that only decide whether a run fits, how it is kept or what the UI shows (timeouts, memory, store and
+# pointer caps, retention, display and performance targets). They never change the bytes of a result, so they stay
+# out of `limits_digest` and a UI or retention knob cannot invalidate cached results (02 s5). Every other field is
+# content-affecting by default: a new field re-keys results until it is deliberately listed here.
+OPERATIONAL_LIMIT_FIELDS = (
+    'l03_heap_percent_of_ram', 'l03_heap_max_mib', 'l04_analyze_timeout_s', 'l04_gzf_timeout_s',
+    'l04_timeout_min_s', 'l04_timeout_max_s', 'l08_ingest_budget_s', 'l08_ingest_rss_bytes', 'l30_part_bytes',
+    'l30_dir_bytes', 'l31_pointer_body_bytes', 'l31_stderr_tail_bytes', 'l32_results_kept', 'l33_displayed_rows',
+    'l34_worker_timeout_s', 'l34_timeout_min_s', 'l34_timeout_max_s', 'l35_ladder_10k_s', 'l35_ladder_60k_s',
+    'l35_ingest_60k_s', 'l35_facts_5000_s', 'l35_worker_rss_bytes', 'l35_first_paint_ms', 'l35_filter_ms',
+    'l35_sort_ms', 'l36_retained_gzf_bytes', 'l37_progress_bytes', 'l37_progress_poll_ms',
+    'l42_worker_mem_max_bytes', 'l42_worker_mem_percent_of_ram')
+CONTENT_LIMIT_FIELDS = tuple(f.name for f in dataclasses.fields(UnifiedLimits)
+                             if f.name not in OPERATIONAL_LIMIT_FIELDS)
 DEFAULT_LIMITS = UnifiedLimits()
 
 
@@ -217,6 +253,8 @@ class Budget:
             raise BudgetExhausted('PT-UNIFIED-TIMEOUT', 'Unified analysis reached its deadline', reason='deadline')
 
     def tick(self, n: int = 1) -> None:
+        if type(n) is not int or n < 0:  # a negative unit count would postpone every later deadline check
+            raise ValueError('tick units must be a non-negative int')
         self.used += n
         if self.used >= self._next:
             self._next = self.used + self.check_every

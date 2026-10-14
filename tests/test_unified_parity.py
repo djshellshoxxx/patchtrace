@@ -203,7 +203,7 @@ def test_md_dump_argv_is_dev_only_and_product_argv_still_forbids_md_index(tmp_pa
     assert '--md_index' not in build_argv('/opt/bindiff/bin/bindiff', tmp_path)
     src_hits = [p for p in (ROOT / 'src').rglob('*.py') if '--md_index' in p.read_text(encoding='utf-8')
                 and 'FORBIDDEN_FLAGS' not in p.read_text(encoding='utf-8')
-                and p.name not in {'binexport_check.py', 'binexport_limits.py', 'binexport_prescan.py'}]
+                and p.name not in {'binexport_check.py', 'binexport_limits.py', 'binexport_prescan.py', 'mdindex.py'}]  # mdindex: docstring
     assert src_hits == []           # no product module builds an --md_index argv
 
 

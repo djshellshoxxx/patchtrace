@@ -21,7 +21,7 @@ from dataclasses import dataclass
 from pathlib import Path
 
 FORMAT = 'patchtrace-offline-runtime'
-MAX_MANIFEST = 4 * 1024 * 1024
+MAX_MANIFEST = 16 * 1024 * 1024  # 60,000 records at ~190 bytes need ~11 MiB (SPEC-06 amended)
 MAX_MEMBERS = 60_000
 MAX_FILE = 2 * 1024**3
 MAX_TOTAL = 8 * 1024**3
@@ -40,6 +40,15 @@ MANIFEST_KEYS = {'format', 'schema_version', 'runtime_id', 'platform', 'architec
 VERSION_KEYS = {'python', 'ghidra', 'jdk', 'ghidriff_revision'}
 REQUIRED_FILES = ('python/python.exe', 'ghidra/Ghidra/application.properties',
                   'jdk/bin/java.exe', 'LICENSES/NOTICE.txt')
+# Per-platform layout. The manifest key set and schema_version are identical for
+# every platform; only these values differ. Windows stays the default everywhere.
+PLATFORM_LAYOUT = {
+    'windows': {'python': 'python/python.exe', 'required': REQUIRED_FILES},
+    'linux': {'python': 'python/bin/python3',
+              'required': ('python/bin/python3', 'ghidra/Ghidra/application.properties',
+                           'jdk/bin/java', 'LICENSES/NOTICE.txt')},
+}
+DEFAULT_PLATFORMS = ('windows',)
 
 
 class OfflineBundleError(ValueError):
@@ -68,6 +77,7 @@ class OfflineBundlePlan:
     python_relative: str = 'payload/python/python.exe'
     ghidra_relative: str = 'payload/ghidra'
     java_relative: str = 'payload/jdk'
+    platform: str = 'windows'
 
     @property
     def file_count(self) -> int:
@@ -143,18 +153,33 @@ def _safe_relative(name: str) -> str:
     return name
 
 
-def _validated_manifest(data: dict) -> tuple[str, tuple[BundleFile, ...]]:
+def validate_manifest(data: object, *, platforms: tuple[str, ...] = DEFAULT_PLATFORMS,
+                      ) -> tuple[str, tuple[BundleFile, ...]]:
+    """Strictly validate a parsed manifest; return (runtime_id, file inventory).
+
+    ``platforms`` lists the platform labels the caller accepts. The default keeps
+    the Windows-only behaviour of the importer; a Linux manifest is accepted only
+    when a loader passes ``('linux',)`` explicitly. Raises OfflineBundleError.
+    """
+    if not isinstance(data, dict):
+        _fail('manifest must be a JSON object')
+    if (not isinstance(platforms, tuple) or not platforms
+            or any(item not in PLATFORM_LAYOUT for item in platforms)):
+        raise ValueError('platforms must be a non-empty tuple of known platform labels')
     if set(data) != MANIFEST_KEYS:
         _fail('unsupported manifest fields')
     if data['format'] != FORMAT or type(data['schema_version']) is not int or data['schema_version'] != 1:
         _fail('unsupported bundle format or schema')
-    if data['platform'] != 'windows' or data['architecture'] != 'amd64':
-        _fail('this bundle is not a Windows x64 backend')
+    platform = data['platform']
+    if not isinstance(platform, str) or platform not in platforms or data['architecture'] != 'amd64':
+        _fail('this bundle is not a Windows x64 backend' if platforms == DEFAULT_PLATFORMS
+              else 'this bundle is not an accepted x64 backend platform')
+    layout = PLATFORM_LAYOUT[platform]
     runtime_id = data['runtime_id']
     if (not isinstance(runtime_id, str) or not ID.fullmatch(runtime_id)
             or runtime_id.endswith('.') or runtime_id.split('.')[0].upper() in WINDOWS_RESERVED):
         _fail('invalid runtime ID')
-    if data['python'] != 'python/python.exe' or data['ghidra'] != 'ghidra' or data['java'] != 'jdk':
+    if data['python'] != layout['python'] or data['ghidra'] != 'ghidra' or data['java'] != 'jdk':
         _fail('unsupported portable runtime layout')
     versions = data['versions']
     if not isinstance(versions, dict) or set(versions) != VERSION_KEYS:
@@ -184,9 +209,15 @@ def _validated_manifest(data: dict) -> tuple[str, tuple[BundleFile, ...]]:
         if total > MAX_TOTAL:
             _fail('uncompressed bundle exceeds 8 GiB')
         files.append(BundleFile(name, size, digest))
-    if any(required.casefold() not in names for required in REQUIRED_FILES):
+    # Windows is case-insensitive; Linux is not, so Linux markers must match exactly.
+    present = names if platform == 'windows' else {item.path for item in files}
+    if any((required.casefold() if platform == 'windows' else required) not in present
+           for required in layout['required']):
         _fail('portable runtime or license notice component is missing')
     return runtime_id, tuple(files)
+
+
+_validated_manifest = validate_manifest  # historical private name
 
 
 def _zip_entries(archive: zipfile.ZipFile, files: tuple[BundleFile, ...]) -> None:
@@ -241,7 +272,8 @@ def _verify_stream(stream, expected: BundleFile, cancel: threading.Event | None,
 
 
 def inspect_offline_bundle(archive: Path, *, expected_sha256: str | None = None,
-                           cancel: threading.Event | None = None) -> OfflineBundlePlan:
+                           cancel: threading.Event | None = None,
+                           platforms: tuple[str, ...] = DEFAULT_PLATFORMS) -> OfflineBundlePlan:
     """Read and verify all bytes without extraction, execution or network."""
     _cancel(cancel)
     archive = Path(archive).resolve()
@@ -264,12 +296,14 @@ def inspect_offline_bundle(archive: Path, *, expected_sha256: str | None = None,
             if len(raw) > MAX_MANIFEST:
                 _fail('manifest exceeds size limit')
             manifest = _json_no_duplicates(raw)
-            runtime_id, files = _validated_manifest(manifest)
+            runtime_id, files = validate_manifest(manifest, platforms=platforms)
             _zip_entries(zf, files)
             for item in files:
                 with zf.open('payload/' + item.path) as stream:
                     _verify_stream(stream, item, cancel)
-        return OfflineBundlePlan(archive, archive_hash, runtime_id, files, raw, manifest)
+        return OfflineBundlePlan(
+            archive, archive_hash, runtime_id, files, raw, manifest,
+            python_relative='payload/' + manifest['python'], platform=manifest['platform'])
     except OfflineBundleError:
         raise
     except _READ_ERRORS as exc:
@@ -335,7 +369,8 @@ def install_offline_bundle(plan: OfflineBundlePlan, runtimes_root: Path, *,
     destination_root = _validated_root(runtimes_root)
     _no_symlink_ancestors(destination_root)
     try:
-        verified = inspect_offline_bundle(plan.archive, expected_sha256=plan.sha256, cancel=cancel)
+        verified = inspect_offline_bundle(plan.archive, expected_sha256=plan.sha256, cancel=cancel,
+                                          platforms=(plan.platform,))
         if (verified.runtime_id != plan.runtime_id or verified.files != plan.files
                 or verified.manifest_bytes != plan.manifest_bytes):
             _fail('bundle changed after inspection')
@@ -424,7 +459,7 @@ def install_offline_bundle(plan: OfflineBundlePlan, runtimes_root: Path, *,
 
 
 def build_offline_bundle(source_payload: Path, runtime_id: str, versions: Mapping[str, str],
-                         destination: Path) -> Path:
+                         destination: Path, *, platform: str = 'windows') -> Path:
     """Package a preassembled relocatable runtime; never install/download/execute it.
 
     Success means package integrity, not runtime compatibility or license approval.
@@ -433,6 +468,8 @@ def build_offline_bundle(source_payload: Path, runtime_id: str, versions: Mappin
     destination = Path(destination).resolve()
     if not source.is_dir() or source.is_symlink() or not destination.is_absolute():
         _fail('producer needs an existing payload directory and absolute output path')
+    if platform not in PLATFORM_LAYOUT:
+        _fail('producer platform must be windows or linux')
     if not isinstance(runtime_id, str) or not ID.fullmatch(runtime_id):
         _fail('invalid runtime ID')
     if set(versions) != VERSION_KEYS:
@@ -456,11 +493,11 @@ def build_offline_bundle(source_payload: Path, runtime_id: str, versions: Mappin
     records.sort(key=lambda entry: entry['path'])
     info = {
         'format': FORMAT, 'schema_version': 1, 'runtime_id': runtime_id,
-        'platform': 'windows', 'architecture': 'amd64',
-        'python': 'python/python.exe', 'ghidra': 'ghidra', 'java': 'jdk',
+        'platform': platform, 'architecture': 'amd64',
+        'python': PLATFORM_LAYOUT[platform]['python'], 'ghidra': 'ghidra', 'java': 'jdk',
         'versions': dict(versions), 'files': records,
     }
-    _validated_manifest(info)
+    validate_manifest(info, platforms=(platform,))
     destination.parent.mkdir(parents=True, exist_ok=True)
     fd, temporary = tempfile.mkstemp(prefix='.offline-pack-', dir=destination.parent)
     os.close(fd)
@@ -488,7 +525,7 @@ def build_offline_bundle(source_payload: Path, runtime_id: str, versions: Mappin
                         member.write(chunk)
                 if _sha256_file(path, None) != record['sha256']:
                     _fail('payload changed during packaging')
-        inspect_offline_bundle(stage)
+        inspect_offline_bundle(stage, platforms=(platform,))
         if destination.exists():
             _fail('archive already exists; refused to overwrite')
         # Atomic no-replace publication: os.replace() could overwrite a file

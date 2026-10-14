@@ -124,7 +124,7 @@
   "$id": "https://patchtrace.local/schemas/unified-result-ptr/1/UnifiedResultPointer.json",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "additionalProperties": false,
-  "description": "Body of the `unified-result` enrichment row (entry id = result_id).",
+  "description": "Body of the `unified-result` enrichment row (entry id = result_id), contract `/1`. Kept as the READ model of\nrows written before S0a-FIX; writers use `UnifiedResultPointerV2`, readers use `parse_pointer`.",
   "properties": {
     "config_digest": {
       "pattern": "^[0-9a-f]{64}$",

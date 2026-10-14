@@ -1,7 +1,6 @@
 """Build an auditable, replaceable-DLL Windows desktop distribution."""
 from __future__ import annotations
 
-import hashlib
 import importlib.metadata
 import json
 import shutil
@@ -9,10 +8,18 @@ import subprocess
 import sys
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+# Pure shared helpers; importing build_linux runs no build.
+from build_linux import attach_backend, check_archive_size, full_archive_name, parse_args, sha256_file  # noqa: E402
+
 PROTOBUF_PIN = '7.36.2'
 # SPEC-10b §2/§9: BinExport2 notices; build refuses to publish without them.
 BINEXPORT_NOTICES = [f'protobuf-{PROTOBUF_PIN}/LICENSE', 'binexport-2bff7af/LICENSE',
                      'binexport-2bff7af/binexport2.proto', 'binexport-2bff7af/PROVENANCE.txt']
+# SPEC-31 s9: the unified engine's MD index re-expresses BinDiff v8 (Apache-2.0); the notice ships with the package.
+BINDIFF_NOTICES = ['bindiff-v8-aecc14d/LICENSE', 'bindiff-v8-aecc14d/PROVENANCE.txt']
+# SPEC-31 03 s3: the Ghidra extractor script runs in the user's external Python, so it travels as a data file.
+EXTRACTOR_SCRIPT = 'patchtrace/unified/extract/ghidra_script.py'
 
 
 def _installed(name):
@@ -31,7 +38,8 @@ def require_upb_protobuf():
                            "(pip install --only-binary=:all: -e '.[dev]')")
 
 
-def main():
+def main(argv=None):
+    args = parse_args(argv)
     if sys.platform != 'win32':
         raise SystemExit('Build on Windows: PyInstaller cannot cross-compile the Windows runtime.')
     root = Path(__file__).resolve().parents[1]
@@ -68,7 +76,7 @@ def main():
     required += [f'{module}-6.12.0/LICENSES/{name}.txt'
                  for module in ['qtbase', 'pyside-setup']
                  for name in ['GPL-2.0-only', 'GPL-3.0-only', 'Qt-GPL-exception-1.0']]
-    required += BINEXPORT_NOTICES
+    required += BINEXPORT_NOTICES + BINDIFF_NOTICES
     if any(not (bundled_notices / item).is_file() for item in required):
         raise RuntimeError('Pinned third-party notices are missing; refusing to publish distribution')
     if len(list((bundled_notices / 'qtbase-6.12.0/attributions').glob('*.html'))) != 49:
@@ -103,6 +111,10 @@ def main():
     # A missing upb extension means a silent pure-Python protobuf fallback (85x memory): never publish that.
     if not any(item.startswith(('google/_upb/_message.', '_internal/google/_upb/_message.')) for item in inventory):
         raise RuntimeError('google/_upb/_message extension missing from the frozen package')
+    # The extractor script must be in the package and byte-identical to the source tree's copy.
+    packaged = [item for item in inventory if item.endswith('/' + EXTRACTOR_SCRIPT)]
+    if len(packaged) != 1 or (package / packaged[0]).read_bytes() != (root / 'src' / EXTRACTOR_SCRIPT).read_bytes():
+        raise RuntimeError('Extractor script data file is missing or differs from the source tree')
     (package / 'file-inventory.json').write_text(json.dumps(inventory, indent=2), encoding='utf-8')
     subprocess.run([str(package / 'PatchTrace.exe'), '--self-test'], timeout=60, check=True)
     # Frozen headless smoke: help must reach stdout and exit 0 without Qt.
@@ -110,13 +122,18 @@ def main():
                          capture_output=True, text=True)
     if cli.returncode != 0 or 'usage:' not in cli.stdout:
         raise RuntimeError(f'Frozen CLI smoke failed ({cli.returncode}): {cli.stderr[-500:]}')
-    archive = Path(shutil.make_archive(str(root / 'dist' / 'PatchTrace-0.1.0-windows-x64'),
+    archive = Path(shutil.make_archive(str(root / 'dist' / f'PatchTrace-{args.version}-windows-x64'),
                                      'zip', root_dir=root / 'dist', base_dir='PatchTrace'))
-    with archive.open('rb') as stream:
-        digest = hashlib.file_digest(stream, 'sha256').hexdigest()
-    archive.with_suffix('.zip.sha256').write_bytes(f'{digest}  {archive.name}\n'.encode('ascii'))
+    archive.with_suffix('.zip.sha256').write_bytes(f'{sha256_file(archive)}  {archive.name}\n'.encode('ascii'))
     print(archive)
-
+    if args.full:  # the lite smoke above is unchanged; backend/ is attached after it
+        attach_backend(package, args.backend_payload, version=args.version, platform_key='windows', root=root,
+                       allow_internal_symlinks=False)
+        full = Path(shutil.make_archive(str(root / 'dist' / full_archive_name(args.version, 'windows')[:-4]),
+                                        'zip', root_dir=root / 'dist', base_dir='PatchTrace'))
+        check_archive_size(full)
+        full.with_suffix('.zip.sha256').write_bytes(f'{sha256_file(full)}  {full.name}\n'.encode('ascii'))
+        print(full)
 
 if __name__ == '__main__':
     main()

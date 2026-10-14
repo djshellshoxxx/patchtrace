@@ -1,0 +1,29 @@
+google/bindiff LICENSE (Apache-2.0), copied unmodified. PatchTrace ships a MODIFIED re-expression of the MD-index
+algorithms described below; it ships no BinDiff source file, binary, plugin or dependency.
+
+Source:   https://github.com/google/bindiff
+Tag:      v8 (lightweight tag)
+Commit:   aecc14dcc2e0f06a0f8957dc465a9073215b5920   (git ls-remote refs/tags/v8, 2026-10-14)
+Files:    https://raw.githubusercontent.com/google/bindiff/aecc14dcc2e0f06a0f8957dc465a9073215b5920/LICENSE
+          .../graph_util.h   .../flow_graph.cc   .../call_graph.cc   (read, not copied)
+SHA-256:  LICENSE        cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30 (11358 bytes)
+          graph_util.h   03d805fcd980c2cfb228d82ac89ed88359326b2c137295bb3e2420e9a479c7e9
+          flow_graph.cc  d096758435fc9f83bfea9ec0f8a1954b5cc05c63f8155e9dbc943f6afbf92ab4
+          call_graph.cc  bddb1c42069b76d568b5ed52d4911ecf374c59ec07ecf2cec4093105ae4dad32
+NOTICE:   the repository has no NOTICE file at this commit (HTTP 404, checked 2026-10-14).
+Copyright of the originals: Copyright 2011-2023 Google LLC.
+Fetched:  2026-10-14
+
+Derived work shipped in PatchTrace: src/patchtrace/unified/ir/mdindex.py (Python, MIT-licensed project code with an
+Apache-2.0 attribution header). It re-expresses graph_util.h `CalculateMdIndexInternal`, the flow-graph MD index
+(flow_graph.cc) and the call-graph vertex MD index (call_graph.cc): the edge value 1/(sqrt(2)*in(s) + sqrt(3)*out(s) +
+sqrt(5)*in(t) + sqrt(7)*out(t) + sqrt(11)*lvl(s) + sqrt(13)*lvl(t)), breadth-first levels, the ascending sort and plain
+left-to-right double accumulation, and the documented level-0 quirks. Changes: language (C++ to Python), data structures
+(integer vertex ids and adjacency lists instead of BinDiff graph classes), a quirk switch, and integer-scaled keys. The
+port was checked bit-for-bit against an independent C++ transcription compiled in a throwaway directory (a 3,000-graph
+random comparison, docs/qa.md; five recorded vectors are pinned in tests/test_unified_ir_graph.py). It was NOT checked
+against the real `bindiff --md_index` output (no pinned BinDiff binary). No GPL or yFiles code is involved; "BinDiff" is
+a trademark of Google LLC and the unified engine never claims to be BinDiff.
+
+Redistribution: both build scripts (tools/build_windows.py, tools/build_linux.py) refuse to publish a distribution
+without LICENSE and this record, and copy them under licenses/upstream/.

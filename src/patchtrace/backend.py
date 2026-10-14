@@ -65,6 +65,11 @@ class BackendConfig:
     # extra names kept when restricted (proxies, custom JDK helpers).
     restrict_env: bool = False
     env_passthrough: tuple[str, ...] = ()
+    # BUNDLE B6: private payload next to the app. Isolated argv (-I), forced restricted env,
+    # JAVA_HOME_OVERRIDE, scratch-directed TEMP/XDG_CACHE_HOME, never inside the install tree.
+    bundle: bool = False
+    # SPEC-31 D-05: keep the two analysed GZFs Ghidriff writes (off by default; argv and cache fingerprint unchanged).
+    retain_gzf: bool = False
 
 
 _PASSTHROUGH_NAME = re.compile(r'^[A-Za-z_][A-Za-z0-9_()]*$')
@@ -120,9 +125,15 @@ def _config_errors(config: BackendConfig) -> list[str]:
         errors.append('PT-BACKEND: no_cache and refresh are mutually exclusive')
     if not isinstance(config.restrict_env, bool):
         errors.append('PT-BACKEND: restrict_env must be a boolean')
+    if not isinstance(config.retain_gzf, bool):
+        errors.append('PT-BACKEND: retain_gzf must be a boolean')
     if not isinstance(config.env_passthrough, tuple) or any(_passthrough_error(n) for n in config.env_passthrough):
         errors.append('PT-BACKEND: env_passthrough must list plain variable names, excluding PYTHONPATH, '
                       'PYTHONHOME, PYTHON*, LD_*, DYLD_*, BASH_ENV, ENV and *_OPTIONS')
+    if not isinstance(config.bundle, bool):
+        errors.append('PT-BACKEND: bundle must be a boolean')
+    elif config.bundle:
+        errors.extend(_bundle_errors(config))
     if not isinstance(config.java_home, str):
         errors.append('PT-BACKEND: Java home must be a directory path')
     elif config.java_home:
@@ -131,6 +142,28 @@ def _config_errors(config: BackendConfig) -> list[str]:
         if not java_home.is_absolute() or not (java_home / 'bin' / java_name).is_file():
             errors.append('PT-BACKEND: private Java home must contain bin/' + java_name)
     return errors
+
+
+def _bundle_errors(config: BackendConfig) -> list[str]:
+    """Bundle mode needs a private JDK and no writable work path inside the install tree (backend/)."""
+    errors = [] if config.java_home else ['PT-BACKEND: bundle mode requires the bundled Java home']
+    root = Path(config.ghidra_dir).resolve().parent.parent
+    for work in (config.cache_dir, tempfile.gettempdir()):
+        if work and Path(work).resolve().is_relative_to(root):
+            errors.append('PT-BUNDLE-WORKDIR: work, cache and temp paths must be outside the bundle install tree')
+            break
+    return errors
+
+
+def _apply_bundle_env(env: dict[str, str], settings_dir: Path | None, windows: bool) -> None:
+    env['PYTHONDONTWRITEBYTECODE'] = '1'
+    if settings_dir is None:
+        return
+    scratch = str(settings_dir.parent)
+    for name in ('XDG_CACHE_HOME', 'TEMP', 'TMP', 'TMPDIR'):
+        for key in [k for k in env if k == name or (windows and k.lower() == name.lower())]:
+            del env[key]
+        env[name] = scratch
 
 
 def build_child_env(base: Mapping[str, str], config: BackendConfig, settings_dir: Path | None, *,
@@ -166,15 +199,18 @@ def build_child_env(base: Mapping[str, str], config: BackendConfig, settings_dir
         env['JAVA_HOME'] = java_home
         path_key = next((k for k in env if k.lower() == 'path'), 'PATH')
         env[path_key] = str(Path(java_home) / 'bin') + os.pathsep + env.get(path_key, '')
+        env['JAVA_HOME_OVERRIDE'] = java_home  # pyghidra prefers it over running bare `java` from PATH
     env['PYTHONIOENCODING'] = 'utf-8'
     env['PYTHONNOUSERSITE'] = '1'
+    if config.bundle:
+        _apply_bundle_env(env, settings_dir, windows)
     if settings_dir is not None:
         env['XDG_CONFIG_HOME'] = str(settings_dir)
     return env
 
 
 def _environment(config: BackendConfig, settings_dir: Path | None = None) -> dict[str, str]:
-    if config.restrict_env and os.environ.get('PATCHTRACE_CHILD_ENV') != 'inherit':
+    if config.bundle or (config.restrict_env and os.environ.get('PATCHTRACE_CHILD_ENV') != 'inherit'):
         return build_child_env(os.environ, config, settings_dir, symbol_downloads=config.allow_symbol_downloads,
                                for_tool='ghidra')
     env = os.environ.copy()
@@ -258,6 +294,18 @@ def _probe_backend(config: BackendConfig, cancel: threading.Event | None = None)
         raise RuntimeError('PT-BACKEND: install ghidriff in the selected Python 3.10+ environment') from None
 
 
+def _bundle_line(config: BackendConfig) -> str:
+    """`Bundled runtime <id>: fast check ok` or the PT-BUNDLE-* problem (blocking walk; run in a worker)."""
+    from .runtime_discovery import check_bundle
+    try:  # config.ghidra_dir is <exe dir>/backend/payload/ghidra
+        status = check_bundle(Path(config.ghidra_dir).resolve().parents[2])
+    except (OSError, IndexError):
+        status = None
+    if status is None:
+        return 'PT-BUNDLE-MISSING: no bundled runtime at this location - extract the complete ZIP again'
+    return status.line()
+
+
 def diagnose(config: BackendConfig) -> list[str]:
     """Actionable, credential-free configuration and dependency summaries."""
     errors = _config_errors(config)
@@ -269,6 +317,8 @@ def diagnose(config: BackendConfig) -> list[str]:
         return ['PT-BACKEND: Ghidra application.properties is unreadable; correct installation permissions']
     statuses = ['Python executable: configured external interpreter',
                 f'Ghidra installation: root verified; version {ghidra_version}']
+    if config.bundle:
+        statuses.append(_bundle_line(config))
     statuses.append('Ghidriff symbol-server lookup: enabled by analyst' if config.allow_symbol_downloads
                     else 'Ghidriff symbol-server lookup: disabled (local/offline option)')
     try:
@@ -534,7 +584,8 @@ def run_comparison(config: BackendConfig, project: ComparisonProject, root: Path
             engine_gzfs = _validated_ghidra_output_path(scratch_root / 'gzfs')
             ghidra_settings = scratch_root / 'ghidra-settings'
             ghidra_settings.mkdir()
-            argv = [str(Path(config.python_executable).resolve()), '-m', 'ghidriff',
+            argv = [str(Path(config.python_executable).resolve()), *(('-I', '-X', 'utf8') if config.bundle else ()),
+                    '-m', 'ghidriff',
                     str(paths['older']), str(paths['newer']), '--output-path',
                     str(_validated_ghidra_output_path(raw)),
                     '--project-location', str(engine_project), '--gzfs-path', str(engine_gzfs)]
@@ -544,6 +595,9 @@ def run_comparison(config: BackendConfig, project: ComparisonProject, root: Path
                                  cancel=cancel,
                                  timeout_seconds=config.timeout_seconds,
                                  check_output=lambda: _output_error(raw))
+            if config.retain_gzf and result.returncode == 0 and not result.reason and not cancel.is_set():
+                from .unified.extract.retain import retain_run_gzfs  # lazy: the unified engine stays optional
+                retain_run_gzfs(engine_gzfs, quarantine, paths, settings, event)
         finally:
             # run_process returns only after the contained tree is terminated.
             leftover = _remove_scratch(scratch_root)

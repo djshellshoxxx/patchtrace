@@ -2,6 +2,7 @@
   "$id": "https://patchtrace.local/schemas/ir-extract-request/1/ExtractRequest.json",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "additionalProperties": false,
+  "description": "Request to the extractor child (03 s2); PatchTrace-authored, so text is rejected, never rewritten.\nInvariants: gzf mode needs gzf_path+gzf_sha256 together, analyze takes none, decompile needs a GZF and at least\none sorted unique RVA, analysis_options apply to analyze only, limits are `UnifiedLimits` fields.",
   "properties": {
     "analysis_options": {
       "additionalProperties": {
@@ -68,7 +69,8 @@
     "limits": {
       "patternProperties": {
         "^l[0-9]{2}_[a-z0-9_]{1,48}$": {
-          "minimum": 0,
+          "maximum": 9223372036854775807,
+          "minimum": 1,
           "type": "integer"
         }
       },

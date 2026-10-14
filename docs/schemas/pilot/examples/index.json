@@ -1,0 +1,252 @@
+{
+  "invalid-CveContext-kev-listed-without-date.json": {
+    "expect": "needs its date",
+    "model": "CveContext",
+    "valid": false
+  },
+  "invalid-CveContext-not-applicable-with-leads.json": {
+    "expect": "produces no leads",
+    "model": "CveContext",
+    "valid": false
+  },
+  "invalid-CveContext-window-one-cve.json": {
+    "expect": "at least two",
+    "model": "CveContext",
+    "valid": false
+  },
+  "invalid-Lead-cap-without-gate.json": {
+    "expect": "needs gate",
+    "model": "Lead",
+    "valid": false
+  },
+  "invalid-Lead-code-lead-with-cve.json": {
+    "expect": "code-only",
+    "model": "Lead",
+    "valid": false
+  },
+  "invalid-Lead-fit-under-conflicting-gate.json": {
+    "expect": "conflicting CVE gate",
+    "model": "Lead",
+    "valid": false
+  },
+  "invalid-Lead-fit-under-unverified-gate.json": {
+    "expect": "unverified CVE gate",
+    "model": "Lead",
+    "valid": false
+  },
+  "invalid-Lead-fit-with-contested-pairing.json": {
+    "expect": "contested pairing",
+    "model": "Lead",
+    "valid": false
+  },
+  "invalid-Lead-fit-with-one-component.json": {
+    "expect": "independent components",
+    "model": "Lead",
+    "valid": false
+  },
+  "invalid-Lead-fit-with-tentative-mechanism.json": {
+    "expect": "requires mechanism",
+    "model": "Lead",
+    "valid": false
+  },
+  "invalid-Lead-gate-not-applicable.json": {
+    "expect": "gate",
+    "model": "Lead",
+    "valid": false
+  },
+  "invalid-Lead-strong-mechanism.json": {
+    "expect": "reserved",
+    "model": "Lead",
+    "valid": false
+  },
+  "invalid-Lead-tie-arithmetic.json": {
+    "expect": "tie size",
+    "model": "Lead",
+    "valid": false
+  },
+  "invalid-Observation-bidi-in-detail.json": {
+    "expect": "plain text",
+    "model": "Observation",
+    "valid": false
+  },
+  "invalid-Observation-die-flag-as-shape.json": {
+    "expect": "context only",
+    "model": "Observation",
+    "valid": false
+  },
+  "invalid-Observation-kind-channel-mismatch.json": {
+    "expect": "belongs to channel",
+    "model": "Observation",
+    "valid": false
+  },
+  "invalid-Observation-newline-in-detail.json": {
+    "expect": "plain text",
+    "model": "Observation",
+    "valid": false
+  },
+  "invalid-Observation-no-origin.json": {
+    "expect": "origins",
+    "model": "Observation",
+    "valid": false
+  },
+  "invalid-PilotAssessment-abstained-with-leads.json": {
+    "expect": "abstained assessment has no leads",
+    "model": "PilotAssessment",
+    "valid": false
+  },
+  "invalid-PilotAssessment-channels-out-of-order.json": {
+    "expect": "channels must be unique",
+    "model": "PilotAssessment",
+    "valid": false
+  },
+  "invalid-PilotAssessment-contract-version.json": {
+    "expect": "contract",
+    "model": "PilotAssessment",
+    "valid": false
+  },
+  "invalid-PilotAssessment-counts-below-persisted.json": {
+    "expect": "exceed the counts",
+    "model": "PilotAssessment",
+    "valid": false
+  },
+  "invalid-PilotAssessment-dangling-observation.json": {
+    "expect": "unknown observation",
+    "model": "PilotAssessment",
+    "valid": false
+  },
+  "invalid-PilotAssessment-duplicate-candidate.json": {
+    "expect": "one lead per",
+    "model": "PilotAssessment",
+    "valid": false
+  },
+  "invalid-PilotAssessment-float-rank.json": {
+    "expect": "rank",
+    "model": "PilotAssessment",
+    "valid": false
+  },
+  "invalid-PilotAssessment-inputs-mismatch.json": {
+    "expect": "inputs must match",
+    "model": "PilotAssessment",
+    "valid": false
+  },
+  "invalid-PilotAssessment-lead-for-not-applicable-cve.json": {
+    "expect": "has no leads",
+    "model": "PilotAssessment",
+    "valid": false
+  },
+  "invalid-PilotAssessment-orientation-swapped.json": {
+    "expect": "orientation",
+    "model": "PilotAssessment",
+    "valid": false
+  },
+  "invalid-PilotAssessment-partial-without-limitations.json": {
+    "expect": "names its limitations",
+    "model": "PilotAssessment",
+    "valid": false
+  },
+  "invalid-PilotAssessment-pool-unsorted.json": {
+    "expect": "sorted by obs_id",
+    "model": "PilotAssessment",
+    "valid": false
+  },
+  "invalid-PilotAssessment-rank-order-vs-class.json": {
+    "expect": "class order",
+    "model": "PilotAssessment",
+    "valid": false
+  },
+  "invalid-PilotAssessment-strong-mechanism.json": {
+    "expect": "reserved",
+    "model": "PilotAssessment",
+    "valid": false
+  },
+  "invalid-PilotAssessment-unknown-cve-context.json": {
+    "expect": "unknown CVE context",
+    "model": "PilotAssessment",
+    "valid": false
+  },
+  "invalid-PilotAssessment-unknown-field.json": {
+    "expect": "Extra inputs",
+    "model": "PilotAssessment",
+    "valid": false
+  },
+  "invalid-PilotManifest-config-float.json": {
+    "expect": "locality_min_tokens",
+    "model": "PilotManifest",
+    "valid": false
+  },
+  "invalid-PilotManifest-missing-assessment-part.json": {
+    "expect": "assessment.json.gz",
+    "model": "PilotManifest",
+    "valid": false
+  },
+  "invalid-PilotResultPointer-dir-mismatch.json": {
+    "expect": "result_id[:16]",
+    "model": "PilotResultPointer",
+    "valid": false
+  },
+  "invalid-ReviewEvent-note-without-text.json": {
+    "expect": "needs text",
+    "model": "ReviewEvent",
+    "valid": false
+  },
+  "invalid-ReviewEvent-oversize-text.json": {
+    "expect": "at most 2048 bytes",
+    "model": "ReviewEvent",
+    "valid": false
+  },
+  "invalid-ReviewEvent-unknown-action.json": {
+    "expect": "action",
+    "model": "ReviewEvent",
+    "valid": false
+  },
+  "valid-CveContext-not-applicable.json": {
+    "expect": null,
+    "model": "CveContext",
+    "valid": true
+  },
+  "valid-Lead-code-only.json": {
+    "expect": null,
+    "model": "Lead",
+    "valid": true
+  },
+  "valid-Observation-conflict.json": {
+    "expect": null,
+    "model": "Observation",
+    "valid": true
+  },
+  "valid-Observation-die-context.json": {
+    "expect": null,
+    "model": "Observation",
+    "valid": true
+  },
+  "valid-PilotAssessment-abstained.json": {
+    "expect": null,
+    "model": "PilotAssessment",
+    "valid": true
+  },
+  "valid-PilotAssessment.json": {
+    "expect": null,
+    "model": "PilotAssessment",
+    "valid": true
+  },
+  "valid-PilotManifest.json": {
+    "expect": null,
+    "model": "PilotManifest",
+    "valid": true
+  },
+  "valid-PilotResultPointer.json": {
+    "expect": null,
+    "model": "PilotResultPointer",
+    "valid": true
+  },
+  "valid-ReviewEvent-note.json": {
+    "expect": null,
+    "model": "ReviewEvent",
+    "valid": true
+  },
+  "valid-ReviewEvent-pin.json": {
+    "expect": null,
+    "model": "ReviewEvent",
+    "valid": true
+  }
+}

@@ -1,0 +1,400 @@
+{
+  "$defs": {
+    "ExpectedChange": {
+      "additionalProperties": false,
+      "description": "One change a weakness rule expects (e.g. a guard added) with its three-valued state.",
+      "properties": {
+        "id": {
+          "pattern": "^[a-z0-9-]{1,48}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "observation_ids": {
+          "default": [],
+          "items": {
+            "pattern": "^[0-9a-f]{64}$",
+            "type": "string"
+          },
+          "maxItems": 256,
+          "title": "Observation Ids",
+          "type": "array"
+        },
+        "required": {
+          "title": "Required",
+          "type": "boolean"
+        },
+        "state": {
+          "enum": [
+            "met",
+            "not-observed",
+            "unknown",
+            "contradicted"
+          ],
+          "title": "State",
+          "type": "string"
+        },
+        "teach_id": {
+          "pattern": "^pilot\\.[a-z]+\\.[a-z0-9-]{1,48}$",
+          "title": "Teach Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "state",
+        "required",
+        "teach_id"
+      ],
+      "title": "ExpectedChange",
+      "type": "object"
+    },
+    "FunctionRef": {
+      "additionalProperties": false,
+      "description": "One function of a candidate side: module-relative address and display name (untrusted, sanitised).",
+      "properties": {
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 256,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "rva": {
+          "maximum": 4294967295,
+          "minimum": 0,
+          "title": "Rva",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "rva"
+      ],
+      "title": "FunctionRef",
+      "type": "object"
+    },
+    "HypothesisFit": {
+      "additionalProperties": false,
+      "description": "How one weakness hypothesis (K rule id and revision) fits a candidate.",
+      "properties": {
+        "basis": {
+          "enum": [
+            "explicit-csaf-cwe",
+            "cwe-id-in-text",
+            "curated-vocabulary"
+          ],
+          "title": "Basis",
+          "type": "string"
+        },
+        "cwe_id": {
+          "pattern": "^CWE-[1-9][0-9]{0,5}$",
+          "title": "Cwe Id",
+          "type": "string"
+        },
+        "expected_changes": {
+          "items": {
+            "$ref": "#/$defs/ExpectedChange"
+          },
+          "maxItems": 16,
+          "minItems": 1,
+          "title": "Expected Changes",
+          "type": "array"
+        },
+        "hypothesis_id": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Hypothesis Id",
+          "type": "string"
+        },
+        "met": {
+          "minimum": 0,
+          "title": "Met",
+          "type": "integer"
+        },
+        "rule_id": {
+          "pattern": "^R-[A-Z0-9-]{1,40}$",
+          "title": "Rule Id",
+          "type": "string"
+        },
+        "rule_revision": {
+          "minimum": 1,
+          "title": "Rule Revision",
+          "type": "integer"
+        },
+        "total": {
+          "minimum": 0,
+          "title": "Total",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "hypothesis_id",
+        "rule_id",
+        "rule_revision",
+        "cwe_id",
+        "basis",
+        "expected_changes",
+        "met",
+        "total"
+      ],
+      "title": "HypothesisFit",
+      "type": "object"
+    },
+    "LeadComponents": {
+      "additionalProperties": false,
+      "description": "Independent origin components behind a lead: `tags` holds the smallest origin tag of each component.",
+      "properties": {
+        "count": {
+          "minimum": 0,
+          "title": "Count",
+          "type": "integer"
+        },
+        "tags": {
+          "default": [],
+          "items": {
+            "pattern": "^D_[a-z0-9_]{1,32}$",
+            "type": "string"
+          },
+          "maxItems": 32,
+          "title": "Tags",
+          "type": "array"
+        }
+      },
+      "required": [
+        "count"
+      ],
+      "title": "LeadComponents",
+      "type": "object"
+    },
+    "Tie": {
+      "additionalProperties": false,
+      "description": "Leads with equal evidence share a tie group: positions `first`..`last`, shown as \"n-m (tie)\".",
+      "properties": {
+        "first": {
+          "minimum": 1,
+          "title": "First",
+          "type": "integer"
+        },
+        "last": {
+          "minimum": 1,
+          "title": "Last",
+          "type": "integer"
+        },
+        "size": {
+          "minimum": 1,
+          "title": "Size",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "size",
+        "first",
+        "last"
+      ],
+      "title": "Tie",
+      "type": "object"
+    }
+  },
+  "$id": "https://patchtrace.local/schemas/pilot/1/Lead.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "One candidate function pair assessed in one context (a CVE, or `cve` null for code evidence only).\n\n`rank` is the display position within the context; `fits` lists every hypothesis, best first. The four id lists\nreference the assessment's observation pool: `support_ids` back the listing, `counter_ids` hold counter and\nconflict evidence, `unknown_ids` record evidence that could not be assessed, `alternative_ids` favour another\nexplanation (for example a toolchain change).",
+  "properties": {
+    "alternative_ids": {
+      "default": [],
+      "items": {
+        "pattern": "^[0-9a-f]{64}$",
+        "type": "string"
+      },
+      "maxItems": 256,
+      "title": "Alternative Ids",
+      "type": "array"
+    },
+    "assessment": {
+      "enum": [
+        "rule-hypothesis",
+        "unknown"
+      ],
+      "title": "Assessment",
+      "type": "string"
+    },
+    "candidate_key": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Candidate Key",
+      "type": "string"
+    },
+    "caps": {
+      "default": [],
+      "items": {
+        "enum": [
+          "confounded-window-needs-locality",
+          "toolchain-changed-lexical-only",
+          "cve-unverified",
+          "cve-conflict"
+        ],
+        "type": "string"
+      },
+      "maxItems": 4,
+      "title": "Caps",
+      "type": "array"
+    },
+    "components": {
+      "$ref": "#/$defs/LeadComponents"
+    },
+    "counter_ids": {
+      "default": [],
+      "items": {
+        "pattern": "^[0-9a-f]{64}$",
+        "type": "string"
+      },
+      "maxItems": 256,
+      "title": "Counter Ids",
+      "type": "array"
+    },
+    "cve": {
+      "anyOf": [
+        {
+          "maxLength": 24,
+          "pattern": "^CVE-[0-9]{4}-[0-9]{4,19}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Cve"
+    },
+    "depth": {
+      "enum": [
+        "typed",
+        "lexical",
+        "none"
+      ],
+      "title": "Depth",
+      "type": "string"
+    },
+    "fits": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/HypothesisFit"
+      },
+      "maxItems": 64,
+      "title": "Fits",
+      "type": "array"
+    },
+    "gate": {
+      "enum": [
+        "applies",
+        "asserted",
+        "unverified",
+        "conflict",
+        "none"
+      ],
+      "title": "Gate",
+      "type": "string"
+    },
+    "identity": {
+      "enum": [
+        "corroborated",
+        "contested",
+        "unassessed"
+      ],
+      "title": "Identity",
+      "type": "string"
+    },
+    "lead_class": {
+      "enum": [
+        "fit",
+        "review",
+        "partial",
+        "code",
+        "queue"
+      ],
+      "title": "Lead Class",
+      "type": "string"
+    },
+    "local_hits": {
+      "default": 0,
+      "minimum": 0,
+      "title": "Local Hits",
+      "type": "integer"
+    },
+    "mechanism": {
+      "enum": [
+        "moderate",
+        "tentative",
+        "unexplained",
+        "contested",
+        "not-assessed"
+      ],
+      "title": "Mechanism",
+      "type": "string"
+    },
+    "newer": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/FunctionRef"
+      },
+      "maxItems": 256,
+      "title": "Newer",
+      "type": "array"
+    },
+    "older": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/FunctionRef"
+      },
+      "maxItems": 256,
+      "title": "Older",
+      "type": "array"
+    },
+    "rank": {
+      "minimum": 1,
+      "title": "Rank",
+      "type": "integer"
+    },
+    "support_ids": {
+      "default": [],
+      "items": {
+        "pattern": "^[0-9a-f]{64}$",
+        "type": "string"
+      },
+      "maxItems": 256,
+      "title": "Support Ids",
+      "type": "array"
+    },
+    "tie": {
+      "$ref": "#/$defs/Tie"
+    },
+    "unknown_ids": {
+      "default": [],
+      "items": {
+        "pattern": "^[0-9a-f]{64}$",
+        "type": "string"
+      },
+      "maxItems": 256,
+      "title": "Unknown Ids",
+      "type": "array"
+    }
+  },
+  "required": [
+    "candidate_key",
+    "lead_class",
+    "mechanism",
+    "identity",
+    "gate",
+    "depth",
+    "components",
+    "rank",
+    "tie",
+    "assessment"
+  ],
+  "title": "Lead",
+  "type": "object"
+}

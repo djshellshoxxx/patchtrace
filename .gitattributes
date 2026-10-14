@@ -3,6 +3,8 @@
 tests/fixtures/secondary/bindiff-synthetic-stdout.txt text eol=lf
 tests/fixtures/binexport/PROVENANCE.json text eol=lf
 third_party/notices/binexport-2bff7af/binexport2.proto -text
+third_party/notices/bindiff-v8-aecc14d/LICENSE -text
+third_party/notices/bindiff-v8-aecc14d/PROVENANCE.txt text eol=lf
 tests/fixtures/secondary/*.txt text eol=lf
 tests/fixtures/secondary/*.json text eol=lf
 corpus/** text eol=lf
@@ -10,9 +12,12 @@ docs/schemas/**/*.json text eol=lf
 docs/schemas/**/*.md text eol=lf
 docs/schemas/intelligence/oasis-csaf-2.0/** -text
 tests/fixtures/csaf/** text eol=lf
+tests/fixtures/csaf/expected/** text eol=lf
+tests/fixtures/csaf/injection/** text eol=lf
 tests/fixtures/intel_tools/** text eol=lf
 tests/fixtures/kbcorrelation/** text eol=lf
 tests/fixtures/tier_w/** -text
+tools/backend_pin.json text eol=lf
 tests/fixtures/kbcorrelation/** text eol=lf
 docs/schemas/kbcorrelation/** text eol=lf
 site/** text eol=lf
@@ -24,3 +29,10 @@ tools/site/** text eol=lf
 tests/site_claims.md text eol=lf
 tests/fixtures/cve/*.json text eol=lf
 tests/fixtures/winbindex/*.json text eol=lf
+docs/schemas/pilot/** text eol=lf
+tests/fixtures/pilot/** text eol=lf
+tests/fixtures/unified/*.json text eol=lf
+tests/fixtures/unified/*.jsonl text eol=lf
+tests/fixtures/unified/*.c text eol=lf
+tests/fixtures/unified/*.bin binary
+src/patchtrace/unified/extract/ghidra_script.py text eol=lf

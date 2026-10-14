@@ -69,6 +69,43 @@ def test_pass_table_matches_spec_04_s4_and_05_s1_1():
     assert PASS_BY_ID['P00'].tier == 'M' and PASS_BY_ID['P00'].cls == 'E-MANUAL'
 
 
+def test_pass_table_agrees_with_the_s0b_registry():
+    """The registry (S0b) and the ladder describe the same passes: names, classes, stages, family kinds, tiers."""
+    from patchtrace.unified.registry import REGISTRY
+    stage_name = {0: 'T0', 1: 'T1', 2: 'T2', 3: 'T3', 4: 'T3+'}
+
+    def family_kind(p):
+        if p.family == 'F-PT-PE':
+            return 'pe'
+        if p.family == 'F-PT-NAMES':
+            return 'names'
+        return 'bytes-or-struct' if p.bytes_family else 'struct'
+    for p in PASSES:
+        row = REGISTRY.pass_spec(p.id)
+        assert row is not None, p.id
+        assert (row.name, row.cls, row.stage, row.family_kind) == (p.name, p.cls, stage_name[p.stage], family_kind(p)), p.id
+        assert p.tier in row.tiers, p.id
+
+
+def test_registry_family_of_agrees_with_every_pair_the_ladder_emits():
+    from unified_ir_builder import random_world
+
+    from patchtrace.unified.ladder.types import TIER_RANK
+    from patchtrace.unified.registry import REGISTRY
+    checked = 0
+    for seed in range(12):
+        older, newer = random_world(seed, 40)
+        corr = run_ladder(older, newer)
+        pairs = [p for p in corr.pairs if p.pass_id != 'P00']
+        for pair, atom in zip(pairs, corr.atoms(), strict=True):
+            assert REGISTRY.family_of(atom.source, atom.step) == pair.family, (atom.source, atom.step)
+            row = REGISTRY.pass_spec(pair.pass_id)
+            if row is not None:                     # PV / PT (implied, thunk) have no registry row: structural
+                assert TIER_RANK[pair.tier] <= max(TIER_RANK[t] for t in row.tiers), (pair.pass_id, pair.tier)
+            checked += 1
+    assert checked > 300
+
+
 def test_pass_table_digest_changes_with_any_rule():
     assert PASS_TABLE_DIGEST == pass_table_digest() and len(PASS_TABLE_DIGEST) == 64
     changed = [dataclasses.replace(PASSES[0], tier='B'), *PASSES[1:]]

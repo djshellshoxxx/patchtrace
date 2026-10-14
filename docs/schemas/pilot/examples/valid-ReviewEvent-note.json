@@ -1,0 +1,8 @@
+{
+  "action": "note",
+  "candidate_key": "35e8b076543394688d3e4a09926e42fe10e4edc9ef66061c5343aab259804db8",
+  "contract": "pilot-review/1",
+  "created_utc": "2099-03-01T13:05:00+00:00",
+  "cve": "CVE-2099-20001",
+  "text": "Checked the newer function: the bound only moved.\nThe advisory title still fits the name."
+}

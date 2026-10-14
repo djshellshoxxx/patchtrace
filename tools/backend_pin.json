@@ -1,0 +1,178 @@
+{
+  "schema": "patchtrace-backend-pin/1",
+  "resolved_on": "2026-10-14",
+  "runtime_id_format": "ghidra-{ghidra}-ghidriff-{sha7}-{os}-amd64",
+  "trust": "Every digest names its source in digest_source: vendor-file (a .sha256.txt / SHA256SUMS published next to the asset by its vendor), vendor-listing (digest from the vendor's release page, also re-hashed by the resolver), pypi-json (PyPI JSON API, TLS only, cross-checked against Ghidra's own pypkg/dist where present). A component with status 'placeholder' carries the literal sha256 PLACEHOLDER-UNRESOLVED: the host was blocked for the resolver on 2026-10-14 [unverified]. tools/check_backend_pin.py --release (and the build) refuse any placeholder, so none can reach a release build. Resolve the placeholders in slice B10 from a networked CI run and mark them digest_source 'tofu' when the vendor publishes no digest.",
+  "components": {
+    "python-windows": {
+      "status": "placeholder",
+      "digest_source": "none",
+      "url": "https://www.python.org/ftp/python/3.12.10/python-3.12.10-embed-amd64.zip",
+      "sha256": "PLACEHOLDER-UNRESOLVED",
+      "size": null,
+      "spdx": "PSF-2.0",
+      "version": "3.12.10",
+      "note": "www.python.org returned HTTP 403 through the egress proxy on 2026-10-14 [unverified]. python.org publishes an MD5 and a sigstore/GPG signature per file; record the MD5 plus an own SHA-256 (tofu) in B10.",
+      "fallback": {
+        "name": "cpython-3.12.10+20250409-x86_64-pc-windows-msvc-install_only_stripped.tar.gz",
+        "url": "https://github.com/astral-sh/python-build-standalone/releases/download/20250409/cpython-3.12.10%2B20250409-x86_64-pc-windows-msvc-install_only_stripped.tar.gz",
+        "sha256": "08670ab68f041481b8127b2ea27e01ddf56131e61fcf845f489024fddcd3deec",
+        "size": 21169583,
+        "digest_source": "vendor-file",
+        "digest_file": "https://github.com/astral-sh/python-build-standalone/releases/download/20250409/SHA256SUMS",
+        "note": "Resolved fallback if the embeddable zip cannot be pinned; changes the payload layout (python/python.exe, python/Lib/site-packages) and needs B4/B3 review."
+      }
+    },
+    "python-linux": {
+      "status": "pinned",
+      "digest_source": "vendor-file",
+      "digest_file": "https://github.com/astral-sh/python-build-standalone/releases/download/20250409/SHA256SUMS",
+      "url": "https://github.com/astral-sh/python-build-standalone/releases/download/20250409/cpython-3.12.10%2B20250409-x86_64-unknown-linux-gnu-install_only_stripped.tar.gz",
+      "sha256": "8c59b9ac6bff2dc3934181d7bc82594f9f59a613afed8d72c9e89d7194e790ee",
+      "size": 21261066,
+      "spdx": "PSF-2.0",
+      "version": "3.12.10"
+    },
+    "ghidra": {
+      "status": "pinned",
+      "digest_source": "vendor-listing",
+      "url": "https://github.com/NationalSecurityAgency/ghidra/releases/download/Ghidra_12.0.4_build/ghidra_12.0.4_PUBLIC_20260303.zip",
+      "sha256": "c3b458661d69e26e203d739c0c82d143cc8a4a29d9e571f099c2cf4bda62a120",
+      "size": 509952513,
+      "spdx": "Apache-2.0",
+      "version": "12.0.4",
+      "note": "Digest from the release page (also pinned in live-backend.yml) and re-hashed from a full download on 2026-10-14: identical. Archive root: ghidra_12.0.4_PUBLIC/ with LICENSE, licenses/, GPL/, bom.json, support/, Ghidra/, docs/, Extensions/, server/, docker/."
+    },
+    "jdk-windows": {
+      "status": "pinned",
+      "digest_source": "vendor-file",
+      "digest_file": "https://github.com/adoptium/temurin21-binaries/releases/download/jdk-21.0.12.1%2B1/OpenJDK21U-jdk_x64_windows_hotspot_21.0.12.1_1.zip.sha256.txt",
+      "url": "https://github.com/adoptium/temurin21-binaries/releases/download/jdk-21.0.12.1%2B1/OpenJDK21U-jdk_x64_windows_hotspot_21.0.12.1_1.zip",
+      "sha256": "f9d6e191ab098c0d416e7d588a24420a8621cd2f4720dab2459b8b7b2d2d8b4e",
+      "size": 205073461,
+      "spdx": "GPL-2.0-only WITH Classpath-exception-2.0",
+      "version": "21.0.12.1+1"
+    },
+    "jdk-linux": {
+      "status": "pinned",
+      "digest_source": "vendor-file",
+      "digest_file": "https://github.com/adoptium/temurin21-binaries/releases/download/jdk-21.0.12.1%2B1/OpenJDK21U-jdk_x64_linux_hotspot_21.0.12.1_1.tar.gz.sha256.txt",
+      "url": "https://github.com/adoptium/temurin21-binaries/releases/download/jdk-21.0.12.1%2B1/OpenJDK21U-jdk_x64_linux_hotspot_21.0.12.1_1.tar.gz",
+      "sha256": "ce79869e1307ed8ee1e2baa86a412b1eb5b75d10a01006d788a6f968bcfaee94",
+      "size": 207473347,
+      "spdx": "GPL-2.0-only WITH Classpath-exception-2.0",
+      "version": "21.0.12.1+1"
+    }
+  },
+  "jdk_source_offer": {
+    "name": "OpenJDK21U-jdk-sources_21.0.12.1_1.tar.gz",
+    "url": "https://github.com/adoptium/temurin21-binaries/releases/download/jdk-21.0.12.1%2B1/OpenJDK21U-jdk-sources_21.0.12.1_1.tar.gz",
+    "sha256": "573057d03584ae793fb7ec9a14c76d826d9187a53efeefd99da47403a5308234",
+    "size": 115126841,
+    "digest_source": "vendor-file",
+    "digest_file": "https://github.com/adoptium/temurin21-binaries/releases/download/jdk-21.0.12.1%2B1/OpenJDK21U-jdk-sources_21.0.12.1_1.tar.gz.sha256.txt",
+    "bundled": false
+  },
+  "wheels": {
+    "windows": [
+      {
+        "name": "jpype1-1.5.2-cp312-cp312-win_amd64.whl",
+        "kind": "wheel",
+        "distribution": "jpype1",
+        "version": "1.5.2",
+        "url": "https://files.pythonhosted.org/packages/74/dd/7408d4beae755de6fcd07c76b2f0bacabc0461b43fba83811c1f7c22440e/jpype1-1.5.2-cp312-cp312-win_amd64.whl",
+        "sha256": "c7b1c2d76d211cab60be16505d32a6b3c9fffc51ce79c68e81a3d48e5effff2d",
+        "size": 356149,
+        "spdx": "Apache-2.0",
+        "digest_source": "pypi-json"
+      }
+    ],
+    "linux": [
+      {
+        "name": "jpype1-1.5.2-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
+        "kind": "wheel",
+        "distribution": "jpype1",
+        "version": "1.5.2",
+        "url": "https://files.pythonhosted.org/packages/74/f3/1cd4332076ed0421e703412f47f15f43af170809435c57ba3162edc80d4b/jpype1-1.5.2-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
+        "sha256": "b5b1fb2b430a50f081ea0ee24d19232ae0d03dbfe3dd076ec5f8ae42b30a656f",
+        "size": 493520,
+        "spdx": "Apache-2.0",
+        "digest_source": "pypi-json"
+      }
+    ],
+    "any": [
+      {
+        "name": "pyghidra-3.0.2-py3-none-any.whl",
+        "kind": "wheel",
+        "distribution": "pyghidra",
+        "version": "3.0.2",
+        "url": "https://files.pythonhosted.org/packages/69/95/b63d7950dd83af3be92dda506ed0b6abe00a1cd623883bf3ff574507a38a/pyghidra-3.0.2-py3-none-any.whl",
+        "sha256": "1bd49496e90d67b8aa06adeb3d80e0a5be6f5582f754e83625197a326772ebfe",
+        "size": 50728,
+        "spdx": "Apache-2.0",
+        "digest_source": "pypi-json"
+      },
+      {
+        "name": "packaging-25.0-py3-none-any.whl",
+        "kind": "wheel",
+        "distribution": "packaging",
+        "version": "25.0",
+        "url": "https://files.pythonhosted.org/packages/20/12/38679034af332785aac8774540895e234f4d07f7545804097de4b666afd8/packaging-25.0-py3-none-any.whl",
+        "sha256": "29572ef2b1f17581046b3a2227d5c611fb25ec70ca1ba8554b24b0e69331a484",
+        "size": 66469,
+        "spdx": "Apache-2.0 OR BSD-2-Clause",
+        "digest_source": "pypi-json",
+        "note": "25.0 is the version Ghidra 12.0.4 ships in pypkg/dist (byte-identical digest); PyPI latest 26.3 is not used."
+      },
+      {
+        "name": "mdutils-1.6.0.tar.gz",
+        "kind": "sdist-built-to-wheel",
+        "distribution": "mdutils",
+        "version": "1.6.0",
+        "url": "https://files.pythonhosted.org/packages/b1/ec/6240f147530a2c8d362ed3f2f7985aca92cda68c25ffc2fc216504b17148/mdutils-1.6.0.tar.gz",
+        "sha256": "647f3cf00df39fee6c57fa6738dc1160fce1788276b5530c87d43a70cdefdaf1",
+        "size": 22881,
+        "spdx": "MIT",
+        "digest_source": "pypi-json",
+        "note": "PyPI publishes no wheel for mdutils 1.6.0 (sdist only, pure Python). The builder builds a py3-none-any wheel from this hash-checked sdist offline, then installs only that wheel; the built wheel's digest is recorded in THIRD-PARTY.json, not here."
+      }
+    ]
+  },
+  "ghidriff": {
+    "repo": "https://github.com/clearbluejar/ghidriff",
+    "sha": "4f5d895fcbb1eacd65efd81145922c15bb7e741d",
+    "spdx": "GPL-3.0-only",
+    "spdx_note": "LICENSE file does not say only/or-later; record as GPL-3.0 (unqualified) in notices.",
+    "requires": {"pyghidra": ">=3.0.0,<4", "mdutils": "==1.6.0", "python": ">=3.10"},
+    "source_tarball": {
+      "name": "ghidriff-4f5d895-source.tar.gz",
+      "status": "placeholder",
+      "digest_source": "none",
+      "url": "https://github.com/clearbluejar/ghidriff/archive/4f5d895fcbb1eacd65efd81145922c15bb7e741d.tar.gz",
+      "sha256": "PLACEHOLDER-UNRESOLVED",
+      "size": null,
+      "note": "Archive downloads for clearbluejar/ghidriff were refused (HTTP 403) on 2026-10-14 [unverified]; GitHub generates this tarball on demand, so record its digest as tofu in B10 and re-check that two downloads agree."
+    }
+  },
+  "ghidra_pypkg_crosscheck": {
+    "source": "ghidra_12.0.4_PUBLIC/Ghidra/Features/PyGhidra/pypkg/dist/ inside the pinned Ghidra zip, read 2026-10-14",
+    "pyghidra": {"file": "pyghidra-3.0.2-py3-none-any.whl", "sha256": "8a24363632998a25c26052ced504f1937d0bad2ed22970e014a87c97933434b9", "size": 50728, "same_member_contents_as_pinned_wheel": true, "note": "Same 50728-byte size and identical member names and bytes, different zip container bytes, so the whole-file digests differ; the PyPI wheel is the pinned one."},
+    "jpype1": {"same_sha256_as_pinned": true},
+    "packaging": {"file": "packaging-25.0-py3-none-any.whl", "same_sha256_as_pinned": true}
+  },
+  "ci_lane_freeze": {
+    "source": ".github/workflows/live-backend.yml (pip install -e . 'ghidriff @ git+...@4f5d895')",
+    "status": "unverified",
+    "note": "The CI lane installs pyghidra, JPype1 and mdutils unpinned; the resolved versions of the recorded run are not available to this resolver [unverified]. Today pyghidra 3.1.0 (2026-05-14) satisfies ghidriff, so the lane may differ from this pin (3.0.2, the version in the Ghidra 12.0.4 tag). Acceptance decides (BUNDLE open question 4)."
+  },
+  "jdk_decision": {
+    "selected": "21",
+    "fallback": "25",
+    "reason": "Ghidra GettingStarted names Java 21 64-bit JDK; JDK 25 is what live-backend.yml exercised. Flip only in B10 after a failing acceptance and record it."
+  },
+  "strip": {
+    "ghidra": ["docs/**", "Extensions/Eclipse/**", "**/os/{other-OS}/**"],
+    "jdk": ["lib/src.zip", "jmods/**"],
+    "keep": ["LICENSE", "licenses/**", "GPL/**", "Ghidra/Processors/**", "Ghidra/Debug/**", "Ghidra/Features/**", "legal/**", "bin/javac*"]
+  }
+}

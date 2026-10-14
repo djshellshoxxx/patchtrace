@@ -1,0 +1,62 @@
+{
+  "$id": "https://patchtrace.local/schemas/pilot-review/1/ReviewEvent.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "An analyst's pin, dismissal or note (own `patch-intent` rows, append only). It never changes a lead's class,\nand a note is shown as the analyst's statement, never as PatchTrace's finding.",
+  "properties": {
+    "action": {
+      "enum": [
+        "pin",
+        "unpin",
+        "dismiss",
+        "restore",
+        "note"
+      ],
+      "title": "Action",
+      "type": "string"
+    },
+    "candidate_key": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Candidate Key",
+      "type": "string"
+    },
+    "contract": {
+      "const": "pilot-review/1",
+      "default": "pilot-review/1",
+      "title": "Contract",
+      "type": "string"
+    },
+    "created_utc": {
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]{1,6})?(\\+00:00|Z)$",
+      "title": "Created Utc",
+      "type": "string"
+    },
+    "cve": {
+      "anyOf": [
+        {
+          "maxLength": 24,
+          "pattern": "^CVE-[0-9]{4}-[0-9]{4,19}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Cve"
+    },
+    "text": {
+      "default": "",
+      "maxLength": 2048,
+      "title": "Text",
+      "type": "string"
+    }
+  },
+  "required": [
+    "candidate_key",
+    "action",
+    "created_utc"
+  ],
+  "title": "ReviewEvent",
+  "type": "object"
+}
