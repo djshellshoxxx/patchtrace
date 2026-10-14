@@ -261,3 +261,6 @@
 - [ ] Not done: 2 s per-side wall-clock budget (reads are small and bounded; cancel is polled per stage); `docs/specs/pe-overview.md` "Build facts" section and "Not done" update (D-amendments, integrator); WBQ S3 consumers
 ### [SPEC-07-hit:derived-cache-hit]
 - [x] Hit path 1.92 s -> 1.44 s at 10,000 pairs (lean cache payload via exclude_defaults + cached TypeAdapter; inlined scalar canonical-JSON fast path). [ ] 500 ms objective still open: build_views ~0.75 s, rank ~0.6 s, input_digest/_locations_owned ~0.35 s remain (see docs/qa.md).
+
+### [CAP-4:capa-cache]
+- [x] `intelligence/tools/capa_cache.py` (lookup, store, fetch_or_run) with tests. [ ] Runner wiring (profile `cache_dir`, `capa_cache.fetch_or_run` around the spawn) is an integrator ask.

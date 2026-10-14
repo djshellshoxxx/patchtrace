@@ -383,3 +383,6 @@ Status column: each row is built by the slice named in `docs/specs/program-e/CAP
 | Module | Files | Responsibility | Depends on | Tests |
 |---|---|---|---|---|
 | build facts | src/patchtrace/pe_overview/{rich_header,debug_entries,clr_header,build_facts}.py | `parse_rich_header(region)` backward `Rich` to `DanS` walk, key, recomputed checksum, <=1,024 entries, signature = SHA-256 of sorted unique `(product_id, build)`; debug entry types (<=16, REPRO); COR20 basics; `collect_build_facts(reader, overview)` -> `PeBuildFacts` (`pe-build-facts/1`): linker/OS/image/subsystem version fields, GuardFlags and SecurityCookie from LoadConfig (bounded by its Size field), runtime families by closed DLL-name table, entropy and overlay summary, anomaly codes; optional dynamic pefile cross-check (`rich-pefile-mismatch`); never raises | pe_overview (read only, no existing file edited) | tests/test_pe_build_facts.py, tests/pe_build_fixtures.py |
+
+### [CAP-4:capa-cache]
+| capa cache | raw-first capa output cache on `DerivedCache` stage `capa-raw` (zlib stdout, key = `cache_key`); bounded inflate, corrupt or refused entries are soft misses; a hit re-parses without spawning | tools/capa_cache | tests/test_capa_cache.py |
