@@ -349,3 +349,9 @@ No manual step. Windows CI must run `tests/test_search_segment.py`; Linux eviden
   - Row 21: prototype two-level custom `QAbstractItemModel` with model-owned filter and sort (no proxy), PySide6 6.12.0 offscreen, 100,000 rows: reset 6 ms, first paint 25 ms with 1,650 `data()` calls (identical at 10,000 rows), filter 10 ms, sort 25-40 ms, `expandAll` 0.4 s; a model reset collapses expansion and selection. Confidence: medium.
 - Open gates (CI or owner only; none closed by CAP-0): L1 Linux required leg (probe, pinned version text, end-to-end pair delta on synthetic pairs equals the goldens) and Windows advisory leg; L2 coverage on a self-built DLL (share of capa function starts equal to a Ghidriff start on the same side); L3 time and memory of vivisect on a real driver on the owner's machine (the Microsoft binary stays local); L4 Ghidra backend with Ghidra 12.0.4 and JDK 25; L5 antivirus and SmartScreen behaviour for `capa.exe`; L6 onefile extraction under 60- and 120-character scratch roots; L7 NVDA/Narrator, 125/150/200% DPI, glyph fonts, frozen-EXE dock smoke.
 - Goldens planned, not present: `expected-pairs-capa-api.json`, `expected-pairs-capa-move.json`, CLI JSON goldens (timestamps and paths ignored).
+### [CAP-1:capa-parser-v2]
+| check | evidence |
+|---|---|
+| coverage, features and labels on REAL capa 9.4.0 output (synthetic PEs) and DERIVED library/unrecovered variants | `tests/test_capa_parser_v2.py`; derived files labelled in `tests/fixtures/intel_tools/capa/MANIFEST.capa-v2.json` |
+| rows stored before CAP-1 stay readable and keep their content ids | `test_records_stored_before_cap1_stay_readable_and_keep_their_ids` |
+| not verified here: memory cap against a real capa run (RLIMIT_AS counts virtual memory), Ghidra 12.0.4 backend (live gate L3, L4) | CAP plan section 10 |

@@ -8,7 +8,9 @@
         "attack": [],
         "feature_count": 0,
         "feature_rvas": [],
+        "features": [],
         "kind": "capability",
+        "labels": [],
         "location": {
           "artifact_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
           "attribution": "function-start",
@@ -150,7 +152,9 @@
             "attack": [],
             "feature_count": 0,
             "feature_rvas": [],
+            "features": [],
             "kind": "capability",
+            "labels": [],
             "location": {
               "artifact_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
               "attribution": "function-start",
@@ -176,6 +180,7 @@
         "counts": {
           "capabilities": 1
         },
+        "coverage": null,
         "engine": "capa",
         "environment": [],
         "image_base": 5368709120,

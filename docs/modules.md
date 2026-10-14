@@ -362,3 +362,7 @@ Status column: each row is built by the slice named in `docs/specs/program-e/CAP
 | capa hints (CAP-7, planned) | intelligence/tools/capa_hints.py, tools/capa_rules_inventory.py | `capability-hints/1` table joined to hypothesis context; rule inventory (names and scopes, no rule text) | capa_view | `test_capa_hints.py` |
 | capa cache (CAP-4, planned) | intelligence/tools/capa_cache.py | raw-first cache of capa stdout (stage `capa-raw`), corrupt entry is a miss | enrichment/cache.py, capa | `test_capa_cache.py` |
 | capabilities UI (CAP-6a/6b, planned) | src/patchtrace/ui_capabilities.py, src/patchtrace/ui_capabilities_setup.py (CAP-11, owner decision) | Capabilities dock: Changes tab, then Setup and run tab; Qt adapter over the pure view-model | capa_view, runtime_discovery, GUI framework E-2 | `test_capabilities_ui.py`, `test_capabilities_run.py` |
+### [CAP-1:capa-parser-v2]
+| module | files | purpose | depends on | tests |
+|---|---|---|---|---|
+| capa parser v2 | intelligence/tools/common.py, intelligence/tools/capa.py | additive `FeatureRef`, `TaxonomyLabel`, `FunctionCoverage`; coverage (evaluated and library function starts), matched leaf features and ATT&CK/MBC labels per capability; exits 11/13 are `PT-TOOL-INPUT`; Ghidra backend needs 12.0+; `CapaConfig.memory_limit_bytes` (8 GiB default, 0 off); `reparse` of a stored raw sidecar | tools.process, tools.normalize | `test_capa_parser_v2.py` |

@@ -241,3 +241,6 @@
 - [x] `docs/modules.md`, `docs/qa.md`, this file: append-only CAP blocks (module rows, evidence rows 19-21, slice status)
 - [ ] NOT done (later slices, per CAP section 9): T0 shared SPEC-29 core prerequisite (not CAP-owned; CAP-0 did not verify its completion); CAP-1 contracts and parser v2; CAP-2 pair delta; CAP-3 view-model; CAP-4 raw-first cache; CAP-5 `intel-tools pairs`; CAP-6a/6b Capabilities dock and run tab; CAP-7 hints; CAP-8 live capa acceptance (L1 Linux required, Windows advisory); CAP-9 extent attribution (deferred on SPEC-31 S1); CAP-10 BinExport2 (deferred); CAP-11 consented download (owner decision)
 - [ ] Integrator asks: none from CAP-0; the T13 amendments change no shared file. Shared-file changes listed in CAP section 10 (`tools/frozen_smoke.py`, `tools/build_windows.py`, `pyproject.toml` marker `live_capa`, `.gitattributes` fixtures) belong to the slices that need them.
+### [CAP-1:capa-parser-v2]
+- [x] Contracts and parser: coverage, features, labels, exit 11/13, Ghidra >= 12.0 probe, memory-cap option, in-memory re-parse (`tests/test_capa_parser_v2.py`)
+- [ ] Integrator: `runner.py` passes `CapaConfig.effective_memory_limit()` for capa (today only FLOSS); `intel-tools probe` rules label and `PT-TOOL-PAIRING` exit mapping (CAP-5)

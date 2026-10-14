@@ -42,11 +42,19 @@ Address = Annotated[int, Field(ge=0, le=MAX_ADDRESS)]
 RunStatus = Literal['ok', 'none-found', 'failed', 'timeout', 'cancelled', 'unsupported', 'absent']
 ErrorCode = Literal['PT-TOOL-ABSENT', 'PT-TOOL-UNSUPPORTED', 'PT-TOOL-INPUT', 'PT-TOOL-ARTIFACT', 'PT-TOOL-OUTPUT',
                     'PT-TOOL-LIMIT', 'PT-TOOL-RUN', 'PT-TOOL-TIMEOUT', 'PT-TOOL-CANCEL', 'PT-TOOL-ADDRESS',
-                    'PT-TOOL-STALE', 'PT-TOOL-MISMATCH', 'PT-TOOL-STORE', 'PT-TOOL-CONSENT']
-Attribution = Literal['function-start', 'basic-block-in-function', 'decoding-routine', 'stack-frame', 'none']
+                    'PT-TOOL-STALE', 'PT-TOOL-MISMATCH', 'PT-TOOL-STORE', 'PT-TOOL-CONSENT', 'PT-TOOL-PAIRING']
+# 'contained-in-function' is reserved for CAP-9 (extent attribution); no v1 parser emits it.
+Attribution = Literal['function-start', 'basic-block-in-function', 'decoding-routine', 'stack-frame',
+                      'contained-in-function', 'none']
 LOCALIZED: frozenset[str] = frozenset({'function-start', 'basic-block-in-function', 'decoding-routine',
                                        'stack-frame'})
 CapaScope = Literal['file', 'function', 'basic block', 'instruction']
+FeatureKind = Literal['api', 'number', 'string', 'substring', 'regex', 'bytes', 'mnemonic', 'offset', 'characteristic',
+                      'section', 'export', 'import', 'function-name', 'class', 'namespace', 'property', 'com', 'operand',
+                      'match']
+MAX_COVERAGE = 262_144
+MAX_FEATURES = 16
+MAX_LABELS = 32
 StringType = Literal['static', 'stack', 'tight', 'decoded', 'language']
 EnvCategory = Literal['compiler', 'linker', 'tool', 'packer', 'protector', 'cryptor', 'installer', 'sfx', 'library',
                       'format', 'overlay', 'other', 'unknown']
@@ -196,6 +204,37 @@ class EvidenceLink(_Strict):
         return self
 
 
+class FeatureRef(_Strict):
+    """One feature that made a capa rule match (T2): what to look for in the code on this side. Global features
+    (os, arch, format) are not kept."""
+    kind: FeatureKind
+    value: str = Field(max_length=120)
+    rva: int | None = Field(default=None, ge=0, lt=2**32)
+
+
+class TaxonomyLabel(_Strict):
+    """An ATT&CK or MBC label exactly as the rule carries it; used for grouping only, never for ordering."""
+    scheme: Literal['attack', 'mbc']
+    group: str = Field(max_length=80)
+    name: str = Field(max_length=120)
+    ident: str = Field(max_length=32)
+
+
+class FunctionCoverage(_Strict):
+    """Which function starts (RVAs) the tool evaluated and which it skipped as library code. A function in neither
+    list is unknown to the tool: not evaluated, so its missing matches say nothing."""
+    evaluated: tuple[Annotated[int, Field(ge=0, lt=2**32)], ...] = Field(default=(), max_length=MAX_COVERAGE)
+    library: tuple[Annotated[int, Field(ge=0, lt=2**32)], ...] = Field(default=(), max_length=MAX_COVERAGE)
+    truncated: bool = False
+
+    @model_validator(mode='after')
+    def _sorted(self):
+        for rvas in (self.evaluated, self.library):
+            if list(rvas) != sorted(set(rvas)):
+                raise ValueError('coverage RVAs are sorted and unique')
+        return self
+
+
 class CapabilityEvidence(_Strict):
     rule_id: str = Field(min_length=1, max_length=256)
     rule_sha256: Sha256
@@ -210,6 +249,9 @@ class CapabilityEvidence(_Strict):
     mbc: tuple[Annotated[str, Field(max_length=32)], ...] = Field(default=(), max_length=32)
     feature_rvas: tuple[Annotated[int, Field(ge=0, lt=2**32)], ...] = Field(default=(), max_length=64)
     feature_count: int = Field(default=0, ge=0)
+    # Additive (CAP-1): successful leaf features (sorted, deduplicated) and the rule's ATT&CK/MBC labels.
+    features: tuple[FeatureRef, ...] = Field(default=(), max_length=MAX_FEATURES)
+    labels: tuple[TaxonomyLabel, ...] = Field(default=(), max_length=MAX_LABELS)
 
 
 class StringEvidence(_Strict):
@@ -261,6 +303,8 @@ class ToolEvidenceSet(_Strict):
     counts: dict[Annotated[str, Field(max_length=32)], Annotated[int, Field(ge=0)]] = Field(default_factory=dict,
                                                                                           max_length=16)
     anomalies: tuple[_SHORT, ...] = Field(default=(), max_length=MAX_ANOMALIES)
+    # Additive (CAP-1): None on rows stored before coverage existed (re-parsed from the raw sidecar, else unknown).
+    coverage: FunctionCoverage | None = None
 
     @field_validator('analysis')
     @classmethod
@@ -313,10 +357,16 @@ def new_run_id(key: str, side: str, started_at: str) -> str:
     return domain_id('tool-run', 1, {'cache_key': key, 'side': side, 'started_at': started_at})
 
 
+def _empty_additive(item: CapabilityEvidence) -> set[str]:
+    """Defaulted CAP-1 fields stay out of the content id so rows stored before them keep their ids."""
+    return {name for name in ('features', 'labels') if not getattr(item, name)}
+
+
 def evidence_entry_id(evidence: ToolEvidenceSet) -> str:
     """Content identity: equal evidence gets the same row id; different content never overwrites a row."""
-    body = canonical_json(evidence.model_dump(mode='json', exclude={'run_id'}) | {
-        'capabilities': [c.model_dump(mode='json', exclude={'source_run_id', 'location'}) | {
+    additive = {'coverage'} if evidence.coverage is None else set()
+    body = canonical_json(evidence.model_dump(mode='json', exclude={'run_id'} | additive) | {
+        'capabilities': [c.model_dump(mode='json', exclude={'source_run_id', 'location'} | _empty_additive(c)) | {
             'location': c.location.model_dump(mode='json', exclude={'tool_run_id'})} for c in evidence.capabilities],
         'strings': [s.model_dump(mode='json', exclude={'source_run_id', 'source_location'}) | {
             'location': s.source_location.model_dump(mode='json', exclude={'tool_run_id'})}
