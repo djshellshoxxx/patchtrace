@@ -229,3 +229,7 @@
 ### [WB1-S1:search-query]
 - [x] S1 grammar, safe MATCH builders (hypothesis: no input raises OperationalError), 40+ name goldens, hostile list, frozen contracts
 - [ ] Integrator: add `tests/fixtures/search/*.json eol=lf` to `.gitattributes`
+
+### [WB1-S2:search-segment]
+- [x] S2 segment store (crash-point, corruption, authorizer allow-list, replace-over-open-file tests; Linux green)
+- [ ] Open gate: the replace-over-open-file and URI-open tests on `windows-latest`

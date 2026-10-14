@@ -334,3 +334,6 @@ Run `python tools/check_search_runtime.py` (add `--require-native-rapidfuzz` on 
 
 ### [WB1-S1:search-query]
 No manual step. Automated: `pytest tests/test_search_query.py` (property test over arbitrary Unicode and grammar fragments against real FTS5 tables).
+
+### [WB1-S2:search-segment]
+No manual step. Windows CI must run `tests/test_search_segment.py`; Linux evidence: 100k names build in about 2.7 s (30 MB), hardened open in 0.36 s.

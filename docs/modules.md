@@ -341,3 +341,8 @@ K1 notes: plan 10.1 "4 edges, 1 mention-only" = 4 vendor-remediation edges + 1 m
 | Module | Files | Responsibility | Depends | Tests |
 |---|---|---|---|---|
 | search (S1) | src/patchtrace/search/{normalize,tokenize,query,contracts}.py | fold/sanitize, identifier splitter, `parse_query` grammar to `QueryPlan`, the only FTS5 MATCH builders, frozen `search/1` and `search-saved/1` contracts | search S0, enrichment.identity | `test_search_normalize.py`, `test_search_query.py`, `test_search_contracts.py` |
+
+### [WB1-S2:search-segment]
+| Module | Files | Responsibility | Depends | Tests |
+|---|---|---|---|---|
+| search (S2) | src/patchtrace/search/segment.py | immutable digest-named FTS5 segment files: staging build, atomic publish (equal file wins, open files never replaced), hardened read-only open under a fail-closed authorizer, corruption handling, derived-file GC and cache trim | search S0/S1, enrichment.identity | `test_search_segment.py` |
