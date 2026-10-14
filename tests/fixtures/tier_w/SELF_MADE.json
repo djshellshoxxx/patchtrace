@@ -1,0 +1,63 @@
+{
+ "compile": [
+  "--target=x86_64-pc-windows-msvc",
+  "-ffreestanding",
+  "-O2",
+  "-g",
+  "-gcodeview",
+  "-ffunction-sections",
+  "-funwind-tables",
+  "-fdebug-compilation-dir=.",
+  "-gno-codeview-command-line"
+ ],
+ "contract": "tier-w-fixtures/1",
+ "files": [
+  {
+   "kind": "pe",
+   "path": "tests/fixtures/tier_w/tiny_v1.pe",
+   "sha256": "b69e9b090dd6406eadc734f005513432503652b55cbd70bb2370b10ea018cd41",
+   "size": 4608,
+   "source": "tests/fixtures/tier_w/src/v1"
+  },
+  {
+   "kind": "pdb",
+   "path": "tests/fixtures/tier_w/tiny_v1.pdb",
+   "sha256": "a06cd2e297c9b027afc78c9ed055011b5f0846fbe830a39f7def7a6100900573",
+   "size": 86016,
+   "source": "tests/fixtures/tier_w/src/v1"
+  },
+  {
+   "kind": "pe",
+   "path": "tests/fixtures/tier_w/tiny_v2.pe",
+   "sha256": "c2e70030a16b5b9b075b9686ebfa9c7bda389743222e98a373369865e0e015ea",
+   "size": 5120,
+   "source": "tests/fixtures/tier_w/src/v2"
+  },
+  {
+   "kind": "pdb",
+   "path": "tests/fixtures/tier_w/tiny_v2.pdb",
+   "sha256": "1bbc5ad518a63965cd1cbe37195699874989799d193a760b5e247b4db305fb65",
+   "size": 86016,
+   "source": "tests/fixtures/tier_w/src/v2"
+  }
+ ],
+ "license": "MIT",
+ "link": [
+  "/dll",
+  "/noentry",
+  "/nodefaultlib",
+  "/debug",
+  "/opt:ref",
+  "/opt:icf",
+  "/brepro",
+  "/pdbaltpath:%_PDB%",
+  "/pdbsourcepath:C:\\src"
+ ],
+ "purpose": "self-made DLL + PDB pairs for Tier-W tests; the only PDBs the repository guard accepts",
+ "recipe": "PYTHONPATH=src python -m tools.calibration.tier_w.make_fixtures",
+ "tier": "test",
+ "tools": {
+  "clang": "Ubuntu clang version 18.1.3 (1ubuntu1)",
+  "lld-link": "Ubuntu LLD 18.1.3"
+ }
+}

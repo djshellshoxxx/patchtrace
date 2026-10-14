@@ -107,3 +107,11 @@ Every substantial future module must be added here before implementation. UI mus
 | lexicon/hypotheses/anchors | intelligence/{lexicon,hypotheses,anchors}.py | `cwe-lexicon/1` (negation, scopes, vagueness), `patch-rules/1` per CWE family, labelled search anchors | enrichment.identity | tests/test_intel_{lexicon,hypotheses,anchors}.py |
 | advisory storage | intelligence/storage.py | append-only `advisory-source`/`advisory-facts` pointer rows + hash-verified sidecars under `intelligence/csaf/` | enrichment.storage (public API only) | tests/test_intel_storage.py |
 | deferred | intelligence/{reports,cli}.py, cli.py hook | JSON/MD export and `intelligence import/fetch/explain` (contract in spec section J) | - | next wave |
+### [W:tier-w-w1] Tier W local-only corpus (SPEC-33 `specs/tier-w-local-corpus.md`, 2026-10-14; dev-only, never shipped)
+| Module | Files | Responsibility | Depends on | Verification |
+|---|---|---|---|---|
+| tier-w foundations | tools/calibration/tier_w/{paths,contracts}.py | local layout under PATCHTRACE_CALIB_ROOT (refused in-tree), `tier: W` markers, strict bounded contracts | tools.calibration | tests/test_tier_w_corpus.py |
+| tier-w catalogue + pairs | tier_w/{catalogue,pairs}.py | Winbindex per-line KB catalogue, optional HEAD `resolve`, adjacent + cross-version pairs, `calibration-corpus/1` manifest + `tier-w-pairs/1` | acquisition.winbindex, lineage | afd.sys fixture + synthetic documents |
+| tier-w PDB/PE readers | tier_w/{msf,pe_tables}.py | stdlib MSF 7.00 reader (identity, publics, procs, OMAP); `.pdata`, base relocations, export RVAs, relocation-masked body hash | pe_overview, artifact_bytes | real self-made DLL+PDB fixtures, synthetic MSF/PE, hypothesis fuzz |
+| tier-w guard | tier_w/guard.py (+4-line hook in corpus.guard) | O1: blocks Microsoft images, PDBs (except SHA-listed self-made fixtures), Tier-W manifests/derived files/labels in git | corpus, msf | tests/test_tier_w_guard.py (repository-wide on every run) |
+| tier-w fixtures | tier_w/make_fixtures.py, tests/fixtures/tier_w/ | MIT freestanding C/C++ -> clang 18 + lld-link /Brepro, path-neutral, byte-reproducible | jobs.run_process | SELF_MADE.json SHA-256 inventory |
