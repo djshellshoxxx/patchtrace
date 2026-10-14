@@ -1,6 +1,6 @@
 # SPEC-09: N-way build comparison (Phase 3b)
 
-Status: developer-ready contract, 2026-10-12. Contract version `nway/1`. Verified facts: `../research/phase3/nway.md` (Ghidriff @ 4f5d895).
+Status: developer-ready contract, 2026-10-12; amendment A-05 (raw `EXTERNAL:<hex>` address_matches entries are skipped and counted in the pair notes) applied in unified-engine slice P2, 2026-10-14. Contract version `nway/1`. Verified facts: `../research/phase3/nway.md` (Ghidriff @ 4f5d895).
 
 ## 1. Outcome and invariants
 

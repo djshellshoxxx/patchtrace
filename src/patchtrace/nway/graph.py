@@ -100,18 +100,20 @@ def _is_external(text: object) -> bool:
     return isinstance(text, str) and _EXTERNAL.fullmatch(text.strip()) is not None
 
 
-def _raw_relations(raw: Mapping, run_id: str, taken_old: set, taken_new: set) -> list[RawRelation]:
-    """Engine relations from Ghidriff address_matches for endpoints no normalized match touches.
+def _read_address_matches(raw: Mapping) -> tuple[dict[int, list[tuple[int, list[str]]]], int]:
+    """Parse raw address_matches into {source: [(target, match types)]} and count the EXTERNAL skips.
 
-    Entries whose source or any target is an `EXTERNAL:<hex>` import location are skipped: they are not
-    functions of either image and have no address to chain. Any other unparsable address is still an error.
+    An entry whose source or any target is an `EXTERNAL:<hex>` import location is skipped and counted once:
+    it is not a function of either image and cannot be chained. Other unparsable addresses are errors.
     """
     table = raw.get('address_matches')
     if not isinstance(table, Mapping):
         raise NwayError('PT-NWAY-PAIR', 'raw matches.address_matches must be an object')
     parsed: dict[int, list[tuple[int, list[str]]]] = {}
+    skipped = 0
     for old_text, targets in table.items():
         if _is_external(old_text):
+            skipped += 1
             continue
         old = parse_address(old_text)
         if old is None or not isinstance(targets, list):
@@ -130,10 +132,30 @@ def _raw_relations(raw: Mapping, run_id: str, taken_old: set, taken_new: set) ->
                 raise NwayError('PT-NWAY-PAIR', 'raw address_matches has an invalid target address')
             entries.append((new, target[1]))
         if touches_external:  # a partial 1:N relation would look 1:1 and chain a wrong hop
+            skipped += 1
             continue
         if old in parsed:
             raise NwayError('PT-NWAY-PAIR', 'raw address_matches repeats a source address')
         parsed[old] = entries
+    return parsed, skipped
+
+
+def external_limitations(raw: Mapping) -> tuple[str, ...]:
+    """Limitation text for raw address_matches entries skipped as EXTERNAL:<hex> locations; () when none."""
+    skipped = _read_address_matches(raw)[1]
+    if not skipped:
+        return ()
+    noun = 'entry' if skipped == 1 else 'entries'
+    return (f'{skipped} raw address_matches {noun} at EXTERNAL:<hex> import locations skipped: '
+            'not functions of either build, so no edges',)
+
+
+def _raw_relations(raw: Mapping, run_id: str, taken_old: set, taken_new: set) -> list[RawRelation]:
+    """Engine relations from Ghidriff address_matches for endpoints no normalized match touches.
+
+    EXTERNAL entries are skipped and counted by `_read_address_matches`; they never become relations.
+    """
+    parsed = _read_address_matches(raw)[0]
     claims: dict[int, int] = {}
     for entries in parsed.values():
         for new in {new for new, _ in entries}:
