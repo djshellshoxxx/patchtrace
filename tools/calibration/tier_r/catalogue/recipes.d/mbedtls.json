@@ -1,0 +1,60 @@
+{
+ "contract": "tier-r-recipes/1",
+ "excluded": [],
+ "recipes": [
+  {
+   "contract": "tier-r-recipe/1",
+   "project": "mbedtls",
+   "family": "crypto",
+   "upstream_git": "https://github.com/Mbed-TLS/mbedtls.git",
+   "license_spdx": "Apache-2.0",
+   "license_file": "LICENSE",
+   "license_evidence": "LICENSE read at all 4 pins (first 107ea89d), 1 distinct SHA-256: LICENSE: Mbed TLS files are provided under a dual Apache-2.0 OR GPL-2.0-or-later license; users may choose which (Apache-2.0 recorded)",
+   "libc": "mingw",
+   "output": "mbedtls.dll",
+   "sources": [
+    "library/*.c"
+   ],
+   "exclude": [
+    "library/net_sockets.c"
+   ],
+   "include_dirs": [
+    "include",
+    "library"
+   ],
+   "defines": [
+    "MBEDTLS_TEST_SW_INET_PTON",
+    "MBEDTLS_NO_PLATFORM_ENTROPY",
+    "MBEDTLS_NO_DEFAULT_ENTROPY_SOURCES",
+    "MBEDTLS_TEST_NULL_ENTROPY"
+   ],
+   "pins": [
+    {
+     "ref": "v3.6.2",
+     "commit": "107ea89daaefb9867ea9121002fbbdf926780e98",
+     "license_sha256": "9b405ef4c89342f5eae1dd828882f931747f71001cfba7d114801039b52ad09b",
+     "date": "2024-10-14"
+    },
+    {
+     "ref": "v3.6.3",
+     "commit": "22098d41c6620ce07cf8a0134d37302355e1e5ef",
+     "license_sha256": "9b405ef4c89342f5eae1dd828882f931747f71001cfba7d114801039b52ad09b",
+     "date": "2025-03-20"
+    },
+    {
+     "ref": "v3.6.4",
+     "commit": "c765c831e5c2a0971410692f92f7a81d6ec65ec2",
+     "license_sha256": "9b405ef4c89342f5eae1dd828882f931747f71001cfba7d114801039b52ad09b",
+     "date": "2025-06-25"
+    },
+    {
+     "ref": "v3.6.5",
+     "commit": "e185d7fd85499c8ce5ca2a54f5cf8fe7dbe3f8df",
+     "license_sha256": "9b405ef4c89342f5eae1dd828882f931747f71001cfba7d114801039b52ad09b",
+     "date": "2025-10-13"
+    }
+   ],
+   "notes": "The 3.6 LTS single-tree layout only (4.x moved crypto to the tf-psa-crypto submodule). Dual-licensed: the Apache-2.0 option is recorded. library/net_sockets.c is excluded (winsock) and three -D switches avoid the bcrypt/ws2_32 import libraries the fixed link line cannot name: the software inet_pton and no platform entropy source (image is never executed). Otherwise the default mbedtls_config.h."
+  }
+ ]
+}

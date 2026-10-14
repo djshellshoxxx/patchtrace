@@ -6,19 +6,2806 @@
   "upstream_git": "https://github.com/madler/zlib.git",
   "license_spdx": "Zlib",
   "license_evidence": "LICENSE at 51b7f2abdade71cd9bb0e7a373ef2610ec6f9daf: 'This software is provided 'as-is', without any express or implied warranty.' (sha256 845efc77...3243, identical at v1.3)",
-  "old": {"ref": "v1.3", "commit": "09155eaa2f9270dc4ed1fa13e2b4b2613e6e4851"},
-  "new": {"ref": "v1.3.1", "commit": "51b7f2abdade71cd9bb0e7a373ef2610ec6f9daf"},
+  "old": {
+   "ref": "v1.3",
+   "commit": "09155eaa2f9270dc4ed1fa13e2b4b2613e6e4851"
+  },
+  "new": {
+   "ref": "v1.3.1",
+   "commit": "51b7f2abdade71cd9bb0e7a373ef2610ec6f9daf"
+  },
   "kind": "release",
   "cve": [],
   "semantic_change": true,
   "changed_functions": [
-   {"name": "inflateSync", "file": "inflate.c", "change": "source and code changed (factory label changed/source-diff)"},
-   {"name": "deflateCopy", "file": "deflate.c", "change": "source and code changed (factory label changed/source-diff)"}
+   {
+    "name": "inflateSync",
+    "file": "inflate.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "deflateCopy",
+    "file": "deflate.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   }
   ],
-  "unchanged_controls": ["adler32", "crc32"],
-  "build": {"system": "single", "recipe_notes": "tier_r recipe zlib (mingw-gcc -O2 -g, top-level *.c, zlib1.dll)", "mingw_ok": "yes"},
-  "verification": {"method": "tools.calibration.tier_r factory.run_card on fetched pins (mingw-gcc 13-win32 O2): 128 project functions, 60 identical, 62 address-only, 2 changed, 9 ambiguous (LIT_MEM #ifdef edits, ERR_MSG macro, constprop clones), 1 added (gz_intmax)", "functions_changed_count": 2, "verified_by_agent_run": true},
-  "sources": ["https://github.com/madler/zlib/releases/tag/v1.3.1", "https://github.com/madler/zlib/blob/v1.3.1/ChangeLog"],
-  "risks": ["Ambiguous records (inactive #ifdef LIT_MEM edits, ERR_MSG bounds macro in zutil.h) are excluded from changed-set scoring by design."]
+  "unchanged_controls": [
+   "adler32",
+   "crc32"
+  ],
+  "build": {
+   "system": "single",
+   "recipe_notes": "tier_r recipe zlib (mingw-gcc -O2 -g, top-level *.c, zlib1.dll)",
+   "mingw_ok": "yes"
+  },
+  "verification": {
+   "method": "tools.calibration.tier_r factory.run_card on fetched pins (mingw-gcc 13-win32 O2): 128 project functions, 60 identical, 62 address-only, 2 changed, 9 ambiguous (LIT_MEM #ifdef edits, ERR_MSG macro, constprop clones), 1 added (gz_intmax)",
+   "functions_changed_count": 2,
+   "verified_by_agent_run": true
+  },
+  "sources": [
+   "https://github.com/madler/zlib/releases/tag/v1.3.1",
+   "https://github.com/madler/zlib/blob/v1.3.1/ChangeLog"
+  ],
+  "risks": [
+   "Ambiguous records (inactive #ifdef LIT_MEM edits, ERR_MSG bounds macro in zutil.h) are excluded from changed-set scoring by design."
+  ]
+ },
+ {
+  "contract": "case-card/1",
+  "id": "zlib-v1.3.1-to-v1.3.1.2",
+  "project": "zlib",
+  "upstream_git": "https://github.com/madler/zlib.git",
+  "license_spdx": "Zlib",
+  "license_evidence": "LICENSE at 570720b0c24f9686c33f35a1b3165c1f568b96be: '(C) 1995-2022 Jean-loup Gailly and Mark Adler / This software is provided 'as-is', without any express or implied warranty.' (sha256 db87e854...3628; read at 51b7f2ab too, sha256 845efc77...3243)",
+  "old": {
+   "ref": "v1.3.1",
+   "commit": "51b7f2abdade71cd9bb0e7a373ef2610ec6f9daf"
+  },
+  "new": {
+   "ref": "v1.3.1.2",
+   "commit": "570720b0c24f9686c33f35a1b3165c1f568b96be"
+  },
+  "kind": "release",
+  "cve": [],
+  "semantic_change": true,
+  "changed_functions": [
+   {
+    "name": "deflate_stored",
+    "file": "deflate.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "deflateBound",
+    "file": "deflate.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "gz_open",
+    "file": "gzlib.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "gzseek64",
+    "file": "gzlib.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "gztell64",
+    "file": "gzlib.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "gz_error",
+    "file": "gzlib.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "gz_load",
+    "file": "gzread.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "gz_avail",
+    "file": "gzread.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "gz_look",
+    "file": "gzread.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "gz_decomp",
+    "file": "gzread.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "gz_read",
+    "file": "gzread.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "gzread",
+    "file": "gzread.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "gzfread",
+    "file": "gzread.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "gzgetc",
+    "file": "gzread.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "gzungetc",
+    "file": "gzread.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "gzgets",
+    "file": "gzread.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "gzdirect",
+    "file": "gzread.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "gz_comp",
+    "file": "gzwrite.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "gz_write",
+    "file": "gzwrite.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "gzwrite",
+    "file": "gzwrite.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "gzfwrite",
+    "file": "gzwrite.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "gzputc",
+    "file": "gzwrite.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "gzputs",
+    "file": "gzwrite.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "gzvprintf",
+    "file": "gzwrite.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "gzflush",
+    "file": "gzwrite.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   }
+  ],
+  "unchanged_controls": [
+   "adler32_z",
+   "adler32",
+   "compress"
+  ],
+  "build": {
+   "system": "single",
+   "mingw_ok": "yes",
+   "recipe_notes": "tier_r recipe zlib (mingw-gcc 13-win32 -O2 -g, explicit file list from recipes.json, zlib1.dll)"
+  },
+  "verification": {
+   "method": "tools.calibration.tier_r factory.run_card on fetched pins (mingw-gcc 13-win32 O2): 132 project functions, 69 unchanged, 31 changed, 24 ambiguous, 6 no-counterpart (bodies: 36 identical, 40 address-only, 50 different); git diff --numstat v1.3.1..v1.3.1.2 -- '*.c' '*.h': 39 files, +1742/-785; changed_functions lists the first 25 of 31 (sorted by file, name)",
+   "files_changed": 39,
+   "functions_changed_count": 31,
+   "verified_by_agent_run": true
+  },
+  "sources": [
+   "https://github.com/madler/zlib/releases/tag/v1.3.1.2",
+   "https://github.com/madler/zlib/compare/v1.3.1...v1.3.1.2"
+  ],
+  "risks": [
+   "24 ambiguous record(s) (source changed with identical code, or induced by macro/header/inlining) are excluded from changed-set scoring by design."
+  ]
+ },
+ {
+  "contract": "case-card/1",
+  "id": "zlib-v1.3.1.2-to-v1.3.2",
+  "project": "zlib",
+  "upstream_git": "https://github.com/madler/zlib.git",
+  "license_spdx": "Zlib",
+  "license_evidence": "LICENSE at da607da739fa6047df13e66a2af6b8bec7c2a498: '(C) 1995-2022 Jean-loup Gailly and Mark Adler / This software is provided 'as-is', without any express or implied warranty.' (sha256 e32ff4e0...45a2; read at 570720b0 too, sha256 db87e854...3628)",
+  "old": {
+   "ref": "v1.3.1.2",
+   "commit": "570720b0c24f9686c33f35a1b3165c1f568b96be"
+  },
+  "new": {
+   "ref": "v1.3.2",
+   "commit": "da607da739fa6047df13e66a2af6b8bec7c2a498"
+  },
+  "kind": "release",
+  "cve": [],
+  "semantic_change": true,
+  "changed_functions": [
+   {
+    "name": "compress2",
+    "file": "compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "compressBound",
+    "file": "compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "crc32_combine64",
+    "file": "crc32.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "crc32_combine_op",
+    "file": "crc32.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "slide_hash",
+    "file": "deflate.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "flush_pending",
+    "file": "deflate.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "deflate_stored",
+    "file": "deflate.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "deflatePending",
+    "file": "deflate.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "deflateBound",
+    "file": "deflate.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "deflate",
+    "file": "deflate.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "deflateInit2_",
+    "file": "deflate.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "deflateCopy",
+    "file": "deflate.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "gz_open",
+    "file": "gzlib.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "gz_fetch",
+    "file": "gzread.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "inflateBack",
+    "file": "infback.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "inflateInit2_",
+    "file": "inflate.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "inflate",
+    "file": "inflate.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "inflateCopy",
+    "file": "inflate.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "inflate_table",
+    "file": "inftrees.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "uncompress2",
+    "file": "uncompr.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "uncompress",
+    "file": "uncompr.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   }
+  ],
+  "unchanged_controls": [
+   "adler32_z",
+   "adler32",
+   "adler32_combine"
+  ],
+  "build": {
+   "system": "single",
+   "mingw_ok": "yes",
+   "recipe_notes": "tier_r recipe zlib (mingw-gcc 13-win32 -O2 -g, explicit file list from recipes.json, zlib1.dll)"
+  },
+  "verification": {
+   "method": "tools.calibration.tier_r factory.run_card on fetched pins (mingw-gcc 13-win32 O2): 138 project functions, 87 unchanged, 21 changed, 22 ambiguous, 8 no-counterpart (bodies: 38 identical, 65 address-only, 27 different); git diff --numstat v1.3.1.2..v1.3.2 -- '*.c' '*.h': 48 files, +1456/-1662",
+   "files_changed": 48,
+   "functions_changed_count": 21,
+   "verified_by_agent_run": true
+  },
+  "sources": [
+   "https://github.com/madler/zlib/releases/tag/v1.3.2",
+   "https://github.com/madler/zlib/compare/v1.3.1.2...v1.3.2"
+  ],
+  "risks": [
+   "22 ambiguous record(s) (source changed with identical code, or induced by macro/header/inlining) are excluded from changed-set scoring by design."
+  ]
+ },
+ {
+  "contract": "case-card/1",
+  "id": "libpng-v1.6.37-to-v1.6.38",
+  "project": "libpng",
+  "upstream_git": "https://github.com/pnggroup/libpng.git",
+  "license_spdx": "Libpng-2.0",
+  "license_evidence": "LICENSE at 0a158f3506502dfa23edfc42790dfaed82efba17: PNG Reference Library License version 2 / Permission is hereby granted to use, copy, modify, and distribute this software ... without fee (sha256 dfe5a536...9960; read at a40189cf too, sha256 bf5e22b9...ea9b)",
+  "old": {
+   "ref": "v1.6.37",
+   "commit": "a40189cf881e9f0db80511c382292a5604c3c3d1"
+  },
+  "new": {
+   "ref": "v1.6.38",
+   "commit": "0a158f3506502dfa23edfc42790dfaed82efba17"
+  },
+  "kind": "release",
+  "cve": [],
+  "semantic_change": true,
+  "changed_functions": [
+   {
+    "name": "png_read_buffer",
+    "file": "pngrutil.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "png_handle_eXIf",
+    "file": "pngrutil.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "png_handle_hIST",
+    "file": "pngrutil.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "png_read_start_row",
+    "file": "pngrutil.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "png_set_tRNS",
+    "file": "pngset.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "png_convert_from_time_t",
+    "file": "pngwrite.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   }
+  ],
+  "unchanged_controls": [
+   "png_colorspace_endpoints_match",
+   "png_reset_crc",
+   "png_calculate_crc"
+  ],
+  "build": {
+   "system": "single",
+   "mingw_ok": "yes",
+   "recipe_notes": "tier_r recipe libpng (mingw-gcc 13-win32 -O2 -g, explicit file list from recipes.json, libpng16.dll)"
+  },
+  "verification": {
+   "method": "tools.calibration.tier_r factory.run_card on fetched pins (mingw-gcc 13-win32 O2): 460 project functions, 361 unchanged, 6 changed, 89 ambiguous, 1 no-counterpart (bodies: 148 identical, 220 address-only, 91 different); git diff --numstat v1.6.37..v1.6.38 -- '*.c' '*.h': 28 files, +504/-416",
+   "files_changed": 28,
+   "functions_changed_count": 6,
+   "verified_by_agent_run": true
+  },
+  "sources": [
+   "https://github.com/pnggroup/libpng/releases/tag/v1.6.38",
+   "https://github.com/pnggroup/libpng/blob/v1.6.38/CHANGES"
+  ],
+  "risks": [
+   "89 ambiguous record(s) (source changed with identical code, or induced by macro/header/inlining) are excluded from changed-set scoring by design."
+  ]
+ },
+ {
+  "contract": "case-card/1",
+  "id": "libpng-v1.6.43-to-v1.6.44",
+  "project": "libpng",
+  "upstream_git": "https://github.com/pnggroup/libpng.git",
+  "license_spdx": "Libpng-2.0",
+  "license_evidence": "LICENSE at f5e92d76973a7a53f517579bc95d61483bf108c0: PNG Reference Library License version 2 / Permission is hereby granted to use, copy, modify, and distribute this software ... without fee (sha256 7317e078...143e; read at ed217e3e too, sha256 7317e078...143e)",
+  "old": {
+   "ref": "v1.6.43",
+   "commit": "ed217e3e601d8e462f7fd1e04bed43ac42212429"
+  },
+  "new": {
+   "ref": "v1.6.44",
+   "commit": "f5e92d76973a7a53f517579bc95d61483bf108c0"
+  },
+  "kind": "release",
+  "cve": [],
+  "semantic_change": true,
+  "changed_functions": [
+   {
+    "name": "png_xy_from_XYZ",
+    "file": "png.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "png_XYZ_from_xy",
+    "file": "png.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   }
+  ],
+  "unchanged_controls": [
+   "png_colorspace_endpoints_match",
+   "png_pow10",
+   "png_muldiv"
+  ],
+  "build": {
+   "system": "single",
+   "mingw_ok": "yes",
+   "recipe_notes": "tier_r recipe libpng (mingw-gcc 13-win32 -O2 -g, explicit file list from recipes.json, libpng16.dll)"
+  },
+  "verification": {
+   "method": "tools.calibration.tier_r factory.run_card on fetched pins (mingw-gcc 13-win32 O2): 460 project functions, 453 unchanged, 2 changed, 5 ambiguous, 0 no-counterpart (bodies: 184 identical, 272 address-only, 4 different); git diff --numstat v1.6.43..v1.6.44 -- '*.c' '*.h': 6 files, +85/-118",
+   "files_changed": 6,
+   "functions_changed_count": 2,
+   "verified_by_agent_run": true
+  },
+  "sources": [
+   "https://github.com/pnggroup/libpng/releases/tag/v1.6.44",
+   "https://github.com/pnggroup/libpng/blob/v1.6.44/CHANGES"
+  ],
+  "risks": [
+   "5 ambiguous record(s) (source changed with identical code, or induced by macro/header/inlining) are excluded from changed-set scoring by design."
+  ]
+ },
+ {
+  "contract": "case-card/1",
+  "id": "lz4-v1.9.2-to-v1.9.3",
+  "project": "lz4",
+  "upstream_git": "https://github.com/lz4/lz4.git",
+  "license_spdx": "BSD-2-Clause",
+  "license_evidence": "lib/LICENSE at d44371841a2f1728a3f36839fd4b7e872d0927d3: LZ4 Library / Copyright (c) Yann Collet / Redistribution and use in source and binary forms, with or without modification, are permitted (BSD 2-Clause) (sha256 d15d99c8...af71; read at fdf2ef58 too, sha256 d15d99c8...af71)",
+  "old": {
+   "ref": "v1.9.2",
+   "commit": "fdf2ef5809ca875c454510610764d9125ef2ebbd"
+  },
+  "new": {
+   "ref": "v1.9.3",
+   "commit": "d44371841a2f1728a3f36839fd4b7e872d0927d3"
+  },
+  "kind": "release",
+  "cve": [],
+  "semantic_change": true,
+  "changed_functions": [
+   {
+    "name": "LZ4_decompress_safe_withSmallPrefix",
+    "file": "lib/lz4.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "LZ4_decompress_fast_extDict",
+    "file": "lib/lz4.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "LZ4_compress_fast_extState",
+    "file": "lib/lz4.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "LZ4_compress_fast_extState_fastReset",
+    "file": "lib/lz4.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "LZ4_loadDict",
+    "file": "lib/lz4.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "LZ4_attach_dictionary",
+    "file": "lib/lz4.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "LZ4_compress_fast_continue",
+    "file": "lib/lz4.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "LZ4_saveDict",
+    "file": "lib/lz4.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "LZ4_decompress_safe",
+    "file": "lib/lz4.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "LZ4_decompress_safe_partial",
+    "file": "lib/lz4.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "LZ4_decompress_fast",
+    "file": "lib/lz4.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "LZ4_decompress_safe_withPrefix64k",
+    "file": "lib/lz4.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "LZ4_decompress_safe_forceExtDict",
+    "file": "lib/lz4.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "LZ4_decompress_safe_continue",
+    "file": "lib/lz4.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "LZ4_decompress_fast_continue",
+    "file": "lib/lz4.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "LZ4F_compressBound",
+    "file": "lib/lz4frame.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "LZ4F_decompress",
+    "file": "lib/lz4frame.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "LZ4HC_compress_optimal",
+    "file": "lib/lz4hc.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "LZ4_createStreamHC",
+    "file": "lib/lz4hc.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "LZ4_initStreamHC",
+    "file": "lib/lz4hc.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "LZ4_compress_HC_extStateHC_fastReset",
+    "file": "lib/lz4hc.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "LZ4_loadDictHC",
+    "file": "lib/lz4hc.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "LZ4_saveDictHC",
+    "file": "lib/lz4hc.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   }
+  ],
+  "unchanged_controls": [
+   "LZ4_compressBound",
+   "LZ4_compress_default",
+   "LZ4_setStreamDecode"
+  ],
+  "build": {
+   "system": "single",
+   "mingw_ok": "yes",
+   "recipe_notes": "tier_r recipe lz4 (mingw-gcc 13-win32 -O2 -g, explicit file list from recipes.json, liblz4.dll)"
+  },
+  "verification": {
+   "method": "tools.calibration.tier_r factory.run_card on fetched pins (mingw-gcc 13-win32 O2): 146 project functions, 84 unchanged, 23 changed, 37 ambiguous, 2 no-counterpart (bodies: 39 identical, 56 address-only, 45 different); git diff --numstat v1.9.2..v1.9.3 -- '*.c' '*.h': 29 files, +2004/-1002",
+   "files_changed": 29,
+   "functions_changed_count": 23,
+   "verified_by_agent_run": true
+  },
+  "sources": [
+   "https://github.com/lz4/lz4/releases/tag/v1.9.3",
+   "https://github.com/lz4/lz4/compare/v1.9.2...v1.9.3"
+  ],
+  "risks": [
+   "37 ambiguous record(s) (source changed with identical code, or induced by macro/header/inlining) are excluded from changed-set scoring by design."
+  ]
+ },
+ {
+  "contract": "case-card/1",
+  "id": "lz4-v1.9.3-to-v1.9.4",
+  "project": "lz4",
+  "upstream_git": "https://github.com/lz4/lz4.git",
+  "license_spdx": "BSD-2-Clause",
+  "license_evidence": "lib/LICENSE at 5ff839680134437dbf4678f3d0c7b371d84f4964: LZ4 Library / Copyright (c) Yann Collet / Redistribution and use in source and binary forms, with or without modification, are permitted (BSD 2-Clause) (sha256 8b58c446...736c; read at d4437184 too, sha256 d15d99c8...af71)",
+  "old": {
+   "ref": "v1.9.3",
+   "commit": "d44371841a2f1728a3f36839fd4b7e872d0927d3"
+  },
+  "new": {
+   "ref": "v1.9.4",
+   "commit": "5ff839680134437dbf4678f3d0c7b371d84f4964"
+  },
+  "kind": "release",
+  "cve": [],
+  "semantic_change": true,
+  "changed_functions": [
+   {
+    "name": "LZ4_decompress_safe_withSmallPrefix",
+    "file": "lib/lz4.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "LZ4_decompress_fast_extDict",
+    "file": "lib/lz4.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "LZ4_attach_dictionary",
+    "file": "lib/lz4.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "LZ4_compress_fast_continue",
+    "file": "lib/lz4.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "LZ4_saveDict",
+    "file": "lib/lz4.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "LZ4_decompress_safe",
+    "file": "lib/lz4.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "LZ4_decompress_safe_partial",
+    "file": "lib/lz4.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "LZ4_decompress_fast",
+    "file": "lib/lz4.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "LZ4_decompress_safe_withPrefix64k",
+    "file": "lib/lz4.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "LZ4_decompress_safe_forceExtDict",
+    "file": "lib/lz4.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "LZ4_setStreamDecode",
+    "file": "lib/lz4.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "LZ4_decompress_fast_continue",
+    "file": "lib/lz4.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "LZ4_decompress_fast_usingDict",
+    "file": "lib/lz4.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "LZ4F_updateDict",
+    "file": "lib/lz4frame.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "LZ4F_makeBlock",
+    "file": "lib/lz4frame.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "LZ4F_decodeHeader",
+    "file": "lib/lz4frame.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "LZ4F_getBlockSize",
+    "file": "lib/lz4frame.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "LZ4F_createCDict",
+    "file": "lib/lz4frame.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "LZ4F_createCompressionContext",
+    "file": "lib/lz4frame.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "LZ4F_freeCompressionContext",
+    "file": "lib/lz4frame.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "LZ4F_compressUpdate",
+    "file": "lib/lz4frame.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "LZ4F_flush",
+    "file": "lib/lz4frame.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "LZ4F_compressEnd",
+    "file": "lib/lz4frame.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "LZ4F_compressFrame_usingCDict",
+    "file": "lib/lz4frame.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "LZ4F_compressFrame",
+    "file": "lib/lz4frame.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   }
+  ],
+  "unchanged_controls": [
+   "LZ4_compressBound",
+   "LZ4_compress_default",
+   "LZ4_decoderRingBufferSize"
+  ],
+  "build": {
+   "system": "single",
+   "mingw_ok": "yes",
+   "recipe_notes": "tier_r recipe lz4 (mingw-gcc 13-win32 -O2 -g, explicit file list from recipes.json, liblz4.dll)"
+  },
+  "verification": {
+   "method": "tools.calibration.tier_r factory.run_card on fetched pins (mingw-gcc 13-win32 O2): 161 project functions, 66 unchanged, 39 changed, 39 ambiguous, 16 no-counterpart (bodies: 25 identical, 51 address-only, 63 different); git diff --numstat v1.9.3..v1.9.4 -- '*.c' '*.h': 38 files, +3633/-1221; changed_functions lists the first 25 of 39 (sorted by file, name)",
+   "files_changed": 38,
+   "functions_changed_count": 39,
+   "verified_by_agent_run": true
+  },
+  "sources": [
+   "https://github.com/lz4/lz4/releases/tag/v1.9.4",
+   "https://github.com/lz4/lz4/compare/v1.9.3...v1.9.4"
+  ],
+  "risks": [
+   "39 ambiguous record(s) (source changed with identical code, or induced by macro/header/inlining) are excluded from changed-set scoring by design."
+  ]
+ },
+ {
+  "contract": "case-card/1",
+  "id": "lz4-v1.9.4-to-v1.10.0",
+  "project": "lz4",
+  "upstream_git": "https://github.com/lz4/lz4.git",
+  "license_spdx": "BSD-2-Clause",
+  "license_evidence": "lib/LICENSE at ebb370ca83af193212df4dcbadcc5d87bc0de2f0: LZ4 Library / Copyright (c) Yann Collet / Redistribution and use in source and binary forms, with or without modification, are permitted (BSD 2-Clause) (sha256 8b58c446...736c; read at 5ff83968 too, sha256 8b58c446...736c)",
+  "old": {
+   "ref": "v1.9.4",
+   "commit": "5ff839680134437dbf4678f3d0c7b371d84f4964"
+  },
+  "new": {
+   "ref": "v1.10.0",
+   "commit": "ebb370ca83af193212df4dcbadcc5d87bc0de2f0"
+  },
+  "kind": "release",
+  "cve": [],
+  "semantic_change": true,
+  "changed_functions": [
+   {
+    "name": "LZ4_compress_fast_extState_fastReset",
+    "file": "lib/lz4.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "LZ4_compress_destSize",
+    "file": "lib/lz4.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "LZ4_loadDict",
+    "file": "lib/lz4.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "LZ4_compress_forceExtDict",
+    "file": "lib/lz4.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "LZ4_decompress_safe_forceExtDict",
+    "file": "lib/lz4.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "LZ4F_readOpen",
+    "file": "lib/lz4file.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "LZ4F_read",
+    "file": "lib/lz4file.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "LZ4F_readClose",
+    "file": "lib/lz4file.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "LZ4F_writeOpen",
+    "file": "lib/lz4file.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "LZ4F_write",
+    "file": "lib/lz4file.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "LZ4F_writeClose",
+    "file": "lib/lz4file.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "LZ4F_initStream",
+    "file": "lib/lz4frame.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "LZ4F_createCDict_advanced",
+    "file": "lib/lz4frame.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "LZ4F_compressBegin_usingCDict",
+    "file": "lib/lz4frame.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "LZ4F_compressBegin",
+    "file": "lib/lz4frame.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "LZ4F_flush",
+    "file": "lib/lz4frame.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "LZ4F_compressUpdateImpl",
+    "file": "lib/lz4frame.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "LZ4F_uncompressedUpdate",
+    "file": "lib/lz4frame.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "LZ4F_compressEnd",
+    "file": "lib/lz4frame.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "LZ4F_compressFrame_usingCDict",
+    "file": "lib/lz4frame.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "LZ4F_compressFrame",
+    "file": "lib/lz4frame.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "LZ4F_resetDecompressionContext",
+    "file": "lib/lz4frame.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "LZ4F_decompress",
+    "file": "lib/lz4frame.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "LZ4HC_setExternalDict",
+    "file": "lib/lz4hc.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "LZ4HC_compress_optimal",
+    "file": "lib/lz4hc.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   }
+  ],
+  "unchanged_controls": [
+   "LZ4_compressBound",
+   "LZ4_sizeofState",
+   "LZ4_attach_dictionary"
+  ],
+  "build": {
+   "system": "single",
+   "mingw_ok": "yes",
+   "recipe_notes": "tier_r recipe lz4 (mingw-gcc 13-win32 -O2 -g, explicit file list from recipes.json, liblz4.dll)"
+  },
+  "verification": {
+   "method": "tools.calibration.tier_r factory.run_card on fetched pins (mingw-gcc 13-win32 O2): 171 project functions, 91 unchanged, 30 changed, 38 ambiguous, 12 no-counterpart (bodies: 36 identical, 70 address-only, 49 different); git diff --numstat v1.9.4..v1.10.0 -- '*.c' '*.h': 40 files, +5557/-1802; changed_functions lists the first 25 of 30 (sorted by file, name)",
+   "files_changed": 40,
+   "functions_changed_count": 30,
+   "verified_by_agent_run": true
+  },
+  "sources": [
+   "https://github.com/lz4/lz4/releases/tag/v1.10.0",
+   "https://github.com/lz4/lz4/compare/v1.9.4...v1.10.0"
+  ],
+  "risks": [
+   "38 ambiguous record(s) (source changed with identical code, or induced by macro/header/inlining) are excluded from changed-set scoring by design."
+  ]
+ },
+ {
+  "contract": "case-card/1",
+  "id": "zstd-v1.4.9-to-v1.5.0",
+  "project": "zstd",
+  "upstream_git": "https://github.com/facebook/zstd.git",
+  "license_spdx": "BSD-3-Clause",
+  "license_evidence": "LICENSE at a488ba114ec17ea1054b9057c26a046fc122b3b6: BSD License / For Zstandard software / Redistribution and use in source and binary forms, with or without modification, are permitted (sha256 2c1a7fa7...1a0b; read at e4558ffd too, sha256 2c1a7fa7...1a0b)",
+  "old": {
+   "ref": "v1.4.9",
+   "commit": "e4558ffd1dc49399faf4ee5d85abed4386b4dcf5"
+  },
+  "new": {
+   "ref": "v1.5.0",
+   "commit": "a488ba114ec17ea1054b9057c26a046fc122b3b6"
+  },
+  "kind": "release",
+  "cve": [],
+  "semantic_change": true,
+  "changed_functions": [
+   {
+    "name": "HUF_writeCTable",
+    "file": "lib/compress/huf_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "HUF_compress_internal",
+    "file": "lib/compress/huf_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ZSTD_makeCCtxParamsFromCParams",
+    "file": "lib/compress/zstd_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ZSTD_buildSeqStore",
+    "file": "lib/compress/zstd_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ZSTD_estimateCCtxSize_usingCCtxParams_internal",
+    "file": "lib/compress/zstd_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ZSTD_copyBlockSequences",
+    "file": "lib/compress/zstd_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ZSTD_loadDictionaryContent",
+    "file": "lib/compress/zstd_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ZSTD_reset_matchState",
+    "file": "lib/compress/zstd_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ZSTD_resetCCtx_internal",
+    "file": "lib/compress/zstd_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ZSTD_cParam_getBounds",
+    "file": "lib/compress/zstd_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ZSTD_CCtxParams_setParameter",
+    "file": "lib/compress/zstd_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ZSTD_CCtx_setParameter",
+    "file": "lib/compress/zstd_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ZSTD_CCtxParams_getParameter",
+    "file": "lib/compress/zstd_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ZSTD_estimateCCtxSize_usingCCtxParams",
+    "file": "lib/compress/zstd_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ZSTD_estimateCCtxSize_usingCParams",
+    "file": "lib/compress/zstd_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ZSTD_estimateCStreamSize_usingCCtxParams",
+    "file": "lib/compress/zstd_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ZSTD_estimateCStreamSize_usingCParams",
+    "file": "lib/compress/zstd_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ZSTD_compressBlock_internal",
+    "file": "lib/compress/zstd_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ZSTD_compressContinue_internal",
+    "file": "lib/compress/zstd_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ZSTD_selectBlockCompressor",
+    "file": "lib/compress/zstd_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ZSTD_compressBegin_internal",
+    "file": "lib/compress/zstd_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ZSTD_initCDict_internal",
+    "file": "lib/compress/zstd_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ZSTD_compress_advanced",
+    "file": "lib/compress/zstd_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ZSTD_compress_usingDict",
+    "file": "lib/compress/zstd_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ZSTD_estimateCDictSize_advanced",
+    "file": "lib/compress/zstd_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   }
+  ],
+  "unchanged_controls": [
+   "FSE_versionNumber",
+   "FSE_isError",
+   "FSE_getErrorName"
+  ],
+  "build": {
+   "system": "single",
+   "mingw_ok": "yes",
+   "recipe_notes": "tier_r recipe zstd (mingw-gcc 13-win32 -O2 -g, explicit file list from recipes.json, libzstd.dll)"
+  },
+  "verification": {
+   "method": "tools.calibration.tier_r factory.run_card on fetched pins (mingw-gcc 13-win32 O2): 514 project functions, 234 unchanged, 42 changed, 206 ambiguous, 32 no-counterpart (bodies: 133 identical, 121 address-only, 228 different); git diff --numstat v1.4.9..v1.5.0 -- '*.c' '*.h': 191 files, +4675/-2398; changed_functions lists the first 25 of 42 (sorted by file, name)",
+   "files_changed": 191,
+   "functions_changed_count": 42,
+   "verified_by_agent_run": true
+  },
+  "sources": [
+   "https://github.com/facebook/zstd/releases/tag/v1.5.0",
+   "https://github.com/facebook/zstd/compare/v1.4.9...v1.5.0"
+  ],
+  "risks": [
+   "206 ambiguous record(s) (source changed with identical code, or induced by macro/header/inlining) are excluded from changed-set scoring by design."
+  ]
+ },
+ {
+  "contract": "case-card/1",
+  "id": "zstd-v1.5.5-to-v1.5.6",
+  "project": "zstd",
+  "upstream_git": "https://github.com/facebook/zstd.git",
+  "license_spdx": "BSD-3-Clause",
+  "license_evidence": "LICENSE at 794ea1b0afca0f020f4e57b6732332231fb23c70: BSD License / For Zstandard software / Redistribution and use in source and binary forms, with or without modification, are permitted (sha256 70552664...c9d8; read at 63779c79 too, sha256 70552664...c9d8)",
+  "old": {
+   "ref": "v1.5.5",
+   "commit": "63779c798237346c2b245c546c40b72a5a5913fe"
+  },
+  "new": {
+   "ref": "v1.5.6",
+   "commit": "794ea1b0afca0f020f4e57b6732332231fb23c70"
+  },
+  "kind": "release",
+  "cve": [],
+  "semantic_change": true,
+  "changed_functions": [
+   {
+    "name": "HUF_readCTable",
+    "file": "lib/compress/huf_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "HUF_getNbBitsFromCTable",
+    "file": "lib/compress/huf_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "HUF_validateCTable",
+    "file": "lib/compress/huf_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "HUF_compress_internal",
+    "file": "lib/compress/huf_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ZSTD_sizeof_matchState",
+    "file": "lib/compress/zstd_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ZSTD_copySequencesToSeqStoreExplicitBlockDelim",
+    "file": "lib/compress/zstd_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ZSTD_copyBlockSequences",
+    "file": "lib/compress/zstd_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ZSTD_copySequencesToSeqStoreNoBlockDelim",
+    "file": "lib/compress/zstd_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ZSTD_buildSeqStore",
+    "file": "lib/compress/zstd_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ZSTD_reset_matchState",
+    "file": "lib/compress/zstd_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ZSTD_resetCCtx_internal",
+    "file": "lib/compress/zstd_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ZSTD_CCtxParams_setParameter",
+    "file": "lib/compress/zstd_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ZSTD_estimateCCtxSize_usingCCtxParams",
+    "file": "lib/compress/zstd_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ZSTD_estimateCStreamSize_usingCCtxParams",
+    "file": "lib/compress/zstd_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ZSTD_compressBlock_internal",
+    "file": "lib/compress/zstd_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ZSTD_compressSeqStore_singleBlock",
+    "file": "lib/compress/zstd_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ZSTD_sequenceBound",
+    "file": "lib/compress/zstd_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ZSTD_referenceExternalSequences",
+    "file": "lib/compress/zstd_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ZSTD_loadCEntropy",
+    "file": "lib/compress/zstd_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ZSTD_freeCCtx",
+    "file": "lib/compress/zstd_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ZSTD_CCtx_reset",
+    "file": "lib/compress/zstd_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ZSTD_createCDict_advanced2",
+    "file": "lib/compress/zstd_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ZSTD_CCtx_init_compressStream2",
+    "file": "lib/compress/zstd_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ZSTD_generateSequences",
+    "file": "lib/compress/zstd_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ZSTD_registerSequenceProducer",
+    "file": "lib/compress/zstd_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   }
+  ],
+  "unchanged_controls": [
+   "FSE_versionNumber",
+   "FSE_isError",
+   "FSE_getErrorName"
+  ],
+  "build": {
+   "system": "single",
+   "mingw_ok": "yes",
+   "recipe_notes": "tier_r recipe zstd (mingw-gcc 13-win32 -O2 -g, explicit file list from recipes.json, libzstd.dll)"
+  },
+  "verification": {
+   "method": "tools.calibration.tier_r factory.run_card on fetched pins (mingw-gcc 13-win32 O2): 563 project functions, 233 unchanged, 63 changed, 252 ambiguous, 13 no-counterpart (bodies: 164 identical, 187 address-only, 199 different); git diff --numstat v1.5.5..v1.5.6 -- '*.c' '*.h': 92 files, +6763/-3320; changed_functions lists the first 25 of 63 (sorted by file, name)",
+   "files_changed": 92,
+   "functions_changed_count": 63,
+   "verified_by_agent_run": true
+  },
+  "sources": [
+   "https://github.com/facebook/zstd/releases/tag/v1.5.6",
+   "https://github.com/facebook/zstd/compare/v1.5.5...v1.5.6"
+  ],
+  "risks": [
+   "252 ambiguous record(s) (source changed with identical code, or induced by macro/header/inlining) are excluded from changed-set scoring by design."
+  ]
+ },
+ {
+  "contract": "case-card/1",
+  "id": "zstd-v1.5.6-to-v1.5.7",
+  "project": "zstd",
+  "upstream_git": "https://github.com/facebook/zstd.git",
+  "license_spdx": "BSD-3-Clause",
+  "license_evidence": "LICENSE at f8745da6ff1ad1e7bab384bd1f9d742439278e99: BSD License / For Zstandard software / Redistribution and use in source and binary forms, with or without modification, are permitted (sha256 70552664...c9d8; read at 794ea1b0 too, sha256 70552664...c9d8)",
+  "old": {
+   "ref": "v1.5.6",
+   "commit": "794ea1b0afca0f020f4e57b6732332231fb23c70"
+  },
+  "new": {
+   "ref": "v1.5.7",
+   "commit": "f8745da6ff1ad1e7bab384bd1f9d742439278e99"
+  },
+  "kind": "release",
+  "cve": [],
+  "semantic_change": true,
+  "changed_functions": [
+   {
+    "name": "ERR_getErrorString",
+    "file": "lib/common/error_private.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ZSTD_estimateCCtxSize_usingCCtxParams_internal",
+    "file": "lib/compress/zstd_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ZSTD_CCtxParams_init_internal",
+    "file": "lib/compress/zstd_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ZSTD_makeCCtxParamsFromCParams",
+    "file": "lib/compress/zstd_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ZSTD_overflowCorrectIfNeeded",
+    "file": "lib/compress/zstd_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ZSTD_loadDictionaryContent",
+    "file": "lib/compress/zstd_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ZSTD_buildSeqStore",
+    "file": "lib/compress/zstd_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ZSTD_resetCCtx_internal",
+    "file": "lib/compress/zstd_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ZSTD_initStaticCCtx",
+    "file": "lib/compress/zstd_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ZSTD_getSeqStore",
+    "file": "lib/compress/zstd_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ZSTD_cParam_getBounds",
+    "file": "lib/compress/zstd_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ZSTD_CCtxParams_setParameter",
+    "file": "lib/compress/zstd_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ZSTD_CCtx_setParameter",
+    "file": "lib/compress/zstd_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ZSTD_CCtxParams_getParameter",
+    "file": "lib/compress/zstd_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ZSTD_checkCParams",
+    "file": "lib/compress/zstd_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ZSTD_CCtx_setCParams",
+    "file": "lib/compress/zstd_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ZSTD_getCParamsFromCCtxParams",
+    "file": "lib/compress/zstd_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ZSTD_estimateCCtxSize_usingCCtxParams",
+    "file": "lib/compress/zstd_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ZSTD_estimateCStreamSize_usingCCtxParams",
+    "file": "lib/compress/zstd_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ZSTD_compressBlock_internal",
+    "file": "lib/compress/zstd_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ZSTD_compressSeqStore_singleBlock",
+    "file": "lib/compress/zstd_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ZSTD_buildEntropyStatisticsAndEstimateSubBlockSize",
+    "file": "lib/compress/zstd_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ZSTD_deriveBlockSplitsHelper",
+    "file": "lib/compress/zstd_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ZSTD_compressContinue_internal",
+    "file": "lib/compress/zstd_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ZSTD_compressBegin_internal",
+    "file": "lib/compress/zstd_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   }
+  ],
+  "unchanged_controls": [
+   "FSE_versionNumber",
+   "FSE_isError",
+   "FSE_getErrorName"
+  ],
+  "build": {
+   "system": "single",
+   "mingw_ok": "yes",
+   "recipe_notes": "tier_r recipe zstd (mingw-gcc 13-win32 -O2 -g, explicit file list from recipes.json, libzstd.dll)"
+  },
+  "verification": {
+   "method": "tools.calibration.tier_r factory.run_card on fetched pins (mingw-gcc 13-win32 O2): 575 project functions, 249 unchanged, 80 changed, 224 ambiguous, 19 no-counterpart (bodies: 237 identical, 172 address-only, 147 different); git diff --numstat v1.5.6..v1.5.7 -- '*.c' '*.h': 100 files, +4394/-2218; changed_functions lists the first 25 of 80 (sorted by file, name)",
+   "files_changed": 100,
+   "functions_changed_count": 80,
+   "verified_by_agent_run": true
+  },
+  "sources": [
+   "https://github.com/facebook/zstd/releases/tag/v1.5.7",
+   "https://github.com/facebook/zstd/compare/v1.5.6...v1.5.7"
+  ],
+  "risks": [
+   "224 ambiguous record(s) (source changed with identical code, or induced by macro/header/inlining) are excluded from changed-set scoring by design."
+  ]
+ },
+ {
+  "contract": "case-card/1",
+  "id": "lua-v5.3.5-to-v5.3.6",
+  "project": "lua",
+  "upstream_git": "https://github.com/lua/lua.git",
+  "license_spdx": "MIT",
+  "license_evidence": "lua.h at 75ea9ccbea7c4886f30da147fb67b693b2624c26: lua.h: Copyright (C) Lua.org, PUC-Rio. Permission is hereby granted, free of charge, to any person obtaining a copy of this software (MIT) (sha256 d05e8e3b...1a9d; read at 063d4e45 too, sha256 ad0c8813...af82)",
+  "old": {
+   "ref": "v5.3.5",
+   "commit": "063d4e4543088e7a21965bda8ee5a0f952a9029e"
+  },
+  "new": {
+   "ref": "v5.3.6",
+   "commit": "75ea9ccbea7c4886f30da147fb67b693b2624c26"
+  },
+  "kind": "release",
+  "cve": [],
+  "semantic_change": true,
+  "changed_functions": [
+   {
+    "name": "lua_upvaluejoin",
+    "file": "lapi.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "l_alloc",
+    "file": "lauxlib.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "findlocal",
+    "file": "ldebug.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "io_popen",
+    "file": "liolib.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "skip_sep",
+    "file": "llex.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "read_long_string",
+    "file": "llex.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "llex",
+    "file": "llex.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "luaY_parser",
+    "file": "lparser.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "LoadString",
+    "file": "lundump.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "LoadFunction",
+    "file": "lundump.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "luaU_undump",
+    "file": "lundump.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   }
+  ],
+  "unchanged_controls": [
+   "index2addr",
+   "lua_xmove",
+   "lua_atpanic"
+  ],
+  "build": {
+   "system": "single",
+   "mingw_ok": "yes",
+   "recipe_notes": "tier_r recipe lua (mingw-gcc 13-win32 -O2 -g, explicit file list from recipes.json, lua54.dll)"
+  },
+  "verification": {
+   "method": "tools.calibration.tier_r factory.run_card on fetched pins (mingw-gcc 13-win32 O2): 592 project functions, 578 unchanged, 11 changed, 2 ambiguous, 1 no-counterpart (bodies: 124 identical, 455 address-only, 12 different); git diff --numstat v5.3.5..v5.3.6 -- '*.c' '*.h': 10 files, +60/-39",
+   "files_changed": 10,
+   "functions_changed_count": 11,
+   "verified_by_agent_run": true
+  },
+  "sources": [
+   "https://github.com/lua/lua/releases/tag/v5.3.6",
+   "https://github.com/lua/lua/compare/v5.3.5...v5.3.6"
+  ],
+  "risks": [
+   "2 ambiguous record(s) (source changed with identical code, or induced by macro/header/inlining) are excluded from changed-set scoring by design."
+  ]
+ },
+ {
+  "contract": "case-card/1",
+  "id": "lua-v5.4.6-to-v5.4.7",
+  "project": "lua",
+  "upstream_git": "https://github.com/lua/lua.git",
+  "license_spdx": "MIT",
+  "license_evidence": "lua.h at 1ab3208a1fceb12fca8f24ba57d6e13c5bff15e3: lua.h: Copyright (C) Lua.org, PUC-Rio. Permission is hereby granted, free of charge, to any person obtaining a copy of this software (MIT) (sha256 341014ee...a62e; read at 64431851 too, sha256 245ec29d...53f0)",
+  "old": {
+   "ref": "v5.4.6",
+   "commit": "6443185167c77adcc8552a3fee7edab7895db1a9"
+  },
+  "new": {
+   "ref": "v5.4.7",
+   "commit": "1ab3208a1fceb12fca8f24ba57d6e13c5bff15e3"
+  },
+  "kind": "release",
+  "cve": [],
+  "semantic_change": true,
+  "changed_functions": [
+   {
+    "name": "lua_tolstring",
+    "file": "lapi.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "pushglobalfuncname",
+    "file": "lauxlib.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "errfile",
+    "file": "lauxlib.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "panic",
+    "file": "lauxlib.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "luaL_fileresult",
+    "file": "lauxlib.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "luaL_loadfilex",
+    "file": "lauxlib.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "getobjname",
+    "file": "ldebug.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "luaG_traceexec",
+    "file": "ldebug.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "resume",
+    "file": "ldo.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "g_write",
+    "file": "liolib.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "io_fclose",
+    "file": "liolib.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "io_flush",
+    "file": "liolib.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "io_tmpfile",
+    "file": "liolib.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "io_popen",
+    "file": "liolib.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "io_open",
+    "file": "liolib.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "g_read",
+    "file": "liolib.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "f_flush",
+    "file": "liolib.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "f_setvbuf",
+    "file": "liolib.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "f_seek",
+    "file": "liolib.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "os_rename",
+    "file": "loslib.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "os_remove",
+    "file": "loslib.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "funcargs",
+    "file": "lparser.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "suffixedexp",
+    "file": "lparser.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "internshrstr",
+    "file": "lstring.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "luaS_createlngstrobj",
+    "file": "lstring.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   }
+  ],
+  "unchanged_controls": [
+   "index2value",
+   "lua_xmove",
+   "lua_atpanic"
+  ],
+  "build": {
+   "system": "single",
+   "mingw_ok": "yes",
+   "recipe_notes": "tier_r recipe lua (mingw-gcc 13-win32 -O2 -g, explicit file list from recipes.json, lua54.dll)"
+  },
+  "verification": {
+   "method": "tools.calibration.tier_r factory.run_card on fetched pins (mingw-gcc 13-win32 O2): 692 project functions, 624 unchanged, 30 changed, 27 ambiguous, 9 no-counterpart (bodies: 121 identical, 521 address-only, 41 different); git diff --numstat v5.4.6..v5.4.7 -- '*.c' '*.h': 30 files, +370/-256; changed_functions lists the first 25 of 30 (sorted by file, name)",
+   "files_changed": 30,
+   "functions_changed_count": 30,
+   "verified_by_agent_run": true
+  },
+  "sources": [
+   "https://github.com/lua/lua/releases/tag/v5.4.7",
+   "https://github.com/lua/lua/compare/v5.4.6...v5.4.7"
+  ],
+  "risks": [
+   "27 ambiguous record(s) (source changed with identical code, or induced by macro/header/inlining) are excluded from changed-set scoring by design."
+  ]
+ },
+ {
+  "contract": "case-card/1",
+  "id": "lua-v5.4.7-to-v5.4.8",
+  "project": "lua",
+  "upstream_git": "https://github.com/lua/lua.git",
+  "license_spdx": "MIT",
+  "license_evidence": "lua.h at 6e22fedb74cf0c9b6656e9fce8b7331db847c605: lua.h: Copyright (C) Lua.org, PUC-Rio. Permission is hereby granted, free of charge, to any person obtaining a copy of this software (MIT) (sha256 3b77329f...1930; read at 1ab3208a too, sha256 341014ee...a62e)",
+  "old": {
+   "ref": "v5.4.7",
+   "commit": "1ab3208a1fceb12fca8f24ba57d6e13c5bff15e3"
+  },
+  "new": {
+   "ref": "v5.4.8",
+   "commit": "6e22fedb74cf0c9b6656e9fce8b7331db847c605"
+  },
+  "kind": "release",
+  "cve": [],
+  "semantic_change": true,
+  "changed_functions": [
+   {
+    "name": "luaK_exp2val",
+    "file": "lcode.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "luaD_seterrorobj",
+    "file": "ldo.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "luaD_throw",
+    "file": "ldo.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "luaD_growstack",
+    "file": "ldo.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "new_localvar",
+    "file": "lparser.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "close_state",
+    "file": "lstate.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "luaE_checkcstack",
+    "file": "lstate.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "luaE_resetthread",
+    "file": "lstate.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "luaV_finishset",
+    "file": "lvm.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   }
+  ],
+  "unchanged_controls": [
+   "index2value",
+   "lua_xmove",
+   "lua_atpanic"
+  ],
+  "build": {
+   "system": "single",
+   "mingw_ok": "yes",
+   "recipe_notes": "tier_r recipe lua (mingw-gcc 13-win32 -O2 -g, explicit file list from recipes.json, lua54.dll)"
+  },
+  "verification": {
+   "method": "tools.calibration.tier_r factory.run_card on fetched pins (mingw-gcc 13-win32 O2): 688 project functions, 669 unchanged, 9 changed, 9 ambiguous, 1 no-counterpart (bodies: 235 identical, 438 address-only, 14 different); git diff --numstat v5.4.7..v5.4.8 -- '*.c' '*.h': 11 files, +53/-28",
+   "files_changed": 11,
+   "functions_changed_count": 9,
+   "verified_by_agent_run": true
+  },
+  "sources": [
+   "https://github.com/lua/lua/releases/tag/v5.4.8",
+   "https://github.com/lua/lua/compare/v5.4.7...v5.4.8"
+  ],
+  "risks": [
+   "9 ambiguous record(s) (source changed with identical code, or induced by macro/header/inlining) are excluded from changed-set scoring by design."
+  ]
+ },
+ {
+  "contract": "case-card/1",
+  "id": "expat-r_2_6_0-to-r_2_6_1",
+  "project": "expat",
+  "upstream_git": "https://github.com/libexpat/libexpat.git",
+  "license_spdx": "MIT",
+  "license_evidence": "expat/COPYING at a590b2d5846865412182805b853dd91d18f38c8d: expat/COPYING: Copyright Thai Open Source Software Center Ltd and Clark Cooper / Expat maintainers. Permission is hereby granted, free of charge, to any person obtaining a copy of this software (MIT) (sha256 122f2c27...9534; read at 849da3e3 too, sha256 122f2c27...9534)",
+  "old": {
+   "ref": "R_2_6_0",
+   "commit": "849da3e3fe727fccef5e96ef35482d66447f06a2"
+  },
+  "new": {
+   "ref": "R_2_6_1",
+   "commit": "a590b2d5846865412182805b853dd91d18f38c8d"
+  },
+  "kind": "release",
+  "cve": [],
+  "semantic_change": true,
+  "changed_functions": [
+   {
+    "name": "callProcessor",
+    "file": "expat/lib/xmlparse.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   }
+  ],
+  "unchanged_controls": [
+   "freeBindings",
+   "errorProcessor",
+   "normalizeLines"
+  ],
+  "build": {
+   "system": "single",
+   "mingw_ok": "yes",
+   "recipe_notes": "tier_r recipe expat (mingw-gcc 13-win32 -O2 -g, explicit file list from recipes.json, libexpat.dll)"
+  },
+  "verification": {
+   "method": "tools.calibration.tier_r factory.run_card on fetched pins (mingw-gcc 13-win32 O2): 291 project functions, 268 unchanged, 1 changed, 22 ambiguous, 0 no-counterpart (bodies: 269 identical, 3 address-only, 19 different); git diff --numstat R_2_6_0..R_2_6_1 -- '*.c' '*.h': 5 files, +70/-82",
+   "files_changed": 5,
+   "functions_changed_count": 1,
+   "verified_by_agent_run": true
+  },
+  "sources": [
+   "https://github.com/libexpat/libexpat/releases/tag/R_2_6_1",
+   "https://github.com/libexpat/libexpat/blob/R_2_6_1/expat/Changes"
+  ],
+  "risks": [
+   "22 ambiguous record(s) (source changed with identical code, or induced by macro/header/inlining) are excluded from changed-set scoring by design."
+  ]
+ },
+ {
+  "contract": "case-card/1",
+  "id": "pcre2-10.46-to-10.47",
+  "project": "pcre2",
+  "upstream_git": "https://github.com/PCRE2Project/pcre2.git",
+  "license_spdx": "BSD-3-Clause",
+  "license_evidence": "LICENCE.md at f454e231fe5006dd7ff8f4693fd2b8eb94333429: LICENCE.md: PCRE2 LICENCE, THE BASIC LIBRARY FUNCTIONS: Redistribution and use in source and binary forms, with or without modification, are permitted (BSD-3-Clause; the PCRE2 exception is for binary-form linking only) (sha256 197d8a73...d811; read at b2bd4254 too, sha256 9cf7ac69...885a)",
+  "old": {
+   "ref": "pcre2-10.46",
+   "commit": "b2bd4254b379b9d7dc9a3dda060a7e27009ccdff"
+  },
+  "new": {
+   "ref": "pcre2-10.47",
+   "commit": "f454e231fe5006dd7ff8f4693fd2b8eb94333429"
+  },
+  "kind": "release",
+  "cve": [],
+  "semantic_change": true,
+  "changed_functions": [
+   {
+    "name": "get_branchlength",
+    "file": "src/pcre2_compile.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "compile_regex",
+    "file": "src/pcre2_compile.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "read_name",
+    "file": "src/pcre2_compile.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "_pcre2_check_escape_8",
+    "file": "src/pcre2_compile.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "pcre2_compile_8",
+    "file": "src/pcre2_compile.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "pcre2_config_8",
+    "file": "src/pcre2_config.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "pcre2_set_glob_escape_8",
+    "file": "src/pcre2_context.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "pcre2_pattern_convert_8",
+    "file": "src/pcre2_convert.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "internal_dfa_match",
+    "file": "src/pcre2_dfa_match.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "pcre2_dfa_match_8",
+    "file": "src/pcre2_dfa_match.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "pcre2_get_error_message_8",
+    "file": "src/pcre2_error.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "match_ref",
+    "file": "src/pcre2_match.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "match",
+    "file": "src/pcre2_match.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "pcre2_match_8",
+    "file": "src/pcre2_match.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "pcre2_match_data_create_from_pattern_8",
+    "file": "src/pcre2_match_data.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "pcre2_callout_enumerate_8",
+    "file": "src/pcre2_pattern_info.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "find_text_end",
+    "file": "src/pcre2_substitute.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "pcre2_substitute_8",
+    "file": "src/pcre2_substitute.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "pcre2_substring_length_bynumber_8",
+    "file": "src/pcre2_substring.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "pcre2_substring_copy_bynumber_8",
+    "file": "src/pcre2_substring.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "pcre2_substring_get_bynumber_8",
+    "file": "src/pcre2_substring.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   }
+  ],
+  "unchanged_controls": [
+   "get_chr_property_list",
+   "read_number",
+   "read_repeat_counts"
+  ],
+  "build": {
+   "system": "single",
+   "mingw_ok": "yes",
+   "recipe_notes": "tier_r recipe pcre2 (mingw-gcc 13-win32 -O2 -g, explicit file list from recipes.json, pcre2-8.dll)"
+  },
+  "verification": {
+   "method": "tools.calibration.tier_r factory.run_card on fetched pins (mingw-gcc 13-win32 O2): 164 project functions, 80 unchanged, 21 changed, 28 ambiguous, 29 no-counterpart (bodies: 62 identical, 38 address-only, 35 different); git diff --numstat pcre2-10.46..pcre2-10.47 -- '*.c' '*.h': 55 files, +12063/-9730",
+   "files_changed": 55,
+   "functions_changed_count": 21,
+   "verified_by_agent_run": true
+  },
+  "sources": [
+   "https://github.com/PCRE2Project/pcre2/releases/tag/pcre2-10.47",
+   "https://github.com/PCRE2Project/pcre2/compare/pcre2-10.46...pcre2-10.47"
+  ],
+  "risks": [
+   "28 ambiguous record(s) (source changed with identical code, or induced by macro/header/inlining) are excluded from changed-set scoring by design."
+  ]
+ },
+ {
+  "contract": "case-card/1",
+  "id": "pcre2-10.47-to-10.48",
+  "project": "pcre2",
+  "upstream_git": "https://github.com/PCRE2Project/pcre2.git",
+  "license_spdx": "BSD-3-Clause",
+  "license_evidence": "LICENCE.md at 7978954dbd2efc6f2196869290553cf1871b4ce6: LICENCE.md: PCRE2 LICENCE, THE BASIC LIBRARY FUNCTIONS: Redistribution and use in source and binary forms, with or without modification, are permitted (BSD-3-Clause; the PCRE2 exception is for binary-form linking only) (sha256 197d8a73...d811; read at f454e231 too, sha256 197d8a73...d811)",
+  "old": {
+   "ref": "pcre2-10.47",
+   "commit": "f454e231fe5006dd7ff8f4693fd2b8eb94333429"
+  },
+  "new": {
+   "ref": "pcre2-10.48",
+   "commit": "7978954dbd2efc6f2196869290553cf1871b4ce6"
+  },
+  "kind": "release",
+  "cve": [],
+  "semantic_change": true,
+  "changed_functions": [
+   {
+    "name": "parsed_skip",
+    "file": "src/pcre2_compile.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "check_lookbehinds",
+    "file": "src/pcre2_compile.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "compile_regex",
+    "file": "src/pcre2_compile.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "_pcre2_check_escape_8",
+    "file": "src/pcre2_compile.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "pcre2_pattern_convert_8",
+    "file": "src/pcre2_convert.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "more_workspace",
+    "file": "src/pcre2_dfa_match.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "match_ref",
+    "file": "src/pcre2_match.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "match",
+    "file": "src/pcre2_match.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "pcre2_match_8",
+    "file": "src/pcre2_match.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "pcre2_serialize_decode_8",
+    "file": "src/pcre2_serialize.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "find_text_end",
+    "file": "src/pcre2_substitute.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "pcre2_substitute_8",
+    "file": "src/pcre2_substitute.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "pcre2_substring_get_bynumber_8",
+    "file": "src/pcre2_substring.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   }
+  ],
+  "unchanged_controls": [
+   "get_chr_property_list",
+   "_pcre2_ckd_smul_8",
+   "read_number"
+  ],
+  "build": {
+   "system": "single",
+   "mingw_ok": "yes",
+   "recipe_notes": "tier_r recipe pcre2 (mingw-gcc 13-win32 -O2 -g, explicit file list from recipes.json, pcre2-8.dll)"
+  },
+  "verification": {
+   "method": "tools.calibration.tier_r factory.run_card on fetched pins (mingw-gcc 13-win32 O2): 155 project functions, 129 unchanged, 13 changed, 12 ambiguous, 1 no-counterpart (bodies: 84 identical, 52 address-only, 18 different); git diff --numstat pcre2-10.47..pcre2-10.48 -- '*.c' '*.h': 22 files, +5527/-4524",
+   "files_changed": 22,
+   "functions_changed_count": 13,
+   "verified_by_agent_run": true
+  },
+  "sources": [
+   "https://github.com/PCRE2Project/pcre2/releases/tag/pcre2-10.48",
+   "https://github.com/PCRE2Project/pcre2/compare/pcre2-10.47...pcre2-10.48"
+  ],
+  "risks": [
+   "12 ambiguous record(s) (source changed with identical code, or induced by macro/header/inlining) are excluded from changed-set scoring by design."
+  ]
+ },
+ {
+  "contract": "case-card/1",
+  "id": "cjson-v1.7.14-to-v1.7.15",
+  "project": "cJSON",
+  "upstream_git": "https://github.com/DaveGamble/cJSON.git",
+  "license_spdx": "MIT",
+  "license_evidence": "LICENSE at d348621ca93571343a56862df7de4ff3bc9b5667: Copyright (c) Dave Gamble and cJSON contributors. Permission is hereby granted, free of charge, to any person obtaining a copy of this software (MIT) (sha256 a36dda20...6d5c; read at d2735278 too, sha256 a36dda20...6d5c)",
+  "old": {
+   "ref": "v1.7.14",
+   "commit": "d2735278ed1c2e4556f53a7a782063b31331dbf7"
+  },
+  "new": {
+   "ref": "v1.7.15",
+   "commit": "d348621ca93571343a56862df7de4ff3bc9b5667"
+  },
+  "kind": "release",
+  "cve": [],
+  "semantic_change": true,
+  "changed_functions": [
+   {
+    "name": "cJSON_CreateIntArray",
+    "file": "cJSON.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "cJSON_CreateFloatArray",
+    "file": "cJSON.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "cJSON_CreateDoubleArray",
+    "file": "cJSON.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "cJSON_CreateStringArray",
+    "file": "cJSON.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "cJSON_Compare",
+    "file": "cJSON.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "generate_merge_patch",
+    "file": "cJSON_Utils.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "apply_patch",
+    "file": "cJSON_Utils.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   }
+  ],
+  "unchanged_controls": [
+   "parse_hex4",
+   "parse_string",
+   "buffer_skip_whitespace"
+  ],
+  "build": {
+   "system": "single",
+   "mingw_ok": "yes",
+   "recipe_notes": "tier_r recipe cJSON (mingw-gcc 13-win32 -O2 -g, explicit file list from recipes.json, cjson.dll)"
+  },
+  "verification": {
+   "method": "tools.calibration.tier_r factory.run_card on fetched pins (mingw-gcc 13-win32 O2): 114 project functions, 105 unchanged, 7 changed, 2 ambiguous, 0 no-counterpart (bodies: 65 identical, 41 address-only, 8 different); git diff --numstat v1.7.14..v1.7.15 -- '*.c' '*.h': 6 files, +86/-16",
+   "files_changed": 6,
+   "functions_changed_count": 7,
+   "verified_by_agent_run": true
+  },
+  "sources": [
+   "https://github.com/DaveGamble/cJSON/releases/tag/v1.7.15",
+   "https://github.com/DaveGamble/cJSON/blob/v1.7.15/CHANGELOG.md"
+  ],
+  "risks": [
+   "2 ambiguous record(s) (source changed with identical code, or induced by macro/header/inlining) are excluded from changed-set scoring by design."
+  ]
+ },
+ {
+  "contract": "case-card/1",
+  "id": "cjson-v1.7.18-to-v1.7.19",
+  "project": "cJSON",
+  "upstream_git": "https://github.com/DaveGamble/cJSON.git",
+  "license_spdx": "MIT",
+  "license_evidence": "LICENSE at c859b25da02955fef659d658b8f324b5cde87be3: Copyright (c) Dave Gamble and cJSON contributors. Permission is hereby granted, free of charge, to any person obtaining a copy of this software (MIT) (sha256 a36dda20...6d5c; read at acc76239 too, sha256 a36dda20...6d5c)",
+  "old": {
+   "ref": "v1.7.18",
+   "commit": "acc76239bee01d8e9c858ae2cab296704e52d916"
+  },
+  "new": {
+   "ref": "v1.7.19",
+   "commit": "c859b25da02955fef659d658b8f324b5cde87be3"
+  },
+  "kind": "release",
+  "cve": [],
+  "semantic_change": true,
+  "changed_functions": [
+   {
+    "name": "cJSON_SetValuestring",
+    "file": "cJSON.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "cJSON_DetachItemViaPointer",
+    "file": "cJSON.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "cJSON_Duplicate",
+    "file": "cJSON.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "decode_array_index_from_pointer",
+    "file": "cJSON_Utils.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   }
+  ],
+  "unchanged_controls": [
+   "parse_hex4",
+   "parse_string",
+   "buffer_skip_whitespace"
+  ],
+  "build": {
+   "system": "single",
+   "mingw_ok": "yes",
+   "recipe_notes": "tier_r recipe cJSON (mingw-gcc 13-win32 -O2 -g, explicit file list from recipes.json, cjson.dll)"
+  },
+  "verification": {
+   "method": "tools.calibration.tier_r factory.run_card on fetched pins (mingw-gcc 13-win32 O2): 114 project functions, 105 unchanged, 4 changed, 4 ambiguous, 1 no-counterpart (bodies: 33 identical, 72 address-only, 8 different); git diff --numstat v1.7.18..v1.7.19 -- '*.c' '*.h': 8 files, +159/-33",
+   "files_changed": 8,
+   "functions_changed_count": 4,
+   "verified_by_agent_run": true
+  },
+  "sources": [
+   "https://github.com/DaveGamble/cJSON/releases/tag/v1.7.19",
+   "https://github.com/DaveGamble/cJSON/blob/v1.7.19/CHANGELOG.md"
+  ],
+  "risks": [
+   "4 ambiguous record(s) (source changed with identical code, or induced by macro/header/inlining) are excluded from changed-set scoring by design."
+  ]
+ },
+ {
+  "contract": "case-card/1",
+  "id": "brotli-v1.0.9-to-v1.1.0",
+  "project": "brotli",
+  "upstream_git": "https://github.com/google/brotli.git",
+  "license_spdx": "MIT",
+  "license_evidence": "LICENSE at ed738e842d2fbdf2d6459e39267a633c4a9b2f5d: Copyright (c) the Brotli Authors. Permission is hereby granted, free of charge, to any person obtaining a copy of this software (MIT) (sha256 3d180008...3c94; read at e61745a6 too, sha256 3d180008...3c94)",
+  "old": {
+   "ref": "v1.0.9",
+   "commit": "e61745a6b7add50d380cfd7d3883dd6c62fc2c71"
+  },
+  "new": {
+   "ref": "v1.1.0",
+   "commit": "ed738e842d2fbdf2d6459e39267a633c4a9b2f5d"
+  },
+  "kind": "release",
+  "cve": [],
+  "semantic_change": true,
+  "changed_functions": [
+   {
+    "name": "CreateBackwardReferencesNH65",
+    "file": "c/enc/backward_references_inc.h",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "CreateBackwardReferencesNH55",
+    "file": "c/enc/backward_references_inc.h",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "CreateBackwardReferencesNH35",
+    "file": "c/enc/backward_references_inc.h",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "CreateBackwardReferencesNH54",
+    "file": "c/enc/backward_references_inc.h",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "CreateBackwardReferencesNH3",
+    "file": "c/enc/backward_references_inc.h",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "PrepareH6",
+    "file": "c/enc/hash_longest_match64_inc.h",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "BlockSplitterFinishBlockLiteral",
+    "file": "c/enc/metablock_inc.h",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "BlockSplitterFinishBlockCommand",
+    "file": "c/enc/metablock_inc.h",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "BlockSplitterFinishBlockDistance",
+    "file": "c/enc/metablock_inc.h",
+    "change": "source and code changed (factory label changed/source-diff)"
+   }
+  ],
+  "unchanged_controls": [
+   "RemapBlockIdsLiteral"
+  ],
+  "build": {
+   "system": "single",
+   "mingw_ok": "yes",
+   "recipe_notes": "tier_r recipe brotli (mingw-gcc 13-win32 -O2 -g, explicit file list from recipes.json, brotli.dll)"
+  },
+  "verification": {
+   "method": "tools.calibration.tier_r factory.run_card on fetched pins (mingw-gcc 13-win32 O2): 250 project functions, 6 unchanged, 9 changed, 164 ambiguous, 71 no-counterpart (bodies: 16 identical, 39 address-only, 124 different); git diff --numstat v1.0.9..v1.1.0 -- '*.c' '*.h': 88 files, +6161/-1726",
+   "files_changed": 88,
+   "functions_changed_count": 9,
+   "verified_by_agent_run": true
+  },
+  "sources": [
+   "https://github.com/google/brotli/releases/tag/v1.1.0",
+   "https://github.com/google/brotli/blob/v1.1.0/CHANGELOG.md"
+  ],
+  "risks": [
+   "164 ambiguous record(s) (source changed with identical code, or induced by macro/header/inlining) are excluded from changed-set scoring by design."
+  ]
+ },
+ {
+  "contract": "case-card/1",
+  "id": "brotli-v1.1.0-to-v1.2.0",
+  "project": "brotli",
+  "upstream_git": "https://github.com/google/brotli.git",
+  "license_spdx": "MIT",
+  "license_evidence": "LICENSE at 028fb5a23661f123017c060daa546b55cf4bde29: Copyright (c) the Brotli Authors. Permission is hereby granted, free of charge, to any person obtaining a copy of this software (MIT) (sha256 3d180008...3c94; read at ed738e84 too, sha256 3d180008...3c94)",
+  "old": {
+   "ref": "v1.1.0",
+   "commit": "ed738e842d2fbdf2d6459e39267a633c4a9b2f5d"
+  },
+  "new": {
+   "ref": "v1.2.0",
+   "commit": "028fb5a23661f123017c060daa546b55cf4bde29"
+  },
+  "kind": "release",
+  "cve": [],
+  "semantic_change": true,
+  "changed_functions": [
+   {
+    "name": "BrotliPopulationCostLiteral",
+    "file": "c/enc/bit_cost_inc.h",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "BrotliPopulationCostCommand",
+    "file": "c/enc/bit_cost_inc.h",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "BrotliPopulationCostDistance",
+    "file": "c/enc/bit_cost_inc.h",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "AttachPreparedDictionary",
+    "file": "c/enc/compound_dictionary.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "BlockSplitterFinishBlockLiteral",
+    "file": "c/enc/metablock_inc.h",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "BlockSplitterFinishBlockCommand",
+    "file": "c/enc/metablock_inc.h",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "BlockSplitterFinishBlockDistance",
+    "file": "c/enc/metablock_inc.h",
+    "change": "source and code changed (factory label changed/source-diff)"
+   }
+  ],
+  "unchanged_controls": [
+   "CreateBackwardReferencesNH2",
+   "CreateBackwardReferencesNH35",
+   "CreateBackwardReferencesNH3"
+  ],
+  "build": {
+   "system": "single",
+   "mingw_ok": "yes",
+   "recipe_notes": "tier_r recipe brotli (mingw-gcc 13-win32 -O2 -g, explicit file list from recipes.json, brotli.dll)"
+  },
+  "verification": {
+   "method": "tools.calibration.tier_r factory.run_card on fetched pins (mingw-gcc 13-win32 O2): 228 project functions, 18 unchanged, 7 changed, 196 ambiguous, 7 no-counterpart (bodies: 44 identical, 133 address-only, 44 different); git diff --numstat v1.1.0..v1.2.0 -- '*.c' '*.h': 100 files, +17661/-15638",
+   "files_changed": 100,
+   "functions_changed_count": 7,
+   "verified_by_agent_run": true
+  },
+  "sources": [
+   "https://github.com/google/brotli/releases/tag/v1.2.0",
+   "https://github.com/google/brotli/blob/v1.2.0/CHANGELOG.md"
+  ],
+  "risks": [
+   "196 ambiguous record(s) (source changed with identical code, or induced by macro/header/inlining) are excluded from changed-set scoring by design."
+  ]
+ },
+ {
+  "contract": "case-card/1",
+  "id": "jansson-v2.12-to-v2.13",
+  "project": "jansson",
+  "upstream_git": "https://github.com/akheron/jansson.git",
+  "license_spdx": "MIT",
+  "license_evidence": "LICENSE at 2882ead5bb90cf12a01b07b2c2361e24960fae02: Copyright (c) Petri Lehtinen. Permission is hereby granted, free of charge, to any person obtaining a copy of this software (MIT) (sha256 1fff7d37...0da0; read at 71c4e8ec too, sha256 f0a0c95c...adc2)",
+  "old": {
+   "ref": "v2.12",
+   "commit": "71c4e8ec215afa225ac20eed269a14963cd37b50"
+  },
+  "new": {
+   "ref": "v2.13",
+   "commit": "2882ead5bb90cf12a01b07b2c2361e24960fae02"
+  },
+  "kind": "release",
+  "cve": [],
+  "semantic_change": true,
+  "changed_functions": [
+   {
+    "name": "do_dump",
+    "file": "src/dump.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "json_deep_copy",
+    "file": "src/value.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "do_dump",
+    "file": "src/dump.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   }
+  ],
+  "unchanged_controls": [
+   "json_sprintf"
+  ],
+  "build": {
+   "system": "single",
+   "mingw_ok": "yes",
+   "recipe_notes": "tier_r recipe jansson (mingw-gcc 13-win32 -O2 -g, explicit file list from recipes.json, jansson.dll)"
+  },
+  "verification": {
+   "method": "tools.calibration.tier_r factory.run_card on fetched pins (mingw-gcc 13-win32 O2): 146 project functions, 3 unchanged, 3 changed, 9 ambiguous, 6 no-counterpart (bodies: 44 identical, 84 address-only, 8 different); git diff --numstat v2.12..v2.13 -- '*.c' '*.h': 40 files, +2749/-2760",
+   "files_changed": 40,
+   "functions_changed_count": 3,
+   "verified_by_agent_run": true
+  },
+  "sources": [
+   "https://github.com/akheron/jansson/releases/tag/v2.13",
+   "https://github.com/akheron/jansson/compare/v2.12...v2.13"
+  ],
+  "risks": [
+   "9 ambiguous record(s) (source changed with identical code, or induced by macro/header/inlining) are excluded from changed-set scoring by design."
+  ]
+ },
+ {
+  "contract": "case-card/1",
+  "id": "jansson-v2.13.1-to-v2.14",
+  "project": "jansson",
+  "upstream_git": "https://github.com/akheron/jansson.git",
+  "license_spdx": "MIT",
+  "license_evidence": "LICENSE at 684e18c927e89615c2d501737e90018f4930d6c5: Copyright (c) Petri Lehtinen. Permission is hereby granted, free of charge, to any person obtaining a copy of this software (MIT) (sha256 1fff7d37...0da0; read at e9ebfa7e too, sha256 1fff7d37...0da0)",
+  "old": {
+   "ref": "v2.13.1",
+   "commit": "e9ebfa7e77a6bee77df44e096b100e7131044059"
+  },
+  "new": {
+   "ref": "v2.14",
+   "commit": "684e18c927e89615c2d501737e90018f4930d6c5"
+  },
+  "kind": "release",
+  "cve": [],
+  "semantic_change": true,
+  "changed_functions": [
+   {
+    "name": "compare_keys",
+    "file": "src/dump.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "do_dump",
+    "file": "src/dump.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "hashtable_set",
+    "file": "src/hashtable.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "hashtable_get",
+    "file": "src/hashtable.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "hashtable_del",
+    "file": "src/hashtable.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "hashtable_iter_at",
+    "file": "src/hashtable.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "jsonp_loop_check",
+    "file": "src/value.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "json_object_get",
+    "file": "src/value.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "json_object_del",
+    "file": "src/value.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "json_object_iter_at",
+    "file": "src/value.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "json_vsprintf",
+    "file": "src/value.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "json_object_set_new_nocheck",
+    "file": "src/value.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "json_object_set_new",
+    "file": "src/value.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "json_object_update_existing",
+    "file": "src/value.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "do_object_update_recursive",
+    "file": "src/value.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "do_dump",
+    "file": "src/dump.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   }
+  ],
+  "unchanged_controls": [
+   "dump_to_fd",
+   "jsonp_error_init",
+   "hashtable_iter"
+  ],
+  "build": {
+   "system": "single",
+   "mingw_ok": "yes",
+   "recipe_notes": "tier_r recipe jansson (mingw-gcc 13-win32 -O2 -g, explicit file list from recipes.json, jansson.dll)"
+  },
+  "verification": {
+   "method": "tools.calibration.tier_r factory.run_card on fetched pins (mingw-gcc 13-win32 O2): 153 project functions, 115 unchanged, 16 changed, 15 ambiguous, 7 no-counterpart (bodies: 35 identical, 80 address-only, 27 different); git diff --numstat v2.13.1..v2.14 -- '*.c' '*.h': 12 files, +438/-93",
+   "files_changed": 12,
+   "functions_changed_count": 16,
+   "verified_by_agent_run": true
+  },
+  "sources": [
+   "https://github.com/akheron/jansson/releases/tag/v2.14",
+   "https://github.com/akheron/jansson/compare/v2.13.1...v2.14"
+  ],
+  "risks": [
+   "15 ambiguous record(s) (source changed with identical code, or induced by macro/header/inlining) are excluded from changed-set scoring by design."
+  ]
+ },
+ {
+  "contract": "case-card/1",
+  "id": "jansson-v2.14-to-v2.14.1",
+  "project": "jansson",
+  "upstream_git": "https://github.com/akheron/jansson.git",
+  "license_spdx": "MIT",
+  "license_evidence": "LICENSE at ed5cae4ed0621ef409510f94270c9f8f263736d0: Copyright (c) Petri Lehtinen. Permission is hereby granted, free of charge, to any person obtaining a copy of this software (MIT) (sha256 150d9090...cda2; read at 684e18c9 too, sha256 1fff7d37...0da0)",
+  "old": {
+   "ref": "v2.14",
+   "commit": "684e18c927e89615c2d501737e90018f4930d6c5"
+  },
+  "new": {
+   "ref": "v2.14.1",
+   "commit": "ed5cae4ed0621ef409510f94270c9f8f263736d0"
+  },
+  "kind": "release",
+  "cve": [],
+  "semantic_change": true,
+  "changed_functions": [
+   {
+    "name": "jsonp_strtod",
+    "file": "src/strconv.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "jsonp_dtostr",
+    "file": "src/strconv.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "do_object_update_recursive",
+    "file": "src/value.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "json_object_update",
+    "file": "src/value.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "json_object_update_missing",
+    "file": "src/value.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   }
+  ],
+  "unchanged_controls": [
+   "dump_to_fd",
+   "json_dump_callback",
+   "json_dumpb"
+  ],
+  "build": {
+   "system": "single",
+   "mingw_ok": "yes",
+   "recipe_notes": "tier_r recipe jansson (mingw-gcc 13-win32 -O2 -g, explicit file list from recipes.json, jansson.dll)"
+  },
+  "verification": {
+   "method": "tools.calibration.tier_r factory.run_card on fetched pins (mingw-gcc 13-win32 O2): 173 project functions, 138 unchanged, 5 changed, 10 ambiguous, 20 no-counterpart (bodies: 47 identical, 91 address-only, 11 different); git diff --numstat v2.14..v2.14.1 -- '*.c' '*.h': 11 files, +6465/-173",
+   "files_changed": 11,
+   "functions_changed_count": 5,
+   "verified_by_agent_run": true
+  },
+  "sources": [
+   "https://github.com/akheron/jansson/releases/tag/v2.14.1",
+   "https://github.com/akheron/jansson/compare/v2.14...v2.14.1"
+  ],
+  "risks": [
+   "10 ambiguous record(s) (source changed with identical code, or induced by macro/header/inlining) are excluded from changed-set scoring by design."
+  ]
+ },
+ {
+  "contract": "case-card/1",
+  "id": "jansson-v2.14.1-to-v2.15.0",
+  "project": "jansson",
+  "upstream_git": "https://github.com/akheron/jansson.git",
+  "license_spdx": "MIT",
+  "license_evidence": "LICENSE at 4a9a6db73d5dc553164992e87426502ab2d54512: Copyright (c) Petri Lehtinen. Permission is hereby granted, free of charge, to any person obtaining a copy of this software (MIT) (sha256 150d9090...cda2; read at ed5cae4e too, sha256 150d9090...cda2)",
+  "old": {
+   "ref": "v2.14.1",
+   "commit": "ed5cae4ed0621ef409510f94270c9f8f263736d0"
+  },
+  "new": {
+   "ref": "v2.15.0",
+   "commit": "4a9a6db73d5dc553164992e87426502ab2d54512"
+  },
+  "kind": "release",
+  "cve": [],
+  "semantic_change": true,
+  "changed_functions": [
+   {
+    "name": "do_dump",
+    "file": "src/dump.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "json_dumps",
+    "file": "src/dump.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "json_set_alloc_funcs",
+    "file": "src/memory.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "strbuffer_append_bytes",
+    "file": "src/strbuffer.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "json_array_extend",
+    "file": "src/value.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "json_array_append_new",
+    "file": "src/value.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "json_array_insert_new",
+    "file": "src/value.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "do_dump",
+    "file": "src/dump.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   }
+  ],
+  "unchanged_controls": [
+   "dump_to_fd",
+   "dump_indent",
+   "jsonp_error_init"
+  ],
+  "build": {
+   "system": "single",
+   "mingw_ok": "yes",
+   "recipe_notes": "tier_r recipe jansson (mingw-gcc 13-win32 -O2 -g, explicit file list from recipes.json, jansson.dll)"
+  },
+  "verification": {
+   "method": "tools.calibration.tier_r factory.run_card on fetched pins (mingw-gcc 13-win32 O2): 176 project functions, 135 unchanged, 8 changed, 29 ambiguous, 4 no-counterpart (bodies: 52 identical, 103 address-only, 13 different); git diff --numstat v2.14.1..v2.15.0 -- '*.c' '*.h': 12 files, +421/-57",
+   "files_changed": 12,
+   "functions_changed_count": 8,
+   "verified_by_agent_run": true
+  },
+  "sources": [
+   "https://github.com/akheron/jansson/releases/tag/v2.15.0",
+   "https://github.com/akheron/jansson/compare/v2.14.1...v2.15.0"
+  ],
+  "risks": [
+   "29 ambiguous record(s) (source changed with identical code, or induced by macro/header/inlining) are excluded from changed-set scoring by design."
+  ]
  }
 ]

@@ -1,0 +1,55 @@
+[
+ {
+  "contract": "case-card/1",
+  "id": "miniz-3.0.2-to-e680017",
+  "project": "miniz",
+  "upstream_git": "https://github.com/richgel999/miniz.git",
+  "license_spdx": "MIT",
+  "license_evidence": "LICENSE at e680017bae901240e8894062c0b0a3020eca42c1: Copyright RAD Game Tools and Valve Software / Rich Geldreich and Tenacious Software LLC. Permission is hereby granted, free of charge, to any person obtaining a copy of this software (MIT) (sha256 0115478d...46b3; read at 293d4db1 too, sha256 0115478d...46b3)",
+  "old": {
+   "ref": "3.0.2",
+   "commit": "293d4db1b7d0ffee9756d035b9ac6f7431ef8492"
+  },
+  "new": {
+   "ref": "e680017",
+   "commit": "e680017bae901240e8894062c0b0a3020eca42c1"
+  },
+  "kind": "cve-fix",
+  "cve": [
+   "CVE-2018-12913"
+  ],
+  "semantic_change": true,
+  "changed_functions": [
+   {
+    "name": "tinfl_decompress",
+    "file": "miniz_tinfl.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   }
+  ],
+  "unchanged_controls": [
+   "mz_adler32",
+   "mz_crc32"
+  ],
+  "build": {
+   "system": "single",
+   "mingw_ok": "yes",
+   "recipe_notes": "tier_r recipe miniz (mingw-gcc 13-win32 -O2 -g, explicit file list from recipes.json, miniz.dll)"
+  },
+  "verification": {
+   "method": "tools.calibration.tier_r factory.run_card on fetched pins (mingw-gcc 13-win32 O2): 140 project functions, 0 unchanged, 0 changed, 140 ambiguous, 0 no-counterpart (bodies: 94 identical, 45 address-only, 1 different); git diff --numstat 3.0.2..e680017 -- '*.c' '*.h': 1 files, +6/-0",
+   "files_changed": 1,
+   "functions_changed_count": 1,
+   "verified_by_agent_run": true,
+   "cve_source": "commit message of e680017"
+  },
+  "sources": [
+   "https://github.com/richgel999/miniz/commit/e680017bae901240e8894062c0b0a3020eca42c1",
+   "https://github.com/richgel999/miniz/compare/293d4db1b7d0ffee9756d035b9ac6f7431ef8492...e680017bae901240e8894062c0b0a3020eca42c1"
+  ],
+  "risks": [
+   "140 ambiguous record(s) (source changed with identical code, or induced by macro/header/inlining) are excluded from changed-set scoring by design.",
+   "Factory labels are all ambiguous (source span not found: tier_r/csrc.py skips the body of the file-level extern \"C\" block); the changed function comes from the git diff hunk header (6 lines added in tinfl_decompress, miniz_tinfl.c) and the controls have identical bodies per the factory body fact.",
+   "The release diff bundles every change between the pins, not only the CVE fixes; the CVE ids come from the project changelog section of the new release."
+  ]
+ }
+]

@@ -1,0 +1,85 @@
+{
+ "contract": "tier-r-recipes/1",
+ "excluded": [],
+ "recipes": [
+  {
+   "contract": "tier-r-recipe/1",
+   "project": "expat",
+   "family": "parser",
+   "upstream_git": "https://github.com/libexpat/libexpat.git",
+   "license_spdx": "MIT",
+   "license_file": "expat/COPYING",
+   "license_evidence": "expat/COPYING read at all 8 pins (first 3bab6c09), 3 distinct SHA-256: expat/COPYING: Copyright Thai Open Source Software Center Ltd and Clark Cooper / Expat maintainers. Permission is hereby granted, free of charge, to any person obtaining a copy of this software (MIT)",
+   "libc": "mingw",
+   "output": "libexpat.dll",
+   "sources": [
+    "expat/lib/xmlparse.c",
+    "expat/lib/xmlrole.c",
+    "expat/lib/xmltok.c"
+   ],
+   "include_dirs": [
+    "expat/lib"
+   ],
+   "defines": [
+    "HAVE_EXPAT_CONFIG_H"
+   ],
+   "write": [
+    {
+     "path": "expat/lib/expat_config.h",
+     "text": "#ifndef EXPAT_CONFIG_H\n#define EXPAT_CONFIG_H 1\n#define BYTEORDER 1234\n#define XML_CONTEXT_BYTES 1024\n#define XML_DTD 1\n#define XML_GE 1\n#define XML_NS 1\n#define HAVE_MEMMOVE 1\n#endif\n"
+    }
+   ],
+   "pins": [
+    {
+     "ref": "R_2_4_8",
+     "commit": "3bab6c09bbe8bf42d84b81563ddbcf4cca4be838",
+     "license_sha256": "8c6b5b6de8fae20b317f4992729abc0e520bfba4c7606cd1e9eeb87418eebdec",
+     "date": "2022-03-28"
+    },
+    {
+     "ref": "R_2_4_9",
+     "commit": "d77291a4824d78e697c5dc2b8024fd65ab31e209",
+     "license_sha256": "122f2c27000472a201d337b9b31f7eb2b52d091b02857061a8880371612d9534",
+     "date": "2022-09-20"
+    },
+    {
+     "ref": "R_2_6_0",
+     "commit": "849da3e3fe727fccef5e96ef35482d66447f06a2",
+     "license_sha256": "122f2c27000472a201d337b9b31f7eb2b52d091b02857061a8880371612d9534",
+     "date": "2024-02-06"
+    },
+    {
+     "ref": "R_2_6_1",
+     "commit": "a590b2d5846865412182805b853dd91d18f38c8d",
+     "license_sha256": "122f2c27000472a201d337b9b31f7eb2b52d091b02857061a8880371612d9534",
+     "date": "2024-02-29"
+    },
+    {
+     "ref": "R_2_6_2",
+     "commit": "fa75b96546c069d17b8f80d91e0f4ef0cde3790d",
+     "license_sha256": "122f2c27000472a201d337b9b31f7eb2b52d091b02857061a8880371612d9534",
+     "date": "2024-03-13"
+    },
+    {
+     "ref": "R_2_6_3",
+     "commit": "88b3ed553d8ad335559254863a33360d55b9f1d6",
+     "license_sha256": "122f2c27000472a201d337b9b31f7eb2b52d091b02857061a8880371612d9534",
+     "date": "2024-09-04"
+    },
+    {
+     "ref": "R_2_7_4",
+     "commit": "f5c2890d8ff91f88a018173d293a9bd02f76389e",
+     "license_sha256": "31b15de82aa19a845156169a17a5488bf597e561b2c318d159ed583139b25e87",
+     "date": "2026-01-31"
+    },
+    {
+     "ref": "R_2_7_5",
+     "commit": "f31adfd584b7f6c50bbf4d22eb928538ffc9145a",
+     "license_sha256": "31b15de82aa19a845156169a17a5488bf597e561b2c318d159ed583139b25e87",
+     "date": "2026-03-17"
+    }
+   ],
+   "notes": "xmltok_impl.c and xmltok_ns.c are #included by xmltok.c. expat_config.h is authored here (little-endian, XML_DTD, XML_GE, XML_NS; the Windows entropy path is used)."
+  }
+ ]
+}

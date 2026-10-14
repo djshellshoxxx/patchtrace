@@ -1,0 +1,260 @@
+[
+ {
+  "contract": "case-card/1",
+  "id": "pcre2-10.46-to-10.47",
+  "project": "pcre2",
+  "upstream_git": "https://github.com/PCRE2Project/pcre2.git",
+  "license_spdx": "BSD-3-Clause",
+  "license_evidence": "LICENCE.md at f454e231fe5006dd7ff8f4693fd2b8eb94333429: LICENCE.md: PCRE2 LICENCE, THE BASIC LIBRARY FUNCTIONS: Redistribution and use in source and binary forms, with or without modification, are permitted (BSD-3-Clause; the PCRE2 exception is for binary-form linking only) (sha256 197d8a73...d811; read at b2bd4254 too, sha256 9cf7ac69...885a)",
+  "old": {
+   "ref": "pcre2-10.46",
+   "commit": "b2bd4254b379b9d7dc9a3dda060a7e27009ccdff"
+  },
+  "new": {
+   "ref": "pcre2-10.47",
+   "commit": "f454e231fe5006dd7ff8f4693fd2b8eb94333429"
+  },
+  "kind": "release",
+  "cve": [],
+  "semantic_change": true,
+  "changed_functions": [
+   {
+    "name": "get_branchlength",
+    "file": "src/pcre2_compile.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "compile_regex",
+    "file": "src/pcre2_compile.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "read_name",
+    "file": "src/pcre2_compile.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "_pcre2_check_escape_8",
+    "file": "src/pcre2_compile.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "pcre2_compile_8",
+    "file": "src/pcre2_compile.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "pcre2_config_8",
+    "file": "src/pcre2_config.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "pcre2_set_glob_escape_8",
+    "file": "src/pcre2_context.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "pcre2_pattern_convert_8",
+    "file": "src/pcre2_convert.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "internal_dfa_match",
+    "file": "src/pcre2_dfa_match.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "pcre2_dfa_match_8",
+    "file": "src/pcre2_dfa_match.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "pcre2_get_error_message_8",
+    "file": "src/pcre2_error.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "match_ref",
+    "file": "src/pcre2_match.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "match",
+    "file": "src/pcre2_match.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "pcre2_match_8",
+    "file": "src/pcre2_match.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "pcre2_match_data_create_from_pattern_8",
+    "file": "src/pcre2_match_data.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "pcre2_callout_enumerate_8",
+    "file": "src/pcre2_pattern_info.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "find_text_end",
+    "file": "src/pcre2_substitute.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "pcre2_substitute_8",
+    "file": "src/pcre2_substitute.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "pcre2_substring_length_bynumber_8",
+    "file": "src/pcre2_substring.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "pcre2_substring_copy_bynumber_8",
+    "file": "src/pcre2_substring.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "pcre2_substring_get_bynumber_8",
+    "file": "src/pcre2_substring.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   }
+  ],
+  "unchanged_controls": [
+   "get_chr_property_list",
+   "read_number",
+   "read_repeat_counts"
+  ],
+  "build": {
+   "system": "single",
+   "mingw_ok": "yes",
+   "recipe_notes": "tier_r recipe pcre2 (mingw-gcc 13-win32 -O2 -g, explicit file list from recipes.json, pcre2-8.dll)"
+  },
+  "verification": {
+   "method": "tools.calibration.tier_r factory.run_card on fetched pins (mingw-gcc 13-win32 O2): 164 project functions, 80 unchanged, 21 changed, 28 ambiguous, 29 no-counterpart (bodies: 62 identical, 38 address-only, 35 different); git diff --numstat pcre2-10.46..pcre2-10.47 -- '*.c' '*.h': 55 files, +12063/-9730",
+   "files_changed": 55,
+   "functions_changed_count": 21,
+   "verified_by_agent_run": true
+  },
+  "sources": [
+   "https://github.com/PCRE2Project/pcre2/releases/tag/pcre2-10.47",
+   "https://github.com/PCRE2Project/pcre2/compare/pcre2-10.46...pcre2-10.47"
+  ],
+  "risks": [
+   "28 ambiguous record(s) (source changed with identical code, or induced by macro/header/inlining) are excluded from changed-set scoring by design."
+  ]
+ },
+ {
+  "contract": "case-card/1",
+  "id": "pcre2-10.47-to-10.48",
+  "project": "pcre2",
+  "upstream_git": "https://github.com/PCRE2Project/pcre2.git",
+  "license_spdx": "BSD-3-Clause",
+  "license_evidence": "LICENCE.md at 7978954dbd2efc6f2196869290553cf1871b4ce6: LICENCE.md: PCRE2 LICENCE, THE BASIC LIBRARY FUNCTIONS: Redistribution and use in source and binary forms, with or without modification, are permitted (BSD-3-Clause; the PCRE2 exception is for binary-form linking only) (sha256 197d8a73...d811; read at f454e231 too, sha256 197d8a73...d811)",
+  "old": {
+   "ref": "pcre2-10.47",
+   "commit": "f454e231fe5006dd7ff8f4693fd2b8eb94333429"
+  },
+  "new": {
+   "ref": "pcre2-10.48",
+   "commit": "7978954dbd2efc6f2196869290553cf1871b4ce6"
+  },
+  "kind": "release",
+  "cve": [],
+  "semantic_change": true,
+  "changed_functions": [
+   {
+    "name": "parsed_skip",
+    "file": "src/pcre2_compile.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "check_lookbehinds",
+    "file": "src/pcre2_compile.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "compile_regex",
+    "file": "src/pcre2_compile.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "_pcre2_check_escape_8",
+    "file": "src/pcre2_compile.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "pcre2_pattern_convert_8",
+    "file": "src/pcre2_convert.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "more_workspace",
+    "file": "src/pcre2_dfa_match.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "match_ref",
+    "file": "src/pcre2_match.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "match",
+    "file": "src/pcre2_match.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "pcre2_match_8",
+    "file": "src/pcre2_match.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "pcre2_serialize_decode_8",
+    "file": "src/pcre2_serialize.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "find_text_end",
+    "file": "src/pcre2_substitute.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "pcre2_substitute_8",
+    "file": "src/pcre2_substitute.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "pcre2_substring_get_bynumber_8",
+    "file": "src/pcre2_substring.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   }
+  ],
+  "unchanged_controls": [
+   "get_chr_property_list",
+   "_pcre2_ckd_smul_8",
+   "read_number"
+  ],
+  "build": {
+   "system": "single",
+   "mingw_ok": "yes",
+   "recipe_notes": "tier_r recipe pcre2 (mingw-gcc 13-win32 -O2 -g, explicit file list from recipes.json, pcre2-8.dll)"
+  },
+  "verification": {
+   "method": "tools.calibration.tier_r factory.run_card on fetched pins (mingw-gcc 13-win32 O2): 155 project functions, 129 unchanged, 13 changed, 12 ambiguous, 1 no-counterpart (bodies: 84 identical, 52 address-only, 18 different); git diff --numstat pcre2-10.47..pcre2-10.48 -- '*.c' '*.h': 22 files, +5527/-4524",
+   "files_changed": 22,
+   "functions_changed_count": 13,
+   "verified_by_agent_run": true
+  },
+  "sources": [
+   "https://github.com/PCRE2Project/pcre2/releases/tag/pcre2-10.48",
+   "https://github.com/PCRE2Project/pcre2/compare/pcre2-10.47...pcre2-10.48"
+  ],
+  "risks": [
+   "12 ambiguous record(s) (source changed with identical code, or induced by macro/header/inlining) are excluded from changed-set scoring by design."
+  ]
+ }
+]
