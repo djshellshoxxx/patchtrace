@@ -5,15 +5,20 @@ libraries remain host prerequisites. Ghidra, Java and Ghidriff stay external.
 """
 from __future__ import annotations
 
+import argparse
+import gzip
 import hashlib
 import importlib.metadata
 import json
 import os
 import platform
+import re
 import shutil
 import subprocess
 import sys
 import tarfile
+from datetime import UTC, datetime
+from fnmatch import fnmatchcase
 from pathlib import Path
 
 VERSION = '0.1.0'
@@ -26,6 +31,210 @@ PROTOBUF_PIN = '7.36.2'
 REQUIRED_NOTICES = ['qtbase-6.12.0/LICENSES/LGPL-3.0-only.txt', f'protobuf-{PROTOBUF_PIN}/LICENSE',
                     'binexport-2bff7af/LICENSE', 'binexport-2bff7af/binexport2.proto',
                     'binexport-2bff7af/PROVENANCE.txt']
+
+
+# --- full variant (BUNDLE-integration-plan B8): pure helpers, shared with build_windows.py ---------------
+FULL_SIZE_LIMIT = int(1.9 * 1024 ** 3)  # release assets are capped at 2 GiB
+MAX_BACKEND_PATH = 150  # Explorer extraction limit is 260 chars; leave room for the install prefix
+VERSION_RE = re.compile(r'^[0-9A-Za-z][0-9A-Za-z.+_-]{0,31}$')
+WINDOWS_RESERVED = {'con', 'prn', 'aux', 'nul', *(f'com{i}' for i in range(1, 10)),
+                    *(f'lpt{i}' for i in range(1, 10))}
+# Files that must keep +x in the Linux tarball (ZIP extraction loses Unix mode bits, so Linux ships tar.gz).
+EXEC_PATTERNS = ('payload/jdk/bin/*', 'payload/python/bin/*', 'payload/ghidra/support/*',
+                 'payload/ghidra/*/os/linux_x86_64/decompile', 'payload/ghidra/*/os/linux_x86_64/sleigh*',
+                 'payload/ghidra/*/os/linux_x86_64/demangler_gnu*')
+
+
+class FullBuildError(RuntimeError):
+    """Build-only failure carrying a stable PT-BUNDLE-* code in the message."""
+
+
+def validate_version(version: str) -> str:
+    if not VERSION_RE.match(version):
+        raise ValueError(f'invalid --version {version!r}')
+    return version
+
+
+def full_archive_name(version: str, platform_key: str) -> str:
+    """Release asset names are exact (BUNDLE section 7.7)."""
+    validate_version(version)
+    if platform_key == 'windows':
+        return f'PatchTrace-{version}-windows-x64-full.zip'
+    if platform_key == 'linux':
+        return f'PatchTrace-{version}-linux-x86_64-full.tar.gz'
+    raise ValueError(f'unknown platform {platform_key!r}')
+
+
+def sha256_file(path: Path) -> str:
+    with path.open('rb') as stream:
+        return hashlib.file_digest(stream, 'sha256').hexdigest()
+
+
+def list_regular_files(root: Path) -> list[str]:
+    """Sorted POSIX relative paths of regular, non-symlink files (bounded scandir walk, no rglob)."""
+    found: list[str] = []
+    stack = [root]
+    while stack:
+        with os.scandir(stack.pop()) as entries:
+            for entry in entries:
+                if entry.is_symlink():
+                    continue
+                if entry.is_dir(follow_symlinks=False):
+                    stack.append(Path(entry.path))
+                elif entry.is_file(follow_symlinks=False):
+                    found.append(Path(entry.path).relative_to(root).as_posix())
+    return sorted(found)
+
+
+def payload_problems(backend: Path, *, allow_internal_symlinks: bool) -> list[str]:
+    """Reasons a backend directory cannot be shipped; empty means acceptable. Never executes anything."""
+    problems: list[str] = []
+    if not (backend / 'manifest.json').is_file():
+        problems.append('PT-BUNDLE-MISSING: backend/manifest.json is absent')
+    if not (backend / 'payload').is_dir():
+        problems.append('PT-BUNDLE-MISSING: backend/payload/ is absent')
+    base = backend.resolve()
+    stack = [backend]
+    while stack:
+        with os.scandir(stack.pop()) as entries:
+            for entry in entries:
+                path = Path(entry.path)
+                rel = path.relative_to(backend).as_posix()
+                if len(rel) > MAX_BACKEND_PATH:
+                    problems.append(f'PT-BUNDLE-PATH-LENGTH: {rel[:60]}... ({len(rel)} > {MAX_BACKEND_PATH})')
+                if entry.is_symlink():
+                    target = path.resolve()
+                    if not allow_internal_symlinks or base not in (target, *target.parents):
+                        problems.append(f'PT-BUNDLE-LINK: {rel}')
+                elif entry.is_dir(follow_symlinks=False):
+                    stack.append(path)
+    return sorted(problems)
+
+
+def windows_name_problems(files: list[str]) -> list[str]:
+    """Names Windows extraction rejects: reserved devices (even with extension), trailing dot/space."""
+    bad = []
+    for rel in files:
+        for part in rel.split('/'):
+            if part.split('.')[0].lower() in WINDOWS_RESERVED or part.endswith(('.', ' ')):
+                bad.append(rel)
+                break
+    return bad
+
+
+def sha256sums_text(digests: dict[str, str]) -> str:
+    """`sha256sum -c` compatible text: `<hex>  <path>` per file, sorted, LF endings."""
+    return ''.join(f'{digests[name]}  {name}\n' for name in sorted(digests))
+
+
+def missing_exec_bits(files_with_modes: dict[str, int]) -> list[str]:
+    """Backend-relative files matching EXEC_PATTERNS that lack any execute bit."""
+    return sorted(name for name, mode in files_with_modes.items()
+                  if any(fnmatchcase(name, pattern) for pattern in EXEC_PATTERNS) and not mode & 0o111)
+
+
+def normalized_mode(mode: int, *, is_dir: bool) -> int:
+    """0755 for directories and anything executable, 0644 otherwise (no setuid or world-write)."""
+    return 0o755 if is_dir or mode & 0o111 else 0o644
+
+
+def tar_filter(info: tarfile.TarInfo) -> tarfile.TarInfo:
+    info.uid = info.gid = 0
+    info.uname = info.gname = ''
+    if not info.issym() and not info.islnk():
+        info.mode = normalized_mode(info.mode, is_dir=info.isdir())
+    return info
+
+
+def write_tar_gz(package: Path, archive: Path, arcname: str = 'PatchTrace') -> None:
+    """Sorted entries, gzip mtime 0, normalised owners and modes; symlinks stay links."""
+    with archive.open('wb') as raw, gzip.GzipFile(filename='', mode='wb', fileobj=raw, mtime=0) as gz, \
+            tarfile.open(fileobj=gz, mode='w', format=tarfile.PAX_FORMAT) as tar:
+        tar.add(package, arcname=arcname, recursive=False, filter=tar_filter)
+        stack = [package]
+        while stack:
+            with os.scandir(stack.pop()) as entries:
+                for entry in sorted(entries, key=lambda e: e.name, reverse=True):
+                    path = Path(entry.path)
+                    tar.add(path, arcname=f'{arcname}/{path.relative_to(package).as_posix()}',
+                            recursive=False, filter=tar_filter)
+                    if entry.is_dir(follow_symlinks=False):
+                        stack.append(path)
+
+
+def build_provenance(*, version: str, platform_key: str, built_at: str, git_commit: str,
+                     manifest_sha256: str, sums_sha256: str, file_count: int, python_version: str) -> dict:
+    return {'schema': 'patchtrace-build-provenance/1', 'variant': 'full', 'version': version,
+            'platform': platform_key, 'built_at': built_at, 'git_commit': git_commit,
+            'backend_manifest_sha256': manifest_sha256, 'sha256sums_sha256': sums_sha256,
+            'file_count': file_count, 'build_python': python_version,
+            'generated_by': 'tools/build_*.py --full'}
+
+
+def current_commit(root: Path) -> str:
+    sha = os.environ.get('GITHUB_SHA')
+    if sha:
+        return sha
+    try:
+        out = subprocess.run(['git', '-C', str(root), 'rev-parse', 'HEAD'], capture_output=True, text=True,
+                             timeout=30, check=True)
+        return out.stdout.strip() or 'unknown'
+    except (OSError, subprocess.SubprocessError):
+        return 'unknown'
+
+
+def attach_backend(package: Path, backend_payload: Path, *, version: str, platform_key: str, root: Path,
+                   allow_internal_symlinks: bool) -> None:
+    """Copy `backend/`, then write SHA256SUMS.txt and build-provenance.json into the package root."""
+    problems = payload_problems(backend_payload, allow_internal_symlinks=allow_internal_symlinks)
+    if platform_key == 'windows':
+        problems += [f'PT-BUNDLE-PATH: reserved Windows name in {name}'
+                     for name in windows_name_problems(list_regular_files(backend_payload))]
+    if problems:
+        raise FullBuildError('Backend payload rejected: ' + '; '.join(problems[:10]))
+    target = package / 'backend'
+    if target.exists():
+        raise FullBuildError('package already contains backend/')
+    shutil.copytree(backend_payload, target, symlinks=True)
+    for name in ('SHA256SUMS.txt', 'build-provenance.json'):
+        (package / name).unlink(missing_ok=True)
+    files = list_regular_files(package)
+    digests = {rel: sha256_file(package / rel) for rel in files}
+    sums = package / 'SHA256SUMS.txt'
+    sums.write_bytes(sha256sums_text(digests).encode('utf-8'))
+    provenance = build_provenance(
+        version=version, platform_key=platform_key, git_commit=current_commit(root),
+        built_at=datetime.now(UTC).strftime('%Y-%m-%dT%H:%M:%SZ'),
+        manifest_sha256=digests['backend/manifest.json'], sums_sha256=sha256_file(sums),
+        file_count=len(files), python_version=sys.version.split()[0])
+    (package / 'build-provenance.json').write_text(json.dumps(provenance, indent=2, sort_keys=True) + '\n',
+                                                   encoding='utf-8')
+
+
+def check_archive_size(archive: Path) -> None:
+    size = archive.stat().st_size
+    if size > FULL_SIZE_LIMIT:
+        raise FullBuildError(f'PT-BUNDLE-SIZE-LIMIT: {archive.name} is {size} bytes; '
+                             'split or fall back to lite + backend ZIP pair')
+
+
+def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description='Build the PatchTrace desktop distribution.')
+    parser.add_argument('--full', action='store_true', help='also build the full variant with backend/')
+    parser.add_argument('--backend-payload', type=Path, help='directory shaped like an installed backend/')
+    parser.add_argument('--version', default=VERSION)
+    args = parser.parse_args(argv)
+    try:
+        validate_version(args.version)
+    except ValueError as exc:
+        parser.error(str(exc))
+    if args.full and not args.backend_payload:
+        parser.error('--full requires --backend-payload DIR')
+    if args.backend_payload and not args.full:
+        parser.error('--backend-payload is only valid with --full')
+    if args.full and not args.backend_payload.is_dir():
+        parser.error(f'--backend-payload {args.backend_payload} is not a directory')
+    return args
 
 
 def require_upb_protobuf() -> None:
@@ -47,7 +256,8 @@ def python_license() -> Path:
     raise RuntimeError('Python redistribution license is missing')
 
 
-def main() -> None:
+def main(argv: list[str] | None = None) -> None:
+    args = parse_args(argv)
     if not sys.platform.startswith('linux') or platform.machine() not in {'x86_64', 'AMD64'}:
         raise SystemExit('Build on Linux x86-64: PyInstaller does not cross-compile.')
     root = Path(__file__).resolve().parents[1]
@@ -97,13 +307,23 @@ def main() -> None:
     cli = subprocess.run([str(executable), 'rank', '--help'], timeout=120, capture_output=True, text=True, env=env)
     if cli.returncode != 0 or 'usage:' not in cli.stdout:
         raise RuntimeError(f'Frozen CLI smoke failed ({cli.returncode}): {cli.stderr[-500:]}')
-    archive = root / 'dist' / f'PatchTrace-{VERSION}-linux-x86_64.tar.gz'
-    with tarfile.open(archive, 'w:gz') as tar:  # tar keeps executable bits; ZIP from shutil may not
-        tar.add(package, arcname='PatchTrace')
-    with archive.open('rb') as stream:
-        digest = hashlib.file_digest(stream, 'sha256').hexdigest()
-    Path(f'{archive}.sha256').write_text(f'{digest}  {archive.name}\n', encoding='ascii')
+    archive = root / 'dist' / f'PatchTrace-{args.version}-linux-x86_64.tar.gz'
+    write_tar_gz(package, archive)  # tar keeps executable bits; ZIP from shutil may not
+    Path(f'{archive}.sha256').write_text(f'{sha256_file(archive)}  {archive.name}\n', encoding='ascii')
     print(archive)
+    if args.full:  # the lite smoke above is unchanged; backend/ is attached after it
+        attach_backend(package, args.backend_payload, version=args.version, platform_key='linux', root=root,
+                       allow_internal_symlinks=True)
+        modes = {rel: (package / 'backend' / rel).stat().st_mode
+                 for rel in list_regular_files(package / 'backend')}
+        missing = missing_exec_bits(modes)
+        if missing:
+            raise FullBuildError(f'Backend files lost their execute bit: {missing[:10]}')
+        full = root / 'dist' / full_archive_name(args.version, 'linux')
+        write_tar_gz(package, full)
+        check_archive_size(full)
+        Path(f'{full}.sha256').write_text(f'{sha256_file(full)}  {full.name}\n', encoding='ascii')
+        print(full)
 
 
 if __name__ == '__main__':

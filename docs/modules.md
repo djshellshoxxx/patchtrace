@@ -184,3 +184,9 @@ Built: common, process, capa, floss, diec, normalize, delta (tests: `tests/test_
 |---|---|---|---|---|
 | backend bundle mode | src/patchtrace/backend.py (`BackendConfig.bundle`, `_bundle_errors`, `_apply_bundle_env`) | `bundle=True`: argv `python -I -X utf8 -m ghidriff`; restricted env forced (ignores `PATCHTRACE_CHILD_ENV=inherit`); restricted child env adds `JAVA_HOME_OVERRIDE` (any private java_home), `PYTHONDONTWRITEBYTECODE`, `XDG_CACHE_HOME`/`TEMP`/`TMP`/`TMPDIR` = per-run scratch; config errors for missing java_home and `PT-BUNDLE-WORKDIR` (cache or temp dir inside the install `backend/`); diagnose line `Bundled runtime: ...` (file verification belongs to backend_bundle, B3b) | existing backend only | tests/test_backend_bundle_env.py |
 >>>>>>> 5ba13c9 (BUNDLE B6: backend bundle flag, isolated argv, child env and diagnose line)
+
+### [B8:build-variants] Full-variant builders (2026-10-14; BUNDLE-integration-plan slice B8)
+| Module | Files | Responsibility | Depends on | Tests |
+|---|---|---|---|---|
+| build variants | tools/build_linux.py, tools/build_windows.py | `--full --backend-payload DIR --version V` (lite unchanged without flags): after the unchanged lite smoke and lite archive, copy `backend/`, write `SHA256SUMS.txt` (sha256sum -c format) and `build-provenance.json` (patchtrace-build-provenance/1), build `PatchTrace-<ver>-windows-x64-full.zip` / `-linux-x86_64-full.tar.gz` plus `.sha256`; refuses payloads without manifest/payload, paths over 150 chars, unsafe symlinks, Windows reserved names, archives over 1.9 GiB; Linux tar has normalised owners/modes, sorted entries, gzip mtime 0 and asserts +x on JDK/python/Ghidra natives; pure helpers live in build_linux.py and are imported by build_windows.py | stdlib | tests/test_build_full_variants.py (synthetic payloads; real builds only in CI) |
+>>>>>>> cd87afb (B8: full-variant build options (backend copy, SHA256SUMS, provenance, archive names, tar modes))
