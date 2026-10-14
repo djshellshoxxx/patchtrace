@@ -139,3 +139,6 @@ Tests: old {msrc,nvd} + newer {nvd} -> merged {msrc(old), nvd(new)}, `retrieved_
 3. H7: default `allowlist` after native validation, with `env_passthrough` visible in Setup; confirm no required corporate-proxy or custom-JDK variable beyond the list.
 4. H10: slower fetch for keyless NVD users (about 6 s per request after the first four) versus rate-limit errors; may the consent preview state the expected duration?
 5. H13: merged snapshot reports the oldest contributing `retrieved_at`; alternative is keeping the newest and showing a per-provider age in the UI (needs a contract change).
+
+## Implementation status (2026-10-14)
+H7 (builder + opt-in `restrict_env`/`env_passthrough`, default OFF pending the native Windows gate), H2 (bound without pre-prune backup), H8 (in-place reuse + discard cleanup; legacy cleanup pending), H9 (`netutil.interruptible`, simplified to the 4-thread cap) and H10 (simplified: single-slot pacing 6 s / 0.6 s instead of the sliding window, NVD 403 retried with backoff instead of the key/keyless split, overall deadline = expected + 120 s) landed; where this differs from the text above, the code and `docs/qa.md` are authoritative. "Append-only" history is now "bounded" (see `persistence.py` docstring).

@@ -489,6 +489,15 @@ REGISTRY: dict[str, TooltipEntry] = {
     'setup.java_browse': _e(
         'Choose the Java folder in a file picker.', 'Avoids typing a long path.',
         'Fills the Java directory field.'),
+    'setup.restrict_env': _e(
+        'Run Ghidra and Java with only an allowlisted set of environment variables.',
+        'Keeps credentials and JVM or Python injection variables away from the process that loads binaries.',
+        'Saved with Save setup. Off by default until validated on your machine.',
+        availability='Experimental. Set PATCHTRACE_CHILD_ENV=inherit to override.'),
+    'setup.env_passthrough': _e(
+        'Extra environment variable names to keep when the allowlist is on, separated by commas.',
+        'Corporate proxy or custom JDK setups may need extra variables.', 'Saved with Save setup.',
+        availability='PYTHONPATH, PYTHONHOME, LD_PRELOAD and names ending in _OPTIONS are rejected.'),
     'setup.symbol_downloads': _e(
         'Allow Ghidriff to look up symbols on the Internet.',
         'Symbols improve names but contact a symbol server.',
