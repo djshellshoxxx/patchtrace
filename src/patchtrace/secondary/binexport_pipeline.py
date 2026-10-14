@@ -21,13 +21,30 @@ LOOKALIKES = ((b'SQLite format 3\x00', 'sqlite'), (b'PK\x03\x04', 'zip'), (b'%PD
               (b'\x7fELF', 'elf'), (b'MZ', 'pe'))
 
 
+_WS = b' \t\r\n'
+_JSON_AFTER_BRACKET = (b'"', b'{', b'[', b']', b'}', b'-', b't', b'f', b'n', *(bytes([d]) for d in b'0123456789'))
+
+
+def _json_like(head: bytes) -> bool:
+    """Text-only head whose first bracket is followed by a JSON token. A BinExport head can begin with
+    0x0a 0x5b ("newline, [") but carries C0 control bytes (tags/lengths) soon after, so it is not text."""
+    text = head[3:] if head.startswith(b'\xef\xbb\xbf') else head
+    decoded = text.decode('utf-8', errors='ignore')  # a 64-byte cut may split one character
+    if any(ord(ch) < 32 and ch not in '\t\r\n' for ch in decoded):
+        return False
+    stripped = text.lstrip(_WS)
+    if stripped[:1] not in (b'{', b'['):
+        return False
+    after = stripped[1:].lstrip(_WS)[:1]
+    return after in _JSON_AFTER_BRACKET if stripped[:1] == b'[' else after in (b'"', b'}')
+
+
 def sniff_lookalike(head: bytes) -> str | None:
-    """Advisory only: used to explain a file the wire checks already rejected, never to reject one."""
+    """Advisory only: explains a file the wire checks already rejected, never rejects one. `head`: 64 bytes."""
     for magic, name in LOOKALIKES:
         if head.startswith(magic):
             return name
-    stripped = head.lstrip(b' \t\r\n\xef\xbb\xbf')
-    return 'json' if stripped[:1] in (b'{', b'[') else None
+    return 'json' if _json_like(head[:64]) else None
 
 
 def alloc_failure(exc: Exception, limits: BinExportLimits) -> bool:
@@ -50,7 +67,7 @@ def inspect_bytes(data: bytes, limits: BinExportLimits, budget: Budget):
     try:
         stats = prescan(memoryview(data), limits, budget)
     except SecondaryError as exc:
-        kind = sniff_lookalike(bytes(data[:16])) if exc.code == 'PT-SECONDARY-INPUT' else None
+        kind = sniff_lookalike(bytes(data[:64])) if exc.code == 'PT-SECONDARY-INPUT' else None
         if kind:
             raise err('PT-SECONDARY-INPUT', f'lookalike_{kind}',
                       f'file looks like {kind.upper()}, not a BinExport2 protobuf') from None

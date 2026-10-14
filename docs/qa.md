@@ -121,3 +121,21 @@ Acceptance automation added (verified locally on Linux against `python -m patcht
 - `tools/frozen_smoke.py` now also covers A5 (`rank --json --dry-run`: one JSON document, exit 0/4), A10 (spaces, Cyrillic, CJK, OneDrive-style and a 200-character path through the CLI; ranking equal to the ASCII baseline, compared on rank, pairing id, score, raw and function because match ids are random per project) and A6s (a 3-build series through `series create`/`series chains --json` with synthetic Ghidriff results imported, so no Ghidra runs). Not covered: A6 with a real `--run`, A7-A9, A11, A12, trailing-dot/space and reserved-name (`CON`, `NUL`) paths (Windows cannot create them through ordinary APIs).
 - `tests/test_acceptance_smoke.py` runs the same checks against the source CLI on every OS (so on `windows-latest` natively, without the frozen package) plus a no-Qt import check of every command's `--help`.
 - `tools/milestone_notes.py` renders spec section 4 release-notes text from supplied results only. Anything not supplied renders as not run or open; manual M01-M18 stay not-run without a pass and an evidence link. The `release` job now writes it to `body_path` (checkout with `persist-credentials: false` and a `qa-*` artifact download added; `permissions`, `needs` and gates unchanged; on generator failure the old static text is used). The qa job result is applied to both OS rows because the matrix reports one aggregate.
+
+## 2026-10-14 C3 BinExport2 support (SPEC-10b) - automated evidence (Linux only) and open gates
+- Re-verified pin: `protobuf` 7.36.2 is still the latest release on PyPI (2026-09-17). Wheel SHA-256s: win_amd64 `a300819d...d353`, manylinux2014_x86_64 `89f23aa5...bfd2`; full list in `third_party/notices/protobuf-7.36.2/MANIFEST.txt`. Installed with `--only-binary=:all:`; `api_implementation.Type()` reports `upb`.
+- Measured on Linux x86-64 (CPython 3.13.16):
+
+| Measurement | Result |
+|---|---|
+| 13.35 MiB / 2 M-record DoS-shaped file | Pre-scan 1.34 s, parse 0.08 s, checker 0.78 s. VmPeak 137 MiB, RSS 126 MiB. |
+| Worker caps (`tools/qa_binexport_memcap.py`, `accept_binexport`) | 48-120 MiB give `worker_oom`; 140 MiB and above succeed. |
+| upb under a cap | Raises `DecodeError("Arena alloc failed")`, not `MemoryError`. |
+| pydantic-core under a cap | Aborts with SIGABRT. Classified as `worker_oom` from its stderr text. |
+| `bytearray` child under the cap | Gets `MemoryError`. |
+
+- Linux frozen build: the `_upb/_message.abi3.so` inventory guard passed (412 KiB delta). Frozen smoke: 30/30 PASS, including B1/B2 through the frozen self-spawned worker.
+- Tests added: 8 descriptor, 25 pre-scan, 47 checker (one per reason slug), 26 pipeline/snapshot/identity, 26 isolation, 3 CLI, 9 property/boundary (hypothesis 2000 + 1000 + 150-example runs), 7 fixtures.
+- Fuzz: `tools/fuzz_binexport.py`, 60 s random-mutation run: 1.6 M inputs, 0 findings. Atheris was not installed.
+- All goldens are synthetic: 4 files bound to `synthetic_pe()` hashes, with `PROVENANCE.json`. None of this is live-compatibility evidence.
+- Open: the Windows CI run (U7 child behaviour at `ProcessMemoryLimit`, `PeakProcessMemoryUsed`, idle commit of the frozen worker, frozen `PatchTrace.exe` B1/B2, size delta, AV). Also open: real Ghidra/IDA goldens (U1, U3, U5, U6, U9, U12) and the CI workflow steps (`pip check`, pin + upb assertion step, nightly Linux fuzz).

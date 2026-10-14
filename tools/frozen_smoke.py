@@ -13,6 +13,10 @@ Checks (each prints PASS/FAIL; any FAIL gives exit 1):
       are NOT exercised: Windows cannot create such directories through ordinary APIs.
   A6s Three-build series through the CLI with IMPORTED synthetic Ghidriff results (no Ghidra runs): two hops,
       one three-node chain, `series chains --json` parses. The native `--run` variant (real Ghidra) is not done.
+  B1  `secondary binexport-check` on a host-generated minimal BinExport2: exit 0, one JSON document, pinned
+      protobuf with upb in the worker (SPEC-10b §9.3). The program under test spawns its own worker child
+      (frozen: the exe itself) through run_process and the Job Object memory cap, so this is the production route.
+  B2  a JSON lookalike and a structurally invalid export exit 2 with their reason slugs and no traceback.
 
 Project and series fixtures are written by the host interpreter (the source tree, `pip install -e`); only the
 program under test is launched as a subprocess. `run_checks` is also used by tests/test_acceptance_smoke.py
@@ -182,7 +186,48 @@ def run_checks(launcher: Sequence[str], *, frozen: bool, emit: Callable[[str], N
             except OSError:
                 pass
         shutil.rmtree(scratch, ignore_errors=True)
+    binexport_checks(launcher, frozen=frozen, check=check)
     return failures
+
+
+def _binexport_bytes(sha: str) -> bytes:
+    """Minimal valid BinExport2 built by the HOST runtime (the program under test only reads it)."""
+    from patchtrace.secondary.binexport_proto import load_binexport2_class
+    m = load_binexport2_class()()
+    m.meta_information.executable_id = sha
+    m.meta_information.executable_name = 'smoke.dll'
+    m.meta_information.architecture_name = 'x86-64'
+    m.meta_information.timestamp = 1_760_000_000
+    m.call_graph.vertex.add(address=0x180001000)
+    return m.SerializeToString()
+
+
+def binexport_checks(launcher: Sequence[str], *, frozen: bool, check: Callable[..., None]) -> None:
+    sha = 'ab' * 32
+    # From source, the child must import this tree (an editable install elsewhere could shadow it).
+    env = None if frozen else dict(os.environ, PYTHONPATH=str(Path(__file__).resolve().parents[1] / 'src'))
+    with tempfile.TemporaryDirectory(prefix='pt-smoke-bx-') as scratch_name:
+        scratch = Path(scratch_name)
+        good = scratch / 'smoke.BinExport'
+        good.write_bytes(_binexport_bytes(sha))
+        r = run(launcher, 'secondary', 'binexport-check', good, '--artifact-sha256', sha, '--role', 'older',
+                '--json', env=env)
+        doc = _json_doc(r.stdout)
+        result = (doc or {}).get('result') or {}
+        check('B1 binexport-check: exit 0, one JSON document, upb worker',
+              r.returncode == 0 and result.get('id_binding') == 'sha256' and result.get('functions') == 1
+              and result.get('protobuf_version') == '7.36.2' and 'Traceback' not in r.stderr,
+              f'rc={r.returncode} {r.stdout[-300:]} {r.stderr}')
+        lookalike = scratch / 'renamed.BinExport'
+        lookalike.write_text('{"not": "a BinExport"}', encoding='utf-8')
+        bad = scratch / 'truncated.BinExport'
+        bad.write_bytes(_binexport_bytes(sha)[:-1])
+        for label, path, slug in (('lookalike', lookalike, 'lookalike_json'), ('truncated', bad, 'wire_truncated')):
+            r = run(launcher, 'secondary', 'binexport-check', path, '--artifact-sha256', sha, '--role', 'older',
+                    env=env)
+            check(f'B2 binexport-check {label}: exit 2 [{slug}], no traceback',
+                  r.returncode == 2 and f'[{slug}]' in r.stderr and 'Traceback' not in r.stderr,
+                  f'rc={r.returncode} {r.stderr}')
 
 
 def main() -> int:

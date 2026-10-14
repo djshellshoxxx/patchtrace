@@ -54,3 +54,8 @@ Stable IDs are independent of filenames. Public interfaces in SPEC-01 and schema
 | packaging | tools/build_windows.py; tools/build_linux.py; tools/pyinstaller_hooks/ | Frozen Windows/Linux runtimes, curated Qt desktop plugins, licenses, inventory and checksum | PyInstaller | Windows/Linux Actions and archive inspection |
 
 Every substantial future module must be added here before implementation. UI must not own analysis logic; provider must not own project state.
+
+## C3 BinExport2 support (2026-10-14, SPEC-10b `binexport2-support.md`)
+| Module | Files | Responsibility | Depends on | Verification |
+|---|---|---|---|---|
+| BinExport2 acceptance | secondary/binexport_{limits,descriptor,proto,prescan,check,identity,snapshot,models,pipeline,worker,run,producer}.py; secondary/binexport.py (facade); secondary/cli_binexport.py | Upb-only runtime from a checked-in descriptor set (private pool). Wire pre-scan before parse, the §6.5 structural checker, identity/orientation/address basis, a TOCTOU-safe snapshot, and a memory/time-capped worker. Public seam: `accept_binexport` -> `AcceptedBinExport(snapshot_path, summary)` plus `accept_pair`. CLI: `secondary binexport-check` and a hidden `_binexport-worker`. | jobs.run_process (`memory_limit_bytes`), contracts, protobuf==7.36.2 | Synthetic messages and goldens, mutation oracle, hypothesis never-crash, real worker and fake-worker isolation tests, Linux frozen smoke B1/B2. Windows CI and real Ghidra/IDA goldens are still open. |

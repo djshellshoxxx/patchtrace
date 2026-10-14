@@ -43,7 +43,7 @@ Decision: **C**. Add `protobuf==7.36.2` (exact pin, like PySide6/pydantic) to `[
 Rejected alternative detail: D remains the contingency only if the `protobuf` wheel becomes unobtainable offline; a streaming validator is feasible because §6.2 already walks the wire format.
 
 Consequences and rules:
-1. `binexport_proto.py` must assert `api_implementation.Type() == 'upb'` after import; otherwise `unsupported(reason=protobuf_not_upb)`. The worker environment explicitly sets `PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=upb` (and removes `TEMPORARILY_DISABLE_PROTOBUF_VERSION_CHECK`).
+1. `binexport_proto.py` must assert `api_implementation.Type() == 'upb'` after import; otherwise `unsupported(reason=protobuf_not_upb)`. **This assertion is the only real guard**: if `google._upb` fails to import, protobuf only warns and falls back to pure Python even when `PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=upb` is set. The worker environment still sets that variable (an explicit `python` value from the user's environment must not leak in) and drops `TEMPORARILY_DISABLE_PROTOBUF_VERSION_CHECK`, but neither is relied on.
 2. The private pool avoids a name clash with any other library registering a top-level `BinExport2` in the default pool (the proto has no package).
 3. The descriptor set is generated once from the pinned .proto by `tools/gen_binexport_descriptor.py` (uses `grpcio-tools` or a local `protoc`, **not** a runtime/dev dependency) and written to `src/patchtrace/secondary/binexport_descriptor.py` as `DESCRIPTOR_SET_B64`, `PROTO_SHA256 = 'e8e4943d...'`, `PROTO_COMMIT = '2bff7af...'`. A unit test decodes it and asserts a **golden field table** `{(path, number): (name, label, type)}` for all 17 listed tables plus 93992622, so a silent descriptor change fails CI.
 4. Third-party notices (Apache-2.0 §4): `third_party/notices/binexport-2bff7af/{LICENSE,binexport2.proto,PROVENANCE.txt}` (LICENSE text copied from the repo, proto copied unmodified with its header, provenance = URL + commit + sha256 + tool versions used). `third_party/notices/protobuf-7.36.2/LICENSE` (BSD-3 text from the wheel `dist-info/LICENSE`). `build_windows.py`/`build_linux.py` add `'protobuf'` to their distribution lists (already copy `LICENSE*` from `dist.files`) and their `required` notice list gets both new directories; the build refuses to publish if missing.
@@ -60,6 +60,7 @@ Consequences and rules:
 | `binexport_identity.py` | `executable_id` classification, pair/orientation, address-basis detection, arch hint | `contracts.check_pair` |
 | `binexport_snapshot.py` | open-once, regular-file, bounded copy into private dir while hashing; `Snapshot` | stdlib |
 | `binexport_pipeline.py` | `inspect_binexport(...)` = snapshot -> prescan -> parse -> check -> identity (the only function the worker and in-process tests call) | all above |
+| `binexport_models.py` (added in the build) | strict pydantic `BinExportSummary`, `WorkerRequest`, `WorkerResult` crossing the worker boundary | `contracts` |
 | `binexport_worker.py` | subprocess `main(argv)`; reads `WorkerRequest` JSON, writes `WorkerResult` JSON to a private file; maps exceptions to exit codes | `binexport_pipeline` |
 | `binexport_run.py` | parent side: build argv/env, memory cap, `jobs.run_process`, parse result file strictly, map to `SecondaryError`; `accept_binexport(...)` public entry | `jobs`, `contracts` |
 | `binexport_producer.py` | `BinExportProducer` Protocol + `UserSuppliedProducer` (v1 only implementation) | `binexport_run` |
@@ -302,7 +303,8 @@ def check_message(msg, L, B):
     for s in msg.string_table:
         b = len(s) ; if b > L.max_string_bytes: string_too_long    # len(str) is code points; use s.encode('utf-8','strict') only when len(s)*4 > cap
         total += b; if total > L.max_string_total: string_total_bytes
-        try: s.encode('utf-8') except UnicodeEncodeError: raise utf8_invalid   # lone surrogates; control chars are NOT rejected
+        if isinstance(s, bytes): raise utf8_invalid   # MEASURED (U4): upb returns bytes for invalid UTF-8 in proto2 strings
+        try: s.encode('utf-8') except UnicodeEncodeError: raise utf8_invalid   # lone surrogates (duck types); control chars are NOT rejected
         B.tick()                                                # (display layers must escape; see §8 T6)
     # --- expressions: parent indexes, cycles, depth ---
     E = msg.expression; ne_ = len(E)
@@ -358,7 +360,9 @@ def check_message(msg, L, B):
         ex = ref.operand_expression_index (default 0)   ; operand = msg.operand[msg.instruction[i].operand_index[op]];
         idx([ex], len(operand.expression_index), 'reference.expression')
         idx([ref.string_table_index] if has else [], n.string_table, ...)  ; require has for string_reference/expression_substitution
-    same for msg.comment (instruction_index optional? if HasField then same local-index rules; string_table_index required)
+    same for msg.comment (instruction_index optional; if HasField then the local-index rules apply; string_table_index required)
+    # BUILD DEVIATION (§15): for comment/address_comment an ABSENT operand/expression index on an instruction (operand)
+    # with nothing to point at is a plain instruction comment (the proto documents these indexes as operand-level markup)
     for d in msg.data_reference: idx instruction_index; (d.address any uint64)
     # --- sections / libraries / md_index ---
     for s in sections: require address + size < 2**64 (no wrap) else section_wraps ; flags free
@@ -406,13 +410,13 @@ Architecture check is advisory: `architecture_name` is compared (case-insensitiv
 | `PT-SECONDARY-RUN` | `worker_timeout`, `worker_oom`, `worker_crash`, `worker_bad_result` | isolation boundary tripped; stderr tail (<= 64 KiB, sanitised) in diagnostics only |
 | `PT-SECONDARY-CANCEL` | `cancelled` | user cancel; worker tree killed, private dir removed, no partial state |
 
-Worker exit codes: 0 result written; 20 `error` document written; 21 internal error (traceback to stderr tail only); 22 `MemoryError`; negative/signal/Windows job kill -> `worker_oom` when memory cap configured and peak >= 95% else `worker_crash`. Every failure removes the snapshot unless the caller asks to keep rejected inputs for triage (default: remove; the user's original is never modified or deleted).
+Worker exit codes: 0 result written; 20 `error` document written; 21 internal error (traceback to stderr tail only); 22 `MemoryError`; 2 unusable request. Out-of-memory classification (measured on Linux, §15): under a cap upb raises `DecodeError("... Arena alloc failed")`, **not** `MemoryError`, and the failed arena growth can leave the peak well below the cap; pydantic-core (Rust) aborts with SIGABRT and `memory allocation of N bytes failed`. So `worker_oom` = exit 22, or a parse failure whose text is an allocation failure or whose peak is >= 0.9 x cap (the worker reports it as RUN/worker_oom, never as INPUT/parse_failed), or a runtime allocation-failure text in the stderr tail, or (Windows) the Job Object `PeakProcessMemoryUsed` >= 0.9 x cap; anything else is `worker_crash`. Every failure removes the snapshot unless the caller asks to keep rejected inputs for triage (default: remove; the user's original is never modified or deleted).
 
 ## 8. Accepting produced files
 
-Phase 1 (this spec, C3/C4): **user-supplied only**. Flow: user selects `older.BinExport` and `newer.BinExport` (extension is a hint, case-insensitive, never decisive) -> `accept_binexport` twice with explicit roles -> `accept_pair` -> snapshots handed to C4. UI/CLI copy tells the user how to produce them (Ghidra File > Export > "Binary BinExport (v2) for BinDiff" with extension matching their Ghidra; IDA `Edit > Plugins > BinExport 12`) and that "Subtract Imagebase" must be chosen identically for both files. PatchTrace never labels its own JSON/CSV `.BinExport`.
+Phase 1 (this spec, C3/C4): **user-supplied only**. Flow: user selects `older.BinExport` and `newer.BinExport` (extension is a hint, case-insensitive, never decisive) -> `accept_binexport` twice with explicit roles -> `accept_pair` -> snapshots handed to C4. UI/CLI copy tells the user how to produce them (Ghidra File > Export > "Binary BinExport (v2) for BinDiff" with extension matching their Ghidra; IDA 9.4+ `Edit > Plugins > BinExport 12`; Binary Ninja is also an upstream-supported exporter, untested here) and that "Subtract Imagebase" must be chosen identically for both files. PatchTrace never labels its own JSON/CSV `.BinExport`.
 
-Phase 2 (Phase E, **separate spec/PRs**): `GhidraHeadlessProducer` implementing `BinExportProducer`. Whatever it writes is exactly as untrusted as a user file and goes through `accept_binexport` unchanged (no fast path). Its own risks, to be specified before coding: (1) extension zip must match the user's exact Ghidra version (released zip targets 11.0.3; later versions require a source build) - probe by installed `Ghidra/Extensions` listing, refuse otherwise; (2) `analyzeHeadless -postScript BinExport.java <out> "<choices>"` argument semantics for `askFile`/`askChoices` are unverified headless and the script prints "Export failed" without throwing - success = exit 0 **and** file accepted; (3) `-scriptPath` and the project dir are code/data injection points: only point at the verified extension dir and a private 0700 project dir; never at a user-controlled path; prefer shipping our own reviewed 30-line GhidraScript over the upstream one; (4) analysis time/memory of Java on hostile PEs: supervised by `run_process`, hard timeout, Job Object memory limit; Ghidra does not execute the target but its loaders/analysers parse hostile input; (5) licensing/redistribution: we reference an external install only (AGENTS.md: Ghidra/Java stay external); (6) the producer must pass `Subtract Imagebase` consistently for both artifacts and record the choice; (7) `executable_id` is the hash Ghidra stored **at import**: producing from a pre-existing Ghidra project may yield a different id - the producer imports from the artifact path itself.
+Phase 2 (Phase E, **separate spec/PRs**): `GhidraHeadlessProducer` implementing `BinExportProducer`. Whatever it writes is exactly as untrusted as a user file and goes through `accept_binexport` unchanged (no fast path). Its own risks, to be specified before coding: (1) extension zip must match the user's exact Ghidra version (released zip targets 11.0.3; later versions require a source build) - probe by installed `Ghidra/Extensions` listing, refuse otherwise; (2) upstream README (re-checked 2026-10-14) runs the exporter as a **pre**-script on an already imported program: `analyzeHeadless <proj> <name> -process <file> -propertiesPath <dir> -preScript BinExport.java -noanalysis` (configured by `BinExport.properties`) or `-preScript BinExport.java <out.BinExport> "<choices>" -noanalysis`, after a separate `-import <file>`; the earlier `-postScript` text here was wrong. Whether the script fails without throwing is unverified - success = exit 0 **and** file accepted; (3) `-scriptPath` and the project dir are code/data injection points: only point at the verified extension dir and a private 0700 project dir; never at a user-controlled path; prefer shipping our own reviewed 30-line GhidraScript over the upstream one; (4) analysis time/memory of Java on hostile PEs: supervised by `run_process`, hard timeout, Job Object memory limit; Ghidra does not execute the target but its loaders/analysers parse hostile input; (5) licensing/redistribution: we reference an external install only (AGENTS.md: Ghidra/Java stay external); (6) the producer must pass `Subtract Imagebase` consistently for both artifacts and record the choice; (7) `executable_id` is the hash Ghidra stored **at import**: producing from a pre-existing Ghidra project may yield a different id - the producer imports from the artifact path itself.
 
 ## 9. Packaging steps and CI checks
 
@@ -438,7 +442,7 @@ Phase 2 (Phase E, **separate spec/PRs**): `GhidraHeadlessProducer` implementing 
 - **Unit/property (in CI, fast)**: (a) *round trip*: random valid messages from a hypothesis strategy (bounded sizes) always `valid`; (b) *single-mutation oracle*: take a valid message, apply exactly one mutation from a table (index +1, index -1, duplicate vertex, swap vertices, set parent to self/descendant, drop entry, edge to non-member, range end > count, huge range overlap, remove meta field, add 1 MiB unknown field, flip wire type of field N) and assert the **specific** reason slug; (c) *never-crash*: arbitrary `bytes` (and bytes derived by random byte flips/truncations/splices of a valid file) into `inspect_binexport` either returns a summary or raises `SecondaryError` - never another exception, never exceeds a 5 s / count-bounded budget (set tiny limits in the test); (d) *prescan/parse agreement*: whenever prescan passes and protobuf parses, `counts` match `len(table)` (catches wire/parse divergence); (e) *monotone caps*: lowering any cap never turns reject into accept.
 - **Boundary cases**: 0-byte, 1-byte, only-meta, 10-byte varint overflow, length = 2^63, tag field 0, nested groups depth 150, packed vs unpacked repeated ints, int32 negative (`-1` encoded as 10-byte varint) indexes, uint64 max addresses, empty-string meta, NUL bytes in strings, lone-surrogate UTF-8 bytes, 5 MiB string.
 - **Isolation tests (Linux+Windows CI)**: fake worker via env-injected small `memory_bytes` -> `worker_oom`; sleeping worker -> `worker_timeout` and no leftover process; cancel mid-prescan -> `PT-SECONDARY-CANCEL` and private dir removed; worker writes garbage/oversized/`NaN` JSON -> `worker_bad_result`.
-- **Nightly/offline (not CI-gating)**: `atheris` or a libFuzzer-style harness over `inspect_binexport` with a seed corpus from the goldens, 30 min, crashes triaged into regression tests; differential testing against upstream C++ parsing is out of scope. CI fuzzing is time-boxed `hypothesis` only.
+- **Nightly/offline (not CI-gating)**: `atheris` (Linux/macOS only; it does not support Windows, so the nightly job is Linux-only and Windows relies on the hypothesis tests) or a libFuzzer-style harness over `inspect_binexport` with a seed corpus from the goldens, 30 min, crashes triaged into regression tests; differential testing against upstream C++ parsing is out of scope. CI fuzzing is time-boxed `hypothesis` only.
 
 ## 11. Threat model
 
@@ -463,10 +467,10 @@ Phase 2 (Phase E, **separate spec/PRs**): `GhidraHeadlessProducer` implementing 
 - U1 Real size/RSS ratio: how large are genuine BinExports (e.g. a 10 MB driver, a 30 MB kernel image) and what is their upb RSS/size ratio? Decides `max_file_bytes` (256 vs 512 MiB) and the `14x` memory formula.
 - U2 Checker wall time per pass on real files (Windows vs Linux) -> `wall_seconds`, tick granularity.
 - U3 Do real Ghidra exports satisfy the strict rules: strictly increasing vertex addresses (duplicates for thunks/imports?), `entry_basic_block_index` always in `basic_block_index`, flow edges only between member blocks, non-empty blocks, all optional index fields present on edges? Each rule here is a hypothesis; any false reject downgrades that rule to a warning with a test. Same for IDA output.
-- U4 Does the proto2 `string` field accept invalid UTF-8 under upb (parse OK vs `DecodeError`)? Behaviour of `utf8_invalid` path depends on it.
+- U4 **Resolved (measured 2026-10-14, upb 7.36.2)**: invalid UTF-8 in a proto2 `string` parses and the field reads back as `bytes` (the pure-Python runtime raises instead); the checker maps `bytes` to `utf8_invalid`.
 - U5 Does Ghidra's `executable_id` equal the artifact file SHA-256 for PEs imported normally (and when the project was created from a different copy, or a fat/trimmed import)? IDA ids for PEs (MD5 fallback frequency)? Decides whether `accept_unbound` is common.
 - U6 Exact `architecture_name` strings per exporter for x86/x64/ARM64 PEs (Ghidra: `<processor>-<size>` from language id; IDA unknown) for the advisory check.
-- U7 Windows: Job Object `ProcessMemoryLimit` behaviour with `jobs.run_process` (child that exceeds the limit: error vs kill; exit code), and whether upb `_message.pyd` loads in the frozen onedir worker with `--hide-console hide-early` build.
+- U7 Windows: Job Object `ProcessMemoryLimit` behaviour with `jobs.run_process`. The limit counts **committed** memory and makes allocations fail rather than killing the process [doc], but what the child sees (MemoryError, `Arena alloc failed`, abnormal exit code) is undocumented: measure with `tools/qa_binexport_memcap.py` on the Windows runner (pipeline and `--alloc` modes; `ProcessResult.peak_memory_bytes` reports `PeakProcessMemoryUsed`); also the idle commit of the frozen worker, which bounds the 512 MiB floor, and whether upb `_message.pyd` loads in the frozen onedir worker with `--hide-console hide-early` build.
 - U8 Frozen Windows size delta and AV false-positive behaviour for the new `.pyd`.
 - U9 Whether any real tool emits multiple `call_graph`/`meta_information` records, packed repeated ints, or unknown fields (`unknown_fields_excess`, `duplicate_singleton` strictness).
 - U10 `protobuf` 7.x abi3 wheel behaviour on Python 3.12 Windows runner in this repo's CI (and Python 3.13/3.14 later).
@@ -495,3 +499,50 @@ C3-1 and C3-2 can proceed in parallel (disjoint files); C3-3 needs C3-2; C3-4 ne
 2. Lower the default `.BinExport` cap from 512 MiB (SPEC-10) to 256 MiB until live evidence exists.
 3. Policy for MD5/empty `executable_id` (IDA fallback): reject by default with an explicit "I confirm this belongs to this artifact" override (recommended), or reject always.
 4. Who produces real-plugin goldens (needs Ghidra with BinExport and, optionally, a licensed IDA) and where larger non-redistributable corpora may live.
+
+## 15. Implementation record (C3 build, 2026-10-14)
+
+Built in worktree branch `worktree-agent-ae86fadb5f83ab3b5` as PR slices C3-1..C3-6, C3-7 (synthetic part) and C3-8, in pure modules under `secondary/`. Labels: [run] measured here on Linux x86-64 (CPython 3.13.16, protobuf 7.36.2 upb, PyInstaller 6.22.3); [ci] can only be verified on the Windows runner; [open] needs a human, Ghidra/IDA or a later PR.
+
+**Pin re-verified [run]:** PyPI latest is still `protobuf` 7.36.2, uploaded 2026-09-17, license BSD-3, no dependencies. The wheel SHA-256s are in `third_party/notices/protobuf-7.36.2/MANIFEST.txt`. The installed runtime reports `upb`. The descriptor set was generated with grpcio-tools 1.84.0 (bundled protoc) in a throwaway directory: 4144 bytes, SHA-256 `1c8b2bc1...6fba`, byte-identical to the §1 claim.
+
+**Measurements [run]:**
+
+| What | Result |
+|---|---|
+| 13.35 MiB file, 2 M tiny `string_table` records (the §1 DoS shape), in-process | Pre-scan 1.34 s (about 1.5 M records/s, slower than the 3.5 M/s tag-only walk because every cap is checked). Parse 0.08 s. Checker 0.78 s. VmPeak 137 MiB, RSS high-water mark 126 MiB, so address space ≈ RSS + 11 MiB. |
+| 10.1 MiB file, 100 k functions | Pre-scan 0.34 s, parse 0.07 s, checker 1.48 s. |
+| End-to-end worker (`python -m patchtrace`), tiny file | About 0.6 s. |
+| End-to-end worker, 13.35 MiB file | About 2.4 s. |
+| Same 13.35 MiB file, worker under explicit caps | 48-120 MiB caps give `worker_oom`; 140 MiB and above succeed (`tools/qa_binexport_memcap.py`). |
+| Allocation failure modes under a cap | At caps of 64-120 MiB, upb raised `DecodeError: ... Arena alloc failed`. At a 120 MiB cap the peak was only 97 MiB (0.81 x cap). At a 96 MiB cap, pydantic-core (Rust) aborted with SIGABRT: `memory allocation of 656 bytes failed`. All of these are now `worker_oom` (§7 text above). |
+| `bytearray` child under `run_process` | `MemoryError` at the cap: 192 MiB held at a 256 MiB cap, 448 MiB at a 512 MiB cap. |
+| Linux frozen build (`tools/build_linux.py`) | Built. The new inventory guard found `_internal/google/_upb/_message.abi3.so` (412 KiB; the protobuf Python modules sit inside the PYZ). The notice directories were copied. `dependency-versions.json` records protobuf 7.36.2. |
+| Linux frozen smoke (`tools/frozen_smoke.py`) | 30/30 PASS, including B1/B2: the frozen exe spawns itself as the capped worker, upb is active and the reasons are correct. |
+| Fuzz | 1.6 M random-mutation inputs in 60 s, seeded from the goldens: 0 findings. Hypothesis: 2000 arbitrary-byte and 1000 flip/truncate/splice examples per run. |
+
+**Deviations and additions (all additive; frozen seam unchanged):**
+- New reason slugs, all `PT-SECONDARY-INPUT`: `call_target_arity`, `block_ranges_excess`, `flow_edge_incomplete`, `reference_incomplete`. `md_index` count above the vertex count is `PT-SECONDARY-LIMIT count_cap:md_index`. An allocation failure during parse is `PT-SECONDARY-RUN worker_oom`.
+- The `meta_field_empty` check applies to `executable_name`/`architecture_name` only. An empty `executable_id` is an identity question: `executable_id_empty`, overridable through `accept_unbound`. The facade `binexport.check_message` keeps the legacy rejection.
+- `comment`/`address_comment`: an absent operand or expression index on an instruction (or operand) with nothing to point at is accepted as a plain instruction comment. The proto documents these indexes as operand-level markup, and rejecting them would be a likely U3 false reject on `ret`-style instructions. An explicit index must be in range. `string_reference`/`expression_substitution` stay strict.
+- `BinExportLimits` adds `max_meta_bytes` 4096, `max_call_targets` 1024 and `coverage_slack` 1024. `memory_bytes` defaults to `None`, meaning `memory_for(file_size)` per file; the parent passes the concrete value to the worker.
+- After parsing, the pipeline asserts that wire counts equal table sizes (`parse_failed` on divergence).
+- `sniff_lookalike` only explains an already-rejected file. Its JSON test is stricter, because a genuine export can start with `0x0a 0x5b` ("newline, `[`"). A regression test covers this.
+- `PeLayout` gains an optional `machine` label for the advisory architecture warning.
+- `BinExportSummary`, `WorkerRequest` and `WorkerResult` live in `binexport_models.py`.
+- Worker isolation on POSIX has two layers. The parent sets `RLIMIT_AS` with `prlimit()` right after spawn and fails closed if it cannot. The worker also lowers its own `RLIMIT_AS` before opening the input, which closes the window between spawn and `prlimit`. No `preexec_fn` is used on Linux.
+- On Windows, `jobs.run_process` sets `JOB_OBJECT_LIMIT_PROCESS_MEMORY` before resume and returns `PeakProcessMemoryUsed` as `ProcessResult.peak_memory_bytes`. A module lock now spans CreatePipe through closing the child-end handles, so concurrent runs cannot inherit each other's pipe write ends.
+- CLI exit codes for `secondary binexport-check`: 0 valid; 2 for INPUT/PAIR/ORIENTATION/LIMIT/UNSUPPORTED; 3 for RUN (worker timeout, OOM, crash or bad result); 5 for cancel. The reason slug is printed in brackets.
+- A PyInstaller hook `hook-patchtrace.secondary.binexport_proto.py` names `google._upb._message` and the descriptor-pool modules. It is a guard, not a fix: the measured build collected them anyway. Both build scripts check the pin and upb before freezing, require the new notices, and refuse to publish without the upb extension.
+
+**Open gates:**
+- [ci] Windows: U7 behaviour at the Job Object limit, the idle commit of the frozen worker, and the frozen `PatchTrace.exe` B1/B2 run (`qa-windows.yml` already runs `frozen_smoke.py`).
+- [ci] CI workflow steps from §9.5, owned by the integration owner because `.github` is outside C3 ownership:
+  - `pip install --only-binary=:all:`;
+  - `pip check`;
+  - a pin + upb assertion step;
+  - `tools/qa_binexport_memcap.py` on Windows;
+  - a Linux-only nightly `tools/fuzz_binexport.py`.
+- [open] C3-7 real-plugin goldens and U1/U3/U5/U6/U9/U12. `tests/fixtures/binexport/` holds synthetic goldens only, so they are not live-compatibility evidence.
+- [open] GUI wiring, and the C4 swap of `bindiff_inputs`' Protocol to the real `AcceptedBinExport`.
+- [open] Phase E producer spec (§8 recipe corrected to `-preScript`).

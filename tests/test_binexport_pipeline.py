@@ -126,6 +126,20 @@ def test_lookalikes_explained(tmp_path, data, kind):
     assert reason_of(inspect, tmp_path, data) == ('PT-SECONDARY-INPUT', f'lookalike_{kind}')
 
 
+def test_truncated_genuine_export_is_not_called_json(tmp_path):
+    """Regression: a BinExport head can read as newline + '[' (meta length 0x5b); it must not be 'JSON'."""
+    m = valid()
+    m.meta_information.executable_name = 'synthetic'  # meta record length 0x5b ('[')
+    data = raw(m)
+    assert data[:2] == b'\x0a\x5b', data[:2]
+    assert reason_of(inspect, tmp_path, data[:-1]) == ('PT-SECONDARY-INPUT', 'wire_truncated')
+    assert pipeline.sniff_lookalike(data[:64]) is None
+    for text in (b'[{"a": 1}]', b'{"a": 1}', b'\n  [1, 2]', b'[]', b'{}', b'["x"]'):
+        assert pipeline.sniff_lookalike(text) == 'json', text
+    for text in (b'[abc', b'{abc}', b'{\x01"a"', b'\x0a[\x0a\x0dsynthetic.sys'):
+        assert pipeline.sniff_lookalike(text) is None, text
+
+
 def test_trailing_garbage_and_parse_failure(tmp_path):
     # A truncated nested message passes the top-level scan but fails the real parse.
     bad_nested = b'\x0a\x03\x12\x01x' + b'\x42\x03\x0a\x05\x08'
