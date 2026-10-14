@@ -6,8 +6,8 @@ from patchtrace.nway.series import sha256_file
 from patchtrace.service import ProjectService
 
 
-def _wanted(builds):
-    h = [sha256_file(b) for b in builds[:3]]
+def _wanted(files):
+    h = [sha256_file(b) for b in files[:3]]
     return {(h[0], h[1]): (0, 1), (h[1], h[2]): (1, 2)}
 
 
