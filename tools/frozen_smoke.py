@@ -44,7 +44,7 @@ import tempfile
 from collections.abc import Callable, Sequence
 from pathlib import Path
 
-COMMANDS = ('rank', 'flags', 'correlate', 'cache', 'acquire', 'series', 'secondary', 'intelligence', 'unified', 'intel-tools')
+COMMANDS = ('rank', 'flags', 'correlate', 'cache', 'acquire', 'series', 'secondary', 'intelligence', 'unified', 'intel-tools', 'backend')
 BASELINE_KEYS = ('rank', 'pairing_id', 'score', 'raw', 'function')  # match_id is random per project
 
 

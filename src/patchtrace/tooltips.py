@@ -539,6 +539,22 @@ REGISTRY: dict[str, TooltipEntry] = {
         'Check that Python, Ghidriff, Ghidra and Java are usable.', 'Finds problems before a long run.',
         'Reports results in the output area. Neither target artifact is run.',
         'Local checks of the configured paths.', 'Disabled during offline installation.'),
+    'setup.backend.bundle': _e(
+        'Shows whether the analysis runtime bundled next to PatchTrace passed its fast file check.',
+        'Tells you before a run whether the download was extracted completely.',
+        'Read-only; select text to copy it. A problem means you should extract the complete ZIP again.',
+        'Compared with backend/manifest.json; no process is started.',
+        'Shown only when a bundled runtime is found next to PatchTrace.'),
+    'setup.backend.verify': _e(
+        'Hash every file of the bundled runtime and compare it with its manifest.',
+        'Finds corrupted or incomplete files that the fast check cannot see.',
+        'Runs in the background with progress text and changes none of your settings. It proves the '
+        'files are intact, not who published them.',
+        'Local files only; no network access.', 'Disabled while another operation runs.'),
+    'setup.backend.verify_cancel': _e(
+        'Stop the running bundle file verification.', 'A full hash of a large bundle can take minutes.',
+        'Stops after the current chunk; your settings and the bundle files are unchanged.',
+        availability='Only enabled while the verification runs.'),
     'setup.accept': _e(
         'Save the backend, desktop and profile settings.', 'Makes the changes take effect.',
         'Writes preferences to local desktop settings. API keys are never saved.'),

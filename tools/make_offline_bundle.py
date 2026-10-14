@@ -7,10 +7,20 @@ a clean offline Windows machine before publishing.
 from __future__ import annotations
 
 import argparse
-import hashlib
+import importlib.util
+import sys
 from pathlib import Path
 
-from patchtrace.offline_bundle import build_offline_bundle
+
+def _builder():
+    """The shared module (tools/ is not a package): one packaging path for both entry points."""
+    name = 'build_backend_bundle'
+    if name not in sys.modules:
+        spec = importlib.util.spec_from_file_location(name, Path(__file__).resolve().with_name(name + '.py'))
+        module = importlib.util.module_from_spec(spec)
+        sys.modules[name] = module
+        spec.loader.exec_module(module)
+    return sys.modules[name]
 
 
 def main() -> int:
@@ -30,11 +40,7 @@ def main() -> int:
         'jdk': args.jdk_version,
         'ghidriff_revision': args.ghidriff_revision,
     }
-    archive = build_offline_bundle(args.payload, args.runtime_id, versions, args.out)
-    with archive.open('rb') as stream:
-        digest = hashlib.file_digest(stream, 'sha256').hexdigest()
-    sidecar = archive.with_suffix(archive.suffix + '.sha256')
-    sidecar.write_bytes(f'{digest}  {archive.name}\n'.encode('ascii'))
+    archive, digest = _builder().package_payload(args.payload, args.out, args.runtime_id, versions)
     print(f'Packed {archive.name} SHA-256 {digest}')
     print('Not a full runtime acceptance test; test in fresh disconnected Windows first.')
     return 0

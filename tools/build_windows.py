@@ -1,13 +1,16 @@
 """Build an auditable, replaceable-DLL Windows desktop distribution."""
 from __future__ import annotations
 
-import hashlib
 import importlib.metadata
 import json
 import shutil
 import subprocess
 import sys
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+# Pure shared helpers; importing build_linux runs no build.
+from build_linux import attach_backend, check_archive_size, full_archive_name, parse_args, sha256_file  # noqa: E402
 
 PROTOBUF_PIN = '7.36.2'
 # SPEC-10b §2/§9: BinExport2 notices; build refuses to publish without them.
@@ -35,7 +38,8 @@ def require_upb_protobuf():
                            "(pip install --only-binary=:all: -e '.[dev]')")
 
 
-def main():
+def main(argv=None):
+    args = parse_args(argv)
     if sys.platform != 'win32':
         raise SystemExit('Build on Windows: PyInstaller cannot cross-compile the Windows runtime.')
     root = Path(__file__).resolve().parents[1]
@@ -118,13 +122,18 @@ def main():
                          capture_output=True, text=True)
     if cli.returncode != 0 or 'usage:' not in cli.stdout:
         raise RuntimeError(f'Frozen CLI smoke failed ({cli.returncode}): {cli.stderr[-500:]}')
-    archive = Path(shutil.make_archive(str(root / 'dist' / 'PatchTrace-0.1.0-windows-x64'),
+    archive = Path(shutil.make_archive(str(root / 'dist' / f'PatchTrace-{args.version}-windows-x64'),
                                      'zip', root_dir=root / 'dist', base_dir='PatchTrace'))
-    with archive.open('rb') as stream:
-        digest = hashlib.file_digest(stream, 'sha256').hexdigest()
-    archive.with_suffix('.zip.sha256').write_bytes(f'{digest}  {archive.name}\n'.encode('ascii'))
+    archive.with_suffix('.zip.sha256').write_bytes(f'{sha256_file(archive)}  {archive.name}\n'.encode('ascii'))
     print(archive)
-
+    if args.full:  # the lite smoke above is unchanged; backend/ is attached after it
+        attach_backend(package, args.backend_payload, version=args.version, platform_key='windows', root=root,
+                       allow_internal_symlinks=False)
+        full = Path(shutil.make_archive(str(root / 'dist' / full_archive_name(args.version, 'windows')[:-4]),
+                                        'zip', root_dir=root / 'dist', base_dir='PatchTrace'))
+        check_archive_size(full)
+        full.with_suffix('.zip.sha256').write_bytes(f'{sha256_file(full)}  {full.name}\n'.encode('ascii'))
+        print(full)
 
 if __name__ == '__main__':
     main()
