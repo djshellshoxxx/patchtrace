@@ -68,7 +68,7 @@ class BackendConfig:
 
 
 _PASSTHROUGH_NAME = re.compile(r'^[A-Za-z_][A-Za-z0-9_()]*$')
-_PASSTHROUGH_DENY = ('PYTHONPATH', 'PYTHONHOME', 'LD_PRELOAD', 'DYLD_INSERT_LIBRARIES')
+_PASSTHROUGH_DENY = ('PYTHONPATH', 'PYTHONHOME', 'LD_PRELOAD', 'DYLD_INSERT_LIBRARIES', 'BASH_ENV', 'ENV')
 _WINDOWS_ENV = frozenset(n.lower() for n in (
     'SystemRoot', 'SystemDrive', 'windir', 'ComSpec', 'PATH', 'PATHEXT', 'TEMP', 'TMP', 'USERPROFILE',
     'HOMEDRIVE', 'HOMEPATH', 'APPDATA', 'LOCALAPPDATA', 'ProgramData', 'ProgramFiles', 'ProgramFiles(x86)',
@@ -79,6 +79,7 @@ _POSIX_ENV = frozenset(('PATH', 'HOME', 'USER', 'LOGNAME', 'LANG', 'TMPDIR', 'TZ
 _NETWORK_ENV = frozenset(n.lower() for n in ('HTTP_PROXY', 'HTTPS_PROXY', 'NO_PROXY', 'SSL_CERT_FILE',
                                               'SSL_CERT_DIR', 'REQUESTS_CA_BUNDLE'))
 _RIZIN_ENV = frozenset(('RZ_PREFIX', 'RZ_LIBR_PLUGINS'))
+_JAVA_ENV = frozenset(('java_home', 'jdk_home'))
 
 
 def parse_env_passthrough(text: str) -> tuple[str, ...]:
@@ -89,7 +90,8 @@ def _passthrough_error(name: object) -> bool:
     if not isinstance(name, str) or not _PASSTHROUGH_NAME.fullmatch(name):
         return True
     upper = name.upper()
-    return upper in _PASSTHROUGH_DENY or upper.endswith('_OPTIONS')
+    return (upper in _PASSTHROUGH_DENY or upper.endswith('_OPTIONS')
+            or upper.startswith(('PYTHON', 'LD_', 'DYLD_')))
 
 
 def _config_errors(config: BackendConfig) -> list[str]:
@@ -120,7 +122,7 @@ def _config_errors(config: BackendConfig) -> list[str]:
         errors.append('PT-BACKEND: restrict_env must be a boolean')
     if not isinstance(config.env_passthrough, tuple) or any(_passthrough_error(n) for n in config.env_passthrough):
         errors.append('PT-BACKEND: env_passthrough must list plain variable names, excluding PYTHONPATH, '
-                      'PYTHONHOME, LD_PRELOAD and *_OPTIONS')
+                      'PYTHONHOME, PYTHON*, LD_*, DYLD_*, BASH_ENV, ENV and *_OPTIONS')
     if not isinstance(config.java_home, str):
         errors.append('PT-BACKEND: Java home must be a directory path')
     elif config.java_home:
@@ -152,6 +154,8 @@ def build_child_env(base: Mapping[str, str], config: BackendConfig, settings_dir
             keep = keep or name.lower() in _NETWORK_ENV
         if for_tool == 'rizin' and name in _RIZIN_ENV:
             keep = True
+        if for_tool == 'ghidra' and not private_java and name.lower() in _JAVA_ENV and bool(base[name]):
+            keep = True  # diagnose accepts an inherited JDK; the restricted child must see the same one
         if keep:
             env[name] = base[name]
     if for_tool == 'rizin':

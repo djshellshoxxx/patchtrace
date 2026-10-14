@@ -1138,6 +1138,7 @@ class SetupDialog(QDialog):
         self.worker = None
         self._busy_kind = None
         self.check.setEnabled(True)
+        self.find.setEnabled(self._discovery is None)
 
     def _offline_busy(self, active):
         self._busy_kind = 'offline' if active else None
@@ -2429,7 +2430,10 @@ class MainWindow(QMainWindow):
         options = pipeline.PipelineOptions(config=profile.ranking_config(), feature_ids=profile.feature_filter(),
                                            max_age_days=profile.snapshot_max_age_days)
 
+        root = self.service.root
+
         def task(cancel, event):
+            pipeline.prepare_publish(root)  # verified backups happen here, not on the GUI thread in publish
             return pipeline.run(snapshot, options, cancel,
                                 lambda message: event(type('Event', (), {'message': message, 'stage': 'rank'})()))
 

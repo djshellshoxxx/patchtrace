@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import sys
 import threading
 from pathlib import Path
@@ -151,6 +152,11 @@ def _parser() -> argparse.ArgumentParser:
     which.add_argument('--function', metavar='NAME')
     which.add_argument('--address', metavar='HEX')
     return parser
+
+
+def _api_key(env_name: str) -> str | None:
+    """NVD key from the named environment variable; unset, empty or blank means no key."""
+    return (os.environ.get(env_name, '').strip() or None) if env_name else None
 
 
 def _emit(args, command: str, status: str, result, warnings: list[str], text: str) -> None:
@@ -356,7 +362,6 @@ def _normalize_available(cve, cve_id: str, bodies: dict, now: str, warnings: lis
 
 
 def cmd_correlate(args, cancel) -> int:
-    import os
 
     from .enrichment import cve
     from .enrichment.contracts import CveSnapshot, EnrichmentError
@@ -394,7 +399,7 @@ def cmd_correlate(args, cancel) -> int:
             raise CliError(ENVIRONMENT, str(exc)) from None
         for request in plan:
             print(f'request: {request.provider} {request.url}', file=sys.stderr)
-        key = os.environ.get(args.api_key_env) if args.api_key_env else None
+        key = _api_key(args.api_key_env)
         duration = intelligence.describe_duration(plan, key is not None)
         if duration:
             print(duration, file=sys.stderr)
