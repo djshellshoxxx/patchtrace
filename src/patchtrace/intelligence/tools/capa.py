@@ -21,9 +21,10 @@ from typing import Literal
 from pydantic import BaseModel, ConfigDict, Field, ValidationError, field_validator
 
 from ...jobs import run_process
-from . import process
+from . import pins, process
 from .common import (
     LICENSES,
+    MAX_ADDRESS,
     CapabilityEvidence,
     EvidenceLink,
     ToolError,
@@ -58,6 +59,7 @@ class CapaConfig:
     ghidra_dir: Path | None = None
     java_home: Path | None = None
     timeout: int = DEFAULT_TIMEOUT
+    accept_untested: bool = False   # explicit opt-in for a build that is not the pinned release (TA-6)
 
 
 def _manifest(config: CapaConfig, *, supported: bool, reason: str | None = None, path: str = '',
@@ -119,43 +121,48 @@ def probe(config: CapaConfig, *, cancel: threading.Event | None = None, runner: 
         with _CACHE_LOCK:
             if key in _CACHE:
                 return _CACHE[key]
-    report = _probe(config, exe, cancel or threading.Event(), runner, environ)
-    if use_cache and not (cancel and cancel.is_set()):
+    report, cacheable = _probe(config, exe, cancel or threading.Event(), runner, environ)
+    if use_cache and cacheable and not (cancel and cancel.is_set()):
         with _CACHE_LOCK:
             _CACHE[key] = report
     return report
 
 
 def _probe(config: CapaConfig, exe: Path, cancel: threading.Event, runner: Callable,
-           environ: Mapping[str, str] | None) -> ToolManifest:
+           environ: Mapping[str, str] | None) -> tuple[ToolManifest, bool]:
+    """(manifest, cacheable): a timeout, cancel or spawn failure is reported but never remembered (TA-10)."""
     try:
         sha = process.sha256_file(exe)
     except (OSError, ToolError):
-        return _manifest(config, supported=False, path=str(exe), reason='the capa executable cannot be hashed')
+        return _manifest(config, supported=False, path=str(exe), reason='the capa executable cannot be hashed'), False
 
-    def unsupported(reason: str, **kw) -> ToolManifest:
-        return _manifest(config, supported=False, path=str(exe), sha=sha, reason=reason, **kw)
+    def unsupported(reason: str, cacheable: bool = True, **kw) -> tuple[ToolManifest, bool]:
+        return _manifest(config, supported=False, path=str(exe), sha=sha, reason=reason,
+                         pin_status=pin_status, **kw), cacheable
+    pin_status = 'pinned' if pins.is_pinned(ENGINE, sha) else 'unpinned'
     if config.backend == 'ghidra' and _ghidra_version(config) is None:
         return unsupported('the Ghidra backend needs --ghidra-dir (Ghidra/application.properties) and --java-home '
                            '(bin/java)')
-    try:
-        version_run = process.run_version_probe(exe, ['--version'], cancel=cancel, runner=runner, environ=environ)
-        help_run = process.run_version_probe(exe, ['--help'], cancel=cancel, runner=runner, environ=environ)
-    except ToolError as exc:
-        return unsupported(exc.message)
-    if version_run.reason == 'cancelled' or help_run.reason == 'cancelled':
-        return unsupported('capa probe was cancelled')
+    version_run = process.run_version_probe(exe, ['--version'], cancel=cancel, runner=runner, environ=environ)
+    help_run = process.run_version_probe(exe, ['--help'], cancel=cancel, runner=runner, environ=environ)
+    transient = process.is_transient(version_run, help_run)
+    for run, what in ((version_run, 'capa --version'), (help_run, 'capa --help')):
+        if run.reason or run.spawn_error:
+            return unsupported(process.describe_failure(run, what), cacheable=not transient)
     match = _VERSION.search(f'{version_run.stdout}\n{version_run.stderr}')
-    if version_run.reason or version_run.returncode != 0 or match is None:
+    if version_run.returncode != 0 or match is None:
         return unsupported(f'capa did not report a version ({process.exit_text(version_run.returncode)})')
     version = '.'.join(match.groups())
     common = {'version': version, 'version_text': process.sanitize(match.group(0), 120),
-              'untested_version': version not in TESTED_VERSIONS}
+              'untested_version': version not in TESTED_VERSIONS or pin_status != 'pinned'}
     if int(match.group(1)) != SUPPORTED_MAJOR:
         return unsupported(f'capa {version} is not supported (the parser contract is capa {SUPPORTED_MAJOR}.x)',
                            **common)
+    if pin_status != 'pinned' and not config.accept_untested:
+        return unsupported(f'this capa build ({sha[:12]}) is not the pinned release (capa 9.4.0); results are '
+                           'accepted only from the pinned build unless you pass --capa-accept-untested', **common)
     text = help_run.stdout + '\n' + help_run.stderr
-    if help_run.reason or help_run.returncode != 0:
+    if help_run.returncode != 0:
         return unsupported('capa --help failed', **common)
     for option in REQUIRED_OPTIONS:
         if not re.search(rf'(?<![\w-]){re.escape(option)}(?![\w-])', text):
@@ -178,7 +185,7 @@ def _probe(config: CapaConfig, exe: Path, cancel: threading.Event, runner: Calla
     if config.backend == 'ghidra':
         extra['backend_version'] = _ghidra_version(config)
     return _manifest(config, supported=True, path=str(exe), sha=sha, capabilities=tuple(sorted(capabilities)),
-                     **common, **extra)
+                     pin_status=pin_status, **common, **extra), True
 
 
 def options(config: CapaConfig) -> dict[str, str]:
@@ -186,13 +193,19 @@ def options(config: CapaConfig) -> dict[str, str]:
     return {'argv': 'capa/1', 'format': 'pe', 'os': 'windows', 'backend': config.backend}
 
 
-def prepare(config: CapaConfig, scratch: Path) -> dict[str, str]:
-    """Copy explicit rule/signature packs into the scratch; returns the digests of the copies."""
+def prepare(config: CapaConfig, scratch: Path, manifest: ToolManifest | None = None) -> dict[str, str]:
+    """Copy explicit rule/signature packs into the scratch; returns the digests of the copies. With the probed
+    `manifest`, a copy that differs from the probed digest (a rule file changed since the probe) is
+    `PT-TOOL-STALE` (TA-6): evidence is never stamped with a rules identity the tool did not read."""
     digests = {}
     if config.rules_dir is not None:
         digests['rules'] = process.copy_tree(Path(config.rules_dir), scratch / 'rules')
     if config.sigs_dir is not None:
         digests['signatures'] = process.copy_tree(Path(config.sigs_dir), scratch / 'sigs')
+    if manifest is not None:
+        for key, probed in (('rules', manifest.rules_sha256), ('signatures', manifest.signatures_sha256)):
+            if key in digests and digests[key] != probed:
+                raise ToolError('PT-TOOL-STALE', f'the capa {key} directory changed since it was probed')
     return digests
 
 
@@ -205,11 +218,14 @@ def build_argv(config: CapaConfig, executable: str, scratch: Path, artifact: Pat
     return [*argv, str(artifact)]
 
 
-def classify_exit(returncode: int, stdout: str, stderr: str) -> tuple[str, str, str]:
+def classify_exit(returncode: int, stdout: str, stderr: str, *, memory_limit_bytes: int | None = None,
+                  peak_memory_bytes: int | None = None) -> tuple[str, str, str]:
     """(status, error code, message) for a non-zero exit (T4)."""
     line = process.first_error_line(stderr, stdout)
     if returncode in EXIT_UNSUPPORTED:
         return 'unsupported', 'PT-TOOL-UNSUPPORTED', f'capa: {EXIT_UNSUPPORTED[returncode]} ({line or "no detail"})'
+    if process.memory_exhausted(stderr, returncode, peak_memory_bytes, memory_limit_bytes):
+        return 'failed', 'PT-TOOL-LIMIT', 'capa stopped at the memory limit (memory)'
     if returncode in EXIT_INPUT:
         return 'failed', 'PT-TOOL-INPUT', f'capa: {EXIT_INPUT[returncode]} ({line or "no detail"})'
     return 'failed', 'PT-TOOL-RUN', f'capa failed ({process.exit_text(returncode)}): {line or "no message"}'
@@ -358,6 +374,9 @@ def _rva(address: Address, base: int, pe: PeMap, anomalies: list[str]) -> int | 
     if not isinstance(address.value, int):
         anomalies.append(f'address-type:{address.type}')
         return None
+    if not 0 <= address.value <= MAX_ADDRESS:
+        anomalies.append('address-out-of-range')
+        return None
     if address.type == 'absolute':
         rva, problem = pe.va_to_rva(address.value, base)
     elif address.type == 'relative':
@@ -388,8 +407,25 @@ def _feature_rvas(match: Match, base: int, pe: PeMap, cap: int) -> tuple[tuple[i
     return tuple(sorted(found)[:cap]), total
 
 
+def _rule_id(name: str, anomalies: list[str]) -> str:
+    """Rule names longer than the record allows get a stable hash suffix so distinct rules never collide (TA-11)."""
+    if len(name) <= 256:
+        return name
+    anomalies.append('rule-id-shortened')
+    return name[:239] + '#' + hashlib.sha256(name.encode('utf-8', 'surrogatepass')).hexdigest()[:16]
+
+
 def parse(raw: bytes, ctx: ParseContext) -> ToolEvidenceSet:
-    """Strict parse + normalisation of one capa JSON document (T5). Raises ToolError on contract violations."""
+    """Strict parse + normalisation of one capa JSON document (T5). Raises ToolError on contract violations; a
+    record the contract refuses (out-of-range values and the like) is `PT-TOOL-OUTPUT`, never a bare
+    pydantic ValidationError (TA-1)."""
+    try:
+        return _parse(raw, ctx)
+    except ValidationError:
+        raise ToolError('PT-TOOL-OUTPUT', 'capa output holds a value outside the evidence contract') from None
+
+
+def _parse(raw: bytes, ctx: ParseContext) -> ToolEvidenceSet:
     data = load_json_strict(raw, max_bytes=ctx.limits.stdout_bytes, max_depth=ctx.limits.json_depth)
     if not isinstance(data, dict) or set(data) != {'meta', 'rules'}:
         raise ToolError('PT-TOOL-OUTPUT', 'capa output is not a result document (wrong parser contract)')
@@ -407,6 +443,8 @@ def parse(raw: bytes, ctx: ParseContext) -> ToolEvidenceSet:
     if analysis.base_address.type != 'absolute' or not isinstance(analysis.base_address.value, int):
         raise ToolError('PT-TOOL-OUTPUT', 'capa reported no absolute base address')
     base = analysis.base_address.value
+    if not 0 <= base <= MAX_ADDRESS:
+        raise ToolError('PT-TOOL-ADDRESS', 'capa reported a base address outside 64 bits')
     anomalies: list[str] = []
     if base != ctx.pe.image_base:
         anomalies.append(f'base-differs:0x{base:x}')
@@ -416,7 +454,9 @@ def parse(raw: bytes, ctx: ParseContext) -> ToolEvidenceSet:
             for block in function.matched_basic_blocks:
                 if isinstance(block.address.value, int):
                     block_owner[block.address.value] = function.address.value
-    evidence: list[CapabilityEvidence] = []
+    # Choose which matches are kept BEFORE building records: sorted by (rule, scope, address, document index), so
+    # a truncated set is a stable prefix that does not depend on the tool's dictionary order (TA-3).
+    candidates = []
     total = 0
     for name, rule in doc.rules.items():
         if rule.meta.is_subscope_rule:
@@ -427,34 +467,40 @@ def parse(raw: bytes, ctx: ParseContext) -> ToolEvidenceSet:
             continue
         if len(rule.source) > MAX_RULE_SOURCE:
             anomalies.append('rule-source-too-large')
+        for index, (address, match) in enumerate(rule.matches):
+            total += 1
+            key_address = address.value if isinstance(address.value, int) else -1
+            candidates.append((name, scope, key_address, index, rule, address, match))
+    candidates.sort(key=lambda item: item[:4])
+    evidence: list[CapabilityEvidence] = []
+    rule_ids: dict[str, str] = {}
+    for name, scope, _key, index, rule, address, match in candidates[:ctx.limits.max_rule_matches]:
         rule_sha = hashlib.sha256(rule.source.encode('utf-8')).hexdigest()
         namespace = rule.meta.namespace
         kind = 'library' if rule.meta.lib else (
             'limitation' if namespace and namespace.startswith('internal/limitation') else 'capability')
-        for index, (address, match) in enumerate(rule.matches):
-            total += 1
-            if len(evidence) >= ctx.limits.max_rule_matches:
-                continue
-            rva = _rva(address, base, ctx.pe, anomalies)
-            function_id, attribution = None, 'none'
-            if rva is not None and scope == 'function':
-                function_id, attribution = f'rva:0x{rva:x}', 'function-start'
-            elif rva is not None and scope == 'basic block' and isinstance(address.value, int):
-                owner = block_owner.get(address.value)
-                owner_rva = ctx.pe.va_to_rva(owner, base)[0] if owner is not None else None
-                if owner_rva is not None:
-                    function_id, attribution = f'rva:0x{owner_rva:x}', 'basic-block-in-function'
-            features, feature_total = _feature_rvas(match, base, ctx.pe, ctx.limits.max_feature_locations)
-            link = EvidenceLink(tool_run_id=ctx.run_id, artifact_sha256=ctx.artifact.sha256, function_id=function_id,
-                                rva=rva, attribution=attribution,
-                                source_fragment=f'rules[{json.dumps(name)[:120]}].matches[{index}]')
-            evidence.append(CapabilityEvidence(
-                rule_id=name[:256], rule_sha256=rule_sha, namespace=namespace[:256] if namespace else None,
-                scope=scope, address_space=address.type, address=address.value if isinstance(address.value, int)
-                and address.value >= 0 else None, location=link, kind=kind, source_run_id=ctx.run_id,
-                attack=tuple(s.id[:32] for s in rule.meta.attack if s.id)[:32],
-                mbc=tuple(s.id[:32] for s in rule.meta.mbc if s.id)[:32],
-                feature_rvas=features, feature_count=feature_total))
+        if name not in rule_ids:
+            rule_ids[name] = _rule_id(name, anomalies)
+        rva = _rva(address, base, ctx.pe, anomalies)
+        function_id, attribution = None, 'none'
+        if rva is not None and scope == 'function':
+            function_id, attribution = f'rva:0x{rva:x}', 'function-start'
+        elif rva is not None and scope == 'basic block' and isinstance(address.value, int):
+            owner = block_owner.get(address.value)
+            owner_rva = ctx.pe.va_to_rva(owner, base)[0] if owner is not None else None
+            if owner_rva is not None:
+                function_id, attribution = f'rva:0x{owner_rva:x}', 'basic-block-in-function'
+        features, feature_total = _feature_rvas(match, base, ctx.pe, ctx.limits.max_feature_locations)
+        link = EvidenceLink(tool_run_id=ctx.run_id, artifact_sha256=ctx.artifact.sha256, function_id=function_id,
+                            rva=rva, attribution=attribution,
+                            source_fragment=f'rules[{json.dumps(name)[:120]}].matches[{index}]')
+        evidence.append(CapabilityEvidence(
+            rule_id=rule_ids[name], rule_sha256=rule_sha, namespace=namespace[:256] if namespace else None,
+            scope=scope, address_space=address.type, address=address.value if isinstance(address.value, int)
+            and 0 <= address.value <= MAX_ADDRESS else None, location=link, kind=kind, source_run_id=ctx.run_id,
+            attack=tuple(s.id[:32] for s in rule.meta.attack if s.id)[:32],
+            mbc=tuple(s.id[:32] for s in rule.meta.mbc if s.id)[:32],
+            feature_rvas=features, feature_count=feature_total))
     evidence.sort(key=lambda e: (e.rule_id, e.scope, -1 if e.address is None else e.address))
     unique = list(dict.fromkeys(anomalies))[:64]
     return ToolEvidenceSet(

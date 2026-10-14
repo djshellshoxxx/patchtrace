@@ -15,6 +15,14 @@ BINEXPORT_NOTICES = [f'protobuf-{PROTOBUF_PIN}/LICENSE', 'binexport-2bff7af/LICE
                      'binexport-2bff7af/binexport2.proto', 'binexport-2bff7af/PROVENANCE.txt']
 
 
+def _installed(name):
+    try:
+        importlib.metadata.distribution(name)
+    except importlib.metadata.PackageNotFoundError:
+        return False
+    return True
+
+
 def require_upb_protobuf():
     """Fail before freezing if the pinned protobuf is absent or would run as the pure-Python fallback."""
     from google.protobuf.internal import api_implementation
@@ -68,7 +76,7 @@ def main():
     shutil.copytree(bundled_notices, notices / 'upstream', dirs_exist_ok=True)
     for name in ['PySide6', 'PySide6_Essentials', 'PySide6_Addons', 'PySide6_WebEngine', 'PySide6_Pdf', 'shiboken6', 'pydantic',
                  'pydantic_core', 'PyInstaller', 'annotated-types', 'typing_extensions', 'typing-inspection',
-                 'protobuf']:
+                 'protobuf', *[n for n in ('rapidfuzz', 'yara-x') if _installed(n)]]:
         dist = importlib.metadata.distribution(name)
         versions[name] = dist.version
         for file in dist.files or []:

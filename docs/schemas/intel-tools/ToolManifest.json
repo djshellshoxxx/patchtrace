@@ -1,0 +1,182 @@
+{
+  "$id": "https://patchtrace.local/schemas/intel-tools/1/ToolManifest.json",
+  "additionalProperties": false,
+  "description": "What the probe verified about one configured tool (T2).",
+  "properties": {
+    "backend": {
+      "anyOf": [
+        {
+          "maxLength": 32,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Backend"
+    },
+    "backend_version": {
+      "anyOf": [
+        {
+          "maxLength": 64,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Backend Version"
+    },
+    "capabilities": {
+      "default": [],
+      "items": {
+        "maxLength": 64,
+        "type": "string"
+      },
+      "maxItems": 32,
+      "title": "Capabilities",
+      "type": "array"
+    },
+    "cli_path": {
+      "default": "",
+      "maxLength": 4096,
+      "title": "Cli Path",
+      "type": "string"
+    },
+    "contract": {
+      "const": "tool-evidence/1",
+      "default": "tool-evidence/1",
+      "title": "Contract",
+      "type": "string"
+    },
+    "engine": {
+      "enum": [
+        "capa",
+        "floss",
+        "diec"
+      ],
+      "title": "Engine",
+      "type": "string"
+    },
+    "executable_sha256": {
+      "anyOf": [
+        {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Executable Sha256"
+    },
+    "license": {
+      "maxLength": 32,
+      "title": "License",
+      "type": "string"
+    },
+    "pin_status": {
+      "default": "unpinned",
+      "enum": [
+        "pinned",
+        "unpinned"
+      ],
+      "title": "Pin Status",
+      "type": "string"
+    },
+    "reason": {
+      "anyOf": [
+        {
+          "maxLength": 500,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Reason"
+    },
+    "rules_sha256": {
+      "anyOf": [
+        {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Rules Sha256"
+    },
+    "rules_source": {
+      "default": "none",
+      "enum": [
+        "directory",
+        "embedded",
+        "none"
+      ],
+      "title": "Rules Source",
+      "type": "string"
+    },
+    "signatures_sha256": {
+      "anyOf": [
+        {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Signatures Sha256"
+    },
+    "supported": {
+      "title": "Supported",
+      "type": "boolean"
+    },
+    "untested_version": {
+      "default": false,
+      "title": "Untested Version",
+      "type": "boolean"
+    },
+    "version": {
+      "anyOf": [
+        {
+          "maxLength": 64,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Version"
+    },
+    "version_text": {
+      "anyOf": [
+        {
+          "maxLength": 120,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Version Text"
+    }
+  },
+  "required": [
+    "engine",
+    "license",
+    "supported"
+  ],
+  "title": "ToolManifest",
+  "type": "object"
+}

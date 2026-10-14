@@ -21,6 +21,17 @@ EXCLUDED = ['PySide6.QtWebEngineCore', 'PySide6.QtWebEngineQuick', 'PySide6.QtWe
             'PySide6.QtPdf', 'PySide6.QtPdfWidgets']
 DISTRIBUTIONS = ['PySide6', 'PySide6_Essentials', 'PySide6_Addons', 'shiboken6', 'pydantic', 'pydantic_core',
                  'PyInstaller', 'annotated-types', 'typing_extensions', 'typing-inspection', 'protobuf']
+OPTIONAL_DISTRIBUTIONS = ['rapidfuzz', 'yara-x']  # B-0 extras: bundled and licensed when installed
+
+
+def _installed(name: str) -> bool:
+    try:
+        importlib.metadata.distribution(name)
+    except importlib.metadata.PackageNotFoundError:
+        return False
+    return True
+
+
 PROTOBUF_PIN = '7.36.2'
 # SPEC-10b §2/§9: notices that must ship; the build refuses to publish without them.
 REQUIRED_NOTICES = ['qtbase-6.12.0/LICENSES/LGPL-3.0-only.txt', f'protobuf-{PROTOBUF_PIN}/LICENSE',
@@ -68,7 +79,7 @@ def main() -> None:
         raise RuntimeError('Pinned third-party notices are missing; refusing to publish distribution')
     shutil.copytree(bundled_notices, notices / 'upstream', dirs_exist_ok=True)
     versions = {'Python': sys.version.split()[0], 'platform': 'linux-x86_64'}
-    for name in DISTRIBUTIONS:
+    for name in DISTRIBUTIONS + [n for n in OPTIONAL_DISTRIBUTIONS if _installed(n)]:
         dist = importlib.metadata.distribution(name)
         versions[name] = dist.version
         for file in dist.files or []:

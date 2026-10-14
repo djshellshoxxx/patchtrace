@@ -57,9 +57,11 @@ class StringChange(_Strict):
     display_value: str = Field(max_length=256)
     secret_kind: str | None = None
     length: int
-    change: Literal['added', 'removed', 'unchanged', 'representation-changed']
+    change: Literal['added', 'removed', 'unchanged', 'representation-changed', 'indeterminate']
     older_types: tuple[str, ...] = ()
     newer_types: tuple[str, ...] = ()
+    older_encodings: tuple[str, ...] = ()
+    newer_encodings: tuple[str, ...] = ()
     older: tuple[EvidenceLink, ...] = Field(default=(), max_length=MAX_LOCATIONS)
     newer: tuple[EvidenceLink, ...] = Field(default=(), max_length=MAX_LOCATIONS)
 
@@ -69,7 +71,7 @@ class EnvironmentChange(_Strict):
     label: str = Field(max_length=200)
     certainty: str
     heuristic: bool
-    change: Literal['added', 'removed', 'unchanged']
+    change: Literal['added', 'removed', 'unchanged', 'indeterminate']
     detect_string: str = Field(default='', max_length=200)
 
 
@@ -132,6 +134,48 @@ def _classify(links: Sequence[EvidenceLink], side: str, pairing: FunctionPairing
     return 'unlocalized'
 
 
+KNOWN_STATUS = frozenset({'added', 'removed', 'modified', 'unchanged'})
+TRUNCATED_NOTE = {'older': 'older evidence is truncated: this capability may exist beyond the cut',
+                  'newer': 'newer evidence is truncated: this capability may exist beyond the cut'}
+
+
+def _localized(link: EvidenceLink) -> bool:
+    return link.attribution in LOCALIZED and _function_rva(link) is not None
+
+
+def _unmatched(old_links: Sequence[EvidenceLink], new_links: Sequence[EvidenceLink], scope: str,
+               pairing: FunctionPairing) -> tuple[list[EvidenceLink], list[EvidenceLink]]:
+    """Matches of one rule that have no counterpart on the other side (audit TA-2).
+
+    A rule that matches somewhere in both files is not 'unchanged' when the newer file also matches it in an added
+    or changed function: the extra, localized match is what ranks a candidate function. Localized matches are
+    paired through the function pairing; matches whose function the pairing does not know cancel by count (so a
+    pure relocation without pairing information is still unchanged), and unlocalized matches compare by count.
+    File-scope rules keep the plain presence comparison."""
+    if scope == 'file':
+        return [], []
+    old_loc, new_loc = [x for x in old_links if _localized(x)], [x for x in new_links if _localized(x)]
+    old_rest = [x for x in old_links if not _localized(x)]
+    new_rest = [x for x in new_links if not _localized(x)]
+    old_fns, new_fns = {_function_rva(x) for x in old_loc}, {_function_rva(x) for x in new_loc}
+    matched_old = {o for o in old_fns if new_fns.intersection(pairing.partners('older', o))}
+    matched_new = {n for n in new_fns if old_fns.intersection(pairing.partners('newer', n))}
+    left_old = [x for x in old_loc if _function_rva(x) not in matched_old]
+    left_new = [x for x in new_loc if _function_rva(x) not in matched_new]
+    extra_old = [x for x in left_old if pairing.status('older', _function_rva(x)) in KNOWN_STATUS]
+    extra_new = [x for x in left_new if pairing.status('newer', _function_rva(x)) in KNOWN_STATUS]
+    unknown_old = [x for x in left_old if all(x is not e for e in extra_old)]
+    unknown_new = [x for x in left_new if all(x is not e for e in extra_new)]
+    cancelled = min(len(unknown_old), len(unknown_new))
+    extra_old += unknown_old[cancelled:]
+    extra_new += unknown_new[cancelled:]
+    if len(new_rest) > len(old_rest):
+        extra_new += new_rest[len(old_rest):]
+    elif len(old_rest) > len(new_rest):
+        extra_old += old_rest[len(new_rest):]
+    return extra_old, extra_new
+
+
 def _capabilities(older: ToolEvidenceSet, newer: ToolEvidenceSet,
                   pairing: FunctionPairing, notes: set[str]) -> list[CapabilityChange]:
     groups: dict[tuple, dict[str, list[CapabilityEvidence]]] = defaultdict(lambda: {'older': [], 'newer': []})
@@ -140,25 +184,44 @@ def _capabilities(older: ToolEvidenceSet, newer: ToolEvidenceSet,
             if item.kind != 'limitation':
                 groups[(item.kind, item.rule_id, item.scope)][side].append(item)
     changes = []
+
+    def entry(kind, rule_id, scope, sample, change, label, old_links, new_links, old_n, new_n, entry_notes):
+        # A side cut at the match limit cannot prove absence: what it lacks may sit beyond the cut (TA-3).
+        if (change == 'added' and older.truncated) or (change == 'removed' and newer.truncated):
+            label = 'unknown'
+            entry_notes = [*entry_notes, TRUNCATED_NOTE['older' if change == 'added' else 'newer']]
+        changes.append(CapabilityChange(
+            rule_id=rule_id, namespace=sample.namespace, scope=scope, kind=kind, change=change,
+            classification=label, older=tuple(old_links[:MAX_LOCATIONS]), newer=tuple(new_links[:MAX_LOCATIONS]),
+            older_matches=old_n, newer_matches=new_n, notes=tuple(entry_notes)))
     for (kind, rule_id, scope), sides in sorted(groups.items(), key=lambda kv: (kv[0][0] != 'capability', kv[0])):
         old, new = sides['older'], sides['newer']
         old_links = [resolve(i.location, 'older', pairing, notes) for i in old]
         new_links = [resolve(i.location, 'newer', pairing, notes) for i in new]
-        if old and new:
-            change, label = 'unchanged', 'unchanged'
-        elif new:
-            change, label = 'added', _classify(new_links, 'newer', pairing)
-        else:
-            change, label = 'removed', _classify(old_links, 'older', pairing)
-        entry_notes = []
-        if old and new and len(old) != len(new):
-            entry_notes.append(f'match count {len(old)} -> {len(new)}')
         sample = (old or new)[0]
-        changes.append(CapabilityChange(
-            rule_id=rule_id, namespace=sample.namespace, scope=scope, kind=kind, change=change, classification=label,
-            older=tuple(old_links[:MAX_LOCATIONS]), newer=tuple(new_links[:MAX_LOCATIONS]), older_matches=len(old),
-            newer_matches=len(new), notes=tuple(entry_notes)))
+        if old and new:
+            entry_notes = [f'match count {len(old)} -> {len(new)}'] if len(old) != len(new) else []
+            entry(kind, rule_id, scope, sample, 'unchanged', 'unchanged', old_links, new_links, len(old), len(new),
+                  entry_notes)
+            extra_old, extra_new = _unmatched(old_links, new_links, scope, pairing)
+            if extra_new:
+                entry(kind, rule_id, scope, sample, 'added', _classify(extra_new, 'newer', pairing), [], extra_new,
+                      0, len(extra_new), ['additional match in a function the older side does not match'])
+            if extra_old:
+                entry(kind, rule_id, scope, sample, 'removed', _classify(extra_old, 'older', pairing), extra_old, [],
+                      len(extra_old), 0, ['match in a function the newer side no longer matches'])
+        elif new:
+            entry(kind, rule_id, scope, sample, 'added', _classify(new_links, 'newer', pairing), [], new_links, 0,
+                  len(new), [])
+        else:
+            entry(kind, rule_id, scope, sample, 'removed', _classify(old_links, 'older', pairing), old_links, [],
+                  len(old), 0, [])
     return changes
+
+
+def _cut(evidence: ToolEvidenceSet, types: Sequence[str]) -> bool:
+    """True when `evidence` lost items of one of `types` to truncation (legacy sets without types: any type)."""
+    return evidence.truncated and (not evidence.truncated_types or bool(set(evidence.truncated_types) & set(types)))
 
 
 def _strings(older: ToolEvidenceSet, newer: ToolEvidenceSet, show_secrets: bool,
@@ -171,10 +234,14 @@ def _strings(older: ToolEvidenceSet, newer: ToolEvidenceSet, show_secrets: bool,
     for value_hash in sorted(groups):
         old, new = groups[value_hash]['older'], groups[value_hash]['newer']
         old_types, new_types = tuple(sorted({s.type for s in old})), tuple(sorted({s.type for s in new}))
+        old_enc, new_enc = tuple(sorted({s.encoding for s in old})), tuple(sorted({s.encoding for s in new}))
         if old and new:
-            change = 'unchanged' if old_types == new_types else 'representation-changed'
+            same = old_types == new_types and old_enc == new_enc   # an ASCII -> UTF-16LE move is a change (F21)
+            change = 'unchanged' if same else 'representation-changed'
+        elif new:  # absent from a side cut in a type it could have had proves nothing (TA-3)
+            change = 'indeterminate' if _cut(older, new_types) else 'added'
         else:
-            change = 'added' if new else 'removed'
+            change = 'indeterminate' if _cut(newer, old_types) else 'removed'
         if change == 'unchanged':
             unchanged += 1
             if not include_unchanged:
@@ -183,7 +250,8 @@ def _strings(older: ToolEvidenceSet, newer: ToolEvidenceSet, show_secrets: bool,
         display = sample.display_value if show_secrets else redacted_display(sample.display_value, sample.secret_kind)
         changes.append(StringChange(
             value_hash=value_hash, display_value=display, secret_kind=sample.secret_kind, length=sample.length,
-            change=change, older_types=old_types, newer_types=new_types,
+            change=change, older_types=old_types, newer_types=new_types, older_encodings=old_enc,
+            newer_encodings=new_enc,
             older=tuple(s.source_location for s in old[:MAX_LOCATIONS]),
             newer=tuple(s.source_location for s in new[:MAX_LOCATIONS])))
     truncated = len(changes) > MAX_STRING_CHANGES
@@ -200,7 +268,12 @@ def _environment(older: ToolEvidenceSet, newer: ToolEvidenceSet) -> list[Environ
     out = []
     for k in sorted(set(olds) | set(news)):
         item = news.get(k) or olds[k]
-        change = 'unchanged' if k in olds and k in news else ('added' if k in news else 'removed')
+        if k in olds and k in news:
+            change = 'unchanged'
+        elif k in news:
+            change = 'indeterminate' if older.truncated else 'added'
+        else:
+            change = 'indeterminate' if newer.truncated else 'removed'
         out.append(EnvironmentChange(category=k[0], label=k[1], certainty=k[2], heuristic=k[3], change=change,
                                      detect_string=item.detect_string))
     return out
@@ -303,5 +376,6 @@ def compute(older_run: ToolRun | None, older: ToolEvidenceSet | None, newer_run:
 
 
 def has_changes(delta: ToolDelta) -> bool:
+    quiet = ('unchanged', 'indeterminate')   # indeterminate = a truncated side cannot tell: not a measured change
     return any(c.change != 'unchanged' for c in delta.capabilities) or any(
-        s.change != 'unchanged' for s in delta.strings) or any(e.change != 'unchanged' for e in delta.environment)
+        s.change not in quiet for s in delta.strings) or any(e.change not in quiet for e in delta.environment)
