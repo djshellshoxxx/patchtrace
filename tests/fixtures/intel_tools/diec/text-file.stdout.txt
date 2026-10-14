@@ -1,0 +1,22 @@
+{
+    "detects": [
+        {
+            "filetype": "Binary",
+            "info": "",
+            "offset": "0",
+            "parentfilepart": "Header",
+            "size": "25",
+            "values": [
+                {
+                    "info": "LF",
+                    "name": "Plain text",
+                    "string": "Format: Plain text[LF]",
+                    "type": "format",
+                    "version": ""
+                }
+            ]
+        }
+    ]
+}
+
+

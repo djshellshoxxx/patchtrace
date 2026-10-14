@@ -1,0 +1,36 @@
+{
+    "detects": [
+        {
+            "filetype": "PE64",
+            "info": "",
+            "offset": "0",
+            "parentfilepart": "Header",
+            "size": "2048",
+            "values": [
+                {
+                    "info": "",
+                    "name": "Microsoft Linker",
+                    "string": "Linker: Microsoft Linker(14.38.33134)",
+                    "type": "linker",
+                    "version": "14.38.33134"
+                },
+                {
+                    "info": "C",
+                    "name": "Microsoft Visual C/C++",
+                    "string": "Compiler: Microsoft Visual C/C++(19.38.33134)[C]",
+                    "type": "compiler",
+                    "version": "19.38.33134"
+                },
+                {
+                    "info": "",
+                    "name": "Microsoft Visual Studio",
+                    "string": "Tool: Microsoft Visual Studio(2022, 17.8)",
+                    "type": "tool",
+                    "version": "2022, 17.8"
+                }
+            ]
+        }
+    ]
+}
+
+

@@ -1,0 +1,2 @@
+ERROR: floss: failed to analyze sample: FLOSS currently supports the following formats for string decoding and stackstrings: PE
+You can analyze shellcode using the --format sc32|sc64 switch. See the help (-h) for more information.

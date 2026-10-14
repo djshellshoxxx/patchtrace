@@ -1,0 +1,565 @@
+{
+  "captured": "2026-10-14",
+  "contract": "intel-tools-goldens/1",
+  "files": {
+    "capa/capa-api-newer.json": {
+      "argv": [
+        "-q",
+        "--color",
+        "never",
+        "-j",
+        "-f",
+        "pe",
+        "-b",
+        "vivisect",
+        "--os",
+        "windows",
+        "{in}"
+      ],
+      "elapsed_s": 8.38,
+      "input": "capa-api-newer.exe",
+      "input_sha256": "e7ed617adeac5f301b0dcca7b0d47d10e01e9493281d9203755ba07e1bf11054",
+      "kind": "stdout",
+      "returncode": 0,
+      "sha256": "9d0107a1ce3a102500d8bd9300cddd30a3e8ac68a6a06e24797922c028cfc154"
+    },
+    "capa/capa-api-older.json": {
+      "argv": [
+        "-q",
+        "--color",
+        "never",
+        "-j",
+        "-f",
+        "pe",
+        "-b",
+        "vivisect",
+        "--os",
+        "windows",
+        "{in}"
+      ],
+      "elapsed_s": 9.51,
+      "input": "capa-api-older.exe",
+      "input_sha256": "239639d1c9f4c181e535763c515d768193d79e42d52fa9552f495f85f9e88805",
+      "kind": "stdout",
+      "returncode": 0,
+      "sha256": "2d8a0998645e638d76ddac4e289f4da584ce853a9ddc9b28ae63ecdc52f6bca0"
+    },
+    "capa/capa-control-newer.json": {
+      "argv": [
+        "-q",
+        "--color",
+        "never",
+        "-j",
+        "-f",
+        "pe",
+        "-b",
+        "vivisect",
+        "--os",
+        "windows",
+        "{in}"
+      ],
+      "elapsed_s": 8.75,
+      "input": "capa-control-newer.exe",
+      "input_sha256": "7988d2f4214199350acb80803f5364bc228ca0a41e1a810c8702a3c2654777cc",
+      "kind": "stdout",
+      "returncode": 0,
+      "sha256": "21d5124b360325aaa55c53a347830cfeeb136adba2278a4b41871a82d40401c9"
+    },
+    "capa/capa-control-older.json": {
+      "argv": [
+        "-q",
+        "--color",
+        "never",
+        "-j",
+        "-f",
+        "pe",
+        "-b",
+        "vivisect",
+        "--os",
+        "windows",
+        "{in}"
+      ],
+      "elapsed_s": 8.9,
+      "input": "capa-control-older.exe",
+      "input_sha256": "239639d1c9f4c181e535763c515d768193d79e42d52fa9552f495f85f9e88805",
+      "kind": "stdout",
+      "returncode": 0,
+      "sha256": "a2a4cdd7f198dfe8554c7968b563427bd3196aa8900246787263433dfb0c91c3"
+    },
+    "capa/error-not-pe.stderr.txt": {
+      "argv": [
+        "-q",
+        "--color",
+        "never",
+        "-j",
+        "-f",
+        "pe",
+        "-b",
+        "vivisect",
+        "--os",
+        "windows",
+        "{in}"
+      ],
+      "input": "text.bin",
+      "kind": "stderr",
+      "returncode": 13,
+      "sha256": "733ea635a4972e358d913a61ae3d2b48e86a39a3f478bdfaef89f4b3ee1a935a"
+    },
+    "capa/error-not-pe.stdout.txt": {
+      "argv": [
+        "-q",
+        "--color",
+        "never",
+        "-j",
+        "-f",
+        "pe",
+        "-b",
+        "vivisect",
+        "--os",
+        "windows",
+        "{in}"
+      ],
+      "input": "text.bin",
+      "kind": "stdout",
+      "returncode": 13,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "capa/help.stdout.txt": {
+      "argv": [
+        "--help"
+      ],
+      "input": null,
+      "kind": "stdout",
+      "returncode": 0,
+      "sha256": "48d4c454f6e3ab65ab17ac5cefb43d5cdbea417015f356a47b583e7cb4214c65"
+    },
+    "capa/version.stdout.txt": {
+      "argv": [
+        "--version"
+      ],
+      "input": null,
+      "kind": "stdout",
+      "returncode": 0,
+      "sha256": "990d48df7440011dea30c8c2c7b7a3ca7f1aaebd62954e32e57eaa433c9e5c78"
+    },
+    "diec/diec-same-newer.json": {
+      "argv": [
+        "-j",
+        "-D",
+        "<path>",
+        "-E",
+        "{empty}",
+        "-C",
+        "{empty}",
+        "{in}"
+      ],
+      "elapsed_s": 0.14,
+      "input": "diec-same-newer.exe",
+      "input_sha256": "3271263489d95559dde44805e55c471c8ed4a60423fcf90c3e841e6537ef915f",
+      "kind": "stdout",
+      "returncode": 0,
+      "sha256": "1c66de15d5b98390e596b9111032bf17e3d1f83c8048ad5ba6779d2cb5772a8b"
+    },
+    "diec/diec-same-older.json": {
+      "argv": [
+        "-j",
+        "-D",
+        "<path>",
+        "-E",
+        "{empty}",
+        "-C",
+        "{empty}",
+        "{in}"
+      ],
+      "elapsed_s": 0.18,
+      "input": "diec-same-older.exe",
+      "input_sha256": "239639d1c9f4c181e535763c515d768193d79e42d52fa9552f495f85f9e88805",
+      "kind": "stdout",
+      "returncode": 0,
+      "sha256": "1c66de15d5b98390e596b9111032bf17e3d1f83c8048ad5ba6779d2cb5772a8b"
+    },
+    "diec/diec-toolchain-newer.heuristic.json": {
+      "argv": [
+        "-j",
+        "-d",
+        "-u",
+        "-D",
+        "<path>",
+        "-E",
+        "{empty}",
+        "-C",
+        "{empty}",
+        "{in}"
+      ],
+      "elapsed_s": 0.21,
+      "input": "diec-toolchain-newer.exe",
+      "input_sha256": "5533d8074a1a87bf39fff38dfb63d93ffad5210a59bb899982bdaa6ef9d0057a",
+      "kind": "stdout",
+      "returncode": 0,
+      "sha256": "1b972c4a7d43aa23ed4c4d4def336ad959512640b61845022c5e2b514cb99886"
+    },
+    "diec/diec-toolchain-newer.json": {
+      "argv": [
+        "-j",
+        "-D",
+        "<path>",
+        "-E",
+        "{empty}",
+        "-C",
+        "{empty}",
+        "{in}"
+      ],
+      "elapsed_s": 0.22,
+      "input": "diec-toolchain-newer.exe",
+      "input_sha256": "5533d8074a1a87bf39fff38dfb63d93ffad5210a59bb899982bdaa6ef9d0057a",
+      "kind": "stdout",
+      "returncode": 0,
+      "sha256": "a08bf522a9d1f39cc0dad163bac0b4d0bb9236ee120282b7d7beaebfd066c429"
+    },
+    "diec/diec-toolchain-older.json": {
+      "argv": [
+        "-j",
+        "-D",
+        "<path>",
+        "-E",
+        "{empty}",
+        "-C",
+        "{empty}",
+        "{in}"
+      ],
+      "elapsed_s": 0.13,
+      "input": "diec-toolchain-older.exe",
+      "input_sha256": "239639d1c9f4c181e535763c515d768193d79e42d52fa9552f495f85f9e88805",
+      "kind": "stdout",
+      "returncode": 0,
+      "sha256": "1c66de15d5b98390e596b9111032bf17e3d1f83c8048ad5ba6779d2cb5772a8b"
+    },
+    "diec/diec-unknown-newer.heuristic.json": {
+      "argv": [
+        "-j",
+        "-d",
+        "-u",
+        "-D",
+        "<path>",
+        "-E",
+        "{empty}",
+        "-C",
+        "{empty}",
+        "{in}"
+      ],
+      "elapsed_s": 0.21,
+      "input": "diec-unknown-newer.exe",
+      "input_sha256": "0c13fbcf386b0abf328aaadd00c965206dd8727c47cde8fa39ba16257f25c98b",
+      "kind": "stdout",
+      "returncode": 0,
+      "sha256": "b00585324a5bd6b1389a199a9ff2d28ab5d025b8548dd75cd0303c1132627489"
+    },
+    "diec/diec-unknown-newer.json": {
+      "argv": [
+        "-j",
+        "-D",
+        "<path>",
+        "-E",
+        "{empty}",
+        "-C",
+        "{empty}",
+        "{in}"
+      ],
+      "elapsed_s": 0.15,
+      "input": "diec-unknown-newer.exe",
+      "input_sha256": "0c13fbcf386b0abf328aaadd00c965206dd8727c47cde8fa39ba16257f25c98b",
+      "kind": "stdout",
+      "returncode": 0,
+      "sha256": "8966fc7040b2779cab95d834334a3785cc6e32c807c23ce3606441155cd342eb"
+    },
+    "diec/diec-unknown-older.json": {
+      "argv": [
+        "-j",
+        "-D",
+        "<path>",
+        "-E",
+        "{empty}",
+        "-C",
+        "{empty}",
+        "{in}"
+      ],
+      "elapsed_s": 0.23,
+      "input": "diec-unknown-older.exe",
+      "input_sha256": "239639d1c9f4c181e535763c515d768193d79e42d52fa9552f495f85f9e88805",
+      "kind": "stdout",
+      "returncode": 0,
+      "sha256": "1c66de15d5b98390e596b9111032bf17e3d1f83c8048ad5ba6779d2cb5772a8b"
+    },
+    "diec/help.stdout.txt": {
+      "argv": [
+        "--help"
+      ],
+      "input": null,
+      "kind": "stdout",
+      "returncode": 0,
+      "sha256": "c908d68856cad85ca592703abac1f967a7c24ba93fe947df5d709b0dcee8c25e"
+    },
+    "diec/text-file.stdout.txt": {
+      "argv": [
+        "-j",
+        "-D",
+        "<path>",
+        "-E",
+        "{empty}",
+        "-C",
+        "{empty}",
+        "{in}"
+      ],
+      "input": "text.bin",
+      "kind": "stdout",
+      "returncode": 0,
+      "sha256": "6cd2f7ec144f7dbc92f825fec460ff7f4034464826060520009bdc81299016ee"
+    },
+    "diec/version.stdout.txt": {
+      "argv": [
+        "--version"
+      ],
+      "input": null,
+      "kind": "stdout",
+      "returncode": 0,
+      "sha256": "0c9c3ead825bd39fcf7ba74692ec22845cc27663a4a433e2120eae1843f5719b"
+    },
+    "floss/empty-no-static-strings.stdout.txt": {
+      "argv": [
+        "-j",
+        "-q",
+        "--disable-progress",
+        "--color",
+        "never",
+        "-f",
+        "pe",
+        "--only",
+        "static",
+        "--",
+        "{in}"
+      ],
+      "input": "nostrings.bin",
+      "kind": "stdout",
+      "returncode": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "floss/error-not-pe-deobfuscate.stderr.txt": {
+      "argv": [
+        "-j",
+        "-q",
+        "--disable-progress",
+        "--color",
+        "never",
+        "-f",
+        "pe",
+        "--only",
+        "static",
+        "stack",
+        "tight",
+        "decoded",
+        "--",
+        "{in}"
+      ],
+      "input": "text.bin",
+      "kind": "stderr",
+      "returncode": 255,
+      "sha256": "4eb892555dbc702b4a9f428b5133b01d608ff362725750508258f06b56bda851"
+    },
+    "floss/error-not-pe-deobfuscate.stdout.txt": {
+      "argv": [
+        "-j",
+        "-q",
+        "--disable-progress",
+        "--color",
+        "never",
+        "-f",
+        "pe",
+        "--only",
+        "static",
+        "stack",
+        "tight",
+        "decoded",
+        "--",
+        "{in}"
+      ],
+      "input": "text.bin",
+      "kind": "stdout",
+      "returncode": 255,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "floss/floss-decode-newer.deobfuscate.json": {
+      "argv": [
+        "-j",
+        "-q",
+        "--disable-progress",
+        "--color",
+        "never",
+        "-f",
+        "pe",
+        "--only",
+        "static",
+        "stack",
+        "tight",
+        "decoded",
+        "--",
+        "{in}"
+      ],
+      "elapsed_s": 6.33,
+      "input": "floss-decode-newer.exe",
+      "input_sha256": "6a8a9277ac9649b1abf35eadca548ef5300b62f692962847595117ce00fdd63a",
+      "kind": "stdout",
+      "returncode": 0,
+      "sha256": "31d90759c0afa5d64e40471607c2fa2322c64e2679cff5197ed45e06f6b47398"
+    },
+    "floss/floss-decode-newer.static.json": {
+      "argv": [
+        "-j",
+        "-q",
+        "--disable-progress",
+        "--color",
+        "never",
+        "-f",
+        "pe",
+        "--only",
+        "static",
+        "--",
+        "{in}"
+      ],
+      "elapsed_s": 1.08,
+      "input": "floss-decode-newer.exe",
+      "input_sha256": "6a8a9277ac9649b1abf35eadca548ef5300b62f692962847595117ce00fdd63a",
+      "kind": "stdout",
+      "returncode": 0,
+      "sha256": "1920c9d1c120f63d2cbee1c5b7aaf3ab6d44122b7c600e46ef3c4d7b73baaf1c"
+    },
+    "floss/floss-decode-older.deobfuscate.json": {
+      "argv": [
+        "-j",
+        "-q",
+        "--disable-progress",
+        "--color",
+        "never",
+        "-f",
+        "pe",
+        "--only",
+        "static",
+        "stack",
+        "tight",
+        "decoded",
+        "--",
+        "{in}"
+      ],
+      "elapsed_s": 5.68,
+      "input": "floss-decode-older.exe",
+      "input_sha256": "13ded9b68b135e15a6e92ab801626848d66b7e8a068bd5dabee61022c340a96a",
+      "kind": "stdout",
+      "returncode": 0,
+      "sha256": "7cb3a9ab03194be475c7f57168c9218828017610a7c0bf8db48177496840fa75"
+    },
+    "floss/floss-decode-older.static.json": {
+      "argv": [
+        "-j",
+        "-q",
+        "--disable-progress",
+        "--color",
+        "never",
+        "-f",
+        "pe",
+        "--only",
+        "static",
+        "--",
+        "{in}"
+      ],
+      "elapsed_s": 1.01,
+      "input": "floss-decode-older.exe",
+      "input_sha256": "13ded9b68b135e15a6e92ab801626848d66b7e8a068bd5dabee61022c340a96a",
+      "kind": "stdout",
+      "returncode": 0,
+      "sha256": "a3b0a7d513629daea867cf49567b1cecf0314eb14d30c3155f6b574e86012f56"
+    },
+    "floss/floss-static-newer.static.json": {
+      "argv": [
+        "-j",
+        "-q",
+        "--disable-progress",
+        "--color",
+        "never",
+        "-f",
+        "pe",
+        "--only",
+        "static",
+        "--",
+        "{in}"
+      ],
+      "elapsed_s": 1.03,
+      "input": "floss-static-newer.exe",
+      "input_sha256": "943f9914f8dae5dc8f79d6b09e51933dad3e90a6ad5070f7ba6e68984bb05425",
+      "kind": "stdout",
+      "returncode": 0,
+      "sha256": "c915834086f5d0fa1121992fd29e7537b869f22aad35f22cc853601fe5d9ac1c"
+    },
+    "floss/floss-static-older.static.json": {
+      "argv": [
+        "-j",
+        "-q",
+        "--disable-progress",
+        "--color",
+        "never",
+        "-f",
+        "pe",
+        "--only",
+        "static",
+        "--",
+        "{in}"
+      ],
+      "elapsed_s": 1.09,
+      "input": "floss-static-older.exe",
+      "input_sha256": "3271263489d95559dde44805e55c471c8ed4a60423fcf90c3e841e6537ef915f",
+      "kind": "stdout",
+      "returncode": 0,
+      "sha256": "14979ed36d1468e28e707b635227db848edbea7b82820bb6a6905907355d82ba"
+    },
+    "floss/help-advanced.stdout.txt": {
+      "argv": [
+        "-H"
+      ],
+      "input": null,
+      "kind": "stdout",
+      "returncode": 0,
+      "sha256": "a12b5f5706de49e4e1347daf049cdce69eeaad33a532267ae66b037e704cbdaa"
+    },
+    "floss/version.stdout.txt": {
+      "argv": [
+        "--version"
+      ],
+      "input": null,
+      "kind": "stdout",
+      "returncode": 0,
+      "sha256": "a71d384f0a681131dd5c5b2c674744be1f6b98097e26752aa8f2af96f7e1d511"
+    }
+  },
+  "host": "Ubuntu 24.04 x86-64, no network (unshare -rn), private HOME/TMPDIR, sample copied to in/artifact.bin",
+  "inputs": {
+    "*.exe": "tests/test_intel_tools_pe.py write_pairs() (deterministic; SHA-256 per file below)",
+    "nostrings.bin": "bytes(range(3)) * 50 (150 bytes, no printable run of 4)",
+    "text.bin": "b'just some text, not a PE\\n' (25 bytes)"
+  },
+  "note": "REAL tool output on SYNTHETIC inputs built by tests/test_intel_tools_pe.py; never evidence about real binaries. Local paths are replaced by <scratch>/<exe>; nothing else was edited.",
+  "tools": {
+    "capa": {
+      "asset": "capa-v9.4.0-linux.zip",
+      "executable_sha256": "cb57c9ea27dda4a6aefb368caca35c3177495e611ad9af64c801d51561035218",
+      "version_text": "capa 9.4.0"
+    },
+    "diec": {
+      "asset": "die_3.21_Ubuntu_24.04_amd64.deb (Qt 5.15.13 Core+Script from noble)",
+      "executable_sha256": "7a142132cd15f8628b98cbef58ae4352d7e1625fb7d33d5b1db5354da7b817da",
+      "version_text": "die 3.21"
+    },
+    "floss": {
+      "asset": "floss-v3.1.1-linux.zip",
+      "executable_sha256": "d71b9ea4fe3b2de974dc1ae3c5d0f67569921bc118dcb02ed72e905a662411cb",
+      "version_text": "floss v3.1.1-0-g3cd3ee6"
+    }
+  }
+}
