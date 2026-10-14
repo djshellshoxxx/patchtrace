@@ -435,3 +435,6 @@ Automated: `tests/test_yarax_engine.py` (real engine and real child: golden grid
 Automated: `tests/test_kbc_acquire_cli.py` (25 tests; fake transport, sockets denied): plan printed with exit 2 and zero requests for missing, wrong-host, wrong-plan and offline consent; consented acquire verifies, imports, attaches (`kb attach --repair`, `kb explain`); hash mismatch and non-empty directory leave nothing; Winbindex record import validation, size bounds, gz replace. Not verified: a live Winbindex or symbol-server download.
 ### [K1a:kev-core] KEV core QA (2026-10-14, local Linux worktree)
 Automated: `tests/test_kev_*.py` (hermetic, no sockets); the full real catalog (1,741 entries, fetched 2026-10-14, not committed) parses with 0 skipped in about 0.07 s. Not verified: Windows run; screen-reader reading of cells; cisa.gov feed URL and licence text (gate K6/owner).
+
+### [K4:kev-kb-adapter]
+Automated: `pytest tests/test_kev_synergy.py tests/test_kev_kb_integration.py` (22 tests). Open at the KB wave merge: synergy item 9 and the real KB view-model.

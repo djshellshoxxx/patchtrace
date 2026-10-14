@@ -344,3 +344,7 @@
 ### [K1a:kev-core]
 - [x] K0 fixtures and vendored schema; K1a pure core, tests `tests/test_kev_{contracts,parse,join,view_model,boundaries,schemas}.py`.
 - [ ] K1b store, K2 transport/service/CLI, K3 GUI, K4 KB adapter, K5 project row/report, K6 live probe; A0 spec, A1-A12 integrator amendments (plan section 10).
+
+### [K4:kev-kb-adapter]
+- [x] `kev/kb_adapter.py`, `tests/test_kev_synergy.py` (items 1-8), `tests/test_kev_kb_integration.py` (fake edges).
+- [ ] Open until KB K8: item 9 (`test_three_lanes_stay_separate_for_cve_2024_38063`), real KB view-model run, contextual_rank byte-identity.
