@@ -277,9 +277,9 @@ def test_one_sided_categories_are_unavailable(category):
     assert {o.detector for o in result.outcomes} == {d.id for d in DETECTORS}
 
 
-def test_missing_code_is_unavailable_not_zero():
+def test_missing_code_is_partial_not_zero():
     result = detect(view(None, BND_NEW))
-    assert result.status == 'unavailable' and all('missing' in o.reason for o in result.outcomes)
+    assert result.status == 'partial' and all('missing' in o.reason for o in result.outcomes)  # SPEC-07h H3
 
 
 def test_split_with_two_functions_is_unavailable():

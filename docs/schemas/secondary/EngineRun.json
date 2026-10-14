@@ -1,0 +1,172 @@
+{
+  "additionalProperties": false,
+  "description": "One attempt; never updated after it is written.",
+  "properties": {
+    "contract": {
+      "const": "engine-run/1",
+      "default": "engine-run/1",
+      "title": "Contract",
+      "type": "string"
+    },
+    "run_id": {
+      "title": "Run Id",
+      "type": "string"
+    },
+    "engine": {
+      "enum": [
+        "ghidriff-baseline",
+        "bindiff",
+        "rz-diff"
+      ],
+      "title": "Engine",
+      "type": "string"
+    },
+    "engine_version": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Engine Version"
+    },
+    "executable_path_sha256": {
+      "anyOf": [
+        {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Executable Path Sha256"
+    },
+    "argv_digest": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Argv Digest",
+      "type": "string"
+    },
+    "older_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Older Sha256",
+      "type": "string"
+    },
+    "newer_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Newer Sha256",
+      "type": "string"
+    },
+    "orientation": {
+      "const": "older->newer",
+      "title": "Orientation",
+      "type": "string"
+    },
+    "cache_key": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Cache Key",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "ok",
+        "failed",
+        "cancelled",
+        "unsupported",
+        "timeout",
+        "cached"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "error_code": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Error Code"
+    },
+    "returncode": {
+      "anyOf": [
+        {
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Returncode"
+    },
+    "started_utc": {
+      "title": "Started Utc",
+      "type": "string"
+    },
+    "duration_ms": {
+      "minimum": 0,
+      "title": "Duration Ms",
+      "type": "integer"
+    },
+    "stderr_tail": {
+      "maxLength": 65536,
+      "title": "Stderr Tail",
+      "type": "string"
+    },
+    "output_sha256": {
+      "anyOf": [
+        {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Output Sha256"
+    },
+    "match_set_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Match Set Id"
+    },
+    "superseded_by": {
+      "default": null,
+      "title": "Superseded By",
+      "type": "null"
+    }
+  },
+  "required": [
+    "run_id",
+    "engine",
+    "engine_version",
+    "executable_path_sha256",
+    "argv_digest",
+    "older_sha256",
+    "newer_sha256",
+    "orientation",
+    "cache_key",
+    "status",
+    "error_code",
+    "returncode",
+    "started_utc",
+    "duration_ms",
+    "stderr_tail",
+    "output_sha256",
+    "match_set_id"
+  ],
+  "title": "EngineRun",
+  "type": "object",
+  "$id": "https://patchtrace.local/schemas/engine-run/1/EngineRun.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}

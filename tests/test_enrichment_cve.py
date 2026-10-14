@@ -141,14 +141,46 @@ def test_conflicting_cwe_and_cvss_recorded_not_merged():
     assert {(c.source, c.value) for c in s.cwes} == {('msrc', 'CWE-787'), ('nvd', 'CWE-191')}
 
 
-def test_conflicting_severity_never_merged():
-    def add(d):
-        m = d['vulnerabilities'][0]['cve']['metrics']['cvssMetricV31']
-        m.append(json.loads(json.dumps(m[0])) | {'source': 'nvd@nist.gov', 'type': 'Primary'})
-        m[-1]['cvssData']['baseSeverity'] = 'HIGH'
-    s = snap(nvd=edited(NVD, add), msrc=None)
-    assert any(c.startswith('severity 3.1:') for c in s.conflicts)
+def _add_nvd_metric(d, *, source='nvd@nist.gov', score=None, severity=None, vector=None):
+    m = d['vulnerabilities'][0]['cve']['metrics']['cvssMetricV31']
+    m.append(json.loads(json.dumps(m[0])) | {'source': source, 'type': 'Primary'})
+    if severity:
+        m[-1]['cvssData']['baseSeverity'] = severity
+    if score is not None:
+        m[-1]['cvssData']['baseScore'] = score
+    if vector:
+        m[-1]['cvssData']['vectorString'] = vector
+
+
+def test_nvd_primary_secondary_difference_is_not_a_conflict():
+    # H12: NVD's own Primary (NIST) and Secondary (CNA) entries routinely differ.
+    s = snap(nvd=edited(NVD, lambda d: _add_nvd_metric(
+        d, score=8.1, severity='HIGH', vector='CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:H')), msrc=None)
+    assert s.conflicts == ()
+    assert {r.base_score_tenths for r in s.cvss} == {98, 81}  # both records kept
     assert {r.severity for r in s.cvss} == {'HIGH', 'CRITICAL'}
+
+
+def test_cvss_conflict_across_providers_and_shared_pair():
+    nvd = edited(NVD, lambda d: _add_nvd_metric(
+        d, score=7.5, vector='CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H'))
+    msrc_same = edited(MSRC, lambda d: d.update(baseScore='7.5',
+                                                vectorString='CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H'))
+    assert snap(nvd=nvd, msrc=msrc_same).conflicts == ()  # MSRC shares a pair with NVD's secondary entry
+    msrc = edited(MSRC, lambda d: d.update(baseScore='7.5',
+                                           vectorString='CVSS:3.1/AV:N/AC:L/PR:H/UI:N/S:U/C:H/I:H/A:H'))
+    s = snap(nvd=NVD, msrc=msrc)
+    conflict = [c for c in s.conflicts if c.startswith('cvss 3.1:')]
+    assert conflict and 'msrc=75' in conflict[0] and 'nvd=98' in conflict[0]
+
+
+def test_cvss_versions_are_never_compared_with_each_other():
+    def v4(d):
+        metrics = d['vulnerabilities'][0]['cve']['metrics']
+        rec = json.loads(json.dumps(metrics['cvssMetricV31'][0]))
+        rec['cvssData'].update(version='4.0', vectorString='CVSS:4.0/AV:N', baseScore=5.0)
+        metrics['cvssMetricV40'] = [rec]
+    assert snap(nvd=edited(NVD, v4), msrc=None).conflicts == ()
 
 
 def test_freshness():
@@ -221,8 +253,8 @@ def test_real_cve_reorders_without_changing_base():
     alpha = by[pid('alpha')]
     assert alpha.adjustment == 0 and alpha.context_score == alpha.base_score  # BND not aligned with CWE-191
     delta = by[pid('delta')]
-    # TcpConnect matches "tcp" (binary support) so the product match may corroborate it.
-    assert delta.adjustment == 16
+    # H4: TcpConnect matches "tcp" but delta has no signal, so name and module match add nothing.
+    assert delta.adjustment == 0 and delta.blocked == ('no-binary-evidence',)
     for e in result.entries:
         orig = next(x for x in ranking.entries if x.pairing_id == e.pairing_id)
         assert (e.base_score, e.base_rank, e.match_id) == (orig.score, orig.rank, orig.match_id)
@@ -326,6 +358,19 @@ def test_stale_snapshots_reported():
     assert r.stale_snapshots == (CVE_ID,)
 
 
+def test_stale_snapshot_makes_status_partial():
+    sets, ranking = scenario()
+    later = datetime(2027, 1, 1, tzinfo=UTC)
+    r = cve.contextual_rank(ranking, sets, [], [snap()], [], {}, now=later, max_age_days=30)
+    assert r.status == 'partial' and r.stale_snapshots == (CVE_ID,)
+    fresh = datetime(2026, 10, 13, tzinfo=UTC)
+    r = cve.contextual_rank(ranking, sets, [], [snap()], [], {}, now=fresh, max_age_days=30)
+    assert r.status == 'complete' and r.stale_snapshots == ()
+    past = datetime(2026, 10, 1, tzinfo=UTC)  # snapshot retrieved "in the future"
+    assert cve.contextual_rank(ranking, sets, [], [snap()], [], {}, now=past, max_age_days=30).status == 'partial'
+    assert cve.contextual_rank(ranking, sets, [], [snap()], [], {}).status == 'complete'  # not evaluated
+
+
 def test_snapshot_round_trips_strictly():
     s = snap()
     assert CveSnapshot.model_validate_json(s.model_dump_json()) == s
@@ -345,10 +390,155 @@ def test_cwe_conflict_blocks_only_disputed_values():
 
 
 def test_select_latest_snapshot_per_cve():
+    # Deliberate H13 change: a newer MSRC-only snapshot no longer discards the older NVD data.
     a = cve.normalize(CVE_ID, {'nvd': NVD}, '2026-01-01T00:00:00Z')
     b = cve.normalize(CVE_ID, {'msrc': MSRC}, '2026-02-01T00:00:00Z')
     kept, ignored = cve.select_latest([b, a])
-    assert kept == (b,) and ignored == (a,)
-    c = cve.normalize(CVE_ID, {'nvd': NVD, 'msrc': MSRC}, '2026-02-01T00:00:00+00:00')  # same instant as b
-    kept, ignored = cve.select_latest([c, b])
-    assert kept[0].snapshot_id == min(b.snapshot_id, c.snapshot_id) and len(ignored) == 1
+    assert ignored == () and kept[0].retrieved_at == a.retrieved_at
+    assert set(kept[0].response_digests) == {'msrc', 'nvd'}
+    a2 = cve.normalize(CVE_ID, {'nvd': NVD + b' '}, '2026-02-01T00:00:00Z')
+    kept, ignored = cve.select_latest([a, a2])
+    assert kept == (a2,) and ignored == (a,)
+
+
+# --- H4: contextual rerank requires binary evidence ---------------------------
+
+def _tcp_cve(**over):
+    return snap(nvd=None, msrc=edited(MSRC, lambda d: d.update(cweList=[], **over)))
+
+
+def test_name_match_without_signals_adds_nothing():
+    sets = [sset('x', []), sset('y', [sig('ERR', 'weak', 'y')])]
+    ranking = rank(sets, RankingConfig())
+    result = cve.contextual_rank(ranking, sets, [], [_tcp_cve()], ['tcpip.sys'],
+                                 {pid('x'): ['TcpConnect'], pid('y'): ['Unrelated']})
+    by = {e.pairing_id: e for e in result.entries}
+    x = by[pid('x')]
+    assert x.adjustment == 0 and x.contributions == () and x.context_score == x.base_score
+    assert x.blocked == ('no-binary-evidence',)
+    assert [e.pairing_id for e in result.entries] == [e.pairing_id for e in ranking.entries]
+
+
+def test_name_match_with_weak_signal_cites_the_signal():
+    s = sig('ERR', 'weak', 'x')
+    sets = [sset('x', [s])]
+    ranking = rank(sets, RankingConfig())
+    e = cve.contextual_rank(ranking, sets, [], [_tcp_cve()], [], {pid('x'): ['TcpConnect']}).entries[0]
+    assert e.adjustment == 12 and e.blocked == ()
+    ident = [c for c in e.contributions if c.kind == 'identifier'][0]
+    assert ident.binary_ref == f'signal:{s.signal_id}' and 'TcpConnect' in ident.detail
+
+
+def test_lowest_signal_id_is_cited_and_unavailable_confidence_is_not_evidence():
+    a, b = sig('ERR', 'weak', 'x', '1'), sig('OVF', 'weak', 'x', '2')
+    sets = [sset('x', [a, b])]
+    ranking = rank(sets, RankingConfig())
+    e = cve.contextual_rank(ranking, sets, [], [_tcp_cve()], [], {pid('x'): ['TcpConnect']}).entries[0]
+    assert [c.binary_ref for c in e.contributions if c.kind == 'identifier'] == [
+        'signal:' + min(a.signal_id, b.signal_id)]
+    sets = [sset('x', [sig('ERR', 'unavailable', 'x')])]
+    ranking = rank(sets, RankingConfig())
+    assert cve.contextual_rank(ranking, sets, [], [_tcp_cve()], [], {pid('x'): ['TcpConnect']}).entries[0].adjustment == 0
+
+
+def test_qualifying_transition_alone_is_binary_evidence():
+    sets = [sset('x', [])]
+    ranking = rank(sets, RankingConfig())
+    t = FeatureTransition(transition_id=H, pairing_id=pid('x'), match_id='m-x', feature_id=7, kind='introduced',
+                          confidence='moderate', qualifies=True)
+    e = cve.contextual_rank(ranking, sets, [t], [_tcp_cve()], [], {pid('x'): ['TcpConnect']}).entries[0]
+    assert e.adjustment == 12 and e.contributions[0].binary_ref.startswith('transition:')
+
+
+def test_unavailable_one_sided_pairing_never_qualifies():
+    p = pid('u')
+    one_sided = SignalSet(pairing_id=p, match_id='m-u', category='added', signals=(), status='unavailable',
+                          outcomes=(DetectorOutcome(pairing_id=p, detector='BND', status='unavailable',
+                                                    reason='NOT-APPLICABLE: x'),))
+    ranking = rank([one_sided], RankingConfig())
+    e = cve.contextual_rank(ranking, [one_sided], [], [_tcp_cve()], ['tcpip.sys'], {p: ['TcpConnect']}).entries[0]
+    assert e.adjustment == 0
+
+
+def test_two_names_two_signals_cap_and_product_needs_other_contribution():
+    sets = [sset('x', [sig('ERR', 'weak', 'x', '1'), sig('OVF', 'weak', 'x', '2')]), sset('p', [])]
+    ranking = rank(sets, RankingConfig())
+    s = snap(nvd=None, msrc=edited(MSRC, lambda d: d.update(cweList=[], cveTitle='Alphaword Betaword')))
+    result = cve.contextual_rank(ranking, sets, [], [s], ['tcpip.sys'],
+                                 {pid('x'): ['Alphaword', 'Betaword', 'Alphaword2Betaword'],
+                                  pid('p'): ['Alphaword']})
+    by = {e.pairing_id: e for e in result.entries}
+    assert by[pid('x')].adjustment == 24 + 4
+    assert by[pid('p')].adjustment == 0  # name + module match, no signal: product cannot lift alone
+
+
+def test_context_score_never_below_base_and_equal_without_signals():
+    sets, ranking = scenario()
+    result = cve.contextual_rank(ranking, sets, [], [snap()], ['tcpip.sys'], names())
+    for e in result.entries:
+        assert e.context_score >= e.base_score
+    empty = [sset(n, []) for n in ('a', 'b')]
+    ranking = rank(empty, RankingConfig())
+    result = cve.contextual_rank(ranking, empty, [], [snap()], ['tcpip.sys'],
+                                 {pid('a'): ['TcpConnect'], pid('b'): ['Ipv6Reassemble']})
+    assert all(e.context_score == e.base_score for e in result.entries)
+
+
+# --- H13: select_latest keeps every provider's newest data ---------------------
+
+OLD = '2026-01-01T00:00:00Z'
+NEW = '2026-02-01T00:00:00Z'
+
+
+def test_select_latest_merges_providers_with_oldest_retrieved_at():
+    old = cve.normalize(CVE_ID, {'nvd': NVD, 'msrc': MSRC}, OLD)
+    nvd2 = edited(NVD, lambda d: d['vulnerabilities'][0]['cve']['descriptions'][0].update(value='Updated text'))
+    new = cve.normalize(CVE_ID, {'nvd': nvd2}, NEW)
+    kept, ignored = cve.select_latest([old, new])
+    assert ignored == () and len(kept) == 1
+    merged = kept[0]
+    assert merged.retrieved_at == OLD  # oldest contributing time: conservative for staleness
+    assert merged.response_digests == {'msrc': old.response_digests['msrc'], 'nvd': new.response_digests['nvd']}
+    assert {d.source for d in merged.descriptions} == {'msrc', 'nvd'}
+    assert 'Updated text' in {d.text for d in merged.descriptions if d.source == 'nvd'}
+    assert {c.source for c in merged.cvss} == {'msrc', 'nvd:secure@microsoft.com'}
+    assert merged.feature_ids == ()
+    # same recipe as a fresh normalize over those responses: identical ids, fields and conflicts
+    fresh = cve.normalize(CVE_ID, {'nvd': nvd2, 'msrc': MSRC}, OLD)
+    assert merged == fresh
+
+
+def test_select_latest_merge_is_order_independent_and_does_not_mutate():
+    old = cve.normalize(CVE_ID, {'nvd': NVD, 'msrc': MSRC}, OLD)
+    new = cve.normalize(CVE_ID, {'nvd': edited(NVD, lambda d: d['vulnerabilities'][0]['cve'].update(
+        published='2024-08-01T00:00:00.000'))}, NEW)
+    before = (old.model_dump(), new.model_dump())
+    a = cve.select_latest([old, new])
+    b = cve.select_latest([new, old])
+    assert a == b
+    assert (old.model_dump(), new.model_dump()) == before
+
+
+def test_select_latest_recomputes_conflicts_for_the_merged_fields():
+    msrc = edited(MSRC, lambda d: d.update(baseScore='7.5',
+                                           vectorString='CVSS:3.1/AV:N/AC:L/PR:H/UI:N/S:U/C:H/I:H/A:H'))
+    old = cve.normalize(CVE_ID, {'nvd': NVD, 'msrc': msrc}, OLD)
+    assert old.conflicts
+    new = cve.normalize(CVE_ID, {'nvd': NVD}, NEW)
+    merged = cve.select_latest([old, new])[0][0]
+    assert merged.conflicts == old.conflicts  # both providers still contribute and still disagree
+
+
+def test_select_latest_ignores_snapshots_that_contribute_nothing():
+    a = cve.normalize(CVE_ID, {'nvd': NVD}, '2026-01-01T00:00:00Z')
+    b = cve.normalize(CVE_ID, {'nvd': NVD + b' '}, '2026-02-01T00:00:00Z')
+    kept, ignored = cve.select_latest([b, a])
+    assert kept == (b,) and ignored == (a,)  # same provider each: unchanged behaviour
+
+
+def test_select_latest_tie_break_uses_snapshot_id():
+    x = cve.normalize(CVE_ID, {'nvd': NVD, 'msrc': MSRC}, NEW)
+    y = cve.normalize(CVE_ID, {'nvd': NVD + b' ', 'msrc': MSRC}, '2026-02-01T00:00:00+00:00')
+    kept, ignored = cve.select_latest([y, x])
+    assert len(kept) == 1 and len(ignored) == 1
+    assert kept[0].snapshot_id == min(x.snapshot_id, y.snapshot_id)

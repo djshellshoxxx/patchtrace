@@ -11,6 +11,7 @@ from __future__ import annotations
 import threading
 from collections.abc import Callable
 from dataclasses import dataclass, field
+from datetime import UTC, datetime
 
 from ..models import ComparisonProject
 from . import identity, ranking, signals, wil
@@ -28,10 +29,10 @@ from .contracts import (
     StageResult,
     Status,
 )
-from .storage import EnrichmentStore, Entry, Guard
+from .storage import ORPHAN_GRACE, EnrichmentStore, Entry, Guard
 from .views import MatchView, RunView, build_views
 
-STAGE_VERSIONS = {'signals': 1, 'wil': 1, 'ranking': 1, 'contextual': 1}
+STAGE_VERSIONS = {'signals': 2, 'wil': 2, 'ranking': 2, 'contextual': 2}
 CANCEL_EVERY = 256
 
 
@@ -165,10 +166,29 @@ def _overall(stages: list[StageResult], requested_context: bool = False) -> Stat
     return 'partial'
 
 
-def _merge(signal_set: SignalSet, extra: tuple[ChangeSignal, ...], wil_status: Status) -> SignalSet:
-    outcome = DetectorOutcome(pairing_id=signal_set.pairing_id, detector='WIL', status=wil_status)
-    return signal_set.model_copy(update={'signals': signal_set.signals + extra,
-                                         'outcomes': signal_set.outcomes + (outcome,)})
+def _wil_outcome(pairing_id: str, view: MatchView | None, transitions: tuple[FeatureTransition, ...],
+                 wil_status: Status) -> DetectorOutcome:
+    """Per-pairing WIL outcome (SPEC-07h H3); the stage status only overrides when the stage itself failed."""
+    def outcome(status: Status, reason: str = '') -> DetectorOutcome:
+        return DetectorOutcome(pairing_id=pairing_id, detector='WIL', status=status, reason=reason)
+    if wil_status != 'complete':
+        return outcome(wil_status)
+    if view is None or not view.two_sided:
+        return outcome('unavailable', f'{signals.NOT_APPLICABLE} one-sided-pairing')
+    if len(view.older) != 1 or len(view.newer) != 1:
+        return outcome('unavailable', f'{signals.NOT_APPLICABLE} pairing-ambiguous')
+    if any(f.code is None for f in (*view.older, *view.newer)):
+        return outcome('unavailable', f'{signals.LIMIT} code-unavailable')
+    notes = sorted({n for t in transitions for n in t.notes if n in {'function-too-large', 'site-limit'}})
+    if notes:
+        return outcome('partial', f'{signals.LIMIT} {",".join(notes)}')
+    return outcome('complete')
+
+
+def _merge(signal_set: SignalSet, extra: tuple[ChangeSignal, ...], outcome: DetectorOutcome) -> SignalSet:
+    outcomes = signal_set.outcomes + (outcome,)
+    return signal_set.model_copy(update={'signals': signal_set.signals + extra, 'outcomes': outcomes,
+                                         'status': signals.aggregate_status(outcomes)})
 
 
 def run(project: ComparisonProject, options: PipelineOptions | None = None,
@@ -207,7 +227,8 @@ def run(project: ComparisonProject, options: PipelineOptions | None = None,
                 raise EnrichmentError('PT-ENRICH-CANCEL', 'enrichment cancelled; completed stages were kept')
             return tuple(out)
         signal_sets, _ = _cached(options.cache, 'signals', signals_key, SignalSet, compute_signals, views)
-        record('signals', 'complete' if all(s.status == 'complete' for s in signal_sets) else 'partial')
+        # Structural not-applicable pairings (added/removed functions) are `unavailable` sets, not degradation.
+        record('signals', 'partial' if any(s.status == 'partial' for s in signal_sets) else 'complete')
     except EnrichmentError as exc:
         record('signals', 'cancelled' if exc.code == 'PT-ENRICH-CANCEL' else 'failed', exc)
 
@@ -238,10 +259,13 @@ def run(project: ComparisonProject, options: PipelineOptions | None = None,
         by_pairing.setdefault(transition.pairing_id, []).append(transition)
     matches: dict[str, MatchView] = {m.pairing_id: m for m in views.matches}
     if 'WIL' in options.config.enabled and signal_sets:
-        signal_sets = tuple(
-            _merge(s, wil.wil_signals(matches[s.pairing_id], tuple(by_pairing.get(s.pairing_id, ())))
-                   if wil_status == 'complete' and s.pairing_id in matches else (), wil_status)
-            for s in signal_sets)
+        merged = []
+        for item in signal_sets:
+            view = matches.get(item.pairing_id)
+            mine = tuple(by_pairing.get(item.pairing_id, ()))
+            extra = wil.wil_signals(view, mine) if wil_status == 'complete' and view is not None else ()
+            merged.append(_merge(item, extra, _wil_outcome(item.pairing_id, view, mine, wil_status)))
+        signal_sets = tuple(merged)
 
     ranking_result: RankingResult | None = None
     stage('ranking', {'signals': signals_key, 'wil': wil_key,
@@ -298,10 +322,18 @@ def publish(store: EnrichmentStore, project: ComparisonProject, result: Pipeline
     # which digests detectors, weights, filter and inputs, so profiles never overwrite or
     # impersonate each other. The pipeline row records which profile produced them.
     rid = result.stage_ids['ranking']
+    # Orphan rows (no pipeline row yet) younger than this belong to a concurrent publish: never reaped.
+    started = (datetime.now(UTC) - ORPHAN_GRACE).isoformat()
+    generation = [f'signals:{rid}', f'wil:{result.stage_ids["wil"]}', f'pipeline:{rid}']
+    if result.ranking is not None:
+        generation.append(f'ranking:{rid}')
+    if result.contextual is not None:
+        generation.append(f'contextual:{result.stage_ids["contextual"]}')
 
     def put(kind: str, items, status: Status, key: str, extra: dict | None = None):
         body = {'items': [i.model_dump(mode='json') for i in items]} | (extra or {})
-        written.append(store.publish(kind, result.guard, current, revision, status, body, f'{kind}:{key}'))
+        written.append(store.publish(kind, result.guard, current, revision, status, body, f'{kind}:{key}',
+                                     protect=generation))
 
     put('signals', result.signal_sets, result.status.stages[0].status, rid)
     put('wil', result.transitions, result.status.stages[1].status, result.stage_ids['wil'])
@@ -312,6 +344,7 @@ def publish(store: EnrichmentStore, project: ComparisonProject, result: Pipeline
     put('pipeline', (result.status,), result.status.status, rid,
         {'stage_ids': dict(result.stage_ids), 'config_digest': result.config_digest,
          'default_profile': result.default_profile})
+    store.apply_retention(current, protect=generation, started=started)
     return written
 
 

@@ -4,7 +4,7 @@ from __future__ import annotations
 import math
 from typing import Annotated, Literal
 
-from pydantic import BaseModel, ConfigDict, Field, model_validator
+from pydantic import BaseModel, ConfigDict, Field, model_serializer, model_validator
 
 from ..enrichment.identity import domain_id
 
@@ -16,7 +16,10 @@ FLAG_NAMES = ('G', 'I', 'O', 'J', 'E', 'L', 'C')
 KIND = 'secondary-matches'
 ErrorCode = Literal['PT-SECONDARY-INPUT', 'PT-SECONDARY-PAIR', 'PT-SECONDARY-ORIENTATION',
                     'PT-SECONDARY-UNSUPPORTED', 'PT-SECONDARY-RUN', 'PT-SECONDARY-CANCEL',
-                    'PT-SECONDARY-LIMIT']
+                    'PT-SECONDARY-LIMIT', 'PT-SECONDARY-TIMEOUT', 'PT-SECONDARY-FORMAT',
+                    'PT-SECONDARY-CACHE']
+MAX_ALTERNATIVES_PER_ANCHOR = 8
+MAX_ALTERNATIVES = 50_000
 
 RZDIFF_LIMITATIONS = (
     'rz-diff similarity is raw-byte Levenshtein: not semantic, sensitive to relocations and address shifts.',
@@ -72,8 +75,17 @@ class SecondaryMatch(_Strict):
         return self
 
 
+class AlternativeMatch(_Strict):
+    """A further candidate an engine proposed for one anchor; never merged across engines or re-scored."""
+    anchor_side: Literal['older', 'newer']
+    anchor_address: Address
+    candidate: SecondaryMatch
+    source: Literal['rz-diff', 'bindiff', 'ghidriff-baseline']
+    rank: int = Field(ge=1)
+
+
 class SecondaryMatchSet(_Strict):
-    contract: Literal['secondary/1'] = 'secondary/1'
+    contract: Literal['secondary/1', 'secondary/2'] = 'secondary/1'
     engine: Engine
     engine_version: str = Field(min_length=1)
     older_sha256: Sha256
@@ -82,21 +94,45 @@ class SecondaryMatchSet(_Strict):
     image_base_subtracted: Literal['yes', 'no', 'unknown'] = 'unknown'
     matches: tuple[SecondaryMatch, ...]
     limitations: tuple[str, ...] = ()
+    # secondary/2 only; omitted from serialised output when default so secondary/1 JSON is unchanged.
+    alternatives: tuple[AlternativeMatch, ...] = ()
+    run_id: str | None = None
+
+    @model_serializer(mode='wrap')
+    def _omit_defaults(self, handler):
+        data = handler(self)
+        for key in ('alternatives', 'run_id'):
+            if not data.get(key):
+                data.pop(key, None)
+        return data
 
     @model_validator(mode='after')
     def same_engine(self):
         if any(m.engine != self.engine or m.engine_version != self.engine_version for m in self.matches):
             raise ValueError('match engine differs from set engine')
+        if self.contract == 'secondary/1' and (self.alternatives or self.run_id is not None):
+            raise ValueError('alternatives and run_id require contract secondary/2')
+        if len(self.alternatives) > MAX_ALTERNATIVES:
+            raise ValueError('PT-SECONDARY-LIMIT: too many alternative matches')
+        per_anchor: dict[tuple[str, int], int] = {}
+        for alt in self.alternatives:
+            key = (alt.anchor_side, alt.anchor_address)
+            per_anchor[key] = per_anchor.get(key, 0) + 1
+            if per_anchor[key] > MAX_ALTERNATIVES_PER_ANCHOR:
+                raise ValueError('PT-SECONDARY-LIMIT: too many alternatives for one anchor')
         return self
 
     @property
     def entry_id(self) -> str:
+        if self.contract == 'secondary/2':
+            return domain_id('secondary', 2, {'engine': self.engine, 'older': self.older_sha256,
+                                              'newer': self.newer_sha256})
         return domain_id('secondary', 1, {'engine': self.engine, 'file_sha256': self.file_sha256,
                                           'older': self.older_sha256, 'newer': self.newer_sha256})
 
 
 class Capability(_Strict):
-    engine: Engine
+    engine: Literal['bindiff', 'rz-diff', 'ghidriff-baseline']
     supported: bool
     version: str | None
     path: str

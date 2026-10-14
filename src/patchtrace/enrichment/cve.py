@@ -243,17 +243,22 @@ def _conflicts(cwes_by: dict[str, list[str]], cvss: list[CvssRecord]) -> list[st
     populated = {p: sorted(set(v)) for p, v in cwes_by.items() if v}
     if len({tuple(v) for v in populated.values()}) > 1:
         conflicts.append('cwe: ' + '; '.join(f'{p}={",".join(v)}' for p, v in sorted(populated.items())))
-    by_version: dict[str, list[CvssRecord]] = {}
+    by_version: dict[str, dict[str, list[CvssRecord]]] = {}
     for record in cvss:
-        by_version.setdefault(record.version, []).append(record)
-    for version, records in sorted(by_version.items()):
-        if len({(_base_vector(r), r.base_score_tenths) for r in records}) > 1:
+        by_version.setdefault(record.version, {}).setdefault(record.source.split(':', 1)[0], []).append(record)
+    for version, providers in sorted(by_version.items()):
+        # Conflicts are only meaningful across providers: NVD's own Primary and Secondary entries
+        # routinely differ and stay in `cvss` without being a disagreement (SPEC-07h H12).
+        pairs = {p: {(_base_vector(r), r.base_score_tenths) for r in rs} for p, rs in providers.items()}
+        if len(pairs) > 1 and not set.intersection(*pairs.values()):
             conflicts.append(f'cvss {version}: ' + '; '.join(
-                f'{r.source}={r.base_score_tenths}' for r in records))
-        severities = {r.severity for r in records if r.severity}
-        if len(severities) > 1:
+                f'{p}={",".join(sorted({str(r.base_score_tenths) for r in rs}))}'
+                for p, rs in sorted(providers.items())))
+        severities = {p: {r.severity for r in rs if r.severity} for p, rs in providers.items()}
+        severities = {p: v for p, v in severities.items() if v}
+        if len(severities) > 1 and not set.intersection(*severities.values()):
             conflicts.append(f'severity {version}: ' + '; '.join(
-                f'{r.source}={r.severity}' for r in records if r.severity))
+                f'{p}={",".join(sorted(v))}' for p, v in sorted(severities.items())))
     return conflicts
 
 
@@ -307,22 +312,68 @@ def is_stale(snapshot: CveSnapshot, now: datetime, max_age_days: int) -> bool:
     return age.total_seconds() < 0 or age.days * 86400 + age.seconds > max_age_days * 86400
 
 
+def _provider(source: str) -> str:
+    return source.split(':', 1)[0]
+
+
+def _merge_snapshots(cve_id: str, chosen: Mapping[str, CveSnapshot]) -> CveSnapshot:
+    """One snapshot built from each provider's newest data. Same recipe as `normalize`, so a merged
+    snapshot and a fresh one over identical responses share an ID. `retrieved_at` is the OLDEST
+    contributing time (conservative for staleness; spec-decisions-20261014)."""
+    providers = sorted(chosen)
+    digests = {p: chosen[p].response_digests[p] for p in providers}
+
+    def attributed(field: str) -> tuple[AttributedValue, ...]:
+        seen = {}
+        for p in providers:
+            for item in getattr(chosen[p], field):
+                if _provider(item.source) == p:
+                    seen.setdefault((p, item.value), item)
+        return tuple(seen[k] for k in sorted(seen))
+
+    cvss = tuple(r for p in providers for r in chosen[p].cvss if _provider(r.source) == p)
+    cwes = attributed('cwes')
+    contributors = {id(s): s for s in chosen.values()}.values()
+    oldest = min(contributors, key=lambda s: (_timestamp(s.retrieved_at).astimezone(UTC), s.snapshot_id))
+    cwes_by: dict[str, list[str]] = {p: [] for p in providers}
+    for c in cwes:
+        cwes_by.setdefault(c.source, []).append(c.value)
+    return CveSnapshot(
+        snapshot_id=identity.domain_id('cve-snapshot', 1, {
+            'cve_id': cve_id, 'normalization_version': NORMALIZATION_VERSION, 'response_digests': digests}),
+        cve_id=cve_id, normalization_version=NORMALIZATION_VERSION, response_digests=digests,
+        retrieved_at=oldest.retrieved_at,
+        descriptions=tuple(d for p in providers for d in chosen[p].descriptions if _provider(d.source) == p),
+        cwes=cwes, cvss=cvss, products=attributed('products'), advisories=attributed('advisories'),
+        published=attributed('published'), feature_ids=(),
+        conflicts=tuple(_conflicts(cwes_by, list(cvss))))
+
+
 def select_latest(snapshots: Iterable[CveSnapshot]) -> tuple[tuple[CveSnapshot, ...], tuple[CveSnapshot, ...]]:
-    """One snapshot per CVE: latest `retrieved_at`, ties broken by smallest snapshot_id.
-    Returns (kept sorted by CVE, ignored sorted by CVE/snapshot_id)."""
-    best: dict[str, CveSnapshot] = {}
-    ignored = []
+    """One snapshot per CVE. Per provider, the newest snapshot containing that provider wins (ties:
+    smallest snapshot_id), so a newer partial fetch never drops another provider's older data. When
+    one snapshot supplies every provider it is returned unchanged; otherwise a merged snapshot is
+    synthesized (see `_merge_snapshots`). Returns (kept sorted by CVE, snapshots that contributed
+    nothing sorted by CVE/snapshot_id)."""
+    by_cve: dict[str, list[CveSnapshot]] = {}
     for snap in sorted(snapshots, key=lambda x: (x.cve_id, x.snapshot_id)):
-        current = best.get(snap.cve_id)
-        if current is None:
-            best[snap.cve_id] = snap
-        elif _timestamp(snap.retrieved_at) > _timestamp(current.retrieved_at):
-            ignored.append(current)
-            best[snap.cve_id] = snap
-        else:
-            ignored.append(snap)
-    return (tuple(best[c] for c in sorted(best)),
-            tuple(sorted(ignored, key=lambda x: (x.cve_id, x.snapshot_id))))
+        by_cve.setdefault(snap.cve_id, []).append(snap)
+    kept, ignored = [], []
+    for cve_id in sorted(by_cve):
+        group = by_cve[cve_id]
+        chosen: dict[str, CveSnapshot] = {}
+        for snap in sorted(group, key=lambda x: (-_timestamp(x.retrieved_at).timestamp(), x.snapshot_id)):
+            for provider in snap.response_digests:
+                chosen.setdefault(provider, snap)
+        contributors = {s.snapshot_id: s for s in chosen.values()}
+        if not contributors:  # no provider digests at all: fall back to the newest snapshot
+            newest = min(group, key=lambda x: (-_timestamp(x.retrieved_at).timestamp(), x.snapshot_id))
+            contributors = {newest.snapshot_id: newest}
+            chosen = {}
+        kept.append(next(iter(contributors.values())) if len(contributors) == 1
+                    else _merge_snapshots(cve_id, chosen))
+        ignored.extend(s for s in group if s.snapshot_id not in contributors)
+    return tuple(kept), tuple(sorted(ignored, key=lambda x: (x.cve_id, x.snapshot_id)))
 
 
 def _canon(token: str) -> str:
@@ -382,9 +433,12 @@ def contextual_rank(ranking: RankingResult, signal_sets: Iterable[SignalSet],
     snapshots = tuple(sorted(snapshots, key=lambda s: s.cve_id))
     signals = {s.pairing_id: s.signals for s in signal_sets}
     qualifying: dict[str, set[int]] = {}
+    qualifying_ids: dict[str, list[str]] = {}
     for t in transitions:
-        if t.qualifies and t.feature_id is not None:
-            qualifying.setdefault(t.pairing_id, set()).add(t.feature_id)
+        if t.qualifies:
+            qualifying_ids.setdefault(t.pairing_id, []).append(t.transition_id)
+            if t.feature_id is not None:
+                qualifying.setdefault(t.pairing_id, set()).add(t.feature_id)
     all_terms = context_terms(snapshots)
     terms = dict(all_terms[:MAX_TERMS])
     cwe_sources: dict[str, set[str]] = {}
@@ -419,16 +473,22 @@ def contextual_rank(ranking: RankingResult, signal_sets: Iterable[SignalSet],
             for term in sorted(name_terms(name)):
                 if term in terms and term not in hits:
                     hits[term] = name
+        pairing_signals = sorted(signals.get(entry.pairing_id, ()), key=lambda s: s.signal_id)
+        # SPEC-07 §8 / 07h H4: a name alone is metadata. Every contribution needs change evidence in
+        # the binary: a signal of any detector (confidence other than unavailable) or a qualifying transition.
+        evidence = [s for s in pairing_signals if s.confidence != 'unavailable']
+        evidence_ref = (f'signal:{evidence[0].signal_id}' if evidence
+                        else f'transition:{min(qualifying_ids[entry.pairing_id])}'
+                        if qualifying_ids.get(entry.pairing_id) else '')
         points = 0
-        for term in sorted(hits):
+        for term in sorted(hits if evidence_ref else ()):
             if points >= 24:
                 break
             contribs.append(ContextContribution(kind='identifier', points=12,
                                                 context_field=f'{terms[term]}:{term}'[:200],
-                                                binary_ref=f'name:{hits[term]}'[:200]))
+                                                binary_ref=evidence_ref[:200], detail=f'name:{hits[term]}'[:200]))
             points += 12
         cwe_points = 0
-        pairing_signals = sorted(signals.get(entry.pairing_id, ()), key=lambda s: s.signal_id)
         for cwe in sorted(cwe_sources):
             if cwe_points >= 20:
                 break
@@ -440,7 +500,7 @@ def contextual_rank(ranking: RankingResult, signal_sets: Iterable[SignalSet],
                     kind='cwe', points=10, context_field=f'{cwe} {",".join(sorted(cwe_sources[cwe]))}'[:200],
                     binary_ref=f'signal:{match.signal_id}', detail=f'{match.detector} {match.confidence}'))
                 cwe_points += 10
-        blocked = []
+        blocked = [] if evidence_ref or not hits else ['no-binary-evidence']
         for cve_id, cwes in sorted(cwe_blocked.items()):
             would = sorted(c for c in cwes if any(
                 s.detector in CWE_DETECTORS.get(c, ()) and s.confidence in ALIGNING_CONFIDENCE
@@ -468,7 +528,8 @@ def contextual_rank(ranking: RankingResult, signal_sets: Iterable[SignalSet],
     stale = ()
     if now is not None and max_age_days is not None:
         stale = tuple(s.cve_id for s in snapshots if is_stale(s, now, max_age_days))
-    status: Status = 'unavailable' if not snapshots else ('partial' if len(all_terms) > MAX_TERMS else 'complete')
+    status: Status = 'unavailable' if not snapshots else (
+        'partial' if stale or len(all_terms) > MAX_TERMS else 'complete')
     return ContextualRanking(
         ranking_input=identity.domain_id('context-input', 1, {
             'ranking_input': ranking.input_digest, 'config_digest': ranking.config_digest}),

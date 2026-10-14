@@ -57,8 +57,21 @@ COMMON_LIMITATIONS: tuple[str, ...] = (
 
 _TOKEN = re.compile(r'[A-Za-z_]\w*|0[xX][0-9A-Fa-f]+|\d+|::|->|<<=|>>=|<<|>>|<=|>=|==|!=|&&|\|\|'
                     r'|[-+*/%&|^]=|\+\+|--|\S')
-_TEMP = re.compile(r'[a-z]{1,5}Var\d+|[a-z]{1,5}Stack_[0-9a-fA-F_]+|(?:local|param|in|extraout|unaff'
-                   r'|DAT|LAB|FUN|PTR|switchD|caseD|joined|stack)_\w+')
+# Ghidra decompiler temporaries only (SPEC-07h H6). A closed table: real names such as `myVar1`,
+# `in_len`, `local_buffer` or `param_count` are NOT temporaries and must stay visible to renames.
+_PFX = r'p{0,3}a?[bcdfilpsuvx]'  # Ghidra datatype letters: pointer depth, array, base type
+_TEMP = re.compile(
+    rf'{_PFX}Var\d+'
+    rf'|{_PFX}Stack_[0-9a-fA-F]+'
+    rf'|{_PFX}Ram[0-9a-fA-F]{{8,16}}'
+    r'|local_(?:res)?[0-9a-fA-F]+'
+    r'|param_\d+'
+    r'|in_(?:[A-Z][A-Z0-9_]*|stack_[0-9a-fA-F]+)'
+    r'|extraout_(?:[A-Z][A-Z0-9_]*|var(?:_[0-9a-fA-F]+)?)'
+    r'|unaff_(?:[A-Z][A-Z0-9_]*|retaddr)'
+    r'|(?:DAT|LAB|FUN)_[0-9a-fA-F]{4,16}'
+    r'|PTR_(?:DAT|LAB|FUN)_[0-9a-fA-F]{4,16}|PTR_\w+_[0-9a-fA-F]{4,16}'
+    r'|switchD_[0-9a-fA-F]+|caseD_[0-9a-fA-F]+|joined_r0x[0-9a-fA-F]+|stack0x[0-9a-fA-F]{4,16}')
 _TYPE = re.compile(r'(?:unsigned|signed|const|volatile|struct|enum|void|bool|char|short|int|long|float'
                    r'|double|u?int\d*(?:_t)?|u?long(?:long)?|u?short|u?char|s?byte|size_t|ssize_t'
                    r'|undefined\d*|s?word|s?dword|s?qword|ulonglong|longlong|uint|ushort|uchar|ulong'
@@ -138,6 +151,44 @@ def _norm_token(token: str) -> str:
     return '$v' if _TEMP.fullmatch(token) else token
 
 
+_INT_SUFFIX = re.compile(r'[uUlL]{1,3}')
+
+
+def _wrapped(tokens: list[str]) -> bool:
+    """True when the first `(` matches the last `)`."""
+    if len(tokens) < 2 or tokens[0] != '(' or tokens[-1] != ')':
+        return False
+    depth = 0
+    for i, token in enumerate(tokens):
+        depth += token == '('
+        depth -= token == ')'
+        if depth == 0:
+            return i == len(tokens) - 1
+    return False
+
+
+def size_canon(tokens: Iterable[str]) -> str:
+    """Canonical size argument (SPEC-07h H5): casts and redundant outer parentheses are removed,
+    integer literals compare by value regardless of base and suffix, temporaries are normalized.
+    `sizeof(type)` keeps its parentheses because the type is the operand."""
+    toks = list(tokens)
+    while True:
+        before = toks
+        toks = _strip_casts(toks, keep_sizeof=True)[0]
+        while _wrapped(toks):
+            toks = toks[1:-1]
+        if toks == before:
+            break
+    out: list[str] = []
+    for token in toks:
+        if out and _NUMBER.fullmatch(out[-1]) and _INT_SUFFIX.fullmatch(token):
+            continue  # `16UL` tokenizes as `16`, `UL`
+        out.append(token)
+    value = [str(int(t, 16) if t[:2] in ('0x', '0X') else int(t)) if _NUMBER.fullmatch(t) else _norm_token(t)
+             for t in out]
+    return _join(value)
+
+
 def _join(tokens: Iterable[str]) -> str:
     return ' '.join(tokens)
 
@@ -151,10 +202,10 @@ def _is_var(tokens: list[str], index: int) -> bool:
     return following not in ('(', '->', '.', '::')
 
 
-def _strip_casts(tokens: list[str]) -> tuple[list[str], tuple[str, ...]]:
+def _strip_casts(tokens: list[str], keep_sizeof: bool = False) -> tuple[list[str], tuple[str, ...]]:
     out, casts, i = [], [], 0
     while i < len(tokens):
-        if tokens[i] == '(':
+        if tokens[i] == '(' and not (keep_sizeof and i > 0 and tokens[i - 1] == 'sizeof'):
             j = i + 1
             while j < len(tokens) and (tokens[j] == '*' or _TYPE.fullmatch(tokens[j])):
                 j += 1
@@ -438,9 +489,33 @@ class Detector:
                 group_key=finding.group_key, locations=finding.locations, rationale=finding.rationale,
                 limitations=tuple(limitations), typed_evidence=False))
         status: Status = 'partial' if ctx.truncated else 'complete'
-        reason = f'function-too-large: scanned first {MAX_LINES} lines / {MAX_CHARS} chars' if ctx.truncated else ''
+        reason = f'{LIMIT} function-too-large: scanned first {MAX_LINES} lines / {MAX_CHARS} chars' if ctx.truncated else ''
         return (_outcome(view, self.id, status, reason),
                 tuple(sorted(signals.values(), key=lambda s: s.signal_id)))
+
+
+# Unavailable-outcome reasons start with one of these prefixes (SPEC-07h H3). NOT-APPLICABLE is a
+# structural exclusion (the detector cannot apply to this pairing); LIMIT is missing or truncated
+# evidence on a pairing the detector should have covered. The DetectorOutcome contract is unchanged.
+NOT_APPLICABLE = 'NOT-APPLICABLE:'
+LIMIT = 'LIMIT:'
+REASON_PREFIXES = (NOT_APPLICABLE, LIMIT)
+
+
+def aggregate_status(outcomes: Iterable[DetectorOutcome]) -> Status:
+    """Evidence quality of what was requested and applicable (SPEC-07h H3)."""
+    outcomes = list(outcomes)
+    statuses = {o.status for o in outcomes}
+    if 'cancelled' in statuses:
+        return 'cancelled'
+    if statuses <= {'complete'}:
+        return 'complete'
+    if statuses == {'unavailable'} and not any(o.reason.startswith(LIMIT) for o in outcomes):
+        return 'unavailable'
+    relevant = [o for o in outcomes if not (o.status == 'unavailable' and o.reason.startswith(NOT_APPLICABLE))]
+    if not relevant:
+        return 'unavailable'
+    return 'complete' if all(o.status == 'complete' for o in relevant) else 'partial'
 
 
 def _outcome(view: MatchView, detector: str, status: Status, reason: str) -> DetectorOutcome:
@@ -449,13 +524,14 @@ def _outcome(view: MatchView, detector: str, status: Status, reason: str) -> Det
 
 def _unavailable_reason(detector: Detector, view: MatchView) -> str:
     if view.category not in detector.categories:
-        return f'category {view.category!r} has no two-sided changed code for this detector'
+        return f'{NOT_APPLICABLE} category {view.category!r} has no two-sided changed code for this detector'
     if not view.two_sided:
-        return 'one side of the pairing is absent'
+        return f'{NOT_APPLICABLE} one side of the pairing is absent'
     if len(view.older) != 1 or len(view.newer) != 1:
-        return f'{view.category} pairing has more than one function per side; hunks exist only for 1:1'
+        return (f'{NOT_APPLICABLE} {view.category} pairing has more than one function per side; '
+                'hunks exist only for 1:1')
     if view.older[0].code is None or view.newer[0].code is None:
-        return 'decompiled code missing on a required side'
+        return f'{LIMIT} decompiled code missing on a required side'
     return ''
 
 
@@ -523,10 +599,22 @@ def _loc(side: _Side, start: int, end: int | None = None) -> SourceLocation:
     return side.view.location(start + 1, (start if end is None else end) + 1)
 
 
+def _loop_keyword(tokens: list[str]) -> str:
+    lead = 1 if tokens[:1] == ['}'] else 0
+    if tokens[lead:lead + 1] in (['for'], ['while']):
+        return tokens[lead]
+    return ''
+
+
 def _added_cmps(ctx: _Context, edit: _Edit) -> Iterable[_Cmp]:
     for index in edit.new:
         ctx.tick()
         if not ctx.newer.control(index):
+            continue
+        # A brand-new loop is new structure, not a guard on existing behaviour (SPEC-07h H5): a loop
+        # header qualifies only when the same keyword already headed a loop in the edit's old range.
+        keyword = _loop_keyword(ctx.newer.tokens[index])
+        if keyword and not any(_loop_keyword(ctx.older.tokens[j]) == keyword for j in edit.old):
             continue
         for cmp in ctx.newer.cmps[index]:
             if cmp.norm() not in ctx.older.cmp_set:
@@ -771,8 +859,8 @@ def _size(ctx: _Context) -> list[_Finding]:
             edit = ctx.new_edit.get(new.line)
             if edit is None:
                 continue
-            old_size = [_join(map(_norm_token, a)) for a in _size_args(old)]
-            new_size = [_join(map(_norm_token, a)) for a in _size_args(new)]
+            old_size = [size_canon(a) for a in _size_args(old)]
+            new_size = [size_canon(a) for a in _size_args(new)]
             if not new_size or old_size == new_size:
                 continue
             if _spilled_same(ctx, edit, new, old_size):
@@ -791,7 +879,7 @@ def _spilled_same(ctx: _Context, edit: _Edit, call: _Call, old_size: list[str]) 
         return False
     window = ctx.window(edit)
     for arg, before in zip(args, old_size, strict=True):
-        if _join(map(_norm_token, arg)) == before:
+        if size_canon(arg) == before:
             continue
         if len(arg) != 1 or not _TEMP.fullmatch(arg[0]):
             return False
@@ -799,7 +887,7 @@ def _spilled_same(ctx: _Context, edit: _Edit, call: _Call, old_size: list[str]) 
         for j in range(window.start, call.line):
             toks = ctx.newer.tokens[j]
             if len(toks) > 3 and toks[0] == arg[0] and toks[1] == '=' and toks[-1] == ';':
-                value = _join(map(_norm_token, toks[2:-1]))
+                value = size_canon(toks[2:-1])
         if value != before:
             return False
     return True
@@ -849,15 +937,18 @@ def _scrub(ctx: _Context) -> list[_Finding]:
     return out
 
 
-def _detector(id_: str, confidence: str, rule, prerequisites: tuple[str, ...], limitations: tuple[str, ...]):
-    return Detector(id_, 1, confidence, SUPPORTED_CATEGORIES, COMMON_PREREQUISITES + prerequisites,
+def _detector(id_: str, confidence: str, rule, prerequisites: tuple[str, ...], limitations: tuple[str, ...],
+              version: int = 1):
+    return Detector(id_, version, confidence, SUPPORTED_CATEGORIES, COMMON_PREREQUISITES + prerequisites,
                     COMMON_LIMITATIONS + limitations, rule)
 
 
 DETECTORS: tuple[Detector, ...] = (
     _detector('BND', 'moderate', _bnd, ('added/changed ordered comparison against a non-zero bound',),
               ('strong confidence requires typed IR, unavailable in this release',
-               'pointer arithmetic recognized only inside *( ... ) dereferences')),
+               'pointer arithmetic recognized only inside *( ... ) dereferences',
+               'a new loop header is not a guard unless the old range had a loop of the same keyword'),
+              version=2),
     _detector('INT', 'weak', _int, ('removed and added comparison in the same hunk',),
               ('operands must match textually after temp normalization',
                'semantically equivalent rewrites such as `i < n` -> `i <= n - 1` are not detected')),
@@ -904,16 +995,7 @@ def detect(view: MatchView, enabled: Iterable[str] | None = None,
             continue
         outcomes.append(outcome)
         signals.extend(found)
-    statuses = {o.status for o in outcomes}
-    status: Status
-    if 'cancelled' in statuses:
-        status = 'cancelled'
-    elif statuses <= {'complete'}:
-        status = 'complete'
-    elif statuses == {'unavailable'}:
-        status = 'unavailable'
-    else:
-        status = 'partial'
+    status = aggregate_status(outcomes) if outcomes else 'complete'
     return SignalSet(pairing_id=view.pairing_id, match_id=view.match_id, category=view.category,
                      signals=tuple(sorted(signals, key=lambda s: (s.detector, s.signal_id))),
                      outcomes=tuple(outcomes), status=status)

@@ -127,10 +127,20 @@ def _parser() -> argparse.ArgumentParser:
     imp = common(sec.add_parser('import-bindiff', help='import a genuine .BinDiff result for this exact pair'))
     imp.add_argument('project', type=Path)
     imp.add_argument('bindiff', type=Path)
-    rz = common(sec.add_parser('rzdiff', help='run rz-diff on the project artifacts'))
+    run = common(sec.add_parser('run', help='run secondary engines on the project artifacts (SPEC-28)'))
+    run.add_argument('project', type=Path)
+    run.add_argument('--engine', action='append', choices=('rz-diff', 'bindiff'), default=None,
+                     help='repeatable; default: every engine that probes as supported')
+    run.add_argument('--rz-diff', default='rz-diff', help='rz-diff executable (absolute path or on PATH)')
+    run.add_argument('--bindiff', default=None, help='BinDiff executable (execution not implemented yet)')
+    run.add_argument('--max-parallel', type=int, choices=(1, 2), default=1)
+    run.add_argument('--timeout', type=int, default=1800, help='per-engine seconds (60..86400)')
+    run.add_argument('--no-cache', action='store_true', help='ignore stored engine runs')
+    rz = common(sec.add_parser('rzdiff', help='alias for `secondary run --engine rz-diff`'))
     rz.add_argument('project', type=Path)
     rz.add_argument('--rz-diff', default='rz-diff', help='rz-diff executable (absolute path or on PATH)')
     rz.add_argument('--timeout', type=int, default=1800)
+    rz.set_defaults(engine=['rz-diff'], bindiff=None, max_parallel=1, no_cache=False)
     rec = common(sec.add_parser('reconcile', help='compare stored secondary match sets with Ghidriff matches'))
     rec.add_argument('project', type=Path)
     chains = common(ser.add_parser('chains', help='list chain hypotheses from series.json'))
@@ -410,7 +420,10 @@ def cmd_correlate(args, cancel) -> int:
         kept, ignored = cve.select_latest(snapshots)
     except EnrichmentError as exc:
         raise CliError(ENVIRONMENT, f'invalid snapshot: {exc}') from None
+    # A merged snapshot has a new id; it is unverified when any file-loaded snapshot of that CVE exists.
+    unverified_cves = {s.cve_id for s in snapshots if s.snapshot_id in unverified}
     snapshots = list(kept)
+    unverified.update(s.snapshot_id for s in snapshots if s.cve_id in unverified_cves)
     warnings += [f'{s.cve_id}: ignored older/duplicate snapshot retrieved {s.retrieved_at}; '
                  'using the most recently retrieved one' for s in ignored]
     missing = requested - {s.cve_id for s in snapshots}
@@ -694,13 +707,25 @@ def cmd_series(args, cancel) -> int:
     return OK if rows or stale.reasons else NO_RESULTS
 
 
-def cmd_secondary(args, cancel) -> int:
-    import os
-    import shutil
+def _secondary_run(args, cancel, service, store, run, sides) -> int:
+    from .enrichment.contracts import EnrichmentError
+    from .secondary import cli_run
+    if not cli_run.TIMEOUT_RANGE[0] <= args.timeout <= cli_run.TIMEOUT_RANGE[1]:
+        raise CliError(ENVIRONMENT, '--timeout must be between 60 and 86400 seconds')
+    try:
+        report = cli_run.execute(service, store, run, sides, args.engine, rz_diff=args.rz_diff,
+                                 max_parallel=args.max_parallel, timeout=args.timeout,
+                                 use_cache=not args.no_cache, cancel=cancel)
+    except EnrichmentError as exc:
+        raise CliError(RUNTIME, str(exc)) from None
+    _emit(args, f'secondary {args.action}', report.status, report.result, report.warnings, report.text)
+    return report.exit_code
 
+
+def cmd_secondary(args, cancel) -> int:
     from .enrichment.contracts import EnrichmentError
     from .enrichment.storage import EnrichmentStore, Guard
-    from .secondary import load_secondary, publish_secondary
+    from .secondary import load_secondary
     from .secondary.contracts import SecondaryError
     from .secondary.reconcile import reconcile
     service = _open(args.project)
@@ -710,13 +735,18 @@ def cmd_secondary(args, cancel) -> int:
         sides = {a.side: a for a in project.artifacts}
         store = EnrichmentStore(service.store)
         if args.action == 'reconcile':
-            sets = [m for e, m in load_secondary(store) if not e.stale]
+            from .secondary.store import select_current
+            chosen, superseded = select_current(load_secondary(store))
+            sets = [m for _, m in chosen]
             if not sets:
                 _emit(args, 'secondary reconcile', 'complete', {'reports': []}, [], 'No secondary match sets stored.')
                 return NO_RESULTS
             reports = [reconcile(project.matches, m) for m in sets]
             from .secondary.evidence import assess_reports
-            assessment = assess_reports(tuple(reports))
+            try:
+                assessment = assess_reports(tuple(reports))
+            except ValueError as exc:
+                raise CliError(RUNTIME, f'PT-SECONDARY-RUN: {exc}') from None
             result = {'reports': [{'engine': r.engine, 'engine_version': r.engine_version, 'counts': r.counts(),
                                    'secondary_only': len(r.secondary_only), 'limitations': list(r.limitations)}
                                   for r in reports],
@@ -734,7 +764,7 @@ def cmd_secondary(args, cancel) -> int:
                                  f'{e.match_id[:12]}: {e.verdict} ({e.tier}; index {e.evidence_index})'
                                  for e in assessment.rows)
             text += '\nEvidence index is NOT a calibrated probability of match correctness or vulnerability.'
-            _emit(args, 'secondary reconcile', 'complete', result, [], text)
+            _emit(args, 'secondary reconcile', 'complete', result, superseded, text)
             return OK
         if run is None:
             raise CliError(ENVIRONMENT, 'project has no completed analysis run to attach secondary matches to')
@@ -743,23 +773,16 @@ def cmd_secondary(args, cancel) -> int:
                 from .secondary.bindiff import import_bindiff
                 match_set = import_bindiff(args.bindiff, sides['older'].sha256, sides['newer'].sha256)
             else:
-                from .secondary.rzdiff import probe, run_rzdiff
-                exe = shutil.which(args.rz_diff) or args.rz_diff
-                env = dict(os.environ)
-                capability = probe(Path(exe), env, cancel)
-                if not capability.supported:
-                    raise CliError(ENVIRONMENT, f'rz-diff unsupported: {capability.reason}')
-                match_set = run_rzdiff(capability, service.root / sides['older'].relative_path,
-                                       service.root / sides['newer'].relative_path, sides['older'].sha256,
-                                       sides['newer'].sha256, env=env, cancel=cancel, timeout_seconds=args.timeout)
+                return _secondary_run(args, cancel, service, store, run, sides)
         except SecondaryError as exc:
             code = CANCELLED if 'CANCEL' in exc.code else (
                 ENVIRONMENT if exc.code in {'PT-SECONDARY-INPUT', 'PT-SECONDARY-UNSUPPORTED', 'PT-SECONDARY-PAIR',
                                             'PT-SECONDARY-ORIENTATION', 'PT-SECONDARY-FORMAT'} else RUNTIME)
             raise CliError(code, str(exc)) from None
+        from .secondary.cli_run import record_import
         guard = Guard(project.id, run.id, run.raw_sha256, match_set.file_sha256)
         try:
-            entry = publish_secondary(store, guard, guard, project.revision, match_set)
+            entry = record_import(store, guard, project.revision, match_set)
         except EnrichmentError as exc:
             raise CliError(RUNTIME, str(exc)) from None
         report = reconcile(project.matches, match_set)

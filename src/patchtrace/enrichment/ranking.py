@@ -20,6 +20,7 @@ from .contracts import (
     SignalSet,
     Status,
 )
+from .signals import NOT_APPLICABLE, aggregate_status
 
 MULTIPLIER = {'strong': 100, 'moderate': 70, 'weak': 35, 'unavailable': 0}
 
@@ -55,10 +56,15 @@ def score_signals(signals: Iterable[ChangeSignal], config: RankingConfig) -> tup
 
 
 def _evidence_status(signal_set: SignalSet) -> Status:
-    statuses = {o.status for o in signal_set.outcomes}
-    if not statuses or statuses == {'unavailable'}:
+    if not signal_set.outcomes:
         return 'unavailable'
-    return 'partial' if statuses - {'complete'} else 'complete'
+    status = aggregate_status(signal_set.outcomes)
+    return 'partial' if status == 'cancelled' else status
+
+
+def _structural(signal_set: SignalSet) -> bool:
+    return bool(signal_set.outcomes) and all(
+        o.status == 'unavailable' and o.reason.startswith(NOT_APPLICABLE) for o in signal_set.outcomes)
 
 
 def rank(signal_sets: Iterable[SignalSet], config: RankingConfig,
@@ -79,8 +85,15 @@ def rank(signal_sets: Iterable[SignalSet], config: RankingConfig,
                      groups=groups, strong_groups=strong, evidence=_evidence_status(s),
                      match_certainty=(certainty or {}).get(s.match_id, 'unknown'))
         for index, (score, strong, s, raw, groups) in enumerate(scored, 1))
-    statuses = {e.evidence for e in entries}
-    status: Status = 'complete' if statuses <= {'complete'} else (
-        'unavailable' if statuses == {'unavailable'} else 'partial')
+    # Structurally not-applicable pairings (one-sided) are reported per entry but do not degrade the result.
+    by_pairing = {s.pairing_id: s for s in sets}
+    statuses = {e.evidence for e in entries if not _structural(by_pairing[e.pairing_id])}
+    status: Status
+    if entries and not statuses:
+        status = 'unavailable'
+    elif statuses <= {'complete'}:
+        status = 'complete'
+    else:
+        status = 'unavailable' if statuses == {'unavailable'} else 'partial'
     return RankingResult(config_digest=config_digest(config), input_digest=input_digest,
                          entries=entries, status=status)

@@ -94,3 +94,6 @@ Provider cancellation is cooperative around network reads; an active read can wa
 
 ## 2026-10-14 full code audit
 See `docs/plans/audit-20261014-and-next-phase.md` for findings, fixes, deferred items and the next-phase plan. Local Linux: 1004 passed, 6 skipped; Ruff clean. Windows pytest, freeze and native Ghidriff results are those of the PR's CI run; clean-profile interactive GUI acceptance remains unverified.
+
+## 2026-10-14 enrichment hardening (SPEC-07h correctness slice)
+Re-baselines (deliberate): `signals`/`wil` group keys change because `_TEMP` is now a closed table (H6); SignalSet/ranking status semantics (H3: missing code is `partial`, one-sided pairings no longer degrade the run); contextual identifier points need binary evidence (H4, e.g. a signal-less pairing with a matching name no longer gains +16); `select_latest` merges providers (H13). Stage versions signals 2, wil 2, ranking 2, contextual 2 invalidate derived caches and stored rows by design. Local Linux: full suite and Ruff clean; Windows CI not run from this worktree.
