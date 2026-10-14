@@ -375,3 +375,5 @@ No manual step. Windows CI must run `tests/test_search_segment.py`; Linux eviden
 Fixtures `nested-overlay`, `empty-result`, `vocabulary` are hand-authored from the upstream writer, not captured. G-L1 must confirm both shapes with real diec 3.21 and replace them.
 ### [D2:pe-build-facts] PE build facts (2026-10-14)
 Automated only, on synthetic PEs from `tests/pe_build_fixtures.py` (Rich equals pefile 2024.8.26 on generated headers; header fields equal pefile's). Not verified: any real MSVC, lld or .NET binary (no Microsoft binary is committed), Rich headers with (0,0) entries or non-0x80 starts beyond the unit cases, Windows.
+### [SPEC-07-hit:derived-cache-hit]
+Profile (10,000 pairs, Linux, cProfile): payload parse 0.82 s, build_views 0.73 s, rank 0.69 s, locations/input digest 0.35 s; cache.get itself 35 ms. After: payload parse 0.35 s; bench hit 1.92 s -> 1.44 s (best of 5, shared host). Ids, digests and ranking pinned by tests/test_enrichment_hit_golden.py.
