@@ -2184,11 +2184,14 @@ class MainWindow(QMainWindow):
         self.evidence_list.clear()
         self.conclusion.clear()
         if not self._finding:
+            self._noted_finding_id = None
             self.show_match_annotations()
             self.update_controls()
             return
         finding = self._finding
-        self.note_target.setCurrentIndex(1)
+        if getattr(self, '_noted_finding_id', None) != finding.id:
+            self.note_target.setCurrentIndex(1)  # only when the selection changes, never on refresh
+            self._noted_finding_id = finding.id
         hypothesis = finding.hypothesis
         detail = ('STALE: retained context no longer describes the current project.\n\n' if finding.stale else '')
         detail += f'{finding.summary}\n\nFix purpose: {finding.fix_purpose}\nCategory: {finding.category}\n'

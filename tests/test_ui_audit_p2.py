@@ -43,3 +43,17 @@ def test_overview_dialogs_are_deleted_not_accumulated(window, qtbot):
     second.close()
     qtbot.waitUntil(lambda: window._preflight_dialog is None)
     assert window._preflight_status is None and window._preflight_pe_table is None
+
+
+def test_refresh_keeps_note_target_unless_finding_changes(window):
+    window.findings_list.setCurrentRow(0)
+    assert window.note_target.currentIndex() == 1
+    window.note_target.setCurrentIndex(0)  # analyst deliberately annotates the match
+    window.refresh()
+    window.select_finding()
+    assert window.note_target.currentIndex() == 0
+    window.findings_list.clearSelection()
+    window.findings_list.setCurrentRow(-1)
+    window.select_finding()
+    window.findings_list.setCurrentRow(0)  # a (re)selected finding resets the target
+    assert window.note_target.currentIndex() == 1
