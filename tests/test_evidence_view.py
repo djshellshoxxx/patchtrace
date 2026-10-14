@@ -173,7 +173,10 @@ def test_cells_never_combine_scores():
 def test_units_in_every_score_cell():
     vm = build()
     agree = row(vm, 'm-agree')
-    assert agree.cells[0].text == 'Exact / high'
+    assert agree.cells[0].text == 'Exact'  # raw match type; no invented score (flag F3)
+    ghidriff_detail = format_cell_detail(agree.cells[0])
+    assert 'Quality label (raw, recorded by PatchTrace): high' in ghidriff_detail
+    assert 'text diff ratio' in ghidriff_detail and 'not a match score' in ghidriff_detail
     assert agree.cells[1].text.startswith('sim ') and 'algo ' in agree.cells[1].text
     assert agree.cells[2].text.startswith('byte sim ')
     assert 'similarity' in agree.cells[1].accessible and 'byte similarity' in agree.cells[2].accessible

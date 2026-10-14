@@ -213,6 +213,8 @@ def test_every_registry_id_is_applied_somewhere(window, qtbot, tmp_path, setting
     qtbot.waitUntil(lambda: series.loaded is not None, timeout=5000)
     roots.append(series)
     names |= {series.objectName(), series.banner.objectName()}
+    # C6: the dock and stale banner are containers/labels, not focusable controls.
+    names |= {window.evidence.dock.objectName(), window.evidence.panel.stale_banner.objectName()}
     for root in roots:
         names |= {w.objectName() for w in controls(root)}
         names |= {a.objectName() for a in actions(root)}
@@ -235,6 +237,11 @@ def test_disabled_controls_keep_tooltip_and_state_prerequisite(qtbot, settings, 
         assert not action.isEnabled()
         check_text(action.text(), action.toolTip())
         assert 'Availability:' in action.toolTip()
+    panel = empty.evidence.panel  # C6: no project -> run/copy/goto disabled, prerequisite stated
+    for control in (panel.run_button, panel.copy_button, panel.goto_button):
+        assert not control.isEnabled()
+        check_text(control.objectName(), control.toolTip())
+        assert 'Availability:' in control.toolTip()
 
 
 def test_recent_project_actions_use_escaped_template(window):
@@ -316,3 +323,17 @@ def test_text_dialogs_and_confirmation_boxes(qtbot, window, monkeypatch):
     confirm_tips(box)
     audit(box)
     assert box.button(QMessageBox.StandardButton.Yes).objectName() == 'confirm.yes'
+
+
+def test_evidence_ids_prefix_complete(window):
+    """Every evidence.* widget/action name is a registry ID and every evidence.* ID is used (C6 7.2)."""
+    ids = {key for key in REGISTRY if key.startswith('evidence.')}
+    templates = {key for key in TEMPLATES if key.startswith('evidence.')}
+    assert len(ids) >= 25 and {'evidence.row', 'evidence.cell', 'evidence.badge'} <= templates
+    dock = window.evidence.dock
+    used = {w.objectName() for w in dock.findChildren(object) if hasattr(w, 'objectName')}
+    used |= {dock.objectName(), window.evidence.action.objectName()}
+    evidence_names = {name for name in used if name.startswith('evidence.')}
+    assert evidence_names <= ids, sorted(evidence_names - ids)
+    assert ids <= evidence_names, sorted(ids - evidence_names)
+    audit(dock)

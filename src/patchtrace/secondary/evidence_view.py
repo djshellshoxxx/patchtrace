@@ -25,7 +25,9 @@ ENGINE_NAMES: dict[str, str] = {'ghidriff': 'Ghidriff', 'bindiff': 'BinDiff', 'r
 # Units are in the header AND in the cell prefix so a screenshot of one cell is self-describing.
 # BinDiff confidence is algorithm-dependent and not documented as a probability (research flag F1),
 # so the cell shows similarity plus the producing algorithm; confidence stays in the detail text.
-ENGINE_UNITS: dict[str, str] = {'ghidriff': 'match type / quality (raw)',
+# Ghidriff exposes no match score: the cell shows its raw match types (flag F3). PatchTrace's `quality`
+# label (which carries Ghidriff's difflib text diff ratio when present) is shown raw in the details only.
+ENGINE_UNITS: dict[str, str] = {'ghidriff': 'match type (raw)',
                                 'bindiff': 'similarity / algorithm',
                                 'rz-diff': 'byte similarity (raw bytes)'}
 UiVerdict = Literal['agree', 'contested', 'single-engine', 'unknown']
@@ -294,12 +296,19 @@ def _candidate_order(c: SecondaryMatch):
             c.newer_address if c.newer_address is not None else -1, -c.similarity_milli)
 
 
+GHIDRIFF_QUALITY_NOTE = ('Quality label (raw, recorded by PatchTrace): {quality}. When it shows a number, that is '
+                         "Ghidriff's difflib text diff ratio over the decompiled code of the already paired "
+                         'functions: a measure of how much they differ, not a match score.')
+
+
 def format_ghidriff_cell(match: FunctionMatch) -> EngineCell:
     types = ', '.join(_line(t, VALUE_LIMIT) for t in match.match_types[:3]) or 'unknown'
-    quality = _line(match.quality, VALUE_LIMIT) or 'unknown'
-    text = f'{types} / {quality}'
-    return EngineCell('ghidriff', 'value', text, None, f'Ghidriff match type {types}, quality {quality}',
-                      note='manual correction (not engine output)' if match.manual else '')
+    if len(match.match_types) > 3:
+        types += f' (+{len(match.match_types) - 3})'
+    note = GHIDRIFF_QUALITY_NOTE.format(quality=_line(match.quality, VALUE_LIMIT) or 'unknown')
+    if match.manual:
+        note += '\nmanual correction (not engine output)'
+    return EngineCell('ghidriff', 'value', types, None, f'Ghidriff match type {types}', note=note)
 
 
 def _value_text(engine: str, c: SecondaryMatch) -> tuple[str, str]:
