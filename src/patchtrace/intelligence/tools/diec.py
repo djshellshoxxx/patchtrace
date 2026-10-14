@@ -20,7 +20,7 @@ from pathlib import Path
 from pydantic import BaseModel, ConfigDict, ValidationError
 
 from ...jobs import run_process
-from . import process
+from . import pins, process
 from .common import (
     LICENSES,
     EnvironmentEvidence,
@@ -107,8 +107,8 @@ def probe(config: DiecConfig, *, cancel: threading.Event | None = None, runner: 
         with _CACHE_LOCK:
             if key in _CACHE:
                 return _CACHE[key]
-    report = _probe(config, exe, cancel or threading.Event(), runner, environ)
-    if use_cache and not (cancel and cancel.is_set()):
+    report, cacheable = _probe(config, exe, cancel or threading.Event(), runner, environ)
+    if use_cache and cacheable and not (cancel and cancel.is_set()):
         with _CACHE_LOCK:
             _CACHE[key] = report
     return report
@@ -119,32 +119,35 @@ def database_for(config: DiecConfig, exe: Path) -> Path | None:
 
 
 def _probe(config: DiecConfig, exe: Path, cancel: threading.Event, runner: Callable,
-           environ: Mapping[str, str] | None) -> ToolManifest:
+           environ: Mapping[str, str] | None) -> tuple[ToolManifest, bool]:
+    """(manifest, cacheable): a timeout, cancel or spawn failure is reported but never remembered (TA-10)."""
     try:
         sha = process.sha256_file(exe)
     except (OSError, ToolError):
-        return _manifest(config, supported=False, path=str(exe), reason='the diec executable cannot be hashed')
+        return _manifest(config, supported=False, path=str(exe),
+                         reason='the diec executable cannot be hashed'), False
+    pin_status = 'pinned' if pins.is_pinned(ENGINE, sha) else 'unpinned'
 
-    def unsupported(reason: str, **kw) -> ToolManifest:
-        return _manifest(config, supported=False, path=str(exe), sha=sha, reason=reason, **kw)
+    def unsupported(reason: str, cacheable: bool = True, **kw) -> tuple[ToolManifest, bool]:
+        return _manifest(config, supported=False, path=str(exe), sha=sha, reason=reason,
+                         pin_status=pin_status, **kw), cacheable
     extra = extra_env(config)
-    try:
-        version_run = process.run_version_probe(exe, ['--version'], cancel=cancel, runner=runner, environ=environ,
-                                                extra=extra)
-        help_run = process.run_version_probe(exe, ['--help'], cancel=cancel, runner=runner, environ=environ,
-                                             extra=extra)
-    except ToolError as exc:
-        return unsupported(exc.message)
-    if version_run.reason == 'cancelled' or help_run.reason == 'cancelled':
-        return unsupported('diec probe was cancelled')
+    version_run = process.run_version_probe(exe, ['--version'], cancel=cancel, runner=runner, environ=environ,
+                                            extra=extra)
+    help_run = process.run_version_probe(exe, ['--help'], cancel=cancel, runner=runner, environ=environ,
+                                         extra=extra)
+    transient = process.is_transient(version_run, help_run)
+    for run, what in ((version_run, 'diec --version'), (help_run, 'diec --help')):
+        if run.reason or run.spawn_error:
+            return unsupported(process.describe_failure(run, what), cacheable=not transient)
     match = _VERSION.search(f'{version_run.stdout}\n{version_run.stderr}')
-    if version_run.reason or version_run.returncode != 0 or match is None:
+    if version_run.returncode != 0 or match is None:
         return unsupported(f'diec did not report a version ({process.exit_text(version_run.returncode)}); on Linux '
                            'it needs the Qt 5 Core and Script libraries')
     version = f'{match.group(1)}.{match.group(2)}'
     text = help_run.stdout + '\n' + help_run.stderr
     common = {'version': version, 'version_text': process.sanitize(match.group(0), 120)}
-    if help_run.reason or help_run.returncode != 0:
+    if help_run.returncode != 0:
         return unsupported('diec --help failed', **common)
     for option in REQUIRED_OPTIONS:
         if not re.search(rf'(?<![\w-]){re.escape(option)}(?![\w-])', text):
@@ -156,27 +159,32 @@ def _probe(config: DiecConfig, exe: Path, cancel: threading.Event, runner: Calla
         digest = process.tree_digest(database)
     except (OSError, ToolError) as exc:
         return unsupported(f'signature database rejected: {getattr(exc, "message", type(exc).__name__)}', **common)
-    tested = version in TESTED_VERSIONS and digest in KNOWN_DATABASES
+    tested = version in TESTED_VERSIONS and digest in KNOWN_DATABASES and pin_status == 'pinned'
     if not tested and not config.accept_untested:
-        return unsupported(f'diec {version} with this signature database is untested; results are accepted only '
-                           'from the pinned 3.21 release (or pass --diec-accept-untested)', rules_sha256=digest,
-                           **common)
+        why = ('this executable is not the pinned release' if pin_status != 'pinned'
+               else 'the signature database is not the pinned one')
+        return unsupported(f'diec {version}: {why}; results are accepted only from the pinned 3.21 release with '
+                           'its signature database (or pass --diec-accept-untested)', rules_sha256=digest, **common)
     capabilities = sorted({'json', 'database', *(['heuristic'] if config.heuristic else [])})
     return _manifest(config, supported=True, path=str(exe), sha=sha, capabilities=tuple(capabilities),
-                     rules_sha256=digest, untested_version=not tested, **common)
+                     rules_sha256=digest, untested_version=not tested, pin_status=pin_status, **common), True
 
 
 def options(config: DiecConfig) -> dict[str, str]:
     return {'argv': 'diec/1', 'mode': 'deep+heuristic' if config.heuristic else 'signature'}
 
 
-def prepare(config: DiecConfig, exe: Path, scratch: Path) -> str:
-    """Copy the signature database into the scratch; returns the digest of the copy."""
+def prepare(config: DiecConfig, exe: Path, scratch: Path, manifest: ToolManifest | None = None) -> str:
+    """Copy the signature database into the scratch; returns the digest of the copy. With the probed `manifest`
+    a copy that differs from the probed digest is `PT-TOOL-STALE` (TA-6)."""
     database = database_for(config, exe)
     if database is None:
         raise ToolError('PT-TOOL-UNSUPPORTED', 'no Detect It Easy signature database')
     (scratch / 'empty').mkdir(exist_ok=True)
-    return process.copy_tree(database, scratch / 'db')
+    digest = process.copy_tree(database, scratch / 'db')
+    if manifest is not None and manifest.rules_sha256 != digest:
+        raise ToolError('PT-TOOL-STALE', 'the signature database changed since it was probed')
+    return digest
 
 
 def build_argv(config: DiecConfig, executable: str, scratch: Path, artifact: Path) -> list[str]:
@@ -230,32 +238,40 @@ def _evidence(value: Value, filetype: str, run_id: str) -> EnvironmentEvidence:
     kind = value.type.lstrip('~').strip().lower()
     unknown = kind == 'unknown' or value.name.strip().lower() == 'unknown'
     category = 'unknown' if unknown else kind if kind in CATEGORIES else 'other'
-    label = ' '.join(part for part in (value.name.strip(), value.version.strip()) if part)[:200]
+    name, version = process.tool_text(value.name, 200), process.tool_text(value.version, 120)
+    label = process.tool_text(' '.join(part for part in (value.name.strip(), value.version.strip()) if part), 200)
     certainty = 'unknown' if unknown else 'heuristic' if heuristic else 'signature'
     return EnvironmentEvidence(
         category=category, toolchain=label if category in ('compiler', 'linker', 'tool') else None,
         packer=label if category in ('packer', 'cryptor', 'sfx', 'installer') else None,
-        protector=label if category == 'protector' else None, detector_rule=process.sanitize(value.name, 200),
-        heuristic=heuristic, certainty=certainty, version=process.sanitize(value.version, 120),
-        detect_string=process.sanitize(value.string, 200), filetype=process.sanitize(filetype, 32),
+        protector=label if category == 'protector' else None, detector_rule=name,
+        heuristic=heuristic, certainty=certainty, version=version,
+        detect_string=process.tool_text(value.string, 200), filetype=process.tool_text(filetype, 32),
         source_run_id=run_id)
 
 
 def parse(raw: bytes, ctx: ParseContext) -> ToolEvidenceSet:
+    """Strict parse + normalisation of one diec JSON document; a value the evidence contract refuses is
+    `PT-TOOL-OUTPUT`, never a bare pydantic ValidationError (TA-1)."""
+    try:
+        return _parse(raw, ctx)
+    except ValidationError:
+        raise ToolError('PT-TOOL-OUTPUT', 'diec output holds a value outside the evidence contract') from None
+
+
+def _parse(raw: bytes, ctx: ParseContext) -> ToolEvidenceSet:
     data = load_json_strict(raw, max_bytes=ctx.limits.stdout_bytes, max_depth=ctx.limits.json_depth)
     try:
         doc = Document.model_validate(data)
     except ValidationError as exc:
         where = '.'.join(str(p) for p in exc.errors()[0]['loc'])[:80] if exc.errors() else '?'
         raise ToolError('PT-TOOL-OUTPUT', f'diec output violates the 3.21 JSON contract at {where}') from None
-    items: list[EnvironmentEvidence] = []
-    total = 0
-    for detect in doc.detects:
-        for value in detect.values:
-            total += 1
-            if len(items) < ctx.limits.max_environment:
-                items.append(_evidence(value, detect.filetype, ctx.run_id))
-    filetypes = sorted({process.sanitize(d.filetype, 32) for d in doc.detects})
+    pairs = [(detect.filetype, value) for detect in doc.detects for value in detect.values]
+    total = len(pairs)
+    # A truncated set is a stable prefix of the sorted detections, not of the tool's order (TA-3).
+    pairs.sort(key=lambda p: (p[0], p[1].type, p[1].name, p[1].version, p[1].string, p[1].info))
+    items = [_evidence(value, filetype, ctx.run_id) for filetype, value in pairs[:ctx.limits.max_environment]]
+    filetypes = sorted({process.tool_text(d.filetype, 32) for d in doc.detects})
     return ToolEvidenceSet(
         run_id=ctx.run_id, engine=ENGINE, side=ctx.side, artifact_sha256=ctx.artifact_sha256, cache_key=ctx.cache_key,
         config_digest=ctx.config_digest, analysis={'filetypes': ','.join(filetypes)[:200]},

@@ -32,6 +32,13 @@ class ProcessResult:
     stderr_tail: str = ''
     # Windows only: the Job Object's PeakProcessMemoryUsed (committed bytes); None elsewhere or if unavailable.
     peak_memory_bytes: int | None = None
+    # Additive (SPEC-29 TA-4/TA-5). The captured streams as the exact bytes read (log_tail/stderr_tail are their
+    # lossy `errors='replace'` text) and the total number of bytes each stream delivered, so a caller can hash
+    # what the child wrote, reject invalid UTF-8 and tell an output flood from a large legitimate output.
+    log_bytes: bytes | None = None
+    stderr_bytes: bytes | None = None
+    stdout_total: int = 0
+    stderr_total: int = 0
 
 
 def _windows_process(argv: Sequence[str], cwd: Path, env: Mapping[str, str], separate_streams: bool = False,
@@ -227,7 +234,8 @@ def run_process(argv: Sequence[str], *, cwd: Path, env: Mapping[str, str],
                 cancel: threading.Event, timeout_seconds: float,
                 check_output: Callable[[], str | None] | None = None,
                 log_limit: int = LOG_LIMIT, separate_streams: bool = False,
-                stderr_limit: int = LOG_LIMIT, memory_limit_bytes: int | None = None) -> ProcessResult:
+                stderr_limit: int = LOG_LIMIT, memory_limit_bytes: int | None = None,
+                max_output_bytes: int | None = None) -> ProcessResult:
     """Run an argv with a bounded log and terminate descendants on every exit.
 
     By default stdout and stderr are merged into `log_tail`. With `separate_streams`,
@@ -239,12 +247,18 @@ def run_process(argv: Sequence[str], *, cwd: Path, env: Mapping[str, str],
     prlimit() right after spawn (no preexec_fn in a threaded GUI; a self-limiting child closes the startup
     window); on other POSIX systems RLIMIT_AS through preexec_fn. RLIMIT_AS counts virtual memory, so size
     the cap with headroom over the expected RSS.
+
+    `max_output_bytes` (default None = unlimited) stops the child as soon as its stdout has delivered more than
+    that many bytes in total (`reason='output-limit'`): `log_limit` only bounds the memory of the kept tail, so a
+    child that prints without end would otherwise run to the full timeout.
     """
     if not argv or not Path(argv[0]).is_absolute():
         raise ValueError('PT-BACKEND: configure an absolute executable path')
     # `not x > 0` rejects NaN (which never reaches a deadline); a float limit would kill the reader thread.
     if not timeout_seconds > 0 or not _positive_int(log_limit) or not _positive_int(stderr_limit):
         raise ValueError('PT-BACKEND: timeout and log limit must be positive')
+    if max_output_bytes is not None and not _positive_int(max_output_bytes):
+        raise ValueError('PT-BACKEND: output limit must be a positive integer')
     if memory_limit_bytes is not None and not (_positive_int(memory_limit_bytes)
                                                and memory_limit_bytes < MEMORY_LIMIT_CEILING):
         raise ValueError('PT-BACKEND: memory limit must be a positive integer')
@@ -263,22 +277,24 @@ def run_process(argv: Sequence[str], *, cwd: Path, env: Mapping[str, str],
                                  start_new_session=True, bufsize=0,
                                  preexec_fn=_posix_preexec(memory_limit_bytes))
     tail, err_tail = bytearray(), bytearray()
+    totals = {'out': 0, 'err': 0}
     lock = threading.Lock()
 
-    def collect(stream, buffer: bytearray, limit: int):
+    def collect(stream, buffer: bytearray, limit: int, name: str):
         try:
             while chunk := stream.read(8192):
                 with lock:
+                    totals[name] += len(chunk)
                     buffer.extend(chunk)
                     if len(buffer) > limit:
                         del buffer[:-limit]
         except (OSError, ValueError):
             pass
 
-    readers = [threading.Thread(target=collect, args=(child.stdout, tail, log_limit),
+    readers = [threading.Thread(target=collect, args=(child.stdout, tail, log_limit, 'out'),
                                 name='patchtrace-log', daemon=True)]
     if separate_streams:
-        readers.append(threading.Thread(target=collect, args=(child.stderr, err_tail, stderr_limit),
+        readers.append(threading.Thread(target=collect, args=(child.stderr, err_tail, stderr_limit, 'err'),
                                         name='patchtrace-err', daemon=True))
     def terminate():
         if os.name == 'nt':
@@ -302,6 +318,8 @@ def run_process(argv: Sequence[str], *, cwd: Path, env: Mapping[str, str],
                 reason = 'cancelled'
             elif time.monotonic() - started >= timeout_seconds:
                 reason = 'timeout'
+            elif max_output_bytes is not None and totals['out'] > max_output_bytes:
+                reason = 'output-limit'
             elif check_output:
                 reason = check_output()
             if reason:
@@ -325,15 +343,17 @@ def run_process(argv: Sequence[str], *, cwd: Path, env: Mapping[str, str],
         for reader in readers:
             reader.join(timeout=5)
         with lock:
-            log = bytes(tail).decode('utf-8', errors='replace')
-            err = bytes(err_tail).decode('utf-8', errors='replace')
+            log_raw, err_raw = bytes(tail), bytes(err_tail)
+            out_total, err_total = totals['out'], totals['err']
+        log = log_raw.decode('utf-8', errors='replace')
+        err = err_raw.decode('utf-8', errors='replace')
         peak = None
         if os.name == 'nt':
             try:
                 peak = child.peak_memory()
             except OSError:
                 peak = None
-        return ProcessResult(returncode, log, reason, err, peak)
+        return ProcessResult(returncode, log, reason, err, peak, log_raw, err_raw, out_total, err_total)
     finally:
         terminate()
         if os.name != 'nt':
