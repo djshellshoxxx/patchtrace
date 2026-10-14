@@ -248,6 +248,7 @@ Generated BinExport2 messages (C3 builder): matching ids, empty id, md5-length i
 
 ### 9.3 Golden `.BinDiff` fixtures
 `tests/fixtures/secondary/bindiff-v8-pair.BinDiff` + `README` (provenance: tool version, command line, input BinExport SHA-256s, date, size ≤ 200 KiB) generated **once** by the live job (§10) from a small compiled pair (`tests/fixtures/old.c/new.c` DLLs or a synthetic BinExport pair) and committed. Tests: import golden → expected counts/algorithm names/flags set (snapshot), hash stability, mutation fuzz (flip bytes in header/schema rows → clean `SecondaryError`, never an uncaught `sqlite3` exception; Hypothesis is available in dev extras). A tiny stdout golden (`bindiff-v8-stdout.txt`) feeds `parse_summary`.
+As built (C4 follow-up, 2026-10-14): `tests/fixtures/secondary/bindiff-v8-real-on-synthetic.BinDiff` (53,248 bytes) + `-stdout.txt` + provenance JSON were written by the **real** BinDiff 8 through the live harness from the synthetic encoder pair; `tests/test_bindiff_real_golden.py` checks hash/provenance, reproducible inputs, 20 matches with the two patched functions flagged, orientation, schema shape, the stdout summary and mutation fuzz. A golden from real-driver exports remains open.
 
 ### 9.4 Live acceptance, never silent
 Marker `live_bindiff` (register in `pyproject.toml` `[tool.pytest.ini_options] markers`). A session-level hook in `tests/conftest.py`:

@@ -73,3 +73,11 @@ Preferred: a maintainer-generated pair from our compiled fixtures via Ghidra hea
 3. Self-hosted or cached artifact: upload the verified `.deb`/`.msi` to a private cache keyed by SHA-256 (no redistribution outside the repo owner's CI).
 4. Build from source (Apache-2.0, needs BinExport 12, Boost, CMake; CLI only, `-DBINEXPORT_ENABLE_IDAPRO=OFF`): last resort, slow, only when upstream assets vanish.
 5. User-run mode: the app still imports a user-produced `.BinDiff` (`secondary import-bindiff`), so the feature degrades to import-only.
+
+## 8. Status after the C4 follow-up (2026-10-14)
+- S0 done: section 4 items 1-9 applied to SPEC-29, code and tests; pin filled (trust-on-first-use, `verified:false`).
+- S2/S3 done **locally on Linux** (not yet on GitHub): stdlib provisioning, probe, end-to-end via `run_engines` + `BinDiffAdapter` on the synthetic encoder pair (`tests/bindiff_live_pair.py`, D2 answered: synthetic until a repo-owned real pair exists), `unshare -rn`.
+- S7 done locally: cancel at the first output byte and a 0.5 s timeout on a 50k-function synthetic pair discard the partial output unread (live checks), plus fake-based tests for cancel/timeout/SIGKILL.
+- S10 partly done: real v8 `.BinDiff` + stdout on the synthetic pair committed with provenance; a golden from real-driver exports is still open.
+- S6 partly done: `cell_size_check`, `max_page_count`, progress deadline; per-table row caps open.
+- Open: S4/S5 (Windows leg runs advisory: records `blocked`/unverified instead of failing), S8 (real-driver resources), S9 (promotion after 10 green runs), D1 second-path re-hash and `.asc` verification.
