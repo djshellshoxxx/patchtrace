@@ -1,0 +1,225 @@
+{
+  "$defs": {
+    "Chip": {
+      "additionalProperties": false,
+      "properties": {
+        "channel": {
+          "enum": [
+            "documentary",
+            "applicability",
+            "exploitation",
+            "hypothesis",
+            "binary-identity",
+            "code-change",
+            "anchor"
+          ],
+          "title": "Channel",
+          "type": "string"
+        },
+        "ref": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SourceRef"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "state": {
+          "enum": [
+            "supports",
+            "neutral",
+            "contradicts",
+            "unknown",
+            "not-run"
+          ],
+          "title": "State",
+          "type": "string"
+        },
+        "text": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "channel",
+        "state",
+        "text"
+      ],
+      "title": "Chip",
+      "type": "object"
+    },
+    "LeadNav": {
+      "additionalProperties": false,
+      "properties": {
+        "match_id": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Match Id"
+        },
+        "project_revision": {
+          "minimum": 0,
+          "title": "Project Revision",
+          "type": "integer"
+        },
+        "run_id": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Run Id"
+        }
+      },
+      "required": [
+        "project_revision"
+      ],
+      "title": "LeadNav",
+      "type": "object"
+    },
+    "SourceRef": {
+      "additionalProperties": false,
+      "properties": {
+        "assertion": {
+          "enum": [
+            "advisory_fact",
+            "index_claim",
+            "binary_observation",
+            "rule_hypothesis",
+            "analyst_statement"
+          ],
+          "title": "Assertion",
+          "type": "string"
+        },
+        "doc_id": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Doc Id",
+          "type": "string"
+        },
+        "pointer": {
+          "maxLength": 4096,
+          "pattern": "^(/([^/~]|~[01])*)*$",
+          "title": "Pointer",
+          "type": "string"
+        }
+      },
+      "required": [
+        "doc_id",
+        "pointer",
+        "assertion"
+      ],
+      "title": "SourceRef",
+      "type": "object"
+    }
+  },
+  "$id": "https://patchtrace.local/schemas/kbcorrelation/1/LeadRow.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "chips": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/Chip"
+      },
+      "title": "Chips",
+      "type": "array"
+    },
+    "contract": {
+      "const": "kbcorrelation/1",
+      "default": "kbcorrelation/1",
+      "title": "Contract",
+      "type": "string"
+    },
+    "group": {
+      "maxLength": 1000,
+      "minLength": 1,
+      "title": "Group",
+      "type": "string"
+    },
+    "hooks": {
+      "default": [],
+      "items": {
+        "enum": [
+          "kb.next.import_documents",
+          "kb.next.choose_product",
+          "kb.next.enter_filename",
+          "kb.next.supply_pair",
+          "kb.next.run_comparison",
+          "kb.next.review_lead",
+          "kb.next.widen_window",
+          "kb.meaning.coverage",
+          "kb.meaning.relation",
+          "kb.meaning.tier",
+          "kb.meaning.grade",
+          "kb.meaning.kev",
+          "kb.meaning.hypothesis"
+        ],
+        "type": "string"
+      },
+      "title": "Hooks",
+      "type": "array"
+    },
+    "lead_id": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Lead Id",
+      "type": "string"
+    },
+    "level": {
+      "enum": [
+        "component",
+        "function"
+      ],
+      "title": "Level",
+      "type": "string"
+    },
+    "nav": {
+      "$ref": "#/$defs/LeadNav"
+    },
+    "rank_basis": {
+      "maxLength": 1000,
+      "minLength": 1,
+      "title": "Rank Basis",
+      "type": "string"
+    },
+    "stale": {
+      "default": false,
+      "title": "Stale",
+      "type": "boolean"
+    },
+    "subject": {
+      "maxLength": 1000,
+      "minLength": 1,
+      "title": "Subject",
+      "type": "string"
+    }
+  },
+  "required": [
+    "lead_id",
+    "level",
+    "group",
+    "subject",
+    "rank_basis",
+    "nav"
+  ],
+  "title": "LeadRow",
+  "type": "object"
+}

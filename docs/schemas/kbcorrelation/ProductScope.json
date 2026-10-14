@@ -1,0 +1,171 @@
+{
+  "$defs": {
+    "ProductRef": {
+      "additionalProperties": false,
+      "properties": {
+        "doc_id": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Doc Id",
+          "type": "string"
+        },
+        "product_id": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Product Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "doc_id",
+        "product_id"
+      ],
+      "title": "ProductRef",
+      "type": "object"
+    }
+  },
+  "$id": "https://patchtrace.local/schemas/kbcorrelation/1/ProductScope.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "alias_catalog_version": {
+      "minimum": 0,
+      "title": "Alias Catalog Version",
+      "type": "integer"
+    },
+    "architecture": {
+      "enum": [
+        "amd64",
+        "arm64",
+        "x86",
+        "unknown"
+      ],
+      "title": "Architecture",
+      "type": "string"
+    },
+    "build": {
+      "anyOf": [
+        {
+          "maxLength": 1000,
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Build"
+    },
+    "channel": {
+      "anyOf": [
+        {
+          "maxLength": 1000,
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Channel"
+    },
+    "contract": {
+      "const": "kbcorrelation/1",
+      "default": "kbcorrelation/1",
+      "title": "Contract",
+      "type": "string"
+    },
+    "display_name": {
+      "maxLength": 1000,
+      "minLength": 1,
+      "title": "Display Name",
+      "type": "string"
+    },
+    "edition": {
+      "anyOf": [
+        {
+          "maxLength": 1000,
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Edition"
+    },
+    "family": {
+      "enum": [
+        "windows-client",
+        "windows-server",
+        "other",
+        "unknown"
+      ],
+      "title": "Family",
+      "type": "string"
+    },
+    "mapping": {
+      "enum": [
+        "verified",
+        "candidate",
+        "unknown",
+        "conflicted"
+      ],
+      "title": "Mapping",
+      "type": "string"
+    },
+    "release": {
+      "anyOf": [
+        {
+          "maxLength": 1000,
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Release"
+    },
+    "scope_id": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Scope Id",
+      "type": "string"
+    },
+    "source_product_ids": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/ProductRef"
+      },
+      "title": "Source Product Ids",
+      "type": "array"
+    },
+    "winbindex_key": {
+      "anyOf": [
+        {
+          "maxLength": 1000,
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Winbindex Key"
+    }
+  },
+  "required": [
+    "scope_id",
+    "family",
+    "architecture",
+    "display_name",
+    "mapping",
+    "alias_catalog_version"
+  ],
+  "title": "ProductScope",
+  "type": "object"
+}

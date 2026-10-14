@@ -1,0 +1,148 @@
+{
+  "$id": "https://patchtrace.local/schemas/kbcorrelation/1/SourceDoc.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "One document's exact bytes (``sha256`` is of the decompressed bytes). ``doc_id`` derives from kind and hash.",
+  "properties": {
+    "authenticity": {
+      "enum": [
+        "unverified-local-file",
+        "tls-allowlisted-host",
+        "tls-allowlisted-host-hash-match"
+      ],
+      "title": "Authenticity",
+      "type": "string"
+    },
+    "contract": {
+      "const": "kbcorrelation/1",
+      "default": "kbcorrelation/1",
+      "title": "Contract",
+      "type": "string"
+    },
+    "current_release_date": {
+      "anyOf": [
+        {
+          "maxLength": 40,
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]{1,9})?(Z|[+-][0-9]{2}:[0-9]{2})$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Current Release Date"
+    },
+    "dialect": {
+      "maxLength": 1000,
+      "minLength": 1,
+      "title": "Dialect",
+      "type": "string"
+    },
+    "doc_id": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Doc Id",
+      "type": "string"
+    },
+    "kind": {
+      "enum": [
+        "cvrf-month",
+        "csaf",
+        "sug-cve",
+        "winbindex-file",
+        "kev",
+        "local-note"
+      ],
+      "title": "Kind",
+      "type": "string"
+    },
+    "lineage": {
+      "enum": [
+        "msrc",
+        "winbindex",
+        "nvd",
+        "cisa",
+        "analyst"
+      ],
+      "title": "Lineage",
+      "type": "string"
+    },
+    "object_path": {
+      "maxLength": 512,
+      "minLength": 1,
+      "title": "Object Path",
+      "type": "string"
+    },
+    "origin": {
+      "enum": [
+        "local-import",
+        "https-fetch"
+      ],
+      "title": "Origin",
+      "type": "string"
+    },
+    "parser_version": {
+      "minimum": 1,
+      "title": "Parser Version",
+      "type": "integer"
+    },
+    "release_id": {
+      "anyOf": [
+        {
+          "pattern": "^[0-9]{4}-(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Release Id"
+    },
+    "retrieved_at": {
+      "maxLength": 40,
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]{1,9})?(Z|[+-][0-9]{2}:[0-9]{2})$",
+      "title": "Retrieved At",
+      "type": "string"
+    },
+    "sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Sha256",
+      "type": "string"
+    },
+    "size": {
+      "minimum": 0,
+      "title": "Size",
+      "type": "integer"
+    },
+    "uri": {
+      "anyOf": [
+        {
+          "maxLength": 2048,
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Uri"
+    }
+  },
+  "required": [
+    "doc_id",
+    "kind",
+    "sha256",
+    "size",
+    "origin",
+    "retrieved_at",
+    "dialect",
+    "parser_version",
+    "authenticity",
+    "lineage",
+    "object_path"
+  ],
+  "title": "SourceDoc",
+  "type": "object"
+}

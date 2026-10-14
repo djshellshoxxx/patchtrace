@@ -1,0 +1,135 @@
+{
+  "$defs": {
+    "KbcIssue": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "enum": [
+            "PT-KBC-INPUT",
+            "PT-KBC-SCOPE",
+            "PT-KBC-CONSENT",
+            "PT-KBC-SOURCE",
+            "PT-KBC-PRODUCT",
+            "PT-KBC-LINEAGE",
+            "PT-KBC-ACQUIRE",
+            "PT-KBC-VERIFY",
+            "PT-KBC-UNSUPPORTED",
+            "PT-KBC-STALE",
+            "PT-KBC-STATE",
+            "PT-KBC-STORAGE",
+            "PT-KBC-LIMIT",
+            "PT-KBC-CANCEL",
+            "PT-KBC-INTERNAL"
+          ],
+          "title": "Code",
+          "type": "string"
+        },
+        "contract": {
+          "const": "kbcorrelation/1",
+          "default": "kbcorrelation/1",
+          "title": "Contract",
+          "type": "string"
+        },
+        "details": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Details"
+        },
+        "message": {
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Message",
+          "type": "string"
+        },
+        "recoverable": {
+          "default": true,
+          "title": "Recoverable",
+          "type": "boolean"
+        },
+        "source_id": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source Id"
+        }
+      },
+      "required": [
+        "code",
+        "message"
+      ],
+      "title": "KbcIssue",
+      "type": "object"
+    }
+  },
+  "$id": "https://patchtrace.local/schemas/kbcorrelation/1/OperationResult.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "contract": {
+      "const": "kbcorrelation/1",
+      "default": "kbcorrelation/1",
+      "title": "Contract",
+      "type": "string"
+    },
+    "issues": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/KbcIssue"
+      },
+      "title": "Issues",
+      "type": "array"
+    },
+    "status": {
+      "enum": [
+        "ok",
+        "partial",
+        "unknown",
+        "unsupported",
+        "cancelled",
+        "error"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "value": {
+      "anyOf": [
+        {},
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Value"
+    },
+    "warnings": {
+      "default": [],
+      "items": {
+        "maxLength": 500,
+        "type": "string"
+      },
+      "title": "Warnings",
+      "type": "array"
+    }
+  },
+  "required": [
+    "status"
+  ],
+  "title": "OperationResult",
+  "type": "object"
+}

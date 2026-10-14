@@ -1,0 +1,96 @@
+{
+  "$defs": {
+    "SourceRef": {
+      "additionalProperties": false,
+      "properties": {
+        "assertion": {
+          "enum": [
+            "advisory_fact",
+            "index_claim",
+            "binary_observation",
+            "rule_hypothesis",
+            "analyst_statement"
+          ],
+          "title": "Assertion",
+          "type": "string"
+        },
+        "doc_id": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Doc Id",
+          "type": "string"
+        },
+        "pointer": {
+          "maxLength": 4096,
+          "pattern": "^(/([^/~]|~[01])*)*$",
+          "title": "Pointer",
+          "type": "string"
+        }
+      },
+      "required": [
+        "doc_id",
+        "pointer",
+        "assertion"
+      ],
+      "title": "SourceRef",
+      "type": "object"
+    }
+  },
+  "$id": "https://patchtrace.local/schemas/kbcorrelation/1/AnalystDecision.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "Append-only: product choice, pair approval, orientation override, name-mismatch confirmation.",
+  "properties": {
+    "contract": {
+      "const": "kbcorrelation/1",
+      "default": "kbcorrelation/1",
+      "title": "Contract",
+      "type": "string"
+    },
+    "created_at": {
+      "maxLength": 40,
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]{1,9})?(Z|[+-][0-9]{2}:[0-9]{2})$",
+      "title": "Created At",
+      "type": "string"
+    },
+    "next": {
+      "maxLength": 1000,
+      "minLength": 1,
+      "title": "Next",
+      "type": "string"
+    },
+    "op": {
+      "maxLength": 1000,
+      "minLength": 1,
+      "title": "Op",
+      "type": "string"
+    },
+    "prior": {
+      "maxLength": 1000,
+      "minLength": 1,
+      "title": "Prior",
+      "type": "string"
+    },
+    "reason": {
+      "maxLength": 500,
+      "title": "Reason",
+      "type": "string"
+    },
+    "refs": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/SourceRef"
+      },
+      "title": "Refs",
+      "type": "array"
+    }
+  },
+  "required": [
+    "op",
+    "prior",
+    "next",
+    "reason",
+    "created_at"
+  ],
+  "title": "AnalystDecision",
+  "type": "object"
+}

@@ -1,0 +1,54 @@
+{
+  "$id": "https://patchtrace.local/schemas/kbcorrelation/1/SearchScope.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "corpus_digest": {
+      "anyOf": [
+        {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Corpus Digest"
+    },
+    "doc_ids": {
+      "default": [],
+      "items": {
+        "pattern": "^[0-9a-f]{64}$",
+        "type": "string"
+      },
+      "title": "Doc Ids",
+      "type": "array"
+    },
+    "kind": {
+      "enum": [
+        "selected_months",
+        "cached_corpus",
+        "provided_files",
+        "mixed"
+      ],
+      "title": "Kind",
+      "type": "string"
+    },
+    "months": {
+      "default": [],
+      "items": {
+        "pattern": "^[0-9]{4}-(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)$",
+        "type": "string"
+      },
+      "maxItems": 24,
+      "title": "Months",
+      "type": "array"
+    }
+  },
+  "required": [
+    "kind"
+  ],
+  "title": "SearchScope",
+  "type": "object"
+}
