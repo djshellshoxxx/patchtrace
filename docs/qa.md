@@ -551,3 +551,7 @@ CI job text for the integration owner (`.github/workflows/qa-windows.yml`, after
 ### [F8:evidence-migration]
 - Automated: tests/test_evidence_host.py, the C6 suites (test_evidence_ui.py, test_ui_engine_setup.py), test_tooltips.py, test_gui_host_seam.py; Qt gate `python tools/qt_gate.py --repeat 5` over them.
 - Manual, not run: the evidence panel as a dock in the saved layout on Windows (shortcut Ctrl+Shift+E, dock tabs with Unified later, floating on a second monitor), part of M23.
+
+### [F9:series-files-docks]
+- Automated: tests/test_ui_m3_docks.py, test_ui_series.py, test_alpha_integration.py, test_preflight_overview.py, test_ui_audit_p2.py, test_tooltips.py, test_gui_host_seam.py (incl. `test_no_new_top_level_window`); `python tools/qt_gate.py --repeat 5` over the default GUI set: 6,260 passed.
+- Manual, not run: Series tabs (open two files, close with the tab button and the keyboard) and the Files dock in the saved layout, floating and docked, on Windows.

@@ -34,7 +34,7 @@ Method: grep of `src/patchtrace` for `settings.value(`, `setValue(`, `_save(`, `
 | `provider/context_budget` | int characters, 512 to 200000 | `24000` | r `ui.py:1036, 2924`; w `ui.py:3056` | PROVIDER |
 | `recent/project` | string, path | `""` | r `ui.py:1965`; w `ui.py:1889` | UI |
 | `recent/projects` | list of strings, at most 8 (`ui.py:1892`) | `[]` | r `ui.py:1890, 1897, 1904`; w `ui.py:1892, 1905` | UI |
-| `series/geometry` | QByteArray | unset | r `ui_series.py:285`; w `ui_series.py:432` | UI (layout) |
+| `series/geometry` | QByteArray | unset | retired by F9 (M3); no reader or writer, a stored value is ignored | UI (layout) |
 | `evidence/geometry` | QByteArray | unset | r `ui_evidence.py:1338`; w `ui_evidence.py:1410` | UI (layout) |
 | `evidence/filter` | int index into `FILTERS` (`ui_evidence.py:110`) | `0` | r `ui_evidence.py:907`; w `ui_evidence.py:986` | UI |
 | `evidence/hide_agreed` | bool | `False` | r `ui_evidence.py:910`; w `ui_evidence.py:987` | UI |

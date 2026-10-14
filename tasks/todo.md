@@ -358,3 +358,8 @@
 - [ ] Reach the plan's +15 (3,157): two more ui.py lines go with F9 (series and files docks).
 - [ ] Integrator: move the evidence status messages to `StatusAnnouncer` and the load/run/probe threads to `TaskRunner` (needs the C6 thread tests rewritten); M4 stays open.
 - [ ] BLOCKED (manual): M19 NVDA walk and M21 keyboard walk of the migrated panel on Windows.
+
+### [F9:series-files-docks] Series and files docks (2026-10-14)
+- [x] M3 done: both former exceptions to "one main window" are docks; ui.py 3,092 lines, `UI_TRANSITIONAL_CEILING` lowered 17 -> -50.
+- [ ] Integrator: `tooltips.py` still says "Opens a non-modal Series window" in `action.series` and describes `series.window` as a window; reword when F7 releases the file.
+- [ ] BLOCKED (manual): keyboard and screen-reader walk of the tab close buttons and both docks on Windows.

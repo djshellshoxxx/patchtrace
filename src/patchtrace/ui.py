@@ -13,7 +13,6 @@ from pathlib import Path
 from PySide6.QtCore import QSettings, Qt, QThread, QTimer, Signal
 from PySide6.QtGui import QAction, QColor, QFont, QKeySequence, QTextCharFormat, QTextCursor
 from PySide6.QtWidgets import (
-    QAbstractItemView,
     QApplication,
     QCheckBox,
     QComboBox,
@@ -52,7 +51,6 @@ from .evidence import build_context, resolve_evidence
 from .gui.qt.host import PanelHost
 from .interpretation import interpret, system_prompt
 from .offline_bundle import inspect_offline_bundle, install_offline_bundle
-from .preflight import overview_rows
 from .providers import ProviderConfig
 from .raw_view import SCOPES, RawSide, build_side, differing_lines
 from .reports import export_project
@@ -67,7 +65,7 @@ from .runtime_discovery import (
 from .service import ProjectService
 from .tooltips import apply_tooltip, apply_tooltips
 from .ui_bundle_setup import BundleSetup
-from .ui_inspection import InspectionThread, fill_pe_table, side_summary
+from .ui_inspection import InspectionThread, side_summary
 
 REVIEWS = ['unreviewed', 'accepted', 'rejected', 'needs-review']
 CATEGORIES = ['modified', 'added', 'removed', 'ambiguous', 'split', 'merged', 'unmatched', 'unchanged']
@@ -1487,6 +1485,8 @@ class ExportDialog(QDialog):
 
 
 class MainWindow(QMainWindow):
+    inspection_status = Signal(str)  # the Files dock renders the inspection through this
+
     def __init__(self, service=None, settings=None, profile_directory: Path | None = None):
         super().__init__()
         self.settings = settings or QSettings('PatchTrace', 'PatchTrace')
@@ -1967,8 +1967,8 @@ class MainWindow(QMainWindow):
             self._guard(lambda: self.set_service(ProjectService.open(Path(path))))
 
     def open_series(self):
-        from .ui_series import show_series_window  # lazy: keeps ui import cheap and avoids a cycle
-        show_series_window(self)
+        if series := self._open_panel('series'):
+            series.choose_and_open()
 
     def open_sample(self):
         parent = QFileDialog.getExistingDirectory(self, 'Choose directory for a new synthetic sample project')
@@ -2734,7 +2734,6 @@ class MainWindow(QMainWindow):
         thread.finished.connect(self._reap_inspection_threads, queued)
         self._inspection_threads.append(thread)  # a replaced (cancelled) thread must never be dropped while running
         self._inspection_thread = thread
-        self._set_overview_status('File inspection running: verifying hashes and parsing PE headers…')
         thread.start()
 
     def _inspection_ready(self, result, key):
@@ -2743,22 +2742,14 @@ class MainWindow(QMainWindow):
             return
         self._clear_inspection()
         self._inspection, self._inspection_key = result, key
-        self._set_overview_status('File inspection complete · ' + side_summary(result))
-        table = getattr(self, '_preflight_pe_table', None)
-        if table is not None:
-            fill_pe_table(table, result)
+        self.inspection_status.emit('File inspection complete · ' + side_summary(result))
         if self._raw_mode():
             self.render_match()
 
     def _inspection_failed(self, message, key=None):
         self._inspection_error = (key or self._project_inspection_key(), message)
-        self._set_overview_status('File inspection failed: ' + message)
+        self.inspection_status.emit('File inspection failed: ' + message)
         self.logs.appendPlainText('File inspection failed: ' + message)
-
-    def _set_overview_status(self, text):
-        label = getattr(self, '_preflight_status', None)
-        if label is not None:
-            label.setText(text)
 
     def _clear_inspection(self):
         if self._inspection is not None:
@@ -2787,69 +2778,11 @@ class MainWindow(QMainWindow):
 
     def show_file_overview(self):
         """Nonmodal read-only preview available without the Ghidra backend."""
-        if not self.project:
-            return
-        artifacts = {artifact.side: artifact for artifact in self.project.artifacts}
-        rows = overview_rows(artifacts['older'], artifacts['newer'])
-        previous = getattr(self, '_preflight_dialog', None)
-        self._forget_overview_widgets()  # before close: a replaced dialog must not clear the new refs
-        if previous is not None:
-            previous.close()  # WA_DeleteOnClose below releases it
-        dialog = QDialog(self)
-        dialog.setAttribute(Qt.WidgetAttribute.WA_DeleteOnClose)
-        dialog.setWindowTitle('Preliminary file comparison')
-        dialog.setMinimumSize(900, 620)
-        dialog.setModal(False)
-        layout = QVBoxLayout(dialog)
-        explanation = PlainLabel(
-            'Recorded values were saved when this project was created. The PE comparison below re-verifies '
-            'each project-owned artifact copy against its SHA-256 and parses headers with bounded read-only '
-            'reads. Nothing is executed. Certificate presence is not signature validity, and COFF timestamps '
-            'can be forged.')
-        explanation.setWordWrap(True)
-        layout.addWidget(explanation)
-        table = QTableWidget(len(rows), 3, dialog)
-        table.setHorizontalHeaderLabels(['Recorded field', 'OLDER', 'NEWER'])
-        table.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
-        table.setColumnWidth(0, 245)
-        table.setColumnWidth(1, 285)
-        table.horizontalHeader().setStretchLastSection(True)
-        for index, row in enumerate(rows):
-            for column, value in enumerate((row.field, row.older, row.newer)):
-                item = QTableWidgetItem(value)
-                item.setToolTip('Saved project artifact metadata; no executable content is run or parsed.')
-                table.setItem(index, column, item)
-        apply_tooltip(table, 'overview.table')
-        layout.addWidget(table)
-        status = PlainLabel('File inspection not started.')
-        status.setWordWrap(True)
-        layout.addWidget(status)
-        pe_table = QTableWidget(0, 5, dialog)
-        pe_table.setHorizontalHeaderLabels(['PE field', 'OLDER', 'NEWER', 'Status', 'Provenance'])
-        pe_table.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
-        pe_table.horizontalHeader().setStretchLastSection(True)
-        apply_tooltip(pe_table, 'overview.pe_table')
-        layout.addWidget(pe_table, 1)
-        self._preflight_dialog = dialog
-        self._preflight_status = status
-        self._preflight_pe_table = pe_table
-        dialog.destroyed.connect(lambda *_: self._overview_destroyed(dialog))
-        inspection = self._current_inspection()
-        if inspection is not None:
-            status.setText('File inspection complete · ' + side_summary(inspection))
-            fill_pe_table(pe_table, inspection)
-        else:
-            self.start_inspection()
-        dialog.show()
+        if self.project and (files := self._open_panel('files')):
+            files.refresh()
 
-    def _overview_destroyed(self, dialog):
-        if getattr(self, '_preflight_dialog', None) is dialog:
-            self._forget_overview_widgets()
-
-    def _forget_overview_widgets(self):
-        self._preflight_dialog = None
-        self._preflight_status = None
-        self._preflight_pe_table = None
+    def _open_panel(self, panel_id):
+        return self.panels.show_panel(panel_id) and self.panels.controller(panel_id)
 
     def run_analysis(self):
         if not self.project:
