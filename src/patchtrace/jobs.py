@@ -18,9 +18,11 @@ class ProcessResult:
     returncode: int
     log_tail: str
     reason: str | None = None
+    # Populated only when run_process(separate_streams=True); log_tail is then stdout alone.
+    stderr_tail: str = ''
 
 
-def _windows_process(argv: Sequence[str], cwd: Path, env: Mapping[str, str]):
+def _windows_process(argv: Sequence[str], cwd: Path, env: Mapping[str, str], separate_streams: bool = False):
     """Start suspended, contain the child before it can run, then resume it.
 
     Popen discards the primary thread handle, so use CreateProcessW directly.
@@ -85,19 +87,24 @@ def _windows_process(argv: Sequence[str], cwd: Path, env: Mapping[str, str]):
         return value
 
     read, write = w.HANDLE(), w.HANDLE()
+    err_read, err_write = w.HANDLE(), w.HANDLE()
     security = Security(c.sizeof(Security), None, True)
     info = ProcessInfo()
     job = null = None
-    stdout = None
+    stdout = stderr = None
     try:
         check(kernel.CreatePipe(c.byref(read), c.byref(write), c.byref(security), 0))
         check(kernel.SetHandleInformation(read, 1, 0))
+        if separate_streams:
+            check(kernel.CreatePipe(c.byref(err_read), c.byref(err_write), c.byref(security), 0))
+            check(kernel.SetHandleInformation(err_read, 1, 0))
         null = kernel.CreateFileW('NUL', 0x80000000, 3, c.byref(security), 3, 0, None)
         if null == c.c_void_p(-1).value:
             raise c.WinError(c.get_last_error())
         startup = Startup()
         startup.cb, startup.flags = c.sizeof(Startup), 0x100
-        startup.stdin, startup.stdout, startup.stderr = null, write, write
+        startup.stdin, startup.stdout = null, write
+        startup.stderr = err_write if separate_streams else write
         command = c.create_unicode_buffer(subprocess.list2cmdline(list(argv)))
         environment = c.create_unicode_buffer('\0'.join(f'{k}={v}' for k, v in sorted(env.items())) + '\0\0')
         check(kernel.CreateProcessW(str(argv[0]), command, None, None, True,
@@ -112,6 +119,9 @@ def _windows_process(argv: Sequence[str], cwd: Path, env: Mapping[str, str]):
             raise c.WinError(c.get_last_error())
         stdout = os.fdopen(msvcrt.open_osfhandle(read.value, os.O_RDONLY | os.O_BINARY), 'rb', buffering=0)
         read = w.HANDLE()  # Python now owns this handle.
+        if separate_streams:
+            stderr = os.fdopen(msvcrt.open_osfhandle(err_read.value, os.O_RDONLY | os.O_BINARY), 'rb', buffering=0)
+            err_read = w.HANDLE()
     except BaseException:
         if info.process:
             kernel.TerminateProcess(info.process, 1)
@@ -121,9 +131,11 @@ def _windows_process(argv: Sequence[str], cwd: Path, env: Mapping[str, str]):
             kernel.CloseHandle(job)
         if stdout:
             stdout.close()
+        if stderr:
+            stderr.close()
         raise
     finally:
-        for handle in [write, read, null, info.thread]:
+        for handle in [write, read, err_write, err_read, null, info.thread]:
             if handle:
                 kernel.CloseHandle(handle)
 
@@ -132,6 +144,7 @@ def _windows_process(argv: Sequence[str], cwd: Path, env: Mapping[str, str]):
 
         def __init__(self):
             self.stdout = stdout
+            self.stderr = stderr
 
         def poll(self):
             # Exit code 259 is legal: wait status distinguishes it from STILL_ACTIVE.
@@ -154,35 +167,47 @@ def _windows_process(argv: Sequence[str], cwd: Path, env: Mapping[str, str]):
 def run_process(argv: Sequence[str], *, cwd: Path, env: Mapping[str, str],
                 cancel: threading.Event, timeout_seconds: float,
                 check_output: Callable[[], str | None] | None = None,
-                log_limit: int = LOG_LIMIT) -> ProcessResult:
-    """Run an argv with a bounded merged log and terminate descendants on every exit."""
+                log_limit: int = LOG_LIMIT, separate_streams: bool = False,
+                stderr_limit: int = LOG_LIMIT) -> ProcessResult:
+    """Run an argv with a bounded log and terminate descendants on every exit.
+
+    By default stdout and stderr are merged into `log_tail`. With `separate_streams`,
+    `log_tail` holds stdout only (bounded by `log_limit`) and `stderr_tail` holds stderr
+    (bounded by `stderr_limit`), each drained by its own thread so neither can block the other.
+    """
     if not argv or not Path(argv[0]).is_absolute():
         raise ValueError('PT-BACKEND: configure an absolute executable path')
-    if timeout_seconds <= 0 or log_limit < 1:
+    if timeout_seconds <= 0 or log_limit < 1 or stderr_limit < 1:
         raise ValueError('PT-BACKEND: timeout and log limit must be positive')
     if cancel.is_set():
         return ProcessResult(-1, '', 'cancelled')
     if os.name == 'nt':
-        child = _windows_process(argv, cwd, env)
+        child = _windows_process(argv, cwd, env, separate_streams)
     else:
         child = subprocess.Popen(list(argv), cwd=cwd, env=dict(env), shell=False,
                                  stdin=subprocess.DEVNULL, stdout=subprocess.PIPE,
-                                 stderr=subprocess.STDOUT, start_new_session=True, bufsize=0)
-    tail = bytearray()
+                                 stderr=subprocess.PIPE if separate_streams else subprocess.STDOUT,
+                                 start_new_session=True, bufsize=0)
+    tail, err_tail = bytearray(), bytearray()
     lock = threading.Lock()
 
-    def collect():
+    def collect(stream, buffer: bytearray, limit: int):
         try:
-            while chunk := child.stdout.read(8192):
+            while chunk := stream.read(8192):
                 with lock:
-                    tail.extend(chunk)
-                    if len(tail) > log_limit:
-                        del tail[:-log_limit]
+                    buffer.extend(chunk)
+                    if len(buffer) > limit:
+                        del buffer[:-limit]
         except (OSError, ValueError):
             pass
 
-    reader = threading.Thread(target=collect, name='patchtrace-log', daemon=True)
-    reader.start()
+    readers = [threading.Thread(target=collect, args=(child.stdout, tail, log_limit),
+                                name='patchtrace-log', daemon=True)]
+    if separate_streams:
+        readers.append(threading.Thread(target=collect, args=(child.stderr, err_tail, stderr_limit),
+                                        name='patchtrace-err', daemon=True))
+    for reader in readers:
+        reader.start()
     started, reason = time.monotonic(), None
 
     def terminate():
@@ -220,10 +245,12 @@ def run_process(argv: Sequence[str], *, cwd: Path, env: Mapping[str, str],
             returncode = child.poll()
             if returncode is None:
                 raise RuntimeError('PT-BACKEND: contained child did not exit')
-        reader.join(timeout=5)
+        for reader in readers:
+            reader.join(timeout=5)
         with lock:
             log = bytes(tail).decode('utf-8', errors='replace')
-        return ProcessResult(returncode, log, reason)
+            err = bytes(err_tail).decode('utf-8', errors='replace')
+        return ProcessResult(returncode, log, reason, err)
     finally:
         terminate()
         if os.name != 'nt':
@@ -233,5 +260,7 @@ def run_process(argv: Sequence[str], *, cwd: Path, env: Mapping[str, str],
                 pass  # Already reported above; do not mask the primary error.
         if os.name == 'nt':
             child.close()
-        if not reader.is_alive():
-            child.stdout.close()
+        streams = [child.stdout, child.stderr][:len(readers)]
+        for reader, stream in zip(readers, streams, strict=True):
+            if not reader.is_alive():
+                stream.close()

@@ -88,3 +88,6 @@ Not performed in this session: interactive clean-Windows GUI walk-through, DPI/t
 
 ## Practical limits
 Provider cancellation is cooperative around network reads; an active read can wait until the 120-second timeout, and transmitted remote context cannot be recalled. Native decompiler crashes/timeouts preserve logs and quarantined output; process isolation is not an OS sandbox. Backend output contracts are pinned to inspected Ghidriff; unknown output fields fail clearly. Only static PE AMD64 is initially supported. Call graph visualization, runtime debugging, automatic reproduction, auto-download and additional formats are deferred. The synthetic sample is authored and explicitly labeled.
+
+## 2026-10-14 rz-diff stream separation
+`jobs.run_process(separate_streams=True)` drains stdout and stderr on independent bounded threads (Windows: second inheritable pipe, Job Object containment unchanged). rz-diff parses stdout only and reports stderr on non-zero exit. Local Linux: 981 passed, 6 skipped; Ruff clean. Windows pipe path and real rizin remain unverified until CI/live runs.

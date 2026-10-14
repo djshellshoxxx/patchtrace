@@ -1,8 +1,9 @@
 """Optional rz-diff secondary engine (SPEC-11): probe, supervised run and strict JSON parser.
 
-`jobs.run_process` merges stdout and stderr into one bounded log, so any stderr text
-rz-diff writes on success makes the document unparseable and is reported as an error
-rather than salvaged: a partially recovered match list would look complete.
+stdout (the JSON document) and stderr (diagnostics) are captured independently with
+`run_process(separate_streams=True)`, so diagnostics written on success cannot corrupt the
+document. Stdout that is still not strict JSON is an error rather than salvaged: a
+partially recovered match list would look complete.
 """
 from __future__ import annotations
 
@@ -152,7 +153,7 @@ def run_rzdiff(capability: Capability, older: Path, newer: Path, older_sha256: s
     with tempfile.TemporaryDirectory(prefix='patchtrace-rzdiff-') as cwd:
         # One byte over the limit lets truncation be detected rather than silently parsed.
         result = runner(argv, cwd=Path(cwd), env=env, cancel=cancel, timeout_seconds=timeout_seconds,
-                        log_limit=STDOUT_LIMIT + 1)
+                        log_limit=STDOUT_LIMIT + 1, separate_streams=True, stderr_limit=STDERR_TAIL)
     output = result.log_tail
     if result.reason == 'cancelled':
         raise SecondaryError('PT-SECONDARY-CANCEL', 'rz-diff was cancelled')
@@ -161,7 +162,7 @@ def run_rzdiff(capability: Capability, older: Path, newer: Path, older_sha256: s
     if result.reason:
         raise SecondaryError('PT-SECONDARY-RUN', f'rz-diff stopped: {result.reason}')
     if result.returncode != 0:
-        tail = output.encode('utf-8')[-STDERR_TAIL:].decode('utf-8', errors='replace')
+        tail = (result.stderr_tail or output).encode('utf-8')[-STDERR_TAIL:].decode('utf-8', errors='replace')
         raise SecondaryError('PT-SECONDARY-RUN', f'rz-diff exited with {result.returncode}: {tail}')
     if len(output.encode('utf-8')) > STDOUT_LIMIT:
         raise SecondaryError('PT-SECONDARY-LIMIT', 'rz-diff output exceeds 64 MiB')
