@@ -1,5 +1,7 @@
 {
  "contract": "tier-r-report/1",
+ "coverage": [],
+ "curves": [],
  "engines": [
   {
    "engine": "rz-diff",
@@ -17,6 +19,8 @@
    "stratum": "authored"
   }
  ],
+ "labels": null,
+ "lineages": null,
  "notes": [
   "SYNTHETIC example: mocked engine output, not live evidence"
  ],
@@ -51,7 +55,10 @@
    "stratum": "authored"
   }
  ],
- "report_sha256": "9829db90e74be6438e69e3bdbe0d9a82ac64c58dc439be7f0f46e1ba21e399d1",
+ "rank": null,
+ "report_sha256": "33fa6bbaee02472981d3fe3a5db73cbd590be66e05ddf185221fc6b618924bbf",
+ "scope_ids": [],
+ "shift": null,
  "strata": {
   "authored": {
    "rz-diff": {
