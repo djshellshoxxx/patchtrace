@@ -509,3 +509,13 @@ def test_package_has_no_qt_or_third_party_pe_imports():
     text = '\n'.join(p.read_text(encoding='utf-8') for p in root.glob('*.py'))
     for banned in ('PySide', 'PyQt', 'import pefile', 'import lief', 'subprocess'):
         assert banned not in text
+
+
+def test_pe32plus_thunk_with_reserved_high_bits_is_not_masked_to_another_rva(tmp_path):
+    data, info = build_pe_ex(PeSpec(pe32plus=True, imports={'k.dll': ['f']}))
+    bad = bytearray(data)
+    struct.pack_into('<Q', bad, info['first_thunk_off'], 0x80001000)
+    ov = run(tmp_path, bytes(bad))
+    assert 'import_thunk_reserved_bits' in codes(ov)
+    assert not any(name == 'f' for name in ov.imports.dlls[0].functions)
+

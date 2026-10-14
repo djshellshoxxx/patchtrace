@@ -289,3 +289,20 @@ def test_progress_restarts_at_zero_on_retry_and_is_optional(tmp_path):
     assert seen[0] == 0 and seen[-1] == len(BODY) and sleeps
     t2, _ = make(Opener(Resp(200, BODY)))
     assert t2.download(planned(), consent(URL), tmp_path / '.', None).size == len(BODY)
+
+
+def test_retry_after_and_content_length_hostile_digits_are_ignored(tmp_path):
+    from datetime import UTC, datetime
+    now = datetime.now(UTC)
+    assert tr._retry_after('9' * 5000, now) is None
+    assert tr._retry_after('²', now) is None
+    t, _ = make(Opener(Resp(200, BODY, headers={'Content-Length': '²'})))
+    assert t.download(planned(), consent(URL), tmp_path).size == len(BODY)
+
+
+def test_download_has_a_total_deadline(tmp_path):
+    ticks = iter(range(0, 10 ** 6, 4000))
+    t, _ = make(Opener(Resp(200, BODY)), clock=lambda: next(ticks))
+    with pytest.raises(tr.AcquisitionError) as info:
+        t.download(planned(), consent(URL), tmp_path)
+    assert info.value.recoverable and 'timeout' in str(info.value)

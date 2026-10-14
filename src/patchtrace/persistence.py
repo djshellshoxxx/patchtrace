@@ -41,8 +41,13 @@ def strict_json(text: str) -> dict:
         except ValueError as exc:
             raise ValueError('PT-SCHEMA: JSON integer exceeds the supported digit limit') from exc
     try:
-        return json.loads(text, object_pairs_hook=pairs, parse_constant=invalid_constant,
-                          parse_float=finite_float, parse_int=bounded_int)
+        value = json.loads(text, object_pairs_hook=pairs, parse_constant=invalid_constant,
+                           parse_float=finite_float, parse_int=bounded_int)
+        # A lone surrogate escape (\\ud800) parses but cannot be stored or hashed as UTF-8.
+        json.dumps(value, ensure_ascii=False).encode('utf-8')
+        return value
+    except UnicodeEncodeError as exc:
+        raise ValueError('PT-SCHEMA: JSON contains an unpaired surrogate escape') from exc
     except RecursionError as exc:
         raise ValueError('PT-SCHEMA: JSON nesting limit exceeded') from exc
 

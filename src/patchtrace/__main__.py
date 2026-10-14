@@ -9,8 +9,8 @@ def main() -> int:
     from pathlib import Path
 
     # Headless commands dispatch before any Qt import (SPEC-07 §11).
-    from .cli import COMMANDS
-    if len(sys.argv) > 1 and (sys.argv[1] in COMMANDS or (sys.argv[1] in {'-h', '--help'})):
+    # Any other first argument is a CLI typo and must fail with exit 2, never start Qt
+    if len(sys.argv) > 1 and sys.argv[1] != '--self-test' and not sys.argv[1].startswith(('-platform', '-style')):
         from .cli import main as cli_main
         return cli_main(sys.argv[1:])
 

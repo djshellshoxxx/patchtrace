@@ -91,3 +91,6 @@ Provider cancellation is cooperative around network reads; an active read can wa
 
 ## 2026-10-14 rz-diff stream separation
 `jobs.run_process(separate_streams=True)` drains stdout and stderr on independent bounded threads (Windows: second inheritable pipe, Job Object containment unchanged). rz-diff parses stdout only and reports stderr on non-zero exit. Local Linux: 981 passed, 6 skipped; Ruff clean. Windows pipe path and real rizin remain unverified until CI/live runs.
+
+## 2026-10-14 full code audit
+See `docs/plans/audit-20261014-and-next-phase.md` for findings, fixes, deferred items and the next-phase plan. Local Linux: 1004 passed, 6 skipped; Ruff clean. Windows pytest, freeze and native Ghidriff results are those of the PR's CI run; clean-profile interactive GUI acceptance remains unverified.

@@ -59,6 +59,13 @@ class PipelineResult:
     default_profile: bool = False
 
 
+def _filter_text(feature_ids) -> str:
+    """'' means no filter; '-' means an explicit empty filter (they must never share a cache key)."""
+    if feature_ids is None:
+        return ''
+    return ','.join(str(i) for i in sorted(feature_ids)) or '-'
+
+
 def input_digest(views: RunView) -> str:
     """Everything derived stages depend on from the project: diff identity, pairings, code."""
     pairings = [{'pairing_id': m.pairing_id, 'match_id': m.match_id, 'quality': m.quality,
@@ -205,7 +212,7 @@ def run(project: ComparisonProject, options: PipelineOptions | None = None,
         record('signals', 'cancelled' if exc.code == 'PT-ENRICH-CANCEL' else 'failed', exc)
 
     wil_key = stage('wil', {'input': guard.input_digest, 'rules': f'wil/{wil.DETECTOR_VERSION}',
-                            'filter': ','.join(str(i) for i in sorted(options.feature_ids or ()))})
+                            'filter': _filter_text(options.feature_ids)})
     transitions: tuple[FeatureTransition, ...] = ()
     wil_status: Status = 'unavailable'
     if stages[-1].status in {'complete', 'partial'}:
@@ -340,7 +347,7 @@ def wil_stage_id(input_digest_value: str, feature_ids: frozenset[int] | None) ->
     """The `wil` stage identity `run` assigns; it is the only stored trace of the feature filter."""
     return identity.stage_id('wil', STAGE_VERSIONS['wil'], {
         'input': input_digest_value, 'rules': f'wil/{wil.DETECTOR_VERSION}',
-        'filter': ','.join(str(i) for i in sorted(feature_ids or ()))})
+        'filter': _filter_text(feature_ids)})
 
 
 def load_profile(store: EnrichmentStore, project: ComparisonProject, config_digest: str,

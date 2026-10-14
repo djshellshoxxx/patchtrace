@@ -273,7 +273,11 @@ class NewProjectDialog(QDialog):
             self.error.setText('Choose two existing binary files. PE format and architecture are validated on creation.')
             return
         root = Path(self.root.text())
-        if root.exists() and any(root.iterdir()):
+        try:
+            occupied = root.exists() and (not root.is_dir() or any(root.iterdir()))
+        except OSError:
+            occupied = True
+        if occupied:
             self.error.setText('The project directory must be absent or empty.')
             return
         super().accept()
@@ -672,7 +676,7 @@ class AcquisitionDialog(QDialog):
                 self.status.setText('Cancelled · downloads discarded, no project created')
                 return
             self.service = quarantine.promote(older, newer, name, root)
-        except (AcquisitionError, ValueError) as exc:
+        except Exception as exc:  # promote can also raise OSError / sqlite3.Error; never leave the dialog silent
             self._failed(str(exc))
             return
         finally:
@@ -1392,6 +1396,7 @@ class MainWindow(QMainWindow):
         # Preliminary inspection (SPEC-26 D) runs on its own thread, independent of analysis jobs.
         self._inspection = None
         self._inspection_key = None
+        self._inspection_error = None  # (key, message) of the last failed inspection
         self._inspection_thread = None
         self._raw_sides = {}
         # Derived enrichment for the current run, keyed by match ID; never part of the project snapshot.
@@ -1790,8 +1795,15 @@ class MainWindow(QMainWindow):
             self.recent_menu.addAction(action)
         self.recent_menu.setEnabled(bool(self.recent_menu.actions()))
 
+    def _forget_recent(self, path):
+        recent = [p for p in self.settings.value('recent/projects', [], type=list) if p != str(path)]
+        self.settings.setValue('recent/projects', recent)
+        self.refresh_recent()
+
     def open_recent(self, path):
         if not self.worker:
+            if not Path(path).exists():
+                self._forget_recent(path)
             self._guard(lambda: self.set_service(ProjectService.open(Path(path))))
 
     def backup_project(self):
@@ -1953,6 +1965,7 @@ class MainWindow(QMainWindow):
         self.hunk_list.clear()
         if not match:
             for view in self.views.values():
+                view.setExtraSelections([])
                 view.setPlainText('No matching function selected.')
             self.match_label.setText('Select a function match to inspect changes.')
             self.hunk_list.blockSignals(False)
@@ -2088,7 +2101,7 @@ class MainWindow(QMainWindow):
         artifact = next(a for a in self.project.artifacts if a.side == side)
         text = f'PatchTrace project {self.project.id} / revision {self.project.revision}\n'
         if self._raw_mode():
-            raw = self._raw_sides.get(side)
+            raw = self._raw_sides.get(side) if self._current_inspection() is not None else None
             if raw is None or raw.rendered is None:
                 self.statusBar().showMessage('No raw bytes are displayed for this side; nothing copied.')
                 return
@@ -2257,10 +2270,10 @@ class MainWindow(QMainWindow):
         if signal is None:
             return
         location = signal.locations[0]
+        if self.mode.currentIndex() != 0:
+            self.mode.setCurrentIndex(0)  # rebuilds the text-mode offsets that raw modes empty
         if location.function_id not in self._function_offsets:
             return
-        if self.mode.currentIndex() != 0:
-            self.mode.setCurrentIndex(0)
         side, offset = self._function_offsets[location.function_id]
         start = self._line_maps[side].get(offset + location.start_line - 1)
         end = self._line_maps[side].get(offset + location.end_line - 1)
@@ -2337,6 +2350,10 @@ class MainWindow(QMainWindow):
             written = pipeline.publish(EnrichmentStore(self.service.store), self.project, result)
             stale = any(e.stale for e in written)
             self._load_enrichment()
+            if result.status.status == 'cancelled':
+                self.logs.appendPlainText('Ranking cancelled; no ranking was stored.')
+                self.filter_matches()
+                return
             if stale:
                 self._ranking_note = 'Project changed while ranking; result stored as stale. Rank again.'
             else:
@@ -2466,11 +2483,16 @@ class MainWindow(QMainWindow):
         self._hunk_index = -1
         inspection = self._current_inspection()
         if inspection is None:
+            self._raw_sides = {}  # never let Copy return bytes from a previous orientation
+            failure = self._inspection_error
+            failed = failure is not None and failure[0] == self._project_inspection_key()
             for view in self.views.values():
                 view.setExtraSelections([])
-                view.setPlainText('Verifying artifact bytes against their recorded SHA-256 and inspecting PE '
+                view.setPlainText(f'[File inspection failed: {failure[1]}]' if failed else
+                                  'Verifying artifact bytes against their recorded SHA-256 and inspecting PE '
                                   'headers. The raw view appears when this read-only check finishes.')
-            self.start_inspection()
+            if not failed:
+                self.start_inspection()
             return
         representation = self.RAW_MODES[self.mode.currentIndex()]
         choice = SCOPES[self.raw_scope.currentIndex()]
@@ -2533,7 +2555,10 @@ class MainWindow(QMainWindow):
         except ValueError:
             self.statusBar().showMessage('Enter a hexadecimal file offset, for example 0x400.')
             return
-        sizes = [reader.size for reader in (inspection.readers.values() if inspection else [])]
+        if inspection is None:
+            self.statusBar().showMessage('File inspection has not finished; try again in a moment.')
+            return
+        sizes = [reader.size for reader in inspection.readers.values()]
         if not sizes or offset < 0 or offset >= max(sizes):
             self.statusBar().showMessage('Offset is outside the verified artifact bytes.')
             return
@@ -2566,7 +2591,7 @@ class MainWindow(QMainWindow):
         thread = InspectionThread(self.project.id, self.project.artifacts, self.service.root, self)
         thread.key = key
         thread.inspection_ready.connect(lambda result, k=key: self._inspection_ready(result, k))
-        thread.inspection_failed.connect(self._inspection_failed)
+        thread.inspection_failed.connect(lambda message, k=key: self._inspection_failed(message, k))
         self._inspection_thread = thread
         self._set_overview_status('File inspection running: verifying hashes and parsing PE headers…')
         thread.start()
@@ -2584,7 +2609,8 @@ class MainWindow(QMainWindow):
         if self._raw_mode():
             self.render_match()
 
-    def _inspection_failed(self, message):
+    def _inspection_failed(self, message, key=None):
+        self._inspection_error = (key or self._project_inspection_key(), message)
         self._set_overview_status('File inspection failed: ' + message)
         self.logs.appendPlainText('File inspection failed: ' + message)
 
@@ -2597,6 +2623,7 @@ class MainWindow(QMainWindow):
         if self._inspection is not None:
             self._inspection.close()
         self._inspection, self._inspection_key, self._raw_sides = None, None, {}
+        self._inspection_error = None
 
     def _stop_inspection(self):
         thread = self._inspection_thread

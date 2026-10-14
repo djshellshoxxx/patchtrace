@@ -8,6 +8,7 @@ hand-edited file can never smuggle in coerced values or unknown detectors.
 from __future__ import annotations
 
 import os
+import re
 import sys
 import tempfile
 from pathlib import Path
@@ -160,6 +161,8 @@ class ProfileStore:
         self.directory = Path(directory)
 
     def _path(self, name: str) -> Path:
+        if not isinstance(name, str) or not re.fullmatch(NAME_PATTERN, name) or len(name) > 64:
+            raise ProfileError(f'invalid profile name {name!r}')
         return self.directory / f'{name}.json'
 
     def names(self) -> list[str]:

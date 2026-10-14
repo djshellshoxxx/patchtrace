@@ -108,7 +108,12 @@ def build_side(side: str, reader: VerifiedArtifactReader | None, overview: PeOve
     pages = page_count(scope, page_size)
     if pages == 0:
         return RawSide(side, scope, None, None, 0, 'Selected scope contains no bytes.')
-    index = max(0, min(page_index, pages - 1))
+    index = max(0, page_index)
+    if index >= pages:
+        # Never show a different page under this page number: that would make the two sides'
+        # offsets look aligned and drive the difference highlight from unrelated bytes.
+        return RawSide(side, scope, None, None, pages,
+                       f'Page {index + 1} is past the end of this side ({pages} page(s) in the selected scope).')
     try:
         page = read_page(reader, scope, index, page_size)
     except ArtifactBytesError as exc:

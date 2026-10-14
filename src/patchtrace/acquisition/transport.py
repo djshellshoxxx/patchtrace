@@ -30,6 +30,7 @@ SYMBOL_HOST = 'msdl.microsoft.com'
 BLOB_SUFFIX = '.blob.core.windows.net'
 CONSENTABLE_HOSTS = frozenset({METADATA_HOST, SYMBOL_HOST})
 MAX_DOWNLOAD_BYTES = 512 * 1024 * 1024
+DOWNLOAD_DEADLINE = 3600.0  # total seconds per download attempt; a slow-drip server cannot hold it open longer
 TIMEOUT = 10.0
 METADATA_DEADLINE = 120.0
 MAX_ATTEMPTS = 3
@@ -123,8 +124,11 @@ def _retry_after(value: str | None, now: datetime) -> float | None:
     if value is None:
         return None
     value = value.strip()
-    if value.isdigit():
-        return float(int(value))
+    if value.isascii() and value.isdigit():
+        try:
+            return float(int(value))
+        except (ValueError, OverflowError):  # absurdly long digit strings
+            return None
     try:
         when = email.utils.parsedate_to_datetime(value)
     except (TypeError, ValueError):
@@ -177,7 +181,8 @@ class Transport:
     def _read(self, response, sink: Callable[[bytes], None], cap: int, what: str,
               deadline: float | None = None) -> None:
         length = response.headers.get('Content-Length')
-        if length is not None and length.strip().isdigit() and int(length) > cap:
+        digits = length.strip() if length is not None else ''
+        if digits.isascii() and digits.isdigit() and (len(digits) > 18 or int(digits) > cap):
             raise AcquisitionError('PT-ACQ-LIMIT', f'{what} exceeds its size cap')
         total = 0
         while True:
@@ -317,7 +322,7 @@ class Transport:
                         if progress and size - reported >= step:
                             reported = size
                             progress(size, planned.size)
-                    self._read(response, sink, cap, 'download')
+                    self._read(response, sink, cap, 'download', self.clock() + DOWNLOAD_DEADLINE)
                     if progress and size != reported:
                         progress(size, planned.size)
                     out.flush()

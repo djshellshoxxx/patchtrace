@@ -387,3 +387,24 @@ def test_source_write_with_restored_mtime_during_copy_is_rejected(tmp_path, monk
     with pytest.raises(ValueError, match='source changed while copying'):
         inspect_artifact(source, 'older', tmp_path / 'project')
     assert not list((tmp_path / 'project' / 'artifacts').iterdir())
+
+
+def test_strict_json_rejects_unpaired_surrogate_but_accepts_pairs():
+    import pytest
+
+    from patchtrace.persistence import strict_json
+    with pytest.raises(ValueError, match='PT-SCHEMA'):
+        strict_json('{"code": "\\ud800"}')
+    assert strict_json('{"code": "\\ud83d\\ude00"}') == {'code': '\U0001F600'}
+
+
+def test_verified_reader_refuses_non_regular_file(tmp_path):
+    import os
+
+    import pytest
+
+    from patchtrace.artifact_bytes import ArtifactBytesError, VerifiedArtifactReader
+    fifo = tmp_path / 'pipe'
+    os.mkfifo(fifo)
+    with pytest.raises(ArtifactBytesError):
+        VerifiedArtifactReader.open_path(fifo)

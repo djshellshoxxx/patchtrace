@@ -177,8 +177,9 @@ class _Pair:
         match = relations[0]
         if match.category not in ONE_TO_ONE or len(match.older) != 1 or len(match.newer) != 1:
             return None
-        if len(self.newer.get(_key(match.newer[0]), [])) != 1:
-            return None
+        incoming = self.newer.get(_key(match.newer[0]), [])
+        if len(incoming) != 1 or incoming[0] is not match:
+            return None  # the node's surviving (e.g. manually corrected) relation is a different match
         return match
 
 

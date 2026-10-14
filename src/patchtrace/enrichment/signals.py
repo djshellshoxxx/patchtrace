@@ -328,7 +328,9 @@ class _Context:
             old, new = range(hunk.old_start, hunk.old_end), range(hunk.new_start, hunk.new_end)
             # Whitespace-, comment- and rename-only hunks, and pure reorderings inside a hunk,
             # carry no semantic edit and must not seed any signal.
-            if Counter(self.older.norm[i] for i in old) == Counter(self.newer.norm[i] for i in new):
+            # Comment-only and blank lines normalize to '' and carry no semantics.
+            if Counter(n for i in old if (n := self.older.norm[i])) == \
+                    Counter(n for i in new if (n := self.newer.norm[i])):
                 continue
             edits.append(_Edit(ordinal, old, new))
         self.edits = tuple(edits)
@@ -701,12 +703,24 @@ def _val(ctx: _Context) -> list[_Finding]:
     return out
 
 
+def _literal(token: str) -> int | None:
+    """C-style literal value; `int(x, 0)` rejects legal C spellings such as `01` or `08`."""
+    try:
+        return int(token, 0)
+    except ValueError:
+        try:
+            return int(token, 10)
+        except ValueError:
+            return None
+
+
 def _error_value(tokens: list[str]) -> bool:
     toks = [t for t in _strip_casts(tokens)[0] if t not in ('(', ')', ';')]
     if len(toks) == 2 and toks[0] == '-' and _NUMBER.fullmatch(toks[1]):
-        return int(toks[1], 0) != 0
+        return _literal(toks[1]) != 0
     if len(toks) == 1 and _NUMBER.fullmatch(toks[0]):
-        return 0xC0000000 <= int(toks[0], 0) <= 0xFFFFFFFF  # NTSTATUS error severity
+        value = _literal(toks[0])
+        return value is not None and 0xC0000000 <= value <= 0xFFFFFFFF  # NTSTATUS error severity
     return len(toks) == 1 and toks[0].startswith('STATUS_') and toks[0] not in _STATUS_OK
 
 

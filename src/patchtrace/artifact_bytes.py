@@ -19,6 +19,7 @@ from __future__ import annotations
 
 import hashlib
 import os
+import stat
 import threading
 from collections.abc import Callable
 from pathlib import Path
@@ -39,9 +40,17 @@ class ArtifactBytesError(Exception):
         self.code = code
 
 
-def _stat_key(stream: BinaryIO) -> tuple[int, int]:
+def _stat_key(stream: BinaryIO) -> tuple[int, int, int]:
+    """Identity of the open file's current state.
+
+    ``st_mtime_ns`` alone can be restored with ``utime`` after an in-place edit. On POSIX
+    ``st_ctime_ns`` is the inode change time and cannot be set by user code, so it detects
+    that. On Windows ``st_ctime_ns`` is the creation time and adds nothing; there an
+    in-place edit that preserves size and mtime is a documented residual risk (artifacts
+    are project-owned read-only copies).
+    """
     info = os.fstat(stream.fileno())
-    return info.st_size, info.st_mtime_ns
+    return info.st_size, info.st_mtime_ns, info.st_ctime_ns
 
 
 class VerifiedArtifactReader:
@@ -67,11 +76,15 @@ class VerifiedArtifactReader:
                   cancel: Callable[[], bool] | None = None) -> VerifiedArtifactReader:
         """Open ``path`` read-only, hash it on the same handle and verify identity."""
         try:
-            stream = Path(path).open('rb')
+            # O_NONBLOCK so a FIFO cannot hang the open; the regular-file check follows.
+            descriptor = os.open(path, os.O_RDONLY | getattr(os, 'O_BINARY', 0) | getattr(os, 'O_NONBLOCK', 0))
+            stream = os.fdopen(descriptor, 'rb')
         except OSError as exc:
             raise ArtifactBytesError('unreadable', f'cannot open input: {exc.strerror or exc}') from exc
         try:
-            size, _ = _stat_key(stream)
+            if not stat.S_ISREG(os.fstat(stream.fileno()).st_mode):
+                raise ArtifactBytesError('unreadable', 'input is not a regular file')
+            size = _stat_key(stream)[0]
             if expected_size is not None and size != expected_size:
                 raise ArtifactBytesError('size_mismatch', f'expected {expected_size} bytes, found {size}')
             digest = hashlib.sha256()
