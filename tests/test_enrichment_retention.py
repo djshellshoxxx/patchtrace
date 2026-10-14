@@ -107,7 +107,7 @@ def test_read_only_store_deletes_nothing(service, current):
     store = EnrichmentStore(service.store)
     for n in range(12):
         make_gen(store, current, n)
-    service.store.connection.execute("UPDATE enrichment_meta SET value='2' WHERE key='extension_version'")
+    service.store.connection.execute("UPDATE enrichment_meta SET value='99' WHERE key='extension_version'")
     service.store.connection.commit()
     newer = EnrichmentStore(service.store)
     before = ids(service)

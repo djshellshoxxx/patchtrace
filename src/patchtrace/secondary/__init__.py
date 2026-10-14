@@ -2,9 +2,12 @@
 from __future__ import annotations
 
 import json
+import logging
 
 from ..enrichment.storage import EnrichmentStore, Entry, Guard
 from .contracts import KIND, SecondaryMatchSet
+
+_log = logging.getLogger(__name__)
 
 
 def publish_secondary(store: EnrichmentStore, guard: Guard, current: Guard, revision: int,
@@ -15,6 +18,16 @@ def publish_secondary(store: EnrichmentStore, guard: Guard, current: Guard, revi
 
 
 def load_secondary(store: EnrichmentStore, current: Guard | None = None) -> list[tuple[Entry, SecondaryMatchSet]]:
-    # Strict models reject JSON lists as tuples in Python mode; JSON mode revalidates stored rows exactly.
-    return [(entry, SecondaryMatchSet.model_validate_json(json.dumps(entry.body)))
-            for entry in store.entries(KIND, current)]
+    """Every readable stored set. A corrupt or invalid row is skipped with a warning (per-row
+    isolation): one bad row must never crash `secondary reconcile` or hide the good ones."""
+    def corrupt(row_id: str) -> None:
+        _log.warning('Skipping secondary row %s: failed its integrity hash', row_id)
+
+    out = []
+    for entry in store.entries(KIND, current, on_corrupt=corrupt):
+        try:
+            # Strict models reject JSON lists as tuples in Python mode; JSON mode revalidates stored rows exactly.
+            out.append((entry, SecondaryMatchSet.model_validate_json(json.dumps(entry.body))))
+        except ValueError as exc:
+            _log.warning('Skipping secondary row %s: %s', entry.id, str(exc).splitlines()[0][:120])
+    return out
