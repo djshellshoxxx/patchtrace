@@ -68,6 +68,7 @@ from .secondary import evidence_panel_service as service_api
 from .secondary.evidence_panel_service import (
     DEFAULT_TIMEOUT,
     PARALLEL_RANGE,
+    RUN_PREVIEW_BINDIFF,
     TIMEOUT_RANGE,
     Cancelled,
     EvidenceRequest,
@@ -101,6 +102,7 @@ from .secondary.evidence_view import (
     state_text,
 )
 from .tooltips import apply_tooltip, template
+from .ui_engine_setup import BinDiffSetupController, BinDiffSetupPanel, SectionScrollArea
 
 ADDRESS_ROLE = Qt.ItemDataRole.UserRole + 2
 SORT_ROLE = Qt.ItemDataRole.UserRole + 1
@@ -579,9 +581,13 @@ class EvidencePanel(QWidget):
     probe_requested = Signal()
     status_message = Signal(str)
 
-    def __init__(self, settings=None, parent=None):
+    def __init__(self, settings=None, parent=None, *, bindiff_setup: bool = True):
         super().__init__(parent)
         self.settings = settings
+        # Track G (§16): the BinDiff run setup section; False builds the exact C6 panel (regression baseline).
+        self._with_bindiff_setup = bindiff_setup
+        self.bindiff_setup: BinDiffSetupPanel | None = None
+        self.bindiff_scroll: SectionScrollArea | None = None
         self.vm: EvidenceViewModel = empty_model('no-project')
         self.loading = False
         self.has_project = False
@@ -837,6 +843,14 @@ class EvidencePanel(QWidget):
         self.run_progress.setVisible(False)
         controls.addWidget(self.run_progress, 1)
         layout.addLayout(controls)
+        if self._with_bindiff_setup:  # track G (§16.1): own toggle row below the run controls, section below it
+            self.bindiff_setup = BinDiffSetupPanel(self.settings)
+            toggle_row = QHBoxLayout()
+            toggle_row.addWidget(self.bindiff_setup.toggle_button)
+            toggle_row.addStretch(1)
+            layout.addLayout(toggle_row)
+            self.bindiff_scroll = SectionScrollArea(self.bindiff_setup)  # only the open section ever scrolls
+            layout.addWidget(self.bindiff_scroll, 2)
         self.run_status = PlainLabel('')
         self.run_status.setObjectName('evidence_run_status')
         self.run_status.setWordWrap(True)
@@ -864,6 +878,12 @@ class EvidencePanel(QWidget):
         note.setWordWrap(True)
         layout.addWidget(note)
         self.tabs.addTab(page, 'Engines')
+        if self.bindiff_setup is not None:
+            chain = [self.import_button, self.bindiff_setup.toggle_button, *self.bindiff_setup.focus_chain(),
+                     self.engine_log, self.copy_details_button]
+            for first, second in zip(chain, chain[1:], strict=False):
+                QWidget.setTabOrder(first, second)
+            self.bindiff_setup.attach(self.bindiff_scroll)
 
     def _apply_metrics(self):
         """Column widths and row height from font metrics only (high-DPI rule §1.7)."""
@@ -1110,6 +1130,8 @@ class EvidencePanel(QWidget):
         self.timeout.setEnabled(idle)
         self.probe_button.setEnabled(idle and self.has_project)
         self.import_button.setEnabled(idle and self.has_project and not reason)
+        if self.bindiff_setup is not None:  # inputs are locked while engines run (the run holds a copy anyway)
+            self.bindiff_setup.set_state(has_project=self.has_project, locked=self.run_active)
 
     # -- state application --
     def _update_status(self):
@@ -1242,7 +1264,8 @@ class EvidenceController(QObject):
     """Owns the dock, threads and the generation counter; reads the project through ``WindowPort``."""
 
     def __init__(self, window, *, loader: Callable = load_evidence, run_execute: Callable | None = None,
-                 run_kw: dict | None = None, probe: Callable | None = None, auto_probe: bool = True):
+                 run_kw: dict | None = None, probe: Callable | None = None, auto_probe: bool = True,
+                 bindiff_kw: dict | None = None):
         super().__init__(window)
         self.window = window
         self.port = WindowPort(window)
@@ -1252,6 +1275,7 @@ class EvidenceController(QObject):
         self.run_kw = run_kw or {}
         self.probe = probe
         self.auto_probe = auto_probe
+        self.probe_found: dict[str, object] = {}  # last engines-probe result, before the BinDiff setup overlay
         self.generation = 0
         self.run_generation = 0
         # Threads are referenced here (and in the module registry) but never parented; their cancel
@@ -1272,6 +1296,12 @@ class EvidenceController(QObject):
         self.engine_states: dict[str, str] = {}
         self.dock = create_evidence_dock(window, self.settings)
         self.panel = self.dock.panel
+        # Track G (§16): BinDiff run setup; reports None (= today's "not configured") until explicitly probed.
+        self.bindiff: BinDiffSetupController | None = None
+        if self.panel.bindiff_setup is not None:
+            self.bindiff = BinDiffSetupController(self.panel.bindiff_setup, settings=self.settings, parent=self,
+                                                  **(bindiff_kw or {}))
+            self.bindiff.changed.connect(self._bindiff_changed)
         window.addDockWidget(Qt.DockWidgetArea.RightDockWidgetArea, self.dock)
         self.dock.hide()
         self._restore_geometry()
@@ -1319,6 +1349,8 @@ class EvidenceController(QObject):
     # -- lifecycle hooks (called from MainWindow) --
     def project_changed(self) -> None:
         key = self.port.key()
+        if self.bindiff is not None:  # validation answers one project and artifact pair only
+            self.bindiff.set_project(None if key is None or not key[4] or not key[5] else (key[1], key[4], key[5]))
         if key is None:
             self._invalidate()
             self.loaded_key = None
@@ -1356,10 +1388,12 @@ class EvidenceController(QObject):
         if project is not None and not self.panel.run_active:
             try:
                 older, newer, osha, nsha = self.port.artifact_paths()
+                selected = self.panel.selected_engines()
                 names = ', '.join(f'{ENGINE_NAMES[e]} {getattr(self.capabilities.get(e), "version", "") or ""}'
-                                  .strip() for e in self.panel.selected_engines()) or 'no engine selected'
+                                  .strip() for e in selected) or 'no engine selected'
+                extra = f' {RUN_PREVIEW_BINDIFF}' if 'bindiff' in selected and self._bindiff_setup() else ''
                 self.panel.set_preview(f'Will run: {names} on older/newer artifact copies (SHA-256 {osha[:12]}.., '
-                                       f'{nsha[:12]}..). Timeout {self.panel.timeout.value()} s.')
+                                       f'{nsha[:12]}..). Timeout {self.panel.timeout.value()} s.{extra}')
             except Exception:  # noqa: BLE001
                 self.panel.set_preview('')
 
@@ -1378,6 +1412,8 @@ class EvidenceController(QObject):
                 pass
         self._invalidate()
         self.run_generation += 1
+        if self.bindiff is not None:
+            self.bindiff.shutdown()  # probe/validation/discovery workers: cancel and join (no terminate)
         for _thread, cancel in self.threads:
             cancel.set()
         for thread, _cancel in self.threads:
@@ -1478,13 +1514,43 @@ class EvidenceController(QObject):
 
     def _probes_ready(self, found: dict, _generation: int) -> None:
         self.probe_thread = None
-        self.capabilities = dict(found)
+        self.probe_found = dict(found)
+        self.capabilities = self._with_bindiff(dict(found))
         self.panel.set_capabilities(self.capabilities)
         self.panel.set_run_status('Engine probe finished.')
         self._refresh_engine_rows()
         self.update_controls()
         if self.panel.vm.state in ('no-engines', 'unsupported') and self.port.project is not None:
             self.reload()
+
+    # -- track G BinDiff setup (§16.6) --
+    def _with_bindiff(self, capabilities: dict) -> dict:
+        """The BinDiff setup's capability over the engines probe; unconfigured keeps the probe result (C6)."""
+        merged = dict(capabilities)
+        own = self.bindiff.capability() if self.bindiff is not None else None
+        if own is not None:
+            merged['bindiff'] = own
+        elif 'bindiff' in self.probe_found:
+            merged['bindiff'] = self.probe_found['bindiff']
+        else:
+            merged.pop('bindiff', None)
+        return merged
+
+    def _bindiff_setup(self):
+        return self.bindiff.run_setup() if self.bindiff is not None else None
+
+    def _bindiff_changed(self) -> None:
+        """The setup's capability changed (probe or validation finished, an input was edited)."""
+        self.capabilities = self._with_bindiff(self.capabilities)
+        self.panel.set_capabilities(self.capabilities)
+        self._refresh_engine_rows()
+        self.update_controls()
+        if self.port.project is not None:
+            # Engine rows, the E1/E7 reasons and the E4 count are built from capability views at load time.
+            if self.dock.isVisible():
+                self.reload()
+            else:
+                self.dirty = True
 
     # -- runs --
     def start_run(self, options: dict) -> None:
@@ -1495,10 +1561,14 @@ class EvidenceController(QObject):
         try:
             older, newer, osha, nsha = self.port.artifact_paths()
             cache = service_api.run_cache(self.port.service, osha, nsha)
+            setup = self._bindiff_setup() if 'bindiff' in options['engines'] and run is not None else None
+            # Exactly the CLI's raw folder (cli.py `_secondary_run`): `<project>/runs/<run id>/raw/secondary`.
+            raw_dir = Path(self.port.service.root) / 'runs' / run.id / 'raw' / 'secondary' if setup else None
             self.run_generation += 1
             request = RunRequest(project.id, project.revision, self.run_generation, tuple(options['engines']),
                                  int(options['max_parallel']), int(options['timeout_s']), older, newer, osha, nsha,
-                                 run.id if run else None, dict(self.capabilities), cache)
+                                 run.id if run else None, dict(self.capabilities), cache, bindiff=setup,
+                                 bindiff_raw_dir=raw_dir)
         except Exception as exc:  # noqa: BLE001
             self.panel.set_run_status(sanitize_text(f'Engine run not started: {exc}', 400))
             return

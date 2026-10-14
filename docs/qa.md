@@ -219,3 +219,16 @@ Toolchain: Ubuntu clang/lld 18.1.3, LLVM 18 tools, mingw-w64 gcc 13-win32 (apt),
 - Benchmark `tools/bench_enrichment.py --repeat 3` (synthetic 10,000 pairs / 110,000 lines, best of 3, same shared 4 vCPU Linux container, Python 3.13.16): before (branch base `5dfc17f`) cold 11.06 s, derived-cache hit 4.49 s; after cold 8.95 s, hit 1.79 s; peak RSS about 775 MiB both. **Objective 500 ms still not met**: strict re-validation of the cached records (about 0.35 s with the collector paused) plus view rebuilding, ownership revalidation and ranking remain, by design. Host is noisy (other agents); earlier 4 vCPU figures (3.1 s) came from another machine. Windows timings unmeasured.
 - Live NVD/MSRC probe, run once from this container 2026-10-14T10:39Z: **BLOCKED** (no direct DNS/egress: `gaierror` for both hosts). First real result must come from the `live-nvd` workflow (manual or weekly); none exists yet.
 - Full suite: see the PR/integration run; local runs listed in the builder report.
+### [G:bindiff-gui-setup] Phase D track G BinDiff GUI setup (2026-10-14, builder worktree, Linux offscreen only)
+
+| Check | Evidence | Result |
+|---|---|---|
+| Full gate | `QT_QPA_PLATFORM=offscreen python -X faulthandler -m pytest -q`, twice | 1883 passed, 6 skipped, both runs (LIVE ACCEPTANCE BLOCKED: bindiff, as before) |
+| Lint | `python -m ruff check src tests tools` | clean |
+| Qt abort check | `test_ui_engine_setup.py` + `test_tooltips.py` + `test_evidence_ui.py` listed 20 times in ONE pytest session (`--keep-duplicates`, `PYTHONFAULTHANDLER=1`) | 1900 passed (20 x 95), no SIGABRT |
+| Validation path | REAL C3 `accept_binexport` worker on the committed SYNTHETIC fixtures: valid pair, swapped, foreign SHA-256, MD5 id with/without the confirmation, same file, oversized (sparse 256 MiB + 1), architecture mismatch, cancel | as specified; synthetic input, not live evidence |
+| Probe / run | FAKE `bindiff` launcher (mocked): pinned, other v8 build, newer major, v7, missing option, no version, relative path; GUI run end to end, GUI provenance equals the CLI's on identical inputs, C6 Cancel stops a hanging run | as specified |
+| Responsiveness | GUI-thread 20 ms heartbeat during a real C3 validation (max gap < 0.5 s), probe/validate slots < 0.25 s, `changed` emitted at most 3 times per probe+validate | passed |
+| Regression | unconfigured panel vs `EvidencePanel(bindiff_setup=False)`: identical widget states through E0-E6/run; same Engines page minimum width; C6 widgets keep width and x position at 680x600 and 460x420 | passed |
+
+Found and fixed while building: a toggle in the run-controls row widened the Engines page minimum (440 to 533 px); a page-level scroll area clipped the bottom rows (Qt height-for-width); the BinDiff engine row kept a stale "not configured" reason until a reload; a late worker result after the dock was deleted raised in a Qt slot (red test first). Not verifiable here: Windows runs, real BinDiff/Ghidra exports through the GUI, DPI rendering, screen-reader output.

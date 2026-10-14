@@ -1,6 +1,6 @@
 # SPEC-28: Multi-engine evidence panel (Phase C, step C6)
 
-Status: developer-ready design, 2026-10-14; implemented in C6 with the deviations recorded in section 15 (measured research `docs/research/phase-c/multi-engine-evidence-ui.md`, plan `docs/plans/hard-problems/evidence-panel-plan.md`). Implements plan item C6 of `docs/plans/phase-c-multi-engine-plan.md`. Relates to SPEC-04 (desktop), SPEC-10/11 (secondary engines), SPEC-26 A (tooltips), SPEC-27 (fusion, calibration). Contract changes: none to persisted data; one additive read helper (section 4.4). Read-only over stored reconciliation; engine runs go through the C1 scheduler.
+Status: developer-ready design, 2026-10-14; implemented in C6 with the deviations recorded in section 15; Phase D track G adds the BinDiff + BinExport setup and run flow inside the Engines tab (section 16, built 2026-10-14) (measured research `docs/research/phase-c/multi-engine-evidence-ui.md`, plan `docs/plans/hard-problems/evidence-panel-plan.md`). Implements plan item C6 of `docs/plans/phase-c-multi-engine-plan.md`. Relates to SPEC-04 (desktop), SPEC-10/11 (secondary engines), SPEC-26 A (tooltips), SPEC-27 (fusion, calibration). Contract changes: none to persisted data; one additive read helper (section 4.4). Read-only over stored reconciliation; engine runs go through the C1 scheduler.
 
 ## 0. Non-negotiable presentation rules
 
@@ -526,3 +526,98 @@ Recorded by the C6 builder; inputs: `docs/plans/spec-decisions-20261014.md` (D1-
 - `secondary/evidence.py::assess_reports` now indexes each report once (behaviour-preserving; first row per match id wins as before).
 - Thread safety evidence: worker callables run off the GUI thread (asserted), `persist_outcome` runs on the GUI thread (asserted), a widget constructed on a worker thread fails a test, teardown matrix (close while loading x5, project switch mid-load, GC of an unreferenced started thread, dock deleted while a worker runs, shutdown during an engine run); the evidence UI + tooltip tests were run 20 times in a row without a failure or abort.
 - Not automatable here (manual / C8 gates): real screen-reader announcement (NVDA/Narrator), 125/150/200% DPI rendering and glyph fonts on Windows, contrast against the live palette, frozen-EXE dock smoke, GUI-thread cost of `load_secondary` for very large stored sets (it must stay on the GUI thread because the SQLite connection is thread-confined).
+
+## 16. Track G (Phase D): BinDiff + BinExport setup and run inside the Engines tab
+
+Status: built 2026-10-14 (Phase D wave 0, track G; `docs/plans/phase-d-build-coordination.md`). Turns the CLI-only BinDiff execution (SPEC-29, `secondary run --engine bindiff`) and BinExport2 acceptance (SPEC-10b, `secondary binexport-check`) into a GUI flow inside the EXISTING C6 dock. One comparison window: no new top-level window and no new dock tab (the planned SPEC-31 `[Unified]` tab stays the only planned addition). Contract changes: none to persisted data; additive fields on the in-memory `RunRequest` (16.6).
+
+### 16.1 Placement and regression rule
+- A checkable button "BinDiff setup" (`engine_setup.toggle`) sits on its own row directly below the Engines tab run controls (Run selected engines ... Import .BinDiff...). It shows/hides a group "BinDiff run setup" (`engine_setup.section`) placed directly below that row. Hidden by default; the open state persists in `QSettings` `engines/bindiff/setup_open` (bool, try/except, default false). Without a project the toggle and the section are disabled (E0 "all disabled").
+- The section lives in its own frameless, vertical-only `SectionScrollArea` (stretch 2, minimum six text lines, never a focus stop), so in a short dock only the open section scrolls and the C6 rows keep their layout. The C6 page itself is not wrapped: measured offscreen, a page-level scroll area sized word-wrapped content by its preferred height and clipped the bottom rows. The toggle is not put into an existing row because that would widen the Engines page minimum (440 px measured; 533 px with the toggle in the run-controls row).
+- Regression rule: with BinDiff NOT configured (no successful explicit probe in this session) every pre-existing C6 widget, state E0-E8, engine row, capability, preview and `RunRequest` is identical to C6 (`bindiff` capability = the default registry probe result "not configured"; `RunRequest.bindiff is None`; `execute_run` uses the default `REGISTRY`), and the only visible addition is the toggle row: no C6 widget changes width or horizontal position or is pushed off the page. `EvidencePanel(settings, bindiff_setup=False)` builds the exact C6 panel and is the test baseline.
+- Widgets live in `ui_engine_setup.py` (`BinDiffSetupPanel`: widgets only, emits intents) with their own controller (`BinDiffSetupController`: threads and state); pure logic lives in `secondary/evidence_panel_service.py`. Both are reusable unchanged by the SPEC-31 dock tab (07-ui-and-cli).
+
+### 16.2 Wireframe (section open)
+```
+[Run selected engines] [Cancel] [Probe engines] [Import .BinDiff...]  ====
+[BinDiff setup]
++- BinDiff run setup -----------------------------------------------------------------------+
+| BinDiff executable (absolute path):                                                        |
+| [/opt/bindiff/bin/bindiff                                  v] [Browse...] [Probe BinDiff]    |
+| Usable: BinDiff 8 (@568181968, Sep 25 2023). Version check: the BinDiff 8 build ...         |
+| Older .BinExport (BinDiff primary):                                                         |
+| [C:\exports\older.BinExport                                 ] [Browse...]                   |
+| Newer .BinExport (BinDiff secondary):                                                       |
+| [C:\exports\newer.BinExport                                 ] [Browse...]                   |
+| [ ] Accept .BinExport files without a SHA-256 executable id                                 |
+| Warning: tick this only for files you exported yourself from exactly ...                   |
+| [Validate .BinExport files] [Cancel validation] ======== (indeterminate)                   |
+| Both .BinExport files are valid BinExport2 and belong to this project's files.              |
+| Older: 3 functions, architecture x86-64, executable id SHA-256, matches the older file.     |
+| [ ] Show technical details     (read-only plain text: codes, kinds, reason slugs)           |
+| How to produce .BinExport files: Ghidra ... / IDA 9.4+ ...; same "Subtract Imagebase"       |
++--------------------------------------------------------------------------------------------+
+```
+The executable field is an editable combo box: discovered candidates are its items, the edit text is the chosen path (no inline completion, typed text is never inserted as an item, minimum contents length 16 so long paths never widen the dock). Labels sit above their fields (stacked form) so the open section is no wider than the C6 Engines rows.
+
+### 16.3 BinDiff executable: discovery and probe
+- Prefill (read-only, never PATH, never executed): first from `QSettings` `engines/bindiff/path` (written only after a successful explicit probe); otherwise, the first time the section is opened with an empty field, `runtime_discovery.discover_local_runtimes().bindiff_executables` runs on a worker thread: exactly one candidate fills the field, several become combo items. Discovery never starts a probe.
+- "Probe BinDiff" runs `bindiff_probe.probe_report(path)` (only `--version` and `--nologo --help`, private workdir, allow-listed env, 30 s, cached per path/mtime/size) on a worker. Relative paths are refused by the probe (`not-found`).
+- Status line texts (exact; `{}` filled; plain text):
+
+| State | Text |
+|---|---|
+| P0 empty | "No BinDiff executable chosen. BinDiff is never looked up on PATH: choose the bindiff executable (bindiff.exe on Windows) of an installed BinDiff 8 and press Probe BinDiff." |
+| P1 one found | "Found an installed BinDiff at the path above; it has not been run. Press Probe BinDiff to check it." |
+| P1 several | "Found {n} installed BinDiff executables; pick one from the list or use Browse, then press Probe BinDiff." |
+| P2 unchecked | "Not checked yet. Probe BinDiff runs only bindiff --version and --help; it never reads the project files." |
+| P3 probing | "Checking BinDiff (bindiff --version and --help only)..." |
+| P4 usable | "Usable: BinDiff {version}. Version check: {pin}." |
+| P5 not usable | "Not usable: {probe reason}" (the SPEC-29 §6 fixed message; never a path or raw tool output) |
+
+Pin status (`{pin}`) compares `Capability.version` with the measured pin `8 (@568181968, Sep 25 2023)` (`tools/bindiff_pin.json` `version_text` without its `BinDiff ` prefix; a test keeps them equal): `pinned` "the BinDiff 8 build PatchTrace was tested with"; `tested` "a BinDiff {major} build other than the one PatchTrace was tested with; accepted because every required option is present"; `untested-newer` "newer than the tested BinDiff 8; accepted because every required option is present, and results are recorded as from an untested version".
+
+### 16.4 BinExport validation
+- Older and newer `.BinExport` paths are picked with Browse (or typed). "Validate .BinExport files" runs `validate_binexports(ValidationRequest)` on a worker: the CLI's own `cli_bindiff.c3_acceptor` (C3 `accept_binexport` in the capped worker, including its swapped-file re-classification) for older then newer, then `bindiff_inputs.bind_pair`. Snapshots go to a private temporary directory that is removed afterwards; the run repeats acceptance exactly as the CLI does, so what BinDiff diffs is what was accepted in that run. The same file chosen twice (same path, or same size and SHA-256) is reported before any worker starts.
+- Progress: indeterminate bar plus "Validating the {side} .BinExport in an isolated checker (step {n} of 2)..." and then "Checking that the two .BinExport files form this project's pair..."; "Cancel validation" sets the shared cancel event (C3 kills the worker tree) and immediately shows "Validation cancelled; nothing was kept."; the late result is dropped by generation.
+- Clicking Validate with a path missing shows "Choose both .BinExport files first: one for the older file and one for the newer file."; an unexpected exception in the check shows "The check stopped unexpectedly ({exception class}); nothing was kept."
+- Success text: "Both .BinExport files are valid BinExport2 and belong to this project's files." (with the unbound confirmation: "Both .BinExport files are valid BinExport2; at least one is tied to this project only by your confirmation.") plus one line per side "{Side}: {n} functions, architecture {arch}, executable id {binding}." with binding `SHA-256, matches the {side} file` | `MD5 only, accepted on your confirmation (not checked)` | `none, accepted on your confirmation (not checked)` | `not a SHA-256, accepted on your confirmation (not checked)`. Architecture names are file strings: `sanitize_text`, plain text only.
+- Failure text: "Not accepted: {message}" with the mapping below; "Show technical details" reveals code, kind (SPEC-29 §6), reason slug (SPEC-10b §7), side and the fixed-template message. Worker stderr (`SecondaryError.diagnostics`) is never shown in the GUI (the CLI keeps printing it to stderr).
+
+| Source (kind / reason) | Message (plain) |
+|---|---|
+| `binexport-orientation`, `orientation_swapped` | The two .BinExport files are swapped: the file chosen as older was exported from the newer file (or the reverse). Swap them and validate again. |
+| `binexport-wrong-artifact`, `executable_id_mismatch` | The {side} .BinExport was exported from a different file than this project's {side} file (its SHA-256 executable id does not match). |
+| `binexport-same-file`, `same_file_twice` | The same .BinExport was chosen for both sides. Choose one export of the older file and one of the newer file. |
+| `binexport-arch-mismatch` | The two .BinExport files describe different processor architectures, so they cannot be a patch pair. |
+| `binexport-unbound`, `executable_id_md5/empty/other` | The {side} .BinExport {does not record a SHA-256 of its source file / records only an MD5 hash of its source file, not a SHA-256 / records no hash of its source file / records an id that is not a SHA-256 of its source file}, so PatchTrace cannot check that it belongs to this project. Re-export it with an exporter that records SHA-256 (Ghidra does), or tick the confirmation below if you exported it from exactly this file yourself. |
+| `address_basis_mixed` | One file uses virtual addresses and the other subtracted the image base. Export both with the same "Subtract Imagebase" choice. |
+| `binexport-too-large`, `too_large` | The {side} .BinExport is larger than the 256 MiB limit. |
+| `memory_cap`, `record_too_large`, `count_cap:*` | The {side} .BinExport exceeds a size or record-count limit of the checker. |
+| `unreadable`, `not_regular_file`, `empty_file`, `file_changed_during_read` | could not be opened / is not a regular file / is empty / changed while it was being read |
+| `lookalike_*` | The {side} file looks like {a SQLite database (perhaps a .BinDiff result) / JSON / a ZIP archive / a Windows executable / an ELF executable / a PDF}, not a .BinExport file. |
+| other `PT-SECONDARY-INPUT` slugs | The {side} .BinExport is not a valid BinExport2 file (its structure failed a check). |
+| `binexport-unsupported`, `protobuf_*`, `descriptor_mismatch`, `worker_unavailable` | BinExport validation is not available in this build (the BinExport2 reader is missing). |
+| `worker_timeout` / `worker_oom` / `worker_crash`, `worker_bad_result` | the check took longer than its time limit / needed more memory than allowed / the isolated checker stopped unexpectedly; the file was not accepted |
+| `identical-pair`, `identical_pair` | This project's older and newer files are identical, so there is nothing to compare. |
+| `workdir-error` | PatchTrace could not prepare a private working folder for the check. Check the free disk space. |
+| `cancelled` | Validation cancelled; nothing was kept. |
+
+### 16.5 Accept-unbound override
+A checkbox "Accept .BinExport files without a SHA-256 executable id" (`engine_setup.accept_unbound`) with an always-visible warning label (`engine_setup.unbound_warning`): "Warning: tick this only for files you exported yourself from exactly this project's older and newer files. Without a SHA-256 id PatchTrace cannot check which file an export came from, so a wrong file gives meaningless pairings. Your confirmation is stored with the BinDiff result; a SHA-256 id that does not match is still refused." It is never persisted, resets when either path or the project changes, and invalidates the last validation. Validation and the run pass it as `accept_unbound` exactly like `--accept-unbound-binexport`, so `EngineRun.provenance['binexport_binding']` reads `asserted:older=<kind>,newer=<kind>` as the CLI records it (a test compares a GUI run with a CLI run on identical inputs).
+
+### 16.6 Run path (C6 flow unchanged)
+- BinDiff capability seen by the Engines tab: the unchanged default probe result while BinDiff is not configured; after an explicit probe: the probe's unsupported capability, or (probe usable) `supported=False` with reason "BinDiff {version} is usable; choose and validate both .BinExport files in BinDiff setup." or "BinDiff {version} is usable, but the .BinExport files were not accepted: {message}", or `supported=True` once the validation of the CURRENT paths, override, project and artifact SHA-256 pair succeeded. The BinDiff checkbox therefore enables only when both checks passed.
+- `RunRequest` gains additive optional fields `bindiff: BinDiffSetup | None` (absolute executable, older/newer `.BinExport`, `accept_unbound`) and `bindiff_raw_dir: Path | None` (`<project>/runs/<run_id>/raw/secondary`, exactly the CLI path). `execute_run(registry=None)` then builds `build_registry(bindiff=bindiff_adapter(setup, raw_dir))`, where `bindiff_adapter` calls `cli_bindiff.adapter_from_args` with an equivalent `argparse.Namespace` and an empty environment (only the GUI field counts; never PATH). Everything else is the C6 flow: scheduler on `EngineRunThread`, outcomes persisted by `persist_outcome` in the GUI-thread slot, generation drop, cancel, states E0-E8.
+- The run preview adds "BinDiff compares the two validated .BinExport files (older = primary, newer = secondary)." when BinDiff is selected.
+- Every change of the setup capability (probe or validation finished, an input edited) refreshes the capabilities, engine rows and run controls at once and reloads the evidence in the background when the dock is visible (else marks it dirty): engine rows, the E1/E7 reasons and the E4 count are built from capability views at load time, so without the reload the BinDiff row kept the old "not configured" reason. Inputs are locked while engines run.
+
+### 16.7 Threads
+`ui_engine_setup.TaskThread` (no Qt parent, module registry `ui_engine_setup._LIVE_THREADS`, released with `deleteLater` on `finished`, cancel `threading.Event`) runs discovery, probe and validation on immutable inputs; results arrive through queued bound-method slots that drop stale generations and results that arrive after the section was deleted with its dock. `BinDiffSetupController.shutdown()` (called by `EvidenceController.shutdown()`) sets every cancel event and `wait()`s every thread; no `terminate()`. Workers never touch widgets, `QSettings`, the clipboard, the project service or SQLite.
+
+### 16.8 Tooltips, accessibility, keyboard
+Registry ids (WHAT/WHY/EFFECT plus SOURCE/Availability, unique, no `<`/`>`): `engine_setup.toggle`, `.section`, `.bindiff_path`, `.bindiff_browse`, `.bindiff_probe`, `.older_binexport`, `.older_browse`, `.newer_binexport`, `.newer_browse`, `.accept_unbound`, `.unbound_warning`, `.validate`, `.cancel_validation`, `.show_details`, `.details`. Every control has an accessible name (exact strings in `ui_engine_setup.ACCESSIBLE_NAMES`) and the registry text as accessible description; the two status labels keep an empty accessible name so `setText` announces (1.8); status is words, never colour. Tab order: ..., Import .BinDiff, BinDiff setup, executable, Browse, Probe BinDiff, older, Browse, newer, Browse, accept checkbox, Validate, Cancel validation, Show technical details, details, then the engine log and Copy details.
+
+### 16.9 Tests (offscreen pytest-qt + pure; mocked unless stated)
+`tests/test_ui_engine_setup_service.py` (pure): message table for every kind/slug, banned-word sweep, pin status and pin constant equal to `tools/bindiff_pin.json`, probe with a fake `bindiff` (ok, version 7, missing option, no version, newer major, relative path), REAL `accept_binexport` on `tests/fixtures/binexport` (valid pair, swapped, foreign SHA-256, MD5 id with and without the override, same file, oversized, architecture mismatch, pre-set cancel), adapter reuse equal to `adapter_from_args`, `execute_run` registry selection. `tests/test_ui_engine_setup.py` (Qt): probe states, discovery prefill without execution and without PATH, validation flow with progress and cancel, override provenance equal to the CLI, end-to-end GUI run with a fake `bindiff` and persistence on the GUI thread, project switch drops results, shutdown joins threads, GUI-thread heartbeat during a real validation, slot time ceilings, tooltips/accessibility/tab order, the regression baseline of 16.1. The new Qt tests run 20 times in one session without an abort.
+Manual / Windows-only gates: a real BinDiff 8 `bindiff.exe` from `%ProgramFiles%` through the GUI, native file dialogs, 125/150/200% DPI layout of the section, NVDA/Narrator announcement of the two status labels, a keyboard-only walk through the section.
