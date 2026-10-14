@@ -179,6 +179,105 @@ def test_run_shard_survives_failure_and_timeout(tree):
     assert status['suite:_template/tiny'] == 'ok'
 
 
+def noisy_runner(argv, timeout, env):
+    text = ' '.join(argv[3:])
+    if 'build-suite corpus/ours/cwe-patterns/arena' in text:
+        err = '\n'.join(f'line {i}' for i in range(60)) + '\nclang: error: boom\n'
+        return 2, json.dumps({'command': 'x', 'status': 'error', 'error': 'bad  thing\nsecond line'}), None, err
+    if 'build-suite corpus/ours/compiler-noise/loops' in text:
+        return 3, json.dumps({'command': 'x', 'status': 'blocked', 'reason': 'BLOCKED: no lld-link'}), None, 'tool x'
+    if 'build-suite corpus/ours/_template/tiny' in text:
+        return 0, json.dumps({'command': 'x', 'status': 'skipped', 'reason': 'identical images'}), None, ''
+    return fake_runner(argv, timeout, env)
+
+
+def test_run_shard_logs_reason_and_bounded_stderr_but_keeps_json_aggregate_only(tree):
+    plan = plan_for(tree, shards=1)
+    log = []
+    doc = S.run_shard(plan, 0, runner=noisy_runner, log=log.append)
+    status = {c['id']: c for c in doc['cases']}
+    assert status['suite:cwe-patterns/arena']['status'] == 'failed'
+    assert status['suite:cwe-patterns/arena']['reason'] == 'exit 2: bad thing second line'
+    assert status['suite:compiler-noise/loops']['status'] == 'blocked'
+    assert status['suite:compiler-noise/loops']['reason'] == 'exit 3: BLOCKED: no lld-link'
+    assert status['suite:_template/tiny']['status'] == 'skipped'
+    text = '\n'.join(log)
+    assert '[FAILED] suite:cwe-patterns/arena: exit 2: bad thing second line' in text
+    assert '[BLOCKED] suite:compiler-noise/loops' in text and 'clang: error: boom' in text
+    assert 'line 39' not in text and 'line 41' in text            # only the last 20 lines
+    assert all(len(entry) < S.STDERR_CHARS + 500 for entry in log)
+    assert 'clang: error' not in json.dumps(doc)                  # stderr never enters the shard JSON
+
+
+def test_stderr_tail_and_reason_are_bounded():
+    assert S.stderr_tail('\n'.join(map(str, range(100))), 3) == '97\n98\n99'
+    assert len(S.stderr_tail('x' * 100_000)) == S.STDERR_CHARS
+    assert len(S.failure_reason(1, None, {'error': 'e' * 5000}, '')) == S.REASON_CHARS
+    assert S.failure_reason(1, None, None, 'a\nlast line') == 'exit 1: last line'
+    assert S.failure_reason(3, None, {'blocked': {'rz-diff': 'not found'}}, '') == 'exit 3: rz-diff: not found'
+
+
+def test_summary_parses_the_pretty_printed_cli_output():
+    pretty = 'warning line\n' + json.dumps({'command': 'x', 'status': 'ok', 'written': ['a']}, indent=1)
+    assert S._summary(pretty)['written'] == ['a']
+    assert S._summary('noise\n{"a": 1}') == {'a': 1}
+    assert S._summary('no json here') is None
+
+
+def test_report_file_and_labels_are_collected_from_the_shard_scratch(tree, tmp_path):
+    plan = plan_for(tree, shards=1, subset='suites')
+    scratch = tmp_path / 'scratch'
+    (scratch / 'known-answer' / 'labels').mkdir(parents=True)
+    (scratch / 'known-answer' / 'labels' / 'p1.json').write_text(json.dumps(
+        {'contract': 'known-answer-labels/1', 'pair_id': 'p1', 'stratum': 'authored', 'functions': [{'name': 'SECRET'}]}))
+    report = scratch / 'known-answer' / 'reports' / 'r.json'
+    report.parent.mkdir(parents=True)
+    report.write_text(json.dumps(make_report('rz-diff', 'p1')))
+    outside = tmp_path / 'outside.json'
+    outside.write_text(json.dumps(make_report('rz-diff', 'evil')))
+
+    def runner(argv, timeout, env):
+        if argv[3] == 'evaluate':
+            return 0, json.dumps({'command': 'evaluate', 'report': str(report), 'status': 'ok'}, indent=1), None
+        return 0, json.dumps({'command': 'x', 'status': 'ok'}), None
+    doc = S.run_shard(plan, 0, runner=runner, scratch=scratch, engines=['rz-diff'])
+    assert [r['inputs'][0]['pair_id'] for r in doc['reports']] == ['p1']
+    assert doc['labels'] == [{'pair_id': 'p1', 'stratum': 'authored'}] and 'SECRET' not in json.dumps(doc)
+    assert S._scratch_json(scratch, outside) is None             # files outside the shard scratch are never read
+
+
+def test_main_exit_codes_distinguish_failed_blocked_and_skipped(tree, tmp_path, monkeypatch, capsys):
+    plan = plan_for(tree, shards=1)
+    plan_path = tmp_path / 'plan.json'
+    plan_path.write_text(json.dumps(plan))
+    monkeypatch.setenv('PATCHTRACE_TIER_R_NO_EVAL', '1')
+
+    def go(runner):
+        monkeypatch.setattr(S, 'default_runner', runner)
+        code = S.main(['run-shard', '--plan', str(plan_path), '--shard', '0', '--out', str(tmp_path / 'o')])
+        return code, json.loads(capsys.readouterr().out.strip().splitlines()[-1])
+
+    code, summary = go(noisy_runner)
+    assert code == S.FINDINGS and summary['failed'] == ['suite:cwe-patterns/arena']
+    assert summary['blocked'] == ['suite:compiler-noise/loops']
+
+    def only_blocked(argv, timeout, env):
+        return noisy_runner(argv, timeout, env) if 'build-suite corpus/ours/compiler-noise/loops' in ' '.join(argv) else fake_runner(argv, timeout, env)
+    code, summary = go(only_blocked)
+    assert code == S.BLOCKED and summary['failed'] == []
+    code, summary = go(fake_runner)
+    assert code == S.OK and summary['blocked'] == []
+
+
+def test_merge_treats_skipped_as_non_failing(tree, tmp_path):
+    plan = plan_for(tree, shards=1)
+    doc = S.run_shard(plan, 0, runner=noisy_runner, log=lambda t: None)
+    docs = [doc]
+    _, prov = S.merge(docs)
+    assert 'suite:_template/tiny' not in prov['failing_cases']
+    assert 'suite:cwe-patterns/arena' in prov['failing_cases'] and 'suite:compiler-noise/loops' in prov['failing_cases']
+
+
 def test_run_shard_rejects_tampered_plan(tree):
     plan = plan_for(tree)
     plan['seed'] = 99
@@ -339,6 +438,9 @@ def test_workflow_structure_and_pins():
     assert doc['jobs']['windows-advisory']['continue-on-error'] is True
     assert doc['jobs']['shard']['needs'] == 'plan' and set(doc['jobs']['merge']['needs']) == {'plan', 'shard'}
     assert doc['permissions'] == {'contents': 'read'}
+    step = next(st for st in doc['jobs']['shard']['steps'] if st.get('name', '').startswith('Install compilers'))
+    for pkg in ('gcc-mingw-w64-x86-64', 'llvm', 'lld', 'clang'):
+        assert pkg in step['run'].split()
 
 
 def test_cli_merge_missing_shard_exit_code(tree, tmp_path):

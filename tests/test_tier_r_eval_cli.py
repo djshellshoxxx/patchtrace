@@ -40,19 +40,52 @@ def run(capsys, *argv):
     return code, (json.loads(text) if text.strip() else {})
 
 
-def test_mutate_is_blocked_while_the_mutation_package_is_absent(capsys, monkeypatch):
-    monkeypatch.setitem(sys.modules, 'tools.calibration.mutations', None)      # import raises ImportError
-    code, doc = run(capsys, 'mutate', '--help-me')
-    assert code == 3 and doc['status'] == 'blocked' and 'another worker' in doc['reason']
+def test_mutate_plants_builds_and_labels_a_tiny_suite_pair(record_live_status, capsys, store):
+    require(record_live_status, 'msvc-free')
+    code, doc = run(capsys, 'mutate', '--suite', str(ROOT / 'corpus/ours/_template/tiny'), '--operator', 'cmp-flip',
+                    '--seed', '1000')
+    assert (code, doc['status'], doc['disagreements']) == (0, 'ok', 0)
+    labels = C.load_labels((store / 'labels' / doc['written'][0]).read_bytes())
+    assert labels.stratum == 'mutation' and labels.case['mutation_case']['operator'] == 'cmp-flip'
+    assert sum(f.label == 'changed' for f in labels.functions) == 1
 
 
-def test_mutate_delegates_when_the_package_exists(capsys, monkeypatch):
+def test_mutate_unknown_operator_is_an_error_not_blocked(capsys, store):
+    code, doc = run(capsys, 'mutate', '--suite', str(ROOT / 'corpus/ours/_template/tiny'), '--operator', 'nope',
+                    '--seed', '1')
+    assert code == 2 and doc['status'] == 'error'
+
+
+def test_aa_and_noise_default_to_the_first_suite_version(monkeypatch, tmp_path):
     seen = []
-    fake = types.ModuleType('tools.calibration.mutations')
-    fake.main = lambda argv: seen.append(argv) or 0
-    monkeypatch.setitem(sys.modules, 'tools.calibration.mutations', fake)
-    code, doc = run(capsys, 'mutate', 'list', '--seed', '7')
-    assert (code, doc['status'], seen) == (0, 'delegated', [['list', '--seed', '7']])
+    monkeypatch.setattr(cli.F, 'run_noise', lambda session, base: seen.append(base.tag) or ([], []))
+    monkeypatch.setenv('PATCHTRACE_CALIB_ROOT', str(tmp_path / 'calib'))
+    args = types.SimpleNamespace(suite=str(ROOT / 'corpus/ours/_template/tiny'), version=None, card=None, side='old',
+                                 store=None)
+    session = types.SimpleNamespace(store=tmp_path)
+    assert cli._base(args, session).tag == 'v1'
+    assert cli.main(['noise', '--suite', str(ROOT / 'corpus/ours/_template/tiny')]) in (0, 3)
+
+
+def test_build_card_reports_identical_images_as_skipped(capsys, monkeypatch, store):
+    def boom(*a, **k):
+        raise cli.F.IdenticalImages('card-x: identical')
+    monkeypatch.setattr(cli.F, 'run_card', boom)
+    monkeypatch.setattr(cli, '_card', lambda cid: object())
+    code, doc = run(capsys, 'build-card', 'card-x')
+    assert (code, doc['status'], doc['written']) == (0, 'skipped', []) and 'identical' in doc['reason']
+
+
+def test_evaluate_uses_the_rz_diff_environment_variable(capsys, monkeypatch, store):
+    seen = {}
+
+    def providers(store_, imports, *, rz_diff, engines):
+        seen['rz'] = rz_diff
+        return {}
+    monkeypatch.setattr(cli.E, 'default_providers', providers)
+    monkeypatch.setenv('RZ_DIFF', '/opt/rizin/bin/rz-diff')
+    run(capsys, 'evaluate', '--engines', 'rz-diff')
+    assert seen['rz'] == '/opt/rizin/bin/rz-diff'
 
 
 def test_corpus_hook_dispatches_to_the_tier_r_cli(capsys):

@@ -10,6 +10,7 @@ import argparse
 import importlib
 import importlib.util
 import json
+import os
 import sys
 from collections.abc import Sequence
 from pathlib import Path
@@ -150,7 +151,10 @@ def cmd_build_suite(args) -> tuple[int, dict]:
 
 def cmd_build_card(args) -> tuple[int, dict]:
     session = _session(args)
-    doc = F.run_card(session, _book(), _card(args.card), opt=args.opt)
+    try:
+        doc = F.run_card(session, _book(), _card(args.card), opt=args.opt)
+    except F.IdenticalImages as exc:
+        return OK, {'command': 'build-card', 'status': 'skipped', 'reason': str(exc), 'written': [], 'disagreements': 0}
     name = F.write_doc(session.store, doc).name
     disagree = doc['summary']['disagreements']
     return (FINDINGS if disagree else OK), {'command': 'build-card', 'status': 'findings' if disagree else 'ok',
@@ -159,11 +163,12 @@ def cmd_build_card(args) -> tuple[int, dict]:
 
 def _base(args, session: F.Session) -> F.BaseSource:
     if args.suite:
-        _, bases = F.suite_bases(Path(args.suite))
-        if args.version not in bases:
+        suite, bases = F.suite_bases(Path(args.suite))
+        version = args.version or suite.versions[0]
+        if version not in bases:
             raise Usage(f'--version must be one of {sorted(bases)}')
-        return bases[args.version]
-    if args.card:
+        return bases[version]
+    if getattr(args, 'card', None):
         card = _card(args.card)
         recipe = _book().get(card.project)
         if recipe is None:
@@ -188,18 +193,13 @@ def cmd_noise(args) -> tuple[int, dict]:
 
 
 def cmd_mutate(args) -> tuple[int, dict]:
-    try:
-        module = importlib.import_module('tools.calibration.mutations')
-    except ImportError:
-        return BLOCKED, {'command': 'mutate', 'status': 'blocked',
-                         'reason': 'BLOCKED: tools.calibration.mutations is not importable here (SPEC-32 s8 is built '
-                                   'by another worker and is not merged yet)'}
-    entry = getattr(module, 'main', None)
-    if entry is None:
-        return BLOCKED, {'command': 'mutate', 'status': 'blocked',
-                         'reason': 'BLOCKED: tools.calibration.mutations has no main(argv) entry point'}
-    code = entry(list(args.rest))
-    return int(code or 0), {'command': 'mutate', 'status': 'delegated', 'exit_code': int(code or 0)}
+    session = _session(args)
+    doc = F.run_mutation(session, _base(args, session), args.operator, args.seed, opt=args.opt)
+    name = F.write_doc(session.store, doc).name
+    disagree = doc['case']['disagreements']
+    return (FINDINGS if disagree else OK), {'command': 'mutate', 'status': 'findings' if disagree else 'ok',
+                                            'written': [name], 'disagreements': disagree,
+                                            'operator': args.operator, 'seed': args.seed}
 
 
 def cmd_evaluate(args) -> tuple[int, dict]:
@@ -210,7 +210,8 @@ def cmd_evaluate(args) -> tuple[int, dict]:
     if unknown:
         raise Usage(f'unknown engine(s) {unknown}; choose from {list(E.ENGINES)}')
     imports = Path(args.imports) if args.imports else store / 'imports'
-    providers = E.default_providers(store, imports, rz_diff=args.rz_diff, engines=engines)
+    providers = E.default_providers(store, imports, rz_diff=args.rz_diff or os.environ.get('RZ_DIFF') or None,
+                                    engines=engines)
     report = E.evaluate(docs, providers, symbols=args.symbols)
     out = Path(args.out) if args.out else store / 'reports' / f'tier-r-{args.symbols}-{report["report_sha256"][:12]}.json'
     out.parent.mkdir(parents=True, exist_ok=True)
@@ -337,8 +338,12 @@ def build_parser() -> argparse.ArgumentParser:
         p.add_argument('--opt', default='O2', choices=('O0', 'O1', 'O2', 'O3', 'Os'))
         if name == 'aa':
             p.add_argument('--no-layout', action='store_true')
-    p = add('mutate', cmd_mutate, 'planted mutations (SPEC-32 s8; delegates to tools.calibration.mutations)')
-    p.add_argument('rest', nargs=argparse.REMAINDER)
+    p = add('mutate', cmd_mutate, 'plant one mutation (SPEC-32 s8) in a suite version, build and label the pair')
+    p.add_argument('--suite', required=True)
+    p.add_argument('--version', help='suite version to mutate (default: the first listed)')
+    p.add_argument('--operator', required=True)
+    p.add_argument('--seed', type=int, required=True)
+    p.add_argument('--opt', default='O2', choices=('O0', 'O1', 'O2', 'O3', 'Os'))
     p = add('evaluate', cmd_evaluate, 'score engines against the label documents (tier-r-report/1)')
     p.add_argument('--labels')
     p.add_argument('--imports', help='folder with <pair_id>.BinDiff and <pair_id>.ghidriff.json (default <store>/imports)')
@@ -368,8 +373,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser = build_parser()
     argv = list(sys.argv[1:] if argv is None else argv)
     try:
-        args = (argparse.Namespace(cmd='mutate', func=cmd_mutate, rest=argv[1:]) if argv[:1] == ['mutate']
-                else parser.parse_args(argv))      # mutate forwards every remaining token untouched
+        args = parser.parse_args(argv)
     except SystemExit as exc:      # argparse: 0 for --help, 2 for usage errors
         return int(exc.code or 0)
     try:
@@ -380,6 +384,9 @@ def main(argv: Sequence[str] | None = None) -> int:
     except Blocked as exc:
         _emit({'command': args.cmd, 'status': 'blocked', 'reason': f'BLOCKED: {exc}'})
         return BLOCKED
+    except F.IdenticalImages as exc:
+        _emit({'command': args.cmd, 'status': 'skipped', 'reason': str(exc)[:500]})
+        return OK
     except (C.ContractError, F.FactoryError, ValueError) as exc:
         _emit({'command': args.cmd, 'status': 'error', 'error': str(exc)[:500]})
         return USAGE

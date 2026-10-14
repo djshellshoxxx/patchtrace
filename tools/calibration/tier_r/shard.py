@@ -50,7 +50,7 @@ MS_PATTERN = re.compile(r'microsoft|tier[-_]w|(^|[^a-z0-9])tw\.|ntoskrnl|ntkrnl|
                         r'|\.msu\b|\.cab\b', re.IGNORECASE)
 ENV_KEEP = ('PATH', 'HOME', 'LC_ALL', 'TZ', 'SYSTEMROOT', 'TEMP', 'TMP', 'RZ_DIFF', 'GHIDRA_INSTALL_DIR', 'JAVA_HOME',
             'SOURCE_DATE_EPOCH')
-STATUS_ORDER = {'ok': 0, 'findings': 1, 'blocked': 2, 'timeout': 3, 'failed': 4}
+STATUS_ORDER = {'ok': 0, 'skipped': 0, 'findings': 1, 'blocked': 2, 'timeout': 3, 'failed': 4}
 
 
 class ShardError(Exception):
@@ -207,18 +207,56 @@ def matrix(plan: dict) -> dict:
 
 # ---- run-shard -----------------------------------------------------------------------------------------------------
 
-Runner = Callable[[list[str], int, dict[str, str]], tuple[int | None, str, str | None]]
+# A runner returns (returncode, stdout, reason) or (returncode, stdout, reason, stderr); stderr is optional.
+Runner = Callable[[list[str], int, dict[str, str]], tuple]
+STDERR_LINES = 20
+STDERR_CHARS = 4000
+REASON_CHARS = 240
 
 
-def default_runner(argv: list[str], timeout: int, env: dict[str, str]) -> tuple[int | None, str, str | None]:
-    """(returncode, stdout, reason). `shell=False`, bounded timeout; returncode None on timeout."""
+def default_runner(argv: list[str], timeout: int, env: dict[str, str]) -> tuple[int | None, str, str | None, str]:
+    """(returncode, stdout, reason, stderr). `shell=False`, bounded timeout; returncode None on timeout."""
     try:
         done = subprocess.run(argv, cwd=REPO_ROOT, env=env, capture_output=True, timeout=timeout, check=False)
-    except subprocess.TimeoutExpired:
-        return None, '', f'timeout after {timeout}s'
+    except subprocess.TimeoutExpired as exc:
+        return None, '', f'timeout after {timeout}s', (exc.stderr or b'')[-STDERR_CHARS * 4:].decode('utf-8', 'replace')
     except OSError as exc:
-        return 127, '', f'cannot start: {exc.strerror or exc}'
-    return done.returncode, done.stdout[-4_000_000:].decode('utf-8', 'replace'), None
+        return 127, '', f'cannot start: {exc.strerror or exc}', ''
+    return (done.returncode, done.stdout[-4_000_000:].decode('utf-8', 'replace'), None,
+            done.stderr[-STDERR_CHARS * 4:].decode('utf-8', 'replace'))
+
+
+def _call(runner: Runner, argv: list[str], timeout: int, env: dict[str, str]) -> tuple[int | None, str, str | None, str]:
+    result = runner(argv, timeout, env)
+    rc, out, reason = result[:3]
+    return rc, out, reason, (result[3] if len(result) > 3 else '')
+
+
+def stderr_tail(text: str, lines: int = STDERR_LINES, chars: int = STDERR_CHARS) -> str:
+    """The last `lines` non-empty stderr lines, at most `chars` characters (the tail is kept)."""
+    kept = [ln.rstrip() for ln in (text or '').splitlines() if ln.strip()][-lines:]
+    return '\n'.join(kept)[-chars:]
+
+
+def failure_reason(rc: int | None, reason: str | None, summary: dict | None, stderr: str) -> str:
+    """One-line, bounded reason for a failed or BLOCKED step: runner reason, the command's own error, or stderr."""
+    if reason:
+        text = reason
+    else:
+        text = ''
+        for key in ('error', 'reason'):
+            if summary and isinstance(summary.get(key), str) and summary[key].strip():
+                text = summary[key]
+                break
+        if not text and summary and isinstance(summary.get('blocked'), dict) and summary['blocked']:
+            text = '; '.join(f'{k}: {v}' for k, v in sorted(summary['blocked'].items()))
+        if not text and summary and summary.get('errors'):
+            text = '; '.join(str(e) for e in summary['errors'][:3])
+        if not text:
+            tail = stderr_tail(stderr, 1)
+            text = tail or 'no diagnostic output'
+        text = f'exit {rc}: {text}'
+    return ' '.join(text.split())[:REASON_CHARS]
 
 
 def _env(scratch: Path) -> dict[str, str]:
@@ -229,14 +267,44 @@ def _env(scratch: Path) -> dict[str, str]:
 
 
 def _summary(stdout: str) -> dict | None:
-    for line in reversed(stdout.strip().splitlines()):
-        if line.lstrip().startswith('{'):
-            try:
-                value = json.loads(line)
-            except ValueError:
-                return None
-            return value if isinstance(value, dict) else None
+    """The command's JSON summary: the whole output, else the last one-line object, else the last block that starts
+    with `{` in column 0 (the CLI pretty-prints) and runs to the end."""
+    text = stdout.strip()
+    candidates = [text]
+    lines = text.splitlines()
+    candidates += [ln for ln in reversed(lines) if ln.lstrip().startswith('{')][:1]
+    candidates += ['\n'.join(lines[i:]) for i in range(len(lines) - 1, -1, -1) if lines[i].startswith('{')][:1]
+    for candidate in candidates:
+        try:
+            value = json.loads(candidate)
+        except ValueError:
+            continue
+        if isinstance(value, dict):
+            return value
     return None
+
+
+def _scratch_json(scratch: Path, value) -> dict | None:
+    """A JSON file named by a command summary, read only when it lies inside this shard's scratch store."""
+    try:
+        path = Path(value).resolve()
+        path.relative_to(scratch.resolve())
+        if path.suffix != '.json' or path.stat().st_size > MAX_SHARD_BYTES:
+            return None
+        doc = json.loads(path.read_text(encoding='utf-8'))
+    except (OSError, ValueError, TypeError):
+        return None
+    return doc if isinstance(doc, dict) else None
+
+
+def _scratch_labels(scratch: Path) -> list[dict]:
+    """Label metadata (no function tables) of every pair built in this shard's scratch store."""
+    out = []
+    for path in sorted((scratch / 'known-answer' / 'labels').glob('*.json')):
+        doc = _scratch_json(scratch, path)
+        if doc and doc.get('contract') == 'known-answer-labels/1':
+            out.append(_label_meta(doc))
+    return out
 
 
 def sanitize(value, depth: int = 0):
@@ -279,15 +347,29 @@ def _absorb(summary: dict, labels: list, features: list, reports: list) -> None:
         reports.append(summary['report'])
 
 
-def _classify(rc: int | None, reason: str | None) -> str:
+def _classify(rc: int | None, reason: str | None, summary: dict | None = None) -> str:
     if rc is None:
         return 'timeout'
-    return {0: 'ok', 1: 'findings', 3: 'blocked'}.get(rc, 'failed')
+    status = {0: 'ok', 1: 'findings', 3: 'blocked'}.get(rc, 'failed')
+    if status == 'ok' and summary and summary.get('status') == 'skipped':
+        return 'skipped'
+    return status
 
 
-def run_shard(plan: dict, shard: int, *, timeout: int = DEFAULT_TIMEOUT, runner: Runner = default_runner,
+def _report_problem(case_id: str, status: str, detail: str | None, stderr: str, log) -> None:
+    """Print one reason line and a bounded stderr tail to the job log (never into the shard JSON)."""
+    label = 'BLOCKED' if status == 'blocked' else status.upper()
+    log(f'[{label}] {case_id}: {detail}')
+    tail = stderr_tail(stderr)
+    if tail:
+        log('  stderr (last lines):\n' + '\n'.join('    ' + ln for ln in tail.splitlines()))
+
+
+def run_shard(plan: dict, shard: int, *, timeout: int = DEFAULT_TIMEOUT, runner: Runner | None = None,
               python: str | None = None, scratch: Path | None = None, engines: Sequence[str] | None = None,
-              verify_plan: bool = True) -> dict:
+              verify_plan: bool = True, log: Callable[[str], None] | None = None) -> dict:
+    runner = runner or default_runner       # looked up at call time so tests and callers can substitute it
+    log = log or (lambda text: print(text, file=sys.stderr, flush=True))
     entry = next((s for s in plan['shards'] if s['shard'] == shard), None)
     if entry is None:
         raise ShardError(f'plan has no shard {shard}')
@@ -296,7 +378,8 @@ def run_shard(plan: dict, shard: int, *, timeout: int = DEFAULT_TIMEOUT, runner:
     py = python or sys.executable
     engines = list(engines or plan['engines'])
     with tempfile.TemporaryDirectory(prefix=f'tier-r-shard{shard}-') as tmp:
-        env = _env(scratch or Path(tmp))
+        scope = Path(scratch or tmp)
+        env = _env(scope)
         labels: list = []
         features: list = []
         reports: list = []
@@ -304,28 +387,47 @@ def run_shard(plan: dict, shard: int, *, timeout: int = DEFAULT_TIMEOUT, runner:
         for case_id in entry['cases']:
             status, detail, summary = 'ok', None, None
             for step in case_steps(case_id):
-                rc, out, reason = runner([py, '-m', 'tools.calibration.tier_r', *step], timeout, env)
-                status, detail = _classify(rc, reason), reason or (f'exit {rc}' if rc else None)
+                rc, out, reason, err = _call(runner, [py, '-m', 'tools.calibration.tier_r', *step], timeout, env)
                 parsed = _summary(out)
+                status = _classify(rc, reason, parsed)
+                detail = None
                 if parsed is not None:
                     summary = sanitize(parsed)
                     refuse_microsoft(canonical_json(summary).decode())
                     _absorb(summary, labels, features, reports)
+                if status == 'skipped':
+                    detail = ' '.join(str(parsed.get('reason') or 'skipped').split())[:REASON_CHARS]
+                    log(f'[SKIPPED] {case_id}: {detail}')
+                elif status in ('timeout', 'failed', 'blocked'):
+                    detail = failure_reason(rc, reason, parsed, err)
+                    _report_problem(case_id, status, detail, err, log)
+                elif rc:
+                    detail = f'exit {rc}'
                 if status in ('timeout', 'failed', 'blocked'):
                     break
             results.append({'id': case_id, 'status': status, 'reason': detail,
                             'digest': hashlib.sha256(canonical_json(summary)).hexdigest() if summary else None})
+        for meta in _scratch_labels(scope):
+            if meta not in labels:
+                labels.append(meta)
         if not (os.environ.get('PATCHTRACE_TIER_R_NO_EVAL')):
             for engine in engines:
-                rc, out, reason = runner([py, '-m', 'tools.calibration.tier_r', 'evaluate', '--engine', engine,
-                                          '--symbols', 'hidden'], timeout, env)
+                rc, out, reason, err = _call(runner, [py, '-m', 'tools.calibration.tier_r', 'evaluate', '--engine',
+                                                      engine, '--symbols', 'hidden'], timeout, env)
                 parsed = _summary(out)
                 if parsed is not None:
+                    report_doc = _scratch_json(scope, parsed.get('report')) if isinstance(parsed.get('report'), str) else None
                     parsed = sanitize(parsed)
+                    if report_doc is not None:
+                        parsed['report'] = sanitize(report_doc)
                     refuse_microsoft(canonical_json(parsed).decode())
                     _absorb(parsed, labels, features, reports)
-                results.append({'id': f'evaluate:{engine}', 'status': _classify(rc, reason),
-                                'reason': reason or (f'exit {rc}' if rc else None), 'digest': None})
+                status = _classify(rc, reason, parsed)
+                detail = reason or (f'exit {rc}' if rc else None)
+                if status in ('timeout', 'failed', 'blocked'):
+                    detail = failure_reason(rc, reason, parsed, err)
+                    _report_problem(f'evaluate:{engine}', status, detail, err, log)
+                results.append({'id': f'evaluate:{engine}', 'status': status, 'reason': detail, 'digest': None})
     doc = {'contract': SHARD_CONTRACT, 'shard': shard, 'of': plan['of'], 'seed': plan['seed'],
            'plan_sha256': plan['plan_sha256'], 'subset': plan['subset'], 'engines': engines,
            'cases': results, 'labels': sorted(labels, key=canonical_json), 'features': sorted(features, key=canonical_json),
@@ -468,7 +570,7 @@ def merge(docs: list[dict]) -> tuple[dict, dict]:
     wrong.sort(key=lambda w: (w['pair_id'], w['engine'], w['old_rva'] is None, w['old_rva'] or 0,
                               w['new_rva'] or 0, w['kind']))
     kept = wrong[:5000]
-    failing = sorted(c['id'] for d in docs for c in d['cases'] if c['status'] not in ('ok', 'findings'))
+    failing = sorted(c['id'] for d in docs for c in d['cases'] if c['status'] not in ('ok', 'findings', 'skipped'))
     notes = [f'merged {len(docs)} shard(s), seed {docs[0]["seed"]}, subset {docs[0]["subset"]}, '
              f'plan {docs[0]["plan_sha256"][:12]}']
     if failing:
@@ -606,9 +708,10 @@ def main(argv: Sequence[str] | None = None) -> int:
             doc = run_shard(plan, args.shard, timeout=args.timeout, verify_plan=args.plan is not None)
             path = write_shard(doc, args.out)
             bad = [c['id'] for c in doc['cases'] if c['status'] in ('failed', 'timeout')]
+            blocked = [c['id'] for c in doc['cases'] if c['status'] == 'blocked']
             print(json.dumps({'shard': doc['shard'], 'file': path.name, 'cases': len(doc['cases']),
-                              'failed': bad, 'shard_sha256': doc['shard_sha256']}, sort_keys=True))
-            return FINDINGS if bad else OK
+                              'failed': bad, 'blocked': blocked, 'shard_sha256': doc['shard_sha256']}, sort_keys=True))
+            return FINDINGS if bad else (BLOCKED if blocked else OK)
         plan = json.loads(args.plan.read_text(encoding='utf-8')) if args.plan else None
         report, prov = merge(load_shards(args.src, plan=plan))
         write_merge(report, prov, args.out)
