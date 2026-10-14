@@ -9,9 +9,8 @@ import urllib.error
 import urllib.parse
 import urllib.request
 from dataclasses import dataclass, field
-from functools import partial
 
-from .netutil import Cancelled, TooManyAbandoned, interruptible
+from .netutil import Cancelled, CapExceeded, DeadlineExceeded, TooManyAbandoned, interruptible, read_bounded
 
 MAX_RESPONSE_BYTES = 2 * 1024 * 1024
 TIMEOUT_SECONDS = 120
@@ -102,25 +101,17 @@ def request_completion(config: ProviderConfig, system_prompt: str, context_paylo
         except TooManyAbandoned:
             raise ProviderError('PT-PROVIDER: previous requests are still closing; retry shortly') from None
         with response:
-            data = bytearray()
-            while True:
-                if cancel.is_set():
-                    raise ProviderCancelled('PT-CANCEL: interpretation cancelled')
-                if time.monotonic() > deadline:
-                    raise ProviderError('PT-PROVIDER: connection failed or timed out; check endpoint and server')
-                # read1 returns available bytes so a slow-drip server cannot hold one read open.
-                size = min(65536, MAX_RESPONSE_BYTES + 1 - len(data))
-                try:
-                    chunk = interruptible(partial(response.read1, size), cancel)
-                except Cancelled:
-                    raise ProviderCancelled('PT-CANCEL: interpretation cancelled') from None
-                except TooManyAbandoned:
-                    raise ProviderError('PT-PROVIDER: previous requests are still closing; retry shortly') from None
-                if not chunk:
-                    break
-                data.extend(chunk)
-                if len(data) > MAX_RESPONSE_BYTES:
-                    raise ProviderError('PT-PROVIDER: response exceeds 2 MiB limit')
+            try:
+                data = read_bounded(response, MAX_RESPONSE_BYTES, deadline=deadline, clock=time.monotonic,
+                                    cancel=cancel)
+            except Cancelled:
+                raise ProviderCancelled('PT-CANCEL: interpretation cancelled') from None
+            except DeadlineExceeded:
+                raise ProviderError('PT-PROVIDER: connection failed or timed out; check endpoint and server') from None
+            except CapExceeded:
+                raise ProviderError('PT-PROVIDER: response exceeds 2 MiB limit') from None
+            except TooManyAbandoned:
+                raise ProviderError('PT-PROVIDER: previous requests are still closing; retry shortly') from None
         if cancel.is_set():
             raise ProviderCancelled('PT-CANCEL: interpretation cancelled')
         result = json.loads(data.decode('utf-8'))
