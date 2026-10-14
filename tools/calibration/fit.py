@@ -25,7 +25,7 @@ from .cv import CVConfig, FittedModel, final_model, nested_cv
 from .evaluate import evaluate_profile
 from .gates import evaluate_gates
 from .ood_fit import ood_fit, reduce_spec
-from .report import make_report, verify_report
+from .report import SYNTHETIC_CLAIM, make_report, verify_report
 from .threshold import choose_tau, choose_tau_low
 
 
@@ -63,6 +63,20 @@ def build_artifact(*, model: FittedModel, profile: str, names: Sequence[str], ki
     return doc
 
 
+def _reproduce_gates(report: Mapping, profile: str, claimed: Mapping[str, str]) -> None:
+    """Never trust a gate status that the report's own numbers do not reproduce (sample size, ECE excess, CIs).
+    Non-statistical conditions (owner sign-off etc.) are not in a report, so they are assumed true here."""
+    res = report['per_profile'].get(profile)
+    if not res:
+        raise PromotionError(f'report has no profile {profile}')
+    cond = dict.fromkeys(('reproducibility_check', 'owner_signoff', 'frozen_exe_smoke', 'independence_caveat_shown'),
+                         True)
+    again = evaluate_gates(report['dataset'], res, pipeline=res, conditions=cond)
+    for gate in ('G0', 'G2', 'G3'):
+        if claimed.get(gate) == 'pass' and again[gate]['status'] != 'pass':
+            raise PromotionError(f'{gate} does not reproduce from the report numbers: {again[gate]["reasons"][:3]}')
+
+
 def promote(artifact: Mapping, report: Mapping, *, profile_gates: Mapping[str, Mapping] | None = None) -> dict:
     """Raise status only on matching, passing report evidence; never edits a report."""
     if not verify_report(report):
@@ -71,8 +85,11 @@ def promote(artifact: Mapping, report: Mapping, *, profile_gates: Mapping[str, M
     if ('tier-w' not in dom.get('evidence_tiers', ()) or dom.get('windows_system_binaries', 'none') == 'none'
             or 'no-windows-system-binaries' in dom.get('scope_ids', ())):
         raise PromotionError('Tier R-only (synthetic) evidence cannot be promoted: Tier W domain required')
+    if report.get('claim') == SYNTHETIC_CLAIM:
+        raise PromotionError('a synthetic/Tier R report makes no real-world claim and cannot be promoted')
     gates = profile_gates or report['per_profile'].get(artifact['profile'], {}).get('gates') or {}
     status = {k: v['status'] for k, v in gates.items()}
+    _reproduce_gates(report, artifact['profile'], status)
     if status.get('G0') == status.get('G2') == status.get('G3') == 'pass':
         level, display = 'numeric-ok', 'number'
     elif status.get('G0') == status.get('G2') == 'pass':

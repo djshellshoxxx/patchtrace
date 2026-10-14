@@ -188,3 +188,29 @@ def test_bad_sigstore_signature_is_reported(tmp_path):
     assert result['ok'] is False
     argv = calls[0]
     assert argv[1:5] == ['-m', 'sigstore', 'verify', 'identity'] and '--cert-identity' in argv and '--bundle' in argv
+
+
+class _FakeResponse:
+    def __init__(self, body: bytes, encoding: str):
+        self._body, self.headers = body, {'Content-Encoding': encoding} if encoding else {}
+
+    def read(self, n=-1):
+        return self._body if n < 0 else self._body[:n]
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *exc):
+        return False
+
+
+@pytest.mark.parametrize('encoding', ['', 'gzip'], ids=['plain', 'gzip'])
+def test_fetch_decodes_gzip_page_bodies(monkeypatch, encoding):
+    import gzip as gz
+    import urllib.request
+
+    html = b'<html><body>Sigstore identity: release-manager@python.org</body></html>'
+    body = gz.compress(html) if encoding else html
+    monkeypatch.setattr(urllib.request, 'urlopen', lambda request, timeout=0: _FakeResponse(body, encoding))
+    assert rec._fetch('https://www.python.org/downloads/', limit=1 << 20) == html
+    assert 'Sigstore identity' in rec._page_text('https://www.python.org/downloads/')

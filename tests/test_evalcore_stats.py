@@ -187,7 +187,7 @@ def test_power_goldens():
     z = 1.959963984540054 + 0.8416212335729143
     assert power.min_detectable_delta(36, 0.3) == pytest.approx(z * 0.3 / 6, rel=1e-12)
     assert power.lineages_needed(0.1, 0.3) == math.ceil((z * 3) ** 2) == 71
-    assert power.power_for_delta(0.0, 36, 0.3) == pytest.approx(0.025, abs=1e-12)  # = alpha/2 upper tail
+    assert power.power_for_delta(0.0, 36, 0.3) == pytest.approx(0.05, abs=1e-12)  # type-I error = alpha (both tails)
     assert power.power_for_delta(power.min_detectable_delta(50, 0.2), 50, 0.2) == pytest.approx(0.8, abs=1e-6)
 
 

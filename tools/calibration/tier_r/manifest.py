@@ -74,7 +74,7 @@ def build_manifest(docs: Sequence[C.KnownAnswerLabels], *, corpus_id: str = 'kno
             ids.append(bid)
         families.setdefault(doc.lineage, Counter())[doc.family] += 1
         pairs.append({'id': doc.pair_id, 'older': ids[0], 'newer': ids[1], 'kind': KIND.get(doc.stratum, 'adjacent-patch'),
-                      'lineage': doc.lineage, 'family_tags': [doc.family], 'role': None})
+                      'lineage': doc.lineage, 'family_tags': [doc.family, f'stratum:{doc.stratum}'], 'role': None})
     members: dict[str, list[str]] = {}
     for bid, lineage in owner.items():
         members.setdefault(lineage, []).append(bid)

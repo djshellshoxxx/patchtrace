@@ -11,6 +11,9 @@ from collections.abc import Sequence
 from .common import det_uniform
 
 KAPPA_MIN, KAPPA_LO_MIN, RAW_MIN = 0.80, 0.70, 0.95
+# Spec §5.6 minimums (300 items overall, 60 per reported subtype) plus the lineage-bootstrap floor: a kappa from
+# fewer items or fewer than 30 lineages is reported but can never pass (the interval is anti-conservative).
+MIN_ITEMS, MIN_SUBTYPE_ITEMS, MIN_GROUPS = 300, 60, 30
 
 
 def raw_agreement(a: Sequence[str], b: Sequence[str]) -> float:
@@ -56,12 +59,21 @@ def agreement_report(pairs: Sequence[tuple[str, str, str, str | None]], *, b_cou
         a, b, g = [p[0] for p in items], [p[1] for p in items], [p[2] for p in items]
         out = kappa_ci(a, b, g, b_count=b_count, seed=seed)
         out['n'] = len(items)
+        out['n_groups'] = len(set(g))
         return out
     overall = block(pairs)
     subtypes = {}
     for st in sorted({p[3] for p in pairs if p[3]}):
         items = [p for p in pairs if p[3] == st]
         subtypes[st] = block(items)
-    ok = (overall['kappa'] is not None and overall['kappa'] >= KAPPA_MIN and overall['raw'] >= RAW_MIN
+        subtypes[st]['insufficient'] = len(items) < MIN_SUBTYPE_ITEMS
+    reasons = []
+    if overall['n'] < MIN_ITEMS:
+        reasons.append(f'only {overall["n"]} double-labelled items (< {MIN_ITEMS})')
+    if overall['n_groups'] < MIN_GROUPS:
+        reasons.append(f'only {overall["n_groups"]} lineages (< {MIN_GROUPS}): interval is anti-conservative')
+    if overall['kappa'] is None:
+        reasons.append('kappa undefined (a single category)')
+    ok = (not reasons and overall['kappa'] >= KAPPA_MIN and overall['raw'] >= RAW_MIN
           and overall['lo'] is not None and overall['lo'] >= KAPPA_LO_MIN)
-    return {'overall': overall, 'subtypes': subtypes, 'meets_threshold': ok}
+    return {'overall': overall, 'subtypes': subtypes, 'meets_threshold': ok, 'insufficient_reasons': reasons}

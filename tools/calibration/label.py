@@ -115,13 +115,15 @@ def consolidate(events: Iterable[dict], meta: Mapping[tuple[str, str], Mapping])
             adjudicated[key] = e
         elif e['phase'] == 'reveal' and blind.get(key, {}).get(e['annotator'], {}).get('A') != e['A']:
             reveal_changes += 1
-    records, pending = [], []
+    records, pending, rejected = [], [], []
     for key in sorted(blind):
         if key not in meta:
             continue
         labels = blind[key]
-        if key in adjudicated:
-            final, adj = adjudicated[key], True
+        if key in adjudicated and adjudicated[key]['annotator'] in labels:
+            rejected.append(key)
+        if key in adjudicated and adjudicated[key]['annotator'] not in labels:
+            final, adj = adjudicated[key], True  # the adjudicator must be a pass independent of the blind labels
         elif len({e['A'] for e in labels.values()}) == 1:
             final, adj = next(iter(labels.values())), False
         else:
@@ -133,4 +135,4 @@ def consolidate(events: Iterable[dict], meta: Mapping[tuple[str, str], Mapping])
                         'source': m.get('source', 'human'), 'annotators': sorted(labels),
                         'adjudicated': adj, 'guideline': final.get('guideline', 'g1'), 'sampling': m['sampling'],
                         'notes': ''})
-    return records, {'pending': pending, 'reveal_changes': reveal_changes}
+    return records, {'pending': pending, 'reveal_changes': reveal_changes, 'rejected_adjudications': rejected}

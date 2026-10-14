@@ -166,11 +166,17 @@ def compare_tarballs(rebuilt: Path, downloaded: Path) -> dict:
 def _fetch(url: str, dest: Path | None = None, limit: int = 64 << 20) -> bytes:
     if not url.startswith('https://'):
         raise VerifyError(f'refusing non-HTTPS URL {url}')
-    request = urllib.request.Request(url, headers={'User-Agent': 'patchtrace-pin-verify/1'})
+    request = urllib.request.Request(url, headers={'User-Agent': 'patchtrace-pin-verify/1', 'Accept-Encoding': 'identity'})
     with urllib.request.urlopen(request, timeout=120) as response:  # noqa: S310 (https checked above)
         data = response.read(limit + 1)
+        encoding = (response.headers.get('Content-Encoding') or '').lower()
     if len(data) > limit:
         raise VerifyError(f'{url} is larger than {limit} bytes')
+    if encoding == 'gzip' or (dest is None and data[:2] == b'\x1f\x8b'):  # a server ignoring identity: decode, bounded
+        with gzip.GzipFile(fileobj=io.BytesIO(data)) as stream:
+            data = stream.read(limit + 1)
+        if len(data) > limit:
+            raise VerifyError(f'{url} expands beyond {limit} bytes')
     if dest is not None:
         dest.write_bytes(data)
     return data
