@@ -1,6 +1,6 @@
 # SPEC-31 / 01 Architecture: layers, modules, import DAG, processes, data flow
 
-Scope: static comparison of two explicit artifacts (older -> newer), Windows PE x64 first, offline, CPU only, Python 3.12 stdlib + existing pins (PySide6 6.12.0, pydantic 2.13.5). Decisions referenced as D-xx are in [00-decisions](00-decisions.md); numbers as L-xx in [02-data-model s6](02-data-model.md#6-limits-single-source-of-numbers).
+Scope: static comparison of two explicit artifacts (older -> newer), Windows PE x64 first, offline, CPU only, Python 3.12 stdlib + existing pins (PySide6 6.12.0, pydantic 2.13.5; protobuf 7.36.2 since C3, unused by SPEC-31). Decisions referenced as D-xx are in [00-decisions](00-decisions.md); numbers as L-xx in [02-data-model s6](02-data-model.md#6-limits-single-source-of-numbers).
 
 ## 1. Layers
 
@@ -38,7 +38,8 @@ Without E1 (no Ghidra configured, or extraction failed) the pipeline still runs 
 | `fusion/components.py` | union-find over joining D-tags -> components | registry | S0b |
 | `fusion/arbiter.py` | atoms -> `UnifiedMatch` decisions, contests, groups | components, contracts | S0b |
 | `facts/pseudo.py` | C6 canonical pseudo-code over stored Ghidriff code (alpha-rename, L1-id substitution) | contracts | S0b |
-| `facts/channels.py` | C0..C5, C8 per pair; S0 subset without IR | ir.reader, facts.align, facts.operands | S0b/S3 |
+| `facts/channels.py` | C0..C5, C8 per pair; S0 subset without IR | ir.reader, facts.align, facts.operands, facts.datamap | S0b/S3 |
+| `facts/datamap.py` | DATA-MAP/1 and target consistency (05 s2.7): string, leave-one-out vote and region-shift data mapping; mapped/unmapped/conflict per address operand | ir.reader, contracts | S3 |
 | `facts/align.py` | bounded instruction-stream alignment (patience + LCS fallback) | stdlib | S3 |
 | `facts/operands.py` | operand-class deltas (address-shift, callee/data change, constant, struct offset, register rename) | ir.reader | S3 |
 | `facts/verdict.py` | proof tiers -> `ChangeFacts` (05 s2) | registry, contracts | S0b/S3 |
@@ -48,8 +49,8 @@ Without E1 (no Ghidra configured, or extraction failed) the pipeline still runs 
 | `ir/mdindex.py` | BinDiff-style MD index (flow graph and call graph, top-down/bottom-up) with attribution header | stdlib `math` | S1 |
 | `ir/pe_tables.py` | `.pdata` RUNTIME_FUNCTION and base-relocation parsing via `VerifiedArtifactReader` | `artifact_bytes`, `pe_overview` | S1 |
 | `ir/reader.py` | `IrReader`: columnar `FunctionTable`, CSR adjacency, on-demand blocks/instructions | ir.schema | S1 |
-| `extract/ghidra_script.py` | runs INSIDE the external Python; stdlib + pyghidra/Ghidra only; never imports `patchtrace` | stdlib, pyghidra (external) | S1 |
-| `extract/runner.py` | private dirs, script copy, argv/env, `jobs.run_process`, progress file, output guard, ingest call | `jobs`, `backend` (env builders), ir.ingest | S1 |
+| `extract/ghidra_script.py` | runs INSIDE the external Python; stdlib + pyghidra/Ghidra only; never imports `patchtrace`; modes `gzf`, `analyze`, `decompile` (S3b) | stdlib, pyghidra (external) | S1 (decompile mode S3) |
+| `extract/runner.py` | private dirs, script copy, argv/env, `jobs.run_process`, progress file, output guard, ingest call, S3b session | `jobs`, `backend` (env builders), ir.ingest | S1 |
 | `ladder/passes.py` | pass table P01..P19 (key fn, gate, tier, tags) | ir.reader, registry | S2 |
 | `ladder/engine.py` | ladder driver to fixpoint, uniqueness gates, provenance | passes, propagate, groups | S2 |
 | `ladder/propagate.py` | neighbour cascade, call-site implied matches with votes/conflicts, thunk-target | ir.reader | S2 |
@@ -58,7 +59,7 @@ Without E1 (no Ghidra configured, or extraction failed) the pipeline still runs 
 | `ladder/residual.py` | P16 reference vectors, P17 BB votes, P18 layout gaps, P19 assignment with rejection | blocking, assign | S5 |
 | `ladder/assign.py` | pure-Python LAP (Jonker-Volgenant style) with reject cost, bucket cap L-31 | stdlib | S5 |
 | `pipeline.py` | stage orchestration (inputs -> result), cancel, partial status | everything above except UI | S0b..S5 |
-| `worker.py` | hidden `_worker` entry: request JSON -> result files in a private dir | pipeline | S0b |
+| `worker.py` | hidden `_worker` entry: request JSON -> result files in a private dir; spawned with `secondary.binexport_run.worker_argv()` (or a shared helper lifted from it in S0b, same tests) | pipeline | S0b |
 | `read_model.py` | Qt-free `UnifiedViewModel`, filters, sort keys, detail/provenance text | contracts, store, `secondary.evidence_view.sanitize_text` | S4 |
 | `cli.py` | `unified` subcommands (dispatched by `patchtrace/cli.py`) | pipeline, store, read_model | S0b/S4 |
 | `src/patchtrace/ui_unified.py` | Qt adapter: `UnifiedController`, table model, navigator view, dock tab, threads | Qt, read_model, tooltips | S4 |
@@ -78,9 +79,10 @@ Tests: `test_unified_import_dag` (AST walk of `src/patchtrace/unified`, allow-li
 | Owner thread (GUI thread or CLI main) | PatchTrace process | builds immutable `UnifiedRequest`, reads project/store, validates worker output, moves sidecars into `runs/<run_id>/unified/`, publishes pointer rows | heavy computation; touching worker objects |
 | `UnifiedRunThread` (QThread, no Qt parent, `_LIVE_THREADS` registry) | PatchTrace process | calls `pipeline.execute(request, cancel)` which spawns children and waits; emits stage events | SQLite access, widgets |
 | Extractor child (one per side, sequential default) | external Python + JVM | dumps IR facts to a private dir; writes `progress.json` | network, PDB download, writing outside its private dirs |
-| Worker child `patchtrace unified _worker` | `sys.executable` (frozen EXE or python) | mode `ingest`: extractor JSONL -> IR sidecar; mode `compute`: E2..E5 from request + IR + snapshot files -> result parts | SQLite project DB access, publishing |
+| Worker child `patchtrace unified _worker` | `sys.executable` (frozen EXE or python) | mode `ingest`: extractor JSONL -> IR sidecar; mode `compute`: E2..E5 from request + IR + snapshot files -> result parts; mode `refacts`: re-judge S3b rows with the decompiled C6 | SQLite project DB access, publishing |
+| Extractor child, decompile mode (S3b) | external Python + JVM | re-opens both retained GZFs, decompiles <= L-41 listed functions per side | anything outside its request |
 | CLI | PatchTrace process | same pipeline in-process OR via worker (`--isolate`, default on Windows frozen) | Qt import |
-Rules: one analysis job per window (C-11): the unified run is disabled while a Ghidriff job runs and vice versa. Cancellation: shared `threading.Event` -> `run_process` kills the Job Object / process group; the owner discards partial output; the previous result row stays current. Progress: children write `progress.json` atomically (`.part` + replace); the parent polls it through `run_process(check_output=...)` (already polled every 50 ms, jobs.py:223-233) and emits events; absent file = indeterminate. Memory: the JVM gets `-Xmx` from L-03; the worker has no hard cap in v1 (U-09).
+Rules: one analysis job per window (C-11): the unified run is disabled while a Ghidriff job runs and vice versa. Cancellation: shared `threading.Event` -> `run_process` kills the Job Object / process group; the owner discards partial output; the previous result row stays current. Progress: children write `progress.json` atomically (`.part` + replace); the parent polls it through `run_process(check_output=...)` (polled every 50 ms, jobs.py:288-298) and emits events; absent file = indeterminate. Memory: the JVM gets `-Xmx` from L-03 and no `memory_limit_bytes` (RLIMIT_AS on Linux would break the JVM's address-space reservations); the PatchTrace worker gets `memory_limit_bytes` = L-42 and C3's OOM classification (`PT-UNIFIED-LIMIT`, reason `worker-oom`). Worker argv/env: C3's `worker_argv()` (frozen: `[sys.executable]`; development: `[python, '-P', '-m', 'patchtrace']` with `PYTHONPATH` = the source tree) followed by `unified _worker ...`; env built like C3's `worker_env` without the protobuf variable.
 
 ## 5. Data flow (normative pseudocode)
 
@@ -96,9 +98,13 @@ def execute(req: UnifiedRequest, cancel: Event, emit: Callable[[StageEvent], Non
             jsonl = extract.runner.extract_side(req, side, budget, emit)          # external Python child
             built = run_worker('ingest', req, jsonl, budget)                       # PatchTrace child (CPU-heavy)
             ir_dirs[side] = store.place_ir(built)          # atomic rename; no SQLite row, found by ir_key
-    if (ir_dirs['older'] is None) != (ir_dirs['newer'] is None):   # F1 symmetry: never mix IR and no-IR sides
-        ir_dirs = {'older': None, 'newer': None}; limitation('ir-asymmetric')
-    return run_worker('compute', req, ir_dirs, budget)     # result parts in a private dir; the OWNER publishes
+    if not symmetric(ir_dirs):                             # F1: both present with equal mode, options digest and symbol policy
+        ir_dirs = re_extract_both_analyze(req, budget) or {'older': None, 'newer': None}; limitation('ir-asymmetric')
+    parts = run_worker('compute', req, ir_dirs, budget)   # result parts in a private dir; the OWNER publishes
+    if req.decompile and parts.s3b_rvas:                   # S3b (05 s2.8, U-11): one Ghidra session over the retained GZFs
+        dec = extract.runner.decompile(req, parts.s3b_rvas, budget, emit)       # bounded by L-41; failure -> limitation only
+        parts = run_worker('refacts', req, ir_dirs, budget, decomp=dec)         # re-judge only the decompiled rows
+    return parts                                           # the owner publishes, then deletes the transient GZFs (03 s8)
 
 def compute(req, ir, budget) -> ResultParts:                # runs inside the worker child (pure, no project DB)
     atoms = [*sources.ghidriff.atoms(req.snapshot, req.raw), *sources.secondary.atoms(req.sets),
@@ -107,10 +113,11 @@ def compute(req, ir, budget) -> ResultParts:                # runs inside the wo
         corr = ladder.engine.run(ir['older'], ir['newer'], anchors=manual_anchors(atoms), budget=budget)
         atoms += corr.atoms()                              # pt-ladder and pt-bytes atoms with pass provenance
     result = fusion.arbiter.decide(atoms, registry=REGISTRY)   # UnifiedMatch rows, deterministic order
+    dmap = facts.datamap.build(ir, result) if ir['older'] else None   # DATA-MAP/1 needs the decided rows (05 s2.7)
     for row in result.rows_needing_facts():                # matched, tentative, candidate, contested pairs
         budget.tick()
-        row.facts = facts.verdict.judge(facts.channels.collect(row, ir, req.snapshot, result))
-    return write_parts(result, req.private_dir)            # rows/facts JSONL.gz + manifest
+        row.facts = facts.verdict.judge(*facts.channels.collect(row, ir, req.snapshot, result, dmap))
+    return write_parts(result, req.private_dir)            # rows/facts JSONL.gz + manifest + S3b candidate list
 ```
 `run_worker(mode, ...)` spawns `patchtrace unified _worker` (01 s4) with a request file, or calls the same function in process for `--in-process`/tests (B-20). The run thread may place immutable, content-addressed IR directories; it never touches SQLite. Owner side: `store.publish_result(output, guard)` re-hashes every part, checks the manifest against `result_key`, moves the directory with `os.replace`, then writes the pointer row through `EnrichmentStore.publish` (stale if the guard moved). Any failure leaves the previous pointer row current.
 
@@ -147,11 +154,12 @@ Messages are fixed templates with labels and numbers only; untrusted text (names
 | `secondary/` | read-only: `store.current_sets()`, `SecondaryMatchSet`, `EngineRun` provenance; engines are still run by the SPEC-28 scheduler/Engines tab; unified never writes `secondary-matches` or `engine-run` |
 | `enrichment/` | storage (two new kinds), identity (`domain_id`, `canonical_json`, `parse_address`), optional `DerivedCache` stage `program-ir`; `attention/1` scores may be displayed beside unified rows that map to a Ghidriff match, never recomputed |
 | `calibration/` | consulted for `display_level()` only; unified evidence families proposed to C9 as `features/2` (U and F families), not built here |
-| `nway/` | unchanged in v1; IR reuse across adjacent pair projects via the global cache (same artifact SHA); P2 fixes its `EXTERNAL:` crash |
+| `nway/` | unchanged in v1; IR reuse across adjacent pair projects via the global cache (same artifact SHA); its `EXTERNAL:` crash is fixed (ce108cd), counting the skips is follow-up P2b |
 | `backend.py` | one additive seam: `BackendConfig.retain_gzf` (D-05); raw-cache fingerprint unchanged (argv unchanged) |
-| `jobs.py` | P1 spawn lock (D-28a); otherwise used as is |
-| `ui.py` | seam <= 12 lines (07 s2); `ui_evidence.py` gains a tab through its controller |
+| `jobs.py` | used as is (the D-28a spawn lock is already merged, jobs.py:14-17) |
+| `secondary/binexport_run.py` | `worker_argv()` / `worker_env()` pattern reused for the unified worker (D-15) |
+| `ui.py` | seam <= 25 lines (07 s2: `current_match` override + `show_external_pair`); `ui_evidence.py` gains a tab through its controller |
 | `cli.py` | `COMMANDS` gains `unified` and one dispatch line |
 
 ## 9. Security invariants (each has a named test in 08 s6)
-1. Targets are never executed; Ghidra loads them as data; no emulation, debugger or scripts from the project. 2. No network: extractor runs with symbol downloads disabled and a private `XDG_CONFIG_HOME` (same isolation as backend.py:533-546); the engine imports no network module. 3. Every child: absolute argv[0], `shell=False`, private cwd, `stdin=DEVNULL`, bounded streams, env from the existing builders (`backend.build_child_env` / `_environment`), tree kill. 4. Extractor output, secondary sets and Ghidriff JSON are untrusted: strict parsers, size caps (L-xx), no `eval`/pickle, names rendered as plain text (C6 `sanitize_text`). 5. The extractor script is copied into an empty private directory before it runs, so no planted module next to it can be imported. 6. Paths given to Ghidra contain no dot-prefixed component and stay below 240 characters on Windows (backend.py `_validated_ghidra_output_path` rule). 7. Results are published only after every part hash verifies; a failure never deletes the previous result.
+1. Targets are never executed; Ghidra loads them as data; no emulation, debugger or scripts from the project. 2. No network: extractor runs with symbol downloads disabled and a private `XDG_CONFIG_HOME` (same isolation as backend.py:533-546); the engine imports no network module. 3. Every child: absolute argv[0], `shell=False`, private cwd, `stdin=DEVNULL`, bounded streams, env from the existing builders (`backend.build_child_env` / `_environment`), tree kill. 4. Extractor output, secondary sets and Ghidriff JSON are untrusted: strict parsers, size caps (L-xx), no `eval`/pickle, names rendered as plain text (C6 `sanitize_text`). 5. The extractor script is copied into an empty private directory before it runs, so no planted module next to it can be imported. 6. Paths given to Ghidra contain no dot-prefixed component and stay below 240 characters on Windows (backend.py `_validated_ghidra_output_path` rule); sidecar directories under `runs/` use 16-hex short ids (02 s3, s4). 7. Results are published only after every part hash verifies; a failure never deletes the previous result.
