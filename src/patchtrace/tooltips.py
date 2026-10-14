@@ -890,6 +890,100 @@ REGISTRY: dict[str, TooltipEntry] = {
         'Explains that the shown evidence describes a different artifact pair, run or revision.',
         'Stale values must not be read as describing the current comparison.',
         'Row activation is disabled until you refresh; copying provenance marks the text STALE.'),
+    # ---- track G BinDiff run setup in the Engines tab (multi-engine-evidence-panel.md section 16) ----
+    'engine_setup.toggle': _e(
+        'Show or hide the BinDiff run setup below the engine controls.',
+        'Running BinDiff needs its executable and one .BinExport file per project file; this section collects '
+        'and checks them.',
+        'Only changes what is shown and is remembered for next time. Nothing runs until you press Probe BinDiff '
+        'or Validate .BinExport files.',
+        availability='Needs an open project.'),
+    'engine_setup.section': _e(
+        'BinDiff run setup: the BinDiff executable and the two .BinExport inputs for this project.',
+        "BinDiff compares exported function graphs, not the binaries, so both exports must come from exactly "
+        "this project's older and newer files.",
+        'Once the executable is usable and both exports are accepted, BinDiff can be ticked for Run selected '
+        'engines.',
+        'Your installed BinDiff 8 and .BinExport files you exported with Ghidra or IDA; nothing is downloaded '
+        'or uploaded.',
+        'Needs an open project; locked while engines run.'),
+    'engine_setup.bindiff_path': _e(
+        'Absolute path of the bindiff executable (bindiff.exe on Windows) of an installed BinDiff 8.',
+        'PatchTrace never searches PATH for BinDiff; you choose the exact program that will be run.',
+        'Changing it marks BinDiff as not checked. The path is remembered after a successful probe. Discovered '
+        'installations are offered in the list but never run until you press Probe BinDiff.',
+        'Typed or chosen by you; suggestions come from a read-only look at standard install folders.',
+        'Needs an open project; locked while engines run.'),
+    'engine_setup.bindiff_browse': _e(
+        'Pick the bindiff executable with a file dialog.',
+        'Saves typing a long installation path by hand.',
+        'Fills the executable field; nothing is run.',
+        availability='Needs an open project; locked while engines run.'),
+    'engine_setup.bindiff_probe': _e(
+        'Check that the chosen file is a usable BinDiff 8 or newer.',
+        'BinDiff is only run when its version and every command-line option PatchTrace relies on are confirmed.',
+        'Runs bindiff --version and bindiff --nologo --help on a background thread, in a private folder with a '
+        'minimal environment. It never reads the project files and never opens the BinDiff user interface.',
+        'The executable you chose; the version is compared with the BinDiff 8 build PatchTrace was tested with.',
+        'Needs an executable path and an open project; locked while engines run.'),
+    'engine_setup.older_binexport': _e(
+        "Path of the .BinExport exported from this project's older file; BinDiff reads it as the primary.",
+        'BinDiff needs one export per side, and the older side is always the primary.',
+        'Changing it discards the last validation and the unbound confirmation.',
+        'A file you exported with Ghidra (File, Export, Binary BinExport (v2) for BinDiff) or with IDA 9.4 or '
+        'newer.',
+        'Needs an open project; locked while engines run.'),
+    'engine_setup.older_browse': _e(
+        'Pick the older .BinExport file with a file dialog.',
+        'Choose the export of the older project file without typing its path.',
+        'Fills the older field; the file is not read until you validate.',
+        availability='Needs an open project; locked while engines run.'),
+    'engine_setup.newer_binexport': _e(
+        "Path of the .BinExport exported from this project's newer file; BinDiff reads it as the secondary.",
+        'BinDiff compares the secondary export against the primary one, so the newer side must be the newer '
+        'file.',
+        'Changing it discards the last validation and the unbound confirmation.',
+        'A file you exported the same way as the older one, with the same Subtract Imagebase choice.',
+        'Needs an open project; locked while engines run.'),
+    'engine_setup.newer_browse': _e(
+        'Pick the newer .BinExport file with a file dialog.',
+        'Choose the export of the newer project file without typing its path.',
+        'Fills the newer field; the file is not read until you validate.',
+        availability='Needs an open project; locked while engines run.'),
+    'engine_setup.accept_unbound': _e(
+        'Accept .BinExport files whose executable id is not a SHA-256 (an MD5 hash, empty, or another id).',
+        'Some exporters write no usable SHA-256 id; without it PatchTrace cannot check which file an export '
+        'came from.',
+        'Lets validation and the next BinDiff run bind such files on your word, and stores your confirmation '
+        'with the result. A SHA-256 id that does not match is still refused. Resets when a path or the project '
+        'changes.',
+        'Your explicit confirmation; it is never remembered between sessions.',
+        'Needs an open project; locked while engines run.'),
+    'engine_setup.unbound_warning': _e(
+        'Warning about accepting .BinExport files without a SHA-256 executable id.',
+        'A wrong file would produce meaningless function pairings that look like real ones.',
+        'Read-only text; nothing changes when you read it.'),
+    'engine_setup.validate': _e(
+        "Check both .BinExport files and confirm they belong to this project's older and newer files.",
+        'Catches swapped, foreign, malformed or oversized exports before BinDiff runs.',
+        'Reads each file in an isolated, memory- and time-limited checker on a background thread, then checks '
+        'the pair. Temporary copies are removed. Shows function counts, architecture and how each file is tied '
+        'to the project.',
+        'The two files you chose and the SHA-256 values recorded for the project files.',
+        'Needs an open project and both paths; locked while engines run.'),
+    'engine_setup.cancel_validation': _e(
+        'Stop the running .BinExport validation.',
+        'Checking a large export can take a while.',
+        'Stops the isolated checker; nothing is kept and the files stay unvalidated.',
+        availability='Needs a running validation.'),
+    'engine_setup.show_details': _e(
+        'Show the technical details of the BinDiff probe and the .BinExport validation.',
+        'Error codes and reason names help when reporting a problem or looking it up in the specification.',
+        'Shows or hides a read-only text area; nothing is run.'),
+    'engine_setup.details': _e(
+        'Read-only technical details: probe result, error code, failure kind, reason name and checked hashes.',
+        'Complements the plain-language status lines with the exact machine values.',
+        'Plain text you can select and copy. Output of the external checkers is never shown here.'),
 }
 
 # Tooltips for items that depend on untrusted or dynamic values.
