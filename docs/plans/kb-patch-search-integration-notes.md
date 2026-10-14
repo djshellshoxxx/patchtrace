@@ -5,6 +5,13 @@ Master spec: docs/specs/kb-patch-search-and-pair-resolution.md
 Build guide: docs/plans/kb-patch-search-implementation.md
 This change is documentation only. Do not report any of the feature as implemented until verified by code/tests.
 
+
+## 0. Expanded integration ownership (2026-10-14)
+
+Use the four new detailed specifications as implementation contracts, not merely further reading: [provider source adapters](../specs/kb-patch-search-source-adapters.md), [pair/lifecycle](../specs/kb-patch-search-pair-lifecycle.md), [UI/CLI](../specs/kb-patch-search-ui-cli-contract.md) and [QA/fixtures](../specs/kb-patch-search-qa-and-fixtures.md). The core SPEC-32 document points to their normative precedence when older shorthand differs.
+
+Key checked repository issue: ProjectStore accepts only its own fixed PRAGMA user_version; changing core SQLite schema would introduce an avoidable incompatible migration. SPEC-32 instead attaches optional metadata through a separate patch_search.sqlite3 companion store and retries attaching a completed normal project idempotently if the attach is interrupted. Core ProjectService and its artifact ownership stay unchanged.
+
 ## 1. Integration inventory of real repository code
 
 | Existing path | Current purpose | Correct integration | Forbidden shortcut |
@@ -152,17 +159,13 @@ A result row should show exact source provenance on selection, not only tooltip;
 
 ## 7. Persistence / migrations / stale handling
 
-Preferred schema addition:
-  patch_search_sources(snapshot_id PK, provider, digest, schema_rev, retrieval_stamp, verified_state, local_blob_ref)
-  patch_search_sessions(session_id PK, parent_project_ref?, revision, query, selected_variant, selected_pair, state, payload_json)
-  patch_search_events(event_id PK, session_id, project_revision, action_type, data_digest, occurred_utc)
-  patch_search_views(view_id PK, session_id, engine_run, dependency_digest, status, derived_json)
+**Resolved architectural decision:** Keep existing project.sqlite3 and ComparisonProject schema unchanged. Introduce an optional project-root/patch_search.sqlite3 companion store, versioned independently. Full lifecycle and table layout are in SPEC-32B. The companion store tracks normalized source snapshots, source object digests, sessions, events and triage views. Its absence/corruption must not prevent ProjectService.open or normal Ghidriff work.
 
-These are DESIGN NAMES; audit existing ProjectStore table naming and migration/version framework first. Avoid storing raw advisory bytes directly in many project databases if a shared content-addressed cache is already available. Treat raw source snapshots as immutable; cap/retain them explicitly and honor licensing constraints. Add schema migration idempotently and test rollback on failure.
+Project creation and sidecar context attach cannot be atomically committed across two SQLite files. First verify both PEs and invoke existing ProjectService.create, then perform guarded sidecar attach. If the second step fails, display CONTEXT_PENDING and provide idempotent repair. Never remove a valid project created by ProjectService merely because optional context could not attach. Concurrent session edits must use a single explicit lock order and transactional expected-revision check.
 
-Attach session only if project artifact SHA256 exactly matches planned pair and project revision is expected. Run-derived evidence pointer validity is checked on every opening of the dock. Stale condition must be visible: source revision, binary replacement, orientation swap, manual match edit, parser/rule version or completed run change.
+A source blob should be available inside the project or a verified portable import for offline reproducibility; a volatile global cache alone is insufficient for durable provenance. Retain raw SHA-256, upstream revision, normalized parser version, product variant, selected pair, analyst overrides and analysis evidence digest. On file/swap/run/source revision/match correction, mark relevant derived view stale, while retaining immutable historical source material. Missing sidecar on an older project requires no migration or write.
 
-Projects without patch sessions must behave byte-for-byte as before. A project missing optional new tables must open normally and lazily migrate only when feature used.
+CLI and UX MUST use the final grammar in SPEC-32C rather than the early placeholder examples. Third-party Winbindex metadata and official MSRC associations are separate evidence classes. A verified file hash does not establish a confirmed vulnerable function.
 
 ## 8. Quality gates and negative examples
 
@@ -201,6 +204,14 @@ Examples that MUST abstain:
 [ ] Data-source licensing and notice scan complete.
 [ ] User-facing help documents unsupported OS/format and verification caveats.
 
+## 9.1 Additional implementation boundaries
+
+- A source query must declare a bounded set of CVRF documents/months or local corpus manifest before a no-match conclusion is treated as complete-in-scope. MSRC /cvrf/{id} identifies a document, not a guaranteed general KB lookup.
+- CVRF remediation Type 2 is a KB article relation, while CSAF vendor_fix is a category, not the same integer enum. Reuse normalized SPEC-28 CSAF claims instead of passing them to CVRF parser.
+- Offline DISM success does not prove completed servicing. Modern checkpoint LCUs may have prerequisites, and offline servicing may leave pending operations. No PSFX automatic readiness claim in v1.
+- The GUI must be built from validated immutable read models and preserve the existing AcquisitionDialog. Use dedicated UI controllers and stable objectNames for accessibility.
+- Exact release tests and negative cases are in SPEC-32D; record PASS/FAIL/BLOCKED/NOT_RUN, never silently count blocked live tests as successful.
+
 ## 10. Implementation handoff prompt (copy into coding agent if needed)
 
     Repository: djshellshoxxx/patchtrace.
@@ -237,7 +248,7 @@ Examples that MUST abstain:
   https://github.com/microsoft/MSRC-Microsoft-Security-Updates-API/blob/main/src/MsrcSecurityUpdates/Public/Get-MsrcCvrfAffectedSoftware.ps1
 - Official CSAF directory and standard:
   https://msrc.microsoft.com/csaf
-  https://docs.oasis-open.org/csaf/csaf/v2.0/cs01/csaf-v2.0-cs01.html
+  https://docs.oasis-open.org/csaf/csaf/v2.0/os/csaf-v2.0-os.html
 - Catalog and offline servicing:
   https://learn.microsoft.com/en-us/windows-server/administration/windows-server-update-services/manage/wsus-and-the-catalog-site
   https://learn.microsoft.com/en-us/windows/deployment/update/psfxwhitepaper
