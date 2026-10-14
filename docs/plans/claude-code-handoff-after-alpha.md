@@ -145,9 +145,11 @@ P2 specification-only; implement after engine/evidence gates:
    enable unintended downloads or network calls, alter existing projects, or
    suppress security failures to make builds green. Handle hostile PE metadata
    as untrusted, escape UI output, and verify source provenance.
-7. **User communications:** output nothing to the user during routine work.
-   Ask only when a true approval, credential, inaccessible Windows resource,
-   policy choice or other user-specific input is essential. Continue
-   autonomously where feasible. Once work is complete, provide one succinct
-   final report: changed modules, PRs merged, tests/CI/Windows artifact and
-   remaining validated blockers. Do not promise later work as completed.
+7. **User communications:** remain silent throughout routine work.
+   Send **no** progress updates, narration, or ordinary final report to the
+   user. Ask only when a true approval, credential, inaccessible Windows
+   resource, policy choice or other user-specific input is essential. Continue
+   autonomously otherwise. Record concise factual handoffs in repository docs
+   and PR/release descriptions: modules, merges, checks, Windows artifact and
+   blockers. If the execution interface unavoidably requires a final reply,
+   use only the PR/release link and no summary. Never claim future work is done.
