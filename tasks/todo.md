@@ -309,3 +309,6 @@
 ### [K6:kbcorrelation-cvrf-fetch] KB-CVE correlator K6 (2026-10-14)
 - [x] `cvrf_fetch.py` and `cli_online.py` with 49 hermetic tests (fake opener, sockets denied): consent equality and `plan_sha`, offline refusal, 429/5xx/Retry-After, 32 MiB cap, cancel (between months, mid-read, in a retry wait), hostile redirects, wrong-month document, partial coverage exit 3.
 - [ ] Integrator: route `kb index sync` to `cli_online.main` in `kbcorrelation/cli.py` (hook text in the `cli_online` docstring); the live MSRC URL shape, document size and rate limits stay unverified until probe L1.
+
+### [WB1:S5S6:search-cli-view]
+[x] S5 search CLI and S6 view model (no widgets). [ ] Open: integrator hooks (cli.py, frozen_smoke COMMANDS, tooltips merge); Qt panel `ui_search.py` and `test_search_{ui,perf}.py` (instance D); `HitDelegate` highlight uses `ResultRowView.spans`.

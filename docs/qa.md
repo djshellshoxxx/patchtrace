@@ -411,3 +411,6 @@ Automated only, on the SYNTHETIC `tests/strings_pe.py` pair and hand-made rows; 
 
 ### [K6:kbcorrelation-cvrf-fetch]
 Mocked only: a fake opener serves the synthetic 2099-Feb fixture; no real MSRC bytes, no socket. Open gates: live probe L1 (URL shape, `Accept`, document size, gzip, rate limit, whether 404 marks an unpublished month), Windows CI, a real hard cancel on a dripping server (covered by the shared transport's own tests, not repeated here).
+
+### [WB1:S5S6:search-cli-view]
+Automated: tests/test_search_cli.py (exit table, envelope, probe, status, invalid input, no Qt) and tests/test_search_view_model.py (states Q0-Q12 exact copy, banned-word sweep, hostile text, 1M-hit paging cap, tooltip data). Open gates: frozen `search --probe` and `search --help` on the Windows bundle (needs the cli.py hook); real-project `search` on a project opened by ProjectService (the CLI tests use a stand-in service).
