@@ -18,7 +18,7 @@ ChannelState = Literal['equal', 'differs', 'unavailable', 'not-applicable']
 ChangeClass = Literal['constant', 'comparison', 'condition', 'callee', 'call-added', 'call-removed', 'data-ref',
     'struct-offset', 'cfg', 'block-added', 'block-removed', 'string', 'size-only', 'refcount-only',
     'address-only', 'register-only', 'layout-only', 'name-only', 'unknown']
-RowFlag = Literal['tiny', 'thunk', 'import', 'hub', 'icf', 'oversize', 'truncated', 'ir-missing', 'pdata-confirmed']
+RowFlag = Literal['tiny', 'thunk', 'import', 'hub', 'icf', 'oversize', 'truncated', 'ir-missing', 'pdata-confirmed', 'library']
 ```
 `UnifiedError(code, message, *, reason=None)`; `code` is one of 01 s6, `reason` a slug (`[a-z0-9-]{1,48}`).
 
@@ -35,6 +35,7 @@ One file `ir.jsonl` per side in the extractor's private output dir, plus `progre
 | fn `rva`, `ranges` | Rva; `[[rva, len], ...]` <= 64 ranges | entry RVA; body ranges (chunks) |
 | fn `name`, `name_src`, `aliases` | str <= 512; `DEFAULT|ANALYSIS|IMPORTED|USER_DEFINED`; <= 16 names | Ghidra symbol and source type; aliases = other symbols at the entry (ICF) |
 | fn `kind`, `thunk_target`, `import` | `normal|thunk|external`; Rva|null; `{dll, name|null, ordinal|null}`|null | |
+| fn `lib` | bool | Ghidra Function ID (FID) matched this function to a known library body [unv API]; tag only (F16) |
 | fn `raw` | hex, <= L-06 bytes per function | body bytes in range order; absent -> flag `oversize` |
 | fn `blocks` | `[[rva, len, n_insn, [succ_rva...], [kind...]], ...]` <= L-02 total | Ghidra basic-block model; kinds `fall|jump|cond|switch|call-return` |
 | fn `insns` | `[[off, len, mnem, imask_hex, [[optype, omask_hex, vkind, value, target_rva|null], ...], flow], ...]` <= L-06 per fn | SLEIGH instruction mask and per-operand masks; `vkind` in `none|scalar|address|register` |

@@ -64,7 +64,7 @@ main(request):
   emit header (image_base, size_of_image, language, compiler, producer)
   for f in functionManager.getFunctions(True):                        # externals listed with kind 'external'
       if monitor/cancel or caps reached: footer status 'partial'; break
-      rec = {rva: f.entry - image_base, ranges: body ranges, name, name_src: symbol.getSource(), aliases: symbols at entry,
+      rec = {rva: f.entry - image_base, ranges: body ranges, name, name_src: symbol.getSource(), aliases: symbols at entry, lib: FID match,
              kind, thunk_target, import, raw (<= L-06), blocks (BasicBlockModel), insns (getPrototype().getInstructionMask(),
              per-operand value masks, OperandType flags, scalars, references), calls, strings (defined string data
              referenced from the body: SHA-256 of UTF-8 value, length, 64-char prefix), text (str(instruction))}

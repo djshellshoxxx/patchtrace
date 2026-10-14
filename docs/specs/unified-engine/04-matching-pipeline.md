@@ -60,7 +60,7 @@ def find(st, p, pool_a, pool_b, tail, rnd, budget):
 
 | ID | Key | Gate (both sides) | Tier | Family (05 s1.1) | Cost (n functions) | Origin |
 |---|---|---|---|---|---|---|
-| P00 manual | analyst correction (1:1 only; N:M becomes a group) | owned by this project, artifact pair matches | M | F-MANUAL | O(m) | SPEC-01 correction flow |
+| P00 manual | analyst correction (1:1 only; N:M becomes a group) | owned by this project, artifact pair matches | M | F-MANUAL | O(m) | SPEC-01 correction flow; user-confirmed passes in Ghidra VT and QBinDiff (R04 s4.16) |
 | P01 import-key | `(dll.lower(), name or '#'+ordinal)` | kind import/external | A | F-PT-PE | O(n) | Ghidriff ExternalsName; BinDiff name hash for library |
 | P02 export-key | export name, else ordinal (`pe_overview` exports) | function at the export RVA | A | F-PT-PE | O(n) | R04 s3 anchor 1 |
 | P03 name-exact | demangled non-default name (`name_src` IMPORTED or USER_DEFINED; not `FUN_`/`thunk_FUN_`/`LAB_` + hex; length >= 3) | size ratio in L-21 OR >= 1 shared mapped callee; else atom tier C + hint `name-body-mismatch` (R05 F13) | A | F-PT-NAMES | O(n) | VT Exact Symbol, BinDiff name hash |
@@ -70,7 +70,7 @@ def find(st, p, pool_a, pool_b, tail, rnd, budget):
 | P07 register-agnostic | `h3` | >= L-12 instructions | B | as P04 | O(n) | Ghidra ExactInstructions |
 | P08 mnemonic-seq | `hm` | >= L-12 instructions | B | as P04 | O(n) | VT Exact Mnemonics |
 | P09 mnemonic-multiset | `hms` | >= L-12 instructions | B | as P04 | O(n) | BinDiff prime signature (exact multiset) |
-| P10 md-flowgraph | `(md_td, md_bu, n_bb, n_edge)` | `n_bb` >= L-11 | B | F-PT-STRUCT | O(n) | BinDiff MD flow graph |
+| P10 md-flowgraph | `(md_td, md_bu, n_bb, n_edge)` | `n_bb` >= L-11 | B | F-PT-STRUCT | O(n) | BinDiff MD flow graph (Diaphora files pure-graph rules under Unreliable, R04 s1 #5: demote to C if its G-U3 precision fails) |
 | P11 md-callgraph | call-graph vertex MD | >= 2 call edges | B | F-PT-STRUCT | O(n + E) | BinDiff MD call graph |
 | P12 string-set | sorted rare string SHA-256 set (L-13/L-14) | >= L-16 elements | B | F-PT-STRUCT | O(refs) | BinDiff/VT string refs (live here, inert in BinDiff, R04 s0.4) |
 | P13 import-callee-set | sorted called import keys | >= L-16 elements | B | F-PT-STRUCT | O(calls) | Diaphora import-names idea (own code) |
