@@ -318,3 +318,9 @@ K1 notes: plan 10.1 "4 edges, 1 mention-only" = 4 vendor-remediation edges + 1 m
 |---|---|---|---|---|
 | strings core | strings/{limits,contracts,keys,table}.py | strict `strings-basis/1`, `strings-delta/1`, `strings-anchor-hit/1` records; columnar `strings-table/1` (hand-validated, ~85 B/row); cache keys for stages `strings-table` and `strings-delta` | enrichment.identity | `test_strings_{contracts,table,schemas}.py` |
 | schemas | tools/generate_strings_schemas.py, docs/schemas/strings/ | JSON Schemas + synthetic examples, regenerate-and-compare | strings.contracts | `test_strings_schemas.py` |
+### [WB3-S1-S3:strings-sources-scan]
+| module | files | role | tests |
+|---|---|---|---|
+| strings sources | `strings/sources.py` | `StringSource` port; `FlossEvidenceSource` (validated `ToolEvidenceSet`) and `RawFlossSource` (raw FLOSS 3.1.1 JSON, per-type quotas, optional offset-to-RVA) produce `SourceRow` + `StringPart` + stage states; hash and display only, never the raw string | `test_strings_sources.py` |
+| strings regions/cues/look-alike | `strings/{regions,cues,lookalike}.py` | section-name region vocabulary, fixed cue vocabulary from text and import sets, skeleton-based look-alike and code point diff | `test_strings_{regions,cues,lookalike}.py` |
+| strings scan | `strings/scan.py` | "PatchTrace basic string scan": chunked ASCII + UTF-16LE scan equal to FLOSS 3.1.1 static semantics, cancel per chunk, per-encoding row cap with exact totals, `BuiltinScanSource` | `test_strings_scan.py` |

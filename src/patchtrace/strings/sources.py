@@ -178,7 +178,7 @@ class RawFlossSource:
         totals = {kind: len(items) for kind, items in by_type.items()}
         take = _quota(totals, self._max_rows)
         rows = [row for kind in STRING_TYPES for _key, row in sorted(by_type[kind], key=lambda c: c[0])[:take[kind]]]
-        rows.sort(key=_order)
+        rows.sort(key=row_order)
         truncated = {kind for kind in STRING_TYPES if take[kind] < totals[kind]}
         return self._result(doc.metadata, tuple(rows), totals, truncated, run_types, raw_sha)
 
@@ -241,7 +241,7 @@ class RawFlossSource:
             stages=stage_states(run_types, totals, truncated), part=part)
 
 
-def _order(row: SourceRow) -> tuple:
+def row_order(row: SourceRow) -> tuple:
     """Same order as the adapter: type, file offset, then the located RVA (function RVA for emulation types)."""
     located = row.rva if row.rva is not None else row.fn_rva
     return row.type, -1 if row.offset is None else row.offset, -1 if located is None else located, row.value_sha256

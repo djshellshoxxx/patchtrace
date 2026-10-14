@@ -212,3 +212,6 @@
 ### [WB3-S0:strings-core] WB3-S0 contracts and table
 - [x] `patchtrace.strings` limits, contracts, keys, columnar table; schemas under `docs/schemas/strings/`; gate measured: two 200k-row sides (unique display values) load in about 0.3 s, tracemalloc peak about 52 MiB
 - [ ] Next: S1 sources, S2 regions/cues, S3 scan (need S0 only)
+### [WB3-S1-S3:strings-sources-scan]
+- [x] WB3-S1 sources, WB3-S2 regions/cues/look-alike, WB3-S3 built-in scan (parity with the FLOSS 3.1.1 static goldens, property tests against a whole-buffer regex oracle)
+- [ ] Open: S0 contracts/table (`strings/__init__.py`, limits, columnar table) not on this base; `SourceRow` maps 1:1 onto the planned table columns; advisory-text/advisory-api/lookalike cues are set by the delta layer (S5/S6)

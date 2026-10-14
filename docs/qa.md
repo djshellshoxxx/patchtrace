@@ -315,3 +315,8 @@ Not verified here, only the `live-unified` workflow can: everything on Windows (
 
 ### [WB3-S0:strings-core] strings table gate
 Linux, Python 3.x shared host, synthetic rows: load of two 200k-row sides 0.2-0.3 s (limit 4 s); tracemalloc peak 52 MiB (limit 400 MiB); sidecar 16.9 MiB per side. Windows leg and real-binary string counts not measured.
+### [WB3-S1-S3:strings-sources-scan]
+| check | evidence |
+|---|---|
+| built-in scan equals FLOSS 3.1.1 static goldens (synthetic pairs) | `tests/test_strings_scan.py::test_scan_matches_floss_goldens` and `test_scan_matches_the_decode_goldens` |
+| scan throughput, 64 MiB, Linux, shared host | code-like data about 125 MB/s, all-zero data about 320 MB/s, pathological random data (a string every ~80 bytes) about 47 MB/s; the 100 MB/s target holds for sparse data only; real binaries and the Windows leg are unmeasured |
