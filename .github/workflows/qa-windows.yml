@@ -34,7 +34,9 @@ jobs:
         if: runner.os == 'Windows'
         continue-on-error: true
         timeout-minutes: 10
-        run: python tools/qa_binexport_memcap.py
+        run: |
+          python tools/qa_binexport_memcap.py --caps 64,96,112,128,256
+          python tools/qa_binexport_memcap.py --alloc --caps 128,256
       - if: runner.os == 'Windows'
         run: python tools/build_windows.py
       - name: Frozen EXE headless smoke (A1-A4) and self-test
