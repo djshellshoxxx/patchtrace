@@ -1,0 +1,68 @@
+name: Live intel tools acceptance
+# Real pinned capa 9.4.0, FLOSS 3.1.1 and Detect It Easy 3.21 (SPEC-29 tools T9), not mocked. ADVISORY: never a
+# required check. Assets are downloaded from the upstream release pages, verified against
+# tools/intel_tools_pin.json (trust-on-first-use values) and extracted without installing or executing them; the
+# live test then probes each tool and runs it on the SYNTHETIC PE pairs, comparing with the committed goldens.
+# Linux is strict inside the job; Windows is advisory (no tool has run on Windows yet): failures are recorded in
+# the status JSON without failing the job. Integrity failures (download, size or SHA-256 mismatch) fail both.
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '41 4 * * 2'
+  pull_request:
+    paths: ['src/patchtrace/intelligence/tools/**', 'tools/intel_tools_pin.json', 'tools/provision_intel_tools.py',
+            'tests/test_live_intel_tools.py', '.github/workflows/live-intel-tools.yml']
+permissions:
+  contents: read
+jobs:
+  live-intel-tools:
+    name: live intel tools (${{ matrix.os }})
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-22.04
+            pin_os: linux
+            advisory: false
+            provision_flags: ''
+          - os: windows-latest
+            pin_os: windows
+            advisory: true
+            provision_flags: '--advisory'
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 60
+    env:
+      PATCHTRACE_LIVE_STATUS_DIR: ${{ github.workspace }}/build/live-status
+      QT_QPA_PLATFORM: offscreen
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Qt runtime libraries (pytest-qt imports Qt; diec needs Qt 5 Core and Script)
+        if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install -y libegl1 libopengl0 libgl1 libqt5core5a libqt5script5
+      - run: python -m pip install -e .[dev]
+      - uses: actions/cache@v4
+        with:
+          path: build/intel-tools-cache
+          key: intel-tools-${{ matrix.pin_os }}-${{ hashFiles('tools/intel_tools_pin.json') }}
+      - name: Provision pinned tools (download + verify + extract; never executes them)
+        shell: bash
+        run: python tools/provision_intel_tools.py --os ${{ matrix.pin_os }} ${{ matrix.provision_flags }} --github-env "$GITHUB_ENV"
+      - name: Live intel tools tests (records passed / failed / blocked)
+        continue-on-error: ${{ matrix.advisory }}
+        shell: bash
+        env:
+          PATCHTRACE_REQUIRE_LIVE_INTEL_TOOLS: ${{ matrix.advisory && '0' || '1' }}
+        run: python -m pytest -rA tests/test_live_intel_tools.py
+      - name: Live status summary
+        if: always()
+        shell: bash
+        run: python tools/check_live_status.py --summary "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: live-intel-tools-${{ matrix.pin_os }}
+          path: build/live-status/
+          if-no-files-found: warn
