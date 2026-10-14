@@ -386,3 +386,5 @@ Automated only: fake capa executables printing committed real output on syntheti
 Synthetic project (tests/search_builders.py: invented names, bytes-only PE files). Open gates: a real Ghidriff JSON for the `raw` section shapes; first-index latency on a 100k-function project (owner machine); Windows CI run of the segment publish over an open file.
 ### [WB3-S4:strings-links]
 Automated only, on the SYNTHETIC pair of `tests/strings_pe.py` and a hand-written Ghidriff-shaped document (not Ghidriff output). F13 escape behaviour is checked against a reference encoder written from the spec, not against a real Ghidra decompile; the hex-escape width rule is a heuristic until a real decompile is compared.
+### [G2:callgraph-snapshot]
+Automated: tests/test_callgraph_{input,pairing,snapshot}.py (raw missing, reader failure, malformed tables, ladder rungs, count-suffix, ambiguity, pair precedence, claim cap, cancel, key sensitivity, hash-seed byte identity, import boundary). Open: real Ghidriff `name_matches` shape and `EXTERNAL:` label forms on a synthetic PE pair (CI or owner).

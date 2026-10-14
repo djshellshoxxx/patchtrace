@@ -272,3 +272,5 @@
 ### [WB3-S4:strings-links]
 - [x] WB3-S4 L1/L4/L5 links and literal segmentation (`strings/{clit,links}.py`); synthetic Ghidriff-shaped fixture `tests/fixtures/strings/pdiff/`
 - [ ] Not built here: edited-pair detection (belongs with the S5 delta), L2/L3/L6 tiers (need IR or capa), Ghidriff `strings` loader wiring in the service layer
+### [G2:callgraph-snapshot]
+- [x] Contracts, project input, raw matches, resolver, pair map, snapshot (GL-01 enforced), bounded queries; G0 fixtures moved to the repo's list-of-targets `matches` shape. [ ] Live gate: one real Ghidriff JSON must confirm `name_matches` (only `address_matches` is read by other repo code). [ ] G3 deltas, noise, hints; G4 CLI/DOT.
