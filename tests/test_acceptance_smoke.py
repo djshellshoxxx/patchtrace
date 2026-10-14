@@ -14,6 +14,7 @@ from pathlib import Path
 import pytest
 
 from patchtrace import cli
+from patchtrace.cli_commands import names
 
 TOOL = Path(__file__).resolve().parents[1] / 'tools' / 'frozen_smoke.py'
 
@@ -38,7 +39,7 @@ def test_smoke_checks_pass_against_source_cli():
     assert not any(line.startswith('FAIL') for line in lines)
 
 
-@pytest.mark.parametrize('command', ['rank', 'flags', 'correlate', 'cache', 'acquire', 'series', 'secondary'])
+@pytest.mark.parametrize('command', names())
 def test_cli_help_paths_never_import_qt(command):
     code = ('import sys\nfrom patchtrace import cli\n'
             'rc = cli.main([sys.argv[1], "--help"])\n'

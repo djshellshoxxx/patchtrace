@@ -6,7 +6,7 @@ Standing rules still in force: `AGENTS.md`, `CLAUDE.md`, `phase-d-build-coordina
 
 ## 0. Owner sequencing (2026-10-14, binding)
 
-ESSENTIAL PRIORITY: integrate Ghidra, Ghidriff and Java (and the private Python) into PatchTrace so no external dependency has to be downloaded (full Windows zip and Linux tar.gz; SPEC-06 consumer and `tools/make_offline_bundle.py` producer exist, the real payload and the integration are open). Owner: instance C. Everything else continues only after it is done: in-flight workers finish (never cancelled), no new slices or waves start until the bundle is announced done. Then the phases below resume in order.
+ESSENTIAL PRIORITY: integrate Ghidra, Ghidriff and Java (and the private Python) into PatchTrace so no external dependency has to be downloaded (full Windows zip and Linux tar.gz; SPEC-06 consumer and `tools/make_offline_bundle.py` producer exist, the real payload and the integration are open). Owner: instance C. Everything else continued only after it was done. **Update 2026-10-14 ~20:30Z: the owner lifted the hold for the feature tracks** (the bundle stays essential and continues on C in parallel; the guided RE teacher is deferred); the build phase runs under `program-e-execution-plan.md` (23 workers on A, 23 on B, 12 on C; Windows + Linux prereleases at every third milestone).
 
 ## 1. Phases and exit gates
 
@@ -66,7 +66,7 @@ Spec numbers are reconciled in `specs/REGISTRY.md`.
 
 - Worker: ruff clean, new tests red then green, full suite twice, schema drift check, no stray files.
 - Wave (integration owner): merge in dependency order, full gate twice locally, one PR, Linux + Windows QA + native matrix + live checks green, squash merge, reset the designated branch to main, ledger updated.
-- Feature done: charter items 1-9 evidenced, GUI offscreen tests (20x repeat without abort), tooltips and accessibility names registered, docs and `docs/modules.md` updated, frozen smoke covers the feature's import.
+- Feature done: charter items 1-9 evidenced, GUI offscreen tests (20x repeat without abort), tooltips and accessibility names registered (`panels check` and `a11y_audit` pass), docs and `docs/modules.md` updated, frozen smoke covers the feature's import.
 - Blocked external acceptance (Windows desktop DPI and screen reader, Microsoft hosts, Tier W on the owner's machine, real third-party executables in the GUI) is reported separately and never counted as done.
 
 ## 6. Check protocol (every 12 hours until complete)

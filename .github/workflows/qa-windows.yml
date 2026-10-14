@@ -104,9 +104,34 @@ jobs:
       - run: QT_QPA_PLATFORM=xcb xvfb-run -a PatchTrace/PatchTrace --self-test
         env:
           LANG: C.UTF-8
+  # Decides whether this push publishes a prerelease (tools/release_gate.py): every third counted merge, a v* tag, a
+  # release marker in the head commit message, or no earlier prerelease. It fails open and says why in `reason`.
+  release-gate:
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    outputs:
+      publish: ${{ steps.gate.outputs.publish }}
+      milestones: ${{ steps.gate.outputs.milestones }}
+      reason: ${{ steps.gate.outputs.reason }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Release gate (every third counted merge)
+        id: gate
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python tools/release_gate.py --head "$GITHUB_SHA" --event "$GITHUB_EVENT_NAME" --ref "$GITHUB_REF" >> "$GITHUB_OUTPUT"
   release:
-    if: startsWith(github.ref, 'refs/tags/v') || (github.ref == 'refs/heads/main' && github.event_name == 'push')
-    needs: [qa, linux-smoke]
+    if: startsWith(github.ref, 'refs/tags/v') || needs.release-gate.outputs.publish == 'true'
+    needs: [qa, linux-smoke, release-gate]
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -138,6 +163,8 @@ jobs:
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
           QA_RESULT: ${{ needs.qa.result }}
           SMOKE_RESULT: ${{ needs.linux-smoke.result }}
+          GATE_MILESTONES: ${{ needs.release-gate.outputs.milestones }}
+          GATE_REASON: ${{ needs.release-gate.outputs.reason }}
         run: |
           cat > "$RUNNER_TEMP/preamble.md" <<'EOF'
           Windows x64 desktop package. Extract the entire ZIP before launching PatchTrace.exe.
@@ -147,6 +174,7 @@ jobs:
           The included synthetic sample works without an analysis backend or AI provider.
           See docs/qa.md for the exact checks performed and unverified acceptance gates.
           EOF
+          printf 'Release gate: %s. Counted merges since the previous prerelease: %s.\n' "$GATE_REASON" "$GATE_MILESTONES" >> "$RUNNER_TEMP/preamble.md"
           python3 src-tree/tools/milestone_notes.py --tag "$TAG" --sha "$GITHUB_SHA" --ref-kind "$REF_KIND" \
             --run-url "$RUN_URL" --run-number "$GITHUB_RUN_NUMBER" --assets release \
             --junit linux=qa-results/qa-Linux/qa-results.xml --junit windows=qa-results/qa-Windows/qa-results.xml \

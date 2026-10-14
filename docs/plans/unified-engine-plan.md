@@ -38,7 +38,7 @@ critical path: S0a -> S2 -> S3 -> S6 gates   (about 18-28 days; S1 runs beside S
 | `src/patchtrace/enrichment/storage.py` | S0a | `KINDS` additions + `backup_once` wrapper (<= 20 lines) |
 | `tools/generate_schemas.py` | S0a | unified output dir only |
 | `src/patchtrace/unified/{addressing,pipeline,worker,cli}.py`, `unified/sources/{ghidriff,secondary,manual}.py`, `unified/fusion/*`, `unified/facts/{pseudo,verdict}.py` | S0b | `facts/channels.py` created by S0b (S0 channels), extended by S3 |
-| `src/patchtrace/cli.py` | S0b | `COMMANDS += ('unified',)` + dispatch (<= 6 lines) |
+| `src/patchtrace/cli_commands/unified.py` | S0b | adapter file (<= 25 lines); a temporary `COMMANDS += ('unified',)` hook may merge first and move later (GUI plan 8.12) |
 | `src/patchtrace/unified/extract/*`, `unified/ir/*`, `.github/workflows/live-unified.yml`, `third_party/notices/bindiff-v8/*` | S1 | |
 | `src/patchtrace/backend.py` | S1 | `retain_gzf` field + move block (<= 25 lines) |
 | `tools/build_windows.py`, `tools/build_linux.py`, `tools/frozen_smoke.py`, `tools/pyinstaller_hooks/hook-patchtrace.unified.extract.py` | S1 | data-file hook, required notice, smoke lines |

@@ -212,7 +212,7 @@ Name map: EvidenceOrigin / SourceDocument / SourceSnapshot / SourceReference -> 
 - Catalog scraping, automatic multi-file batches beyond 5, DISM or PSFX hydration in the core path: unverifiable terms or fragile; E3 only.
 
 ## 8. CLI and GUI
-### 8.1 CLI (one `cli_*.py` per verb module; `kbcorrelation/cli.py` assembles; hook of <=6 lines in `patchtrace/cli.py`)
+### 8.1 CLI (one `cli_*.py` per verb module; `kbcorrelation/cli.py` assembles; adapter `cli_commands/kb.py` (<= 25 lines; no `patchtrace/cli.py` hook, GUI plan 8.12))
 ```
 kb index import FILE...  |  kb index status|verify            # offline; CVRF month or CSAF JSON
 kb index plan --months YYYY-MM[,..] | --since YYYY-MM          # E0, pure: exact requests, hosts, caps, plan_sha; zero network
@@ -230,8 +230,8 @@ kb attach PROJECT --investigation INV [--repair] ; kb explain PROJECT --cve CVE 
 
 ### 8.2 GUI (single main window; no new top-level window)
 **Placement and entry.**
-- `KbDock(QDockWidget)` "KB / CVE investigation" (objectName `kb.dock`), Right area, hidden until toggled, closable, movable, floatable like the Evidence dock; minimum 560x360; geometry in QSettings `kb/geometry` (try/except).
-- Menu `Project > Find KB / CVE...` is `dock.toggleViewAction()`, Ctrl+Shift+K (free: MainWindow uses Ctrl+N/O/S/E/I/R, F1, F5, Esc, Alt+Up/Down; Evidence uses Ctrl+Shift+E; planned: Unified Ctrl+Shift+U, Search Ctrl+Shift+F).
+- `KbDock(QDockWidget)` "KB / CVE investigation" (objectName `kb.dock`), Right area, hidden until toggled, closable, movable, floatable like the Evidence dock; minimum 560x360; layout stored by the host (no `kb/geometry` key).
+- Menu `Project > Find KB / CVE...` is `dock.toggleViewAction()`, Ctrl+Shift+K (free: MainWindow uses Ctrl+N/O/S/E/I/R, F1, F5, Esc, Alt+Up/Down; Evidence uses Ctrl+Shift+E; planned: Unified Ctrl+Shift+U, Search Ctrl+Shift+F). GUI plan section 10 keeps this key for KB; CAP uses Ctrl+Shift+A and KEV Ctrl+Shift+X.
 - Works with no project open; `project_changed()` switches to the attached investigation. It registers with the GUI-track panel registry when that lands; until then it copies the Evidence pattern exactly so migration is mechanical. Only existing modal helpers are used (`QFileDialog`, one consent `QMessageBox`).
 
 **Layout** (Updates page shown; all pages are built eagerly, filled lazily):
@@ -295,7 +295,7 @@ Relation labels: "Vendor remediation (MSRC CVRF, product-specific)", "Vendor ref
 
 **Accessibility** (docs [unverified], section 2).
 - Accessible names: "KB / CVE investigation panel", "Lead", "Investigation steps", "Advisory documents", "Security updates for the lead", "Candidate files", "Older build candidates", "Newer build candidates", "Leads", "Advisory context details".
-- The status label keeps an EMPTY accessible name so `setText` announces (C6 s1.8). Badges are text plus an ASCII glyph (`[=] index-adjacent`, `[~] asserted`, `[!] blocked`, `[?] unknown`), never colour alone. 2 px focus ring; contrast >=4.5:1 text and >=3:1 non-text by a pure test; no colour beyond `DARK_STYLE`; row heights from font metrics.
+- Status text is announced through `ctx.announce` (GUI plan F6 `StatusAnnouncer`, F7), not by `setText` on an empty accessible name (C6 s1.8). Badges are text plus an ASCII glyph (`[=] index-adjacent`, `[~] asserted`, `[!] blocked`, `[?] unknown`), never colour alone. 2 px focus ring; contrast >=4.5:1 text and >=3:1 non-text by a pure test; no colour beyond `DARK_STYLE`; row heights from font metrics.
 - Tab order: Lead, Search, Import, Plan, step bar, page controls in reading order, Cancel. Enter runs the page's primary action on a selected row; Ctrl+C copies a plain provenance block (<=16 KiB); Ctrl+PageDown/PageUp change step; Esc stays MainWindow "Cancel job" (ui.py:1529) and the dock Cancel is a button.
 - NVDA/Narrator announcements, 125/150/200% DPI and a keyboard-only walk stay manual gates (C8).
 
@@ -345,7 +345,7 @@ E0 = K0, K0f, K1, K2, K3, K4a, K4b (K1 and K2 in parallel, K4a and K4b in parall
 | A-5 | `enrichment/storage.py` `KINDS` | add `kb-investigation`, `kb-context` (not `DERIVED_KINDS`); test: rows survive retention |
 | A-6 | `persistence.py:522` `backup()` | also copy `kb` and `intelligence`; verified round trip (repairs the CSAF gap too) |
 | A-7 | `acquisition/winbindex.py` (K5 owns this edit) | additive `parse_rows()` (dict key as SHA, `(version, KB)` rows, `otherWindowsVersions`, heading class, BASE date); `parse()` unchanged |
-| A-8 | `cli.py` | `COMMANDS`, `HANDLERS` and the `_command_name` set gain `kb` (<=6 lines) |
+| A-8 | `cli_commands/kb.py` | adapter file (<= 25 lines) over `kbcorrelation/cli.py`; no `cli.py`, `COMMANDS` or `HANDLERS` edit (GUI plan 8.12) |
 | A-9 | `ui.py` | import; `self.kb = KbController(self)` after line 1504; menu item in `_build_actions`; hooks beside 1984, 2985, 3113 (<=12 lines); the dialog refactor stays optional |
 | A-10 | `intelligence/anchors.py`, `contracts.py` | public `text_anchors()`; `Anchor.source` gains `cvrf-title`, `cvrf-note`, `cvrf-tag` (additive, schema regenerated). Fallback: a KB-local copy plus a drift test |
 | A-11 | `docs/specs/workbench/01-search-fts5-rapidfuzz.md` s4 | `SearchSourceRef.field` gains `advisory`; the extractor calls `AdvisoryTextSource` |
