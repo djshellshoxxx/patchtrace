@@ -432,3 +432,6 @@ K3 notes: `workflow.py` now also allows `pair_proposed` from the searched states
 
 ### [G5:view-model]
 - `callgraph/view_model.py`: Qt-free Changes/Neighbours/Tree rows, E0-E12 status copy, detail and clipboard text, local `graph.*` tooltip table (`GRAPH_TIPS`). Widgets (`ui_calls.py`, `ui_calls_tips.py`) wait for the panel registry (F5).
+
+### [WB3-S6:anchors-export-cli]
+`strings/anchors.py` (AnchorSet to cue terms and `StringAnchorHit` join; strength `anchor`, never moves a review tier, secrets never match), `strings/search_rows.py` (`SearchRow` for changed and linked strings, secrets by kind and hash, coverage line), `strings/export.py` (`strings-export/1` JSON and CSV, redacted by default, atomic, no clobber without force, CSV formula guard), `strings/cli.py` (Qt-free `strings list|delta|explain|scan|export` dispatcher plus `table_from_source`; `register(sub, common, handlers)`). The `cli.py` hook is an integrator ask.

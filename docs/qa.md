@@ -405,3 +405,6 @@ Automated only: tests/test_buildenv_store.py (round trip, republish, unknown kin
 
 ### [WB3-S7a:strings-view-model]
 Automated only (`tests/test_strings_{view_model,copy}.py`, hand-built StringChange rows): filters, review order, hostile-text escaping, banned-word sweep over all visible text, one teach entry per id, tooltip ids equal the card list. Screen-reader wording is not verified.
+
+### [WB3-S6:anchors-export-cli]
+Automated only, on the SYNTHETIC `tests/strings_pe.py` pair and hand-made rows; no tool is run. The CLI is exercised through the real `cli.main` with a test-local copy of the integrator hook. Not verified: function links through the CLI on a project with a completed analysis run, stored FLOSS evidence through `--source floss|auto`, Windows.

@@ -302,3 +302,6 @@
 ### [G5:view-model]
 - [x] Pure view models and tests (`tests/test_callgraph_view_model.py`).
 - [ ] `ui_calls.py`, `ui_calls_tips.py`, `tests/test_ui_calls.py` after F5.
+
+### [WB3-S6:anchors-export-cli]
+- [x] Anchors, search rows, export, CLI dispatcher and tests (synthetic pair, built-in scan). [ ] Integrator: 6-line `cli.py` hook, `frozen_smoke` check of `strings scan --builtin --json` (A8, A13). [ ] Not built: derived-cache storage of tables and deltas (recomputed per call), Ghidriff `strings` input to the CLI (L1 links need it), review-order boost from anchor hits (by design none).
