@@ -367,7 +367,7 @@ class ProductMapping(Record):
     product_name: Short
     status: Literal['verified', 'candidate']
     basis: Literal['advisory-file-hash', 'relationship-from-verified-component', 'asserted-product-id',
-                   'file-version-equals-product-version', 'file-version-in-range']
+                   'file-version-equals-product-version', 'same-product-name']
     detail: str = Field(max_length=500)
 
 
@@ -406,7 +406,7 @@ class SideApplicability(Record):
 
 
 class Contradiction(Record):
-    kind: Literal['cross-revision', 'vex-vs-advisory', 'orientation', 'mapping']
+    kind: Literal['cross-revision', 'vex-vs-advisory', 'cross-document', 'orientation']
     product_name: str | None = Field(default=None, max_length=1000)
     claims: tuple[StatusEvidence, ...] = ()
     explanation: str = Field(min_length=1, max_length=1000)

@@ -440,6 +440,12 @@ def _precedence(v: _Version) -> tuple:
     return (v.major, v.minor, v.patch, 0 if v.pre else 1, v.pre)
 
 
+def revision_precedence(text: str) -> tuple | None:
+    """Ordering key of a CSAF ``version_t`` (integer or SemVer precedence), or None when malformed."""
+    version = _version(text)
+    return _precedence(version) if version is not None else None
+
+
 def _product_definitions(doc: dict) -> Iterator[tuple[str, str]]:
     """(product_id, JSON pointer) of every Full Product Name definition (§6.1.2 paths), document order."""
     tree = doc.get('product_tree') or {}
