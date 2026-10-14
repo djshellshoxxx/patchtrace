@@ -3,12 +3,12 @@ from __future__ import annotations
 
 import json
 import os
-import sys
 import threading
 import time
 from pathlib import Path
 
 import pytest
+from fake_exe import make_fake_exe
 
 from patchtrace.jobs import ProcessResult
 from patchtrace.secondary.contracts import Capability, SecondaryError
@@ -16,14 +16,10 @@ from patchtrace.secondary.rzdiff import parse_output, parse_version, probe, run_
 
 OLD, NEW = 'a' * 64, 'b' * 64
 FIXTURE = Path(__file__).parent / 'fixtures' / 'secondary' / 'rzdiff-functions.json'
-posix = pytest.mark.skipif(os.name == 'nt', reason='shebang fake executables are POSIX-only')
 
 
 def fake(tmp_path, body: str) -> Path:
-    path = tmp_path / 'rz-diff'
-    path.write_text(f'#!{Path(sys.executable).resolve()}\nimport sys, time, os\n{body}\n')
-    path.chmod(0o755)
-    return path
+    return make_fake_exe(tmp_path, 'rz-diff', f'import sys, time, os\n{body}\n')
 
 
 def cap(path='/opt/rz-diff', version='0.9.1'):
@@ -168,7 +164,6 @@ def test_run_failures(tmp_path, log, code, reason, error):
         assert 'cannot open file' in info.value.message
 
 
-@posix
 def test_real_fake_executable_end_to_end(tmp_path):
     older, newer = artifacts(tmp_path)
     exe = fake(tmp_path, f'''
@@ -185,7 +180,6 @@ sys.stdout.write(open({str(FIXTURE)!r}).read())
     assert len(result.matches) == 4
 
 
-@posix
 def test_fake_exit_zero_empty_stdout_is_error(tmp_path):
     older, newer = artifacts(tmp_path)
     exe = fake(tmp_path, 'sys.exit(0)')
@@ -193,7 +187,6 @@ def test_fake_exit_zero_empty_stdout_is_error(tmp_path):
         run_rzdiff(cap(exe), older, newer, OLD, NEW, env=dict(os.environ), cancel=threading.Event())
 
 
-@posix
 def test_fake_cancel_kills_child(tmp_path):
     older, newer = artifacts(tmp_path)
     exe = fake(tmp_path, 'time.sleep(60)')
@@ -206,7 +199,6 @@ def test_fake_cancel_kills_child(tmp_path):
     assert time.monotonic() - started < 10
 
 
-@posix
 def test_fake_timeout(tmp_path, monkeypatch):
     from patchtrace.secondary import rzdiff
     monkeypatch.setattr(rzdiff, 'TIMEOUT_RANGE', (1, 86_400))
@@ -217,7 +209,6 @@ def test_fake_timeout(tmp_path, monkeypatch):
                    timeout_seconds=1)
 
 
-@posix
 def test_stderr_diagnostics_do_not_corrupt_json(tmp_path):
     older, newer = artifacts(tmp_path)
     exe = fake(tmp_path, f'''
@@ -229,7 +220,6 @@ sys.stderr.write("INFO: done\\n")
     assert len(result.matches) == 4
 
 
-@posix
 def test_nonzero_exit_reports_stderr_not_stdout(tmp_path):
     older, newer = artifacts(tmp_path)
     exe = fake(tmp_path, 'sys.stdout.write("partial"); sys.stderr.write("ERROR: cannot open file"); sys.exit(1)')

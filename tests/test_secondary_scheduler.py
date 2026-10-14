@@ -111,16 +111,22 @@ def test_stderr_noise_does_not_corrupt_json(tmp_path):
 
 
 def test_timeout_maps_to_timeout_status_and_kills_tree(tmp_path):
-    pidfile = tmp_path / 'child.pid'
+    """Portable tree-kill proof: the grandchild's heartbeat file stops growing once run_engines returns."""
+    pidfile, beat = tmp_path / 'child.pid', tmp_path / 'child.beat'
+    grandchild = ("import sys,time\nf=open(sys.argv[1],'ab',buffering=0)\n"
+                  "while True:\n    f.write(b'x')\n    time.sleep(0.05)")
     code = ("import subprocess,sys,time\n"
-            "c=subprocess.Popen([sys.executable,'-c','import time;time.sleep(60)'])\n"
+            f"c=subprocess.Popen([sys.executable,'-c',{grandchild!r},{str(beat)!r}])\n"
             f"open({str(pidfile)!r},'w').write(str(c.pid))\ntime.sleep(60)")
-    [out] = go(tmp_path, {'rz-diff': PyEngine(code)}, ['rz-diff'], per_engine_timeout={'rz-diff': 1.5})
+    [out] = go(tmp_path, {'rz-diff': PyEngine(code)}, ['rz-diff'], per_engine_timeout={'rz-diff': 3.0})
     assert (out.run.status, out.run.error_code) == ('timeout', 'PT-SECONDARY-TIMEOUT')
-    if os.name != 'nt' and pidfile.exists():
-        pid = int(pidfile.read_text())
+    assert pidfile.exists() and beat.exists(), 'grandchild never started within the deadline'
+    size = beat.stat().st_size
+    time.sleep(0.5)  # run_process returns only after the whole tree (Job Object / killpg) is terminated
+    assert beat.stat().st_size == size
+    if os.name != 'nt':
         time.sleep(0.3)
-        assert not _alive(pid)
+        assert not _alive(int(pidfile.read_text()))
 
 
 def test_cancel_fan_out_stops_running_and_marks_unstarted_cancelled(tmp_path):

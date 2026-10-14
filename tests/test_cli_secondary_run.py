@@ -2,11 +2,10 @@
 from __future__ import annotations
 
 import json
-import os
 import sys
-from pathlib import Path
 
 import pytest
+from fake_exe import make_fake_exe
 from test_secondary_bindiff import build
 
 from patchtrace import cli
@@ -14,7 +13,6 @@ from patchtrace.service import ProjectService
 
 GOOD = json.dumps([{'similarity': 0.5, 'type': 'PARTIAL', 'original': {'addr': 1, 'name': 'f', 'size': 1},
                     'modified': {'addr': 2, 'name': 'g', 'size': 1}}])
-posix = pytest.mark.skipif(os.name == 'nt', reason='shebang fake executables are POSIX-only')
 
 
 @pytest.fixture
@@ -27,13 +25,10 @@ def project(tmp_path):
 
 
 def fake_rz(tmp_path, output=GOOD, code=0):
-    path = tmp_path / 'bin' / 'rz-diff'
-    path.parent.mkdir(exist_ok=True)
-    path.write_text(f'#!{Path(sys.executable).resolve()}\nimport sys\n'
-                    f"if sys.argv[1:] == ['-v']:\n    print('rz-diff 0.9.1')\n    sys.exit(0)\n"
-                    f'print({output!r})\nsys.exit({code})\n')
-    path.chmod(0o755)
-    return str(path)
+    source = ("import sys\n"
+              "if sys.argv[1:] == ['-v']:\n    print('rz-diff 0.9.1')\n    sys.exit(0)\n"
+              f"print({output!r})\nsys.exit({code})\n")
+    return str(make_fake_exe(tmp_path / 'bin', 'rz-diff', source))
 
 
 def run_cli(root, *extra, capsys):
@@ -41,7 +36,6 @@ def run_cli(root, *extra, capsys):
     return code, json.loads(capsys.readouterr().out)
 
 
-@posix
 def test_run_json_complete_then_cached_then_reconcile_after_reruns(project, tmp_path, capsys):
     root, _ = project
     exe = fake_rz(tmp_path)
@@ -57,7 +51,6 @@ def test_run_json_complete_then_cached_then_reconcile_after_reruns(project, tmp_
     assert [r['engine'] for r in reports] == ['rz-diff']
 
 
-@posix
 def test_run_partial_exits_3(project, tmp_path, capsys):
     root, _ = project
     code, doc = run_cli(root, '--rz-diff', fake_rz(tmp_path), '--engine', 'rz-diff', '--engine', 'bindiff',
@@ -67,14 +60,12 @@ def test_run_partial_exits_3(project, tmp_path, capsys):
     assert cli.main(['secondary', 'reconcile', str(root), '--json']) == 0  # the ok set was stored
 
 
-@posix
 def test_run_all_zero_matches_exits_4(project, tmp_path, capsys):
     root, _ = project
     code, doc = run_cli(root, '--rz-diff', fake_rz(tmp_path, output='[]'), capsys=capsys)
     assert code == 4 and doc['result']['runs'][0]['matches'] == 0
 
 
-@posix
 def test_run_engine_crash_exits_3(project, tmp_path, capsys):
     root, _ = project
     code, doc = run_cli(root, '--rz-diff', fake_rz(tmp_path, output='boom', code=1), '--engine', 'rz-diff',
@@ -111,7 +102,6 @@ def test_run_max_parallel_three_exits_2(project):
     assert cli.main(['secondary', 'run', str(root), '--max-parallel', '3']) == 2
 
 
-@posix
 def test_rzdiff_alias_matches_run_output(project, tmp_path, capsys):
     root, _ = project
     exe = fake_rz(tmp_path)
