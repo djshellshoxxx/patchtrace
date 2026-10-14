@@ -109,10 +109,12 @@ jobs:
           name: PatchTrace-linux-x86_64
           path: release
       - uses: actions/download-artifact@v4
+        continue-on-error: true  # evidence text only; never blocks a release
         with:
           pattern: qa-*
           path: qa-results
       - uses: actions/checkout@v4
+        continue-on-error: true
         with:
           path: src-tree
           persist-credentials: false
