@@ -121,6 +121,28 @@ def test_function_identity_grouping_closes_cross_lineage_body_leak():
     assert len(set(hubs.group_of.values())) == 4  # the CRT hub did not collapse everything
 
 
+def test_choose_calibrator_isotonic_only_with_enough_data_and_one_se_gain():
+    from tools.calibration.cv import choose_calibrator, fit_calibrator
+    from tools.calibration.mathcore import apply_isotonic
+
+    def world(n):
+        rows, scores, fold_of = [], {}, {}
+        for i in range(n):
+            s = 4 * det_uniform('iso-s', i) - 2
+            p = 0.1 if s < 0 else 0.9  # plateaus: no sigmoid reproduces them
+            rid = f'r{i:05d}'
+            rows.append(Row(rid, f'L{i % 50}', (s,), int(det_uniform('iso-y', i) < p)))
+            scores[rid], fold_of[rid] = s, (i % 50) % 5
+        return rows, scores, fold_of
+    rows, scores, fold_of = world(6000)
+    assert choose_calibrator(rows, scores, fold_of, FAST) == 'isotonic'
+    cal = fit_calibrator('isotonic', rows, scores)
+    assert apply_isotonic(cal[1], -1.0) == pytest.approx(0.1, abs=0.03)
+    assert apply_isotonic(cal[1], 1.0) == pytest.approx(0.9, abs=0.03)
+    small_rows, small_scores, small_fold = world(800)  # < 1000 effective per class: project heuristic -> Platt
+    assert choose_calibrator(small_rows, small_scores, small_fold, FAST) == 'platt'
+
+
 def test_training_weights_clip_natural_and_unit_adversarial():
     rows = [Row(str(i), 'g', (0.0,), 1, w, 'natural') for i, w in enumerate([1.0, 1.0, 1.0, 100.0])]
     rows.append(Row('adv', 'g', (0.0,), 0, 50.0, 'adversarial'))
