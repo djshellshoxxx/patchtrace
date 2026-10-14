@@ -25,7 +25,7 @@
 ## Architectural rules
 
 - The project remains an ordered two-PE comparison with immutable source files and single-writer project storage. Derived search index is disposable and built in separate cache; graph and FLOSS evidence is source-linked, not silently inserted as original match truth.
-- Integrate with existing `ui_evidence.py` WindowPort, Qt workers and tooltips. The integrator owns a single workbench dock/page controller; do not introduce three competing full UI windows.
+- Integrate with existing `ui_evidence.py` WindowPort, Qt workers and tooltips. Workbench features are independent registry panels (GUI plan section 10), not pages of one workbench dock; the KB wizard stays a modal dialog and its results go to docks. Do not introduce three competing full UI windows.
 - NetworkX models graph relations inside one artifact; existing `nway/graph.py` tracks correspondences across builds and must remain separate.
 - Strings returned by FLOSS may be *newly detected* because analysis settings/decoder changed; do not call them a confirmed security fix. Source type, location/address space and tool version always visible.
 - Compilers, DLLs, analysis engines and fuzzy scores are not vulnerabilities. Do not silently upgrade text similarity or call adjacency to CVE causation.

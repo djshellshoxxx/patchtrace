@@ -7,7 +7,7 @@ UI owner: one integration worker; CLI owner: one integration worker. Do not let 
 ## 0. Critical design constraints verified against PatchTrace
 
 - src/patchtrace/ui.py has an existing AcquisitionDialog for **filename -> select older/newer -> download** and a Worker(QThread) pattern. Preserve that action and dialog unchanged for current users.
-- src/patchtrace/cli.py COMMANDS is a fixed tuple and HANDLERS maps known top-level commands. Add "patch" deliberately in both, and to _command_name's action grouping, without rewriting existing parsing or exit codes.
+- Verbs are adapter files (GUI plan 8.12): `src/patchtrace/cli_commands/patch.py` registers "patch"; the `cli.py` COMMANDS tuple and HANDLERS map stay unedited, and existing parsing and exit codes are not rewritten.
 - Existing --json envelope convention is contract enrichment-cli/1, one JSON document on stdout with diagnostics on stderr. Patch commands return that existing outer envelope and place versioned patch-search/1 objects inside result; do not silently alter the global CLI_CONTRACT version.
 - Existing ProjectService and ProjectStore use a single owning SQLite connection; worker thread can compute/fetch but project create/sidecar attach happens on GUI thread or an explicitly separately owned connection if audited.
 - Current main window is large. New view and state-management code go into ui_patch_search.py and ui_patch_intelligence.py, plus only a short MainWindow action/callback seam.
@@ -74,6 +74,8 @@ For command failure, match existing CLI error envelope (which may have error but
 No secret keys, SAS query parameters, private file system paths or raw exception traceback in output.
 
 ## 3. GUI information architecture and control state
+
+GUI plan section 10 (integrator): the KB wizard stays a modal dialog, a child of the main window; its results go to docks (registry panels), never to a second window.
 
 Entry point:
     File / New:
@@ -188,7 +190,7 @@ E3, blocked:
 ## 6. Contract tests
 
 C01: Parser accepts correct patch grammar and invalid options return exit 2.
-C02: COMMANDS/HANDLERS/_command_name register patch and preserve all existing commands.
+C02: `cli_commands/patch.py` (adapter, GUI plan 8.12) registers `patch`; COMMANDS, HANDLERS and `_command_name` stay unedited and all existing commands are preserved.
 C03: --json prints exactly one document on stdout; stderr only diagnostics.
 C04: No network from bare search, variants, components, explain or offline.
 C05: Consent flag without exact planned request fails and never fetches.

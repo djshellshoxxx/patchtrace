@@ -1,6 +1,6 @@
 # Windows acceptance and milestone builds
 
-Status: draft spec, 2026-10-14. Sections marked **(new)** are not implemented; everything else describes current behaviour.
+Status: draft spec, 2026-10-14. Sections marked **(new)** are not implemented; everything else describes current behaviour, including the release gate paragraph of section 1.1 (slice RG).
 
 Observed state (read-only GitHub REST, 2026-10-14; re-check before acting): remote `main` = `4985132535` (local HEAD `c0df3ad` adds this file and is unpushed); open PRs = 0; latest prerelease `v0.1.0-beta.131` targets `b7e819a`. The `main` push run 135 at `4985132` **failed in `qa (ubuntu-latest)`** at the `pytest` step, so `release` was skipped and no prerelease exists for that commit. The run log was not retrievable from this session, so the failing test is unknown.
 
@@ -14,16 +14,18 @@ From `.github/workflows/qa-windows.yml`:
 
 | Trigger | Jobs that run | Publishes a GitHub prerelease? |
 |---|---|---|
-| `push` to `main` | `qa` (ubuntu-latest, windows-latest), `linux-package`, `linux-smoke` (22.04, 24.04), `release` | Yes, only if `qa` and `linux-smoke` succeed. Tag `v0.1.0-beta.<run_number>` |
+| `push` to `main` | `qa` (ubuntu-latest, windows-latest), `linux-package`, `linux-smoke` (22.04, 24.04), `release-gate`, `release` | Only if `qa` and `linux-smoke` succeed and the release gate says so (every third counted merge, see the release gate paragraph below). Tag `v0.1.0-beta.<run_number>` |
 | `push` of a tag matching `v*` | same jobs | Yes. The tag name is used as the release tag |
 | `pull_request`, `workflow_dispatch` | QA jobs only | No |
 
 - `live-backend.yml` (native Ghidriff matrix) never publishes. It is a gate for the same SHA.
-- The `release` job has no `paths` filter, so docs-only merges to `main` also publish. Decide whether this is wanted (open decision).
+- The `release` job has no `paths` filter; the release gate (paragraph below) limits publication to every third counted merge, and a docs-only merge that carries a skip marker neither runs the workflow nor counts.
 - `run_number` counts every run of the workflow, including PR and failed runs. Observed tags therefore have gaps (beta.118, .120, .127, .129, .131).
 - Release body is hard-coded and says "beta"; `target_commitish` is `github.sha`.
 - Uploaded release assets (`release/*`): `PatchTrace-0.1.0-windows-x64.zip`, `PatchTrace-0.1.0-windows-x64.zip.sha256`, `PatchTrace-0.1.0-linux-x86_64.tar.gz`, `PatchTrace-0.1.0-linux-x86_64.tar.gz.sha256`. The version `0.1.0` is hard-coded in `pyproject.toml`, both build scripts and the workflow, so the tag is not in the filenames.
 - Known failure mode: publishing returns HTTP 403 `Resource not accessible by integration` when the head commit adds or changes `.github/workflows/*` (see `docs/plans/phase-c-multi-engine-plan.md`, handoff B1). The build is green but no release exists. The ZIP and tarball remain as Actions artifacts `PatchTrace-windows-x64` and `PatchTrace-linux-x86_64`. Report such a run as "build green, publish failed", never as a release.
+
+**Release gate (slice RG, `tools/release_gate.py`).** A push-only `release-gate` job decides whether this push publishes: `release` needs it and runs only for a `v*` tag or when the gate prints `publish=true`. The gate counts the first-parent commits on `main` after the commit (`target_commitish`) of the latest published, non-draft prerelease whose tag starts with `v0.1.0-beta.`, the head included, and publishes at the third. It also publishes for a head message containing `[release]`, for a tag, when no such prerelease exists or the latest one is not on the head's first-parent history, and whenever the gate itself fails (fail open: the reason is printed, and the count and the reason go into the release notes). A commit whose whole message, subject and body alike, contains `[skip ci]`, `[ci skip]`, `[no ci]`, `[skip actions]` or `[actions skip]` is not counted, because GitHub runs no workflow for it and no build exists; the head always counts, because this run exists. Consequences: `qa`, the packages and the smoke jobs still run on every push that is not skipped; a squash body that quotes a marker on any line skips the whole push run (PR #48 was skipped that way), so do not write the literal markers in commit messages or PR bodies unless that is the intent, and `[release]` belongs to the owner and instance A; two runs in flight at once both read the release list before either publishes, so an extra prerelease is possible; a `workflow_dispatch` run no longer publishes even from a `v*` tag ref, because the gate job is push-only.
 
 ### 1.2 Which commits are milestone candidates
 
@@ -133,6 +135,16 @@ Result is `pass`, `fail` or `not-run`; default `not-run`.
 | M16 | Antivirus or file lock | Hold the export target or project file open exclusively (helper as in A12); attempt export and save | Clear error; no crash; no partial file; project still opens |
 | M17 | Restart persistence | Quit and relaunch | Last project and settings restored |
 | M18 | Unicode path | Project folder with non-ASCII name; open, export | Works; exported file name and content correct |
+| M19 | NVDA walk | Start NVDA; walk each panel with Tab and the arrow keys; run one search and read the results table | Panel names spoken; table cells read with units; one announcement per completed search; no description flood |
+| M20 | Narrator walk | Start Narrator (Caps Lock+arrows; developer mode Ctrl+Caps Lock+F12 to read the tree); walk each panel and its table headers; trigger one notification | Table headers read with each cell; status and notification speech as the GUI plan states |
+| M21 | Keyboard-only walk | Without the mouse: Tab through every panel, F6 and Shift+F6 to cycle panels, Ctrl+Shift+P for the palette, move one panel | Every control reachable; focus visible; palette and panel move work without the mouse |
+| M22 | Windows contrast themes | Settings, Accessibility, Contrast themes; each contrast theme; open each panel | Chips legible; focus visible on every focused control |
+| M23 | Layout persistence | Float one panel onto a second monitor; quit and relaunch; View, Reset panel layout | Floating panel restored after relaunch; Reset returns the defaults and is announced |
+| M24 | DPI and monitor moves | Run at 100%, 150% and 200% scale; move the window between monitors of different scale | No clipped chips or rows after each change |
+| M25 | Accessibility Insights | Run Accessibility Insights for Windows FastPass and Live Inspect on each panel | Results recorded per panel; no unexplained failure |
+| M26 | 100k-row table under Narrator | Open a 100,000-row table with Narrator running; sort, filter and move through cells | No hang; the window stays responsive; cells read on focus |
+| M27 | Panel shortcuts while floating | Float a panel; press each panel shortcut | Each shortcut acts on its own panel while the panel floats |
+| M28 | Frozen style plugin | Inspect `PySide6/plugins/styles` in `file-inventory.json` of the frozen package; note which style renders | The record names the style that renders |
 
 Record table (copy per test run; one row per check):
 
@@ -156,6 +168,16 @@ Record table (copy per test run; one row per check):
 | M16 | not-run | | | | | |
 | M17 | not-run | | | | | |
 | M18 | not-run | | | | | |
+| M19 | not-run | | | | | |
+| M20 | not-run | | | | | |
+| M21 | not-run | | | | | |
+| M22 | not-run | | | | | |
+| M23 | not-run | | | | | |
+| M24 | not-run | | | | | |
+| M25 | not-run | | | | | |
+| M26 | not-run | | | | | |
+| M27 | not-run | | | | | |
+| M28 | not-run | | | | | |
 
 A `fail` links to an issue and states observed behaviour. A check not performed stays `not-run` with the reason. Never copy a result to a new SHA.
 

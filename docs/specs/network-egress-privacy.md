@@ -1,0 +1,158 @@
+# Network egress, consent and privacy statement (SPEC-42)
+
+Status: draft, 2026-10-14. Tier: low (haiku), review mid. Source: `docs/audits/spec-gaps-20261014.md` section 5, row 7 (inventory; no-telemetry and no-auto-update statement with log contents; offline switch and socket-audit hook). Inputs read: `docs/specs/REGISTRY.md` section 1; `docs/plans/program-e-research-brief.md` section 3; `docs/plans/worker-brief.md` sections 1-3 (the main checkout's copy; the file is tracked only on other branches and is absent from this worktree); `AGENTS.md`; the code and tests cited below.
+
+Snapshot: worktree branch `worktree-agent-a848997ebf9d328b9`, commit `fd6cdba`. Line numbers refer to that commit. `1560531`, the REGISTRY.md snapshot of `main`, is an ancestor of it. GitHub was not queried (worker brief section 3), so open PRs, their checks and the live default-branch SHA are unverified.
+
+Numbering: `docs/specs/REGISTRY.md:14` names SPEC-41 as the next free number, and `docs/specs/program-e/GDE-integration-plan.md:3,285` proposes SPEC-41 for GDE. This file is SPEC-42 as requested; the owner confirms the number (REGISTRY.md section 1, rules 4 and 6).
+
+Conventions: `[proposal]` marks a recommendation, not existing behaviour. `[unverified]` marks an external or unconfirmed fact. Every other statement about existing behaviour cites `file:line`. "Runtime" means reachable from the shipped GUI or CLI; "tool" means `tools/` or CI.
+
+## 1. Inventory of network use
+
+Found by reading `src/` and `tools/` (grep for `urllib`, `http`, `socket`, `ssl`, `opener`, `transport`, `download`, `fetch`, host literals, and `subprocess` calls to network tools). "Consent" names the object the code checks. Caps are as coded.
+
+| # | Host or pattern | Purpose [class] | What is sent | Consent rule (code) | Caps (bytes, time, redirects) | Offline behaviour | Owner module | Test |
+|---|---|---|---|---|---|---|---|---|
+| 1 | `winbindex.m417z.com` GET `/data/by_filename_compressed/<name>.json.gz` | Build lookup [runtime] | lowercase file name in the path; `User-Agent: PatchTrace` (`acquisition/transport.py:41`) | `AcquisitionConsent`: exact host and URL (`transport.py:71-74,209`); CLI `acquire search --consent-hosts winbindex.m417z.com` (`cli.py:107,541`) | 64 MiB compressed (`winbindex.py:24`); 10 s per operation (`transport.py:34`); 120 s total (`transport.py:35,210`); 3 attempts, Retry-After at most 60 s (`transport.py:36-37,162-165`); no redirect (`transport.py:217-219`) | no request without consent; the transport has no cache (`transport.py:145-151`) | `acquisition/transport.py`, `acquisition/winbindex.py` | `tests/test_acquisition_transport.py:130`; `tests/test_acquisition_cli.py:100`; `tests/test_ui_acquisition.py:92` |
+| 2 | `msdl.microsoft.com` `/download/symbols/<name>/<timestamp hex><size hex>/<name>`: HEAD probe, then GET | Microsoft symbol server; the two builds of an approved plan [runtime] | public file name, timestamp and SizeOfImage in the path (`acquisition/contracts.py:21,48-53`); no body | exact URL in `AcquisitionConsent` (`transport.py:257,282`); plan URLs must be symbol-server URLs (`contracts.py:141`); CLI `acquire fetch --consent-hosts winbindex.m417z.com,msdl.microsoft.com` (`cli.py:114-115,554`) | 512 MiB per file (`transport.py:32`); 3600 s per download (`transport.py:33,325`); at most 256 probes per candidate (`winbindex.py:26`); 4 concurrent probes (`transport.py:38,258`); one redirect (`transport.py:299-304`) | none; size and SHA-256 must match the Winbindex record (`transport.py:330-333`) | `acquisition/transport.py`, `acquisition/contracts.py`, `acquisition/winbindex.py` | `tests/test_acquisition_transport.py:63,130`; `tests/test_ui_acquisition.py:92,228` |
+| 3 | `*.blob.core.windows.net`, only as the single redirect target of row 2 | symbol bytes served from Azure blob storage [runtime] | GET; the signed URL is not stored, only the host (`transport.py:337`) | not an entry of `AcquisitionConsent.hosts`; admitted by `_check(target, blob=True)` (`transport.py:64,299-300`); named in the GUI consent text (`ui.py:414-419`) and printed on stderr when the CLI download starts (`cli.py:588-589`); `--consent-hosts` does not name it (`cli.py:554`) | as row 2 (`transport.py:285,325`) | none | `acquisition/transport.py` | `tests/test_acquisition_transport.py:63-71` |
+| 4 | `api.msrc.microsoft.com` GET `/sug/v2.0/en-US/vulnerability/<CVE>` | MSRC CVE data for ranking context [runtime] | CVE ID in the path; `Accept` and `User-Agent` headers (`enrichment/intelligence.py:55,59`) | `FetchConsent`: provider names and exact URLs (`intelligence.py:91-99,318-319`); `correlate --fetch` needs `--consent-providers` naming exactly the providers used (`cli.py:90-91,407-409`) | 4 MiB response (`intelligence.py:42,399-400,422-423`); connect 10 s (`:43,368`); 30 s total from the actual send (`:44,337`); 3 attempts, Retry-After at most 60 s (`:45,47,349-351`); 3 redirects, each host-checked (`:46,360-389`); unpaced (`:189-190`); 64 CVEs per plan (`:41,127-128`) | `correlate` without `--fetch` reads `--snapshot` files only (`cli.py:88-89`) | `enrichment/intelligence.py`, `cli.py` | `tests/test_enrichment_intelligence.py:105`; `tests/test_audit_enrichment.py:246-295` |
+| 5 | `services.nvd.nist.gov` GET `/rest/json/cves/2.0?cveId=<CVE>` | NVD CVE data [runtime] | CVE ID in the query; optional NVD key in the `apiKey` header, from the environment variable named by `--api-key-env` (`intelligence.py:3-6,58,288-289`; `cli.py:93,172-174,416`) | as row 4; the key is removed on any cross-host redirect (`intelligence.py:385-387`) and must be printable ASCII of at most 256 characters (`:320-322`) | as row 4, plus pacing of 6 s between requests without a key and 0.6 s with a key (`intelligence.py:51,189-196`); HTTP 403 retried with backoff (`:392-394,343-345`) | as row 4 | `enrichment/intelligence.py`, `cli.py` | `tests/test_enrichment_intelligence.py:105`; `tests/test_nvd_pacing.py` |
+| 6 | `msrc.microsoft.com` `/csaf/provider-metadata.json`, `/csaf/<yyyy>/<name>.json` index entries, `/.well-known/csaf/` (`intelligence/csaf/discovery.py:23-24`; `csaf/transport.py:31-32`) | CSAF advisory discovery and documents for `intelligence fetch` [runtime] | GET with two fixed headers; CVE-derived file names in the path (`csaf/transport.py:3-6`) | `CsafConsent`: hosts only, not URLs (`csaf/transport.py:49-59,77-78`); `--consent-hosts` must be exactly `msrc.microsoft.com` (`intelligence/cli.py:211-212`); `--provider-metadata` must stay inside the allowlist (`csaf/transport.py:62-79`) | provider metadata 1 MiB, index 16 MiB, document 16 MiB, hash 4 KiB (`csaf/transport.py:33-34`); connect 10 s, request 60 s, plan 300 s (`:37-39`); 3 attempts; 2 redirects (`:40-41`) | `--offline` reads only `--cache-dir` and opens no socket (`intelligence/cli.py:216,240`; `csaf/transport.py:250-258`) | `intelligence/csaf/transport.py`, `intelligence/csaf/discovery.py`, `intelligence/cli.py` | `tests/test_intel_cli.py:491-495,581`; `tests/test_intel_transport.py:64,71,92,177`; `tests/test_intel_discovery.py:56` |
+| 7 | user-set HTTPS endpoint; GUI default `https://api.openai.com/v1` (`ui.py:1323`) | AI interpretation of selected matches, OpenAI-compatible kind [runtime, GUI only] | POST of JSON: system prompt plus the exact context text (decompiled function lines, names, callers and callees; default 24 000-character budget) (`providers.py:75-89`; `evidence.py:36,106`; `ui.py:2924`); `Authorization: Bearer` from the session key (`providers.py:87-88`) | `ContextDialog` shows the exact context, system prompt and omissions; sending happens only on accept (`ui.py:1275`, `:2918-2936`); the LLM `interpret` is called only from `ui.py:2936`; `cli.py` does not import providers | HTTPS required (`providers.py:53-55`); 2 MiB response (`:16,122-123`); 120 s total (`:17,93,109-110`); 64 KiB reads (`:112`); redirects refused (`:65-67`) | unavailable offline | `providers.py`, `interpretation.py`, `evidence.py`, `ui.py` | `tests/test_ui.py:97-101`; `tests/test_interpretation.py:272-274`; `tests/test_audit_ai_reports.py:33-38` |
+| 8 | loopback only: `127.0.0.1:11434` by default (`ui.py:1303`) | AI interpretation with a local Ollama model [runtime] | the same POST as row 7; the text stays on loopback | same `ContextDialog` as row 7; the endpoint must be a loopback address (`providers.py:57-62`) | as row 7 | works offline (local process) | `providers.py`, `ui.py` | `tests/test_interpretation.py:272-274` |
+| 9 | Ghidriff child process, Ghidra symbol store; `msdl.microsoft.com` in upstream log examples [unverified for this build] | PDB lookup during Ghidra analysis [runtime, child process] | [unverified] PDB identity chosen by Ghidra; PatchTrace controls only argv and environment | standing Setup checkbox `backend/allow_symbol_downloads`, default off, labelled "may access the Internet" (`ui.py:1017-1019`; `backend.py:57`; `ui.py:2562-2569`); off adds `--no-symbols` (`backend.py:592-593`); proxy and CA variables passed only when on (`backend.py:186-187`) | 3600 s child timeout by default (`ui.py:1028,2568`); no byte cap set by PatchTrace | `--no-symbols` when off; network effect [unverified] (section 8, E5) | `backend.py`, `ui.py`, `enrichment/profiles.py:81` | `tests/test_jobs.py:383,391`; `tests/test_child_env.py:47-48` |
+| 10 | `github.com` release assets: `google/bindiff`, `mandiant/capa`, `mandiant/flare-floss`, `horsicq/DIE-engine` (pins in `tools/*_pin.json`) | developer provisioning of pinned tools [tool] | GET of pinned release-asset URLs only (`tools/provision_intel_tools.py:6,83`; `tools/provision_bindiff.py:101`) | explicit invocation; size and SHA-256 pins must match (`tools/provision_bindiff.py:64`; `tools/provision_intel_tools.py:59-60`); a pin without values is never downloaded | 300 s (`provision_intel_tools.py:83`); 120 s (`provision_bindiff.py:101`) | not applicable; `pin-missing` blocks before any download | `tools/provision_intel_tools.py`, `tools/provision_bindiff.py` | `tests/test_provision_intel_tools.py:88,94`; `tests/test_provision_bindiff.py:136` |
+| 11 | hosts in `tools/backend_pin.json`: `files.pythonhosted.org`, `www.python.org`, `github.com` (Ghidra, Adoptium, python-build-standalone, ghidriff) | offline-bundle builder [tool] | GET of pinned URLs; HTTPS only, and a redirect must stay HTTPS (`tools/build_backend_bundle.py:263,268`) | explicit builder run; `download` is "the only network access in the builder" (`build_backend_bundle.py:261-262`); size and SHA-256 pins, a mismatch is a hard failure (`:289-308`) | 120 s (`:267`); `max_bytes` per entry (`:261`) | the builder needs network; the built bundle does not | `tools/build_backend_bundle.py` | `tests/test_build_backend_bundle.py:242,320,358` |
+| 12 | `github.com` over git, one pinned commit (`madler/zlib` in the catalogue) | calibration corpus [tool] | git fetch of a 40-hex commit with a private HOME, no hooks or credential helpers (`tools/calibration/tier_r/fetch.py:3`) | explicit fetch step; host allowlist and URL shape (`fetch.py:19-20,35-38,71`); no file in `tests/` references `fetch_commit` (gap F3) | size and file-count caps (`fetch.py:5`); `rev-parse HEAD` must equal the pin | plan only unless the fetch step runs | `tools/calibration/tier_r/fetch.py`, `tools/calibration/corpus.py` | none |
+| 13 | manifest URLs (https only) | calibration corpus download via `urllib` [tool] | GET | `fetch --download` flag (`tools/calibration/corpus.py:191`); the download call (`corpus.py:217`) follows the gate at `corpus.py:214` | 120 s (`corpus.py:167`); 512 MiB (`corpus.py:26,168-170`) | plan only without `--download` | `tools/calibration/corpus.py` | none (gap F2); `_urllib_download` is `# pragma: no cover` (`corpus.py:163`) |
+| 14 | as rows 1-2, through `acquisition/transport.py` | tier-W calibration catalogue, resolve and fetch [tool] | as rows 1-2 | explicit `catalogue`, `resolve` and `fetch` subcommands with consent (`tools/calibration/tier_w/__init__.py:6`; `tools/calibration/tier_w/catalogue.py:153`) | as rows 1-2 | explicit subcommands only | `tools/calibration/tier_w/` | `tests/test_tier_w_*.py` (consent assertions not read) |
+| 15 | `services.nvd.nist.gov`, `api.msrc.microsoft.com` (`tools/live_nvd_probe.py:40`) | live provider check in CI [tool]; schedule not read, the backlog says weekly and never required | TCP connect to port 443 without a proxy (`live_nvd_probe.py:54-57`); the CLI run with `--consent-providers` (`:179`) | explicit `--consent-providers` (`:179`) | 10 s connect timeout (`:54`) | not run offline; unreachable hosts are listed in its output (`:94`) | `tools/live_nvd_probe.py`, `.github/workflows/live-nvd.yml` | `tests/test_live_nvd_probe.py:79` |
+| 16 | operator-supplied host:port (`tools/bundle_acceptance.py:174-178`) | air-gap proof: a TCP connect that must fail [tool] | TCP connect with no data; expects `BLOCKED` | the operator runs the acceptance tool | 5 s (`bundle_acceptance.py:44`) | this row is the denial check itself | `tools/bundle_acceptance.py` | `tests/test_bundle_acceptance_unit.py` |
+| 17 | `api.msrc.microsoft.com` CVRF (planned, SPEC-34) (`kbcorrelation/sources/net_plan.py:8,97`) | monthly CVRF sync [planned, not bound] | nothing in this tree: `net_plan` performs no I/O (`net_plan.py:4`); `AdvisoryPort.fetch` has no adapter (`kbcorrelation/ports.py:14,34`) | future consent bound to `plan_sha` (`net_plan.py:4-5`) | not in code yet | CSAF import is skipped when the port is unbound (`kbcorrelation/cli_index.py:306-307`) | `kbcorrelation/` | `tests/test_kbc_net_plan.py:16,88` (`no_sockets`) |
+| 18 | none passed by PatchTrace; BinDiff CLI on Linux [external] | BinDiff CLI run [external] | none (`docs/specs/bindiff-execution.md:209`; measured with strace by the spec author, [M]) | not applicable | per the BinDiff spec | not applicable | `secondary/bindiff.py` | none automated (section 8, E7) |
+
+Not egress: `socket.gethostname()` values go only to local lock and cache owner records (`src/patchtrace/persistence.py:244`; `src/patchtrace/enrichment/cache.py:56,197,206`); no socket is opened. Loopback: row 8 only; local test listeners are at `tests/test_bundle_acceptance_unit.py:144,261,305`. No network by construction: `src/patchtrace/unified/` (`tests/test_unified_packaging.py:192,232`; `tests/test_unified_pipeline.py:626-644`) and the pure `kbcorrelation` contracts (`src/patchtrace/kbcorrelation/contracts.py:3`).
+
+## 2. Normative rules
+
+**R1. Consent is operation-specific.**
+Current: five mechanisms gate the operations above: `AcquisitionConsent`, built only from the displayed plan (`src/patchtrace/acquisition/transport.py:45-54`, docstring at `:47`); `FetchConsent` (`src/patchtrace/enrichment/intelligence.py:91-99`); `CsafConsent`, hosts only (`src/patchtrace/intelligence/csaf/transport.py:49-59`); the LLM `ContextDialog` (`src/patchtrace/ui.py:1275`, `:2918-2936`); and the symbol-lookup checkbox (`src/patchtrace/ui.py:1017-1019`).
+Rule: a new host needs its own consent object, a test that the request is refused without consent, and a row in section 1 (census test, section 7).
+[proposal] CSAF consent stays host-level, because the index is read before document URLs exist. Each document URL still passes `check_url` on every GET (`csaf/transport.py:62-79,250`), and the consent text must say so.
+
+**R2. No silent upload of binary content.**
+Current: the only request with a body is the LLM POST of JSON text (`src/patchtrace/providers.py:75-89`). Every other request is GET or HEAD without a body (`transport.py:213,239,291,302`; `intelligence.py:163`; `csaf/transport.py:108`). The payload path reads no file bytes: grep finds no `read_bytes` or `'rb'` in `evidence.py`, `interpretation.py` or `providers.py`. The body sent is `context.payload` verbatim (`providers.py:75`), the text the dialog's Exact context tab shows (`ui.py:1275` onwards).
+Rule: no network function sends file bytes, project paths or notes. A future upload needs its own consent naming the file, its size and its SHA-256.
+
+**R3. Credentials are session-only.**
+Current: the NVD key comes only from the environment variable named by `--api-key-env` (`src/patchtrace/cli.py:93,172-174,416`), goes only in the `apiKey` header (`intelligence.py:288-289`), is stripped on cross-host redirects (`:385-387`) and is validated (`:320-322`). The LLM key is a password field, "Session only; never saved" (`ui.py:1307`), passed as `ProviderConfig.api_key` (`ui.py:1326-1327`; `providers.py:33`, `repr=False`) and captured by the job closure (`ui.py:2936`). The settings write saves only kind, endpoint and model (`ui.py:2933-2935`). Child environments exclude `NVD_API_KEY` and token variables (`tests/test_child_env.py:10,37`; allowlist `src/patchtrace/backend.py:169-196`).
+Gap: no test asserts that a run keeps a key out of `QSettings`, `analysis.log`, snapshots or error text (grep finds no such assertion).
+Rule: PatchTrace never writes a key to disk, argv, a URL, a log or a report.
+
+**R4. Offline by default.**
+Current: a request needs a consent object or a named consent flag. `correlate` fetches only with `--fetch` and matching `--consent-providers` (`cli.py:402-409`); `intelligence fetch --offline` opens no socket (`intelligence/cli.py:216,240`); symbol lookups are off by default (`backend.py:57`; `ui.py:1018`; `backend.py:592-593`).
+Gap: there is no product-wide offline switch. A grep for `PATCHTRACE_[A-Z_]*(OFFLINE|NET|ONLINE|CONSENT)` over `src`, `tools` and `tests` finds nothing. The only `PATCHTRACE_*` gates in the tree are live-test gates (`PATCHTRACE_LIVE_*`, `PATCHTRACE_REQUIRE_LIVE_*`); none is in `src/`.
+
+**R5. No telemetry (statement for README and website).**
+Statement: PatchTrace has no telemetry. It sends no usage data, analytics or crash reports. Checked on `fd6cdba`:
+(a) word grep for `telemetry|analytics|sentry|posthog|mixpanel|gtag|plausible|updater|autoupdate|auto_update|self_update|update_check|check_for_updates|releases_latest` over `src`, `tools`, `site` and `pyproject.toml`: 4 hits, all text: `src/patchtrace/diagnostics.py:41` (a prohibition), `src/patchtrace/intelligence/hypotheses.py:45,130` (wording about analysed code), `src/patchtrace/unified/keys.py:93` (the word "plausible").
+(b) `pyproject.toml` `dependencies` lists `PySide6`, `shiboken6`, `pydantic` and `protobuf` only; no HTTP or telemetry package (optional extras not read).
+(c) `QtNetwork`, `QNetwork`, `QWebEngine`, `QDesktopServices`, `openUrl`, `webbrowser`, `QUrl`, `QWebSocket`, `QTcpSocket`, `QSslSocket`: 0 hits in `src` and `tools`.
+(d) `excepthook` and `faulthandler`: 0 hits in `src` (`src/patchtrace/secondary/scheduler.py:197` is a local `sys.exc_info` check).
+(e) `site/`: no `http(s)://` reference in `index.template.html`, `site.js` or `styles.css`; the only script is local (`site/index.template.html:13`); `site/assets/cdl-mark.svg` has no `href` or `src`.
+Rule: no code may add analytics, a crash upload or a remote asset without a spec change and a row in section 1.
+
+**R6. No automatic update (statement for README and website).**
+Statement: PatchTrace does not check for or install updates. Checked: no file in `src` matches `api.github`, `releases/latest` or `/releases/`; `tools` has no `api.github` or `releases/latest`; `github.com` appears in `src` only in docstrings (`src/patchtrace/unified/ir/mdindex.py:3`, `src/patchtrace/enrichment/intelligence.py:16`, `src/patchtrace/enrichment/cve.py:6`). The release downloads in section 1 are developer tools (rows 10-12). Any future updater is a new spec with an explicit consent decision (`docs/audits/spec-gaps-20261014.md` section 5, row 2).
+
+**R7. What logs and diagnostics contain.**
+Current: `analysis.log` holds the Ghidriff log tail after `redact_log` (`src/patchtrace/backend.py:606-607`). `redact_log` removes credential assignments, bearer tokens, Authorization values, URL userinfo and known token shapes, and keeps the last 2 MiB (`src/patchtrace/diagnostics.py:6-29`). Error text is redacted to 2048 or 4096 characters (`backend.py:331,425,635`). Exit-code hints are fixed strings with the return code as the only interpolated value (`diagnostics.py:38-68`; the docstring at `:41` forbids interpolating untrusted output). Stderr request lines show provider or method and URL (`cli.py:415,516,579-589`; `intelligence/cli.py:225-226`); URLs carry CVE IDs and public names, and keys travel only in headers and are never printed. Lock and cache owner records hold the hostname and PID locally (`persistence.py:244`; `enrichment/cache.py:56`).
+Tests: `tests/test_audit_runtime.py:12-78`; `tests/test_audit_ai_reports.py:76-79` (whole Authorization value); `tests/test_jobs.py:176,415-427,556-558`. There is no `tests/test_diagnostics.py`.
+Gap: no test runs an analysis with a secret present and checks that `analysis.log` and error text lack it.
+
+## 3. Consent findings: egress paths lacking a consent test
+
+- F1. Ghidriff symbol lookup (row 9). Argv and environment are tested (`tests/test_jobs.py:383,391`; `tests/test_child_env.py:47-48`). No test shows that no symbol-server request occurs with the setting off; the child is a process, so only argv and environment are observable.
+- F2. Calibration download (row 13). `_urllib_download` is `# pragma: no cover` (`tools/calibration/corpus.py:163`). No file in `tests/` references `_urllib_download` or `--download` (grep).
+- F3. Tier-R git fetch (row 12). No file in `tests/` references `fetch_commit` (grep).
+- F4. CLI blob allowance (row 3). The GUI consent text names the blob host (`ui.py:414-419`). The CLI requires `--consent-hosts` to name exactly `winbindex.m417z.com` and `msdl.microsoft.com` (`cli.py:554`) and prints the blob allowance only once the download starts (`cli.py:588-589`). [proposal] print it in the CLI consent step, before any request.
+- F5. LLM send (row 7). The consent test covers only Cancel (`tests/test_ui.py:97-101`). No test asserts that an accepted send transmits exactly `context.payload`. [proposal] test, section 7.
+- F6. Key handling (R3). No test, as stated there.
+- F7. CSAF granularity (R1). Host-level by design; tests check exact host consent (`tests/test_intel_cli.py:491-495`; `tests/test_intel_transport.py:71`).
+Not gaps: NVD and MSRC (`tests/test_enrichment_intelligence.py:105`); acquisition (`tests/test_acquisition_transport.py:130`; `tests/test_ui_acquisition.py:92,228`; `tests/test_acquisition_cli.py:100`); CSAF URL allowlist (`tests/test_intel_transport.py:64`); the unified engine (no socket: `tests/test_unified_pipeline.py:626-644`).
+
+## 4. Offline switch [proposal]
+
+- One Qt-free, stdlib-only module, `src/patchtrace/netpolicy.py`, exposes `require(kind, host)`, which raises `PT-NET-OFFLINE` before any socket is opened. Each opener in section 1 calls it first: `acquisition/transport.py:96-108`, `enrichment/intelligence.py:161-171`, `intelligence/csaf/transport.py:107-116`, `providers.py:89-98`. When offline, the child-environment builder (`backend.py:169-196`) strips proxy and CA variables and adds `--no-symbols` (`backend.py:592-593`).
+- Sources: environment variable `PATCHTRACE_OFFLINE=1` (none exists today), a Setup checkbox, and a global CLI flag `--offline` (today only `intelligence fetch` has one, `intelligence/cli.py:216`).
+- Precedence: offline wins over consent. A consent object cannot re-enable the network while offline.
+- Envelope: the enrichment CLI reports `offline` and an empty `requests` list, the fields `intelligence fetch` already reports (`intelligence/cli.py:262-276`).
+
+## 5. Socket-audit test hook [proposal]
+
+- An autouse fixture in `tests/conftest.py` arms `sys.addaudithook` for `socket.connect`, `socket.getaddrinfo` and `socket.gethostbyname`, and fails on any non-loopback address. Tests that need the network carry `@pytest.mark.live` and are skipped unless `PATCHTRACE_LIVE=1`.
+- Reuse: the per-test armed audit hook (`tests/test_unified_pipeline.py:626-644`); the `no_sockets` fixture (`tests/kbc_k1_support.py:27-33`, used at `tests/test_kbc_index.py:24`, `tests/test_kbc_products.py:10`, `tests/test_kbc_net_plan.py:16`); the autouse `no_sockets` (`tests/test_kbc_fixtures.py:31-38`); the autouse `hermetic` fixture (`tests/test_intel_cli.py:48-54`).
+- Loopback listeners (`tests/test_bundle_acceptance_unit.py:144,261,305`) need the loopback allowance.
+- Whether CPython can remove an audit hook is [unverified] (section 8, E2). The per-test flag pattern works either way.
+
+## 6. Privacy text (quotable; README and website)
+
+> PatchTrace has no telemetry. It sends no usage data, analytics or crash reports, and it does not check for or install updates.
+>
+> It works offline by default. Comparing your own builds, running Ghidra and BinDiff, and reading reports all happen on your computer.
+>
+> Network use happens only when you choose it, and each kind of request asks first:
+> - Winbindex and the Microsoft symbol server (to download builds): you approve the hosts and file names. Downloads are checked against the Winbindex SHA-256 and size, and they are never run.
+> - CVE data from NVD and MSRC: you approve the providers. Requests carry the CVE ID and standard headers only. An NVD API key, if you use one, is read from an environment variable and sent only to NVD.
+> - CSAF advisories from msrc.microsoft.com: you approve the host.
+> - AI interpretation: you see the exact text before it is sent. A local Ollama model stays on your computer. A remote endpoint receives the text you previewed.
+> - Symbol lookups for Ghidra are off unless you turn them on in Setup.
+>
+> Binary files are never uploaded. API keys are kept for the current session only, and PatchTrace does not save them to disk.
+>
+> Analysis logs (analysis.log in each project) stay on your computer, with credential-looking text redacted.
+
+## 7. Census and tests [proposal]
+
+- `tests/test_network_census.py`: scan `src/patchtrace/**/*.py` for imports of `urllib`, `http.client`, `socket`, `ssl`, `requests`, `httpx`, `ftplib` and `smtplib`, and for `Request(` constructions. Assert they occur only in the owner modules of section 1, and that every `method=` is GET or HEAD except `providers.py:89`. The unified package already forbids these imports (`tests/test_unified_packaging.py:192,232`).
+- `tests/test_consent_gates.py`: (a) an accepted LLM send transmits exactly `context.payload` (fake opener); (b) no key appears in `QSettings`, `analysis.log` or error text after a fake run; (c) with symbol lookups off, the Ghidriff argv contains `--no-symbols` and the child environment has no proxy variable (extends `tests/test_jobs.py:383,391`); (d) the CLI consent step names the blob host before any request (F4); (e) the calibration and tier-R fetches refuse without their explicit flag (F2, F3).
+- `tests/test_offline_switch.py`: with `PATCHTRACE_OFFLINE=1`, every opener in section 1 raises `PT-NET-OFFLINE` before connecting, even with consent.
+- Native check (E5): a Windows run with symbol lookups on and off, recording every host contacted (firewall log or socket audit), before the `--no-symbols` behaviour is relied on.
+
+## 8. External facts and unverified items
+
+- E1 [unverified] urllib with an empty `ProxyHandler({})` uses no environment proxies. `docs.python.org` did not resolve from the WebFetch sandbox on 2026-10-14 (`getaddrinfo ENOTFOUND`). The code relies on it at `transport.py:97-99`, `providers.py:90-91`, `intelligence.py:143-145` and `csaf/transport.py:102-104`.
+- E2 [unverified] `sys.addaudithook` hooks cannot be removed. Same failure, 2026-10-14. The proposal does not depend on it.
+- E3 [unverified] the public symbol server is `https://msdl.microsoft.com/download/symbols`: `learn.microsoft.com` did not resolve on 2026-10-14. Indirect evidence: the Ghidriff upstream README at `4f5d895` shows that URL in logs and examples (https://github.com/clearbluejar/ghidriff/blob/4f5d895fcbb1eacd65efd81145922c15bb7e741d/README.md, retrieved 2026-10-14).
+- E4 [unverified] NVD limits of 5 requests per rolling 30 s without a key and 50 with a key. `nvd.nist.gov` did not resolve on 2026-10-14. The code records them from the NVD developer page on 2026-10-12 (`intelligence.py:12-13`); the H10 entry of `docs/specs/enrichment-hardening-backlog.md` says live enforcement is unverified.
+- E5 [unverified] whether Ghidriff `--no-symbols` stops symbol-server access. The same README, retrieved 2026-10-14, describes the option only as "Turn off symbols for analysis (default: False)" and does not describe its network effect.
+- E6 [unverified] Winbindex data is GPL-3. The claim is a code comment (`acquisition/winbindex.py:3`); the upstream licence was not fetched.
+- E7 BinDiff makes no network calls on Linux. The spec author measured this with strace (`docs/specs/bindiff-execution.md:86,209`, marked [M]); not re-measured here.
+- Not checked: GitHub PR state and the default-branch SHA (the worker brief forbids GitHub access); Windows behaviour; live NVD and MSRC responses. The product's own site text says the live fetch is not verified against the real services (`site/content.json:92`).
+
+## 9. Decisions for the owner
+
+1. SPEC number: SPEC-41 is the registry's next free number; this file is SPEC-42 as requested.
+2. CSAF consent: keep host-level consent (R1), or require URL-level consent after the index is read?
+3. Symbol lookups: keep the standing Setup checkbox, or ask per run and show the host?
+4. Offline switch: adopt section 4 (environment variable, Setup checkbox, global CLI flag, offline wins)?
+5. Privacy text: approve section 6, including "does not check for or install updates" (this rests on R6, not on E-facts).
+
+## 10. Risks
+
+- Redaction is pattern-based and best effort (`src/patchtrace/diagnostics.py:6-20`); a secret in an unlisted shape can reach `analysis.log`. Mitigation: the test in section 7.
+- Symbol-lookup isolation depends on Ghidriff honouring `--no-symbols` (E5), not on PatchTrace alone.
+- The LLM path sends decompiled code text to a remote endpoint when the user chooses it; the preview is the only control.
+- New hosts or openers can appear without review; the census test (section 7) is the guard.
+
+## Integrator asks
+
+REGISTRY.md row for section 2, Table A, in the same change. `tests/test_spec_registry.py` fails without it (`docs/specs/REGISTRY.md:17`; the test scans `docs/specs/` recursively at `tests/test_spec_registry.py:14-20`).
+
+```text
+| `docs/specs/network-egress-privacy.md` | none (self-described draft) | SPEC-42 (proposed; the registry's next free number is SPEC-41) | draft | acquisition/transport.py, enrichment/intelligence.py, providers.py, intelligence/csaf/transport.py, diagnostics.py, backend.py | network inventory, consent rules and privacy text; proposals marked |
+```
+
+Also: confirm the number (section 9, decision 1). Once section 6 is approved, the README and the website may quote it.
