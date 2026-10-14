@@ -11,7 +11,7 @@ SourceId = Annotated[str, Field(pattern=r'^[a-z][a-z0-9-]{1,31}$')]   # NOT a Li
 StepId   = Annotated[str, Field(min_length=1, max_length=64)]   # pass id or upstream algorithm text, sanitized
 Tier     = Literal['M', 'A', 'B', 'C', 'W']                     # manual, accept key, corroborating, candidate, weak
 Card     = Literal['1:1', '1:N', 'N:1', 'N:M', 'non-exclusive']
-Decision = Literal['accepted', 'probable', 'candidate', 'contested', 'ambiguous', 'older-only', 'newer-only', 'unknown']
+Decision = Literal['matched', 'tentative', 'candidate', 'contested', 'ambiguous', 'older-only', 'newer-only', 'unknown']
 Materiality = Literal['unchanged', 'cosmetic', 'material', 'review', 'unknown', 'not-applicable']
 ChannelId = Literal['C0', 'C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7', 'C8']
 ChannelState = Literal['equal', 'differs', 'unavailable', 'not-applicable']
@@ -198,7 +198,7 @@ Timestamps, absolute paths and display preferences are never hashed (SPEC-07 s3 
 | L-22 / L-23 | blocking: candidates per function / bucket cap | 20 / 300 | `ladder/blocking.py` |
 | L-24 | assignment bucket cap / total budget / score floor | 200 / 30 s / 0.6 | `ladder/assign.py` |
 | L-25 | BB vote | >= 2 distinct rare blocks of >= 4 instructions | P17 |
-| L-26 | layout gap | exactly one unmatched function per side between two accepted anchors | P18 |
+| L-26 | layout gap | exactly one unmatched function per side between two ladder-accepted anchors | P18 |
 | L-27 | L2 alignment | 20,000 instructions per side per pair (beyond: prefix/suffix only, verdict `review`) | `facts/align.py` |
 | L-28 | stored deltas per pair | 64 | `ChangeFacts` |
 | L-29 | canonical pseudo-code input | 20,000 lines / 2,000,000 chars per side (= enrichment views bound) | `facts/pseudo.py` |
@@ -223,7 +223,7 @@ Timestamps, absolute paths and display preferences are never hashed (SPEC-07 s3 
 ## 8. JSON examples (synthetic)
 ```json
 {"contract":"unified-match/1","row_id":"9c1f...e2","older":[{"rva":4096,"name":"ParseHeader","kind":"function"}],
- "newer":[{"rva":4368,"name":"ParseHeader","kind":"function"}],"decision":"accepted",
+ "newer":[{"rva":4368,"name":"ParseHeader","kind":"function"}],"decision":"matched",
  "support":[{"component":"K1","tier":"A","atom_index":0},{"component":"K2","tier":"B","atom_index":3}],
  "contest":null,"atoms":[{"source":"pt-ladder","step":"P03-name-exact","tier":"A","cardinality":"1:1","older_rva":4096,"newer_rva":4368},
   {"source":"ghidriff","step":"SymbolsHash","tier":"A","cardinality":"1:1","older_rva":4096,"newer_rva":4368,"ref":"m-17"},

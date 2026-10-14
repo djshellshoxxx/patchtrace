@@ -16,7 +16,7 @@ Basis: R05 s0-s4 (cited, not repeated). Owner slices: S0b (fusion, S0 channels, 
 | F-PT-BYTES | P04-P09, P14 when BOTH functions are `pdata-confirmed` (source id `pt-bytes`) | D_bytes, D_ghidra_decode | D_bytes only |
 | F-PT-STRUCT | every other `pt-ladder` step, and P04-P09/P14 without pdata confirmation | D_ghidra, D_ghidra_decode, D_callgraph | D_ghidra, D_callgraph |
 | F-MANUAL | P00 | D_analyst | all |
-Components = connected components of the family graph where two families are joined iff they share a joining tag (union-find, deterministic order by family name; component ids `K<n>` by sorted first family). With today's registry: K1 = {F-GHIDRIFF, F-BINDIFF, F-DIAPHORA, F-PT-NAMES, F-PT-STRUCT} (shared D_symbols/D_ghidra/D_callgraph), K2 = {F-RZDIFF, F-PT-BYTES} (D_bytes), K3 = {F-PT-PE}, K0 = {F-MANUAL}. Assumption **A-IND-1**: `D_ghidra_decode` (SLEIGH instruction decoding and masks, deterministic, no analysis heuristics) does not join; it is validated by ablation G-U7 (08) and is reviewer item W1. The table reproduces `calibration.features.family_dependencies` for G/B/R (features.py:39-47) and only adds families.
+Components = connected components of the family graph where two families are joined iff they share a joining tag (union-find, deterministic order by family name; component ids `K<n>` by sorted first family). With today's registry: K1 = {F-GHIDRIFF, F-BINDIFF, F-DIAPHORA, F-PT-NAMES, F-PT-STRUCT} (shared D_symbols/D_ghidra/D_callgraph), K2 = {F-RZDIFF, F-PT-BYTES} (D_bytes), K3 = {F-PT-PE}, K0 = {F-MANUAL}. Assumption **A-IND-1**: `D_ghidra_decode` (SLEIGH instruction decoding and masks, deterministic, no analysis heuristics) does not join; it is validated by ablation G-U7 (08) and is reviewer item W1. The table reproduces `calibration.features.family_dependencies` for G/B/R (features.py:40-47) and only adds families.
 
 ### 1.2 Source atoms -> tiers (adapters, 06)
 
@@ -49,22 +49,22 @@ def decide(atoms, groups, registry) -> list[UnifiedMatch]:
     return sorted(rows, key=lambda r: (min_rva(r.older), min_rva(r.newer), r.row_id))
 
 def base_decision(edge_atoms, registry):
-    if any(a.tier == 'M' for a in edge_atoms): return 'accepted'      # analyst control; contests still recorded
+    if any(a.tier == 'M' for a in edge_atoms): return 'matched'      # analyst control; contests still recorded
     best = max_pool_per_component(edge_atoms, registry)            # {component: strongest atom}; idempotent inside a component
-    if any(a.tier == 'A' for a in best.values()): return 'accepted'
-    if sum(a.tier == 'B' for a in best.values()) >= 2: return 'accepted'   # tier B in two INDEPENDENT components (C-08)
-    if any(a.tier == 'B' for a in best.values()): return 'probable'
+    if any(a.tier == 'A' for a in best.values()): return 'matched'
+    if sum(a.tier == 'B' for a in best.values()) >= 2: return 'matched'   # tier B in two INDEPENDENT components (C-08)
+    if any(a.tier == 'B' for a in best.values()): return 'tentative'
     return 'candidate'                                             # only C or W evidence
 ```
-`row()` sets `decision='contested'` when `against` is non-empty (SPEC-27: any source pairing an endpoint differently), keeps the uncontested decision in `hints` (`uncontested:accepted`), and sets `Contest.strength = 'strong'` iff any against-atom has tier M, A or B, else `'weak'` (D-12). Contested rows are never auto-anything; a manual row stays `accepted` with its contest shown.
+`row()` sets `decision='contested'` when `against` is non-empty (SPEC-27: any source pairing an endpoint differently), keeps the uncontested decision in `hints` (`uncontested:matched`), and sets `Contest.strength = 'strong'` iff any against-atom has tier M, A or B, else `'weak'` (D-12). Contested rows are never auto-anything; a manual row stays `matched` with its contest shown.
 
 ### 1.4 Invariants and what fusion never does
 Never averages, sums or ranks native scores across sources; never treats a missing atom as a vote (absent sources leave `support` shorter, nothing else); never converts counts of agreeing sources into a number shown to users; never lets a model override `contested` (SPEC-28 calibration s9.5). Display level is read from `calibration.policy.display_level()` and is `'ordinal'` today; a future validated artifact for a unified profile may add bands through the read model only (C-09). Tests: `test_fusion_never_emits_numbers`, `test_absent_source_is_not_a_vote`, `test_weak_contest_still_contested`, `test_two_ghidra_derived_sources_are_one_component`, `test_manual_row_accepted_with_contest_shown`, `test_greedy_matching_keeps_every_against_atom`.
 
 ### 1.5 How the L1 false-positive rate is bounded
-1. Construction: `accepted` needs a unique tier-A key (hash collisions ~2^-64 per pair; duplicates fail uniqueness; names guarded by size/callee checks; tiny/thunk excluded) or tier B from two independent components; propagated tier-B pairs need >= 2 votes and 0 conflicts; tail passes give `candidate` only.
+1. Construction: `matched` needs a unique tier-A key (hash collisions ~2^-64 per pair; duplicates fail uniqueness; names guarded by size/callee checks; tiny/thunk excluded) or tier B from two independent components; propagated tier-B pairs need >= 2 votes and 0 conflicts; tail passes give `candidate` only.
 2. Conflict surfacing: any contradicting atom makes the row `contested`; nothing is silently resolved.
-3. Measurement gates (08): G-U3 accepted-pair precision on Tier R with exact truth >= 99.5 % (lineage-cluster CI lower bound >= 99.0 %) and zero truth-contradicted tier-A pairs on A/A corpora; per-pass precision table published; a pass whose precision CI lower bound < 98 % is demoted one tier by config change (recorded in `config_digest`). Targets are [inf] proposals to preregister.
+3. Measurement gates (08): G-U3 matched-pair precision on Tier R with exact truth >= 99.5 % (lineage-cluster CI lower bound >= 99.0 %) and zero truth-contradicted tier-A pairs on A/A corpora; per-pass precision table published; a pass whose precision CI lower bound < 98 % is demoted one tier by config change (recorded in `config_digest`). Targets are [inf] proposals to preregister.
 
 ## 2. L2 ChangeFacts (`facts/*`)
 ### 2.1 Channels
@@ -75,7 +75,7 @@ Never averages, sums or ranks native scores across sources; never treats a missi
 | C1 | address-masked bytes `h1` | bytes | IR | S3 |
 | C2 | aligned operand-class deltas (2.2) | bytes | IR instructions | S3 |
 | C3 | layout-independent CFG: `n_bb`, `n_edge`, block `hms` multiset, `md_td`, `md_bu` | cfg | IR | S3 |
-| C4 | callee multiset mapped through accepted rows (thunks -> targets, imports by key) | calls | IR (S3) or Ghidriff `called` names mapped through Ghidriff pairs (S0 variant C4n) | S0b/S3 |
+| C4 | callee multiset mapped through `matched` rows (thunks -> targets, imports by key) | calls | IR (S3) or Ghidriff `called` names mapped through Ghidriff pairs (S0 variant C4n) | S0b/S3 |
 | C5 | constant multiset (ALL non-address immediates, not only rare ones) and string-hash multiset | bytes (IR) / decompiler (S0 variant C5t from code literals) | IR or Ghidriff code | S0b/S3 |
 | C6 | canonical pseudo-code (2.4) | decompiler | Ghidriff `code` on both sides (today: modified pairs only); S3b on-demand decompile | S0b |
 | C7 | BSim-style features | decompiler | not in v1 (B-09) | - |
@@ -105,7 +105,7 @@ def operand_deltas(a_ins, b_ins, align, rows, pe) -> list[Delta]:
     out += [Delta('block-added' if side == 'b' else 'block-removed', 'C2', ...) for side, blk in align.unmatched_blocks()]
     return out[:L28]                                            # rest counted in deltas_omitted
 ```
-An address operand counts as "mapped" only when both targets belong to rows whose decision is `accepted` with tier A or M; otherwise the delta stays (soundness of COS-ADDR depends on L1, reviewer item W4).
+An address operand counts as "mapped" only when both targets belong to rows whose decision is `matched` with tier A or M; otherwise the delta stays (soundness of COS-ADDR depends on L1, reviewer item W4).
 
 ### 2.3 Alignment (`facts/align.py`)
 Block level first: blocks paired by unique block `h1` inside the pair, then by CFG position (entry, then successors of paired blocks, unique only); instruction level inside paired blocks: patience diff on L2 tokens, Hirschberg LCS fallback (linear space) when patience leaves gaps; whole-function cap L-27 (beyond: prefix/suffix only, verdict at most `review`, `limits_hit: align-cap`). Deterministic tie-breaks by RVA.

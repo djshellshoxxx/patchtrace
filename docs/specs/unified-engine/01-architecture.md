@@ -15,7 +15,7 @@ Scope: static comparison of two explicit artifacts (older -> newer), Windows PE 
         |
  E4 Fusion + arbiter: independence components, max-pool by tier, decisions, contest strength (05 s1)
         |
- E5 L2 ChangeFacts on accepted/probable/candidate pairs: channels C0..C8, proof tiers (05 s2)
+ E5 L2 ChangeFacts on matched/tentative/candidate pairs: channels C0..C8, proof tiers (05 s2)
         |
  E6 UnifiedResult (sidecar + pointer row) -> UnifiedReadModel (Qt-free) -> ONE window (07)
 ```
@@ -100,7 +100,7 @@ def execute(req: UnifiedRequest, cancel: Event, emit: Callable[[StageEvent], Non
         corr = ladder.engine.run(ir['older'], ir['newer'], anchors=manual_anchors(atoms), budget=budget)
         atoms += corr.atoms()                              # pt-ladder and pt-bytes atoms with pass provenance
     result = fusion.arbiter.decide(atoms, registry=REGISTRY)   # UnifiedMatch rows, deterministic order
-    for row in result.rows_needing_facts():                # accepted, probable, candidate, contested pairs
+    for row in result.rows_needing_facts():                # matched, tentative, candidate, contested pairs
         budget.tick()
         row.facts = facts.verdict.judge(facts.channels.collect(row, ir, req.snapshot, result))
     return write_parts(result, req.private_dir)            # rows/atoms/facts JSONL.gz + manifest; owner publishes

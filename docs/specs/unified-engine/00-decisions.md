@@ -56,7 +56,7 @@ Status: contract-freeze draft, 2026-10-14, base `main` = `cb25132`. Number check
 | C-05 | SPEC-QB-01 `matching/*` package, profiles, BP solver | one engine, token budget | absorbed into `unified/ladder`, `unified/fusion`; solver not built; one conservative config in v1 | section 3.1 |
 | C-06 | SPEC-QB-02 new SQLite tables `matching_*` | SPEC-07 additive kinds, single writer | no new tables; enrichment kinds + sidecar files | 10 row A-10 |
 | C-07 | SPEC-RD-01/02 `comparison/*` + tables `comparison_*` | SPEC-26 already owns raw/PE layout views | re-home file-level layers to SPEC-26; function-level opcode/operand delta into L2 | section 3.1 |
-| C-08 | R02 tier B "accept when a second key or another engine agrees" | R05 s3.3 "hard accept only exact/masked/name" | `accepted` = tier A, or tier B confirmed by a second INDEPENDENT component; tier B alone = `probable` | 05 s1.3 |
+| C-08 | R02 tier B "accept when a second key or another engine agrees" | R05 s3.3 "hard accept only exact/masked/name" | `matched` = tier A, or tier B confirmed by a second INDEPENDENT component; tier B alone = `tentative` | 05 s1.3 |
 | C-09 | R05 s3.4 learned weights + calibration | hard rule: ordinal until validated artifact | rule-based ordinal decisions now; feature family proposal for C9 later (`features/2`) | 05 s1.5 |
 | C-10 | SPEC-01 DEC-02 "do not fork matching" | in-house ladder | DEC-02 reworded: never fork Ghidriff; a separate derived engine may match | 10 row A-01 |
 | C-11 | SPEC-01 "one active job per window" | extraction + worker jobs | unified run counts as THE analysis job: disabled while Ghidriff runs and vice versa | 10 row A-01 |
@@ -96,7 +96,7 @@ Status: contract-freeze draft, 2026-10-14, base `main` = `cb25132`. Number check
 | U-03 | Default navigator filter hides `cosmetic` and `unchanged` rows (count always visible, one click to show)? | yes |
 | U-04 | Retire the C6 Evidence tab once the Unified tab passes G-U gates? | keep both until gates pass, then retire (single drill-down) |
 | U-05 | Feature flag default | OFF in alpha; ON only after G-U1..G-U6 pass |
-| U-06 | Show tier-B-from-one-component rows as `probable`? | yes (never counted as accepted, never used for an "unchanged" claim) |
+| U-06 | Show tier-B-from-one-component rows as `tentative`? | yes (never counted as matched, never used for an "unchanged" claim) |
 | U-07 | Tier R corpus builds on Windows CI runners (clang-cl/mingw/MSVC) for A/A and planted-mutation gates | yes (consistent with spec-decisions O6) |
 | U-08 | IR storage: project-local only, or also the global derived cache when a profile `cache_dir` is set? | both; global cache optional |
 | U-09 | Memory cap for the unified worker | none in v1 (as SPEC-29 D10) until measured; measure first (G-U5) |
