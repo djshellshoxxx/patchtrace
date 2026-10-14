@@ -69,6 +69,26 @@ DO NOT:
 - use a CVE search response's text mention of KB to substitute for a product-bound remediation,
 - bundle Microsoft source data or third-party Winbindex indexes without licensing review.
 
+## 1.4 Official update-summary listing: document discovery, not direct KB mapping
+
+A second read of the Microsoft MSRC published OpenAPI confirms these **documented** GET paths in addition to /cvrf/{id}:
+- /updates : update summaries with OData query options;
+- /updates/{key} or /updates({key}) : keyed by update month ID, CVE identifier, or year;
+- /cvrf/{id} : monthly CVRF document by yyyy-mmm.
+
+The OpenAPI does not describe a keyed arbitrary KB reverse search. The /updates listing CAN help discover available CVRF document IDs/dates, after schema validation and bounded pagination; it does NOT itself prove a KB-to-CVE remediation edge. Treat summary listing as a discovery index only.
+
+Suggested humane search UX:
+1. Search the locally indexed, source-verified CVRF corpus instantly. If product/KB matches found, show them with coverage bounds.
+2. If missing or incomplete, show the exact source scope and offer one-click 'Search more advisory months' using an explicit bounded recent period (initial 12 months is a proposed UX default) and a network-consent preview.
+3. For old KBs, user can widen the date range or select all available historical months in explicitly paginated batches, showing total scanned/completed/failed rather than silently fetching years of data.
+4. The source summary index can suggest document IDs before fetching full CVRF payloads. Track per-document revision/retrieval status and dedup by document identity+digest. Never search unboundedly by default.
+5. Only if every selected/advertised source document was actually indexed without gaps may coverage be COMPLETE_WITHIN_DECLARED_SCOPE. The application MUST NOT claim that a bounded scan is exhaustive across Microsoft's complete history.
+
+The live adapter must verify authentication policy, OData paging/continuation, last-modified semantics, redirects and response schema before claiming support, because the OpenAPI schema is an upstream interface, not an observed success log. Store a fixture for /updates summary and a distinct fixture for /cvrf/{id}; never apply the CVRF remediation parser to the summary response.
+
+Reference: https://github.com/microsoft/MSRC-Microsoft-Security-Updates-API/blob/main/docs/swagger.json
+
 ## 2. CVRF parser normalization algorithm
 
 The official PowerShell Get-MsrcCvrfAffectedSoftware function provides the mapping precedent:
