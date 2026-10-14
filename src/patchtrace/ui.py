@@ -719,6 +719,7 @@ class ProfilesPanel(QWidget):
         super().__init__(parent)
         self.store = ProfileStore(directory)
         self._editing: str | None = None
+        self._baseline: dict | None = None
         layout = QHBoxLayout(self)
         left = QVBoxLayout()
         self.list = QListWidget()
@@ -828,7 +829,27 @@ class ProfilesPanel(QWidget):
             return
         self._editing = None if profile.is_default else profile.name
         self._fill(profile)
+        self._baseline = self.editor_data()
         self.error.setText('')
+
+    def is_dirty(self) -> bool:
+        """True when the editor differs from the loaded, editable profile."""
+        if self._editing is None or self._baseline is None:
+            return False
+        try:
+            return self.editor_data() != self._baseline
+        except ValueError:
+            return True
+
+    def confirm_save(self, name: str) -> bool:
+        box = QMessageBox(QMessageBox.Icon.Question, 'Unsaved profile changes',
+                          f'Profile {name} has unsaved changes.\n\nYes saves them and continues; '
+                          'No returns to the editor.',
+                          QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No, self)
+        box.setTextFormat(Qt.TextFormat.PlainText)
+        box.setDefaultButton(QMessageBox.StandardButton.Yes)
+        confirm_tips(box)
+        return box.exec() == QMessageBox.StandardButton.Yes
 
     def _fill(self, profile):
         self.name.setText(profile.name)
@@ -932,6 +953,14 @@ class ProfilesPanel(QWidget):
         self.reload('default')
 
 
+_DISCOVERY_THREADS: set = set()
+
+
+def _release_thread(holder: set, thread) -> None:
+    holder.discard(thread)
+    thread.deleteLater()
+
+
 class SetupDialog(QDialog):
     def __init__(self, settings, parent=None, profile_directory: Path | None = None):
         super().__init__(parent)
@@ -1017,12 +1046,37 @@ class SetupDialog(QDialog):
         apply_tooltip(self.tabs.tabBar(), 'setup.tabs')
         outer.addWidget(dialog_buttons(self, 'Save setup', 'setup'))
         self.worker = None
+        self._discovery = None
+        self._busy_kind = None  # 'diagnosis' | 'offline' while self.worker is running
         self._pending_plan = None
         self.discover_existing()
 
     def discover_existing(self):
-        """Suggest known local installations without executing or installing tools."""
-        found = discover_local_runtimes()
+        """Suggest known local installations without executing or installing tools (background scan)."""
+        if self._discovery is not None:
+            return
+        self.find.setEnabled(False)
+        self.diagnostics.setPlainText('Searching for existing installations (local discovery only)…')
+        # Unparented and module-held until finished: the dialog may be destroyed mid-scan, and destroying
+        # a running QThread aborts the process. Bound-method connections drop when the dialog is deleted.
+        thread = Worker(lambda cancel, event: discover_local_runtimes())
+        _DISCOVERY_THREADS.add(thread)
+        thread.result_ready.connect(self._apply_discovery)
+        thread.failed.connect(self._discovery_failed)
+        thread.finished.connect(self._finish_discovery)
+        thread.finished.connect(lambda t=thread: _release_thread(_DISCOVERY_THREADS, t))
+        self._discovery = thread
+        thread.start()
+
+    def _discovery_failed(self, message):
+        self.diagnostics.setPlainText(f'Local discovery failed: {message}')
+
+    def _finish_discovery(self):
+        self._discovery = None
+        if not self._busy_kind:
+            self.find.setEnabled(True)
+
+    def _apply_discovery(self, found):
         notes = ['Local discovery only: nothing downloaded or executed.']
         for label, edit, paths in (
             ('External Python', self.python, found.python_executables),
@@ -1039,6 +1093,8 @@ class SetupDialog(QDialog):
             else:
                 notes.append(f'{label}: not found; use Browse after installing')
         notes.append('Detected paths require Diagnose dependencies and a real comparison to verify.')
+        if self._busy_kind:  # never overwrite progress text of a running diagnosis or offline install
+            return
         self.diagnostics.setPlainText('\n'.join(notes))
 
     def browse(self, edit, directory):
@@ -1059,6 +1115,7 @@ class SetupDialog(QDialog):
         if self.worker and self.worker.isRunning():
             return
         config = self.config()
+        self._busy_kind = 'diagnosis'
         self.check.setEnabled(False)
         self.diagnostics.setPlainText('Checking external dependencies…')
         self.worker = Worker(lambda cancel, event: diagnose(config), self)
@@ -1069,11 +1126,13 @@ class SetupDialog(QDialog):
 
     def _finish_diagnosis(self):
         self.worker = None
+        self._busy_kind = None
         self.check.setEnabled(True)
 
     def _offline_busy(self, active):
+        self._busy_kind = 'offline' if active else None
         self.install.setEnabled(not active)
-        self.find.setEnabled(not active)
+        self.find.setEnabled(not active and self._discovery is None)
         self.check.setEnabled(not active)
         self.cancel_install.setEnabled(active)
         for edit in (self.python, self.ghidra, self.java_home):
@@ -1161,13 +1220,22 @@ class SetupDialog(QDialog):
 
     def reject(self):
         if self.worker and self.worker.isRunning():
-            self.diagnostics.appendPlainText('Wait for dependency diagnosis to finish before closing setup.')
+            self.tabs.setCurrentIndex(0)
+            if self._busy_kind == 'offline':
+                self.cancel_offline_install()
+                self.diagnostics.appendPlainText('Close setup again once the operation has stopped.')
+            else:
+                self.diagnostics.appendPlainText('Wait for dependency diagnosis to finish before closing setup.')
             return
         super().reject()
 
     def accept(self):
         if self.worker and self.worker.isRunning():
             return
+        if self.profiles.is_dirty():
+            self.tabs.setCurrentWidget(self.profiles)
+            if not self.profiles.confirm_save(self.profiles.selected_name()) or not self.profiles.save_profile():
+                return
         super().accept()
 
 
@@ -2184,11 +2252,14 @@ class MainWindow(QMainWindow):
         self.evidence_list.clear()
         self.conclusion.clear()
         if not self._finding:
+            self._noted_finding_id = None
             self.show_match_annotations()
             self.update_controls()
             return
         finding = self._finding
-        self.note_target.setCurrentIndex(1)
+        if getattr(self, '_noted_finding_id', None) != finding.id:
+            self.note_target.setCurrentIndex(1)  # only when the selection changes, never on refresh
+            self._noted_finding_id = finding.id
         hypothesis = finding.hypothesis
         detail = ('STALE: retained context no longer describes the current project.\n\n' if finding.stale else '')
         detail += f'{finding.summary}\n\nFix purpose: {finding.fix_purpose}\nCategory: {finding.category}\n'
@@ -2479,7 +2550,7 @@ class MainWindow(QMainWindow):
             return self._inspection
         return None
 
-    def _render_raw(self, match):
+    def _render_raw(self, match, clamped_from: int | None = None):
         self._hunks = []
         self._hunk_index = -1
         inspection = self._current_inspection()
@@ -2521,6 +2592,10 @@ class MainWindow(QMainWindow):
         self.raw_page.blockSignals(True)
         self.raw_page.setMaximum(pages)
         self.raw_page.blockSignals(False)
+        if clamped_from is None and self.raw_page.value() - 1 != page_index:
+            # The requested page is past the longest readable side: show the last page, not a page-less message.
+            self._render_raw(match, clamped_from=page_index + 1)
+            return
         diff = differing_lines(sides['older'], sides['newer'], representation)
         for side, raw in sides.items():
             view = self.views[side]
@@ -2543,6 +2618,8 @@ class MainWindow(QMainWindow):
             summary += f' · {len(diff)} line(s) with differing bytes at equal offsets'
         if notes:
             summary += ' · ' + '; '.join(notes)
+        if clamped_from is not None:
+            summary += f' · requested page {clamped_from} is past the end; showing last page {pages}'
         self.match_label.setText(summary)
         self.match_label.setToolTip('\n\n'.join(captions) or 'No raw bytes displayed.')
 
@@ -2654,9 +2731,11 @@ class MainWindow(QMainWindow):
         artifacts = {artifact.side: artifact for artifact in self.project.artifacts}
         rows = overview_rows(artifacts['older'], artifacts['newer'])
         previous = getattr(self, '_preflight_dialog', None)
+        self._forget_overview_widgets()  # before close: a replaced dialog must not clear the new refs
         if previous is not None:
-            previous.close()
+            previous.close()  # WA_DeleteOnClose below releases it
         dialog = QDialog(self)
+        dialog.setAttribute(Qt.WidgetAttribute.WA_DeleteOnClose)
         dialog.setWindowTitle('Preliminary file comparison')
         dialog.setMinimumSize(900, 620)
         dialog.setModal(False)
@@ -2693,7 +2772,7 @@ class MainWindow(QMainWindow):
         self._preflight_dialog = dialog
         self._preflight_status = status
         self._preflight_pe_table = pe_table
-        dialog.destroyed.connect(lambda *_: self._forget_overview_widgets())
+        dialog.destroyed.connect(lambda *_: self._overview_destroyed(dialog))
         inspection = self._current_inspection()
         if inspection is not None:
             status.setText('File inspection complete · ' + side_summary(inspection))
@@ -2702,7 +2781,12 @@ class MainWindow(QMainWindow):
             self.start_inspection()
         dialog.show()
 
+    def _overview_destroyed(self, dialog):
+        if getattr(self, '_preflight_dialog', None) is dialog:
+            self._forget_overview_widgets()
+
     def _forget_overview_widgets(self):
+        self._preflight_dialog = None
         self._preflight_status = None
         self._preflight_pe_table = None
 
