@@ -1,0 +1,476 @@
+{
+  "$defs": {
+    "Binary": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "pattern": "^[A-Za-z0-9._-]{1,64}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "tier": {
+          "enum": [
+            "W",
+            "R"
+          ],
+          "title": "Tier",
+          "type": "string"
+        },
+        "file_name": {
+          "maxLength": 255,
+          "minLength": 1,
+          "pattern": "^[^/\\\\:]+$",
+          "title": "File Name",
+          "type": "string"
+        },
+        "arch": {
+          "enum": [
+            "x64",
+            "x86",
+            "arm64",
+            "other"
+          ],
+          "title": "Arch",
+          "type": "string"
+        },
+        "sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Sha256",
+          "type": "string"
+        },
+        "size": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Size"
+        },
+        "winbindex": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/WinbindexIdentity"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "pdb": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Pdb"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "toolchain": {
+          "default": "unknown",
+          "title": "Toolchain",
+          "type": "string"
+        },
+        "source": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Source"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "recipe": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Recipe"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "redistribution": {
+          "title": "Redistribution",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "tier",
+        "file_name",
+        "arch",
+        "sha256",
+        "redistribution"
+      ],
+      "title": "Binary",
+      "type": "object"
+    },
+    "Lineage": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "pattern": "^[A-Za-z0-9._-]{1,64}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "members": {
+          "items": {
+            "pattern": "^[A-Za-z0-9._-]{1,64}$",
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Members",
+          "type": "array"
+        },
+        "cluster_rule": {
+          "title": "Cluster Rule",
+          "type": "string"
+        },
+        "cluster_evidence_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Cluster Evidence Sha256",
+          "type": "string"
+        },
+        "family": {
+          "default": "unknown",
+          "title": "Family",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "members",
+        "cluster_rule",
+        "cluster_evidence_sha256"
+      ],
+      "title": "Lineage",
+      "type": "object"
+    },
+    "Pair": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "pattern": "^[A-Za-z0-9._-]{1,64}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "older": {
+          "pattern": "^[A-Za-z0-9._-]{1,64}$",
+          "title": "Older",
+          "type": "string"
+        },
+        "newer": {
+          "pattern": "^[A-Za-z0-9._-]{1,64}$",
+          "title": "Newer",
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "adjacent-patch",
+            "cross-version",
+            "unrelated-control"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "lineage": {
+          "pattern": "^[A-Za-z0-9._-]{1,64}$",
+          "title": "Lineage",
+          "type": "string"
+        },
+        "family_tags": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Family Tags",
+          "type": "array"
+        },
+        "role": {
+          "anyOf": [
+            {
+              "enum": [
+                "dev",
+                "locked-test",
+                "shift-test"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Role"
+        }
+      },
+      "required": [
+        "id",
+        "older",
+        "newer",
+        "kind",
+        "lineage"
+      ],
+      "title": "Pair",
+      "type": "object"
+    },
+    "Pdb": {
+      "additionalProperties": false,
+      "properties": {
+        "guid_age": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Guid Age"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "used_for": {
+          "enum": [
+            "labels-only",
+            "none"
+          ],
+          "title": "Used For",
+          "type": "string"
+        }
+      },
+      "required": [
+        "used_for"
+      ],
+      "title": "Pdb",
+      "type": "object"
+    },
+    "Recipe": {
+      "additionalProperties": false,
+      "properties": {
+        "toolchain_digest": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Toolchain Digest",
+          "type": "string"
+        },
+        "argv": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Argv",
+          "type": "array"
+        },
+        "opt": {
+          "title": "Opt",
+          "type": "string"
+        },
+        "strip": {
+          "title": "Strip",
+          "type": "boolean"
+        },
+        "env_digest": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Env Digest",
+          "type": "string"
+        }
+      },
+      "required": [
+        "toolchain_digest",
+        "argv",
+        "opt",
+        "strip",
+        "env_digest"
+      ],
+      "title": "Recipe",
+      "type": "object"
+    },
+    "Source": {
+      "additionalProperties": false,
+      "properties": {
+        "git": {
+          "minLength": 1,
+          "title": "Git",
+          "type": "string"
+        },
+        "commit": {
+          "pattern": "^[0-9a-f]{7,64}$",
+          "title": "Commit",
+          "type": "string"
+        },
+        "license": {
+          "minLength": 1,
+          "title": "License",
+          "type": "string"
+        }
+      },
+      "required": [
+        "git",
+        "commit",
+        "license"
+      ],
+      "title": "Source",
+      "type": "object"
+    },
+    "Split": {
+      "additionalProperties": false,
+      "properties": {
+        "salt": {
+          "minLength": 1,
+          "title": "Salt",
+          "type": "string"
+        },
+        "method": {
+          "title": "Method",
+          "type": "string"
+        },
+        "shift_test_lineages": {
+          "default": [],
+          "items": {
+            "pattern": "^[A-Za-z0-9._-]{1,64}$",
+            "type": "string"
+          },
+          "title": "Shift Test Lineages",
+          "type": "array"
+        },
+        "overlap_threshold": {
+          "default": 0.15,
+          "exclusiveMinimum": 0,
+          "maximum": 1,
+          "title": "Overlap Threshold",
+          "type": "number"
+        }
+      },
+      "required": [
+        "salt",
+        "method"
+      ],
+      "title": "Split",
+      "type": "object"
+    },
+    "WinbindexIdentity": {
+      "additionalProperties": false,
+      "properties": {
+        "timestamp": {
+          "maximum": 4294967295,
+          "minimum": 0,
+          "title": "Timestamp",
+          "type": "integer"
+        },
+        "virtual_size": {
+          "maximum": 4294967295,
+          "minimum": 0,
+          "title": "Virtual Size",
+          "type": "integer"
+        },
+        "version": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Version"
+        },
+        "kb": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Kb",
+          "type": "array"
+        }
+      },
+      "required": [
+        "timestamp",
+        "virtual_size"
+      ],
+      "title": "WinbindexIdentity",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "contract": {
+      "const": "calibration-corpus/1",
+      "title": "Contract",
+      "type": "string"
+    },
+    "corpus_id": {
+      "pattern": "^[A-Za-z0-9._-]{1,64}$",
+      "title": "Corpus Id",
+      "type": "string"
+    },
+    "created": {
+      "title": "Created",
+      "type": "string"
+    },
+    "tool_git": {
+      "title": "Tool Git",
+      "type": "string"
+    },
+    "binaries": {
+      "items": {
+        "$ref": "#/$defs/Binary"
+      },
+      "title": "Binaries",
+      "type": "array"
+    },
+    "pairs": {
+      "items": {
+        "$ref": "#/$defs/Pair"
+      },
+      "title": "Pairs",
+      "type": "array"
+    },
+    "lineages": {
+      "items": {
+        "$ref": "#/$defs/Lineage"
+      },
+      "title": "Lineages",
+      "type": "array"
+    },
+    "split": {
+      "$ref": "#/$defs/Split"
+    }
+  },
+  "required": [
+    "contract",
+    "corpus_id",
+    "created",
+    "tool_git",
+    "binaries",
+    "pairs",
+    "lineages",
+    "split"
+  ],
+  "title": "CorpusManifest",
+  "type": "object",
+  "$id": "https://patchtrace.local/schemas/calibration-corpus/1/CorpusManifest.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}

@@ -1,0 +1,46 @@
+[36mUsage: [0mrz-diff [options] <file0> <file1>
+ [32m-a[0m[33m arch [0m     [0mSpecify architecture plugin to use (x86, arm, ..)
+ [32m-b[0m[33m bits [0m     [0mSpecify register size for arch (16 (thumb), 32, 64, ..)
+ [32m-d[0m[33m myers [0m    [0mCompute edit distance using Eugene W. Myers' O(ND) algorithm (no substitution)
+ [32m-d[0m[33m leven [0m    [0mCompute edit distance using Levenshtein O(N^2) algorithm (with substitution)
+ [32m-d[0m[33m lcs-roll [0m [0mCompute edit distance using Myers+FastCDC with chunk size 128 (-0 to change chunk size)
+ [32m-d[0m[33m ssdeep [0m   [0mCompute edit distance using Context triggered piecewise hashing comparison
+ [32m-i[0m           [0mUse command line arguments instead of files (only for -d)
+ [32m-H[0m           [0mHexadecimal visual mode
+ [32m-h[0m           [0mShow this help
+ [32m-j[0m           [0mJSON output
+ [32m-q[0m           [0mQuiet output
+ [32m-v[0m           [0mShow version information
+ [32m-V[0m           [0mBe more verbose (stderr output)
+ [32m-K[0m[33m theme [0m    [0mSet a give color theme (see rizin 'eco' command)
+ [32m-e[0m[33m k=v [0m      [0mSet an evaluable config variable
+ [32m-A[0m           [0mCompare virtual and physical addresses
+ [32m-B[0m           [0mRun 'aaa' when loading the bin
+ [32m-C[0m           [0mDisable colors
+ [32m-T[0m           [0mShow timestamp information
+ [32m-S[0m[33m WxH [0m      [0mSet the width and height of the terminal for visual mode
+ [32m-0[0m[33m cmd [0m      [0mInput for file0 when option -t 'commands' is given.
+ [32m[0m             [0mThe same value will be set for file1, if -1 is not set.
+ [32m-1[0m[33m cmd [0m      [0mInput for file1 when option -t 'commands' is given.
+ [32m-t[0m[33m bytes [0m    [0mCompare raw bytes in the files (only for small files)
+ [32m-t[0m[33m lines [0m    [0mCompare text files
+ [32m-t[0m[33m functions [0m[0mCompare functions found in the files
+ [32m[0m             [0moptional -0 <fcn name|offset> to compare only one function
+ [32m-t[0m[33m classes [0m  [0mCompare classes found in the files
+ [32m-t[0m[33m command [0m  [0mCompare command output returned when executed in both files
+ [32m[0m             [0mrequires -0 <cmd> and -1 <cmd> is optional
+ [32m-t[0m[33m entries [0m  [0mCompare entries found in the files
+ [32m-t[0m[33m fields [0m   [0mCompare fields found in the files
+ [32m-t[0m[33m graphs [0m   [0mCompare 2 functions and outputs in graphviz/dot format
+ [32m[0m             [0mrequires -0 <fcn name|offset> and -1 <fcn name|offset> is optional
+ [32m-t[0m[33m imports [0m  [0mCompare imports found in the files
+ [32m-t[0m[33m libraries [0m[0mCompare libraries found in the files
+ [32m-t[0m[33m sections [0m [0mCompare sections found in the files
+ [32m-t[0m[33m strings [0m  [0mCompare strings found in the files
+ [32m-t[0m[33m symbols [0m  [0mCompare symbols found in the files
+Palette colors can be changed by adding the following lines inside the $HOME/.rizinrc file
+  ec diff.unknown blue  | offset color
+  ec diff.match   green | match color
+  ec diff.unmatch red   | mismatch color
+Environment variables
+  RZ_COLOR              | enables/disables colors support

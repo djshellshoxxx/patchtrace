@@ -1,0 +1,182 @@
+{
+  "$defs": {
+    "Sampling": {
+      "additionalProperties": false,
+      "properties": {
+        "stratum": {
+          "enum": [
+            "natural",
+            "adversarial"
+          ],
+          "title": "Stratum",
+          "type": "string"
+        },
+        "stage": {
+          "title": "Stage",
+          "type": "string"
+        },
+        "p_incl": {
+          "exclusiveMinimum": 0,
+          "maximum": 1,
+          "title": "P Incl",
+          "type": "number"
+        }
+      },
+      "required": [
+        "stratum",
+        "stage",
+        "p_incl"
+      ],
+      "title": "Sampling",
+      "type": "object"
+    },
+    "Side": {
+      "additionalProperties": false,
+      "properties": {
+        "rva": {
+          "maximum": 18446744073709551615,
+          "minimum": 0,
+          "title": "Rva",
+          "type": "integer"
+        },
+        "size": {
+          "minimum": 0,
+          "title": "Size",
+          "type": "integer"
+        },
+        "body_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Body Sha256",
+          "type": "string"
+        }
+      },
+      "required": [
+        "rva",
+        "size",
+        "body_sha256"
+      ],
+      "title": "Side",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "pair": {
+      "pattern": "^[A-Za-z0-9._-]{1,64}$",
+      "title": "Pair",
+      "type": "string"
+    },
+    "match_id": {
+      "maxLength": 200,
+      "minLength": 1,
+      "title": "Match Id",
+      "type": "string"
+    },
+    "older": {
+      "$ref": "#/$defs/Side"
+    },
+    "newer": {
+      "$ref": "#/$defs/Side"
+    },
+    "A": {
+      "enum": [
+        "same",
+        "different",
+        "no-counterpart",
+        "indeterminate"
+      ],
+      "title": "A",
+      "type": "string"
+    },
+    "subtype": {
+      "anyOf": [
+        {
+          "enum": [
+            "N1",
+            "N2",
+            "N3",
+            "N4",
+            "N5",
+            "N6",
+            "N7",
+            "N8",
+            "N9",
+            "N10",
+            "N11",
+            "N12"
+          ],
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Subtype"
+    },
+    "B": {
+      "default": null,
+      "title": "B",
+      "type": "null"
+    },
+    "C": {
+      "default": null,
+      "title": "C",
+      "type": "null"
+    },
+    "D": {
+      "default": null,
+      "title": "D",
+      "type": "null"
+    },
+    "source": {
+      "enum": [
+        "human",
+        "symbol-derived",
+        "synthetic-exact"
+      ],
+      "title": "Source",
+      "type": "string"
+    },
+    "annotators": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Annotators",
+      "type": "array"
+    },
+    "adjudicated": {
+      "title": "Adjudicated",
+      "type": "boolean"
+    },
+    "guideline": {
+      "title": "Guideline",
+      "type": "string"
+    },
+    "sampling": {
+      "$ref": "#/$defs/Sampling"
+    },
+    "notes": {
+      "default": "",
+      "maxLength": 2000,
+      "title": "Notes",
+      "type": "string"
+    }
+  },
+  "required": [
+    "pair",
+    "match_id",
+    "older",
+    "newer",
+    "A",
+    "subtype",
+    "source",
+    "annotators",
+    "adjudicated",
+    "guideline",
+    "sampling"
+  ],
+  "title": "LabelRecord",
+  "type": "object",
+  "$id": "https://patchtrace.local/schemas/calibration-labels/1/LabelRecord.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}

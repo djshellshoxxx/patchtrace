@@ -2,6 +2,8 @@
 
 usage: live_rzdiff_check.py RZ_DIFF OLDER NEWER OUT_JSON --pin 0.9.1 --archive-sha256 HEX --os NAME
 Exits non-zero on any failed assertion; the result JSON is written even on failure when possible.
+It drives rz-diff through the production path: the shared `engine_env` allow-list, the registry adapter and
+`scheduler.run_engines` (not a hand-built environment or a direct `run_rzdiff` call).
 """
 from __future__ import annotations
 
@@ -9,13 +11,32 @@ import argparse
 import hashlib
 import json
 import os
-import subprocess
+import re
 import sys
+import tempfile
 import threading
 import time
 from pathlib import Path
 
-from patchtrace.secondary.rzdiff import probe, run_rzdiff
+from patchtrace.jobs import run_process
+from patchtrace.secondary.engine_env import engine_env
+from patchtrace.secondary.registry import build_registry
+from patchtrace.secondary.scheduler import ProjectRef, run_engines
+
+FROZEN_FLAGS = ('-C', '-j', '-t')
+_OPTION = re.compile(r'^\s*(-[A-Za-z0-9])(?![A-Za-z0-9-])', re.MULTILINE)
+
+
+_ANSI = re.compile(r'\x1b\[[0-9;]*[A-Za-z]')
+
+
+def help_options(text: str) -> set[str]:
+    """Options declared at the start of a help line (`  -C   ...`), not any substring of the text.
+
+    rz-diff colours its `-h` output even when stdout is a pipe (`\x1b[32m-C\x1b[0m ...`), so escape
+    sequences are removed before the line-start match (found by the first live CI run of this parser).
+    """
+    return set(_OPTION.findall(_ANSI.sub('', text)))
 
 
 def sha256(path: Path) -> str:
@@ -36,26 +57,34 @@ def main() -> int:
                     'archive_sha256': args.archive_sha256, 'status': 'failed', 'errors': []}
     started = time.monotonic()
     try:
-        env = dict(os.environ)
+        env = engine_env(os.environ, 'rz-diff')
         older, newer = args.older.resolve(), args.newer.resolve()
         result['fixture_sha256'] = {'older': sha256(older), 'newer': sha256(newer)}
         if result['fixture_sha256']['older'] == result['fixture_sha256']['newer']:
             raise AssertionError('fixture pair is identical')
-        capability = probe(args.rz_diff, env, threading.Event())
+        registry = build_registry(rz_diff=str(args.rz_diff.resolve()))
+        capability = registry['rz-diff'].probe(env, threading.Event())
         result['rizin_version'] = capability.version
         if not capability.supported:
             raise AssertionError(f'probe unsupported: {capability.reason}')
         if capability.version != args.pin:
             raise AssertionError(f'version {capability.version} != pin {args.pin}')
-        # Flag drift must fail loudly: -h has to mention every flag the adapter freezes in argv().
-        helped = subprocess.run([str(args.rz_diff), '-h'], capture_output=True, text=True, timeout=60)
-        help_text = helped.stdout + helped.stderr
-        result['help_flags'] = {flag: flag in help_text for flag in ('-C', '-j', '-t')}
+        # Flag drift must fail loudly: -h has to declare every flag the adapter freezes in argv().
+        with tempfile.TemporaryDirectory(prefix='patchtrace-rzhelp-') as cwd:
+            helped = run_process([capability.path, '-h'], cwd=Path(cwd), env=env, cancel=threading.Event(),
+                                 timeout_seconds=60, log_limit=256 * 1024)
+        declared = help_options(helped.log_tail)
+        result['help_flags'] = {flag: flag in declared for flag in FROZEN_FLAGS}
         if not all(result['help_flags'].values()):
-            raise AssertionError(f'rz-diff -h does not mention all frozen flags: {result["help_flags"]}')
-        match_set = run_rzdiff(capability, older, newer, result['fixture_sha256']['older'],
-                               result['fixture_sha256']['newer'], env=env, cancel=threading.Event(),
-                               timeout_seconds=300)
+            raise AssertionError(f'rz-diff -h does not declare all frozen flags: {result["help_flags"]}')
+        project = ProjectRef(older, newer, result['fixture_sha256']['older'], result['fixture_sha256']['newer'])
+        (outcome,) = run_engines(project, ['rz-diff'], cancel=threading.Event(), env=env, registry=registry,
+                                 per_engine_timeout={'rz-diff': 300.0})
+        result['engine_run'] = {'status': outcome.run.status, 'error_code': outcome.run.error_code,
+                                'argv_digest': outcome.run.argv_digest}
+        if outcome.run.status != 'ok' or outcome.match_set is None:
+            raise AssertionError(f'run_engines status {outcome.run.status} ({outcome.run.error_code})')
+        match_set = outcome.match_set
         result['match_count'] = len(match_set.matches)
         result['output_sha256'] = match_set.file_sha256
         if not match_set.matches:

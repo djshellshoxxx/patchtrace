@@ -14,15 +14,23 @@ from __future__ import annotations
 
 import hashlib
 import json
+import logging
 import sqlite3
-from collections.abc import Collection, Iterable
+from collections.abc import Callable, Collection, Iterable
 from dataclasses import dataclass
 from datetime import UTC, datetime, timedelta
+from pathlib import Path
 
 from ..persistence import ProjectStore, safe_path
 from .contracts import EnrichmentError
 
-EXTENSION_VERSION = 1
+# Highest extension version this client understands. New stores are stamped BASE_EXTENSION_VERSION and
+# are raised to 2 only when a v2-only row (`engine-run`, `secondary/2` sets) is first written, so a v1
+# client keeps full access to every project that never used SPEC-28 and reads older stores unchanged.
+EXTENSION_VERSION = 2
+BASE_EXTENSION_VERSION = 1
+RUN_KIND = 'engine-run'
+RUN_KEEP = 8  # newest engine-run rows kept per (engine, older, newer) group
 MAX_ROW = 32 * 1024 * 1024
 MAX_TOTAL = 128 * 1024 * 1024
 KINDS = frozenset({'signals', 'ranking', 'wil', 'cve-snapshot', 'contextual', 'pipeline', 'secondary-matches',
@@ -58,6 +66,66 @@ class Entry:
     body: dict
 
 
+def _snapshot_sha(db: sqlite3.Connection):
+    return db.execute('SELECT sha256 FROM current_snapshot WHERE singleton=1').fetchone()
+
+
+def _write_backup(root, db: sqlite3.Connection, label: str) -> None:
+    """Verified SQLite backup of `db` into `<root>/backups`. The copy is written under a `.part` name and
+    renamed only after `quick_check` and the snapshot hash match, so a crash never leaves a half-trusted file."""
+    directory = safe_path(root, 'backups')
+    directory.mkdir(exist_ok=True)
+    stamp = datetime.now(UTC).strftime('%Y%m%dT%H%M%S%fZ')
+    target = safe_path(root, f'backups/project-pre-{label}-{stamp}.sqlite3')
+    part = safe_path(root, f'backups/project-pre-{label}-{stamp}.sqlite3.part')
+    expected = _snapshot_sha(db)
+    copy = sqlite3.connect(part)
+    try:
+        db.backup(copy)
+        ok = copy.execute('PRAGMA quick_check').fetchone()[0] == 'ok'
+        got = _snapshot_sha(copy)
+    finally:
+        copy.close()
+    if not ok or got != expected:
+        part.unlink(missing_ok=True)
+        raise EnrichmentError('PT-ENRICH-INPUT', f'pre-{label} database backup failed verification')
+    part.replace(target)
+
+
+def prepare_backups(root) -> None:
+    """Make the verified pre-extension / pre-retention backups a publish would otherwise take synchronously.
+
+    Thread-safe and best-effort: call it from a worker thread before the owner thread publishes. It opens its
+    own read-only connection (never the owner's), so a failure here only means the owner thread falls back to
+    taking the same backup itself; nothing about the safety checks is skipped."""
+    try:
+        root = Path(root).resolve()
+        database = safe_path(root, 'project.sqlite3')
+        if not database.is_file():
+            return
+        db = sqlite3.connect(f'{database.as_uri()}?mode=ro', uri=True, timeout=5)
+        try:
+            tables = {r[0] for r in db.execute("SELECT name FROM sqlite_master WHERE type='table'")}
+            if 'enrichment_meta' not in tables:
+                label = 'enrichment'
+            elif _retention_likely(db, root, tables):
+                label = 'retention'
+            else:
+                return
+            _write_backup(root, db, label)
+        finally:
+            db.close()
+    except Exception:  # noqa: BLE001 - best effort: the owner thread repeats the work if this fails
+        logging.getLogger(__name__).debug('Background pre-publish backup skipped', exc_info=True)
+
+
+def _retention_likely(db: sqlite3.Connection, root: Path, tables: set[str]) -> bool:
+    if 'enrichment_entries' not in tables or any((root / 'backups').glob('project-pre-retention-*.sqlite3')):
+        return False
+    count = db.execute("SELECT COUNT(*) FROM enrichment_entries WHERE kind='pipeline'").fetchone()[0]
+    return count >= KEEP_CURRENT
+
+
 class EnrichmentStore:
     def __init__(self, store: ProjectStore):
         self.store = store
@@ -87,21 +155,26 @@ class EnrichmentStore:
         return {row[0] for row in self._db.execute("SELECT name FROM sqlite_master WHERE type='table'")}
 
     def _backup_before_create(self, label: str = 'enrichment') -> None:
+        _write_backup(self.store.root, self._db, label)
+
+    def _has_current_backup(self, label: str) -> bool:
+        """True when a verified `project-pre-<label>-*` backup (e.g. made by `prepare_backups` on a worker
+        thread) holds exactly the snapshot the live database holds now. One-row read per candidate."""
         directory = safe_path(self.store.root, 'backups')
-        directory.mkdir(exist_ok=True)
-        stamp = datetime.now(UTC).strftime('%Y%m%dT%H%M%S%fZ')
-        target = safe_path(self.store.root, f'backups/project-pre-{label}-{stamp}.sqlite3')
-        expected = self._db.execute('SELECT sha256 FROM current_snapshot WHERE singleton=1').fetchone()
-        copy = sqlite3.connect(target)
-        try:
-            self._db.backup(copy)
-            ok = copy.execute('PRAGMA quick_check').fetchone()[0] == 'ok'
-            got = copy.execute('SELECT sha256 FROM current_snapshot WHERE singleton=1').fetchone()
-        finally:
-            copy.close()
-        if not ok or got != expected:
-            target.unlink(missing_ok=True)
-            raise EnrichmentError('PT-ENRICH-INPUT', f'pre-{label} database backup failed verification')
+        if not directory.is_dir():
+            return False
+        live = _snapshot_sha(self._db)
+        for candidate in sorted(directory.glob(f'project-pre-{label}-*.sqlite3'), reverse=True):
+            try:
+                copy = sqlite3.connect(f'{candidate.as_uri()}?mode=ro', uri=True, timeout=5)
+                try:
+                    if _snapshot_sha(copy) == live:
+                        return True
+                finally:
+                    copy.close()
+            except (sqlite3.Error, OSError, ValueError):
+                continue
+        return False
 
     def ensure(self) -> None:
         """Create tables on first use; detect newer extension versions (read-only)."""
@@ -109,7 +182,8 @@ class EnrichmentStore:
             return
         tables = self._tables()
         if 'enrichment_meta' not in tables:
-            self._backup_before_create()
+            if not self._has_current_backup('enrichment'):
+                self._backup_before_create()
             self._ddl_transaction([
                 ('CREATE TABLE enrichment_meta (key TEXT PRIMARY KEY, value TEXT NOT NULL)', ()),
                 ('CREATE TABLE enrichment_entries (id TEXT PRIMARY KEY, kind TEXT NOT NULL, '
@@ -119,7 +193,7 @@ class EnrichmentStore:
                  'body_sha256 TEXT NOT NULL)', ()),
                 ('CREATE INDEX enrichment_entries_lookup ON enrichment_entries(kind, run_id)', ()),
                 ("INSERT INTO enrichment_meta(key, value) VALUES('extension_version', ?)",
-                 (str(EXTENSION_VERSION),)),
+                 (str(BASE_EXTENSION_VERSION),)),
             ])
         row = self._db.execute("SELECT value FROM enrichment_meta WHERE key='extension_version'").fetchone()
         version = int(row[0]) if row and row[0].isdigit() else 0
@@ -153,7 +227,11 @@ class EnrichmentStore:
                                       recoverable=True)
         stale = guard != current
         created = datetime.now(UTC).isoformat()
+        v2_only = kind == RUN_KIND or (isinstance(body, dict) and body.get('contract') == 'secondary/2')
         with self._db:
+            if v2_only:  # additive stamp in the same transaction as the first v2-only row
+                self._db.execute("UPDATE enrichment_meta SET value='2' WHERE key='extension_version' "
+                                 "AND CAST(value AS INTEGER) < 2")
             self._db.execute(
                 'INSERT INTO enrichment_entries(id,kind,project_id,project_revision,run_id,raw_sha256,input_digest,'
                 'status,stale,created,body,body_sha256) VALUES(?,?,?,?,?,?,?,?,?,?,?,?) ON CONFLICT(id) DO UPDATE SET '
@@ -163,8 +241,11 @@ class EnrichmentStore:
                  status, int(stale), created, text, hashlib.sha256(text.encode()).hexdigest()))
         return Entry(entry_id, kind, guard, revision, status, stale, created, body)
 
-    def entries(self, kind: str, current: Guard | None = None) -> list[Entry]:
-        """All rows of a kind, newest first; staleness is evaluated against `current` when given."""
+    def entries(self, kind: str, current: Guard | None = None,
+                on_corrupt: Callable[[str], None] | None = None) -> list[Entry]:
+        """All rows of a kind, newest first; staleness is evaluated against `current` when given.
+        A row failing its integrity hash raises, unless `on_corrupt` is given: it is then skipped and
+        reported by id so one bad row cannot hide the others."""
         if 'enrichment_entries' not in self._tables():
             return []
         rows = self._db.execute(
@@ -173,6 +254,9 @@ class EnrichmentStore:
         out = []
         for row in rows:
             if hashlib.sha256(row[10].encode()).hexdigest() != row[11]:
+                if on_corrupt is not None:
+                    on_corrupt(row[0])
+                    continue
                 raise EnrichmentError('PT-ENRICH-INPUT', 'stored enrichment row failed its integrity hash')
             guard = Guard(row[2], row[4], row[5], row[6])
             stale = bool(row[8]) or (current is not None and guard != current)
@@ -233,7 +317,7 @@ class EnrichmentStore:
         directory = safe_path(self.store.root, 'backups')
         return directory.exists() and any(directory.glob('project-pre-retention-*.sqlite3'))
 
-    def _delete(self, ids: Collection[str]) -> int:
+    def _delete(self, ids: Collection[str], kinds: tuple[str, ...] = DERIVED_KINDS) -> int:
         """Delete rows and record `retention_version` in one transaction, after a verified backup."""
         ids = sorted(ids)
         if not ids:
@@ -241,19 +325,69 @@ class EnrichmentStore:
         if not self._has_retention_backup():
             self._backup_before_create('retention')
         db = self._db
-        marks = ','.join('?' * len(DERIVED_KINDS))
+        marks = ','.join('?' * len(kinds))
         db.execute('BEGIN IMMEDIATE')
         try:
             for start in range(0, len(ids), 400):
                 chunk = ids[start:start + 400]
                 db.execute(f'DELETE FROM enrichment_entries WHERE id IN ({",".join("?" * len(chunk))}) '
-                           f'AND kind IN ({marks})', (*chunk, *DERIVED_KINDS))
+                           f'AND kind IN ({marks})', (*chunk, *kinds))
             db.execute(_RETENTION_META_SQL)
         except BaseException:
             db.execute('ROLLBACK')
             raise
         db.execute('COMMIT')
         return len(ids)
+
+    def _run_rows(self) -> list[tuple[str, str, int, tuple, bool]]:
+        """(id, created, size, group, referenced) for every engine-run row, newest first. A run is
+        referenced when a stored secondary set names it (`run_id`) or it names a stored set."""
+        rows = self._db.execute(
+            'SELECT id, created, LENGTH(CAST(body AS BLOB)), body FROM enrichment_entries WHERE kind=? '
+            'ORDER BY created DESC, id DESC', (RUN_KIND,)).fetchall()
+        sets = {r[0] for r in self._db.execute('SELECT id FROM enrichment_entries WHERE kind=?',
+                                               ('secondary-matches',))}
+        named = set()
+        for (body,) in self._db.execute('SELECT body FROM enrichment_entries WHERE kind=?', ('secondary-matches',)):
+            try:
+                run_id = json.loads(body).get('run_id')
+            except ValueError:
+                continue
+            if isinstance(run_id, str):
+                named.add(run_id)
+        out = []
+        for row_id, created, size, body in rows:
+            try:
+                doc = json.loads(body)
+                group = (doc.get('engine'), doc.get('older_sha256'), doc.get('newer_sha256'))
+                referenced = row_id in named or doc.get('match_set_id') in sets
+            except (ValueError, AttributeError):
+                group, referenced = (None, None, None), False
+            out.append((row_id, created, size, group, referenced))
+        return out
+
+    def _evictable_runs(self, keep: int) -> list[tuple[str, int]]:
+        """(id, size) of engine-run rows beyond the newest `keep` per group, oldest first; rows tied to a
+        stored secondary set are never offered."""
+        seen: dict[tuple, int] = {}
+        doomed = []
+        for row_id, _created, size, group, referenced in self._run_rows():
+            seen[group] = seen.get(group, 0) + 1
+            if seen[group] > keep and not referenced:
+                doomed.append((row_id, size))
+        return doomed[::-1]
+
+    def prune_runs(self, keep: int | None = None) -> int:
+        """Best-effort: delete engine-run history beyond the newest RUN_KEEP per (engine, pair). Imported
+        `secondary-matches` rows are never touched. Returns the number of rows deleted."""
+        try:
+            self.ensure()
+            if self.read_only:
+                return 0
+            return self._delete([i for i, _ in self._evictable_runs(RUN_KEEP if keep is None else keep)],
+                                (RUN_KIND,))
+        except (EnrichmentError, sqlite3.Error):
+            return 0
 
     def apply_retention(self, current: Guard, protect: Collection[str] = (), started: str | None = None) -> int:
         """Best-effort garbage collection after a publish; returns the number of rows deleted.
@@ -308,6 +442,12 @@ class EnrichmentStore:
             cutoff = (datetime.now(UTC) - ORPHAN_GRACE).isoformat()
             doomed = self._orphans(rows, pipes, cutoff) - protected
             freed = sum(rows[i][1] for i in doomed)
+            runs: set[str] = set()
+            for row_id, size in self._evictable_runs(1):  # run history is cheap to lose; sets are never offered
+                if freed >= need_bytes:
+                    break
+                runs.add(row_id)
+                freed += size
             remaining = list(pipes)
             for gen in order:
                 if freed >= need_bytes:
@@ -322,7 +462,7 @@ class EnrichmentStore:
                         freed += rows[row_id][1]
             if freed < need_bytes:
                 raise limit(0)
-            self._delete(doomed)
+            self._delete(doomed | runs, (*DERIVED_KINDS, RUN_KIND))
             return freed
         except sqlite3.Error as exc:
             raise EnrichmentError('PT-ENRICH-LIMIT', 'project enrichment data would exceed 128 MiB '

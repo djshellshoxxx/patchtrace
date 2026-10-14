@@ -83,6 +83,20 @@ def run_engines(project: ProjectRef, engines: Sequence[EngineId], *, max_paralle
             except Exception:  # a faulty observer must not fail an engine
                 pass
 
+    def provenance(eid, status: Status, error: SecondaryError | None) -> dict[str, str]:
+        """Optional adapter hook (SPEC-29 §5); adapters without it keep empty provenance (unchanged rows)."""
+        hook = getattr(registry[eid], 'provenance', None)
+        if hook is None:
+            return {}
+        try:
+            data = {str(k): str(v)[:256] for k, v in dict(hook()).items()}
+        except Exception:  # provenance must never turn an outcome into a crash
+            data = {}
+        kind = getattr(error, 'kind', None) or {'timeout': 'timeout', 'cancelled': 'cancelled'}.get(status)
+        if kind:
+            data['failure_kind'] = kind
+        return dict(list(data.items())[:16])
+
     def outcome(eid, status: Status, started: str, t0: float, *, cap: Capability | None = None,
                 digest: str | None = None, key: str | None = None, error: SecondaryError | None = None,
                 raw: RawResult | None = None, match_set: SecondaryMatchSet | None = None,
@@ -97,7 +111,7 @@ def run_engines(project: ProjectRef, engines: Sequence[EngineId], *, max_paralle
             cache_key=key, status=status, error_code=_code(error), returncode=raw.returncode if raw else None,
             started_utc=started, duration_ms=int((time.monotonic() - t0) * 1000),
             stderr_tail=sanitize_stderr(raw.stderr_tail) if raw else '', output_sha256=output_sha256,
-            match_set_id=match_set.entry_id if match_set else None)
+            match_set_id=match_set.entry_id if match_set else None, provenance=provenance(eid, status, error))
         emit(EngineEvent(eid, 'finished', status))
         return EngineOutcome(run, match_set, error)
 
@@ -122,7 +136,9 @@ def run_engines(project: ProjectRef, engines: Sequence[EngineId], *, max_paralle
                                 Path(workdir), cancel, float(deadlines.get(eid, DEFAULT_DEADLINE)), runner,
                                 stdout_limit)
                 digest = argv_digest(adapter.argv(cap, job), project.older, project.newer)
-                key = cache_key(eid, cap.version, digest, project.older_sha256, project.newer_sha256)
+                extra = getattr(adapter, 'cache_extra', None)  # SPEC-29 §5: e.g. the .BinExport hashes
+                key = cache_key(eid, cap.version, digest, project.older_sha256, project.newer_sha256,
+                                extra=tuple(extra(cap, job)) if extra else ())
                 hit = cache.find(key) if cache else None
                 if hit is not None:
                     return outcome(eid, 'cached', started, t0, cap=cap, digest=digest, key=key, match_set=hit,

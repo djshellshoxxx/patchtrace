@@ -12,16 +12,28 @@ from dataclasses import dataclass
 from datetime import UTC, datetime
 from pathlib import Path
 
+from ..enrichment.contracts import EnrichmentError
 from ..enrichment.storage import EnrichmentStore, Guard
 from . import scheduler
 from .contracts import SecondaryMatchSet
+from .engine_env import engine_env
 from .reconcile import reconcile
-from .registry import REGISTRY, build_registry, safe_env
-from .runs import EngineId, EngineOutcome, EngineRun, argv_digest, as_v2, cache_key, new_run_id
+from .registry import REGISTRY, BinDiffAdapter, build_registry
+from .runs import (
+    EngineId,
+    EngineOutcome,
+    EngineRun,
+    argv_digest,
+    as_v2,
+    cache_key,
+    new_run_id,
+    sanitize_stderr,
+)
 from .store import cache_snapshot, publish_engine_set, publish_run
 
 OK, ENVIRONMENT, RUNTIME, NO_RESULTS, CANCELLED = 0, 2, 3, 4, 5
-ENV_CODES = frozenset({'PT-SECONDARY-INPUT', 'PT-SECONDARY-UNSUPPORTED', 'PT-SECONDARY-PAIR',
+# PT-SECONDARY-INPUT raised while parsing engine output is a runtime failure (3), not an environment one.
+ENV_CODES = frozenset({'PT-SECONDARY-UNSUPPORTED', 'PT-SECONDARY-PAIR',
                        'PT-SECONDARY-ORIENTATION', 'PT-SECONDARY-FORMAT'})
 DEFAULT_ENGINES: tuple[EngineId, ...] = ('rz-diff', 'bindiff')
 TIMEOUT_RANGE = (60, 86_400)
@@ -53,16 +65,16 @@ def classify(outcomes: Sequence[EngineOutcome], cancelled: bool) -> tuple[str, i
 
 def execute(service, store: EnrichmentStore, run, sides: dict, engines: Sequence[EngineId] | None, *,
             rz_diff: str, max_parallel: int, timeout: int, use_cache: bool,
-            cancel: threading.Event) -> RunReport:
+            cancel: threading.Event, bindiff: BinDiffAdapter | None = None) -> RunReport:
     project = service.project
-    registry = build_registry(rz_diff=rz_diff) if rz_diff != 'rz-diff' else REGISTRY
-    env = safe_env(os.environ)
+    registry = build_registry(rz_diff=rz_diff, bindiff=bindiff) if rz_diff != 'rz-diff' or bindiff else REGISTRY
+    env = engine_env(os.environ, 'rz-diff')  # the one shared allow-list; BinDiff builds its own from it
     if engines is None:
         engines = [e for e in DEFAULT_ENGINES if registry[e].probe(env, cancel).supported]
         if not engines:
             return RunReport('failed', ENVIRONMENT, {'runs': [], 'reconciliation': {'reports': []}}, [],
                              'No runnable secondary engine found (rz-diff >= 0.9.0 is required; '
-                             'BinDiff execution is not implemented).')
+                             'BinDiff 8 needs --bindiff and both --older-binexport/--newer-binexport).')
     older, newer = (Path(service.root / sides[s].relative_path).resolve() for s in ('older', 'newer'))
     ref = scheduler.ProjectRef(older, newer, sides['older'].sha256, sides['newer'].sha256)
     snapshot = cache_snapshot(store, ref.older_sha256, ref.newer_sha256) if use_cache else {}
@@ -73,15 +85,30 @@ def execute(service, store: EnrichmentStore, run, sides: dict, engines: Sequence
 
     warnings: list[str] = []
     rows, reports = [], []
+    persist_failed: dict[str, EngineRun] = {}
 
     def persist(outcome: EngineOutcome) -> None:
-        """Runs on this thread as each engine finishes, so Ctrl+C never loses a completed outcome."""
+        """Runs on this thread as each engine finishes, so Ctrl+C never loses a completed outcome.
+        A storage failure (row over 32 MiB, 128 MiB cap) fails only this engine: the failure is
+        recorded as a failed EngineRun and a warning, never raised into the scheduler."""
         record, match_set = outcome.run, outcome.match_set
         digest = match_set.file_sha256 if match_set else record.cache_key
         guard = Guard(project.id, run.id, run.raw_sha256, digest)
-        if match_set is not None and record.status == 'ok':  # a cache hit never rewrites the set
-            publish_engine_set(store, guard, guard, project.revision, match_set)
-        publish_run(store, guard, guard, project.revision, record)
+        try:
+            if match_set is not None and record.status == 'ok':  # a cache hit never rewrites the set
+                publish_engine_set(store, guard, guard, project.revision, match_set)
+            publish_run(store, guard, guard, project.revision, record)
+        except EnrichmentError as exc:
+            warnings.append(f'{record.engine}: result not stored ({exc.code}): {exc.message}')
+            record = record.model_copy(update={
+                'status': 'failed', 'error_code': exc.code, 'output_sha256': None, 'match_set_id': None,
+                'stderr_tail': sanitize_stderr(f'{exc.code}: {exc.message}')})
+            match_set = None
+            persist_failed[record.run_id] = record
+            try:
+                publish_run(store, guard, guard, project.revision, record)
+            except EnrichmentError as again:
+                warnings.append(f'{record.engine}: failure record not stored ({again.code})')
         if match_set is not None:
             reports.append(reconcile(project.matches, match_set))
         rows.append({'engine': record.engine, 'status': record.status, 'error_code': record.error_code,
@@ -99,6 +126,8 @@ def execute(service, store: EnrichmentStore, run, sides: dict, engines: Sequence
     order = {e: i for i, e in enumerate(o.run.engine for o in outcomes)}
     rows.sort(key=lambda r: order[r['engine']])
     reports.sort(key=lambda r: order[r.engine])
+    outcomes = [EngineOutcome(persist_failed[o.run.run_id], None, None) if o.run.run_id in persist_failed else o
+                for o in outcomes]
     status, code = classify(outcomes, cancel.is_set())
     result = {'runs': rows,
               'reconciliation': {'reports': [{'engine': r.engine, 'engine_version': r.engine_version,

@@ -54,3 +54,18 @@ def test_every_cli_command_is_covered_by_the_smoke_list():
     parser = cli._parser()
     sub = next(a for a in parser._actions if getattr(a, 'choices', None))
     assert set(sub.choices) == set(smoke.COMMANDS)
+
+
+def test_live_rzdiff_check_parses_real_coloured_help_text():
+    """Real `rz-diff -h` (rizin 0.9.1) output contains ANSI colour codes; the flag-drift check must see through them."""
+    import importlib.util
+    from pathlib import Path
+    root = Path(__file__).resolve().parents[1]
+    spec = importlib.util.spec_from_file_location('live_rzdiff_check', root / 'tools' / 'live_rzdiff_check.py')
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    text = (root / 'tests' / 'fixtures' / 'secondary' / 'rz-diff-0.9.1-help.txt').read_text(encoding='utf-8')
+    assert '\x1b[' in text  # the fixture is the raw coloured output, not a cleaned copy
+    assert set(module.FROZEN_FLAGS) <= module.help_options(text)
+    # A help text that lacks a frozen flag must be detected (the check is not a substring match).
+    assert '-t' not in module.help_options('  -j   JSON output\n  --type  not an option line\n')

@@ -33,10 +33,14 @@ BINDIFF_LIMITATIONS = (
 
 
 class SecondaryError(Exception):
-    def __init__(self, code: ErrorCode, message: str):
+    """`kind` (optional) names the SPEC-29 §6 failure sub-class, e.g. 'binexport-unbound'; it never
+    changes `code` and is recorded as `EngineRun.provenance['failure_kind']`."""
+
+    def __init__(self, code: ErrorCode, message: str, *, kind: str | None = None):
         super().__init__(f'{code}: {message}')
         self.code = code
         self.message = message
+        self.kind = kind
 
 
 class _Strict(BaseModel):

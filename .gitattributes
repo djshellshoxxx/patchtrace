@@ -1,0 +1,3 @@
+*.BinDiff binary
+*.BinExport binary
+tests/fixtures/secondary/bindiff-synthetic-stdout.txt text eol=lf

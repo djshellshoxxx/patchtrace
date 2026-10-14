@@ -150,7 +150,8 @@ def test_huge_stdout_is_bounded_and_rejected_as_limit(tmp_path):
 def test_unsupported_engine_is_outcome_not_exception(tmp_path):
     out = go(tmp_path, build_registry(), ['bindiff', 'ghidriff-baseline'])
     assert [o.run.status for o in out] == ['unsupported', 'unsupported']
-    assert out[0].run.error_code == 'PT-SECONDARY-UNSUPPORTED' and 'C4' in str(out[0].error)
+    assert out[0].run.error_code == 'PT-SECONDARY-UNSUPPORTED' and 'not configured' in str(out[0].error)
+    assert out[0].run.provenance == {'failure_kind': 'not-configured'}
 
 
 def test_missing_rz_diff_is_unsupported(tmp_path):

@@ -54,3 +54,25 @@ Stable IDs are independent of filenames. Public interfaces in SPEC-01 and schema
 | packaging | tools/build_windows.py; tools/build_linux.py; tools/pyinstaller_hooks/ | Frozen Windows/Linux runtimes, curated Qt desktop plugins, licenses, inventory and checksum | PyInstaller | Windows/Linux Actions and archive inspection |
 
 Every substantial future module must be added here before implementation. UI must not own analysis logic; provider must not own project state.
+
+## Phase C6 evidence panel modules (SPEC-28 evidence panel, owner C6)
+
+| Module | Files | Responsibility | Depends on | Tests |
+|---|---|---|---|---|
+| evidence view | secondary/evidence_view.py | Pure typed view-model (`EvidenceViewModel`, `EvidenceRow`, `EngineCell`, `EngineInfo`, `Alternative`), verdict mapping Agree/Contested/Single engine/Unknown, per-engine native cell text (never combined), `sanitize_text`, `filter_rows`, `format_provenance_block`, state precedence E0-E8 | secondary.reconcile/evidence | Pure table-driven tests, banned-string sweep, no-Qt subprocess import |
+| evidence panel service | secondary/evidence_panel_service.py | Pure orchestration: immutable `EvidenceRequest` -> `load_evidence` (newest set per engine, reconcile, assess, build), `detect_stale`, `EngineOutcomeView` adapter over SPEC-28 `EngineOutcome`, `RunRequest` + `execute_run` over `scheduler.run_engines` | evidence view, secondary scheduler | Pure tests with injected fake registry |
+| evidence UI | ui_evidence.py | Qt adapter: `EvidenceController` (dock, generation counter, GUI-thread persistence), `EvidencePanel`, table/filter-proxy/engine-status models, badge delegate, `EvidenceLoadThread`/`EngineRunThread` (workers see immutable requests only) | Qt, evidence panel service | pytest-qt offscreen per state E0-E8, hostile strings, thread tests, tooltip audit |
+## C4 BinDiff execution (SPEC-29, 2026-10-14)
+| Module | File | Responsibility | Depends on | Tests |
+|---|---|---|---|---|
+| bindiff probe | secondary/bindiff_probe.py | `--version`/`--help` capability probe (major >= 8, required options, untested newer majors, `bindiff_ui`/`bindiff_cli` refused, never PATH), cached per (path, mtime, size); `sanitize` | jobs.run_process, engine_env | `tests/test_bindiff_probe.py` (fake `bindiff`) |
+| bindiff inputs | secondary/bindiff_inputs.py | `AcceptedBinExportLike` Protocol (C3 seam), `bind_pair` (SHA-256 `executable_id` binding, orientation, explicit asserted override), `copy_and_hash` | contracts | `tests/test_bindiff_inputs.py` |
+| bindiff run | secondary/bindiff_run.py | private workdir, fixed argv, output guard, success = exit 0 + one `older_vs_newer.BinDiff`, raw preserved before hardened import, §6 kinds | bindiff_probe, bindiff_inputs, bindiff | `tests/test_bindiff_run.py` |
+| engine env | secondary/engine_env.py | single child-env allow-list for secondary engines (rz-diff via `backend.build_child_env`, BinDiff from scratch) | backend | `tests/test_engine_env.py`, `tests/test_live_rzdiff_check.py` |
+| bindiff CLI | secondary/cli_bindiff.py | `--older/--newer-binexport`, `--accept-unbound-binexport`, `PATCHTRACE_BINDIFF`, C3 acceptor wrapper | registry | `tests/test_cli_bindiff.py` |
+| live harness | tests/conftest.py, tests/test_live_bindiff.py, tools/{provision_bindiff,check_live_status,make_bindiff_fixtures}.py, tools/bindiff_pin.json, .github/workflows/live-bindiff.yml | never-silent live status (`passed/failed/blocked`), fail-closed pinned provisioning, synthetic goldens | - | `tests/test_live_harness.py`, `tests/test_bindiff_golden.py` |
+### C9 calibration (2026-10-14; synthetic validation only)
+| Module | Files | Responsibility | Depends on | Verification |
+|---|---|---|---|---|
+| calibration runtime (ships, pure) | src/patchtrace/calibration/{features,artifact,predict,ood,policy}.py | `features/1` extraction from stored Ghidriff + `Reconciliation` rows (families G,B,R,S,P,X, dependency table, profiles); strict `patchtrace-calibration-model/1` loader (size cap, strict JSON, digest, schema/semantic checks, no pickle) that degrades to no-model; predict + provenance; OOD flags; policy order; `display_level()` = 'ordinal' unless a valid artifact carries passing gates | models, secondary.reconcile (read-only) | tests/test_calibration_runtime.py (golden vectors, loader negatives, policy table, no forbidden imports) |
+| calibration dev pipeline (never ships) | tools/calibration/*.py, tools/calibration/guidelines/g1.md | contracts (corpus/labels/report), corpus verify/fetch + no-PE/Tier-W guard, lineage union-find + identity grouping + roles, sampling, blind labelling log, kappa, stdlib IRLS/Platt/PAV, grouped nested CV, metrics, lineage bootstrap, Learn-then-Test thresholds, null-simulated ECE, OOD validation, ablations, baselines (M0, M0b raw bytes, M1, M2), gates, deterministic report, single-use locked test, synthetic worlds, schema generation | patchtrace.calibration, acquisition.contracts | tests/test_calibration_{math,metrics,cv,tools}.py; optional scikit-learn cross-check (`calibration-dev` extra) |

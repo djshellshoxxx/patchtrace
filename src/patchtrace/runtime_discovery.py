@@ -18,6 +18,8 @@ MAX_CHILDREN_PER_ROOT = 64
 class RuntimeCandidates:
     python_executables: tuple[Path, ...]
     ghidra_roots: tuple[Path, ...]
+    # SPEC-29 §8: pre-fill only. Never found via PATH, never executed here; the BinDiff probe decides.
+    bindiff_executables: tuple[Path, ...] = ()
 
 
 def _safe_file(path: Path) -> Path | None:
@@ -65,9 +67,40 @@ def _children(root: Path, prefix: str = ''):
         return ()
 
 
+def _bindiff_candidates(env: Mapping[str, str], system_paths: Sequence[Path] | None) -> set[Path]:
+    """Fixed install locations plus one bounded `bindiff*` level under PatchTrace runtime dirs; regular,
+    non-symlink files only (so a probable `/usr/bin/bindiff` symlink is intentionally not discovered)."""
+    found: set[Path] = set()
+
+    def add(candidate: Path) -> None:
+        if (resolved := _safe_file(candidate)) is not None:
+            found.add(resolved)
+
+    if env.get('PATCHTRACE_BINDIFF'):
+        add(Path(env['PATCHTRACE_BINDIFF']))
+    if system_paths is None:
+        system_paths = []
+        if env.get('PROGRAMFILES'):
+            system_paths.append(Path(env['PROGRAMFILES']) / 'BinDiff' / 'bin' / 'bindiff.exe')
+        if os.name != 'nt':
+            system_paths.append(Path('/opt/bindiff/bin/bindiff'))
+    for path in system_paths:
+        add(Path(path))
+    runtime_roots = []
+    if env.get('LOCALAPPDATA'):
+        runtime_roots.append((Path(env['LOCALAPPDATA']) / 'PatchTrace' / 'runtimes', 'bindiff.exe'))
+    if env.get('HOME'):
+        runtime_roots.append((Path(env['HOME']) / '.local' / 'share' / 'patchtrace' / 'runtimes', 'bindiff'))
+    for root, name in runtime_roots:
+        for child in _children(root, 'bindiff'):
+            add(child / 'bin' / name)
+    return found
+
+
 def discover_local_runtimes(
     environ: Mapping[str, str] | None = None,
     search_roots: Sequence[Path] = (),
+    bindiff_system_paths: Sequence[Path] | None = None,
 ) -> RuntimeCandidates:
     """Find existing tools without execution, downloads or disk mutation.
 
@@ -125,4 +158,6 @@ def discover_local_runtimes(
     return RuntimeCandidates(
         python_executables=tuple(sorted(pythons, key=lambda p: os.path.normcase(str(p)))),
         ghidra_roots=tuple(sorted(ghidras, key=lambda p: os.path.normcase(str(p)))),
+        bindiff_executables=tuple(sorted(_bindiff_candidates(env, bindiff_system_paths),
+                                         key=lambda p: os.path.normcase(str(p)))),
     )

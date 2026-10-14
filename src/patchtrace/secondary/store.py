@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import json
 
+from ..enrichment.contracts import EnrichmentError
 from ..enrichment.storage import EnrichmentStore, Entry, Guard
 from . import load_secondary
 from .contracts import KIND, SecondaryMatchSet
@@ -49,7 +50,9 @@ def current_sets(store: EnrichmentStore, current: Guard | None = None) -> list[R
 
 def publish_run(store: EnrichmentStore, guard: Guard, current: Guard, revision: int, run: EngineRun) -> Entry:
     """Append one EngineRun row (ids are unique per attempt, so rows are never overwritten)."""
-    return store.publish(RUN_KIND, guard, current, revision, 'complete', run.model_dump(mode='json'), run.run_id)
+    entry = store.publish(RUN_KIND, guard, current, revision, 'complete', run.model_dump(mode='json'), run.run_id)
+    store.prune_runs()  # best-effort retention: newest RUN_KEEP per engine/pair, sets never touched
+    return entry
 
 
 def cache_snapshot(store: EnrichmentStore, older_sha256: str, newer_sha256: str,
@@ -59,8 +62,8 @@ def cache_snapshot(store: EnrichmentStore, older_sha256: str, newer_sha256: str,
     found: dict[str, SecondaryMatchSet] = {}
     try:
         sets = {e.id: m for e, m in load_secondary(store, current) if not e.stale}
-        entries = store.entries(RUN_KIND, current)
-    except ValueError:
+        entries = store.entries(RUN_KIND, current, on_corrupt=lambda _id: None)
+    except (ValueError, EnrichmentError):
         return found  # PT-SECONDARY-CACHE: unreadable rows are a miss, never fatal
     for entry in reversed(entries):  # oldest first so the newest valid row wins
         try:

@@ -307,6 +307,13 @@ def run(project: ComparisonProject, options: PipelineOptions | None = None,
                           ranking.config_digest(options.config), default)
 
 
+def prepare_publish(root) -> None:
+    """Worker-thread step before `publish`: take the verified pre-extension/retention backups off the
+    owner (GUI) thread. Best effort; `publish` still takes any backup that is missing."""
+    from .storage import prepare_backups
+    prepare_backups(root)
+
+
 def publish(store: EnrichmentStore, project: ComparisonProject, result: PipelineResult) -> list[Entry]:
     """Owner-thread publication with an immediate currency recheck against the live project.
     Cancelled results are never published: they would leave an incomplete profile row set."""
@@ -348,6 +355,15 @@ def publish(store: EnrichmentStore, project: ComparisonProject, result: Pipeline
     return written
 
 
+def _versions_current(entry) -> bool:
+    """A stored pipeline row is served only if every recorded stage ran at today's stage version."""
+    try:
+        stages = entry.body['items'][0]['stages']
+        return bool(stages) and all(STAGE_VERSIONS.get(s['stage']) == s['stage_version'] for s in stages)
+    except (KeyError, IndexError, TypeError):
+        return False
+
+
 def load_default(store: EnrichmentStore, project: ComparisonProject):
     """(RankingResult, signal sets, note) for the default profile computed from the live
     project, or (None, (), reason). Rows from other profiles are never returned."""
@@ -359,7 +375,7 @@ def load_default(store: EnrichmentStore, project: ComparisonProject):
     digest = ranking.config_digest(RankingConfig())
     candidates = [e for e in store.entries('pipeline', guard)
                   if e.body.get('default_profile') is True and e.body.get('config_digest') == digest]
-    current = next((e for e in candidates if not e.stale), None)
+    current = next((e for e in candidates if not e.stale and _versions_current(e)), None)
     if current is None:
         # Only say "stale" when a default-profile row exists for an older state; rows of
         # other weight profiles are not evidence that the project changed.
@@ -396,7 +412,7 @@ def load_profile(store: EnrichmentStore, project: ComparisonProject, config_dige
     wil_id = wil_stage_id(guard.input_digest, feature_ids)
     candidates = [e for e in store.entries('pipeline', guard) if e.body.get('config_digest') == config_digest
                   and e.body.get('stage_ids', {}).get('wil') == wil_id]
-    current = next((e for e in candidates if not e.stale), None)
+    current = next((e for e in candidates if not e.stale and _versions_current(e)), None)
     if current is None:
         stale = bool(candidates) or any(e.body.get('config_digest') == config_digest
                                         for e in store.entries('pipeline'))

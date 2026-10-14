@@ -133,3 +133,16 @@ def test_reject_during_diagnosis_waits_with_accurate_message(qtbot, window, tmp_
     assert 'diagnosis' in dialog.diagnostics.toPlainText().lower()
     dialog.worker.cancel.set()
     qtbot.waitUntil(lambda: dialog.worker is None, timeout=5000)
+
+
+def test_find_button_reenabled_when_diagnosis_ends_after_discovery(qtbot, window, tmp_path, monkeypatch):
+    """Audit2 #9: a diagnosis finishing after discovery ended used to leave Find disabled forever."""
+    from patchtrace.runtime_discovery import RuntimeCandidates
+    monkeypatch.setattr('patchtrace.ui.discover_local_runtimes', lambda: RuntimeCandidates((), ()))
+    dialog = SetupDialog(window.settings, window, tmp_path / 'profiles')
+    qtbot.addWidget(dialog)
+    dialog._busy_kind = 'diagnosis'  # diagnosis started while the scan was still running
+    qtbot.waitUntil(lambda: dialog._discovery is None, timeout=5000)
+    assert not dialog.find.isEnabled()
+    dialog._finish_diagnosis()
+    assert dialog.find.isEnabled() and dialog.check.isEnabled()

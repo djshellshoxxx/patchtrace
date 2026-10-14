@@ -298,3 +298,10 @@ Order: P0 -> P1 -> (P2, P4a in parallel; disjoint files) -> P3 -> P4b -> P5; P6 
 - A cache hit writes only a `cached` `EngineRun` row; the stored set is not rewritten.
 - Alternatives: persisted model and limits exist; adapters do not emit them yet; reconcile/evidence report rank (section 6.2).
 - Test names in section 10 follow the files as built. Windows fake executables are `.cmd` launchers, which also exercises Job Object containment through `cmd.exe`; this is unverified until Windows CI runs.
+
+## 16. Additive contract changes from SPEC-29 (C4, 2026-10-14)
+- `EngineRun.provenance: dict[str, str]` (max 16 keys `[a-z0-9_]{1,64}`, values <= 256 chars, default `{}`, omitted from serialised output when empty so earlier `engine-run/1` rows round-trip byte-identically). Schema regenerated.
+- `cache_key(..., extra=())`: further output-determining inputs (BinDiff: the two `.BinExport` snapshot hashes). Empty `extra` gives exactly the previous key.
+- `SecondaryError(code, message, *, kind=None)`: optional §6 failure kind; recorded as `provenance['failure_kind']`.
+- Scheduler: optional adapter hooks `cache_extra(cap, job)` and `provenance()`; adapters without them are unchanged.
+- §9.6 env allow-list: `secondary/engine_env.py` is the single source (rz-diff = `backend.build_child_env(for_tool='rizin')`); `tools/live_rzdiff_check.py` runs through it plus `run_engines`, and checks `-h` by parsing option lines.

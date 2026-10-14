@@ -1,0 +1,13 @@
+{
+  "file": "bindiff-synthetic-pair.BinDiff",
+  "file_sha256": "77bb8fdf1723cb40c3a692941e299130222c23f3c3bdc9af83e675af66b6df92",
+  "functions": 5,
+  "metadata_version": "BinDiff 8 (synthetic fixture, not produced by BinDiff)",
+  "newer_sha256": "838170756159b109c961a5e8dd44a7dd5abe4029fb15b7f9687e8395a6f2ebfa",
+  "note": "Not produced by BinDiff; replace with the live v8 golden (SPEC-29 section 9.3).",
+  "older_sha256": "109f36c70027a83dc3409acf5bcd97ae7cc387678d2e6ee0a5f684f68bc2fcbe",
+  "produced_by": "tools/make_bindiff_fixtures.py",
+  "size": 53248,
+  "sqlite_version": "3.45.1",
+  "synthetic": true
+}
