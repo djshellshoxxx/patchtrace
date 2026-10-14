@@ -19,6 +19,29 @@ _SKIP = object()
 
 
 def _normalize(value):
+    """Exact-type fast path for the hot identity payloads (dicts, lists, ASCII strings, ints); anything
+    else takes the general path below. Output and errors are identical (tests/test_identity_equivalence.py)."""
+    kind = type(value)
+    if kind is str:
+        return value if value.isascii() else unicodedata.normalize('NFC', value)  # NFC never changes ASCII
+    if kind is int or kind is bool or value is None:
+        return value
+    if kind is dict:
+        out = {}
+        for key, item in value.items():
+            if type(key) is not str and not isinstance(key, str):
+                raise TypeError('identity payload keys must be strings')
+            normalized = key if key.isascii() else unicodedata.normalize('NFC', key)
+            if normalized in out:
+                raise ValueError('keys collide after NFC normalization')
+            out[normalized] = _normalize(item)
+        return out
+    if kind is list or kind is tuple:
+        return [_normalize(item) for item in value]
+    return _normalize_general(value)
+
+
+def _normalize_general(value):
     if isinstance(value, str):
         return unicodedata.normalize('NFC', value)
     if isinstance(value, bool) or value is None:
@@ -42,9 +65,13 @@ def _normalize(value):
     raise TypeError(f'unsupported identity payload type {type(value).__name__}')
 
 
+# One shared encoder: `json.dumps` with these options builds a new JSONEncoder per call. Stateless while
+# encoding (`markers` is per call), so it is safe to share between threads.
+_ENCODER = json.JSONEncoder(sort_keys=True, separators=(',', ':'), ensure_ascii=False, allow_nan=False)
+
+
 def canonical_json(value) -> bytes:
-    return json.dumps(_normalize(value), sort_keys=True, separators=(',', ':'),
-                      ensure_ascii=False, allow_nan=False).encode('utf-8')
+    return _ENCODER.encode(_normalize(value)).encode('utf-8')
 
 
 def domain_id(domain: str, version: int, payload) -> str:
@@ -56,6 +83,9 @@ def domain_id(domain: str, version: int, payload) -> str:
 
 def sorted_unique(items: Iterable) -> list:
     """Order-independent set representation by canonical bytes."""
+    items = list(items)
+    if len(items) <= 1:  # nothing to order or merge (1:1 pairings); the caller's payload is still validated
+        return items
     seen = {canonical_json(item): item for item in items}
     return [seen[key] for key in sorted(seen)]
 

@@ -8,6 +8,7 @@ Missing decompiled code stays None so detectors can report `unavailable`.
 from __future__ import annotations
 
 from dataclasses import dataclass
+from functools import cached_property
 
 from ..alignment import diff_hunks
 from ..models import ComparisonProject, FunctionMatch, FunctionRecord
@@ -61,11 +62,30 @@ class MatchView:
     quality: str
     older: tuple[FunctionView, ...]
     newer: tuple[FunctionView, ...]
-    hunks: tuple[Hunk, ...]
+    given_hunks: tuple[Hunk, ...] | None = None  # None: derived from the 1:1 code on first use
 
     @property
     def two_sided(self) -> bool:
         return bool(self.older) and bool(self.newer)
+
+    @cached_property
+    def hunks(self) -> tuple[Hunk, ...]:
+        """Line hunks of a 1:1 pairing with code on both sides, else (). Computed once, on demand: a
+        derived-cache hit only re-validates locations and never needs the alignment."""
+        if self.given_hunks is not None:
+            return self.given_hunks
+        older, newer = self.older, self.newer
+        if len(older) != 1 or len(newer) != 1 or older[0].code is None or newer[0].code is None:
+            return ()
+        return tuple(Hunk(h.operation, h.old_start, h.old_end, h.new_start, h.new_end)
+                     for h in diff_hunks('\n'.join(older[0].code), '\n'.join(newer[0].code), self.match_id))
+
+    @cached_property
+    def semantic_ordinals(self) -> frozenset[int]:
+        """Ordinals of the non-noise changed hunks (B1 rule, `signals.semantic_hunk_ordinals`), computed once
+        per view and shared with B2; `signals.detect` primes it from the context it already built."""
+        from .signals import semantic_hunk_ordinals  # lazy: signals imports this module
+        return semantic_hunk_ordinals(self)
 
 
 @dataclass(frozen=True)
@@ -111,12 +131,7 @@ def match_view(match: FunctionMatch, diff: str, artifacts: dict[str, str]) -> Ma
     newer = tuple(_function(f, 'newer', artifacts['newer'], match.run_id) for f in match.newer)
     pairing = identity.pairing_id(diff, match.category, match.manual,
                                   _occurrences(diff, 'older', older), _occurrences(diff, 'newer', newer))
-    hunks: tuple[Hunk, ...] = ()
-    if len(older) == 1 and len(newer) == 1 and older[0].code is not None and newer[0].code is not None:
-        hunks = tuple(Hunk(h.operation, h.old_start, h.old_end, h.new_start, h.new_end)
-                      for h in diff_hunks('\n'.join(older[0].code), '\n'.join(newer[0].code), match.id))
-    return MatchView(pairing, match.id, match.run_id, match.category, match.manual, match.quality,
-                     older, newer, hunks)
+    return MatchView(pairing, match.id, match.run_id, match.category, match.manual, match.quality, older, newer)
 
 
 def location_problem(function: FunctionView, loc: SourceLocation) -> str | None:

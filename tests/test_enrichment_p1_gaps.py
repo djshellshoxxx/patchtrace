@@ -92,3 +92,14 @@ def test_validate_location_rejects_wrong_side(located):
     with pytest.raises(EnrichmentError) as info:
         views.validate_location(run_view, flipped)
     assert info.value.code == 'PT-ENRICH-OWNERSHIP'
+
+
+def test_truncated_pairing_wil_outcome_is_partial(monkeypatch):
+    monkeypatch.setattr(views, 'MAX_LINES', 5)  # the flag check sits in the unscanned tail
+    pairing = view(_long('if (Feature_1234__private_IsEnabledDeviceUsage()) { len = 1; }'),
+                   _long('if (Feature_1234__private_IsEnabledDeviceUsage()) { len = 2; }'))
+    outcome = pipeline._wil_outcome(pairing.pairing_id, pairing, (), 'complete')
+    assert outcome.status == 'partial' and outcome.reason.startswith(signals.LIMIT)
+    monkeypatch.setattr(views, 'MAX_LINES', 20_000)
+    whole = view(_long('len = 1'), _long('len = 2'))
+    assert pipeline._wil_outcome(whole.pairing_id, whole, (), 'complete').status == 'complete'

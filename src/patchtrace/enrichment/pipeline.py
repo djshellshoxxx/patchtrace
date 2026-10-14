@@ -8,6 +8,8 @@ status degrades to `partial`. Missing evidence is `unavailable`, never an empty 
 """
 from __future__ import annotations
 
+import contextlib
+import gc
 import threading
 from collections.abc import Callable
 from dataclasses import dataclass, field
@@ -38,6 +40,31 @@ CANCEL_EVERY = 256
 _DIGEST_EXCLUDE = frozenset({'CANCEL_EVERY'})
 OLDER_ALGORITHM_NOTE = ('Stored ranking is stale (computed by an older PatchTrace version). '
                         'Rank changes again.')
+
+
+_GC_LOCK = threading.Lock()
+_GC_STATE = {'depth': 0, 'was_enabled': False}
+
+
+@contextlib.contextmanager
+def _gc_paused():
+    """Pause the cyclic garbage collector while a run allocates its many small records (tens of thousands
+    of frozen models at 10,000 pairings): repeated full collections made validation and view building
+    superlinear. Reference counting still frees everything at once; the collector runs again (and
+    catches up) as soon as the outermost pause ends. Re-entrant and thread-safe: the first entrant
+    records whether collection was enabled and the last one to leave restores exactly that."""
+    with _GC_LOCK:
+        if _GC_STATE['depth'] == 0:
+            _GC_STATE['was_enabled'] = gc.isenabled()
+            gc.disable()
+        _GC_STATE['depth'] += 1
+    try:
+        yield
+    finally:
+        with _GC_LOCK:
+            _GC_STATE['depth'] -= 1
+            if _GC_STATE['depth'] == 0 and _GC_STATE['was_enabled']:
+                gc.enable()
 
 
 def algorithm_digests() -> dict[str, str]:
@@ -193,7 +220,10 @@ def _wil_outcome(pairing_id: str, view: MatchView | None, transitions: tuple[Fea
         return outcome('unavailable', f'{signals.NOT_APPLICABLE} pairing-ambiguous')
     if any(f.code is None for f in (*view.older, *view.newer)):
         return outcome('unavailable', f'{signals.LIMIT} code-unavailable')
-    notes = sorted({n for t in transitions for n in t.notes if n in {'function-too-large', 'site-limit'}})
+    notes = {n for t in transitions for n in t.notes if n in {'function-too-large', 'site-limit'}}
+    if any(f.truncated for f in (*view.older, *view.newer)):
+        notes.add('function-too-large')  # a flag may sit in the unscanned tail even without a transition
+    notes = sorted(notes)
     if notes:
         return outcome('partial', f'{signals.LIMIT} {",".join(notes)}')
     return outcome('complete')
@@ -207,6 +237,12 @@ def _merge(signal_set: SignalSet, extra: tuple[ChangeSignal, ...], outcome: Dete
 
 def run(project: ComparisonProject, options: PipelineOptions | None = None,
         cancel: threading.Event | None = None, progress: Callable[[str], None] | None = None) -> PipelineResult:
+    with _gc_paused():
+        return _run(project, options, cancel, progress)
+
+
+def _run(project: ComparisonProject, options: PipelineOptions | None,
+         cancel: threading.Event | None, progress: Callable[[str], None] | None) -> PipelineResult:
     options = options or PipelineOptions()
     views = build_views(project, options.run_id)
     guard = Guard(views.project_id, views.run_id, views.raw_sha256, input_digest(views))
