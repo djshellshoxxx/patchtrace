@@ -125,20 +125,33 @@ def test_reimport_bindiff_twice_then_reconcile_exit_0(project, tmp_path, capsys)
 
 def test_interrupt_after_first_engine_keeps_its_stored_set(project, monkeypatch, capsys):
     """Ctrl+C during a later engine: the finished rz-diff outcome is already persisted (SPEC-28 section 7)."""
-    import _thread
     import threading
 
-    from test_secondary_scheduler import PyEngine
+    from test_secondary_scheduler import PyEngine, interrupt_main_when
 
     from patchtrace.secondary import cli_run
 
     registry = {'rz-diff': PyEngine(f'print({GOOD!r})'),
                 'bindiff': PyEngine('import time\ntime.sleep(60)', 'bindiff')}
     monkeypatch.setattr(cli_run, 'build_registry', lambda **kw: registry)
+    persisted = threading.Event()
+    real_publish_run = cli_run.publish_run
+
+    def publish_run_then_signal(*args, **kwargs):
+        result = real_publish_run(*args, **kwargs)
+        if getattr(args[-1], 'engine', None) == 'rz-diff':
+            persisted.set()  # the finished outcome is stored: only now may Ctrl+C arrive (no fixed delay)
+        return result
+
+    monkeypatch.setattr(cli_run, 'publish_run', publish_run_then_signal)
     root, _ = project
-    threading.Timer(4.0, _thread.interrupt_main).start()
-    code = cli.main(['secondary', 'run', str(root), '--json', '--rz-diff', sys.executable,
-                     '--engine', 'rz-diff', '--engine', 'bindiff'])
+    stop, watcher = interrupt_main_when(persisted)
+    try:
+        code = cli.main(['secondary', 'run', str(root), '--json', '--rz-diff', sys.executable,
+                         '--engine', 'rz-diff', '--engine', 'bindiff'])
+    finally:
+        stop.set()
+        watcher.join(5)
     assert code == 5 and json.loads(capsys.readouterr().out)['status'] == 'cancelled'
     assert cli.main(['secondary', 'reconcile', str(root), '--json']) == 0
     assert [r['engine'] for r in json.loads(capsys.readouterr().out)['result']['reports']] == ['rz-diff']
