@@ -13,6 +13,7 @@ from pathlib import Path
 from PySide6.QtCore import QSettings, Qt, QThread, QTimer, Signal
 from PySide6.QtGui import QAction, QColor, QFont, QKeySequence, QTextCharFormat, QTextCursor
 from PySide6.QtWidgets import (
+    QAbstractItemView,
     QApplication,
     QCheckBox,
     QComboBox,
@@ -50,6 +51,7 @@ from .backend import BackendConfig, diagnose, quarantine_failed_run, run_compari
 from .evidence import build_context, resolve_evidence
 from .interpretation import interpret, system_prompt
 from .offline_bundle import inspect_offline_bundle, install_offline_bundle
+from .preflight import overview_rows
 from .providers import ProviderConfig
 from .reports import export_project
 from .runtime_discovery import discover_local_runtimes
@@ -1350,6 +1352,8 @@ class MainWindow(QMainWindow):
         self.open_action = self._action('Open', self.open_project, 'Ctrl+O')
         self.sample_action = self._action('Sample', self.open_sample)
         self.import_action = self._action('Import JSON', self.import_diff)
+        self.overview_action = self._action('File overview', self.show_file_overview)
+        self.overview_action.setToolTip('View older/newer names, sizes and saved SHA-256 values immediately. This read-only preview uses recorded project metadata; PE headers and signatures are not yet inspected.')
         self.run_action = self._action('Run comparison', self.run_analysis, 'F5')
         self.cancel_action = self._action('Cancel job', self.cancel_job, 'Escape')
         self.interpret_action = self._action('Interpret selection', self.preview_interpretation, 'Ctrl+I')
@@ -1365,12 +1369,12 @@ class MainWindow(QMainWindow):
         toolbar.setMovable(False)
         self.addToolBar(toolbar)
         for action in [self.new_action, self.open_action, self.sample_action, self.import_action,
-                       self.run_action, self.rank_action, self.cancel_action, self.interpret_action, self.export_action,
+                       self.overview_action, self.run_action, self.rank_action, self.cancel_action, self.interpret_action, self.export_action,
                        self.setup_action]:
             toolbar.addAction(action)
         file_menu = self.menuBar().addMenu('Project')
         for action in [self.new_action, self.acquire_action, self.open_action, self.sample_action, self.save_action,
-                       self.import_action, self.export_action, self.swap_action]:
+                       self.import_action, self.overview_action, self.export_action, self.swap_action]:
             file_menu.addAction(action)
         file_menu.addAction(self.backup_action)
         file_menu.addAction(self.undo_match_action)
@@ -2290,6 +2294,41 @@ class MainWindow(QMainWindow):
                              # Raw-output reuse (SPEC-07 §13) is opt-in via the selected profile's cache_dir.
                              cache_dir=str(profile.cache_dir or ''))
 
+    def show_file_overview(self):
+        """Nonmodal read-only preview available without the Ghidra backend."""
+        if not self.project:
+            return
+        artifacts = {artifact.side: artifact for artifact in self.project.artifacts}
+        rows = overview_rows(artifacts['older'], artifacts['newer'])
+        previous = getattr(self, '_preflight_dialog', None)
+        if previous is not None:
+            previous.close()
+        dialog = QDialog(self)
+        dialog.setWindowTitle('Preliminary file comparison · recorded metadata')
+        dialog.setMinimumSize(850, 345)
+        dialog.setModal(False)
+        layout = QVBoxLayout(dialog)
+        explanation = PlainLabel(
+            'Read-only values recorded when this project was created. SHA-256 and size '
+            'are saved input metadata, not a fresh disk integrity check. This alpha '
+            'preview does not parse PE headers or verify certificate signatures.')
+        explanation.setWordWrap(True)
+        layout.addWidget(explanation)
+        table = QTableWidget(len(rows), 3, dialog)
+        table.setHorizontalHeaderLabels(['Recorded field', 'OLDER', 'NEWER'])
+        table.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
+        table.setColumnWidth(0, 245)
+        table.setColumnWidth(1, 285)
+        table.horizontalHeader().setStretchLastSection(True)
+        for index, row in enumerate(rows):
+            for column, value in enumerate((row.field, row.older, row.newer)):
+                item = QTableWidgetItem(value)
+                item.setToolTip('Saved project artifact metadata; no executable content is run or parsed.')
+                table.setItem(index, column, item)
+        layout.addWidget(table)
+        self._preflight_dialog = dialog
+        dialog.show()
+
     def run_analysis(self):
         if not self.project:
             return
@@ -2300,6 +2339,7 @@ class MainWindow(QMainWindow):
         if not str(config.python_executable) or not str(config.ghidra_dir):
             self.show_error('Configure the external Python executable and Ghidra directory in Setup.')
             return
+        self.show_file_overview()
         snapshot, root, service = self.project.model_copy(deep=True), self.service.root, self.service
         def compare(cancel, event):
             raw_path, run = run_comparison(config, snapshot, root, cancel, event)
@@ -2468,6 +2508,7 @@ class MainWindow(QMainWindow):
         self.interpret_action.setEnabled(project and idle and bool(self.navigator.selectedItems()))
         self.rank_action.setEnabled(project and idle and any(r.status == "completed" and r.raw_sha256
                                                               for r in self.project.runs))
+        self.overview_action.setEnabled(project)
         self.cancel_action.setEnabled(not idle and not self.worker.cancel.is_set())
         self.correct_button.setEnabled(bool(match) and idle)
         self.match_review.setEnabled(bool(match) and idle)
