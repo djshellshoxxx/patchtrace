@@ -52,10 +52,8 @@ Suggested source discovery pseudocode:
         for doc_id in ids:
             raw = provider.get_snapshot(doc_id)      # explicit consent or local cache
             parsed = validate_and_normalize(raw)     # strict boundary
-            outputs.append(index_cvfr_kb(parsed, query.kb))
+            outputs.append(index_cvrf_kb(parsed, query.kb))
         return combine_edges_preserving_lineage(outputs, scope)
-
-The example's index_cvfr_kb name should be spelled index_cvrf_kb in actual code.
 
 ### 1.3 MSRC API shape validation gate
 
