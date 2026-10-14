@@ -89,7 +89,8 @@ class RzDiffAdapter:
 
 
 Acceptor = Callable[..., AcceptedBinExportLike]
-"""(path, *, artifact_sha256, role, accept_unbound, cancel) -> accepted snapshot; raises SecondaryError.
+"""(path, *, artifact_sha256, role, accept_unbound, cancel, other_sha256) -> accepted snapshot; raises
+SecondaryError.
 Wraps C3 `accept_binexport`; injected so C4 never imports C3 modules in tested code paths."""
 
 
@@ -128,19 +129,20 @@ class BinDiffAdapter:
                 'binexport-missing', self._report.major)
         return self._report.capability
 
-    def _accept(self, item, role: str, artifact_sha256: str, cancel: threading.Event) -> AcceptedBinExportLike:
+    def _accept(self, item, role: str, artifact_sha256: str, other_sha256: str,
+                cancel: threading.Event) -> AcceptedBinExportLike:
         if not isinstance(item, Path | str):
             return item
         if self.acceptor is None:
             raise SecondaryError('PT-SECONDARY-UNSUPPORTED', 'BinExport validation is unavailable in this build.',
                                  kind='binexport-unsupported')
         return self.acceptor(Path(item), artifact_sha256=artifact_sha256, role=role,
-                             accept_unbound=self.accept_unbound, cancel=cancel)
+                             accept_unbound=self.accept_unbound, cancel=cancel, other_sha256=other_sha256)
 
     def bound(self, job: EngineJob) -> BoundPair:
         if self._pair is None:
-            older = self._accept(self.older, 'older', job.older_sha256, job.cancel)
-            newer = self._accept(self.newer, 'newer', job.newer_sha256, job.cancel)
+            older = self._accept(self.older, 'older', job.older_sha256, job.newer_sha256, job.cancel)
+            newer = self._accept(self.newer, 'newer', job.newer_sha256, job.older_sha256, job.cancel)
             self._pair = bind_pair(older, newer, job.older_sha256, job.newer_sha256,
                                    accept_unbound=self.accept_unbound)
         return self._pair
