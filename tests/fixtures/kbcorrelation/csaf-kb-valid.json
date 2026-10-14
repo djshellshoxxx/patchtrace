@@ -1,0 +1,156 @@
+{
+  "document": {
+    "category": "csaf_security_advisory",
+    "csaf_version": "2.0",
+    "lang": "en",
+    "publisher": {
+      "category": "vendor",
+      "name": "PatchTrace Synthetic Fixture Vendor (not Microsoft)",
+      "namespace": "https://example.invalid/csaf-kb"
+    },
+    "title": "Synthetic KB fixture advisory, valid variant (not Microsoft)",
+    "tracking": {
+      "current_release_date": "2099-02-13T00:00:00Z",
+      "id": "PT-SYNTH-KB-2099-02-VALID",
+      "initial_release_date": "2099-02-13T00:00:00Z",
+      "revision_history": [
+        {
+          "date": "2099-02-13T00:00:00Z",
+          "number": "1",
+          "summary": "Initial synthetic release"
+        }
+      ],
+      "status": "final",
+      "version": "1"
+    }
+  },
+  "product_tree": {
+    "branches": [
+      {
+        "category": "product_name",
+        "name": "Example OS 24H2 x64",
+        "product": {
+          "name": "Example OS 24H2 x64",
+          "product_id": "PT-CLIENT"
+        }
+      },
+      {
+        "category": "product_name",
+        "name": "Example OS 24H2 ARM64",
+        "product": {
+          "name": "Example OS 24H2 ARM64",
+          "product_id": "PT-CLIENT-ARM"
+        }
+      },
+      {
+        "category": "product_name",
+        "name": "Example Server 2099 x64",
+        "product": {
+          "name": "Example Server 2099 x64",
+          "product_id": "PT-SERVER"
+        }
+      },
+      {
+        "category": "product_name",
+        "name": "Example Server 2099 Core x64",
+        "product": {
+          "name": "Example Server 2099 Core x64",
+          "product_id": "PT-SERVER-CORE"
+        }
+      },
+      {
+        "category": "product_name",
+        "name": "Example Server 2089 x64",
+        "product": {
+          "name": "Example Server 2089 x64",
+          "product_id": "PT-SERVER-LEGACY"
+        }
+      }
+    ],
+    "product_groups": [
+      {
+        "group_id": "PT-GRP-CLIENT",
+        "product_ids": [
+          "PT-CLIENT",
+          "PT-CLIENT-ARM"
+        ]
+      },
+      {
+        "group_id": "PT-GRP-SERVER",
+        "product_ids": [
+          "PT-SERVER",
+          "PT-SERVER-CORE"
+        ]
+      }
+    ]
+  },
+  "vulnerabilities": [
+    {
+      "cve": "CVE-2099-20001",
+      "cwe": {
+        "id": "CWE-125",
+        "name": "Out-of-bounds Read"
+      },
+      "notes": [
+        {
+          "category": "description",
+          "text": "Synthetic note: an item-reader index is not checked before a read.",
+          "title": "Summary"
+        }
+      ],
+      "product_status": {
+        "fixed": [
+          "PT-CLIENT",
+          "PT-CLIENT-ARM"
+        ],
+        "known_affected": [
+          "PT-SERVER"
+        ]
+      },
+      "remediations": [
+        {
+          "category": "vendor_fix",
+          "details": "Install update KB5099001 for Example OS 24H2.",
+          "group_ids": [
+            "PT-GRP-CLIENT"
+          ],
+          "url": "https://support.example.invalid/help/5099001"
+        }
+      ],
+      "title": "Out-of-bounds read in the item reader"
+    },
+    {
+      "cve": "CVE-2099-20002",
+      "cwe": {
+        "id": "CWE-190",
+        "name": "Integer Overflow or Wraparound"
+      },
+      "notes": [
+        {
+          "category": "description",
+          "text": "Synthetic note: a size product wraps before the allocation.",
+          "title": "Summary"
+        }
+      ],
+      "product_status": {
+        "known_affected": [
+          "PT-SERVER",
+          "PT-SERVER-CORE"
+        ],
+        "known_not_affected": [
+          "PT-SERVER-LEGACY"
+        ]
+      },
+      "remediations": [
+        {
+          "category": "vendor_fix",
+          "details": "Install the latest servicing update for Example Server 2099.",
+          "group_ids": [
+            "PT-GRP-SERVER"
+          ]
+        }
+      ],
+      "title": "Integer overflow in the allocation size check"
+    }
+  ]
+}

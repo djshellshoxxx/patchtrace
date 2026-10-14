@@ -143,3 +143,6 @@
 ### [K0:kbcorrelation-contracts] KB-CVE correlator K0 (2026-10-14)
 - [x] contracts, limits, ids, errors, ports, `tools/generate_kbc_schemas.py` + `docs/schemas/kbcorrelation/` (+ examples), regenerate-and-compare test, KB syntax matrix, Coverage `complete_in_scope` invariant
 - [ ] DEFERRED to later slices: K0f fixtures, A-5/A-6 (KINDS, backup), A-8 `cli.py` hook, A-12 (`.gitattributes` LF for docs/schemas/kbcorrelation, frozen smoke import, `live_kbc` marker); live probe L1 confirms provisional `KbcLimits`
+### [K1:kbcorrelation-sources] KB-CVE correlator K1 (2026-10-14)
+- [x] cvrf/csaf_bridge/scope/importer/net_plan, products + alias catalog, index, `kb index` verbs (import/status/verify/plan); S01-S10, S11, S12-S14, S16, S19 and NEG-01/02/03/04/05/06/07/08/24/25/26 covered by synthetic tests; reorder-invariance property; 32 MiB cap + gzip bomb; two-axis coverage; product status disputes
+- [ ] NOT done / open: K3 hook of `cli_index` into `kb` and `cli.py` (A-8); K2 replaces the interim workspace files; S15 timeline UI; S17/S18 end-to-end in K3; cross-document status disputes (only in-document); real MSRC CVRF dialect + URL shape (live probe L1) and CSAF KB location (L4) BLOCKED; S20 needs a captured official response (live)

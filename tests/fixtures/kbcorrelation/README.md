@@ -67,3 +67,18 @@ python -c "import sys; sys.path[:0]=['tests','src']; import kbc_helpers as h; [o
 ```
 
 Then recompute `MANIFEST.json` (sha256 and bytes per file) and run `tests/test_kbc_fixtures.py`.
+
+## K1 additions (slice K1, appended; K0f files above are unchanged)
+
+| file | made by | what it holds |
+|---|---|---|
+| `csaf-kb-valid.json` | `tests/kbc_k1_support.py::valid_csaf()` | `csaf-kb.json` with CVE-2099-20001's contradiction removed (PT-CLIENT and PT-CLIENT-ARM only `fixed`, PT-SERVER `known_affected`). It passes the real CSAF validator; `tests/test_kbc_csaf_bridge.py` asserts the committed bytes still equal the builder. |
+
+**Finding for the K0f owner.** `csaf-kb.json` lists PT-CLIENT and PT-CLIENT-ARM under both `fixed` and `known_affected` for
+CVE-2099-20001, which the in-repo CSAF validator rejects (`PT-INTEL-VALIDATE`, test 6.1.6). It is kept unchanged (K0f owns it);
+K1 tests that need a document the real validator accepts use `csaf-kb-valid.json`, and K1 bridge tests that only need
+normalised facts build them in code.
+
+**Count reconciliation (plan 10.1 step 1).** The baseline month yields 5 edge rows: 4 `vendor-remediation` edges plus 1
+`mention-only` edge. "4 edges, 1 mention-only" in the plan counts the mention separately; `ImportedDocument.counts()` reports
+`edges: 4`, `mention_only: 1`, `edge_rows: 5`.

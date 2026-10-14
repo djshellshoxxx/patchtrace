@@ -2,6 +2,19 @@
   "contract": "kbcorrelation-fixtures/1",
   "created": "2026-10-14T12:20:00Z",
   "files": {
+    "csaf-kb-valid.json": {
+      "bytes": 3872,
+      "created": "2026-10-14T13:00:00Z",
+      "generator": "tests/kbc_k1_support.py::valid_csaf",
+      "licence": "MIT (repository LICENSE); synthetic test data, no third-party content",
+      "origin": "synthetic, hand-written PatchTrace fixture; not Microsoft-derived or copied. K1 addition: csaf-kb.json with the 6.1.6 contradiction removed (CVE-2099-20001 lists the client products only as fixed), so it passes the real CSAF validator and can exercise the importer end to end (S05, S12, S13, S16).",
+      "path": "csaf-kb-valid.json",
+      "sha256": "159fea737a2ca3a43bc4532bbf2dc2557dd7dfe64176795e0d629ace4b82f16e",
+      "used_by": [
+        "tests/test_kbc_csaf_bridge.py (builder parity, importer through the real intelligence validator)",
+        "tests/test_kbc_index.py (CSAF import and status)"
+      ]
+    },
     "csaf-kb.json": {
       "bytes": 3901,
       "created": "2026-10-14T12:20:00Z",
