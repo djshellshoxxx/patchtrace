@@ -20,7 +20,7 @@ import sys
 from dataclasses import dataclass
 from pathlib import Path
 
-from . import cli_index, cli_pairs
+from . import cli_index, cli_online, cli_pairs
 from .cli_index import IndexPorts, Parser, add_common, present, run_cli, workspace_root
 
 
@@ -105,6 +105,9 @@ def main(argv: list[str] | None = None, *, env=None, stdout=None, stderr=None) -
     """Run ``kb <verb> ...``. ``env`` replaces the production ports (tests)."""
     argv = list(sys.argv[1:] if argv is None else argv)
     context = Context(env)
+    if argv[:2] == ['index', 'sync'] and not ({'-h', '--help'} & set(argv[2:])):
+        return cli_online.main(argv[2:], ports=cli_online.OnlinePorts(context.index_ports()), stdout=stdout,
+                               stderr=stderr)
     if argv[:1] == ['index']:
         if '-h' in argv[1:] or '--help' in argv[1:]:
             return cli_index.main(argv[1:], stdout=stdout, stderr=stderr)
