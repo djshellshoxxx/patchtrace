@@ -719,17 +719,17 @@ REGISTRY: dict[str, TooltipEntry] = {
         'Decline and stop.', 'Leaves things as they are.', 'The described action does not happen.'),
     # ---- Series window (SPEC-09b) ------------------------------------------------------------
     'action.series': _e(
-        'Open a read-only window over a stored series.json of three or more builds of one binary.',
+        'Open a read-only tab over a stored series.json of three or more builds of one binary.',
         'Follow one function across several builds and see which hops deserve attention first.',
-        'Opens a non-modal Series window. Nothing is computed, run or written, and pair projects are only read.',
+        'Opens the Series panel with a tab for that series. Nothing is computed, run or written, and pair projects are only read.',
         'The series.json written by `patchtrace series create` and the pair projects next to it.'),
     'series.window': _e(
-        'Read-only view of the chain hypotheses stored in one series.json.',
+        'Read-only view of the chain hypotheses stored in one series.json, in the Series panel.',
         'Compares a function across builds without opening each pair project by hand.',
         'Nothing is changed. Chains are labelled hypotheses assembled from independent pairwise results.',
         'series.json (nway/1) and each pair project\'s stored results.'),
     'series.reload': _e(
-        'Read series.json and the pair projects again.', 'Picks up pair results changed since the window opened.',
+        'Read series.json and the pair projects again.', 'Picks up pair results changed since the tab opened.',
         'Cancels a load in progress and starts a new read. Nothing is written.',
         availability='Always available.'),
     'series.cancel_load': _e(
