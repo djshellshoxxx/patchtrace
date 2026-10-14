@@ -953,6 +953,14 @@ class ProfilesPanel(QWidget):
         self.reload('default')
 
 
+_DISCOVERY_THREADS: set = set()
+
+
+def _release_thread(holder: set, thread) -> None:
+    holder.discard(thread)
+    thread.deleteLater()
+
+
 class SetupDialog(QDialog):
     def __init__(self, settings, parent=None, profile_directory: Path | None = None):
         super().__init__(parent)
@@ -1038,12 +1046,37 @@ class SetupDialog(QDialog):
         apply_tooltip(self.tabs.tabBar(), 'setup.tabs')
         outer.addWidget(dialog_buttons(self, 'Save setup', 'setup'))
         self.worker = None
+        self._discovery = None
+        self._busy_kind = None  # 'diagnosis' | 'offline' while self.worker is running
         self._pending_plan = None
         self.discover_existing()
 
     def discover_existing(self):
-        """Suggest known local installations without executing or installing tools."""
-        found = discover_local_runtimes()
+        """Suggest known local installations without executing or installing tools (background scan)."""
+        if self._discovery is not None:
+            return
+        self.find.setEnabled(False)
+        self.diagnostics.setPlainText('Searching for existing installations (local discovery only)…')
+        # Unparented and module-held until finished: the dialog may be destroyed mid-scan, and destroying
+        # a running QThread aborts the process. Bound-method connections drop when the dialog is deleted.
+        thread = Worker(lambda cancel, event: discover_local_runtimes())
+        _DISCOVERY_THREADS.add(thread)
+        thread.result_ready.connect(self._apply_discovery)
+        thread.failed.connect(self._discovery_failed)
+        thread.finished.connect(self._finish_discovery)
+        thread.finished.connect(lambda t=thread: _release_thread(_DISCOVERY_THREADS, t))
+        self._discovery = thread
+        thread.start()
+
+    def _discovery_failed(self, message):
+        self.diagnostics.setPlainText(f'Local discovery failed: {message}')
+
+    def _finish_discovery(self):
+        self._discovery = None
+        if not self._busy_kind:
+            self.find.setEnabled(True)
+
+    def _apply_discovery(self, found):
         notes = ['Local discovery only: nothing downloaded or executed.']
         for label, edit, paths in (
             ('External Python', self.python, found.python_executables),
@@ -1060,6 +1093,8 @@ class SetupDialog(QDialog):
             else:
                 notes.append(f'{label}: not found; use Browse after installing')
         notes.append('Detected paths require Diagnose dependencies and a real comparison to verify.')
+        if self._busy_kind:  # never overwrite progress text of a running diagnosis or offline install
+            return
         self.diagnostics.setPlainText('\n'.join(notes))
 
     def browse(self, edit, directory):
@@ -1080,6 +1115,7 @@ class SetupDialog(QDialog):
         if self.worker and self.worker.isRunning():
             return
         config = self.config()
+        self._busy_kind = 'diagnosis'
         self.check.setEnabled(False)
         self.diagnostics.setPlainText('Checking external dependencies…')
         self.worker = Worker(lambda cancel, event: diagnose(config), self)
@@ -1090,11 +1126,13 @@ class SetupDialog(QDialog):
 
     def _finish_diagnosis(self):
         self.worker = None
+        self._busy_kind = None
         self.check.setEnabled(True)
 
     def _offline_busy(self, active):
+        self._busy_kind = 'offline' if active else None
         self.install.setEnabled(not active)
-        self.find.setEnabled(not active)
+        self.find.setEnabled(not active and self._discovery is None)
         self.check.setEnabled(not active)
         self.cancel_install.setEnabled(active)
         for edit in (self.python, self.ghidra, self.java_home):
@@ -1182,7 +1220,12 @@ class SetupDialog(QDialog):
 
     def reject(self):
         if self.worker and self.worker.isRunning():
-            self.diagnostics.appendPlainText('Wait for dependency diagnosis to finish before closing setup.')
+            self.tabs.setCurrentIndex(0)
+            if self._busy_kind == 'offline':
+                self.cancel_offline_install()
+                self.diagnostics.appendPlainText('Close setup again once the operation has stopped.')
+            else:
+                self.diagnostics.appendPlainText('Wait for dependency diagnosis to finish before closing setup.')
             return
         super().reject()
 

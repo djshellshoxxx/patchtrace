@@ -65,3 +65,71 @@ def test_accept_without_edits_does_not_prompt(qtbot, window, tmp_path, monkeypat
     monkeypatch.setattr(dialog.profiles, 'confirm_save', lambda name: pytest.fail('prompted'))
     dialog.accept()
     assert dialog.result() == QDialog.DialogCode.Accepted
+
+
+def test_discovery_runs_off_the_gui_thread(qtbot, window, tmp_path, monkeypatch):
+    import threading
+
+    from patchtrace.runtime_discovery import RuntimeCandidates
+    release, seen = threading.Event(), {}
+    python = tmp_path / 'py' / 'python.exe'
+
+    def slow():
+        seen['thread'] = threading.current_thread()
+        release.wait(10)
+        return RuntimeCandidates((python,), ())
+    monkeypatch.setattr('patchtrace.ui.discover_local_runtimes', slow)
+    dialog = SetupDialog(window.settings, window, tmp_path / 'profiles')
+    qtbot.addWidget(dialog)
+    assert dialog.python.text() == '' and 'search' in dialog.diagnostics.toPlainText().lower()
+    assert not dialog.find.isEnabled()
+    release.set()
+    qtbot.waitUntil(lambda: dialog.python.text() == str(python), timeout=5000)
+    qtbot.waitUntil(dialog.find.isEnabled, timeout=5000)
+    assert seen['thread'] is not threading.main_thread()
+
+
+def test_discovery_failure_is_reported_not_raised(qtbot, window, tmp_path, monkeypatch):
+    def boom():
+        raise OSError('disk gone')
+    monkeypatch.setattr('patchtrace.ui.discover_local_runtimes', boom)
+    dialog = SetupDialog(window.settings, window, tmp_path / 'profiles')
+    qtbot.addWidget(dialog)
+    qtbot.waitUntil(lambda: 'disk gone' in dialog.diagnostics.toPlainText(), timeout=5000)
+    qtbot.waitUntil(dialog.find.isEnabled, timeout=5000)
+
+
+def test_reject_during_offline_operation_cancels_it(qtbot, window, tmp_path):
+    from patchtrace.ui import Worker
+    dialog = SetupDialog(window.settings, window, tmp_path / 'profiles')
+    qtbot.addWidget(dialog)
+    qtbot.waitUntil(dialog.find.isEnabled, timeout=5000)
+    dialog.show()
+    dialog._busy_kind = 'offline'
+    dialog.worker = Worker(lambda cancel, event: cancel.wait(10), dialog)
+    dialog.worker.finished.connect(dialog._finish_offline_install)
+    dialog._offline_busy(True)
+    dialog.worker.start()
+    dialog.reject()
+    assert dialog.worker.cancel.is_set() and dialog.isVisible()
+    text = dialog.diagnostics.toPlainText().lower()
+    assert 'offline' in text and 'diagnosis' not in text
+    qtbot.waitUntil(lambda: dialog.worker is None, timeout=5000)
+    dialog.reject()
+    assert not dialog.isVisible()
+
+
+def test_reject_during_diagnosis_waits_with_accurate_message(qtbot, window, tmp_path):
+    from patchtrace.ui import Worker
+    dialog = SetupDialog(window.settings, window, tmp_path / 'profiles')
+    qtbot.addWidget(dialog)
+    qtbot.waitUntil(dialog.find.isEnabled, timeout=5000)
+    dialog._busy_kind = 'diagnosis'
+    dialog.worker = Worker(lambda cancel, event: cancel.wait(10), dialog)
+    dialog.worker.finished.connect(dialog._finish_diagnosis)
+    dialog.worker.start()
+    dialog.reject()
+    assert not dialog.worker.cancel.is_set()
+    assert 'diagnosis' in dialog.diagnostics.toPlainText().lower()
+    dialog.worker.cancel.set()
+    qtbot.waitUntil(lambda: dialog.worker is None, timeout=5000)
