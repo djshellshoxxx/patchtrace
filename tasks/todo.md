@@ -305,3 +305,7 @@
 
 ### [WB3-S6:anchors-export-cli]
 - [x] Anchors, search rows, export, CLI dispatcher and tests (synthetic pair, built-in scan). [ ] Integrator: 6-line `cli.py` hook, `frozen_smoke` check of `strings scan --builtin --json` (A8, A13). [ ] Not built: derived-cache storage of tables and deltas (recomputed per call), Ghidriff `strings` input to the CLI (L1 links need it), review-order boost from anchor hits (by design none).
+
+### [K6:kbcorrelation-cvrf-fetch] KB-CVE correlator K6 (2026-10-14)
+- [x] `cvrf_fetch.py` and `cli_online.py` with 49 hermetic tests (fake opener, sockets denied): consent equality and `plan_sha`, offline refusal, 429/5xx/Retry-After, 32 MiB cap, cancel (between months, mid-read, in a retry wait), hostile redirects, wrong-month document, partial coverage exit 3.
+- [ ] Integrator: route `kb index sync` to `cli_online.main` in `kbcorrelation/cli.py` (hook text in the `cli_online` docstring); the live MSRC URL shape, document size and rate limits stay unverified until probe L1.

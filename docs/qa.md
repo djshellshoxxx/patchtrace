@@ -408,3 +408,6 @@ Automated only (`tests/test_strings_{view_model,copy}.py`, hand-built StringChan
 
 ### [WB3-S6:anchors-export-cli]
 Automated only, on the SYNTHETIC `tests/strings_pe.py` pair and hand-made rows; no tool is run. The CLI is exercised through the real `cli.main` with a test-local copy of the integrator hook. Not verified: function links through the CLI on a project with a completed analysis run, stored FLOSS evidence through `--source floss|auto`, Windows.
+
+### [K6:kbcorrelation-cvrf-fetch]
+Mocked only: a fake opener serves the synthetic 2099-Feb fixture; no real MSRC bytes, no socket. Open gates: live probe L1 (URL shape, `Accept`, document size, gzip, rate limit, whether 404 marks an unpublished month), Windows CI, a real hard cancel on a dripping server (covered by the shared transport's own tests, not repeated here).
