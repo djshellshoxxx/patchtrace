@@ -1,6 +1,6 @@
 # SPEC-32: Known-answer corpus factory (Tier R, dev-only)
 
-Status: DRAFT, building (Phase D, builder D, 2026-10-14). Implements the Tier R / A-A / planted-mutation corpus that
+Status: PARTIALLY BUILT (Phase D wave 0, builder D, 2026-10-14; see s16 for built vs deferred). Implements the Tier R / A-A / planted-mutation corpus that
 `calibration-corpus-and-model.md` (SPEC-28 C9) sections 3, 4, 5 and `unified-engine/08-evaluation.md` (SPEC-31 Tier R, A/A,
 planted mutations, gates G-U1/G-U2/G-U6) require. Nothing here ships: `tools/` is excluded from the Windows package. No
 numbers in this file are results; results live in reports recorded by SHA-256 in `docs/qa.md`.
@@ -184,3 +184,8 @@ no-recipe; evaluation metrics on hand-computed match sets; report determinism; a
   adopt; found cases arrive as `case-card/1` and are ingested without code changes.
 
 ## 16. Amendments (append-only)
+### [D:known-answer-factory] 2026-10-14 build amendments
+1. Built and tested: s3 inputs I1 (recipe contract), I2/I3 (case cards via `factory.run_card`), I4 (suites via `factory.run_suite` with cross-check); s4 profiles `msvc-free`, `mingw-gcc`, `mingw-clang`; s5 inventory and hashes; s6 contract; s7 decision table; s9 A/A rebuild, layout and noise (`factory.run_aa`, `factory.run_noise`).
+2. Determinism facts found while building: clang must get `-ffile-compilation-dir=.` (a `-ffile-prefix-map` argument is itself recorded in the CodeView build info) plus `-gno-codeview-command-line`; lld-link needs `/pdbsourcepath:` (it absolutises relative CodeView paths and records cwd in S_ENVBLOCK), so PDB paths read `/ka-src/<rel>` and are mapped back; llvm-pdbutil prints `addr = SSSS:OOOO` in decimal; `llvm-strip` rewrites the debug directory's PointerToRawData, which the RVA check masks; multi-call tools (lld-link -> lld) must not be symlink-resolved.
+3. Freestanding builds link a factory-written helper archive (memcpy/memmove/memset/memcmp/_fltused, one member each, debug dir `/ka-runtime`, classified runtime) and pass `-mno-stack-arg-probe`.
+4. Deferred to the next wave (not committed): M1 catalogue beyond zlib (only one verified pair committed), M2 CVE cases, M3 mutations (s8), s10 evaluator, s11 manifest/annotation conversions, s12 CLI and the `corpus.py` hook, s13 workflow, and a manifest-only `public-datasets` importer (DeepHistory pins, oss-fuzz-vulns, CVE List V5 raw records; research note `docs/research/calibration/preexisting-labelled-data.md`).

@@ -95,3 +95,10 @@ Every substantial future module must be added here before implementation. UI mus
 | unified pipeline | src/patchtrace/unified/{pipeline,worker,cli,read_model}.py | stage orchestration, hidden `_worker`, `unified` CLI verbs, Qt-free view model | all unified modules | planned, S0b/S4 |
 | unified UI | src/patchtrace/ui_unified.py | navigator view switch + dock tab in the single MainWindow; threads per C6 rules | Qt, read_model | planned, S4 |
 | prerequisites | jobs.py (spawn lock), nway/graph.py (`EXTERNAL:` keys) | latent defects found while grounding SPEC-31 | - | done (C3 merge, ce108cd); P2b skip count planned |
+### [D:known-answer-factory] SPEC-32 known-answer corpus factory (2026-10-14, builder D; dev-only, never shipped)
+| Module | Files | Responsibility | Depends on | Verification |
+|---|---|---|---|---|
+| contracts + schemas | tools/calibration/tier_r/{contracts,schemas}.py, docs/schemas/corpus/* | `known-answer-labels/1`, `tier-r-recipe(s)/1`, `mutation-case/1`, `tier-r-report/1`; typed views of `case-card/1` and `suite/1`; own generator with valid/invalid examples | pydantic, tools.calibration.common | tests/test_tier_r_contracts.py |
+| C locator | tools/calibration/tier_r/csrc.py | comment/string/preprocessor-aware tokenizer, ANSI/K&R/macro-wrapped definitions, span comparison | - | tests/test_tier_r_csrc.py |
+| builds + truth | tools/calibration/tier_r/{toolchain,build,pe,debuginfo,bodyhash,fetch}.py | allow-listed tool runner via jobs.run_process; reproducible msvc-free (clang + lld-link + PDB) and mingw-gcc/mingw-clang (DWARF) builds; stripped engine image with RVA check; PDB/DWARF/COFF inventory; raw + address-masked body hashes; pinned HTTPS git fetch with licence hash | patchtrace.jobs | tests/test_tier_r_factory.py (compiles synthetic C; BLOCKED when tools are missing) |
+| labeller + factory | tools/calibration/tier_r/{labeler,factory}.py, catalogue/{recipes,releases}.json | identity join, SPEC-32 s7 decision table, authored-truth cross-check; suites, case cards, A/A rebuild/layout, toolchain noise | all above | tests/test_tier_r_{factory,catalogue}.py |

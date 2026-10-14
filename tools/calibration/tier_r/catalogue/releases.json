@@ -1,0 +1,24 @@
+[
+ {
+  "contract": "case-card/1",
+  "id": "zlib-v1.3-to-v1.3.1",
+  "project": "zlib",
+  "upstream_git": "https://github.com/madler/zlib.git",
+  "license_spdx": "Zlib",
+  "license_evidence": "LICENSE at 51b7f2abdade71cd9bb0e7a373ef2610ec6f9daf: 'This software is provided 'as-is', without any express or implied warranty.' (sha256 845efc77...3243, identical at v1.3)",
+  "old": {"ref": "v1.3", "commit": "09155eaa2f9270dc4ed1fa13e2b4b2613e6e4851"},
+  "new": {"ref": "v1.3.1", "commit": "51b7f2abdade71cd9bb0e7a373ef2610ec6f9daf"},
+  "kind": "release",
+  "cve": [],
+  "semantic_change": true,
+  "changed_functions": [
+   {"name": "inflateSync", "file": "inflate.c", "change": "source and code changed (factory label changed/source-diff)"},
+   {"name": "deflateCopy", "file": "deflate.c", "change": "source and code changed (factory label changed/source-diff)"}
+  ],
+  "unchanged_controls": ["adler32", "crc32"],
+  "build": {"system": "single", "recipe_notes": "tier_r recipe zlib (mingw-gcc -O2 -g, top-level *.c, zlib1.dll)", "mingw_ok": "yes"},
+  "verification": {"method": "tools.calibration.tier_r factory.run_card on fetched pins (mingw-gcc 13-win32 O2): 128 project functions, 60 identical, 62 address-only, 2 changed, 9 ambiguous (LIT_MEM #ifdef edits, ERR_MSG macro, constprop clones), 1 added (gz_intmax)", "functions_changed_count": 2, "verified_by_agent_run": true},
+  "sources": ["https://github.com/madler/zlib/releases/tag/v1.3.1", "https://github.com/madler/zlib/blob/v1.3.1/ChangeLog"],
+  "risks": ["Ambiguous records (inactive #ifdef LIT_MEM edits, ERR_MSG bounds macro in zutil.h) are excluded from changed-set scoring by design."]
+ }
+]
