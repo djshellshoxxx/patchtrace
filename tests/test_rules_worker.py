@@ -427,6 +427,21 @@ def test_a_missing_engine_is_an_unavailable_document_not_a_crash(monkeypatch, tm
     assert (doc.error.code, doc.error.reason) == ('PT-RULE-UNAVAILABLE', 'engine-missing')
 
 
+@pytest.mark.parametrize('message', ['libyara_x.so: failed to map segment from shared object', 'Cannot allocate memory'],
+                         ids=['loader-map-segment', 'enomem-text'])
+def test_an_engine_that_cannot_load_under_the_memory_cap_is_out_of_memory_not_missing(monkeypatch, tmp_path, message):
+    monkeypatch.delattr(rules_package, 'engine', raising=False)
+    monkeypatch.delitem(sys.modules, 'patchtrace.rules.engine', raising=False)
+    real_import = __import__
+
+    def refusing_import(name, globals=None, locals=None, fromlist=(), level=0):
+        if level == 1 and 'engine' in (fromlist or ()):
+            raise ImportError(message)
+        return real_import(name, globals, locals, fromlist, level)
+    monkeypatch.setattr('builtins.__import__', refusing_import)
+    assert worker.run(request_file(tmp_path)) == worker.EXIT_MEMORY
+
+
 @pytest.mark.parametrize('content', [b'{"contract": "rules-worker/1", "op": "probe", "result": "/x", "extra": 1}',
                                      b'{"op": "probe", "op": "scan"}', b'not json', b'', b'\xff\xfe',
                                      b'{"contract": "rules-worker/2", "op": "probe", "result": "/x"}',
