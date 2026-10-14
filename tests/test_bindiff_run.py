@@ -70,7 +70,8 @@ def test_ok_run_end_to_end(tmp_path):
     assert Path(call['cwd']).name == 'cwd' and workdir.name.startswith('patchtrace-bindiff-')
     expected_env = bindiff_probe.build_env(Path(adapter._report.capability.path), workdir)
     if os.name == 'nt':
-        assert set(expected_env) <= set(call['env'])
+        # Windows reports environment variable names upper-cased (SystemRoot -> SYSTEMROOT); names are case-insensitive.
+        assert {k.upper() for k in expected_env} <= {k.upper() for k in call['env']}
     else:
         assert call['env'] == expected_env
     assert not set(SECRETS) & set(call['env'])
