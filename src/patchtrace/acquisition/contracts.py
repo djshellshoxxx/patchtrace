@@ -20,6 +20,8 @@ UINT32_MAX = 4_294_967_295
 PE_EXTENSIONS = frozenset({'exe', 'dll', 'sys', 'efi', 'drv', 'ocx', 'cpl', 'scr'})
 SYMBOL_SERVER = 'https://msdl.microsoft.com/download/symbols'
 _NAME = re.compile(r'[a-z0-9._-]{1,128}')
+_DEVICE_NAMES = frozenset({'con', 'prn', 'aux', 'nul', *(f'com{i}' for i in range(1, 10)),
+                          *(f'lpt{i}' for i in range(1, 10))})
 Sha256 = Annotated[str, Field(pattern=r'^[0-9a-f]{64}$')]
 Format = Literal['pe', 'pa30', 'pa31', 'unknown']
 ErrorCode = Literal['PT-ACQ-INPUT', 'PT-ACQ-CONFIG', 'PT-ACQ-LIMIT', 'PT-ACQ-CANCEL', 'PT-ACQ-NETWORK',
@@ -40,6 +42,9 @@ def validate_file_name(value: object) -> str:
     # fullmatch: `$` would admit a trailing newline into a URL path segment.
     if type(value) is not str or not _NAME.fullmatch(value) or value in {'.', '..'}:
         raise AcquisitionError('PT-ACQ-INPUT', 'file name must be a lowercase basename of [a-z0-9._-]')
+    stem = value.split('.', 1)[0]
+    if not stem or stem in _DEVICE_NAMES:  # Windows resolves `con.dll` to the console device
+        raise AcquisitionError('PT-ACQ-INPUT', 'file name is empty or reserved by Windows')
     if value.rsplit('.', 1)[-1] not in PE_EXTENSIONS or '.' not in value:
         raise AcquisitionError('PT-ACQ-INPUT', f'file extension must be one of {sorted(PE_EXTENSIONS)}')
     return value

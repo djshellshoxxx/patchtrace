@@ -9,7 +9,9 @@ from __future__ import annotations
 
 import email.utils
 import hashlib
+import http.client
 import os
+import socket
 import tempfile
 import threading
 import time
@@ -17,7 +19,7 @@ import urllib.error
 import urllib.parse
 import urllib.request
 from collections.abc import Callable, Iterable, Mapping
-from concurrent.futures import ThreadPoolExecutor
+from concurrent.futures import FIRST_COMPLETED, ThreadPoolExecutor, wait
 from dataclasses import dataclass
 from datetime import UTC, datetime
 from pathlib import Path
@@ -39,7 +41,8 @@ MAX_CONCURRENT_PROBES = 4
 RETRYABLE_STATUS = frozenset({429, 500, 502, 503, 504})
 REDIRECT_STATUS = frozenset({301, 302, 303, 307, 308})
 HEADERS = (('User-Agent', 'PatchTrace'),)
-_CHUNK = 1024 * 1024
+_CHUNK = 64 * 1024  # small, so cancel and the deadline are noticed after at most one socket wait
+WATCH_INTERVAL = 0.1
 
 
 @dataclass(frozen=True)
@@ -61,6 +64,9 @@ def _check(url: str, *, blob: bool = False) -> str:
     except ValueError:
         raise AcquisitionError('PT-ACQ-NETWORK', 'invalid URL refused') from None
     host = parts.hostname or ''
+    # urlsplit strips tab/CR/LF and tolerates spaces; http.client would later raise with the signed URL in its text.
+    if any(not '!' <= ch <= '~' for ch in url):
+        raise AcquisitionError('PT-ACQ-NETWORK', 'invalid URL refused')
     allowed = (host.endswith(BLOB_SUFFIX) and len(host) > len(BLOB_SUFFIX)) if blob else host in CONSENTABLE_HOSTS
     if (parts.scheme != 'https' or not allowed or port not in (None, 443)
             or parts.username is not None or parts.password is not None):
@@ -87,7 +93,22 @@ class _Response:
         self.headers = raw.headers
 
     def read(self, size: int) -> bytes:
-        return self._raw.read(size)
+        # read1 returns what one socket read delivered instead of waiting for a full buffer.
+        reader = getattr(self._raw, 'read1', self._raw.read)
+        return reader(size)
+
+    def abort(self) -> None:
+        """Wake a read blocked in another thread. Best effort: closing alone does not interrupt recv."""
+        sock = getattr(getattr(getattr(self._raw, 'fp', None), 'raw', None), '_sock', None)
+        try:
+            if sock is not None:
+                sock.shutdown(socket.SHUT_RDWR)
+        except OSError:
+            pass
+        try:
+            self._raw.close()
+        except (OSError, ValueError):
+            pass
 
     def close(self) -> None:
         self._raw.close()
@@ -102,6 +123,8 @@ def urllib_open(method: str, url: str, headers: Mapping[str, str], timeout: floa
                                      timeout=timeout))
     except urllib.error.HTTPError as exc:
         return _Response(exc)
+    except (ValueError, http.client.HTTPException):
+        raise ConnectionError('invalid request') from None  # the message would echo the signed URL
     except urllib.error.URLError as exc:
         if isinstance(exc.reason, TimeoutError):
             raise TimeoutError('timed out') from None
@@ -184,16 +207,25 @@ class Transport:
         digits = length.strip() if length is not None else ''
         if digits.isascii() and digits.isdigit() and (len(digits) > 18 or int(digits) > cap):
             raise AcquisitionError('PT-ACQ-LIMIT', f'{what} exceeds its size cap')
+        stop = self._watch(response, deadline)
+        try:
+            self._read_chunks(response, sink, cap, what, deadline)
+        finally:
+            if stop is not None:
+                stop.set()
+
+    def _read_chunks(self, response, sink: Callable[[bytes], None], cap: int, what: str,
+                     deadline: float | None) -> None:
         total = 0
         while True:
-            _cancelled(self.cancel)
-            if deadline is not None and self.clock() >= deadline:
-                raise AcquisitionError('PT-ACQ-NETWORK', 'total timeout exceeded', recoverable=True)
+            self._live(deadline)
             try:
                 chunk = response.read(min(_CHUNK, cap + 1 - total))
-            except TimeoutError:
-                raise _Retry(None) from None
-            except OSError:
+            # AttributeError: http.client drops its stream on close, so a read racing an abort sees None.
+            except (OSError, ValueError, AttributeError, http.client.HTTPException) as exc:
+                self._live(deadline)  # an abort by the watcher surfaces here as a read error
+                if isinstance(exc, TimeoutError):
+                    raise _Retry(None) from None
                 raise AcquisitionError('PT-ACQ-NETWORK', 'connection failed while reading',
                                        recoverable=True) from None
             if not chunk:
@@ -202,6 +234,27 @@ class Transport:
             if total > cap:
                 raise AcquisitionError('PT-ACQ-LIMIT', f'{what} exceeds its size cap')
             sink(chunk)
+
+    def _live(self, deadline: float | None) -> None:
+        _cancelled(self.cancel)
+        if deadline is not None and self.clock() >= deadline:
+            raise AcquisitionError('PT-ACQ-NETWORK', 'total timeout exceeded', recoverable=True)
+
+    def _watch(self, response, deadline: float | None) -> threading.Event | None:
+        """Abort a read that blocks on a silent or dripping server once cancel or the deadline hits."""
+        abort = getattr(response, 'abort', None)
+        if abort is None:
+            return None
+        stop = threading.Event()
+
+        def watch() -> None:
+            while not stop.wait(WATCH_INTERVAL):
+                if (self.cancel is not None and self.cancel.is_set()) or (
+                        deadline is not None and self.clock() >= deadline):
+                    abort()
+                    return
+        threading.Thread(target=watch, daemon=True, name='acquisition-read-watch').start()
+        return stop
 
     # -- Winbindex metadata -------------------------------------------------------------
     def fetch_metadata(self, file_name: str, consent: AcquisitionConsent) -> MetadataResponse:
@@ -256,8 +309,23 @@ class Transport:
         for url in urls:
             _consented(url, consent)
         with ThreadPoolExecutor(max_workers=MAX_CONCURRENT_PROBES) as pool:
-            futures = [pool.submit(self.probe, url, consent) for url in urls]
+            failed = threading.Event()
+
+            def task(url: str) -> bool:
+                if failed.is_set():  # a sibling already failed and its error is the one raised
+                    return False
+                try:
+                    return self.probe(url, consent)
+                except BaseException:
+                    failed.set()
+                    raise
+            futures = [pool.submit(task, url) for url in urls]
             try:
+                pending = set(futures)
+                while pending:
+                    done, pending = wait(pending, return_when=FIRST_COMPLETED)
+                    for future in done:
+                        future.result()  # the first failure stops queued probes below
                 results = [f.result() for f in futures]
             except BaseException:
                 for future in futures:
