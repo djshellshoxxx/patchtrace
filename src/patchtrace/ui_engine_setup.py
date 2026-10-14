@@ -504,6 +504,8 @@ class BinDiffSetupController(QObject):
         if identity == self.identity:
             return
         previous, self.identity = self.identity, identity
+        if not self._alive():
+            return
         if previous is not None and (identity is None or identity[0] != previous[0]):
             self.panel.clear_inputs()  # another project: its files need other exports (emits inputs_edited)
         else:
@@ -536,7 +538,7 @@ class BinDiffSetupController(QObject):
         self._start(thread)
 
     def _discovered(self, result, generation: int) -> None:
-        if generation != self.discovery_generation or isinstance(result, TaskFailure):
+        if generation != self.discovery_generation or isinstance(result, TaskFailure) or not self._alive():
             return
         self.discovered_paths = tuple(result)
         self.panel.set_candidates(self.discovered_paths)
@@ -558,8 +560,8 @@ class BinDiffSetupController(QObject):
         self.panel.set_probe_status(PROBE_TEXT['probing'], True)
 
     def _probe_done(self, result, generation: int) -> None:
-        if generation != self.probe_generation:
-            return  # a newer probe or an edited path supersedes this result
+        if generation != self.probe_generation or not self._alive():
+            return  # a newer probe or an edited path supersedes this result; or the section is gone
         self.probe_thread = None
         if isinstance(result, TaskFailure):
             self.probe_result = None
@@ -618,7 +620,7 @@ class BinDiffSetupController(QObject):
         self._refresh()
 
     def _validation_progress(self, step, generation: int) -> None:
-        if generation != self.validation_generation:
+        if generation != self.validation_generation or not self._alive():
             return
         if step == 'pair':
             text = VALIDATION_TEXT['pair']
@@ -627,7 +629,7 @@ class BinDiffSetupController(QObject):
         self.panel.set_validation_status(text, True)
 
     def _validation_done(self, result, generation: int) -> None:
-        if generation != self.validation_generation:
+        if generation != self.validation_generation or not self._alive():
             return
         self.validation_thread = self.validation_cancel = None
         if isinstance(result, TaskFailure):
@@ -659,6 +661,10 @@ class BinDiffSetupController(QObject):
         return VALIDATION_TEXT['idle'] if self.identity is not None else VALIDATION_TEXT['no-project']
 
     # -- plumbing --
+    def _alive(self) -> bool:
+        """The section can be deleted with its dock while a worker still runs; late results are then dropped."""
+        return isValid(self.panel)
+
     def _start(self, thread: TaskThread) -> None:
         self.threads = [(t, c) for t, c in self.threads if thread_alive(t)]
         self.threads.append((thread, thread.cancel))

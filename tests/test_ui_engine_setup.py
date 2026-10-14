@@ -679,6 +679,95 @@ def test_gui_bindiff_run_matches_cli_provenance(window, qtbot, tmp_path, monkeyp
     assert from_cli.provenance == gui.provenance
 
 
+def test_bindiff_checkbox_follows_setup(window, qtbot):
+    controller = window.evidence
+    controller.probe = lambda cancel: dict(DEFAULT_CAPS)
+    controller.bindiff.prober = usable_prober
+    controller.bindiff.validator = lambda request, cancel, progress=None: svc.BinExportValidation(
+        'ok', request.key, binding='sha256')
+    open_dock(window, qtbot)
+    controller.start_probe()
+    qtbot.waitUntil(lambda: controller.probe_thread is None, timeout=5000)
+    setup, box = controller.panel.bindiff_setup, controller.panel.engine_checks['bindiff']
+    setup.set_executable('/x/bindiff')
+    setup.probe_button.click()
+    qtbot.waitUntil(lambda: controller.bindiff.current_probe() is not None, timeout=5000)
+    rows = {r.engine: r for r in controller.panel.engine_model.rows}
+    assert not box.isEnabled() and 'choose and validate both .BinExport files' in rows['bindiff'].detail
+    setup.older.setText(str(OLDER))
+    setup.newer.setText(str(NEWER))
+    setup.validate_button.click()
+    qtbot.waitUntil(box.isEnabled, timeout=5000)
+    box.setChecked(True)
+    controller.update_controls()
+    assert svc.RUN_PREVIEW_BINDIFF in controller.panel.preview.text()
+    setup.newer.setText(str(NEWER) + '.other')  # an edit invalidates the validation: BinDiff is not runnable
+    assert not box.isEnabled() and not box.isChecked()
+    assert svc.RUN_PREVIEW_BINDIFF not in controller.panel.preview.text()
+
+
+def test_cancel_gui_bindiff_run(window, qtbot, tmp_path, monkeypatch):
+    """The C6 Cancel button stops a running BinDiff: process tree killed, nothing stored (fake BinDiff)."""
+    from fake_bindiff import spy_calls
+
+    from patchtrace.enrichment.storage import EnrichmentStore
+    from patchtrace.secondary.store import current_sets
+    monkeypatch.setattr(cli_bindiff, 'c3_acceptor', fake_acceptor_factory)
+    exe = make_fake_bindiff(tmp_path / 'bd', 'hang')
+    older = write_fake_binexport(tmp_path / 'older.BinExport', OLD_SHA)
+    newer = write_fake_binexport(tmp_path / 'newer.BinExport', NEW_SHA)
+    controller = window.evidence
+    controller.probe = lambda cancel: dict(DEFAULT_CAPS)
+    open_dock(window, qtbot)
+    setup = controller.panel.bindiff_setup
+    setup.set_executable(str(exe))
+    setup.probe_button.click()
+    qtbot.waitUntil(lambda: controller.bindiff.current_probe() is not None, timeout=20000)
+    setup.older.setText(str(older))
+    setup.newer.setText(str(newer))
+    setup.validate_button.click()
+    qtbot.waitUntil(controller.panel.engine_checks['bindiff'].isEnabled, timeout=20000)
+    controller.panel.engine_checks['bindiff'].setChecked(True)
+    controller.panel.run_button.click()
+    qtbot.waitUntil(lambda: any('--nologo' in c['argv'] and len(c['argv']) > 2 for c in spy_calls(tmp_path / 'bd')),
+                    timeout=30000)
+    controller.panel.cancel_button.click()
+    qtbot.waitUntil(lambda: controller.run_thread is None, timeout=30000)
+    assert controller.outcomes['bindiff'].status == 'cancelled'
+    assert [m.engine for _, m in current_sets(EnrichmentStore(window.service.store))] == []
+    assert not list(window.service.root.rglob('bindiff-*.BinDiff'))
+
+
+def test_dock_deleted_while_setup_worker_runs(qtbot, tmp_path, settings):
+    """C6 teardown matrix for the setup worker: the unparented thread survives the dock; its late result is
+    dropped without touching the deleted section (pytest-qt fails the test if a slot raises)."""
+    view = MainWindow(ProjectService.sample(tmp_path / 's'), settings, tmp_path / 'profiles')
+    view.evidence.auto_probe = False
+    controller = view.evidence.bindiff
+    gate = threading.Event()
+
+    def validator(request, cancel, progress=None):
+        gate.wait(5)
+        return svc.BinExportValidation('ok', request.key, binding='sha256')
+    controller.validator = validator
+    setup = view.evidence.panel.bindiff_setup
+    setup.older.setText('o.BinExport')
+    setup.newer.setText('n.BinExport')
+    setup.validate_button.click()
+    [thread] = [t for t, _ in controller.threads]
+    assert thread.parent() is None
+    view.evidence.dock.deleteLater()
+    QCoreApplication.sendPostedEvents(None, QEvent.Type.DeferredDelete)
+    gate.set()
+    assert thread.wait(5000)
+    qtbot.wait(50)  # deliver the queued result
+    assert controller.validation is None
+    view.evidence.shutdown()
+    view.service.close()
+    view.service = None
+    view.deleteLater()
+
+
 def test_window_close_joins_setup_workers(qtbot, tmp_path, settings):
     view = MainWindow(ProjectService.sample(tmp_path / 's'), settings, tmp_path / 'profiles')
     view.evidence.auto_probe = False

@@ -12,8 +12,10 @@ import argparse
 import hashlib
 import os
 import re
+import shutil
 import tempfile
 import threading
+import time
 from collections.abc import Callable, Mapping, Sequence
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -592,13 +594,19 @@ def _side_view(accepted, bound: BoundInput) -> BinExportSideView:
                              sanitize_text(getattr(summary, 'address_basis', None) or 'unknown', 16), warnings)
 
 
-def _release_snapshots(folder: Path) -> None:
-    """C3 snapshots are read-only (0o400); make them removable so cleanup also works on Windows."""
-    for path in folder.rglob('*'):
-        try:
-            path.chmod(0o700 if path.is_dir() else 0o600)
-        except OSError:
-            pass
+def _remove_private(folder: Path) -> None:
+    """Remove the private validation folder. C3 snapshots are read-only (0o400), so they are made writable first
+    (needed on Windows); a scanner may hold a fresh file briefly, so removal is retried. Runs on the worker."""
+    for attempt in range(3):
+        for path in folder.rglob('*'):
+            try:
+                path.chmod(0o700 if path.is_dir() else 0o600)
+            except OSError:
+                pass
+        shutil.rmtree(folder, ignore_errors=True)
+        if not folder.exists():
+            return
+        time.sleep(0.1 * (attempt + 1))
 
 
 def validate_binexports(request: ValidationRequest, cancel: threading.Event, *,
@@ -620,29 +628,29 @@ def validate_binexports(request: ValidationRequest, cancel: threading.Event, *,
         if _same_file(older_path, newer_path, cancel):
             raise SecondaryError('PT-SECONDARY-PAIR', 'The same .BinExport file was supplied for both sides.',
                                  kind='binexport-same-file')
-        with tempfile.TemporaryDirectory(prefix='patchtrace-bxcheck-', ignore_cleanup_errors=True) as tmp:
-            try:
-                acceptor = (acceptor_factory or cli_bindiff.c3_acceptor)(Path(tmp))
-                if acceptor is None:
-                    raise SecondaryError('PT-SECONDARY-UNSUPPORTED', 'BinExport validation is unavailable in this '
-                                         'build.', kind='binexport-unsupported')
-                common = dict(accept_unbound=request.accept_unbound, cancel=cancel)
-                side = 'older'
-                step('older')
-                older = acceptor(older_path, artifact_sha256=request.older_sha256, role='older',
-                                 other_sha256=request.newer_sha256, **common)
-                side = 'newer'
-                step('newer')
-                newer = acceptor(newer_path, artifact_sha256=request.newer_sha256, role='newer',
-                                 other_sha256=request.older_sha256, **common)
-                side = None
-                step('pair')
-                pair = bind_pair(older, newer, request.older_sha256, request.newer_sha256,
-                                 accept_unbound=request.accept_unbound)
-                return BinExportValidation('ok', key, _side_view(older, pair.older), _side_view(newer, pair.newer),
-                                           pair.provenance()['binexport_binding'])
-            finally:
-                _release_snapshots(Path(tmp))
+        folder = Path(tempfile.mkdtemp(prefix='patchtrace-bxcheck-'))  # private (0o700 on POSIX)
+        try:
+            acceptor = (acceptor_factory or cli_bindiff.c3_acceptor)(folder)
+            if acceptor is None:
+                raise SecondaryError('PT-SECONDARY-UNSUPPORTED', 'BinExport validation is unavailable in this '
+                                     'build.', kind='binexport-unsupported')
+            common = dict(accept_unbound=request.accept_unbound, cancel=cancel)
+            side = 'older'
+            step('older')
+            older = acceptor(older_path, artifact_sha256=request.older_sha256, role='older',
+                             other_sha256=request.newer_sha256, **common)
+            side = 'newer'
+            step('newer')
+            newer = acceptor(newer_path, artifact_sha256=request.newer_sha256, role='newer',
+                             other_sha256=request.older_sha256, **common)
+            side = None
+            step('pair')
+            pair = bind_pair(older, newer, request.older_sha256, request.newer_sha256,
+                             accept_unbound=request.accept_unbound)
+            return BinExportValidation('ok', key, _side_view(older, pair.older), _side_view(newer, pair.newer),
+                                       pair.provenance()['binexport_binding'])
+        finally:
+            _remove_private(folder)
     except SecondaryError as exc:
         status = 'cancelled' if exc.code == 'PT-SECONDARY-CANCEL' or cancel.is_set() else 'failed'
         return BinExportValidation(status, key, problem=describe_problem(exc, side))
