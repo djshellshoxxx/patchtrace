@@ -518,3 +518,8 @@ Not verified here: Windows and GitHub Actions; any live Ollama or OpenAI-compati
 | State copy, precedence, actions, announcements, hostile text, a11y_audit in all 12 states | tests/test_gui_state_view.py |
 | qt_gate repeat 10 over the five F3 files | 1,770 passed, no abort or surviving thread |
 | Not verified here | Windows, real screen readers, high contrast, DPI scaling, the frozen build |
+### [F6b:graph-canvas]
+| Check | Result |
+|---|---|
+| test_gui_graph_view.py and test_gui_qt_canvas.py, qt_gate repeat 5 | 295 passed, no abort or surviving thread |
+| Not verified here | Windows timings, real screen readers, DPI scaling |

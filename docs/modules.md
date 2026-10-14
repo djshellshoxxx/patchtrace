@@ -534,3 +534,9 @@ F4 notes: `prepare_table` takes `columns` because they may change with every tab
 - gui/qt/chips.py: paint_chip (shape, glyph, text; fill from tokens), ChipLabel (accessible name Prefix: words), ChipDelegate (CHIP_ROLE). High-contrast drawing is F7.
 - gui/qt/theme.py: ThemeTokens, DARK, build_stylesheet(DARK) == ui.DARK_STYLE (golden), contrast_problems(tokens). System and high-contrast variants are F7.
 - gui/tips.py (pure): register_tips (idempotent, conflict is PT-GUI-TIPS), gui_tips()/register_gui_tips() (gui.state_*, gui.notice*), apply_tip(accessible='what'|'full', name=) = apply_tooltip + What-line description + UIA identifier. The host (F5) must call register_gui_tips() before panels are built.
+### [F6b:graph-canvas] GraphCanvas (GUI plan 8.4; 2026-10-14)
+| Module | Files | Responsibility | Depends on | Tests |
+|---|---|---|---|---|
+| graph view | src/patchtrace/gui/graph_view.py | Qt-free `GraphNodeView`, `GraphEdgeView`, `GraphTooLargeError` (PT-GUI-GRAPH-TOO-LARGE), `validate_graph`, `check_ceilings`, zoom clamp, `detail_level`, `nearest_in_direction`, `first_node`, `adjacency` | gui.registry, gui.state, gui.text | tests/test_gui_graph_view.py, tests/test_gui_core_isolation.py |
+| graph canvas | src/patchtrace/gui/qt/canvas.py | `GraphCanvas(QGraphicsView)`: stock items only, scene swap with deleteLater, level of detail by zoom, keyboard, polite announcements, click and double click | graph_view, qt.metrics, qt.theme; PySide6 | tests/test_gui_qt_canvas.py |
+F6b notes: `setMinimumRenderSize` is a `QGraphicsScene` method, set on every new scene. The optional minimap is not built. Edges are straight centre-to-centre lines; the feature supplies the layout and the textual adjacency table. Dangling edges and duplicate keys raise `ValueError`.

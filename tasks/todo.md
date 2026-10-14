@@ -337,3 +337,6 @@
 - [ ] Integrator (F5): call register_gui_tips() in the host and in the test fixture; wrap the central widget with NoticeStrip; have tooltips.py delegate apply_tooltip(accessible=) to gui.tips.apply_tip or adopt it.
 - [ ] F7: high-contrast chip drawing, system variant, ThemeTokens from QPalette.
 - [ ] BLOCKED (manual): real Narrator or NVDA output for the status strip and notice strip, Windows rendering of chip shapes at 100-200 percent DPI.
+### [F6b:graph-canvas]
+- [x] GraphCanvas and gui/graph_view.py with focused tests.
+- [ ] BLOCKED (manual): Windows timings of the 500/2,000 and 2,000/8,000 budgets, real screen reader output for node announcements.
