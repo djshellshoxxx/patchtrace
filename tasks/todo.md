@@ -222,3 +222,6 @@
 - [x] Red tests first (`tests/test_callgraph_fixtures.py`), then builder `tests/callgraph_fixtures.py` and six committed fixtures in `tests/fixtures/callgraph/`; 24 focused tests pass; ruff clean
 - [ ] Integrator: add `.gitattributes` line `tests/fixtures/callgraph/** text eol=lf`
 - [ ] Live gate (WB2 section 5): confirm the real Ghidriff `matches` label forms against one real synthetic-PE JSON before trusting hub registry and import keys; the fixture's `name_matches`/`address_matches` shape is an assumption until then
+### [WB1-S0:search-foundation]
+- [x] S0 capability probe, limits, errors, cache paths, bench and runtime-check tools (focused tests green on Linux)
+- [ ] Open gate: probe on `windows-latest` and the frozen Windows build (`check_search_runtime.py` and later `search --probe`)

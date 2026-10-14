@@ -329,3 +329,5 @@ Automated only: 400-trial differential vs NetworkX (SCC, ancestors, descendants,
 | Shape guards | svc known-answer call sets, hostile names (bidi, U+2028, CR/LF, quote and backslash, NUL, 600-char label), ambiguous qualified name, absent `matches`, count-suffix inferable vs ambiguous stem, cycle plus 66-caller hub | 6 tests pass |
 | Byte stability | committed files equal builder output byte-for-byte, LF, ASCII-escaped | pass |
 Not verified: the real Ghidriff `matches` label forms (live gate, owner or CI).
+### [WB1-S0:search-foundation]
+Run `python tools/check_search_runtime.py` (add `--require-native-rapidfuzz` on release builds) on Linux and Windows CI; it must print `search-runtime: ok` with fts5, unicode61 and trigram true. UNVERIFIED on Windows until the first CI run.

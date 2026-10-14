@@ -332,3 +332,7 @@ K1 notes: plan 10.1 "4 edges, 1 mention-only" = 4 vendor-remediation edges + 1 m
 | module | path | responsibility | depends on | tests |
 |---|---|---|---|---|
 | callgraph fixtures | tests/callgraph_fixtures.py, tests/fixtures/callgraph/*.json | six SYNTHETIC Ghidriff-shaped PDiff inputs (svc_pair, hostile_names, ambiguous_pair, no_matches, count_suffix, cycle_hub) built from a builder; regenerate with `python tests/callgraph_fixtures.py` | normalization (test only), models | `test_callgraph_fixtures.py` |
+### [WB1-S0:search-foundation]
+| Module | Files | Responsibility | Depends | Tests |
+|---|---|---|---|---|
+| search (S0) | src/patchtrace/search/{limits,errors,capability,paths}.py, tools/check_search_runtime.py, tools/bench_search.py | search limits, PT-SEARCH-* errors and exit codes, FTS5/trigram/RapidFuzz runtime probe, per-user cache layout refusing in-project roots | stdlib, optional_deps | `test_search_capability.py`, `test_search_paths.py` |
