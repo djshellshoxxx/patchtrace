@@ -51,7 +51,7 @@ def output_map(service, engine: str) -> dict[str, str]:
 
 def body_for(service, engine: str, counter: Path, *, extra: str = '') -> str:
     return ('import hashlib, os, sys, time\n'
-            f'open({str(counter)!r}, "a").write("x")\n' + extra +
+            f'import os, uuid\nos.makedirs({str(counter)!r}, exist_ok=True)\nopen(os.path.join({str(counter)!r}, uuid.uuid4().hex), "w").close()\n' + extra +
             'sha = hashlib.sha256(open(ARGS[-1], "rb").read()).hexdigest()\n'
             f'OUT = {output_map(service, engine)!r}\n'
             'sys.stdout.write(OUT[sha])\n')
@@ -69,7 +69,8 @@ def request(service, setup, **kw) -> runner.RunRequest:
 
 
 def spawns(counter: Path) -> int:
-    return len(counter.read_text()) if counter.exists() else 0
+    # one marker file per spawn: concurrent appends to a shared file lose writes on Windows
+    return len(list(counter.iterdir())) if counter.exists() else 0
 
 
 def test_end_to_end_persists_runs_and_evidence_then_serves_the_cache(tmp_path, project):
