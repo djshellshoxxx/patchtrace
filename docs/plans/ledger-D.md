@@ -10,6 +10,8 @@ Session `session_01Mr844cQDLwXi9iMUoGmBXk`; branch `claude/instance-d-gui`; pare
 | F4 VirtualTable | built, in branch (bbb92ad,f1d23cc); 47 tests, qt_gate 5x ok; open: TSV formula-prefix neutralisation, sort command for panels | |
 | F3 | built, in branch (a98bf40..1784c44); 177 tests, 10x gate ok | dark stylesheet == DARK_STYLE |
 | F6b GraphCanvas | built, in branch (a512c67); 59 tests, 5x gate ok; minimap not built | |
+| F8 evidence+engine-setup migration | built, in branch (a7ce5e2); 800 tests 5x; ui.py ceiling 25->17; threads/table/StateView migration + M4 not done (C6 tests drive legacy paths) | |
+| F9 | worker running | |
 | F6a CodeDiffView | built, in branch (d9ccfb6); 105 tests, 5x gate ok; ui.py M4 selection sites move in F8 | |
 | F5 host + ui.py seam | built, in branch (7f88cf0,da031ea,d320908); 91 host tests, qt_gate 5x over all GUI tests 5665 passed (one F4 timing flake under load); ui.py +25 lines (ceiling) | CI repeat job text in docs/qa.md [GUI-F5:host]; announce F5 to A and B after the PR merges |
 | F5, F6a/b, F7, F8, F9 | waiting on deps | GUI plan section 9 |
