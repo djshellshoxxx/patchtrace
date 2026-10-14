@@ -17,12 +17,13 @@ _SELECTABLE = Qt.TextInteractionFlag.TextSelectableByMouse | Qt.TextInteractionF
 
 class PlainLabel(QLabel):
     """A label whose text is data. Single line labels middle-elide to their width and show the full text, escaped,
-    as a tooltip; ``wrap=True`` labels wrap instead. Selectable only when asked."""
+    as a tooltip; ``wrap=True`` labels wrap instead. Selectable only when asked; ``multiline=True`` keeps line breaks."""
 
     def __init__(self, text: str = '', parent: QWidget | None = None, *, limit: int = LABEL_LIMIT, elide: bool = True,
-                 wrap: bool = False, selectable: bool = False) -> None:
+                 wrap: bool = False, selectable: bool = False, multiline: bool = False) -> None:
         super().__init__(parent)
         self._limit = limit
+        self._multiline = multiline
         self._elide = elide and not wrap
         self._full = ''
         self._auto_tip = False
@@ -35,7 +36,7 @@ class PlainLabel(QLabel):
         self.setText(text)
 
     def setText(self, text: object) -> None:  # noqa: N802 (Qt name)
-        self._full = sanitize_text(text, self._limit)
+        self._full = sanitize_text(text, self._limit, multiline=self._multiline)
         self._show()
 
     def full_text(self) -> str:

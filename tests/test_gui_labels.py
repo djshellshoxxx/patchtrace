@@ -134,3 +134,11 @@ def test_labelled_sanitizes_its_text(qtbot):
     field = QLineEdit(parent)
     labelled(field, 'A\u202eB')
     assert field.accessibleName() == 'AB'
+
+
+def test_multiline_keeps_line_breaks_only_when_asked(qtbot):
+    plain, multi = PlainLabel(wrap=True), PlainLabel(wrap=True, multiline=True)
+    for widget in (plain, multi):
+        qtbot.addWidget(widget)
+        widget.setText('one\ntwo')
+    assert '\n' not in plain.text() and multi.text() == 'one\ntwo'

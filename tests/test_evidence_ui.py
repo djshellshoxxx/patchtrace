@@ -495,12 +495,12 @@ def test_close_window_while_loading_joins_thread(qtbot, tmp_path, settings):
         view = MainWindow(ProjectService.sample(tmp_path / f's{_}'), settings, tmp_path / 'profiles')
         qtbot.addWidget(view)
         gate = threading.Event()
-        view.evidence.loader = gated_loader(gate)
-        view.evidence.auto_probe = False
+        view.panels.controller('evidence').loader = gated_loader(gate)
+        view.panels.controller('evidence').auto_probe = False
         view.show()
-        view.evidence.action.trigger()
-        qtbot.waitUntil(lambda v=view: v.evidence.load_thread is not None, timeout=5000)
-        thread = view.evidence.load_thread
+        view.panels.show_panel('evidence')  # a layout saved by the previous window may already show the dock
+        qtbot.waitUntil(lambda v=view: v.panels.controller('evidence').load_thread is not None, timeout=5000)
+        thread = view.panels.controller('evidence').load_thread
         threading.Timer(0.05, gate.set).start()
         view.close()  # closeEvent -> shutdown: cancel + join before the service closes
         assert not ui_evidence.thread_alive(thread)
@@ -508,18 +508,18 @@ def test_close_window_while_loading_joins_thread(qtbot, tmp_path, settings):
 
 def test_project_switch_mid_load_drops_old_generation(window, qtbot, tmp_path):
     gate = threading.Event()
-    window.evidence.loader = gated_loader(gate)
-    window.evidence.auto_probe = False
+    window.panels.controller('evidence').loader = gated_loader(gate)
+    window.panels.controller('evidence').auto_probe = False
     window.show()
-    window.evidence.action.trigger()
-    qtbot.waitUntil(lambda: window.evidence.load_thread is not None, timeout=5000)
-    old_generation = window.evidence.generation
-    window.evidence.loader = service_api.load_evidence
+    window.panels.toggle_action('evidence').trigger()
+    qtbot.waitUntil(lambda: window.panels.controller('evidence').load_thread is not None, timeout=5000)
+    old_generation = window.panels.controller('evidence').generation
+    window.panels.controller('evidence').loader = service_api.load_evidence
     window.set_service(ProjectService.sample(tmp_path / 'other'))
     gate.set()
-    qtbot.waitUntil(lambda: not window.evidence.panel.loading, timeout=5000)
-    assert window.evidence.generation > old_generation
-    assert window.evidence.panel.vm.project_id == window.project.id
+    qtbot.waitUntil(lambda: not window.panels.controller('evidence').panel.loading, timeout=5000)
+    assert window.panels.controller('evidence').generation > old_generation
+    assert window.panels.controller('evidence').panel.vm.project_id == window.project.id
 
 
 def test_started_thread_without_reference_survives_gc(qtbot):
@@ -538,16 +538,16 @@ def test_started_thread_without_reference_survives_gc(qtbot):
 def test_panel_deleted_while_thread_runs(qtbot, tmp_path, settings):
     view = MainWindow(ProjectService.sample(tmp_path / 's'), settings, tmp_path / 'profiles')
     gate = threading.Event()
-    view.evidence.loader = gated_loader(gate)
-    view.evidence.auto_probe = False
-    view.evidence.reload()
-    thread = view.evidence.load_thread
+    view.panels.controller('evidence').loader = gated_loader(gate)
+    view.panels.controller('evidence').auto_probe = False
+    view.panels.controller('evidence').reload()
+    thread = view.panels.controller('evidence').load_thread
     assert thread.parent() is None  # never parented: deleting the panel cannot destroy it
-    view.evidence.dock.deleteLater()
+    view.panels.controller('evidence').dock.deleteLater()
     QCoreApplication.sendPostedEvents(None, QEvent.Type.DeferredDelete)
     gate.set()
     thread.wait()
-    view.evidence.shutdown()
+    view.panels.controller('evidence').shutdown()
     view.service.close()
     view.service = None
     view.deleteLater()
@@ -561,25 +561,25 @@ def window(qtbot, tmp_path, settings):
     view = MainWindow(ProjectService.sample(tmp_path / 's'), settings, tmp_path / 'profiles')
     qtbot.addWidget(view)
     yield view
-    view.evidence.shutdown()
+    view.panels.controller('evidence').shutdown()
     if view.service:
         view.service.close()
         view.service = None
 
 
 def open_dock(window, qtbot):
-    window.evidence.auto_probe = False
+    window.panels.controller('evidence').auto_probe = False
     window.show()
-    window.evidence.action.trigger()
-    qtbot.waitUntil(lambda: window.evidence.panel.vm.state != 'no-project' and not window.evidence.panel.loading,
+    window.panels.toggle_action('evidence').trigger()
+    qtbot.waitUntil(lambda: window.panels.controller('evidence').panel.vm.state != 'no-project' and not window.panels.controller('evidence').panel.loading,
                     timeout=5000)
 
 
 def test_mainwindow_dock_loads_no_engines_and_action_shortcut(window, qtbot):
-    assert window.evidence.action.shortcut().toString() == 'Ctrl+Shift+E'
-    assert window.evidence.dock.isHidden()
+    assert window.panels.toggle_action('evidence').shortcut().toString() == 'Ctrl+Shift+E'
+    assert window.panels.controller('evidence').dock.isHidden()
     open_dock(window, qtbot)
-    assert window.evidence.panel.vm.state == 'no-engines'
+    assert window.panels.controller('evidence').panel.vm.state == 'no-engines'
 
 
 def test_mainwindow_seam_is_minimal():
@@ -588,7 +588,7 @@ def test_mainwindow_seam_is_minimal():
     assert 'EvidenceTableModel' not in text and 'EvidenceDelegate' not in text
     seam = [line for line in text.splitlines() if re.search(r'self\.evidence\b(?!_)', line) or 'EvidenceController' in line
             or "hasattr(self, 'evidence')" in line]
-    assert len(seam) <= 10, seam  # the coordination budget is <= 15 lines in ui.py
+    assert not seam, seam  # M1 and M2: the host is the only seam
 
 
 class FakeRun:
@@ -628,7 +628,7 @@ def supported():
 
 
 def start(window, qtbot, fake, engines=('rz-diff',)):
-    controller = window.evidence
+    controller = window.panels.controller('evidence')
     controller.run_execute = fake
     controller.capabilities = supported()
     controller.panel.set_capabilities(controller.capabilities)
@@ -702,7 +702,7 @@ def test_project_switch_during_run_drops_result(window, qtbot, tmp_path):
 
 def test_run_disabled_while_ghidriff_job_active(window, qtbot):
     open_dock(window, qtbot)
-    controller = window.evidence
+    controller = window.panels.controller('evidence')
     controller.panel.set_capabilities(supported())
     controller.panel.engine_checks['rz-diff'].setChecked(True)
     controller.update_controls()
@@ -741,9 +741,9 @@ def test_worker_never_touches_widgets(window, qtbot, tmp_path, monkeypatch):
         loader_threads.append(QThread.currentThread() is not app_thread)
         assert isinstance(request, service_api.EvidenceRequest)
         return service_api.load_evidence(request, cancel)
-    window.evidence.loader = loader
-    window.evidence.reload()
-    qtbot.waitUntil(lambda: not window.evidence.panel.loading, timeout=5000)
+    window.panels.controller('evidence').loader = loader
+    window.panels.controller('evidence').reload()
+    qtbot.waitUntil(lambda: not window.panels.controller('evidence').panel.loading, timeout=5000)
     controller = start(window, qtbot, FakeRun(real_outcomes(window, tmp_path, ('rz-diff',))))
     qtbot.waitUntil(lambda: controller.run_thread is None, timeout=10000)
     assert loader_threads and all(loader_threads) and violations == []
@@ -751,7 +751,7 @@ def test_worker_never_touches_widgets(window, qtbot, tmp_path, monkeypatch):
 
 def test_stale_generation_result_is_dropped(window, qtbot):
     open_dock(window, qtbot)
-    controller = window.evidence
+    controller = window.panels.controller('evidence')
     before = controller.panel.vm
     controller._model_ready(empty_model('failed', error='old'), controller.generation - 1)
     assert controller.panel.vm is before
@@ -770,13 +770,13 @@ def test_navigator_link_both_ways(window, qtbot):
     guard = Guard(project.id, run.id, run.raw_sha256, match_set.file_sha256)
     publish_engine_set(EnrichmentStore(window.service.store), guard, guard, project.revision, match_set)
     open_dock(window, qtbot)
-    panel = window.evidence.panel
+    panel = window.panels.controller('evidence').panel
     assert panel.vm.state in ('ready', 'partial'), panel.vm.error
     assert panel.select_match(match.id)
     panel.activate_current()
     assert window.current_match().id == match.id
     other = next(m for m in project.matches if m.id != match.id)
-    window.evidence.follow_match(other)
+    window.panels.controller('evidence').selection_changed(other.id)
     assert panel.current_row().match_id == other.id
 
 
@@ -800,6 +800,6 @@ def test_table_model_empty_is_safe():
 def test_controller_without_project(qtbot, settings, tmp_path):
     empty = MainWindow(None, settings, tmp_path / 'profiles')
     qtbot.addWidget(empty)
-    assert isinstance(empty.evidence, EvidenceController)
-    assert empty.evidence.panel.status.text() == STATE_TEXT['no-project']
-    empty.evidence.shutdown()
+    assert isinstance(empty.panels.controller('evidence'), EvidenceController)
+    assert empty.panels.controller('evidence').panel.status.text() == STATE_TEXT['no-project']
+    empty.panels.controller('evidence').shutdown()

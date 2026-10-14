@@ -352,3 +352,9 @@
 - [ ] F8: evidence migration (`secondary/evidence_panel.py`; remove the `hasattr(self, 'evidence')` hooks and the menu lookup by 'Analysis'); then lower `UI_TRANSITIONAL_CEILING` in tests/test_gui_host_seam.py to the final +15.
 - [ ] F7: Theme submenu, `theme_changed` on palette change, reduced motion.
 - [ ] BLOCKED (manual): palette, F6 order, dock tab names and notice strip with real Narrator or NVDA on Windows; layout restore across DPI changes.
+
+### [F8:evidence-migration] Evidence and engine setup on the host (2026-10-14)
+- [x] M1 and M2 done; `UI_TRANSITIONAL_CEILING` lowered 25 -> 17 (ui.py 3,159 lines).
+- [ ] Reach the plan's +15 (3,157): two more ui.py lines go with F9 (series and files docks).
+- [ ] Integrator: move the evidence status messages to `StatusAnnouncer` and the load/run/probe threads to `TaskRunner` (needs the C6 thread tests rewritten); M4 stays open.
+- [ ] BLOCKED (manual): M19 NVDA walk and M21 keyboard walk of the migrated panel on Windows.

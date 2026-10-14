@@ -612,9 +612,9 @@ def test_unconfigured_layout_keeps_c6_geometry(qtbot, tmp_path, size):
 def window(qtbot, tmp_path, settings):
     view = MainWindow(ProjectService.sample(tmp_path / 's'), settings, tmp_path / 'profiles')
     qtbot.addWidget(view)
-    view.evidence.auto_probe = False
+    view.panels.controller('evidence').auto_probe = False
     yield view
-    view.evidence.shutdown()
+    view.panels.controller('evidence').shutdown()
     if view.service:
         view.service.close()
         view.service = None
@@ -622,13 +622,13 @@ def window(qtbot, tmp_path, settings):
 
 def open_dock(window, qtbot):
     window.show()
-    window.evidence.action.trigger()
-    qtbot.waitUntil(lambda: window.evidence.panel.vm.state != 'no-project' and not window.evidence.panel.loading,
+    window.panels.toggle_action('evidence').trigger()
+    qtbot.waitUntil(lambda: window.panels.controller('evidence').panel.vm.state != 'no-project' and not window.panels.controller('evidence').panel.loading,
                     timeout=10000)
 
 
 def test_unconfigured_controller_keeps_c6_flow(window, qtbot):
-    controller = window.evidence
+    controller = window.panels.controller('evidence')
     controller.probe = lambda cancel: dict(DEFAULT_CAPS)
     open_dock(window, qtbot)
     controller.start_probe()
@@ -661,7 +661,7 @@ def test_gui_bindiff_run_matches_cli_provenance(window, qtbot, tmp_path, monkeyp
     exe = make_fake_bindiff(tmp_path / 'bd')
     older = write_fake_binexport(tmp_path / 'older.BinExport', '1' * 32)  # MD5-sized id: needs confirmation
     newer = write_fake_binexport(tmp_path / 'newer.BinExport', NEW_SHA)
-    controller = window.evidence
+    controller = window.panels.controller('evidence')
     controller.probe = lambda cancel: dict(DEFAULT_CAPS)
     open_dock(window, qtbot)
     setup = controller.panel.bindiff_setup
@@ -713,7 +713,7 @@ def test_gui_bindiff_run_matches_cli_provenance(window, qtbot, tmp_path, monkeyp
 
 
 def test_bindiff_checkbox_follows_setup(window, qtbot):
-    controller = window.evidence
+    controller = window.panels.controller('evidence')
     controller.probe = lambda cancel: dict(DEFAULT_CAPS)
     controller.bindiff.prober = usable_prober
     controller.bindiff.validator = lambda request, cancel, progress=None: svc.BinExportValidation(
@@ -755,7 +755,7 @@ def test_cancel_gui_bindiff_run(window, qtbot, tmp_path, monkeypatch):
     exe = make_fake_bindiff(tmp_path / 'bd', 'hang')
     older = write_fake_binexport(tmp_path / 'older.BinExport', OLD_SHA)
     newer = write_fake_binexport(tmp_path / 'newer.BinExport', NEW_SHA)
-    controller = window.evidence
+    controller = window.panels.controller('evidence')
     controller.probe = lambda cancel: dict(DEFAULT_CAPS)
     open_dock(window, qtbot)
     setup = controller.panel.bindiff_setup
@@ -781,27 +781,27 @@ def test_dock_deleted_while_setup_worker_runs(qtbot, tmp_path, settings):
     """C6 teardown matrix for the setup worker: the unparented thread survives the dock; its late result is
     dropped without touching the deleted section (pytest-qt fails the test if a slot raises)."""
     view = MainWindow(ProjectService.sample(tmp_path / 's'), settings, tmp_path / 'profiles')
-    view.evidence.auto_probe = False
-    controller = view.evidence.bindiff
+    view.panels.controller('evidence').auto_probe = False
+    controller = view.panels.controller('evidence').bindiff
     gate = threading.Event()
 
     def validator(request, cancel, progress=None):
         gate.wait(5)
         return svc.BinExportValidation('ok', request.key, binding='sha256')
     controller.validator = validator
-    setup = view.evidence.panel.bindiff_setup
+    setup = view.panels.controller('evidence').panel.bindiff_setup
     setup.older.setText('o.BinExport')
     setup.newer.setText('n.BinExport')
     setup.validate_button.click()
     [thread] = [t for t, _ in controller.threads]
     assert thread.parent() is None
-    view.evidence.dock.deleteLater()
+    view.panels.controller('evidence').dock.deleteLater()
     QCoreApplication.sendPostedEvents(None, QEvent.Type.DeferredDelete)
     gate.set()
     assert thread.wait(5000)
     qtbot.wait(50)  # deliver the queued result
     assert controller.validation is None
-    view.evidence.shutdown()
+    view.panels.controller('evidence').shutdown()
     view.service.close()
     view.service = None
     view.deleteLater()
@@ -809,8 +809,8 @@ def test_dock_deleted_while_setup_worker_runs(qtbot, tmp_path, settings):
 
 def test_window_close_joins_setup_workers(qtbot, tmp_path, settings):
     view = MainWindow(ProjectService.sample(tmp_path / 's'), settings, tmp_path / 'profiles')
-    view.evidence.auto_probe = False
-    controller = view.evidence.bindiff
+    view.panels.controller('evidence').auto_probe = False
+    controller = view.panels.controller('evidence').bindiff
 
     def validator(request, cancel, progress=None):
         while not cancel.is_set():
@@ -818,8 +818,8 @@ def test_window_close_joins_setup_workers(qtbot, tmp_path, settings):
         return svc.BinExportValidation('cancelled', request.key)
     controller.validator = validator
     view.show()
-    view.evidence.action.trigger()
-    setup = view.evidence.panel.bindiff_setup
+    view.panels.show_panel('evidence')
+    setup = view.panels.controller('evidence').panel.bindiff_setup
     setup.older.setText('o.BinExport')
     setup.newer.setText('n.BinExport')
     setup.validate_button.click()

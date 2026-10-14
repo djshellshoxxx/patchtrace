@@ -214,9 +214,9 @@ def test_every_registry_id_is_applied_somewhere(window, qtbot, tmp_path, setting
     roots.append(series)
     names |= {series.objectName(), series.banner.objectName()}
     # C6: the dock and stale banner are containers/labels, not focusable controls.
-    names |= {window.evidence.dock.objectName(), window.evidence.panel.stale_banner.objectName()}
+    names |= {window.panels.controller('evidence').dock.objectName(), window.panels.controller('evidence').panel.stale_banner.objectName()}
     # Track G: the BinDiff setup group and its warning label are a container and a label.
-    setup = window.evidence.panel.bindiff_setup
+    setup = window.panels.controller('evidence').panel.bindiff_setup
     names |= {setup.objectName(), setup.warning.objectName()}
     # F5: framework widgets and every panel the manifest has built, without listing panel roots by hand.
     from PySide6.QtWidgets import QDockWidget
@@ -257,7 +257,7 @@ def test_disabled_controls_keep_tooltip_and_state_prerequisite(qtbot, settings, 
         assert not action.isEnabled()
         check_text(action.text(), action.toolTip())
         assert 'Availability:' in action.toolTip()
-    panel = empty.evidence.panel  # C6: no project -> run/copy/goto disabled, prerequisite stated
+    panel = empty.panels.controller('evidence').panel  # C6: no project -> run/copy/goto disabled, prerequisite stated
     for control in (panel.run_button, panel.copy_button, panel.goto_button):
         assert not control.isEnabled()
         check_text(control.objectName(), control.toolTip())
@@ -356,10 +356,11 @@ def test_evidence_ids_prefix_complete(window):
     ids = {key for key in REGISTRY if key.startswith('evidence.')}
     templates = {key for key in TEMPLATES if key.startswith('evidence.')}
     assert len(ids) >= 25 and {'evidence.row', 'evidence.cell', 'evidence.badge'} <= templates
-    dock = window.evidence.dock
+    dock = window.panels.controller('evidence').dock
     used = {w.objectName() for w in dock.findChildren(object) if hasattr(w, 'objectName')}
-    used |= {dock.objectName(), window.evidence.action.objectName()}
-    evidence_names = {name for name in used if name.startswith('evidence.')}
+    used |= {dock.objectName(), window.panels.toggle_action('evidence').objectName()}
+    # the host's StateView around the panel names its own children `evidence.state_*` (gui tips, not this registry)
+    evidence_names = {name for name in used if name.startswith('evidence.') and '.state_' not in name}
     assert evidence_names <= ids, sorted(evidence_names - ids)
     assert ids <= evidence_names, sorted(ids - evidence_names)
     audit(dock)
@@ -369,11 +370,11 @@ def test_engine_setup_ids_prefix_complete(window):
     """Track G (spec 16.8): every engine_setup.* id is used in the dock and every such widget is registered."""
     ids = {key for key in REGISTRY if key.startswith('engine_setup.')}
     assert len(ids) == 15
-    dock = window.evidence.dock
+    dock = window.panels.controller('evidence').dock
     used = {w.objectName() for w in dock.findChildren(object) if hasattr(w, 'objectName')}
     names = {name for name in used if name.startswith('engine_setup.')}
     assert names == ids, sorted(names ^ ids)
-    setup = window.evidence.panel.bindiff_setup
+    setup = window.panels.controller('evidence').panel.bindiff_setup
     for widget in controls(setup) + [setup.toggle_button]:
         assert widget.objectName().startswith('engine_setup.'), widget.objectName()
         assert widget.toolTip() == tooltip(widget.objectName())

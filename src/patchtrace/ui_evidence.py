@@ -20,7 +20,6 @@ module only moves immutable view-models into widgets and forwards intents. Rules
 from __future__ import annotations
 
 import dataclasses
-import threading
 import time
 from collections.abc import Callable, Sequence
 from dataclasses import dataclass
@@ -30,8 +29,8 @@ from PySide6.QtCore import (
     QAbstractTableModel,
     QByteArray,
     QModelIndex,
-    QObject,
     QRect,
+    QSettings,
     QSize,
     Qt,
     QThread,
@@ -47,7 +46,6 @@ from PySide6.QtWidgets import (
     QFileDialog,
     QHBoxLayout,
     QHeaderView,
-    QLabel,
     QLineEdit,
     QPlainTextEdit,
     QProgressBar,
@@ -64,6 +62,12 @@ from PySide6.QtWidgets import (
 )
 from shiboken6 import isValid
 
+from .gui.qt.docks import ControllerBase
+from .gui.qt.labels import PlainLabel
+from .gui.qt.settings import PanelSettings
+from .gui.qt.tasks import CancelToken
+from .gui.registry import PanelContext
+from .gui.text import VIEW_LIMIT
 from .secondary import evidence_panel_service as service_api
 from .secondary.evidence_panel_service import (
     DEFAULT_TIMEOUT,
@@ -138,39 +142,6 @@ def contrast_ratio(first: str, second: str) -> float:
         return 0.2126 * linear[0] + 0.7152 * linear[1] + 0.0722 * linear[2]
     high, low = sorted((luminance(first), luminance(second)), reverse=True)
     return (high + 0.05) / (low + 0.05)
-
-
-class PlainLabel(QLabel):
-    """Untrusted names and messages are always text, never Qt rich text."""
-
-    def __init__(self, text: str = '', parent=None):
-        super().__init__(text, parent)
-        self.setTextFormat(Qt.TextFormat.PlainText)
-        self.setOpenExternalLinks(False)
-        self.setTextInteractionFlags(Qt.TextInteractionFlag.NoTextInteraction)
-
-
-def _bool_setting(settings, key: str, default: bool) -> bool:
-    try:
-        value = settings.value(key, default)
-        if isinstance(value, bool):
-            return value
-        text = str(value).strip().lower()
-        if text in ('true', '1'):
-            return True
-        if text in ('false', '0'):
-            return False
-    except Exception:  # noqa: BLE001 - corrupted settings fall back to defaults
-        pass
-    return default
-
-
-def _int_setting(settings, key: str, default: int, low: int, high: int) -> int:
-    try:
-        value = int(str(settings.value(key, default)).strip())
-    except Exception:  # noqa: BLE001
-        return default
-    return value if low <= value <= high else default
 
 
 # ---- models ---------------------------------------------------------------------------------------
@@ -483,7 +454,7 @@ class _WorkerThread(QThread):
 
     def __init__(self):
         super().__init__()
-        self.cancel = threading.Event()
+        self.cancel = CancelToken()
         _LIVE_THREADS.add(self)
         self.finished.connect(self._release)
 
@@ -583,7 +554,7 @@ class EvidencePanel(QWidget):
 
     def __init__(self, settings=None, parent=None, *, bindiff_setup: bool = True):
         super().__init__(parent)
-        self.settings = settings
+        self.settings = PanelSettings(settings, 'evidence') if isinstance(settings, QSettings) else settings
         # Track G (§16): the BinDiff run setup section; False builds the exact C6 panel (regression baseline).
         self._with_bindiff_setup = bindiff_setup
         self.bindiff_setup: BinDiffSetupPanel | None = None
@@ -612,7 +583,7 @@ class EvidencePanel(QWidget):
         layout.addWidget(self.tabs, 1)
         self._build_evidence_tab()
         self._build_engines_tab()
-        self.footer = PlainLabel(FOOTER)
+        self.footer = PlainLabel(FOOTER, wrap=True, limit=VIEW_LIMIT, multiline=True)
         self.footer.setObjectName('evidence_footer')
         self.footer.setWordWrap(True)
         layout.addWidget(self.footer)
@@ -636,7 +607,7 @@ class EvidencePanel(QWidget):
         layout = QVBoxLayout(page)
         layout.setContentsMargins(2, 2, 2, 2)
         bar = QHBoxLayout()
-        bar.addWidget(PlainLabel('Filter:'))
+        bar.addWidget(PlainLabel('Filter:', elide=False))
         self.filter = QComboBox()
         self.filter.addItems([name for name, _ in FILTERS])
         apply_tooltip(self.filter, 'evidence.filter')
@@ -670,22 +641,22 @@ class EvidencePanel(QWidget):
         self.refresh_button.clicked.connect(self.refresh_requested)
         bar.addWidget(self.refresh_button)
         layout.addLayout(bar)
-        self.engines_label = PlainLabel('')
+        self.engines_label = PlainLabel('', wrap=True, limit=VIEW_LIMIT, multiline=True)
         self.engines_label.setObjectName('evidence_engines')
         self.engines_label.setWordWrap(True)
         layout.addWidget(self.engines_label)
-        self.status = PlainLabel('')
+        self.status = PlainLabel('', wrap=True, limit=VIEW_LIMIT, multiline=True)
         self.status.setObjectName('evidence_status')
         # Accessible name intentionally empty: QLabel.setText only emits an accessibility NameChanged event
         # when no fixed name is set, so the status text itself is the announced name (WCAG 4.1.3 intent).
         self.status.setWordWrap(True)
         layout.addWidget(self.status)
-        self.stale_banner = PlainLabel('')
+        self.stale_banner = PlainLabel('', wrap=True, limit=VIEW_LIMIT, multiline=True)
         apply_tooltip(self.stale_banner, 'evidence.stale_banner')
         self.stale_banner.setWordWrap(True)
         self.stale_banner.setAccessibleName('Stale engine evidence warning')
         layout.addWidget(self.stale_banner)
-        self.partial_banner = PlainLabel('')
+        self.partial_banner = PlainLabel('', wrap=True, limit=VIEW_LIMIT, multiline=True)
         self.partial_banner.setObjectName('evidence_partial_banner')
         self.partial_banner.setWordWrap(True)
         layout.addWidget(self.partial_banner)
@@ -694,7 +665,7 @@ class EvidencePanel(QWidget):
         # Page 0: state message (E0, E1, E2, E5, E7, E8). Every control is constructed eagerly.
         message = QWidget()
         message_layout = QVBoxLayout(message)
-        self.state_label = PlainLabel('')
+        self.state_label = PlainLabel('', wrap=True, limit=VIEW_LIMIT, multiline=True)
         self.state_label.setObjectName('evidence_state_text')
         self.state_label.setWordWrap(True)
         self.state_label.setAlignment(Qt.AlignmentFlag.AlignTop | Qt.AlignmentFlag.AlignLeft)
@@ -799,14 +770,14 @@ class EvidencePanel(QWidget):
             box.toggled.connect(lambda _checked: self._update_run_controls())
             self.engine_checks[engine] = box
             options.addWidget(box)
-        options.addWidget(PlainLabel('Parallel engines:'))
+        options.addWidget(PlainLabel('Parallel engines:', elide=False))
         self.parallel = QSpinBox()
         self.parallel.setRange(*PARALLEL_RANGE)
         self.parallel.setValue(1)
         apply_tooltip(self.parallel, 'evidence.parallel')
         self.parallel.setAccessibleName('Parallel engines')
         options.addWidget(self.parallel)
-        options.addWidget(PlainLabel('Timeout (s):'))
+        options.addWidget(PlainLabel('Timeout (s):', elide=False))
         self.timeout = QSpinBox()
         self.timeout.setRange(*TIMEOUT_RANGE)
         self.timeout.setValue(DEFAULT_TIMEOUT)
@@ -851,11 +822,11 @@ class EvidencePanel(QWidget):
             layout.addLayout(toggle_row)
             self.bindiff_scroll = SectionScrollArea(self.bindiff_setup)  # only the open section ever scrolls
             layout.addWidget(self.bindiff_scroll, 2)
-        self.run_status = PlainLabel('')
+        self.run_status = PlainLabel('', wrap=True, limit=VIEW_LIMIT, multiline=True)
         self.run_status.setObjectName('evidence_run_status')
         self.run_status.setWordWrap(True)
         layout.addWidget(self.run_status)
-        self.preview = PlainLabel('')
+        self.preview = PlainLabel('', wrap=True, limit=VIEW_LIMIT, multiline=True)
         self.preview.setObjectName('evidence_run_preview')
         self.preview.setWordWrap(True)
         layout.addWidget(self.preview)
@@ -873,7 +844,7 @@ class EvidencePanel(QWidget):
         log_actions.addWidget(self.copy_details_button)
         log_actions.addStretch(1)
         layout.addLayout(log_actions)
-        note = PlainLabel(RUN_NOTE)
+        note = PlainLabel(RUN_NOTE, wrap=True, limit=VIEW_LIMIT, multiline=True)
         note.setObjectName('evidence_run_note')
         note.setWordWrap(True)
         layout.addWidget(note)
@@ -904,13 +875,13 @@ class EvidencePanel(QWidget):
         if self.settings is None:
             return
         self.filter.blockSignals(True)
-        self.filter.setCurrentIndex(_int_setting(self.settings, 'evidence/filter', 0, 0, len(FILTERS) - 1))
+        self.filter.setCurrentIndex(self.settings.get_int('filter', 0, 0, len(FILTERS) - 1))
         self.filter.blockSignals(False)
         self.hide_agreed.blockSignals(True)
-        self.hide_agreed.setChecked(_bool_setting(self.settings, 'evidence/hide_agreed', False))
+        self.hide_agreed.setChecked(self.settings.get_bool('hide_agreed', False))
         self.hide_agreed.blockSignals(False)
         self.show_index_box.blockSignals(True)
-        self.show_index = _bool_setting(self.settings, 'evidence/show_index', False)
+        self.show_index = self.settings.get_bool('show_index', False)
         self.show_index_box.setChecked(self.show_index)
         self.show_index_box.blockSignals(False)
         self.model.set_filter(FILTERS[self.filter.currentIndex()][1], '', self.hide_agreed.isChecked())
@@ -919,7 +890,7 @@ class EvidencePanel(QWidget):
         if self.settings is None:
             return
         try:
-            self.settings.setValue(key, value)
+            self.settings.set(key, value)
         except Exception:  # noqa: BLE001
             pass
 
@@ -983,8 +954,8 @@ class EvidencePanel(QWidget):
 
     # -- evidence tab behaviour --
     def _filter_changed(self, *_):
-        self._save('evidence/filter', self.filter.currentIndex())
-        self._save('evidence/hide_agreed', self.hide_agreed.isChecked())
+        self._save('filter', self.filter.currentIndex())
+        self._save('hide_agreed', self.hide_agreed.isChecked())
         self._apply_filter()
 
     def _apply_filter(self):
@@ -997,7 +968,7 @@ class EvidencePanel(QWidget):
 
     def _show_index_changed(self, checked):
         self.show_index = bool(checked)
-        self._save('evidence/show_index', self.show_index)
+        self._save('show_index', self.show_index)
         self._render_detail()
 
     def _header_clicked(self, section):
@@ -1189,87 +1160,23 @@ class EvidencePanel(QWidget):
         self._update_run_controls()
 
 
-class EvidenceDock(QDockWidget):
-    def __init__(self, panel: EvidencePanel, parent=None):
-        super().__init__('Engine evidence', parent)
-        self.setObjectName('evidence.dock')
-        self.setAccessibleName('Engine evidence panel')
-        apply_tooltip(self, 'evidence.dock')
-        self.setFeatures(QDockWidget.DockWidgetFeature.DockWidgetClosable
-                         | QDockWidget.DockWidgetFeature.DockWidgetMovable
-                         | QDockWidget.DockWidgetFeature.DockWidgetFloatable)
-        self.setWidget(panel)
-        self.panel = panel
+# ---- controller (panel host seam) -----------------------------------------------------------------
 
 
-def create_evidence_dock(parent=None, settings=None) -> EvidenceDock:
-    return EvidenceDock(EvidencePanel(settings), parent)
+class EvidenceController(ControllerBase):
+    """Owns the threads and the generation counter; reads the project through the panel host's port. The host owns
+    the dock, the View-menu entry, the shortcut and the layout; it calls the hooks only while the panel is shown."""
 
-
-# ---- controller (MainWindow seam) -----------------------------------------------------------------
-
-
-class WindowPort:
-    """Narrow read/write access to the MainWindow's project (spec §8 ProjectPort). GUI thread only."""
-
-    def __init__(self, window):
-        self.window = window
-
-    @property
-    def service(self):
-        return getattr(self.window, 'service', None)
-
-    @property
-    def project(self):
-        service = self.service
-        return service.project if service else None
-
-    def busy(self) -> bool:
-        return getattr(self.window, 'worker', None) is not None
-
-    def key(self):
-        project = self.project
-        if project is None:
-            return None
-        run = service_api.latest_run(project)
-        sides = {a.side: a.sha256 for a in project.artifacts}
-        return (str(self.service.root), project.id, project.revision, run.id if run else None,
-                sides.get('older'), sides.get('newer'))
-
-    def identity(self):
-        key = self.key()
-        return None if key is None else key[:2]
-
-    def artifact_paths(self) -> tuple[Path, Path, str, str]:
-        project = self.project
-        sides = {a.side: a for a in project.artifacts}
-        root = Path(self.service.root)
-        return ((root / sides['older'].relative_path).resolve(), (root / sides['newer'].relative_path).resolve(),
-                sides['older'].sha256, sides['newer'].sha256)
-
-    def select_match(self, match_id: str) -> bool:
-        navigator = getattr(self.window, 'navigator', None)
-        if navigator is None:
-            return False
-        for row in range(navigator.count()):
-            item = navigator.item(row)
-            if item.data(Qt.ItemDataRole.UserRole) == match_id:
-                navigator.setCurrentItem(item)
-                navigator.scrollToItem(item)
-                return True
-        return False
-
-
-class EvidenceController(QObject):
-    """Owns the dock, threads and the generation counter; reads the project through ``WindowPort``."""
-
-    def __init__(self, window, *, loader: Callable = load_evidence, run_execute: Callable | None = None,
+    def __init__(self, ctx: PanelContext, *, loader: Callable = load_evidence, run_execute: Callable | None = None,
                  run_kw: dict | None = None, probe: Callable | None = None, auto_probe: bool = True,
                  bindiff_kw: dict | None = None):
-        super().__init__(window)
-        self.window = window
-        self.port = WindowPort(window)
-        self.settings = getattr(window, 'settings', None)
+        panel = EvidencePanel(ctx.settings)
+        super().__init__(panel)
+        self.panel = panel
+        # The concrete port is also the legacy window port: it carries the live service and the window (spec 17).
+        self.port = ctx.project
+        self.window = self.port.window
+        self.settings = self.window.settings  # the BinDiff setup keeps its own `engines/bindiff/*` keys
         self.loader = loader
         self.run_execute = run_execute
         self.run_kw = run_kw or {}
@@ -1279,39 +1186,28 @@ class EvidenceController(QObject):
         self.generation = 0
         self.run_generation = 0
         # Threads are referenced here (and in the module registry) but never parented; their cancel
-        # events are kept separately so cancelling never touches a possibly deleted QThread wrapper.
+        # tokens are kept separately so cancelling never touches a possibly deleted QThread wrapper.
         self.load_thread: EvidenceLoadThread | None = None
-        self.load_cancel: threading.Event | None = None
+        self.load_cancel: CancelToken | None = None
         self.run_thread: EngineRunThread | None = None
-        self.run_cancel: threading.Event | None = None
+        self.run_cancel: CancelToken | None = None
         self.probe_thread: EngineProbeThread | None = None
-        self.threads: list[tuple[QThread, threading.Event]] = []
+        self.threads: list[tuple[QThread, CancelToken]] = []
         self.run_request: RunRequest | None = None
         self.loaded_key = None
         self.dirty = True
         self.probed = False
-        self._following = False
+        self._legacy_geometry_done = False
         self.outcomes: dict[str, EngineOutcomeView] = {}
         self.capabilities: dict[str, object] = {}
         self.engine_states: dict[str, str] = {}
-        self.dock = create_evidence_dock(window, self.settings)
-        self.panel = self.dock.panel
+        self._status = ctx.shell.status
         # Track G (§16): BinDiff run setup; reports None (= today's "not configured") until explicitly probed.
         self.bindiff: BinDiffSetupController | None = None
         if self.panel.bindiff_setup is not None:
             self.bindiff = BinDiffSetupController(self.panel.bindiff_setup, settings=self.settings, parent=self,
                                                   **(bindiff_kw or {}))
             self.bindiff.changed.connect(self._bindiff_changed)
-        window.addDockWidget(Qt.DockWidgetArea.RightDockWidgetArea, self.dock)
-        self.dock.hide()
-        self._restore_geometry()
-        self.action = self.dock.toggleViewAction()
-        self.action.setText('Engine evidence')
-        apply_tooltip(self.action, 'evidence.action')
-        self.action.setShortcut(QKeySequence('Ctrl+Shift+E'))
-        self._install_menu()
-        queued = Qt.ConnectionType.QueuedConnection
-        self.dock.visibilityChanged.connect(self._visibility_changed, queued)
         self.panel.refresh_requested.connect(self.reload)
         self.panel.match_activated.connect(self._activate)
         self.panel.run_requested.connect(self.start_run)
@@ -1319,38 +1215,38 @@ class EvidenceController(QObject):
         self.panel.probe_requested.connect(self.start_probe)
         self.panel.import_bindiff_requested.connect(self.import_bindiff)
         self.panel.status_message.connect(self._status)
-        self.project_changed()
+        self.panel.has_project = self.port.project() is not None  # the BinDiff setup needs it before the first show
+        self._set_validation_project(self.port.key())
+        self._refresh_engine_rows()
+        self.update_controls()
 
-    # -- setup --
-    def _install_menu(self):
-        bar = self.window.menuBar() if hasattr(self.window, 'menuBar') else None
-        if bar is None:
-            return
-        for action in bar.actions():
-            if action.menu() is not None and action.text() == 'Analysis':
-                action.menu().addAction(self.action)
-                return
-
-    def _restore_geometry(self):
-        if self.settings is None:
-            return
-        try:
-            value = self.settings.value('evidence/geometry')
-            if isinstance(value, (QByteArray, bytes)) and value:
-                self.dock.restoreGeometry(QByteArray(value))
-        except Exception:  # noqa: BLE001 - invalid geometry is ignored
-            pass
-
-    def _status(self, text: str) -> None:
-        bar = self.window.statusBar() if hasattr(self.window, 'statusBar') else None
-        if bar is not None:
-            bar.showMessage(text, 5000)
-
-    # -- lifecycle hooks (called from MainWindow) --
-    def project_changed(self) -> None:
-        key = self.port.key()
+    def _set_validation_project(self, key) -> None:
         if self.bindiff is not None:  # validation answers one project and artifact pair only
             self.bindiff.set_project(None if key is None or not key[4] or not key[5] else (key[1], key[4], key[5]))
+
+    @property
+    def dock(self) -> QDockWidget | None:
+        """The host's dock around the panel (None before the host has placed it)."""
+        widget = self.panel.parentWidget()
+        while widget is not None and not isinstance(widget, QDockWidget):
+            widget = widget.parentWidget()
+        return widget
+
+    def _restore_legacy_geometry(self) -> None:
+        """Before the host, the dock's geometry was `evidence/geometry`; read it once when no layout was saved."""
+        self._legacy_geometry_done = True
+        dock, settings = self.dock, self.window.settings
+        value = settings.value('evidence/geometry')
+        if dock is None or settings.contains('layout/state') or not isinstance(value, (QByteArray, bytes)) or not value:
+            return
+        dock.restoreGeometry(QByteArray(value))
+        settings.remove('evidence/geometry')
+
+    # -- host hooks --
+    def project_changed(self, key) -> None:
+        if not self._legacy_geometry_done:
+            self._restore_legacy_geometry()
+        self._set_validation_project(key)
         if key is None:
             self._invalidate()
             self.loaded_key = None
@@ -1365,18 +1261,28 @@ class EvidenceController(QObject):
             self.outcomes.clear()
             self.probed = False
         self.panel.has_project = True
-        if key != self.loaded_key:
-            self.dirty = True
-            if self.dock.isVisible():
-                self.reload()
-            elif self.loaded_key is not None and key[:2] != self.loaded_key[:2]:
-                self.panel.set_project(True)
+        if key != self.loaded_key or self.dirty:
+            self.reload()
+        if self.auto_probe and not self.probed:
+            self.start_probe()
         self.update_controls()
 
-    matches_changed = project_changed
+    def busy_changed(self, busy: bool) -> None:
+        """Also the host's "shown again" signal: it calls this on every activation."""
+        if self.dirty and self.port.project() is not None:
+            self.reload()
+        self.update_controls()
+
+    def capabilities_changed(self) -> None:
+        self.update_controls()
+
+    def selection_changed(self, match_id: str | None) -> None:
+        """Navigator selection -> panel highlight; the panel's own activation of a row is a no-op here."""
+        if match_id is not None:
+            self.panel.select_match(match_id)
 
     def update_controls(self) -> None:
-        project = self.port.project
+        project = self.port.project()
         reason = None
         if project is None:
             reason = 'Needs an open project.'
@@ -1397,19 +1303,8 @@ class EvidenceController(QObject):
             except Exception:  # noqa: BLE001
                 self.panel.set_preview('')
 
-    def follow_match(self, match) -> None:
-        """Navigator selection -> panel highlight (no activation loop)."""
-        if match is None or self._following or not self.dock.isVisible():
-            return
-        self.panel.select_match(match.id)
-
     def shutdown(self) -> None:
         """Cancel and join every worker: destroying a running QThread aborts the process."""
-        if self.settings is not None:
-            try:
-                self.settings.setValue('evidence/geometry', self.dock.saveGeometry())
-            except Exception:  # noqa: BLE001
-                pass
         self._invalidate()
         self.run_generation += 1
         if self.bindiff is not None:
@@ -1436,16 +1331,8 @@ class EvidenceController(QObject):
         self._reap()
         self.threads.append((thread, thread.cancel))
 
-    def _visibility_changed(self, visible: bool) -> None:
-        if not visible:
-            return
-        if self.dirty and self.port.project is not None:
-            self.reload()
-        if self.auto_probe and not self.probed and self.port.project is not None:
-            self.start_probe()
-
     def reload(self) -> None:
-        if self.port.project is None:
+        if self.port.project() is None:
             self.panel.set_project(False)
             return
         self._invalidate()
@@ -1457,7 +1344,7 @@ class EvidenceController(QObject):
             request = service_api.build_request(self.port.service, generation=generation, outcomes=outcomes,
                                                 calibration_level=calibration_display_level())
         except Exception as exc:  # noqa: BLE001 - unreadable store rows become E5, never a crash
-            self.panel.set_view_model(empty_model('failed', project_id=self.port.project.id,
+            self.panel.set_view_model(empty_model('failed', project_id=self.port.project().id,
                                                   error=sanitize_text(f'PT-EVIDENCE-ASSEMBLY: {exc}', 400)))
             return
         self.loaded_key = self.port.key()
@@ -1492,12 +1379,8 @@ class EvidenceController(QObject):
         self.threads = [(t, c) for t, c in self.threads if thread_alive(t)]
 
     def _activate(self, match_id: str) -> None:
-        self._following = True
-        try:
-            if not self.port.select_match(match_id):
-                self._status('That match is hidden by the navigator filters.')
-        finally:
-            self._following = False
+        if not self.port.select_match(match_id):
+            self._status('That match is hidden by the navigator filters.')
 
     # -- probes --
     def start_probe(self) -> None:
@@ -1520,7 +1403,7 @@ class EvidenceController(QObject):
         self.panel.set_run_status('Engine probe finished.')
         self._refresh_engine_rows()
         self.update_controls()
-        if self.panel.vm.state in ('no-engines', 'unsupported') and self.port.project is not None:
+        if self.panel.vm.state in ('no-engines', 'unsupported') and self.port.project() is not None:
             self.reload()
 
     # -- track G BinDiff setup (§16.6) --
@@ -1545,18 +1428,19 @@ class EvidenceController(QObject):
         self.panel.set_capabilities(self.capabilities)
         self._refresh_engine_rows()
         self.update_controls()
-        if self.port.project is not None:
+        if self.port.project() is not None:
             # Engine rows, the E1/E7 reasons and the E4 count are built from capability views at load time.
-            if self.dock.isVisible():
+            dock = self.dock
+            if dock is not None and dock.isVisible():
                 self.reload()
             else:
                 self.dirty = True
 
     # -- runs --
     def start_run(self, options: dict) -> None:
-        if self.run_thread is not None or self.port.project is None or self.port.busy():
+        project = self.port.project()
+        if self.run_thread is not None or project is None or self.port.busy():
             return
-        project = self.port.project
         run = service_api.latest_run(project)
         try:
             older, newer, osha, nsha = self.port.artifact_paths()
@@ -1659,13 +1543,14 @@ class EvidenceController(QObject):
             self.panel.set_run_active(False)
             self._refresh_engine_rows()
             self.update_controls()
-            if self.port.project is not None:
+            if self.port.project() is not None:
                 self.reload()
         self._reap()
 
     # -- import --
     def import_bindiff(self, path: str | None = None) -> None:
-        if self.port.project is None or self.port.busy():
+        project = self.port.project()
+        if project is None or self.port.busy():
             return
         if path is None:
             path, _ = QFileDialog.getOpenFileName(self.window, 'Import BinDiff result', '',
@@ -1675,7 +1560,6 @@ class EvidenceController(QObject):
         from .enrichment.storage import EnrichmentStore, Guard
         from .secondary.bindiff import import_bindiff
         from .secondary.cli_run import record_import
-        project = self.port.project
         run = service_api.latest_run(project)
         if run is None:
             self.panel.set_run_status('Import needs a completed Ghidriff run.')
@@ -1701,7 +1585,7 @@ class EvidenceController(QObject):
             cap = self.capabilities.get(engine)
             live = self.engine_states.get(engine)
             if engine == 'ghidriff':
-                project = self.port.project
+                project = self.port.project()
                 run = service_api.latest_run(project) if project else None
                 rows.append(EngineRowView('ghidriff', 'Ghidriff', 'baseline' if run else 'not run',
                                           sanitize_text(run.backend_version if run else '-', 40),

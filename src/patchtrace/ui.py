@@ -67,7 +67,6 @@ from .runtime_discovery import (
 from .service import ProjectService
 from .tooltips import apply_tooltip, apply_tooltips
 from .ui_bundle_setup import BundleSetup
-from .ui_evidence import EvidenceController
 from .ui_inspection import InspectionThread, fill_pe_table, side_summary
 
 REVIEWS = ['unreviewed', 'accepted', 'rejected', 'needs-review']
@@ -1524,7 +1523,6 @@ class MainWindow(QMainWindow):
         self.panels = PanelHost(self)  # dock shells only; panels are built when first shown
         self._build_actions()
         self._build_workspace()
-        self.evidence = EvidenceController(self)  # C6 engine evidence dock (ui_evidence.py)
         self.restore_preferences()
         self.timer = QTimer(self)
         self.timer.timeout.connect(self._elapsed)
@@ -2003,8 +2001,6 @@ class MainWindow(QMainWindow):
         self._updating = False
         self.render_match()
         self.update_controls()
-        if hasattr(self, 'evidence'):
-            self.evidence.project_changed()
         self.panels.project_changed()
 
     def filter_matches(self, *_):
@@ -2068,7 +2064,6 @@ class MainWindow(QMainWindow):
             self.note_target.setCurrentIndex(0)
             self.render_match()
             self.update_controls()
-            self.evidence.follow_match(self.current_match())
             self.panels.selection_changed(self.current_match())
 
     def render_match(self, *_):
@@ -3026,8 +3021,6 @@ class MainWindow(QMainWindow):
     def update_controls(self):
         if not hasattr(self, 'navigator') or not hasattr(self, 'raw_button'):
             return
-        if hasattr(self, 'evidence'):
-            self.evidence.update_controls()
         self.panels.update_controls()
         idle = self.worker is None
         project = bool(self.service)
@@ -3157,7 +3150,6 @@ class MainWindow(QMainWindow):
         for name, splitter in [('workspace', self.workspace), ('vertical', self.vertical), ('code', self.code_split)]:
             self.settings.setValue('desktop/' + name, splitter.saveState())
         self.settings.setValue('desktop/sync', self.sync_scroll.isChecked())
-        self.evidence.shutdown()
         self.panels.shutdown()
         self.settings.sync()
         self._stop_inspection()

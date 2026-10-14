@@ -18,11 +18,11 @@ from patchtrace.service import ProjectService
 from patchtrace.ui import MainWindow
 
 SRC = Path(__file__).resolve().parents[1] / 'src' / 'patchtrace'
-# ui.py was 3,142 lines when F5 started (3,119 at d972125 plus the zero-download bundle work). F5 alone keeps the
-# evidence hooks, so its transitional ceiling is +25 over that, the interpretation-note fix included. The final
-# seam after F8 is at most +15 over d972125 (3,134).
+# ui.py was 3,142 lines when F5 started (3,119 at d972125 plus the zero-download bundle work). F5 alone kept the
+# evidence hooks (+25); F8 removed them (M1, M2). The plan's final seam is +15 over d972125 (3,134 = 3,142 - 8);
+# F9 removes the series and files code, which closes the remaining gap.
 UI_LINES_BEFORE_F5 = 3142
-UI_TRANSITIONAL_CEILING = 25
+UI_TRANSITIONAL_CEILING = 17
 
 
 def test_ui_seam_budget():
@@ -34,7 +34,7 @@ def test_ui_seam_is_a_handful_of_host_calls_and_names_no_feature():
     text = (SRC / 'ui.py').read_text(encoding='utf-8')
     assert len(re.findall(r'self\.panels\.', text)) <= 8
     assert text.count('PanelHost') == 2  # the import and the one construction
-    packages = {entry.module.split('.')[1] for entry in MANIFEST} - {'secondary'}  # evidence is legacy until F8
+    packages = {entry.module.split('.')[1] for entry in MANIFEST}
     assert not [name for name in packages if re.search(rf'(?:from|import) \.{name}\b|patchtrace\.{name}\b', text)]
 
 
@@ -110,11 +110,11 @@ def test_host_owned_widgets_pass_the_accessibility_audit(qtbot, settings):
 # ---- the real manifest and the legacy evidence dock ---------------------------------------------------------------
 
 
-def test_the_shipped_manifest_has_no_built_panel_yet_and_no_problem(main_window):
+def test_the_shipped_manifest_builds_only_evidence_and_has_no_problem(main_window):
     host = main_window.panels
-    assert host.panels == {} and host.problems == []
-    assert set(host.not_built) == {entry.id for entry in MANIFEST}
-    assert host.self_check() == [] and host.build_all_for_test() == {}
+    assert set(host.panels) == {'evidence'} and host.problems == []
+    assert set(host.not_built) == {entry.id for entry in MANIFEST} - {'evidence'}
+    assert host.self_check() == [] and set(host.build_all_for_test()) == {'evidence'}
 
 
 def test_building_the_host_is_cheap(qtbot, settings):
@@ -136,12 +136,12 @@ def test_the_legacy_evidence_dock_survives_the_saved_layout(qtbot, tmp_path):
 
     first = open_window('one')
     first.show()
-    first.evidence.dock.show()
+    first.panels.controller('evidence').dock.show()
     first.close()
     first.service = None
     second = open_window('two')
     second.show()
-    assert second.evidence.dock.objectName() == 'evidence.dock' and not second.evidence.dock.isHidden()
+    assert second.panels.controller('evidence').dock.objectName() == 'evidence.dock' and not second.panels.controller('evidence').dock.isHidden()
     second.close()
     second.service = None
 
