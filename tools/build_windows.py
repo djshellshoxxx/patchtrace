@@ -9,11 +9,25 @@ import subprocess
 import sys
 from pathlib import Path
 
+PROTOBUF_PIN = '7.36.2'
+# SPEC-10b §2/§9: BinExport2 notices; build refuses to publish without them.
+BINEXPORT_NOTICES = [f'protobuf-{PROTOBUF_PIN}/LICENSE', 'binexport-2bff7af/LICENSE',
+                     'binexport-2bff7af/binexport2.proto', 'binexport-2bff7af/PROVENANCE.txt']
+
+
+def require_upb_protobuf():
+    """Fail before freezing if the pinned protobuf is absent or would run as the pure-Python fallback."""
+    from google.protobuf.internal import api_implementation
+    if importlib.metadata.version('protobuf') != PROTOBUF_PIN or api_implementation.Type() != 'upb':
+        raise RuntimeError(f'protobuf {PROTOBUF_PIN} with the upb backend is required '
+                           "(pip install --only-binary=:all: -e '.[dev]')")
+
 
 def main():
     if sys.platform != 'win32':
         raise SystemExit('Build on Windows: PyInstaller cannot cross-compile the Windows runtime.')
     root = Path(__file__).resolve().parents[1]
+    require_upb_protobuf()
     subprocess.run([sys.executable, '-m', 'PyInstaller', '--noconfirm', '--clean',
                     # Console subsystem so headless commands return output and exit codes to the
                     # invoking shell; the bootloader hides a console the process owns (double-click),
@@ -46,13 +60,15 @@ def main():
     required += [f'{module}-6.12.0/LICENSES/{name}.txt'
                  for module in ['qtbase', 'pyside-setup']
                  for name in ['GPL-2.0-only', 'GPL-3.0-only', 'Qt-GPL-exception-1.0']]
+    required += BINEXPORT_NOTICES
     if any(not (bundled_notices / item).is_file() for item in required):
         raise RuntimeError('Pinned third-party notices are missing; refusing to publish distribution')
     if len(list((bundled_notices / 'qtbase-6.12.0/attributions').glob('*.html'))) != 49:
         raise RuntimeError('Qt Core/GUI/Network attribution set is incomplete')
     shutil.copytree(bundled_notices, notices / 'upstream', dirs_exist_ok=True)
     for name in ['PySide6', 'PySide6_Essentials', 'PySide6_Addons', 'PySide6_WebEngine', 'PySide6_Pdf', 'shiboken6', 'pydantic',
-                 'pydantic_core', 'PyInstaller', 'annotated-types', 'typing_extensions', 'typing-inspection']:
+                 'pydantic_core', 'PyInstaller', 'annotated-types', 'typing_extensions', 'typing-inspection',
+                 'protobuf']:
         dist = importlib.metadata.distribution(name)
         versions[name] = dist.version
         for file in dist.files or []:
@@ -76,6 +92,9 @@ def main():
                           ['webengine', 'pdf', 'virtualkeyboard', 'qt6quick', 'qt6qml'])]
     if unexpected:
         raise RuntimeError(f'Unexpected unused WebEngine/PDF binaries collected: {unexpected}')
+    # A missing upb extension means a silent pure-Python protobuf fallback (85x memory): never publish that.
+    if not any(item.startswith(('google/_upb/_message.', '_internal/google/_upb/_message.')) for item in inventory):
+        raise RuntimeError('google/_upb/_message extension missing from the frozen package')
     (package / 'file-inventory.json').write_text(json.dumps(inventory, indent=2), encoding='utf-8')
     subprocess.run([str(package / 'PatchTrace.exe'), '--self-test'], timeout=60, check=True)
     # Frozen headless smoke: help must reach stdout and exit 0 without Qt.

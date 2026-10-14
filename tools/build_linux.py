@@ -20,7 +20,20 @@ VERSION = '0.1.0'
 EXCLUDED = ['PySide6.QtWebEngineCore', 'PySide6.QtWebEngineQuick', 'PySide6.QtWebEngineWidgets',
             'PySide6.QtPdf', 'PySide6.QtPdfWidgets']
 DISTRIBUTIONS = ['PySide6', 'PySide6_Essentials', 'PySide6_Addons', 'shiboken6', 'pydantic', 'pydantic_core',
-                 'PyInstaller', 'annotated-types', 'typing_extensions', 'typing-inspection']
+                 'PyInstaller', 'annotated-types', 'typing_extensions', 'typing-inspection', 'protobuf']
+PROTOBUF_PIN = '7.36.2'
+# SPEC-10b §2/§9: notices that must ship; the build refuses to publish without them.
+REQUIRED_NOTICES = ['qtbase-6.12.0/LICENSES/LGPL-3.0-only.txt', f'protobuf-{PROTOBUF_PIN}/LICENSE',
+                    'binexport-2bff7af/LICENSE', 'binexport-2bff7af/binexport2.proto',
+                    'binexport-2bff7af/PROVENANCE.txt']
+
+
+def require_upb_protobuf() -> None:
+    """Fail before freezing if the pinned protobuf is absent or would run as the pure-Python fallback."""
+    from google.protobuf.internal import api_implementation
+    if importlib.metadata.version('protobuf') != PROTOBUF_PIN or api_implementation.Type() != 'upb':
+        raise RuntimeError(f'protobuf {PROTOBUF_PIN} with the upb backend is required '
+                           "(pip install --only-binary=:all: -e '.[dev]')")
 
 
 def python_license() -> Path:
@@ -38,6 +51,7 @@ def main() -> None:
     if not sys.platform.startswith('linux') or platform.machine() not in {'x86_64', 'AMD64'}:
         raise SystemExit('Build on Linux x86-64: PyInstaller does not cross-compile.')
     root = Path(__file__).resolve().parents[1]
+    require_upb_protobuf()
     argv = [sys.executable, '-m', 'PyInstaller', '--noconfirm', '--clean', '--onedir', '--name', 'PatchTrace',
             '--additional-hooks-dir', str(root / 'tools' / 'pyinstaller_hooks'), '--paths', str(root / 'src')]
     for module in EXCLUDED:
@@ -50,7 +64,7 @@ def main() -> None:
     notices = package / 'licenses'
     notices.mkdir(exist_ok=True)
     bundled_notices = root / 'third_party' / 'notices'
-    if not (bundled_notices / 'qtbase-6.12.0/LICENSES/LGPL-3.0-only.txt').is_file():
+    if any(not (bundled_notices / item).is_file() for item in REQUIRED_NOTICES):
         raise RuntimeError('Pinned third-party notices are missing; refusing to publish distribution')
     shutil.copytree(bundled_notices, notices / 'upstream', dirs_exist_ok=True)
     versions = {'Python': sys.version.split()[0], 'platform': 'linux-x86_64'}
@@ -71,6 +85,9 @@ def main() -> None:
         ('libqt6webengine', 'libqt6pdf', 'libqt6quick', 'libqt6qml'))]
     if unexpected:
         raise RuntimeError(f'Unexpected unused WebEngine/PDF/Quick libraries collected: {unexpected}')
+    # A missing upb extension means a silent pure-Python protobuf fallback (85x memory): never publish that.
+    if not any(item.startswith(('google/_upb/_message.', '_internal/google/_upb/_message.')) for item in inventory):
+        raise RuntimeError('google/_upb/_message extension missing from the frozen package')
     (package / 'file-inventory.json').write_text(json.dumps(inventory, indent=2), encoding='utf-8')
     executable = package / 'PatchTrace'
     if not os.access(executable, os.X_OK):

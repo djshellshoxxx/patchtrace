@@ -11,6 +11,10 @@ from dataclasses import dataclass
 from pathlib import Path
 
 LOG_LIMIT = 2 * 1024 * 1024
+# Windows: inheritable pipe/NUL handles exist from CreatePipe until the parent closes the child ends after
+# CreateProcessW(bInheritHandles=True). Serialising that window stops a concurrent run_process child from
+# inheriting another run's pipe write end (which would keep that reader from ever seeing EOF).
+_WINDOWS_SPAWN_LOCK = threading.Lock()
 
 
 @dataclass(frozen=True)
@@ -20,9 +24,12 @@ class ProcessResult:
     reason: str | None = None
     # Populated only when run_process(separate_streams=True); log_tail is then stdout alone.
     stderr_tail: str = ''
+    # Windows only: the Job Object's PeakProcessMemoryUsed (committed bytes); None elsewhere or if unavailable.
+    peak_memory_bytes: int | None = None
 
 
-def _windows_process(argv: Sequence[str], cwd: Path, env: Mapping[str, str], separate_streams: bool = False):
+def _windows_process(argv: Sequence[str], cwd: Path, env: Mapping[str, str], separate_streams: bool = False,
+                     memory_limit_bytes: int | None = None):
     """Start suspended, contain the child before it can run, then resume it.
 
     Popen discards the primary thread handle, so use CreateProcessW directly.
@@ -76,6 +83,7 @@ def _windows_process(argv: Sequence[str], cwd: Path, env: Mapping[str, str], sep
         'TerminateProcess': ([w.HANDLE, w.UINT], w.BOOL),
         'TerminateJobObject': ([w.HANDLE, w.UINT], w.BOOL),
         'CloseHandle': ([w.HANDLE], w.BOOL),
+        'QueryInformationJobObject': ([w.HANDLE, c.c_int, c.c_void_p, w.DWORD, c.POINTER(w.DWORD)], w.BOOL),
     }
     for name, (args, result) in signatures.items():
         fn = getattr(kernel, name)
@@ -92,6 +100,7 @@ def _windows_process(argv: Sequence[str], cwd: Path, env: Mapping[str, str], sep
     info = ProcessInfo()
     job = null = None
     stdout = stderr = None
+    _WINDOWS_SPAWN_LOCK.acquire()
     try:
         check(kernel.CreatePipe(c.byref(read), c.byref(write), c.byref(security), 0))
         check(kernel.SetHandleInformation(read, 1, 0))
@@ -113,6 +122,11 @@ def _windows_process(argv: Sequence[str], cwd: Path, env: Mapping[str, str], sep
         job = check(kernel.CreateJobObjectW(None, None))
         limits = ExtendedLimits()
         limits.basic.flags = 0x2000  # JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE
+        if memory_limit_bytes is not None:
+            # JOB_OBJECT_LIMIT_PROCESS_MEMORY: committed-memory cap per process, set before the child resumes.
+            # Over-limit behaviour (allocation failure vs termination, exit code) is a measured unknown (U7).
+            limits.basic.flags |= 0x100
+            limits.process_memory = memory_limit_bytes
         check(kernel.SetInformationJobObject(job, 9, c.byref(limits), c.sizeof(limits)))
         check(kernel.AssignProcessToJobObject(job, info.process))
         if kernel.ResumeThread(info.thread) == 0xffffffff:
@@ -135,9 +149,12 @@ def _windows_process(argv: Sequence[str], cwd: Path, env: Mapping[str, str], sep
             stderr.close()
         raise
     finally:
-        for handle in [write, read, err_write, err_read, null, info.thread]:
-            if handle:
-                kernel.CloseHandle(handle)
+        try:
+            for handle in [write, read, err_write, err_read, null, info.thread]:
+                if handle:
+                    kernel.CloseHandle(handle)
+        finally:
+            _WINDOWS_SPAWN_LOCK.release()
 
     class WindowsChild:
         pid = info.pid
@@ -154,6 +171,12 @@ def _windows_process(argv: Sequence[str], cwd: Path, env: Mapping[str, str], sep
             check(kernel.GetExitCodeProcess(info.process, c.byref(code)))
             return code.value
 
+        def peak_memory(self):
+            info_out = ExtendedLimits()
+            if not kernel.QueryInformationJobObject(job, 9, c.byref(info_out), c.sizeof(info_out), None):
+                return None
+            return int(info_out.peak_process)
+
         def kill_tree(self):
             check(kernel.TerminateJobObject(job, 1))
 
@@ -164,30 +187,72 @@ def _windows_process(argv: Sequence[str], cwd: Path, env: Mapping[str, str], sep
     return WindowsChild()
 
 
+def _posix_preexec(memory_limit_bytes: int | None):
+    if memory_limit_bytes is None or hasattr(__import__('resource'), 'prlimit'):
+        return None
+    import resource
+
+    def apply():  # only on POSIX systems without prlimit (not Linux)
+        resource.setrlimit(resource.RLIMIT_AS, (memory_limit_bytes, memory_limit_bytes))
+    return apply
+
+
+def _posix_prlimit(child, memory_limit_bytes: int) -> None:
+    import resource
+    if not hasattr(resource, 'prlimit'):
+        return  # applied by preexec_fn
+    try:
+        _, hard = resource.prlimit(child.pid, resource.RLIMIT_AS)
+        # Never raise an inherited lower hard limit (needs privilege); lowering is always allowed.
+        cap = memory_limit_bytes if hard == resource.RLIM_INFINITY else min(hard, memory_limit_bytes)
+        resource.prlimit(child.pid, resource.RLIMIT_AS, (cap, cap))
+    except ProcessLookupError:
+        pass  # exited before the cap applied: nothing left to cap
+    except OSError:
+        try:  # fail closed: never run uncapped when a cap was requested
+            os.killpg(child.pid, signal.SIGKILL)
+        except ProcessLookupError:
+            pass
+        child.wait(timeout=5)
+        raise
+
+
 def run_process(argv: Sequence[str], *, cwd: Path, env: Mapping[str, str],
                 cancel: threading.Event, timeout_seconds: float,
                 check_output: Callable[[], str | None] | None = None,
                 log_limit: int = LOG_LIMIT, separate_streams: bool = False,
-                stderr_limit: int = LOG_LIMIT) -> ProcessResult:
+                stderr_limit: int = LOG_LIMIT, memory_limit_bytes: int | None = None) -> ProcessResult:
     """Run an argv with a bounded log and terminate descendants on every exit.
 
     By default stdout and stderr are merged into `log_tail`. With `separate_streams`,
     `log_tail` holds stdout only (bounded by `log_limit`) and `stderr_tail` holds stderr
     (bounded by `stderr_limit`), each drained by its own thread so neither can block the other.
+
+    `memory_limit_bytes` (default None = unlimited, unchanged behaviour) caps the child: a Windows Job Object
+    per-process memory limit applied before the suspended child resumes; on Linux RLIMIT_AS set with
+    prlimit() right after spawn (no preexec_fn in a threaded GUI; a self-limiting child closes the startup
+    window); on other POSIX systems RLIMIT_AS through preexec_fn. RLIMIT_AS counts virtual memory, so size
+    the cap with headroom over the expected RSS.
     """
     if not argv or not Path(argv[0]).is_absolute():
         raise ValueError('PT-BACKEND: configure an absolute executable path')
     if timeout_seconds <= 0 or log_limit < 1 or stderr_limit < 1:
         raise ValueError('PT-BACKEND: timeout and log limit must be positive')
+    if memory_limit_bytes is not None and (isinstance(memory_limit_bytes, bool)
+                                           or not isinstance(memory_limit_bytes, int) or memory_limit_bytes < 1):
+        raise ValueError('PT-BACKEND: memory limit must be a positive integer')
     if cancel.is_set():
         return ProcessResult(-1, '', 'cancelled')
     if os.name == 'nt':
-        child = _windows_process(argv, cwd, env, separate_streams)
+        child = _windows_process(argv, cwd, env, separate_streams, memory_limit_bytes)
     else:
         child = subprocess.Popen(list(argv), cwd=cwd, env=dict(env), shell=False,
                                  stdin=subprocess.DEVNULL, stdout=subprocess.PIPE,
                                  stderr=subprocess.PIPE if separate_streams else subprocess.STDOUT,
-                                 start_new_session=True, bufsize=0)
+                                 start_new_session=True, bufsize=0,
+                                 preexec_fn=_posix_preexec(memory_limit_bytes))
+        if memory_limit_bytes is not None:
+            _posix_prlimit(child, memory_limit_bytes)
     tail, err_tail = bytearray(), bytearray()
     lock = threading.Lock()
 
@@ -250,7 +315,13 @@ def run_process(argv: Sequence[str], *, cwd: Path, env: Mapping[str, str],
         with lock:
             log = bytes(tail).decode('utf-8', errors='replace')
             err = bytes(err_tail).decode('utf-8', errors='replace')
-        return ProcessResult(returncode, log, reason, err)
+        peak = None
+        if os.name == 'nt':
+            try:
+                peak = child.peak_memory()
+            except OSError:
+                peak = None
+        return ProcessResult(returncode, log, reason, err, peak)
     finally:
         terminate()
         if os.name != 'nt':

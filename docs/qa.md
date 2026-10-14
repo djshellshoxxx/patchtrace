@@ -151,3 +151,27 @@ No real-data claim: every number below comes from generated worlds with known gr
 - scikit-learn 1.9.1 (optional `calibration-dev` extra, installed locally only): weighted L2 logistic within 1e-4 relative at C in {0.05, 1, 100}, isotonic knots equal, Platt within 1e-3. Without scikit-learn these 3 tests skip (CI default).
 - Simulations: well-specified world OOF ECE excess over null within 0.02, slope/intercept CIs contain 1/0, LTT-certified tau has true precision >= 0.95; planted lineage leakage: random-split AUC exceeds grouped by > 0.15 (observed 0.825 vs 0.511); lineage shift fails the shift criterion; overconfident model fails H1 (ECE excess and slope); inverse-probability weights recover population precision; pipeline artifact/report byte-identical on rerun and under row permutation (same platform).
 - Not verified here (CI/Windows/real data only): cross-platform byte-identical report SHA; Windows run of the calibration tests; frozen-EXE loading of a bundled artifact (none exists); any Tier R or Tier W result; G0-G3 on real data (all `insufficient-data`).
+## 2026-10-14 C3 BinExport2 support (SPEC-10b) - automated evidence (Linux only) and open gates
+- Re-verified pin: `protobuf` 7.36.2 is still the latest release on PyPI (2026-09-17). Wheel SHA-256s: win_amd64 `a300819d...d353`, manylinux2014_x86_64 `89f23aa5...bfd2`; full list in `third_party/notices/protobuf-7.36.2/MANIFEST.txt`. Installed with `--only-binary=:all:`; `api_implementation.Type()` reports `upb`.
+- Measured on Linux x86-64 (CPython 3.13.16):
+
+| Measurement | Result |
+|---|---|
+| 13.35 MiB / 2 M-record DoS-shaped file | Pre-scan 1.34 s, parse 0.08 s, checker 0.78 s. VmPeak 137 MiB, RSS 126 MiB. |
+| Worker caps (`tools/qa_binexport_memcap.py`, `accept_binexport`) | 48-120 MiB give `worker_oom`; 140 MiB and above succeed. |
+| upb under a cap | Raises `DecodeError("Arena alloc failed")`, not `MemoryError`. |
+| pydantic-core under a cap | Aborts with SIGABRT. Classified as `worker_oom` from its stderr text. |
+| `bytearray` child under the cap | Gets `MemoryError`. |
+
+- Linux frozen build: the `_upb/_message.abi3.so` inventory guard passed (412 KiB delta). Frozen smoke: 30/30 PASS, including B1/B2 through the frozen self-spawned worker.
+- Tests added: 8 descriptor, 25 pre-scan, 48 checker (one per reason slug), 26 pipeline/snapshot/identity, 28 isolation, 3 CLI, 9 property/boundary (hypothesis 2000 + 1000 + 150-example runs), 7 fixtures.
+- Fuzz: `tools/fuzz_binexport.py`, 60 s random-mutation run: 1.6 M inputs, 0 findings. Atheris was not installed.
+- All goldens are synthetic: 4 files bound to `synthetic_pe()` hashes, with `PROVENANCE.json`. None of this is live-compatibility evidence.
+- Open: the Windows CI run (U7 child behaviour at `ProcessMemoryLimit`, `PeakProcessMemoryUsed`, idle commit of the frozen worker, frozen `PatchTrace.exe` B1/B2, size delta, AV). Also open: real Ghidra/IDA goldens (U1, U3, U5, U6, U9, U12) and the CI workflow steps (`pip check`, pin + upb assertion step, nightly Linux fuzz).
+- Unreproduced fatal interpreter error. One of 15 full `pytest -q` runs on this branch ended in a Python fatal error: the faulthandler `Extension modules: shiboken6, PySide6.QtCore/QtGui/QtWidgets/QtTest, google._upb._message` line was the last output. The traceback was lost because the output was piped through `tail -1`. Attempts to reproduce found no crash:
+  - 13 further full runs of this branch;
+  - 40 runs of the in-process BinExport tests (about 126 k hypothesis inputs);
+  - a 7.44 M-input in-process `inspect_bytes` stress with the input recorded before each parse;
+  - 8 full runs of the base commit `29a4d3f`.
+
+  Cause unknown, whether Qt teardown flakiness or upb (T3). Production parsing runs only in the capped worker, where a crash surfaces as `worker_crash`. Re-run CI with `python -X faulthandler -m pytest` and keep full logs.

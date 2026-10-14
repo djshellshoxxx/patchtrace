@@ -6,7 +6,7 @@ name = "patchtrace"
 version = "0.1.0"
 description = "Compare binaries. Trace fixes. Investigate flaws."
 requires-python = ">=3.12"
-dependencies = ["PySide6==6.12.0", "pydantic==2.13.5"]
+dependencies = ["PySide6==6.12.0", "pydantic==2.13.5", "protobuf==7.36.2"]
 [project.optional-dependencies]
 dev = ["pytest>=8", "pytest-qt>=4", "ruff>=0.12", "pyinstaller==6.22.3", "hypothesis>=6.100"]
 # Optional cross-check of the in-repo stdlib fitter (decision O5); never imported at runtime or frozen.

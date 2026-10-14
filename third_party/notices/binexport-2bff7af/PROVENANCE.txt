@@ -1,0 +1,15 @@
+google/binexport binexport2.proto and LICENSE (Apache-2.0), copied unmodified.
+
+Source:   https://github.com/google/binexport
+Commit:   2bff7af27af206354b2a90a9de566dc6bbae3e1b
+Files:    https://raw.githubusercontent.com/google/binexport/2bff7af27af206354b2a90a9de566dc6bbae3e1b/binexport2.proto
+          https://raw.githubusercontent.com/google/binexport/2bff7af27af206354b2a90a9de566dc6bbae3e1b/LICENSE
+SHA-256:  binexport2.proto e8e4943de00b37038b614bbd0515cb188caf3e4a2e20c6566544e791f93647d8 (16058 bytes)
+          LICENSE          c1724a9c059a2450d2f4945de389eba5789b1f74212491a7973a0b69fbdb399e (14750 bytes)
+NOTICE:   the repository has no NOTICE file (checked 2026-10-14).
+Fetched:  2026-10-14
+
+Derived work shipped in PatchTrace: src/patchtrace/secondary/binexport_descriptor.py holds the FileDescriptorSet
+compiled from this .proto (4144 bytes, SHA-256 1c8b2bc116389395e5756da22c33f464cdfc026de8e2e95c122bc40b389f6fba,
+no source info) by tools/gen_binexport_descriptor.py using grpcio-tools 1.84.0 (bundled protoc), run in a
+throwaway directory; grpcio-tools is not a PatchTrace dependency.

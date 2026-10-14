@@ -71,3 +71,9 @@
 - [ ] Labelling HTML front-end on 127.0.0.1 (terminal mode exists); C9-10 labelling campaign blocked on USER decisions O1, O2, O4
 - [ ] Cross-platform report determinism (Linux vs Windows byte-identical report SHA) - only verifiable in CI; package-data + PyInstaller datas entry when the first artifact ships
 - [ ] C9-12 GUI L1/L2 via C6 only after a locked-test pass (C6 imports `display_level()` guarded; currently always 'ordinal')
+## C3 BinExport2 (SPEC-10b, 2026-10-14)
+- [x] C3-1..C3-6 and C3-8 built: pinned protobuf 7.36.2 (upb only), descriptor + golden field table, pre-scan, checker, identity, snapshot, pipeline, capped worker with `accept_binexport`/`accept_pair`, `jobs.run_process(memory_limit_bytes=)` plus the Windows spawn-handle lock, `secondary binexport-check`, notices, build-script guards, frozen smoke B1/B2, hypothesis/fuzz, synthetic goldens with provenance.
+- [ ] Windows CI: U7 behaviour at the Job Object memory limit (`tools/qa_binexport_memcap.py`), frozen `PatchTrace.exe` B1/B2, size delta and AV result for `_message.pyd`.
+- [ ] CI workflow steps (integration owner): `--only-binary=:all:` install, `pip check`, pin + upb assertion, Linux-only nightly `tools/fuzz_binexport.py`.
+- [ ] C3-7 real Ghidra/IDA goldens (human); live rows U1/U3/U5/U6/U9/U12.
+- [ ] C4: swap the `bindiff_inputs` Protocol for the real `AcceptedBinExport`. GUI wiring of BinExport selection.
