@@ -4,6 +4,17 @@ Status: implementation plan, 2026-10-14. This document is NOT a claim that code 
 Depends on: docs/specs/kb-patch-search-and-pair-resolution.md.
 Cross-references: SPEC-08, SPEC-07, SPEC-28, SPEC-30, current C6 evidence UI, SPEC-31 unified-engine plans.
 
+
+## 0. Dependency and precedence update (2026-10-14)
+
+The implementation plan has four detailed normative companion specs, and all coding tasks must use them together:
+- [SPEC-32A official advisory/provider contract](../specs/kb-patch-search-source-adapters.md) for per-product CVRF Type-2 KB edges, selected-month bounded scope and CSAF-specific normalized claims.
+- [SPEC-32B pair/lifecycle](../specs/kb-patch-search-pair-lifecycle.md) for exact PE compatibility, independent pre-fix boundary, optional companion database and interrupted-attachment repair.
+- [SPEC-32C GUI/CLI](../specs/kb-patch-search-ui-cli-contract.md) for final command syntax, Qt state machine and consent/worker behavior.
+- [SPEC-32D fixtures and QA](../specs/kb-patch-search-qa-and-fixtures.md) for tests and release gates.
+
+**Important correction:** The existing ProjectStore validates its fixed schema version; therefore do not alter project.sqlite3 or ComparisonProject in SPEC-32. Add a separate optional, project-root/patch_search.sqlite3 store with its own schema. Project creation and patch context attachment are independent commits: a failure after ProjectService.create must leave the project usable and provide idempotent context-attach retry. A session that only has a source association can still produce meaningful offline results without a downloadable file.
+
 ## 1. Guardrails and first action
 
 Before editing:
@@ -125,9 +136,9 @@ Gate: schema roundtrip, determinism, negative matrix pass.
 ### Slice P1: offline KB/CVRF discovery (medium, 1 PR)
 
 Files: cvrf.py, sources.py, discovery.py, persistence.py, test_patch_cvrf.py.
-- Map CVRF /Vulnerability entries by the exact associated ProductID in Remediations.Type == 2 records and matching KB article description. Normalize CVE identity separately from product graph. Retain source record position and exact pointer.
+- Map CVRF /Vulnerability entries by the exact associated ProductID in Remediations.Type == 2 records and matching KB article description, using SPEC-32A normalized source dialect and source-pointer tests. Never infer product KB association from CVRF monthly co-presence. Normalize CVE identity separately from product graph. Retain source record position and exact pointer.
 - In multi-product arrays, create edges only when remediation targets include the specific product. Product name lookup must use ProductTree and surface unknown IDs as mapping problems, not bogus names.
-- Search one or more imported source documents, return deduplicated update variants and edges. For records without authoritative updateID, generate a source-qualified synthetic ID; distinguish from a real Microsoft update identity.
+- Search an explicitly bounded source corpus (named monthly documents or a manifest) and report coverage of that scope. Return deduplicated update variants and edges. For records without authoritative updateID, generate a source-qualified synthetic ID; distinguish from a real Microsoft update identity. No complete history claim from one month.
 - Conflicting source revisions become parallel claims with a conflict status. Do not hide older source silently.
 - Snapshot raw content atomically and generate content-addressed local objects; no automatic network or project writes.
 Gate: examples with known-affected and known-not-affected statuses, multiple KBs per CVE, one KB addressing multiple CVEs, mixed products and missing ProductID.
@@ -158,15 +169,15 @@ Gate: cannot mark a pair "verified_pre_post" without the required metadata evide
 Files: acquiring.py, test_patch_acquiring.py, tiny ProjectService boundary.
 - Reuse current acquisition.Transport, consent preview, quarantine.make_plan, quarantine.acquire and quarantine.promote. Existing SPEC-08 requires exact same basename, SHA mismatch, known sizes, Microsoft symbol-server URL and hashes; pass through these validations.
 - For already present full PEs, use existing ingestion/ProjectService path with verified local hashes, PE parsing and matching identity instead of a second quarantine implementation.
-- One operation-private staging area; all or nothing project adoption. No project created until both verified PEs are present and project location validated.
-- New session/provenance stored separately, append only; artifact identity is computed by the original service. Preserve exact pair hashes and source refs.
+- One operation-private staging area. Verify both PEs before ProjectService.create; then attach context using the SPEC-32B two-phase/idempotent protocol. If attaching context fails, retain valid project with CONTEXT_PENDING.
+- New session/provenance is stored append-only in optional patch_search.sqlite3, not in core database tables; artifact identity is computed by the original ProjectService. Preserve exact hashes and source refs; implement idempotent repair after interrupted attachment.
 - Delta-only and PSFX-only entries return blocked/capability status, not a corrupted PE project.
 Gate: SPEC-08 regression suite all green; hash mismatch/cancel/partial download/proxy redirect tests; no project on failure.
 
 ### Slice P5: CLI-first end-to-end flow (easy/medium, 1 PR)
 
 Files: cli_patch.py and minimal dispatch changes in cli.py; test_patch_cli.py.
-- Define --offline, --snapshot, --fetch-metadata, --consent-hosts, --product-id, --file, --pair-id, --project, --json semantics with parser tests.
+- Implement the complete exact grammar in SPEC-32C (including selected-month/corpus scope, patch search/variants/components/pairs/fetch/attach/explain). Define --offline, --snapshot, --fetch-metadata, --consent-hosts, --product-id, --file, --pair-id, --project, --json semantics with parser golden tests.
 - CLI defaults are local-only. No "search" command should fetch without explicit --fetch-metadata.
 - Implement plan-only/--dry-run that prints exact source requests and download plan without modifying project.
 - JSON errors emit standard envelope; exit statuses consistent with existing CLI. Progress and consent summary go to stderr, bounded.
@@ -199,7 +210,7 @@ Gate: Qt offscreen tests, cancellation, selection resets, rapid window close, no
 ### Slice P8: supported package fallback feasibility (separately gated, optional)
 
 Files: package_adapters/ module added only if verified; fixtures and WIndows CI.
-- First analyze whether MSU/CAB manifest extraction can produce a full binary or requires PSFX hydration. Windows newer LCUs are commonly forward/reverse deltas relative to RTM and component state. Generic extract-all-file commands cannot promise hydrated PE files.
+- First analyze whether MSU/CAB manifest extraction can produce a full binary or requires PSFX hydration. Checkpoint LCUs may require prerequisite updates, and DISM offline servicing can leave components install-pending; confirm final full-PE version state, not just a successful command exit. Generic extract-all-file commands cannot promise hydrated PE files.
 - Optional supported path: take a known genuine baseline image (with build provenance) and Microsoft update package, mount offline into disposable scratch directory, apply update using supported DISM servicing and extract older/newer versions from separate before/after images. Requires image compatibility, prereqs and adequate disk budget.
 - Never use DISM /Online. Never execute update package inside current runtime. No silent admin elevation.
 - Verify expected PE SHA-256, machine, version, product lineage and safe copy; always clean up/retry idempotently. Do not store EULA-restricted binaries in test repos.
@@ -249,7 +260,7 @@ Use PT-PATCH-INPUT / PT-PATCH-CONFIG / PT-PATCH-PROVIDER / PT-PATCH-LIMIT / PT-P
 
 - Metadata fetch: cache a full validated snapshot or none.
 - Binary acquisition: hash during streaming, fsync/rename into private final storage, verify again when reading cache; remove only operation-owned temp files.
-- Project creation: check empty/nonexistent destination, store two files with existing service, attach session source refs transactionally. Crash recovery identifies orphaned private staging without deleting user files.
+- Project creation: check empty/nonexistent destination, store two verified files with existing ProjectService. Sidecar attachment is a separate guarded SQLite transaction; on failure retain core project and retry attach idempotently. Crash recovery identifies operation-private staging without deleting user files.
 - Acquire/session idempotency key derives from selected KB + product + filename + ordered pair hashes + snapshot IDs; repeated request can reuse verified cache but must not silently overwrite a different project.
 - Revision guard is an atomic check-and-commit under the existing ProjectStore ownership model; do not do a separate check then overwrite without locking.
 
@@ -315,6 +326,22 @@ On supported development environment:
     python tools/build_windows.py --help
 
 Confirm actual pyproject extras and build command flags before running; the snippets above are illustrative, not verified CI logs. Use repository-pinned dependencies, not unsolicited unpinned upgrades. Native Windows build and GUI verification are required; Linux success alone is insufficient.
+
+## 8.1 Approval and independent worker integration gates
+
+Implementation owner must split work into nonoverlapping file responsibilities. Pure source-contract/CVRF work (P0-P1) and pure pair decision rules (P3) can run in separate branches after a shared DTO version is ratified. A single integrator owns src/patchtrace/cli.py, src/patchtrace/ui.py, docs/modules.md, tasks/todo.md and project lifecycle seams. Do not perform mass reformatting or refactor unrelated comparison engines in the same PR.
+
+Required merge order (keep tested vertical slices useful):
+1. Contract and fixture schema PR; zero network, no Qt imports.
+2. Offline CVRF parser and exact source-provenance product joins.
+3. Pair resolver and manual/local verified two-PE pathway, with source-boundary UNKNOWN supported.
+4. Sidecar and two-phase attachment recovery. Fault inject restart at PROJECT_CREATED_CONTEXT_PENDING.
+5. CLI end-to-end and real Windows headless offline fixture.
+6. New Qt wizard and post-run contextual evidence read model.
+7. Consented MSRC + Winbindex live provider work after documented real-schema probes.
+8. Optional package rehydration is a distinct gated milestone; not part of alpha.
+
+Stop and raise integration issue if main branch changes ProjectStore schema, source models or engine evidence IDs while implementing. Resolve via adapters with contract tests instead of silently overwriting upstream behavior. Before each merge run existing acquisition/enrichment/CLI tests and associated slice suite; update QA with exact execution evidence, not assumed green status.
 
 ## 9. Definition of done for the MVP
 
