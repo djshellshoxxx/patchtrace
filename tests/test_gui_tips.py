@@ -139,3 +139,15 @@ def test_applied_to_a_real_widget(qtbot):
     assert button.accessibleDescription() == 'Load this panel again.'
     assert button.accessibleIdentifier() == 'search.state_retry'
     assert button.objectName() == 'search.state_retry'
+
+
+def test_legacy_apply_tooltip_delegates_and_keeps_the_full_description():
+    tips.register_tips({'zz.one': TooltipEntry('Do the thing.', 'Because.', 'Nothing changes.', 'src', 'avail')})
+    legacy, short = Target(), Target()
+    tooltips.apply_tooltip(legacy, 'zz.one')
+    tooltips.apply_tooltip(short, 'zz.one', accessible='what', name='panel.one')
+    full = legacy.values['setAccessibleDescription']
+    assert full.startswith('What: Do the thing. Why: Because. Effect: Nothing changes.') and 'avail' in full
+    assert legacy.values['setAccessibleIdentifier'] == 'zz.one' and legacy.values['setObjectName'] == 'zz.one'
+    assert short.values['setAccessibleDescription'] == 'Do the thing.'
+    assert short.values['setAccessibleIdentifier'] == 'panel.one'

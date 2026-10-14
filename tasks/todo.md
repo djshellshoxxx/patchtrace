@@ -337,3 +337,10 @@
 - [ ] Integrator (F5): call register_gui_tips() in the host and in the test fixture; wrap the central widget with NoticeStrip; have tooltips.py delegate apply_tooltip(accessible=) to gui.tips.apply_tip or adopt it.
 - [ ] F7: high-contrast chip drawing, system variant, ThemeTokens from QPalette.
 - [ ] BLOCKED (manual): real Narrator or NVDA output for the status strip and notice strip, Windows rendering of chip shapes at 100-200 percent DPI.
+
+### [GUI-F5:host] GUI framework F5: panel host and seam (2026-10-14)
+- [x] PanelHost, docks, layout persistence, View menu, command palette, F6 cycle, anchors, MainWindowPort, ui.py seam, tooltips delegation, `--self-test` panel check, seam budget and forbidden-API tests; AI-FIX: completed interpretation runs show `run.error`.
+- [ ] Integrator: add the repeat job to `.github/workflows/qa-windows.yml` (text in docs/qa.md [GUI-F5:host]); run the full suite twice and `tools/qt_gate.py --repeat 20` on Linux.
+- [ ] F8: evidence migration (`secondary/evidence_panel.py`; remove the `hasattr(self, 'evidence')` hooks and the menu lookup by 'Analysis'); then lower `UI_TRANSITIONAL_CEILING` in tests/test_gui_host_seam.py to the final +15.
+- [ ] F7: Theme submenu, `theme_changed` on palette change, reduced motion.
+- [ ] BLOCKED (manual): palette, F6 order, dock tab names and notice strip with real Narrator or NVDA on Windows; layout restore across DPI changes.

@@ -518,3 +518,21 @@ Not verified here: Windows and GitHub Actions; any live Ollama or OpenAI-compati
 | State copy, precedence, actions, announcements, hostile text, a11y_audit in all 12 states | tests/test_gui_state_view.py |
 | qt_gate repeat 10 over the five F3 files | 1,770 passed, no abort or surviving thread |
 | Not verified here | Windows, real screen readers, high contrast, DPI scaling, the frozen build |
+
+### [GUI-F5:host] GUI framework F5 (2026-10-14, local Linux worktree, PySide6 offscreen)
+| Check | Evidence |
+|---|---|
+| Shells, lazy build, replay, dirty, debounce, blocked, failed factory, ports, anchors | tests/test_gui_host.py (26 tests) |
+| Layout round trip, damaged blob (digest, schema, oversize, garbage, missing), reset, no "objectName not set" warning, tab bar names, View menu, central wrapper | tests/test_gui_host_layout.py |
+| Palette filter, recent, unavailable reasons, Enter, Escape (does not fire Cancel job), arrows, announcement, hostile titles, host commands, F6 cycle, Ctrl+Shift+P | tests/test_gui_host_palette.py |
+| ui.py budget, forbidden APIs (new code zero, legacy counts only shrink), one main window, accessibility audit of host widgets, legacy evidence dock survives the saved layout, shutdown | tests/test_gui_host_seam.py |
+| qt_gate repeat 5 over all GUI test files (1,133 per pass) | 5,665 passed, no abort or surviving thread (an earlier run on a loaded CPU failed F4's timing ceiling test `test_data_calls_are_independent_of_the_row_count` once, 0.095 s against 0.057 s; it passed on rerun) |
+| Not verified here | Windows, real screen readers, frozen build self-check, the 20x gate |
+
+CI job text for the integration owner (`.github/workflows/qa-windows.yml`, after the existing Qt steps; Linux PR job uses `--repeat 20`):
+```yaml
+      - name: GUI repeat gate
+        run: python tools/qt_gate.py --repeat 5
+        env:
+          QT_QPA_PLATFORM: offscreen
+```

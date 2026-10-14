@@ -74,7 +74,6 @@ class CommandPalette(QFrame):
         self.results = QListWidget()
         self.results.setObjectName('gui.palette_list')
         self.results.setAccessibleName('Matching commands')
-        self.results.setFocusPolicy(Qt.FocusPolicy.NoFocus)  # the search box keeps focus; arrows drive the list
         apply_tip(self.search, 'gui.palette')
         apply_tip(self.results, 'gui.palette_list')
         layout = QVBoxLayout(self)

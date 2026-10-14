@@ -145,7 +145,9 @@ class MainWindowPort:
         self.window.show_external_pair(older, newer, label)
 
     def navigate(self, anchor: AnchorRef) -> NavResult:
-        return self._host.router.navigate(anchor.pinned(self.key()) if anchor.revision is None else anchor)
+        if anchor.run_id is None and anchor.revision is None:
+            anchor = anchor.pinned(self.key())  # an unpinned anchor means "here, now"; a pinned one is checked as is
+        return self._host.router.navigate(anchor)
 
     def focus_panel(self, panel_id: str) -> None:
         self._host.focus_panel(panel_id)
@@ -232,7 +234,7 @@ class PanelHost(QObject):
         self.port = MainWindowPort(self)
         self.tasks = TaskRunner(self, status=self.port.status)
         self.capabilities = capabilities or WindowCapabilities(self.port)
-        self.router = AnchorRouter(self.port.key, self._handler_for, self._show_anchor)
+        self.router = AnchorRouter(lambda: self.port.key(), self._handler_for, self._show_anchor)
         self.problems: list[str] = []
         self.not_built: tuple[str, ...] = ()
         self.panels: dict[str, Panel] = {}
@@ -562,7 +564,7 @@ class PanelHost(QObject):
                 regions.append((panel.dock, panel.controller.focus_target() or panel.dock.view))
         regions.append((found['diagnostics'], found['diagnostics']))
         target = next_region([(box, target) for box, target in regions if box is not None and target is not None],
-                             QApplication.focusWidget(), step)
+                             QApplication.focusWidget() or window.focusWidget(), step)
         if target is not None:
             focus_region(target)
 

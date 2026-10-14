@@ -40,6 +40,9 @@ def main() -> int:
                 app.processEvents()
                 if not window.navigator.count() or 'SYNTHETIC SAMPLE' not in window.project_label.text():
                     raise RuntimeError('Desktop self-test did not display sample matches')
+                problems = window.panels.self_check()  # every manifest module imported, every panel built once
+                if problems:
+                    raise RuntimeError('Panel self-check failed: ' + '; '.join(problems))
             finally:
                 # Release the project lock/SQLite connection even on failure so cleanup can proceed.
                 window.close()

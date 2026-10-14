@@ -49,6 +49,7 @@ from .acquisition.transport import BLOB_SUFFIX, METADATA_HOST, SYMBOL_HOST, Acqu
 from .alignment import alignment_strategy, diff_hunks
 from .backend import BackendConfig, diagnose, parse_env_passthrough, quarantine_failed_run, run_comparison
 from .evidence import build_context, resolve_evidence
+from .gui.qt.host import PanelHost
 from .interpretation import interpret, system_prompt
 from .offline_bundle import inspect_offline_bundle, install_offline_bundle
 from .preflight import overview_rows
@@ -66,7 +67,6 @@ from .runtime_discovery import (
 from .service import ProjectService
 from .tooltips import apply_tooltip, apply_tooltips
 from .ui_bundle_setup import BundleSetup
-from .gui.qt.host import PanelHost
 from .ui_evidence import EvidenceController
 from .ui_inspection import InspectionThread, fill_pe_table, side_summary
 
