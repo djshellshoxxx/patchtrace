@@ -21,7 +21,7 @@ from dataclasses import dataclass
 from pathlib import Path
 
 FORMAT = 'patchtrace-offline-runtime'
-MAX_MANIFEST = 4 * 1024 * 1024
+MAX_MANIFEST = 16 * 1024 * 1024  # 60,000 records at ~190 bytes need ~11 MiB (SPEC-06 amended)
 MAX_MEMBERS = 60_000
 MAX_FILE = 2 * 1024**3
 MAX_TOTAL = 8 * 1024**3
