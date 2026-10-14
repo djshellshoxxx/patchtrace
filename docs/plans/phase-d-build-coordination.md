@@ -1,0 +1,32 @@
+# Phase D build coordination (2026-10-14): ChatGPT specs, SPEC-31 unified engine, hardening backlog
+
+Owner decision (user, 2026-10-14): integrate ALL ChatGPT-authored specs and merge; SPEC-31 plans are pre-approved and USER decisions U-01..U-10 take their recommended defaults (`../specs/unified-engine/00-decisions.md` section 4); then continue with the next phase. Builders never wait for answers: where input is missing, keep the safe default and record the gap. Live acceptance that cannot run here is recorded as BLOCKED, never as done.
+
+Sources of truth: AGENTS.md, CLAUDE.md, `../specs/*`, `unified-engine-plan.md` (slices, ownership, gates), `csaf-patch-intelligence-implementation.md` (ChatGPT delivery order). Numbering: "SPEC-28" is used by four documents; in this file CSAF = `csaf-cve-interpretation-engine.md`, orchestration = `multi-engine-orchestration.md`.
+
+## 1. Tracks and exclusive file ownership (a file has one owner per wave)
+
+| Wave | Track | Spec | Exclusive files | Depends on | Hooks outside own files |
+|---|---|---|---|---|---|
+| 0 | K | CSAF 28a+28b: discovery/transport/validate/normalize/applicability, CWE lexicon, hypotheses, source snapshot storage, import/explain CLI, JSON/MD export | `src/patchtrace/intelligence/{contracts,lexicon,hypotheses,anchors,storage,reports,cli}.py`, `intelligence/csaf/*`, `tools/generate_intelligence_schemas.py`, `docs/schemas/intelligence/*`, `tests/test_intel_*.py` (not `test_intel_tools_*`), `tests/fixtures/csaf/*` | existing `enrichment/` + `acquisition/transport.py` patterns | `cli.py`: command `intelligence` (<= 6 lines) |
+| 0 | T | three-tool adapters (capa, FLOSS, diec) per `three-tool-evidence-adapters.md` | `src/patchtrace/intelligence/tools/*`, `tools/generate_intel_tools_schemas.py`, `docs/schemas/intel-tools/*`, `tests/test_intel_tools_*.py`, `tests/fixtures/intel_tools/*`, `.github/workflows/live-intel-tools.yml`, `tools/provision_intel_tools.py`, `tools/intel_tools_pin.json` | `jobs.run_process`, `backend.build_child_env` | `cli.py`: command `intel-tools` (<= 6 lines) |
+| 0 | B | hardening backlog: H2 verified pre-prune backup, H8 legacy duplicate raw cleanup, H10 live NVD probe, derived-cache algorithm digests and the 500 ms cache objective, rz-diff CLI allowlist wiring | `src/patchtrace/enrichment/{storage,cache}.py`, `secondary/rzdiff.py`, `tools/live_nvd_probe.py`, `.github/workflows/live-nvd.yml`, related tests | - | none |
+| 1 | S0a, S0b, S1, S2, S6r | SPEC-31 slices as owned in `unified-engine-plan.md` section 3 (S0a does NOT edit `enrichment/storage.py`: reserved kinds are already in `KINDS`; wrappers live in `unified/store.py`) | per that table | wave 0 merged, review log applied | `cli.py` command `unified`; `backend.py` `retain_gzf` (S1) |
+| 2 | S3, S4, S5; Diaphora optional adapter; SPEC-30 patch intent (30a-c) | per plan / `patch-intent-localization-engine.md` | per plan | K, T, S0b, S2 | `ui.py` seam (S4 only) |
+| 3 | S6 gates; SPEC-30d evaluation; Patch Search + CVE Correlation (when the spec arrives) | | | | |
+
+## 2. Frozen seams every builder must respect
+- Enrichment kinds already reserved in `enrichment/storage.py` `KINDS`: `unified-run`, `unified-result` (SPEC-31 02-data-model), `advisory-source`, `advisory-facts` (K), `tool-run`, `tool-evidence` (T), `patch-intent` (SPEC-30). Only `DERIVED_KINDS` are auto-deleted; new kinds are never evicted by retention unless their owner adds them to `DERIVED_KINDS` with a test. Rows are capped (32 MiB row / 128 MiB total): large payloads go to sidecar files referenced by hash.
+- Subprocesses: `jobs.run_process` only (Job Object / killpg containment, `separate_streams=True`), fixed absolute executable, `shell=False`, private cwd, child environment from the audited allow-list (`backend.build_child_env(for_tool=...)` or `secondary/engine_env.py`), bounded output, cooperative cancel. Never execute a target binary.
+- Network: only the consented/allow-listed/bounded pattern of `acquisition/transport.py` and `enrichment/intelligence.py` (HTTPS, host allow-list, redirect/body/time caps, offline cache); no upload of binary content; credentials session-only.
+- CLI: new command = own dispatcher module + a hook of at most 6 lines in `cli.py` (`COMMANDS` + dispatch); output through the `enrichment-cli/1` envelope, exit codes 0/2/3/4/5; no Qt import.
+- Error codes: `PT-INTEL-*` (K), `PT-TOOL-*` (T), `PT-PILOT-*` (SPEC-30), `PT-UNIFIED-*` (SPEC-31). Contract versions: `intelligence/1`, `tool-evidence/1`, `pilot/1`; persisted contracts change additively only.
+- Evidence rules (AGENTS.md): never average engine scores; keep conflicts; missing is unknown, not a negative vote; uncalibrated numbers are never shown as vulnerability confidence; shared-origin evidence counts once; advisory text is untrusted data (escape on export, bounded, never executed).
+- Schemas: each track generates its own schema directory with its own generator script and a regenerate-and-compare test (pattern of `tools/generate_schemas.py`); do not edit `tools/generate_schemas.py` (S0a only).
+- Docs: update the spec status line you build from; append (never reflow) short blocks to `docs/modules.md`, `tasks/todo.md`, `docs/qa.md`; amend a spec before changing a contract.
+
+## 3. Builder protocol
+Work only in your worktree; commit often with trailer `Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>`; never push, never touch GitHub; no stray files in the repo (scratchpad for temporaries). Red/green tests first for behaviour; `python -m ruff check src tests tools` and `QT_QPA_PLATFORM=offscreen python -m pytest -q` (repeat the full suite at least twice) before reporting. Mocked or synthetic tests are never live evidence: label them. Final report at most 250 words: what exists, test counts, deviations from the spec, what only CI/Windows/live can verify, hard unresolved items.
+
+## 4. Integration protocol (owner)
+Merge builder branches in dependency order (append-only doc conflicts keep both sides), run the full gate twice locally, push the designated branch, open one PR per wave, wait for Linux + Windows QA, native matrix and live workflows, squash-merge when green, reset the designated branch to the new `main`, then start the next wave. Windows QA failures are fixed on the PR, never skipped.

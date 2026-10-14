@@ -34,7 +34,11 @@ RUN_KEEP = 8  # newest engine-run rows kept per (engine, older, newer) group
 MAX_ROW = 32 * 1024 * 1024
 MAX_TOTAL = 128 * 1024 * 1024
 KINDS = frozenset({'signals', 'ranking', 'wil', 'cve-snapshot', 'contextual', 'pipeline', 'secondary-matches',
-                   'engine-run'})
+                   'engine-run',
+                   # Reserved for Phase D (docs/plans/phase-d-build-coordination.md); none is in DERIVED_KINDS,
+                   # so retention never deletes them: SPEC-31 unified-*, CSAF advisory-*, SPEC-29 tool-*, SPEC-30.
+                   'unified-run', 'unified-result', 'advisory-source', 'advisory-facts', 'tool-run', 'tool-evidence',
+                   'patch-intent'})
 
 # Retention (SPEC-07h H1). Only recomputable derived kinds are ever deleted; imported evidence
 # (`secondary-matches`), `cve-snapshot` and unknown kinds are never evicted.
