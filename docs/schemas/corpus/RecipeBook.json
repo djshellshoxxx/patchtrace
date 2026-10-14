@@ -162,6 +162,15 @@
           "title": "Libc",
           "type": "string"
         },
+        "libs": {
+          "default": [],
+          "items": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_.+-]{0,63}$",
+            "type": "string"
+          },
+          "title": "Libs",
+          "type": "array"
+        },
         "license_evidence": {
           "maxLength": 500,
           "minLength": 1,
@@ -320,6 +329,22 @@
           ],
           "default": null,
           "title": "Include Dirs"
+        },
+        "libs": {
+          "anyOf": [
+            {
+              "items": {
+                "pattern": "^[A-Za-z0-9][A-Za-z0-9_.+-]{0,63}$",
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Libs"
         },
         "match": {
           "items": {
