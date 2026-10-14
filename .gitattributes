@@ -13,3 +13,4 @@ tests/fixtures/csaf/** text eol=lf
 tests/fixtures/intel_tools/** text eol=lf
 tests/fixtures/kbcorrelation/** text eol=lf
 tests/fixtures/tier_w/** -text
+tools/backend_pin.json text eol=lf

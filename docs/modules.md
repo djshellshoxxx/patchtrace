@@ -158,17 +158,18 @@ Built: common, process, capa, floss, diec, normalize, delta (tests: `tests/test_
 ### [B-0:optional-deps] Program E dependency enablement (2026-10-14; instance B)
 | Module | Files | Responsibility | Depends on | Tests |
 |---|---|---|---|---|
-<<<<<<< HEAD
 | optional deps | src/patchtrace/optional_deps.py, tools/pyinstaller_hooks/hook-patchtrace.optional_deps.py | guarded static imports of rapidfuzz, yara_x (extras `search`, `rules` in pyproject; pefile/pygments/networkx are dev test oracles only, wheels only); `probe()`/`available()`/`summary_line()` never raise; `--self-test` prints `optional-deps:` and `tools/frozen_smoke.py` requires `missing=none` in the frozen EXE; `.github/workflows/optional-deps.yml` installs the extras wheels-only on ubuntu and windows | stdlib | `tests/test_optional_deps.py` |
-=======
 | optional deps | src/patchtrace/optional_deps.py, tools/pyinstaller_hooks/hook-patchtrace.optional_deps.py | guarded static imports of rapidfuzz, pygments, networkx, pefile, yara_x (extras `workbench`, `rules` in pyproject, wheels only); `probe()`/`available()`/`summary_line()` never raise; `--self-test` prints `optional-deps:` and `tools/frozen_smoke.py` requires `missing=none` in the frozen EXE; `.github/workflows/optional-deps.yml` installs the extras wheels-only on ubuntu and windows | stdlib | `tests/test_optional_deps.py` |
 ### [K0:kbcorrelation-contracts] KB-CVE correlator contracts (2026-10-14; KB-integration-plan slice K0)
 | Module | Files | Responsibility | Depends on | Tests |
 |---|---|---|---|---|
 | kbcorrelation contracts | src/patchtrace/kbcorrelation/{__init__ (empty),contracts,limits,ids,errors,ports}.py | strict frozen `kbcorrelation/1` records (7.2), `KbcLimits` (7.4), `kb-syntax/1` ids (canonical `KB`+4-10 ASCII digits, bare digits only via `normalise_kb_edge`, no numeric cast), `PT-KBC-*` + `KbcIssue`/`OperationResult`, sibling-call Protocol ports; no Qt, urllib, sqlite3 | pydantic, `intelligence.contracts` types, `enrichment.identity.domain_id`, `acquisition.contracts.validate_file_name` (contracts.py only) | tests/test_kbc_contracts.py, test_kbc_ids.py, test_kbc_schemas.py; docs/schemas/kbcorrelation/ via tools/generate_kbc_schemas.py |
->>>>>>> worktree-agent-a382eefdbdbec2cd6
 
 ### [B3:offline-bundle-linux] offline_bundle Linux platform (2026-10-14; BUNDLE slice B3)
 | Module | Files | Responsibility | Depends on | Tests |
 |---|---|---|---|---|
 | offline_bundle (amended) | src/patchtrace/offline_bundle.py | public `validate_manifest(data, *, platforms=('windows',))`; `platform: linux` (python `python/bin/python3`, markers `jdk/bin/java`, exact-case) accepted only when a loader passes `platforms=('linux',)`; `inspect_offline_bundle(..., platforms=)`, `build_offline_bundle(..., platform=)`; plan gains `platform`; Windows defaults byte-identical, manifest keys unchanged | stdlib | tests/test_offline_bundle.py, tests/test_offline_bundle_linux.py |
+### [B1:backend-pins] BUNDLE backend pins (2026-10-14; slice B1)
+| Module | Files | Responsibility | Depends on | Tests |
+|---|---|---|---|---|
+| backend pin | tools/backend_pin.json (`patchtrace-backend-pin/1`, LF via .gitattributes), tools/check_backend_pin.py | single source of pins for the full bundle: Python 3.12.10, Ghidra 12.0.4, Temurin 21.0.12.1+1, hash-locked jpype1/pyghidra/packaging wheels and the mdutils sdist, Ghidriff commit, safe strips; every digest names its `digest_source`; two digests are explicit `PLACEHOLDER-UNRESOLVED` (python.org embeddable zip, Ghidriff source tarball: hosts blocked, [unverified]); `check_backend_pin.py --release` exits 3 while any placeholder remains | stdlib | tests/test_backend_pin.py |
