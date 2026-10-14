@@ -167,3 +167,8 @@ Built: common, process, capa, floss, diec, normalize, delta (tests: `tests/test_
 |---|---|---|---|---|
 | kbcorrelation contracts | src/patchtrace/kbcorrelation/{__init__ (empty),contracts,limits,ids,errors,ports}.py | strict frozen `kbcorrelation/1` records (7.2), `KbcLimits` (7.4), `kb-syntax/1` ids (canonical `KB`+4-10 ASCII digits, bare digits only via `normalise_kb_edge`, no numeric cast), `PT-KBC-*` + `KbcIssue`/`OperationResult`, sibling-call Protocol ports; no Qt, urllib, sqlite3 | pydantic, `intelligence.contracts` types, `enrichment.identity.domain_id`, `acquisition.contracts.validate_file_name` (contracts.py only) | tests/test_kbc_contracts.py, test_kbc_ids.py, test_kbc_schemas.py; docs/schemas/kbcorrelation/ via tools/generate_kbc_schemas.py |
 >>>>>>> worktree-agent-a382eefdbdbec2cd6
+
+### [B3:offline-bundle-linux] offline_bundle Linux platform (2026-10-14; BUNDLE slice B3)
+| Module | Files | Responsibility | Depends on | Tests |
+|---|---|---|---|---|
+| offline_bundle (amended) | src/patchtrace/offline_bundle.py | public `validate_manifest(data, *, platforms=('windows',))`; `platform: linux` (python `python/bin/python3`, markers `jdk/bin/java`, exact-case) accepted only when a loader passes `platforms=('linux',)`; `inspect_offline_bundle(..., platforms=)`, `build_offline_bundle(..., platform=)`; plan gains `platform`; Windows defaults byte-identical, manifest keys unchanged | stdlib | tests/test_offline_bundle.py, tests/test_offline_bundle_linux.py |

@@ -91,3 +91,7 @@ E) release: place full bundle ZIP, standalone PatchTrace ZIP, SHA-256 sidecar an
 ## 8. Staged delivery
 
 M1 detailed contract, schema example, threat model and builder spec checked into docs (this file). M2 pure ZIP validator + tests. M3 atomic installer + tests. M4 GUI and backend/JDK injection, discovery and tests. M5 offline packager and fake bundle acceptance. M6 real Windows full offline bundle creation and clean air-gapped QA (blocked until real dependency payload is assembled). Maintain separate PR and merge only after standard CI checks; do not overwrite other contributors.
+
+## Amendment 2026-10-14 (BUNDLE slice B3): Linux platform, public validator
+
+Section 3 manifest is unchanged (same key set, `schema_version` 1, four `versions` keys). Additively, `platform` may be `linux` (`architecture` `amd64`, `python` `python/bin/python3`, `java` `jdk`, required files `python/bin/python3`, `ghidra/Ghidra/application.properties`, `jdk/bin/java`, `LICENSES/NOTICE.txt`, matched case-sensitively; Windows markers stay case-insensitive). `validate_manifest(data, *, platforms=('windows',))` is public; a Linux manifest is rejected unless the caller passes `platforms=('linux',)`, so the Windows importer UI still refuses non-Windows ZIPs. Portable path rules (reserved names, `:`, trailing dot/space, casefold collisions) apply to all platforms. `OfflineBundlePlan.platform` records the accepted platform and `python_relative` follows the manifest.
