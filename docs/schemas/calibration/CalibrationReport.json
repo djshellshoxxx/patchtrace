@@ -1,0 +1,147 @@
+{
+  "$defs": {
+    "GateResult": {
+      "additionalProperties": false,
+      "properties": {
+        "status": {
+          "enum": [
+            "pass",
+            "fail",
+            "insufficient-data"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "reasons": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Reasons",
+          "type": "array"
+        }
+      },
+      "required": [
+        "status",
+        "reasons"
+      ],
+      "title": "GateResult",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "contract": {
+      "const": "calibration-report/1",
+      "title": "Contract",
+      "type": "string"
+    },
+    "claim": {
+      "title": "Claim",
+      "type": "string"
+    },
+    "prereg_sha256": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Prereg Sha256"
+    },
+    "corpus_manifest_sha256": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Corpus Manifest Sha256"
+    },
+    "label_set_sha256": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Label Set Sha256"
+    },
+    "tool_git": {
+      "title": "Tool Git",
+      "type": "string"
+    },
+    "python_version": {
+      "title": "Python Version",
+      "type": "string"
+    },
+    "dataset": {
+      "additionalProperties": true,
+      "title": "Dataset",
+      "type": "object"
+    },
+    "per_profile": {
+      "additionalProperties": true,
+      "title": "Per Profile",
+      "type": "object"
+    },
+    "gates": {
+      "additionalProperties": {
+        "$ref": "#/$defs/GateResult"
+      },
+      "propertyNames": {
+        "enum": [
+          "G0",
+          "G1",
+          "G2",
+          "G3"
+        ]
+      },
+      "title": "Gates",
+      "type": "object"
+    },
+    "blind_spots": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Blind Spots",
+      "type": "array"
+    },
+    "amendments": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Amendments",
+      "type": "array"
+    },
+    "report_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Report Sha256",
+      "type": "string"
+    }
+  },
+  "required": [
+    "contract",
+    "claim",
+    "prereg_sha256",
+    "corpus_manifest_sha256",
+    "label_set_sha256",
+    "tool_git",
+    "python_version",
+    "dataset",
+    "per_profile",
+    "gates",
+    "blind_spots",
+    "amendments",
+    "report_sha256"
+  ],
+  "title": "CalibrationReport",
+  "type": "object",
+  "$id": "https://patchtrace.local/schemas/calibration-report/1/CalibrationReport.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}

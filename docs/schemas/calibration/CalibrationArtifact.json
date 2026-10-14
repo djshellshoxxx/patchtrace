@@ -1,0 +1,560 @@
+{
+  "$defs": {
+    "ArtifactFeature": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "num",
+            "cat",
+            "flag"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "median": {
+          "title": "Median",
+          "type": "number"
+        },
+        "mean": {
+          "title": "Mean",
+          "type": "number"
+        },
+        "sd": {
+          "exclusiveMinimum": 0,
+          "title": "Sd",
+          "type": "number"
+        },
+        "coef": {
+          "title": "Coef",
+          "type": "number"
+        }
+      },
+      "required": [
+        "name",
+        "kind",
+        "median",
+        "mean",
+        "sd",
+        "coef"
+      ],
+      "title": "ArtifactFeature",
+      "type": "object"
+    },
+    "Band": {
+      "additionalProperties": false,
+      "properties": {
+        "lo": {
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Lo",
+          "type": "number"
+        },
+        "hi": {
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Hi",
+          "type": "number"
+        },
+        "label": {
+          "maxLength": 80,
+          "minLength": 1,
+          "title": "Label",
+          "type": "string"
+        }
+      },
+      "required": [
+        "lo",
+        "hi",
+        "label"
+      ],
+      "title": "Band",
+      "type": "object"
+    },
+    "Domain": {
+      "additionalProperties": false,
+      "properties": {
+        "engines": {
+          "additionalProperties": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "title": "Engines",
+          "type": "object"
+        },
+        "toolchains": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Toolchains",
+          "type": "array"
+        },
+        "arch": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Arch",
+          "type": "array"
+        },
+        "corpus_id": {
+          "title": "Corpus Id",
+          "type": "string"
+        },
+        "n_pairs": {
+          "minimum": 0,
+          "title": "N Pairs",
+          "type": "integer"
+        },
+        "n_lineages": {
+          "minimum": 0,
+          "title": "N Lineages",
+          "type": "integer"
+        },
+        "prevalence": {
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Prevalence",
+          "type": "number"
+        },
+        "known_blind_spots": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Known Blind Spots",
+          "type": "array"
+        }
+      },
+      "required": [
+        "engines",
+        "toolchains",
+        "arch",
+        "corpus_id",
+        "n_pairs",
+        "n_lineages",
+        "prevalence",
+        "known_blind_spots"
+      ],
+      "title": "Domain",
+      "type": "object"
+    },
+    "Evidence": {
+      "additionalProperties": false,
+      "properties": {
+        "preregistration_sha256": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Preregistration Sha256"
+        },
+        "report_sha256": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Report Sha256"
+        },
+        "corpus_manifest_sha256": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Corpus Manifest Sha256"
+        },
+        "label_set_sha256": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Label Set Sha256"
+        },
+        "tool_git": {
+          "title": "Tool Git",
+          "type": "string"
+        },
+        "gates": {
+          "additionalProperties": {
+            "enum": [
+              "pass",
+              "fail",
+              "insufficient-data"
+            ],
+            "type": "string"
+          },
+          "default": {},
+          "propertyNames": {
+            "enum": [
+              "G0",
+              "G1",
+              "G2",
+              "G3"
+            ]
+          },
+          "title": "Gates",
+          "type": "object"
+        }
+      },
+      "required": [
+        "preregistration_sha256",
+        "report_sha256",
+        "corpus_manifest_sha256",
+        "label_set_sha256",
+        "tool_git"
+      ],
+      "title": "Evidence",
+      "type": "object"
+    },
+    "Isotonic": {
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "isotonic",
+          "title": "Type",
+          "type": "string"
+        },
+        "knots": {
+          "items": {
+            "maxItems": 2,
+            "minItems": 2,
+            "prefixItems": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "number"
+              }
+            ],
+            "type": "array"
+          },
+          "maxItems": 5000,
+          "minItems": 1,
+          "title": "Knots",
+          "type": "array"
+        }
+      },
+      "required": [
+        "type",
+        "knots"
+      ],
+      "title": "Isotonic",
+      "type": "object"
+    },
+    "OodSpec": {
+      "additionalProperties": false,
+      "properties": {
+        "names": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Names",
+          "type": "array"
+        },
+        "mu": {
+          "items": {
+            "type": "number"
+          },
+          "title": "Mu",
+          "type": "array"
+        },
+        "chol": {
+          "items": {
+            "items": {
+              "type": "number"
+            },
+            "type": "array"
+          },
+          "title": "Chol",
+          "type": "array"
+        },
+        "d2_soft": {
+          "minimum": 0,
+          "title": "D2 Soft",
+          "type": "number"
+        },
+        "d2_cut": {
+          "minimum": 0,
+          "title": "D2 Cut",
+          "type": "number"
+        },
+        "ranges": {
+          "additionalProperties": {
+            "maxItems": 2,
+            "minItems": 2,
+            "prefixItems": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "number"
+              }
+            ],
+            "type": "array"
+          },
+          "title": "Ranges",
+          "type": "object"
+        },
+        "cat_levels": {
+          "additionalProperties": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "title": "Cat Levels",
+          "type": "object"
+        },
+        "engine_versions": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Engine Versions",
+          "type": "array"
+        }
+      },
+      "required": [
+        "names",
+        "mu",
+        "chol",
+        "d2_soft",
+        "d2_cut",
+        "ranges",
+        "cat_levels",
+        "engine_versions"
+      ],
+      "title": "OodSpec",
+      "type": "object"
+    },
+    "Platt": {
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "platt",
+          "title": "Type",
+          "type": "string"
+        },
+        "a": {
+          "title": "A",
+          "type": "number"
+        },
+        "b": {
+          "title": "B",
+          "type": "number"
+        }
+      },
+      "required": [
+        "type",
+        "a",
+        "b"
+      ],
+      "title": "Platt",
+      "type": "object"
+    },
+    "PolicySpec": {
+      "additionalProperties": false,
+      "properties": {
+        "tau": {
+          "anyOf": [
+            {
+              "exclusiveMaximum": 1,
+              "exclusiveMinimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Tau"
+        },
+        "tau_low": {
+          "anyOf": [
+            {
+              "exclusiveMaximum": 1,
+              "exclusiveMinimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Tau Low"
+        },
+        "display": {
+          "enum": [
+            "none",
+            "band",
+            "number"
+          ],
+          "title": "Display",
+          "type": "string"
+        },
+        "bands": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/Band"
+          },
+          "title": "Bands",
+          "type": "array"
+        }
+      },
+      "required": [
+        "tau",
+        "tau_low",
+        "display"
+      ],
+      "title": "PolicySpec",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "contract": {
+      "const": "patchtrace-calibration-model/1",
+      "title": "Contract",
+      "type": "string"
+    },
+    "model_id": {
+      "maxLength": 120,
+      "minLength": 1,
+      "title": "Model Id",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "experimental",
+        "bands-ok",
+        "numeric-ok"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "target": {
+      "const": "A",
+      "title": "Target",
+      "type": "string"
+    },
+    "feature_schema": {
+      "title": "Feature Schema",
+      "type": "string"
+    },
+    "profile": {
+      "title": "Profile",
+      "type": "string"
+    },
+    "features": {
+      "items": {
+        "$ref": "#/$defs/ArtifactFeature"
+      },
+      "maxItems": 64,
+      "minItems": 1,
+      "title": "Features",
+      "type": "array"
+    },
+    "intercept": {
+      "title": "Intercept",
+      "type": "number"
+    },
+    "base": {
+      "const": "l2-logistic",
+      "title": "Base",
+      "type": "string"
+    },
+    "C": {
+      "exclusiveMinimum": 0,
+      "title": "C",
+      "type": "number"
+    },
+    "calibrator": {
+      "discriminator": {
+        "mapping": {
+          "isotonic": "#/$defs/Isotonic",
+          "platt": "#/$defs/Platt"
+        },
+        "propertyName": "type"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/Platt"
+        },
+        {
+          "$ref": "#/$defs/Isotonic"
+        }
+      ],
+      "title": "Calibrator"
+    },
+    "policy": {
+      "$ref": "#/$defs/PolicySpec"
+    },
+    "ood": {
+      "$ref": "#/$defs/OodSpec"
+    },
+    "calibration_domain": {
+      "$ref": "#/$defs/Domain"
+    },
+    "evidence": {
+      "$ref": "#/$defs/Evidence"
+    },
+    "created": {
+      "title": "Created",
+      "type": "string"
+    },
+    "expires": {
+      "title": "Expires",
+      "type": "string"
+    },
+    "digest_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Digest Sha256",
+      "type": "string"
+    }
+  },
+  "required": [
+    "contract",
+    "model_id",
+    "status",
+    "target",
+    "feature_schema",
+    "profile",
+    "features",
+    "intercept",
+    "base",
+    "C",
+    "calibrator",
+    "policy",
+    "ood",
+    "calibration_domain",
+    "evidence",
+    "created",
+    "expires",
+    "digest_sha256"
+  ],
+  "title": "CalibrationArtifact",
+  "type": "object",
+  "$id": "https://patchtrace.local/schemas/patchtrace-calibration-model/1/CalibrationArtifact.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}

@@ -39,3 +39,5 @@ Sources:
 - https://github.com/google/bindiff/blob/main/docs/concepts.md
 - https://github.com/google/bindiff/blob/main/differ.cc
 - https://manpages.opensuse.org/Tumbleweed/rizin/rz-diff.1.en.html
+
+Placement amendment (2026-10-14, C9 build; see `calibration-corpus-and-model.md` section 18): the "future secondary/calibration/" modules are superseded. The shipped runtime (features, artifact loader, predict, ood, policy) is `src/patchtrace/calibration/`; labels, training, metrics, reports and drift analysis stay dev-only in `tools/calibration/` and never ship. No numeric confidence is displayed: `calibration.policy.display_level()` returns `'ordinal'` until a validated artifact passes the go/no-go gates.
