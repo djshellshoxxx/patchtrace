@@ -92,3 +92,32 @@ def test_store_round_trip_keeps_ghidriff_untouched(tmp_path):
         assert mset(sm(1, 2)).entry_id == secondary.entry_id  # keyed by file/pair, not content
     finally:
         svc.close()
+
+
+def alt(side, anchor, older, newer, rank, source='rz-diff'):
+    from patchtrace.secondary.contracts import AlternativeMatch
+    return AlternativeMatch(anchor_side=side, anchor_address=anchor, candidate=sm(older, newer),
+                            source=source, rank=rank)
+
+
+def test_disagreement_matching_alternative_reports_rank_without_changing_verdict():
+    matches = [gmatch('m', '10', '20'), gmatch('plain', '50', '60')]
+    base = mset(sm(0x10, 0x30), sm(0x50, 0x60))
+    without = reconcile(matches, base)
+    secondary = base.model_copy(update={'alternatives': (
+        alt('older', 0x10, 0x10, 0x25, 1), alt('older', 0x10, 0x10, 0x20, 2), alt('newer', 0x20, 0x11, 0x20, 3))})
+    report = reconcile(matches, secondary)
+    assert [r.status for r in report.rows] == [r.status for r in without.rows] == ['disagreement', 'agreement']
+    row = report.rows[0]
+    assert row.disagreement_kind == 'matches-alternative-rank-2' and row.alternative_rank == 2
+    assert len(row.alternatives) == 3 and 'alternative rank 2' in row.note
+    assert report.rows[1].disagreement_kind is None and report.rows[1].alternatives == ()
+    assert without.rows[0].disagreement_kind == 'conflicting-endpoints' and without.rows[0].alternatives == ()
+    assert report.counts() == without.counts()
+
+
+def test_alternatives_that_do_not_match_keep_plain_disagreement():
+    secondary = mset(sm(0x10, 0x30)).model_copy(update={'alternatives': (alt('older', 0x10, 0x10, 0x99, 1),)})
+    row = reconcile([gmatch('m', '10', '20')], secondary).rows[0]
+    assert row.status == 'disagreement' and row.disagreement_kind == 'conflicting-endpoints'
+    assert row.alternative_rank is None and len(row.alternatives) == 1

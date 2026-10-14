@@ -71,12 +71,11 @@ def execute(service, store: EnrichmentStore, run, sides: dict, engines: Sequence
         def find(self, key):
             return snapshot.get(key)
 
-    outcomes = scheduler.run_engines(
-        ref, list(engines), max_parallel=max_parallel, per_engine_timeout=dict.fromkeys(engines, float(timeout)),
-        cancel=cancel, cache=Snapshot() if use_cache else None, env=env, registry=registry)
     warnings: list[str] = []
     rows, reports = [], []
-    for outcome in outcomes:
+
+    def persist(outcome: EngineOutcome) -> None:
+        """Runs on this thread as each engine finishes, so Ctrl+C never loses a completed outcome."""
         record, match_set = outcome.run, outcome.match_set
         digest = match_set.file_sha256 if match_set else record.cache_key
         guard = Guard(project.id, run.id, run.raw_sha256, digest)
@@ -92,6 +91,14 @@ def execute(service, store: EnrichmentStore, run, sides: dict, engines: Sequence
                      'alternatives': len(match_set.alternatives) if match_set else 0})
         if outcome.error is not None:
             warnings.append(f'{record.engine}: {outcome.error}')
+
+    outcomes = scheduler.run_engines(
+        ref, list(engines), max_parallel=max_parallel, per_engine_timeout=dict.fromkeys(engines, float(timeout)),
+        cancel=cancel, cache=Snapshot() if use_cache else None, env=env, registry=registry, on_outcome=persist)
+    # Report in plan order (completion order only matters for persistence).
+    order = {e: i for i, e in enumerate(o.run.engine for o in outcomes)}
+    rows.sort(key=lambda r: order[r['engine']])
+    reports.sort(key=lambda r: order[r.engine])
     status, code = classify(outcomes, cancel.is_set())
     result = {'runs': rows,
               'reconciliation': {'reports': [{'engine': r.engine, 'engine_version': r.engine_version,
