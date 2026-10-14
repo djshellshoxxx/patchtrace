@@ -324,3 +324,7 @@ K1 notes: plan 10.1 "4 edges, 1 mention-only" = 4 vendor-remediation edges + 1 m
 | strings sources | `strings/sources.py` | `StringSource` port; `FlossEvidenceSource` (validated `ToolEvidenceSet`) and `RawFlossSource` (raw FLOSS 3.1.1 JSON, per-type quotas, optional offset-to-RVA) produce `SourceRow` + `StringPart` + stage states; hash and display only, never the raw string | `test_strings_sources.py` |
 | strings regions/cues/look-alike | `strings/{regions,cues,lookalike}.py` | section-name region vocabulary, fixed cue vocabulary from text and import sets, skeleton-based look-alike and code point diff | `test_strings_{regions,cues,lookalike}.py` |
 | strings scan | `strings/scan.py` | "PatchTrace basic string scan": chunked ASCII + UTF-16LE scan equal to FLOSS 3.1.1 static semantics, cancel per chunk, per-encoding row cap with exact totals, `BuiltinScanSource` | `test_strings_scan.py` |
+### [G1:callgraph-kernel]
+| module | files | purpose | deps | tests |
+|---|---|---|---|---|
+| callgraph kernel | src/patchtrace/callgraph/{limits,text,labels,csr,algo}.py | label parsing, untrusted-text sanitizer, immutable CSR digraph, SCC/reach/ancestors/bidirectional distance/bounded simple paths (stdlib only, no runtime NetworkX) | stdlib | `test_callgraph_labels.py`, `test_callgraph_csr.py`, `test_callgraph_algo.py` |

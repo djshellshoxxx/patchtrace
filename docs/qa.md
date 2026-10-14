@@ -320,3 +320,5 @@ Linux, Python 3.x shared host, synthetic rows: load of two 200k-row sides 0.2-0.
 |---|---|
 | built-in scan equals FLOSS 3.1.1 static goldens (synthetic pairs) | `tests/test_strings_scan.py::test_scan_matches_floss_goldens` and `test_scan_matches_the_decode_goldens` |
 | scan throughput, 64 MiB, Linux, shared host | code-like data about 125 MB/s, all-zero data about 320 MB/s, pathological random data (a string every ~80 bytes) about 47 MB/s; the 100 MB/s target holds for sparse data only; real binaries and the Windows leg are unmeasured |
+### [G1:callgraph-kernel]
+Automated only: 400-trial differential vs NetworkX (SCC, ancestors, descendants, BFS, multi-source, distance, simple-path lengths), hash-seed determinism, 60k node / 447k edge build and algorithm gates (budgets 5x-10x measured). No manual gate.

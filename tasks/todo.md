@@ -215,3 +215,6 @@
 ### [WB3-S1-S3:strings-sources-scan]
 - [x] WB3-S1 sources, WB3-S2 regions/cues/look-alike, WB3-S3 built-in scan (parity with the FLOSS 3.1.1 static goldens, property tests against a whole-buffer regex oracle)
 - [ ] Open: S0 contracts/table (`strings/__init__.py`, limits, columnar table) not on this base; `SourceRow` maps 1:1 onto the planned table columns; advisory-text/advisory-api/lookalike cues are set by the delta layer (S5/S6)
+### [G1:callgraph-kernel]
+- [x] Kernel (limits, text, labels, CSR, algo) with NetworkX 3.7 differential oracle (dev only, skipped when absent) and PYTHONHASHSEED 0/1 determinism test
+- [ ] Next: G2 contracts, input, pairing, resolver, snapshot, query
