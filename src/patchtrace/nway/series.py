@@ -40,7 +40,7 @@ def sha256_file(path: Path) -> str:
 def read_project(path: Path) -> ComparisonProject:
     from ..service import ProjectService
     try:
-        service = ProjectService.open(path)
+        service = ProjectService.open(path, maintenance=False)
     except ValueError as exc:
         raise NwayError('PT-NWAY-PAIR', f'cannot open pair project {Path(path).name}: {exc}') from None
     except (sqlite3.Error, OSError):

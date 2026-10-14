@@ -1,0 +1,50 @@
+name: Live NVD/MSRC probe (advisory)
+# Real provider calls through the CLI, not mocked (SPEC-07h H10, tools/live_nvd_probe.py). Advisory only:
+# scheduled and manual, no push/PR trigger, never a required check, keyless NVD (pacing exercised).
+# BLOCKED (host unreachable, rate limited) exits 0 and is shown in the summary; FAILED (provider drift) exits 1.
+on:
+  workflow_dispatch:
+    inputs:
+      cves:
+        description: 'Space-separated CVE ids (default: CVE-2024-38063 CVE-2024-30088)'
+        required: false
+        default: ''
+  schedule:
+    - cron: '37 5 * * 1'
+permissions:
+  contents: read
+concurrency:
+  group: live-nvd
+  cancel-in-progress: false
+jobs:
+  live-nvd:
+    name: live NVD/MSRC probe (ubuntu-latest)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install -e .
+      - name: Probe providers through the CLI (keyless)
+        shell: bash
+        env:
+          PROBE_CVES: ${{ inputs.cves }}
+        run: |
+          set -euo pipefail
+          set -f  # the input is split into words, never globbed; the tool validates each id
+          args=()
+          for cve in $PROBE_CVES; do args+=(--cve "$cve"); done
+          python tools/live_nvd_probe.py --out build/live-status/cve-providers.json "${args[@]}"
+      - name: Step summary
+        if: always()
+        run: python tools/check_live_status.py --dir build/live-status --summary "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: live-nvd
+          path: build/live-status/cve-providers.json
+          if-no-files-found: warn

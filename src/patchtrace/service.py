@@ -56,13 +56,18 @@ class ProjectService:
             raise
 
     @classmethod
-    def open(cls, root: Path) -> ProjectService:
+    def open(cls, root: Path, *, maintenance: bool = True) -> ProjectService:
+        """`maintenance=False` for read-only readers (series): skips the H8 legacy raw cleanup."""
         store = ProjectStore(root)
         try:
-            return cls(store.root, store.load(), store)
+            service = cls(store.root, store.load(), store)
         except Exception:
             store.close()
             raise
+        if maintenance:  # SPEC-07h H8: journalled, verified, best effort; never raises
+            from .raw_cleanup import cleanup_legacy_raw_duplicates
+            cleanup_legacy_raw_duplicates(service.root, service.project)
+        return service
 
     @classmethod
     def sample(cls, root: Path) -> ProjectService:
