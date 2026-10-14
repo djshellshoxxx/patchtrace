@@ -53,10 +53,13 @@ from .interpretation import interpret, system_prompt
 from .offline_bundle import inspect_offline_bundle, install_offline_bundle
 from .preflight import overview_rows
 from .providers import ProviderConfig
+from .raw_view import SCOPES, RawSide, build_side, differing_lines
 from .reports import export_project
+from .representations import DEFAULT_PAGE_SIZE, Representation
 from .runtime_discovery import discover_local_runtimes
 from .service import ProjectService
 from .tooltips import apply_tooltip, apply_tooltips
+from .ui_inspection import InspectionThread, fill_pe_table, side_summary
 
 REVIEWS = ['unreviewed', 'accepted', 'rejected', 'needs-review']
 CATEGORIES = ['modified', 'added', 'removed', 'ambiguous', 'split', 'merged', 'unmatched', 'unchanged']
@@ -1383,6 +1386,11 @@ class MainWindow(QMainWindow):
         self.service = service
         self.worker = None
         self._updating = False
+        # Preliminary inspection (SPEC-26 D) runs on its own thread, independent of analysis jobs.
+        self._inspection = None
+        self._inspection_key = None
+        self._inspection_thread = None
+        self._raw_sides = {}
         # Derived enrichment for the current run, keyed by match ID; never part of the project snapshot.
         self._ranking = {}
         self._signal_sets = {}
@@ -1581,9 +1589,26 @@ class MainWindow(QMainWindow):
         layout.setContentsMargins(4, 0, 4, 0)
         row = QHBoxLayout()
         self.mode = QComboBox()
-        self.mode.addItems(['Decompiled code', 'Assembly', 'Metadata'])
-        self.mode.currentTextChanged.connect(self.render_match)
+        self.mode.addItems(['Decompiled code', 'Assembly', 'Metadata', 'Hex (raw bytes)', 'Binary (raw bytes)',
+                            'Base64 (raw bytes)'])
+        self.mode.currentTextChanged.connect(self._mode_changed)
         row.addWidget(self.mode)
+        self.raw_scope = QComboBox()
+        self.raw_scope.addItems(['Whole file', 'From function entry'])
+        self.raw_scope.currentIndexChanged.connect(self._raw_scope_changed)
+        row.addWidget(self.raw_scope)
+        self.raw_page = QSpinBox()
+        self.raw_page.setRange(1, 1)
+        self.raw_page.setPrefix('Page ')
+        self.raw_page.valueChanged.connect(lambda *_: self.render_match())
+        row.addWidget(self.raw_page)
+        self.raw_goto = QLineEdit()
+        self.raw_goto.setPlaceholderText('Go to file offset (hex)')
+        self.raw_goto.setMaximumWidth(170)
+        self.raw_goto.returnPressed.connect(self.raw_goto_offset)
+        row.addWidget(self.raw_goto)
+        for widget in (self.raw_scope, self.raw_page, self.raw_goto):
+            widget.setVisible(False)
         self.sync_scroll = QCheckBox('Sync scroll')
         self.sync_scroll.setChecked(True)
         row.addWidget(self.sync_scroll)
@@ -1629,6 +1654,8 @@ class MainWindow(QMainWindow):
         self.hunk_list.setAccessibleName('Changed hunks')
         self.hunk_list.currentIndexChanged.connect(self.select_hunk)
         layout.addWidget(self.hunk_list)
+        apply_tooltips(self, {'raw_scope': 'viewer.raw_scope', 'raw_page': 'viewer.raw_page',
+                              'raw_goto': 'viewer.raw_goto'})
         apply_tooltips(self, {'mode': 'viewer.mode', 'sync_scroll': 'viewer.sync_scroll',
                               'previous_diff': 'nav.previous_hunk', 'next_diff': 'nav.next_hunk',
                               'hunk_list': 'nav.hunk_list'})
@@ -1740,6 +1767,8 @@ class MainWindow(QMainWindow):
 
     def set_service(self, service):
         previous = self.service
+        if previous is not service:
+            self._stop_inspection()
         self.service = service
         if previous and previous is not service:
             previous.close()
@@ -1931,6 +1960,11 @@ class MainWindow(QMainWindow):
         self.match_review.blockSignals(True)
         self.match_review.setCurrentText(match.review)
         self.match_review.blockSignals(False)
+        if self._raw_mode():
+            self.hunk_list.blockSignals(False)
+            self._render_raw(match)
+            self.update_controls()
+            return
         texts = {}
         for side in ['older', 'newer']:
             chunks = []
@@ -2004,6 +2038,11 @@ class MainWindow(QMainWindow):
         """
         if not self.project or not self.current_match():
             return
+        if self._raw_mode():
+            self.statusBar().showMessage('Raw byte views have no text hunks; lines with differing bytes are '
+                                         'highlighted. Switch to Decompiled code or Assembly to step through '
+                                         'changes, or use the page control.')
+            return
         target = self._hunk_index + step
         if self._hunks and 0 <= target < len(self._hunks):
             self.hunk_list.setCurrentIndex(target)
@@ -2045,6 +2084,15 @@ class MainWindow(QMainWindow):
             return
         artifact = next(a for a in self.project.artifacts if a.side == side)
         text = f'PatchTrace project {self.project.id} / revision {self.project.revision}\n'
+        if self._raw_mode():
+            raw = self._raw_sides.get(side)
+            if raw is None or raw.rendered is None:
+                self.statusBar().showMessage('No raw bytes are displayed for this side; nothing copied.')
+                return
+            text += f'{side}: {artifact.name}\nArtifact SHA-256: {artifact.sha256}\n\n{raw.rendered.copy_text}'
+            QApplication.clipboard().setText(text)
+            self.statusBar().showMessage('Copied the displayed raw bytes with artifact, scope and page provenance.')
+            return
         text += f'{side}: {artifact.name}\nSHA-256: {artifact.sha256}\nRun: {match.run_id}\nMatch: {match.id}\n\n'
         for function in getattr(match, side):
             text += f'Function: {function.name} / {function.id} / {function.address or "unavailable"}\n'
@@ -2385,6 +2433,176 @@ class MainWindow(QMainWindow):
                              # Raw-output reuse (SPEC-07 §13) is opt-in via the selected profile's cache_dir.
                              cache_dir=str(profile.cache_dir or ''))
 
+    # ---- SPEC-26 B: raw byte representations ------------------------------------------------
+    RAW_MODES = {3: Representation.HEX, 4: Representation.BINARY, 5: Representation.BASE64}
+
+    def _raw_mode(self):
+        return self.mode.currentIndex() in self.RAW_MODES
+
+    def _mode_changed(self, *_):
+        raw = self._raw_mode()
+        for widget in (self.raw_scope, self.raw_page, self.raw_goto):
+            widget.setVisible(raw)
+        if raw:
+            self.start_inspection()
+        self.render_match()
+
+    def _raw_scope_changed(self, *_):
+        self.raw_page.blockSignals(True)
+        self.raw_page.setValue(1)
+        self.raw_page.blockSignals(False)
+        self.render_match()
+
+    def _current_inspection(self):
+        if self._inspection is not None and self._inspection_key == self._project_inspection_key():
+            return self._inspection
+        return None
+
+    def _render_raw(self, match):
+        self._hunks = []
+        self._hunk_index = -1
+        inspection = self._current_inspection()
+        if inspection is None:
+            for view in self.views.values():
+                view.setExtraSelections([])
+                view.setPlainText('Verifying artifact bytes against their recorded SHA-256 and inspecting PE '
+                                  'headers. The raw view appears when this read-only check finishes.')
+            self.start_inspection()
+            return
+        representation = self.RAW_MODES[self.mode.currentIndex()]
+        choice = SCOPES[self.raw_scope.currentIndex()]
+        page_index = self.raw_page.value() - 1
+        sides = {}
+        notes = []
+        for side in ['older', 'newer']:
+            functions = getattr(match, side)
+            function = functions[0] if functions else None
+            info = inspection.sides[side]
+            if len(functions) > 1:
+                notes.append(f'{side}: first of {len(functions)} functions used for entry scope')
+            if choice == 'entry' and function is None:
+                raw = RawSide(side, None, None, None, 0, f'No {side} function in this relationship.')
+            else:
+                raw = build_side(side, inspection.reader(side), info.overview,
+                                 function.address if function else None, choice, representation, page_index,
+                                 DEFAULT_PAGE_SIZE)
+                if inspection.reader(side) is None and info.error:
+                    raw = RawSide(side, None, None, None, 0,
+                                  f'Verified artifact bytes unavailable ({info.error_code}): {info.error}')
+            sides[side] = raw
+        self._raw_sides = sides
+        pages = max(1, *(raw.pages for raw in sides.values()))
+        self.raw_page.blockSignals(True)
+        self.raw_page.setMaximum(pages)
+        self.raw_page.blockSignals(False)
+        diff = differing_lines(sides['older'], sides['newer'], representation)
+        for side, raw in sides.items():
+            view = self.views[side]
+            view.setPlainText(raw.rendered.text if raw.rendered else f'[{raw.message}]')
+            selections = []
+            if raw.rendered:
+                for line in diff:
+                    block = view.document().findBlockByNumber(line)
+                    if not block.isValid():
+                        continue
+                    selection = QTextEdit.ExtraSelection()
+                    selection.cursor = QTextCursor(block)
+                    selection.format.setBackground(QColor('#263a43'))
+                    selection.format.setProperty(QTextCharFormat.Property.FullWidthSelection, True)
+                    selections.append(selection)
+            view.setExtraSelections(selections)
+        captions = [f'{side.upper()}: {raw.rendered.caption}' for side, raw in sides.items() if raw.rendered]
+        summary = f'{representation.value.upper()} · original on-disk bytes · page {page_index + 1} of {pages}'
+        if diff:
+            summary += f' · {len(diff)} line(s) with differing bytes at equal offsets'
+        if notes:
+            summary += ' · ' + '; '.join(notes)
+        self.match_label.setText(summary)
+        self.match_label.setToolTip('\n\n'.join(captions) or 'No raw bytes displayed.')
+
+    def raw_goto_offset(self):
+        text = self.raw_goto.text().strip().lower().removeprefix('0x')
+        inspection = self._current_inspection()
+        if not text:
+            return
+        try:
+            offset = int(text, 16)
+        except ValueError:
+            self.statusBar().showMessage('Enter a hexadecimal file offset, for example 0x400.')
+            return
+        sizes = [reader.size for reader in (inspection.readers.values() if inspection else [])]
+        if not sizes or offset < 0 or offset >= max(sizes):
+            self.statusBar().showMessage('Offset is outside the verified artifact bytes.')
+            return
+        self.raw_scope.blockSignals(True)
+        self.raw_scope.setCurrentIndex(SCOPES.index('whole'))
+        self.raw_scope.blockSignals(False)
+        self.raw_page.blockSignals(True)
+        self.raw_page.setMaximum(max(1, -(-max(sizes) // DEFAULT_PAGE_SIZE)))
+        self.raw_page.setValue(offset // DEFAULT_PAGE_SIZE + 1)
+        self.raw_page.blockSignals(False)
+        self.render_match()
+
+    # ---- SPEC-26 D: preliminary inspection lifecycle -----------------------------------------
+    def _project_inspection_key(self):
+        if not self.project or not self.service:
+            return None
+        sides = {artifact.side: artifact.sha256 for artifact in self.project.artifacts}
+        return (str(self.service.root), self.project.id, sides.get('older'), sides.get('newer'))
+
+    def start_inspection(self):
+        """Start the bounded read-only inspection worker unless a current result or run exists."""
+        key = self._project_inspection_key()
+        if key is None or (self._inspection is not None and self._inspection_key == key):
+            return
+        thread = self._inspection_thread
+        if thread is not None and thread.isRunning():
+            if thread.key == key:
+                return
+            thread.cancel.set()
+        thread = InspectionThread(self.project.id, self.project.artifacts, self.service.root, self)
+        thread.key = key
+        thread.inspection_ready.connect(lambda result, k=key: self._inspection_ready(result, k))
+        thread.inspection_failed.connect(self._inspection_failed)
+        self._inspection_thread = thread
+        self._set_overview_status('File inspection running: verifying hashes and parsing PE headers…')
+        thread.start()
+
+    def _inspection_ready(self, result, key):
+        if key != self._project_inspection_key():
+            result.close()
+            return
+        self._clear_inspection()
+        self._inspection, self._inspection_key = result, key
+        self._set_overview_status('File inspection complete · ' + side_summary(result))
+        table = getattr(self, '_preflight_pe_table', None)
+        if table is not None:
+            fill_pe_table(table, result)
+        if self._raw_mode():
+            self.render_match()
+
+    def _inspection_failed(self, message):
+        self._set_overview_status('File inspection failed: ' + message)
+        self.logs.appendPlainText('File inspection failed: ' + message)
+
+    def _set_overview_status(self, text):
+        label = getattr(self, '_preflight_status', None)
+        if label is not None:
+            label.setText(text)
+
+    def _clear_inspection(self):
+        if self._inspection is not None:
+            self._inspection.close()
+        self._inspection, self._inspection_key, self._raw_sides = None, None, {}
+
+    def _stop_inspection(self):
+        thread = self._inspection_thread
+        if thread is not None:
+            thread.cancel.set()
+            thread.wait(10000)
+            self._inspection_thread = None
+        self._clear_inspection()
+
     def show_file_overview(self):
         """Nonmodal read-only preview available without the Ghidra backend."""
         if not self.project:
@@ -2395,14 +2613,15 @@ class MainWindow(QMainWindow):
         if previous is not None:
             previous.close()
         dialog = QDialog(self)
-        dialog.setWindowTitle('Preliminary file comparison · recorded metadata')
-        dialog.setMinimumSize(850, 345)
+        dialog.setWindowTitle('Preliminary file comparison')
+        dialog.setMinimumSize(900, 620)
         dialog.setModal(False)
         layout = QVBoxLayout(dialog)
         explanation = PlainLabel(
-            'Read-only values recorded when this project was created. SHA-256 and size '
-            'are saved input metadata, not a fresh disk integrity check. This alpha '
-            'preview does not parse PE headers or verify certificate signatures.')
+            'Recorded values were saved when this project was created. The PE comparison below re-verifies '
+            'each project-owned artifact copy against its SHA-256 and parses headers with bounded read-only '
+            'reads. Nothing is executed. Certificate presence is not signature validity, and COFF timestamps '
+            'can be forged.')
         explanation.setWordWrap(True)
         layout.addWidget(explanation)
         table = QTableWidget(len(rows), 3, dialog)
@@ -2418,8 +2637,30 @@ class MainWindow(QMainWindow):
                 table.setItem(index, column, item)
         apply_tooltip(table, 'overview.table')
         layout.addWidget(table)
+        status = PlainLabel('File inspection not started.')
+        status.setWordWrap(True)
+        layout.addWidget(status)
+        pe_table = QTableWidget(0, 5, dialog)
+        pe_table.setHorizontalHeaderLabels(['PE field', 'OLDER', 'NEWER', 'Status', 'Provenance'])
+        pe_table.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
+        pe_table.horizontalHeader().setStretchLastSection(True)
+        apply_tooltip(pe_table, 'overview.pe_table')
+        layout.addWidget(pe_table, 1)
         self._preflight_dialog = dialog
+        self._preflight_status = status
+        self._preflight_pe_table = pe_table
+        dialog.destroyed.connect(lambda *_: self._forget_overview_widgets())
+        inspection = self._current_inspection()
+        if inspection is not None:
+            status.setText('File inspection complete · ' + side_summary(inspection))
+            fill_pe_table(pe_table, inspection)
+        else:
+            self.start_inspection()
         dialog.show()
+
+    def _forget_overview_widgets(self):
+        self._preflight_status = None
+        self._preflight_pe_table = None
 
     def run_analysis(self):
         if not self.project:
@@ -2711,6 +2952,7 @@ class MainWindow(QMainWindow):
             self.settings.setValue('desktop/' + name, splitter.saveState())
         self.settings.setValue('desktop/sync', self.sync_scroll.isChecked())
         self.settings.sync()
+        self._stop_inspection()
         if self.service:
             self.service.close()
             self.service = None

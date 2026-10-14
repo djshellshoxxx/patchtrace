@@ -240,11 +240,33 @@ REGISTRY: dict[str, TooltipEntry] = {
         availability='Needs a selected match and no running job.'),
     # ---- code viewer -------------------------------------------------------------------------
     'viewer.mode': _e(
-        'Choose the representation of the selected function: decompiled C-like text, actual assembly, '
-        'or preserved metadata.',
+        'Choose the representation: decompiled C-like text, actual assembly, preserved metadata, or the '
+        'original artifact bytes as Hex, Binary or Base64.',
         'Different views answer different questions about the same change.',
-        'Redraws both panes. Unavailable representations are not reconstructed.',
-        'The imported or freshly generated Ghidriff JSON.'),
+        'Redraws both panes. Unavailable representations are not reconstructed. Raw views read exact '
+        'on-disk bytes and never encode decompiled text.',
+        'Text views: the imported or freshly generated Ghidriff JSON. Raw views: the project-owned artifact '
+        'copies, re-verified against their recorded SHA-256.'),
+    'viewer.raw_scope': _e(
+        'Choose which bytes the Hex, Binary or Base64 view shows: the whole file, or file bytes starting at '
+        'the selected function entry point.',
+        'Lets you look at the bytes around a changed function or browse the whole artifact.',
+        'Redraws both raw panes from page 1 of the chosen scope.',
+        'The entry address comes from Ghidriff and is mapped to a file offset through the PE section table. '
+        'The function extent is not determined; bytes past the function end are shown as they are on disk.',
+        'Only used by raw views. Entry scope is unavailable when the address is virtual-only, ambiguous or '
+        'outside the image; no range is guessed.'),
+    'viewer.raw_page': _e(
+        'Page number within the selected raw byte scope (4,096 bytes per page).',
+        'Large files are read in bounded pages instead of all at once.',
+        'Reads and redraws the chosen page on both sides at the same logical offset.',
+        'Verified artifact bytes.', 'Only used by raw views; the maximum is the longer side\'s page count.'),
+    'viewer.raw_goto': _e(
+        'Jump to a file offset in the whole-file raw scope. Accepts hexadecimal, for example 0x400 or 400.',
+        'Gets to a known offset (section start, overlay, certificate table) quickly.',
+        'Switches to Whole file scope and shows the page containing that offset.',
+        'Offsets are file offsets, not RVAs or virtual addresses.',
+        'Only used by raw views. Offsets past the end of the larger file are rejected.'),
     'viewer.sync_scroll': _e(
         'Synchronize older and newer code-pane vertical scroll positions.',
         'Keeps matched lines level while you read.',
@@ -648,6 +670,14 @@ REGISTRY: dict[str, TooltipEntry] = {
     'export.cancel': _e(
         'Close without writing a report.', 'Backs out safely.', 'Nothing is written.'),
     # ---- other dialogs ---------------------------------------------------------------------
+    'overview.pe_table': _e(
+        'Field-by-field comparison of parsed PE headers, sections, imports, exports, overlay and '
+        'certificate-table presence for the older and newer artifacts.',
+        'Shows structural differences immediately, before or without the Ghidriff analysis backend.',
+        'Read-only. Bold rows changed. Nothing is executed and the project is not modified.',
+        'Bounded read-only parsing of the verified project artifact copies. COFF timestamps are untrusted. '
+        'Certificate presence is not signature validity.',
+        'Fields show unavailable when a side cannot be verified or parsed; the reason is in each tooltip.'),
     'overview.table': _e(
         'Recorded file fields for the older and newer artifacts.', 'A fast sanity check before analysis.',
         'Read-only; nothing is executed, parsed or re-read from disk.',
