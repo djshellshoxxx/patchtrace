@@ -1,0 +1,40 @@
+# Unified diff engine (SPEC-31): cost-cut ladder and backup plans
+
+Every expensive element has a cheaper variant that keeps the invariants (derived only, no averaging, conflicts preserved, missing = unknown, ordinal display, one window). Switching is a configuration change recorded in `config_digest` (02 s5), so results produced under a backup are never confused with full results. "Trigger" = the measurable condition that makes the owner switch; decisions are recorded in `docs/qa.md` and `tasks/todo.md`.
+
+## 1. Cost-cut ladder
+
+| ID | Expensive element | Cheaper variant | Value retained | Value lost | Trigger to fall back | Switch |
+|---|---|---|---|---|---|---|
+| B-00 | ProgramIR extraction altogether | S0 only: fusion and decisions over stored Ghidriff/rz-diff/BinDiff/manual outputs, S0 channels (C4n, C5t, C6, C8) | one cross-engine row model, independence components, contest strength, typed downgrade hints, `COS-PSEUDO` proofs on Ghidriff-modified pairs, unchanged pairs from `address_matches` | constant-only edits Ghidriff misses, masked-byte proofs, in-house ladder | no Ghidra/Python configured; extraction fails twice; user choice | automatic (state U7), `unified run --no-extract` |
+| B-01 | GZF reuse (needs `retain_gzf`, Ghidriff internals [unv]) | `analyze` mode: own headless analysis with recorded options | everything | 2x Ghidra time (ntoskrnl ~1349 s per side, R03 s3) | GZF missing, unreadable or Ghidra refuses it | automatic per side |
+| B-02 | Ghidra as IR producer | rizin `aflj/afbj/pdfj` producer | names, CFG shape, bytes, calls for reachable code | functions not reached by `aaa` (77/138 in R03), masks (`h1..h3` NULL) | no Ghidra but rizin installed | config `producer=rizin`, both sides |
+| B-03 | instruction details for every function | two-phase extraction: phase 1 raw bytes only; phase 2 details only for functions whose `h0` is not unique-equal on the other side (GZF reopen) | all L1 keys and L2 channels for changed functions | detail-based keys (P06-P09, P14) for unchanged functions (not needed: they match by P04) | IR > L-07 or ingest > L-08 on real data | config `details=changed-only` |
+| B-04 | full ladder P00-P15 incl. BinDiff MD port | minimal ladder: P00-P05 + implied matches | anchors, exact and masked matches, propagation by votes | structural tiers, MD parity claims (no BinDiff-derived code shipped) | G-U3 parity fails after two fix attempts, or U-01 answered "no port" | pass table subset |
+| B-05 | propagation to fixpoint | single global pass per tier, no neighbour cascade | global unique keys | duplicates disambiguated by neighbours, implied matches | ladder > 2x L-35 at 60k after one optimisation pass | config `propagation=off` |
+| B-06 | general L2 alignment + operand classifier | positional C2 only where `h2` is equal (same opcode/operand-class sequence, instruction-by-instruction comparison, no alignment); otherwise C0/C1/C4 only | constant, struct-offset and callee-target classes for same-shape edits (the typical fix shape, R05 s0.1), all proofs except COS-LAYOUT | classification of inserted/removed instructions and blocks (those rows stay `review`) | alignment cost > L-35 facts budget or soundness doubts in tests | config `facts=positional` |
+| B-07 | residual stage P16-P19 (blocking, vectors, votes, LAP) | skip | everything above | candidates for changed leftovers (they stay older-only / newer-only) | S5 not started or > budget | pass table subset |
+| B-08 | on-demand decompile of review pairs (S3b) | none | review ordering by delta class | promotion of constant-only edits from `review` to `material` via C6 | Ghidra decompile cost per pair unmeasured/too high (R05 s9 Q2) | omit S3b |
+| B-09 | BSim/p-code features (C7) | none (v1 default) | - | register/scheduling invariance for medium tier | default | - |
+| B-10 | navigator view switch in `MainWindow` | Unified tab in the Engine evidence dock only (its own table); code panes driven by "Show" | single window, all rows and details | navigator integration, keyboard-first browsing in the main list | `ui.py` seam conflicts with parallel work, or Qt perf gates fail | build flag in `ui_unified.py` |
+| B-10b | any GUI | CLI/JSON only (`unified show/explain`) | full data, scripting | interactive review | S4 blocked | none needed |
+| B-11 | Windows tables (DVRT overrides, RTTI/vtable anchors, XFG hashes, GuardCF) | none (v1 default) | - | anchors in stripped images, override variants (they appear one-sided) | default | - |
+| B-12 | N-way churn index (F12) | none (v1 default) | - | demotion of per-build jitter | default | - |
+| B-13 | facts for N:M group rows | `not-applicable` (v1 default) | group visibility | change classes inside groups | default | - |
+| B-14 | BinDiff parity oracle | parity against Ghidriff only; wording "BinDiff-style", no parity claim | Ghidriff regression oracle | MD exactness evidence | no pinned BinDiff (qa.md: blocked) | automatic |
+| B-15 | global IR cache across projects | project-local IR only | per-project reuse | N-way reuse of the same build's IR | cache dir unset or cache errors | automatic |
+| B-16 | pure-Python LAP | greedy mutual-best with margin inside buckets | candidates for clear cases | optimal assignment in crowded buckets | LAP > 30 s total (L-24) | automatic per bucket |
+| B-17 | QBinDiff-style belief propagation | never built unless S5 data show > 10 % of functions unresolved AND a corpus experiment shows gain; then an optional child process with numpy in a separate environment, never bundled | - | - | evidence-driven only | new spec required |
+| B-18 | persisted IR sidecar | in-memory IR per run (re-extract each time) | identical results | reuse; drill-down disassembly after restart | antivirus/disk problems with sidecars on Windows (T-08) | config `persist_ir=false` |
+| B-19 | Diaphora adapter | none until DA-01 D3 merges | - | a third family | DA-01 not merged | automatic (source absent) |
+| B-20 | worker child process | in-process run on the `UnifiedRunThread` with a strict budget and a UI notice | identical results | GUI smoothness, kill-based cancel (cooperative cancel only) | frozen worker spawn fails (T-11) | automatic with warning |
+
+## 2. Minimum viable unified engine (MVUE)
+S0a + S0b (B-00 is complete on its own) + S1 with B-03 + S2 with B-04 + S3 with B-06 + S4 with B-10, flag off.
+- Inputs: Ghidriff run (required), stored rz-diff/BinDiff sets (optional), Ghidra configured (optional).
+- Output: one row per correspondence across all sources with decision, contest strength and support components; for IR pairs: unchanged / cosmetic (COS-ADDR, COS-PSEUDO) / material / review with change classes for same-shape edits; constant-only patches surface as top-ranked `review` instead of being invisible (R03 s3: Ghidriff reported 0 of 2 constant-only edits).
+- Effort: about 20-29 developer-days [inf] (S0a 2-3, S0b 5-7, S1-lite 5-7, S2-min 4-6, S3-lite 2-3, S4-dock 2-3).
+- Gates still required before the flag defaults on: G-U1, G-U2 (on the classes B-06 covers), G-U4, G-U8; G-U3 against Ghidriff only (B-14).
+
+## 3. Never-cut list (removing any of these is a defect, not a backup)
+Derived-only storage; per-source native values never combined; `contested` preserved; missing = unknown; ordinal display; one window; offline and no target execution; strict validation of every external file; additive persistence with backups; deterministic output; cancellation that keeps previous results.
