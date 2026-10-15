@@ -21,6 +21,7 @@ FORBIDDEN_OS_CALLS = ('system', 'popen', 'spawn', 'exec', 'fork', 'startfile')
 SPAWN_MODULES = {'patchtrace.jobs'}
 MAY_SPAWN = {'pipeline', 'extract/runner'}
 EXEMPT = {'extract/ghidra_script'}  # runs inside the external Python and never imports patchtrace (S1)
+GUI_FACTORY = {'panel'}  # the pure PanelSpec declaration names its Qt factory module with a function-level import
 # 01 s3 rule 3, completed with the modules of this slice: a module may import only modules of a lower or equal rank.
 RANK = {'limits': 0, 'contracts': 1, 'addressing': 1, 'exchange': 1, 'keys': 2, 'registry': 2, 'store': 3,
         'read_text': 3, 'sources': 4, 'fusion': 5, 'facts': 6, 'compute': 7, 'pipeline': 8, 'read_model': 9,
@@ -98,7 +99,7 @@ def violations(module: str, relative: str, is_package: bool, source: str) -> lis
         top = name.split('.')[0]
         if relative not in EXEMPT and top in FORBIDDEN:
             found.append(f'{relative} imports {name}')
-        if relative not in EXEMPT and (name == 'patchtrace.ui' or name.startswith(('patchtrace.ui.', 'patchtrace.ui_'))):
+        if relative not in EXEMPT | GUI_FACTORY and (name == 'patchtrace.ui' or name.startswith(('patchtrace.ui.', 'patchtrace.ui_'))):
             found.append(f'{relative} imports the GUI module {name}')
         if name in SPAWN_MODULES and relative not in MAY_SPAWN:
             found.append(f'{relative} imports {name}, but only {sorted(MAY_SPAWN)} may spawn processes')
