@@ -18,7 +18,7 @@ from pathlib import Path
 from uuid import UUID
 
 from .diagnostics import describe_backend_exit, redact_log
-from .ingestion import safe_path
+from .ingestion import MAX_ARTIFACT_BYTES, safe_path
 from .jobs import run_process
 from .models import AnalysisRun, ComparisonProject, JobEvent, uid
 
@@ -272,9 +272,10 @@ def _probe_backend(config: BackendConfig, cancel: threading.Event | None = None)
         '"ghidriff":version("ghidriff"),"pyghidra":version("pyghidra"),'
         '"available":u.find_spec("ghidriff") is not None}))'
     )
-    result = run_process([str(Path(config.python_executable).resolve()), '-c', code],
-                         cwd=Path(config.ghidra_dir), env=_environment(config),
-                         cancel=cancel or threading.Event(), timeout_seconds=15, log_limit=16384)
+    with tempfile.TemporaryDirectory(prefix='patchtrace-probe-') as scratch:
+        result = run_process([str(Path(config.python_executable).resolve()), '-I', '-X', 'utf8', '-c', code],
+                             cwd=Path(scratch), env=_environment(config),
+                             cancel=cancel or threading.Event(), timeout_seconds=15, log_limit=16384)
     if result.reason == 'cancelled':
         raise RuntimeError('PT-CANCEL: analysis cancelled during dependency check')
     if result.reason or result.returncode:
@@ -354,6 +355,28 @@ def _input_path(root: Path, relative: str, digest: str, cancel: threading.Event)
     if hasher.hexdigest() != digest:
         raise ValueError('PT-INPUT: project artifact hash changed; re-import the original binary')
     return resolved
+
+
+def _snapshot_input(source: Path, destination: Path, digest: str, cancel: threading.Event) -> Path:
+    """Hash the exact bytes copied to private scratch before handing them to Ghidriff."""
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    hasher = hashlib.sha256()
+    copied = 0
+    with source.open('rb') as original, destination.open('xb') as target:
+        while True:
+            if cancel.is_set():
+                raise RuntimeError('PT-CANCEL: analysis cancelled during input validation')
+            chunk = original.read(1024 * 1024)
+            if not chunk:
+                break
+            copied += len(chunk)
+            if copied > MAX_ARTIFACT_BYTES:
+                raise ValueError('PT-INPUT: project artifact exceeds the 1 GiB limit')
+            target.write(chunk)
+            hasher.update(chunk)
+    if hasher.hexdigest() != digest:
+        raise ValueError('PT-INPUT: project artifact hash changed; re-import the original binary')
+    return destination
 
 
 def _output_error(directory: Path) -> str | None:
@@ -584,14 +607,17 @@ def run_comparison(config: BackendConfig, project: ComparisonProject, root: Path
             engine_gzfs = _validated_ghidra_output_path(scratch_root / 'gzfs')
             ghidra_settings = scratch_root / 'ghidra-settings'
             ghidra_settings.mkdir()
-            argv = [str(Path(config.python_executable).resolve()), *(('-I', '-X', 'utf8') if config.bundle else ()),
+            paths = {side: _snapshot_input(path, scratch_root / 'inputs' / side / path.name,
+                                           settings[f'{side}_sha256'], cancel)
+                     for side, path in paths.items()}
+            argv = [str(Path(config.python_executable).resolve()), '-I', '-X', 'utf8',
                     '-m', 'ghidriff',
                     str(paths['older']), str(paths['newer']), '--output-path',
                     str(_validated_ghidra_output_path(raw)),
                     '--project-location', str(engine_project), '--gzfs-path', str(engine_gzfs)]
             if not config.allow_symbol_downloads:
                 argv.append('--no-symbols')
-            result = run_process(argv, cwd=Path(config.ghidra_dir), env=_environment(config, ghidra_settings),
+            result = run_process(argv, cwd=scratch_root, env=_environment(config, ghidra_settings),
                                  cancel=cancel,
                                  timeout_seconds=config.timeout_seconds,
                                  check_output=lambda: _output_error(raw))

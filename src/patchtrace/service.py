@@ -118,6 +118,8 @@ class ProjectService:
 
     def _prepare_analysis(self, raw_path: Path, run: AnalysisRun) -> PreparedImport:
         self.store._check_open()
+        if run.id in self._prepared:
+            raise ValueError('PT-SCHEMA: analysis run already has a prepared import; apply or discard it first')
         snapshot = self.project.model_copy(deep=True)
         source = Path(raw_path)
         if run.status != 'completed':
@@ -285,6 +287,8 @@ class ProjectService:
                       category: str, reason: str) -> None:
         if not reason.strip():
             raise ValueError('PT-SCHEMA: manual correction requires an analyst reason')
+        if not older_ids and not newer_ids:
+            raise ValueError('PT-SCHEMA: correction must select at least one function')
         if len(older_ids + newer_ids) != len(set(older_ids + newer_ids)):
             raise ValueError('PT-SCHEMA: correction has duplicate selected function IDs')
         candidate = self.project.model_copy(deep=True)

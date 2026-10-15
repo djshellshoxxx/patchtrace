@@ -416,14 +416,17 @@ def cmd_correlate(args, cancel) -> int:
             plan = intelligence.plan_requests(sorted(requested), providers)
         except EnrichmentError as exc:
             raise CliError(ENVIRONMENT, str(exc)) from None
+        previewed_urls = []
         for request in plan:
+            previewed_urls.append(request.url)
             print(f'request: {request.provider} {request.url}', file=sys.stderr)
+        fetch_consent = intelligence.FetchConsent(consent, frozenset(previewed_urls))
         key = _api_key(args.api_key_env)
         duration = intelligence.describe_duration(plan, key is not None)
         if duration:
             print(duration, file=sys.stderr)
         try:
-            responses, failures = intelligence.fetch_all(plan, intelligence.FetchConsent.for_plan(plan),
+            responses, failures = intelligence.fetch_all(plan, fetch_consent,
                                                          api_key=key, cancel=cancel)
             if failures and not responses:
                 raise next(iter(failures.values()))

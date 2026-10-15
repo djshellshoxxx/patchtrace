@@ -117,8 +117,9 @@ def test_run_comparison_argv_is_isolated(layout, monkeypatch):
 
     def spy(argv, **kw):
         seen['argv'], seen['env'] = list(argv), kw['env']
-        # -I would also drop the fake package from sys.path (cwd); run the stub without it.
-        return real([a for a in argv if a != '-I'], **kw)
+        # Invoke the fixture script explicitly; keep isolation and the production cwd.
+        index = argv.index('-m')
+        return real([*argv[:index], str(package / '__main__.py'), *argv[index + 2:]], **kw)
 
     monkeypatch.setattr(backend, 'run_process', spy)
     _path, run = run_comparison(config, project, root, threading.Event(), lambda _e: None)
