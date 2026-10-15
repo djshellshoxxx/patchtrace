@@ -336,9 +336,6 @@
 ### [S8:search-tool-advisory-sources]
 - [x] WB1 S8: `search/sources/{tools,advisory}.py` (tool, advisory, CVE groups behind ports) with tests.
 - [ ] Integrator: bind `extra_specs`, `comparable`, and a `cve-snapshot` reader to the real stores.
-### [R2:yarax-engine-worker]
-- [x] R2 engine facade, hidden worker, runner; tests `tests/test_yarax_{engine,worker}.py`.
-- [ ] R7: `rules _worker` CLI verb for the frozen exe, PyInstaller hook, frozen smoke scan (`--request` with result path `-` prints the one JSON document).
 ### [K7v:kb-acquire-cli]
 - [x] `kb acquire` verb, `Acquirer` binding in `wiring`, `kb index import --winbindex`. Integrator: hook `kb` in `patchtrace/cli.py` (see `kbcorrelation/cli.py`) if not yet applied.
 ### [K1a:kev-core]
@@ -348,16 +345,6 @@
 ### [K4:kev-kb-adapter]
 - [x] `kev/kb_adapter.py`, `tests/test_kev_synergy.py` (items 1-8), `tests/test_kev_kb_integration.py` (fake edges).
 - [ ] Open until KB K8: item 9 (`test_three_lanes_stay_separate_for_cve_2024_38063`), real KB view-model run, contextual_rank byte-identity.
-### [R1:yarax-synth]
-- [x] R1 closed-grammar synthesis, strict re-parse, goldens, Formatter fixed point, hostile-input sweeps (`tests/test_yarax_synth.py`).
-- [ ] Integrator: `.gitattributes` `*.yar text eol=lf` and `tests/fixtures/yarax/** text eol=lf`; `yara-x==1.21.0` pin (the synth tests import `yara_x` as an oracle).
-### [R3:yarax-candidates]
-- [x] R3 candidates without bytes (strings, imports, capabilities), gates, adapters; tests `tests/test_yarax_candidates.py`, fixtures `tests/yarax_fixtures.py`.
-- [ ] R4 hook-ups: `linked_by='xref'` promotion of strings, bytes windows, `RuleWriter` bound to R1 `synth.py`; R5 feeds lint and scan cells to `gates.with_compile` / `gates.with_scan`.
-### [R4:yarax-bytes]
-- [x] Byte windows, masks, iced adapter, `.pdata`/`.reloc` table reader, synergy grid; tests `tests/test_yarax_{masks,synergy}.py`.
-- [ ] R5: build the candidate from `window.propose_windows` and persist it with `window.to_bytes_feature` (YARA-X accepts leading and trailing `??` in a hex pattern, measured).
-- [ ] Unified S1 owner: replace `mask_iced` with `adapters/mask_unified.py` via the `FunctionMaskView` port; `pe_overview/tables.py` stays the `.pdata`/`.reloc` source until then.
 ### [GUI:framework] GUI framework plan amendments (2026-10-14; GUI-F0, documentation only)
 - [x] GUI-F0: section 10 amendments applied to the docs it names (multi-engine-evidence-panel 1.8, 5.3.6, 8, 15 and new 17; unified-engine 07 sections 2, 8, 9, 10 and 01 line; ui.md paragraph; series-window and gui-preflight M3; workbench README and KB contract; modules, qa and acceptance rows; roadmap 5; phase-d 1; CLI lines of unified, KB and workbench-floss; the eleven sibling plans' CLI hooks, accessibility, shortcuts and placement). Code rows of section 10 are not in F0.
 - [ ] GUI F1 to F9 not started. Order from GUI plan section 9: F0 and F1 (with F1b in parallel), then F2, then F3 and F4 with F2, then F5 (single owner of `ui.py`, `tooltips.py`, `tests/test_tooltips.py`, `panel_manifest.py`), then F6a, F6b, F7 and F8 in parallel, then F9.
@@ -396,10 +383,6 @@
 - [x] K2 transport, service and Qt-free CLI `kev/{transport,service,cli}.py`, tests `tests/test_kev_{transport,service,cli}.py`.
 - [ ] Integrator: `kev` hook in `cli.py` (see docstring of `kev/cli.py`); K6 live gate must verify the canonical CISA URL and User-Agent acceptance before it is called verified.
 
-### [R5:yarax-matrix-store-export-cli]
-- [x] R5 matrix, store, export, CLI; real-engine gates (`sep`, `compile`, `uniq`), grid verdicts, resume, append-only rows, export golden.
-- [ ] Integrator: `cli.py` hook (`COMMANDS += 'rules'`, `_command_name` set, `yarax_cli.register(sub, common, HANDLERS)`), frozen argv `rules _worker` is registered by `register`.
-- [ ] Material verdict source: `propose` takes `--confirm-material` (rules are `unvetted`) until a stored per-pair materiality is wired; R4 adds bytes windows (`uniq`/`sep` by RVA are ready).
 ### [PIL-A2:advisory-sources] Patch-intent localization advisory-side adapters (2026-10-14; plan `docs/specs/program-e/PIL-integration-plan.md` s9)
 - [x] `pilot/sources/{advisory,identity,kev,window,snapshot}.py` and `tests/test_pilot_sources_advisory.py` (K report adapter, CVE gate, KEV port with absence as context, confounded window, pairing verdict map, B3 snapshot and excerpt as K facts); gates `test_cve_gate_table` (35 rows plus a 1,350-combination oracle), `test_kev_absence_is_unknown_context`, `test_unified_beats_secondary_for_identity`, `test_confounding_counts_cves_fixed_on_newer`, every `detail` passes `sanitize_text`
 - [ ] Integrator: `pilot/sources/__init__.py` is created by PIL-A2 and PIL-A3 alike (keep one, a docstring only); add `status(self) -> ChannelStatus` to `ports.AdvisorySource` (`StoredAdvisorySource.status()` already provides it, so a partial advisory load is not read as complete); decide whether `KbWindowSource` moves into `ports.py`

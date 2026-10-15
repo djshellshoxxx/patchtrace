@@ -42,6 +42,5 @@ tests/fixtures/buildenv/** text eol=lf
 tests/fixtures/kev/** text eol=lf
 docs/schemas/kev/** text eol=lf
 *.yar text eol=lf
-tests/fixtures/yarax/** text eol=lf
 tests/fixtures/wbq/** text eol=lf
 tests/fixtures/kev/** text eol=lf
