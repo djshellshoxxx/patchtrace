@@ -805,3 +805,11 @@ Not verified here: Windows; the frozen executable; a live backend for `rules pro
 | Tests | `tests/test_pilot_read_model.py` (35), `tests/test_ui_leads.py` (61) offscreen on Linux; `python tools/qt_gate.py --repeat 6 tests/test_ui_leads.py`: 366 passed, no abort |
 | Known gates | one test per state L0-L8 and each gate and window banner; banned-string sweep over every producible string (stems `probab`, `likelihood`, `confidence`, `percent`, `vulnerab`, `exploit`, `proven`, `certain`, `verified`, `safe`, `secure`, with the sanctioned phrases removed); no enum slug and no percent sign in any cell; hostile names, notes and tooltips stay text; `a11y_audit` clean in every state; no new top-level window; late results dropped on a project switch; shutdown cancels and waits |
 | Not verified here | Windows; real screen readers; a PE-backed project (the resolver finds no row in the synthetic sample, so Go to function is only exercised with an injected resolver); the freeze of the GUI-thread collection on a large project |
+### [QA-CLI:stress] CLI and persistence stress (2026-10-15, Linux, root host)
+
+| Item | Evidence |
+|---|---|
+| Tests | `tests/stress/test_cli_stress_{verbs,paths,concurrency,recovery,perf}.py`: 158 collected, 150 passed, 1 skipped (read-only directory, root), 7 strict xfail; 22.9 s |
+| Open bugs (xfail) | QA-CLI-1 (Medium) `--json` parse failure prints no document; QA-CLI-2 (Low) offline `correlate --cve bad` exits 4; QA-CLI-3 (Medium) `cache verify` on a file `--cache-dir` exits 0 `complete` with `_Unsafe`; QA-CLI-4 (Low) `rank` ignores an unusable `--cache-dir` silently |
+| Measured, not gated | 10k-pair cold 5-7 s, cache hit 1.5-3 s (objective 500 ms not met), peak RSS 547 MiB (objective 512 MiB); details in `docs/audits/20261015-qa-cli-persistence.md` |
+| Not verified | Windows; read-only directory as a non-root user |
