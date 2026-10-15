@@ -213,3 +213,10 @@ def test_clierror_message_is_redacted(project, capsys, monkeypatch):
     code, out, err = run(['rank', str(project), '--json'], capsys)
     assert code == 3 and 'abcdef123456SECRET' not in out + err and 'redacted' in out
 
+
+
+def test_cache_status_unusable_path_is_a_runtime_error(tmp_path, capsys):
+    blocker = tmp_path / 'file'
+    blocker.write_text('x')
+    code, out, _ = run(['cache', 'status', '--cache-dir', str(blocker), '--json'], capsys)
+    assert code == 3 and json.loads(out)['status'] == 'failed'

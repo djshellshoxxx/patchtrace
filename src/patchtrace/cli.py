@@ -496,6 +496,8 @@ def cmd_cache(args, cancel) -> int:
             result = cache.prune(args.target_bytes)
     except EnrichmentError as exc:
         raise CliError(ENVIRONMENT if exc.code == 'PT-ENRICH-CONFIG' else RUNTIME, str(exc)) from None
+    if 'error' in result:
+        raise CliError(RUNTIME, f'cache at {args.cache_dir} is unusable ({result["error"]}); check the path and permissions')
     _emit(args, 'cache', 'complete', result, [], json.dumps(result, indent=2, sort_keys=True))
     return OK
 
