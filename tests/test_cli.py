@@ -293,3 +293,10 @@ def test_file_as_project_path_is_reported_as_not_a_directory_cli_b_10(tmp_path, 
     afile.write_text("x")
     code, out, _ = run(["rank", str(afile), "--json"], capsys)
     assert code == 2 and "not a directory" in json.loads(out)["error"]
+
+
+def test_kb_usage_error_command_label_has_no_placeholder_cli_b_11(project, capsys):
+    for argv, name in ((["kb", str(project), "--json"], "kb"), (["kb", "index", str(project), "--json"], "kb index")):
+        code, out, _ = run(argv, capsys)
+        doc = json.loads(out)
+        assert code == 2 and doc["command"] == name, (argv, doc)
