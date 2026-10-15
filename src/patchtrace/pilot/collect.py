@@ -68,7 +68,7 @@ def universe(stored: Sequence[str], named: Sequence[str], *, cap: int = DEFAULT_
     have, asked = tuple(sorted(set(stored))), tuple(sorted(set(named)))
     missing = [cve for cve in asked if cve not in have]
     if missing:
-        raise PilotError('PT-PILOT-NOTFOUND', f'No stored advisory lists {missing[0]}', reason='cve-not-stored')
+        raise PilotError('PT-PILOT-NOTFOUND', 'A named CVE has no stored advisory', reason='cve-not-stored')
     if len(have) <= cap:
         return have, asked or have
     if not asked or len(asked) > cap:

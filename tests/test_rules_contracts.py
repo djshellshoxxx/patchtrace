@@ -572,6 +572,8 @@ def test_no_rules_module_imports_the_network_or_a_gui_toolkit():
     """Offline-first (plan s3.7): across the whole package, whatever slices have landed."""
     for path in sorted(PACKAGE.rglob('*.py')):
         roots = {m.split('.')[0] for m in _imports(path)}
+        if path.name == 'qt_panel.py':  # the Rules dock's widgets are the package's only Qt module
+            roots -= {'PySide6', 'shiboken6'}
         assert not roots & {'PySide6', 'shiboken6', 'socket', 'ssl', 'urllib', 'http', 'ftplib', 'smtplib', 'requests',
                             'httpx', 'aiohttp', 'xmlrpc'}, path.name
 

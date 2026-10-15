@@ -11,6 +11,9 @@ permissions:
   contents: read
 env:
   RIZIN_VERSION: '0.9.1'
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.ref }}
+  cancel-in-progress: true
 jobs:
   live-rizin:
     name: live rz-diff (${{ matrix.os }})

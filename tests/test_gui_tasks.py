@@ -272,7 +272,8 @@ def test_shutdown_with_a_hung_worker_returns_in_time_and_names_it(qtbot):
     assert started.wait(5)
     start = time.monotonic()
     stuck = local.shutdown(timeout=0.2)
-    assert stuck == ['pt-task-hung'] and time.monotonic() - start >= 0.2
+    # Thread.join(timeout) can return up to a Windows timer tick (~16 ms) early; the point is that it waited
+    assert stuck == ['pt-task-hung'] and time.monotonic() - start >= 0.15
     assert time.monotonic() - start < 3
     release.set()
     qtbot.waitUntil(lambda: bool(not tasks.live_task_threads()), timeout=5000)
@@ -332,13 +333,16 @@ def test_repaint_under_a_checkpointing_cpu_worker_stays_responsive(runner, qtbot
     _repaint_times(view, 5)
     idle = statistics.median(_repaint_times(view))
 
+    burning = threading.Event()
+
     def burn(token, report):
         total = 0
+        burning.set()
         while not token.checkpoint():
             total += sum(range(2000))
         return total
     token = runner.submit('burn', burn)
-    time.sleep(0.05)
+    assert burning.wait(10)
     loaded = sorted(_repaint_times(view, 40))
     token.set()
     assert loaded[int(len(loaded) * 0.95) - 1] <= idle * 5 + 0.020
@@ -453,6 +457,18 @@ def test_legacy_registries_are_adopted_into_shutdown(monkeypatch, qtbot):
     local = TaskRunner()
     assert local.shutdown(timeout=5) == []
     assert not thread.isRunning() and tasks.legacy_threads() == []
+
+
+@pytest.mark.parametrize('module, attribute', [('ui', '_DISCOVERY_THREADS'), ('ui_bundle_setup', '_THREADS')],
+                         ids=['ui-discovery', 'bundle-setup'])
+def test_unlisted_legacy_registries_are_joined_at_shutdown(monkeypatch, qtbot, module, attribute):
+    thread = _LegacyThread()
+    monkeypatch.setitem(sys.modules, f'patchtrace.{module}', types.SimpleNamespace(**{attribute: {thread}}))
+    thread.start()
+    qtbot.waitUntil(thread.isRunning, timeout=5000)
+    assert tasks.legacy_threads() == [thread]
+    assert tasks.join_legacy_threads(timeout=5) == []
+    assert not thread.isRunning()
 
 
 # ---- tools/qt_gate.py -----------------------------------------------------------------------------
@@ -598,3 +614,46 @@ def test_dropping_runners_in_a_subprocess_never_aborts(tmp_path):
     env = {**os.environ, 'QT_QPA_PLATFORM': 'offscreen', 'PYTHONFAULTHANDLER': '1'}
     done = subprocess.run([sys.executable, str(script)], env=env, capture_output=True, text=True, timeout=120)
     assert done.returncode == 0 and done.stdout.strip() == 'ok', done.stderr[-2000:]
+
+
+@pytest.mark.parametrize('char', ['؜', '‎', '‏', '‮', '⁦'], ids=['alm', 'lrm', 'rlm', 'rlo', 'lri'])
+def test_task_text_drops_every_bidi_control(char):
+    assert char not in tasks._clip(f'a{char}b', 10)
+
+
+def test_a_worker_raising_a_base_exception_still_delivers_an_error_and_frees_the_channel(runner, qtbot):
+    sink = Sink()
+
+    def work(token, report):
+        raise SystemExit(3)
+    runner.submit('demo', work, sink.result, sink.error)
+    qtbot.waitUntil(lambda: bool(sink.errors), timeout=5000)
+    assert sink.errors == [TaskFailure('SystemExit')] and not runner.busy('demo')
+
+
+class _FreedOn:
+    """A callback capture that records the thread dropping its last reference (stands in for a controller or model)."""
+
+    def __init__(self, freed: list[str]) -> None:
+        self._freed = freed
+
+    def __del__(self) -> None:
+        self._freed.append(threading.current_thread().name)
+
+
+@pytest.mark.parametrize('lane', [False, True], ids=['task', 'lane'])
+def test_callback_captures_are_freed_on_the_gui_thread_never_on_a_worker(qtbot, lane):
+    freed: list[str] = []
+    for _ in range(40):
+        local, results = TaskRunner(reraise=True), []
+        capture = _FreedOn(freed)
+        if lane:
+            local.lane('l', lambda: None).submit(lambda state, token, report: 1,
+                                                 lambda value, c=capture, out=results: out.append(value))
+        else:
+            local.submit('c', lambda token, report: 1, lambda value, c=capture, out=results: out.append(value))
+        del capture
+        qtbot.waitUntil(lambda out=results: bool(out), timeout=5000)
+        assert local.shutdown(timeout=5) == []
+        QApplication.processEvents()
+    assert freed and set(freed) == {'MainThread'}

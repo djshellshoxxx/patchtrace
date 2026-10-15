@@ -249,19 +249,22 @@ def save(series: Series, path: Path, *, replace_corrupt: bool = False) -> None:
         try:
             previous = load(path)
         except NwayError as exc:
-            if exc.code != 'PT-NWAY-STORAGE':
+            if exc.code not in ('PT-NWAY-STORAGE', 'PT-NWAY-LIMIT'):
                 raise
             if not replace_corrupt:
-                raise NwayError('PT-NWAY-STORAGE', f'{str(exc).removeprefix("PT-NWAY-STORAGE: ")}; '
+                raise NwayError(exc.code, f'{str(exc).removeprefix(exc.code + ": ")}; '
                                 'use --replace-corrupt to keep a copy and replace it') from None
             _keep_corrupt_copy(path)
         if previous is not None and previous.series_id != series.series_id:
             raise NwayError('PT-NWAY-STORAGE', f'{path.name} belongs to another series; use a different --root')
+    text = dumps(series)
+    if len(text.encode('utf-8')) > MAX_SERIES_BYTES:
+        raise NwayError('PT-NWAY-LIMIT', f'{path.name} would exceed {MAX_SERIES_BYTES} bytes')
     fd, temporary = tempfile.mkstemp(prefix='.series-', dir=path.parent)
     stage = Path(temporary)
     try:
         with os.fdopen(fd, 'w', encoding='utf-8', newline='\n') as stream:
-            stream.write(dumps(series))
+            stream.write(text)
             stream.flush()
             os.fsync(stream.fileno())
         os.replace(stage, path)

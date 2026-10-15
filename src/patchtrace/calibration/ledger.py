@@ -67,6 +67,10 @@ class ValidationLedger(_Strict):
     digest_sha256: Sha256
 
 
+def _expired(entry: LedgerEntry, day: dt.date) -> bool:
+    return entry.state != 'unvalidated' and day > dt.date.fromisoformat(entry.expires or '1970-01-01')
+
+
 @dataclass(frozen=True)
 class LedgerResult:
     entries: tuple[LedgerEntry, ...]
@@ -77,10 +81,12 @@ class LedgerResult:
         day = today or dt.date.today()
         for e in self.entries:
             if e.channel == channel and e.facet == facet:
-                if e.state != 'unvalidated' and day > dt.date.fromisoformat(e.expires or '1970-01-01'):
-                    return 'unvalidated'
-                return e.state
+                return 'unvalidated' if _expired(e, day) else e.state
         return 'unvalidated'
+
+    def live_entries(self, today: dt.date | None = None) -> tuple[LedgerEntry, ...]:
+        day = today or dt.date.today()
+        return tuple(e for e in self.entries if not _expired(e, day))
 
 
 def parse_ledger(data: bytes, *, today: dt.date | None = None) -> ValidationLedger:

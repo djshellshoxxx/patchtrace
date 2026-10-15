@@ -47,7 +47,7 @@ from .acquisition.transport import BLOB_SUFFIX, METADATA_HOST, SYMBOL_HOST, Acqu
 from .alignment import alignment_strategy, diff_hunks
 from .backend import BackendConfig, diagnose, parse_env_passthrough, quarantine_failed_run, run_comparison
 from .evidence import build_context, resolve_evidence
-from .gui.qt.codediff import clear_selections, compose_selections, row_selection
+from .gui.qt.codediff import clear_selections, compose_selections, row_selection, view_text
 from .gui.qt.host import PanelHost
 from .gui.qt.theme import DARK
 from .interpretation import interpret, system_prompt
@@ -2408,7 +2408,7 @@ class MainWindow(QMainWindow):
         self.match_label.setText(label)
         for side, text in (('older', older_text), ('newer', newer_text)):
             clear_selections(self.views[side], 'diff')
-            self.views[side].setPlainText(text[:MAX_VIEW_CHARS])
+            self.views[side].setPlainText(view_text(text))
 
     def _load_enrichment(self):
         """Show the stored ranking only when it was computed from the current run and pairings."""
@@ -2845,14 +2845,14 @@ class MainWindow(QMainWindow):
             self.refresh()
         self.start_job('Importing Ghidriff JSON', lambda cancel, event: service.prepare_import(Path(path)), commit)
 
-    def preview_interpretation(self):
+    def preview_interpretation(self, *_, notes=()):
         if not self.project or self.worker:
             return
         match_ids = [item.data(Qt.ItemDataRole.UserRole) for item in self.navigator.selectedItems()]
         if not match_ids:
             return
         budget = setting_int(self.settings, 'provider/context_budget', 24000, 512, 200000)
-        context = self._guard(lambda: build_context(self.project, match_ids, max_chars=budget))
+        context = self._guard(lambda: build_context(self.project, match_ids, max_chars=budget, notes=notes))
         if context is None:
             return
         dialog = ContextDialog(context, self.settings, self)

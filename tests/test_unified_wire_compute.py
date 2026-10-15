@@ -26,7 +26,7 @@ from patchtrace.unified.ir.ladder_port import ReaderSide
 from patchtrace.unified.ladder import residual
 from patchtrace.unified.ladder.engine import run_ladder
 from patchtrace.unified.ladder.types import CorrGroup
-from patchtrace.unified.limits import DEFAULT_LIMITS, Budget
+from patchtrace.unified.limits import DEFAULT_LIMITS, Budget, BudgetExhausted
 from patchtrace.unified.registry import REGISTRY
 from patchtrace.unified.sources import GhidriffRun, RawGhidriff, SourceInputs
 from patchtrace.unified.sources.ladder import anchor_pairs, ladder_output
@@ -251,3 +251,45 @@ def test_to_match_stores_the_row_flags_sorted_without_repeats_and_only_valid_one
     assert row.flags == ('pdata-confirmed', 'tiny') and arbiter.to_match(d, {}, OLD_SHA, NEW_SHA).flags == ()
     with pytest.raises(ValidationError):
         arbiter.to_match(d, {}, OLD_SHA, NEW_SHA, flags=('not-a-flag',))
+
+
+# --- U7-06: a deadline that passes during the ladder keeps the partial result -----------------------------------------------------
+
+class FakeClock:
+    def __init__(self):
+        self.now = 0.0
+
+    def __call__(self):
+        return self.now
+
+
+def _expire_at_fusion(clock):
+    def emit(event):
+        if event.stage == 'fusion':
+            clock.now = 100.0
+    return emit
+
+
+def test_a_deadline_that_passes_in_the_ladder_stores_a_partial_result_with_unknown_rows(tmp_path):
+    inputs, addr, ir = probe(tmp_path)
+    clock = FakeClock()
+    budget = Budget(deadline=50.0, clock=clock, check_every=1)
+    manifest, directory = run(tmp_path, inputs, addr, ir=ir, budget=budget, emit=_expire_at_fusion(clock))
+    assert manifest.status == 'partial'
+    assert 'timeout' in manifest.limitations and compute.is_degrading('timeout')
+    stored = store.read_rows(directory, manifest)
+    assert stored and any(r.materiality == 'unknown' for r in stored)
+    assert all(r.materiality in ('unknown', 'not-applicable') for r in stored)    # never a negative verdict
+    assert not any(r.materiality == 'unchanged' for r in stored)
+
+
+def test_a_cancel_in_the_ladder_still_aborts_the_run(tmp_path):
+    inputs, addr, ir = probe(tmp_path)
+    cancelled = threading.Event()
+
+    def emit(event):
+        if event.stage == 'fusion':
+            cancelled.set()
+    with pytest.raises(BudgetExhausted) as stopped:
+        run(tmp_path, inputs, addr, ir=ir, budget=Budget(cancel=cancelled, check_every=1), emit=emit)
+    assert stopped.value.code == 'PT-UNIFIED-CANCEL'

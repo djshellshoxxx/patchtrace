@@ -13,6 +13,7 @@ import shutil
 import stat
 import struct
 import tempfile
+import time
 import zlib
 from collections.abc import Callable
 from pathlib import Path
@@ -31,6 +32,8 @@ from .contracts import (
 from .transport import AcquisitionConsent, Transport
 
 _CHUNK = 1024 * 1024
+STAGING_PREFIX = 'patchtrace-acquire-'
+STALE_STAGING_SECONDS = 24 * 3600  # far above the one-hour download deadline
 ANNOTATION_PREFIX = 'acquisition/1 provenance: '
 
 
@@ -50,16 +53,43 @@ def make_plan(older: BuildCandidate, newer: BuildCandidate, older_url: str, newe
 
 
 def create_staging(parent: Path | None = None) -> Path:
+    sweep_staging(parent)
     # mkdtemp creates the directory 0700, so other local users cannot swap staged files.
-    return Path(tempfile.mkdtemp(prefix='patchtrace-acquire-', dir=parent))
+    return Path(tempfile.mkdtemp(prefix=STAGING_PREFIX, dir=parent))
 
 
-def remove_staging(staging: Path) -> None:
+def sweep_staging(parent: Path | None = None) -> None:
+    """Remove staging directories a crashed run left behind. Recent ones may belong to a live run."""
+    root = Path(parent) if parent is not None else Path(tempfile.gettempdir())
+    cutoff = time.time() - STALE_STAGING_SECONDS
+    try:
+        stale = [p for p in root.glob(STAGING_PREFIX + '*') if p.is_dir() and p.stat().st_mtime < cutoff]
+    except OSError:
+        return
+    for path in stale:
+        remove_staging(path)
+
+
+def remove_staging(staging: Path, attempts: int = 4, delay: float = 0.25) -> bool:
+    """Best-effort removal; never raises. Antivirus or an indexer can hold a freshly written file on
+    Windows, so a locked entry is retried and then left behind. Returns whether the directory is gone."""
     def writable(func, path, _exc):
-        os.chmod(path, stat.S_IWRITE | stat.S_IREAD)
-        func(path)
-    if Path(staging).exists():
-        shutil.rmtree(staging, onexc=writable)
+        for attempt in range(attempts):
+            try:
+                # a directory also needs the search bit, or its children become unreachable for a non-root user
+                os.chmod(path, stat.S_IRWXU if os.path.isdir(path) else stat.S_IWRITE | stat.S_IREAD)
+                func(path)
+                return
+            except OSError:
+                if attempt + 1 < attempts:
+                    time.sleep(delay)
+
+    try:
+        if Path(staging).exists():
+            shutil.rmtree(staging, onexc=writable)
+        return not Path(staging).exists()
+    except OSError:
+        return False
 
 
 def _pe_machine(head: bytes) -> int | None:

@@ -128,7 +128,9 @@ class SecondaryAdapter:
                 ledger.flag(f'{engine}-address-basis-not-comparable')
                 continue
             if engine == 'bindiff':
-                ledger.flag('bindiff-stub-rows-not-identified')
+                if any(r.basicblocks is None for r in rows):
+                    ledger.flag('bindiff-stub-rows-not-identified')
+                ledger.count('bindiff-stub-rows-demoted', sum(r.basicblocks == 0 for r in rows))
             if engine == 'rz-diff':
                 if not match_set.engine_version.startswith('0.9.'):
                     ledger.flag(f'rz-diff-untested-version:{clean_name(match_set.engine_version, 40)}')
@@ -167,10 +169,14 @@ class SecondaryAdapter:
             for side, rva, name in (('older', older, row.older_name), ('newer', newer, row.newer_name)):
                 if rva is not None:
                     nodes[(side, rva)] = nodes.get((side, rva)) or clean_name(name)
+        stub = row.engine == 'bindiff' and row.basicblocks == 0
+        if stub:
+            tier = 'C'  # a zero-block record is a stub or thunk: it names a pair but proves nothing alone (06 s3)
         atoms.append(Atom(source=row.engine, step=step, tier=tier, cardinality=cardinality, cls=cls, older_rva=older,
                           newer_rva=newer, ref=entry_id[:128],
                           native=native(('similarity', row.similarity_text), ('confidence', row.confidence_text),
-                                        ('algorithm', row.algorithm))))
+                                        ('algorithm', row.algorithm),
+                                        ('demoted', 'stub-basicblocks-0' if stub else None))))
 
     # -- rz-diff ---------------------------------------------------------------------------------------------------
 

@@ -9,6 +9,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import re
 import sys
 import threading
 from pathlib import Path
@@ -16,6 +17,7 @@ from pathlib import Path
 from .backend_cli import cmd_backend
 from .backend_cli import register as register_backend
 from .diagnostics import redact_log
+from .hostile_text import escape_text
 from .intelligence import cli as intelligence_cli
 from .intelligence.tools import cli as intel_tools_cli  # SPEC-29 tools dispatcher (cheap import)
 
@@ -41,6 +43,15 @@ def _non_negative(value: str) -> int:
     if number < 0:
         raise argparse.ArgumentTypeError('must be 0 or greater')
     return number
+
+
+_CVE_ID = re.compile(r'CVE-\d{4}-\d{4,19}', re.ASCII)
+
+
+def _cve_id(value: str) -> str:
+    if not _CVE_ID.fullmatch(value):
+        raise argparse.ArgumentTypeError('must look like CVE-YYYY-NNNN')
+    return value
 
 
 def _parser(argv=()) -> argparse.ArgumentParser:
@@ -85,7 +96,7 @@ def _parser(argv=()) -> argparse.ArgumentParser:
     corr.add_argument('project', type=Path)
     cached(corr)
     profiled(corr)
-    corr.add_argument('--cve', action='append', required=True, metavar='CVE-YYYY-NNNN')
+    corr.add_argument('--cve', action='append', required=True, metavar='CVE-YYYY-NNNN', type=_cve_id)
     corr.add_argument('--snapshot', type=Path, action='append', default=[],
                       help='previously saved CVE snapshot JSON (offline)')
     corr.add_argument('--fetch', action='store_true', help='retrieve from providers (requires consent)')
@@ -183,7 +194,8 @@ def _emit(args, command: str, status: str, result, warnings: list[str], text: st
                                      'result': result, 'warnings': warnings}, sort_keys=True) + '\n')
     else:
         for warning in warnings:
-            print(f'warning: {warning}', file=sys.stderr)
+            print(f'warning: {escape_text(warning)}', file=sys.stderr)
+        text = escape_text(text, keep='\n')  # names and evidence are untrusted: no ESC or bidi controls reach a terminal
         sys.stdout.write(text + ('\n' if text and not text.endswith('\n') else ''))
 
 
@@ -266,6 +278,8 @@ def _with_cache(args, options, profile=None):
         if getattr(args, 'refresh', False):
             raise CliError(ENVIRONMENT, '--refresh requires --cache-dir')
         return options
+    if args.cache_dir.exists() and not args.cache_dir.is_dir():
+        raise CliError(ENVIRONMENT, f'cache directory {args.cache_dir} is not a directory; no cache was used')
     import dataclasses
 
     from .enrichment.cache import CacheConfig, DerivedCache
@@ -506,8 +520,8 @@ def cmd_cache(args, cancel) -> int:
             result = cache.prune(args.target_bytes)
     except EnrichmentError as exc:
         raise CliError(ENVIRONMENT if exc.code == 'PT-ENRICH-CONFIG' else RUNTIME, str(exc)) from None
-    if result.get('error'):
-        raise CliError(RUNTIME, f'cache unusable: {result["error"]}')
+    if 'error' in result:
+        raise CliError(ENVIRONMENT, f'cache at {args.cache_dir} is unusable ({result["error"]}); check the path and permissions')
     _emit(args, 'cache', 'complete', result, [], json.dumps(result, indent=2, sort_keys=True))
     return OK
 
@@ -780,7 +794,8 @@ def cmd_secondary(args, cancel) -> int:
         store = EnrichmentStore(service.store)
         if args.action == 'reconcile':
             from .secondary.store import select_current
-            chosen, superseded = select_current(load_secondary(store))
+            pair = (sides['older'].sha256, sides['newer'].sha256) if {'older', 'newer'} <= sides.keys() else None
+            chosen, superseded = select_current(load_secondary(store), pair)
             sets = [m for _, m in chosen]
             if not sets:
                 _emit(args, 'secondary reconcile', 'complete', {'reports': []}, [], 'No secondary match sets stored.')
@@ -815,7 +830,8 @@ def cmd_secondary(args, cancel) -> int:
         try:
             if args.action == 'import-bindiff':
                 from .secondary.bindiff import import_bindiff
-                match_set = import_bindiff(args.bindiff, sides['older'].sha256, sides['newer'].sha256)
+                match_set = import_bindiff(args.bindiff, sides['older'].sha256, sides['newer'].sha256,
+                                           preserve_dir=Path(service.root) / 'runs' / run.id / 'raw' / 'secondary')
             else:
                 return _secondary_run(args, cancel, service, store, run, sides)
         except SecondaryError as exc:
@@ -869,11 +885,13 @@ def main(argv: list[str] | None = None) -> int:
         args = _parser(argv).parse_args(argv)
         return (getattr(args, 'handler', None) or HANDLERS[args.command])(args, cancel)
     except CliError as exc:
-        print(f'error: {_terminal_text(exc, 4000)}', file=sys.stderr)
+        message = redact_log(str(exc))
+        print(f'error: {_terminal_text(message, 4000)}', file=sys.stderr)
         as_json, label = _json_envelope(args, argv)
         if as_json:
-            sys.stdout.write(json.dumps({'contract': CLI_CONTRACT, 'command': label, 'status': 'failed',
-                                         'result': None, 'warnings': [], 'error': str(exc)}, sort_keys=True) + '\n')
+            status = 'cancelled' if exc.code == CANCELLED else 'failed'
+            sys.stdout.write(json.dumps({'contract': CLI_CONTRACT, 'command': label, 'status': status,
+                                         'result': None, 'warnings': [], 'error': message}, sort_keys=True) + '\n')
         return exc.code
     except KeyboardInterrupt:
         cancel.set()

@@ -18,7 +18,7 @@ from typing import Protocol
 
 from ..secondary.evidence_view import CLIPBOARD_CAP, CLIPBOARD_ROWS, sanitize_text
 from . import keys, store
-from .contracts import Atom, ChangeFacts, UnifiedMatch, UnifiedResultManifest
+from .contracts import Atom, ChangeFacts, UnifiedMatch, UnifiedResultManifest, strip_unsafe
 from .limits import DEFAULT_LIMITS, UnifiedError, UnifiedLimits
 from .registry import REGISTRY, Registry
 
@@ -72,7 +72,7 @@ def clean(value: object, limit: int = 200) -> str:
     text = value if type(value) is str else '' if value is None else str(value)
     if text.isprintable() and len(text) <= limit:  # fast path: nothing `sanitize_text` would remove is printable
         return text
-    return sanitize_text(text.replace('\n', ' ').replace('\t', ' '), limit)
+    return sanitize_text(strip_unsafe(text.replace('\n', ' ').replace('\t', ' '), replacement=''), limit)
 
 
 def hex_rva(rva: int | None) -> str:
