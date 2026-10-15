@@ -195,7 +195,7 @@ def test_main_window_every_action_and_control_has_a_registry_tooltip(window):
 
 
 PANEL_BATCH_PENDING_TIPS = {
-    'capabilities.retry', 'capabilities.tabs', 'graph.callsite', 'graph.diagram', 'graph.export_dot', 'graph.minimap',
+    'capabilities.retry', 'capabilities.tabs', 'graph.diagram',
     'graph.status', 'graph.tabs', 'kb.footer', 'rules.tabs', 'search.kinds', 'search.save', 'search.saved',
 }
 
@@ -258,7 +258,7 @@ def test_every_registry_id_is_applied_somewhere(window, qtbot, tmp_path, setting
     names |= {controller.dock.objectName() for controller in window.panels.panels.values()
               if getattr(controller, 'dock', None) is not None}
     # Tips registered by the 2026-10-15 panel batch for sub-features or states that build_all_for_test does not
-    # show (graph DOT export/call-site reveal/minimap are not built yet; the rest appear only in states each panel's own
+    # show (graph tabs/diagram/status are not reachable by the FOCUSABLE sweep; the rest appear only in states each panel's own
     # tests drive). Shrink this set as those features land; never grow it for an existing control.
     names |= PANEL_BATCH_PENDING_TIPS
     # The Related panel (FAB-6) is not in the shipped manifest yet, but its controller registers its tips globally as

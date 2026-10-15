@@ -117,3 +117,23 @@ def test_zooming_past_both_clamps_keeps_the_level_consistent(canvas):
         canvas.zoom_out()
     assert canvas.zoom == gv.ZOOM_MIN and canvas.level == gv.detail_level(gv.ZOOM_MIN)
     assert canvas.node_count == GRAPH_NODES_MAX
+
+
+def test_minimap_over_the_maximum_graph_stays_bounded_and_follows_zoom_and_panning(canvas):
+    from patchtrace.callgraph.minimap import MAX_DOTS
+    from patchtrace.callgraph.minimap_qt import MinimapWidget
+    nodes, edges = grid(GRAPH_NODES_MAX)
+    canvas.set_graph(nodes, edges)
+    minimap = MinimapWidget(canvas)
+    minimap.set_points({n.key: (n.x, n.y) for n in nodes}, 'n0')
+    minimap.show()
+    assert len(minimap.model.dots) == min(GRAPH_NODES_MAX, MAX_DOTS)
+    fitted = minimap.model.coverage_percent
+    for _ in range(8):
+        canvas.zoom_in()
+    QApplication.processEvents()
+    assert minimap.model.coverage_percent < fitted
+    for _ in range(30):
+        QApplication.sendEvent(minimap, QKeyEvent(QKeyEvent.Type.KeyPress, Qt.Key.Key_Right, Qt.KeyboardModifier.NoModifier))
+    minimap.grab()  # a full repaint of 2,000 dots must not raise
+    assert 0 <= minimap.model.coverage_percent <= 100

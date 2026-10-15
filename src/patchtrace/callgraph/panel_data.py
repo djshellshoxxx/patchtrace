@@ -10,6 +10,8 @@ from ..models import ComparisonProject
 from .contracts import GraphView, Pairing, Side
 from .contracts_delta import CallDelta, GraphLead
 from .delta import DeltaContext, compute_deltas, diff_types_by_match
+from .dot import render_dot
+from .export_json import GraphExport, default_name
 from .leads import build_leads
 from .limits import GraphError
 from .project_input import ProjectInput, read_project_input
@@ -136,3 +138,27 @@ def positions(found: Neighbourhood) -> dict[str, tuple[float, float]]:
         for row, node_id in enumerate(sorted(ids, key=lambda i: (names.get(i, ''), i))):
             out[node_id] = (layer * LAYER_X, row * ROW_Y)
     return out
+
+
+# ---- DOT export of what is shown (docs/specs/panels/graph-inspection.md section 1) -------------------------------
+
+
+def dot_export(data: GraphData, found: Neighbourhood) -> GraphExport:
+    """The visible neighbourhood as a one-sided `GraphExport`; nothing outside the shown view is added."""
+    ids = data.snapshot.data
+    view = found.view
+    shown = {found.spec.side: view}
+    return GraphExport(
+        project_id=ids.project_id, run_id=ids.run_id, match_id=found.spec.match_id, older_sha256=ids.older_sha256,
+        newer_sha256=ids.newer_sha256, older=shown.get('older'), newer=shown.get('newer'), truncated=view.truncated,
+        limitations=view.limitations)
+
+
+def dot_text(data: GraphData, found: Neighbourhood) -> str:
+    """DOT text of the visible graph. Raises `GraphError` (PT-GRAPH-EXPORT) over the size cap."""
+    return render_dot(dot_export(data, found))
+
+
+def dot_name(text: str) -> str:
+    """Suggested file name: derived from the content, never from function names."""
+    return default_name(text, 'dot')
