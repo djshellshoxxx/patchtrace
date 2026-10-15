@@ -852,7 +852,8 @@ def main(argv: list[str] | None = None) -> int:
     except CliError as exc:
         print(f'error: {exc}', file=sys.stderr)
         if args is not None and getattr(args, 'json', False):
-            sys.stdout.write(json.dumps({'contract': CLI_CONTRACT, 'command': _command_name(args), 'status': 'failed',
+            status = 'cancelled' if exc.code == CANCELLED else 'failed'
+            sys.stdout.write(json.dumps({'contract': CLI_CONTRACT, 'command': _command_name(args), 'status': status,
                                          'result': None, 'warnings': [], 'error': str(exc)}, sort_keys=True) + '\n')
         return exc.code
     except KeyboardInterrupt:

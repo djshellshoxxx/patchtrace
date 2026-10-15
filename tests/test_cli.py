@@ -187,3 +187,12 @@ def test_unexpected_exception_maps_to_runtime_exit_with_json(monkeypatch, capsys
     assert cli.main(['rank', '--json', 'x']) == 3
     document = json.loads(capsys.readouterr().out)
     assert document['status'] == 'failed' and 'boom' in document['error']
+
+
+def test_cancel_clierror_writes_cancelled_envelope(project, capsys, monkeypatch):
+    def cancelled(*_a, **_k):
+        raise cli.CliError(cli.CANCELLED, 'cancelled by test')
+    monkeypatch.setitem(cli.HANDLERS, 'rank', cancelled)
+    code, out, _ = run(['rank', str(project), '--json'], capsys)
+    assert code == 5 and json.loads(out)['status'] == 'cancelled'
+
