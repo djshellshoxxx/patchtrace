@@ -173,23 +173,31 @@ def test_g_u8_every_check_names_tests_that_exist_in_the_repository():
         for name in check.tests:
             module, test = name.split('::')
             assert test in defined.get(module, set()), name
-    assert {c.id for c in gates_u.G_U8_CHECKS if not c.tests} == {'ui-policy', 'frozen-smoke'}
+    assert {c.id for c in gates_u.G_U8_CHECKS if not c.tests} == {'frozen-smoke'}
 
 
-def test_g_u8_all_present_checks_pass_but_the_ui_policy_waits_for_s4_and_the_smoke_has_no_attestation():
+def test_g_u8_all_present_checks_pass_but_the_smoke_has_no_attestation():
     g8 = by_id(gates_u.build_report(inputs(xml=PASS_ALL)))['G-U8']
-    assert g8.status == 'pending'
+    assert g8.status == 'insufficient-data'
     states = {c['id']: c['status'] for c in g8.observed['checks']}
-    assert states['ui-policy'] == 'pending' and states['frozen-smoke'] == 'missing'
-    assert {s for k, s in states.items() if k not in ('ui-policy', 'frozen-smoke')} == {'pass'}
+    assert states['frozen-smoke'] == 'missing'
+    assert {s for k, s in states.items() if k != 'frozen-smoke'} == {'pass'}
 
 
-def test_g_u8_stays_pending_on_the_ui_policy_until_s4_names_its_tests_even_with_everything_else_green():
+def test_g_u8_passes_with_the_ui_policy_tests_green_and_the_smoke_attested():
     g8 = by_id(gates_u.build_report(inputs(xml=PASS_ALL, attested={'frozen-smoke': 'pass'})))['G-U8']
-    assert g8.status == 'pending' and 'S4' in ' '.join(g8.reasons)
-    states = {c['id']: c['status'] for c in g8.observed['checks']}
-    assert states['frozen-smoke'] == 'pass' and states['ui-policy'] == 'pending'
-    assert {s for k, s in states.items() if k != 'ui-policy'} == {'pass'}
+    assert g8.status == 'pass' and not g8.reasons
+    ui = next(c for c in gates_u.G_U8_CHECKS if c.id == 'ui-policy')
+    assert len(ui.tests) >= 3 and ui.needs is None
+
+
+def test_g_u8_a_skipped_ui_test_is_blocked_not_a_pass():
+    ui = next(c for c in gates_u.G_U8_CHECKS if c.id == 'ui-policy')
+    first = tuple(ui.tests[0].split('::'))
+    rest = [tuple(p.split('::')) for p in ALL_G_U8 if p != ui.tests[0]]
+    g8 = by_id(gates_u.build_report(inputs(xml=junit(passed=rest, skipped=[first]),
+                                           attested={'frozen-smoke': 'pass'})))['G-U8']
+    assert g8.status == 'insufficient-data' and {c['id']: c['status'] for c in g8.observed['checks']}['ui-policy'] == 'blocked'
 
 
 def test_g_u8_a_failing_test_is_a_failure_and_a_skipped_one_is_blocked_not_a_pass():

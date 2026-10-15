@@ -117,7 +117,11 @@ G_U8_CHECKS = (
     IntegrityCheck('extractor-script-ast', 'the extractor script AST has no network, subprocess or dynamic-code use',
                    ('test_unified_ghidra_script::test_ghidra_script_imports_no_patchtrace',
                     'test_unified_ghidra_script::test_script_runs_no_dynamic_code_and_spawns_nothing')),
-    IntegrityCheck('ui-policy', 'tooltips, accessibility and banned words of the Unified view', needs='S4'),
+    IntegrityCheck('ui-policy', 'tooltips, accessibility and banned words of the Unified view',
+                   ('test_ui_unified::test_controls_are_named_tipped_and_plain',
+                    'test_ui_unified::test_run_is_off_by_default_and_names_the_reason',
+                    'test_unified_panel_spec::test_every_tip_the_read_model_names_is_declared',
+                    'test_unified_read_model::test_unified_banned_strings_never_appear')),
     IntegrityCheck('frozen-smoke', 'the frozen smoke including unified --help and unified _worker --self-check',
                    attestation='frozen-smoke'),
 )
