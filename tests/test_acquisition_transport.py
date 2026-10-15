@@ -9,6 +9,7 @@ import pytest
 
 from patchtrace.acquisition import transport as tr
 from patchtrace.acquisition.contracts import AcquisitionError, PlannedDownload
+from drip_server import drip_server
 
 NAME = 'afd.sys'
 URL = 'https://msdl.microsoft.com/download/symbols/afd.sys/D37888A1b2000/afd.sys'
@@ -308,45 +309,9 @@ def test_download_has_a_total_deadline(tmp_path):
     assert info.value.recoverable and 'timeout' in str(info.value)
 
 
-def _drip_server(total: int, gap: float):
-    """Loopback HTTP server sending `total` bytes one at a time, `gap` seconds apart."""
-    import socket
-    srv = socket.socket()
-    srv.bind(('127.0.0.1', 0))
-    srv.listen(4)
-    stop = threading.Event()
-
-    def serve():
-        while not stop.is_set():
-            srv.settimeout(0.1)
-            try:
-                conn, _ = srv.accept()
-            except OSError:
-                continue
-            with conn:
-                try:
-                    conn.recv(4096)
-                    conn.sendall(f'HTTP/1.1 200 OK\r\nContent-Length: {total}\r\n\r\n'.encode())
-                    for _ in range(total):
-                        if stop.wait(gap):
-                            break
-                        conn.sendall(b'x')
-                except OSError:
-                    pass
-
-    thread = threading.Thread(target=serve, daemon=True)
-    thread.start()
-
-    def close():
-        stop.set()
-        thread.join(2)
-        srv.close()
-    return f'http://127.0.0.1:{srv.getsockname()[1]}/drip', close
-
-
 def test_slow_drip_download_stops_at_the_total_deadline(tmp_path, monkeypatch):
     import time
-    local, close = _drip_server(40, 0.2)  # 8 s of dripping against a 1 s deadline
+    local, close = drip_server(40, 0.2)  # 8 s of dripping against a 1 s deadline
     monkeypatch.setattr(tr, 'DOWNLOAD_DEADLINE', 1.0)
     t, _ = make(lambda method, url, headers, timeout: tr.urllib_open(method, local, headers, timeout))
     started = time.monotonic()
@@ -361,7 +326,7 @@ def test_slow_drip_download_stops_at_the_total_deadline(tmp_path, monkeypatch):
 
 def test_slow_drip_download_observes_cancel(tmp_path):
     import time
-    local, close = _drip_server(40, 0.2)
+    local, close = drip_server(40, 0.2)
     cancel = threading.Event()
     threading.Timer(0.5, cancel.set).start()
     t, _ = make(lambda method, url, headers, timeout: tr.urllib_open(method, local, headers, timeout), cancel=cancel)
