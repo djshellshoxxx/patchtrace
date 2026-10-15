@@ -882,3 +882,6 @@ R5 contract notes: no persisted contract changed. Deviations from the card, all 
 
 ### [LBL-prereg:tools]
 `tools/calibration/prereg.py` recomputes or verifies the C9 preregistration SHA-256 (read-only, never writes the lock). `tools/calibration/vendoring_scan.py` proposes lineage merges from shared masked body hashes (merge-only, hubs excluded, threshold and hub limit required). `tests/test_prereg_constants.py` pins the cv/threshold/gates/ece_null/metrics constants to the preregistration.
+
+### [LBL-13:channels]
+`tools/calibration/channels/{strings,capabilities,environment,rules,leadlist}.py` (dev-only): one scorer per channel pack, each returning its own `PackReport` (intervals by lineage bootstrap from `evalcore.boot`, exact counts, gate booleans). Packs are never pooled; `rules` is `blocked` while `yara_x` is missing. `leadlist` evaluates the LBL s7.6 conditions (precision above base rate, A/A false-lead rate <= 0.1 %, hit@10 non-inferiority -0.02, one improved slice); below 30 lineages a condition is undefined, never passed.

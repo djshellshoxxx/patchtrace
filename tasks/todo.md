@@ -568,3 +568,6 @@
 ### [LBL-prereg:tools]
 - [x] P-1 prereg hash tool, P-2 constants test, vendoring scan (PREREG 8.5 i and ii closed; 8.5 iii open).
 - [ ] Before the lock: run the vendoring scan over the Tier R per-lineage masked body hashes and apply merge proposals.
+
+### [LBL-13:channels]
+- [x] Channel pack scorers with hand-computed goldens (synthetic inputs). Open: real inputs need FLOSS/capa runners (T track) and YARA-X for `rules`.

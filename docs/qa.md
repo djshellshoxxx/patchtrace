@@ -832,3 +832,6 @@ Automated: tests/test_ci_summary.py (counts, 90% warning, error status, determin
 
 ### [LBL-prereg:tools]
 Automated evidence only: `python -m tools.calibration.prereg --qa docs/qa.md` verifies the recorded `C9-PREREG-v1` SHA after the lock; no lock exists yet.
+
+### [LBL-13:channels]
+Automated only: `tests/test_calib_channels_*.py` (synthetic pairs). No channel value is claimed on real builds; `rules` is blocked until YARA-X is available.
