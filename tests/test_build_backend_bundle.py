@@ -277,7 +277,8 @@ def test_strip_rules_remove_docs_and_other_os_natives(tmp_path, platform):
     assert not (result.payload_dir / 'jdk/lib/src.zip').exists() and not (result.payload_dir / 'jdk/jmods').exists()
     os_dirs = {p.name for p in (ghidra / 'Ghidra/Features/Decompiler/os').iterdir()}
     assert os_dirs == ({'win_x86_64'} if platform == 'windows' else {'linux_x86_64'})
-    assert (ghidra / 'LICENSE').is_file() and (ghidra / 'GPL/decompiler.txt').is_file()
+    assert (ghidra / 'LICENSE').is_file()
+    assert not (ghidra / 'GPL').exists()  # policy: Ghidra GPL/** is stripped by default
     assert result.stripped_files >= 5 and result.stripped_bytes >= 800
 
 
@@ -796,3 +797,43 @@ def test_real_wheel_build_from_a_source_tarball_is_byte_compared(tmp_path):
         raise
     assert built.path.name == 'tinypkg-1.0-py3-none-any.whl' and built.sha256 == tool.sha256_file(built.path)
     copy.deepcopy(built)  # frozen dataclass stays copyable
+
+
+def test_notice_states_the_licence_policy_honestly(tmp_path):
+    world = World(tmp_path, 'windows')
+    world.pin['license_policy']['allowed']['temurin-jdk']['owner_approved'] = False  # the pending-approval wording
+    world.write_pin()
+    result = build(world, tmp_path)
+    notice = (result.payload_dir / 'LICENSES/NOTICE.txt').read_text(encoding='utf-8')
+    assert 'not a legal compliance claim' in notice
+    assert 'temurin-jdk [GPL-2.0-only WITH Classpath-exception-2.0]: shipped, OWNER APPROVAL PENDING' in notice
+    assert 'ghidriff [GPL-3.0-only]: shipped, owner approved' in notice
+    assert 'ghidra-GPL-dir [LicenseRef-Ghidra-GPL-dir]: NOT shipped' in notice
+    assert 'GNU demangling of non-PE targets is unavailable' in notice
+    assert any('PT-BUNDLE-LICENSE' in w and 'temurin-jdk' in w for w in result.warnings)
+
+
+def test_release_build_refuses_pending_licence_approval(tmp_path):
+    world = World(tmp_path, 'linux')
+    world.pin['license_policy']['allowed']['temurin-jdk']['owner_approved'] = False  # approval withdrawn
+    world.write_pin()
+    with pytest.raises(tool.BundleBuildError) as caught:
+        build(world, tmp_path, release=True)
+    assert caught.value.code == 'PT-BUNDLE-LICENSE' and 'temurin-jdk' in str(caught.value)
+
+
+def test_release_build_passes_once_every_listed_component_is_approved(tmp_path):
+    world = World(tmp_path, 'linux')
+    world.pin['license_policy']['allowed']['temurin-jdk']['owner_approved'] = True
+    world.write_pin()
+    result = build(world, tmp_path, release=True)
+    assert not any('PT-BUNDLE-LICENSE' in w for w in result.warnings)
+
+
+def test_gpl_directory_kept_by_a_bad_pin_is_refused(tmp_path):
+    world = World(tmp_path, 'linux')
+    world.pin['strip']['ghidra'].remove('GPL/**')
+    world.write_pin()
+    with pytest.raises(tool.BundleBuildError) as caught:
+        build(world, tmp_path)
+    assert caught.value.code == 'PT-BUNDLE-PIN' and 'GPL' in str(caught.value)

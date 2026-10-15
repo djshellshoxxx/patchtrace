@@ -1,0 +1,138 @@
+{
+  "$id": "https://patchtrace.local/schemas/callgraph/1/GraphNode.json",
+  "additionalProperties": false,
+  "properties": {
+    "address": {
+      "anyOf": [
+        {
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Address"
+    },
+    "candidates": {
+      "default": [],
+      "items": {
+        "type": "string"
+      },
+      "title": "Candidates",
+      "type": "array"
+    },
+    "contract": {
+      "const": "workbench-graph-node/1",
+      "default": "workbench-graph-node/1",
+      "title": "Contract",
+      "type": "string"
+    },
+    "flags": {
+      "default": [],
+      "items": {
+        "enum": [
+          "import",
+          "hub",
+          "thunk-suspect",
+          "api-hint",
+          "newly-imported",
+          "trace-helper",
+          "inferred-count-suffix"
+        ],
+        "type": "string"
+      },
+      "title": "Flags",
+      "type": "array"
+    },
+    "function_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Function Id"
+    },
+    "id": {
+      "title": "Id",
+      "type": "string"
+    },
+    "kind": {
+      "enum": [
+        "function",
+        "paired-unchanged",
+        "external",
+        "label-only",
+        "ambiguous"
+      ],
+      "title": "Kind",
+      "type": "string"
+    },
+    "label": {
+      "maxLength": 512,
+      "title": "Label",
+      "type": "string"
+    },
+    "match_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Match Id"
+    },
+    "reason": {
+      "default": "",
+      "title": "Reason",
+      "type": "string"
+    },
+    "side": {
+      "enum": [
+        "older",
+        "newer"
+      ],
+      "title": "Side",
+      "type": "string"
+    },
+    "tier": {
+      "enum": [
+        "record",
+        "pairing",
+        "label"
+      ],
+      "title": "Tier",
+      "type": "string"
+    },
+    "via": {
+      "enum": [
+        "emitted-record",
+        "name-match",
+        "address-match",
+        "external",
+        "thunk",
+        "count-suffix",
+        "unresolved"
+      ],
+      "title": "Via",
+      "type": "string"
+    }
+  },
+  "required": [
+    "id",
+    "side",
+    "kind",
+    "label",
+    "via",
+    "tier"
+  ],
+  "title": "GraphNode",
+  "type": "object"
+}

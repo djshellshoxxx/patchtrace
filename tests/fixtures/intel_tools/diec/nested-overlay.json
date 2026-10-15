@@ -1,0 +1,52 @@
+{
+    "detects": [
+        {
+            "filetype": "PE64",
+            "info": "",
+            "offset": "0",
+            "parentfilepart": "Header",
+            "size": "4096",
+            "values": [
+                {
+                    "info": "",
+                    "name": "MinGW",
+                    "string": "Compiler: MinGW(GCC 10)",
+                    "type": "compiler",
+                    "version": "GCC 10"
+                },
+                {
+                    "filetype": "ZIP",
+                    "info": "",
+                    "offset": "8192",
+                    "parentfilepart": "Overlay",
+                    "size": "4096",
+                    "values": [
+                        {
+                            "info": "",
+                            "name": "ZIP",
+                            "string": "Archive: ZIP(2.0)",
+                            "type": "archive",
+                            "version": "2.0"
+                        },
+                        {
+                            "filetype": "PE32",
+                            "info": "",
+                            "offset": "16384",
+                            "parentfilepart": "Archive",
+                            "size": "4096",
+                            "values": [
+                                {
+                                    "info": "",
+                                    "name": "UPX",
+                                    "string": "Packer: UPX(3.96)",
+                                    "type": "packer",
+                                    "version": "3.96"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

@@ -209,6 +209,142 @@
 - [ ] BLOCKED: diec live leg (no Qt5 Core/Script libs in this container), all Windows legs, first GitHub run of `live-intel-tools.yml`, Ghidra backend, independent re-hash of the pins from a second network path, executable-swap window between re-hash and spawn is narrowed not closed
 - [ ] Not done: `intel-tools pairs` (CAP), capa `memory_limit_bytes` option and `contained-in-function` (CAP-1), DiE vocabulary (DIE D1), `tools/frozen_smoke.py`/`build_windows.py` pin packaging, docs/qa.md rows (integrator)
 
+### [WB3-S0:strings-core] WB3-S0 contracts and table
+- [x] `patchtrace.strings` limits, contracts, keys, columnar table; schemas under `docs/schemas/strings/`; gate measured: two 200k-row sides (unique display values) load in about 0.3 s, tracemalloc peak about 52 MiB
+- [ ] Next: S1 sources, S2 regions/cues, S3 scan (need S0 only)
+### [WB3-S1-S3:strings-sources-scan]
+- [x] WB3-S1 sources, WB3-S2 regions/cues/look-alike, WB3-S3 built-in scan (parity with the FLOSS 3.1.1 static goldens, property tests against a whole-buffer regex oracle)
+- [ ] Open: S0 contracts/table (`strings/__init__.py`, limits, columnar table) not on this base; `SourceRow` maps 1:1 onto the planned table columns; advisory-text/advisory-api/lookalike cues are set by the delta layer (S5/S6)
+### [G1:callgraph-kernel]
+- [x] Kernel (limits, text, labels, CSR, algo) with NetworkX 3.7 differential oracle (dev only, skipped when absent) and PYTHONHASHSEED 0/1 determinism test
+- [ ] Next: G2 contracts, input, pairing, resolver, snapshot, query
+### [G0:fixtures] WB2 G0 synthetic call-graph fixtures (2026-10-14, Haiku 5.5, worktree)
+- [x] Red tests first (`tests/test_callgraph_fixtures.py`), then builder `tests/callgraph_fixtures.py` and six committed fixtures in `tests/fixtures/callgraph/`; 24 focused tests pass; ruff clean
+- [ ] Integrator: add `.gitattributes` line `tests/fixtures/callgraph/** text eol=lf`
+- [ ] Live gate (WB2 section 5): confirm the real Ghidriff `matches` label forms against one real synthetic-PE JSON before trusting hub registry and import keys; the fixture's `name_matches`/`address_matches` shape is an assumption until then
+### [WB1-S0:search-foundation]
+- [x] S0 capability probe, limits, errors, cache paths, bench and runtime-check tools (focused tests green on Linux)
+- [ ] Open gate: probe on `windows-latest` and the frozen Windows build (`check_search_runtime.py` and later `search --probe`)
+
+### [WB1-S1:search-query]
+- [x] S1 grammar, safe MATCH builders (hypothesis: no input raises OperationalError), 40+ name goldens, hostile list, frozen contracts
+- [ ] Integrator: add `tests/fixtures/search/*.json eol=lf` to `.gitattributes`
+
+### [WB1-S2:search-segment]
+- [x] S2 segment store (crash-point, corruption, authorizer allow-list, replace-over-open-file tests; Linux green)
+- [ ] Open gate: the replace-over-open-file and URI-open tests on `windows-latest`
+### [K2:kbcorrelation-store] KB-CVE correlator K2 (2026-10-14)
+- [x] workspace store, two-phase attach, reducer, recovery; subprocess hard-kill (SIGKILL) at `index_after_doc`, `index_before_commit`, `after_project_create`, `before_cas` (x2), `after_sidecar_write`, `attach_before_row` (x2) leaves a valid project and workspace; repair idempotent; newer store fails closed; project backup keeps the `kb` sidecars
+- [ ] NOT done / open: K3 binds `ProjectPort` (`create_project` must return the existing project for the same bytes; `put_row` has no directory, so the binding needs a project registry) and replaces the interim `cli_index` files with `WorkspaceStore`; `kb attach --repair` verb; workspace object eviction (only `unreferenced_objects()` lists candidates); `tests/test_kbc_contracts.py` must exempt `store.py` from its sqlite3 ban; Windows run of the kill tests (CI) not yet seen
+### [CAP-0:capa-docs] CAP-0 spec amendments and documentation rows (2026-10-14, builder worktree; docs only, no code)
+- [x] `docs/specs/three-tool-evidence-adapters.md`: status line, tool-selection wording on localization, new T13.1-T13.6 amendments (CAP section 10); `docs/specs/patch-intent-localization-engine.md`: CAP scoring amendment (context only, lineage, `observation_key`)
+- [x] `docs/modules.md`, `docs/qa.md`, this file: append-only CAP blocks (module rows, evidence rows 19-21, slice status)
+- [ ] NOT done (later slices, per CAP section 9): T0 shared SPEC-29 core prerequisite (not CAP-owned; CAP-0 did not verify its completion); CAP-1 contracts and parser v2; CAP-2 pair delta; CAP-3 view-model; CAP-4 raw-first cache; CAP-5 `intel-tools pairs`; CAP-6a/6b Capabilities dock and run tab; CAP-7 hints; CAP-8 live capa acceptance (L1 Linux required, Windows advisory); CAP-9 extent attribution (deferred on SPEC-31 S1); CAP-10 BinExport2 (deferred); CAP-11 consented download (owner decision)
+- [ ] Integrator asks: none from CAP-0; the T13 amendments change no shared file. Shared-file changes listed in CAP section 10 (`tools/frozen_smoke.py`, `tools/build_windows.py`, `pyproject.toml` marker `live_capa`, `.gitattributes` fixtures) belong to the slices that need them.
+### [CAP-1:capa-parser-v2]
+- [x] Contracts and parser: coverage, features, labels, exit 11/13, Ghidra >= 12.0 probe, memory-cap option, in-memory re-parse (`tests/test_capa_parser_v2.py`)
+- [ ] Integrator: `runner.py` passes `CapaConfig.effective_memory_limit()` for capa (today only FLOSS); `intel-tools probe` rules label and `PT-TOOL-PAIRING` exit mapping (CAP-5)
+
+### [CAP-2:capa-pairs]
+- [x] Pair groups, pair delta, synergy golden `tests/fixtures/intel_tools/expected-pairs-capa-api.json`, properties, 20,000-item bound, no-Qt import test
+- [ ] Not done: `tests/capa_pairs_pe.py` and REAL `capa-move-*` goldens need the pinned capa (not in this container); the DERIVED `capa-move-derived-newer.json` stands in (labelled in `MANIFEST.capa-v2.json`)
+- [ ] Integrator: generate a `capa-pairs/1` JSON Schema in `tools/generate_intel_tools_schemas.py` (its test pins 9 outputs); hypothesis-context leg of the synergy test is CAP-7
+
+### [CAP-3:capa-view]
+- [x] View-model, banned-wording sweep, 100,000-row build and re-arrange budget, no-Qt import test (`tests/test_capa_view.py`)
+- [ ] Not done here (CAP-6a, needs the GUI registry): Qt model/view with the `data()`-call budgets, tooltips, offscreen state tests, 20x repeat
+
+### [D1:diec-hardening]
+- Done: adapter hardening (nested, empty result, heuristic marks, 57-name table, installer flag, memory cap function). Open: runner wiring of the diec memory cap (integrator), live goldens replace the hand-authored fixtures (G-L1).
+### [D2:pe-build-facts] PE build facts (2026-10-14, Sonnet 5.5, worktree)
+- [x] Rich (stdlib, bounded, equals pefile 2024.8.26 on generated headers), header version fields, debug entry types, LoadConfig GuardFlags/cookie, CLR header, runtime families, `collect_build_facts`; hypothesis never-raise
+- [ ] Not done: 2 s per-side wall-clock budget (reads are small and bounded; cancel is polled per stage); `docs/specs/pe-overview.md` "Build facts" section and "Not done" update (D-amendments, integrator); WBQ S3 consumers
+### [SPEC-07-hit:derived-cache-hit]
+- [x] Hit path 1.92 s -> 1.44 s at 10,000 pairs (lean cache payload via exclude_defaults + cached TypeAdapter; inlined scalar canonical-JSON fast path). [ ] 500 ms objective still open: build_views ~0.75 s, rank ~0.6 s, input_digest/_locations_owned ~0.35 s remain (see docs/qa.md).
+
+### [CAP-4:capa-cache]
+- [x] `intelligence/tools/capa_cache.py` (lookup, store, fetch_or_run) with tests. [ ] Runner wiring (profile `cache_dir`, `capa_cache.fetch_or_run` around the spawn) is an integrator ask.
+### [CAP-5:capa-cli]
+- [x] `intel-tools pairs` (--engine, --change, --namespace, --include-noise, --include-library, --show-features, --show-secrets, --json), probe rules label, `PT-TOOL-PAIRING` exit mapping, `capa-pairs/1` schema entry.
+- [ ] Not done: `--hypothesis CVE-ID` (needs CAP-7 `capa_hints`); `cli_commands/pairs.py` adapter and `frozen_smoke.py` import (integrator).
+### [WB1:S3:sources-build]
+- [x] Sources v1 (`fn`, `raw`, `pe:<side>`, `ann`, `fnd`) and build orchestration; determinism under permutation and incremental == from-scratch tested. [ ] Live gate: the `strings`/`symbols` shape of a real Ghidriff JSON (the `raw` reader fails closed on any other shape); `name_matches` of unchanged functions stay unindexed until then.
+### [WB3-S4:strings-links]
+- [x] WB3-S4 L1/L4/L5 links and literal segmentation (`strings/{clit,links}.py`); synthetic Ghidriff-shaped fixture `tests/fixtures/strings/pdiff/`
+- [ ] Not built here: edited-pair detection (belongs with the S5 delta), L2/L3/L6 tiers (need IR or capa), Ghidriff `strings` loader wiring in the service layer
+### [G2:callgraph-snapshot]
+- [x] Contracts, project input, raw matches, resolver, pair map, snapshot (GL-01 enforced), bounded queries; G0 fixtures moved to the repo's list-of-targets `matches` shape. [ ] Live gate: one real Ghidriff JSON must confirm `name_matches` (only `address_matches` is read by other repo code). [ ] G3 deltas, noise, hints; G4 CLI/DOT.
+### [G7:callgraph-evolution]
+- [x] Pure evolution model, pair view and lineage builder. [ ] CLI `graph series`, composition (read pair projects read-only via nway PairReader, close each) and `ui_calls_evolution.py` tab wait for G4 and the GUI panel registry.
+### [D3:buildenv-core] Build-environment core (2026-10-14, Sonnet 5.5, worktree)
+- [x] Contracts, fingerprint, delta, pre-flight, `noise-map/1`, anchors, copy deck, view model, schemas in `docs/schemas/build-environment/`, synergy test on the committed real diec 3.21 goldens, `quality_flags` parity.
+- [ ] Not done: store, CLI, report (D4); card, controller, tooltips (D5); overlay wiring (D6, reuses `noise_map.row_effect`/`order_rows`); timeline (D7); DiE golden for the UPX image (live gate D8); G-DIE-1 (D9). `buildenv/auto_diec` and `confirm_before_run` settings belong to D5.
+### [WB3-S5:strings-delta]
+- [x] WB3-S5 basis rules, delta, edited pairs, review tiers (`strings/{basis,delta,edits,rank}.py`); `SYN-WB3-1` on SYNTHETIC inputs (`tests/fixtures/strings/synergy/`)
+- [ ] Not built here: anchor join (`StringsDelta.anchors`, S6), `format-spec` as an `EditRef.kind` value (reported as a reason instead; needs a contracts addition), real FLOSS/Ghidriff goldens (S9)
+
+### [D6:overlay]
+- [x] Pure overlay and tests (100k rows). [ ] S4 wiring: `build_tag` on `UnifiedRowView`, partition, navigator notice.
+### [G3:callgraph-deltas]
+- [x] Deltas, hub registry, API hints, groups, blast/entry, paths, leads; section 5 known answer reproduced (P first, L hub-only, 3 of 5 `called` flags cleared). [ ] Live gate: real Ghidriff label forms (`name_matches`, import labels) still unconfirmed; fixtures are synthetic. [ ] G4 CLI/JSON/DOT and a composition-root `EntryPort`/hint source.
+### [K3:kbcorrelation-service] KB-CVE correlator K3 (2026-10-14)
+- [x] components (tier D/E), manual pairs (grade B/X, KB9 copy), local plan, documentary context (stated CWE -> curated hypothesis, unknowns, limitations), JSON/Markdown export, `KbService`, production `ProjectPort`, `kb` dispatcher (`index`, `search`, `products`, `components`, `pairs`, `import-pair`, `plan`, `attach --repair`, `explain`, `export`); `cli_index` moved onto `WorkspaceStore`; offline E0 script steps 1-4 and 6 incl. SIGKILL at five crash points then idempotent repair; banned-word sweep
+- [ ] NOT done / open: step 5 (`rank` then `kb leads`, slice K4a); the 6-line `patchtrace/cli.py` hook (integrator); CSAF applicability report in the context; `kb attach` to a foreign project (W3); `kb plan`/`kb pairs` need K5; KEV adapter (K8); `ContextBundle` JSON schema; Windows CI run of the new tests (subprocess kill uses `os._exit(137)` there)
+### [WB1:S4:service-rank]
+- [x] Query engine, ranking, pair expansion, fuzzy and `SearchService`; synergy test (`test_container_size_beats_each_channel`), permutation-stable order, 100k-document and 100k-name timeout gates, cursor bound to index key and plan, too-broad cap. [ ] Not done: tool/advisory/IR sources (S8/S9) feed the service through `extra_specs`; `Evidence.seen_by` lists one origin (no cross-group corroboration); no `representation changed` change class 1 signal; unified summary, tool delta and series stay empty with a stated limitation.
+### [D4:buildenv-store-cli-report] (2026-10-14, Sonnet 5.5, worktree)
+- [x] `build-env` store with `test_old_reader_ignores_build_env_kind`; CLI `show`, `delta`, `timeline` (mounted on a local parser in tests); report section with injection fixtures.
+- [ ] Not done, integrator seams: `KINDS += 'build-env'`, the <= 6 line `cli.py` hook and `_command_name`, `reports.py` extras parameter that calls `buildenv.report`, `artifact_inspection.py` side-inspector seam. CLI does not persist fingerprints (the GUI card writes them, D5). Timeline verb reports per-hop toolchain only; the strip model is D7.
+
+### [WB3-S7a:strings-view-model]
+- [x] View-model, copy and tooltip entries with tests. [ ] S7b Qt panel (needs the GUI registry); [ ] `tooltips.register_entries()` hook (A7).
+
+### [G5:view-model]
+- [x] Pure view models and tests (`tests/test_callgraph_view_model.py`).
+- [ ] `ui_calls.py`, `ui_calls_tips.py`, `tests/test_ui_calls.py` after F5.
+
+### [WB3-S6:anchors-export-cli]
+- [x] Anchors, search rows, export, CLI dispatcher and tests (synthetic pair, built-in scan). [ ] Integrator: 6-line `cli.py` hook, `frozen_smoke` check of `strings scan --builtin --json` (A8, A13). [ ] Not built: derived-cache storage of tables and deltas (recomputed per call), Ghidriff `strings` input to the CLI (L1 links need it), review-order boost from anchor hits (by design none).
+
+### [K6:kbcorrelation-cvrf-fetch] KB-CVE correlator K6 (2026-10-14)
+- [x] `cvrf_fetch.py` and `cli_online.py` with 49 hermetic tests (fake opener, sockets denied): consent equality and `plan_sha`, offline refusal, 429/5xx/Retry-After, 32 MiB cap, cancel (between months, mid-read, in a retry wait), hostile redirects, wrong-month document, partial coverage exit 3.
+- [ ] Integrator: route `kb index sync` to `cli_online.main` in `kbcorrelation/cli.py` (hook text in the `cli_online` docstring); the live MSRC URL shape, document size and rate limits stay unverified until probe L1.
+
+### [WB1:S5S6:search-cli-view]
+[x] S5 search CLI and S6 view model (no widgets). [ ] Open: integrator hooks (cli.py, frozen_smoke COMMANDS, tooltips merge); Qt panel `ui_search.py` and `test_search_{ui,perf}.py` (instance D); `HitDelegate` highlight uses `ResultRowView.spans`.
+### [G4:callgraph-cli]
+- [x] CLI dispatcher, DOT and JSON export, schemas and drift test; G7 `graph series` verb (read-only pair projects, missing pair = unknown, exit 3). [ ] `cli.py` hook (`COMMANDS`, `_command_name`, `register` call) and a `cli_commands/graph.py` adapter once F1b lands. [ ] Live gate: DOT opened in a real Graphviz (never executed here); real Ghidriff label forms.
+
+### [K5:kbc-lineage-resolver] KB-CVE correlator K5 (2026-10-14)
+- [x] additive `winbindex.parse_rows` (md5-only and shared-KB rows kept, BASE, heading class), `kbcorrelation/{lineage,resolver}.py`, synthetic fixtures, tests incl. the grade property
+- [ ] open: wiring `IndexPort` and `kb pairs`/`kb plan` to `resolve` (integrator, K7); live check of the heading classes and `otherWindowsVersions` on a fresh record (needs the Winbindex host)
+
+### [K4a:kbcorrelation-leads] KB-CVE correlator K4a (2026-10-14)
+- [x] `leads`, `cli_leads` (`kb leads PROJECT [--cve] [--limit]`), `view_model`; E0 synergy golden `tests/fixtures/kbcorrelation/expected/synergy-leads.json` (baseline scores 26/25, 36/25, 36/35 reproduced); KEV never reorders functions; contested stays contested; stale on swapped orientation; lineage counts once.
+- [ ] NOT done / open: `patchtrace/cli.py` `kb` hook (integrator, see K3); run id in the stale fingerprint (needs the context row to record it); KEV, unified and secondary adapters (K8: `RealEngine` moves to `adapters/engine.py`); unified MAT-ANCHOR and anchor-coincidence membership; `.gitattributes` line for `tests/fixtures/kbcorrelation/expected/*.json`.
+### [K5w:pairs-plan-glue]
+- [x] K3/K5 glue: `kb pairs` / `kb plan` over the offline file index; tests `tests/test_kbc_pairs_index.py`.
+- [ ] `kb index import` accepting a Winbindex record (today the file is placed in `<workspace>/winbindex/` by hand); E1 network `PairPlan`.
+
+### [CAP-7:capa-hints]
+- [x] Hint table + `capability_context`; inventory extractor; tests `tests/test_capa_hints.py`.
+- [ ] Open: `rules-inventory-9.4.0.json` is DERIVED/UNVERIFIED (7 matched rules from the real goldens). Regenerate from the pinned capa-rules 9.4.0 with `--rules-dir`, then re-resolve the removed candidates (process-launch, privilege-identity, crypto-primitive, `load-code/*`) and restore only those that resolve.
+- [ ] Open: `--hypothesis CVE-ID` in `intel-tools pairs` (not on the CAP-7 card; integrator or CAP-5 follow-up) can call `capability_context`.
+### [K7:acquire-workflow]
+- [x] Non-UI K7: `acquisition/workflow.py`, `kbcorrelation/acquire.py`, `tests/test_acquisition_workflow.py`.
+- [ ] K7 UI (instance D): `ui_kb_online.py`, `tooltips_kb_online.py`; `kb acquire` CLI verb and `wiring` binding of `Acquirer` (integrator); dialog refactor onto the workflow (last).
+### [S8:search-tool-advisory-sources]
+- [x] WB1 S8: `search/sources/{tools,advisory}.py` (tool, advisory, CVE groups behind ports) with tests.
+- [ ] Integrator: bind `extra_specs`, `comparable`, and a `cve-snapshot` reader to the real stores.
+### [K7v:kb-acquire-cli]
+- [x] `kb acquire` verb, `Acquirer` binding in `wiring`, `kb index import --winbindex`. Integrator: hook `kb` in `patchtrace/cli.py` (see `kbcorrelation/cli.py`) if not yet applied.
+### [K1a:kev-core]
+- [x] K0 fixtures and vendored schema; K1a pure core, tests `tests/test_kev_{contracts,parse,join,view_model,boundaries,schemas}.py`.
+- [ ] K1b store, K2 transport/service/CLI, K3 GUI, K4 KB adapter, K5 project row/report, K6 live probe; A0 spec, A1-A12 integrator amendments (plan section 10).
+
+### [K4:kev-kb-adapter]
+- [x] `kev/kb_adapter.py`, `tests/test_kev_synergy.py` (items 1-8), `tests/test_kev_kb_integration.py` (fake edges).
+- [ ] Open until KB K8: item 9 (`test_three_lanes_stay_separate_for_cve_2024_38063`), real KB view-model run, contextual_rank byte-identity.
 ### [F2:qt-runtime]
 - [x] F2 Qt runtime built (tasks, settings, announce, metrics, runtime, qt_support, qt_gate); 20x gate green on Linux
 - [ ] F2 open: Windows 5x gate and the integrator full-suite runs; `gui/__init__.py` is F1-owned (F2 relies on a namespace package until F1 lands)
@@ -244,6 +380,12 @@
 - [ ] Open for PIL-A3 and PIL-B2: the carrier of `Evidence.level` (B1 signal confidence) and `Evidence.subject` (API name, capability namespace) on an `Observation` (A1 has no field for either); the 14 rows with `PilotRule.detectors == ()` are the ones plan s7 holds at tentative unless two components agree; B2 reads `Evaluation.conflict_ids` to force `contested`
 - [ ] Owner: the plan s9 PIL-B1 card still says "20 K rules" and asks for K edits that audit C already made (CWE-193 lives in its own family `off-by-one`, not under `bounds`); the two extra rows (R-FORMAT-STRING, R-OFF-BY-ONE) and INPUT's `BND` leaf are decisions beyond the draft table; `next_step` sentences are not part of the table (read model, C2); A1's `keys.DOMAINS` does not list `pilot-rules`
 - [ ] Not done: capa namespace rows (empty in v1 until CAP validates its tags; a later additive revision changes the digest and makes stored results stale); Windows and Python 3.12 CI for `tests/test_pilot_rules.py` (3.12.3 verified locally in a venv)
+### [K1b:kev-store]
+- [x] K1b snapshot store `kev/store.py`, tests `tests/test_kev_store.py`.
+### [K2:kev-transport-cli]
+- [x] K2 transport, service and Qt-free CLI `kev/{transport,service,cli}.py`, tests `tests/test_kev_{transport,service,cli}.py`.
+- [ ] Integrator: `kev` hook in `cli.py` (see docstring of `kev/cli.py`); K6 live gate must verify the canonical CISA URL and User-Agent acceptance before it is called verified.
+
 ### [PIL-A2:advisory-sources] Patch-intent localization advisory-side adapters (2026-10-14; plan `docs/specs/program-e/PIL-integration-plan.md` s9)
 - [x] `pilot/sources/{advisory,identity,kev,window,snapshot}.py` and `tests/test_pilot_sources_advisory.py` (K report adapter, CVE gate, KEV port with absence as context, confounded window, pairing verdict map, B3 snapshot and excerpt as K facts); gates `test_cve_gate_table` (35 rows plus a 1,350-combination oracle), `test_kev_absence_is_unknown_context`, `test_unified_beats_secondary_for_identity`, `test_confounding_counts_cves_fixed_on_newer`, every `detail` passes `sanitize_text`
 - [ ] Integrator: `pilot/sources/__init__.py` is created by PIL-A2 and PIL-A3 alike (keep one, a docstring only); add `status(self) -> ChannelStatus` to `ports.AdvisorySource` (`StoredAdvisorySource.status()` already provides it, so a partial advisory load is not read as complete); decide whether `KbWindowSource` moves into `ports.py`

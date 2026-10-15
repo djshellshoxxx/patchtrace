@@ -842,7 +842,8 @@ def _git_commit() -> str:
     return out if re.fullmatch(r'[0-9a-f]{40}', out) else 'unknown'
 
 
-def notice_text(doc: ThirdPartyDoc, ghidriff: Mapping, runtime_id: str) -> str:
+def notice_text(doc: ThirdPartyDoc, ghidriff: Mapping, runtime_id: str,
+                license_policy: Mapping | None = None) -> str:
     lines = [
         f'PatchTrace analysis runtime {runtime_id}', '',
         'This directory tree is an aggregate of separate programs. Each component keeps its own licence;',
@@ -859,7 +860,30 @@ def notice_text(doc: ThirdPartyDoc, ghidriff: Mapping, runtime_id: str) -> str:
         if len(item.license_files) > 6:
             lines.append(f'      ... and {len(item.license_files) - 6} more licence files')
     lines += ['', 'Machine-readable inventory: LICENSES/THIRD-PARTY.json', '']
+    lines += policy_notice_lines(license_policy)
     return '\n'.join(lines)
+
+
+def policy_notice_lines(license_policy: Mapping | None) -> list[str]:
+    """Plain statement of the GPL-family components, their policy status and what was left out (a policy gate)."""
+    if not license_policy:
+        return []
+    lines = ['Licence policy (an engineering policy gate in tools/backend_pin.json, not a legal compliance claim):']
+    for name, entry in sorted(license_policy.get('allowed', {}).items()):
+        if not entry.get('shipped', True):
+            status = 'NOT shipped (stripped from this payload)'
+        elif entry.get('owner_approved') is True:
+            status = 'shipped, owner approved'
+        else:
+            status = 'shipped, OWNER APPROVAL PENDING (release and publish builds are refused)'
+        lines.append(f'  {name} [{entry.get("spdx", "")}]: {status}')
+        lines.append(f'      role: {entry.get("role", "")}')
+        lines.append(f'      why: {entry.get("rationale", "")}')
+    if license_policy.get('allowed', {}).get('ghidra-GPL-dir', {}).get('shipped') is False:
+        lines += ['  Ghidra GPL/** (GNU demangler) is removed, so GNU demangling of non-PE targets is unavailable;',
+                  '  Windows PE uses the Apache-licensed Microsoft demangler.']
+    lines.append('')
+    return lines
 
 
 def source_offer_text(ghidriff_sha: str, tarball_name: str, tarball_sha: str, jdk_offer: Mapping,
@@ -1090,7 +1114,8 @@ def build_backend(pin_path: Path, platform: str, out_dir: Path, *, cache_dir: Pa
                   python: str | None = None, clock: Callable[[], datetime.datetime] | None = None,
                   git_commit: str | None = None, compile_bytecode: bool = True,
                   asset_limit: int = ASSET_LIMIT, split: bool = False,
-                  progress: Progress | None = None, source_builder: SourceBuilder | None = None) -> BuildResult:
+                  progress: Progress | None = None, source_builder: SourceBuilder | None = None,
+                  release: bool = False) -> BuildResult:
     """Build `<out_dir>/backend/{manifest.json,payload/}` plus the SPEC-06 importer ZIP for one platform."""
     if platform not in PLATFORMS:
         raise ValueError('platform must be windows or linux')
@@ -1202,13 +1227,24 @@ def build_backend(pin_path: Path, platform: str, out_dir: Path, *, cache_dir: Pa
         _copy_into(payload, f'SOURCES/{source_name}', ghidriff_tar)
         doc = ThirdPartyDoc(pin_sha256=hashlib.sha256(pin_bytes).hexdigest(), built_at=_utc_text(clock),
                             git_commit=git_commit or _git_commit(), components=tp_components)
+        checker = _load_sibling('check_backend_pin')
+        refused = (checker.copyleft_problems([(item.id, item.spdx) for item in doc.components], pin)
+                   + checker.shipped_gpl_dir_problems(_tree_files(payload), pin))
+        if refused:
+            _fail('PT-BUNDLE-LICENSE', '; '.join(refused))
+        pending = checker.unapproved_licenses(pin)
+        if pending and release:
+            _fail('PT-BUNDLE-LICENSE', f'owner approval pending for {", ".join(pending)}; a release build is refused')
+        if pending:
+            warnings.append(f'PT-BUNDLE-LICENSE policy gate: owner approval PENDING for {", ".join(pending)}; '
+                            'this acceptance build must not be published or released')
         missing = [path for item in doc.components for path in item.license_files if not (payload / path).is_file()]
         if missing:
             _fail('PT-BUNDLE-LICENSE', f'licence file(s) not in the payload: {missing[:3]!r}')
         (payload / 'SOURCES/SOURCE-OFFER.txt').write_text(
             source_offer_text(sha, source_name, tarball_entry['sha256'], pin['jdk_source_offer'], jdk_version),
             encoding='utf-8', newline='\n')
-        (payload / 'LICENSES/NOTICE.txt').write_text(notice_text(doc, pin['ghidriff'], runtime_id),
+        (payload / 'LICENSES/NOTICE.txt').write_text(notice_text(doc, pin['ghidriff'], runtime_id, pin.get('license_policy')),
                                                      encoding='utf-8', newline='\n')
         third_party_json = json.dumps(doc.model_dump(by_alias=True, mode='json', exclude_none=True),
                                       indent=2, sort_keys=True) + '\n'
@@ -1352,7 +1388,8 @@ def _run_build(args: argparse.Namespace) -> int:
     try:
         result = build_backend(args.pin, args.platform, args.out, cache_dir=args.cache_dir,
                                version=args.version, compile_bytecode=not args.no_compile,
-                               split=args.split, asset_limit=args.asset_limit, progress=progress)
+                               split=args.split, asset_limit=args.asset_limit, progress=progress,
+                               release=args.release)
     except BundleBuildError as error:
         print(f'error: {error}', file=sys.stderr)
         return EXIT_BUILD
@@ -1388,6 +1425,8 @@ def main(argv: list[str] | None = None) -> int:
     build.add_argument('--version', default='dev', help='release version used in archive names')
     build.add_argument('--split', action='store_true', help='split the archive when above the asset limit')
     build.add_argument('--asset-limit', type=int, default=ASSET_LIMIT)
+    build.add_argument('--release', action='store_true',
+                       help='refuse while any license_policy component lacks owner approval')
     build.add_argument('--no-compile', action='store_true', help='skip bytecode precompilation')
     build.add_argument('--json', action='store_true')
     build.set_defaults(func=_run_build)

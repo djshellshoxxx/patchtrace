@@ -1,0 +1,743 @@
+{
+  "SearchRow": {
+    "invalid": [],
+    "valid": [
+      {
+        "coverage": "changed and linked",
+        "doc_key": "strings:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "field": "strings",
+        "flags": [],
+        "function_ids": [
+          "rva:0x1030"
+        ],
+        "offsets": [
+          1536
+        ],
+        "side": "newer",
+        "status": "only-newer",
+        "text": "hello",
+        "title": "hello"
+      }
+    ]
+  },
+  "StringAnchorHit": {
+    "invalid": [
+      {
+        "label": "strength above anchor",
+        "value": {
+          "anchor_id": "anchor-1",
+          "contract": "strings-anchor-hit/1",
+          "kind": "api-name",
+          "lineage_group": "bytes:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "links": [
+            {
+              "evidence_ref": "run-1#0",
+              "function": {
+                "ambiguous": false,
+                "match_id": null,
+                "name": "sub_1030",
+                "project_function_id": null,
+                "rva": 4144,
+                "side": "newer"
+              },
+              "join": null,
+              "line": null,
+              "lineage_group": "bytes:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "pair_status": "modified",
+              "tier": "L1"
+            }
+          ],
+          "match": "exact",
+          "presence_newer": true,
+          "presence_older": false,
+          "strength": "confirmed",
+          "string_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        }
+      }
+    ],
+    "valid": [
+      {
+        "anchor_id": "anchor-1",
+        "contract": "strings-anchor-hit/1",
+        "kind": "api-name",
+        "lineage_group": "bytes:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "links": [
+          {
+            "evidence_ref": "run-1#0",
+            "function": {
+              "ambiguous": false,
+              "match_id": null,
+              "name": "sub_1030",
+              "project_function_id": null,
+              "rva": 4144,
+              "side": "newer"
+            },
+            "join": null,
+            "line": null,
+            "lineage_group": "bytes:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "pair_status": "modified",
+            "tier": "L1"
+          }
+        ],
+        "match": "exact",
+        "presence_newer": true,
+        "presence_older": false,
+        "strength": "anchor",
+        "string_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      }
+    ]
+  },
+  "StringBasis": {
+    "invalid": [
+      {
+        "label": "extra field",
+        "value": {
+          "artifact_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "contract": "strings-basis/1",
+          "language": {
+            "detected": null,
+            "selected": null
+          },
+          "min_length": 4,
+          "parts": [
+            {
+              "config_digest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+              "consent_sha256": null,
+              "executable_sha256": null,
+              "raw_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+              "run_id": "run-1",
+              "semantics_id": "ascii+utf16le-ascii/v1",
+              "source": "floss",
+              "source_version": "3.1.1",
+              "types": [
+                "static"
+              ]
+            }
+          ],
+          "rows_kept": 2,
+          "rows_seen": 2,
+          "side": "older",
+          "stages": {
+            "stack": {
+              "detail": "",
+              "state": "not-run"
+            },
+            "static": {
+              "detail": "",
+              "state": "complete"
+            }
+          },
+          "surprise": 1
+        }
+      },
+      {
+        "label": "more kept than seen",
+        "value": {
+          "artifact_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "contract": "strings-basis/1",
+          "language": {
+            "detected": null,
+            "selected": null
+          },
+          "min_length": 4,
+          "parts": [
+            {
+              "config_digest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+              "consent_sha256": null,
+              "executable_sha256": null,
+              "raw_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+              "run_id": "run-1",
+              "semantics_id": "ascii+utf16le-ascii/v1",
+              "source": "floss",
+              "source_version": "3.1.1",
+              "types": [
+                "static"
+              ]
+            }
+          ],
+          "rows_kept": 3,
+          "rows_seen": 2,
+          "side": "older",
+          "stages": {
+            "stack": {
+              "detail": "",
+              "state": "not-run"
+            },
+            "static": {
+              "detail": "",
+              "state": "complete"
+            }
+          }
+        }
+      },
+      {
+        "label": "no parts",
+        "value": {
+          "artifact_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "contract": "strings-basis/1",
+          "language": {
+            "detected": null,
+            "selected": null
+          },
+          "min_length": 4,
+          "parts": [],
+          "rows_kept": 2,
+          "rows_seen": 2,
+          "side": "older",
+          "stages": {
+            "stack": {
+              "detail": "",
+              "state": "not-run"
+            },
+            "static": {
+              "detail": "",
+              "state": "complete"
+            }
+          }
+        }
+      }
+    ],
+    "valid": [
+      {
+        "artifact_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "contract": "strings-basis/1",
+        "language": {
+          "detected": null,
+          "selected": null
+        },
+        "min_length": 4,
+        "parts": [
+          {
+            "config_digest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+            "consent_sha256": null,
+            "executable_sha256": null,
+            "raw_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "run_id": "run-1",
+            "semantics_id": "ascii+utf16le-ascii/v1",
+            "source": "floss",
+            "source_version": "3.1.1",
+            "types": [
+              "static"
+            ]
+          }
+        ],
+        "rows_kept": 2,
+        "rows_seen": 2,
+        "side": "older",
+        "stages": {
+          "stack": {
+            "detail": "",
+            "state": "not-run"
+          },
+          "static": {
+            "detail": "",
+            "state": "complete"
+          }
+        }
+      }
+    ]
+  },
+  "StringChange": {
+    "invalid": [
+      {
+        "label": "only-newer observed on the older side",
+        "value": {
+          "cues": [
+            "message"
+          ],
+          "display": "hello",
+          "edit": null,
+          "id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "length": 5,
+          "links": [
+            {
+              "evidence_ref": "run-1#0",
+              "function": {
+                "ambiguous": false,
+                "match_id": null,
+                "name": "sub_1030",
+                "project_function_id": null,
+                "rva": 4144,
+                "side": "newer"
+              },
+              "join": null,
+              "line": null,
+              "lineage_group": "bytes:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "pair_status": "modified",
+              "tier": "L1"
+            }
+          ],
+          "lookalike_of": null,
+          "newer": {
+            "encodings": [
+              "ASCII"
+            ],
+            "offsets": [
+              1536
+            ],
+            "region": ".rdata",
+            "rvas": [
+              8192
+            ],
+            "types": [
+              "static"
+            ]
+          },
+          "notes": [],
+          "older": {
+            "encodings": [
+              "ASCII"
+            ],
+            "offsets": [
+              1536
+            ],
+            "region": ".rdata",
+            "rvas": [
+              8192
+            ],
+            "types": [
+              "static"
+            ]
+          },
+          "reasons": [
+            "pair-modified"
+          ],
+          "review_tier": 1,
+          "status": "only-newer",
+          "value_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        }
+      },
+      {
+        "label": "cue outside the vocabulary",
+        "value": {
+          "cues": [
+            "scary"
+          ],
+          "display": "hello",
+          "edit": null,
+          "id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "length": 5,
+          "links": [
+            {
+              "evidence_ref": "run-1#0",
+              "function": {
+                "ambiguous": false,
+                "match_id": null,
+                "name": "sub_1030",
+                "project_function_id": null,
+                "rva": 4144,
+                "side": "newer"
+              },
+              "join": null,
+              "line": null,
+              "lineage_group": "bytes:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "pair_status": "modified",
+              "tier": "L1"
+            }
+          ],
+          "lookalike_of": null,
+          "newer": {
+            "encodings": [
+              "ASCII"
+            ],
+            "offsets": [
+              1536
+            ],
+            "region": ".rdata",
+            "rvas": [
+              8192
+            ],
+            "types": [
+              "static"
+            ]
+          },
+          "notes": [],
+          "older": null,
+          "reasons": [
+            "pair-modified"
+          ],
+          "review_tier": 1,
+          "status": "only-newer",
+          "value_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        }
+      },
+      {
+        "label": "review tier 8",
+        "value": {
+          "cues": [
+            "message"
+          ],
+          "display": "hello",
+          "edit": null,
+          "id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "length": 5,
+          "links": [
+            {
+              "evidence_ref": "run-1#0",
+              "function": {
+                "ambiguous": false,
+                "match_id": null,
+                "name": "sub_1030",
+                "project_function_id": null,
+                "rva": 4144,
+                "side": "newer"
+              },
+              "join": null,
+              "line": null,
+              "lineage_group": "bytes:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "pair_status": "modified",
+              "tier": "L1"
+            }
+          ],
+          "lookalike_of": null,
+          "newer": {
+            "encodings": [
+              "ASCII"
+            ],
+            "offsets": [
+              1536
+            ],
+            "region": ".rdata",
+            "rvas": [
+              8192
+            ],
+            "types": [
+              "static"
+            ]
+          },
+          "notes": [],
+          "older": null,
+          "reasons": [
+            "pair-modified"
+          ],
+          "review_tier": 8,
+          "status": "only-newer",
+          "value_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        }
+      }
+    ],
+    "valid": [
+      {
+        "cues": [
+          "message"
+        ],
+        "display": "hello",
+        "edit": null,
+        "id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "length": 5,
+        "links": [
+          {
+            "evidence_ref": "run-1#0",
+            "function": {
+              "ambiguous": false,
+              "match_id": null,
+              "name": "sub_1030",
+              "project_function_id": null,
+              "rva": 4144,
+              "side": "newer"
+            },
+            "join": null,
+            "line": null,
+            "lineage_group": "bytes:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "pair_status": "modified",
+            "tier": "L1"
+          }
+        ],
+        "lookalike_of": null,
+        "newer": {
+          "encodings": [
+            "ASCII"
+          ],
+          "offsets": [
+            1536
+          ],
+          "region": ".rdata",
+          "rvas": [
+            8192
+          ],
+          "types": [
+            "static"
+          ]
+        },
+        "notes": [],
+        "older": null,
+        "reasons": [
+          "pair-modified"
+        ],
+        "review_tier": 1,
+        "status": "only-newer",
+        "value_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      }
+    ]
+  },
+  "StringLink": {
+    "invalid": [],
+    "valid": [
+      {
+        "evidence_ref": "run-1#0",
+        "function": {
+          "ambiguous": false,
+          "match_id": null,
+          "name": "sub_1030",
+          "project_function_id": null,
+          "rva": 4144,
+          "side": "newer"
+        },
+        "join": null,
+        "line": null,
+        "lineage_group": "bytes:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "pair_status": "modified",
+        "tier": "L1"
+      }
+    ]
+  },
+  "StringsDelta": {
+    "invalid": [
+      {
+        "label": "value gate claims validation",
+        "value": {
+          "anchors": {
+            "digest": null,
+            "hits": []
+          },
+          "basis_notes": [],
+          "changes": [
+            {
+              "cues": [
+                "message"
+              ],
+              "display": "hello",
+              "edit": null,
+              "id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+              "length": 5,
+              "links": [
+                {
+                  "evidence_ref": "run-1#0",
+                  "function": {
+                    "ambiguous": false,
+                    "match_id": null,
+                    "name": "sub_1030",
+                    "project_function_id": null,
+                    "rva": 4144,
+                    "side": "newer"
+                  },
+                  "join": null,
+                  "line": null,
+                  "lineage_group": "bytes:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                  "pair_status": "modified",
+                  "tier": "L1"
+                }
+              ],
+              "lookalike_of": null,
+              "newer": {
+                "encodings": [
+                  "ASCII"
+                ],
+                "offsets": [
+                  1536
+                ],
+                "region": ".rdata",
+                "rvas": [
+                  8192
+                ],
+                "types": [
+                  "static"
+                ]
+              },
+              "notes": [],
+              "older": null,
+              "reasons": [
+                "pair-modified"
+              ],
+              "review_tier": 1,
+              "status": "only-newer",
+              "value_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+            }
+          ],
+          "comparable": true,
+          "contract": "strings-delta/1",
+          "counts": {
+            "only-newer": 1
+          },
+          "harmonized": {
+            "min_length": 4,
+            "types": [
+              "static"
+            ]
+          },
+          "newer_basis_digest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "older_basis_digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "pairing": {
+            "available": true,
+            "notes": []
+          },
+          "truncated": false,
+          "value_gate": "validated"
+        }
+      },
+      {
+        "label": "not comparable but carries changes",
+        "value": {
+          "anchors": {
+            "digest": null,
+            "hits": []
+          },
+          "basis_notes": [],
+          "changes": [
+            {
+              "cues": [
+                "message"
+              ],
+              "display": "hello",
+              "edit": null,
+              "id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+              "length": 5,
+              "links": [
+                {
+                  "evidence_ref": "run-1#0",
+                  "function": {
+                    "ambiguous": false,
+                    "match_id": null,
+                    "name": "sub_1030",
+                    "project_function_id": null,
+                    "rva": 4144,
+                    "side": "newer"
+                  },
+                  "join": null,
+                  "line": null,
+                  "lineage_group": "bytes:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                  "pair_status": "modified",
+                  "tier": "L1"
+                }
+              ],
+              "lookalike_of": null,
+              "newer": {
+                "encodings": [
+                  "ASCII"
+                ],
+                "offsets": [
+                  1536
+                ],
+                "region": ".rdata",
+                "rvas": [
+                  8192
+                ],
+                "types": [
+                  "static"
+                ]
+              },
+              "notes": [],
+              "older": null,
+              "reasons": [
+                "pair-modified"
+              ],
+              "review_tier": 1,
+              "status": "only-newer",
+              "value_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+            }
+          ],
+          "comparable": false,
+          "contract": "strings-delta/1",
+          "counts": {
+            "only-newer": 1
+          },
+          "harmonized": {
+            "min_length": 4,
+            "types": [
+              "static"
+            ]
+          },
+          "newer_basis_digest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "older_basis_digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "pairing": {
+            "available": true,
+            "notes": []
+          },
+          "truncated": false,
+          "value_gate": "unvalidated"
+        }
+      }
+    ],
+    "valid": [
+      {
+        "anchors": {
+          "digest": null,
+          "hits": []
+        },
+        "basis_notes": [],
+        "changes": [
+          {
+            "cues": [
+              "message"
+            ],
+            "display": "hello",
+            "edit": null,
+            "id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "length": 5,
+            "links": [
+              {
+                "evidence_ref": "run-1#0",
+                "function": {
+                  "ambiguous": false,
+                  "match_id": null,
+                  "name": "sub_1030",
+                  "project_function_id": null,
+                  "rva": 4144,
+                  "side": "newer"
+                },
+                "join": null,
+                "line": null,
+                "lineage_group": "bytes:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                "pair_status": "modified",
+                "tier": "L1"
+              }
+            ],
+            "lookalike_of": null,
+            "newer": {
+              "encodings": [
+                "ASCII"
+              ],
+              "offsets": [
+                1536
+              ],
+              "region": ".rdata",
+              "rvas": [
+                8192
+              ],
+              "types": [
+                "static"
+              ]
+            },
+            "notes": [],
+            "older": null,
+            "reasons": [
+              "pair-modified"
+            ],
+            "review_tier": 1,
+            "status": "only-newer",
+            "value_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          }
+        ],
+        "comparable": true,
+        "contract": "strings-delta/1",
+        "counts": {
+          "only-newer": 1
+        },
+        "harmonized": {
+          "min_length": 4,
+          "types": [
+            "static"
+          ]
+        },
+        "newer_basis_digest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "older_basis_digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "pairing": {
+          "available": true,
+          "notes": []
+        },
+        "truncated": false,
+        "value_gate": "unvalidated"
+      }
+    ]
+  }
+}

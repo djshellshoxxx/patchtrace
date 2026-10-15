@@ -8,7 +8,9 @@
         "attack": [],
         "feature_count": 0,
         "feature_rvas": [],
+        "features": [],
         "kind": "capability",
+        "labels": [],
         "location": {
           "artifact_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
           "attribution": "function-start",
@@ -41,7 +43,9 @@
         "filetype": "",
         "heuristic": false,
         "packer": null,
+        "part_path": "",
         "protector": null,
+        "raw_type": "",
         "source": "diec",
         "source_run_id": "run-1",
         "toolchain": "Example C 1.0",
@@ -80,6 +84,30 @@
         "site_rva": null,
         "source_fragment": null,
         "tool_run_id": "run-1"
+      }
+    ]
+  },
+  "PairCapabilityDelta": {
+    "invalid": [],
+    "valid": [
+      {
+        "changes": [],
+        "comparable": false,
+        "contract": "capa-pairs/1",
+        "counts": {},
+        "coverage": null,
+        "engine": "capa",
+        "flags": [],
+        "newer_run_id": null,
+        "notes": [],
+        "older_run_id": "run-1",
+        "pairing": "unavailable",
+        "reasons": [
+          "no stored run for the newer artifact"
+        ],
+        "truncated": false,
+        "unattributed": [],
+        "value_gate": "unvalidated"
       }
     ]
   },
@@ -150,7 +178,9 @@
             "attack": [],
             "feature_count": 0,
             "feature_rvas": [],
+            "features": [],
             "kind": "capability",
+            "labels": [],
             "location": {
               "artifact_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
               "attribution": "function-start",
@@ -176,6 +206,7 @@
         "counts": {
           "capabilities": 1
         },
+        "coverage": null,
         "engine": "capa",
         "environment": [],
         "image_base": 5368709120,

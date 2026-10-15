@@ -1,0 +1,345 @@
+{
+  "$defs": {
+    "ApiHit": {
+      "additionalProperties": false,
+      "properties": {
+        "api": {
+          "title": "Api",
+          "type": "string"
+        },
+        "family": {
+          "title": "Family",
+          "type": "string"
+        },
+        "rule_id": {
+          "title": "Rule Id",
+          "type": "string"
+        },
+        "rule_revision": {
+          "title": "Rule Revision",
+          "type": "string"
+        },
+        "via": {
+          "enum": [
+            "rule-hint",
+            "advisory-anchor",
+            "capa"
+          ],
+          "title": "Via",
+          "type": "string"
+        }
+      },
+      "required": [
+        "api",
+        "rule_id",
+        "rule_revision",
+        "family",
+        "via"
+      ],
+      "title": "ApiHit",
+      "type": "object"
+    },
+    "CalleeChange": {
+      "additionalProperties": false,
+      "properties": {
+        "api": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/ApiHit"
+          },
+          "title": "Api",
+          "type": "array"
+        },
+        "cls": {
+          "enum": [
+            "same-link",
+            "added-call",
+            "removed-call",
+            "call-to-new-function",
+            "callee-deleted",
+            "cannot-determine"
+          ],
+          "title": "Cls",
+          "type": "string"
+        },
+        "flags": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Flags",
+          "type": "array"
+        },
+        "newer_label": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Newer Label"
+        },
+        "newer_node": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Newer Node"
+        },
+        "older_label": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Older Label"
+        },
+        "older_node": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Older Node"
+        },
+        "pairing": {
+          "$ref": "#/$defs/Pairing"
+        },
+        "reason": {
+          "default": "",
+          "title": "Reason",
+          "type": "string"
+        }
+      },
+      "required": [
+        "cls",
+        "pairing"
+      ],
+      "title": "CalleeChange",
+      "type": "object"
+    },
+    "Opinion": {
+      "additionalProperties": false,
+      "description": "One engine's statement about a function's partners.",
+      "properties": {
+        "partners": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Partners",
+          "type": "array"
+        },
+        "via": {
+          "title": "Via",
+          "type": "string"
+        }
+      },
+      "required": [
+        "via",
+        "partners"
+      ],
+      "title": "Opinion",
+      "type": "object"
+    },
+    "Pairing": {
+      "additionalProperties": false,
+      "properties": {
+        "contract": {
+          "const": "workbench-graph-pairing/1",
+          "default": "workbench-graph-pairing/1",
+          "title": "Contract",
+          "type": "string"
+        },
+        "engines": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/Opinion"
+          },
+          "title": "Engines",
+          "type": "array"
+        },
+        "inferred": {
+          "default": false,
+          "title": "Inferred",
+          "type": "boolean"
+        },
+        "kind": {
+          "enum": [
+            "one",
+            "many",
+            "removed",
+            "added",
+            "unknown",
+            "contested"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "partners": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Partners",
+          "type": "array"
+        },
+        "via": {
+          "default": "",
+          "title": "Via",
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind"
+      ],
+      "title": "Pairing",
+      "type": "object"
+    }
+  },
+  "$id": "https://patchtrace.local/schemas/callgraph/1/CallDelta.json",
+  "additionalProperties": false,
+  "properties": {
+    "callers_listed_newer": {
+      "default": 0,
+      "minimum": 0,
+      "title": "Callers Listed Newer",
+      "type": "integer"
+    },
+    "callers_listed_older": {
+      "default": 0,
+      "minimum": 0,
+      "title": "Callers Listed Older",
+      "type": "integer"
+    },
+    "changes": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/CalleeChange"
+      },
+      "title": "Changes",
+      "type": "array"
+    },
+    "contract": {
+      "const": "workbench-graph-delta/1",
+      "default": "workbench-graph-delta/1",
+      "title": "Contract",
+      "type": "string"
+    },
+    "downgrade": {
+      "default": "none",
+      "enum": [
+        "none",
+        "renumber-only",
+        "hub-only"
+      ],
+      "title": "Downgrade",
+      "type": "string"
+    },
+    "ghidriff_diff_types": {
+      "default": [],
+      "items": {
+        "type": "string"
+      },
+      "title": "Ghidriff Diff Types",
+      "type": "array"
+    },
+    "limitations": {
+      "default": [],
+      "items": {
+        "type": "string"
+      },
+      "title": "Limitations",
+      "type": "array"
+    },
+    "match_id": {
+      "title": "Match Id",
+      "type": "string"
+    },
+    "newer_function_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Newer Function Id"
+    },
+    "newer_label": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Newer Label"
+    },
+    "older_function_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Older Function Id"
+    },
+    "older_label": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Older Label"
+    },
+    "omitted": {
+      "default": 0,
+      "minimum": 0,
+      "title": "Omitted",
+      "type": "integer"
+    },
+    "state": {
+      "enum": [
+        "compared",
+        "one-sided",
+        "not-comparable",
+        "unavailable"
+      ],
+      "title": "State",
+      "type": "string"
+    }
+  },
+  "required": [
+    "match_id",
+    "state"
+  ],
+  "title": "CallDelta",
+  "type": "object"
+}

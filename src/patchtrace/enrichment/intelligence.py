@@ -33,7 +33,7 @@ from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from functools import partial
 
-from ..netutil import Cancelled, TooManyAbandoned, interruptible
+from ..netutil import Cancelled, CapExceeded, DeadlineExceeded, TooManyAbandoned, interruptible, read_bounded
 from .contracts import EnrichmentError
 
 CVE_PATTERN = re.compile(r'CVE-\d{4}-\d{4,19}', re.ASCII)  # ASCII digits only: \d alone also matches Unicode digits
@@ -405,31 +405,23 @@ def _attempt(url, headers, opener, cancel, clock, deadline, now) -> tuple[bytes,
             digits = length.strip() if length is not None else ''
             if digits.isascii() and digits.isdigit() and (len(digits) > 12 or int(digits) > MAX_RESPONSE_BYTES):
                 raise EnrichmentError('PT-ENRICH-LIMIT', 'provider response exceeds 4 MiB')
-            data = bytearray()
-            # read1 returns after one socket receive, so the deadline is checked between receives.
-            read = getattr(response, 'read1', response.read)
-            while True:
-                _cancelled(cancel)
-                if clock() >= deadline:
-                    raise EnrichmentError('PT-ENRICH-NETWORK', 'total timeout exceeded', recoverable=True)
-                try:
-                    size = min(_CHUNK, MAX_RESPONSE_BYTES + 1 - len(data))
-                    chunk = interruptible(partial(read, size), cancel)
-                except Cancelled:
-                    raise EnrichmentError('PT-ENRICH-CANCEL', 'CVE fetch cancelled', recoverable=True) from None
-                except TooManyAbandoned:
-                    raise EnrichmentError('PT-ENRICH-NETWORK', 'previous requests still closing',
-                                          recoverable=True) from None
-                except TimeoutError:
-                    raise _Retry(None) from None
-                except (OSError, http.client.HTTPException):
-                    raise EnrichmentError('PT-ENRICH-NETWORK', 'connection failed while reading',
-                                          recoverable=True) from None
-                if not chunk:
-                    return bytes(data), url
-                data.extend(chunk)
-                if len(data) > MAX_RESPONSE_BYTES:
-                    raise EnrichmentError('PT-ENRICH-LIMIT', 'provider response exceeds 4 MiB')
+            try:
+                return read_bounded(response, MAX_RESPONSE_BYTES, deadline=deadline, clock=clock, cancel=cancel,
+                                    chunk=_CHUNK), url
+            except Cancelled:
+                raise EnrichmentError('PT-ENRICH-CANCEL', 'CVE fetch cancelled', recoverable=True) from None
+            except DeadlineExceeded:
+                raise EnrichmentError('PT-ENRICH-NETWORK', 'total timeout exceeded', recoverable=True) from None
+            except CapExceeded:
+                raise EnrichmentError('PT-ENRICH-LIMIT', 'provider response exceeds 4 MiB') from None
+            except TooManyAbandoned:
+                raise EnrichmentError('PT-ENRICH-NETWORK', 'previous requests still closing',
+                                      recoverable=True) from None
+            except TimeoutError:
+                raise _Retry(None) from None
+            except (OSError, http.client.HTTPException):
+                raise EnrichmentError('PT-ENRICH-NETWORK', 'connection failed while reading',
+                                      recoverable=True) from None
         finally:
             response.close()
     raise EnrichmentError('PT-ENRICH-NETWORK', 'too many redirects')

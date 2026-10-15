@@ -1,0 +1,365 @@
+{
+  "old_meta": {
+    "Executable SHA256": "c0ab62f3ac74f3513f3af72bf1b0bd4386356c85d3b3e0f0078317757c9abc64",
+    "Synthetic sample": true
+  },
+  "new_meta": {
+    "Executable SHA256": "7ce7faa1104fe24ca39194f4533f03267563de51c11a87eaa36797b16a723ac0",
+    "Synthetic sample": true
+  },
+  "functions": {
+    "added": [
+      {
+        "name": "FUN_140001f00",
+        "fullname": "FUN_140001f00",
+        "address": "140001f00",
+        "code": "int CheckLength(int n) {\n    return n;\n}",
+        "calling": [
+          "FUN_1400018c0"
+        ],
+        "called": [],
+        "sym_type": "FUNCTION",
+        "external": false
+      },
+      {
+        "name": "ntoskrnl.exe::ProbeForRead",
+        "fullname": "ntoskrnl.exe::ProbeForRead",
+        "address": "EXTERNAL:3f0010",
+        "code": null,
+        "calling": [
+          "FUN_1400018c0"
+        ],
+        "called": [],
+        "sym_type": "EXTERNAL",
+        "external": true
+      },
+      {
+        "name": "ntoskrnl.exe::EtwWriteTransfer",
+        "fullname": "ntoskrnl.exe::EtwWriteTransfer",
+        "address": "EXTERNAL:3f0020",
+        "code": null,
+        "calling": [
+          "FUN_140001d40"
+        ],
+        "called": [],
+        "sym_type": "EXTERNAL",
+        "external": true
+      }
+    ],
+    "deleted": [],
+    "modified": [
+      {
+        "old": {
+          "name": "DriverEntry",
+          "fullname": "DriverEntry",
+          "address": "140001000",
+          "code": null,
+          "calling": [],
+          "called": [
+            "FUN_140001500"
+          ],
+          "sym_type": "FUNCTION",
+          "external": false
+        },
+        "new": {
+          "name": "DriverEntry",
+          "fullname": "DriverEntry",
+          "address": "140001000",
+          "code": null,
+          "calling": [],
+          "called": [
+            "FUN_140001640"
+          ],
+          "sym_type": "FUNCTION",
+          "external": false
+        },
+        "diff_type": [
+          "called"
+        ],
+        "ratio": 0.5,
+        "match_types": [
+          "Symbols"
+        ]
+      },
+      {
+        "old": {
+          "name": "FUN_140001500",
+          "fullname": "FUN_140001500",
+          "address": "140001500",
+          "code": null,
+          "calling": [
+            "DriverEntry"
+          ],
+          "called": [
+            "FUN_140001800",
+            "FUN_140001600",
+            "FUN_140001c00",
+            "FUN_140001200"
+          ],
+          "sym_type": "FUNCTION",
+          "external": false
+        },
+        "new": {
+          "name": "FUN_140001640",
+          "fullname": "FUN_140001640",
+          "address": "140001640",
+          "code": null,
+          "calling": [
+            "DriverEntry"
+          ],
+          "called": [
+            "FUN_1400018c0",
+            "FUN_140001740",
+            "FUN_140001d40",
+            "FUN_140001340"
+          ],
+          "sym_type": "FUNCTION",
+          "external": false
+        },
+        "diff_type": [
+          "called"
+        ],
+        "ratio": 0.5,
+        "match_types": [
+          "Symbols"
+        ]
+      },
+      {
+        "old": {
+          "name": "FUN_140001600",
+          "fullname": "FUN_140001600",
+          "address": "140001600",
+          "code": "int FormatLine(int v) {\n    return v == 1;\n}",
+          "calling": [
+            "FUN_140001500"
+          ],
+          "called": [
+            "FUN_140001200"
+          ],
+          "sym_type": "FUNCTION",
+          "external": false
+        },
+        "new": {
+          "name": "FUN_140001740",
+          "fullname": "FUN_140001740",
+          "address": "140001740",
+          "code": "int FormatLine(int v) {\n    return v == 2;\n}",
+          "calling": [
+            "FUN_140001640"
+          ],
+          "called": [
+            "FUN_140001340"
+          ],
+          "sym_type": "FUNCTION",
+          "external": false
+        },
+        "diff_type": [
+          "code",
+          "called"
+        ],
+        "ratio": 0.5,
+        "match_types": [
+          "Symbols"
+        ]
+      },
+      {
+        "old": {
+          "name": "FUN_140001800",
+          "fullname": "FUN_140001800",
+          "address": "140001800",
+          "code": null,
+          "calling": [
+            "FUN_140001500"
+          ],
+          "called": [
+            "FUN_140001200",
+            "ntoskrnl.exe::ExAllocatePool2"
+          ],
+          "sym_type": "FUNCTION",
+          "external": false
+        },
+        "new": {
+          "name": "FUN_1400018c0",
+          "fullname": "FUN_1400018c0",
+          "address": "1400018c0",
+          "code": null,
+          "calling": [
+            "FUN_140001640"
+          ],
+          "called": [
+            "FUN_140001340",
+            "ntoskrnl.exe::ExAllocatePool2",
+            "ntoskrnl.exe::ProbeForRead",
+            "FUN_140001f00"
+          ],
+          "sym_type": "FUNCTION",
+          "external": false
+        },
+        "diff_type": [
+          "called"
+        ],
+        "ratio": 0.5,
+        "match_types": [
+          "Symbols"
+        ]
+      },
+      {
+        "old": {
+          "name": "FUN_140001c00",
+          "fullname": "FUN_140001c00",
+          "address": "140001c00",
+          "code": null,
+          "calling": [
+            "FUN_140001500"
+          ],
+          "called": [
+            "ntoskrnl.exe::EtwWrite"
+          ],
+          "sym_type": "FUNCTION",
+          "external": false
+        },
+        "new": {
+          "name": "FUN_140001d40",
+          "fullname": "FUN_140001d40",
+          "address": "140001d40",
+          "code": null,
+          "calling": [
+            "FUN_140001640"
+          ],
+          "called": [
+            "ntoskrnl.exe::EtwWrite",
+            "ntoskrnl.exe::EtwWriteTransfer"
+          ],
+          "sym_type": "FUNCTION",
+          "external": false
+        },
+        "diff_type": [
+          "called"
+        ],
+        "ratio": 0.5,
+        "match_types": [
+          "Symbols"
+        ]
+      }
+    ]
+  },
+  "md_credits": "SYNTHETIC call-graph fixture; not output from Ghidriff or a real build",
+  "matches": {
+    "name_matches": {
+      "DriverEntry": [
+        [
+          "DriverEntry",
+          [
+            "ExactBytesFunctionHasher"
+          ]
+        ]
+      ],
+      "FUN_140001500": [
+        [
+          "FUN_140001640",
+          [
+            "ExactBytesFunctionHasher"
+          ]
+        ]
+      ],
+      "FUN_140001600": [
+        [
+          "FUN_140001740",
+          [
+            "ExactBytesFunctionHasher"
+          ]
+        ]
+      ],
+      "FUN_140001800": [
+        [
+          "FUN_1400018c0",
+          [
+            "ExactBytesFunctionHasher"
+          ]
+        ]
+      ],
+      "FUN_140001c00": [
+        [
+          "FUN_140001d40",
+          [
+            "ExactBytesFunctionHasher"
+          ]
+        ]
+      ],
+      "FUN_140001200": [
+        [
+          "FUN_140001340",
+          [
+            "ExactBytesFunctionHasher"
+          ]
+        ]
+      ],
+      "ntoskrnl.exe::ExAllocatePool2": [
+        [
+          "ntoskrnl.exe::ExAllocatePool2",
+          [
+            "ExactBytesFunctionHasher"
+          ]
+        ]
+      ],
+      "ntoskrnl.exe::EtwWrite": [
+        [
+          "ntoskrnl.exe::EtwWrite",
+          [
+            "ExactBytesFunctionHasher"
+          ]
+        ]
+      ]
+    },
+    "address_matches": {
+      "140001000": [
+        [
+          "140001000",
+          [
+            "ExactBytesFunctionHasher"
+          ]
+        ]
+      ],
+      "140001500": [
+        [
+          "140001640",
+          [
+            "ExactBytesFunctionHasher"
+          ]
+        ]
+      ],
+      "140001600": [
+        [
+          "140001740",
+          [
+            "ExactBytesFunctionHasher"
+          ]
+        ]
+      ],
+      "140001800": [
+        [
+          "1400018c0",
+          [
+            "ExactBytesFunctionHasher"
+          ]
+        ]
+      ],
+      "140001c00": [
+        [
+          "140001d40",
+          [
+            "ExactBytesFunctionHasher"
+          ]
+        ]
+      ],
+      "140001200": [
+        [
+          "140001340",
+          [
+            "ExactBytesFunctionHasher"
+          ]
+        ]
+      ]
+    }
+  }
+}

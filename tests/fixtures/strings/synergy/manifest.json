@@ -1,0 +1,5 @@
+{
+  "synthetic": true,
+  "note": "SYN-WB3-1 inputs are built in tests (tests/strings_pe.py plus hand-made rows) and the Ghidriff-shaped file in ../pdiff. Replace with real FLOSS 3.1.1 and Ghidriff output in WB3-S9.",
+  "files": {"anchors.json": "cue context: advisory phrase, api hint, import lists"}
+}

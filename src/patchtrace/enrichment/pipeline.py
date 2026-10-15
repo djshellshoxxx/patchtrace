@@ -9,11 +9,14 @@ status degrades to `partial`. Missing evidence is `unavailable`, never an empty 
 from __future__ import annotations
 
 import contextlib
+import functools
 import gc
 import threading
 from collections.abc import Callable
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
+
+from pydantic import TypeAdapter
 
 from ..models import ComparisonProject
 from . import identity, ranking, signals, wil
@@ -161,6 +164,11 @@ def _locations_owned(views: RunView, items, model) -> bool:
     return True
 
 
+@functools.cache
+def _adapter(model) -> TypeAdapter:
+    return TypeAdapter(list[model])
+
+
 def _cached(cache, stage: str, key: str, model, compute: Callable[[], tuple], views: RunView):
     """Return (value_tuple, from_cache). Cache admission failure never fails the stage.
     Only fully completed values are admitted, so a cancelled or failed computation can
@@ -171,10 +179,8 @@ def _cached(cache, stage: str, key: str, model, compute: Callable[[], tuple], vi
         except EnrichmentError:
             payload = None
         if payload is not None:
-            import json
             try:
-                from pydantic import TypeAdapter
-                value = tuple(TypeAdapter(list[model]).validate_json(payload))
+                value = tuple(_adapter(model).validate_json(payload))
                 if _locations_owned(views, value, model):
                     return value, True
             except (ValueError, UnicodeError):
@@ -183,9 +189,8 @@ def _cached(cache, stage: str, key: str, model, compute: Callable[[], tuple], vi
     if any(getattr(item, 'status', 'complete') in {'cancelled', 'failed'} for item in value):
         return value, False
     if cache is not None:
-        import json
-        body = json.dumps([item.model_dump(mode='json') for item in value], sort_keys=True,
-                          separators=(',', ':')).encode('utf-8')
+        # Defaults are restored by validation on read; leaving them out cuts the bytes parsed on every hit.
+        body = _adapter(model).dump_json(list(value), exclude_defaults=True)
         try:
             cache.put(stage, key, body, {'stage': stage})
         except EnrichmentError:

@@ -1,0 +1,34 @@
+{
+  "contract": "intel-tools-goldens-derived/1",
+  "edits": {
+    "capa-library-derived-newer.json": [
+      "function rva 0x1070 (dyn) removed from feature_counts.functions (not recovered by capa)"
+    ],
+    "capa-library-derived-older.json": [
+      "function rva 0x1030 (host) moved from feature_counts.functions to library_functions as a FLIRT match",
+      "rule \"get hostname\" removed (a library function is skipped, so it has no matches)",
+      "function rva 0x1065 (dyn) removed from feature_counts.functions (not recovered by capa)"
+    ],
+    "capa-move-derived-newer.json": [
+      "rule \"get hostname\": the function-scope match address moves from rva 0x1053 to rva 0x1070 (only the match key; feature locations are unchanged)"
+    ]
+  },
+  "files": {
+    "capa-library-derived-newer.json": {
+      "derived_from": "capa-api-newer.json",
+      "sha256": "e183d23526871aa0348e793899757586bcb1db2dea3eb2482dbeeab91ef9cbc2",
+      "source_sha256": "9d0107a1ce3a102500d8bd9300cddd30a3e8ac68a6a06e24797922c028cfc154"
+    },
+    "capa-library-derived-older.json": {
+      "derived_from": "capa-api-older.json",
+      "sha256": "fd0b413f2553021bf2438a0cb7d63ac388cc06abbca2268a97c59942a6047c67",
+      "source_sha256": "2d8a0998645e638d76ddac4e289f4da584ce853a9ddc9b28ae63ecdc52f6bca0"
+    },
+    "capa-move-derived-newer.json": {
+      "derived_from": "capa-api-newer.json",
+      "sha256": "c216e21210d8ec2b4a71ba6fc865def2a201686a4af675eee9fb929797ca3cde",
+      "source_sha256": "9d0107a1ce3a102500d8bd9300cddd30a3e8ac68a6a06e24797922c028cfc154"
+    }
+  },
+  "label": "DERIVED: hand-edited copies of REAL capa 9.4.0 output on SYNTHETIC PEs; not tool output"
+}

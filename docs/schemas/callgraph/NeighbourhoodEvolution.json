@@ -1,0 +1,210 @@
+{
+  "$defs": {
+    "CalleeLineage": {
+      "additionalProperties": false,
+      "properties": {
+        "cells": {
+          "items": {
+            "enum": [
+              "present",
+              "absent",
+              "unknown"
+            ],
+            "type": "string"
+          },
+          "title": "Cells",
+          "type": "array"
+        },
+        "events": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/LineageEvent"
+          },
+          "title": "Events",
+          "type": "array"
+        },
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "labels_by_ordinal": {
+          "items": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "title": "Labels By Ordinal",
+          "type": "array"
+        }
+      },
+      "required": [
+        "id",
+        "labels_by_ordinal",
+        "cells"
+      ],
+      "title": "CalleeLineage",
+      "type": "object"
+    },
+    "Inconsistency": {
+      "additionalProperties": false,
+      "properties": {
+        "detail": {
+          "maxLength": 512,
+          "title": "Detail",
+          "type": "string"
+        },
+        "kind": {
+          "const": "same-build-callees-differ",
+          "title": "Kind",
+          "type": "string"
+        },
+        "ordinal": {
+          "minimum": 0,
+          "title": "Ordinal",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "kind",
+        "ordinal",
+        "detail"
+      ],
+      "title": "Inconsistency",
+      "type": "object"
+    },
+    "LineageEvent": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "enum": [
+            "appeared",
+            "dropped",
+            "reverted"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "ordinal": {
+          "minimum": 0,
+          "title": "Ordinal",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "kind",
+        "ordinal"
+      ],
+      "title": "LineageEvent",
+      "type": "object"
+    },
+    "OrdinalDigest": {
+      "additionalProperties": false,
+      "properties": {
+        "digest": {
+          "title": "Digest",
+          "type": "string"
+        },
+        "ordinal": {
+          "minimum": 0,
+          "title": "Ordinal",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "ordinal",
+        "digest"
+      ],
+      "title": "OrdinalDigest",
+      "type": "object"
+    }
+  },
+  "$id": "https://patchtrace.local/schemas/callgraph/1/NeighbourhoodEvolution.json",
+  "additionalProperties": false,
+  "properties": {
+    "builds": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Builds",
+      "type": "array"
+    },
+    "chain_id": {
+      "title": "Chain Id",
+      "type": "string"
+    },
+    "contract": {
+      "const": "workbench-graph-evolution/1",
+      "default": "workbench-graph-evolution/1",
+      "title": "Contract",
+      "type": "string"
+    },
+    "digest_by_ordinal": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/OrdinalDigest"
+      },
+      "title": "Digest By Ordinal",
+      "type": "array"
+    },
+    "focus_labels": {
+      "items": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "title": "Focus Labels",
+      "type": "array"
+    },
+    "inconsistencies": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/Inconsistency"
+      },
+      "title": "Inconsistencies",
+      "type": "array"
+    },
+    "limitations": {
+      "default": [],
+      "items": {
+        "type": "string"
+      },
+      "title": "Limitations",
+      "type": "array"
+    },
+    "lineages": {
+      "items": {
+        "$ref": "#/$defs/CalleeLineage"
+      },
+      "title": "Lineages",
+      "type": "array"
+    },
+    "series_id": {
+      "title": "Series Id",
+      "type": "string"
+    },
+    "truncated": {
+      "default": false,
+      "title": "Truncated",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "series_id",
+    "chain_id",
+    "builds",
+    "focus_labels",
+    "lineages"
+  ],
+  "title": "NeighbourhoodEvolution",
+  "type": "object"
+}

@@ -18,7 +18,6 @@ tests/fixtures/intel_tools/** text eol=lf
 tests/fixtures/kbcorrelation/** text eol=lf
 tests/fixtures/tier_w/** -text
 tools/backend_pin.json text eol=lf
-tests/fixtures/kbcorrelation/** text eol=lf
 docs/schemas/kbcorrelation/** text eol=lf
 site/** text eol=lf
 site/**/*.png binary
@@ -36,6 +35,13 @@ tests/fixtures/unified/*.jsonl text eol=lf
 tests/fixtures/unified/*.c text eol=lf
 tests/fixtures/unified/*.bin binary
 src/patchtrace/unified/extract/ghidra_script.py text eol=lf
+tests/fixtures/callgraph/** text eol=lf
+tests/fixtures/strings/** text eol=lf
+tests/fixtures/search/*.json text eol=lf
+tests/fixtures/buildenv/** text eol=lf
+tests/fixtures/kev/** text eol=lf
+docs/schemas/kev/** text eol=lf
+*.yar text eol=lf
 tests/fixtures/wbq/** text eol=lf
 tests/fixtures/kev/** text eol=lf
 tools/unified/corpus/** text eol=lf

@@ -1,0 +1,176 @@
+{
+ "9999999999999999999999999999999999999999999999999999999999999999": {
+  "fileInfo": {
+   "description": "Example driver",
+   "machineType": 34404,
+   "md5": "00000000000000000000000000000000",
+   "sha1": "1111111111111111111111111111111111111111",
+   "sha256": "8888888888888888888888888888888888888888888888888888888888888888",
+   "signingStatus": "Unknown",
+   "size": 1000,
+   "timestamp": 4000000000,
+   "version": "10.0.1.1",
+   "virtualSize": 131072
+  },
+  "windowsVersions": {}
+ },
+ "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa": {
+  "fileInfo": {
+   "description": "Example driver",
+   "machineType": 34404,
+   "md5": "00000000000000000000000000000000",
+   "sha1": "1111111111111111111111111111111111111111",
+   "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+   "signingStatus": "Unknown",
+   "size": 1000,
+   "timestamp": 4000000000,
+   "version": "10.0.26100.1 (WinBuild.synthetic)",
+   "virtualSize": 131072
+  },
+  "windowsVersions": {
+   "11-24H2": {
+    "BASE": {
+     "windowsVersionInfo": {
+      "isoSha256": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+      "releaseDate": "2098-10-01"
+     }
+    }
+   }
+  }
+ },
+ "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb": {
+  "fileInfo": {
+   "description": "Example driver",
+   "machineType": 34404,
+   "md5": "00000000000000000000000000000000",
+   "sha1": "1111111111111111111111111111111111111111",
+   "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+   "signingStatus": "Unknown",
+   "size": 1000,
+   "timestamp": 4000000000,
+   "version": "10.0.26100.90 (WinBuild.synthetic)",
+   "virtualSize": 131072
+  },
+  "windowsVersions": {
+   "11-24H2": {
+    "KB5096000": {
+     "updateInfo": {
+      "heading": "January 8, 2099-KB5096000 (OS Build 26100.90)",
+      "releaseDate": "2099-01-08",
+      "releaseVersion": "26100.90",
+      "updateUrl": "https://example.invalid/help/0"
+     }
+    }
+   }
+  }
+ },
+ "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc": {
+  "fileInfo": {
+   "description": "Example driver",
+   "machineType": 34404,
+   "md5": "00000000000000000000000000000000",
+   "sha1": "1111111111111111111111111111111111111111",
+   "sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+   "signingStatus": "Unknown",
+   "size": 1000,
+   "timestamp": 4000000000,
+   "version": "10.0.26100.100 (WinBuild.synthetic)",
+   "virtualSize": 131072
+  },
+  "windowsVersions": {
+   "11-24H2": {
+    "KB5097000": {
+     "updateInfo": {
+      "heading": "January 14, 2099-KB5097000 (OS Build 26100.100)",
+      "releaseDate": "2099-01-14",
+      "releaseVersion": "26100.100",
+      "updateUrl": "https://example.invalid/help/0"
+     }
+    },
+    "KB5098000": {
+     "updateInfo": {
+      "heading": "January 28, 2099-KB5098000 (OS Build 26100.110) Preview",
+      "releaseDate": "2099-01-28",
+      "releaseVersion": "26100.110",
+      "updateUrl": "https://example.invalid/help/0"
+     }
+    }
+   },
+   "BADKEY": {
+    "KBX": {
+     "updateInfo": {
+      "heading": "x",
+      "releaseDate": "2099-01-01",
+      "releaseVersion": "1.1",
+      "updateUrl": "https://example.invalid/help/0"
+     }
+    }
+   }
+  }
+ },
+ "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd": {
+  "fileInfo": {
+   "lastSectionPointerToRawData": 1536,
+   "lastSectionVirtualAddress": 126976,
+   "machineType": 34404,
+   "md5": "22222222222222222222222222222222",
+   "size": 1100,
+   "timestamp": 4000100000
+  },
+  "windowsVersions": {
+   "11-24H2": {
+    "KB5099001": {
+     "updateInfo": {
+      "heading": "February 11, 2099-KB5099001 (OS Builds 26200.120 and 26100.120)",
+      "otherWindowsVersions": [
+       "11-25H2"
+      ],
+      "releaseDate": "2099-02-11",
+      "releaseVersion": "26200.120",
+      "updateUrl": "https://example.invalid/help/0"
+     }
+    }
+   }
+  }
+ },
+ "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff": {
+  "fileInfo": {
+   "description": "Example driver",
+   "machineType": 34404,
+   "md5": "00000000000000000000000000000000",
+   "sha1": "1111111111111111111111111111111111111111",
+   "sha256": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+   "signingStatus": "Unknown",
+   "size": 1000,
+   "timestamp": 4000000000,
+   "version": "10.0.19045.50 (WinBuild.synthetic)",
+   "virtualSize": 131072
+  },
+  "windowsVersions": {
+   "10-22H2": {
+    "KB5099002": {
+     "updateInfo": {
+      "heading": "February 11, 2099-KB5099002 (OS Build 19045.50)",
+      "releaseDate": "2099-02-11",
+      "releaseVersion": "19045.50",
+      "updateUrl": "https://example.invalid/help/0"
+     }
+    }
+   }
+  }
+ },
+ "not-a-sha": {
+  "fileInfo": {
+   "description": "Example driver",
+   "machineType": 34404,
+   "md5": "00000000000000000000000000000000",
+   "sha1": "1111111111111111111111111111111111111111",
+   "signingStatus": "Unknown",
+   "size": 1000,
+   "timestamp": 4000000000,
+   "version": "10.0.1.1",
+   "virtualSize": 131072
+  },
+  "windowsVersions": {}
+ }
+}

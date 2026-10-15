@@ -1,0 +1,161 @@
+{
+  "$defs": {
+    "FunctionRef": {
+      "additionalProperties": false,
+      "properties": {
+        "ambiguous": {
+          "default": false,
+          "title": "Ambiguous",
+          "type": "boolean"
+        },
+        "match_id": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Match Id"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 256,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "project_function_id": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Project Function Id"
+        },
+        "rva": {
+          "anyOf": [
+            {
+              "maximum": 18446744073709551615,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Rva"
+        },
+        "side": {
+          "enum": [
+            "older",
+            "newer"
+          ],
+          "title": "Side",
+          "type": "string"
+        }
+      },
+      "required": [
+        "side"
+      ],
+      "title": "FunctionRef",
+      "type": "object"
+    }
+  },
+  "$id": "https://patchtrace.local/schemas/strings/1/StringLink.json",
+  "additionalProperties": false,
+  "properties": {
+    "evidence_ref": {
+      "maxLength": 256,
+      "minLength": 1,
+      "title": "Evidence Ref",
+      "type": "string"
+    },
+    "function": {
+      "$ref": "#/$defs/FunctionRef"
+    },
+    "join": {
+      "anyOf": [
+        {
+          "enum": [
+            "exact",
+            "contains"
+          ],
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Join"
+    },
+    "line": {
+      "anyOf": [
+        {
+          "minimum": 1,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Line"
+    },
+    "lineage_group": {
+      "maxLength": 128,
+      "minLength": 1,
+      "title": "Lineage Group",
+      "type": "string"
+    },
+    "pair_status": {
+      "enum": [
+        "added",
+        "removed",
+        "modified",
+        "unchanged",
+        "ambiguous",
+        "unknown"
+      ],
+      "title": "Pair Status",
+      "type": "string"
+    },
+    "tier": {
+      "enum": [
+        "L1",
+        "L2",
+        "L3",
+        "L4",
+        "L5",
+        "L6"
+      ],
+      "title": "Tier",
+      "type": "string"
+    }
+  },
+  "required": [
+    "tier",
+    "function",
+    "pair_status",
+    "lineage_group",
+    "evidence_ref"
+  ],
+  "title": "StringLink",
+  "type": "object"
+}

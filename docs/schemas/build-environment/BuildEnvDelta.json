@@ -1,0 +1,413 @@
+{
+  "$defs": {
+    "BuildChange": {
+      "additionalProperties": false,
+      "properties": {
+        "basis": {
+          "items": {
+            "enum": [
+              "pe-header",
+              "rich-header",
+              "debug-directory",
+              "load-config",
+              "imports",
+              "clr-header",
+              "sections",
+              "diec"
+            ],
+            "type": "string"
+          },
+          "maxItems": 4,
+          "title": "Basis",
+          "type": "array"
+        },
+        "change": {
+          "enum": [
+            "added",
+            "removed",
+            "changed",
+            "unchanged",
+            "one-sided-unknown"
+          ],
+          "title": "Change",
+          "type": "string"
+        },
+        "key": {
+          "enum": [
+            "compiler",
+            "compiler_version",
+            "linker",
+            "linker_field",
+            "linker_rich",
+            "build_tool",
+            "runtime_family",
+            "language",
+            "target_os",
+            "subsystem",
+            "os_version_field",
+            "subsystem_version_field",
+            "image_version_field",
+            "rich_signature",
+            "packer",
+            "protector",
+            "installer",
+            "obfuscator",
+            "managed",
+            "gs_cookie",
+            "cfg",
+            "aslr",
+            "repro",
+            "debug_entry_types",
+            "entropy_exec",
+            "overlay"
+          ],
+          "title": "Key",
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "toolchain",
+            "option",
+            "descriptive"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "newer": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Newer"
+        },
+        "older": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Older"
+        },
+        "strength": {
+          "enum": [
+            "strong",
+            "weak"
+          ],
+          "title": "Strength",
+          "type": "string"
+        }
+      },
+      "required": [
+        "key",
+        "older",
+        "newer",
+        "change",
+        "kind",
+        "strength",
+        "basis"
+      ],
+      "title": "BuildChange",
+      "type": "object"
+    },
+    "NoiseReason": {
+      "additionalProperties": false,
+      "properties": {
+        "classes": {
+          "items": {
+            "maxLength": 24,
+            "type": "string"
+          },
+          "maxItems": 12,
+          "title": "Classes",
+          "type": "array"
+        },
+        "code": {
+          "const": "toolchain-differs",
+          "title": "Code",
+          "type": "string"
+        },
+        "effect": {
+          "enum": [
+            "tag",
+            "order"
+          ],
+          "title": "Effect",
+          "type": "string"
+        },
+        "why": {
+          "maxLength": 200,
+          "title": "Why",
+          "type": "string"
+        }
+      },
+      "required": [
+        "code",
+        "classes",
+        "effect",
+        "why"
+      ],
+      "title": "NoiseReason",
+      "type": "object"
+    },
+    "PreflightWarning": {
+      "additionalProperties": false,
+      "properties": {
+        "basis": {
+          "items": {
+            "enum": [
+              "pe-header",
+              "rich-header",
+              "debug-directory",
+              "load-config",
+              "imports",
+              "clr-header",
+              "sections",
+              "diec"
+            ],
+            "type": "string"
+          },
+          "maxItems": 4,
+          "title": "Basis",
+          "type": "array"
+        },
+        "code": {
+          "enum": [
+            "packed",
+            "protected",
+            "managed",
+            "installer",
+            "overlay-large",
+            "packed-one-side",
+            "toolchain-differs",
+            "tool-unavailable",
+            "heuristic-only",
+            "stale-evidence",
+            "sources-disagree"
+          ],
+          "title": "Code",
+          "type": "string"
+        },
+        "detail": {
+          "maxLength": 400,
+          "title": "Detail",
+          "type": "string"
+        },
+        "severity": {
+          "enum": [
+            "notice",
+            "caution"
+          ],
+          "title": "Severity",
+          "type": "string"
+        },
+        "side": {
+          "enum": [
+            "older",
+            "newer",
+            "both"
+          ],
+          "title": "Side",
+          "type": "string"
+        },
+        "summary": {
+          "maxLength": 160,
+          "title": "Summary",
+          "type": "string"
+        },
+        "teach_id": {
+          "anyOf": [
+            {
+              "maxLength": 40,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Teach Id"
+        }
+      },
+      "required": [
+        "code",
+        "side",
+        "severity",
+        "summary",
+        "detail",
+        "basis",
+        "teach_id"
+      ],
+      "title": "PreflightWarning",
+      "type": "object"
+    }
+  },
+  "$id": "https://patchtrace.local/schemas/build-environment/1/BuildEnvDelta.json",
+  "additionalProperties": false,
+  "properties": {
+    "changes": {
+      "items": {
+        "$ref": "#/$defs/BuildChange"
+      },
+      "maxItems": 128,
+      "title": "Changes",
+      "type": "array"
+    },
+    "comparable": {
+      "title": "Comparable",
+      "type": "boolean"
+    },
+    "contract": {
+      "const": "build-environment/1",
+      "default": "build-environment/1",
+      "title": "Contract",
+      "type": "string"
+    },
+    "counts": {
+      "additionalProperties": {
+        "minimum": 0,
+        "type": "integer"
+      },
+      "maxProperties": 16,
+      "propertyNames": {
+        "maxLength": 32
+      },
+      "title": "Counts",
+      "type": "object"
+    },
+    "delta_id": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Delta Id",
+      "type": "string"
+    },
+    "limits_hit": {
+      "items": {
+        "pattern": "^[a-z0-9][a-z0-9-]{0,39}$",
+        "type": "string"
+      },
+      "maxItems": 8,
+      "title": "Limits Hit",
+      "type": "array"
+    },
+    "map_version": {
+      "const": "noise-map/1",
+      "default": "noise-map/1",
+      "title": "Map Version",
+      "type": "string"
+    },
+    "newer_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Newer Sha256",
+      "type": "string"
+    },
+    "noise": {
+      "items": {
+        "$ref": "#/$defs/NoiseReason"
+      },
+      "maxItems": 4,
+      "title": "Noise",
+      "type": "array"
+    },
+    "older_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Older Sha256",
+      "type": "string"
+    },
+    "options_changed": {
+      "items": {
+        "enum": [
+          "compiler",
+          "compiler_version",
+          "linker",
+          "linker_field",
+          "linker_rich",
+          "build_tool",
+          "runtime_family",
+          "language",
+          "target_os",
+          "subsystem",
+          "os_version_field",
+          "subsystem_version_field",
+          "image_version_field",
+          "rich_signature",
+          "packer",
+          "protector",
+          "installer",
+          "obfuscator",
+          "managed",
+          "gs_cookie",
+          "cfg",
+          "aslr",
+          "repro",
+          "debug_entry_types",
+          "entropy_exec",
+          "overlay"
+        ],
+        "type": "string"
+      },
+      "maxItems": 8,
+      "title": "Options Changed",
+      "type": "array"
+    },
+    "orientation": {
+      "const": "older->newer",
+      "default": "older->newer",
+      "title": "Orientation",
+      "type": "string"
+    },
+    "preflight": {
+      "items": {
+        "$ref": "#/$defs/PreflightWarning"
+      },
+      "maxItems": 16,
+      "title": "Preflight",
+      "type": "array"
+    },
+    "reasons": {
+      "items": {
+        "pattern": "^[a-z0-9][a-z0-9-]{0,39}$",
+        "type": "string"
+      },
+      "maxItems": 12,
+      "title": "Reasons",
+      "type": "array"
+    },
+    "toolchain": {
+      "enum": [
+        "same",
+        "differs",
+        "unknown"
+      ],
+      "title": "Toolchain",
+      "type": "string"
+    },
+    "toolchain_corroborated": {
+      "title": "Toolchain Corroborated",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "delta_id",
+    "older_sha256",
+    "newer_sha256",
+    "comparable",
+    "reasons",
+    "toolchain",
+    "toolchain_corroborated",
+    "options_changed",
+    "changes",
+    "preflight",
+    "noise",
+    "limits_hit",
+    "counts"
+  ],
+  "title": "BuildEnvDelta",
+  "type": "object"
+}

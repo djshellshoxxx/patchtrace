@@ -1,0 +1,91 @@
+{
+  "$id": "https://patchtrace.local/schemas/build-environment/1/PreflightWarning.json",
+  "additionalProperties": false,
+  "properties": {
+    "basis": {
+      "items": {
+        "enum": [
+          "pe-header",
+          "rich-header",
+          "debug-directory",
+          "load-config",
+          "imports",
+          "clr-header",
+          "sections",
+          "diec"
+        ],
+        "type": "string"
+      },
+      "maxItems": 4,
+      "title": "Basis",
+      "type": "array"
+    },
+    "code": {
+      "enum": [
+        "packed",
+        "protected",
+        "managed",
+        "installer",
+        "overlay-large",
+        "packed-one-side",
+        "toolchain-differs",
+        "tool-unavailable",
+        "heuristic-only",
+        "stale-evidence",
+        "sources-disagree"
+      ],
+      "title": "Code",
+      "type": "string"
+    },
+    "detail": {
+      "maxLength": 400,
+      "title": "Detail",
+      "type": "string"
+    },
+    "severity": {
+      "enum": [
+        "notice",
+        "caution"
+      ],
+      "title": "Severity",
+      "type": "string"
+    },
+    "side": {
+      "enum": [
+        "older",
+        "newer",
+        "both"
+      ],
+      "title": "Side",
+      "type": "string"
+    },
+    "summary": {
+      "maxLength": 160,
+      "title": "Summary",
+      "type": "string"
+    },
+    "teach_id": {
+      "anyOf": [
+        {
+          "maxLength": 40,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Teach Id"
+    }
+  },
+  "required": [
+    "code",
+    "side",
+    "severity",
+    "summary",
+    "detail",
+    "basis",
+    "teach_id"
+  ],
+  "title": "PreflightWarning",
+  "type": "object"
+}

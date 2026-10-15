@@ -1,0 +1,64 @@
+{
+  "$id": "https://patchtrace.local/schemas/callgraph/1/ObservedPaths.json",
+  "additionalProperties": false,
+  "properties": {
+    "completeness": {
+      "enum": [
+        "changed-set-lists",
+        "whole-program",
+        "unknown"
+      ],
+      "title": "Completeness",
+      "type": "string"
+    },
+    "contract": {
+      "const": "workbench-graph-paths/1",
+      "default": "workbench-graph-paths/1",
+      "title": "Contract",
+      "type": "string"
+    },
+    "labels": {
+      "additionalProperties": {
+        "type": "string"
+      },
+      "title": "Labels",
+      "type": "object"
+    },
+    "note": {
+      "title": "Note",
+      "type": "string"
+    },
+    "paths": {
+      "items": {
+        "items": {
+          "type": "string"
+        },
+        "type": "array"
+      },
+      "title": "Paths",
+      "type": "array"
+    },
+    "side": {
+      "enum": [
+        "older",
+        "newer"
+      ],
+      "title": "Side",
+      "type": "string"
+    },
+    "truncated": {
+      "title": "Truncated",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "side",
+    "paths",
+    "labels",
+    "truncated",
+    "completeness",
+    "note"
+  ],
+  "title": "ObservedPaths",
+  "type": "object"
+}

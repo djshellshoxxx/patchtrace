@@ -1,0 +1,414 @@
+{
+  "$defs": {
+    "EditRef": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "enum": [
+            "insert",
+            "delete",
+            "replace",
+            "prefix",
+            "suffix"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "of": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Of",
+          "type": "string"
+        }
+      },
+      "required": [
+        "of",
+        "kind"
+      ],
+      "title": "EditRef",
+      "type": "object"
+    },
+    "FunctionRef": {
+      "additionalProperties": false,
+      "properties": {
+        "ambiguous": {
+          "default": false,
+          "title": "Ambiguous",
+          "type": "boolean"
+        },
+        "match_id": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Match Id"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 256,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "project_function_id": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Project Function Id"
+        },
+        "rva": {
+          "anyOf": [
+            {
+              "maximum": 18446744073709551615,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Rva"
+        },
+        "side": {
+          "enum": [
+            "older",
+            "newer"
+          ],
+          "title": "Side",
+          "type": "string"
+        }
+      },
+      "required": [
+        "side"
+      ],
+      "title": "FunctionRef",
+      "type": "object"
+    },
+    "SideObservation": {
+      "additionalProperties": false,
+      "properties": {
+        "encodings": {
+          "default": [],
+          "items": {
+            "enum": [
+              "ASCII",
+              "UTF-16LE",
+              "UTF-8"
+            ],
+            "type": "string"
+          },
+          "title": "Encodings",
+          "type": "array"
+        },
+        "offsets": {
+          "default": [],
+          "items": {
+            "maximum": 18446744073709551615,
+            "minimum": 0,
+            "type": "integer"
+          },
+          "maxItems": 16,
+          "title": "Offsets",
+          "type": "array"
+        },
+        "region": {
+          "anyOf": [
+            {
+              "maxLength": 64,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Region"
+        },
+        "rvas": {
+          "default": [],
+          "items": {
+            "maximum": 18446744073709551615,
+            "minimum": 0,
+            "type": "integer"
+          },
+          "maxItems": 16,
+          "title": "Rvas",
+          "type": "array"
+        },
+        "types": {
+          "default": [],
+          "items": {
+            "enum": [
+              "static",
+              "stack",
+              "tight",
+              "decoded",
+              "language"
+            ],
+            "type": "string"
+          },
+          "title": "Types",
+          "type": "array"
+        }
+      },
+      "title": "SideObservation",
+      "type": "object"
+    },
+    "StringLink": {
+      "additionalProperties": false,
+      "properties": {
+        "evidence_ref": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Evidence Ref",
+          "type": "string"
+        },
+        "function": {
+          "$ref": "#/$defs/FunctionRef"
+        },
+        "join": {
+          "anyOf": [
+            {
+              "enum": [
+                "exact",
+                "contains"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Join"
+        },
+        "line": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Line"
+        },
+        "lineage_group": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Lineage Group",
+          "type": "string"
+        },
+        "pair_status": {
+          "enum": [
+            "added",
+            "removed",
+            "modified",
+            "unchanged",
+            "ambiguous",
+            "unknown"
+          ],
+          "title": "Pair Status",
+          "type": "string"
+        },
+        "tier": {
+          "enum": [
+            "L1",
+            "L2",
+            "L3",
+            "L4",
+            "L5",
+            "L6"
+          ],
+          "title": "Tier",
+          "type": "string"
+        }
+      },
+      "required": [
+        "tier",
+        "function",
+        "pair_status",
+        "lineage_group",
+        "evidence_ref"
+      ],
+      "title": "StringLink",
+      "type": "object"
+    }
+  },
+  "$id": "https://patchtrace.local/schemas/strings/1/StringChange.json",
+  "additionalProperties": false,
+  "properties": {
+    "cues": {
+      "default": [],
+      "items": {
+        "enum": [
+          "message",
+          "format",
+          "path",
+          "registry",
+          "url",
+          "guid",
+          "api-name",
+          "dynamic-api",
+          "dll-name",
+          "pdb-path",
+          "version",
+          "identifier",
+          "advisory-text",
+          "advisory-api",
+          "lookalike",
+          "secret-like",
+          "resource",
+          "noise-like"
+        ],
+        "type": "string"
+      },
+      "maxItems": 8,
+      "title": "Cues",
+      "type": "array"
+    },
+    "display": {
+      "maxLength": 256,
+      "title": "Display",
+      "type": "string"
+    },
+    "edit": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/EditRef"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "id": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Id",
+      "type": "string"
+    },
+    "length": {
+      "minimum": 0,
+      "title": "Length",
+      "type": "integer"
+    },
+    "links": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/StringLink"
+      },
+      "maxItems": 8,
+      "title": "Links",
+      "type": "array"
+    },
+    "lookalike_of": {
+      "anyOf": [
+        {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Lookalike Of"
+    },
+    "newer": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/SideObservation"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "notes": {
+      "default": [],
+      "items": {
+        "maxLength": 256,
+        "type": "string"
+      },
+      "title": "Notes",
+      "type": "array"
+    },
+    "older": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/SideObservation"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "reasons": {
+      "default": [],
+      "items": {
+        "maxLength": 256,
+        "type": "string"
+      },
+      "title": "Reasons",
+      "type": "array"
+    },
+    "review_tier": {
+      "maximum": 7,
+      "minimum": 1,
+      "title": "Review Tier",
+      "type": "integer"
+    },
+    "status": {
+      "enum": [
+        "only-older",
+        "only-newer",
+        "both",
+        "representation-changed",
+        "edited",
+        "not-compared",
+        "indeterminate"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "value_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Value Sha256",
+      "type": "string"
+    }
+  },
+  "required": [
+    "id",
+    "value_sha256",
+    "display",
+    "length",
+    "status",
+    "review_tier"
+  ],
+  "title": "StringChange",
+  "type": "object"
+}

@@ -246,12 +246,12 @@ def test_malformed_file_is_exit_2_and_the_index_is_unchanged(run, bad):
     """Plan 10.1 step 1: a malformed file -> 2 and the index (and object store) is unchanged, even in a batch."""
     run('import', fx('cvrf-2099-Feb.json'))
     before = sorted(p.name for p in run.ws.rglob('*') if p.is_file())
-    manifest = (run.ws / cli_index.MANIFEST_NAME).read_bytes()
+    ids = [d['doc_id'] for d in run('status')[1]['result']['documents']]
     code, doc, err = run('import', fx('cvrf-2099-Feb-empty.xml'), fx(bad))
     assert code == 2 and doc['status'] == 'failed' and doc['result']['index_changed'] is False
     assert doc['result']['rejected'][0]['file'] == bad and err.startswith('error:')
     assert sorted(p.name for p in run.ws.rglob('*') if p.is_file()) == before
-    assert (run.ws / cli_index.MANIFEST_NAME).read_bytes() == manifest
+    assert [d['doc_id'] for d in run('status')[1]['result']['documents']] == ids
 
 
 def test_missing_file_and_oversize_file_are_exit_2(run, tmp_path):
@@ -302,11 +302,11 @@ def test_empty_workspace_is_exit_4_for_status_and_verify(run):
         assert code == 4 and doc['status'] == 'unavailable'
 
 
-def test_damaged_manifest_is_a_runtime_error(run):
+def test_damaged_database_is_a_runtime_error(run):
     run('import', fx('cvrf-2099-Feb.json'))
-    (run.ws / cli_index.MANIFEST_NAME).write_text('{not json', encoding='utf-8')
+    (run.ws / 'kbc.sqlite3').write_bytes(b'not a database' * 100)
     code, doc, _ = run('status')
-    assert code == 3 and 'damaged' in doc['error']
+    assert code == 3 and 'PT-KBC-STORAGE' in doc['error']
 
 
 def test_arguments_and_help(run, capsys):

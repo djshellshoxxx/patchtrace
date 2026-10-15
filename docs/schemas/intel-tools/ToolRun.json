@@ -261,7 +261,8 @@
             "PT-TOOL-STALE",
             "PT-TOOL-MISMATCH",
             "PT-TOOL-STORE",
-            "PT-TOOL-CONSENT"
+            "PT-TOOL-CONSENT",
+            "PT-TOOL-PAIRING"
           ],
           "type": "string"
         },

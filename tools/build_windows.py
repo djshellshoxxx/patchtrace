@@ -10,7 +10,13 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 # Pure shared helpers; importing build_linux runs no build.
-from build_linux import attach_backend, check_archive_size, full_archive_name, parse_args, sha256_file  # noqa: E402
+from build_linux import (  # noqa: E402
+    attach_backend,
+    check_archive_size,
+    full_archive_name,
+    parse_args,
+    sha256_file,
+)
 
 PROTOBUF_PIN = '7.36.2'
 # SPEC-10b §2/§9: BinExport2 notices; build refuses to publish without them.
@@ -84,7 +90,7 @@ def main(argv=None):
     shutil.copytree(bundled_notices, notices / 'upstream', dirs_exist_ok=True)
     for name in ['PySide6', 'PySide6_Essentials', 'PySide6_Addons', 'PySide6_WebEngine', 'PySide6_Pdf', 'shiboken6', 'pydantic',
                  'pydantic_core', 'PyInstaller', 'annotated-types', 'typing_extensions', 'typing-inspection',
-                 'protobuf', *[n for n in ('rapidfuzz', 'yara-x') if _installed(n)]]:
+                 'protobuf', *[n for n in ('rapidfuzz', 'yara-x', 'iced-x86') if _installed(n)]]:
         dist = importlib.metadata.distribution(name)
         versions[name] = dist.version
         for file in dist.files or []:
@@ -128,7 +134,7 @@ def main(argv=None):
     print(archive)
     if args.full:  # the lite smoke above is unchanged; backend/ is attached after it
         attach_backend(package, args.backend_payload, version=args.version, platform_key='windows', root=root,
-                       allow_internal_symlinks=False)
+                       allow_internal_symlinks=False, release=args.release)
         full = Path(shutil.make_archive(str(root / 'dist' / full_archive_name(args.version, 'windows')[:-4]),
                                         'zip', root_dir=root / 'dist', base_dir='PatchTrace'))
         check_archive_size(full)

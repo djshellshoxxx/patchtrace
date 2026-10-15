@@ -313,6 +313,129 @@ Toolchain for every live line: Ghidra 12.0.4 PUBLIC (archive SHA-256 `c3b458661d
 Found and fixed while building: `collect_data_files` collected nothing when a stale editable install shadowed the source tree (the hook now uses its own repository path); a sibling directory named `ghidra` next to the script would shadow Ghidra's Java package (the script now lives alone in `script/`); strict `.pdata` union equality confirmed only 17 of 38 MinGW primaries (alignment padding: tolerance rule, 38 of 38); a bare `[disp32]` / `[GS:0x30]` displacement was unlocated; `Ordinal_<n>` export placeholders were taken as aliases; raw bidi characters in regex literals were replaced by escapes; `.gitattributes` gaps closed (script LF so its hash is the same on every OS, notice bytes, fixtures).
 Not verified here, only the `live-unified` workflow can: everything on Windows (JVM, Job Object, pyghidra and paths on `windows-latest`), MSVC-built fixtures (operand typing and RVA-form switches were seen on clang and MinGW code only), a real Ghidriff-written GZF on Windows through `retain_gzf`, `content_digest` equality across operating systems on the same DLL bytes, the Windows frozen smoke U1 (and U2 once S0b lands) and the Windows PyInstaller hook, the FID `lib` marker, and BinDiff `--md_index` parity. Scale beyond 4,060 functions per side (L-35: 60k) was not measured.
 
+### [WB3-S0:strings-core] strings table gate
+Linux, Python 3.x shared host, synthetic rows: load of two 200k-row sides 0.2-0.3 s (limit 4 s); tracemalloc peak 52 MiB (limit 400 MiB); sidecar 16.9 MiB per side. Windows leg and real-binary string counts not measured.
+### [WB3-S1-S3:strings-sources-scan]
+| check | evidence |
+|---|---|
+| built-in scan equals FLOSS 3.1.1 static goldens (synthetic pairs) | `tests/test_strings_scan.py::test_scan_matches_floss_goldens` and `test_scan_matches_the_decode_goldens` |
+| scan throughput, 64 MiB, Linux, shared host | code-like data about 125 MB/s, all-zero data about 320 MB/s, pathological random data (a string every ~80 bytes) about 47 MB/s; the 100 MB/s target holds for sparse data only; real binaries and the Windows leg are unmeasured |
+### [G1:callgraph-kernel]
+Automated only: 400-trial differential vs NetworkX (SCC, ancestors, descendants, BFS, multi-source, distance, simple-path lengths), hash-seed determinism, 60k node / 447k edge build and algorithm gates (budgets 5x-10x measured). No manual gate.
+### [G0:fixtures] WB2 G0 fixture gate (2026-10-14, Haiku 5.5, worktree; Linux)
+| Check | Method | Result |
+|---|---|---|
+| Strict JSON and normalizer | every committed fixture loaded with duplicate-key and NaN/Infinity rejection, round-tripped to its builder, and passed through `normalize_ghidriff` with a project built from the fixture's SHA-256 pair | 6 of 6 pass (18 tests) |
+| Shape guards | svc known-answer call sets, hostile names (bidi, U+2028, CR/LF, quote and backslash, NUL, 600-char label), ambiguous qualified name, absent `matches`, count-suffix inferable vs ambiguous stem, cycle plus 66-caller hub | 6 tests pass |
+| Byte stability | committed files equal builder output byte-for-byte, LF, ASCII-escaped | pass |
+Not verified: the real Ghidriff `matches` label forms (live gate, owner or CI).
+### [WB1-S0:search-foundation]
+Run `python tools/check_search_runtime.py` (add `--require-native-rapidfuzz` on release builds) on Linux and Windows CI; it must print `search-runtime: ok` with fts5, unicode61 and trigram true. UNVERIFIED on Windows until the first CI run.
+
+### [WB1-S1:search-query]
+No manual step. Automated: `pytest tests/test_search_query.py` (property test over arbitrary Unicode and grammar fragments against real FTS5 tables).
+
+### [WB1-S2:search-segment]
+No manual step. Windows CI must run `tests/test_search_segment.py`; Linux evidence: 100k names build in about 2.7 s (30 MB), hardened open in 0.36 s.
+### [K2:kbcorrelation-store] KB correlator K2 crash consistency (2026-10-14, local Linux worktree; synthetic only)
+| Check | Method | Result |
+|---|---|---|
+| Hard kill at 8 crash points | child process SIGKILLs itself (os._exit(137) where SIGKILL is missing) at `index_after_doc`, `index_before_commit`, `after_project_create`, `before_cas` 1 and 2, `after_sidecar_write`, `attach_before_row` 1 and 2; parent opens the project with `ProjectService.open`, repairs twice, then with a rebuilt context | all valid; second repair changes no revision or attempt |
+| Not verified | Windows (file replace, SQLite WAL) and a real power loss (fsync is requested, not provable here) | open |
+### [CAP-0:cap-evidence] CAP evidence rows 19-21 and open gates (2026-10-14, docs only; no test run, no live evidence)
+- Evidence rows carried over from `docs/specs/program-e/CAP-integration-plan.md` section 2 (own measurements, not committed; synthetic PEs and a shared container):
+  - Row 19: time on tiny synthetic PEs is 8.38-9.51 s per file (Linux, onefile start, embedded cache, vivisect); real-binary time and memory are unmeasured [unverified]. Source: `tests/fixtures/intel_tools/manifest.json` `elapsed_s`. Confidence: high for the synthetic, none for real.
+  - Row 20: existing strict parser on a 27.8 MB document with 20,000 matches: JSON load 1.95 s, pydantic 2.61 s, `parse()` 5.61 s, peak RSS 745 MiB (Python 3.13.16, pydantic 2.13.5, shared container, throw-away script). Confidence: medium.
+  - Row 21: prototype two-level custom `QAbstractItemModel` with model-owned filter and sort (no proxy), PySide6 6.12.0 offscreen, 100,000 rows: reset 6 ms, first paint 25 ms with 1,650 `data()` calls (identical at 10,000 rows), filter 10 ms, sort 25-40 ms, `expandAll` 0.4 s; a model reset collapses expansion and selection. Confidence: medium.
+- Open gates (CI or owner only; none closed by CAP-0): L1 Linux required leg (probe, pinned version text, end-to-end pair delta on synthetic pairs equals the goldens) and Windows advisory leg; L2 coverage on a self-built DLL (share of capa function starts equal to a Ghidriff start on the same side); L3 time and memory of vivisect on a real driver on the owner's machine (the Microsoft binary stays local); L4 Ghidra backend with Ghidra 12.0.4 and JDK 25; L5 antivirus and SmartScreen behaviour for `capa.exe`; L6 onefile extraction under 60- and 120-character scratch roots; L7 NVDA/Narrator, 125/150/200% DPI, glyph fonts, frozen-EXE dock smoke.
+- Goldens planned, not present: `expected-pairs-capa-api.json`, `expected-pairs-capa-move.json`, CLI JSON goldens (timestamps and paths ignored).
+### [CAP-1:capa-parser-v2]
+| check | evidence |
+|---|---|
+| coverage, features and labels on REAL capa 9.4.0 output (synthetic PEs) and DERIVED library/unrecovered variants | `tests/test_capa_parser_v2.py`; derived files labelled in `tests/fixtures/intel_tools/capa/MANIFEST.capa-v2.json` |
+| rows stored before CAP-1 stay readable and keep their content ids | `test_records_stored_before_cap1_stay_readable_and_keep_their_ids` |
+| not verified here: memory cap against a real capa run (RLIMIT_AS counts virtual memory), Ghidra 12.0.4 backend (live gate L3, L4) | CAP plan section 10 |
+
+### [CAP-2:capa-pairs]
+| check | evidence |
+|---|---|
+| plan section 5 expectation (2 gained, 1 lost, 2 unchanged, 0 moved, 2 unattributed) on REAL capa output | `test_pair_delta_equals_the_committed_golden`, `test_the_combined_channel_names_four_changes_and_two_unplaced_behaviours` |
+| moved, detection noise, library, unrecovered, orientation swap, control pair | `tests/test_capa_synergy.py` (moved and library cases use DERIVED variants) |
+| not verified here: capa-move on REAL capa output, coverage against Ghidriff function starts (live gate L2) | needs the pinned capa and Ghidriff |
+
+### [CAP-3:capa-view]
+| check | evidence |
+|---|---|
+| exact state copy C0-C13, footer, accessible names and texts | `tests/test_capa_view.py` |
+| banned stems and words absent from every UI-authored string | `test_banned_strings_never_appear` |
+| badge contrast (text >= 4.5:1, fill >= 3:1 on the dark theme) | `test_badges_are_neutral_with_enough_contrast` |
+| not verified here: NVDA/Narrator output, glyph fonts, DPI, the Qt `data()` cost budgets (CAP-6a) | manual gate L7 |
+
+### [D1:diec-hardening]
+Fixtures `nested-overlay`, `empty-result`, `vocabulary` are hand-authored from the upstream writer, not captured. G-L1 must confirm both shapes with real diec 3.21 and replace them.
+### [D2:pe-build-facts] PE build facts (2026-10-14)
+Automated only, on synthetic PEs from `tests/pe_build_fixtures.py` (Rich equals pefile 2024.8.26 on generated headers; header fields equal pefile's). Not verified: any real MSVC, lld or .NET binary (no Microsoft binary is committed), Rich headers with (0,0) entries or non-0x80 starts beyond the unit cases, Windows.
+### [SPEC-07-hit:derived-cache-hit]
+Profile (10,000 pairs, Linux, cProfile): payload parse 0.82 s, build_views 0.73 s, rank 0.69 s, locations/input digest 0.35 s; cache.get itself 35 ms. After: payload parse 0.35 s; bench hit 1.92 s -> 1.44 s (best of 5, shared host). Ids, digests and ranking pinned by tests/test_enrichment_hit_golden.py.
+
+### [CAP-4:capa-cache]
+Hermetic: 17 tests in tests/test_capa_cache.py (hit does not spawn, corrupt/bomb/trailing/key-change are misses, private cache dir). Real-binary cache timing not measured.
+### [CAP-5:capa-cli]
+Automated only: fake capa executables printing committed real output on synthetic PE pairs, project matches added in-test (`tests/test_capa_cli.py`). Not verified: a real capa run, Windows.
+### [WB1:S3:sources-build]
+Synthetic project (tests/search_builders.py: invented names, bytes-only PE files). Open gates: a real Ghidriff JSON for the `raw` section shapes; first-index latency on a 100k-function project (owner machine); Windows CI run of the segment publish over an open file.
+### [WB3-S4:strings-links]
+Automated only, on the SYNTHETIC pair of `tests/strings_pe.py` and a hand-written Ghidriff-shaped document (not Ghidriff output). F13 escape behaviour is checked against a reference encoder written from the spec, not against a real Ghidra decompile; the hex-escape width rule is a heuristic until a real decompile is compared.
+### [G2:callgraph-snapshot]
+Automated: tests/test_callgraph_{input,pairing,snapshot}.py (raw missing, reader failure, malformed tables, ladder rungs, count-suffix, ambiguity, pair precedence, claim cap, cancel, key sensitivity, hash-seed byte identity, import boundary). Open: real Ghidriff `name_matches` shape and `EXTERNAL:` label forms on a synthetic PE pair (CI or owner).
+### [G7:callgraph-evolution]
+Automated: tests/test_callgraph_evolution.py (4-build matrix with dropped and reverted, rename lineage, missing pair and missing record = unknown, same-build inconsistency, deleted callee, no raw matches, hostile labels, limits, cancel). Open: read-only open and close of real pair projects (composition, with the CLI/tab); real Ghidriff name_matches shape.
+### [D3:buildenv-core] Build-environment core (2026-10-14)
+Automated only, on synthetic PEs and the committed real diec 3.21 JSON goldens (no tool is run, no Microsoft binary). The synergy test asserts annotation, counts and ordering rules on hand-authored rows, not effectiveness (G-DIE-1 is open). Not verified: real-binary fingerprints, the UPX diec golden (live gate), the 1 MiB large-overlay threshold (PatchTrace's own choice).
+### [WB3-S5:strings-delta]
+Automated only, on SYNTHETIC inputs (built-in scan of the `tests/strings_pe.py` pair, hand-made rows, the hand-written Ghidriff-shaped document, a hand-written cue context). The emulation row of SYN-WB3-1 uses hand-made decoded rows, not FLOSS output. Properties are seeded loops (swap symmetry, offset-shift invariance, row-order invariance), not hypothesis. Blocked: real FLOSS 3.1.1 / Ghidriff goldens (S9), measured delta time and memory at 200k rows (budget: delta <= 1 s).
+### [G3:callgraph-deltas]
+Automated: tests/test_callgraph_{delta,leads,synergy}.py (exact svc classes, renumber-only, set semantics, unknown is not removed, caps, cancel, swap-symmetry and rename-invariance properties, hub and API-hint lookups, groups, blast, entry, paths, banned-string and unsafe-text sweep over every fixture). Open: hub-registry spellings and import label forms need a real Ghidriff run.
+### [K3:kbcorrelation-service] KB correlator K3 QA (2026-10-14, local Linux worktree; synthetic only)
+Automated: `tests/test_kbc_{components,pairs,context,service,cli,e0_e2e}.py` (sockets denied; real `ProjectService`, `EnrichmentStore` and reused `intelligence` rules). The E0 script runs steps 1-4 and 6; step 6 kills a child `kb import-pair` at `after_project_create`, `before_cas` (4th and 5th), `after_sidecar_write` and `attach_before_row`, then `kb attach --repair` twice (second run changes nothing), `kb explain`, `kb export` (escaped, no local path) and a `ProjectService.backup` round trip of `kb/`. Not verified: step 5 (K4a), Windows runs (`os._exit(137)` replaces SIGKILL), any real MSRC/CSAF/Winbindex bytes, a project held open by the GUI (typed attach failure), antivirus holds on the project sqlite file.
+### [WB1:S4:service-rank]
+Synthetic known-answer project (tests/search_synergy_builders.py: invented names; FLOSS-shaped and advisory segments injected through `extra_specs`). Open gates: 100k-function project latency on the owner machine through the real build path (the test uses a 100k-document segment); Windows CI; real tool and advisory sources (S8).
+### [D4:buildenv-store-cli-report]
+Automated only: tests/test_buildenv_store.py (round trip, republish, unknown kind refused, size limit, corrupt row skipped, other project ignored, old reader), tests/test_buildenv_cli.py (exit codes 0/2/3/4/5 per verb, envelope, basenames only, stale and one-sided DiE rows, read-only project, hostile text, no Qt import), tests/test_buildenv_report.py (orientation guard, size cap, redaction, Markdown and HTML injection, banned words). Manual and live gates unchanged (G-L1 to G-L4, G-DIE-1).
+
+### [WB3-S7a:strings-view-model]
+Automated only (`tests/test_strings_{view_model,copy}.py`, hand-built StringChange rows): filters, review order, hostile-text escaping, banned-word sweep over all visible text, one teach entry per id, tooltip ids equal the card list. Screen-reader wording is not verified.
+
+### [WB3-S6:anchors-export-cli]
+Automated only, on the SYNTHETIC `tests/strings_pe.py` pair and hand-made rows; no tool is run. The CLI is exercised through the real `cli.main` with a test-local copy of the integrator hook. Not verified: function links through the CLI on a project with a completed analysis run, stored FLOSS evidence through `--source floss|auto`, Windows.
+
+### [K6:kbcorrelation-cvrf-fetch]
+Mocked only: a fake opener serves the synthetic 2099-Feb fixture; no real MSRC bytes, no socket. Open gates: live probe L1 (URL shape, `Accept`, document size, gzip, rate limit, whether 404 marks an unpublished month), Windows CI, a real hard cancel on a dripping server (covered by the shared transport's own tests, not repeated here).
+
+### [WB1:S5S6:search-cli-view]
+Automated: tests/test_search_cli.py (exit table, envelope, probe, status, invalid input, no Qt) and tests/test_search_view_model.py (states Q0-Q12 exact copy, banned-word sweep, hostile text, 1M-hit paging cap, tooltip data). Open gates: frozen `search --probe` and `search --help` on the Windows bundle (needs the cli.py hook); real-project `search` on a project opened by ProjectService (the CLI tests use a stand-in service).
+### [G4:callgraph-cli]
+Automated: tests/test_callgraph_{cli,dot,schemas}.py through the dispatcher over synthetic projects on disk (exit table 0/2/3/4/5, one JSON document, read-only project tree, overwrite refusal, series matrix with a dropped, an appeared and an unknown cell), a lexer-oracle round trip of every Unicode code point (a deterministic sweep: hypothesis is not installed here), DOT golden with the random match id masked, and schema regenerate-and-compare. Not verified: Graphviz parsing of the output (the oracle ports scan.l and labels.c rules from the plan, not from a Graphviz run), `cli.main` end to end (hook pending), Windows.
+
+### [K5:kbc-lineage-resolver]
+Automated: `tests/test_acquisition_winbindex_rows.py`, `tests/test_kbc_{lineage,resolver}.py` on synthetic Winbindex-shaped records (no network, no Microsoft data). Open gate: parse a freshly fetched real record once on the owner's machine and compare the row counts with `parse` (expect rows for every 64-hex key).
+
+### [K4a:kbcorrelation-leads] KB correlator K4a QA (2026-10-14, local Linux worktree; synthetic only)
+Automated: `tests/test_kbc_{leads,view_model,synergy}.py` (sockets denied; real `ProjectService`, `rank`, `correlate --dry-run` for the baseline). Not verified: Windows run; a real MSRC document; the dock (K4b) on top of the view model.
+
+### [CAP-7:capa-hints] capability hints QA (2026-10-14, local Linux worktree; synthetic and derived only)
+Automated: `tests/test_capa_hints.py`. Not verified: any hint against the real capa-rules pack (not obtainable offline); hint semantics are unvalidated by design.
+### [K7:acquire-workflow]
+Automated: `tests/test_acquisition_workflow.py` (25 tests; fake opener, no sockets): pair acquired and imported, consent equality, cancel leaves no project or staging, hash mismatch discarded. Not verified: a live symbol-server download, Windows run.
+### [S8:search-tool-advisory-sources]
+Automated: tests/test_search_sources_tools.py (presence absent/present/unknown through the real `SearchService`, secret redaction in segment bytes, advisory markup, supersession flags, permutation-stable docs and digests). Owner gate: none beyond the integrator wiring above.
+### [K7v:kb-acquire-cli]
+Automated: `tests/test_kbc_acquire_cli.py` (25 tests; fake transport, sockets denied): plan printed with exit 2 and zero requests for missing, wrong-host, wrong-plan and offline consent; consented acquire verifies, imports, attaches (`kb attach --repair`, `kb explain`); hash mismatch and non-empty directory leave nothing; Winbindex record import validation, size bounds, gz replace. Not verified: a live Winbindex or symbol-server download.
+### [K1a:kev-core] KEV core QA (2026-10-14, local Linux worktree)
+Automated: `tests/test_kev_*.py` (hermetic, no sockets); the full real catalog (1,741 entries, fetched 2026-10-14, not committed) parses with 0 skipped in about 0.07 s. Not verified: Windows run; screen-reader reading of cells; cisa.gov feed URL and licence text (gate K6/owner).
+
+### [K4:kev-kb-adapter]
+Automated: `pytest tests/test_kev_synergy.py tests/test_kev_kb_integration.py` (22 tests). Open at the KB wave merge: synergy item 9 and the real KB view-model.
 ### [F2:qt-runtime]
 | Check | Method | Result |
 |---|---|---|
@@ -367,6 +490,11 @@ Not verified here: Windows, the Linux-versus-Windows decoder equality on the kno
 - Measured: `evaluate_rule` costs 17 to 22 microseconds per call (3 changes, up to 8 pieces of evidence), so 40,000 calls (5,000 pairs x 8 CVEs, one hypothesis each) take 0.7 to 0.9 s of the 5 s localization target; PIL-B2 can skip candidates that have no evidence at all.
 - Found while building: the card's K edits and "20 K rules" were stale (audit C added R-FORMAT-STRING and R-OFF-BY-ONE, see docs/modules.md [PIL-B1:rules]); B1's `INT` reports `moderate` for a strictness flip on identical operands and `weak` otherwise, which is why `b1:` leaves carry a floor; B3 maps CWE-1284 to (VAL, BND), which the plan's INPUT row did not cover (the row now accepts `BND`); the shared scratchpad holds other workers' files (a `mutate.py` and a `mut/` directory of PIL-A2 collided with mine; mine now live in their own subdirectory).
 - Not verified here: Windows (CI); behaviour on real B1 `SignalSet`s through the PIL-A3 adapter (no adapter exists yet, so the carriers of `Evidence.level` and `Evidence.subject` are unproven); the plan s5 synergy oracle (PIL-T) and fusion (PIL-B2).
+### [K1b:kev-store] KEV store QA (2026-10-14, local Linux worktree)
+Automated: `tests/test_kev_store.py` (21 tests, temp dirs, injected `os.replace` faults, no sockets): crash at each of the three install steps keeps the previous current, older mirror never replaces a newer current, damaged pointer, snapshot or meta falls back and says so, gzip bomb capped, three-step `PermissionError` retry, prune needs `confirmed`. Not verified: a real Windows sharing violation.
+### [K2:kev-transport-cli] KEV transport, service and CLI QA (2026-10-14, local Linux worktree)
+Automated: `tests/test_kev_{transport,service,cli}.py` (hermetic: scripted opener, sockets denied for `plan`): cross-host and non-https/port/userinfo/query redirects refused, 16 MiB cap with a lying Content-Length, fixed headers, env proxy ignored, cancel and deadline abort a blocked read, retries (Retry-After at most 60 s), exact consent host, shrink and older-mirror rules, one JSON document and exit codes 0/2/3/4/5. Not verified (open gates): the canonical CISA URL and its acceptance of the `PatchTrace` User-Agent (K6 live probe); real TLS and the proxy-ignoring default opener against a live server; Windows.
+
 ### [PIL-A2:advisory-sources] Patch-intent localization advisory-side adapters (2026-10-14, builder worktree on fd6cdba; Linux container, synthetic data only)
 - Red first: the new test file failed at collection (`No module named 'patchtrace.pilot.sources'`) before the package existed. Green: `tests/test_pilot_sources_advisory.py` 174 passed in about 2 s on Python 3.13.16 and on Python 3.12.3 (the CI pin; scratch venv); `ruff check` clean on the new files.
 - Gates: `test_cve_gate_table` (35 named rows) plus `test_cve_gate_agrees_with_the_table_for_every_combination` (an independently written decision list over 1,350 combinations of resolution, mapping, contradiction count and assumption); `test_kev_absence_is_unknown_context`; `test_unified_beats_secondary_for_identity` (every unified x secondary combination); `test_confounding_counts_cves_fixed_on_newer`; every `detail` passes `sanitize_text`, `plain_line` and a banned-word sweep (hostile and conflicting CSAF fixtures, a real trimmed NVD/MSRC snapshot, hostile record text).

@@ -375,8 +375,11 @@ def test_install_at_65k_lines_stays_inside_the_budget(controller, panes):
 def test_tokenizing_200k_chars_in_the_model_stays_inside_the_budget():
     lines = body(5000)
     assert 160_000 < sum(len(line) + 1 for line in lines) < 260_000
-    model = CodeTextModel(lines, lines, 'c', colors=True, marks=False)
-    start = time.perf_counter()
-    for row, line in enumerate(lines):
-        model.spans('older', row, line)
-    assert time.perf_counter() - start <= 0.15 * 4
+    best = float('inf')
+    for _ in range(3):  # best of three on a fresh model: a loaded shared runner inflates one run, not all three
+        model = CodeTextModel(lines, lines, 'c', colors=True, marks=False)
+        start = time.perf_counter()
+        for row, line in enumerate(lines):
+            model.spans('older', row, line)
+        best = min(best, time.perf_counter() - start)
+    assert best <= 0.15 * 4, f'tokenizing took {best:.3f}s at best'
