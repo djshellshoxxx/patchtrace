@@ -264,6 +264,8 @@ def part_lines(path: Path, limits: UnifiedLimits = DEFAULT_LIMITS) -> Iterator[b
                 buffer += chunk
                 *complete, buffer = buffer.split(b'\n')
                 for line in complete:
+                    if len(line) > LINE_MAX_BYTES:
+                        raise _err('A unified result line is too long', 'line-too-long')
                     yield line + b'\n'
                 if len(buffer) > LINE_MAX_BYTES:
                     raise _err('A unified result line is too long', 'line-too-long')

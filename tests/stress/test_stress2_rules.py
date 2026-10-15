@@ -69,8 +69,6 @@ def test_first_blocking_is_none_when_every_gate_is_waived_or_passed():
     assert g.first_blocking(gates) is None
 
 
-@pytest.mark.xfail(strict=True, reason='QA-S2-5: not_mostly_wildcards(0, 0) divides by a zero window length and raises '
-                   'ZeroDivisionError instead of returning a failed gate')
 def test_empty_window_fails_the_wildcard_gate_without_raising():
     gate = g.not_mostly_wildcards(0, 0)
     assert not g.passed(gate)

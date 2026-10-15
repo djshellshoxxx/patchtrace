@@ -95,8 +95,6 @@ def test_body_over_the_row_cap_is_refused_with_a_typed_error(shared):
     assert info.value.code.startswith('PT-ENRICH-')
 
 
-@pytest.mark.xfail(strict=True, reason='QA-S2-3: a non-finite number in a body escapes publish as a raw ValueError '
-                   '(json allow_nan=False), not a typed PT-ENRICH-INPUT')
 def test_non_finite_number_in_body_is_a_typed_refusal(shared):
     store, guard, revision = shared
     with pytest.raises(EnrichmentError) as info:

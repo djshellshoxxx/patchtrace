@@ -87,8 +87,6 @@ def test_universe_bounds_the_stored_cves_at_scale():
     assert info.value.reason == 'too-many-cves'
 
 
-@pytest.mark.xfail(strict=True, reason='QA-S2-1: universe() puts the caller-supplied CVE text into PilotError.message '
-                   '(documented as a fixed template), so control and bidi characters reach the message unescaped')
 def test_universe_message_never_echoes_hostile_input():
     stored = ['CVE-2099-0001']
     with pytest.raises(PilotError) as info:
