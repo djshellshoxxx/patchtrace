@@ -7,6 +7,7 @@ Listing of every file under `docs/research/`, 2026-10-14. "Specs cited" lists SP
 | [calibration/preexisting-labelled-data.md](calibration/preexisting-labelled-data.md) | - | research | Pre-existing labelled data for PatchTrace tests (research note) |
 | [calibration/prior-art-corpus-factories.md](calibration/prior-art-corpus-factories.md) | SPEC-28, SPEC-31, SPEC-32 | research note | Prior art for the known-answer corpus factory (R2): what to reuse instead of rebuilding |
 | [diaphora-feature-study-20261014.md](diaphora-feature-study-20261014.md) | - | - | Diaphora research: actionable features for PatchTrace |
+| [ghidra-headless-large-pe.md](ghidra-headless-large-pe.md) | SPEC-31 | research | Ghidra 12.x headless on large Windows PEs: settings, pitfalls, determinism, bundle size |
 | [gde/R1-expert-patch-diffing-workflows.md](gde/R1-expert-patch-diffing-workflows.md) | - | - | GDE R1: How expert reverse engineers perform patch diffing and binary triage |
 | [gde/R2-teaching-and-guidance-in-tools.md](gde/R2-teaching-and-guidance-in-tools.md) | - | - | GDE R2: teaching and guidance in tools (evidence and design recommendations) |
 | [kbcve/msrc-sources.md](kbcve/msrc-sources.md) | SPEC-31 | research for SPEC-31-B | MSRC sources for the KB-to-CVE reverse index (research note RK1) |
