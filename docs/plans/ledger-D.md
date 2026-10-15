@@ -55,3 +55,9 @@ Local-only worker branches awaiting B: KB panels (72605cd) and WB1-WB3 panels (a
 - Handoff docs: five Sonnet writers produce docs/handoff/* (label training, unified, bundle, features+panels, operations/owner actions). A second label-training/unified worker batch starts after them (Tier W 20-22/24, LBL-12 unified adapter, G-U5 perf, ladder/fusion property tests).
 - Open owner items unchanged: Windows desktop pass, Tier W runs, prereg sign-off at the right time, signing application, QA-CLI-3 exit-code decision (recommend 2), QA-S2-2 store threading decision (recommend owner-thread-only + test change), card-audit items (pcre2 licence, postgresql-libpq card, brotli/zstd licence rows, Windows-scope field).
 - ChatGPT: branches chatgpt/{corpus-1,deferred-audit-fixes-1,help-docs-1,kb-fixtures-1,panels-1,unified-fixtures-1} exist (draft PRs #67-#72 per A); unified fixtures validated and merged; others unreviewed. Prompts 6-12 in docs/plans/chatgpt-prompts.md.
+
+## 6-hour check 2026-10-15 ~12:20Z
+- PR #64 head 85f1b9e (GC-collect fixture for the Linux qt-gate segfault): `linux`, `windows`, native x5, shards, live lanes green; `qa` (both OS) and `qt-gate` (ubuntu, windows) still running.
+- Bundle: Ghidriff source tarball rebuilds with identical contents on the runner (git 2.55) but different tar bytes (pin 613449a2, runner 8f96e687); fix needs owner choice (content-digest fallback vs reproducible tar writer). Diagnostic run 38686279359.
+- R1 diagnostic runs (corpus-tier-r 38679899059/38679901515): all shards green; per-recipe detail needs artifact read.
+- Open PRs: #74 (C), #72-#67 (ChatGPT drafts, untriaged except #71 merged content), #61 (codex).
