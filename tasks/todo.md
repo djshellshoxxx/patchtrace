@@ -507,3 +507,7 @@
 - [x] `rules/{store,matrix,export,cli}.py`, `cli_commands/rules.py`, `tests/test_rules_{store,matrix,export,cli}.py` (14, 34, 20, 28), `tests/rules_store_support.py`, golden `tests/fixtures/rules/export/export-term-v1.yar`.
 - [ ] Integrator: the live `PairBackend` for `rules propose` (match to `PairSource`, strings, imports, capabilities, bytes and DiE flags from the project stores; track T) is not built, so `propose` exits 2 without it; `ui_rules`/R6a can use `matrix`, `store` and `export` as they are; pins for `yara-x`/`iced-x86` in `pyproject.toml`, `optional_deps.py`, the PyInstaller hook and `frozen_smoke` (R2 and R4 asks); `.gitattributes` lines `tests/fixtures/rules/** text eol=lf` and `*.yar text eol=lf` (the new golden is LF-only); the repo guard of plan s10 (the marker `patchtrace-rule-export/1` is in the new golden, under `tests/fixtures/rules/`).
 - [ ] BLOCKED, live evidence: Windows CI for the new tests (CRLF checkout of the golden, file locking of the sidecar), a real series through `rules test`, and the frozen `rules _rules-worker` path.
+
+### [PIL-D1:eval-core]
+- [x] metrics, ablation, gate, report (tests/test_pilot_eval_*.py)
+- [ ] arm runner over localize(), case/advisory loader, CLI: needs LBL M2/M5 pair labels and tools/calibration/pilot/advisories/<CVE>.json
