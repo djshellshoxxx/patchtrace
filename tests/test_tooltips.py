@@ -109,6 +109,7 @@ def audit(root, exempt=()):
         check_text(label, widget.toolTip())
         assert widget.objectName(), f'{label}: no semantic object name'
         assert widget.accessibleDescription(), f'{label}: no accessible description'
+        assert len(widget.accessibleDescription()) <= 160 and not widget.accessibleDescription().startswith('What:'), label
         base = widget.objectName()
         if base in REGISTRY:
             assert widget.toolTip() == tooltip(base)
