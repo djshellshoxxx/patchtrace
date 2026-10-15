@@ -286,3 +286,10 @@ def test_unopenable_project_path_is_a_usage_error_without_absolute_path_cli_b_07
     code, out, _ = run(["rank", "A" * 5000, "--json"], capsys)
     doc = json.loads(out)
     assert code == 2 and doc["status"] == "failed" and str(tmp_path) not in doc["error"] and len(doc["error"]) < 300
+
+
+def test_file_as_project_path_is_reported_as_not_a_directory_cli_b_10(tmp_path, capsys):
+    afile = tmp_path / "afile.txt"
+    afile.write_text("x")
+    code, out, _ = run(["rank", str(afile), "--json"], capsys)
+    assert code == 2 and "not a directory" in json.loads(out)["error"]
