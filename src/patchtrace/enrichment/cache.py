@@ -264,19 +264,19 @@ class DerivedCache:
         path = self._lock_path(stage, key)
         for _attempt in range(2):
             owner = _new_owner()
-            try:
-                fd = os.open(path, os.O_WRONLY | os.O_CREAT | os.O_EXCL | getattr(os, 'O_BINARY', 0), 0o600)
-            except FileExistsError:
-                if not self._recover(path, _HELD_LOCKS):
-                    return None
-                continue
             with _REGISTRY_LOCK:
                 _HELD_LOCKS.add(owner['nonce'])
             try:
-                with os.fdopen(fd, 'wb') as handle:
-                    handle.write(json.dumps(owner).encode())
+                _publish_owner(path, owner)
+            except FileExistsError:
+                with _REGISTRY_LOCK:
+                    _HELD_LOCKS.discard(owner['nonce'])
+                if not self._recover(path, _HELD_LOCKS):
+                    return None
+                continue
             except OSError:
-                self._unlock(stage, key, owner['nonce'])
+                with _REGISTRY_LOCK:
+                    _HELD_LOCKS.discard(owner['nonce'])
                 raise
             return owner['nonce']
         return None
@@ -473,7 +473,7 @@ class DerivedCache:
         try:
             try:
                 self._safe_dir(path.parent, create=True)
-                _write_file(path, json.dumps(owner).encode())
+                _publish_owner(path, owner)
                 created = True
             except (OSError, _Unsafe):
                 pass  # in-process registry still protects against our own prune
@@ -692,6 +692,24 @@ def _write_file(path: Path, data: bytes) -> None:
         handle.write(data)
         handle.flush()
         os.fsync(handle.fileno())
+
+
+def _publish_owner(path: Path, owner: dict) -> None:
+    """Create `path` already holding its owner record, or raise FileExistsError. A hard link is an
+    exclusive create that exposes complete content, so a crash cannot leave an empty lock or lease."""
+    tmp = path.with_name(f'{path.name}.new-{owner["nonce"]}')
+    try:
+        data = json.dumps(owner).encode()
+        _write_file(tmp, data)
+        try:
+            os.link(tmp, path)
+        except FileExistsError:
+            raise
+        except OSError:  # no hard links here (FAT, some network shares): plain exclusive create
+            _write_file(path, data)
+    finally:
+        with contextlib.suppress(OSError):
+            os.unlink(tmp)
 
 
 # Separate seams so tests can simulate a crash at each promotion point.

@@ -248,6 +248,26 @@ def test_crash_at_each_promotion_point(cache, monkeypatch, point):
     assert cache.get('signals', KEY) == PAYLOAD
 
 
+@pytest.mark.parametrize('what', ['lock', 'lease'])
+def test_crash_while_writing_the_owner_leaves_no_torn_file(cache, monkeypatch, what):
+    def crash(*_args, **_kw):
+        raise SimulatedCrash()
+    monkeypatch.setattr(cache_mod.os, 'fdopen', crash)
+    with pytest.raises(SimulatedCrash):
+        if what == 'lock':
+            cache.put('signals', KEY, PAYLOAD, {})
+        else:
+            with cache.lease('signals', KEY):
+                pass
+    monkeypatch.undo()
+    cache_mod._HELD_LOCKS.clear()
+    cache_mod._HELD_LEASES.clear()
+    cache_mod._HELD_LEASE_KEYS.clear()
+    shard = entry_dir(cache, 'signals', KEY).parent
+    assert not [p for p in shard.glob(f'{KEY}.lock')] and not [p for p in shard.glob(f'{KEY}.lease-*')]
+    assert cache.put('signals', KEY, PAYLOAD, {}) and cache.get('signals', KEY) == PAYLOAD
+
+
 def test_prune_also_cleans_orphan_staging(cache, monkeypatch):
     monkeypatch.setattr(cache_mod, '_publish', lambda *a: (_ for _ in ()).throw(SimulatedCrash()))
     monkeypatch.setattr(cache_mod, '_discard_staging', lambda path: None)
