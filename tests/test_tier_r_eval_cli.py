@@ -109,11 +109,11 @@ def test_usage_errors_exit_2(capsys, tmp_path, monkeypatch):
 def test_evaluate_with_nothing_installed_is_blocked_exit_3(capsys, store, monkeypatch):
     monkeypatch.setenv('PATH', str(store))                                   # no rz-diff on PATH
     code, doc = run(capsys, 'evaluate')
-    assert code == 3 and doc['status'] == 'blocked' and set(doc['blocked']) == {'rz-diff', 'bindiff', 'ghidriff'}
+    assert code == 3 and doc['status'] == 'blocked' and set(doc['blocked']) == {'rz-diff', 'bindiff', 'ghidriff', 'attention'}
     report = Path(doc['report'])
     assert C.load_report(report.read_bytes()).report_sha256 == doc['report_sha256']
     md = report.with_suffix('.md').read_text(encoding='utf-8')
-    assert md.count('BLOCKED') == 3 and doc['report_sha256'] in md
+    assert md.count('BLOCKED') == 4 and doc['report_sha256'] in md
 
 
 def test_evaluate_with_imports_scores_and_exits_0(capsys, store):

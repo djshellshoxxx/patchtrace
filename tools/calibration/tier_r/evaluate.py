@@ -18,189 +18,42 @@ Mocked or canned engine output in tests is synthetic and never live evidence (AG
 """
 from __future__ import annotations
 
-import math
-import os
 import re
-import shutil
-import threading
 import typing
 from collections import defaultdict
-from collections.abc import Callable, Collection, Iterable, Mapping, Sequence
+from collections.abc import Collection, Iterable, Mapping, Sequence
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Protocol
 
-from patchtrace.jobs import run_process
-from patchtrace.secondary.bindiff import import_bindiff
-from patchtrace.secondary.contracts import SecondaryError, SecondaryMatchSet
-from patchtrace.secondary.engine_env import engine_env
-from patchtrace.secondary.registry import build_registry
-from patchtrace.secondary.scheduler import ProjectRef, run_engines
-
-from ..common import digest, r12, strict_json
-from ..evalcore import protocols as EP
+from ..common import digest, r12
 from ..evalcore import report as ER
+from ..evalcore.engines.attention import AttentionProvider
+from ..evalcore.engines.bindiff import BindiffImportProvider, BindiffProvider  # noqa: F401
+from ..evalcore.engines.common import (  # noqa: F401 - re-exported: the evaluator's public surface
+    EngineOutput,
+    Prediction,
+    Provider,
+    StaticProvider,
+    blocked,
+    clean,
+    failed,
+    from_match_set,
+    to_engine_pairs,
+    to_rva,
+)
+from ..evalcore.engines.ghidriff import GhidriffImportProvider, from_ghidriff  # noqa: F401
+from ..evalcore.engines.rzdiff import RzDiffProvider, image_path  # noqa: F401
 from . import contracts as C
 from . import report_schemas as RS
 
-ENGINES = ('rz-diff', 'bindiff', 'ghidriff')   # the engines this module can drive or import
+ENGINES = ('rz-diff', 'bindiff', 'ghidriff', 'attention')   # the engines this module can drive or import
 ENGINE_ORDER = typing.get_args(C.Engine)         # report order of every engine, incl. unified and attention
 COUNT_KEYS = ('pairs', 'truth_same', 'identity_tp', 'identity_fp', 'identity_fn', 'changed_truth', 'changed_tp',
               'changed_fp', 'changed_fn', 'matched_negatives', 'cosmetic_matched', 'cosmetic_flagged',
               'ignored_predictions', 'ambiguous_records')
 MAX_WRONG = 1000
-MAX_IMPORT_BYTES = 256 * 1024 * 1024
 IMPLICIT_NOTE = ('ghidriff lists only added/deleted/modified functions: truth pairs it does not mention are counted as '
                  'matched and unchanged, so its identity numbers are an upper bound')
-
-
-@dataclass(frozen=True)
-class Prediction:
-    old_rva: int
-    new_rva: int
-    changed: bool
-    similarity_milli: int | None = None
-    old_name: str | None = None
-    new_name: str | None = None
-    order_key: tuple | None = None               # lead-list sort key; default (similarity, name), smaller first
-
-
-@dataclass(frozen=True)
-class EngineOutput:
-    engine: str
-    status: str                                  # ok | blocked | failed
-    version: str | None = None
-    reason: str | None = None
-    predictions: tuple[Prediction, ...] = ()
-    old_only: frozenset[int] = frozenset()       # old functions the engine reports without a counterpart
-    new_only: frozenset[int] = frozenset()
-    implicit_unchanged: bool = False
-    ignored_unaddressed: int = 0
-
-
-def blocked(engine: str, reason: str) -> EngineOutput:
-    return EngineOutput(engine, 'blocked', reason=_clean(reason))
-
-
-def failed(engine: str, reason: str) -> EngineOutput:
-    return EngineOutput(engine, 'failed', reason=_clean(reason))
-
-
-def _clean(text: str, limit: int = 400) -> str:
-    return re.sub(r'[\x00-\x1f\x7f]+', ' ', str(text)).strip()[:limit]
-
-
-class Provider(Protocol):
-    engine: str
-
-    def __call__(self, labels: C.KnownAnswerLabels, symbols: str) -> EngineOutput: ...
-
-
-class StaticProvider:
-    """Pre-computed output per pair id (tests and replays); a pair without an entry is blocked."""
-
-    def __init__(self, engine: str, outputs: Mapping[str, EngineOutput]):
-        self.engine, self.outputs = engine, dict(outputs)
-
-    def __call__(self, labels, symbols):
-        return self.outputs.get(labels.pair_id) or blocked(self.engine, f'no recorded output for {labels.pair_id}')
-
-
-# ---- normalising engine results to RVAs --------------------------------------------------------------------------------
-
-def to_rva(address: int, image_base: int) -> int:
-    """Engines report virtual addresses (BinExport, rizin, Ghidra) or already-relative ones: subtract the base once."""
-    return address - image_base if address >= image_base else address
-
-
-def from_match_set(engine: str, match_set: SecondaryMatchSet, image_base: int) -> EngineOutput:
-    base = 0 if match_set.image_base_subtracted == 'yes' else image_base
-    predictions, old_only, new_only = [], set(), set()
-    for m in match_set.matches:
-        if m.older_address is None or m.newer_address is None:
-            (old_only if m.newer_address is None else new_only).add(
-                to_rva(m.older_address if m.newer_address is None else m.newer_address, base))
-            continue
-        changed = m.similarity_milli < 1000
-        if engine == 'rz-diff':
-            changed = changed or m.match_type != 'COMPLETE'
-        predictions.append(Prediction(to_rva(m.older_address, base), to_rva(m.newer_address, base), changed,
-                                      m.similarity_milli, m.older_name, m.newer_name))
-    return EngineOutput(engine, 'ok', version=match_set.engine_version, predictions=tuple(predictions),
-                        old_only=frozenset(old_only), new_only=frozenset(new_only))
-
-
-_HEX = re.compile(r'(?:0x)?([0-9a-fA-F]{1,16})$')
-
-
-def _ghidra_address(text: object) -> int | None:
-    if not isinstance(text, str):
-        return None
-    found = _HEX.search(text.strip().rsplit(':', 1)[-1])
-    return int(found.group(1), 16) if found else None
-
-
-def from_ghidriff(raw: dict, labels: C.KnownAnswerLabels, symbols: str) -> EngineOutput:
-    """Raw Ghidriff PDiff JSON -> output, through the production `verify_diff_identity` + `normalize_ghidriff`."""
-    from patchtrace.models import AnalysisRun, Artifact, ComparisonProject
-    from patchtrace.normalization import normalize_ghidriff, verify_diff_identity
-    older_sha, newer_sha = (s.sha256 if symbols == 'hidden' else s.debug_sha256 for s in (labels.older, labels.newer))
-    run = AnalysisRun(status='completed')
-    project = ComparisonProject(
-        name=labels.pair_id, runs=[run],
-        artifacts=[Artifact(side='older', name=labels.older.file_name, sha256=older_sha, size=max(labels.older.size, 1),
-                            relative_path='older/image'),
-                   Artifact(side='newer', name=labels.newer.file_name, sha256=newer_sha, size=max(labels.newer.size, 1),
-                            relative_path='newer/image')])
-    verify_diff_identity(raw, project)
-    base = labels.older.image_base
-    predictions, old_only, new_only, unaddressed = [], set(), set(), 0
-    for match in normalize_ghidriff(raw, project, run.id):
-        old = match.older[0] if match.older else None
-        new = match.newer[0] if match.newer else None
-        old_addr = _ghidra_address(old.address) if old else None
-        new_addr = _ghidra_address(new.address) if new else None
-        if match.category == 'removed':
-            if old_addr is None:
-                unaddressed += 1
-            else:
-                old_only.add(to_rva(old_addr, base))
-        elif match.category == 'added':
-            if new_addr is None:
-                unaddressed += 1
-            else:
-                new_only.add(to_rva(new_addr, base))
-        elif old_addr is None or new_addr is None:
-            unaddressed += 1
-        else:
-            ratio = (old.metadata or {}).get('upstream_similarity')
-            milli = round(ratio * 1000) if isinstance(ratio, int | float) and not isinstance(ratio, bool) else None
-            predictions.append(Prediction(to_rva(old_addr, base), to_rva(new_addr, base), True, milli,
-                                          old.metadata.get('upstream_name'), new.metadata.get('upstream_name')))
-    return EngineOutput('ghidriff', 'ok', version=raw.get('program_options', {}).get('version')
-                        if isinstance(raw.get('program_options'), dict)
-                        and isinstance(raw['program_options'].get('version'), str) else None,
-                        predictions=tuple(predictions), old_only=frozenset(old_only), new_only=frozenset(new_only),
-                        implicit_unchanged=True, ignored_unaddressed=unaddressed)
-
-
-def to_engine_pairs(out: EngineOutput, symbols: str) -> EP.EnginePairs:
-    """The scorer-neutral view of one engine run. Flagged rows are ordered by ascending native similarity, then
-    name (an unknown similarity sorts last), unless the output carries its own `order_key` (attention, unified)."""
-    rows, seen = [], set()
-    for p in out.predictions:
-        if (p.old_rva, p.new_rva) in seen:
-            continue
-        seen.add((p.old_rva, p.new_rva))
-        key = None
-        if p.changed:
-            sim = math.inf if p.similarity_milli is None else p.similarity_milli
-            key = p.order_key or (sim, p.old_name or p.new_name or '')
-        rows.append(EP.EnginePair(p.old_rva, p.new_rva, p.changed,
-                                  None if p.similarity_milli is None else p.similarity_milli / 1000, key))
-    rows += [EP.EnginePair(rva, None, None, identity='unpaired') for rva in sorted(out.old_only)]
-    rows += [EP.EnginePair(None, rva, None, identity='unpaired') for rva in sorted(out.new_only)]
-    return EP.EnginePairs(out.engine, out.version, symbols, tuple(rows), out.implicit_unchanged)
 
 
 def engine_output_doc(out: EngineOutput, labels: C.KnownAnswerLabels, symbols: str) -> dict:
@@ -208,7 +61,8 @@ def engine_output_doc(out: EngineOutput, labels: C.KnownAnswerLabels, symbols: s
     return {'contract': RS.OUTPUT_CONTRACT, 'engine': out.engine, 'version': out.version, 'symbols': symbols,
             'older_sha256': older, 'newer_sha256': newer, 'implicit_unchanged': out.implicit_unchanged,
             'predictions': [{'old_rva': p.old_rva, 'new_rva': p.new_rva, 'changed': p.changed,
-                             'similarity_milli': p.similarity_milli, 'old_name': p.old_name, 'new_name': p.new_name}
+                             'similarity_milli': p.similarity_milli, 'old_name': p.old_name, 'new_name': p.new_name,
+                             **({'order_key': list(p.order_key)} if p.order_key else {})}  # the order is the content
                             for p in sorted(out.predictions, key=lambda p: (p.old_rva, p.new_rva))],
             'old_only_rvas': sorted(out.old_only), 'new_only_rvas': sorted(out.new_only),
             'ignored_unaddressed': out.ignored_unaddressed}
@@ -300,87 +154,13 @@ def sum_counts(rows: Iterable[Mapping[str, int]]) -> dict[str, int]:
 
 # ---- providers ------------------------------------------------------------------------------------------------------
 
-def image_path(store: Path, side: C.ImageSide, symbols: str) -> tuple[Path, str]:
-    sha = side.sha256 if symbols == 'hidden' else side.debug_sha256
-    return Path(store) / 'images' / sha / side.file_name, sha
-
-
-class RzDiffProvider:
-    """rz-diff through `build_registry` + `run_engines` (the production adapter, pinned-rizin argv, bounded output)."""
-    engine = 'rz-diff'
-
-    def __init__(self, store: Path, *, executable: str | None = None, environ: Mapping[str, str] | None = None,
-                 runner: Callable = run_process, deadline: float = 1800.0, run: Callable = run_engines):
-        self.store, self.executable, self.runner, self.deadline, self.run = Path(store), executable, runner, deadline, run
-        self.environ = os.environ if environ is None else environ
-
-    def __call__(self, labels, symbols):
-        exe = self.executable or shutil.which('rz-diff', path=self.environ.get('PATH'))
-        if not exe:
-            return blocked(self.engine, 'rz-diff executable not found (install the pinned rizin or pass --rz-diff)')
-        (older, osha), (newer, nsha) = (image_path(self.store, s, symbols) for s in (labels.older, labels.newer))
-        missing = [p.name for p in (older, newer) if not p.is_file()]
-        if missing:
-            return blocked(self.engine, f'engine image(s) not in the store: {", ".join(missing)}')
-        outcomes = self.run(ProjectRef(older, newer, osha, nsha), ['rz-diff'], cancel=threading.Event(),
-                            env=engine_env(self.environ, 'rz-diff'), registry=build_registry(rz_diff=exe),
-                            runner=self.runner, per_engine_timeout={'rz-diff': self.deadline})
-        outcome = outcomes[0]
-        if outcome.match_set is not None:
-            return from_match_set(self.engine, outcome.match_set, labels.older.image_base)
-        message = outcome.error.message if outcome.error else outcome.run.status
-        if outcome.run.status == 'unsupported':
-            return blocked(self.engine, message)
-        return failed(self.engine, f'{outcome.run.status}: {message}')
-
-
-class BindiffImportProvider:
-    """`<imports>/<pair_id>.BinDiff` placed by the user, read by the production hardened importer."""
-    engine = 'bindiff'
-
-    def __init__(self, imports: Path | None):
-        self.imports = None if imports is None else Path(imports)
-
-    def __call__(self, labels, symbols):
-        path = None if self.imports is None else self.imports / f'{labels.pair_id}.BinDiff'
-        if path is None or not path.is_file():
-            return blocked(self.engine, 'no BinDiff installation was driven and no imported '
-                           f'{labels.pair_id}.BinDiff exists in the imports folder')
-        osha, nsha = (s.sha256 if symbols == 'hidden' else s.debug_sha256 for s in (labels.older, labels.newer))
-        try:
-            match_set = import_bindiff(path, osha, nsha)
-        except SecondaryError as exc:
-            return failed(self.engine, exc.message)
-        return from_match_set(self.engine, match_set, labels.older.image_base)
-
-
-class GhidriffImportProvider:
-    """`<imports>/<pair_id>.ghidriff.json` (raw PDiff JSON) placed by the user, read by `normalize_ghidriff`."""
-    engine = 'ghidriff'
-
-    def __init__(self, imports: Path | None):
-        self.imports = None if imports is None else Path(imports)
-
-    def __call__(self, labels, symbols):
-        path = None if self.imports is None else self.imports / f'{labels.pair_id}.ghidriff.json'
-        if path is None or not path.is_file():
-            return blocked(self.engine, f'no imported {labels.pair_id}.ghidriff.json exists in the imports folder '
-                           '(Ghidra/Java/Ghidriff are not run by this tool)')
-        try:
-            if path.stat().st_size > MAX_IMPORT_BYTES:
-                return failed(self.engine, 'ghidriff JSON exceeds 256 MiB')
-            raw = strict_json(path.read_bytes())
-            return from_ghidriff(raw, labels, symbols)
-        except (OSError, ValueError, RecursionError) as exc:
-            return failed(self.engine, f'ghidriff import rejected: {exc}')
-
-
 def default_providers(store: Path, imports: Path | None = None, *, rz_diff: str | None = None,
                       engines: Sequence[str] = ENGINES) -> list[Provider]:
     imports = Path(imports) if imports is not None else Path(store) / 'imports'
     made = {'rz-diff': lambda: RzDiffProvider(store, executable=rz_diff),
-            'bindiff': lambda: BindiffImportProvider(imports),
-            'ghidriff': lambda: GhidriffImportProvider(imports)}
+            'bindiff': lambda: BindiffProvider(imports),
+            'ghidriff': lambda: GhidriffImportProvider(imports),
+            'attention': lambda: AttentionProvider(imports)}
     return [made[e]() for e in ENGINES if e in engines]
 
 
@@ -445,7 +225,7 @@ def evaluate_full(labels_docs: Sequence[C.KnownAnswerLabels], providers: Sequenc
         if not rows:
             reason = 'no label documents to evaluate'
         elif bad:
-            reason = _clean(f'{bad[0][3]}' + (f' (and {len(bad) - 1} more pairs)' if len(bad) > 1 else ''), 500)
+            reason = clean(f'{bad[0][3]}' + (f' (and {len(bad) - 1} more pairs)' if len(bad) > 1 else ''), 500)
         if rows and len(ok) / len(rows) < COMPLETION_WARNING:
             all_notes.append(f'{engine}: only {len(ok)} of {len(rows)} pairs completed (below 90%); '
                              'metrics cover completed pairs only')
@@ -453,7 +233,7 @@ def evaluate_full(labels_docs: Sequence[C.KnownAnswerLabels], providers: Sequenc
                         'reason': reason, 'runs': len(ok), 'failures': sum(1 for r in bad if r[2] == 'failed')})
         for pid, stratum, st, why, counts, sha, _ in rows:
             pairs.append({'pair_id': pid, 'stratum': stratum, 'engine': engine, 'status': st,
-                          'reason': None if st == 'ok' else _clean(why or '', 500),
+                          'reason': None if st == 'ok' else clean(why or '', 500),
                           'metrics': metrics_from_counts(counts) if counts else None, 'output_sha256': sha})
         for stratum in sorted({r[1] for r in ok}):
             strata[stratum][engine] = metrics_from_counts(sum_counts(r[4] for r in ok if r[1] == stratum))
