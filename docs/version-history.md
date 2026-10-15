@@ -64,7 +64,7 @@ Only these tags carry published packages that were recorded in the ledgers: beta
 
 ## After beta.225 (merged, not in the ledgers)
 
-Merged on the main line by 2026-10-14, from the ledger and git history: the zero-download backend bundle builder, discovery, `backend` CLI, acceptance harness and workflow (PR #48, not yet built into a published package); release gate, CLI command registry and GUI foundation (PR #52); SPEC-41 to SPEC-45 drafts (AI provider, network egress and privacy, settings, CLI umbrella, accessibility). The registry now also holds the `fabric`, `kev`, `pilot` and `rules` verbs (see `docs/cli-reference.md`); the dates of that work are UNVERIFIED here. The repository has a tag `v0.1.0-beta.243` that is not described in the ledgers; its change set is UNVERIFIED. More work is on integration branches awaiting merge.
+Merged on the main line by 2026-10-14, from the ledger and git history: the zero-download backend bundle builder, discovery, `backend` CLI, acceptance harness and workflow (PR #48, not yet built into a published package); release gate, CLI command registry and GUI foundation (PR #52); SPEC-41 to SPEC-45 drafts (AI provider, network egress and privacy, settings, CLI umbrella, accessibility). The registry now also holds the `fabric`, `kev`, `pilot` and `rules` verbs (see `docs/cli-reference.md`); the dates of that work are UNVERIFIED here. The repository has tags `v0.1.0-beta.243`, `v0.1.0-beta.281` and `v0.1.0-beta.372` (checked with `git tag -l 'v0.1.0-beta.*'` on 2026-10-15) that are not described in the ledgers; their change sets are UNVERIFIED. More work is on integration branches awaiting merge.
 
 ## Open items before a final release
 
