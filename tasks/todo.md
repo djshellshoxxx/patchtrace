@@ -762,3 +762,7 @@
 
 ### [WB2-G5G6:calls-panel]
 - [ ] Calls panel follow-ups: graph.export_dot, graph.callsite, graph/* settings, Tree as a lazy model, entry paths.
+
+### [WB3-S7b:strings-panel]
+
+- [ ] Strings panel: wire function pairing and stored observations into the loader; FLOSS run/probe/consent, export, settings (`strings/*`), column tips.

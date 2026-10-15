@@ -1012,3 +1012,8 @@ Automated: `tests/test_ui_search_panel.py` (offscreen, 29 tests, `tools/qt_gate.
 
 ### [WB2-G5G6:calls-panel]
 Offscreen: `QT_QPA_PLATFORM=offscreen python tools/qt_gate.py --repeat 5 tests/test_ui_graph_panel.py`. Screen-reader and high-contrast passes are owner gates, not done.
+
+
+### [WB3-S7b:strings-panel]
+
+Automated: `tests/test_ui_strings_panel.py` (offscreen, qt_gate x5). Owner-only: NVDA and Narrator pass, high-contrast and DPI check of the Strings dock.
