@@ -85,7 +85,38 @@ OUTPUT RULES: exhaustive; do not abbreviate or say 'and so on'. Emit each file a
 
 ---
 
+## PROMPT 6: Deferred audit fixes, written straight into the repo (own branch, draft PR)
+
+Different from prompts 1-5: ChatGPT commits to the repository itself. It may only create and push its own branch and open a DRAFT pull request; it must never touch `main` or any `claude/*` branch. CI then runs the tests; nothing here is trusted until CI is green and a Claude worker has reviewed the diff.
+
+```
+ROLE: senior Python engineer fixing audited defects in PatchTrace, a Windows-first desktop tool that compares an older and a newer build of a Windows PE binary to find the code a patch changed. You work test-first and you write directly to the GitHub repository djshellshoxxx/patchtrace, which you can read and write.
+
+GIT RULES (hard limits):
+1. Base: branch claude/instance-d-gui (NOT main; main lacks the newest code). Create ONE new branch named chatgpt/deferred-audit-fixes-1 from the current head of claude/instance-d-gui.
+2. Commit and push ONLY to chatgpt/deferred-audit-fixes-1. Never push, force-push, merge or delete anything on main or on any branch whose name starts with claude/. Never rewrite history. One commit per finding, message: "<finding id>: <what changed>".
+3. When done, open a DRAFT pull request from chatgpt/deferred-audit-fixes-1 into claude/instance-d-gui. Do not mark it ready, do not merge it, do not enable auto-merge.
+4. If you cannot write to the repo, stop at once and say so; do not paste the code into chat instead.
+
+READ FIRST (branch claude/instance-d-gui): AGENTS.md, CLAUDE.md, docs/plans/worker-brief.md (coding rules and product invariants: follow them exactly), and the six fix reports docs/audits/20261015-fixes-core-series.md, docs/audits/20261015-fixes-acquisition.md, docs/audits/20261015-fixes-secondary.md, docs/audits/20261015-fixes-cli-pe-intel.md, docs/audits/20261015-fixes-gui-ops.md, docs/audits/20261015-fixes-test-hygiene.md. Each ends with a list of DEFERRED findings. The full finding text (file:line, evidence) is in the matching audit file docs/audits/20261015-*.md (not the fixes- files).
+
+TASK: fix as many DEFERRED findings as you can, in this priority order: (1) security findings (ids starting SEC-), (2) acquisition findings (ACQ-12, ACQ-13), (3) core/series, (4) CLI/PE, (5) GUI (GUI-9, 11, 12, 15), (6) test hygiene (TST-4 rest, TST-8). Skip a finding when it needs a decision from the owner, needs network or a real Windows machine, or would change a persisted file format incompatibly (persisted contracts change additively only); list each skipped finding with the reason in the PR description.
+
+FOR EACH FINDING: (a) re-read the cited code and confirm the defect still exists on the branch (if already fixed, say so and skip); (b) write a failing test first, in the matching existing tests/ file or a new tests/test_<area>_<id>.py, hermetic (no network, no Microsoft binaries, no executing target files), deterministic, with short explicit pytest ids; (c) make the smallest correct code change; (d) keep code style, naming, comment density and type hints identical to the surrounding file; pure logic stays separate from Qt; (e) never add a dependency; (f) never edit tests to make them pass unless the test asserted the defect, and then say so in the commit message.
+
+CANNOT RUN CODE: you cannot execute tests. Therefore be conservative: read the called functions and existing tests before editing, trace each new test by hand against your code, and prefer fewer, certain fixes over many guesses. Mark in the PR description which fixes you traced by hand and how.
+
+INVARIANTS (violating one is a defect): never execute a target binary; no network without operation-specific consent; never fabricate evidence; untrusted text is bounded and escaped; older/newer orientation explicit; provenance preserved; one main window; persisted contracts additive only; no GPL/AGPL code copied; Microsoft-derived binaries or labels never committed.
+
+PR DESCRIPTION must contain: table of finding id | status (fixed / already fixed / skipped) | files | test name; the skipped list with reasons; "Not verified" (everything that needs running). Do not claim tests pass.
+
+OUTPUT: after you finish, reply with the PR URL, the branch name, the table, and "NEXT: <first finding you did not reach>" if you stopped early. Stop after at most 15 findings per conversation; I will start a new conversation for the rest.
+```
+
+---
+
 ## What to do with the output
-1. Copy each ChatGPT reply (all messages of one prompt, one after another) into a text file named `promptN-<topic>.md`.
+0. Prompt 6 needs no copying: ChatGPT pushes its own branch `chatgpt/deferred-audit-fixes-1` and opens a draft PR. Tell Claude when it appears; Claude reviews the diff and lets CI decide.
+1. Copy each ChatGPT reply (prompts 1-5) (all messages of one prompt, one after another) into a text file named `promptN-<topic>.md`.
 2. Put the file in `docs/inbox/chatgpt/` on branch `claude/instance-d-gui` (GitHub: Add file > Upload files or Create new file), or paste it to Claude in chat.
 3. Tell Claude. It runs `python tools/split_chatgpt_output.py docs/inbox/chatgpt/<file> --apply`, then workers lint, verify facts (SHAs, CVE ids, licences, field names) and run the tests before anything is merged.
