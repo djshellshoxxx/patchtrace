@@ -222,3 +222,13 @@ def test_interrupt_before_parse_emits_cancelled_envelope_cli_b_03(monkeypatch, c
     code, out, _ = run(["rank", "x", "--json"], capsys)
     doc = json.loads(out)
     assert code == cli.CANCELLED and doc["status"] == "cancelled" and doc["command"] == "rank"
+
+
+def test_interrupt_during_cli_dispatch_exits_cancelled_cli_b_04(monkeypatch, capsys):
+    from patchtrace import __main__ as entry
+    def boom(argv):
+        raise KeyboardInterrupt
+    monkeypatch.setattr(cli, "main", boom)
+    monkeypatch.setattr(sys, "argv", ["patchtrace", "rank", "x"])
+    assert entry.main() == cli.CANCELLED
+    assert capsys.readouterr().err.strip() == "cancelled"
