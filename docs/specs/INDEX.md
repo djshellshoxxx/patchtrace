@@ -7,6 +7,7 @@ Listing of every file under `docs/specs/`, 2026-10-14. SPEC number and status co
 | [REGISTRY.md](REGISTRY.md) | REGISTRY | n/a | Spec registry |
 | [accessibility-baseline.md](accessibility-baseline.md) | SPEC-45 | draft | Accessibility, keyboard, DPI and localization baseline (SPEC-45) |
 | [acquisition.md](acquisition.md) | SPEC-08 | partial | SPEC-08: Binary acquisition (Phase 3a) |
+| [agent-skill-workflow.md](agent-skill-workflow.md) | SPEC-56 | approved | Agent skills and specification-first workflow |
 | [ai-provider-interpretation.md](ai-provider-interpretation.md) | SPEC-41 | draft | AI provider and interpretation contract (SPEC-41) |
 | [app-settings.md](app-settings.md) | SPEC-43 | draft | App settings and persistence contract (SPEC-43) |
 | [architecture.md](architecture.md) | SPEC-01 | built | PatchTrace beta architecture (SPEC-01, schema v1) |
