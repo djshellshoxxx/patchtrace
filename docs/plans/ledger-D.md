@@ -6,7 +6,7 @@ Session `session_01Mr844cQDLwXi9iMUoGmBXk`; branch `claude/instance-d-gui`; pare
 |---|---|---|
 | Setup (docs from A's branch, plans read) | done 2026-10-14 | rate limit `allowed_warning` (no Opus) |
 | F0, F1, F1b (A) | waiting for A's merge | not on main at fd6cdba |
-| F2 Qt runtime | built, merged into branch (unmerged to main; PR after F1 lands) | 0708da9,1f0864f,3f55d56; 113 tests, qt_gate 20x 2260 passed, ruff clean; Windows unverified; local Progress/TaskFailure to reconcile with F1 |
+| F2-F9 framework | ALL BUILT; PR #58 (draft) open; full suite x2 10068 passed locally; waits Windows+Linux CI | follow-ups: evidence threads/table on TaskRunner/VirtualTable, M4, TSV formula prefix, CI 20x job text |
 | F4 VirtualTable | built, in branch (bbb92ad,f1d23cc); 47 tests, qt_gate 5x ok; open: TSV formula-prefix neutralisation, sort command for panels | |
 | F3 | built, in branch (a98bf40..1784c44); 177 tests, 10x gate ok | dark stylesheet == DARK_STYLE |
 | F6b GraphCanvas | built, in branch (a512c67); 59 tests, 5x gate ok; minimap not built | |
