@@ -777,3 +777,7 @@ Done: dock with state matrix, consent, import, changes, copy, go to CVE. Open: r
 
 ### [FAB-6:related]
 - [x] Related evidence panel, table-only first release. Open for the integrator: manifest slot, leads area, host wiring of `show_anchor`.
+
+### [LBL-20:fetch-transport] / [LBL-21:symbols]
+- [x] Fixture-tested `tier_w/fetch.py`, `transport.py`, `symbols.py`, `symbols_llvm.py`, `ghidra_export_symbols.py`, `symbols_ghidra.py` (`tests/test_tier_w_fetch.py`, `tests/test_tier_w_symbols.py`).
+- [ ] BLOCKED, owner/Windows runner: live msdl fetch, live Ghidra 12.0.4 export (`PATCHTRACE_GHIDRA_DIR`), `pyghidra` mode, PDB-forcing pre-script, adapter text for `fetch-plan`/`fetch`/`symbols` (LBL-25).

@@ -1033,3 +1033,6 @@ Automated: `tests/test_ui_kev_panel.py` offscreen, `tools/qt_gate.py --repeat 5`
 ### [FAB-6:related]
 | Tests | `tests/test_ui_related_panel.py` (35) offscreen on Linux; `python tools/qt_gate.py --repeat 5 tests/test_ui_related_panel.py`: 175 passed |
 | Not verified here | Windows; screen readers; the real project store read from a worker thread (reader is injected) |
+
+### [LBL-20/21:tier-w-fetch-symbols]
+Automated: `tests/test_tier_w_fetch.py` (33 passed) and `tests/test_tier_w_symbols.py` (29 passed, 1 xfailed). The xfail is the live Ghidra export, recorded BLOCKED (no Ghidra on the runner). The live llvm-pdbutil parity test ran against the self-made PDB (LLVM 18.1.3). Not evidenced: any real Microsoft download or PDB (O1, owner only).

@@ -1113,3 +1113,9 @@ Calls panel (id graph): `callgraph/panel.py` (PanelSpec), `panel_qt.py` (widgets
 
 ### [FAB-6:related]
 - `fabric/related.py` (Qt-free rows, columns, state, `anchor_ref` = `AnchorRef.from_fabric`), `fabric/panel.py` (`PANEL` id `related`, tips `related.*`, teach `related.*`), `ui_related.py` (`RelatedController`, table-only). Tests `tests/test_ui_related_panel.py` (35).
+
+### [LBL-20:tier-w-fetch]
+`tools/calibration/tier_w/fetch.py` and `transport.py` (SPEC-33 s4, library API; the `fetch-plan`/`fetch` CLI adapters belong to LBL-25). `plan_binaries` (offline plan from the manifest and pairs sidecar), `consent_for`, `disk_needed`/`ensure_disk`, `fetch_binary` (existing `quarantine.acquire`, x64 PE only, read-only, resume by SHA-256), `fetch_pdb` (CodeView identity, `SymbolTransport.download_pdb`: throttle, one blob redirect, size cap, MSF magic, GUID/age re-check by the stdlib reader, `pdb-rejected` events), hash-chained `Ledger` of `tier-w-fetch/1` events (`file_sha256`, because `sha256` is the chain's own key). Tests use a fake opener only; the live msdl path is an owner step and records no result in CI.
+
+### [LBL-21:tier-w-symbols]
+`symbols.py` (pure `symbol-map/1` builder and `export_msf`, SPEC-33 s5.3 merge rule), `symbols_llvm.py` (strict LLVM 18 `llvm-pdbutil` adapter, parity-tested against the stdlib reader when the tool is installed), `ghidra_export_symbols.py` (Jython 2.7 and CPython 3 script) and `symbols_ghidra.py` (headless driver, private project/XDG dirs). The live Ghidra test is BLOCKED (xfail with reason) unless `PATCHTRACE_GHIDRA_DIR` points at Ghidra. Not built: `pyghidra` mode and the PDB-forcing pre-script (need a live Ghidra to verify).
