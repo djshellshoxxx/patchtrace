@@ -18,12 +18,14 @@ Mocked or canned engine output in tests is synthetic and never live evidence (AG
 """
 from __future__ import annotations
 
+import math
 import os
 import re
 import shutil
 import threading
+import typing
 from collections import defaultdict
-from collections.abc import Callable, Iterable, Mapping, Sequence
+from collections.abc import Callable, Collection, Iterable, Mapping, Sequence
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Protocol
@@ -36,10 +38,13 @@ from patchtrace.secondary.registry import build_registry
 from patchtrace.secondary.scheduler import ProjectRef, run_engines
 
 from ..common import digest, r12, strict_json
+from ..evalcore import protocols as EP
+from ..evalcore import report as ER
 from . import contracts as C
 from . import report_schemas as RS
 
-ENGINES = ('rz-diff', 'bindiff', 'ghidriff')
+ENGINES = ('rz-diff', 'bindiff', 'ghidriff')   # the engines this module can drive or import
+ENGINE_ORDER = typing.get_args(C.Engine)         # report order of every engine, incl. unified and attention
 COUNT_KEYS = ('pairs', 'truth_same', 'identity_tp', 'identity_fp', 'identity_fn', 'changed_truth', 'changed_tp',
               'changed_fp', 'changed_fn', 'matched_negatives', 'cosmetic_matched', 'cosmetic_flagged',
               'ignored_predictions', 'ambiguous_records')
@@ -57,6 +62,7 @@ class Prediction:
     similarity_milli: int | None = None
     old_name: str | None = None
     new_name: str | None = None
+    order_key: tuple | None = None               # lead-list sort key; default (similarity, name), smaller first
 
 
 @dataclass(frozen=True)
@@ -176,6 +182,25 @@ def from_ghidriff(raw: dict, labels: C.KnownAnswerLabels, symbols: str) -> Engin
                         and isinstance(raw['program_options'].get('version'), str) else None,
                         predictions=tuple(predictions), old_only=frozenset(old_only), new_only=frozenset(new_only),
                         implicit_unchanged=True, ignored_unaddressed=unaddressed)
+
+
+def to_engine_pairs(out: EngineOutput, symbols: str) -> EP.EnginePairs:
+    """The scorer-neutral view of one engine run. Flagged rows are ordered by ascending native similarity, then
+    name (an unknown similarity sorts last), unless the output carries its own `order_key` (attention, unified)."""
+    rows, seen = [], set()
+    for p in out.predictions:
+        if (p.old_rva, p.new_rva) in seen:
+            continue
+        seen.add((p.old_rva, p.new_rva))
+        key = None
+        if p.changed:
+            sim = math.inf if p.similarity_milli is None else p.similarity_milli
+            key = p.order_key or (sim, p.old_name or p.new_name or '')
+        rows.append(EP.EnginePair(p.old_rva, p.new_rva, p.changed,
+                                  None if p.similarity_milli is None else p.similarity_milli / 1000, key))
+    rows += [EP.EnginePair(rva, None, None, identity='unpaired') for rva in sorted(out.old_only)]
+    rows += [EP.EnginePair(None, rva, None, identity='unpaired') for rva in sorted(out.new_only)]
+    return EP.EnginePairs(out.engine, out.version, symbols, tuple(rows), out.implicit_unchanged)
 
 
 def engine_output_doc(out: EngineOutput, labels: C.KnownAnswerLabels, symbols: str) -> dict:
@@ -366,9 +391,20 @@ class _EngineAcc:
     results: list = field(default_factory=list)   # (pair_id, stratum, status, reason, counts|None, sha|None, version)
 
 
-def evaluate(labels_docs: Sequence[C.KnownAnswerLabels], providers: Sequence[Provider], *, symbols: str = 'hidden',
-             notes: Sequence[str] = (), max_wrong: int = MAX_WRONG) -> dict:
+COMPLETION_WARNING = 0.9
+
+
+def evaluate(labels_docs: Sequence[C.KnownAnswerLabels], providers: Sequence[Provider], **kwargs) -> dict:
     """Run every provider on every pair and return the finalized `tier-r-report/1` document (no timestamps)."""
+    return evaluate_full(labels_docs, providers, **kwargs)[0]
+
+
+def evaluate_full(labels_docs: Sequence[C.KnownAnswerLabels], providers: Sequence[Provider], *,
+                  symbols: str = 'hidden', notes: Sequence[str] = (), max_wrong: int = MAX_WRONG,
+                  shift_lineages: Collection[str] = (), b_count: int = ER.boot.B_COUNT) -> tuple[dict, dict]:
+    """(report, paired deltas). The deltas (engine vs engine, per stratum and population, with sd, minimum detectable
+    delta and achieved power) have no field in `tier-r-report/1` yet, so they are returned beside it, not hashed in it.
+    `b_count` is the lineage-bootstrap size (2,000; 500 in smoke)."""
     if symbols not in ('hidden', 'visible'):
         raise C.ContractError('symbols must be hidden or visible')
     docs = sorted(labels_docs, key=lambda d: d.pair_id)
@@ -379,7 +415,8 @@ def evaluate(labels_docs: Sequence[C.KnownAnswerLabels], providers: Sequence[Pro
     all_notes = list(notes)
     if symbols == 'visible':
         all_notes.append('symbols visible: engines saw the debug image; not comparable with hidden-symbol results')
-    for provider in sorted(providers, key=lambda p: ENGINES.index(p.engine)):
+    runs: dict[str, list[ER.Run]] = defaultdict(list)
+    for provider in sorted(providers, key=lambda p: ENGINE_ORDER.index(p.engine)):
         acc = by_engine[provider.engine]
         for labels in docs:
             try:
@@ -389,13 +426,14 @@ def evaluate(labels_docs: Sequence[C.KnownAnswerLabels], providers: Sequence[Pro
             counts = sha = None
             if out.status == 'ok':
                 counts, wrong = score_pair(labels, out)
+                runs[provider.engine].append(ER.Run(labels, to_engine_pairs(out, symbols)))
                 wrong_all += wrong
                 sha = RS.output_sha256(engine_output_doc(out, labels, symbols))
                 if out.implicit_unchanged and IMPLICIT_NOTE not in all_notes:
                     all_notes.append(IMPLICIT_NOTE)
             acc.results.append((labels.pair_id, labels.stratum, out.status, out.reason, counts, sha, out.version))
     pairs, strata, engines = [], defaultdict(dict), []
-    for engine in ENGINES:
+    for engine in ENGINE_ORDER:
         if engine not in by_engine:
             continue
         rows = by_engine[engine].results
@@ -408,6 +446,9 @@ def evaluate(labels_docs: Sequence[C.KnownAnswerLabels], providers: Sequence[Pro
             reason = 'no label documents to evaluate'
         elif bad:
             reason = _clean(f'{bad[0][3]}' + (f' (and {len(bad) - 1} more pairs)' if len(bad) > 1 else ''), 500)
+        if rows and len(ok) / len(rows) < COMPLETION_WARNING:
+            all_notes.append(f'{engine}: only {len(ok)} of {len(rows)} pairs completed (below 90%); '
+                             'metrics cover completed pairs only')
         engines.append({'engine': engine, 'status': status, 'version': next((r[6] for r in ok if r[6]), None),
                         'reason': reason, 'runs': len(ok), 'failures': sum(1 for r in bad if r[2] == 'failed')})
         for pid, stratum, st, why, counts, sha, _ in rows:
@@ -416,14 +457,17 @@ def evaluate(labels_docs: Sequence[C.KnownAnswerLabels], providers: Sequence[Pro
                           'metrics': metrics_from_counts(counts) if counts else None, 'output_sha256': sha})
         for stratum in sorted({r[1] for r in ok}):
             strata[stratum][engine] = metrics_from_counts(sum_counts(r[4] for r in ok if r[1] == stratum))
-    wrong_all.sort(key=lambda w: (w['pair_id'], ENGINES.index(w['engine']), -1 if w['old_rva'] is None else w['old_rva'],
+    wrong_all.sort(key=lambda w: (w['pair_id'], ENGINE_ORDER.index(w['engine']), -1 if w['old_rva'] is None else w['old_rva'],
                                   -1 if w['new_rva'] is None else w['new_rva']))
     report = {'contract': 'tier-r-report/1', 'symbols': symbols,
               'inputs': [{'pair_id': d.pair_id, 'stratum': d.stratum, 'labels_digest': d.digest_sha256} for d in docs],
               'engines': engines, 'strata': {k: strata[k] for k in sorted(strata)}, 'pairs': pairs,
               'wrong_matches': wrong_all[:max_wrong], 'wrong_matches_truncated': max(0, len(wrong_all) - max_wrong),
               'notes': all_notes, 'report_sha256': '0' * 64}
-    return finalize_report(report)
+    attempts = [(e, r[1], r[2]) for e, acc in by_engine.items() for r in acc.results]
+    fields, deltas = ER.build_blocks(docs, runs, attempts, symbols=symbols, shift_lineages=shift_lineages,
+                                     b_count=b_count)
+    return finalize_report({**report, **fields}), deltas
 
 
 def finalize_report(report: dict) -> dict:
@@ -447,6 +491,39 @@ def _cell(text) -> str:
     return re.sub(r'[|\r\n`<>]', ' ', '' if text is None else str(text))[:120]
 
 
+def _iv(iv: Mapping | None) -> str:
+    if not iv or iv['point'] is None:
+        return 'n/a'
+    span = '' if iv['lo'] is None else f' [{iv["lo"]:.3f}, {iv["hi"]:.3f}]'
+    return f'{iv["point"]:.3f}{span}' + (' (anti-conservative)' if iv['anti_conservative'] else '')
+
+
+def _block_lines(report: Mapping) -> list[str]:
+    """Coverage, per-label cells and rank blocks: descriptive, one row per engine, never pooled."""
+    lines = []
+    if report.get('coverage'):
+        lines += ['', f'## Coverage (lineages: {report.get("lineages")})', '',
+                  '| engine | stratum | attempted | completed | blocked | failed |', '|---|---|---|---|---|---|']
+        lines += [f'| {c["engine"]} | {c["stratum"]} | {c["attempted"]} | {c["completed"]} | {c["blocked"]} | '
+                  f'{c["failed"]} |' for c in report['coverage']]
+    for stratum, per_engine in (report.get('labels') or {}).items():
+        lines += ['', f'## Per-label outcomes, stratum {stratum}', '',
+                  '| engine | truth label | paired correct | paired wrong | unpaired | abstained | flagged | rate |',
+                  '|---|---|---|---|---|---|---|---|']
+        lines += [f'| {e} | {label} | {c["paired_correct"]} | {c["paired_wrong"]} | {c["unpaired"]} | '
+                  f'{c["abstained"]} | {c["flagged"]} | {_iv(c["rate"])} |'
+                  for e in ENGINE_ORDER if e in per_engine for label, c in per_engine[e].items()]
+    for stratum, per_engine in (report.get('rank') or {}).items():
+        lines += ['', f'## Fix rank, stratum {stratum}', '',
+                  '| engine | population | pairs | lineages | found | pool median | hit@1 | hit@3 | hit@10 | MRR | nDCG@10 |',
+                  '|---|---|---|---|---|---|---|---|---|---|---|']
+        lines += [f'| {e} | {b["population"]} | {b["pairs"]} | {b["lineages"]} | {b["found_in_pool"]} | '
+                  f'{_fmt(b["pool_median"])} | {_iv(b["hit_at"]["1"])} | {_iv(b["hit_at"]["3"])} | '
+                  f'{_iv(b["hit_at"]["10"])} | {_iv(b["mrr"])} | {_iv(b["ndcg10"])} |'
+                  for e in ENGINE_ORDER if e in per_engine for b in [per_engine[e]]]
+    return lines
+
+
 def render_markdown(report: Mapping, max_wrong: int = 50) -> str:
     lines = ['# Tier R evaluation (tier-r-report/1)', '', f'- report_sha256: `{report["report_sha256"]}`',
              f'- symbols: {report["symbols"]}', f'- pairs: {len(report["inputs"])}', '', '## Engines', '',
@@ -460,9 +537,10 @@ def render_markdown(report: Mapping, max_wrong: int = 50) -> str:
     for stratum, per_engine in report['strata'].items():
         lines += ['', f'## Stratum {stratum}', '', '| engine | ' + ' | '.join(cols) + ' |',
                   '|---|' + '---|' * len(cols)]
-        for engine in ENGINES:
+        for engine in ENGINE_ORDER:
             if engine in per_engine:
                 lines.append(f'| {engine} | ' + ' | '.join(_fmt(per_engine[engine][c]) for c in cols) + ' |')
+    lines += _block_lines(report)
     lines += ['', '## Wrong matches', '']
     wrong = report['wrong_matches']
     if not wrong:
