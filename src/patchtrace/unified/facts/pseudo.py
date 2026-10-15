@@ -3,7 +3,8 @@
 Comments and whitespace are dropped; locals, parameters and temporaries are alpha-renamed by first occurrence;
 `LAB_`/`switchD_`/`caseD_` labels (they stay inside the function) are renamed by first occurrence; function labels
 become the token of the matched row they map to, else a numbered unmapped token; data labels are always unmapped
-in S0 (DATA-MAP is S3). Literals are compared by value; strings, operators, casts and call names are kept exactly.
+without DATA-MAP (S0); with it (`data_labels`, S3) a data label that DATA-MAP/1 maps becomes the token of its datum pair
+on both sides. Literals are compared by value; strings, operators, casts and call names are kept exactly.
 An alpha-renamed unmapped label could hide a swapped global (R-02), so `Canon.unmapped` > 0 forbids COS-PSEUDO/1.
 The scanner is hand-written around `re.match` and `str.find` so hostile text cannot make it quadratic.
 """
@@ -123,8 +124,9 @@ def _number(kind: str, text: str) -> str:
 
 
 def canonicalize(code: str, side: str, labels, addr: AddressMap, basis: str,
-                 limits: UnifiedLimits = DEFAULT_LIMITS) -> Canon:
-    """`labels.token(side, rva)` gives the token of the matched row that owns a function RVA, or None."""
+                 limits: UnifiedLimits = DEFAULT_LIMITS, data_labels=None) -> Canon:
+    """`labels.token(side, rva)` gives the token of the matched row that owns a function RVA, or None;
+    `data_labels.token(side, rva)` does the same for a datum mapped by DATA-MAP/1 (None: every data label is unmapped)."""
     raw = _scan(code)
     brace = next((i for i, (_k, t) in enumerate(raw) if t == '{'), len(raw))
     tokens: list[str] = []
@@ -160,8 +162,14 @@ def canonicalize(code: str, side: str, labels, addr: AddressMap, basis: str,
                     mapped.add(token)
                 else:
                     token = rename(unmapped, text, 'U')
-            elif _DATA_LABEL.match(text):
-                token = rename(unmapped, text, 'U')
+            elif (found := _DATA_LABEL.match(text)) is not None:
+                rva = addr.to_rva(side, int(found.group(1), 16), basis) if data_labels is not None else None
+                mapped_token = data_labels.token(side, rva) if rva is not None else None
+                if mapped_token is not None:
+                    token = mapped_token
+                    mapped.add(token)
+                else:
+                    token = rename(unmapped, text, 'U')
             if (index >= brace and index + 1 < len(raw) and raw[index + 1][1] == '(' and text not in KEYWORDS
                     and (index == 0 or raw[index - 1][1] not in ('.', '->'))):
                 calls.append(token)

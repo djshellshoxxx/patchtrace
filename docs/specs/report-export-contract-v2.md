@@ -1,6 +1,6 @@
-# RPT2: Report and export contract v2
+# Report and export contract v2 (SPEC-50)
 
-Status: draft for build, written 2026-10-14 (Program E, E-1). Additive over `docs/specs/architecture.md` "Reports" and `src/patchtrace/reports.py` (`export_project`, `_snapshot`, `_render`, `_clean`, `_redact`, `_markdown_escape`, `_cell`), `ExportManifest` in `src/patchtrace/models.py`, and the UI export dialog (`docs/specs/ui.md` line 15). Report contract v1 output stays byte-for-byte producible: v2 is opt-in until the GUI and CLI default is switched by the owner.
+Status: draft for build (registered as SPEC-50, formerly RPT2 under `docs/specs/program-e/`), written 2026-10-14 (Program E, E-1); not yet built. Additive over `docs/specs/architecture.md` "Reports" and `src/patchtrace/reports.py` (`export_project`, `_snapshot`, `_render`, `_clean`, `_redact`, `_markdown_escape`, `_cell`), `ExportManifest` in `src/patchtrace/models.py`, and the UI export dialog (`docs/specs/ui.md` line 15). Report contract v1 output stays byte-for-byte producible: v2 is opt-in until the GUI and CLI default is switched by the owner.
 
 Source-access note: `www.w3.org`, `spec.commonmark.org` and `arxiv.org` were not reachable from the sandbox on 2026-10-14 (DNS failure). Standards claims below are `[unverified: host blocked]` and must be re-checked in the build slice. Code claims were read from this repository on 2026-10-14; two defects found in `reports.py` were reproduced locally (section 6).
 

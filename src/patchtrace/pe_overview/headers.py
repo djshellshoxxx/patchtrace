@@ -6,9 +6,11 @@ from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from typing import Any
 
+from patchtrace.artifact_bytes import VerifiedArtifactReader
+
 from ._common import Ctx
 from .directories import parse_directories
-from .models import ChecksumInfo, CodeLabel, CoffTimestamp, PeKind
+from .models import ChecksumInfo, CodeLabel, CoffTimestamp, Limits, PeKind
 
 MACHINES = {
     0x0: 'UNKNOWN', 0x14C: 'I386', 0x166: 'R4000', 0x1C0: 'ARM', 0x1C4: 'ARMNT', 0x200: 'IA64',
@@ -128,6 +130,14 @@ def parse_headers(ctx: Ctx) -> HeaderState:
         subsystem = _parse_optional(ctx, st, opt_size)
     f['pe_kind'] = classify_kind(chars, subsystem)
     return st
+
+
+def read_image_layout(reader: VerifiedArtifactReader) -> tuple[int, int] | None:
+    """(ImageBase, SizeOfImage) from the DOS and optional headers alone: no section table, entropy, checksum or
+    directory work, so a hostile layout costs nothing. None unless both are readable and SizeOfImage is not zero."""
+    fields = parse_headers(Ctx(reader, None, Limits())).fields
+    base, size = fields.get('image_base'), fields.get('size_of_image')
+    return (base, size) if base is not None and size else None
 
 
 def _parse_optional(ctx: Ctx, st: HeaderState, opt_size: int) -> int | None:

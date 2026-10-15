@@ -95,6 +95,31 @@ def place_ir(root: Path, run_id: str, built: Path) -> Path:
     return final
 
 
+def list_ir(root: Path, run_id: str) -> tuple[tuple[Path, ProgramIrManifest], ...]:
+    """Every IR directory placed below one run, sorted by key. The check is the cheap one a plan can afford on every
+    refresh (a regular directory of exactly the two files, a valid manifest naming this directory, a regular database
+    file); the SHA-256 of the database is `IrReader.open`'s job, so a tampered file fails the run that uses it with
+    `STORE` instead of costing a gigabyte of hashing per status call. A directory that fails the cheap check is not
+    listed."""
+    try:
+        parent = ir_dir(root, run_id, '0' * 64).parent
+        names = sorted(p for p in parent.iterdir() if p.is_dir() and not p.is_symlink()) if parent.is_dir() else []
+    except (UnifiedError, ValueError, OSError):
+        return ()
+    found = []
+    for directory in names:
+        try:
+            manifest = read_manifest(directory)
+            database = directory / schema.DB_NAME
+            if (directory.name != manifest.ir_key[:16] or database.is_symlink() or not database.is_file()
+                    or {p.name for p in directory.iterdir()} != {schema.DB_NAME, schema.MANIFEST_NAME}):
+                continue
+        except (UnifiedError, OSError):
+            continue
+        found.append((directory, manifest))
+    return tuple(sorted(found, key=lambda item: item[1].ir_key))
+
+
 def find_ir(root: Path, run_id: str, ir_key: str) -> Path | None:
     """The verified directory for `ir_key`, or None (a missing or corrupt IR is a cache miss, never a crash)."""
     try:

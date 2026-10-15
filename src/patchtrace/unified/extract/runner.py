@@ -5,6 +5,9 @@ One extractor child per side, sequential by default (two JVMs may exhaust RAM, L
 Python running the packaged script; the JVM is never memory-capped (RLIMIT_AS breaks JVM reservations, T-38), `-Xmx`
 bounds it. The target binary is never executed: Ghidra loads it as data. All paths handed to Ghidra are private,
 absolute, without dot-prefixed components and shorter than 240 characters (the `ExtractRequest` contract checks it).
+
+`decompile_side` (S3b, 05 s2.8) runs the same child in `decompile` mode over the GZF retained by an earlier run: one
+child per side with the requested RVAs, its `decomp.jsonl` validated line by line before anything uses it.
 """
 from __future__ import annotations
 
@@ -31,12 +34,15 @@ from .. import keys
 from ..contracts import ExtractRequest, IrKeyInputs
 from ..limits import DEFAULT_LIMITS, Budget, BudgetExhausted, UnifiedError, UnifiedLimits
 from . import PRIVATE_SCRIPT_NAME, SYMBOLS_BY_MODE, analysis_options_digest, script_bytes, script_sha256
+from .decomp import DecompRecord, read_decomp
 
 DEFAULT_HEAP_MB = 4096                     # unknown RAM (the package may not import ctypes, 03 s12.2 item 1)
 STDOUT_LIMIT = 64 * 1024
 STDERR_LIMIT = 256 * 1024
 REQUEST_LIMIT_KEYS = ('l01_functions_per_side', 'l02_instructions_per_side', 'l05_string_bytes', 'l06_fn_raw_bytes',
                       'l06_fn_instructions')
+DECOMPILE_LIMIT_KEYS = ('l29_pseudo_chars', 'l29_pseudo_lines', 'l41_decompile_fn_s', 'l41_decompile_run_s')
+DECOMPILE_OVERHEAD_S = 120                 # JVM start, GZF import and teardown on top of the L-41 run budget
 _SLUG = re.compile(r'^[a-z0-9-]{1,48}$')
 _STDERR_UNSAFE = re.compile('[\x00-\x08\x0b-\x1f\x7f-\x9f\u2028\u2029\u202a-\u202e\u2066-\u2069]')
 _PROBE_KEYS = frozenset({'ghidra', 'pyghidra', 'java', 'python', 'script_sha256'})
@@ -47,6 +53,7 @@ _REASONS = {
     'ghidra-version': 'PT-UNIFIED-UNSUPPORTED', 'pyghidra-missing': 'PT-UNIFIED-UNSUPPORTED',
     'operand-flags': 'PT-UNIFIED-UNSUPPORTED', 'unsupported-mode': 'PT-UNIFIED-UNSUPPORTED',
     'jvm-start': 'PT-UNIFIED-UNSUPPORTED', 'import-failed': 'PT-UNIFIED-UNSUPPORTED',
+    'decompiler-unavailable': 'PT-UNIFIED-UNSUPPORTED',
     'bad-request': 'PT-UNIFIED-INTERNAL', 'bad-option': 'PT-UNIFIED-INPUT', 'cancelled': 'PT-UNIFIED-CANCEL',
     'crash': 'PT-UNIFIED-EXTRACT',
 }
@@ -94,6 +101,37 @@ class ExtractOutput:
         remove_tree(self.work_dir)
 
 
+@dataclass(frozen=True)
+class DecompileJob:
+    """One side of an on-demand decompile (05 s2.8): the GZF retained by the run that produced the IR (`gzf_path`,
+    `gzf_sha256`) and the function RVAs to decompile (1..L-41, the sorted unique set is sent)."""
+    side: Literal['older', 'newer']
+    artifact_path: Path
+    artifact_sha256: str
+    backend: BackendConfig
+    gzf_path: Path
+    gzf_sha256: str
+    rvas: tuple[int, ...]
+    limits: UnifiedLimits = DEFAULT_LIMITS
+    timeout_seconds: int | None = None
+    max_heap_mb: int | None = None
+    total_ram_bytes: int | None = None
+
+
+@dataclass
+class DecompileOutput:
+    """`records` are the validated lines of `out/decomp.jsonl` by RVA; the caller uses them and calls `cleanup()`."""
+    work_dir: Path
+    jsonl: Path
+    records: dict[int, DecompRecord]
+    probe: dict = field(default_factory=dict)
+    stderr_tail: str = ''
+    script_sha256: str = ''
+
+    def cleanup(self) -> None:
+        remove_tree(self.work_dir)
+
+
 def _error(code: str, message: str, reason: str) -> UnifiedError:
     return UnifiedError(code, message, reason=reason)
 
@@ -125,7 +163,7 @@ def effective_options(job: ExtractJob) -> dict[str, str]:
     return dict(job.analysis_options) if job.analysis_options is not None else default_analysis_options(job.mode)
 
 
-def heap_mb(job: ExtractJob) -> int:
+def heap_mb(job: ExtractJob | DecompileJob) -> int:
     if job.max_heap_mb is not None:
         return job.max_heap_mb
     if job.total_ram_bytes:
@@ -256,10 +294,8 @@ def classify(result: ProcessResult) -> UnifiedError | None:
     return _error(code, messages[code], reason)
 
 
-def _timeout_seconds(job: ExtractJob, budget: Budget) -> float:
-    limits = job.limits
-    seconds = job.timeout_seconds if job.timeout_seconds is not None else (
-        limits.l04_analyze_timeout_s if job.mode == 'analyze' else limits.l04_gzf_timeout_s)
+def _bounded_timeout(limits: UnifiedLimits, seconds: int, budget: Budget) -> float:
+    """`seconds` clamped to the L-04 range and to what is left of the run's deadline."""
     seconds = limits.checked_timeout(seconds, kind='extract')
     if budget.deadline is not None:
         remaining = budget.deadline - budget.clock()
@@ -267,6 +303,12 @@ def _timeout_seconds(job: ExtractJob, budget: Budget) -> float:
             raise BudgetExhausted('PT-UNIFIED-TIMEOUT', 'Unified analysis reached its deadline', reason='deadline')
         seconds = min(float(seconds), remaining)
     return float(seconds)
+
+
+def _timeout_seconds(job: ExtractJob, budget: Budget) -> float:
+    limits = job.limits
+    return _bounded_timeout(limits, job.timeout_seconds if job.timeout_seconds is not None else (
+        limits.l04_analyze_timeout_s if job.mode == 'analyze' else limits.l04_gzf_timeout_s), budget)
 
 
 def _build_request(job: ExtractJob, work: Path) -> ExtractRequest:
@@ -283,44 +325,94 @@ def _build_request(job: ExtractJob, work: Path) -> ExtractRequest:
                      'path of 240 characters or more, or an out-of-range value)', 'request-invalid') from None
 
 
+def _build_decompile_request(job: DecompileJob, work: Path) -> ExtractRequest:
+    limits = {k: v for k, v in job.limits.as_dict().items() if k in DECOMPILE_LIMIT_KEYS}
+    try:
+        return ExtractRequest(
+            side=job.side, artifact_path=str(Path(job.artifact_path).absolute()), artifact_sha256=job.artifact_sha256,
+            mode='decompile', gzf_path=str(Path(job.gzf_path).absolute()), gzf_sha256=job.gzf_sha256,
+            out_dir=str(work / 'out'), work_dir=str(work / 'ghidra'), max_heap_mb=heap_mb(job), analysis_options={},
+            limits=limits, decompile_rvas=tuple(sorted(set(job.rvas))))
+    except ValidationError:
+        raise _error('PT-UNIFIED-INPUT', 'The decompile paths or parameters are not usable (dot-prefixed folder, '
+                     'path of 240 characters or more, or an out-of-range value)', 'request-invalid') from None
+
+
 def private_dir() -> Path:
     return Path(tempfile.mkdtemp(prefix='patchtrace-ir-')).resolve()
+
+
+def _require_backend(cfg: BackendConfig) -> None:
+    if not cfg.python_executable or not cfg.ghidra_dir or backend_module._config_errors(cfg):
+        raise _error('PT-UNIFIED-UNSUPPORTED', 'Ghidra extraction needs the configured Python and Ghidra', 'no-backend')
+
+
+def _spawn(cfg: BackendConfig, work: Path, request: ExtractRequest, limits: UnifiedLimits, timeout: float,
+           budget: Budget, emit: Callable[[ExtractProgress], None] | None,
+           runner: Callable[..., ProcessResult]) -> ProcessResult:
+    """What every mode shares once `work` exists: the private layout, the verified script copy, the request file, the
+    environment and the supervised child with its classification. A failure raises; `work` is the caller's to remove."""
+    for name in ('script', 'ghidra', 'out', 'ghidra-settings'):
+        (work / name).mkdir()
+    # The interpreter puts the script's directory first on sys.path: it holds only the script, so no sibling
+    # (not even the `ghidra` project directory, which would shadow Ghidra's Java package) is importable.
+    script = work / 'script' / PRIVATE_SCRIPT_NAME
+    script.write_bytes(script_bytes())
+    request_path = work / 'request.json'
+    request_path.write_text(request.model_dump_json(), encoding='utf-8', newline='\n')
+    env = backend_module._environment(cfg, work / 'ghidra-settings')
+    # Not resolved: a venv interpreter is a symlink/launcher whose location selects its site-packages.
+    argv = [os.path.abspath(cfg.python_executable), '-B', '-X', 'utf8', str(script), '--request', str(request_path)]
+    guard = OutputGuard(work / 'out', emit, limits.l05_output_bytes, limits.l37_progress_bytes,
+                        limits.l36_retained_gzf_bytes)
+    result = runner(argv, cwd=work, env=env, cancel=budget.cancel or threading.Event(), timeout_seconds=timeout,
+                    check_output=guard, log_limit=STDOUT_LIMIT, separate_streams=True, stderr_limit=STDERR_LIMIT)
+    failure = classify(result)
+    if failure is not None:
+        failure.diagnostics = sanitize_stderr(result.stderr_tail)   # plain text for a log, never in the message
+        raise failure
+    remove_tree(work / 'ghidra')                       # the Ghidra project can be large; only `out/` is kept
+    remove_tree(work / 'ghidra-settings')
+    return result
+
+
+def decompile_side(job: DecompileJob, budget: Budget | None = None,
+                   emit: Callable[[ExtractProgress], None] | None = None, *,
+                   runner: Callable[..., ProcessResult] = run_process) -> DecompileOutput:
+    """Decompile the requested functions of one side from its retained GZF (05 s2.8) and return the validated records.
+    Raises `UnifiedError`; the private directory never outlives a failure."""
+    budget = budget or Budget()
+    _require_backend(job.backend)
+    rvas = tuple(sorted(set(job.rvas)))
+    if not rvas or len(rvas) > job.limits.l41_decompile_pairs:
+        raise _error('PT-UNIFIED-INPUT', 'A decompile run needs between one function and the L-41 limit',
+                     'request-invalid')
+    timeout = _bounded_timeout(job.limits, job.timeout_seconds if job.timeout_seconds is not None else
+                               job.limits.l41_decompile_run_s + DECOMPILE_OVERHEAD_S, budget)
+    work = private_dir()
+    try:
+        result = _spawn(job.backend, work, _build_decompile_request(job, work), job.limits, timeout, budget, emit,
+                        runner)
+        jsonl = work / 'out' / 'decomp.jsonl'
+        records = read_decomp(jsonl, job.side, rvas, job.limits)
+        probe, _reason = _child_documents(result.log_tail)
+        return DecompileOutput(work, jsonl, records, probe, sanitize_stderr(result.stderr_tail), script_sha256())
+    except BaseException:
+        remove_tree(work)
+        raise
 
 
 def extract_side(job: ExtractJob, budget: Budget | None = None, emit: Callable[[ExtractProgress], None] | None = None,
                  *, runner: Callable[..., ProcessResult] = run_process) -> ExtractOutput:
     """Run the extractor for one side and return its private output (03 s3). Raises `UnifiedError`."""
     budget = budget or Budget()
-    cfg = job.backend
-    if not cfg.python_executable or not cfg.ghidra_dir or backend_module._config_errors(cfg):
-        raise _error('PT-UNIFIED-UNSUPPORTED', 'Ghidra extraction needs the configured Python and Ghidra', 'no-backend')
+    _require_backend(job.backend)
     if job.mode == 'gzf' and (job.gzf_path is None or job.gzf_sha256 is None):
         raise _error('PT-UNIFIED-INPUT', 'gzf mode needs the retained GZF and its SHA-256', 'request-invalid')
     timeout = _timeout_seconds(job, budget)
     work = private_dir()
     try:
-        for name in ('script', 'ghidra', 'out', 'ghidra-settings'):
-            (work / name).mkdir()
-        # The interpreter puts the script's directory first on sys.path: it holds only the script, so no sibling
-        # (not even the `ghidra` project directory, which would shadow Ghidra's Java package) is importable.
-        script = work / 'script' / PRIVATE_SCRIPT_NAME
-        script.write_bytes(script_bytes())
-        request = _build_request(job, work)
-        request_path = work / 'request.json'
-        request_path.write_text(request.model_dump_json(), encoding='utf-8', newline='\n')
-        env = backend_module._environment(cfg, work / 'ghidra-settings')
-        # Not resolved: a venv interpreter is a symlink/launcher whose location selects its site-packages.
-        argv = [os.path.abspath(cfg.python_executable), '-B', '-X', 'utf8', str(script), '--request', str(request_path)]
-        guard = OutputGuard(work / 'out', emit, job.limits.l05_output_bytes, job.limits.l37_progress_bytes,
-                            job.limits.l36_retained_gzf_bytes)
-        result = runner(argv, cwd=work, env=env, cancel=budget.cancel or threading.Event(), timeout_seconds=timeout,
-                        check_output=guard, log_limit=STDOUT_LIMIT, separate_streams=True, stderr_limit=STDERR_LIMIT)
-        failure = classify(result)
-        if failure is not None:
-            failure.diagnostics = sanitize_stderr(result.stderr_tail)   # plain text for a log, never in the message
-            raise failure
-        remove_tree(work / 'ghidra')                       # the Ghidra project can be large; only `out/` is kept
-        remove_tree(work / 'ghidra-settings')
+        result = _spawn(job.backend, work, _build_request(job, work), job.limits, timeout, budget, emit, runner)
         jsonl = work / 'out' / 'ir.jsonl'
         if not jsonl.is_file() or jsonl.is_symlink():
             raise _error('PT-UNIFIED-IR', 'The extractor produced no output', 'no-output')

@@ -1,6 +1,6 @@
-# GHR: PatchTrace-owned Ghidriff launcher and symbol policy
+# PatchTrace-owned Ghidriff launcher and symbol policy (SPEC-53)
 
-Status: draft for build, written 2026-10-14 (Program E, E-1). Closes the open item "Local-only symbol policy: needs PatchTrace-owned Ghidriff launcher (CLI cannot set empty symbol URLs)" (`tasks/todo.md`). Touches `src/patchtrace/backend.py` (`run_comparison`, `BackendConfig`, `_environment`), `enrichment/cache.py` (`RuntimeFingerprint`), `reports.py` (`SAFE_SETTING_KEYS`), `ui.py` Setup. Existing persisted contracts (`symbol_policy` values `disabled | online`, `allow_symbol_downloads`) are preserved.
+Status: draft (SPEC-53), written 2026-10-14; promoted from program-e/ with no content change; not built. Closes the open item "Local-only symbol policy: needs PatchTrace-owned Ghidriff launcher (CLI cannot set empty symbol URLs)" (`tasks/todo.md`). Touches `src/patchtrace/backend.py` (`run_comparison`, `BackendConfig`, `_environment`), `enrichment/cache.py` (`RuntimeFingerprint`), `reports.py` (`SAFE_SETTING_KEYS`), `ui.py` Setup. Existing persisted contracts (`symbol_policy` values `disabled | online`, `allow_symbol_downloads`) are preserved.
 
 Source-access note: `learn.microsoft.com` and other Microsoft hosts were blocked from the sandbox on 2026-10-14; facts about Microsoft symbol services are `[unverified]`. Ghidriff source was read from the pinned commit through raw file fetches (retrieved 2026-10-14). A fetch tool summarized the files; function bodies not quoted in full below are paraphrased and must be re-read in the build slice.
 

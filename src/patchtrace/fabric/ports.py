@@ -3,7 +3,7 @@
 Every feature track talks to the fabric through these seams and never imports another feature's internals. The write
 side is `AnchorSink` (PIL and KB assume `publish(project_key, anchors)`), the read side is `AnchorReader` (GDE assumes
 `resolve(kind, value, side)`); a pin for the analyst is a separate port added in FAB-4, so neither Protocol changes.
-`OriginRegistry` is the Protocol PIL already uses (`pilot/ports.py`), so PIL rebinds to it unchanged.
+`OriginRegistry` and `AnchorSink` are the seams PIL uses: `pilot/ports.py` re-exports them (FAB-3), so PIL has no copy.
 
 Rules every implementation follows: a source that is missing, not run or failed yields fewer anchors (unknown, never a
 negative vote); free text in an anchor is already plain text (`contracts.clean_line`); nothing here executes a target

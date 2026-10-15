@@ -1,0 +1,51 @@
+{
+  "$id": "https://patchtrace.local/schemas/fabric/1/Ref.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "What a witness was read from: a source kind and id, an optional RFC 6901 pointer and content digest.",
+  "properties": {
+    "id": {
+      "maxLength": 256,
+      "minLength": 1,
+      "title": "Id",
+      "type": "string"
+    },
+    "kind": {
+      "pattern": "^[a-z0-9-]{1,48}$",
+      "title": "Kind",
+      "type": "string"
+    },
+    "pointer": {
+      "anyOf": [
+        {
+          "maxLength": 4096,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Pointer"
+    },
+    "sha256": {
+      "anyOf": [
+        {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Sha256"
+    }
+  },
+  "required": [
+    "kind",
+    "id"
+  ],
+  "title": "Ref",
+  "type": "object"
+}

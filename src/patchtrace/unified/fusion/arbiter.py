@@ -315,9 +315,32 @@ def _assemble(older, newer, decision, chosen_atoms, against_atoms, extra_atoms, 
                    mapped=mapped)
 
 
+PAIRING = ('matched', 'tentative', 'candidate', 'contested')
+
+
+def decided_from_match(row: UnifiedMatch) -> Decided:
+    """The decided row a stored row came from (the inverse of `to_match`): a stage that runs after the result was
+    written (S3b judges some rows again) rebuilds the decisions from the rows instead of repeating the ladder and
+    the fusion. `pair` is the single edge of a one-to-one pairing row; `mapped` is the rule of `_assemble`."""
+    single = len(row.older) == len(row.newer) == 1 and row.decision in PAIRING
+    pair = (row.older[0].rva, row.newer[0].rva) if single else None
+    mapped = row.decision == 'matched' and pair is not None and any(s.tier in ('A', 'M') for s in row.support)
+    return Decided(older=tuple(s.rva for s in row.older), newer=tuple(s.rva for s in row.newer),
+                   decision=row.decision, support=row.support, contest=row.contest, atoms=row.atoms,
+                   hints=row.hints, ghidriff_match_id=row.ghidriff_match_id, pair=pair, mapped=mapped)
+
+
+def node_info(row: UnifiedMatch) -> dict[tuple[str, int], NodeInfo]:
+    """The display names and kinds of the functions of a stored row, in the shape `to_match` reads."""
+    return {(side, ref.rva): NodeInfo(ref.name, ref.kind)
+            for side, refs in (('older', row.older), ('newer', row.newer)) for ref in refs}
+
+
 def to_match(d: Decided, nodes: Mapping, older_sha256: str, newer_sha256: str, *, materiality: str | None = None,
-             change_classes: Sequence[str] = (), extra_hints: Sequence[str] = ()) -> UnifiedMatch:
-    """The validated persisted row. One-sided and group rows default to `not-applicable` (facts are v1-skipped)."""
+             change_classes: Sequence[str] = (), extra_hints: Sequence[str] = (),
+             flags: Iterable[str] = ()) -> UnifiedMatch:
+    """The validated persisted row. One-sided and group rows default to `not-applicable` (facts are v1-skipped).
+    `flags` are the row flags of the IR facts (`Judged.flags`); they are stored sorted and without repeats."""
     def refs(side: str, rvas: Iterable[int]) -> tuple[SideRef, ...]:
         out = []
         for rva in rvas:
@@ -330,4 +353,5 @@ def to_match(d: Decided, nodes: Mapping, older_sha256: str, newer_sha256: str, *
         newer=refs('newer', d.newer), decision=d.decision, support=d.support, contest=d.contest, atoms=d.atoms,
         ghidriff_match_id=d.ghidriff_match_id,
         materiality=materiality or ('unknown' if pair_row else 'not-applicable'),
-        change_classes=tuple(change_classes), hints=tuple(sorted({*d.hints, *extra_hints}))[:MAX_HINTS])
+        change_classes=tuple(change_classes), flags=tuple(sorted(set(flags))),
+        hints=tuple(sorted({*d.hints, *extra_hints}))[:MAX_HINTS])

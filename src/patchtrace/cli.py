@@ -15,6 +15,7 @@ from pathlib import Path
 
 from .backend_cli import cmd_backend
 from .backend_cli import register as register_backend
+from .diagnostics import redact_log
 from .intelligence import cli as intelligence_cli
 from .intelligence.tools import cli as intel_tools_cli  # SPEC-29 tools dispatcher (cheap import)
 
@@ -864,9 +865,9 @@ def main(argv: list[str] | None = None) -> int:
     except SystemExit as exc:  # --help
         return int(exc.code or 0)
     except Exception as exc:  # contract: unexpected failures are runtime errors (3), never a bare traceback
-        print(f'error: {type(exc).__name__}: {exc}', file=sys.stderr)
+        message = f'{type(exc).__name__}: {redact_log(str(exc))}'  # an exception may quote a header, URL or argv
+        print(f'error: {message}', file=sys.stderr)
         if args is not None and getattr(args, 'json', False):
             sys.stdout.write(json.dumps({'contract': CLI_CONTRACT, 'command': _command_name(args), 'status': 'failed',
-                                         'result': None, 'warnings': [], 'error': f'{type(exc).__name__}: {exc}'},
-                                        sort_keys=True) + '\n')
+                                         'result': None, 'warnings': [], 'error': message}, sort_keys=True) + '\n')
         return RUNTIME

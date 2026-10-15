@@ -2,6 +2,7 @@
 (old readers never see unified kinds; enrichment retention never deletes them). Synthetic sample projects only."""
 from __future__ import annotations
 
+import dataclasses
 import gzip
 import hashlib
 import json
@@ -25,7 +26,7 @@ from patchtrace.secondary.store import current_sets
 from patchtrace.unified import contracts as uc
 from patchtrace.unified import keys, store
 from patchtrace.unified.contracts import ChangeFacts, SideRef, SourceRef, UnifiedMatch, UnifiedRun
-from patchtrace.unified.limits import UnifiedError
+from patchtrace.unified.limits import DEFAULT_LIMITS, UnifiedError
 
 FUTURE = '9999-01-01T00:00:00+00:00'
 CH = tuple((c, 'equal') for c in ('C0', 'C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7', 'C8'))
@@ -91,6 +92,26 @@ def test_write_verify_read_round_trip(case):
         assert f.read(10)[4:8] == b'\x00\x00\x00\x00'  # gzip mtime 0: no timestamp in the container
     assert keys.result_key(keys.result_key_inputs(manifest)) == manifest.result_id
     assert manifest.counts.decisions.matched == 2 and manifest.counts.materiality.unchanged == 2
+
+
+def test_the_part_reader_and_the_record_parser_are_public(case):
+    """The read layer (`read_text.SidecarRecords`) shares the store's caps and strictness through public names."""
+    staged, manifest, _ = _stage(case)
+    lines = list(store.part_lines(staged / store.ROWS))
+    assert len(lines) == 2 and all(line.endswith(b'\n') for line in lines)
+    row = store.parse_line(lines[0], UnifiedMatch)
+    assert row.older[0].name == 'f0' and row.row_id == keys.row_id(manifest.older_sha256, manifest.newer_sha256,
+                                                                    [0x1000], [0x2000])
+    with pytest.raises(UnifiedError) as bad:
+        store.parse_line(b'{"contract":"unified-match/1"}\n', UnifiedMatch)
+    assert bad.value.reason == 'record-invalid'
+    with pytest.raises(UnifiedError) as framing:
+        store.parse_line(lines[0].replace(b'\n', b'\r\n'), UnifiedMatch)
+    assert framing.value.reason == 'line-framing'
+    tight = dataclasses.replace(DEFAULT_LIMITS, l30_part_bytes=10, l30_dir_bytes=10)
+    with pytest.raises(UnifiedError) as big:
+        list(store.part_lines(staged / store.ROWS, tight))
+    assert big.value.reason == 'part-too-large'
 
 
 def test_part_hash_mismatch_is_rejected(case):

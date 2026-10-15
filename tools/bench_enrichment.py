@@ -2,7 +2,8 @@
 
 Synthetic, labelled workload: N modified 1:1 matches, each with ~L/N decompiled lines per side and
 one inserted bounds check per pairing, so every detector path does real work. Measures wall time
-and peak RSS of views+signals+wil+ranking, and a derived-cache hit. Run from the repository root:
+and peak RSS (`null` where the platform gives no figure) of views+signals+wil+ranking, and a derived-cache hit.
+Run from the repository root:
 
     python tools/bench_enrichment.py [--pairs 10000] [--lines 100000] [--repeat 3] [--json]
 
@@ -39,6 +40,17 @@ def build_project(pairs: int, lines: int):
                                              revision=0, id='bench', schema_version=1, created='', sample=False)
 
 
+def peak_rss_mib() -> float | None:
+    """Peak resident set size of this process in MiB, or None where `resource` is missing (Windows): an unmeasured
+    value must not read as 0.0 MiB, which would pass the 512 MiB objective."""
+    try:
+        import resource  # POSIX only
+    except ImportError:
+        return None
+    peak = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
+    return round(peak / (1024 * 1024 if sys.platform == 'darwin' else 1024), 1)  # bytes on macOS, KiB elsewhere
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument('--pairs', type=int, default=10_000)
@@ -64,16 +76,11 @@ def main() -> int:
             t2 = time.perf_counter()
             hit = pipeline.run(project, pipeline.PipelineOptions(cache=cache))
             warm = min(warm, time.perf_counter() - t2)
-    try:
-        import resource  # POSIX only
-        rss_kib = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
-    except ImportError:
-        rss_kib = 0
     report = {
         'workload': 'synthetic', 'pairs': args.pairs, 'lines_total': sum(
             len(f.code.splitlines()) for m in project.matches for f in m.older + m.newer),
         'build_seconds': round(build, 2), 'pipeline_cold_seconds': round(cold, 2),
-        'pipeline_cache_hit_seconds': round(warm, 2), 'repeat': repeat, 'peak_rss_mib': round(rss_kib / 1024, 1),
+        'pipeline_cache_hit_seconds': round(warm, 2), 'repeat': repeat, 'peak_rss_mib': peak_rss_mib(),
         'status': result.status.status, 'identical_on_hit': hit.ranking == result.ranking,
         'top_score': result.ranking.entries[0].score if result.ranking.entries else None,
         'python': sys.version.split()[0], 'platform': platform.platform(), 'machine': platform.machine(),
