@@ -755,3 +755,7 @@
 - [x] D9 tools/buildenv_value_gate.py with hand-computed goldens (synthetic)
 - [ ] D9 run on real Tier R M4 outcomes (needs UE S2/S3 outcomes and the known-answer factory)
 - [ ] D8 first dispatch of `live-buildenv` (Actions) and golden confirmation; stays BLOCKED locally without PATCHTRACE_DIEC
+
+### [WB1-S7:search-panel]
+- [x] Search dock on the panel framework (states Q0-Q12, paged rows, navigation, cancel, shutdown).
+- [ ] Kinds menu, saved searches, suggestion popup, hit-span delegate, F3/Shift+F3, feature-owned paged model (see commit notes).

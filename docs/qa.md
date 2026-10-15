@@ -1004,3 +1004,7 @@ Goldens are derived from committed tool output, not from a new live capture; the
 
 ### [D8:live-buildenv]
 - Locally both cases record BLOCKED (no diec here); the job is dispatch-only. Not verified: any live run, including the golden equality and the provisioning step with `--engine diec`.
+
+
+### [WB1-S7:search-panel]
+Automated: `tests/test_ui_search_panel.py` (offscreen, 29 tests, `tools/qt_gate.py --repeat 5` clean). Not verified: real index on a project, Windows, screen readers.
