@@ -115,6 +115,117 @@ OUTPUT: after you finish, reply with the PR URL, the branch name, the table, and
 
 ---
 
+## PROMPTS 7-11: prompts 1-5 again, but ChatGPT commits straight to the repo
+
+Each block below is self-contained. Same git rules as PROMPT 6: its own `chatgpt/*` branch, draft PR into `claude/instance-d-gui`, never `main`, never `claude/*`. Only NEW files (no overwrites), only the paths named. Claude reviews the diff, CI decides.
+
+### PROMPT 7: Qt panel specs (direct write)
+
+```
+ROLE: senior engineer and technical writer on PatchTrace (Windows-first PySide6 tool that compares an older and a newer build of a Windows PE binary). You can read and write the GitHub repository djshellshoxxx/patchtrace.
+
+TASK DEFINITION: open docs/plans/chatgpt-prompts.md on branch claude/instance-d-gui and read the section "PROMPT 1 of 5" completely (ROLE, REPO ACCESS, FACTS, INVARIANTS, TASK, EACH SPEC/RULES). Do that task exactly as written, with ONE change: ignore its OUTPUT RULES (the "=== FILE ===" blocks and "NEXT:" turns). Instead commit each file straight into the repository.
+
+GIT RULES (hard limits):
+1. Base: branch claude/instance-d-gui (NOT main). Create ONE branch named chatgpt/panels-1 from its current head.
+2. Commit and push ONLY to chatgpt/panels-1. Never push, force-push, merge or delete on main or on any branch starting with claude/. Never rewrite history. One commit per file or small related group, clear message.
+3. Create only NEW files, only under docs/specs/panels/ and docs/plans/panels-build-plan.md. Never overwrite or edit an existing file; if a file you want already exists, write yours with a -2 suffix and say so. Never touch src/, .github/, pyproject.toml or tools/ unless the section names it.
+4. When finished, open a DRAFT pull request from chatgpt/panels-1 into claude/instance-d-gui. Do not mark it ready, merge it or enable auto-merge.
+5. If you cannot write to the repo, stop at once and say so. Do not paste file contents into chat instead.
+
+QUALITY: you cannot run code. Anything you cannot verify (SHAs, CVE ids, licences, version numbers, field names, URLs) must be marked UNVERIFIED in the file, never invented. Follow docs/plans/worker-brief.md for coding and product-invariant rules. Be exhaustive; do not abbreviate; no placeholders such as "TBD".
+
+PR DESCRIPTION: list every file with one line of purpose, then "Not verified" (everything that needs running or network). Do not claim tests pass.
+
+REPLY at the end with only: PR URL, branch name, file count, and "NEXT: <what you did not reach>" if you stopped early (at most ~25 files per conversation; I will start another conversation for the rest).
+```
+
+### PROMPT 8: Tier R corpus: recipe cards, planted mutations, CVE-fix case candidates (direct write)
+
+```
+ROLE: senior engineer and technical writer on PatchTrace (Windows-first PySide6 tool that compares an older and a newer build of a Windows PE binary). You can read and write the GitHub repository djshellshoxxx/patchtrace.
+
+TASK DEFINITION: open docs/plans/chatgpt-prompts.md on branch claude/instance-d-gui and read the section "PROMPT 2 of 5" completely (ROLE, REPO ACCESS, FACTS, INVARIANTS, TASK, EACH SPEC/RULES). Do that task exactly as written, with ONE change: ignore its OUTPUT RULES (the "=== FILE ===" blocks and "NEXT:" turns). Instead commit each file straight into the repository.
+
+GIT RULES (hard limits):
+1. Base: branch claude/instance-d-gui (NOT main). Create ONE branch named chatgpt/corpus-1 from its current head.
+2. Commit and push ONLY to chatgpt/corpus-1. Never push, force-push, merge or delete on main or on any branch starting with claude/. Never rewrite history. One commit per file or small related group, clear message.
+3. Create only NEW files, only under the paths PROMPT 2 names (recipe/release catalogue data, corpus/catalog, docs/plans). Never overwrite or edit an existing file; if a file you want already exists, write yours with a -2 suffix and say so. Never touch src/, .github/, pyproject.toml or tools/ unless the section names it.
+4. When finished, open a DRAFT pull request from chatgpt/corpus-1 into claude/instance-d-gui. Do not mark it ready, merge it or enable auto-merge.
+5. If you cannot write to the repo, stop at once and say so. Do not paste file contents into chat instead.
+
+QUALITY: you cannot run code. Anything you cannot verify (SHAs, CVE ids, licences, version numbers, field names, URLs) must be marked UNVERIFIED in the file, never invented. Follow docs/plans/worker-brief.md for coding and product-invariant rules. Be exhaustive; do not abbreviate; no placeholders such as "TBD".
+
+PR DESCRIPTION: list every file with one line of purpose, then "Not verified" (everything that needs running or network). Do not claim tests pass.
+
+REPLY at the end with only: PR URL, branch name, file count, and "NEXT: <what you did not reach>" if you stopped early (at most ~25 files per conversation; I will start another conversation for the rest).
+```
+
+### PROMPT 9: Unified-engine gate fixtures and test code (direct write)
+
+```
+ROLE: senior engineer and technical writer on PatchTrace (Windows-first PySide6 tool that compares an older and a newer build of a Windows PE binary). You can read and write the GitHub repository djshellshoxxx/patchtrace.
+
+TASK DEFINITION: open docs/plans/chatgpt-prompts.md on branch claude/instance-d-gui and read the section "PROMPT 3 of 5" completely (ROLE, REPO ACCESS, FACTS, INVARIANTS, TASK, EACH SPEC/RULES). Do that task exactly as written, with ONE change: ignore its OUTPUT RULES (the "=== FILE ===" blocks and "NEXT:" turns). Instead commit each file straight into the repository.
+
+GIT RULES (hard limits):
+1. Base: branch claude/instance-d-gui (NOT main). Create ONE branch named chatgpt/unified-fixtures-1 from its current head.
+2. Commit and push ONLY to chatgpt/unified-fixtures-1. Never push, force-push, merge or delete on main or on any branch starting with claude/. Never rewrite history. One commit per file or small related group, clear message.
+3. Create only NEW files, only under the paths PROMPT 3 names (tests/ and tests/fixtures/ only). Never overwrite or edit an existing file; if a file you want already exists, write yours with a -2 suffix and say so. Never touch src/, .github/, pyproject.toml or tools/ unless the section names it.
+4. When finished, open a DRAFT pull request from chatgpt/unified-fixtures-1 into claude/instance-d-gui. Do not mark it ready, merge it or enable auto-merge.
+5. If you cannot write to the repo, stop at once and say so. Do not paste file contents into chat instead.
+
+QUALITY: you cannot run code. Anything you cannot verify (SHAs, CVE ids, licences, version numbers, field names, URLs) must be marked UNVERIFIED in the file, never invented. Follow docs/plans/worker-brief.md for coding and product-invariant rules. Be exhaustive; do not abbreviate; no placeholders such as "TBD".
+
+PR DESCRIPTION: list every file with one line of purpose, then "Not verified" (everything that needs running or network). Do not claim tests pass.
+
+REPLY at the end with only: PR URL, branch name, file count, and "NEXT: <what you did not reach>" if you stopped early (at most ~25 files per conversation; I will start another conversation for the rest).
+```
+
+### PROMPT 10: KB/CVE correlator and patch-search fixtures, adversarial cases, property tests (direct write)
+
+```
+ROLE: senior engineer and technical writer on PatchTrace (Windows-first PySide6 tool that compares an older and a newer build of a Windows PE binary). You can read and write the GitHub repository djshellshoxxx/patchtrace.
+
+TASK DEFINITION: open docs/plans/chatgpt-prompts.md on branch claude/instance-d-gui and read the section "PROMPT 4 of 5" completely (ROLE, REPO ACCESS, FACTS, INVARIANTS, TASK, EACH SPEC/RULES). Do that task exactly as written, with ONE change: ignore its OUTPUT RULES (the "=== FILE ===" blocks and "NEXT:" turns). Instead commit each file straight into the repository.
+
+GIT RULES (hard limits):
+1. Base: branch claude/instance-d-gui (NOT main). Create ONE branch named chatgpt/kb-fixtures-1 from its current head.
+2. Commit and push ONLY to chatgpt/kb-fixtures-1. Never push, force-push, merge or delete on main or on any branch starting with claude/. Never rewrite history. One commit per file or small related group, clear message.
+3. Create only NEW files, only under the paths PROMPT 4 names (tests/ and tests/fixtures/ only). Never overwrite or edit an existing file; if a file you want already exists, write yours with a -2 suffix and say so. Never touch src/, .github/, pyproject.toml or tools/ unless the section names it.
+4. When finished, open a DRAFT pull request from chatgpt/kb-fixtures-1 into claude/instance-d-gui. Do not mark it ready, merge it or enable auto-merge.
+5. If you cannot write to the repo, stop at once and say so. Do not paste file contents into chat instead.
+
+QUALITY: you cannot run code. Anything you cannot verify (SHAs, CVE ids, licences, version numbers, field names, URLs) must be marked UNVERIFIED in the file, never invented. Follow docs/plans/worker-brief.md for coding and product-invariant rules. Be exhaustive; do not abbreviate; no placeholders such as "TBD".
+
+PR DESCRIPTION: list every file with one line of purpose, then "Not verified" (everything that needs running or network). Do not claim tests pass.
+
+REPLY at the end with only: PR URL, branch name, file count, and "NEXT: <what you did not reach>" if you stopped early (at most ~25 files per conversation; I will start another conversation for the rest).
+```
+
+### PROMPT 11: Full help, documentation and tooltip copy (direct write)
+
+```
+ROLE: senior engineer and technical writer on PatchTrace (Windows-first PySide6 tool that compares an older and a newer build of a Windows PE binary). You can read and write the GitHub repository djshellshoxxx/patchtrace.
+
+TASK DEFINITION: open docs/plans/chatgpt-prompts.md on branch claude/instance-d-gui and read the section "PROMPT 5 of 5" completely (ROLE, REPO ACCESS, FACTS, INVARIANTS, TASK, EACH SPEC/RULES). Do that task exactly as written, with ONE change: ignore its OUTPUT RULES (the "=== FILE ===" blocks and "NEXT:" turns). Instead commit each file straight into the repository.
+
+GIT RULES (hard limits):
+1. Base: branch claude/instance-d-gui (NOT main). Create ONE branch named chatgpt/help-docs-1 from its current head.
+2. Commit and push ONLY to chatgpt/help-docs-1. Never push, force-push, merge or delete on main or on any branch starting with claude/. Never rewrite history. One commit per file or small related group, clear message.
+3. Create only NEW files, only under docs/guide/ and docs/help/ only; do not edit src/. Never overwrite or edit an existing file; if a file you want already exists, write yours with a -2 suffix and say so. Never touch src/, .github/, pyproject.toml or tools/ unless the section names it.
+4. When finished, open a DRAFT pull request from chatgpt/help-docs-1 into claude/instance-d-gui. Do not mark it ready, merge it or enable auto-merge.
+5. If you cannot write to the repo, stop at once and say so. Do not paste file contents into chat instead.
+
+QUALITY: you cannot run code. Anything you cannot verify (SHAs, CVE ids, licences, version numbers, field names, URLs) must be marked UNVERIFIED in the file, never invented. Follow docs/plans/worker-brief.md for coding and product-invariant rules. Be exhaustive; do not abbreviate; no placeholders such as "TBD".
+
+PR DESCRIPTION: list every file with one line of purpose, then "Not verified" (everything that needs running or network). Do not claim tests pass.
+
+REPLY at the end with only: PR URL, branch name, file count, and "NEXT: <what you did not reach>" if you stopped early (at most ~25 files per conversation; I will start another conversation for the rest).
+```
+
+---
+
 ## What to do with the output
 0. Prompt 6 needs no copying: ChatGPT pushes its own branch `chatgpt/deferred-audit-fixes-1` and opens a draft PR. Tell Claude when it appears; Claude reviews the diff and lets CI decide.
 1. Copy each ChatGPT reply (prompts 1-5) (all messages of one prompt, one after another) into a text file named `promptN-<topic>.md`.
