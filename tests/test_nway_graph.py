@@ -296,3 +296,9 @@ def test_ser2_empty_name_without_an_address_is_an_nway_error():
     with pytest.raises(NwayError, match='PT-NWAY-INPUT'):
         extract_chains(H[:3], [p.build() for p in ps])
 
+
+def test_ser3_split_that_includes_the_chain_end_is_inferred_not_contradicted():
+    built = [p.build() for p in straight(3)]
+    d = PairBuilder(H[0], H[2])
+    d.rel('split', older=[fn('f', 0x1000)], newer=[fn('f', 0x1002), fn('g', 0x5000)], match_types=())
+    assert extract_chains(H[:3], built, d.build())[0][0].status == 'inferred'

@@ -373,7 +373,7 @@ def _build_chain(sid: str, start: int, path: list[Key], matches: list[FunctionMa
         elif one is not None and _key(one.newer[0]) != path[-1] and end == n - 1:
             status = 'contradicted'
         elif relations and end == n - 1 and one is None and not any(
-                {_key(f) for f in r.newer} == {path[-1]} for r in relations):
+                path[-1] in {_key(f) for f in r.newer} for r in relations):
             # Direct pair records the start as removed/split/merged away from the chain's end.
             status = 'contradicted'
     chain_id = domain_id('series-chain', 1, {'series_id': sid,
