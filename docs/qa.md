@@ -843,3 +843,8 @@ Automated only: `tests/test_calib_channels_*.py` (synthetic pairs). No channel v
 ### [LBL-08:msvc-cl]
 - Automated (Linux): argv, banner, host gating, nuisance variants and a build through fake `cl`/`link` pass; the real-compiler test records `blocked` (profile msvc builds only on a Windows host).
 - Not verified: any real `cl` build (A/A byte identity, PDB source-path normalisation via `/d1trimfile`, `llvm-strip` on a MSVC image, `llvm-pdbutil` inventory). Needs the windows-2022 advisory job.
+
+### [STRESS2:stress-deep-2]
+- Automated (Linux, synthetic, seeded): tests/stress/test_stress2_{pilot,kev,kbcorrelation,enrichment_store,unified_parts,rules}.py; 78 passed, 5 strict xfail. Scale knob PATCHTRACE_STRESS_SCALE (default 1).
+- Defects (product code unchanged): QA-S2-1 pilot universe() echoes caller CVE text into PilotError.message; QA-S2-2 project store connection is bound to its creating thread (lock-serialised writer threads all fail with ProgrammingError); QA-S2-3 NaN in an enrichment body escapes as ValueError, not PT-ENRICH-INPUT; QA-S2-4 unified part_lines does not enforce the 4 MiB line cap on newline-terminated lines; QA-S2-5 rules not_mostly_wildcards(0,0) raises ZeroDivisionError.
+- Not exercised: YARA-X lint path (yara_x not installed in the worker venv); unified retention with many published results (needs staged result dirs).
