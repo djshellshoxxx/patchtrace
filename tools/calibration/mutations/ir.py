@@ -25,7 +25,7 @@ from .operators import Edit, apply_edits
 
 __all__ = ['IR_OPERATORS', 'IrMutation', 'IrSite', 'LayerVerdict', 'NoIrSite', 'OperatorAgreement',
            'agreement_by_operator', 'compile_ir_object', 'emit_ir', 'ir_changed', 'ir_layer_status', 'ir_sites',
-           'mutate_ir', 'normalise_function', 'optimise_ir']
+           'mutate_ir', 'normalise_function', 'optimise_ir', 'run_in_tree']
 
 IR_OPERATORS = ('cmp-flip', 'const-change', 'field-offset', 'index-swap', 'branch-swap', 'callee-swap')
 _FLIP = {'eq': 'ne', 'ne': 'eq', 'slt': 'sge', 'sge': 'slt', 'sle': 'sgt', 'sgt': 'sle',
@@ -288,7 +288,8 @@ def _clang(tools: Toolchain | None) -> str:
     return (tools if tools is not None else probe(names=['clang'])).path('clang')
 
 
-def _run_in_tree(files: Mapping[str, str], argv_tail: Sequence[str], clang: str, out: str, timeout: float) -> bytes:
+def run_in_tree(files: Mapping[str, str], argv_tail: Sequence[str], exe: str, out: str, timeout: float) -> bytes:
+    """Run one LLVM tool over a private copy of `files` and return the bytes of its output file `out`."""
     with tempfile.TemporaryDirectory(prefix='pt-ir-') as tmp:
         root = Path(tmp)
         for rel, text in files.items():
@@ -296,10 +297,10 @@ def _run_in_tree(files: Mapping[str, str], argv_tail: Sequence[str], clang: str,
                 raise ValueError(f'unsafe relative path {rel!r}')
             (root / rel).parent.mkdir(parents=True, exist_ok=True)
             (root / rel).write_text(text, encoding='utf-8', newline='\n')
-        result = run_tool([clang, *argv_tail, '-o', out], cwd=root, timeout=timeout)
+        result = run_tool([exe, *argv_tail, '-o', out], cwd=root, timeout=timeout)
         if result.returncode != 0 or not (root / out).is_file():
             tail = (result.stderr_tail or result.log_tail or result.reason or '')[-300:]
-            raise ToolError(f'clang failed on the IR layer input: {tail}')
+            raise ToolError(f'{Path(exe).name} failed on the IR layer input: {tail}')
         return (root / out).read_bytes()
 
 
@@ -308,15 +309,15 @@ def emit_ir(files: Mapping[str, str], rel: str, tools: Toolchain | None = None, 
     """Textual unoptimised IR of one C file of the tree (freestanding, `-O0` without `optnone`, with debug info)."""
     tail = ['-S', '-emit-llvm', '-O0', '-Xclang', '-disable-O0-optnone', '-g', '-x', 'c', '-ffreestanding',
             '-Wno-everything', '-I.', *flags, rel]
-    return _run_in_tree(files, tail, _clang(tools), 'out.ll', timeout).decode('utf-8', errors='replace')
+    return run_in_tree(files, tail, _clang(tools), 'out.ll', timeout).decode('utf-8', errors='replace')
 
 
 def optimise_ir(ll: str, tools: Toolchain | None = None, *, timeout: float = 120.0) -> str:
     """The `-O2` IR of a (possibly mutated) module: the form comparable with the source layer's optimised body."""
-    return _run_in_tree({'x.ll': ll}, ['-S', '-emit-llvm', '-O2', '-x', 'ir', 'x.ll'], _clang(tools), 'out.ll',
+    return run_in_tree({'x.ll': ll}, ['-S', '-emit-llvm', '-O2', '-x', 'ir', 'x.ll'], _clang(tools), 'out.ll',
                         timeout).decode('utf-8', errors='replace')
 
 
 def compile_ir_object(ll: str, tools: Toolchain | None = None, *, timeout: float = 120.0) -> bytes:
     """`clang -O2 -c x.ll`: the object file of a mutated module (the link step belongs to the farm)."""
-    return _run_in_tree({'x.ll': ll}, ['-c', '-O2', '-x', 'ir', 'x.ll'], _clang(tools), 'out.o', timeout)
+    return run_in_tree({'x.ll': ll}, ['-c', '-O2', '-x', 'ir', 'x.ll'], _clang(tools), 'out.o', timeout)
