@@ -41,14 +41,14 @@ def runtime_requirements():
                                       for requirement in project['optional-dependencies'][extra]]
 
 
-@pytest.mark.xfail(strict=True, reason='CODEX-9')
+@pytest.mark.xfail(strict=True, raises=AssertionError, reason='CODEX-9')
 def test_runtime_requirements_have_exact_pins():
     loose = [requirement for requirement in runtime_requirements()
              if not re.fullmatch(r'[\w.-]+==[^*,;\s]+', requirement)]
     assert not loose, loose
 
 
-@pytest.mark.xfail(strict=True, reason='CODEX-10')
+@pytest.mark.xfail(strict=True, raises=AssertionError, reason='CODEX-10')
 def test_all_declared_dependencies_have_pin_or_upper_bound():
     document = manifest()
     requirements = document['build-system']['requires'] + document['project']['dependencies']
@@ -59,7 +59,7 @@ def test_all_declared_dependencies_have_pin_or_upper_bound():
     assert not loose, loose
 
 
-@pytest.mark.xfail(strict=True, reason='CODEX-11')
+@pytest.mark.xfail(strict=True, raises=AssertionError, reason='CODEX-11')
 def test_optional_runtime_dependencies_have_notice_rows():
     rows = '\n'.join(line.lower() for line in source('docs/notices.md').splitlines()
                      if line.startswith('|'))
@@ -67,7 +67,7 @@ def test_optional_runtime_dependencies_have_notice_rows():
     assert all(name.lower() in rows for name in names), names
 
 
-@pytest.mark.xfail(strict=True, reason='CODEX-12')
+@pytest.mark.xfail(strict=True, raises=AssertionError, reason='CODEX-12')
 def test_license_copy_loops_require_nonempty_license_sets():
     permissive = []
     for path in ('tools/build_linux.py', 'tools/build_windows.py'):
@@ -82,7 +82,7 @@ def test_license_copy_loops_require_nonempty_license_sets():
     assert not permissive, permissive
 
 
-@pytest.mark.xfail(strict=True, reason='CODEX-13')
+@pytest.mark.xfail(strict=True, raises=AssertionError, reason='CODEX-13')
 def test_full_payload_validation_parses_manifest():
     functions = [function('tools/build_linux.py', name) for name in ('payload_problems', 'attach_backend')]
     calls = [node.func for func in functions for node in ast.walk(func) if isinstance(node, ast.Call)]
@@ -94,14 +94,14 @@ def test_full_payload_validation_parses_manifest():
     assert validates, 'Backend attachment checks presence but never parses/verifies the manifest'
 
 
-@pytest.mark.xfail(strict=True, reason='CODEX-14')
+@pytest.mark.xfail(strict=True, raises=AssertionError, reason='CODEX-14')
 def test_linux_package_runs_full_cli_smoke():
     workflow = source('.github/workflows/qa-windows.yml')
     linux = workflow.split('  linux-package:\n', 1)[1].split('  # Decides', 1)[0]
     assert 'frozen_smoke' in linux or 'frozen_smoke' in source('tools/build_linux.py')
 
 
-@pytest.mark.xfail(strict=True, reason='CODEX-15')
+@pytest.mark.xfail(strict=True, raises=AssertionError, reason='CODEX-15')
 def test_full_bundle_pin_has_no_other_gpl_components():
     pins = json.loads(source('tools/backend_pin.json'))
 
