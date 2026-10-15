@@ -42,6 +42,8 @@ FOOTER = ("Call lists are the distinct direct calls recorded by Ghidra's analysi
           'not removed.')
 CALLSITE_FOUND = 'text match in decompiled code'
 CALLSITE_MISSING = 'Call site not found in the decompiled text (it may be inlined or renamed).'
+NO_CODE_TEXT = 'No decompiled text is stored for the caller.'
+NO_EDGE_TEXT = 'Select a call to see where it appears in the code.'
 NO_ENTRY_PATH = 'No observed path from an export or the entry point; stored call lists are partial'
 
 CHANGE_TEXT: dict[ChangeClass, str] = {
@@ -435,22 +437,29 @@ GRAPH_TIPS: dict[str, TipEntry] = {
                    'Shows chains of calls without drawing a graph.', 'Expand a row to load its children.'),
     'graph.diagram': ('Visual drawing of the nearby calls.', 'Gives a quick overview of the shape of the calls.',
                       'Visual only; the Neighbours table has the same information.'),
-    'graph.minimap': ('Small overview of the whole diagram.', 'Helps you find your place in a large drawing.',
-                      'Click to centre the diagram there.'),
+    'graph.minimap': ('Overview of the whole diagram with the visible part outlined.',
+                      'Helps you find your place in a large drawing.',
+                      'Click it or use its arrow keys to move the view; the Minimap button or M shows or hides it.'),
+    'graph.edges': ('Calls that touch the selected function, with their entry addresses.',
+                    'Choose one call to see where it appears in the code.',
+                    'Enter shows its call site; Open shows the caller.'),
+    'graph.callsites': ('Lines of the caller text that name the called function.',
+                        'Text matches are the stored evidence for a call.',
+                        'A text match is not an instruction address.'),
     'graph.detail': ('Details of the selected row: identity, pairing, call evidence, limits and provenance.',
                      'Shows where each statement comes from.', _VIEW_ONLY),
     'graph.open': ('Open the selected function in the main window.', 'Lets you read its decompiled text.',
                    'Selects the matching pair in the main window.'),
-    'graph.callsite': ('Find the line in the decompiled text where the call appears.',
+    'graph.callsite': ('Find the lines of the caller decompiled text that name the selected callee.',
                        'Takes you straight to the evidence for a call.',
-                       'Searches the text; the call may be inlined or renamed and then is not found.'),
+                       'Reads stored text only; no match means the call may be inlined or renamed.'),
     'graph.focus': ('Make the selected function the new centre of the view.', 'Lets you follow a chain of calls.',
                     'Ctrl+Enter does the same.'),
     'graph.back': ('Return to the previous centre.', 'Undoes a focus change.', 'Backspace does the same.'),
     'graph.copy': ('Copy the details as plain text.', 'Lets you paste the evidence into notes.',
                    'Puts text on the clipboard; nothing is sent anywhere.'),
     'graph.export_dot': ('Save the current neighbourhood as a DOT file.', 'Lets other graph tools draw it.',
-                         'Writes one file where you choose; existing files are not replaced without asking.'),
+                         'Writes one file at the path you choose in the save dialog and nothing else.'),
     'graph.status': ('Current state of the Calls panel.', 'Explains why a view is empty or limited.', _VIEW_ONLY),
 }
 GRAPH_TIP_TEMPLATES: dict[str, TipEntry] = {
@@ -463,13 +472,14 @@ ACCESSIBLE_NAMES = {
     'table': 'Neighbours of the selected function', 'tree': 'Call tree of the selected function',
     'diagram': 'Call diagram (visual only; the Neighbours table has the same information)',
     'detail': 'Selected call details', 'open': 'Open selected function', 'callsite': 'Show call site',
-    'export_dot': 'Export DOT file'}
+    'export_dot': 'Export DOT file', 'edges': 'Call edges of the selected function',
+    'sites': 'Call site lines in the caller text', 'minimap': 'Diagram overview', 'minimap_view': 'Diagram minimap'}
 
 
 def all_copy() -> Iterable[str]:
     """Every fixed user-facing string, for the banned-word sweep."""
     yield from STATE_TEXT.values()
-    yield from (FOOTER, CALLSITE_FOUND, CALLSITE_MISSING, NO_ENTRY_PATH, HUB_TEXT, NOT_COMPARABLE)
+    yield from (FOOTER, CALLSITE_FOUND, CALLSITE_MISSING, NO_CODE_TEXT, NO_EDGE_TEXT, NO_ENTRY_PATH, HUB_TEXT, NOT_COMPARABLE)
     yield from CHANGE_TEXT.values()
     yield from DELTA_STATE_TEXT.values()
     yield from ACCESSIBLE_NAMES.values()

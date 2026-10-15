@@ -10,12 +10,11 @@ from dataclasses import dataclass
 from ..models import ComparisonProject
 from .contracts import GraphEdge, GraphNode, GraphView
 from .text import one_line
-from .view_model import CALLSITE_FOUND, CALLSITE_MISSING, find_call_sites
+from .view_model import CALLSITE_FOUND, CALLSITE_MISSING, NO_CODE_TEXT, find_call_sites
 
 CALLSITE_ROW_CAP = 50
 ROW_TEXT_LIMIT = 160
 EDGE_ROW_CAP = 2_000
-NO_CODE_TEXT = 'No decompiled text is stored for the caller.'
 UNKNOWN = 'Unknown'
 
 EDGE_COLUMNS = ('Caller', 'Callee', 'Caller entry', 'Callee entry', 'Basis')
