@@ -22,7 +22,7 @@ from tools.unified.corpus import manifest as corpus_manifest  # noqa: E402
 from tools.unified.mutations import classes, templates  # noqa: E402
 
 SPEC = (ROOT / 'docs' / 'specs' / 'unified-engine' / '08-evaluation.md').read_text(encoding='utf-8')
-S3_GATES = ('G-U1', 'G-U2', 'G-U3', 'G-U4', 'G-U6', 'G-U7')
+S3_GATES = ('G-U3', 'G-U4', 'G-U6', 'G-U7')           # G-U1 and G-U2 read unified-outcomes/1 (test_unified_gate_eval.py)
 
 
 def spec_rows():
@@ -82,7 +82,7 @@ def test_the_registry_has_the_eight_gates_with_the_questions_and_first_slices_of
 
 def test_each_waiting_gate_names_what_it_waits_for_and_never_a_slice_that_is_built():
     needs = {g.id: g.needs for g in gates_u.GATES}
-    assert needs['G-U1'] == needs['G-U2'] == needs['G-U4'] == needs['G-U7'] == ('S3',)
+    assert needs['G-U1'] == needs['G-U2'] == () and needs['G-U4'] == needs['G-U7'] == ('S3',)
     assert needs['G-U3'] == ('IR-to-ladder adapter', 'S6b')                         # S2 is built: its first-slice cell is no wait
     assert needs['G-U6'] == ('S3', 'SPEC-32 evaluation core')
     reported = {g.id: g.needs for g in gates_u.build_report(inputs()).gates}
@@ -101,8 +101,9 @@ def test_every_gate_that_waits_says_for_what_and_what_it_will_read():
 def test_with_no_input_no_gate_passes_and_each_says_why():
     built = gates_u.build_report(inputs())
     assert len(built.gates) == 8 and all(g.status != 'pass' for g in built.gates)
-    assert {g.id: g.status for g in built.gates} == {**dict.fromkeys(S3_GATES, 'pending'),
-                                                      'G-U5': 'insufficient-data', 'G-U8': 'insufficient-data'}
+    assert {g.id: g.status for g in built.gates} == {**dict.fromkeys(S3_GATES, 'pending'), 'G-U1': 'insufficient-data',
+                                                      'G-U2': 'insufficient-data', 'G-U5': 'insufficient-data',
+                                                      'G-U8': 'insufficient-data'}
     assert all(g.reasons for g in built.gates) and built.flag.decision_ready is False
 
 

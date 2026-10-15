@@ -1,9 +1,9 @@
 """Gate report generator for SPEC-31 (08-evaluation s1): G-U1..G-U8 -> `gate-report/1`. Dev-only, never shipped.
 
-SKELETON of slice S6a. It fixes the report contract, the status vocabulary and the registry of the eight gates, and it
-evaluates the two gates whose inputs exist today: G-U5 from `bench-report/1` files and G-U8 from a pytest JUnit file plus
-attested CI steps. The six gates that need S3 (L2 verdicts and proofs) or the SPEC-32 scoring core stay `pending` and say
-what they wait for and what they will read; their evaluators are slice S6b. For those gates the report already carries
+Slice S6a fixed the report contract, the status vocabulary and the registry of the eight gates, and it
+evaluated G-U5 from `bench-report/1` files and G-U8 from a pytest JUnit file plus attested CI steps. Slice S6b adds G-U1
+and G-U2 over `unified-outcomes/1` (`tools/unified/evaluators.py`). G-U3, G-U4, G-U6 and G-U7 stay `pending` and say
+what they wait for and what they will read. For those gates the report already carries
 facts about the corpus they will read (counts from `unified-corpus-manifest/1`), so a missing mutant class or an
 anti-conservative lineage count is visible before any engine runs.
 
@@ -32,7 +32,7 @@ from pydantic import BaseModel, ConfigDict, ValidationError
 from tools.calibration.bootstrap import MIN_GROUPS_HEADLINE
 from tools.calibration.common import digest, strict_json
 from tools.calibration.tier_r.contracts import ContractError, dump_json
-from tools.unified import bench
+from tools.unified import bench, evaluators, outcomes
 from tools.unified.corpus import manifest as corpus_manifest
 from tools.unified.mutations import classes
 
@@ -62,13 +62,9 @@ class GateSpec:
 
 GATES = (
     GateSpec('G-U1', 'does the engine invent changes?', 'S3 (S0b for X vs X)',
-             'the unified-result/1 counts of every A/A pair in the corpus manifest', needs=('S3',),
-             waits=('the L2 verdicts unchanged and cosmetic need the named proofs UNCH/1, COS-ADDR/1 and COS-LAYOUT/1, '
-                    'which arrive with S3; before S3 no result row can be called unchanged',)),
+             'unified-outcomes/1 for every A/A pair of the corpus manifest (P0, P1; P2 is reported, never gated)'),
     GateSpec('G-U2', 'does it see real changes, and never hide them?', 'S3',
-             'the unified-result/1 rows of every mutant pair, joined to the planted function of its label document',
-             needs=('S3',), waits=('mutant verdicts (material, review, cosmetic, unchanged) are produced by the S3 channels and '
-                    'proofs; the mutants and their labels already exist (tools.unified.mutations)',)),
+             'unified-outcomes/1 for every mutant pair: the verdict of the planted function, per class'),
     GateSpec('G-U3', 'are `matched` pairs right?', 'S2',
              'the ladder correspondence of every release pair joined to its label document, and parity-report/1',
              needs=('IR-to-ladder adapter', 'S6b'), waits=('the ladder cannot read a real ProgramIR yet: the IrReader to IrSide adapter is not on the base, so '
@@ -161,6 +157,7 @@ class GateReport(_Strict):
 class Inputs:
     manifest: corpus_manifest.CorpusManifest | None = None
     benches: list[bench.BenchReport] = field(default_factory=list)
+    outcomes: list[outcomes.OutcomeSet] = field(default_factory=list)
     junit: dict[str, list[str]] | None = None
     attested: dict[str, str] = field(default_factory=dict)
     digests: dict[str, Any] = field(default_factory=dict)       # 'manifest': sha, 'bench': [sha], 'junit': [sha]
@@ -204,12 +201,12 @@ def _check_state(check: IntegrityCheck, inputs: Inputs) -> str:
         return {'pass': 'pass', 'fail': 'fail'}.get(inputs.attested.get(check.attestation, ''), 'missing')
     if not check.tests:
         return 'pending'
-    outcomes = [inputs.junit.get(t, []) if inputs.junit else [] for t in check.tests]
-    if any('failed' in o for o in outcomes):
+    found = [inputs.junit.get(t, []) if inputs.junit else [] for t in check.tests]
+    if any('failed' in o for o in found):
         return 'fail'
-    if any('skipped' in o for o in outcomes):
+    if any('skipped' in o for o in found):
         return 'blocked'
-    return 'pass' if all(o for o in outcomes) else 'missing'
+    return 'pass' if all(o for o in found) else 'missing'
 
 
 def _g_u8(inputs: Inputs) -> tuple[Status, list[str], tuple[str, ...], dict]:
@@ -263,6 +260,17 @@ def _g_u5(inputs: Inputs) -> tuple[Status, list[str], tuple[str, ...], dict]:
     return ('pending' if reasons else 'pass'), reasons, needs, observed
 
 
+# ---- G-U1 and G-U2 ------------------------------------------------------------------------------------------------------------
+
+def _g_u_outcomes(gate: GateSpec, inputs: Inputs, facts: dict[str, dict]) -> tuple[Status, list[str], tuple[str, ...], dict]:
+    if inputs.manifest is None or not inputs.outcomes:
+        what = 'corpus manifest' if inputs.manifest is None else 'unified-outcomes file (python -m tools.unified.live_pairs)'
+        return 'insufficient-data', [f'no {what} supplied'], (), {'consumes': gate.consumes, 'corpus': facts.get(gate.id)}
+    evaluate = evaluators.g_u1 if gate.id == 'G-U1' else evaluators.g_u2
+    status, reasons, observed = evaluate(inputs.manifest, inputs.outcomes)
+    return status, reasons, (), {**observed, 'corpus': facts.get(gate.id), 'runs': [o.run for o in inputs.outcomes]}
+
+
 # ---- corpus readiness ----------------------------------------------------------------------------------------------------------
 
 def corpus_facts(m: corpus_manifest.CorpusManifest | None) -> dict[str, dict]:
@@ -295,6 +303,8 @@ def _waiting(gate: GateSpec, facts: dict[str, dict]) -> tuple[Status, list[str],
 def _evaluate(gate: GateSpec, inputs: Inputs, facts: dict[str, dict]) -> GateRow:
     if gate.id == 'G-U5':
         status, reasons, needs, observed = _g_u5(inputs)
+    elif gate.id in ('G-U1', 'G-U2'):
+        status, reasons, needs, observed = _g_u_outcomes(gate, inputs, facts)
     elif gate.id == 'G-U8':
         status, reasons, needs, observed = _g_u8(inputs)
     else:
@@ -315,6 +325,8 @@ def _inputs_section(inputs: Inputs) -> dict[str, Any]:
             'bench': [{'sha256': (digests.get('bench') or [None] * len(inputs.benches))[i], 'verdict': b.verdict,
                        'platform': b.environment.get('platform'), 'counts_sha256': b.counts_sha256}
                       for i, b in enumerate(inputs.benches)],
+            'outcomes': [{'sha256': (digests.get('outcomes') or [None] * len(inputs.outcomes))[i], 'run': o.run,
+                          'platform': o.platform, 'outcomes_sha256': o.outcomes_sha256} for i, o in enumerate(inputs.outcomes)],
             'junit': None if inputs.junit is None else {'sha256': digests.get('junit'),
                                                         'tests': sum(len(v) for v in inputs.junit.values())},
             'attested': dict(sorted(inputs.attested.items()))}
@@ -383,6 +395,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser = argparse.ArgumentParser(prog='python -m tools.unified.gates_u', description=__doc__.split('\n\n')[0])
     parser.add_argument('--manifest', help='unified-corpus-manifest/1')
     parser.add_argument('--bench', action='append', default=[], help='bench-report/1 (repeat for Linux and Windows)')
+    parser.add_argument('--outcomes', action='append', default=[], help='unified-outcomes/1 (repeat for every run)')
     parser.add_argument('--junit', action='append', default=[], help='pytest --junitxml file (repeat to merge)')
     parser.add_argument('--attest', action='append', default=[], help='NAME=pass|fail for a CI step that is no test')
     parser.add_argument('--out', help='write gate-report/1 here')
@@ -396,12 +409,14 @@ def main(argv: Sequence[str] | None = None) -> int:
             inputs.manifest, inputs.digests['manifest'] = corpus_manifest.load(raw), hashlib.sha256(raw).hexdigest()
         raws = [_read(p) for p in args.bench]
         inputs.benches, inputs.digests['bench'] = [bench.load(r) for r in raws], [hashlib.sha256(r).hexdigest() for r in raws]
+        raws = [_read(p) for p in args.outcomes]
+        inputs.outcomes, inputs.digests['outcomes'] = [outcomes.load(r) for r in raws], [hashlib.sha256(r).hexdigest() for r in raws]
         raws = [_read(p) for p in args.junit]
         if raws:
             inputs.junit = {}
             for raw in raws:
-                for key, outcomes in parse_junit(raw).items():
-                    inputs.junit.setdefault(key, []).extend(outcomes)
+                for key, results in parse_junit(raw).items():
+                    inputs.junit.setdefault(key, []).extend(results)
             inputs.digests['junit'] = [hashlib.sha256(r).hexdigest() for r in raws]
         report = build_report(inputs)
     except ContractError as exc:
