@@ -227,7 +227,7 @@ def fallback_decision(argv: Sequence[str] | None) -> Decision | None:
         known, _ = lenient.parse_known_args(list(argv) if argv is not None else sys.argv[1:])
     except (argparse.ArgumentError, SystemExit):
         return None
-    if not known.event:
+    if not known.event or (known.event == 'push' and not known.ref):
         return None
     decision = ref_decision(known.event, known.ref)
     return decision if decision is not None and not decision.publish else None
