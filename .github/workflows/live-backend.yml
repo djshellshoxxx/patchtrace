@@ -8,6 +8,9 @@ on:
     paths: ['src/**', 'tools/live_backend_check.py', 'tools/live_cache_check.py', 'tools/seed_symbol_cache.py', 'tests/fixtures/**', '.github/workflows/live-backend.yml']
 permissions:
   contents: read
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.ref }}
+  cancel-in-progress: true
 jobs:
   native:
     # Separate jobs per hypothesis: job names/conclusions are visible without log access.
