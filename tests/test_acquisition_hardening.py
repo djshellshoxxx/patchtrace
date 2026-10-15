@@ -120,6 +120,30 @@ def test_total_deadline_interrupts_slow_response(drip_server, tmp_path, monkeypa
     assert list(tmp_path.iterdir()) == []
 
 
+def test_slow_drip_is_read_exactly_across_many_socket_timeout_slices(drip_server, tmp_path, monkeypatch):
+    # Each gap between bytes spans several slices, so the sliced receive times out repeatedly mid-body.
+    monkeypatch.setattr(tr, 'SLICE', 0.02)
+    size, expected = 40, b'x' * 40
+    monkeypatch.setitem(globals(), 'SIZE', size)
+    server = drip_server(interval=0.08)
+    plan = PlannedDownload(side='older', file_name='afd.sys', sha256=hashlib.sha256(expected).hexdigest(),
+                           size=size, url=URL, record_sha256='0' * 64)
+    got = tr.Transport(opener=local_opener(server)).download(plan, tr.AcquisitionConsent.for_urls([URL]), tmp_path)
+    assert got.size == size and got.sha256 == plan.sha256
+    assert got.path.read_bytes() == expected
+
+
+def test_silent_peer_still_times_out_after_the_idle_budget(drip_server, tmp_path):
+    server = drip_server(stall=30.0)
+
+    def opener(method, url, headers, timeout):
+        return tr.urllib_open(method, f'http://127.0.0.1:{server.server_address[1]}/blob', headers, 0.6)
+    t = tr.Transport(opener=opener, sleep=lambda *_: None)
+    with pytest.raises(AcquisitionError) as err:
+        t.download(planned(), tr.AcquisitionConsent.for_urls([URL]), tmp_path)
+    assert err.value.code == 'PT-ACQ-NETWORK'
+
+
 class Resp:
     def __init__(self, status=200, headers=None):
         self.status, self.headers = status, headers or {}

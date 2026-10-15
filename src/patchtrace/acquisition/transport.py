@@ -42,7 +42,7 @@ RETRYABLE_STATUS = frozenset({429, 500, 502, 503, 504})
 REDIRECT_STATUS = frozenset({301, 302, 303, 307, 308})
 HEADERS = (('User-Agent', 'PatchTrace'),)
 _CHUNK = 64 * 1024  # small, so cancel and the deadline are noticed after at most one socket wait
-WATCH_INTERVAL = 0.1
+SLICE = 0.5  # longest a blocking receive may go without re-checking cancel and the deadline
 
 
 @dataclass(frozen=True)
@@ -86,9 +86,38 @@ class _NoRedirect(urllib.request.HTTPRedirectHandler):
         return None
 
 
+class _SlicedSocket:
+    """Wraps a connected socket so every blocking receive wakes about every SLICE seconds.
+
+    Closing or shutting a socket from another thread does not reliably wake a blocked recv on
+    Windows, so the reader itself polls: each slice re-runs ``guard`` (which raises on cancel or
+    deadline) and a silent peer is given up on after ``idle`` seconds, as one plain socket timeout
+    would. The wrapper sits under http.client's buffered reader, which therefore never sees the
+    intermediate timeouts and stays consistent.
+    """
+
+    def __init__(self, sock: socket.socket, guard: Callable[[], None], idle: float):
+        self._sock, self._guard, self._idle = sock, guard, idle
+        sock.settimeout(SLICE)
+
+    def recv_into(self, buffer, *args):
+        started = time.monotonic()
+        while True:
+            self._guard()
+            try:
+                return self._sock.recv_into(buffer, *args)
+            except TimeoutError:
+                if time.monotonic() - started >= self._idle:
+                    raise
+
+    def __getattr__(self, name: str):
+        return getattr(self._sock, name)
+
+
 class _Response:
-    def __init__(self, raw):
+    def __init__(self, raw, timeout: float = TIMEOUT):
         self._raw = raw
+        self._timeout = timeout
         self.status = getattr(raw, 'status', None) or raw.code
         self.headers = raw.headers
 
@@ -97,18 +126,13 @@ class _Response:
         reader = getattr(self._raw, 'read1', self._raw.read)
         return reader(size)
 
-    def abort(self) -> None:
-        """Wake a read blocked in another thread. Best effort: closing alone does not interrupt recv."""
-        sock = getattr(getattr(getattr(self._raw, 'fp', None), 'raw', None), '_sock', None)
-        try:
-            if sock is not None:
-                sock.shutdown(socket.SHUT_RDWR)
-        except OSError:
-            pass
-        try:
-            self._raw.close()
-        except (OSError, ValueError):
-            pass
+    def guard_reads(self, guard: Callable[[], None]) -> None:
+        """Make body reads call ``guard`` at least every SLICE seconds. Best effort: without a real socket
+        underneath, the plain socket timeout still bounds each read."""
+        io = getattr(getattr(self._raw, 'fp', None), 'raw', None)
+        sock = getattr(io, '_sock', None)
+        if sock is not None and not isinstance(sock, _SlicedSocket):
+            io._sock = _SlicedSocket(sock, guard, self._timeout)
 
     def close(self) -> None:
         self._raw.close()
@@ -120,9 +144,9 @@ def urllib_open(method: str, url: str, headers: Mapping[str, str], timeout: floa
     opener = urllib.request.build_opener(urllib.request.ProxyHandler({}), _NoRedirect())
     try:
         return _Response(opener.open(urllib.request.Request(url, headers=dict(headers), method=method),
-                                     timeout=timeout))
+                                     timeout=timeout), timeout)
     except urllib.error.HTTPError as exc:
-        return _Response(exc)
+        return _Response(exc, timeout)
     except (ValueError, http.client.HTTPException):
         raise ConnectionError('invalid request') from None  # the message would echo the signed URL
     except urllib.error.URLError as exc:
@@ -207,12 +231,10 @@ class Transport:
         digits = length.strip() if length is not None else ''
         if digits.isascii() and digits.isdigit() and (len(digits) > 18 or int(digits) > cap):
             raise AcquisitionError('PT-ACQ-LIMIT', f'{what} exceeds its size cap')
-        stop = self._watch(response, deadline)
-        try:
-            self._read_chunks(response, sink, cap, what, deadline)
-        finally:
-            if stop is not None:
-                stop.set()
+        guard_reads = getattr(response, 'guard_reads', None)
+        if guard_reads is not None:
+            guard_reads(lambda: self._live(deadline))
+        self._read_chunks(response, sink, cap, what, deadline)
 
     def _read_chunks(self, response, sink: Callable[[bytes], None], cap: int, what: str,
                      deadline: float | None) -> None:
@@ -221,9 +243,7 @@ class Transport:
             self._live(deadline)
             try:
                 chunk = response.read(min(_CHUNK, cap + 1 - total))
-            # AttributeError: http.client drops its stream on close, so a read racing an abort sees None.
-            except (OSError, ValueError, AttributeError, http.client.HTTPException) as exc:
-                self._live(deadline)  # an abort by the watcher surfaces here as a read error
+            except (OSError, ValueError, http.client.HTTPException) as exc:
                 if isinstance(exc, TimeoutError):
                     raise _Retry(None) from None
                 raise AcquisitionError('PT-ACQ-NETWORK', 'connection failed while reading',
@@ -239,22 +259,6 @@ class Transport:
         _cancelled(self.cancel)
         if deadline is not None and self.clock() >= deadline:
             raise AcquisitionError('PT-ACQ-NETWORK', 'total timeout exceeded', recoverable=True)
-
-    def _watch(self, response, deadline: float | None) -> threading.Event | None:
-        """Abort a read that blocks on a silent or dripping server once cancel or the deadline hits."""
-        abort = getattr(response, 'abort', None)
-        if abort is None:
-            return None
-        stop = threading.Event()
-
-        def watch() -> None:
-            while not stop.wait(WATCH_INTERVAL):
-                if (self.cancel is not None and self.cancel.is_set()) or (
-                        deadline is not None and self.clock() >= deadline):
-                    abort()
-                    return
-        threading.Thread(target=watch, daemon=True, name='acquisition-read-watch').start()
-        return stop
 
     # -- Winbindex metadata -------------------------------------------------------------
     def fetch_metadata(self, file_name: str, consent: AcquisitionConsent) -> MetadataResponse:
