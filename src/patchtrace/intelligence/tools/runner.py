@@ -17,8 +17,9 @@ from datetime import UTC, datetime
 from pathlib import Path
 
 from ...artifact_bytes import VerifiedArtifactReader
+from ...enrichment.cache import CacheConfig, DerivedCache
 from ...jobs import run_process
-from . import capa, diec, floss, process
+from . import capa, capa_cache, diec, floss, process
 from .common import (
     DEFAULT_LIMITS,
     LICENSES,
@@ -125,6 +126,18 @@ def _failed_run(engine: str, side: str, artifact: ArtifactRef, manifest: ToolMan
                    error_code=code, profile=request.profile, options=options, manifest=manifest, **extra)
 
 
+def _raw_cache(engine: str, config, request: RunRequest) -> DerivedCache | None:
+    if engine != 'capa' or not request.use_cache or config.cache_dir is None:
+        return None
+    return DerivedCache(CacheConfig(root=Path(config.cache_dir)))
+
+
+def _cached_execution(raw: bytes) -> process.Execution:
+    """A cache hit looks like a clean run to the code below; nothing was spawned."""
+    return process.Execution(returncode=0, reason=None, stdout=raw.decode('utf-8', 'replace'), stderr='',
+                             oversize=False, elapsed_ms=0, stdout_raw=raw)
+
+
 def probe_engine(engine: str, config, cancel: threading.Event, runner: Callable, environ=None) -> ToolManifest:
     if config is None:
         return ToolManifest(engine=engine, license=LICENSES[engine], supported=False,
@@ -170,8 +183,12 @@ def run_job(engine: str, artifact: ArtifactRef, manifest: ToolManifest, request:
         memory = request.memory_limit_bytes if request.memory_limit_bytes is not None else (
             config.effective_memory_limit())
         limits = DEFAULT_LIMITS[engine]
-        execution = process.execute(argv, scratch=scratch, env=env, cancel=cancel, timeout=timeout, limits=limits,
-                                    runner=runner, memory_limit_bytes=memory)
+        cache = _raw_cache(engine, config, request)
+        cached = capa_cache.lookup(cache, artifact.sha256, manifest, options, limits.stdout_bytes) \
+            if cache is not None else None
+        execution = _cached_execution(cached) if cached is not None else process.execute(
+            argv, scratch=scratch, env=env, cancel=cancel, timeout=timeout, limits=limits, runner=runner,
+            memory_limit_bytes=memory)
         common = dict(elapsed=execution.elapsed_ms, returncode=execution.returncode,
                       stderr_digest=execution.digests()[1], stderr_excerpt=process.excerpt(execution.stderr),
                       stdout_digest=execution.digests()[0])
@@ -219,6 +236,8 @@ def run_job(engine: str, artifact: ArtifactRef, manifest: ToolManifest, request:
                     evidence = floss.parse(raw, floss.ParseContext(
                         context['run_id'], side, copy, context['cache_key'], context['config_digest'], pe, reader,
                         limits, config.deobfuscate))
+        if cache is not None and cached is None:   # only output that exited 0 and parsed is worth keeping
+            capa_cache.store(cache, artifact.sha256, manifest, options, raw)
         count = evidence.evidence_count()
         run = ToolRun(
             run_id=context['run_id'], engine=engine, side=side, input_artifact_hash=artifact.sha256,

@@ -72,6 +72,7 @@ class CapaConfig:
     timeout: int = DEFAULT_TIMEOUT
     accept_untested: bool = False   # explicit opt-in for a build that is not the pinned release (TA-6)
     memory_limit_bytes: int | None = None   # None: 8 GiB; 0: no cap (RLIMIT_AS counts virtual memory)
+    cache_dir: Path | None = None   # raw-first output cache (CAP-4); None: no cache. Never capa's own scratch HOME
 
     def effective_memory_limit(self) -> int | None:
         limit = self.memory_limit_bytes
