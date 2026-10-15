@@ -19,6 +19,7 @@ Listing of every file under `docs/research/`, 2026-10-14. "Specs cited" lists SP
 | [phase3/binexport-bindiff.md](phase3/binexport-bindiff.md) | - | - | BinExport and BinDiff |
 | [phase3/nway.md](phase3/nway.md) | - | - | N-way comparison: comparing three or more builds of one binary |
 | [phase3/rizin.md](phase3/rizin.md) | - | - | Rizin rz-diff |
+| [ue-matching-literature.md](ue-matching-literature.md) | SPEC-31 | research | UE matching and fusion: literature survey and concrete improvements (ladder P00-P19, fusion, ranking) |
 | [unified-engine/01-patchtrace-build.md](unified-engine/01-patchtrace-build.md) | SPEC-29 | - | 01 PatchTrace current build as an integration surface (unified diff engine research) |
 | [unified-engine/02-bindiff.md](unified-engine/02-bindiff.md) | SPEC-10, SPEC-29 | - | 02 - BinDiff (google/bindiff 8) at reimplementation level (unified diff engine research) |
 | [unified-engine/03-ghidriff-rizin.md](unified-engine/03-ghidriff-rizin.md) | SPEC-11, SPEC-27 | - | 03 Ghidriff (+ Ghidra Version Tracking) and Rizin rz-diff as inputs to a unified diff engine |
