@@ -78,3 +78,35 @@ def test_sec4_user_bindiff_is_preserved_before_parse(tmp_path):
     kept = raw / f'bindiff-{match_set.file_sha256}.BinDiff'
     assert kept.read_bytes() == source.read_bytes()
     assert hashlib.sha256(kept.read_bytes()).hexdigest() == match_set.file_sha256
+
+
+def _fake_binexport_worker(argv, **kw):
+    import json
+
+    from patchtrace.secondary.binexport_descriptor import PROTO_SHA256
+    from patchtrace.secondary.binexport_models import BinExportSummary, WorkerResult
+    req = json.loads(Path(argv[-1]).read_text(encoding='utf-8'))
+    data = Path(req['src']).read_bytes()
+    Path(req['snapshot']).write_bytes(data)
+    summary = BinExportSummary(
+        file_sha256=_sha(data), file_size=len(data), executable_id='0' * 64, executable_name='x',
+        architecture_name='x', timestamp=None, id_binding='sha256', role=req['role'], address_basis='unknown',
+        counts={}, function_addresses=(1,), vertex_types=(0,), warnings=(), protobuf_version='7.36.2',
+        descriptor_proto_sha256=PROTO_SHA256)
+    Path(req['result']).write_text(WorkerResult(kind='ok', summary=summary).model_dump_json(), encoding='utf-8')
+    return SimpleNamespace(returncode=0, reason=None, stderr_tail='', log_tail='')
+
+
+def test_sec5_repeated_accepts_of_one_file_keep_a_single_snapshot(tmp_path, monkeypatch):
+    from patchtrace.secondary import binexport_run
+    monkeypatch.setattr(binexport_run, 'load_binexport2_class', lambda: None)
+    monkeypatch.setattr(binexport_run, 'run_process', _fake_binexport_worker)
+    source = tmp_path / 'a.BinExport'
+    source.write_bytes(b'binexport-bytes')
+    private = tmp_path / 'raw'
+    private.mkdir()
+    paths = [binexport_run.accept_binexport(source, artifact_sha256='0' * 64, role='older', private_dir=private,
+                                            cancel=threading.Event(), accept_unbound=True).snapshot_path
+             for _ in range(3)]
+    assert len(list(private.iterdir())) == 1 and len(set(paths)) == 1
+    assert paths[0].read_bytes() == b'binexport-bytes'
