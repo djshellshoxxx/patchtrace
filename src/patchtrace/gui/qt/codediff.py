@@ -70,7 +70,7 @@ def hunk_background(operation: str, tokens: ThemeTokens) -> str:
     return ensure_contrast(fill, tokens.text, tokens.surface_alt, TEXT_CONTRAST)
 
 
-def _row_selection(view: QPlainTextEdit, first_row: int, last_row: int, color: str,
+def row_selection(view: QPlainTextEdit, first_row: int, last_row: int, color: str,
                    underline: str | None = None) -> QTextEdit.ExtraSelection | None:
     """A full-width background over aligned rows (underlined in ``underline`` when given: high contrast drops
     the tint, so the mark must not be colour alone), or None when a row is not in the document."""
@@ -207,7 +207,7 @@ class CodeDiffView(QWidget):
     def _paint_hunks(self) -> None:
         for pane in self.panes.values():
             mark = self._tokens.text if self._tokens.high_contrast else None
-            selections = (_row_selection(pane, h.start, h.start + h.length - 1,
+            selections = (row_selection(pane, h.start, h.start + h.length - 1,
                                          hunk_background(h.operation, self._tokens), mark) for h in self._hunks)
             compose_selections(pane, 'diff', [item for item in selections if item is not None])
 
@@ -247,7 +247,7 @@ class CodeDiffView(QWidget):
             return False
         first, last = mapping[start - 1], mapping[end - 1]
         color = ensure_contrast(self._tokens.focus_ring, self._tokens.text, self._tokens.surface_alt)
-        selection = _row_selection(self.panes[side], first, last, color)
+        selection = row_selection(self.panes[side], first, last, color)
         if selection is None:
             return False
         compose_selections(self.panes[side], 'anchor', [selection])

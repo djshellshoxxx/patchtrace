@@ -11,7 +11,7 @@ from collections.abc import Callable
 from pathlib import Path
 
 from PySide6.QtCore import QSettings, Qt, QThread, QTimer, Signal
-from PySide6.QtGui import QAction, QColor, QFont, QKeySequence, QTextCharFormat, QTextCursor
+from PySide6.QtGui import QAction, QFont, QKeySequence, QTextCursor
 from PySide6.QtWidgets import (
     QApplication,
     QCheckBox,
@@ -36,7 +36,6 @@ from PySide6.QtWidgets import (
     QTableWidget,
     QTableWidgetItem,
     QTabWidget,
-    QTextEdit,
     QToolBar,
     QVBoxLayout,
     QWidget,
@@ -48,7 +47,9 @@ from .acquisition.transport import BLOB_SUFFIX, METADATA_HOST, SYMBOL_HOST, Acqu
 from .alignment import alignment_strategy, diff_hunks
 from .backend import BackendConfig, diagnose, parse_env_passthrough, quarantine_failed_run, run_comparison
 from .evidence import build_context, resolve_evidence
+from .gui.qt.codediff import clear_selections, compose_selections, row_selection
 from .gui.qt.host import PanelHost
+from .gui.qt.theme import DARK
 from .interpretation import interpret, system_prompt
 from .offline_bundle import inspect_offline_bundle, install_offline_bundle
 from .providers import ProviderConfig
@@ -2076,7 +2077,7 @@ class MainWindow(QMainWindow):
         self.hunk_list.clear()
         if not match:
             for view in self.views.values():
-                view.setExtraSelections([])
+                clear_selections(view, 'diff')
                 view.setPlainText('No matching function selected.')
             self.match_label.setText('Select a function match to inspect changes.')
             self.hunk_list.blockSignals(False)
@@ -2146,16 +2147,10 @@ class MainWindow(QMainWindow):
         self.update_controls()
 
     def _highlight_hunks(self, view):
-        selections = []
-        for start, length, operation in self._hunks:
-            selection = QTextEdit.ExtraSelection()
-            selection.cursor = QTextCursor(view.document().findBlockByNumber(start))
-            end = view.document().findBlockByNumber(start + length - 1)
-            selection.cursor.setPosition(end.position() + end.length() - 1, QTextCursor.MoveMode.KeepAnchor)
-            selection.format.setBackground(QColor('#263a43' if operation == 'replace' else '#33392b'))
-            selection.format.setProperty(QTextCharFormat.Property.FullWidthSelection, True)
-            selections.append(selection)
-        view.setExtraSelections(selections)
+        selections = (row_selection(view, start, start + length - 1,
+                                    DARK.hunk_replace if operation == 'replace' else DARK.hunk_other)
+                      for start, length, operation in self._hunks)
+        compose_selections(view, 'diff', [item for item in selections if item])
 
     def navigate_hunk(self, step):
         """Navigate changed regions, crossing function boundaries at the ends.
@@ -2412,7 +2407,7 @@ class MainWindow(QMainWindow):
         self.hunk_list.clear()
         self.match_label.setText(label)
         for side, text in (('older', older_text), ('newer', newer_text)):
-            self.views[side].setExtraSelections([])
+            clear_selections(self.views[side], 'diff')
             self.views[side].setPlainText(text[:MAX_VIEW_CHARS])
 
     def _load_enrichment(self):
@@ -2614,7 +2609,7 @@ class MainWindow(QMainWindow):
             failure = self._inspection_error
             failed = failure is not None and failure[0] == self._project_inspection_key()
             for view in self.views.values():
-                view.setExtraSelections([])
+                clear_selections(view, 'diff')
                 view.setPlainText(f'[File inspection failed: {failure[1]}]' if failed else
                                   'Verifying artifact bytes against their recorded SHA-256 and inspecting PE '
                                   'headers. The raw view appears when this read-only check finishes.')
@@ -2655,18 +2650,8 @@ class MainWindow(QMainWindow):
         for side, raw in sides.items():
             view = self.views[side]
             view.setPlainText(raw.rendered.text if raw.rendered else f'[{raw.message}]')
-            selections = []
-            if raw.rendered:
-                for line in diff:
-                    block = view.document().findBlockByNumber(line)
-                    if not block.isValid():
-                        continue
-                    selection = QTextEdit.ExtraSelection()
-                    selection.cursor = QTextCursor(block)
-                    selection.format.setBackground(QColor('#263a43'))
-                    selection.format.setProperty(QTextCharFormat.Property.FullWidthSelection, True)
-                    selections.append(selection)
-            view.setExtraSelections(selections)
+            selections = (row_selection(view, line, line, DARK.hunk_replace) for line in diff if raw.rendered)
+            compose_selections(view, 'diff', [item for item in selections if item])
         captions = [f'{side.upper()}: {raw.rendered.caption}' for side, raw in sides.items() if raw.rendered]
         summary = f'{representation.value.upper()} · original on-disk bytes · page {page_index + 1} of {pages}'
         if diff:
