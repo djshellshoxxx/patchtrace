@@ -1,0 +1,104 @@
+{
+  "old_meta": {
+    "Executable SHA256": "c0ab62f3ac74f3513f3af72bf1b0bd4386356c85d3b3e0f0078317757c9abc64",
+    "Synthetic sample": true
+  },
+  "new_meta": {
+    "Executable SHA256": "7ce7faa1104fe24ca39194f4533f03267563de51c11a87eaa36797b16a723ac0",
+    "Synthetic sample": true
+  },
+  "functions": {
+    "added": [
+      {
+        "name": "report_invalid_index",
+        "fullname": "report_invalid_index",
+        "address": "180001200",
+        "code": "int report_invalid_index(size_t i, size_t len) {\n    return -1;\n}",
+        "calling": [
+          "read_item"
+        ],
+        "called": [],
+        "sym_type": "FUNCTION",
+        "external": false
+      }
+    ],
+    "deleted": [
+      {
+        "name": "debug_dump",
+        "fullname": "debug_dump",
+        "address": "180001400",
+        "code": "void debug_dump(const char *t) {\n    puts(t);\n}",
+        "calling": [],
+        "called": [],
+        "sym_type": "FUNCTION",
+        "external": false
+      }
+    ],
+    "modified": [
+      {
+        "old": {
+          "name": "read_item",
+          "fullname": "read_item",
+          "address": "180001000",
+          "code": "int read_item(const char *b, size_t len, size_t i) {\n    return b[i];\n}",
+          "calling": [],
+          "called": [],
+          "sym_type": "FUNCTION",
+          "external": false
+        },
+        "new": {
+          "name": "read_item",
+          "fullname": "read_item",
+          "address": "180001080",
+          "code": "int read_item(const char *b, size_t len, size_t i) {\n    if (i >= len) return report_invalid_index(i, len);\n    return b[i];\n}",
+          "calling": [],
+          "called": [
+            "report_invalid_index"
+          ],
+          "sym_type": "FUNCTION",
+          "external": false
+        },
+        "diff_type": [
+          "code",
+          "address",
+          "called"
+        ],
+        "ratio": 0.58,
+        "match_types": [
+          "Symbols"
+        ]
+      },
+      {
+        "old": {
+          "name": "get_version",
+          "fullname": "get_version",
+          "address": "180001600",
+          "code": "int get_version(void) {\n    return 1;\n}",
+          "calling": [],
+          "called": [],
+          "sym_type": "FUNCTION",
+          "external": false
+        },
+        "new": {
+          "name": "get_version",
+          "fullname": "get_version",
+          "address": "180001700",
+          "code": "int get_version(void) {\n    return 2;\n}",
+          "calling": [],
+          "called": [],
+          "sym_type": "FUNCTION",
+          "external": false
+        },
+        "diff_type": [
+          "code",
+          "address"
+        ],
+        "ratio": 0.94,
+        "match_types": [
+          "Symbols"
+        ]
+      }
+    ]
+  },
+  "md_credits": "SYNTHETIC call-graph fixture; not output from Ghidriff or a real build"
+}

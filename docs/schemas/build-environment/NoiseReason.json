@@ -1,0 +1,41 @@
+{
+  "$id": "https://patchtrace.local/schemas/build-environment/1/NoiseReason.json",
+  "additionalProperties": false,
+  "properties": {
+    "classes": {
+      "items": {
+        "maxLength": 24,
+        "type": "string"
+      },
+      "maxItems": 12,
+      "title": "Classes",
+      "type": "array"
+    },
+    "code": {
+      "const": "toolchain-differs",
+      "title": "Code",
+      "type": "string"
+    },
+    "effect": {
+      "enum": [
+        "tag",
+        "order"
+      ],
+      "title": "Effect",
+      "type": "string"
+    },
+    "why": {
+      "maxLength": 200,
+      "title": "Why",
+      "type": "string"
+    }
+  },
+  "required": [
+    "code",
+    "classes",
+    "effect",
+    "why"
+  ],
+  "title": "NoiseReason",
+  "type": "object"
+}

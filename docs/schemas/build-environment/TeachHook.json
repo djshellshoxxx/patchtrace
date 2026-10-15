@@ -1,0 +1,32 @@
+{
+  "$id": "https://patchtrace.local/schemas/build-environment/1/TeachHook.json",
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "maxLength": 40,
+      "title": "Id",
+      "type": "string"
+    },
+    "meaning": {
+      "maxLength": 200,
+      "title": "Meaning",
+      "type": "string"
+    },
+    "next_steps": {
+      "items": {
+        "maxLength": 200,
+        "type": "string"
+      },
+      "maxItems": 4,
+      "title": "Next Steps",
+      "type": "array"
+    }
+  },
+  "required": [
+    "id",
+    "meaning",
+    "next_steps"
+  ],
+  "title": "TeachHook",
+  "type": "object"
+}

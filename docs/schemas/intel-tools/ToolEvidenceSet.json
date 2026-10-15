@@ -54,6 +54,15 @@
           "title": "Feature Rvas",
           "type": "array"
         },
+        "features": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/FeatureRef"
+          },
+          "maxItems": 16,
+          "title": "Features",
+          "type": "array"
+        },
         "kind": {
           "enum": [
             "capability",
@@ -62,6 +71,15 @@
           ],
           "title": "Kind",
           "type": "string"
+        },
+        "labels": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/TaxonomyLabel"
+          },
+          "maxItems": 32,
+          "title": "Labels",
+          "type": "array"
         },
         "location": {
           "$ref": "#/$defs/EvidenceLink"
@@ -146,7 +164,12 @@
             "format",
             "overlay",
             "other",
-            "unknown"
+            "unknown",
+            "language",
+            "os",
+            "archive",
+            "signtool",
+            "petool"
           ],
           "title": "Category",
           "type": "string"
@@ -194,6 +217,12 @@
           "default": null,
           "title": "Packer"
         },
+        "part_path": {
+          "default": "",
+          "maxLength": 200,
+          "title": "Part Path",
+          "type": "string"
+        },
         "protector": {
           "anyOf": [
             {
@@ -206,6 +235,12 @@
           ],
           "default": null,
           "title": "Protector"
+        },
+        "raw_type": {
+          "default": "",
+          "maxLength": 64,
+          "title": "Raw Type",
+          "type": "string"
         },
         "source": {
           "const": "diec",
@@ -265,6 +300,7 @@
             "basic-block-in-function",
             "decoding-routine",
             "stack-frame",
+            "contained-in-function",
             "none"
           ],
           "title": "Attribution",
@@ -379,6 +415,97 @@
       "title": "EvidenceLink",
       "type": "object"
     },
+    "FeatureRef": {
+      "additionalProperties": false,
+      "description": "One feature that made a capa rule match (T2): what to look for in the code on this side. Global features\n(os, arch, format) are not kept.",
+      "properties": {
+        "kind": {
+          "enum": [
+            "api",
+            "number",
+            "string",
+            "substring",
+            "regex",
+            "bytes",
+            "mnemonic",
+            "offset",
+            "characteristic",
+            "section",
+            "export",
+            "import",
+            "function-name",
+            "class",
+            "namespace",
+            "property",
+            "com",
+            "operand",
+            "match"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "rva": {
+          "anyOf": [
+            {
+              "exclusiveMaximum": 4294967296,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Rva"
+        },
+        "value": {
+          "maxLength": 120,
+          "title": "Value",
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind",
+        "value"
+      ],
+      "title": "FeatureRef",
+      "type": "object"
+    },
+    "FunctionCoverage": {
+      "additionalProperties": false,
+      "description": "Which function starts (RVAs) the tool evaluated and which it skipped as library code. A function in neither\nlist is unknown to the tool: not evaluated, so its missing matches say nothing.",
+      "properties": {
+        "evaluated": {
+          "default": [],
+          "items": {
+            "exclusiveMaximum": 4294967296,
+            "minimum": 0,
+            "type": "integer"
+          },
+          "maxItems": 262144,
+          "title": "Evaluated",
+          "type": "array"
+        },
+        "library": {
+          "default": [],
+          "items": {
+            "exclusiveMaximum": 4294967296,
+            "minimum": 0,
+            "type": "integer"
+          },
+          "maxItems": 262144,
+          "title": "Library",
+          "type": "array"
+        },
+        "truncated": {
+          "default": false,
+          "title": "Truncated",
+          "type": "boolean"
+        }
+      },
+      "title": "FunctionCoverage",
+      "type": "object"
+    },
     "StringEvidence": {
       "additionalProperties": false,
       "properties": {
@@ -473,6 +600,43 @@
       ],
       "title": "StringEvidence",
       "type": "object"
+    },
+    "TaxonomyLabel": {
+      "additionalProperties": false,
+      "description": "An ATT&CK or MBC label exactly as the rule carries it; used for grouping only, never for ordering.",
+      "properties": {
+        "group": {
+          "maxLength": 80,
+          "title": "Group",
+          "type": "string"
+        },
+        "ident": {
+          "maxLength": 32,
+          "title": "Ident",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 120,
+          "title": "Name",
+          "type": "string"
+        },
+        "scheme": {
+          "enum": [
+            "attack",
+            "mbc"
+          ],
+          "title": "Scheme",
+          "type": "string"
+        }
+      },
+      "required": [
+        "scheme",
+        "group",
+        "name",
+        "ident"
+      ],
+      "title": "TaxonomyLabel",
+      "type": "object"
     }
   },
   "$id": "https://patchtrace.local/schemas/intel-tools/1/ToolEvidenceSet.json",
@@ -550,6 +714,17 @@
       },
       "title": "Counts",
       "type": "object"
+    },
+    "coverage": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/FunctionCoverage"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
     },
     "engine": {
       "enum": [

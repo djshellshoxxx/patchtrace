@@ -8,6 +8,7 @@ from __future__ import annotations
 import hashlib
 import json
 import re
+import unicodedata
 import zlib
 from dataclasses import dataclass
 
@@ -185,3 +186,176 @@ def candidate_sizes(candidate: BuildCandidate) -> tuple[int, ...]:
 def candidate_urls(candidate: BuildCandidate) -> tuple[str, ...]:
     return tuple(symbol_server_url(candidate.file_name, candidate.timestamp, s)
                  for s in candidate_sizes(candidate) if s <= UINT32_MAX)
+
+
+# ----------------------------------------------------------------------------------------------- per-row view
+# Additive (KB2 s2.D, RK2 s1.5): identity is the dict key, one row per (version key, KB) body, md5-only delta
+# records kept. ``parse`` above is unchanged and still feeds the acquisition flow.
+
+HEADING_MAX = 300
+_KB = re.compile(r'KB[0-9]{4,10}')
+_VERSION_KEY = re.compile(r'[A-Za-z0-9][A-Za-z0-9._-]{0,39}')
+_UBR = re.compile(r'[0-9]{1,6}\.[0-9]{1,6}')
+_FULL_MARKERS = ('version', 'sha1', 'description')
+
+
+@dataclass(frozen=True)
+class WinbindexRow:
+    """One Winbindex ``(file build, Windows version, KB)`` fact; ``kb`` is None for the dated BASE image."""
+    file_name: str
+    sha256: str
+    version_key: str
+    kb: str | None
+    release_date: str | None
+    release_version: str | None
+    heading: str
+    heading_class: str
+    other_versions: tuple[str, ...]
+    variant: str
+    download: str
+    size: int | None
+    machine_type: int | None
+    timestamp: int | None
+    virtual_size: int | None
+    last_section_va: int | None
+    last_section_raw: int | None
+    file_version: str | None
+    record_sha256: str
+    source: str
+
+    def as_mapping(self) -> dict:
+        """JSON-compatible form handed to ``kbcorrelation`` through its index port."""
+        data = {name: getattr(self, name) for name in self.__dataclass_fields__}
+        data['other_versions'] = list(self.other_versions)
+        if self.download == 'direct' and self.timestamp is not None and self.virtual_size is not None:
+            data['download_url'] = symbol_server_url(self.file_name, self.timestamp, self.virtual_size)
+        return data
+
+
+@dataclass(frozen=True)
+class RowsResult:
+    rows: tuple[WinbindexRow, ...]
+    skipped: int
+    skipped_bodies: int
+    warnings: tuple[str, ...]
+
+
+def heading_class(heading: str | None) -> str:
+    text = (heading or '').lower()
+    if not text:
+        return 'none'
+    if 'expired' in text:
+        return 'expired'
+    if 'out-of-band' in text or 'out of band' in text:
+        return 'out-of-band'
+    return 'preview' if 'preview' in text else 'standard'
+
+
+def _clean(text: str, limit: int) -> str:
+    # Advisory-adjacent text is untrusted: drop control and format (bidi) characters, then bound it.
+    return ''.join(' ' if unicodedata.category(c).startswith('C') else c for c in text)[:limit]
+
+
+def _variant(info: dict) -> str:
+    if 'timestamp' not in info or 'machineType' not in info:
+        return 'raw'
+    if any(marker in info for marker in _FULL_MARKERS):
+        return 'full'
+    return 'delta+' if 'virtualSize' in info else 'delta'
+
+
+def _download_class(size, timestamp, virtual_size, va, raw) -> str:
+    if timestamp is not None and virtual_size is not None:
+        return 'direct'
+    if timestamp is not None and size is not None and va is not None and raw is not None:
+        return 'candidates'
+    return 'unavailable'
+
+
+def _date(value) -> str | None:
+    return value if isinstance(value, str) and _DATE.fullmatch(value) else None
+
+
+def _body_facts(kb: str, body) -> tuple[str | None, str | None, str, tuple[str, ...]] | None:
+    """(release_date, release_version, heading, other version keys) or None for an unreadable body."""
+    if not isinstance(body, dict):
+        return None
+    if kb == 'BASE':
+        base = body.get('windowsVersionInfo')
+        return (_date(base.get('releaseDate')) if isinstance(base, dict) else None), None, '', ()
+    info = body.get('updateInfo')
+    if not _KB.fullmatch(kb) or not isinstance(info, dict):
+        return None
+    release = info.get('releaseVersion')
+    heading = info.get('heading')
+    others = info.get('otherWindowsVersions')
+    shared = sorted({o for o in others if isinstance(o, str) and _VERSION_KEY.fullmatch(o)}) \
+        if isinstance(others, list) else []
+    return (_date(info.get('releaseDate')),
+            release if isinstance(release, str) and _UBR.fullmatch(release) else None,
+            _clean(heading, HEADING_MAX) if isinstance(heading, str) else '', tuple(shared))
+
+
+def _entry_rows(file_name: str, key: str, entry: dict, info: dict, source: str):
+    """Rows for one entry plus the number of unreadable ``(version, KB)`` bodies."""
+    size, timestamp = _opt_uint(info, 'size') or None, _opt_uint(info, 'timestamp')
+    virtual_size = _opt_uint(info, 'virtualSize') or None
+    va, raw = _opt_uint(info, 'lastSectionVirtualAddress'), _opt_uint(info, 'lastSectionPointerToRawData')
+    machine = info.get('machineType')
+    version = info.get('version')
+    common = dict(
+        file_name=file_name, sha256=key, variant=_variant(info),
+        download=_download_class(size, timestamp, virtual_size, va, raw), size=size,
+        machine_type=machine if type(machine) is int and 0 <= machine <= 0xFFFF else None, timestamp=timestamp,
+        virtual_size=virtual_size, last_section_va=va, last_section_raw=raw,
+        file_version=_clean(version, 200) if isinstance(version, str) else None,
+        record_sha256=hashlib.sha256(_canonical(entry)).hexdigest(), source=source)
+    rows, bad = [], 0
+    windows = entry.get('windowsVersions')
+    for version_key, updates in (windows.items() if isinstance(windows, dict) else ()):
+        if not isinstance(updates, dict) or not _VERSION_KEY.fullmatch(version_key):
+            bad += 1
+            continue
+        for kb, body in updates.items():
+            facts = _body_facts(kb, body)
+            if facts is None:
+                bad += 1
+                continue
+            date, release, heading, others = facts
+            rows.append(WinbindexRow(version_key=version_key, kb=None if kb == 'BASE' else kb, release_date=date,
+                                     release_version=release, heading=heading,
+                                     heading_class=heading_class(heading or None),
+                                     other_versions=tuple(o for o in others if o != version_key), **common))
+    return rows, bad
+
+
+def parse_rows(data: bytes, file_name: str, data_date: str, *, compressed: bool = True) -> RowsResult:
+    """Parse a ``<name>.json.gz`` body into one row per ``(SHA-256, version key, KB)``.
+
+    Identity is the dict key; a ``fileInfo.sha256`` that disagrees with it is a conflict and the entry is skipped,
+    while an absent one (md5-only delta records, the newest builds) is kept. Counts of what was skipped are returned.
+    """
+    file_name = validate_file_name(file_name)
+    if not _DATE.fullmatch(data_date):
+        raise AcquisitionError('PT-ACQ-INPUT', 'data date must be YYYY-MM-DD')
+    document = strict_json(decompress(data) if compressed else data)
+    if not isinstance(document, dict):
+        raise AcquisitionError('PT-ACQ-PROVIDER', 'Winbindex record must be a JSON object')
+    rows: list[WinbindexRow] = []
+    skipped = skipped_bodies = 0
+    for key, entry in document.items():
+        info = entry.get('fileInfo') if isinstance(entry, dict) else None
+        if (not isinstance(info, dict) or not _SHA.fullmatch(key)
+                or info.get('sha256', key) != key):
+            skipped += 1
+            continue
+        found, bad = _entry_rows(file_name, key, entry, info, f'winbindex@{data_date}')
+        rows.extend(found)
+        skipped_bodies += bad
+    rows.sort(key=lambda r: (r.version_key, r.release_date or '', r.release_version or '', r.kb or '', r.sha256))
+    warnings = []
+    if skipped:
+        warnings.append(f'{skipped} index rows skipped (newest builds may be missing)')
+    if skipped_bodies:
+        warnings.append(f'{skipped_bodies} version/KB bodies unreadable and ignored')
+    return RowsResult(tuple(rows), skipped, skipped_bodies, tuple(warnings))

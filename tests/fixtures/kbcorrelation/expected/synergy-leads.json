@@ -1,0 +1,200 @@
+{
+  "engine_scores": {
+    "correlate_20001": {
+      "alloc_items": 25,
+      "debug_dump": 0,
+      "get_version": 0,
+      "read_item": 36,
+      "report_invalid_index": 0
+    },
+    "correlate_20001_20002": {
+      "alloc_items": 35,
+      "debug_dump": 0,
+      "get_version": 0,
+      "read_item": 36,
+      "report_invalid_index": 0
+    },
+    "rank": {
+      "alloc_items": 25,
+      "debug_dump": 0,
+      "get_version": 0,
+      "read_item": 26,
+      "report_invalid_index": 0
+    }
+  },
+  "leads": {
+    "coverage_text": [
+      "Checked 1 of 1 documents (2099-Feb); nothing else was checked; newest revision seen 2099-02-13. Revised CVEs may sit in earlier documents."
+    ],
+    "groups": [
+      {
+        "cwe_text": "CWE-125 stated by vendor (CVRF)",
+        "group": "CVE-2099-20001",
+        "hypotheses": [
+          "R-MEMORY-READ"
+        ],
+        "kev": "no-snapshot",
+        "kev_text": "KEV: not loaded",
+        "leads": [
+          {
+            "chips": [
+              [
+                "anchor",
+                "not-run",
+                "anchor facts are not loaded"
+              ],
+              [
+                "applicability",
+                "unknown",
+                "unknown (no loaded document states applicability to these two files)"
+              ],
+              [
+                "binary-identity",
+                "supports",
+                "the two files are the pair the context was prepared for (SHA-256)"
+              ],
+              [
+                "code-change",
+                "supports",
+                "observed BND signal (moderate): added bound comparison `index >= length` on a variable used as index/offset/size at newer line 5"
+              ],
+              [
+                "documentary",
+                "supports",
+                "CVE-2099-20001: stated by vendor (CVRF), unverified local file; 1 source family"
+              ],
+              [
+                "exploitation",
+                "not-run",
+                "KEV: not loaded"
+              ],
+              [
+                "hypothesis",
+                "supports",
+                "hypothesis R-MEMORY-READ aligns with detector BND"
+              ]
+            ],
+            "group": "CVE-2099-20001",
+            "hooks": [
+              "kb.meaning.hypothesis",
+              "kb.next.review_lead"
+            ],
+            "navigable": true,
+            "rank_basis": "attention order 1 of 5 (the engine's own order, not a measure of risk)",
+            "stale": false,
+            "subject": "read_item"
+          }
+        ]
+      }
+    ],
+    "hooks": [
+      "kb.next.review_lead"
+    ],
+    "limitations": [
+      "The context records what advisory documents state and which checks could not be made; it does not show that any changed function addresses a vulnerability."
+    ],
+    "mention_only": [
+      "CVE-2099-20003"
+    ],
+    "not_applicable": [
+      "CVE-2099-20002 (Example Server 2099 x64 only)"
+    ],
+    "state": "ready",
+    "text": "Leads pair the advisory context with the comparison. The order inside a group is the engine's own attention order; it does not show that any changed function addresses a vulnerability.",
+    "unattributed": [
+      {
+        "chips": [
+          [
+            "applicability",
+            "neutral",
+            "no applicable CVE: its aligned CWE-190 CVE-2099-20002 lists Example Server 2099 x64 only"
+          ],
+          [
+            "code-change",
+            "neutral",
+            "detector signals (OVF) do not align with any applicable CVE"
+          ]
+        ],
+        "group": "unattributed",
+        "hooks": [
+          "kb.next.review_lead"
+        ],
+        "navigable": true,
+        "rank_basis": "attention order 2 of 5 (the engine's own order, not a measure of risk)",
+        "stale": false,
+        "subject": "alloc_items"
+      },
+      {
+        "chips": [
+          [
+            "applicability",
+            "neutral",
+            "no applicable CVE in the context aligns with this change"
+          ],
+          [
+            "code-change",
+            "unknown",
+            "removed function: no older/newer pair to compare"
+          ]
+        ],
+        "group": "unattributed",
+        "hooks": [
+          "kb.next.review_lead"
+        ],
+        "navigable": true,
+        "rank_basis": "attention order 3 of 5 (the engine's own order, not a measure of risk)",
+        "stale": false,
+        "subject": "debug_dump"
+      },
+      {
+        "chips": [
+          [
+            "applicability",
+            "neutral",
+            "no applicable CVE in the context aligns with this change"
+          ],
+          [
+            "code-change",
+            "unknown",
+            "no detector signal; absence of a signal is not a negative finding"
+          ]
+        ],
+        "group": "unattributed",
+        "hooks": [
+          "kb.next.review_lead"
+        ],
+        "navigable": true,
+        "rank_basis": "attention order 4 of 5 (the engine's own order, not a measure of risk)",
+        "stale": false,
+        "subject": "get_version"
+      },
+      {
+        "chips": [
+          [
+            "applicability",
+            "neutral",
+            "no applicable CVE in the context aligns with this change"
+          ],
+          [
+            "code-change",
+            "unknown",
+            "added function: no older/newer pair to compare"
+          ]
+        ],
+        "group": "unattributed",
+        "hooks": [
+          "kb.next.review_lead"
+        ],
+        "navigable": true,
+        "rank_basis": "attention order 5 of 5 (the engine's own order, not a measure of risk)",
+        "stale": false,
+        "subject": "report_invalid_index"
+      }
+    ],
+    "unknowns": [
+      "KEV listing was not loaded, so exploitation status is unknown.",
+      "CVE-2099-20003 is mentioned in advisory text only and is left out of the context.",
+      "Applicability of the advisory to these two files is unverified until you confirm the product."
+    ]
+  }
+}

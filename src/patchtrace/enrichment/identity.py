@@ -34,10 +34,16 @@ def _normalize(value):
             normalized = key if key.isascii() else unicodedata.normalize('NFC', key)
             if normalized in out:
                 raise ValueError('keys collide after NFC normalization')
-            out[normalized] = _normalize(item)
+            # Scalars are the bulk of every payload: handle them without a recursive call.
+            leaf = type(item)
+            if leaf is str and item.isascii() or leaf is int:
+                out[normalized] = item
+            else:
+                out[normalized] = _normalize(item)
         return out
     if kind is list or kind is tuple:
-        return [_normalize(item) for item in value]
+        return [item if type(item) is int or type(item) is str and item.isascii() else _normalize(item)
+                for item in value]
     return _normalize_general(value)
 
 

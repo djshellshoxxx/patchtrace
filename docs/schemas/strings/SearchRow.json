@@ -1,0 +1,93 @@
+{
+  "$id": "https://patchtrace.local/schemas/strings/1/SearchRow.json",
+  "additionalProperties": false,
+  "description": "Row for WB1's index; WB1 owns the translation into its own storage.",
+  "properties": {
+    "coverage": {
+      "default": "",
+      "maxLength": 256,
+      "title": "Coverage",
+      "type": "string"
+    },
+    "doc_key": {
+      "maxLength": 256,
+      "title": "Doc Key",
+      "type": "string"
+    },
+    "field": {
+      "const": "strings",
+      "default": "strings",
+      "title": "Field",
+      "type": "string"
+    },
+    "flags": {
+      "default": [],
+      "items": {
+        "maxLength": 256,
+        "type": "string"
+      },
+      "title": "Flags",
+      "type": "array"
+    },
+    "function_ids": {
+      "default": [],
+      "items": {
+        "maxLength": 256,
+        "type": "string"
+      },
+      "title": "Function Ids",
+      "type": "array"
+    },
+    "offsets": {
+      "default": [],
+      "items": {
+        "maximum": 18446744073709551615,
+        "minimum": 0,
+        "type": "integer"
+      },
+      "maxItems": 16,
+      "title": "Offsets",
+      "type": "array"
+    },
+    "side": {
+      "enum": [
+        "older",
+        "newer"
+      ],
+      "title": "Side",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "only-older",
+        "only-newer",
+        "both",
+        "representation-changed",
+        "edited",
+        "not-compared",
+        "indeterminate"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "text": {
+      "maxLength": 256,
+      "title": "Text",
+      "type": "string"
+    },
+    "title": {
+      "maxLength": 256,
+      "title": "Title",
+      "type": "string"
+    }
+  },
+  "required": [
+    "doc_key",
+    "text",
+    "title",
+    "side",
+    "status"
+  ],
+  "title": "SearchRow",
+  "type": "object"
+}

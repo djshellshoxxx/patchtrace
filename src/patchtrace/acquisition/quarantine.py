@@ -6,6 +6,7 @@ verified AMD64 PE can become a project input, and the project copy is made by th
 """
 from __future__ import annotations
 
+import hashlib
 import json
 import os
 import shutil
@@ -99,7 +100,10 @@ def acquire(planned: PlannedDownload, consent: AcquisitionConsent, staging: Path
     """Download, verify and identify one planned file into `staging/<side>/<file_name>`."""
     name = validate_file_name(planned.file_name)
     side_dir = Path(staging) / planned.side
-    side_dir.mkdir(mode=0o700, exist_ok=False)
+    try:
+        side_dir.mkdir(mode=0o700, exist_ok=False)
+    except FileExistsError:
+        raise AcquisitionError('PT-ACQ-CONFIG', f'staging already holds a {planned.side} download') from None
     got = transport.download(planned, consent, side_dir, progress)
     final = side_dir / name
     os.replace(got.path, final)
@@ -120,6 +124,10 @@ def promote(older: AcquiredArtifact, newer: AcquiredArtifact, name: str, root: P
     for item in (older, newer):
         if item.format != 'pe':
             raise AcquisitionError('PT-ACQ-VERIFY', f'{item.side} file is {item.format}, not an AMD64 PE')
+    if not all(_staged_matches(item) for item in (older, newer)):
+        raise AcquisitionError('PT-ACQ-VERIFY', 'a staged file changed after it was verified')
+    root = Path(root)
+    existed = root.exists()
     service = ProjectService.create(Path(older.path), Path(newer.path), name, root)
     try:
         by_side = {a.side: a for a in service.project.artifacts}
@@ -132,5 +140,26 @@ def promote(older: AcquiredArtifact, newer: AcquiredArtifact, name: str, root: P
             service.annotate(artifact.id, ANNOTATION_PREFIX + json.dumps(record, sort_keys=True))
     except BaseException:
         service.close()
+        _discard_project(root, existed)
         raise
     return service
+
+
+def _staged_matches(item: AcquiredArtifact) -> bool:
+    digest = hashlib.sha256()
+    try:
+        with Path(item.path).open('rb') as stream:
+            for chunk in iter(lambda: stream.read(_CHUNK), b''):
+                digest.update(chunk)
+    except OSError:
+        return False
+    return digest.hexdigest() == item.sha256
+
+
+def _discard_project(root: Path, existed: bool) -> None:
+    # `create` accepts only an absent or empty directory, so everything inside is ours.
+    if not existed:
+        remove_staging(root)
+        return
+    for child in root.iterdir():
+        remove_staging(child) if child.is_dir() else child.unlink(missing_ok=True)

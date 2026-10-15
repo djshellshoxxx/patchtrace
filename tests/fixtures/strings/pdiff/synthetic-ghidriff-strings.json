@@ -1,0 +1,16 @@
+{
+  "_provenance": "SYNTHETIC, hand-written in the shape of the Ghidriff JSON root strings section (WB3 plan F11); not Ghidriff output. Addresses are ImageBase 0x140000000 plus the RVAs of tests/strings_pe.py synergy_pair.",
+  "strings": {
+    "added": [
+      {"name": "s_index_exceeds_140002070", "address": "140002070", "refcount": 1, "reftypes": ["DATA"], "calling": ["ParseHeader"]},
+      {"name": "s_registry_140002090", "address": "140002090", "refcount": 1, "reftypes": ["DATA"], "calling": ["InitRegistry"]},
+      {"name": "s_config_loaded_1400020b0", "address": "1400020b0", "refcount": 1, "reftypes": ["DATA"], "calling": ["ParseHeader"]}
+    ],
+    "deleted": [
+      {"name": "s_config_loaded_140002070", "address": "140002070", "refcount": 1, "reftypes": ["DATA"], "calling": ["ParseHeader"]},
+      {"name": "s_debug_dump_1400020b0", "address": "1400020b0", "refcount": 1, "reftypes": ["DATA"], "calling": ["ParseHeader"]},
+      {"name": "s_inside_header_140002092", "address": "140002092", "refcount": 1, "reftypes": ["DATA"], "calling": ["ParseHeader"]}
+    ]
+  },
+  "matches": {"address_matches": {}}
+}

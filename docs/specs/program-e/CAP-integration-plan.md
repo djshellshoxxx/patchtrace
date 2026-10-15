@@ -1,6 +1,6 @@
 # CAP integration plan: capa capability deltas on matched function pairs
 
-Status: Program E phase E-1 research plan, 2026-10-14 (Sonnet 5.5). Documents only, no code. Charter: `docs/plans/program-e-roadmap.md` section 3. Builds on SPEC-29 tools (`docs/specs/three-tool-evidence-adapters.md`, contract `tool-evidence/1`) and the built adapter `src/patchtrace/intelligence/tools/{capa,common,normalize,delta,process}.py` (baseline: `tests/test_intel_tools_common.py` + `test_intel_tools_parsers.py` = 30 passed, 2026-10-14). Every source below was retrieved 2026-10-14.
+Status: Program E phase E-1 research plan, 2026-10-14 (Sonnet 5.5). Built so far: CAP-1 (parser v2), CAP-2 (`capa_pairs.py`), CAP-3 (`capa_view.py`), CAP-5 (`intel-tools pairs` in `intelligence/tools/cli.py`), CAP-7 (`capa_hints.py`, inventory extractor; inventory is derived and unverified); the rest is not built. Charter: `docs/plans/program-e-roadmap.md` section 3. Builds on SPEC-29 tools (`docs/specs/three-tool-evidence-adapters.md`, contract `tool-evidence/1`) and the built adapter `src/patchtrace/intelligence/tools/{capa,common,normalize,delta,process}.py` (baseline: `tests/test_intel_tools_common.py` + `test_intel_tools_parsers.py` = 30 passed, 2026-10-14). Every source below was retrieved 2026-10-14.
 
 ## 1. Verdict and scope
 - **Verdict: build it as a context and noise-attribution channel, never as a vulnerability detector.** capa rules describe behaviours, so the channel is silent for most memory-safety fixes; silence is unknown, never evidence against a hypothesis.

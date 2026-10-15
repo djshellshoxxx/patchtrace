@@ -6,9 +6,9 @@ guarded), so a build without the extras still works. Metadata makes the self-tes
 """
 from PyInstaller.utils.hooks import collect_submodules, copy_metadata
 
-hiddenimports = collect_submodules('rapidfuzz') + ['yara_x']
+hiddenimports = collect_submodules('rapidfuzz') + ['yara_x', 'iced_x86']
 datas = []
-for _dist in ('rapidfuzz', 'yara-x'):
+for _dist in ('rapidfuzz', 'yara-x', 'iced-x86'):
     try:
         datas += copy_metadata(_dist)
     except Exception:  # extra not installed

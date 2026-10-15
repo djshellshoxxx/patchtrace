@@ -25,12 +25,19 @@ from . import pins, process
 from .common import (
     LICENSES,
     MAX_ADDRESS,
+    MAX_COVERAGE,
+    MAX_FEATURES,
+    MAX_LABELS,
     CapabilityEvidence,
     EvidenceLink,
+    FeatureRef,
+    FunctionCoverage,
+    TaxonomyLabel,
     ToolError,
     ToolEvidenceSet,
     ToolLimits,
     ToolManifest,
+    display_text,
     load_json_strict,
 )
 from .normalize import PeMap, check_binding
@@ -43,7 +50,11 @@ REQUIRED_OPTIONS = ('-j', '--json', '-q', '--quiet', '--color', '-f', '--format'
                     '--rules', '-s', '--signatures')
 EXIT_UNSUPPORTED = {16: 'unsupported file type', 17: 'unsupported architecture', 18: 'unsupported operating system',
                     20: 'unsupported Ghidra version', 24: 'unsupported Ghidra execution mode'}
-EXIT_INPUT = {10: 'the rule set is missing', 12: 'the rule set is invalid', 15: 'the signature files are invalid'}
+EXIT_INPUT = {10: 'the rule set is missing', 11: 'the input file is missing', 12: 'the rule set is invalid',
+              13: 'the input file is corrupt', 15: 'the signature files are invalid'}
+MIN_GHIDRA = (12, 0)
+MEMORY_DEFAULT = 8 * 1024 ** 3
+MIN_MEMORY_LIMIT = 256 * 1024 ** 2
 MAX_RULE_SOURCE = 256 * 1024
 _VERSION = re.compile(r'^capa (\d+)\.(\d+)\.(\d+)\s*$', re.MULTILINE)
 _BACKENDS = re.compile(r'-b \{([a-z0-9,]+)\}')
@@ -60,6 +71,17 @@ class CapaConfig:
     java_home: Path | None = None
     timeout: int = DEFAULT_TIMEOUT
     accept_untested: bool = False   # explicit opt-in for a build that is not the pinned release (TA-6)
+    memory_limit_bytes: int | None = None   # None: 8 GiB; 0: no cap (RLIMIT_AS counts virtual memory)
+
+    def effective_memory_limit(self) -> int | None:
+        limit = self.memory_limit_bytes
+        if limit is None:
+            return MEMORY_DEFAULT
+        if limit == 0:
+            return None
+        if limit < MIN_MEMORY_LIMIT:
+            raise ToolError('PT-TOOL-INPUT', 'the capa memory limit must be 0 (off) or at least 256 MiB')
+        return limit
 
 
 def _manifest(config: CapaConfig, *, supported: bool, reason: str | None = None, path: str = '',
@@ -91,6 +113,12 @@ def _ghidra_version(config: CapaConfig) -> str | None:
         return None
     match = _GHIDRA_VERSION.search(text)
     return match.group(1) if match else None
+
+
+def _ghidra_too_old(version: str) -> bool:
+    """capa's Ghidra backend exits 20 on Ghidra before 12.0; refuse at probe time. An unreadable version is old."""
+    parts = re.match(r'^(\d+)\.(\d+)', version)
+    return parts is None or (int(parts.group(1)), int(parts.group(2))) < MIN_GHIDRA
 
 
 _CACHE: dict[tuple, ToolManifest] = {}
@@ -143,6 +171,10 @@ def _probe(config: CapaConfig, exe: Path, cancel: threading.Event, runner: Calla
     if config.backend == 'ghidra' and _ghidra_version(config) is None:
         return unsupported('the Ghidra backend needs --ghidra-dir (Ghidra/application.properties) and --java-home '
                            '(bin/java)')
+    ghidra_version = _ghidra_version(config) if config.backend == 'ghidra' else None
+    if ghidra_version is not None and _ghidra_too_old(ghidra_version):
+        return unsupported(f'the Ghidra backend needs Ghidra {MIN_GHIDRA[0]}.{MIN_GHIDRA[1]} or newer '
+                           f'(found {process.sanitize(ghidra_version, 32)})')
     version_run = process.run_version_probe(exe, ['--version'], cancel=cancel, runner=runner, environ=environ)
     help_run = process.run_version_probe(exe, ['--help'], cancel=cancel, runner=runner, environ=environ)
     transient = process.is_transient(version_run, help_run)
@@ -183,7 +215,7 @@ def _probe(config: CapaConfig, exe: Path, cancel: threading.Event, runner: Calla
         return unsupported(f'rule or signature directory rejected: {getattr(exc, "message", type(exc).__name__)}',
                            **common)
     if config.backend == 'ghidra':
-        extra['backend_version'] = _ghidra_version(config)
+        extra['backend_version'] = ghidra_version
     return _manifest(config, supported=True, path=str(exe), sha=sha, capabilities=tuple(sorted(capabilities)),
                      pin_status=pin_status, **common, **extra), True
 
@@ -313,6 +345,12 @@ class Scopes(_Model):
 
 class Spec(_Open):
     id: str = Field(default='', max_length=64)
+    tactic: str = Field(default='', max_length=512)      # ATT&CK
+    technique: str = Field(default='', max_length=512)
+    subtechnique: str = Field(default='', max_length=512)
+    objective: str = Field(default='', max_length=512)   # MBC
+    behavior: str = Field(default='', max_length=512)
+    method: str = Field(default='', max_length=512)
 
 
 class RuleMeta(_Open):
@@ -407,6 +445,73 @@ def _feature_rvas(match: Match, base: int, pe: PeMap, cap: int) -> tuple[tuple[i
     return tuple(sorted(found)[:cap]), total
 
 
+_FEATURE_KINDS = {'api', 'number', 'string', 'substring', 'regex', 'bytes', 'mnemonic', 'offset', 'characteristic',
+                  'section', 'export', 'import', 'function-name', 'class', 'namespace', 'property', 'com', 'match'}
+_HEX_KINDS = frozenset({'number', 'offset', 'operand'})
+
+
+def _feature_ref(feature: dict, rva: int | None) -> FeatureRef | None:
+    """A leaf feature as a short text reference; global (os, arch, format) and unknown kinds give None."""
+    kind = feature.get('type')
+    if not isinstance(kind, str):
+        return None
+    ref_kind = 'operand' if kind.startswith('operand') else kind
+    if ref_kind not in _FEATURE_KINDS and ref_kind != 'operand':
+        return None
+    value = feature.get(kind, feature.get(kind.replace(' ', '_')))
+    if isinstance(value, bool) or value is None:
+        return None
+    if isinstance(value, int):
+        text = f'0x{value:x}' if ref_kind in _HEX_KINDS and value >= 0 else str(value)
+    elif isinstance(value, str):
+        text = value
+    else:
+        text = json.dumps(value, sort_keys=True, separators=(',', ':'))[:240]
+    return FeatureRef(kind=ref_kind, value=display_text(text, 120), rva=rva)
+
+
+def _features(match: Match, base: int, pe: PeMap) -> tuple[FeatureRef, ...]:
+    """Successful leaf features of a matched rule (T2): sorted, one per (kind, value) with its lowest location."""
+    found: dict[tuple[str, str], int | None] = {}
+    stack = [match]
+    while stack:
+        node = stack.pop()
+        if not node.success:
+            continue
+        if node.node.type == 'feature' and node.node.feature is not None:
+            rvas = [rva for rva in (pe.va_to_rva(a.value, base)[0] for a in node.locations
+                                    if a.type == 'absolute' and isinstance(a.value, int)) if rva is not None]
+            ref = _feature_ref(node.node.feature, min(rvas) if rvas else None)
+            if ref is not None:
+                key = (ref.kind, ref.value)
+                known = found.get(key)
+                found[key] = ref.rva if known is None else (known if ref.rva is None else min(known, ref.rva))
+        stack.extend(node.children)
+    refs = sorted(found.items(), key=lambda item: (item[0], -1 if item[1] is None else item[1]))
+    return tuple(FeatureRef(kind=kind, value=value, rva=rva) for (kind, value), rva in refs[:MAX_FEATURES])
+
+
+def _labels(rule: RuleMeta) -> tuple[TaxonomyLabel, ...]:
+    """ATT&CK and MBC labels as capa emits them (grouping only, never ordering or counting)."""
+    def name(*parts: str) -> str:
+        return '::'.join(part for part in parts if part)
+    labels = {TaxonomyLabel(scheme='attack', group=display_text(s.tactic, 80), ident=display_text(s.id, 32),
+                            name=display_text(name(s.technique, s.subtechnique), 120)) for s in rule.attack if s.id}
+    labels |= {TaxonomyLabel(scheme='mbc', group=display_text(s.objective, 80), ident=display_text(s.id, 32),
+                             name=display_text(name(s.behavior, s.method), 120)) for s in rule.mbc if s.id}
+    return tuple(sorted(labels, key=lambda label: (label.scheme, label.group, label.name, label.ident)))[:MAX_LABELS]
+
+
+def _coverage(analysis: Analysis, base: int, pe: PeMap, anomalies: list[str]) -> FunctionCoverage:
+    """Function starts capa evaluated and those it skipped as library code (everything else is unknown)."""
+    def starts(addresses: list[Address]) -> tuple[tuple[int, ...], bool]:
+        rvas = sorted({rva for rva in (_rva(a, base, pe, anomalies) for a in addresses) if rva is not None})
+        return tuple(rvas[:MAX_COVERAGE]), len(rvas) > MAX_COVERAGE
+    evaluated, cut_evaluated = starts([item.address for item in analysis.feature_counts.functions])
+    library, cut_library = starts([item.address for item in analysis.library_functions])
+    return FunctionCoverage(evaluated=evaluated, library=library, truncated=cut_evaluated or cut_library)
+
+
 def _rule_id(name: str, anomalies: list[str]) -> str:
     """Rule names longer than the record allows get a stable hash suffix so distinct rules never collide (TA-11)."""
     if len(name) <= 256:
@@ -470,17 +575,20 @@ def _parse(raw: bytes, ctx: ParseContext) -> ToolEvidenceSet:
         for index, (address, match) in enumerate(rule.matches):
             total += 1
             key_address = address.value if isinstance(address.value, int) else -1
-            candidates.append((name, scope, key_address, index, rule, address, match))
-    candidates.sort(key=lambda item: item[:4])
+            rank = 0 if scope in ('function', 'basic block') else 1   # a cut keeps localized scopes first
+            candidates.append((rank, name, scope, key_address, index, rule, address, match))
+    candidates.sort(key=lambda item: item[:5])
     evidence: list[CapabilityEvidence] = []
     rule_ids: dict[str, str] = {}
-    for name, scope, _key, index, rule, address, match in candidates[:ctx.limits.max_rule_matches]:
+    rule_labels: dict[str, tuple[TaxonomyLabel, ...]] = {}
+    for _rank, name, scope, _key, index, rule, address, match in candidates[:ctx.limits.max_rule_matches]:
         rule_sha = hashlib.sha256(rule.source.encode('utf-8')).hexdigest()
         namespace = rule.meta.namespace
         kind = 'library' if rule.meta.lib else (
             'limitation' if namespace and namespace.startswith('internal/limitation') else 'capability')
         if name not in rule_ids:
             rule_ids[name] = _rule_id(name, anomalies)
+            rule_labels[name] = _labels(rule.meta)
         rva = _rva(address, base, ctx.pe, anomalies)
         function_id, attribution = None, 'none'
         if rva is not None and scope == 'function':
@@ -500,8 +608,10 @@ def _parse(raw: bytes, ctx: ParseContext) -> ToolEvidenceSet:
             and 0 <= address.value <= MAX_ADDRESS else None, location=link, kind=kind, source_run_id=ctx.run_id,
             attack=tuple(s.id[:32] for s in rule.meta.attack if s.id)[:32],
             mbc=tuple(s.id[:32] for s in rule.meta.mbc if s.id)[:32],
-            feature_rvas=features, feature_count=feature_total))
+            feature_rvas=features, feature_count=feature_total, features=_features(match, base, ctx.pe),
+            labels=rule_labels[name]))
     evidence.sort(key=lambda e: (e.rule_id, e.scope, -1 if e.address is None else e.address))
+    coverage = _coverage(analysis, base, ctx.pe, anomalies)
     unique = list(dict.fromkeys(anomalies))[:64]
     return ToolEvidenceSet(
         run_id=ctx.run_id, engine=ENGINE, side=ctx.side, artifact_sha256=ctx.artifact.sha256,
@@ -511,4 +621,12 @@ def _parse(raw: bytes, ctx: ParseContext) -> ToolEvidenceSet:
                   'library_functions': len(analysis.library_functions), 'version': doc.meta.version[:32]},
         capabilities=tuple(evidence), truncated=total > len(evidence),
         counts={'capabilities': len(evidence), 'rule_matches_total': total, 'rules': len(doc.rules)},
-        anomalies=tuple(unique))
+        anomalies=tuple(unique), coverage=coverage)
+
+
+def reparse(raw: bytes, expected_stdout_digest: str | None, ctx: ParseContext) -> ToolEvidenceSet:
+    """In-memory re-parse of a stored raw sidecar with the current parser (rows stored before coverage existed).
+    The bytes must hash to the run's recorded stdout digest; otherwise they are not what the run produced."""
+    if expected_stdout_digest is None or hashlib.sha256(raw).hexdigest() != expected_stdout_digest:
+        raise ToolError('PT-TOOL-STORE', 'the stored capa output does not match its recorded digest')
+    return parse(raw, ctx)

@@ -1,0 +1,222 @@
+{
+  "$defs": {
+    "Blast": {
+      "additionalProperties": false,
+      "properties": {
+        "direct_callers": {
+          "minimum": 0,
+          "title": "Direct Callers",
+          "type": "integer"
+        },
+        "observed_callers": {
+          "minimum": 0,
+          "title": "Observed Callers",
+          "type": "integer"
+        },
+        "unknown_frontier": {
+          "minimum": 0,
+          "title": "Unknown Frontier",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "direct_callers",
+        "observed_callers",
+        "unknown_frontier"
+      ],
+      "title": "Blast",
+      "type": "object"
+    },
+    "ClaimRef": {
+      "additionalProperties": false,
+      "properties": {
+        "field": {
+          "enum": [
+            "callees",
+            "callers"
+          ],
+          "title": "Field",
+          "type": "string"
+        },
+        "record_id": {
+          "title": "Record Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "record_id",
+        "field"
+      ],
+      "title": "ClaimRef",
+      "type": "object"
+    },
+    "EntryDistance": {
+      "additionalProperties": false,
+      "properties": {
+        "hops": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Hops"
+        },
+        "state": {
+          "enum": [
+            "reached",
+            "not-reached",
+            "unknown"
+          ],
+          "title": "State",
+          "type": "string"
+        },
+        "via": {
+          "default": "",
+          "title": "Via",
+          "type": "string"
+        }
+      },
+      "required": [
+        "state"
+      ],
+      "title": "EntryDistance",
+      "type": "object"
+    },
+    "GraphSignal": {
+      "additionalProperties": false,
+      "properties": {
+        "evidence": {
+          "$ref": "#/$defs/ClaimRef"
+        },
+        "id": {
+          "enum": [
+            "new-function-called",
+            "api-hint-called",
+            "import-called",
+            "call-dropped",
+            "known-function-called",
+            "fan-in-context",
+            "hub-only"
+          ],
+          "title": "Id",
+          "type": "string"
+        },
+        "meaning": {
+          "title": "Meaning",
+          "type": "string"
+        },
+        "next_step": {
+          "title": "Next Step",
+          "type": "string"
+        },
+        "rank": {
+          "title": "Rank",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id",
+        "rank",
+        "meaning",
+        "next_step",
+        "evidence"
+      ],
+      "title": "GraphSignal",
+      "type": "object"
+    },
+    "Origin": {
+      "additionalProperties": false,
+      "properties": {
+        "engine": {
+          "title": "Engine",
+          "type": "string"
+        },
+        "group": {
+          "const": "calls",
+          "default": "calls",
+          "title": "Group",
+          "type": "string"
+        },
+        "raw_sha256": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Raw Sha256"
+        },
+        "run_id": {
+          "title": "Run Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "engine",
+        "run_id",
+        "raw_sha256"
+      ],
+      "title": "Origin",
+      "type": "object"
+    }
+  },
+  "$id": "https://patchtrace.local/schemas/callgraph/1/GraphLead.json",
+  "additionalProperties": false,
+  "properties": {
+    "blast": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Blast"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "contract": {
+      "const": "workbench-graph-leads/1",
+      "default": "workbench-graph-leads/1",
+      "title": "Contract",
+      "type": "string"
+    },
+    "entry": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/EntryDistance"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "match_id": {
+      "title": "Match Id",
+      "type": "string"
+    },
+    "origin": {
+      "$ref": "#/$defs/Origin"
+    },
+    "signals": {
+      "items": {
+        "$ref": "#/$defs/GraphSignal"
+      },
+      "title": "Signals",
+      "type": "array"
+    }
+  },
+  "required": [
+    "match_id",
+    "signals",
+    "origin"
+  ],
+  "title": "GraphLead",
+  "type": "object"
+}

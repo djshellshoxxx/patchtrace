@@ -16,6 +16,7 @@
             "basic-block-in-function",
             "decoding-routine",
             "stack-frame",
+            "contained-in-function",
             "none"
           ],
           "title": "Attribution",

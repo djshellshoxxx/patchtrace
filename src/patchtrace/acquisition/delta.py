@@ -18,6 +18,8 @@ from pathlib import Path
 from .contracts import AcquisitionError
 
 DELTA_FILE_TYPE_RAW = 1
+MAX_DELTA_INPUT = 1024 * 1024 * 1024  # base, delta and result are all held in memory; msdelta cannot be cancelled
+MAX_DELTA_OUTPUT = MAX_DELTA_INPUT
 
 
 def capability() -> str:
@@ -64,7 +66,7 @@ def _load(dll_path: Path | None):
     if not path.is_absolute() or not path.is_file():
         raise AcquisitionError('PT-ACQ-UNSUPPORTED', f'{path.name} not found')
     try:
-        return ctypes.WinDLL(str(path))
+        return ctypes.WinDLL(str(path), use_last_error=True)
     except OSError:
         raise AcquisitionError('PT-ACQ-UNSUPPORTED', f'cannot load {path.name}') from None
 
@@ -80,6 +82,8 @@ def apply_raw(base: bytes, delta: bytes, *, update_compression: Path | None = No
     fmt, raw = strip_header(delta)
     if fmt == 'pa31' and update_compression is None:
         raise AcquisitionError('PT-ACQ-UNSUPPORTED', 'PA31 needs a user-selected UpdateCompression.dll')
+    if len(base) > MAX_DELTA_INPUT or len(raw) > MAX_DELTA_INPUT:
+        raise AcquisitionError('PT-ACQ-LIMIT', 'delta input exceeds the 1 GiB cap')
     dll = _load(update_compression if fmt == 'pa31' else None)
     DeltaInput, DeltaOutput = _structs()
     apply = dll.ApplyDeltaB
@@ -94,7 +98,9 @@ def apply_raw(base: bytes, delta: bytes, *, update_compression: Path | None = No
     try:
         if not ok:
             # A wrong base fails here: the delta embeds the target hash.
-            raise AcquisitionError('PT-ACQ-VERIFY', f'ApplyDeltaB failed (error {ctypes.GetLastError()})')
+            raise AcquisitionError('PT-ACQ-VERIFY', f'ApplyDeltaB failed (error {ctypes.get_last_error()})')
+        if output.uSize > MAX_DELTA_OUTPUT:
+            raise AcquisitionError('PT-ACQ-LIMIT', 'delta output exceeds the 1 GiB cap')
         return ctypes.string_at(output.lpStart, output.uSize) if output.uSize else b''
     finally:
         if output.lpStart:

@@ -1,0 +1,254 @@
+{
+  "$defs": {
+    "BasisPart": {
+      "additionalProperties": false,
+      "properties": {
+        "config_digest": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Config Digest",
+          "type": "string"
+        },
+        "consent_sha256": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Consent Sha256"
+        },
+        "executable_sha256": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Executable Sha256"
+        },
+        "raw_sha256": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Raw Sha256"
+        },
+        "run_id": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Run Id"
+        },
+        "semantics_id": {
+          "maxLength": 64,
+          "minLength": 1,
+          "title": "Semantics Id",
+          "type": "string"
+        },
+        "source": {
+          "enum": [
+            "builtin-scan",
+            "floss"
+          ],
+          "title": "Source",
+          "type": "string"
+        },
+        "source_version": {
+          "default": "",
+          "maxLength": 64,
+          "title": "Source Version",
+          "type": "string"
+        },
+        "types": {
+          "items": {
+            "enum": [
+              "static",
+              "stack",
+              "tight",
+              "decoded",
+              "language"
+            ],
+            "type": "string"
+          },
+          "maxItems": 5,
+          "minItems": 1,
+          "title": "Types",
+          "type": "array"
+        }
+      },
+      "required": [
+        "source",
+        "semantics_id",
+        "types",
+        "config_digest"
+      ],
+      "title": "BasisPart",
+      "type": "object"
+    },
+    "LanguageInfo": {
+      "additionalProperties": false,
+      "properties": {
+        "detected": {
+          "anyOf": [
+            {
+              "maxLength": 32,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Detected"
+        },
+        "selected": {
+          "anyOf": [
+            {
+              "maxLength": 32,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Selected"
+        }
+      },
+      "title": "LanguageInfo",
+      "type": "object"
+    },
+    "StageState": {
+      "additionalProperties": false,
+      "properties": {
+        "detail": {
+          "default": "",
+          "maxLength": 200,
+          "title": "Detail",
+          "type": "string"
+        },
+        "state": {
+          "enum": [
+            "complete",
+            "heuristic",
+            "not-run",
+            "failed",
+            "truncated"
+          ],
+          "title": "State",
+          "type": "string"
+        }
+      },
+      "required": [
+        "state"
+      ],
+      "title": "StageState",
+      "type": "object"
+    }
+  },
+  "$id": "https://patchtrace.local/schemas/strings/1/StringBasis.json",
+  "additionalProperties": false,
+  "description": "What a table was extracted with; two tables compare only through their bases (spec WB3 s7.1).",
+  "properties": {
+    "artifact_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Artifact Sha256",
+      "type": "string"
+    },
+    "contract": {
+      "const": "strings-basis/1",
+      "default": "strings-basis/1",
+      "title": "Contract",
+      "type": "string"
+    },
+    "language": {
+      "$ref": "#/$defs/LanguageInfo",
+      "default": {
+        "detected": null,
+        "selected": null
+      }
+    },
+    "min_length": {
+      "maximum": 4096,
+      "minimum": 1,
+      "title": "Min Length",
+      "type": "integer"
+    },
+    "parts": {
+      "items": {
+        "$ref": "#/$defs/BasisPart"
+      },
+      "maxItems": 2,
+      "minItems": 1,
+      "title": "Parts",
+      "type": "array"
+    },
+    "rows_kept": {
+      "minimum": 0,
+      "title": "Rows Kept",
+      "type": "integer"
+    },
+    "rows_seen": {
+      "minimum": 0,
+      "title": "Rows Seen",
+      "type": "integer"
+    },
+    "side": {
+      "enum": [
+        "older",
+        "newer"
+      ],
+      "title": "Side",
+      "type": "string"
+    },
+    "stages": {
+      "additionalProperties": {
+        "$ref": "#/$defs/StageState"
+      },
+      "propertyNames": {
+        "enum": [
+          "static",
+          "stack",
+          "tight",
+          "decoded",
+          "language"
+        ]
+      },
+      "title": "Stages",
+      "type": "object"
+    }
+  },
+  "required": [
+    "artifact_sha256",
+    "side",
+    "min_length",
+    "rows_seen",
+    "rows_kept",
+    "stages",
+    "parts"
+  ],
+  "title": "StringBasis",
+  "type": "object"
+}

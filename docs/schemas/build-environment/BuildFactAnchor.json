@@ -1,0 +1,98 @@
+{
+  "$id": "https://patchtrace.local/schemas/build-environment/1/BuildFactAnchor.json",
+  "additionalProperties": false,
+  "description": "A per-side build fact offered to other tracks as an anchor (never as a vote).",
+  "properties": {
+    "anchor_id": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Anchor Id",
+      "type": "string"
+    },
+    "artifact_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Artifact Sha256",
+      "type": "string"
+    },
+    "certainty": {
+      "enum": [
+        "exact-field",
+        "derived",
+        "signature",
+        "heuristic",
+        "unknown"
+      ],
+      "title": "Certainty",
+      "type": "string"
+    },
+    "key": {
+      "enum": [
+        "compiler",
+        "compiler_version",
+        "linker",
+        "linker_field",
+        "linker_rich",
+        "build_tool",
+        "runtime_family",
+        "language",
+        "target_os",
+        "subsystem",
+        "os_version_field",
+        "subsystem_version_field",
+        "image_version_field",
+        "rich_signature",
+        "packer",
+        "protector",
+        "installer",
+        "obfuscator",
+        "managed",
+        "gs_cookie",
+        "cfg",
+        "aslr",
+        "repro",
+        "debug_entry_types",
+        "entropy_exec",
+        "overlay"
+      ],
+      "title": "Key",
+      "type": "string"
+    },
+    "side": {
+      "enum": [
+        "older",
+        "newer"
+      ],
+      "title": "Side",
+      "type": "string"
+    },
+    "source": {
+      "enum": [
+        "pe-header",
+        "rich-header",
+        "debug-directory",
+        "load-config",
+        "imports",
+        "clr-header",
+        "sections",
+        "diec"
+      ],
+      "title": "Source",
+      "type": "string"
+    },
+    "value": {
+      "maxLength": 200,
+      "title": "Value",
+      "type": "string"
+    }
+  },
+  "required": [
+    "anchor_id",
+    "key",
+    "value",
+    "side",
+    "artifact_sha256",
+    "source",
+    "certainty"
+  ],
+  "title": "BuildFactAnchor",
+  "type": "object"
+}
