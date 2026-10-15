@@ -22,7 +22,7 @@ BOOK = C.load_recipes((CATALOGUE / 'recipes.json').read_bytes())
 CARDS = C.load_cards((CATALOGUE / 'releases.json').read_bytes()) + C.load_cards((CATALOGUE / 'cves.json').read_bytes())
 HEX40, HEX64 = re.compile(r'^[0-9a-f]{40}$'), re.compile(r'^[0-9a-f]{64}$')
 # project -> (SPDX licence, minimum cards, pins must be adjacent releases)
-TRANCHE = {'libdeflate': ('MIT', 3, True)}
+TRANCHE = {'libdeflate': ('MIT', 3, True), 'stb': ('MIT', 3, True)}
 
 
 def _raw_cards(project):
@@ -67,3 +67,13 @@ def test_unbuilt_cards_never_claim_an_agent_verification(project):
             assert verification.get('status') == 'unverified-build', raw['id']
             assert raw['build']['mingw_ok'] == 'unverified', raw['id']
 
+
+
+def test_stb_translation_unit_wrappers_define_their_implementation_macro():
+    """stb is header-only and has no tags: each authored wrapper is exactly `#define X_IMPLEMENTATION` + `#include`."""
+    recipe = BOOK.get('stb')
+    assert recipe.sources == ('stb_vorbis.c',) and recipe.write
+    for rule in recipe.write:
+        header = rule.path.replace('_impl.c', '.h')
+        macro = header[:-2].upper() + '_IMPLEMENTATION'
+        assert rule.text == f'#define {macro}\n#include "{header}"\n', rule.path

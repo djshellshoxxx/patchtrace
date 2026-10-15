@@ -977,6 +977,78 @@
     }
    ],
    "notes": "Library sources only (programs/, scripts/ and tests are not compiled); no cmake or make: lib/*.c plus the per-arch cpu_features.c files, whose bodies compile out on the other architecture. Each pin passes native gcc -std=gnu11 -fsyntax-only -I. on all 11 sources; built with mingw-w64 gcc 13-win32 -O2 -g at every card pin. Upstream uses no dllexport without LIBDEFLATE_DLL, so the DLL exports every global symbol."
+  },
+  {
+   "contract": "tier-r-recipe/1",
+   "project": "stb",
+   "family": "image-codec",
+   "upstream_git": "https://github.com/nothings/stb.git",
+   "license_spdx": "MIT",
+   "license_file": "LICENSE",
+   "license_evidence": "LICENSE read at all 5 pins (first 5e4a0617), 1 distinct SHA-256: This software is available under 2 licenses -- choose whichever you prefer. ALTERNATIVE A - MIT License / Permission is hereby granted, free of charge, to any person obtaining a copy of this software (alternative B is the Unlicense; MIT is the one recorded)",
+   "libc": "mingw",
+   "output": "stb.dll",
+   "sources": [
+    "stb_vorbis.c"
+   ],
+   "include_dirs": [
+    "."
+   ],
+   "write": [
+    {
+     "path": "stb_image_impl.c",
+     "text": "#define STB_IMAGE_IMPLEMENTATION\n#include \"stb_image.h\"\n"
+    },
+    {
+     "path": "stb_image_write_impl.c",
+     "text": "#define STB_IMAGE_WRITE_IMPLEMENTATION\n#include \"stb_image_write.h\"\n"
+    },
+    {
+     "path": "stb_rect_pack_impl.c",
+     "text": "#define STB_RECT_PACK_IMPLEMENTATION\n#include \"stb_rect_pack.h\"\n"
+    },
+    {
+     "path": "stb_sprintf_impl.c",
+     "text": "#define STB_SPRINTF_IMPLEMENTATION\n#include \"stb_sprintf.h\"\n"
+    },
+    {
+     "path": "stb_truetype_impl.c",
+     "text": "#define STB_TRUETYPE_IMPLEMENTATION\n#include \"stb_truetype.h\"\n"
+    }
+   ],
+   "pins": [
+    {
+     "ref": "stb_image-2.23-2020-02-02",
+     "commit": "5e4a0617b72fd4db2e1fc4d5c2d8b483d948d573",
+     "license_sha256": "bebfe904b14301657e4e5d655c811d51fd31b97c455b9cc2d8600d6bac6cff63",
+     "date": "2020-02-02"
+    },
+    {
+     "ref": "stb_image-2.26",
+     "commit": "314d0a6f9af5af27e585336eecea333e95c5a2d8",
+     "license_sha256": "bebfe904b14301657e4e5d655c811d51fd31b97c455b9cc2d8600d6bac6cff63",
+     "date": "2020-07-13"
+    },
+    {
+     "ref": "stb_image-2.27",
+     "commit": "1ee679ca2ef753a528db5ba6801e1067b40481b8",
+     "license_sha256": "bebfe904b14301657e4e5d655c811d51fd31b97c455b9cc2d8600d6bac6cff63",
+     "date": "2021-07-11"
+    },
+    {
+     "ref": "stb_image-2.28",
+     "commit": "6199bf77130da41fd424722eeb7a8db4d766c4c6",
+     "license_sha256": "bebfe904b14301657e4e5d655c811d51fd31b97c455b9cc2d8600d6bac6cff63",
+     "date": "2023-01-29"
+    },
+    {
+     "ref": "stb_image-2.30",
+     "commit": "013ac3beddff3dbffafd5177e7972067cd2b5083",
+     "license_sha256": "bebfe904b14301657e4e5d655c811d51fd31b97c455b9cc2d8600d6bac6cff63",
+     "date": "2024-05-31"
+    }
+   ],
+   "notes": "stb has no tags: pins are commit pairs, each the upstream 'update version numbers' commit (stb_image 2.23, 2.26, 2.27, 2.28) plus 013ac3b (2.30). The single-header libraries are compiled through five authored one-line translation-unit wrappers (the *_IMPLEMENTATION define then the header) and stb_vorbis.c, which is an ordinary C file; changed-function files are therefore the headers. LICENSE exists only from 2020-02-02, so the 2019 stb_vorbis CVE cards stay no-recipe. Each pin passes native gcc -fsyntax-only on all six units and links as a shared object; built with mingw-w64 gcc 13-win32 -O2 -g at every card pin. MIT is chosen from the dual MIT / Unlicense LICENSE (alternative A)."
   }
  ]
 }
