@@ -202,8 +202,11 @@
     }
   },
   "strip": {
-    "ghidra": ["docs/**", "Extensions/Eclipse/**", "**/os/{other-OS}/**", "GPL/**"],
+    "ghidra": ["docs/**", "Extensions/**", "**/os/{other-OS}/**", "GPL/**", "Ghidra/Features/Base/data/typeinfo/golang/**",
+               "Ghidra/Features/Jython/**", "Ghidra/Features/BSim/**", "Ghidra/Features/GhidraServer/**", "Ghidra/Debug/**"],
+    "ghidra_fid": ["Ghidra/Features/FunctionID/data/*.fidbf"],
     "jdk": ["lib/src.zip", "jmods/**"],
-    "keep": ["LICENSE", "licenses/**", "Ghidra/Processors/**", "Ghidra/Debug/**", "Ghidra/Features/**", "legal/**", "bin/javac*"]
-  }
+    "keep": ["LICENSE", "licenses/**", "Ghidra/Processors/**", "Ghidra/Features/**", "legal/**", "bin/javac*"]
+  },
+  "jlink": {"modules": ["java.base", "java.desktop", "java.xml", "java.logging", "java.datatransfer", "java.management", "java.sql", "java.naming", "java.rmi", "java.scripting", "java.compiler", "java.net.http", "java.security.jgss", "java.prefs", "java.instrument", "jdk.unsupported", "jdk.xml.dom", "jdk.security.auth", "jdk.net", "jdk.management", "jdk.crypto.ec", "jdk.zipfs", "jdk.charsets", "jdk.jdi", "jdk.jshell", "jdk.compiler"]}
 }

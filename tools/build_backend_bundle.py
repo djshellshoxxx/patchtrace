@@ -206,6 +206,12 @@ PLATFORMS = ('windows', 'linux')
 _ENV_KEEP = ('PATH', 'SYSTEMROOT', 'SystemRoot', 'TEMP', 'TMP', 'TMPDIR', 'HOME', 'USERPROFILE', 'LANG',
              'LC_ALL', 'COMSPEC', 'PATHEXT', 'SOURCE_DATE_EPOCH')
 
+JLINK_FLAGS = ('--strip-debug', '--no-man-pages', '--no-header-files', '--compress=zip-6')
+# Ghidra's PyGhidra path has no in-process analysis timeout (research row 6): the process-level limit
+# (unified L-04) is the only one, so the bundle records it and the symbol policy next to the runtime.
+RUNTIME_POLICY = {'schema': 'patchtrace-runtime-policy/1', 'ghidriff_args': ['--no-symbols'],
+                  'symbol_servers': 'disabled', 'analysis_timeout_s': 7_200, 'timeout_enforced_by': 'process'}
+
 # Linux file-mode gate (plan section 6): every pattern must match at least one file and every match must
 # keep the execute bit that the vendor archive recorded.
 LINUX_EXEC_PATTERNS = (
@@ -577,6 +583,34 @@ def strip_tree(root: Path, strip: Sequence[str], keep: Sequence[str], target: st
 
 
 # ----- subprocess runner and pip -------------------------------------------------------------------------
+def reduce_jdk(jdk: Path, modules: Sequence[str], runner: Runner, work: Path, target: str) -> dict[str, int]:
+    """Replace the full JDK by a jlink image of the pinned modules; returns the new `jdk/` file modes.
+
+    jlink does not copy every licence file, so `legal/` and the root licence files are carried over from the
+    full JDK (GPLv2 with Classpath exception still applies to the image).
+    """
+    image = work / 'jlink-runtime'
+    exe = 'jlink.exe' if target == 'windows' else 'jlink'
+    runner([str(jdk / 'bin' / exe), '--module-path', str(jdk / 'jmods'), '--add-modules', ','.join(modules),
+            *JLINK_FLAGS, '--output', str(image)], work)
+    if not (image / 'lib' / 'modules').is_file():
+        _fail('PT-BUNDLE-JLINK', 'jlink produced no runtime image (lib/modules is missing)')
+    if (jdk / 'legal').is_dir():
+        shutil.copytree(jdk / 'legal', image / 'legal', dirs_exist_ok=True)
+    for item in jdk.iterdir():
+        if item.is_file() and _LICENSE_NAME.match(item.name):
+            shutil.copyfile(item, image / item.name)
+    shutil.rmtree(jdk)
+    shutil.move(str(image), str(jdk))
+    return {f'jdk/{name}': 0o755 if (jdk / name).stat().st_mode & 0o111 else 0o644 for name in _tree_files(jdk)}
+
+
+def write_runtime_policy(payload: Path) -> None:
+    target = payload / 'config' / 'runtime-policy.json'
+    target.parent.mkdir(parents=True, exist_ok=True)
+    target.write_text(json.dumps(RUNTIME_POLICY, indent=2, sort_keys=True) + '\n', encoding='utf-8', newline='\n')
+
+
 def run_tool(argv: Sequence[str], cwd: Path) -> None:
     """Run a builder tool (python -m pip ...) with a scrubbed environment; no proxy or index variables."""
     env = {key: value for key, value in os.environ.items() if key in _ENV_KEEP}
@@ -912,6 +946,10 @@ def gate_pin(pin_bytes: bytes) -> dict:
     if problems:
         shown = '; '.join(problems[:6]) + (f' (+{len(problems) - 6} more)' if len(problems) > 6 else '')
         _fail('PT-BUNDLE-PIN', f'pin refused (check_backend_pin --release semantics): {shown}')
+    modules = data.get('jlink', {}).get('modules', ['java.base'])
+    if not (isinstance(modules, list) and 'java.base' in modules
+            and all(isinstance(item, str) and re.fullmatch(r'[a-z][a-z0-9.]*', item) for item in modules)):
+        _fail('PT-BUNDLE-PIN', 'jlink.modules must be a list of module names that includes java.base')
     return data
 
 
@@ -1115,7 +1153,7 @@ def build_backend(pin_path: Path, platform: str, out_dir: Path, *, cache_dir: Pa
                   git_commit: str | None = None, compile_bytecode: bool = True,
                   asset_limit: int = ASSET_LIMIT, split: bool = False,
                   progress: Progress | None = None, source_builder: SourceBuilder | None = None,
-                  release: bool = False) -> BuildResult:
+                  release: bool = False, keep_fid: bool = False) -> BuildResult:
     """Build `<out_dir>/backend/{manifest.json,payload/}` plus the SPEC-06 importer ZIP for one platform."""
     if platform not in PLATFORMS:
         raise ValueError('platform must be windows or linux')
@@ -1181,11 +1219,19 @@ def build_backend(pin_path: Path, platform: str, out_dir: Path, *, cache_dir: Pa
             _fail('PT-BUNDLE-PIN-MISMATCH',
                   f'Ghidra application.properties says {found.group(1) if found else "nothing"}, pinned {ghidra_version}')
 
+        if 'jlink' in pin:
+            say('building the jlink runtime')
+            modes = {name: mode for name, mode in modes.items() if not name.startswith('jdk/')}
+            modes.update(reduce_jdk(payload / 'jdk', pin['jlink']['modules'], runner, work, platform))
+
         # 3. strip (pinned, gated by the keep patterns) -- before any licence copy
         say('applying pinned strip rules')
         stripped_files = stripped_bytes = 0
         for folder in ('ghidra', 'jdk'):
-            removed, freed = strip_tree(payload / folder, pin['strip'][folder], pin['strip']['keep'], platform)
+            rules = list(pin['strip'][folder])
+            if folder == 'ghidra' and not keep_fid:
+                rules += pin['strip'].get('ghidra_fid', [])
+            removed, freed = strip_tree(payload / folder, rules, pin['strip']['keep'], platform)
             stripped_files += len(removed)
             stripped_bytes += freed
             for name in removed:
@@ -1249,6 +1295,8 @@ def build_backend(pin_path: Path, platform: str, out_dir: Path, *, cache_dir: Pa
         third_party_json = json.dumps(doc.model_dump(by_alias=True, mode='json', exclude_none=True),
                                       indent=2, sort_keys=True) + '\n'
         (payload / 'LICENSES/THIRD-PARTY.json').write_text(third_party_json, encoding='utf-8', newline='\n')
+
+        write_runtime_policy(payload)
 
         # 6. gates, modes, manifest, archive
         say('checking path, mode and size gates')
