@@ -171,9 +171,12 @@ def label_diff(old: SideData, new: SideData, *, label_source: str,
             label, kind, note = 'ambiguous', None, 'source span not found'
         check = 'unchecked'
         if name in declared_changed:
-            check = 'ok' if label in ('changed', 'ambiguous') else 'disagree'
+            # D-04: an ambiguous row is explained but not verified; it must not count as agreement (plan 4.5).
+            check = {'changed': 'ok', 'ambiguous': 'unchecked'}.get(label, 'disagree')
             if check == 'disagree':
                 note = (note + '; ' if note else '') + f'card declares a change, evidence says {label}'
+            elif check == 'unchecked':
+                note = (note + '; ' if note else '') + 'card declares a change, evidence is ambiguous: not verified'
         elif name in declared_unchanged:
             check = 'ok' if label != 'changed' else 'disagree'
             if check == 'disagree':
