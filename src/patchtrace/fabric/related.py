@@ -89,12 +89,11 @@ def rows_of(anchors: tuple[Anchor, ...] | list[Anchor]) -> tuple[RelatedRow, ...
 
 
 COLUMNS = (
-    ColumnSpec('kind', 'Kind', lambda r: KIND_TITLES[r.kind], width_em=14, accessible=lambda r: r.accessible,
-               tip_id='related.dock'),
+    ColumnSpec('kind', 'Kind', lambda r: KIND_TITLES[r.kind], width_em=14, accessible=lambda r: r.accessible),
     ColumnSpec('label', 'Label', lambda r: r.label, width_em=36),
     ColumnSpec('side', 'Side', lambda r: r.side, width_em=8),
-    ColumnSpec('role', 'Role', lambda r: r.role_text, width_em=12, tip_id='related.role'),
-    ColumnSpec('witnesses', 'Witnesses', lambda r: r.witness_text, width_em=18, tip_id='related.witnesses',
+    ColumnSpec('role', 'Role', lambda r: r.role_text, width_em=12),
+    ColumnSpec('witnesses', 'Witnesses', lambda r: r.witness_text, width_em=18,
                sort_key=lambda r: (r.independent, r.witnesses)),
     ColumnSpec('producers', 'Producers', lambda r: r.producers, width_em=20))
 # No default order: the rows arrive in the fabric's canonical order and keep it.
