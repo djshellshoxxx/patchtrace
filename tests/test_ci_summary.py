@@ -176,4 +176,6 @@ def test_merge_job_runs_determinism_and_the_never_silent_summary(wf):
 def test_artifacts_hold_only_labels_and_reports(wf):
     paths = [s['with']['path'] for j in wf['jobs'].values() for s in j['steps']
              if str(s.get('uses', '')).startswith('actions/upload-artifact')]
-    assert sorted(paths) == ['merged/', 'plan.json', 'shard-out/shard-*.json', 'shard-out/shard-*.json']
+    # the MSVC advisory leg uploads its toolchain probe and status files only
+    assert sorted(paths) == ['merged/', 'msvc-toolchain.json\nmsvc-status/\n', 'plan.json', 'shard-out/shard-*.json',
+                             'shard-out/shard-*.json']
