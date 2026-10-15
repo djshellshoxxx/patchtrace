@@ -3,12 +3,9 @@
 All evidence logic lives in ``secondary.evidence_view`` and ``secondary.evidence_panel_service``; this
 module only moves immutable view-models into widgets and forwards intents. Rules enforced here:
 
-* Workers (``QThread.run``) receive immutable request objects and emit signals only. They never
+* Workers (``TaskRunner`` tasks) receive immutable request objects and return values. They never
   touch widgets, ``QSettings``, the clipboard, the project service or SQLite. Persisting an engine
-  result happens in a GUI-thread slot (queued bound-method connection).
-* Threads have NO Qt parent: destroying a running QThread (parent deleted, or garbage collection of
-  an unreferenced started thread) aborts the process. A module registry keeps every started thread
-  alive until ``finished``; ``EvidenceController.shutdown`` cancels and joins them.
+  result happens in a GUI-thread callback; the host joins every task at shutdown.
 * Sorting and filtering are owned by the table model (an index list), not a sort/filter proxy model:
   a proxy sort calls ``data()`` per comparison (measured seconds at 10k rows on PySide6 6.12).
 * Every launch captures a monotonically increasing generation; results of older generations are
@@ -21,6 +18,7 @@ from __future__ import annotations
 
 import dataclasses
 import time
+from collections import deque
 from collections.abc import Callable, Sequence
 from dataclasses import dataclass
 from pathlib import Path
@@ -33,11 +31,10 @@ from PySide6.QtCore import (
     QSettings,
     QSize,
     Qt,
-    QThread,
     QTimer,
     Signal,
 )
-from PySide6.QtGui import QColor, QFont, QFontMetrics, QGuiApplication, QKeySequence, QPalette, QPen
+from PySide6.QtGui import QColor, QFont, QFontMetrics, QGuiApplication, QPalette, QPen
 from PySide6.QtWidgets import (
     QAbstractItemView,
     QCheckBox,
@@ -45,14 +42,12 @@ from PySide6.QtWidgets import (
     QDockWidget,
     QFileDialog,
     QHBoxLayout,
-    QHeaderView,
     QLineEdit,
     QPlainTextEdit,
     QProgressBar,
     QPushButton,
     QSpinBox,
     QSplitter,
-    QStackedWidget,
     QStyle,
     QStyledItemDelegate,
     QTableView,
@@ -65,9 +60,15 @@ from shiboken6 import isValid
 from .gui.qt.docks import ControllerBase
 from .gui.qt.labels import PlainLabel
 from .gui.qt.settings import PanelSettings
-from .gui.qt.tasks import CancelToken
+from .gui.qt.state_view import StateView
+from .gui.qt.table import ROW_ROLE, VirtualTable
+from .gui.qt.tasks import CancelToken, TaskCancelled
 from .gui.registry import PanelContext
+from .gui.state import StateModel
+from .gui.table_spec import Cancelled as TableCancelled
+from .gui.table_spec import PreparedTable
 from .gui.text import VIEW_LIMIT
+from .gui.tips import register_gui_tips
 from .secondary import evidence_panel_service as service_api
 from .secondary.evidence_panel_service import (
     DEFAULT_TIMEOUT,
@@ -75,42 +76,35 @@ from .secondary.evidence_panel_service import (
     RUN_PREVIEW_BINDIFF,
     TIMEOUT_RANGE,
     Cancelled,
-    EvidenceRequest,
     RunRequest,
     capability_view,
     load_evidence,
     outcome_view,
 )
+from .secondary.evidence_table import COLUMN_EMS, ENGINE_EMS, prepare_evidence_table
 from .secondary.evidence_view import (
     ENGINE_COLUMNS,
     ENGINE_NAMES,
     ENGINE_STATE_TEXT,
-    ENGINE_UNITS,
     FOOTER,
     LOG_LINES,
     SECONDARY_ENGINES,
     STATE_TEXT,
     VERDICT_GLYPHS,
-    VERDICT_MEANING,
-    VERDICT_PRIORITY,
     EngineOutcomeView,
     EvidenceRow,
     EvidenceViewModel,
     calibration_display_level,
     empty_model,
-    filter_rows,
-    format_cell_detail,
     format_provenance_blocks,
     format_row_detail,
+    normalize_search,
     sanitize_text,
     state_text,
 )
 from .tooltips import apply_tooltip, template
 from .ui_engine_setup import BinDiffSetupController, BinDiffSetupPanel, SectionScrollArea
 
-ADDRESS_ROLE = Qt.ItemDataRole.UserRole + 2
-SORT_ROLE = Qt.ItemDataRole.UserRole + 1
-ROW_ROLE = Qt.ItemDataRole.UserRole
 FILTERS: tuple[tuple[str, frozenset[str]], ...] = (
     ('All', frozenset({'agree', 'contested', 'single-engine', 'unknown'})),
     ('Contested', frozenset({'contested'})),
@@ -127,11 +121,8 @@ BADGE_TEXT = '#000000'
 BADGE_BORDER = '#000000'
 THEME_BACKGROUND = '#161b22'  # ui.DARK_STYLE QWidget background
 MUTED_KINDS = frozenset({'not-run', 'no-record', 'not-comparable', 'failed'})
-COLUMN_EMS = {0: 28, 1: 16}
-ENGINE_EMS = 18
 RUN_NOTE = ('Engines read both stored artifact copies as data; the binaries themselves are never run. '
             'Nothing is uploaded.')
-_LIVE_THREADS: set[QThread] = set()  # a running QThread must never be garbage collected
 
 
 def contrast_ratio(first: str, second: str) -> float:
@@ -145,164 +136,6 @@ def contrast_ratio(first: str, second: str) -> float:
 
 
 # ---- models ---------------------------------------------------------------------------------------
-
-
-class EvidenceTableModel(QAbstractTableModel):
-    """Rows of one view-model plus an index view (filter + sort) computed in Python.
-
-    The filtered/sorted view is a list of indices into the immutable rows, so filtering and sorting
-    10k rows is one Python pass (no per-row proxy callbacks); ``data`` reads precomputed strings and
-    formats tooltip detail lazily. ``data_calls`` counts calls for the performance gate.
-    """
-
-    def __init__(self, parent=None):
-        super().__init__(parent)
-        self.vm: EvidenceViewModel | None = None
-        self.rows: tuple[EvidenceRow, ...] = ()
-        self.view: list[int] = []
-        self.verdicts: frozenset[str] = FILTERS[0][1]
-        self.search = ''
-        self.hide_agree = False
-        self.sort_column = -1
-        self.sort_order = Qt.SortOrder.AscendingOrder
-        self.stale = False
-        self.data_calls = 0
-
-    # -- content --
-    def set_view_model(self, vm: EvidenceViewModel | None) -> None:
-        self.beginResetModel()
-        self.vm = vm
-        self.rows = (vm.rows + vm.engine_only) if vm else ()
-        self.stale = bool(vm and vm.state == 'stale')
-        self._recompute()
-        self.endResetModel()
-
-    def set_filter(self, verdicts: frozenset[str], search: str, hide_agree: bool) -> None:
-        self.beginResetModel()
-        self.verdicts, self.search, self.hide_agree = verdicts, search, hide_agree
-        self._recompute()
-        self.endResetModel()
-
-    def sort(self, column: int, order=Qt.SortOrder.AscendingOrder) -> None:
-        """Model-owned sort: one Python sort over precomputed keys, no per-comparison data() calls.
-
-        Persistent indexes (selection, current index) follow their rows through the reorder.
-        """
-        self.layoutAboutToBeChanged.emit()
-        persistent = self.persistentIndexList()
-        anchors = [(self.view[p.row()] if 0 <= p.row() < len(self.view) else None, p.column()) for p in persistent]
-        self.sort_column, self.sort_order = column, order
-        self._recompute()
-        position = {row_index: n for n, row_index in enumerate(self.view)}
-        moved = [self.index(position[row_index], col) if row_index in position else QModelIndex()
-                 for row_index, col in anchors]
-        self.changePersistentIndexList(persistent, moved)
-        self.layoutChanged.emit()
-
-    def _recompute(self) -> None:
-        rows = self.rows
-        # Default order first (contested, unknown, single engine, agree; then Ghidriff order). Column sorts
-        # are stable on top of it, so ties keep this order in both directions.
-        indices = sorted(filter_rows(rows, self.verdicts, self.search, self.hide_agree),
-                         key=lambda i: (VERDICT_PRIORITY[rows[i].verdict], rows[i].order))
-        column = self.sort_column
-        reverse = self.sort_order == Qt.SortOrder.DescendingOrder
-        if column == 0:
-            indices.sort(key=lambda i: rows[i].function_label.lower(), reverse=reverse)
-        elif column == 1:
-            indices.sort(key=lambda i: VERDICT_PRIORITY[rows[i].verdict], reverse=reverse)
-        elif column >= 2:
-            cell = column - 2
-            if ENGINE_COLUMNS[cell] == 'ghidriff':  # no numeric match score exists: alphabetical by raw text
-                indices.sort(key=lambda i: rows[i].cells[cell].text.lower(), reverse=reverse)
-            else:  # that ONE engine's native milli; rows without a value last, by name/address (flag F8)
-                have = [i for i in indices if rows[i].cells[cell].sort_key is not None]
-                none = [i for i in indices if rows[i].cells[cell].sort_key is None]
-                have.sort(key=lambda i: rows[i].cells[cell].sort_key, reverse=reverse)
-                none.sort(key=lambda i: (rows[i].function_label.lower(), rows[i].address_label))
-                indices = have + none
-        self.view = indices
-
-    def row_at(self, view_row: int) -> EvidenceRow | None:
-        return self.rows[self.view[view_row]] if 0 <= view_row < len(self.view) else None
-
-    def view_row_of(self, match_id: str) -> int:
-        for position, index in enumerate(self.view):
-            if self.rows[index].match_id == match_id:
-                return position
-        return -1
-
-    # -- Qt model API --
-    def rowCount(self, parent=None):
-        return 0 if parent is not None and parent.isValid() else len(self.view)
-
-    def columnCount(self, parent=None):
-        return 0 if parent is not None and parent.isValid() else 2 + len(ENGINE_COLUMNS)
-
-    def headerData(self, section, orientation, role=Qt.ItemDataRole.DisplayRole):
-        if orientation != Qt.Orientation.Horizontal:
-            return None
-        if section == 0:
-            title, unit = 'Match / function', 'name, older > newer address'
-        elif section == 1:
-            title, unit = 'Verdict', 'function pairing only'
-        else:
-            engine = ENGINE_COLUMNS[section - 2]
-            info = self.vm.engine(engine) if self.vm else None
-            title, unit = (info.label if info else ENGINE_NAMES[engine]), ENGINE_UNITS[engine]
-        if role == Qt.ItemDataRole.DisplayRole:
-            return f'{title}\n{unit}'
-        if role in (Qt.ItemDataRole.ToolTipRole, Qt.ItemDataRole.AccessibleTextRole):
-            return f'{title} ({unit})'
-        return None
-
-    def flags(self, index):
-        if not index.isValid():
-            return Qt.ItemFlag.NoItemFlags
-        return Qt.ItemFlag.ItemIsEnabled | Qt.ItemFlag.ItemIsSelectable
-
-    def data(self, index, role=Qt.ItemDataRole.DisplayRole):
-        self.data_calls += 1
-        if not index.isValid() or index.row() >= len(self.view):
-            return None
-        row = self.rows[self.view[index.row()]]
-        column = index.column()
-        if role == Qt.ItemDataRole.DisplayRole:
-            if column == 0:
-                return row.function_label
-            if column == 1:
-                return row.verdict_text
-            return row.cells[column - 2].text
-        if role == ADDRESS_ROLE:
-            return row.address_label
-        if role == ROW_ROLE:
-            return row
-        if role == SORT_ROLE:
-            return row.cells[column - 2].sort_key if column >= 2 else None
-        if role == Qt.ItemDataRole.AccessibleTextRole:
-            if column == 0:
-                values = ', '.join(f'{ENGINE_NAMES[c.engine]} {c.text}' for c in row.cells)
-                return f'{row.function_label}, verdict {row.verdict_text}, {values}'
-            if column == 1:
-                return f'Verdict: {row.verdict_text}'
-            return row.cells[column - 2].accessible
-        if role == Qt.ItemDataRole.ToolTipRole:
-            return self._tooltip(row, column)
-        return None
-
-    def _tooltip(self, row: EvidenceRow, column: int) -> str:
-        engines = ', '.join(info.label for info in self.vm.engines) if self.vm else ''
-        if column == 0:
-            return template('evidence.row', function=row.function_label, verdict=row.verdict_text,
-                            engines=engines, reason=row.address_label)
-        if column == 1:
-            return template('evidence.badge', verdict=row.verdict_text, meaning=VERDICT_MEANING[row.verdict],
-                            reason=row.reason)
-        cell = row.cells[column - 2]
-        info = self.vm.engine(cell.engine) if self.vm else None
-        return template('evidence.cell', engine=ENGINE_NAMES[cell.engine], value=cell.text,
-                        unit=ENGINE_UNITS[cell.engine], provenance=info.label if info else cell.engine,
-                        reason=format_cell_detail(cell).replace('\n', ' | '))
 
 
 @dataclass(frozen=True)
@@ -356,7 +189,8 @@ class EngineStatusModel(QAbstractTableModel):
 
 
 class EvidenceDelegate(QStyledItemDelegate):
-    """Badge + two-line match painting with drawText only (no rich text, no pixmaps)."""
+    """Badge + two-line match painting with drawText only (no rich text, no pixmaps). `stale` italicises rows."""
+    stale = False
 
     def sizeHint(self, option, index):
         metrics = option.fontMetrics
@@ -365,11 +199,10 @@ class EvidenceDelegate(QStyledItemDelegate):
         return QSize(width, height)
 
     def paint(self, painter, option, index):
-        model = index.model()
         row = index.data(ROW_ROLE)
         if row is None:
             return super().paint(painter, option, index)
-        stale = getattr(model, 'stale', False)
+        stale = self.stale
         palette = option.palette
         painter.save()
         selected = bool(option.state & QStyle.StateFlag.State_Selected)
@@ -422,121 +255,14 @@ class EvidenceDelegate(QStyledItemDelegate):
         painter.restore()
 
 
-class EvidenceTable(QTableView):
-    """Keyboard: Enter activates, Ctrl+C copies provenance, Space moves focus to the detail pane."""
-    activated_row = Signal()
+class EvidenceTable(VirtualTable):
+    """Ctrl+C copies the provenance blocks of the selected matches (not the table's TSV); Enter, double-click and
+    Space come from `VirtualTable` (`activated_key`, `detail_requested`)."""
     copy_requested = Signal()
-    detail_requested = Signal()
 
-    def keyPressEvent(self, event):
-        if event.matches(QKeySequence.StandardKey.Copy):
-            self.copy_requested.emit()
-            return
-        if event.key() in (Qt.Key.Key_Return, Qt.Key.Key_Enter):
-            self.activated_row.emit()
-            return
-        if event.key() == Qt.Key.Key_Space:
-            self.detail_requested.emit()
-            return
-        super().keyPressEvent(event)
-
-
-# ---- worker threads -------------------------------------------------------------------------------
-
-
-def thread_alive(thread) -> bool:
-    return thread is not None and isValid(thread) and thread.isRunning()
-
-
-class _WorkerThread(QThread):
-    """No Qt parent (a parent deleting a running QThread aborts the process); the module registry keeps
-    the object alive until ``finished``, then it is deleted later (same pattern as ``ui_series``)."""
-
-    def __init__(self):
-        super().__init__()
-        self.cancel = CancelToken()
-        _LIVE_THREADS.add(self)
-        self.finished.connect(self._release)
-
-    def _release(self) -> None:
-        _LIVE_THREADS.discard(self)
-        self.deleteLater()
-
-
-class EvidenceLoadThread(_WorkerThread):
-    """Runs the pure ``load_evidence`` on an immutable request; emits the view-model."""
-    model_ready = Signal(object, int)
-    load_failed = Signal(str, int)
-
-    def __init__(self, request: EvidenceRequest, loader: Callable = load_evidence):
-        super().__init__()
-        self.request = request
-        self.generation = request.generation
-        self.loader = loader
-
-    def run(self):
-        try:
-            vm = self.loader(self.request, self.cancel.is_set)
-        except Cancelled:
-            return
-        except Exception as exc:  # noqa: BLE001 - surfaced as E5 text
-            if not self.cancel.is_set():
-                self.load_failed.emit(f'PT-EVIDENCE-ASSEMBLY: unexpected {type(exc).__name__}', self.generation)
-            return
-        if not self.cancel.is_set():
-            self.model_ready.emit(vm, self.generation)
-
-
-class EngineRunThread(_WorkerThread):
-    """Wraps the SPEC-28 scheduler; emits per-engine outcome views. Never persists anything."""
-    engine_started = Signal(str, int)
-    engine_progress = Signal(str, int, int, int)  # engine, done, total (0 = indeterminate), generation
-    engine_finished = Signal(object, int)
-    all_finished = Signal(object, int)
-    run_failed = Signal(str, int)
-
-    def __init__(self, request: RunRequest, execute: Callable | None = None, **execute_kw):
-        super().__init__()
-        self.request = request
-        self.generation = request.generation
-        self.execute = execute or service_api.execute_run
-        self.execute_kw = execute_kw
-
-    def run(self):
-        generation = self.generation
-
-        def on_event(event):
-            if event.phase == 'started':
-                self.engine_started.emit(event.engine, generation)
-                self.engine_progress.emit(event.engine, 0, 0, generation)
-
-        def on_outcome(outcome):
-            self.engine_finished.emit(outcome_view(outcome), generation)
-
-        try:
-            outcomes = self.execute(self.request, self.cancel, on_event=on_event, on_outcome=on_outcome,
-                                    **self.execute_kw)
-        except Exception as exc:  # noqa: BLE001 - class name only; messages may carry paths or tokens
-            self.run_failed.emit(f'PT-SECONDARY-RUN: {type(exc).__name__}', generation)
-            return
-        self.all_finished.emit(tuple(outcome_view(o) for o in outcomes), generation)
-
-
-class EngineProbeThread(_WorkerThread):
-    probes_ready = Signal(object, int)
-
-    def __init__(self, generation: int, probe: Callable | None = None):
-        super().__init__()
-        self.generation = generation
-        self.probe = probe or service_api.probe_engines
-
-    def run(self):
-        try:
-            found = self.probe(self.cancel)
-        except Exception:  # noqa: BLE001
-            found = {}
-        if not self.cancel.is_set():
-            self.probes_ready.emit(found, self.generation)
+    def copy_selection(self) -> tuple[int, bool]:
+        self.copy_requested.emit()
+        return 0, False
 
 
 # ---- panel ------------------------------------------------------------------------------------------
@@ -570,6 +296,7 @@ class EvidencePanel(QWidget):
         self.engine_logs: dict[str, str] = {}
         self.engine_errors: dict[str, str] = {}
         self._selected_id: str | None = None
+        self._sorted = (-1, Qt.SortOrder.AscendingOrder)
         self.setObjectName('evidence_panel')
         self.setAccessibleName('Engine evidence panel')
         layout = QVBoxLayout(self)
@@ -660,68 +387,31 @@ class EvidencePanel(QWidget):
         self.partial_banner.setObjectName('evidence_partial_banner')
         self.partial_banner.setWordWrap(True)
         layout.addWidget(self.partial_banner)
-        self.stack = QStackedWidget()
-        layout.addWidget(self.stack, 1)
-        # Page 0: state message (E0, E1, E2, E5, E7, E8). Every control is constructed eagerly.
-        message = QWidget()
-        message_layout = QVBoxLayout(message)
-        self.state_label = PlainLabel('', wrap=True, limit=VIEW_LIMIT, multiline=True)
-        self.state_label.setObjectName('evidence_state_text')
-        self.state_label.setWordWrap(True)
-        self.state_label.setAlignment(Qt.AlignmentFlag.AlignTop | Qt.AlignmentFlag.AlignLeft)
-        message_layout.addWidget(self.state_label)
         self.loading_bar = QProgressBar()
         self.loading_bar.setObjectName('evidence_loading')
         self.loading_bar.setRange(0, 0)
         self.loading_bar.setAccessibleName('Loading engine evidence')
-        message_layout.addWidget(self.loading_bar)
-        buttons = QHBoxLayout()
-        self.retry_button = QPushButton('Retry')
-        apply_tooltip(self.retry_button, 'evidence.retry')
-        self.retry_button.setAccessibleName('Retry assembling engine evidence')
-        self.retry_button.clicked.connect(self.refresh_requested)
-        buttons.addWidget(self.retry_button)
-        self.copy_error_button = QPushButton('Copy details')
-        apply_tooltip(self.copy_error_button, 'evidence.copy_error')
-        self.copy_error_button.setAccessibleName('Copy engine evidence error details')
-        self.copy_error_button.clicked.connect(self.copy_error)
-        buttons.addWidget(self.copy_error_button)
-        self.open_engines_button = QPushButton('Open Engines tab')
-        apply_tooltip(self.open_engines_button, 'evidence.open_engines')
-        self.open_engines_button.setAccessibleName('Open the Engines tab')
-        self.open_engines_button.clicked.connect(lambda: self.tabs.setCurrentIndex(1))
-        buttons.addWidget(self.open_engines_button)
-        buttons.addStretch(1)
-        message_layout.addLayout(buttons)
-        message_layout.addStretch(1)
-        self.stack.addWidget(message)
-        # Page 1: table + detail.
-        split = QSplitter(Qt.Orientation.Vertical)
+        layout.addWidget(self.loading_bar)
+        register_gui_tips()  # idempotent; the host has done it already (the StateView buttons use these tips)
+        self.state_view = StateView('evidence.matches', 'Engine evidence matches', parent=page, text_limit=VIEW_LIMIT, multiline=True)
+        self.state_view.retry_requested.connect(self.refresh_requested)
+        self.state_view.setup_requested.connect(lambda: self.tabs.setCurrentIndex(1))
+        self.state_view.copy_requested.connect(self._copy_text)
+        layout.addWidget(self.state_view, 1)
+        split = self.split = QSplitter(Qt.Orientation.Vertical)
         split.setObjectName('evidence_split')
-        self.model = EvidenceTableModel(self)
-        self.table = EvidenceTable()
-        self.table.setModel(self.model)
+        self.table = EvidenceTable('Per-match engine evidence table')
+        self.model = self.table.table_model
         apply_tooltip(self.table, 'evidence.table')
-        self.table.setAccessibleName('Per-match engine evidence table')
-        self.table.setItemDelegate(EvidenceDelegate(self.table))
-        self.table.setSelectionBehavior(QAbstractItemView.SelectionBehavior.SelectRows)
-        self.table.setSelectionMode(QAbstractItemView.SelectionMode.ExtendedSelection)
-        self.table.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
-        self.table.setSortingEnabled(False)
-        self.table.verticalHeader().setVisible(False)  # hidden: no per-row RowHeader accessibles
-        self.table.verticalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Fixed)
-        self.table.setWordWrap(False)
+        self.delegate = EvidenceDelegate(self.table)
+        self.table.setItemDelegate(self.delegate)
         header = self.table.horizontalHeader()
-        header.setSectionResizeMode(QHeaderView.ResizeMode.Interactive)
         header.setStretchLastSection(False)
-        header.setSectionsClickable(True)
-        header.setSortIndicatorShown(True)
         header.sectionClicked.connect(self._header_clicked)
         self.table.selectionModel().selectionChanged.connect(self._selection_changed)
-        self.table.doubleClicked.connect(lambda _index: self.activate_current())
-        self.table.activated_row.connect(self.activate_current)
+        self.table.activated_key.connect(lambda _key: self.activate_current())
         self.table.copy_requested.connect(self.copy_provenance)
-        self.table.detail_requested.connect(lambda: self.detail.setFocus())
+        self.table.detail_requested.connect(lambda _key: self.detail.setFocus())
         split.addWidget(self.table)
         lower = QWidget()
         lower_layout = QVBoxLayout(lower)
@@ -741,7 +431,7 @@ class EvidencePanel(QWidget):
         actions.addStretch(1)
         lower_layout.addLayout(actions)
         split.addWidget(lower)
-        self.stack.addWidget(split)
+        self.state_view.set_content(split)
         self._apply_metrics()
         self.tabs.addTab(page, 'Evidence')
 
@@ -857,13 +547,8 @@ class EvidencePanel(QWidget):
             self.bindiff_setup.attach(self.bindiff_scroll)
 
     def _apply_metrics(self):
-        """Column widths and row height from font metrics only (high-DPI rule §1.7)."""
-        metrics = self.table.fontMetrics()
-        em = metrics.horizontalAdvance('M')
-        for column in range(self.model.columnCount()):
-            self.table.setColumnWidth(column, em * COLUMN_EMS.get(column, ENGINE_EMS))
-        self.table.verticalHeader().setDefaultSectionSize(max(2 * metrics.lineSpacing() + 6, 28))
-        self.table.horizontalHeader().setMinimumHeight(2 * metrics.lineSpacing() + 6)
+        """Two-line header (title and unit); widths and row height come from the table's own font metrics."""
+        self.table.horizontalHeader().setMinimumHeight(2 * self.table.fontMetrics().lineSpacing() + 6)
 
     def changeEvent(self, event):
         super().changeEvent(event)
@@ -884,7 +569,7 @@ class EvidencePanel(QWidget):
         self.show_index = self.settings.get_bool('show_index', False)
         self.show_index_box.setChecked(self.show_index)
         self.show_index_box.blockSignals(False)
-        self.model.set_filter(FILTERS[self.filter.currentIndex()][1], '', self.hide_agreed.isChecked())
+        self._set_table_filter('')
 
     def _save(self, key, value):
         if self.settings is None:
@@ -901,19 +586,21 @@ class EvidencePanel(QWidget):
             self.vm = empty_model('no-project')
             self.shown_table = False
             self.loading = False
-            self.model.set_view_model(None)
+            self.table.set_prepared(prepare_evidence_table(self.vm))
         self._apply()
 
     def set_loading(self, loading: bool) -> None:
         self.loading = loading
         self._apply()
 
-    def set_view_model(self, vm: EvidenceViewModel) -> None:
+    def set_view_model(self, vm: EvidenceViewModel, prepared: PreparedTable | None = None) -> None:
+        """`prepared` is the table the load worker built for `vm`; without it the table is prepared here."""
         self.vm = vm
         self.loading = False
         self.has_project = vm.state != 'no-project'
         keep = self._selected_id
-        self.model.set_view_model(vm if vm.rows or vm.engine_only else None)
+        self.delegate.stale = vm.state == 'stale'
+        self.table.set_prepared(prepared or prepare_evidence_table(vm))
         self.shown_table = bool(vm.rows or vm.engine_only)
         self._apply()
         if keep:
@@ -928,8 +615,7 @@ class EvidencePanel(QWidget):
         if self.vm.state in ('no-project', 'failed'):
             return
         self.vm = dataclasses.replace(self.vm, state='stale', stale_reason=reason)
-        self.model.stale = True
-        self.model.vm = self.vm
+        self.delegate.stale = True
         self.table.viewport().update()
         self._apply()
 
@@ -960,11 +646,16 @@ class EvidencePanel(QWidget):
 
     def _apply_filter(self):
         keep = self._selected_id
-        self.model.set_filter(FILTERS[self.filter.currentIndex()][1], self.search.text(),
-                              self.hide_agreed.isChecked())
+        self._set_table_filter(self.search.text())
         if keep and not self.select_match(keep):
             self._render_detail()
         self._update_status()
+
+    def _set_table_filter(self, search: str) -> None:
+        """Verdict set and 'Hide agreed' are a row predicate; the search text is the table's own filter (a leading
+        0x on the query is dropped because stored addresses carry none)."""
+        allowed = FILTERS[self.filter.currentIndex()][1] - ({'agree'} if self.hide_agreed.isChecked() else set())
+        self.table.set_filter(normalize_search(search), lambda row: row.verdict in allowed)
 
     def _show_index_changed(self, checked):
         self.show_index = bool(checked)
@@ -972,15 +663,17 @@ class EvidencePanel(QWidget):
         self._render_detail()
 
     def _header_clicked(self, section):
-        header = self.table.horizontalHeader()
-        if self.model.sort_column == section:
-            order = (Qt.SortOrder.DescendingOrder if self.model.sort_order == Qt.SortOrder.AscendingOrder
+        """Match and verdict sort ascending first, engine columns descending first (best score on top). Qt flips
+        the indicator itself just before this runs, so the next order comes from the last one this method chose."""
+        column, current = self._sorted
+        if column == section:
+            order = (Qt.SortOrder.DescendingOrder if current == Qt.SortOrder.AscendingOrder
                      else Qt.SortOrder.AscendingOrder)
         else:
             order = Qt.SortOrder.AscendingOrder if section < 2 else Qt.SortOrder.DescendingOrder
+        self._sorted = (section, order)
         keep = self._selected_id
-        self.model.sort(section, order)
-        header.setSortIndicator(section, order)
+        self.table.horizontalHeader().setSortIndicator(section, order)  # the table sorts on the indicator change
         if keep:
             self.select_match(keep)
 
@@ -1011,10 +704,20 @@ class EvidencePanel(QWidget):
         QGuiApplication.clipboard().setText(format_provenance_blocks(self.vm, rows, self.show_index))
         self.status_message.emit(f'Copied provenance for {min(len(rows), 200)} match(es)')
 
-    def copy_error(self):
-        if self.vm.error:
-            QGuiApplication.clipboard().setText(
-                f'PatchTrace engine evidence error\nProject: {self.vm.project_id}\n{self.vm.error}')
+    @staticmethod
+    def _copy_text(text: str) -> None:
+        QGuiApplication.clipboard().setText(text)
+
+    def _state_model(self) -> StateModel:
+        """The words and actions of a state that shows no table; the copy is the evidence panel's own."""
+        vm = self.vm
+        text = state_text(vm)
+        if vm.state == 'failed':
+            report = f'PatchTrace engine evidence error\nProject: {vm.project_id}\n{vm.error}'
+            return StateModel('error', text, report, ('retry', 'copy'))
+        if vm.state in ('no-engines', 'unsupported'):
+            return StateModel('idle' if vm.state == 'no-engines' else 'unsupported', text, '', ('setup',))
+        return StateModel('too-large' if vm.state == 'too-large' else 'idle', text)
 
     # -- engines tab behaviour --
     def set_engine_rows(self, rows: Sequence[EngineRowView]) -> None:
@@ -1131,16 +834,16 @@ class EvidencePanel(QWidget):
         state = 'no-project' if not self.has_project else vm.state
         table_state = state in ('ready', 'partial', 'stale') and self.shown_table
         loading_first = self.loading and not self.shown_table and self.has_project
-        self.stack.setCurrentIndex(1 if table_state and not loading_first else 0)
         if loading_first:
-            self.state_label.setText(STATE_TEXT['loading'])
-        elif not table_state:
-            self.state_label.setText(state_text(vm) if self.has_project else STATE_TEXT['no-project'])
+            model = StateModel('loading', STATE_TEXT['loading'])
+        elif table_state:
+            model = StateModel('ready', '')
+        elif not self.has_project:
+            model = StateModel('no-project', STATE_TEXT['no-project'])
+        else:
+            model = self._state_model()
+        self.state_view.set_state(model, has_content=table_state and not loading_first)
         self.loading_bar.setVisible(loading_first)
-        self.retry_button.setVisible(state == 'failed')
-        self.copy_error_button.setVisible(state == 'failed')
-        self.open_engines_button.setVisible(state in ('no-engines', 'unsupported'))
-        self.open_engines_button.setEnabled(self.has_project)
         self.stale_banner.setVisible(state == 'stale')
         self.stale_banner.setText(state_text(vm) if state == 'stale' else '')
         self.partial_banner.setVisible(state == 'partial')
@@ -1185,14 +888,10 @@ class EvidenceController(ControllerBase):
         self.probe_found: dict[str, object] = {}  # last engines-probe result, before the BinDiff setup overlay
         self.generation = 0
         self.run_generation = 0
-        # Threads are referenced here (and in the module registry) but never parented; their cancel
-        # tokens are kept separately so cancelling never touches a possibly deleted QThread wrapper.
-        self.load_thread: EvidenceLoadThread | None = None
-        self.load_cancel: CancelToken | None = None
-        self.run_thread: EngineRunThread | None = None
-        self.run_cancel: CancelToken | None = None
-        self.probe_thread: EngineProbeThread | None = None
-        self.threads: list[tuple[QThread, CancelToken]] = []
+        self.tasks = ctx.tasks  # the host's TaskRunner: channels evidence.load, evidence.run, evidence.probe
+        self.load_token: CancelToken | None = None  # set while that channel's task has not delivered
+        self.run_token: CancelToken | None = None
+        self.probe_token: CancelToken | None = None
         self.run_request: RunRequest | None = None
         self.loaded_key = None
         self.dirty = True
@@ -1304,32 +1003,23 @@ class EvidenceController(ControllerBase):
                 self.panel.set_preview('')
 
     def shutdown(self) -> None:
-        """Cancel and join every worker: destroying a running QThread aborts the process."""
+        """Cancel every task (the host joins them next); the scheduler's cancel kills engine children."""
         self._invalidate()
         self.run_generation += 1
         if self.bindiff is not None:
             self.bindiff.shutdown()  # probe/validation/discovery workers: cancel and join (no terminate)
-        for _thread, cancel in self.threads:
-            cancel.set()
-        for thread, _cancel in self.threads:
-            if isValid(thread):
-                thread.wait()  # engine children are killed by the scheduler's cancel; no forced thread kill
-        self.threads = []
-        self.load_thread = self.run_thread = self.probe_thread = None
-        self.run_cancel = self.load_cancel = None
+        for channel in ('evidence.run', 'evidence.probe'):
+            self.tasks.cancel(channel)
+        self.run_token = self.probe_token = None
         if isValid(self.panel):
             self.panel.elapsed_timer.stop()
 
     # -- loading --
     def _invalidate(self) -> None:
         self.generation += 1
-        if self.load_cancel is not None:
-            self.load_cancel.set()
-        self.load_thread = self.load_cancel = None
-
-    def _register(self, thread: QThread) -> None:
-        self._reap()
-        self.threads.append((thread, thread.cancel))
+        if self.load_token is not None:
+            self.tasks.cancel('evidence.load')
+        self.load_token = None
 
     def reload(self) -> None:
         if self.port.project() is None:
@@ -1349,34 +1039,35 @@ class EvidenceController(ControllerBase):
             return
         self.loaded_key = self.port.key()
         self.dirty = False
-        thread = EvidenceLoadThread(request, self.loader)
-        queued = Qt.ConnectionType.QueuedConnection
-        thread.model_ready.connect(self._model_ready, queued)
-        thread.load_failed.connect(self._load_failed, queued)
-        thread.finished.connect(self._reap, queued)
-        self._register(thread)
-        self.load_thread, self.load_cancel = thread, thread.cancel
+        loader = self.loader
+
+        def work(token: CancelToken, _report: Callable) -> tuple[EvidenceViewModel, PreparedTable | None]:
+            try:
+                vm = loader(request, token.is_set)
+                return vm, prepare_evidence_table(vm, token) if vm.rows or vm.engine_only else None
+            except (Cancelled, TableCancelled):
+                raise TaskCancelled from None
+
+        self.load_token = self.tasks.submit(
+            'evidence.load', work, on_result=lambda result: self._model_ready(result[0], generation, result[1]),
+            on_error=lambda failure: self._load_failed(
+                f'PT-EVIDENCE-ASSEMBLY: unexpected {failure.exception_class}', generation))
         self.panel.set_project(True)
         self.panel.set_loading(True)
-        thread.start()
 
-    def _model_ready(self, vm: EvidenceViewModel, generation: int) -> None:
-        if generation != self.generation:
-            return  # stale generation: dropped
-        self.load_thread = self.load_cancel = None
-        self.panel.set_view_model(vm)
+    def _model_ready(self, vm: EvidenceViewModel, generation: int, prepared: PreparedTable | None = None) -> None:
+        if generation != self.generation or not isValid(self.panel):
+            return  # stale generation or a panel deleted under a running task: dropped
+        self.load_token = None
+        self.panel.set_view_model(vm, prepared)
         self._refresh_engine_rows()
         self.update_controls()
 
     def _load_failed(self, message: str, generation: int) -> None:
-        if generation != self.generation:
+        if generation != self.generation or not isValid(self.panel):
             return
-        self.load_thread = self.load_cancel = None
+        self.load_token = None
         self.panel.set_failed(message)
-
-    def _reap(self) -> None:
-        """Forget finished threads; their deletion is owned by the registry (``_WorkerThread._release``)."""
-        self.threads = [(t, c) for t, c in self.threads if thread_alive(t)]
 
     def _activate(self, match_id: str) -> None:
         if not self.port.select_match(match_id):
@@ -1384,19 +1075,22 @@ class EvidenceController(ControllerBase):
 
     # -- probes --
     def start_probe(self) -> None:
-        if thread_alive(self.probe_thread):
+        if self.probe_token is not None:
             return
         self.probed = True
-        thread = EngineProbeThread(self.generation, self.probe)
-        thread.probes_ready.connect(self._probes_ready, Qt.ConnectionType.QueuedConnection)
-        thread.finished.connect(self._reap, Qt.ConnectionType.QueuedConnection)
-        self._register(thread)
-        self.probe_thread = thread
-        self.panel.set_run_status('Probing engines (no binary is touched)...')
-        thread.start()
+        probe = self.probe or service_api.probe_engines
 
-    def _probes_ready(self, found: dict, _generation: int) -> None:
-        self.probe_thread = None
+        def work(token: CancelToken, _report: Callable) -> dict:
+            try:
+                return probe(token)
+            except Exception:  # noqa: BLE001 - an engine that cannot be probed is simply not offered
+                return {}
+
+        self.probe_token = self.tasks.submit('evidence.probe', work, on_result=self._probes_ready)
+        self.panel.set_run_status('Probing engines (no binary is touched)...')
+
+    def _probes_ready(self, found: dict) -> None:
+        self.probe_token = None
         self.probe_found = dict(found)
         self.capabilities = self._with_bindiff(dict(found))
         self.panel.set_capabilities(self.capabilities)
@@ -1439,7 +1133,7 @@ class EvidenceController(ControllerBase):
     # -- runs --
     def start_run(self, options: dict) -> None:
         project = self.port.project()
-        if self.run_thread is not None or project is None or self.port.busy():
+        if self.run_token is not None or project is None or self.port.busy():
             return
         run = service_api.latest_run(project)
         try:
@@ -1457,24 +1151,55 @@ class EvidenceController(ControllerBase):
             self.panel.set_run_status(sanitize_text(f'Engine run not started: {exc}', 400))
             return
         self.run_request = request
-        thread = EngineRunThread(request, self.run_execute, **self.run_kw)
-        queued = Qt.ConnectionType.QueuedConnection
-        thread.engine_started.connect(self._engine_started, queued)
-        thread.engine_finished.connect(self._engine_finished, queued)
-        thread.all_finished.connect(self._all_finished, queued)
-        thread.run_failed.connect(self._run_failed, queued)
-        thread.finished.connect(self._run_thread_finished, queued)
-        self._register(thread)
-        self.run_thread, self.run_cancel = thread, thread.cancel
         for engine in request.engines:
             self.engine_states[engine] = 'queued'
         self.panel.set_run_active(True, request.engines)
         self._refresh_engine_rows()
-        thread.start()
+        self._submit_run(request)
+
+    def _submit_run(self, request: RunRequest) -> None:
+        """Engine events cross as a queue drained on the GUI thread: the runner's progress is latest-wins, and every
+        outcome must be persisted. Cancelling sets the token (it does not supersede), so cancelled outcomes arrive."""
+        generation = request.generation
+        execute = self.run_execute or service_api.execute_run
+        kw = self.run_kw
+        events: deque = deque()
+
+        def work(token: CancelToken, report: Callable) -> tuple:
+            def on_event(event) -> None:
+                if event.phase == 'started':
+                    events.append(('started', event.engine))
+                    report('engines')
+
+            def on_outcome(outcome) -> None:
+                events.append(('finished', outcome_view(outcome)))
+                report('engines')
+
+            outcomes = execute(request, token, on_event=on_event, on_outcome=on_outcome, **kw)
+            return tuple(outcome_view(o) for o in outcomes)
+
+        def finish(announce: Callable[[], None]) -> None:
+            self._drain_run_events(events, generation)
+            announce()
+            self._run_finished()
+
+        self.run_token = self.tasks.submit(
+            'evidence.run', work, on_progress=lambda _progress: self._drain_run_events(events, generation),
+            on_result=lambda views: finish(lambda: self._all_finished(views, generation)),
+            on_error=lambda failure: finish(lambda: self._run_failed(
+                f'PT-SECONDARY-RUN: {failure.exception_class}', generation)))
+
+    def _drain_run_events(self, events: deque, generation: int) -> None:
+        while events:
+            kind, payload = events.popleft()
+            if kind == 'started':
+                self._engine_started(payload, generation)
+            else:
+                self._engine_finished(payload, generation)
 
     def cancel_run(self) -> None:
-        if self.run_cancel is not None and self.run_thread is not None:
-            self.run_cancel.set()
+        if self.run_token is not None:
+            self.run_token.set()
             self.panel.set_run_status('Cancelling engines...')
 
     def _engine_started(self, engine: str, generation: int) -> None:
@@ -1534,18 +1259,15 @@ class EvidenceController(ControllerBase):
             return
         self.panel.set_run_status(f'Engine run failed: {sanitize_text(message, 200)}')
 
-    def _run_thread_finished(self) -> None:
-        thread = self.run_thread
-        if thread is not None and not thread_alive(thread):
-            self.run_thread = self.run_cancel = None
-            self.run_request = None
-            self.engine_states.clear()
-            self.panel.set_run_active(False)
-            self._refresh_engine_rows()
-            self.update_controls()
-            if self.port.project() is not None:
-                self.reload()
-        self._reap()
+    def _run_finished(self) -> None:
+        self.run_token = None
+        self.run_request = None
+        self.engine_states.clear()
+        self.panel.set_run_active(False)
+        self._refresh_engine_rows()
+        self.update_controls()
+        if self.port.project() is not None:
+            self.reload()
 
     # -- import --
     def import_bindiff(self, path: str | None = None) -> None:

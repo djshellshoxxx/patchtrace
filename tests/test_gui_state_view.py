@@ -8,7 +8,7 @@ from qt_support import HOSTILE_PARAMS, RecordingAnnouncer, a11y_audit, join_gui_
 
 from patchtrace import tooltips
 from patchtrace.gui.qt.state_view import NoticeStrip, StateView
-from patchtrace.gui.state import STATE_KINDS, NoticeModel, factory_failure, state_model
+from patchtrace.gui.state import STATE_KINDS, NoticeModel, StateModel, factory_failure, state_model
 from patchtrace.gui.tips import register_gui_tips
 
 
@@ -308,3 +308,14 @@ def test_the_strip_passes_the_accessibility_audit(strip):
     strip.set_notice('die.preflight', notice(detail='Full explanation.'))
     strip._details_button.click()
     assert a11y_audit(strip) == []
+
+
+def test_a_panel_may_ask_for_longer_multiline_state_copy(qtbot):
+    long_text = 'first line ' + 'x' * 300 + '\nsecond line'
+    default = StateView('search', 'Search')
+    roomy = StateView('evidence', 'Evidence', text_limit=4_000, multiline=True)
+    for widget in (default, roomy):
+        qtbot.addWidget(widget)
+        widget.set_state(StateModel('idle', long_text))
+    assert len(default.status_label().text()) <= 200 and '\n' not in default.status_label().text()
+    assert roomy.status_label().text() == long_text

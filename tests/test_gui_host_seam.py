@@ -20,10 +20,10 @@ from patchtrace.ui import MainWindow
 SRC = Path(__file__).resolve().parents[1] / 'src' / 'patchtrace'
 # ui.py was 3,142 lines when F5 started (3,119 at d972125 plus the zero-download bundle work). F5 alone kept the
 # evidence hooks (+25); F8 removed them (M1, M2). The plan's final seam is +15 over d972125 (3,134 = 3,142 - 8);
-# F9 removed the series and files code (M3: -50 lines net), which closed the gap and went below it; the ceiling
-# only goes down from here.
+# F9 removed the series and files code (M3: -50 lines net), which closed the gap and went below it; M4 (selection
+# layers through compose_selections) took another 15. The ceiling only goes down from here.
 UI_LINES_BEFORE_F5 = 3142
-UI_TRANSITIONAL_CEILING = -50
+UI_TRANSITIONAL_CEILING = -65
 
 
 def test_ui_seam_budget():

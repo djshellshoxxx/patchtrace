@@ -27,7 +27,7 @@ PROGRESS_INTERVAL_MS = 100       # 10 Hz, latest wins; 100,000 unthrottled emits
 JOIN_SECONDS = 5.0
 CHECKPOINT_WORK = 0.002          # sleep 1 ms after every 2 ms of CPU work (measured repaint p95 20 ms)
 CHECKPOINT_SLEEP = 0.001
-LEGACY_MODULES = ('ui_evidence', 'ui_engine_setup', 'ui_series', 'ui_bundle_setup', 'ui_inspection')
+LEGACY_MODULES = ('ui_engine_setup', 'ui_series', 'ui_bundle_setup', 'ui_inspection')
 
 _UNSAFE = re.compile('[\x00-\x1f\x7f-\x9f  ‪-‮⁦-⁩]')
 

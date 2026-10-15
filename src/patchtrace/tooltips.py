@@ -847,19 +847,6 @@ REGISTRY: dict[str, TooltipEntry] = {
         'Brings the panel up to date after the project changed.',
         'Recomputes the table on a background thread; nothing is written.',
         availability='Needs an open project.'),
-    'evidence.retry': _e(
-        'Try assembling engine evidence again after a failure.',
-        'A transient read problem may have caused the failure.',
-        'Reloads on a background thread; stored results are unchanged.',
-        availability='Shown after a failure.'),
-    'evidence.copy_error': _e(
-        'Copy the evidence assembly error text to the clipboard.',
-        'Lets you report the failure precisely.', 'Writes plain text to the clipboard only.',
-        availability='Shown after a failure.'),
-    'evidence.open_engines': _e(
-        'Open the Engines tab to import a BinDiff file or run rz-diff.',
-        'Cross-engine comparison needs at least one secondary engine result.',
-        'Switches to the Engines tab; nothing runs yet.', availability='Needs an open project.'),
     'evidence.import_bindiff': _e(
         'Import a .BinDiff result file for this older/newer pair.',
         'Adds BinDiff as a second opinion on function pairing.',

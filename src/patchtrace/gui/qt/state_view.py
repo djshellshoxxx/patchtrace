@@ -18,7 +18,7 @@ from PySide6.QtCore import Qt, Signal
 from PySide6.QtWidgets import QHBoxLayout, QPushButton, QSizePolicy, QVBoxLayout, QWidget
 
 from ..state import ACTION_LABELS, NOTICE_CHARS, NoticeModel, StateModel, action_name, dominant, state_model
-from ..text import sanitize_text
+from ..text import LABEL_LIMIT, sanitize_text
 from ..tips import apply_tip
 from .labels import PlainLabel, SafeTextView
 
@@ -41,7 +41,8 @@ class StateView(QWidget):
     copy_requested = Signal(str)  # the details text; the host copies it (ShellPort.copy_text)
 
     def __init__(self, panel_id: str, title: str, announcer: Announcer | None = None,
-                 parent: QWidget | None = None) -> None:
+                 parent: QWidget | None = None, *, text_limit: int = LABEL_LIMIT, multiline: bool = False) -> None:
+        """`text_limit` and `multiline` are for a panel whose own state copy is longer than a line (default: one line)."""
         super().__init__(parent)
         self._title = sanitize_text(title)
         self._announcer = announcer
@@ -49,7 +50,7 @@ class StateView(QWidget):
         self._content: QWidget | None = None
         self._has_content = False
         self.setObjectName(f'{panel_id}.state_view')
-        self._status = PlainLabel(wrap=True)
+        self._status = PlainLabel(wrap=True, limit=text_limit, multiline=multiline)
         self._status.setObjectName(f'{panel_id}.state_status')
         self._status.setAccessibleName('')  # read when focused; changes are announced instead
         self._buttons = {action: self._button(panel_id, action) for action in _ACTION_ORDER}

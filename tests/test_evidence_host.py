@@ -31,7 +31,7 @@ def test_the_host_builds_the_controller_at_start_without_work(main_window):
     controller = host.controller('evidence')
     assert isinstance(controller, EvidenceController) and host.problems == []
     assert controller.dock.objectName() == 'evidence.dock' and not host.is_shown('evidence')
-    assert controller.load_thread is None and controller.probe_thread is None and controller.generation == 0
+    assert controller.load_token is None and controller.probe_token is None and controller.generation == 0
 
 
 def test_the_window_has_no_evidence_attribute_and_the_menu_entry_is_the_hosts(main_window):
