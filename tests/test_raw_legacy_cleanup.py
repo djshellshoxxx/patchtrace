@@ -68,6 +68,17 @@ def test_restore_recreates_removed_copy(legacy):
     assert raw_cleanup.restore_raw_duplicates(root) == 0
 
 
+@pytest.mark.parametrize('tail', ['{"kept":"runs/x', '[1]', '{"v":1'], ids=['torn', 'not-object', 'unclosed'])
+def test_restore_rejects_a_torn_journal_before_writing_anything(legacy, tail):
+    root, _run_id, duplicate, _kept = legacy
+    ProjectService.open(root).close()
+    journal = root / 'backups' / 'raw-duplicates.jsonl'
+    journal.write_bytes(journal.read_bytes() + tail.encode('ascii'))
+    with pytest.raises(ValueError, match=r'^PT-STORAGE: raw duplicate journal line 2 is malformed'):
+        raw_cleanup.restore_raw_duplicates(root)
+    assert not duplicate.exists()  # the valid first line was not applied
+
+
 @pytest.mark.parametrize('variant', ['other-bytes-same-size', 'other-size'])
 def test_differing_copy_is_kept(legacy, variant, caplog):
     root, _run_id, duplicate, _kept = legacy

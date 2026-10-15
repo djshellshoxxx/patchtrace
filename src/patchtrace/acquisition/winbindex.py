@@ -62,6 +62,9 @@ def decompress(data: bytes) -> bytes:
     return out
 
 
+_SURROGATE_ESCAPE = re.compile(rb'\\u[dD][89a-fA-F]')
+
+
 def _no_duplicates(pairs):
     result = {}
     for key, value in pairs:
@@ -84,8 +87,11 @@ def _finite_float(literal: str) -> float:
 
 def strict_json(text: bytes):
     try:
-        return json.loads(text.decode('utf-8'), object_pairs_hook=_no_duplicates,
-                          parse_constant=_reject_constant, parse_float=_finite_float)
+        value = json.loads(text.decode('utf-8'), object_pairs_hook=_no_duplicates,
+                           parse_constant=_reject_constant, parse_float=_finite_float)
+        if _SURROGATE_ESCAPE.search(text):
+            _canonical(value)  # an unpaired surrogate is legal JSON but not text; this raises on it
+        return value
     except (UnicodeDecodeError, ValueError, RecursionError):
         raise AcquisitionError('PT-ACQ-PROVIDER', 'Winbindex record is not strict JSON') from None
 

@@ -154,6 +154,9 @@ class _UrllibResponse:
     def read(self, size: int) -> bytes:
         return self._raw.read(size)
 
+    def read1(self, size: int) -> bytes:
+        return self._raw.read1(size)
+
     def close(self) -> None:
         self._raw.close()
 
@@ -381,8 +384,12 @@ def _attempt(url, headers, opener, cancel, clock, deadline, now) -> tuple[bytes,
                 location = response.headers.get('Location')
                 if not location:
                     raise EnrichmentError('PT-ENRICH-PROVIDER', 'redirect without Location')
-                target = urllib.parse.urljoin(url, location)
-                if urllib.parse.urlsplit(target).hostname != urllib.parse.urlsplit(url).hostname:
+                try:
+                    target = urllib.parse.urljoin(url, location)
+                    moved = urllib.parse.urlsplit(target).hostname != urllib.parse.urlsplit(url).hostname
+                except ValueError:
+                    raise EnrichmentError('PT-ENRICH-NETWORK', 'invalid URL refused') from None
+                if moved:
                     # The NVD key is for NVD only; never forward it to another allowlisted host.
                     headers = {k: v for k, v in headers.items() if k not in KEY_HEADER.values()}
                 url = target
@@ -399,13 +406,15 @@ def _attempt(url, headers, opener, cancel, clock, deadline, now) -> tuple[bytes,
             if digits.isascii() and digits.isdigit() and (len(digits) > 12 or int(digits) > MAX_RESPONSE_BYTES):
                 raise EnrichmentError('PT-ENRICH-LIMIT', 'provider response exceeds 4 MiB')
             data = bytearray()
+            # read1 returns after one socket receive, so the deadline is checked between receives.
+            read = getattr(response, 'read1', response.read)
             while True:
                 _cancelled(cancel)
                 if clock() >= deadline:
                     raise EnrichmentError('PT-ENRICH-NETWORK', 'total timeout exceeded', recoverable=True)
                 try:
                     size = min(_CHUNK, MAX_RESPONSE_BYTES + 1 - len(data))
-                    chunk = interruptible(partial(response.read, size), cancel)
+                    chunk = interruptible(partial(read, size), cancel)
                 except Cancelled:
                     raise EnrichmentError('PT-ENRICH-CANCEL', 'CVE fetch cancelled', recoverable=True) from None
                 except TooManyAbandoned:
