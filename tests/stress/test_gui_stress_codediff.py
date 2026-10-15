@@ -94,8 +94,6 @@ def test_copying_a_cut_side_is_bounded_and_carries_its_provenance(view, qtbot):
     assert len(text.encode('utf-8')) <= MAX_VIEW_CHARS + 200 + len(TRUNCATION_NOTICE.encode())
 
 
-@pytest.mark.xfail(strict=True, reason='QA-GUI-1: a form feed, vertical tab, NEL or lone CR in a source line splits '
-                                       'the pane row but not the PairText row, so later hunks and anchors shift by one')
 def test_a_form_feed_inside_a_line_does_not_shift_later_rows(view):
     old = ['int a;\fint b;', 'static void f(void)', '{', 'return;', '}']
     new = ['int a;\fint b;', 'static void f(void)', '{', 'return 1;', '}']
@@ -107,3 +105,13 @@ def test_a_form_feed_inside_a_line_does_not_shift_later_rows(view):
     selected = view.pane('newer').extraSelections()
     assert selected and view.pane('newer').document().findBlock(
         selected[0].cursor.position()).text().startswith('return 1;')
+
+
+@pytest.mark.parametrize('separator', ['\v', '\f', '\x85', '\r'], ids=['vt', 'ff', 'nel', 'cr'])
+def test_every_line_break_form_keeps_one_row_per_source_line(view, separator):
+    old = [f'int a;{separator}int b;', 'static void f(void)', '{', 'return;', '}']
+    new = [f'int a;{separator}int b;', 'static void f(void)', '{', 'return 1;', '}']
+    pair = align_pair(old, new, [('equal', 0, 3, 0, 3), ('replace', 3, 4, 3, 4), ('equal', 4, 5, 4, 5)])
+    view.set_pair(pair, ('old.c', 'new.c'))
+    rows = view.pane('newer').toPlainText().split('\n')
+    assert len(rows) == len(new) and rows[3] == 'return 1;', rows

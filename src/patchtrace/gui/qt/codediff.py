@@ -7,6 +7,7 @@ and a search hit or a mark never replaces a hunk. `CodeDiffView` feeds two read-
 """
 from __future__ import annotations
 
+import re
 from collections.abc import Callable, Sequence
 from weakref import WeakKeyDictionary
 
@@ -90,10 +91,16 @@ def row_selection(view: QPlainTextEdit, first_row: int, last_row: int, color: st
     return selection
 
 
+# A lone CR, VT, FF or NEL inside a source line: the sanitizer would turn it into a row break, so the pane would
+# have more rows than the aligned pair. CRLF stays a break. Shown as a space, as the single-line rule does.
+_INLINE_BREAK = re.compile('\r(?!\n)|[\v\f\x85]')
+
+
 def _capped(text: str) -> tuple[str, bool]:
     """Sanitized text of at most MAX_VIEW_CHARS characters (cut before sanitizing, so a huge value costs no more)
-    and whether anything was cut."""
-    return sanitize_text(text[:MAX_VIEW_CHARS], MAX_VIEW_CHARS, multiline=True), len(text) > MAX_VIEW_CHARS
+    and whether anything was cut. Each source line is exactly one row."""
+    shown = _INLINE_BREAK.sub(' ', text[:MAX_VIEW_CHARS])
+    return sanitize_text(shown, MAX_VIEW_CHARS, multiline=True), len(text) > MAX_VIEW_CHARS
 
 
 def view_text(text: object) -> str:
