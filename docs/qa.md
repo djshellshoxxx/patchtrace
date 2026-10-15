@@ -993,3 +993,7 @@ Goldens are derived from committed tool output, not from a new live capture; the
 - Automated (Linux, synthetic, seeded): tests/stress/test_stress2_{pilot,kev,kbcorrelation,enrichment_store,unified_parts,rules}.py; 78 passed, 5 strict xfail. Scale knob PATCHTRACE_STRESS_SCALE (default 1).
 - Defects (product code unchanged): QA-S2-1 pilot universe() echoes caller CVE text into PilotError.message; QA-S2-2 project store connection is bound to its creating thread (lock-serialised writer threads all fail with ProgrammingError); QA-S2-3 NaN in an enrichment body escapes as ValueError, not PT-ENRICH-INPUT; QA-S2-4 unified part_lines does not enforce the 4 MiB line cap on newline-terminated lines; QA-S2-5 rules not_mostly_wildcards(0,0) raises ZeroDivisionError.
 - Not exercised: YARA-X lint path (yara_x not installed in the worker venv); unified retention with many published results (needs staged result dirs).
+
+### [D7:buildenv-timeline]
+- `tests/test_buildenv_timeline.py` (12): cells, adjacent hops only, not-run is not a difference, tool-version guard, header-only stays unknown, bounds.
+- Not verified: offscreen strip test (strip not built; needs the nway/ui_series seam).

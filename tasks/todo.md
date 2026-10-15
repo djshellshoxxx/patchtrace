@@ -749,3 +749,6 @@
 - [x] `strings/run_service.py`, `ui_strings_run.py`, `tests/test_ui_strings_run.py`.
 - [ ] Wire `StringsRunController` into the Strings dock (needs S7b `ui_strings.py`); `ToolStore` built on the GUI thread.
 - [ ] Integrator: add `tests/test_live_strings.py` and `tests/fixtures/strings/goldens/**` to `.github/workflows/live-intel-tools.yml` paths and pytest list.
+
+- [x] D7 buildenv/timeline.py (pure) with tests
+- [ ] D7 seams: `PairSnapshot.build_env`, `BuildTimelineStrip` in `ui_series.py` (integrator)

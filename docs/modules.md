@@ -1080,3 +1080,6 @@ Audit of `unified/` and `tools/unified/` (`docs/audits/20261015-unified-audit.md
 | service | src/patchtrace/strings/run_service.py | Qt-free `run_strings(request, cancel)`: FLOSS via `run_job` or the built-in scan; never touches the project store (SQLite and the project lock stay on the GUI thread); typed `StringsRunOutcome` (ready, cancelled, failed, stale); `persist` and `is_stale` for the GUI thread. |
 | controller | src/patchtrace/ui_strings_run.py | `StringsRunController` over the host `TaskRunner` channel `strings.run`: stale check, persist, one outcome per run, cancel at once, project switch drops the result. No widgets. |
 | tests | tests/test_ui_strings_run.py (10), tests/test_live_strings.py (2 hermetic, 2 live), tests/fixtures/strings/goldens | Fake FLOSS on synthetic pairs: consent hash recorded, cancel, stale, project switch. |
+
+### [D7:buildenv-timeline]
+`buildenv/timeline.py`: pure series timeline over 3-8 builds. Rows per fact family (toolchain, runtime, packing, managed, options) with cells `value`, `unknown` or `not-run` (firm facts only), one `Hop` per adjacent pair (never non-adjacent), `tools-differ` hop when the Detect It Easy setups differ, `change_after`. Reads stored rows through the `BuildEnvReader` port (`BuildEnvStore.latest` shape). The strip, `PairSnapshot.build_env` and `ui_series.py` wiring are Integrator asks.
