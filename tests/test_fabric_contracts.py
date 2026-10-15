@@ -328,17 +328,27 @@ def _imports(tree: ast.AST):
             yield node.level, node.module or ''
 
 
+ADAPTERS = {'store.py', 'pins.py'}  # the modules over the enrichment store: the only ones that may reach it and SQLite
+CLI_ADAPTER = 'cli.py'  # the Qt-free dispatcher: the only module that reaches the CLI envelope, a project and paths
+
+
 def test_package_imports_no_qt_io_or_other_feature():
     files = sorted(PACKAGE.glob('*.py'))
     assert {f.name for f in files} == {'__init__.py', 'contracts.py', 'convert.py', 'ids.py', 'limits.py',
-                                       'memory.py', 'origins.py', 'ports.py'}
+                                       'memory.py', 'origins.py', 'ports.py', *ADAPTERS, CLI_ADAPTER}
     for path in files:
+        adapter = path.name in ADAPTERS
+        cli_adapter = path.name == CLI_ADAPTER
         for level, module in _imports(ast.parse(path.read_text(encoding='utf-8'))):
             top = module.split('.')[0]
             if level == 0:
-                assert top not in FORBIDDEN and top != 'patchtrace', f'{path.name} imports {module}'
-            elif level == 2:  # the one shared primitive outside the package: canonical JSON and domain ids
-                assert module == 'enrichment.identity', f'{path.name} imports ..{module}'
+                allowed = {'sqlite3'} if adapter else {'pathlib'} if cli_adapter else set()
+                assert (top not in FORBIDDEN or top in allowed) and top != 'patchtrace', f'{path.name} imports {module}'
+            elif level == 2:  # canonical JSON and domain ids; adapters also the enrichment store and its errors
+                allowed = {'enrichment.identity'}
+                allowed |= {'enrichment.storage', 'enrichment.contracts'} if adapter else set()
+                allowed |= {'cli', 'service', 'enrichment.storage'} if cli_adapter else set()
+                assert module in allowed, f'{path.name} imports ..{module}'
             else:
                 assert level == 1, f'{path.name} reaches {level} levels up'
 

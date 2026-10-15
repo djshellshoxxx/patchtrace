@@ -3,13 +3,14 @@
 An origin tag names the data a witness was derived from (`D_vendor_text` for every repetition of an advisory's claim,
 `D_ghidra` for B1, ChangeFacts and Ghidra call labels, `D_pe_tables`, `D_vivisect`, `D_bytes`). Two witnesses are
 dependent when their tag sets share a tag, transitively; the number of connected components is the number of
-independent witnesses. This is the fabric's implementation of the calculus PIL ships provisionally in
-`pilot/origins.py` (a test pins the two to each other until PIL rebinds, FAB-3). Locality never counts here, and a
+independent witnesses. This is the one implementation of the calculus and the one table: PIL's `pilot/origins.py`
+re-exports them since FAB-3 and keeps only its own error type and identity domain. Locality never counts here, and a
 witness without origin tags is refused: unknown provenance must never add independence.
 
-The default table is PIL's plus the FAB-2 rows of plan s10: KEV's catalog listing, WBQ's PE self-report family and WB3's
-`emulation` and `ir` lineage groups. CAP's lineage tags wait for CAP-7 (plan s11, question 3), and every other source is
-added by one data change, requested by its owner.
+The default table is PIL's original rows plus the FAB-2 rows of plan s10: KEV's catalog listing, WBQ's PE self-report
+family and WB3's `emulation` and `ir` lineage groups. CAP's lineage tags wait for CAP-7 (plan s11, question 3), and
+every other source is added by one data change, requested by its owner. A row added here moves `digest()`, and with it
+the PIL origins digest (`tests/test_fabric_adopt.py` pins that one too).
 """
 from __future__ import annotations
 
@@ -128,9 +129,14 @@ class DefaultOriginRegistry:
     def components(self, origin_sets: Iterable[Iterable[str]]) -> tuple[tuple[str, ...], ...]:
         return components(origin_sets)
 
-    def digest(self) -> str:
+    def payload(self) -> dict[str, object]:
+        """The table as it is hashed: the version and the sorted tags per source. A consumer may hash it under its own
+        identity domain (PIL does), so its ids stay in its namespace while the table has one definition."""
         sources = {name: list(tags) for name, tags in sorted(self._table.items())}
-        return domain_id(DOMAIN, 1, {'version': self._version, 'sources': sources})
+        return {'version': self._version, 'sources': sources}
+
+    def digest(self) -> str:
+        return domain_id(DOMAIN, 1, self.payload())
 
 
 def digest() -> str:

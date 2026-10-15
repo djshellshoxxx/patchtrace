@@ -1,8 +1,9 @@
 """FAB-0 origin tags, `components` and the registry (docs/specs/program-e/FAB-integration-plan.md s6, s7).
 
-Covers: the shared-origin calculus (permutation invariant, idempotent, transitive, refuses an empty origin set),
-parity with `pilot.origins.components` until the fabric adopts it, the default registry as a superset of PIL's table,
-its digest, and the guard that a witness must carry exactly the registry's tags of its source. Synthetic data only.
+Covers: the shared-origin calculus (permutation invariant, idempotent, transitive, refuses an empty origin set, equal to an
+independent reference), the default table and registry, its digest, and the guard that a witness must carry exactly the
+registry's tags of its source. PIL uses this table and calculus since FAB-3; that adoption is `test_fabric_adopt.py`.
+Synthetic data only.
 """
 from __future__ import annotations
 
@@ -16,7 +17,6 @@ from hypothesis import strategies as st
 
 from patchtrace.fabric import ids, origins
 from patchtrace.fabric.limits import FabricError
-from patchtrace.pilot import origins as pilot_origins
 
 PROPS = settings(deadline=None, max_examples=80, derandomize=True, database=None,
                  suppress_health_check=[HealthCheck.too_slow])
@@ -28,6 +28,23 @@ def oracle(domain: str, payload) -> str:
     head = b'patchtrace\x00' + domain.encode('ascii') + b'\x00' + b'1' + b'\x00'
     body = json.dumps(payload, sort_keys=True, separators=(',', ':'), ensure_ascii=False).encode('utf-8')
     return hashlib.sha256(head + body).hexdigest()
+
+
+def reference_components(sets) -> tuple[tuple[str, ...], ...]:
+    """A quadratic reference, written differently from the union-find: merge any two groups that share a tag."""
+    groups = [set(tags) for tags in sets]
+    merged = True
+    while merged:
+        merged = False
+        for i, first in enumerate(groups):
+            for j in range(i + 1, len(groups)):
+                if first & groups[j]:
+                    first |= groups.pop(j)
+                    merged = True
+                    break
+            if merged:
+                break
+    return tuple(sorted(tuple(sorted(group)) for group in groups))
 
 
 # --- the calculus -------------------------------------------------------------------------------------------------
@@ -73,16 +90,13 @@ def test_components_ignore_order_and_duplicates_and_are_idempotent(sets, rnd):
 
 @PROPS
 @given(TAG_SETS)
-def test_components_equal_the_pilot_implementation_until_the_fabric_adopts_it(sets):
-    assert origins.components(sets) == pilot_origins.components(sets)
+def test_components_equal_an_independent_reference(sets):
+    assert origins.components(sets) == reference_components(sets)
 
 
 # --- the registry -------------------------------------------------------------------------------------------------
 
-def test_default_table_contains_every_pilot_source_with_equal_tags():
-    assert set(origins.TAGS) >= set(pilot_origins.TAGS)
-    for source, tags in pilot_origins.SOURCE_TAGS.items():
-        assert origins.SOURCE_TAGS[source] == tags, source
+def test_default_table_is_sorted_and_uses_known_tags():
     for tags in origins.SOURCE_TAGS.values():
         assert list(tags) == sorted(set(tags)) and set(tags) <= set(origins.TAGS)
 
@@ -93,12 +107,6 @@ def test_default_table_contains_every_pilot_source_with_equal_tags():
 def test_the_fab2_rows_name_their_origin(source, tags):
     assert origins.DefaultOriginRegistry().tags_for(source) == tags
     assert set(tags) <= set(origins.TAGS)
-
-
-def test_fab2_adds_exactly_the_planned_rows_to_pils_table_and_leaves_capa_alone():
-    added = set(origins.SOURCE_TAGS) - set(pilot_origins.SOURCE_TAGS)
-    assert added == {'kev-catalog', 'pe-self-report', 'emulation', 'ir'}
-    assert origins.SOURCE_TAGS['capa'] == pilot_origins.SOURCE_TAGS['capa'] == ('D_vivisect',)
 
 
 def test_registry_answers_tags_and_fails_closed_on_an_unknown_source():
@@ -118,6 +126,16 @@ def test_registry_digest_is_the_planned_formula_and_tracks_table_and_version():
     table = dict(origins.SOURCE_TAGS)
     table['floss'] = ('D_bytes', 'D_vivisect')
     assert origins.DefaultOriginRegistry(table).digest() != registry.digest()
+
+
+def test_registry_payload_is_the_hashed_table_in_sorted_order_and_hands_out_copies():
+    registry = origins.DefaultOriginRegistry()
+    payload = registry.payload()
+    assert payload == {'version': 1, 'sources': {name: list(tags) for name, tags in origins.SOURCE_TAGS.items()}}
+    assert list(payload['sources']) == sorted(origins.SOURCE_TAGS)
+    assert registry.digest() == oracle('fabric-origins', payload)
+    payload['sources']['b1'].append('D_other')
+    assert registry.tags_for('b1') == ('D_ghidra',) and registry.payload() != payload
 
 
 def test_registry_digest_golden():

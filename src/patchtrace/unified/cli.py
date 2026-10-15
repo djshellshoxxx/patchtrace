@@ -6,9 +6,16 @@ imports Qt. Exit codes follow the existing contract: 0 ok, 2 invalid argument or
 3 runtime failure or a partial result, 4 zero rows after filtering (or `run --fail-on-none`), 5 cancelled. In
 `--json` mode stdout carries exactly one `enrichment-cli/1` document and the first warning is the standing note
 that unified results are experimental, derived and ordinal.
+
+`show` and `explain` print what the Unified tab shows: both go through the Qt-free read model (`read_model`,
+`read_text`), so the order (contested, material, review, ...), the badges, the per-source cells and the section texts
+are the window's, and the default view collapses unchanged and structurally proven cosmetic rows with a visible
+count (U-03; `--all` or `--change` lists them).
 """
 from __future__ import annotations
 
+import argparse
+import re
 import sys
 import threading
 from pathlib import Path
@@ -16,7 +23,7 @@ from pathlib import Path
 LABEL = 'experimental, derived, ordinal'
 NOTE = 'Unified results are experimental, derived and ordinal; the Ghidriff result stays the primary record.'
 NO_EXTRACT = ('extraction is not available in this build; the result uses stored engine outputs only '
-              '(no instruction-level facts)')
+              '(no instruction-level facts)')    # said when no ProgramIR is placed for the project (S0 mode)
 SOURCES = ('ghidriff', 'bindiff', 'rz-diff', 'manual')
 DECISIONS = ('matched', 'tentative', 'candidate', 'contested', 'ambiguous', 'older-only', 'newer-only', 'unknown')
 MATERIALITIES = ('unchanged', 'cosmetic', 'material', 'review', 'unknown', 'not-applicable')
@@ -25,7 +32,14 @@ CLASSES = ('constant', 'comparison', 'condition', 'callee', 'call-added', 'call-
            'register-only', 'layout-only', 'name-only', 'frame', 'eh', 'unknown')
 VERBS = ('run', 'show', 'explain', 'status')
 PREFIX_MIN = 8
-NAME_WIDTH = 40
+SOURCE_ID = re.compile(r'[a-z][a-z0-9-]{1,31}')
+NATIVE_NOTE = 'Native values are engine-specific and never combined.'
+
+
+def _source_id(text: str) -> str:
+    if not SOURCE_ID.fullmatch(text):
+        raise argparse.ArgumentTypeError('a source id is lower-case letters, digits and hyphens, for example bindiff')
+    return text
 
 
 def register(sub, common, handlers) -> None:
@@ -37,9 +51,16 @@ def register(sub, common, handlers) -> None:
                                      metavar='{' + ','.join(VERBS) + '}')
     run = common(actions.add_parser('run', help='compute and store the unified result for this project'))
     run.add_argument('project', type=Path)
-    run.add_argument('--no-extract', action='store_true', help='S0 mode: no instruction-level extraction (the only '
-                                                                'mode in this build)')
-    run.add_argument('--no-decompile', action='store_true', help='accepted for later modes; no effect in S0 mode')
+    run.add_argument('--no-extract', action='store_true',
+                     help='S0 mode: use the stored engine outputs only, even when a ProgramIR is placed for the '
+                          'project (the ladder and the instruction-level facts need one)')
+    run.add_argument('--no-residual', action='store_true',
+                     help='backup B-07: skip the residual passes P16-P19 of the ladder (another result, another id)')
+    run.add_argument('--no-decompile', action='store_true',
+                     help='skip the on-demand decompile of review pairs (the constant-only pairs stay in review)')
+    run.add_argument('--python', default='', help='external Python executable of the extractor (with --ghidra-dir '
+                                                   'it enables the decompile of review pairs)')
+    run.add_argument('--ghidra-dir', default='', help='Ghidra installation root (with --python)')
     run.add_argument('--sources', default=','.join(SOURCES), metavar='LIST',
                      help='comma list of ' + ', '.join(SOURCES) + ' (default: all)')
     isolation = run.add_mutually_exclusive_group()
@@ -50,12 +71,19 @@ def register(sub, common, handlers) -> None:
     run.add_argument('--timeout', type=int, default=3600, help='worker seconds (60..86400)')
     run.add_argument('--refresh', action='store_true', help='recompute even when a stored result has these inputs')
     run.add_argument('--fail-on-none', action='store_true', help='exit 4 when no row is material or review')
-    show = common(actions.add_parser('show', help='list rows of the current unified result'))
+    show = common(actions.add_parser('show', help='list rows of the current unified result, most important first'))
     show.add_argument('project', type=Path)
     show.add_argument('--decision', action='append', choices=DECISIONS, default=[], metavar='DECISION')
     show.add_argument('--change', action='append', choices=MATERIALITIES, default=[], metavar='CHANGE',
-                      help='materiality: ' + ', '.join(MATERIALITIES))
+                      help='materiality: ' + ', '.join(MATERIALITIES) + ' (listing one always shows its rows)')
     show.add_argument('--class', dest='classes', action='append', choices=CLASSES, default=[], metavar='CLASS')
+    show.add_argument('--source', action='append', type=_source_id, default=[], metavar='SOURCE',
+                      help='only rows with a record from this source (repeatable)')
+    show.add_argument('--search', default='', metavar='TEXT',
+                      help='function names or hexadecimal RVAs, with or without 0x')
+    show.add_argument('--all', action='store_true',
+                      help='also list the unchanged rows and the cosmetic rows with a structural proof, which are '
+                           'collapsed by default')
     show.add_argument('--limit', type=int, default=200, help='rows printed (default 200; totals are always given)')
     explain = common(actions.add_parser('explain', help='atoms, contest, facts and provenance of one row'))
     explain.add_argument('project', type=Path)
@@ -127,11 +155,19 @@ def _counts_text(counts) -> str:
 # --- run ------------------------------------------------------------------------------------------------------------
 
 def _run(args, cancel) -> int:
-    from ..cli import CANCELLED, NO_RESULTS, OK, RUNTIME, _emit, _open
+    from ..cli import CANCELLED, ENVIRONMENT, NO_RESULTS, OK, RUNTIME, CliError, _emit, _open
     from . import pipeline
     from .limits import UnifiedError
+    if bool(args.python) != bool(args.ghidra_dir):
+        raise CliError(ENVIRONMENT, '--python and --ghidra-dir go together')
+    backend = None
+    if args.python:
+        from ..backend import BackendConfig
+        backend = BackendConfig(python_executable=args.python, ghidra_dir=args.ghidra_dir, timeout_seconds=args.timeout)
     options = pipeline.UnifiedOptions(sources=_sources(args.sources), isolate=args.isolate, timeout_s=args.timeout,
-                                      refresh=args.refresh)
+                                      refresh=args.refresh, use_ir=not args.no_extract,
+                                      residual=not args.no_residual, decompile=not args.no_decompile,
+                                      backend=backend)
     service = _open(args.project)
     try:
         try:
@@ -151,7 +187,7 @@ def _run(args, cancel) -> int:
     text = (f'unified run: {report.result_status}{" (stored result reused)" if report.status == "cached" else ""} '
             f'({LABEL})\nresult: {report.result_id[:16]}\n{_counts_text(report.counts)}\n'
             f'sources: {", ".join(report.sources)}\nlimitations: {", ".join(report.limitations) or "none"}')
-    extra = [] if args.no_extract else [NO_EXTRACT]
+    extra = [NO_EXTRACT] if report.mode == 's0' and not args.no_extract else []
     _emit(args, 'unified run', report.result_status, result, [NOTE, *extra, *report.warnings], text)
     material = report.counts.materiality.material + report.counts.materiality.review
     if report.result_status == 'partial':
@@ -171,10 +207,8 @@ def _plan_or_none(service):
 
 
 def _changed_inputs(loaded, plan) -> list[str]:
-    from . import keys
-    if plan is None or loaded.manifest is None or loaded.manifest.result_id == plan.result_id:
-        return []
-    return list(keys.changed_inputs(keys.result_key_inputs(loaded.manifest), plan.identity.key_inputs))
+    from . import read_model
+    return read_model.changed_inputs(loaded, plan)
 
 
 def _require_result(loaded, args) -> list[str]:
@@ -186,6 +220,33 @@ def _require_result(loaded, args) -> list[str]:
         raise CliError(RUNTIME, f'the stored unified result is unusable [{loaded.reason or "invalid"}]: run again '
                                 'with --refresh')
     return ['the stored result is stale: its inputs changed; run again to refresh it'] if loaded.state == 'stale' else []
+
+
+def _open_request(args):
+    """Open the project, read the plan and the stored pointer row (the only database access), and close it again."""
+    from ..cli import RUNTIME, CliError, _open
+    from . import read_model
+    service = _open(args.project)
+    try:
+        request = read_model.request_from_service(service)
+    finally:
+        service.close()
+    if request.error:
+        raise CliError(RUNTIME, request.error)
+    return request, _require_result(request.loaded, args)
+
+
+def _load_view(request, cancel):
+    """The read model of the stored result: an unusable one is a runtime error (3), a cancel is exit 5."""
+    from ..cli import RUNTIME, CliError
+    from . import read_model
+    try:
+        vm = read_model.load_unified(request, cancel.is_set)
+    except read_model.Cancelled:
+        raise KeyboardInterrupt from None
+    if vm.error:
+        raise CliError(RUNTIME, vm.error)
+    return vm
 
 
 def _side_json(side) -> list[dict]:
@@ -201,133 +262,111 @@ def _row_json(row) -> dict:
             'hints': [_t(h) for h in row.hints], 'flags': list(row.flags)}
 
 
-def _side_text(side) -> str:
-    if not side:
-        return '-'
-    parts = [f'0x{s.rva:X}' + (f' {_t(s.name, NAME_WIDTH)}' if s.name else '') for s in side[:2]]
-    return ', '.join(parts) + (f' (+{len(side) - 2})' if len(side) > 2 else '')
+def _view_json(vm, row) -> dict:
+    """What the read model adds to a stored row: labels, badge words, the change text and each source's own cell."""
+    return {'function': row.function_label, 'addresses': row.address_label, 'decision_text': row.decision_text,
+            'glyph': row.glyph, 'change_text': row.change_text, 'proof': row.proof, 'tier': row.tier or None,
+            'edit_group': row.edit_group, 'collapsed': row.collapsed,
+            'cells': [{'source': info.source, 'kind': cell.kind, 'text': cell.text}
+                      for info, cell in zip(vm.sources, row.cells, strict=True)]}
+
+
+def _fit(text: str, width: int) -> str:
+    return text if len(text) <= width else text[:max(0, width - 3)] + '...'
+
+
+def _table(vm, rows) -> list[str]:
+    """Aligned text table: the id prefix to give to `explain --row`, the badge, the change, then one column per
+    present source with that source's own words (never merged)."""
+    from . import read_model
+    head = ['ROW', 'DECISION', 'CHANGE', 'FUNCTION', 'ADDRESSES', *(info.display.upper() for info in vm.sources)]
+    body = [[r.row_id[:12], read_model.BADGES[r.decision], r.change_text, r.function_label, r.address_label,
+             *(cell.text for cell in r.cells)] for r in rows]
+    widths = [12, 15, 34, 30, 26, *(26 for _ in vm.sources)]
+    return [' '.join(_fit(cell, w).ljust(w) for cell, w in zip(line, widths, strict=True)).rstrip()
+            for line in [head, *body]]
+
+
+def _select(args, vm) -> tuple[list[int], int]:
+    """(indices of the rows to list, rows left out only because they are collapsed by default). `--all` and an
+    explicit `--change` list collapsed rows, so nothing is then left out."""
+    from . import read_model
+
+    def matching(collapsed: bool) -> list[int]:
+        return read_model.filter_rows(vm.rows, decisions=args.decision or None, materialities=args.change or None,
+                                      classes=args.classes or None, sources=args.source or None, search=args.search,
+                                      show_collapsed=collapsed)
+    listed = matching(args.all)
+    return listed, len(matching(True)) - len(listed)
 
 
 def _show(args, cancel) -> int:
-    from ..cli import NO_RESULTS, OK, RUNTIME, CliError, _emit, _open
-    from . import pipeline
-    from .limits import UnifiedError
-    service = _open(args.project)
-    try:
-        plan, _ = _plan_or_none(service)
-        loaded = pipeline.load_current(service, plan)
-        warnings = _require_result(loaded, args)
-        decisions, changes, classes = set(args.decision), set(args.change), set(args.classes)
-        total = filtered = 0
-        shown = []
-        try:
-            for row in pipeline.read_rows(loaded):
-                total += 1
-                if ((decisions and row.decision not in decisions) or (changes and row.materiality not in changes)
-                        or (classes and not classes & set(row.change_classes))):
-                    continue
-                filtered += 1
-                if len(shown) < max(0, args.limit):
-                    shown.append(row)
-        except UnifiedError as error:
-            raise CliError(RUNTIME, f'{error.code}: {error.message} [{error.reason}]') from None
-        changed = _changed_inputs(loaded, plan)
-    finally:
-        service.close()
-    result = {'result_id': loaded.manifest.result_id, 'state': loaded.state, 'stale': loaded.state == 'stale',
-              'changed_inputs': changed, 'status': loaded.manifest.status, 'total': total, 'filtered': filtered,
-              'rows': [_row_json(r) for r in shown]}
-    lines = [f'unified show: result {loaded.manifest.result_id[:16]} {loaded.manifest.status}, {total} rows, '
-             f'{filtered} match, {len(shown)} shown ({LABEL})']
-    lines += [f'{r.decision:<11} {r.materiality:<14} {_side_text(r.older):<{NAME_WIDTH + 12}} '
-              f'{_side_text(r.newer):<{NAME_WIDTH + 12}} {",".join(r.change_classes) or "-"}' for r in shown]
-    _emit(args, 'unified show', loaded.manifest.status, result, [NOTE, *warnings], '\n'.join(lines))
-    return OK if filtered else NO_RESULTS
+    from ..cli import NO_RESULTS, OK, RUNTIME, CliError, _emit
+    from . import read_model
+    request, warnings = _open_request(args)
+    vm = _load_view(request, cancel)
+    listed, hidden = _select(args, vm)
+    shown = [vm.rows[i] for i in listed[:max(0, args.limit)]]
+    records = read_model.records_for(vm, shown)       # a damaged part is a typed error: exit 3 through `dispatch`
+    if len(records) != len(shown):
+        raise CliError(RUNTIME, 'a listed row could not be read [row-missing]: run again with --refresh')
+    manifest, total = vm.manifest, vm.counts['rows']
+    result = {'result_id': manifest.result_id, 'state': request.loaded.state, 'stale': request.loaded.state == 'stale',
+              'changed_inputs': list(request.changed_inputs), 'status': manifest.status, 'total': total,
+              'filtered': len(listed), 'hidden': hidden, 'counts': dict(vm.counts),
+              'evidence_classes': dict(vm.evidence_classes),
+              'sources': [{'source': i.source, 'display': i.display, 'unit': i.unit_caption, 'version': i.version}
+                          for i in vm.sources],
+              'rows': [_row_json(records[r.row_id].match) | _view_json(vm, r) for r in shown]}
+    lines = [f'unified show: result {manifest.result_id[:16]} {manifest.status}, {total} rows, {len(listed)} match, '
+             f'{len(shown)} shown ({LABEL})', read_model.summary_text(vm, show_collapsed=bool(args.all or args.change)),
+             read_model.header_text(vm), '', *_table(vm, shown)]
+    if hidden:
+        lines.append(f'{hidden} more rows are collapsed by default (unchanged, or cosmetic with a structural proof); '
+                     'list them with --all or --change')
+    if len(listed) > len(shown):
+        lines.append(f'{len(listed) - len(shown)} more rows match; raise --limit to list them')
+    _emit(args, 'unified show', manifest.status, result, [NOTE, *warnings], '\n'.join([*lines, NATIVE_NOTE]))
+    return OK if listed else NO_RESULTS
 
 
-def _find_row(loaded, prefix: str):
-    from ..cli import ENVIRONMENT, CliError
-    from . import pipeline
-    found = [row for row in pipeline.read_rows(loaded) if row.row_id.startswith(prefix)]
+def _explain(args, cancel) -> int:
+    from ..cli import ENVIRONMENT, OK, CliError, _emit
+    from . import read_model, read_text
+    prefix = args.row.strip().lower()
+    if len(prefix) < PREFIX_MIN or any(c not in '0123456789abcdef' for c in prefix):
+        raise CliError(ENVIRONMENT, f'--row takes at least {PREFIX_MIN} hexadecimal digits of a row id')
+    request, warnings = _open_request(args)
+    loaded = request.loaded
+    manifest = loaded.manifest
+    records = read_text.SidecarRecords(loaded.directory, manifest)   # a damaged part is a typed error: exit 3
+    found = records.find(prefix, None)
     if not found:
         raise CliError(ENVIRONMENT, f'no row starts with {_t(prefix, 70)}')
     if len(found) > 1:
         raise CliError(ENVIRONMENT, f'{len(found)} rows start with {_t(prefix, 70)}: give more digits')
-    return found[0]
-
-
-def _facts_for(loaded, row_id: str):
-    from . import pipeline
-    return next((f for f in pipeline.read_facts(loaded) if f.row_id == row_id), None)
-
-
-def _atom_text(index: int, atom) -> str:
-    older = '-' if atom.older_rva is None else f'0x{atom.older_rva:X}'
-    newer = '-' if atom.newer_rva is None else f'0x{atom.newer_rva:X}'
-    native = ''.join(f' {_t(k, 32)}={_t(v, 120)}' for k, v in atom.native)
-    return (f'  [{index}] {atom.source} {_t(atom.step, 64)} tier {atom.tier} {atom.cls} {atom.cardinality} '
-            f'{older} -> {newer}{native}')
-
-
-def _facts_text(facts) -> list[str]:
-    if facts is None:
-        return ['facts: none (not a pair that gets change facts)']
-    lines = [f'facts: verdict {facts.verdict}' + (f', proof {facts.proof}' if facts.proof else '')
-             + (f', second channel {facts.second_channel}' if facts.second_channel else ''),
-             '  channels: ' + ', '.join(f'{c} {s}' for c, s in facts.channels)]
-    for delta in facts.deltas:
-        older = '-' if delta.older_rva is None else f'0x{delta.older_rva:X}'
-        newer = '-' if delta.newer_rva is None else f'0x{delta.newer_rva:X}'
-        change = '' if delta.old is None and delta.new is None else f' {_t(delta.old, 120)} -> {_t(delta.new, 120)}'
-        lines.append(f'  delta {delta.cls} ({delta.channel}) {older} -> {newer}{change}')
-    if facts.deltas_omitted:
-        lines.append(f'  {facts.deltas_omitted} more deltas not listed')
-    if facts.limits_hit:
-        lines.append('  limits: ' + ', '.join(facts.limits_hit))
-    return lines
-
-
-def _explain(args, cancel) -> int:
-    from ..cli import ENVIRONMENT, OK, RUNTIME, CliError, _emit, _open
-    from . import pipeline
-    from .limits import UnifiedError
-    prefix = args.row.strip().lower()
-    if len(prefix) < PREFIX_MIN or any(c not in '0123456789abcdef' for c in prefix):
-        raise CliError(ENVIRONMENT, f'--row takes at least {PREFIX_MIN} hexadecimal digits of a row id')
-    service = _open(args.project)
-    try:
-        plan, _ = _plan_or_none(service)
-        loaded = pipeline.load_current(service, plan)
-        warnings = _require_result(loaded, args)
-        try:
-            row = _find_row(loaded, prefix)
-            facts = _facts_for(loaded, row.row_id)
-        except UnifiedError as error:
-            raise CliError(RUNTIME, f'{error.code}: {error.message} [{error.reason}]') from None
-    finally:
-        service.close()
-    manifest = loaded.manifest
+    record = records.get(found)[found[0]]
+    notes = ([read_text.STALE_NOTE.format(reason=read_model.stale_reason_text(request.changed_inputs))]
+             if loaded.state == 'stale' else [])
+    match, facts = record.match, record.facts
     provenance = {'result_id': manifest.result_id, 'status': manifest.status, 'engine_version': manifest.engine_version,
                   'sources': [{'source': s.source, 'version': _t(s.version, 64)} for s in manifest.sources],
                   'limitations': [_t(x) for x in manifest.limitations]}
-    result = {'row': row.model_dump(mode='json'), 'facts': None if facts is None else facts.model_dump(mode='json'),
-              'provenance': provenance, 'state': loaded.state}
-    lines = [f'row {row.row_id[:16]}: {row.decision}, change {row.materiality} ({LABEL})',
-             f'older: {_side_text(row.older)}', f'newer: {_side_text(row.newer)}']
-    if row.support:
-        lines.append('support: ' + ', '.join(f'{s.component} tier {s.tier} (atom {s.atom_index})'
-                                              for s in row.support))
-    if row.contest is not None:
-        lines.append(f'contest: {row.contest.strength} against atoms {", ".join(map(str, row.contest.against))}')
-    lines.append(f'atoms ({len(row.atoms)}):')
-    lines += [_atom_text(i, a) for i, a in enumerate(row.atoms)]
-    lines += _facts_text(facts)
-    lines.append('classes: ' + (", ".join(row.change_classes) or "none"))
-    lines.append('hints: ' + (", ".join(_t(h) for h in row.hints) or "none"))
-    lines.append(f'provenance: result {manifest.result_id[:16]} {manifest.status}, sources '
-                 + ', '.join(f'{s.source} {_t(s.version, 64)}' for s in manifest.sources))
-    _emit(args, 'unified explain', manifest.status, result, [NOTE, *warnings], '\n'.join(lines))
+    detail = read_text.detail_text(manifest, record, notes=notes)
+    result = {'row': match.model_dump(mode='json'), 'facts': None if facts is None else facts.model_dump(mode='json'),
+              'provenance': provenance, 'state': loaded.state, 'detail': detail}
+    text = f'row {match.row_id[:16]}: {match.decision}, change {match.materiality} ({LABEL})\n{detail}'
+    _emit(args, 'unified explain', manifest.status, result, [NOTE, *warnings], text)
     return OK
+
+
+def _ir_status(manifest) -> dict:
+    """The ProgramIR the current result was computed from (S0 mode has none)."""
+    if manifest is None or manifest.ir_older is None:
+        return {'available': False, 'reason': 's0-mode'}
+    def side(ref) -> dict:
+        return {'ir_key': ref.ir_key, 'functions': ref.functions, 'producer_mode': ref.producer_mode}
+    return {'available': True, 'older': side(manifest.ir_older), 'newer': side(manifest.ir_newer)}
 
 
 def _status(args, cancel) -> int:
@@ -351,7 +390,7 @@ def _status(args, cancel) -> int:
         'limitations': [] if manifest is None else [_t(x) for x in manifest.limitations],
         'changed_inputs': changed, 'planned_result_id': None if plan is None else plan.result_id,
         'plan_error': None if plan_error is None else (plan_error.reason or plan_error.code),
-        'ir': {'available': False, 'reason': 's0-mode'}, 'engine_version': keys.ENGINE_VERSION,
+        'ir': _ir_status(manifest), 'engine_version': keys.ENGINE_VERSION,
         'runs': [{'started_utc': r.started_utc, 'status': r.status, 'error_code': r.error_code,
                   'result_id': r.result_id} for r in runs]}
     lines = [f'unified status: {loaded.state}' + (f' [{loaded.reason}]' if loaded.reason else '') + f' ({LABEL})']
@@ -363,7 +402,10 @@ def _status(args, cancel) -> int:
         lines.append('inputs changed since that result: ' + ', '.join(changed))
     if plan_error is not None:
         lines.append(f'planning: {plan_error.code} [{plan_error.reason}]')
-    lines.append('instruction-level data: not extracted in this mode')
+    ir = result['ir']
+    lines.append('instruction-level data: ProgramIR of both sides ('
+                 f'{ir["older"]["functions"]} and {ir["newer"]["functions"]} functions)' if ir['available']
+                 else 'instruction-level data: not extracted in this mode')
     lines += [f'run {r.started_utc} {r.status}' + (f' {r.error_code}' if r.error_code else '') for r in runs]
     _emit(args, 'unified status', 'complete', result, [NOTE], '\n'.join(lines))
     return OK

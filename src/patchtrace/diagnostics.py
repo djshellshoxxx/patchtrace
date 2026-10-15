@@ -5,27 +5,57 @@ import re
 
 _ASSIGNMENT = re.compile(
     r'''(?ix)(authorization["']?\s*[:=]\s*["']?\s*(?:(?:bearer|basic)\s+)?|
-    (?:api[_-]?key|token|password|secret)["']?\s*[:=]\s*)
+    (?:api[_-]?key|access[_-]?key|secret[_-]?key|token|password|secret)["']?\s*[:=]\s*)
     (?:"[^"\n]*"|'[^'\n]*'|[^\s,;"']+)'''
 )
-# Conservative bare credential shapes: GitHub, AWS access key IDs, bearer, sk- keys.
+# Conservative bare credential shapes: GitHub (classic and fine-grained), AWS access key IDs, bearer, sk- keys, Slack.
 _BARE_TOKENS = re.compile(
-    r'\bgh[pousr]_[A-Za-z0-9]{36,}\b|\bAKIA[0-9A-Z]{16}\b|\bsk-[A-Za-z0-9_-]{8,}'
+    r'\bgh[pousr]_[A-Za-z0-9]{36,}\b|\bgithub_pat_[A-Za-z0-9_]{22,}\b|\bAKIA[0-9A-Z]{16}\b|\bsk-[A-Za-z0-9_-]{8,}'
+    r'|\bxox[abprs]-[A-Za-z0-9-]{10,}'
 )
 # Whole header value: schemes such as Token/ApiKey/Digest would otherwise leave the secret visible.
 _AUTH_HEADER = re.compile(r'(?i)(\bauthorization["\']?\s*[:=]\s*)[^\r\n]+')
+# Same for Cookie and Set-Cookie: every pair is a credential and the attributes after them say nothing worth keeping.
+_COOKIE_HEADER = re.compile(r'(?i)(cookie["\']?[ \t]{0,8}:[ \t]{0,64})[^\r\n]+')
 _BEARER = re.compile(r'\b(bearer\s+)[A-Za-z0-9._~+/=-]{8,}', re.IGNORECASE)
+# '://' is the anchor: a pattern that began with the scheme rescanned a long run of letters from every offset (quadratic).
 # Greedy to the last '@' before the path: unencoded '@' in a password must not
 # leave its tail visible, and proxy schemes such as socks5:// carry credentials too.
-_URL_AUTH = re.compile(r'([a-z][a-z0-9+.-]*://)[^/\s]*@', re.IGNORECASE)
+_URL_AUTH = re.compile(r'(://)[^/\s]*@')
+# Azure SAS signature, percent-encoded base64 in a query string (after the ';' of '&amp;' too). The other SAS fields,
+# version, permissions and expiry, are not secret. A '?', '&' or ';' lead keeps 'sig=15' in prose alone.
+_SAS_SIGNATURE = re.compile(r'(?i)([?&;]sig=)[^&;#\s"\'<>)]++')
+# `--password x`, `--github-token x` and the list form `'--token', 'x'` that str(CalledProcessError) prints. The keyword
+# ends the flag, so `--token-file x` and `--max-tokens 5` stay (`--token=x` is an assignment). The lookbehind gives a
+# run of dashes one attempt, not one per dash. An unquoted value runs to whitespace, commas included, so a finished
+# `[redacted]` from an earlier pass is skipped (not one with text glued to it); a quote that never closes hides the rest.
+_ARGV_SECRET = re.compile(
+    r'''(?ix)(?<![\w-])(--[a-z0-9_-]{0,24}?(?:api[_-]?key|access[_-]?key|secret[_-]?key|token|password|passwd|secret)
+    ["']?(?:[ \t]{1,16}|[ \t]{0,16},[ \t]{0,16}))
+    (?:"[^"\r\n]*+"|'[^'\r\n]*+'|(?!\[redacted\](?:[\s,"']|\Z))[^\s"']++|["'][^\r\n]*+)'''
+)
+# header.payload.signature, each base64url, header and payload starting '{"'. The lookbehind gives a run of 'eyJ' one
+# attempt, not one per offset, yet admits an escaped delimiter ('%3DeyJ'); the caps sit far above any real segment.
+_JWT = re.compile(
+    r'(?:(?<![A-Za-z0-9_-])|(?<=%[0-9A-Fa-f]{2}))'
+    r'eyJ[A-Za-z0-9_-]{1,8192}+\.eyJ[A-Za-z0-9_-]{1,65536}+\.[A-Za-z0-9_-]{0,8192}+'
+)
 
 
 def redact_log(text: str, limit: int = 2 * 1024 * 1024) -> str:
+    """Hide credentials, then keep the last `limit` characters (last, so a secret is never cut before it is matched).
+
+    Linear on any input: each pattern has a literal or lookbehind anchor and no nested quantifier;
+    tests/test_redaction_coverage.py runs hostile one-MiB inputs."""
     text = _URL_AUTH.sub(r'\1[redacted]@', text)
     text = _AUTH_HEADER.sub(r'\1[redacted]', text)
+    text = _COOKIE_HEADER.sub(r'\1[redacted]', text)
     text = _ASSIGNMENT.sub(r'\1[redacted]', text)
+    text = _ARGV_SECRET.sub(r'\1[redacted]', text)
+    text = _SAS_SIGNATURE.sub(r'\1[redacted]', text)
     text = _BEARER.sub(r'\1[redacted]', text)
     text = _BARE_TOKENS.sub('[redacted]', text)
+    text = _JWT.sub('[redacted]', text)
     return text[-limit:]
 
 

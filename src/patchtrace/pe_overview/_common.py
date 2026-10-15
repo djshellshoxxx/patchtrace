@@ -4,10 +4,12 @@ from __future__ import annotations
 from collections.abc import Callable
 
 from patchtrace.artifact_bytes import VerifiedArtifactReader
+from patchtrace.hostile_text import is_hostile
 
 from .models import Limits, PeWarning
 
 MAX_STRUCT_READ = 1024 * 1024
+_LATIN1_HOSTILE = {b: '?' for b in range(256) if is_hostile(chr(b))}
 
 
 class Cancelled(Exception):
@@ -15,8 +17,9 @@ class Cancelled(Exception):
 
 
 def clean_text(raw: bytes) -> str:
-    """Latin-1 decode with control characters replaced, safe to show in a UI."""
-    return ''.join(chr(b) if 0x20 <= b != 0x7F else '?' for b in raw)
+    """Latin-1 decode with control and format characters (the shared hostile rule) replaced by '?', safe to show in
+    a UI."""
+    return raw.decode('latin-1').translate(_LATIN1_HOSTILE)
 
 
 class Ctx:
@@ -25,6 +28,7 @@ class Ctx:
         self.cancel = cancel
         self.limits = limits
         self.warnings: list[PeWarning] = []
+        self.entropy_spent = 0  # bytes measured so far, against the per-file budget of `entropy.py`
         self._seen: set[str] = set()
 
     def check(self) -> None:

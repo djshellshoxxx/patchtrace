@@ -15,6 +15,9 @@ file access exists in the package except `authenticode.verify_authenticode(path)
 - `PeOverview.to_dict()` (JSON-serializable), `PeOverview.section_map() -> SectionMap`
 - `SectionMap.from_overview(ov)`, `SectionMap.rva_to_file_ranges(rva, length) -> tuple[FileRange, ...] | None`
 - `compare_overviews(older, newer) -> tuple[FieldComparison, ...]`
+- `headers.read_image_layout(reader) -> tuple[int, int] | None`: (ImageBase, SizeOfImage) from the DOS and optional
+  headers alone, with no section, entropy, checksum or directory work; `None` unless both are readable and
+  SizeOfImage is not zero. For callers that need nothing else (`unified/addressing.layout_from_reader`).
 - `authenticode.verify_authenticode(path) -> TrustResult`, `authenticode.classify_hresult(hr) -> str`
 
 All records are frozen slotted dataclasses. Unavailable values are `None`, never guessed.
@@ -35,15 +38,19 @@ Warning codes: `too_short`, `not_mz`, `lfanew_out_of_range`, `lfanew_over_cap`, 
 `import_descriptor_loop`, `import_name_pointer_loop`, `import_dlls_over_cap`, `import_functions_over_cap`,
 `import_names_over_cap`, `export_rva_out_of_file`, `export_count_implausible`, `export_names_over_cap`,
 `name_truncated`, `debug_unparseable`, `certificate_table_out_of_file`, `certificate_entry_invalid`,
-`data_after_certificate_table` (informational), `checksum_skipped_large`, `internal_error_*`.
+`data_after_certificate_table` (informational), `checksum_skipped_large`, `entropy_budget_exhausted`,
+`internal_error_*`.
 
 ## Limits (`Limits`, all enforced)
 
 max e_lfanew 64 KiB; max sections 96; max data directories 16; max import DLLs 512; max functions per
 DLL 4096; max total import names 20000; max name length 512 bytes; max export names 20000; entropy cap
-8 MiB per section/overlay (`sampled=True` when capped; the first 8 MiB is measured); checksum skipped
-with a warning above 256 MiB. Reads are made in at most 1 MiB pieces. `cancel()` is polled between stages
-and between chunks.
+8 MiB per section/overlay and at most four such ranges (32 MiB) per file, spent in section-table order and
+then on the overlay, so sections that overlap cannot multiply the work (`sampled=True` when a range is capped
+or cut; the first bytes are measured). A range that finds the budget spent is measured with what is left, or
+not at all (`entropy` None, `entropy_bytes` 0, `sampled=True`), and the file gets the warning
+`entropy_budget_exhausted` (status `partial`); checksum skipped with a warning above 256 MiB. Reads are
+made in at most 1 MiB pieces. `cancel()` is polled between stages and between chunks.
 
 ## Semantics
 
@@ -54,8 +61,11 @@ and between chunks.
 - Entrypoint: RVA and VA (`image_base + rva`) only. Register state is runtime state and is not reported.
 - Checksum: stored vs. the standard PE checksum (16-bit ones-complement word sum with the checksum
   DWORD zeroed, folded, plus file length). Match is informational; most user-mode binaries store 0.
-- Sections: names decoded latin-1, NULs stripped, control characters replaced by `?`. Entropy is Shannon
-  entropy of raw bytes (bits/byte).
+- Sections: names decoded latin-1, NULs stripped, hostile characters replaced by `?`: the control characters
+  (C0, DEL and C1, U+0080 to U+009F) and the format characters (categories `Cc` and `Cf`, in Latin-1 only the
+  soft hyphen U+00AD), as judged by `patchtrace.hostile_text.is_hostile`, the one rule that
+  `intelligence.tools.process.sanitize` shares. Entropy is Shannon entropy of raw bytes (bits/byte, four
+  decimals; constant data is `0.0`, never `-0.0`).
 - Overlay: bytes after the last section raw end, excluding the certificate table (which is a file-offset
   directory, not an RVA, and not overlay).
 - Certificate table: presence, offset, size, `WIN_CERTIFICATE` headers. `signature_status` is always

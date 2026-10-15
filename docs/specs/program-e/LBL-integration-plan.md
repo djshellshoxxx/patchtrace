@@ -229,7 +229,7 @@ Builders own disjoint files; the contract freeze lands first. Order: 00 -> (01, 
 | LBL-18 | GUI: `ui_evidence.py` seam (<= 40 lines), `secondary/evidence_view.py`, `tooltips.py`, `tests/test_ui_calibration_scope.py` | 17; coordinate with UE S4 and track G on the same files | Sonnet (Qt) | M | the offscreen tests of 8.6, 20x repeat | footer-only line |
 | LBL-19 | `reports.py` `evidence_scope`, `calibration/status.py` + adapter `cli_commands/calibration.py` (<= 25 lines; replaces the `cli.py` hook and the frozen-smoke line) | 17 | Haiku | S | report goldens updated; `calibration status` exits 4 then 0 | - |
 | LBL-20..24 | Tier W next wave (SPEC-33): 20 `fetch` + `SymbolTransport`; 21 `symbols` (Ghidra exporter, `symbol-map/1`, llvm-pdbutil adapter); 22 labels, tags, audit (`tier_w/{labels,audit}.py`); 23 `runner.py`; 24 `evaluate.py` and `aggregate.py` on evalcore + guard contract list | 11 for 24 | Sonnet | M each | synthetic and self-made fixture tests; the live Ghidra test records passed/failed/blocked | skip the llvm-pdbutil adapter |
-| LBL-25 | `tier_w/{pipeline,__main__}.py` (`all`), `docs/plans/tier-w-runbook.md` | 20-24 | Sonnet | M | dry run end to end on self-made fixtures; the owner run is a separate owner-only gate | stage-by-stage commands |
+| LBL-25 | `tier_w/{pipeline,__main__}.py` (`all`), the Tier W local-run runbook (planned, path chosen when written) | 20-24 | Sonnet | M | dry run end to end on self-made fixtures; the owner run is a separate owner-only gate | stage-by-stage commands |
 
 ## 10. Amendments required, test and QA plan
 | file | section | change |

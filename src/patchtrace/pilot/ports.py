@@ -8,49 +8,22 @@ their owners; the persisted records they exchange are frozen in `contracts`.
 Rules every implementation follows: a source that is missing, not run, unsupported, failed or stale reports it through
 a `ChannelStatus` and yields fewer observations (unknown, never a negative vote); free text in a returned observation is
 already plain text (`contracts.clean_line`); nothing here executes a target binary, opens a socket or transmits data.
-When the insight fabric (FAB) lands it adopts or replaces `origins.py` and rebinds `OriginRegistry`, `AnchorSink` and
-`Navigator` here, and nothing else changes.
+Two seams belong to the insight fabric since FAB-3 and are re-exported here, so PIL's import path stays and nothing is
+copied: `OriginRegistry` (origin tags per evidence source and the components calculus; `origins.DefaultOriginRegistry`
+is PIL's flavour) and `AnchorSink` (`publish(project_key, anchors)` over fabric `Anchor`s; PIL's `PilotAnchor` offers
+become anchors through `fabric.convert.from_pilot_anchor`, and `fabric.memory.NullAnchorSink` is the no-op sink).
+`Navigator` is not a fabric seam (navigation is the GUI's), so it stays here.
 """
 from __future__ import annotations
 
 from collections.abc import Iterable, Iterator, Sequence
 from typing import TYPE_CHECKING, Protocol, runtime_checkable
 
-from .contracts import Candidate, ChannelStatus, Kev, Nav, Observation, PilotAnchor, ToolKey
+from ..fabric.ports import AnchorSink, OriginRegistry  # noqa: F401 - re-exported
+from .contracts import Candidate, ChannelStatus, Kev, Nav, Observation, ToolKey
 
 if TYPE_CHECKING:  # annotation only: the K contract is the canonical advisory model (intelligence/1)
     from ..intelligence.contracts import IntelligenceReport
-
-
-@runtime_checkable
-class OriginRegistry(Protocol):
-    """Origin tags per evidence source and the shared-origin component calculus (`origins.DefaultOriginRegistry`)."""
-
-    @property
-    def version(self) -> int:
-        """Version of the tag table; part of `digest()`."""
-        ...
-
-    def tags_for(self, source: str) -> tuple[str, ...]:
-        """Sorted origin tags of an evidence source; an unknown source fails closed (`PT-PILOT-INPUT`)."""
-        ...
-
-    def components(self, origin_sets: Iterable[Iterable[str]]) -> tuple[tuple[str, ...], ...]:
-        """Connected components of origin tags: observations sharing a tag count once."""
-        ...
-
-    def digest(self) -> str:
-        """Digest of the table; `PilotInputs.origins_digest`."""
-        ...
-
-
-@runtime_checkable
-class AnchorSink(Protocol):
-    """Receives the anchors PIL offers (function, wanted string and API, rule, CVE, CWE); the fabric owns storage."""
-
-    def publish(self, project_key: str, anchors: Sequence[PilotAnchor]) -> None:
-        """Hand over anchors for one project; an implementation may ignore them (a no-op sink is valid)."""
-        ...
 
 
 @runtime_checkable

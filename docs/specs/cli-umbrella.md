@@ -35,7 +35,7 @@ Evolution rule (additive only). Within `enrichment-cli/1` a change may add an op
 
 ## 4. Exit codes and status
 
-Contract (`cli.py:1-6`, `23`): 0 success; 2 invalid arguments, configuration or environment, argparse errors included (`cli.py:34-35`); 3 runtime failure; 4 legitimate no result (complete evidence, zero rows); 5 cancellation (Ctrl+C maps here, `cli.py:854-860`). An unexpected exception prints one line and exits 3 (`cli.py:863-869`). Visible verbs return only 0, 2, 3, 4 or 5. Hidden workers do not: `unified _worker` returns 0, 1, 2, 3, 5 or 22 (`unified/worker.py:20`) and `secondary _binexport-worker` returns 0, 2, 20, 21 or 22 (`binexport_worker.py:14`), which reach the process exit code unchanged (`cli.py:847`).
+Contract (`cli.py:1-6`, `23`): 0 success; 2 invalid arguments, configuration or environment, argparse errors included (`cli.py:34-35`); 3 runtime failure; 4 legitimate no result (complete evidence, zero rows); 5 cancellation (Ctrl+C maps here, `cli.py:854-860`). An unexpected exception prints one line, with the exception text passed through `diagnostics.redact_log` on stderr and in the `--json` `error` field, and exits 3 (`cli.py:863-869`). Visible verbs return only 0, 2, 3, 4 or 5. Hidden workers do not: `unified _worker` returns 0, 1, 2, 3, 5 or 22 (`unified/worker.py:20`) and `secondary _binexport-worker` returns 0, 2, 20, 21 or 22 (`binexport_worker.py:14`), which reach the process exit code unchanged (`cli.py:847`).
 
 Observed `status` values: `complete`, `partial`, `failed`, `cancelled`, `unavailable` (`cli.py:467`), `stale` (`cli.py:726`), `no-results` (`backend_cli.py:90, 277`). Section 8, item 4.
 
@@ -261,7 +261,7 @@ Default for all five: not in the alpha. The audit left them open (`spec-gaps-202
 | Verb | State at HEAD | Source | Proposal |
 |---|---|---|---|
 | doctor | no verb | `completeness-audit.md:40` | [proposal] not in alpha. Diagnosis stays with `backend diagnose` (`backend_cli.py:46`) and `intel-tools probe`. |
-| export | no verb; RPT2 specifies `export PROJECT --format json\|md\|html` with exits 0/2/3/4/5 | `RPT2-report-export-contract-v2.md:121` (status: draft for build) | [proposal] not in alpha. If the RPT2 build slice is approved it ships as `cli_commands/export.py` (section 9). Owner decision: RPT2 build or alpha. |
+| export | no verb; RPT2 specifies `export PROJECT --format json\|md\|html` with exits 0/2/3/4/5 | `docs/specs/report-export-contract-v2.md:121` (status: draft for build) | [proposal] not in alpha. If the RPT2 build slice is approved it ships as `cli_commands/export.py` (section 9). Owner decision: RPT2 build or alpha. |
 | import | no verb; the two imports are `intelligence import` (`intelligence/cli.py:151`) and `secondary import-bindiff` (`cli.py:136`) | `cli.py:136` | [proposal] not in alpha. A generic `import` would hide two different inputs. |
 | show | `unified show` and `unified explain` exist (`unified/cli.py:53-62`) | `unified/cli.py` | [proposal] not in alpha. A top-level `show` would duplicate them. |
 | project | no code | `completeness-audit.md:40` | [proposal] not in alpha. Projects come from `acquire fetch`, `series create` and the desktop. |

@@ -38,3 +38,4 @@ Rule: each amendment is applied in the PR of the slice named in the last column,
 ## Status of applied rows
 - 2026-10-14, S0b: **A-16** (SPEC-10 `bindiff-adapter.md` s3), **A-17** (SPEC-11 `secondary-engine.md` s5) and **A-08** (SPEC-27 `multi-engine-evidence-calibration.md` "Decision"; an S0a row that S0a deferred and whose behaviour S0b implements) are applied. A-16 records a gap: the stored `SecondaryMatch` does not carry `basicblocks`, so S0 cannot recognise stub rows (02 s10 item 8a).
 - Still open from S0a (documentation-only status lines, not needed by S0b): A-01, A-01b, A-03, A-06, A-09, A-10, A-11, A-14.
+- 2026-10-14, S6a: **A-19** is applied (`../verification.md`, section "Unified engine gates"). **A-07** is delivered as proposal text only in `12-features2-proposal.md`; the one-line pointer in `calibration-corpus-and-model.md` s18 item 9 is left to the C9 owner (that spec is under active change by the calibration track).
