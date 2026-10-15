@@ -90,6 +90,9 @@ class _Response:
     def read(self, size: int) -> bytes:
         return self._raw.read(size)
 
+    def read1(self, size: int) -> bytes:
+        return self._raw.read1(size)
+
     def close(self) -> None:
         self._raw.close()
 
@@ -186,12 +189,15 @@ class Transport:
         if digits.isascii() and digits.isdigit() and (len(digits) > 18 or int(digits) > cap):
             raise AcquisitionError('PT-ACQ-LIMIT', f'{what} exceeds its size cap')
         total = 0
+        # read1 returns after one socket receive, so cancel and the deadline are looked at
+        # between receives; read(n) would block until n bytes arrive however slowly.
+        read = getattr(response, 'read1', response.read)
         while True:
             _cancelled(self.cancel)
             if deadline is not None and self.clock() >= deadline:
                 raise AcquisitionError('PT-ACQ-NETWORK', 'total timeout exceeded', recoverable=True)
             try:
-                chunk = response.read(min(_CHUNK, cap + 1 - total))
+                chunk = read(min(_CHUNK, cap + 1 - total))
             except TimeoutError:
                 raise _Retry(None) from None
             except (OSError, http.client.HTTPException):
