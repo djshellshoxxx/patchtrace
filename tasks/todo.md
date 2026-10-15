@@ -531,3 +531,9 @@
 
 ### [D:master-plan]
 - Master plan and categorized to-do list for finishing the project: `docs/plans/master-plan-d.md`, `docs/plans/master-todo-d.md`; panel specs prompt for ChatGPT: `docs/plans/chatgpt-panel-specs-prompt.md`.
+
+
+### [UE2-S6b:live-gates]
+- [x] G-U1, G-U2, G-U4 evaluators over `unified-outcomes/1`; G-U8 `ui-policy` tests named; live driver and workflow written; focused tests green on Linux
+- [ ] BLOCKED / not run: the first dispatch of `unified-live-gates.yml` (static checks only), the Windows leg, `live_pairs` against a real Ghidra (its pure parts are tested), mutant runs at 20 per class (about 240 Ghidriff runs, one job per class)
+- [ ] Still pending gates: G-U3 (IR-to-ladder adapter and a pinned BinDiff), G-U6 (SPEC-32 evaluation core), G-U7 (rows with atoms), G-U4 chain checks (third version per project), G-U1 P1 nuisance variants (BuildSpec link flags)

@@ -1,0 +1,192 @@
+name: Unified live gates (SPEC-31 S6b, advisory)
+# Dispatch only and advisory. Builds the Tier R pairs, the A/A pairs and the planted mutants from pinned open-source
+# sources on Linux (never executed), then runs the WHOLE unified pipeline on them with a real Ghidra, Ghidriff and the
+# extractor, on Linux and on Windows over the SAME image bytes, and feeds the outcomes to the gate report (G-U1, G-U2, G-U4).
+# The images are open-source test builds (no Microsoft binary) and live as artifacts for three days only.
+# Results belong in docs/qa.md with the run URL; nothing here gates a merge and the unified flag stays off (U-05).
+on:
+  workflow_dispatch:
+    inputs:
+      pairs:
+        description: Case card ids to build, comma-separated, or all
+        default: all
+        type: string
+      per_class:
+        description: Planted mutants per class (G-U2 needs 20 or more)
+        default: '20'
+        type: string
+permissions:
+  contents: read
+env:
+  GHIDRA_URL: https://github.com/NationalSecurityAgency/ghidra/releases/download/Ghidra_12.0.4_build/ghidra_12.0.4_PUBLIC_20260303.zip
+  GHIDRA_SHA256: c3b458661d69e26e203d739c0c82d143cc8a4a29d9e571f099c2cf4bda62a120
+  GHIDRIFF_PIN: 'ghidriff @ git+https://github.com/clearbluejar/ghidriff.git@4f5d895fcbb1eacd65efd81145922c15bb7e741d'
+jobs:
+  build:
+    name: build the pairs, the A/A pairs and the mutants (Linux)
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    env:
+      PATCHTRACE_KA_MINGW_GCC: /usr/bin/x86_64-w64-mingw32-gcc-win32
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Keep the corpus store outside the work tree
+        run: echo "PATCHTRACE_CALIB_ROOT=$RUNNER_TEMP/calib" >> "$GITHUB_ENV"
+      - name: Install the compilers and LLVM tools
+        run: sudo apt-get update && sudo apt-get install -y --no-install-recommends gcc-mingw-w64-x86-64-win32 clang lld llvm
+      - run: "python -m pip install --only-binary=:all: -e '.[dev]'"
+      - name: Toolchain report (exit 3 means BLOCKED)
+        run: python -m tools.unified.corpus toolchain
+      - name: Fetch the pinned sources and verify their digests
+        env:
+          PAIRS: ${{ inputs.pairs }}
+        run: python -m tools.unified.corpus fetch --pairs "$PAIRS"
+      - name: Build and label the release pairs
+        env:
+          PAIRS: ${{ inputs.pairs }}
+        run: python -m tools.unified.corpus build --pairs "$PAIRS"
+      - name: A/A pairs P0 P1 P2
+        run: python -m tools.unified.corpus aa --projects all
+      - name: Planted mutants of the G-U2 classes
+        env:
+          PER_CLASS: ${{ inputs.per_class }}
+        run: python -m tools.unified.corpus mutate --per-class "$PER_CLASS"
+      - name: Corpus manifest
+        run: python -m tools.unified.corpus manifest --out out/unified-corpus-manifest.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: unified-live-corpus
+          retention-days: 3
+          path: |
+            ${{ runner.temp }}/calib/known-answer/labels
+            ${{ runner.temp }}/calib/known-answer/images
+      - uses: actions/upload-artifact@v4
+        with:
+          name: unified-live-manifest
+          retention-days: 3
+          path: out/unified-corpus-manifest.json
+  pairs:
+    name: A/A and release pairs, both orientations (${{ matrix.os }})
+    needs: build
+    runs-on: ${{ matrix.os }}
+    continue-on-error: true
+    timeout-minutes: 240
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - uses: actions/download-artifact@v4
+        with:
+          name: unified-live-corpus
+          path: corpus
+      - name: Install Ghidra 12.0.4 with a pinned digest
+        run: |
+          curl -fsSL -o ghidra.zip "$GHIDRA_URL"
+          echo "$GHIDRA_SHA256  ghidra.zip" | sha256sum -c -
+          python -m zipfile -e ghidra.zip ghidra-runtime
+          echo "GHIDRA_INSTALL_DIR=$(python -c "import glob,os;print(os.path.abspath(glob.glob('ghidra-runtime/*')[0]))")" >> "$GITHUB_ENV"
+      - run: "python -m pip install --only-binary=:all: -e . pyghidra==3.0.2"
+      - name: Install the pinned Ghidriff, a source revision built like live-unified does
+        run: python -m pip install "$GHIDRIFF_PIN"
+      - name: Live run, first pass
+        run: python -m tools.unified.live_pairs --labels corpus/labels --store corpus --ghidra-dir "$GHIDRA_INSTALL_DIR" --roles release,cve-fix,P0,P1 --swap --run "${{ runner.os }}-1" --out out/outcomes-${{ runner.os }}-1.json
+      - name: Live run, second pass (determinism)
+        run: python -m tools.unified.live_pairs --labels corpus/labels --store corpus --ghidra-dir "$GHIDRA_INSTALL_DIR" --roles release,cve-fix,P0,P1 --run "${{ runner.os }}-2" --out out/outcomes-${{ runner.os }}-2.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: unified-live-outcomes-pairs-${{ runner.os }}
+          if-no-files-found: ignore
+          path: out/outcomes-*.json
+  mutants:
+    name: planted mutants of the class ${{ matrix.cls }} (Linux)
+    needs: build
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    timeout-minutes: 240
+    strategy:
+      fail-fast: false
+      matrix:
+        cls: [constant, comparison, bound, signedness, removed-check, callee-swap, field-offset, added-block, global-swap, index-swap, branch-swap, buf-resize]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - uses: actions/download-artifact@v4
+        with:
+          name: unified-live-corpus
+          path: corpus
+      - name: Install Ghidra 12.0.4 with a pinned digest
+        run: |
+          curl -fsSL -o ghidra.zip "$GHIDRA_URL"
+          echo "$GHIDRA_SHA256  ghidra.zip" | sha256sum -c -
+          python -m zipfile -e ghidra.zip ghidra-runtime
+          echo "GHIDRA_INSTALL_DIR=$(python -c "import glob,os;print(os.path.abspath(glob.glob('ghidra-runtime/*')[0]))")" >> "$GITHUB_ENV"
+      - run: "python -m pip install --only-binary=:all: -e . pyghidra==3.0.2"
+      - name: Install the pinned Ghidriff, a source revision built like live-unified does
+        run: python -m pip install "$GHIDRIFF_PIN"
+      - name: Live run on the mutants of the class
+        env:
+          CLS: ${{ matrix.cls }}
+        run: python -m tools.unified.live_pairs --labels corpus/labels --store corpus --ghidra-dir "$GHIDRA_INSTALL_DIR" --roles mutation --prefix "mut-$CLS-" --run "mutants-$CLS" --out "out/outcomes-mutants-$CLS.json"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: unified-live-outcomes-mutants-${{ matrix.cls }}
+          if-no-files-found: ignore
+          path: out/outcomes-*.json
+  report:
+    name: gate report (advisory, never strict)
+    needs: [build, pairs, mutants]
+    if: ${{ !cancelled() }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: "python -m pip install --only-binary=:all: -e '.[dev]'"
+      - uses: actions/download-artifact@v4
+        with:
+          name: unified-live-manifest
+          path: in
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: unified-live-outcomes-*
+          path: in
+          merge-multiple: true
+      - name: Write the gate report
+        run: |
+          args=()
+          for f in in/outcomes-*.json; do args+=(--outcomes "$f"); done
+          mkdir -p out
+          python -m tools.unified.gates_u --manifest in/unified-corpus-manifest.json "${args[@]}" --out out/gate-report.json --markdown out/gate-report.md
+          cat out/gate-report.md >> "$GITHUB_STEP_SUMMARY"
+          sha256sum out/gate-report.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: unified-live-gate-report
+          if-no-files-found: ignore
+          path: out/gate-report.*
