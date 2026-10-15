@@ -1008,3 +1008,7 @@ Goldens are derived from committed tool output, not from a new live capture; the
 
 ### [WB1-S7:search-panel]
 Automated: `tests/test_ui_search_panel.py` (offscreen, 29 tests, `tools/qt_gate.py --repeat 5` clean). Not verified: real index on a project, Windows, screen readers.
+
+
+### [WB2-G5G6:calls-panel]
+Offscreen: `QT_QPA_PLATFORM=offscreen python tools/qt_gate.py --repeat 5 tests/test_ui_graph_panel.py`. Screen-reader and high-contrast passes are owner gates, not done.

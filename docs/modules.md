@@ -1092,3 +1092,6 @@ Audit of `unified/` and `tools/unified/` (`docs/audits/20261015-unified-audit.md
 
 ### [WB1-S7:search-panel]
 `search/panel.py` (pure `PANEL`, factory loads Qt lazily), `search/qt_panel.py` (`SearchController`: query, side/scope/mode/sort, paged rows over `view_model.ResultsBuffer`, detail, Go to code, Other side, Copy, index build, cancel), `search/tooltip_entries.py` (`TooltipEntry` form of `tooltip_data` plus `search.cancel`). Tests: `tests/test_ui_search_panel.py`.
+
+### [WB2-G5G6:calls-panel]
+Calls panel (id graph): `callgraph/panel.py` (PanelSpec), `panel_qt.py` (widgets and controller), `panel_data.py` (Qt-free worker side), `tooltip_entries.py`. Tests `tests/test_ui_graph_panel.py`. Not built yet: DOT export, call-site reveal, settings persistence, minimap.

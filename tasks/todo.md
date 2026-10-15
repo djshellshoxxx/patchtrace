@@ -759,3 +759,6 @@
 ### [WB1-S7:search-panel]
 - [x] Search dock on the panel framework (states Q0-Q12, paged rows, navigation, cancel, shutdown).
 - [ ] Kinds menu, saved searches, suggestion popup, hit-span delegate, F3/Shift+F3, feature-owned paged model (see commit notes).
+
+### [WB2-G5G6:calls-panel]
+- [ ] Calls panel follow-ups: graph.export_dot, graph.callsite, graph/* settings, Tree as a lazy model, entry paths.
