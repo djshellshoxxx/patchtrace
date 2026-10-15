@@ -896,3 +896,7 @@ R5 contract notes: no persisted contract changed. Deviations from the card, all 
 
 ### [LBL-06:mutations-source]
 - `tools/calibration/mutations/ops_more.py` adds the nine remaining source operators (`signedness-flip`, `callee-swap`, `field-offset`, `global-swap`, `index-swap`, `branch-swap`, `buf-resize`, `string-literal`, `api-use`); `registry.py` merges them with the first sixteen (`OPERATORS_IMPL`, 25 ids) and holds `PROFILE_ONLY` (`api-use`: mingw profiles, `apply_case(profile=...)` raises `OperatorUnavailable` otherwise). `engine.make_masked_body_check` is the source-layer form of the s7 acceptance rule (optimised, address-masked assembly of the target: semantic must differ, cosmetic must be equal, not comparable is rejected). Contract Literals already carried the nine ids (LBL-00); nothing changed in `tier_r/`.
+
+
+### [DEFERRED-AUDIT-1:CORE-10] Ingestion prefix gate
+The existing `ingestion.inspect_artifact` checks up to 64 KiB from its open source stream before writing the staged copy, then hashes and writes that prefix followed by the remaining stream. `_validate_pe_prefix` rejects invalid DOS headers and available PE headers; a PE header outside that prefix is left to the existing full `validate_pe(stage)` check. Post-copy source fingerprints, content addressing, and persisted Artifact fields are unchanged. Regression coverage: `tests/test_ingestion_core10.py` and the existing mutation checks in `tests/test_core.py`; tests not run in this batch.

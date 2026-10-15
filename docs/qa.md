@@ -843,3 +843,10 @@ Automated only: `tests/test_calib_channels_*.py` (synthetic pairs). No channel v
 ### [LBL-08:msvc-cl]
 - Automated (Linux): argv, banner, host gating, nuisance variants and a build through fake `cl`/`link` pass; the real-compiler test records `blocked` (profile msvc builds only on a Windows host).
 - Not verified: any real `cl` build (A/A byte identity, PDB source-path normalisation via `/d1trimfile`, `llvm-strip` on a MSVC image, `llvm-pdbutil` inventory). Needs the windows-2022 advisory job.
+
+
+### [DEFERRED-AUDIT-1:CORE-10] Deferred audit continuation
+- CORE-10: bounded 64 KiB DOS/PE prefix rejection before any staging write; the same open stream supplies the copied prefix and remainder. Full staged-file validation and existing mutation fingerprints remain.
+- Added `tests/test_ingestion_core10.py`: eight malformed-prefix cases assert zero copy writes and staging cleanup; a header beyond the prefix is accepted only by full validation, with an invalid-signature control.
+- Hand tracing only: inspected synthetic_pe's 0x80 PE offset, 240-byte optional header and section table; traced the existing restored-mtime mutation test through the initial read and unchanged post-copy fingerprint rejection. No test, lint, compilation or native check was executed.
+- CORE-11 skipped: new persisted text/metadata caps could reject existing projects; an owner compatibility policy is required. Batch totals: eight implementation/spec fixes, seven skipped findings, fifteen findings considered. Draft PR #67 remains unverified; NEXT CORE-12.

@@ -584,3 +584,11 @@
 ### [LBL-06:mutations-source]
 - [x] Nine added source operators with goldens, compile checks, determinism, recorded rejections, masked-body rule, profile gate
 - [ ] Open: the `locate/cases/cli` split of row 06 (the 25 operators are usable through `engine.apply_case`); `buf-resize` must land `review` in the evaluation (frame-only), checked by the evalcore row, not here
+
+
+### [DEFERRED-AUDIT-1:CORE-10] Verification handoff
+- [x] Commit CORE-10's bounded prefix precheck and synthetic regression tests; retain full staged PE validation and source-change checks.
+- [ ] Run `tests/test_ingestion_core10.py`, `tests/test_core.py`, ingestion/PE tests and Ruff on Linux and Windows; no execution was permitted in this batch.
+- [ ] Run all regression tests and existing integration tests listed in draft PR #67; check real Ghidriff isolation, input snapshots, GZF retention and raw-cache paths.
+- [ ] Owner: choose compatible persisted text/metadata limits for CORE-11 before adding validation that rejects existing snapshots.
+- [ ] Continue at CORE-12 in a new conversation; this conversation reached its fifteen-finding limit.
