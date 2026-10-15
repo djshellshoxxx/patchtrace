@@ -483,11 +483,23 @@ Detection rules: probe, propose, show, decide, test, export, history.
 | `rules export` | `project` (required), `--json`, `--version` (required), `--out` (required), `--include-names`, `--allow-git-tree`, `--with-warnings` |
 | `rules history` | `project` (required), `--json`, `--lineage` |
 
+## Built verbs without a section here
+
+These verbs are in `python -m patchtrace --help`. Their flags are in the parser, and each has a user page in [docs/help](help/README.md). The command-line forms are listed there.
+
+| Verb | Subcommands | Help page |
+|---|---|---|
+| `build-env` | `show`, `delta`, `timeline` | [64](help/64-cli-build-env.md) |
+| `graph` | `neighbours`, `delta`, `leads`, `paths`, `export`, `series` | [66](help/66-cli-graph.md) |
+| `kb` | `index`, `search`, `attach`, `explain`, `export`, `products`, `components`, `pairs`, `import-pair`, `plan`, `leads`, `acquire` | [67](help/67-cli-kb.md) |
+| `search` | (flags only; `--status`, `--rebuild`, `--probe` are modes) | [72](help/72-cli-search.md) |
+| `strings` | `list`, `delta`, `explain`, `scan`, `export` | [73](help/73-cli-strings.md) |
+
 ## Specified but not built (planned)
 
 None of these exist in the parser today; each will arrive as a `cli_commands/<verb>.py` adapter and owns its own spec. Do not rely on them.
 
 | Verb | Source |
 |---|---|
-| `patch`, `search`, `graph`, `strings`, `kb`, `build-env`, `pe-meta`, `calibration` | planned verbs listed in SPEC-44 section 9 (GUI plan 8.12) |
+| `patch`, `pe-meta`, `calibration` | planned verbs listed in SPEC-44 section 9 (GUI plan 8.12) |
 | `doctor`, `export`, `import`, `show`, `project` | proposals in SPEC-44 section 7 |

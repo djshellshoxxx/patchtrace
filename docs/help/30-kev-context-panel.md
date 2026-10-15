@@ -1,34 +1,30 @@
-# CISA KEV context panel
+# Exploitation context panel
 
-Planned. The KEV plan specifies an exploitation-context dock. Its panel declaration was unavailable during review. Desktop availability and live update support are UNVERIFIED.
+The **Exploitation context** panel looks up CVE IDs in a CISA Known Exploited Vulnerabilities (KEV) catalog that is stored on your computer. Its title is `Exploitation context`. It is a right dock, shown with `Ctrl+Shift+X`, and it is tabbed with **KB and CVE**.
 
-The manifest reserves Ctrl+Shift+X. The panel is intended to look up CVE IDs in a locally retained CISA Known Exploited Vulnerabilities catalog.
+KEV membership is context about a CVE. It is not a property of a function, and it does not change any ranking or match.
 
-Import a supported catalog JSON file or review the exact request before downloading an update. **Showing the panel does not authorize a download.**
+Type CVE IDs in **CVE IDs to look up** and choose **Look up**. Results are filtered with a choice of:
 
-The planned request preview identifies the destination, headers, response limit, and stored catalog behavior. It states that the catalog request sends no project data or CVE IDs.
+- `All CVEs`
+- `Listed in KEV`
+- `Listed, ransomware use known`
+- `Not listed`
+- `No catalog or invalid ID`
 
-Read the catalog version, release time, retrieval source, and freshness alongside each lookup.
+Sort with `Input order`, or with `KEV-listed first (reading order, not a score)`. The second option only changes reading order.
 
-| Result | Interpretation |
-|---|---|
-| `Listed` | The CVE appears in the selected catalog |
-| `Not listed` | The CVE does not appear in that snapshot |
-| `Unavailable` | No usable catalog supports the lookup |
-| `Invalid ID` | The supplied identifier failed validation |
+Catalog controls:
 
-“Not listed” does not establish absence of exploitation. An old catalog may lack later additions. Ransomware use marked unknown must remain unknown.
+- **Update from CISA...** shows the exact request first. The request is sent only after you approve it. **Cancel without contacting CISA** cancels before any request.
+- **Import file...** reads a catalog JSON file you saved. It works even when network updates are off.
+- **Show changes** compares the two newest stored catalogs.
+- **Copy**, **Copy address** and **Go to CVE context** copy the record, copy the CISA page address, and go to the CVE context.
 
-CISA’s due date is catalog context. Applicability of a remediation obligation to your organization is outside this panel’s determination.
+When network updates are off in your setup, the panel says: *Network updates are switched off here. Import file still works.*
 
-The planned `KEV-listed` first option changes reading order only. It does not alter function rankings, pairing decisions, or evidence strength.
+Read the catalog's source and date with every answer. Source labels are `CISA website`, `CISA GitHub mirror` or `a local file`. A catalog that is absent, old or unreadable cannot support a current negative answer. `Not listed` applies only to the snapshot you checked. The due date shown in a record is CISA's, not a judgement about your obligations.
 
-`Copy details` with snapshot provenance when recording a lookup.
+The same catalog is available from the command line: [`patchtrace kev`](68-cli-kev.md).
 
-Sources: docs/specs/program-e/KEV-integration-plan.md, section 8; src/patchtrace/panel_manifest.py.
-
-next
-
-Worked for 1m 55s
-
-<!-- FORMAT NOTE: The raw text ends with stray UI-capture lines "next" and "Worked for 1m 55s" (likely pasted from a chat transcript). Kept as plain text; confirm and remove if unintended. -->
+Sources: `src/patchtrace/kev/panel.py`, `src/patchtrace/ui_kev.py`, `src/patchtrace/kev/view_model.py`, `src/patchtrace/kev/cli.py`.

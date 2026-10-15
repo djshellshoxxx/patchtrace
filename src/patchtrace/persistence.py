@@ -284,7 +284,8 @@ class ProjectStore:
             except OSError as exc:
                 raise ValueError(f'PT-STORAGE: project directory cannot be created: {exc.strerror or exc}') from exc
         if not self.root.is_dir():
-            raise ValueError('PT-STORAGE: project directory does not exist')
+            raise ValueError('PT-STORAGE: project path is not a directory' if self.root.exists()
+                             else 'PT-STORAGE: project directory does not exist')
         self.lock = ProjectLock(self.root)
         created_database = False
         try:

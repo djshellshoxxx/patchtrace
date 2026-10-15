@@ -10,7 +10,7 @@ Around it sit **docks**, one per feature panel. Each dock can be shown or hidden
 
 ## Which panels exist today
 
-`patchtrace panels list` is the live answer. At the time of writing (main at `21a005e`): 14 reserved, **5 built**, 9 not built.
+`patchtrace panels list` is the live answer. Checked on 2026-10-15 against the working tree: 14 reserved, **13 built**, 1 not built (Guide).
 
 | Panel | State | Default area | Shortcut | Opens with |
 |---|---|---|---|---|
@@ -19,17 +19,19 @@ Around it sit **docks**, one per feature panel. Each dock can be shown or hidden
 | Leads (`leads`) | built | left | Ctrl+Shift+L | View menu |
 | Files (`files`) | built, needs a project | bottom | none | Project > File overview, or View menu |
 | Series (`series`) | built | bottom | none | Project > Series window..., or View menu |
-| Search (`search`) | **planned** | bottom | Ctrl+Shift+F | not available |
-| Graph (`graph`) | **planned** | bottom | Ctrl+Shift+G | not available |
-| Strings (`strings`) | **planned** (tabbed with Graph) | bottom | Ctrl+Shift+T | not available |
-| Capabilities (`capabilities`) | **planned** (tabbed with Graph) | bottom | Ctrl+Shift+A | not available |
-| Build environment (`build_env`) | **planned** (tabbed with Evidence) | right | Ctrl+Shift+B | not available |
-| Rules (`rules`) | **planned** | right | Ctrl+Shift+R | not available |
-| KB (`kb`) | **planned** | right | Ctrl+Shift+K | not available |
-| KEV (`kev`) | **planned** (tabbed with KB) | right | Ctrl+Shift+X | not available |
-| Guide (`guide`) | **planned** | left | Ctrl+Shift+H | not available |
+| Search (`search`) | built, needs a project | bottom | Ctrl+Shift+F | View menu |
+| Calls (`graph`) | built, needs a project; tabbed with Strings and Capabilities | bottom | Ctrl+Shift+G | View menu |
+| Strings (`strings`) | built, needs a project; tabbed with Calls | bottom | Ctrl+Shift+T | View menu |
+| Capabilities (`capabilities`) | built, needs a project; tabbed with Calls | bottom | Ctrl+Shift+A | View menu |
+| Build environment (`build_env`) | built, needs a project; tabbed with Engine evidence | right | Ctrl+Shift+B | View menu |
+| Detection rules (`rules`) | built, needs a project | right | Ctrl+Shift+R | View menu |
+| KB and CVE (`kb`) | built | right | Ctrl+Shift+K | View menu |
+| Exploitation context (`kev`) | built; tabbed with KB and CVE | right | Ctrl+Shift+X | View menu |
+| Guide (`guide`) | **not built** (reserved only) | left | Ctrl+Shift+H | not available |
 
-Source: `src/patchtrace/panel_manifest.py`. A panel that is not built is hidden from the menus. Several of the planned panels have working headless verbs ([16](16-cli-reference.md)) but no dock yet. The Series and Files panels are read-only views; the Series dock keeps one tab per opened `series.json` ([14](14-series.md), [15](15-files-and-pe-overview.md)).
+The panel titles are the labels the desktop shows; the `Calls` title belongs to the `graph` slot and `Exploitation context` to the `kev` slot. Each built panel has a page in [docs/help](../help/README.md).
+
+Source: `src/patchtrace/panel_manifest.py`. A panel that is not built is hidden from the menus. The Related evidence dock (`src/patchtrace/fabric/panel.py`, `Ctrl+Shift+J`) has a module, but the manifest does not list it, so this build's menus do not show it. The Series and Files panels are read-only views; the Series dock keeps one tab per opened `series.json` ([14](14-series.md), [15](15-files-and-pe-overview.md)).
 
 A dock whose `requires` is not met (for example Files and Unified need an open project) stays openable but shows its state in words rather than a blank pane. Panel shortcuts always have the form **Ctrl+Shift+<letter>**; the registry rejects any other form and any collision with the main-window keys.
 
@@ -63,7 +65,8 @@ The layout is stored in OS settings (`layout/schema`, `layout/state` capped at 6
 | Alt+Left / Alt+Right | Navigate back / forward |
 | F6 / Shift+F6 | Next / previous panel region |
 | Ctrl+Shift+P | Command palette |
-| Ctrl+Shift+E, U, L (built) | Engine evidence, Unified, Leads |
+| Ctrl+Shift+E, U, L, F, G, T, A, B, R, K, X (built) | Engine evidence, Unified, Leads, Search, Calls, Strings, Capabilities, Build environment, Detection rules, KB and CVE, Exploitation context |
+| Ctrl+Shift+H (reserved, Guide not built) | Guide |
 | Ctrl+Shift+F, G, T, A, B, R, K, X, H (planned) | reserved for the planned panels above |
 
 The main-window keys are literals in `src/patchtrace/ui.py`; `gui/shortcuts.py` lists them as reserved so a panel cannot claim one. Menus have no Alt-letter mnemonics yet (SPEC-45 audit).

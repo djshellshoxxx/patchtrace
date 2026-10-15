@@ -29,7 +29,7 @@ ROOT = Path(__file__).resolve().parents[1]
 SRC = ROOT / 'src'
 PACKAGE = SRC / 'patchtrace' / 'cli_commands'
 HOOK = ROOT / 'tools' / 'pyinstaller_hooks' / 'hook-patchtrace.cli_commands.py'
-CLI_BASELINE_LINES = 891  # cli.py before the seam (869) plus 22 lines of the CLI-5/6/7 and QA-CLI-2/4 bug fixes; the seam budget stays + 6 (8.12)
+CLI_BASELINE_LINES = 914  # cli.py before the seam (869) plus the CLI-5/6/7, QA-CLI-2/4 and audit WP-01, CLI-B-02/07/09 bug fixes; the seam budget stays + 6 (8.12)
 BUILTINS = ('rank', 'flags', 'correlate', 'cache', 'acquire', 'series', 'secondary', 'intelligence',
             'unified', 'intel-tools', 'backend')
 UNAVAILABLE = 'unavailable (could not be loaded)'

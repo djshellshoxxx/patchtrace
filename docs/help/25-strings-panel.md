@@ -1,21 +1,19 @@
 # Strings panel
 
-Planned. The WB3 plan defines string extraction and comparison controls. The panel declaration was unavailable during review. Implemented and packaged coverage is UNVERIFIED.
+The **Strings** panel compares the strings of the older and newer build. It is a bottom dock, shown with `Ctrl+Shift+T`, and it is tabbed with **Calls** and **Capabilities**. It needs an open project.
 
-The planned entry shortcut is Ctrl+Shift+T. Start with the built-in scan for plain strings. FLOSS is a separate optional tool for additional extraction methods.
+Start with **Scan both builds**, which runs the built-in scan of both files. It reads the bytes and does not run either file. **Re-scan both builds** repeats it. **Cancel** stops the scan. The status line then says *Extraction cancelled. Earlier results are unchanged.*
 
-Running FLOSS with emulation requires an explicit review step. **It is distinct from the built-in byte scan and must not start merely because the panel opens.**
+Filter with the change filter, which offers `Differences`, `All changes`, `Only in newer`, `Only in older` and `Edited`. Use the text box (*Text to find*) and the **Hide noise-like strings** checkbox to narrow the table.
 
-Before reading differences, inspect the comparison basis. The two sides need compatible extraction settings. A blocked basis requires rescanning with matching settings rather than interpreting inconsistent inventories.
+Select a row to see its details. The row shows the function it links to, or *No supported function link*, and its file offset, or *No file offset*. Then:
 
-Planned row labels distinguish Only in newer, Only in older, Edited, In both, and Not compared. If a scan hits its limit, missing strings remain unresolved; they must not become definite added or removed claims.
+- **Open function** opens the function that uses the string.
+- **Open in hex** opens the string's bytes in the hex view.
+- **Copy escaped** copies the selected strings with escaped characters.
 
-Filter by side, change, type, cue, length, text, or selected function. The detail view records links and provenance. Function attribution can be unavailable or indirect.
+A string in a file is not proof that a function uses it, and an unlinked string is not proof that none does. Secret-looking text is handled as data. Copy only what you need.
 
-Planned actions include opening an attributed function, opening an available byte offset, copying escaped text, and explicitly requesting exact text. Secret-looking values are redacted by default.
+FLOSS, a separate tool with its own settings, is not part of this panel. Use [`patchtrace intel-tools`](62-cli-intel-tools.md) for it. The command-line scan is [`patchtrace strings`](73-cli-strings.md).
 
-No differences means no differences within that scan’s coverage. Text stored in unsupported encodings, compressed data, or encrypted data can remain outside it.
-
-> UNVERIFIED: final dock placement differs between the older feature plan and the central manifest.
-
-Sources: docs/specs/program-e/WB3-integration-plan.md, section 8; src/patchtrace/panel_manifest.py.
+Sources: `src/patchtrace/strings/panel.py`, `src/patchtrace/strings/qt_panel.py`, `src/patchtrace/strings/cli.py`.

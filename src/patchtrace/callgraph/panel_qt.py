@@ -13,6 +13,7 @@ from PySide6.QtGui import QKeyEvent, QKeySequence, QShortcut
 from PySide6.QtWidgets import (
     QCheckBox,
     QComboBox,
+    QFileDialog,
     QHBoxLayout,
     QPushButton,
     QSpinBox,
@@ -37,12 +38,28 @@ from ..gui.table_spec import ColumnSpec, PreparedTable, TableSpec, prepare_table
 from ..gui.text import sanitize_text
 from ..gui.tips import apply_tip, register_gui_tips, register_tips
 from . import panel_data as pd
+from .call_sites import (
+    CALLSITE_COLUMNS,
+    EDGE_COLUMNS,
+    CallSiteRow,
+    CallSiteView,
+    EdgeRow,
+    call_site_view,
+    callsite_cell,
+    edge_cell,
+    edge_rows,
+    function_code,
+)
+from .export_json import write_export
+from .limits import GraphError
+from .minimap_qt import MinimapWidget
 from .tooltip_entries import TEMPLATES, TIPS
 from .view_model import (
     ACCESSIBLE_NAMES,
     CHANGES_COLUMNS,
     FOOTER,
     NEIGHBOUR_COLUMNS,
+    NO_EDGE_TEXT,
     ChangesRow,
     ChangesView,
     NeighbourRow,
@@ -64,6 +81,7 @@ TREE_ROLE = Qt.ItemDataRole.UserRole + 1
 DIRECTIONS = (('Both', 'both'), ('Callers', 'in'), ('Callees', 'out'))
 SIDES = (('Newer', 'newer'), ('Older', 'older'))
 Loader = Callable[[object, Path | None, Callable[[], bool]], object]
+CHANNELS = ('graph-load', 'graph-rows', 'graph-query', 'graph-callsite', 'graph-export')
 
 CHANGE_WIDTHS = (26, 36, 10, 10, 24, 12, 24, 18)
 CHANGE_COLUMNS = tuple(
@@ -77,6 +95,40 @@ NEIGHBOUR_COLS = tuple(
                accessible=lambda r: r.accessible)
     for i, title in enumerate(NEIGHBOUR_COLUMNS))
 NEIGHBOUR_SPEC = TableSpec(row_key=lambda r: r.node_id, search_text=lambda r: r.name)
+EDGE_WIDTHS = (24, 24, 14, 14, 18)
+EDGE_COLS = tuple(
+    ColumnSpec(title.lower().replace(' ', '_'), title, (lambda r, i=i: edge_cell(r, i)), width_em=EDGE_WIDTHS[i],
+               accessible=lambda r: r.accessible)
+    for i, title in enumerate(EDGE_COLUMNS))
+EDGE_SPEC = TableSpec(row_key=lambda r: r.edge_id, search_text=lambda r: f'{r.caller} {r.callee}')
+SITE_WIDTHS = (8, 70)
+SITE_COLS = tuple(
+    ColumnSpec(title.lower(), title, (lambda r, i=i: callsite_cell(r, i)), width_em=SITE_WIDTHS[i],
+               accessible=lambda r: r.accessible)
+    for i, title in enumerate(CALLSITE_COLUMNS))
+SITE_SPEC = TableSpec(row_key=lambda r: str(r.line), search_text=lambda r: r.text)
+
+
+def default_save_dialog(parent: QWidget, name: str) -> str:
+    """The only way a DOT file gets a path: the analyst picks it here. Cancel returns an empty string."""
+    value, _ = QFileDialog.getSaveFileName(parent, 'Export call graph as DOT', name,
+                                           'Graphviz DOT (*.dot);;All files (*)')
+    return value
+
+
+def _build_dot(data: pd.GraphData, found: pd.Neighbourhood) -> str | pd.Failure:
+    try:
+        return pd.dot_text(data, found)
+    except GraphError as exc:
+        return pd.Failure(exc.code, exc.message)
+
+
+def _write_dot(path: str, text: str) -> int | pd.Failure:
+    try:
+        write_export(Path(path), text, 'dot', overwrite=True)  # the save dialog already asked about replacing
+    except GraphError as exc:
+        return pd.Failure(exc.code, exc.message)
+    return len(text.encode('utf-8'))
 
 
 @dataclass(frozen=True)
@@ -114,7 +166,7 @@ class CallsPanel(QWidget):
     """The widgets. It holds no result state: the controller feeds it."""
 
     option_changed = Signal()
-    action_requested = Signal(str)  # open, focus, back, copy
+    action_requested = Signal(str)  # open, focus, back, copy, callsite, export_dot
 
     def __init__(self, announcer=None) -> None:
         super().__init__()
@@ -144,25 +196,53 @@ class CallsPanel(QWidget):
         self.tree.setAccessibleName(ACCESSIBLE_NAMES['tree'])
         self.tree.setHeaderLabels(['Function'])
         self.tree.header().setAccessibleName('Call tree column headers')
+        self.edges = VirtualTable(ACCESSIBLE_NAMES['edges'])
+        self.edges.setObjectName('graph.edges_table')
+        self.sites = VirtualTable(ACCESSIBLE_NAMES['sites'])
+        self.sites.setObjectName('graph.callsite_table')
+        self.site_note = PlainLabel(NO_EDGE_TEXT, wrap=True, limit=400)
+        self.site_note.setObjectName('graph.callsite_note')
+        site_page = QWidget()
+        site_column = QVBoxLayout(site_page)
+        site_column.setContentsMargins(0, 0, 0, 0)
+        site_column.addWidget(self.edges, 2)
+        site_column.addWidget(self.site_note)
+        site_column.addWidget(self.sites, 1)
         self.canvas = GraphCanvas(announcer)
         self.canvas.setAccessibleName(ACCESSIBLE_NAMES['diagram'])
         self.canvas.setObjectName('graph.diagram')
         self.diagram_note = PlainLabel(wrap=True, limit=400)
         self.diagram_note.setObjectName('graph.diagram_note')
-        diagram = QWidget()
+        self.minimap = MinimapWidget(self.canvas)
+        self.minimap_toggle = QPushButton('Minimap')
+        self.minimap_toggle.setObjectName('graph.minimap')
+        self.minimap_toggle.setAccessibleName(ACCESSIBLE_NAMES['minimap'])
+        self.minimap_toggle.setCheckable(True)
+        self.minimap_toggle.setChecked(True)
+        self.minimap.setVisible(False)
+        self.diagram = QWidget()
+        diagram = self.diagram
         column = QVBoxLayout(diagram)
         column.setContentsMargins(0, 0, 0, 0)
-        column.addWidget(self.diagram_note)
-        column.addWidget(self.canvas, 1)
+        top = QHBoxLayout()
+        top.addWidget(self.diagram_note, 1)
+        top.addWidget(self.minimap_toggle)
+        body = QHBoxLayout()
+        body.addWidget(self.canvas, 1)
+        body.addWidget(self.minimap, 0, Qt.AlignmentFlag.AlignTop)
+        column.addLayout(top)
+        column.addLayout(body, 1)
         self.tabs = QTabWidget()
         self.tabs.setAccessibleName(ACCESSIBLE_NAMES['tabs'])
         self.tabs.setObjectName('graph.tabs')
         for widget, title in ((self.changes, 'Changes'), (self.neighbours, 'Neighbours'), (self.tree, 'Tree'),
-                              (diagram, 'Diagram')):
+                              (diagram, 'Diagram'), (site_page, 'Call sites')):
             self.tabs.addTab(widget, title)
         for widget, tip in ((self.tabs, 'graph.tabs'), (self.changes, 'graph.changes_table'),
                             (self.neighbours, 'graph.table'), (self.tree, 'graph.tree'),
-                            (self.canvas, 'graph.diagram')):
+                            (self.canvas, 'graph.diagram'), (self.edges, 'graph.edges'),
+                            (self.sites, 'graph.callsites'), (self.minimap_toggle, 'graph.minimap'),
+                            (self.minimap, 'graph.minimap')):
             apply_tip(widget, tip)
         self.detail = SafeTextView(ACCESSIBLE_NAMES['detail'], limit=DETAIL_LIMIT, wrap=True)
         self.detail.setObjectName('graph.detail')
@@ -176,7 +256,10 @@ class CallsPanel(QWidget):
         for action, text, name, tip in (('open', 'Open', ACCESSIBLE_NAMES['open'], 'graph.open'),
                                         ('focus', 'Focus here', 'Focus on selected function', 'graph.focus'),
                                         ('back', 'Back', 'Back to previous function', 'graph.back'),
-                                        ('copy', 'Copy details', 'Copy details of selection', 'graph.copy')):
+                                        ('copy', 'Copy details', 'Copy details of selection', 'graph.copy'),
+                                        ('callsite', 'Show call site', ACCESSIBLE_NAMES['callsite'], 'graph.callsite'),
+                                        ('export_dot', 'Export DOT', ACCESSIBLE_NAMES['export_dot'],
+                                         'graph.export_dot')):
             button = QPushButton(text)
             button.setAccessibleName(name)
             apply_tip(button, tip)
@@ -222,13 +305,16 @@ class CallsPanel(QWidget):
 class CallsController(ControllerBase):
     """Owns the loaded data and the requests in flight. Hooks run on the GUI thread."""
 
-    def __init__(self, ctx: PanelContext, *, loader: Loader = pd.load_graph_data) -> None:
+    def __init__(self, ctx: PanelContext, *, loader: Loader = pd.load_graph_data,
+                 save_dialog: Callable[[QWidget, str], str] = default_save_dialog) -> None:
         register_gui_tips()
         register_tips(TIPS, TEMPLATES)
         panel = CallsPanel(getattr(ctx.shell, 'announcer', None))
         super().__init__(panel)
         self.panel, self.ctx, self.port, self.tasks, self.loader = panel, ctx, ctx.project, ctx.tasks, loader
         self.epoch = 0
+        self.save_dialog = save_dialog
+        self.project_copy = None
         self.key = None
         self.data: pd.GraphData | None = None
         self.found: pd.Neighbourhood | None = None
@@ -260,6 +346,11 @@ class CallsController(ControllerBase):
         panel.neighbours.activated_key.connect(lambda _k: self._action('open'))
         panel.neighbours.focus_key.connect(lambda: self._action('focus'))
         panel.neighbours.back_key.connect(lambda: self._action('back'))
+        panel.edges.selectionModel().currentRowChanged.connect(lambda *_: self._edge_selected())
+        panel.edges.activated_key.connect(lambda _k: self._action('callsite'))
+        panel.minimap_toggle.toggled.connect(lambda _c: self._sync_minimap())
+        QShortcut(QKeySequence('M'), panel.diagram, activated=panel.minimap_toggle.toggle).setContext(
+            Qt.ShortcutContext.WidgetWithChildrenShortcut)
         panel.tree.itemExpanded.connect(self._expand)
         panel.tree.currentItemChanged.connect(lambda *_: self._tree_selected())
         panel.canvas.node_focused.connect(self._canvas_focused)
@@ -269,9 +360,10 @@ class CallsController(ControllerBase):
 
     def project_changed(self, key) -> None:
         self.epoch += 1
-        for channel in ('graph-load', 'graph-rows', 'graph-query'):
+        for channel in CHANNELS:
             self.tasks.cancel(channel)
         self.key, self.data, self.found, self.rows, self.seed = key, None, None, None, None
+        self.project_copy = None
         self.history.clear()
         self.flags, self.error, self.stale_reason, self.loading, self.tree_index = set(), ('', ''), '', False, None
         self._clear_views()
@@ -299,7 +391,7 @@ class CallsController(ControllerBase):
 
     def shutdown(self) -> None:
         self.epoch += 1
-        for channel in ('graph-load', 'graph-rows', 'graph-query'):
+        for channel in CHANNELS:
             self.tasks.cancel(channel)
 
     def show_anchor(self, anchor: AnchorRef) -> NavResult:
@@ -320,6 +412,7 @@ class CallsController(ControllerBase):
         service = getattr(self.port, 'service', None)
         root = Path(service.root) if service is not None and getattr(service, 'root', None) is not None else None
         copy, epoch, loader, key = project.model_copy(deep=True), self.epoch, self.loader, self.key
+        self.project_copy = copy
         self.loading, self.error, self.stale_reason = True, ('', ''), ''
         self.flags.discard('cancelled')
         self._render()
@@ -431,6 +524,7 @@ class CallsController(ControllerBase):
     def _apply_found(self, found: pd.Neighbourhood) -> None:
         panel = self.panel
         panel.neighbours.set_prepared(prepare_table(NEIGHBOUR_SPEC, NEIGHBOUR_COLS, found.rows))
+        self._refresh_edges(found.focus_id)
         self._fill_tree(found)
         self._fill_diagram(found)
 
@@ -473,11 +567,13 @@ class CallsController(ControllerBase):
         edges = [GraphEdgeView(e.src, e.dst, 'call') for e in found.view.edges]
         try:
             panel.canvas.set_graph(nodes, edges)
+            panel.minimap.set_points({n.key: (n.x, n.y) for n in nodes}, found.focus_id)
             panel.diagram_note.setText('')
         except GraphTooLargeError:
             panel.diagram_note.setText(STATE_TEXT['E11'].format(n=f'{len(nodes):,}'))
             self.flags.add('too-large')
         panel.diagram_note.setVisible(bool(panel.diagram_note.full_text()))
+        self._sync_minimap()
 
     def _clear_views(self, keep_changes: bool = False) -> None:
         panel = self.panel
@@ -486,6 +582,10 @@ class CallsController(ControllerBase):
         panel.neighbours.set_prepared(prepare_table(NEIGHBOUR_SPEC, NEIGHBOUR_COLS, ()))
         panel.tree.clear()
         panel.canvas.set_graph([], [])
+        panel.minimap.clear()
+        self._sync_minimap()
+        panel.edges.set_prepared(prepare_table(EDGE_SPEC, EDGE_COLS, ()))
+        self._clear_sites(NO_EDGE_TEXT)
         panel.diagram_note.setVisible(False)
         panel.detail.setPlainText('')
 
@@ -520,6 +620,7 @@ class CallsController(ControllerBase):
             if node is not None:
                 partner_ = pd.partner(self.data.snapshot, found.spec.side, node.id)
                 self.panel.detail.setPlainText(copy_text(node_detail(node, partner_, found.view)))
+            self._refresh_edges(row.node_id)
         self._enable()
 
     def _tree_selected(self) -> None:
@@ -532,6 +633,9 @@ class CallsController(ControllerBase):
 
     def _selected_node_id(self) -> str | None:
         tabs = self.panel.tabs.currentIndex()
+        if tabs == 4:
+            edge = self.current_edge()
+            return edge.caller_id if edge else None
         if tabs == 3:
             return self.panel.canvas.focused_key
         if tabs == 2:
@@ -551,7 +655,8 @@ class CallsController(ControllerBase):
             self._query()
 
     def _action(self, action: str) -> None:
-        {'open': self.open, 'focus': self.focus_here, 'back': self.back, 'copy': self.copy}[action]()
+        {'open': self.open, 'focus': self.focus_here, 'back': self.back, 'copy': self.copy,
+         'callsite': self.show_call_site, 'export_dot': self.export_dot}[action]()
 
     def open(self) -> None:
         """Open the selected function in the code panes through the anchor router; a miss changes nothing."""
@@ -598,12 +703,111 @@ class CallsController(ControllerBase):
     def copy(self) -> None:
         self.ctx.shell.copy_text(self.panel.detail.toPlainText()[:16 * 1024])
 
+    # ---- edges, call sites and the minimap ------------------------------------------------------------------------
+
+    def current_edge(self) -> EdgeRow | None:
+        index = self.panel.edges.currentIndex()
+        return index.data(ROW_ROLE) if index.isValid() else None
+
+    def _refresh_edges(self, node_id: str) -> None:
+        found = self.found
+        if found is None:
+            return
+        rows, _total = edge_rows(found.view, node_id)
+        self.panel.edges.set_prepared(prepare_table(EDGE_SPEC, EDGE_COLS, rows))
+        self._clear_sites(NO_EDGE_TEXT)
+
+    def _clear_sites(self, note: str) -> None:
+        self.panel.sites.set_prepared(prepare_table(SITE_SPEC, SITE_COLS, ()))
+        self.panel.site_note.setText(note)
+
+    def _edge_selected(self) -> None:
+        self._clear_sites(NO_EDGE_TEXT)
+        self._enable()
+
+    def show_call_site(self) -> None:
+        """Reveal the lines of the caller's stored decompiled text that name the callee (a text match)."""
+        edge, found, project = self.current_edge(), self.found, self.project_copy
+        if edge is None or found is None or project is None:
+            return
+        nodes = {n.id: n for n in found.view.nodes}
+        caller, callee = nodes.get(edge.caller_id), nodes.get(edge.callee_id)
+        if caller is None or callee is None:
+            return
+        if not caller.function_id:
+            return self._show_sites(call_site_view(None, callee.label))
+        function_id, label, epoch, edge_id = caller.function_id, callee.label, self.epoch, edge.edge_id
+        self.tasks.submit('graph-callsite',
+                          lambda _token, _report: call_site_view(function_code(project, function_id), label),
+                          lambda view, e=epoch, i=edge_id: self._sites_ready(view, e, i),
+                          lambda f, e=epoch: self._export_failed(f, e))
+
+    def _sites_ready(self, view: CallSiteView, epoch: int, edge_id: str) -> None:
+        edge = self.current_edge()
+        if not self._current(epoch) or edge is None or edge.edge_id != edge_id:
+            return
+        self._show_sites(view)
+
+    def _show_sites(self, view: CallSiteView) -> None:
+        rows: tuple[CallSiteRow, ...] = view.rows
+        self.panel.sites.set_prepared(prepare_table(SITE_SPEC, SITE_COLS, rows))
+        if view.message:
+            note = view.message
+        else:
+            shown = f'{len(rows)} of {view.total}' if view.total > len(rows) else str(view.total)
+            note = f'{shown} text match{"" if view.total == 1 else "es"} in decompiled code'
+        self.panel.site_note.setText(note)
+        self.ctx.shell.announce(note)
+
+    def _sync_minimap(self) -> None:
+        panel = self.panel
+        panel.minimap.setVisible(panel.minimap_toggle.isChecked() and panel.canvas.node_count > 0)
+        panel.minimap.refresh()
+
+    def export_dot(self) -> None:
+        """Build the DOT text on a worker; only then ask for a path. No path means no file."""
+        data, found, epoch = self.data, self.found, self.epoch
+        if data is None or found is None:
+            return
+        self.tasks.submit('graph-export', lambda _token, _report: _build_dot(data, found),
+                          lambda result, e=epoch: self._dot_ready(result, e), lambda f, e=epoch: self._export_failed(f, e))
+
+    def _dot_ready(self, result: str | pd.Failure, epoch: int) -> None:
+        if not self._current(epoch):
+            return
+        if isinstance(result, pd.Failure):
+            return self._say(f'DOT export failed: {result.code}: {result.message}')
+        path = self.save_dialog(self.panel, pd.dot_name(result))
+        if not path:
+            return self._say('Export cancelled. Nothing was written.')
+        self.tasks.submit('graph-export', lambda _token, _report: _write_dot(path, result),
+                          lambda size, e=epoch, p=path: self._written(size, e, p),
+                          lambda f, e=epoch: self._export_failed(f, e))
+
+    def _written(self, result: int | pd.Failure, epoch: int, path: str) -> None:
+        if not self._current(epoch):
+            return
+        if isinstance(result, pd.Failure):
+            return self._say(f'DOT export failed: {result.code}: {result.message}')
+        self._say(f'Wrote {sanitize_text(Path(path).name, 120)} ({result:,} bytes).')
+
+    def _export_failed(self, failure, epoch: int) -> None:
+        if self._current(epoch):
+            self._say(f'DOT export failed: {failure.code}: {failure.exception_class} stopped the work')
+
+    def _say(self, text: str) -> None:
+        """Status bar and screen reader; the committed call view is not replaced."""
+        self.ctx.shell.status(text)
+        self.ctx.shell.announce(text)
+
     def _enable(self) -> None:
         buttons = self.panel.buttons
         buttons['back'].setEnabled(bool(self.history))
         buttons['open'].setEnabled(self.data is not None and self._selected_target_exists())
         buttons['focus'].setEnabled(self.found is not None and self._selected_node_id() is not None)
         buttons['copy'].setEnabled(bool(self.panel.detail.toPlainText()))
+        buttons['callsite'].setEnabled(self.found is not None and self.current_edge() is not None)
+        buttons['export_dot'].setEnabled(self.data is not None and self.found is not None and not self.loading)
 
     def _selected_target_exists(self) -> bool:
         return self.current_change() is not None or self._selected_node_id() is not None
