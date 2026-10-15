@@ -1,0 +1,437 @@
+{
+  "$defs": {
+    "BuildInfo": {
+      "additionalProperties": false,
+      "properties": {
+        "profile": {
+          "enum": [
+            "msvc-free",
+            "mingw-gcc",
+            "mingw-clang",
+            "clang-cl",
+            "msvc"
+          ],
+          "title": "Profile",
+          "type": "string"
+        },
+        "compiler": {
+          "maxLength": 64,
+          "minLength": 1,
+          "title": "Compiler",
+          "type": "string"
+        },
+        "compiler_version": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Compiler Version",
+          "type": "string"
+        },
+        "opt": {
+          "enum": [
+            "O0",
+            "O1",
+            "O2",
+            "O3",
+            "Os"
+          ],
+          "title": "Opt",
+          "type": "string"
+        },
+        "recipe_digest": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Recipe Digest",
+          "type": "string"
+        },
+        "link_order": {
+          "default": "sorted",
+          "enum": [
+            "sorted",
+            "reversed",
+            "rotated"
+          ],
+          "title": "Link Order",
+          "type": "string"
+        },
+        "variant": {
+          "default": "",
+          "maxLength": 64,
+          "pattern": "^[a-z0-9-]*$",
+          "title": "Variant",
+          "type": "string"
+        }
+      },
+      "required": [
+        "profile",
+        "compiler",
+        "compiler_version",
+        "opt",
+        "recipe_digest"
+      ],
+      "title": "BuildInfo",
+      "type": "object"
+    },
+    "EngineRun": {
+      "additionalProperties": false,
+      "properties": {
+        "engine": {
+          "enum": [
+            "rz-diff",
+            "ghidriff"
+          ],
+          "title": "Engine",
+          "type": "string"
+        },
+        "version": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Version"
+        },
+        "output_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Output Sha256",
+          "type": "string"
+        }
+      },
+      "required": [
+        "engine",
+        "output_sha256"
+      ],
+      "title": "EngineRun",
+      "type": "object"
+    },
+    "ImageSide": {
+      "additionalProperties": false,
+      "properties": {
+        "sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Sha256",
+          "type": "string"
+        },
+        "debug_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Debug Sha256",
+          "type": "string"
+        },
+        "pdb_sha256": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Pdb Sha256"
+        },
+        "size": {
+          "maximum": 67108864,
+          "minimum": 64,
+          "title": "Size",
+          "type": "integer"
+        },
+        "file_name": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9._+-]+\\.(dll|exe)$",
+          "title": "File Name",
+          "type": "string"
+        },
+        "image_base": {
+          "maximum": 18446744073709551615,
+          "minimum": 0,
+          "title": "Image Base",
+          "type": "integer"
+        },
+        "source": {
+          "$ref": "#/$defs/SourceRef"
+        },
+        "build": {
+          "$ref": "#/$defs/BuildInfo"
+        }
+      },
+      "required": [
+        "sha256",
+        "debug_sha256",
+        "size",
+        "file_name",
+        "image_base",
+        "source",
+        "build"
+      ],
+      "title": "ImageSide",
+      "type": "object"
+    },
+    "RowDoc": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "maxLength": 300,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "y": {
+          "enum": [
+            0,
+            1
+          ],
+          "title": "Y",
+          "type": "integer"
+        },
+        "identities": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 4,
+          "title": "Identities",
+          "type": "array"
+        },
+        "x": {
+          "items": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "maxItems": 128,
+          "title": "X",
+          "type": "array"
+        }
+      },
+      "required": [
+        "id",
+        "y",
+        "identities",
+        "x"
+      ],
+      "title": "RowDoc",
+      "type": "object"
+    },
+    "SourceRef": {
+      "additionalProperties": false,
+      "properties": {
+        "git": {
+          "anyOf": [
+            {
+              "pattern": "^https://[A-Za-z0-9.-]+/[A-Za-z0-9._/-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Git"
+        },
+        "suite": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9._-]+/[A-Za-z0-9._-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Suite"
+        },
+        "commit": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{40}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Commit"
+        },
+        "version": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9._-]{1,64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Version"
+        },
+        "ref": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Ref"
+        },
+        "license_spdx": {
+          "maxLength": 64,
+          "minLength": 1,
+          "title": "License Spdx",
+          "type": "string"
+        },
+        "mutation": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9._-]{1,96}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Mutation"
+        }
+      },
+      "required": [
+        "license_spdx"
+      ],
+      "title": "SourceRef",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "description": "Candidate rows of one pair in `features/1` column order, with the provenance the split audit needs.",
+  "properties": {
+    "contract": {
+      "const": "tier-r-feature-rows/1",
+      "title": "Contract",
+      "type": "string"
+    },
+    "pair_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,95}$",
+      "title": "Pair Id",
+      "type": "string"
+    },
+    "stratum": {
+      "enum": [
+        "release",
+        "cve",
+        "control",
+        "mutation",
+        "aa",
+        "noise",
+        "authored"
+      ],
+      "title": "Stratum",
+      "type": "string"
+    },
+    "project": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,95}$",
+      "title": "Project",
+      "type": "string"
+    },
+    "lineage": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,95}$",
+      "title": "Lineage",
+      "type": "string"
+    },
+    "family": {
+      "maxLength": 64,
+      "minLength": 1,
+      "pattern": "^[a-z0-9-]+$",
+      "title": "Family",
+      "type": "string"
+    },
+    "older": {
+      "$ref": "#/$defs/ImageSide"
+    },
+    "newer": {
+      "$ref": "#/$defs/ImageSide"
+    },
+    "label_digest": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Label Digest",
+      "type": "string"
+    },
+    "profile": {
+      "enum": [
+        "G",
+        "G+R"
+      ],
+      "title": "Profile",
+      "type": "string"
+    },
+    "columns": {
+      "items": {
+        "type": "string"
+      },
+      "maxItems": 128,
+      "title": "Columns",
+      "type": "array"
+    },
+    "engine_runs": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/EngineRun"
+      },
+      "title": "Engine Runs",
+      "type": "array"
+    },
+    "excluded": {
+      "additionalProperties": {
+        "type": "integer"
+      },
+      "title": "Excluded",
+      "type": "object"
+    },
+    "rows": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/RowDoc"
+      },
+      "maxItems": 200000,
+      "title": "Rows",
+      "type": "array"
+    },
+    "digest_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Digest Sha256",
+      "type": "string"
+    }
+  },
+  "required": [
+    "contract",
+    "pair_id",
+    "stratum",
+    "project",
+    "lineage",
+    "family",
+    "older",
+    "newer",
+    "label_digest",
+    "profile",
+    "columns",
+    "digest_sha256"
+  ],
+  "title": "PairRows",
+  "type": "object",
+  "$id": "https://patchtrace.local/schemas/tier-r-feature-rows/1/PairRows.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}
