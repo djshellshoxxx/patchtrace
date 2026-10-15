@@ -266,7 +266,7 @@ def _g_u_outcomes(gate: GateSpec, inputs: Inputs, facts: dict[str, dict]) -> tup
         what = 'corpus manifest' if inputs.manifest is None and gate.id != 'G-U4' else 'unified-outcomes file (python -m tools.unified.live_pairs)'
         return 'insufficient-data', [f'no {what} supplied'], (), {'consumes': gate.consumes, 'corpus': facts.get(gate.id)}
     if gate.id == 'G-U4':
-        status, reasons, observed = evaluators.g_u4(inputs.outcomes)
+        status, reasons, observed = evaluators.g_u4(inputs.outcomes, inputs.manifest)
     else:
         evaluate = evaluators.g_u1 if gate.id == 'G-U1' else evaluators.g_u2
         status, reasons, observed = evaluate(inputs.manifest, inputs.outcomes)

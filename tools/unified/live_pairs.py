@@ -60,7 +60,9 @@ def select(docs: Sequence[C.KnownAnswerLabels], pairs: str, roles: str, prefix: 
 def outcome_of(service: ProjectService, doc: C.KnownAnswerLabels, orientation: outcomes.Orientation) -> outcomes.PairOutcome:
     """The rows of the current stored unified result of the project, reduced; nothing is recomputed."""
     loaded = pipeline.load_current(service, pipeline.make_plan(service))
-    return outcomes.collect(store.read_rows(loaded.directory, loaded.manifest), doc, orientation=orientation)
+    facts = {f.row_id: f for f in store.read_facts(loaded.directory, loaded.manifest)}
+    return outcomes.collect(store.read_rows(loaded.directory, loaded.manifest), doc, orientation=orientation,
+                            facts=facts)
 
 
 def analyse_pair(doc: C.KnownAnswerLabels, store_dir: Path, backend: BackendConfig, work: Path,

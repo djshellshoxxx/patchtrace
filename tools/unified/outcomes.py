@@ -8,11 +8,12 @@ never shipped.
 from __future__ import annotations
 
 import json
-from collections.abc import Iterable
-from typing import Literal
+from collections.abc import Iterable, Mapping
+from typing import Any, Literal
 
 from pydantic import BaseModel, ConfigDict, ValidationError
 
+from patchtrace.unified.contracts import SEMANTIC_CLASSES
 from tools.calibration.common import digest, strict_json
 from tools.calibration.tier_r import contracts as C
 
@@ -29,6 +30,8 @@ class OutcomeRow(_Strict):
     newer: tuple[int, ...]
     decision: str
     materiality: str
+    proof: str = ''                 # the proof of the stored change facts (`COS-PSEUDO/1`, ...), '' when none was joined
+    cheap_semantic: bool = False    # a semantic delta from a channel other than the decompiler's C6 (G-U4 cross-tier check)
 
 
 class Planted(_Strict):
@@ -54,10 +57,13 @@ class OutcomeSet(_Strict):
     outcomes_sha256: C.Sha256
 
 
-def row_of(match) -> OutcomeRow:
-    """From a stored `UnifiedMatch`: the RVAs of both sides and the two verdict words, nothing else."""
+def row_of(match, fact=None) -> OutcomeRow:
+    """From a stored `UnifiedMatch`: the RVAs of both sides and the two verdict words; with the row's stored
+    `ChangeFacts` also its proof and whether a cheap-tier semantic delta stands beside it."""
+    cheap = fact is not None and any(d.cls in SEMANTIC_CLASSES and d.channel != 'C6' for d in fact.deltas)
     return OutcomeRow(older=tuple(s.rva for s in match.older), newer=tuple(s.rva for s in match.newer),
-                      decision=match.decision, materiality=match.materiality)
+                      decision=match.decision, materiality=match.materiality,
+                      proof=(fact.proof or '') if fact is not None else '', cheap_semantic=cheap)
 
 
 def planted_of(doc: C.KnownAnswerLabels) -> Planted | None:
@@ -77,8 +83,11 @@ def collect_rows(out: Iterable[OutcomeRow], doc: C.KnownAnswerLabels, *, orienta
                        rows_sha256=digest({'rows': [r.model_dump(mode='json') for r in rows]}, 'none'))
 
 
-def collect(matches: Iterable, doc: C.KnownAnswerLabels, *, orientation: Orientation = 'forward') -> PairOutcome:
-    return collect_rows((row_of(m) for m in matches), doc, orientation=orientation)
+def collect(matches: Iterable, doc: C.KnownAnswerLabels, *, orientation: Orientation = 'forward',
+            facts: Mapping[str, Any] | None = None) -> PairOutcome:
+    """`facts` maps `row_id` to the stored `ChangeFacts`; without it the rows carry no proof."""
+    facts = facts or {}
+    return collect_rows((row_of(m, facts.get(m.row_id)) for m in matches), doc, orientation=orientation)
 
 
 def build(run: str, platform: str, pairs: Iterable[PairOutcome]) -> OutcomeSet:

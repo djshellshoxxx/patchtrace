@@ -309,6 +309,31 @@ def run_nuisance(session: Session, base: BaseSource, kinds: Sequence[str], *, op
     return docs, skipped
 
 
+def run_chains(session: Session, base: BaseSource, chains: Sequence[tuple[str, str]], *, opt: str = 'O2'
+               ) -> tuple[list[dict], list[str]]:
+    """Three-build chains of one source for the metamorphic gate: A is the `aa-a` rebuild, B and C are built with the two
+    nuisances of a chain; the pairs A-B, B-C and A-C are P1 pairs (same source, so any real change is a bug)."""
+    docs, skipped = [], []
+    a = session.build(base.spec(opt=opt, variant='aa-a'))
+    for first, second in chains:
+        name = f'{first}-{second}'
+        try:
+            b = session.build(base.spec(opt=opt, variant=f'aa-{first}', nuisance=first))
+            c = session.build(base.spec(opt=opt, variant=f'aa-{second}', nuisance=second))
+        except (Blocked, BuildError) as exc:
+            skipped.append(f'chain {name}: {exc}'[:300])
+            continue
+        sides = [session.side(x, base.root) for x in (a, b, c)]
+        for leg, (i, j) in (('ab', (0, 1)), ('bc', (1, 2)), ('ac', (0, 2))):
+            docs.append(finalize(pid=pair_id('aa', base.project, base.tag, opt, 'chain', name, leg), stratum='aa',
+                                 method='aa-layout', base_old=base, base_new=base, old=sides[i], new=sides[j],
+                                 label_source='same-source',
+                                 functions=label_construction(sides[i], sides[j], label_source='same-source',
+                                                              semantic=False),
+                                 case={'kind': 'chain', 'chain': name, 'leg': leg, 'opt': opt}))
+    return docs, skipped
+
+
 def noise_variants(base: BaseSource, tools: Toolchain) -> list[tuple[str, str, str, str]]:
     """(profile_a, opt_a, profile_b, opt_b) pairs that can build here."""
     out = [(base.profile, a, base.profile, b) for a, b in NOISE_OPT_PAIRS]

@@ -141,8 +141,10 @@ def _accepted(manifest: corpus_manifest.CorpusManifest, class_id: str) -> tuple[
 
 FLIP = {'older-only': 'newer-only', 'newer-only': 'older-only'}
 PAIRING = ('matched', 'older-only', 'newer-only')
-CHAIN_WAIT = ('pending: the 3-build chain checks need a third consecutive version per project (the catalogue has two), '
-              'and "a cheap-tier semantic delta never coexists with COS-PSEUDO" needs the stored facts, not only rows')
+NON_SEMANTIC = ('unchanged', 'cosmetic')
+CHAIN_WAIT = ('pending: no 3-build chain (A-B, B-C and A-C over three distinct images of one project) is in the corpus '
+              'manifest; P1 chains come from `corpus aa`, release chains need a third consecutive version per project '
+              '(the catalogue has two)')
 
 
 def _pairing(rows, mirror: bool) -> frozenset:
@@ -151,7 +153,7 @@ def _pairing(rows, mirror: bool) -> frozenset:
     return frozenset((r.older, r.newer, r.decision) for r in rows if r.decision in PAIRING)
 
 
-def g_u4(sets: Sequence[OutcomeSet]) -> Result:
+def g_u4(sets: Sequence[OutcomeSet], manifest: corpus_manifest.CorpusManifest | None = None) -> Result:
     """Equal row digests for the same pair across runs (two runs, Linux against Windows, permuted input), and the
     swapped orientation of a pair mirrors the forward one: the same matched set, older-only and newer-only trade places."""
     reasons: list[str] = []
@@ -183,10 +185,80 @@ def g_u4(sets: Sequence[OutcomeSet]) -> Result:
             mirrored[pair_id] = 'mirrored' if ok else 'not-mirrored'
             if not ok:
                 reasons.append(f'{pair_id} run {run}: the swapped orientation is not the mirror image of the forward one')
-    observed = {'compared': compared, 'mirrored': mirrored, 'not_comparable': not_comparable}
-    if reasons:
-        return 'fail', reasons, observed
+    chain_reasons, chain_notes, chains = _chains(manifest, sets)
+    rows_all = [(s.run, p.pair_id, r) for s in sets for p in s.pairs for r in p.rows]
+    pseudo = [f'{pid} run {run}: a COS-PSEUDO/1 row holds a cheap-tier semantic delta'
+              for run, pid, r in rows_all if r.proof == 'COS-PSEUDO/1' and r.cheap_semantic]
+    observed = {'compared': compared, 'mirrored': mirrored, 'not_comparable': not_comparable, 'chains': chains,
+                'pseudo_rows': sum(1 for _, _, r in rows_all if r.proof == 'COS-PSEUDO/1'), 'pseudo_violations': len(pseudo)}
+    if reasons or chain_reasons or pseudo:
+        return 'fail', [*reasons, *chain_reasons, *pseudo], observed
     if not compared and not mirrored:
         return 'insufficient-data', ['no pair has two runs over the same bytes or a swapped orientation to compare',
                                      *notes], observed
-    return 'pending', [*notes, CHAIN_WAIT], observed
+    if not chains['found']:
+        return 'pending', [*notes, CHAIN_WAIT], observed
+    if chain_notes or not chains['composable']:
+        return 'insufficient-data', [*notes, *chain_notes, *([] if chains['composable'] else [
+            'no function is cosmetic or unchanged on both legs of a chain, so the check had nothing to compose'])], observed
+    return 'pass', notes, observed
+
+
+def _rows_by(rows, side: str) -> dict:
+    """Matched one-to-one rows keyed by the RVA of the named side."""
+    return {getattr(r, side)[0]: r for r in rows if r.decision == 'matched' and len(r.older) == 1 and len(r.newer) == 1}
+
+
+def find_chains(manifest: corpus_manifest.CorpusManifest | None) -> list[tuple[str, str, str]]:
+    """(A-B, B-C, A-C) pair ids over three distinct images of one project, read from the image digests."""
+    if manifest is None:
+        return []
+    pairs = sorted((p for p in manifest.pairs if p.gated and not p.x_vs_x), key=lambda p: p.pair_id)
+    found = []
+    for ab in pairs:
+        for bc in (p for p in pairs if p.project == ab.project and p.older.sha256 == ab.newer.sha256):
+            for ac in (p for p in pairs if p.project == ab.project and p.older.sha256 == ab.older.sha256
+                       and p.newer.sha256 == bc.newer.sha256):
+                if len({ab.older.sha256, ab.newer.sha256, bc.newer.sha256}) == 3:
+                    found.append((ab.pair_id, bc.pair_id, ac.pair_id))
+    return found
+
+
+def _chain_run(ab: PairOutcome, bc: PairOutcome, ac: PairOutcome) -> tuple[int, list[str]]:
+    """(functions that are non-semantic on both legs, those whose A-C verdict is `material`)."""
+    by_old_bc, by_old_ac = _rows_by(bc.rows, 'older'), _rows_by(ac.rows, 'older')
+    composable, material = 0, []
+    for r1 in _rows_by(ab.rows, 'older').values():
+        r2, r3 = by_old_bc.get(r1.newer[0]), by_old_ac.get(r1.older[0])
+        if r2 is None or r3 is None or r1.materiality not in NON_SEMANTIC or r2.materiality not in NON_SEMANTIC \
+                or r3.newer != r2.newer:
+            continue
+        composable += 1
+        if r3.materiality == 'material':
+            material.append(f'{r1.older[0]:#x}')
+    return composable, material
+
+
+def _chains(manifest, sets: Sequence[OutcomeSet]) -> tuple[list[str], list[str], dict[str, Any]]:
+    found = find_chains(manifest)
+    reasons: list[str] = []
+    notes: list[str] = []
+    state: dict[str, str] = {}
+    composable = 0
+    for legs in found:
+        name = '|'.join(legs)
+        got = [dict(forward(sets, pid)) for pid in legs]
+        runs = sorted(set(got[0]) & set(got[1]) & set(got[2]))
+        if not runs:
+            notes.append(f'chain {name}: no run holds all three legs, not evaluated')
+            state[name] = 'missing'
+            continue
+        state[name] = 'pass'
+        for run in runs:
+            n, material = _chain_run(got[0][run], got[1][run], got[2][run])
+            composable += n
+            if material:
+                state[name] = 'fail'
+                reasons.append(f'chain {name} run {run}: cosmetic from A to B and from B to C yet material from A to C '
+                               f'at {", ".join(material[:5])}')
+    return reasons, notes, {'found': len(found), 'composable': composable, 'evaluated': dict(sorted(state.items()))}

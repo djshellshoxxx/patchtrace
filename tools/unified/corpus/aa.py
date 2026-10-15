@@ -13,6 +13,7 @@ from dataclasses import dataclass, field
 from tools.calibration.tier_r import factory as F
 from tools.calibration.tier_r.build import NUISANCES
 
+CHAINS = (('icf', 'timestamp'), ('guid', 'path'))     # A = the rebuild, B and C = these nuisances (G-U4 3-build chain)
 METHOD_CLASS = {'aa-rebuild': 'P0', 'aa-layout': 'P1', 'toolchain-noise': 'P2'}
 P1_KINDS = ('link-order', *NUISANCES)       # what G-U1 wants covered; a kind with no pair keeps the gate pending
 
@@ -32,8 +33,9 @@ def classify(doc) -> str | None:
 def run(session: F.Session, base: F.BaseSource, *, opt: str = 'O2') -> AaResult:
     docs = F.run_aa(session, base, opt=opt, layout=True)
     nuisance, unbuilt = F.run_nuisance(session, base, NUISANCES, opt=opt)
+    chains, chain_skipped = F.run_chains(session, base, CHAINS, opt=opt)
     noise, skipped = F.run_noise(session, base)
-    return AaResult([*docs, *nuisance, *noise], [*unbuilt, *skipped])
+    return AaResult([*docs, *nuisance, *chains, *noise], [*unbuilt, *chain_skipped, *skipped])
 
 
 def variant_of(doc) -> str:

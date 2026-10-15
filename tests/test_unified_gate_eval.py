@@ -14,7 +14,7 @@ sys.path[:0] = [str(ROOT), str(TESTS), str(ROOT / 'src')]
 from unified_s6_helpers import label_doc, mutation_doc  # noqa: E402
 
 from tools.calibration.tier_r.contracts import ContractError  # noqa: E402
-from tools.unified import gates_u, outcomes  # noqa: E402
+from tools.unified import evaluators, gates_u, outcomes  # noqa: E402
 from tools.unified.corpus import aa  # noqa: E402
 from tools.unified.corpus import manifest as corpus_manifest  # noqa: E402
 from tools.unified.mutations import classes, templates  # noqa: E402
@@ -284,7 +284,7 @@ def g4(manifest, *sets):
     return gate(gates_u.build_report(inputs(manifest, *sets)), 'G-U4')
 
 
-def test_g_u4_equal_rows_across_runs_and_a_mirrored_swap_leave_only_the_unbuilt_chain_pending():
+def test_g_u4_equal_rows_across_runs_and_a_mirrored_swap_leave_only_the_missing_chain_pending():
     doc = label_doc('rel', 'release')
     m = corpus_manifest.build([doc], {})
     a = run('linux', pair(doc, det_rows()), pair(doc, swapped(det_rows()), orientation='swapped'))
@@ -321,3 +321,61 @@ def test_g_u4_runs_over_different_image_bytes_are_not_compared_and_never_a_failu
     g = g4(corpus_manifest.build([doc], {}), run('linux', pair(doc, det_rows())), run('windows', pair(rebuilt, other)))
     assert g.status == 'insufficient-data' and g.observed['compared'] == {}
     assert g.observed['not_comparable'] == {'rel': ['linux', 'windows']} and any('bytes' in r for r in g.reasons)
+
+
+# ---- G-U4 3-build chain and the cross-tier check ---------------------------------------------------------------------------
+
+SHA = {'A': 'a' * 64, 'B': 'b' * 64, 'C': 'c' * 64}
+
+
+def chain_docs():
+    return {leg: label_doc(f'ch-{leg}', 'aa', method='aa-layout', older=SHA[leg[0].upper()], newer=SHA[leg[1].upper()])
+            for leg in ('ab', 'bc', 'ac')}
+
+
+def chain_run(ac_materiality='cosmetic', ab='cosmetic', bc='cosmetic', name='linux'):
+    docs = chain_docs()
+    given = {'ab': ab, 'bc': bc, 'ac': ac_materiality}
+    return run(name, *(pair(docs[k], rows(5, materiality=m)) for k, m in given.items()))
+
+
+def chain_manifest():
+    return corpus_manifest.build(list(chain_docs().values()), {})
+
+
+def test_find_chains_reads_three_distinct_images_of_one_project_from_the_manifest():
+    assert evaluators.find_chains(chain_manifest()) == [('ch-ab', 'ch-bc', 'ch-ac')]
+    assert evaluators.find_chains(corpus_manifest.build([chain_docs()['ab'], chain_docs()['bc']], {})) == []
+    assert evaluators.find_chains(None) == []
+
+
+def test_g_u4_a_chain_that_is_cosmetic_on_both_legs_must_not_be_material_end_to_end():
+    ok = g4(chain_manifest(), chain_run(), chain_run(name='windows'))
+    assert ok.status == 'pass'
+    assert ok.observed['chains'] == {'found': 1, 'composable': 10, 'evaluated': {'ch-ab|ch-bc|ch-ac': 'pass'}}
+    bad = g4(chain_manifest(), chain_run(ac_materiality='material'))
+    assert bad.status == 'fail' and any('cosmetic from A to B' in r and 'material from A to C' in r for r in bad.reasons)
+
+
+def test_g_u4_a_material_leg_is_no_contradiction_and_a_chain_without_composable_functions_is_insufficient():
+    g = g4(chain_manifest(), chain_run(ac_materiality='material', ab='material'),
+           chain_run(ac_materiality='material', ab='material', name='windows'))
+    assert g.observed['chains']['composable'] == 0 and g.status == 'insufficient-data'
+
+
+def test_g_u4_a_chain_missing_a_leg_is_insufficient_data_never_a_pass():
+    docs = chain_docs()
+    partial = run('linux', pair(docs['ab'], rows()), pair(docs['bc'], rows()))
+    g = g4(chain_manifest(), partial, run('windows', pair(docs['ab'], rows())))
+    assert g.status == 'insufficient-data' and any('no run holds all three legs' in r for r in g.reasons)
+
+
+def test_g_u4_cos_pseudo_beside_a_cheap_tier_semantic_delta_fails():
+    doc = label_doc('rel', 'release')
+    clean = [R(older=(0x1000,), newer=(0x1000,), decision='matched', materiality='cosmetic', proof='COS-PSEUDO/1')]
+    dirty = [R(older=(0x1000,), newer=(0x1000,), decision='matched', materiality='cosmetic', proof='COS-PSEUDO/1',
+               cheap_semantic=True)]
+    m = corpus_manifest.build([doc], {})
+    assert g4(m, run('a', pair(doc, clean)), run('b', pair(doc, clean))).observed['pseudo_violations'] == 0
+    bad = g4(m, run('a', pair(doc, dirty)))
+    assert bad.status == 'fail' and any('COS-PSEUDO/1' in r for r in bad.reasons)

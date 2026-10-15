@@ -541,6 +541,7 @@
 
 ### [UE3-S6c:gates]
 - [x] G-U1 P1 nuisance variants (generator and evaluator coverage); built only on the next live `unified-live-gates.yml` run (not dispatched here)
+- [x] G-U4 3-build chain (P1 chains) and COS-PSEUDO cross-tier check
 - [ ] BLOCKED / not run: every live part; whether lld honours each nuisance as intended is known only from the first Tier R build
 
 
