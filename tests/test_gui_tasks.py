@@ -455,6 +455,18 @@ def test_legacy_registries_are_adopted_into_shutdown(monkeypatch, qtbot):
     assert not thread.isRunning() and tasks.legacy_threads() == []
 
 
+@pytest.mark.parametrize('module, attribute', [('ui', '_DISCOVERY_THREADS'), ('ui_bundle_setup', '_THREADS')],
+                         ids=['ui-discovery', 'bundle-setup'])
+def test_unlisted_legacy_registries_are_joined_at_shutdown(monkeypatch, qtbot, module, attribute):
+    thread = _LegacyThread()
+    monkeypatch.setitem(sys.modules, f'patchtrace.{module}', types.SimpleNamespace(**{attribute: {thread}}))
+    thread.start()
+    qtbot.waitUntil(thread.isRunning, timeout=5000)
+    assert tasks.legacy_threads() == [thread]
+    assert tasks.join_legacy_threads(timeout=5) == []
+    assert not thread.isRunning()
+
+
 # ---- tools/qt_gate.py -----------------------------------------------------------------------------
 
 
