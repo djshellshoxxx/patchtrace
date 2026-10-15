@@ -220,3 +220,13 @@ def test_cache_status_unusable_path_is_a_runtime_error(tmp_path, capsys):
     blocker.write_text('x')
     code, out, _ = run(['cache', 'status', '--cache-dir', str(blocker), '--json'], capsys)
     assert code == 3 and json.loads(out)['status'] == 'failed'
+
+
+@pytest.mark.parametrize('name', ['evil\x1b[2J\x1b[31mNAME', 'gnp\u202eexe', 'c1\x9b2Jx'], ids=['esc', 'rlo', 'c1-csi'])
+def test_text_output_escapes_hostile_characters(name, capsys):
+    from argparse import Namespace
+    cli._emit(Namespace(json=False), 'rank', 'complete', None, [f'warn {name}'], f'  1 {name}\nsecond line')
+    captured = capsys.readouterr()
+    for stream in (captured.out, captured.err):
+        assert not any(ch in stream for ch in '\x1b\x9b\u202e')
+    assert captured.out.endswith('second line\n') and captured.out.count('\n') == 2

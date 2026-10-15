@@ -16,6 +16,7 @@ from pathlib import Path
 from .backend_cli import cmd_backend
 from .backend_cli import register as register_backend
 from .diagnostics import redact_log
+from .hostile_text import escape_text
 from .intelligence import cli as intelligence_cli
 from .intelligence.tools import cli as intel_tools_cli  # SPEC-29 tools dispatcher (cheap import)
 
@@ -183,7 +184,8 @@ def _emit(args, command: str, status: str, result, warnings: list[str], text: st
                                      'result': result, 'warnings': warnings}, sort_keys=True) + '\n')
     else:
         for warning in warnings:
-            print(f'warning: {warning}', file=sys.stderr)
+            print(f'warning: {escape_text(warning)}', file=sys.stderr)
+        text = escape_text(text, keep='\n')  # names and evidence are untrusted: no ESC or bidi controls reach a terminal
         sys.stdout.write(text + ('\n' if text and not text.endswith('\n') else ''))
 
 
