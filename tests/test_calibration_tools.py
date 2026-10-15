@@ -363,7 +363,8 @@ def test_locked_test_runs_once_per_preregistration(tmp_path):
 def test_schemas_render_and_committed_copies_are_current():
     rendered = render()
     assert set(rendered) == {'CalibrationArtifact.json', 'CorpusManifest.json', 'LabelRecord.json',
-                             'CalibrationReport.json', 'ValidationLedger.json'}
+                             'CalibrationReport.json', 'ValidationLedger.json', 'PairRows.json',
+                             'ShiftLadder.json'}
     folder = ROOT / 'docs' / 'schemas' / 'calibration'
     for name, text in rendered.items():
         assert (folder / name).read_text(encoding='utf-8') == text
