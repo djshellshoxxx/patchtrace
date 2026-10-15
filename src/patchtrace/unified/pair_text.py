@@ -24,7 +24,7 @@ from pathlib import Path
 from ..alignment import diff_hunks
 from ..gui.pair_text import PairHunk, PairText, align_pair
 from . import store
-from .contracts import IrRef, SideRef
+from .contracts import IrRef, SideRef, strip_unsafe
 from .facts.align import align
 from .facts.fnview import FnView, load_view
 from .ir.place import ir_dir
@@ -276,7 +276,7 @@ class RowCodeSource:
             return _Side(message=DECOMP_MISSING)
         status, code = found
         if status == 'ok' and code:
-            return _Side(tuple(code.splitlines()))
+            return _Side(tuple(strip_unsafe(line, keep_layout=True) for line in code.splitlines()))
         return _Side(message=DECOMP_STATUS.get(status, DECOMP_MISSING))
 
     def _decompiled(self, vm, older_refs, newer_refs, producer: str) -> CodeChannel:

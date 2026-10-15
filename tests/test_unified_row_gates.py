@@ -10,10 +10,11 @@ from types import SimpleNamespace
 TESTS = Path(__file__).resolve().parent
 ROOT = TESTS.parent
 sys.path[:0] = [str(ROOT), str(TESTS), str(ROOT / 'src')]
-from unified_s6_helpers import label_doc, mutation_doc  # noqa: E402
+from unified_s6_helpers import label_doc  # noqa: E402
 
 from tools.unified import cluster, gates_u, outcomes, rowgates  # noqa: E402
 from tools.unified.corpus import manifest as corpus_manifest  # noqa: E402
+from tools.unified.mutations import classes  # noqa: E402
 
 Basis, R = outcomes.Basis, outcomes.OutcomeRow
 
@@ -144,8 +145,13 @@ def test_g_u3_a_ghidriff_exact_pair_must_be_matched_or_contested_on_an_aa_pair()
 
 # ---- G-U6 -------------------------------------------------------------------------------------------------------------------
 
-def g6_corpus(lineages=2):
-    return [mutation_doc(f'mut-constant-{i:02d}', target='ka_constant_00') for i in range(lineages)]
+LINEAGES = cluster.MIN_GROUPS_HEADLINE      # fewer lineages make an interval anti-conservative: no gate passes on it
+
+
+def g6_corpus(lineages=LINEAGES):
+    case = {'unified_class': 'constant', 'target': 'ka_constant_00', 'verdicts': list(classes.BY_ID['constant'].verdicts)}
+    return [label_doc(f'mut-constant-{i:02d}', 'mutation', target='ka_constant_00', project=f'p{i}', case=case)
+            for i in range(lineages)]
 
 
 def g6_pair(doc, *, unified_false=0, legacy_false=5, planted_unified='material', planted_legacy=True, tool='ghidriff'):
@@ -156,16 +162,16 @@ def g6_pair(doc, *, unified_false=0, legacy_false=5, planted_unified='material',
     return pair(doc, rows, legacy_tools=(tool,))
 
 
-def g6(**args):
-    docs = g6_corpus()
+def g6(lineages=LINEAGES, **args):
+    docs = g6_corpus(lineages)
     return gate(corpus_manifest.build(docs, {}), run(*(g6_pair(d, **args) for d in docs)), 'G-U6')
 
 
 def test_g_u6_fewer_material_false_leads_at_equal_recall_passes_with_the_numbers():
-    g = g6(unified_false=2, legacy_false=5)                                  # 4 against 10: a 60 % reduction
+    g = g6(unified_false=2, legacy_false=5)                                  # 60 against 150: a 60 % reduction
     assert g.status == 'pass'
     tool = g.observed['per_tool']['ghidriff']
-    assert (tool['false_leads_unified'], tool['false_leads_legacy'], tool['planted']) == (4, 10, 2)
+    assert (tool['false_leads_unified'], tool['false_leads_legacy'], tool['planted']) == (60, 150, 30)
     assert tool['reduction']['point'] == 0.6 and tool['recall_unified'] == tool['recall_legacy'] == 1.0
     assert g.observed['not_supplied'] == ['bindiff', 'rz-diff']
 
@@ -202,18 +208,22 @@ def bb(k1='K02', k2='K05', c1='E-BODY', c2='E-CFG'):
     return (basis('B', 'P08', c1, k1), basis('B', 'P10', c2, k2))
 
 
-def g7_pair(doc, tier_a=(100, 1), pairs=None):
+def g7_rows(tier_a=(100, 1), pairs=None):
     rows = [row(i, truth='wrong' if i < tier_a[1] else 'right') for i in range(tier_a[0])]
     offset = tier_a[0]
     for (k1, k2), (n, wrong) in (pairs or {}).items():
         rows += [row(offset + i, truth='wrong' if i < wrong else 'right', supports=bb(k1, k2)) for i in range(n)]
         offset += n
-    return pair(doc, rows)
+    return rows
 
 
-def g7(**args):
-    doc = label_doc('rel', 'release')
-    return gate(corpus_manifest.build([doc], {}), run(g7_pair(doc, **args)), 'G-U7')
+def g7(lineages=LINEAGES, **args):
+    """The rows are dealt one by one to `lineages` release pairs of their own project, so a class of n rows spans
+    min(n, lineages) lineages."""
+    docs = [label_doc(f'rel-{i}', 'release', project=f'p{i}') for i in range(lineages)]
+    rows = g7_rows(**args)
+    built = [pair(doc, rows[i::lineages]) for i, doc in enumerate(docs)]
+    return gate(corpus_manifest.build(docs, {}), run(*built), 'G-U7')
 
 
 def test_g_u7_a_class_pair_no_worse_than_twice_the_tier_a_error_rate_passes():
@@ -312,3 +322,17 @@ def test_every_gate_has_a_numbers_line_that_survives_an_empty_report():
     report = gates_u.build_report(gates_u.Inputs())
     assert all(gates_u.numbers(g) == '-' for g in report.gates)
     assert gates_u.render_markdown(report).count('| G-U') == 16
+
+
+def test_g_u6_fewer_than_thirty_lineages_cannot_decide_even_with_a_large_reduction():
+    g = g6(lineages=LINEAGES - 1, unified_false=0, legacy_false=5)
+    assert g.status == 'insufficient-data' and any('anti-conservative' in r for r in g.reasons)
+    assert g6(lineages=LINEAGES - 1, unified_false=5, legacy_false=5).status == 'fail'      # a failure is still a verdict
+
+
+def test_g_u7_fewer_than_thirty_lineages_are_never_assumed_safe():
+    g = g7(lineages=LINEAGES - 1, pairs={('K02', 'K05'): (40, 0)})
+    assert g.status == 'insufficient-data'
+    assert g.observed['class_pairs']['K02+K05|E-BODY+E-CFG']['status'] == 'insufficient-data'
+    assert any('anti-conservative' in r for r in g.reasons)
+    assert g7(lineages=LINEAGES - 1, pairs={('K02', 'K05'): (40, 4)}).status == 'fail'

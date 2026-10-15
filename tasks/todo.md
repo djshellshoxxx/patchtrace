@@ -584,3 +584,9 @@
 ### [LBL-06:mutations-source]
 - [x] Nine added source operators with goldens, compile checks, determinism, recorded rejections, masked-body rule, profile gate
 - [ ] Open: the `locate/cases/cli` split of row 06 (the 25 operators are usable through `engine.apply_case`); `buf-resize` must land `review` in the evaluation (frame-only), checked by the evalcore row, not here
+
+### [U7:audit]
+- [x] Audit written, 4 Medium fixed with red tests
+- [ ] U7-05 BinDiff stub rows reach tier A alone (additive `SecondaryMatch.basicblocks` or IR-aware demotion before fusion)
+- [ ] U7-06 decide the budget policy for fusion and facts after a ladder deadline (partial result is lost today)
+- [ ] U7-07 trace-arg mutant class for G-U2
