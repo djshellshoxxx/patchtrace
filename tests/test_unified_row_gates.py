@@ -279,3 +279,36 @@ def test_collect_joins_supports_atoms_truth_and_legacy_flags_without_recomputing
         ('K02', 'A', 'E-BODY', 'pt-ladder', 'P04-exact-bytes')]
     assert got.legacy_tools == ('bindiff', 'ghidriff')
     assert outcomes.load(outcomes.dump(run(got))).pairs[0].rows == got.rows
+
+
+# ---- the assembler: one report from a download directory ---------------------------------------------------------------------
+
+def test_the_assembler_reads_a_download_directory_and_the_markdown_states_the_decision_with_numbers(tmp_path, capsys):
+    manifest, pairs = g3_inputs()
+    (tmp_path / 'unified-corpus-manifest.json').write_bytes(corpus_manifest.dump(manifest))
+    (tmp_path / 'outcomes-pairs-Linux-1.json').write_bytes(outcomes.dump(run(*pairs)))
+    (tmp_path / 'notes.txt').write_text('ignored', encoding='utf-8')
+    (tmp_path / 'outcomes-sub').mkdir()
+    found = gates_u.expand_inputs(str(tmp_path))
+    assert [Path(p).name for p in found['outcomes']] == ['outcomes-pairs-Linux-1.json'] and len(found['manifest']) == 1
+    out, md = tmp_path / 'r.json', tmp_path / 'r.md'
+    assert gates_u.main(['--inputs', str(tmp_path), '--out', str(out), '--markdown', str(md)]) == 0
+    text = md.read_text(encoding='utf-8')
+    capsys.readouterr()
+    assert 'NOT READY, the flag stays OFF (O2)' in text and 'G-U3 blocked' in text and '## Numbers' in text
+    assert '620 matched rows, precision 1.0000 (95% CI' in text and '31 lineages' in text
+    report = gates_u.load(out.read_bytes())
+    assert report.flag.decision_ready is False and report.report_sha256 in text
+    assert gates_u.main(['--inputs', str(tmp_path / 'nowhere')]) == 2
+
+
+def test_the_assembler_ignores_links_and_reads_nothing_it_was_not_told_to(tmp_path):
+    (tmp_path / 'real.json').write_text('{}', encoding='utf-8')
+    (tmp_path / 'outcomes-link.json').symlink_to(tmp_path / 'real.json')
+    assert gates_u.expand_inputs(str(tmp_path)) == {'manifest': [], 'outcomes': [], 'bench': [], 'junit': []}
+
+
+def test_every_gate_has_a_numbers_line_that_survives_an_empty_report():
+    report = gates_u.build_report(gates_u.Inputs())
+    assert all(gates_u.numbers(g) == '-' for g in report.gates)
+    assert gates_u.render_markdown(report).count('| G-U') == 16

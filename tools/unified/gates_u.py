@@ -351,12 +351,56 @@ def _cell(text: str) -> str:
     return ' '.join(text.replace('|', '/').split())
 
 
+def _interval(ci: dict | None) -> str:
+    if not ci or ci.get('point') is None:
+        return 'n/a'
+    low, high = ci.get('lo'), ci.get('hi')
+    span = 'no interval' if low is None else f'95% CI {low:.4f} to {high:.4f}'
+    return f'{ci["point"]:.4f} ({span}, {ci["groups"]} lineages{", anti-conservative" if ci["anti_conservative"] else ""})'
+
+
+def numbers(g: GateRow) -> str:
+    """The measured values of a gate on one line: counts, rates and intervals, never prose."""
+    o = g.observed
+    if g.id == 'G-U1' and 'evaluated' in o:
+        states = Counter(o['evaluated'].values())
+        return f'{len(o["evaluated"])} A/A pairs: ' + ', '.join(f'{k} {v}' for k, v in sorted(states.items()))
+    if g.id == 'G-U2' and 'classes' in o:
+        return '; '.join(f'{k} recall {v["recall"]} ({v["detected"]} hits, {v["mutants"]} mutants), leaks {v["leaks"]}'
+                         for k, v in o['classes'].items())
+    if g.id == 'G-U3' and 'rows' in o:
+        return (f'{o["rows"]} matched rows, precision {_interval(o["precision"])}; tier-A contradicted '
+                f'{len(o["tier_a_contradicted"])}; Ghidriff exact unmatched {len(o["ghidriff_exact_unmatched"])}; '
+                f'demote {o["demote"] or "none"}')
+    if g.id == 'G-U4' and 'compared' in o:
+        return (f'compared {len(o["compared"])} pairs, mirrored {len(o["mirrored"])}, chains {o["chains"]["found"]} '
+                f'({o["chains"]["composable"]} composable functions), COS-PSEUDO violations {o["pseudo_violations"]}')
+    if g.id == 'G-U6' and 'per_tool' in o:
+        return '; '.join(f'{t}: false leads {v["false_leads_unified"]} against {v["false_leads_legacy"]}, reduction '
+                         f'{_interval(v["reduction"])}, recall {v["recall_unified"]} against {v["recall_legacy"]}'
+                         for t, v in o['per_tool'].items()) or 'no legacy output'
+    if g.id == 'G-U7' and 'class_pairs' in o:
+        states = Counter(v['status'] for v in o['class_pairs'].values())
+        return (f'tier-A error rate {o["tier_a"]["error_rate"]} over {o["tier_a"]["rows"]} rows; {len(o["class_pairs"])} '
+                'class pairs: ' + ', '.join(f'{k} {v}' for k, v in sorted(states.items())))
+    if g.id == 'G-U5' and 'measured' in o:
+        return f'bench verdicts {o["measured"]}, Windows report {o["windows_report"]}'
+    if g.id == 'G-U8' and 'checks' in o:
+        return ', '.join(f'{c["id"]} {c["status"]}' for c in o['checks'])
+    return '-'
+
+
 def render_markdown(report: GateReport) -> str:
+    waiting = [f'{g.id} {g.status}' for g in report.gates if g.id in U05_GATES and g.status != 'pass']
+    decision = ('READY: G-U1..G-U6 pass; record this report_sha256 in docs/qa.md before the flag changes' if report.flag.decision_ready
+                else 'NOT READY, the flag stays OFF (O2); open: ' + ', '.join(waiting))
     lines = ['# SPEC-31 gate report', '', report.claim, '',
-             f'Flag default: {report.flag.default}. Decision ready: {"yes" if report.flag.decision_ready else "no"}. '
-             f'{report.flag.rule}', '', '| Gate | Status | Question | Why |', '|---|---|---|---|']
+             f'Flag default: {report.flag.default}. Decision: {decision}. {report.flag.rule}', '',
+             '| Gate | Status | Question | Why |', '|---|---|---|---|']
     lines += [f'| {g.id} | {g.status} | {_cell(g.question)} | {_cell("; ".join(g.reasons)) or "-"} |'
               for g in report.gates]
+    lines += ['', '## Numbers', '', '| Gate | Measured |', '|---|---|']
+    lines += [f'| {g.id} | {_cell(numbers(g))} |' for g in report.gates]
     lines += ['', 'Summary: ' + ', '.join(f'{k} {v}' for k, v in report.summary.items()),
               f'report_sha256 {report.report_sha256}', '']
     return '\n'.join(lines)
@@ -371,6 +415,18 @@ def _read(path: str) -> bytes:
         raise ContractError(f'cannot read {path}: {exc.strerror or exc}') from None
 
 
+def expand_inputs(directory: str) -> dict[str, list[str]]:
+    """The files of a download directory by role, sorted; links and sub-directories are ignored, never followed."""
+    root = Path(directory)
+    if not root.is_dir():
+        raise ContractError(f'--inputs {directory} is not a directory')
+
+    def pick(pattern: str) -> list[str]:
+        return [str(p) for p in sorted(root.glob(pattern)) if p.is_file() and not p.is_symlink()]
+    return {'manifest': pick('unified-corpus-manifest.json'), 'outcomes': pick('outcomes-*.json'),
+            'bench': pick('bench-*.json'), 'junit': pick('junit-*.xml')}
+
+
 def _attestations(items: Sequence[str]) -> dict[str, str]:
     out = {}
     for item in items:
@@ -383,6 +439,8 @@ def _attestations(items: Sequence[str]) -> dict[str, str]:
 
 def main(argv: Sequence[str] | None = None) -> int:
     parser = argparse.ArgumentParser(prog='python -m tools.unified.gates_u', description=__doc__.split('\n\n')[0])
+    parser.add_argument('--inputs', help='a directory holding unified-corpus-manifest.json, outcomes-*.json, bench-*.json '
+                                         'and junit-*.xml (the layout the live workflow downloads); added to the options below')
     parser.add_argument('--manifest', help='unified-corpus-manifest/1')
     parser.add_argument('--bench', action='append', default=[], help='bench-report/1 (repeat for Linux and Windows)')
     parser.add_argument('--outcomes', action='append', default=[], help='unified-outcomes/1 (repeat for every run)')
@@ -393,6 +451,11 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser.add_argument('--strict', action='store_true', help='exit 1 unless every gate passes (default: advisory)')
     args = parser.parse_args(argv)
     try:
+        if args.inputs:
+            found = expand_inputs(args.inputs)
+            args.manifest = args.manifest or (found['manifest'] or [None])[0]
+            args.bench, args.outcomes, args.junit = (args.bench + found['bench'], args.outcomes + found['outcomes'],
+                                                     args.junit + found['junit'])
         inputs = Inputs(attested=_attestations(args.attest))
         if args.manifest:
             raw = _read(args.manifest)
