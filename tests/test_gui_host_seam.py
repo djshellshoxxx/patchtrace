@@ -163,3 +163,15 @@ def test_show_external_pair_sanitises_and_announces_truncation(main_window):
     notice = '\n[View truncated at 200,000 characters; provenance copy uses full records.]'
     assert older == 'a' * MAX_VIEW_CHARS + notice
     assert newer == 'xyz'
+
+
+def test_the_inspection_worker_sends_only_the_exception_class(monkeypatch, tmp_path):
+    from patchtrace import ui_inspection
+
+    def boom(*_args):
+        raise ValueError('C:/secret/path')
+    monkeypatch.setattr(ui_inspection, 'inspect_project_artifacts', boom)
+    thread, seen = ui_inspection.InspectionThread('p', [], tmp_path), []
+    thread.inspection_failed.connect(lambda message, key: seen.append(message))
+    thread.run()
+    assert seen == ['ValueError']

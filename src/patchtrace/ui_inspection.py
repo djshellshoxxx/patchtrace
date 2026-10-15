@@ -7,6 +7,7 @@ the Files dock. All domain logic lives in ``artifact_inspection``,
 """
 from __future__ import annotations
 
+import logging
 import threading
 from dataclasses import dataclass
 from pathlib import Path
@@ -59,8 +60,9 @@ class InspectionThread(QThread):
     def run(self):
         try:
             result = inspect_project_artifacts(self.project_id, self.artifacts, self.root, self.cancel.is_set)
-        except Exception as exc:  # noqa: BLE001 - surfaced to the user as text
-            self.inspection_failed.emit(f'{type(exc).__name__}: {exc}', self.key)
+        except Exception as exc:  # noqa: BLE001 - only the class crosses the thread boundary (GUI plan 8.5)
+            logging.getLogger(__name__).warning('File inspection failed', exc_info=True)
+            self.inspection_failed.emit(type(exc).__name__, self.key)
             return
         if self.cancel.is_set():
             result.close()
