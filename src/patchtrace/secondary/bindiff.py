@@ -33,6 +33,7 @@ from .contracts import (
 
 MAGIC = b'SQLite format 3\x00'
 MAX_SIZE = 512 * 1024 * 1024
+NAME_LIMIT = 64 * 1024  # characters per function name, as on the BinExport side
 MASK = 0xFFFF_FFFF_FFFF_FFFF
 DEFAULT_DEADLINE = 120.0     # seconds of wall clock for the whole import, checked by the progress handler
 PROGRESS_STEPS = 10_000      # SQLite VM instructions between deadline checks
@@ -93,6 +94,8 @@ def _address(value: object) -> int:
 
 
 def _name(value: object) -> str | None:
+    if isinstance(value, str) and len(value) > NAME_LIMIT:
+        raise SecondaryError('PT-SECONDARY-LIMIT', f'BinDiff function name exceeds {NAME_LIMIT} characters')
     if value is None or isinstance(value, str):
         return value
     raise _fail('function name is not text')
