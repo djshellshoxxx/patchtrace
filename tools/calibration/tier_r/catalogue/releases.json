@@ -2807,5 +2807,1214 @@
   "risks": [
    "29 ambiguous record(s) (source changed with identical code, or induced by macro/header/inlining) are excluded from changed-set scoring by design."
   ]
+ },
+ {
+  "contract": "case-card/1",
+  "id": "libdeflate-v1.15-to-v1.16",
+  "project": "libdeflate",
+  "upstream_git": "https://github.com/ebiggers/libdeflate.git",
+  "license_spdx": "MIT",
+  "license_evidence": "COPYING at 7e11d509789df468151b52f7ed64ca4e566996c4: MIT: Copyright 2016 Eric Biggers / Permission is hereby granted, free of charge, to any person obtaining a copy of this software (sha256 5d246dd2...40fe; read at 02013385 too, sha256 5d246dd2...40fe)",
+  "old": {
+   "ref": "v1.15",
+   "commit": "020133854ff73b8506fe59f92a9b5b622d360716"
+  },
+  "new": {
+   "ref": "v1.16",
+   "commit": "7e11d509789df468151b52f7ed64ca4e566996c4"
+  },
+  "kind": "release",
+  "cve": [],
+  "semantic_change": true,
+  "changed_functions": [
+   {
+    "name": "deflate_flush_block",
+    "file": "lib/deflate_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "deflate_compress_fastest",
+    "file": "lib/deflate_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "deflate_compress_greedy",
+    "file": "lib/deflate_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "deflate_compress_near_optimal",
+    "file": "lib/deflate_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "libdeflate_alloc_compressor",
+    "file": "lib/deflate_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "deflate_decompress_default",
+    "file": "lib/decompress_template.h",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "deflate_decompress_bmi2",
+    "file": "lib/decompress_template.h",
+    "change": "source and code changed (factory label changed/source-diff)"
+   }
+  ],
+  "unchanged_controls": [
+   "libdeflate_alloc_decompressor",
+   "libdeflate_deflate_compress_bound",
+   "libdeflate_free_decompressor"
+  ],
+  "build": {
+   "system": "single",
+   "mingw_ok": "yes",
+   "recipe_notes": "tier_r recipe libdeflate (mingw-gcc 13-win32 -O2 -g, explicit file list from recipes.json, libdeflate.dll)"
+  },
+  "verification": {
+   "method": "tools.calibration.tier_r build-card on fetched pins (mingw-gcc 13-win32 O2): 55 project functions, 39 unchanged, 7 changed, 2 ambiguous, 7 no-counterpart (bodies: 9 identical, 30 address-only, 9 different); git diff --numstat v1.15..v1.16 -- '*.c' '*.h': 9 files.; rebuilt from the committed card: 0 disagreements; A/A rebuild, reversed-order and rotated-order links of v1.19 at O2 byte-identical (tier_r aa)",
+   "files_changed": 9,
+   "functions_changed_count": 7,
+   "verified_by_agent_run": true,
+   "build_verified": true,
+   "status": "verified"
+  },
+  "sources": [
+   "https://github.com/ebiggers/libdeflate/releases/tag/v1.16",
+   "https://github.com/ebiggers/libdeflate/blob/v1.16/NEWS.md"
+  ],
+  "risks": [
+   "2 ambiguous record(s) (source changed with identical code, or induced by macro/header/inlining) are excluded from changed-set scoring by design."
+  ]
+ },
+ {
+  "contract": "case-card/1",
+  "id": "libdeflate-v1.16-to-v1.17",
+  "project": "libdeflate",
+  "upstream_git": "https://github.com/ebiggers/libdeflate.git",
+  "license_spdx": "MIT",
+  "license_evidence": "COPYING at bd925ae68e99f65d69f20181cb845aaba5c8f098: MIT: Copyright 2016 Eric Biggers / Permission is hereby granted, free of charge, to any person obtaining a copy of this software (sha256 5d246dd2...40fe; read at 7e11d509 too, sha256 5d246dd2...40fe)",
+  "old": {
+   "ref": "v1.16",
+   "commit": "7e11d509789df468151b52f7ed64ca4e566996c4"
+  },
+  "new": {
+   "ref": "v1.17",
+   "commit": "bd925ae68e99f65d69f20181cb845aaba5c8f098"
+  },
+  "kind": "release",
+  "cve": [],
+  "semantic_change": true,
+  "changed_functions": [
+   {
+    "name": "deflate_optimize_and_flush_block",
+    "file": "lib/deflate_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   }
+  ],
+  "unchanged_controls": [
+   "libdeflate_adler32",
+   "libdeflate_alloc_decompressor",
+   "libdeflate_crc32"
+  ],
+  "build": {
+   "system": "single",
+   "mingw_ok": "yes",
+   "recipe_notes": "tier_r recipe libdeflate (mingw-gcc 13-win32 -O2 -g, explicit file list from recipes.json, libdeflate.dll)"
+  },
+  "verification": {
+   "method": "tools.calibration.tier_r build-card on fetched pins (mingw-gcc 13-win32 O2): 54 project functions, 49 unchanged, 1 changed, 4 ambiguous, 0 no-counterpart (bodies: 29 identical, 20 address-only, 5 different); git diff --numstat v1.16..v1.17 -- '*.c' '*.h': 28 files.; rebuilt from the committed card: 0 disagreements; A/A rebuild, reversed-order and rotated-order links of v1.19 at O2 byte-identical (tier_r aa)",
+   "files_changed": 28,
+   "functions_changed_count": 1,
+   "verified_by_agent_run": true,
+   "build_verified": true,
+   "status": "verified"
+  },
+  "sources": [
+   "https://github.com/ebiggers/libdeflate/releases/tag/v1.17",
+   "https://github.com/ebiggers/libdeflate/blob/v1.17/NEWS.md"
+  ],
+  "risks": [
+   "4 ambiguous record(s) (source changed with identical code, or induced by macro/header/inlining) are excluded from changed-set scoring by design."
+  ]
+ },
+ {
+  "contract": "case-card/1",
+  "id": "libdeflate-v1.18-to-v1.19",
+  "project": "libdeflate",
+  "upstream_git": "https://github.com/ebiggers/libdeflate.git",
+  "license_spdx": "MIT",
+  "license_evidence": "COPYING at dd12ff2b36d603dbb7fa8838fe7e7176fcbd4f6f: MIT: Copyright 2016 Eric Biggers / Permission is hereby granted, free of charge, to any person obtaining a copy of this software (sha256 5d246dd2...40fe; read at 495fee11 too, sha256 5d246dd2...40fe)",
+  "old": {
+   "ref": "v1.18",
+   "commit": "495fee110ebb48a5eb63b75fd67e42b2955871e2"
+  },
+  "new": {
+   "ref": "v1.19",
+   "commit": "dd12ff2b36d603dbb7fa8838fe7e7176fcbd4f6f"
+  },
+  "kind": "release",
+  "cve": [],
+  "semantic_change": true,
+  "changed_functions": [
+   {
+    "name": "deflate_make_huffman_code",
+    "file": "lib/deflate_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "deflate_flush_block",
+    "file": "lib/deflate_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "calculate_min_match_len",
+    "file": "lib/deflate_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "deflate_compress_fastest",
+    "file": "lib/deflate_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "deflate_compress_greedy",
+    "file": "lib/deflate_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "deflate_optimize_and_flush_block",
+    "file": "lib/deflate_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "deflate_compress_near_optimal",
+    "file": "lib/deflate_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "libdeflate_alloc_compressor",
+    "file": "lib/deflate_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "libdeflate_deflate_compress",
+    "file": "lib/deflate_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "libdeflate_free_compressor",
+    "file": "lib/deflate_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "libdeflate_deflate_compress_bound",
+    "file": "lib/deflate_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "libdeflate_alloc_decompressor",
+    "file": "lib/deflate_decompress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "libdeflate_free_decompressor",
+    "file": "lib/deflate_decompress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "libdeflate_aligned_malloc",
+    "file": "lib/utils.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "libdeflate_aligned_free",
+    "file": "lib/utils.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   }
+  ],
+  "unchanged_controls": [
+   "libdeflate_adler32",
+   "libdeflate_crc32",
+   "libdeflate_gzip_decompress"
+  ],
+  "build": {
+   "system": "single",
+   "mingw_ok": "yes",
+   "recipe_notes": "tier_r recipe libdeflate (mingw-gcc 13-win32 -O2 -g, explicit file list from recipes.json, libdeflate.dll)"
+  },
+  "verification": {
+   "method": "tools.calibration.tier_r build-card on fetched pins (mingw-gcc 13-win32 O2): 56 project functions, 28 unchanged, 16 changed, 8 ambiguous, 4 no-counterpart (bodies: 13 identical, 17 address-only, 22 different); git diff --numstat v1.18..v1.19 -- '*.c' '*.h': 8 files.; rebuilt from the committed card: 0 disagreements; A/A rebuild, reversed-order and rotated-order links of v1.19 at O2 byte-identical (tier_r aa)",
+   "files_changed": 8,
+   "functions_changed_count": 16,
+   "verified_by_agent_run": true,
+   "build_verified": true,
+   "status": "verified"
+  },
+  "sources": [
+   "https://github.com/ebiggers/libdeflate/releases/tag/v1.19",
+   "https://github.com/ebiggers/libdeflate/blob/v1.19/NEWS.md"
+  ],
+  "risks": [
+   "8 ambiguous record(s) (source changed with identical code, or induced by macro/header/inlining) are excluded from changed-set scoring by design.",
+   "changed_functions lists the first 15 of 16 factory-labelled changed functions."
+  ]
+ },
+ {
+  "contract": "case-card/1",
+  "id": "libdeflate-v1.19-to-v1.20",
+  "project": "libdeflate",
+  "upstream_git": "https://github.com/ebiggers/libdeflate.git",
+  "license_spdx": "MIT",
+  "license_evidence": "COPYING at 275aa5141db6eda3587214e0f1d3a134768f557d: MIT: Copyright 2016 Eric Biggers / Permission is hereby granted, free of charge, to any person obtaining a copy of this software (sha256 5d246dd2...40fe; read at dd12ff2b too, sha256 5d246dd2...40fe)",
+  "old": {
+   "ref": "v1.19",
+   "commit": "dd12ff2b36d603dbb7fa8838fe7e7176fcbd4f6f"
+  },
+  "new": {
+   "ref": "v1.20",
+   "commit": "275aa5141db6eda3587214e0f1d3a134768f557d"
+  },
+  "kind": "release",
+  "cve": [],
+  "semantic_change": true,
+  "changed_functions": [
+   {
+    "name": "adler32_generic",
+    "file": "lib/adler32.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "libdeflate_init_x86_cpu_features",
+    "file": "lib/x86/cpu_features.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   }
+  ],
+  "unchanged_controls": [
+   "libdeflate_aligned_free",
+   "libdeflate_aligned_malloc",
+   "libdeflate_deflate_compress_bound"
+  ],
+  "build": {
+   "system": "single",
+   "mingw_ok": "yes",
+   "recipe_notes": "tier_r recipe libdeflate (mingw-gcc 13-win32 -O2 -g, explicit file list from recipes.json, libdeflate.dll)"
+  },
+  "verification": {
+   "method": "tools.calibration.tier_r build-card on fetched pins (mingw-gcc 13-win32 O2): 64 project functions, 44 unchanged, 2 changed, 4 ambiguous, 14 no-counterpart (bodies: 14 identical, 32 address-only, 4 different); git diff --numstat v1.19..v1.20 -- '*.c' '*.h': 31 files.; rebuilt from the committed card: 0 disagreements; A/A rebuild, reversed-order and rotated-order links of v1.19 at O2 byte-identical (tier_r aa)",
+   "files_changed": 31,
+   "functions_changed_count": 2,
+   "verified_by_agent_run": true,
+   "build_verified": true,
+   "status": "verified"
+  },
+  "sources": [
+   "https://github.com/ebiggers/libdeflate/releases/tag/v1.20",
+   "https://github.com/ebiggers/libdeflate/blob/v1.20/NEWS.md"
+  ],
+  "risks": [
+   "4 ambiguous record(s) (source changed with identical code, or induced by macro/header/inlining) are excluded from changed-set scoring by design."
+  ]
+ },
+ {
+  "contract": "case-card/1",
+  "id": "libdeflate-v1.23-to-v1.24",
+  "project": "libdeflate",
+  "upstream_git": "https://github.com/ebiggers/libdeflate.git",
+  "license_spdx": "MIT",
+  "license_evidence": "COPYING at 96836d7d9d10e3e0d53e6edb54eb908514e336c4: MIT: Copyright 2016 Eric Biggers / Permission is hereby granted, free of charge, to any person obtaining a copy of this software (sha256 4ad69099...e73a; read at 78051988 too, sha256 4ad69099...e73a)",
+  "old": {
+   "ref": "v1.23",
+   "commit": "78051988f96dc8d8916310d8b24021f01bd9e102"
+  },
+  "new": {
+   "ref": "v1.24",
+   "commit": "96836d7d9d10e3e0d53e6edb54eb908514e336c4"
+  },
+  "kind": "release",
+  "cve": [],
+  "semantic_change": true,
+  "changed_functions": [
+   {
+    "name": "crc32_x86_pclmulqdq",
+    "file": "lib/x86/crc32_pclmul_template.h",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "crc32_x86_pclmulqdq_avx",
+    "file": "lib/x86/crc32_pclmul_template.h",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "crc32_x86_vpclmulqdq_avx2",
+    "file": "lib/x86/crc32_pclmul_template.h",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "crc32_x86_vpclmulqdq_avx512_vl256",
+    "file": "lib/x86/crc32_pclmul_template.h",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "crc32_x86_vpclmulqdq_avx512_vl512",
+    "file": "lib/x86/crc32_pclmul_template.h",
+    "change": "source and code changed (factory label changed/source-diff)"
+   }
+  ],
+  "unchanged_controls": [
+   "libdeflate_adler32",
+   "libdeflate_aligned_free",
+   "libdeflate_aligned_malloc"
+  ],
+  "build": {
+   "system": "single",
+   "mingw_ok": "yes",
+   "recipe_notes": "tier_r recipe libdeflate (mingw-gcc 13-win32 -O2 -g, explicit file list from recipes.json, libdeflate.dll)"
+  },
+  "verification": {
+   "method": "tools.calibration.tier_r build-card on fetched pins (mingw-gcc 13-win32 O2): 60 project functions, 48 unchanged, 5 changed, 7 ambiguous, 0 no-counterpart (bodies: 25 identical, 30 address-only, 5 different); git diff --numstat v1.23..v1.24 -- '*.c' '*.h': 10 files.; rebuilt from the committed card: 0 disagreements; A/A rebuild, reversed-order and rotated-order links of v1.19 at O2 byte-identical (tier_r aa)",
+   "files_changed": 10,
+   "functions_changed_count": 5,
+   "verified_by_agent_run": true,
+   "build_verified": true,
+   "status": "verified"
+  },
+  "sources": [
+   "https://github.com/ebiggers/libdeflate/releases/tag/v1.24",
+   "https://github.com/ebiggers/libdeflate/blob/v1.24/NEWS.md"
+  ],
+  "risks": [
+   "7 ambiguous record(s) (source changed with identical code, or induced by macro/header/inlining) are excluded from changed-set scoring by design."
+  ]
+ },
+ {
+  "contract": "case-card/1",
+  "id": "stb-stb_image-2.23-2020-02-02-to-stb_image-2.26",
+  "project": "stb",
+  "upstream_git": "https://github.com/nothings/stb.git",
+  "license_spdx": "MIT",
+  "license_evidence": "LICENSE at 314d0a6f9af5af27e585336eecea333e95c5a2d8: ALTERNATIVE A - MIT License / Permission is hereby granted, free of charge, to any person obtaining a copy of this software (sha256 bebfe904...ff63; read at 5e4a0617 too, sha256 bebfe904...ff63)",
+  "old": {
+   "ref": "stb_image-2.23-2020-02-02",
+   "commit": "5e4a0617b72fd4db2e1fc4d5c2d8b483d948d573"
+  },
+  "new": {
+   "ref": "stb_image-2.26",
+   "commit": "314d0a6f9af5af27e585336eecea333e95c5a2d8"
+  },
+  "kind": "release",
+  "cve": [],
+  "semantic_change": true,
+  "changed_functions": [
+   {
+    "name": "stbi__skip",
+    "file": "stb_image.h",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "stbi__stdio_skip",
+    "file": "stb_image.h",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "stbi__stdio_eof",
+    "file": "stb_image.h",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "stbi__fill_bits",
+    "file": "stb_image.h",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "stbi__zhuffman_decode",
+    "file": "stb_image.h",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "stbi__zexpand",
+    "file": "stb_image.h",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "stbi__convert_format16",
+    "file": "stb_image.h",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "stbi__compute_huffman_codes",
+    "file": "stb_image.h",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "stbi__convert_format",
+    "file": "stb_image.h",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "stbi__create_png_image_raw",
+    "file": "stb_image.h",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "stbi__extend_receive",
+    "file": "stb_image.h",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "stbi__hdr_load",
+    "file": "stb_image.h",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "stbi__bmp_parse_header",
+    "file": "stb_image.h",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "stbi__bmp_load",
+    "file": "stb_image.h",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "stbi__gif_header",
+    "file": "stb_image.h",
+    "change": "source and code changed (factory label changed/source-diff)"
+   }
+  ],
+  "unchanged_controls": [
+   "stbi__bitreverse16",
+   "stbi__high_bit",
+   "stbi__mad3sizes_valid"
+  ],
+  "build": {
+   "system": "single",
+   "mingw_ok": "yes",
+   "recipe_notes": "tier_r recipe stb (mingw-gcc 13-win32 -O2 -g, explicit file list from recipes.json, stb.dll)"
+  },
+  "verification": {
+   "method": "tools.calibration.tier_r build-card on fetched pins (mingw-gcc 13-win32 O2): 318 project functions, 169 unchanged, 35 changed, 90 ambiguous, 10 no-counterpart (bodies: 63 identical, 123 address-only, 122 different); git diff --numstat stb_image-2.23-2020-02-02..stb_image-2.26 -- '*.c' '*.h': 28 files.; rebuilt from the committed card: 0 disagreements; A/A rebuild, reversed-order and rotated-order links of stb_image-2.26 at O2 byte-identical (tier_r aa)",
+   "files_changed": 28,
+   "functions_changed_count": 35,
+   "verified_by_agent_run": true,
+   "build_verified": true,
+   "status": "verified"
+  },
+  "sources": [
+   "https://github.com/nothings/stb/commit/314d0a6f9af5af27e585336eecea333e95c5a2d8",
+   "https://github.com/nothings/stb/compare/5e4a0617b72fd4db2e1fc4d5c2d8b483d948d573...314d0a6f9af5af27e585336eecea333e95c5a2d8"
+  ],
+  "risks": [
+   "90 ambiguous record(s) (source changed with identical code, or induced by macro/header/inlining) are excluded from changed-set scoring by design.",
+   "changed_functions lists the first 15 of 35 factory-labelled changed functions."
+  ]
+ },
+ {
+  "contract": "case-card/1",
+  "id": "stb-stb_image-2.26-to-stb_image-2.27",
+  "project": "stb",
+  "upstream_git": "https://github.com/nothings/stb.git",
+  "license_spdx": "MIT",
+  "license_evidence": "LICENSE at 1ee679ca2ef753a528db5ba6801e1067b40481b8: ALTERNATIVE A - MIT License / Permission is hereby granted, free of charge, to any person obtaining a copy of this software (sha256 bebfe904...ff63; read at 314d0a6f too, sha256 bebfe904...ff63)",
+  "old": {
+   "ref": "stb_image-2.26",
+   "commit": "314d0a6f9af5af27e585336eecea333e95c5a2d8"
+  },
+  "new": {
+   "ref": "stb_image-2.27",
+   "commit": "1ee679ca2ef753a528db5ba6801e1067b40481b8"
+  },
+  "kind": "release",
+  "cve": [],
+  "semantic_change": true,
+  "changed_functions": [
+   {
+    "name": "stbi__extend_receive",
+    "file": "stb_image.h",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "stbi__jpeg_decode_block",
+    "file": "stb_image.h",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "stbi__jpeg_decode_block_prog_dc",
+    "file": "stb_image.h",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "stbi__bmp_parse_header",
+    "file": "stb_image.h",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "stbi__pnm_info",
+    "file": "stb_image.h",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "stbi__bmp_load",
+    "file": "stb_image.h",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "stbi__load_gif_main",
+    "file": "stb_image.h",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "stbi__load_main",
+    "file": "stb_image.h",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "stbi__is_16_main",
+    "file": "stb_image.h",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "stbiw__write3",
+    "file": "stb_image_write.h",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "stbi_write_bmp_core",
+    "file": "stb_image_write.h",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "stbi_zlib_compress",
+    "file": "stb_image_write.h",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "rect_original_order",
+    "file": "stb_rect_pack.h",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "rect_height_compare",
+    "file": "stb_rect_pack.h",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "stbrp_init_target",
+    "file": "stb_rect_pack.h",
+    "change": "source and code changed (factory label changed/source-diff)"
+   }
+  ],
+  "unchanged_controls": [
+   "stbi__bitreverse16",
+   "stbi__fill_bits",
+   "stbi__high_bit"
+  ],
+  "build": {
+   "system": "single",
+   "mingw_ok": "yes",
+   "recipe_notes": "tier_r recipe stb (mingw-gcc 13-win32 -O2 -g, explicit file list from recipes.json, stb.dll)"
+  },
+  "verification": {
+   "method": "tools.calibration.tier_r build-card on fetched pins (mingw-gcc 13-win32 O2): 319 project functions, 231 unchanged, 24 changed, 58 ambiguous, 6 no-counterpart (bodies: 61 identical, 180 address-only, 72 different); git diff --numstat stb_image-2.26..stb_image-2.27 -- '*.c' '*.h': 22 files.; rebuilt from the committed card: 0 disagreements; A/A rebuild, reversed-order and rotated-order links of stb_image-2.26 at O2 byte-identical (tier_r aa)",
+   "files_changed": 22,
+   "functions_changed_count": 24,
+   "verified_by_agent_run": true,
+   "build_verified": true,
+   "status": "verified"
+  },
+  "sources": [
+   "https://github.com/nothings/stb/commit/1ee679ca2ef753a528db5ba6801e1067b40481b8",
+   "https://github.com/nothings/stb/compare/314d0a6f9af5af27e585336eecea333e95c5a2d8...1ee679ca2ef753a528db5ba6801e1067b40481b8"
+  ],
+  "risks": [
+   "58 ambiguous record(s) (source changed with identical code, or induced by macro/header/inlining) are excluded from changed-set scoring by design.",
+   "changed_functions lists the first 15 of 24 factory-labelled changed functions."
+  ]
+ },
+ {
+  "contract": "case-card/1",
+  "id": "stb-stb_image-2.27-to-stb_image-2.28",
+  "project": "stb",
+  "upstream_git": "https://github.com/nothings/stb.git",
+  "license_spdx": "MIT",
+  "license_evidence": "LICENSE at 6199bf77130da41fd424722eeb7a8db4d766c4c6: ALTERNATIVE A - MIT License / Permission is hereby granted, free of charge, to any person obtaining a copy of this software (sha256 bebfe904...ff63; read at 1ee679ca too, sha256 bebfe904...ff63)",
+  "old": {
+   "ref": "stb_image-2.27",
+   "commit": "1ee679ca2ef753a528db5ba6801e1067b40481b8"
+  },
+  "new": {
+   "ref": "stb_image-2.28",
+   "commit": "6199bf77130da41fd424722eeb7a8db4d766c4c6"
+  },
+  "kind": "release",
+  "cve": [],
+  "semantic_change": true,
+  "changed_functions": [
+   {
+    "name": "stbi__build_huffman",
+    "file": "stb_image.h",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "stbi__extend_receive",
+    "file": "stb_image.h",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "stbi__jpeg_huff_decode",
+    "file": "stb_image.h",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "stbi__jpeg_decode_block",
+    "file": "stb_image.h",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "stbi__jpeg_decode_block_prog_dc",
+    "file": "stb_image.h",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "stbi__pnm_info",
+    "file": "stb_image.h",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "stbi__bmp_load",
+    "file": "stb_image.h",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "stbi__hdr_load",
+    "file": "stb_image.h",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "stbi__process_marker",
+    "file": "stb_image.h",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "stbi__decode_jpeg_image",
+    "file": "stb_image.h",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "stbi__parse_png_file",
+    "file": "stb_image.h",
+    "change": "source and code changed (factory label changed/source-diff)"
+   }
+  ],
+  "unchanged_controls": [
+   "stbi__bitreverse16",
+   "stbi__fill_bits",
+   "stbi__high_bit"
+  ],
+  "build": {
+   "system": "single",
+   "mingw_ok": "yes",
+   "recipe_notes": "tier_r recipe stb (mingw-gcc 13-win32 -O2 -g, explicit file list from recipes.json, stb.dll)"
+  },
+  "verification": {
+   "method": "tools.calibration.tier_r build-card on fetched pins (mingw-gcc 13-win32 O2): 320 project functions, 279 unchanged, 11 changed, 26 ambiguous, 4 no-counterpart (bodies: 130 identical, 149 address-only, 37 different); git diff --numstat stb_image-2.27..stb_image-2.28 -- '*.c' '*.h': 6 files.; rebuilt from the committed card: 0 disagreements; A/A rebuild, reversed-order and rotated-order links of stb_image-2.26 at O2 byte-identical (tier_r aa)",
+   "files_changed": 6,
+   "functions_changed_count": 11,
+   "verified_by_agent_run": true,
+   "build_verified": true,
+   "status": "verified"
+  },
+  "sources": [
+   "https://github.com/nothings/stb/commit/6199bf77130da41fd424722eeb7a8db4d766c4c6",
+   "https://github.com/nothings/stb/compare/1ee679ca2ef753a528db5ba6801e1067b40481b8...6199bf77130da41fd424722eeb7a8db4d766c4c6"
+  ],
+  "risks": [
+   "26 ambiguous record(s) (source changed with identical code, or induced by macro/header/inlining) are excluded from changed-set scoring by design."
+  ]
+ },
+ {
+  "contract": "case-card/1",
+  "id": "stb-stb_image-2.28-to-stb_image-2.30",
+  "project": "stb",
+  "upstream_git": "https://github.com/nothings/stb.git",
+  "license_spdx": "MIT",
+  "license_evidence": "LICENSE at 013ac3beddff3dbffafd5177e7972067cd2b5083: ALTERNATIVE A - MIT License / Permission is hereby granted, free of charge, to any person obtaining a copy of this software (sha256 bebfe904...ff63; read at 6199bf77 too, sha256 bebfe904...ff63)",
+  "old": {
+   "ref": "stb_image-2.28",
+   "commit": "6199bf77130da41fd424722eeb7a8db4d766c4c6"
+  },
+  "new": {
+   "ref": "stb_image-2.30",
+   "commit": "013ac3beddff3dbffafd5177e7972067cd2b5083"
+  },
+  "kind": "release",
+  "cve": [],
+  "semantic_change": true,
+  "changed_functions": [
+   {
+    "name": "stbi__zhuffman_decode",
+    "file": "stb_image.h",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "stbi__create_png_image_raw",
+    "file": "stb_image.h",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "stbi__parse_zlib",
+    "file": "stb_image.h",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "stbi__parse_png_file",
+    "file": "stb_image.h",
+    "change": "source and code changed (factory label changed/source-diff)"
+   }
+  ],
+  "unchanged_controls": [
+   "stbi__bitreverse16",
+   "stbi__high_bit",
+   "stbi__mad3sizes_valid"
+  ],
+  "build": {
+   "system": "single",
+   "mingw_ok": "yes",
+   "recipe_notes": "tier_r recipe stb (mingw-gcc 13-win32 -O2 -g, explicit file list from recipes.json, stb.dll)"
+  },
+  "verification": {
+   "method": "tools.calibration.tier_r build-card on fetched pins (mingw-gcc 13-win32 O2): 320 project functions, 297 unchanged, 4 changed, 18 ambiguous, 1 no-counterpart (bodies: 140 identical, 157 address-only, 22 different); git diff --numstat stb_image-2.28..stb_image-2.30 -- '*.c' '*.h': 11 files.; rebuilt from the committed card: 0 disagreements; A/A rebuild, reversed-order and rotated-order links of stb_image-2.26 at O2 byte-identical (tier_r aa)",
+   "files_changed": 11,
+   "functions_changed_count": 4,
+   "verified_by_agent_run": true,
+   "build_verified": true,
+   "status": "verified"
+  },
+  "sources": [
+   "https://github.com/nothings/stb/commit/013ac3beddff3dbffafd5177e7972067cd2b5083",
+   "https://github.com/nothings/stb/compare/6199bf77130da41fd424722eeb7a8db4d766c4c6...013ac3beddff3dbffafd5177e7972067cd2b5083"
+  ],
+  "risks": [
+   "18 ambiguous record(s) (source changed with identical code, or induced by macro/header/inlining) are excluded from changed-set scoring by design."
+  ]
+ },
+ {
+  "contract": "case-card/1",
+  "id": "c-ares-cares-1_27_0-to-cares-1_28_0",
+  "project": "c-ares",
+  "upstream_git": "https://github.com/c-ares/c-ares.git",
+  "license_spdx": "MIT",
+  "license_evidence": "LICENSE.md at 458c93721387d2974fe125c0a4efec2eab30e6be: MIT License / Copyright (c) 1998 Massachusetts Institute of Technology / Permission is hereby granted, free of charge, to any person obtaining a copy of this software (sha256 80fff253...9aef; read at 9eb57f2c too, sha256 80fff253...9aef)",
+  "old": {
+   "ref": "cares-1_27_0",
+   "commit": "9eb57f2c8beb4e8af590992e56182c0788b9ce0b"
+  },
+  "new": {
+   "ref": "cares-1_28_0",
+   "commit": "458c93721387d2974fe125c0a4efec2eab30e6be"
+  },
+  "kind": "release",
+  "cve": [],
+  "semantic_change": true,
+  "changed_functions": [
+   {
+    "name": "ares__buf_consume_nonwhitespace",
+    "file": "src/lib/ares__buf.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ares__buf_split",
+    "file": "src/lib/ares__buf.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ares__parse_into_addrinfo",
+    "file": "src/lib/ares__parse_into_addrinfo.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ares_cancel",
+    "file": "src/lib/ares_cancel.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ares_create_query",
+    "file": "src/lib/ares_create_query.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ares_destroy",
+    "file": "src/lib/ares_destroy.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "end_hquery",
+    "file": "src/lib/ares_getaddrinfo.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "host_callback",
+    "file": "src/lib/ares_getaddrinfo.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "next_lookup",
+    "file": "src/lib/ares_gethostbyaddr.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "addr_callback",
+    "file": "src/lib/ares_gethostbyaddr.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ares_init_options",
+    "file": "src/lib/ares_init.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ares__init_by_options",
+    "file": "src/lib/ares_options.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ares_parse_a_reply",
+    "file": "src/lib/ares_parse_a_reply.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ares_parse_aaaa_reply",
+    "file": "src/lib/ares_parse_aaaa_reply.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ares_parse_ptr_reply",
+    "file": "src/lib/ares_parse_ptr_reply.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   }
+  ],
+  "unchanged_controls": [
+   "ares__addr_is_linklocal",
+   "ares__addr_match",
+   "ares__addrinfo2addrttl"
+  ],
+  "build": {
+   "system": "single",
+   "mingw_ok": "yes",
+   "recipe_notes": "tier_r recipe c-ares (mingw-gcc 13-win32 -O2 -g, explicit file list from recipes.json, libcares.dll)"
+  },
+  "verification": {
+   "method": "tools.calibration.tier_r build-card on fetched pins (mingw-gcc 13-win32 O2): 509 project functions, 409 unchanged, 31 changed, 22 ambiguous, 46 no-counterpart (bodies: 144 identical, 270 address-only, 43 different); git diff --numstat cares-1_27_0..cares-1_28_0 -- '*.c' '*.h': 50 files.; rebuilt from the committed card: 0 disagreements; A/A rebuild, reversed-order and rotated-order links of cares-1_28_0 at O2 byte-identical (tier_r aa)",
+   "files_changed": 50,
+   "functions_changed_count": 31,
+   "verified_by_agent_run": true,
+   "build_verified": true,
+   "status": "verified"
+  },
+  "sources": [
+   "https://github.com/c-ares/c-ares/releases/tag/cares-1_28_0",
+   "https://github.com/c-ares/c-ares/compare/cares-1_27_0...cares-1_28_0"
+  ],
+  "risks": [
+   "22 ambiguous record(s) (source changed with identical code, or induced by macro/header/inlining) are excluded from changed-set scoring by design.",
+   "changed_functions lists the first 15 of 31 factory-labelled changed functions."
+  ]
+ },
+ {
+  "contract": "case-card/1",
+  "id": "c-ares-cares-1_28_0-to-cares-1_28_1",
+  "project": "c-ares",
+  "upstream_git": "https://github.com/c-ares/c-ares.git",
+  "license_spdx": "MIT",
+  "license_evidence": "LICENSE.md at 3a26df136a76b0bcb893fce2787527efbec80fa4: MIT License / Copyright (c) 1998 Massachusetts Institute of Technology / Permission is hereby granted, free of charge, to any person obtaining a copy of this software (sha256 80fff253...9aef; read at 458c9372 too, sha256 80fff253...9aef)",
+  "old": {
+   "ref": "cares-1_28_0",
+   "commit": "458c93721387d2974fe125c0a4efec2eab30e6be"
+  },
+  "new": {
+   "ref": "cares-1_28_1",
+   "commit": "3a26df136a76b0bcb893fce2787527efbec80fa4"
+  },
+  "kind": "release",
+  "cve": [],
+  "semantic_change": true,
+  "changed_functions": [
+   {
+    "name": "ares__search_name_list",
+    "file": "src/lib/ares_search.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   }
+  ],
+  "unchanged_controls": [
+   "ares__addr_is_linklocal",
+   "ares__addr_match",
+   "ares__addrinfo2addrttl"
+  ],
+  "build": {
+   "system": "single",
+   "mingw_ok": "yes",
+   "recipe_notes": "tier_r recipe c-ares (mingw-gcc 13-win32 -O2 -g, explicit file list from recipes.json, libcares.dll)"
+  },
+  "verification": {
+   "method": "tools.calibration.tier_r build-card on fetched pins (mingw-gcc 13-win32 O2): 499 project functions, 489 unchanged, 1 changed, 9 ambiguous, 0 no-counterpart (bodies: 351 identical, 138 address-only, 2 different); git diff --numstat cares-1_28_0..cares-1_28_1 -- '*.c' '*.h': 2 files.; rebuilt from the committed card: 0 disagreements; A/A rebuild, reversed-order and rotated-order links of cares-1_28_0 at O2 byte-identical (tier_r aa)",
+   "files_changed": 2,
+   "functions_changed_count": 1,
+   "verified_by_agent_run": true,
+   "build_verified": true,
+   "status": "verified"
+  },
+  "sources": [
+   "https://github.com/c-ares/c-ares/releases/tag/cares-1_28_1",
+   "https://github.com/c-ares/c-ares/compare/cares-1_28_0...cares-1_28_1"
+  ],
+  "risks": [
+   "9 ambiguous record(s) (source changed with identical code, or induced by macro/header/inlining) are excluded from changed-set scoring by design."
+  ]
+ },
+ {
+  "contract": "case-card/1",
+  "id": "c-ares-cares-1_28_1-to-cares-1_29_0",
+  "project": "c-ares",
+  "upstream_git": "https://github.com/c-ares/c-ares.git",
+  "license_spdx": "MIT",
+  "license_evidence": "LICENSE.md at bf4c5fd223e71776e3d0c5a6a8d5598ffb82597c: MIT License / Copyright (c) 1998 Massachusetts Institute of Technology / Permission is hereby granted, free of charge, to any person obtaining a copy of this software (sha256 80fff253...9aef; read at 3a26df13 too, sha256 80fff253...9aef)",
+  "old": {
+   "ref": "cares-1_28_1",
+   "commit": "3a26df136a76b0bcb893fce2787527efbec80fa4"
+  },
+  "new": {
+   "ref": "cares-1_29_0",
+   "commit": "bf4c5fd223e71776e3d0c5a6a8d5598ffb82597c"
+  },
+  "kind": "release",
+  "cve": [],
+  "semantic_change": true,
+  "changed_functions": [
+   {
+    "name": "ares__check_cleanup_conn",
+    "file": "src/lib/ares__close_sockets.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ares__open_connection",
+    "file": "src/lib/ares__socket.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ares_queue_wait_empty",
+    "file": "src/lib/ares__threads.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ares_destroy",
+    "file": "src/lib/ares_destroy.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ares__dns_name_write",
+    "file": "src/lib/ares_dns_name.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ares_event_process_updates",
+    "file": "src/lib/ares_event_thread.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ares_event_thread_destroy_int",
+    "file": "src/lib/ares_event_thread.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ares_event_update",
+    "file": "src/lib/ares_event_thread.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ares_event_thread_init",
+    "file": "src/lib/ares_event_thread.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ares_fds",
+    "file": "src/lib/ares_fds.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ares_getnameinfo_int",
+    "file": "src/lib/ares_getnameinfo.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ares_getsock",
+    "file": "src/lib/ares_getsock.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ares_init_options",
+    "file": "src/lib/ares_init.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ares_reinit",
+    "file": "src/lib/ares_init.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ares_dup",
+    "file": "src/lib/ares_init.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   }
+  ],
+  "unchanged_controls": [
+   "ares__addr_is_linklocal",
+   "ares__addr_match",
+   "ares__addrinfo2addrttl"
+  ],
+  "build": {
+   "system": "single",
+   "mingw_ok": "yes",
+   "recipe_notes": "tier_r recipe c-ares (mingw-gcc 13-win32 -O2 -g, explicit file list from recipes.json, libcares.dll)"
+  },
+  "verification": {
+   "method": "tools.calibration.tier_r build-card on fetched pins (mingw-gcc 13-win32 O2): 519 project functions, 439 unchanged, 22 changed, 35 ambiguous, 21 no-counterpart (bodies: 164 identical, 286 address-only, 40 different); git diff --numstat cares-1_28_1..cares-1_29_0 -- '*.c' '*.h': 36 files.; rebuilt from the committed card: 0 disagreements; A/A rebuild, reversed-order and rotated-order links of cares-1_28_0 at O2 byte-identical (tier_r aa)",
+   "files_changed": 36,
+   "functions_changed_count": 22,
+   "verified_by_agent_run": true,
+   "build_verified": true,
+   "status": "verified"
+  },
+  "sources": [
+   "https://github.com/c-ares/c-ares/releases/tag/cares-1_29_0",
+   "https://github.com/c-ares/c-ares/compare/cares-1_28_1...cares-1_29_0"
+  ],
+  "risks": [
+   "35 ambiguous record(s) (source changed with identical code, or induced by macro/header/inlining) are excluded from changed-set scoring by design.",
+   "changed_functions lists the first 15 of 22 factory-labelled changed functions."
+  ]
+ },
+ {
+  "contract": "case-card/1",
+  "id": "c-ares-cares-1_29_0-to-v1.30.0",
+  "project": "c-ares",
+  "upstream_git": "https://github.com/c-ares/c-ares.git",
+  "license_spdx": "MIT",
+  "license_evidence": "LICENSE.md at f90e73304a2d9f5c56d2255c19f9efaaa5b2c16c: MIT License / Copyright (c) 1998 Massachusetts Institute of Technology / Permission is hereby granted, free of charge, to any person obtaining a copy of this software (sha256 8a9994f8...21c2; read at bf4c5fd2 too, sha256 80fff253...9aef)",
+  "old": {
+   "ref": "cares-1_29_0",
+   "commit": "bf4c5fd223e71776e3d0c5a6a8d5598ffb82597c"
+  },
+  "new": {
+   "ref": "v1.30.0",
+   "commit": "f90e73304a2d9f5c56d2255c19f9efaaa5b2c16c"
+  },
+  "kind": "release",
+  "cve": [],
+  "semantic_change": true,
+  "changed_functions": [
+   {
+    "name": "ares__buf_parse_dns_binstr",
+    "file": "src/lib/ares__buf.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ares__buf_parse_dns_str",
+    "file": "src/lib/ares__buf.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ares_queue_wait_empty",
+    "file": "src/lib/ares__threads.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ares__tvnow",
+    "file": "src/lib/ares__timeval.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ares_dns_rec_type_isvalid",
+    "file": "src/lib/ares_dns_mapping.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ares_dns_class_isvalid",
+    "file": "src/lib/ares_dns_mapping.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ares_dns_rec_type_tostr",
+    "file": "src/lib/ares_dns_mapping.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ares_dns_rr_key_tostr",
+    "file": "src/lib/ares_dns_mapping.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ares_dns_rr_key_datatype",
+    "file": "src/lib/ares_dns_mapping.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ares_dns_rr_get_keys",
+    "file": "src/lib/ares_dns_mapping.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ares_dns_rr_data_ptr",
+    "file": "src/lib/ares_dns_record.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ares__dns_rr_free",
+    "file": "src/lib/ares_dns_record.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ares_dns_record_query_add",
+    "file": "src/lib/ares_dns_record.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ares_dns_record_rr_add",
+    "file": "src/lib/ares_dns_record.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ares_dns_write_rr",
+    "file": "src/lib/ares_dns_write.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   }
+  ],
+  "unchanged_controls": [
+   "ares__addr_is_linklocal",
+   "ares__addr_match",
+   "ares__addrinfo2addrttl"
+  ],
+  "build": {
+   "system": "single",
+   "mingw_ok": "yes",
+   "recipe_notes": "tier_r recipe c-ares (mingw-gcc 13-win32 -O2 -g, explicit file list from recipes.json, libcares.dll)"
+  },
+  "verification": {
+   "method": "tools.calibration.tier_r build-card on fetched pins (mingw-gcc 13-win32 O2): 520 project functions, 448 unchanged, 31 changed, 36 ambiguous, 3 no-counterpart (bodies: 155 identical, 302 address-only, 52 different); git diff --numstat cares-1_29_0..v1.30.0 -- '*.c' '*.h': 27 files.; rebuilt from the committed card: 0 disagreements; A/A rebuild, reversed-order and rotated-order links of cares-1_28_0 at O2 byte-identical (tier_r aa)",
+   "files_changed": 27,
+   "functions_changed_count": 31,
+   "verified_by_agent_run": true,
+   "build_verified": true,
+   "status": "verified"
+  },
+  "sources": [
+   "https://github.com/c-ares/c-ares/releases/tag/v1.30.0",
+   "https://github.com/c-ares/c-ares/compare/cares-1_29_0...v1.30.0"
+  ],
+  "risks": [
+   "36 ambiguous record(s) (source changed with identical code, or induced by macro/header/inlining) are excluded from changed-set scoring by design.",
+   "changed_functions lists the first 15 of 31 factory-labelled changed functions."
+  ]
  }
 ]

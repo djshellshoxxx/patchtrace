@@ -907,6 +907,231 @@
     }
    ],
    "notes": "Eight src files; src/config.h (cmake output upstream) is authored per version with YAML_VERSION_* and YAML_DECLARE_STATIC. The licence file is named License only from 0.2.3 on (LICENSE before), so earlier tags are not pinned."
+  },
+  {
+   "contract": "tier-r-recipe/1",
+   "project": "libdeflate",
+   "family": "compression",
+   "upstream_git": "https://github.com/ebiggers/libdeflate.git",
+   "license_spdx": "MIT",
+   "license_file": "COPYING",
+   "license_evidence": "COPYING read at all 8 pins (first 02013385), 2 distinct SHA-256: MIT licence / Copyright Eric Biggers / Permission is hereby granted, free of charge, to any person obtaining a copy of this software (the copyright line gains Google LLC from v1.21)",
+   "libc": "mingw",
+   "output": "libdeflate.dll",
+   "sources": [
+    "lib/*.c",
+    "lib/x86/*.c",
+    "lib/arm/*.c"
+   ],
+   "include_dirs": [
+    "."
+   ],
+   "pins": [
+    {
+     "ref": "v1.15",
+     "commit": "020133854ff73b8506fe59f92a9b5b622d360716",
+     "license_sha256": "5d246dd2537307b80fed9ba5fdddf5d0fe7a8f023393a071182b9daed56b40fe",
+     "date": "2022-12-04"
+    },
+    {
+     "ref": "v1.16",
+     "commit": "7e11d509789df468151b52f7ed64ca4e566996c4",
+     "license_sha256": "5d246dd2537307b80fed9ba5fdddf5d0fe7a8f023393a071182b9daed56b40fe",
+     "date": "2023-01-12"
+    },
+    {
+     "ref": "v1.17",
+     "commit": "bd925ae68e99f65d69f20181cb845aaba5c8f098",
+     "license_sha256": "5d246dd2537307b80fed9ba5fdddf5d0fe7a8f023393a071182b9daed56b40fe",
+     "date": "2023-01-15"
+    },
+    {
+     "ref": "v1.18",
+     "commit": "495fee110ebb48a5eb63b75fd67e42b2955871e2",
+     "license_sha256": "5d246dd2537307b80fed9ba5fdddf5d0fe7a8f023393a071182b9daed56b40fe",
+     "date": "2023-03-23"
+    },
+    {
+     "ref": "v1.19",
+     "commit": "dd12ff2b36d603dbb7fa8838fe7e7176fcbd4f6f",
+     "license_sha256": "5d246dd2537307b80fed9ba5fdddf5d0fe7a8f023393a071182b9daed56b40fe",
+     "date": "2023-09-16"
+    },
+    {
+     "ref": "v1.20",
+     "commit": "275aa5141db6eda3587214e0f1d3a134768f557d",
+     "license_sha256": "5d246dd2537307b80fed9ba5fdddf5d0fe7a8f023393a071182b9daed56b40fe",
+     "date": "2024-03-17"
+    },
+    {
+     "ref": "v1.23",
+     "commit": "78051988f96dc8d8916310d8b24021f01bd9e102",
+     "license_sha256": "4ad69099cb4374836fd27583d9991e2838cd86b6e4666ab26b2d32582c91e73a",
+     "date": "2024-12-10"
+    },
+    {
+     "ref": "v1.24",
+     "commit": "96836d7d9d10e3e0d53e6edb54eb908514e336c4",
+     "license_sha256": "4ad69099cb4374836fd27583d9991e2838cd86b6e4666ab26b2d32582c91e73a",
+     "date": "2025-05-11"
+    }
+   ],
+   "notes": "Library sources only (programs/, scripts/ and tests are not compiled); no cmake or make: lib/*.c plus the per-arch cpu_features.c files, whose bodies compile out on the other architecture. Each pin passes native gcc -std=gnu11 -fsyntax-only -I. on all 11 sources; built with mingw-w64 gcc 13-win32 -O2 -g at every card pin. Upstream uses no dllexport without LIBDEFLATE_DLL, so the DLL exports every global symbol."
+  },
+  {
+   "contract": "tier-r-recipe/1",
+   "project": "stb",
+   "family": "image-codec",
+   "upstream_git": "https://github.com/nothings/stb.git",
+   "license_spdx": "MIT",
+   "license_file": "LICENSE",
+   "license_evidence": "LICENSE read at all 5 pins (first 5e4a0617), 1 distinct SHA-256: This software is available under 2 licenses -- choose whichever you prefer. ALTERNATIVE A - MIT License / Permission is hereby granted, free of charge, to any person obtaining a copy of this software (alternative B is the Unlicense; MIT is the one recorded)",
+   "libc": "mingw",
+   "output": "stb.dll",
+   "sources": [
+    "stb_vorbis.c"
+   ],
+   "include_dirs": [
+    "."
+   ],
+   "write": [
+    {
+     "path": "stb_image_impl.c",
+     "text": "#define STB_IMAGE_IMPLEMENTATION\n#include \"stb_image.h\"\n"
+    },
+    {
+     "path": "stb_image_write_impl.c",
+     "text": "#define STB_IMAGE_WRITE_IMPLEMENTATION\n#include \"stb_image_write.h\"\n"
+    },
+    {
+     "path": "stb_rect_pack_impl.c",
+     "text": "#define STB_RECT_PACK_IMPLEMENTATION\n#include \"stb_rect_pack.h\"\n"
+    },
+    {
+     "path": "stb_sprintf_impl.c",
+     "text": "#define STB_SPRINTF_IMPLEMENTATION\n#include \"stb_sprintf.h\"\n"
+    },
+    {
+     "path": "stb_truetype_impl.c",
+     "text": "#define STB_TRUETYPE_IMPLEMENTATION\n#include \"stb_truetype.h\"\n"
+    }
+   ],
+   "pins": [
+    {
+     "ref": "stb_image-2.23-2020-02-02",
+     "commit": "5e4a0617b72fd4db2e1fc4d5c2d8b483d948d573",
+     "license_sha256": "bebfe904b14301657e4e5d655c811d51fd31b97c455b9cc2d8600d6bac6cff63",
+     "date": "2020-02-02"
+    },
+    {
+     "ref": "stb_image-2.26",
+     "commit": "314d0a6f9af5af27e585336eecea333e95c5a2d8",
+     "license_sha256": "bebfe904b14301657e4e5d655c811d51fd31b97c455b9cc2d8600d6bac6cff63",
+     "date": "2020-07-13"
+    },
+    {
+     "ref": "stb_image-2.27",
+     "commit": "1ee679ca2ef753a528db5ba6801e1067b40481b8",
+     "license_sha256": "bebfe904b14301657e4e5d655c811d51fd31b97c455b9cc2d8600d6bac6cff63",
+     "date": "2021-07-11"
+    },
+    {
+     "ref": "stb_image-2.28",
+     "commit": "6199bf77130da41fd424722eeb7a8db4d766c4c6",
+     "license_sha256": "bebfe904b14301657e4e5d655c811d51fd31b97c455b9cc2d8600d6bac6cff63",
+     "date": "2023-01-29"
+    },
+    {
+     "ref": "stb_image-2.30",
+     "commit": "013ac3beddff3dbffafd5177e7972067cd2b5083",
+     "license_sha256": "bebfe904b14301657e4e5d655c811d51fd31b97c455b9cc2d8600d6bac6cff63",
+     "date": "2024-05-31"
+    }
+   ],
+   "notes": "stb has no tags: pins are commit pairs, each the upstream 'update version numbers' commit (stb_image 2.23, 2.26, 2.27, 2.28) plus 013ac3b (2.30). The single-header libraries are compiled through five authored one-line translation-unit wrappers (the *_IMPLEMENTATION define then the header) and stb_vorbis.c, which is an ordinary C file; changed-function files are therefore the headers. LICENSE exists only from 2020-02-02, so the 2019 stb_vorbis CVE cards stay no-recipe. Each pin passes native gcc -fsyntax-only on all six units and links as a shared object; built with mingw-w64 gcc 13-win32 -O2 -g at every card pin. MIT is chosen from the dual MIT / Unlicense LICENSE (alternative A)."
+  },
+  {
+   "contract": "tier-r-recipe/1",
+   "project": "c-ares",
+   "family": "network",
+   "upstream_git": "https://github.com/c-ares/c-ares.git",
+   "license_spdx": "MIT",
+   "license_file": "LICENSE.md",
+   "license_evidence": "LICENSE.md read at all 8 pins (first 0ad09d25), 2 distinct SHA-256: MIT License / Copyright (c) 1998 Massachusetts Institute of Technology / Copyright (c) 2007 - Daniel Stenberg with many contributors / Permission is hereby granted, free of charge, to any person obtaining a copy of this software",
+   "libc": "mingw",
+   "output": "libcares.dll",
+   "sources": [
+    "src/lib/*.c"
+   ],
+   "include_dirs": [
+    "include",
+    "src/lib"
+   ],
+   "defines": [
+    "CARES_BUILDING_LIBRARY"
+   ],
+   "libs": [
+    "ws2_32",
+    "iphlpapi",
+    "advapi32"
+   ],
+   "write": [
+    {
+     "path": "include/ares_build.h",
+     "text": "#ifndef __CARES_BUILD_H\n#define __CARES_BUILD_H\n#define CARES_TYPEOF_ARES_SOCKLEN_T int\ntypedef CARES_TYPEOF_ARES_SOCKLEN_T ares_socklen_t;\n#define CARES_TYPEOF_ARES_SSIZE_T long long\ntypedef CARES_TYPEOF_ARES_SSIZE_T ares_ssize_t;\n#endif\n"
+    }
+   ],
+   "pins": [
+    {
+     "ref": "cares-1_26_0",
+     "commit": "0ad09d251bf01cc2b7860950527e33e22cd64256",
+     "license_sha256": "80fff25340df53b0cf0c3cddbca9050b559b9cbed2ad71830327cfef54959aef",
+     "date": "2024-01-25"
+    },
+    {
+     "ref": "cares-1_27_0",
+     "commit": "9eb57f2c8beb4e8af590992e56182c0788b9ce0b",
+     "license_sha256": "80fff25340df53b0cf0c3cddbca9050b559b9cbed2ad71830327cfef54959aef",
+     "date": "2024-02-22"
+    },
+    {
+     "ref": "cares-1_28_0",
+     "commit": "458c93721387d2974fe125c0a4efec2eab30e6be",
+     "license_sha256": "80fff25340df53b0cf0c3cddbca9050b559b9cbed2ad71830327cfef54959aef",
+     "date": "2024-03-28"
+    },
+    {
+     "ref": "cares-1_28_1",
+     "commit": "3a26df136a76b0bcb893fce2787527efbec80fa4",
+     "license_sha256": "80fff25340df53b0cf0c3cddbca9050b559b9cbed2ad71830327cfef54959aef",
+     "date": "2024-03-30"
+    },
+    {
+     "ref": "cares-1_29_0",
+     "commit": "bf4c5fd223e71776e3d0c5a6a8d5598ffb82597c",
+     "license_sha256": "80fff25340df53b0cf0c3cddbca9050b559b9cbed2ad71830327cfef54959aef",
+     "date": "2024-05-22"
+    },
+    {
+     "ref": "v1.30.0",
+     "commit": "f90e73304a2d9f5c56d2255c19f9efaaa5b2c16c",
+     "license_sha256": "8a9994f85a8e531e1a3217ab7ba509787c6b93056aabe702137ce662db8321c2",
+     "date": "2024-06-06"
+    },
+    {
+     "ref": "cares-1_27_0-pre-ghsa-mg26",
+     "commit": "035c4c3776ee0d04a9db97213891367b7998de55",
+     "license_sha256": "80fff25340df53b0cf0c3cddbca9050b559b9cbed2ad71830327cfef54959aef",
+     "date": "2024-02-22"
+    },
+    {
+     "ref": "cares-1_27_0-ghsa-mg26-merge",
+     "commit": "a804c04ddc8245fc8adf0e92368709639125e183",
+     "license_sha256": "80fff25340df53b0cf0c3cddbca9050b559b9cbed2ad71830327cfef54959aef",
+     "date": "2024-02-22"
+    }
+   ],
+   "notes": "No cmake, autoconf or generated config: src/lib/config-win32.h is selected by ares_setup.h when WIN32 is defined and HAVE_CONFIG_H is not, and include/ares_build.h is authored (the mingw branch of ares_build.h.dist, whose __int64 ssize_t line precedes any mingw header; socklen_t is int, ssize_t is long long). All src/lib/*.c are compiled (the POSIX event backends compile out). Tags cares-1_26_0 to v1.30.0 share the flat src/lib layout; the two trailing pins are the first-parent pair of the CVE-2024-25629 merge (found card c-ares-read-line-embedded-nul-cve-2024-25629 in corpus/catalog), both between cares-1_26_0 and cares-1_27_0. Releases from v1.33.0 move sources into subdirectories and are not pinned."
   }
  ]
 }
