@@ -117,3 +117,17 @@ def test_pipeline_reports_the_missing_baseline():
     assert res.evaluation['baselines_unavailable'] == ['M2']
     fdr = res.evaluation.get('fdr_reduction')
     assert fdr is None or fdr['baseline'] != 'M2'
+
+
+# ---- D-08 shard engine status is truthful when no run completed ----------------------------------------------------------
+
+def _eng(status, runs=0, failures=0):
+    return {'engine': 'rz-diff', 'status': status, 'version': None, 'reason': None, 'runs': runs, 'failures': failures}
+
+
+@pytest.mark.parametrize('states, expected', [
+    (('blocked', 'failed'), 'failed'), (('blocked', 'blocked'), 'blocked'), (('failed', 'failed'), 'failed'),
+    (('ok', 'blocked'), 'partial'), (('ok', 'failed'), 'partial'), (('ok', 'ok'), 'ok')])
+def test_engine_status_without_a_completed_run_is_blocked_or_failed(states, expected):
+    from tools.calibration.tier_r import shard
+    assert shard._engine_status([_eng(s, runs=1 if s == 'ok' else 0) for s in states])['status'] == expected
