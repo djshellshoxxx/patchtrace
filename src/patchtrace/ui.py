@@ -11,9 +11,8 @@ from collections.abc import Callable
 from pathlib import Path
 
 from PySide6.QtCore import QSettings, Qt, QThread, QTimer, Signal
-from PySide6.QtGui import QAction, QColor, QFont, QKeySequence, QTextCharFormat, QTextCursor
+from PySide6.QtGui import QAction, QFont, QKeySequence, QTextCursor
 from PySide6.QtWidgets import (
-    QAbstractItemView,
     QApplication,
     QCheckBox,
     QComboBox,
@@ -37,7 +36,6 @@ from PySide6.QtWidgets import (
     QTableWidget,
     QTableWidgetItem,
     QTabWidget,
-    QTextEdit,
     QToolBar,
     QVBoxLayout,
     QWidget,
@@ -49,9 +47,11 @@ from .acquisition.transport import BLOB_SUFFIX, METADATA_HOST, SYMBOL_HOST, Acqu
 from .alignment import alignment_strategy, diff_hunks
 from .backend import BackendConfig, diagnose, parse_env_passthrough, quarantine_failed_run, run_comparison
 from .evidence import build_context, resolve_evidence
+from .gui.qt.codediff import clear_selections, compose_selections, row_selection
+from .gui.qt.host import PanelHost
+from .gui.qt.theme import DARK
 from .interpretation import interpret, system_prompt
 from .offline_bundle import inspect_offline_bundle, install_offline_bundle
-from .preflight import overview_rows
 from .providers import ProviderConfig
 from .raw_view import SCOPES, RawSide, build_side, differing_lines
 from .reports import export_project
@@ -66,8 +66,7 @@ from .runtime_discovery import (
 from .service import ProjectService
 from .tooltips import apply_tooltip, apply_tooltips
 from .ui_bundle_setup import BundleSetup
-from .ui_evidence import EvidenceController
-from .ui_inspection import InspectionThread, fill_pe_table, side_summary
+from .ui_inspection import InspectionThread, side_summary
 
 REVIEWS = ['unreviewed', 'accepted', 'rejected', 'needs-review']
 CATEGORIES = ['modified', 'added', 'removed', 'ambiguous', 'split', 'merged', 'unmatched', 'unchanged']
@@ -1487,6 +1486,8 @@ class ExportDialog(QDialog):
 
 
 class MainWindow(QMainWindow):
+    inspection_status = Signal(str)  # the Files dock renders the inspection through this
+
     def __init__(self, service=None, settings=None, profile_directory: Path | None = None):
         super().__init__()
         self.settings = settings or QSettings('PatchTrace', 'PatchTrace')
@@ -1520,9 +1521,9 @@ class MainWindow(QMainWindow):
         self.resize(1440, 900)
         self.setMinimumSize(960, 640)
         self.setStyleSheet(DARK_STYLE)
+        self.panels = PanelHost(self)  # dock shells only; panels are built when first shown
         self._build_actions()
         self._build_workspace()
-        self.evidence = EvidenceController(self)  # C6 engine evidence dock (ui_evidence.py)
         self.restore_preferences()
         self.timer = QTimer(self)
         self.timer.timeout.connect(self._elapsed)
@@ -1967,8 +1968,8 @@ class MainWindow(QMainWindow):
             self._guard(lambda: self.set_service(ProjectService.open(Path(path))))
 
     def open_series(self):
-        from .ui_series import show_series_window  # lazy: keeps ui import cheap and avoids a cycle
-        show_series_window(self)
+        if series := self._open_panel('series'):
+            series.choose_and_open()
 
     def open_sample(self):
         parent = QFileDialog.getExistingDirectory(self, 'Choose directory for a new synthetic sample project')
@@ -2001,8 +2002,7 @@ class MainWindow(QMainWindow):
         self._updating = False
         self.render_match()
         self.update_controls()
-        if hasattr(self, 'evidence'):
-            self.evidence.project_changed()
+        self.panels.project_changed()
 
     def filter_matches(self, *_):
         previous = self.navigator.currentItem()
@@ -2065,7 +2065,7 @@ class MainWindow(QMainWindow):
             self.note_target.setCurrentIndex(0)
             self.render_match()
             self.update_controls()
-            self.evidence.follow_match(self.current_match())
+            self.panels.selection_changed(self.current_match())
 
     def render_match(self, *_):
         match = self.current_match()
@@ -2077,7 +2077,7 @@ class MainWindow(QMainWindow):
         self.hunk_list.clear()
         if not match:
             for view in self.views.values():
-                view.setExtraSelections([])
+                clear_selections(view, 'diff')
                 view.setPlainText('No matching function selected.')
             self.match_label.setText('Select a function match to inspect changes.')
             self.hunk_list.blockSignals(False)
@@ -2147,16 +2147,10 @@ class MainWindow(QMainWindow):
         self.update_controls()
 
     def _highlight_hunks(self, view):
-        selections = []
-        for start, length, operation in self._hunks:
-            selection = QTextEdit.ExtraSelection()
-            selection.cursor = QTextCursor(view.document().findBlockByNumber(start))
-            end = view.document().findBlockByNumber(start + length - 1)
-            selection.cursor.setPosition(end.position() + end.length() - 1, QTextCursor.MoveMode.KeepAnchor)
-            selection.format.setBackground(QColor('#263a43' if operation == 'replace' else '#33392b'))
-            selection.format.setProperty(QTextCharFormat.Property.FullWidthSelection, True)
-            selections.append(selection)
-        view.setExtraSelections(selections)
+        selections = (row_selection(view, start, start + length - 1,
+                                    DARK.hunk_replace if operation == 'replace' else DARK.hunk_other)
+                      for start, length, operation in self._hunks)
+        compose_selections(view, 'diff', [item for item in selections if item])
 
     def navigate_hunk(self, step):
         """Navigate changed regions, crossing function boundaries at the ends.
@@ -2387,19 +2381,34 @@ class MainWindow(QMainWindow):
         location = signal.locations[0]
         if self.mode.currentIndex() != 0:
             self.mode.setCurrentIndex(0)  # rebuilds the text-mode offsets that raw modes empty
-        if location.function_id not in self._function_offsets:
-            return
-        side, offset = self._function_offsets[location.function_id]
-        start = self._line_maps[side].get(offset + location.start_line - 1)
-        end = self._line_maps[side].get(offset + location.end_line - 1)
+        self.reveal_lines(location.function_id, location.start_line, location.end_line)
+
+    def reveal_lines(self, function_id, start_line, end_line):
+        """Select original lines of a function in its pane (the function id fixes the side); the pane, or None."""
+        if function_id not in self._function_offsets:
+            return None
+        side, offset = self._function_offsets[function_id]
+        start = self._line_maps[side].get(offset + start_line - 1)
+        end = self._line_maps[side].get(offset + end_line - 1)
         if start is None or end is None:
-            return
+            return None
         view = self.views[side]
         cursor = QTextCursor(view.document().findBlockByNumber(start))
         block = view.document().findBlockByNumber(end)
         cursor.setPosition(block.position() + block.length() - 1, QTextCursor.MoveMode.KeepAnchor)
         view.setTextCursor(cursor)
         view.centerCursor()
+        return view
+
+    def show_external_pair(self, older_text, newer_text, label):
+        """Show two texts from a panel in the code panes; no match, hunk or line map belongs to them."""
+        self._function_offsets, self._hunks, self._hunk_index = {}, [], -1
+        self._line_maps = {'older': {}, 'newer': {}}
+        self.hunk_list.clear()
+        self.match_label.setText(label)
+        for side, text in (('older', older_text), ('newer', newer_text)):
+            clear_selections(self.views[side], 'diff')
+            self.views[side].setPlainText(text[:MAX_VIEW_CHARS])
 
     def _load_enrichment(self):
         """Show the stored ranking only when it was computed from the current run and pairings."""
@@ -2513,18 +2522,10 @@ class MainWindow(QMainWindow):
                 break
         self.mode.setCurrentIndex(0)
         self.render_match()
-        side, offset = self._function_offsets[evidence.function_id]
-        start = self._line_maps[side].get(offset + evidence.start_line - 1)
-        end = self._line_maps[side].get(offset + evidence.end_line - 1)
-        if start is None or end is None:
+        view = self.reveal_lines(evidence.function_id, evidence.start_line, evidence.end_line)
+        if view is None:
             text_dialog(self, 'Evidence beyond displayed code · retained context', evidence.text)
             return
-        view = self.views[side]
-        cursor = QTextCursor(view.document().findBlockByNumber(start))
-        block = view.document().findBlockByNumber(end)
-        cursor.setPosition(block.position() + block.length() - 1, QTextCursor.MoveMode.KeepAnchor)
-        view.setTextCursor(cursor)
-        view.centerCursor()
         view.setFocus()
         self.update_controls()
 
@@ -2608,7 +2609,7 @@ class MainWindow(QMainWindow):
             failure = self._inspection_error
             failed = failure is not None and failure[0] == self._project_inspection_key()
             for view in self.views.values():
-                view.setExtraSelections([])
+                clear_selections(view, 'diff')
                 view.setPlainText(f'[File inspection failed: {failure[1]}]' if failed else
                                   'Verifying artifact bytes against their recorded SHA-256 and inspecting PE '
                                   'headers. The raw view appears when this read-only check finishes.')
@@ -2649,18 +2650,8 @@ class MainWindow(QMainWindow):
         for side, raw in sides.items():
             view = self.views[side]
             view.setPlainText(raw.rendered.text if raw.rendered else f'[{raw.message}]')
-            selections = []
-            if raw.rendered:
-                for line in diff:
-                    block = view.document().findBlockByNumber(line)
-                    if not block.isValid():
-                        continue
-                    selection = QTextEdit.ExtraSelection()
-                    selection.cursor = QTextCursor(block)
-                    selection.format.setBackground(QColor('#263a43'))
-                    selection.format.setProperty(QTextCharFormat.Property.FullWidthSelection, True)
-                    selections.append(selection)
-            view.setExtraSelections(selections)
+            selections = (row_selection(view, line, line, DARK.hunk_replace) for line in diff if raw.rendered)
+            compose_selections(view, 'diff', [item for item in selections if item])
         captions = [f'{side.upper()}: {raw.rendered.caption}' for side, raw in sides.items() if raw.rendered]
         summary = f'{representation.value.upper()} · original on-disk bytes · page {page_index + 1} of {pages}'
         if diff:
@@ -2685,7 +2676,13 @@ class MainWindow(QMainWindow):
         if inspection is None:
             self.statusBar().showMessage('File inspection has not finished; try again in a moment.')
             return
-        sizes = [reader.size for reader in inspection.readers.values()]
+        self.show_raw_offset(None, offset)
+
+    def show_raw_offset(self, side, offset):
+        """Page the raw byte view to a file offset (`side` None or 'both' = either artifact's size bounds it)."""
+        inspection = self._current_inspection()
+        sizes = [reader.size for name, reader in (inspection.readers.items() if inspection else ())
+                 if side in (None, 'both', name)]
         if not sizes or offset < 0 or offset >= max(sizes):
             self.statusBar().showMessage('Offset is outside the verified artifact bytes.')
             return
@@ -2722,7 +2719,6 @@ class MainWindow(QMainWindow):
         thread.finished.connect(self._reap_inspection_threads, queued)
         self._inspection_threads.append(thread)  # a replaced (cancelled) thread must never be dropped while running
         self._inspection_thread = thread
-        self._set_overview_status('File inspection running: verifying hashes and parsing PE headers…')
         thread.start()
 
     def _inspection_ready(self, result, key):
@@ -2731,22 +2727,14 @@ class MainWindow(QMainWindow):
             return
         self._clear_inspection()
         self._inspection, self._inspection_key = result, key
-        self._set_overview_status('File inspection complete · ' + side_summary(result))
-        table = getattr(self, '_preflight_pe_table', None)
-        if table is not None:
-            fill_pe_table(table, result)
+        self.inspection_status.emit('File inspection complete · ' + side_summary(result))
         if self._raw_mode():
             self.render_match()
 
     def _inspection_failed(self, message, key=None):
         self._inspection_error = (key or self._project_inspection_key(), message)
-        self._set_overview_status('File inspection failed: ' + message)
+        self.inspection_status.emit('File inspection failed: ' + message)
         self.logs.appendPlainText('File inspection failed: ' + message)
-
-    def _set_overview_status(self, text):
-        label = getattr(self, '_preflight_status', None)
-        if label is not None:
-            label.setText(text)
 
     def _clear_inspection(self):
         if self._inspection is not None:
@@ -2775,69 +2763,11 @@ class MainWindow(QMainWindow):
 
     def show_file_overview(self):
         """Nonmodal read-only preview available without the Ghidra backend."""
-        if not self.project:
-            return
-        artifacts = {artifact.side: artifact for artifact in self.project.artifacts}
-        rows = overview_rows(artifacts['older'], artifacts['newer'])
-        previous = getattr(self, '_preflight_dialog', None)
-        self._forget_overview_widgets()  # before close: a replaced dialog must not clear the new refs
-        if previous is not None:
-            previous.close()  # WA_DeleteOnClose below releases it
-        dialog = QDialog(self)
-        dialog.setAttribute(Qt.WidgetAttribute.WA_DeleteOnClose)
-        dialog.setWindowTitle('Preliminary file comparison')
-        dialog.setMinimumSize(900, 620)
-        dialog.setModal(False)
-        layout = QVBoxLayout(dialog)
-        explanation = PlainLabel(
-            'Recorded values were saved when this project was created. The PE comparison below re-verifies '
-            'each project-owned artifact copy against its SHA-256 and parses headers with bounded read-only '
-            'reads. Nothing is executed. Certificate presence is not signature validity, and COFF timestamps '
-            'can be forged.')
-        explanation.setWordWrap(True)
-        layout.addWidget(explanation)
-        table = QTableWidget(len(rows), 3, dialog)
-        table.setHorizontalHeaderLabels(['Recorded field', 'OLDER', 'NEWER'])
-        table.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
-        table.setColumnWidth(0, 245)
-        table.setColumnWidth(1, 285)
-        table.horizontalHeader().setStretchLastSection(True)
-        for index, row in enumerate(rows):
-            for column, value in enumerate((row.field, row.older, row.newer)):
-                item = QTableWidgetItem(value)
-                item.setToolTip('Saved project artifact metadata; no executable content is run or parsed.')
-                table.setItem(index, column, item)
-        apply_tooltip(table, 'overview.table')
-        layout.addWidget(table)
-        status = PlainLabel('File inspection not started.')
-        status.setWordWrap(True)
-        layout.addWidget(status)
-        pe_table = QTableWidget(0, 5, dialog)
-        pe_table.setHorizontalHeaderLabels(['PE field', 'OLDER', 'NEWER', 'Status', 'Provenance'])
-        pe_table.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
-        pe_table.horizontalHeader().setStretchLastSection(True)
-        apply_tooltip(pe_table, 'overview.pe_table')
-        layout.addWidget(pe_table, 1)
-        self._preflight_dialog = dialog
-        self._preflight_status = status
-        self._preflight_pe_table = pe_table
-        dialog.destroyed.connect(lambda *_: self._overview_destroyed(dialog))
-        inspection = self._current_inspection()
-        if inspection is not None:
-            status.setText('File inspection complete · ' + side_summary(inspection))
-            fill_pe_table(pe_table, inspection)
-        else:
-            self.start_inspection()
-        dialog.show()
+        if self.project and (files := self._open_panel('files')):
+            files.refresh()
 
-    def _overview_destroyed(self, dialog):
-        if getattr(self, '_preflight_dialog', None) is dialog:
-            self._forget_overview_widgets()
-
-    def _forget_overview_widgets(self):
-        self._preflight_dialog = None
-        self._preflight_status = None
-        self._preflight_pe_table = None
+    def _open_panel(self, panel_id):
+        return self.panels.show_panel(panel_id) and self.panels.controller(panel_id)
 
     def run_analysis(self):
         if not self.project:
@@ -2946,8 +2876,13 @@ class MainWindow(QMainWindow):
             self.show_error(run.error or 'Interpretation failed. Inspect the retained raw response; no findings were promoted.')
         elif run.status == 'cancelled':
             self.job_label.setText('Interpretation cancelled')
-        elif run.findings:
-            self.findings_list.setCurrentRow(self.findings_list.count() - len(run.findings))
+        else:
+            if run.error:  # a partial quarantine is a completed run with a note; the analyst must see it
+                self.job_label.setText('Note · ' + run.error)
+                self.logs.appendPlainText('NOTE: ' + run.error)
+                self.statusBar().showMessage(run.error)
+            if run.findings:
+                self.findings_list.setCurrentRow(self.findings_list.count() - len(run.findings))
 
     def start_job(self, title, task, complete):
         if self.worker:
@@ -2993,7 +2928,7 @@ class MainWindow(QMainWindow):
         self.worker = None
         self.timer.stop()
         self.progress.setVisible(False)
-        if not self.job_label.text().startswith(('Error', 'Cancelled', 'Interpretation cancelled')):
+        if not self.job_label.text().startswith(('Error', 'Cancelled', 'Interpretation cancelled', 'Note')):
             self.job_label.setText(f'Finished · {int(time.monotonic() - self._job_started)} seconds')
         if worker:
             worker.deleteLater()
@@ -3004,8 +2939,7 @@ class MainWindow(QMainWindow):
     def update_controls(self):
         if not hasattr(self, 'navigator') or not hasattr(self, 'raw_button'):
             return
-        if hasattr(self, 'evidence'):
-            self.evidence.update_controls()
+        self.panels.update_controls()
         idle = self.worker is None
         project = bool(self.service)
         match = self.current_match()
@@ -3122,6 +3056,7 @@ class MainWindow(QMainWindow):
             splitter.setChildrenCollapsible(False)
         self.apply_font(setting_int(self.settings, 'desktop/font_size', 11, 8, 28))
         self.sync_scroll.setChecked(self.settings.value('desktop/sync', True, type=bool))
+        self.panels.restore_layout()
 
     def closeEvent(self, event):
         if self.worker:
@@ -3133,7 +3068,7 @@ class MainWindow(QMainWindow):
         for name, splitter in [('workspace', self.workspace), ('vertical', self.vertical), ('code', self.code_split)]:
             self.settings.setValue('desktop/' + name, splitter.saveState())
         self.settings.setValue('desktop/sync', self.sync_scroll.isChecked())
-        self.evidence.shutdown()
+        self.panels.shutdown()
         self.settings.sync()
         self._stop_inspection()
         if self.service:

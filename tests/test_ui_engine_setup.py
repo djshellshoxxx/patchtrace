@@ -27,7 +27,7 @@ from test_evidence_view import build
 from test_tooltips import controls
 from test_ui_engine_setup_service import MD5_OLDER, NEW_SHA, NEWER, OLD_SHA, OLDER, fake_acceptor_factory
 
-from patchtrace import cli, ui_engine_setup, ui_evidence
+from patchtrace import cli, ui_engine_setup
 from patchtrace.secondary import bindiff_probe, cli_bindiff
 from patchtrace.secondary import evidence_panel_service as svc
 from patchtrace.secondary.contracts import Capability
@@ -41,8 +41,7 @@ PINNED = svc.PINNED_BINDIFF_VERSION
 
 
 def live_workers() -> list:
-    return [t for registry in (ui_engine_setup._LIVE_THREADS, ui_evidence._LIVE_THREADS) for t in list(registry)
-            if ui_engine_setup.thread_alive(t)]
+    return [t for t in list(ui_engine_setup._LIVE_THREADS) if ui_engine_setup.thread_alive(t)]
 
 
 @pytest.fixture(autouse=True)
@@ -512,8 +511,8 @@ def test_default_discoverer_reads_runtime_discovery_only(monkeypatch, tmp_path):
 
 
 PRE_EXISTING = ('tabs', 'filter', 'search', 'hide_agreed', 'show_index_box', 'copy_button', 'refresh_button',
-                'engines_label', 'status', 'stale_banner', 'partial_banner', 'state_label', 'loading_bar',
-                'retry_button', 'copy_error_button', 'open_engines_button', 'table', 'detail', 'goto_button',
+                'engines_label', 'status', 'stale_banner', 'partial_banner', 'state_view', 'loading_bar',
+                'table', 'detail', 'goto_button',
                 'engine_table', 'parallel', 'timeout', 'run_button', 'cancel_button', 'probe_button',
                 'import_button', 'run_progress', 'run_status', 'preview', 'engine_log', 'copy_details_button',
                 'footer')
@@ -534,6 +533,7 @@ def describe(widget) -> tuple:
 
 def fingerprint(panel) -> list:
     rows = [describe(getattr(panel, name)) for name in PRE_EXISTING]
+    rows.append(describe(panel.state_view.status_label()))
     rows += [describe(box) for box in panel.engine_checks.values()]
     rows.append(tuple(panel.tabs.tabText(i) for i in range(panel.tabs.count())))
     rows.append(tuple((r.engine, r.state, r.detail) for r in panel.engine_model.rows))
@@ -612,9 +612,9 @@ def test_unconfigured_layout_keeps_c6_geometry(qtbot, tmp_path, size):
 def window(qtbot, tmp_path, settings):
     view = MainWindow(ProjectService.sample(tmp_path / 's'), settings, tmp_path / 'profiles')
     qtbot.addWidget(view)
-    view.evidence.auto_probe = False
+    view.panels.controller('evidence').auto_probe = False
     yield view
-    view.evidence.shutdown()
+    view.panels.controller('evidence').shutdown()
     if view.service:
         view.service.close()
         view.service = None
@@ -622,17 +622,17 @@ def window(qtbot, tmp_path, settings):
 
 def open_dock(window, qtbot):
     window.show()
-    window.evidence.action.trigger()
-    qtbot.waitUntil(lambda: window.evidence.panel.vm.state != 'no-project' and not window.evidence.panel.loading,
+    window.panels.toggle_action('evidence').trigger()
+    qtbot.waitUntil(lambda: window.panels.controller('evidence').panel.vm.state != 'no-project' and not window.panels.controller('evidence').panel.loading,
                     timeout=10000)
 
 
 def test_unconfigured_controller_keeps_c6_flow(window, qtbot):
-    controller = window.evidence
+    controller = window.panels.controller('evidence')
     controller.probe = lambda cancel: dict(DEFAULT_CAPS)
     open_dock(window, qtbot)
     controller.start_probe()
-    qtbot.waitUntil(lambda: controller.probe_thread is None, timeout=5000)
+    qtbot.waitUntil(lambda: controller.probe_token is None, timeout=5000)
     assert controller.capabilities == DEFAULT_CAPS and controller.bindiff.capability() is None
     rows = {r.engine: r for r in controller.panel.engine_model.rows}
     assert rows['bindiff'].state == 'unsupported' and rows['bindiff'].detail == BINDIFF_UNSUPPORTED
@@ -643,7 +643,7 @@ def test_unconfigured_controller_keeps_c6_flow(window, qtbot):
     controller.update_controls()
     assert svc.RUN_PREVIEW_BINDIFF not in controller.panel.preview.text()
     controller.panel.run_button.click()
-    qtbot.waitUntil(lambda: controller.run_thread is None, timeout=10000)
+    qtbot.waitUntil(lambda: controller.run_token is None, timeout=10000)
     assert captured and captured[0].bindiff is None and captured[0].bindiff_raw_dir is None
 
 
@@ -661,7 +661,7 @@ def test_gui_bindiff_run_matches_cli_provenance(window, qtbot, tmp_path, monkeyp
     exe = make_fake_bindiff(tmp_path / 'bd')
     older = write_fake_binexport(tmp_path / 'older.BinExport', '1' * 32)  # MD5-sized id: needs confirmation
     newer = write_fake_binexport(tmp_path / 'newer.BinExport', NEW_SHA)
-    controller = window.evidence
+    controller = window.panels.controller('evidence')
     controller.probe = lambda cancel: dict(DEFAULT_CAPS)
     open_dock(window, qtbot)
     setup = controller.panel.bindiff_setup
@@ -690,7 +690,7 @@ def test_gui_bindiff_run_matches_cli_provenance(window, qtbot, tmp_path, monkeyp
     monkeypatch.setattr(svc, 'persist_outcome', spy)
     controller.panel.run_button.click()
     assert setup.older.isEnabled() is False  # inputs locked while engines run
-    qtbot.waitUntil(lambda: controller.run_thread is None, timeout=60000)
+    qtbot.waitUntil(lambda: controller.run_token is None, timeout=60000)
     qtbot.waitUntil(lambda: controller.panel.vm.engine('bindiff').state == 'ready', timeout=20000)
     assert on_gui == [True] and setup.older.isEnabled()
     [gui] = [r for r in engine_runs(window.service) if r.engine == 'bindiff']
@@ -713,14 +713,14 @@ def test_gui_bindiff_run_matches_cli_provenance(window, qtbot, tmp_path, monkeyp
 
 
 def test_bindiff_checkbox_follows_setup(window, qtbot):
-    controller = window.evidence
+    controller = window.panels.controller('evidence')
     controller.probe = lambda cancel: dict(DEFAULT_CAPS)
     controller.bindiff.prober = usable_prober
     controller.bindiff.validator = lambda request, cancel, progress=None: svc.BinExportValidation(
         'ok', request.key, binding='sha256')
     open_dock(window, qtbot)
     controller.start_probe()
-    qtbot.waitUntil(lambda: controller.probe_thread is None, timeout=5000)
+    qtbot.waitUntil(lambda: controller.probe_token is None, timeout=5000)
     setup, box = controller.panel.bindiff_setup, controller.panel.engine_checks['bindiff']
     setup.set_executable('/x/bindiff')
     setup.probe_button.click()
@@ -755,7 +755,7 @@ def test_cancel_gui_bindiff_run(window, qtbot, tmp_path, monkeypatch):
     exe = make_fake_bindiff(tmp_path / 'bd', 'hang')
     older = write_fake_binexport(tmp_path / 'older.BinExport', OLD_SHA)
     newer = write_fake_binexport(tmp_path / 'newer.BinExport', NEW_SHA)
-    controller = window.evidence
+    controller = window.panels.controller('evidence')
     controller.probe = lambda cancel: dict(DEFAULT_CAPS)
     open_dock(window, qtbot)
     setup = controller.panel.bindiff_setup
@@ -771,7 +771,7 @@ def test_cancel_gui_bindiff_run(window, qtbot, tmp_path, monkeypatch):
     qtbot.waitUntil(lambda: any('--nologo' in c['argv'] and len(c['argv']) > 2 for c in spy_calls(tmp_path / 'bd')),
                     timeout=30000)
     controller.panel.cancel_button.click()
-    qtbot.waitUntil(lambda: controller.run_thread is None, timeout=30000)
+    qtbot.waitUntil(lambda: controller.run_token is None, timeout=30000)
     assert controller.outcomes['bindiff'].status == 'cancelled'
     assert [m.engine for _, m in current_sets(EnrichmentStore(window.service.store))] == []
     assert not list(window.service.root.rglob('bindiff-*.BinDiff'))
@@ -781,27 +781,27 @@ def test_dock_deleted_while_setup_worker_runs(qtbot, tmp_path, settings):
     """C6 teardown matrix for the setup worker: the unparented thread survives the dock; its late result is
     dropped without touching the deleted section (pytest-qt fails the test if a slot raises)."""
     view = MainWindow(ProjectService.sample(tmp_path / 's'), settings, tmp_path / 'profiles')
-    view.evidence.auto_probe = False
-    controller = view.evidence.bindiff
+    view.panels.controller('evidence').auto_probe = False
+    controller = view.panels.controller('evidence').bindiff
     gate = threading.Event()
 
     def validator(request, cancel, progress=None):
         gate.wait(5)
         return svc.BinExportValidation('ok', request.key, binding='sha256')
     controller.validator = validator
-    setup = view.evidence.panel.bindiff_setup
+    setup = view.panels.controller('evidence').panel.bindiff_setup
     setup.older.setText('o.BinExport')
     setup.newer.setText('n.BinExport')
     setup.validate_button.click()
     [thread] = [t for t, _ in controller.threads]
     assert thread.parent() is None
-    view.evidence.dock.deleteLater()
+    view.panels.controller('evidence').dock.deleteLater()
     QCoreApplication.sendPostedEvents(None, QEvent.Type.DeferredDelete)
     gate.set()
     assert thread.wait(5000)
     qtbot.wait(50)  # deliver the queued result
     assert controller.validation is None
-    view.evidence.shutdown()
+    view.panels.controller('evidence').shutdown()
     view.service.close()
     view.service = None
     view.deleteLater()
@@ -809,8 +809,8 @@ def test_dock_deleted_while_setup_worker_runs(qtbot, tmp_path, settings):
 
 def test_window_close_joins_setup_workers(qtbot, tmp_path, settings):
     view = MainWindow(ProjectService.sample(tmp_path / 's'), settings, tmp_path / 'profiles')
-    view.evidence.auto_probe = False
-    controller = view.evidence.bindiff
+    view.panels.controller('evidence').auto_probe = False
+    controller = view.panels.controller('evidence').bindiff
 
     def validator(request, cancel, progress=None):
         while not cancel.is_set():
@@ -818,8 +818,8 @@ def test_window_close_joins_setup_workers(qtbot, tmp_path, settings):
         return svc.BinExportValidation('cancelled', request.key)
     controller.validator = validator
     view.show()
-    view.evidence.action.trigger()
-    setup = view.evidence.panel.bindiff_setup
+    view.panels.show_panel('evidence')
+    setup = view.panels.controller('evidence').panel.bindiff_setup
     setup.older.setText('o.BinExport')
     setup.newer.setText('n.BinExport')
     setup.validate_button.click()

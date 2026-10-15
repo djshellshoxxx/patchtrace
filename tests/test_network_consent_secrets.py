@@ -43,8 +43,8 @@ SETTINGS_KEYS = (
     'provider/model', 'provider/context_budget', 'recent/project', 'recent/projects', 'series/geometry',
     'evidence/geometry', 'evidence/filter', 'evidence/hide_agreed', 'evidence/show_index', 'engines/bindiff/path',
     'engines/bindiff/setup_open')
-# Written by the flows below. The other six are layout, toggles and a probed engine path: nothing typed reaches them.
-DRIVEN_KEYS = frozenset(SETTINGS_KEYS) - {'series/geometry', 'evidence/filter', 'evidence/hide_agreed',
+# Written by the flows below. The others are layout (evidence/geometry is legacy since the panel host), toggles and a probed engine path: nothing typed reaches them.
+DRIVEN_KEYS = frozenset(SETTINGS_KEYS) - {'series/geometry', 'evidence/geometry', 'evidence/filter', 'evidence/hide_agreed',
                                           'evidence/show_index', 'engines/bindiff/path', 'engines/bindiff/setup_open'}
 
 SESSION_KEY = 'sk-session-' + '4f9a2c7e1b8d3056'

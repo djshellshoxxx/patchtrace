@@ -198,8 +198,11 @@ def test_text_role_is_the_default_text_colour_of_dark_style():
 
 
 def test_hunk_colours_are_the_ones_the_panes_paint():
-    match = re.search(r"QColor\('(#[0-9a-f]{6})' if operation == 'replace' else '(#[0-9a-f]{6})'\)", ui_text())
-    assert match and match.groups() == (DARK.hunk_replace, DARK.hunk_edit)
+    """Since migration M4 the panes paint hunks through `gui.qt.codediff.hunk_background` with the theme tokens."""
+    from patchtrace.gui.qt.codediff import hunk_background
+    from patchtrace.gui.qt.theme import DARK as DARK_TOKENS
+    assert hunk_background('replace', DARK_TOKENS).lower() == DARK.hunk_replace
+    assert hunk_background('insert', DARK_TOKENS).lower() == DARK.hunk_edit
 
 
 # --- the runtime guard ------------------------------------------------------------------------------------------------

@@ -1,0 +1,35 @@
+name: Pilot evaluation (advisory)
+# PIL-D2. Patch-intent localization evaluation, manual dispatch, Linux only, advisory (never a required check).
+# Runs the hermetic evaluation tests and records the preregistration hash that every report must carry.
+# Uploads aggregate metrics only: no binaries, no Microsoft-derived data, no tokens.
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  evaluate:
+    name: evaluate
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: 'python -m pip install --only-binary :all: pytest hypothesis'
+      - run: python -m pip install -e .
+      - name: Record the preregistration hash
+        run: |
+          mkdir -p out
+          sha256sum docs/plans/pilot-preregistration-v1.md | tee out/prereg.sha256
+      - name: Evaluation tests
+        run: python -m pytest tests/test_pilot_eval_metrics.py tests/test_pilot_eval_gate.py -q -p no:cacheprovider
+      - name: Write the report
+        run: >-
+          python -c "import json; from tools.calibration.pilot.report import build_report, prereg_sha256;
+          json.dump(build_report(prereg_sha=prereg_sha256(), corpus_sha='0'*64, tool_sha='0'*40, arms={},
+          gate={'status': 'not-evaluated', 'conditions': {}}, exclusions={}), open('out/report.json', 'w'), sort_keys=True)"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: pilot-eval
+          path: out/

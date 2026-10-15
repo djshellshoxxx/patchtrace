@@ -26,7 +26,7 @@ tooltips.py           EDIT new `series.*` IDs (section 7)
 ```
 Rules: `nway/*` and `view_model.py` import no Qt, network or subprocess (extend `test_pure_modules_import_no_qt_or_network`). `ui_series.py` holds no domain logic; it renders a `SeriesView` and forwards intents. `ui.py` must not import `ui_series` at module import time (offscreen import cost, circular import).
 
-Migration M3 (GUI plan section 8, slice F9): the `SeriesWindow` moves to a `series` dock (a tab per opened `series.json`), the `series/geometry` key is retired and the host stores layout. Until F9 it is a recorded exception to "one main window" (GUI plan open question 7).
+Migration M3 (GUI plan section 8, slice F9): the `SeriesWindow` moves to a `series` dock (a tab per opened `series.json`), the `series/geometry` key is retired and the host stores layout. Built in F9: `nway/panel.py` declares the `series` dock and `ui_series.SeriesController` keeps one tab per file; the exception is closed.
 
 ## 3. Pair access (`nway/pair_access.py`)
 

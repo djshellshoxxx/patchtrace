@@ -719,17 +719,17 @@ REGISTRY: dict[str, TooltipEntry] = {
         'Decline and stop.', 'Leaves things as they are.', 'The described action does not happen.'),
     # ---- Series window (SPEC-09b) ------------------------------------------------------------
     'action.series': _e(
-        'Open a read-only window over a stored series.json of three or more builds of one binary.',
+        'Open a read-only tab over a stored series.json of three or more builds of one binary.',
         'Follow one function across several builds and see which hops deserve attention first.',
-        'Opens a non-modal Series window. Nothing is computed, run or written, and pair projects are only read.',
+        'Opens the Series panel with a tab for that series. Nothing is computed, run or written, and pair projects are only read.',
         'The series.json written by `patchtrace series create` and the pair projects next to it.'),
     'series.window': _e(
-        'Read-only view of the chain hypotheses stored in one series.json.',
+        'Read-only view of the chain hypotheses stored in one series.json, in the Series panel.',
         'Compares a function across builds without opening each pair project by hand.',
         'Nothing is changed. Chains are labelled hypotheses assembled from independent pairwise results.',
         'series.json (nway/1) and each pair project\'s stored results.'),
     'series.reload': _e(
-        'Read series.json and the pair projects again.', 'Picks up pair results changed since the window opened.',
+        'Read series.json and the pair projects again.', 'Picks up pair results changed since the tab opened.',
         'Cancels a load in progress and starts a new read. Nothing is written.',
         availability='Always available.'),
     'series.cancel_load': _e(
@@ -847,19 +847,6 @@ REGISTRY: dict[str, TooltipEntry] = {
         'Brings the panel up to date after the project changed.',
         'Recomputes the table on a background thread; nothing is written.',
         availability='Needs an open project.'),
-    'evidence.retry': _e(
-        'Try assembling engine evidence again after a failure.',
-        'A transient read problem may have caused the failure.',
-        'Reloads on a background thread; stored results are unchanged.',
-        availability='Shown after a failure.'),
-    'evidence.copy_error': _e(
-        'Copy the evidence assembly error text to the clipboard.',
-        'Lets you report the failure precisely.', 'Writes plain text to the clipboard only.',
-        availability='Shown after a failure.'),
-    'evidence.open_engines': _e(
-        'Open the Engines tab to import a BinDiff file or run rz-diff.',
-        'Cross-engine comparison needs at least one secondary engine result.',
-        'Switches to the Engines tab; nothing runs yet.', availability='Needs an open project.'),
     'evidence.import_bindiff': _e(
         'Import a .BinDiff result file for this older/newer pair.',
         'Adds BinDiff as a second opinion on function pairing.',
@@ -1085,26 +1072,16 @@ def _rich(text: str) -> str:
     return '<p style="white-space:pre-wrap">' + html.escape(text).replace('\n', '<br>') + '</p>'
 
 
-def apply_tooltip(target, tip_id: str, *, name: str | None = None, **values: object) -> None:
-    """Apply a registry entry to a QWidget or QAction.
+def apply_tooltip(target, tip_id: str, *, name: str | None = None, accessible: str = 'full', **values: object) -> None:
+    """Apply a registry entry to a QWidget or QAction (the work is `gui.tips.apply_tip`).
 
-    Sets toolTip and whatsThis on both, plus statusTip on actions and accessibleDescription on
-    widgets. ``objectName`` is set to ``name`` (default: the ID) only when still empty. Dynamic IDs
-    (those in TEMPLATES) take their values as keyword arguments.
+    Sets toolTip and whatsThis on both, plus statusTip on actions and accessibleDescription on widgets. The legacy
+    description is the whole flattened text; panels pass ``accessible='what'`` for the short What line.
+    ``objectName`` is set to ``name`` (default: the ID) only when still empty. Dynamic IDs (those in TEMPLATES)
+    take their values as keyword arguments.
     """
-    if tip_id in TEMPLATES:
-        rich, plain = template(tip_id, **values), template_description(tip_id, **values)
-    else:
-        rich, plain = tooltip(tip_id), plain_description(tip_id)
-    flat = plain.replace('\n', ' ')
-    target.setToolTip(rich)
-    target.setWhatsThis(plain)
-    if hasattr(target, 'setStatusTip'):
-        target.setStatusTip(flat)
-    if hasattr(target, 'setAccessibleDescription'):
-        target.setAccessibleDescription(flat)
-    if not target.objectName():
-        target.setObjectName(name or tip_id)
+    from .gui.tips import apply_tip
+    apply_tip(target, tip_id, accessible=accessible, name=name, **values)
 
 
 def apply_tooltips(owner, mapping: dict[str, str]) -> None:

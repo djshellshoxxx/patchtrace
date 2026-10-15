@@ -7,7 +7,6 @@ os.environ.setdefault('QT_QPA_PLATFORM', 'offscreen')
 
 import pytest
 from PySide6.QtCore import QSettings
-from PySide6.QtWidgets import QTableWidget
 
 from patchtrace.models import Artifact
 from patchtrace.preflight import overview_rows
@@ -43,20 +42,18 @@ def test_overview_reports_identical_artifacts():
     assert indexed['Size change (newer - older)'] == '+0 bytes'
 
 
-def test_preliminary_dialog_renders_read_only_project_metadata(qtbot, tmp_path):
+def test_files_dock_renders_read_only_project_metadata(qtbot, tmp_path):
     service = ProjectService.sample(tmp_path / 'sample')
     window = MainWindow(service, QSettings(str(tmp_path / 'ui.ini'), QSettings.Format.IniFormat))
     qtbot.addWidget(window)
+    window.show()
     window.show_file_overview()
-    dialog = window._preflight_dialog
-    assert dialog is not None
-    assert dialog.isVisible()
-    assert not dialog.isModal()
-    table = dialog.findChild(QTableWidget)
-    assert table is not None
-    assert table.columnCount() == 3
-    labels = [table.item(i, 0).text() for i in range(table.rowCount())]
+    files = window.panels.controller('files')
+    assert files.widget().isVisible() and window.panels.is_shown('files')
+    model = files.recorded
+    assert model.columnCount() == 3
+    labels = [model.data(model.index(i, 0)) for i in range(model.rowCount())]
     assert 'SHA-256' in labels and 'File size' in labels
-    assert 'PE' in [table.item(i, 1).text() for i in range(table.rowCount())]
-    dialog.close()
+    assert 'PE' in [model.data(model.index(i, 1)) for i in range(model.rowCount())]
+    window._stop_inspection()
     window.close()

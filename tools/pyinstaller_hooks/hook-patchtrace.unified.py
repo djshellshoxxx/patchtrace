@@ -1,18 +1,15 @@
-"""Collect every submodule of `patchtrace.unified` (the frozen `unified _worker --self-check` imports all of them).
-
-The unified engine imports most of its modules lazily (worker, ladder, ir, facts), which PyInstaller's static scan
-misses; the Windows frozen smoke then fails with `ModuleNotFoundError: patchtrace.unified.ir.cfg`. As in the
-cli_commands hook, `on_error='raise'` fails the build instead of shipping an exe that crashes, and the files of THIS
-tree must all be among the results (an editable install elsewhere can make the isolated child resolve another tree).
+"""Collect every `patchtrace.unified` module (SPEC-31): the frozen `unified _worker --self-check` imports them all by name
+(`worker.MODULES`), so PyInstaller's bytecode scan cannot see the ones that only the worker loads (`ir.cfg` was missing
+from the first frozen build that ran the self-check). The names come from this tree's files, not from
+`collect_submodules`: that helper imports the package in an isolated child process and silently returns [] when a stale
+editable install elsewhere shadows the source tree. The extractor script runs in the external Python and is never imported.
 """
 from pathlib import Path
 
-from PyInstaller.utils.hooks import collect_submodules
-
-hiddenimports = collect_submodules('patchtrace.unified', on_error='raise')
-_root = Path(__file__).resolve().parents[2] / 'src' / 'patchtrace' / 'unified'
-_missing = {'patchtrace.unified.' + '.'.join(path.relative_to(_root).with_suffix('').parts)
-            for path in _root.rglob('*.py')
-            if path.name != '__init__.py' and 'extract/ghidra_script' not in path.as_posix()} - set(hiddenimports)
-if _missing:
-    raise RuntimeError(f'patchtrace.unified did not collect {sorted(_missing)}; refusing to build an exe without them')
+_ROOT = Path(__file__).resolve().parents[2] / 'src'
+_PACKAGE = _ROOT / 'patchtrace' / 'unified'
+hiddenimports = sorted(
+    '.'.join(path.relative_to(_ROOT).with_suffix('').parts).removesuffix('.__init__')
+    for path in _PACKAGE.rglob('*.py') if path.name != 'ghidra_script.py')
+if not hiddenimports:
+    raise SystemExit(f'PT-BUILD: no unified modules found under {_PACKAGE}; refusing to build the package')

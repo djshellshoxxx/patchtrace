@@ -345,6 +345,9 @@
 ### [K4:kev-kb-adapter]
 - [x] `kev/kb_adapter.py`, `tests/test_kev_synergy.py` (items 1-8), `tests/test_kev_kb_integration.py` (fake edges).
 - [ ] Open until KB K8: item 9 (`test_three_lanes_stay_separate_for_cve_2024_38063`), real KB view-model run, contextual_rank byte-identity.
+### [F2:qt-runtime]
+- [x] F2 Qt runtime built (tasks, settings, announce, metrics, runtime, qt_support, qt_gate); 20x gate green on Linux
+- [ ] F2 open: Windows 5x gate and the integrator full-suite runs; `gui/__init__.py` is F1-owned (F2 relies on a namespace package until F1 lands)
 ### [GUI:framework] GUI framework plan amendments (2026-10-14; GUI-F0, documentation only)
 - [x] GUI-F0: section 10 amendments applied to the docs it names (multi-engine-evidence-panel 1.8, 5.3.6, 8, 15 and new 17; unified-engine 07 sections 2, 8, 9, 10 and 01 line; ui.md paragraph; series-window and gui-preflight M3; workbench README and KB contract; modules, qa and acceptance rows; roadmap 5; phase-d 1; CLI lines of unified, KB and workbench-floss; the eleven sibling plans' CLI hooks, accessibility, shortcuts and placement). Code rows of section 10 are not in F0.
 - [ ] GUI F1 to F9 not started. Order from GUI plan section 9: F0 and F1 (with F1b in parallel), then F2, then F3 and F4 with F2, then F5 (single owner of `ui.py`, `tooltips.py`, `tests/test_tooltips.py`, `panel_manifest.py`), then F6a, F6b, F7 and F8 in parallel, then F9.
@@ -467,6 +470,45 @@
 - [ ] Integration owner: (a) adapter `IrReader -> MnemonicSource` and `run_ladder(..., passes=pass_table(older=..., newer=...))` in the pipeline, with `table_digest()` as the `pass_table_digest` input of `config_digest`; (b) the policy that picks `residual=False` (B-07); (c) `worker.MODULES` and the frozen smoke list when the pipeline imports the stage; (d) 01 s2 says "L-31" for `ladder/assign.py`, the number is L-24; (e) a `perf` pytest marker if G-U5 files should be deselectable (the S5 file takes about 50 s); (f) the S5 deviations of docs/modules.md [S5:residual] into a short build-notes paragraph in 04
 - [ ] BLOCKED (live): residual precision and recall on real Ghidra IR and Tier R (the G-U3 per-pass table for P16-P19 is S6's), the real cost of decoding `ins` blobs for the unmatched functions (the synthetic double costs about 25 us per function), G-U5 on the Windows runner and the frozen EXE, the L-24 / L-20 / L-25 / L-26 numbers are the spec's and are not tuned on real data
 - [ ] Known limits: the LAP time cap (L-24, 30 s) reads the wall clock, so on a very slow machine the same input can abstain where a fast one does not (recorded as `assign-time-cap`); `SideData.blocks` collapses a block repeated inside one function, so P17 counts it once
+
+### [F4:virtual-table] VirtualTable
+- [x] `gui/table_spec.py` (pure) and `gui/qt/table.py`; 10k and 100k `data()` and time gates, selection, sort, filter, keyboard, copy cap (`tests/test_gui_table.py`, `tests/test_gui_table_spec.py`).
+- [ ] Integrator: re-measure the time ceilings on Windows CI; add a panel-level sort command and a status announcement from `counts_changed` and `copied`; chips delegate (F3) reads `CHIP_ROLE`.
+### [GUI-F3:widgets] GUI framework F3: shared widgets (2026-10-14)
+- [x] labels, state_view (StateView, NoticeStrip), chips, theme (dark tokens, stylesheet equal to DARK_STYLE), gui/tips.py with tests/test_gui_{labels,state_view,chips,theme,tips}.py; qt_gate repeat 10: 1,770 passed.
+- [ ] Integrator (F5): call register_gui_tips() in the host and in the test fixture; wrap the central widget with NoticeStrip; have tooltips.py delegate apply_tooltip(accessible=) to gui.tips.apply_tip or adopt it.
+- [ ] F7: high-contrast chip drawing, system variant, ThemeTokens from QPalette.
+- [ ] BLOCKED (manual): real Narrator or NVDA output for the status strip and notice strip, Windows rendering of chip shapes at 100-200 percent DPI.
+### [F6b:graph-canvas]
+- [x] GraphCanvas and gui/graph_view.py with focused tests.
+- [ ] BLOCKED (manual): Windows timings of the 500/2,000 and 2,000/8,000 budgets, real screen reader output for node announcements.
+
+### [F6a:codediff]
+- [ ] Integrator (M4): move the four ui.py setExtraSelections sites (render_match, _highlight_hunks, raw view, raw clear) to compose_selections; adopt CodeDiffView in ui.py when M4 lands.
+- [ ] WBQ S9: attach the windowed CodeHighlighter through CodeDiffView.attach_highlighter before set_pair.
+- [x] F7: hunk tints are ThemeTokens (hunk_replace, hunk_other) with system and high-contrast variants.
+
+### [GUI-F5:host] GUI framework F5: panel host and seam (2026-10-14)
+- [x] PanelHost, docks, layout persistence, View menu, command palette, F6 cycle, anchors, MainWindowPort, ui.py seam, tooltips delegation, `--self-test` panel check, seam budget and forbidden-API tests; AI-FIX: completed interpretation runs show `run.error`.
+- [ ] Integrator: add the repeat job to `.github/workflows/qa-windows.yml` (text in docs/qa.md [GUI-F5:host]); run the full suite twice and `tools/qt_gate.py --repeat 20` on Linux.
+- [ ] F8: evidence migration (`secondary/evidence_panel.py`; remove the `hasattr(self, 'evidence')` hooks and the menu lookup by 'Analysis'); then lower `UI_TRANSITIONAL_CEILING` in tests/test_gui_host_seam.py to the final +15.
+- [ ] F7: Theme submenu, `theme_changed` on palette change, reduced motion.
+- [ ] BLOCKED (manual): palette, F6 order, dock tab names and notice strip with real Narrator or NVDA on Windows; layout restore across DPI changes.
+
+### [F8:evidence-migration] Evidence and engine setup on the host (2026-10-14)
+- [x] M1 and M2 done; `UI_TRANSITIONAL_CEILING` lowered 25 -> 17 (ui.py 3,159 lines).
+- [ ] Reach the plan's +15 (3,157): two more ui.py lines go with F9 (series and files docks).
+- [ ] Integrator: move the evidence status messages to `StatusAnnouncer` and the load/run/probe threads to `TaskRunner` (needs the C6 thread tests rewritten); M4 stays open.
+- [ ] BLOCKED (manual): M19 NVDA walk and M21 keyboard walk of the migrated panel on Windows.
+### [F7:theme]
+- [x] system variant, automatic high contrast, chip HC drawing, reduced motion (Qt animation effects), View > Theme, hunk tints as ThemeTokens, focused tests.
+- [ ] Integrator: a tip id for the Theme submenu (tooltips.py is frozen for F7); panels with their own painting should handle `theme_changed` and use `tokens.high_contrast`; legacy ui.py widget-level stylesheets (code font size) are unaffected.
+- [ ] BLOCKED (manual M22): real Windows high-contrast themes (Aquatic, Desert, Dusk, Night sky), Settings > Accessibility > Visual effects (animations off), light/dark OS switch with the System variant, chip and hunk legibility at 100-200 percent DPI.
+
+### [F9:series-files-docks] Series and files docks (2026-10-14)
+- [x] M3 done: both former exceptions to "one main window" are docks; ui.py 3,092 lines, `UI_TRANSITIONAL_CEILING` lowered 17 -> -50.
+- [ ] Integrator: `tooltips.py` still says "Opens a non-modal Series window" in `action.series` and describes `series.window` as a window; reword when F7 releases the file.
+- [ ] BLOCKED (manual): keyboard and screen-reader walk of the tab close buttons and both docks on Windows.
 ### [RA-FIX-1:audit-fixes] Random audit 1 fixes (2026-10-14, Sonnet 5.5, worktree; Linux only)
 - [x] RA-1 per-file entropy budget (4 x `entropy_cap`, `entropy_budget_exhausted`) and `headers.read_image_layout` for `unified.addressing.layout_from_reader`; the audit recipe (96 sections over one 8 MiB range, 8.4 MB file) takes 1.4 s instead of 34.3 s, the honest one-section file stays at 0.5 s
 - [x] RA-4 offline cache index sharded over `urls/<xx>.json`, an unreadable index file is never rewritten (`PT-INTEL-CONFIG`), a full shard is refused (`PT-INTEL-LIMIT`), the first version's `urls.json` stays readable and untouched
@@ -607,3 +649,27 @@
 - [x] `rules/{store,matrix,export,cli}.py`, `cli_commands/rules.py`, `tests/test_rules_{store,matrix,export,cli}.py` (14, 34, 20, 28), `tests/rules_store_support.py`, golden `tests/fixtures/rules/export/export-term-v1.yar`.
 - [ ] Integrator: the live `PairBackend` for `rules propose` (match to `PairSource`, strings, imports, capabilities, bytes and DiE flags from the project stores; track T) is not built, so `propose` exits 2 without it; `ui_rules`/R6a can use `matrix`, `store` and `export` as they are; pins for `yara-x`/`iced-x86` in `pyproject.toml`, `optional_deps.py`, the PyInstaller hook and `frozen_smoke` (R2 and R4 asks); `.gitattributes` lines `tests/fixtures/rules/** text eol=lf` and `*.yar text eol=lf` (the new golden is LF-only); the repo guard of plan s10 (the marker `patchtrace-rule-export/1` is in the new golden, under `tests/fixtures/rules/`).
 - [ ] BLOCKED, live evidence: Windows CI for the new tests (CRLF checkout of the golden, file locking of the sidecar), a real series through `rules test`, and the frozen `rules _rules-worker` path.
+
+### [PIL-D1:eval-core]
+- [x] metrics, ablation, gate, report (tests/test_pilot_eval_*.py)
+- [ ] arm runner over localize(), case/advisory loader, CLI: needs LBL M2/M5 pair labels and tools/calibration/pilot/advisories/<CVE>.json
+
+### [PIL-C2:read-model]
+- [x] pilot/read_model.py (tests/test_pilot_read_model.py)
+- [ ] ui_leads.py, leads.* tooltips, PANEL registration, reveal_location, storage prepare/commit split (GUI track)
+### [WBQ-S6-S9:qt-modules]
+- [x] S6 `pemeta_view.py`, `ui_pemeta.py`, `tests/test_ui_pemeta.py` (39 tests); S9 `codetext_view.py`, `ui_codetext.py`, `tests/test_ui_codetext.py` (34 tests); qt_gate x5 green (365 passed).
+- [ ] Integrator: Files panel hosts `PeMetaWidget` as a "Build facts" tab and feeds it a `PeMetaSnapshot` (needs WBQ S5 in `inspect.py`; S3 Rich header rows are not built); `ui.py` seam: `CodeTextController(self.old_view, self.new_view, announce=ctx.announce, live_base=...)`, `begin(...)` before and `finish()` after the `setPlainText` calls in `render_match`, `configure(colors, marks)` from QSettings `desktop/code_colors` and `desktop/token_marks` (default off), F8 and Shift+F8 actions calling `step_change(+1/-1)`, the label under the hunk selector, Setup rows; tooltip ids from `TIPS` in both UI modules move into `tooltips.py` or the panel specs.
+- [ ] BLOCKED, live evidence: NVDA and Narrator reading of the "Line changes" label, 125/150/200% DPI, Windows high contrast, bold advance in Consolas, pixel probe of syntax foreground on a hunk row.
+### [UE-S4b:ui-unified]
+- [x] Unified panel (`unified/panel.py`, `ui_unified.py`) on the GUI host, built against `read_model.py`; 39 focused tests, qt_gate x20 green.
+- [ ] Integrator: tests/test_tooltips.py needs `unified.dock`, `unified.tab`, `unified.source.unknown` in the `names` set of `test_every_registry_id_is_applied_somewhere` (no focusable control carries them); the Explain text should feed `build_context`/`ContextDialog` (ui.py) instead of the preview-only dialog.
+- [ ] Open: reader for stored IR disassembly / decompiled pair text (`pair_texts` hook) to fill the code panes for rows without a Ghidriff match; persist `unified/columns`.
+### [PIL-C2:leads]
+- [x] `pilot/read_model.py`, `pilot/panel.py`, `ui_leads.py`, `tests/test_pilot_read_model.py`, `tests/test_ui_leads.py`, `tests/leads_support.py`; qt_gate repeat 6 of `test_ui_leads.py`: 366 passed.
+- [ ] Integrator: add `leads` to `built` in `tests/test_gui_host_seam.py::test_the_shipped_manifest_builds_only_the_migrated_panels_and_has_no_problem` and to the dock list of `tests/test_tooltips.py::test_every_registry_id_is_applied_somewhere` (both fail on any new built panel until then). Decide `default_visible` for the dock (the plan wants it visible with a project; GUI open question 13).
+- [ ] A: a worker-safe `collect` (snapshot in, evidence out) so that Prepare leads does not hold the GUI thread while evidence is collected; public `collect.overview` (the dock imports `_overview`); a snapshot date in `Kev(not-in-snapshot)`; `store.load` split into pointer rows (GUI thread) and sidecar read (worker).
+- [ ] BLOCKED, live evidence: real UIA/NVDA/Narrator announcement of the status lines, high-contrast and 200 percent DPI look of the chips, Windows CI of the new tests.
+
+### [D:master-plan]
+- Master plan and categorized to-do list for finishing the project: `docs/plans/master-plan-d.md`, `docs/plans/master-todo-d.md`; panel specs prompt for ChatGPT: `docs/plans/chatgpt-panel-specs-prompt.md`.

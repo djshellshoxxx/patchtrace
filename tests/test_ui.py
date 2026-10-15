@@ -432,3 +432,14 @@ def test_new_project_dialog_rejects_directory_that_is_a_file(qtbot, tmp_path):
     dialog.root.setText(str(binary))
     dialog.accept()
     assert 'absent or empty' in dialog.error.text()
+
+
+@pytest.mark.parametrize('error', ['PT-QUARANTINE: 1 of 3 findings dropped', None], ids=['partial', 'clean'])
+def test_completed_interpretation_shows_its_error_note(window, error):
+    from patchtrace.models import InterpretationRun
+    match = window.project.matches[0]
+    context = build_context(window.project, [match.id])
+    window.complete_interpretation(InterpretationRun(context=context, provider='fixture', model='none',
+                                                     status='completed', error=error))
+    shown = window.job_label.text() + window.statusBar().currentMessage() + window.logs.toPlainText()
+    assert (error in shown) if error else ('PT-' not in shown)

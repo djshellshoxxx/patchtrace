@@ -31,7 +31,6 @@ from PySide6.QtWidgets import (
     QGridLayout,
     QGroupBox,
     QHBoxLayout,
-    QLabel,
     QLineEdit,
     QPlainTextEdit,
     QProgressBar,
@@ -41,6 +40,9 @@ from PySide6.QtWidgets import (
 )
 from shiboken6 import isValid
 
+from .gui.qt.labels import PlainLabel
+from .gui.qt.tasks import CancelToken
+from .gui.text import VIEW_LIMIT
 from .runtime_discovery import discover_local_runtimes
 from .secondary.evidence_panel_service import (
     PROBE_TEXT,
@@ -136,17 +138,6 @@ def _save(settings, key: str, value) -> None:
         pass
 
 
-class _PlainLabel(QLabel):
-    """File strings and messages are always text, never Qt rich text (same rule as ui_evidence.PlainLabel)."""
-
-    def __init__(self, text: str = '', parent=None):
-        super().__init__(text, parent)
-        self.setTextFormat(Qt.TextFormat.PlainText)
-        self.setOpenExternalLinks(False)
-        self.setTextInteractionFlags(Qt.TextInteractionFlag.NoTextInteraction)
-        self.setWordWrap(True)
-
-
 @dataclass(frozen=True)
 class TaskFailure:
     """A task raised unexpectedly; only the exception class name crosses the thread boundary."""
@@ -164,7 +155,7 @@ class TaskThread(QThread):
 
     def __init__(self, task: Callable, generation: int):
         super().__init__()
-        self.cancel = threading.Event()
+        self.cancel = CancelToken()
         self.task = task
         self.generation = generation
         _LIVE_THREADS.add(self)
@@ -256,7 +247,7 @@ class BinDiffSetupPanel(QGroupBox):
         self._control(self.path, 'bindiff_path')
         self.browse_exe = self._control(QPushButton('Browse...'), 'bindiff_browse')
         self.probe_button = self._control(QPushButton('Probe BinDiff'), 'bindiff_probe')
-        self.probe_status = _PlainLabel(PROBE_TEXT['empty'])
+        self.probe_status = PlainLabel(PROBE_TEXT['empty'], wrap=True, limit=VIEW_LIMIT, multiline=True)
         self.probe_status.setObjectName('engine_setup_probe_status')  # empty accessible name: setText announces
         self.older = self._control(QLineEdit(), 'older_binexport')
         self.older.setMaxLength(PATH_LIMIT)
@@ -268,7 +259,7 @@ class BinDiffSetupPanel(QGroupBox):
         self.newer_browse = self._control(QPushButton('Browse...'), 'newer_browse')
         self.accept_box = self._control(QCheckBox('Accept .BinExport files without a SHA-256 executable id'),
                                         'accept_unbound')
-        self.warning = _PlainLabel(WARNING_TEXT)
+        self.warning = PlainLabel(WARNING_TEXT, wrap=True, limit=VIEW_LIMIT, multiline=True)
         apply_tooltip(self.warning, 'engine_setup.unbound_warning')
         self.warning.setAccessibleName(ACCESSIBLE_NAMES['unbound_warning'])
         self.validate_button = self._control(QPushButton('Validate .BinExport files'), 'validate')
@@ -278,7 +269,7 @@ class BinDiffSetupPanel(QGroupBox):
         self.progress.setRange(0, 0)  # indeterminate: C3 reports no counts; the status line names the step
         self.progress.setAccessibleName(ACCESSIBLE_NAMES['validation_progress'])
         self.progress.setVisible(False)
-        self.validation_status = _PlainLabel(VALIDATION_TEXT['no-project'])
+        self.validation_status = PlainLabel(VALIDATION_TEXT['no-project'], wrap=True, limit=VIEW_LIMIT, multiline=True)
         self.validation_status.setObjectName('engine_setup_validation_status')  # empty accessible name
         self.show_details = self._control(QCheckBox('Show technical details'), 'show_details')
         self.details = self._control(QPlainTextEdit(), 'details')
@@ -286,13 +277,13 @@ class BinDiffSetupPanel(QGroupBox):
         self.details.setPlainText(DETAILS_EMPTY)
         self.details.setMaximumBlockCount(400)
         self.details.setVisible(False)
-        self.help = _PlainLabel(HELP_TEXT)
+        self.help = PlainLabel(HELP_TEXT, wrap=True, limit=VIEW_LIMIT, multiline=True)
         self.help.setObjectName('engine_setup_help')
         labels = []
         for text, buddy in (('BinDiff executable (absolute path):', self.path),
                             ('Older .BinExport (BinDiff primary):', self.older),
                             ('Newer .BinExport (BinDiff secondary):', self.newer)):
-            label = _PlainLabel(text)
+            label = PlainLabel(text, wrap=True, limit=VIEW_LIMIT, multiline=True)
             label.setBuddy(buddy)  # labelled-by relation for screen readers
             labels.append(label)
         # Stacked form (label above field) keeps the section no wider than the C6 Engines rows.
