@@ -49,7 +49,8 @@ def fake_search(changed=0, indexed=0, missing=()):
 def test_each_kind_maps_to_a_plan(kind, value, expected):
     assert query_text(anchor(kind, value), changed=True) == expected
     item = plan_for(anchor(kind, value))
-    assert item.plan is not None and item.plan.scope == 'changed' and item.plan.mode == 'exact'
+    assert item.plan is not None and item.plan.scope == 'changed' and item.plan.mode == 'words'
+    # exact mode never matches a quoted phrase (service._names needs a single bare term), so it is not used
     assert item.plan.phrases
 
 

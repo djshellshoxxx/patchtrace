@@ -56,7 +56,7 @@ def query_text(anchor: Anchor, *, changed: bool) -> str:
 
 def plan_for(anchor: Anchor, *, changed: bool = True) -> AnchorPlan:
     try:
-        plan = parse_query(query_text(anchor, changed=changed), mode='exact')
+        plan = parse_query(query_text(anchor, changed=changed), mode='words')
     except SearchError as error:
         return AnchorPlan(anchor.anchor_id, anchor.kind, anchor.label, None, error.message)
     return AnchorPlan(anchor.anchor_id, anchor.kind, anchor.label, plan)
