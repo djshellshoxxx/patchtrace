@@ -121,6 +121,24 @@ def build_tarball(repo_dir: Path, commit: str, out: Path, run: Run = _run) -> di
     return {'tree': tree, 'prefix': prefix, 'sha256': sha256_bytes(data), 'size': len(data)}
 
 
+def content_digest(path: Path) -> str:
+    """Layout-independent sha256 of a tarball: sorted (name, kind, exec bit, link target, body sha256); ignores tar/gzip bytes."""
+    rows: list[bytes] = []
+    with tarfile.open(path, mode='r:*') as archive:
+        for member in archive:
+            if member.isdir():
+                kind, body = 'd', b''
+            elif member.isreg():
+                kind, body = 'f', hashlib.sha256(archive.extractfile(member).read()).digest()
+            elif member.issym():
+                kind, body = 'l', member.linkname.encode()
+            else:
+                raise VerifyError(f'unsupported member type: {member.name!r}')
+            exec_bit = '1' if member.isreg() and member.mode & 0o111 else '0'
+            rows.append(f'{member.name}\0{kind}\0{exec_bit}\0'.encode() + body)
+    return sha256_bytes(b'\n'.join(sorted(rows)))
+
+
 def describe_tarball(path: Path) -> list[str]:
     """Per top-level-directory digests of (name, mode, size, content) plus the git version: used to localise a pin mismatch."""
     groups: dict[str, hashlib._Hash] = {}

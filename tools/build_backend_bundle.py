@@ -1101,6 +1101,14 @@ def rebuild_ghidriff_tarball(ghidriff: Mapping, work: Path, source_builder: Sour
         _fail('PT-BUNDLE-FETCH', 'ghidriff.source_tarball: nothing was rebuilt')
     if size != entry['size'] or actual != entry['sha256']:
         detail = ''
+        pinned_content = entry.get('content_sha256')
+        if source_builder is None and _HEX64.match(str(pinned_content)):
+            # tar/gzip bytes depend on the runner's git and zlib; the pin vouches for the member contents
+            try:
+                if _load_sibling('verify_backend_pins').content_digest(path) == pinned_content:
+                    return path
+            except Exception:  # noqa: BLE001 - fall through to the mismatch failure
+                pass
         if source_builder is None:  # diagnostics only for the real recipe: names the differing top-level directory
             try:
                 detail = '\n' + '\n'.join(_load_sibling('verify_backend_pins').describe_tarball(path))

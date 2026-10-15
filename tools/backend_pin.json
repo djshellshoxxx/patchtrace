@@ -151,6 +151,7 @@
       "url": "https://github.com/clearbluejar/ghidriff/archive/4f5d895fcbb1eacd65efd81145922c15bb7e741d.tar.gz",
       "sha256": "613449a2743e50a11c96b8a6cf6856095816cfece77a021c49cac6e4fe4fe87f",
       "size": 7086648,
+      "content_sha256": "b7c9aec8ee249be052256c5db06cdaf876dba5cefc955e249c26d6ff3b75d9fc",
       "note": "Deterministic git-rebuilt tarball (verify_backend_pins.py rebuild from the pinned commit); the GitHub archive was compared member by member (117 identical) and the rebuild is byte-identical twice, pin_verify run 38661029764; recorded with the owner approval of 2026-10-15. No trust on first use."
     }
   },
