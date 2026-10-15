@@ -215,6 +215,7 @@ def test_every_registry_id_is_applied_somewhere(window, qtbot, tmp_path, setting
     names |= {window.panels.controller('evidence').dock.objectName(), window.panels.controller('evidence').panel.stale_banner.objectName()}
     # M3: the series and files docks are containers too.
     names |= {window.panels.panels[panel_id].dock.objectName() for panel_id in ('series', 'files')}
+    names |= {'unified.dock', 'unified.tab', 'unified.source.unknown'}
     # Track G: the BinDiff setup group and its warning label are a container and a label.
     setup = window.panels.controller('evidence').panel.bindiff_setup
     names |= {setup.objectName(), setup.warning.objectName()}
