@@ -531,3 +531,19 @@
 
 ### [D:master-plan]
 - Master plan and categorized to-do list for finishing the project: `docs/plans/master-plan-d.md`, `docs/plans/master-todo-d.md`; panel specs prompt for ChatGPT: `docs/plans/chatgpt-panel-specs-prompt.md`.
+
+
+### [UE2-S6b:live-gates]
+- [x] G-U1, G-U2, G-U4 evaluators over `unified-outcomes/1`; G-U8 `ui-policy` tests named; live driver and workflow written; focused tests green on Linux
+- [ ] BLOCKED / not run: the first dispatch of `unified-live-gates.yml` (static checks only), the Windows leg, `live_pairs` against a real Ghidra (its pure parts are tested), mutant runs at 20 per class (about 240 Ghidriff runs, one job per class)
+- [ ] Still pending gates: G-U3 (IR-to-ladder adapter and a pinned BinDiff), G-U6 (SPEC-32 evaluation core), G-U7 (rows with atoms), G-U4 chain checks (third version per project), G-U1 P1 nuisance variants (BuildSpec link flags)
+
+
+### [UE2-U3U5:explain-columns]
+- [x] Explain fragment in `build_context` / the existing ContextDialog flow (rows with a Ghidriff match); `unified/columns` persisted; qt_gate x5 green on the Unified, columns, host-seam and tooltip tests
+- [ ] Open: rows without a Ghidriff match still use the own preview (build_context needs a stored match); Windows DPI and screen-reader passes
+
+
+### [UE2-U4U6:ir-text-real-gui]
+- [x] U6 IR text reader (`IrPairTexts`); U4 hermetic real-pipeline GUI test; qt_gate x5 green (Unified, columns, pipeline, host seam)
+- [ ] Open: decompiled C of S3b rows (`decomp.jsonl.gz`) is not yet read for the code panes; alignment gaps from `facts/align.py` are not drawn (the diff pane aligns the two texts itself); Windows (the worker child, DPI)

@@ -34,6 +34,7 @@ from .gui.registry import PanelContext
 from .tooltips import apply_tooltip, template, tooltip
 from .unified import pipeline, read_model
 from .unified.limits import UnifiedError
+from .unified.pair_text import IrPairTexts
 from .unified.read_model import (
     Cancelled,
     UnifiedLoadRequest,
@@ -45,6 +46,7 @@ from .unified.registry import REGISTRY
 
 ROW_ROLE = Qt.ItemDataRole.UserRole
 SEARCH_DEBOUNCE_MS = 150
+COLUMNS_DEBOUNCE_MS = 250
 DEFAULT_CHANGES = ('material', 'review', 'unknown', 'not-applicable')   # 07 s7; cosmetic/unchanged are counted
 CANCELLED_TEXT = 'Cancelled; earlier results unchanged.'
 LOADING_DETAIL = 'Loading details...'
@@ -268,10 +270,14 @@ class UnifiedPanel(QWidget):
     copy_requested = Signal(object)     # list of rows
     explain_requested = Signal(object)
     filters_changed = Signal()
+    columns_changed = Signal()          # a user resize settled (debounced); never emitted for our own sizing
 
     def __init__(self, parent: QWidget | None = None) -> None:
         super().__init__(parent)
         self.setAccessibleName('Unified comparison')
+        self._user_widths: dict[str, int] = {}
+        self._column_keys: tuple[str, ...] = ()
+        self._sizing = False
         self.model = UnifiedTableModel(self)
         self.header = PlainLabel(wrap=True, limit=600)
         self.status = PlainLabel(wrap=True, limit=600)
@@ -329,6 +335,11 @@ class UnifiedPanel(QWidget):
         self._timer = QTimer(self)
         self._timer.setSingleShot(True)
         self._timer.setInterval(SEARCH_DEBOUNCE_MS)
+        self._columns_timer = QTimer(self)
+        self._columns_timer.setSingleShot(True)
+        self._columns_timer.setInterval(COLUMNS_DEBOUNCE_MS)
+        self._columns_timer.timeout.connect(self.columns_changed)
+        self.table.horizontalHeader().sectionResized.connect(self._section_resized)
         self._layout_widgets()
         self._connect()
         for button in (self.cancel_button, self.retry_button, self.copy_error_button):
@@ -424,11 +435,37 @@ class UnifiedPanel(QWidget):
         self.banner.setPlainText('\n'.join(vm.banners[1:] if vm.state in ('U4', 'U6') else vm.banners))
         self.banner.setVisible(bool(self.banner.toPlainText()))
         self._set_sources(vm)
-        self.model.set_view_model(vm)
+        self._sizing = True
+        try:
+            self.model.set_view_model(vm)
+            self._size_columns(vm)
+        finally:
+            self._sizing = False
         self.apply_filters()
         self.retry_button.setVisible(vm.state == 'U5')
         self.copy_error_button.setVisible(vm.state == 'U5')
         self.cancel_button.setVisible(vm.state == 'U2')
+
+    def set_column_widths(self, widths: Mapping[str, int]) -> None:
+        """The remembered widths (already validated by the controller); they apply at the next view model."""
+        self._user_widths = dict(widths)
+
+    def user_widths(self) -> dict[str, int]:
+        return dict(self._user_widths)
+
+    def _size_columns(self, vm: UnifiedViewModel) -> None:
+        spec = read_model.columns(vm)
+        self._column_keys = tuple(c.key for c in spec)
+        em = self.table.fontMetrics().averageCharWidth()
+        header = self.table.horizontalHeader()
+        for index, column in enumerate(spec):
+            header.resizeSection(index, self._user_widths.get(column.key) or em * column.width_em)
+
+    def _section_resized(self, index: int, _old: int, new: int) -> None:
+        if self._sizing or not 0 <= index < len(self._column_keys):
+            return
+        self._user_widths[self._column_keys[index]] = new
+        self._columns_timer.start()
 
     def _set_sources(self, vm: UnifiedViewModel) -> None:
         """Every registry source is listed (so the choice does not move between results); an id this build does not
@@ -537,7 +574,8 @@ class UnifiedController(ControllerBase):
         self._copy_text = ctx.shell.copy_text
         self.nav = ctx.nav
         self.loader = loader
-        self.pair_texts = pair_texts
+        self._ir_texts = IrPairTexts() if pair_texts is None else None
+        self.pair_texts = pair_texts or self._ir_texts
         self.engine_busy = engine_busy or self._evidence_run_active
         self.vm: UnifiedViewModel | None = None
         self.dirty = True
@@ -545,6 +583,7 @@ class UnifiedController(ControllerBase):
         self.last_error = ''
         self.detail_generation = 0
         self._restore_filters()
+        self._restore_columns()
         panel.run_requested.connect(self.start_run)
         panel.retry_requested.connect(self.start_run)
         panel.cancel_requested.connect(self.cancel_run)
@@ -556,6 +595,7 @@ class UnifiedController(ControllerBase):
         panel.copy_requested.connect(self.copy_provenance)
         panel.explain_requested.connect(self.explain)
         panel.filters_changed.connect(self._save_filters)
+        panel.columns_changed.connect(self._save_columns)
         self.update_controls()
 
     # -- settings (each read validated; a bad value is the default) --
@@ -566,6 +606,12 @@ class UnifiedController(ControllerBase):
             if saved:
                 button.set_checked(saved)
         panel.show_hidden.setChecked(self.settings.get_bool('view/show_hidden', False))
+
+    def _restore_columns(self) -> None:
+        self.panel.set_column_widths(read_model.parse_column_widths(self.settings.get_list('columns', ())))
+
+    def _save_columns(self) -> None:
+        self.settings.set('columns', read_model.format_column_widths(self.panel.user_widths()))
 
     def _save_filters(self) -> None:
         panel = self.panel
@@ -603,6 +649,8 @@ class UnifiedController(ControllerBase):
     def shutdown(self) -> None:
         for channel in (LOAD_CHANNEL, RUN_CHANNEL, DETAIL_CHANNEL):
             self.tasks.cancel(channel)
+        if self._ir_texts is not None:
+            self._ir_texts.close()
 
     # -- load --
     def _backend(self):
@@ -773,6 +821,10 @@ class UnifiedController(ControllerBase):
         fragment = read_model.explain_context(self.vm, row) if row is not None and self.vm else None
         if fragment is None:
             self._status('No context could be built for this row.')
+            return
+        if row.ghidriff_match_id is not None and self.nav.select_match(row.ghidriff_match_id, True):
+            # D-30: the text reaches an AI only inside the existing, explicit context preview of the selected match
+            self.window.preview_interpretation(notes=[(fragment.title, fragment.text, fragment.omitted)])
             return
         ExplainDialog(fragment.title, fragment.text, fragment.omitted, self.window).exec()
 

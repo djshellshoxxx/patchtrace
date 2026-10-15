@@ -81,9 +81,12 @@ def validate_context(context: AnalysisContext) -> dict:
     try:
         data = json.loads(context.payload, object_pairs_hook=_no_duplicates,
                           parse_constant=lambda value: (_ for _ in ()).throw(ValueError('invalid JSON number')))
-        if (set(data) != {'schema_version', 'project_id', 'revision', 'artifacts', 'matches', 'evidence', 'omitted'}
-                or data['schema_version'] != 1):
+        if (set(data) - {'unified'} != {'schema_version', 'project_id', 'revision', 'artifacts', 'matches', 'evidence',
+                                        'omitted'} or data['schema_version'] != 1):
             raise ValueError('invalid context payload schema')
+        if any(set(n) != {'title', 'text'} or not all(isinstance(v, str) for v in n.values())
+               for n in data.get('unified', [])):
+            raise ValueError('invalid context note schema')
         if any(set(a) != {'id', 'side', 'sha256'} for a in data['artifacts']):
             raise ValueError('invalid context artifact schema')
         if any(set(m) != {'id', 'run_id', 'category', 'function_ids', 'context_function_ids'}

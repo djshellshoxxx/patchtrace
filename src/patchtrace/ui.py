@@ -2845,14 +2845,14 @@ class MainWindow(QMainWindow):
             self.refresh()
         self.start_job('Importing Ghidriff JSON', lambda cancel, event: service.prepare_import(Path(path)), commit)
 
-    def preview_interpretation(self):
+    def preview_interpretation(self, *_, notes=()):
         if not self.project or self.worker:
             return
         match_ids = [item.data(Qt.ItemDataRole.UserRole) for item in self.navigator.selectedItems()]
         if not match_ids:
             return
         budget = setting_int(self.settings, 'provider/context_budget', 24000, 512, 200000)
-        context = self._guard(lambda: build_context(self.project, match_ids, max_chars=budget))
+        context = self._guard(lambda: build_context(self.project, match_ids, max_chars=budget, notes=notes))
         if context is None:
             return
         dialog = ContextDialog(context, self.settings, self)
