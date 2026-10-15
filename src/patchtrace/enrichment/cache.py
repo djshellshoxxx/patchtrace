@@ -331,6 +331,8 @@ class DerivedCache:
             raise _Corrupt('manifest names another entry')
         if stage == RAW_STAGE and manifest.size > self.config.raw_max_bytes:
             raise _Corrupt('raw entry exceeds bound')
+        if manifest.size > self.config.budget_bytes:  # put() never admits more, so this is damage
+            raise _Corrupt('entry exceeds budget')
         try:
             with open(payload_path, 'rb') as handle:
                 payload = handle.read(manifest.size + 1)

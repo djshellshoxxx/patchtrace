@@ -316,6 +316,17 @@ def test_corrupt_entries_quarantined(cache, damage):
     assert cache.put('signals', KEY, PAYLOAD, {})
 
 
+@pytest.mark.parametrize('size', [2 ** 40, 2 ** 70], ids=['tib', 'beyond-ssize'])
+def test_absurd_manifest_size_is_corrupt_not_a_crash(cache, size):
+    assert cache.put('signals', KEY, PAYLOAD, {})
+    entry = entry_dir(cache, 'signals', KEY)
+    manifest = json.loads((entry / 'manifest.json').read_text())
+    manifest['size'] = size
+    (entry / 'manifest.json').write_text(json.dumps(manifest))
+    assert cache.get('signals', KEY) is None
+    assert not entry.exists() and _quarantine_count(cache) == 1
+
+
 def test_verify_counts(cache):
     k2 = stage_id('signals', 1, {'x': B})
     assert cache.put('signals', KEY, PAYLOAD, {})
