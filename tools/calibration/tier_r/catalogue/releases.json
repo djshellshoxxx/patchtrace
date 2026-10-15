@@ -2807,5 +2807,386 @@
   "risks": [
    "29 ambiguous record(s) (source changed with identical code, or induced by macro/header/inlining) are excluded from changed-set scoring by design."
   ]
+ },
+ {
+  "contract": "case-card/1",
+  "id": "libdeflate-v1.15-to-v1.16",
+  "project": "libdeflate",
+  "upstream_git": "https://github.com/ebiggers/libdeflate.git",
+  "license_spdx": "MIT",
+  "license_evidence": "COPYING at 7e11d509789df468151b52f7ed64ca4e566996c4: MIT: Copyright 2016 Eric Biggers / Permission is hereby granted, free of charge, to any person obtaining a copy of this software (sha256 5d246dd2...40fe; read at 02013385 too, sha256 5d246dd2...40fe)",
+  "old": {
+   "ref": "v1.15",
+   "commit": "020133854ff73b8506fe59f92a9b5b622d360716"
+  },
+  "new": {
+   "ref": "v1.16",
+   "commit": "7e11d509789df468151b52f7ed64ca4e566996c4"
+  },
+  "kind": "release",
+  "cve": [],
+  "semantic_change": true,
+  "changed_functions": [
+   {
+    "name": "deflate_flush_block",
+    "file": "lib/deflate_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "deflate_compress_fastest",
+    "file": "lib/deflate_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "deflate_compress_greedy",
+    "file": "lib/deflate_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "deflate_compress_near_optimal",
+    "file": "lib/deflate_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "libdeflate_alloc_compressor",
+    "file": "lib/deflate_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "deflate_decompress_default",
+    "file": "lib/decompress_template.h",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "deflate_decompress_bmi2",
+    "file": "lib/decompress_template.h",
+    "change": "source and code changed (factory label changed/source-diff)"
+   }
+  ],
+  "unchanged_controls": [
+   "libdeflate_alloc_decompressor",
+   "libdeflate_deflate_compress_bound",
+   "libdeflate_free_decompressor"
+  ],
+  "build": {
+   "system": "single",
+   "mingw_ok": "yes",
+   "recipe_notes": "tier_r recipe libdeflate (mingw-gcc 13-win32 -O2 -g, explicit file list from recipes.json, libdeflate.dll)"
+  },
+  "verification": {
+   "method": "tools.calibration.tier_r build-card on fetched pins (mingw-gcc 13-win32 O2): 55 project functions, 39 unchanged, 7 changed, 2 ambiguous, 7 no-counterpart (bodies: 9 identical, 30 address-only, 9 different); git diff --numstat v1.15..v1.16 -- '*.c' '*.h': 9 files.; rebuilt from the committed card: 0 disagreements; A/A rebuild, reversed-order and rotated-order links of v1.19 at O2 byte-identical (tier_r aa)",
+   "files_changed": 9,
+   "functions_changed_count": 7,
+   "verified_by_agent_run": true,
+   "build_verified": true,
+   "status": "verified"
+  },
+  "sources": [
+   "https://github.com/ebiggers/libdeflate/releases/tag/v1.16",
+   "https://github.com/ebiggers/libdeflate/blob/v1.16/NEWS.md"
+  ],
+  "risks": [
+   "2 ambiguous record(s) (source changed with identical code, or induced by macro/header/inlining) are excluded from changed-set scoring by design."
+  ]
+ },
+ {
+  "contract": "case-card/1",
+  "id": "libdeflate-v1.16-to-v1.17",
+  "project": "libdeflate",
+  "upstream_git": "https://github.com/ebiggers/libdeflate.git",
+  "license_spdx": "MIT",
+  "license_evidence": "COPYING at bd925ae68e99f65d69f20181cb845aaba5c8f098: MIT: Copyright 2016 Eric Biggers / Permission is hereby granted, free of charge, to any person obtaining a copy of this software (sha256 5d246dd2...40fe; read at 7e11d509 too, sha256 5d246dd2...40fe)",
+  "old": {
+   "ref": "v1.16",
+   "commit": "7e11d509789df468151b52f7ed64ca4e566996c4"
+  },
+  "new": {
+   "ref": "v1.17",
+   "commit": "bd925ae68e99f65d69f20181cb845aaba5c8f098"
+  },
+  "kind": "release",
+  "cve": [],
+  "semantic_change": true,
+  "changed_functions": [
+   {
+    "name": "deflate_optimize_and_flush_block",
+    "file": "lib/deflate_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   }
+  ],
+  "unchanged_controls": [
+   "libdeflate_adler32",
+   "libdeflate_alloc_decompressor",
+   "libdeflate_crc32"
+  ],
+  "build": {
+   "system": "single",
+   "mingw_ok": "yes",
+   "recipe_notes": "tier_r recipe libdeflate (mingw-gcc 13-win32 -O2 -g, explicit file list from recipes.json, libdeflate.dll)"
+  },
+  "verification": {
+   "method": "tools.calibration.tier_r build-card on fetched pins (mingw-gcc 13-win32 O2): 54 project functions, 49 unchanged, 1 changed, 4 ambiguous, 0 no-counterpart (bodies: 29 identical, 20 address-only, 5 different); git diff --numstat v1.16..v1.17 -- '*.c' '*.h': 28 files.; rebuilt from the committed card: 0 disagreements; A/A rebuild, reversed-order and rotated-order links of v1.19 at O2 byte-identical (tier_r aa)",
+   "files_changed": 28,
+   "functions_changed_count": 1,
+   "verified_by_agent_run": true,
+   "build_verified": true,
+   "status": "verified"
+  },
+  "sources": [
+   "https://github.com/ebiggers/libdeflate/releases/tag/v1.17",
+   "https://github.com/ebiggers/libdeflate/blob/v1.17/NEWS.md"
+  ],
+  "risks": [
+   "4 ambiguous record(s) (source changed with identical code, or induced by macro/header/inlining) are excluded from changed-set scoring by design."
+  ]
+ },
+ {
+  "contract": "case-card/1",
+  "id": "libdeflate-v1.18-to-v1.19",
+  "project": "libdeflate",
+  "upstream_git": "https://github.com/ebiggers/libdeflate.git",
+  "license_spdx": "MIT",
+  "license_evidence": "COPYING at dd12ff2b36d603dbb7fa8838fe7e7176fcbd4f6f: MIT: Copyright 2016 Eric Biggers / Permission is hereby granted, free of charge, to any person obtaining a copy of this software (sha256 5d246dd2...40fe; read at 495fee11 too, sha256 5d246dd2...40fe)",
+  "old": {
+   "ref": "v1.18",
+   "commit": "495fee110ebb48a5eb63b75fd67e42b2955871e2"
+  },
+  "new": {
+   "ref": "v1.19",
+   "commit": "dd12ff2b36d603dbb7fa8838fe7e7176fcbd4f6f"
+  },
+  "kind": "release",
+  "cve": [],
+  "semantic_change": true,
+  "changed_functions": [
+   {
+    "name": "deflate_make_huffman_code",
+    "file": "lib/deflate_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "deflate_flush_block",
+    "file": "lib/deflate_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "calculate_min_match_len",
+    "file": "lib/deflate_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "deflate_compress_fastest",
+    "file": "lib/deflate_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "deflate_compress_greedy",
+    "file": "lib/deflate_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "deflate_optimize_and_flush_block",
+    "file": "lib/deflate_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "deflate_compress_near_optimal",
+    "file": "lib/deflate_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "libdeflate_alloc_compressor",
+    "file": "lib/deflate_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "libdeflate_deflate_compress",
+    "file": "lib/deflate_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "libdeflate_free_compressor",
+    "file": "lib/deflate_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "libdeflate_deflate_compress_bound",
+    "file": "lib/deflate_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "libdeflate_alloc_decompressor",
+    "file": "lib/deflate_decompress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "libdeflate_free_decompressor",
+    "file": "lib/deflate_decompress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "libdeflate_aligned_malloc",
+    "file": "lib/utils.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "libdeflate_aligned_free",
+    "file": "lib/utils.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   }
+  ],
+  "unchanged_controls": [
+   "libdeflate_adler32",
+   "libdeflate_crc32",
+   "libdeflate_gzip_decompress"
+  ],
+  "build": {
+   "system": "single",
+   "mingw_ok": "yes",
+   "recipe_notes": "tier_r recipe libdeflate (mingw-gcc 13-win32 -O2 -g, explicit file list from recipes.json, libdeflate.dll)"
+  },
+  "verification": {
+   "method": "tools.calibration.tier_r build-card on fetched pins (mingw-gcc 13-win32 O2): 56 project functions, 28 unchanged, 16 changed, 8 ambiguous, 4 no-counterpart (bodies: 13 identical, 17 address-only, 22 different); git diff --numstat v1.18..v1.19 -- '*.c' '*.h': 8 files.; rebuilt from the committed card: 0 disagreements; A/A rebuild, reversed-order and rotated-order links of v1.19 at O2 byte-identical (tier_r aa)",
+   "files_changed": 8,
+   "functions_changed_count": 16,
+   "verified_by_agent_run": true,
+   "build_verified": true,
+   "status": "verified"
+  },
+  "sources": [
+   "https://github.com/ebiggers/libdeflate/releases/tag/v1.19",
+   "https://github.com/ebiggers/libdeflate/blob/v1.19/NEWS.md"
+  ],
+  "risks": [
+   "8 ambiguous record(s) (source changed with identical code, or induced by macro/header/inlining) are excluded from changed-set scoring by design.",
+   "changed_functions lists the first 15 of 16 factory-labelled changed functions."
+  ]
+ },
+ {
+  "contract": "case-card/1",
+  "id": "libdeflate-v1.19-to-v1.20",
+  "project": "libdeflate",
+  "upstream_git": "https://github.com/ebiggers/libdeflate.git",
+  "license_spdx": "MIT",
+  "license_evidence": "COPYING at 275aa5141db6eda3587214e0f1d3a134768f557d: MIT: Copyright 2016 Eric Biggers / Permission is hereby granted, free of charge, to any person obtaining a copy of this software (sha256 5d246dd2...40fe; read at dd12ff2b too, sha256 5d246dd2...40fe)",
+  "old": {
+   "ref": "v1.19",
+   "commit": "dd12ff2b36d603dbb7fa8838fe7e7176fcbd4f6f"
+  },
+  "new": {
+   "ref": "v1.20",
+   "commit": "275aa5141db6eda3587214e0f1d3a134768f557d"
+  },
+  "kind": "release",
+  "cve": [],
+  "semantic_change": true,
+  "changed_functions": [
+   {
+    "name": "adler32_generic",
+    "file": "lib/adler32.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "libdeflate_init_x86_cpu_features",
+    "file": "lib/x86/cpu_features.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   }
+  ],
+  "unchanged_controls": [
+   "libdeflate_aligned_free",
+   "libdeflate_aligned_malloc",
+   "libdeflate_deflate_compress_bound"
+  ],
+  "build": {
+   "system": "single",
+   "mingw_ok": "yes",
+   "recipe_notes": "tier_r recipe libdeflate (mingw-gcc 13-win32 -O2 -g, explicit file list from recipes.json, libdeflate.dll)"
+  },
+  "verification": {
+   "method": "tools.calibration.tier_r build-card on fetched pins (mingw-gcc 13-win32 O2): 64 project functions, 44 unchanged, 2 changed, 4 ambiguous, 14 no-counterpart (bodies: 14 identical, 32 address-only, 4 different); git diff --numstat v1.19..v1.20 -- '*.c' '*.h': 31 files.; rebuilt from the committed card: 0 disagreements; A/A rebuild, reversed-order and rotated-order links of v1.19 at O2 byte-identical (tier_r aa)",
+   "files_changed": 31,
+   "functions_changed_count": 2,
+   "verified_by_agent_run": true,
+   "build_verified": true,
+   "status": "verified"
+  },
+  "sources": [
+   "https://github.com/ebiggers/libdeflate/releases/tag/v1.20",
+   "https://github.com/ebiggers/libdeflate/blob/v1.20/NEWS.md"
+  ],
+  "risks": [
+   "4 ambiguous record(s) (source changed with identical code, or induced by macro/header/inlining) are excluded from changed-set scoring by design."
+  ]
+ },
+ {
+  "contract": "case-card/1",
+  "id": "libdeflate-v1.23-to-v1.24",
+  "project": "libdeflate",
+  "upstream_git": "https://github.com/ebiggers/libdeflate.git",
+  "license_spdx": "MIT",
+  "license_evidence": "COPYING at 96836d7d9d10e3e0d53e6edb54eb908514e336c4: MIT: Copyright 2016 Eric Biggers / Permission is hereby granted, free of charge, to any person obtaining a copy of this software (sha256 4ad69099...e73a; read at 78051988 too, sha256 4ad69099...e73a)",
+  "old": {
+   "ref": "v1.23",
+   "commit": "78051988f96dc8d8916310d8b24021f01bd9e102"
+  },
+  "new": {
+   "ref": "v1.24",
+   "commit": "96836d7d9d10e3e0d53e6edb54eb908514e336c4"
+  },
+  "kind": "release",
+  "cve": [],
+  "semantic_change": true,
+  "changed_functions": [
+   {
+    "name": "crc32_x86_pclmulqdq",
+    "file": "lib/x86/crc32_pclmul_template.h",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "crc32_x86_pclmulqdq_avx",
+    "file": "lib/x86/crc32_pclmul_template.h",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "crc32_x86_vpclmulqdq_avx2",
+    "file": "lib/x86/crc32_pclmul_template.h",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "crc32_x86_vpclmulqdq_avx512_vl256",
+    "file": "lib/x86/crc32_pclmul_template.h",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "crc32_x86_vpclmulqdq_avx512_vl512",
+    "file": "lib/x86/crc32_pclmul_template.h",
+    "change": "source and code changed (factory label changed/source-diff)"
+   }
+  ],
+  "unchanged_controls": [
+   "libdeflate_adler32",
+   "libdeflate_aligned_free",
+   "libdeflate_aligned_malloc"
+  ],
+  "build": {
+   "system": "single",
+   "mingw_ok": "yes",
+   "recipe_notes": "tier_r recipe libdeflate (mingw-gcc 13-win32 -O2 -g, explicit file list from recipes.json, libdeflate.dll)"
+  },
+  "verification": {
+   "method": "tools.calibration.tier_r build-card on fetched pins (mingw-gcc 13-win32 O2): 60 project functions, 48 unchanged, 5 changed, 7 ambiguous, 0 no-counterpart (bodies: 25 identical, 30 address-only, 5 different); git diff --numstat v1.23..v1.24 -- '*.c' '*.h': 10 files.; rebuilt from the committed card: 0 disagreements; A/A rebuild, reversed-order and rotated-order links of v1.19 at O2 byte-identical (tier_r aa)",
+   "files_changed": 10,
+   "functions_changed_count": 5,
+   "verified_by_agent_run": true,
+   "build_verified": true,
+   "status": "verified"
+  },
+  "sources": [
+   "https://github.com/ebiggers/libdeflate/releases/tag/v1.24",
+   "https://github.com/ebiggers/libdeflate/blob/v1.24/NEWS.md"
+  ],
+  "risks": [
+   "7 ambiguous record(s) (source changed with identical code, or induced by macro/header/inlining) are excluded from changed-set scoring by design."
+  ]
  }
 ]
