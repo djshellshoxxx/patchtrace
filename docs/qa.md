@@ -975,3 +975,7 @@ Automated only: `tests/test_calib_channels_*.py` (synthetic pairs). No channel v
 ### [LBL-07:mutations-ir-opt]
 - `tests/test_mutations_ir.py` (27) and `tests/test_mutations_opt.py` (11): hand-computed IR goldens, fake process runner, and one real-tool test per layer that asserts BLOCKED when clang/opt is absent. Real clang/opt 18.1.3 on Linux: `mergefunc`, `always-inline`, `loop-extract`, `hotcoldsplit` change the module; `partial-inliner` returned `unchanged` on the sample (its trigger is narrow), reported as a rejected attempt, not a pass.
 - Not verified: the Windows runner (`opt` availability is [unverified] per the LBL plan); agreement rates on real mutants (needs the farm).
+
+
+### [WB2-G8:whole-program-sources]
+Automated only: `pytest tests/test_callgraph_sources.py` (14). No live BinExport/IR acceptance run.
