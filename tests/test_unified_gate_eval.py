@@ -294,3 +294,11 @@ def test_g_u4_one_run_without_a_swap_has_nothing_to_compare():
     doc = label_doc('rel', 'release')
     g = g4(corpus_manifest.build([doc], {}), run('linux', pair(doc, det_rows())))
     assert g.status == 'insufficient-data' and g.observed['compared'] == {} and g.observed['mirrored'] == {}
+
+
+def test_g_u4_runs_over_different_image_bytes_are_not_compared_and_never_a_failure():
+    doc, rebuilt = label_doc('rel', 'release'), label_doc('rel', 'release', older='c' * 64, newer='d' * 64)
+    other = det_rows()[1:]
+    g = g4(corpus_manifest.build([doc], {}), run('linux', pair(doc, det_rows())), run('windows', pair(rebuilt, other)))
+    assert g.status == 'insufficient-data' and g.observed['compared'] == {}
+    assert g.observed['not_comparable'] == {'rel': ['linux', 'windows']} and any('bytes' in r for r in g.reasons)

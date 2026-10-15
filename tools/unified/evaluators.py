@@ -151,15 +151,26 @@ def g_u4(sets: Sequence[OutcomeSet]) -> Result:
     """Equal row digests for the same pair across runs (two runs, Linux against Windows, permuted input), and the
     swapped orientation of a pair mirrors the forward one: the same matched set, older-only and newer-only trade places."""
     reasons: list[str] = []
+    notes: list[str] = []
     compared: dict[str, str] = {}
     mirrored: dict[str, str] = {}
+    not_comparable: dict[str, list[str]] = {}
     for pair_id in sorted({p.pair_id for s in sets for p in s.pairs}):
         runs = forward(sets, pair_id)
-        if len(runs) >= 2:
-            same = len({o.rows_sha256 for _, o in runs}) == 1
-            compared[pair_id] = 'equal' if same else 'differs'
+        buckets: dict[str, list[tuple[str, PairOutcome]]] = {}
+        for run, outcome in runs:
+            buckets.setdefault(outcome.labels_sha256, []).append((run, outcome))
+        if len(buckets) > 1:
+            not_comparable[pair_id] = [r for r, _ in runs]
+            notes.append(f'{pair_id}: runs {", ".join(r for r, _ in runs)} built other image bytes '
+                         '(label digests differ), not compared')
+        for group in buckets.values():
+            if len(group) < 2:
+                continue
+            same = len({o.rows_sha256 for _, o in group}) == 1
+            compared[pair_id] = 'equal' if same and compared.get(pair_id) != 'differs' else 'differs'
             if not same:
-                reasons.append(f'{pair_id}: the rows differ between runs {", ".join(r for r, _ in runs)}')
+                reasons.append(f'{pair_id}: the rows differ between runs {", ".join(r for r, _ in group)}')
         for run, back in ((s.run, p) for s in sets for p in s.pairs if p.pair_id == pair_id and p.orientation == 'swapped'):
             ahead = next((o for r, o in runs if r == run), None)
             if ahead is None:
@@ -168,9 +179,10 @@ def g_u4(sets: Sequence[OutcomeSet]) -> Result:
             mirrored[pair_id] = 'mirrored' if ok else 'not-mirrored'
             if not ok:
                 reasons.append(f'{pair_id} run {run}: the swapped orientation is not the mirror image of the forward one')
-    observed = {'compared': compared, 'mirrored': mirrored}
+    observed = {'compared': compared, 'mirrored': mirrored, 'not_comparable': not_comparable}
     if reasons:
         return 'fail', reasons, observed
     if not compared and not mirrored:
-        return 'insufficient-data', ['no pair has two runs or a swapped orientation to compare'], observed
-    return 'pending', [CHAIN_WAIT], observed
+        return 'insufficient-data', ['no pair has two runs over the same bytes or a swapped orientation to compare',
+                                     *notes], observed
+    return 'pending', [*notes, CHAIN_WAIT], observed
