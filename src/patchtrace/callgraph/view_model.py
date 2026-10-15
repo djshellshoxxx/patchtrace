@@ -119,16 +119,29 @@ def entry_text(entry: EntryDistance | None) -> str:
     return NO_ENTRY_PATH
 
 
+def _token_pattern(callee: str) -> re.Pattern[str] | None:
+    token = callee.rsplit('::', 1)[-1]
+    return re.compile(r'(?<![\w$@?])' + re.escape(token) + r'(?![\w$@?])') if token else None
+
+
 def find_call_site(text: str, callee: str) -> int | None:
     """1-based number of the first line whose identifier token equals the callee, else None."""
-    token = callee.rsplit('::', 1)[-1]
-    if not token:
+    pattern = _token_pattern(callee)
+    if pattern is None:
         return None
-    pattern = re.compile(r'(?<![\w$@?])' + re.escape(token) + r'(?![\w$@?])')
     for number, line in enumerate(text.splitlines()[:MAX_LINES_SCANNED], 1):
         if pattern.search(line):
             return number
     return None
+
+
+def find_call_sites(text: str, callee: str) -> list[tuple[int, str]]:
+    """Every (1-based line number, line) whose identifier token equals the callee, in line order."""
+    pattern = _token_pattern(callee)
+    if pattern is None:
+        return []
+    return [(number, line) for number, line in enumerate(text.splitlines()[:MAX_LINES_SCANNED], 1)
+            if pattern.search(line)]
 
 
 def callsite_text(found: int | None) -> str:
