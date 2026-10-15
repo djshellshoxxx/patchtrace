@@ -215,11 +215,11 @@ def test_clierror_message_is_redacted(project, capsys, monkeypatch):
 
 
 
-def test_cache_status_unusable_path_is_a_runtime_error(tmp_path, capsys):
+def test_cache_status_unusable_path_is_an_environment_error(tmp_path, capsys):
     blocker = tmp_path / 'file'
     blocker.write_text('x')
     code, out, _ = run(['cache', 'status', '--cache-dir', str(blocker), '--json'], capsys)
-    assert code == 3 and json.loads(out)['status'] == 'failed'
+    assert code == 2 and json.loads(out)['status'] == 'failed'
 
 
 @pytest.mark.parametrize('name', ['evil\x1b[2J\x1b[31mNAME', 'gnp\u202eexe', 'c1\x9b2Jx'], ids=['esc', 'rlo', 'c1-csi'])

@@ -102,3 +102,14 @@ Each item: goal, steps, what to send back, blocks, size, dependencies. Claude ti
 - [ ] O4 settings done; `pages.yml` ran once.
 - [ ] O6 application sent.
 - [ ] No final release without an explicit owner statement.
+
+## Owner decisions recorded 2026-10-15 ("accept all")
+
+| Item | Decision | Applied |
+|---|---|---|
+| QA-CLI-3 | `cache verify` / `cache status` on a `--cache-dir` that is not a directory exit 2 (environment/config) | `cli.py cmd_cache`; `tests/test_cli.py`; strict xfail removed in `tests/stress/test_cli_stress_paths.py` |
+| QA-S2-2 | The project store is owner-thread-only; workers hand results to the owner thread, a foreign-thread write fails with `sqlite3.ProgrammingError` and writes nothing | `tests/stress/test_stress2_enrichment_store.py::test_the_store_is_owner_thread_only_and_a_foreign_writer_changes_nothing` |
+| Label-training pre-registration lock | Lock as drafted, but only after the LBL-26 pre-lock audit items (D-01..D-12, C-1..C-8) are closed; then the real Tier R run | NOT yet applied: waiting on those items (see `docs/handoff/label-training.md`) |
+| Card-audit licence items | pcre2 recipe/releases/checker use `BSD-3-Clause WITH PCRE2-exception`; postgresql-libpq card excluded (moved to `corpus/excluded/` with its reason; `PostgreSQL` removed from the checker allow-list); brotli (MIT) and zstd (BSD-3-Clause elected over GPL-2.0) rows added to `docs/plans/calibration-licences.md` | done; `AUDITED_CVE_IDS` is now 32 |
+| Windows-scope field on CVE cards | Accepted in principle; no field is added until the CVEs to annotate are chosen (additive-only contract) | open: needs the CVE list |
+| FAB-A03, remaining U7 items | Handled as short yes/no lists in this file when reached | open |

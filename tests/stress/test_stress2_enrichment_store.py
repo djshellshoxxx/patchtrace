@@ -4,6 +4,7 @@ body-size and non-finite-number refusals, and hostile body text round-trips. Syn
 from __future__ import annotations
 
 import os
+import sqlite3
 import threading
 import uuid
 
@@ -39,27 +40,25 @@ def _run_threads(target, count: int) -> None:
         thread.join()
 
 
-@pytest.mark.xfail(strict=True, reason='QA-S2-2: the project connection is bound to its creating thread (persistence.py '
-                   'sqlite3.connect without check_same_thread), so lock-serialised writer threads all fail with '
-                   'ProgrammingError')
-def test_lock_serialised_writers_keep_every_row(shared):
+def test_the_store_is_owner_thread_only_and_a_foreign_writer_changes_nothing(shared):
+    """QA-S2-2 (owner decision 2026-10-15): the project connection belongs to the thread that opened it. Workers
+    never write to it; they hand results to the owner thread. A foreign-thread publish fails loudly and writes no row."""
     store, guard, revision = shared
-    gate = threading.Lock()
     per_thread = 20 * SCALE
     failures: list[BaseException] = []
 
-    def writer(number: int) -> None:
-        for index in range(per_thread):
-            try:
-                with gate:
-                    store.publish('ranking', guard, guard, revision, 'complete', {'t': number, 'i': index},
-                                  f'w{number}-{index}')
-            except BaseException as error:  # noqa: BLE001 - collected and asserted below
-                failures.append(error)
+    def foreign_writer(number: int) -> None:
+        try:
+            store.publish('ranking', guard, guard, revision, 'complete', {'t': number}, f'w{number}')
+        except BaseException as error:  # noqa: BLE001 - collected and asserted below
+            failures.append(error)
 
-    _run_threads(writer, 6)
-    assert failures == []
-    assert len(store.entries('ranking', guard)) == 6 * per_thread
+    _run_threads(foreign_writer, 6)
+    assert len(failures) == 6 and all(isinstance(error, sqlite3.ProgrammingError) for error in failures)
+    assert store.entries('ranking', guard) == []
+    for index in range(per_thread):  # the owner thread keeps working after the refusals
+        store.publish('ranking', guard, guard, revision, 'complete', {'i': index}, f'own-{index}')
+    assert len(store.entries('ranking', guard)) == per_thread
 
 
 def test_many_small_rows_read_back_exactly(shared):

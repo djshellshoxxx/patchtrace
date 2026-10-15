@@ -24,7 +24,7 @@ RECIPES = ROOT / 'tools' / 'calibration' / 'tier_r' / 'catalogue' / 'recipes.d'
 REGISTER = ROOT / 'docs' / 'plans' / 'calibration-licences.md'
 CVE_ID = re.compile(r'CVE-\d{4}-\d{4,7}')
 DISAGREE = re.compile(r'\b([1-9]\d*) disagree')
-AUDITED_CVE_IDS = 33  # docs/audits/20261015-lbl05-card-audit.md, corpus/catalog/*.json
+AUDITED_CVE_IDS = 32  # docs/audits/20261015-lbl05-card-audit.md, corpus/catalog/*.json
 _spec = importlib.util.spec_from_file_location('corpus_check', ROOT / 'tools' / 'corpus_check.py')
 corpus_check = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(corpus_check)
@@ -88,20 +88,15 @@ def test_recipe_licences_are_on_the_allow_list(path: Path) -> None:
         assert recipe['license_spdx'] in C.PERMISSIVE_SPDX, recipe['project']
 
 
-@pytest.mark.xfail(strict=True, reason='LBL-05 open item: recipes.d/pcre2.json records BSD-3-Clause, the register says '
-                   'BSD-3-Clause WITH PCRE2-exception (docs/plans/calibration-licences.md row pcre2); fix outside slice')
 def test_pcre2_recipe_licence_matches_the_register() -> None:
     assert _recipe('pcre2')['license_spdx'] == 'BSD-3-Clause WITH PCRE2-exception'
 
 
-@pytest.mark.xfail(strict=True, reason='LBL-05 open item: postgresql-libpq card is licence-blocked in the register '
-                   '(open item 7) but still present in corpus/catalog/crypto-net-db-script.json')
 def test_no_found_card_uses_a_blocked_licence() -> None:
     blocked = [card['id'] for card in _found_cards() if card['license_spdx'] == 'PostgreSQL']
     assert blocked == []
 
 
-@pytest.mark.xfail(strict=True, reason='LBL-05 open item: brotli and zstd recipes are not in the licence register')
 def test_brotli_and_zstd_are_in_the_licence_register() -> None:
     text = REGISTER.read_text(encoding='utf-8')
     assert 'brotli' in text and 'zstd' in text

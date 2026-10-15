@@ -1912,7 +1912,7 @@
   "id": "pcre2-10.46-to-10.47",
   "project": "pcre2",
   "upstream_git": "https://github.com/PCRE2Project/pcre2.git",
-  "license_spdx": "BSD-3-Clause",
+  "license_spdx": "BSD-3-Clause WITH PCRE2-exception",
   "license_evidence": "LICENCE.md at f454e231fe5006dd7ff8f4693fd2b8eb94333429: LICENCE.md: PCRE2 LICENCE, THE BASIC LIBRARY FUNCTIONS: Redistribution and use in source and binary forms, with or without modification, are permitted (BSD-3-Clause; the PCRE2 exception is for binary-form linking only) (sha256 197d8a73...d811; read at b2bd4254 too, sha256 9cf7ac69...885a)",
   "old": {
    "ref": "pcre2-10.46",
@@ -2061,7 +2061,7 @@
   "id": "pcre2-10.47-to-10.48",
   "project": "pcre2",
   "upstream_git": "https://github.com/PCRE2Project/pcre2.git",
-  "license_spdx": "BSD-3-Clause",
+  "license_spdx": "BSD-3-Clause WITH PCRE2-exception",
   "license_evidence": "LICENCE.md at 7978954dbd2efc6f2196869290553cf1871b4ce6: LICENCE.md: PCRE2 LICENCE, THE BASIC LIBRARY FUNCTIONS: Redistribution and use in source and binary forms, with or without modification, are permitted (BSD-3-Clause; the PCRE2 exception is for binary-form linking only) (sha256 197d8a73...d811; read at f454e231 too, sha256 197d8a73...d811)",
   "old": {
    "ref": "pcre2-10.47",

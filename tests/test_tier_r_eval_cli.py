@@ -10,7 +10,7 @@ from pathlib import Path
 
 import pytest
 from bindiff_builder import build
-from test_tier_r_eval_engines import _ghidriff
+from test_tier_r_eval_engines import _ghidriff, _with_real_hashes
 from test_tier_r_eval_metrics import FUNCS, make_labels
 from tier_r_helpers import require
 
@@ -21,7 +21,7 @@ from tools.calibration import corpus  # noqa: E402
 from tools.calibration.tier_r import cli  # noqa: E402
 from tools.calibration.tier_r import contracts as C  # noqa: E402
 
-LABELS = make_labels(FUNCS, pair_id='syn-eng')
+LABELS = _with_real_hashes(make_labels(FUNCS, pair_id='syn-eng'))  # the same hashes the Ghidriff fixture records
 BASE = 0x180000000
 
 
