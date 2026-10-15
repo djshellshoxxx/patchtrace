@@ -19,6 +19,7 @@ first-party rows (F16), trace-argument constants last (F17), then severity (05 s
 from __future__ import annotations
 
 import functools
+import re
 from collections import Counter
 from collections.abc import Callable, Collection, Mapping, Sequence
 from dataclasses import dataclass, field
@@ -700,6 +701,29 @@ def columns(vm: UnifiedViewModel) -> tuple[ColumnSpec, ...]:
     native values is in its header (`unit`) as well as in the words of its cells."""
     return FIXED_COLUMNS + tuple(
         ColumnSpec(f'source:{s.source}', s.display, s.unit_caption, 22, s.tooltip_id, s.source) for s in vm.sources)
+
+
+COLUMN_WIDTH_RANGE = (24, 4000)     # pixels a remembered width may have; anything else is the default (U5)
+MAX_SAVED_COLUMNS = 32              # the settings list limit of the panel host
+_COLUMN_KEY = re.compile(r'(?:function|decision|change|source:[a-z0-9][a-z0-9_.-]{0,63})')
+
+
+def parse_column_widths(items: Sequence[str]) -> dict[str, int]:
+    """`key:pixels` items of the `unified/columns` setting. Untrusted: keys that are no column key, non-decimal numbers,
+    widths outside COLUMN_WIDTH_RANGE and repeats are ignored (the first valid item of a key wins). Keys of sources
+    that this result does not show stay in the dict and are simply not applied."""
+    out: dict[str, int] = {}
+    low, high = COLUMN_WIDTH_RANGE
+    for item in items:
+        key, _, number = item.rpartition(':')
+        if _COLUMN_KEY.fullmatch(key) and key not in out and number.isdecimal() and low <= int(number) <= high:
+            out[key] = int(number)
+    return out
+
+
+def format_column_widths(widths: Mapping[str, int]) -> tuple[str, ...]:
+    """The setting value: valid keys only, sorted, at most MAX_SAVED_COLUMNS items."""
+    return tuple(f'{key}:{widths[key]}' for key in sorted(widths) if _COLUMN_KEY.fullmatch(key))[:MAX_SAVED_COLUMNS]
 
 
 def cell_text(row: UnifiedRowView, column: int) -> str:

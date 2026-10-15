@@ -258,8 +258,31 @@ def test_explain_previews_the_bounded_context_and_sends_nothing(unified, monkeyp
     monkeypatch.setattr(ui_unified.ExplainDialog, 'exec',
                         lambda self: seen.append(' '.join(label.text() for label in self.findChildren(
                             ui_unified.PlainLabel))))
-    controller.explain(controller.vm.rows[0])
+    row = next(r for r in controller.vm.rows if r.ghidriff_match_id is None)
+    controller.explain(row)
     assert seen and 'Nothing is sent from here' in seen[0]
+
+
+def test_explain_of_a_row_with_a_ghidriff_match_feeds_the_existing_context_preview(unified, monkeypatch):
+    window, controller = loaded_controller(unified)
+    calls = []
+    controller.nav = SimpleNamespace(select_match=lambda match_id, clear_filters=False: calls.append(match_id) or True)
+    monkeypatch.setattr(window, 'preview_interpretation', lambda *a, notes=(): calls.append(('preview', list(notes))))
+    monkeypatch.setattr(ui_unified.ExplainDialog, 'exec', lambda self: calls.append('own-dialog'))
+    row = next(r for r in controller.vm.rows if r.ghidriff_match_id)
+    controller.explain(row)
+    fragment = read_model.explain_context(controller.vm, row)
+    assert calls == [row.ghidriff_match_id, ('preview', [(fragment.title, fragment.text, fragment.omitted)])]
+
+
+def test_explain_falls_back_to_its_own_preview_when_the_match_is_not_in_the_navigator(unified, monkeypatch):
+    window, controller = loaded_controller(unified)
+    calls = []
+    controller.nav = SimpleNamespace(select_match=lambda match_id, clear_filters=False: False)
+    monkeypatch.setattr(window, 'preview_interpretation', lambda *a, notes=(): calls.append('preview'))
+    monkeypatch.setattr(ui_unified.ExplainDialog, 'exec', lambda self: calls.append('own-dialog'))
+    controller.explain(next(r for r in controller.vm.rows if r.ghidriff_match_id))
+    assert calls == ['own-dialog']
 
 
 def test_copy_provenance_uses_the_shell_clipboard(unified):
