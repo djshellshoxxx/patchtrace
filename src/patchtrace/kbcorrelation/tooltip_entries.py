@@ -33,7 +33,7 @@ TIPS = {
     'kb.footer': _tip('What was checked, what does not apply and what is unknown for this context.',
                       'Coverage and limits stay visible so that a short list is not read as a clean result.',
                       'Read-only text.'),
-    'kb.refresh': _tip('Reload the stored leads of this project.', 'Picks up a context or ranking prepared elsewhere.',
+    'kb.refresh': _tip('Reload the stored KB and CVE leads of this project.', 'Picks up a context or ranking prepared elsewhere.',
                        'Reads stored results again; nothing is downloaded or run.'),
     'kb.goto': _tip('Go to the selected function in the code panes.', 'Lets you read the changed function.',
                     'Selects its comparison row.',
