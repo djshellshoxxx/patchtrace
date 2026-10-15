@@ -261,6 +261,9 @@ def test_every_registry_id_is_applied_somewhere(window, qtbot, tmp_path, setting
     # show (graph DOT export/call-site reveal/minimap are not built yet; the rest appear only in states each panel's own
     # tests drive). Shrink this set as those features land; never grow it for an existing control.
     names |= PANEL_BATCH_PENDING_TIPS
+    # The Related panel (FAB-6) is not in the shipped manifest yet, but its controller registers its tips globally as
+    # soon as any test builds it; the ids then show up here depending on test order. Drop this line when it ships.
+    names |= {tip_id for tip_id in REGISTRY if tip_id.startswith('related.')}
     missing = set(REGISTRY) - names - EXEMPT_IDS
     assert not missing, sorted(missing)
 

@@ -455,6 +455,7 @@ def test_a_late_result_after_a_project_switch_is_dropped(qtbot, tmp_path):
             started.set()
             gate.wait(5)
         return assembler_for(deltas[which])(stored_value, unchanged, token)
+    gate.set()  # start() settles its first load; only the race below may block on the gate (5 s gate vs 5 s settle)
     controller = start(qtbot, tmp_path, project=project, assembler=assemble,
                        loader=lambda _s, p: stored[p.id])
     controller.tasks.shutdown()  # the first start() settled on a fresh project; use a clean runner for the race
