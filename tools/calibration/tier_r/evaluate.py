@@ -25,6 +25,8 @@ from collections.abc import Collection, Iterable, Mapping, Sequence
 from dataclasses import dataclass, field
 from pathlib import Path
 
+from patchtrace.calibration.scope import TIER_R_CLAIM
+
 from ..common import digest, r12
 from ..evalcore import report as ER
 from ..evalcore.engines.attention import AttentionProvider
@@ -305,7 +307,8 @@ def _block_lines(report: Mapping) -> list[str]:
 
 
 def render_markdown(report: Mapping, max_wrong: int = 50) -> str:
-    lines = ['# Tier R evaluation (tier-r-report/1)', '', f'- report_sha256: `{report["report_sha256"]}`',
+    lines = ['# Tier R evaluation (tier-r-report/1)', '', f'> {TIER_R_CLAIM}', '',
+             f'- report_sha256: `{report["report_sha256"]}`',
              f'- symbols: {report["symbols"]}', f'- pairs: {len(report["inputs"])}', '', '## Engines', '',
              '| engine | status | version | runs | failures | reason |', '|---|---|---|---|---|---|']
     for e in report['engines']:

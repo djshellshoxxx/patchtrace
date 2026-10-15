@@ -26,6 +26,7 @@ from .pe import read_pe
 
 GUIDELINE = 'ka-1'
 TS = '1970-01-01T00:00:00Z'
+NATURAL_STRATA = frozenset({'release', 'cve', 'control'})   # LBL s2: every engine candidate of these pairs is natural
 BodyReader = Callable[[str, int, int], bytes]       # (image sha256, rva, size) -> code bytes
 
 
@@ -47,6 +48,16 @@ def match_id(old_rva: int, new_rva: int) -> str:
 
 def _ambiguous(f: C.FunctionLabel) -> bool:
     return f.label == 'ambiguous' or f.identity == 'ambiguous'
+
+
+def sampling_of(labels: C.KnownAnswerLabels, engines: Sequence[str]) -> dict:
+    """Natural = an engine candidate (right or wrong) of a release, CVE or control pair. Mutation, noise, A/A and
+    suite candidates are adversarial. A truth pair that no engine proposed is not a candidate of any engine, so it
+    can never be natural: a natural stratum of truth pairs only would contain no negative at all."""
+    if not engines:
+        return {'stratum': 'adversarial', 'stage': 'known-answer-truth', 'p_incl': 1.0}
+    stratum = 'natural' if labels.stratum in NATURAL_STRATA else 'adversarial'
+    return {'stratum': stratum, 'stage': 'engine-candidate', 'p_incl': 1.0}
 
 
 def candidates(labels: C.KnownAnswerLabels, outputs: Mapping[str, EngineOutput] | None = None
@@ -76,9 +87,8 @@ def candidates(labels: C.KnownAnswerLabels, outputs: Mapping[str, EngineOutput] 
         else:
             answer, subtype = 'different', None
         engines = tuple(sorted(proposed.get(key, ())))
-        sampling = ({'stratum': 'natural', 'stage': 'known-answer-truth', 'p_incl': 1.0} if key in truth else
-                    {'stratum': 'adversarial', 'stage': 'engine-candidate', 'p_incl': 1.0})
-        found.append(Candidate(labels.pair_id, match_id(*key), key[0], key[1], answer, subtype, sampling, engines))
+        found.append(Candidate(labels.pair_id, match_id(*key), key[0], key[1], answer, subtype,
+                               sampling_of(labels, engines), engines))
     return found, dict(skipped)
 
 
