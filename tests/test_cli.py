@@ -196,3 +196,12 @@ def test_text_mode_names_are_terminal_safe_wp01():
     names = cli._match_names([match])
     assert names['m'] and not any(ord(c) < 32 or 0x7f <= ord(c) < 0xa0 or c == '‮' for c in names['m'])
     assert '\\u001b' in names['m']
+
+
+def test_cache_on_a_file_root_fails_cli_b_01(tmp_path, capsys):
+    afile = tmp_path / "afile.txt"
+    afile.write_text("x")
+    for action in ("status", "verify", "prune"):
+        code, out, _ = run(["cache", action, "--cache-dir", str(afile), "--json"], capsys)
+        doc = json.loads(out)
+        assert code != 0 and doc["status"] == "failed" and "cache" in doc["error"], (action, code, doc)
