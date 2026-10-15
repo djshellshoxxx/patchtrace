@@ -988,3 +988,8 @@ Automated only: `pytest tests/test_callgraph_sources.py` (14). No live BinExport
 | pinned FLOSS on the synthetic pair equals the goldens (Linux CI; Windows advisory leg) | `tests/test_live_strings.py::test_pinned_floss_reproduces_the_string_goldens`; BLOCKED here: `PATCHTRACE_FLOSS` is not provisioned, the test records `blocked` and prints `LIVE ACCEPTANCE BLOCKED` |
 | run orchestration: consent hash recorded, cancel, stale, project switch | `tests/test_ui_strings_run.py` (fake FLOSS, synthetic pairs) |
 Goldens are derived from committed tool output, not from a new live capture; they become real-run goldens only when CI passes the live test. Real-binary string counts, Windows onefile start time and AV behaviour stay owner or CI items.
+
+### [STRESS2:stress-deep-2]
+- Automated (Linux, synthetic, seeded): tests/stress/test_stress2_{pilot,kev,kbcorrelation,enrichment_store,unified_parts,rules}.py; 78 passed, 5 strict xfail. Scale knob PATCHTRACE_STRESS_SCALE (default 1).
+- Defects (product code unchanged): QA-S2-1 pilot universe() echoes caller CVE text into PilotError.message; QA-S2-2 project store connection is bound to its creating thread (lock-serialised writer threads all fail with ProgrammingError); QA-S2-3 NaN in an enrichment body escapes as ValueError, not PT-ENRICH-INPUT; QA-S2-4 unified part_lines does not enforce the 4 MiB line cap on newline-terminated lines; QA-S2-5 rules not_mostly_wildcards(0,0) raises ZeroDivisionError.
+- Not exercised: YARA-X lint path (yara_x not installed in the worker venv); unified retention with many published results (needs staged result dirs).
