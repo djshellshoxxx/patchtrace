@@ -14,6 +14,7 @@ from pathlib import Path
 
 import pytest
 from fake_exe import make_fake_exe
+from liveness_support import heartbeat_stopped
 from unified_extract_builder import SHA, document_set, function, pe_view, write_jsonl
 
 from patchtrace.backend import BackendConfig
@@ -483,16 +484,6 @@ def test_runaway_output_is_killed_and_removed(tmp_path, private_tempdir, mode, l
 
 # --- cancel and timeout kill the tree ---------------------------------------------------------------------------------
 
-def heartbeat_stopped(beat: Path) -> bool:
-    deadline = time.monotonic() + 15
-    while not beat.exists() and time.monotonic() < deadline:
-        time.sleep(0.1)
-    time.sleep(1.0)
-    size = beat.stat().st_size if beat.exists() else 0
-    time.sleep(0.6)
-    return beat.exists() and (beat.stat().st_size if beat.exists() else 0) == size
-
-
 @pytest.mark.parametrize('how', ['cancel', 'timeout'])
 def test_cancel_and_timeout_kill_tree_and_remove_private_dir(tmp_path, monkeypatch, private_tempdir, how):
     beat = tmp_path / 'beat.txt'
@@ -508,7 +499,7 @@ def test_cancel_and_timeout_kill_tree_and_remove_private_dir(tmp_path, monkeypat
         runner.extract_side(job_for(tmp_path, 'grandchild'), budget)
     assert (caught.value.code, caught.value.reason) == expected
     assert time.monotonic() - started < 60 and leftovers(private_tempdir) == []
-    assert heartbeat_stopped(beat), 'the grandchild survived'
+    assert heartbeat_stopped(beat, settle=0.6, start_timeout=15), 'the grandchild never started or survived'
 
 
 def test_an_expired_budget_is_refused_before_spawning(tmp_path, private_tempdir):

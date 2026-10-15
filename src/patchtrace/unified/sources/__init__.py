@@ -18,7 +18,7 @@ from typing import Annotated, Any, Literal, Protocol, runtime_checkable
 from pydantic import BaseModel, ConfigDict, Field, ValidationError
 
 from ..addressing import AddressMap, parse_va_text
-from ..contracts import Atom, SourceRef
+from ..contracts import Atom, SourceRef, replace_surrogates
 from ..limits import DEFAULT_LIMITS, Budget, UnifiedError, UnifiedLimits
 
 MAX_CALLS = 4096
@@ -153,14 +153,14 @@ class Ledger:
 def clean_name(value: object, limit: int = 256) -> str | None:
     """Plain-text name for display (controls and bidi characters removed); empty -> None."""
     from ...secondary.evidence_view import sanitize_text
-    text = sanitize_text(value, limit) if value is not None else ''
+    text = replace_surrogates(sanitize_text(value, limit)) if value is not None else ''
     return text or None
 
 
 def native(*pairs: tuple[str, str | None]) -> tuple[tuple[str, str], ...]:
     """Upstream display text only (<= 4 labelled values, 120 characters each); no rule ever reads it."""
     from ...secondary.evidence_view import sanitize_text
-    return tuple((label[:32], sanitize_text(text, 120)) for label, text in pairs if text)[:4]
+    return tuple((label[:32], replace_surrogates(sanitize_text(text, 120))) for label, text in pairs if text)[:4]
 
 
 def function_rva(function: SnapshotFunction, side: str, addr: AddressMap, basis: str, ledger: Ledger) -> int | None:
@@ -180,20 +180,22 @@ def atom_order(atom: Atom) -> tuple:
 # --- snapshot lines (owner writes, worker reads) --------------------------------------------------------------------
 
 def _function(record, limits: UnifiedLimits) -> SnapshotFunction:
-    code = record.code
+    code = None if record.code is None else replace_surrogates(record.code)
     omitted = False
     if code is not None and (len(code) > limits.l29_pseudo_chars or code.count('\n') + 1 > limits.l29_pseudo_lines):
         code, omitted = None, True
     metadata = record.metadata if isinstance(record.metadata, dict) else {}
     types = metadata.get('diff_types')
-    types = tuple(t[:32] for t in types[:16] if isinstance(t, str)) if isinstance(types, list) else ()
+    types = tuple(replace_surrogates(t[:32]) for t in types[:16] if isinstance(t, str)) if isinstance(types, list) else ()
     ratio = metadata.get('upstream_similarity')
     ratio_text = repr(ratio)[:32] if isinstance(ratio, int | float) and not isinstance(ratio, bool) else None
     return SnapshotFunction(
-        name=str(record.name)[:512], address=None if record.address is None else str(record.address)[:40],
+        name=replace_surrogates(str(record.name)[:512]),
+        address=None if record.address is None else replace_surrogates(str(record.address)[:40]),
         code=code, code_omitted=omitted,
-        callees=tuple(str(x)[:512] for x in record.callees[:MAX_CALLS]),
-        callers=tuple(str(x)[:512] for x in record.callers[:MAX_CALLS]), diff_types=types, ratio_text=ratio_text)
+        callees=tuple(replace_surrogates(str(x)[:512]) for x in record.callees[:MAX_CALLS]),
+        callers=tuple(replace_surrogates(str(x)[:512]) for x in record.callers[:MAX_CALLS]), diff_types=types,
+        ratio_text=ratio_text)
 
 
 def snapshot_from_project(project, run_id: str, limits: UnifiedLimits = DEFAULT_LIMITS, *,
@@ -203,7 +205,7 @@ def snapshot_from_project(project, run_id: str, limits: UnifiedLimits = DEFAULT_
     if len(project.matches) > limits.l38_rows_per_result:
         raise UnifiedError('PT-UNIFIED-LIMIT', 'The project has more matches than L-38 allows', reason='rows-cap')
     out = [SnapshotMatch(id=m.id, category=m.category, manual=bool(m.manual),
-                         match_types=tuple(str(t)[:64] for t in m.match_types[:16]),
+                         match_types=tuple(replace_surrogates(str(t)[:64]) for t in m.match_types[:16]),
                          older=tuple(_function(f, limits) for f in m.older[:MAX_FUNCTIONS_PER_SIDE]),
                          newer=tuple(_function(f, limits) for f in m.newer[:MAX_FUNCTIONS_PER_SIDE]))
            for m in project.matches if m.run_id == run_id and (m.manual or not manual_only)]

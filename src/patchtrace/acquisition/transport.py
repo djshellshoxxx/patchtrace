@@ -134,6 +134,9 @@ class _Response:
         if sock is not None and not isinstance(sock, _SlicedSocket):
             io._sock = _SlicedSocket(sock, guard, self._timeout)
 
+    def read1(self, size: int) -> bytes:
+        return self._raw.read1(size)
+
     def close(self) -> None:
         self._raw.close()
 
@@ -218,7 +221,7 @@ class Transport:
             return self.opener(method, url, dict(HEADERS), timeout)
         except TimeoutError:
             raise _Retry(None) from None
-        except OSError:
+        except (OSError, http.client.HTTPException):
             raise AcquisitionError('PT-ACQ-NETWORK', 'connection failed', recoverable=True) from None
 
     def _retryable(self, response) -> None:
@@ -239,10 +242,13 @@ class Transport:
     def _read_chunks(self, response, sink: Callable[[bytes], None], cap: int, what: str,
                      deadline: float | None) -> None:
         total = 0
+        # read1 returns after one socket receive, so cancel and the deadline are looked at
+        # between receives; read(n) would block until n bytes arrive however slowly.
+        read = getattr(response, 'read1', response.read)
         while True:
             self._live(deadline)
             try:
-                chunk = response.read(min(_CHUNK, cap + 1 - total))
+                chunk = read(min(_CHUNK, cap + 1 - total))
             except (OSError, ValueError, http.client.HTTPException) as exc:
                 if isinstance(exc, TimeoutError):
                     raise _Retry(None) from None
@@ -368,7 +374,10 @@ class Transport:
                 location = response.headers.get('Location')
                 if not location:
                     raise AcquisitionError('PT-ACQ-PROVIDER', 'redirect without Location')
-                target = urllib.parse.urljoin(url, location)
+                try:
+                    target = urllib.parse.urljoin(url, location)
+                except ValueError:
+                    raise AcquisitionError('PT-ACQ-NETWORK', 'invalid URL refused') from None
                 redirect_host = _check(target, blob=True)
                 response.close()
                 response = self._open('GET', target)

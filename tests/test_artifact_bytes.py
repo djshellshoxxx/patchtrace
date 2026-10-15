@@ -72,7 +72,7 @@ def test_mutation_after_verification_detected(tmp_path):
     path = tmp_path / 'a.bin'
     write(path, b'0123456789')
     reader = VerifiedArtifactReader.open_path(path)
-    time.sleep(0.01)
+    time.sleep(0.01)  # inherent: lets the file's mtime tick past the one recorded when the reader opened it
     with path.open('ab') as stream:
         stream.write(b'tail')
     os.utime(path, ns=(time.time_ns(), time.time_ns() + 10_000_000))
@@ -134,3 +134,21 @@ def test_in_place_edit_with_restored_mtime_is_detected(tmp_path):
         reader.read(0, 4)
     assert info.value.code == 'artifact_changed'
     reader.close()
+
+
+def test_change_between_hash_chunks_is_detected(tmp_path):
+    path = tmp_path / 'big.bin'
+    write(path, b'A' * (2 * 1024 * 1024 + 10))
+    calls = []
+
+    def cancel():
+        calls.append(1)
+        if len(calls) == 2:  # runs after the first chunk is hashed
+            with path.open('r+b') as stream:
+                stream.write(b'B' * 4096)
+            os.utime(path, ns=(time.time_ns(), time.time_ns() + 10_000_000))
+        return False
+
+    with pytest.raises(ArtifactBytesError) as exc:
+        VerifiedArtifactReader.open_path(path, cancel=cancel)
+    assert exc.value.code == 'artifact_changed'

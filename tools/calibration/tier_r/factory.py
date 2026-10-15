@@ -72,14 +72,15 @@ class BaseSource:
     source_date_epoch: int = 0
     std: str | None = None
     tag: str = ''
+    libs: tuple[str, ...] = ()
 
     def spec(self, *, opt: str = 'O2', link_order: str = 'sorted', variant: str = '', root: Path | None = None,
-             profile: str | None = None) -> BuildSpec:
+             profile: str | None = None, nuisance: str = '') -> BuildSpec:
         return BuildSpec(project=self.project, source_root=Path(root or self.root), files=self.files,
                          output=self.output, profile=profile or self.profile, opt=opt, include_dirs=self.include_dirs,
                          defines=self.defines, cflags=self.cflags, generated=self.generated,
                          dependencies=self.dependencies, link_order=link_order, variant=variant,
-                         source_date_epoch=self.source_date_epoch, std=self.std)
+                         source_date_epoch=self.source_date_epoch, std=self.std, nuisance=nuisance, libs=self.libs)
 
 
 @dataclass
@@ -197,7 +198,7 @@ def recipe_base(book: C.RecipeBook, recipe: C.Recipe, ref: str, commit: str, sto
                       profile='mingw-gcc' if recipe.libc == 'mingw' else 'msvc-free',
                       include_dirs=tuple(eff['include_dirs']) or ('.',), defines=tuple(eff['defines']),
                       cflags=recipe.cflags, generated=tuple(generated), dependencies=tuple(deps),
-                      source_date_epoch=int(done.get('commit_time') or 0), tag=ref)
+                      source_date_epoch=int(done.get('commit_time') or 0), tag=ref, libs=tuple(eff['libs']))
 
 
 CARD_KIND_DEFAULT = {'bounds-only': 'bounds-check-change', 'constant-only': 'constant-change',
@@ -288,6 +289,52 @@ def run_aa(session: Session, base: BaseSource, *, opt: str = 'O2', layout: bool 
     return docs
 
 
+def run_nuisance(session: Session, base: BaseSource, kinds: Sequence[str], *, opt: str = 'O2'
+                 ) -> tuple[list[dict], list[str]]:
+    """P1 pairs beyond link order: the rebuild `aa-a` against the same source built with one nuisance. An identical image
+    is kept (it is an X-versus-X pair, a stricter check); a variant the toolchain cannot build is listed as skipped."""
+    docs, skipped = [], []
+    a = session.build(base.spec(opt=opt, variant='aa-a'))
+    sa = session.side(a, base.root)
+    for kind in kinds:
+        try:
+            c = session.build(base.spec(opt=opt, variant=f'aa-{kind}', nuisance=kind))
+        except (Blocked, BuildError) as exc:
+            skipped.append(f'{kind}: {exc}'[:300])
+            continue
+        sc = session.side(c, base.root)
+        docs.append(finalize(pid=pair_id('aa', base.project, base.tag, opt, kind), stratum='aa', method='aa-layout',
+                             base_old=base, base_new=base, old=sa, new=sc, label_source='same-source',
+                             functions=label_construction(sa, sc, label_source='same-source', semantic=False),
+                             case={'kind': 'nuisance', 'nuisance': kind, 'opt': opt}))
+    return docs, skipped
+
+
+def run_chains(session: Session, base: BaseSource, chains: Sequence[tuple[str, str]], *, opt: str = 'O2'
+               ) -> tuple[list[dict], list[str]]:
+    """Three-build chains of one source for the metamorphic gate: A is the `aa-a` rebuild, B and C are built with the two
+    nuisances of a chain; the pairs A-B, B-C and A-C are P1 pairs (same source, so any real change is a bug)."""
+    docs, skipped = [], []
+    a = session.build(base.spec(opt=opt, variant='aa-a'))
+    for first, second in chains:
+        name = f'{first}-{second}'
+        try:
+            b = session.build(base.spec(opt=opt, variant=f'aa-{first}', nuisance=first))
+            c = session.build(base.spec(opt=opt, variant=f'aa-{second}', nuisance=second))
+        except (Blocked, BuildError) as exc:
+            skipped.append(f'chain {name}: {exc}'[:300])
+            continue
+        sides = [session.side(x, base.root) for x in (a, b, c)]
+        for leg, (i, j) in (('ab', (0, 1)), ('bc', (1, 2)), ('ac', (0, 2))):
+            docs.append(finalize(pid=pair_id('aa', base.project, base.tag, opt, 'chain', name, leg), stratum='aa',
+                                 method='aa-layout', base_old=base, base_new=base, old=sides[i], new=sides[j],
+                                 label_source='same-source',
+                                 functions=label_construction(sides[i], sides[j], label_source='same-source',
+                                                              semantic=False),
+                                 case={'kind': 'chain', 'chain': name, 'leg': leg, 'opt': opt}))
+    return docs, skipped
+
+
 def noise_variants(base: BaseSource, tools: Toolchain) -> list[tuple[str, str, str, str]]:
     """(profile_a, opt_a, profile_b, opt_b) pairs that can build here."""
     out = [(base.profile, a, base.profile, b) for a, b in NOISE_OPT_PAIRS]
@@ -295,6 +342,11 @@ def noise_variants(base: BaseSource, tools: Toolchain) -> list[tuple[str, str, s
         out.append(('mingw-gcc', 'O2', 'mingw-clang', 'O2'))
     if base.profile == 'msvc-free' and tools.profile_status('mingw-gcc') is None:
         out.append(('msvc-free', 'O2', 'mingw-gcc', 'O2'))
+    # the real-compiler shift (LBL s2): the base profile against `cl`, and `cl` against the free MSVC-style leg
+    if base.profile in ('mingw-gcc', 'msvc-free') and tools.profile_status('msvc') is None:
+        out.append((base.profile, 'O2', 'msvc', 'O2'))
+    if base.profile == 'msvc' and tools.profile_status('msvc-free') is None:
+        out.append(('msvc', 'O2', 'msvc-free', 'O2'))
     return out
 
 

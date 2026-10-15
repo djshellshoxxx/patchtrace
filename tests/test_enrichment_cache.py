@@ -248,6 +248,26 @@ def test_crash_at_each_promotion_point(cache, monkeypatch, point):
     assert cache.get('signals', KEY) == PAYLOAD
 
 
+@pytest.mark.parametrize('what', ['lock', 'lease'])
+def test_crash_while_writing_the_owner_leaves_no_torn_file(cache, monkeypatch, what):
+    def crash(*_args, **_kw):
+        raise SimulatedCrash()
+    monkeypatch.setattr(cache_mod.os, 'fdopen', crash)
+    with pytest.raises(SimulatedCrash):
+        if what == 'lock':
+            cache.put('signals', KEY, PAYLOAD, {})
+        else:
+            with cache.lease('signals', KEY):
+                pass
+    monkeypatch.undo()
+    cache_mod._HELD_LOCKS.clear()
+    cache_mod._HELD_LEASES.clear()
+    cache_mod._HELD_LEASE_KEYS.clear()
+    shard = entry_dir(cache, 'signals', KEY).parent
+    assert not [p for p in shard.glob(f'{KEY}.lock')] and not [p for p in shard.glob(f'{KEY}.lease-*')]
+    assert cache.put('signals', KEY, PAYLOAD, {}) and cache.get('signals', KEY) == PAYLOAD
+
+
 def test_prune_also_cleans_orphan_staging(cache, monkeypatch):
     monkeypatch.setattr(cache_mod, '_publish', lambda *a: (_ for _ in ()).throw(SimulatedCrash()))
     monkeypatch.setattr(cache_mod, '_discard_staging', lambda path: None)
@@ -314,6 +334,28 @@ def test_corrupt_entries_quarantined(cache, damage):
     assert not entry.exists()
     assert _quarantine_count(cache) == 1
     assert cache.put('signals', KEY, PAYLOAD, {})
+
+
+@pytest.mark.parametrize('size', [2 ** 40, 2 ** 70], ids=['tib', 'beyond-ssize'])
+def test_absurd_manifest_size_is_corrupt_not_a_crash(cache, size):
+    assert cache.put('signals', KEY, PAYLOAD, {})
+    entry = entry_dir(cache, 'signals', KEY)
+    manifest = json.loads((entry / 'manifest.json').read_text())
+    manifest['size'] = size
+    (entry / 'manifest.json').write_text(json.dumps(manifest))
+    assert cache.get('signals', KEY) is None
+    assert not entry.exists() and _quarantine_count(cache) == 1
+
+
+def test_quarantine_counts_toward_the_budget_and_is_evicted_first(cache):
+    k2 = stage_id('signals', 1, {'x': B})
+    assert cache.put('signals', KEY, PAYLOAD, {}) and cache.put('signals', k2, PAYLOAD, {})
+    (entry_dir(cache, 'signals', k2) / 'payload').write_bytes(b'tampered-and-long')
+    assert cache.get('signals', k2) is None and _quarantine_count(cache) == 1
+    live = cache.status()['bytes']
+    result = cache.prune(live)  # the live entry alone fits; the quarantined one must go first
+    assert _quarantine_count(cache) == 0 and result['quarantine_removed'] == 1
+    assert cache.get('signals', KEY) == PAYLOAD and cache.status()['entries'] == 1
 
 
 def test_verify_counts(cache):

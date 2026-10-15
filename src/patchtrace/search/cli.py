@@ -173,11 +173,8 @@ def _search(args, out, err, service) -> int:
     from patchtrace.search.contracts import SearchRequest
     from patchtrace.search.errors import SearchError
     from patchtrace.search.query import parse_query
-    if args.anchors_from:
-        try:
-            import patchtrace.search.anchors  # noqa: F401  (slice S10 adds the module)
-        except ImportError:
-            raise SearchError('PT-SEARCH-CAPABILITY', NO_ANCHORS) from None
+    if args.anchors_from:  # the S10 bridge (search.anchors) exists, but this verb is not wired to it yet
+        raise SearchError('PT-SEARCH-CAPABILITY', NO_ANCHORS)
     if not (args.query or args.kind):
         raise SearchError('PT-SEARCH-QUERY', 'give --query, or browse with --kind')
     plan = parse_query(_query_text(args), mode=args.mode)
