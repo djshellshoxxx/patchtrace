@@ -110,7 +110,7 @@ def validate_context(context: AnalysisContext) -> dict:
             artifact = artifacts[ref.artifact_id]
             if (ref.id in seen or artifact['side'] != ref.side or (ref.run_id, ref.function_id) not in scope
                     or evidence_id(ref, artifact['sha256']) != ref.id
-                    or len(ref.text.splitlines()) != ref.end_line - ref.start_line + 1):
+                    or len(ref.text.split('\n')) != ref.end_line - ref.start_line + 1):
                 raise ValueError('invalid evidence ownership')
             seen.add(ref.id)
         return data
