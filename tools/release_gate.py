@@ -62,9 +62,12 @@ class Decision(NamedTuple):
     reason: str
 
 
+SKIP_TRAILER = re.compile(r'^skip-checks:[ \t]*true[ \t]*$', re.IGNORECASE | re.MULTILINE)
+
+
 def skips_ci(message: str) -> bool:
     lowered = message.lower()
-    return any(marker in lowered for marker in SKIP_MARKERS)
+    return any(marker in lowered for marker in SKIP_MARKERS) or bool(SKIP_TRAILER.search(message))
 
 
 def counted_merges(commits: Sequence[Commit], head: str) -> int:
@@ -214,6 +217,22 @@ def build_parser(environ: Mapping[str, str]) -> argparse.ArgumentParser:
     return parser
 
 
+def fallback_decision(argv: Sequence[str] | None) -> Decision | None:
+    """The event and ref alone, read leniently from a command line the strict parser refused. Only a
+    non-publishing answer is used: a parse error must never publish for a pull request or other non-push event."""
+    lenient = argparse.ArgumentParser(add_help=False, allow_abbrev=False, exit_on_error=False)
+    lenient.add_argument('--event', default='')
+    lenient.add_argument('--ref', default='')
+    try:
+        known, _ = lenient.parse_known_args(list(argv) if argv is not None else sys.argv[1:])
+    except (argparse.ArgumentError, SystemExit):
+        return None
+    if not known.event:
+        return None
+    decision = ref_decision(known.event, known.ref)
+    return decision if decision is not None and not decision.publish else None
+
+
 def describe(exc: Exception) -> str:
     return str(exc) if isinstance(exc, GateError) else f'{type(exc).__name__} {exc}'
 
@@ -230,7 +249,8 @@ def main(argv: Sequence[str] | None = None, *, tools: Tools | None = None,
         if decision is None:
             decision = evaluate(Tools() if tools is None else tools, args.repo, args.head)
     except Exception as exc:  # fail open: a broken gate must never withhold a build, and it says why
-        decision = Decision(True, 0, f'gate error, publishing anyway: {describe(exc)}')
+        decision = fallback_decision(argv) or Decision(
+            True, 0, f'gate error, publishing anyway: {describe(exc)}')
     text = render(decision)
     out.write(text)
     err.write(f'release_gate: {" ".join(text.split())}\n')

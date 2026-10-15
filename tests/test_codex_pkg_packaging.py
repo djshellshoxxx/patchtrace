@@ -48,7 +48,6 @@ def test_runtime_requirements_have_exact_pins():
     assert not loose, loose
 
 
-@pytest.mark.xfail(strict=True, reason='CODEX-10')
 def test_all_declared_dependencies_have_pin_or_upper_bound():
     document = manifest()
     requirements = document['build-system']['requires'] + document['project']['dependencies']
@@ -59,7 +58,6 @@ def test_all_declared_dependencies_have_pin_or_upper_bound():
     assert not loose, loose
 
 
-@pytest.mark.xfail(strict=True, reason='CODEX-11')
 def test_optional_runtime_dependencies_have_notice_rows():
     rows = '\n'.join(line.lower() for line in source('docs/notices.md').splitlines()
                      if line.startswith('|'))
@@ -67,7 +65,6 @@ def test_optional_runtime_dependencies_have_notice_rows():
     assert all(name.lower() in rows for name in names), names
 
 
-@pytest.mark.xfail(strict=True, reason='CODEX-12')
 def test_license_copy_loops_require_nonempty_license_sets():
     permissive = []
     for path in ('tools/build_linux.py', 'tools/build_windows.py'):
