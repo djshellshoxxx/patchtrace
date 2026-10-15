@@ -308,6 +308,14 @@ def test_download_has_a_total_deadline(tmp_path):
     assert info.value.recoverable and 'timeout' in str(info.value)
 
 
+def test_http_protocol_error_is_typed_network_error(tmp_path):
+    import http.client
+    t, _ = make(Opener(http.client.BadStatusLine('NOT-HTTP garbage')))
+    with pytest.raises(AcquisitionError) as exc:
+        t.download(planned(), consent(URL), tmp_path)
+    assert exc.value.code == 'PT-ACQ-NETWORK' and 'garbage' not in str(exc.value)
+
+
 def test_malformed_redirect_location_is_typed_network_error(tmp_path):
     opener = Opener(Resp(302, headers={'Location': 'https://[x'}))
     t, _ = make(opener)

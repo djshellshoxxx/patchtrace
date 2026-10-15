@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import email.utils
 import hashlib
+import http.client
 import os
 import tempfile
 import threading
@@ -171,7 +172,7 @@ class Transport:
             return self.opener(method, url, dict(HEADERS), timeout)
         except TimeoutError:
             raise _Retry(None) from None
-        except OSError:
+        except (OSError, http.client.HTTPException):
             raise AcquisitionError('PT-ACQ-NETWORK', 'connection failed', recoverable=True) from None
 
     def _retryable(self, response) -> None:
@@ -193,7 +194,7 @@ class Transport:
                 chunk = response.read(min(_CHUNK, cap + 1 - total))
             except TimeoutError:
                 raise _Retry(None) from None
-            except OSError:
+            except (OSError, http.client.HTTPException):
                 raise AcquisitionError('PT-ACQ-NETWORK', 'connection failed while reading',
                                        recoverable=True) from None
             if not chunk:
