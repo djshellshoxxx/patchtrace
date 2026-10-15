@@ -67,6 +67,13 @@ SEMANTIC_OPERATORS = ('cmp-flip', 'const-change', 'bounds-check-insert', 'bounds
 OPT_OPERATORS = ('loop-extract', 'hotcoldsplit', 'mergefunc', 'always-inline', 'partial-inliner')
 COSMETIC_OPERATORS = ('ws-comment', 'dead-code', 'reorder-defs', 'local-rename', 'macro-rewrite', 'inline-toggle',
                       *OPT_OPERATORS)
+
+
+def masked_body_must_match(operator: str) -> bool:
+    """LBL-26 D-05 (plan 4.5): a source-level cosmetic operator must leave the target's address-masked body equal.
+    The `opt` pass operators restructure code by design, so the equality rule does not apply to them."""
+    return operator in COSMETIC_OPERATORS and operator not in OPT_OPERATORS
+
 Operator = Literal['cmp-flip', 'const-change', 'bounds-check-insert', 'bounds-check-remove', 'call-add', 'call-remove',
                    'arg-swap', 'loop-bound', 'off-by-one', 'int-width', 'ws-comment', 'dead-code', 'reorder-defs',
                    'local-rename', 'macro-rewrite', 'inline-toggle',

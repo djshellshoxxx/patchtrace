@@ -45,3 +45,36 @@ def test_declared_change_with_agreeing_evidence_stays_ok_and_disagree_stays_disa
     old, new = pair(tmp_path, SRC_OLD, 'r1', 'm1')
     (rec,) = LB.label_diff(old, new, label_source='source-diff', declared_changed={'f': 'source-diff'})
     assert (rec['label'], rec['check']) == ('unchanged', 'disagree')
+
+
+# ---- D-05 cosmetic operators: the masked-body equality rule is the same in both labellers ------------------------------
+
+SOURCE_COSMETIC = ('ws-comment', 'dead-code', 'reorder-defs', 'local-rename', 'macro-rewrite', 'inline-toggle')
+OPT_COSMETIC = ('loop-extract', 'hotcoldsplit', 'mergefunc', 'always-inline', 'partial-inliner')
+
+
+@pytest.mark.parametrize('op', SOURCE_COSMETIC)
+def test_cosmetic_target_with_changed_masked_body_disagrees_in_mutation_labels(op):
+    def facts(eq):
+        return [ML.FunctionFact('t', True, True, eq)]
+    (d,) = ML.label_mutation(op, 't', facts(False))
+    assert (d.label, d.change_kind, d.check) == ('cosmetic', op, 'disagree') and 'masked body' in d.note
+    (d,) = ML.label_mutation(op, 't', facts(True))
+    assert (d.label, d.check) == ('cosmetic', 'ok')
+    (d,) = ML.label_mutation(op, 't', facts(None))           # not comparable is not accepted, as for semantic
+    assert d.check == 'disagree'
+
+
+@pytest.mark.parametrize('op', OPT_COSMETIC)
+def test_opt_pass_operators_restructure_code_by_design(op):
+    (d,) = ML.label_mutation(op, 't', [ML.FunctionFact('t', True, True, False)])
+    assert (d.label, d.check) == ('cosmetic', 'ok')
+
+
+@pytest.mark.parametrize('op', SOURCE_COSMETIC)
+@pytest.mark.parametrize('body, check', [('identical', 'ok'), ('address-only', 'ok'), ('different', 'disagree')])
+def test_cosmetic_target_rule_matches_in_the_pair_labeller(tmp_path, op, body, check):
+    raw, masked = {'identical': ('r1', 'm1'), 'address-only': ('r2', 'm1'), 'different': ('r2', 'm2')}[body]
+    old, new = pair(tmp_path, SRC_OLD, raw, masked)
+    (rec,) = LB.label_construction(old, new, label_source='x', semantic=False, declared={'f': ('cosmetic', op)})
+    assert (rec['label'], rec['check']) == ('cosmetic', check)

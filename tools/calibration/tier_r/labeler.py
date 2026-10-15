@@ -12,6 +12,7 @@ from pathlib import Path
 
 from .bodyhash import Disassembly, body_fact, disassemble, hash_functions
 from .build import BuildResult
+from .contracts import masked_body_must_match
 from .csrc import FunctionDef, Source, compare_spans
 from .debuginfo import ImageFunction, Inventory, inventory
 from .pe import read_pe
@@ -214,6 +215,8 @@ def label_construction(old: SideData, new: SideData, *, label_source: str, seman
             note = ''
             if label == 'changed' and body != 'different':
                 check, note = 'disagree', 'planted semantic change left the masked body unchanged'
+            elif label == 'cosmetic' and masked_body_must_match(kind) and body not in ('identical', 'address-only'):
+                check, note = 'disagree', 'planted cosmetic change altered the masked body'
             out.append(_record(j, identity='same', label=label, kind=kind, body=body, source='planted-mutation',
                                check=check, notes=note))
             continue
