@@ -1,0 +1,50 @@
+{
+ "contract": "tier-r-recipes/1",
+ "excluded": [],
+ "recipes": [
+  {
+   "contract": "tier-r-recipe/1",
+   "project": "zlib",
+   "family": "compression",
+   "upstream_git": "https://github.com/madler/zlib.git",
+   "license_spdx": "Zlib",
+   "license_file": "LICENSE",
+   "license_evidence": "LICENSE at 09155eaa and 51b7f2ab (same SHA-256 at v1.3 and v1.3.1; later tags carry a newer copyright year and their own SHA-256 in pins): '(C) 1995-2022 Jean-loup Gailly and Mark Adler / This software is provided 'as-is', without any express or implied warranty.'",
+   "libc": "mingw",
+   "output": "zlib1.dll",
+   "sources": [
+    "*.c"
+   ],
+   "include_dirs": [
+    "."
+   ],
+   "pins": [
+    {
+     "ref": "v1.3",
+     "commit": "09155eaa2f9270dc4ed1fa13e2b4b2613e6e4851",
+     "license_sha256": "845efc77857d485d91fb3e0b884aaa929368c717ae8186b66fe1ed2495753243",
+     "date": "2023-08-18"
+    },
+    {
+     "ref": "v1.3.1",
+     "commit": "51b7f2abdade71cd9bb0e7a373ef2610ec6f9daf",
+     "license_sha256": "845efc77857d485d91fb3e0b884aaa929368c717ae8186b66fe1ed2495753243",
+     "date": "2024-01-22"
+    },
+    {
+     "ref": "v1.3.1.2",
+     "commit": "570720b0c24f9686c33f35a1b3165c1f568b96be",
+     "license_sha256": "db87e85464166fab6bc644092392fd6cfedf0abd8a16c63f419139ea57c33628",
+     "date": "2025-12-08"
+    },
+    {
+     "ref": "v1.3.2",
+     "commit": "da607da739fa6047df13e66a2af6b8bec7c2a498",
+     "license_sha256": "e32ff4e00d9d94930537635291da39e7e612703334bf6fde8c7f1686fe8a45a2",
+     "date": "2026-02-17"
+    }
+   ],
+   "notes": "Top-level *.c only (subdirectories excluded by the POSIX glob). Commits are the peeled tag objects from git ls-remote; each verified by the fetch receipt (git rev-parse HEAD)."
+  }
+ ]
+}

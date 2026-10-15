@@ -12,6 +12,7 @@ compared with the recorded size and SHA-256, and only those exact bytes are scan
 """
 from __future__ import annotations
 
+import errno
 import hashlib
 import os
 import stat
@@ -65,11 +66,17 @@ def _publish(path: str, document: WorkerResult) -> None:
         out.write(data)
 
 
+# What the dynamic loader reports when RLIMIT_AS leaves no room to map the extension.
+_NO_MEMORY_TEXT = ('failed to map segment', 'cannot allocate memory')
+
+
 def _engine():
     """The facade module; importing it is what loads the extension, so this is the "is the engine here" check."""
     try:
         from . import engine
     except (ImportError, OSError) as exc:
+        if getattr(exc, 'errno', None) == errno.ENOMEM or any(text in str(exc).lower() for text in _NO_MEMORY_TEXT):
+            raise MemoryError from None  # the address-space cap stopped the extension loading: a limit, not a missing engine
         print(f'rules worker: engine import failed: {type(exc).__name__}', file=sys.stderr)
         raise RuleError('PT-RULE-UNAVAILABLE', 'The rule engine (YARA-X) is not available in this installation',
                         reason='engine-missing') from None

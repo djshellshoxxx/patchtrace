@@ -317,6 +317,23 @@ K1 notes: plan 10.1 "4 edges, 1 mention-only" = 4 vendor-remediation edges + 1 m
 | module | files | purpose | deps | tests |
 |---|---|---|---|---|
 | gui.qt runtime | src/patchtrace/gui/qt/{tasks,settings,announce,metrics,runtime}.py, tools/qt_gate.py, tests/qt_support.py | `TaskRunner` (channels with generations, 10 Hz progress, lanes, shutdown joins and adopts the legacy `_LIVE_THREADS`), `CancelToken`, `PanelSettings`, `StatusAnnouncer`, `Metrics`, 1 ms switch interval; shared Qt test fixtures; repeat gate | PySide6 | `test_gui_tasks.py`, `test_gui_announce.py`, `test_gui_settings.py` |
+### [D:known-answer-eval] SPEC-32 s10-s12 (2026-10-14, dev-only, `tools/` is not packaged)
+| Module | Files | Responsibility | Depends on | Tests |
+|---|---|---|---|---|
+| tier-r evaluator | tools/calibration/tier_r/evaluate.py | per-engine, per-stratum identity and changed-set precision/recall, FP rate, wrong-match list; engine front ends (rz-diff via production registry/scheduler, `.BinDiff` and Ghidriff JSON imports; absent = BLOCKED); deterministic `tier-r-report/1` + Markdown | secondary registry/scheduler/bindiff, normalization, tier_r.contracts | tests/test_tier_r_eval_metrics.py, test_tier_r_eval_engines.py, test_tier_r_eval_report.py |
+| report schemas | tools/calibration/tier_r/report_schemas.py | `tier-r-engine-output/1` schema, report examples (synthetic) into docs/schemas/corpus/ | tier_r.contracts, evaluate | test_tier_r_eval_report.py |
+| manifest / annotate | tools/calibration/tier_r/{manifest,annotate}.py | `calibration-corpus/1` manifest; labels -> hash-chained annotation log -> `calibration-labels/1` (`synthetic-exact`) | calibration.contracts, label, lineage | tests/test_tier_r_eval_corpus.py |
+| tier-r CLI | tools/calibration/tier_r/{cli,__main__}.py; hook in tools/calibration/corpus.py | `python -m tools.calibration.tier_r <cmd>` (exit 0/1/2/3), `corpus known-answer <cmd>` | factory, fetch, toolchain, evaluate, manifest, annotate | tests/test_tier_r_eval_cli.py |
+
+### LBL-17 honest scope (2026-10-14; synthetic fixtures only)
+| module | files | responsibility | depends on | tests |
+|---|---|---|---|---|
+| calibration scope | src/patchtrace/calibration/{scope,ledger,context}.py | closed `ScopeId` vocabulary, fixed copy, `TIER_R_CLAIM`; pure `notice(level, ledger, artifacts)` (untested / tested-synthetic / tested-windows / degraded / expired); strict `validation-ledger/1` loader (<= 64 KiB, <= 64 entries, digest, expiry; any problem degrades to all `unvalidated`, `PT-CALIB-LEDGER`); `context_from_tools` (signature-certain DiE toolchain only, else `unknown`) | calibration.artifact, features | tests/test_calibration_scope.py |
+| calibration domain scope | artifact.py `Domain.{evidence_tiers,windows_system_binaries,scope_ids}`, policy.py | additive fields; a non-`experimental` artifact needs `tier-w`, windows coverage and no `no-windows-system-binaries`; a Tier R-only artifact cannot be promoted and `artifact_display_level` stays `ordinal`; `ValidationLedger.json` schema via `tools/calibration/schemas.py` | - | test_tier_r_only_artifact_cannot_be_promoted, test_scope_copy_sweep |
+### [D:mutations] SPEC-32 s8 planted mutations (M3) built (2026-10-14)
+| Module | Files | Responsibility | Depends on | Tests |
+|---|---|---|---|---|
+| mutations | tools/calibration/mutations/{operators,engine,contracts,labels}.py | 16 token-level operators inside one `csrc.py`-located function; `plan_mutants` (sites ordered by `det_uniform(seed, operator, file, function, site)`), `apply_case` (clang `-fsyntax-only` rejection, bounded attempts, recorded rejections, `extra_check` hook for the masked-body gate, `Blocked` without clang), `replay_case`; `mutation-case/1` models re-exported from `tier_r/contracts.py` plus `patch_digest`/`dump_case`/`load_case`; s7 labelling rule as the pure `label_mutation` | tier_r.csrc, tier_r.toolchain, common | tests/test_mutations_{ops,labels}.py |
 ### [GUI:framework] Program E GUI framework module rows (2026-10-14; GUI-F0, documentation only: every row is planned and none is built; plan `docs/specs/program-e/GUI-integration-plan.md` sections 8 and 9)
 | Module | Files | Responsibility | Depends on | Tests |
 |---|---|---|---|---|

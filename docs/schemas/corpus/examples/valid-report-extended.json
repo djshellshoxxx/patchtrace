@@ -1,0 +1,233 @@
+{
+ "contract": "tier-r-report/1",
+ "coverage": [
+  {
+   "attempted": 1,
+   "blocked": 0,
+   "completed": 1,
+   "engine": "rz-diff",
+   "failed": 0,
+   "stratum": "authored"
+  }
+ ],
+ "curves": [
+  {
+   "bins": [
+    {
+     "hi": 0.5,
+     "lo": 0.0,
+     "n": 2,
+     "precision": 0.5
+    },
+    {
+     "hi": 1.0,
+     "lo": 0.5,
+     "n": 0,
+     "precision": null
+    }
+   ],
+   "engine": "rz-diff",
+   "kind": "native-precision"
+  }
+ ],
+ "engines": [
+  {
+   "engine": "rz-diff",
+   "failures": 0,
+   "reason": null,
+   "runs": 1,
+   "status": "ok",
+   "version": "0.9.1"
+  },
+  {
+   "engine": "bindiff",
+   "failures": 0,
+   "reason": "example: no BinDiff installation and no imported .BinDiff files",
+   "runs": 0,
+   "status": "blocked",
+   "version": null
+  },
+  {
+   "engine": "unified",
+   "failures": 0,
+   "reason": "example: no unified-result rows",
+   "runs": 0,
+   "status": "blocked",
+   "version": null
+  }
+ ],
+ "inputs": [
+  {
+   "labels_digest": "8525f83a4cea4bc2a3dc1f8a6fccad50efa9df822bdf82e3758e3b1794901ccb",
+   "pair_id": "ours-template-tiny-v1-v2",
+   "stratum": "authored"
+  }
+ ],
+ "labels": {
+  "authored": {
+   "rz-diff": {
+    "changed": {
+     "abstained": 0,
+     "flagged": 1,
+     "paired_correct": 1,
+     "paired_wrong": 0,
+     "rate": {
+      "anti_conservative": true,
+      "hi": 1.0,
+      "lo": 0.5,
+      "point": 1.0,
+      "undefined": false
+     },
+     "unpaired": 0
+    }
+   }
+  }
+ },
+ "lineages": 1,
+ "notes": [
+  "example only"
+ ],
+ "pairs": [
+  {
+   "engine": "rz-diff",
+   "metrics": {
+    "ambiguous_records": 0,
+    "changed_fn": 0,
+    "changed_fp": 1,
+    "changed_precision": 0.5,
+    "changed_recall": 1.0,
+    "changed_tp": 1,
+    "changed_truth": 1,
+    "cosmetic_flagged": 1,
+    "cosmetic_matched": 1,
+    "fp_rate": 0.5,
+    "identity_fn": 0,
+    "identity_fp": 0,
+    "identity_precision": 1.0,
+    "identity_recall": 1.0,
+    "identity_tp": 3,
+    "ignored_predictions": 0,
+    "matched_negatives": 2,
+    "pairs": 1,
+    "truth_same": 3
+   },
+   "output_sha256": "d15b97b10e14b8861eaef70a7eb0c7741daef8e83bd8f7e9b117a8a34b6cc1bb",
+   "pair_id": "ours-template-tiny-v1-v2",
+   "reason": null,
+   "status": "ok",
+   "stratum": "authored"
+  }
+ ],
+ "rank": {
+  "authored": {
+   "attention": {
+    "found_in_pool": 1,
+    "hit_at": {
+     "1": {
+      "anti_conservative": true,
+      "hi": null,
+      "lo": null,
+      "point": 1.0,
+      "undefined": false
+     },
+     "10": {
+      "anti_conservative": true,
+      "hi": null,
+      "lo": null,
+      "point": 1.0,
+      "undefined": false
+     },
+     "20": {
+      "anti_conservative": true,
+      "hi": null,
+      "lo": null,
+      "point": 1.0,
+      "undefined": false
+     },
+     "3": {
+      "anti_conservative": true,
+      "hi": null,
+      "lo": null,
+      "point": 1.0,
+      "undefined": false
+     },
+     "5": {
+      "anti_conservative": true,
+      "hi": null,
+      "lo": null,
+      "point": 1.0,
+      "undefined": false
+     }
+    },
+    "lineages": 1,
+    "mean_rank": 1.0,
+    "mrr": {
+     "anti_conservative": true,
+     "hi": null,
+     "lo": null,
+     "point": 1.0,
+     "undefined": false
+    },
+    "ndcg10": {
+     "anti_conservative": true,
+     "hi": null,
+     "lo": null,
+     "point": 1.0,
+     "undefined": false
+    },
+    "pairs": 1,
+    "pool_median": 3.0,
+    "population": "planted",
+    "tie_rule": "midrank"
+   }
+  }
+ },
+ "report_sha256": "6635c87af2682142c347718a78557c2d541a7c10c8c17d942b56d38cb231144e",
+ "scope_ids": [
+  "tier-r-synthetic"
+ ],
+ "shift": {
+  "descriptors": {
+   "function_size": {
+    "n": 5,
+    "q05": 16.0,
+    "q25": 16.0,
+    "q50": 16.0,
+    "q75": 32.0,
+    "q95": 64.0
+   }
+  },
+  "n_lineages": 1,
+  "shares": {
+   "thunk": 0.0
+  }
+ },
+ "strata": {
+  "authored": {
+   "rz-diff": {
+    "ambiguous_records": 0,
+    "changed_fn": 0,
+    "changed_fp": 1,
+    "changed_precision": 0.5,
+    "changed_recall": 1.0,
+    "changed_tp": 1,
+    "changed_truth": 1,
+    "cosmetic_flagged": 1,
+    "cosmetic_matched": 1,
+    "fp_rate": 0.5,
+    "identity_fn": 0,
+    "identity_fp": 0,
+    "identity_precision": 1.0,
+    "identity_recall": 1.0,
+    "identity_tp": 3,
+    "ignored_predictions": 0,
+    "matched_negatives": 2,
+    "pairs": 1,
+    "truth_same": 3
+   }
+  }
+ },
+ "symbols": "hidden",
+ "wrong_matches": [],
+ "wrong_matches_truncated": 0
+}

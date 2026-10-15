@@ -7,6 +7,7 @@ views (cards, suites) ignore unknown keys because their authors may add notes; `
 from __future__ import annotations
 
 import re
+import typing
 from collections import Counter
 from typing import Annotated, Any, Literal
 
@@ -58,11 +59,22 @@ Profile = Literal['msvc-free', 'mingw-gcc', 'mingw-clang', 'clang-cl', 'msvc']
 Opt = Literal['O0', 'O1', 'O2', 'O3', 'Os']
 Taxonomy = Literal['N1', 'N2', 'N3', 'N4', 'N5', 'N6', 'N7', 'N8', 'N9', 'N10', 'N11', 'N12']
 SEMANTIC_OPERATORS = ('cmp-flip', 'const-change', 'bounds-check-insert', 'bounds-check-remove', 'call-add',
-                      'call-remove', 'arg-swap', 'loop-bound', 'off-by-one', 'int-width')
-COSMETIC_OPERATORS = ('ws-comment', 'dead-code', 'reorder-defs', 'local-rename', 'macro-rewrite', 'inline-toggle')
+                      'call-remove', 'arg-swap', 'loop-bound', 'off-by-one', 'int-width',
+                      # LBL-00 (SPEC-32 s16): nine added source/IR operators, all planted semantic changes
+                      'signedness-flip', 'callee-swap', 'field-offset', 'global-swap', 'index-swap', 'branch-swap',
+                      'buf-resize', 'string-literal', 'api-use')
+# Stock `opt -passes=` transforms: semantics preserved, so the target is cosmetic(<pass>) (layer `opt`).
+OPT_OPERATORS = ('loop-extract', 'hotcoldsplit', 'mergefunc', 'always-inline', 'partial-inliner')
+COSMETIC_OPERATORS = ('ws-comment', 'dead-code', 'reorder-defs', 'local-rename', 'macro-rewrite', 'inline-toggle',
+                      *OPT_OPERATORS)
 Operator = Literal['cmp-flip', 'const-change', 'bounds-check-insert', 'bounds-check-remove', 'call-add', 'call-remove',
                    'arg-swap', 'loop-bound', 'off-by-one', 'int-width', 'ws-comment', 'dead-code', 'reorder-defs',
-                   'local-rename', 'macro-rewrite', 'inline-toggle']
+                   'local-rename', 'macro-rewrite', 'inline-toggle',
+                   'signedness-flip', 'callee-swap', 'field-offset', 'global-swap', 'index-swap', 'branch-swap',
+                   'buf-resize', 'string-literal', 'api-use',
+                   'loop-extract', 'hotcoldsplit', 'mergefunc', 'always-inline', 'partial-inliner']
+Layer = Literal['source', 'ir', 'opt']
+Engine = Literal['rz-diff', 'bindiff', 'ghidriff', 'unified', 'attention']
 # Licences accepted for third-party sources: permissive only (same allow-list as tools/corpus_check.py, plus 0BSD).
 PERMISSIVE_SPDX = frozenset({'MIT', 'Apache-2.0', 'BSD-2-Clause', 'BSD-3-Clause', 'Zlib', 'ISC', 'CC0-1.0', 'Unlicense',
                              'Libpng-2.0', 'curl', 'IJG', 'BSL-1.0', 'blessing', '0BSD',
@@ -336,8 +348,12 @@ class RecipeVariant(_Strict):
     exclude: tuple[Glob, ...] | None = None
     include_dirs: tuple[RelPath, ...] | None = None
     defines: tuple[str, ...] | None = None
+    libs: tuple[LibName, ...] | None = None
     copy_files: tuple[CopyRule, ...] | None = None
     write: tuple[WriteRule, ...] | None = None
+
+
+LibName = Annotated[str, Field(pattern=r'^[A-Za-z0-9][A-Za-z0-9_.+-]{0,63}$')]  # bare names, never paths or flags
 
 
 class Recipe(_Strict):
@@ -355,6 +371,7 @@ class Recipe(_Strict):
     include_dirs: tuple[RelPath, ...] = ()
     defines: tuple[str, ...] = ()
     cflags: tuple[str, ...] = ()
+    libs: tuple[LibName, ...] = ()
     copy_files: tuple[CopyRule, ...] = ()
     write: tuple[WriteRule, ...] = ()
     depends: tuple[Dependency, ...] = ()
@@ -400,7 +417,7 @@ class Recipe(_Strict):
     def resolved(self, ref: str, commit: str) -> dict:
         """Effective lists for one pin after variant overrides."""
         out = {'sources': self.sources, 'exclude': self.exclude, 'include_dirs': self.include_dirs,
-               'defines': self.defines, 'copy_files': self.copy_files, 'write': self.write}
+               'defines': self.defines, 'libs': self.libs, 'copy_files': self.copy_files, 'write': self.write}
         for variant in self.variants:
             if ref in variant.match or commit in variant.match:
                 for key in out:
@@ -447,6 +464,7 @@ class MutationCase(_Strict):
     case_id: Ident
     base: SourceRef
     operator: Operator
+    layer: Layer = 'source'
     kind: Literal['semantic', 'cosmetic']
     seed: int = Field(ge=0, le=2**63 - 1)
     target_file: RelPath
@@ -463,13 +481,15 @@ class MutationCase(_Strict):
         expected = 'semantic' if self.operator in SEMANTIC_OPERATORS else 'cosmetic'
         if self.kind != expected:
             raise ValueError(f'operator {self.operator} is {expected}')
+        if (self.layer == 'opt') != (self.operator in OPT_OPERATORS):
+            raise ValueError('layer opt carries exactly the opt operators')
         return self
 
 
 # ---- tier-r-report/1 ---------------------------------------------------------------------------------------------
 
 class EngineStatus(_Strict):
-    engine: Literal['rz-diff', 'bindiff', 'ghidriff']
+    engine: Engine
     status: Literal['ok', 'partial', 'blocked', 'failed']
     version: str | None = None
     reason: str | None = Field(default=None, max_length=500)
@@ -502,7 +522,7 @@ class Metrics(_Strict):
 class PairResult(_Strict):
     pair_id: Ident
     stratum: Stratum
-    engine: Literal['rz-diff', 'bindiff', 'ghidriff']
+    engine: Engine
     status: Literal['ok', 'blocked', 'failed']
     reason: str | None = Field(default=None, max_length=500)
     metrics: Metrics | None = None
@@ -511,7 +531,7 @@ class PairResult(_Strict):
 
 class WrongMatch(_Strict):
     pair_id: Ident
-    engine: Literal['rz-diff', 'bindiff', 'ghidriff']
+    engine: Engine
     kind: Literal['wrong-counterpart', 'paired-no-counterpart', 'paired-unlabelled']
     old_rva: Rva | None
     new_rva: Rva | None
@@ -520,6 +540,116 @@ class WrongMatch(_Strict):
     expected_new_rva: Rva | None = None
     expected_old_rva: Rva | None = None
     similarity_milli: int | None = Field(default=None, ge=0, le=1000)
+
+
+# LBL-00 additions (plan s7.1; additive, every field optional so existing report documents stay valid)
+
+Unit = Annotated[float, Field(ge=0.0, le=1.0)]
+HIT_KS = ('1', '3', '5', '10', '20')
+Population = Literal['real-fix', 'planted']
+
+
+class Interval(_Strict):
+    """Lineage-bootstrap interval; `undefined` when too few lineages, `anti_conservative` below 30 lineages."""
+    point: float | None = None
+    lo: float | None = None
+    hi: float | None = None
+    undefined: bool = False
+    anti_conservative: bool = False
+
+    @model_validator(mode='after')
+    def defined_or_not(self):
+        if self.undefined and (self.point, self.lo, self.hi) != (None, None, None):
+            raise ValueError('an undefined interval carries no numbers')
+        if not self.undefined and self.point is None:
+            raise ValueError('a defined interval needs its point')
+        if self.lo is not None and self.hi is not None and self.lo > self.hi:
+            raise ValueError('interval lo > hi')
+        return self
+
+
+class LabelCell(_Strict):
+    paired_correct: int = Field(ge=0)
+    paired_wrong: int = Field(ge=0)
+    unpaired: int = Field(ge=0)
+    abstained: int = Field(ge=0)
+    flagged: int = Field(ge=0)
+    rate: Interval
+
+
+class RankBlock(_Strict):
+    population: Population
+    pairs: int = Field(ge=0)
+    lineages: int = Field(ge=0)
+    pool_median: float | None = None
+    found_in_pool: int = Field(ge=0)
+    hit_at: dict[str, Interval]
+    mrr: Interval
+    mean_rank: float | None = None
+    ndcg10: Interval
+    tie_rule: Literal['midrank'] = 'midrank'
+
+    @field_validator('hit_at')
+    @classmethod
+    def ks(cls, value):
+        if set(value) != set(HIT_KS):
+            raise ValueError(f'hit_at keys must be exactly {HIT_KS}')
+        return value
+
+
+class CurveBin(_Strict):
+    lo: float
+    hi: float
+    n: int = Field(ge=0)
+    precision: Unit | None = None
+
+    @model_validator(mode='after')
+    def ordered(self):
+        if self.lo > self.hi:
+            raise ValueError('bin lo > hi')
+        return self
+
+
+class CurveBlock(_Strict):
+    kind: Literal['native-precision', 'tier-precision', 'reliability']
+    engine: Engine | Literal['model']
+    bins: tuple[CurveBin, ...] = Field(max_length=64)
+
+
+class Quantiles(_Strict):
+    n: int = Field(ge=0)
+    q05: float | None = None
+    q25: float | None = None
+    q50: float | None = None
+    q75: float | None = None
+    q95: float | None = None
+
+
+class ShiftBlock(_Strict):
+    descriptors: dict[str, Quantiles]
+    shares: dict[str, Unit]
+    n_lineages: int = Field(ge=0)
+
+
+class CoverageRow(_Strict):
+    engine: Engine
+    stratum: Stratum
+    attempted: int = Field(ge=0)
+    completed: int = Field(ge=0)
+    blocked: int = Field(ge=0)
+    failed: int = Field(ge=0)
+
+    @model_validator(mode='after')
+    def accounted(self):
+        if self.completed + self.blocked + self.failed > self.attempted:
+            raise ValueError('completed + blocked + failed exceeds attempted')
+        return self
+
+
+def _keys_in(value, allowed: tuple[str, ...], what: str):
+    bad = sorted(set(value) - set(allowed))
+    if bad:
+        raise ValueError(f'unknown {what}: {bad}')
 
 
 class InputRef(_Strict):
@@ -538,7 +668,29 @@ class TierRReport(_Strict):
     wrong_matches: tuple[WrongMatch, ...] = Field(max_length=5000)
     wrong_matches_truncated: int = Field(ge=0)
     notes: tuple[Annotated[str, Field(max_length=500)], ...] = ()
+    # LBL-00 optional additions: per-label cells, rank metrics, curves, shift, coverage (never pooled across engines)
+    labels: dict[str, dict[str, dict[str, LabelCell]]] | None = None
+    rank: dict[str, dict[str, RankBlock]] | None = None
+    curves: tuple[CurveBlock, ...] = ()
+    shift: ShiftBlock | None = None
+    coverage: tuple[CoverageRow, ...] = ()
+    lineages: int | None = Field(default=None, ge=0)
+    scope_ids: tuple[Ident, ...] = Field(default=(), max_length=32)
     report_sha256: Sha256
+
+    @model_validator(mode='after')
+    def keyed_sections(self):
+        engines = typing.get_args(Engine)
+        strata = typing.get_args(Stratum)
+        for stratum, per_engine in (self.labels or {}).items():
+            _keys_in([stratum], strata, 'stratum')
+            _keys_in(per_engine, engines, 'engine')
+            for cells in per_engine.values():
+                _keys_in(cells, typing.get_args(Label), 'truth label')
+        for stratum, per_engine in (self.rank or {}).items():
+            _keys_in([stratum], strata, 'stratum')
+            _keys_in(per_engine, engines, 'engine')
+        return self
 
 
 def load_report(data: bytes) -> TierRReport:

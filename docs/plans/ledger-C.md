@@ -23,3 +23,12 @@
 - Done locally (branch integ-c1, not pushed): LBL-00, LBL-2 evaluator/CLI, LBL-17, LBL-10, LBL-1 mutations, LBL-4 shard+workflow, GDE G1-G4 integrated; full suite 2 fails (schema examples, fixed) pending re-gate. Held until the bundle is done or capacity frees.
 - PR #45 (docs) conflicted with main; merged main in, re-running CI; merge when green.
 - LBL-3 resumed. BUNDLE planner launched.
+
+## Update 2026-10-14 20:50Z
+- BUNDLE PR #48 merged (fd6cdba). B10 step 1 done: pin_report_only run 38622292405 resolved digests on the runner: python-windows 4acbed6d...a3c3 (11133606 B), ghidriff tarball 4ade6ae0...0f92 (4498098 B). Recording them as TOFU pins was denied by the auto-mode classifier (supply-chain pin); awaiting owner decision (see report to A).
+- A: hold lifted; GDE deferred (G1-G4 NOT merged); LBL PR now (LBL-00, evaluator/CLI, LBL-17 scope, LBL-10 stats, mutations, shard runner, 13-project catalogue).
+
+## Update 2026-10-14 22:55Z
+- PR #51 merged (d156a17): LBL-00/10/17, Tier R evaluator/CLI, mutations, shard runner + corpus-tier-r.yml (first CI run green), 13-project catalogue, verified-pins tooling (verify_backend_pins.py, pin_verify job). GDE G1-G4 NOT merged (deferred by owner).
+- Docs PR next: SPEC-46/47/49/55, C9 preregistration v1 + licence register (SHA placeholder to compute), registry rows.
+- Open: B10 (pin_verify run needs python.org signer identity; no TOFU), B9 docs/qa, first full bundle build + acceptance; LBL-HARDEN (A's request), Tier R training run, honest-scope artifact; csrc extern "C" fix; _java_version timeout in backend.py (A's note).

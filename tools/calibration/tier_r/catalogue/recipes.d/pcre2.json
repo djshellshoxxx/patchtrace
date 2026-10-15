@@ -1,0 +1,101 @@
+{
+ "contract": "tier-r-recipes/1",
+ "excluded": [],
+ "recipes": [
+  {
+   "contract": "tier-r-recipe/1",
+   "project": "pcre2",
+   "family": "parser",
+   "upstream_git": "https://github.com/PCRE2Project/pcre2.git",
+   "license_spdx": "BSD-3-Clause",
+   "license_file": "LICENCE.md",
+   "license_evidence": "LICENCE.md read at all 5 pins (first 2dce7761), 2 distinct SHA-256: LICENCE.md: PCRE2 LICENCE, THE BASIC LIBRARY FUNCTIONS: Redistribution and use in source and binary forms, with or without modification, are permitted (BSD-3-Clause; the PCRE2 exception is for binary-form linking only)",
+   "libc": "mingw",
+   "output": "pcre2-8.dll",
+   "sources": [
+    "src/pcre2_*.c"
+   ],
+   "exclude": [
+    "src/pcre2_dftables.c",
+    "src/pcre2_fuzzsupport.c",
+    "src/pcre2_jit_test.c",
+    "src/pcre2_printint.c",
+    "src/pcre2_ucptables.c",
+    "src/pcre2_ucd.c.dist"
+   ],
+   "include_dirs": [
+    "src"
+   ],
+   "defines": [
+    "HAVE_CONFIG_H",
+    "PCRE2_CODE_UNIT_WIDTH=8",
+    "PCRE2_STATIC"
+   ],
+   "copy_files": [
+    {
+     "src": "src/config.h.generic",
+     "dst": "src/config.h"
+    },
+    {
+     "src": "src/pcre2.h.generic",
+     "dst": "src/pcre2.h"
+    },
+    {
+     "src": "src/pcre2_chartables.c.dist",
+     "dst": "src/pcre2_chartables.c"
+    }
+   ],
+   "variants": [
+    {
+     "match": [
+      "pcre2-10.45",
+      "pcre2-10.46"
+     ],
+     "exclude": [
+      "src/pcre2_dftables.c",
+      "src/pcre2_fuzzsupport.c",
+      "src/pcre2_jit_test.c",
+      "src/pcre2_printint.c",
+      "src/pcre2_ucptables.c",
+      "src/pcre2_ucd.c.dist",
+      "src/pcre2_jit_match.c",
+      "src/pcre2_jit_misc.c"
+     ]
+    }
+   ],
+   "pins": [
+    {
+     "ref": "pcre2-10.45",
+     "commit": "2dce7761b1831fd3f82a9c2bd5476259d945da4d",
+     "license_sha256": "9cf7ac6976099a1d856826d3ef1b093bd6b84489dc6100628ac79e740cf9885a",
+     "date": "2025-02-04"
+    },
+    {
+     "ref": "pcre2-10.46",
+     "commit": "b2bd4254b379b9d7dc9a3dda060a7e27009ccdff",
+     "license_sha256": "9cf7ac6976099a1d856826d3ef1b093bd6b84489dc6100628ac79e740cf9885a",
+     "date": "2025-08-27"
+    },
+    {
+     "ref": "pcre2-10.47",
+     "commit": "f454e231fe5006dd7ff8f4693fd2b8eb94333429",
+     "license_sha256": "197d8a73ffee0d6b09adba2f9c677b5f5aede24edf89258a68e48248d010d811",
+     "date": "2025-10-20"
+    },
+    {
+     "ref": "pcre2-10.48",
+     "commit": "7978954dbd2efc6f2196869290553cf1871b4ce6",
+     "license_sha256": "197d8a73ffee0d6b09adba2f9c677b5f5aede24edf89258a68e48248d010d811",
+     "date": "2026-08-31"
+    },
+    {
+     "ref": "pcre2-10.49",
+     "commit": "6f9d7c1373262c541324a16a358785b33ef116cf",
+     "license_sha256": "197d8a73ffee0d6b09adba2f9c677b5f5aede24edf89258a68e48248d010d811",
+     "date": "2026-09-28"
+    }
+   ],
+   "notes": "8-bit library without JIT (stub pcre2_jit_*). config.h, pcre2.h and pcre2_chartables.c come from the pinned *.generic/.dist templates (copy rules); pcre2_ucd.c/pcre2_ucptables.c are #included by other units; in 10.45/10.46 pcre2_jit_match.c and pcre2_jit_misc.c are #included by pcre2_jit_compile.c and excluded as separate units."
+  }
+ ]
+}

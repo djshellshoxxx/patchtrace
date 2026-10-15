@@ -309,7 +309,7 @@ def test_consolidate_agreement_disagreement_adjudication():
     records, stats = consolidate(ev, meta)
     assert [(r['match_id'], r['A'], r['adjudicated']) for r in records] == [('m0', 'same', False),
                                                                            ('m2', 'different', True)]
-    assert stats == {'pending': [('p', 'm1')], 'reveal_changes': 1}
+    assert stats == {'pending': [('p', 'm1')], 'reveal_changes': 1, 'rejected_adjudications': []}
     load_labels(b'\n'.join(json.dumps(r).encode() for r in records))  # valid calibration-labels/1
 
 
@@ -363,7 +363,7 @@ def test_locked_test_runs_once_per_preregistration(tmp_path):
 def test_schemas_render_and_committed_copies_are_current():
     rendered = render()
     assert set(rendered) == {'CalibrationArtifact.json', 'CorpusManifest.json', 'LabelRecord.json',
-                             'CalibrationReport.json'}
+                             'CalibrationReport.json', 'ValidationLedger.json'}
     folder = ROOT / 'docs' / 'schemas' / 'calibration'
     for name, text in rendered.items():
         assert (folder / name).read_text(encoding='utf-8') == text

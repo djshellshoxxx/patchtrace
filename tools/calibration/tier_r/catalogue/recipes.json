@@ -1,9 +1,26 @@
 {
  "contract": "tier-r-recipes/1",
  "excluded": [
-  {"project": "sqlite3", "reason": "the git tree needs generated amalgamation/parser sources (tclsh, lemon): building would execute generated host tools"},
-  {"project": "bzip2", "reason": "upstream sourceware.org git was unreachable from the authoring sandbox (proxy 403); no pins verified"},
-  {"project": "giflib", "reason": "upstream git.code.sf.net was unreachable from the authoring sandbox (proxy 403); no pins verified"}
+  {
+   "project": "sqlite3",
+   "reason": "the git tree needs generated amalgamation/parser sources (tclsh, lemon): building would execute generated host tools"
+  },
+  {
+   "project": "giflib",
+   "reason": "upstream git.code.sf.net was unreachable from the authoring sandbox (proxy 403); no pins verified"
+  },
+  {
+   "project": "bzip2",
+   "reason": "github.com/libarchive/bzip2 was cloned and COPYING read: it is the custom bzip2-1.0.6 BSD-style licence, whose SPDX id is not on the permissive allow-list (the upstream sourceware.org host was unreachable earlier); not used"
+  },
+  {
+   "project": "xz-embedded",
+   "reason": "cloned from github.com/tukaani-project/xz-embedded: the only permissively licensed pins (0BSD COPYING, v20240322 onwards; v20240124 and older are public-domain text, not on the allow-list) build to byte-identical decoder images in the default configuration (v20240322, v2024-04-05, v2024-12-30), so no valid release pair exists"
+  },
+  {
+   "project": "libarchive",
+   "reason": "not attempted: the library needs a configure/cmake-generated config.h with many feature macros and a large format subset; no explicit pinned file list was verified, and found libarchive cases stay no-recipe"
+  }
  ],
  "recipes": [
   {
@@ -13,16 +30,883 @@
    "upstream_git": "https://github.com/madler/zlib.git",
    "license_spdx": "Zlib",
    "license_file": "LICENSE",
-   "license_evidence": "LICENSE at 09155eaa and 51b7f2ab (same SHA-256): '(C) 1995-2022 Jean-loup Gailly and Mark Adler / This software is provided 'as-is', without any express or implied warranty.'",
+   "license_evidence": "LICENSE at 09155eaa and 51b7f2ab (same SHA-256 at v1.3 and v1.3.1; later tags carry a newer copyright year and their own SHA-256 in pins): '(C) 1995-2022 Jean-loup Gailly and Mark Adler / This software is provided 'as-is', without any express or implied warranty.'",
    "libc": "mingw",
    "output": "zlib1.dll",
-   "sources": ["*.c"],
-   "include_dirs": ["."],
+   "sources": [
+    "*.c"
+   ],
+   "include_dirs": [
+    "."
+   ],
    "pins": [
-    {"ref": "v1.3", "commit": "09155eaa2f9270dc4ed1fa13e2b4b2613e6e4851", "license_sha256": "845efc77857d485d91fb3e0b884aaa929368c717ae8186b66fe1ed2495753243", "date": "2023-08-18"},
-    {"ref": "v1.3.1", "commit": "51b7f2abdade71cd9bb0e7a373ef2610ec6f9daf", "license_sha256": "845efc77857d485d91fb3e0b884aaa929368c717ae8186b66fe1ed2495753243", "date": "2024-01-22"}
+    {
+     "ref": "v1.3",
+     "commit": "09155eaa2f9270dc4ed1fa13e2b4b2613e6e4851",
+     "license_sha256": "845efc77857d485d91fb3e0b884aaa929368c717ae8186b66fe1ed2495753243",
+     "date": "2023-08-18"
+    },
+    {
+     "ref": "v1.3.1",
+     "commit": "51b7f2abdade71cd9bb0e7a373ef2610ec6f9daf",
+     "license_sha256": "845efc77857d485d91fb3e0b884aaa929368c717ae8186b66fe1ed2495753243",
+     "date": "2024-01-22"
+    },
+    {
+     "ref": "v1.3.1.2",
+     "commit": "570720b0c24f9686c33f35a1b3165c1f568b96be",
+     "license_sha256": "db87e85464166fab6bc644092392fd6cfedf0abd8a16c63f419139ea57c33628",
+     "date": "2025-12-08"
+    },
+    {
+     "ref": "v1.3.2",
+     "commit": "da607da739fa6047df13e66a2af6b8bec7c2a498",
+     "license_sha256": "e32ff4e00d9d94930537635291da39e7e612703334bf6fde8c7f1686fe8a45a2",
+     "date": "2026-02-17"
+    }
    ],
    "notes": "Top-level *.c only (subdirectories excluded by the POSIX glob). Commits are the peeled tag objects from git ls-remote; each verified by the fetch receipt (git rev-parse HEAD)."
+  },
+  {
+   "contract": "tier-r-recipe/1",
+   "project": "libpng",
+   "family": "image-codec",
+   "upstream_git": "https://github.com/pnggroup/libpng.git",
+   "license_spdx": "Libpng-2.0",
+   "license_file": "LICENSE",
+   "license_evidence": "LICENSE read at all 14 pins (first a40189cf), 5 distinct SHA-256: PNG Reference Library License version 2 / Permission is hereby granted to use, copy, modify, and distribute this software ... without fee",
+   "libc": "mingw",
+   "output": "libpng16.dll",
+   "sources": [
+    "png.c",
+    "pngerror.c",
+    "pngget.c",
+    "pngmem.c",
+    "pngpread.c",
+    "pngread.c",
+    "pngrio.c",
+    "pngrtran.c",
+    "pngrutil.c",
+    "pngset.c",
+    "pngtrans.c",
+    "pngwio.c",
+    "pngwrite.c",
+    "pngwtran.c",
+    "pngwutil.c"
+   ],
+   "include_dirs": [
+    "."
+   ],
+   "copy_files": [
+    {
+     "src": "scripts/pnglibconf.h.prebuilt",
+     "dst": "pnglibconf.h"
+    }
+   ],
+   "depends": [
+    {
+     "project": "zlib",
+     "ref": "v1.3.1",
+     "commit": "51b7f2abdade71cd9bb0e7a373ef2610ec6f9daf"
+    }
+   ],
+   "pins": [
+    {
+     "ref": "v1.6.37",
+     "commit": "a40189cf881e9f0db80511c382292a5604c3c3d1",
+     "license_sha256": "bf5e22b9dce8464064ae17a48ea1133c3369ac9e1d80ef9e320e5219aa14ea9b",
+     "date": "2019-04-14"
+    },
+    {
+     "ref": "v1.6.38",
+     "commit": "0a158f3506502dfa23edfc42790dfaed82efba17",
+     "license_sha256": "dfe5a536b0e5a531f844fb9c101a3089aca60772a503893b8e15f9457e369960",
+     "date": "2022-09-14"
+    },
+    {
+     "ref": "v1.6.41",
+     "commit": "ba980b8f0cfbc270ba1c4a663455e2fe8bad91d2",
+     "license_sha256": "7317e078e2d3b5d7ba5a6159e650945153262b44b76f6700f8e9edb261c5143e",
+     "date": "2024-01-24"
+    },
+    {
+     "ref": "v1.6.42",
+     "commit": "35d9f5ea523cb4f9d677af4705e00ddd185ed10e",
+     "license_sha256": "7317e078e2d3b5d7ba5a6159e650945153262b44b76f6700f8e9edb261c5143e",
+     "date": "2024-01-29"
+    },
+    {
+     "ref": "v1.6.43",
+     "commit": "ed217e3e601d8e462f7fd1e04bed43ac42212429",
+     "license_sha256": "7317e078e2d3b5d7ba5a6159e650945153262b44b76f6700f8e9edb261c5143e",
+     "date": "2024-02-23"
+    },
+    {
+     "ref": "v1.6.44",
+     "commit": "f5e92d76973a7a53f517579bc95d61483bf108c0",
+     "license_sha256": "7317e078e2d3b5d7ba5a6159e650945153262b44b76f6700f8e9edb261c5143e",
+     "date": "2024-09-12"
+    },
+    {
+     "ref": "v1.6.46",
+     "commit": "0024abd279d3a06435c0309a3f4172eed7c7a19a",
+     "license_sha256": "16d9daaafbf63a31a5bdc91d4600972548fef5aaa1244202393288dbd079c49a",
+     "date": "2025-01-23"
+    },
+    {
+     "ref": "v1.6.47",
+     "commit": "872555f4ba910252783af1507f9e7fe1653be252",
+     "license_sha256": "16d9daaafbf63a31a5bdc91d4600972548fef5aaa1244202393288dbd079c49a",
+     "date": "2025-02-18"
+    },
+    {
+     "ref": "v1.6.50",
+     "commit": "2b978915d82377df13fcbb1fb56660195ded868a",
+     "license_sha256": "16d9daaafbf63a31a5bdc91d4600972548fef5aaa1244202393288dbd079c49a",
+     "date": "2025-07-01"
+    },
+    {
+     "ref": "v1.6.51",
+     "commit": "49363adcfaf098748d7a4c8c624ad8c45a8c3a86",
+     "license_sha256": "16d9daaafbf63a31a5bdc91d4600972548fef5aaa1244202393288dbd079c49a",
+     "date": "2025-11-21"
+    },
+    {
+     "ref": "v1.6.53",
+     "commit": "4e3f57d50f552841550a36eabbb3fbcecacb7750",
+     "license_sha256": "16d9daaafbf63a31a5bdc91d4600972548fef5aaa1244202393288dbd079c49a",
+     "date": "2025-12-05"
+    },
+    {
+     "ref": "v1.6.54",
+     "commit": "02f2b4f4699f0ef9111a6534f093b53732df4452",
+     "license_sha256": "bdb0a645ea18c60507d0368379b1ac5474b92255fcc2d115e07486a7672ba526",
+     "date": "2026-01-12"
+    },
+    {
+     "ref": "v1.6.55",
+     "commit": "c3e304954a9cfd154bc0dfbfea2b01cd61d6546d",
+     "license_sha256": "bdb0a645ea18c60507d0368379b1ac5474b92255fcc2d115e07486a7672ba526",
+     "date": "2026-02-09"
+    },
+    {
+     "ref": "v1.6.56",
+     "commit": "d5515b5b8be3901aac04e5bd8bd5c89f287bcd33",
+     "license_sha256": "bdb0a645ea18c60507d0368379b1ac5474b92255fcc2d115e07486a7672ba526",
+     "date": "2026-03-25"
+    }
+   ],
+   "notes": "Fifteen explicit libpng sources (pngtest.c and example.c excluded); scripts/pnglibconf.h.prebuilt is copied to pnglibconf.h (no configure/cmake); zlib v1.3.1 is compiled into the same image as a dependency; no arch-specific SIMD files."
+  },
+  {
+   "contract": "tier-r-recipe/1",
+   "project": "lz4",
+   "family": "compression",
+   "upstream_git": "https://github.com/lz4/lz4.git",
+   "license_spdx": "BSD-2-Clause",
+   "license_file": "lib/LICENSE",
+   "license_evidence": "lib/LICENSE read at all 4 pins (first fdf2ef58), 2 distinct SHA-256: LZ4 Library / Copyright (c) Yann Collet / Redistribution and use in source and binary forms, with or without modification, are permitted (BSD 2-Clause)",
+   "libc": "mingw",
+   "output": "liblz4.dll",
+   "sources": [
+    "lib/lz4.c",
+    "lib/lz4hc.c",
+    "lib/lz4frame.c",
+    "lib/lz4file.c",
+    "lib/xxhash.c"
+   ],
+   "include_dirs": [
+    "lib"
+   ],
+   "pins": [
+    {
+     "ref": "v1.9.2",
+     "commit": "fdf2ef5809ca875c454510610764d9125ef2ebbd",
+     "license_sha256": "d15d99c8dc6b0ec22174c0e563a95bc40f9363ca7f9d9d793bb5c5a8e8d0af71",
+     "date": "2019-08-15"
+    },
+    {
+     "ref": "v1.9.3",
+     "commit": "d44371841a2f1728a3f36839fd4b7e872d0927d3",
+     "license_sha256": "d15d99c8dc6b0ec22174c0e563a95bc40f9363ca7f9d9d793bb5c5a8e8d0af71",
+     "date": "2020-11-15"
+    },
+    {
+     "ref": "v1.9.4",
+     "commit": "5ff839680134437dbf4678f3d0c7b371d84f4964",
+     "license_sha256": "8b58c446121a109ccf32edc094bba3010a3d85e4ee3702950db55e4d3e87736c",
+     "date": "2022-08-15"
+    },
+    {
+     "ref": "v1.10.0",
+     "commit": "ebb370ca83af193212df4dcbadcc5d87bc0de2f0",
+     "license_sha256": "8b58c446121a109ccf32edc094bba3010a3d85e4ee3702950db55e4d3e87736c",
+     "date": "2024-07-21"
+    }
+   ],
+   "notes": "The BSD-2-Clause library directory only (lib/LICENSE; the repository root LICENSE also covers the GPL programs/ tools, which are not compiled). lz4file.c exists from v1.9.4 on and is ignored where absent."
+  },
+  {
+   "contract": "tier-r-recipe/1",
+   "project": "zstd",
+   "family": "compression",
+   "upstream_git": "https://github.com/facebook/zstd.git",
+   "license_spdx": "BSD-3-Clause",
+   "license_file": "LICENSE",
+   "license_evidence": "LICENSE read at all 5 pins (first e4558ffd), 2 distinct SHA-256: BSD License / For Zstandard software / Redistribution and use in source and binary forms, with or without modification, are permitted",
+   "libc": "mingw",
+   "output": "libzstd.dll",
+   "sources": [
+    "lib/common/*.c",
+    "lib/compress/*.c",
+    "lib/decompress/*.c"
+   ],
+   "include_dirs": [
+    "lib",
+    "lib/common"
+   ],
+   "defines": [
+    "ZSTD_DISABLE_ASM=1"
+   ],
+   "pins": [
+    {
+     "ref": "v1.4.9",
+     "commit": "e4558ffd1dc49399faf4ee5d85abed4386b4dcf5",
+     "license_sha256": "2c1a7fa704df8f3a606f6fc010b8b5aaebf403f3aeec339a12048f1ba7331a0b",
+     "date": "2021-03-02"
+    },
+    {
+     "ref": "v1.5.0",
+     "commit": "a488ba114ec17ea1054b9057c26a046fc122b3b6",
+     "license_sha256": "2c1a7fa704df8f3a606f6fc010b8b5aaebf403f3aeec339a12048f1ba7331a0b",
+     "date": "2021-05-14"
+    },
+    {
+     "ref": "v1.5.5",
+     "commit": "63779c798237346c2b245c546c40b72a5a5913fe",
+     "license_sha256": "7055266497633c9025b777c78eb7235af13922117480ed5c674677adc381c9d8",
+     "date": "2023-04-04"
+    },
+    {
+     "ref": "v1.5.6",
+     "commit": "794ea1b0afca0f020f4e57b6732332231fb23c70",
+     "license_sha256": "7055266497633c9025b777c78eb7235af13922117480ed5c674677adc381c9d8",
+     "date": "2024-03-21"
+    },
+    {
+     "ref": "v1.5.7",
+     "commit": "f8745da6ff1ad1e7bab384bd1f9d742439278e99",
+     "license_sha256": "7055266497633c9025b777c78eb7235af13922117480ed5c674677adc381c9d8",
+     "date": "2025-02-18"
+    }
+   ],
+   "notes": "zstd is dual BSD-3-Clause / GPL-2.0; the BSD option (LICENSE, not COPYING) is the one recorded. common+compress+decompress only (no dictBuilder/legacy/threading); the amd64 assembly Huffman decoder is disabled with ZSTD_DISABLE_ASM."
+  },
+  {
+   "contract": "tier-r-recipe/1",
+   "project": "lua",
+   "family": "script-vm",
+   "upstream_git": "https://github.com/lua/lua.git",
+   "license_spdx": "MIT",
+   "license_file": "lua.h",
+   "license_evidence": "lua.h read at all 5 pins (first 063d4e45), 5 distinct SHA-256: lua.h: Copyright (C) Lua.org, PUC-Rio. Permission is hereby granted, free of charge, to any person obtaining a copy of this software (MIT)",
+   "libc": "mingw",
+   "output": "lua54.dll",
+   "sources": [
+    "*.c"
+   ],
+   "exclude": [
+    "lua.c",
+    "luac.c",
+    "onelua.c",
+    "ltests.c"
+   ],
+   "include_dirs": [
+    "."
+   ],
+   "pins": [
+    {
+     "ref": "v5.3.5",
+     "commit": "063d4e4543088e7a21965bda8ee5a0f952a9029e",
+     "license_sha256": "ad0c88137d59e93f88c416f1f24661fd5d529d2658b10ffa9c283a94a507af82",
+     "date": "2018-12-17"
+    },
+    {
+     "ref": "v5.3.6",
+     "commit": "75ea9ccbea7c4886f30da147fb67b693b2624c26",
+     "license_sha256": "d05e8e3b199aa51fec7c3d40f058a1e4f9aa76bb0587a9fe211f00c800f71a9d",
+     "date": "2020-08-18"
+    },
+    {
+     "ref": "v5.4.6",
+     "commit": "6443185167c77adcc8552a3fee7edab7895db1a9",
+     "license_sha256": "245ec29da577aefefebdb728c32a7d7407e4ff43889e038d2ab6e6349f5153f0",
+     "date": "2023-05-02"
+    },
+    {
+     "ref": "v5.4.7",
+     "commit": "1ab3208a1fceb12fca8f24ba57d6e13c5bff15e3",
+     "license_sha256": "341014ee8b49570fc01c1fb2afc6a7decc853525636c74e7a6a9507a933aa62e",
+     "date": "2024-06-13"
+    },
+    {
+     "ref": "v5.4.8",
+     "commit": "6e22fedb74cf0c9b6656e9fce8b7331db847c605",
+     "license_sha256": "3b77329f9deed929a5cbe7a7d5fc81ebbb63fd869a49e0a9302fe9240caf1930",
+     "date": "2025-05-21"
+    }
+   ],
+   "notes": "The licence notice is the MIT block at the end of lua.h (no LICENSE file in the development repository). Core + standard libraries; the lua.c/luac.c front ends, onelua.c amalgam and ltests.c are excluded."
+  },
+  {
+   "contract": "tier-r-recipe/1",
+   "project": "expat",
+   "family": "parser",
+   "upstream_git": "https://github.com/libexpat/libexpat.git",
+   "license_spdx": "MIT",
+   "license_file": "expat/COPYING",
+   "license_evidence": "expat/COPYING read at all 8 pins (first 3bab6c09), 3 distinct SHA-256: expat/COPYING: Copyright Thai Open Source Software Center Ltd and Clark Cooper / Expat maintainers. Permission is hereby granted, free of charge, to any person obtaining a copy of this software (MIT)",
+   "libc": "mingw",
+   "output": "libexpat.dll",
+   "sources": [
+    "expat/lib/xmlparse.c",
+    "expat/lib/xmlrole.c",
+    "expat/lib/xmltok.c"
+   ],
+   "include_dirs": [
+    "expat/lib"
+   ],
+   "defines": [
+    "HAVE_EXPAT_CONFIG_H"
+   ],
+   "write": [
+    {
+     "path": "expat/lib/expat_config.h",
+     "text": "#ifndef EXPAT_CONFIG_H\n#define EXPAT_CONFIG_H 1\n#define BYTEORDER 1234\n#define XML_CONTEXT_BYTES 1024\n#define XML_DTD 1\n#define XML_GE 1\n#define XML_NS 1\n#define HAVE_MEMMOVE 1\n#endif\n"
+    }
+   ],
+   "pins": [
+    {
+     "ref": "R_2_4_8",
+     "commit": "3bab6c09bbe8bf42d84b81563ddbcf4cca4be838",
+     "license_sha256": "8c6b5b6de8fae20b317f4992729abc0e520bfba4c7606cd1e9eeb87418eebdec",
+     "date": "2022-03-28"
+    },
+    {
+     "ref": "R_2_4_9",
+     "commit": "d77291a4824d78e697c5dc2b8024fd65ab31e209",
+     "license_sha256": "122f2c27000472a201d337b9b31f7eb2b52d091b02857061a8880371612d9534",
+     "date": "2022-09-20"
+    },
+    {
+     "ref": "R_2_6_0",
+     "commit": "849da3e3fe727fccef5e96ef35482d66447f06a2",
+     "license_sha256": "122f2c27000472a201d337b9b31f7eb2b52d091b02857061a8880371612d9534",
+     "date": "2024-02-06"
+    },
+    {
+     "ref": "R_2_6_1",
+     "commit": "a590b2d5846865412182805b853dd91d18f38c8d",
+     "license_sha256": "122f2c27000472a201d337b9b31f7eb2b52d091b02857061a8880371612d9534",
+     "date": "2024-02-29"
+    },
+    {
+     "ref": "R_2_6_2",
+     "commit": "fa75b96546c069d17b8f80d91e0f4ef0cde3790d",
+     "license_sha256": "122f2c27000472a201d337b9b31f7eb2b52d091b02857061a8880371612d9534",
+     "date": "2024-03-13"
+    },
+    {
+     "ref": "R_2_6_3",
+     "commit": "88b3ed553d8ad335559254863a33360d55b9f1d6",
+     "license_sha256": "122f2c27000472a201d337b9b31f7eb2b52d091b02857061a8880371612d9534",
+     "date": "2024-09-04"
+    },
+    {
+     "ref": "R_2_7_4",
+     "commit": "f5c2890d8ff91f88a018173d293a9bd02f76389e",
+     "license_sha256": "31b15de82aa19a845156169a17a5488bf597e561b2c318d159ed583139b25e87",
+     "date": "2026-01-31"
+    },
+    {
+     "ref": "R_2_7_5",
+     "commit": "f31adfd584b7f6c50bbf4d22eb928538ffc9145a",
+     "license_sha256": "31b15de82aa19a845156169a17a5488bf597e561b2c318d159ed583139b25e87",
+     "date": "2026-03-17"
+    }
+   ],
+   "notes": "xmltok_impl.c and xmltok_ns.c are #included by xmltok.c. expat_config.h is authored here (little-endian, XML_DTD, XML_GE, XML_NS; the Windows entropy path is used)."
+  },
+  {
+   "contract": "tier-r-recipe/1",
+   "project": "pcre2",
+   "family": "parser",
+   "upstream_git": "https://github.com/PCRE2Project/pcre2.git",
+   "license_spdx": "BSD-3-Clause",
+   "license_file": "LICENCE.md",
+   "license_evidence": "LICENCE.md read at all 5 pins (first 2dce7761), 2 distinct SHA-256: LICENCE.md: PCRE2 LICENCE, THE BASIC LIBRARY FUNCTIONS: Redistribution and use in source and binary forms, with or without modification, are permitted (BSD-3-Clause; the PCRE2 exception is for binary-form linking only)",
+   "libc": "mingw",
+   "output": "pcre2-8.dll",
+   "sources": [
+    "src/pcre2_*.c"
+   ],
+   "exclude": [
+    "src/pcre2_dftables.c",
+    "src/pcre2_fuzzsupport.c",
+    "src/pcre2_jit_test.c",
+    "src/pcre2_printint.c",
+    "src/pcre2_ucptables.c",
+    "src/pcre2_ucd.c.dist"
+   ],
+   "include_dirs": [
+    "src"
+   ],
+   "defines": [
+    "HAVE_CONFIG_H",
+    "PCRE2_CODE_UNIT_WIDTH=8",
+    "PCRE2_STATIC"
+   ],
+   "copy_files": [
+    {
+     "src": "src/config.h.generic",
+     "dst": "src/config.h"
+    },
+    {
+     "src": "src/pcre2.h.generic",
+     "dst": "src/pcre2.h"
+    },
+    {
+     "src": "src/pcre2_chartables.c.dist",
+     "dst": "src/pcre2_chartables.c"
+    }
+   ],
+   "variants": [
+    {
+     "match": [
+      "pcre2-10.45",
+      "pcre2-10.46"
+     ],
+     "exclude": [
+      "src/pcre2_dftables.c",
+      "src/pcre2_fuzzsupport.c",
+      "src/pcre2_jit_test.c",
+      "src/pcre2_printint.c",
+      "src/pcre2_ucptables.c",
+      "src/pcre2_ucd.c.dist",
+      "src/pcre2_jit_match.c",
+      "src/pcre2_jit_misc.c"
+     ]
+    }
+   ],
+   "pins": [
+    {
+     "ref": "pcre2-10.45",
+     "commit": "2dce7761b1831fd3f82a9c2bd5476259d945da4d",
+     "license_sha256": "9cf7ac6976099a1d856826d3ef1b093bd6b84489dc6100628ac79e740cf9885a",
+     "date": "2025-02-04"
+    },
+    {
+     "ref": "pcre2-10.46",
+     "commit": "b2bd4254b379b9d7dc9a3dda060a7e27009ccdff",
+     "license_sha256": "9cf7ac6976099a1d856826d3ef1b093bd6b84489dc6100628ac79e740cf9885a",
+     "date": "2025-08-27"
+    },
+    {
+     "ref": "pcre2-10.47",
+     "commit": "f454e231fe5006dd7ff8f4693fd2b8eb94333429",
+     "license_sha256": "197d8a73ffee0d6b09adba2f9c677b5f5aede24edf89258a68e48248d010d811",
+     "date": "2025-10-20"
+    },
+    {
+     "ref": "pcre2-10.48",
+     "commit": "7978954dbd2efc6f2196869290553cf1871b4ce6",
+     "license_sha256": "197d8a73ffee0d6b09adba2f9c677b5f5aede24edf89258a68e48248d010d811",
+     "date": "2026-08-31"
+    },
+    {
+     "ref": "pcre2-10.49",
+     "commit": "6f9d7c1373262c541324a16a358785b33ef116cf",
+     "license_sha256": "197d8a73ffee0d6b09adba2f9c677b5f5aede24edf89258a68e48248d010d811",
+     "date": "2026-09-28"
+    }
+   ],
+   "notes": "8-bit library without JIT (stub pcre2_jit_*). config.h, pcre2.h and pcre2_chartables.c come from the pinned *.generic/.dist templates (copy rules); pcre2_ucd.c/pcre2_ucptables.c are #included by other units; in 10.45/10.46 pcre2_jit_match.c and pcre2_jit_misc.c are #included by pcre2_jit_compile.c and excluded as separate units."
+  },
+  {
+   "contract": "tier-r-recipe/1",
+   "project": "cJSON",
+   "family": "parser",
+   "upstream_git": "https://github.com/DaveGamble/cJSON.git",
+   "license_spdx": "MIT",
+   "license_file": "LICENSE",
+   "license_evidence": "LICENSE read at all 6 pins (first d2735278), 1 distinct SHA-256: Copyright (c) Dave Gamble and cJSON contributors. Permission is hereby granted, free of charge, to any person obtaining a copy of this software (MIT)",
+   "libc": "mingw",
+   "output": "cjson.dll",
+   "sources": [
+    "cJSON.c",
+    "cJSON_Utils.c"
+   ],
+   "include_dirs": [
+    "."
+   ],
+   "pins": [
+    {
+     "ref": "v1.7.14",
+     "commit": "d2735278ed1c2e4556f53a7a782063b31331dbf7",
+     "license_sha256": "a36dda207c36db5818729c54e7ad4e8b0c6fba847491ba64f372c1a2037b6d5c",
+     "date": "2020-09-03"
+    },
+    {
+     "ref": "v1.7.15",
+     "commit": "d348621ca93571343a56862df7de4ff3bc9b5667",
+     "license_sha256": "a36dda207c36db5818729c54e7ad4e8b0c6fba847491ba64f372c1a2037b6d5c",
+     "date": "2021-08-25"
+    },
+    {
+     "ref": "v1.7.16",
+     "commit": "cb8693b058ba302f4829ec6d03f609ac6f848546",
+     "license_sha256": "a36dda207c36db5818729c54e7ad4e8b0c6fba847491ba64f372c1a2037b6d5c",
+     "date": "2023-07-05"
+    },
+    {
+     "ref": "v1.7.17",
+     "commit": "87d8f0961a01bf09bef98ff89bae9fdec42181ee",
+     "license_sha256": "a36dda207c36db5818729c54e7ad4e8b0c6fba847491ba64f372c1a2037b6d5c",
+     "date": "2023-12-26"
+    },
+    {
+     "ref": "v1.7.18",
+     "commit": "acc76239bee01d8e9c858ae2cab296704e52d916",
+     "license_sha256": "a36dda207c36db5818729c54e7ad4e8b0c6fba847491ba64f372c1a2037b6d5c",
+     "date": "2024-05-13"
+    },
+    {
+     "ref": "v1.7.19",
+     "commit": "c859b25da02955fef659d658b8f324b5cde87be3",
+     "license_sha256": "a36dda207c36db5818729c54e7ad4e8b0c6fba847491ba64f372c1a2037b6d5c",
+     "date": "2025-09-09"
+    }
+   ],
+   "notes": "Two source files; no build system used."
+  },
+  {
+   "contract": "tier-r-recipe/1",
+   "project": "mbedtls",
+   "family": "crypto",
+   "upstream_git": "https://github.com/Mbed-TLS/mbedtls.git",
+   "license_spdx": "Apache-2.0",
+   "license_file": "LICENSE",
+   "license_evidence": "LICENSE read at all 4 pins (first 107ea89d), 1 distinct SHA-256: LICENSE: Mbed TLS files are provided under a dual Apache-2.0 OR GPL-2.0-or-later license; users may choose which (Apache-2.0 recorded)",
+   "libc": "mingw",
+   "output": "mbedtls.dll",
+   "sources": [
+    "library/*.c"
+   ],
+   "exclude": [
+    "library/net_sockets.c"
+   ],
+   "include_dirs": [
+    "include",
+    "library"
+   ],
+   "defines": [
+    "MBEDTLS_TEST_SW_INET_PTON",
+    "MBEDTLS_NO_PLATFORM_ENTROPY",
+    "MBEDTLS_NO_DEFAULT_ENTROPY_SOURCES",
+    "MBEDTLS_TEST_NULL_ENTROPY"
+   ],
+   "pins": [
+    {
+     "ref": "v3.6.2",
+     "commit": "107ea89daaefb9867ea9121002fbbdf926780e98",
+     "license_sha256": "9b405ef4c89342f5eae1dd828882f931747f71001cfba7d114801039b52ad09b",
+     "date": "2024-10-14"
+    },
+    {
+     "ref": "v3.6.3",
+     "commit": "22098d41c6620ce07cf8a0134d37302355e1e5ef",
+     "license_sha256": "9b405ef4c89342f5eae1dd828882f931747f71001cfba7d114801039b52ad09b",
+     "date": "2025-03-20"
+    },
+    {
+     "ref": "v3.6.4",
+     "commit": "c765c831e5c2a0971410692f92f7a81d6ec65ec2",
+     "license_sha256": "9b405ef4c89342f5eae1dd828882f931747f71001cfba7d114801039b52ad09b",
+     "date": "2025-06-25"
+    },
+    {
+     "ref": "v3.6.5",
+     "commit": "e185d7fd85499c8ce5ca2a54f5cf8fe7dbe3f8df",
+     "license_sha256": "9b405ef4c89342f5eae1dd828882f931747f71001cfba7d114801039b52ad09b",
+     "date": "2025-10-13"
+    }
+   ],
+   "notes": "The 3.6 LTS single-tree layout only (4.x moved crypto to the tf-psa-crypto submodule). Dual-licensed: the Apache-2.0 option is recorded. library/net_sockets.c is excluded (winsock) and three -D switches avoid the bcrypt/ws2_32 import libraries the fixed link line cannot name: the software inet_pton and no platform entropy source (image is never executed). Otherwise the default mbedtls_config.h."
+  },
+  {
+   "contract": "tier-r-recipe/1",
+   "project": "brotli",
+   "family": "compression",
+   "upstream_git": "https://github.com/google/brotli.git",
+   "license_spdx": "MIT",
+   "license_file": "LICENSE",
+   "license_evidence": "LICENSE read at all 5 pins (first d6d98957), 1 distinct SHA-256: Copyright (c) the Brotli Authors. Permission is hereby granted, free of charge, to any person obtaining a copy of this software (MIT)",
+   "libc": "mingw",
+   "output": "brotli.dll",
+   "sources": [
+    "c/common/*.c",
+    "c/dec/*.c",
+    "c/enc/*.c"
+   ],
+   "include_dirs": [
+    "c/include"
+   ],
+   "pins": [
+    {
+     "ref": "v1.0.7",
+     "commit": "d6d98957ca8ccb1ef45922e978bb10efca0ea541",
+     "license_sha256": "3d180008e36922a4e8daec11c34c7af264fed5962d07924aea928c38e8663c94",
+     "date": "2018-10-23"
+    },
+    {
+     "ref": "v1.0.8",
+     "commit": "db361a0bb901d6a71c7cbf1370d97b3703482e3b",
+     "license_sha256": "3d180008e36922a4e8daec11c34c7af264fed5962d07924aea928c38e8663c94",
+     "date": "2020-08-27"
+    },
+    {
+     "ref": "v1.0.9",
+     "commit": "e61745a6b7add50d380cfd7d3883dd6c62fc2c71",
+     "license_sha256": "3d180008e36922a4e8daec11c34c7af264fed5962d07924aea928c38e8663c94",
+     "date": "2020-08-27"
+    },
+    {
+     "ref": "v1.1.0",
+     "commit": "ed738e842d2fbdf2d6459e39267a633c4a9b2f5d",
+     "license_sha256": "3d180008e36922a4e8daec11c34c7af264fed5962d07924aea928c38e8663c94",
+     "date": "2023-08-29"
+    },
+    {
+     "ref": "v1.2.0",
+     "commit": "028fb5a23661f123017c060daa546b55cf4bde29",
+     "license_sha256": "3d180008e36922a4e8daec11c34c7af264fed5962d07924aea928c38e8663c94",
+     "date": "2025-10-27"
+    }
+   ],
+   "notes": "Common, decoder and encoder C sources; the command-line tool is not built."
+  },
+  {
+   "contract": "tier-r-recipe/1",
+   "project": "miniz",
+   "family": "compression",
+   "upstream_git": "https://github.com/richgel999/miniz.git",
+   "license_spdx": "MIT",
+   "license_file": "LICENSE",
+   "license_evidence": "LICENSE read at all 6 pins (first a4264837), 1 distinct SHA-256: Copyright RAD Game Tools and Valve Software / Rich Geldreich and Tenacious Software LLC. Permission is hereby granted, free of charge, to any person obtaining a copy of this software (MIT)",
+   "libc": "mingw",
+   "output": "miniz.dll",
+   "sources": [
+    "miniz.c",
+    "miniz_tdef.c",
+    "miniz_tinfl.c",
+    "miniz_zip.c"
+   ],
+   "include_dirs": [
+    "."
+   ],
+   "write": [
+    {
+     "path": "miniz_export.h",
+     "text": "#ifndef MINIZ_EXPORT_H\n#define MINIZ_EXPORT_H\n#define MINIZ_EXPORT\n#endif\n"
+    }
+   ],
+   "pins": [
+    {
+     "ref": "2.1.0",
+     "commit": "a4264837ae37384b1d7a205a6732db322f0f3769",
+     "license_sha256": "0115478d567121238cf6cc1c0c361926cf07a49d9e4c9e66da97fac6a01646b3",
+     "date": "2019-04-11"
+    },
+    {
+     "ref": "2.2.0",
+     "commit": "cb97387d20909c0a4728972fd0f19bfacd083c42",
+     "license_sha256": "0115478d567121238cf6cc1c0c361926cf07a49d9e4c9e66da97fac6a01646b3",
+     "date": "2021-06-27"
+    },
+    {
+     "ref": "3.0.0",
+     "commit": "39f65158c7e5a830e390f3aece08de654c763981",
+     "license_sha256": "0115478d567121238cf6cc1c0c361926cf07a49d9e4c9e66da97fac6a01646b3",
+     "date": "2022-10-23"
+    },
+    {
+     "ref": "3.0.2",
+     "commit": "293d4db1b7d0ffee9756d035b9ac6f7431ef8492",
+     "license_sha256": "0115478d567121238cf6cc1c0c361926cf07a49d9e4c9e66da97fac6a01646b3",
+     "date": "2023-01-15"
+    },
+    {
+     "ref": "3.1.0",
+     "commit": "174573d60290f447c13a2b1b3405de2b96e27d6c",
+     "license_sha256": "0115478d567121238cf6cc1c0c361926cf07a49d9e4c9e66da97fac6a01646b3",
+     "date": "2025-09-21"
+    },
+    {
+     "ref": "e680017",
+     "commit": "e680017bae901240e8894062c0b0a3020eca42c1",
+     "license_sha256": "0115478d567121238cf6cc1c0c361926cf07a49d9e4c9e66da97fac6a01646b3",
+     "date": "2024-12-18"
+    }
+   ],
+   "notes": "miniz_export.h (generated by cmake upstream) is authored as an empty export macro. Source files that do not exist at a pin are ignored."
+  },
+  {
+   "contract": "tier-r-recipe/1",
+   "project": "jansson",
+   "family": "parser",
+   "upstream_git": "https://github.com/akheron/jansson.git",
+   "license_spdx": "MIT",
+   "license_file": "LICENSE",
+   "license_evidence": "LICENSE read at all 6 pins (first 71c4e8ec), 3 distinct SHA-256: Copyright (c) Petri Lehtinen. Permission is hereby granted, free of charge, to any person obtaining a copy of this software (MIT)",
+   "libc": "mingw",
+   "output": "jansson.dll",
+   "sources": [
+    "src/*.c"
+   ],
+   "include_dirs": [
+    "src"
+   ],
+   "defines": [
+    "HAVE_CONFIG_H"
+   ],
+   "write": [
+    {
+     "path": "src/jansson_config.h",
+     "text": "#ifndef JANSSON_CONFIG_H\n#define JANSSON_CONFIG_H\n#ifdef __cplusplus\n#define JSON_INLINE inline\n#else\n#define JSON_INLINE inline\n#endif\n#define JSON_INTEGER_IS_LONG_LONG 1\n#define JSON_HAVE_LOCALECONV 1\n#define JSON_HAVE_ATOMIC_BUILTINS 1\n#define JSON_HAVE_SYNC_BUILTINS 1\n#define JSON_PARSER_MAX_DEPTH 2048\n#endif\n"
+    },
+    {
+     "path": "src/jansson_private_config.h",
+     "text": "#define HAVE_STDINT_H 1\n#define HAVE_FCNTL_H 1\n#define HAVE_SYS_STAT_H 1\n#define HAVE_SYS_TYPES_H 1\n#define HAVE_LOCALE_H 1\n#define HAVE_SETLOCALE 1\n#define HAVE_INT32_T 1\n#define HAVE_UINT32_T 1\n#define HAVE_UINT16_T 1\n#define HAVE_UINT8_T 1\n#define HAVE_ATOMIC_BUILTINS 1\n#define HAVE_SYNC_BUILTINS 1\n"
+    }
+   ],
+   "pins": [
+    {
+     "ref": "v2.12",
+     "commit": "71c4e8ec215afa225ac20eed269a14963cd37b50",
+     "license_sha256": "f0a0c95c64e9f49ec4cbfac8e7fee06823c85ee8ba4af5d57aaabb372347adc2",
+     "date": "2018-11-26"
+    },
+    {
+     "ref": "v2.13",
+     "commit": "2882ead5bb90cf12a01b07b2c2361e24960fae02",
+     "license_sha256": "1fff7d37d22157bcd81ab53b6c54da755d7c2f868f15807d9bde920f10730da0",
+     "date": "2020-05-05"
+    },
+    {
+     "ref": "v2.13.1",
+     "commit": "e9ebfa7e77a6bee77df44e096b100e7131044059",
+     "license_sha256": "1fff7d37d22157bcd81ab53b6c54da755d7c2f868f15807d9bde920f10730da0",
+     "date": "2020-05-07"
+    },
+    {
+     "ref": "v2.14",
+     "commit": "684e18c927e89615c2d501737e90018f4930d6c5",
+     "license_sha256": "1fff7d37d22157bcd81ab53b6c54da755d7c2f868f15807d9bde920f10730da0",
+     "date": "2021-09-09"
+    },
+    {
+     "ref": "v2.14.1",
+     "commit": "ed5cae4ed0621ef409510f94270c9f8f263736d0",
+     "license_sha256": "150d90904cd8de73609bb177b42edd3867b07b4b7b786dbba319f30de39fcda2",
+     "date": "2025-03-23"
+    },
+    {
+     "ref": "v2.15.0",
+     "commit": "4a9a6db73d5dc553164992e87426502ab2d54512",
+     "license_sha256": "150d90904cd8de73609bb177b42edd3867b07b4b7b786dbba319f30de39fcda2",
+     "date": "2026-01-24"
+    }
+   ],
+   "notes": "jansson_config.h and jansson_private_config.h (autoconf/cmake output upstream) are authored here with the mingw-w64 feature set."
+  },
+  {
+   "contract": "tier-r-recipe/1",
+   "project": "libyaml",
+   "family": "parser",
+   "upstream_git": "https://github.com/yaml/libyaml.git",
+   "license_spdx": "MIT",
+   "license_file": "License",
+   "license_evidence": "License read at all 3 pins (first bf529028), 1 distinct SHA-256: License: Copyright Ingy dot Net / Kirill Simonov. Permission is hereby granted, free of charge, to any person obtaining a copy of this software (MIT)",
+   "libc": "mingw",
+   "output": "yaml.dll",
+   "sources": [
+    "src/api.c",
+    "src/dumper.c",
+    "src/emitter.c",
+    "src/loader.c",
+    "src/parser.c",
+    "src/reader.c",
+    "src/scanner.c",
+    "src/writer.c"
+   ],
+   "include_dirs": [
+    "include",
+    "src"
+   ],
+   "defines": [
+    "HAVE_CONFIG_H=1"
+   ],
+   "write": [
+    {
+     "path": "src/config.h",
+     "text": "#define YAML_VERSION_MAJOR 0\n#define YAML_VERSION_MINOR 2\n#define YAML_VERSION_PATCH 5\n#define YAML_VERSION_STRING \"0.2.5\"\n#define YAML_DECLARE_STATIC 1\n"
+    }
+   ],
+   "variants": [
+    {
+     "match": [
+      "0.2.3"
+     ],
+     "write": [
+      {
+       "path": "src/config.h",
+       "text": "#define YAML_VERSION_MAJOR 0\n#define YAML_VERSION_MINOR 2\n#define YAML_VERSION_PATCH 3\n#define YAML_VERSION_STRING \"0.2.3\"\n#define YAML_DECLARE_STATIC 1\n"
+      }
+     ]
+    },
+    {
+     "match": [
+      "0.2.4"
+     ],
+     "write": [
+      {
+       "path": "src/config.h",
+       "text": "#define YAML_VERSION_MAJOR 0\n#define YAML_VERSION_MINOR 2\n#define YAML_VERSION_PATCH 4\n#define YAML_VERSION_STRING \"0.2.4\"\n#define YAML_DECLARE_STATIC 1\n"
+      }
+     ]
+    }
+   ],
+   "pins": [
+    {
+     "ref": "0.2.3",
+     "commit": "bf5290289996338dcba9471b839013068d9e9ae8",
+     "license_sha256": "c40112449f254b9753045925248313e9270efa36d226b22d82d4cc6c43c57f29",
+     "date": "2020-04-11"
+    },
+    {
+     "ref": "0.2.4",
+     "commit": "72e2f75277ff88ad1fb8a81cf422df06bf371578",
+     "license_sha256": "c40112449f254b9753045925248313e9270efa36d226b22d82d4cc6c43c57f29",
+     "date": "2020-04-19"
+    },
+    {
+     "ref": "0.2.5",
+     "commit": "2c891fc7a770e8ba2fec34fc6b545c672beb37e6",
+     "license_sha256": "c40112449f254b9753045925248313e9270efa36d226b22d82d4cc6c43c57f29",
+     "date": "2020-06-01"
+    }
+   ],
+   "notes": "Eight src files; src/config.h (cmake output upstream) is authored per version with YAML_VERSION_* and YAML_DECLARE_STATIC. The licence file is named License only from 0.2.3 on (LICENSE before), so earlier tags are not pinned."
   }
  ]
 }

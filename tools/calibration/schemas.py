@@ -1,4 +1,4 @@
-"""Generate JSON schemas for the four calibration contracts into docs/schemas/calibration/ (run from repo root:
+"""Generate JSON schemas for the calibration contracts into docs/schemas/calibration/ (run from repo root:
 `PYTHONPATH=src python -m tools.calibration.schemas`). Kept here so the shared generate_schemas.py is untouched."""
 from __future__ import annotations
 
@@ -6,11 +6,13 @@ import json
 from pathlib import Path
 
 from patchtrace.calibration.artifact import CalibrationArtifact
+from patchtrace.calibration.ledger import ValidationLedger
 
 from .contracts import CalibrationReport, CorpusManifest, LabelRecord
 
 SCHEMAS = ((CalibrationArtifact, 'patchtrace-calibration-model/1'), (CorpusManifest, 'calibration-corpus/1'),
-           (LabelRecord, 'calibration-labels/1'), (CalibrationReport, 'calibration-report/1'))
+           (LabelRecord, 'calibration-labels/1'), (CalibrationReport, 'calibration-report/1'),
+           (ValidationLedger, 'validation-ledger/1'))
 
 
 def render() -> dict[str, str]:

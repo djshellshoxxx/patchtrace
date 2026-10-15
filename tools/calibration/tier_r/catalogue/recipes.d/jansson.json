@@ -1,0 +1,75 @@
+{
+ "contract": "tier-r-recipes/1",
+ "excluded": [],
+ "recipes": [
+  {
+   "contract": "tier-r-recipe/1",
+   "project": "jansson",
+   "family": "parser",
+   "upstream_git": "https://github.com/akheron/jansson.git",
+   "license_spdx": "MIT",
+   "license_file": "LICENSE",
+   "license_evidence": "LICENSE read at all 6 pins (first 71c4e8ec), 3 distinct SHA-256: Copyright (c) Petri Lehtinen. Permission is hereby granted, free of charge, to any person obtaining a copy of this software (MIT)",
+   "libc": "mingw",
+   "output": "jansson.dll",
+   "sources": [
+    "src/*.c"
+   ],
+   "include_dirs": [
+    "src"
+   ],
+   "defines": [
+    "HAVE_CONFIG_H"
+   ],
+   "write": [
+    {
+     "path": "src/jansson_config.h",
+     "text": "#ifndef JANSSON_CONFIG_H\n#define JANSSON_CONFIG_H\n#ifdef __cplusplus\n#define JSON_INLINE inline\n#else\n#define JSON_INLINE inline\n#endif\n#define JSON_INTEGER_IS_LONG_LONG 1\n#define JSON_HAVE_LOCALECONV 1\n#define JSON_HAVE_ATOMIC_BUILTINS 1\n#define JSON_HAVE_SYNC_BUILTINS 1\n#define JSON_PARSER_MAX_DEPTH 2048\n#endif\n"
+    },
+    {
+     "path": "src/jansson_private_config.h",
+     "text": "#define HAVE_STDINT_H 1\n#define HAVE_FCNTL_H 1\n#define HAVE_SYS_STAT_H 1\n#define HAVE_SYS_TYPES_H 1\n#define HAVE_LOCALE_H 1\n#define HAVE_SETLOCALE 1\n#define HAVE_INT32_T 1\n#define HAVE_UINT32_T 1\n#define HAVE_UINT16_T 1\n#define HAVE_UINT8_T 1\n#define HAVE_ATOMIC_BUILTINS 1\n#define HAVE_SYNC_BUILTINS 1\n"
+    }
+   ],
+   "pins": [
+    {
+     "ref": "v2.12",
+     "commit": "71c4e8ec215afa225ac20eed269a14963cd37b50",
+     "license_sha256": "f0a0c95c64e9f49ec4cbfac8e7fee06823c85ee8ba4af5d57aaabb372347adc2",
+     "date": "2018-11-26"
+    },
+    {
+     "ref": "v2.13",
+     "commit": "2882ead5bb90cf12a01b07b2c2361e24960fae02",
+     "license_sha256": "1fff7d37d22157bcd81ab53b6c54da755d7c2f868f15807d9bde920f10730da0",
+     "date": "2020-05-05"
+    },
+    {
+     "ref": "v2.13.1",
+     "commit": "e9ebfa7e77a6bee77df44e096b100e7131044059",
+     "license_sha256": "1fff7d37d22157bcd81ab53b6c54da755d7c2f868f15807d9bde920f10730da0",
+     "date": "2020-05-07"
+    },
+    {
+     "ref": "v2.14",
+     "commit": "684e18c927e89615c2d501737e90018f4930d6c5",
+     "license_sha256": "1fff7d37d22157bcd81ab53b6c54da755d7c2f868f15807d9bde920f10730da0",
+     "date": "2021-09-09"
+    },
+    {
+     "ref": "v2.14.1",
+     "commit": "ed5cae4ed0621ef409510f94270c9f8f263736d0",
+     "license_sha256": "150d90904cd8de73609bb177b42edd3867b07b4b7b786dbba319f30de39fcda2",
+     "date": "2025-03-23"
+    },
+    {
+     "ref": "v2.15.0",
+     "commit": "4a9a6db73d5dc553164992e87426502ab2d54512",
+     "license_sha256": "150d90904cd8de73609bb177b42edd3867b07b4b7b786dbba319f30de39fcda2",
+     "date": "2026-01-24"
+    }
+   ],
+   "notes": "jansson_config.h and jansson_private_config.h (autoconf/cmake output upstream) are authored here with the mingw-w64 feature set."
+  }
+ ]
+}

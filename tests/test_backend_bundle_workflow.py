@@ -14,7 +14,7 @@ ROOT = Path(__file__).resolve().parents[1]
 WORKFLOW = ROOT / '.github' / 'workflows' / 'backend-bundle.yml'
 ALLOWED_ACTIONS = {'actions/checkout@v4', 'actions/setup-python@v5', 'actions/upload-artifact@v4',
                    'actions/download-artifact@v4', 'actions/cache@v4', 'ilammy/msvc-dev-cmd@v1'}
-JOB_IDS = {'pin', 'bld-win', 'acc-win', 'bld-lin', 'acc-lin', 'pub'}
+JOB_IDS = {'pin', 'vrfy', 'bld-win', 'acc-win', 'bld-lin', 'acc-lin', 'pub'}
 
 
 @pytest.fixture(scope='module')
@@ -84,6 +84,22 @@ def test_pin_job_enforces_release_gate_and_reports(doc):
     assert report and report[0]['with']['name'] == 'pin-report'
 
 
+def test_pin_verify_job_is_ubuntu_pinned_and_uploads_evidence(doc):
+    for name in ('workflow_dispatch', 'workflow_call'):
+        assert {'pin_verify', 'sigstore_identity', 'sigstore_issuer', 'gpg_fingerprint'} <= set(triggers(doc)[name]['inputs'])
+    job = doc['jobs']['vrfy']
+    assert job['runs-on'] == 'ubuntu-latest' and job['needs'] == 'pin'
+    assert "needs.pin.outputs.verify == 'true'" in job['if'] and 'permissions' not in job
+    text = all_run_text(job)
+    assert re.search(r"pip install 'sigstore==\d+\.\d+\.\d+'", text)
+    assert 'verify_backend_pins.py verify' in text and 'cat pin-verify.json' in text
+    up = [s for s in steps(job) if s.get('uses', '').startswith('actions/upload-artifact')]
+    assert up and up[0]['if'] == 'always()' and up[0]['with']['name'] == 'pin-verify'
+    assert '${{' not in text  # inputs reach the shell only through env
+    plan = next(s for s in steps(doc['jobs']['pin']) if s.get('id') == 'plan')
+    assert 'verify=true' in plan['run'] and 'build=false' in plan['run']
+
+
 def test_builders_gate_on_pin_and_use_full_flags(doc):
     for job_id, platform in (('bld-win', 'windows'), ('bld-lin', 'linux')):
         job = doc['jobs'][job_id]
@@ -145,7 +161,8 @@ def test_publish_is_prerelease_only_and_fails_loudly(doc):
 
 def test_publish_requires_explicit_input_never_tag_alone(doc):
     plan = next(s for s in steps(doc['jobs']['pin']) if s.get('id') == 'plan')['run']
-    assert re.search(r'publish=false; \[ "\$IN_PUBLISH" = true \] && \[ "\$report" = false \] && publish=true', plan)
+    assert re.search(r'publish=false\n\s*if \[ "\$IN_PUBLISH" = true \] && \[ "\$report" = false \] '
+                     r'&& \[ "\$verify" = false \]; then publish=true; fi', plan)
 
 
 def test_inputs_reach_shell_only_through_env(doc):

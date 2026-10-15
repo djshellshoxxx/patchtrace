@@ -1,0 +1,55 @@
+{
+ "contract": "tier-r-recipes/1",
+ "excluded": [
+  {
+   "project": "example",
+   "reason": "illustration"
+  }
+ ],
+ "recipes": [
+  {
+   "contract": "tier-r-recipe/1",
+   "defines": [
+    "ZLIB_DLL"
+   ],
+   "exclude": [
+    "gz*.c"
+   ],
+   "family": "compression",
+   "include_dirs": [
+    "."
+   ],
+   "libc": "mingw",
+   "libs": [
+    "bcrypt",
+    "ws2_32"
+   ],
+   "license_evidence": "example",
+   "license_file": "LICENSE",
+   "license_spdx": "Zlib",
+   "output": "mbedtls.dll",
+   "pins": [
+    {
+     "commit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+     "license_sha256": "d15b97b10e14b8861eaef70a7eb0c7741daef8e83bd8f7e9b117a8a34b6cc1bb",
+     "ref": "v1.3"
+    }
+   ],
+   "project": "mbedtls",
+   "sources": [
+    "*.c"
+   ],
+   "upstream_git": "https://github.com/madler/zlib.git",
+   "variants": [
+    {
+     "libs": [
+      "bcrypt"
+     ],
+     "match": [
+      "v1.3"
+     ]
+    }
+   ]
+  }
+ ]
+}

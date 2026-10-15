@@ -180,6 +180,9 @@ def make_artifact(profile='G+R', **overrides) -> dict:
            'evidence': {'preregistration_sha256': None, 'report_sha256': None, 'corpus_manifest_sha256': None,
                         'label_set_sha256': None, 'tool_git': 'test', 'gates': {}},
            'created': '2026-10-01', 'expires': '2027-09-30'}
+    if overrides.get('status') in ('bands-ok', 'numeric-ok') and 'calibration_domain' not in overrides:
+        doc['calibration_domain'] = {**doc['calibration_domain'], 'evidence_tiers': ['tier-r', 'tier-w'],
+                                     'windows_system_binaries': 'local-measured'}
     for key, value in overrides.items():
         doc[key] = value
     doc['digest_sha256'] = digest(doc)

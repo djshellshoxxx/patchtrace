@@ -59,6 +59,20 @@ def quick_grace(monkeypatch):
     monkeypatch.setattr(runner, 'TIMEOUT_GRACE', 0.5)
 
 
+@pytest.fixture(autouse=True)
+def keep_the_address_space_limit():
+    """`worker.run` lowers RLIMIT_AS of its own process (in production that process is the child). Called in process by
+    these tests it would cap pytest itself, and every later thread start in the session (a reader thread of
+    `run_process`) then hangs with the main thread waiting for a thread that died: restore the limit after each test."""
+    if os.name == 'nt':
+        yield
+        return
+    import resource
+    saved = resource.getrlimit(resource.RLIMIT_AS)
+    yield
+    resource.setrlimit(resource.RLIMIT_AS, saved)
+
+
 PRELUDE = '''
 import json, os, subprocess, sys, time
 req = json.load(open(sys.argv[-1], encoding="utf-8"))
@@ -413,6 +427,21 @@ def test_a_missing_engine_is_an_unavailable_document_not_a_crash(monkeypatch, tm
     assert (doc.error.code, doc.error.reason) == ('PT-RULE-UNAVAILABLE', 'engine-missing')
 
 
+@pytest.mark.parametrize('message', ['libyara_x.so: failed to map segment from shared object', 'Cannot allocate memory'],
+                         ids=['loader-map-segment', 'enomem-text'])
+def test_an_engine_that_cannot_load_under_the_memory_cap_is_out_of_memory_not_missing(monkeypatch, tmp_path, message):
+    monkeypatch.delattr(rules_package, 'engine', raising=False)
+    monkeypatch.delitem(sys.modules, 'patchtrace.rules.engine', raising=False)
+    real_import = __import__
+
+    def refusing_import(name, globals=None, locals=None, fromlist=(), level=0):
+        if level == 1 and 'engine' in (fromlist or ()):
+            raise ImportError(message)
+        return real_import(name, globals, locals, fromlist, level)
+    monkeypatch.setattr('builtins.__import__', refusing_import)
+    assert worker.run(request_file(tmp_path)) == worker.EXIT_MEMORY
+
+
 @pytest.mark.parametrize('content', [b'{"contract": "rules-worker/1", "op": "probe", "result": "/x", "extra": 1}',
                                      b'{"op": "probe", "op": "scan"}', b'not json', b'', b'\xff\xfe',
                                      b'{"contract": "rules-worker/2", "op": "probe", "result": "/x"}',
@@ -513,8 +542,14 @@ def test_a_missing_engine_in_a_real_child_is_unavailable(monkeypatch, tmp_path, 
     assert list(scratch.iterdir()) == []
 
 
+# RLIMIT_AS counts address space, so on Linux caps up to 192 MiB are below the engine's footprint. The Windows job limit
+# counts committed memory only (CI measured 2026-10-14: the same 33.5 MiB scan completes under 64, 128 and 192 MiB), so
+# the Windows caps sit below the size of the target itself: reading it cannot fit, whatever the interpreter's base commit.
+OOM_CAPS_MIB = (16, 24, 32) if os.name == 'nt' else (64, 128, 192)
+
+
 @needs_engine
-@pytest.mark.parametrize('cap_mib', [64, 128, 192], ids=['cap-64', 'cap-128', 'cap-192'])
+@pytest.mark.parametrize('cap_mib', OOM_CAPS_MIB, ids=[f'cap-{cap}' for cap in OOM_CAPS_MIB])
 def test_real_worker_out_of_memory_is_classified_as_a_limit_not_a_crash(tmp_path, scratch, cap_mib):
     """Linux measured: RLIMIT_AS below the engine's footprint ends as a Rust allocation abort (64), an ENOMEM panic caught
     as BaseException (128) or a MemoryError (192, exit 22); all three are `worker-oom`. Windows (U7): the job limit counts
@@ -529,5 +564,5 @@ def test_real_worker_out_of_memory_is_classified_as_a_limit_not_a_crash(tmp_path
     error = failure(runner.scan, [valid], [target], limits=limits, scratch_dir=scratch)
     assert error.reason == 'worker-oom' or (os.name == 'nt' and error.reason == 'worker-crash'), error
     assert error.code in ('PT-RULE-LIMIT', 'PT-RULE-ENGINE') and list(scratch.iterdir()) == []
-    if cap_mib < 192:  # too small to even start: the probe says the engine is unavailable
+    if os.name != 'nt' and cap_mib < 192:  # too small to even start: the probe says the engine is unavailable
         assert failure(runner.probe, limits=limits, scratch_dir=scratch).code == 'PT-RULE-UNAVAILABLE'

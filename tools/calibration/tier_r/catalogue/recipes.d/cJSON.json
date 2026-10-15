@@ -1,0 +1,63 @@
+{
+ "contract": "tier-r-recipes/1",
+ "excluded": [],
+ "recipes": [
+  {
+   "contract": "tier-r-recipe/1",
+   "project": "cJSON",
+   "family": "parser",
+   "upstream_git": "https://github.com/DaveGamble/cJSON.git",
+   "license_spdx": "MIT",
+   "license_file": "LICENSE",
+   "license_evidence": "LICENSE read at all 6 pins (first d2735278), 1 distinct SHA-256: Copyright (c) Dave Gamble and cJSON contributors. Permission is hereby granted, free of charge, to any person obtaining a copy of this software (MIT)",
+   "libc": "mingw",
+   "output": "cjson.dll",
+   "sources": [
+    "cJSON.c",
+    "cJSON_Utils.c"
+   ],
+   "include_dirs": [
+    "."
+   ],
+   "pins": [
+    {
+     "ref": "v1.7.14",
+     "commit": "d2735278ed1c2e4556f53a7a782063b31331dbf7",
+     "license_sha256": "a36dda207c36db5818729c54e7ad4e8b0c6fba847491ba64f372c1a2037b6d5c",
+     "date": "2020-09-03"
+    },
+    {
+     "ref": "v1.7.15",
+     "commit": "d348621ca93571343a56862df7de4ff3bc9b5667",
+     "license_sha256": "a36dda207c36db5818729c54e7ad4e8b0c6fba847491ba64f372c1a2037b6d5c",
+     "date": "2021-08-25"
+    },
+    {
+     "ref": "v1.7.16",
+     "commit": "cb8693b058ba302f4829ec6d03f609ac6f848546",
+     "license_sha256": "a36dda207c36db5818729c54e7ad4e8b0c6fba847491ba64f372c1a2037b6d5c",
+     "date": "2023-07-05"
+    },
+    {
+     "ref": "v1.7.17",
+     "commit": "87d8f0961a01bf09bef98ff89bae9fdec42181ee",
+     "license_sha256": "a36dda207c36db5818729c54e7ad4e8b0c6fba847491ba64f372c1a2037b6d5c",
+     "date": "2023-12-26"
+    },
+    {
+     "ref": "v1.7.18",
+     "commit": "acc76239bee01d8e9c858ae2cab296704e52d916",
+     "license_sha256": "a36dda207c36db5818729c54e7ad4e8b0c6fba847491ba64f372c1a2037b6d5c",
+     "date": "2024-05-13"
+    },
+    {
+     "ref": "v1.7.19",
+     "commit": "c859b25da02955fef659d658b8f324b5cde87be3",
+     "license_sha256": "a36dda207c36db5818729c54e7ad4e8b0c6fba847491ba64f372c1a2037b6d5c",
+     "date": "2025-09-09"
+    }
+   ],
+   "notes": "Two source files; no build system used."
+  }
+ ]
+}

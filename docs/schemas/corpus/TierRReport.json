@@ -1,5 +1,151 @@
 {
   "$defs": {
+    "CoverageRow": {
+      "additionalProperties": false,
+      "properties": {
+        "attempted": {
+          "minimum": 0,
+          "title": "Attempted",
+          "type": "integer"
+        },
+        "blocked": {
+          "minimum": 0,
+          "title": "Blocked",
+          "type": "integer"
+        },
+        "completed": {
+          "minimum": 0,
+          "title": "Completed",
+          "type": "integer"
+        },
+        "engine": {
+          "enum": [
+            "rz-diff",
+            "bindiff",
+            "ghidriff",
+            "unified",
+            "attention"
+          ],
+          "title": "Engine",
+          "type": "string"
+        },
+        "failed": {
+          "minimum": 0,
+          "title": "Failed",
+          "type": "integer"
+        },
+        "stratum": {
+          "enum": [
+            "release",
+            "cve",
+            "control",
+            "mutation",
+            "aa",
+            "noise",
+            "authored"
+          ],
+          "title": "Stratum",
+          "type": "string"
+        }
+      },
+      "required": [
+        "engine",
+        "stratum",
+        "attempted",
+        "completed",
+        "blocked",
+        "failed"
+      ],
+      "title": "CoverageRow",
+      "type": "object"
+    },
+    "CurveBin": {
+      "additionalProperties": false,
+      "properties": {
+        "hi": {
+          "title": "Hi",
+          "type": "number"
+        },
+        "lo": {
+          "title": "Lo",
+          "type": "number"
+        },
+        "n": {
+          "minimum": 0,
+          "title": "N",
+          "type": "integer"
+        },
+        "precision": {
+          "anyOf": [
+            {
+              "maximum": 1.0,
+              "minimum": 0.0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Precision"
+        }
+      },
+      "required": [
+        "lo",
+        "hi",
+        "n"
+      ],
+      "title": "CurveBin",
+      "type": "object"
+    },
+    "CurveBlock": {
+      "additionalProperties": false,
+      "properties": {
+        "bins": {
+          "items": {
+            "$ref": "#/$defs/CurveBin"
+          },
+          "maxItems": 64,
+          "title": "Bins",
+          "type": "array"
+        },
+        "engine": {
+          "anyOf": [
+            {
+              "enum": [
+                "rz-diff",
+                "bindiff",
+                "ghidriff",
+                "unified",
+                "attention"
+              ],
+              "type": "string"
+            },
+            {
+              "const": "model",
+              "type": "string"
+            }
+          ],
+          "title": "Engine"
+        },
+        "kind": {
+          "enum": [
+            "native-precision",
+            "tier-precision",
+            "reliability"
+          ],
+          "title": "Kind",
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind",
+        "engine",
+        "bins"
+      ],
+      "title": "CurveBlock",
+      "type": "object"
+    },
     "EngineStatus": {
       "additionalProperties": false,
       "properties": {
@@ -7,7 +153,9 @@
           "enum": [
             "rz-diff",
             "bindiff",
-            "ghidriff"
+            "ghidriff",
+            "unified",
+            "attention"
           ],
           "title": "Engine",
           "type": "string"
@@ -100,6 +248,103 @@
         "labels_digest"
       ],
       "title": "InputRef",
+      "type": "object"
+    },
+    "Interval": {
+      "additionalProperties": false,
+      "description": "Lineage-bootstrap interval; `undefined` when too few lineages, `anti_conservative` below 30 lineages.",
+      "properties": {
+        "anti_conservative": {
+          "default": false,
+          "title": "Anti Conservative",
+          "type": "boolean"
+        },
+        "hi": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Hi"
+        },
+        "lo": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Lo"
+        },
+        "point": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Point"
+        },
+        "undefined": {
+          "default": false,
+          "title": "Undefined",
+          "type": "boolean"
+        }
+      },
+      "title": "Interval",
+      "type": "object"
+    },
+    "LabelCell": {
+      "additionalProperties": false,
+      "properties": {
+        "abstained": {
+          "minimum": 0,
+          "title": "Abstained",
+          "type": "integer"
+        },
+        "flagged": {
+          "minimum": 0,
+          "title": "Flagged",
+          "type": "integer"
+        },
+        "paired_correct": {
+          "minimum": 0,
+          "title": "Paired Correct",
+          "type": "integer"
+        },
+        "paired_wrong": {
+          "minimum": 0,
+          "title": "Paired Wrong",
+          "type": "integer"
+        },
+        "rate": {
+          "$ref": "#/$defs/Interval"
+        },
+        "unpaired": {
+          "minimum": 0,
+          "title": "Unpaired",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "paired_correct",
+        "paired_wrong",
+        "unpaired",
+        "abstained",
+        "flagged",
+        "rate"
+      ],
+      "title": "LabelCell",
       "type": "object"
     },
     "Metrics": {
@@ -262,7 +507,9 @@
           "enum": [
             "rz-diff",
             "bindiff",
-            "ghidriff"
+            "ghidriff",
+            "unified",
+            "attention"
           ],
           "title": "Engine",
           "type": "string"
@@ -341,6 +588,196 @@
       "title": "PairResult",
       "type": "object"
     },
+    "Quantiles": {
+      "additionalProperties": false,
+      "properties": {
+        "n": {
+          "minimum": 0,
+          "title": "N",
+          "type": "integer"
+        },
+        "q05": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Q05"
+        },
+        "q25": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Q25"
+        },
+        "q50": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Q50"
+        },
+        "q75": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Q75"
+        },
+        "q95": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Q95"
+        }
+      },
+      "required": [
+        "n"
+      ],
+      "title": "Quantiles",
+      "type": "object"
+    },
+    "RankBlock": {
+      "additionalProperties": false,
+      "properties": {
+        "found_in_pool": {
+          "minimum": 0,
+          "title": "Found In Pool",
+          "type": "integer"
+        },
+        "hit_at": {
+          "additionalProperties": {
+            "$ref": "#/$defs/Interval"
+          },
+          "title": "Hit At",
+          "type": "object"
+        },
+        "lineages": {
+          "minimum": 0,
+          "title": "Lineages",
+          "type": "integer"
+        },
+        "mean_rank": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Mean Rank"
+        },
+        "mrr": {
+          "$ref": "#/$defs/Interval"
+        },
+        "ndcg10": {
+          "$ref": "#/$defs/Interval"
+        },
+        "pairs": {
+          "minimum": 0,
+          "title": "Pairs",
+          "type": "integer"
+        },
+        "pool_median": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Pool Median"
+        },
+        "population": {
+          "enum": [
+            "real-fix",
+            "planted"
+          ],
+          "title": "Population",
+          "type": "string"
+        },
+        "tie_rule": {
+          "const": "midrank",
+          "default": "midrank",
+          "title": "Tie Rule",
+          "type": "string"
+        }
+      },
+      "required": [
+        "population",
+        "pairs",
+        "lineages",
+        "found_in_pool",
+        "hit_at",
+        "mrr",
+        "ndcg10"
+      ],
+      "title": "RankBlock",
+      "type": "object"
+    },
+    "ShiftBlock": {
+      "additionalProperties": false,
+      "properties": {
+        "descriptors": {
+          "additionalProperties": {
+            "$ref": "#/$defs/Quantiles"
+          },
+          "title": "Descriptors",
+          "type": "object"
+        },
+        "n_lineages": {
+          "minimum": 0,
+          "title": "N Lineages",
+          "type": "integer"
+        },
+        "shares": {
+          "additionalProperties": {
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "type": "number"
+          },
+          "title": "Shares",
+          "type": "object"
+        }
+      },
+      "required": [
+        "descriptors",
+        "shares",
+        "n_lineages"
+      ],
+      "title": "ShiftBlock",
+      "type": "object"
+    },
     "WrongMatch": {
       "additionalProperties": false,
       "properties": {
@@ -348,7 +785,9 @@
           "enum": [
             "rz-diff",
             "bindiff",
-            "ghidriff"
+            "ghidriff",
+            "unified",
+            "attention"
           ],
           "title": "Engine",
           "type": "string"
@@ -482,6 +921,22 @@
       "title": "Contract",
       "type": "string"
     },
+    "coverage": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/CoverageRow"
+      },
+      "title": "Coverage",
+      "type": "array"
+    },
+    "curves": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/CurveBlock"
+      },
+      "title": "Curves",
+      "type": "array"
+    },
     "engines": {
       "items": {
         "$ref": "#/$defs/EngineStatus"
@@ -495,6 +950,40 @@
       },
       "title": "Inputs",
       "type": "array"
+    },
+    "labels": {
+      "anyOf": [
+        {
+          "additionalProperties": {
+            "additionalProperties": {
+              "additionalProperties": {
+                "$ref": "#/$defs/LabelCell"
+              },
+              "type": "object"
+            },
+            "type": "object"
+          },
+          "type": "object"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Labels"
+    },
+    "lineages": {
+      "anyOf": [
+        {
+          "minimum": 0,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Lineages"
     },
     "notes": {
       "default": [],
@@ -512,10 +1001,49 @@
       "title": "Pairs",
       "type": "array"
     },
+    "rank": {
+      "anyOf": [
+        {
+          "additionalProperties": {
+            "additionalProperties": {
+              "$ref": "#/$defs/RankBlock"
+            },
+            "type": "object"
+          },
+          "type": "object"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Rank"
+    },
     "report_sha256": {
       "pattern": "^[0-9a-f]{64}$",
       "title": "Report Sha256",
       "type": "string"
+    },
+    "scope_ids": {
+      "default": [],
+      "items": {
+        "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,95}$",
+        "type": "string"
+      },
+      "maxItems": 32,
+      "title": "Scope Ids",
+      "type": "array"
+    },
+    "shift": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ShiftBlock"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
     },
     "strata": {
       "additionalProperties": {
