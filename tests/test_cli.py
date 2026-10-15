@@ -213,3 +213,12 @@ def test_usage_errors_emit_json_envelope_cli_b_02(project, capsys):
         code, out, _ = run(argv, capsys)
         doc = json.loads(out)
         assert code == 2 and doc["status"] == "failed" and doc["command"] == name and doc["error"], argv
+
+
+def test_interrupt_before_parse_emits_cancelled_envelope_cli_b_03(monkeypatch, capsys):
+    def boom(argv):
+        raise KeyboardInterrupt
+    monkeypatch.setattr(cli, "_parser", boom)
+    code, out, _ = run(["rank", "x", "--json"], capsys)
+    doc = json.loads(out)
+    assert code == cli.CANCELLED and doc["status"] == "cancelled" and doc["command"] == "rank"
