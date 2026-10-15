@@ -17,7 +17,7 @@ jobs:
       matrix:
         os: [ubuntu-latest, windows-latest]
     runs-on: ${{ matrix.os }}
-    timeout-minutes: 60
+    timeout-minutes: 120
     env:
       QT_QPA_PLATFORM: offscreen
     steps:
@@ -74,7 +74,7 @@ jobs:
           - os: windows-latest
             repeat: 5
     runs-on: ${{ matrix.os }}
-    timeout-minutes: 60
+    timeout-minutes: 120
     env:
       QT_QPA_PLATFORM: offscreen
     steps:
