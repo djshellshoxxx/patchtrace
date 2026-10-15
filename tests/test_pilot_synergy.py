@@ -1,11 +1,10 @@
 """PIL-T: the synergy oracle of the patch-intent localization engine (docs/specs/program-e/PIL-integration-plan.md s5, s9).
 
 A hand-built observation ledger (nine functions, two CVEs) and a validator-clean synthetic CSAF are fixed in
-``tests/fixtures/pilot/synergy-1/``. The checks that need no engine pass today: the fixtures validate against the
-pilot/1 contracts and the real K pipeline, the expected tables are the plan's tables, the goldens are byte-stable, and
-the fake ports obey the A1 Protocols. Everything that needs fusion and ranking (PIL-B2) is ``PIL_B2``:
-``xfail(strict=True)`` that expects only ``EngineMissing``, so it flips loudly when ``patchtrace.pilot.service`` appears
-and never hides a wrong class, rank or cap.
+``tests/fixtures/pilot/synergy-1/``. The checks that need no engine: the fixtures validate against the pilot/1
+contracts and the real K pipeline, the expected tables are the plan's tables, the goldens are byte-stable, and the fake
+ports obey the A1 Protocols. The engine tests (fusion and ranking, PIL-B2) run ``patchtrace.pilot.service.localize`` on
+that ledger; they were ``xfail(strict=True)`` until it landed.
 
 Synthetic data only; nothing here is live evidence.
 """
@@ -23,7 +22,6 @@ from pathlib import Path
 import pytest
 from pilot_synergy_support import (
     FIXTURES,
-    PIL_B2,
     ZERO_COUNTS,
     Sources,
     arms,
@@ -444,7 +442,7 @@ def test_the_arm_knobs_do_what_they_say():
     assert dropped not in {o.obs_id for _, o in observed(reduced, [f.key for f in ledger.functions])}
 
 
-# --- the engine: PIL-B2 (xfail strict; expects only EngineMissing) ----------------------------------------------------
+# --- the engine: PIL-B2 -------------------------------------------------------------------------------------------
 
 CHECKS = {
     'class': lambda lead: lead.lead_class, 'mechanism': lambda lead: lead.mechanism,
@@ -468,7 +466,6 @@ def check_lead(fid: str, lead: c.Lead, spec: dict) -> None:
             assert read(lead.fits[0]) == spec[name], f'{fid}: {name}'  # fits are ordered best first
 
 
-@PIL_B2
 def test_synergy_full_arm_isolates_truth():
     want = expected()['full'][CVE1]
     assessment = run_arm('full')
@@ -490,7 +487,6 @@ def test_synergy_full_arm_isolates_truth():
     assert {f.rule_id for f in leads['F1'].fits} == {'R-MEMORY-WRITE'}
 
 
-@PIL_B2
 @pytest.mark.parametrize('arm_id', ARM_IDS, ids=ARM_IDS)
 def test_synergy_single_channel_arms_fall_short(arm_id):
     spec = expected()['arms'][arm_id]
@@ -512,7 +508,6 @@ def test_synergy_single_channel_arms_fall_short(arm_id):
         assert all(x.confounding.state == 'unknown' for x in assessment.cves)
 
 
-@PIL_B2
 def test_second_cve_gets_its_own_fit_lead():
     assessment = run_arm('full')
     want = expected()['full'][CVE2]
@@ -535,7 +530,6 @@ def summary(assessment: c.PilotAssessment) -> list:
                    for f in lead.fits)) for lead in assessment.leads]
 
 
-@PIL_B2
 def test_more_advisory_sources_do_not_add_independence():
     steps = [('stated',), ('stated', 'nvd'), ('stated', 'nvd', 'msrc'), ('stated', 'nvd', 'msrc', 'kev')]
     results = []
@@ -547,7 +541,6 @@ def test_more_advisory_sources_do_not_add_independence():
     assert all(result == results[0] for result in results), 'repeating the advisory changed a lead'
 
 
-@PIL_B2
 @pytest.mark.parametrize('sources', [('b1',), ('cf',), ('b1', 'cf'), ('b1', 'cf', 'calls')],
                          ids=['b1', 'cf', 'b1-cf', 'b1-cf-calls'])
 def test_b1_and_changefacts_are_one_component(sources):
@@ -563,7 +556,6 @@ def channel_state(assessment: c.PilotAssessment, channel: str) -> str:
     return next(x.state for x in assessment.channels if x.channel == channel)
 
 
-@PIL_B2
 @pytest.mark.parametrize('dropped', ['capa', 'floss'], ids=['capa', 'floss'])
 def test_unavailable_channel_is_unknown_not_unmet(dropped):
     full = run_arm('full')
@@ -583,7 +575,6 @@ def test_unavailable_channel_is_unknown_not_unmet(dropped):
                 assert now.state == was.state or (was.state, now.state) == ('not-observed', 'unknown')
 
 
-@PIL_B2
 def test_kev_never_changes_function_order():
     expected_states = {'ledger': {CVE1: 'listed', CVE2: 'not-in-snapshot'},
                        'other': {CVE1: 'not-in-snapshot', CVE2: 'listed'},
@@ -599,7 +590,6 @@ def test_kev_never_changes_function_order():
     assert ranked(lead_map(runs['ledger'], CVE1))[0] == 'F1' and ranked(lead_map(runs['other'], CVE2))[0] == 'F6'
 
 
-@PIL_B2
 def test_die_flag_caps_lexical_only_lead():
     plain = lead_map(run_arm('adv-b1'), CVE1)
     assert classes(plain, 'fit') == ['F1', 'F9']  # lexical B1 evidence alone reaches moderate (plan s11, question 5)
@@ -614,7 +604,6 @@ def test_die_flag_caps_lexical_only_lead():
     assert typed['F9'].lead_class == 'partial' and 'toolchain-changed-lexical-only' in typed['F9'].caps
 
 
-@PIL_B2
 def test_equal_evidence_forms_tie_group():
     ledger = load_ledger()
     leads = lead_map(run_arm('b1'), None)
@@ -631,7 +620,6 @@ def test_equal_evidence_forms_tie_group():
     assert ranked(lead_map(run_arm('b1'), None)) == ranked(leads)  # and it is stable across runs
 
 
-@PIL_B2
 def test_removing_support_never_raises_a_tier():
     ledger = load_ledger()
     full = arms()['full']

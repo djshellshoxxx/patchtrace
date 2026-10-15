@@ -48,7 +48,13 @@ KINDS = frozenset({'signals', 'ranking', 'wil', 'cve-snapshot', 'contextual', 'p
                    # Program E (integration owner, AM1): saved searches and the rule-authoring rows. Same rule:
                    # none is in DERIVED_KINDS, so retention never deletes them.
                    'search-saved', 'rule-candidate', 'rule-decision', 'rule-version', 'rule-test',
-                   'rule-export'})
+                   'rule-export',
+                   # Program E (FAB-1): one row per (producer, batch) of the anchor fabric. Again not in
+                   # DERIVED_KINDS, so retention never deletes it; no extension_version bump, as `patch-intent`.
+                   'anchor-batch',
+                   # Program E (FAB-4): the analyst's pins on anchors, append-only events. Same rule: never derived,
+                   # so retention never deletes them and no producer retraction can reach them.
+                   'anchor-pin'})
 
 # Retention (SPEC-07h H1). Only recomputable derived kinds are ever deleted; imported evidence
 # (`secondary-matches`), `cve-snapshot` and unknown kinds are never evicted.

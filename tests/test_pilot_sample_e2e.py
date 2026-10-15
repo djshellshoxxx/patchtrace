@@ -5,9 +5,9 @@ constant, `report_invalid_index` was added and `debug_dump` deleted. With a CWE-
 (`tests/fixtures/pilot/synergy-1/sample-cwe125-advisory.json`) the plan expects: `read_item` FITS ADVISORY on text
 evidence only, `get_version` CHANGED, NO FIT, and the added `report_invalid_index` only as context on its caller.
 
-What passes today: the advisory and the B1 evidence the scenario rests on are real (the K validator and applicability,
-B1 `signals.detect` on the project's own decompiled code) and the ledger built from them is valid pilot/1 data. The
-verdict itself needs PIL-B2 (``PIL_B2``: xfail strict, expects only ``EngineMissing``). Synthetic data only.
+The advisory and the B1 evidence the scenario rests on are real (the K validator and applicability, B1 `signals.detect`
+on the project's own decompiled code) and the ledger built from them is valid pilot/1 data. The verdict itself is
+`patchtrace.pilot.service.localize` (PIL-B2; the test was ``xfail(strict=True)`` until it landed). Synthetic data only.
 """
 from __future__ import annotations
 
@@ -17,7 +17,6 @@ import struct
 import pytest
 from pilot_synergy_support import (
     FIXTURES,
-    PIL_B2,
     ZERO_COUNTS,
     Sources,
     StaticAdvisory,
@@ -196,7 +195,6 @@ def referenced(lead: c.Lead) -> set[str]:
     return {*lead.support_ids, *lead.counter_ids, *lead.unknown_ids, *lead.alternative_ids}
 
 
-@PIL_B2
 def test_pilot_sample_project_end_to_end(project):
     sources, names, extra = sample_sources(project)
     assessment = localize(sources)

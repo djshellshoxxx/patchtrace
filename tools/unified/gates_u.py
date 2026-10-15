@@ -1,0 +1,418 @@
+"""Gate report generator for SPEC-31 (08-evaluation s1): G-U1..G-U8 -> `gate-report/1`. Dev-only, never shipped.
+
+SKELETON of slice S6a. It fixes the report contract, the status vocabulary and the registry of the eight gates, and it
+evaluates the two gates whose inputs exist today: G-U5 from `bench-report/1` files and G-U8 from a pytest JUnit file plus
+attested CI steps. The six gates that need S3 (L2 verdicts and proofs) or the SPEC-32 scoring core stay `pending` and say
+what they wait for and what they will read; their evaluators are slice S6b. For those gates the report already carries
+facts about the corpus they will read (counts from `unified-corpus-manifest/1`), so a missing mutant class or an
+anti-conservative lineage count is visible before any engine runs.
+
+Statuses: `pass` / `fail` are verdicts on data; `insufficient-data` means the data supplied (or its size) cannot decide;
+`pending` means a slice that is not built yet; `blocked` marks a part that needs something outside the code (a pinned
+BinDiff, a Windows runner). Nothing is inferred, nothing averaged, and a missing input is never a pass. The report is
+deterministic (sorted keys, LF, no timestamps) and strict on load, with a digest. U-05: the unified flag defaults to ON
+only after G-U1..G-U6 pass with report SHAs recorded in docs/qa.md.
+"""
+from __future__ import annotations
+
+import argparse
+import hashlib
+import json
+import re
+import sys
+import xml.etree.ElementTree as ET
+from collections import Counter
+from collections.abc import Sequence
+from dataclasses import dataclass, field
+from pathlib import Path
+from typing import Any, Literal
+
+from pydantic import BaseModel, ConfigDict, ValidationError
+
+from tools.calibration.bootstrap import MIN_GROUPS_HEADLINE
+from tools.calibration.common import digest, strict_json
+from tools.calibration.tier_r.contracts import ContractError, dump_json
+from tools.unified import bench
+from tools.unified.corpus import manifest as corpus_manifest
+from tools.unified.mutations import classes
+
+CONTRACT = 'gate-report/1'
+CLAIM = ('Measured on synthetic workloads and test builds of open-source code; says nothing about Windows system '
+         'files; no accuracy claim, the unified display stays ordinal.')
+U05_RULE = ('U-05: the unified flag defaults to ON only after G-U1..G-U6 pass with report SHAs recorded in '
+            'docs/qa.md; alpha builds ship with it OFF.')
+U05_GATES = ('G-U1', 'G-U2', 'G-U3', 'G-U4', 'G-U5', 'G-U6')
+MIN_MUTANTS_PER_CLASS = 20          # 08 s1 G-U2 [inf]
+MAX_JUNIT_BYTES = 8 * 2**20
+STATUSES = ('pass', 'fail', 'insufficient-data', 'pending', 'blocked')
+ATTESTABLE = ('frozen-smoke',)
+Status = Literal['pass', 'fail', 'insufficient-data', 'pending', 'blocked']
+
+
+@dataclass(frozen=True)
+class GateSpec:
+    id: str
+    question: str               # the question and first slice are the cells of the 08 s1 table (a test keeps them equal)
+    first_slice: str            # the earliest slice that could run it; NOT what it waits for today (`needs`)
+    consumes: str
+    needs: tuple[str, ...] = () # what is missing today; G-U5 and G-U8 derive theirs from the inputs
+    waits: tuple[str, ...] = ()
+    blocked: tuple[str, ...] = ()
+
+
+GATES = (
+    GateSpec('G-U1', 'does the engine invent changes?', 'S3 (S0b for X vs X)',
+             'the unified-result/1 counts of every A/A pair in the corpus manifest', needs=('S3',),
+             waits=('the L2 verdicts unchanged and cosmetic need the named proofs UNCH/1, COS-ADDR/1 and COS-LAYOUT/1, '
+                    'which arrive with S3; before S3 no result row can be called unchanged',)),
+    GateSpec('G-U2', 'does it see real changes, and never hide them?', 'S3',
+             'the unified-result/1 rows of every mutant pair, joined to the planted function of its label document',
+             needs=('S3',), waits=('mutant verdicts (material, review, cosmetic, unchanged) are produced by the S3 channels and '
+                    'proofs; the mutants and their labels already exist (tools.unified.mutations)',)),
+    GateSpec('G-U3', 'are `matched` pairs right?', 'S2',
+             'the ladder correspondence of every release pair joined to its label document, and parity-report/1',
+             needs=('IR-to-ladder adapter', 'S6b'), waits=('the ladder cannot read a real ProgramIR yet: the IrReader to IrSide adapter is not on the base, so '
+                    'no ladder pair exists for a real image; the evaluator is slice S6b',),
+             blocked=('the BinDiff oracle part (MD index parity, tier A/B agreement) needs a pinned BinDiff: '
+                      'tools/bindiff_pin.json has no verified assets',)),
+    GateSpec('G-U4', 'is it deterministic and symmetric?', 'S0b / S3',
+             'two runs, a Linux and a Windows run, permuted inputs and the swapped orientation of the same pair',
+             needs=('S3',), waits=('manifest.json equality of the whole pipeline, mirrored rows and the COS-PSEUDO rule need S3, and '
+                    'the 3-build chain checks need a third consecutive version per project (the catalogue has two)',)),
+    GateSpec('G-U5', 'does it fit a 60k-function image on a laptop?', 'S2 / S5',
+             'bench-report/1 from the Linux runner and from the Windows runner or the frozen EXE',
+             waits=('the largest Tier R pair through the whole pipeline needs S3',)),
+    GateSpec('G-U6', 'is it worth it?', 'S3',
+             'the unified-result/1 materiality and the best single legacy output on the same planted and A/A pairs',
+             needs=('S3', 'SPEC-32 evaluation core'), waits=('needs the S3 materiality and the scoring core of the SPEC-32 evaluation, which reads Ghidriff '
+                    'modified, BinDiff flags and rz-diff non-identical on the same pairs',)),
+    GateSpec('G-U7', 'is narrowed A-IND-1 safe?', 'S3',
+             'the unified-result/1 rows with their atoms: error rate by component pair and evidence-class pair',
+             needs=('S3',), waits=('rows matched via two tier-B atoms and their evidence classes come from the S3 fusion of real rows; '
+                    'classes with fewer than 30 such rows are reported insufficient-data, never assumed safe',)),
+    GateSpec('G-U8', 'did we break anything?', 'every slice',
+             'a pytest JUnit file of the full suite and the attested CI steps'),
+)
+BY_ID = {g.id: g for g in GATES}
+
+
+@dataclass(frozen=True)
+class IntegrityCheck:
+    id: str
+    text: str
+    tests: tuple[str, ...] = ()         # `module::test`; every parametrised instance must pass
+    attestation: str | None = None      # a CI step that is not a pytest test
+    needs: str | None = None            # slice that has to name the tests first
+
+
+G_U8_CHECKS = (
+    IntegrityCheck('primary-snapshot-unchanged', 'the primary snapshot SHA is unchanged by unified runs',
+                   ('test_unified_pipeline::test_unified_run_never_mutates_project_snapshot',)),
+    IntegrityCheck('old-reader-ignores-unified-kinds', 'an old reader ignores the unified enrichment kinds',
+                   ('test_unified_store::test_old_reader_ignores_unified_kinds',)),
+    IntegrityCheck('schema-drift', 'the committed unified schemas equal the regenerated ones',
+                   ('test_unified_contracts::test_generate_schemas_reproduces_committed_files',)),
+    IntegrityCheck('no-socket-during-run', 'no socket is opened during a full unified run (audit hook)',
+                   ('test_unified_pipeline::test_no_network_during_unified_run',)),
+    IntegrityCheck('extractor-script-ast', 'the extractor script AST has no network, subprocess or dynamic-code use',
+                   ('test_unified_ghidra_script::test_ghidra_script_imports_no_patchtrace',
+                    'test_unified_ghidra_script::test_script_runs_no_dynamic_code_and_spawns_nothing')),
+    IntegrityCheck('ui-policy', 'tooltips, accessibility and banned words of the Unified view', needs='S4'),
+    IntegrityCheck('frozen-smoke', 'the frozen smoke including unified --help and unified _worker --self-check',
+                   attestation='frozen-smoke'),
+)
+
+
+class _Strict(BaseModel):
+    model_config = ConfigDict(extra='forbid', strict=True, frozen=True)
+
+
+class GateRow(_Strict):
+    id: str
+    question: str
+    first_slice: str
+    status: Status
+    reasons: tuple[str, ...]
+    needs: tuple[str, ...]
+    observed: dict[str, Any]
+
+
+class Flag(_Strict):
+    default: Literal['off']
+    decision_ready: bool
+    rule: str
+
+
+class GateReport(_Strict):
+    contract: Literal['gate-report/1']
+    claim: str
+    inputs: dict[str, Any]
+    gates: tuple[GateRow, ...]
+    summary: dict[str, int]
+    flag: Flag
+    report_sha256: str
+
+
+@dataclass
+class Inputs:
+    manifest: corpus_manifest.CorpusManifest | None = None
+    benches: list[bench.BenchReport] = field(default_factory=list)
+    junit: dict[str, list[str]] | None = None
+    attested: dict[str, str] = field(default_factory=dict)
+    digests: dict[str, Any] = field(default_factory=dict)       # 'manifest': sha, 'bench': [sha], 'junit': [sha]
+
+
+# ---- JUnit -------------------------------------------------------------------------------------------------------------------
+
+def parse_junit(data: bytes) -> dict[str, list[str]]:
+    """`module::test` -> outcomes (passed / failed / skipped) of a pytest JUnit file; parametrised instances share a key.
+    The file is untrusted data: bounded, strictly UTF-8 without NUL (so a UTF-16 payload cannot hide a declaration from
+    the check below) and refused when it declares a DTD or an entity, so no entity is ever expanded."""
+    if len(data) > MAX_JUNIT_BYTES:
+        raise ContractError('the JUnit file is larger than 8 MiB')
+    try:
+        text = data.decode('utf-8')
+    except UnicodeDecodeError:
+        raise ContractError('the JUnit file is not UTF-8') from None
+    if '\x00' in text:
+        raise ContractError('the JUnit file contains a NUL character')
+    if re.search(r'<!\s*(DOCTYPE|ENTITY)', text, re.I):
+        raise ContractError('the JUnit file declares a DTD or an entity')
+    try:
+        root = ET.fromstring(data)
+    except ET.ParseError as exc:
+        raise ContractError(f'the JUnit file is not XML: {exc}') from None
+    if root.tag not in ('testsuites', 'testsuite'):
+        raise ContractError(f'unexpected JUnit root element {root.tag!r}')
+    out: dict[str, list[str]] = {}
+    for case in root.iter('testcase'):
+        parts = case.get('classname', '').split('.')
+        module = next((p for p in reversed(parts) if p.startswith('test_')), parts[-1])
+        name = case.get('name', '').split('[', 1)[0]
+        failed = case.find('failure') is not None or case.find('error') is not None
+        outcome = 'failed' if failed else 'skipped' if case.find('skipped') is not None else 'passed'
+        out.setdefault(f'{module}::{name}', []).append(outcome)
+    return dict(sorted(out.items()))
+
+
+def _check_state(check: IntegrityCheck, inputs: Inputs) -> str:
+    if check.attestation:
+        return {'pass': 'pass', 'fail': 'fail'}.get(inputs.attested.get(check.attestation, ''), 'missing')
+    if not check.tests:
+        return 'pending'
+    outcomes = [inputs.junit.get(t, []) if inputs.junit else [] for t in check.tests]
+    if any('failed' in o for o in outcomes):
+        return 'fail'
+    if any('skipped' in o for o in outcomes):
+        return 'blocked'
+    return 'pass' if all(o for o in outcomes) else 'missing'
+
+
+def _g_u8(inputs: Inputs) -> tuple[Status, list[str], tuple[str, ...], dict]:
+    if inputs.junit is None and not inputs.attested:
+        return 'insufficient-data', ['no JUnit file and no attestation supplied'], (), {}
+    states = [(c, _check_state(c, inputs)) for c in G_U8_CHECKS]
+    observed = {'checks': [{'id': c.id, 'status': s} for c, s in states]}
+    reasons = []
+    for check, state in states:
+        if state == 'fail':
+            reasons.append(f'{check.id}: failed ({", ".join(check.tests) or check.attestation})')
+        elif state == 'blocked':
+            reasons.append(f'{check.id}: a required test was skipped, which is BLOCKED and not a pass')
+        elif state == 'missing':
+            reasons.append(f'{check.id}: no result for {", ".join(check.tests) or check.attestation}')
+        elif state == 'pending':
+            reasons.append(f'{check.id}: waits for {check.needs} to name the tests ({check.text})')
+    kinds = {s for _, s in states}
+    status: Status = ('fail' if 'fail' in kinds else 'pending' if 'pending' in kinds
+                      else 'insufficient-data' if kinds & {'missing', 'blocked'} else 'pass')
+    return status, reasons, tuple(sorted({c.needs for c, s in states if s == 'pending' and c.needs})), observed
+
+
+# ---- G-U5 --------------------------------------------------------------------------------------------------------------------
+
+def _g_u5(inputs: Inputs) -> tuple[Status, list[str], tuple[str, ...], dict]:
+    benches = inputs.benches
+    if not benches:
+        return 'insufficient-data', ['no bench report supplied (python -m tools.unified.bench)'], (), {}
+    rows = [row for b in benches for row in b.rows]
+    failures = [f'{r.stage} n={r.n}: measurement failed ({r.error})' for r in rows if r.status != 'measured']
+    failures += [f'{r.stage} n={r.n}: {g.name} {g.verdict} ({g.observed} against {g.allowed} allowed)'
+                 for r in rows for g in r.gates if g.verdict == 'fail']
+    failures += [f'{r.stage} n={r.n}: check {c.name} failed ({c.detail})' for r in rows for c in r.checks if not c.ok]
+    windows = any('windows' in str(b.environment.get('platform', '')).lower() for b in benches)
+    observed = {'measured': [b.verdict for b in benches], 'windows_report': windows,
+                'reports': [{'platform': b.environment.get('platform'), 'verdict': b.verdict,
+                             'counts_sha256': b.counts_sha256} for b in benches]}
+    if failures:
+        return 'fail', failures, (), observed
+    if not any(r.gates for r in rows):
+        return 'insufficient-data', ['no row at a gated size was measured (ladder 10k or 60k, ingest 60k: the sizes '
+                                     'L-35 defines)'], (), observed
+    reasons = [f'pending: {p.stage} needs {p.needs} ({p.what}; limit {p.limit} = {p.limit_value})'
+               for p in benches[0].pending]
+    if not windows:
+        reasons.append('pending: no bench report from the Windows runner or the frozen EXE (numbers are recorded, '
+                       'never extrapolated from Linux)')
+    reasons += [f'pending: {w}' for w in BY_ID['G-U5'].waits]
+    needs = tuple(sorted({p.needs for p in benches[0].pending} | {'S3'}))
+    return ('pending' if reasons else 'pass'), reasons, needs, observed
+
+
+# ---- corpus readiness ----------------------------------------------------------------------------------------------------------
+
+def corpus_facts(m: corpus_manifest.CorpusManifest | None) -> dict[str, dict]:
+    """What the gates that wait for S3 will read, counted from the manifest: coverage, not results."""
+    if m is None:
+        return {}
+    roles = Counter(p.role for p in m.pairs)
+    mutants = Counter(p.mutation.unified_class for p in m.pairs if p.mutation)
+    gate3 = [p for p in m.pairs if 'G-U3' in p.gates]
+    lineages = len({p.lineage for p in gate3})
+    return {
+        'G-U1': {'P0': roles['P0'], 'P0_x_vs_x': sum(1 for p in m.pairs if p.role == 'P0' and p.x_vs_x),
+                 'P1': roles['P1'], 'P2': roles['P2'], 'pending_p1': [x.item for x in m.pending
+                                                                      if x.item.startswith('P1:')]},
+        'G-U2': {'mutants_per_class': {c.id: mutants.get(c.id, 0) for c in classes.CLASSES},
+                 'classes_below_minimum': [c.id for c in classes.CLASSES if mutants.get(c.id, 0) < MIN_MUTANTS_PER_CLASS],
+                 'minimum': MIN_MUTANTS_PER_CLASS,
+                 'pending_classes': [{'class': x.item.split(':', 1)[1], 'reason': x.reason} for x in m.pending
+                                     if x.item.startswith('mutation:')]},
+        'G-U3': {'pairs': len(gate3), 'lineages': lineages, 'anti_conservative': lineages < MIN_GROUPS_HEADLINE}}
+
+
+# ---- report -----------------------------------------------------------------------------------------------------------------------
+
+def _waiting(gate: GateSpec, facts: dict[str, dict]) -> tuple[Status, list[str], tuple[str, ...], dict]:
+    reasons = [f'pending: {w}' for w in gate.waits] + [f'blocked: {b}' for b in gate.blocked]
+    return 'pending', reasons, gate.needs, {'consumes': gate.consumes, 'corpus': facts.get(gate.id)}
+
+
+def _evaluate(gate: GateSpec, inputs: Inputs, facts: dict[str, dict]) -> GateRow:
+    if gate.id == 'G-U5':
+        status, reasons, needs, observed = _g_u5(inputs)
+    elif gate.id == 'G-U8':
+        status, reasons, needs, observed = _g_u8(inputs)
+    else:
+        status, reasons, needs, observed = _waiting(gate, facts)
+    return GateRow(id=gate.id, question=gate.question, first_slice=gate.first_slice, status=status,
+                   reasons=tuple(reasons), needs=needs, observed=observed)
+
+
+def decision_ready(rows: Sequence[GateRow]) -> bool:
+    return all(r.status == 'pass' for r in rows if r.id in U05_GATES)
+
+
+def _inputs_section(inputs: Inputs) -> dict[str, Any]:
+    digests = inputs.digests
+    return {'manifest': None if inputs.manifest is None else {
+                'sha256': digests.get('manifest'), 'manifest_sha256': inputs.manifest.manifest_sha256,
+                'pairs': len(inputs.manifest.pairs)},
+            'bench': [{'sha256': (digests.get('bench') or [None] * len(inputs.benches))[i], 'verdict': b.verdict,
+                       'platform': b.environment.get('platform'), 'counts_sha256': b.counts_sha256}
+                      for i, b in enumerate(inputs.benches)],
+            'junit': None if inputs.junit is None else {'sha256': digests.get('junit'),
+                                                        'tests': sum(len(v) for v in inputs.junit.values())},
+            'attested': dict(sorted(inputs.attested.items()))}
+
+
+def build_report(inputs: Inputs) -> GateReport:
+    facts = corpus_facts(inputs.manifest)
+    rows = [_evaluate(g, inputs, facts) for g in GATES]
+    summary = {s: sum(1 for r in rows if r.status == s) for s in STATUSES}
+    body = {'contract': CONTRACT, 'claim': CLAIM, 'inputs': _inputs_section(inputs),
+            'gates': [r.model_dump(mode='json') for r in rows], 'summary': summary,
+            'flag': {'default': 'off', 'decision_ready': decision_ready(rows), 'rule': U05_RULE}}
+    return GateReport.model_validate_json(json.dumps({**body, 'report_sha256': digest(body, 'report_sha256')}))
+
+
+def dump(report: GateReport) -> bytes:
+    return dump_json(report.model_dump(mode='json'))
+
+
+def load(data: bytes) -> GateReport:
+    try:
+        raw = strict_json(data)
+        report = GateReport.model_validate_json(data)
+    except (ValueError, ValidationError) as exc:
+        raise ContractError(f'gate report invalid: {exc}') from None
+    if digest(raw, 'report_sha256') != report.report_sha256:
+        raise ContractError('gate report digest mismatch (edited after generation)')
+    return report
+
+
+def _cell(text: str) -> str:
+    return ' '.join(text.replace('|', '/').split())
+
+
+def render_markdown(report: GateReport) -> str:
+    lines = ['# SPEC-31 gate report', '', report.claim, '',
+             f'Flag default: {report.flag.default}. Decision ready: {"yes" if report.flag.decision_ready else "no"}. '
+             f'{report.flag.rule}', '', '| Gate | Status | Question | Why |', '|---|---|---|---|']
+    lines += [f'| {g.id} | {g.status} | {_cell(g.question)} | {_cell("; ".join(g.reasons)) or "-"} |'
+              for g in report.gates]
+    lines += ['', 'Summary: ' + ', '.join(f'{k} {v}' for k, v in report.summary.items()),
+              f'report_sha256 {report.report_sha256}', '']
+    return '\n'.join(lines)
+
+
+# ---- command line ------------------------------------------------------------------------------------------------------------------------
+
+def _read(path: str) -> bytes:
+    try:
+        return Path(path).read_bytes()
+    except OSError as exc:
+        raise ContractError(f'cannot read {path}: {exc.strerror or exc}') from None
+
+
+def _attestations(items: Sequence[str]) -> dict[str, str]:
+    out = {}
+    for item in items:
+        name, _, value = item.partition('=')
+        if name not in ATTESTABLE or value not in ('pass', 'fail'):
+            raise ContractError(f'--attest takes NAME=pass|fail with NAME one of {", ".join(ATTESTABLE)}; got {item!r}')
+        out[name] = value
+    return out
+
+
+def main(argv: Sequence[str] | None = None) -> int:
+    parser = argparse.ArgumentParser(prog='python -m tools.unified.gates_u', description=__doc__.split('\n\n')[0])
+    parser.add_argument('--manifest', help='unified-corpus-manifest/1')
+    parser.add_argument('--bench', action='append', default=[], help='bench-report/1 (repeat for Linux and Windows)')
+    parser.add_argument('--junit', action='append', default=[], help='pytest --junitxml file (repeat to merge)')
+    parser.add_argument('--attest', action='append', default=[], help='NAME=pass|fail for a CI step that is no test')
+    parser.add_argument('--out', help='write gate-report/1 here')
+    parser.add_argument('--markdown', help='write the Markdown rendering here')
+    parser.add_argument('--strict', action='store_true', help='exit 1 unless every gate passes (default: advisory)')
+    args = parser.parse_args(argv)
+    try:
+        inputs = Inputs(attested=_attestations(args.attest))
+        if args.manifest:
+            raw = _read(args.manifest)
+            inputs.manifest, inputs.digests['manifest'] = corpus_manifest.load(raw), hashlib.sha256(raw).hexdigest()
+        raws = [_read(p) for p in args.bench]
+        inputs.benches, inputs.digests['bench'] = [bench.load(r) for r in raws], [hashlib.sha256(r).hexdigest() for r in raws]
+        raws = [_read(p) for p in args.junit]
+        if raws:
+            inputs.junit = {}
+            for raw in raws:
+                for key, outcomes in parse_junit(raw).items():
+                    inputs.junit.setdefault(key, []).extend(outcomes)
+            inputs.digests['junit'] = [hashlib.sha256(r).hexdigest() for r in raws]
+        report = build_report(inputs)
+    except ContractError as exc:
+        print(f'error: {exc}', file=sys.stderr)
+        return 2
+    text = render_markdown(report)
+    print(text)
+    if args.out:
+        Path(args.out).parent.mkdir(parents=True, exist_ok=True)
+        Path(args.out).write_bytes(dump(report))
+    if args.markdown:
+        Path(args.markdown).parent.mkdir(parents=True, exist_ok=True)
+        Path(args.markdown).write_text(text, encoding='utf-8', newline='\n')
+    return 1 if args.strict and any(g.status != 'pass' for g in report.gates) else 0
+
+
+if __name__ == '__main__':
+    raise SystemExit(main())

@@ -26,7 +26,7 @@ MAX_FUNCTIONS_PER_SIDE = 1024
 LINE_MAX_BYTES = 256 * 1024 * 1024
 Category = Literal['modified', 'added', 'removed', 'unmatched', 'ambiguous', 'split', 'merged', 'unchanged']
 Short = Annotated[str, Field(max_length=64)]
-DEGRADING = frozenset({'raw-missing', 'raw-hash-mismatch', 'raw-unparsable'})
+DEGRADING = frozenset({'raw-missing', 'raw-hash-mismatch', 'raw-unparsable', 'ladder-partial'})
 
 
 class _Strict(BaseModel):

@@ -967,11 +967,13 @@ def test_budget_deadline_comparison_tolerates_a_coarse_clock():
 
 MODULES = ('limits', 'contracts', 'keys', 'origins', 'ports')
 # Runtime imports per module (besides the standard library). `ports` imports foreign contracts for annotations only.
+# `origins` and `ports` rebind the fabric's table, calculus and seams (FAB-3), so they reach its pure modules.
 RUNTIME_ALLOWED = {
     'limits': set(), 'contracts': {'pydantic', 'patchtrace.pilot.limits'},
     'keys': {'patchtrace.enrichment.identity', 'patchtrace.pilot.contracts', 'patchtrace.pilot.limits'},
-    'origins': {'patchtrace.enrichment.identity', 'patchtrace.pilot.contracts', 'patchtrace.pilot.limits'},
-    'ports': {'patchtrace.pilot.contracts'}}
+    'origins': {'patchtrace.enrichment.identity', 'patchtrace.fabric.limits', 'patchtrace.fabric.origins',
+                'patchtrace.pilot.contracts', 'patchtrace.pilot.limits'},
+    'ports': {'patchtrace.fabric.ports', 'patchtrace.pilot.contracts'}}
 TYPING_ALLOWED = {'ports': {'patchtrace.intelligence.contracts'}}
 STDLIB = {'__future__', 'collections', 'collections.abc', 'dataclasses', 'datetime', 'hashlib', 'json', 're', 'time',
           'types', 'typing', 'uuid'}

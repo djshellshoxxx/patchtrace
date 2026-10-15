@@ -930,7 +930,7 @@ def fake_importer(missing=(), flags=None):
 
     def import_module(name):
         modules = {}
-        for module_name, attr in script.REQUIRED_CLASSES:
+        for module_name, attr in (*script.REQUIRED_CLASSES, *script.DECOMPILER_CLASSES):
             if f'{module_name}.{attr}' in missing:
                 continue
             value = SimpleNamespace(**table) if attr == 'OperandType' else SimpleNamespace(name=attr)
@@ -1037,7 +1037,7 @@ def test_main_exit_codes_and_error_documents(tmp_path, monkeypatch, capsys, quie
     assert json.loads((tmp_path / 'out' / 'progress.json').read_text(encoding='utf-8'))['phase'] == 'start'
 
     decompile = write_request(tmp_path, valid_request(tmp_path, mode='decompile'), 'decompile.json')
-    assert run_main(['--request', decompile], capsys)[:2] == (4, [{'error': {'reason': 'unsupported-mode'}}])
+    assert run_main(['--request', decompile], capsys)[:2] == (2, [{'error': {'reason': 'bad-request'}}])   # no GZF, no RVA
 
 
 def test_main_reports_crashes_by_class_name_only(tmp_path, monkeypatch, capsys, quiet_signals):

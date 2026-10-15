@@ -1,0 +1,46 @@
+{
+  "$id": "https://patchtrace.local/schemas/fabric/1/PairRef.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "The preimage of a `pair:` key: both artifact hashes in explicit older/newer order and the RVA lists. One side may\nbe empty (an added or removed function).",
+  "properties": {
+    "newer_rvas": {
+      "items": {
+        "maximum": 4294967295,
+        "minimum": 0,
+        "type": "integer"
+      },
+      "maxItems": 256,
+      "title": "Newer Rvas",
+      "type": "array"
+    },
+    "newer_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Newer Sha256",
+      "type": "string"
+    },
+    "older_rvas": {
+      "items": {
+        "maximum": 4294967295,
+        "minimum": 0,
+        "type": "integer"
+      },
+      "maxItems": 256,
+      "title": "Older Rvas",
+      "type": "array"
+    },
+    "older_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Older Sha256",
+      "type": "string"
+    }
+  },
+  "required": [
+    "older_sha256",
+    "newer_sha256",
+    "older_rvas",
+    "newer_rvas"
+  ],
+  "title": "PairRef",
+  "type": "object"
+}

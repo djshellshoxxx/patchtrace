@@ -1,0 +1,58 @@
+[
+ {
+  "contract": "case-card/1",
+  "id": "libpng-v1.6.43-to-v1.6.44",
+  "project": "libpng",
+  "upstream_git": "https://github.com/pnggroup/libpng.git",
+  "license_spdx": "Libpng-2.0",
+  "license_evidence": "LICENSE at f5e92d76973a7a53f517579bc95d61483bf108c0 (sha256 7317e078...143e, identical at v1.6.43): 'PNG Reference Library License version 2 ... Permission is hereby granted to use, copy, modify, and distribute this software, or portions hereof, for any purpose, without fee'",
+  "old": {"ref": "v1.6.43", "commit": "ed217e3e601d8e462f7fd1e04bed43ac42212429"},
+  "new": {"ref": "v1.6.44", "commit": "f5e92d76973a7a53f517579bc95d61483bf108c0"},
+  "kind": "release",
+  "cve": [],
+  "semantic_change": true,
+  "changed_functions": [
+   {"name": "png_xy_from_XYZ", "file": "png.c", "kind": "overflow-hardening", "change": "chroma calculations hardened against overflow (CHANGES, Version 1.6.44 of the pinned tree); source and code changed"},
+   {"name": "png_XYZ_from_xy", "file": "png.c", "kind": "overflow-hardening", "change": "chroma calculations hardened against overflow (CHANGES, Version 1.6.44 of the pinned tree); source and code changed"}
+  ],
+  "unchanged_controls": ["png_pow10", "png_muldiv"],
+  "build": {"system": "other", "recipe_notes": "tools/calibration/tier_r recipe libpng (shared Tier R recipe, mingw-gcc 13-win32 -O2 -g, zlib v1.3.1 compiled in), libpng16.dll", "mingw_ok": "yes"},
+  "verification": {
+   "method": "tools.calibration.tier_r factory.run_card on the fetched pins (mingw-gcc 13-win32 -O2, Linux, local run, not CI): 460 project functions, 453 unchanged, 2 changed, 5 ambiguous, 0 disagreements; both declared functions confirmed changed",
+   "functions_changed_count": 2,
+   "verified_by_agent_run": true
+  },
+  "sources": ["https://github.com/pnggroup/libpng/commit/f5e92d76973a7a53f517579bc95d61483bf108c0"],
+  "risks": ["Ambiguous records (source or code changed without the other) are excluded from changed-set scoring by design."]
+ },
+ {
+  "contract": "case-card/1",
+  "id": "lua-v5.4.6-to-v5.4.7",
+  "project": "lua",
+  "upstream_git": "https://github.com/lua/lua.git",
+  "license_spdx": "MIT",
+  "license_evidence": "lua.h footer at 1ab3208a1fceb12fca8f24ba57d6e13c5bff15e3: 'Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files ... to deal in the Software without restriction'",
+  "old": {"ref": "v5.4.6", "commit": "6443185167c77adcc8552a3fee7edab7895db1a9"},
+  "new": {"ref": "v5.4.7", "commit": "1ab3208a1fceb12fca8f24ba57d6e13c5bff15e3"},
+  "kind": "release",
+  "cve": [],
+  "semantic_change": true,
+  "changed_functions": [
+   {"name": "lua_tolstring", "file": "lapi.c", "change": "source and code changed (factory label changed/source-diff)"},
+   {"name": "luaL_loadfilex", "file": "lauxlib.c", "change": "source and code changed (factory label changed/source-diff)"},
+   {"name": "getobjname", "file": "ldebug.c", "change": "source and code changed (factory label changed/source-diff)"},
+   {"name": "luaH_getint", "file": "ltable.c", "change": "source and code changed (factory label changed/source-diff)"},
+   {"name": "luaS_newlstr", "file": "lstring.c", "change": "source and code changed (factory label changed/source-diff)"},
+   {"name": "luaV_execute", "file": "lvm.c", "change": "source and code changed (factory label changed/source-diff); the interpreter loop"}
+  ],
+  "unchanged_controls": ["index2value", "lua_rotate"],
+  "build": {"system": "other", "recipe_notes": "tools/calibration/tier_r recipe lua (shared Tier R recipe, mingw-gcc 13-win32 -O2 -g), lua54.dll", "mingw_ok": "yes"},
+  "verification": {
+   "method": "tools.calibration.tier_r factory.run_card on the fetched pins (mingw-gcc 13-win32 -O2, Linux, local run, not CI): 692 project functions, 624 unchanged, 30 changed, 27 ambiguous, 2 cosmetic, 9 no-counterpart, 0 disagreements",
+   "functions_changed_count": 30,
+   "verified_by_agent_run": true
+  },
+  "sources": ["https://github.com/lua/lua/commit/1ab3208a1fceb12fca8f24ba57d6e13c5bff15e3"],
+  "risks": ["Ambiguous records (source or code changed without the other) are excluded from changed-set scoring by design.", "luaV_execute is one very large function: a stress for block-level and call-level matching, not a typical function."]
+ }
+]

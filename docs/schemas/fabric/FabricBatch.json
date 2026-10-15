@@ -1,0 +1,391 @@
+{
+  "$defs": {
+    "Anchor": {
+      "additionalProperties": false,
+      "description": "A typed, keyed, oriented statement with 1..16 witnesses. Identity is (kind, key, side, role, subject).",
+      "properties": {
+        "anchor_id": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Anchor Id",
+          "type": "string"
+        },
+        "key": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Key",
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "function",
+            "string",
+            "import",
+            "capability",
+            "rule",
+            "build_fact",
+            "advisory_phrase",
+            "cve",
+            "kb",
+            "cwe"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "pair": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PairRef"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "role": {
+          "enum": [
+            "observed",
+            "stated",
+            "hint"
+          ],
+          "title": "Role",
+          "type": "string"
+        },
+        "side": {
+          "enum": [
+            "older",
+            "newer",
+            "both",
+            "none"
+          ],
+          "title": "Side",
+          "type": "string"
+        },
+        "subject": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Subject"
+        },
+        "witnesses": {
+          "items": {
+            "$ref": "#/$defs/Witness"
+          },
+          "maxItems": 16,
+          "minItems": 1,
+          "title": "Witnesses",
+          "type": "array"
+        }
+      },
+      "required": [
+        "anchor_id",
+        "kind",
+        "key",
+        "side",
+        "role",
+        "witnesses"
+      ],
+      "title": "Anchor",
+      "type": "object"
+    },
+    "PairRef": {
+      "additionalProperties": false,
+      "description": "The preimage of a `pair:` key: both artifact hashes in explicit older/newer order and the RVA lists. One side may\nbe empty (an added or removed function).",
+      "properties": {
+        "newer_rvas": {
+          "items": {
+            "maximum": 4294967295,
+            "minimum": 0,
+            "type": "integer"
+          },
+          "maxItems": 256,
+          "title": "Newer Rvas",
+          "type": "array"
+        },
+        "newer_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Newer Sha256",
+          "type": "string"
+        },
+        "older_rvas": {
+          "items": {
+            "maximum": 4294967295,
+            "minimum": 0,
+            "type": "integer"
+          },
+          "maxItems": 256,
+          "title": "Older Rvas",
+          "type": "array"
+        },
+        "older_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Older Sha256",
+          "type": "string"
+        }
+      },
+      "required": [
+        "older_sha256",
+        "newer_sha256",
+        "older_rvas",
+        "newer_rvas"
+      ],
+      "title": "PairRef",
+      "type": "object"
+    },
+    "Ref": {
+      "additionalProperties": false,
+      "description": "What a witness was read from: a source kind and id, an optional RFC 6901 pointer and content digest.",
+      "properties": {
+        "id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "kind": {
+          "pattern": "^[a-z0-9-]{1,48}$",
+          "title": "Kind",
+          "type": "string"
+        },
+        "pointer": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Pointer"
+        },
+        "sha256": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sha256"
+        }
+      },
+      "required": [
+        "kind",
+        "id"
+      ],
+      "title": "Ref",
+      "type": "object"
+    },
+    "Witness": {
+      "additionalProperties": false,
+      "description": "One producer's statement of an anchor, with its provenance. `witness_id` is the content id (`ids.witness_id`),\nso an identical republish collapses; `origins` must equal the registry's tags of `source` (`PT-FAB-ORIGIN`).",
+      "properties": {
+        "batch": {
+          "pattern": "^[a-z0-9][a-z0-9._-]{0,63}$",
+          "title": "Batch",
+          "type": "string"
+        },
+        "facets": {
+          "default": [],
+          "items": {
+            "maxItems": 2,
+            "minItems": 2,
+            "prefixItems": [
+              {
+                "pattern": "^[a-z][a-z0-9_]{0,31}$",
+                "type": "string"
+              },
+              {
+                "maxLength": 300,
+                "minLength": 1,
+                "type": "string"
+              }
+            ],
+            "type": "array"
+          },
+          "maxItems": 16,
+          "title": "Facets",
+          "type": "array"
+        },
+        "input_sha256": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Input Sha256"
+        },
+        "label": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Label",
+          "type": "string"
+        },
+        "origins": {
+          "items": {
+            "pattern": "^D_[a-z0-9_]{1,32}$",
+            "type": "string"
+          },
+          "maxItems": 8,
+          "minItems": 1,
+          "title": "Origins",
+          "type": "array"
+        },
+        "producer": {
+          "enum": [
+            "core",
+            "ue",
+            "cap",
+            "die",
+            "wb3",
+            "wbq",
+            "wb2",
+            "wb1",
+            "yrx",
+            "kb",
+            "kev",
+            "pil",
+            "analyst"
+          ],
+          "title": "Producer",
+          "type": "string"
+        },
+        "ref": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Ref"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "source": {
+          "pattern": "^[a-z0-9-]{1,48}$",
+          "title": "Source",
+          "type": "string"
+        },
+        "tool": {
+          "anyOf": [
+            {
+              "maxLength": 64,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tool"
+        },
+        "tool_version": {
+          "anyOf": [
+            {
+              "maxLength": 64,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tool Version"
+        },
+        "witness_id": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Witness Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "witness_id",
+        "producer",
+        "batch",
+        "source",
+        "origins",
+        "label"
+      ],
+      "title": "Witness",
+      "type": "object"
+    }
+  },
+  "$id": "https://patchtrace.local/schemas/fabric/1/FabricBatch.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "Body of an `anchor-batch` row: the anchors of one (producer, batch), each holding only that batch's witnesses.\n`origins_digest` names the origin table the witnesses' tags were checked against.",
+  "properties": {
+    "anchors": {
+      "items": {
+        "$ref": "#/$defs/Anchor"
+      },
+      "maxItems": 20000,
+      "minItems": 1,
+      "title": "Anchors",
+      "type": "array"
+    },
+    "batch": {
+      "pattern": "^[a-z0-9][a-z0-9._-]{0,63}$",
+      "title": "Batch",
+      "type": "string"
+    },
+    "contract": {
+      "const": "fabric-batch/1",
+      "default": "fabric-batch/1",
+      "title": "Contract",
+      "type": "string"
+    },
+    "origins_digest": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Origins Digest",
+      "type": "string"
+    },
+    "producer": {
+      "enum": [
+        "core",
+        "ue",
+        "cap",
+        "die",
+        "wb3",
+        "wbq",
+        "wb2",
+        "wb1",
+        "yrx",
+        "kb",
+        "kev",
+        "pil",
+        "analyst"
+      ],
+      "title": "Producer",
+      "type": "string"
+    }
+  },
+  "required": [
+    "producer",
+    "batch",
+    "origins_digest",
+    "anchors"
+  ],
+  "title": "FabricBatch",
+  "type": "object"
+}

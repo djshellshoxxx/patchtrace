@@ -1,0 +1,54 @@
+name: Live KEV catalog probe (advisory)
+# Real downloads of the CISA Known Exploited Vulnerabilities catalog through the CLI, not mocked (KEV plan K6,
+# tools/live_kev_probe.py). Advisory only: scheduled and manual, no push or pull_request trigger, never a required
+# check. It fetches the canonical www.cisa.gov address (fixed User-Agent PatchTrace) and CISA's GitHub mirror,
+# compares the two catalogs, and compares CISA's live JSON Schema with the vendored copy. BLOCKED (host unreachable,
+# access denied, rate limited) exits 0 and is shown in the summary; FAILED (drift) exits 1. The canonical address
+# becomes the GUI default only after this has passed on GitHub. Windows TLS roots are a frozen-build gate, not tested here.
+on:
+  workflow_dispatch:
+    inputs:
+      sources:
+        description: 'both, or mirror to probe only CISA''s GitHub copy (the fallback)'
+        required: false
+        default: 'both'
+        type: choice
+        options: [both, mirror]
+  schedule:
+    - cron: '23 6 * * 3'
+permissions:
+  contents: read
+concurrency:
+  group: live-kev
+  cancel-in-progress: false
+jobs:
+  live-kev:
+    name: live KEV probe (ubuntu-latest)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: "python -m pip install --only-binary=:all: -e ."
+      - name: Probe the sources through the CLI
+        shell: bash
+        env:
+          PROBE_SOURCES: ${{ inputs.sources }}
+        run: |
+          set -euo pipefail
+          sources='cisa-site,cisa-github'
+          if [ "$PROBE_SOURCES" = 'mirror' ]; then sources='cisa-github'; fi
+          python tools/live_kev_probe.py --sources "$sources" --out build/live-status/kev-catalog.json
+      - name: Step summary
+        if: always()
+        run: python tools/check_live_status.py --dir build/live-status --summary "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: live-kev
+          path: build/live-status/kev-catalog.json
+          if-no-files-found: warn

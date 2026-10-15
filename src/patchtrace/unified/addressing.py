@@ -40,12 +40,12 @@ def parse_va_text(text: object) -> int | None:
 
 def layout_from_reader(reader) -> PeLayout:
     """ImageBase/SizeOfImage from the artifact's own verified bytes (`pe_overview`), never from an engine."""
-    from ..pe_overview import inspect_pe
-    overview = inspect_pe(reader)
-    if overview.image_base is None or overview.size_of_image is None or not overview.size_of_image:
+    from ..pe_overview.headers import read_image_layout
+    layout = read_image_layout(reader)
+    if layout is None:
         raise UnifiedError('PT-UNIFIED-INPUT', 'The artifact has no readable PE image layout',
                            reason='pe-layout-unavailable')
-    return PeLayout(image_base=overview.image_base, size_of_image=overview.size_of_image)
+    return PeLayout(image_base=layout[0], size_of_image=layout[1])
 
 
 @dataclass(frozen=True)

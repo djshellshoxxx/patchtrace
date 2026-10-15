@@ -172,15 +172,19 @@ def test_frozen_smoke_runs_the_unified_cli_checks_only_when_the_cli_exists(tmp_p
 UNIFIED = ROOT / 'src' / 'patchtrace' / 'unified'
 S1_ALLOWED = {
     'extract/__init__': set(), 'extract/retain': {'patchtrace.unified.limits'},
+    'extract/decomp': {'patchtrace.unified.limits'},                        # S3b: the strict reader of decomp.jsonl
     'extract/runner': {'patchtrace', 'patchtrace.backend', 'patchtrace.jobs', 'patchtrace.unified',
-                       'patchtrace.unified.contracts', 'patchtrace.unified.extract', 'patchtrace.unified.limits',
-                       'pydantic'},
+                       'patchtrace.unified.contracts', 'patchtrace.unified.extract', 'patchtrace.unified.extract.decomp',
+                       'patchtrace.unified.limits', 'pydantic'},
     'ir/__init__': set(), 'ir/cfg': set(), 'ir/features': set(), 'ir/mdindex': set(), 'ir/operands': set(),
     'ir/ingest': {'patchtrace.unified', 'patchtrace.unified.contracts', 'patchtrace.unified.ir',
                   'patchtrace.unified.ir.cfg', 'patchtrace.unified.ir.features', 'patchtrace.unified.ir.ins',
                   'patchtrace.unified.ir.mdindex', 'patchtrace.unified.ir.operands', 'patchtrace.unified.ir.records',
                   'patchtrace.unified.limits'},
     'ir/ins': {'patchtrace.unified.ir.schema'},
+    'ir/ladder_port': {'patchtrace.unified.ir', 'patchtrace.unified.ir.features', 'patchtrace.unified.ir.reader',
+                       'patchtrace.unified.ir.schema', 'patchtrace.unified.ladder.ports',
+                       'patchtrace.unified.limits'},                        # S3/S5: the IrReader as the ladder's IrSide
     'ir/pe_tables': {'patchtrace.artifact_bytes', 'patchtrace.pe_overview', 'patchtrace.unified.limits'},
     'ir/place': {'patchtrace.ingestion', 'patchtrace.unified.contracts', 'patchtrace.unified.ir',
                  'patchtrace.unified.ir.reader', 'patchtrace.unified.limits'},

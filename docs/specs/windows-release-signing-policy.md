@@ -1,6 +1,6 @@
-# WIN: Windows release and code-signing policy (PyInstaller one-folder zip prereleases)
+# Windows release and code-signing policy (SPEC-52)
 
-Status: draft policy, written 2026-10-14 (Program E, E-1). Complements `docs/specs/windows-acceptance-and-milestone-builds.md` (release channels, verification, notes template) and `docs/windows.md`. No signing is performed by this document; it fixes what is signed, by whom, and what the project may truthfully say.
+Status: draft (SPEC-52), written 2026-10-14; promoted from program-e/ with no content change; a policy, nothing is signed yet. Complements `docs/specs/windows-acceptance-and-milestone-builds.md` (release channels, verification, notes template) and `docs/windows.md`. No signing is performed by this document; it fixes what is signed, by whom, and what the project may truthfully say.
 
 Source-access note: `learn.microsoft.com`, `docs.github.com`, `signpath.org`, `azure.microsoft.com` and `www.rfc-editor.org` were not reachable from the research sandbox on 2026-10-14 (egress proxy 403 or DNS failure). Claims about those services are marked `[unverified]` and the owner must re-check them at decision time; they change often. Repository facts were read directly.
 
@@ -25,7 +25,7 @@ Not built here: purchase of a certificate or enrolment (owner action), SmartScre
 | Repo licence MIT, copyright "Circuit Drift Labs" | `LICENSE` (this repo) | 2026-10-14 | high |
 | PyInstaller 6.22.3 pinned; bootloader is an executable inside the folder that is the only PatchTrace-built PE | `pyproject.toml` dev extra, `build_windows.py` | 2026-10-14 | high |
 | PyInstaller supports `--version-file` and `--manifest` for the built executable | https://pyinstaller.org/en/stable/usage.html | not retrieved (not attempted after proxy failure) | [unverified] |
-| Authenticode signatures embed in the PE; a zip cannot carry one, so the zip is protected by hash and attestation, not signature | PE/Authenticode format, see `SPEC26D2-pe-version-authenticode.md` section 2 | not retrievable | [unverified: MS host blocked] |
+| Authenticode signatures embed in the PE; a zip cannot carry one, so the zip is protected by hash and attestation, not signature | PE/Authenticode format, see `pe-version-authenticode.md` (SPEC-51) section 2 | not retrievable | [unverified: MS host blocked] |
 | Public CAs require code-signing private keys on certified hardware or a managed HSM service since the CA/Browser Forum baseline change of 2023; a PFX in a CI secret is therefore not an option for publicly trusted certificates | https://cabforum.org/working-groups/code-signing/requirements/ | not retrieved | [unverified] |
 | SmartScreen reputation is per file hash and publisher certificate, builds gradually, and a signature does not guarantee absence of a warning | Microsoft Defender SmartScreen documentation on learn.microsoft.com | not retrievable | [unverified: MS host blocked] |
 | A GitHub OIDC token (`id-token: write`) lets a job authenticate to an external service without a stored secret; artifact attestations use `attestations: write` and `actions/attest-build-provenance`, verified with `gh attestation verify` | https://docs.github.com/en/actions | not retrievable | [unverified] |
