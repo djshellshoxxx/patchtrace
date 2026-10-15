@@ -274,14 +274,14 @@ def test_masked_body_rule_accepts_code_changing_operators(clang, op):
                                                                                   new.by_name(fn)[0].end]
 
 
-def test_masked_body_rule_rejects_address_only_changes_and_records_them(clang):
+@pytest.mark.parametrize('op, fn', [('string-literal', 'shout'), ('callee-swap', 'dispatch'), ('global-swap', 'glob'),
+                                    ('api-use', 'copy')])
+def test_masked_body_rule_rejects_address_only_changes_and_records_them(clang, op, fn):
     # strings, callees and globals live behind masked symbols: the label noise the rule exists to catch
-    for op, fn in (('string-literal', 'shout'), ('callee-swap', 'dispatch'), ('global-swap', 'glob'),
-                   ('api-use', 'copy')):
-        with pytest.raises(E.NoMutationSite) as err:
-            E.apply_case(FILES, op, seed=3, base=BASE, tools=clang, target=('m.c', fn), max_attempts=10,
-                         extra_check=check_for(clang))
-        assert err.value.rejected and all('masked body' in r.reason for r in err.value.rejected), op
+    with pytest.raises(E.NoMutationSite) as err:
+        E.apply_case(FILES, op, seed=3, base=BASE, tools=clang, target=('m.c', fn), max_attempts=10,
+                     extra_check=check_for(clang))
+    assert err.value.rejected and all('masked body' in r.reason for r in err.value.rejected), op
 
 
 def test_masked_body_rule_accepts_a_string_that_changes_code(clang):

@@ -6,6 +6,7 @@ bundles are built in temporary directories and are only parsed, never extracted 
 """
 from __future__ import annotations
 
+import os
 import stat
 import tempfile
 import warnings
@@ -129,7 +130,13 @@ def _hostile_variants(members):
     }
 
 
-@pytest.mark.parametrize('variant', ['traversal-member', 'absolute-member', 'backslash-name', 'symlink-payload',
+BACKSLASH_WINDOWS = pytest.mark.skipif(
+    os.name == 'nt', reason='zipfile rewrites os.sep to / when it reads a name on Windows, so the backslash cannot reach '
+                            'the inspector; the case is exercised on POSIX hosts')
+
+
+@pytest.mark.parametrize('variant', ['traversal-member', 'absolute-member',
+                                     pytest.param('backslash-name', marks=BACKSLASH_WINDOWS), 'symlink-payload',
                                      'directory-entry', 'exact-duplicate', 'case-collision-manifest',
                                      'case-collision-notice', 'nfd-collision', 'reserved-member',
                                      'reserved-com1-superscript', 'extra-unlisted-file', 'notice-dropped'])
