@@ -27,7 +27,7 @@ from .common import (
     _Strict,
     redacted_display,
 )
-from .diec import INSTALLER_TYPES, PACKED_TYPES, PROTECTED_TYPES
+from .diec_types import INSTALLER_TYPES, PACKED_TYPES, PROTECTED_TYPES
 from .normalize import FunctionPairing, comparability
 
 MAX_LOCATIONS = 16

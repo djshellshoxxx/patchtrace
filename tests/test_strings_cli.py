@@ -19,17 +19,6 @@ from patchtrace.strings.table import FLAG_SECRET
 EXCEEDS = 'index %u exceeds length %u'
 
 
-@pytest.fixture(autouse=True)
-def hooked(monkeypatch):
-    """What the integrator's `cli.py` hook does: register the verb, its handler and its `strings <action>` name."""
-    original = cli.register_backend
-    monkeypatch.setattr(cli, 'register_backend', lambda sub, common: (
-        original(sub, common), strings_cli.register(sub, common, cli.HANDLERS)))
-    monkeypatch.setitem(cli.HANDLERS, 'strings', strings_cli.dispatch)
-    monkeypatch.setattr(cli, '_command_name', lambda a: f'{a.command} {a.action}' if a.command == 'strings'
-                        else a.command)
-
-
 @pytest.fixture(scope='module')
 def root(tmp_path_factory):
     base = tmp_path_factory.mktemp('strings-cli')
@@ -148,7 +137,8 @@ def test_export_writes_atomically_and_refuses_to_clobber(root, tmp_path, capsys,
 
 
 def test_cancelled_scan_is_exit_5(root):
-    args = cli._parser().parse_args(['strings', 'scan', str(root), '--builtin'])
+    argv = ['strings', 'scan', str(root), '--builtin']
+    args = cli._parser(argv).parse_args(argv)
     stop = threading.Event()
     stop.set()
     with pytest.raises(cli.CliError) as raised:
