@@ -78,3 +78,42 @@ def test_cosmetic_target_rule_matches_in_the_pair_labeller(tmp_path, op, body, c
     old, new = pair(tmp_path, SRC_OLD, raw, masked)
     (rec,) = LB.label_construction(old, new, label_source='x', semantic=False, declared={'f': ('cosmetic', op)})
     assert (rec['label'], rec['check']) == ('cosmetic', check)
+
+
+# ---- D-07 baseline M2 needs the agreement columns it scores --------------------------------------------------------------
+
+def _rows2(names, values):
+    from tools.calibration.common import Row
+    return [Row(f'r{i}', f'g{i}', tuple(v), i % 2, 1.0, 'natural') for i, v in enumerate(values)], list(names)
+
+
+def test_m2_is_unavailable_without_any_agreement_column():
+    from tools.calibration import baselines as B
+    rows, names = _rows2(['G.ratio', 'R.similarity'], [(0.1, 0.2), (0.9, 0.8)])
+    assert B.m2(rows, names) is None
+    assert 'M2' not in B.all_baselines(rows, names)
+    assert B.unavailable(names) == ['M2']
+
+
+def test_m2_scores_only_the_columns_present_and_never_reads_a_missing_one_as_a_zero_vote():
+    from tools.calibration import baselines as B
+    rows, names = _rows2(['X.agree_R'], [(0.0,), (1.0,)])
+    assert B.m2(rows, names) == {'r0': 55.0, 'r1': 63.0}
+    rows, names = _rows2(['X.agree_B', 'X.agree_R'], [(1.0, 1.0)])
+    assert B.m2(rows, names) == {'r0': 83.0}
+    assert B.unavailable(names) == []
+
+
+def test_pipeline_reports_the_missing_baseline():
+    import datetime as dt
+
+    from tools.calibration.cv import CVConfig
+    from tools.calibration.fit import run_pipeline
+    from tools.calibration.synth import make_world
+    world = make_world(n_groups=20, per_group=10, beta=(1.0, 1.0, 1.0, 0.0), seed='d07')
+    res = run_pipeline(world.rows, names=['G.ratio', 'R.similarity', 'S.size_ratio'], kinds=['num'] * 3, profile='G+R',
+                       cfg=CVConfig(k_outer=2, k_inner=2, c_grid=(1.0,)), b_count=30, created=dt.date(2026, 10, 15),
+                       model_id='d07', null_sims=20)
+    assert res.evaluation['baselines_unavailable'] == ['M2']
+    fdr = res.evaluation.get('fdr_reduction')
+    assert fdr is None or fdr['baseline'] != 'M2'
