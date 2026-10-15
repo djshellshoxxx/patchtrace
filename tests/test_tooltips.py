@@ -109,6 +109,7 @@ def audit(root, exempt=()):
         check_text(label, widget.toolTip())
         assert widget.objectName(), f'{label}: no semantic object name'
         assert widget.accessibleDescription(), f'{label}: no accessible description'
+        assert len(widget.accessibleDescription()) <= 160 and not widget.accessibleDescription().startswith('What:'), label
         base = widget.objectName()
         if base in REGISTRY:
             assert widget.toolTip() == tooltip(base)
@@ -220,12 +221,18 @@ def test_every_registry_id_is_applied_somewhere(window, qtbot, tmp_path, setting
     setup = window.panels.controller('evidence').panel.bindiff_setup
     names |= {setup.objectName(), setup.warning.objectName()}
     # F5: framework widgets and every panel the manifest has built, without listing panel roots by hand.
-    from PySide6.QtWidgets import QDockWidget
+    from PySide6.QtWidgets import QDockWidget, QWidget
 
+    from patchtrace.gui.qt.canvas import GraphCanvas
+    from patchtrace.gui.qt.codediff import CodeDiffView
     from patchtrace.gui.qt.docks import name_tab_bars
     from patchtrace.gui.qt.state_view import StateView
     state = StateView('zz', 'Zz')
     qtbot.addWidget(state)
+    holder = QWidget()  # findChildren skips the root, so the shared widgets that no built panel shows yet sit in it
+    CodeDiffView(holder), GraphCanvas(parent=holder)
+    qtbot.addWidget(holder)
+    roots.append(holder)
     roots += [state] + [c.widget() for c in window.panels.build_all_for_test().values() if c.widget() is not None]
     first, second = QDockWidget('A', window), QDockWidget('B', window)
     first.setObjectName('zz_a.dock'), second.setObjectName('zz_b.dock')
@@ -239,7 +246,7 @@ def test_every_registry_id_is_applied_somewhere(window, qtbot, tmp_path, setting
     shown = {w.toolTip() for root in roots + [window] for w in controls(root)}
     shown |= {a.toolTip() for root in roots + [window] for a in actions(root)}
     names |= {tip_id for tip_id in REGISTRY if tooltip(tip_id) in shown}  # a control may carry a per-panel name
-    names |= {'dialog.text_view', 'dialog.close', 'confirm.yes', 'confirm.no'}
+    names |= {'dialog.text_view', 'dialog.close', 'confirm.yes', 'confirm.no', 'gui.graph'}  # FOCUSABLE lacks QGraphicsView
     names |= {n.rsplit('.', 1)[0] for n in names if n.startswith('profile.detector')}
     missing = set(REGISTRY) - names - EXEMPT_IDS
     assert not missing, sorted(missing)
@@ -335,6 +342,8 @@ def test_files_panel(qtbot, window):
     files = window.panels.controller('files').widget()
     audit(files)
     assert len(controls(files)) >= 1
+    assert sorted(t.accessibleName() for t in files.findChildren(QAbstractItemView) if t.objectName().startswith('overview.')) == [
+        'PE comparison fields', 'Recorded artifact fields']
 
 
 def test_text_dialogs_and_confirmation_boxes(qtbot, window, monkeypatch):

@@ -34,6 +34,7 @@ from PySide6.QtWidgets import (
 from ..pair_text import PairHunk, PairText
 from ..text import sanitize_text
 from ..theme_math import TEXT_CONTRAST, ensure_contrast
+from ..tips import apply_tip, register_gui_tips
 from .labels import PlainLabel
 from .theme import DARK, ThemeTokens
 
@@ -95,6 +96,12 @@ def _capped(text: str) -> tuple[str, bool]:
     return sanitize_text(text[:MAX_VIEW_CHARS], MAX_VIEW_CHARS, multiline=True), len(text) > MAX_VIEW_CHARS
 
 
+def view_text(text: object) -> str:
+    """Untrusted text ready for a code pane: sanitized, bounded, and ending in the truncation notice when cut."""
+    shown, cut = _capped(str(text))
+    return shown + (f'\n{TRUNCATION_NOTICE}' if cut else '')
+
+
 class _Pane(QPlainTextEdit):
     def __init__(self, name: str, parent: QWidget | None = None) -> None:
         super().__init__(parent)
@@ -102,6 +109,8 @@ class _Pane(QPlainTextEdit):
         self.setLineWrapMode(QPlainTextEdit.LineWrapMode.NoWrap)
         self.setAccessibleName(name)
         self.setFont(QFontDatabase.systemFont(QFontDatabase.SystemFont.FixedFont))
+        register_gui_tips()
+        apply_tip(self, 'gui.code_pane', name='codediff.' + name.lower().replace(' ', '_'))
 
 
 class CodeDiffView(QWidget):
@@ -139,6 +148,7 @@ class CodeDiffView(QWidget):
             header.addWidget(self._provenance[side], 1)
             button = QPushButton('Copy')
             button.setAccessibleName(f'Copy {side} artifact code')
+            apply_tip(button, 'gui.code_copy', name=f'codediff.copy_{side}')
             button.clicked.connect(lambda _checked=False, which=side: self.copy_side(which))
             header.addWidget(button)
             layout.addLayout(header)
@@ -307,5 +317,5 @@ def _side(side: str) -> str:
     return side
 
 
-__all__ = ['CodeDiffView', 'LAYERS', 'MAX_VIEW_CHARS', 'TRUNCATION_NOTICE', 'clear_selections', 'compose_selections',
+__all__ = ['CodeDiffView', 'LAYERS', 'MAX_VIEW_CHARS', 'TRUNCATION_NOTICE', 'clear_selections', 'compose_selections', 'view_text',
            'hunk_background']

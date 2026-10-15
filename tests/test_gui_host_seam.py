@@ -154,3 +154,24 @@ def test_closing_the_window_saves_the_layout_and_joins_the_workers(main_window):
     assert host.closed and window.settings.contains('layout/state')
     with pytest.raises(RuntimeError):
         host.tasks.submit('late', lambda token, report: None)
+
+
+def test_show_external_pair_sanitises_and_announces_truncation(main_window):
+    from patchtrace.ui import MAX_VIEW_CHARS
+    main_window.show_external_pair('a' * (MAX_VIEW_CHARS + 50), 'x‮y\x07z', 'label')
+    older, newer = (main_window.views[side].toPlainText() for side in ('older', 'newer'))
+    notice = '\n[View truncated at 200,000 characters; provenance copy uses full records.]'
+    assert older == 'a' * MAX_VIEW_CHARS + notice
+    assert newer == 'xyz'
+
+
+def test_the_inspection_worker_sends_only_the_exception_class(monkeypatch, tmp_path):
+    from patchtrace import ui_inspection
+
+    def boom(*_args):
+        raise ValueError('C:/secret/path')
+    monkeypatch.setattr(ui_inspection, 'inspect_project_artifacts', boom)
+    thread, seen = ui_inspection.InspectionThread('p', [], tmp_path), []
+    thread.inspection_failed.connect(lambda message, key: seen.append(message))
+    thread.run()
+    assert seen == ['ValueError']

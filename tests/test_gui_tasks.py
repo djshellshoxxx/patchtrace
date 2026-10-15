@@ -458,6 +458,18 @@ def test_legacy_registries_are_adopted_into_shutdown(monkeypatch, qtbot):
     assert not thread.isRunning() and tasks.legacy_threads() == []
 
 
+@pytest.mark.parametrize('module, attribute', [('ui', '_DISCOVERY_THREADS'), ('ui_bundle_setup', '_THREADS')],
+                         ids=['ui-discovery', 'bundle-setup'])
+def test_unlisted_legacy_registries_are_joined_at_shutdown(monkeypatch, qtbot, module, attribute):
+    thread = _LegacyThread()
+    monkeypatch.setitem(sys.modules, f'patchtrace.{module}', types.SimpleNamespace(**{attribute: {thread}}))
+    thread.start()
+    qtbot.waitUntil(thread.isRunning, timeout=5000)
+    assert tasks.legacy_threads() == [thread]
+    assert tasks.join_legacy_threads(timeout=5) == []
+    assert not thread.isRunning()
+
+
 # ---- tools/qt_gate.py -----------------------------------------------------------------------------
 
 
@@ -601,3 +613,18 @@ def test_dropping_runners_in_a_subprocess_never_aborts(tmp_path):
     env = {**os.environ, 'QT_QPA_PLATFORM': 'offscreen', 'PYTHONFAULTHANDLER': '1'}
     done = subprocess.run([sys.executable, str(script)], env=env, capture_output=True, text=True, timeout=120)
     assert done.returncode == 0 and done.stdout.strip() == 'ok', done.stderr[-2000:]
+
+
+@pytest.mark.parametrize('char', ['؜', '‎', '‏', '‮', '⁦'], ids=['alm', 'lrm', 'rlm', 'rlo', 'lri'])
+def test_task_text_drops_every_bidi_control(char):
+    assert char not in tasks._clip(f'a{char}b', 10)
+
+
+def test_a_worker_raising_a_base_exception_still_delivers_an_error_and_frees_the_channel(runner, qtbot):
+    sink = Sink()
+
+    def work(token, report):
+        raise SystemExit(3)
+    runner.submit('demo', work, sink.result, sink.error)
+    qtbot.waitUntil(lambda: bool(sink.errors), timeout=5000)
+    assert sink.errors == [TaskFailure('SystemExit')] and not runner.busy('demo')
