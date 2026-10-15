@@ -1107,3 +1107,6 @@ Calls panel (id graph): `callgraph/panel.py` (PanelSpec), `panel_qt.py` (widgets
 | data | src/patchtrace/intelligence/tools/capa_data.py, capa_exec.py | Qt-free: stored read (GUI thread), assemble and prepare (worker), probe, run preview, per-side `run_job`, publish (GUI thread) |
 | dock | src/patchtrace/intelligence/tools/capa_qt.py | `CapabilitiesController` on `gui/qt` (`StateView`, `VirtualTable`, `SafeTextView`); tabs Changes and Setup and run |
 | tests | tests/test_ui_capabilities_panel.py (35) | state matrix, hostile text, a11y, late result on project switch, shutdown, previewed run |
+
+### [K3:kev-panel]
+`kev/panel.py` (pure PanelSpec, KEV claims profile), `ui_kev_model.py` (Qt-free input parsing, rows, columns, filtered view, closed failure reasons), `ui_kev.py` (KevController on the task runner; epoch-guarded results; consent before the only network call). Tests: `tests/test_ui_kev_panel.py`.

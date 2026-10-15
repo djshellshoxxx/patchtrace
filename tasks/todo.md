@@ -771,3 +771,6 @@
 - [x] Capabilities dock (CAP-6a changes, CAP-6b setup, probe, preview, run) on the panel framework.
 - [ ] Integrator: no `ui.py` change needed; host Open-setup and Run-comparison remedies are not wired.
 - [ ] Not built: grouped tree model (flat table with a Group column), commands, C13 reparse refresh, reported-match count for C12.
+
+### [K3:kev-panel]
+Done: dock with state matrix, consent, import, changes, copy, go to CVE. Open: replace-anyway after a shrink refusal (needs a staged-install service API), kev/filter and kev/sort settings, network policy port.
