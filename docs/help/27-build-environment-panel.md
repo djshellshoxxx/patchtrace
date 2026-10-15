@@ -1,21 +1,20 @@
 # Build environment panel
 
-Planned. The DIE plan describes build-environment presentation, initially as a card in file inspection and later as a dock. The dock declaration was unavailable during review. Migration status is UNVERIFIED.
+The **Build environment** panel lists the build facts of the older and newer file side by side: facts recorded in each PE, and any stored Detect It Easy results. It is a right dock, shown with `Ctrl+Shift+B`, and it is tabbed with **Engine evidence**. It needs an open project.
 
-Build-environment information helps explain differences introduced by compilers, linkers, packaging, or analysis conditions.
+Controls:
 
-The design combines PatchTrace’s header checks with stored Detect It Easy results. Without Detect It Easy, the interface should identify which local checks ran and which tool-derived names remain unavailable.
+- **Read again** reads the build environment again. Use it after a file or tool result changes.
+- **Cancel** stops the read. The panel then keeps its earlier results.
+- **Technical details** (a checkbox, *Show technical details*) shows the underlying values.
+- **Copy** copies the build environment as text.
 
-Compare the older and newer values alongside their basis. A linker header field and a signature-based compiler identification are different kinds of evidence.
+The build facts table has an entry for each fact on each side. A missing side is shown as missing. It is not treated as equal to the other side.
 
-A toolchain difference can explain some code changes without a source edit. It does not establish the cause of every changed function. Conversely, **no detected toolchain difference does not establish identical compiler options.**
+Detect It Easy results are a tool's identification. The panel notes when it has not run on both files, or when the two results come from different tool setups. Those notes mean the comparison is partial.
 
-Packed, protected, managed, installer, and large-overlay notices describe limits on interpretation. PatchTrace does not unpack a target by executing it. An installer’s embedded application payload may remain unanalyzed.
+A difference in build facts can explain some code changes without a source edit. It does not show which function changed for that reason. Identical facts do not prove identical compiler options.
 
-The planned `Read with Detect It Easy` action explicitly invokes the configured tool. Merely reading stored build facts does not run it.
+The same facts are available from the command line: [`patchtrace build-env`](64-cli-build-env.md).
 
-Use `Technical details` and `Copy details` to retain the underlying observations. A failed side should leave readable information from the other side available.
-
-The central manifest reserves Ctrl+Shift+B. The earlier card design specifies no global shortcut; availability depends on migration.
-
-Sources: docs/specs/program-e/DIE-integration-plan.md, section 8; src/patchtrace/panel_manifest.py.
+Sources: `src/patchtrace/buildenv/panel.py`, `src/patchtrace/buildenv/qt_panel.py`, `src/patchtrace/buildenv/copy.py`.

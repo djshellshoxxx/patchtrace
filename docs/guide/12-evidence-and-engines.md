@@ -82,12 +82,12 @@ A contradiction always takes priority over any number of agreeing engines. A cel
 
 | Source | Built? | Where |
 |---|---|---|
-| Static tool evidence: capa, FLOSS, Detect It Easy | CLI built (`intel-tools probe/run/delta`); the Capabilities panel is **planned** | [16](16-cli-reference.md) |
+| Static tool evidence: capa, FLOSS, Detect It Easy | CLI built (`intel-tools probe/run/delta`); the Capabilities panel is built | [16](16-cli-reference.md) |
 | CSAF advisories and CWE hypotheses | CLI built (`intelligence import/fetch/explain`) | advisory facts are vendor claims, not proof for a function |
 | Patch-intent leads | CLI (`pilot`) and Leads dock built | an ordered list of places to look, not a likelihood |
-| CISA KEV | CLI (`kev`) built; KEV dock **planned** | context about a CVE, never a ranking input |
-| YARA-X rule workflow | CLI (`rules`) built; Rules dock **planned**; `rules propose` needs the live evidence seam | one candidate, one version at a time |
-| KB number search (`patch`, `kb`) and the Patch Search panel | **planned** | specs only |
+| CISA KEV | CLI (`kev`) built; the Exploitation context panel is built | context about a CVE, never a ranking input |
+| YARA-X rule workflow | CLI (`rules`) built; the Detection rules panel shows stored results | one candidate, one version at a time |
+| KB and CVE | CLI (`kb`) built; the KB and CVE panel is built; the `patch` verb is **planned** | advisory context with stated coverage |
 | Anchor fabric | CLI `fabric list/show/resolve/stats` built (read-only) | shared anchors that panels navigate by |
 
-Panels still **planned** in the manifest: Search, Graph, Strings, Capabilities, Build environment, Rules, KB, KEV, Guide (`patchtrace panels list` shows 5 built and 9 not built). See [13](13-panels-and-layout.md).
+The only panel still **not built** in the manifest is Guide (`patchtrace panels list` shows 13 built and 1 not built, checked 2026-10-15). See [13](13-panels-and-layout.md).

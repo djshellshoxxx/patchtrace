@@ -45,7 +45,7 @@ Things this documentation set could not settle from the code and documents at `m
 
 ## D. Things I deliberately did not document
 
-- Planned panels beyond one-line status (Search, Graph, Strings, Capabilities, Build environment, Rules, KB, KEV, Guide): no code exists to describe. Their plans are under `docs/specs/program-e/` and `docs/specs/workbench/`.
+- Guide panel: not built (reserved only); no user chapter is written for it. Its plan is under `docs/specs/program-e/GDE-integration-plan.md`. The other panels are built and have help pages in `docs/help/`.
 - The guided teacher (GDE / E-5): deferred by the owner; only hooks (`TeachTopic`, `kev/teach.py`) exist.
 - Label-training internals (`tools/calibration/`, Tier R catalogue, mutations, evaluation harness): described only at the level of what it means for the shipped product ([22](../internals/22-engines-and-fusion.md)). Source: `docs/specs/known-answer-corpus.md`, `calibration-corpus-and-model.md`, `docs/plans/c9-preregistration-v1.md`.
 - Per-detector regular expressions and rule-table rows (`enrichment/signals.py`, `pilot/rules/data.py`): these are code and tests, not documentation.
@@ -83,4 +83,4 @@ These statements appear in the guide because a spec, ledger or QA record says so
 3. Amend SPEC-55 N-02 and N-05 and the last paragraph of `docs/specs/ui.md` to match the built GUI framework (B2 to B4, B7).
 4. Document the `unified/enabled` setting where users can find it, or add a Setup control (A1).
 5. Re-run the SPEC-45 accessibility scan and record which gaps closed (A3).
-6. When the `kb`, `kev` and `rules` panels and the zero-download package land, add their user chapters; the chapters marked **planned** here are the placeholders.
+6. The `kb`, `kev` and `rules` panels are built and have help pages (`docs/help/28`, `29`, `30`). Still open: the zero-download package, and a user chapter for the Guide panel once it is built.

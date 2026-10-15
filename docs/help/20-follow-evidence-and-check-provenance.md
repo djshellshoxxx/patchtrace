@@ -24,9 +24,3 @@ If a citation does not navigate, inspect its context status before assuming the 
 **Missing evidence remains unknown.** An unavailable representation or omitted record does not establish that the behavior under investigation is absent.
 
 Sources: README.md; docs/specs/ui.md; src/patchtrace/tooltips.py; AGENTS.md.
-
-next
-
-Worked for 1m 54s
-
-<!-- FORMAT NOTE: The raw text ends with stray UI-capture lines "next" and "Worked for 1m 54s" (likely pasted from a chat transcript). Kept as plain text; confirm and remove if unintended. -->

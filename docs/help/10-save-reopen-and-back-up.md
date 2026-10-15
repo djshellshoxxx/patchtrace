@@ -23,9 +23,3 @@ Project storage is local and is not encrypted by PatchTrace. Retained interpreta
 Keep projects outside the application directory so replacing the portable application does not replace your research.
 
 Sources: `README.md,` “Projects, backups, and data handling”; `docs/windows.md;` `docs/specs/ui.md.`
-
-ok next
-
-Worked for 1m 35s
-
-<!-- FORMAT NOTE: the stray lines 'ok next' (line 30) and 'Worked for 1m 35s' (last line) look like leftover tool or chat text rather than help content; kept unchanged, please confirm or remove. -->
