@@ -17,6 +17,10 @@ on:
       subset:
         description: smoke, suites, cards, mutations, noise or full
         default: smoke
+  schedule:
+    # Nightly smoke then noise on the pinned ubuntu-24.04 image; the heavy matrices stay dispatch-only.
+    - cron: '17 3 * * *'
+    - cron: '47 3 * * *'
   push:
     branches: [main]
     paths: ['tools/calibration/**', 'corpus/ours/**', '.github/workflows/corpus-tier-r.yml']
@@ -35,11 +39,11 @@ env:
   SHARDS: ${{ inputs.shards || '2' }}
   SEED: ${{ inputs.seed || '1' }}
   ENGINES: ${{ inputs.engines || 'rz-diff' }}
-  SUBSET: ${{ inputs.subset || 'smoke' }}
+  SUBSET: ${{ inputs.subset || (github.event.schedule == '47 3 * * *' && 'noise') || 'smoke' }}
 jobs:
   plan:
     name: plan
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 10
     outputs:
       matrix: ${{ steps.plan.outputs.matrix }}
@@ -63,7 +67,7 @@ jobs:
   shard:
     name: shard ${{ matrix.shard }} of ${{ matrix.of }}
     needs: plan
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 120
     strategy:
       fail-fast: false
@@ -147,7 +151,7 @@ jobs:
     name: merge
     needs: [plan, shard]
     if: always() && needs.plan.result == 'success'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
@@ -166,6 +170,18 @@ jobs:
           path: plan
       - name: Merge (fails on missing, duplicate or foreign shards)
         run: python -m tools.calibration.tier_r.shard merge --in shards --plan plan/plan.json --out merged
+      - name: Determinism (second merge of the same shards must give the same report_sha256)
+        run: |
+          python -m tools.calibration.tier_r.shard merge --in shards --plan plan/plan.json --out merged-again
+          python -m tools.calibration.ci_summary determinism merged merged-again
+      - name: CI status JSON (never silent, even when the shard set is rejected)
+        if: always()
+        run: |
+          mkdir -p merged
+          rc=0
+          python -m tools.calibration.ci_summary summarize --shards shards --plan plan/plan.json --out merged/ci-summary.json || rc=$?
+          cat merged/ci-summary.md >> "$GITHUB_STEP_SUMMARY"
+          exit $rc
       - name: Step summary
         if: always()
         run: |

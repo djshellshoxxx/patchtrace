@@ -826,3 +826,6 @@ Not verified here: Windows; the frozen executable; a live backend for `rules pro
 - Network-verified: peeled tag commits (ls-remote of tags) for libdeflate v1.15-v1.24 and c-ares cares-1_26_0 to v1.30.0; stb has no tags (five version-bump commits, all ancestors of master); every licence file hashed from the pinned commit.
 - Built here: `tier_r fetch` and `build-card --opt O2` for all 13 new cards (libdeflate 5, stb 4, c-ares 4), 0 disagreements after the declared lists were taken from the factory labels; `aa` byte-identical for libdeflate v1.19, stb_image-2.26 and cares-1_28_0. c-ares needed `Recipe.libs` wired into the link line (ws2_32, iphlpapi, advapi32).
 - Not verified: the same runs on an Actions runner (R1); the untagged c-ares pins 035c4c37 and a804c04d (CVE-2024-25629 pair) were hashed but no card was built from them; the Windows MSVC leg.
+
+### [LBL-14:ci-summary]
+Automated: tests/test_ci_summary.py (counts, 90% warning, error status, determinism, workflow invariants). Not run: the nightly schedule and the determinism step on a real runner (needs main plus Actions).

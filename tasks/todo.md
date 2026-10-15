@@ -560,3 +560,7 @@
 ### [UE4:code-panes]
 - [x] Decompiled-C side by side in `CodeDiffView` (stored part, honest unavailable), alignment gaps from the stored IR, hunk navigation, provenance per side, copy with provenance, all states, tooltips, accessible names; 100,000-line cap test
 - [ ] Integrator: write `decomp.jsonl.gz` (parts of the manifest, same line shape as `extract/decomp.py`) when the on-demand decompile ran; until then the C mode reports "not stored"
+
+### [LBL-14:ci-summary]
+- [x] ci_summary.py, nightly smoke+noise on ubuntu-24.04, determinism and status steps in the merge job (hermetic tests only).
+- [ ] First green scheduled run on Actions (not verified here).
