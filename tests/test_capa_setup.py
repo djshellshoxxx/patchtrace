@@ -3,10 +3,10 @@ from __future__ import annotations
 
 import hashlib
 import io
+import os
 import subprocess
 import sys
 import threading
-import os
 import zipfile
 from pathlib import Path
 
