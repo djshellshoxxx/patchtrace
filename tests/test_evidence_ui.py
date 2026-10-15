@@ -14,9 +14,6 @@ from PySide6.QtCore import QCoreApplication, QEvent, QModelIndex, QSettings, Qt,
 from PySide6.QtGui import QAccessible, QFont, QGuiApplication
 from PySide6.QtWidgets import QApplication, QStyleOptionViewItem, QWidget
 from test_evidence_view import (
-    NEW,
-    OLD,
-    RUN,
     bd,
     build,
     gmatch,
@@ -26,6 +23,7 @@ from test_evidence_view import (
 )
 
 from patchtrace import ui_evidence
+from patchtrace.gui.qt import tasks
 from patchtrace.secondary import evidence_panel_service as service_api
 from patchtrace.secondary.contracts import Capability
 from patchtrace.secondary.evidence_view import (
@@ -39,7 +37,6 @@ from patchtrace.service import ProjectService
 from patchtrace.ui import MainWindow
 from patchtrace.ui_evidence import (
     ADDRESS_ROLE,
-    EngineRunThread,
     EvidenceController,
     EvidenceDelegate,
     EvidencePanel,
@@ -49,12 +46,9 @@ from patchtrace.ui_evidence import (
 
 @pytest.fixture(autouse=True)
 def join_evidence_threads():
-    """Every evidence worker must be finished after each test; deferred deletes are flushed."""
+    """Every evidence task must be finished after each test; deferred deletes are flushed."""
     yield
-    for thread in list(ui_evidence._LIVE_THREADS):
-        if ui_evidence.thread_alive(thread):
-            thread.cancel.set()
-            assert thread.wait(5000), 'evidence worker still running after the test'
+    assert tasks.shutdown_live_runners(timeout=5) == [], 'evidence worker still running after the test'
     QApplication.processEvents()
     QCoreApplication.sendPostedEvents(None, QEvent.Type.DeferredDelete)
 
@@ -499,11 +493,11 @@ def test_close_window_while_loading_joins_thread(qtbot, tmp_path, settings):
         view.panels.controller('evidence').auto_probe = False
         view.show()
         view.panels.show_panel('evidence')  # a layout saved by the previous window may already show the dock
-        qtbot.waitUntil(lambda v=view: v.panels.controller('evidence').load_thread is not None, timeout=5000)
-        thread = view.panels.controller('evidence').load_thread
+        qtbot.waitUntil(lambda v=view: v.panels.controller('evidence').load_token is not None, timeout=5000)
+        assert tasks.live_task_threads()
         threading.Timer(0.05, gate.set).start()
         view.close()  # closeEvent -> shutdown: cancel + join before the service closes
-        assert not ui_evidence.thread_alive(thread)
+        assert not tasks.live_task_threads()
 
 
 def test_project_switch_mid_load_drops_old_generation(window, qtbot, tmp_path):
@@ -512,7 +506,7 @@ def test_project_switch_mid_load_drops_old_generation(window, qtbot, tmp_path):
     window.panels.controller('evidence').auto_probe = False
     window.show()
     window.panels.toggle_action('evidence').trigger()
-    qtbot.waitUntil(lambda: window.panels.controller('evidence').load_thread is not None, timeout=5000)
+    qtbot.waitUntil(lambda: window.panels.controller('evidence').load_token is not None, timeout=5000)
     old_generation = window.panels.controller('evidence').generation
     window.panels.controller('evidence').loader = service_api.load_evidence
     window.set_service(ProjectService.sample(tmp_path / 'other'))
@@ -522,31 +516,36 @@ def test_project_switch_mid_load_drops_old_generation(window, qtbot, tmp_path):
     assert window.panels.controller('evidence').panel.vm.project_id == window.project.id
 
 
-def test_started_thread_without_reference_survives_gc(qtbot):
+def test_started_task_without_reference_survives_gc(qtbot, tmp_path, settings):
     import gc
+    view = MainWindow(ProjectService.sample(tmp_path / 's'), settings, tmp_path / 'profiles')
+    qtbot.addWidget(view)
+    controller = view.panels.controller('evidence')
     gate = threading.Event()
-    request = service_api.EvidenceRequest('p', RUN, 0, OLD, NEW, (), ())
-    thread = ui_evidence.EvidenceLoadThread(request, gated_loader(gate))
-    thread.start()
-    del thread
-    gc.collect()  # the registry holds it: no 'QThread: Destroyed while thread is still running' abort
+    controller.loader = gated_loader(gate)
+    controller.auto_probe = False
+    controller.reload()
+    controller.load_token = None  # drop the only reference to the started task's token
+    gc.collect()  # the runner holds the task: the worker is neither collected nor aborted
     gate.set()
-    qtbot.waitUntil(lambda: not any(ui_evidence.thread_alive(t) for t in list(ui_evidence._LIVE_THREADS)),
-                    timeout=5000)
+    qtbot.waitUntil(lambda: not controller.panel.loading, timeout=5000)
+    assert controller.panel.vm.project_id == view.project.id
+    controller.shutdown()
+    view.service.close()
+    view.service = None
 
 
-def test_panel_deleted_while_thread_runs(qtbot, tmp_path, settings):
+def test_panel_deleted_while_task_runs(qtbot, tmp_path, settings):
     view = MainWindow(ProjectService.sample(tmp_path / 's'), settings, tmp_path / 'profiles')
     gate = threading.Event()
     view.panels.controller('evidence').loader = gated_loader(gate)
     view.panels.controller('evidence').auto_probe = False
     view.panels.controller('evidence').reload()
-    thread = view.panels.controller('evidence').load_thread
-    assert thread.parent() is None  # never parented: deleting the panel cannot destroy it
+    assert view.panels.controller('evidence').load_token is not None
     view.panels.controller('evidence').dock.deleteLater()
     QCoreApplication.sendPostedEvents(None, QEvent.Type.DeferredDelete)
-    gate.set()
-    thread.wait()
+    gate.set()  # the result arrives for a deleted panel and is dropped
+    qtbot.waitUntil(lambda: not tasks.live_task_threads(), timeout=5000)
     view.panels.controller('evidence').shutdown()
     view.service.close()
     view.service = None
@@ -648,7 +647,7 @@ def test_run_success_stores_set_on_gui_thread_and_refreshes(window, qtbot, tmp_p
     monkeypatch.setattr(service_api, 'persist_outcome', spy)
     fake = FakeRun(real_outcomes(window, tmp_path, ('rz-diff',)))
     controller = start(window, qtbot, fake)
-    qtbot.waitUntil(lambda: controller.run_thread is None, timeout=10000)
+    qtbot.waitUntil(lambda: controller.run_token is None, timeout=10000)
     qtbot.waitUntil(lambda: controller.panel.vm.engine('rz-diff').state == 'ready', timeout=5000)
     assert seen == [True]
     assert fake.thread is not QApplication.instance().thread()
@@ -659,7 +658,7 @@ def test_run_one_engine_fails_other_result_kept(window, qtbot, tmp_path):
     open_dock(window, qtbot)
     controller = start(window, qtbot, FakeRun(real_outcomes(window, tmp_path, ('rz-diff', 'bindiff'))),
                        ('rz-diff', 'bindiff'))
-    qtbot.waitUntil(lambda: controller.run_thread is None, timeout=10000)
+    qtbot.waitUntil(lambda: controller.run_token is None, timeout=10000)
     qtbot.waitUntil(lambda: controller.panel.vm.engine('rz-diff').state == 'ready', timeout=5000)
     assert controller.outcomes['bindiff'].status == 'failed'
     assert controller.panel.vm.engine('bindiff').state == 'failed'
@@ -679,7 +678,7 @@ def test_cancel_discards_and_marks_cancelled(window, qtbot, tmp_path):
     outcomes = service_api.execute_run(request, cancel, registry={'rz-diff': FakeRz(GOOD)}, env={})
     controller = start(window, qtbot, FakeRun(outcomes))
     controller.cancel_run()
-    qtbot.waitUntil(lambda: controller.run_thread is None, timeout=10000)
+    qtbot.waitUntil(lambda: controller.run_token is None, timeout=10000)
     assert controller.outcomes['rz-diff'].status == 'cancelled'
     from patchtrace.enrichment.storage import EnrichmentStore
     from patchtrace.secondary.store import current_sets
@@ -693,7 +692,7 @@ def test_project_switch_during_run_drops_result(window, qtbot, tmp_path):
     old_service = window.service
     window.set_service(ProjectService.sample(tmp_path / 'other'))
     gate.set()
-    qtbot.waitUntil(lambda: controller.run_thread is None, timeout=10000)
+    qtbot.waitUntil(lambda: controller.run_token is None, timeout=10000)
     from patchtrace.enrichment.storage import EnrichmentStore
     from patchtrace.secondary.store import current_sets
     assert current_sets(EnrichmentStore(window.service.store)) == []
@@ -718,10 +717,11 @@ def test_close_window_cancels_and_waits(window, qtbot, tmp_path):
     open_dock(window, qtbot)
     gate = threading.Event()
     controller = start(window, qtbot, FakeRun(real_outcomes(window, tmp_path, ('rz-diff',)), gate))
-    thread = controller.run_thread
+    assert controller.run_token is not None and tasks.live_task_threads()
     threading.Timer(0.2, gate.set).start()
     controller.shutdown()
-    assert not thread.isRunning() and controller.threads == []
+    assert controller.run_token is None
+    assert window.panels.tasks.shutdown() == [] and not tasks.live_task_threads()
 
 
 def test_worker_never_touches_widgets(window, qtbot, tmp_path, monkeypatch):
@@ -745,7 +745,7 @@ def test_worker_never_touches_widgets(window, qtbot, tmp_path, monkeypatch):
     window.panels.controller('evidence').reload()
     qtbot.waitUntil(lambda: not window.panels.controller('evidence').panel.loading, timeout=5000)
     controller = start(window, qtbot, FakeRun(real_outcomes(window, tmp_path, ('rz-diff',))))
-    qtbot.waitUntil(lambda: controller.run_thread is None, timeout=10000)
+    qtbot.waitUntil(lambda: controller.run_token is None, timeout=10000)
     assert loader_threads and all(loader_threads) and violations == []
 
 
@@ -780,15 +780,15 @@ def test_navigator_link_both_ways(window, qtbot):
     assert panel.current_row().match_id == other.id
 
 
-def test_engine_run_thread_reports_failure_class_only(qtbot, tmp_path):
+def test_engine_run_reports_failure_class_only(window, qtbot):
+    open_dock(window, qtbot)
+
     def boom(request, cancel, **kw):
         raise RuntimeError('secret-token')
-    request = service_api.RunRequest('p', 0, 7, ('rz-diff',), 1, 60, tmp_path, tmp_path, OLD, NEW, RUN)
-    thread = EngineRunThread(request, boom)
-    with qtbot.waitSignal(thread.run_failed, timeout=5000) as blocker:
-        thread.start()
-    thread.wait()
-    assert blocker.args == ['PT-SECONDARY-RUN: RuntimeError', 7]
+    controller = start(window, qtbot, boom)
+    qtbot.waitUntil(lambda: controller.run_token is None, timeout=10000)
+    status = controller.panel.run_status.text()
+    assert status == 'Engine run failed: PT-SECONDARY-RUN: RuntimeError' and 'secret-token' not in status
 
 
 def test_table_model_empty_is_safe():

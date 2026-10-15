@@ -27,7 +27,7 @@ from test_evidence_view import build
 from test_tooltips import controls
 from test_ui_engine_setup_service import MD5_OLDER, NEW_SHA, NEWER, OLD_SHA, OLDER, fake_acceptor_factory
 
-from patchtrace import cli, ui_engine_setup, ui_evidence
+from patchtrace import cli, ui_engine_setup
 from patchtrace.secondary import bindiff_probe, cli_bindiff
 from patchtrace.secondary import evidence_panel_service as svc
 from patchtrace.secondary.contracts import Capability
@@ -41,8 +41,7 @@ PINNED = svc.PINNED_BINDIFF_VERSION
 
 
 def live_workers() -> list:
-    return [t for registry in (ui_engine_setup._LIVE_THREADS, ui_evidence._LIVE_THREADS) for t in list(registry)
-            if ui_engine_setup.thread_alive(t)]
+    return [t for t in list(ui_engine_setup._LIVE_THREADS) if ui_engine_setup.thread_alive(t)]
 
 
 @pytest.fixture(autouse=True)
@@ -632,7 +631,7 @@ def test_unconfigured_controller_keeps_c6_flow(window, qtbot):
     controller.probe = lambda cancel: dict(DEFAULT_CAPS)
     open_dock(window, qtbot)
     controller.start_probe()
-    qtbot.waitUntil(lambda: controller.probe_thread is None, timeout=5000)
+    qtbot.waitUntil(lambda: controller.probe_token is None, timeout=5000)
     assert controller.capabilities == DEFAULT_CAPS and controller.bindiff.capability() is None
     rows = {r.engine: r for r in controller.panel.engine_model.rows}
     assert rows['bindiff'].state == 'unsupported' and rows['bindiff'].detail == BINDIFF_UNSUPPORTED
@@ -643,7 +642,7 @@ def test_unconfigured_controller_keeps_c6_flow(window, qtbot):
     controller.update_controls()
     assert svc.RUN_PREVIEW_BINDIFF not in controller.panel.preview.text()
     controller.panel.run_button.click()
-    qtbot.waitUntil(lambda: controller.run_thread is None, timeout=10000)
+    qtbot.waitUntil(lambda: controller.run_token is None, timeout=10000)
     assert captured and captured[0].bindiff is None and captured[0].bindiff_raw_dir is None
 
 
@@ -690,7 +689,7 @@ def test_gui_bindiff_run_matches_cli_provenance(window, qtbot, tmp_path, monkeyp
     monkeypatch.setattr(svc, 'persist_outcome', spy)
     controller.panel.run_button.click()
     assert setup.older.isEnabled() is False  # inputs locked while engines run
-    qtbot.waitUntil(lambda: controller.run_thread is None, timeout=60000)
+    qtbot.waitUntil(lambda: controller.run_token is None, timeout=60000)
     qtbot.waitUntil(lambda: controller.panel.vm.engine('bindiff').state == 'ready', timeout=20000)
     assert on_gui == [True] and setup.older.isEnabled()
     [gui] = [r for r in engine_runs(window.service) if r.engine == 'bindiff']
@@ -720,7 +719,7 @@ def test_bindiff_checkbox_follows_setup(window, qtbot):
         'ok', request.key, binding='sha256')
     open_dock(window, qtbot)
     controller.start_probe()
-    qtbot.waitUntil(lambda: controller.probe_thread is None, timeout=5000)
+    qtbot.waitUntil(lambda: controller.probe_token is None, timeout=5000)
     setup, box = controller.panel.bindiff_setup, controller.panel.engine_checks['bindiff']
     setup.set_executable('/x/bindiff')
     setup.probe_button.click()
@@ -771,7 +770,7 @@ def test_cancel_gui_bindiff_run(window, qtbot, tmp_path, monkeypatch):
     qtbot.waitUntil(lambda: any('--nologo' in c['argv'] and len(c['argv']) > 2 for c in spy_calls(tmp_path / 'bd')),
                     timeout=30000)
     controller.panel.cancel_button.click()
-    qtbot.waitUntil(lambda: controller.run_thread is None, timeout=30000)
+    qtbot.waitUntil(lambda: controller.run_token is None, timeout=30000)
     assert controller.outcomes['bindiff'].status == 'cancelled'
     assert [m.engine for _, m in current_sets(EnrichmentStore(window.service.store))] == []
     assert not list(window.service.root.rglob('bindiff-*.BinDiff'))
