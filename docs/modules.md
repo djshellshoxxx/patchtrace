@@ -879,3 +879,6 @@ R5 contract notes: no persisted contract changed. Deviations from the card, all 
 
 ### [LBL-14:ci-summary]
 `tools/calibration/ci_summary.py`: Qt-free `summarize` (never-silent `tier-r-ci-summary/1` JSON plus Markdown: attempted/completed/blocked/failed per engine and stratum, <90% completion warning, `report_sha256`; a damaged shard set is status `error`) and `determinism` (two merges, equal `report_sha256`). Used by the merge job of `corpus-tier-r.yml`.
+
+### [LBL-prereg:tools]
+`tools/calibration/prereg.py` recomputes or verifies the C9 preregistration SHA-256 (read-only, never writes the lock). `tools/calibration/vendoring_scan.py` proposes lineage merges from shared masked body hashes (merge-only, hubs excluded, threshold and hub limit required). `tests/test_prereg_constants.py` pins the cv/threshold/gates/ece_null/metrics constants to the preregistration.

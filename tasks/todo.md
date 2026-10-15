@@ -564,3 +564,7 @@
 ### [LBL-14:ci-summary]
 - [x] ci_summary.py, nightly smoke+noise on ubuntu-24.04, determinism and status steps in the merge job (hermetic tests only).
 - [ ] First green scheduled run on Actions (not verified here).
+
+### [LBL-prereg:tools]
+- [x] P-1 prereg hash tool, P-2 constants test, vendoring scan (PREREG 8.5 i and ii closed; 8.5 iii open).
+- [ ] Before the lock: run the vendoring scan over the Tier R per-lineage masked body hashes and apply merge proposals.

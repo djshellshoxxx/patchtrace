@@ -829,3 +829,6 @@ Not verified here: Windows; the frozen executable; a live backend for `rules pro
 
 ### [LBL-14:ci-summary]
 Automated: tests/test_ci_summary.py (counts, 90% warning, error status, determinism, workflow invariants). Not run: the nightly schedule and the determinism step on a real runner (needs main plus Actions).
+
+### [LBL-prereg:tools]
+Automated evidence only: `python -m tools.calibration.prereg --qa docs/qa.md` verifies the recorded `C9-PREREG-v1` SHA after the lock; no lock exists yet.
