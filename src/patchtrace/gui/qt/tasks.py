@@ -110,6 +110,12 @@ class _Task:
     def report(self, stage: str, done: int = 0, total: int | None = None, message: str = '') -> None:
         self.pending = (stage, done, total, message)
 
+    def release(self) -> None:
+        """Drop the body and the callbacks. A worker frame (or ``Thread._args``) can outlive the GUI thread's last
+        use of the task, and the callbacks capture controllers and models: their last reference must die on the GUI
+        thread, not on whichever thread unwinds last."""
+        self.fn = self.on_result = self.on_error = self.on_progress = None
+
 
 @dataclass(slots=True)
 class _Event:
@@ -120,7 +126,7 @@ class _Event:
     def release(self) -> None:
         """Drop the payload and the task body; only ever called on the GUI thread."""
         self.payload = None
-        self.task.fn = None
+        self.task.release()
 
 
 class _Hub(QObject):
@@ -291,7 +297,7 @@ class TaskRunner:
 
     def _release_pending(self) -> None:
         for task in self._running:
-            task.fn = None
+            task.release()
         for event in self._parked.values():
             event.release()
         self._running.clear()
@@ -429,7 +435,7 @@ def _lane_loop(requests: queue.Queue, init: Callable[[], Any], close: Callable[[
         else:
             event = _execute(task, state)
         _post(event)
-        del event
+        del event, task
     if failure is None and close:
         with suppress(Exception):
             close(state)

@@ -628,3 +628,31 @@ def test_a_worker_raising_a_base_exception_still_delivers_an_error_and_frees_the
     runner.submit('demo', work, sink.result, sink.error)
     qtbot.waitUntil(lambda: bool(sink.errors), timeout=5000)
     assert sink.errors == [TaskFailure('SystemExit')] and not runner.busy('demo')
+
+
+class _FreedOn:
+    """A callback capture that records the thread dropping its last reference (stands in for a controller or model)."""
+
+    def __init__(self, freed: list[str]) -> None:
+        self._freed = freed
+
+    def __del__(self) -> None:
+        self._freed.append(threading.current_thread().name)
+
+
+@pytest.mark.parametrize('lane', [False, True], ids=['task', 'lane'])
+def test_callback_captures_are_freed_on_the_gui_thread_never_on_a_worker(qtbot, lane):
+    freed: list[str] = []
+    for _ in range(40):
+        local, results = TaskRunner(reraise=True), []
+        capture = _FreedOn(freed)
+        if lane:
+            local.lane('l', lambda: None).submit(lambda state, token, report: 1,
+                                                 lambda value, c=capture, out=results: out.append(value))
+        else:
+            local.submit('c', lambda token, report: 1, lambda value, c=capture, out=results: out.append(value))
+        del capture
+        qtbot.waitUntil(lambda out=results: bool(out), timeout=5000)
+        assert local.shutdown(timeout=5) == []
+        QApplication.processEvents()
+    assert freed and set(freed) == {'MainThread'}
