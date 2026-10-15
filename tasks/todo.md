@@ -755,3 +755,7 @@
 - [x] D9 tools/buildenv_value_gate.py with hand-computed goldens (synthetic)
 - [ ] D9 run on real Tier R M4 outcomes (needs UE S2/S3 outcomes and the known-answer factory)
 - [ ] D8 first dispatch of `live-buildenv` (Actions) and golden confirmation; stays BLOCKED locally without PATCHTRACE_DIEC
+
+### [LBL-20:fetch-transport] / [LBL-21:symbols]
+- [x] Fixture-tested `tier_w/fetch.py`, `transport.py`, `symbols.py`, `symbols_llvm.py`, `ghidra_export_symbols.py`, `symbols_ghidra.py` (`tests/test_tier_w_fetch.py`, `tests/test_tier_w_symbols.py`).
+- [ ] BLOCKED, owner/Windows runner: live msdl fetch, live Ghidra 12.0.4 export (`PATCHTRACE_GHIDRA_DIR`), `pyghidra` mode, PDB-forcing pre-script, adapter text for `fetch-plan`/`fetch`/`symbols` (LBL-25).
