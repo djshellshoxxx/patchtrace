@@ -602,6 +602,8 @@ def reduce_jdk(jdk: Path, modules: Sequence[str], runner: Runner, work: Path, ta
             shutil.copyfile(item, image / item.name)
     shutil.rmtree(jdk)
     shutil.move(str(image), str(jdk))
+    if os.name == 'nt':  # NTFS records no execute bit: a non-Windows target keeps its launchers executable under bin/
+        return {f'jdk/{name}': 0o755 if name.startswith('bin/') else 0o644 for name in _tree_files(jdk)}
     return {f'jdk/{name}': 0o755 if (jdk / name).stat().st_mode & 0o111 else 0o644 for name in _tree_files(jdk)}
 
 

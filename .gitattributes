@@ -48,3 +48,4 @@ tools/unified/corpus/** text eol=lf
 tests/fixtures/rules/** text eol=lf
 *.yar text eol=lf
 tests/fixtures/known_answer/** text eol=lf
+docs/plans/c9-preregistration-v1.md text eol=lf

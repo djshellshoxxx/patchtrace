@@ -688,7 +688,12 @@ class _Corrupt(Exception):
 
 def _write_file(path: Path, data: bytes) -> None:
     fd = os.open(path, os.O_WRONLY | os.O_CREAT | os.O_EXCL | getattr(os, 'O_BINARY', 0), 0o600)
-    with os.fdopen(fd, 'wb') as handle:
+    try:
+        stream = os.fdopen(fd, 'wb')
+    except BaseException:
+        os.close(fd)  # an open handle would keep the file undeletable on Windows
+        raise
+    with stream as handle:
         handle.write(data)
         handle.flush()
         os.fsync(handle.fileno())

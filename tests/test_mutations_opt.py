@@ -2,6 +2,7 @@
 runner, hand-written IR); the real-`opt` test runs when opt and clang are installed and otherwise asserts BLOCKED."""
 from __future__ import annotations
 
+import shutil
 from types import SimpleNamespace
 
 import pytest
@@ -131,8 +132,9 @@ def test_real_opt_or_blocked():
     status = O.opt_layer_status()
     if status:
         assert O.apply_opt(BEFORE, 'mergefunc').blocked
-        with pytest.raises(T.Blocked):
-            O.emit_opt_input({'a.c': SOURCE}, 'a.c')
+        if not shutil.which('clang'):  # emitting IR needs only clang; a host with clang but no opt (the Windows runner) emits
+            with pytest.raises(T.Blocked):
+                O.emit_opt_input({'a.c': SOURCE}, 'a.c')
         return
     ll = O.emit_opt_input({'a.c': SOURCE}, 'a.c')
     got = {op: O.apply_opt(ll, op) for op in O.OPT_PASSES}

@@ -63,6 +63,7 @@ def _write_zip(path: Path, members: list[tuple[str, bytes, int]]) -> Path:
         with zipfile.ZipFile(path, 'w', compression=zipfile.ZIP_DEFLATED) as zf:
             for name, data, attr in members:
                 info = zipfile.ZipInfo(name, date_time=(1980, 1, 1, 0, 0, 0))
+                info.filename = name  # ZipInfo() rewrites os.sep to '/' on Windows; a hostile name must survive as written
                 info.compress_type = zipfile.ZIP_DEFLATED
                 info.external_attr = attr
                 zf.writestr(info, data)

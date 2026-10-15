@@ -16,7 +16,7 @@ from tools.calibration.tier_r.csrc import Source
 
 NEW_OPS = ('signedness-flip', 'callee-swap', 'field-offset', 'global-swap', 'index-swap', 'branch-swap',
            'buf-resize', 'string-literal', 'api-use')
-CODE = '''typedef unsigned long size_t;
+CODE = '''typedef __SIZE_TYPE__ size_t;
 void *memcpy(void *d, const void *s, size_t n);
 char *strncpy(char *d, const char *s, size_t n);
 char *strcpy(char *d, const char *s);
