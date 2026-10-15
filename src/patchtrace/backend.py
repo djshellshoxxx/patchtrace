@@ -272,9 +272,10 @@ def _probe_backend(config: BackendConfig, cancel: threading.Event | None = None)
         '"ghidriff":version("ghidriff"),"pyghidra":version("pyghidra"),'
         '"available":u.find_spec("ghidriff") is not None}))'
     )
-    result = run_process([str(Path(config.python_executable).resolve()), '-c', code],
-                         cwd=Path(config.ghidra_dir), env=_environment(config),
-                         cancel=cancel or threading.Event(), timeout_seconds=15, log_limit=16384)
+    with tempfile.TemporaryDirectory(prefix='patchtrace-probe-') as scratch:
+        result = run_process([str(Path(config.python_executable).resolve()), '-I', '-X', 'utf8', '-c', code],
+                             cwd=Path(scratch), env=_environment(config),
+                             cancel=cancel or threading.Event(), timeout_seconds=15, log_limit=16384)
     if result.reason == 'cancelled':
         raise RuntimeError('PT-CANCEL: analysis cancelled during dependency check')
     if result.reason or result.returncode:
@@ -609,14 +610,14 @@ def run_comparison(config: BackendConfig, project: ComparisonProject, root: Path
             paths = {side: _snapshot_input(path, scratch_root / 'inputs' / side / path.name,
                                            settings[f'{side}_sha256'], cancel)
                      for side, path in paths.items()}
-            argv = [str(Path(config.python_executable).resolve()), *(('-I', '-X', 'utf8') if config.bundle else ()),
+            argv = [str(Path(config.python_executable).resolve()), '-I', '-X', 'utf8',
                     '-m', 'ghidriff',
                     str(paths['older']), str(paths['newer']), '--output-path',
                     str(_validated_ghidra_output_path(raw)),
                     '--project-location', str(engine_project), '--gzfs-path', str(engine_gzfs)]
             if not config.allow_symbol_downloads:
                 argv.append('--no-symbols')
-            result = run_process(argv, cwd=Path(config.ghidra_dir), env=_environment(config, ghidra_settings),
+            result = run_process(argv, cwd=scratch_root, env=_environment(config, ghidra_settings),
                                  cancel=cancel,
                                  timeout_seconds=config.timeout_seconds,
                                  check_output=lambda: _output_error(raw))

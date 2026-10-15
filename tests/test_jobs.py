@@ -105,6 +105,16 @@ def fake_runtime(tmp_path, monkeypatch):
         artifact.write_bytes(content)
         artifacts.append(Artifact(side=side, name=artifact.name, size=len(content),
                                   sha256=hashlib.sha256(content).hexdigest(), relative_path=artifact.name))
+    real_run = backend.run_process
+
+    def run_fake(argv, **kwargs):
+        if '-m' in argv and argv[argv.index('-m') + 1] == 'ghidriff':
+            index = argv.index('-m')
+            argv = [*argv[:index], str(package / '__main__.py'), *argv[index + 2:]]
+        return real_run(argv, **kwargs)
+
+    # The fixture must not depend on importing a planted package from the child's cwd.
+    monkeypatch.setattr(backend, 'run_process', run_fake)
     project = ComparisonProject(name='fake-runtime-fixture', artifacts=artifacts)
     config = BackendConfig(str(Path(sys.executable).resolve()), str(ghidra))
     return tmp_path, package, project, config
