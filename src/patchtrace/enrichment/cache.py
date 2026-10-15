@@ -523,8 +523,20 @@ class DerivedCache:
                 total += os.lstat(entry / name).st_size
         return total
 
+    def _quarantine_items(self) -> list[tuple[int, Path, int]]:
+        """(mtime, path, bytes) of quarantined entries; they count toward the budget and go first."""
+        qdir = self._base / 'quarantine'
+        try:
+            if not self._safe_dir(qdir, create=False):
+                return []
+            return [(os.lstat(p).st_mtime_ns, p, self._entry_bytes(p))
+                    for p in qdir.iterdir() if not _is_link_or_junction(p)]
+        except (OSError, _Unsafe):
+            return []
+
     def _usage(self) -> int:
-        return sum(self._entry_bytes(e) for _s, _k, e in self._entries())
+        return (sum(self._entry_bytes(e) for _s, _k, e in self._entries())
+                + sum(size for _m, _p, size in self._quarantine_items()))
 
     def _leased(self, stage: str, key: str) -> bool:
         shard = self._shard(stage, key)
@@ -616,7 +628,7 @@ class DerivedCache:
         if type(target) is not int or target < 0:
             raise _config_error('target_bytes must be a non-negative integer')
         result = {'removed': 0, 'freed_bytes': 0, 'skipped_leased': 0, 'skipped_locked': 0,
-                  'bytes': 0, 'staging_removed': 0, 'locks_recovered': 0}
+                  'bytes': 0, 'staging_removed': 0, 'locks_recovered': 0, 'quarantine_removed': 0}
         if self.config.no_cache:
             return result
         try:
@@ -628,7 +640,15 @@ class DerivedCache:
                 except OSError:
                     clock = 0  # incomplete entries are the first to go
                 candidates.append((clock, stage, key, entry, self._entry_bytes(entry)))
-            total = sum(c[4] for c in candidates)
+            quarantined = self._quarantine_items()
+            total = sum(c[4] for c in candidates) + sum(size for _m, _p, size in quarantined)
+            for _mtime, path, size in sorted(quarantined, key=lambda q: q[0]):
+                if total <= target:
+                    break
+                _discard_staging(path)
+                if not path.exists():
+                    total -= size
+                    result['quarantine_removed'] += 1
             for _clock, stage, key, entry, size in sorted(candidates):
                 if total <= target:
                     break
