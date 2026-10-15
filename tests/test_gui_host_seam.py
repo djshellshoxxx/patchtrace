@@ -112,7 +112,9 @@ def test_host_owned_widgets_pass_the_accessibility_audit(qtbot, settings):
 
 def test_the_shipped_manifest_builds_only_the_migrated_panels_and_has_no_problem(main_window):
     host = main_window.panels
-    built = {'evidence', 'series', 'files', 'unified', 'leads'}
+    # Every manifest panel except the deferred guide stub is built (2026-10-15 panel batch).
+    built = {'evidence', 'series', 'files', 'unified', 'leads', 'search', 'graph', 'strings', 'capabilities', 'build_env',
+             'rules', 'kb', 'kev'}
     assert set(host.panels) == built and host.problems == []
     assert set(host.not_built) == {entry.id for entry in MANIFEST} - built
     assert host.self_check() == [] and set(host.build_all_for_test()) == built
