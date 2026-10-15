@@ -196,3 +196,11 @@ def test_cancel_clierror_writes_cancelled_envelope(project, capsys, monkeypatch)
     code, out, _ = run(['rank', str(project), '--json'], capsys)
     assert code == 5 and json.loads(out)['status'] == 'cancelled'
 
+
+
+@pytest.mark.parametrize('argv', [['rank', '--json'], ['bogus', '--json']], ids=['missing-arg', 'bad-verb'])
+def test_json_usage_error_prints_envelope(argv, capsys):
+    code, out, _ = run(argv, capsys)
+    doc = json.loads(out)
+    assert code == 2 and doc['status'] == 'failed' and doc['contract'] == cli.CLI_CONTRACT and doc['error']
+

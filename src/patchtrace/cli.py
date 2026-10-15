@@ -851,7 +851,11 @@ def main(argv: list[str] | None = None) -> int:
         return (getattr(args, 'handler', None) or HANDLERS[args.command])(args, cancel)
     except CliError as exc:
         print(f'error: {exc}', file=sys.stderr)
-        if args is not None and getattr(args, 'json', False):
+        if args is None and '--json' in argv:  # the parse itself failed: scan argv for the output mode
+            sys.stdout.write(json.dumps({'contract': CLI_CONTRACT, 'command': next((a for a in argv if not a.startswith('-')), 'patchtrace'),
+                                         'status': 'failed', 'result': None, 'warnings': [], 'error': str(exc)},
+                                        sort_keys=True) + '\n')
+        elif args is not None and getattr(args, 'json', False):
             status = 'cancelled' if exc.code == CANCELLED else 'failed'
             sys.stdout.write(json.dumps({'contract': CLI_CONTRACT, 'command': _command_name(args), 'status': status,
                                          'result': None, 'warnings': [], 'error': str(exc)}, sort_keys=True) + '\n')
