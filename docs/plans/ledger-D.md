@@ -35,3 +35,7 @@ Session `session_01Mr844cQDLwXi9iMUoGmBXk`; branch `claude/instance-d-gui`; pare
 - WB1-WB3 panels built on LOCAL worktree branch worktree-agent-ac64fcf9a50ccae01 (commits a338d6a search, 536de75 graph, 690ee91 strings, 6620230 palette test fix): depend on B's unmerged branch; NOT in PR #58. Findings: TaskRunner dropped by a worker thread / gc off the GUI thread segfaults in Shiboken (harden tasks.py); palette results cap 50.
 - KB panels: local branch worktree-agent-ae1ddf7ace07cf49d (72605cd), depends on B.
 - All track agents finished; none running.
+
+## Update 2026-10-15 ~02:45Z: PR #58 MERGED as 21a005e
+GUI F2-F9 + follow-through, Unified panel (S4b), Leads dock (PIL C2), PIL D1/D2, WBQ S6/S9 Qt views, TaskRunner thread-safety fix (T15), unified frozen hook, rules timeout test fix, sigstore 4.5.0. All Linux/Windows checks green on b93a6ad. Branch reset to main.
+Local-only worker branches awaiting B: KB panels (72605cd) and WB1-WB3 panels (a338d6a..6620230), see master-todo T19.
