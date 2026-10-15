@@ -571,3 +571,8 @@
 
 ### [LBL-13:channels]
 - [x] Channel pack scorers with hand-computed goldens (synthetic inputs). Open: real inputs need FLOSS/capa runners (T track) and YARA-X for `rules`.
+
+
+### [U3-U8:cli-pin]
+- [x] U3 S4 CLI polish (early usage errors, exit codes in help); Explain fragment path already built.
+- [x] U8 prep: pin checker and runbook. Open (owner, network): run docs/runbooks/bindiff-pin.md, flip `verified`; wire `bindiff_pin verify` into `unified-live-gates.yml`; first dispatch of that workflow.

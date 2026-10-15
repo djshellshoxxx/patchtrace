@@ -835,3 +835,7 @@ Automated evidence only: `python -m tools.calibration.prereg --qa docs/qa.md` ve
 
 ### [LBL-13:channels]
 Automated only: `tests/test_calib_channels_*.py` (synthetic pairs). No channel value is claimed on real builds; `rules` is blocked until YARA-X is available.
+
+
+### [U3-U8:cli-pin]
+- Automated: `tests/test_unified_cli.py` and `tests/test_unified_bindiff_pin.py` (hermetic). Blocked on the owner: BinDiff v8 digest verification (needs an independent network path and the issuer key), so G-U3 oracle part is not run.

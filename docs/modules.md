@@ -885,3 +885,8 @@ R5 contract notes: no persisted contract changed. Deviations from the card, all 
 
 ### [LBL-13:channels]
 `tools/calibration/channels/{strings,capabilities,environment,rules,leadlist}.py` (dev-only): one scorer per channel pack, each returning its own `PackReport` (intervals by lineage bootstrap from `evalcore.boot`, exact counts, gate booleans). Packs are never pooled; `rules` is `blocked` while `yara_x` is missing. `leadlist` evaluates the LBL s7.6 conditions (precision above base rate, A/A false-lead rate <= 0.1 %, hit@10 non-inferiority -0.02, one improved slice); below 30 lineages a condition is undefined, never passed.
+
+
+### [U3-U8:cli-pin]
+- `unified/cli.py`: `--timeout` (60..86,400) and `--limit` (>= 0) are refused before the project is opened (exit 2, one failed `enrichment-cli/1` document); `--help` of `unified`, `run` and `show` lists the exit codes (0/2/3/4/5) and the always-a-document rule. The Explain fragment already reaches `build_context(notes=...)` and `ContextDialog` through `preview_interpretation(notes=)` (no further `ui.py` change). Tests: additions in `tests/test_unified_cli.py`.
+- `tools/unified/bindiff_pin.py` (`verify|print`, `--require-verified`, `--github-output`) checks `tools/bindiff_pin.json` offline and refuses placeholder digests; `docs/runbooks/bindiff-pin.md` lists the commands an owner runs to obtain the verified digest. The committed pin stays trust-on-first-use, so the BinDiff part of G-U3 stays blocked. Tests: `tests/test_unified_bindiff_pin.py`.
