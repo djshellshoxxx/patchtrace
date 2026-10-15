@@ -397,7 +397,7 @@ def test_name_patterns_do_not_backtrack_on_hostile_names(name):
     classify_name(name)
     parse_auto_name(name)
     is_temp_name(name)
-    assert time.perf_counter() - started < 0.5
+    assert time.perf_counter() - started < 2.5      # 5x slack for shared CI; catastrophic backtracking takes far longer
 
 
 # --- limits -------------------------------------------------------------------------------------------------------

@@ -367,12 +367,16 @@ def test_ports_are_protocols_without_default_behaviour():
 
 FORBIDDEN = {'PySide6', 'PyQt5', 'PyQt6', 'urllib', 'http', 'socket', 'sqlite3', 'requests', 'ssl'}
 SIBLINGS = {'acquisition', 'enrichment', 'intelligence', 'unified', 'secondary', 'ui', 'backend', 'cli', 'jobs'}
-ALLOWED_FORBIDDEN = {'store.py': {'sqlite3'}, 'recovery.py': {'sqlite3'}}  # K2 owns the workspace database
+ALLOWED_FORBIDDEN = {'store.py': {'sqlite3'}, 'recovery.py': {'sqlite3'},
+                     'panel_qt.py': {'PySide6'}}  # K2 owns the workspace database; panel_qt.py is the Qt view of the Leads dock
 # context.py reads the reused intelligence contract types (CweProfile, HypothesisSet); wiring.py is the composition root
 # and the only module that binds sibling behaviour (plan section 9).
 ALLOWED_SIBLINGS = {'contracts.py': {'acquisition', 'enrichment', 'intelligence'}, 'context.py': {'intelligence'},
                     'wiring.py': SIBLINGS | {'service'},
-                    'cli_leads.py': {'enrichment', 'service'}}  # RealEngine moves to adapters/engine.py in K8
+                    'cli_leads.py': {'enrichment', 'service'},  # RealEngine moves to adapters/engine.py in K8
+                    # the Leads dock: PanelSpec, state notices, tooltip entries and the Qt view use the GUI framework
+                    'panel.py': {'gui'}, 'panel_state.py': {'gui'}, 'tooltip_entries.py': {'tooltips'},
+                    'panel_qt.py': {'gui'}}
 
 
 def _imports(path):

@@ -62,9 +62,9 @@ Only these tags carry published packages that were recorded in the ledgers: beta
 | beta.222 | Program E plans and specs; unified pass ladder; Pages site tooling |
 | beta.225 | Unified engine (registry, adapters, fusion, pipeline, `unified` CLI, Ghidra extractor); CSAF reports and `intelligence` CLI. Windows zip 60,640,443 bytes, sha256 `05138b1fe480361d1b6d812de76635c6ae9cf39931e5a5da07f178449e191473`; Linux tar.gz 89,535,839 bytes, sha256 `2fdb5ece075b63c32c9ec9d673d9f4171c5fd3fb8b201d526736f068956f15ae` (ledger A). CI: Windows pytest 4884 passed, Linux 4891 passed, frozen and Linux smoke on Ubuntu 22.04 and 24.04 |
 
-## After beta.225 (merged, not yet in a tag)
+## After beta.225 (merged, not in the ledgers)
 
-Merged on the main line by 2026-10-14, from the ledger and git history: the zero-download backend bundle builder, discovery, `backend` CLI, acceptance harness and workflow (PR #48, not yet built into a published package); release gate, CLI command registry and GUI foundation (PR #52); SPEC-41 to SPEC-45 drafts (AI provider, network egress and privacy, settings, CLI umbrella, accessibility). More work is on integration branches awaiting merge.
+Merged on the main line by 2026-10-14, from the ledger and git history: the zero-download backend bundle builder, discovery, `backend` CLI, acceptance harness and workflow (PR #48, not yet built into a published package); release gate, CLI command registry and GUI foundation (PR #52); SPEC-41 to SPEC-45 drafts (AI provider, network egress and privacy, settings, CLI umbrella, accessibility). The registry now also holds the `fabric`, `kev`, `pilot` and `rules` verbs (see `docs/cli-reference.md`); the dates of that work are UNVERIFIED here. The repository has a tag `v0.1.0-beta.243` that is not described in the ledgers; its change set is UNVERIFIED. More work is on integration branches awaiting merge.
 
 ## Open items before a final release
 

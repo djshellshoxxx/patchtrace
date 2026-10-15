@@ -18,11 +18,12 @@ from unified_s6_helpers import evaluated, label_doc, mutation_doc, row  # noqa: 
 
 from tools.calibration.tier_r.contracts import ContractError  # noqa: E402
 from tools.unified import bench, gates_u  # noqa: E402
+from tools.unified.corpus import aa  # noqa: E402
 from tools.unified.corpus import manifest as corpus_manifest  # noqa: E402
 from tools.unified.mutations import classes, templates  # noqa: E402
 
 SPEC = (ROOT / 'docs' / 'specs' / 'unified-engine' / '08-evaluation.md').read_text(encoding='utf-8')
-S3_GATES = ('G-U1', 'G-U2', 'G-U3', 'G-U4', 'G-U6', 'G-U7')
+S3_GATES = ('G-U3', 'G-U6', 'G-U7')           # G-U1 and G-U2 read unified-outcomes/1 (test_unified_gate_eval.py)
 
 
 def spec_rows():
@@ -80,19 +81,16 @@ def test_the_registry_has_the_eight_gates_with_the_questions_and_first_slices_of
         assert (gate.question, gate.first_slice) == (spec[gate.id]['question'], spec[gate.id]['first_slice']), gate.id
 
 
-def test_each_waiting_gate_names_what_it_waits_for_and_never_a_slice_that_is_built():
+def test_no_outcome_gate_waits_for_a_slice_that_is_built():
     needs = {g.id: g.needs for g in gates_u.GATES}
-    assert needs['G-U1'] == needs['G-U2'] == needs['G-U4'] == needs['G-U7'] == ('S3',)
-    assert needs['G-U3'] == ('IR-to-ladder adapter', 'S6b')                         # S2 is built: its first-slice cell is no wait
-    assert needs['G-U6'] == ('S3', 'SPEC-32 evaluation core')
+    assert all(needs[i] == () for i in ('G-U1', 'G-U2', 'G-U3', 'G-U4', 'G-U6', 'G-U7'))
     reported = {g.id: g.needs for g in gates_u.build_report(inputs()).gates}
     assert all(reported[i] == needs[i] for i in S3_GATES)
 
 
-def test_every_gate_that_waits_says_for_what_and_what_it_will_read():
+def test_every_outcome_gate_says_what_it_reads_and_g_u3_names_its_one_blocked_part():
     for gate in gates_u.GATES:
-        if gate.id in S3_GATES:
-            assert gate.waits and all(len(w) > 30 for w in gate.waits) and gate.consumes, gate.id
+        assert gate.consumes, gate.id
     assert gates_u.BY_ID['G-U3'].blocked and 'bindiff' in gates_u.BY_ID['G-U3'].blocked[0].lower()
 
 
@@ -101,15 +99,16 @@ def test_every_gate_that_waits_says_for_what_and_what_it_will_read():
 def test_with_no_input_no_gate_passes_and_each_says_why():
     built = gates_u.build_report(inputs())
     assert len(built.gates) == 8 and all(g.status != 'pass' for g in built.gates)
-    assert {g.id: g.status for g in built.gates} == {**dict.fromkeys(S3_GATES, 'pending'),
-                                                      'G-U5': 'insufficient-data', 'G-U8': 'insufficient-data'}
+    assert {g.id: g.status for g in built.gates} == {**dict.fromkeys(S3_GATES, 'insufficient-data'), 'G-U1': 'insufficient-data',
+                                                      'G-U2': 'insufficient-data', 'G-U4': 'insufficient-data', 'G-U5': 'insufficient-data',
+                                                      'G-U8': 'insufficient-data'}
     assert all(g.reasons for g in built.gates) and built.flag.decision_ready is False
 
 
-def test_gates_that_need_s3_stay_pending_whatever_the_corpus_and_the_other_inputs_look_like():
+def test_gates_that_read_rows_stay_insufficient_without_outcomes_whatever_the_other_inputs_look_like():
     built = gates_u.build_report(inputs(manifest=corpus(), benches=[good_bench()], xml=PASS_ALL,
                                         attested={'frozen-smoke': 'pass'}))
-    assert {g.id: g.status for g in built.gates if g.id in S3_GATES} == dict.fromkeys(S3_GATES, 'pending')
+    assert {g.id: g.status for g in built.gates if g.id in S3_GATES} == dict.fromkeys(S3_GATES, 'insufficient-data')
     assert built.flag.decision_ready is False and 'U-05' in built.flag.rule
 
 
@@ -122,6 +121,10 @@ def test_the_decision_is_ready_only_when_g_u1_to_g_u6_pass_and_nothing_else_coun
         assert gates_u.decision_ready(weaker) is False
     rows[6] = rows[6].model_copy(update={'status': 'fail'})
     assert gates_u.decision_ready(rows) is True                                      # U-05 names G-U1..G-U6
+    rows[7] = rows[7].model_copy(update={'status': 'fail'})
+    assert gates_u.decision_ready(rows) is False                                     # a broken integrity check blocks
+    rows[7] = rows[7].model_copy(update={'status': 'insufficient-data'})
+    assert gates_u.decision_ready(rows) is True                                      # only a verdict of fail does
 
 
 def test_readiness_counts_the_corpus_the_gates_will_read_and_flags_what_is_short():
@@ -130,7 +133,7 @@ def test_readiness_counts_the_corpus_the_gates_will_read_and_flags_what_is_short
     assert g2['classes_below_minimum'] == [] and set(g2['mutants_per_class'].values()) == {20}
     assert {p['class'] for p in g2['pending_classes']} == {'moved-rva-call', 'try-scope'}
     g1 = by_id(full)['G-U1'].observed['corpus']
-    assert (g1['P0'], g1['P0_x_vs_x'], g1['P1'], g1['P2']) == (1, 1, 1, 1) and len(g1['pending_p1']) == 4
+    assert (g1['P0'], g1['P0_x_vs_x'], g1['P1'], g1['P2']) == (1, 1, 1, 1) and g1['pending_p1'] == [f'P1:{k}' for k in aa.P1_KINDS]
     short = gates_u.build_report(inputs(manifest=corpus(per_class=19)))
     assert set(by_id(short)['G-U2'].observed['corpus']['classes_below_minimum']) == {c.id for c in classes.CLASSES}
     g3 = by_id(full)['G-U3'].observed['corpus']
@@ -173,23 +176,31 @@ def test_g_u8_every_check_names_tests_that_exist_in_the_repository():
         for name in check.tests:
             module, test = name.split('::')
             assert test in defined.get(module, set()), name
-    assert {c.id for c in gates_u.G_U8_CHECKS if not c.tests} == {'ui-policy', 'frozen-smoke'}
+    assert {c.id for c in gates_u.G_U8_CHECKS if not c.tests} == {'frozen-smoke'}
 
 
-def test_g_u8_all_present_checks_pass_but_the_ui_policy_waits_for_s4_and_the_smoke_has_no_attestation():
+def test_g_u8_all_present_checks_pass_but_the_smoke_has_no_attestation():
     g8 = by_id(gates_u.build_report(inputs(xml=PASS_ALL)))['G-U8']
-    assert g8.status == 'pending'
+    assert g8.status == 'insufficient-data'
     states = {c['id']: c['status'] for c in g8.observed['checks']}
-    assert states['ui-policy'] == 'pending' and states['frozen-smoke'] == 'missing'
-    assert {s for k, s in states.items() if k not in ('ui-policy', 'frozen-smoke')} == {'pass'}
+    assert states['frozen-smoke'] == 'missing'
+    assert {s for k, s in states.items() if k != 'frozen-smoke'} == {'pass'}
 
 
-def test_g_u8_stays_pending_on_the_ui_policy_until_s4_names_its_tests_even_with_everything_else_green():
+def test_g_u8_passes_with_the_ui_policy_tests_green_and_the_smoke_attested():
     g8 = by_id(gates_u.build_report(inputs(xml=PASS_ALL, attested={'frozen-smoke': 'pass'})))['G-U8']
-    assert g8.status == 'pending' and 'S4' in ' '.join(g8.reasons)
-    states = {c['id']: c['status'] for c in g8.observed['checks']}
-    assert states['frozen-smoke'] == 'pass' and states['ui-policy'] == 'pending'
-    assert {s for k, s in states.items() if k != 'ui-policy'} == {'pass'}
+    assert g8.status == 'pass' and not g8.reasons
+    ui = next(c for c in gates_u.G_U8_CHECKS if c.id == 'ui-policy')
+    assert len(ui.tests) >= 3 and ui.needs is None
+
+
+def test_g_u8_a_skipped_ui_test_is_blocked_not_a_pass():
+    ui = next(c for c in gates_u.G_U8_CHECKS if c.id == 'ui-policy')
+    first = tuple(ui.tests[0].split('::'))
+    rest = [tuple(p.split('::')) for p in ALL_G_U8 if p != ui.tests[0]]
+    g8 = by_id(gates_u.build_report(inputs(xml=junit(passed=rest, skipped=[first]),
+                                           attested={'frozen-smoke': 'pass'})))['G-U8']
+    assert g8.status == 'insufficient-data' and {c['id']: c['status'] for c in g8.observed['checks']}['ui-policy'] == 'blocked'
 
 
 def test_g_u8_a_failing_test_is_a_failure_and_a_skipped_one_is_blocked_not_a_pass():

@@ -49,7 +49,7 @@ from .contracts import (
 from .ids import anchors_digest, check_orientation, verify_anchor
 from .limits import DEFAULT_LIMITS, FabricError, FabricLimits
 from .memory import MemoryAnchorStore
-from .origins import DefaultOriginRegistry
+from .origins import DefaultOriginRegistry, check_origins
 from .ports import OriginRegistry
 
 KIND = 'anchor-batch'
@@ -237,12 +237,14 @@ def _head(entry: Entry, project_id: str) -> BatchHead | None:
     return head if entry.id == row_id(head.producer, head.batch) else None
 
 
-def _anchor(raw: object, head: BatchHead, pair: tuple[str, str]) -> Anchor | None:
-    """One stored anchor, or None: it must validate in JSON mode, certify its own ids, hold only the witnesses of its
-    batch and agree with the orientation of the project's pair."""
+def _anchor(raw: object, head: BatchHead, pair: tuple[str, str], registry: OriginRegistry) -> Anchor | None:
+    """One stored anchor, or None: it must validate in JSON mode, certify its own ids, carry the origin tags its source
+    has in the registry (a stored row is not trusted to count independence), hold only the witnesses of its batch and
+    agree with the orientation of the project's pair."""
     try:
         anchor = Anchor.model_validate_json(json.dumps(raw))
         verify_anchor(anchor)
+        check_origins(anchor, registry)
         check_orientation(anchor, *pair)
     except (ValueError, FabricError):  # a ValidationError is a ValueError
         return None
@@ -399,7 +401,7 @@ class EnrichmentAnchorStore:
             return _unreadable(entry.id)
         taken = skipped = 0
         for raw in entry.body['anchors']:
-            anchor = _anchor(raw, head, project.pair)
+            anchor = _anchor(raw, head, project.pair, self._registry)
             if anchor is not None and self._merge(merged, anchor):
                 taken += 1
             else:

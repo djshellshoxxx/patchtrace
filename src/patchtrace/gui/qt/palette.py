@@ -85,6 +85,7 @@ class CommandPalette(QFrame):
         self._idle.timeout.connect(self._announce_count)
         self.search.textChanged.connect(self._filter)
         self.search.installEventFilter(self)
+        self.results.installEventFilter(self)
         self.results.itemActivated.connect(self._activated)
         self.hide()
 
@@ -159,7 +160,7 @@ class CommandPalette(QFrame):
 
     def eventFilter(self, watched: QObject, event: QEvent) -> bool:  # noqa: N802
         kind = event.type()
-        if watched is self.search and kind in (QEvent.Type.KeyPress, QEvent.Type.ShortcutOverride):
+        if watched in (self.search, self.results) and kind in (QEvent.Type.KeyPress, QEvent.Type.ShortcutOverride):
             key = event.key()
             if key == Qt.Key.Key_Escape:  # the window's Escape ("Cancel job") must not fire while the palette is open
                 if kind == QEvent.Type.ShortcutOverride:

@@ -17,6 +17,7 @@ from __future__ import annotations
 import hashlib
 import json
 import re
+import unicodedata
 from collections.abc import Iterable
 from dataclasses import dataclass
 
@@ -38,7 +39,7 @@ _KEYABLE = re.compile(r'^(?:[0-9]{2}H[12]|[0-9]{4})$')
 
 def clean_text(value: object, limit: int = 1000) -> str:
     """Untrusted advisory text as plain text: C0/C1 controls (newline and tab become a space) and bidirectional
-    formatting characters are removed, surrogates are replaced, the result is cut to ``limit`` characters. Markup is
+    formatting and other invisible format characters (zero-width, BOM, soft hyphen, tag) are removed, surrogates are replaced, the result is cut to ``limit`` characters. Markup is
     kept verbatim (it is data; renderers must treat it as plain text)."""
     if not isinstance(value, str):
         return ''
@@ -47,7 +48,7 @@ def clean_text(value: object, limit: int = 1000) -> str:
         code = ord(ch)
         if ch in '\n\r\t':
             out.append(' ')
-        elif code < 0x20 or 0x7f <= code < 0xa0:
+        elif code < 0x20 or 0x7f <= code < 0xa0 or unicodedata.category(ch) == 'Cf':
             continue
         elif 0xd800 <= code <= 0xdfff:
             out.append('�')

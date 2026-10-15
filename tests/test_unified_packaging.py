@@ -172,7 +172,7 @@ def test_frozen_smoke_runs_the_unified_cli_checks_only_when_the_cli_exists(tmp_p
 UNIFIED = ROOT / 'src' / 'patchtrace' / 'unified'
 S1_ALLOWED = {
     'extract/__init__': set(), 'extract/retain': {'patchtrace.unified.limits'},
-    'extract/decomp': {'patchtrace.unified.limits'},                        # S3b: the strict reader of decomp.jsonl
+    'extract/decomp': {'patchtrace.unified.contracts', 'patchtrace.unified.limits'},   # S3b: the strict reader of decomp.jsonl
     'extract/runner': {'patchtrace', 'patchtrace.backend', 'patchtrace.jobs', 'patchtrace.unified',
                        'patchtrace.unified.contracts', 'patchtrace.unified.extract', 'patchtrace.unified.extract.decomp',
                        'patchtrace.unified.limits', 'pydantic'},

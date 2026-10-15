@@ -143,7 +143,9 @@ def test_an_expectations_file_turns_a_series_build_into_a_scored_row(world, olde
     assert cells['2-V1t.dll'].verdict == 'as-expected'
 
 
-@pytest.mark.parametrize('text', ['[]', '{"a": "maybe"}', '{"a": 1}', 'not json'], ids=['list', 'word', 'number', 'text'])
+@pytest.mark.parametrize('text', ['[]', '{"a": "maybe"}', '{"a": 1}', 'not json', '{"x.exe": "hit", "x.exe": "hit"}',
+                                  '{"x.exe": "hit", "x.exe": "unknown"}', '{"x.exe": "hit"}' + ' ' * (1 << 20)],
+                         ids=['list', 'word', 'number', 'text', 'dup-same-value', 'dup-other-value', 'too-large'])
 def test_a_bad_expectations_file_is_refused(tmp_path, text):
     path = tmp_path / 'expect.json'
     path.write_text(text, encoding='utf-8')

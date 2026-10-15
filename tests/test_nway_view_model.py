@@ -257,3 +257,13 @@ def test_disk_reader_wrong_pair_and_changed(builds, tmp_path, capsys):  # noqa: 
     assert snap.state == 'changed'
     loaded = vm.load_view(root / 'series.json', reader, threading.Event())
     assert loaded.state == 'partial' and loaded.rows[0].stale and loaded.rows[0].degraded
+
+
+def test_ser4_locked_direct_pair_is_degraded_not_stale(series_file, monkeypatch):
+    path, series = series_file
+    first, second = ids(series)
+    reason = 'pair 0→2: cannot open pair project direct: project is locked by another PatchTrace window'
+    monkeypatch.setattr(store, 'staleness', lambda *_: store.Staleness(frozenset(), True, (reason,)))
+    loaded = load(path, {0: ok({first: 70}), 1: ok({second: 40})})
+    [row] = vm.apply_query(loaded, vm.ViewQuery()).rows
+    assert not row.stale and reason not in loaded.warnings

@@ -13,7 +13,6 @@ other build is unscored until the analyst says what to expect.
 from __future__ import annotations
 
 import hashlib
-import json
 import re
 import threading
 from collections import Counter
@@ -37,6 +36,7 @@ from .contracts import (
     TargetRef,
     WorkerRule,
     WorkerTarget,
+    strict_json,
 )
 from .errors import RuleError
 from .limits import DEFAULT_LIMITS, RuleLimits, limits_digest
@@ -136,10 +136,17 @@ def _target(target_id: str, role: str, label: str, sha: str, size: int, ordinal:
         raise RuleError('PT-RULE-INPUT', 'A file or an expectation of the test is not valid', reason='bad-target') from None
 
 
+MAX_EXPECTATIONS_BYTES = 1 << 20
+
+
 def read_expectations(path: Path) -> dict[str, str]:
     """`{"<sha256 or file name>": "hit" | "no-hit" | "unknown"}` from a small JSON file."""
     try:
-        data = json.loads(path.read_text(encoding='utf-8'))
+        with path.open('rb') as stream:
+            raw = stream.read(MAX_EXPECTATIONS_BYTES + 1)
+        if len(raw) > MAX_EXPECTATIONS_BYTES:
+            raise ValueError('too large')
+        data = strict_json(raw.decode('utf-8'))
     except (OSError, ValueError):
         raise RuleError('PT-RULE-INPUT', 'The expectations file could not be read as JSON', reason='expect-file') from None
     if not isinstance(data, dict) or not all(isinstance(k, str) and v in ('hit', 'no-hit', 'unknown')

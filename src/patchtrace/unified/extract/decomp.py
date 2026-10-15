@@ -8,17 +8,16 @@ requested RVA must appear. A failure is `PT-UNIFIED-EXTRACT` with reason `bad-de
 from __future__ import annotations
 
 import json
-import re
-from collections.abc import Sequence
+from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 from pathlib import Path
 
+from ..contracts import strip_unsafe
 from ..limits import DEFAULT_LIMITS, UnifiedError, UnifiedLimits
 
 STATUSES = ('ok', 'timeout', 'failed')
 _KEYS = frozenset({'side', 'rva', 'status', 'code'})
-# Controls other than TAB and LF, the line and paragraph separators and the bidi controls are replaced, as for IR texts.
-_CONTROL = re.compile('[\x00-\x08\x0b-\x1f\x7f-\x9f  ‪-‮⁦-⁩]')
+PART_LINE_TEXT_BYTES = 3 * 1024 * 1024    # below the 4 MiB line cap of a stored part (store.LINE_MAX_BYTES)
 JSON_EXPANSION = 12          # an ASCII JSON line spends up to 12 bytes (two \uXXXX escapes) on one character
 
 
@@ -72,7 +71,7 @@ def _code(value: object, limits: UnifiedLimits) -> str:
         raise _bad('code') from None
     if len(value) > limits.l29_pseudo_chars or value.count('\n') + 1 > limits.l29_pseudo_lines:
         raise _bad('code-cap')
-    return _CONTROL.sub('?', value)
+    return strip_unsafe(value, keep_layout=True, replacement='?')
 
 
 def read_decomp(path: Path, side: str, rvas: Sequence[int],
@@ -109,3 +108,22 @@ def read_decomp(path: Path, side: str, rvas: Sequence[int],
     if set(found) != wanted:
         raise _bad('missing')
     return dict(sorted(found.items()))
+
+
+def part_lines(records: Mapping[str, Mapping[int, DecompRecord]],
+               limits: UnifiedLimits = DEFAULT_LIMITS) -> list[dict]:
+    """The lines of the stored part `decomp.jsonl.gz` (S3b, 07 s6): `{side, rva, status, code}`, older side first, RVAs
+    ascending. The text is scrubbed again (the part is the product's own output, never the extractor's bytes) and a
+    text over L-29 (characters, lines) or whose JSON line would exceed the part line cap becomes `failed` without
+    text: a bounded part is better than none, and the code pane says why a function has no text."""
+    out = []
+    for side in ('older', 'newer'):
+        for rva, record in sorted(records.get(side, {}).items()):
+            status, code = record.status, record.code
+            if code is not None:
+                code = strip_unsafe(code, keep_layout=True, replacement='?')
+                too_long = len(code) > limits.l29_pseudo_chars or code.count('\n') + 1 > limits.l29_pseudo_lines
+                if too_long or len(json.dumps(code, ensure_ascii=False).encode('utf-8')) > PART_LINE_TEXT_BYTES:
+                    status, code = 'failed', None
+            out.append({'side': side, 'rva': rva, 'status': status, 'code': code if status == 'ok' else None})
+    return out

@@ -636,7 +636,8 @@ def test_exit_codes_and_single_json_documents_through_real_processes(project, tm
     nothing = process('intelligence', 'explain', project, '--cve', 'CVE-2099-77777', '--json')
     assert nothing.returncode == 4 and one_doc(nothing.stdout)['result']['report'] is None
     bad = process('intelligence', 'import', project, REV1_FILE, '--cve', 'nope', '--json')
-    assert bad.returncode == 2 and 'Traceback' not in bad.stderr and bad.stdout == ''
+    # QA-CLI-1: a usage error in --json mode still prints exactly one failed document
+    assert bad.returncode == 2 and 'Traceback' not in bad.stderr and one_doc(bad.stdout)['status'] == 'failed'
     refused = process('intelligence', 'fetch', project, '--cve', CVE, '--json')
     assert refused.returncode == 2 and 'Traceback' not in refused.stderr
     empty = tmp_path / 'empty'
