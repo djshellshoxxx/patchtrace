@@ -22,12 +22,12 @@ from patchtrace.fabric.store import KIND
 P = fss.PROJECT
 ALL = AnchorQuery(limit=500)
 TEN_MB = 10 * 1024 * 1024
-UNSAFE = ('‮', '⁦', ' ', '\x00', '\x9b', '\ud800')
+UNSAFE = ('\u202e', '\u2066', '\u2028', '\x00', '\x9b', '\ud800')
 HOSTILE = {
-    'bidi-override': 'pay‮PLAN',
-    'bidi-isolate': 'a⁦b⁩c',
-    'zero-width': 'zero​width⁠joiner',
-    'line-separator': 'one two',
+    'bidi-override': 'pay\u202ePLAN',
+    'bidi-isolate': 'a\u2066b\u2069c',
+    'zero-width': 'zero\u200bwidth\u2060joiner',
+    'line-separator': 'one\u2028two',
     'nul-byte': 'nul\x00byte',
     'c1-control': 'c1\x9bcsi',
     'lone-surrogate': 'ok\ud800end',
@@ -91,7 +91,7 @@ def test_a_ten_megabyte_label_is_cut_to_the_label_limit_and_still_stored(project
 
 
 def test_a_ten_megabyte_bidi_label_is_stripped_then_cut(store):
-    anchor = fs.import_anchor('Big', batch='c1', label='a‮' * (TEN_MB // 2))
+    anchor = fs.import_anchor('Big', batch='c1', label='a\u202e' * (TEN_MB // 2))
     label = anchor.witnesses[0].label
     assert len(label) <= 200 and not any(char in label for char in UNSAFE)
     store.publish(P, [anchor])
@@ -156,7 +156,7 @@ def test_a_note_of_multibyte_text_is_counted_in_bytes(pins):
 
 def test_a_hostile_note_keeps_its_lines_and_drops_its_unsafe_characters(pins):
     anchor = fs.import_anchor('Note', batch='c1')
-    pinned = pins.pin(P, anchor, note='line one‮\nline\tTwo\x00')
+    pinned = pins.pin(P, anchor, note='line one\u202e\nline\tTwo\x00')
     assert pinned.note == 'line one\nline Two'
 
 
@@ -174,7 +174,7 @@ def test_pins_keep_their_label_through_replacement_and_retraction(project, store
     anchor = fs.import_anchor('Kept', batch='c1', label='pinned label')
     store.publish(P, [anchor])
     pins.pin(P, anchor, note='keep')
-    store.publish(P, [fs.import_anchor('Other', batch='c1', label='‮swapped')])
+    store.publish(P, [fs.import_anchor('Other', batch='c1', label='\u202eswapped')])
     store.retract(P, 'cap', 'c1')
     listed = pins.pins(P).pins
     assert [(pin.anchor_id, pin.label, pin.note) for pin in listed] == [(anchor.anchor_id, 'pinned label', 'keep')]

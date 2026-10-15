@@ -9,7 +9,12 @@ from __future__ import annotations
 import threading
 
 import pytest
-from host_support import Recorder, make_host, spec  # noqa: F401 - the autouse tooltip fixture is imported with it
+from host_support import (  # noqa: F401 - the autouse tooltip fixture
+    Recorder,
+    make_host,
+    private_tooltip_registry,
+    spec,
+)
 from PySide6.QtWidgets import QApplication
 from qt_support import join_gui_threads, main_window, settings, task_threads  # noqa: F401
 

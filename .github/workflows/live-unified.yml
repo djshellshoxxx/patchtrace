@@ -13,7 +13,7 @@ env:
   GHIDRA_SHA256: c3b458661d69e26e203d739c0c82d143cc8a4a29d9e571f099c2cf4bda62a120
   GHIDRIFF_PIN: 'ghidriff @ git+https://github.com/clearbluejar/ghidriff.git@4f5d895fcbb1eacd65efd81145922c15bb7e741d'
 concurrency:
-  group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.ref }}
+  group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 jobs:
   windows:

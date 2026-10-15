@@ -76,7 +76,8 @@ def remove_staging(staging: Path, attempts: int = 4, delay: float = 0.25) -> boo
     def writable(func, path, _exc):
         for attempt in range(attempts):
             try:
-                os.chmod(path, stat.S_IWRITE | stat.S_IREAD)
+                # a directory also needs the search bit, or its children become unreachable for a non-root user
+                os.chmod(path, stat.S_IRWXU if os.path.isdir(path) else stat.S_IWRITE | stat.S_IREAD)
                 func(path)
                 return
             except OSError:

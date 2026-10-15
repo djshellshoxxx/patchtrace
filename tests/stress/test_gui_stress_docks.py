@@ -9,7 +9,11 @@ from __future__ import annotations
 
 import random
 
-from host_support import make_host, spec  # noqa: E402 - the fake-panel host of the host tests
+from host_support import (  # noqa: E402,F401 - the fake-panel host of the host tests
+    make_host,
+    private_tooltip_registry,
+    spec,
+)
 from PySide6.QtWidgets import QApplication, QMainWindow
 from qt_support import join_gui_threads, main_window, settings, top_level_windows  # noqa: F401
 
@@ -50,7 +54,8 @@ def test_every_dock_is_shown_hidden_floated_moved_and_reset_in_a_seeded_order(qt
     window.show()
     qtbot.waitExposed(window)
     docks = docked(host)
-    assert len(docks) == 5, f'the shipped manifest builds five docks in this tree, found {sorted(docks)}'
+    core = {'evidence', 'series', 'files', 'unified', 'leads'}
+    assert core <= set(docks), f'the shipped manifest builds the five core docks and more, found {sorted(docks)}'
     exercise(qtbot, window, host, docks)
 
 

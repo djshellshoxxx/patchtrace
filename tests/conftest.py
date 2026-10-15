@@ -17,20 +17,39 @@ ROOT = Path(__file__).resolve().parents[1]
 LIVE_STATUS_KEY = pytest.StashKey[list]()
 
 
+MODAL_WATCHDOG_MS = 30_000
+
+
 @pytest.fixture(autouse=True)
 def _no_blocking_modal_dialogs(request, monkeypatch):
     """An error path that opens QMessageBox.exec() blocks the whole job forever under the offscreen platform (CI qa hung
-    for two hours on one). Fail the test instead; tests that expect a dialog patch exec themselves, which wins."""
+    for two hours on one). Keep the real dialog (some tests inspect and close it from a timer) but reject it after
+    MODAL_WATCHDOG_MS and fail the test that opened it."""
     if 'qtbot' not in request.fixturenames and 'window' not in request.fixturenames:
         return
     try:
+        from PySide6.QtCore import QTimer
         from PySide6.QtWidgets import QMessageBox
     except ImportError:  # no Qt in this environment
         return
+    real_exec = QMessageBox.exec
 
-    def refuse(self, *args, **kwargs):
-        raise AssertionError(f'unexpected modal dialog: {self.windowTitle()}: {self.text()}')
-    monkeypatch.setattr(QMessageBox, 'exec', refuse)
+    def watched(self, *args, **kwargs):
+        expired = []
+
+        def expire():
+            expired.append(True)
+            self.reject()
+        timer = QTimer(self)
+        timer.setSingleShot(True)
+        timer.timeout.connect(expire)
+        timer.start(MODAL_WATCHDOG_MS)
+        result = real_exec(self, *args, **kwargs)
+        timer.stop()
+        if expired:
+            raise AssertionError(f'modal dialog was never answered: {self.windowTitle()}: {self.text()}')
+        return result
+    monkeypatch.setattr(QMessageBox, 'exec', watched)
 
 
 @pytest.fixture(autouse=True)

@@ -25,8 +25,8 @@ P = fss.PROJECT
 ALL = AnchorQuery(limit=500)
 BATCHES = ('c1', 'c2', 'c3')
 NAMES = ('Alpha', 'Beta', 'Gamma', 'Delta', 'Epsilon', 'Zeta')
-HOSTILE = st.sampled_from(['‮', '⁦', '​', ' ', '\x00', '\x9b', '\ud800', '\udfff', '\t', '\n',
-                           'é', '́', '\U0001f600', ' '])
+HOSTILE = st.sampled_from(['\u202e', '\u2066', '\u200b', '\u2028', '\x00', '\x9b', '\ud800', '\udfff', '\t', '\n',
+                           'é', '\u0301', '\U0001f600', ' '])
 HOSTILE_TEXT = st.text(alphabet=st.one_of(HOSTILE, st.characters()), max_size=60)
 LABEL = st.one_of(st.none(), HOSTILE_TEXT, st.just('x' * 5000))
 SLOW = settings(max_examples=12, deadline=None)
