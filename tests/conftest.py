@@ -18,6 +18,22 @@ LIVE_STATUS_KEY = pytest.StashKey[list]()
 
 
 @pytest.fixture(autouse=True)
+def _no_blocking_modal_dialogs(request, monkeypatch):
+    """An error path that opens QMessageBox.exec() blocks the whole job forever under the offscreen platform (CI qa hung
+    for two hours on one). Fail the test instead; tests that expect a dialog patch exec themselves, which wins."""
+    if 'qtbot' not in request.fixturenames and 'window' not in request.fixturenames:
+        return
+    try:
+        from PySide6.QtWidgets import QMessageBox
+    except ImportError:  # no Qt in this environment
+        return
+
+    def refuse(self, *args, **kwargs):
+        raise AssertionError(f'unexpected modal dialog: {self.windowTitle()}: {self.text()}')
+    monkeypatch.setattr(QMessageBox, 'exec', refuse)
+
+
+@pytest.fixture(autouse=True)
 def _collect_qt_garbage(request):
     """CI qt-gate segfaulted inside the cyclic GC on the GUI thread (Shiboken wrappers of earlier tests' widgets
     collected while a later test's worker thread ran). Collect at each Qt test's end, when no worker is live."""
