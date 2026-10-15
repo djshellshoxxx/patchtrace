@@ -1,0 +1,42 @@
+{
+  "$id": "https://patchtrace.local/schemas/kev/1/KevCurrent.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "``current.json`` of the store: which snapshot is in use and since when.",
+  "properties": {
+    "contract": {
+      "const": "kev/1",
+      "default": "kev/1",
+      "title": "Contract",
+      "type": "string"
+    },
+    "date_released": {
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$",
+      "title": "Date Released",
+      "type": "string"
+    },
+    "raw_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Raw Sha256",
+      "type": "string"
+    },
+    "set_at": {
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$",
+      "title": "Set At",
+      "type": "string"
+    },
+    "snapshot_id": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Snapshot Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "snapshot_id",
+    "raw_sha256",
+    "date_released",
+    "set_at"
+  ],
+  "title": "KevCurrent",
+  "type": "object"
+}

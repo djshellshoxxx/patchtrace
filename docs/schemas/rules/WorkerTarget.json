@@ -1,0 +1,46 @@
+{
+  "$id": "https://patchtrace.local/schemas/rules/1/WorkerTarget.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "``sha256`` is None for a file whose identity the caller does not know (an extra build); ``size`` is what the caller\nsaw. A file that differs from either is reported as changed, never scanned as if it were the recorded build.",
+  "properties": {
+    "path": {
+      "maxLength": 4096,
+      "minLength": 1,
+      "pattern": "^[^\\x00]+$",
+      "title": "Path",
+      "type": "string"
+    },
+    "sha256": {
+      "anyOf": [
+        {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Sha256"
+    },
+    "size": {
+      "exclusiveMaximum": 1099511627776,
+      "minimum": 0,
+      "title": "Size",
+      "type": "integer"
+    },
+    "target_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+      "title": "Target Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "target_id",
+    "path",
+    "size"
+  ],
+  "title": "WorkerTarget",
+  "type": "object"
+}

@@ -1,6 +1,7 @@
 # KEV integration plan: CISA Known Exploited Vulnerabilities as an explained exploitation-context channel
 
 Program E track KEV, research plan written 2026-10-14 (documents only, no code). Source for the future spec `docs/specs/kev-exploitation-context.md` (integration owner assigns the SPEC number; contract `kev/1`). The worktree branch was fast-forwarded to d972125 to obtain the brief; this commit adds only this file.
+Status 2026-10-14: slices K0 (fixtures, vendored schema), K1a (pure core) and K1b (snapshot store) are built and integrated (`docs/modules.md` `[K1a:kev-core]` and `[K1b:kev-store]`, `tasks/todo.md`, `docs/qa.md`); K2 to K7 and the amendments A0 to A11 are open.
 Source tags (every URL is `https://raw.githubusercontent.com/` + tag): R = `cisagov/kev-data/main/` (CISA's own repository), V = `cisagov/vulnrichment/develop/`, Q = `qt/qtbase/v6.12.0/`, W = `w3c/wcag/main/understanding/`, M = `MicrosoftDocs/win32/docs/desktop-src/WinAuto/`, S = `CERTCC/SSVC/main/docs/reference/decision_points/`. Confidence: verified (read or executed this session), inferred (derived from verified data), [unverified] (host blocked or not confirmable).
 
 ## 1. Verdict and scope
@@ -262,4 +263,4 @@ Spec first: A0 (section 10) before K1a. Files are exclusive per slice; shared fi
 11. Auto-refresh or startup reminder: default none; a text hint only when older than 14 days.
 12. MSRC exploitability sibling lane: default recommend to the KB track (section 3). 13. Shrink guard threshold 10%: default as stated, `--accept-shrink` overrides.
 14. EPSS: default no until analysts ask for ordering inside non-KEV sets.
-15. Row kind name if the FAB contract defines a different registry: default `kev-context` until then.
+15. Row kind name if the FAB contract defines a different registry: default `kev-context` until then. Amended by FAB-0 (2026-10-14): the row stays `kev-context`; the FAB contract defines no other row, and KEV reaches the fabric only as `cve` witnesses with source `kev-catalog`.

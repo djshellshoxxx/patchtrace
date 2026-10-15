@@ -1,0 +1,879 @@
+{
+  "$defs": {
+    "ApiRef": {
+      "additionalProperties": false,
+      "properties": {
+        "dll": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Dll",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "dll",
+        "name"
+      ],
+      "title": "ApiRef",
+      "type": "object"
+    },
+    "BytesFeature": {
+      "additionalProperties": false,
+      "properties": {
+        "included": {
+          "title": "Included",
+          "type": "boolean"
+        },
+        "kind": {
+          "const": "bytes",
+          "default": "bytes",
+          "title": "Kind",
+          "type": "string"
+        },
+        "length": {
+          "maximum": 512,
+          "minimum": 16,
+          "title": "Length",
+          "type": "integer"
+        },
+        "literal": {
+          "minimum": 0,
+          "title": "Literal",
+          "type": "integer"
+        },
+        "longest_run": {
+          "minimum": 0,
+          "title": "Longest Run",
+          "type": "integer"
+        },
+        "mask": {
+          "default": [],
+          "items": {
+            "enum": [
+              "rip-disp",
+              "branch-ext",
+              "reloc",
+              "addr-ref"
+            ],
+            "type": "string"
+          },
+          "title": "Mask",
+          "type": "array"
+        },
+        "mask_source": {
+          "enum": [
+            "iced-x86",
+            "unified-ir"
+          ],
+          "title": "Mask Source",
+          "type": "string"
+        },
+        "other_hits": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Other Hits"
+        },
+        "pattern": {
+          "pattern": "^(?:[0-9A-F]{2}|\\?\\?)(?: (?:[0-9A-F]{2}|\\?\\?)){15,511}$",
+          "title": "Pattern",
+          "type": "string"
+        },
+        "pins": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/CallPin"
+          },
+          "maxItems": 4,
+          "title": "Pins",
+          "type": "array"
+        },
+        "separation": {
+          "enum": [
+            "older-only",
+            "newer-only",
+            "both-sides",
+            "unknown"
+          ],
+          "title": "Separation",
+          "type": "string"
+        },
+        "side": {
+          "enum": [
+            "older",
+            "newer"
+          ],
+          "title": "Side",
+          "type": "string"
+        },
+        "source_hits": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source Hits"
+        },
+        "window_rva": {
+          "maximum": 4294967295,
+          "minimum": 0,
+          "title": "Window Rva",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "included",
+        "side",
+        "window_rva",
+        "length",
+        "pattern",
+        "literal",
+        "longest_run",
+        "mask_source",
+        "separation"
+      ],
+      "title": "BytesFeature",
+      "type": "object"
+    },
+    "CallPin": {
+      "additionalProperties": false,
+      "description": "Ties a masked ``call [rip+disp32]`` inside a bytes window to the import slot it goes through. Offsets are inside the\nwindow; ``end_offset`` is where the instruction ends (the base of the RIP-relative displacement).",
+      "properties": {
+        "disp_offset": {
+          "exclusiveMaximum": 512,
+          "minimum": 0,
+          "title": "Disp Offset",
+          "type": "integer"
+        },
+        "dll": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Dll",
+          "type": "string"
+        },
+        "end_offset": {
+          "maximum": 512,
+          "minimum": 4,
+          "title": "End Offset",
+          "type": "integer"
+        },
+        "name": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "disp_offset",
+        "end_offset",
+        "dll",
+        "name"
+      ],
+      "title": "CallPin",
+      "type": "object"
+    },
+    "CapabilityFeature": {
+      "additionalProperties": false,
+      "description": "A capa capability that appeared or disappeared with the changed code. It contributes metadata and API gates; it is\nnever a rule condition by itself.",
+      "properties": {
+        "api_gates": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/ApiRef"
+          },
+          "maxItems": 8,
+          "title": "Api Gates",
+          "type": "array"
+        },
+        "attack": {
+          "default": [],
+          "items": {
+            "maxLength": 64,
+            "minLength": 1,
+            "type": "string"
+          },
+          "maxItems": 16,
+          "title": "Attack",
+          "type": "array"
+        },
+        "classification": {
+          "enum": [
+            "newly-introduced",
+            "removed-with-code"
+          ],
+          "title": "Classification",
+          "type": "string"
+        },
+        "included": {
+          "title": "Included",
+          "type": "boolean"
+        },
+        "kind": {
+          "const": "capability",
+          "default": "capability",
+          "title": "Kind",
+          "type": "string"
+        },
+        "namespace": {
+          "anyOf": [
+            {
+              "maxLength": 256,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Namespace"
+        },
+        "rule_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Rule Id",
+          "type": "string"
+        },
+        "separation": {
+          "enum": [
+            "older-only",
+            "newer-only",
+            "both-sides",
+            "unknown"
+          ],
+          "title": "Separation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "included",
+        "rule_id",
+        "classification",
+        "separation"
+      ],
+      "title": "CapabilityFeature",
+      "type": "object"
+    },
+    "EngineStamp": {
+      "additionalProperties": false,
+      "description": "What produced a result. A change of ``version``, ``grammar`` or ``worker`` marks stored grids stale; the rule text\nis kept. ``decoder`` is ``none`` for a stamp that has no byte-feature step (scan-only work, decoder not installed).",
+      "properties": {
+        "decoder": {
+          "default": "none",
+          "enum": [
+            "iced-x86",
+            "unified-ir",
+            "none"
+          ],
+          "title": "Decoder",
+          "type": "string"
+        },
+        "decoder_version": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9A-Za-z][0-9A-Za-z.+_-]{0,39}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Decoder Version"
+        },
+        "engine": {
+          "const": "yara-x",
+          "default": "yara-x",
+          "title": "Engine",
+          "type": "string"
+        },
+        "grammar": {
+          "const": "yrx-gen/1",
+          "default": "yrx-gen/1",
+          "title": "Grammar",
+          "type": "string"
+        },
+        "version": {
+          "pattern": "^[0-9A-Za-z][0-9A-Za-z.+_-]{0,39}$",
+          "title": "Version",
+          "type": "string"
+        },
+        "version_source": {
+          "enum": [
+            "metadata",
+            "pin"
+          ],
+          "title": "Version Source",
+          "type": "string"
+        },
+        "worker": {
+          "const": "rules-worker/1",
+          "default": "rules-worker/1",
+          "title": "Worker",
+          "type": "string"
+        }
+      },
+      "required": [
+        "version",
+        "version_source"
+      ],
+      "title": "EngineStamp",
+      "type": "object"
+    },
+    "FunctionRef": {
+      "additionalProperties": false,
+      "description": "One side's function. ``size`` is known only with a verified extent (``.pdata`` or the unified IR); a leaf function\nwithout exception data has ``extent == 'unknown'`` and no size, so no bytes feature can be built from it.",
+      "properties": {
+        "extent": {
+          "enum": [
+            "pdata",
+            "unified-ir",
+            "unknown"
+          ],
+          "title": "Extent",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 256,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "rva": {
+          "maximum": 4294967295,
+          "minimum": 0,
+          "title": "Rva",
+          "type": "integer"
+        },
+        "size": {
+          "anyOf": [
+            {
+              "exclusiveMaximum": 4294967296,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Size"
+        }
+      },
+      "required": [
+        "rva",
+        "extent"
+      ],
+      "title": "FunctionRef",
+      "type": "object"
+    },
+    "Gate": {
+      "additionalProperties": false,
+      "description": "One check with its measured number (a count, a size or short text), never combined into a score.",
+      "properties": {
+        "detail": {
+          "default": "",
+          "maxLength": 300,
+          "title": "Detail",
+          "type": "string"
+        },
+        "gate_id": {
+          "enum": [
+            "elig",
+            "len",
+            "wild",
+            "uniq",
+            "sep",
+            "compile",
+            "secret",
+            "dist"
+          ],
+          "title": "Gate Id",
+          "type": "string"
+        },
+        "measured": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "maxLength": 64,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Measured"
+        },
+        "state": {
+          "enum": [
+            "pass",
+            "fail",
+            "unknown",
+            "waived"
+          ],
+          "title": "State",
+          "type": "string"
+        }
+      },
+      "required": [
+        "gate_id",
+        "state"
+      ],
+      "title": "Gate",
+      "type": "object"
+    },
+    "ImportFeature": {
+      "additionalProperties": false,
+      "properties": {
+        "delay": {
+          "default": false,
+          "title": "Delay",
+          "type": "boolean"
+        },
+        "dll": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Dll",
+          "type": "string"
+        },
+        "included": {
+          "title": "Included",
+          "type": "boolean"
+        },
+        "kind": {
+          "const": "import",
+          "default": "import",
+          "title": "Kind",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 256,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "ordinal": {
+          "anyOf": [
+            {
+              "maximum": 65535,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Ordinal"
+        },
+        "origin": {
+          "enum": [
+            "pe-imports",
+            "capa-api"
+          ],
+          "title": "Origin",
+          "type": "string"
+        },
+        "separation": {
+          "enum": [
+            "older-only",
+            "newer-only",
+            "both-sides",
+            "unknown"
+          ],
+          "title": "Separation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "included",
+        "dll",
+        "origin",
+        "separation"
+      ],
+      "title": "ImportFeature",
+      "type": "object"
+    },
+    "PairSource": {
+      "additionalProperties": false,
+      "description": "The analyst-accepted changed-function pair. Eligibility (``materiality == 'material'`` or analyst confirmation) is a\ngate of the candidate, not a property of this fact record.",
+      "properties": {
+        "analyst_confirmed_material": {
+          "title": "Analyst Confirmed Material",
+          "type": "boolean"
+        },
+        "category": {
+          "enum": [
+            "modified",
+            "added",
+            "removed"
+          ],
+          "title": "Category",
+          "type": "string"
+        },
+        "cwe": {
+          "anyOf": [
+            {
+              "pattern": "^CWE-[1-9][0-9]{0,5}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cwe"
+        },
+        "finding_id": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Finding Id"
+        },
+        "match_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+          "title": "Match Id",
+          "type": "string"
+        },
+        "materiality": {
+          "enum": [
+            "unchanged",
+            "cosmetic",
+            "material",
+            "review",
+            "unknown"
+          ],
+          "title": "Materiality",
+          "type": "string"
+        },
+        "newer": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/FunctionRef"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "newer_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Newer Sha256",
+          "type": "string"
+        },
+        "older": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/FunctionRef"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "older_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Older Sha256",
+          "type": "string"
+        },
+        "project_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+          "title": "Project Id",
+          "type": "string"
+        },
+        "review": {
+          "const": "accepted",
+          "title": "Review",
+          "type": "string"
+        },
+        "revision": {
+          "minimum": 0,
+          "title": "Revision",
+          "type": "integer"
+        },
+        "run_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+          "title": "Run Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_id",
+        "revision",
+        "run_id",
+        "older_sha256",
+        "newer_sha256",
+        "match_id",
+        "category",
+        "review",
+        "materiality",
+        "analyst_confirmed_material"
+      ],
+      "title": "PairSource",
+      "type": "object"
+    },
+    "StringFeature": {
+      "additionalProperties": false,
+      "description": "A static string the changed code references. ``text`` is the escaped form exactly as the rule emits it (exact bytes\nwere re-read from the verified artifact; the display form is never used); ``length`` is the byte count it stands for.",
+      "properties": {
+        "encoding": {
+          "enum": [
+            "ascii",
+            "wide",
+            "ascii-wide"
+          ],
+          "title": "Encoding",
+          "type": "string"
+        },
+        "evidence_run_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Evidence Run Id",
+          "type": "string"
+        },
+        "included": {
+          "title": "Included",
+          "type": "boolean"
+        },
+        "kind": {
+          "const": "string",
+          "default": "string",
+          "title": "Kind",
+          "type": "string"
+        },
+        "length": {
+          "maximum": 256,
+          "minimum": 1,
+          "title": "Length",
+          "type": "integer"
+        },
+        "linked_by": {
+          "enum": [
+            "xref",
+            "file-level"
+          ],
+          "title": "Linked By",
+          "type": "string"
+        },
+        "offset": {
+          "exclusiveMaximum": 1099511627776,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "separation": {
+          "enum": [
+            "older-only",
+            "newer-only",
+            "both-sides",
+            "unknown"
+          ],
+          "title": "Separation",
+          "type": "string"
+        },
+        "side": {
+          "enum": [
+            "older",
+            "newer"
+          ],
+          "title": "Side",
+          "type": "string"
+        },
+        "text": {
+          "maxLength": 1024,
+          "pattern": "^(?:[ !#-\\[\\]-~]|\\\\(?:[\"\\\\nrt]|x[0-9A-Fa-f]{2}))+$",
+          "title": "Text",
+          "type": "string"
+        },
+        "value_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Value Sha256",
+          "type": "string"
+        }
+      },
+      "required": [
+        "included",
+        "side",
+        "value_sha256",
+        "length",
+        "text",
+        "encoding",
+        "offset",
+        "evidence_run_id",
+        "linked_by",
+        "separation"
+      ],
+      "title": "StringFeature",
+      "type": "object"
+    }
+  },
+  "$id": "https://patchtrace.local/schemas/rules/1/RuleCandidate.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "One proposed rule for one direction of one accepted pair. Included features all describe that direction's build\nonly (delta, not inventory); features of the other build, or present in both, are shown but never included.",
+  "properties": {
+    "candidate_id": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Candidate Id",
+      "type": "string"
+    },
+    "compile_warnings": {
+      "default": [],
+      "items": {
+        "pattern": "^(?:E[0-9]{3}|[a-z][a-z0-9_]{1,63})$",
+        "type": "string"
+      },
+      "maxItems": 16,
+      "title": "Compile Warnings",
+      "type": "array"
+    },
+    "contract": {
+      "const": "yara-rules/1",
+      "default": "yara-rules/1",
+      "title": "Contract",
+      "type": "string"
+    },
+    "direction": {
+      "enum": [
+        "older",
+        "newer"
+      ],
+      "title": "Direction",
+      "type": "string"
+    },
+    "engine": {
+      "$ref": "#/$defs/EngineStamp"
+    },
+    "features": {
+      "items": {
+        "discriminator": {
+          "mapping": {
+            "bytes": "#/$defs/BytesFeature",
+            "capability": "#/$defs/CapabilityFeature",
+            "import": "#/$defs/ImportFeature",
+            "string": "#/$defs/StringFeature"
+          },
+          "propertyName": "kind"
+        },
+        "oneOf": [
+          {
+            "$ref": "#/$defs/BytesFeature"
+          },
+          {
+            "$ref": "#/$defs/StringFeature"
+          },
+          {
+            "$ref": "#/$defs/ImportFeature"
+          },
+          {
+            "$ref": "#/$defs/CapabilityFeature"
+          }
+        ]
+      },
+      "maxItems": 64,
+      "minItems": 1,
+      "title": "Features",
+      "type": "array"
+    },
+    "gates": {
+      "items": {
+        "$ref": "#/$defs/Gate"
+      },
+      "maxItems": 8,
+      "title": "Gates",
+      "type": "array"
+    },
+    "lineage_id": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Lineage Id",
+      "type": "string"
+    },
+    "rule_name": {
+      "pattern": "^PT_[0-9a-f]{12}_(?:older|newer)$",
+      "title": "Rule Name",
+      "type": "string"
+    },
+    "rule_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Rule Sha256",
+      "type": "string"
+    },
+    "rule_text": {
+      "maxLength": 65536,
+      "minLength": 1,
+      "title": "Rule Text",
+      "type": "string"
+    },
+    "source": {
+      "$ref": "#/$defs/PairSource"
+    },
+    "unvetted": {
+      "title": "Unvetted",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "candidate_id",
+    "lineage_id",
+    "direction",
+    "source",
+    "features",
+    "rule_name",
+    "rule_text",
+    "rule_sha256",
+    "gates",
+    "engine",
+    "unvetted"
+  ],
+  "title": "RuleCandidate",
+  "type": "object"
+}

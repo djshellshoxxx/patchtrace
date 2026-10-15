@@ -1,0 +1,82 @@
+{
+  "$id": "https://patchtrace.local/schemas/rules/1/ImportFeature.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "delay": {
+      "default": false,
+      "title": "Delay",
+      "type": "boolean"
+    },
+    "dll": {
+      "maxLength": 256,
+      "minLength": 1,
+      "title": "Dll",
+      "type": "string"
+    },
+    "included": {
+      "title": "Included",
+      "type": "boolean"
+    },
+    "kind": {
+      "const": "import",
+      "default": "import",
+      "title": "Kind",
+      "type": "string"
+    },
+    "name": {
+      "anyOf": [
+        {
+          "maxLength": 256,
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Name"
+    },
+    "ordinal": {
+      "anyOf": [
+        {
+          "maximum": 65535,
+          "minimum": 1,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Ordinal"
+    },
+    "origin": {
+      "enum": [
+        "pe-imports",
+        "capa-api"
+      ],
+      "title": "Origin",
+      "type": "string"
+    },
+    "separation": {
+      "enum": [
+        "older-only",
+        "newer-only",
+        "both-sides",
+        "unknown"
+      ],
+      "title": "Separation",
+      "type": "string"
+    }
+  },
+  "required": [
+    "included",
+    "dll",
+    "origin",
+    "separation"
+  ],
+  "title": "ImportFeature",
+  "type": "object"
+}

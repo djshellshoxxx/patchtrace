@@ -1,0 +1,97 @@
+{
+  "$id": "https://patchtrace.local/schemas/rules/1/CellResult.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "One rule against one target. ``hits`` counts the matches of the first rule pattern that matched (capped by the\nengine at ``max_matches_per_pattern``), or is 1 for a rule that matched without a pattern; ``offsets`` are the first\nfile offsets (ascending) and ``rvas`` their module-relative addresses (``None`` outside every section). A file that\nwas not scanned, timed out or errored has ``hits is None``: unknown is never zero.",
+  "properties": {
+    "elapsed_ms": {
+      "default": 0,
+      "exclusiveMaximum": 1099511627776,
+      "minimum": 0,
+      "title": "Elapsed Ms",
+      "type": "integer"
+    },
+    "hits": {
+      "anyOf": [
+        {
+          "minimum": 0,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Hits"
+    },
+    "offsets": {
+      "default": [],
+      "items": {
+        "exclusiveMaximum": 1099511627776,
+        "minimum": 0,
+        "type": "integer"
+      },
+      "maxItems": 8,
+      "title": "Offsets",
+      "type": "array"
+    },
+    "reason": {
+      "anyOf": [
+        {
+          "pattern": "^[a-z0-9-]{1,48}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Reason"
+    },
+    "rvas": {
+      "default": [],
+      "items": {
+        "anyOf": [
+          {
+            "maximum": 4294967295,
+            "minimum": 0,
+            "type": "integer"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "maxItems": 8,
+      "title": "Rvas",
+      "type": "array"
+    },
+    "state": {
+      "enum": [
+        "hit",
+        "no-hit",
+        "not-scanned",
+        "timeout",
+        "error"
+      ],
+      "title": "State",
+      "type": "string"
+    },
+    "verdict": {
+      "default": "unscored",
+      "enum": [
+        "as-expected",
+        "unexpected-hit",
+        "unexpected-miss",
+        "unscored"
+      ],
+      "title": "Verdict",
+      "type": "string"
+    }
+  },
+  "required": [
+    "state"
+  ],
+  "title": "CellResult",
+  "type": "object"
+}

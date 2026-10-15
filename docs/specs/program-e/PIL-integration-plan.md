@@ -54,7 +54,7 @@ Charter 1-9: (1) keys and explicit orientation; (2) delta channels only, absent 
 ## 4. Cross-feature links
 | Anchor kind | PIL emits | PIL consumes | Used by | How |
 |---|---|---|---|---|
-| function | `fn:<candidate_key>` per assessed candidate (class, mechanism, CVEs) | unified rows, Ghidriff matches, secondary verdicts | WB1 badge on hits, WB2 node badge, unified UI row detail, GDE lesson target, KB "Open Leads" | key is `row_id`; navigation through the `Navigator` port |
+| function | `fn:<candidate_key>` per assessed candidate (class, mechanism, CVEs) | unified rows, Ghidriff matches, secondary verdicts | WB1 badge on hits, WB2 node badge, unified UI row detail, GDE lesson target, KB "Open Leads" | key is `row_id`; navigation through the GUI `NavigationPort`. Amended by FAB-0 (2026-10-14): FAB owns no navigation |
 | string | wanted strings (K quoted-string anchors) | T `StringChange` (value_hash), IR `str` rows | WB3 highlight, YRX seed | join on casefolded UTF-8 hash; static strings are never attributed to a function |
 | import/API | wanted APIs (hypothesis `api_hints`) | PE import delta, IR call import keys, Ghidriff `called` labels | WB2 edge highlight, YRX | `dll!name` when known; label-only calls support at most `tentative` |
 | capability | none | T `CapabilityChange` (function or basic-block attributed only) | CAP UI | context unless a data row maps its namespace (empty in v1) |
@@ -66,10 +66,10 @@ Charter 1-9: (1) keys and explicit orientation; (2) delta channels only, absent 
 | CWE | `CWE-n` plus family per hypothesis | KEV `cwes`, NVD and MSRC CWE (same origin as the advisory, tag `D_vendor_text`; an NVD analyst CWE that differs is a kept disagreement, not a second vote) | LBL labels, GDE | disagreement is kept, never voted |
 
 **FAB versus PIL.** FAB owns vocabulary and plumbing:
-1. the `Anchor` record, kinds and canonical keys; 2. the origin-tag registry and `components()` (generalising SPEC-31 05 s1.1 and `calibration.features.family_dependencies`, so "shared origin counts once" has one implementation); 3. anchor persistence, queries and staleness guards; 4. `NavRef` and the `Navigator` port; 5. a cross-feature insights feed that can list leads from any provider.
+1. the `Anchor` record, kinds and canonical keys; 2. the origin-tag registry and `components()` (generalising SPEC-31 05 s1.1 and `calibration.features.family_dependencies`, so "shared origin counts once" has one implementation); 3. anchor persistence, queries and staleness guards; 4. ~~`NavRef` and the `Navigator` port;~~ Amended by FAB-0 (2026-10-14): navigation stays in the GUI `NavigationPort`, so FAB does not own it; 5. a cross-feature insights feed that can list leads from any provider.
 
 PIL owns judgment: CWE/rule expected changes, three-valued evaluation, gates, tiers, tie-aware order, "why" text, review events, evaluation. FAB must not rank, classify CWEs or phrase explanations.
-Until FAB lands PIL ships `pilot/origins.py` and `pilot/ports.py` (`OriginRegistry`, `AnchorSink`, `Navigator` plus the input ports `AdvisorySource`, `ChangeEvidenceSource`, `ToolEvidenceSource`, `KevSource`, `CallDeltaSource`, `PairingSource`). FAB adopts or replaces them by moving files and rebinding `ports.py` only.
+Until FAB lands PIL ships `pilot/origins.py` and `pilot/ports.py` (`OriginRegistry`, `AnchorSink` plus the input ports `AdvisorySource`, `ChangeEvidenceSource`, `ToolEvidenceSource`, `KevSource`, `CallDeltaSource`, `PairingSource`). FAB adopts or replaces them by moving files and rebinding `ports.py` only. Amended by FAB-0 (2026-10-14): that rebinding is slice FAB-3 (FAB plan s9); navigation is not a PIL or FAB port (it stays the GUI `NavigationPort`), so `Navigator` is dropped from this list.
 
 ## 5. Synergy test
 Scenario (synthetic, hand-built ledger plus a validator-clean CSAF, no binaries). Module `examplenet.sys`; the update window fixes two CVEs:

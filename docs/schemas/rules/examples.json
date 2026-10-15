@@ -1,0 +1,4917 @@
+{
+  "ApiRef": {
+    "invalid": [
+      {
+        "example": {
+          "dll": "KERNEL32.dll",
+          "name": "TerminateProcess",
+          "unexpected_field": 1
+        },
+        "match": "extra_forbidden",
+        "reason": "extra fields are forbidden"
+      }
+    ],
+    "valid": [
+      {
+        "dll": "KERNEL32.dll",
+        "name": "TerminateProcess"
+      }
+    ]
+  },
+  "BytesFeature": {
+    "invalid": [
+      {
+        "example": {
+          "included": true,
+          "kind": "bytes",
+          "length": 24,
+          "literal": 20,
+          "longest_run": 15,
+          "mask": [
+            "rip-disp"
+          ],
+          "mask_source": "iced-x86",
+          "other_hits": 0,
+          "pattern": "48 83 EC 28 31 C9 BA 01 00 00 00 90 48 FF 15 ?? ?? ?? ?? 48 83 C4 28 C3",
+          "pins": [
+            {
+              "disp_offset": 15,
+              "dll": "KERNEL32.dll",
+              "end_offset": 19,
+              "name": "TerminateProcess"
+            }
+          ],
+          "separation": "older-only",
+          "side": "older",
+          "source_hits": 1,
+          "unexpected_field": 1,
+          "window_rva": 4173
+        },
+        "match": "extra_forbidden",
+        "reason": "extra fields are forbidden"
+      },
+      {
+        "example": {
+          "included": true,
+          "kind": "bytes",
+          "length": 24,
+          "literal": 21,
+          "longest_run": 15,
+          "mask": [
+            "rip-disp"
+          ],
+          "mask_source": "iced-x86",
+          "other_hits": 0,
+          "pattern": "48 83 EC 28 31 C9 BA 01 00 00 00 90 48 FF 15 ?? ?? ?? ?? 48 83 C4 28 C3",
+          "pins": [
+            {
+              "disp_offset": 15,
+              "dll": "KERNEL32.dll",
+              "end_offset": 19,
+              "name": "TerminateProcess"
+            }
+          ],
+          "separation": "older-only",
+          "side": "older",
+          "source_hits": 1,
+          "window_rva": 4173
+        },
+        "match": "must be the pattern",
+        "reason": "metrics are the pattern's own"
+      },
+      {
+        "example": {
+          "included": true,
+          "kind": "bytes",
+          "length": 24,
+          "literal": 20,
+          "longest_run": 15,
+          "mask": [],
+          "mask_source": "iced-x86",
+          "other_hits": 0,
+          "pattern": "48 83 EC 28 31 C9 BA 01 00 00 00 90 48 FF 15 ?? ?? ?? ?? 48 83 C4 28 C3",
+          "pins": [
+            {
+              "disp_offset": 15,
+              "dll": "KERNEL32.dll",
+              "end_offset": 19,
+              "name": "TerminateProcess"
+            }
+          ],
+          "separation": "older-only",
+          "side": "older",
+          "source_hits": 1,
+          "window_rva": 4173
+        },
+        "match": "wildcards need the mask kinds",
+        "reason": "wildcards need a mask kind"
+      },
+      {
+        "example": {
+          "included": true,
+          "kind": "bytes",
+          "length": 24,
+          "literal": 20,
+          "longest_run": 15,
+          "mask": [
+            "rip-disp"
+          ],
+          "mask_source": "iced-x86",
+          "other_hits": 0,
+          "pattern": "48 83 EC 28 31 C9 BA 01 00 00 00 90 48 FF 15 ?? ?? ?? ?? 48 83 C4 28 C3",
+          "pins": [
+            {
+              "disp_offset": 14,
+              "dll": "KERNEL32.dll",
+              "end_offset": 19,
+              "name": "TerminateProcess"
+            }
+          ],
+          "separation": "older-only",
+          "side": "older",
+          "source_hits": 1,
+          "window_rva": 4173
+        },
+        "match": "must be wildcarded",
+        "reason": "a pinned displacement is wildcarded"
+      },
+      {
+        "example": {
+          "included": true,
+          "kind": "bytes",
+          "length": 24,
+          "literal": 20,
+          "longest_run": 15,
+          "mask": [
+            "rip-disp"
+          ],
+          "mask_source": "iced-x86",
+          "other_hits": 2,
+          "pattern": "48 83 EC 28 31 C9 BA 01 00 00 00 90 48 FF 15 ?? ?? ?? ?? 48 83 C4 28 C3",
+          "pins": [
+            {
+              "disp_offset": 15,
+              "dll": "KERNEL32.dll",
+              "end_offset": 19,
+              "name": "TerminateProcess"
+            }
+          ],
+          "separation": "older-only",
+          "side": "older",
+          "source_hits": 1,
+          "window_rva": 4173
+        },
+        "match": "separation must be",
+        "reason": "a window found in the other build is not a separator"
+      },
+      {
+        "example": {
+          "included": true,
+          "kind": "bytes",
+          "length": 24,
+          "literal": 20,
+          "longest_run": 15,
+          "mask": [
+            "rip-disp"
+          ],
+          "mask_source": "iced-x86",
+          "other_hits": 0,
+          "pattern": "48 83",
+          "pins": [
+            {
+              "disp_offset": 15,
+              "dll": "KERNEL32.dll",
+              "end_offset": 19,
+              "name": "TerminateProcess"
+            }
+          ],
+          "separation": "older-only",
+          "side": "older",
+          "source_hits": 1,
+          "window_rva": 4173
+        },
+        "match": "string_pattern_mismatch",
+        "reason": "a window is at least 16 bytes"
+      }
+    ],
+    "valid": [
+      {
+        "included": true,
+        "kind": "bytes",
+        "length": 24,
+        "literal": 20,
+        "longest_run": 15,
+        "mask": [
+          "rip-disp"
+        ],
+        "mask_source": "iced-x86",
+        "other_hits": 0,
+        "pattern": "48 83 EC 28 31 C9 BA 01 00 00 00 90 48 FF 15 ?? ?? ?? ?? 48 83 C4 28 C3",
+        "pins": [
+          {
+            "disp_offset": 15,
+            "dll": "KERNEL32.dll",
+            "end_offset": 19,
+            "name": "TerminateProcess"
+          }
+        ],
+        "separation": "older-only",
+        "side": "older",
+        "source_hits": 1,
+        "window_rva": 4173
+      }
+    ]
+  },
+  "CallPin": {
+    "invalid": [
+      {
+        "example": {
+          "disp_offset": 15,
+          "dll": "KERNEL32.dll",
+          "end_offset": 19,
+          "name": "TerminateProcess",
+          "unexpected_field": 1
+        },
+        "match": "extra_forbidden",
+        "reason": "extra fields are forbidden"
+      },
+      {
+        "example": {
+          "disp_offset": 15,
+          "dll": "KERNEL32.dll",
+          "end_offset": 17,
+          "name": "TerminateProcess"
+        },
+        "match": "must end at or before the instruction end",
+        "reason": "a 4-byte displacement fits before the end"
+      }
+    ],
+    "valid": [
+      {
+        "disp_offset": 15,
+        "dll": "KERNEL32.dll",
+        "end_offset": 19,
+        "name": "TerminateProcess"
+      }
+    ]
+  },
+  "CapabilityFeature": {
+    "invalid": [
+      {
+        "example": {
+          "api_gates": [
+            {
+              "dll": "KERNEL32.dll",
+              "name": "TerminateProcess"
+            }
+          ],
+          "attack": [],
+          "classification": "removed-with-code",
+          "included": false,
+          "kind": "capability",
+          "namespace": "host-interaction/process/terminate",
+          "rule_id": "terminate process",
+          "separation": "older-only",
+          "unexpected_field": 1
+        },
+        "match": "extra_forbidden",
+        "reason": "extra fields are forbidden"
+      },
+      {
+        "example": {
+          "api_gates": [
+            {
+              "dll": "KERNEL32.dll",
+              "name": "TerminateProcess"
+            }
+          ],
+          "attack": [],
+          "classification": "removed-with-code",
+          "included": false,
+          "kind": "capability",
+          "namespace": "host-interaction/process/terminate",
+          "rule_id": "terminate process",
+          "separation": "newer-only"
+        },
+        "match": "removed-with-code means older-only",
+        "reason": "the classification fixes the side"
+      },
+      {
+        "example": {
+          "api_gates": [
+            {
+              "dll": "KERNEL32.dll",
+              "name": "TerminateProcess"
+            }
+          ],
+          "attack": [],
+          "classification": "newly-detectable",
+          "included": false,
+          "kind": "capability",
+          "namespace": "host-interaction/process/terminate",
+          "rule_id": "terminate process",
+          "separation": "older-only"
+        },
+        "match": "literal_error",
+        "reason": "only localized changes"
+      }
+    ],
+    "valid": [
+      {
+        "api_gates": [
+          {
+            "dll": "KERNEL32.dll",
+            "name": "TerminateProcess"
+          }
+        ],
+        "attack": [],
+        "classification": "removed-with-code",
+        "included": false,
+        "kind": "capability",
+        "namespace": "host-interaction/process/terminate",
+        "rule_id": "terminate process",
+        "separation": "older-only"
+      }
+    ]
+  },
+  "CellResult": {
+    "invalid": [
+      {
+        "example": {
+          "elapsed_ms": 3,
+          "hits": 1,
+          "offsets": [
+            589
+          ],
+          "reason": null,
+          "rvas": [
+            4173
+          ],
+          "state": "hit",
+          "unexpected_field": 1,
+          "verdict": "as-expected"
+        },
+        "match": "extra_forbidden",
+        "reason": "extra fields are forbidden"
+      },
+      {
+        "example": {
+          "elapsed_ms": 3,
+          "hits": 0,
+          "offsets": [
+            589
+          ],
+          "reason": null,
+          "rvas": [
+            4173
+          ],
+          "state": "hit",
+          "verdict": "as-expected"
+        },
+        "match": "at least one match",
+        "reason": "a hit has a match"
+      },
+      {
+        "example": {
+          "elapsed_ms": 2,
+          "hits": null,
+          "offsets": [],
+          "reason": null,
+          "rvas": [],
+          "state": "no-hit",
+          "verdict": "as-expected"
+        },
+        "match": "no-hit means zero",
+        "reason": "no-hit means zero matches"
+      },
+      {
+        "example": {
+          "elapsed_ms": 0,
+          "hits": 0,
+          "offsets": [],
+          "reason": "not-pe",
+          "rvas": [],
+          "state": "not-scanned",
+          "verdict": "unscored"
+        },
+        "match": "no hit count",
+        "reason": "an unscanned file has no hit count"
+      },
+      {
+        "example": {
+          "elapsed_ms": 0,
+          "hits": null,
+          "offsets": [],
+          "reason": "because",
+          "rvas": [],
+          "state": "not-scanned",
+          "verdict": "unscored"
+        },
+        "match": "one reason",
+        "reason": "not-scanned reasons are a closed list"
+      },
+      {
+        "example": {
+          "elapsed_ms": 3,
+          "hits": 1,
+          "offsets": [
+            589,
+            589
+          ],
+          "reason": null,
+          "rvas": [
+            4173
+          ],
+          "state": "hit",
+          "verdict": "as-expected"
+        },
+        "match": "strictly ascending",
+        "reason": "offsets ascend"
+      },
+      {
+        "example": {
+          "elapsed_ms": 30000,
+          "hits": null,
+          "offsets": [],
+          "reason": null,
+          "rvas": [],
+          "state": "timeout",
+          "verdict": "as-expected"
+        },
+        "match": "never scored",
+        "reason": "a timeout is never scored"
+      }
+    ],
+    "valid": [
+      {
+        "elapsed_ms": 3,
+        "hits": 1,
+        "offsets": [
+          589
+        ],
+        "reason": null,
+        "rvas": [
+          4173
+        ],
+        "state": "hit",
+        "verdict": "as-expected"
+      },
+      {
+        "elapsed_ms": 2,
+        "hits": 0,
+        "offsets": [],
+        "reason": null,
+        "rvas": [],
+        "state": "no-hit",
+        "verdict": "as-expected"
+      },
+      {
+        "elapsed_ms": 0,
+        "hits": null,
+        "offsets": [],
+        "reason": "not-pe",
+        "rvas": [],
+        "state": "not-scanned",
+        "verdict": "unscored"
+      },
+      {
+        "elapsed_ms": 30000,
+        "hits": null,
+        "offsets": [],
+        "reason": null,
+        "rvas": [],
+        "state": "timeout",
+        "verdict": "unscored"
+      },
+      {
+        "elapsed_ms": 0,
+        "hits": null,
+        "offsets": [],
+        "reason": "scan-error",
+        "rvas": [],
+        "state": "error",
+        "verdict": "unscored"
+      }
+    ]
+  },
+  "Diagnostic": {
+    "invalid": [
+      {
+        "example": {
+          "code": "text_as_hex",
+          "column": 5,
+          "line": 14,
+          "title": "hex pattern could be written as text literal",
+          "unexpected_field": 1
+        },
+        "match": "extra_forbidden",
+        "reason": "extra fields are forbidden"
+      },
+      {
+        "example": {
+          "code": "text_as_hex",
+          "column": 5,
+          "line": 14,
+          "title": "line\nbreak"
+        },
+        "match": "single line",
+        "reason": "a title is one line"
+      },
+      {
+        "example": {
+          "code": "text_as_hex",
+          "column": 5,
+          "line": 0,
+          "title": "hex pattern could be written as text literal"
+        },
+        "match": "greater_than_equal",
+        "reason": "lines start at 1"
+      }
+    ],
+    "valid": [
+      {
+        "code": "text_as_hex",
+        "column": 5,
+        "line": 14,
+        "title": "hex pattern could be written as text literal"
+      },
+      {
+        "code": "E018",
+        "column": 5,
+        "line": 14,
+        "title": "slow pattern"
+      }
+    ]
+  },
+  "EngineStamp": {
+    "invalid": [
+      {
+        "example": {
+          "decoder": "iced-x86",
+          "decoder_version": "1.21.0",
+          "engine": "yara-x",
+          "grammar": "yrx-gen/1",
+          "unexpected_field": 1,
+          "version": "1.21.0",
+          "version_source": "metadata",
+          "worker": "rules-worker/1"
+        },
+        "match": "extra_forbidden",
+        "reason": "extra fields are forbidden"
+      },
+      {
+        "example": {
+          "decoder": "iced-x86",
+          "decoder_version": null,
+          "engine": "yara-x",
+          "grammar": "yrx-gen/1",
+          "version": "1.21.0",
+          "version_source": "metadata",
+          "worker": "rules-worker/1"
+        },
+        "match": "a decoder has a version",
+        "reason": "a decoder has a version"
+      },
+      {
+        "example": {
+          "decoder": "iced-x86",
+          "decoder_version": "1.21.0",
+          "engine": "yara-x",
+          "grammar": "yrx-gen/1",
+          "version": "1.21.0 ",
+          "version_source": "metadata",
+          "worker": "rules-worker/1"
+        },
+        "match": "string_pattern_mismatch",
+        "reason": "version text is a token"
+      }
+    ],
+    "valid": [
+      {
+        "decoder": "iced-x86",
+        "decoder_version": "1.21.0",
+        "engine": "yara-x",
+        "grammar": "yrx-gen/1",
+        "version": "1.21.0",
+        "version_source": "metadata",
+        "worker": "rules-worker/1"
+      },
+      {
+        "decoder": "none",
+        "decoder_version": null,
+        "engine": "yara-x",
+        "grammar": "yrx-gen/1",
+        "version": "1.21.0",
+        "version_source": "pin",
+        "worker": "rules-worker/1"
+      }
+    ]
+  },
+  "ExportRecord": {
+    "invalid": [
+      {
+        "example": {
+          "basename": "example-rule.yar",
+          "contract": "yara-rules/1",
+          "export_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "exported_at": "2099-03-01T00:00:00Z",
+          "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "unexpected_field": 1,
+          "version_id": "3333333333333333333333333333333333333333333333333333333333333333",
+          "warnings": [
+            "not-tested"
+          ]
+        },
+        "match": "extra_forbidden",
+        "reason": "extra fields are forbidden"
+      },
+      {
+        "example": {
+          "basename": "example-rule.yar",
+          "contract": "yara-rules/2",
+          "export_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "exported_at": "2099-03-01T00:00:00Z",
+          "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "version_id": "3333333333333333333333333333333333333333333333333333333333333333",
+          "warnings": [
+            "not-tested"
+          ]
+        },
+        "match": "literal_error",
+        "reason": "unsupported future contract version"
+      },
+      {
+        "example": {
+          "basename": "dir/rule.yar",
+          "contract": "yara-rules/1",
+          "export_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "exported_at": "2099-03-01T00:00:00Z",
+          "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "version_id": "3333333333333333333333333333333333333333333333333333333333333333",
+          "warnings": [
+            "not-tested"
+          ]
+        },
+        "match": "string_pattern_mismatch",
+        "reason": "a basename has no path"
+      },
+      {
+        "example": {
+          "basename": "example-rule.yar",
+          "contract": "yara-rules/1",
+          "export_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "exported_at": "2099-03-01T00:00:00Z",
+          "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "version_id": "3333333333333333333333333333333333333333333333333333333333333333",
+          "warnings": [
+            "b",
+            "a"
+          ]
+        },
+        "match": "sorted and unique",
+        "reason": "warnings are sorted"
+      }
+    ],
+    "valid": [
+      {
+        "basename": "example-rule.yar",
+        "contract": "yara-rules/1",
+        "export_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "exported_at": "2099-03-01T00:00:00Z",
+        "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "version_id": "3333333333333333333333333333333333333333333333333333333333333333",
+        "warnings": [
+          "not-tested"
+        ]
+      }
+    ]
+  },
+  "FunctionRef": {
+    "invalid": [
+      {
+        "example": {
+          "extent": "pdata",
+          "name": null,
+          "rva": 4173,
+          "size": 24,
+          "unexpected_field": 1
+        },
+        "match": "extra_forbidden",
+        "reason": "extra fields are forbidden"
+      },
+      {
+        "example": {
+          "extent": "unknown",
+          "name": null,
+          "rva": 4173,
+          "size": 24
+        },
+        "match": "a size needs a verified extent",
+        "reason": "a size needs a verified extent"
+      },
+      {
+        "example": {
+          "extent": "unknown",
+          "name": "example_leaf",
+          "rva": 8192,
+          "size": 24
+        },
+        "match": "a size needs a verified extent",
+        "reason": "an unknown extent has no size"
+      }
+    ],
+    "valid": [
+      {
+        "extent": "pdata",
+        "name": null,
+        "rva": 4173,
+        "size": 24
+      },
+      {
+        "extent": "unknown",
+        "name": "example_leaf",
+        "rva": 8192,
+        "size": null
+      }
+    ]
+  },
+  "Gate": {
+    "invalid": [
+      {
+        "example": {
+          "detail": "Change reviewed as material",
+          "gate_id": "elig",
+          "measured": "material",
+          "state": "pass",
+          "unexpected_field": 1
+        },
+        "match": "extra_forbidden",
+        "reason": "extra fields are forbidden"
+      },
+      {
+        "example": {
+          "detail": "Change reviewed as material",
+          "gate_id": "score",
+          "measured": "material",
+          "state": "pass"
+        },
+        "match": "literal_error",
+        "reason": "gates are a closed list"
+      },
+      {
+        "example": {
+          "detail": "Change reviewed as material",
+          "gate_id": "elig",
+          "measured": 1.5,
+          "state": "pass"
+        },
+        "match": "int_type",
+        "reason": "a measured number is an integer"
+      }
+    ],
+    "valid": [
+      {
+        "detail": "Change reviewed as material",
+        "gate_id": "elig",
+        "measured": "material",
+        "state": "pass"
+      },
+      {
+        "detail": "toolchain not checked",
+        "gate_id": "dist",
+        "measured": null,
+        "state": "unknown"
+      }
+    ]
+  },
+  "ImportFeature": {
+    "invalid": [
+      {
+        "example": {
+          "delay": false,
+          "dll": "KERNEL32.dll",
+          "included": true,
+          "kind": "import",
+          "name": "TerminateProcess",
+          "ordinal": null,
+          "origin": "pe-imports",
+          "separation": "older-only",
+          "unexpected_field": 1
+        },
+        "match": "extra_forbidden",
+        "reason": "extra fields are forbidden"
+      },
+      {
+        "example": {
+          "delay": false,
+          "dll": "KERNEL32.dll",
+          "included": true,
+          "kind": "import",
+          "name": "TerminateProcess",
+          "ordinal": 3,
+          "origin": "pe-imports",
+          "separation": "older-only"
+        },
+        "match": "exactly one of name and ordinal",
+        "reason": "name and ordinal are exclusive"
+      },
+      {
+        "example": {
+          "delay": false,
+          "dll": "KERNEL32.dll",
+          "included": true,
+          "kind": "import",
+          "ordinal": null,
+          "origin": "pe-imports",
+          "separation": "older-only"
+        },
+        "match": "exactly one of name and ordinal",
+        "reason": "an import has a name or an ordinal"
+      }
+    ],
+    "valid": [
+      {
+        "delay": false,
+        "dll": "KERNEL32.dll",
+        "included": true,
+        "kind": "import",
+        "name": "TerminateProcess",
+        "ordinal": null,
+        "origin": "pe-imports",
+        "separation": "older-only"
+      },
+      {
+        "delay": true,
+        "dll": "EXAMPLE.dll",
+        "included": false,
+        "kind": "import",
+        "name": null,
+        "ordinal": 12,
+        "origin": "pe-imports",
+        "separation": "unknown"
+      }
+    ]
+  },
+  "LintResult": {
+    "invalid": [
+      {
+        "example": {
+          "errors": [],
+          "formatter_stable": true,
+          "identifiers": [
+            "PT_0123456789ab_older"
+          ],
+          "imports": [
+            "pe"
+          ],
+          "name": "3333333333333333333333333333333333333333333333333333333333333333",
+          "ok": true,
+          "patterns": 1,
+          "unexpected_field": 1,
+          "warnings": [
+            {
+              "code": "text_as_hex",
+              "column": 5,
+              "line": 14,
+              "title": "hex pattern could be written as text literal"
+            }
+          ]
+        },
+        "match": "extra_forbidden",
+        "reason": "extra fields are forbidden"
+      },
+      {
+        "example": {
+          "errors": [
+            {
+              "code": "E018",
+              "title": "slow pattern"
+            }
+          ],
+          "formatter_stable": true,
+          "identifiers": [
+            "PT_0123456789ab_older"
+          ],
+          "imports": [
+            "pe"
+          ],
+          "name": "3333333333333333333333333333333333333333333333333333333333333333",
+          "ok": true,
+          "patterns": 1,
+          "warnings": [
+            {
+              "code": "text_as_hex",
+              "column": 5,
+              "line": 14,
+              "title": "hex pattern could be written as text literal"
+            }
+          ]
+        },
+        "match": "ok means no errors",
+        "reason": "ok means no errors"
+      },
+      {
+        "example": {
+          "errors": [
+            {
+              "code": "E018",
+              "column": 5,
+              "line": 14,
+              "title": "slow pattern"
+            }
+          ],
+          "formatter_stable": true,
+          "identifiers": [],
+          "imports": [],
+          "name": "4444444444444444444444444444444444444444444444444444444444444444",
+          "ok": false,
+          "patterns": 0,
+          "warnings": []
+        },
+        "match": "only a rule that compiled",
+        "reason": "only a compiled rule is stable"
+      }
+    ],
+    "valid": [
+      {
+        "errors": [],
+        "formatter_stable": true,
+        "identifiers": [
+          "PT_0123456789ab_older"
+        ],
+        "imports": [
+          "pe"
+        ],
+        "name": "3333333333333333333333333333333333333333333333333333333333333333",
+        "ok": true,
+        "patterns": 1,
+        "warnings": [
+          {
+            "code": "text_as_hex",
+            "column": 5,
+            "line": 14,
+            "title": "hex pattern could be written as text literal"
+          }
+        ]
+      },
+      {
+        "errors": [
+          {
+            "code": "E018",
+            "column": 5,
+            "line": 14,
+            "title": "slow pattern"
+          }
+        ],
+        "formatter_stable": false,
+        "identifiers": [],
+        "imports": [],
+        "name": "4444444444444444444444444444444444444444444444444444444444444444",
+        "ok": false,
+        "patterns": 0,
+        "warnings": []
+      }
+    ]
+  },
+  "MatrixRun": {
+    "invalid": [
+      {
+        "example": {
+          "anomalies": [
+            "1 file was not a PE image"
+          ],
+          "cache_key": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+          "cells": [
+            {
+              "elapsed_ms": 3,
+              "hits": 1,
+              "offsets": [
+                589
+              ],
+              "reason": null,
+              "rvas": [
+                4173
+              ],
+              "state": "hit",
+              "verdict": "as-expected"
+            },
+            {
+              "elapsed_ms": 2,
+              "hits": 0,
+              "offsets": [],
+              "reason": null,
+              "rvas": [],
+              "state": "no-hit",
+              "verdict": "as-expected"
+            },
+            {
+              "elapsed_ms": 0,
+              "hits": null,
+              "offsets": [],
+              "reason": "not-pe",
+              "rvas": [],
+              "state": "not-scanned",
+              "verdict": "unscored"
+            }
+          ],
+          "contract": "yara-rules/1",
+          "engine": {
+            "decoder": "none",
+            "decoder_version": null,
+            "engine": "yara-x",
+            "grammar": "yrx-gen/1",
+            "version": "1.21.0",
+            "version_source": "pin",
+            "worker": "rules-worker/1"
+          },
+          "finished_at": "2099-03-01T00:00:00Z",
+          "limits": {
+            "candidates_per_direction": 3,
+            "candidates_per_run": 200,
+            "cells": 105000,
+            "clean_targets": 2000,
+            "diagnostics_per_rule": 16,
+            "extra_targets": 64,
+            "features_per_candidate": 64,
+            "file_bytes": 134217728,
+            "function_bytes": 65536,
+            "hex_pattern_bytes": 512,
+            "hex_patterns_per_rule": 4,
+            "label_chars": 120,
+            "max_matches_per_pattern": 64,
+            "meta_string_chars": 512,
+            "offsets_per_cell": 8,
+            "patterns_per_rule": 12,
+            "pins_per_feature": 4,
+            "request_bytes": 8388608,
+            "result_bytes": 33554432,
+            "rule_text_bytes": 65536,
+            "rules_per_run": 50,
+            "run_bytes": 8589934592,
+            "run_wall_s": 3600,
+            "series_targets": 8,
+            "stderr_tail_bytes": 8192,
+            "target_timeout_max_s": 300,
+            "target_timeout_min_s": 5,
+            "target_timeout_s": 30,
+            "text_pattern_bytes": 256,
+            "text_patterns_per_rule": 8,
+            "versions_per_lineage": 50,
+            "window_min_bytes": 16,
+            "worker_memory_bytes": 1073741824,
+            "worker_memory_max_bytes": 2147483648
+          },
+          "rules": [
+            {
+              "rule_sha256": "7ce1da78d8105cc009c32637943060ee504085155d999353e296742a37b30f51",
+              "version_id": "3333333333333333333333333333333333333333333333333333333333333333"
+            }
+          ],
+          "run_id": "run-test-1",
+          "status": "complete",
+          "targets": [
+            {
+              "advisory_says": "unknown",
+              "expect": "hit",
+              "file_version": "10.0.26100.5000",
+              "kb": "KB5098000",
+              "label": "older.dll",
+              "ordinal": 1,
+              "role": "older-anchor",
+              "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "size": 4096,
+              "target_id": "t1",
+              "toolchain_flag": "unknown"
+            },
+            {
+              "advisory_says": "fixed",
+              "expect": "no-hit",
+              "file_version": "10.0.26100.5001",
+              "kb": "KB5099001",
+              "label": "newer.dll",
+              "ordinal": 2,
+              "role": "series",
+              "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+              "size": 4096,
+              "target_id": "t2",
+              "toolchain_flag": "none"
+            },
+            {
+              "advisory_says": "unknown",
+              "expect": "no-hit",
+              "file_version": null,
+              "kb": null,
+              "label": "clean1.dll",
+              "ordinal": null,
+              "role": "clean",
+              "sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+              "size": 2048,
+              "target_id": "t3",
+              "toolchain_flag": "unknown"
+            }
+          ],
+          "unexpected_field": 1
+        },
+        "match": "extra_forbidden",
+        "reason": "extra fields are forbidden"
+      },
+      {
+        "example": {
+          "anomalies": [
+            "1 file was not a PE image"
+          ],
+          "cache_key": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+          "cells": [
+            {
+              "elapsed_ms": 3,
+              "hits": 1,
+              "offsets": [
+                589
+              ],
+              "reason": null,
+              "rvas": [
+                4173
+              ],
+              "state": "hit",
+              "verdict": "as-expected"
+            },
+            {
+              "elapsed_ms": 2,
+              "hits": 0,
+              "offsets": [],
+              "reason": null,
+              "rvas": [],
+              "state": "no-hit",
+              "verdict": "as-expected"
+            },
+            {
+              "elapsed_ms": 0,
+              "hits": null,
+              "offsets": [],
+              "reason": "not-pe",
+              "rvas": [],
+              "state": "not-scanned",
+              "verdict": "unscored"
+            }
+          ],
+          "contract": "yara-rules/2",
+          "engine": {
+            "decoder": "none",
+            "decoder_version": null,
+            "engine": "yara-x",
+            "grammar": "yrx-gen/1",
+            "version": "1.21.0",
+            "version_source": "pin",
+            "worker": "rules-worker/1"
+          },
+          "finished_at": "2099-03-01T00:00:00Z",
+          "limits": {
+            "candidates_per_direction": 3,
+            "candidates_per_run": 200,
+            "cells": 105000,
+            "clean_targets": 2000,
+            "diagnostics_per_rule": 16,
+            "extra_targets": 64,
+            "features_per_candidate": 64,
+            "file_bytes": 134217728,
+            "function_bytes": 65536,
+            "hex_pattern_bytes": 512,
+            "hex_patterns_per_rule": 4,
+            "label_chars": 120,
+            "max_matches_per_pattern": 64,
+            "meta_string_chars": 512,
+            "offsets_per_cell": 8,
+            "patterns_per_rule": 12,
+            "pins_per_feature": 4,
+            "request_bytes": 8388608,
+            "result_bytes": 33554432,
+            "rule_text_bytes": 65536,
+            "rules_per_run": 50,
+            "run_bytes": 8589934592,
+            "run_wall_s": 3600,
+            "series_targets": 8,
+            "stderr_tail_bytes": 8192,
+            "target_timeout_max_s": 300,
+            "target_timeout_min_s": 5,
+            "target_timeout_s": 30,
+            "text_pattern_bytes": 256,
+            "text_patterns_per_rule": 8,
+            "versions_per_lineage": 50,
+            "window_min_bytes": 16,
+            "worker_memory_bytes": 1073741824,
+            "worker_memory_max_bytes": 2147483648
+          },
+          "rules": [
+            {
+              "rule_sha256": "7ce1da78d8105cc009c32637943060ee504085155d999353e296742a37b30f51",
+              "version_id": "3333333333333333333333333333333333333333333333333333333333333333"
+            }
+          ],
+          "run_id": "run-test-1",
+          "status": "complete",
+          "targets": [
+            {
+              "advisory_says": "unknown",
+              "expect": "hit",
+              "file_version": "10.0.26100.5000",
+              "kb": "KB5098000",
+              "label": "older.dll",
+              "ordinal": 1,
+              "role": "older-anchor",
+              "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "size": 4096,
+              "target_id": "t1",
+              "toolchain_flag": "unknown"
+            },
+            {
+              "advisory_says": "fixed",
+              "expect": "no-hit",
+              "file_version": "10.0.26100.5001",
+              "kb": "KB5099001",
+              "label": "newer.dll",
+              "ordinal": 2,
+              "role": "series",
+              "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+              "size": 4096,
+              "target_id": "t2",
+              "toolchain_flag": "none"
+            },
+            {
+              "advisory_says": "unknown",
+              "expect": "no-hit",
+              "file_version": null,
+              "kb": null,
+              "label": "clean1.dll",
+              "ordinal": null,
+              "role": "clean",
+              "sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+              "size": 2048,
+              "target_id": "t3",
+              "toolchain_flag": "unknown"
+            }
+          ]
+        },
+        "match": "literal_error",
+        "reason": "unsupported future contract version"
+      },
+      {
+        "example": {
+          "anomalies": [
+            "1 file was not a PE image"
+          ],
+          "cache_key": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+          "cells": [],
+          "contract": "yara-rules/1",
+          "engine": {
+            "decoder": "none",
+            "decoder_version": null,
+            "engine": "yara-x",
+            "grammar": "yrx-gen/1",
+            "version": "1.21.0",
+            "version_source": "pin",
+            "worker": "rules-worker/1"
+          },
+          "finished_at": "2099-03-01T00:00:00Z",
+          "limits": {
+            "candidates_per_direction": 3,
+            "candidates_per_run": 200,
+            "cells": 105000,
+            "clean_targets": 2000,
+            "diagnostics_per_rule": 16,
+            "extra_targets": 64,
+            "features_per_candidate": 64,
+            "file_bytes": 134217728,
+            "function_bytes": 65536,
+            "hex_pattern_bytes": 512,
+            "hex_patterns_per_rule": 4,
+            "label_chars": 120,
+            "max_matches_per_pattern": 64,
+            "meta_string_chars": 512,
+            "offsets_per_cell": 8,
+            "patterns_per_rule": 12,
+            "pins_per_feature": 4,
+            "request_bytes": 8388608,
+            "result_bytes": 33554432,
+            "rule_text_bytes": 65536,
+            "rules_per_run": 50,
+            "run_bytes": 8589934592,
+            "run_wall_s": 3600,
+            "series_targets": 8,
+            "stderr_tail_bytes": 8192,
+            "target_timeout_max_s": 300,
+            "target_timeout_min_s": 5,
+            "target_timeout_s": 30,
+            "text_pattern_bytes": 256,
+            "text_patterns_per_rule": 8,
+            "versions_per_lineage": 50,
+            "window_min_bytes": 16,
+            "worker_memory_bytes": 1073741824,
+            "worker_memory_max_bytes": 2147483648
+          },
+          "rules": [
+            {
+              "rule_sha256": "7ce1da78d8105cc009c32637943060ee504085155d999353e296742a37b30f51",
+              "version_id": "3333333333333333333333333333333333333333333333333333333333333333"
+            }
+          ],
+          "run_id": "run-test-1",
+          "status": "complete",
+          "targets": [
+            {
+              "advisory_says": "unknown",
+              "expect": "hit",
+              "file_version": "10.0.26100.5000",
+              "kb": "KB5098000",
+              "label": "older.dll",
+              "ordinal": 1,
+              "role": "older-anchor",
+              "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "size": 4096,
+              "target_id": "t1",
+              "toolchain_flag": "unknown"
+            },
+            {
+              "advisory_says": "fixed",
+              "expect": "no-hit",
+              "file_version": "10.0.26100.5001",
+              "kb": "KB5099001",
+              "label": "newer.dll",
+              "ordinal": 2,
+              "role": "series",
+              "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+              "size": 4096,
+              "target_id": "t2",
+              "toolchain_flag": "none"
+            },
+            {
+              "advisory_says": "unknown",
+              "expect": "no-hit",
+              "file_version": null,
+              "kb": null,
+              "label": "clean1.dll",
+              "ordinal": null,
+              "role": "clean",
+              "sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+              "size": 2048,
+              "target_id": "t3",
+              "toolchain_flag": "unknown"
+            }
+          ]
+        },
+        "match": "targets x rules",
+        "reason": "cells are targets x rules"
+      },
+      {
+        "example": {
+          "anomalies": [
+            "1 file was not a PE image"
+          ],
+          "cache_key": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+          "cells": [
+            {
+              "elapsed_ms": 3,
+              "hits": 1,
+              "offsets": [
+                589
+              ],
+              "reason": null,
+              "rvas": [
+                4173
+              ],
+              "state": "hit",
+              "verdict": "as-expected"
+            },
+            {
+              "elapsed_ms": 2,
+              "hits": 0,
+              "offsets": [],
+              "reason": null,
+              "rvas": [],
+              "state": "no-hit",
+              "verdict": "as-expected"
+            },
+            {
+              "elapsed_ms": 0,
+              "hits": null,
+              "offsets": [],
+              "reason": "not-pe",
+              "rvas": [],
+              "state": "not-scanned",
+              "verdict": "unscored"
+            }
+          ],
+          "contract": "yara-rules/1",
+          "engine": {
+            "decoder": "none",
+            "decoder_version": null,
+            "engine": "yara-x",
+            "grammar": "yrx-gen/1",
+            "version": "1.21.0",
+            "version_source": "pin",
+            "worker": "rules-worker/1"
+          },
+          "finished_at": "2099-03-01T00:00:00Z",
+          "limits": {
+            "candidates_per_direction": 3,
+            "candidates_per_run": 200,
+            "cells": 105000,
+            "clean_targets": 2000,
+            "diagnostics_per_rule": 16,
+            "extra_targets": 64,
+            "features_per_candidate": 64,
+            "file_bytes": 134217728,
+            "function_bytes": 65536,
+            "hex_pattern_bytes": 512,
+            "hex_patterns_per_rule": 4,
+            "label_chars": 120,
+            "max_matches_per_pattern": 64,
+            "meta_string_chars": 512,
+            "offsets_per_cell": 8,
+            "patterns_per_rule": 12,
+            "pins_per_feature": 4,
+            "request_bytes": 8388608,
+            "result_bytes": 33554432,
+            "rule_text_bytes": 65536,
+            "rules_per_run": 50,
+            "run_bytes": 8589934592,
+            "run_wall_s": 3600,
+            "series_targets": 8,
+            "stderr_tail_bytes": 8192,
+            "target_timeout_max_s": 300,
+            "target_timeout_min_s": 5,
+            "target_timeout_s": 30,
+            "text_pattern_bytes": 256,
+            "text_patterns_per_rule": 8,
+            "versions_per_lineage": 50,
+            "window_min_bytes": 16,
+            "worker_memory_bytes": 1073741824,
+            "worker_memory_max_bytes": 2147483648
+          },
+          "rules": [
+            {
+              "rule_sha256": "7ce1da78d8105cc009c32637943060ee504085155d999353e296742a37b30f51",
+              "version_id": "3333333333333333333333333333333333333333333333333333333333333333"
+            }
+          ],
+          "run_id": "run-test-1",
+          "status": "complete",
+          "targets": [
+            {
+              "advisory_says": "unknown",
+              "expect": "hit",
+              "file_version": "10.0.26100.5000",
+              "kb": "KB5098000",
+              "label": "older.dll",
+              "ordinal": 1,
+              "role": "older-anchor",
+              "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "size": 4096,
+              "target_id": "t1",
+              "toolchain_flag": "unknown"
+            },
+            {
+              "advisory_says": "fixed",
+              "expect": "no-hit",
+              "file_version": "10.0.26100.5001",
+              "kb": "KB5099001",
+              "label": "newer.dll",
+              "ordinal": 2,
+              "role": "series",
+              "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+              "size": 4096,
+              "target_id": "t1",
+              "toolchain_flag": "none"
+            },
+            {
+              "advisory_says": "unknown",
+              "expect": "no-hit",
+              "file_version": null,
+              "kb": null,
+              "label": "clean1.dll",
+              "ordinal": null,
+              "role": "clean",
+              "sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+              "size": 2048,
+              "target_id": "t3",
+              "toolchain_flag": "unknown"
+            }
+          ]
+        },
+        "match": "must be unique",
+        "reason": "target ids are unique"
+      },
+      {
+        "example": {
+          "anomalies": [
+            "1 file was not a PE image"
+          ],
+          "cache_key": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+          "cells": [
+            {
+              "elapsed_ms": 3,
+              "hits": 1,
+              "offsets": [
+                589
+              ],
+              "reason": null,
+              "rvas": [
+                4173
+              ],
+              "state": "hit",
+              "verdict": "as-expected"
+            },
+            {
+              "elapsed_ms": 2,
+              "hits": 0,
+              "offsets": [],
+              "reason": null,
+              "rvas": [],
+              "state": "no-hit",
+              "verdict": "as-expected"
+            },
+            {
+              "elapsed_ms": 0,
+              "hits": null,
+              "offsets": [],
+              "reason": "not-pe",
+              "rvas": [],
+              "state": "not-scanned",
+              "verdict": "unscored"
+            }
+          ],
+          "contract": "yara-rules/1",
+          "engine": {
+            "decoder": "none",
+            "decoder_version": null,
+            "engine": "yara-x",
+            "grammar": "yrx-gen/1",
+            "version": "1.21.0",
+            "version_source": "pin",
+            "worker": "rules-worker/1"
+          },
+          "finished_at": "2099-03-01T00:00:00Z",
+          "limits": {
+            "candidates_per_direction": 3,
+            "candidates_per_run": 200,
+            "cells": 105000,
+            "clean_targets": 2000,
+            "diagnostics_per_rule": 16,
+            "extra_targets": 64,
+            "features_per_candidate": 64,
+            "file_bytes": 134217728,
+            "function_bytes": 65536,
+            "hex_pattern_bytes": 512,
+            "hex_patterns_per_rule": 4,
+            "label_chars": 120,
+            "max_matches_per_pattern": 64,
+            "meta_string_chars": 512,
+            "offsets_per_cell": 8,
+            "patterns_per_rule": 12,
+            "pins_per_feature": 4,
+            "request_bytes": 8388608,
+            "result_bytes": 33554432,
+            "rule_text_bytes": 65536,
+            "rules_per_run": 50,
+            "run_bytes": 8589934592,
+            "run_wall_s": 3600,
+            "series_targets": 8,
+            "stderr_tail_bytes": 8192,
+            "target_timeout_max_s": 300,
+            "target_timeout_min_s": 5,
+            "target_timeout_s": 30,
+            "text_pattern_bytes": 256,
+            "text_patterns_per_rule": 8,
+            "versions_per_lineage": 50,
+            "window_min_bytes": 16,
+            "worker_memory_bytes": 1073741824,
+            "worker_memory_max_bytes": 2147483648
+          },
+          "rules": [
+            {
+              "rule_sha256": "7ce1da78d8105cc009c32637943060ee504085155d999353e296742a37b30f51",
+              "version_id": "3333333333333333333333333333333333333333333333333333333333333333"
+            }
+          ],
+          "run_id": "run-test-1",
+          "status": "verified",
+          "targets": [
+            {
+              "advisory_says": "unknown",
+              "expect": "hit",
+              "file_version": "10.0.26100.5000",
+              "kb": "KB5098000",
+              "label": "older.dll",
+              "ordinal": 1,
+              "role": "older-anchor",
+              "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "size": 4096,
+              "target_id": "t1",
+              "toolchain_flag": "unknown"
+            },
+            {
+              "advisory_says": "fixed",
+              "expect": "no-hit",
+              "file_version": "10.0.26100.5001",
+              "kb": "KB5099001",
+              "label": "newer.dll",
+              "ordinal": 2,
+              "role": "series",
+              "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+              "size": 4096,
+              "target_id": "t2",
+              "toolchain_flag": "none"
+            },
+            {
+              "advisory_says": "unknown",
+              "expect": "no-hit",
+              "file_version": null,
+              "kb": null,
+              "label": "clean1.dll",
+              "ordinal": null,
+              "role": "clean",
+              "sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+              "size": 2048,
+              "target_id": "t3",
+              "toolchain_flag": "unknown"
+            }
+          ]
+        },
+        "match": "literal_error",
+        "reason": "status is a closed list"
+      }
+    ],
+    "valid": [
+      {
+        "anomalies": [
+          "1 file was not a PE image"
+        ],
+        "cache_key": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+        "cells": [
+          {
+            "elapsed_ms": 3,
+            "hits": 1,
+            "offsets": [
+              589
+            ],
+            "reason": null,
+            "rvas": [
+              4173
+            ],
+            "state": "hit",
+            "verdict": "as-expected"
+          },
+          {
+            "elapsed_ms": 2,
+            "hits": 0,
+            "offsets": [],
+            "reason": null,
+            "rvas": [],
+            "state": "no-hit",
+            "verdict": "as-expected"
+          },
+          {
+            "elapsed_ms": 0,
+            "hits": null,
+            "offsets": [],
+            "reason": "not-pe",
+            "rvas": [],
+            "state": "not-scanned",
+            "verdict": "unscored"
+          }
+        ],
+        "contract": "yara-rules/1",
+        "engine": {
+          "decoder": "none",
+          "decoder_version": null,
+          "engine": "yara-x",
+          "grammar": "yrx-gen/1",
+          "version": "1.21.0",
+          "version_source": "pin",
+          "worker": "rules-worker/1"
+        },
+        "finished_at": "2099-03-01T00:00:00Z",
+        "limits": {
+          "candidates_per_direction": 3,
+          "candidates_per_run": 200,
+          "cells": 105000,
+          "clean_targets": 2000,
+          "diagnostics_per_rule": 16,
+          "extra_targets": 64,
+          "features_per_candidate": 64,
+          "file_bytes": 134217728,
+          "function_bytes": 65536,
+          "hex_pattern_bytes": 512,
+          "hex_patterns_per_rule": 4,
+          "label_chars": 120,
+          "max_matches_per_pattern": 64,
+          "meta_string_chars": 512,
+          "offsets_per_cell": 8,
+          "patterns_per_rule": 12,
+          "pins_per_feature": 4,
+          "request_bytes": 8388608,
+          "result_bytes": 33554432,
+          "rule_text_bytes": 65536,
+          "rules_per_run": 50,
+          "run_bytes": 8589934592,
+          "run_wall_s": 3600,
+          "series_targets": 8,
+          "stderr_tail_bytes": 8192,
+          "target_timeout_max_s": 300,
+          "target_timeout_min_s": 5,
+          "target_timeout_s": 30,
+          "text_pattern_bytes": 256,
+          "text_patterns_per_rule": 8,
+          "versions_per_lineage": 50,
+          "window_min_bytes": 16,
+          "worker_memory_bytes": 1073741824,
+          "worker_memory_max_bytes": 2147483648
+        },
+        "rules": [
+          {
+            "rule_sha256": "7ce1da78d8105cc009c32637943060ee504085155d999353e296742a37b30f51",
+            "version_id": "3333333333333333333333333333333333333333333333333333333333333333"
+          }
+        ],
+        "run_id": "run-test-1",
+        "status": "complete",
+        "targets": [
+          {
+            "advisory_says": "unknown",
+            "expect": "hit",
+            "file_version": "10.0.26100.5000",
+            "kb": "KB5098000",
+            "label": "older.dll",
+            "ordinal": 1,
+            "role": "older-anchor",
+            "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "size": 4096,
+            "target_id": "t1",
+            "toolchain_flag": "unknown"
+          },
+          {
+            "advisory_says": "fixed",
+            "expect": "no-hit",
+            "file_version": "10.0.26100.5001",
+            "kb": "KB5099001",
+            "label": "newer.dll",
+            "ordinal": 2,
+            "role": "series",
+            "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "size": 4096,
+            "target_id": "t2",
+            "toolchain_flag": "none"
+          },
+          {
+            "advisory_says": "unknown",
+            "expect": "no-hit",
+            "file_version": null,
+            "kb": null,
+            "label": "clean1.dll",
+            "ordinal": null,
+            "role": "clean",
+            "sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+            "size": 2048,
+            "target_id": "t3",
+            "toolchain_flag": "unknown"
+          }
+        ]
+      }
+    ]
+  },
+  "PairSource": {
+    "invalid": [
+      {
+        "example": {
+          "analyst_confirmed_material": false,
+          "category": "removed",
+          "cwe": null,
+          "finding_id": "finding-1",
+          "match_id": "match-1",
+          "materiality": "material",
+          "newer": null,
+          "newer_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "older": {
+            "extent": "pdata",
+            "name": null,
+            "rva": 4173,
+            "size": 24
+          },
+          "older_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "project_id": "project-1",
+          "review": "accepted",
+          "revision": 3,
+          "run_id": "run-1",
+          "unexpected_field": 1
+        },
+        "match": "extra_forbidden",
+        "reason": "extra fields are forbidden"
+      },
+      {
+        "example": {
+          "analyst_confirmed_material": false,
+          "category": "removed",
+          "cwe": null,
+          "finding_id": "finding-1",
+          "match_id": "match-1",
+          "materiality": "material",
+          "newer": null,
+          "newer_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "older": null,
+          "older_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "project_id": "project-1",
+          "review": "accepted",
+          "revision": 3,
+          "run_id": "run-1"
+        },
+        "match": "exactly the functions",
+        "reason": "a removed pair has its older function"
+      },
+      {
+        "example": {
+          "analyst_confirmed_material": false,
+          "category": "removed",
+          "cwe": null,
+          "finding_id": "finding-1",
+          "match_id": "match-1",
+          "materiality": "material",
+          "newer": null,
+          "newer_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "older": {
+            "extent": "pdata",
+            "name": null,
+            "rva": 4173,
+            "size": 24
+          },
+          "older_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "project_id": "project-1",
+          "review": "accepted",
+          "revision": 3,
+          "run_id": "run-1"
+        },
+        "match": "the older and newer builds must differ",
+        "reason": "the two builds differ"
+      },
+      {
+        "example": {
+          "analyst_confirmed_material": false,
+          "category": "removed",
+          "cwe": null,
+          "finding_id": "finding-1",
+          "match_id": "match-1",
+          "materiality": "material",
+          "newer": null,
+          "newer_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "older": {
+            "extent": "pdata",
+            "name": null,
+            "rva": 4173,
+            "size": 24
+          },
+          "older_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "project_id": "project-1",
+          "review": "unreviewed",
+          "revision": 3,
+          "run_id": "run-1"
+        },
+        "match": "literal_error",
+        "reason": "only accepted pairs"
+      }
+    ],
+    "valid": [
+      {
+        "analyst_confirmed_material": false,
+        "category": "removed",
+        "cwe": null,
+        "finding_id": "finding-1",
+        "match_id": "match-1",
+        "materiality": "material",
+        "newer": null,
+        "newer_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "older": {
+          "extent": "pdata",
+          "name": null,
+          "rva": 4173,
+          "size": 24
+        },
+        "older_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "project_id": "project-1",
+        "review": "accepted",
+        "revision": 3,
+        "run_id": "run-1"
+      },
+      {
+        "analyst_confirmed_material": true,
+        "category": "modified",
+        "cwe": "CWE-20",
+        "finding_id": null,
+        "match_id": "match-2",
+        "materiality": "unknown",
+        "newer": {
+          "extent": "unified-ir",
+          "name": null,
+          "rva": 4237,
+          "size": 38
+        },
+        "newer_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "older": {
+          "extent": "unified-ir",
+          "name": null,
+          "rva": 4173,
+          "size": 38
+        },
+        "older_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "project_id": "project-1",
+        "review": "accepted",
+        "revision": 3,
+        "run_id": "run-1"
+      }
+    ]
+  },
+  "RuleCandidate": {
+    "invalid": [
+      {
+        "example": {
+          "candidate_id": "1111111111111111111111111111111111111111111111111111111111111111",
+          "compile_warnings": [],
+          "contract": "yara-rules/1",
+          "direction": "older",
+          "engine": {
+            "decoder": "iced-x86",
+            "decoder_version": "1.21.0",
+            "engine": "yara-x",
+            "grammar": "yrx-gen/1",
+            "version": "1.21.0",
+            "version_source": "metadata",
+            "worker": "rules-worker/1"
+          },
+          "features": [
+            {
+              "included": true,
+              "kind": "bytes",
+              "length": 24,
+              "literal": 20,
+              "longest_run": 15,
+              "mask": [
+                "rip-disp"
+              ],
+              "mask_source": "iced-x86",
+              "other_hits": 0,
+              "pattern": "48 83 EC 28 31 C9 BA 01 00 00 00 90 48 FF 15 ?? ?? ?? ?? 48 83 C4 28 C3",
+              "pins": [
+                {
+                  "disp_offset": 15,
+                  "dll": "KERNEL32.dll",
+                  "end_offset": 19,
+                  "name": "TerminateProcess"
+                }
+              ],
+              "separation": "older-only",
+              "side": "older",
+              "source_hits": 1,
+              "window_rva": 4173
+            },
+            {
+              "delay": false,
+              "dll": "KERNEL32.dll",
+              "included": true,
+              "kind": "import",
+              "name": "TerminateProcess",
+              "ordinal": null,
+              "origin": "pe-imports",
+              "separation": "older-only"
+            },
+            {
+              "api_gates": [
+                {
+                  "dll": "KERNEL32.dll",
+                  "name": "TerminateProcess"
+                }
+              ],
+              "attack": [],
+              "classification": "removed-with-code",
+              "included": false,
+              "kind": "capability",
+              "namespace": "host-interaction/process/terminate",
+              "rule_id": "terminate process",
+              "separation": "older-only"
+            },
+            {
+              "encoding": "ascii",
+              "evidence_run_id": "tool-run-1",
+              "included": false,
+              "kind": "string",
+              "length": 8,
+              "linked_by": "file-level",
+              "offset": 8720,
+              "separation": "newer-only",
+              "side": "newer",
+              "text": "Example\\x00",
+              "value_sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+            }
+          ],
+          "gates": [
+            {
+              "detail": "Change reviewed as material",
+              "gate_id": "elig",
+              "measured": "material",
+              "state": "pass"
+            },
+            {
+              "detail": "20 literal bytes, longest run 15",
+              "gate_id": "len",
+              "measured": 20,
+              "state": "pass"
+            },
+            {
+              "detail": "4 of 24 bytes are wildcards",
+              "gate_id": "wild",
+              "measured": 16,
+              "state": "pass"
+            },
+            {
+              "detail": "",
+              "gate_id": "uniq",
+              "measured": 1,
+              "state": "pass"
+            },
+            {
+              "detail": "",
+              "gate_id": "sep",
+              "measured": 0,
+              "state": "pass"
+            },
+            {
+              "detail": "no warnings",
+              "gate_id": "compile",
+              "measured": 0,
+              "state": "pass"
+            },
+            {
+              "detail": "",
+              "gate_id": "secret",
+              "measured": 0,
+              "state": "pass"
+            },
+            {
+              "detail": "toolchain not checked",
+              "gate_id": "dist",
+              "measured": null,
+              "state": "unknown"
+            }
+          ],
+          "lineage_id": "0123456789abcccccccccccccccccccccccccccccccccccccccccccccccccccc",
+          "rule_name": "PT_0123456789ab_older",
+          "rule_sha256": "7ce1da78d8105cc009c32637943060ee504085155d999353e296742a37b30f51",
+          "rule_text": "import \"pe\"\n\nrule PT_0123456789ab_older: patchtrace older_side {\n  meta:\n    patchtrace_rule_id    = \"0123456789ab.v1\"\n    patchtrace_version    = 1\n    patchtrace_project_id = \"project-1\"\n    older_sha256          = \"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"\n    newer_sha256          = \"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\"\n    side                  = \"older\"\n    change                = \"removed\"\n    function_older        = \"0x104d\"\n    statement             = \"A match means a file contains this pattern. It does not show whether the file is affected by a flaw.\"\n\n  strings:\n    $b = { 48 83 EC 28 31 C9 BA 01 00 00 00 90 48 FF 15 ?? ?? ?? ?? 48 83 C4 28 C3 }\n\n  condition:\n    uint16(0) == 0x5A4D and pe.is_pe and pe.machine == pe.MACHINE_AMD64 and for any s in pe.sections: (s.characteristics & pe.SECTION_MEM_EXECUTE != 0 and $b in (s.raw_data_offset..s.raw_data_offset + s.raw_data_size)) and pe.imports(\"KERNEL32.dll\", \"TerminateProcess\")\n}\n",
+          "source": {
+            "analyst_confirmed_material": false,
+            "category": "removed",
+            "cwe": null,
+            "finding_id": "finding-1",
+            "match_id": "match-1",
+            "materiality": "material",
+            "newer": null,
+            "newer_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "older": {
+              "extent": "pdata",
+              "name": null,
+              "rva": 4173,
+              "size": 24
+            },
+            "older_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "project_id": "project-1",
+            "review": "accepted",
+            "revision": 3,
+            "run_id": "run-1"
+          },
+          "unexpected_field": 1,
+          "unvetted": false
+        },
+        "match": "extra_forbidden",
+        "reason": "extra fields are forbidden"
+      },
+      {
+        "example": {
+          "candidate_id": "1111111111111111111111111111111111111111111111111111111111111111",
+          "compile_warnings": [],
+          "contract": "yara-rules/2",
+          "direction": "older",
+          "engine": {
+            "decoder": "iced-x86",
+            "decoder_version": "1.21.0",
+            "engine": "yara-x",
+            "grammar": "yrx-gen/1",
+            "version": "1.21.0",
+            "version_source": "metadata",
+            "worker": "rules-worker/1"
+          },
+          "features": [
+            {
+              "included": true,
+              "kind": "bytes",
+              "length": 24,
+              "literal": 20,
+              "longest_run": 15,
+              "mask": [
+                "rip-disp"
+              ],
+              "mask_source": "iced-x86",
+              "other_hits": 0,
+              "pattern": "48 83 EC 28 31 C9 BA 01 00 00 00 90 48 FF 15 ?? ?? ?? ?? 48 83 C4 28 C3",
+              "pins": [
+                {
+                  "disp_offset": 15,
+                  "dll": "KERNEL32.dll",
+                  "end_offset": 19,
+                  "name": "TerminateProcess"
+                }
+              ],
+              "separation": "older-only",
+              "side": "older",
+              "source_hits": 1,
+              "window_rva": 4173
+            },
+            {
+              "delay": false,
+              "dll": "KERNEL32.dll",
+              "included": true,
+              "kind": "import",
+              "name": "TerminateProcess",
+              "ordinal": null,
+              "origin": "pe-imports",
+              "separation": "older-only"
+            },
+            {
+              "api_gates": [
+                {
+                  "dll": "KERNEL32.dll",
+                  "name": "TerminateProcess"
+                }
+              ],
+              "attack": [],
+              "classification": "removed-with-code",
+              "included": false,
+              "kind": "capability",
+              "namespace": "host-interaction/process/terminate",
+              "rule_id": "terminate process",
+              "separation": "older-only"
+            },
+            {
+              "encoding": "ascii",
+              "evidence_run_id": "tool-run-1",
+              "included": false,
+              "kind": "string",
+              "length": 8,
+              "linked_by": "file-level",
+              "offset": 8720,
+              "separation": "newer-only",
+              "side": "newer",
+              "text": "Example\\x00",
+              "value_sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+            }
+          ],
+          "gates": [
+            {
+              "detail": "Change reviewed as material",
+              "gate_id": "elig",
+              "measured": "material",
+              "state": "pass"
+            },
+            {
+              "detail": "20 literal bytes, longest run 15",
+              "gate_id": "len",
+              "measured": 20,
+              "state": "pass"
+            },
+            {
+              "detail": "4 of 24 bytes are wildcards",
+              "gate_id": "wild",
+              "measured": 16,
+              "state": "pass"
+            },
+            {
+              "detail": "",
+              "gate_id": "uniq",
+              "measured": 1,
+              "state": "pass"
+            },
+            {
+              "detail": "",
+              "gate_id": "sep",
+              "measured": 0,
+              "state": "pass"
+            },
+            {
+              "detail": "no warnings",
+              "gate_id": "compile",
+              "measured": 0,
+              "state": "pass"
+            },
+            {
+              "detail": "",
+              "gate_id": "secret",
+              "measured": 0,
+              "state": "pass"
+            },
+            {
+              "detail": "toolchain not checked",
+              "gate_id": "dist",
+              "measured": null,
+              "state": "unknown"
+            }
+          ],
+          "lineage_id": "0123456789abcccccccccccccccccccccccccccccccccccccccccccccccccccc",
+          "rule_name": "PT_0123456789ab_older",
+          "rule_sha256": "7ce1da78d8105cc009c32637943060ee504085155d999353e296742a37b30f51",
+          "rule_text": "import \"pe\"\n\nrule PT_0123456789ab_older: patchtrace older_side {\n  meta:\n    patchtrace_rule_id    = \"0123456789ab.v1\"\n    patchtrace_version    = 1\n    patchtrace_project_id = \"project-1\"\n    older_sha256          = \"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"\n    newer_sha256          = \"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\"\n    side                  = \"older\"\n    change                = \"removed\"\n    function_older        = \"0x104d\"\n    statement             = \"A match means a file contains this pattern. It does not show whether the file is affected by a flaw.\"\n\n  strings:\n    $b = { 48 83 EC 28 31 C9 BA 01 00 00 00 90 48 FF 15 ?? ?? ?? ?? 48 83 C4 28 C3 }\n\n  condition:\n    uint16(0) == 0x5A4D and pe.is_pe and pe.machine == pe.MACHINE_AMD64 and for any s in pe.sections: (s.characteristics & pe.SECTION_MEM_EXECUTE != 0 and $b in (s.raw_data_offset..s.raw_data_offset + s.raw_data_size)) and pe.imports(\"KERNEL32.dll\", \"TerminateProcess\")\n}\n",
+          "source": {
+            "analyst_confirmed_material": false,
+            "category": "removed",
+            "cwe": null,
+            "finding_id": "finding-1",
+            "match_id": "match-1",
+            "materiality": "material",
+            "newer": null,
+            "newer_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "older": {
+              "extent": "pdata",
+              "name": null,
+              "rva": 4173,
+              "size": 24
+            },
+            "older_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "project_id": "project-1",
+            "review": "accepted",
+            "revision": 3,
+            "run_id": "run-1"
+          },
+          "unvetted": false
+        },
+        "match": "literal_error",
+        "reason": "unsupported future contract version"
+      },
+      {
+        "example": {
+          "candidate_id": "1111111111111111111111111111111111111111111111111111111111111111",
+          "compile_warnings": [],
+          "contract": "yara-rules/1",
+          "direction": "older",
+          "engine": {
+            "decoder": "iced-x86",
+            "decoder_version": "1.21.0",
+            "engine": "yara-x",
+            "grammar": "yrx-gen/1",
+            "version": "1.21.0",
+            "version_source": "metadata",
+            "worker": "rules-worker/1"
+          },
+          "features": [
+            {
+              "included": true,
+              "kind": "bytes",
+              "length": 24,
+              "literal": 20,
+              "longest_run": 15,
+              "mask": [
+                "rip-disp"
+              ],
+              "mask_source": "iced-x86",
+              "other_hits": 0,
+              "pattern": "48 83 EC 28 31 C9 BA 01 00 00 00 90 48 FF 15 ?? ?? ?? ?? 48 83 C4 28 C3",
+              "pins": [
+                {
+                  "disp_offset": 15,
+                  "dll": "KERNEL32.dll",
+                  "end_offset": 19,
+                  "name": "TerminateProcess"
+                }
+              ],
+              "separation": "older-only",
+              "side": "older",
+              "source_hits": 1,
+              "window_rva": 4173
+            },
+            {
+              "delay": false,
+              "dll": "KERNEL32.dll",
+              "included": true,
+              "kind": "import",
+              "name": "TerminateProcess",
+              "ordinal": null,
+              "origin": "pe-imports",
+              "separation": "older-only"
+            },
+            {
+              "api_gates": [
+                {
+                  "dll": "KERNEL32.dll",
+                  "name": "TerminateProcess"
+                }
+              ],
+              "attack": [],
+              "classification": "removed-with-code",
+              "included": false,
+              "kind": "capability",
+              "namespace": "host-interaction/process/terminate",
+              "rule_id": "terminate process",
+              "separation": "older-only"
+            },
+            {
+              "encoding": "ascii",
+              "evidence_run_id": "tool-run-1",
+              "included": false,
+              "kind": "string",
+              "length": 8,
+              "linked_by": "file-level",
+              "offset": 8720,
+              "separation": "newer-only",
+              "side": "newer",
+              "text": "Example\\x00",
+              "value_sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+            }
+          ],
+          "gates": [
+            {
+              "detail": "Change reviewed as material",
+              "gate_id": "elig",
+              "measured": "material",
+              "state": "pass"
+            },
+            {
+              "detail": "20 literal bytes, longest run 15",
+              "gate_id": "len",
+              "measured": 20,
+              "state": "pass"
+            },
+            {
+              "detail": "4 of 24 bytes are wildcards",
+              "gate_id": "wild",
+              "measured": 16,
+              "state": "pass"
+            },
+            {
+              "detail": "",
+              "gate_id": "uniq",
+              "measured": 1,
+              "state": "pass"
+            },
+            {
+              "detail": "",
+              "gate_id": "sep",
+              "measured": 0,
+              "state": "pass"
+            },
+            {
+              "detail": "no warnings",
+              "gate_id": "compile",
+              "measured": 0,
+              "state": "pass"
+            },
+            {
+              "detail": "",
+              "gate_id": "secret",
+              "measured": 0,
+              "state": "pass"
+            },
+            {
+              "detail": "toolchain not checked",
+              "gate_id": "dist",
+              "measured": null,
+              "state": "unknown"
+            }
+          ],
+          "lineage_id": "0123456789abcccccccccccccccccccccccccccccccccccccccccccccccccccc",
+          "rule_name": "PT_0123456789ab_older",
+          "rule_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "rule_text": "import \"pe\"\n\nrule PT_0123456789ab_older: patchtrace older_side {\n  meta:\n    patchtrace_rule_id    = \"0123456789ab.v1\"\n    patchtrace_version    = 1\n    patchtrace_project_id = \"project-1\"\n    older_sha256          = \"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"\n    newer_sha256          = \"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\"\n    side                  = \"older\"\n    change                = \"removed\"\n    function_older        = \"0x104d\"\n    statement             = \"A match means a file contains this pattern. It does not show whether the file is affected by a flaw.\"\n\n  strings:\n    $b = { 48 83 EC 28 31 C9 BA 01 00 00 00 90 48 FF 15 ?? ?? ?? ?? 48 83 C4 28 C3 }\n\n  condition:\n    uint16(0) == 0x5A4D and pe.is_pe and pe.machine == pe.MACHINE_AMD64 and for any s in pe.sections: (s.characteristics & pe.SECTION_MEM_EXECUTE != 0 and $b in (s.raw_data_offset..s.raw_data_offset + s.raw_data_size)) and pe.imports(\"KERNEL32.dll\", \"TerminateProcess\")\n}\n",
+          "source": {
+            "analyst_confirmed_material": false,
+            "category": "removed",
+            "cwe": null,
+            "finding_id": "finding-1",
+            "match_id": "match-1",
+            "materiality": "material",
+            "newer": null,
+            "newer_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "older": {
+              "extent": "pdata",
+              "name": null,
+              "rva": 4173,
+              "size": 24
+            },
+            "older_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "project_id": "project-1",
+            "review": "accepted",
+            "revision": 3,
+            "run_id": "run-1"
+          },
+          "unvetted": false
+        },
+        "match": "not the hash of rule_text",
+        "reason": "the hash is of the text"
+      },
+      {
+        "example": {
+          "candidate_id": "1111111111111111111111111111111111111111111111111111111111111111",
+          "compile_warnings": [],
+          "contract": "yara-rules/1",
+          "direction": "older",
+          "engine": {
+            "decoder": "iced-x86",
+            "decoder_version": "1.21.0",
+            "engine": "yara-x",
+            "grammar": "yrx-gen/1",
+            "version": "1.21.0",
+            "version_source": "metadata",
+            "worker": "rules-worker/1"
+          },
+          "features": [
+            {
+              "included": true,
+              "kind": "bytes",
+              "length": 24,
+              "literal": 20,
+              "longest_run": 15,
+              "mask": [
+                "rip-disp"
+              ],
+              "mask_source": "iced-x86",
+              "other_hits": 0,
+              "pattern": "48 83 EC 28 31 C9 BA 01 00 00 00 90 48 FF 15 ?? ?? ?? ?? 48 83 C4 28 C3",
+              "pins": [
+                {
+                  "disp_offset": 15,
+                  "dll": "KERNEL32.dll",
+                  "end_offset": 19,
+                  "name": "TerminateProcess"
+                }
+              ],
+              "separation": "older-only",
+              "side": "older",
+              "source_hits": 1,
+              "window_rva": 4173
+            },
+            {
+              "delay": false,
+              "dll": "KERNEL32.dll",
+              "included": true,
+              "kind": "import",
+              "name": "TerminateProcess",
+              "ordinal": null,
+              "origin": "pe-imports",
+              "separation": "older-only"
+            },
+            {
+              "api_gates": [
+                {
+                  "dll": "KERNEL32.dll",
+                  "name": "TerminateProcess"
+                }
+              ],
+              "attack": [],
+              "classification": "removed-with-code",
+              "included": false,
+              "kind": "capability",
+              "namespace": "host-interaction/process/terminate",
+              "rule_id": "terminate process",
+              "separation": "older-only"
+            },
+            {
+              "encoding": "ascii",
+              "evidence_run_id": "tool-run-1",
+              "included": false,
+              "kind": "string",
+              "length": 8,
+              "linked_by": "file-level",
+              "offset": 8720,
+              "separation": "newer-only",
+              "side": "newer",
+              "text": "Example\\x00",
+              "value_sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+            }
+          ],
+          "gates": [
+            {
+              "detail": "Change reviewed as material",
+              "gate_id": "elig",
+              "measured": "material",
+              "state": "pass"
+            },
+            {
+              "detail": "20 literal bytes, longest run 15",
+              "gate_id": "len",
+              "measured": 20,
+              "state": "pass"
+            },
+            {
+              "detail": "4 of 24 bytes are wildcards",
+              "gate_id": "wild",
+              "measured": 16,
+              "state": "pass"
+            },
+            {
+              "detail": "",
+              "gate_id": "uniq",
+              "measured": 1,
+              "state": "pass"
+            },
+            {
+              "detail": "",
+              "gate_id": "sep",
+              "measured": 0,
+              "state": "pass"
+            },
+            {
+              "detail": "no warnings",
+              "gate_id": "compile",
+              "measured": 0,
+              "state": "pass"
+            },
+            {
+              "detail": "",
+              "gate_id": "secret",
+              "measured": 0,
+              "state": "pass"
+            },
+            {
+              "detail": "toolchain not checked",
+              "gate_id": "dist",
+              "measured": null,
+              "state": "unknown"
+            }
+          ],
+          "lineage_id": "0123456789abcccccccccccccccccccccccccccccccccccccccccccccccccccc",
+          "rule_name": "PT_ffffffffffff_older",
+          "rule_sha256": "7ce1da78d8105cc009c32637943060ee504085155d999353e296742a37b30f51",
+          "rule_text": "import \"pe\"\n\nrule PT_0123456789ab_older: patchtrace older_side {\n  meta:\n    patchtrace_rule_id    = \"0123456789ab.v1\"\n    patchtrace_version    = 1\n    patchtrace_project_id = \"project-1\"\n    older_sha256          = \"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"\n    newer_sha256          = \"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\"\n    side                  = \"older\"\n    change                = \"removed\"\n    function_older        = \"0x104d\"\n    statement             = \"A match means a file contains this pattern. It does not show whether the file is affected by a flaw.\"\n\n  strings:\n    $b = { 48 83 EC 28 31 C9 BA 01 00 00 00 90 48 FF 15 ?? ?? ?? ?? 48 83 C4 28 C3 }\n\n  condition:\n    uint16(0) == 0x5A4D and pe.is_pe and pe.machine == pe.MACHINE_AMD64 and for any s in pe.sections: (s.characteristics & pe.SECTION_MEM_EXECUTE != 0 and $b in (s.raw_data_offset..s.raw_data_offset + s.raw_data_size)) and pe.imports(\"KERNEL32.dll\", \"TerminateProcess\")\n}\n",
+          "source": {
+            "analyst_confirmed_material": false,
+            "category": "removed",
+            "cwe": null,
+            "finding_id": "finding-1",
+            "match_id": "match-1",
+            "materiality": "material",
+            "newer": null,
+            "newer_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "older": {
+              "extent": "pdata",
+              "name": null,
+              "rva": 4173,
+              "size": 24
+            },
+            "older_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "project_id": "project-1",
+            "review": "accepted",
+            "revision": 3,
+            "run_id": "run-1"
+          },
+          "unvetted": false
+        },
+        "match": "rule_name must be",
+        "reason": "the name derives from the lineage"
+      },
+      {
+        "example": {
+          "candidate_id": "1111111111111111111111111111111111111111111111111111111111111111",
+          "compile_warnings": [],
+          "contract": "yara-rules/1",
+          "direction": "newer",
+          "engine": {
+            "decoder": "iced-x86",
+            "decoder_version": "1.21.0",
+            "engine": "yara-x",
+            "grammar": "yrx-gen/1",
+            "version": "1.21.0",
+            "version_source": "metadata",
+            "worker": "rules-worker/1"
+          },
+          "features": [
+            {
+              "included": true,
+              "kind": "bytes",
+              "length": 24,
+              "literal": 20,
+              "longest_run": 15,
+              "mask": [
+                "rip-disp"
+              ],
+              "mask_source": "iced-x86",
+              "other_hits": 0,
+              "pattern": "48 83 EC 28 31 C9 BA 01 00 00 00 90 48 FF 15 ?? ?? ?? ?? 48 83 C4 28 C3",
+              "pins": [
+                {
+                  "disp_offset": 15,
+                  "dll": "KERNEL32.dll",
+                  "end_offset": 19,
+                  "name": "TerminateProcess"
+                }
+              ],
+              "separation": "older-only",
+              "side": "older",
+              "source_hits": 1,
+              "window_rva": 4173
+            },
+            {
+              "delay": false,
+              "dll": "KERNEL32.dll",
+              "included": true,
+              "kind": "import",
+              "name": "TerminateProcess",
+              "ordinal": null,
+              "origin": "pe-imports",
+              "separation": "older-only"
+            },
+            {
+              "api_gates": [
+                {
+                  "dll": "KERNEL32.dll",
+                  "name": "TerminateProcess"
+                }
+              ],
+              "attack": [],
+              "classification": "removed-with-code",
+              "included": false,
+              "kind": "capability",
+              "namespace": "host-interaction/process/terminate",
+              "rule_id": "terminate process",
+              "separation": "older-only"
+            },
+            {
+              "encoding": "ascii",
+              "evidence_run_id": "tool-run-1",
+              "included": false,
+              "kind": "string",
+              "length": 8,
+              "linked_by": "file-level",
+              "offset": 8720,
+              "separation": "newer-only",
+              "side": "newer",
+              "text": "Example\\x00",
+              "value_sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+            }
+          ],
+          "gates": [
+            {
+              "detail": "Change reviewed as material",
+              "gate_id": "elig",
+              "measured": "material",
+              "state": "pass"
+            },
+            {
+              "detail": "20 literal bytes, longest run 15",
+              "gate_id": "len",
+              "measured": 20,
+              "state": "pass"
+            },
+            {
+              "detail": "4 of 24 bytes are wildcards",
+              "gate_id": "wild",
+              "measured": 16,
+              "state": "pass"
+            },
+            {
+              "detail": "",
+              "gate_id": "uniq",
+              "measured": 1,
+              "state": "pass"
+            },
+            {
+              "detail": "",
+              "gate_id": "sep",
+              "measured": 0,
+              "state": "pass"
+            },
+            {
+              "detail": "no warnings",
+              "gate_id": "compile",
+              "measured": 0,
+              "state": "pass"
+            },
+            {
+              "detail": "",
+              "gate_id": "secret",
+              "measured": 0,
+              "state": "pass"
+            },
+            {
+              "detail": "toolchain not checked",
+              "gate_id": "dist",
+              "measured": null,
+              "state": "unknown"
+            }
+          ],
+          "lineage_id": "0123456789abcccccccccccccccccccccccccccccccccccccccccccccccccccc",
+          "rule_name": "PT_0123456789ab_older",
+          "rule_sha256": "7ce1da78d8105cc009c32637943060ee504085155d999353e296742a37b30f51",
+          "rule_text": "import \"pe\"\n\nrule PT_0123456789ab_older: patchtrace older_side {\n  meta:\n    patchtrace_rule_id    = \"0123456789ab.v1\"\n    patchtrace_version    = 1\n    patchtrace_project_id = \"project-1\"\n    older_sha256          = \"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"\n    newer_sha256          = \"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\"\n    side                  = \"older\"\n    change                = \"removed\"\n    function_older        = \"0x104d\"\n    statement             = \"A match means a file contains this pattern. It does not show whether the file is affected by a flaw.\"\n\n  strings:\n    $b = { 48 83 EC 28 31 C9 BA 01 00 00 00 90 48 FF 15 ?? ?? ?? ?? 48 83 C4 28 C3 }\n\n  condition:\n    uint16(0) == 0x5A4D and pe.is_pe and pe.machine == pe.MACHINE_AMD64 and for any s in pe.sections: (s.characteristics & pe.SECTION_MEM_EXECUTE != 0 and $b in (s.raw_data_offset..s.raw_data_offset + s.raw_data_size)) and pe.imports(\"KERNEL32.dll\", \"TerminateProcess\")\n}\n",
+          "source": {
+            "analyst_confirmed_material": false,
+            "category": "removed",
+            "cwe": null,
+            "finding_id": "finding-1",
+            "match_id": "match-1",
+            "materiality": "material",
+            "newer": null,
+            "newer_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "older": {
+              "extent": "pdata",
+              "name": null,
+              "rva": 4173,
+              "size": 24
+            },
+            "older_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "project_id": "project-1",
+            "review": "accepted",
+            "revision": 3,
+            "run_id": "run-1"
+          },
+          "unvetted": false
+        },
+        "match": "needs a newer function",
+        "reason": "a removed pair has no newer function"
+      },
+      {
+        "example": {
+          "candidate_id": "1111111111111111111111111111111111111111111111111111111111111111",
+          "compile_warnings": [],
+          "contract": "yara-rules/1",
+          "direction": "older",
+          "engine": {
+            "decoder": "iced-x86",
+            "decoder_version": "1.21.0",
+            "engine": "yara-x",
+            "grammar": "yrx-gen/1",
+            "version": "1.21.0",
+            "version_source": "metadata",
+            "worker": "rules-worker/1"
+          },
+          "features": [
+            {
+              "included": true,
+              "kind": "bytes",
+              "length": 24,
+              "literal": 20,
+              "longest_run": 15,
+              "mask": [
+                "rip-disp"
+              ],
+              "mask_source": "iced-x86",
+              "other_hits": 0,
+              "pattern": "48 83 EC 28 31 C9 BA 01 00 00 00 90 48 FF 15 ?? ?? ?? ?? 48 83 C4 28 C3",
+              "pins": [
+                {
+                  "disp_offset": 15,
+                  "dll": "KERNEL32.dll",
+                  "end_offset": 19,
+                  "name": "TerminateProcess"
+                }
+              ],
+              "separation": "both-sides",
+              "side": "older",
+              "source_hits": 1,
+              "window_rva": 4173
+            },
+            {
+              "delay": false,
+              "dll": "KERNEL32.dll",
+              "included": true,
+              "kind": "import",
+              "name": "TerminateProcess",
+              "ordinal": null,
+              "origin": "pe-imports",
+              "separation": "older-only"
+            },
+            {
+              "api_gates": [
+                {
+                  "dll": "KERNEL32.dll",
+                  "name": "TerminateProcess"
+                }
+              ],
+              "attack": [],
+              "classification": "removed-with-code",
+              "included": false,
+              "kind": "capability",
+              "namespace": "host-interaction/process/terminate",
+              "rule_id": "terminate process",
+              "separation": "older-only"
+            },
+            {
+              "encoding": "ascii",
+              "evidence_run_id": "tool-run-1",
+              "included": false,
+              "kind": "string",
+              "length": 8,
+              "linked_by": "file-level",
+              "offset": 8720,
+              "separation": "newer-only",
+              "side": "newer",
+              "text": "Example\\x00",
+              "value_sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+            }
+          ],
+          "gates": [
+            {
+              "detail": "Change reviewed as material",
+              "gate_id": "elig",
+              "measured": "material",
+              "state": "pass"
+            },
+            {
+              "detail": "20 literal bytes, longest run 15",
+              "gate_id": "len",
+              "measured": 20,
+              "state": "pass"
+            },
+            {
+              "detail": "4 of 24 bytes are wildcards",
+              "gate_id": "wild",
+              "measured": 16,
+              "state": "pass"
+            },
+            {
+              "detail": "",
+              "gate_id": "uniq",
+              "measured": 1,
+              "state": "pass"
+            },
+            {
+              "detail": "",
+              "gate_id": "sep",
+              "measured": 0,
+              "state": "pass"
+            },
+            {
+              "detail": "no warnings",
+              "gate_id": "compile",
+              "measured": 0,
+              "state": "pass"
+            },
+            {
+              "detail": "",
+              "gate_id": "secret",
+              "measured": 0,
+              "state": "pass"
+            },
+            {
+              "detail": "toolchain not checked",
+              "gate_id": "dist",
+              "measured": null,
+              "state": "unknown"
+            }
+          ],
+          "lineage_id": "0123456789abcccccccccccccccccccccccccccccccccccccccccccccccccccc",
+          "rule_name": "PT_0123456789ab_older",
+          "rule_sha256": "7ce1da78d8105cc009c32637943060ee504085155d999353e296742a37b30f51",
+          "rule_text": "import \"pe\"\n\nrule PT_0123456789ab_older: patchtrace older_side {\n  meta:\n    patchtrace_rule_id    = \"0123456789ab.v1\"\n    patchtrace_version    = 1\n    patchtrace_project_id = \"project-1\"\n    older_sha256          = \"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"\n    newer_sha256          = \"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\"\n    side                  = \"older\"\n    change                = \"removed\"\n    function_older        = \"0x104d\"\n    statement             = \"A match means a file contains this pattern. It does not show whether the file is affected by a flaw.\"\n\n  strings:\n    $b = { 48 83 EC 28 31 C9 BA 01 00 00 00 90 48 FF 15 ?? ?? ?? ?? 48 83 C4 28 C3 }\n\n  condition:\n    uint16(0) == 0x5A4D and pe.is_pe and pe.machine == pe.MACHINE_AMD64 and for any s in pe.sections: (s.characteristics & pe.SECTION_MEM_EXECUTE != 0 and $b in (s.raw_data_offset..s.raw_data_offset + s.raw_data_size)) and pe.imports(\"KERNEL32.dll\", \"TerminateProcess\")\n}\n",
+          "source": {
+            "analyst_confirmed_material": false,
+            "category": "removed",
+            "cwe": null,
+            "finding_id": "finding-1",
+            "match_id": "match-1",
+            "materiality": "material",
+            "newer": null,
+            "newer_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "older": {
+              "extent": "pdata",
+              "name": null,
+              "rva": 4173,
+              "size": 24
+            },
+            "older_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "project_id": "project-1",
+            "review": "accepted",
+            "revision": 3,
+            "run_id": "run-1"
+          },
+          "unvetted": false
+        },
+        "match": "separation must be",
+        "reason": "delta, not inventory"
+      },
+      {
+        "example": {
+          "candidate_id": "1111111111111111111111111111111111111111111111111111111111111111",
+          "compile_warnings": [],
+          "contract": "yara-rules/1",
+          "direction": "older",
+          "engine": {
+            "decoder": "iced-x86",
+            "decoder_version": "1.21.0",
+            "engine": "yara-x",
+            "grammar": "yrx-gen/1",
+            "version": "1.21.0",
+            "version_source": "metadata",
+            "worker": "rules-worker/1"
+          },
+          "features": [
+            {
+              "included": true,
+              "kind": "bytes",
+              "length": 24,
+              "literal": 20,
+              "longest_run": 15,
+              "mask": [
+                "rip-disp"
+              ],
+              "mask_source": "iced-x86",
+              "other_hits": 0,
+              "pattern": "48 83 EC 28 31 C9 BA 01 00 00 00 90 48 FF 15 ?? ?? ?? ?? 48 83 C4 28 C3",
+              "pins": [
+                {
+                  "disp_offset": 15,
+                  "dll": "KERNEL32.dll",
+                  "end_offset": 19,
+                  "name": "TerminateProcess"
+                }
+              ],
+              "separation": "older-only",
+              "side": "older",
+              "source_hits": 1,
+              "window_rva": 4173
+            },
+            {
+              "delay": false,
+              "dll": "KERNEL32.dll",
+              "included": true,
+              "kind": "import",
+              "name": "TerminateProcess",
+              "ordinal": null,
+              "origin": "pe-imports",
+              "separation": "older-only"
+            },
+            {
+              "api_gates": [
+                {
+                  "dll": "KERNEL32.dll",
+                  "name": "TerminateProcess"
+                }
+              ],
+              "attack": [],
+              "classification": "removed-with-code",
+              "included": false,
+              "kind": "capability",
+              "namespace": "host-interaction/process/terminate",
+              "rule_id": "terminate process",
+              "separation": "older-only"
+            },
+            {
+              "encoding": "ascii",
+              "evidence_run_id": "tool-run-1",
+              "included": false,
+              "kind": "string",
+              "length": 8,
+              "linked_by": "file-level",
+              "offset": 8720,
+              "separation": "newer-only",
+              "side": "newer",
+              "text": "Example\\x00",
+              "value_sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+            }
+          ],
+          "gates": [
+            {
+              "gate_id": "sep",
+              "state": "pass"
+            },
+            {
+              "gate_id": "len",
+              "state": "pass"
+            }
+          ],
+          "lineage_id": "0123456789abcccccccccccccccccccccccccccccccccccccccccccccccccccc",
+          "rule_name": "PT_0123456789ab_older",
+          "rule_sha256": "7ce1da78d8105cc009c32637943060ee504085155d999353e296742a37b30f51",
+          "rule_text": "import \"pe\"\n\nrule PT_0123456789ab_older: patchtrace older_side {\n  meta:\n    patchtrace_rule_id    = \"0123456789ab.v1\"\n    patchtrace_version    = 1\n    patchtrace_project_id = \"project-1\"\n    older_sha256          = \"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"\n    newer_sha256          = \"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\"\n    side                  = \"older\"\n    change                = \"removed\"\n    function_older        = \"0x104d\"\n    statement             = \"A match means a file contains this pattern. It does not show whether the file is affected by a flaw.\"\n\n  strings:\n    $b = { 48 83 EC 28 31 C9 BA 01 00 00 00 90 48 FF 15 ?? ?? ?? ?? 48 83 C4 28 C3 }\n\n  condition:\n    uint16(0) == 0x5A4D and pe.is_pe and pe.machine == pe.MACHINE_AMD64 and for any s in pe.sections: (s.characteristics & pe.SECTION_MEM_EXECUTE != 0 and $b in (s.raw_data_offset..s.raw_data_offset + s.raw_data_size)) and pe.imports(\"KERNEL32.dll\", \"TerminateProcess\")\n}\n",
+          "source": {
+            "analyst_confirmed_material": false,
+            "category": "removed",
+            "cwe": null,
+            "finding_id": "finding-1",
+            "match_id": "match-1",
+            "materiality": "material",
+            "newer": null,
+            "newer_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "older": {
+              "extent": "pdata",
+              "name": null,
+              "rva": 4173,
+              "size": 24
+            },
+            "older_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "project_id": "project-1",
+            "review": "accepted",
+            "revision": 3,
+            "run_id": "run-1"
+          },
+          "unvetted": false
+        },
+        "match": "canonical order",
+        "reason": "gates are in canonical order"
+      },
+      {
+        "example": {
+          "candidate_id": "1111111111111111111111111111111111111111111111111111111111111111",
+          "compile_warnings": [],
+          "contract": "yara-rules/1",
+          "direction": "older",
+          "engine": {
+            "decoder": "iced-x86",
+            "decoder_version": "1.21.0",
+            "engine": "yara-x",
+            "grammar": "yrx-gen/1",
+            "version": "1.21.0",
+            "version_source": "metadata",
+            "worker": "rules-worker/1"
+          },
+          "features": [
+            {
+              "included": true,
+              "kind": "bytes",
+              "length": 24,
+              "literal": 20,
+              "longest_run": 15,
+              "mask": [
+                "rip-disp"
+              ],
+              "mask_source": "iced-x86",
+              "other_hits": 0,
+              "pattern": "48 83 EC 28 31 C9 BA 01 00 00 00 90 48 FF 15 ?? ?? ?? ?? 48 83 C4 28 C3",
+              "pins": [
+                {
+                  "disp_offset": 15,
+                  "dll": "KERNEL32.dll",
+                  "end_offset": 19,
+                  "name": "TerminateProcess"
+                }
+              ],
+              "separation": "older-only",
+              "side": "older",
+              "source_hits": 1,
+              "window_rva": 4173
+            },
+            {
+              "delay": false,
+              "dll": "KERNEL32.dll",
+              "included": true,
+              "kind": "import",
+              "name": "TerminateProcess",
+              "ordinal": null,
+              "origin": "pe-imports",
+              "separation": "older-only"
+            },
+            {
+              "api_gates": [
+                {
+                  "dll": "KERNEL32.dll",
+                  "name": "TerminateProcess"
+                }
+              ],
+              "attack": [],
+              "classification": "removed-with-code",
+              "included": false,
+              "kind": "capability",
+              "namespace": "host-interaction/process/terminate",
+              "rule_id": "terminate process",
+              "separation": "older-only"
+            },
+            {
+              "encoding": "ascii",
+              "evidence_run_id": "tool-run-1",
+              "included": false,
+              "kind": "string",
+              "length": 8,
+              "linked_by": "file-level",
+              "offset": 8720,
+              "separation": "newer-only",
+              "side": "newer",
+              "text": "Example\\x00",
+              "value_sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+            }
+          ],
+          "gates": [
+            {
+              "detail": "Change reviewed as material",
+              "gate_id": "elig",
+              "measured": "material",
+              "state": "pass"
+            },
+            {
+              "detail": "20 literal bytes, longest run 15",
+              "gate_id": "len",
+              "measured": 20,
+              "state": "pass"
+            },
+            {
+              "detail": "4 of 24 bytes are wildcards",
+              "gate_id": "wild",
+              "measured": 16,
+              "state": "pass"
+            },
+            {
+              "detail": "",
+              "gate_id": "uniq",
+              "measured": 1,
+              "state": "pass"
+            },
+            {
+              "detail": "",
+              "gate_id": "sep",
+              "measured": 0,
+              "state": "pass"
+            },
+            {
+              "detail": "no warnings",
+              "gate_id": "compile",
+              "measured": 0,
+              "state": "pass"
+            },
+            {
+              "detail": "",
+              "gate_id": "secret",
+              "measured": 0,
+              "state": "pass"
+            },
+            {
+              "detail": "toolchain not checked",
+              "gate_id": "dist",
+              "measured": null,
+              "state": "unknown"
+            }
+          ],
+          "lineage_id": "0123456789abcccccccccccccccccccccccccccccccccccccccccccccccccccc",
+          "rule_name": "PT_0123456789ab_older",
+          "rule_sha256": "7ce1da78d8105cc009c32637943060ee504085155d999353e296742a37b30f51",
+          "rule_text": "import \"pe\"\n\nrule PT_0123456789ab_older: patchtrace older_side {\n  meta:\n    patchtrace_rule_id    = \"0123456789ab.v1\"\n    patchtrace_version    = 1\n    patchtrace_project_id = \"project-1\"\n    older_sha256          = \"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"\n    newer_sha256          = \"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\"\n    side                  = \"older\"\n    change                = \"removed\"\n    function_older        = \"0x104d\"\n    statement             = \"A match means a file contains this pattern. It does not show whether the file is affected by a flaw.\"\n\n  strings:\n    $b = { 48 83 EC 28 31 C9 BA 01 00 00 00 90 48 FF 15 ?? ?? ?? ?? 48 83 C4 28 C3 }\n\n  condition:\n    uint16(0) == 0x5A4D and pe.is_pe and pe.machine == pe.MACHINE_AMD64 and for any s in pe.sections: (s.characteristics & pe.SECTION_MEM_EXECUTE != 0 and $b in (s.raw_data_offset..s.raw_data_offset + s.raw_data_size)) and pe.imports(\"KERNEL32.dll\", \"TerminateProcess\")\n}\n",
+          "source": {
+            "analyst_confirmed_material": false,
+            "category": "removed",
+            "cwe": null,
+            "finding_id": "finding-1",
+            "match_id": "match-1",
+            "materiality": "material",
+            "newer": null,
+            "newer_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "older": {
+              "extent": "pdata",
+              "name": null,
+              "rva": 4173,
+              "size": 24
+            },
+            "older_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "project_id": "project-1",
+            "review": "accepted",
+            "revision": 3,
+            "run_id": "run-1"
+          },
+          "unvetted": true
+        },
+        "match": "unvetted is exactly",
+        "reason": "unvetted means confirmed by the analyst only"
+      },
+      {
+        "example": {
+          "candidate_id": "1111111111111111111111111111111111111111111111111111111111111111",
+          "compile_warnings": [],
+          "contract": "yara-rules/1",
+          "direction": "older",
+          "engine": {
+            "decoder": "iced-x86",
+            "decoder_version": "1.21.0",
+            "engine": "yara-x",
+            "grammar": "yrx-gen/1",
+            "version": "1.21.0",
+            "version_source": "metadata",
+            "worker": "rules-worker/1"
+          },
+          "features": [
+            {
+              "included": true,
+              "kind": "bytes",
+              "length": 24,
+              "literal": 20,
+              "longest_run": 15,
+              "mask": [
+                "rip-disp"
+              ],
+              "mask_source": "iced-x86",
+              "other_hits": 0,
+              "pattern": "48 83 EC 28 31 C9 BA 01 00 00 00 90 48 FF 15 ?? ?? ?? ?? 48 83 C4 28 C3",
+              "pins": [
+                {
+                  "disp_offset": 15,
+                  "dll": "KERNEL32.dll",
+                  "end_offset": 19,
+                  "name": "TerminateProcess"
+                }
+              ],
+              "separation": "older-only",
+              "side": "older",
+              "source_hits": 1,
+              "window_rva": 4173
+            },
+            {
+              "delay": false,
+              "dll": "KERNEL32.dll",
+              "included": true,
+              "kind": "import",
+              "name": "TerminateProcess",
+              "ordinal": null,
+              "origin": "pe-imports",
+              "separation": "older-only"
+            },
+            {
+              "api_gates": [
+                {
+                  "dll": "KERNEL32.dll",
+                  "name": "TerminateProcess"
+                }
+              ],
+              "attack": [],
+              "classification": "removed-with-code",
+              "included": false,
+              "kind": "capability",
+              "namespace": "host-interaction/process/terminate",
+              "rule_id": "terminate process",
+              "separation": "older-only"
+            },
+            {
+              "encoding": "ascii",
+              "evidence_run_id": "tool-run-1",
+              "included": false,
+              "kind": "string",
+              "length": 8,
+              "linked_by": "file-level",
+              "offset": 8720,
+              "separation": "newer-only",
+              "side": "newer",
+              "text": "Example\\x00",
+              "value_sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+            }
+          ],
+          "gates": [
+            {
+              "detail": "Change reviewed as material",
+              "gate_id": "elig",
+              "measured": "material",
+              "state": "pass"
+            },
+            {
+              "detail": "20 literal bytes, longest run 15",
+              "gate_id": "len",
+              "measured": 20,
+              "state": "pass"
+            },
+            {
+              "detail": "4 of 24 bytes are wildcards",
+              "gate_id": "wild",
+              "measured": 16,
+              "state": "pass"
+            },
+            {
+              "detail": "",
+              "gate_id": "uniq",
+              "measured": 1,
+              "state": "pass"
+            },
+            {
+              "detail": "",
+              "gate_id": "sep",
+              "measured": 0,
+              "state": "pass"
+            },
+            {
+              "detail": "no warnings",
+              "gate_id": "compile",
+              "measured": 0,
+              "state": "pass"
+            },
+            {
+              "detail": "",
+              "gate_id": "secret",
+              "measured": 0,
+              "state": "pass"
+            },
+            {
+              "detail": "toolchain not checked",
+              "gate_id": "dist",
+              "measured": null,
+              "state": "unknown"
+            }
+          ],
+          "lineage_id": "0123456789abcccccccccccccccccccccccccccccccccccccccccccccccccccc",
+          "rule_name": "PT_0123456789ab_older",
+          "rule_sha256": "7ce1da78d8105cc009c32637943060ee504085155d999353e296742a37b30f51",
+          "rule_text": "import \"pe\"\r\n\r\nrule PT_0123456789ab_older: patchtrace older_side {\r\n  meta:\r\n    patchtrace_rule_id    = \"0123456789ab.v1\"\r\n    patchtrace_version    = 1\r\n    patchtrace_project_id = \"project-1\"\r\n    older_sha256          = \"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"\r\n    newer_sha256          = \"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\"\r\n    side                  = \"older\"\r\n    change                = \"removed\"\r\n    function_older        = \"0x104d\"\r\n    statement             = \"A match means a file contains this pattern. It does not show whether the file is affected by a flaw.\"\r\n\r\n  strings:\r\n    $b = { 48 83 EC 28 31 C9 BA 01 00 00 00 90 48 FF 15 ?? ?? ?? ?? 48 83 C4 28 C3 }\r\n\r\n  condition:\r\n    uint16(0) == 0x5A4D and pe.is_pe and pe.machine == pe.MACHINE_AMD64 and for any s in pe.sections: (s.characteristics & pe.SECTION_MEM_EXECUTE != 0 and $b in (s.raw_data_offset..s.raw_data_offset + s.raw_data_size)) and pe.imports(\"KERNEL32.dll\", \"TerminateProcess\")\r\n}\r\n",
+          "source": {
+            "analyst_confirmed_material": false,
+            "category": "removed",
+            "cwe": null,
+            "finding_id": "finding-1",
+            "match_id": "match-1",
+            "materiality": "material",
+            "newer": null,
+            "newer_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "older": {
+              "extent": "pdata",
+              "name": null,
+              "rva": 4173,
+              "size": 24
+            },
+            "older_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "project_id": "project-1",
+            "review": "accepted",
+            "revision": 3,
+            "run_id": "run-1"
+          },
+          "unvetted": false
+        },
+        "match": "LF line ends only",
+        "reason": "rule text is LF-only ASCII"
+      }
+    ],
+    "valid": [
+      {
+        "candidate_id": "1111111111111111111111111111111111111111111111111111111111111111",
+        "compile_warnings": [],
+        "contract": "yara-rules/1",
+        "direction": "older",
+        "engine": {
+          "decoder": "iced-x86",
+          "decoder_version": "1.21.0",
+          "engine": "yara-x",
+          "grammar": "yrx-gen/1",
+          "version": "1.21.0",
+          "version_source": "metadata",
+          "worker": "rules-worker/1"
+        },
+        "features": [
+          {
+            "included": true,
+            "kind": "bytes",
+            "length": 24,
+            "literal": 20,
+            "longest_run": 15,
+            "mask": [
+              "rip-disp"
+            ],
+            "mask_source": "iced-x86",
+            "other_hits": 0,
+            "pattern": "48 83 EC 28 31 C9 BA 01 00 00 00 90 48 FF 15 ?? ?? ?? ?? 48 83 C4 28 C3",
+            "pins": [
+              {
+                "disp_offset": 15,
+                "dll": "KERNEL32.dll",
+                "end_offset": 19,
+                "name": "TerminateProcess"
+              }
+            ],
+            "separation": "older-only",
+            "side": "older",
+            "source_hits": 1,
+            "window_rva": 4173
+          },
+          {
+            "delay": false,
+            "dll": "KERNEL32.dll",
+            "included": true,
+            "kind": "import",
+            "name": "TerminateProcess",
+            "ordinal": null,
+            "origin": "pe-imports",
+            "separation": "older-only"
+          },
+          {
+            "api_gates": [
+              {
+                "dll": "KERNEL32.dll",
+                "name": "TerminateProcess"
+              }
+            ],
+            "attack": [],
+            "classification": "removed-with-code",
+            "included": false,
+            "kind": "capability",
+            "namespace": "host-interaction/process/terminate",
+            "rule_id": "terminate process",
+            "separation": "older-only"
+          },
+          {
+            "encoding": "ascii",
+            "evidence_run_id": "tool-run-1",
+            "included": false,
+            "kind": "string",
+            "length": 8,
+            "linked_by": "file-level",
+            "offset": 8720,
+            "separation": "newer-only",
+            "side": "newer",
+            "text": "Example\\x00",
+            "value_sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+          }
+        ],
+        "gates": [
+          {
+            "detail": "Change reviewed as material",
+            "gate_id": "elig",
+            "measured": "material",
+            "state": "pass"
+          },
+          {
+            "detail": "20 literal bytes, longest run 15",
+            "gate_id": "len",
+            "measured": 20,
+            "state": "pass"
+          },
+          {
+            "detail": "4 of 24 bytes are wildcards",
+            "gate_id": "wild",
+            "measured": 16,
+            "state": "pass"
+          },
+          {
+            "detail": "",
+            "gate_id": "uniq",
+            "measured": 1,
+            "state": "pass"
+          },
+          {
+            "detail": "",
+            "gate_id": "sep",
+            "measured": 0,
+            "state": "pass"
+          },
+          {
+            "detail": "no warnings",
+            "gate_id": "compile",
+            "measured": 0,
+            "state": "pass"
+          },
+          {
+            "detail": "",
+            "gate_id": "secret",
+            "measured": 0,
+            "state": "pass"
+          },
+          {
+            "detail": "toolchain not checked",
+            "gate_id": "dist",
+            "measured": null,
+            "state": "unknown"
+          }
+        ],
+        "lineage_id": "0123456789abcccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "rule_name": "PT_0123456789ab_older",
+        "rule_sha256": "7ce1da78d8105cc009c32637943060ee504085155d999353e296742a37b30f51",
+        "rule_text": "import \"pe\"\n\nrule PT_0123456789ab_older: patchtrace older_side {\n  meta:\n    patchtrace_rule_id    = \"0123456789ab.v1\"\n    patchtrace_version    = 1\n    patchtrace_project_id = \"project-1\"\n    older_sha256          = \"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"\n    newer_sha256          = \"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\"\n    side                  = \"older\"\n    change                = \"removed\"\n    function_older        = \"0x104d\"\n    statement             = \"A match means a file contains this pattern. It does not show whether the file is affected by a flaw.\"\n\n  strings:\n    $b = { 48 83 EC 28 31 C9 BA 01 00 00 00 90 48 FF 15 ?? ?? ?? ?? 48 83 C4 28 C3 }\n\n  condition:\n    uint16(0) == 0x5A4D and pe.is_pe and pe.machine == pe.MACHINE_AMD64 and for any s in pe.sections: (s.characteristics & pe.SECTION_MEM_EXECUTE != 0 and $b in (s.raw_data_offset..s.raw_data_offset + s.raw_data_size)) and pe.imports(\"KERNEL32.dll\", \"TerminateProcess\")\n}\n",
+        "source": {
+          "analyst_confirmed_material": false,
+          "category": "removed",
+          "cwe": null,
+          "finding_id": "finding-1",
+          "match_id": "match-1",
+          "materiality": "material",
+          "newer": null,
+          "newer_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "older": {
+            "extent": "pdata",
+            "name": null,
+            "rva": 4173,
+            "size": 24
+          },
+          "older_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "project_id": "project-1",
+          "review": "accepted",
+          "revision": 3,
+          "run_id": "run-1"
+        },
+        "unvetted": false
+      }
+    ]
+  },
+  "RuleDecision": {
+    "invalid": [
+      {
+        "example": {
+          "action": "accept",
+          "analyst_label": "Example: terminate process removed",
+          "candidate_id": "1111111111111111111111111111111111111111111111111111111111111111",
+          "contract": "yara-rules/1",
+          "cve": [
+            "CVE-2099-10001"
+          ],
+          "cwe": [
+            "CWE-404"
+          ],
+          "decided_at": "2099-03-01T00:00:00Z",
+          "decision_id": "2222222222222222222222222222222222222222222222222222222222222222",
+          "kb": [
+            "KB5099001"
+          ],
+          "note": "SYNTHETIC example",
+          "unexpected_field": 1
+        },
+        "match": "extra_forbidden",
+        "reason": "extra fields are forbidden"
+      },
+      {
+        "example": {
+          "action": "accept",
+          "analyst_label": "Example: terminate process removed",
+          "candidate_id": "1111111111111111111111111111111111111111111111111111111111111111",
+          "contract": "yara-rules/2",
+          "cve": [
+            "CVE-2099-10001"
+          ],
+          "cwe": [
+            "CWE-404"
+          ],
+          "decided_at": "2099-03-01T00:00:00Z",
+          "decision_id": "2222222222222222222222222222222222222222222222222222222222222222",
+          "kb": [
+            "KB5099001"
+          ],
+          "note": "SYNTHETIC example"
+        },
+        "match": "literal_error",
+        "reason": "unsupported future contract version"
+      },
+      {
+        "example": {
+          "action": "accept",
+          "analyst_label": null,
+          "candidate_id": "1111111111111111111111111111111111111111111111111111111111111111",
+          "contract": "yara-rules/1",
+          "cve": [
+            "CVE-2099-10001"
+          ],
+          "cwe": [
+            "CWE-404"
+          ],
+          "decided_at": "2099-03-01T00:00:00Z",
+          "decision_id": "2222222222222222222222222222222222222222222222222222222222222222",
+          "kb": [
+            "KB5099001"
+          ],
+          "note": "SYNTHETIC example"
+        },
+        "match": "needs a label",
+        "reason": "accepting needs a label"
+      },
+      {
+        "example": {
+          "action": "reject",
+          "analyst_label": "late label",
+          "candidate_id": "1111111111111111111111111111111111111111111111111111111111111111",
+          "contract": "yara-rules/1",
+          "cve": [],
+          "cwe": [],
+          "decided_at": "2099-03-01T00:00:00Z",
+          "decision_id": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+          "kb": [],
+          "note": ""
+        },
+        "match": "belong to an accept",
+        "reason": "a label belongs to accept"
+      },
+      {
+        "example": {
+          "action": "accept",
+          "analyst_label": "x‮y",
+          "candidate_id": "1111111111111111111111111111111111111111111111111111111111111111",
+          "contract": "yara-rules/1",
+          "cve": [
+            "CVE-2099-10001"
+          ],
+          "cwe": [
+            "CWE-404"
+          ],
+          "decided_at": "2099-03-01T00:00:00Z",
+          "decision_id": "2222222222222222222222222222222222222222222222222222222222222222",
+          "kb": [
+            "KB5099001"
+          ],
+          "note": "SYNTHETIC example"
+        },
+        "match": "bidirectional",
+        "reason": "a bidi override is refused"
+      },
+      {
+        "example": {
+          "action": "accept",
+          "analyst_label": "Example: terminate process removed",
+          "candidate_id": "1111111111111111111111111111111111111111111111111111111111111111",
+          "contract": "yara-rules/1",
+          "cve": [
+            "CVE-2099-1"
+          ],
+          "cwe": [
+            "CWE-404"
+          ],
+          "decided_at": "2099-03-01T00:00:00Z",
+          "decision_id": "2222222222222222222222222222222222222222222222222222222222222222",
+          "kb": [
+            "KB5099001"
+          ],
+          "note": "SYNTHETIC example"
+        },
+        "match": "string_pattern_mismatch",
+        "reason": "advisory ids are validated"
+      }
+    ],
+    "valid": [
+      {
+        "action": "accept",
+        "analyst_label": "Example: terminate process removed",
+        "candidate_id": "1111111111111111111111111111111111111111111111111111111111111111",
+        "contract": "yara-rules/1",
+        "cve": [
+          "CVE-2099-10001"
+        ],
+        "cwe": [
+          "CWE-404"
+        ],
+        "decided_at": "2099-03-01T00:00:00Z",
+        "decision_id": "2222222222222222222222222222222222222222222222222222222222222222",
+        "kb": [
+          "KB5099001"
+        ],
+        "note": "SYNTHETIC example"
+      },
+      {
+        "action": "reject",
+        "analyst_label": null,
+        "candidate_id": "1111111111111111111111111111111111111111111111111111111111111111",
+        "contract": "yara-rules/1",
+        "cve": [],
+        "cwe": [],
+        "decided_at": "2099-03-01T00:00:00Z",
+        "decision_id": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+        "kb": [],
+        "note": ""
+      }
+    ]
+  },
+  "RuleVersion": {
+    "invalid": [
+      {
+        "example": {
+          "candidate_id": "1111111111111111111111111111111111111111111111111111111111111111",
+          "contract": "yara-rules/1",
+          "created_at": "2099-03-01T00:00:00Z",
+          "decision_id": "2222222222222222222222222222222222222222222222222222222222222222",
+          "engine": {
+            "decoder": "iced-x86",
+            "decoder_version": "1.21.0",
+            "engine": "yara-x",
+            "grammar": "yrx-gen/1",
+            "version": "1.21.0",
+            "version_source": "metadata",
+            "worker": "rules-worker/1"
+          },
+          "lineage_id": "0123456789abcccccccccccccccccccccccccccccccccccccccccccccccccccc",
+          "rule_sha256": "7ce1da78d8105cc009c32637943060ee504085155d999353e296742a37b30f51",
+          "rule_text": "import \"pe\"\n\nrule PT_0123456789ab_older: patchtrace older_side {\n  meta:\n    patchtrace_rule_id    = \"0123456789ab.v1\"\n    patchtrace_version    = 1\n    patchtrace_project_id = \"project-1\"\n    older_sha256          = \"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"\n    newer_sha256          = \"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\"\n    side                  = \"older\"\n    change                = \"removed\"\n    function_older        = \"0x104d\"\n    statement             = \"A match means a file contains this pattern. It does not show whether the file is affected by a flaw.\"\n\n  strings:\n    $b = { 48 83 EC 28 31 C9 BA 01 00 00 00 90 48 FF 15 ?? ?? ?? ?? 48 83 C4 28 C3 }\n\n  condition:\n    uint16(0) == 0x5A4D and pe.is_pe and pe.machine == pe.MACHINE_AMD64 and for any s in pe.sections: (s.characteristics & pe.SECTION_MEM_EXECUTE != 0 and $b in (s.raw_data_offset..s.raw_data_offset + s.raw_data_size)) and pe.imports(\"KERNEL32.dll\", \"TerminateProcess\")\n}\n",
+          "source": {
+            "analyst_confirmed_material": false,
+            "category": "removed",
+            "cwe": null,
+            "finding_id": "finding-1",
+            "match_id": "match-1",
+            "materiality": "material",
+            "newer": null,
+            "newer_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "older": {
+              "extent": "pdata",
+              "name": null,
+              "rva": 4173,
+              "size": 24
+            },
+            "older_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "project_id": "project-1",
+            "review": "accepted",
+            "revision": 3,
+            "run_id": "run-1"
+          },
+          "supersedes": null,
+          "unexpected_field": 1,
+          "version": 1,
+          "version_id": "3333333333333333333333333333333333333333333333333333333333333333"
+        },
+        "match": "extra_forbidden",
+        "reason": "extra fields are forbidden"
+      },
+      {
+        "example": {
+          "candidate_id": "1111111111111111111111111111111111111111111111111111111111111111",
+          "contract": "yara-rules/2",
+          "created_at": "2099-03-01T00:00:00Z",
+          "decision_id": "2222222222222222222222222222222222222222222222222222222222222222",
+          "engine": {
+            "decoder": "iced-x86",
+            "decoder_version": "1.21.0",
+            "engine": "yara-x",
+            "grammar": "yrx-gen/1",
+            "version": "1.21.0",
+            "version_source": "metadata",
+            "worker": "rules-worker/1"
+          },
+          "lineage_id": "0123456789abcccccccccccccccccccccccccccccccccccccccccccccccccccc",
+          "rule_sha256": "7ce1da78d8105cc009c32637943060ee504085155d999353e296742a37b30f51",
+          "rule_text": "import \"pe\"\n\nrule PT_0123456789ab_older: patchtrace older_side {\n  meta:\n    patchtrace_rule_id    = \"0123456789ab.v1\"\n    patchtrace_version    = 1\n    patchtrace_project_id = \"project-1\"\n    older_sha256          = \"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"\n    newer_sha256          = \"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\"\n    side                  = \"older\"\n    change                = \"removed\"\n    function_older        = \"0x104d\"\n    statement             = \"A match means a file contains this pattern. It does not show whether the file is affected by a flaw.\"\n\n  strings:\n    $b = { 48 83 EC 28 31 C9 BA 01 00 00 00 90 48 FF 15 ?? ?? ?? ?? 48 83 C4 28 C3 }\n\n  condition:\n    uint16(0) == 0x5A4D and pe.is_pe and pe.machine == pe.MACHINE_AMD64 and for any s in pe.sections: (s.characteristics & pe.SECTION_MEM_EXECUTE != 0 and $b in (s.raw_data_offset..s.raw_data_offset + s.raw_data_size)) and pe.imports(\"KERNEL32.dll\", \"TerminateProcess\")\n}\n",
+          "source": {
+            "analyst_confirmed_material": false,
+            "category": "removed",
+            "cwe": null,
+            "finding_id": "finding-1",
+            "match_id": "match-1",
+            "materiality": "material",
+            "newer": null,
+            "newer_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "older": {
+              "extent": "pdata",
+              "name": null,
+              "rva": 4173,
+              "size": 24
+            },
+            "older_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "project_id": "project-1",
+            "review": "accepted",
+            "revision": 3,
+            "run_id": "run-1"
+          },
+          "supersedes": null,
+          "version": 1,
+          "version_id": "3333333333333333333333333333333333333333333333333333333333333333"
+        },
+        "match": "literal_error",
+        "reason": "unsupported future contract version"
+      },
+      {
+        "example": {
+          "candidate_id": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+          "contract": "yara-rules/1",
+          "created_at": "2099-03-01T00:00:00Z",
+          "decision_id": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+          "engine": {
+            "decoder": "iced-x86",
+            "decoder_version": "1.21.0",
+            "engine": "yara-x",
+            "grammar": "yrx-gen/1",
+            "version": "1.21.0",
+            "version_source": "metadata",
+            "worker": "rules-worker/1"
+          },
+          "lineage_id": "0123456789abcccccccccccccccccccccccccccccccccccccccccccccccccccc",
+          "rule_sha256": "f9114c14fcc595257d9b9668ec5df043d7280036d41e8f0768eaa0afc6a98c87",
+          "rule_text": "import \"pe\"\n\nrule PT_0123456789ab_older: patchtrace older_side {\n  meta:\n    patchtrace_rule_id    = \"0123456789ab.v2\"\n    patchtrace_version    = 2\n    patchtrace_project_id = \"project-1\"\n    older_sha256          = \"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"\n    newer_sha256          = \"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\"\n    side                  = \"older\"\n    change                = \"removed\"\n    function_older        = \"0x104d\"\n    statement             = \"A match means a file contains this pattern. It does not show whether the file is affected by a flaw.\"\n\n  strings:\n    $b = { 48 83 EC 28 31 C9 BA 01 00 00 00 90 48 FF 15 ?? ?? ?? ?? 48 83 C4 28 C3 }\n\n  condition:\n    uint16(0) == 0x5A4D and pe.is_pe and pe.machine == pe.MACHINE_AMD64 and for any s in pe.sections: (s.characteristics & pe.SECTION_MEM_EXECUTE != 0 and $b in (s.raw_data_offset..s.raw_data_offset + s.raw_data_size)) and pe.imports(\"KERNEL32.dll\", \"TerminateProcess\")\n}\n",
+          "source": {
+            "analyst_confirmed_material": false,
+            "category": "removed",
+            "cwe": null,
+            "finding_id": "finding-1",
+            "match_id": "match-1",
+            "materiality": "material",
+            "newer": null,
+            "newer_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "older": {
+              "extent": "pdata",
+              "name": null,
+              "rva": 4173,
+              "size": 24
+            },
+            "older_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "project_id": "project-1",
+            "review": "accepted",
+            "revision": 3,
+            "run_id": "run-1"
+          },
+          "supersedes": null,
+          "version": 2,
+          "version_id": "4444444444444444444444444444444444444444444444444444444444444444"
+        },
+        "match": "supersedes",
+        "reason": "a later version supersedes its predecessor"
+      },
+      {
+        "example": {
+          "candidate_id": "1111111111111111111111111111111111111111111111111111111111111111",
+          "contract": "yara-rules/1",
+          "created_at": "2099-03-01T00:00:00Z",
+          "decision_id": "2222222222222222222222222222222222222222222222222222222222222222",
+          "engine": {
+            "decoder": "iced-x86",
+            "decoder_version": "1.21.0",
+            "engine": "yara-x",
+            "grammar": "yrx-gen/1",
+            "version": "1.21.0",
+            "version_source": "metadata",
+            "worker": "rules-worker/1"
+          },
+          "lineage_id": "0123456789abcccccccccccccccccccccccccccccccccccccccccccccccccccc",
+          "rule_sha256": "7ce1da78d8105cc009c32637943060ee504085155d999353e296742a37b30f51",
+          "rule_text": "import \"pe\"\n\nrule PT_0123456789ab_older: patchtrace older_side {\n  meta:\n    patchtrace_rule_id    = \"0123456789ab.v1\"\n    patchtrace_version    = 1\n    patchtrace_project_id = \"project-1\"\n    older_sha256          = \"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"\n    newer_sha256          = \"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\"\n    side                  = \"older\"\n    change                = \"removed\"\n    function_older        = \"0x104d\"\n    statement             = \"A match means a file contains this pattern. It does not show whether the file is affected by a flaw.\"\n\n  strings:\n    $b = { 48 83 EC 28 31 C9 BA 01 00 00 00 90 48 FF 15 ?? ?? ?? ?? 48 83 C4 28 C3 }\n\n  condition:\n    uint16(0) == 0x5A4D and pe.is_pe and pe.machine == pe.MACHINE_AMD64 and for any s in pe.sections: (s.characteristics & pe.SECTION_MEM_EXECUTE != 0 and $b in (s.raw_data_offset..s.raw_data_offset + s.raw_data_size)) and pe.imports(\"KERNEL32.dll\", \"TerminateProcess\")\n}\n",
+          "source": {
+            "analyst_confirmed_material": false,
+            "category": "removed",
+            "cwe": null,
+            "finding_id": "finding-1",
+            "match_id": "match-1",
+            "materiality": "material",
+            "newer": null,
+            "newer_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "older": {
+              "extent": "pdata",
+              "name": null,
+              "rva": 4173,
+              "size": 24
+            },
+            "older_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "project_id": "project-1",
+            "review": "accepted",
+            "revision": 3,
+            "run_id": "run-1"
+          },
+          "supersedes": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "version": 1,
+          "version_id": "3333333333333333333333333333333333333333333333333333333333333333"
+        },
+        "match": "supersedes",
+        "reason": "version 1 supersedes nothing"
+      },
+      {
+        "example": {
+          "candidate_id": "1111111111111111111111111111111111111111111111111111111111111111",
+          "contract": "yara-rules/1",
+          "created_at": "2099-03-01T00:00:00Z",
+          "decision_id": "2222222222222222222222222222222222222222222222222222222222222222",
+          "engine": {
+            "decoder": "iced-x86",
+            "decoder_version": "1.21.0",
+            "engine": "yara-x",
+            "grammar": "yrx-gen/1",
+            "version": "1.21.0",
+            "version_source": "metadata",
+            "worker": "rules-worker/1"
+          },
+          "lineage_id": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+          "rule_sha256": "7ce1da78d8105cc009c32637943060ee504085155d999353e296742a37b30f51",
+          "rule_text": "import \"pe\"\n\nrule PT_0123456789ab_older: patchtrace older_side {\n  meta:\n    patchtrace_rule_id    = \"0123456789ab.v1\"\n    patchtrace_version    = 1\n    patchtrace_project_id = \"project-1\"\n    older_sha256          = \"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"\n    newer_sha256          = \"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\"\n    side                  = \"older\"\n    change                = \"removed\"\n    function_older        = \"0x104d\"\n    statement             = \"A match means a file contains this pattern. It does not show whether the file is affected by a flaw.\"\n\n  strings:\n    $b = { 48 83 EC 28 31 C9 BA 01 00 00 00 90 48 FF 15 ?? ?? ?? ?? 48 83 C4 28 C3 }\n\n  condition:\n    uint16(0) == 0x5A4D and pe.is_pe and pe.machine == pe.MACHINE_AMD64 and for any s in pe.sections: (s.characteristics & pe.SECTION_MEM_EXECUTE != 0 and $b in (s.raw_data_offset..s.raw_data_offset + s.raw_data_size)) and pe.imports(\"KERNEL32.dll\", \"TerminateProcess\")\n}\n",
+          "source": {
+            "analyst_confirmed_material": false,
+            "category": "removed",
+            "cwe": null,
+            "finding_id": "finding-1",
+            "match_id": "match-1",
+            "materiality": "material",
+            "newer": null,
+            "newer_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "older": {
+              "extent": "pdata",
+              "name": null,
+              "rva": 4173,
+              "size": 24
+            },
+            "older_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "project_id": "project-1",
+            "review": "accepted",
+            "revision": 3,
+            "run_id": "run-1"
+          },
+          "supersedes": null,
+          "version": 1,
+          "version_id": "3333333333333333333333333333333333333333333333333333333333333333"
+        },
+        "match": "rule of this lineage",
+        "reason": "the text belongs to the lineage"
+      }
+    ],
+    "valid": [
+      {
+        "candidate_id": "1111111111111111111111111111111111111111111111111111111111111111",
+        "contract": "yara-rules/1",
+        "created_at": "2099-03-01T00:00:00Z",
+        "decision_id": "2222222222222222222222222222222222222222222222222222222222222222",
+        "engine": {
+          "decoder": "iced-x86",
+          "decoder_version": "1.21.0",
+          "engine": "yara-x",
+          "grammar": "yrx-gen/1",
+          "version": "1.21.0",
+          "version_source": "metadata",
+          "worker": "rules-worker/1"
+        },
+        "lineage_id": "0123456789abcccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "rule_sha256": "7ce1da78d8105cc009c32637943060ee504085155d999353e296742a37b30f51",
+        "rule_text": "import \"pe\"\n\nrule PT_0123456789ab_older: patchtrace older_side {\n  meta:\n    patchtrace_rule_id    = \"0123456789ab.v1\"\n    patchtrace_version    = 1\n    patchtrace_project_id = \"project-1\"\n    older_sha256          = \"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"\n    newer_sha256          = \"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\"\n    side                  = \"older\"\n    change                = \"removed\"\n    function_older        = \"0x104d\"\n    statement             = \"A match means a file contains this pattern. It does not show whether the file is affected by a flaw.\"\n\n  strings:\n    $b = { 48 83 EC 28 31 C9 BA 01 00 00 00 90 48 FF 15 ?? ?? ?? ?? 48 83 C4 28 C3 }\n\n  condition:\n    uint16(0) == 0x5A4D and pe.is_pe and pe.machine == pe.MACHINE_AMD64 and for any s in pe.sections: (s.characteristics & pe.SECTION_MEM_EXECUTE != 0 and $b in (s.raw_data_offset..s.raw_data_offset + s.raw_data_size)) and pe.imports(\"KERNEL32.dll\", \"TerminateProcess\")\n}\n",
+        "source": {
+          "analyst_confirmed_material": false,
+          "category": "removed",
+          "cwe": null,
+          "finding_id": "finding-1",
+          "match_id": "match-1",
+          "materiality": "material",
+          "newer": null,
+          "newer_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "older": {
+            "extent": "pdata",
+            "name": null,
+            "rva": 4173,
+            "size": 24
+          },
+          "older_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "project_id": "project-1",
+          "review": "accepted",
+          "revision": 3,
+          "run_id": "run-1"
+        },
+        "supersedes": null,
+        "version": 1,
+        "version_id": "3333333333333333333333333333333333333333333333333333333333333333"
+      },
+      {
+        "candidate_id": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+        "contract": "yara-rules/1",
+        "created_at": "2099-03-01T00:00:00Z",
+        "decision_id": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+        "engine": {
+          "decoder": "iced-x86",
+          "decoder_version": "1.21.0",
+          "engine": "yara-x",
+          "grammar": "yrx-gen/1",
+          "version": "1.21.0",
+          "version_source": "metadata",
+          "worker": "rules-worker/1"
+        },
+        "lineage_id": "0123456789abcccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "rule_sha256": "f9114c14fcc595257d9b9668ec5df043d7280036d41e8f0768eaa0afc6a98c87",
+        "rule_text": "import \"pe\"\n\nrule PT_0123456789ab_older: patchtrace older_side {\n  meta:\n    patchtrace_rule_id    = \"0123456789ab.v2\"\n    patchtrace_version    = 2\n    patchtrace_project_id = \"project-1\"\n    older_sha256          = \"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"\n    newer_sha256          = \"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\"\n    side                  = \"older\"\n    change                = \"removed\"\n    function_older        = \"0x104d\"\n    statement             = \"A match means a file contains this pattern. It does not show whether the file is affected by a flaw.\"\n\n  strings:\n    $b = { 48 83 EC 28 31 C9 BA 01 00 00 00 90 48 FF 15 ?? ?? ?? ?? 48 83 C4 28 C3 }\n\n  condition:\n    uint16(0) == 0x5A4D and pe.is_pe and pe.machine == pe.MACHINE_AMD64 and for any s in pe.sections: (s.characteristics & pe.SECTION_MEM_EXECUTE != 0 and $b in (s.raw_data_offset..s.raw_data_offset + s.raw_data_size)) and pe.imports(\"KERNEL32.dll\", \"TerminateProcess\")\n}\n",
+        "source": {
+          "analyst_confirmed_material": false,
+          "category": "removed",
+          "cwe": null,
+          "finding_id": "finding-1",
+          "match_id": "match-1",
+          "materiality": "material",
+          "newer": null,
+          "newer_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "older": {
+            "extent": "pdata",
+            "name": null,
+            "rva": 4173,
+            "size": 24
+          },
+          "older_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "project_id": "project-1",
+          "review": "accepted",
+          "revision": 3,
+          "run_id": "run-1"
+        },
+        "supersedes": "3333333333333333333333333333333333333333333333333333333333333333",
+        "version": 2,
+        "version_id": "4444444444444444444444444444444444444444444444444444444444444444"
+      }
+    ]
+  },
+  "RunRule": {
+    "invalid": [
+      {
+        "example": {
+          "rule_sha256": "7ce1da78d8105cc009c32637943060ee504085155d999353e296742a37b30f51",
+          "unexpected_field": 1,
+          "version_id": "3333333333333333333333333333333333333333333333333333333333333333"
+        },
+        "match": "extra_forbidden",
+        "reason": "extra fields are forbidden"
+      },
+      {
+        "example": {
+          "rule_sha256": "7ce1da78d8105cc009c32637943060ee504085155d999353e296742a37b30f51",
+          "version_id": "xyz"
+        },
+        "match": "string_pattern_mismatch",
+        "reason": "ids are SHA-256 hex"
+      }
+    ],
+    "valid": [
+      {
+        "rule_sha256": "7ce1da78d8105cc009c32637943060ee504085155d999353e296742a37b30f51",
+        "version_id": "3333333333333333333333333333333333333333333333333333333333333333"
+      }
+    ]
+  },
+  "StringFeature": {
+    "invalid": [
+      {
+        "example": {
+          "encoding": "ascii",
+          "evidence_run_id": "tool-run-1",
+          "included": false,
+          "kind": "string",
+          "length": 8,
+          "linked_by": "file-level",
+          "offset": 8720,
+          "separation": "newer-only",
+          "side": "newer",
+          "text": "Example\\x00",
+          "unexpected_field": 1,
+          "value_sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+        },
+        "match": "extra_forbidden",
+        "reason": "extra fields are forbidden"
+      },
+      {
+        "example": {
+          "encoding": "ascii",
+          "evidence_run_id": "tool-run-1",
+          "included": false,
+          "kind": "string",
+          "length": 8,
+          "linked_by": "file-level",
+          "offset": 8720,
+          "separation": "newer-only",
+          "side": "newer",
+          "text": "say \"hi\"",
+          "value_sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+        },
+        "match": "string_pattern_mismatch",
+        "reason": "a bare quote would break out of the string"
+      },
+      {
+        "example": {
+          "encoding": "ascii",
+          "evidence_run_id": "tool-run-1",
+          "included": false,
+          "kind": "string",
+          "length": 8,
+          "linked_by": "file-level",
+          "offset": 8720,
+          "separation": "newer-only",
+          "side": "newer",
+          "text": "back\\",
+          "value_sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+        },
+        "match": "string_pattern_mismatch",
+        "reason": "a trailing backslash would escape the quote"
+      },
+      {
+        "example": {
+          "encoding": "ascii",
+          "evidence_run_id": "tool-run-1",
+          "included": false,
+          "kind": "string",
+          "length": 3,
+          "linked_by": "file-level",
+          "offset": 8720,
+          "separation": "newer-only",
+          "side": "newer",
+          "text": "Example\\x00",
+          "value_sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+        },
+        "match": "number of bytes",
+        "reason": "length is the escaped text's byte count"
+      },
+      {
+        "example": {
+          "encoding": "ascii",
+          "evidence_run_id": "tool-run-1",
+          "included": false,
+          "kind": "string",
+          "length": 8,
+          "linked_by": "file-level",
+          "offset": 8720,
+          "separation": "older-only",
+          "side": "newer",
+          "text": "Example\\x00",
+          "value_sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+        },
+        "match": "cannot exist only in the other build",
+        "reason": "a string present in the newer build is not older-only"
+      }
+    ],
+    "valid": [
+      {
+        "encoding": "ascii",
+        "evidence_run_id": "tool-run-1",
+        "included": false,
+        "kind": "string",
+        "length": 8,
+        "linked_by": "file-level",
+        "offset": 8720,
+        "separation": "newer-only",
+        "side": "newer",
+        "text": "Example\\x00",
+        "value_sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+      }
+    ]
+  },
+  "TargetRef": {
+    "invalid": [
+      {
+        "example": {
+          "advisory_says": "unknown",
+          "expect": "hit",
+          "file_version": "10.0.26100.5000",
+          "kb": "KB5098000",
+          "label": "older.dll",
+          "ordinal": 1,
+          "role": "older-anchor",
+          "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "size": 4096,
+          "target_id": "t1",
+          "toolchain_flag": "unknown",
+          "unexpected_field": 1
+        },
+        "match": "extra_forbidden",
+        "reason": "extra fields are forbidden"
+      },
+      {
+        "example": {
+          "advisory_says": "unknown",
+          "expect": "hit",
+          "file_version": "10.0.26100.5000",
+          "kb": "KB5098000",
+          "label": "older.dll",
+          "ordinal": 1,
+          "role": "clean",
+          "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "size": 4096,
+          "target_id": "t1",
+          "toolchain_flag": "unknown"
+        },
+        "match": "no series ordinal",
+        "reason": "a clean file has no ordinal"
+      },
+      {
+        "example": {
+          "advisory_says": "unknown",
+          "expect": "no-hit",
+          "file_version": null,
+          "kb": null,
+          "label": "clean1.dll",
+          "ordinal": null,
+          "role": "series",
+          "sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+          "size": 2048,
+          "target_id": "t3",
+          "toolchain_flag": "unknown"
+        },
+        "match": "has an ordinal",
+        "reason": "a series build has an ordinal"
+      },
+      {
+        "example": {
+          "advisory_says": "unknown",
+          "expect": "hit",
+          "file_version": "10.0.26100.5000",
+          "kb": "KB5098000",
+          "label": "a\nb",
+          "ordinal": 1,
+          "role": "older-anchor",
+          "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "size": 4096,
+          "target_id": "t1",
+          "toolchain_flag": "unknown"
+        },
+        "match": "single line",
+        "reason": "a label is one line"
+      }
+    ],
+    "valid": [
+      {
+        "advisory_says": "unknown",
+        "expect": "hit",
+        "file_version": "10.0.26100.5000",
+        "kb": "KB5098000",
+        "label": "older.dll",
+        "ordinal": 1,
+        "role": "older-anchor",
+        "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "size": 4096,
+        "target_id": "t1",
+        "toolchain_flag": "unknown"
+      },
+      {
+        "advisory_says": "fixed",
+        "expect": "no-hit",
+        "file_version": "10.0.26100.5001",
+        "kb": "KB5099001",
+        "label": "newer.dll",
+        "ordinal": 2,
+        "role": "series",
+        "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "size": 4096,
+        "target_id": "t2",
+        "toolchain_flag": "none"
+      },
+      {
+        "advisory_says": "unknown",
+        "expect": "no-hit",
+        "file_version": null,
+        "kb": null,
+        "label": "clean1.dll",
+        "ordinal": null,
+        "role": "clean",
+        "sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "size": 2048,
+        "target_id": "t3",
+        "toolchain_flag": "unknown"
+      }
+    ]
+  },
+  "WorkerError": {
+    "invalid": [
+      {
+        "example": {
+          "code": "PT-RULE-UNAVAILABLE",
+          "message": "The rule engine is not available",
+          "reason": "engine-missing",
+          "unexpected_field": 1
+        },
+        "match": "extra_forbidden",
+        "reason": "extra fields are forbidden"
+      },
+      {
+        "example": {
+          "code": "PT-RULE-OTHER",
+          "message": "The rule engine is not available",
+          "reason": "engine-missing"
+        },
+        "match": "literal_error",
+        "reason": "codes are a closed list"
+      }
+    ],
+    "valid": [
+      {
+        "code": "PT-RULE-UNAVAILABLE",
+        "message": "The rule engine is not available",
+        "reason": "engine-missing"
+      }
+    ]
+  },
+  "WorkerLimits": {
+    "invalid": [
+      {
+        "example": {
+          "diagnostics_per_rule": 16,
+          "file_bytes": 134217728,
+          "max_matches_per_pattern": 64,
+          "memory_bytes": 1073741824,
+          "offsets_per_cell": 8,
+          "patterns_per_rule": 12,
+          "target_timeout_s": 30,
+          "unexpected_field": 1
+        },
+        "match": "extra_forbidden",
+        "reason": "extra fields are forbidden"
+      },
+      {
+        "example": {
+          "diagnostics_per_rule": 16,
+          "file_bytes": 134217728,
+          "max_matches_per_pattern": 64,
+          "memory_bytes": 1073741824,
+          "offsets_per_cell": 8,
+          "patterns_per_rule": 12,
+          "target_timeout_s": 0
+        },
+        "match": "greater_than_equal",
+        "reason": "a timeout is at least one second"
+      },
+      {
+        "example": {
+          "diagnostics_per_rule": 16,
+          "file_bytes": 134217728,
+          "max_matches_per_pattern": 64,
+          "memory_bytes": 1,
+          "offsets_per_cell": 8,
+          "patterns_per_rule": 12,
+          "target_timeout_s": 30
+        },
+        "match": "greater_than_equal",
+        "reason": "the memory cap leaves room to start"
+      }
+    ],
+    "valid": [
+      {
+        "diagnostics_per_rule": 16,
+        "file_bytes": 134217728,
+        "max_matches_per_pattern": 64,
+        "memory_bytes": 1073741824,
+        "offsets_per_cell": 8,
+        "patterns_per_rule": 12,
+        "target_timeout_s": 30
+      }
+    ]
+  },
+  "WorkerRequest": {
+    "invalid": [
+      {
+        "example": {
+          "contract": "rules-worker/1",
+          "limits": {
+            "diagnostics_per_rule": 16,
+            "file_bytes": 134217728,
+            "max_matches_per_pattern": 64,
+            "memory_bytes": 1073741824,
+            "offsets_per_cell": 8,
+            "patterns_per_rule": 12,
+            "target_timeout_s": 30
+          },
+          "op": "probe",
+          "result": "/example/scratch/out.json",
+          "rules": [],
+          "targets": [],
+          "unexpected_field": 1
+        },
+        "match": "extra_forbidden",
+        "reason": "extra fields are forbidden"
+      },
+      {
+        "example": {
+          "contract": "yara-rules/2",
+          "limits": {
+            "diagnostics_per_rule": 16,
+            "file_bytes": 134217728,
+            "max_matches_per_pattern": 64,
+            "memory_bytes": 1073741824,
+            "offsets_per_cell": 8,
+            "patterns_per_rule": 12,
+            "target_timeout_s": 30
+          },
+          "op": "probe",
+          "result": "/example/scratch/out.json",
+          "rules": [],
+          "targets": []
+        },
+        "match": "literal_error",
+        "reason": "unsupported future contract version"
+      },
+      {
+        "example": {
+          "contract": "rules-worker/1",
+          "limits": {
+            "diagnostics_per_rule": 16,
+            "file_bytes": 134217728,
+            "max_matches_per_pattern": 64,
+            "memory_bytes": 1073741824,
+            "offsets_per_cell": 8,
+            "patterns_per_rule": 12,
+            "target_timeout_s": 30
+          },
+          "op": "execute",
+          "result": "/example/scratch/out.json",
+          "rules": [],
+          "targets": []
+        },
+        "match": "literal_error",
+        "reason": "ops are a closed list"
+      },
+      {
+        "example": {
+          "contract": "rules-worker/1",
+          "limits": {
+            "diagnostics_per_rule": 16,
+            "file_bytes": 134217728,
+            "max_matches_per_pattern": 64,
+            "memory_bytes": 1073741824,
+            "offsets_per_cell": 8,
+            "patterns_per_rule": 12,
+            "target_timeout_s": 30
+          },
+          "op": "lint",
+          "result": "/example/scratch/out.json",
+          "rules": [
+            {
+              "name": "3333333333333333333333333333333333333333333333333333333333333333",
+              "text": "import \"pe\"\n\nrule PT_0123456789ab_older: patchtrace older_side {\n  meta:\n    patchtrace_rule_id    = \"0123456789ab.v1\"\n    patchtrace_version    = 1\n    patchtrace_project_id = \"project-1\"\n    older_sha256          = \"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"\n    newer_sha256          = \"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\"\n    side                  = \"older\"\n    change                = \"removed\"\n    function_older        = \"0x104d\"\n    statement             = \"A match means a file contains this pattern. It does not show whether the file is affected by a flaw.\"\n\n  strings:\n    $b = { 48 83 EC 28 31 C9 BA 01 00 00 00 90 48 FF 15 ?? ?? ?? ?? 48 83 C4 28 C3 }\n\n  condition:\n    uint16(0) == 0x5A4D and pe.is_pe and pe.machine == pe.MACHINE_AMD64 and for any s in pe.sections: (s.characteristics & pe.SECTION_MEM_EXECUTE != 0 and $b in (s.raw_data_offset..s.raw_data_offset + s.raw_data_size)) and pe.imports(\"KERNEL32.dll\", \"TerminateProcess\")\n}\n"
+            }
+          ],
+          "targets": [
+            {
+              "path": "/x",
+              "size": 1,
+              "target_id": "t1"
+            }
+          ]
+        },
+        "match": "carries rules and no targets",
+        "reason": "a lint request has no targets"
+      },
+      {
+        "example": {
+          "contract": "rules-worker/1",
+          "limits": {
+            "diagnostics_per_rule": 16,
+            "file_bytes": 134217728,
+            "max_matches_per_pattern": 64,
+            "memory_bytes": 1073741824,
+            "offsets_per_cell": 8,
+            "patterns_per_rule": 12,
+            "target_timeout_s": 30
+          },
+          "op": "scan",
+          "result": "/example/scratch/out.json",
+          "rules": [],
+          "targets": [
+            {
+              "path": "/example/older.bin",
+              "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "size": 4096,
+              "target_id": "t1"
+            }
+          ]
+        },
+        "match": "carries rules and targets",
+        "reason": "a scan request needs rules"
+      },
+      {
+        "example": {
+          "contract": "rules-worker/1",
+          "limits": {
+            "diagnostics_per_rule": 16,
+            "file_bytes": 134217728,
+            "max_matches_per_pattern": 64,
+            "memory_bytes": 1073741824,
+            "offsets_per_cell": 8,
+            "patterns_per_rule": 12,
+            "target_timeout_s": 30
+          },
+          "op": "scan",
+          "result": "/example/scratch/out.json",
+          "rules": [
+            {
+              "name": "3333333333333333333333333333333333333333333333333333333333333333",
+              "text": "import \"pe\"\n\nrule PT_0123456789ab_older: patchtrace older_side {\n  meta:\n    patchtrace_rule_id    = \"0123456789ab.v1\"\n    patchtrace_version    = 1\n    patchtrace_project_id = \"project-1\"\n    older_sha256          = \"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"\n    newer_sha256          = \"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\"\n    side                  = \"older\"\n    change                = \"removed\"\n    function_older        = \"0x104d\"\n    statement             = \"A match means a file contains this pattern. It does not show whether the file is affected by a flaw.\"\n\n  strings:\n    $b = { 48 83 EC 28 31 C9 BA 01 00 00 00 90 48 FF 15 ?? ?? ?? ?? 48 83 C4 28 C3 }\n\n  condition:\n    uint16(0) == 0x5A4D and pe.is_pe and pe.machine == pe.MACHINE_AMD64 and for any s in pe.sections: (s.characteristics & pe.SECTION_MEM_EXECUTE != 0 and $b in (s.raw_data_offset..s.raw_data_offset + s.raw_data_size)) and pe.imports(\"KERNEL32.dll\", \"TerminateProcess\")\n}\n"
+            }
+          ],
+          "targets": [
+            {
+              "path": "/example/older.bin",
+              "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "size": 4096,
+              "target_id": "a b"
+            }
+          ]
+        },
+        "match": "string_pattern_mismatch",
+        "reason": "target ids are keys"
+      }
+    ],
+    "valid": [
+      {
+        "contract": "rules-worker/1",
+        "limits": {
+          "diagnostics_per_rule": 16,
+          "file_bytes": 134217728,
+          "max_matches_per_pattern": 64,
+          "memory_bytes": 1073741824,
+          "offsets_per_cell": 8,
+          "patterns_per_rule": 12,
+          "target_timeout_s": 30
+        },
+        "op": "probe",
+        "result": "/example/scratch/out.json",
+        "rules": [],
+        "targets": []
+      },
+      {
+        "contract": "rules-worker/1",
+        "limits": {
+          "diagnostics_per_rule": 16,
+          "file_bytes": 134217728,
+          "max_matches_per_pattern": 64,
+          "memory_bytes": 1073741824,
+          "offsets_per_cell": 8,
+          "patterns_per_rule": 12,
+          "target_timeout_s": 30
+        },
+        "op": "lint",
+        "result": "/example/scratch/out.json",
+        "rules": [
+          {
+            "name": "3333333333333333333333333333333333333333333333333333333333333333",
+            "text": "import \"pe\"\n\nrule PT_0123456789ab_older: patchtrace older_side {\n  meta:\n    patchtrace_rule_id    = \"0123456789ab.v1\"\n    patchtrace_version    = 1\n    patchtrace_project_id = \"project-1\"\n    older_sha256          = \"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"\n    newer_sha256          = \"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\"\n    side                  = \"older\"\n    change                = \"removed\"\n    function_older        = \"0x104d\"\n    statement             = \"A match means a file contains this pattern. It does not show whether the file is affected by a flaw.\"\n\n  strings:\n    $b = { 48 83 EC 28 31 C9 BA 01 00 00 00 90 48 FF 15 ?? ?? ?? ?? 48 83 C4 28 C3 }\n\n  condition:\n    uint16(0) == 0x5A4D and pe.is_pe and pe.machine == pe.MACHINE_AMD64 and for any s in pe.sections: (s.characteristics & pe.SECTION_MEM_EXECUTE != 0 and $b in (s.raw_data_offset..s.raw_data_offset + s.raw_data_size)) and pe.imports(\"KERNEL32.dll\", \"TerminateProcess\")\n}\n"
+          }
+        ],
+        "targets": []
+      },
+      {
+        "contract": "rules-worker/1",
+        "limits": {
+          "diagnostics_per_rule": 16,
+          "file_bytes": 134217728,
+          "max_matches_per_pattern": 64,
+          "memory_bytes": 1073741824,
+          "offsets_per_cell": 8,
+          "patterns_per_rule": 12,
+          "target_timeout_s": 30
+        },
+        "op": "scan",
+        "result": "/example/scratch/out.json",
+        "rules": [
+          {
+            "name": "3333333333333333333333333333333333333333333333333333333333333333",
+            "text": "import \"pe\"\n\nrule PT_0123456789ab_older: patchtrace older_side {\n  meta:\n    patchtrace_rule_id    = \"0123456789ab.v1\"\n    patchtrace_version    = 1\n    patchtrace_project_id = \"project-1\"\n    older_sha256          = \"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"\n    newer_sha256          = \"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\"\n    side                  = \"older\"\n    change                = \"removed\"\n    function_older        = \"0x104d\"\n    statement             = \"A match means a file contains this pattern. It does not show whether the file is affected by a flaw.\"\n\n  strings:\n    $b = { 48 83 EC 28 31 C9 BA 01 00 00 00 90 48 FF 15 ?? ?? ?? ?? 48 83 C4 28 C3 }\n\n  condition:\n    uint16(0) == 0x5A4D and pe.is_pe and pe.machine == pe.MACHINE_AMD64 and for any s in pe.sections: (s.characteristics & pe.SECTION_MEM_EXECUTE != 0 and $b in (s.raw_data_offset..s.raw_data_offset + s.raw_data_size)) and pe.imports(\"KERNEL32.dll\", \"TerminateProcess\")\n}\n"
+          }
+        ],
+        "targets": [
+          {
+            "path": "/example/older.bin",
+            "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "size": 4096,
+            "target_id": "t1"
+          }
+        ]
+      }
+    ]
+  },
+  "WorkerResult": {
+    "invalid": [
+      {
+        "example": {
+          "cells": [],
+          "contract": "rules-worker/1",
+          "engine": {
+            "decoder": "iced-x86",
+            "decoder_version": "1.21.0",
+            "engine": "yara-x",
+            "grammar": "yrx-gen/1",
+            "version": "1.21.0",
+            "version_source": "metadata",
+            "worker": "rules-worker/1"
+          },
+          "error": null,
+          "kind": "ok",
+          "lint": [],
+          "modules": [
+            "hash",
+            "math",
+            "pe"
+          ],
+          "op": "probe",
+          "unexpected_field": 1
+        },
+        "match": "extra_forbidden",
+        "reason": "extra fields are forbidden"
+      },
+      {
+        "example": {
+          "cells": [],
+          "contract": "yara-rules/2",
+          "engine": {
+            "decoder": "iced-x86",
+            "decoder_version": "1.21.0",
+            "engine": "yara-x",
+            "grammar": "yrx-gen/1",
+            "version": "1.21.0",
+            "version_source": "metadata",
+            "worker": "rules-worker/1"
+          },
+          "error": null,
+          "kind": "ok",
+          "lint": [],
+          "modules": [
+            "hash",
+            "math",
+            "pe"
+          ],
+          "op": "probe"
+        },
+        "match": "literal_error",
+        "reason": "unsupported future contract version"
+      },
+      {
+        "example": {
+          "cells": [],
+          "contract": "rules-worker/1",
+          "engine": {
+            "decoder": "iced-x86",
+            "decoder_version": "1.21.0",
+            "engine": "yara-x",
+            "grammar": "yrx-gen/1",
+            "version": "1.21.0",
+            "version_source": "metadata",
+            "worker": "rules-worker/1"
+          },
+          "error": null,
+          "kind": "ok",
+          "lint": [
+            {
+              "name": "x",
+              "ok": true
+            }
+          ],
+          "modules": [
+            "hash",
+            "math",
+            "pe"
+          ],
+          "op": "probe"
+        },
+        "match": "exactly its own sections",
+        "reason": "a probe carries its own sections"
+      },
+      {
+        "example": {
+          "cells": [
+            {
+              "elapsed_ms": 3,
+              "hits": 1,
+              "offsets": [
+                589
+              ],
+              "reason": null,
+              "rvas": [
+                4173
+              ],
+              "state": "hit",
+              "verdict": "as-expected"
+            }
+          ],
+          "contract": "rules-worker/1",
+          "engine": {
+            "decoder": "none",
+            "decoder_version": null,
+            "engine": "yara-x",
+            "grammar": "yrx-gen/1",
+            "version": "1.21.0",
+            "version_source": "pin",
+            "worker": "rules-worker/1"
+          },
+          "error": null,
+          "kind": "ok",
+          "lint": [
+            {
+              "errors": [],
+              "formatter_stable": true,
+              "identifiers": [
+                "PT_0123456789ab_older"
+              ],
+              "imports": [
+                "pe"
+              ],
+              "name": "3333333333333333333333333333333333333333333333333333333333333333",
+              "ok": true,
+              "patterns": 1,
+              "warnings": [
+                {
+                  "code": "text_as_hex",
+                  "column": 5,
+                  "line": 14,
+                  "title": "hex pattern could be written as text literal"
+                }
+              ]
+            }
+          ],
+          "modules": [],
+          "op": "scan"
+        },
+        "match": "scores nothing",
+        "reason": "the worker scores nothing"
+      },
+      {
+        "example": {
+          "cells": [
+            {
+              "elapsed_ms": 3,
+              "hits": 1,
+              "offsets": [
+                589
+              ],
+              "reason": null,
+              "rvas": [
+                4173
+              ],
+              "state": "hit",
+              "verdict": "unscored"
+            }
+          ],
+          "contract": "rules-worker/1",
+          "engine": {
+            "decoder": "none",
+            "decoder_version": null,
+            "engine": "yara-x",
+            "grammar": "yrx-gen/1",
+            "version": "1.21.0",
+            "version_source": "pin",
+            "worker": "rules-worker/1"
+          },
+          "error": null,
+          "kind": "error",
+          "lint": [
+            {
+              "errors": [],
+              "formatter_stable": true,
+              "identifiers": [
+                "PT_0123456789ab_older"
+              ],
+              "imports": [
+                "pe"
+              ],
+              "name": "3333333333333333333333333333333333333333333333333333333333333333",
+              "ok": true,
+              "patterns": 1,
+              "warnings": [
+                {
+                  "code": "text_as_hex",
+                  "column": 5,
+                  "line": 14,
+                  "title": "hex pattern could be written as text literal"
+                }
+              ]
+            }
+          ],
+          "modules": [],
+          "op": "scan"
+        },
+        "match": "error alone",
+        "reason": "an error result carries the error alone"
+      },
+      {
+        "example": {
+          "cells": [],
+          "contract": "rules-worker/1",
+          "engine": {
+            "version": "1.21.0",
+            "version_source": "pin"
+          },
+          "error": {
+            "code": "PT-RULE-UNAVAILABLE",
+            "message": "The rule engine is not available",
+            "reason": "engine-missing"
+          },
+          "kind": "error",
+          "lint": [],
+          "modules": [],
+          "op": "lint"
+        },
+        "match": "error alone",
+        "reason": "an error result has no engine"
+      }
+    ],
+    "valid": [
+      {
+        "cells": [],
+        "contract": "rules-worker/1",
+        "engine": {
+          "decoder": "iced-x86",
+          "decoder_version": "1.21.0",
+          "engine": "yara-x",
+          "grammar": "yrx-gen/1",
+          "version": "1.21.0",
+          "version_source": "metadata",
+          "worker": "rules-worker/1"
+        },
+        "error": null,
+        "kind": "ok",
+        "lint": [],
+        "modules": [
+          "hash",
+          "math",
+          "pe"
+        ],
+        "op": "probe"
+      },
+      {
+        "cells": [
+          {
+            "elapsed_ms": 3,
+            "hits": 1,
+            "offsets": [
+              589
+            ],
+            "reason": null,
+            "rvas": [
+              4173
+            ],
+            "state": "hit",
+            "verdict": "unscored"
+          }
+        ],
+        "contract": "rules-worker/1",
+        "engine": {
+          "decoder": "none",
+          "decoder_version": null,
+          "engine": "yara-x",
+          "grammar": "yrx-gen/1",
+          "version": "1.21.0",
+          "version_source": "pin",
+          "worker": "rules-worker/1"
+        },
+        "error": null,
+        "kind": "ok",
+        "lint": [
+          {
+            "errors": [],
+            "formatter_stable": true,
+            "identifiers": [
+              "PT_0123456789ab_older"
+            ],
+            "imports": [
+              "pe"
+            ],
+            "name": "3333333333333333333333333333333333333333333333333333333333333333",
+            "ok": true,
+            "patterns": 1,
+            "warnings": [
+              {
+                "code": "text_as_hex",
+                "column": 5,
+                "line": 14,
+                "title": "hex pattern could be written as text literal"
+              }
+            ]
+          }
+        ],
+        "modules": [],
+        "op": "scan"
+      },
+      {
+        "cells": [],
+        "contract": "rules-worker/1",
+        "engine": null,
+        "error": {
+          "code": "PT-RULE-UNAVAILABLE",
+          "message": "The rule engine is not available",
+          "reason": "engine-missing"
+        },
+        "kind": "error",
+        "lint": [],
+        "modules": [],
+        "op": "lint"
+      }
+    ]
+  },
+  "WorkerRule": {
+    "invalid": [
+      {
+        "example": {
+          "name": "3333333333333333333333333333333333333333333333333333333333333333",
+          "text": "import \"pe\"\n\nrule PT_0123456789ab_older: patchtrace older_side {\n  meta:\n    patchtrace_rule_id    = \"0123456789ab.v1\"\n    patchtrace_version    = 1\n    patchtrace_project_id = \"project-1\"\n    older_sha256          = \"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"\n    newer_sha256          = \"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\"\n    side                  = \"older\"\n    change                = \"removed\"\n    function_older        = \"0x104d\"\n    statement             = \"A match means a file contains this pattern. It does not show whether the file is affected by a flaw.\"\n\n  strings:\n    $b = { 48 83 EC 28 31 C9 BA 01 00 00 00 90 48 FF 15 ?? ?? ?? ?? 48 83 C4 28 C3 }\n\n  condition:\n    uint16(0) == 0x5A4D and pe.is_pe and pe.machine == pe.MACHINE_AMD64 and for any s in pe.sections: (s.characteristics & pe.SECTION_MEM_EXECUTE != 0 and $b in (s.raw_data_offset..s.raw_data_offset + s.raw_data_size)) and pe.imports(\"KERNEL32.dll\", \"TerminateProcess\")\n}\n",
+          "unexpected_field": 1
+        },
+        "match": "extra_forbidden",
+        "reason": "extra fields are forbidden"
+      },
+      {
+        "example": {
+          "name": "3333333333333333333333333333333333333333333333333333333333333333",
+          "text": "rule x { condition: true }é"
+        },
+        "match": "printable ASCII",
+        "reason": "rule text is ASCII"
+      }
+    ],
+    "valid": [
+      {
+        "name": "3333333333333333333333333333333333333333333333333333333333333333",
+        "text": "import \"pe\"\n\nrule PT_0123456789ab_older: patchtrace older_side {\n  meta:\n    patchtrace_rule_id    = \"0123456789ab.v1\"\n    patchtrace_version    = 1\n    patchtrace_project_id = \"project-1\"\n    older_sha256          = \"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"\n    newer_sha256          = \"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\"\n    side                  = \"older\"\n    change                = \"removed\"\n    function_older        = \"0x104d\"\n    statement             = \"A match means a file contains this pattern. It does not show whether the file is affected by a flaw.\"\n\n  strings:\n    $b = { 48 83 EC 28 31 C9 BA 01 00 00 00 90 48 FF 15 ?? ?? ?? ?? 48 83 C4 28 C3 }\n\n  condition:\n    uint16(0) == 0x5A4D and pe.is_pe and pe.machine == pe.MACHINE_AMD64 and for any s in pe.sections: (s.characteristics & pe.SECTION_MEM_EXECUTE != 0 and $b in (s.raw_data_offset..s.raw_data_offset + s.raw_data_size)) and pe.imports(\"KERNEL32.dll\", \"TerminateProcess\")\n}\n"
+      }
+    ]
+  },
+  "WorkerTarget": {
+    "invalid": [
+      {
+        "example": {
+          "path": "/example/older.bin",
+          "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "size": 4096,
+          "target_id": "t1",
+          "unexpected_field": 1
+        },
+        "match": "extra_forbidden",
+        "reason": "extra fields are forbidden"
+      },
+      {
+        "example": {
+          "path": "/example/older.bin",
+          "sha256": "ABC",
+          "size": 4096,
+          "target_id": "t1"
+        },
+        "match": "string_pattern_mismatch",
+        "reason": "hashes are lower-case hex"
+      },
+      {
+        "example": {
+          "path": "",
+          "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "size": 4096,
+          "target_id": "t1"
+        },
+        "match": "string_too_short",
+        "reason": "a path is not empty"
+      }
+    ],
+    "valid": [
+      {
+        "path": "/example/older.bin",
+        "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "size": 4096,
+        "target_id": "t1"
+      }
+    ]
+  }
+}

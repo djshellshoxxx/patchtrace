@@ -82,7 +82,7 @@ Workflows enabled:
 | note, finding | `Locator(note or finding)` | `project.annotations`, `interpretations` (origin `model`) | GDE; reports |
 | pair / change fact | `PairExpansion` (section 7) | live project, `load_default`, unified read model, `delta.compute`, `nway` | FAB triage reads the same fields; nothing is copied into the index |
 
-FAB hand-off: hits expose `anchor_kind` and `anchor_key` (= `Locator` fields) so the synergy architect maps them 1:1. An `AnchorSink` Protocol (`pin(locator, note, provenance)`) is defined but unimplemented; "Pin as lead" stays absent until FAB exists.
+FAB hand-off: hits expose `anchor_kind` and `anchor_key` (= `Locator` fields) so the synergy architect maps them 1:1. A `PinPort` Protocol (`pin(locator, note, provenance)`, FAB-4) is defined but unimplemented; "Pin as lead" stays absent until FAB exists. Amended by FAB-0 (2026-10-14): the pin is the separate `PinPort`, so `AnchorSink` never gains a pin.
 
 ## 5. Synergy test (known answer, synthetic, committed-fixture friendly)
 `tests/test_search_synergy.py::test_container_size_beats_each_channel`. Builders: `tests/search_builders.py` (S3: synthetic PE pair from `sample.synthetic_pe`, Ghidriff-shaped JSON imported like `frozen_smoke._import_pair`) and `tests/search_synergy_builders.py` (S4: `ToolEvidenceSet`, CSAF facts). No Microsoft binary.

@@ -1,0 +1,25 @@
+{
+  "$id": "https://patchtrace.local/schemas/rules/1/WorkerRule.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "``name`` is the caller's key for this rule (a version id), not the YARA identifier.",
+  "properties": {
+    "name": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+      "title": "Name",
+      "type": "string"
+    },
+    "text": {
+      "maxLength": 65536,
+      "minLength": 1,
+      "title": "Text",
+      "type": "string"
+    }
+  },
+  "required": [
+    "name",
+    "text"
+  ],
+  "title": "WorkerRule",
+  "type": "object"
+}
