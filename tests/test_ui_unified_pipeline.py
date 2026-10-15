@@ -13,7 +13,6 @@ from qt_support import settings, top_level_windows  # noqa: F401  (the fixture i
 from unified_s0_fixtures import make_project
 from unified_wire_support import place_pair
 
-import patchtrace.ui_unified as ui_unified
 from patchtrace.gui.tips import register_tips
 from patchtrace.ui import MainWindow
 from patchtrace.unified import pipeline
@@ -75,18 +74,20 @@ def test_run_button_publishes_a_real_result_and_the_panel_shows_it(real):
     assert top_level_windows() == [window]
 
 
-def test_a_row_without_a_ghidriff_match_shows_the_stored_disassembly(real):
+def test_a_row_without_a_ghidriff_match_shows_the_stored_disassembly_in_the_panel(real):
     window, controller, service = real
     run_to_result(controller)
-    shown = []
-    controller.nav = SimpleNamespace(show_pair=lambda *args: shown.append(args),
-                                     select_match=lambda match_id, clear_filters=False: True)
+    controller.nav = SimpleNamespace(select_match=lambda match_id, clear_filters=False: True)
     row = next(r for r in controller.vm.rows if r.ghidriff_match_id is None and 'keep_same' in r.function_label)
+    code = controller.panel.code
     controller.show_row(row)
-    older, newer, label = shown[-1]
-    assert 'mov' in older.lower() and 'mov' in newer.lower() and 'ProgramIR' in label
-    assert older.splitlines()[0][:8].strip('0123456789abcdef') == ''
-    assert ui_unified.NO_PAIR_TEXT not in (older, newer)
+    wait_for(lambda: 'MOV' in code.view.panes['older'].toPlainText())
+    older, newer = (code.view.panes[side].toPlainText() for side in ('older', 'newer'))
+    assert older.splitlines()[0][:8].strip('0123456789abcdef') == '' and 'MOV' in newer
+    assert code.shown_mode() == 'disassembly' and not code.view.hunks        # no decompiled text is stored yet
+    assert code.status.full_text().startswith('Disassembly from ProgramIR (Ghidra')
+    assert 'decompiled code unavailable for this pair' in code.status.full_text()
+    assert top_level_windows() == [window]
 
 
 def test_explain_on_a_matched_row_opens_the_context_preview_with_the_real_fragment(real, monkeypatch):

@@ -813,3 +813,11 @@ Not verified here: Windows; the frozen executable; a live backend for `rules pro
 | Open bugs (xfail) | QA-CLI-1 (Medium) `--json` parse failure prints no document; QA-CLI-2 (Low) offline `correlate --cve bad` exits 4; QA-CLI-3 (Medium) `cache verify` on a file `--cache-dir` exits 0 `complete` with `_Unsafe`; QA-CLI-4 (Low) `rank` ignores an unusable `--cache-dir` silently |
 | Measured, not gated | 10k-pair cold 5-7 s, cache hit 1.5-3 s (objective 500 ms not met), peak RSS 547 MiB (objective 512 MiB); details in `docs/audits/20261015-qa-cli-persistence.md` |
 | Not verified | Windows; read-only directory as a non-root user |
+
+
+### [UE4:code-panes] Unified code view
+| Item | Result |
+|---|---|
+| Tests | `tests/test_unified_pair_text.py`, `tests/test_ui_unified_code.py`, `tests/test_ui_unified.py`, `tests/test_ui_unified_pipeline.py` offscreen on Linux; `python tools/qt_gate.py --repeat 5` over the Unified files |
+| Known gates | every code state, hostile text in code, provenance and notes, accessibility audit, tooltip registry, a 100,000 line function (capped with the notice, only hunks inside the cut navigable), a tampered or malformed decompile part is not shown |
+| Not verified here | Windows; real screen readers; real decompiled text (no pipeline writes the part yet, the tests store C with the product's part writer) |

@@ -909,7 +909,8 @@ TOOLTIP_IDS: tuple[str, ...] = (
     'unified.view_switch', 'unified.run', 'unified.cancel', 'unified.filter_decision', 'unified.filter_change',
     'unified.filter_class', 'unified.filter_source', 'unified.search', 'unified.show_hidden', 'unified.table',
     'unified.tab', 'unified.detail', 'unified.goto', 'unified.correct', 'unified.copy', 'unified.explain',
-    'unified.retry', 'unified.copy_error', 'unified.stale_banner', 'unified.source.unknown')
+    'unified.retry', 'unified.copy_error', 'unified.stale_banner', 'unified.source.unknown', 'unified.code_mode',
+    'unified.code_prev', 'unified.code_next', 'unified.code_copy', 'unified.code_older', 'unified.code_newer')
 TOOLTIP_TEMPLATE_IDS: tuple[str, ...] = ('unified.row', 'unified.cell', 'unified.badge', 'unified.delta')
 
 
