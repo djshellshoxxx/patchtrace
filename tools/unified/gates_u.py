@@ -1,8 +1,8 @@
 """Gate report generator for SPEC-31 (08-evaluation s1): G-U1..G-U8 -> `gate-report/1`. Dev-only, never shipped.
 
 Slice S6a fixed the report contract, the status vocabulary and the registry of the eight gates, and it
-evaluated G-U5 from `bench-report/1` files and G-U8 from a pytest JUnit file plus attested CI steps. Slice S6b adds G-U1
-and G-U2 over `unified-outcomes/1` (`tools/unified/evaluators.py`). G-U3, G-U4, G-U6 and G-U7 stay `pending` and say
+evaluated G-U5 from `bench-report/1` files and G-U8 from a pytest JUnit file plus attested CI steps. Slice S6b adds G-U1,
+G-U2 and G-U4 over `unified-outcomes/1` (`tools/unified/evaluators.py`). G-U3, G-U6 and G-U7 stay `pending` and say
 what they wait for and what they will read. For those gates the report already carries
 facts about the corpus they will read (counts from `unified-corpus-manifest/1`), so a missing mutant class or an
 anti-conservative lineage count is visible before any engine runs.
@@ -72,9 +72,7 @@ GATES = (
              blocked=('the BinDiff oracle part (MD index parity, tier A/B agreement) needs a pinned BinDiff: '
                       'tools/bindiff_pin.json has no verified assets',)),
     GateSpec('G-U4', 'is it deterministic and symmetric?', 'S0b / S3',
-             'two runs, a Linux and a Windows run, permuted inputs and the swapped orientation of the same pair',
-             needs=('S3',), waits=('manifest.json equality of the whole pipeline, mirrored rows and the COS-PSEUDO rule need S3, and '
-                    'the 3-build chain checks need a third consecutive version per project (the catalogue has two)',)),
+             'unified-outcomes/1 of two runs, a Linux and a Windows run, permuted inputs and the swapped orientation'),
     GateSpec('G-U5', 'does it fit a 60k-function image on a laptop?', 'S2 / S5',
              'bench-report/1 from the Linux runner and from the Windows runner or the frozen EXE',
              waits=('the largest Tier R pair through the whole pipeline needs S3',)),
@@ -263,11 +261,14 @@ def _g_u5(inputs: Inputs) -> tuple[Status, list[str], tuple[str, ...], dict]:
 # ---- G-U1 and G-U2 ------------------------------------------------------------------------------------------------------------
 
 def _g_u_outcomes(gate: GateSpec, inputs: Inputs, facts: dict[str, dict]) -> tuple[Status, list[str], tuple[str, ...], dict]:
-    if inputs.manifest is None or not inputs.outcomes:
-        what = 'corpus manifest' if inputs.manifest is None else 'unified-outcomes file (python -m tools.unified.live_pairs)'
+    if (inputs.manifest is None and gate.id != 'G-U4') or not inputs.outcomes:
+        what = 'corpus manifest' if inputs.manifest is None and gate.id != 'G-U4' else 'unified-outcomes file (python -m tools.unified.live_pairs)'
         return 'insufficient-data', [f'no {what} supplied'], (), {'consumes': gate.consumes, 'corpus': facts.get(gate.id)}
-    evaluate = evaluators.g_u1 if gate.id == 'G-U1' else evaluators.g_u2
-    status, reasons, observed = evaluate(inputs.manifest, inputs.outcomes)
+    if gate.id == 'G-U4':
+        status, reasons, observed = evaluators.g_u4(inputs.outcomes)
+    else:
+        evaluate = evaluators.g_u1 if gate.id == 'G-U1' else evaluators.g_u2
+        status, reasons, observed = evaluate(inputs.manifest, inputs.outcomes)
     return status, reasons, (), {**observed, 'corpus': facts.get(gate.id), 'runs': [o.run for o in inputs.outcomes]}
 
 
@@ -303,7 +304,7 @@ def _waiting(gate: GateSpec, facts: dict[str, dict]) -> tuple[Status, list[str],
 def _evaluate(gate: GateSpec, inputs: Inputs, facts: dict[str, dict]) -> GateRow:
     if gate.id == 'G-U5':
         status, reasons, needs, observed = _g_u5(inputs)
-    elif gate.id in ('G-U1', 'G-U2'):
+    elif gate.id in ('G-U1', 'G-U2', 'G-U4'):
         status, reasons, needs, observed = _g_u_outcomes(gate, inputs, facts)
     elif gate.id == 'G-U8':
         status, reasons, needs, observed = _g_u8(inputs)

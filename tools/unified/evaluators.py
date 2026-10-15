@@ -1,4 +1,4 @@
-"""Evaluators of the gates that read `unified-outcomes/1` (08-evaluation s1): G-U1 (A/A null) and G-U2 (planted mutations).
+"""Evaluators of the gates that read `unified-outcomes/1` (08-evaluation s1): G-U1 (A/A null), G-U2 (planted mutations) and G-U4 (determinism, symmetry).
 
 Each returns `(status, reasons, observed)`; the gate report adds the gate's identity. Statuses follow `gates_u`: `fail` is a
 verdict on data, `insufficient-data` means the data cannot decide (a pair without an outcome, fewer than 20 mutants in a
@@ -133,3 +133,44 @@ def g_u2(manifest: corpus_manifest.CorpusManifest, sets: Sequence[OutcomeSet]) -
 
 def _accepted(manifest: corpus_manifest.CorpusManifest, class_id: str) -> tuple[str, ...]:
     return tuple(v for p in manifest.pairs if p.mutation and p.mutation.unified_class == class_id for v in p.mutation.verdicts)
+
+
+FLIP = {'older-only': 'newer-only', 'newer-only': 'older-only'}
+PAIRING = ('matched', 'older-only', 'newer-only')
+CHAIN_WAIT = ('pending: the 3-build chain checks need a third consecutive version per project (the catalogue has two), '
+              'and "a cheap-tier semantic delta never coexists with COS-PSEUDO" needs the stored facts, not only rows')
+
+
+def _pairing(rows, mirror: bool) -> frozenset:
+    if mirror:
+        return frozenset((r.newer, r.older, FLIP.get(r.decision, r.decision)) for r in rows if r.decision in PAIRING)
+    return frozenset((r.older, r.newer, r.decision) for r in rows if r.decision in PAIRING)
+
+
+def g_u4(sets: Sequence[OutcomeSet]) -> Result:
+    """Equal row digests for the same pair across runs (two runs, Linux against Windows, permuted input), and the
+    swapped orientation of a pair mirrors the forward one: the same matched set, older-only and newer-only trade places."""
+    reasons: list[str] = []
+    compared: dict[str, str] = {}
+    mirrored: dict[str, str] = {}
+    for pair_id in sorted({p.pair_id for s in sets for p in s.pairs}):
+        runs = forward(sets, pair_id)
+        if len(runs) >= 2:
+            same = len({o.rows_sha256 for _, o in runs}) == 1
+            compared[pair_id] = 'equal' if same else 'differs'
+            if not same:
+                reasons.append(f'{pair_id}: the rows differ between runs {", ".join(r for r, _ in runs)}')
+        for run, back in ((s.run, p) for s in sets for p in s.pairs if p.pair_id == pair_id and p.orientation == 'swapped'):
+            ahead = next((o for r, o in runs if r == run), None)
+            if ahead is None:
+                continue
+            ok = _pairing(ahead.rows, True) == _pairing(back.rows, False)
+            mirrored[pair_id] = 'mirrored' if ok else 'not-mirrored'
+            if not ok:
+                reasons.append(f'{pair_id} run {run}: the swapped orientation is not the mirror image of the forward one')
+    observed = {'compared': compared, 'mirrored': mirrored}
+    if reasons:
+        return 'fail', reasons, observed
+    if not compared and not mirrored:
+        return 'insufficient-data', ['no pair has two runs or a swapped orientation to compare'], observed
+    return 'pending', [CHAIN_WAIT], observed

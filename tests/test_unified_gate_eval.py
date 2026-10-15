@@ -247,3 +247,50 @@ def test_the_command_line_reads_manifest_and_outcome_files_into_the_report(tmp_p
     assert g1.status == 'pending' and loaded.inputs['outcomes'][0]['run'] == 'linux'
     capsys.readouterr()
     assert gates_u.main(['--outcomes', str(tmp_path / 'missing.json')]) == 2
+
+
+# ---- G-U4 ---------------------------------------------------------------------------------------------------------------------
+
+def swapped(rs):
+    flip = {'older-only': 'newer-only', 'newer-only': 'older-only'}
+    return [R(older=r.newer, newer=r.older, decision=flip.get(r.decision, r.decision), materiality=r.materiality) for r in rs]
+
+
+def det_rows():
+    return [*rows(4), R(older=(0x2000,), newer=(), decision='older-only', materiality='not-applicable'),
+            R(older=(), newer=(0x3000,), decision='newer-only', materiality='not-applicable')]
+
+
+def g4(manifest, *sets):
+    return gate(gates_u.build_report(inputs(manifest, *sets)), 'G-U4')
+
+
+def test_g_u4_equal_rows_across_runs_and_a_mirrored_swap_leave_only_the_unbuilt_chain_pending():
+    doc = label_doc('rel', 'release')
+    m = corpus_manifest.build([doc], {})
+    a = run('linux', pair(doc, det_rows()), pair(doc, swapped(det_rows()), orientation='swapped'))
+    b = run('windows', pair(doc, list(reversed(det_rows()))))
+    g = g4(m, a, b)
+    assert g.status == 'pending' and g.observed['compared'] == {'rel': 'equal'} and g.observed['mirrored'] == {'rel': 'mirrored'}
+    assert any('3-build chain' in r for r in g.reasons)
+
+
+def test_g_u4_rows_that_differ_between_two_runs_fail():
+    doc = label_doc('rel', 'release')
+    other = det_rows()
+    other[0] = R(older=other[0].older, newer=other[0].newer, decision='matched', materiality='review')
+    g = g4(corpus_manifest.build([doc], {}), run('linux', pair(doc, det_rows())), run('windows', pair(doc, other)))
+    assert g.status == 'fail' and any('rel' in r and 'linux' in r and 'windows' in r for r in g.reasons)
+
+
+def test_g_u4_a_swap_that_is_not_the_mirror_image_fails():
+    doc = label_doc('rel', 'release')
+    broken = swapped(det_rows())[1:]
+    g = g4(corpus_manifest.build([doc], {}), run('linux', pair(doc, det_rows()), pair(doc, broken, orientation='swapped')))
+    assert g.status == 'fail' and any('mirror' in r for r in g.reasons)
+
+
+def test_g_u4_one_run_without_a_swap_has_nothing_to_compare():
+    doc = label_doc('rel', 'release')
+    g = g4(corpus_manifest.build([doc], {}), run('linux', pair(doc, det_rows())))
+    assert g.status == 'insufficient-data' and g.observed['compared'] == {} and g.observed['mirrored'] == {}
