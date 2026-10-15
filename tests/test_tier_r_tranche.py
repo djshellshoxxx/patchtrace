@@ -22,7 +22,7 @@ BOOK = C.load_recipes((CATALOGUE / 'recipes.json').read_bytes())
 CARDS = C.load_cards((CATALOGUE / 'releases.json').read_bytes()) + C.load_cards((CATALOGUE / 'cves.json').read_bytes())
 HEX40, HEX64 = re.compile(r'^[0-9a-f]{40}$'), re.compile(r'^[0-9a-f]{64}$')
 # project -> (SPDX licence, minimum cards, pins must be adjacent releases)
-TRANCHE = {'libdeflate': ('MIT', 3, True), 'stb': ('MIT', 3, True)}
+TRANCHE = {'libdeflate': ('MIT', 3, True), 'stb': ('MIT', 3, True), 'c-ares': ('MIT', 3, True)}
 
 
 def _raw_cards(project):

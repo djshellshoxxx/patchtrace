@@ -1049,6 +1049,89 @@
     }
    ],
    "notes": "stb has no tags: pins are commit pairs, each the upstream 'update version numbers' commit (stb_image 2.23, 2.26, 2.27, 2.28) plus 013ac3b (2.30). The single-header libraries are compiled through five authored one-line translation-unit wrappers (the *_IMPLEMENTATION define then the header) and stb_vorbis.c, which is an ordinary C file; changed-function files are therefore the headers. LICENSE exists only from 2020-02-02, so the 2019 stb_vorbis CVE cards stay no-recipe. Each pin passes native gcc -fsyntax-only on all six units and links as a shared object; built with mingw-w64 gcc 13-win32 -O2 -g at every card pin. MIT is chosen from the dual MIT / Unlicense LICENSE (alternative A)."
+  },
+  {
+   "contract": "tier-r-recipe/1",
+   "project": "c-ares",
+   "family": "network",
+   "upstream_git": "https://github.com/c-ares/c-ares.git",
+   "license_spdx": "MIT",
+   "license_file": "LICENSE.md",
+   "license_evidence": "LICENSE.md read at all 8 pins (first 0ad09d25), 2 distinct SHA-256: MIT License / Copyright (c) 1998 Massachusetts Institute of Technology / Copyright (c) 2007 - Daniel Stenberg with many contributors / Permission is hereby granted, free of charge, to any person obtaining a copy of this software",
+   "libc": "mingw",
+   "output": "libcares.dll",
+   "sources": [
+    "src/lib/*.c"
+   ],
+   "include_dirs": [
+    "include",
+    "src/lib"
+   ],
+   "defines": [
+    "CARES_BUILDING_LIBRARY"
+   ],
+   "libs": [
+    "ws2_32",
+    "iphlpapi",
+    "advapi32"
+   ],
+   "write": [
+    {
+     "path": "include/ares_build.h",
+     "text": "#ifndef __CARES_BUILD_H\n#define __CARES_BUILD_H\n#define CARES_TYPEOF_ARES_SOCKLEN_T int\ntypedef CARES_TYPEOF_ARES_SOCKLEN_T ares_socklen_t;\n#define CARES_TYPEOF_ARES_SSIZE_T long long\ntypedef CARES_TYPEOF_ARES_SSIZE_T ares_ssize_t;\n#endif\n"
+    }
+   ],
+   "pins": [
+    {
+     "ref": "cares-1_26_0",
+     "commit": "0ad09d251bf01cc2b7860950527e33e22cd64256",
+     "license_sha256": "80fff25340df53b0cf0c3cddbca9050b559b9cbed2ad71830327cfef54959aef",
+     "date": "2024-01-25"
+    },
+    {
+     "ref": "cares-1_27_0",
+     "commit": "9eb57f2c8beb4e8af590992e56182c0788b9ce0b",
+     "license_sha256": "80fff25340df53b0cf0c3cddbca9050b559b9cbed2ad71830327cfef54959aef",
+     "date": "2024-02-22"
+    },
+    {
+     "ref": "cares-1_28_0",
+     "commit": "458c93721387d2974fe125c0a4efec2eab30e6be",
+     "license_sha256": "80fff25340df53b0cf0c3cddbca9050b559b9cbed2ad71830327cfef54959aef",
+     "date": "2024-03-28"
+    },
+    {
+     "ref": "cares-1_28_1",
+     "commit": "3a26df136a76b0bcb893fce2787527efbec80fa4",
+     "license_sha256": "80fff25340df53b0cf0c3cddbca9050b559b9cbed2ad71830327cfef54959aef",
+     "date": "2024-03-30"
+    },
+    {
+     "ref": "cares-1_29_0",
+     "commit": "bf4c5fd223e71776e3d0c5a6a8d5598ffb82597c",
+     "license_sha256": "80fff25340df53b0cf0c3cddbca9050b559b9cbed2ad71830327cfef54959aef",
+     "date": "2024-05-22"
+    },
+    {
+     "ref": "v1.30.0",
+     "commit": "f90e73304a2d9f5c56d2255c19f9efaaa5b2c16c",
+     "license_sha256": "8a9994f85a8e531e1a3217ab7ba509787c6b93056aabe702137ce662db8321c2",
+     "date": "2024-06-06"
+    },
+    {
+     "ref": "cares-1_27_0-pre-ghsa-mg26",
+     "commit": "035c4c3776ee0d04a9db97213891367b7998de55",
+     "license_sha256": "80fff25340df53b0cf0c3cddbca9050b559b9cbed2ad71830327cfef54959aef",
+     "date": "2024-02-22"
+    },
+    {
+     "ref": "cares-1_27_0-ghsa-mg26-merge",
+     "commit": "a804c04ddc8245fc8adf0e92368709639125e183",
+     "license_sha256": "80fff25340df53b0cf0c3cddbca9050b559b9cbed2ad71830327cfef54959aef",
+     "date": "2024-02-22"
+    }
+   ],
+   "notes": "No cmake, autoconf or generated config: src/lib/config-win32.h is selected by ares_setup.h when WIN32 is defined and HAVE_CONFIG_H is not, and include/ares_build.h is authored (the mingw branch of ares_build.h.dist, whose __int64 ssize_t line precedes any mingw header; socklen_t is int, ssize_t is long long). All src/lib/*.c are compiled (the POSIX event backends compile out). Tags cares-1_26_0 to v1.30.0 share the flat src/lib layout; the two trailing pins are the first-parent pair of the CVE-2024-25629 merge (found card c-ares-read-line-embedded-nul-cve-2024-25629 in corpus/catalog), both between cares-1_26_0 and cares-1_27_0. Releases from v1.33.0 move sources into subdirectories and are not pinned."
   }
  ]
 }
