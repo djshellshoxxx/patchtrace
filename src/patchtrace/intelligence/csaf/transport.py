@@ -25,7 +25,7 @@ from datetime import UTC, datetime
 from functools import partial
 from pathlib import Path
 
-from ...netutil import Cancelled, TooManyAbandoned, interruptible
+from ...netutil import Cancelled, CapExceeded, DeadlineExceeded, TooManyAbandoned, interruptible, read_bounded
 from ..contracts import IntelError
 
 CONSENTABLE_HOSTS = frozenset({'msrc.microsoft.com'})
@@ -93,6 +93,9 @@ class _Response:
 
     def read(self, size: int) -> bytes:
         return self._raw.read(size)
+
+    def read1(self, size: int) -> bytes:
+        return self._raw.read1(size)
 
     def close(self) -> None:
         self._raw.close()
@@ -363,23 +366,18 @@ class CsafTransport:
         digits = length.strip() if length is not None else ''
         if digits.isascii() and digits.isdigit() and (len(digits) > 12 or int(digits) > cap):
             raise IntelError('PT-INTEL-LIMIT', f'{kind} exceeds its {cap}-byte cap')
-        data = bytearray()
-        while True:
-            self._cancelled()
-            if self.clock() >= deadline:
-                raise IntelError('PT-INTEL-NETWORK', 'request deadline exceeded while reading', recoverable=True)
-            try:
-                chunk = interruptible(partial(response.read, min(_CHUNK, cap + 1 - len(data))), self.cancel)
-            except Cancelled:
-                raise IntelError('PT-INTEL-CANCEL', 'CSAF fetch cancelled', recoverable=True) from None
-            except TooManyAbandoned:
-                raise IntelError('PT-INTEL-NETWORK', 'previous requests still closing', recoverable=True) from None
-            except TimeoutError:
-                raise _Retry(None) from None
-            except (OSError, http.client.HTTPException):
-                raise IntelError('PT-INTEL-NETWORK', 'connection failed while reading', recoverable=True) from None
-            if not chunk:
-                return bytes(data)
-            data.extend(chunk)
-            if len(data) > cap:
-                raise IntelError('PT-INTEL-LIMIT', f'{kind} exceeds its {cap}-byte cap')
+        try:
+            return read_bounded(response, cap, deadline=deadline, clock=self.clock, cancel=self.cancel,
+                                chunk=_CHUNK)
+        except Cancelled:
+            raise IntelError('PT-INTEL-CANCEL', 'CSAF fetch cancelled', recoverable=True) from None
+        except DeadlineExceeded:
+            raise IntelError('PT-INTEL-NETWORK', 'request deadline exceeded while reading', recoverable=True) from None
+        except CapExceeded:
+            raise IntelError('PT-INTEL-LIMIT', f'{kind} exceeds its {cap}-byte cap') from None
+        except TooManyAbandoned:
+            raise IntelError('PT-INTEL-NETWORK', 'previous requests still closing', recoverable=True) from None
+        except TimeoutError:
+            raise _Retry(None) from None
+        except (OSError, http.client.HTTPException):
+            raise IntelError('PT-INTEL-NETWORK', 'connection failed while reading', recoverable=True) from None

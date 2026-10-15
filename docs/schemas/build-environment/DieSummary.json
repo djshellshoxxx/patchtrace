@@ -1,0 +1,102 @@
+{
+  "$id": "https://patchtrace.local/schemas/build-environment/1/DieSummary.json",
+  "additionalProperties": false,
+  "description": "What the stored `diec` run says about itself; the evidence rows are only read.",
+  "properties": {
+    "argv_version": {
+      "anyOf": [
+        {
+          "maxLength": 32,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Argv Version"
+    },
+    "cache_key": {
+      "anyOf": [
+        {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Cache Key"
+    },
+    "db_label": {
+      "anyOf": [
+        {
+          "maxLength": 64,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Db Label"
+    },
+    "db_sha256": {
+      "anyOf": [
+        {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Db Sha256"
+    },
+    "heuristics": {
+      "title": "Heuristics",
+      "type": "boolean"
+    },
+    "run_id": {
+      "maxLength": 128,
+      "title": "Run Id",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "ok",
+        "none-found",
+        "failed",
+        "timeout",
+        "cancelled",
+        "unsupported",
+        "absent",
+        "not-run"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "tool_version": {
+      "anyOf": [
+        {
+          "maxLength": 64,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Tool Version"
+    }
+  },
+  "required": [
+    "status",
+    "run_id",
+    "tool_version",
+    "db_label",
+    "db_sha256",
+    "argv_version",
+    "heuristics",
+    "cache_key"
+  ],
+  "title": "DieSummary",
+  "type": "object"
+}

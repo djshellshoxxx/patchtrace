@@ -1,0 +1,723 @@
+{
+  "$defs": {
+    "CoverageSummary": {
+      "additionalProperties": false,
+      "properties": {
+        "ambiguous_groups": {
+          "minimum": 0,
+          "title": "Ambiguous Groups",
+          "type": "integer"
+        },
+        "attributed_matches": {
+          "minimum": 0,
+          "title": "Attributed Matches",
+          "type": "integer"
+        },
+        "both_evaluated": {
+          "minimum": 0,
+          "title": "Both Evaluated",
+          "type": "integer"
+        },
+        "matched_groups": {
+          "minimum": 0,
+          "title": "Matched Groups",
+          "type": "integer"
+        },
+        "newer_library": {
+          "minimum": 0,
+          "title": "Newer Library",
+          "type": "integer"
+        },
+        "newer_not_recovered": {
+          "minimum": 0,
+          "title": "Newer Not Recovered",
+          "type": "integer"
+        },
+        "older_library": {
+          "minimum": 0,
+          "title": "Older Library",
+          "type": "integer"
+        },
+        "older_not_recovered": {
+          "minimum": 0,
+          "title": "Older Not Recovered",
+          "type": "integer"
+        },
+        "total_matches": {
+          "minimum": 0,
+          "title": "Total Matches",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "matched_groups",
+        "both_evaluated",
+        "older_library",
+        "newer_library",
+        "older_not_recovered",
+        "newer_not_recovered",
+        "ambiguous_groups",
+        "attributed_matches",
+        "total_matches"
+      ],
+      "title": "CoverageSummary",
+      "type": "object"
+    },
+    "EvidenceLink": {
+      "additionalProperties": false,
+      "description": "Where an evidence item sits in one artifact, in canonical module-relative terms (T2, T5.3).",
+      "properties": {
+        "artifact_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Artifact Sha256",
+          "type": "string"
+        },
+        "attribution": {
+          "default": "none",
+          "enum": [
+            "function-start",
+            "basic-block-in-function",
+            "decoding-routine",
+            "stack-frame",
+            "contained-in-function",
+            "none"
+          ],
+          "title": "Attribution",
+          "type": "string"
+        },
+        "data_rva": {
+          "anyOf": [
+            {
+              "exclusiveMaximum": 4294967296,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Data Rva"
+        },
+        "file_offset": {
+          "anyOf": [
+            {
+              "exclusiveMaximum": 1099511627776,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "File Offset"
+        },
+        "function_id": {
+          "anyOf": [
+            {
+              "maxLength": 24,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Function Id"
+        },
+        "project_function_id": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Project Function Id"
+        },
+        "rva": {
+          "anyOf": [
+            {
+              "exclusiveMaximum": 4294967296,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Rva"
+        },
+        "site_rva": {
+          "anyOf": [
+            {
+              "exclusiveMaximum": 4294967296,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Site Rva"
+        },
+        "source_fragment": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source Fragment"
+        },
+        "tool_run_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Tool Run Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "tool_run_id",
+        "artifact_sha256"
+      ],
+      "title": "EvidenceLink",
+      "type": "object"
+    },
+    "FeatureRef": {
+      "additionalProperties": false,
+      "description": "One feature that made a capa rule match (T2): what to look for in the code on this side. Global features\n(os, arch, format) are not kept.",
+      "properties": {
+        "kind": {
+          "enum": [
+            "api",
+            "number",
+            "string",
+            "substring",
+            "regex",
+            "bytes",
+            "mnemonic",
+            "offset",
+            "characteristic",
+            "section",
+            "export",
+            "import",
+            "function-name",
+            "class",
+            "namespace",
+            "property",
+            "com",
+            "operand",
+            "match"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "rva": {
+          "anyOf": [
+            {
+              "exclusiveMaximum": 4294967296,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Rva"
+        },
+        "value": {
+          "maxLength": 120,
+          "title": "Value",
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind",
+        "value"
+      ],
+      "title": "FeatureRef",
+      "type": "object"
+    },
+    "PairCell": {
+      "additionalProperties": false,
+      "properties": {
+        "features": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/FeatureRef"
+          },
+          "maxItems": 16,
+          "title": "Features",
+          "type": "array"
+        },
+        "links": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/EvidenceLink"
+          },
+          "maxItems": 4,
+          "title": "Links",
+          "type": "array"
+        },
+        "matches": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Matches",
+          "type": "integer"
+        },
+        "reason": {
+          "anyOf": [
+            {
+              "enum": [
+                "library-function",
+                "function-not-recovered",
+                "evidence-truncated"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reason"
+        },
+        "state": {
+          "enum": [
+            "present",
+            "absent",
+            "not-evaluated",
+            "no-function"
+          ],
+          "title": "State",
+          "type": "string"
+        }
+      },
+      "required": [
+        "state"
+      ],
+      "title": "PairCell",
+      "type": "object"
+    },
+    "PairChange": {
+      "additionalProperties": false,
+      "properties": {
+        "category": {
+          "enum": [
+            "modified",
+            "added",
+            "removed",
+            "unchanged",
+            "ambiguous",
+            "split",
+            "merged",
+            "unmatched"
+          ],
+          "title": "Category",
+          "type": "string"
+        },
+        "change": {
+          "enum": [
+            "gained",
+            "lost",
+            "moved",
+            "unchanged",
+            "not-compared"
+          ],
+          "title": "Change",
+          "type": "string"
+        },
+        "change_id": {
+          "maxLength": 64,
+          "title": "Change Id",
+          "type": "string"
+        },
+        "group_id": {
+          "maxLength": 160,
+          "title": "Group Id",
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "capability",
+            "library"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "labels": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/TaxonomyLabel"
+          },
+          "maxItems": 32,
+          "title": "Labels",
+          "type": "array"
+        },
+        "match_id": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Match Id"
+        },
+        "namespace": {
+          "anyOf": [
+            {
+              "maxLength": 256,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Namespace"
+        },
+        "newer": {
+          "$ref": "#/$defs/PairCell"
+        },
+        "noise": {
+          "default": "none",
+          "enum": [
+            "none",
+            "detection-difference"
+          ],
+          "title": "Noise",
+          "type": "string"
+        },
+        "observation_key": {
+          "maxLength": 64,
+          "title": "Observation Key",
+          "type": "string"
+        },
+        "older": {
+          "$ref": "#/$defs/PairCell"
+        },
+        "relocation": {
+          "default": "none",
+          "enum": [
+            "none",
+            "candidate"
+          ],
+          "title": "Relocation",
+          "type": "string"
+        },
+        "rule_id": {
+          "maxLength": 256,
+          "title": "Rule Id",
+          "type": "string"
+        },
+        "scope": {
+          "maxLength": 16,
+          "title": "Scope",
+          "type": "string"
+        }
+      },
+      "required": [
+        "change_id",
+        "group_id",
+        "category",
+        "rule_id",
+        "scope",
+        "kind",
+        "change",
+        "older",
+        "newer",
+        "observation_key"
+      ],
+      "title": "PairChange",
+      "type": "object"
+    },
+    "QualityFlag": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "enum": [
+            "toolchain-changed",
+            "packed",
+            "protected",
+            "installer",
+            "heuristic-only",
+            "environment-unknown",
+            "capa-limitation",
+            "function-recovery-shift"
+          ],
+          "title": "Code",
+          "type": "string"
+        },
+        "detail": {
+          "maxLength": 500,
+          "title": "Detail",
+          "type": "string"
+        },
+        "source": {
+          "enum": [
+            "capa",
+            "floss",
+            "diec"
+          ],
+          "title": "Source",
+          "type": "string"
+        }
+      },
+      "required": [
+        "code",
+        "detail",
+        "source"
+      ],
+      "title": "QualityFlag",
+      "type": "object"
+    },
+    "TaxonomyLabel": {
+      "additionalProperties": false,
+      "description": "An ATT&CK or MBC label exactly as the rule carries it; used for grouping only, never for ordering.",
+      "properties": {
+        "group": {
+          "maxLength": 80,
+          "title": "Group",
+          "type": "string"
+        },
+        "ident": {
+          "maxLength": 32,
+          "title": "Ident",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 120,
+          "title": "Name",
+          "type": "string"
+        },
+        "scheme": {
+          "enum": [
+            "attack",
+            "mbc"
+          ],
+          "title": "Scheme",
+          "type": "string"
+        }
+      },
+      "required": [
+        "scheme",
+        "group",
+        "name",
+        "ident"
+      ],
+      "title": "TaxonomyLabel",
+      "type": "object"
+    },
+    "Unattributed": {
+      "additionalProperties": false,
+      "properties": {
+        "change": {
+          "enum": [
+            "gained",
+            "lost",
+            "unchanged"
+          ],
+          "title": "Change",
+          "type": "string"
+        },
+        "namespace": {
+          "anyOf": [
+            {
+              "maxLength": 256,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Namespace"
+        },
+        "newer_matches": {
+          "minimum": 0,
+          "title": "Newer Matches",
+          "type": "integer"
+        },
+        "older_matches": {
+          "minimum": 0,
+          "title": "Older Matches",
+          "type": "integer"
+        },
+        "reason": {
+          "enum": [
+            "file-scope",
+            "instruction-scope",
+            "basic-block-without-layout",
+            "address-rejected",
+            "function-not-paired"
+          ],
+          "title": "Reason",
+          "type": "string"
+        },
+        "rule_id": {
+          "maxLength": 256,
+          "title": "Rule Id",
+          "type": "string"
+        },
+        "scope": {
+          "maxLength": 16,
+          "title": "Scope",
+          "type": "string"
+        }
+      },
+      "required": [
+        "rule_id",
+        "scope",
+        "change",
+        "older_matches",
+        "newer_matches",
+        "reason"
+      ],
+      "title": "Unattributed",
+      "type": "object"
+    }
+  },
+  "$id": "https://patchtrace.local/schemas/intel-tools/1/PairCapabilityDelta.json",
+  "additionalProperties": false,
+  "properties": {
+    "changes": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/PairChange"
+      },
+      "title": "Changes",
+      "type": "array"
+    },
+    "comparable": {
+      "title": "Comparable",
+      "type": "boolean"
+    },
+    "contract": {
+      "const": "capa-pairs/1",
+      "default": "capa-pairs/1",
+      "title": "Contract",
+      "type": "string"
+    },
+    "counts": {
+      "additionalProperties": {
+        "type": "integer"
+      },
+      "title": "Counts",
+      "type": "object"
+    },
+    "coverage": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/CoverageSummary"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "engine": {
+      "const": "capa",
+      "default": "capa",
+      "title": "Engine",
+      "type": "string"
+    },
+    "flags": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/QualityFlag"
+      },
+      "title": "Flags",
+      "type": "array"
+    },
+    "newer_run_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Newer Run Id"
+    },
+    "notes": {
+      "default": [],
+      "items": {
+        "type": "string"
+      },
+      "title": "Notes",
+      "type": "array"
+    },
+    "older_run_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Older Run Id"
+    },
+    "pairing": {
+      "default": "unavailable",
+      "enum": [
+        "available",
+        "unavailable"
+      ],
+      "title": "Pairing",
+      "type": "string"
+    },
+    "reasons": {
+      "default": [],
+      "items": {
+        "type": "string"
+      },
+      "title": "Reasons",
+      "type": "array"
+    },
+    "truncated": {
+      "default": false,
+      "title": "Truncated",
+      "type": "boolean"
+    },
+    "unattributed": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/Unattributed"
+      },
+      "title": "Unattributed",
+      "type": "array"
+    },
+    "value_gate": {
+      "const": "unvalidated",
+      "default": "unvalidated",
+      "title": "Value Gate",
+      "type": "string"
+    }
+  },
+  "required": [
+    "comparable",
+    "older_run_id",
+    "newer_run_id"
+  ],
+  "title": "PairCapabilityDelta",
+  "type": "object"
+}

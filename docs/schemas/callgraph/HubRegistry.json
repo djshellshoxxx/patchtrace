@@ -1,0 +1,65 @@
+{
+  "$defs": {
+    "HubRule": {
+      "additionalProperties": false,
+      "properties": {
+        "family": {
+          "enum": [
+            "trace-helper",
+            "security-cookie",
+            "cfg-dispatch"
+          ],
+          "title": "Family",
+          "type": "string"
+        },
+        "pattern": {
+          "title": "Pattern",
+          "type": "string"
+        },
+        "retrieved": {
+          "title": "Retrieved",
+          "type": "string"
+        },
+        "source": {
+          "title": "Source",
+          "type": "string"
+        }
+      },
+      "required": [
+        "pattern",
+        "family",
+        "source",
+        "retrieved"
+      ],
+      "title": "HubRule",
+      "type": "object"
+    }
+  },
+  "$id": "https://patchtrace.local/schemas/callgraph/1/HubRegistry.json",
+  "additionalProperties": false,
+  "properties": {
+    "contract": {
+      "const": "hub-registry/1",
+      "default": "hub-registry/1",
+      "title": "Contract",
+      "type": "string"
+    },
+    "rules": {
+      "items": {
+        "$ref": "#/$defs/HubRule"
+      },
+      "title": "Rules",
+      "type": "array"
+    },
+    "version": {
+      "title": "Version",
+      "type": "string"
+    }
+  },
+  "required": [
+    "version",
+    "rules"
+  ],
+  "title": "HubRegistry",
+  "type": "object"
+}

@@ -85,7 +85,7 @@ def test_poisoned_cache_entry_is_ignored(service, tmp_path):
     payload = json.loads(cache.get('signals', key))
     # Forge: move a signal's excerpt hash so it no longer matches the live code.
     for item in payload:
-        for sig in item['signals']:
+        for sig in item.get('signals', ()):  # empty sets are stored without defaults
             sig['locations'][0]['excerpt_sha256'] = 'f' * 64
     poisoned = DerivedCache(CacheConfig(root=tmp_path / 'cache2'))
     assert poisoned.put('signals', key, json.dumps(payload, sort_keys=True, separators=(',', ':')).encode(),

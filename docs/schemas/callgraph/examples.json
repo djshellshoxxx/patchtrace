@@ -1,0 +1,819 @@
+{
+  "CallDelta": {
+    "invalid": [
+      {
+        "label": "change class outside the vocabulary",
+        "value": {
+          "callers_listed_newer": 0,
+          "callers_listed_older": 0,
+          "changes": [
+            {
+              "api": [
+                {
+                  "api": "ProbeForRead",
+                  "family": "bounds",
+                  "rule_id": "R-BOUNDS",
+                  "rule_revision": "1",
+                  "via": "rule-hint"
+                }
+              ],
+              "cls": "verified",
+              "flags": [
+                "import",
+                "newly-imported"
+              ],
+              "newer_label": "ntoskrnl.exe::ProbeForRead",
+              "newer_node": "n-callee",
+              "older_label": null,
+              "older_node": null,
+              "pairing": {
+                "contract": "workbench-graph-pairing/1",
+                "engines": [
+                  {
+                    "partners": [
+                      "FUN_140001500"
+                    ],
+                    "via": "ghidriff:Symbols"
+                  }
+                ],
+                "inferred": false,
+                "kind": "one",
+                "partners": [
+                  "FUN_140001500"
+                ],
+                "via": "ghidriff:Symbols"
+              },
+              "reason": ""
+            }
+          ],
+          "contract": "workbench-graph-delta/1",
+          "downgrade": "none",
+          "ghidriff_diff_types": [],
+          "limitations": [
+            "only distinct callees are compared"
+          ],
+          "match_id": "m-1",
+          "newer_function_id": null,
+          "newer_label": "FUN_140001640",
+          "older_function_id": null,
+          "older_label": null,
+          "omitted": 0,
+          "state": "compared"
+        }
+      },
+      {
+        "label": "negative omitted count",
+        "value": {
+          "callers_listed_newer": 0,
+          "callers_listed_older": 0,
+          "changes": [
+            {
+              "api": [
+                {
+                  "api": "ProbeForRead",
+                  "family": "bounds",
+                  "rule_id": "R-BOUNDS",
+                  "rule_revision": "1",
+                  "via": "rule-hint"
+                }
+              ],
+              "cls": "added-call",
+              "flags": [
+                "import",
+                "newly-imported"
+              ],
+              "newer_label": "ntoskrnl.exe::ProbeForRead",
+              "newer_node": "n-callee",
+              "older_label": null,
+              "older_node": null,
+              "pairing": {
+                "contract": "workbench-graph-pairing/1",
+                "engines": [
+                  {
+                    "partners": [
+                      "FUN_140001500"
+                    ],
+                    "via": "ghidriff:Symbols"
+                  }
+                ],
+                "inferred": false,
+                "kind": "one",
+                "partners": [
+                  "FUN_140001500"
+                ],
+                "via": "ghidriff:Symbols"
+              },
+              "reason": ""
+            }
+          ],
+          "contract": "workbench-graph-delta/1",
+          "downgrade": "none",
+          "ghidriff_diff_types": [],
+          "limitations": [
+            "only distinct callees are compared"
+          ],
+          "match_id": "m-1",
+          "newer_function_id": null,
+          "newer_label": "FUN_140001640",
+          "older_function_id": null,
+          "older_label": null,
+          "omitted": -1,
+          "state": "compared"
+        }
+      }
+    ],
+    "valid": [
+      {
+        "callers_listed_newer": 0,
+        "callers_listed_older": 0,
+        "changes": [
+          {
+            "api": [
+              {
+                "api": "ProbeForRead",
+                "family": "bounds",
+                "rule_id": "R-BOUNDS",
+                "rule_revision": "1",
+                "via": "rule-hint"
+              }
+            ],
+            "cls": "added-call",
+            "flags": [
+              "import",
+              "newly-imported"
+            ],
+            "newer_label": "ntoskrnl.exe::ProbeForRead",
+            "newer_node": "n-callee",
+            "older_label": null,
+            "older_node": null,
+            "pairing": {
+              "contract": "workbench-graph-pairing/1",
+              "engines": [
+                {
+                  "partners": [
+                    "FUN_140001500"
+                  ],
+                  "via": "ghidriff:Symbols"
+                }
+              ],
+              "inferred": false,
+              "kind": "one",
+              "partners": [
+                "FUN_140001500"
+              ],
+              "via": "ghidriff:Symbols"
+            },
+            "reason": ""
+          }
+        ],
+        "contract": "workbench-graph-delta/1",
+        "downgrade": "none",
+        "ghidriff_diff_types": [],
+        "limitations": [
+          "only distinct callees are compared"
+        ],
+        "match_id": "m-1",
+        "newer_function_id": null,
+        "newer_label": "FUN_140001640",
+        "older_function_id": null,
+        "older_label": null,
+        "omitted": 0,
+        "state": "compared"
+      }
+    ]
+  },
+  "GraphEdge": {
+    "invalid": [],
+    "valid": [
+      {
+        "contract": "workbench-graph-edge/1",
+        "dst": "n-callee",
+        "flags": [],
+        "id": "e-1",
+        "side": "newer",
+        "src": "n-caller",
+        "support": [
+          "called"
+        ]
+      }
+    ]
+  },
+  "GraphExport": {
+    "invalid": [],
+    "valid": [
+      {
+        "contract": "workbench-graph-export/1",
+        "correspondence": [],
+        "limitations": [],
+        "match_id": "m-1",
+        "newer": {
+          "completeness": "changed-set-lists",
+          "contract": "workbench-graph/1",
+          "correspondence": [],
+          "edges": [
+            {
+              "contract": "workbench-graph-edge/1",
+              "dst": "n-callee",
+              "flags": [],
+              "id": "e-1",
+              "side": "newer",
+              "src": "n-caller",
+              "support": [
+                "called"
+              ]
+            }
+          ],
+          "limitations": [
+            "Direct calls only."
+          ],
+          "more": [],
+          "newer_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "nodes": [
+            {
+              "address": 5368714816,
+              "candidates": [],
+              "contract": "workbench-graph-node/1",
+              "flags": [],
+              "function_id": "f-1",
+              "id": "n-caller",
+              "kind": "function",
+              "label": "FUN_140001640",
+              "match_id": "m-1",
+              "reason": "",
+              "side": "newer",
+              "tier": "record",
+              "via": "emitted-record"
+            },
+            {
+              "address": null,
+              "candidates": [],
+              "contract": "workbench-graph-node/1",
+              "flags": [
+                "import"
+              ],
+              "function_id": null,
+              "id": "n-callee",
+              "kind": "external",
+              "label": "ntoskrnl.exe::ProbeForRead",
+              "match_id": null,
+              "reason": "",
+              "side": "newer",
+              "tier": "record",
+              "via": "external"
+            }
+          ],
+          "older_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "orientation": "older->newer",
+          "project_id": "p-1",
+          "run_id": "r-1",
+          "side": "newer",
+          "source": {
+            "source_id": "ghidriff-lists",
+            "tier": "labels",
+            "version": "1"
+          },
+          "truncated": false
+        },
+        "newer_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "older": null,
+        "older_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "project_id": "p-1",
+        "run_id": "r-1",
+        "truncated": false
+      }
+    ]
+  },
+  "GraphLead": {
+    "invalid": [],
+    "valid": [
+      {
+        "blast": {
+          "direct_callers": 1,
+          "observed_callers": 2,
+          "unknown_frontier": 1
+        },
+        "contract": "workbench-graph-leads/1",
+        "entry": {
+          "hops": 2,
+          "state": "reached",
+          "via": "DriverEntry"
+        },
+        "match_id": "m-1",
+        "origin": {
+          "engine": "ghidriff-lists",
+          "group": "calls",
+          "raw_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "run_id": "r-1"
+        },
+        "signals": [
+          {
+            "evidence": {
+              "field": "callees",
+              "record_id": "f-1"
+            },
+            "id": "import-called",
+            "meaning": "Newly calls the import ProbeForRead",
+            "next_step": "Read the call site and the arguments.",
+            "rank": 3
+          }
+        ]
+      }
+    ]
+  },
+  "GraphNode": {
+    "invalid": [
+      {
+        "label": "extra field",
+        "value": {
+          "address": 5368714816,
+          "candidates": [],
+          "contract": "workbench-graph-node/1",
+          "flags": [],
+          "function_id": "f-1",
+          "id": "n-caller",
+          "kind": "function",
+          "label": "FUN_140001640",
+          "match_id": "m-1",
+          "reason": "",
+          "side": "newer",
+          "surprise": 1,
+          "tier": "record",
+          "via": "emitted-record"
+        }
+      },
+      {
+        "label": "kind outside the vocabulary",
+        "value": {
+          "address": 5368714816,
+          "candidates": [],
+          "contract": "workbench-graph-node/1",
+          "flags": [],
+          "function_id": "f-1",
+          "id": "n-caller",
+          "kind": "maybe",
+          "label": "FUN_140001640",
+          "match_id": "m-1",
+          "reason": "",
+          "side": "newer",
+          "tier": "record",
+          "via": "emitted-record"
+        }
+      },
+      {
+        "label": "label over 512 characters",
+        "value": {
+          "address": 5368714816,
+          "candidates": [],
+          "contract": "workbench-graph-node/1",
+          "flags": [],
+          "function_id": "f-1",
+          "id": "n-caller",
+          "kind": "function",
+          "label": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+          "match_id": "m-1",
+          "reason": "",
+          "side": "newer",
+          "tier": "record",
+          "via": "emitted-record"
+        }
+      }
+    ],
+    "valid": [
+      {
+        "address": 5368714816,
+        "candidates": [],
+        "contract": "workbench-graph-node/1",
+        "flags": [],
+        "function_id": "f-1",
+        "id": "n-caller",
+        "kind": "function",
+        "label": "FUN_140001640",
+        "match_id": "m-1",
+        "reason": "",
+        "side": "newer",
+        "tier": "record",
+        "via": "emitted-record"
+      }
+    ]
+  },
+  "GraphView": {
+    "invalid": [
+      {
+        "label": "orientation is always older to newer",
+        "value": {
+          "completeness": "changed-set-lists",
+          "contract": "workbench-graph/1",
+          "correspondence": [],
+          "edges": [
+            {
+              "contract": "workbench-graph-edge/1",
+              "dst": "n-callee",
+              "flags": [],
+              "id": "e-1",
+              "side": "newer",
+              "src": "n-caller",
+              "support": [
+                "called"
+              ]
+            }
+          ],
+          "limitations": [
+            "Direct calls only."
+          ],
+          "more": [],
+          "newer_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "nodes": [
+            {
+              "address": 5368714816,
+              "candidates": [],
+              "contract": "workbench-graph-node/1",
+              "flags": [],
+              "function_id": "f-1",
+              "id": "n-caller",
+              "kind": "function",
+              "label": "FUN_140001640",
+              "match_id": "m-1",
+              "reason": "",
+              "side": "newer",
+              "tier": "record",
+              "via": "emitted-record"
+            },
+            {
+              "address": null,
+              "candidates": [],
+              "contract": "workbench-graph-node/1",
+              "flags": [
+                "import"
+              ],
+              "function_id": null,
+              "id": "n-callee",
+              "kind": "external",
+              "label": "ntoskrnl.exe::ProbeForRead",
+              "match_id": null,
+              "reason": "",
+              "side": "newer",
+              "tier": "record",
+              "via": "external"
+            }
+          ],
+          "older_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "orientation": "newer->older",
+          "project_id": "p-1",
+          "run_id": "r-1",
+          "side": "newer",
+          "source": {
+            "source_id": "ghidriff-lists",
+            "tier": "labels",
+            "version": "1"
+          },
+          "truncated": false
+        }
+      },
+      {
+        "label": "side outside older and newer",
+        "value": {
+          "completeness": "changed-set-lists",
+          "contract": "workbench-graph/1",
+          "correspondence": [],
+          "edges": [
+            {
+              "contract": "workbench-graph-edge/1",
+              "dst": "n-callee",
+              "flags": [],
+              "id": "e-1",
+              "side": "newer",
+              "src": "n-caller",
+              "support": [
+                "called"
+              ]
+            }
+          ],
+          "limitations": [
+            "Direct calls only."
+          ],
+          "more": [],
+          "newer_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "nodes": [
+            {
+              "address": 5368714816,
+              "candidates": [],
+              "contract": "workbench-graph-node/1",
+              "flags": [],
+              "function_id": "f-1",
+              "id": "n-caller",
+              "kind": "function",
+              "label": "FUN_140001640",
+              "match_id": "m-1",
+              "reason": "",
+              "side": "newer",
+              "tier": "record",
+              "via": "emitted-record"
+            },
+            {
+              "address": null,
+              "candidates": [],
+              "contract": "workbench-graph-node/1",
+              "flags": [
+                "import"
+              ],
+              "function_id": null,
+              "id": "n-callee",
+              "kind": "external",
+              "label": "ntoskrnl.exe::ProbeForRead",
+              "match_id": null,
+              "reason": "",
+              "side": "newer",
+              "tier": "record",
+              "via": "external"
+            }
+          ],
+          "older_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "orientation": "older->newer",
+          "project_id": "p-1",
+          "run_id": "r-1",
+          "side": "left",
+          "source": {
+            "source_id": "ghidriff-lists",
+            "tier": "labels",
+            "version": "1"
+          },
+          "truncated": false
+        }
+      }
+    ],
+    "valid": [
+      {
+        "completeness": "changed-set-lists",
+        "contract": "workbench-graph/1",
+        "correspondence": [],
+        "edges": [
+          {
+            "contract": "workbench-graph-edge/1",
+            "dst": "n-callee",
+            "flags": [],
+            "id": "e-1",
+            "side": "newer",
+            "src": "n-caller",
+            "support": [
+              "called"
+            ]
+          }
+        ],
+        "limitations": [
+          "Direct calls only."
+        ],
+        "more": [],
+        "newer_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "nodes": [
+          {
+            "address": 5368714816,
+            "candidates": [],
+            "contract": "workbench-graph-node/1",
+            "flags": [],
+            "function_id": "f-1",
+            "id": "n-caller",
+            "kind": "function",
+            "label": "FUN_140001640",
+            "match_id": "m-1",
+            "reason": "",
+            "side": "newer",
+            "tier": "record",
+            "via": "emitted-record"
+          },
+          {
+            "address": null,
+            "candidates": [],
+            "contract": "workbench-graph-node/1",
+            "flags": [
+              "import"
+            ],
+            "function_id": null,
+            "id": "n-callee",
+            "kind": "external",
+            "label": "ntoskrnl.exe::ProbeForRead",
+            "match_id": null,
+            "reason": "",
+            "side": "newer",
+            "tier": "record",
+            "via": "external"
+          }
+        ],
+        "older_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "orientation": "older->newer",
+        "project_id": "p-1",
+        "run_id": "r-1",
+        "side": "newer",
+        "source": {
+          "source_id": "ghidriff-lists",
+          "tier": "labels",
+          "version": "1"
+        },
+        "truncated": false
+      }
+    ]
+  },
+  "HubRegistry": {
+    "invalid": [],
+    "valid": [
+      {
+        "contract": "hub-registry/1",
+        "rules": [
+          {
+            "family": "trace-helper",
+            "pattern": "EtwWrite*",
+            "retrieved": "2026-10-14",
+            "source": "unified F17 trace-helper table"
+          },
+          {
+            "family": "trace-helper",
+            "pattern": "WmiTraceMessage*",
+            "retrieved": "2026-10-14",
+            "source": "unified F17 trace-helper table"
+          },
+          {
+            "family": "trace-helper",
+            "pattern": "TraceMessage*",
+            "retrieved": "2026-10-14",
+            "source": "unified F17 trace-helper table"
+          },
+          {
+            "family": "trace-helper",
+            "pattern": "TraceLogging*",
+            "retrieved": "2026-10-14",
+            "source": "unified F17 trace-helper table"
+          },
+          {
+            "family": "trace-helper",
+            "pattern": "_tlgWrite*",
+            "retrieved": "2026-10-14",
+            "source": "unified F17 trace-helper table"
+          },
+          {
+            "family": "security-cookie",
+            "pattern": "__security_check_cookie",
+            "retrieved": "2026-10-14",
+            "source": "WB2 plan 7.1"
+          },
+          {
+            "family": "cfg-dispatch",
+            "pattern": "_guard_check_icall*",
+            "retrieved": "2026-10-14",
+            "source": "WB2 plan 7.1 (spelling unverified; owner review)"
+          },
+          {
+            "family": "cfg-dispatch",
+            "pattern": "_guard_dispatch_icall*",
+            "retrieved": "2026-10-14",
+            "source": "WB2 plan 7.1 (spelling unverified; owner review)"
+          },
+          {
+            "family": "cfg-dispatch",
+            "pattern": "__guard_check_icall*",
+            "retrieved": "2026-10-14",
+            "source": "WB2 plan 7.1 (spelling unverified; owner review)"
+          },
+          {
+            "family": "cfg-dispatch",
+            "pattern": "__guard_dispatch_icall*",
+            "retrieved": "2026-10-14",
+            "source": "WB2 plan 7.1 (spelling unverified; owner review)"
+          }
+        ],
+        "version": "1"
+      }
+    ]
+  },
+  "NeighbourhoodEvolution": {
+    "invalid": [
+      {
+        "label": "cell outside present, absent, unknown",
+        "value": {
+          "builds": [
+            "b0",
+            "b1",
+            "b2"
+          ],
+          "chain_id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "contract": "workbench-graph-evolution/1",
+          "digest_by_ordinal": [],
+          "focus_labels": [
+            "F",
+            "F",
+            "F"
+          ],
+          "inconsistencies": [],
+          "limitations": [],
+          "lineages": [
+            {
+              "cells": [
+                "present",
+                "no",
+                "absent"
+              ],
+              "events": [
+                {
+                  "kind": "dropped",
+                  "ordinal": 2
+                }
+              ],
+              "id": "l-1",
+              "labels_by_ordinal": [
+                "X",
+                "X",
+                null
+              ]
+            }
+          ],
+          "series_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "truncated": false
+        }
+      }
+    ],
+    "valid": [
+      {
+        "builds": [
+          "b0",
+          "b1",
+          "b2"
+        ],
+        "chain_id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "contract": "workbench-graph-evolution/1",
+        "digest_by_ordinal": [],
+        "focus_labels": [
+          "F",
+          "F",
+          "F"
+        ],
+        "inconsistencies": [],
+        "limitations": [],
+        "lineages": [
+          {
+            "cells": [
+              "present",
+              "present",
+              "absent"
+            ],
+            "events": [
+              {
+                "kind": "dropped",
+                "ordinal": 2
+              }
+            ],
+            "id": "l-1",
+            "labels_by_ordinal": [
+              "X",
+              "X",
+              null
+            ]
+          }
+        ],
+        "series_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "truncated": false
+      }
+    ]
+  },
+  "ObservedPaths": {
+    "invalid": [],
+    "valid": [
+      {
+        "completeness": "changed-set-lists",
+        "contract": "workbench-graph-paths/1",
+        "labels": {
+          "n-callee": "ntoskrnl.exe::ProbeForRead",
+          "n-caller": "FUN_140001640"
+        },
+        "note": "Observed path of at most 1 calls; calls outside the stored lists are not seen.",
+        "paths": [
+          [
+            "n-caller",
+            "n-callee"
+          ]
+        ],
+        "side": "newer",
+        "truncated": false
+      }
+    ]
+  },
+  "Pairing": {
+    "invalid": [],
+    "valid": [
+      {
+        "contract": "workbench-graph-pairing/1",
+        "engines": [
+          {
+            "partners": [
+              "FUN_140001500"
+            ],
+            "via": "ghidriff:Symbols"
+          }
+        ],
+        "inferred": false,
+        "kind": "one",
+        "partners": [
+          "FUN_140001500"
+        ],
+        "via": "ghidriff:Symbols"
+      }
+    ]
+  }
+}

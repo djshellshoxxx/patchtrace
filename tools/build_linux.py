@@ -9,6 +9,7 @@ import argparse
 import gzip
 import hashlib
 import importlib.metadata
+import importlib.util
 import json
 import os
 import platform
@@ -26,7 +27,7 @@ EXCLUDED = ['PySide6.QtWebEngineCore', 'PySide6.QtWebEngineQuick', 'PySide6.QtWe
             'PySide6.QtPdf', 'PySide6.QtPdfWidgets']
 DISTRIBUTIONS = ['PySide6', 'PySide6_Essentials', 'PySide6_Addons', 'shiboken6', 'pydantic', 'pydantic_core',
                  'PyInstaller', 'annotated-types', 'typing_extensions', 'typing-inspection', 'protobuf']
-OPTIONAL_DISTRIBUTIONS = ['rapidfuzz', 'yara-x']  # B-0 extras: bundled and licensed when installed
+OPTIONAL_DISTRIBUTIONS = ['rapidfuzz', 'yara-x', 'iced-x86']  # B-0 extras: bundled and licensed when installed
 
 
 def _installed(name: str) -> bool:
@@ -101,13 +102,90 @@ def list_regular_files(root: Path) -> list[str]:
     return sorted(found)
 
 
-def payload_problems(backend: Path, *, allow_internal_symlinks: bool) -> list[str]:
+PIN_PATH = Path(__file__).resolve().with_name('backend_pin.json')
+
+
+def _load_checker():
+    """tools/check_backend_pin.py (stdlib only), loaded by path so no sys.path assumptions are needed."""
+    spec = importlib.util.spec_from_file_location('_pt_check_backend_pin',
+                                                  Path(__file__).resolve().with_name('check_backend_pin.py'))
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+def _bundle_modules():
+    """The canonical strict validators; the build environment has PatchTrace installed, src/ is the fallback."""
+    try:
+        from patchtrace import backend_bundle, offline_bundle
+    except ImportError:
+        sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'src'))
+        from patchtrace import backend_bundle, offline_bundle
+    return backend_bundle, offline_bundle
+
+
+def manifest_problems(backend: Path, platform_key: str, *, allow_internal_symlinks: bool) -> tuple[list[str], list[str]]:
+    """Strict manifest parse plus complete (hashing) tree verification against it.
+
+    Returns (problems, manifest-declared file paths). Uses the same validators the installed runtime uses, so
+    a manifest that would be refused at run time is refused here, before anything is copied.
+    """
+    backend_bundle, offline_bundle = _bundle_modules()
+    manifest = backend / 'manifest.json'
+    try:
+        raw = manifest.read_bytes()
+        data = offline_bundle._json_no_duplicates(raw)
+        _, files = offline_bundle.validate_manifest(data, platforms=(platform_key,))
+    except OSError:
+        return ['PT-BUNDLE-MISSING: backend/manifest.json cannot be read'], []
+    except offline_bundle.OfflineBundleError as exc:
+        return [f'PT-BUNDLE-MANIFEST: {str(exc).removeprefix("PT-OFFLINE: ")}'], []
+    ref = backend_bundle.BundleRef(root=backend, manifest_path=manifest, runtime_id=str(data['runtime_id']),
+                                   python=backend / 'payload' / str(data['python']),
+                                   ghidra=backend / 'payload' / 'ghidra', java_home=backend / 'payload' / 'jdk',
+                                   platform=platform_key, manifest_sha256=hashlib.sha256(raw).hexdigest())
+    report = backend_bundle.verify_bundle(ref, mode='full')
+    found = [f'{item.code}: {item.path}' for item in report.problems
+             if not (allow_internal_symlinks and item.code == 'PT-BUNDLE-LINK')]  # link rules are judged below
+    if report.truncated:
+        found.append('PT-BUNDLE-MANIFEST: further tree problems were truncated')
+    return found, [item.path for item in files]
+
+
+def license_problems(backend: Path, declared_files: list[str], pin: dict) -> list[str]:
+    """PT-BUNDLE-LICENSE: every GPL-family component of the payload must be listed in the pin's license_policy."""
+    checker = _load_checker()
+    path = backend / 'payload' / 'LICENSES' / 'THIRD-PARTY.json'
+    try:
+        doc = json.loads(path.read_text(encoding='utf-8'))
+        items = [(str(c['id']), str(c['spdx'])) for c in doc['components']]
+    except (OSError, ValueError, KeyError, TypeError):
+        return ['PT-BUNDLE-LICENSE: payload/LICENSES/THIRD-PARTY.json is missing or unreadable, '
+                'so component licences cannot be checked']
+    return checker.copyleft_problems(items, pin) + checker.shipped_gpl_dir_problems(declared_files, pin)
+
+
+def payload_problems(backend: Path, *, allow_internal_symlinks: bool, platform_key: str = 'linux',
+                     pin_path: Path | None = None) -> list[str]:
     """Reasons a backend directory cannot be shipped; empty means acceptable. Never executes anything."""
     problems: list[str] = []
     if not (backend / 'manifest.json').is_file():
         problems.append('PT-BUNDLE-MISSING: backend/manifest.json is absent')
     if not (backend / 'payload').is_dir():
         problems.append('PT-BUNDLE-MISSING: backend/payload/ is absent')
+    if not problems:
+        tree, declared = manifest_problems(backend, platform_key, allow_internal_symlinks=allow_internal_symlinks)
+        problems += tree
+        if declared and not tree:
+            try:
+                pin = json.loads((pin_path or PIN_PATH).read_text(encoding='utf-8'))
+            except (OSError, ValueError):
+                pin = None
+            pin_errors = _load_checker().validate_pin(pin) if pin is not None else ['pin unreadable']
+            if pin_errors:
+                problems.append('PT-BUNDLE-PIN: ' + '; '.join(pin_errors[:3]))
+            else:
+                problems += license_problems(backend, declared, pin)
     base = backend.resolve()
     stack = [backend]
     while stack:
@@ -199,9 +277,29 @@ def current_commit(root: Path) -> str:
 
 
 def attach_backend(package: Path, backend_payload: Path, *, version: str, platform_key: str, root: Path,
-                   allow_internal_symlinks: bool) -> None:
-    """Copy `backend/`, then write SHA256SUMS.txt and build-provenance.json into the package root."""
-    problems = payload_problems(backend_payload, allow_internal_symlinks=allow_internal_symlinks)
+                   allow_internal_symlinks: bool, release: bool = False, pin_path: Path | None = None) -> None:
+    """Validate, copy `backend/`, then write SHA256SUMS.txt and build-provenance.json into the package root.
+
+    Validation (strict manifest, complete tree verification, licence policy) runs before anything is copied
+    or written. With `release`, a listed component whose owner_approved is false is refused; otherwise the build
+    proceeds with a loud warning and the pending components are recorded in the provenance.
+    """
+    problems = payload_problems(backend_payload, allow_internal_symlinks=allow_internal_symlinks,
+                                platform_key=platform_key, pin_path=pin_path)
+    pending: list[str] = []
+    if not problems:
+        try:
+            pending = _load_checker().unapproved_licenses(
+                json.loads((pin_path or PIN_PATH).read_text(encoding='utf-8')))
+        except (OSError, ValueError):
+            pending = []
+        if pending and release:
+            problems.append('PT-BUNDLE-LICENSE: owner approval pending for ' + ', '.join(pending)
+                            + '; a release build is refused')
+        elif pending:
+            print('WARNING: PT-BUNDLE-LICENSE policy gate: owner approval is still PENDING for '
+                  + ', '.join(pending) + '. This acceptance build must not be published or released.',
+                  file=sys.stderr)
     if platform_key == 'windows':
         problems += [f'PT-BUNDLE-PATH: reserved Windows name in {name}'
                      for name in windows_name_problems(list_regular_files(backend_payload))]
@@ -222,6 +320,7 @@ def attach_backend(package: Path, backend_payload: Path, *, version: str, platfo
         built_at=datetime.now(UTC).strftime('%Y-%m-%dT%H:%M:%SZ'),
         manifest_sha256=digests['backend/manifest.json'], sums_sha256=sha256_file(sums),
         file_count=len(files), python_version=sys.version.split()[0])
+    provenance['license_policy_pending_owner_approval'] = pending
     (package / 'build-provenance.json').write_text(json.dumps(provenance, indent=2, sort_keys=True) + '\n',
                                                    encoding='utf-8')
 
@@ -238,11 +337,15 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument('--full', action='store_true', help='also build the full variant with backend/')
     parser.add_argument('--backend-payload', type=Path, help='directory shaped like an installed backend/')
     parser.add_argument('--version', default=VERSION)
+    parser.add_argument('--release', action='store_true',
+                        help='with --full: refuse while any license_policy component lacks owner approval')
     args = parser.parse_args(argv)
     try:
         validate_version(args.version)
     except ValueError as exc:
         parser.error(str(exc))
+    if args.release and not args.full:
+        parser.error('--release is only valid with --full')
     if args.full and not args.backend_payload:
         parser.error('--full requires --backend-payload DIR')
     if args.backend_payload and not args.full:
@@ -331,7 +434,7 @@ def main(argv: list[str] | None = None) -> None:
     Path(f'{archive}.sha256').write_text(f'{sha256_file(archive)}  {archive.name}\n', encoding='ascii')
     print(archive)
     if args.full:  # the lite smoke above is unchanged; backend/ is attached after it
-        attach_backend(package, args.backend_payload, version=args.version, platform_key='linux', root=root,
+        attach_backend(package, args.backend_payload, version=args.version, platform_key='linux', root=root, release=args.release,
                        allow_internal_symlinks=True)
         modes = {rel: (package / 'backend' / rel).stat().st_mode
                  for rel in list_regular_files(package / 'backend')}

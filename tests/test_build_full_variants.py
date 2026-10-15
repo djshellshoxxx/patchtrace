@@ -28,16 +28,58 @@ linux = _load('build_linux')
 windows = _load('build_windows')
 
 
-def _payload(root: Path, *, extra: dict[str, bytes] | None = None) -> Path:
+PIN = json.loads((TOOLS / 'backend_pin.json').read_text(encoding='utf-8'))
+JDK_SPDX = 'GPL-2.0-only WITH Classpath-exception-2.0'
+LAYOUT = {'linux': {'python/bin/python3': b'#!py', 'jdk/bin/java': b'ELF'},
+          'windows': {'python/python.exe': b'MZ', 'jdk/bin/java.exe': b'MZ'}}
+
+
+def _components(*extra: tuple[str, str]) -> bytes:
+    items = [('ghidriff', 'GPL-3.0-only'), ('jdk', JDK_SPDX), ('python', 'PSF-2.0'), *extra]
+    return json.dumps({'components': [{'id': i, 'spdx': x} for i, x in items]}).encode()
+
+
+def _write_manifest(backend: Path, files: dict[str, bytes], platform: str, **override) -> None:
+    manifest = {
+        'format': 'patchtrace-offline-runtime', 'schema_version': 1,
+        'runtime_id': f'ghidra-12.0.4-ghidriff-4f5d895-{platform}-amd64', 'platform': platform,
+        'architecture': 'amd64', 'python': 'python/python.exe' if platform == 'windows' else 'python/bin/python3',
+        'ghidra': 'ghidra', 'java': 'jdk',
+        'versions': {'python': '3.12.10', 'ghidra': '12.0.4', 'jdk': '21.0.5', 'ghidriff_revision': '4f5d895'},
+        'files': [{'path': n, 'size': len(c), 'sha256': hashlib.sha256(c).hexdigest()}
+                  for n, c in sorted(files.items())]}
+    manifest.update(override)
+    (backend / 'manifest.json').write_text(json.dumps(manifest), encoding='utf-8')
+
+
+def _payload(root: Path, *, extra: dict[str, bytes] | None = None, platform: str = 'linux',
+             third_party: bytes | None = None) -> Path:
+    """A tiny but fully valid backend/ (manifest inventory == tree); `extra` files are declared too."""
     backend = root / 'backend-src'
-    files = {'manifest.json': b'{"schema":1}', 'payload/python/bin/python3': b'#!py',
-             'payload/jdk/bin/java': b'ELF', 'payload/LICENSES/NOTICE.txt': b'notice', **(extra or {})}
+    files = {**LAYOUT[platform], 'ghidra/Ghidra/application.properties': b'application.version=12.0.4',
+             'LICENSES/NOTICE.txt': b'notice',
+             'LICENSES/THIRD-PARTY.json': _components() if third_party is None else third_party, **(extra or {})}
     for rel, data in files.items():
-        path = backend / rel
+        path = backend / 'payload' / rel
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_bytes(data)
-        path.chmod(0o755 if '/bin/' in rel else 0o600)
+    _write_manifest(backend, files, platform)
     return backend
+
+
+def _pin_file(root: Path, *, approve_jdk: bool, name: str = 'pin.json') -> Path:
+    pin = json.loads(json.dumps(PIN))
+    pin['license_policy']['allowed']['temurin-jdk']['owner_approved'] = approve_jdk
+    path = root / name
+    path.write_text(json.dumps(pin), encoding='utf-8')
+    return path
+
+
+def _package(root: Path) -> Path:
+    package = root / 'PatchTrace'
+    package.mkdir()
+    (package / 'PatchTrace').write_bytes(b'exe')
+    return package
 
 
 @pytest.mark.parametrize('version', ['0.1.0', '1.2.3-rc1', 'v2'], ids=['plain', 'rc', 'prefixed'])
@@ -93,13 +135,16 @@ def test_normalized_mode(mode, is_dir, expected):
 
 def test_payload_problems_clean_and_missing(tmp_path):
     assert linux.payload_problems(_payload(tmp_path), allow_internal_symlinks=False) == []
+    (tmp_path / 'w').mkdir()
+    assert linux.payload_problems(_payload(tmp_path / 'w', platform='windows'), allow_internal_symlinks=False,
+                                  platform_key='windows') == []
     (tmp_path / 'empty').mkdir()
     problems = linux.payload_problems(tmp_path / 'empty', allow_internal_symlinks=False)
     assert [p.split(':')[0] for p in problems] == ['PT-BUNDLE-MISSING'] * 2
 
 
 def test_payload_long_path_rejected(tmp_path):
-    backend = _payload(tmp_path, extra={'payload/' + 'd' * 160 + '/f': b'x'})
+    backend = _payload(tmp_path, extra={'d' * 160 + '/f': b'x'})
     problems = linux.payload_problems(backend, allow_internal_symlinks=True)
     assert any(p.startswith('PT-BUNDLE-PATH-LENGTH') for p in problems)
 
@@ -118,9 +163,7 @@ def test_payload_symlinks(tmp_path, target, allow, bad):
 
 
 def test_attach_backend_writes_sums_and_provenance(tmp_path):
-    package = tmp_path / 'PatchTrace'
-    package.mkdir()
-    (package / 'PatchTrace').write_bytes(b'exe')
+    package = _package(tmp_path)
     backend = _payload(tmp_path)
     linux.attach_backend(package, backend, version='9.9.9', platform_key='linux', root=tmp_path,
                          allow_internal_symlinks=True)
@@ -143,7 +186,7 @@ def test_attach_backend_writes_sums_and_provenance(tmp_path):
 def test_attach_backend_rejects_reserved_windows_name(tmp_path):
     package = tmp_path / 'PatchTrace'
     package.mkdir()
-    backend = _payload(tmp_path, extra={'payload/ghidra/nul.txt': b'x'})
+    backend = _payload(tmp_path, extra={'ghidra/nul.txt': b'x'}, platform='windows')
     with pytest.raises(RuntimeError, match='reserved Windows name'):
         windows.attach_backend(package, backend, version='1.0', platform_key='windows', root=tmp_path,
                                allow_internal_symlinks=False)
@@ -209,3 +252,125 @@ def test_parse_args_full(tmp_path):
     args = windows.parse_args(['--full', '--backend-payload', str(tmp_path), '--version', '2.0.0'])
     assert args.full and args.backend_payload == tmp_path and args.version == '2.0.0'
 
+
+
+# ---- CODEX-13: strict manifest + complete tree verification before anything is copied ---------------------
+
+def _codes(problems):
+    return sorted({p.split(':')[0] for p in problems})
+
+
+def test_empty_manifest_and_empty_payload_is_refused(tmp_path):
+    backend = tmp_path / 'backend-src'
+    (backend / 'payload').mkdir(parents=True)
+    (backend / 'manifest.json').write_text('{}', encoding='utf-8')
+    assert 'PT-BUNDLE-MANIFEST' in _codes(linux.payload_problems(backend, allow_internal_symlinks=False))
+    package = _package(tmp_path)
+    with pytest.raises(linux.FullBuildError, match='PT-BUNDLE-MANIFEST'):
+        linux.attach_backend(package, backend, version='1.0', platform_key='linux', root=tmp_path,
+                             allow_internal_symlinks=False)
+    assert sorted(p.name for p in package.iterdir()) == ['PatchTrace']  # nothing copied, no sums or provenance
+
+
+def _extra_file(backend):
+    (backend / 'payload' / 'stray.txt').write_bytes(b'x')
+
+
+def _missing_file(backend):
+    (backend / 'payload' / 'LICENSES' / 'NOTICE.txt').unlink()
+
+
+def _wrong_size(backend):
+    (backend / 'payload' / 'LICENSES' / 'NOTICE.txt').write_bytes(b'longer notice')
+
+
+def _wrong_hash(backend):
+    (backend / 'payload' / 'LICENSES' / 'NOTICE.txt').write_bytes(b'NOTICE')
+
+
+def _duplicate_key(backend):
+    text = (backend / 'manifest.json').read_text(encoding='utf-8')
+    (backend / 'manifest.json').write_text(text.replace('{"format"', '{"format": "x", "format"', 1), encoding='utf-8')
+
+
+@pytest.mark.parametrize(('tamper', 'code'), [(_extra_file, 'PT-BUNDLE-EXTRA'), (_missing_file, 'PT-BUNDLE-MISSING'),
+                                              (_wrong_size, 'PT-BUNDLE-SIZE'), (_wrong_hash, 'PT-BUNDLE-HASH'),
+                                              (_duplicate_key, 'PT-BUNDLE-MANIFEST')],
+                         ids=['extra', 'missing', 'size', 'hash', 'duplicate-key'])
+def test_tree_must_equal_manifest_exactly(tmp_path, tamper, code):
+    backend = _payload(tmp_path)
+    tamper(backend)
+    assert code in _codes(linux.payload_problems(backend, allow_internal_symlinks=False))
+    package = _package(tmp_path)
+    with pytest.raises(linux.FullBuildError, match=code):
+        linux.attach_backend(package, backend, version='1.0', platform_key='linux', root=tmp_path,
+                             allow_internal_symlinks=False)
+    assert not (package / 'backend').exists() and not (package / 'SHA256SUMS.txt').exists()
+
+
+def test_manifest_platform_must_match_the_target(tmp_path):
+    backend = _payload(tmp_path, platform='windows')
+    assert 'PT-BUNDLE-MANIFEST' in _codes(linux.payload_problems(backend, allow_internal_symlinks=False,
+                                                                 platform_key='linux'))
+
+
+# ---- CODEX-15: licence policy gate ------------------------------------------------------------------------
+
+@pytest.mark.parametrize('spdx', ['GPL-3.0-only', 'LGPL-2.1-only', 'AGPL-3.0-or-later'], ids=['gpl', 'lgpl', 'agpl'])
+def test_unlisted_copyleft_component_is_refused(tmp_path, spdx):
+    backend = _payload(tmp_path, third_party=_components(('mystery', spdx)))
+    problems = linux.payload_problems(backend, allow_internal_symlinks=False)
+    assert any(p.startswith('PT-BUNDLE-LICENSE') and 'mystery' in p for p in problems)
+
+
+def test_listed_component_with_changed_spdx_is_refused(tmp_path):
+    other = json.dumps({'components': [{'id': 'jdk', 'spdx': 'GPL-3.0-only'}]}).encode()
+    problems = linux.payload_problems(_payload(tmp_path, third_party=other), allow_internal_symlinks=False)
+    assert any(p.startswith('PT-BUNDLE-LICENSE') and 'jdk' in p for p in problems)
+
+
+@pytest.mark.parametrize('content', [b'not json', b'{"components": 5}'], ids=['garbage', 'shape'])
+def test_licence_inventory_must_be_readable(tmp_path, content):
+    backend = _payload(tmp_path, third_party=content)
+    assert any(p.startswith('PT-BUNDLE-LICENSE') for p in linux.payload_problems(backend, allow_internal_symlinks=False))
+
+
+def test_missing_licence_inventory_is_refused(tmp_path):
+    backend = _payload(tmp_path)
+    (backend / 'payload' / 'LICENSES' / 'THIRD-PARTY.json').unlink()
+    files = {p.relative_to(backend / 'payload').as_posix(): p.read_bytes()
+             for p in (backend / 'payload').rglob('*') if p.is_file()}
+    _write_manifest(backend, files, 'linux')
+    assert any(p.startswith('PT-BUNDLE-LICENSE') for p in linux.payload_problems(backend, allow_internal_symlinks=False))
+
+
+def test_ghidra_gpl_directory_in_payload_is_refused(tmp_path):
+    backend = _payload(tmp_path, extra={'ghidra/GPL/Demangler/readme.txt': b'gpl'})
+    assert any('GPL/' in p for p in linux.payload_problems(backend, allow_internal_symlinks=False))
+
+
+def test_release_attach_refuses_pending_approval_and_acceptance_warns(tmp_path, capsys):
+    backend = _payload(tmp_path)
+    pending = _pin_file(tmp_path, approve_jdk=False, name='pending.json')
+    approved = _pin_file(tmp_path, approve_jdk=True, name='approved.json')
+    package = _package(tmp_path)
+    with pytest.raises(linux.FullBuildError, match='PT-BUNDLE-LICENSE.*temurin-jdk'):
+        linux.attach_backend(package, backend, version='1.0', platform_key='linux', root=tmp_path,
+                             allow_internal_symlinks=False, release=True, pin_path=pending)
+    assert not (package / 'backend').exists()
+    linux.attach_backend(package, backend, version='1.0', platform_key='linux', root=tmp_path,
+                         allow_internal_symlinks=False, release=False, pin_path=pending)
+    assert 'PENDING' in capsys.readouterr().err
+    prov = json.loads((package / 'build-provenance.json').read_text(encoding='utf-8'))
+    assert prov['license_policy_pending_owner_approval'] == ['temurin-jdk']
+    package2 = tmp_path / 'p2'
+    package2.mkdir()
+    linux.attach_backend(package2, backend, version='1.0', platform_key='linux', root=tmp_path,
+                         allow_internal_symlinks=False, release=True, pin_path=approved)
+    prov = json.loads((package2 / 'build-provenance.json').read_text(encoding='utf-8'))
+    assert prov['license_policy_pending_owner_approval'] == []
+
+
+def test_release_flag_requires_full():
+    with pytest.raises(SystemExit):
+        linux.parse_args(['--release'])

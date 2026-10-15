@@ -1,0 +1,109 @@
+{
+  "$id": "https://patchtrace.local/schemas/build-environment/1/BuildFact.json",
+  "additionalProperties": false,
+  "properties": {
+    "certainty": {
+      "enum": [
+        "exact-field",
+        "derived",
+        "signature",
+        "heuristic",
+        "unknown"
+      ],
+      "title": "Certainty",
+      "type": "string"
+    },
+    "key": {
+      "enum": [
+        "compiler",
+        "compiler_version",
+        "linker",
+        "linker_field",
+        "linker_rich",
+        "build_tool",
+        "runtime_family",
+        "language",
+        "target_os",
+        "subsystem",
+        "os_version_field",
+        "subsystem_version_field",
+        "image_version_field",
+        "rich_signature",
+        "packer",
+        "protector",
+        "installer",
+        "obfuscator",
+        "managed",
+        "gs_cookie",
+        "cfg",
+        "aslr",
+        "repro",
+        "debug_entry_types",
+        "entropy_exec",
+        "overlay"
+      ],
+      "title": "Key",
+      "type": "string"
+    },
+    "raw": {
+      "default": [],
+      "items": {
+        "maxItems": 2,
+        "minItems": 2,
+        "prefixItems": [
+          {
+            "maxLength": 32,
+            "type": "string"
+          },
+          {
+            "maxLength": 120,
+            "type": "string"
+          }
+        ],
+        "type": "array"
+      },
+      "maxItems": 4,
+      "title": "Raw",
+      "type": "array"
+    },
+    "ref": {
+      "default": "",
+      "maxLength": 64,
+      "title": "Ref",
+      "type": "string"
+    },
+    "source": {
+      "enum": [
+        "pe-header",
+        "rich-header",
+        "debug-directory",
+        "load-config",
+        "imports",
+        "clr-header",
+        "sections",
+        "diec"
+      ],
+      "title": "Source",
+      "type": "string"
+    },
+    "value": {
+      "maxLength": 200,
+      "title": "Value",
+      "type": "string"
+    },
+    "version": {
+      "default": "",
+      "maxLength": 120,
+      "title": "Version",
+      "type": "string"
+    }
+  },
+  "required": [
+    "key",
+    "value",
+    "source",
+    "certainty"
+  ],
+  "title": "BuildFact",
+  "type": "object"
+}

@@ -49,6 +49,8 @@ KINDS = frozenset({'signals', 'ranking', 'wil', 'cve-snapshot', 'contextual', 'p
                    # none is in DERIVED_KINDS, so retention never deletes them.
                    'search-saved', 'rule-candidate', 'rule-decision', 'rule-version', 'rule-test',
                    'rule-export',
+                   # Program E (DIE D4): build-environment fingerprints and deltas; never in DERIVED_KINDS.
+                   'build-env',
                    # Program E (FAB-1): one row per (producer, batch) of the anchor fabric. Again not in
                    # DERIVED_KINDS, so retention never deletes it; no extension_version bump, as `patch-intent`.
                    'anchor-batch',

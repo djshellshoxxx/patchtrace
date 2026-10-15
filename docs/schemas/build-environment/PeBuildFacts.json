@@ -1,0 +1,414 @@
+{
+  "$defs": {
+    "ClrFacts": {
+      "additionalProperties": false,
+      "properties": {
+        "flags": {
+          "items": {
+            "maxLength": 32,
+            "type": "string"
+          },
+          "maxItems": 16,
+          "title": "Flags",
+          "type": "array"
+        },
+        "has_native_header": {
+          "title": "Has Native Header",
+          "type": "boolean"
+        },
+        "header_size": {
+          "minimum": 0,
+          "title": "Header Size",
+          "type": "integer"
+        },
+        "il_only": {
+          "title": "Il Only",
+          "type": "boolean"
+        },
+        "metadata_version": {
+          "anyOf": [
+            {
+              "maxLength": 64,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Metadata Version"
+        },
+        "runtime_major": {
+          "minimum": 0,
+          "title": "Runtime Major",
+          "type": "integer"
+        },
+        "runtime_minor": {
+          "minimum": 0,
+          "title": "Runtime Minor",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "header_size",
+        "runtime_major",
+        "runtime_minor",
+        "flags",
+        "il_only",
+        "has_native_header",
+        "metadata_version"
+      ],
+      "title": "ClrFacts",
+      "type": "object"
+    },
+    "RichEntry": {
+      "additionalProperties": false,
+      "properties": {
+        "build": {
+          "maximum": 65535,
+          "minimum": 0,
+          "title": "Build",
+          "type": "integer"
+        },
+        "count": {
+          "maximum": 4294967295,
+          "minimum": 0,
+          "title": "Count",
+          "type": "integer"
+        },
+        "product_id": {
+          "maximum": 65535,
+          "minimum": 0,
+          "title": "Product Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "product_id",
+        "build",
+        "count"
+      ],
+      "title": "RichEntry",
+      "type": "object"
+    },
+    "RichFacts": {
+      "additionalProperties": false,
+      "properties": {
+        "checksum_ok": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Checksum Ok"
+        },
+        "entries": {
+          "items": {
+            "$ref": "#/$defs/RichEntry"
+          },
+          "maxItems": 1024,
+          "title": "Entries",
+          "type": "array"
+        },
+        "key": {
+          "maximum": 4294967295,
+          "minimum": 0,
+          "title": "Key",
+          "type": "integer"
+        },
+        "offset": {
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "signature": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Signature",
+          "type": "string"
+        },
+        "truncated": {
+          "title": "Truncated",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "offset",
+        "key",
+        "checksum_ok",
+        "entries",
+        "truncated",
+        "signature"
+      ],
+      "title": "RichFacts",
+      "type": "object"
+    }
+  },
+  "$id": "https://patchtrace.local/schemas/build-environment/1/PeBuildFacts.json",
+  "additionalProperties": false,
+  "description": "Header-level facts of one PE (mirror of `pe_overview.build_facts.PeBuildFacts`, which stays stdlib).",
+  "properties": {
+    "anomalies": {
+      "items": {
+        "pattern": "^[a-z0-9][a-z0-9-]{0,39}$",
+        "type": "string"
+      },
+      "maxItems": 16,
+      "title": "Anomalies",
+      "type": "array"
+    },
+    "clr": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ClrFacts"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "debug_entry_types": {
+      "items": {
+        "type": "integer"
+      },
+      "maxItems": 16,
+      "title": "Debug Entry Types",
+      "type": "array"
+    },
+    "dll_characteristics": {
+      "items": {
+        "maxLength": 32,
+        "type": "string"
+      },
+      "maxItems": 32,
+      "title": "Dll Characteristics",
+      "type": "array"
+    },
+    "entropy_exec_max": {
+      "anyOf": [
+        {
+          "maximum": 8,
+          "minimum": 0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Entropy Exec Max"
+    },
+    "facts_version": {
+      "const": "pe-build-facts/1",
+      "default": "pe-build-facts/1",
+      "title": "Facts Version",
+      "type": "string"
+    },
+    "guard_flags": {
+      "anyOf": [
+        {
+          "items": {
+            "maxLength": 48,
+            "type": "string"
+          },
+          "maxItems": 32,
+          "type": "array"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Guard Flags"
+    },
+    "image_field": {
+      "anyOf": [
+        {
+          "maxItems": 2,
+          "minItems": 2,
+          "prefixItems": [
+            {
+              "maximum": 65535,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "maximum": 65535,
+              "minimum": 0,
+              "type": "integer"
+            }
+          ],
+          "type": "array"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Image Field"
+    },
+    "linker_field": {
+      "anyOf": [
+        {
+          "maxItems": 2,
+          "minItems": 2,
+          "prefixItems": [
+            {
+              "maximum": 65535,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "maximum": 65535,
+              "minimum": 0,
+              "type": "integer"
+            }
+          ],
+          "type": "array"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Linker Field"
+    },
+    "os_field": {
+      "anyOf": [
+        {
+          "maxItems": 2,
+          "minItems": 2,
+          "prefixItems": [
+            {
+              "maximum": 65535,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "maximum": 65535,
+              "minimum": 0,
+              "type": "integer"
+            }
+          ],
+          "type": "array"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Os Field"
+    },
+    "overlay_entropy": {
+      "anyOf": [
+        {
+          "maximum": 8,
+          "minimum": 0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Overlay Entropy"
+    },
+    "overlay_size": {
+      "minimum": 0,
+      "title": "Overlay Size",
+      "type": "integer"
+    },
+    "repro": {
+      "title": "Repro",
+      "type": "boolean"
+    },
+    "rich": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/RichFacts"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "runtime_families": {
+      "items": {
+        "maxLength": 32,
+        "type": "string"
+      },
+      "maxItems": 8,
+      "title": "Runtime Families",
+      "type": "array"
+    },
+    "sampled": {
+      "title": "Sampled",
+      "type": "boolean"
+    },
+    "security_cookie_set": {
+      "anyOf": [
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Security Cookie Set"
+    },
+    "subsystem": {
+      "anyOf": [
+        {
+          "maxLength": 32,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Subsystem"
+    },
+    "subsystem_field": {
+      "anyOf": [
+        {
+          "maxItems": 2,
+          "minItems": 2,
+          "prefixItems": [
+            {
+              "maximum": 65535,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "maximum": 65535,
+              "minimum": 0,
+              "type": "integer"
+            }
+          ],
+          "type": "array"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Subsystem Field"
+    }
+  },
+  "required": [
+    "linker_field",
+    "os_field",
+    "image_field",
+    "subsystem_field",
+    "subsystem",
+    "dll_characteristics",
+    "guard_flags",
+    "security_cookie_set",
+    "debug_entry_types",
+    "repro",
+    "rich",
+    "clr",
+    "runtime_families",
+    "entropy_exec_max",
+    "overlay_size",
+    "overlay_entropy",
+    "sampled",
+    "anomalies"
+  ],
+  "title": "PeBuildFacts",
+  "type": "object"
+}

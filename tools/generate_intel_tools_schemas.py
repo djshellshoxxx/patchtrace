@@ -18,14 +18,14 @@ ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / 'docs' / 'schemas' / 'intel-tools'
 
 CONTRACTS = ('ToolManifest', 'ToolRun', 'EvidenceLink', 'CapabilityEvidence', 'StringEvidence', 'EnvironmentEvidence',
-             'ToolEvidenceSet', 'ToolDelta')
+             'ToolEvidenceSet', 'ToolDelta', 'PairCapabilityDelta')
 A, B, C = 'a' * 64, 'b' * 64, 'c' * 64
 SCHEMA_BASE = 'https://patchtrace.local/schemas/intel-tools/1/'
 
 
 def _models():
-    from patchtrace.intelligence.tools import common, delta
-    return {'ToolManifest': common.ToolManifest, 'ToolRun': common.ToolRun, 'EvidenceLink': common.EvidenceLink,
+    from patchtrace.intelligence.tools import capa_pairs, common, delta
+    return {'PairCapabilityDelta': capa_pairs.PairCapabilityDelta,'ToolManifest': common.ToolManifest, 'ToolRun': common.ToolRun, 'EvidenceLink': common.EvidenceLink,
             'CapabilityEvidence': common.CapabilityEvidence, 'StringEvidence': common.StringEvidence,
             'EnvironmentEvidence': common.EnvironmentEvidence, 'ToolEvidenceSet': common.ToolEvidenceSet,
             'ToolDelta': delta.ToolDelta}
@@ -55,7 +55,10 @@ def valid_records() -> dict:
                                  config_digest=C, image_base=0x140000000, capabilities=(capability,),
                                  counts={'capabilities': 1})
     from patchtrace.intelligence.tools import delta
-    return {'ToolManifest': manifest, 'ToolRun': run, 'EvidenceLink': link, 'CapabilityEvidence': capability,
+    from patchtrace.intelligence.tools.capa_pairs import PairCapabilityDelta
+    return {'PairCapabilityDelta': PairCapabilityDelta(comparable=False, older_run_id='run-1', newer_run_id=None,
+                                                       reasons=('no stored run for the newer artifact',)),
+            'ToolManifest': manifest, 'ToolRun': run, 'EvidenceLink': link, 'CapabilityEvidence': capability,
             'StringEvidence': text, 'EnvironmentEvidence': env, 'ToolEvidenceSet': evidence,
             'ToolDelta': delta.ToolDelta(engine='capa', older_run_id='run-1', newer_run_id='run-2', comparable=False,
                                          reasons=('no stored run for the newer artifact',))}

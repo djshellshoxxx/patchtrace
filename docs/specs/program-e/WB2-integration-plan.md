@@ -1,5 +1,7 @@
 # WB2 integration plan: call graph / XREF explorer (research output, 2026-10-14; plan only, no code)
 
+**Status (2026-10-14):** G0 synthetic fixtures built (`tests/callgraph_fixtures.py`, six committed inputs); G1 kernel, G2 snapshot/pairing/query, G3 deltas/leads and G4 CLI/DOT/JSON/schemas built (`cli.py` hook pending); G7 pure evolution and the `graph series` verb built; G5 onward not started.
+
 Base `prep/program-e` d972125. Labels: **[src]** read in upstream source, **[own]** measured here (Linux, 4 vCPU, Python 3.12.3 and 3.13.16, PySide6 6.12.0 offscreen; Windows not measured), **[inf]** inference, **[unverified]** not confirmable (host blocked from the sandbox). Read: AGENTS/CLAUDE, roadmap s3, modules.md, todo.md, workbench 02/04/README + implementation plan, unified-engine 02/03/05/07, three-tool adapters, phase-d coordination, `models.py`, `normalization.py`, `backend.py`, `nway/{graph,series,pair_access}.py`, `evidence.py`, `intelligence/{anchors,hypotheses,tools/*}.py`, `pe_overview/models.py`, `cli.py`, `ui.py`/`ui_evidence.py` seams, `tooltips.py`.
 
 ## 1. Verdict and scope

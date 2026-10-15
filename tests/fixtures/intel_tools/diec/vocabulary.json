@@ -1,0 +1,412 @@
+{
+    "detects": [
+        {
+            "filetype": "PE64",
+            "info": "",
+            "offset": "0",
+            "parentfilepart": "Header",
+            "size": "4096",
+            "values": [
+                {
+                    "info": "",
+                    "name": "N00",
+                    "string": "Unknown: N00",
+                    "type": "unknown",
+                    "version": ""
+                },
+                {
+                    "info": "",
+                    "name": "N01",
+                    "string": "APK obfuscator: N01",
+                    "type": "apk obfuscator",
+                    "version": ""
+                },
+                {
+                    "info": "",
+                    "name": "N02",
+                    "string": "APK Tool: N02",
+                    "type": "apk tool",
+                    "version": ""
+                },
+                {
+                    "info": "",
+                    "name": "N03",
+                    "string": "Archive: N03",
+                    "type": "archive",
+                    "version": ""
+                },
+                {
+                    "info": "",
+                    "name": "N04",
+                    "string": "Author: N04",
+                    "type": "author",
+                    "version": ""
+                },
+                {
+                    "info": "",
+                    "name": "N05",
+                    "string": "Certificate: N05",
+                    "type": "certificate",
+                    "version": ""
+                },
+                {
+                    "info": "",
+                    "name": "N06",
+                    "string": "Compiler: N06",
+                    "type": "compiler",
+                    "version": ""
+                },
+                {
+                    "info": "",
+                    "name": "N07",
+                    "string": "Compressor: N07",
+                    "type": "compressor",
+                    "version": ""
+                },
+                {
+                    "info": "",
+                    "name": "N08",
+                    "string": "Converter: N08",
+                    "type": "converter",
+                    "version": ""
+                },
+                {
+                    "info": "",
+                    "name": "N09",
+                    "string": "Corrupted data: N09",
+                    "type": "corrupted data",
+                    "version": ""
+                },
+                {
+                    "info": "",
+                    "name": "N10",
+                    "string": "Creator: N10",
+                    "type": "creator",
+                    "version": ""
+                },
+                {
+                    "info": "",
+                    "name": "N11",
+                    "string": "Crypter: N11",
+                    "type": "crypter",
+                    "version": ""
+                },
+                {
+                    "info": "",
+                    "name": "N12",
+                    "string": "Cryptor: N12",
+                    "type": "cryptor",
+                    "version": ""
+                },
+                {
+                    "info": "",
+                    "name": "N13",
+                    "string": "Data: N13",
+                    "type": "data",
+                    "version": ""
+                },
+                {
+                    "info": "",
+                    "name": "N14",
+                    "string": "Database: N14",
+                    "type": "database",
+                    "version": ""
+                },
+                {
+                    "info": "",
+                    "name": "N15",
+                    "string": "Debug data: N15",
+                    "type": "debug data",
+                    "version": ""
+                },
+                {
+                    "info": "",
+                    "name": "N16",
+                    "string": "Document: N16",
+                    "type": "document",
+                    "version": ""
+                },
+                {
+                    "info": "",
+                    "name": "N17",
+                    "string": "Dongle protection: N17",
+                    "type": "dongle protection",
+                    "version": ""
+                },
+                {
+                    "info": "",
+                    "name": "N18",
+                    "string": "DOS extender: N18",
+                    "type": "dos extender",
+                    "version": ""
+                },
+                {
+                    "info": "",
+                    "name": "N19",
+                    "string": "Format: N19",
+                    "type": "format",
+                    "version": ""
+                },
+                {
+                    "info": "",
+                    "name": "N20",
+                    "string": "Generic: N20",
+                    "type": "generic",
+                    "version": ""
+                },
+                {
+                    "info": "",
+                    "name": "N21",
+                    "string": "Image: N21",
+                    "type": "image",
+                    "version": ""
+                },
+                {
+                    "info": "",
+                    "name": "N22",
+                    "string": "Installer: N22",
+                    "type": "installer",
+                    "version": ""
+                },
+                {
+                    "info": "",
+                    "name": "N23",
+                    "string": "Installer data: N23",
+                    "type": "installer data",
+                    "version": ""
+                },
+                {
+                    "info": "",
+                    "name": "N24",
+                    "string": "JAR obfuscator: N24",
+                    "type": "jar obfuscator",
+                    "version": ""
+                },
+                {
+                    "info": "",
+                    "name": "N25",
+                    "string": "Joiner: N25",
+                    "type": "joiner",
+                    "version": ""
+                },
+                {
+                    "info": "",
+                    "name": "N26",
+                    "string": "Language: N26",
+                    "type": "language",
+                    "version": ""
+                },
+                {
+                    "info": "",
+                    "name": "N27",
+                    "string": "Library: N27",
+                    "type": "library",
+                    "version": ""
+                },
+                {
+                    "info": "",
+                    "name": "N28",
+                    "string": "Licensing: N28",
+                    "type": "licensing",
+                    "version": ""
+                },
+                {
+                    "info": "",
+                    "name": "N29",
+                    "string": "Linker: N29",
+                    "type": "linker",
+                    "version": ""
+                },
+                {
+                    "info": "",
+                    "name": "N30",
+                    "string": "Loader: N30",
+                    "type": "loader",
+                    "version": ""
+                },
+                {
+                    "info": "",
+                    "name": "N31",
+                    "string": "Malware: N31",
+                    "type": "malware",
+                    "version": ""
+                },
+                {
+                    "info": "",
+                    "name": "N32",
+                    "string": ".NET compressor: N32",
+                    "type": ".net compressor",
+                    "version": ""
+                },
+                {
+                    "info": "",
+                    "name": "N33",
+                    "string": ".NET obfuscator: N33",
+                    "type": ".net obfuscator",
+                    "version": ""
+                },
+                {
+                    "info": "",
+                    "name": "N34",
+                    "string": "Obfuscator: N34",
+                    "type": "obfuscator",
+                    "version": ""
+                },
+                {
+                    "info": "",
+                    "name": "N35",
+                    "string": "Operation system: N35",
+                    "type": "operation system",
+                    "version": ""
+                },
+                {
+                    "info": "",
+                    "name": "N36",
+                    "string": "Overlay: N36",
+                    "type": "overlay",
+                    "version": ""
+                },
+                {
+                    "info": "",
+                    "name": "N37",
+                    "string": "Package: N37",
+                    "type": "package",
+                    "version": ""
+                },
+                {
+                    "info": "",
+                    "name": "N38",
+                    "string": "Packer: N38",
+                    "type": "packer",
+                    "version": ""
+                },
+                {
+                    "info": "",
+                    "name": "N39",
+                    "string": "Personal data: N39",
+                    "type": "personal data",
+                    "version": ""
+                },
+                {
+                    "info": "",
+                    "name": "N40",
+                    "string": "PE Tool: N40",
+                    "type": "pe tool",
+                    "version": ""
+                },
+                {
+                    "info": "",
+                    "name": "N41",
+                    "string": "Platform: N41",
+                    "type": "platform",
+                    "version": ""
+                },
+                {
+                    "info": "",
+                    "name": "N42",
+                    "string": "Player: N42",
+                    "type": "player",
+                    "version": ""
+                },
+                {
+                    "info": "",
+                    "name": "N43",
+                    "string": "Producer: N43",
+                    "type": "producer",
+                    "version": ""
+                },
+                {
+                    "info": "",
+                    "name": "N44",
+                    "string": "Protection: N44",
+                    "type": "protection",
+                    "version": ""
+                },
+                {
+                    "info": "",
+                    "name": "N45",
+                    "string": "Protector: N45",
+                    "type": "protector",
+                    "version": ""
+                },
+                {
+                    "info": "",
+                    "name": "N46",
+                    "string": "Protector data: N46",
+                    "type": "protector data",
+                    "version": ""
+                },
+                {
+                    "info": "",
+                    "name": "N47",
+                    "string": "ROM: N47",
+                    "type": "rom",
+                    "version": ""
+                },
+                {
+                    "info": "",
+                    "name": "N48",
+                    "string": "SFX: N48",
+                    "type": "sfx",
+                    "version": ""
+                },
+                {
+                    "info": "",
+                    "name": "N49",
+                    "string": "SFX data: N49",
+                    "type": "sfx data",
+                    "version": ""
+                },
+                {
+                    "info": "",
+                    "name": "N50",
+                    "string": "Sign tool: N50",
+                    "type": "sign tool",
+                    "version": ""
+                },
+                {
+                    "info": "",
+                    "name": "N51",
+                    "string": "Source code: N51",
+                    "type": "source code",
+                    "version": ""
+                },
+                {
+                    "info": "",
+                    "name": "N52",
+                    "string": "Stub: N52",
+                    "type": "stub",
+                    "version": ""
+                },
+                {
+                    "info": "",
+                    "name": "N53",
+                    "string": "Tool: N53",
+                    "type": "tool",
+                    "version": ""
+                },
+                {
+                    "info": "",
+                    "name": "N54",
+                    "string": "Trojan: N54",
+                    "type": "trojan",
+                    "version": ""
+                },
+                {
+                    "info": "",
+                    "name": "N55",
+                    "string": "Virtual machine: N55",
+                    "type": "virtual machine",
+                    "version": ""
+                },
+                {
+                    "info": "",
+                    "name": "N56",
+                    "string": "Virus: N56",
+                    "type": "virus",
+                    "version": ""
+                }
+            ]
+        }
+    ]
+}

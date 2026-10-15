@@ -1,0 +1,70 @@
+{
+ "1111111111111111111111111111111111111111111111111111111111111111": {
+  "fileInfo": {
+   "description": "Example driver",
+   "machineType": 34404,
+   "md5": "00000000000000000000000000000000",
+   "sha1": "1111111111111111111111111111111111111111",
+   "sha256": "1111111111111111111111111111111111111111111111111111111111111111",
+   "signingStatus": "Unknown",
+   "size": 1000,
+   "timestamp": 4000000000,
+   "version": "10.0.26100.90 (WinBuild.synthetic)",
+   "virtualSize": 131072
+  },
+  "windowsVersions": {
+   "11-24H2": {
+    "KB5096000": {
+     "updateInfo": {
+      "heading": "January 8, 2099-KB5096000 (OS Build 26100.90)",
+      "releaseDate": "2099-01-08",
+      "releaseVersion": "26100.90",
+      "updateUrl": "https://example.invalid/help/0"
+     }
+    }
+   }
+  }
+ },
+ "2222222222222222222222222222222222222222222222222222222222222222": {
+  "fileInfo": {
+   "description": "Example driver",
+   "machineType": 34404,
+   "md5": "00000000000000000000000000000000",
+   "sha1": "1111111111111111111111111111111111111111",
+   "sha256": "2222222222222222222222222222222222222222222222222222222222222222",
+   "signingStatus": "Unknown",
+   "size": 1000,
+   "timestamp": 4000000000,
+   "version": "10.0.26100.100 (WinBuild.synthetic)",
+   "virtualSize": 131072
+  },
+  "windowsVersions": {
+   "11-24H2": {
+    "KB5097000": {
+     "updateInfo": {
+      "heading": "January 14, 2099-KB5097000 (OS Build 26100.100)",
+      "releaseDate": "2099-01-14",
+      "releaseVersion": "26100.100",
+      "updateUrl": "https://example.invalid/help/0"
+     }
+    },
+    "KB5098000": {
+     "updateInfo": {
+      "heading": "January 28, 2099-KB5098000 (OS Build 26100.110) Preview",
+      "releaseDate": "2099-01-28",
+      "releaseVersion": "26100.110",
+      "updateUrl": "https://example.invalid/help/0"
+     }
+    },
+    "KB5099001": {
+     "updateInfo": {
+      "heading": "February 11, 2099-KB5099001 (OS Build 26100.120)",
+      "releaseDate": "2099-02-11",
+      "releaseVersion": "26100.120",
+      "updateUrl": "https://example.invalid/help/0"
+     }
+    }
+   }
+  }
+ }
+}

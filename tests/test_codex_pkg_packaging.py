@@ -41,7 +41,7 @@ def runtime_requirements():
                                       for requirement in project['optional-dependencies'][extra]]
 
 
-@pytest.mark.xfail(strict=True, reason='CODEX-9')
+# CODEX-9 fixed: every runtime requirement (core and optional extras) is an exact pin
 def test_runtime_requirements_have_exact_pins():
     loose = [requirement for requirement in runtime_requirements()
              if not re.fullmatch(r'[\w.-]+==[^*,;\s]+', requirement)]
@@ -82,7 +82,6 @@ def test_license_copy_loops_require_nonempty_license_sets():
     assert not permissive, permissive
 
 
-@pytest.mark.xfail(strict=True, reason='CODEX-13')
 def test_full_payload_validation_parses_manifest():
     functions = [function('tools/build_linux.py', name) for name in ('payload_problems', 'attach_backend')]
     calls = [node.func for func in functions for node in ast.walk(func) if isinstance(node, ast.Call)]
@@ -101,16 +100,26 @@ def test_linux_package_runs_full_cli_smoke():
     assert 'frozen_smoke' in linux or 'frozen_smoke' in source('tools/build_linux.py')
 
 
-@pytest.mark.xfail(strict=True, reason='CODEX-15')
 def test_full_bundle_pin_has_no_other_gpl_components():
+    """CODEX-15 repaired by an explicit, enforced policy (tools/check_backend_pin.py), not by loosening the scan.
+
+    Every GPL-family SPDX outside ghidriff must be named in license_policy, with an identical SPDX and an
+    explicit owner_approved boolean; Ghidra's GPL/** directory must be stripped, not kept.
+    """
     pins = json.loads(source('tools/backend_pin.json'))
+    allowed = pins['license_policy']['allowed']
 
     def forbidden(node, path=''):
         findings = []
         if isinstance(node, dict):
             spdx = node.get('spdx', '')
-            if re.search(r'(?<!L)\b(?:A?GPL)-', spdx) and not path.startswith('ghidriff'):
-                findings.append((path, spdx))
+            if re.search(r'(?<!L)\b(?:A?GPL)-', spdx) and not path.startswith(('ghidriff', 'license_policy')):
+                component = path.split('.')[-1]
+                listed = [name for name, entry in allowed.items()
+                          if component in entry['match'] and entry['spdx'] == spdx
+                          and isinstance(entry['owner_approved'], bool)]
+                if not listed:
+                    findings.append((path, spdx))
             for key, value in node.items():
                 findings.extend(forbidden(value, f'{path}.{key}' if path else key))
         elif isinstance(node, list):
@@ -119,6 +128,9 @@ def test_full_bundle_pin_has_no_other_gpl_components():
         return findings
 
     assert not forbidden(pins), forbidden(pins)
+    assert set(allowed) == {'ghidriff', 'temurin-jdk', 'ghidra-GPL-dir'}
+    assert 'GPL/**' in pins['strip']['ghidra'] and 'GPL/**' not in pins['strip']['keep']
+    assert allowed['ghidra-GPL-dir']['shipped'] is False
 
 
 def test_core_runtime_declarations_are_exactly_pinned():

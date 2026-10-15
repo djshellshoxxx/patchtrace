@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import threading
 from collections.abc import Callable
+from functools import partial
 
 MAX_ABANDONED = 4
 _lock = threading.Lock()
@@ -11,6 +12,14 @@ _abandoned = 0
 
 class Cancelled(Exception):
     """Raised when the cancel event fired while a blocking call was in flight."""
+
+
+class DeadlineExceeded(Exception):
+    """Raised when the request deadline passed before the body was complete."""
+
+
+class CapExceeded(Exception):
+    """Raised when the body is larger than the caller's byte cap."""
 
 
 class TooManyAbandoned(OSError):
@@ -73,3 +82,26 @@ def interruptible[T](call: Callable[[], T], cancel: threading.Event | None, *, p
     if error is not None:
         raise error
     return value
+
+
+def read_bounded(response, cap: int, *, deadline: float, clock: Callable[[], float],
+                 cancel: threading.Event | None, chunk: int = 65536) -> bytes:
+    """Read a whole body of at most ``cap`` bytes, honouring ``deadline`` and ``cancel`` on every read.
+
+    ``read1`` returns whatever is available, so a server dripping one byte at a time cannot hold a
+    single read open until a full chunk arrives; the deadline is re-checked after each small read.
+    Raises `Cancelled`, `DeadlineExceeded` or `CapExceeded`; socket errors propagate to the caller.
+    """
+    read = getattr(response, 'read1', response.read)
+    data = bytearray()
+    while True:
+        if cancel is not None and cancel.is_set():
+            raise Cancelled()
+        if clock() >= deadline:
+            raise DeadlineExceeded()
+        piece = interruptible(partial(read, min(chunk, cap + 1 - len(data))), cancel)
+        if not piece:
+            return bytes(data)
+        data.extend(piece)
+        if len(data) > cap:
+            raise CapExceeded()

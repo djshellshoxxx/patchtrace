@@ -295,6 +295,26 @@ class Execution:
         return out, err
 
 
+def total_ram_bytes() -> int | None:
+    """Physical memory of this machine, or None when the platform does not say (callers then use their ceiling)."""
+    if os.name == 'nt':
+        import ctypes
+
+        class MemoryStatus(ctypes.Structure):
+            _fields_ = [('length', ctypes.c_ulong), ('load', ctypes.c_ulong), ('total_phys', ctypes.c_ulonglong),
+                        *((name, ctypes.c_ulonglong) for name in ('avail_phys', 'total_page', 'avail_page',
+                                                                  'total_virtual', 'avail_virtual',
+                                                                  'avail_extended'))]
+        status = MemoryStatus(ctypes.sizeof(MemoryStatus))
+        ok = ctypes.windll.kernel32.GlobalMemoryStatusEx(ctypes.byref(status))  # type: ignore[attr-defined]
+        return int(status.total_phys) if ok and status.total_phys > 0 else None
+    try:
+        total = os.sysconf('SC_PHYS_PAGES') * os.sysconf('SC_PAGE_SIZE')
+    except (ValueError, OSError, AttributeError):
+        return None
+    return total if total > 0 else None
+
+
 def execute(argv: list[str], *, scratch: Path, env: Mapping[str, str], cancel: threading.Event, timeout: float,
             limits: ToolLimits, runner: Callable = run_process, memory_limit_bytes: int | None = None) -> Execution:
     """Run once with separated, bounded streams. The child is stopped as soon as its stdout passes the limit

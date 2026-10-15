@@ -168,7 +168,7 @@ def run_job(engine: str, artifact: ArtifactRef, manifest: ToolManifest, request:
             argv = diec.build_argv(config, str(exe), scratch, copy.path)
         env = process.tool_env(exe, scratch, extra=_extra_env(engine, config))
         memory = request.memory_limit_bytes if request.memory_limit_bytes is not None else (
-            config.effective_memory_limit() if engine == 'floss' else None)
+            config.effective_memory_limit())
         limits = DEFAULT_LIMITS[engine]
         execution = process.execute(argv, scratch=scratch, env=env, cancel=cancel, timeout=timeout, limits=limits,
                                     runner=runner, memory_limit_bytes=memory)

@@ -1,0 +1,468 @@
+{
+  "changes": [
+    {
+      "category": "unchanged",
+      "change": "unchanged",
+      "change_id": "88c17759fad9779bd98667940db01d89",
+      "group_id": "u:4238:4284",
+      "kind": "library",
+      "labels": [],
+      "match_id": null,
+      "namespace": null,
+      "newer": {
+        "features": [
+          {
+            "kind": "characteristic",
+            "rva": 4286,
+            "value": "tight loop"
+          }
+        ],
+        "links": [
+          {
+            "artifact_sha256": "e7ed617adeac5f301b0dcca7b0d47d10e01e9493281d9203755ba07e1bf11054",
+            "attribution": "function-start",
+            "data_rva": null,
+            "file_offset": null,
+            "function_id": "rva:0x10bc",
+            "project_function_id": null,
+            "rva": 4284,
+            "site_rva": null,
+            "source_fragment": "rules[\"contain loop\"].matches[0]",
+            "tool_run_id": "run-newer"
+          }
+        ],
+        "matches": 1,
+        "reason": null,
+        "state": "present"
+      },
+      "noise": "none",
+      "observation_key": "4c0e3d3e15bc23ff6d18557603161f23bf7fb7ab94c77192d76a6010912bcafc",
+      "older": {
+        "features": [
+          {
+            "kind": "characteristic",
+            "rva": 4240,
+            "value": "tight loop"
+          }
+        ],
+        "links": [
+          {
+            "artifact_sha256": "239639d1c9f4c181e535763c515d768193d79e42d52fa9552f495f85f9e88805",
+            "attribution": "function-start",
+            "data_rva": null,
+            "file_offset": null,
+            "function_id": "rva:0x108e",
+            "project_function_id": null,
+            "rva": 4238,
+            "site_rva": null,
+            "source_fragment": "rules[\"contain loop\"].matches[0]",
+            "tool_run_id": "run-older"
+          }
+        ],
+        "matches": 1,
+        "reason": null,
+        "state": "present"
+      },
+      "relocation": "none",
+      "rule_id": "contain loop",
+      "scope": "function"
+    },
+    {
+      "category": "unchanged",
+      "change": "unchanged",
+      "change_id": "b660287b89a6ba0cf77836a4fadad375",
+      "group_id": "u:4238:4284",
+      "kind": "capability",
+      "labels": [
+        {
+          "group": "Defense Evasion",
+          "ident": "T1027",
+          "name": "Obfuscated Files or Information",
+          "scheme": "attack"
+        },
+        {
+          "group": "Data",
+          "ident": "C0026.002",
+          "name": "Encode Data::XOR",
+          "scheme": "mbc"
+        },
+        {
+          "group": "Defense Evasion",
+          "ident": "E1027.m02",
+          "name": "Obfuscated Files or Information::Encoding-Standard Algorithm",
+          "scheme": "mbc"
+        }
+      ],
+      "match_id": null,
+      "namespace": "data-manipulation/encoding/xor",
+      "newer": {
+        "features": [
+          {
+            "kind": "characteristic",
+            "rva": 4286,
+            "value": "nzxor"
+          },
+          {
+            "kind": "characteristic",
+            "rva": 4286,
+            "value": "tight loop"
+          }
+        ],
+        "links": [
+          {
+            "artifact_sha256": "e7ed617adeac5f301b0dcca7b0d47d10e01e9493281d9203755ba07e1bf11054",
+            "attribution": "basic-block-in-function",
+            "data_rva": null,
+            "file_offset": null,
+            "function_id": "rva:0x10bc",
+            "project_function_id": null,
+            "rva": 4286,
+            "site_rva": null,
+            "source_fragment": "rules[\"encode data using XOR\"].matches[0]",
+            "tool_run_id": "run-newer"
+          }
+        ],
+        "matches": 1,
+        "reason": null,
+        "state": "present"
+      },
+      "noise": "none",
+      "observation_key": "4d179545312abf51135409a6b8b1d41b37f5a757a081d2228c3839131f7ed38c",
+      "older": {
+        "features": [
+          {
+            "kind": "characteristic",
+            "rva": 4240,
+            "value": "nzxor"
+          },
+          {
+            "kind": "characteristic",
+            "rva": 4240,
+            "value": "tight loop"
+          }
+        ],
+        "links": [
+          {
+            "artifact_sha256": "239639d1c9f4c181e535763c515d768193d79e42d52fa9552f495f85f9e88805",
+            "attribution": "basic-block-in-function",
+            "data_rva": null,
+            "file_offset": null,
+            "function_id": "rva:0x108e",
+            "project_function_id": null,
+            "rva": 4240,
+            "site_rva": null,
+            "source_fragment": "rules[\"encode data using XOR\"].matches[0]",
+            "tool_run_id": "run-older"
+          }
+        ],
+        "matches": 1,
+        "reason": null,
+        "state": "present"
+      },
+      "relocation": "none",
+      "rule_id": "encode data using XOR",
+      "scope": "basic block"
+    },
+    {
+      "category": "added",
+      "change": "gained",
+      "change_id": "4fb09ead6484c06cc9d80e29d3f24151",
+      "group_id": "m:env",
+      "kind": "capability",
+      "labels": [
+        {
+          "group": "Discovery",
+          "ident": "T1082",
+          "name": "System Information Discovery",
+          "scheme": "attack"
+        },
+        {
+          "group": "Discovery",
+          "ident": "E1082",
+          "name": "System Information Discovery",
+          "scheme": "mbc"
+        }
+      ],
+      "match_id": "env",
+      "namespace": "host-interaction/environment-variable",
+      "newer": {
+        "features": [
+          {
+            "kind": "api",
+            "rva": 4168,
+            "value": "GetEnvironmentVariable"
+          }
+        ],
+        "links": [
+          {
+            "artifact_sha256": "e7ed617adeac5f301b0dcca7b0d47d10e01e9493281d9203755ba07e1bf11054",
+            "attribution": "function-start",
+            "data_rva": null,
+            "file_offset": null,
+            "function_id": "rva:0x1030",
+            "project_function_id": null,
+            "rva": 4144,
+            "site_rva": null,
+            "source_fragment": "rules[\"query environment variable\"].matches[0]",
+            "tool_run_id": "run-newer"
+          }
+        ],
+        "matches": 1,
+        "reason": null,
+        "state": "present"
+      },
+      "noise": "none",
+      "observation_key": "d26a3aa2d477445d966de5638465908c53a42977d7d078ee5834bbb0bc454d48",
+      "older": {
+        "features": [],
+        "links": [],
+        "matches": 0,
+        "reason": null,
+        "state": "no-function"
+      },
+      "relocation": "none",
+      "rule_id": "query environment variable",
+      "scope": "function"
+    },
+    {
+      "category": "modified",
+      "change": "gained",
+      "change_id": "46c3f5e37a70d8139e1232c593c98047",
+      "group_id": "m:log",
+      "kind": "capability",
+      "labels": [
+        {
+          "group": "File System",
+          "ident": "C0052",
+          "name": "Writes File",
+          "scheme": "mbc"
+        }
+      ],
+      "match_id": "log",
+      "namespace": "host-interaction/file-system/write",
+      "newer": {
+        "features": [
+          {
+            "kind": "api",
+            "rva": 4273,
+            "value": "WriteFile"
+          }
+        ],
+        "links": [
+          {
+            "artifact_sha256": "e7ed617adeac5f301b0dcca7b0d47d10e01e9493281d9203755ba07e1bf11054",
+            "attribution": "function-start",
+            "data_rva": null,
+            "file_offset": null,
+            "function_id": "rva:0x1096",
+            "project_function_id": null,
+            "rva": 4246,
+            "site_rva": null,
+            "source_fragment": "rules[\"write file on Windows\"].matches[0]",
+            "tool_run_id": "run-newer"
+          }
+        ],
+        "matches": 1,
+        "reason": null,
+        "state": "present"
+      },
+      "noise": "none",
+      "observation_key": "55118add1dd5c8af508ae6731ecaef13f9e77db85bef9a5e936fd9a1756f13b7",
+      "older": {
+        "features": [],
+        "links": [],
+        "matches": 0,
+        "reason": null,
+        "state": "absent"
+      },
+      "relocation": "none",
+      "rule_id": "write file on Windows",
+      "scope": "function"
+    },
+    {
+      "category": "unchanged",
+      "change": "unchanged",
+      "change_id": "223e78378a0abbd80e26ddd7867bfbde",
+      "group_id": "u:4144:4179",
+      "kind": "capability",
+      "labels": [
+        {
+          "group": "Discovery",
+          "ident": "T1082",
+          "name": "System Information Discovery",
+          "scheme": "attack"
+        },
+        {
+          "group": "Discovery",
+          "ident": "E1082",
+          "name": "System Information Discovery",
+          "scheme": "mbc"
+        }
+      ],
+      "match_id": null,
+      "namespace": "host-interaction/os/hostname",
+      "newer": {
+        "features": [
+          {
+            "kind": "api",
+            "rva": 4197,
+            "value": "GetComputerName"
+          }
+        ],
+        "links": [
+          {
+            "artifact_sha256": "e7ed617adeac5f301b0dcca7b0d47d10e01e9493281d9203755ba07e1bf11054",
+            "attribution": "function-start",
+            "data_rva": null,
+            "file_offset": null,
+            "function_id": "rva:0x1053",
+            "project_function_id": null,
+            "rva": 4179,
+            "site_rva": null,
+            "source_fragment": "rules[\"get hostname\"].matches[0]",
+            "tool_run_id": "run-newer"
+          }
+        ],
+        "matches": 1,
+        "reason": null,
+        "state": "present"
+      },
+      "noise": "none",
+      "observation_key": "728507577cfdb134f2365a403a61fa64ab72827034c550e49d573abacb9980e7",
+      "older": {
+        "features": [
+          {
+            "kind": "api",
+            "rva": 4162,
+            "value": "GetComputerName"
+          }
+        ],
+        "links": [
+          {
+            "artifact_sha256": "239639d1c9f4c181e535763c515d768193d79e42d52fa9552f495f85f9e88805",
+            "attribution": "function-start",
+            "data_rva": null,
+            "file_offset": null,
+            "function_id": "rva:0x1030",
+            "project_function_id": null,
+            "rva": 4144,
+            "site_rva": null,
+            "source_fragment": "rules[\"get hostname\"].matches[0]",
+            "tool_run_id": "run-older"
+          }
+        ],
+        "matches": 1,
+        "reason": null,
+        "state": "present"
+      },
+      "relocation": "none",
+      "rule_id": "get hostname",
+      "scope": "function"
+    },
+    {
+      "category": "removed",
+      "change": "lost",
+      "change_id": "c20db201699da1384b3684cebeb39f61",
+      "group_id": "m:term",
+      "kind": "capability",
+      "labels": [
+        {
+          "group": "Process",
+          "ident": "C0018",
+          "name": "Terminate Process",
+          "scheme": "mbc"
+        }
+      ],
+      "match_id": "term",
+      "namespace": "host-interaction/process/terminate",
+      "newer": {
+        "features": [],
+        "links": [],
+        "matches": 0,
+        "reason": null,
+        "state": "no-function"
+      },
+      "noise": "none",
+      "observation_key": "e9a15aa20d5881f5975d227e330963bb9df02778f8f023e620716d2c8f9f2a0d",
+      "older": {
+        "features": [
+          {
+            "kind": "api",
+            "rva": 4186,
+            "value": "TerminateProcess"
+          }
+        ],
+        "links": [
+          {
+            "artifact_sha256": "239639d1c9f4c181e535763c515d768193d79e42d52fa9552f495f85f9e88805",
+            "attribution": "function-start",
+            "data_rva": null,
+            "file_offset": null,
+            "function_id": "rva:0x104d",
+            "project_function_id": null,
+            "rva": 4173,
+            "site_rva": null,
+            "source_fragment": "rules[\"terminate process\"].matches[0]",
+            "tool_run_id": "run-older"
+          }
+        ],
+        "matches": 1,
+        "reason": null,
+        "state": "present"
+      },
+      "relocation": "none",
+      "rule_id": "terminate process",
+      "scope": "function"
+    }
+  ],
+  "comparable": true,
+  "contract": "capa-pairs/1",
+  "counts": {
+    "detection-difference": 0,
+    "gained": 2,
+    "lost": 1,
+    "moved": 0,
+    "not-compared": 0,
+    "unchanged": 2
+  },
+  "coverage": {
+    "ambiguous_groups": 0,
+    "attributed_matches": 7,
+    "both_evaluated": 5,
+    "matched_groups": 5,
+    "newer_library": 0,
+    "newer_not_recovered": 0,
+    "older_library": 0,
+    "older_not_recovered": 0,
+    "total_matches": 10
+  },
+  "engine": "capa",
+  "flags": [],
+  "newer_run_id": "run-newer",
+  "notes": [],
+  "older_run_id": "run-older",
+  "pairing": "available",
+  "reasons": [],
+  "truncated": false,
+  "unattributed": [
+    {
+      "change": "gained",
+      "namespace": "executable/pe/section/tls",
+      "newer_matches": 1,
+      "older_matches": 0,
+      "reason": "file-scope",
+      "rule_id": "contain a thread local storage (.tls) section",
+      "scope": "file"
+    },
+    {
+      "change": "unchanged",
+      "namespace": "linking/runtime-linking",
+      "newer_matches": 1,
+      "older_matches": 1,
+      "reason": "instruction-scope",
+      "rule_id": "link function at runtime on Windows",
+      "scope": "instruction"
+    }
+  ],
+  "value_gate": "unvalidated"
+}

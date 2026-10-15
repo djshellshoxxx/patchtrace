@@ -1,0 +1,36 @@
+// patchtrace call graph export (workbench-graph-export/1)
+// match: <id>
+// older sha256: c0ab62f3ac74f3513f3af72bf1b0bd4386356c85d3b3e0f0078317757c9abc64
+// newer sha256: 7ce7faa1104fe24ca39194f4533f03267563de51c11a87eaa36797b16a723ac0
+digraph patchtrace_calls {
+  rankdir=LR;
+  node [shape=box, fontname="Helvetica"];
+  subgraph cluster_older {
+    label="Older build";
+    n1 [label="FUN_140001200\npaired, unchanged", color="#4d6b2f"];
+    n2 [label="FUN_140001500", color="#1f4e79"];
+    n3 [label="FUN_140001800", color="#1f4e79"];
+    n4 [label="ntoskrnl.exe::ExAllocatePool2\nimport", color="#6b4c9a"];
+    n2 -> n3;
+    n3 -> n1;
+    n3 -> n4;
+  }
+  subgraph cluster_newer {
+    label="Newer build";
+    n5 [label="FUN_140001340\npaired, unchanged", color="#4d6b2f"];
+    n6 [label="FUN_140001640", color="#1f4e79"];
+    n7 [label="FUN_1400018c0", color="#1f4e79"];
+    n8 [label="FUN_140001f00", color="#1f4e79"];
+    n9 [label="ntoskrnl.exe::ExAllocatePool2\nimport", color="#6b4c9a"];
+    n10 [label="ntoskrnl.exe::ProbeForRead\nimport", color="#6b4c9a"];
+    n6 -> n7;
+    n7 -> n5;
+    n7 -> n8;
+    n7 -> n9;
+    n7 -> n10;
+  }
+  n1 -> n5 [style=dotted, constraint=false, arrowhead=none];
+  n2 -> n6 [style=dotted, constraint=false, arrowhead=none];
+  n3 -> n7 [style=dotted, constraint=false, arrowhead=none];
+  n4 -> n9 [style=dotted, constraint=false, arrowhead=none];
+}

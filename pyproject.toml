@@ -12,7 +12,7 @@ dev = ["pytest>=8", "pytest-qt>=4", "ruff>=0.12", "pyinstaller==6.22.3", "hypoth
        "pefile>=2024.8.26", "pygments>=2.18,<3"]  # networkx, pefile, pygments: test oracles only, never runtime (WB2/WBQ)
 # Program E optional features (B-0). Every import is guarded by patchtrace.optional_deps; wheels only.
 search = ["rapidfuzz==3.14.6"]
-rules = ["yara-x>=1.0,<2"]
+rules = ["yara-x==1.21.0", "iced-x86==1.21.0"]
 # Optional cross-check of the in-repo stdlib fitter (decision O5); never imported at runtime or frozen.
 calibration-dev = ["scikit-learn>=1.5"]
 [project.scripts]
