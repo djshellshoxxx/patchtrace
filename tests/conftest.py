@@ -5,30 +5,17 @@ blocked checks are printed in a `LIVE ACCEPTANCE BLOCKED` section. Each entry sa
 PATCHTRACE_LIVE_MOCKED=1 (set by the harness tests that run against fake executables) or `mocked=True`."""
 from __future__ import annotations
 
-import atexit
 import json
 import os
-import shutil
-import tempfile
 from pathlib import Path
 
 import pytest
+from live_status import live_status_dir
 
 ROOT = Path(__file__).resolve().parents[1]
 LIVE_STATUS_KEY = pytest.StashKey[list]()
 
 
-_SCRATCH_STATUS: list[Path] = []
-
-
-def live_status_dir() -> Path:
-    explicit = os.environ.get('PATCHTRACE_LIVE_STATUS_DIR')
-    if explicit:
-        return Path(explicit)
-    if not _SCRATCH_STATUS:
-        _SCRATCH_STATUS.append(Path(tempfile.mkdtemp(prefix='patchtrace-live-status-')))
-        atexit.register(shutil.rmtree, _SCRATCH_STATUS[0], ignore_errors=True)
-    return _SCRATCH_STATUS[0]
 
 
 def pytest_configure(config):

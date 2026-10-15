@@ -10,8 +10,8 @@ import sys
 from pathlib import Path
 
 import pytest
-from conftest import live_status_dir
 from fake_bindiff import make_fake_bindiff
+from live_status import live_status_dir
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / 'tools'))
