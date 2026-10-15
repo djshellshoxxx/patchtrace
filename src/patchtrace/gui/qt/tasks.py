@@ -5,9 +5,15 @@ and progress come back on the GUI thread through one queued bridge slot. The wor
 the project service and SQLite: it gets an immutable snapshot built on the GUI thread and returns a value.
 ``TaskRunner.lane`` is a long-lived worker whose state (for example read-only SQLite connections) is opened,
 used and closed on that one thread. Legacy ``QThread`` registries (``_LIVE_THREADS``) are adopted into the same
-shutdown until they are migrated."""
+shutdown until they are migrated.
+
+Ownership rule (to-do T15): every Qt object is created, used and freed on the GUI thread. Workers hold only pure
+Python objects (the task, a lock, a set); a result or closure that holds a Qt object is released by the GUI thread
+after delivery, never by the worker. A live runner is referenced by a module registry until ``shutdown``, so
+dropping the last user reference (or collecting garbage on a worker thread) cannot free the bridge off-thread."""
 from __future__ import annotations
 
+import collections
 import queue
 import re
 import sys
@@ -93,6 +99,9 @@ class _Task:
     on_result: Callable[[Any], None] | None
     on_error: Callable[[TaskFailure], None] | None
     on_progress: Callable[[Progress], None] | None
+    fn: Callable | None = None       # the worker body; released on the GUI thread so a captured Qt object dies there
+    with_state: bool = False         # lane request: fn(state, token, report)
+    owner: Callable[[], TaskRunner | None] | None = None    # weak: a worker never keeps the runner alive
     pending: tuple | None = None     # latest report() arguments, written by the worker, read by the GUI timer
     sent: tuple | None = None
 
@@ -106,38 +115,99 @@ class _Event:
     task: _Task
     payload: Any = None
 
+    def release(self) -> None:
+        """Drop the payload and the task body; only ever called on the GUI thread."""
+        self.payload = None
+        self.task.fn = None
+
+
+class _Hub(QObject):
+    """One process-wide object on the GUI thread. Workers append to the mailbox and emit ``wake``; they never see a
+    runner or its bridge, so the only Qt object a worker touches is never freed."""
+    wake = Signal()
+
+    def __init__(self) -> None:
+        super().__init__()
+        self.wake.connect(self._drain, Qt.ConnectionType.QueuedConnection)
+
+    @Slot()
+    def _drain(self) -> None:
+        while True:
+            try:
+                event = _MAILBOX.popleft()
+            except IndexError:
+                return
+            owner = event.task.owner() if event.task.owner else None
+            if owner is None:
+                event.release()
+            else:
+                owner._deliver(event)
+
 
 class _Bridge(QObject):
-    """Lives on the GUI thread. The slots are bound methods on a queued connection, never lambdas."""
-    delivered = Signal(object)
+    """Per runner, lives on the GUI thread: parent for the progress timer. It holds the runner weakly (no cycle)."""
 
-    def __init__(self, parent: QObject | None, deliver: Callable, tick: Callable) -> None:
+    def __init__(self, parent: QObject | None, owner: Callable[[], TaskRunner | None]) -> None:
         super().__init__(parent)
-        self._deliver = deliver
+        self._owner = owner
         self.timer = QTimer(self)
         self.timer.setInterval(PROGRESS_INTERVAL_MS)
-        self.timer.timeout.connect(tick)
-        self.delivered.connect(self._receive, Qt.ConnectionType.QueuedConnection)
+        self.timer.timeout.connect(self._tick)
 
-    @Slot(object)
-    def _receive(self, event: _Event) -> None:
-        self._deliver(event)
-
-    def post(self, event: _Event) -> None:
-        try:
-            self.delivered.emit(event)
-        except RuntimeError:         # the bridge was deleted while a worker was still running
-            pass
+    @Slot()
+    def _tick(self) -> None:
+        owner = self._owner()
+        if owner is not None:
+            owner._tick()
 
 
-_RUNNERS: weakref.WeakSet[TaskRunner] = weakref.WeakSet()
+_MAILBOX: collections.deque[_Event] = collections.deque()
+_HUB: _Hub | None = None
+_RUNNERS: set[TaskRunner] = set()    # strong until shutdown: the host or parent owns the lifetime, not the GC
+
+
+def _hub() -> _Hub:
+    global _HUB
+    if _HUB is None or not isValid(_HUB):
+        _HUB = _Hub()
+    return _HUB
+
+
+def _post(event: _Event) -> None:
+    """Called on a worker thread. The mailbox holds the only reference once the caller drops its own."""
+    _MAILBOX.append(event)
+    hub = _HUB
+    try:
+        if hub is not None:
+            hub.wake.emit()
+    except RuntimeError:             # the hub was deleted at interpreter exit
+        pass
+
+
+def _execute(task: _Task, state: Any) -> _Event:
+    """Worker side. ``fn`` and its frame die here, but ``task.fn`` keeps the closure alive for the GUI thread."""
+    try:
+        fn = task.fn
+        value = fn(state, task.token, task.report) if task.with_state else fn(task.token, task.report)
+        return _Event('result', task, value)
+    except TaskCancelled:
+        return _Event('drop', task)
+    except Exception as exc:  # noqa: BLE001 - only the class crosses the thread boundary
+        return _Event('error', task, TaskFailure(type(exc).__name__))
+
+
+def _work(task: _Task, lock: threading.Lock, threads: set[threading.Thread]) -> None:
+    _post(_execute(task, None))
+    with lock:
+        threads.discard(threading.current_thread())
 
 
 class TaskRunner:
     def __init__(self, parent: QObject | None = None, status: Callable[[str], None] | None = None,
                  reraise: bool = False) -> None:
         """``status`` receives a line when a result callback raises; with ``reraise`` (tests) it propagates."""
-        self._bridge = _Bridge(parent, self._deliver, self._tick)
+        self._bridge = _Bridge(parent, weakref.ref(self))
+        _hub()
         self._status = status
         self._reraise = reraise
         self._generation: dict[str, int] = {}
@@ -161,8 +231,8 @@ class TaskRunner:
         self._require_open()
         token = self._supersede(channel)
         generation = self._generation[channel]
-        task = _Task(channel, generation, token, on_result, on_error, on_progress)
-        self._start(task, lambda: fn(token, task.report), f'pt-task-{channel}')
+        task = _Task(channel, generation, token, on_result, on_error, on_progress, fn, False, weakref.ref(self))
+        self._start(task, f'pt-task-{channel}')
         return token
 
     def cancel(self, channel: str) -> None:
@@ -209,13 +279,21 @@ class TaskRunner:
             thread.join(max(0.0, deadline - time.monotonic()))
         stuck = [t.name for t in threads if t.is_alive()]
         stuck += [type(t).__name__ for t in join_legacy_threads(max(0.0, deadline - time.monotonic()))]
-        self._running.clear()
-        self._parked.clear()
+        self._release_pending()
+        _RUNNERS.discard(self)
         if isValid(self._bridge):
             self._bridge.deleteLater()
         return stuck
 
     # ---- internals -----------------------------------------------------------------------------
+
+    def _release_pending(self) -> None:
+        for task in self._running:
+            task.fn = None
+        for event in self._parked.values():
+            event.release()
+        self._running.clear()
+        self._parked.clear()
 
     def _require_open(self) -> None:
         if QThread.currentThread() is not self._bridge.thread():
@@ -231,25 +309,14 @@ class TaskRunner:
         self._tokens[channel] = CancelToken()
         return self._tokens[channel]
 
-    def _start(self, task: _Task, call: Callable[[], Any], name: str) -> None:
+    def _start(self, task: _Task, name: str) -> None:
         self._running.add(task)
         if task.on_progress:
             self._bridge.timer.start()
-        thread = threading.Thread(target=self._work, args=(task, call), name=name, daemon=True)
+        thread = threading.Thread(target=_work, args=(task, self._lock, self._threads), name=name, daemon=True)
         with self._lock:
             self._threads.add(thread)
         thread.start()
-
-    def _work(self, task: _Task, call: Callable[[], Any]) -> None:
-        try:
-            event = _Event('result', task, call())
-        except TaskCancelled:
-            event = _Event('drop', task)
-        except Exception as exc:  # noqa: BLE001 - only the class crosses the thread boundary
-            event = _Event('error', task, TaskFailure(type(exc).__name__))
-        self._bridge.post(event)
-        with self._lock:
-            self._threads.discard(threading.current_thread())
 
     def _current(self, task: _Task) -> bool:
         return task.generation is None or self._generation.get(task.channel) == task.generation
@@ -257,14 +324,21 @@ class TaskRunner:
     def _deliver(self, event: _Event) -> None:
         task = event.task
         self._running.discard(task)
-        if self._closed or event.kind == 'drop' or not self._current(task):
+        if self._closed or event.kind == 'drop' or not self._current(task) or not isValid(self._bridge):
+            event.release()
             return
         if task.channel in self._held:
+            replaced = self._parked.get(task.channel)
             self._parked[task.channel] = event
+            if replaced:
+                replaced.release()
             return
         self._flush_progress(task)
         callback = task.on_result if event.kind == 'result' else task.on_error
-        self._apply(task.channel, callback, event.payload)
+        try:
+            self._apply(task.channel, callback, event.payload)
+        finally:
+            event.release()
 
     def _tick(self) -> None:
         pending = [t for t in self._running if t.on_progress]
@@ -308,7 +382,8 @@ class Lane:
         self._close = close
         self._queue: queue.Queue = queue.Queue()
         self._latest = CancelToken()
-        self._thread = threading.Thread(target=self._loop, name=f'pt-lane-{name}', daemon=True)
+        self._thread = threading.Thread(target=_lane_loop, name=f'pt-lane-{name}', daemon=True,
+                                        args=(self._queue, init, close, runner._lock, runner._threads))
         with runner._lock:
             runner._threads.add(self._thread)
         self._thread.start()
@@ -324,45 +399,40 @@ class Lane:
             self._latest.set()
             self._latest = token
             generation = runner._generation[self._channel] = runner._generation.get(self._channel, 0) + 1
-        task = _Task(self._channel, generation, token, on_result, on_error, on_progress)
+        task = _Task(self._channel, generation, token, on_result, on_error, on_progress, fn, True,
+                     weakref.ref(runner))
         runner._running.add(task)
         if on_progress:
             runner._bridge.timer.start()
-        self._queue.put((task, fn))
+        self._queue.put(task)
         return token
 
     def stop(self) -> None:
         self._queue.put(None)
 
-    def _loop(self) -> None:
-        state, failure = None, None
-        try:
-            state = self._init()
-        except Exception as exc:  # noqa: BLE001
-            failure = TaskFailure(type(exc).__name__)
-        while (item := self._queue.get()) is not None:
-            task, fn = item
-            if task.token.is_set():
-                event = _Event('drop', task)
-            elif failure:
-                event = _Event('error', task, failure)
-            else:
-                event = self._run(task, fn, state)
-            self._runner._bridge.post(event)
-        if failure is None and self._close:
-            with suppress(Exception):
-                self._close(state)
-        with self._runner._lock:
-            self._runner._threads.discard(threading.current_thread())
 
-    @staticmethod
-    def _run(task: _Task, fn: Callable, state: Any) -> _Event:
-        try:
-            return _Event('result', task, fn(state, task.token, task.report))
-        except TaskCancelled:
-            return _Event('drop', task)
-        except Exception as exc:  # noqa: BLE001
-            return _Event('error', task, TaskFailure(type(exc).__name__))
+def _lane_loop(requests: queue.Queue, init: Callable[[], Any], close: Callable[[Any], None] | None,
+               lock: threading.Lock, threads: set[threading.Thread]) -> None:
+    """The lane thread's whole world: pure objects only, never the Lane or its runner."""
+    state, failure = None, None
+    try:
+        state = init()
+    except Exception as exc:  # noqa: BLE001
+        failure = TaskFailure(type(exc).__name__)
+    while (task := requests.get()) is not None:
+        if task.token.is_set():
+            event = _Event('drop', task)
+        elif failure:
+            event = _Event('error', task, failure)
+        else:
+            event = _execute(task, state)
+        _post(event)
+        del event
+    if failure is None and close:
+        with suppress(Exception):
+            close(state)
+    with lock:
+        threads.discard(threading.current_thread())
 
 
 # ---- process-wide helpers (tests and the host) ------------------------------------------------------

@@ -2,17 +2,20 @@
 from __future__ import annotations
 
 import gc
+import os
 import statistics
+import subprocess
 import sys
 import threading
 import time
 import types
+import weakref
 from pathlib import Path
 
 import pytest
-from PySide6.QtCore import QAbstractTableModel, QModelIndex, Qt, QThread
+from PySide6.QtCore import QAbstractTableModel, QModelIndex, QObject, Qt, QThread
 from PySide6.QtWidgets import QApplication, QTableView
-from qt_support import join_gui_threads, slot_timer  # noqa: F401
+from qt_support import flush_deferred_deletes, join_gui_threads, slot_timer  # noqa: F401
 from shiboken6 import delete as delete_qobject
 
 from patchtrace.gui.qt import tasks
@@ -484,3 +487,114 @@ def test_qt_gate_default_files_cover_the_gui_tests_and_this_file():
     files = _qt_gate().default_files()
     assert 'tests/test_gui_tasks.py' in files and 'tests/test_evidence_ui.py' in files
     assert 'tests/qt_support.py' not in files and files == sorted(files)
+
+
+# ---- Qt objects are freed on the GUI thread only (to-do T15) ----------------------------------------
+
+
+class Probe(QObject):
+    """A Qt wrapper that records the thread that frees it."""
+    freed_on: list[threading.Thread] = []
+
+    def __del__(self) -> None:
+        Probe.freed_on.append(threading.current_thread())
+
+
+class WatchedRunner(TaskRunner):
+    def __del__(self) -> None:
+        Probe.freed_on.append(threading.current_thread())
+
+
+def _collect_on_a_worker_thread() -> None:
+    thread = threading.Thread(target=gc.collect)
+    thread.start()
+    thread.join()
+
+
+def _off_gui_thread(threads: list[threading.Thread]) -> list[str]:
+    return [t.name for t in threads if t is not threading.main_thread()]
+
+
+@pytest.mark.parametrize('parented', [False, True], ids=['no-parent', 'parent'])
+def test_dropping_runner_closure_and_result_frees_qt_objects_on_the_gui_thread(qtbot, parented):
+    Probe.freed_on = []
+    parent, gate, got, bridge_freed = QObject(), threading.Event(), [], []
+    local = WatchedRunner(parent if parented else None)
+    held = Probe()
+    weakref.finalize(local._bridge, lambda: bridge_freed.append(threading.current_thread()))
+
+    def work(token, report, held=held):
+        gate.wait(5)
+        return Probe()
+    local.submit('c', work, got.append)
+    del held, work, local
+    gate.set()
+    qtbot.waitUntil(lambda: bool(got) and not tasks.live_task_threads(), timeout=5000)
+    got.clear()
+    _collect_on_a_worker_thread()
+    tasks.shutdown_live_runners()
+    flush_deferred_deletes()
+    gc.collect()
+    assert _off_gui_thread(Probe.freed_on + bridge_freed) == []
+
+
+def test_lane_dropped_without_shutdown_frees_qt_objects_on_the_gui_thread(qtbot):
+    Probe.freed_on = []
+    local, got = WatchedRunner(), []
+    local.lane('db', lambda: 1).submit(lambda state, token, report: Probe(), got.append)
+    qtbot.waitUntil(lambda: bool(got), timeout=5000)
+    got.clear()
+    del local
+    _collect_on_a_worker_thread()
+    tasks.shutdown_live_runners()
+    flush_deferred_deletes()
+    gc.collect()
+    assert _off_gui_thread(Probe.freed_on) == []
+
+
+def test_runner_is_kept_alive_until_shutdown_without_a_reference(qtbot):
+    sink, gate = Sink(), threading.Event()
+    local = TaskRunner()
+    local.submit('c', lambda token, report: gate.wait(5) and 'kept', sink.result)
+    del local
+    gc.collect()
+    gate.set()
+    qtbot.waitUntil(lambda: sink.results == ['kept'], timeout=5000)
+    assert tasks.shutdown_live_runners() == []
+    assert tasks.live_task_threads() == []
+
+
+STRESS = """
+import gc, threading
+from PySide6.QtCore import QObject
+from PySide6.QtWidgets import QApplication
+from patchtrace.gui.qt.tasks import TaskRunner, shutdown_live_runners
+
+app, parent, got = QApplication([]), QObject(), []
+for index in range(50):
+    gate, held = threading.Event(), QObject()
+    runner = TaskRunner(parent if index % 2 else None)
+
+    def work(token, report, held=held):
+        gate.wait(5)
+        return QObject()
+    runner.submit('c', work, got.append)
+    del held, work, runner
+    gate.set()
+    collector = threading.Thread(target=gc.collect)
+    collector.start()
+    collector.join()
+    for _ in range(10):
+        app.processEvents()
+        threading.Event().wait(0.002)
+assert shutdown_live_runners() == []
+print('ok')
+"""
+
+
+def test_dropping_runners_in_a_subprocess_never_aborts(tmp_path):
+    script = tmp_path / 'stress.py'
+    script.write_text(STRESS, encoding='utf-8', newline='\n')
+    env = {**os.environ, 'QT_QPA_PLATFORM': 'offscreen', 'PYTHONFAULTHANDLER': '1'}
+    done = subprocess.run([sys.executable, str(script)], env=env, capture_output=True, text=True, timeout=120)
+    assert done.returncode == 0 and done.stdout.strip() == 'ok', done.stderr[-2000:]
