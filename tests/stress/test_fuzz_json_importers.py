@@ -172,8 +172,6 @@ def test_diec_parse_with_mutated_detect_field_only_raises_tool_error(field, valu
         pass
 
 
-@pytest.mark.xfail(strict=True, reason='QA-FUZZ-1: NFC and NFD spellings of one key are not treated as duplicates '
-                                       '(zip member names are NFC-folded, JSON keys are not)')
 def test_nfc_and_nfd_spelled_keys_are_duplicates():
     text = '{"é": 1, "é": 2}'
     with pytest.raises(ValueError):

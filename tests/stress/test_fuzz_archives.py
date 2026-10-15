@@ -151,9 +151,6 @@ def test_compression_bomb_member_is_refused(tmp_path):
     assert 'compression limits' in str(info.value)
 
 
-@pytest.mark.xfail(strict=True, raises=UnicodeDecodeError,
-                   reason='QA-FUZZ-2: zipfile decode error on a UTF-8-flagged central-directory name escapes '
-                          'inspect_offline_bundle (not in _READ_ERRORS) as a raw exception')
 def test_invalid_utf8_member_name_is_a_typed_offline_error(tmp_path):
     base = _base_bundle(tmp_path)
     raw = base.read_bytes()
@@ -192,9 +189,6 @@ def test_corrupted_bundle_bytes_only_raise_offline_error(flips):
         try:
             inspect_offline_bundle(corrupt, platforms=LINUX)
         except OfflineBundleError:
-            pass
-        except UnicodeDecodeError:
-            # Known defect QA-FUZZ-2, pinned by test_invalid_utf8_member_name_is_a_typed_offline_error.
             pass
 
 

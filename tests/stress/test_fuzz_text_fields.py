@@ -9,7 +9,6 @@ from __future__ import annotations
 
 import unicodedata
 
-import pytest
 from hypothesis import HealthCheck, given, settings
 from hypothesis import strategies as st
 
@@ -84,8 +83,6 @@ def test_advisory_text_strips_controls_bidi_and_surrogates_and_respects_its_cap(
     assert len(out) <= 1000
 
 
-@pytest.mark.xfail(strict=True, reason='QA-FUZZ-3: advisory clean_text keeps zero-width, BOM, soft-hyphen and tag '
-                                       'format characters (Cf), which the shared hostile-text rule removes')
 def test_advisory_text_removes_every_format_character():
     out = advisory_text('​CVE-2099­-1﻿\U000e0001')
     assert not any(unicodedata.category(char) == 'Cf' for char in out)

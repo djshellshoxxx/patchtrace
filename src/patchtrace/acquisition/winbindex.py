@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import math
 import re
 import zlib
 from dataclasses import dataclass
@@ -74,10 +75,17 @@ def _reject_constant(name):
     raise ValueError(f'non-finite number {name}')
 
 
+def _finite_float(literal: str) -> float:
+    number = float(literal)  # an overflowing literal such as 1e999 never reaches parse_constant
+    if not math.isfinite(number):
+        _reject_constant(literal[:40])
+    return number
+
+
 def strict_json(text: bytes):
     try:
         return json.loads(text.decode('utf-8'), object_pairs_hook=_no_duplicates,
-                          parse_constant=_reject_constant)
+                          parse_constant=_reject_constant, parse_float=_finite_float)
     except (UnicodeDecodeError, ValueError, RecursionError):
         raise AcquisitionError('PT-ACQ-PROVIDER', 'Winbindex record is not strict JSON') from None
 

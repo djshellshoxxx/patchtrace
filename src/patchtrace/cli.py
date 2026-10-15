@@ -16,6 +16,7 @@ from pathlib import Path
 from .backend_cli import cmd_backend
 from .backend_cli import register as register_backend
 from .diagnostics import redact_log
+from .hostile_text import escape_text
 from .intelligence import cli as intelligence_cli
 from .intelligence.tools import cli as intel_tools_cli  # SPEC-29 tools dispatcher (cheap import)
 
@@ -183,7 +184,8 @@ def _emit(args, command: str, status: str, result, warnings: list[str], text: st
                                      'result': result, 'warnings': warnings}, sort_keys=True) + '\n')
     else:
         for warning in warnings:
-            print(f'warning: {warning}', file=sys.stderr)
+            print(f'warning: {escape_text(warning)}', file=sys.stderr)
+        text = escape_text(text, keep='\n')  # names and evidence are untrusted: no ESC or bidi controls reach a terminal
         sys.stdout.write(text + ('\n' if text and not text.endswith('\n') else ''))
 
 
@@ -496,6 +498,8 @@ def cmd_cache(args, cancel) -> int:
             result = cache.prune(args.target_bytes)
     except EnrichmentError as exc:
         raise CliError(ENVIRONMENT if exc.code == 'PT-ENRICH-CONFIG' else RUNTIME, str(exc)) from None
+    if 'error' in result:
+        raise CliError(RUNTIME, f'cache at {args.cache_dir} is unusable ({result["error"]}); check the path and permissions')
     _emit(args, 'cache', 'complete', result, [], json.dumps(result, indent=2, sort_keys=True))
     return OK
 
@@ -850,10 +854,16 @@ def main(argv: list[str] | None = None) -> int:
         args = _parser(argv).parse_args(argv)
         return (getattr(args, 'handler', None) or HANDLERS[args.command])(args, cancel)
     except CliError as exc:
-        print(f'error: {exc}', file=sys.stderr)
-        if args is not None and getattr(args, 'json', False):
-            sys.stdout.write(json.dumps({'contract': CLI_CONTRACT, 'command': _command_name(args), 'status': 'failed',
-                                         'result': None, 'warnings': [], 'error': str(exc)}, sort_keys=True) + '\n')
+        message = redact_log(str(exc))
+        print(f'error: {message}', file=sys.stderr)
+        if args is None and '--json' in argv:  # the parse itself failed: scan argv for the output mode
+            sys.stdout.write(json.dumps({'contract': CLI_CONTRACT, 'command': next((a for a in argv if not a.startswith('-')), 'patchtrace'),
+                                         'status': 'failed', 'result': None, 'warnings': [], 'error': message},
+                                        sort_keys=True) + '\n')
+        elif args is not None and getattr(args, 'json', False):
+            status = 'cancelled' if exc.code == CANCELLED else 'failed'
+            sys.stdout.write(json.dumps({'contract': CLI_CONTRACT, 'command': _command_name(args), 'status': status,
+                                         'result': None, 'warnings': [], 'error': message}, sort_keys=True) + '\n')
         return exc.code
     except KeyboardInterrupt:
         cancel.set()
