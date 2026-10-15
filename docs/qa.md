@@ -1017,3 +1017,10 @@ Offscreen: `QT_QPA_PLATFORM=offscreen python tools/qt_gate.py --repeat 5 tests/t
 ### [WB3-S7b:strings-panel]
 
 Automated: `tests/test_ui_strings_panel.py` (offscreen, qt_gate x5). Owner-only: NVDA and Narrator pass, high-contrast and DPI check of the Strings dock.
+
+
+### [CAP-6:capabilities-panel]
+| Item | Result |
+|---|---|
+| Tests | `tests/test_ui_capabilities_panel.py` (35) offscreen on Linux; `python tools/qt_gate.py --repeat 5 tests/test_ui_capabilities_panel.py`: 175 passed |
+| Not verified | Windows; screen readers; a real capa program; a PE-backed project (all data through injected fakes) |

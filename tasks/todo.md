@@ -766,3 +766,8 @@
 ### [WB3-S7b:strings-panel]
 
 - [ ] Strings panel: wire function pairing and stored observations into the loader; FLOSS run/probe/consent, export, settings (`strings/*`), column tips.
+
+### [CAP-6:capabilities-panel]
+- [x] Capabilities dock (CAP-6a changes, CAP-6b setup, probe, preview, run) on the panel framework.
+- [ ] Integrator: no `ui.py` change needed; host Open-setup and Run-comparison remedies are not wired.
+- [ ] Not built: grouped tree model (flat table with a Group column), commands, C13 reparse refresh, reported-match count for C12.

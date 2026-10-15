@@ -1099,3 +1099,11 @@ Calls panel (id graph): `callgraph/panel.py` (PanelSpec), `panel_qt.py` (widgets
 ### [WB3-S7b:strings-panel]
 
 `strings/panel.py` declares the Strings `PanelSpec`; `strings/qt_panel.py` is the Qt controller (StateView states, VirtualTable, TaskRunner channels `strings-scan` and `strings-view`, generation and project-key guard). The default loader is the built-in scan with no function pairing; FLOSS, probe, export, rescan and settings are not built yet.
+
+### [CAP-6:capabilities-panel]
+| Part | Files | Notes |
+|---|---|---|
+| declaration | src/patchtrace/intelligence/tools/capa_panel.py, tooltip_entries.py | `PANEL` id `capabilities`, bottom, tabbed with graph, `Ctrl+Shift+A`, tips `capabilities.*`; pure, loads no Qt |
+| data | src/patchtrace/intelligence/tools/capa_data.py, capa_exec.py | Qt-free: stored read (GUI thread), assemble and prepare (worker), probe, run preview, per-side `run_job`, publish (GUI thread) |
+| dock | src/patchtrace/intelligence/tools/capa_qt.py | `CapabilitiesController` on `gui/qt` (`StateView`, `VirtualTable`, `SafeTextView`); tabs Changes and Setup and run |
+| tests | tests/test_ui_capabilities_panel.py (35) | state matrix, hostile text, a11y, late result on project switch, shutdown, previewed run |
