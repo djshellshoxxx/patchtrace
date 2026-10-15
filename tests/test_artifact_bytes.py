@@ -72,7 +72,7 @@ def test_mutation_after_verification_detected(tmp_path):
     path = tmp_path / 'a.bin'
     write(path, b'0123456789')
     reader = VerifiedArtifactReader.open_path(path)
-    time.sleep(0.01)
+    time.sleep(0.01)  # inherent: lets the file's mtime tick past the one recorded when the reader opened it
     with path.open('ab') as stream:
         stream.write(b'tail')
     os.utime(path, ns=(time.time_ns(), time.time_ns() + 10_000_000))

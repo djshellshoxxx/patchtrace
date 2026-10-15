@@ -332,13 +332,16 @@ def test_repaint_under_a_checkpointing_cpu_worker_stays_responsive(runner, qtbot
     _repaint_times(view, 5)
     idle = statistics.median(_repaint_times(view))
 
+    burning = threading.Event()
+
     def burn(token, report):
         total = 0
+        burning.set()
         while not token.checkpoint():
             total += sum(range(2000))
         return total
     token = runner.submit('burn', burn)
-    time.sleep(0.05)
+    assert burning.wait(10)
     loaded = sorted(_repaint_times(view, 40))
     token.set()
     assert loaded[int(len(loaded) * 0.95) - 1] <= idle * 5 + 0.020

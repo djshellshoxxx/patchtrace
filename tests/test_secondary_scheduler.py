@@ -11,6 +11,7 @@ import time
 from pathlib import Path
 
 import pytest
+from liveness_support import heartbeat_stopped, wait_for
 
 from patchtrace.secondary.contracts import Capability, SecondaryError
 from patchtrace.secondary.registry import (
@@ -142,12 +143,9 @@ def test_timeout_maps_to_timeout_status_and_kills_tree(tmp_path):
     [out] = go(tmp_path, {'rz-diff': PyEngine(code)}, ['rz-diff'], per_engine_timeout={'rz-diff': 3.0})
     assert (out.run.status, out.run.error_code) == ('timeout', 'PT-SECONDARY-TIMEOUT')
     assert pidfile.exists() and beat.exists(), 'grandchild never started within the deadline'
-    size = beat.stat().st_size
-    time.sleep(0.5)  # run_process returns only after the whole tree (Job Object / killpg) is terminated
-    assert beat.stat().st_size == size
+    assert heartbeat_stopped(beat)  # run_process returns only after the whole tree (Job Object / killpg) is terminated
     if os.name != 'nt':
-        time.sleep(0.3)
-        assert not _alive(int(pidfile.read_text()))
+        assert wait_for(lambda: not _alive(int(pidfile.read_text())), timeout=5)
 
 
 def test_cancel_fan_out_stops_running_and_marks_unstarted_cancelled(tmp_path):
