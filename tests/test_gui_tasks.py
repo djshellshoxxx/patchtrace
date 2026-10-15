@@ -272,7 +272,8 @@ def test_shutdown_with_a_hung_worker_returns_in_time_and_names_it(qtbot):
     assert started.wait(5)
     start = time.monotonic()
     stuck = local.shutdown(timeout=0.2)
-    assert stuck == ['pt-task-hung'] and time.monotonic() - start >= 0.2
+    # Thread.join(timeout) can return up to a Windows timer tick (~16 ms) early; the point is that it waited
+    assert stuck == ['pt-task-hung'] and time.monotonic() - start >= 0.15
     assert time.monotonic() - start < 3
     release.set()
     qtbot.waitUntil(lambda: bool(not tasks.live_task_threads()), timeout=5000)
