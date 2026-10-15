@@ -138,8 +138,6 @@ PARSE_FAILURES_JSON = [
     (['acquire', 'search', '--json'], 'acquire-search-no-name'),
     (['rank', '@case', '--json', '--limit', 'x'], 'rank-bad-limit'),
 ]
-@pytest.mark.xfail(strict=True, reason='QA-CLI-1: argparse failures in --json mode print no JSON document '
-                   '(cli.main builds the envelope only after a successful parse)')
 @pytest.mark.parametrize('argv,case_id', PARSE_FAILURES_JSON, ids=[c[1] for c in PARSE_FAILURES_JSON])
 def test_json_mode_parse_failure_emits_one_document(argv, case_id, fixture_paths, capsys):
     code, out, err = run_main(_resolve(argv, fixture_paths), capsys)
