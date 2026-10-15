@@ -979,3 +979,12 @@ Automated only: `tests/test_calib_channels_*.py` (synthetic pairs). No channel v
 
 ### [WB2-G8:whole-program-sources]
 Automated only: `pytest tests/test_callgraph_sources.py` (14). No live BinExport/IR acceptance run.
+
+
+### [WB3-S9:strings-live]
+| check | evidence |
+|---|---|
+| goldens equal what the committed FLOSS 3.1.1 output yields through the run service (no tool needed) | `tests/test_live_strings.py::test_goldens_match_the_committed_floss_output` |
+| pinned FLOSS on the synthetic pair equals the goldens (Linux CI; Windows advisory leg) | `tests/test_live_strings.py::test_pinned_floss_reproduces_the_string_goldens`; BLOCKED here: `PATCHTRACE_FLOSS` is not provisioned, the test records `blocked` and prints `LIVE ACCEPTANCE BLOCKED` |
+| run orchestration: consent hash recorded, cancel, stale, project switch | `tests/test_ui_strings_run.py` (fake FLOSS, synthetic pairs) |
+Goldens are derived from committed tool output, not from a new live capture; they become real-run goldens only when CI passes the live test. Real-binary string counts, Windows onefile start time and AV behaviour stay owner or CI items.

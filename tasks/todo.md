@@ -744,3 +744,8 @@
 
 ### [WB2-G8:whole-program-sources]
 - [x] G8 sources built and tested (synthetic graphs, networkx oracle). Open: snapshot.py must merge `source.limitations`; G9 glue is integrator-owned (frozen files).
+
+### [WB3-S8:strings-run] (2026-10-15, Sonnet 5.5, worktree; Linux)
+- [x] `strings/run_service.py`, `ui_strings_run.py`, `tests/test_ui_strings_run.py`.
+- [ ] Wire `StringsRunController` into the Strings dock (needs S7b `ui_strings.py`); `ToolStore` built on the GUI thread.
+- [ ] Integrator: add `tests/test_live_strings.py` and `tests/fixtures/strings/goldens/**` to `.github/workflows/live-intel-tools.yml` paths and pytest list.

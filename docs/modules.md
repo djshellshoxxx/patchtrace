@@ -1073,3 +1073,10 @@ Audit of `unified/` and `tools/unified/` (`docs/audits/20261015-unified-audit.md
 
 ### [WB2-G8:whole-program-sources]
 `callgraph/source_ir.py` (`IrCallSource`, program-ir/1 readers via the `calls(fid)` accessor, call/jump kinds kept per edge) and `callgraph/source_binexport.py` (`BinExportCallSource`, jump-as-call recorded in `limitations`). Both are `CallSource`s at tier `addresses`, completeness `whole-program`. Tests: `tests/test_callgraph_sources.py`.
+
+### [WB3-S8:strings-run]
+| part | file | contract |
+|---|---|---|
+| service | src/patchtrace/strings/run_service.py | Qt-free `run_strings(request, cancel)`: FLOSS via `run_job` or the built-in scan; never touches the project store (SQLite and the project lock stay on the GUI thread); typed `StringsRunOutcome` (ready, cancelled, failed, stale); `persist` and `is_stale` for the GUI thread. |
+| controller | src/patchtrace/ui_strings_run.py | `StringsRunController` over the host `TaskRunner` channel `strings.run`: stale check, persist, one outcome per run, cancel at once, project switch drops the result. No widgets. |
+| tests | tests/test_ui_strings_run.py (10), tests/test_live_strings.py (2 hermetic, 2 live), tests/fixtures/strings/goldens | Fake FLOSS on synthetic pairs: consent hash recorded, cancel, stale, project switch. |
