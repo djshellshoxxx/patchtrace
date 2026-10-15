@@ -223,9 +223,9 @@ def _read(db: sqlite3.Connection, older_sha256: str, newer_sha256: str, file_sha
         algorithms[ident] = name
     engine_version = version[len('BinDiff '):]
     matches = []
-    for row in db.execute('SELECT address1, name1, address2, name2, similarity, confidence, flags, algorithm '
+    for row in db.execute('SELECT address1, name1, address2, name2, similarity, confidence, flags, algorithm, basicblocks '
                           'FROM function ORDER BY address1, address2'):
-        address1, name1, address2, name2, similarity, confidence, flags, algorithm = row
+        address1, name1, address2, name2, similarity, confidence, flags, algorithm, basicblocks = row
         if algorithm not in algorithms:
             raise _fail(f'function.algorithm {algorithm!r} has no functionalgorithm row')
         sim_milli, sim_text = to_milli(similarity, 'function.similarity')
@@ -236,7 +236,8 @@ def _read(db: sqlite3.Connection, older_sha256: str, newer_sha256: str, file_sha
             older_name=_name(name1), newer_name=_name(name2),
             similarity_milli=sim_milli, similarity_text=sim_text,
             confidence_milli=conf_milli, confidence_text=conf_text,
-            flags=flag_names(flags), algorithm=algorithms[algorithm]))
+            flags=flag_names(flags), algorithm=algorithms[algorithm],
+            basicblocks=basicblocks if isinstance(basicblocks, int) and basicblocks >= 0 else None))
     olders = [m.older_address for m in matches]
     newers = [m.newer_address for m in matches]
     if len(set(olders)) != len(olders) or len(set(newers)) != len(newers):

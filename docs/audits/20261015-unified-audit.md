@@ -118,3 +118,10 @@ are listed as U7-14); the `clean()` fast path (`str.isprintable`) is exact (chec
 
 U7-05 (SecondaryMatch.basicblocks or IR-aware demotion), U7-06 (deadline policy after a partial ladder), U7-07 (trace-arg
 class), U7-08 (mirror check scope), U7-09 (remaining regex copies, shared `evidence_view`), U7-10 to U7-14, U7-15 to U7-18.
+
+### U7-05 fixed (BinDiff stub rows)
+- Additive `SecondaryMatch.basicblocks` (default `None`, `ge=0`; schema regenerated); the BinDiff importer records the
+  `function.basicblocks` column. `SecondaryAdapter` emits a `basicblocks == 0` row as tier C with native `demoted =
+  stub-basicblocks-0` and the limitation `bindiff-stub-rows-demoted:N`, so it stays a `candidate` with provenance and
+  cannot reach `matched` alone. `None` behaves as before (`bindiff-stub-rows-not-identified` is now raised only then).
+  Tests: `test_unified_fusion.py` (stub alone, stub plus agreeing source, non-stub, legacy row parses).
