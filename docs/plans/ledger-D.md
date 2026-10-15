@@ -29,3 +29,9 @@ Session `session_01Mr844cQDLwXi9iMUoGmBXk`; branch `claude/instance-d-gui`; pare
 | KB K4b/K7 panels | built on worktree branch worktree-agent-ae1ddf7ace07cf49d (commit 72605cd, needs B's K1-K7 on main, NOT in PR #58) | 89 tests, qt_gate 6x |
 | WB1-WB3 panels, GUI follow-through | agents running | |
 | GUI2 follow-through | done 2026-10-15; qt_gate 5x over all GUI files 6465 passed (6 commits after the merge of claude/instance-d-gui) | TSV formula prefixes neutralised in `build_tsv`; M4 selections via `compose_selections` (ui.py 3,077 lines, ceiling -65); evidence load/run/probe on `TaskRunner` (engine events through a drained queue so latest-wins progress cannot drop an outcome); evidence matches on `VirtualTable` (pure `secondary/evidence_table.py`, prepared in the load worker; `set_filter` row predicate and `ColumnSpec.tooltip` added); evidence state page on `StateView` (`text_limit`/`multiline` kwargs); tips `evidence.retry`, `evidence.copy_error`, `evidence.open_engines` removed, test_tooltips id floor 25 -> 22 |
+
+## Update 2026-10-15 ~01:30Z
+- Master plan + to-do + ChatGPT panel-specs prompt: docs/plans/master-plan-d.md, master-todo-d.md, chatgpt-panel-specs-prompt.md. 6h routine trig_0122FzH1LktnkdDiqZrkJVZt.
+- WB1-WB3 panels built on LOCAL worktree branch worktree-agent-ac64fcf9a50ccae01 (commits a338d6a search, 536de75 graph, 690ee91 strings, 6620230 palette test fix): depend on B's unmerged branch; NOT in PR #58. Findings: TaskRunner dropped by a worker thread / gc off the GUI thread segfaults in Shiboken (harden tasks.py); palette results cap 50.
+- KB panels: local branch worktree-agent-ae1ddf7ace07cf49d (72605cd), depends on B.
+- All track agents finished; none running.
