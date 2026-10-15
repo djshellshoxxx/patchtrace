@@ -34,6 +34,7 @@ from PySide6.QtWidgets import (
 from ..pair_text import PairHunk, PairText
 from ..text import sanitize_text
 from ..theme_math import TEXT_CONTRAST, ensure_contrast
+from ..tips import apply_tip, register_gui_tips
 from .labels import PlainLabel
 from .theme import DARK, ThemeTokens
 
@@ -102,6 +103,8 @@ class _Pane(QPlainTextEdit):
         self.setLineWrapMode(QPlainTextEdit.LineWrapMode.NoWrap)
         self.setAccessibleName(name)
         self.setFont(QFontDatabase.systemFont(QFontDatabase.SystemFont.FixedFont))
+        register_gui_tips()
+        apply_tip(self, 'gui.code_pane', name='codediff.' + name.lower().replace(' ', '_'))
 
 
 class CodeDiffView(QWidget):
@@ -139,6 +142,7 @@ class CodeDiffView(QWidget):
             header.addWidget(self._provenance[side], 1)
             button = QPushButton('Copy')
             button.setAccessibleName(f'Copy {side} artifact code')
+            apply_tip(button, 'gui.code_copy', name=f'codediff.copy_{side}')
             button.clicked.connect(lambda _checked=False, which=side: self.copy_side(which))
             header.addWidget(button)
             layout.addLayout(header)
