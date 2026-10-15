@@ -8,6 +8,7 @@ from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 
 from ..evalcore import boot, rank
+from ..stats import clopper_pearson_upper
 from .common import EMPTY, PackReport, interval, lineage_count, observations, ratio
 
 NON_INFERIORITY_MARGIN = -0.02
@@ -74,6 +75,16 @@ def _slice_improves(pairs: Sequence[LeadPair]) -> bool | None:
     return False
 
 
+def _aa_condition(flagged: int, pool: int) -> bool | None:
+    """False when the observed rate already exceeds the limit; True only when the one-sided 95 % upper bound is
+    within it (0 of 100 is not evidence of <= 0.1 %); None (inconclusive) otherwise."""
+    if not pool:
+        return None
+    if flagged / pool > AA_FALSE_LEAD_MAX:
+        return False
+    return clopper_pearson_upper(flagged, pool) <= AA_FALSE_LEAD_MAX or None
+
+
 def score(pairs: Sequence[LeadPair], aa: Sequence[LeadAA], b_count: int = boot.B_COUNT) -> PackReport:
     metrics = {}
     for k in rank.HIT_KS:
@@ -83,11 +94,11 @@ def score(pairs: Sequence[LeadPair], aa: Sequence[LeadAA], b_count: int = boot.B
     metrics['precision_minus_base'], d_prec = _delta(
         observations(flagged, _precision), observations(flagged, _base_rate), 'precision', b_count)
     metrics['hit@10_delta'], d_hit = _delta(_hits(pairs, True, HIT_K), _hits(pairs, False, HIT_K), 'hit10', b_count)
-    aa_rate = ratio(sum(a.flagged for a in aa), sum(a.pool for a in aa))
+    aa_flagged, aa_pool = sum(a.flagged for a in aa), sum(a.pool for a in aa)
     conditions = {
         'precision_above_base': None if d_prec is None or d_prec.lo is None or d_prec.anti_conservative
         else d_prec.lo > 0,
-        'aa_false_lead_rate': None if aa_rate is None else aa_rate <= AA_FALSE_LEAD_MAX,
+        'aa_false_lead_rate': _aa_condition(aa_flagged, aa_pool),
         'hit10_non_inferior': None if d_hit is None else boot.non_inferior(d_hit, NON_INFERIORITY_MARGIN),
         'improves_a_slice': _slice_improves(pairs),
     }
@@ -96,5 +107,5 @@ def score(pairs: Sequence[LeadPair], aa: Sequence[LeadAA], b_count: int = boot.B
     else:
         verdict = 'pass' if all(c is True for c in conditions.values()) else 'inconclusive'
     return PackReport('leadlist', 'ok', pairs=len(pairs), lineages=lineage_count(pairs), metrics=metrics,
-                      counts={'aa_flagged': sum(a.flagged for a in aa), 'aa_pool': sum(a.pool for a in aa)},
+                      counts={'aa_flagged': aa_flagged, 'aa_pool': aa_pool},
                       gate={**conditions, 'verdict': verdict})

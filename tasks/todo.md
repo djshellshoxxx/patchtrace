@@ -590,3 +590,8 @@
 - [ ] U7-05 BinDiff stub rows reach tier A alone (additive `SecondaryMatch.basicblocks` or IR-aware demotion before fusion)
 - [ ] U7-06 decide the budget policy for fusion and facts after a ladder deadline (partial result is lost today)
 - [ ] U7-07 trace-arg mutant class for G-U2
+
+### [LBL-26:audit]
+- [x] Pre-lock audit docs/audits/20261015-lbl26-pre-lock-audit.md; 2 High and 4 Medium fixed with red tests
+- [ ] LBL-26 for C: wire guards.audit_identity_roles, natural-only rows, indeterminate worst-case bound, nested tau (audit C-1..C-8)
+- [ ] LBL-26 deferred D-01..D-12 (audit doc)

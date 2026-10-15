@@ -37,7 +37,7 @@ def test_golden_hit_at_k_with_and_without_reported_separately():
 
 def test_three_lineages_never_become_a_claim():
     r = leadlist.score(_pairs(), [LeadAA('a1', 'L1', 0, 500)], b_count=50)
-    assert r.gate == {'precision_above_base': None, 'aa_false_lead_rate': True, 'hit10_non_inferior': None,
+    assert r.gate == {'precision_above_base': None, 'aa_false_lead_rate': None, 'hit10_non_inferior': None,
                       'improves_a_slice': True, 'verdict': 'inconclusive'}
 
 
@@ -51,15 +51,16 @@ def _many(n, improves):
 
 
 @pytest.mark.parametrize('improves, flagged, verdict', [
-    (True, 0, 'pass'), (True, 1, 'fail'), (False, 0, 'fail')], ids=['pass', 'aa-fail', 'regress-fail'])
+    (True, 0, 'pass'), (True, 4, 'fail'), (False, 0, 'fail')], ids=['pass', 'aa-fail', 'regress-fail'])
 def test_gate_verdicts_with_30_lineages(improves, flagged, verdict):
-    r = leadlist.score(_many(30, improves), [LeadAA('a', 'LL0', flagged, 100)], b_count=100)
+    r = leadlist.score(_many(30, improves), [LeadAA('a', 'LL0', flagged, 3000)], b_count=100)
     assert r.gate['verdict'] == verdict
 
 
-def test_aa_false_lead_rate_boundary_is_inclusive():
+def test_aa_false_lead_rate_at_the_limit_is_inconclusive_not_a_pass():
+    # 1 of 1000 equals 0.1 % but its exact upper bound is far above it: the pool cannot show the rate is within it
     r = leadlist.score(_many(30, True), [LeadAA('a', 'LL0', 1, 1000)], b_count=100)
-    assert (r.gate['aa_false_lead_rate'], r.gate['verdict']) == (True, 'pass')
+    assert (r.gate['aa_false_lead_rate'], r.gate['verdict']) == (None, 'inconclusive')
 
 
 def test_fix_absent_from_pool_is_a_miss():
