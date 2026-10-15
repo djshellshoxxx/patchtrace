@@ -6,6 +6,7 @@ untrusted: every string passes `sanitize_text`.
 """
 from __future__ import annotations
 
+import re
 from collections.abc import Callable, Iterable, Sequence
 from dataclasses import dataclass
 from typing import Any
@@ -101,15 +102,27 @@ def order_by(indexes: Iterable[int], keys: Sequence[Any] | None, descending: boo
     return present + absent
 
 
+_FORMULA_PREFIXES = ('=', '+', '-', '@')
+_PLAIN_NUMBER = re.compile(r'[+-]?\d+(?:\.\d+)?')
+
+
+def _spreadsheet_safe(cell: str) -> str:
+    """A leading apostrophe stops Excel and Calc from evaluating a pasted cell as a formula; plain numbers stay."""
+    if cell.startswith(_FORMULA_PREFIXES) and not _PLAIN_NUMBER.fullmatch(cell):
+        return "'" + cell
+    return cell
+
+
 def build_tsv(header: Sequence[str], lines: Iterable[Sequence[str]], limit: int = COPY_LIMIT) -> tuple[str, int, bool]:
     """Tab-separated text of the header and as many `lines` as fit in `limit` UTF-8 bytes, notice included.
-    Returns (text, rows copied, truncated). Cells are already single-line (`sanitize_text`)."""
+    Returns (text, rows copied, truncated). Cells are already single-line (`sanitize_text`);
+    formula-looking cells get a leading apostrophe."""
     reserve = len(TRUNCATED_NOTICE.encode()) + 1
-    out = ['\t'.join(header)]
+    out = ['\t'.join(map(_spreadsheet_safe, header))]
     size = len(out[0].encode())
     copied, truncated = 0, False
     for cells in lines:
-        line = '\t'.join(cells)
+        line = '\t'.join(map(_spreadsheet_safe, cells))
         cost = len(line.encode()) + 1
         if size + cost > limit - reserve:
             truncated = True

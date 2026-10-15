@@ -77,3 +77,17 @@ def test_tsv_cuts_multibyte_text_on_a_character_boundary():
     assert text == 'H' * 11
     text, _, _ = build_tsv(['é' * 20], [], limit=11)
     assert len(text.encode()) <= 11 and set(text) == {'é'}
+
+
+@pytest.mark.parametrize('cell', ['=1+1', '+SUM(A1)', '-2+3', '@SUM(A1)', '=cmd|calc!A0', '-1e3x'],
+                         ids=['eq', 'plus', 'minus', 'at', 'dde', 'minus-exp'])
+def test_tsv_neutralises_spreadsheet_formula_prefixes(cell):
+    text, _, _ = build_tsv([cell], [[cell, 'ok']])
+    header, row = text.split('\n')
+    assert header == "'" + cell and row == "'" + cell + '\tok'
+
+
+@pytest.mark.parametrize('cell', ['-5', '+3.5', '-0.25', 'plain', "'=x", 'a=b', ''],
+                         ids=['int', 'float', 'frac', 'text', 'quoted', 'mid', 'empty'])
+def test_tsv_leaves_numbers_and_ordinary_text_alone(cell):
+    assert build_tsv(['H'], [[cell]])[0] == 'H\n' + cell
