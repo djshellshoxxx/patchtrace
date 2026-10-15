@@ -34,7 +34,7 @@ from PySide6.QtCore import (
     QTimer,
     Signal,
 )
-from PySide6.QtGui import QColor, QFont, QFontMetrics, QGuiApplication, QKeySequence, QPalette, QPen
+from PySide6.QtGui import QColor, QFont, QFontMetrics, QGuiApplication, QPalette, QPen
 from PySide6.QtWidgets import (
     QAbstractItemView,
     QCheckBox,
@@ -42,7 +42,6 @@ from PySide6.QtWidgets import (
     QDockWidget,
     QFileDialog,
     QHBoxLayout,
-    QHeaderView,
     QLineEdit,
     QPlainTextEdit,
     QProgressBar,
@@ -62,8 +61,11 @@ from shiboken6 import isValid
 from .gui.qt.docks import ControllerBase
 from .gui.qt.labels import PlainLabel
 from .gui.qt.settings import PanelSettings
+from .gui.qt.table import ROW_ROLE, VirtualTable
 from .gui.qt.tasks import CancelToken, TaskCancelled
 from .gui.registry import PanelContext
+from .gui.table_spec import Cancelled as TableCancelled
+from .gui.table_spec import PreparedTable
 from .gui.text import VIEW_LIMIT
 from .secondary import evidence_panel_service as service_api
 from .secondary.evidence_panel_service import (
@@ -77,36 +79,30 @@ from .secondary.evidence_panel_service import (
     load_evidence,
     outcome_view,
 )
+from .secondary.evidence_table import COLUMN_EMS, ENGINE_EMS, prepare_evidence_table
 from .secondary.evidence_view import (
     ENGINE_COLUMNS,
     ENGINE_NAMES,
     ENGINE_STATE_TEXT,
-    ENGINE_UNITS,
     FOOTER,
     LOG_LINES,
     SECONDARY_ENGINES,
     STATE_TEXT,
     VERDICT_GLYPHS,
-    VERDICT_MEANING,
-    VERDICT_PRIORITY,
     EngineOutcomeView,
     EvidenceRow,
     EvidenceViewModel,
     calibration_display_level,
     empty_model,
-    filter_rows,
-    format_cell_detail,
     format_provenance_blocks,
     format_row_detail,
+    normalize_search,
     sanitize_text,
     state_text,
 )
 from .tooltips import apply_tooltip, template
 from .ui_engine_setup import BinDiffSetupController, BinDiffSetupPanel, SectionScrollArea
 
-ADDRESS_ROLE = Qt.ItemDataRole.UserRole + 2
-SORT_ROLE = Qt.ItemDataRole.UserRole + 1
-ROW_ROLE = Qt.ItemDataRole.UserRole
 FILTERS: tuple[tuple[str, frozenset[str]], ...] = (
     ('All', frozenset({'agree', 'contested', 'single-engine', 'unknown'})),
     ('Contested', frozenset({'contested'})),
@@ -123,8 +119,6 @@ BADGE_TEXT = '#000000'
 BADGE_BORDER = '#000000'
 THEME_BACKGROUND = '#161b22'  # ui.DARK_STYLE QWidget background
 MUTED_KINDS = frozenset({'not-run', 'no-record', 'not-comparable', 'failed'})
-COLUMN_EMS = {0: 28, 1: 16}
-ENGINE_EMS = 18
 RUN_NOTE = ('Engines read both stored artifact copies as data; the binaries themselves are never run. '
             'Nothing is uploaded.')
 
@@ -140,164 +134,6 @@ def contrast_ratio(first: str, second: str) -> float:
 
 
 # ---- models ---------------------------------------------------------------------------------------
-
-
-class EvidenceTableModel(QAbstractTableModel):
-    """Rows of one view-model plus an index view (filter + sort) computed in Python.
-
-    The filtered/sorted view is a list of indices into the immutable rows, so filtering and sorting
-    10k rows is one Python pass (no per-row proxy callbacks); ``data`` reads precomputed strings and
-    formats tooltip detail lazily. ``data_calls`` counts calls for the performance gate.
-    """
-
-    def __init__(self, parent=None):
-        super().__init__(parent)
-        self.vm: EvidenceViewModel | None = None
-        self.rows: tuple[EvidenceRow, ...] = ()
-        self.view: list[int] = []
-        self.verdicts: frozenset[str] = FILTERS[0][1]
-        self.search = ''
-        self.hide_agree = False
-        self.sort_column = -1
-        self.sort_order = Qt.SortOrder.AscendingOrder
-        self.stale = False
-        self.data_calls = 0
-
-    # -- content --
-    def set_view_model(self, vm: EvidenceViewModel | None) -> None:
-        self.beginResetModel()
-        self.vm = vm
-        self.rows = (vm.rows + vm.engine_only) if vm else ()
-        self.stale = bool(vm and vm.state == 'stale')
-        self._recompute()
-        self.endResetModel()
-
-    def set_filter(self, verdicts: frozenset[str], search: str, hide_agree: bool) -> None:
-        self.beginResetModel()
-        self.verdicts, self.search, self.hide_agree = verdicts, search, hide_agree
-        self._recompute()
-        self.endResetModel()
-
-    def sort(self, column: int, order=Qt.SortOrder.AscendingOrder) -> None:
-        """Model-owned sort: one Python sort over precomputed keys, no per-comparison data() calls.
-
-        Persistent indexes (selection, current index) follow their rows through the reorder.
-        """
-        self.layoutAboutToBeChanged.emit()
-        persistent = self.persistentIndexList()
-        anchors = [(self.view[p.row()] if 0 <= p.row() < len(self.view) else None, p.column()) for p in persistent]
-        self.sort_column, self.sort_order = column, order
-        self._recompute()
-        position = {row_index: n for n, row_index in enumerate(self.view)}
-        moved = [self.index(position[row_index], col) if row_index in position else QModelIndex()
-                 for row_index, col in anchors]
-        self.changePersistentIndexList(persistent, moved)
-        self.layoutChanged.emit()
-
-    def _recompute(self) -> None:
-        rows = self.rows
-        # Default order first (contested, unknown, single engine, agree; then Ghidriff order). Column sorts
-        # are stable on top of it, so ties keep this order in both directions.
-        indices = sorted(filter_rows(rows, self.verdicts, self.search, self.hide_agree),
-                         key=lambda i: (VERDICT_PRIORITY[rows[i].verdict], rows[i].order))
-        column = self.sort_column
-        reverse = self.sort_order == Qt.SortOrder.DescendingOrder
-        if column == 0:
-            indices.sort(key=lambda i: rows[i].function_label.lower(), reverse=reverse)
-        elif column == 1:
-            indices.sort(key=lambda i: VERDICT_PRIORITY[rows[i].verdict], reverse=reverse)
-        elif column >= 2:
-            cell = column - 2
-            if ENGINE_COLUMNS[cell] == 'ghidriff':  # no numeric match score exists: alphabetical by raw text
-                indices.sort(key=lambda i: rows[i].cells[cell].text.lower(), reverse=reverse)
-            else:  # that ONE engine's native milli; rows without a value last, by name/address (flag F8)
-                have = [i for i in indices if rows[i].cells[cell].sort_key is not None]
-                none = [i for i in indices if rows[i].cells[cell].sort_key is None]
-                have.sort(key=lambda i: rows[i].cells[cell].sort_key, reverse=reverse)
-                none.sort(key=lambda i: (rows[i].function_label.lower(), rows[i].address_label))
-                indices = have + none
-        self.view = indices
-
-    def row_at(self, view_row: int) -> EvidenceRow | None:
-        return self.rows[self.view[view_row]] if 0 <= view_row < len(self.view) else None
-
-    def view_row_of(self, match_id: str) -> int:
-        for position, index in enumerate(self.view):
-            if self.rows[index].match_id == match_id:
-                return position
-        return -1
-
-    # -- Qt model API --
-    def rowCount(self, parent=None):
-        return 0 if parent is not None and parent.isValid() else len(self.view)
-
-    def columnCount(self, parent=None):
-        return 0 if parent is not None and parent.isValid() else 2 + len(ENGINE_COLUMNS)
-
-    def headerData(self, section, orientation, role=Qt.ItemDataRole.DisplayRole):
-        if orientation != Qt.Orientation.Horizontal:
-            return None
-        if section == 0:
-            title, unit = 'Match / function', 'name, older > newer address'
-        elif section == 1:
-            title, unit = 'Verdict', 'function pairing only'
-        else:
-            engine = ENGINE_COLUMNS[section - 2]
-            info = self.vm.engine(engine) if self.vm else None
-            title, unit = (info.label if info else ENGINE_NAMES[engine]), ENGINE_UNITS[engine]
-        if role == Qt.ItemDataRole.DisplayRole:
-            return f'{title}\n{unit}'
-        if role in (Qt.ItemDataRole.ToolTipRole, Qt.ItemDataRole.AccessibleTextRole):
-            return f'{title} ({unit})'
-        return None
-
-    def flags(self, index):
-        if not index.isValid():
-            return Qt.ItemFlag.NoItemFlags
-        return Qt.ItemFlag.ItemIsEnabled | Qt.ItemFlag.ItemIsSelectable
-
-    def data(self, index, role=Qt.ItemDataRole.DisplayRole):
-        self.data_calls += 1
-        if not index.isValid() or index.row() >= len(self.view):
-            return None
-        row = self.rows[self.view[index.row()]]
-        column = index.column()
-        if role == Qt.ItemDataRole.DisplayRole:
-            if column == 0:
-                return row.function_label
-            if column == 1:
-                return row.verdict_text
-            return row.cells[column - 2].text
-        if role == ADDRESS_ROLE:
-            return row.address_label
-        if role == ROW_ROLE:
-            return row
-        if role == SORT_ROLE:
-            return row.cells[column - 2].sort_key if column >= 2 else None
-        if role == Qt.ItemDataRole.AccessibleTextRole:
-            if column == 0:
-                values = ', '.join(f'{ENGINE_NAMES[c.engine]} {c.text}' for c in row.cells)
-                return f'{row.function_label}, verdict {row.verdict_text}, {values}'
-            if column == 1:
-                return f'Verdict: {row.verdict_text}'
-            return row.cells[column - 2].accessible
-        if role == Qt.ItemDataRole.ToolTipRole:
-            return self._tooltip(row, column)
-        return None
-
-    def _tooltip(self, row: EvidenceRow, column: int) -> str:
-        engines = ', '.join(info.label for info in self.vm.engines) if self.vm else ''
-        if column == 0:
-            return template('evidence.row', function=row.function_label, verdict=row.verdict_text,
-                            engines=engines, reason=row.address_label)
-        if column == 1:
-            return template('evidence.badge', verdict=row.verdict_text, meaning=VERDICT_MEANING[row.verdict],
-                            reason=row.reason)
-        cell = row.cells[column - 2]
-        info = self.vm.engine(cell.engine) if self.vm else None
-        return template('evidence.cell', engine=ENGINE_NAMES[cell.engine], value=cell.text,
-                        unit=ENGINE_UNITS[cell.engine], provenance=info.label if info else cell.engine,
-                        reason=format_cell_detail(cell).replace('\n', ' | '))
 
 
 @dataclass(frozen=True)
@@ -351,7 +187,8 @@ class EngineStatusModel(QAbstractTableModel):
 
 
 class EvidenceDelegate(QStyledItemDelegate):
-    """Badge + two-line match painting with drawText only (no rich text, no pixmaps)."""
+    """Badge + two-line match painting with drawText only (no rich text, no pixmaps). `stale` italicises rows."""
+    stale = False
 
     def sizeHint(self, option, index):
         metrics = option.fontMetrics
@@ -360,11 +197,10 @@ class EvidenceDelegate(QStyledItemDelegate):
         return QSize(width, height)
 
     def paint(self, painter, option, index):
-        model = index.model()
         row = index.data(ROW_ROLE)
         if row is None:
             return super().paint(painter, option, index)
-        stale = getattr(model, 'stale', False)
+        stale = self.stale
         palette = option.palette
         painter.save()
         selected = bool(option.state & QStyle.StateFlag.State_Selected)
@@ -417,23 +253,14 @@ class EvidenceDelegate(QStyledItemDelegate):
         painter.restore()
 
 
-class EvidenceTable(QTableView):
-    """Keyboard: Enter activates, Ctrl+C copies provenance, Space moves focus to the detail pane."""
-    activated_row = Signal()
+class EvidenceTable(VirtualTable):
+    """Ctrl+C copies the provenance blocks of the selected matches (not the table's TSV); Enter, double-click and
+    Space come from `VirtualTable` (`activated_key`, `detail_requested`)."""
     copy_requested = Signal()
-    detail_requested = Signal()
 
-    def keyPressEvent(self, event):
-        if event.matches(QKeySequence.StandardKey.Copy):
-            self.copy_requested.emit()
-            return
-        if event.key() in (Qt.Key.Key_Return, Qt.Key.Key_Enter):
-            self.activated_row.emit()
-            return
-        if event.key() == Qt.Key.Key_Space:
-            self.detail_requested.emit()
-            return
-        super().keyPressEvent(event)
+    def copy_selection(self) -> tuple[int, bool]:
+        self.copy_requested.emit()
+        return 0, False
 
 
 # ---- panel ------------------------------------------------------------------------------------------
@@ -467,6 +294,7 @@ class EvidencePanel(QWidget):
         self.engine_logs: dict[str, str] = {}
         self.engine_errors: dict[str, str] = {}
         self._selected_id: str | None = None
+        self._sorted = (-1, Qt.SortOrder.AscendingOrder)
         self.setObjectName('evidence_panel')
         self.setAccessibleName('Engine evidence panel')
         layout = QVBoxLayout(self)
@@ -595,30 +423,18 @@ class EvidencePanel(QWidget):
         # Page 1: table + detail.
         split = QSplitter(Qt.Orientation.Vertical)
         split.setObjectName('evidence_split')
-        self.model = EvidenceTableModel(self)
-        self.table = EvidenceTable()
-        self.table.setModel(self.model)
+        self.table = EvidenceTable('Per-match engine evidence table')
+        self.model = self.table.table_model
         apply_tooltip(self.table, 'evidence.table')
-        self.table.setAccessibleName('Per-match engine evidence table')
-        self.table.setItemDelegate(EvidenceDelegate(self.table))
-        self.table.setSelectionBehavior(QAbstractItemView.SelectionBehavior.SelectRows)
-        self.table.setSelectionMode(QAbstractItemView.SelectionMode.ExtendedSelection)
-        self.table.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
-        self.table.setSortingEnabled(False)
-        self.table.verticalHeader().setVisible(False)  # hidden: no per-row RowHeader accessibles
-        self.table.verticalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Fixed)
-        self.table.setWordWrap(False)
+        self.delegate = EvidenceDelegate(self.table)
+        self.table.setItemDelegate(self.delegate)
         header = self.table.horizontalHeader()
-        header.setSectionResizeMode(QHeaderView.ResizeMode.Interactive)
         header.setStretchLastSection(False)
-        header.setSectionsClickable(True)
-        header.setSortIndicatorShown(True)
         header.sectionClicked.connect(self._header_clicked)
         self.table.selectionModel().selectionChanged.connect(self._selection_changed)
-        self.table.doubleClicked.connect(lambda _index: self.activate_current())
-        self.table.activated_row.connect(self.activate_current)
+        self.table.activated_key.connect(lambda _key: self.activate_current())
         self.table.copy_requested.connect(self.copy_provenance)
-        self.table.detail_requested.connect(lambda: self.detail.setFocus())
+        self.table.detail_requested.connect(lambda _key: self.detail.setFocus())
         split.addWidget(self.table)
         lower = QWidget()
         lower_layout = QVBoxLayout(lower)
@@ -754,13 +570,8 @@ class EvidencePanel(QWidget):
             self.bindiff_setup.attach(self.bindiff_scroll)
 
     def _apply_metrics(self):
-        """Column widths and row height from font metrics only (high-DPI rule §1.7)."""
-        metrics = self.table.fontMetrics()
-        em = metrics.horizontalAdvance('M')
-        for column in range(self.model.columnCount()):
-            self.table.setColumnWidth(column, em * COLUMN_EMS.get(column, ENGINE_EMS))
-        self.table.verticalHeader().setDefaultSectionSize(max(2 * metrics.lineSpacing() + 6, 28))
-        self.table.horizontalHeader().setMinimumHeight(2 * metrics.lineSpacing() + 6)
+        """Two-line header (title and unit); widths and row height come from the table's own font metrics."""
+        self.table.horizontalHeader().setMinimumHeight(2 * self.table.fontMetrics().lineSpacing() + 6)
 
     def changeEvent(self, event):
         super().changeEvent(event)
@@ -781,7 +592,7 @@ class EvidencePanel(QWidget):
         self.show_index = self.settings.get_bool('show_index', False)
         self.show_index_box.setChecked(self.show_index)
         self.show_index_box.blockSignals(False)
-        self.model.set_filter(FILTERS[self.filter.currentIndex()][1], '', self.hide_agreed.isChecked())
+        self._set_table_filter('')
 
     def _save(self, key, value):
         if self.settings is None:
@@ -798,19 +609,21 @@ class EvidencePanel(QWidget):
             self.vm = empty_model('no-project')
             self.shown_table = False
             self.loading = False
-            self.model.set_view_model(None)
+            self.table.set_prepared(prepare_evidence_table(self.vm))
         self._apply()
 
     def set_loading(self, loading: bool) -> None:
         self.loading = loading
         self._apply()
 
-    def set_view_model(self, vm: EvidenceViewModel) -> None:
+    def set_view_model(self, vm: EvidenceViewModel, prepared: PreparedTable | None = None) -> None:
+        """`prepared` is the table the load worker built for `vm`; without it the table is prepared here."""
         self.vm = vm
         self.loading = False
         self.has_project = vm.state != 'no-project'
         keep = self._selected_id
-        self.model.set_view_model(vm if vm.rows or vm.engine_only else None)
+        self.delegate.stale = vm.state == 'stale'
+        self.table.set_prepared(prepared or prepare_evidence_table(vm))
         self.shown_table = bool(vm.rows or vm.engine_only)
         self._apply()
         if keep:
@@ -825,8 +638,7 @@ class EvidencePanel(QWidget):
         if self.vm.state in ('no-project', 'failed'):
             return
         self.vm = dataclasses.replace(self.vm, state='stale', stale_reason=reason)
-        self.model.stale = True
-        self.model.vm = self.vm
+        self.delegate.stale = True
         self.table.viewport().update()
         self._apply()
 
@@ -857,11 +669,16 @@ class EvidencePanel(QWidget):
 
     def _apply_filter(self):
         keep = self._selected_id
-        self.model.set_filter(FILTERS[self.filter.currentIndex()][1], self.search.text(),
-                              self.hide_agreed.isChecked())
+        self._set_table_filter(self.search.text())
         if keep and not self.select_match(keep):
             self._render_detail()
         self._update_status()
+
+    def _set_table_filter(self, search: str) -> None:
+        """Verdict set and 'Hide agreed' are a row predicate; the search text is the table's own filter (a leading
+        0x on the query is dropped because stored addresses carry none)."""
+        allowed = FILTERS[self.filter.currentIndex()][1] - ({'agree'} if self.hide_agreed.isChecked() else set())
+        self.table.set_filter(normalize_search(search), lambda row: row.verdict in allowed)
 
     def _show_index_changed(self, checked):
         self.show_index = bool(checked)
@@ -869,15 +686,17 @@ class EvidencePanel(QWidget):
         self._render_detail()
 
     def _header_clicked(self, section):
-        header = self.table.horizontalHeader()
-        if self.model.sort_column == section:
-            order = (Qt.SortOrder.DescendingOrder if self.model.sort_order == Qt.SortOrder.AscendingOrder
+        """Match and verdict sort ascending first, engine columns descending first (best score on top). Qt flips
+        the indicator itself just before this runs, so the next order comes from the last one this method chose."""
+        column, current = self._sorted
+        if column == section:
+            order = (Qt.SortOrder.DescendingOrder if current == Qt.SortOrder.AscendingOrder
                      else Qt.SortOrder.AscendingOrder)
         else:
             order = Qt.SortOrder.AscendingOrder if section < 2 else Qt.SortOrder.DescendingOrder
+        self._sorted = (section, order)
         keep = self._selected_id
-        self.model.sort(section, order)
-        header.setSortIndicator(section, order)
+        self.table.horizontalHeader().setSortIndicator(section, order)  # the table sorts on the indicator change
         if keep:
             self.select_match(keep)
 
@@ -1235,24 +1054,25 @@ class EvidenceController(ControllerBase):
         self.dirty = False
         loader = self.loader
 
-        def work(token: CancelToken, _report: Callable) -> EvidenceViewModel:
+        def work(token: CancelToken, _report: Callable) -> tuple[EvidenceViewModel, PreparedTable | None]:
             try:
-                return loader(request, token.is_set)
-            except Cancelled:
+                vm = loader(request, token.is_set)
+                return vm, prepare_evidence_table(vm, token) if vm.rows or vm.engine_only else None
+            except (Cancelled, TableCancelled):
                 raise TaskCancelled from None
 
         self.load_token = self.tasks.submit(
-            'evidence.load', work, on_result=lambda vm: self._model_ready(vm, generation),
+            'evidence.load', work, on_result=lambda result: self._model_ready(result[0], generation, result[1]),
             on_error=lambda failure: self._load_failed(
                 f'PT-EVIDENCE-ASSEMBLY: unexpected {failure.exception_class}', generation))
         self.panel.set_project(True)
         self.panel.set_loading(True)
 
-    def _model_ready(self, vm: EvidenceViewModel, generation: int) -> None:
+    def _model_ready(self, vm: EvidenceViewModel, generation: int, prepared: PreparedTable | None = None) -> None:
         if generation != self.generation or not isValid(self.panel):
             return  # stale generation or a panel deleted under a running task: dropped
         self.load_token = None
-        self.panel.set_view_model(vm)
+        self.panel.set_view_model(vm, prepared)
         self._refresh_engine_rows()
         self.update_controls()
 

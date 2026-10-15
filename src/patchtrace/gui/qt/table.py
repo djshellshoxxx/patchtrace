@@ -6,6 +6,9 @@ owns filter and sort over an index list (stable, None last), so there is no prox
 """
 from __future__ import annotations
 
+from collections.abc import Callable
+from typing import Any
+
 from PySide6.QtCore import QAbstractTableModel, QItemSelection, QItemSelectionModel, QModelIndex, Qt, Signal
 from PySide6.QtGui import QGuiApplication, QKeyEvent, QKeySequence
 from PySide6.QtWidgets import QAbstractItemView, QHeaderView, QTableView, QWidget
@@ -34,6 +37,7 @@ class VirtualTableModel(QAbstractTableModel):
         super().__init__(parent)
         self._p = _EMPTY
         self._terms: tuple[str, ...] = ()
+        self._row_filter: Callable[[Any], bool] | None = None
         self._sort_key: str | None = None
         self._descending = False
         self._view: list[int] = list(_EMPTY.order)
@@ -73,13 +77,14 @@ class VirtualTableModel(QAbstractTableModel):
         self.endResetModel()
         self.counts_changed.emit(len(self._view), prepared.total)
 
-    def set_filter(self, text: str) -> None:
-        """Rows whose search text contains every whitespace-separated term (case-insensitive)."""
+    def set_filter(self, text: str, row_filter: Callable[[Any], bool] | None = None) -> None:
+        """Rows whose search text contains every whitespace-separated term (case-insensitive) and that pass
+        `row_filter` (a predicate on the source row, for example a verdict set). Both are replaced together."""
         terms = tuple(text.casefold().split())
-        if terms == self._terms:
+        if terms == self._terms and row_filter is self._row_filter:
             return
         self.beginResetModel()
-        self._terms = terms
+        self._terms, self._row_filter = terms, row_filter
         self._rebuild()
         self.endResetModel()
         self.counts_changed.emit(len(self._view), self._p.total)
@@ -116,6 +121,9 @@ class VirtualTableModel(QAbstractTableModel):
         if self._terms:
             searches, terms = p.searches, self._terms
             indexes = [i for i in indexes if all(term in searches[i] for term in terms)]
+        if self._row_filter is not None:
+            rows, keep = p.rows, self._row_filter
+            indexes = [i for i in indexes if keep(rows[i])]
         column = self._sort_column()
         if column >= 0:
             indexes = order_by(indexes, self._keys_of(column), self._descending)
@@ -195,9 +203,9 @@ class VirtualTableModel(QAbstractTableModel):
             return self._p.keys[source]
         if role == ROW_ROLE:
             return self._p.rows[source]
-        if role == _TOOLTIP:
-            return self._p.texts[source][column]
         source_row = self._p.rows[source]
+        if role == _TOOLTIP:
+            return spec.tooltip(source_row) if spec.tooltip else self._p.texts[source][column]
         if role == CHIP_ROLE:
             return spec.chip(source_row) if spec.chip else None
         if role == SORT_ROLE:
@@ -267,9 +275,9 @@ class VirtualTable(QTableView):
         self.table_model.set_prepared(prepared)
         self._after_content_change(kept)
 
-    def set_filter(self, text: str) -> None:
+    def set_filter(self, text: str, row_filter: Callable[[Any], bool] | None = None) -> None:
         kept = self._remember()
-        self.table_model.set_filter(text)
+        self.table_model.set_filter(text, row_filter)
         self._after_content_change(kept)
 
     def _after_content_change(self, kept: tuple[str | None, list[str]]) -> None:

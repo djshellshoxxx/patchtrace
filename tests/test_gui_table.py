@@ -395,3 +395,23 @@ def test_the_table_uses_none_of_the_forbidden_apis():
     for banned in ('QSortFilterProxyModel', 'lessThan', 'ResizeToContents', 'ToContents', 'setHtml', 'setMarkdown',
                    'RichText', 'processEvents(', 'QTableWidget', 'QStandardItemModel'):
         assert banned not in source, banned
+
+
+def test_row_filter_composes_with_text_filter_and_clears_with_the_next_call(table):
+    table.set_prepared(prepare(60))
+    model = table.table_model
+    table.set_filter('', lambda row: row[2] == 'g1')
+    assert model.rowCount() == 12 and all(model.index(r, 2).data() == 'g1' for r in range(12))
+    table.set_filter('fn00000', lambda row: row[2] == 'g1')  # fn000001 and fn000006 are g1; the rest fail the predicate
+    assert names(model) == ['fn000001', 'fn000006']
+    table.set_filter('')
+    assert model.rowCount() == 60
+
+
+def test_column_tooltip_replaces_the_cell_text_tooltip(table):
+    columns = (ColumnSpec('name', 'Function', lambda r: r[0], tooltip=lambda r: f'<p>{r[0]}!</p>'),
+               ColumnSpec('note', 'Note', lambda r: r[3]))
+    table.set_prepared(prepare(3, columns))
+    model = table.table_model
+    assert model.index(0, 0).data(Qt.ItemDataRole.ToolTipRole) == '<p>fn000000!</p>'
+    assert model.index(0, 1).data(Qt.ItemDataRole.ToolTipRole) == 'note 0'

@@ -10,7 +10,7 @@ import threading
 os.environ.setdefault('QT_QPA_PLATFORM', 'offscreen')
 
 import pytest
-from PySide6.QtCore import QCoreApplication, QEvent, QModelIndex, QSettings, Qt, QThread
+from PySide6.QtCore import QCoreApplication, QEvent, QModelIndex, QPoint, QSettings, Qt, QThread
 from PySide6.QtGui import QAccessible, QFont, QGuiApplication
 from PySide6.QtWidgets import QApplication, QStyleOptionViewItem, QWidget
 from test_evidence_view import (
@@ -24,8 +24,10 @@ from test_evidence_view import (
 
 from patchtrace import ui_evidence
 from patchtrace.gui.qt import tasks
+from patchtrace.gui.qt.table import ROW_ROLE, VirtualTableModel
 from patchtrace.secondary import evidence_panel_service as service_api
 from patchtrace.secondary.contracts import Capability
+from patchtrace.secondary.evidence_table import prepare_evidence_table
 from patchtrace.secondary.evidence_view import (
     FOOTER,
     STATE_TEXT,
@@ -36,11 +38,9 @@ from patchtrace.secondary.evidence_view import (
 from patchtrace.service import ProjectService
 from patchtrace.ui import MainWindow
 from patchtrace.ui_evidence import (
-    ADDRESS_ROLE,
     EvidenceController,
     EvidenceDelegate,
     EvidencePanel,
-    EvidenceTableModel,
 )
 
 
@@ -166,7 +166,7 @@ def test_state_stale_banner_greys_rows_disables_goto_keeps_copy(panel, qtbot):
     show(panel, build())
     panel.set_stale('the project changed after these results were loaded')
     assert visible(panel.stale_banner) and 'Engine evidence is stale' in panel.stale_banner.text()
-    assert panel.model.stale
+    assert panel.delegate.stale
     panel.table.selectRow(0)
     assert not panel.goto_button.isEnabled() and panel.copy_button.isEnabled()
     with qtbot.assertNotEmitted(panel.match_activated):
@@ -366,7 +366,7 @@ def test_delegate_paints_every_state_without_error(panel, qtbot):
     panel.table.viewport().repaint()
     panel.set_stale('x')
     panel.table.viewport().repaint()
-    assert panel.model.data(panel.model.index(0, 0), ADDRESS_ROLE) == '30 > 40'
+    assert panel.model.data(panel.model.index(0, 0), ROW_ROLE).address_label == '30 > 40'
 
 
 # ---- performance gate (research flag F4) -----------------------------------------------------------
@@ -400,8 +400,9 @@ def test_large_models_stay_lazy_with_data_call_ceilings(panel, n):
     QApplication.processEvents()
     model = panel.model
     model.data_calls = 0
+    prepared = prepare_evidence_table(vm)  # the load worker does this; the GUI thread only swaps the pointer
     start = time.perf_counter()
-    show(panel, vm)
+    panel.set_view_model(vm, prepared)
     QApplication.processEvents()
     reset_time = time.perf_counter() - start
     ceiling = int(7 * visible_cells(panel.table) * 1.2) + 20
@@ -584,7 +585,7 @@ def test_mainwindow_dock_loads_no_engines_and_action_shortcut(window, qtbot):
 def test_mainwindow_seam_is_minimal():
     from pathlib import Path
     text = (Path(ui_evidence.__file__).parent / 'ui.py').read_text(encoding='utf-8')
-    assert 'EvidenceTableModel' not in text and 'EvidenceDelegate' not in text
+    assert 'EvidenceTable' not in text and 'EvidenceDelegate' not in text
     seam = [line for line in text.splitlines() if re.search(r'self\.evidence\b(?!_)', line) or 'EvidenceController' in line
             or "hasattr(self, 'evidence')" in line]
     assert not seam, seam  # M1 and M2: the host is the only seam
@@ -792,7 +793,7 @@ def test_engine_run_reports_failure_class_only(window, qtbot):
 
 
 def test_table_model_empty_is_safe():
-    model = EvidenceTableModel()
+    model = VirtualTableModel()
     assert model.rowCount() == 0 and model.data(model.index(0, 0)) is None
     assert model.rowCount(QModelIndex()) == 0
 
@@ -803,3 +804,17 @@ def test_controller_without_project(qtbot, settings, tmp_path):
     assert isinstance(empty.panels.controller('evidence'), EvidenceController)
     assert empty.panels.controller('evidence').panel.status.text() == STATE_TEXT['no-project']
     empty.panels.controller('evidence').shutdown()
+
+
+def test_real_header_click_sorts_engine_columns_descending_first_then_toggles(panel, qtbot):
+    matches = [gmatch(f'm{i}', f'{0x10 + i:x}', f'{0x20 + i:x}', f'f{i}') for i in range(3)]
+    sets = (mset('bindiff', bd(0x10, 0x20, sim=500), bd(0x11, 0x21, sim=900)),)
+    show(panel, build(matches=matches, sets=sets))
+    panel.resize(1100, 500)
+    panel.show()
+    header = panel.table.horizontalHeader()
+    x = header.sectionViewportPosition(3) + 5
+    qtbot.mouseClick(header.viewport(), Qt.MouseButton.LeftButton, pos=QPoint(x, 5))
+    assert [panel.model.row_at(i).match_id for i in range(3)] == ['m1', 'm0', 'm2']
+    qtbot.mouseClick(header.viewport(), Qt.MouseButton.LeftButton, pos=QPoint(x, 5))
+    assert [panel.model.row_at(i).match_id for i in range(3)] == ['m0', 'm1', 'm2']

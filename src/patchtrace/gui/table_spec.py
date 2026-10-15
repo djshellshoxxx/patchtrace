@@ -24,7 +24,8 @@ Row = Any
 class ColumnSpec:
     """One column. `text(row)` is the display string; `sort_key(row)` orders the column (None sorts last in both
     directions; omitted = the display text, case-folded); `chip(row)` is an opaque value for a chip delegate;
-    `accessible(row)` replaces the default "{title}: {text}, {unit}" accessible text; `tip_id` is the tooltip id."""
+    `accessible(row)` replaces the default "{title}: {text}, {unit}" accessible text; `tooltip(row)` replaces the
+    default tooltip (the cell text) and must return escaped rich text; `tip_id` is the tooltip id."""
 
     key: str
     title: str
@@ -34,6 +35,7 @@ class ColumnSpec:
     sort_key: Callable[[Row], Any] | None = None
     chip: Callable[[Row], Any] | None = None
     accessible: Callable[[Row], str] | None = None
+    tooltip: Callable[[Row], str] | None = None
     tip_id: str = ''
 
 
