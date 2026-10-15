@@ -336,6 +336,8 @@ def test_files_panel(qtbot, window):
     files = window.panels.controller('files').widget()
     audit(files)
     assert len(controls(files)) >= 1
+    assert sorted(t.accessibleName() for t in files.findChildren(QAbstractItemView) if t.objectName().startswith('overview.')) == [
+        'PE comparison fields', 'Recorded artifact fields']
 
 
 def test_text_dialogs_and_confirmation_boxes(qtbot, window, monkeypatch):
