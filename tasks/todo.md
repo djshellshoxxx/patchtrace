@@ -754,3 +754,4 @@
 - [ ] D7 seams: `PairSnapshot.build_env`, `BuildTimelineStrip` in `ui_series.py` (integrator)
 - [x] D9 tools/buildenv_value_gate.py with hand-computed goldens (synthetic)
 - [ ] D9 run on real Tier R M4 outcomes (needs UE S2/S3 outcomes and the known-answer factory)
+- [ ] D8 first dispatch of `live-buildenv` (Actions) and golden confirmation; stays BLOCKED locally without PATCHTRACE_DIEC

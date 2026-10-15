@@ -66,3 +66,39 @@ jobs:
           name: live-intel-tools-${{ matrix.pin_os }}
           path: build/live-status/
           if-no-files-found: warn
+  live-buildenv:
+    # DIE plan D8: real diec on the synthetic pairs through the build-environment delta. Dispatch-only, Linux, advisory.
+    if: github.event_name == 'workflow_dispatch'
+    name: live build environment (ubuntu-22.04)
+    runs-on: ubuntu-22.04
+    timeout-minutes: 30
+    env:
+      PATCHTRACE_LIVE_STATUS_DIR: ${{ github.workspace }}/build/live-status
+      QT_QPA_PLATFORM: offscreen
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Qt runtime libraries (pytest-qt imports Qt; diec needs Qt 5 Core and Script)
+        run: sudo apt-get update && sudo apt-get install -y libegl1 libopengl0 libgl1 libqt5core5a libqt5script5
+      - run: python -m pip install -e .[dev]
+      - uses: actions/cache@v4
+        with:
+          path: build/intel-tools-cache
+          key: intel-tools-linux-${{ hashFiles('tools/intel_tools_pin.json') }}
+      - name: Provision pinned diec (download + verify + extract; never executes it)
+        run: python tools/provision_intel_tools.py --os linux --engine diec --github-env "$GITHUB_ENV"
+      - name: Live build-environment tests (records passed / failed / blocked)
+        env:
+          PATCHTRACE_REQUIRE_LIVE_INTEL_TOOLS: '1'
+        run: python -m pytest -rA tests/test_live_buildenv.py
+      - name: Live status summary
+        if: always()
+        run: python tools/check_live_status.py --summary "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: live-buildenv
+          path: build/live-status/
+          if-no-files-found: warn

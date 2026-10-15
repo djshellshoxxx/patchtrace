@@ -1001,3 +1001,6 @@ Goldens are derived from committed tool output, not from a new live capture; the
 ### [D9:buildenv-value-gate]
 - `tests/test_buildenv_value_gate.py` (12): hand-computed golden counts, control and leakage checks, no-data, determinism, input rejection, CLI.
 - Not verified: any real M4 pair; the targets are [inf] proposals.
+
+### [D8:live-buildenv]
+- Locally both cases record BLOCKED (no diec here); the job is dispatch-only. Not verified: any live run, including the golden equality and the provisioning step with `--engine diec`.

@@ -1086,3 +1086,6 @@ Audit of `unified/` and `tools/unified/` (`docs/audits/20261015-unified-audit.md
 
 ### [D9:buildenv-value-gate]
 `tools/buildenv_value_gate.py`: G-DIE-1 counter. Input `buildenv-value-gate-input/1` (M4 strata `toolchain-variant`, `aa`, `o0-vs-o2`, rows with truth), tags decided by the real `noise_map.tag_rows`; report `buildenv-value-gate/1` with raw counts per stratum, two checks (zero tags on controls, zero semantic leakage; `no-data` is never a pass) and no false-lead-reduction claim. Feeding it real Tier R M4 outcomes is an open step (needs the unified outcomes of the M4 pairs).
+
+### [D8:live-buildenv]
+`tests/test_live_buildenv.py` and job `live-buildenv` in `live-intel-tools.yml` (dispatch-only, Linux): real pinned `diec` on the synthetic `diec-same` and `diec-toolchain` pairs; the live toolchain verdict and change set must equal the committed-golden delta. Records `buildenv-diec` as passed, failed or blocked.
