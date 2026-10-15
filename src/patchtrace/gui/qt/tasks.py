@@ -194,7 +194,7 @@ def _execute(task: _Task, state: Any) -> _Event:
         return _Event('result', task, value)
     except TaskCancelled:
         return _Event('drop', task)
-    except Exception as exc:  # noqa: BLE001 - only the class crosses the thread boundary
+    except BaseException as exc:  # noqa: BLE001 - only the class crosses the thread boundary
         return _Event('error', task, TaskFailure(type(exc).__name__))
 
 

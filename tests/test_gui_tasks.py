@@ -615,3 +615,13 @@ def test_dropping_runners_in_a_subprocess_never_aborts(tmp_path):
 @pytest.mark.parametrize('char', ['؜', '‎', '‏', '‮', '⁦'], ids=['alm', 'lrm', 'rlm', 'rlo', 'lri'])
 def test_task_text_drops_every_bidi_control(char):
     assert char not in tasks._clip(f'a{char}b', 10)
+
+
+def test_a_worker_raising_a_base_exception_still_delivers_an_error_and_frees_the_channel(runner, qtbot):
+    sink = Sink()
+
+    def work(token, report):
+        raise SystemExit(3)
+    runner.submit('demo', work, sink.result, sink.error)
+    qtbot.waitUntil(lambda: bool(sink.errors), timeout=5000)
+    assert sink.errors == [TaskFailure('SystemExit')] and not runner.busy('demo')
