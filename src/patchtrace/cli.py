@@ -265,6 +265,8 @@ def _open(project: Path):
         return ProjectService.open(project)
     except ValueError as exc:
         raise CliError(ENVIRONMENT, str(exc)) from None
+    except OSError as exc:  # e.g. a path that is too long: no absolute directory in the message
+        raise CliError(ENVIRONMENT, f'PT-STORAGE: project cannot be opened ({exc.strerror or type(exc).__name__})') from None
 
 
 def _with_cache(args, options, profile=None):

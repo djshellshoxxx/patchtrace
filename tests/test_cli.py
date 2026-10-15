@@ -280,3 +280,9 @@ def test_text_output_escapes_hostile_characters(name, capsys):
     for stream in (captured.out, captured.err):
         assert not any(ch in stream for ch in '\x1b\x9b\u202e')
     assert captured.out.endswith('second line\n') and captured.out.count('\n') == 2
+
+
+def test_unopenable_project_path_is_a_usage_error_without_absolute_path_cli_b_07(tmp_path, capsys):
+    code, out, _ = run(["rank", "A" * 5000, "--json"], capsys)
+    doc = json.loads(out)
+    assert code == 2 and doc["status"] == "failed" and str(tmp_path) not in doc["error"] and len(doc["error"]) < 300
