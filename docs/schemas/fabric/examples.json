@@ -1,0 +1,1841 @@
+{
+  "Anchor": {
+    "invalid": [
+      {
+        "example": {
+          "anchor_id": "0d337b149b19ddf22fa578d7e91f58016a38b6980538fd3c56dd487c48b125ee",
+          "key": "pair:85de90cf17dfd60e8bbdc53eb26e677341f67f41c7a192916df6a3e5eb21b0f6",
+          "kind": "function",
+          "pair": {
+            "newer_rvas": [
+              4160
+            ],
+            "newer_sha256": "5268ef3e15b1950176c752e1387da1e222e9e7b1200f6e12f3320c751fb3a0ff",
+            "older_rvas": [
+              4096,
+              4112
+            ],
+            "older_sha256": "6fa719c7e0703411e2bcac97bef6a2db260e0d5d5c164395d3bf9f79d8796676"
+          },
+          "role": "observed",
+          "side": "both",
+          "subject": null,
+          "unexpected_field": 1,
+          "witnesses": [
+            {
+              "batch": "ue1",
+              "facets": [],
+              "input_sha256": null,
+              "label": "ParsePacket",
+              "origins": [
+                "D_ghidra"
+              ],
+              "producer": "ue",
+              "ref": null,
+              "source": "pairing",
+              "tool": null,
+              "tool_version": null,
+              "witness_id": "c560ad67902c50479df599817fe62e621ff87adc956ce8957dc5f5add48afbdf"
+            }
+          ]
+        },
+        "match": "extra_forbidden",
+        "reason": "extra fields are forbidden"
+      },
+      {
+        "example": {
+          "anchor_id": "0d337b149b19ddf22fa578d7e91f58016a38b6980538fd3c56dd487c48b125ee",
+          "key": "pair:85de90cf17dfd60e8bbdc53eb26e677341f67f41c7a192916df6a3e5eb21b0f6",
+          "kind": "api",
+          "pair": {
+            "newer_rvas": [
+              4160
+            ],
+            "newer_sha256": "5268ef3e15b1950176c752e1387da1e222e9e7b1200f6e12f3320c751fb3a0ff",
+            "older_rvas": [
+              4096,
+              4112
+            ],
+            "older_sha256": "6fa719c7e0703411e2bcac97bef6a2db260e0d5d5c164395d3bf9f79d8796676"
+          },
+          "role": "observed",
+          "side": "both",
+          "subject": null,
+          "witnesses": [
+            {
+              "batch": "ue1",
+              "facets": [],
+              "input_sha256": null,
+              "label": "ParsePacket",
+              "origins": [
+                "D_ghidra"
+              ],
+              "producer": "ue",
+              "ref": null,
+              "source": "pairing",
+              "tool": null,
+              "tool_version": null,
+              "witness_id": "c560ad67902c50479df599817fe62e621ff87adc956ce8957dc5f5add48afbdf"
+            }
+          ]
+        },
+        "match": "literal_error",
+        "reason": "kinds are a closed list"
+      },
+      {
+        "example": {
+          "anchor_id": "0d337b149b19ddf22fa578d7e91f58016a38b6980538fd3c56dd487c48b125ee",
+          "key": "pair:85de90cf17dfd60e8bbdc53eb26e677341f67f41c7a192916df6a3e5eb21b0f6",
+          "kind": "function",
+          "pair": {
+            "newer_rvas": [
+              4160
+            ],
+            "newer_sha256": "5268ef3e15b1950176c752e1387da1e222e9e7b1200f6e12f3320c751fb3a0ff",
+            "older_rvas": [
+              4096,
+              4112
+            ],
+            "older_sha256": "6fa719c7e0703411e2bcac97bef6a2db260e0d5d5c164395d3bf9f79d8796676"
+          },
+          "role": "observed",
+          "side": "sideways",
+          "subject": null,
+          "witnesses": [
+            {
+              "batch": "ue1",
+              "facets": [],
+              "input_sha256": null,
+              "label": "ParsePacket",
+              "origins": [
+                "D_ghidra"
+              ],
+              "producer": "ue",
+              "ref": null,
+              "source": "pairing",
+              "tool": null,
+              "tool_version": null,
+              "witness_id": "c560ad67902c50479df599817fe62e621ff87adc956ce8957dc5f5add48afbdf"
+            }
+          ]
+        },
+        "match": "literal_error",
+        "reason": "sides are a closed list"
+      },
+      {
+        "example": {
+          "anchor_id": "0d337b149b19ddf22fa578d7e91f58016a38b6980538fd3c56dd487c48b125ee",
+          "key": "pair:85de90cf17dfd60e8bbdc53eb26e677341f67f41c7a192916df6a3e5eb21b0f6",
+          "kind": "function",
+          "pair": {
+            "newer_rvas": [
+              4160
+            ],
+            "newer_sha256": "5268ef3e15b1950176c752e1387da1e222e9e7b1200f6e12f3320c751fb3a0ff",
+            "older_rvas": [
+              4096,
+              4112
+            ],
+            "older_sha256": "6fa719c7e0703411e2bcac97bef6a2db260e0d5d5c164395d3bf9f79d8796676"
+          },
+          "role": "observed",
+          "side": "both",
+          "subject": null,
+          "witnesses": []
+        },
+        "match": "too_short",
+        "reason": "an anchor has a witness"
+      },
+      {
+        "example": {
+          "anchor_id": "abc",
+          "key": "rtlulongadd",
+          "kind": "import",
+          "pair": null,
+          "role": "observed",
+          "side": "newer",
+          "subject": "pair:85de90cf17dfd60e8bbdc53eb26e677341f67f41c7a192916df6a3e5eb21b0f6",
+          "witnesses": [
+            {
+              "batch": "cap1",
+              "facets": [
+                [
+                  "dll",
+                  "ntdll"
+                ],
+                [
+                  "name",
+                  "RtlULongAdd"
+                ]
+              ],
+              "input_sha256": "5268ef3e15b1950176c752e1387da1e222e9e7b1200f6e12f3320c751fb3a0ff",
+              "label": "RtlULongAdd",
+              "origins": [
+                "D_vivisect"
+              ],
+              "producer": "cap",
+              "ref": {
+                "id": "tool-run-1",
+                "kind": "tool-evidence",
+                "pointer": null,
+                "sha256": null
+              },
+              "source": "capa",
+              "tool": "capa",
+              "tool_version": "9.0.0",
+              "witness_id": "494d9c005bbf39b0926739762d2f8a5344c06581436bab2644ad8dae627d49be"
+            }
+          ]
+        },
+        "match": "string_pattern_mismatch",
+        "reason": "ids are SHA-256 hex"
+      },
+      {
+        "example": {
+          "anchor_id": "c79eab77734226cead6e90a150fe426b29960d69c6dc8453cdb1a742061e6cea",
+          "key": "CWE-190",
+          "kind": "cwe",
+          "pair": null,
+          "role": "stated",
+          "side": "none",
+          "subject": null,
+          "witnesses": [
+            null
+          ]
+        },
+        "match": "model_type",
+        "reason": "a witness is a record"
+      }
+    ],
+    "valid": [
+      {
+        "anchor_id": "0d337b149b19ddf22fa578d7e91f58016a38b6980538fd3c56dd487c48b125ee",
+        "key": "pair:85de90cf17dfd60e8bbdc53eb26e677341f67f41c7a192916df6a3e5eb21b0f6",
+        "kind": "function",
+        "pair": {
+          "newer_rvas": [
+            4160
+          ],
+          "newer_sha256": "5268ef3e15b1950176c752e1387da1e222e9e7b1200f6e12f3320c751fb3a0ff",
+          "older_rvas": [
+            4096,
+            4112
+          ],
+          "older_sha256": "6fa719c7e0703411e2bcac97bef6a2db260e0d5d5c164395d3bf9f79d8796676"
+        },
+        "role": "observed",
+        "side": "both",
+        "subject": null,
+        "witnesses": [
+          {
+            "batch": "ue1",
+            "facets": [],
+            "input_sha256": null,
+            "label": "ParsePacket",
+            "origins": [
+              "D_ghidra"
+            ],
+            "producer": "ue",
+            "ref": null,
+            "source": "pairing",
+            "tool": null,
+            "tool_version": null,
+            "witness_id": "c560ad67902c50479df599817fe62e621ff87adc956ce8957dc5f5add48afbdf"
+          }
+        ]
+      },
+      {
+        "anchor_id": "9a71dd48d26a8826b83ae751d26419fe5f8b2c12ceee0b956e3491f4552c6b06",
+        "key": "rtlulongadd",
+        "kind": "import",
+        "pair": null,
+        "role": "observed",
+        "side": "newer",
+        "subject": "pair:85de90cf17dfd60e8bbdc53eb26e677341f67f41c7a192916df6a3e5eb21b0f6",
+        "witnesses": [
+          {
+            "batch": "cap1",
+            "facets": [
+              [
+                "dll",
+                "ntdll"
+              ],
+              [
+                "name",
+                "RtlULongAdd"
+              ]
+            ],
+            "input_sha256": "5268ef3e15b1950176c752e1387da1e222e9e7b1200f6e12f3320c751fb3a0ff",
+            "label": "RtlULongAdd",
+            "origins": [
+              "D_vivisect"
+            ],
+            "producer": "cap",
+            "ref": {
+              "id": "tool-run-1",
+              "kind": "tool-evidence",
+              "pointer": null,
+              "sha256": null
+            },
+            "source": "capa",
+            "tool": "capa",
+            "tool_version": "9.0.0",
+            "witness_id": "494d9c005bbf39b0926739762d2f8a5344c06581436bab2644ad8dae627d49be"
+          }
+        ]
+      },
+      {
+        "anchor_id": "cea4eadc5c379075f2087e0fa62d478ddaa64abbd2c1bb1bc9198258a8bcb994",
+        "key": "rtlulongadd",
+        "kind": "import",
+        "pair": null,
+        "role": "hint",
+        "side": "none",
+        "subject": null,
+        "witnesses": [
+          {
+            "batch": "kb1",
+            "facets": [],
+            "input_sha256": null,
+            "label": "CWE-190 integer overflow",
+            "origins": [
+              "D_vendor_text"
+            ],
+            "producer": "kb",
+            "ref": null,
+            "source": "advisory-text",
+            "tool": null,
+            "tool_version": null,
+            "witness_id": "c7484695994611d05cce73b980e868524467f6d88a93caab93939cbf6ddc2689"
+          }
+        ]
+      },
+      {
+        "anchor_id": "c79eab77734226cead6e90a150fe426b29960d69c6dc8453cdb1a742061e6cea",
+        "key": "CWE-190",
+        "kind": "cwe",
+        "pair": null,
+        "role": "stated",
+        "side": "none",
+        "subject": null,
+        "witnesses": [
+          {
+            "batch": "kb1",
+            "facets": [],
+            "input_sha256": null,
+            "label": "CWE-190 integer overflow",
+            "origins": [
+              "D_vendor_text"
+            ],
+            "producer": "kb",
+            "ref": null,
+            "source": "advisory-text",
+            "tool": null,
+            "tool_version": null,
+            "witness_id": "c7484695994611d05cce73b980e868524467f6d88a93caab93939cbf6ddc2689"
+          }
+        ]
+      }
+    ]
+  },
+  "FabricBatch": {
+    "invalid": [
+      {
+        "example": {
+          "anchors": [
+            {
+              "anchor_id": "2ada285e30c03eb13a82334771e6a6681c31087f45a0bf9bb365c89aba52ffae",
+              "key": "create process",
+              "kind": "capability",
+              "pair": null,
+              "role": "observed",
+              "side": "newer",
+              "subject": "pair:85de90cf17dfd60e8bbdc53eb26e677341f67f41c7a192916df6a3e5eb21b0f6",
+              "witnesses": [
+                {
+                  "batch": "cap1",
+                  "facets": [
+                    [
+                      "namespace",
+                      "host-interaction/process/create"
+                    ],
+                    [
+                      "scope",
+                      "function"
+                    ]
+                  ],
+                  "input_sha256": "5268ef3e15b1950176c752e1387da1e222e9e7b1200f6e12f3320c751fb3a0ff",
+                  "label": "create process",
+                  "origins": [
+                    "D_vivisect"
+                  ],
+                  "producer": "cap",
+                  "ref": {
+                    "id": "facts-1",
+                    "kind": "advisory-facts",
+                    "pointer": "/vulnerabilities/0/notes/1",
+                    "sha256": "a40a0cde5964d0c92baf94211693ee15db9dcef166cd3a1b24626c9d4f0d8119"
+                  },
+                  "source": "capa",
+                  "tool": null,
+                  "tool_version": null,
+                  "witness_id": "0aa26695d92ff1350b9a1968f106ce091e1170519d6579d1b13a18451d506d32"
+                }
+              ]
+            },
+            {
+              "anchor_id": "9a71dd48d26a8826b83ae751d26419fe5f8b2c12ceee0b956e3491f4552c6b06",
+              "key": "rtlulongadd",
+              "kind": "import",
+              "pair": null,
+              "role": "observed",
+              "side": "newer",
+              "subject": "pair:85de90cf17dfd60e8bbdc53eb26e677341f67f41c7a192916df6a3e5eb21b0f6",
+              "witnesses": [
+                {
+                  "batch": "cap1",
+                  "facets": [
+                    [
+                      "dll",
+                      "ntdll"
+                    ],
+                    [
+                      "name",
+                      "RtlULongAdd"
+                    ]
+                  ],
+                  "input_sha256": "5268ef3e15b1950176c752e1387da1e222e9e7b1200f6e12f3320c751fb3a0ff",
+                  "label": "RtlULongAdd",
+                  "origins": [
+                    "D_vivisect"
+                  ],
+                  "producer": "cap",
+                  "ref": {
+                    "id": "tool-run-1",
+                    "kind": "tool-evidence",
+                    "pointer": null,
+                    "sha256": null
+                  },
+                  "source": "capa",
+                  "tool": "capa",
+                  "tool_version": "9.0.0",
+                  "witness_id": "494d9c005bbf39b0926739762d2f8a5344c06581436bab2644ad8dae627d49be"
+                }
+              ]
+            }
+          ],
+          "batch": "cap1",
+          "contract": "fabric-batch/1",
+          "origins_digest": "a48c53ab4e44d99a2ef8dc4d3f36fa81e33b5c42dc20cfa2ff453ce30c1a3f10",
+          "producer": "cap",
+          "unexpected_field": 1
+        },
+        "match": "extra_forbidden",
+        "reason": "extra fields are forbidden"
+      },
+      {
+        "example": {
+          "anchors": [
+            {
+              "anchor_id": "2ada285e30c03eb13a82334771e6a6681c31087f45a0bf9bb365c89aba52ffae",
+              "key": "create process",
+              "kind": "capability",
+              "pair": null,
+              "role": "observed",
+              "side": "newer",
+              "subject": "pair:85de90cf17dfd60e8bbdc53eb26e677341f67f41c7a192916df6a3e5eb21b0f6",
+              "witnesses": [
+                {
+                  "batch": "cap1",
+                  "facets": [
+                    [
+                      "namespace",
+                      "host-interaction/process/create"
+                    ],
+                    [
+                      "scope",
+                      "function"
+                    ]
+                  ],
+                  "input_sha256": "5268ef3e15b1950176c752e1387da1e222e9e7b1200f6e12f3320c751fb3a0ff",
+                  "label": "create process",
+                  "origins": [
+                    "D_vivisect"
+                  ],
+                  "producer": "cap",
+                  "ref": {
+                    "id": "facts-1",
+                    "kind": "advisory-facts",
+                    "pointer": "/vulnerabilities/0/notes/1",
+                    "sha256": "a40a0cde5964d0c92baf94211693ee15db9dcef166cd3a1b24626c9d4f0d8119"
+                  },
+                  "source": "capa",
+                  "tool": null,
+                  "tool_version": null,
+                  "witness_id": "0aa26695d92ff1350b9a1968f106ce091e1170519d6579d1b13a18451d506d32"
+                }
+              ]
+            },
+            {
+              "anchor_id": "9a71dd48d26a8826b83ae751d26419fe5f8b2c12ceee0b956e3491f4552c6b06",
+              "key": "rtlulongadd",
+              "kind": "import",
+              "pair": null,
+              "role": "observed",
+              "side": "newer",
+              "subject": "pair:85de90cf17dfd60e8bbdc53eb26e677341f67f41c7a192916df6a3e5eb21b0f6",
+              "witnesses": [
+                {
+                  "batch": "cap1",
+                  "facets": [
+                    [
+                      "dll",
+                      "ntdll"
+                    ],
+                    [
+                      "name",
+                      "RtlULongAdd"
+                    ]
+                  ],
+                  "input_sha256": "5268ef3e15b1950176c752e1387da1e222e9e7b1200f6e12f3320c751fb3a0ff",
+                  "label": "RtlULongAdd",
+                  "origins": [
+                    "D_vivisect"
+                  ],
+                  "producer": "cap",
+                  "ref": {
+                    "id": "tool-run-1",
+                    "kind": "tool-evidence",
+                    "pointer": null,
+                    "sha256": null
+                  },
+                  "source": "capa",
+                  "tool": "capa",
+                  "tool_version": "9.0.0",
+                  "witness_id": "494d9c005bbf39b0926739762d2f8a5344c06581436bab2644ad8dae627d49be"
+                }
+              ]
+            }
+          ],
+          "batch": "cap1",
+          "contract": "fabric-batch/2",
+          "origins_digest": "a48c53ab4e44d99a2ef8dc4d3f36fa81e33b5c42dc20cfa2ff453ce30c1a3f10",
+          "producer": "cap"
+        },
+        "match": "literal_error",
+        "reason": "unsupported future contract version"
+      },
+      {
+        "example": {
+          "anchors": [
+            {
+              "anchor_id": "2ada285e30c03eb13a82334771e6a6681c31087f45a0bf9bb365c89aba52ffae",
+              "key": "create process",
+              "kind": "capability",
+              "pair": null,
+              "role": "observed",
+              "side": "newer",
+              "subject": "pair:85de90cf17dfd60e8bbdc53eb26e677341f67f41c7a192916df6a3e5eb21b0f6",
+              "witnesses": [
+                {
+                  "batch": "cap1",
+                  "facets": [
+                    [
+                      "namespace",
+                      "host-interaction/process/create"
+                    ],
+                    [
+                      "scope",
+                      "function"
+                    ]
+                  ],
+                  "input_sha256": "5268ef3e15b1950176c752e1387da1e222e9e7b1200f6e12f3320c751fb3a0ff",
+                  "label": "create process",
+                  "origins": [
+                    "D_vivisect"
+                  ],
+                  "producer": "cap",
+                  "ref": {
+                    "id": "facts-1",
+                    "kind": "advisory-facts",
+                    "pointer": "/vulnerabilities/0/notes/1",
+                    "sha256": "a40a0cde5964d0c92baf94211693ee15db9dcef166cd3a1b24626c9d4f0d8119"
+                  },
+                  "source": "capa",
+                  "tool": null,
+                  "tool_version": null,
+                  "witness_id": "0aa26695d92ff1350b9a1968f106ce091e1170519d6579d1b13a18451d506d32"
+                }
+              ]
+            },
+            {
+              "anchor_id": "9a71dd48d26a8826b83ae751d26419fe5f8b2c12ceee0b956e3491f4552c6b06",
+              "key": "rtlulongadd",
+              "kind": "import",
+              "pair": null,
+              "role": "observed",
+              "side": "newer",
+              "subject": "pair:85de90cf17dfd60e8bbdc53eb26e677341f67f41c7a192916df6a3e5eb21b0f6",
+              "witnesses": [
+                {
+                  "batch": "cap1",
+                  "facets": [
+                    [
+                      "dll",
+                      "ntdll"
+                    ],
+                    [
+                      "name",
+                      "RtlULongAdd"
+                    ]
+                  ],
+                  "input_sha256": "5268ef3e15b1950176c752e1387da1e222e9e7b1200f6e12f3320c751fb3a0ff",
+                  "label": "RtlULongAdd",
+                  "origins": [
+                    "D_vivisect"
+                  ],
+                  "producer": "cap",
+                  "ref": {
+                    "id": "tool-run-1",
+                    "kind": "tool-evidence",
+                    "pointer": null,
+                    "sha256": null
+                  },
+                  "source": "capa",
+                  "tool": "capa",
+                  "tool_version": "9.0.0",
+                  "witness_id": "494d9c005bbf39b0926739762d2f8a5344c06581436bab2644ad8dae627d49be"
+                }
+              ]
+            }
+          ],
+          "batch": "cap1",
+          "contract": "fabric-batch/1",
+          "origins_digest": "a48c53ab4e44d99a2ef8dc4d3f36fa81e33b5c42dc20cfa2ff453ce30c1a3f10",
+          "producer": "gui"
+        },
+        "match": "literal_error",
+        "reason": "producers are a closed list"
+      },
+      {
+        "example": {
+          "anchors": [
+            {
+              "anchor_id": "2ada285e30c03eb13a82334771e6a6681c31087f45a0bf9bb365c89aba52ffae",
+              "key": "create process",
+              "kind": "capability",
+              "pair": null,
+              "role": "observed",
+              "side": "newer",
+              "subject": "pair:85de90cf17dfd60e8bbdc53eb26e677341f67f41c7a192916df6a3e5eb21b0f6",
+              "witnesses": [
+                {
+                  "batch": "cap1",
+                  "facets": [
+                    [
+                      "namespace",
+                      "host-interaction/process/create"
+                    ],
+                    [
+                      "scope",
+                      "function"
+                    ]
+                  ],
+                  "input_sha256": "5268ef3e15b1950176c752e1387da1e222e9e7b1200f6e12f3320c751fb3a0ff",
+                  "label": "create process",
+                  "origins": [
+                    "D_vivisect"
+                  ],
+                  "producer": "cap",
+                  "ref": {
+                    "id": "facts-1",
+                    "kind": "advisory-facts",
+                    "pointer": "/vulnerabilities/0/notes/1",
+                    "sha256": "a40a0cde5964d0c92baf94211693ee15db9dcef166cd3a1b24626c9d4f0d8119"
+                  },
+                  "source": "capa",
+                  "tool": null,
+                  "tool_version": null,
+                  "witness_id": "0aa26695d92ff1350b9a1968f106ce091e1170519d6579d1b13a18451d506d32"
+                }
+              ]
+            },
+            {
+              "anchor_id": "9a71dd48d26a8826b83ae751d26419fe5f8b2c12ceee0b956e3491f4552c6b06",
+              "key": "rtlulongadd",
+              "kind": "import",
+              "pair": null,
+              "role": "observed",
+              "side": "newer",
+              "subject": "pair:85de90cf17dfd60e8bbdc53eb26e677341f67f41c7a192916df6a3e5eb21b0f6",
+              "witnesses": [
+                {
+                  "batch": "cap1",
+                  "facets": [
+                    [
+                      "dll",
+                      "ntdll"
+                    ],
+                    [
+                      "name",
+                      "RtlULongAdd"
+                    ]
+                  ],
+                  "input_sha256": "5268ef3e15b1950176c752e1387da1e222e9e7b1200f6e12f3320c751fb3a0ff",
+                  "label": "RtlULongAdd",
+                  "origins": [
+                    "D_vivisect"
+                  ],
+                  "producer": "cap",
+                  "ref": {
+                    "id": "tool-run-1",
+                    "kind": "tool-evidence",
+                    "pointer": null,
+                    "sha256": null
+                  },
+                  "source": "capa",
+                  "tool": "capa",
+                  "tool_version": "9.0.0",
+                  "witness_id": "494d9c005bbf39b0926739762d2f8a5344c06581436bab2644ad8dae627d49be"
+                }
+              ]
+            }
+          ],
+          "batch": "cap1",
+          "contract": "fabric-batch/1",
+          "origins_digest": "xyz",
+          "producer": "cap"
+        },
+        "match": "string_pattern_mismatch",
+        "reason": "the origin table is named by its digest"
+      },
+      {
+        "example": {
+          "anchors": [],
+          "batch": "cap1",
+          "contract": "fabric-batch/1",
+          "origins_digest": "a48c53ab4e44d99a2ef8dc4d3f36fa81e33b5c42dc20cfa2ff453ce30c1a3f10",
+          "producer": "cap"
+        },
+        "match": "too_short",
+        "reason": "a stored batch holds an anchor"
+      },
+      {
+        "example": {
+          "anchors": [
+            {
+              "anchor_id": "9a71dd48d26a8826b83ae751d26419fe5f8b2c12ceee0b956e3491f4552c6b06",
+              "key": "rtlulongadd",
+              "kind": "import",
+              "pair": null,
+              "role": "observed",
+              "side": "newer",
+              "subject": "pair:85de90cf17dfd60e8bbdc53eb26e677341f67f41c7a192916df6a3e5eb21b0f6",
+              "witnesses": [
+                {
+                  "batch": "cap1",
+                  "facets": [
+                    [
+                      "dll",
+                      "ntdll"
+                    ],
+                    [
+                      "name",
+                      "RtlULongAdd"
+                    ]
+                  ],
+                  "input_sha256": "5268ef3e15b1950176c752e1387da1e222e9e7b1200f6e12f3320c751fb3a0ff",
+                  "label": "RtlULongAdd",
+                  "origins": [
+                    "D_vivisect"
+                  ],
+                  "producer": "cap",
+                  "ref": {
+                    "id": "tool-run-1",
+                    "kind": "tool-evidence",
+                    "pointer": null,
+                    "sha256": null
+                  },
+                  "source": "capa",
+                  "tool": "capa",
+                  "tool_version": "9.0.0",
+                  "witness_id": "494d9c005bbf39b0926739762d2f8a5344c06581436bab2644ad8dae627d49be"
+                }
+              ]
+            },
+            {
+              "anchor_id": "2ada285e30c03eb13a82334771e6a6681c31087f45a0bf9bb365c89aba52ffae",
+              "key": "create process",
+              "kind": "capability",
+              "pair": null,
+              "role": "observed",
+              "side": "newer",
+              "subject": "pair:85de90cf17dfd60e8bbdc53eb26e677341f67f41c7a192916df6a3e5eb21b0f6",
+              "witnesses": [
+                {
+                  "batch": "cap1",
+                  "facets": [
+                    [
+                      "namespace",
+                      "host-interaction/process/create"
+                    ],
+                    [
+                      "scope",
+                      "function"
+                    ]
+                  ],
+                  "input_sha256": "5268ef3e15b1950176c752e1387da1e222e9e7b1200f6e12f3320c751fb3a0ff",
+                  "label": "create process",
+                  "origins": [
+                    "D_vivisect"
+                  ],
+                  "producer": "cap",
+                  "ref": {
+                    "id": "facts-1",
+                    "kind": "advisory-facts",
+                    "pointer": "/vulnerabilities/0/notes/1",
+                    "sha256": "a40a0cde5964d0c92baf94211693ee15db9dcef166cd3a1b24626c9d4f0d8119"
+                  },
+                  "source": "capa",
+                  "tool": null,
+                  "tool_version": null,
+                  "witness_id": "0aa26695d92ff1350b9a1968f106ce091e1170519d6579d1b13a18451d506d32"
+                }
+              ]
+            }
+          ],
+          "batch": "cap1",
+          "contract": "fabric-batch/1",
+          "origins_digest": "a48c53ab4e44d99a2ef8dc4d3f36fa81e33b5c42dc20cfa2ff453ce30c1a3f10",
+          "producer": "cap"
+        },
+        "match": "sorted and unique by anchor_id",
+        "reason": "anchors are sorted by id"
+      },
+      {
+        "example": {
+          "anchors": [
+            {
+              "anchor_id": "2ada285e30c03eb13a82334771e6a6681c31087f45a0bf9bb365c89aba52ffae",
+              "key": "create process",
+              "kind": "capability",
+              "pair": null,
+              "role": "observed",
+              "side": "newer",
+              "subject": "pair:85de90cf17dfd60e8bbdc53eb26e677341f67f41c7a192916df6a3e5eb21b0f6",
+              "witnesses": [
+                {
+                  "batch": "cap1",
+                  "facets": [
+                    [
+                      "namespace",
+                      "host-interaction/process/create"
+                    ],
+                    [
+                      "scope",
+                      "function"
+                    ]
+                  ],
+                  "input_sha256": "5268ef3e15b1950176c752e1387da1e222e9e7b1200f6e12f3320c751fb3a0ff",
+                  "label": "create process",
+                  "origins": [
+                    "D_vivisect"
+                  ],
+                  "producer": "cap",
+                  "ref": {
+                    "id": "facts-1",
+                    "kind": "advisory-facts",
+                    "pointer": "/vulnerabilities/0/notes/1",
+                    "sha256": "a40a0cde5964d0c92baf94211693ee15db9dcef166cd3a1b24626c9d4f0d8119"
+                  },
+                  "source": "capa",
+                  "tool": null,
+                  "tool_version": null,
+                  "witness_id": "0aa26695d92ff1350b9a1968f106ce091e1170519d6579d1b13a18451d506d32"
+                }
+              ]
+            },
+            {
+              "anchor_id": "9a71dd48d26a8826b83ae751d26419fe5f8b2c12ceee0b956e3491f4552c6b06",
+              "key": "rtlulongadd",
+              "kind": "import",
+              "pair": null,
+              "role": "observed",
+              "side": "newer",
+              "subject": "pair:85de90cf17dfd60e8bbdc53eb26e677341f67f41c7a192916df6a3e5eb21b0f6",
+              "witnesses": [
+                {
+                  "batch": "cap1",
+                  "facets": [
+                    [
+                      "dll",
+                      "ntdll"
+                    ],
+                    [
+                      "name",
+                      "RtlULongAdd"
+                    ]
+                  ],
+                  "input_sha256": "5268ef3e15b1950176c752e1387da1e222e9e7b1200f6e12f3320c751fb3a0ff",
+                  "label": "RtlULongAdd",
+                  "origins": [
+                    "D_vivisect"
+                  ],
+                  "producer": "cap",
+                  "ref": {
+                    "id": "tool-run-1",
+                    "kind": "tool-evidence",
+                    "pointer": null,
+                    "sha256": null
+                  },
+                  "source": "capa",
+                  "tool": "capa",
+                  "tool_version": "9.0.0",
+                  "witness_id": "494d9c005bbf39b0926739762d2f8a5344c06581436bab2644ad8dae627d49be"
+                }
+              ]
+            }
+          ],
+          "batch": "ue1",
+          "contract": "fabric-batch/1",
+          "origins_digest": "a48c53ab4e44d99a2ef8dc4d3f36fa81e33b5c42dc20cfa2ff453ce30c1a3f10",
+          "producer": "cap"
+        },
+        "match": "its row",
+        "reason": "a row holds the witnesses of its own batch"
+      },
+      {
+        "example": {
+          "anchors": [
+            {
+              "anchor_id": "2ada285e30c03eb13a82334771e6a6681c31087f45a0bf9bb365c89aba52ffae",
+              "key": "create process",
+              "kind": "capability",
+              "pair": null,
+              "role": "observed",
+              "side": "newer",
+              "subject": "pair:85de90cf17dfd60e8bbdc53eb26e677341f67f41c7a192916df6a3e5eb21b0f6",
+              "witnesses": [
+                {
+                  "batch": "cap1",
+                  "facets": [
+                    [
+                      "namespace",
+                      "host-interaction/process/create"
+                    ],
+                    [
+                      "scope",
+                      "function"
+                    ]
+                  ],
+                  "input_sha256": "5268ef3e15b1950176c752e1387da1e222e9e7b1200f6e12f3320c751fb3a0ff",
+                  "label": "create process",
+                  "origins": [
+                    "D_vivisect"
+                  ],
+                  "producer": "cap",
+                  "ref": {
+                    "id": "facts-1",
+                    "kind": "advisory-facts",
+                    "pointer": "/vulnerabilities/0/notes/1",
+                    "sha256": "a40a0cde5964d0c92baf94211693ee15db9dcef166cd3a1b24626c9d4f0d8119"
+                  },
+                  "source": "capa",
+                  "tool": null,
+                  "tool_version": null,
+                  "witness_id": "0aa26695d92ff1350b9a1968f106ce091e1170519d6579d1b13a18451d506d32"
+                }
+              ]
+            },
+            {
+              "anchor_id": "9a71dd48d26a8826b83ae751d26419fe5f8b2c12ceee0b956e3491f4552c6b06",
+              "key": "rtlulongadd",
+              "kind": "import",
+              "pair": null,
+              "role": "observed",
+              "side": "newer",
+              "subject": "pair:85de90cf17dfd60e8bbdc53eb26e677341f67f41c7a192916df6a3e5eb21b0f6",
+              "witnesses": [
+                {
+                  "batch": "cap1",
+                  "facets": [
+                    [
+                      "dll",
+                      "ntdll"
+                    ],
+                    [
+                      "name",
+                      "RtlULongAdd"
+                    ]
+                  ],
+                  "input_sha256": "5268ef3e15b1950176c752e1387da1e222e9e7b1200f6e12f3320c751fb3a0ff",
+                  "label": "RtlULongAdd",
+                  "origins": [
+                    "D_vivisect"
+                  ],
+                  "producer": "cap",
+                  "ref": {
+                    "id": "tool-run-1",
+                    "kind": "tool-evidence",
+                    "pointer": null,
+                    "sha256": null
+                  },
+                  "source": "capa",
+                  "tool": "capa",
+                  "tool_version": "9.0.0",
+                  "witness_id": "494d9c005bbf39b0926739762d2f8a5344c06581436bab2644ad8dae627d49be"
+                }
+              ]
+            }
+          ],
+          "batch": "Cap 1",
+          "contract": "fabric-batch/1",
+          "origins_digest": "a48c53ab4e44d99a2ef8dc4d3f36fa81e33b5c42dc20cfa2ff453ce30c1a3f10",
+          "producer": "cap"
+        },
+        "match": "string_pattern_mismatch",
+        "reason": "a batch name is a slug"
+      }
+    ],
+    "valid": [
+      {
+        "anchors": [
+          {
+            "anchor_id": "2ada285e30c03eb13a82334771e6a6681c31087f45a0bf9bb365c89aba52ffae",
+            "key": "create process",
+            "kind": "capability",
+            "pair": null,
+            "role": "observed",
+            "side": "newer",
+            "subject": "pair:85de90cf17dfd60e8bbdc53eb26e677341f67f41c7a192916df6a3e5eb21b0f6",
+            "witnesses": [
+              {
+                "batch": "cap1",
+                "facets": [
+                  [
+                    "namespace",
+                    "host-interaction/process/create"
+                  ],
+                  [
+                    "scope",
+                    "function"
+                  ]
+                ],
+                "input_sha256": "5268ef3e15b1950176c752e1387da1e222e9e7b1200f6e12f3320c751fb3a0ff",
+                "label": "create process",
+                "origins": [
+                  "D_vivisect"
+                ],
+                "producer": "cap",
+                "ref": {
+                  "id": "facts-1",
+                  "kind": "advisory-facts",
+                  "pointer": "/vulnerabilities/0/notes/1",
+                  "sha256": "a40a0cde5964d0c92baf94211693ee15db9dcef166cd3a1b24626c9d4f0d8119"
+                },
+                "source": "capa",
+                "tool": null,
+                "tool_version": null,
+                "witness_id": "0aa26695d92ff1350b9a1968f106ce091e1170519d6579d1b13a18451d506d32"
+              }
+            ]
+          },
+          {
+            "anchor_id": "9a71dd48d26a8826b83ae751d26419fe5f8b2c12ceee0b956e3491f4552c6b06",
+            "key": "rtlulongadd",
+            "kind": "import",
+            "pair": null,
+            "role": "observed",
+            "side": "newer",
+            "subject": "pair:85de90cf17dfd60e8bbdc53eb26e677341f67f41c7a192916df6a3e5eb21b0f6",
+            "witnesses": [
+              {
+                "batch": "cap1",
+                "facets": [
+                  [
+                    "dll",
+                    "ntdll"
+                  ],
+                  [
+                    "name",
+                    "RtlULongAdd"
+                  ]
+                ],
+                "input_sha256": "5268ef3e15b1950176c752e1387da1e222e9e7b1200f6e12f3320c751fb3a0ff",
+                "label": "RtlULongAdd",
+                "origins": [
+                  "D_vivisect"
+                ],
+                "producer": "cap",
+                "ref": {
+                  "id": "tool-run-1",
+                  "kind": "tool-evidence",
+                  "pointer": null,
+                  "sha256": null
+                },
+                "source": "capa",
+                "tool": "capa",
+                "tool_version": "9.0.0",
+                "witness_id": "494d9c005bbf39b0926739762d2f8a5344c06581436bab2644ad8dae627d49be"
+              }
+            ]
+          }
+        ],
+        "batch": "cap1",
+        "contract": "fabric-batch/1",
+        "origins_digest": "a48c53ab4e44d99a2ef8dc4d3f36fa81e33b5c42dc20cfa2ff453ce30c1a3f10",
+        "producer": "cap"
+      },
+      {
+        "anchors": [
+          {
+            "anchor_id": "0d337b149b19ddf22fa578d7e91f58016a38b6980538fd3c56dd487c48b125ee",
+            "key": "pair:85de90cf17dfd60e8bbdc53eb26e677341f67f41c7a192916df6a3e5eb21b0f6",
+            "kind": "function",
+            "pair": {
+              "newer_rvas": [
+                4160
+              ],
+              "newer_sha256": "5268ef3e15b1950176c752e1387da1e222e9e7b1200f6e12f3320c751fb3a0ff",
+              "older_rvas": [
+                4096,
+                4112
+              ],
+              "older_sha256": "6fa719c7e0703411e2bcac97bef6a2db260e0d5d5c164395d3bf9f79d8796676"
+            },
+            "role": "observed",
+            "side": "both",
+            "subject": null,
+            "witnesses": [
+              {
+                "batch": "ue1",
+                "facets": [],
+                "input_sha256": null,
+                "label": "ParsePacket",
+                "origins": [
+                  "D_ghidra"
+                ],
+                "producer": "ue",
+                "ref": null,
+                "source": "pairing",
+                "tool": null,
+                "tool_version": null,
+                "witness_id": "c560ad67902c50479df599817fe62e621ff87adc956ce8957dc5f5add48afbdf"
+              }
+            ]
+          },
+          {
+            "anchor_id": "21d1cbe01bbadd29efd54f2bcd61a085233ba84cdc55faff0350d70cb850417d",
+            "key": "pair:7aa43fc37b7acdf95ff1a1d9ab0c3051db899fa0421670a42bf2609736aa5496",
+            "kind": "function",
+            "pair": {
+              "newer_rvas": [],
+              "newer_sha256": "5268ef3e15b1950176c752e1387da1e222e9e7b1200f6e12f3320c751fb3a0ff",
+              "older_rvas": [
+                8192
+              ],
+              "older_sha256": "6fa719c7e0703411e2bcac97bef6a2db260e0d5d5c164395d3bf9f79d8796676"
+            },
+            "role": "observed",
+            "side": "both",
+            "subject": null,
+            "witnesses": [
+              {
+                "batch": "ue1",
+                "facets": [],
+                "input_sha256": null,
+                "label": "ParsePacket",
+                "origins": [
+                  "D_ghidra"
+                ],
+                "producer": "ue",
+                "ref": null,
+                "source": "pairing",
+                "tool": null,
+                "tool_version": null,
+                "witness_id": "c560ad67902c50479df599817fe62e621ff87adc956ce8957dc5f5add48afbdf"
+              }
+            ]
+          }
+        ],
+        "batch": "ue1",
+        "contract": "fabric-batch/1",
+        "origins_digest": "a48c53ab4e44d99a2ef8dc4d3f36fa81e33b5c42dc20cfa2ff453ce30c1a3f10",
+        "producer": "ue"
+      }
+    ]
+  },
+  "PairRef": {
+    "invalid": [
+      {
+        "example": {
+          "newer_rvas": [
+            4160
+          ],
+          "newer_sha256": "5268ef3e15b1950176c752e1387da1e222e9e7b1200f6e12f3320c751fb3a0ff",
+          "older_rvas": [
+            4096,
+            4112
+          ],
+          "older_sha256": "6fa719c7e0703411e2bcac97bef6a2db260e0d5d5c164395d3bf9f79d8796676",
+          "unexpected_field": 1
+        },
+        "match": "extra_forbidden",
+        "reason": "extra fields are forbidden"
+      },
+      {
+        "example": {
+          "newer_rvas": [
+            4160
+          ],
+          "newer_sha256": "5268ef3e15b1950176c752e1387da1e222e9e7b1200f6e12f3320c751fb3a0ff",
+          "older_rvas": [
+            4112,
+            4096
+          ],
+          "older_sha256": "6fa719c7e0703411e2bcac97bef6a2db260e0d5d5c164395d3bf9f79d8796676"
+        },
+        "match": "sorted and unique",
+        "reason": "RVAs ascend"
+      },
+      {
+        "example": {
+          "newer_rvas": [
+            4294967296
+          ],
+          "newer_sha256": "5268ef3e15b1950176c752e1387da1e222e9e7b1200f6e12f3320c751fb3a0ff",
+          "older_rvas": [
+            4096,
+            4112
+          ],
+          "older_sha256": "6fa719c7e0703411e2bcac97bef6a2db260e0d5d5c164395d3bf9f79d8796676"
+        },
+        "match": "less_than_equal",
+        "reason": "an RVA fits 32 bits"
+      },
+      {
+        "example": {
+          "newer_rvas": [],
+          "newer_sha256": "5268ef3e15b1950176c752e1387da1e222e9e7b1200f6e12f3320c751fb3a0ff",
+          "older_rvas": [],
+          "older_sha256": "6fa719c7e0703411e2bcac97bef6a2db260e0d5d5c164395d3bf9f79d8796676"
+        },
+        "match": "at least one function",
+        "reason": "a pair needs a function on a side"
+      }
+    ],
+    "valid": [
+      {
+        "newer_rvas": [
+          4160
+        ],
+        "newer_sha256": "5268ef3e15b1950176c752e1387da1e222e9e7b1200f6e12f3320c751fb3a0ff",
+        "older_rvas": [
+          4096,
+          4112
+        ],
+        "older_sha256": "6fa719c7e0703411e2bcac97bef6a2db260e0d5d5c164395d3bf9f79d8796676"
+      },
+      {
+        "newer_rvas": [],
+        "newer_sha256": "5268ef3e15b1950176c752e1387da1e222e9e7b1200f6e12f3320c751fb3a0ff",
+        "older_rvas": [
+          8192
+        ],
+        "older_sha256": "6fa719c7e0703411e2bcac97bef6a2db260e0d5d5c164395d3bf9f79d8796676"
+      }
+    ]
+  },
+  "PinEvent": {
+    "invalid": [
+      {
+        "example": {
+          "action": "pin",
+          "anchor_id": "9a71dd48d26a8826b83ae751d26419fe5f8b2c12ceee0b956e3491f4552c6b06",
+          "contract": "fabric-pin/1",
+          "created_utc": "2099-03-01T12:00:00+00:00",
+          "key": "rtlulongadd",
+          "kind": "import",
+          "label": "RtlULongAdd",
+          "newer_sha256": "5268ef3e15b1950176c752e1387da1e222e9e7b1200f6e12f3320c751fb3a0ff",
+          "note": "Check the overflow guard.\nThen the caller.",
+          "older_sha256": "6fa719c7e0703411e2bcac97bef6a2db260e0d5d5c164395d3bf9f79d8796676",
+          "role": "observed",
+          "seq": 1,
+          "side": "newer",
+          "subject": "pair:85de90cf17dfd60e8bbdc53eb26e677341f67f41c7a192916df6a3e5eb21b0f6",
+          "unexpected_field": 1,
+          "via": "related"
+        },
+        "match": "extra_forbidden",
+        "reason": "extra fields are forbidden"
+      },
+      {
+        "example": {
+          "action": "pin",
+          "anchor_id": "9a71dd48d26a8826b83ae751d26419fe5f8b2c12ceee0b956e3491f4552c6b06",
+          "contract": "fabric-batch/2",
+          "created_utc": "2099-03-01T12:00:00+00:00",
+          "key": "rtlulongadd",
+          "kind": "import",
+          "label": "RtlULongAdd",
+          "newer_sha256": "5268ef3e15b1950176c752e1387da1e222e9e7b1200f6e12f3320c751fb3a0ff",
+          "note": "Check the overflow guard.\nThen the caller.",
+          "older_sha256": "6fa719c7e0703411e2bcac97bef6a2db260e0d5d5c164395d3bf9f79d8796676",
+          "role": "observed",
+          "seq": 1,
+          "side": "newer",
+          "subject": "pair:85de90cf17dfd60e8bbdc53eb26e677341f67f41c7a192916df6a3e5eb21b0f6",
+          "via": "related"
+        },
+        "match": "literal_error",
+        "reason": "unsupported future contract version"
+      },
+      {
+        "example": {
+          "action": "delete",
+          "anchor_id": "9a71dd48d26a8826b83ae751d26419fe5f8b2c12ceee0b956e3491f4552c6b06",
+          "contract": "fabric-pin/1",
+          "created_utc": "2099-03-01T12:00:00+00:00",
+          "key": "rtlulongadd",
+          "kind": "import",
+          "label": "RtlULongAdd",
+          "newer_sha256": "5268ef3e15b1950176c752e1387da1e222e9e7b1200f6e12f3320c751fb3a0ff",
+          "note": "Check the overflow guard.\nThen the caller.",
+          "older_sha256": "6fa719c7e0703411e2bcac97bef6a2db260e0d5d5c164395d3bf9f79d8796676",
+          "role": "observed",
+          "seq": 1,
+          "side": "newer",
+          "subject": "pair:85de90cf17dfd60e8bbdc53eb26e677341f67f41c7a192916df6a3e5eb21b0f6",
+          "via": "related"
+        },
+        "match": "literal_error",
+        "reason": "actions are pin and unpin"
+      },
+      {
+        "example": {
+          "action": "pin",
+          "anchor_id": "9a71dd48d26a8826b83ae751d26419fe5f8b2c12ceee0b956e3491f4552c6b06",
+          "contract": "fabric-pin/1",
+          "created_utc": "2099-03-01T12:00:00+00:00",
+          "key": "rtlulongadd",
+          "kind": "import",
+          "label": "RtlULongAdd",
+          "newer_sha256": "5268ef3e15b1950176c752e1387da1e222e9e7b1200f6e12f3320c751fb3a0ff",
+          "note": "Check the overflow guard.\nThen the caller.",
+          "older_sha256": "6fa719c7e0703411e2bcac97bef6a2db260e0d5d5c164395d3bf9f79d8796676",
+          "role": "observed",
+          "seq": 0,
+          "side": "newer",
+          "subject": "pair:85de90cf17dfd60e8bbdc53eb26e677341f67f41c7a192916df6a3e5eb21b0f6",
+          "via": "related"
+        },
+        "match": "greater_than_equal",
+        "reason": "a sequence number starts at 1"
+      },
+      {
+        "example": {
+          "action": "pin",
+          "anchor_id": "9a71dd48d26a8826b83ae751d26419fe5f8b2c12ceee0b956e3491f4552c6b06",
+          "contract": "fabric-pin/1",
+          "created_utc": "2099-03-01T12:00:00+00:00",
+          "key": "someotherapi",
+          "kind": "import",
+          "label": "RtlULongAdd",
+          "newer_sha256": "5268ef3e15b1950176c752e1387da1e222e9e7b1200f6e12f3320c751fb3a0ff",
+          "note": "Check the overflow guard.\nThen the caller.",
+          "older_sha256": "6fa719c7e0703411e2bcac97bef6a2db260e0d5d5c164395d3bf9f79d8796676",
+          "role": "observed",
+          "seq": 1,
+          "side": "newer",
+          "subject": "pair:85de90cf17dfd60e8bbdc53eb26e677341f67f41c7a192916df6a3e5eb21b0f6",
+          "via": "related"
+        },
+        "match": "must be derived",
+        "reason": "the id is derived from the identity"
+      },
+      {
+        "example": {
+          "action": "pin",
+          "anchor_id": "9a71dd48d26a8826b83ae751d26419fe5f8b2c12ceee0b956e3491f4552c6b06",
+          "contract": "fabric-pin/1",
+          "created_utc": "2099-03-01T12:00:00+00:00",
+          "key": "rtlulongadd",
+          "kind": "import",
+          "label": "RtlULongAdd",
+          "newer_sha256": "5268ef3e15b1950176c752e1387da1e222e9e7b1200f6e12f3320c751fb3a0ff",
+          "note": "Check the overflow guard.\nThen the caller.",
+          "older_sha256": "6fa719c7e0703411e2bcac97bef6a2db260e0d5d5c164395d3bf9f79d8796676",
+          "role": "stated",
+          "seq": 1,
+          "side": "newer",
+          "subject": "pair:85de90cf17dfd60e8bbdc53eb26e677341f67f41c7a192916df6a3e5eb21b0f6",
+          "via": "related"
+        },
+        "match": "not allowed for this kind",
+        "reason": "the role is one the kind allows"
+      },
+      {
+        "example": {
+          "action": "pin",
+          "anchor_id": "9a71dd48d26a8826b83ae751d26419fe5f8b2c12ceee0b956e3491f4552c6b06",
+          "contract": "fabric-pin/1",
+          "created_utc": "2099-03-01T12:00:00+00:00",
+          "key": "rtlulongadd",
+          "kind": "import",
+          "label": "RtlULongAdd",
+          "newer_sha256": "5268ef3e15b1950176c752e1387da1e222e9e7b1200f6e12f3320c751fb3a0ff",
+          "note": "a\tb",
+          "older_sha256": "6fa719c7e0703411e2bcac97bef6a2db260e0d5d5c164395d3bf9f79d8796676",
+          "role": "observed",
+          "seq": 1,
+          "side": "newer",
+          "subject": "pair:85de90cf17dfd60e8bbdc53eb26e677341f67f41c7a192916df6a3e5eb21b0f6",
+          "via": "related"
+        },
+        "match": "one line of plain text",
+        "reason": "a note is plain text"
+      },
+      {
+        "example": {
+          "action": "pin",
+          "anchor_id": "9a71dd48d26a8826b83ae751d26419fe5f8b2c12ceee0b956e3491f4552c6b06",
+          "contract": "fabric-pin/1",
+          "created_utc": "2099-03-01T12:00:00+00:00",
+          "key": "rtlulongadd",
+          "kind": "import",
+          "label": "RtlULongAdd",
+          "newer_sha256": "5268ef3e15b1950176c752e1387da1e222e9e7b1200f6e12f3320c751fb3a0ff",
+          "note": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "older_sha256": "6fa719c7e0703411e2bcac97bef6a2db260e0d5d5c164395d3bf9f79d8796676",
+          "role": "observed",
+          "seq": 1,
+          "side": "newer",
+          "subject": "pair:85de90cf17dfd60e8bbdc53eb26e677341f67f41c7a192916df6a3e5eb21b0f6",
+          "via": "related"
+        },
+        "match": "too_long",
+        "reason": "a note is at most 2 KiB of characters"
+      },
+      {
+        "example": {
+          "action": "pin",
+          "anchor_id": "9a71dd48d26a8826b83ae751d26419fe5f8b2c12ceee0b956e3491f4552c6b06",
+          "contract": "fabric-pin/1",
+          "created_utc": "2099-03-01T12:00:00+00:00",
+          "key": "rtlulongadd",
+          "kind": "import",
+          "label": "RtlULongAdd",
+          "newer_sha256": "5268ef3e15b1950176c752e1387da1e222e9e7b1200f6e12f3320c751fb3a0ff",
+          "note": "ééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééé",
+          "older_sha256": "6fa719c7e0703411e2bcac97bef6a2db260e0d5d5c164395d3bf9f79d8796676",
+          "role": "observed",
+          "seq": 1,
+          "side": "newer",
+          "subject": "pair:85de90cf17dfd60e8bbdc53eb26e677341f67f41c7a192916df6a3e5eb21b0f6",
+          "via": "related"
+        },
+        "match": "at most 2048 bytes",
+        "reason": "a note is at most 2 KiB of UTF-8"
+      },
+      {
+        "example": {
+          "action": "unpin",
+          "anchor_id": "9a71dd48d26a8826b83ae751d26419fe5f8b2c12ceee0b956e3491f4552c6b06",
+          "contract": "fabric-pin/1",
+          "created_utc": "2099-03-01T12:05:00Z",
+          "key": "rtlulongadd",
+          "kind": "import",
+          "label": "RtlULongAdd",
+          "newer_sha256": "5268ef3e15b1950176c752e1387da1e222e9e7b1200f6e12f3320c751fb3a0ff",
+          "note": "still true",
+          "older_sha256": "6fa719c7e0703411e2bcac97bef6a2db260e0d5d5c164395d3bf9f79d8796676",
+          "role": "observed",
+          "seq": 2,
+          "side": "newer",
+          "subject": "pair:85de90cf17dfd60e8bbdc53eb26e677341f67f41c7a192916df6a3e5eb21b0f6",
+          "via": "analyst"
+        },
+        "match": "no note",
+        "reason": "an unpin carries no note"
+      },
+      {
+        "example": {
+          "action": "pin",
+          "anchor_id": "9a71dd48d26a8826b83ae751d26419fe5f8b2c12ceee0b956e3491f4552c6b06",
+          "contract": "fabric-pin/1",
+          "created_utc": "2099-03-01T12:00:00+00:00",
+          "key": "rtlulongadd",
+          "kind": "import",
+          "label": "RtlULongAdd",
+          "newer_sha256": "5268ef3e15b1950176c752e1387da1e222e9e7b1200f6e12f3320c751fb3a0ff",
+          "note": "Check the overflow guard.\nThen the caller.",
+          "older_sha256": "6fa719c7e0703411e2bcac97bef6a2db260e0d5d5c164395d3bf9f79d8796676",
+          "role": "observed",
+          "seq": 1,
+          "side": "newer",
+          "subject": "pair:85de90cf17dfd60e8bbdc53eb26e677341f67f41c7a192916df6a3e5eb21b0f6",
+          "via": "Related"
+        },
+        "match": "string_pattern_mismatch",
+        "reason": "where a pin came from is a slug"
+      },
+      {
+        "example": {
+          "action": "pin",
+          "anchor_id": "9a71dd48d26a8826b83ae751d26419fe5f8b2c12ceee0b956e3491f4552c6b06",
+          "contract": "fabric-pin/1",
+          "created_utc": "2099-03-01 12:00:00",
+          "key": "rtlulongadd",
+          "kind": "import",
+          "label": "RtlULongAdd",
+          "newer_sha256": "5268ef3e15b1950176c752e1387da1e222e9e7b1200f6e12f3320c751fb3a0ff",
+          "note": "Check the overflow guard.\nThen the caller.",
+          "older_sha256": "6fa719c7e0703411e2bcac97bef6a2db260e0d5d5c164395d3bf9f79d8796676",
+          "role": "observed",
+          "seq": 1,
+          "side": "newer",
+          "subject": "pair:85de90cf17dfd60e8bbdc53eb26e677341f67f41c7a192916df6a3e5eb21b0f6",
+          "via": "related"
+        },
+        "match": "string_pattern_mismatch",
+        "reason": "the time is UTC ISO 8601"
+      }
+    ],
+    "valid": [
+      {
+        "action": "pin",
+        "anchor_id": "9a71dd48d26a8826b83ae751d26419fe5f8b2c12ceee0b956e3491f4552c6b06",
+        "contract": "fabric-pin/1",
+        "created_utc": "2099-03-01T12:00:00+00:00",
+        "key": "rtlulongadd",
+        "kind": "import",
+        "label": "RtlULongAdd",
+        "newer_sha256": "5268ef3e15b1950176c752e1387da1e222e9e7b1200f6e12f3320c751fb3a0ff",
+        "note": "Check the overflow guard.\nThen the caller.",
+        "older_sha256": "6fa719c7e0703411e2bcac97bef6a2db260e0d5d5c164395d3bf9f79d8796676",
+        "role": "observed",
+        "seq": 1,
+        "side": "newer",
+        "subject": "pair:85de90cf17dfd60e8bbdc53eb26e677341f67f41c7a192916df6a3e5eb21b0f6",
+        "via": "related"
+      },
+      {
+        "action": "unpin",
+        "anchor_id": "9a71dd48d26a8826b83ae751d26419fe5f8b2c12ceee0b956e3491f4552c6b06",
+        "contract": "fabric-pin/1",
+        "created_utc": "2099-03-01T12:05:00Z",
+        "key": "rtlulongadd",
+        "kind": "import",
+        "label": "RtlULongAdd",
+        "newer_sha256": "5268ef3e15b1950176c752e1387da1e222e9e7b1200f6e12f3320c751fb3a0ff",
+        "note": "",
+        "older_sha256": "6fa719c7e0703411e2bcac97bef6a2db260e0d5d5c164395d3bf9f79d8796676",
+        "role": "observed",
+        "seq": 2,
+        "side": "newer",
+        "subject": "pair:85de90cf17dfd60e8bbdc53eb26e677341f67f41c7a192916df6a3e5eb21b0f6",
+        "via": "analyst"
+      }
+    ]
+  },
+  "Ref": {
+    "invalid": [
+      {
+        "example": {
+          "id": "tool-run-1",
+          "kind": "tool-evidence",
+          "pointer": null,
+          "sha256": null,
+          "unexpected_field": 1
+        },
+        "match": "extra_forbidden",
+        "reason": "extra fields are forbidden"
+      },
+      {
+        "example": {
+          "id": "tool-run-1",
+          "kind": "Tool Evidence",
+          "pointer": null,
+          "sha256": null
+        },
+        "match": "string_pattern_mismatch",
+        "reason": "a source kind is a slug"
+      },
+      {
+        "example": {
+          "id": "facts-1",
+          "kind": "advisory-facts",
+          "pointer": "vulnerabilities/0",
+          "sha256": "a40a0cde5964d0c92baf94211693ee15db9dcef166cd3a1b24626c9d4f0d8119"
+        },
+        "match": "string_pattern_mismatch",
+        "reason": "a pointer is an RFC 6901 pointer"
+      },
+      {
+        "example": {
+          "id": "facts-1",
+          "kind": "advisory-facts",
+          "pointer": "/vulnerabilities/0/notes/1",
+          "sha256": "ABC"
+        },
+        "match": "string_pattern_mismatch",
+        "reason": "hashes are lower-case hex"
+      }
+    ],
+    "valid": [
+      {
+        "id": "tool-run-1",
+        "kind": "tool-evidence",
+        "pointer": null,
+        "sha256": null
+      },
+      {
+        "id": "facts-1",
+        "kind": "advisory-facts",
+        "pointer": "/vulnerabilities/0/notes/1",
+        "sha256": "a40a0cde5964d0c92baf94211693ee15db9dcef166cd3a1b24626c9d4f0d8119"
+      }
+    ]
+  },
+  "Witness": {
+    "invalid": [
+      {
+        "example": {
+          "batch": "ue1",
+          "facets": [],
+          "input_sha256": null,
+          "label": "ParsePacket",
+          "origins": [
+            "D_ghidra"
+          ],
+          "producer": "ue",
+          "ref": null,
+          "source": "pairing",
+          "tool": null,
+          "tool_version": null,
+          "unexpected_field": 1,
+          "witness_id": "c560ad67902c50479df599817fe62e621ff87adc956ce8957dc5f5add48afbdf"
+        },
+        "match": "extra_forbidden",
+        "reason": "extra fields are forbidden"
+      },
+      {
+        "example": {
+          "batch": "ue1",
+          "facets": [],
+          "input_sha256": null,
+          "label": "ParsePacket",
+          "origins": [
+            "D_ghidra"
+          ],
+          "producer": "gui",
+          "ref": null,
+          "source": "pairing",
+          "tool": null,
+          "tool_version": null,
+          "witness_id": "c560ad67902c50479df599817fe62e621ff87adc956ce8957dc5f5add48afbdf"
+        },
+        "match": "literal_error",
+        "reason": "producers are a closed list"
+      },
+      {
+        "example": {
+          "batch": "ue1",
+          "facets": [],
+          "input_sha256": null,
+          "label": "ParsePacket",
+          "origins": [],
+          "producer": "ue",
+          "ref": null,
+          "source": "pairing",
+          "tool": null,
+          "tool_version": null,
+          "witness_id": "c560ad67902c50479df599817fe62e621ff87adc956ce8957dc5f5add48afbdf"
+        },
+        "match": "too_short",
+        "reason": "a witness names its origins"
+      },
+      {
+        "example": {
+          "batch": "cap1",
+          "facets": [
+            [
+              "dll",
+              "ntdll"
+            ],
+            [
+              "name",
+              "RtlULongAdd"
+            ]
+          ],
+          "input_sha256": "5268ef3e15b1950176c752e1387da1e222e9e7b1200f6e12f3320c751fb3a0ff",
+          "label": "RtlULongAdd",
+          "origins": [
+            "D_vivisect",
+            "D_bytes"
+          ],
+          "producer": "cap",
+          "ref": {
+            "id": "tool-run-1",
+            "kind": "tool-evidence",
+            "pointer": null,
+            "sha256": null
+          },
+          "source": "capa",
+          "tool": "capa",
+          "tool_version": "9.0.0",
+          "witness_id": "494d9c005bbf39b0926739762d2f8a5344c06581436bab2644ad8dae627d49be"
+        },
+        "match": "sorted and unique",
+        "reason": "origins are sorted"
+      },
+      {
+        "example": {
+          "batch": "ue1",
+          "facets": [],
+          "input_sha256": null,
+          "label": "a\nb",
+          "origins": [
+            "D_ghidra"
+          ],
+          "producer": "ue",
+          "ref": null,
+          "source": "pairing",
+          "tool": null,
+          "tool_version": null,
+          "witness_id": "c560ad67902c50479df599817fe62e621ff87adc956ce8957dc5f5add48afbdf"
+        },
+        "match": "one line of plain text",
+        "reason": "a label is one line of plain text"
+      },
+      {
+        "example": {
+          "batch": "cap1",
+          "facets": [
+            [
+              "name",
+              "x"
+            ],
+            [
+              "dll",
+              "y"
+            ]
+          ],
+          "input_sha256": "5268ef3e15b1950176c752e1387da1e222e9e7b1200f6e12f3320c751fb3a0ff",
+          "label": "RtlULongAdd",
+          "origins": [
+            "D_vivisect"
+          ],
+          "producer": "cap",
+          "ref": {
+            "id": "tool-run-1",
+            "kind": "tool-evidence",
+            "pointer": null,
+            "sha256": null
+          },
+          "source": "capa",
+          "tool": "capa",
+          "tool_version": "9.0.0",
+          "witness_id": "494d9c005bbf39b0926739762d2f8a5344c06581436bab2644ad8dae627d49be"
+        },
+        "match": "sorted and unique",
+        "reason": "facets are sorted by name"
+      },
+      {
+        "example": {
+          "batch": "ue1",
+          "facets": [],
+          "input_sha256": null,
+          "label": "ParsePacket",
+          "origins": [
+            "D_ghidra"
+          ],
+          "producer": "ue",
+          "ref": null,
+          "source": "pairing",
+          "tool": null,
+          "tool_version": null,
+          "witness_id": "xyz"
+        },
+        "match": "string_pattern_mismatch",
+        "reason": "ids are SHA-256 hex"
+      }
+    ],
+    "valid": [
+      {
+        "batch": "ue1",
+        "facets": [],
+        "input_sha256": null,
+        "label": "ParsePacket",
+        "origins": [
+          "D_ghidra"
+        ],
+        "producer": "ue",
+        "ref": null,
+        "source": "pairing",
+        "tool": null,
+        "tool_version": null,
+        "witness_id": "c560ad67902c50479df599817fe62e621ff87adc956ce8957dc5f5add48afbdf"
+      },
+      {
+        "batch": "cap1",
+        "facets": [
+          [
+            "dll",
+            "ntdll"
+          ],
+          [
+            "name",
+            "RtlULongAdd"
+          ]
+        ],
+        "input_sha256": "5268ef3e15b1950176c752e1387da1e222e9e7b1200f6e12f3320c751fb3a0ff",
+        "label": "RtlULongAdd",
+        "origins": [
+          "D_vivisect"
+        ],
+        "producer": "cap",
+        "ref": {
+          "id": "tool-run-1",
+          "kind": "tool-evidence",
+          "pointer": null,
+          "sha256": null
+        },
+        "source": "capa",
+        "tool": "capa",
+        "tool_version": "9.0.0",
+        "witness_id": "494d9c005bbf39b0926739762d2f8a5344c06581436bab2644ad8dae627d49be"
+      },
+      {
+        "batch": "cap1",
+        "facets": [
+          [
+            "namespace",
+            "host-interaction/process/create"
+          ],
+          [
+            "scope",
+            "function"
+          ]
+        ],
+        "input_sha256": "5268ef3e15b1950176c752e1387da1e222e9e7b1200f6e12f3320c751fb3a0ff",
+        "label": "create process",
+        "origins": [
+          "D_vivisect"
+        ],
+        "producer": "cap",
+        "ref": {
+          "id": "facts-1",
+          "kind": "advisory-facts",
+          "pointer": "/vulnerabilities/0/notes/1",
+          "sha256": "a40a0cde5964d0c92baf94211693ee15db9dcef166cd3a1b24626c9d4f0d8119"
+        },
+        "source": "capa",
+        "tool": null,
+        "tool_version": null,
+        "witness_id": "0aa26695d92ff1350b9a1968f106ce091e1170519d6579d1b13a18451d506d32"
+      }
+    ]
+  }
+}

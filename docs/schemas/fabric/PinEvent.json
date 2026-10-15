@@ -1,0 +1,135 @@
+{
+  "$id": "https://patchtrace.local/schemas/fabric/1/PinEvent.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "Body of an `anchor-pin` row: one analyst action on one anchor. The anchor is named by its identity and label, so\nthe event says what was pinned even after every batch that offered it is gone, and by the project's older and newer\nhashes, so it says which way round the files were compared.",
+  "properties": {
+    "action": {
+      "enum": [
+        "pin",
+        "unpin"
+      ],
+      "title": "Action",
+      "type": "string"
+    },
+    "anchor_id": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Anchor Id",
+      "type": "string"
+    },
+    "contract": {
+      "const": "fabric-pin/1",
+      "default": "fabric-pin/1",
+      "title": "Contract",
+      "type": "string"
+    },
+    "created_utc": {
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]{1,6})?(\\+00:00|Z)$",
+      "title": "Created Utc",
+      "type": "string"
+    },
+    "key": {
+      "maxLength": 200,
+      "minLength": 1,
+      "title": "Key",
+      "type": "string"
+    },
+    "kind": {
+      "enum": [
+        "function",
+        "string",
+        "import",
+        "capability",
+        "rule",
+        "build_fact",
+        "advisory_phrase",
+        "cve",
+        "kb",
+        "cwe"
+      ],
+      "title": "Kind",
+      "type": "string"
+    },
+    "label": {
+      "maxLength": 200,
+      "minLength": 1,
+      "title": "Label",
+      "type": "string"
+    },
+    "newer_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Newer Sha256",
+      "type": "string"
+    },
+    "note": {
+      "default": "",
+      "maxLength": 2048,
+      "title": "Note",
+      "type": "string"
+    },
+    "older_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Older Sha256",
+      "type": "string"
+    },
+    "role": {
+      "enum": [
+        "observed",
+        "stated",
+        "hint"
+      ],
+      "title": "Role",
+      "type": "string"
+    },
+    "seq": {
+      "minimum": 1,
+      "title": "Seq",
+      "type": "integer"
+    },
+    "side": {
+      "enum": [
+        "older",
+        "newer",
+        "both",
+        "none"
+      ],
+      "title": "Side",
+      "type": "string"
+    },
+    "subject": {
+      "anyOf": [
+        {
+          "maxLength": 200,
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Subject"
+    },
+    "via": {
+      "pattern": "^[a-z0-9-]{1,48}$",
+      "title": "Via",
+      "type": "string"
+    }
+  },
+  "required": [
+    "seq",
+    "action",
+    "anchor_id",
+    "kind",
+    "key",
+    "side",
+    "role",
+    "label",
+    "via",
+    "older_sha256",
+    "newer_sha256",
+    "created_utc"
+  ],
+  "title": "PinEvent",
+  "type": "object"
+}

@@ -1,14 +1,19 @@
-"""SPEC-31 pipeline (01 s4-s5): inputs -> published result in S0 mode (no ProgramIR).
+"""SPEC-31 pipeline (01 s4-s5): inputs -> published result, in S0 mode (stored engine outputs only) or in IR mode (the
+same plus the ladder and the IR channels, when a ProgramIR is placed for both sides).
 
 Everything that touches SQLite stays on the owner thread (the CLI main thread, later the GUI thread); `execute` may
 run on a plain thread (S4's `UnifiedRunThread`):
 
-* `make_plan` / `prepare` (owner, read-only): the completed Ghidriff run, the PE layouts, the stored secondary sets and
-  the analyst's corrections give the immutable `Plan` / `UnifiedRequest` and the `result_id` BEFORE the run.
+* `make_plan` / `prepare` (owner, read-only): the completed Ghidriff run, the PE layouts, the stored secondary sets,
+  the analyst's corrections and the placed sidecars (found by key and verified by the worker, never extracted here)
+  give the immutable `Plan` / `UnifiedRequest` and the `result_id` BEFORE the run.
 * `cached` (owner): a verified result with that id is reused and recorded as a `cached` run.
 * `execute` (any thread, no SQLite): private directory, then the worker child through `jobs.run_process` with C3's
   `worker_argv()`, its allow-listed environment, the L-42 memory cap and C3's OOM classification, or the same code in
-  process (`compute.run_request`). It returns a `WorkerOutput` value and never raises for a worker failure.
+  process (`compute.run_request`). In IR mode the pairs worth a decompile come back with the report: the extractor
+  child (never the memory-capped worker, whose limit a JVM would inherit) decompiles them on both sides over the
+  retained programs, and a second worker call judges those rows again (S3b). It returns a `WorkerOutput` value and
+  never raises for a worker failure; a decompile that cannot run only adds a limitation.
 * `publish` (owner): re-derive the identity from what the worker observed, verify every part of the staged result,
   publish the pointer row and record the `unified-run` row. A failure never replaces the current result.
 
@@ -27,7 +32,7 @@ import sys
 import tempfile
 import threading
 import time
-from collections.abc import Callable, Iterable, Iterator
+from collections.abc import Callable, Iterable, Iterator, Mapping
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from pathlib import Path
@@ -36,6 +41,7 @@ from typing import Literal
 from pydantic import ValidationError
 
 from ..artifact_bytes import ArtifactBytesError, VerifiedArtifactReader
+from ..backend import BackendConfig
 from ..enrichment.contracts import EnrichmentError
 from ..enrichment.storage import EnrichmentStore, Guard
 from ..ingestion import safe_path
@@ -49,18 +55,23 @@ from ..secondary.store import current_sets
 from . import keys, store
 from .addressing import AddressMap, PeLayout, layout_from_reader
 from .compute import Identity, plan_identity, run_request
-from .contracts import Counts, StageRecord, UnifiedResultManifest, UnifiedRun
+from .contracts import Counts, ProgramIrManifest, StageRecord, UnifiedResultManifest, UnifiedRun
 from .exchange import (
     ALL_SOURCES,
     StageEvent,
     WorkerFile,
+    WorkerIr,
     WorkerLayout,
     WorkerReport,
     WorkerRequest,
     fail,
     read_report,
+    write_refacts,
 )
-from .limits import DEFAULT_LIMITS, ERROR_CODES, UnifiedError, UnifiedLimits
+from .extract.runner import DecompileJob, ExtractProgress, decompile_side
+from .ir.pe_tables import read_pe_tables
+from .ir.place import list_ir
+from .limits import DEFAULT_LIMITS, ERROR_CODES, Budget, BudgetExhausted, UnifiedError, UnifiedLimits
 from .registry import REGISTRY, Registry
 from .sources import (
     GhidriffRun,
@@ -74,13 +85,15 @@ from .sources import (
 from .sources.ghidriff import MAX_RAW_BYTES
 from .sources.secondary import write_loaded
 
-__all__ = ['ALL_SOURCES', 'Plan', 'RunReport', 'StageEvent', 'UnifiedOptions', 'UnifiedRequest', 'WorkerOutput',
-           'cached', 'execute', 'load_current', 'make_plan', 'prepare', 'publish', 'recent_runs', 'run_unified',
-           'total_ram_bytes']
+__all__ = ['ALL_SOURCES', 'PlacedIr', 'Plan', 'RunReport', 'StageEvent', 'UnifiedOptions', 'UnifiedRequest',
+           'WorkerOutput', 'cached', 'execute', 'load_current', 'make_plan', 'prepare', 'publish', 'recent_runs',
+           'run_unified', 'total_ram_bytes']
 
 SECONDARY_ENGINES = ('bindiff', 'rz-diff')
-MODE = 's0'
+MODE_S0, MODE_IR = 's0', 'ir'
 RUN_STATUS = {'PT-UNIFIED-CANCEL': 'cancelled', 'PT-UNIFIED-TIMEOUT': 'timeout', 'PT-UNIFIED-UNSUPPORTED': 'unsupported'}
+IR_ASYMMETRIC = ('The ProgramIR of the two sides was produced differently (producer, mode, options or symbols), so '
+                 'the result uses stored engine outputs only.')
 
 
 @dataclass(frozen=True)
@@ -91,6 +104,20 @@ class UnifiedOptions:
     refresh: bool = False                   # recompute even when a verified result with this id exists
     total_ram_bytes: int | None = None      # None: probe (POSIX); unknown -> the absolute L-42 cap
     runner: Callable = field(default=run_process, compare=False)
+    use_ir: bool = True                     # False = S0 mode even when a ProgramIR is placed (`--no-extract`, B-00)
+    residual: bool = True                   # False = backup B-07: the ladder without the residual passes P16-P19
+    decompile: bool = True                  # False = no on-demand decompile of review pairs (`--no-decompile`, B-08)
+    backend: BackendConfig | None = None    # the configured Python and Ghidra; without them nothing can be decompiled
+
+
+@dataclass(frozen=True)
+class PlacedIr:
+    """One placed ProgramIR sidecar a plan uses: where it is and what the result key records of it. Found by the
+    cheap manifest check of `ir.place.list_ir`; the worker verifies the database before it reads a row."""
+    directory: Path
+    ir_key: str
+    content_digest: str
+    functions: int
 
 
 @dataclass(frozen=True)
@@ -111,6 +138,9 @@ class Plan:
     secondary: tuple[LoadedSecondary, ...]
     manual: tuple[SnapshotMatch, ...]
     identity: Identity | None = None
+    ir: tuple[PlacedIr, PlacedIr] | None = None     # older, newer; None = S0 mode
+    ir_note: str | None = None                      # why placed sidecars were not used (a warning of the report)
+    residual: bool = True
 
     @property
     def result_id(self) -> str:
@@ -119,6 +149,13 @@ class Plan:
     @property
     def config_digest(self) -> str:
         return self.identity.config_digest  # type: ignore[union-attr]
+
+    @property
+    def mode(self) -> str:
+        return MODE_S0 if self.ir is None else MODE_IR
+
+    def ir_digests(self) -> tuple[str, str] | None:
+        return None if self.ir is None else (self.ir[0].content_digest, self.ir[1].content_digest)
 
     def addr(self) -> AddressMap:
         return AddressMap(self.older_layout, self.newer_layout)
@@ -146,6 +183,11 @@ class UnifiedRequest:
     started_utc: str
     started_monotonic: float
     prepare_ms: int
+    sections: tuple[tuple[tuple[int, int], ...], tuple[tuple[int, int], ...]] | None = None   # PE sections, IR mode
+    decompile: bool = True
+    backend: BackendConfig | None = None
+    artifacts: Mapping[str, Path] = field(default_factory=dict)       # side -> verified artifact path
+    gzf_recorded: Mapping[str, str] = field(default_factory=dict)     # side -> SHA-256 the run's settings recorded
 
 
 @dataclass(frozen=True)
@@ -157,6 +199,8 @@ class WorkerOutput:
     stderr_tail: str = ''
     peak_rss_bytes: int | None = None
     compute_ms: int = 0
+    stages: tuple[StageRecord, ...] = ()     # stages of their own between compute and verify (the decompile)
+    notes: tuple[str, ...] = ()              # limitations the owner added to the staged manifest
 
 
 @dataclass(frozen=True)
@@ -172,7 +216,7 @@ class RunReport:
     warnings: tuple[str, ...]
     directory: Path
     result_status: Literal['complete', 'partial']
-    mode: str = MODE
+    mode: str = MODE_S0
 
 
 def total_ram_bytes() -> int | None:
@@ -264,8 +308,35 @@ def _stored_sets(service, sources: tuple[str, ...]) -> tuple[LoadedSecondary, ..
     return tuple(LoadedSecondary(entry.id, match_set) for entry, match_set in rows if match_set.engine in wanted)
 
 
+def _producer(manifest: ProgramIrManifest) -> tuple:
+    """What F1 (05 s3) wants equal on both sides: producer, mode, analysis options and symbol policy."""
+    p = manifest.producer
+    return p.kind, p.mode, p.ghidra, p.analysis_options_digest, p.symbols
+
+
+def _find_ir(root: Path, run_id: str, older: tuple[str, PeLayout],
+             newer: tuple[str, PeLayout]) -> tuple[tuple[PlacedIr, PlacedIr] | None, str | None]:
+    """The placed sidecars of this run for this pair: of the right artifact and image layout, produced the same way on
+    both sides (F1); the newest pair wins (ties: the smaller key), so the choice is a function of what is stored.
+    Returns `(pair, None)`, `(None, None)` when a side has none, or `(None, note)` when both have some but never the
+    same way (the run then stays in S0 mode and the report says why)."""
+    def candidates(sha256: str, layout: PeLayout):
+        usable = [(d, m) for d, m in list_ir(root, run_id)
+                  if m.artifact_sha256 == sha256 and (m.image_base, m.size_of_image) == (layout.image_base,
+                                                                                         layout.size_of_image)]
+        return sorted(usable, key=lambda item: (item[1].created_utc, item[1].ir_key), reverse=True)
+    first, second = candidates(*older), candidates(*newer)
+    if not first or not second:
+        return None, None
+    for a in first:
+        for b in second:
+            if _producer(a[1]) == _producer(b[1]):
+                return tuple(PlacedIr(d, m.ir_key, m.content_digest, m.counts.functions) for d, m in (a, b)), None
+    return None, IR_ASYMMETRIC
+
+
 def make_plan(service, sources: Iterable[str] = ALL_SOURCES, *, limits: UnifiedLimits = DEFAULT_LIMITS,
-              registry: Registry = REGISTRY) -> Plan:
+              registry: Registry = REGISTRY, use_ir: bool = True, residual: bool = True) -> Plan:
     """Owner thread, read-only. Raises `UnifiedError(INPUT)` when there is nothing to build a result from."""
     chosen = _validate_sources(sources)
     project = service.project
@@ -277,11 +348,31 @@ def make_plan(service, sources: Iterable[str] = ALL_SOURCES, *, limits: UnifiedL
     manual = snapshot_from_project(project, run.id, limits, manual_only=True)
     secondary = _stored_sets(service, chosen)
     sides = {a.side: a.sha256 for a in project.artifacts}
+    placed, note = (_find_ir(service.root, run.id, (sides['older'], older), (sides['newer'], newer)) if use_ir
+                    else (None, None))
     base = Plan(project_id=project.id, revision=project.revision, run_id=run.id, raw_sha256=run.raw_sha256,
                 raw_path=raw_path, raw_status=raw_status, backend_version=str(run.backend_version)[:64],
                 older_sha256=sides['older'], newer_sha256=sides['newer'], older_layout=older, newer_layout=newer,
-                sources=chosen, secondary=secondary, manual=manual)
-    return dataclasses.replace(base, identity=plan_identity(base.inputs(), base.addr(), chosen, registry, limits))
+                sources=chosen, secondary=secondary, manual=manual, ir=placed, ir_note=note, residual=residual)
+    identity = plan_identity(base.inputs(), base.addr(), chosen, registry, limits, ir=base.ir_digests(),
+                             residual=residual)
+    return dataclasses.replace(base, identity=identity)
+
+
+def _sections(service) -> tuple[tuple[tuple[int, int], ...], tuple[tuple[int, int], ...]]:
+    """The PE sections of the two verified artifacts as (start rva, end rva): DATA-MAP/1 needs them for its region
+    shift. Read only for a run that uses ProgramIR."""
+    found: dict[str, tuple[tuple[int, int], ...]] = {}
+    for artifact in service.project.artifacts:
+        try:
+            reader = VerifiedArtifactReader.open_artifact(artifact, service.root)
+        except ArtifactBytesError:
+            raise fail('PT-UNIFIED-INPUT', 'artifact-unreadable') from None
+        try:
+            found[artifact.side] = tuple((s.start, s.end) for s in read_pe_tables(reader).sections)
+        finally:
+            reader.close()
+    return found['older'], found['newer']
 
 
 def prepare(service, options: UnifiedOptions | None = None, *, limits: UnifiedLimits = DEFAULT_LIMITS,
@@ -290,12 +381,21 @@ def prepare(service, options: UnifiedOptions | None = None, *, limits: UnifiedLi
     options = options or UnifiedOptions()
     timeout = limits.checked_timeout(options.timeout_s, kind='worker')
     started_utc, started = _now(), time.monotonic()
-    plan = make_plan(service, options.sources, limits=limits, registry=registry)
+    plan = make_plan(service, options.sources, limits=limits, registry=registry, use_ir=options.use_ir,
+                     residual=options.residual)
     snapshot = snapshot_from_project(service.project, plan.run_id, limits)
     ram = options.total_ram_bytes if options.total_ram_bytes is not None else total_ram_bytes()
+    run = _completed_run(service.project)
+    recorded = (run.settings or {}).get('gzf') if run is not None else None
     return UnifiedRequest(root=service.root, plan=plan, snapshot=snapshot, timeout_s=timeout,
                           isolate=options.isolate, refresh=options.refresh, total_ram_bytes=ram,
-                          started_utc=started_utc, started_monotonic=started, prepare_ms=_ms(started))
+                          started_utc=started_utc, started_monotonic=started, prepare_ms=_ms(started),
+                          sections=None if plan.ir is None else _sections(service), decompile=options.decompile,
+                          backend=options.backend,
+                          artifacts={a.side: safe_path(service.root, a.relative_path)
+                                     for a in service.project.artifacts},
+                          gzf_recorded={side: info['sha256'] for side, info in (recorded or {}).items()
+                                        if isinstance(info, dict) and isinstance(info.get('sha256'), str)})
 
 
 # --- execute (no SQLite; any thread) ------------------------------------------------------------------------------
@@ -321,10 +421,20 @@ def _write_request(request: UnifiedRequest, private: Path) -> Path:
         snapshot=WorkerFile(path=str(snapshot_path), sha256=digest, size=size), snapshot_lines=lines,
         secondary=tuple(files), sources=plan.sources,  # type: ignore[arg-type]
         report_path=str(private / 'report.json'), progress_path=str(private / 'progress.json'),
-        budget_seconds=request.timeout_s)
+        budget_seconds=request.timeout_s, residual=plan.residual, **_ir_fields(request))
     request_path = private / 'request.json'
     request_path.write_text(req.model_dump_json(), encoding='utf-8')
     return request_path
+
+
+def _ir_fields(request: UnifiedRequest) -> dict:
+    ir = request.plan.ir
+    if ir is None:
+        return {}
+    sections = request.sections or ((), ())
+    return {f'ir_{side}': WorkerIr(directory=str(placed.directory), ir_key=placed.ir_key,
+                                   content_digest=placed.content_digest, sections=sections[index])
+            for index, (side, placed) in enumerate(zip(('older', 'newer'), ir, strict=True))}
 
 
 def _error_from_report(report: WorkerReport) -> UnifiedError:
@@ -337,7 +447,8 @@ def _exit_reason(returncode: int) -> str:
 
 
 def _spawn(request: UnifiedRequest, request_path: Path, staged: Path, private: Path, cancel: threading.Event,
-           emit, runner, limits: UnifiedLimits) -> tuple[WorkerReport | None, UnifiedError | None, str, int | None]:
+           emit, runner, limits: UnifiedLimits,
+           report_name: str = 'report.json') -> tuple[WorkerReport | None, UnifiedError | None, str, int | None]:
     """Run `patchtrace unified _worker` as a child: C3's argv and environment recipe, L-42 cap, C3's OOM rule."""
     memory = limits.worker_memory_cap(request.total_ram_bytes)
     argv = [*worker_argv(), 'unified', '_worker', '--request', str(request_path), '--result-dir', str(staged)]
@@ -370,7 +481,7 @@ def _spawn(request: UnifiedRequest, request_path: Path, staged: Path, private: P
         return None, fail('PT-UNIFIED-CANCEL', 'cancelled'), tail, peak
     if res.reason == 'timeout':
         return None, fail('PT-UNIFIED-TIMEOUT', 'worker-deadline'), tail, peak
-    report = read_report(private / 'report.json')
+    report = read_report(private / report_name)
     if report is not None and not report.ok:
         return None, _error_from_report(report), tail, peak
     if res.returncode == 0 and report is not None:
@@ -386,6 +497,97 @@ def _discard(path: Path | None) -> None:
         shutil.rmtree(path, ignore_errors=True)
 
 
+def _file_sha256(path: Path) -> str:
+    digest = hashlib.sha256()
+    with open(path, 'rb') as handle:
+        for chunk in iter(lambda: handle.read(1 << 22), b''):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
+def _retained_gzf(request: UnifiedRequest, side: str) -> tuple[Path, str] | str:
+    """The program Ghidriff left for this side (`runs/<run>/unified/gzf/<side>.gzf`, 03 s8) and its SHA-256, or the
+    reason it cannot be used: `no-gzf` (absent, a link, not a file) or `gzf-changed` (the run recorded another hash)."""
+    try:
+        path = safe_path(request.root, f'runs/{request.plan.run_id}/unified/gzf/{side}.gzf')
+        if path.is_symlink() or not path.is_file():
+            return 'no-gzf'
+        digest = _file_sha256(path)
+    except (OSError, ValueError):
+        return 'no-gzf'
+    recorded = request.gzf_recorded.get(side)
+    return 'gzf-changed' if recorded is not None and recorded != digest else (path, digest)
+
+
+def _decompile(request: UnifiedRequest, pairs: tuple[tuple[int, int], ...], cancel: threading.Event, emit, runner,
+               limits: UnifiedLimits) -> tuple[dict[str, dict[int, str]], str | None]:
+    """The C text of the chosen functions, per side and RVA, from one extractor child per side (05 s2.8). The reason
+    is set when no text could be had (`no-backend`, `no-gzf`, `gzf-changed`, `timeout` or the extractor's slug); a
+    cancel is not a reason, it ends the run."""
+    texts: dict[str, dict[int, str]] = {'older': {}, 'newer': {}}
+    if request.backend is None:
+        return texts, 'no-backend'
+    programs = {side: _retained_gzf(request, side) for side in texts}
+    unusable = next((found for found in programs.values() if isinstance(found, str)), None)
+    if unusable is not None:
+        return texts, unusable
+    sha = {'older': request.plan.older_sha256, 'newer': request.plan.newer_sha256}
+    rvas = {'older': sorted({o for o, _ in pairs}), 'newer': sorted({n for _, n in pairs})}
+
+    def progress(event: ExtractProgress) -> None:
+        if emit is not None:
+            emit(StageEvent('decompile', event.done, event.total))
+    for side in texts:
+        path, digest = programs[side]
+        job = DecompileJob(side=side, artifact_path=request.artifacts[side], artifact_sha256=sha[side],
+                           backend=request.backend, gzf_path=path, gzf_sha256=digest, rvas=tuple(rvas[side]),
+                           limits=limits, total_ram_bytes=request.total_ram_bytes)
+        try:
+            output = decompile_side(job, Budget(None, cancel), progress, runner=runner)
+        except BudgetExhausted as exc:
+            if exc.code == 'PT-UNIFIED-CANCEL':
+                raise
+            return texts, 'timeout'
+        except UnifiedError as exc:
+            return texts, exc.reason or 'extract-failed'
+        try:
+            texts[side] = {rva: rec.code for rva, rec in output.records.items()
+                           if rec.status == 'ok' and rec.code is not None}
+        finally:
+            output.cleanup()
+    return texts, None
+
+
+def _decompile_stage(started: float, pairs, texts, reason: str | None) -> tuple[StageRecord, tuple[str, ...]]:
+    """The stage record and the limitations of one decompile attempt (informational: the status stays)."""
+    ms = _ms(started)
+    if reason is not None:
+        status = 'skipped' if reason in ('no-backend', 'no-gzf', 'gzf-changed') else 'failed'
+        return StageRecord(stage='decompile', status=status, duration_ms=ms, reason=reason), (
+            f'decompile-skipped:{reason}',)
+    missing = sum(1 for o, n in pairs if o not in texts['older'] or n not in texts['newer'])
+    if missing:
+        return StageRecord(stage='decompile', status='partial', duration_ms=ms), (f'decompile-failed:{missing}',)
+    return StageRecord(stage='decompile', status='ok', duration_ms=ms), ()
+
+
+def _judge_again(request: UnifiedRequest, report: WorkerReport, texts, request_path: Path, staged: Path,
+                 private: Path, cancel, emit, runner, limits, registry) -> tuple[WorkerReport, str, int | None]:
+    """Second worker call: the staged result is read back and the pairs with a text on both sides are judged again."""
+    refacts = write_refacts(private / 'refacts.json', pairs=report.refacts, texts=texts)
+    again = WorkerRequest.model_validate_json(request_path.read_text(encoding='utf-8')).model_copy(
+        update={'refacts': refacts, 'report_path': str(private / 'report-refacts.json')})
+    second = private / 'request-refacts.json'
+    second.write_text(again.model_dump_json(), encoding='utf-8')
+    if request.isolate:
+        done, error, tail, peak = _spawn(request, second, staged, private, cancel, emit, runner, limits,
+                                         'report-refacts.json')
+        if error is not None or done is None:
+            raise error or fail('PT-UNIFIED-INTERNAL', 'worker-no-report')
+        return done, tail, peak
+    return run_request(second, staged, cancel=cancel, emit=emit, limits=limits, registry=registry), '', None
+
+
 def execute(request: UnifiedRequest, cancel: threading.Event | None = None,
             emit: Callable[[StageEvent], None] | None = None, *, runner: Callable = run_process,
             limits: UnifiedLimits = DEFAULT_LIMITS, registry: Registry = REGISTRY) -> WorkerOutput:
@@ -396,6 +598,7 @@ def execute(request: UnifiedRequest, cancel: threading.Event | None = None,
     started = time.monotonic()
     private = staged = None
     report, error, tail, peak = None, None, '', None
+    stage, notes, decompile_ms = None, (), 0
     try:
         if request.isolate and (limits is not DEFAULT_LIMITS or registry is not REGISTRY):
             raise fail('PT-UNIFIED-INPUT', 'custom-config-in-process-only')  # the child always uses the defaults
@@ -406,6 +609,16 @@ def execute(request: UnifiedRequest, cancel: threading.Event | None = None,
             report, error, tail, peak = _spawn(request, request_path, staged, private, cancel, emit, runner, limits)
         else:
             report = run_request(request_path, staged, cancel=cancel, emit=emit, limits=limits, registry=registry)
+        if error is None and report is not None and report.refacts and request.decompile:
+            began = time.monotonic()
+            texts, reason = _decompile(request, report.refacts, cancel, emit, runner, limits)
+            stage, notes = _decompile_stage(began, report.refacts, texts, reason)
+            decompile_ms = stage.duration_ms
+            if reason is None and any(o in texts['older'] and n in texts['newer'] for o, n in report.refacts):
+                report, tail, peak = _judge_again(request, report, texts, request_path, staged, private, cancel, emit,
+                                                  runner, limits, registry)
+            if notes:
+                store.add_limitations(staged, notes)
     except UnifiedError as exc:
         error = exc
     except MemoryError:
@@ -418,13 +631,14 @@ def execute(request: UnifiedRequest, cancel: threading.Event | None = None,
         _discard(staged)
         return WorkerOutput(None, error or fail('PT-UNIFIED-INTERNAL', 'worker-no-report'), None, tail, peak,
                             _ms(started))
-    return WorkerOutput(report, None, staged, tail, peak, _ms(started))
+    return WorkerOutput(report, None, staged, tail, peak, _ms(started) - decompile_ms,
+                        stages=() if stage is None else (stage,), notes=notes)
 
 
 # --- publish (owner thread) ------------------------------------------------------------------------------------------
 
 def _provenance(request: UnifiedRequest, config_digest: str | None) -> dict[str, str]:
-    out = {'mode': MODE, 'engine_version': keys.ENGINE_VERSION, 'sources': ','.join(request.plan.sources),
+    out = {'mode': request.plan.mode, 'engine_version': keys.ENGINE_VERSION, 'sources': ','.join(request.plan.sources),
            'worker': 'child' if request.isolate else 'in-process',
            'python': '.'.join(str(n) for n in sys.version_info[:3]), 'registry': REGISTRY.digest()[:16]}
     if config_digest:
@@ -457,8 +671,8 @@ def _report(status: str, manifest: UnifiedResultManifest, directory: Path, run_i
     return RunReport(status=status, result_id=manifest.result_id, run_id=run_id,  # type: ignore[arg-type]
                      counts=manifest.counts, limitations=manifest.limitations,
                      sources=tuple(sorted({s.source for s in manifest.sources})), selected=plan.sources,
-                     stages=tuple(stages), warnings=warnings, directory=Path(directory),
-                     result_status=manifest.status)
+                     stages=tuple(stages), warnings=(*((plan.ir_note,) if plan.ir_note else ()), *warnings),
+                     directory=Path(directory), result_status=manifest.status, mode=plan.mode)
 
 
 def cached(service, request: UnifiedRequest, *, enrichment: EnrichmentStore | None = None,
@@ -491,8 +705,9 @@ def publish(service, request: UnifiedRequest, output: WorkerOutput, *, enrichmen
         report = output.report
         stages.append(StageRecord(stage='compute', status='partial' if report.status == 'partial' else 'ok',
                                   duration_ms=output.compute_ms))
+        stages.extend(output.stages)
         expected = plan_identity(plan.inputs(raw_status=report.raw_status or plan.raw_status), plan.addr(),
-                                 plan.sources, REGISTRY, limits)
+                                 plan.sources, REGISTRY, limits, ir=plan.ir_digests(), residual=plan.residual)
         if report.result_id != expected.result_id:
             raise fail('PT-UNIFIED-STORE', 'result-id-mismatch')
         t = time.monotonic()
@@ -501,7 +716,8 @@ def publish(service, request: UnifiedRequest, output: WorkerOutput, *, enrichmen
         t = time.monotonic()
         published = store.publish_result(enrichment, output.staged, guard=plan.guard(expected.result_id),
                                          current=_current_guard(service.project, expected.result_id),
-                                         revision=service.project.revision, limits=limits)
+                                         revision=service.project.revision, limits=limits,
+                                         upgrade=bool(output.stages))
         stages.append(_stage('publish', t))
     except UnifiedError as error:
         _discard(output.staged)

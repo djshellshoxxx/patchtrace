@@ -1,0 +1,135 @@
+name: Unified corpus gates (SPEC-31 S6, advisory)
+# Dispatch only and advisory: nothing here gates a merge, and the unified flag stays off until G-U1..G-U6 pass (U-05).
+# Fetches the pinned Tier R sources (never executed), builds the release pairs, the A/A pairs and the planted mutants,
+# runs the G-U5 bench on Linux and Windows, then writes the gate report. Gates that need S3 stay pending in the report.
+# Artifacts are reports and label documents only, never images. Results belong in docs/qa.md with the run URL.
+on:
+  workflow_dispatch:
+    inputs:
+      pairs:
+        description: Case card ids to build, comma-separated, or all
+        default: all
+        type: string
+      per_class:
+        description: Planted mutants per class (G-U2 needs 20 or more)
+        default: '24'
+        type: string
+      bench_sizes:
+        description: Function counts for the G-U5 bench (L-35 defines 10000 and 60000)
+        default: '10000,60000'
+        type: string
+permissions:
+  contents: read
+jobs:
+  corpus:
+    name: corpus build, A/A, mutants, bench and integrity tests (Linux)
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    env:
+      QT_QPA_PLATFORM: offscreen
+      PATCHTRACE_KA_MINGW_GCC: /usr/bin/x86_64-w64-mingw32-gcc-win32
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Keep the corpus store outside the work tree
+        run: echo "PATCHTRACE_CALIB_ROOT=$RUNNER_TEMP/calib" >> "$GITHUB_ENV"
+      - name: Install the compilers and LLVM tools
+        run: sudo apt-get update && sudo apt-get install -y --no-install-recommends gcc-mingw-w64-x86-64-win32 clang lld llvm libegl1 libopengl0 libgl1
+      - run: "python -m pip install --only-binary=:all: -e '.[dev]'"
+      - name: Toolchain report (exit 3 means BLOCKED)
+        run: python -m tools.unified.corpus toolchain
+      - name: Offline catalogue check
+        run: python -m tools.unified.corpus check
+      - name: Fetch the pinned sources and verify their digests
+        env:
+          PAIRS: ${{ inputs.pairs }}
+        run: python -m tools.unified.corpus fetch --pairs "$PAIRS"
+      - name: Build and label the release pairs
+        env:
+          PAIRS: ${{ inputs.pairs }}
+        run: python -m tools.unified.corpus build --pairs "$PAIRS"
+      - name: A/A pairs P0 P1 P2
+        run: python -m tools.unified.corpus aa --projects all
+      - name: Planted mutants of the G-U2 classes
+        env:
+          PER_CLASS: ${{ inputs.per_class }}
+        run: python -m tools.unified.corpus mutate --per-class "$PER_CLASS"
+      - name: Corpus manifest
+        run: python -m tools.unified.corpus manifest --out out/unified-corpus-manifest.json
+      - name: G-U5 bench on the Linux runner
+        env:
+          BENCH_SIZES: ${{ inputs.bench_sizes }}
+        run: python -m tools.unified.bench --sizes "$BENCH_SIZES" --out out/bench-linux.json
+      - name: G-U8 integrity tests as JUnit
+        run: python -m pytest tests/test_unified_pipeline.py tests/test_unified_store.py tests/test_unified_contracts.py tests/test_unified_ghidra_script.py -q -p no:cacheprovider --junitxml=out/junit.xml
+      - name: Collect the label documents
+        if: always()
+        run: mkdir -p out/labels && cp "$PATCHTRACE_CALIB_ROOT"/known-answer/labels/*.json out/labels/
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: unified-corpus-linux
+          if-no-files-found: ignore
+          path: |
+            out/*.json
+            out/*.xml
+            out/labels/*.json
+  bench-windows:
+    name: G-U5 bench on the Windows runner (advisory)
+    runs-on: windows-latest
+    continue-on-error: true
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: "python -m pip install --only-binary=:all: -e '.[dev]'"
+      - name: G-U5 bench on the Windows runner
+        shell: bash
+        env:
+          BENCH_SIZES: ${{ inputs.bench_sizes }}
+        run: python -m tools.unified.bench --sizes "$BENCH_SIZES" --out out/bench-windows.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: unified-corpus-bench-windows
+          if-no-files-found: ignore
+          path: out/bench-windows.json
+  report:
+    name: gate report (advisory, never strict)
+    needs: [corpus, bench-windows]
+    if: ${{ !cancelled() }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: "python -m pip install --only-binary=:all: -e '.[dev]'"
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: unified-corpus-*
+          path: in
+          merge-multiple: true
+      - name: Write the gate report
+        shell: bash
+        run: |
+          args=()
+          if [ -f in/unified-corpus-manifest.json ]; then args+=(--manifest in/unified-corpus-manifest.json); fi
+          if [ -f in/bench-linux.json ]; then args+=(--bench in/bench-linux.json); fi
+          if [ -f in/bench-windows.json ]; then args+=(--bench in/bench-windows.json); fi
+          if [ -f in/junit.xml ]; then args+=(--junit in/junit.xml); fi
+          mkdir -p out
+          python -m tools.unified.gates_u "${args[@]}" --out out/gate-report.json --markdown out/gate-report.md
+          cat out/gate-report.md >> "$GITHUB_STEP_SUMMARY"
+          sha256sum out/gate-report.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: unified-gate-report
+          if-no-files-found: ignore
+          path: out/gate-report.*

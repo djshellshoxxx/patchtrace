@@ -44,3 +44,6 @@ docs/schemas/kev/** text eol=lf
 *.yar text eol=lf
 tests/fixtures/wbq/** text eol=lf
 tests/fixtures/kev/** text eol=lf
+tools/unified/corpus/** text eol=lf
+tests/fixtures/rules/** text eol=lf
+*.yar text eol=lf

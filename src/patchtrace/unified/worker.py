@@ -18,9 +18,19 @@ from . import compute, exchange
 from .limits import BudgetExhausted, UnifiedError
 
 EXIT_OK, EXIT_INTERNAL, EXIT_USAGE, EXIT_ERROR_DOC, EXIT_CANCEL, EXIT_MEMORY = 0, 1, 2, 3, 5, 22
-MODULES = ('addressing', 'contracts', 'keys', 'limits', 'registry', 'store', 'sources', 'sources.ghidriff',
-           'sources.manual', 'sources.secondary', 'fusion.components', 'fusion.arbiter', 'facts.pseudo',
-           'facts.channels', 'facts.verdict', 'exchange', 'compute', 'pipeline', 'worker', 'cli')
+# Every module of the package except the extractor script (it runs in the external Python and is never imported). The
+# frozen smoke imports exactly this list, and tests/test_unified_import_dag.py compares it with the files on disk, so
+# a module cannot be left out and a removed one cannot linger.
+MODULES = (
+    'addressing', 'cli', 'compute', 'contracts', 'exchange', 'extract', 'extract.decomp', 'extract.retain',
+    'extract.runner', 'facts', 'facts.align', 'facts.anchors', 'facts.channels', 'facts.datamap', 'facts.eh',
+    'facts.fnview', 'facts.irchannels', 'facts.layout', 'facts.operands', 'facts.pseudo', 'facts.refacts',
+    'facts.trace', 'facts.verdict', 'fusion', 'fusion.arbiter', 'fusion.components', 'ir', 'ir.cfg', 'ir.features',
+    'ir.ingest', 'ir.ins', 'ir.ladder_port', 'ir.mdindex', 'ir.operands', 'ir.pe_tables', 'ir.place', 'ir.reader',
+    'ir.records', 'ir.schema', 'keys', 'ladder', 'ladder.assign', 'ladder.blocking', 'ladder.engine',
+    'ladder.groups', 'ladder.passes', 'ladder.passspec', 'ladder.ports', 'ladder.propagate', 'ladder.residual',
+    'ladder.side', 'ladder.state', 'ladder.types', 'limits', 'pipeline', 'read_model', 'read_text', 'registry',
+    'sources', 'sources.ghidriff', 'sources.ladder', 'sources.manual', 'sources.secondary', 'store', 'worker')
 USAGE = 'usage: unified _worker --request FILE --result-dir DIR | --self-check'
 
 

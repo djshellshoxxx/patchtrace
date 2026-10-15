@@ -1,6 +1,6 @@
 # App settings and persistence contract (SPEC-43)
 
-Status: draft, 2026-10-14.
+Status: draft, 2026-10-14; the session-key scan of section 7 landed in slice CONSENT (`tests/test_network_consent_secrets.py`), the refusal of secret-shaped model and endpoint text (G1, G2) and sections 9 and 10 are open.
 
 This is the registry of record for user settings that `src/patchtrace` persists, and the rules for naming, defaults, reset, format and boundaries. Card: `docs/audits/spec-gaps-20261014.md:124` (row 9). Basis: commit `fd6cdba`, which is this worktree's HEAD and the local `origin/main` ref. `docs/specs/REGISTRY.md` is a 1560531 snapshot, and open PR state was not checked. Sections 1 and 10 describe the code as built. The other sections are normative. `[proposal]` marks rules not yet built; `[unverified]` marks claims not run here.
 
@@ -42,7 +42,7 @@ Method: grep of `src/patchtrace` for `settings.value(`, `setValue(`, `_save(`, `
 | `engines/bindiff/path` | string, path, at most 4096 characters | `""` | r `ui_engine_setup.py:512`; w `ui_engine_setup.py:616` (after a successful probe only) | PATH |
 | `engines/bindiff/setup_open` | bool | `False` | r `ui_engine_setup.py:338`; w `ui_engine_setup.py:430` | UI |
 
-Undocumented keys: of the eleven `backend/*` and `provider/*` keys, only `backend/allow_symbol_downloads` is named by key in any document (`docs/specs/program-e/GHR-ghidriff-launcher-symbols.md:100`), and `provider/model` appears once in `docs/research.md:58`. `GUI-integration-plan.md:120` lists existing keys by glob and omits both groups. `desktop/*` and `recent/*` appear only in prose or as globs (`ui.md:3`; `GUI-integration-plan.md:120`).
+Undocumented keys: of the eleven `backend/*` and `provider/*` keys, only `backend/allow_symbol_downloads` is named by key in any document (`docs/specs/ghidriff-launcher-symbols.md:100`), and `provider/model` appears once in `docs/research.md:58`. `GUI-integration-plan.md:120` lists existing keys by glob and omits both groups. `desktop/*` and `recent/*` appear only in prose or as globs (`ui.md:3`; `GUI-integration-plan.md:120`).
 
 Not persisted (no key exists): the Evidence panel's "Parallel engines" and "Timeout" (`ui_evidence.py:805, 812`; limits from `secondary/evidence_panel_service.py:48-50`), and the export options (`ui.md:15`).
 
@@ -118,7 +118,7 @@ C4. Gaps found while writing this spec:
 All three follow `GUI-integration-plan.md`: the host owns layout, QSettings is the only store, getters range-check, and no credential is stored. Once approved, T1 replaces the theme notes in `ui.md` (lines 3 and 13), T2 the redaction note (line 15), and T3 the worker-count note (line 13).
 
 T1. Theme, `theme/variant`, default `dark`. Values `dark` and `system`; any other value reads as `dark` (`GUI-integration-plan.md:120`). No `light` variant in alpha (`:433`). High contrast stays automatic and unsaved (`:245`). `dark` stays byte-identical to `ui.DARK_STYLE` (`:244`). Entry point in the View menu (`:208`); slices F3 and F7 (`:383`, `:388`).
-T2. Redaction, `export/redaction_profile`, default `local`, values `local`, `share` and `custom`. It sets the export dialog default only; the report contract owns the semantics (`RPT2-report-export-contract-v2.md:90`). Asymmetry rule: a saved default may only reduce disclosure. `export/include_code` and `export/include_raw_provider_text` stay per export and are never saved (`ui.md:15`; `RPT2-report-export-contract-v2.md:19`). The key stays inert until RPT2 v2 is the default (`RPT2-report-export-contract-v2.md:3`).
+T2. Redaction, `export/redaction_profile`, default `local`, values `local`, `share` and `custom`. It sets the export dialog default only; the report contract owns the semantics (`docs/specs/report-export-contract-v2.md:90`). Asymmetry rule: a saved default may only reduce disclosure. `export/include_code` and `export/include_raw_provider_text` stay per export and are never saved (`ui.md:15`; `docs/specs/report-export-contract-v2.md:19`). The key stays inert until RPT2 v2 is the default (`docs/specs/report-export-contract-v2.md:3`).
 T3. Worker count, `engines/max_parallel`, default 1, bounds `PARALLEL_RANGE` (`secondary/evidence_panel_service.py:50`). It is the saved default of the per-run "Parallel engines" control (`ui_evidence.py:803-805`), not a second scheduler. Background `TaskRunner` lanes stay fixed (`GUI-integration-plan.md:382`; `ui.md:13`). Heavy Python work stays in a subprocess or calls `checkpoint()` (`GUI-integration-plan.md:240`). `[proposal]` Test: identical results for 1 and N engines.
 
 ## 9. Tests [proposal; hermetic]

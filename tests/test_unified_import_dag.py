@@ -23,7 +23,8 @@ MAY_SPAWN = {'pipeline', 'extract/runner'}
 EXEMPT = {'extract/ghidra_script'}  # runs inside the external Python and never imports patchtrace (S1)
 # 01 s3 rule 3, completed with the modules of this slice: a module may import only modules of a lower or equal rank.
 RANK = {'limits': 0, 'contracts': 1, 'addressing': 1, 'exchange': 1, 'keys': 2, 'registry': 2, 'store': 3,
-        'sources': 4, 'fusion': 5, 'facts': 6, 'compute': 7, 'pipeline': 8, 'worker': 9, 'cli': 10}
+        'read_text': 3, 'sources': 4, 'fusion': 5, 'facts': 6, 'compute': 7, 'pipeline': 8, 'read_model': 9,
+        'worker': 9, 'cli': 10}
 NEVER = {('ladder', 'fusion'), ('ladder', 'facts'), ('fusion', 'ladder'), ('sources', 'fusion'),
          ('sources', 'facts'), ('fusion', 'facts'), ('pipeline', 'worker'), ('pipeline', 'cli'),
          ('compute', 'pipeline'), ('compute', 'worker')}
@@ -157,8 +158,8 @@ def test_the_checker_can_fail():
 
 def test_the_layers_cover_the_modules_of_this_slice():
     top = {path.relative_to(UNIFIED).parts[0].removesuffix('.py') for path in files()}
-    owned = {'limits', 'contracts', 'addressing', 'exchange', 'keys', 'registry', 'store', 'sources', 'fusion', 'facts',
-             'compute', 'pipeline', 'worker', 'cli'}
+    owned = {'limits', 'contracts', 'addressing', 'exchange', 'keys', 'registry', 'store', 'read_text', 'sources',
+             'fusion', 'facts', 'compute', 'pipeline', 'read_model', 'worker', 'cli'}
     assert owned <= top and owned <= set(RANK)
 
 
@@ -222,17 +223,28 @@ def test_no_other_package_imports_unified():
     assert offenders == []
 
 
-def test_the_frozen_self_check_lists_every_module_of_this_slice():
-    on_disk = set()
+def test_the_frozen_self_check_lists_every_module_of_the_package():
+    """`worker.MODULES` is the one list that the frozen smoke (`unified _worker --self-check`) imports: it must name
+    every module on disk, so a new module cannot be forgotten and a removed one cannot linger. The extractor script is
+    the one exception: it runs in the external Python and PatchTrace never imports it."""
+    on_disk = {dotted(path).removeprefix('patchtrace.unified.') for path in files()
+               if path.name != 'ghidra_script.py' and dotted(path) != 'patchtrace.unified'}
+    assert on_disk == set(worker.MODULES)
+
+
+def test_no_module_reads_a_private_name_of_a_sibling_module():
+    """The read layer once reached into `store._lines`: a reader that two modules share is public API or it is not
+    shared (`store.part_lines`, `store.parse_line`)."""
+    found = []
     for path in files():
-        relative = path.relative_to(UNIFIED).with_suffix('').as_posix().removesuffix('/__init__')
-        if relative.split('/')[0] in {'sources', 'fusion'} or relative in {'addressing', 'contracts', 'keys', 'limits',
-                                                                          'registry', 'store', 'exchange', 'compute',
-                                                                          'pipeline', 'worker', 'cli'}:
-            on_disk.add(relative.replace('/', '.'))
-    assert on_disk - {'sources', 'fusion'} <= set(worker.MODULES)
-    for name in ('facts.pseudo', 'facts.channels', 'facts.verdict'):
-        assert name in worker.MODULES
+        source = path.read_text(encoding='utf-8')
+        siblings = {name.rsplit('.', 1)[-1] for name in imports(dotted(path), path.name == '__init__.py', source)
+                    if local_module(name) is not None}
+        for node in ast.walk(ast.parse(source)):
+            if (isinstance(node, ast.Attribute) and isinstance(node.value, ast.Name) and node.value.id in siblings
+                    and node.attr.startswith('_') and not node.attr.startswith('__')):
+                found.append(f'{path.name}:{node.lineno} {node.value.id}.{node.attr}')
+    assert found == []
 
 
 @pytest.mark.parametrize('name', ['contracts', 'limits', 'keys', 'exchange', 'addressing'])

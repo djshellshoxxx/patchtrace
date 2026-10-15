@@ -1,12 +1,17 @@
-"""S0 channels (05 s2.1, s6): C4n, C5t, C6 and C8 for the chosen pair of a decided row. Pure.
+"""Channels C0-C8 (05 s2.1, s6) for the chosen pair of a decided row. Pure.
 
-Everything comes from stored data: Ghidriff's decompiled text and callee names (by RVA, from the records of ANY
-match, so a pair another source made out of an `added` and a `deleted` function still has code) and the stored
-BinDiff flags of the exact pair. The IR channels C0-C3 and C7 are `unavailable` in S0. Deltas are located at
+S0 mode (no `ir_sides`): C4n, C5t, C6 and C8 from stored data only: Ghidriff's decompiled text and callee names (by
+RVA, from the records of ANY match, so a pair another source made out of an `added` and a `deleted` function still
+has code) and the stored BinDiff flags of the exact pair. C0-C3 and C7 are `unavailable`; deltas are located at
 function entry RVAs (no instruction addresses without IR).
+
+IR mode (`ir_sides` given, S3): C0-C5 come from the two ProgramIR sidecars (`irchannels`) and replace the S0 C4/C5
+and the S0 deltas; C6 and C8 stay as the cross-check data groups that MAT-ANCHOR needs. Data labels of the canonical
+pseudo-code follow DATA-MAP/1. A pair that is not in the IR keeps its S0 evidence and the `ir-missing` row flag.
 """
 from __future__ import annotations
 
+import dataclasses
 from collections import Counter
 from collections.abc import Iterable, Mapping, Sequence
 
@@ -14,9 +19,12 @@ from .. import keys
 from ..addressing import AddressMap, parse_va_text
 from ..contracts import Delta
 from ..fusion.arbiter import Decided
-from ..limits import DEFAULT_LIMITS, UnifiedLimits
+from ..limits import DEFAULT_LIMITS, Budget, UnifiedLimits
 from ..sources import SnapshotFunction, SnapshotMatch
-from . import CALL_CLASSES, Evidence, severity
+from . import CALL_CLASSES, Evidence, IrEvidence, severity
+from .anchors import AnchorInputs, anchor_for
+from .irchannels import IrFacts, IrSides
+from .operands import CallTarget
 from .pseudo import FUNC_LABEL, Canon, canonicalize
 
 S0_CHANNELS = ('C4', 'C5', 'C6', 'C8')
@@ -69,16 +77,26 @@ class FactsContext:
     def __init__(self, older_sha256: str, newer_sha256: str, addr: AddressMap, basis: str, pair_map: PairMap,
                  functions: Mapping[str, Mapping[int, SnapshotFunction]], names: Mapping[str, Mapping[str, int]],
                  modified: frozenset[tuple[int, int]], bindiff_flags: Mapping[tuple[int, int], tuple[str, ...]],
-                 limits: UnifiedLimits):
+                 limits: UnifiedLimits, ir: IrFacts | None = None,
+                 decompiled: Mapping[str, Mapping[int, str]] | None = None):
         self.addr, self.basis, self.pair_map, self.limits = addr, basis, pair_map, limits
         self.functions, self.names = functions, names
         self.modified, self.bindiff_flags = modified, bindiff_flags
         self.older_sha256, self.newer_sha256 = older_sha256, newer_sha256
+        self.ir = ir
+        self.data_labels = DataLabels(ir.targets) if ir is not None else None
+        decompiled = decompiled or {}
+        self.decompiled = {side: dict(decompiled.get(side, {})) for side in ('older', 'newer')}
 
     @classmethod
     def build(cls, *, older_sha256: str, newer_sha256: str, addr: AddressMap, matches: Sequence[SnapshotMatch],
               rows: Sequence[Decided], bindiff_flags: Mapping[tuple[int, int], tuple[str, ...]],
-              limits: UnifiedLimits = DEFAULT_LIMITS) -> FactsContext:
+              limits: UnifiedLimits = DEFAULT_LIMITS, ir_sides: IrSides | None = None,
+              budget: Budget | None = None,
+              decompiled: Mapping[str, Mapping[int, str]] | None = None) -> FactsContext:
+        """`ir_sides` switches on the IR channels C0-C5 and the IR proofs (S3); without it this is S0 mode.
+        `decompiled` (S3b, 05 s2.8) maps side -> RVA -> C text of the on-demand decompile: it stands in for Ghidriff's
+        stored code of a pair that has none on either side, so C6 and MAT-ANCHOR can see a same-size edit."""
         ordered = sorted(matches, key=lambda m: m.id)
         older_values = [v for m in ordered for f in m.older if (v := parse_va_text(f.address)) is not None]
         newer_values = [v for m in ordered for f in m.newer if (v := parse_va_text(f.address)) is not None]
@@ -103,15 +121,34 @@ class FactsContext:
                     modified.add((rvas['older'][0], rvas['newer'][0]))
         unique = {side: {name: next(iter(found)) for name, found in table.items() if len(found) == 1}
                   for side, table in names.items()}
+        ir = IrFacts(ir_sides, [r.pair for r in rows if r.mapped and r.pair], limits=limits, budget=budget) \
+            if ir_sides is not None else None
         return cls(older_sha256, newer_sha256, addr, 'va' if basis == 'not-comparable' else basis,
                    PairMap.from_rows(older_sha256, newer_sha256, rows), functions, unique, frozenset(modified),
-                   dict(bindiff_flags), limits)
+                   dict(bindiff_flags), limits, ir, decompiled)
 
     # -- helpers -----------------------------------------------------------------------------------------------------
 
     def _over_cap(self, code: str | None) -> bool:
         return code is not None and (len(code) > self.limits.l29_pseudo_chars
                                      or code.count('\n') + 1 > self.limits.l29_pseudo_lines)
+
+    def _texts(self, o: int, n: int, old: SnapshotFunction | None,
+               new: SnapshotFunction | None) -> tuple[str | None, str | None, bool]:
+        """(older text, newer text, capped): Ghidriff's stored code of the two records; when it is not there for
+        both, the on-demand decompile of BOTH sides (S3b), never one of each (two analyses, two decompiles)."""
+        code_old = code_new = None
+        if old is not None and new is not None:
+            if old.code_omitted or new.code_omitted or self._over_cap(old.code) or self._over_cap(new.code):
+                return None, None, True
+            code_old, code_new = old.code, new.code
+        if code_old is None or code_new is None:
+            extra_old, extra_new = self.decompiled['older'].get(o), self.decompiled['newer'].get(n)
+            if extra_old is not None and extra_new is not None:
+                if self._over_cap(extra_old) or self._over_cap(extra_new):
+                    return None, None, True
+                code_old, code_new = extra_old, extra_new
+        return code_old, code_new, False
 
     def _identity(self, side: str, name: str) -> str:
         """Row token when the callee resolves to a mapped function, the name for a real name, a side-specific
@@ -138,12 +175,14 @@ class FactsContext:
         found: list[tuple[Delta, frozenset[str]]] = []   # delta + the callee identities it is about
         canon_old: Canon | None = None
         canon_new: Canon | None = None
-        if old is not None and new is not None:
-            if old.code_omitted or new.code_omitted or self._over_cap(old.code) or self._over_cap(new.code):
-                limits_hit.append('pseudo-cap')
-            elif old.code is not None and new.code is not None:
-                canon_old = canonicalize(old.code, 'older', self.pair_map, self.addr, self.basis, self.limits)
-                canon_new = canonicalize(new.code, 'newer', self.pair_map, self.addr, self.basis, self.limits)
+        code_old, code_new, capped = self._texts(o, n, old, new)
+        if capped:
+            limits_hit.append('pseudo-cap')
+        elif code_old is not None and code_new is not None:
+            canon_old = canonicalize(code_old, 'older', self.pair_map, self.addr, self.basis, self.limits,
+                                     self.data_labels)
+            canon_new = canonicalize(code_new, 'newer', self.pair_map, self.addr, self.basis, self.limits,
+                                     self.data_labels)
 
         def delta(cls: str, channel: str, before: str | None, after: str | None, tokens=()) -> None:
             found.append((Delta(cls=cls, channel=channel, older_rva=o, newer_rva=n,
@@ -191,9 +230,46 @@ class FactsContext:
         targets = (len(canon_old.mapped) if canon_old else 0,
                    canon_old.unmapped + canon_new.unmapped if canon_old and canon_new else 0, conflicts)
         diff_types = tuple(sorted({*(old.diff_types if old else ()), *(new.diff_types if new else ())}))
-        return Evidence(states=states, deltas=tuple(d for d, _ in found), anchors=anchors, targets=targets,
-                        eh='unavailable', change_signal=(o, n) in self.modified, diff_types=diff_types,
-                        limits_hit=tuple(limits_hit))
+        s0 = Evidence(states=states, deltas=tuple(d for d, _ in found), anchors=anchors, targets=targets,
+                      eh='unavailable', change_signal=(o, n) in self.modified, diff_types=diff_types,
+                      limits_hit=tuple(limits_hit))
+        if self.ir is None:
+            return s0
+        return self._with_ir(s0, o, n, canon_old, canon_new, flags)
+
+    # -- the IR channels ---------------------------------------------------------------------------------------------
+
+    def _with_ir(self, s0: Evidence, o: int, n: int, canon_old: Canon | None, canon_new: Canon | None,
+                 flags: tuple[str, ...] | None) -> Evidence:
+        """Replace the S0 channels C4/C5 and the S0 deltas by the IR's (05 s2.1); C6 and C8 stay. A pair whose
+        functions are not in the IR, or have no instruction data, keeps its S0 evidence plus the `ir-missing` flag."""
+        pair = self.ir.analyze(o, n)
+        if pair is None or pair.states['C2'] == 'unavailable':
+            states = dict(s0.states)
+            if pair is not None:
+                states.update(C0=pair.states['C0'], C1=pair.states['C1'])
+            return dataclasses.replace(s0, states=states, row_flags=(*(pair.flags if pair else ()), 'ir-missing'))
+        states = {**s0.states, **pair.states}
+        inputs = AnchorInputs(states=states, pair=pair, canon_old=canon_old, canon_new=canon_new, bindiff_flags=flags,
+                              identity=self._callee_identity, data_token=self.ir.targets.data_token)
+        anchors = tuple(anchor_for(delta, info, inputs) for delta, info in pair.deltas)
+        pseudo_unmapped = canon_old.unmapped + canon_new.unmapped if canon_old and canon_new else 0
+        return Evidence(states=states, deltas=tuple(d for d, _ in pair.deltas), anchors=anchors, targets=pair.targets,
+                        eh=pair.eh, change_signal=s0.change_signal, diff_types=s0.diff_types,
+                        limits_hit=tuple(dict.fromkeys((*s0.limits_hit, *pair.limits_hit))),
+                        ir=IrEvidence(pair.positional_cfg, pair.layout_ok, pair.mask_unlocated, pseudo_unmapped,
+                                      pair.trace_arg),
+                        row_flags=pair.flags)
+
+    def _callee_identity(self, side: str, target: CallTarget | None) -> str | None:
+        """A callee as the canonical pseudo-code writes it: the token of its matched row, else its trusted name."""
+        if target is None:
+            return None
+        if target.kind == 'imp':
+            return str(target.value).split('!', 1)[-1]
+        if target.kind == 'fn':
+            return self.pair_map.token(side, target.value) or self.ir.function_name(side, target.value)
+        return None
 
     # -- delta builders ----------------------------------------------------------------------------------------------
 
@@ -241,3 +317,13 @@ class FactsContext:
         if states['C8'] == 'differs' and flags is not None and 'C' in flags:
             return 'C8'
         return None
+
+
+class DataLabels:
+    """Adapter handing DATA-MAP/1 data tokens to `canon/1` (pseudo.canonicalize)."""
+
+    def __init__(self, targets):
+        self._targets = targets
+
+    def token(self, side: str, rva: int) -> str | None:
+        return self._targets.data_token(side, rva)

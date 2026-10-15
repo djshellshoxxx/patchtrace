@@ -6,8 +6,10 @@ SHA-256 of the input file, of the packaged script itself and of string values; w
 `work_dir`; makes no network access; iterates deterministically (functions by ascending entry). The target binary
 is only ever loaded as data by Ghidra, never executed.
 
-usage: python pt_ir_extract.py --request request.json     (modes `gzf` and `analyze`; `decompile` is S3b)
+usage: python pt_ir_extract.py --request request.json     (modes `gzf`, `analyze` and `decompile`)
        python pt_ir_extract.py --self-check                (no request; lists missing Ghidra classes)
+`decompile` (05 s2.8, S3b) re-opens the retained GZF of one side, decompiles ONLY the requested RVAs and writes
+`decomp.jsonl` (one `{side, rva, status, code}` line per RVA, status ok | timeout | failed); it writes no `ir.jsonl`.
 Exit codes: 0 ok, 2 bad request, 3 input mismatch, 4 unsupported, 5 cancelled by signal, other = crash.
 stdout: first line `{"probe": {...}}`; on failure the last line is `{"error": {"reason": "<slug>"}}`.
 """
@@ -56,16 +58,19 @@ REQUIRED_CLASSES = (
     ('ghidra.program.model.symbol', 'SourceType'), ('ghidra.program.util', 'GhidraProgramUtilities'),
     ('ghidra.util.task', 'TaskMonitor'), ('java.io', 'File'), ('java.lang', 'System'),
 )
+DECOMPILER_CLASSES = (('ghidra.app.decompiler', 'DecompInterface'),)    # `decompile` mode only (S3b)
 _SOURCE_NAMES = ('DEFAULT', 'ANALYSIS', 'AI', 'IMPORTED', 'USER_DEFINED')
 _HEX = re.compile(r'^[0-9a-f]{64}$')
 _ORDINAL = re.compile(r'^(?:#|Ordinal_)(\d{1,6})$')
 _ORDINAL_LABEL = re.compile(r'^Ordinal_\d{1,6}$')
 _CONTROL = re.compile('[\x00-\x1f\x7f-\x9f\u2028\u2029\u202a-\u202e\u2066-\u2069]')
+_CODE_CONTROL = re.compile('[\x00-\x08\x0b-\x1f\x7f-\x9f\u2028\u2029\u202a-\u202e\u2066-\u2069]')   # TAB and LF stay
 _REQUEST_KEYS = ('contract', 'side', 'artifact_path', 'artifact_sha256', 'mode', 'gzf_path', 'gzf_sha256', 'out_dir',
                  'work_dir', 'max_heap_mb', 'analysis_options', 'limits', 'decompile_rvas')
 _DEFAULT_LIMITS = {'l01_functions_per_side': 250_000, 'l02_instructions_per_side': 20_000_000,
                    'l05_string_bytes': 64 * 1024, 'l06_fn_raw_bytes': 16 * 1024 * 1024,
-                   'l06_fn_instructions': 100_000}
+                   'l06_fn_instructions': 100_000, 'l29_pseudo_chars': 2_000_000, 'l29_pseudo_lines': 20_000,
+                   'l41_decompile_pairs': 64, 'l41_decompile_fn_s': 60, 'l41_decompile_run_s': 600}
 CANCEL = {'flag': False}
 
 
@@ -200,14 +205,24 @@ def load_request(path: str) -> dict:
           and isinstance(request['limits'], dict)
           and all(isinstance(k, str) and type(v) is int and v >= 0 for k, v in request['limits'].items())
           and isinstance(request['decompile_rvas'], list))
-    if request['mode'] == 'gzf':
+    if request['mode'] in ('gzf', 'decompile'):
         ok = ok and _is_abs(request['gzf_path']) and isinstance(request['gzf_sha256'], str) \
             and bool(_HEX.match(request['gzf_sha256']))
     else:
         ok = ok and request['gzf_path'] is None and request['gzf_sha256'] is None
+    ok = ok and _valid_rvas(request)
     if not ok:
         raise ScriptExit(EXIT_BAD_REQUEST, 'bad-request')
     return request
+
+
+def _valid_rvas(request: dict) -> bool:
+    """`decompile_rvas`: empty unless the mode is `decompile`, then 1..L-41 unique ascending non-negative integers."""
+    rvas = request['decompile_rvas']
+    if request['mode'] != 'decompile':
+        return rvas == []
+    cap = {**_DEFAULT_LIMITS, **request['limits']}['l41_decompile_pairs']
+    return 0 < len(rvas) <= cap and all(type(rva) is int and rva >= 0 for rva in rvas) and rvas == sorted(set(rvas))
 
 
 class ProgressFile:
@@ -235,6 +250,7 @@ class Java:
 
     def __init__(self):
         self.missing: list[str] = []
+        self.missing_decompiler: list[str] = []      # only `decompile` mode needs these
 
     def load(self) -> Java:
         for module_name, attr in REQUIRED_CLASSES:
@@ -242,6 +258,11 @@ class Java:
                 setattr(self, attr, getattr(importlib.import_module(module_name), attr))
             except (ImportError, AttributeError):
                 self.missing.append(f'{module_name}.{attr}')
+        for module_name, attr in DECOMPILER_CLASSES:
+            try:
+                setattr(self, attr, getattr(importlib.import_module(module_name), attr))
+            except (ImportError, AttributeError):
+                self.missing_decompiler.append(f'{module_name}.{attr}')
         if not self.missing:
             live = {}
             for name in EXPECTED_OPERAND_FLAGS:
@@ -306,8 +327,9 @@ def self_check(ghidra_dir: str | None = None) -> int:
         return EXIT_UNSUPPORTED
     start_jvm(ghidra_dir, 512)
     java = Java().load()
-    _print({'self_check': {'ok': not java.missing, 'missing': java.missing, 'versions': probe_versions(java)}})
-    return EXIT_OK if not java.missing else EXIT_UNSUPPORTED
+    missing = [*java.missing, *java.missing_decompiler]
+    _print({'self_check': {'ok': not missing, 'missing': missing, 'versions': probe_versions(java)}})
+    return EXIT_OK if not missing else EXIT_UNSUPPORTED
 
 
 def _print(obj: dict) -> None:
@@ -688,11 +710,10 @@ def new_byte_array(length: int):
 
 
 def run(request: dict) -> int:
-    """gzf / analyze extraction (03 s4). Raises ScriptExit for every controlled failure."""
+    """gzf / analyze extraction (03 s4) and the on-demand decompile of S3b (05 s2.8). Raises ScriptExit for every
+    controlled failure."""
     out_dir, work_dir = request['out_dir'], request['work_dir']
     mode = request['mode']
-    if mode == 'decompile':
-        raise ScriptExit(EXIT_UNSUPPORTED, 'unsupported-mode')  # S3b: owned by slice S3
     if not (os.path.isdir(out_dir) and os.path.isdir(work_dir)):
         raise ScriptExit(EXIT_BAD_REQUEST, 'bad-request')
     ghidra_dir = os.environ.get('GHIDRA_INSTALL_DIR', '')
@@ -706,7 +727,7 @@ def run(request: dict) -> int:
         raise ScriptExit(EXIT_MISMATCH, 'artifact-hash') from None
     if artifact_hash != request['artifact_sha256']:
         raise ScriptExit(EXIT_MISMATCH, 'artifact-hash')
-    if mode == 'gzf' and file_sha256(request['gzf_path']) != request['gzf_sha256']:
+    if mode in ('gzf', 'decompile') and file_sha256(request['gzf_path']) != request['gzf_sha256']:
         raise ScriptExit(EXIT_MISMATCH, 'program-hash')
     header_pe = parse_pe_header(request['artifact_path'])
     start_jvm(ghidra_dir, request['max_heap_mb'])
@@ -715,17 +736,19 @@ def run(request: dict) -> int:
     _print({'probe': probe_versions(java)})
     if java.missing:
         raise ScriptExit(EXIT_UNSUPPORTED, 'operand-flags' if java.missing == ['operand-flags'] else 'ghidra-version')
+    if mode == 'decompile' and getattr(java, 'missing_decompiler', None):
+        raise ScriptExit(EXIT_UNSUPPORTED, 'decompiler-unavailable')
     project = java.GhidraProject.createProject(work_dir, 'pt', True)
     try:
         progress.write('import', 0, None)
-        source = request['gzf_path'] if mode == 'gzf' else request['artifact_path']
+        source = request['gzf_path'] if mode in ('gzf', 'decompile') else request['artifact_path']
         program = project.importProgram(java.File(source))
         if program is None:
             raise ScriptExit(EXIT_UNSUPPORTED, 'import-failed')
         language = str(program.getLanguageID())
         if not language.startswith('x86:LE:64'):
             raise ScriptExit(EXIT_UNSUPPORTED, 'unsupported-language')
-        if mode == 'gzf':
+        if mode in ('gzf', 'decompile'):
             if not java.GhidraProgramUtilities.isAnalyzed(program):
                 raise ScriptExit(EXIT_MISMATCH, 'gzf-not-analyzed')
         else:
@@ -737,12 +760,89 @@ def run(request: dict) -> int:
             project.saveAsPackedFile(program, java.File(os.path.join(out_dir, 'program.gzf')), True)
         if str(program.getExecutableSHA256()) != request['artifact_sha256']:
             raise ScriptExit(EXIT_MISMATCH, 'program-hash')
+        if mode == 'decompile':
+            return _write_decomp(request, java, program, progress)
         return _write_ir(request, java, program, header_pe, language, progress)
     finally:
         try:
             project.close()
         except Exception:  # noqa: BLE001 - cleanup must not mask the primary failure
             pass
+
+
+# --- on-demand decompile (S3b, 05 s2.8) ------------------------------------------------------------------------------
+
+def clean_code(value: object) -> str:
+    """Decompiled C text for the JSONL: CRLF becomes LF, TAB and LF stay, other controls and lone surrogates become '?'."""
+    text = str(value).replace('\r\n', '\n').replace('\r', '\n')
+    return _CODE_CONTROL.sub('?', text.encode('utf-8', 'replace').decode('utf-8'))
+
+
+def decompile_function(decompiler, functions, base, rva: int, seconds: int, limits: dict, monitor) -> tuple[str, str | None]:
+    """(status, code) of ONE requested function: `ok` with its C text, `timeout`, or `failed` (no function at the RVA,
+    an external function, a decompiler error, no text, or text over L-29). A function-level problem never raises."""
+    try:
+        function = functions.getFunctionAt(base.add(rva))
+    except Exception:  # noqa: BLE001 - an address outside the program
+        return 'failed', None
+    if function is None or function.isExternal():
+        return 'failed', None
+    try:
+        results = decompiler.decompileFunction(function, seconds, monitor)
+    except Exception:  # noqa: BLE001 - a decompiler fault is one failed function, not a failed run
+        return 'failed', None
+    if results is None:
+        return 'failed', None
+    if results.isTimedOut():
+        return 'timeout', None
+    if not results.decompileCompleted():
+        return 'failed', None
+    produced = results.getDecompiledFunction()
+    text = None if produced is None else produced.getC()
+    if text is None:
+        return 'failed', None
+    code = clean_code(text)
+    if not code.strip() or len(code) > limits['l29_pseudo_chars'] or code.count('\n') + 1 > limits['l29_pseudo_lines']:
+        return 'failed', None
+    return 'ok', code
+
+
+def _write_decomp(request: dict, java, program, progress: ProgressFile) -> int:
+    """Decompile exactly `decompile_rvas` of the retained program and write `decomp.jsonl` (03 s4): one line per RVA in
+    ascending order, never a function outside the request. Each function gets at most L-41 seconds and the run at most
+    L-41 seconds in all; once the run budget is spent the remaining RVAs are `timeout` without being attempted."""
+    limits = {**_DEFAULT_LIMITS, **request['limits']}
+    rvas, side = request['decompile_rvas'], request['side']
+    base, functions = program.getImageBase(), program.getFunctionManager()
+    decompiler = java.DecompInterface()
+    records = []
+    try:
+        if not decompiler.openProgram(program):
+            raise ScriptExit(EXIT_UNSUPPORTED, 'decompiler-unavailable')
+        deadline = time.monotonic() + limits['l41_decompile_run_s']
+        progress.write('decompile', 0, len(rvas))
+        for number, rva in enumerate(rvas):
+            if CANCEL['flag']:
+                raise ScriptExit(EXIT_CANCELLED, 'cancelled')
+            remaining = deadline - time.monotonic()
+            if remaining <= 0:
+                status, code = 'timeout', None
+            else:
+                seconds = max(1, min(limits['l41_decompile_fn_s'], math.ceil(remaining)))
+                status, code = decompile_function(decompiler, functions, base, rva, seconds, limits,
+                                                  java.TaskMonitor.DUMMY)
+            records.append({'side': side, 'rva': rva, 'status': status, 'code': code})
+            progress.write('decompile', number + 1, len(rvas))
+    finally:
+        try:
+            decompiler.dispose()
+        except Exception:  # noqa: BLE001 - cleanup must not mask the primary failure
+            pass
+    with open(os.path.join(request['out_dir'], 'decomp.jsonl'), 'w', encoding='utf-8', newline='\n') as out:
+        for record in records:
+            out.write(dump_line(record) + '\n')
+    progress.write('done', len(records), len(rvas))
+    return EXIT_OK
 
 
 def _write_ir(request: dict, java, program, header_pe: dict, language: str, progress: ProgressFile) -> int:

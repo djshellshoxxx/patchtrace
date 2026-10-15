@@ -251,8 +251,11 @@ def test_cli_unified_show_json_single_document(capsys, root):
     row = next(r for r in result['rows'] if r['older'] and r['older'][0]['name'] == 'read_item')
     assert (row['decision'], row['materiality'], row['change_classes']) == ('matched', 'material', ['call-added'])
     assert row['older'] == [{'kind': 'function', 'name': 'read_item', 'rva': 0x1000}]
-    assert set(row) == {'row_id', 'decision', 'materiality', 'older', 'newer', 'change_classes', 'support',
-                        'contest', 'hints', 'flags'}
+    stored = {'row_id', 'decision', 'materiality', 'older', 'newer', 'change_classes', 'support', 'contest', 'hints',
+              'flags'}
+    added = {'function', 'addresses', 'decision_text', 'glyph', 'change_text', 'proof', 'tier', 'edit_group',
+             'collapsed', 'cells'}   # S4a: what the Unified view shows, added beside the stored fields (additive)
+    assert set(row) == stored | added
 
 
 def test_show_filters_combine_and_totals_stay_whole(capsys, root):
@@ -278,7 +281,10 @@ def test_show_text_table(capsys, root):
     code, out, _ = call(capsys, 'unified', 'show', root, '--change', 'material')
     lines = out.splitlines()
     assert code == 0 and lines[0].startswith('unified show: result ') and '1 match, 1 shown' in lines[0]
-    assert lines[1].split() == ['matched', 'material', '0x1000', 'read_item', '0x1080', 'read_item', 'call-added']
+    head = next(i for i, line in enumerate(lines) if line.startswith('ROW '))
+    assert lines[head].split() == ['ROW', 'DECISION', 'CHANGE', 'FUNCTION', 'ADDRESSES', 'GHIDRIFF']
+    assert lines[head + 1].split()[1:] == ['[=]', 'Matched', 'Material:', 'call-added', 'read_item', '0x1000', '>',
+                                           '0x1080', 'SymbolsHash']
 
 
 def test_show_before_any_run_asks_for_one(capsys, root):
@@ -335,8 +341,10 @@ def test_explain_gives_atoms_facts_and_provenance(capsys, root):
     assert result['provenance']['sources'] == [{'source': 'ghidriff', 'version': '1'}]
     code, text, _ = call(capsys, 'unified', 'explain', root, '--row', row_id.upper())
     assert code == 0 and text.startswith(f'row {row_id[:16]}: matched, change material')
-    assert 'atoms (1):' in text and 'delta call-added' in text and 'second channel C6' in text
-    assert 'support: K1 tier A' in text and 'classes: call-added' in text and 'provenance: result ' in text
+    assert 'Atoms (1):' in text and 'delta call-added' in text and 'second channel C6' in text
+    assert 'K1: ghidriff SymbolsHash tier A' in text and 'classes: call-added' in text
+    assert 'Provenance:' in text and f'result {result["provenance"]["result_id"]}' in text
+    assert result['detail'] in text and text.endswith(result['detail'] + '\n')   # the window's own text, shared
 
 
 @pytest.mark.parametrize('row, message', [('abc', 'at least 8'), ('zzzzzzzz', 'hexadecimal'), ('', 'at least 8'),

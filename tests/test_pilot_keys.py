@@ -425,11 +425,12 @@ def test_components_partition_the_tags_and_contain_every_input_set(sets):
 
 PORT_NAMES = ('OriginRegistry', 'AnchorSink', 'Navigator', 'AdvisorySource', 'ChangeEvidenceSource',
               'ToolEvidenceSource', 'KevSource', 'CallDeltaSource', 'PairingSource')
+FABRIC_PORT_NAMES = ('OriginRegistry', 'AnchorSink')  # owned by the fabric since FAB-3; re-exported here
 
 
 def test_ports_module_defines_exactly_the_planned_protocols():
     defined = {n for n, v in vars(ports).items() if isinstance(v, type) and v.__module__ == ports.__name__}
-    assert defined == set(PORT_NAMES)
+    assert defined == set(PORT_NAMES) - set(FABRIC_PORT_NAMES)  # test_fabric_adopt.py pins the rebinding
     for name in PORT_NAMES:
         assert getattr(getattr(ports, name), '_is_protocol', False), name
 
@@ -453,6 +454,9 @@ class _FakeNavigator:
 
 class _FakeSink:
     def publish(self, project_key, anchors):
+        return None
+
+    def retract(self, project_key, producer, batch):
         return None
 
 

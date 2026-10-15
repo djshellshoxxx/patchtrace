@@ -201,6 +201,19 @@ def write_result(directory: Path, *, older_sha256: str, newer_sha256: str, ghidr
     return manifest
 
 
+def add_limitations(directory: Path, notes: Iterable[str]) -> UnifiedResultManifest:
+    """Add informational limitations to a staged result: the manifest is rewritten, no part is touched. They are not
+    an input of the result key (02 s5) and the status stays as it is, so callers add only non-degrading notes."""
+    manifest, _sha = read_manifest(directory)
+    document = manifest.model_dump(mode='json')
+    document['limitations'] = sorted({*manifest.limitations, *notes})
+    updated = UnifiedResultManifest.model_validate_json(json.dumps(document))
+    part = Path(directory) / f'{MANIFEST}.part'
+    part.write_bytes(dump_line(updated))
+    _replace(part, Path(directory) / MANIFEST)
+    return updated
+
+
 # --- verification and reading (pure file I/O; any thread) ---------------------------------------------------------
 
 def read_manifest(directory: Path) -> tuple[UnifiedResultManifest, str]:
@@ -223,7 +236,9 @@ def read_manifest(directory: Path) -> tuple[UnifiedResultManifest, str]:
     return manifest, hashlib.sha256(data).hexdigest()
 
 
-def _lines(path: Path, limits: UnifiedLimits) -> Iterator[bytes]:
+def part_lines(path: Path, limits: UnifiedLimits = DEFAULT_LIMITS) -> Iterator[bytes]:
+    """The LF-terminated lines of one gzip part, under the L-30 part cap and the line cap (the one reader every
+    consumer shares: verification, `read_rows`, the read layer's lazy record access)."""
     try:
         with open(path, 'rb') as raw, gzip.GzipFile(fileobj=raw, mode='rb') as gz:
             total, buffer = 0, b''
@@ -250,7 +265,7 @@ def _no_duplicate_keys(pairs: list) -> dict:
     return out
 
 
-def _parse(line: bytes, model):
+def parse_line(line: bytes, model):
     """One part line -> a validated record. Strict where pydantic is not (`persistence.strict_json` is the repo's
     gate, but its per-number hooks cost as much as the validation itself): a duplicate key is an error, because
     last-wins would let a hostile writer hide a field; NaN, floats and oversized ints cannot validate (no model has
@@ -290,7 +305,7 @@ class _Deep:
         return {ROWS: self.row, FACTS: self.fact}.get(name)
 
     def row(self, line: bytes) -> None:
-        row = _parse(line, UnifiedMatch)
+        row = parse_line(line, UnifiedMatch)
         if not _row_id_ok(self.manifest, row) or row.row_id in self.materiality:
             raise _err('A unified row id is wrong or repeated', 'row-id')
         self.materiality[row.row_id] = row.materiality
@@ -298,7 +313,7 @@ class _Deep:
         self.materialities[row.materiality] += 1
 
     def fact(self, line: bytes) -> None:
-        fact = _parse(line, ChangeFacts)
+        fact = parse_line(line, ChangeFacts)
         if self.materiality.get(fact.row_id) != fact.verdict or fact.row_id in self.facted:
             raise _err('Change facts do not match their row', 'facts-row')
         self.facted.add(fact.row_id)
@@ -330,7 +345,7 @@ def _verify(directory: Path, *, expected_result_id: str | None = None, expected_
             raise _err('A unified result part is missing', 'part-missing')
         feed = checks.feed(part.name) if checks else None
         digest, size, count = hashlib.sha256(), 0, 0
-        for line in _lines(path, limits):
+        for line in part_lines(path, limits):
             digest.update(line)
             size += len(line)
             count += 1
@@ -357,8 +372,8 @@ def verify_result_dir(directory: Path, *, expected_result_id: str | None = None,
 
 def _read(directory: Path, manifest: UnifiedResultManifest, name: str, model, limits: UnifiedLimits):
     part = next(p for p in manifest.parts if p.name == name)
-    for line in _lines(Path(directory) / part.name, limits):
-        yield _parse(line, model)
+    for line in part_lines(Path(directory) / part.name, limits):
+        yield parse_line(line, model)
 
 
 def read_rows(directory: Path, manifest: UnifiedResultManifest,
@@ -449,12 +464,14 @@ class PublishedResult:
 
 
 def publish_result(enrichment: EnrichmentStore, staged: Path, *, guard: Guard, current: Guard, revision: int,
-                   limits: UnifiedLimits = DEFAULT_LIMITS) -> PublishedResult:
+                   limits: UnifiedLimits = DEFAULT_LIMITS, upgrade: bool = False) -> PublishedResult:
     """Verify a staged result (deeply: it comes from a worker), check that it belongs to this project, rename it
     into place, then publish its pointer row. Any failure before the row leaves the previous pointer row current;
     a crash after the rename leaves a directory without a row that the next publish sweeps. The same `result_id`
     with other content is refused (`result-drift`): ids bind the inputs, not the parts, so a changed payload under
-    an old id means the engine is not deterministic, which must be seen, never silently discarded."""
+    an old id means the engine is not deterministic, which must be seen, never silently discarded. `upgrade` is the
+    one exception: the on-demand decompile (S3b) adds a second channel to rows of a result whose id it does not
+    change, so a refresh that decompiled replaces the verified directory of the same id."""
     _require_owner(enrichment)
     if enrichment.read_only:
         raise _err('Project enrichment data was written by a newer PatchTrace', 'read-only-store',
@@ -481,6 +498,10 @@ def publish_result(enrichment: EnrichmentStore, staged: Path, *, guard: Guard, c
             _rmtree(trash)
         elif existing.result_id != manifest.result_id:
             raise _err('Another result already uses this sidecar directory', 'dir-collision')
+        elif existing.model_copy(update={'created_utc': manifest.created_utc}) != manifest and upgrade:
+            trash = final.with_name(f'tmp-{secrets.token_hex(8)}')
+            _replace(final, trash)
+            _rmtree(trash)
         elif existing.model_copy(update={'created_utc': manifest.created_utc}) != manifest:
             raise _err('The same result id was produced with different content', 'result-drift',
                        'PT-UNIFIED-INTERNAL')

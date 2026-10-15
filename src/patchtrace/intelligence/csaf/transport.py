@@ -156,28 +156,49 @@ class Fetched:
 
 
 class OfflineCache:
-    """Opt-in, content-addressed body cache: ``<root>/bodies/<sha256>`` plus ``<root>/urls.json``.
+    """Opt-in, content-addressed body cache: ``<root>/bodies/<sha256>`` plus a URL index sharded over
+    ``<root>/urls/<xx>.json`` (``xx`` is the first byte of the SHA-256 of the URL, so no index file grows with the
+    whole cache). The single ``<root>/urls.json`` of the first version is still read, a shard entry wins over it,
+    and it is never rewritten. An index file that cannot be read is never rewritten either: ``put`` refuses first.
     Entries are verified by hash on every read; anything unreadable or mismatched counts as absent."""
     MAX_MAP_BYTES = 8 * 1024 * 1024
 
     def __init__(self, root: Path):
         self.root = Path(root)
 
-    def _map(self) -> dict:
-        path = self.root / 'urls.json'
+    def _shard(self, url: str) -> Path:
+        return self.root / 'urls' / f'{hashlib.sha256(url.encode("utf-8")).hexdigest()[:2]}.json'
+
+    def _map(self, path: Path, *, strict: bool = False) -> dict:
+        """The URL map in ``path``: {} when there is none. A file that cannot be read (I/O error, not JSON, not an
+        object, over ``MAX_MAP_BYTES``) reads as {} too, unless ``strict``, which refuses with PT-INTEL-CONFIG."""
         try:
             if path.stat().st_size > self.MAX_MAP_BYTES:
-                return {}
+                raise ValueError('index over its size cap')
             data = json.loads(path.read_text(encoding='utf-8'))
-        except (OSError, ValueError):
+            if not isinstance(data, dict):
+                raise ValueError('index is not an object')
+        except FileNotFoundError:
             return {}
-        return data if isinstance(data, dict) else {}
+        except (OSError, ValueError, RecursionError):
+            if strict:
+                raise IntelError('PT-INTEL-CONFIG', f'the offline cache index {path.name} cannot be read; repair or '
+                                                    'delete it') from None
+            return {}
+        return data
+
+    def _entry(self, url: str) -> dict | None:
+        for path in (self._shard(url), self.root / 'urls.json'):
+            entry = self._map(path).get(url)
+            if isinstance(entry, dict) and isinstance(entry.get('sha256'), str):
+                return entry
+        return None
 
     def get(self, url: str, limit: int | None = None) -> Fetched | None:
         """The cached body of ``url`` or None. A body larger than ``limit`` bytes is refused with PT-INTEL-LIMIT
         before it is read, so a planted file cannot exhaust memory."""
-        entry = self._map().get(url)
-        if not isinstance(entry, dict) or not isinstance(entry.get('sha256'), str):
+        entry = self._entry(url)
+        if entry is None:
             return None
         sha = entry['sha256']
         if len(sha) != 64 or any(c not in '0123456789abcdef' for c in sha):
@@ -195,15 +216,20 @@ class OfflineCache:
                        retrieved_at=str(entry.get('retrieved_at', '')), from_cache=True)
 
     def put(self, fetched: Fetched) -> None:
+        shard = self._shard(fetched.url)
+        mapping = self._map(shard, strict=True)
+        mapping[fetched.url] = {'sha256': fetched.sha256, 'retrieved_at': fetched.retrieved_at,
+                                'final_url': fetched.final_url}
+        index = json.dumps(mapping, sort_keys=True, indent=1).encode('utf-8')
+        if len(index) > self.MAX_MAP_BYTES:
+            raise IntelError('PT-INTEL-LIMIT', f'the offline cache index {shard.name} is full')
         bodies = self.root / 'bodies'
         bodies.mkdir(parents=True, exist_ok=True)
         target = bodies / fetched.sha256
         if not target.is_file():
             _atomic_write(target, fetched.body)
-        mapping = self._map()
-        mapping[fetched.url] = {'sha256': fetched.sha256, 'retrieved_at': fetched.retrieved_at,
-                                'final_url': fetched.final_url}
-        _atomic_write(self.root / 'urls.json', json.dumps(mapping, sort_keys=True, indent=1).encode('utf-8'))
+        shard.parent.mkdir(exist_ok=True)
+        _atomic_write(shard, index)
 
 
 def _atomic_write(path: Path, data: bytes) -> None:
@@ -277,11 +303,12 @@ class CsafTransport:
                 self.sleep(wait, self.cancel)
                 continue
             if result is not None and self.cache is not None:
-                try:
+                try:  # best-effort: a full disk, a locked file or a refused index must not lose the fetch
                     self.cache.put(result)
-                except OSError as exc:  # the cache is best-effort: a full disk or a locked file must not lose the fetch
+                except (OSError, IntelError) as exc:
                     if self.announce is not None:
-                        self.announce(f'cache not updated ({exc.strerror or type(exc).__name__})')
+                        reason = exc.message if isinstance(exc, IntelError) else exc.strerror or type(exc).__name__
+                        self.announce(f'cache not updated ({reason})')
             return result
         raise AssertionError('unreachable')
 

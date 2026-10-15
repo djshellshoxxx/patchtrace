@@ -22,6 +22,7 @@ from dataclasses import dataclass
 from pathlib import Path
 
 from ...enrichment.identity import canonical_json
+from ...hostile_text import is_hostile
 from ...jobs import run_process
 from ...secondary.engine_env import engine_env
 from .common import STDERR_EXCERPT, ToolError, ToolLimits, display_text
@@ -42,7 +43,7 @@ def sanitize(text: str, limit: int = 200) -> str:
     their last component (no local paths or user names), whitespace collapsed, length capped. Not for names the
     tool reports about the file (use `tool_text`): the path scrubber would mangle `C/C++` or `UPX/LZMA`."""
     text = _ANSI.sub('', text)
-    text = ''.join(c if c == '\t' or (ord(c) >= 32 and ord(c) != 127) else ' ' for c in text)
+    text = ''.join(' ' if is_hostile(c) else c for c in text)
     text = _PATHISH.sub(lambda m: ntpath.basename(m.group(0).rstrip('\\/')) or '<path>', text)
     return ' '.join(text.split())[:limit]
 

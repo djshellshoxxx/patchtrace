@@ -1,0 +1,17 @@
+{
+ "contract": "unified-corpus-pins/1",
+ "pairs": {
+  "libpng-v1.6.43-to-v1.6.44": {
+   "new": "69cde6dc23282f33e10a4fd141f43511ff3875fbdc057c6d53dd2fa9150494c9",
+   "old": "d116b6fe93e5f077239b341ecd11dfbc61b98ea1e0bbc1c837f87fd2f92f6308"
+  },
+  "lua-v5.4.6-to-v5.4.7": {
+   "new": "9a2cf466daa79513dd8b13ab11ae531b0b3102d906617820e462218b1c868714",
+   "old": "fca2c5b3140e814b9db88c47a05e66157c49afe5d74d5d8c983e1beb28368aa5"
+  },
+  "zlib-v1.3-to-v1.3.1": {
+   "new": "59ffb737564bc3e4dc29915cfe9ce1ecfdbdf2258e59893214707502dd6a2a79",
+   "old": "358251e9c59cf51857b5f398fea2f5ea83387bc1ec89756864a1ce214f86fd64"
+  }
+ }
+}

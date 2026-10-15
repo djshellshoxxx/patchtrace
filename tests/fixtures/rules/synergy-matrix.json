@@ -1,0 +1,84 @@
+{
+  "contract": "rules-synergy-matrix/1",
+  "note": "SYNTHETIC. The older-build rule taken from `term` of the capa-api pair (YRX plan section 5), written five ways, scanned over eleven builds by YARA-X 1.21.0. hit@0xNNN = the rule matches and its first byte pattern starts at that RVA; hit = it matches without a byte pattern; no-hit = it does not match. Rows follow the table of the plan; the file must be byte-identical on Linux and Windows.",
+  "builds": [
+    "V1",
+    "V1r",
+    "V1t",
+    "V2",
+    "LA",
+    "IMP",
+    "BOTH",
+    "clean-1",
+    "clean-2",
+    "clean-3",
+    "clean-4"
+  ],
+  "rules": {
+    "exact bytes": {
+      "V1": "hit@0x104d",
+      "V1r": "no-hit",
+      "V1t": "hit@0x104d",
+      "V2": "no-hit",
+      "LA": "no-hit",
+      "IMP": "no-hit",
+      "BOTH": "no-hit",
+      "clean-1": "no-hit",
+      "clean-2": "no-hit",
+      "clean-3": "no-hit",
+      "clean-4": "no-hit"
+    },
+    "masked bytes": {
+      "V1": "hit@0x104d",
+      "V1r": "hit@0x108d",
+      "V1t": "hit@0x104d",
+      "V2": "no-hit",
+      "LA": "hit@0x1010",
+      "IMP": "no-hit",
+      "BOTH": "hit@0x1015",
+      "clean-1": "no-hit",
+      "clean-2": "no-hit",
+      "clean-3": "no-hit",
+      "clean-4": "no-hit"
+    },
+    "import only": {
+      "V1": "hit",
+      "V1r": "hit",
+      "V1t": "hit",
+      "V2": "no-hit",
+      "LA": "no-hit",
+      "IMP": "hit",
+      "BOTH": "hit",
+      "clean-1": "no-hit",
+      "clean-2": "no-hit",
+      "clean-3": "no-hit",
+      "clean-4": "no-hit"
+    },
+    "masked + import": {
+      "V1": "hit@0x104d",
+      "V1r": "hit@0x108d",
+      "V1t": "hit@0x104d",
+      "V2": "no-hit",
+      "LA": "no-hit",
+      "IMP": "no-hit",
+      "BOTH": "hit@0x1015",
+      "clean-1": "no-hit",
+      "clean-2": "no-hit",
+      "clean-3": "no-hit",
+      "clean-4": "no-hit"
+    },
+    "masked + call-target pin": {
+      "V1": "hit@0x104d",
+      "V1r": "hit@0x108d",
+      "V1t": "hit@0x104d",
+      "V2": "no-hit",
+      "LA": "no-hit",
+      "IMP": "no-hit",
+      "BOTH": "no-hit",
+      "clean-1": "no-hit",
+      "clean-2": "no-hit",
+      "clean-3": "no-hit",
+      "clean-4": "no-hit"
+    }
+  }
+}

@@ -8,13 +8,15 @@ a report are fixed slugs, never untrusted text (01 s6).
 """
 from __future__ import annotations
 
+import hashlib
 import os
 import re
+from collections.abc import Iterable, Mapping
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Literal
+from typing import Annotated, Literal
 
-from pydantic import BaseModel, ConfigDict, Field, ValidationError
+from pydantic import BaseModel, ConfigDict, Field, ValidationError, model_validator
 
 from ..persistence import strict_json
 from .limits import UnifiedError
@@ -65,6 +67,16 @@ class WorkerLayout(_Strict):
     size_of_image: int = Field(ge=1, le=2**32 - 1)
 
 
+class WorkerIr(_Strict):
+    """One placed ProgramIR sidecar the worker opens (the directory lies in the project, not in the private one: the
+    worker re-verifies the manifest, the file hash, the key and the digest before it reads a row). `sections` are the
+    PE sections of the artifact as (start rva, end rva) for the DATA-MAP/1 region shift."""
+    directory: str = Field(min_length=1, max_length=1024)
+    ir_key: str = Field(pattern=r'^[0-9a-f]{64}$')
+    content_digest: str = Field(pattern=r'^[0-9a-f]{64}$')
+    sections: tuple[tuple[int, int], ...] = Field(default=(), max_length=96)
+
+
 class WorkerRequest(_Strict):
     """`unified-worker-request/1`: written by the owner into a private directory."""
     contract: Literal['unified-worker-request/1'] = 'unified-worker-request/1'
@@ -84,6 +96,19 @@ class WorkerRequest(_Strict):
     report_path: str = Field(min_length=1, max_length=1024)
     progress_path: str | None = Field(default=None, max_length=1024)
     budget_seconds: int = Field(ge=1, le=86_400)
+    ir_older: WorkerIr | None = None        # ProgramIR is used for both sides or for neither (F1)
+    ir_newer: WorkerIr | None = None
+    residual: bool = True                   # False = backup B-07: the ladder without the residual passes P16-P19
+    refacts: WorkerFile | None = None       # set: judge the pairs of this `unified-refacts/1` file again (S3b), the
+                                            # staged result in the result directory is the first phase's
+
+    @model_validator(mode='after')
+    def _both_sides_or_none(self):
+        if (self.ir_older is None) != (self.ir_newer is None):
+            raise ValueError('ProgramIR is used for both sides or for neither')
+        if self.refacts is not None and self.ir_older is None:
+            raise ValueError('the decompiled text is judged against ProgramIR')
+        return self
 
 
 class WorkerReport(_Strict):
@@ -99,6 +124,50 @@ class WorkerReport(_Strict):
     facts: int = Field(default=0, ge=0)
     limitations: tuple[str, ...] = Field(default=(), max_length=64)
     stage_ms: dict[str, int] = Field(default_factory=dict)
+    refacts: tuple[tuple[int, int], ...] = Field(default=(), max_length=64)   # (older rva, newer rva) worth a decompile
+
+
+Rva = Annotated[int, Field(ge=0, le=2**32 - 1)]
+REFACTS_MAX_BYTES = 128 * 1024 * 1024   # 64 pairs x two sides x L-29 characters would be 256 MiB; real texts are KiB
+
+
+class WorkerRefacts(_Strict):
+    """`unified-refacts/1`: the on-demand decompile (S3b) as the owner hands it to the worker - the pairs that were
+    chosen (older rva, newer rva) and the C text the decompiler printed per side and function. A function without a
+    text is simply absent; the worker uses the text of BOTH sides of a pair or none."""
+    contract: Literal['unified-refacts/1'] = 'unified-refacts/1'
+    pairs: tuple[tuple[Rva, Rva], ...] = Field(default=(), max_length=64)
+    older: tuple[tuple[Rva, str], ...] = Field(default=(), max_length=64)
+    newer: tuple[tuple[Rva, str], ...] = Field(default=(), max_length=64)
+
+    def texts(self, side: str) -> dict[int, str]:
+        return dict(self.older if side == 'older' else self.newer)
+
+
+def write_refacts(path: Path, *, pairs: Iterable[tuple[int, int]], texts: Mapping[str, Mapping[int, str]]) -> WorkerFile:
+    """Write the file and describe it for the request (path, SHA-256, size)."""
+    document = WorkerRefacts(pairs=tuple(sorted(set(pairs))), older=tuple(sorted(texts.get('older', {}).items())),
+                             newer=tuple(sorted(texts.get('newer', {}).items())))
+    data = document.model_dump_json().encode('utf-8')
+    write_atomic(Path(path), data)
+    return WorkerFile(path=str(path), sha256=hashlib.sha256(data).hexdigest(), size=len(data))
+
+
+def read_refacts(path: Path, *, expected_sha256: str | None = None) -> WorkerRefacts:
+    """The strict reader of the file (a private file of this run, re-hashed when the request names its hash)."""
+    try:
+        if Path(path).stat().st_size > REFACTS_MAX_BYTES:
+            raise fail('PT-UNIFIED-INPUT', 'refacts-invalid')
+        data = Path(path).read_bytes()
+        if expected_sha256 is not None and hashlib.sha256(data).hexdigest() != expected_sha256:
+            raise fail('PT-UNIFIED-INPUT', 'refacts-invalid')
+        text = data.decode('utf-8')
+        strict_json(text)
+        return WorkerRefacts.model_validate_json(text)
+    except UnifiedError:
+        raise
+    except (OSError, ValueError, ValidationError):
+        raise fail('PT-UNIFIED-INPUT', 'refacts-invalid') from None
 
 
 def read_request(path: Path) -> WorkerRequest:
