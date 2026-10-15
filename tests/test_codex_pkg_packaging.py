@@ -41,7 +41,7 @@ def runtime_requirements():
                                       for requirement in project['optional-dependencies'][extra]]
 
 
-@pytest.mark.xfail(strict=True, reason='CODEX-9')
+# CODEX-9 fixed: every runtime requirement (core and optional extras) is an exact pin
 def test_runtime_requirements_have_exact_pins():
     loose = [requirement for requirement in runtime_requirements()
              if not re.fullmatch(r'[\w.-]+==[^*,;\s]+', requirement)]
