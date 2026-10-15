@@ -37,6 +37,7 @@ from .rzdiff import STDOUT_LIMIT
 
 MAX_PARALLEL = 2
 DEFAULT_DEADLINE = 1800.0
+MAX_DEADLINE = 86400.0
 
 
 @dataclass(frozen=True)
@@ -146,11 +147,14 @@ def run_engines(project: ProjectRef, engines: Sequence[EngineId], *, max_paralle
                         'PT-SECONDARY-UNSUPPORTED: ')))
             # Best-effort removal: on Windows a scanner or lingering handle can make the delete fail, and that must
             # not turn a finished run into 'failed' (or emit a second 'finished' event for it).
+            deadline = float(deadlines.get(eid, DEFAULT_DEADLINE))
+            if not 0 < deadline <= MAX_DEADLINE:
+                raise SecondaryError('PT-SECONDARY-INPUT', f'timeout must be above 0 and at most {MAX_DEADLINE:g} s')
             with tempfile.TemporaryDirectory(prefix='patchtrace-engine-', ignore_cleanup_errors=True) as workdir:
                 older, newer = (_verified_inputs(project, Path(workdir)) if getattr(adapter, 'reads_artifacts', False)
                                 else (project.older, project.newer))
                 job = EngineJob(older, newer, project.older_sha256, project.newer_sha256, env,
-                                Path(workdir), cancel, float(deadlines.get(eid, DEFAULT_DEADLINE)), runner,
+                                Path(workdir), cancel, deadline, runner,
                                 stdout_limit)
                 digest = argv_digest(adapter.argv(cap, job), older, newer)
                 extra = getattr(adapter, 'cache_extra', None)  # SPEC-29 §5: e.g. the .BinExport hashes

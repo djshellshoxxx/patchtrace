@@ -110,3 +110,35 @@ def test_sec5_repeated_accepts_of_one_file_keep_a_single_snapshot(tmp_path, monk
              for _ in range(3)]
     assert len(list(private.iterdir())) == 1 and len(set(paths)) == 1
     assert paths[0].read_bytes() == b'binexport-bytes'
+
+
+def test_sec6_oversized_bindiff_function_name_is_refused():
+    import pytest
+
+    from patchtrace.secondary.bindiff import _name
+    from patchtrace.secondary.contracts import SecondaryError
+    assert _name('a' * 65536) == 'a' * 65536
+    with pytest.raises(SecondaryError) as info:
+        _name('a' * 65537)
+    assert info.value.code == 'PT-SECONDARY-LIMIT'
+
+
+def test_sec7_non_positive_or_huge_deadline_is_refused_before_running(tmp_path):
+    older, newer = tmp_path / 'o.bin', tmp_path / 'n.bin'
+    older.write_bytes(b'o')
+    newer.write_bytes(b'n')
+    ref = scheduler.ProjectRef(older, newer, _sha(b'o'), _sha(b'n'))
+    ran = []
+    for bad in (0.0, -5.0, 86401.0):
+        (out,) = scheduler.run_engines(ref, ['rz-diff'], cancel=threading.Event(), env={},
+                                       registry={'rz-diff': _FakeRizin()}, per_engine_timeout={'rz-diff': bad},
+                                       runner=lambda *a, **k: ran.append(1))
+        assert (out.run.status, out.run.error_code) == ('failed', 'PT-SECONDARY-INPUT'), bad
+    assert ran == []
+
+
+def test_sec9_stored_stderr_drops_bidi_overrides():
+    from patchtrace.secondary.runs import sanitize_stderr
+    stored = sanitize_stderr('ok \u202eevil\u2066 \u200f line\u2028end')
+    assert not set(stored) & set('\u202e\u2066\u200f\u2028')
+    assert 'evil' in stored
