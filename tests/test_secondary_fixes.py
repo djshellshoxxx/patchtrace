@@ -66,3 +66,15 @@ def test_sec2_newer_row_for_another_pair_does_not_hide_current_pair():
     assert [e.id for e, _ in chosen] == ['a']
     chosen, _ = select_current([other, mine], pair=('o9', 'n9'))  # no row for the pair: newest, shown as stale
     assert [e.id for e, _ in chosen] == ['b']
+
+
+def test_sec4_user_bindiff_is_preserved_before_parse(tmp_path):
+    from bindiff_builder import NEW, OLD, build
+
+    from patchtrace.secondary.bindiff import import_bindiff
+    source = build(tmp_path / 'user.BinDiff')
+    raw = tmp_path / 'raw'
+    match_set = import_bindiff(source, OLD, NEW, preserve_dir=raw)
+    kept = raw / f'bindiff-{match_set.file_sha256}.BinDiff'
+    assert kept.read_bytes() == source.read_bytes()
+    assert hashlib.sha256(kept.read_bytes()).hexdigest() == match_set.file_sha256

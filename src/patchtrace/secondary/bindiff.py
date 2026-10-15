@@ -14,10 +14,13 @@ table in `sqlite_master` (a view named like a required table is never read).
 from __future__ import annotations
 
 import hashlib
+import os
 import sqlite3
+import tempfile
 import time
 from pathlib import Path
 
+from .bindiff_inputs import copy_and_hash
 from .contracts import (
     BINDIFF_LIMITATIONS,
     SecondaryError,
@@ -97,11 +100,15 @@ def _name(value: object) -> str | None:
 
 def import_bindiff(path: Path, older_sha256: str, newer_sha256: str, *,
                    expected_hashes: tuple[str, str] | None = None,
-                   deadline_seconds: float = DEFAULT_DEADLINE) -> SecondaryMatchSet:
+                   deadline_seconds: float = DEFAULT_DEADLINE, preserve_dir: Path | None = None) -> SecondaryMatchSet:
     """`expected_hashes` (SPEC-29 §3): the `file.hash` pair to require when the BinExport inputs were bound
     by an explicit user assertion rather than a SHA-256 `executable_id`; default = the artifact hashes.
-    `deadline_seconds` bounds the whole import (SPEC-29 §7.2); expiry raises `PT-SECONDARY-LIMIT`."""
+    `deadline_seconds` bounds the whole import (SPEC-29 §7.2); expiry raises `PT-SECONDARY-LIMIT`.
+    `preserve_dir`: a user-selected file is first copied there (hashed once, named by its hash) and the copy is
+    parsed, so the stored hash describes the bytes read and the upstream raw data is kept."""
     path = Path(path).resolve()
+    if preserve_dir is not None:
+        path = _preserve(path, Path(preserve_dir))
     try:
         size = path.stat().st_size
         with path.open('rb') as handle:
@@ -141,6 +148,24 @@ def import_bindiff(path: Path, older_sha256: str, newer_sha256: str, *,
         raise _fail(f'malformed BinDiff database: {type(exc).__name__}') from None
     finally:
         db.close()
+
+
+def _preserve(source: Path, directory: Path) -> Path:
+    try:
+        directory.mkdir(parents=True, exist_ok=True)
+        fd, temp = tempfile.mkstemp(prefix='.bindiff-', suffix='.part', dir=directory)
+        os.close(fd)
+        Path(temp).unlink()  # copy_and_hash creates its destination exclusively
+        try:
+            sha = copy_and_hash(source, Path(temp), max_bytes=MAX_SIZE)
+            kept = directory / f'bindiff-{sha}.BinDiff'
+            os.replace(temp, kept)
+        except BaseException:
+            Path(temp).unlink(missing_ok=True)
+            raise
+    except OSError as exc:
+        raise _fail(f'cannot preserve BinDiff file: {exc.strerror}') from None
+    return kept
 
 
 def _check_schema_objects(db: sqlite3.Connection) -> set[str]:
