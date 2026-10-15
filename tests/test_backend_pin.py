@@ -248,8 +248,16 @@ def test_policy_structure_is_enforced(pin, mutate):
     assert checker.validate_pin(pin)
 
 
+def test_committed_pin_records_the_owner_jdk_approval(pin):
+    jdk = pin['license_policy']['allowed']['temurin-jdk']
+    assert jdk['owner_approved'] is True and jdk['approved_on'] == '2026-10-15' and jdk['approved_via']
+    assert checker.unapproved_licenses(pin) == []  # stripped GPL dir is not shipped, so never pending
+
+
 def test_pending_approval_is_reported_and_blocks_release_only(pin, tmp_path):
-    assert checker.unapproved_licenses(pin) == ['temurin-jdk']  # stripped GPL dir is not shipped, so not pending
+    pin = json.loads(json.dumps(pin))
+    pin['license_policy']['allowed']['temurin-jdk']['owner_approved'] = False  # simulate a withdrawn approval
+    assert checker.unapproved_licenses(pin) == ['temurin-jdk']
     path = tmp_path / 'pin.json'
     path.write_text(json.dumps(resolved(pin)), encoding='utf-8')
     plain = run_tool('--pin', str(path))

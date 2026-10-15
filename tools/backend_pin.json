@@ -184,10 +184,12 @@
       "temurin-jdk": {
         "spdx": "GPL-2.0-only WITH Classpath-exception-2.0",
         "role": "Java runtime required by Ghidra, embedded in the full bundle",
-        "owner_approved": false,
+        "owner_approved": true,
+        "approved_on": "2026-10-15",
+        "approved_via": "owner answered 'Yes, ship the JDK' directly in the Instance C session to the question 'May the zero-download bundle ship OpenJDK (Temurin, GPL-2.0-only WITH Classpath-exception-2.0)?'; Instance A separately reported the same owner answer in its session",
         "shipped": true,
         "match": ["jdk", "jdk-windows", "jdk-linux"],
-        "rationale": "PENDING EXPLICIT OWNER APPROVAL. Ghidra needs a JDK and the owner asked for a no-download bundle, which requires shipping a JRE; the written product rule has not been updated to allow it. Until approved, release and publish builds are refused; acceptance builds warn."
+        "rationale": "Ghidra needs a JDK and the owner asked for a no-download bundle, which requires shipping a JRE. Owner approval recorded 2026-10-15 (see approved_via). Shipped unmodified as a separate runtime with its licence texts and a source offer."
       },
       "ghidra-GPL-dir": {
         "spdx": "LicenseRef-Ghidra-GPL-dir",

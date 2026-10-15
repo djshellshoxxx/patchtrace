@@ -790,7 +790,10 @@ def test_real_wheel_build_from_a_source_tarball_is_byte_compared(tmp_path):
 
 
 def test_notice_states_the_licence_policy_honestly(tmp_path):
-    result = build(World(tmp_path, 'windows'), tmp_path)
+    world = World(tmp_path, 'windows')
+    world.pin['license_policy']['allowed']['temurin-jdk']['owner_approved'] = False  # the pending-approval wording
+    world.write_pin()
+    result = build(world, tmp_path)
     notice = (result.payload_dir / 'LICENSES/NOTICE.txt').read_text(encoding='utf-8')
     assert 'not a legal compliance claim' in notice
     assert 'temurin-jdk [GPL-2.0-only WITH Classpath-exception-2.0]: shipped, OWNER APPROVAL PENDING' in notice
@@ -802,6 +805,8 @@ def test_notice_states_the_licence_policy_honestly(tmp_path):
 
 def test_release_build_refuses_pending_licence_approval(tmp_path):
     world = World(tmp_path, 'linux')
+    world.pin['license_policy']['allowed']['temurin-jdk']['owner_approved'] = False  # approval withdrawn
+    world.write_pin()
     with pytest.raises(tool.BundleBuildError) as caught:
         build(world, tmp_path, release=True)
     assert caught.value.code == 'PT-BUNDLE-LICENSE' and 'temurin-jdk' in str(caught.value)
