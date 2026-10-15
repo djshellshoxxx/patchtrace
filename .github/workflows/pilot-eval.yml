@@ -1,7 +1,7 @@
 name: Pilot evaluation (advisory)
 # PIL-D2. Patch-intent localization evaluation, manual dispatch, Linux only, advisory (never a required check).
 # Runs the hermetic evaluation tests and records the preregistration hash that every report must carry.
-# Uploads aggregate metrics only: no binaries, no Microsoft-derived data, no secrets.
+# Uploads aggregate metrics only: no binaries, no Microsoft-derived data, no tokens.
 on:
   workflow_dispatch:
 permissions:
@@ -16,7 +16,7 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - run: python -m pip install --only-binary=:all: pytest hypothesis
+      - run: 'python -m pip install --only-binary :all: pytest hypothesis'
       - run: python -m pip install -e .
       - name: Record the preregistration hash
         run: |
