@@ -1038,8 +1038,14 @@ def rebuild_ghidriff_tarball(ghidriff: Mapping, work: Path, source_builder: Sour
     except OSError:
         _fail('PT-BUNDLE-FETCH', 'ghidriff.source_tarball: nothing was rebuilt')
     if size != entry['size'] or actual != entry['sha256']:
+        detail = ''
+        if source_builder is None:  # diagnostics only for the real recipe: names the differing top-level directory
+            try:
+                detail = '\n' + '\n'.join(_load_sibling('verify_backend_pins').describe_tarball(path))
+            except Exception as error:  # noqa: BLE001 - the mismatch itself is the failure; never mask it
+                detail = f'\n(no member digests: {type(error).__name__})'
         _fail('PT-BUNDLE-PIN-MISMATCH', f'ghidriff.source_tarball: rebuilt {size} bytes sha256 {actual}, '
-                                        f'pinned {entry["size"]} bytes sha256 {entry["sha256"]}')
+                                        f'pinned {entry["size"]} bytes sha256 {entry["sha256"]}{detail}')
     return path
 
 

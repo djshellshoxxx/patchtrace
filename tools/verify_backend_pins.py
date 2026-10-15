@@ -121,6 +121,21 @@ def build_tarball(repo_dir: Path, commit: str, out: Path, run: Run = _run) -> di
     return {'tree': tree, 'prefix': prefix, 'sha256': sha256_bytes(data), 'size': len(data)}
 
 
+def describe_tarball(path: Path) -> list[str]:
+    """Per top-level-directory digests of (name, mode, size, content) plus the git version: used to localise a pin mismatch."""
+    groups: dict[str, hashlib._Hash] = {}
+    counts: dict[str, int] = {}
+    with tarfile.open(path, mode='r:gz') as archive:
+        for member in archive:
+            top = '/'.join(member.name.split('/')[:2])
+            body = archive.extractfile(member).read() if member.isreg() else member.linkname.encode()
+            digest = groups.setdefault(top, hashlib.sha256())
+            digest.update(f'{member.name}\0{member.mode:o}\0{member.size}\0{member.type!r}\0'.encode() + hashlib.sha256(body).digest())
+            counts[top] = counts.get(top, 0) + 1
+    git = subprocess.run(['git', '--version'], capture_output=True, text=True, check=False).stdout.strip()
+    return [f'{git}; python {sys.version.split()[0]}'] + [f'{top} n={counts[top]} {groups[top].hexdigest()[:16]}' for top in sorted(groups)]
+
+
 def rebuild_tarball(repo: str, commit: str, work: Path, run: Run = _run) -> tuple[Path, dict]:
     """Fetch `commit` from `repo` into `work/ghidriff-git` and rebuild the tarball at `work/ghidriff-source.tar.gz`."""
     clone = work / 'ghidriff-git'
