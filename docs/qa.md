@@ -839,3 +839,7 @@ Automated only: `tests/test_calib_channels_*.py` (synthetic pairs). No channel v
 
 ### [U3-U8:cli-pin]
 - Automated: `tests/test_unified_cli.py` and `tests/test_unified_bindiff_pin.py` (hermetic). Blocked on the owner: BinDiff v8 digest verification (needs an independent network path and the issuer key), so G-U3 oracle part is not run.
+
+### [LBL-08:msvc-cl]
+- Automated (Linux): argv, banner, host gating, nuisance variants and a build through fake `cl`/`link` pass; the real-compiler test records `blocked` (profile msvc builds only on a Windows host).
+- Not verified: any real `cl` build (A/A byte identity, PDB source-path normalisation via `/d1trimfile`, `llvm-strip` on a MSVC image, `llvm-pdbutil` inventory). Needs the windows-2022 advisory job.

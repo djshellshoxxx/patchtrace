@@ -576,3 +576,7 @@
 ### [U3-U8:cli-pin]
 - [x] U3 S4 CLI polish (early usage errors, exit codes in help); Explain fragment path already built.
 - [x] U8 prep: pin checker and runbook. Open (owner, network): run docs/runbooks/bindiff-pin.md, flip `verified`; wire `bindiff_pin verify` into `unified-live-gates.yml`; first dispatch of that workflow.
+
+### [LBL-08:msvc-leg]
+- [x] `msvc` profile, probing, host gating, nuisance variants, noise pairs, hermetic tests with fake `cl`/`link` (`tests/test_tier_r_msvc.py`)
+- [ ] Owner/CI: run the dispatch-only `msvc-advisory` job of `corpus-tier-r.yml` on windows-2022 (set repository variable TIER_R_MSVC=1) and check the recorded `cl` version, the `/d1trimfile` source-path normalisation and A/A byte identity; advisory until 10 green runs
