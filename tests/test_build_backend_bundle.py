@@ -174,12 +174,14 @@ class World:
 class FakeRunner:
     """Stands in for `python -I -m pip install/wheel`: validates the argv and unpacks/zips locally."""
 
-    def __init__(self, *, mutate: bool = False, wheel_tag: str = 'py3-none-any') -> None:
-        self.calls, self.mutate, self.wheel_tag = [], mutate, wheel_tag
+    def __init__(self, *, mutate: bool = False, wheel_tag: str = 'py3-none-any', skip_jlink: bool = False) -> None:
+        self.calls, self.mutate, self.wheel_tag, self.skip_jlink = [], mutate, wheel_tag, skip_jlink
 
     def __call__(self, argv, cwd) -> None:
         self.calls.append(list(argv))
-        if 'install' in argv:
+        if Path(argv[0]).stem == 'jlink':
+            self._jlink(argv)
+        elif 'install' in argv:
             self._install(argv)
         else:
             self._wheel(argv)
@@ -187,6 +189,18 @@ class FakeRunner:
     @staticmethod
     def _opt(argv, name):
         return argv[argv.index(name) + 1]
+
+    def _jlink(self, argv) -> None:
+        if self.skip_jlink:
+            return
+        out = Path(self._opt(argv, '--output'))
+        exe = '.exe' if argv[0].endswith('.exe') else ''
+        for name in ('java', 'javac'):
+            (out / 'bin').mkdir(parents=True, exist_ok=True)
+            (out / 'bin' / f'{name}{exe}').write_bytes(b'ELF\n')
+            (out / 'bin' / f'{name}{exe}').chmod(0o755)
+        (out / 'lib').mkdir()
+        (out / 'lib' / 'modules').write_bytes(b'm')
 
     def _install(self, argv) -> None:
         lines = Path(self._opt(argv, '-r')).read_text(encoding='utf-8').splitlines()
@@ -279,7 +293,7 @@ def test_strip_rules_remove_docs_and_other_os_natives(tmp_path, platform):
     assert os_dirs == ({'win_x86_64'} if platform == 'windows' else {'linux_x86_64'})
     assert (ghidra / 'LICENSE').is_file()
     assert not (ghidra / 'GPL').exists()  # policy: Ghidra GPL/** is stripped by default
-    assert result.stripped_files >= 5 and result.stripped_bytes >= 800
+    assert result.stripped_files >= 4 and result.stripped_bytes >= 800  # jmods/src.zip now leave with jlink
 
 
 def test_third_party_json_documents_every_component(tmp_path):
@@ -328,10 +342,20 @@ def test_linux_modes_are_applied_and_symlinks_become_copies(tmp_path):
 
 
 # ----- gates (each red) ----------------------------------------------------------------------------------
+def _pin_with_placeholder(tmp_path):
+    """The committed pin is fully resolved now; keep the refusal tests hermetic by re-opening one component."""
+    pin = json.loads(REAL_PIN.read_text(encoding='utf-8'))
+    pin['components']['python-windows'].update(status='placeholder', sha256='PLACEHOLDER-UNRESOLVED', size=None,
+                                               digest_source='none')
+    path = tmp_path / 'placeholder-pin.json'
+    path.write_text(json.dumps(pin), encoding='utf-8')
+    return path
+
+
 def test_unresolved_pin_placeholders_are_refused_before_any_download(tmp_path):
     calls = []
     with pytest.raises(tool.BundleBuildError) as caught:
-        tool.build_backend(REAL_PIN, 'linux', tmp_path / 'out', cache_dir=tmp_path / 'c',
+        tool.build_backend(_pin_with_placeholder(tmp_path), 'linux', tmp_path / 'out', cache_dir=tmp_path / 'c',
                            fetcher=lambda *a: calls.append(a), runner=FakeRunner())
     assert caught.value.code == 'PT-BUNDLE-PIN' and 'placeholder' in str(caught.value) and calls == []
 
@@ -744,8 +768,8 @@ def test_make_offline_bundle_cli_is_unchanged_and_uses_the_shared_module(tmp_pat
     assert legacy._builder().package_payload.__module__ == 'build_backend_bundle'
 
 
-def test_cli_build_refuses_the_committed_pin_with_a_clear_exit_code(tmp_path, capsys):
-    code = tool.main(['build', '--platform', 'linux', '--out', str(tmp_path / 'o'), '--pin', str(REAL_PIN)])
+def test_cli_build_refuses_a_pin_with_a_placeholder_with_a_clear_exit_code(tmp_path, capsys):
+    code = tool.main(['build', '--platform', 'linux', '--out', str(tmp_path / 'o'), '--pin', str(_pin_with_placeholder(tmp_path))])
     assert code == tool.EXIT_BUILD and 'PT-BUNDLE-PIN' in capsys.readouterr().err
 
 
@@ -827,3 +851,81 @@ def test_gpl_directory_kept_by_a_bad_pin_is_refused(tmp_path):
     with pytest.raises(tool.BundleBuildError) as caught:
         build(world, tmp_path)
     assert caught.value.code == 'PT-BUNDLE-PIN' and 'GPL' in str(caught.value)
+
+# ----- B7: stronger strip, jlink runtime, offline policy -------------------------------------------------
+HEAVY = {
+    'Ghidra/Features/FunctionID/data/vs2019_x64.fidbf': b'f' * 300,
+    'Ghidra/Features/Base/data/typeinfo/golang/go1.20.json': b'g' * 300,
+    'Ghidra/Features/Jython/lib/jython.jar': b'j' * 300,
+    'Ghidra/Features/BSim/lib/bsim.jar': b'b' * 300,
+    'Ghidra/Features/GhidraServer/lib/server.jar': b's' * 300,
+    'Ghidra/Debug/Debugger/lib/d.jar': b'd' * 300,
+    'Ghidra/Features/Base/lib/Base.jar': b'base',
+    'Ghidra/Features/Decompiler/lib/Decompiler.jar': b'decomp',
+}
+
+
+@PLATFORMS
+def test_strip_removes_fid_golang_jython_bsim_server_and_debug_but_keeps_the_core(tmp_path, platform):
+    result = build(World(tmp_path, platform, extra_ghidra=HEAVY), tmp_path)
+    ghidra = result.payload_dir / 'ghidra'
+    for gone in list(HEAVY)[:6]:
+        assert not (ghidra / gone).exists(), gone
+    assert (ghidra / 'Ghidra/Features/Base/lib/Base.jar').is_file()
+    assert (ghidra / 'Ghidra/Features/Decompiler/lib/Decompiler.jar').is_file()
+
+
+def test_keep_fid_pin_flag_retains_the_function_id_databases(tmp_path):
+    result = build(World(tmp_path, 'linux', extra_ghidra=HEAVY), tmp_path, keep_fid=True)
+    ghidra = result.payload_dir / 'ghidra'
+    assert (ghidra / 'Ghidra/Features/FunctionID/data/vs2019_x64.fidbf').is_file()
+    assert not (ghidra / 'Ghidra/Features/Jython').exists()
+
+
+@PLATFORMS
+def test_jlink_replaces_the_jdk_with_the_pinned_module_set(tmp_path, platform):
+    world = World(tmp_path, platform)
+    runner = FakeRunner()
+    result = build(world, tmp_path, runner)
+    (call,) = [c for c in runner.calls if Path(c[0]).stem == 'jlink']
+    modules = call[call.index('--add-modules') + 1].split(',')
+    assert modules == world.pin['jlink']['modules'] and {'java.base', 'jdk.compiler'} <= set(modules)
+    assert {'--strip-debug', '--no-man-pages', '--no-header-files'} <= set(call)
+    assert Path(call[call.index('--module-path') + 1]).name == 'jmods'
+    jdk = result.payload_dir / 'jdk'
+    assert (jdk / 'lib/modules').is_file() and not (jdk / 'jmods').exists()
+    assert (jdk / 'legal/java.base/LICENSE').read_bytes() == b'GPLv2+CE\n'  # copied from the full JDK
+    assert any((jdk / 'bin').glob('javac*'))
+
+
+def test_pin_without_jlink_keeps_the_full_jdk(tmp_path):
+    world = World(tmp_path, 'linux')
+    del world.pin['jlink']
+    world.write_pin()
+    runner = FakeRunner()
+    result = build(world, tmp_path, runner)
+    assert not [c for c in runner.calls if Path(c[0]).stem == 'jlink']
+    assert (result.payload_dir / 'jdk/bin/java').is_file() and not (result.payload_dir / 'jdk/lib/modules').exists()
+
+
+def test_jlink_that_produces_nothing_fails_loudly(tmp_path):
+    with pytest.raises(tool.BundleBuildError) as caught:
+        build(World(tmp_path, 'linux'), tmp_path, FakeRunner(skip_jlink=True))
+    assert caught.value.code == 'PT-BUNDLE-JLINK'
+
+
+def test_jlink_without_java_base_is_refused(tmp_path):
+    world = World(tmp_path, 'linux')
+    world.pin['jlink']['modules'] = ['java.desktop']
+    world.write_pin()
+    with pytest.raises(tool.BundleBuildError) as caught:
+        build(world, tmp_path)
+    assert caught.value.code == 'PT-BUNDLE-PIN'
+
+
+@PLATFORMS
+def test_runtime_policy_disables_symbol_servers_and_bounds_each_analysis(tmp_path, platform):
+    result = build(World(tmp_path, platform), tmp_path)
+    policy_doc = json.loads((result.payload_dir / 'config/runtime-policy.json').read_text(encoding='utf-8'))
+    assert policy_doc == {'schema': 'patchtrace-runtime-policy/1', 'ghidriff_args': ['--no-symbols'],
+                          'symbol_servers': 'disabled', 'analysis_timeout_s': 7200, 'timeout_enforced_by': 'process'}

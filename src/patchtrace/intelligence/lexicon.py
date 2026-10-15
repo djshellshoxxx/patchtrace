@@ -15,6 +15,7 @@ display labels only.
 """
 from __future__ import annotations
 
+import functools
 import html
 import re
 import unicodedata
@@ -213,6 +214,7 @@ def family(cwe_id: str) -> str | None:
     return _FAMILY_OF.get(cwe_id)
 
 
+@functools.cache  # the lexicon is module data fixed at import; every profile and every pilot input record asked again
 def lexicon_digest() -> str:
     table = [{'id': t.term_id, 'phrases': list(t.phrases), 'cwe': list(t.cwe_ids), 'scope': t.scope,
               'strength': t.strength} for t in TERMS]

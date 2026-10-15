@@ -168,6 +168,19 @@
           ],
           "default": null,
           "title": "Match Type"
+        },
+        "basicblocks": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Basicblocks"
         }
       },
       "required": [

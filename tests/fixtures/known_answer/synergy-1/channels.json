@@ -1,0 +1,12 @@
+{
+ "contract": "synergy-1-channels",
+ "note": "SYNTHETIC hand-written channel output (LBL s5). capa runs on the vivisect backend, so its origin differs from the Ghidra-based unified rows; shared-origin evidence would count once.",
+ "origins": {"unified": "ghidra", "capa": "vivisect"},
+ "capa": {
+  "scope": "function",
+  "behaviour_deltas": [
+   {"rva": 4112, "rules": ["read-config-value", "write-config-value"]},
+   {"rva": 4240, "rules": ["validate-length-field"]}
+  ]
+ }
+}

@@ -120,14 +120,14 @@ Every substantial future module must be added here before implementation. UI mus
 |---|---|---|---|---|
 | tool contracts | intelligence/tools/common.py | strict frozen `ToolManifest`, `ToolRun`, `EvidenceLink`, `CapabilityEvidence`, `StringEvidence`, `EnvironmentEvidence`, `ToolEvidenceSet`, `ToolError` (`PT-TOOL-*`), strict JSON loader, sanitising, secret patterns, tree digests, cache key | pydantic, enrichment.identity | `tests/test_intel_tools_common.py` |
 | tool process | intelligence/tools/process.py | private scratch (verified artifact copy), from-scratch env via `secondary/engine_env.py`, supervised `jobs.run_process`, outcome classification | jobs, engine_env, artifact_bytes | `tests/test_intel_tools_runner.py` (fake executables) |
-| capa adapter | intelligence/tools/capa.py | probe, fixed argv (vivisect/ghidra), strict 9.x result-document parser, rule/signature pack digests | common, process | `tests/test_intel_tools_capa.py` (real goldens on SYNTHETIC PEs) |
-| FLOSS adapter | intelligence/tools/floss.py | probe, static-only default argv, consented deobfuscation (emulation) opt-in, strict 3.x parser | common, process | `tests/test_intel_tools_floss.py` |
-| diec adapter | intelligence/tools/diec.py | probe, pinned 3.21 + database digest, strict JSON parser, signature/heuristic/unknown certainty | common, process | `tests/test_intel_tools_diec.py` |
-| normalize | intelligence/tools/normalize.py | verified PE map, canonical RVA, offset verification, function attribution, set validation (binding, contract, stale), comparability | pe_overview, common | `tests/test_intel_tools_normalize.py` |
-| delta | intelligence/tools/delta.py | capability/string/environment deltas, newly-introduced vs newly-detectable, unlocalized, quality flags (value gate unvalidated) | normalize | `tests/test_intel_tools_delta.py` |
-| runner + store | intelligence/tools/runner.py, intelligence/tools/store.py | profiles basic/context/full, job scheduler (cap 2), cache key reuse, error isolation; `tool-run`/`tool-evidence` rows, content-addressed sidecars | jobs, enrichment.storage | `tests/test_intel_tools_runner.py`, `tests/test_intel_tools_store.py` |
+| capa adapter | intelligence/tools/capa.py | probe, fixed argv (vivisect/ghidra), strict 9.x result-document parser, rule/signature pack digests | common, process | `tests/test_intel_tools_parsers.py` (real goldens on SYNTHETIC PEs) |
+| FLOSS adapter | intelligence/tools/floss.py | probe, static-only default argv, consented deobfuscation (emulation) opt-in, strict 3.x parser | common, process | `tests/test_intel_tools_floss_wb3.py` |
+| diec adapter | intelligence/tools/diec.py | probe, pinned 3.21 + database digest, strict JSON parser, signature/heuristic/unknown certainty | common, process | `tests/test_intel_tools_parsers.py` |
+| normalize | intelligence/tools/normalize.py | verified PE map, canonical RVA, offset verification, function attribution, set validation (binding, contract, stale), comparability | pe_overview, common | `tests/test_intel_tools_audit.py` |
+| delta | intelligence/tools/delta.py | capability/string/environment deltas, newly-introduced vs newly-detectable, unlocalized, quality flags (value gate unvalidated) | normalize | `tests/test_intel_tools_delta_wb3.py` |
+| runner + store | intelligence/tools/runner.py, intelligence/tools/store.py | profiles basic/context/full, job scheduler (cap 2), cache key reuse, error isolation; `tool-run`/`tool-evidence` rows, content-addressed sidecars | jobs, enrichment.storage | `tests/test_intel_tools_runner.py` |
 | CLI | intelligence/tools/cli.py (+ 6-line hook in cli.py) | `intel-tools probe|run|delta`, `enrichment-cli/1`, exit codes 0/2/3/4/5, redaction by default | runner, delta, service | `tests/test_intel_tools_cli.py` |
-| provisioning + live | tools/provision_intel_tools.py, tools/intel_tools_pin.json, tools/generate_intel_tools_schemas.py, docs/schemas/intel-tools/, tests/test_live_intel_tools.py, .github/workflows/live-intel-tools.yml | pinned download/verify/extract without executing; never-silent live status | - | `tests/test_intel_tools_provision.py`, `tests/test_intel_tools_schemas.py` |
+| provisioning + live | tools/provision_intel_tools.py, tools/intel_tools_pin.json, tools/generate_intel_tools_schemas.py, docs/schemas/intel-tools/, tests/test_live_intel_tools.py, .github/workflows/live-intel-tools.yml | pinned download/verify/extract without executing; never-silent live status | - | `tests/test_provision_intel_tools.py`, `tests/test_intel_tools_schemas.py` |
 ### [T:core] build status (2026-10-14)
 Built: common, process, capa, floss, diec, normalize, delta (tests: `tests/test_intel_tools_common.py`, `tests/test_intel_tools_parsers.py`, fixtures `tests/fixtures/intel_tools/`, builder `tests/test_intel_tools_pe.py`). Planned rows above that are NOT built yet (next wave): runner + store, CLI + hook, schema generator, provisioning/pin, live test/workflow.
 ### [D:known-answer-factory] SPEC-32 known-answer corpus factory (2026-10-14, builder D; dev-only, never shipped)
@@ -1023,3 +1023,115 @@ R5 contract notes: no persisted contract changed. Deviations from the card, all 
 | panel | src/patchtrace/pilot/panel.py | `PANEL` for the F5 host: id `leads`, area left, `Ctrl+Shift+L`, tips `leads.*` and the template `leads.chip`, anchors in `cve` and `match`, anchors out `string`, `import`, `capability`, `rule`, `build_fact`, `advisory_phrase`. Loading it imports no Qt. Hidden at first run (`default_visible` False). |
 | dock | src/patchtrace/ui_leads.py | `LeadsController` and `LeadsPanel` on `gui/qt` (`VirtualTable`, `ChipLabel`, `PlainLabel`, `SafeTextView`, the task runner). The GUI thread reads pointer rows and review events and stores results (the project is locked to one writer and its connection is thread-bound); workers get snapshots only (rows from the assessment, ranking of collected evidence, resolving Ghidriff rows for Go to function). Prepare leads = `collect` (GUI thread) then `localize` (worker) then `store.publish` (GUI thread). |
 | tests | tests/test_pilot_read_model.py (35), tests/test_ui_leads.py (61), tests/leads_support.py | Every state, hostile text, names, anchors in and out, keys, review events through the project database, threads, host and `MainWindow` integration, claims, enum-slug and number sweeps. |
+
+
+### [UE2-S6b:live-gates] SPEC-31 S6b gate evaluators and live run (2026-10-15)
+- `tools/unified/outcomes.py` (`unified-outcomes/1`: per pair the rows' decision and materiality by RVA, the planted function of a mutant, a row digest), `tools/unified/evaluators.py` (G-U1 A/A null, G-U2 leakage and recall per class, G-U4 determinism across runs over the same image bytes and the mirror image of the swapped orientation), `tools/unified/live_pairs.py` (the whole pipeline on label documents with a real Ghidra, `--swap`, `--prefix`), `gates_u --outcomes`; G-U8 `ui-policy` names the S4 tests.
+- `.github/workflows/unified-live-gates.yml`: dispatch only and advisory; builds on Linux, then A/A and release pairs on Linux and Windows over the same bytes (two passes, both orientations), one mutant job per class, then the gate report. Tests: tests/test_unified_gate_eval.py, test_unified_live_pairs.py, test_unified_live_workflow.py.
+
+### [UE3-S6c:gates] SPEC-31 remaining gates (2026-10-15)
+- G-U1 P1 nuisance variants: `BuildSpec.nuisance` (`icf`, `timestamp`, `guid`, `path`; empty by default, in the recipe digest only when set, so every existing digest is unchanged) with the pure argv transforms `build.nuisance_link` / `nuisance_compile`; `factory.run_nuisance` builds each against the `aa-a` rebuild (an identical image is kept as an X-versus-X pair, a variant the linker cannot express is listed as skipped); `corpus.aa.run` adds them to the P1 set, the manifest pair carries `variant`, and `evaluators.g_u1` stays `pending` for every kind in `aa.P1_KINDS` that no gated P1 pair covers (the static `P1:` pending items are gone). Tests: tests/test_unified_nuisance.py, test_unified_gate_eval.py.
+- G-U4 3-build chain: `factory.run_chains` / `aa.CHAINS` build A (the rebuild), B and C (two nuisances) and the pairs A-B, B-C, A-C as P1 pairs; `evaluators.find_chains` finds chains from the manifest image digests (any project, so release triples count once they exist); a function cosmetic or unchanged on both legs and `material` from A to C fails the gate; `OutcomeRow.proof` / `cheap_semantic` (from the joined `ChangeFacts`) make COS-PSEUDO beside a cheap-tier semantic delta a failure. No chain in the manifest keeps G-U4 `pending`; a chain without a run holding all three legs or without a composable function is `insufficient-data`.
+- G-U3, G-U6, G-U7 (`tools/unified/rowgates.py`, `cluster.py`): `unified-outcomes/1` rows now carry the supports joined to their atoms (`basis`: component, tier, evidence class, source, step), the truth of a one-to-one row against the labels (`outcomes.Truth`: right / wrong / unknown, and edited / not-edited), `ghidriff_exact`, and the legacy tools that flag the pair (`legacy`, `PairOutcome.legacy_tools`; `live_pairs` fills Ghidriff's `modified`; BinDiff and rz-diff are not wired, so they are reported under `not_supplied`). G-U3: matched-pair precision >= 99.5 % with a lineage-cluster (B = 2000) lower bound >= 99.0 %, 0 truth-contradicted tier-A pairs and every Ghidriff SymbolsHash/ExactBytes pair matched or contested on the A/A pairs, a per-pass table with `demote` for ladder passes whose interval starts below 98 %; fewer than 30 lineages is `insufficient-data`; with all of that satisfied the status is `blocked`, because the BinDiff oracle part has no pin. G-U6: per legacy tool, material false leads at least 20 % fewer (exact fraction) at planted recall not lower, over the mutation and A/A pairs the tool ran on; a tool with no false leads cannot be beaten (`insufficient-data`). G-U7: per (component pair, evidence-class pair) of rows supported by exactly two tier-B atoms, error rate not above twice the tier-A rate; under 30 rows is `insufficient-data`, a failing pair is told to be joined by configuration. Tests: tests/test_unified_row_gates.py (24).
+- Assembler: `gates_u --inputs DIR` reads `unified-corpus-manifest.json`, `outcomes-*.json`, `bench-*.json`, `junit-*.xml` (links ignored); the Markdown carries a decision line (O2: flag OFF until G-U1..G-U6 pass), a status table and a Numbers table (counts, rates, lineage-cluster intervals). `unified-live-gates.yml` now runs the mutant matrix (class x Linux/Windows), an `integrity` job (bench and the G-U8 test modules, both systems) and assembles with `--inputs`. Not produced there: the frozen-smoke attestation (G-U8 stays insufficient-data until a run attests it).
+
+
+### [UE2-U3U5:explain-columns] Unified Explain into the context preview, remembered column widths (2026-10-15)
+- `evidence.build_context(..., notes=[(title, text, omitted)])` adds an optional `unified` section (at most 8 notes, a quarter of the budget, never cut: what does not fit is listed in `omitted`); a context without notes is unchanged. `interpretation.validate_context` accepts the optional section with its two-field schema. `ui.py`: `preview_interpretation(*_, notes=())` passes it through (no new lines). `UnifiedController.explain` selects the row's Ghidriff match and opens the existing preview with the fragment; rows without a match keep the own preview (nothing is sent from either).
+- `unified/columns` setting: `read_model.parse_column_widths` / `format_column_widths` (24 to 4000 px, valid keys only, at most 32 items), `UnifiedPanel.set_column_widths` / `user_widths` / `columns_changed` (debounced, user resizes only), default widths from `ColumnSpec.width_em`. Tests: tests/test_context_unified_notes.py (7), tests/test_ui_unified_columns.py (7), tests/test_ui_unified.py (explain routing).
+
+
+### [UE2-U4U6:ir-text-real-gui] IR text for rows without a Ghidriff match, real-pipeline GUI test (2026-10-15)
+- `unified/pair_text.py` (`IrPairTexts`, rank 10, listed in `worker.MODULES` and the layer map): the Ghidra-produced instruction text (`ins.txt`) of each side from the stored ProgramIR, one `<rva>  <text>` line per instruction (4,000 lines, then a counted notice), labelled "Disassembly from ProgramIR (Ghidra <version>); decompiled code unavailable for this pair"; a side without a function, a function absent from the IR and a sidecar without text each say so. `UnifiedViewModel.result_dir` (additive) locates the sidecars. `UnifiedController` uses it as the default `pair_texts` and closes its readers at shutdown.
+- tests/test_ui_unified_pipeline.py (4): Run button -> real `prepare` / `execute` (worker child) / `publish` over a synthetic project with hand-assembled sidecars; the panel rows, the primary project unchanged, IR text for a row with no match, Explain routing with the real fragment, a second run reusing the stored result. tests/test_unified_pair_text.py (6).
+
+
+### [UE4:code-panes] Unified code view: decompiled C, alignment gaps, hunks, provenance (2026-10-15)
+- `unified/pair_text.py` (`RowCodeSource`, replaces `IrPairTexts`): per row two channels, `decompiled` and `disassembly`, each a `PairText` with one provenance line per side or the reason it is unavailable. Decompiled C is read from the result part `decomp.jsonl.gz` (checked against the manifest digest, byte count and record count; any mismatch or malformed line reads as unavailable); a result without the part says so. Disassembly gaps come from the stored-IR alignment (`facts/align.py`, the longest address-ordered chain of its instruction pairs), not from a text diff; C is aligned with the bounded `alignment.diff_hunks`. A one-sided row shows its code against "No function on this side."; a function over 4,000 instructions is cut and shown unaligned with a note. Reads run under a lock because the panel loads on a worker thread.
+- `ui_unified.py` (`UnifiedCodeView`, a `CodeDiffView` plus mode, previous and next change, change counter, status line): the code of a row without a Ghidriff match shows in the panel (Enter or Go to match), no longer through `show_pair`; rows with a match still render in the main window. States: hint, loading, in main window, decompiled, disassembly (with "decompiled code unavailable for this pair" and the reason), an unavailable mode (its reason in the panes), error. Copy per side puts the provenance line before the code. Tips `unified.code_mode|code_prev|code_next|code_copy|code_older|code_newer`.
+- Not done here (outside the allowed files): `compute`/`pipeline` do not yet write `decomp.jsonl.gz` after the on-demand decompile, so real results show "Decompiled code is not stored in this result" until they do. The reader and the manifest part name are ready.
+- Tests: `tests/test_unified_pair_text.py` (32), `tests/test_ui_unified_code.py` (26), additions in `tests/test_ui_unified.py` and `tests/test_ui_unified_pipeline.py`.
+
+### [LBL-14:ci-summary]
+`tools/calibration/ci_summary.py`: Qt-free `summarize` (never-silent `tier-r-ci-summary/1` JSON plus Markdown: attempted/completed/blocked/failed per engine and stratum, <90% completion warning, `report_sha256`; a damaged shard set is status `error`) and `determinism` (two merges, equal `report_sha256`). Used by the merge job of `corpus-tier-r.yml`.
+
+### [LBL-prereg:tools]
+`tools/calibration/prereg.py` recomputes or verifies the C9 preregistration SHA-256 (read-only, never writes the lock). `tools/calibration/vendoring_scan.py` proposes lineage merges from shared masked body hashes (merge-only, hubs excluded, threshold and hub limit required). `tests/test_prereg_constants.py` pins the cv/threshold/gates/ece_null/metrics constants to the preregistration.
+
+### [LBL-13:channels]
+`tools/calibration/channels/{strings,capabilities,environment,rules,leadlist}.py` (dev-only): one scorer per channel pack, each returning its own `PackReport` (intervals by lineage bootstrap from `evalcore.boot`, exact counts, gate booleans). Packs are never pooled; `rules` is `blocked` while `yara_x` is missing. `leadlist` evaluates the LBL s7.6 conditions (precision above base rate, A/A false-lead rate <= 0.1 %, hit@10 non-inferiority -0.02, one improved slice); below 30 lineages a condition is undefined, never passed.
+
+
+### [U3-U8:cli-pin]
+- `unified/cli.py`: `--timeout` (60..86,400) and `--limit` (>= 0) are refused before the project is opened (exit 2, one failed `enrichment-cli/1` document); `--help` of `unified`, `run` and `show` lists the exit codes (0/2/3/4/5) and the always-a-document rule. The Explain fragment already reaches `build_context(notes=...)` and `ContextDialog` through `preview_interpretation(notes=)` (no further `ui.py` change). Tests: additions in `tests/test_unified_cli.py`.
+- `tools/unified/bindiff_pin.py` (`verify|print`, `--require-verified`, `--github-output`) checks `tools/bindiff_pin.json` offline and refuses placeholder digests; `docs/runbooks/bindiff-pin.md` lists the commands an owner runs to obtain the verified digest. The committed pin stays trust-on-first-use, so the BinDiff part of G-U3 stays blocked. Tests: `tests/test_unified_bindiff_pin.py`.
+
+### [LBL-08:msvc-profile]
+- `tools/calibration/tier_r/msvc.py`: pure argv builders (`compile_argv`, `link_argv`), banner parsing and the developer-environment allow-list for the `msvc` build profile (real `cl`/`link`, Windows host only). `toolchain.py` probes `cl` and `msvc-link` (a Microsoft banner is required, so coreutils `link` is rejected), gates the profile on `Toolchain.host`, and `build.py` dispatches to it (nuisances `icf`/`timestamp`/`guid`/`path` included). `factory.noise_variants` adds the gcc/msvc-free vs `cl` toolchain-noise pairs only when `cl` can build. Other profiles are unchanged.
+
+### [LBL-06:mutations-source]
+- `tools/calibration/mutations/ops_more.py` adds the nine remaining source operators (`signedness-flip`, `callee-swap`, `field-offset`, `global-swap`, `index-swap`, `branch-swap`, `buf-resize`, `string-literal`, `api-use`); `registry.py` merges them with the first sixteen (`OPERATORS_IMPL`, 25 ids) and holds `PROFILE_ONLY` (`api-use`: mingw profiles, `apply_case(profile=...)` raises `OperatorUnavailable` otherwise). `engine.make_masked_body_check` is the source-layer form of the s7 acceptance rule (optimised, address-masked assembly of the target: semantic must differ, cosmetic must be equal, not comparable is rejected). Contract Literals already carried the nine ids (LBL-00); nothing changed in `tier_r/`.
+
+### [U7:audit]
+Audit of `unified/` and `tools/unified/` (`docs/audits/20261015-unified-audit.md`): lone surrogates in names no longer stop a run, one `contracts.strip_unsafe` scrubs decompiler text, code panes and `clean`, G-U6/G-U7 refuse to pass on fewer than 30 lineages, a failing G-U8 blocks `decision_ready`. Tests: `tests/test_unified_audit_text.py` (29), additions in `test_unified_row_gates.py` and `test_unified_gates.py`. Deferred: U7-05 (BinDiff stub rows, needs `SecondaryMatch.basicblocks`), U7-06 (deadline policy after a partial ladder).
+
+### [LBL-07:mutations-ir-opt]
+`tools/calibration/mutations/ir.py`: the IR layer, an independent second truth source for source-layer mutation labels. Pure text edits over `clang -S -emit-llvm -O0 -Xclang -disable-O0-optnone -g` IR for six operators (`cmp-flip`, `const-change`, `field-offset`, `index-swap`, `branch-swap`, `callee-swap`), `normalise_function` / `ir_changed` (renumbered, debug-free comparison; `None` when a side lacks the function), and `agreement_by_operator` (per-operator agreement of the IR observation with the source label, unknowns counted apart, never pooled; `1 - rate` estimates source-layer label noise). `opt_transforms.py`: `loop-extract`, `hotcoldsplit`, `mergefunc`, `always-inline`, `partial-inliner` via stock `opt -passes=`; result `ok | unchanged | blocked` (reason), new symbols (`no-counterpart`), removed symbols, N tag. Both layers report BLOCKED without clang/opt, never skip.
+
+### [WB2-G8:whole-program-sources]
+`callgraph/source_ir.py` (`IrCallSource`, program-ir/1 readers via the `calls(fid)` accessor, call/jump kinds kept per edge) and `callgraph/source_binexport.py` (`BinExportCallSource`, jump-as-call recorded in `limitations`). Both are `CallSource`s at tier `addresses`, completeness `whole-program`. Tests: `tests/test_callgraph_sources.py`.
+
+### [WB3-S8:strings-run]
+| part | file | contract |
+|---|---|---|
+| service | src/patchtrace/strings/run_service.py | Qt-free `run_strings(request, cancel)`: FLOSS via `run_job` or the built-in scan; never touches the project store (SQLite and the project lock stay on the GUI thread); typed `StringsRunOutcome` (ready, cancelled, failed, stale); `persist` and `is_stale` for the GUI thread. |
+| controller | src/patchtrace/ui_strings_run.py | `StringsRunController` over the host `TaskRunner` channel `strings.run`: stale check, persist, one outcome per run, cancel at once, project switch drops the result. No widgets. |
+| tests | tests/test_ui_strings_run.py (10), tests/test_live_strings.py (2 hermetic, 2 live), tests/fixtures/strings/goldens | Fake FLOSS on synthetic pairs: consent hash recorded, cancel, stale, project switch. |
+
+### [D7:buildenv-timeline]
+`buildenv/timeline.py`: pure series timeline over 3-8 builds. Rows per fact family (toolchain, runtime, packing, managed, options) with cells `value`, `unknown` or `not-run` (firm facts only), one `Hop` per adjacent pair (never non-adjacent), `tools-differ` hop when the Detect It Easy setups differ, `change_after`. Reads stored rows through the `BuildEnvReader` port (`BuildEnvStore.latest` shape). The strip, `PairSnapshot.build_env` and `ui_series.py` wiring are Integrator asks.
+
+### [D9:buildenv-value-gate]
+`tools/buildenv_value_gate.py`: G-DIE-1 counter. Input `buildenv-value-gate-input/1` (M4 strata `toolchain-variant`, `aa`, `o0-vs-o2`, rows with truth), tags decided by the real `noise_map.tag_rows`; report `buildenv-value-gate/1` with raw counts per stratum, two checks (zero tags on controls, zero semantic leakage; `no-data` is never a pass) and no false-lead-reduction claim. Feeding it real Tier R M4 outcomes is an open step (needs the unified outcomes of the M4 pairs).
+
+### [D8:live-buildenv]
+`tests/test_live_buildenv.py` and job `live-buildenv` in `live-intel-tools.yml` (dispatch-only, Linux): real pinned `diec` on the synthetic `diec-same` and `diec-toolchain` pairs; the live toolchain verdict and change set must equal the committed-golden delta. Records `buildenv-diec` as passed, failed or blocked.
+
+### [WB1-S7:search-panel]
+`search/panel.py` (pure `PANEL`, factory loads Qt lazily), `search/qt_panel.py` (`SearchController`: query, side/scope/mode/sort, paged rows over `view_model.ResultsBuffer`, detail, Go to code, Other side, Copy, index build, cancel), `search/tooltip_entries.py` (`TooltipEntry` form of `tooltip_data` plus `search.cancel`). Tests: `tests/test_ui_search_panel.py`.
+
+### [WB2-G5G6:calls-panel]
+Calls panel (id graph): `callgraph/panel.py` (PanelSpec), `panel_qt.py` (widgets and controller), `panel_data.py` (Qt-free worker side), `tooltip_entries.py`. Tests `tests/test_ui_graph_panel.py`. Not built yet: DOT export, call-site reveal, settings persistence, minimap.
+
+### [WB3-S7b:strings-panel]
+
+`strings/panel.py` declares the Strings `PanelSpec`; `strings/qt_panel.py` is the Qt controller (StateView states, VirtualTable, TaskRunner channels `strings-scan` and `strings-view`, generation and project-key guard). The default loader is the built-in scan with no function pairing; FLOSS, probe, export, rescan and settings are not built yet.
+
+### [CAP-6:capabilities-panel]
+| Part | Files | Notes |
+|---|---|---|
+| declaration | src/patchtrace/intelligence/tools/capa_panel.py, tooltip_entries.py | `PANEL` id `capabilities`, bottom, tabbed with graph, `Ctrl+Shift+A`, tips `capabilities.*`; pure, loads no Qt |
+| data | src/patchtrace/intelligence/tools/capa_data.py, capa_exec.py | Qt-free: stored read (GUI thread), assemble and prepare (worker), probe, run preview, per-side `run_job`, publish (GUI thread) |
+| dock | src/patchtrace/intelligence/tools/capa_qt.py | `CapabilitiesController` on `gui/qt` (`StateView`, `VirtualTable`, `SafeTextView`); tabs Changes and Setup and run |
+| tests | tests/test_ui_capabilities_panel.py (35) | state matrix, hostile text, a11y, late result on project switch, shutdown, previewed run |
+
+### [K3:kev-panel]
+`kev/panel.py` (pure PanelSpec, KEV claims profile), `ui_kev_model.py` (Qt-free input parsing, rows, columns, filtered view, closed failure reasons), `ui_kev.py` (KevController on the task runner; epoch-guarded results; consent before the only network call). Tests: `tests/test_ui_kev_panel.py`.
+
+### [FAB-6:related]
+- `fabric/related.py` (Qt-free rows, columns, state, `anchor_ref` = `AnchorRef.from_fabric`), `fabric/panel.py` (`PANEL` id `related`, tips `related.*`, teach `related.*`), `ui_related.py` (`RelatedController`, table-only). Tests `tests/test_ui_related_panel.py` (35).
+
+### [LBL-20:tier-w-fetch]
+`tools/calibration/tier_w/fetch.py` and `transport.py` (SPEC-33 s4, library API; the `fetch-plan`/`fetch` CLI adapters belong to LBL-25). `plan_binaries` (offline plan from the manifest and pairs sidecar), `consent_for`, `disk_needed`/`ensure_disk`, `fetch_binary` (existing `quarantine.acquire`, x64 PE only, read-only, resume by SHA-256), `fetch_pdb` (CodeView identity, `SymbolTransport.download_pdb`: throttle, one blob redirect, size cap, MSF magic, GUID/age re-check by the stdlib reader, `pdb-rejected` events), hash-chained `Ledger` of `tier-w-fetch/1` events (`file_sha256`, because `sha256` is the chain's own key). Tests use a fake opener only; the live msdl path is an owner step and records no result in CI.
+
+### [LBL-21:tier-w-symbols]
+`symbols.py` (pure `symbol-map/1` builder and `export_msf`, SPEC-33 s5.3 merge rule), `symbols_llvm.py` (strict LLVM 18 `llvm-pdbutil` adapter, parity-tested against the stdlib reader when the tool is installed), `ghidra_export_symbols.py` (Jython 2.7 and CPython 3 script) and `symbols_ghidra.py` (headless driver, private project/XDG dirs). The live Ghidra test is BLOCKED (xfail with reason) unless `PATCHTRACE_GHIDRA_DIR` points at Ghidra. Not built: `pyghidra` mode and the PDB-forcing pre-script (need a live Ghidra to verify).
+
+### [LBL-22:tier-w-labels]
+`tools/calibration/tier_w/labels.py` (truth from symbol maps, candidate labels, N2/N9/N10/N3 and exported tags, detail records) and `audit.py` (seeded census/random sampler, blind queue, Clopper-Pearson weighted audit report). Pure; names stay in `tier-w-label-detail/1`.
+
+### [LBL-24:tier-w-aggregate]
+`tier_w/evaluate.py` (per engine and condition, Wilson item-level, circular guard) and `aggregate.py` (`tier-w-aggregate/1`, lineage bootstrap via evalcore, cells with n < 30 suppressed, no pooling). `tier-w-aggregate/1` joined `guard.TIER_W_CONTRACTS`.
+
+### [LBL-12:unified-adapter]
+`tools/calibration/evalcore/engines/unified.py` maps `unified-match/1` rows (result dir or `<pair_id>.unified.jsonl`) to evalcore predictions per LBL s7.1; synthetic fixtures only. Gap: a paired row with unknown materiality is left out of predictions because `Prediction.changed` is a bool (no "paired, flag abstained"); it is counted in `ignored_unaddressed`. Not yet wired into `tier_r/evaluate.py` `default_providers` (frozen to this slice).

@@ -61,12 +61,12 @@ class VerifiedArtifactReader:
     still perform reads off the GUI thread.
     """
 
-    def __init__(self, stream: BinaryIO, size: int, sha256: str, label: str):
+    def __init__(self, stream: BinaryIO, size: int, sha256: str, label: str, stat: tuple[int, int, int]):
         self._stream: BinaryIO | None = stream
         self._size = size
         self._sha256 = sha256
         self._label = label
-        self._stat = _stat_key(stream)
+        self._stat = stat
         self._lock = threading.Lock()
 
     # -- construction -----------------------------------------------------
@@ -84,7 +84,8 @@ class VerifiedArtifactReader:
         try:
             if not stat.S_ISREG(os.fstat(stream.fileno()).st_mode):
                 raise ArtifactBytesError('unreadable', 'input is not a regular file')
-            size = _stat_key(stream)[0]
+            baseline = _stat_key(stream)  # taken before hashing so a change during verification is caught
+            size = baseline[0]
             if expected_size is not None and size != expected_size:
                 raise ArtifactBytesError('size_mismatch', f'expected {expected_size} bytes, found {size}')
             digest = hashlib.sha256()
@@ -98,10 +99,9 @@ class VerifiedArtifactReader:
             actual = digest.hexdigest()
             if expected_sha256 is not None and actual != expected_sha256.lower():
                 raise ArtifactBytesError('hash_mismatch', 'file content differs from the recorded SHA-256')
-            reader = cls(stream, size, actual, Path(path).name)
-            if reader._stat[0] != size:
-                raise ArtifactBytesError('artifact_changed', 'file size changed during verification')
-            return reader
+            if _stat_key(stream) != baseline:
+                raise ArtifactBytesError('artifact_changed', 'file changed during verification')
+            return cls(stream, size, actual, Path(path).name, baseline)
         except BaseException:
             stream.close()
             raise

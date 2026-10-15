@@ -78,9 +78,35 @@ _BASE: dict[str, TooltipEntry] = {
         'Read-only; text is shown as plain text.', availability='Needs a selected row.'),
     'unified.goto': _tip(
         'Show the selected row in the code panes of the main window.',
-        'Compare the decompiled code of the pair next to the evidence.',
-        'Selects the Ghidriff match, or shows the pair texts that are stored for this row.',
+        'Compare the code of the pair next to the evidence.',
+        'Selects the Ghidriff match, or shows the stored decompiled C or disassembly of this row in this tab.',
         availability='Needs a selected row.'),
+    'unified.code_mode': _tip(
+        'Choose which code of the selected row to compare: decompiled C or the stored disassembly.',
+        'Decompiled C exists only for pairs the analysis decompiled on demand; the disassembly comes from the stored '
+        'ProgramIR. A choice without text says why instead of showing code.',
+        'Switches the two code panes of this tab; nothing is computed.', 'Stored unified result.',
+        'Needs a row shown with Enter or Go to match.'),
+    'unified.code_prev': _tip(
+        'Jump to the previous changed region in both code panes.', 'Walk through the differences of one function.',
+        'Scrolls both panes to the region; nothing changes.', availability='Needs code with at least one change.'),
+    'unified.code_next': _tip(
+        'Jump to the next changed region in both code panes.', 'Walk through the differences of one function.',
+        'Scrolls both panes to the region; stops at the last one.', availability='Needs code with at least one change.'),
+    'unified.code_copy': _tip(
+        'Copy this side code with its provenance line as plain text.',
+        'Keep the exact function, source and artifact digests next to the code you quote.',
+        'Puts the text on the clipboard; the view is capped at 200,000 characters.', availability='Needs code on this side.'),
+    'unified.code_older': _tip(
+        'Older artifact code of the selected row, read only.',
+        'Gaps are rows where the older side has no counterpart of the newer code; nothing is invented.',
+        'Plain text; scrolls together with the newer pane.', 'Stored unified result.',
+        'Needs a row shown with Enter or Go to match.'),
+    'unified.code_newer': _tip(
+        'Newer artifact code of the selected row, read only.',
+        'Gaps are rows where the newer side has no counterpart of the older code; nothing is invented.',
+        'Plain text; scrolls together with the older pane.', 'Stored unified result.',
+        'Needs a row shown with Enter or Go to match.'),
     'unified.correct': _tip(
         'Correct the function relationship of the selected row.', 'Record an analyst decision with its reason.',
         'Opens the existing correction dialog for the Ghidriff match of this row.',

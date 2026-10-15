@@ -173,6 +173,12 @@ def _chunk_ok(sig: list[Token], lo: int, hi: int) -> bool:
     return saw_paren
 
 
+def _is_linkage_open(sig: list[Token], i: int, chunk_start: int) -> bool:
+    """`extern "C" {` / `extern "C++" {` with nothing else in the chunk."""
+    return (i - chunk_start == 2 and sig[chunk_start].text == 'extern' and sig[chunk_start + 1].kind == 'string'
+            and sig[chunk_start + 1].text in {'"C"', '"C++"'})
+
+
 def find_functions(src: Source) -> list[FunctionDef]:
     sig = src.sig
     out: list[FunctionDef] = []
@@ -193,7 +199,17 @@ def find_functions(src: Source) -> list[FunctionDef]:
             chunk_start = i + 1
             i += 1
             continue
+        if t.kind == 'punct' and t.text == '}':
+            # only a linkage-block close can reach here at file scope (definition bodies are skipped whole)
+            chunk_start, pieces = i + 1, [i + 1]
+            i += 1
+            continue
         if t.kind == 'punct' and t.text == '{':
+            if _is_linkage_open(sig, i, chunk_start):
+                # `extern "C" { ... }` only changes linkage: its contents are file scope, so step inside
+                chunk_start, pieces = i + 1, [i + 1]
+                i += 1
+                continue
             close = _matching(sig, i, '{', '}')
             found, name_hi = None, i
             if i > chunk_start and _chunk_ok(sig, chunk_start, i) and sig[i - 1].text != ';':

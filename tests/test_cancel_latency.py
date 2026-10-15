@@ -45,7 +45,7 @@ def test_blocked_opener_is_abandoned_on_cancel_and_closed_later():
     start = time.monotonic()
     with pytest.raises(EnrichmentError) as exc:
         it.fetch(plan, consent, opener=opener, cancel=cancel)
-    assert exc.value.code == 'PT-ENRICH-CANCEL' and time.monotonic() - start < 0.5
+    assert exc.value.code == 'PT-ENRICH-CANCEL' and time.monotonic() - start < 2.5  # 5x slack for shared CI; a cancel regression blocks for 10 s
     release.set()
     deadline = time.monotonic() + 2
     while not late and time.monotonic() < deadline:
@@ -79,7 +79,7 @@ def test_blocked_read_is_cancelled_and_response_closed():
     start = time.monotonic()
     with pytest.raises(EnrichmentError) as exc:
         it.fetch(plan, consent, opener=lambda *a: Resp(), cancel=cancel)
-    assert exc.value.code == 'PT-ENRICH-CANCEL' and time.monotonic() - start < 0.5
+    assert exc.value.code == 'PT-ENRICH-CANCEL' and time.monotonic() - start < 2.5  # 5x slack for shared CI; a cancel regression blocks for 10 s
     assert closed.wait(1)
 
 
@@ -120,5 +120,5 @@ def test_provider_completion_cancel_latency(monkeypatch):
     start = time.monotonic()
     with pytest.raises(providers.ProviderCancelled):
         providers.request_completion(config, 'system', 'context', cancel)
-    assert time.monotonic() - start < 0.5
+    assert time.monotonic() - start < 2.5  # 5x slack for shared CI; a cancel regression blocks for 10 s
     release.set()

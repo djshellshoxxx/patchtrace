@@ -1,11 +1,11 @@
 """Gate report generator for SPEC-31 (08-evaluation s1): G-U1..G-U8 -> `gate-report/1`. Dev-only, never shipped.
 
-SKELETON of slice S6a. It fixes the report contract, the status vocabulary and the registry of the eight gates, and it
-evaluates the two gates whose inputs exist today: G-U5 from `bench-report/1` files and G-U8 from a pytest JUnit file plus
-attested CI steps. The six gates that need S3 (L2 verdicts and proofs) or the SPEC-32 scoring core stay `pending` and say
-what they wait for and what they will read; their evaluators are slice S6b. For those gates the report already carries
-facts about the corpus they will read (counts from `unified-corpus-manifest/1`), so a missing mutant class or an
-anti-conservative lineage count is visible before any engine runs.
+Slice S6a fixed the report contract, the status vocabulary and the registry of the eight gates, and it
+evaluated G-U5 from `bench-report/1` files and G-U8 from a pytest JUnit file plus attested CI steps. Slice S6b added G-U1,
+G-U2 and G-U4 over `unified-outcomes/1` (`tools/unified/evaluators.py`); slice S6c adds G-U3, G-U6 and G-U7
+(`tools/unified/rowgates.py`, intervals from `tools/unified/cluster.py`). Every outcome gate also carries the facts of the
+corpus it reads (counts from `unified-corpus-manifest/1`), so a missing mutant class or an anti-conservative lineage count
+is visible before any engine runs.
 
 Statuses: `pass` / `fail` are verdicts on data; `insufficient-data` means the data supplied (or its size) cannot decide;
 `pending` means a slice that is not built yet; `blocked` marks a part that needs something outside the code (a pinned
@@ -32,7 +32,8 @@ from pydantic import BaseModel, ConfigDict, ValidationError
 from tools.calibration.bootstrap import MIN_GROUPS_HEADLINE
 from tools.calibration.common import digest, strict_json
 from tools.calibration.tier_r.contracts import ContractError, dump_json
-from tools.unified import bench
+from tools.unified import bench, evaluators, outcomes, rowgates
+from tools.unified.corpus import aa
 from tools.unified.corpus import manifest as corpus_manifest
 from tools.unified.mutations import classes
 
@@ -42,6 +43,7 @@ CLAIM = ('Measured on synthetic workloads and test builds of open-source code; s
 U05_RULE = ('U-05: the unified flag defaults to ON only after G-U1..G-U6 pass with report SHAs recorded in '
             'docs/qa.md; alpha builds ship with it OFF.')
 U05_GATES = ('G-U1', 'G-U2', 'G-U3', 'G-U4', 'G-U5', 'G-U6')
+INTEGRITY_GATE = 'G-U8'
 MIN_MUTANTS_PER_CLASS = 20          # 08 s1 G-U2 [inf]
 MAX_JUNIT_BYTES = 8 * 2**20
 STATUSES = ('pass', 'fail', 'insufficient-data', 'pending', 'blocked')
@@ -62,34 +64,22 @@ class GateSpec:
 
 GATES = (
     GateSpec('G-U1', 'does the engine invent changes?', 'S3 (S0b for X vs X)',
-             'the unified-result/1 counts of every A/A pair in the corpus manifest', needs=('S3',),
-             waits=('the L2 verdicts unchanged and cosmetic need the named proofs UNCH/1, COS-ADDR/1 and COS-LAYOUT/1, '
-                    'which arrive with S3; before S3 no result row can be called unchanged',)),
+             'unified-outcomes/1 for every A/A pair of the corpus manifest (P0, P1; P2 is reported, never gated)'),
     GateSpec('G-U2', 'does it see real changes, and never hide them?', 'S3',
-             'the unified-result/1 rows of every mutant pair, joined to the planted function of its label document',
-             needs=('S3',), waits=('mutant verdicts (material, review, cosmetic, unchanged) are produced by the S3 channels and '
-                    'proofs; the mutants and their labels already exist (tools.unified.mutations)',)),
+             'unified-outcomes/1 for every mutant pair: the verdict of the planted function, per class'),
     GateSpec('G-U3', 'are `matched` pairs right?', 'S2',
              'the ladder correspondence of every release pair joined to its label document, and parity-report/1',
-             needs=('IR-to-ladder adapter', 'S6b'), waits=('the ladder cannot read a real ProgramIR yet: the IrReader to IrSide adapter is not on the base, so '
-                    'no ladder pair exists for a real image; the evaluator is slice S6b',),
              blocked=('the BinDiff oracle part (MD index parity, tier A/B agreement) needs a pinned BinDiff: '
                       'tools/bindiff_pin.json has no verified assets',)),
     GateSpec('G-U4', 'is it deterministic and symmetric?', 'S0b / S3',
-             'two runs, a Linux and a Windows run, permuted inputs and the swapped orientation of the same pair',
-             needs=('S3',), waits=('manifest.json equality of the whole pipeline, mirrored rows and the COS-PSEUDO rule need S3, and '
-                    'the 3-build chain checks need a third consecutive version per project (the catalogue has two)',)),
+             'unified-outcomes/1 of two runs, a Linux and a Windows run, permuted inputs and the swapped orientation'),
     GateSpec('G-U5', 'does it fit a 60k-function image on a laptop?', 'S2 / S5',
              'bench-report/1 from the Linux runner and from the Windows runner or the frozen EXE',
              waits=('the largest Tier R pair through the whole pipeline needs S3',)),
     GateSpec('G-U6', 'is it worth it?', 'S3',
-             'the unified-result/1 materiality and the best single legacy output on the same planted and A/A pairs',
-             needs=('S3', 'SPEC-32 evaluation core'), waits=('needs the S3 materiality and the scoring core of the SPEC-32 evaluation, which reads Ghidriff '
-                    'modified, BinDiff flags and rz-diff non-identical on the same pairs',)),
+             'unified-outcomes/1 rows with the legacy tools that flag them, on the planted and A/A pairs'),
     GateSpec('G-U7', 'is narrowed A-IND-1 safe?', 'S3',
-             'the unified-result/1 rows with their atoms: error rate by component pair and evidence-class pair',
-             needs=('S3',), waits=('rows matched via two tier-B atoms and their evidence classes come from the S3 fusion of real rows; '
-                    'classes with fewer than 30 such rows are reported insufficient-data, never assumed safe',)),
+             'unified-outcomes/1 rows with their supports and truth: error rate by component pair and evidence-class pair'),
     GateSpec('G-U8', 'did we break anything?', 'every slice',
              'a pytest JUnit file of the full suite and the attested CI steps'),
 )
@@ -117,7 +107,11 @@ G_U8_CHECKS = (
     IntegrityCheck('extractor-script-ast', 'the extractor script AST has no network, subprocess or dynamic-code use',
                    ('test_unified_ghidra_script::test_ghidra_script_imports_no_patchtrace',
                     'test_unified_ghidra_script::test_script_runs_no_dynamic_code_and_spawns_nothing')),
-    IntegrityCheck('ui-policy', 'tooltips, accessibility and banned words of the Unified view', needs='S4'),
+    IntegrityCheck('ui-policy', 'tooltips, accessibility and banned words of the Unified view',
+                   ('test_ui_unified::test_controls_are_named_tipped_and_plain',
+                    'test_ui_unified::test_run_is_off_by_default_and_names_the_reason',
+                    'test_unified_panel_spec::test_every_tip_the_read_model_names_is_declared',
+                    'test_unified_read_model::test_unified_banned_strings_never_appear')),
     IntegrityCheck('frozen-smoke', 'the frozen smoke including unified --help and unified _worker --self-check',
                    attestation='frozen-smoke'),
 )
@@ -157,6 +151,7 @@ class GateReport(_Strict):
 class Inputs:
     manifest: corpus_manifest.CorpusManifest | None = None
     benches: list[bench.BenchReport] = field(default_factory=list)
+    outcomes: list[outcomes.OutcomeSet] = field(default_factory=list)
     junit: dict[str, list[str]] | None = None
     attested: dict[str, str] = field(default_factory=dict)
     digests: dict[str, Any] = field(default_factory=dict)       # 'manifest': sha, 'bench': [sha], 'junit': [sha]
@@ -200,12 +195,12 @@ def _check_state(check: IntegrityCheck, inputs: Inputs) -> str:
         return {'pass': 'pass', 'fail': 'fail'}.get(inputs.attested.get(check.attestation, ''), 'missing')
     if not check.tests:
         return 'pending'
-    outcomes = [inputs.junit.get(t, []) if inputs.junit else [] for t in check.tests]
-    if any('failed' in o for o in outcomes):
+    found = [inputs.junit.get(t, []) if inputs.junit else [] for t in check.tests]
+    if any('failed' in o for o in found):
         return 'fail'
-    if any('skipped' in o for o in outcomes):
+    if any('skipped' in o for o in found):
         return 'blocked'
-    return 'pass' if all(o for o in outcomes) else 'missing'
+    return 'pass' if all(o for o in found) else 'missing'
 
 
 def _g_u8(inputs: Inputs) -> tuple[Status, list[str], tuple[str, ...], dict]:
@@ -259,6 +254,20 @@ def _g_u5(inputs: Inputs) -> tuple[Status, list[str], tuple[str, ...], dict]:
     return ('pending' if reasons else 'pass'), reasons, needs, observed
 
 
+# ---- G-U1 and G-U2 ------------------------------------------------------------------------------------------------------------
+
+def _g_u_outcomes(gate: GateSpec, inputs: Inputs, facts: dict[str, dict]) -> tuple[Status, list[str], tuple[str, ...], dict]:
+    if (inputs.manifest is None and gate.id != 'G-U4') or not inputs.outcomes:
+        what = 'corpus manifest' if inputs.manifest is None and gate.id != 'G-U4' else 'unified-outcomes file (python -m tools.unified.live_pairs)'
+        return 'insufficient-data', [f'no {what} supplied'], (), {'consumes': gate.consumes, 'corpus': facts.get(gate.id)}
+    if gate.id == 'G-U4':
+        status, reasons, observed = evaluators.g_u4(inputs.outcomes, inputs.manifest)
+    else:
+        evaluate = {'G-U1': evaluators.g_u1, 'G-U2': evaluators.g_u2, **rowgates.EVALUATORS}[gate.id]
+        status, reasons, observed = evaluate(inputs.manifest, inputs.outcomes)
+    return status, reasons, (), {**observed, 'corpus': facts.get(gate.id), 'runs': [o.run for o in inputs.outcomes]}
+
+
 # ---- corpus readiness ----------------------------------------------------------------------------------------------------------
 
 def corpus_facts(m: corpus_manifest.CorpusManifest | None) -> dict[str, dict]:
@@ -271,8 +280,9 @@ def corpus_facts(m: corpus_manifest.CorpusManifest | None) -> dict[str, dict]:
     lineages = len({p.lineage for p in gate3})
     return {
         'G-U1': {'P0': roles['P0'], 'P0_x_vs_x': sum(1 for p in m.pairs if p.role == 'P0' and p.x_vs_x),
-                 'P1': roles['P1'], 'P2': roles['P2'], 'pending_p1': [x.item for x in m.pending
-                                                                      if x.item.startswith('P1:')]},
+                 'P1': roles['P1'], 'P2': roles['P2'], 'P1_variants': sorted({p.variant for p in m.pairs if p.role == 'P1' and p.variant}),
+                 'pending_p1': [f'P1:{k}' for k in aa.P1_KINDS
+                                if k not in {p.variant for p in m.pairs if p.role == 'P1'}]},
         'G-U2': {'mutants_per_class': {c.id: mutants.get(c.id, 0) for c in classes.CLASSES},
                  'classes_below_minimum': [c.id for c in classes.CLASSES if mutants.get(c.id, 0) < MIN_MUTANTS_PER_CLASS],
                  'minimum': MIN_MUTANTS_PER_CLASS,
@@ -283,24 +293,21 @@ def corpus_facts(m: corpus_manifest.CorpusManifest | None) -> dict[str, dict]:
 
 # ---- report -----------------------------------------------------------------------------------------------------------------------
 
-def _waiting(gate: GateSpec, facts: dict[str, dict]) -> tuple[Status, list[str], tuple[str, ...], dict]:
-    reasons = [f'pending: {w}' for w in gate.waits] + [f'blocked: {b}' for b in gate.blocked]
-    return 'pending', reasons, gate.needs, {'consumes': gate.consumes, 'corpus': facts.get(gate.id)}
-
-
 def _evaluate(gate: GateSpec, inputs: Inputs, facts: dict[str, dict]) -> GateRow:
     if gate.id == 'G-U5':
         status, reasons, needs, observed = _g_u5(inputs)
     elif gate.id == 'G-U8':
         status, reasons, needs, observed = _g_u8(inputs)
     else:
-        status, reasons, needs, observed = _waiting(gate, facts)
+        status, reasons, needs, observed = _g_u_outcomes(gate, inputs, facts)
     return GateRow(id=gate.id, question=gate.question, first_slice=gate.first_slice, status=status,
                    reasons=tuple(reasons), needs=needs, observed=observed)
 
 
 def decision_ready(rows: Sequence[GateRow]) -> bool:
-    return all(r.status == 'pass' for r in rows if r.id in U05_GATES)
+    """U-05: G-U1..G-U6 pass. G-U8 (integrity: snapshot untouched, no socket, schemas) additionally must not have failed."""
+    return all(r.status == 'pass' for r in rows if r.id in U05_GATES) and not any(
+        r.status == 'fail' for r in rows if r.id == INTEGRITY_GATE)
 
 
 def _inputs_section(inputs: Inputs) -> dict[str, Any]:
@@ -311,6 +318,8 @@ def _inputs_section(inputs: Inputs) -> dict[str, Any]:
             'bench': [{'sha256': (digests.get('bench') or [None] * len(inputs.benches))[i], 'verdict': b.verdict,
                        'platform': b.environment.get('platform'), 'counts_sha256': b.counts_sha256}
                       for i, b in enumerate(inputs.benches)],
+            'outcomes': [{'sha256': (digests.get('outcomes') or [None] * len(inputs.outcomes))[i], 'run': o.run,
+                          'platform': o.platform, 'outcomes_sha256': o.outcomes_sha256} for i, o in enumerate(inputs.outcomes)],
             'junit': None if inputs.junit is None else {'sha256': digests.get('junit'),
                                                         'tests': sum(len(v) for v in inputs.junit.values())},
             'attested': dict(sorted(inputs.attested.items()))}
@@ -345,12 +354,57 @@ def _cell(text: str) -> str:
     return ' '.join(text.replace('|', '/').split())
 
 
+def _interval(ci: dict | None) -> str:
+    if not ci or ci.get('point') is None:
+        return 'n/a'
+    low, high = ci.get('lo'), ci.get('hi')
+    span = 'no interval' if low is None else f'95% CI {low:.4f} to {high:.4f}'
+    return f'{ci["point"]:.4f} ({span}, {ci["groups"]} lineages{", anti-conservative" if ci["anti_conservative"] else ""})'
+
+
+def numbers(g: GateRow) -> str:
+    """The measured values of a gate on one line: counts, rates and intervals, never prose."""
+    o = g.observed
+    if g.id == 'G-U1' and 'evaluated' in o:
+        states = Counter(o['evaluated'].values())
+        return f'{len(o["evaluated"])} A/A pairs: ' + ', '.join(f'{k} {v}' for k, v in sorted(states.items()))
+    if g.id == 'G-U2' and 'classes' in o:
+        return '; '.join(f'{k} recall {v["recall"]} ({v["detected"]} hits, {v["mutants"]} mutants), leaks {v["leaks"]}'
+                         for k, v in o['classes'].items())
+    if g.id == 'G-U3' and 'rows' in o:
+        return (f'{o["rows"]} matched rows, precision {_interval(o["precision"])}; tier-A contradicted '
+                f'{len(o["tier_a_contradicted"])}; Ghidriff exact unmatched {len(o["ghidriff_exact_unmatched"])}; '
+                f'demote {o["demote"] or "none"}')
+    if g.id == 'G-U4' and 'compared' in o:
+        return (f'compared {len(o["compared"])} pairs, mirrored {len(o["mirrored"])}, chains {o["chains"]["found"]} '
+                f'({o["chains"]["composable"]} composable functions), COS-PSEUDO violations {o["pseudo_violations"]}')
+    if g.id == 'G-U6' and 'per_tool' in o:
+        return '; '.join(f'{t}: false leads {v["false_leads_unified"]} against {v["false_leads_legacy"]}, reduction '
+                         f'{_interval(v["reduction"])}, recall {v["recall_unified"]} against {v["recall_legacy"]}'
+                         for t, v in o['per_tool'].items()) or 'no legacy output'
+    if g.id == 'G-U7' and 'class_pairs' in o:
+        states = Counter(v['status'] for v in o['class_pairs'].values())
+        return (f'tier-A error rate {o["tier_a"]["error_rate"]} over {o["tier_a"]["rows"]} rows; {len(o["class_pairs"])} '
+                'class pairs: ' + ', '.join(f'{k} {v}' for k, v in sorted(states.items())))
+    if g.id == 'G-U5' and 'measured' in o:
+        return f'bench verdicts {o["measured"]}, Windows report {o["windows_report"]}'
+    if g.id == 'G-U8' and 'checks' in o:
+        return ', '.join(f'{c["id"]} {c["status"]}' for c in o['checks'])
+    return '-'
+
+
 def render_markdown(report: GateReport) -> str:
+    waiting = [f'{g.id} {g.status}' for g in report.gates
+               if (g.id in U05_GATES and g.status != 'pass') or (g.id == INTEGRITY_GATE and g.status == 'fail')]
+    decision = ('READY: G-U1..G-U6 pass; record this report_sha256 in docs/qa.md before the flag changes' if report.flag.decision_ready
+                else 'NOT READY, the flag stays OFF (O2); open: ' + ', '.join(waiting))
     lines = ['# SPEC-31 gate report', '', report.claim, '',
-             f'Flag default: {report.flag.default}. Decision ready: {"yes" if report.flag.decision_ready else "no"}. '
-             f'{report.flag.rule}', '', '| Gate | Status | Question | Why |', '|---|---|---|---|']
+             f'Flag default: {report.flag.default}. Decision: {decision}. {report.flag.rule}', '',
+             '| Gate | Status | Question | Why |', '|---|---|---|---|']
     lines += [f'| {g.id} | {g.status} | {_cell(g.question)} | {_cell("; ".join(g.reasons)) or "-"} |'
               for g in report.gates]
+    lines += ['', '## Numbers', '', '| Gate | Measured |', '|---|---|']
+    lines += [f'| {g.id} | {_cell(numbers(g))} |' for g in report.gates]
     lines += ['', 'Summary: ' + ', '.join(f'{k} {v}' for k, v in report.summary.items()),
               f'report_sha256 {report.report_sha256}', '']
     return '\n'.join(lines)
@@ -365,6 +419,18 @@ def _read(path: str) -> bytes:
         raise ContractError(f'cannot read {path}: {exc.strerror or exc}') from None
 
 
+def expand_inputs(directory: str) -> dict[str, list[str]]:
+    """The files of a download directory by role, sorted; links and sub-directories are ignored, never followed."""
+    root = Path(directory)
+    if not root.is_dir():
+        raise ContractError(f'--inputs {directory} is not a directory')
+
+    def pick(pattern: str) -> list[str]:
+        return [str(p) for p in sorted(root.glob(pattern)) if p.is_file() and not p.is_symlink()]
+    return {'manifest': pick('unified-corpus-manifest.json'), 'outcomes': pick('outcomes-*.json'),
+            'bench': pick('bench-*.json'), 'junit': pick('junit-*.xml')}
+
+
 def _attestations(items: Sequence[str]) -> dict[str, str]:
     out = {}
     for item in items:
@@ -377,8 +443,11 @@ def _attestations(items: Sequence[str]) -> dict[str, str]:
 
 def main(argv: Sequence[str] | None = None) -> int:
     parser = argparse.ArgumentParser(prog='python -m tools.unified.gates_u', description=__doc__.split('\n\n')[0])
+    parser.add_argument('--inputs', help='a directory holding unified-corpus-manifest.json, outcomes-*.json, bench-*.json '
+                                         'and junit-*.xml (the layout the live workflow downloads); added to the options below')
     parser.add_argument('--manifest', help='unified-corpus-manifest/1')
     parser.add_argument('--bench', action='append', default=[], help='bench-report/1 (repeat for Linux and Windows)')
+    parser.add_argument('--outcomes', action='append', default=[], help='unified-outcomes/1 (repeat for every run)')
     parser.add_argument('--junit', action='append', default=[], help='pytest --junitxml file (repeat to merge)')
     parser.add_argument('--attest', action='append', default=[], help='NAME=pass|fail for a CI step that is no test')
     parser.add_argument('--out', help='write gate-report/1 here')
@@ -386,18 +455,25 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser.add_argument('--strict', action='store_true', help='exit 1 unless every gate passes (default: advisory)')
     args = parser.parse_args(argv)
     try:
+        if args.inputs:
+            found = expand_inputs(args.inputs)
+            args.manifest = args.manifest or (found['manifest'] or [None])[0]
+            args.bench, args.outcomes, args.junit = (args.bench + found['bench'], args.outcomes + found['outcomes'],
+                                                     args.junit + found['junit'])
         inputs = Inputs(attested=_attestations(args.attest))
         if args.manifest:
             raw = _read(args.manifest)
             inputs.manifest, inputs.digests['manifest'] = corpus_manifest.load(raw), hashlib.sha256(raw).hexdigest()
         raws = [_read(p) for p in args.bench]
         inputs.benches, inputs.digests['bench'] = [bench.load(r) for r in raws], [hashlib.sha256(r).hexdigest() for r in raws]
+        raws = [_read(p) for p in args.outcomes]
+        inputs.outcomes, inputs.digests['outcomes'] = [outcomes.load(r) for r in raws], [hashlib.sha256(r).hexdigest() for r in raws]
         raws = [_read(p) for p in args.junit]
         if raws:
             inputs.junit = {}
             for raw in raws:
-                for key, outcomes in parse_junit(raw).items():
-                    inputs.junit.setdefault(key, []).extend(outcomes)
+                for key, results in parse_junit(raw).items():
+                    inputs.junit.setdefault(key, []).extend(results)
             inputs.digests['junit'] = [hashlib.sha256(r).hexdigest() for r in raws]
         report = build_report(inputs)
     except ContractError as exc:

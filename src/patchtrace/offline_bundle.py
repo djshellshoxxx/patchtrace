@@ -34,7 +34,7 @@ WINDOWS_RESERVED = {'CON', 'PRN', 'AUX', 'NUL'} | {
 } | {'CONIN$', 'CONOUT$'}
 # Errors raised by zipfile/zlib for corrupt or unsupported members.
 _READ_ERRORS = (OSError, EOFError, zipfile.BadZipFile, zipfile.LargeZipFile, RuntimeError,
-                zlib.error, NotImplementedError)
+                zlib.error, NotImplementedError, UnicodeError)
 MANIFEST_KEYS = {'format', 'schema_version', 'runtime_id', 'platform', 'architecture',
                  'python', 'ghidra', 'java', 'versions', 'files'}
 VERSION_KEYS = {'python', 'ghidra', 'jdk', 'ghidriff_revision'}

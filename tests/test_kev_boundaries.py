@@ -27,6 +27,7 @@ NEVER_LOADED = {'PySide6', 'shiboken6', 'sqlite3', '_sqlite3', 'ssl', 'http', 'u
                 'ftplib', 'smtplib'}
 NEVER_LOADED_MODULES = {'urllib.request', 'urllib.response'}
 ALLOWED_SIBLINGS = {'patchtrace.enrichment.identity', 'patchtrace.tooltips'}
+PANEL_SIBLINGS = {'patchtrace.gui.registry', 'patchtrace.gui.text', 'patchtrace.ui_kev'}  # PanelSpec declaration + lazy factory
 CLOCK_CALLS = {'now', 'utcnow', 'today', 'monotonic', 'perf_counter', 'time_ns'}
 RANKING_MODULES = ('patchtrace.enrichment.ranking', 'patchtrace.enrichment.cve', 'patchtrace.enrichment.signals',
                    'patchtrace.enrichment.pipeline', 'patchtrace.enrichment.views', 'patchtrace.evidence')
@@ -79,10 +80,11 @@ def test_pure_modules_import_only_what_they_may(name):
         top = target.split('.')[0]
         assert top not in FORBIDDEN, f'{name} imports {target}'
         if top == 'patchtrace' and not target.startswith('patchtrace.kev'):
+            allowed = ALLOWED_SIBLINGS | (PANEL_SIBLINGS if name == 'panel' else set())
             assert any(target == ok or target.startswith(ok + '.') or ok.startswith(target + '.')
-                       for ok in ALLOWED_SIBLINGS), f'{name} reaches {target}'
+                       for ok in allowed), f'{name} reaches {target}'
         assert not any(target == rank or target.startswith(rank + '.') for rank in RANKING_MODULES), (name, target)
-        assert not target.startswith('patchtrace.ui'), (name, target)
+        assert not target.startswith('patchtrace.ui') or (name == 'panel' and target.startswith('patchtrace.ui_kev')), (name, target)
 
 
 @pytest.mark.parametrize('name', pure_modules())

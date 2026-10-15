@@ -248,6 +248,14 @@ def _overall(parts: dict[str, dict], sources: Sequence[str]) -> tuple[str, str]:
     return 'passed', reason[:REASON_CHARS]
 
 
+_LIVE_PARTS = (reachable, run_cli, fetch_live_schema, transport.urllib_open)
+
+
+def _mocked(check_host, runner, schema_reader) -> bool:
+    """True when any seam (or the HTTP opener) is not the production one: such a run is never live evidence."""
+    return (check_host, runner, schema_reader, transport.urllib_open) != _LIVE_PARTS
+
+
 def probe(sources: Sequence[str], work: Path, timeout: float, *,
           check_host: Callable[[str], tuple[bool, str]] | None = None,
           runner: Callable[[Sequence[str], float], CliRun] | None = None,
@@ -275,7 +283,7 @@ def probe(sources: Sequence[str], work: Path, timeout: float, *,
               else {'result': 'skipped', 'detail': 'needs the mirror host'})
     parts['schema'] = schema
     status, reason = _overall(parts, sources)
-    return {'engine': ENGINE, 'mocked': False, 'status': status, 'reason': reason, 'sources_requested': list(sources),
+    return {'engine': ENGINE, 'mocked': _mocked(check_host, runner, schema_reader), 'status': status, 'reason': reason, 'sources_requested': list(sources),
             'canonical_probed': 'cisa-site' in sources, 'sources': results, 'cross_check': parts['cross-check'],
             'schema': schema, 'cli_seconds': round(seconds, 2), 'python': platform.python_version(),
             'platform': platform.platform(), 'utc': datetime.now(UTC).isoformat(timespec='seconds')}
