@@ -1028,3 +1028,8 @@ Automated: `tests/test_ui_strings_panel.py` (offscreen, qt_gate x5). Owner-only:
 
 ### [K3:kev-panel]
 Automated: `tests/test_ui_kev_panel.py` offscreen, `tools/qt_gate.py --repeat 5` clean. Not verified: NVDA/Narrator, high contrast, live CISA download.
+
+
+### [FAB-6:related]
+| Tests | `tests/test_ui_related_panel.py` (35) offscreen on Linux; `python tools/qt_gate.py --repeat 5 tests/test_ui_related_panel.py`: 175 passed |
+| Not verified here | Windows; screen readers; the real project store read from a worker thread (reader is injected) |

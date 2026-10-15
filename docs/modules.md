@@ -1110,3 +1110,6 @@ Calls panel (id graph): `callgraph/panel.py` (PanelSpec), `panel_qt.py` (widgets
 
 ### [K3:kev-panel]
 `kev/panel.py` (pure PanelSpec, KEV claims profile), `ui_kev_model.py` (Qt-free input parsing, rows, columns, filtered view, closed failure reasons), `ui_kev.py` (KevController on the task runner; epoch-guarded results; consent before the only network call). Tests: `tests/test_ui_kev_panel.py`.
+
+### [FAB-6:related]
+- `fabric/related.py` (Qt-free rows, columns, state, `anchor_ref` = `AnchorRef.from_fabric`), `fabric/panel.py` (`PANEL` id `related`, tips `related.*`, teach `related.*`), `ui_related.py` (`RelatedController`, table-only). Tests `tests/test_ui_related_panel.py` (35).

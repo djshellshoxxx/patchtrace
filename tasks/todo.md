@@ -774,3 +774,6 @@
 
 ### [K3:kev-panel]
 Done: dock with state matrix, consent, import, changes, copy, go to CVE. Open: replace-anyway after a shrink refusal (needs a staged-install service API), kev/filter and kev/sort settings, network policy port.
+
+### [FAB-6:related]
+- [x] Related evidence panel, table-only first release. Open for the integrator: manifest slot, leads area, host wiring of `show_anchor`.
