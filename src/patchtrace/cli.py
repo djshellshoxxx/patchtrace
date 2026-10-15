@@ -268,6 +268,8 @@ def _with_cache(args, options, profile=None):
         if getattr(args, 'refresh', False):
             raise CliError(ENVIRONMENT, '--refresh requires --cache-dir')
         return options
+    if args.cache_dir.exists() and not args.cache_dir.is_dir():
+        raise CliError(ENVIRONMENT, f'cache directory {args.cache_dir} is not a directory; no cache was used')
     import dataclasses
 
     from .enrichment.cache import CacheConfig, DerivedCache

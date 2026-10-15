@@ -113,8 +113,6 @@ def test_cache_verify_on_a_file_reports_failure(tmp_path, capsys):
     assert code == cli.ENVIRONMENT, (code, out[-300:])
 
 
-@pytest.mark.xfail(strict=True, reason='QA-CLI-4: rank with an unusable --cache-dir runs without any cache and '
-                   'reports no warning; the user asked for a cache that was not used')
 def test_rank_reports_an_unusable_cache_dir(tmp_path, capsys):
     root = make_sample(tmp_path / 'case')
     cache_file = tmp_path / 'cache-file'
