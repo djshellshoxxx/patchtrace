@@ -8,6 +8,7 @@ import time
 from pathlib import Path
 
 import pytest
+from liveness_support import heartbeat_code, heartbeat_stopped, wait_for
 
 from patchtrace import backend
 from patchtrace.backend import BackendConfig, quarantine_failed_run, run_comparison
@@ -600,19 +601,6 @@ def test_merged_default_is_unchanged(tmp_path):
     assert sorted(result.log_tail) == ['e', 'o'] and result.stderr_tail == ''
 
 
-def _heartbeat_child(beat: Path) -> str:
-    """A child that appends to `beat` every 50 ms for 20 s: self-limiting even if containment regresses."""
-    return (f'import time\nf=open({str(beat)!r},"ab",buffering=0)\n'
-            'for _ in range(400):\n    f.write(b"x")\n    time.sleep(0.05)\n')
-
-
-def _stops_growing(beat: Path) -> bool:
-    time.sleep(1.0)  # a surviving child starts, imports and appends within this window
-    size = beat.stat().st_size if beat.exists() else 0
-    time.sleep(0.5)
-    return (beat.stat().st_size if beat.exists() else 0) == size
-
-
 def test_failure_between_spawn_and_supervision_still_kills_the_child(tmp_path, monkeypatch):
     """Thread exhaustion after the spawn must not orphan the child tree (audit PS-1)."""
     beat = tmp_path / 'beat'
@@ -620,14 +608,16 @@ def test_failure_between_spawn_and_supervision_still_kills_the_child(tmp_path, m
 
     def start(self):
         if self.name == 'patchtrace-log':
+            # fail only once the child provably runs, so "stopped growing" below cannot pass vacuously
+            assert wait_for(lambda: beat.exists() and beat.stat().st_size > 0), 'the child never started'
             raise RuntimeError("can't start new thread")
         real_start(self)
 
     monkeypatch.setattr(threading.Thread, 'start', start)
     with pytest.raises(RuntimeError, match="can't start new thread"):
-        execute(tmp_path, _heartbeat_child(beat), timeout=30)
+        execute(tmp_path, heartbeat_code(beat), timeout=30)
     monkeypatch.undo()
-    assert _stops_growing(beat), 'the child kept running after run_process raised'
+    assert heartbeat_stopped(beat), 'the child never started, or kept running after run_process raised'
 
 
 @pytest.mark.parametrize('limit', [1 << 62, 1 << 64, 1 << 80])
