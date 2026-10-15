@@ -3,7 +3,9 @@
 usage: check_backend_pin.py [--pin tools/backend_pin.json] [--release]
 
 Exit codes: 0 pin valid (and, with --release, fully resolved); 1 pin malformed; 3 --release and at least one
-component is still a placeholder (unresolved digest). A placeholder is allowed in the repository so the pin can
+component is still a placeholder (unresolved digest); 4 --release and a shipped copyleft component in
+license_policy still has owner_approved false (--allow-unapproved-licenses downgrades that to a loud warning
+for non-publishing acceptance builds). A placeholder is allowed in the repository so the pin can
 land before every host is reachable, but a release build must pass --release, so none can ship.
 """
 from __future__ import annotations
@@ -29,6 +31,11 @@ REQUIRED_DISTRIBUTIONS = ('jpype1', 'pyghidra', 'packaging', 'mdutils')
 PLATFORM_SECTIONS = {'windows': ('windows', 'any'), 'linux': ('linux', 'any')}
 _HEX64 = re.compile(r'^[0-9a-f]{64}$')
 _HEX40 = re.compile(r'^[0-9a-f]{40}$')
+# Any GPL-family licence (GPL, LGPL, AGPL, also inside an expression such as "GPL-2.0-only WITH ...").
+_COPYLEFT = re.compile(r'(?<![A-Za-z])(?:A|L)?GPL(?![A-Za-z])', re.IGNORECASE)
+LICENSE_CODE = 'PT-BUNDLE-LICENSE'
+POLICY_FIELDS = ('spdx', 'role', 'owner_approved', 'rationale', 'shipped', 'match')
+APPROVAL_FIELDS = ('approved_on', 'approved_via')  # optional audit trail for an approval
 
 
 def _is_int(value: object) -> bool:
@@ -80,6 +87,95 @@ def _check_spdx(where: str, entry: dict, problems: list[str]) -> None:
     spdx = entry.get('spdx')
     if not isinstance(spdx, str) or not spdx.strip():
         problems.append(f'{where}: spdx is required')
+
+
+def is_copyleft(spdx: object) -> bool:
+    return isinstance(spdx, str) and bool(_COPYLEFT.search(spdx))
+
+
+def _policy_allowed(data: object) -> dict:
+    policy = data.get('license_policy') if isinstance(data, dict) else None
+    allowed = policy.get('allowed') if isinstance(policy, dict) else None
+    return allowed if isinstance(allowed, dict) else {}
+
+
+def copyleft_problems(items: list[tuple[str, str]], pin: object) -> list[str]:
+    """PT-BUNDLE-LICENSE problems for (component id, spdx) pairs: every GPL-family component must be listed.
+
+    `pin` is the whole pin (anything holding `license_policy`). An entry covers a component only when the id is
+    in its `match` list and the SPDX strings are identical, so a changed licence is refused again.
+    """
+    allowed = _policy_allowed(pin)
+    problems = []
+    for ident, spdx in items:
+        if not is_copyleft(spdx):
+            continue
+        covered = any(isinstance(entry, dict) and ident in (entry.get('match') or ()) and entry.get('spdx') == spdx
+                      for entry in allowed.values())
+        if not covered:
+            problems.append(f'{LICENSE_CODE}: {ident} is {spdx!r} and is not listed in license_policy')
+    return problems
+
+
+def unapproved_licenses(data: object) -> list[str]:
+    """Ids of shipped license_policy components whose owner_approved is not true."""
+    return sorted(name for name, entry in _policy_allowed(data).items()
+                  if isinstance(entry, dict) and entry.get('shipped', True) and entry.get('owner_approved') is not True)
+
+
+def shipped_gpl_dir_problems(files: list[str], data: object) -> list[str]:
+    """A manifest listing ghidra/GPL/** is refused unless license_policy lists that directory as shipped+approved."""
+    entry = _policy_allowed(data).get('ghidra-GPL-dir')
+    if isinstance(entry, dict) and entry.get('shipped') is True and entry.get('owner_approved') is True:
+        return []
+    hits = [name for name in files if name.lower().startswith('ghidra/gpl/')]
+    return [f'{LICENSE_CODE}: payload ships Ghidra GPL/ files ({hits[0]}, {len(hits)} total) but '
+            'license_policy ghidra-GPL-dir is not shipped and owner-approved'] if hits else []
+
+
+def _check_license_policy(data: dict, problems: list[str]) -> None:
+    policy = data.get('license_policy')
+    allowed = policy.get('allowed') if isinstance(policy, dict) else None
+    if not isinstance(allowed, dict) or not allowed:
+        problems.append('license_policy.allowed must be a non-empty object')
+        return
+    for name, entry in allowed.items():
+        where = f'license_policy.allowed.{name}'
+        if not isinstance(entry, dict) or not set(POLICY_FIELDS) <= set(entry) <= {*POLICY_FIELDS, *APPROVAL_FIELDS}:
+            problems.append(f'{where}: fields must be {POLICY_FIELDS} plus optional {APPROVAL_FIELDS}')
+            continue
+        for key in ('spdx', 'role', 'rationale'):
+            if not isinstance(entry[key], str) or not entry[key].strip():
+                problems.append(f'{where}.{key} is required')
+        for key in ('owner_approved', 'shipped'):
+            if not isinstance(entry[key], bool):
+                problems.append(f'{where}.{key} must be a boolean')
+        if not isinstance(entry['match'], list) or not all(isinstance(m, str) for m in entry['match']):
+            problems.append(f'{where}.match must be a list of component ids')
+    ghidriff = allowed.get('ghidriff')
+    if not (isinstance(ghidriff, dict) and ghidriff.get('spdx') == (data.get('ghidriff') or {}).get('spdx')):
+        problems.append('license_policy.allowed.ghidriff must exist and carry the pinned ghidriff SPDX')
+    # every GPL-family component of the pin must be explicitly listed
+    items: list[tuple[str, str]] = []
+    for name, entry in (data.get('components') or {}).items():
+        if isinstance(entry, dict):
+            items.append((name, str(entry.get('spdx', ''))))
+    for lane in (data.get('wheels') or {}).values():
+        items.extend((str(w.get('distribution')), str(w.get('spdx', ''))) for w in lane if isinstance(w, dict))
+    if isinstance(data.get('ghidriff'), dict):
+        items.append(('ghidriff', str(data['ghidriff'].get('spdx', ''))))
+    problems.extend(copyleft_problems(items, data))
+    # a component listed as not shipped must really be stripped from the payload
+    strip = data.get('strip') if isinstance(data.get('strip'), dict) else {}
+    gpl = allowed.get('ghidra-GPL-dir')
+    if not isinstance(gpl, dict):
+        problems.append('license_policy.allowed.ghidra-GPL-dir is required (Ghidra GPL/** is policy-gated)')
+    elif gpl.get('shipped') is False:
+        if 'GPL/**' not in (strip.get('ghidra') or []) or 'GPL/**' in (strip.get('keep') or []):
+            problems.append('license_policy ghidra-GPL-dir is not shipped: strip.ghidra must contain GPL/** and '
+                            'strip.keep must not')
+    elif 'GPL/**' in (strip.get('keep') or []) and gpl.get('owner_approved') is not True:
+        problems.append('strip.keep keeps GPL/** without owner approval in license_policy')
 
 
 def _wheel_tag_ok(platform: str, name: str) -> bool:
@@ -214,6 +310,7 @@ def validate_pin(data: object) -> list[str]:
     strip = data.get('strip')
     if not isinstance(strip, dict) or not all(isinstance(strip.get(k), list) and strip[k] for k in ('ghidra', 'jdk', 'keep')):
         problems.append('strip must list ghidra, jdk and keep globs')
+    _check_license_policy(data, problems)
     return problems
 
 
@@ -239,7 +336,10 @@ def release_problems(data: dict) -> list[str]:
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument('--pin', type=Path, default=DEFAULT_PIN)
-    parser.add_argument('--release', action='store_true', help='also fail (exit 3) while any placeholder remains')
+    parser.add_argument('--release', action='store_true', help='also fail (exit 3) while any placeholder remains, '
+                        'and (exit 4) while a shipped license_policy component lacks owner approval')
+    parser.add_argument('--allow-unapproved-licenses', action='store_true',
+                        help='non-publishing acceptance builds only: warn loudly instead of exit 4')
     args = parser.parse_args(argv)
     try:
         data = json.loads(args.pin.read_text(encoding='utf-8'))
@@ -258,6 +358,14 @@ def main(argv: list[str] | None = None) -> int:
             print(f'{"FAIL" if args.release else "note"}: {line}', file=stream)
         if args.release:
             return 3
+    pending = unapproved_licenses(data)
+    if pending:
+        text = ('LICENSE POLICY: owner approval is still pending for ' + ', '.join(pending)
+                + ' (policy gate, not a legal finding); a published release is refused')
+        if args.release and not args.allow_unapproved_licenses:
+            print(f'FAIL: {LICENSE_CODE}: {text}', file=sys.stderr)
+            return 4
+        print(f'WARNING: {text}', file=sys.stderr)
     print('backend pin ok' + (f' ({len(unresolved)} unresolved placeholder(s))' if unresolved else ''))
     return 0
 

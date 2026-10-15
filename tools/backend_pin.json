@@ -170,9 +170,38 @@
     "fallback": "25",
     "reason": "Ghidra GettingStarted names Java 21 64-bit JDK; JDK 25 is what live-backend.yml exercised. Flip only in B10 after a failing acceptance and record it."
   },
+  "license_policy": {
+    "rule": "No GPL-family code beyond the entries below. This is an engineering policy gate enforced by tools/check_backend_pin.py and the builders; it is not a legal compliance statement. An entry covers a component only by id (match) and identical SPDX.",
+    "allowed": {
+      "ghidriff": {
+        "spdx": "GPL-3.0-only",
+        "role": "static diff engine, separate unmodified out-of-process program (python -I -m ghidriff)",
+        "owner_approved": true,
+        "shipped": true,
+        "match": ["ghidriff"],
+        "rationale": "The one GPL exception in the product rule: GPL-3.0, never imported or linked, shipped unmodified with the exact corresponding source tarball and a written source offer."
+      },
+      "temurin-jdk": {
+        "spdx": "GPL-2.0-only WITH Classpath-exception-2.0",
+        "role": "Java runtime required by Ghidra, embedded in the full bundle",
+        "owner_approved": false,
+        "shipped": true,
+        "match": ["jdk", "jdk-windows", "jdk-linux"],
+        "rationale": "PENDING EXPLICIT OWNER APPROVAL. Ghidra needs a JDK and the owner asked for a no-download bundle, which requires shipping a JRE; the written product rule has not been updated to allow it. Until approved, release and publish builds are refused; acceptance builds warn."
+      },
+      "ghidra-GPL-dir": {
+        "spdx": "LicenseRef-Ghidra-GPL-dir",
+        "role": "Ghidra GPL/** directory (GNU demangler sources and binaries)",
+        "owner_approved": false,
+        "shipped": false,
+        "match": [],
+        "rationale": "Stripped from the payload by default (strip.ghidra GPL/**, not in strip.keep). PatchTrace targets Windows PE, which uses Ghidra's Apache-licensed Microsoft demangler; GNU demangling of non-PE targets is lost. Shipping it needs explicit owner approval and a matching pin change."
+      }
+    }
+  },
   "strip": {
-    "ghidra": ["docs/**", "Extensions/Eclipse/**", "**/os/{other-OS}/**"],
+    "ghidra": ["docs/**", "Extensions/Eclipse/**", "**/os/{other-OS}/**", "GPL/**"],
     "jdk": ["lib/src.zip", "jmods/**"],
-    "keep": ["LICENSE", "licenses/**", "GPL/**", "Ghidra/Processors/**", "Ghidra/Debug/**", "Ghidra/Features/**", "legal/**", "bin/javac*"]
+    "keep": ["LICENSE", "licenses/**", "Ghidra/Processors/**", "Ghidra/Debug/**", "Ghidra/Features/**", "legal/**", "bin/javac*"]
   }
 }
