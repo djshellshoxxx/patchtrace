@@ -560,3 +560,9 @@
 ### [UE4:code-panes]
 - [x] Decompiled-C side by side in `CodeDiffView` (stored part, honest unavailable), alignment gaps from the stored IR, hunk navigation, provenance per side, copy with provenance, all states, tooltips, accessible names; 100,000-line cap test
 - [ ] Integrator: write `decomp.jsonl.gz` (parts of the manifest, same line shape as `extract/decomp.py`) when the on-demand decompile ran; until then the C mode reports "not stored"
+
+### [U7:audit]
+- [x] Audit written, 4 Medium fixed with red tests
+- [ ] U7-05 BinDiff stub rows reach tier A alone (additive `SecondaryMatch.basicblocks` or IR-aware demotion before fusion)
+- [ ] U7-06 decide the budget policy for fusion and facts after a ladder deadline (partial result is lost today)
+- [ ] U7-07 trace-arg mutant class for G-U2

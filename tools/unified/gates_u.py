@@ -43,6 +43,7 @@ CLAIM = ('Measured on synthetic workloads and test builds of open-source code; s
 U05_RULE = ('U-05: the unified flag defaults to ON only after G-U1..G-U6 pass with report SHAs recorded in '
             'docs/qa.md; alpha builds ship with it OFF.')
 U05_GATES = ('G-U1', 'G-U2', 'G-U3', 'G-U4', 'G-U5', 'G-U6')
+INTEGRITY_GATE = 'G-U8'
 MIN_MUTANTS_PER_CLASS = 20          # 08 s1 G-U2 [inf]
 MAX_JUNIT_BYTES = 8 * 2**20
 STATUSES = ('pass', 'fail', 'insufficient-data', 'pending', 'blocked')
@@ -304,7 +305,9 @@ def _evaluate(gate: GateSpec, inputs: Inputs, facts: dict[str, dict]) -> GateRow
 
 
 def decision_ready(rows: Sequence[GateRow]) -> bool:
-    return all(r.status == 'pass' for r in rows if r.id in U05_GATES)
+    """U-05: G-U1..G-U6 pass. G-U8 (integrity: snapshot untouched, no socket, schemas) additionally must not have failed."""
+    return all(r.status == 'pass' for r in rows if r.id in U05_GATES) and not any(
+        r.status == 'fail' for r in rows if r.id == INTEGRITY_GATE)
 
 
 def _inputs_section(inputs: Inputs) -> dict[str, Any]:
@@ -391,7 +394,8 @@ def numbers(g: GateRow) -> str:
 
 
 def render_markdown(report: GateReport) -> str:
-    waiting = [f'{g.id} {g.status}' for g in report.gates if g.id in U05_GATES and g.status != 'pass']
+    waiting = [f'{g.id} {g.status}' for g in report.gates
+               if (g.id in U05_GATES and g.status != 'pass') or (g.id == INTEGRITY_GATE and g.status == 'fail')]
     decision = ('READY: G-U1..G-U6 pass; record this report_sha256 in docs/qa.md before the flag changes' if report.flag.decision_ready
                 else 'NOT READY, the flag stays OFF (O2); open: ' + ', '.join(waiting))
     lines = ['# SPEC-31 gate report', '', report.claim, '',

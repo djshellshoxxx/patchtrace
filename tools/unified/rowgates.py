@@ -179,6 +179,10 @@ def g_u6(manifest: corpus_manifest.CorpusManifest, sets: Sequence[OutcomeSet]) -
         per_tool[tool] = {'pairs': sum(1 for _, o in have if tool in o.legacy_tools), 'false_leads_unified': fl_u,
                           'false_leads_legacy': fl_t, 'reduction': interval, 'planted': planted,
                           'recall_unified': cluster.rate(hit_u, planted), 'recall_legacy': cluster.rate(hit_t, planted)}
+        if interval['anti_conservative']:
+            undecided = True
+            reasons.append(f'{tool}: {interval["groups"]} lineages, fewer than {cluster.MIN_GROUPS_HEADLINE}: the '
+                           'interval is anti-conservative and cannot decide')
         if not fl_t:
             if fl_u:
                 failed = True
@@ -243,8 +247,14 @@ def g_u7(manifest: corpus_manifest.CorpusManifest, sets: Sequence[OutcomeSet]) -
         bound = None if a_rate is None else ERROR_RATIO_MAX * a_rate
         bad = bound is not None and ci['point'] > bound
         failed |= bad
+        thin = not bad and ci['anti_conservative']
+        short |= thin
         table[key] = {'rows': n, 'error_rate': ci['point'], 'ci_low': ci['lo'], 'ci_high': ci['hi'],
-                      'bound': None if bound is None else round(bound, 6), 'status': 'fail' if bad else 'pass'}
+                      'bound': None if bound is None else round(bound, 6),
+                      'status': 'fail' if bad else 'insufficient-data' if thin else 'pass'}
+        if thin:
+            reasons.append(f'{key}: {ci["groups"]} lineages, fewer than {cluster.MIN_GROUPS_HEADLINE}: the interval is '
+                           'anti-conservative; never assumed safe')
         if bad:
             reasons.append(f'{key}: B+B error rate {ci["point"]:.4f} exceeds {ERROR_RATIO_MAX:g}x the tier-A rate '
                            f'{a_rate:.4f}; join these two components by configuration')

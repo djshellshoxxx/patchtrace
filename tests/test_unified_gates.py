@@ -121,6 +121,10 @@ def test_the_decision_is_ready_only_when_g_u1_to_g_u6_pass_and_nothing_else_coun
         assert gates_u.decision_ready(weaker) is False
     rows[6] = rows[6].model_copy(update={'status': 'fail'})
     assert gates_u.decision_ready(rows) is True                                      # U-05 names G-U1..G-U6
+    rows[7] = rows[7].model_copy(update={'status': 'fail'})
+    assert gates_u.decision_ready(rows) is False                                     # a broken integrity check blocks
+    rows[7] = rows[7].model_copy(update={'status': 'insufficient-data'})
+    assert gates_u.decision_ready(rows) is True                                      # only a verdict of fail does
 
 
 def test_readiness_counts_the_corpus_the_gates_will_read_and_flags_what_is_short():

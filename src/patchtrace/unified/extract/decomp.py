@@ -8,17 +8,15 @@ requested RVA must appear. A failure is `PT-UNIFIED-EXTRACT` with reason `bad-de
 from __future__ import annotations
 
 import json
-import re
 from collections.abc import Sequence
 from dataclasses import dataclass
 from pathlib import Path
 
+from ..contracts import strip_unsafe
 from ..limits import DEFAULT_LIMITS, UnifiedError, UnifiedLimits
 
 STATUSES = ('ok', 'timeout', 'failed')
 _KEYS = frozenset({'side', 'rva', 'status', 'code'})
-# Controls other than TAB and LF, the line and paragraph separators and the bidi controls are replaced, as for IR texts.
-_CONTROL = re.compile('[\x00-\x08\x0b-\x1f\x7f-\x9f  ‪-‮⁦-⁩]')
 JSON_EXPANSION = 12          # an ASCII JSON line spends up to 12 bytes (two \uXXXX escapes) on one character
 
 
@@ -72,7 +70,7 @@ def _code(value: object, limits: UnifiedLimits) -> str:
         raise _bad('code') from None
     if len(value) > limits.l29_pseudo_chars or value.count('\n') + 1 > limits.l29_pseudo_lines:
         raise _bad('code-cap')
-    return _CONTROL.sub('?', value)
+    return strip_unsafe(value, keep_layout=True, replacement='?')
 
 
 def read_decomp(path: Path, side: str, rvas: Sequence[int],
