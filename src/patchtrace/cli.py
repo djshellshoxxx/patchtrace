@@ -9,6 +9,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import re
 import sys
 import threading
 from pathlib import Path
@@ -42,6 +43,15 @@ def _non_negative(value: str) -> int:
     if number < 0:
         raise argparse.ArgumentTypeError('must be 0 or greater')
     return number
+
+
+_CVE_ID = re.compile(r'CVE-\d{4}-\d{4,19}', re.ASCII)
+
+
+def _cve_id(value: str) -> str:
+    if not _CVE_ID.fullmatch(value):
+        raise argparse.ArgumentTypeError('must look like CVE-YYYY-NNNN')
+    return value
 
 
 def _parser(argv=()) -> argparse.ArgumentParser:
@@ -86,7 +96,7 @@ def _parser(argv=()) -> argparse.ArgumentParser:
     corr.add_argument('project', type=Path)
     cached(corr)
     profiled(corr)
-    corr.add_argument('--cve', action='append', required=True, metavar='CVE-YYYY-NNNN')
+    corr.add_argument('--cve', action='append', required=True, metavar='CVE-YYYY-NNNN', type=_cve_id)
     corr.add_argument('--snapshot', type=Path, action='append', default=[],
                       help='previously saved CVE snapshot JSON (offline)')
     corr.add_argument('--fetch', action='store_true', help='retrieve from providers (requires consent)')
