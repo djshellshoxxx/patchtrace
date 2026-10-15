@@ -55,6 +55,7 @@ def test_the_stored_result_of_a_project_reduces_to_outcome_rows_for_both_orienta
     assert {r.decision for r in forward.rows} <= {'matched', 'older-only', 'newer-only', 'tentative', 'candidate',
                                                   'contested', 'ambiguous', 'unknown'}
     assert any(r.older and r.newer and r.materiality in ('material', 'review') for r in forward.rows)
+    assert any(r.basis and r.truth for r in forward.rows)         # supports joined to their atoms, truth joined to the labels
     assert forward.rows_sha256 == swapped.rows_sha256 and (forward.orientation, swapped.orientation) == ('forward', 'swapped')
     assert outcomes.load(outcomes.dump(outcomes.build('t', 'x', [forward]))).pairs[0].rows == forward.rows
 

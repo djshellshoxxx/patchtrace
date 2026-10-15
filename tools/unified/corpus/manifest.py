@@ -58,6 +58,7 @@ class ManifestPair(_Strict):
     functions: int
     by_label: dict[str, int]
     mutation: MutationFacts | None = None
+    variant: str = ''                 # P1 only: `link-order` or the nuisance (icf, timestamp, guid, path)
 
 
 class Pending(_Strict):
@@ -96,13 +97,12 @@ def _pair(doc: C.KnownAnswerLabels, role: str) -> ManifestPair:
         pair_id=doc.pair_id, role=role, gates=GATES[role], gated=role not in NOT_GATED, project=doc.project,
         lineage=doc.lineage, x_vs_x=doc.older.sha256 == doc.newer.sha256, older=image(doc.older),
         newer=image(doc.newer), labels_sha256=doc.digest_sha256, functions=doc.summary.functions,
-        by_label=dict(doc.summary.by_label), mutation=mutation)
+        by_label=dict(doc.summary.by_label), mutation=mutation,
+        variant=aa.variant_of(doc) if role == 'P1' else '')
 
 
 def pending() -> tuple[Pending, ...]:
-    p1 = [Pending(item=f'P1:{name}', reason=f'{what}; {aa.P1_PENDING_REASON}') for name, what in aa.P1_PENDING]
-    muts = [Pending(item=f'mutation:{p.id}', reason=f'needs {p.needs}: {p.reason}') for p in classes.PENDING]
-    return tuple(p1 + muts)
+    return tuple(Pending(item=f'mutation:{p.id}', reason=f'needs {p.needs}: {p.reason}') for p in classes.PENDING)
 
 
 def build(docs: Iterable[C.KnownAnswerLabels], toolchain: Mapping[str, str]) -> CorpusManifest:

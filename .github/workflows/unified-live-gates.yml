@@ -1,7 +1,9 @@
 name: Unified live gates (SPEC-31 S6b, advisory)
 # Dispatch only and advisory. Builds the Tier R pairs, the A/A pairs and the planted mutants from pinned open-source
 # sources on Linux (never executed), then runs the WHOLE unified pipeline on them with a real Ghidra, Ghidriff and the
-# extractor, on Linux and on Windows over the SAME image bytes, and feeds the outcomes to the gate report (G-U1, G-U2, G-U4).
+# extractor, on Linux and on Windows over the SAME image bytes (the release and A/A pairs, and every planted-mutant class),
+# and feeds the outcomes, a bench report and the G-U8 test results of both systems to the gate report (G-U1..G-U8).
+# Only aggregate numbers and RVA-keyed verdict rows leave a job: no function bytes, no decompiled text, no PDB.
 # The images are open-source test builds (no Microsoft binary) and live as artifacts for three days only.
 # Results belong in docs/qa.md with the run URL; nothing here gates a merge and the unified flag stays off (U-05).
 on:
@@ -114,14 +116,18 @@ jobs:
           if-no-files-found: ignore
           path: out/outcomes-*.json
   mutants:
-    name: planted mutants of the class ${{ matrix.cls }} (Linux)
+    name: planted mutants of the class ${{ matrix.cls }} (${{ matrix.os }})
     needs: build
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
     continue-on-error: true
     timeout-minutes: 240
+    defaults:
+      run:
+        shell: bash
     strategy:
       fail-fast: false
       matrix:
+        os: [ubuntu-latest, windows-latest]
         cls: [constant, comparison, bound, signedness, removed-check, callee-swap, field-offset, added-block, global-swap, index-swap, branch-swap, buf-resize]
     steps:
       - uses: actions/checkout@v4
@@ -148,16 +154,48 @@ jobs:
       - name: Live run on the mutants of the class
         env:
           CLS: ${{ matrix.cls }}
-        run: python -m tools.unified.live_pairs --labels corpus/labels --store corpus --ghidra-dir "$GHIDRA_INSTALL_DIR" --roles mutation --prefix "mut-$CLS-" --run "mutants-$CLS" --out "out/outcomes-mutants-$CLS.json"
+        run: python -m tools.unified.live_pairs --labels corpus/labels --store corpus --ghidra-dir "$GHIDRA_INSTALL_DIR" --roles mutation --prefix "mut-$CLS-" --run "mutants-$CLS-$RUNNER_OS" --out "out/outcomes-mutants-$CLS-$RUNNER_OS.json"
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: unified-live-outcomes-mutants-${{ matrix.cls }}
+          name: unified-live-outcomes-mutants-${{ matrix.cls }}-${{ matrix.os }}
           if-no-files-found: ignore
           path: out/outcomes-*.json
+  integrity:
+    name: bench and integrity tests (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    continue-on-error: true
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    defaults:
+      run:
+        shell: bash
+    env:
+      QT_QPA_PLATFORM: offscreen
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: "python -m pip install --only-binary=:all: -e '.[dev]'"
+      - name: Bench report (G-U5)
+        run: python -m tools.unified.bench --sizes 10000,60000 --out "out/bench-$RUNNER_OS.json"
+      - name: The tests the G-U8 checks name
+        run: python -m pytest tests/test_unified_pipeline.py tests/test_unified_store.py tests/test_unified_contracts.py tests/test_unified_ghidra_script.py tests/test_ui_unified.py tests/test_unified_panel_spec.py tests/test_unified_read_model.py -q -p no:cacheprovider --junitxml "out/junit-$RUNNER_OS.xml"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: unified-live-integrity-${{ matrix.os }}
+          if-no-files-found: ignore
+          path: |
+            out/bench-*.json
+            out/junit-*.xml
   report:
     name: gate report (advisory, never strict)
-    needs: [build, pairs, mutants]
+    needs: [build, pairs, mutants, integrity]
     if: ${{ !cancelled() }}
     runs-on: ubuntu-latest
     timeout-minutes: 30
@@ -176,12 +214,15 @@ jobs:
           pattern: unified-live-outcomes-*
           path: in
           merge-multiple: true
-      - name: Write the gate report
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: unified-live-integrity-*
+          path: in
+          merge-multiple: true
+      - name: Assemble the gate report
         run: |
-          args=()
-          for f in in/outcomes-*.json; do args+=(--outcomes "$f"); done
           mkdir -p out
-          python -m tools.unified.gates_u --manifest in/unified-corpus-manifest.json "${args[@]}" --out out/gate-report.json --markdown out/gate-report.md
+          python -m tools.unified.gates_u --inputs in --out out/gate-report.json --markdown out/gate-report.md
           cat out/gate-report.md >> "$GITHUB_STEP_SUMMARY"
           sha256sum out/gate-report.json
       - uses: actions/upload-artifact@v4

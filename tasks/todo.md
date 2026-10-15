@@ -536,7 +536,15 @@
 ### [UE2-S6b:live-gates]
 - [x] G-U1, G-U2, G-U4 evaluators over `unified-outcomes/1`; G-U8 `ui-policy` tests named; live driver and workflow written; focused tests green on Linux
 - [ ] BLOCKED / not run: the first dispatch of `unified-live-gates.yml` (static checks only), the Windows leg, `live_pairs` against a real Ghidra (its pure parts are tested), mutant runs at 20 per class (about 240 Ghidriff runs, one job per class)
-- [ ] Still pending gates: G-U3 (IR-to-ladder adapter and a pinned BinDiff), G-U6 (SPEC-32 evaluation core), G-U7 (rows with atoms), G-U4 chain checks (third version per project), G-U1 P1 nuisance variants (BuildSpec link flags)
+- [x] superseded by [UE3-S6c:gates] below (G-U3, G-U6, G-U7, G-U4 chains, G-U1 P1 variants have evaluators; only the BinDiff oracle part of G-U3 stays blocked)
+
+
+### [UE3-S6c:gates]
+- [x] G-U1 P1 nuisance variants (generator and evaluator coverage); built only on the next live `unified-live-gates.yml` run (not dispatched here)
+- [x] G-U4 3-build chain (P1 chains) and COS-PSEUDO cross-tier check
+- [x] G-U3, G-U6, G-U7 evaluators (pure, synthetic fixtures); G-U3 stays `blocked` on the BinDiff pin even when its data pass
+- [x] `gates_u --inputs` assembler with numbers and decision line; workflow: mutants on both systems, integrity job (bench, G-U8 tests)
+- [ ] BLOCKED / not run: every live part; whether lld honours each nuisance as intended is known only from the first Tier R build
 
 
 ### [UE2-U3U5:explain-columns]

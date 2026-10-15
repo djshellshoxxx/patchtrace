@@ -18,6 +18,7 @@ from unified_s6_helpers import evaluated, label_doc, mutation_doc, row  # noqa: 
 
 from tools.calibration.tier_r.contracts import ContractError  # noqa: E402
 from tools.unified import bench, gates_u  # noqa: E402
+from tools.unified.corpus import aa  # noqa: E402
 from tools.unified.corpus import manifest as corpus_manifest  # noqa: E402
 from tools.unified.mutations import classes, templates  # noqa: E402
 
@@ -80,19 +81,16 @@ def test_the_registry_has_the_eight_gates_with_the_questions_and_first_slices_of
         assert (gate.question, gate.first_slice) == (spec[gate.id]['question'], spec[gate.id]['first_slice']), gate.id
 
 
-def test_each_waiting_gate_names_what_it_waits_for_and_never_a_slice_that_is_built():
+def test_no_outcome_gate_waits_for_a_slice_that_is_built():
     needs = {g.id: g.needs for g in gates_u.GATES}
-    assert needs['G-U1'] == needs['G-U2'] == needs['G-U4'] == () and needs['G-U7'] == ('S3',)
-    assert needs['G-U3'] == ('IR-to-ladder adapter', 'S6b')                         # S2 is built: its first-slice cell is no wait
-    assert needs['G-U6'] == ('S3', 'SPEC-32 evaluation core')
+    assert all(needs[i] == () for i in ('G-U1', 'G-U2', 'G-U3', 'G-U4', 'G-U6', 'G-U7'))
     reported = {g.id: g.needs for g in gates_u.build_report(inputs()).gates}
     assert all(reported[i] == needs[i] for i in S3_GATES)
 
 
-def test_every_gate_that_waits_says_for_what_and_what_it_will_read():
+def test_every_outcome_gate_says_what_it_reads_and_g_u3_names_its_one_blocked_part():
     for gate in gates_u.GATES:
-        if gate.id in S3_GATES:
-            assert gate.waits and all(len(w) > 30 for w in gate.waits) and gate.consumes, gate.id
+        assert gate.consumes, gate.id
     assert gates_u.BY_ID['G-U3'].blocked and 'bindiff' in gates_u.BY_ID['G-U3'].blocked[0].lower()
 
 
@@ -101,16 +99,16 @@ def test_every_gate_that_waits_says_for_what_and_what_it_will_read():
 def test_with_no_input_no_gate_passes_and_each_says_why():
     built = gates_u.build_report(inputs())
     assert len(built.gates) == 8 and all(g.status != 'pass' for g in built.gates)
-    assert {g.id: g.status for g in built.gates} == {**dict.fromkeys(S3_GATES, 'pending'), 'G-U1': 'insufficient-data',
+    assert {g.id: g.status for g in built.gates} == {**dict.fromkeys(S3_GATES, 'insufficient-data'), 'G-U1': 'insufficient-data',
                                                       'G-U2': 'insufficient-data', 'G-U4': 'insufficient-data', 'G-U5': 'insufficient-data',
                                                       'G-U8': 'insufficient-data'}
     assert all(g.reasons for g in built.gates) and built.flag.decision_ready is False
 
 
-def test_gates_that_need_s3_stay_pending_whatever_the_corpus_and_the_other_inputs_look_like():
+def test_gates_that_read_rows_stay_insufficient_without_outcomes_whatever_the_other_inputs_look_like():
     built = gates_u.build_report(inputs(manifest=corpus(), benches=[good_bench()], xml=PASS_ALL,
                                         attested={'frozen-smoke': 'pass'}))
-    assert {g.id: g.status for g in built.gates if g.id in S3_GATES} == dict.fromkeys(S3_GATES, 'pending')
+    assert {g.id: g.status for g in built.gates if g.id in S3_GATES} == dict.fromkeys(S3_GATES, 'insufficient-data')
     assert built.flag.decision_ready is False and 'U-05' in built.flag.rule
 
 
@@ -131,7 +129,7 @@ def test_readiness_counts_the_corpus_the_gates_will_read_and_flags_what_is_short
     assert g2['classes_below_minimum'] == [] and set(g2['mutants_per_class'].values()) == {20}
     assert {p['class'] for p in g2['pending_classes']} == {'moved-rva-call', 'try-scope'}
     g1 = by_id(full)['G-U1'].observed['corpus']
-    assert (g1['P0'], g1['P0_x_vs_x'], g1['P1'], g1['P2']) == (1, 1, 1, 1) and len(g1['pending_p1']) == 4
+    assert (g1['P0'], g1['P0_x_vs_x'], g1['P1'], g1['P2']) == (1, 1, 1, 1) and g1['pending_p1'] == [f'P1:{k}' for k in aa.P1_KINDS]
     short = gates_u.build_report(inputs(manifest=corpus(per_class=19)))
     assert set(by_id(short)['G-U2'].observed['corpus']['classes_below_minimum']) == {c.id for c in classes.CLASSES}
     g3 = by_id(full)['G-U3'].observed['corpus']

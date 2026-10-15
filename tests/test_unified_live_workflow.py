@@ -30,7 +30,7 @@ def run_text(job: dict) -> str:
 def test_it_is_dispatch_only_and_advisory(doc):
     assert set(doc.get('on', doc.get(True))) == {'workflow_dispatch'}
     assert doc['permissions'] == {'contents': 'read'}
-    assert doc['jobs']['pairs']['continue-on-error'] is True and doc['jobs']['mutants']['continue-on-error'] is True
+    assert all(doc['jobs'][name]['continue-on-error'] is True for name in ('pairs', 'mutants', 'integrity'))
     assert doc['jobs']['report']['if'] == '${{ !cancelled() }}' and '--strict' not in run_text(doc['jobs']['report'])
     assert all(job['timeout-minutes'] <= 240 for job in doc['jobs'].values())
 
@@ -61,7 +61,8 @@ def test_every_pip_install_takes_wheels_only_except_the_pinned_ghidriff_revision
 def test_the_matrix_covers_every_mutant_class_and_both_operating_systems(doc):
     from tools.unified.mutations import classes
     assert doc['jobs']['mutants']['strategy']['matrix']['cls'] == [c.id for c in classes.CLASSES]
-    assert doc['jobs']['pairs']['strategy']['matrix']['os'] == ['ubuntu-latest', 'windows-latest']
+    for name in ('pairs', 'mutants', 'integrity'):
+        assert doc['jobs'][name]['strategy']['matrix']['os'] == ['ubuntu-latest', 'windows-latest'], name
     assert doc['jobs']['mutants']['strategy']['fail-fast'] is False
 
 
@@ -89,12 +90,25 @@ def test_every_command_it_runs_exists_and_the_report_reads_what_the_jobs_upload(
         for flag in re.findall(r'(--[a-z-]+)', line):
             assert f"'{flag}'" in source, flag
     download = [s for s in doc['jobs']['report']['steps'] if str(s.get('uses', '')).startswith('actions/download')]
-    assert {s['with'].get('name') or s['with'].get('pattern') for s in download} == {'unified-live-manifest',
-                                                                                     'unified-live-outcomes-*'}
-    assert 'in/unified-corpus-manifest.json' in run_text(doc['jobs']['report']) and '--outcomes' in text
+    assert {s['with'].get('name') or s['with'].get('pattern') for s in download} == {
+        'unified-live-manifest', 'unified-live-outcomes-*', 'unified-live-integrity-*'}
+    assert '--inputs in' in run_text(doc['jobs']['report']) and '--outcomes' not in run_text(doc['jobs']['report'])
 
 
 def test_names_have_no_colon_space(doc):
     texts = [doc['name']] + [job['name'] for job in doc['jobs'].values()]
     texts += [str(s.get('name', '')) for job in doc['jobs'].values() for s in job['steps']]
     assert not [t for t in texts if ': ' in t]
+
+
+def test_the_report_reads_the_file_names_the_jobs_write_and_every_job_needs_what_it_downloads(doc):
+    text = '\n'.join(run_text(job) for job in doc['jobs'].values())
+    written = set(re.findall(r'out/((?:outcomes|bench|junit)-[\w$-]*\.(?:json|xml))', text))
+    assert written and all(re.match(r'(outcomes|bench|junit)-', name) for name in written)
+    assert set(doc['jobs']['report']['needs']) == {'build', 'pairs', 'mutants', 'integrity'}
+
+
+def test_the_integrity_job_runs_the_tests_the_g_u8_checks_name(doc):
+    from tools.unified import gates_u
+    modules = {t.split('::')[0] for c in gates_u.G_U8_CHECKS for t in c.tests}
+    assert all(f'tests/{m}.py' in run_text(doc['jobs']['integrity']) for m in modules)
