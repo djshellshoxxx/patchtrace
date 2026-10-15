@@ -18,6 +18,7 @@ from .bootstrap import (
 )
 from .common import Row
 from .ece_null import NULL_SIMS, debiased_l2, ece_null, ece_null_summary, residual_rho
+from .guards import RowError, validate_preds
 from .ood_fit import risk_ratio
 from .threshold import evaluate_frozen_tau
 
@@ -42,6 +43,9 @@ def evaluate_profile(rows: Sequence[Row], preds: Mapping[str, float], *, tau: fl
                      ood_hard: Mapping[str, bool] | None = None, b_count: int = 2000, seed=21,
                      with_slope_ci: bool = True, null_sims: int = NULL_SIMS) -> dict:
     nat = sorted((r for r in rows if r.stratum == 'natural'), key=lambda r: r.id)
+    if not nat:
+        raise RowError('no natural-stratum rows to evaluate')
+    validate_preds(nat, preds)
     p, y, w = _arrays(nat, preds)
     out: dict = {'n_natural': len(nat), 'n_groups': len(group_rows(nat)),
                  'prevalence': M.prevalence(y, w), 'tau': tau, 'tau_low': tau_low}

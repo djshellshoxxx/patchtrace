@@ -5,118 +5,6 @@
     "count": 12,
     "vulnerabilities": [
         {
-            "cveID": "CVE-2021-38648",
-            "vendorProject": "Microsoft",
-            "product": "Open Management Infrastructure (OMI)",
-            "vulnerabilityName": "Microsoft Open Management Infrastructure (OMI) Privilege Escalation Vulnerability",
-            "dateAdded": "2021-11-03",
-            "shortDescription": "Microsoft Open Management Infrastructure (OMI) within Azure VM Management Extensions contains an unspecified vulnerability allowing privilege escalation.",
-            "requiredAction": "Apply updates per vendor instructions.",
-            "dueDate": "2021-11-17",
-            "knownRansomwareCampaignUse": "Unknown",
-            "forensicTriage": "No",
-            "notes": "https:\/\/nvd.nist.gov\/vuln\/detail\/CVE-2021-38648",
-            "cwes": [
-                "CWE-1390"
-            ]
-        },
-        {
-            "cveID": "CVE-2021-34527",
-            "vendorProject": "Microsoft",
-            "product": "Windows",
-            "vulnerabilityName": "Microsoft Windows Print Spooler Remote Code Execution Vulnerability",
-            "dateAdded": "2021-11-03",
-            "shortDescription": "Microsoft Windows Print Spooler contains an unspecified vulnerability due to the Windows Print Spooler service improperly performing privileged file operations. Successful exploitation allows an attacker to perform remote code execution with SYSTEM privileges. The vulnerability is also known under the moniker of PrintNightmare.",
-            "requiredAction": "Apply updates per vendor instructions.",
-            "dueDate": "2022-05-03",
-            "knownRansomwareCampaignUse": "Known",
-            "forensicTriage": "No",
-            "notes": "Reference CISA's ED 21-04 (https:\/\/www.cisa.gov\/news-events\/directives\/ed-21-04-mitigate-windows-print-spooler-service-vulnerability) for further guidance and requirements. Note: The due date for addressing this vulnerability aligns with the requirements outlined in ED 21-04. https:\/\/nvd.nist.gov\/vuln\/detail\/CVE-2021-34527",
-            "cwes": [
-                "CWE-269"
-            ]
-        },
-        {
-            "cveID": "CVE-2017-0144",
-            "vendorProject": "Microsoft",
-            "product": "SMBv1",
-            "vulnerabilityName": "Microsoft SMBv1 Remote Code Execution Vulnerability",
-            "dateAdded": "2022-02-10",
-            "shortDescription": "The SMBv1 server in multiple Microsoft Windows versions allows remote attackers to execute arbitrary code via crafted packets.",
-            "requiredAction": "Apply updates per vendor instructions.",
-            "dueDate": "2022-08-10",
-            "knownRansomwareCampaignUse": "Known",
-            "forensicTriage": "No",
-            "notes": "https:\/\/nvd.nist.gov\/vuln\/detail\/CVE-2017-0144",
-            "cwes": [
-                "CWE-20"
-            ]
-        },
-        {
-            "cveID": "CVE-2024-30088",
-            "vendorProject": "Microsoft",
-            "product": "Windows ",
-            "vulnerabilityName": "Microsoft Windows Kernel TOCTOU Race Condition Vulnerability",
-            "dateAdded": "2024-10-15",
-            "shortDescription": "Microsoft Windows Kernel contains a time-of-check to time-of-use (TOCTOU) race condition vulnerability that could allow for privilege escalation. ",
-            "requiredAction": "Apply mitigations per vendor instructions or discontinue use of the product if mitigations are unavailable.",
-            "dueDate": "2024-11-05",
-            "knownRansomwareCampaignUse": "Known",
-            "forensicTriage": "No",
-            "notes": "https:\/\/msrc.microsoft.com\/update-guide\/en-US\/vulnerability\/CVE-2024-30088 ; https:\/\/nvd.nist.gov\/vuln\/detail\/CVE-2024-30088",
-            "cwes": [
-                "CWE-367"
-            ]
-        },
-        {
-            "cveID": "CVE-2021-41773",
-            "vendorProject": "Apache",
-            "product": "HTTP Server",
-            "vulnerabilityName": "Apache HTTP Server Path Traversal Vulnerability",
-            "dateAdded": "2021-11-03",
-            "shortDescription": "Apache HTTP Server contains a path traversal vulnerability that allows an attacker to perform remote code execution if files outside directories configured by Alias-like directives are not under default \ufffdrequire all denied\ufffd or if CGI scripts are enabled. The original patch issued under this CVE ID is insufficient, please review remediation information under CVE-2021-42013.",
-            "requiredAction": "Apply updates per vendor instructions.",
-            "dueDate": "2021-11-17",
-            "knownRansomwareCampaignUse": "Known",
-            "forensicTriage": "No",
-            "notes": "https:\/\/nvd.nist.gov\/vuln\/detail\/CVE-2021-41773",
-            "cwes": [
-                "CWE-22"
-            ]
-        },
-        {
-            "cveID": "CVE-2017-9841",
-            "vendorProject": "PHPUnit",
-            "product": "PHPUnit",
-            "vulnerabilityName": "PHPUnit Command Injection Vulnerability",
-            "dateAdded": "2022-02-15",
-            "shortDescription": "PHPUnit allows remote attackers to execute arbitrary PHP code via HTTP POST data beginning with a \"<?php \" substring, as demonstrated by an attack on a site with an exposed \/vendor folder, i.e., external access to the \/vendor\/phpunit\/phpunit\/src\/Util\/PHP\/eval-stdin.php URI.",
-            "requiredAction": "Apply updates per vendor instructions.",
-            "dueDate": "2022-08-15",
-            "knownRansomwareCampaignUse": "Unknown",
-            "forensicTriage": "No",
-            "notes": "https:\/\/nvd.nist.gov\/vuln\/detail\/CVE-2017-9841",
-            "cwes": [
-                "CWE-94"
-            ]
-        },
-        {
-            "cveID": "CVE-2013-2597",
-            "vendorProject": "Code Aurora",
-            "product": "ACDB Audio Driver",
-            "vulnerabilityName": "Code Aurora ACDB Audio Driver Stack-based Buffer Overflow Vulnerability",
-            "dateAdded": "2022-09-15",
-            "shortDescription": "The Code Aurora audio calibration database (acdb) audio driver contains a stack-based buffer overflow vulnerability that allows for privilege escalation. Code Aurora is used in third-party products such as Qualcomm and Android.",
-            "requiredAction": "Apply updates per vendor instructions.",
-            "dueDate": "2022-10-06",
-            "knownRansomwareCampaignUse": "Unknown",
-            "forensicTriage": "No",
-            "notes": "https:\/\/web.archive.org\/web\/20161226013354\/https:\/www.codeaurora.org\/news\/security-advisories\/stack-based-buffer-overflow-acdb-audio-driver-cve-2013-2597; https:\/\/nvd.nist.gov\/vuln\/detail\/CVE-2013-2597",
-            "cwes": [
-                "CWE-119"
-            ]
-        },
-        {
             "cveID": "CVE-2026-104935",
             "vendorProject": "Ivanti",
             "product": "Connect Secure",
@@ -163,6 +51,86 @@
             "cwes": []
         },
         {
+            "cveID": "CVE-2025-60710",
+            "vendorProject": "Microsoft",
+            "product": "Windows",
+            "vulnerabilityName": "Microsoft Windows Link Following Vulnerability",
+            "dateAdded": "2026-04-13",
+            "shortDescription": "Microsoft Windows contains a link following vulnerability that allows for privilege escalation",
+            "requiredAction": "Apply mitigations per vendor instructions, follow applicable BOD 22-01 guidance for cloud services, or discontinue use of the product if mitigations are unavailable.",
+            "dueDate": "2026-04-27",
+            "knownRansomwareCampaignUse": "Known",
+            "forensicTriage": "No",
+            "notes": "https:\/\/msrc.microsoft.com\/update-guide\/vulnerability\/CVE-2025-60710 ; https:\/\/nvd.nist.gov\/vuln\/detail\/CVE-2025-60710",
+            "cwes": [
+                "CWE-59"
+            ]
+        },
+        {
+            "cveID": "CVE-2024-30088",
+            "vendorProject": "Microsoft",
+            "product": "Windows ",
+            "vulnerabilityName": "Microsoft Windows Kernel TOCTOU Race Condition Vulnerability",
+            "dateAdded": "2024-10-15",
+            "shortDescription": "Microsoft Windows Kernel contains a time-of-check to time-of-use (TOCTOU) race condition vulnerability that could allow for privilege escalation. ",
+            "requiredAction": "Apply mitigations per vendor instructions or discontinue use of the product if mitigations are unavailable.",
+            "dueDate": "2024-11-05",
+            "knownRansomwareCampaignUse": "Known",
+            "forensicTriage": "No",
+            "notes": "https:\/\/msrc.microsoft.com\/update-guide\/en-US\/vulnerability\/CVE-2024-30088 ; https:\/\/nvd.nist.gov\/vuln\/detail\/CVE-2024-30088",
+            "cwes": [
+                "CWE-367"
+            ]
+        },
+        {
+            "cveID": "CVE-2013-2597",
+            "vendorProject": "Code Aurora",
+            "product": "ACDB Audio Driver",
+            "vulnerabilityName": "Code Aurora ACDB Audio Driver Stack-based Buffer Overflow Vulnerability",
+            "dateAdded": "2022-09-15",
+            "shortDescription": "The Code Aurora audio calibration database (acdb) audio driver contains a stack-based buffer overflow vulnerability that allows for privilege escalation. Code Aurora is used in third-party products such as Qualcomm and Android.",
+            "requiredAction": "Apply updates per vendor instructions.",
+            "dueDate": "2022-10-06",
+            "knownRansomwareCampaignUse": "Unknown",
+            "forensicTriage": "No",
+            "notes": "https:\/\/web.archive.org\/web\/20161226013354\/https:\/www.codeaurora.org\/news\/security-advisories\/stack-based-buffer-overflow-acdb-audio-driver-cve-2013-2597; https:\/\/nvd.nist.gov\/vuln\/detail\/CVE-2013-2597",
+            "cwes": [
+                "CWE-119"
+            ]
+        },
+        {
+            "cveID": "CVE-2017-9841",
+            "vendorProject": "PHPUnit",
+            "product": "PHPUnit",
+            "vulnerabilityName": "PHPUnit Command Injection Vulnerability",
+            "dateAdded": "2022-02-15",
+            "shortDescription": "PHPUnit allows remote attackers to execute arbitrary PHP code via HTTP POST data beginning with a \"<?php \" substring, as demonstrated by an attack on a site with an exposed \/vendor folder, i.e., external access to the \/vendor\/phpunit\/phpunit\/src\/Util\/PHP\/eval-stdin.php URI.",
+            "requiredAction": "Apply updates per vendor instructions.",
+            "dueDate": "2022-08-15",
+            "knownRansomwareCampaignUse": "Unknown",
+            "forensicTriage": "No",
+            "notes": "https:\/\/nvd.nist.gov\/vuln\/detail\/CVE-2017-9841",
+            "cwes": [
+                "CWE-94"
+            ]
+        },
+        {
+            "cveID": "CVE-2017-0144",
+            "vendorProject": "Microsoft",
+            "product": "SMBv1",
+            "vulnerabilityName": "Microsoft SMBv1 Remote Code Execution Vulnerability",
+            "dateAdded": "2022-02-10",
+            "shortDescription": "The SMBv1 server in multiple Microsoft Windows versions allows remote attackers to execute arbitrary code via crafted packets.",
+            "requiredAction": "Apply updates per vendor instructions.",
+            "dueDate": "2022-08-10",
+            "knownRansomwareCampaignUse": "Known",
+            "forensicTriage": "No",
+            "notes": "https:\/\/nvd.nist.gov\/vuln\/detail\/CVE-2017-0144",
+            "cwes": [
+                "CWE-20"
+            ]
+        },
+        {
             "cveID": "CVE-2021-44228",
             "vendorProject": "Apache",
             "product": "Log4j2",
@@ -181,19 +149,51 @@
             ]
         },
         {
-            "cveID": "CVE-2025-60710",
-            "vendorProject": "Microsoft",
-            "product": "Windows",
-            "vulnerabilityName": "Microsoft Windows Link Following Vulnerability",
-            "dateAdded": "2026-04-13",
-            "shortDescription": "Microsoft Windows contains a link following vulnerability that allows for privilege escalation",
-            "requiredAction": "Apply mitigations per vendor instructions, follow applicable BOD 22-01 guidance for cloud services, or discontinue use of the product if mitigations are unavailable.",
-            "dueDate": "2026-04-27",
+            "cveID": "CVE-2021-41773",
+            "vendorProject": "Apache",
+            "product": "HTTP Server",
+            "vulnerabilityName": "Apache HTTP Server Path Traversal Vulnerability",
+            "dateAdded": "2021-11-03",
+            "shortDescription": "Apache HTTP Server contains a path traversal vulnerability that allows an attacker to perform remote code execution if files outside directories configured by Alias-like directives are not under default \ufffdrequire all denied\ufffd or if CGI scripts are enabled. The original patch issued under this CVE ID is insufficient, please review remediation information under CVE-2021-42013.",
+            "requiredAction": "Apply updates per vendor instructions.",
+            "dueDate": "2021-11-17",
             "knownRansomwareCampaignUse": "Known",
             "forensicTriage": "No",
-            "notes": "https:\/\/msrc.microsoft.com\/update-guide\/vulnerability\/CVE-2025-60710 ; https:\/\/nvd.nist.gov\/vuln\/detail\/CVE-2025-60710",
+            "notes": "https:\/\/nvd.nist.gov\/vuln\/detail\/CVE-2021-41773",
             "cwes": [
-                "CWE-59"
+                "CWE-22"
+            ]
+        },
+        {
+            "cveID": "CVE-2021-34527",
+            "vendorProject": "Microsoft",
+            "product": "Windows",
+            "vulnerabilityName": "Microsoft Windows Print Spooler Remote Code Execution Vulnerability",
+            "dateAdded": "2021-11-03",
+            "shortDescription": "Microsoft Windows Print Spooler contains an unspecified vulnerability due to the Windows Print Spooler service improperly performing privileged file operations. Successful exploitation allows an attacker to perform remote code execution with SYSTEM privileges. The vulnerability is also known under the moniker of PrintNightmare.",
+            "requiredAction": "Apply updates per vendor instructions.",
+            "dueDate": "2022-05-03",
+            "knownRansomwareCampaignUse": "Known",
+            "forensicTriage": "No",
+            "notes": "Reference CISA's ED 21-04 (https:\/\/www.cisa.gov\/news-events\/directives\/ed-21-04-mitigate-windows-print-spooler-service-vulnerability) for further guidance and requirements. Note: The due date for addressing this vulnerability aligns with the requirements outlined in ED 21-04. https:\/\/nvd.nist.gov\/vuln\/detail\/CVE-2021-34527",
+            "cwes": [
+                "CWE-269"
+            ]
+        },
+        {
+            "cveID": "CVE-2021-38648",
+            "vendorProject": "Microsoft",
+            "product": "Open Management Infrastructure (OMI)",
+            "vulnerabilityName": "Microsoft Open Management Infrastructure (OMI) Privilege Escalation Vulnerability",
+            "dateAdded": "2021-11-03",
+            "shortDescription": "Microsoft Open Management Infrastructure (OMI) within Azure VM Management Extensions contains an unspecified vulnerability allowing privilege escalation.",
+            "requiredAction": "Apply updates per vendor instructions.",
+            "dueDate": "2021-11-17",
+            "knownRansomwareCampaignUse": "Unknown",
+            "forensicTriage": "No",
+            "notes": "https:\/\/nvd.nist.gov\/vuln\/detail\/CVE-2021-38648",
+            "cwes": [
+                "CWE-1390"
             ]
         }
     ]

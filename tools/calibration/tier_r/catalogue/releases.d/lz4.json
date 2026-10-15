@@ -1,0 +1,499 @@
+[
+ {
+  "contract": "case-card/1",
+  "id": "lz4-v1.9.2-to-v1.9.3",
+  "project": "lz4",
+  "upstream_git": "https://github.com/lz4/lz4.git",
+  "license_spdx": "BSD-2-Clause",
+  "license_evidence": "lib/LICENSE at d44371841a2f1728a3f36839fd4b7e872d0927d3: LZ4 Library / Copyright (c) Yann Collet / Redistribution and use in source and binary forms, with or without modification, are permitted (BSD 2-Clause) (sha256 d15d99c8...af71; read at fdf2ef58 too, sha256 d15d99c8...af71)",
+  "old": {
+   "ref": "v1.9.2",
+   "commit": "fdf2ef5809ca875c454510610764d9125ef2ebbd"
+  },
+  "new": {
+   "ref": "v1.9.3",
+   "commit": "d44371841a2f1728a3f36839fd4b7e872d0927d3"
+  },
+  "kind": "release",
+  "cve": [],
+  "semantic_change": true,
+  "changed_functions": [
+   {
+    "name": "LZ4_decompress_safe_withSmallPrefix",
+    "file": "lib/lz4.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "LZ4_decompress_fast_extDict",
+    "file": "lib/lz4.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "LZ4_compress_fast_extState",
+    "file": "lib/lz4.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "LZ4_compress_fast_extState_fastReset",
+    "file": "lib/lz4.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "LZ4_loadDict",
+    "file": "lib/lz4.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "LZ4_attach_dictionary",
+    "file": "lib/lz4.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "LZ4_compress_fast_continue",
+    "file": "lib/lz4.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "LZ4_saveDict",
+    "file": "lib/lz4.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "LZ4_decompress_safe",
+    "file": "lib/lz4.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "LZ4_decompress_safe_partial",
+    "file": "lib/lz4.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "LZ4_decompress_fast",
+    "file": "lib/lz4.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "LZ4_decompress_safe_withPrefix64k",
+    "file": "lib/lz4.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "LZ4_decompress_safe_forceExtDict",
+    "file": "lib/lz4.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "LZ4_decompress_safe_continue",
+    "file": "lib/lz4.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "LZ4_decompress_fast_continue",
+    "file": "lib/lz4.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "LZ4F_compressBound",
+    "file": "lib/lz4frame.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "LZ4F_decompress",
+    "file": "lib/lz4frame.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "LZ4HC_compress_optimal",
+    "file": "lib/lz4hc.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "LZ4_createStreamHC",
+    "file": "lib/lz4hc.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "LZ4_initStreamHC",
+    "file": "lib/lz4hc.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "LZ4_compress_HC_extStateHC_fastReset",
+    "file": "lib/lz4hc.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "LZ4_loadDictHC",
+    "file": "lib/lz4hc.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "LZ4_saveDictHC",
+    "file": "lib/lz4hc.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   }
+  ],
+  "unchanged_controls": [
+   "LZ4_compressBound",
+   "LZ4_compress_default",
+   "LZ4_setStreamDecode"
+  ],
+  "build": {
+   "system": "single",
+   "mingw_ok": "yes",
+   "recipe_notes": "tier_r recipe lz4 (mingw-gcc 13-win32 -O2 -g, explicit file list from recipes.json, liblz4.dll)"
+  },
+  "verification": {
+   "method": "tools.calibration.tier_r factory.run_card on fetched pins (mingw-gcc 13-win32 O2): 146 project functions, 84 unchanged, 23 changed, 37 ambiguous, 2 no-counterpart (bodies: 39 identical, 56 address-only, 45 different); git diff --numstat v1.9.2..v1.9.3 -- '*.c' '*.h': 29 files, +2004/-1002",
+   "files_changed": 29,
+   "functions_changed_count": 23,
+   "verified_by_agent_run": true
+  },
+  "sources": [
+   "https://github.com/lz4/lz4/releases/tag/v1.9.3",
+   "https://github.com/lz4/lz4/compare/v1.9.2...v1.9.3"
+  ],
+  "risks": [
+   "37 ambiguous record(s) (source changed with identical code, or induced by macro/header/inlining) are excluded from changed-set scoring by design."
+  ]
+ },
+ {
+  "contract": "case-card/1",
+  "id": "lz4-v1.9.3-to-v1.9.4",
+  "project": "lz4",
+  "upstream_git": "https://github.com/lz4/lz4.git",
+  "license_spdx": "BSD-2-Clause",
+  "license_evidence": "lib/LICENSE at 5ff839680134437dbf4678f3d0c7b371d84f4964: LZ4 Library / Copyright (c) Yann Collet / Redistribution and use in source and binary forms, with or without modification, are permitted (BSD 2-Clause) (sha256 8b58c446...736c; read at d4437184 too, sha256 d15d99c8...af71)",
+  "old": {
+   "ref": "v1.9.3",
+   "commit": "d44371841a2f1728a3f36839fd4b7e872d0927d3"
+  },
+  "new": {
+   "ref": "v1.9.4",
+   "commit": "5ff839680134437dbf4678f3d0c7b371d84f4964"
+  },
+  "kind": "release",
+  "cve": [],
+  "semantic_change": true,
+  "changed_functions": [
+   {
+    "name": "LZ4_decompress_safe_withSmallPrefix",
+    "file": "lib/lz4.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "LZ4_decompress_fast_extDict",
+    "file": "lib/lz4.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "LZ4_attach_dictionary",
+    "file": "lib/lz4.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "LZ4_compress_fast_continue",
+    "file": "lib/lz4.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "LZ4_saveDict",
+    "file": "lib/lz4.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "LZ4_decompress_safe",
+    "file": "lib/lz4.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "LZ4_decompress_safe_partial",
+    "file": "lib/lz4.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "LZ4_decompress_fast",
+    "file": "lib/lz4.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "LZ4_decompress_safe_withPrefix64k",
+    "file": "lib/lz4.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "LZ4_decompress_safe_forceExtDict",
+    "file": "lib/lz4.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "LZ4_setStreamDecode",
+    "file": "lib/lz4.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "LZ4_decompress_fast_continue",
+    "file": "lib/lz4.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "LZ4_decompress_fast_usingDict",
+    "file": "lib/lz4.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "LZ4F_updateDict",
+    "file": "lib/lz4frame.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "LZ4F_makeBlock",
+    "file": "lib/lz4frame.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "LZ4F_decodeHeader",
+    "file": "lib/lz4frame.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "LZ4F_getBlockSize",
+    "file": "lib/lz4frame.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "LZ4F_createCDict",
+    "file": "lib/lz4frame.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "LZ4F_createCompressionContext",
+    "file": "lib/lz4frame.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "LZ4F_freeCompressionContext",
+    "file": "lib/lz4frame.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "LZ4F_compressUpdate",
+    "file": "lib/lz4frame.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "LZ4F_flush",
+    "file": "lib/lz4frame.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "LZ4F_compressEnd",
+    "file": "lib/lz4frame.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "LZ4F_compressFrame_usingCDict",
+    "file": "lib/lz4frame.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "LZ4F_compressFrame",
+    "file": "lib/lz4frame.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   }
+  ],
+  "unchanged_controls": [
+   "LZ4_compressBound",
+   "LZ4_compress_default",
+   "LZ4_decoderRingBufferSize"
+  ],
+  "build": {
+   "system": "single",
+   "mingw_ok": "yes",
+   "recipe_notes": "tier_r recipe lz4 (mingw-gcc 13-win32 -O2 -g, explicit file list from recipes.json, liblz4.dll)"
+  },
+  "verification": {
+   "method": "tools.calibration.tier_r factory.run_card on fetched pins (mingw-gcc 13-win32 O2): 161 project functions, 66 unchanged, 39 changed, 39 ambiguous, 16 no-counterpart (bodies: 25 identical, 51 address-only, 63 different); git diff --numstat v1.9.3..v1.9.4 -- '*.c' '*.h': 38 files, +3633/-1221; changed_functions lists the first 25 of 39 (sorted by file, name)",
+   "files_changed": 38,
+   "functions_changed_count": 39,
+   "verified_by_agent_run": true
+  },
+  "sources": [
+   "https://github.com/lz4/lz4/releases/tag/v1.9.4",
+   "https://github.com/lz4/lz4/compare/v1.9.3...v1.9.4"
+  ],
+  "risks": [
+   "39 ambiguous record(s) (source changed with identical code, or induced by macro/header/inlining) are excluded from changed-set scoring by design."
+  ]
+ },
+ {
+  "contract": "case-card/1",
+  "id": "lz4-v1.9.4-to-v1.10.0",
+  "project": "lz4",
+  "upstream_git": "https://github.com/lz4/lz4.git",
+  "license_spdx": "BSD-2-Clause",
+  "license_evidence": "lib/LICENSE at ebb370ca83af193212df4dcbadcc5d87bc0de2f0: LZ4 Library / Copyright (c) Yann Collet / Redistribution and use in source and binary forms, with or without modification, are permitted (BSD 2-Clause) (sha256 8b58c446...736c; read at 5ff83968 too, sha256 8b58c446...736c)",
+  "old": {
+   "ref": "v1.9.4",
+   "commit": "5ff839680134437dbf4678f3d0c7b371d84f4964"
+  },
+  "new": {
+   "ref": "v1.10.0",
+   "commit": "ebb370ca83af193212df4dcbadcc5d87bc0de2f0"
+  },
+  "kind": "release",
+  "cve": [],
+  "semantic_change": true,
+  "changed_functions": [
+   {
+    "name": "LZ4_compress_fast_extState_fastReset",
+    "file": "lib/lz4.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "LZ4_compress_destSize",
+    "file": "lib/lz4.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "LZ4_loadDict",
+    "file": "lib/lz4.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "LZ4_compress_forceExtDict",
+    "file": "lib/lz4.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "LZ4_decompress_safe_forceExtDict",
+    "file": "lib/lz4.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "LZ4F_readOpen",
+    "file": "lib/lz4file.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "LZ4F_read",
+    "file": "lib/lz4file.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "LZ4F_readClose",
+    "file": "lib/lz4file.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "LZ4F_writeOpen",
+    "file": "lib/lz4file.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "LZ4F_write",
+    "file": "lib/lz4file.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "LZ4F_writeClose",
+    "file": "lib/lz4file.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "LZ4F_initStream",
+    "file": "lib/lz4frame.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "LZ4F_createCDict_advanced",
+    "file": "lib/lz4frame.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "LZ4F_compressBegin_usingCDict",
+    "file": "lib/lz4frame.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "LZ4F_compressBegin",
+    "file": "lib/lz4frame.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "LZ4F_flush",
+    "file": "lib/lz4frame.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "LZ4F_compressUpdateImpl",
+    "file": "lib/lz4frame.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "LZ4F_uncompressedUpdate",
+    "file": "lib/lz4frame.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "LZ4F_compressEnd",
+    "file": "lib/lz4frame.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "LZ4F_compressFrame_usingCDict",
+    "file": "lib/lz4frame.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "LZ4F_compressFrame",
+    "file": "lib/lz4frame.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "LZ4F_resetDecompressionContext",
+    "file": "lib/lz4frame.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "LZ4F_decompress",
+    "file": "lib/lz4frame.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "LZ4HC_setExternalDict",
+    "file": "lib/lz4hc.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "LZ4HC_compress_optimal",
+    "file": "lib/lz4hc.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   }
+  ],
+  "unchanged_controls": [
+   "LZ4_compressBound",
+   "LZ4_sizeofState",
+   "LZ4_attach_dictionary"
+  ],
+  "build": {
+   "system": "single",
+   "mingw_ok": "yes",
+   "recipe_notes": "tier_r recipe lz4 (mingw-gcc 13-win32 -O2 -g, explicit file list from recipes.json, liblz4.dll)"
+  },
+  "verification": {
+   "method": "tools.calibration.tier_r factory.run_card on fetched pins (mingw-gcc 13-win32 O2): 171 project functions, 91 unchanged, 30 changed, 38 ambiguous, 12 no-counterpart (bodies: 36 identical, 70 address-only, 49 different); git diff --numstat v1.9.4..v1.10.0 -- '*.c' '*.h': 40 files, +5557/-1802; changed_functions lists the first 25 of 30 (sorted by file, name)",
+   "files_changed": 40,
+   "functions_changed_count": 30,
+   "verified_by_agent_run": true
+  },
+  "sources": [
+   "https://github.com/lz4/lz4/releases/tag/v1.10.0",
+   "https://github.com/lz4/lz4/compare/v1.9.4...v1.10.0"
+  ],
+  "risks": [
+   "38 ambiguous record(s) (source changed with identical code, or induced by macro/header/inlining) are excluded from changed-set scoring by design."
+  ]
+ }
+]

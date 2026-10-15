@@ -1,0 +1,222 @@
+{
+  "document": {
+    "category": "csaf_security_advisory",
+    "csaf_version": "2.0",
+    "distribution": {
+      "text": "SYNTHETIC test fixture for PatchTrace. Not a real advisory.",
+      "tlp": {
+        "label": "WHITE",
+        "url": "https://www.first.org/tlp/"
+      }
+    },
+    "lang": "en-US",
+    "notes": [
+      {
+        "category": "legal_disclaimer",
+        "text": "SYNTHETIC CSAF 2.0 fixture written for PatchTrace tests. No vendor published it and it describes no real vulnerability, product or update.",
+        "title": "Synthetic fixture"
+      }
+    ],
+    "publisher": {
+      "category": "vendor",
+      "contact_details": "none (synthetic fixture)",
+      "name": "PatchTrace Synthetic Fixture Vendor (not Microsoft)",
+      "namespace": "https://example.invalid/patchtrace-synthetic"
+    },
+    "references": [
+      {
+        "category": "self",
+        "summary": "Synthetic self reference",
+        "url": "https://example.invalid/patchtrace-synthetic/csaf/2099/pt-synth-pilot_2099-001.json"
+      }
+    ],
+    "title": "SYNTHETIC Example Net update for IPv6 fragment reassembly and options parse vulnerabilities",
+    "tracking": {
+      "current_release_date": "2099-02-10T08:00:00.000Z",
+      "generator": {
+        "date": "2099-02-10T08:00:00.000Z",
+        "engine": {
+          "name": "PatchTrace fixture author",
+          "version": "1"
+        }
+      },
+      "id": "PT-SYNTH-PILOT_2099-001",
+      "initial_release_date": "2099-02-10T08:00:00.000Z",
+      "revision_history": [
+        {
+          "date": "2099-02-10T08:00:00.000Z",
+          "number": "1",
+          "summary": "Initial synthetic release."
+        }
+      ],
+      "status": "final",
+      "version": "1"
+    }
+  },
+  "product_tree": {
+    "branches": [
+      {
+        "branches": [
+          {
+            "branches": [
+              {
+                "branches": [
+                  {
+                    "category": "product_version_range",
+                    "name": "<10.0.22621.5000",
+                    "product": {
+                      "name": "Example OS 22H2 for x64-based Systems <10.0.22621.5000",
+                      "product_id": "PTP-100-1"
+                    }
+                  },
+                  {
+                    "category": "product_version",
+                    "name": "10.0.22621.5000",
+                    "product": {
+                      "name": "Example OS 22H2 for x64-based Systems 10.0.22621.5000",
+                      "product_id": "PTP-100-2"
+                    }
+                  }
+                ],
+                "category": "product_name",
+                "name": "Example OS 22H2 for x64-based Systems"
+              }
+            ],
+            "category": "product_family",
+            "name": "Example OS"
+          }
+        ],
+        "category": "vendor",
+        "name": "PatchTrace Synthetic Fixture Vendor"
+      }
+    ],
+    "full_product_names": [
+      {
+        "name": "Example examplenet.sys 10.0.22621.4999 (synthetic build)",
+        "product_id": "PTP-800",
+        "product_identification_helper": {
+          "hashes": [
+            {
+              "file_hashes": [
+                {
+                  "algorithm": "sha256",
+                  "value": "3aa1f3653202a1be3710a508e36065f8c8ae00dc3e8494b8ebe0c1d6ca3d45d1"
+                }
+              ],
+              "filename": "examplenet.sys"
+            }
+          ]
+        }
+      },
+      {
+        "name": "Example examplenet.sys 10.0.22621.5000 (synthetic build)",
+        "product_id": "PTP-900",
+        "product_identification_helper": {
+          "hashes": [
+            {
+              "file_hashes": [
+                {
+                  "algorithm": "sha256",
+                  "value": "9e1dd2d600fc31153c59a091031336c01c910a224a5f8a8b207e835c1a45ea43"
+                }
+              ],
+              "filename": "examplenet.sys"
+            }
+          ]
+        }
+      }
+    ],
+    "relationships": [
+      {
+        "category": "default_component_of",
+        "full_product_name": {
+          "name": "Example examplenet.sys 10.0.22621.4999 (synthetic build) as part of Example OS 22H2 for x64-based Systems <10.0.22621.5000",
+          "product_id": "PTP-801"
+        },
+        "product_reference": "PTP-800",
+        "relates_to_product_reference": "PTP-100-1"
+      },
+      {
+        "category": "default_component_of",
+        "full_product_name": {
+          "name": "Example examplenet.sys 10.0.22621.5000 (synthetic build) as part of Example OS 22H2 for x64-based Systems 10.0.22621.5000",
+          "product_id": "PTP-901"
+        },
+        "product_reference": "PTP-900",
+        "relates_to_product_reference": "PTP-100-2"
+      }
+    ]
+  },
+  "vulnerabilities": [
+    {
+      "cve": "CVE-2099-20001",
+      "cwe": {
+        "id": "CWE-787",
+        "name": "Out-of-bounds Write"
+      },
+      "notes": [
+        {
+          "category": "description",
+          "text": "SYNTHETIC: A heap-based buffer overflow in the IPv6 fragment reassembly code of examplenet.sys lets crafted fragments write past the end of a buffer.",
+          "title": "Description"
+        }
+      ],
+      "product_status": {
+        "fixed": [
+          "PTP-100-2",
+          "PTP-901"
+        ],
+        "known_affected": [
+          "PTP-100-1",
+          "PTP-801"
+        ]
+      },
+      "remediations": [
+        {
+          "category": "vendor_fix",
+          "details": "Install synthetic update PT6000001",
+          "product_ids": [
+            "PTP-801"
+          ],
+          "url": "https://example.invalid/patchtrace-synthetic/updates/PT6000001"
+        }
+      ],
+      "title": "SYNTHETIC Example Net IPv6 Fragment Reassembly Remote Code Execution Vulnerability"
+    },
+    {
+      "cve": "CVE-2099-20002",
+      "cwe": {
+        "id": "CWE-125",
+        "name": "Out-of-bounds Read"
+      },
+      "notes": [
+        {
+          "category": "description",
+          "text": "SYNTHETIC: An out-of-bounds read while parsing IPv6 options in examplenet.sys can disclose adjacent kernel memory.",
+          "title": "Description"
+        }
+      ],
+      "product_status": {
+        "fixed": [
+          "PTP-100-2",
+          "PTP-901"
+        ],
+        "known_affected": [
+          "PTP-100-1",
+          "PTP-801"
+        ]
+      },
+      "remediations": [
+        {
+          "category": "vendor_fix",
+          "details": "Install synthetic update PT6000001",
+          "product_ids": [
+            "PTP-801"
+          ],
+          "url": "https://example.invalid/patchtrace-synthetic/updates/PT6000001"
+        }
+      ],
+      "title": "SYNTHETIC Example Net IPv6 Options Parse Information Disclosure Vulnerability"
+    }
+  ]
+}

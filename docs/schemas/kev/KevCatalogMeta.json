@@ -2,13 +2,8 @@
   "$defs": {
     "ConsentRecord": {
       "additionalProperties": false,
+      "description": "The one consent behind one fetch: nothing is remembered for later requests.",
       "properties": {
-        "contract": {
-          "const": "kev/1",
-          "default": "kev/1",
-          "title": "Contract",
-          "type": "string"
-        },
         "granted_at": {
           "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$",
           "title": "Granted At",
@@ -41,7 +36,7 @@
           "type": "string"
         },
         "url": {
-          "maxLength": 2048,
+          "maxLength": 512,
           "title": "Url",
           "type": "string"
         }
@@ -71,8 +66,7 @@
       "type": "string"
     },
     "catalog_version": {
-      "maxLength": 32,
-      "minLength": 1,
+      "pattern": "^[!-~](?:[ -~]{0,30}[!-~])?$",
       "title": "Catalog Version",
       "type": "string"
     },
@@ -100,7 +94,7 @@
     },
     "count": {
       "maximum": 20000,
-      "minimum": 0,
+      "minimum": 1,
       "title": "Count",
       "type": "integer"
     },
@@ -111,7 +105,7 @@
     },
     "entry_count": {
       "maximum": 20000,
-      "minimum": 0,
+      "minimum": 1,
       "title": "Entry Count",
       "type": "integer"
     },
@@ -119,6 +113,7 @@
       "anyOf": [
         {
           "maxLength": 255,
+          "minLength": 1,
           "type": "string"
         },
         {
@@ -131,7 +126,7 @@
     "final_url": {
       "anyOf": [
         {
-          "maxLength": 2048,
+          "maxLength": 512,
           "type": "string"
         },
         {
@@ -170,6 +165,7 @@
       "type": "string"
     },
     "skipped_entries": {
+      "default": 0,
       "maximum": 20000,
       "minimum": 0,
       "title": "Skipped Entries",
@@ -192,7 +188,7 @@
     "source_url": {
       "anyOf": [
         {
-          "maxLength": 2048,
+          "maxLength": 512,
           "type": "string"
         },
         {
@@ -206,6 +202,7 @@
       "default": [],
       "items": {
         "maxLength": 64,
+        "minLength": 1,
         "type": "string"
       },
       "maxItems": 16,
@@ -216,6 +213,7 @@
       "default": [],
       "items": {
         "maxLength": 200,
+        "minLength": 0,
         "type": "string"
       },
       "maxItems": 20,
@@ -232,7 +230,6 @@
     "date_released",
     "count",
     "entry_count",
-    "skipped_entries",
     "source",
     "retrieved_at",
     "authenticity"

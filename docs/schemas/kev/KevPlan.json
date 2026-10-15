@@ -1,29 +1,8 @@
 {
-  "$defs": {
-    "KevHeaders": {
-      "additionalProperties": false,
-      "properties": {
-        "accept": {
-          "const": "application/json",
-          "default": "application/json",
-          "title": "Accept",
-          "type": "string"
-        },
-        "user_agent": {
-          "const": "PatchTrace",
-          "default": "PatchTrace",
-          "title": "User Agent",
-          "type": "string"
-        }
-      },
-      "title": "KevHeaders",
-      "type": "object"
-    }
-  },
   "$id": "https://patchtrace.local/schemas/kev/1/KevPlan.json",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "additionalProperties": false,
-  "description": "The exact request shown before consent. Building it does no network and no DNS.",
+  "description": "The exact request a person is asked to allow. ``expected_bytes_hint`` is display only and not hashed.",
   "properties": {
     "contract": {
       "const": "kev/1",
@@ -32,38 +11,40 @@
       "type": "string"
     },
     "expected_bytes_hint": {
-      "default": 1800000,
-      "minimum": 0,
-      "title": "Expected Bytes Hint",
-      "type": "integer"
+      "anyOf": [
+        {
+          "minimum": 0,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Expected Bytes Hint"
     },
     "headers": {
-      "$ref": "#/$defs/KevHeaders",
-      "default": {
-        "accept": "application/json",
-        "user_agent": "PatchTrace"
-      }
+      "additionalProperties": {
+        "type": "string"
+      },
+      "title": "Headers",
+      "type": "object"
     },
     "host": {
-      "maxLength": 253,
       "title": "Host",
       "type": "string"
     },
     "max_bytes": {
-      "const": 16777216,
-      "default": 16777216,
       "title": "Max Bytes",
       "type": "integer"
     },
     "method": {
       "const": "GET",
-      "default": "GET",
       "title": "Method",
       "type": "string"
     },
     "operation": {
       "const": "fetch-kev-catalog",
-      "default": "fetch-kev-catalog",
       "title": "Operation",
       "type": "string"
     },
@@ -81,15 +62,19 @@
       "type": "string"
     },
     "url": {
-      "maxLength": 2048,
+      "maxLength": 512,
       "title": "Url",
       "type": "string"
     }
   },
   "required": [
+    "operation",
     "source",
     "url",
     "host",
+    "method",
+    "headers",
+    "max_bytes",
     "plan_sha"
   ],
   "title": "KevPlan",

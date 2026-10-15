@@ -1,0 +1,261 @@
+[
+ {
+  "contract": "case-card/1",
+  "id": "brotli-v1.0.9-to-v1.1.0",
+  "project": "brotli",
+  "upstream_git": "https://github.com/google/brotli.git",
+  "license_spdx": "MIT",
+  "license_evidence": "LICENSE at ed738e842d2fbdf2d6459e39267a633c4a9b2f5d: Copyright (c) the Brotli Authors. Permission is hereby granted, free of charge, to any person obtaining a copy of this software (MIT) (sha256 3d180008...3c94; read at e61745a6 too, sha256 3d180008...3c94)",
+  "old": {
+   "ref": "v1.0.9",
+   "commit": "e61745a6b7add50d380cfd7d3883dd6c62fc2c71"
+  },
+  "new": {
+   "ref": "v1.1.0",
+   "commit": "ed738e842d2fbdf2d6459e39267a633c4a9b2f5d"
+  },
+  "kind": "release",
+  "cve": [],
+  "semantic_change": true,
+  "changed_functions": [
+   {
+    "name": "CreateBackwardReferencesNH65",
+    "file": "c/enc/backward_references_inc.h",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "CreateBackwardReferencesNH55",
+    "file": "c/enc/backward_references_inc.h",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "CreateBackwardReferencesNH35",
+    "file": "c/enc/backward_references_inc.h",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "CreateBackwardReferencesNH54",
+    "file": "c/enc/backward_references_inc.h",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "CreateBackwardReferencesNH3",
+    "file": "c/enc/backward_references_inc.h",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "PrepareH6",
+    "file": "c/enc/hash_longest_match64_inc.h",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "BlockSplitterFinishBlockLiteral",
+    "file": "c/enc/metablock_inc.h",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "BlockSplitterFinishBlockCommand",
+    "file": "c/enc/metablock_inc.h",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "BlockSplitterFinishBlockDistance",
+    "file": "c/enc/metablock_inc.h",
+    "change": "source and code changed (factory label changed/source-diff)"
+   }
+  ],
+  "unchanged_controls": [
+   "RemapBlockIdsLiteral"
+  ],
+  "build": {
+   "system": "single",
+   "mingw_ok": "yes",
+   "recipe_notes": "tier_r recipe brotli (mingw-gcc 13-win32 -O2 -g, explicit file list from recipes.json, brotli.dll)"
+  },
+  "verification": {
+   "method": "tools.calibration.tier_r factory.run_card on fetched pins (mingw-gcc 13-win32 O2): 250 project functions, 6 unchanged, 9 changed, 164 ambiguous, 71 no-counterpart (bodies: 16 identical, 39 address-only, 124 different); git diff --numstat v1.0.9..v1.1.0 -- '*.c' '*.h': 88 files, +6161/-1726",
+   "files_changed": 88,
+   "functions_changed_count": 9,
+   "verified_by_agent_run": true
+  },
+  "sources": [
+   "https://github.com/google/brotli/releases/tag/v1.1.0",
+   "https://github.com/google/brotli/blob/v1.1.0/CHANGELOG.md"
+  ],
+  "risks": [
+   "164 ambiguous record(s) (source changed with identical code, or induced by macro/header/inlining) are excluded from changed-set scoring by design."
+  ]
+ },
+ {
+  "contract": "case-card/1",
+  "id": "brotli-v1.1.0-to-v1.2.0",
+  "project": "brotli",
+  "upstream_git": "https://github.com/google/brotli.git",
+  "license_spdx": "MIT",
+  "license_evidence": "LICENSE at 028fb5a23661f123017c060daa546b55cf4bde29: Copyright (c) the Brotli Authors. Permission is hereby granted, free of charge, to any person obtaining a copy of this software (MIT) (sha256 3d180008...3c94; read at ed738e84 too, sha256 3d180008...3c94)",
+  "old": {
+   "ref": "v1.1.0",
+   "commit": "ed738e842d2fbdf2d6459e39267a633c4a9b2f5d"
+  },
+  "new": {
+   "ref": "v1.2.0",
+   "commit": "028fb5a23661f123017c060daa546b55cf4bde29"
+  },
+  "kind": "release",
+  "cve": [],
+  "semantic_change": true,
+  "changed_functions": [
+   {
+    "name": "BrotliPopulationCostLiteral",
+    "file": "c/enc/bit_cost_inc.h",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "BrotliPopulationCostCommand",
+    "file": "c/enc/bit_cost_inc.h",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "BrotliPopulationCostDistance",
+    "file": "c/enc/bit_cost_inc.h",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "AttachPreparedDictionary",
+    "file": "c/enc/compound_dictionary.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "BlockSplitterFinishBlockLiteral",
+    "file": "c/enc/metablock_inc.h",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "BlockSplitterFinishBlockCommand",
+    "file": "c/enc/metablock_inc.h",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "BlockSplitterFinishBlockDistance",
+    "file": "c/enc/metablock_inc.h",
+    "change": "source and code changed (factory label changed/source-diff)"
+   }
+  ],
+  "unchanged_controls": [
+   "CreateBackwardReferencesNH2",
+   "CreateBackwardReferencesNH35",
+   "CreateBackwardReferencesNH3"
+  ],
+  "build": {
+   "system": "single",
+   "mingw_ok": "yes",
+   "recipe_notes": "tier_r recipe brotli (mingw-gcc 13-win32 -O2 -g, explicit file list from recipes.json, brotli.dll)"
+  },
+  "verification": {
+   "method": "tools.calibration.tier_r factory.run_card on fetched pins (mingw-gcc 13-win32 O2): 228 project functions, 18 unchanged, 7 changed, 196 ambiguous, 7 no-counterpart (bodies: 44 identical, 133 address-only, 44 different); git diff --numstat v1.1.0..v1.2.0 -- '*.c' '*.h': 100 files, +17661/-15638",
+   "files_changed": 100,
+   "functions_changed_count": 7,
+   "verified_by_agent_run": true
+  },
+  "sources": [
+   "https://github.com/google/brotli/releases/tag/v1.2.0",
+   "https://github.com/google/brotli/blob/v1.2.0/CHANGELOG.md"
+  ],
+  "risks": [
+   "196 ambiguous record(s) (source changed with identical code, or induced by macro/header/inlining) are excluded from changed-set scoring by design."
+  ]
+ },
+ {
+  "contract": "case-card/1",
+  "id": "brotli-v1.0.7-to-v1.0.8",
+  "project": "brotli",
+  "upstream_git": "https://github.com/google/brotli.git",
+  "license_spdx": "MIT",
+  "license_evidence": "LICENSE at db361a0bb901d6a71c7cbf1370d97b3703482e3b: Copyright (c) the Brotli Authors. Permission is hereby granted, free of charge, to any person obtaining a copy of this software (MIT) (sha256 3d180008...3c94; read at d6d98957 too, sha256 3d180008...3c94)",
+  "old": {
+   "ref": "v1.0.7",
+   "commit": "d6d98957ca8ccb1ef45922e978bb10efca0ea541"
+  },
+  "new": {
+   "ref": "v1.0.8",
+   "commit": "db361a0bb901d6a71c7cbf1370d97b3703482e3b"
+  },
+  "kind": "cve-fix",
+  "cve": [
+   "CVE-2020-8927"
+  ],
+  "semantic_change": true,
+  "changed_functions": [
+   {
+    "name": "CreateBackwardReferencesNH65",
+    "file": "c/enc/backward_references_inc.h",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "PrepareH5",
+    "file": "c/enc/hash_longest_match_inc.h",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "PrepareH6",
+    "file": "c/enc/hash_longest_match64_inc.h",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "PrepareH40",
+    "file": "c/enc/hash_forgetful_chain_inc.h",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "PrepareH41",
+    "file": "c/enc/hash_forgetful_chain_inc.h",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "PrepareH42",
+    "file": "c/enc/hash_forgetful_chain_inc.h",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "PrepareH65",
+    "file": "c/enc/hash_composite_inc.h",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "PrepareH35",
+    "file": "c/enc/hash_composite_inc.h",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "PrepareH55",
+    "file": "c/enc/hash_composite_inc.h",
+    "change": "source and code changed (factory label changed/source-diff)"
+   }
+  ],
+  "unchanged_controls": [
+   "RemapBlockIdsLiteral",
+   "RefineEntropyCodesDistance",
+   "RefineEntropyCodesCommand"
+  ],
+  "build": {
+   "system": "single",
+   "mingw_ok": "yes",
+   "recipe_notes": "tier_r recipe brotli (mingw-gcc 13-win32 -O2 -g, explicit file list from recipes.json, brotli.dll)"
+  },
+  "verification": {
+   "method": "tools.calibration.tier_r factory.run_card on fetched pins (mingw-gcc 13-win32 O2): 226 project functions, 6 unchanged, 9 changed, 175 ambiguous, 36 no-counterpart (bodies: 25 identical, 56 address-only, 109 different); git diff --numstat v1.0.7..v1.0.8 -- '*.c' '*.h': 60 files, +3960/-2402",
+   "files_changed": 60,
+   "functions_changed_count": 9,
+   "verified_by_agent_run": true,
+   "cve_source": "CHANGELOG.md (v1.1.0)"
+  },
+  "sources": [
+   "https://github.com/google/brotli/releases/tag/v1.0.8",
+   "https://github.com/google/brotli/blob/v1.1.0/CHANGELOG.md"
+  ],
+  "risks": [
+   "175 ambiguous record(s) (source changed with identical code, or induced by macro/header/inlining) are excluded from changed-set scoring by design.",
+   "The release diff bundles every change between the pins, not only the CVE fixes; the CVE ids come from the project changelog section of the new release."
+  ]
+ }
+]

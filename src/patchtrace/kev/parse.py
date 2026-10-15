@@ -1,181 +1,267 @@
-"""Tolerant, bounded reader for CISA's KEV catalog JSON (KEV-integration-plan sections 6 and 7). Pure.
+"""CISA KEV JSON catalog bytes to strict ``kev/1`` records (KEV-integration-plan sections 6 and 7). Pure and offline.
 
-The input is untrusted: strict JSON (no duplicate keys, NaN or Infinity, bounded size and depth), parsed by content
-and never by Content-Type. Unknown upstream fields are reported by name, not fatal; a missing required field is fatal
-(upstream drift); an entry whose values fail validation is skipped and counted, never repaired. Only ``KevError`` is
-raised. Messages are fixed templates. The CSV export has no release metadata, so it is refused.
+The input is untrusted. The JSON is read strictly (no duplicate keys, NaN or Infinity; size and entry caps) and then
+mapped by hand: a field this parser does not know is listed by name and ignored, but anything that violates CISA's own
+schema (a missing required field, a wrong type, a bad CVE ID or date, a count that does not match, a repeated CVE ID)
+fails the whole file with ``KevError``, because an entry dropped quietly would later read as "Not listed". For that
+reason ``skipped_entries`` stays 0 here. Text is cleaned to one plain line at this boundary and capped; the raw bytes
+stay the source of truth (the store keeps them). Identities depend on the bytes and the parser version only, never on
+the clock, so ``retrieved_at`` is a caller-supplied label.
 """
 from __future__ import annotations
 
-import datetime
 import hashlib
 import json
 import re
+from datetime import datetime
 
 from pydantic import ValidationError
 
 from ..enrichment.identity import domain_id
-from ..search.normalize import sanitize_text
 from . import limits
-from .contracts import ConsentRecord, KevCatalog, KevCatalogMeta, KevEntry, KevError, Source
+from .contracts import (
+    VERSION_PATTERN,
+    ConsentRecord,
+    KevCatalog,
+    KevCatalogMeta,
+    KevEntry,
+    KevError,
+    clean_text,
+    entry_digest,
+)
 
+FORMAT, VALIDATE = 'PT-KEV-FORMAT', 'PT-KEV-VALIDATE'
 TOP_REQUIRED = ('catalogVersion', 'dateReleased', 'count', 'vulnerabilities')
-TOP_KNOWN = frozenset(TOP_REQUIRED) | {'title'}
+TOP_KNOWN = frozenset((*TOP_REQUIRED, 'title'))              # the real catalog also carries a title the schema omits
 ENTRY_REQUIRED = ('cveID', 'vendorProject', 'product', 'vulnerabilityName', 'dateAdded', 'shortDescription',
                   'requiredAction', 'dueDate')
 ENTRY_OPTIONAL = ('knownRansomwareCampaignUse', 'forensicTriage', 'notes', 'cwes')
-ENTRY_KNOWN = frozenset(ENTRY_REQUIRED) | frozenset(ENTRY_OPTIONAL)
-_RELEASED = re.compile(r'([0-9]{4}-[0-9]{2}-[0-9]{2})T([0-9]{2}:[0-9]{2}:[0-9]{2})(?:\.[0-9]{1,9})?(Z|[+-][0-9]{2}:[0-9]{2})')
+ENTRY_KNOWN = frozenset((*ENTRY_REQUIRED, *ENTRY_OPTIONAL))
+UPSTREAM_NAMES = {'cve_id': 'cveID', 'vendor_project': 'vendorProject', 'product': 'product',
+                  'name': 'vulnerabilityName', 'date_added': 'dateAdded', 'due_date': 'dueDate',
+                  'short_description': 'shortDescription', 'required_action': 'requiredAction', 'notes': 'notes',
+                  'cwes': 'cwes', 'ransomware_use': 'knownRansomwareCampaignUse', 'forensic_triage': 'forensicTriage'}
+SOURCES = ('cisa-site', 'cisa-github', 'local-import')
+
 _BOM = b'\xef\xbb\xbf'
+_RANSOMWARE = {'Known': 'known', 'Unknown': 'unknown'}
+_TRIAGE = {'Yes': 'yes', 'No': 'no'}
+_CWE = re.compile(r'CWE-[0-9]{1,6}')
+_VERSION = re.compile(VERSION_PATTERN)
+_RELEASED = re.compile(r'([0-9]{4})-([0-9]{2})-([0-9]{2})T([0-9]{2}):([0-9]{2}):([0-9]{2})(?:\.[0-9]{1,9})?Z')
 
 
-def _no_duplicates(pairs: list[tuple[str, object]]) -> dict:
-    out: dict = {}
-    for key, value in pairs:
-        if key in out:
-            raise ValueError('duplicate key')
-        out[key] = value
-    return out
+class _Tally:
+    """What the mapping tolerated, reported once in the meta as counts (never as untrusted text)."""
+    __slots__ = ('shortened', 'unrecognized', 'dropped_cwes', 'unknown')
+
+    def __init__(self) -> None:
+        self.shortened = self.unrecognized = self.dropped_cwes = 0
+        self.unknown: set[str] = set()
 
 
-def _reject_constant(_name: str) -> None:
-    raise ValueError('non-finite number')
+# --- bytes to a JSON document -------------------------------------------------------------------------------
+
+def _no_repeated_keys(pairs: list) -> dict:
+    result = dict(pairs)
+    if len(result) != len(pairs):
+        raise KevError(FORMAT, 'the file repeats a key inside one JSON object')
+    return result
 
 
-def _depth(value: object) -> int:
-    deepest, stack = 0, [(value, 1)]
-    while stack:
-        item, level = stack.pop()
-        if isinstance(item, (dict, list)):
-            deepest = max(deepest, level)
-            stack.extend((child, level + 1) for child in (item.values() if isinstance(item, dict) else item))
-    return deepest
+def _no_constants(_name: str):
+    raise KevError(FORMAT, 'the file contains NaN or Infinity, which JSON does not allow')
 
 
-def _load(raw: bytes) -> tuple[object, list[str]]:
-    warnings: list[str] = []
-    if len(raw) > limits.MAX_BYTES:
-        raise KevError('PT-KEV-LIMIT', 'the file is larger than 16 MiB')
-    if raw.startswith(_BOM):
-        raw = raw[len(_BOM):]
-        warnings.append('A UTF-8 byte order mark was ignored.')
-    if raw.lstrip()[:5] == b'cveID':
-        raise KevError('PT-KEV-UNSUPPORTED', 'CSV has no catalog release date; import the JSON file')
+def _looks_like_csv(raw: bytes) -> bool:
+    return raw[len(_BOM):].startswith(b'cveID,') if raw.startswith(_BOM) else raw.startswith(b'cveID,')
+
+
+def _load(raw: bytes) -> dict:
+    if len(raw) > limits.MAX_CATALOG_BYTES:
+        raise KevError('PT-KEV-LIMIT', f'the file is larger than {limits.MAX_CATALOG_BYTES // limits.MIB} MiB')
+    if not raw or raw.isspace():
+        raise KevError(FORMAT, 'the file is empty')
+    if _looks_like_csv(raw):
+        raise KevError('PT-KEV-UNSUPPORTED', 'a CSV file has no catalog version or release date; import the JSON file')
     try:
-        data = json.loads(raw.decode('utf-8'), object_pairs_hook=_no_duplicates, parse_constant=_reject_constant)
-    except (ValueError, RecursionError) as exc:  # JSONDecodeError and UnicodeDecodeError are ValueErrors
-        raise KevError('PT-KEV-FORMAT', 'the file is not a KEV JSON catalog') from exc
-    if _depth(data) > limits.MAX_JSON_DEPTH:
-        raise KevError('PT-KEV-FORMAT', 'the file is nested too deeply')
-    return data, warnings
+        text = raw.decode('utf-8-sig')
+    except UnicodeDecodeError:
+        raise KevError(FORMAT, 'the file is not UTF-8 text') from None
+    try:
+        document = json.loads(text, object_pairs_hook=_no_repeated_keys, parse_constant=_no_constants)
+    except KevError:
+        raise
+    except RecursionError:
+        raise KevError(FORMAT, 'the JSON is nested too deeply') from None
+    except ValueError:                                          # includes JSONDecodeError and absurd integers
+        raise KevError(FORMAT, 'the file is not valid JSON') from None
+    if not isinstance(document, dict):
+        raise KevError(FORMAT, 'the file is not a KEV JSON catalog')
+    return document
 
 
-def _release_time(value: object) -> str:
-    match = _RELEASED.fullmatch(value) if isinstance(value, str) else None
+# --- header -------------------------------------------------------------------------------------------------
+
+def _released(value: object) -> str:
+    match = _RELEASED.fullmatch(value) if type(value) is str else None
+    if match is not None:
+        try:
+            datetime(*map(int, match.groups()))
+        except ValueError:
+            match = None
     if match is None:
-        raise KevError('PT-KEV-FORMAT', 'the catalog release time is missing or malformed')
-    day, clock, zone = match.groups()
-    try:
-        stamp = datetime.datetime.fromisoformat(f'{day}T{clock}{"+00:00" if zone == "Z" else zone}')
-    except ValueError as exc:
-        raise KevError('PT-KEV-FORMAT', 'the catalog release time is not a real time') from exc
-    return stamp.astimezone(datetime.UTC).strftime('%Y-%m-%dT%H:%M:%SZ')
+        raise KevError(FORMAT, 'dateReleased is not a real UTC timestamp like 2026-10-13T19:10:43Z')
+    return value[:19] + 'Z'                                     # seconds; the real file carries four fraction digits
 
 
-def _enum(value: object, mapping: dict[str, str]) -> str:
-    if value is None:
+def _header(document: dict) -> tuple[str, str, int, list]:
+    missing = [name for name in TOP_REQUIRED if name not in document]
+    if missing:
+        raise KevError(FORMAT, f'the file is not a KEV catalog: it lacks {", ".join(missing)}')
+    version = document['catalogVersion']
+    version = version.strip() if type(version) is str else ''
+    if not _VERSION.fullmatch(version):
+        raise KevError(FORMAT, 'catalogVersion is not a short printable text')
+    count, rows = document['count'], document['vulnerabilities']
+    if type(count) is not int or count < 0:
+        raise KevError(FORMAT, 'count is not a whole number')
+    if not isinstance(rows, list):
+        raise KevError(FORMAT, 'vulnerabilities is not a list')
+    return version, _released(document['dateReleased']), count, rows
+
+
+# --- entries ------------------------------------------------------------------------------------------------
+
+def _field_name(scope: str, name: str) -> str:
+    return f'{scope}.' + (clean_text(name, limits.MAX_UNKNOWN_NAME_CHARS - len(scope) - 1) or '?')
+
+
+def _text(number: int, raw: dict, name: str, limit: int, tally: _Tally) -> str:
+    value = raw[name]
+    if type(value) is not str:
+        raise KevError(VALIDATE, f'entry {number} has a {name} that is not text')
+    text = clean_text(value, None)
+    if len(text) > limit:
+        tally.shortened += 1
+        text = text[:limit - 3] + '...'
+    return text
+
+
+def _choice(number: int, raw: dict, name: str, mapping: dict, tally: _Tally) -> str:
+    if name not in raw:
         return 'absent'
-    return mapping.get(value, 'unrecognized') if isinstance(value, str) else 'unrecognized'
+    value = raw[name]
+    if type(value) is not str:
+        raise KevError(VALIDATE, f'entry {number} has a {name} that is not text')
+    found = mapping.get(value.strip())
+    if found is None:
+        tally.unrecognized += 1
+        return 'unrecognized'
+    return found
 
 
-def _text(item: dict, key: str, required: bool = True) -> str:
-    value = item.get(key, None if required else '')
-    if not isinstance(value, str):
-        raise ValueError(f'{key} is not text')
-    return value
+def _weaknesses(number: int, raw: dict, tally: _Tally) -> tuple[str, ...]:
+    if 'cwes' not in raw:
+        return ()
+    items = raw['cwes']
+    if not isinstance(items, list) or not all(type(item) is str for item in items):
+        raise KevError(VALIDATE, f'entry {number} has a cwes that is not a list of text')
+    kept = [token for token in (item.strip() for item in items) if _CWE.fullmatch(token)][:limits.MAX_CWES]
+    tally.dropped_cwes += len(items) - len(kept)
+    return tuple(kept)
 
 
-def entry_digest(fields: dict) -> str:
-    return domain_id('kev-entry', 1, fields)
-
-
-def _entry(item: dict) -> KevEntry:
-    """Map one upstream object to a stored entry; ValueError or ValidationError means skip it."""
-    cwes = item.get('cwes', [])
-    if not isinstance(cwes, list) or not all(isinstance(c, str) for c in cwes):
-        raise ValueError('cwes is not a list of text')
+def _entry(number: int, raw: object, tally: _Tally) -> KevEntry:
+    if type(raw) is not dict:
+        raise KevError(VALIDATE, f'entry {number} is not a JSON object')
+    for name in ENTRY_REQUIRED:
+        if name not in raw:
+            raise KevError(VALIDATE, f'entry {number} lacks the required field {name}')
+    tally.unknown.update(_field_name('entry', name) for name in raw if name not in ENTRY_KNOWN)
+    for name in ('cveID', 'dateAdded', 'dueDate'):          # hashed below before the model checks their form
+        if type(raw[name]) is not str:
+            raise KevError(VALIDATE, f'entry {number} has a {name} that is not text')
+        if not raw[name].isascii():
+            raise KevError(VALIDATE, f'entry {number} has a {name} that is not plain ASCII')
     fields = {
-        'cve_id': _text(item, 'cveID'), 'vendor_project': _text(item, 'vendorProject').strip(),
-        'product': _text(item, 'product').strip(), 'name': _text(item, 'vulnerabilityName'),
-        'date_added': _text(item, 'dateAdded'), 'due_date': _text(item, 'dueDate'),
-        'cwes': tuple(cwes),
-        'ransomware_use': _enum(item.get('knownRansomwareCampaignUse'), {'Known': 'known', 'Unknown': 'unknown'}),
-        'forensic_triage': _enum(item.get('forensicTriage'), {'Yes': 'yes', 'No': 'no'}),
-        'short_description': _text(item, 'shortDescription'),
-        'required_action': _text(item, 'requiredAction'), 'notes': _text(item, 'notes', False),
+        'cve_id': raw['cveID'],
+        'vendor_project': _text(number, raw, 'vendorProject', limits.MAX_VENDOR_CHARS, tally),
+        'product': _text(number, raw, 'product', limits.MAX_PRODUCT_CHARS, tally),
+        'name': _text(number, raw, 'vulnerabilityName', limits.MAX_NAME_CHARS, tally),
+        'date_added': raw['dateAdded'], 'due_date': raw['dueDate'],
+        'short_description': _text(number, raw, 'shortDescription', limits.MAX_DESCRIPTION_CHARS, tally),
+        'required_action': _text(number, raw, 'requiredAction', limits.MAX_ACTION_CHARS, tally),
+        'notes': _text(number, raw, 'notes', limits.MAX_NOTES_CHARS, tally) if 'notes' in raw else '',
+        'cwes': _weaknesses(number, raw, tally),
+        'ransomware_use': _choice(number, raw, 'knownRansomwareCampaignUse', _RANSOMWARE, tally),
+        'forensic_triage': _choice(number, raw, 'forensicTriage', _TRIAGE, tally),
     }
-    return KevEntry(**fields, entry_digest=entry_digest(fields))
+    try:
+        return KevEntry(**fields, entry_digest=entry_digest(fields))
+    except ValidationError as error:
+        names = sorted({UPSTREAM_NAMES.get(str(item['loc'][0]), str(item['loc'][0])) for item in error.errors()
+                        if item['loc']})
+        raise KevError(VALIDATE, f'entry {number} failed checks ({", ".join(names) or "consistency"})') from None
 
 
-def content_digest(entries: list[KevEntry] | tuple[KevEntry, ...]) -> str:
-    """Identity of the facts alone: independent of JSON layout, key order, entry order and edge whitespace."""
-    return domain_id('kev-content', 1, sorted([entry.cve_id, entry.entry_digest] for entry in entries))
+def _entries(rows: list, tally: _Tally) -> list[KevEntry]:
+    entries, seen = [], set()
+    for number, raw in enumerate(rows, start=1):
+        item = _entry(number, raw, tally)
+        if item.cve_id in seen:
+            raise KevError(VALIDATE, f'{item.cve_id} is listed more than once')
+        seen.add(item.cve_id)
+        entries.append(item)
+    return sorted(entries, key=lambda item: item.cve_id)
 
 
-def snapshot_id(raw_sha256: str) -> str:
-    return domain_id('kev-snapshot', 1, {'raw_sha256': raw_sha256, 'parser_version': limits.PARSER_VERSION})
+# --- the catalog --------------------------------------------------------------------------------------------
+
+def _warnings(tally: _Tally) -> tuple[str, ...]:
+    found = len(tally.unknown)
+    messages = [
+        (tally.shortened, f'text values shortened to their length limit: {tally.shortened}'),
+        (tally.unrecognized, f'ransomware or forensic triage values not recognized: {tally.unrecognized}'),
+        (tally.dropped_cwes, 'weakness identifiers left out (not CWE-n, or beyond '
+                             f'{limits.MAX_CWES} per entry): {tally.dropped_cwes}'),
+        (found, f'unknown field names found: {found} (listed in unknown_fields)'),
+        (found > limits.MAX_UNKNOWN_FIELDS, f'unknown field names not listed: {found - limits.MAX_UNKNOWN_FIELDS}')]
+    return tuple(text for show, text in messages if show)
 
 
-def _basename(name: str | None) -> str | None:
-    return re.split(r'[\\/]', name)[-1][:255] or None if name else None
-
-
-def parse_catalog(raw: bytes, *, source: Source, retrieved_at: str, source_url: str | None = None,
+def parse_catalog(raw: bytes, *, source: str, retrieved_at: str, source_url: str | None = None,
                   final_url: str | None = None, consent: ConsentRecord | None = None,
                   file_name: str | None = None) -> KevCatalog:
-    """Parse and validate catalog bytes. ``retrieved_at`` is supplied by the caller: the clock is never read here."""
-    data, warnings = _load(raw)
-    if not isinstance(data, dict) or any(key not in data for key in TOP_REQUIRED):
-        raise KevError('PT-KEV-FORMAT', 'the file is not a KEV JSON catalog')
-    items, count, version = data['vulnerabilities'], data['count'], data['catalogVersion']
-    if not isinstance(items, list) or type(count) is not int or not isinstance(version, str) or not version \
-            or len(version) > 32:
-        raise KevError('PT-KEV-FORMAT', 'the catalog header has the wrong types')
-    released = _release_time(data['dateReleased'])
-    if count != len(items):
-        raise KevError('PT-KEV-VALIDATE', 'the declared count differs from the number of entries')
-    if not items:
-        raise KevError('PT-KEV-VALIDATE', 'the catalog has no entries')
-    if len(items) > limits.MAX_ENTRIES:
-        raise KevError('PT-KEV-LIMIT', 'the catalog has too many entries')
-    unknown = {key for key in data if key not in TOP_KNOWN}
-    entries: dict[str, KevEntry] = {}
-    skipped = 0
-    for position, item in enumerate(items):
-        if not isinstance(item, dict) or any(key not in item for key in ENTRY_REQUIRED):
-            raise KevError('PT-KEV-FORMAT', 'an entry lacks a required field')
-        unknown.update(key for key in item if key not in ENTRY_KNOWN)
-        try:
-            entry = _entry(item)
-        except (ValueError, ValidationError):  # ValidationError is a ValueError subclass
-            skipped += 1
-            if len(warnings) < limits.MAX_WARNINGS:
-                warnings.append(f'Entry {position + 1} failed validation and was skipped.')
-            continue
-        if entry.cve_id in entries:
-            raise KevError('PT-KEV-VALIDATE', 'a CVE ID appears twice')
-        entries[entry.cve_id] = entry
-    ordered = tuple(entries[key] for key in sorted(entries))
-    if not ordered:
-        raise KevError('PT-KEV-VALIDATE', 'no entry passed validation')
+    """Parse and check one catalog. ``source`` and the provenance arguments describe where ``raw`` came from; a
+    description that contradicts itself is ``PT-KEV-INPUT``. Raises only ``KevError``."""
+    if source not in SOURCES:
+        raise KevError('PT-KEV-INPUT', 'source must be cisa-site, cisa-github or local-import')
+    raw = bytes(raw)
+    document = _load(raw)
+    version, released, declared, rows = _header(document)
+    if len(rows) > limits.MAX_ENTRIES:
+        raise KevError('PT-KEV-LIMIT', f'the catalog lists more than {limits.MAX_ENTRIES} entries')
+    if declared != len(rows):
+        raise KevError(VALIDATE, f'count says {declared} entries but the file lists {len(rows)}')
+    if not rows:
+        raise KevError(VALIDATE, 'the catalog lists no entries')
+    tally = _Tally()
+    tally.unknown.update(_field_name('catalog', name) for name in document if name not in TOP_KNOWN)
+    entries = _entries(rows, tally)
     sha = hashlib.sha256(raw).hexdigest()
     try:
         meta = KevCatalogMeta(
-            snapshot_id=snapshot_id(sha), raw_sha256=sha, raw_size=len(raw), content_digest=content_digest(ordered),
-            catalog_version=version, date_released=released, count=count, entry_count=len(ordered),
-            skipped_entries=skipped, source=source, source_url=source_url, final_url=final_url,
-            retrieved_at=retrieved_at, authenticity='unverified-local-file' if source == 'local-import'
-            else 'tls-allowlisted-host', unknown_fields=tuple(sorted(sanitize_text(key, 64) for key in unknown))[:limits.MAX_UNKNOWN_FIELDS], warnings=tuple(warnings), consent=consent, file_name=_basename(file_name))
-        return KevCatalog(meta=meta, entries=ordered)
-    except ValidationError as exc:
-        raise KevError('PT-KEV-VALIDATE', 'the catalog header failed checks') from exc
+            snapshot_id=domain_id('kev-snapshot', 1, {'raw_sha256': sha, 'parser_version': limits.PARSER_VERSION}),
+            raw_sha256=sha, raw_size=len(raw),
+            content_digest=domain_id('kev-content', 1, [item.entry_digest for item in entries]),
+            catalog_version=version, date_released=released, count=declared, entry_count=len(entries),
+            source=source, source_url=source_url, final_url=final_url, retrieved_at=retrieved_at,
+            authenticity='unverified-local-file' if source == 'local-import' else 'tls-allowlisted-host',
+            unknown_fields=tuple(sorted(tally.unknown))[:limits.MAX_UNKNOWN_FIELDS], warnings=_warnings(tally),
+            consent=consent, file_name=file_name)
+    except ValidationError as error:
+        names = sorted({str(item['loc'][0]) for item in error.errors() if item['loc']})
+        raise KevError('PT-KEV-INPUT', f'the source description is inconsistent ({", ".join(names) or "source"})',
+                       recoverable=False) from None
+    return KevCatalog(meta, tuple(entries))

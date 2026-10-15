@@ -2,7 +2,7 @@
   "$id": "https://patchtrace.local/schemas/kev/1/KevEntrySlim.json",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "additionalProperties": false,
-  "description": "An entry without the three long texts: what project rows keep.",
+  "description": "An entry without its three long texts: what a project row keeps. ``entry_digest`` is the full entry's.",
   "properties": {
     "contract": {
       "const": "kev/1",
@@ -11,12 +11,12 @@
       "type": "string"
     },
     "cve_id": {
-      "maxLength": 24,
       "pattern": "^CVE-[0-9]{4}-[0-9]{4,19}$",
       "title": "Cve Id",
       "type": "string"
     },
     "cwes": {
+      "default": [],
       "items": {
         "pattern": "^CWE-[0-9]{1,6}$",
         "type": "string"
@@ -52,11 +52,13 @@
     },
     "name": {
       "maxLength": 256,
+      "minLength": 0,
       "title": "Name",
       "type": "string"
     },
     "product": {
       "maxLength": 256,
+      "minLength": 0,
       "title": "Product",
       "type": "string"
     },
@@ -72,6 +74,7 @@
     },
     "vendor_project": {
       "maxLength": 128,
+      "minLength": 0,
       "title": "Vendor Project",
       "type": "string"
     }
@@ -83,7 +86,6 @@
     "name",
     "date_added",
     "due_date",
-    "cwes",
     "ransomware_use",
     "forensic_triage",
     "entry_digest"

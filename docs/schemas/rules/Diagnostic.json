@@ -1,0 +1,53 @@
+{
+  "$id": "https://patchtrace.local/schemas/rules/1/Diagnostic.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "A compiler error or warning, reduced to what is safe to keep: engine rule text and source excerpts are dropped.",
+  "properties": {
+    "code": {
+      "pattern": "^(?:E[0-9]{3}|[A-Za-z][A-Za-z0-9_]{1,63})$",
+      "title": "Code",
+      "type": "string"
+    },
+    "column": {
+      "anyOf": [
+        {
+          "exclusiveMaximum": 2147483648,
+          "minimum": 1,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Column"
+    },
+    "line": {
+      "anyOf": [
+        {
+          "exclusiveMaximum": 2147483648,
+          "minimum": 1,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Line"
+    },
+    "title": {
+      "maxLength": 200,
+      "minLength": 1,
+      "title": "Title",
+      "type": "string"
+    }
+  },
+  "required": [
+    "code",
+    "title"
+  ],
+  "title": "Diagnostic",
+  "type": "object"
+}

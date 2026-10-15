@@ -1,0 +1,191 @@
+{
+  "$defs": {
+    "WorkerLimits": {
+      "additionalProperties": false,
+      "description": "The caps the child enforces itself (the parent also enforces the process memory cap and the wall clock).",
+      "properties": {
+        "diagnostics_per_rule": {
+          "default": 16,
+          "maximum": 16,
+          "minimum": 1,
+          "title": "Diagnostics Per Rule",
+          "type": "integer"
+        },
+        "file_bytes": {
+          "default": 134217728,
+          "maximum": 134217728,
+          "minimum": 1,
+          "title": "File Bytes",
+          "type": "integer"
+        },
+        "max_matches_per_pattern": {
+          "default": 64,
+          "maximum": 64,
+          "minimum": 1,
+          "title": "Max Matches Per Pattern",
+          "type": "integer"
+        },
+        "memory_bytes": {
+          "default": 1073741824,
+          "maximum": 2147483648,
+          "minimum": 16777216,
+          "title": "Memory Bytes",
+          "type": "integer"
+        },
+        "offsets_per_cell": {
+          "default": 8,
+          "maximum": 8,
+          "minimum": 1,
+          "title": "Offsets Per Cell",
+          "type": "integer"
+        },
+        "patterns_per_rule": {
+          "default": 12,
+          "maximum": 12,
+          "minimum": 1,
+          "title": "Patterns Per Rule",
+          "type": "integer"
+        },
+        "target_timeout_s": {
+          "default": 30,
+          "maximum": 300,
+          "minimum": 1,
+          "title": "Target Timeout S",
+          "type": "integer"
+        }
+      },
+      "title": "WorkerLimits",
+      "type": "object"
+    },
+    "WorkerRule": {
+      "additionalProperties": false,
+      "description": "``name`` is the caller's key for this rule (a version id), not the YARA identifier.",
+      "properties": {
+        "name": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Name",
+          "type": "string"
+        },
+        "text": {
+          "maxLength": 65536,
+          "minLength": 1,
+          "title": "Text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "text"
+      ],
+      "title": "WorkerRule",
+      "type": "object"
+    },
+    "WorkerTarget": {
+      "additionalProperties": false,
+      "description": "``sha256`` is None for a file whose identity the caller does not know (an extra build); ``size`` is what the caller\nsaw. A file that differs from either is reported as changed, never scanned as if it were the recorded build.",
+      "properties": {
+        "path": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "pattern": "^[^\\x00]+$",
+          "title": "Path",
+          "type": "string"
+        },
+        "sha256": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sha256"
+        },
+        "size": {
+          "exclusiveMaximum": 1099511627776,
+          "minimum": 0,
+          "title": "Size",
+          "type": "integer"
+        },
+        "target_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Target Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "target_id",
+        "path",
+        "size"
+      ],
+      "title": "WorkerTarget",
+      "type": "object"
+    }
+  },
+  "$id": "https://patchtrace.local/schemas/rules/1/WorkerRequest.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "contract": {
+      "const": "rules-worker/1",
+      "default": "rules-worker/1",
+      "title": "Contract",
+      "type": "string"
+    },
+    "limits": {
+      "$ref": "#/$defs/WorkerLimits",
+      "default": {
+        "diagnostics_per_rule": 16,
+        "file_bytes": 134217728,
+        "max_matches_per_pattern": 64,
+        "memory_bytes": 1073741824,
+        "offsets_per_cell": 8,
+        "patterns_per_rule": 12,
+        "target_timeout_s": 30
+      }
+    },
+    "op": {
+      "enum": [
+        "probe",
+        "lint",
+        "scan"
+      ],
+      "title": "Op",
+      "type": "string"
+    },
+    "result": {
+      "maxLength": 4096,
+      "minLength": 1,
+      "pattern": "^[^\\x00]+$",
+      "title": "Result",
+      "type": "string"
+    },
+    "rules": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/WorkerRule"
+      },
+      "maxItems": 50,
+      "title": "Rules",
+      "type": "array"
+    },
+    "targets": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/WorkerTarget"
+      },
+      "maxItems": 2072,
+      "title": "Targets",
+      "type": "array"
+    }
+  },
+  "required": [
+    "op",
+    "result"
+  ],
+  "title": "WorkerRequest",
+  "type": "object"
+}

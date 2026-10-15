@@ -1,0 +1,337 @@
+[
+ {
+  "contract": "case-card/1",
+  "id": "expat-r_2_6_0-to-r_2_6_1",
+  "project": "expat",
+  "upstream_git": "https://github.com/libexpat/libexpat.git",
+  "license_spdx": "MIT",
+  "license_evidence": "expat/COPYING at a590b2d5846865412182805b853dd91d18f38c8d: expat/COPYING: Copyright Thai Open Source Software Center Ltd and Clark Cooper / Expat maintainers. Permission is hereby granted, free of charge, to any person obtaining a copy of this software (MIT) (sha256 122f2c27...9534; read at 849da3e3 too, sha256 122f2c27...9534)",
+  "old": {
+   "ref": "R_2_6_0",
+   "commit": "849da3e3fe727fccef5e96ef35482d66447f06a2"
+  },
+  "new": {
+   "ref": "R_2_6_1",
+   "commit": "a590b2d5846865412182805b853dd91d18f38c8d"
+  },
+  "kind": "release",
+  "cve": [],
+  "semantic_change": true,
+  "changed_functions": [
+   {
+    "name": "callProcessor",
+    "file": "expat/lib/xmlparse.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   }
+  ],
+  "unchanged_controls": [
+   "freeBindings",
+   "errorProcessor",
+   "normalizeLines"
+  ],
+  "build": {
+   "system": "single",
+   "mingw_ok": "yes",
+   "recipe_notes": "tier_r recipe expat (mingw-gcc 13-win32 -O2 -g, explicit file list from recipes.json, libexpat.dll)"
+  },
+  "verification": {
+   "method": "tools.calibration.tier_r factory.run_card on fetched pins (mingw-gcc 13-win32 O2): 291 project functions, 268 unchanged, 1 changed, 22 ambiguous, 0 no-counterpart (bodies: 269 identical, 3 address-only, 19 different); git diff --numstat R_2_6_0..R_2_6_1 -- '*.c' '*.h': 5 files, +70/-82",
+   "files_changed": 5,
+   "functions_changed_count": 1,
+   "verified_by_agent_run": true
+  },
+  "sources": [
+   "https://github.com/libexpat/libexpat/releases/tag/R_2_6_1",
+   "https://github.com/libexpat/libexpat/blob/R_2_6_1/expat/Changes"
+  ],
+  "risks": [
+   "22 ambiguous record(s) (source changed with identical code, or induced by macro/header/inlining) are excluded from changed-set scoring by design."
+  ]
+ },
+ {
+  "contract": "case-card/1",
+  "id": "expat-r_2_4_8-to-r_2_4_9",
+  "project": "expat",
+  "upstream_git": "https://github.com/libexpat/libexpat.git",
+  "license_spdx": "MIT",
+  "license_evidence": "expat/COPYING at d77291a4824d78e697c5dc2b8024fd65ab31e209: expat/COPYING: Copyright Thai Open Source Software Center Ltd and Clark Cooper / Expat maintainers. Permission is hereby granted, free of charge, to any person obtaining a copy of this software (MIT) (sha256 122f2c27...9534; read at 3bab6c09 too, sha256 8c6b5b6d...bdec)",
+  "old": {
+   "ref": "R_2_4_8",
+   "commit": "3bab6c09bbe8bf42d84b81563ddbcf4cca4be838"
+  },
+  "new": {
+   "ref": "R_2_4_9",
+   "commit": "d77291a4824d78e697c5dc2b8024fd65ab31e209"
+  },
+  "kind": "cve-fix",
+  "cve": [
+   "CVE-2022-40674"
+  ],
+  "semantic_change": true,
+  "changed_functions": [
+   {
+    "name": "processXmlDecl",
+    "file": "expat/lib/xmlparse.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "internalEntityProcessor",
+    "file": "expat/lib/xmlparse.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   }
+  ],
+  "unchanged_controls": [
+   "freeBindings",
+   "errorProcessor",
+   "normalizeLines"
+  ],
+  "build": {
+   "system": "single",
+   "mingw_ok": "yes",
+   "recipe_notes": "tier_r recipe expat (mingw-gcc 13-win32 -O2 -g, explicit file list from recipes.json, libexpat.dll)"
+  },
+  "verification": {
+   "method": "tools.calibration.tier_r factory.run_card on fetched pins (mingw-gcc 13-win32 O2): 288 project functions, 277 unchanged, 2 changed, 9 ambiguous, 0 no-counterpart (bodies: 177 identical, 104 address-only, 7 different); git diff --numstat R_2_4_8..R_2_4_9 -- '*.c' '*.h': 9 files, +108/-22",
+   "files_changed": 9,
+   "functions_changed_count": 2,
+   "verified_by_agent_run": true,
+   "cve_source": "expat/Changes (R_2_4_9)"
+  },
+  "sources": [
+   "https://github.com/libexpat/libexpat/releases/tag/R_2_4_9",
+   "https://github.com/libexpat/libexpat/blob/R_2_4_9/expat/Changes"
+  ],
+  "risks": [
+   "9 ambiguous record(s) (source changed with identical code, or induced by macro/header/inlining) are excluded from changed-set scoring by design.",
+   "The release diff bundles every change between the pins, not only the CVE fixes; the CVE ids come from the project changelog section of the new release."
+  ]
+ },
+ {
+  "contract": "case-card/1",
+  "id": "expat-r_2_6_1-to-r_2_6_2",
+  "project": "expat",
+  "upstream_git": "https://github.com/libexpat/libexpat.git",
+  "license_spdx": "MIT",
+  "license_evidence": "expat/COPYING at fa75b96546c069d17b8f80d91e0f4ef0cde3790d: expat/COPYING: Copyright Thai Open Source Software Center Ltd and Clark Cooper / Expat maintainers. Permission is hereby granted, free of charge, to any person obtaining a copy of this software (MIT) (sha256 122f2c27...9534; read at a590b2d5 too, sha256 122f2c27...9534)",
+  "old": {
+   "ref": "R_2_6_1",
+   "commit": "a590b2d5846865412182805b853dd91d18f38c8d"
+  },
+  "new": {
+   "ref": "R_2_6_2",
+   "commit": "fa75b96546c069d17b8f80d91e0f4ef0cde3790d"
+  },
+  "kind": "cve-fix",
+  "cve": [
+   "CVE-2024-28757"
+  ],
+  "semantic_change": true,
+  "changed_functions": [
+   {
+    "name": "storeEntityValue",
+    "file": "expat/lib/xmlparse.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   }
+  ],
+  "unchanged_controls": [
+   "freeBindings",
+   "errorProcessor",
+   "normalizeLines"
+  ],
+  "build": {
+   "system": "single",
+   "mingw_ok": "yes",
+   "recipe_notes": "tier_r recipe expat (mingw-gcc 13-win32 -O2 -g, explicit file list from recipes.json, libexpat.dll)"
+  },
+  "verification": {
+   "method": "tools.calibration.tier_r factory.run_card on fetched pins (mingw-gcc 13-win32 O2): 291 project functions, 283 unchanged, 1 changed, 7 ambiguous, 0 no-counterpart (bodies: 155 identical, 132 address-only, 4 different); git diff --numstat R_2_6_1..R_2_6_2 -- '*.c' '*.h': 5 files, +113/-5",
+   "files_changed": 5,
+   "functions_changed_count": 1,
+   "verified_by_agent_run": true,
+   "cve_source": "expat/Changes (R_2_6_2)"
+  },
+  "sources": [
+   "https://github.com/libexpat/libexpat/releases/tag/R_2_6_2",
+   "https://github.com/libexpat/libexpat/blob/R_2_6_2/expat/Changes"
+  ],
+  "risks": [
+   "7 ambiguous record(s) (source changed with identical code, or induced by macro/header/inlining) are excluded from changed-set scoring by design.",
+   "The release diff bundles every change between the pins, not only the CVE fixes; the CVE ids come from the project changelog section of the new release."
+  ]
+ },
+ {
+  "contract": "case-card/1",
+  "id": "expat-r_2_7_4-to-r_2_7_5",
+  "project": "expat",
+  "upstream_git": "https://github.com/libexpat/libexpat.git",
+  "license_spdx": "MIT",
+  "license_evidence": "expat/COPYING at f31adfd584b7f6c50bbf4d22eb928538ffc9145a: expat/COPYING: Copyright Thai Open Source Software Center Ltd and Clark Cooper / Expat maintainers. Permission is hereby granted, free of charge, to any person obtaining a copy of this software (MIT) (sha256 31b15de8...5e87; read at f5c2890d too, sha256 31b15de8...5e87)",
+  "old": {
+   "ref": "R_2_7_4",
+   "commit": "f5c2890d8ff91f88a018173d293a9bd02f76389e"
+  },
+  "new": {
+   "ref": "R_2_7_5",
+   "commit": "f31adfd584b7f6c50bbf4d22eb928538ffc9145a"
+  },
+  "kind": "cve-fix",
+  "cve": [
+   "CVE-2026-32776",
+   "CVE-2026-32777",
+   "CVE-2026-32778"
+  ],
+  "semantic_change": true,
+  "changed_functions": [
+   {
+    "name": "hashTableDestroy",
+    "file": "expat/lib/xmlparse.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "lookup",
+    "file": "expat/lib/xmlparse.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "processEntity",
+    "file": "expat/lib/xmlparse.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "handleUnknownEncoding",
+    "file": "expat/lib/xmlparse.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "parserInit",
+    "file": "expat/lib/xmlparse.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "defineAttribute",
+    "file": "expat/lib/xmlparse.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "nextScaffoldPart",
+    "file": "expat/lib/xmlparse.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "addBinding",
+    "file": "expat/lib/xmlparse.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "storeRawNames",
+    "file": "expat/lib/xmlparse.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "poolGrow",
+    "file": "expat/lib/xmlparse.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "setContext",
+    "file": "expat/lib/xmlparse.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "XML_ParserReset",
+    "file": "expat/lib/xmlparse.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "XML_SetEncoding",
+    "file": "expat/lib/xmlparse.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "XML_ParserFree",
+    "file": "expat/lib/xmlparse.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "parserCreate",
+    "file": "expat/lib/xmlparse.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "XML_ExternalEntityParserCreate",
+    "file": "expat/lib/xmlparse.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "XML_Parse",
+    "file": "expat/lib/xmlparse.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "XML_StopParser",
+    "file": "expat/lib/xmlparse.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "XML_GetParsingStatus",
+    "file": "expat/lib/xmlparse.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "XML_ExpatVersionInfo",
+    "file": "expat/lib/xmlparse.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "accountingDiffTolerated",
+    "file": "expat/lib/xmlparse.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "processXmlDecl",
+    "file": "expat/lib/xmlparse.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "doIgnoreSection",
+    "file": "expat/lib/xmlparse.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "epilogProcessor",
+    "file": "expat/lib/xmlparse.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "storeEntityValue",
+    "file": "expat/lib/xmlparse.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   }
+  ],
+  "unchanged_controls": [
+   "callProcessor",
+   "sip24_update",
+   "sip24_final"
+  ],
+  "build": {
+   "system": "single",
+   "mingw_ok": "yes",
+   "recipe_notes": "tier_r recipe expat (mingw-gcc 13-win32 -O2 -g, explicit file list from recipes.json, libexpat.dll)"
+  },
+  "verification": {
+   "method": "tools.calibration.tier_r factory.run_card on fetched pins (mingw-gcc 13-win32 O2): 296 project functions, 164 unchanged, 36 changed, 96 ambiguous, 0 no-counterpart (bodies: 145 identical, 112 address-only, 39 different); git diff --numstat R_2_7_4..R_2_7_5 -- '*.c' '*.h': 11 files, +146/-22; changed_functions lists the first 25 of 36 (sorted by file, name)",
+   "files_changed": 11,
+   "functions_changed_count": 36,
+   "verified_by_agent_run": true,
+   "cve_source": "expat/Changes (R_2_7_5)"
+  },
+  "sources": [
+   "https://github.com/libexpat/libexpat/releases/tag/R_2_7_5",
+   "https://github.com/libexpat/libexpat/blob/R_2_7_5/expat/Changes"
+  ],
+  "risks": [
+   "96 ambiguous record(s) (source changed with identical code, or induced by macro/header/inlining) are excluded from changed-set scoring by design.",
+   "The release diff bundles every change between the pins, not only the CVE fixes; the CVE ids come from the project changelog section of the new release."
+  ]
+ }
+]

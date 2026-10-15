@@ -13,6 +13,9 @@ from .gates import combine
 
 SYNTHETIC_CLAIM = ('SYNTHETIC/PIPELINE VALIDATION ONLY: computed on generated data with known ground truth. '
                    'Makes no claim about real Windows binaries, Ghidriff, BinDiff or rz-diff accuracy.')
+# Datasets whose ground truth is generated or built from open-source test builds: never a real-world claim,
+# whatever the caller passes as `synthetic`.
+SYNTHETIC_TIERS = frozenset({'synthetic', 'R', 'tier-r', 'r'})
 REAL_CLAIM = ('Function-match correctness (target A) only, within the stated calibration domain; never a '
               'vulnerability probability.')
 
@@ -43,6 +46,7 @@ def blind_spots(per_profile: Mapping[str, Mapping]) -> list[str]:
 def make_report(*, prereg_sha: str | None, corpus_manifest_sha: str | None, label_set_sha: str | None,
                 tool_git: str, dataset: Mapping, per_profile: Mapping[str, Mapping], synthetic: bool,
                 known_limits: Sequence[str] = (), amendments: Sequence[str] = ()) -> dict:
+    synthetic = synthetic or str(dataset.get('tier', '')).lower() in {t.lower() for t in SYNTHETIC_TIERS}
     report = {'contract': 'calibration-report/1', 'claim': SYNTHETIC_CLAIM if synthetic else REAL_CLAIM,
               'prereg_sha256': prereg_sha, 'corpus_manifest_sha256': corpus_manifest_sha,
               'label_set_sha256': label_set_sha, 'tool_git': tool_git,

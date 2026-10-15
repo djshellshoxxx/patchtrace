@@ -1,0 +1,172 @@
+{
+  "$defs": {
+    "CallPin": {
+      "additionalProperties": false,
+      "description": "Ties a masked ``call [rip+disp32]`` inside a bytes window to the import slot it goes through. Offsets are inside the\nwindow; ``end_offset`` is where the instruction ends (the base of the RIP-relative displacement).",
+      "properties": {
+        "disp_offset": {
+          "exclusiveMaximum": 512,
+          "minimum": 0,
+          "title": "Disp Offset",
+          "type": "integer"
+        },
+        "dll": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Dll",
+          "type": "string"
+        },
+        "end_offset": {
+          "maximum": 512,
+          "minimum": 4,
+          "title": "End Offset",
+          "type": "integer"
+        },
+        "name": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "disp_offset",
+        "end_offset",
+        "dll",
+        "name"
+      ],
+      "title": "CallPin",
+      "type": "object"
+    }
+  },
+  "$id": "https://patchtrace.local/schemas/rules/1/BytesFeature.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "included": {
+      "title": "Included",
+      "type": "boolean"
+    },
+    "kind": {
+      "const": "bytes",
+      "default": "bytes",
+      "title": "Kind",
+      "type": "string"
+    },
+    "length": {
+      "maximum": 512,
+      "minimum": 16,
+      "title": "Length",
+      "type": "integer"
+    },
+    "literal": {
+      "minimum": 0,
+      "title": "Literal",
+      "type": "integer"
+    },
+    "longest_run": {
+      "minimum": 0,
+      "title": "Longest Run",
+      "type": "integer"
+    },
+    "mask": {
+      "default": [],
+      "items": {
+        "enum": [
+          "rip-disp",
+          "branch-ext",
+          "reloc",
+          "addr-ref"
+        ],
+        "type": "string"
+      },
+      "title": "Mask",
+      "type": "array"
+    },
+    "mask_source": {
+      "enum": [
+        "iced-x86",
+        "unified-ir"
+      ],
+      "title": "Mask Source",
+      "type": "string"
+    },
+    "other_hits": {
+      "anyOf": [
+        {
+          "minimum": 0,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Other Hits"
+    },
+    "pattern": {
+      "pattern": "^(?:[0-9A-F]{2}|\\?\\?)(?: (?:[0-9A-F]{2}|\\?\\?)){15,511}$",
+      "title": "Pattern",
+      "type": "string"
+    },
+    "pins": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/CallPin"
+      },
+      "maxItems": 4,
+      "title": "Pins",
+      "type": "array"
+    },
+    "separation": {
+      "enum": [
+        "older-only",
+        "newer-only",
+        "both-sides",
+        "unknown"
+      ],
+      "title": "Separation",
+      "type": "string"
+    },
+    "side": {
+      "enum": [
+        "older",
+        "newer"
+      ],
+      "title": "Side",
+      "type": "string"
+    },
+    "source_hits": {
+      "anyOf": [
+        {
+          "minimum": 0,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Source Hits"
+    },
+    "window_rva": {
+      "maximum": 4294967295,
+      "minimum": 0,
+      "title": "Window Rva",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "included",
+    "side",
+    "window_rva",
+    "length",
+    "pattern",
+    "literal",
+    "longest_run",
+    "mask_source",
+    "separation"
+  ],
+  "title": "BytesFeature",
+  "type": "object"
+}

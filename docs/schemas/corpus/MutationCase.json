@@ -207,6 +207,16 @@
       "title": "Kind",
       "type": "string"
     },
+    "layer": {
+      "default": "source",
+      "enum": [
+        "source",
+        "ir",
+        "opt"
+      ],
+      "title": "Layer",
+      "type": "string"
+    },
     "moved_function": {
       "anyOf": [
         {
@@ -237,7 +247,21 @@
         "reorder-defs",
         "local-rename",
         "macro-rewrite",
-        "inline-toggle"
+        "inline-toggle",
+        "signedness-flip",
+        "callee-swap",
+        "field-offset",
+        "global-swap",
+        "index-swap",
+        "branch-swap",
+        "buf-resize",
+        "string-literal",
+        "api-use",
+        "loop-extract",
+        "hotcoldsplit",
+        "mergefunc",
+        "always-inline",
+        "partial-inliner"
       ],
       "title": "Operator",
       "type": "string"

@@ -1,0 +1,54 @@
+{
+ "contract": "tier-r-recipes/1",
+ "excluded": [],
+ "recipes": [
+  {
+   "contract": "tier-r-recipe/1",
+   "project": "lz4",
+   "family": "compression",
+   "upstream_git": "https://github.com/lz4/lz4.git",
+   "license_spdx": "BSD-2-Clause",
+   "license_file": "lib/LICENSE",
+   "license_evidence": "lib/LICENSE read at all 4 pins (first fdf2ef58), 2 distinct SHA-256: LZ4 Library / Copyright (c) Yann Collet / Redistribution and use in source and binary forms, with or without modification, are permitted (BSD 2-Clause)",
+   "libc": "mingw",
+   "output": "liblz4.dll",
+   "sources": [
+    "lib/lz4.c",
+    "lib/lz4hc.c",
+    "lib/lz4frame.c",
+    "lib/lz4file.c",
+    "lib/xxhash.c"
+   ],
+   "include_dirs": [
+    "lib"
+   ],
+   "pins": [
+    {
+     "ref": "v1.9.2",
+     "commit": "fdf2ef5809ca875c454510610764d9125ef2ebbd",
+     "license_sha256": "d15d99c8dc6b0ec22174c0e563a95bc40f9363ca7f9d9d793bb5c5a8e8d0af71",
+     "date": "2019-08-15"
+    },
+    {
+     "ref": "v1.9.3",
+     "commit": "d44371841a2f1728a3f36839fd4b7e872d0927d3",
+     "license_sha256": "d15d99c8dc6b0ec22174c0e563a95bc40f9363ca7f9d9d793bb5c5a8e8d0af71",
+     "date": "2020-11-15"
+    },
+    {
+     "ref": "v1.9.4",
+     "commit": "5ff839680134437dbf4678f3d0c7b371d84f4964",
+     "license_sha256": "8b58c446121a109ccf32edc094bba3010a3d85e4ee3702950db55e4d3e87736c",
+     "date": "2022-08-15"
+    },
+    {
+     "ref": "v1.10.0",
+     "commit": "ebb370ca83af193212df4dcbadcc5d87bc0de2f0",
+     "license_sha256": "8b58c446121a109ccf32edc094bba3010a3d85e4ee3702950db55e4d3e87736c",
+     "date": "2024-07-21"
+    }
+   ],
+   "notes": "The BSD-2-Clause library directory only (lib/LICENSE; the repository root LICENSE also covers the GPL programs/ tools, which are not compiled). lz4file.c exists from v1.9.4 on and is ignored where absent."
+  }
+ ]
+}

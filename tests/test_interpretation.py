@@ -3,6 +3,7 @@ import json
 import threading
 
 import pytest
+from providers_support import FakeOpener, Loopback, http_reply, install_opener, raw_reply
 
 from patchtrace.evidence import EvidenceError, build_context, context_digest, resolve_evidence
 from patchtrace.interpretation import (
@@ -334,3 +335,211 @@ def test_export_safe_runtime_provenance_only(project, tmp_path):
     assert settings['timeout_seconds'] == 3600
     assert 'SESSION_SECRET' not in path.read_text() and 'SECRET_MARKER' not in path.read_text()
     assert 'java_path' not in settings and 'nested' not in settings
+
+
+def test_interpret_records_failed_run_for_an_unclassified_transport_error(project, monkeypatch):
+    context = build_context(project, ['match'])
+    install_opener(monkeypatch, FakeOpener(RuntimeError('PEER_TEXT')))
+    run = interpret(context, ProviderConfig('ollama', 'http://127.0.0.1:11434', 'fixture'), threading.Event())
+    assert run.status == 'failed' and run.findings == [] and run.raw_response == ''
+    assert run.error == 'PT-PROVIDER: transport failed unexpectedly (RuntimeError)'
+
+
+def test_interpret_end_to_end_over_a_loopback_ollama(project):
+    """The whole path on the real urllib stack: the previewed payload goes out, validated findings come back."""
+    context = build_context(project, ['match'])
+    answer = json.dumps({'message': {'role': 'assistant', 'content': response(context)}}).encode()
+    with Loopback(http_reply('200 OK', answer)) as server:
+        run = interpret(context, ProviderConfig('ollama', server.endpoint, 'fixture'), threading.Event())
+    assert run.status == 'completed' and run.error is None
+    assert [f.summary for f in run.findings] == ['Adds a bounds check']
+    (received,) = server.received
+    sent = json.loads(received.body)['messages']
+    assert sent == [{'role': 'system', 'content': system_prompt()}, {'role': 'user', 'content': context.payload}]
+
+
+def test_interpret_survives_a_peer_that_does_not_speak_http(project):
+    """Probe P3: BadStatusLine used to escape interpret() and reach the UI as raw peer text."""
+    context = build_context(project, ['match'])
+    with Loopback(raw_reply(b'NOT-HTTP garbage\r\n\r\n')) as server:
+        run = interpret(context, ProviderConfig('ollama', server.endpoint, 'fixture'), threading.Event())
+    assert run.status == 'failed' and run.findings == []
+    assert run.error.startswith('PT-PROVIDER: ') and 'garbage' not in run.error
+
+
+# --- identifiers the context does not contain are new claims (SPEC-41 R29, G10, G12) ---------------------
+
+CODE_WITH_IDS = ('int bounds(int n) {\n// see CVE-2099-0001, CWE-787 and CVSS 9.8\n'
+                 'if(n > 9) return -1;\nreturn n + 1;\n}')
+CLAIMS = {'cve': 'Fixes CVE-2099-0001.', 'cvss': 'Rated CVSS 9.8 overall.', 'cwe': 'Matches CWE-787 exactly.'}
+LOCATIONS = ['summary', 'fix_purpose', 'explanation', 'preconditions', 'unknowns', 'verification',
+             'alternative', 'alt_unknowns', 'cwe_rationale']
+FULLWIDTH = ''.join(chr(ord(c) + 0xFEE0) for c in 'CVE-2099-0001')
+ARABIC_DIGITS = ''.join(chr(0x0660 + int(d)) for d in '0001')
+
+
+def hypothesis(context, **fields):
+    base = {'explanation': 'A new guard rejects large n.', 'supporting': [context.evidence[0].id],
+            'contradicting': [], 'preconditions': [], 'unknowns': [], 'verification': [],
+            'confidence': 'medium'}
+    return base | fields
+
+
+def inject(context, where, text):
+    """Overrides for response() that put `text` into one model-written field."""
+    if where in {'summary', 'fix_purpose'}:
+        return {where: text}
+    if where == 'cwe_rationale':
+        return {'cwe': 'CWE-1', 'cwe_rationale': text}
+    if where == 'alternative':
+        return {'alternatives': [hypothesis(context, explanation=text)]}
+    if where == 'alt_unknowns':
+        return {'alternatives': [hypothesis(context, unknowns=[text])]}
+    return {'hypothesis': hypothesis(context, **{where: text if where == 'explanation' else [text]})}
+
+
+def interpret_raw(monkeypatch, context, raw):
+    monkeypatch.setattr('patchtrace.interpretation.request_completion', lambda *args: raw)
+    config = ProviderConfig('ollama', 'http://127.0.0.1:11434', 'fixture')
+    return interpret(context, config, threading.Event())
+
+
+def finding_dict(context, **overrides):
+    return json.loads(response(context, **overrides))['findings'][0]
+
+
+@pytest.mark.parametrize('where', LOCATIONS)
+@pytest.mark.parametrize('kind', list(CLAIMS))
+def test_finding_introducing_an_identifier_is_quarantined(project, monkeypatch, kind, where):
+    context = build_context(project, ['match'])
+    raw = response(context, **inject(context, where, CLAIMS[kind]))
+    run = interpret_raw(monkeypatch, context, raw)
+    assert run.status == 'failed' and run.findings == [] and run.raw_response == raw
+    assert 'quarantined' in run.error and kind.upper() in run.error
+
+
+def test_clean_findings_survive_a_quarantined_neighbour(project, monkeypatch):
+    context = build_context(project, ['match'])
+    dirty = finding_dict(context, summary='Fixes CVE-2099-0001.')
+    raw = json.dumps({'findings': [dirty, finding_dict(context)]})
+    run = interpret_raw(monkeypatch, context, raw)
+    assert run.status == 'completed' and [f.summary for f in run.findings] == ['Adds a bounds check']
+    assert run.error == ('PT-PROVIDER: 1 of 2 findings quarantined for CVE claims absent from the supplied '
+                         'context; raw response kept')
+    assert 'CVE-2099-0001' in run.raw_response and 'CVE-2099-0001' not in run.error
+
+
+@pytest.mark.parametrize('text', ['Mirrors CVE-2099-0001.', 'see cve-2099-0001', 'CVE 2099 0001 is cited',
+                                  'classic CWE-787 and CWE 787', 'CVSS 9.8 as noted', 'CVSS score of 9.8',
+                                  'CVSS v3.1 base score 9.8'],
+                         ids=['cve', 'cve-lower', 'cve-spaced', 'cwe-twice', 'cvss', 'cvss-words',
+                              'cvss-version'])
+def test_identifiers_present_in_the_context_are_not_new_claims(project, monkeypatch, text):
+    project.matches[0].newer[0].code = CODE_WITH_IDS
+    context = build_context(project, ['match'])
+    assert 'CVE-2099-0001' in context.payload
+    run = interpret_raw(monkeypatch, context, response(context, summary=text))
+    assert run.status == 'completed' and len(run.findings) == 1 and run.error is None
+
+
+def test_declared_cwe_may_be_repeated_but_not_joined_by_another(project, monkeypatch):
+    context = build_context(project, ['match'])
+    declared = {'cwe': 'CWE-787', 'cwe_rationale': 'Out-of-bounds write.'}
+    repeated = response(context, summary='Guards the CWE-787 write.', **declared)
+    run = interpret_raw(monkeypatch, context, repeated)
+    assert run.status == 'completed' and run.findings[0].cwe == 'CWE-787'
+    run = interpret_raw(monkeypatch, context, response(context, summary='Also CWE-125 reads.', **declared))
+    assert run.status == 'failed' and 'CWE' in run.error
+
+
+@pytest.mark.parametrize('spelling', [
+    'cve-2099-0001', 'CVE 2099 0001', 'CVE_2099_0001', 'CVE-20990001',
+    'CVE\N{NON-BREAKING HYPHEN}2099\N{NON-BREAKING HYPHEN}0001', 'CVE\N{MINUS SIGN}2099\N{MINUS SIGN}0001',
+    'CVE-2099-\N{ZERO WIDTH SPACE}0001', 'C\N{SOFT HYPHEN}VE-2099-0001', FULLWIDTH],
+    ids=['lower', 'spaces', 'underscores', 'no-separator', 'nb-hyphen', 'minus', 'zero-width', 'soft-hyphen',
+         'fullwidth'])
+def test_respelled_identifiers_are_still_claims(project, monkeypatch, spelling):
+    context = build_context(project, ['match'])
+    run = interpret_raw(monkeypatch, context, response(context, summary=f'Fixes {spelling} here.'))
+    assert run.status == 'failed' and 'CVE' in run.error
+
+
+@pytest.mark.parametrize('text', [
+    'CVSS v3.1 is not assessed here.', 'No CVE or CWE is inferred.', 'A 9.8 build number and version 3.1.',
+    'RECVE-2099-0001 is not an identifier.', 'CWEs and CVEs are not inferred.',
+    'CVSS is not assessed. Adds 1.5 KiB of checks.', 'CVE-2099-123 is too short to be an identifier.'],
+    ids=['version-only', 'no-digits', 'bare-numbers', 'embedded', 'plurals', 'next-sentence', 'short-sequence'])
+def test_text_without_identifier_claims_is_unaffected(project, monkeypatch, text):
+    context = build_context(project, ['match'])
+    run = interpret_raw(monkeypatch, context, response(context, summary=text))
+    assert run.status == 'completed' and run.error is None and len(run.findings) == 1
+
+
+def test_quarantined_claims_never_reach_exports(project, monkeypatch, tmp_path):
+    context = build_context(project, ['match'])
+    dirty = finding_dict(context, summary='Fixes CVE-2099-0001.')
+    run = interpret_raw(monkeypatch, context, json.dumps({'findings': [dirty, finding_dict(context)]}))
+    project.interpretations.append(run)
+    for format in ('json', 'html', 'md'):
+        path = tmp_path / ('report.' + format)
+        export_project(project, format, path)
+        assert 'CVE-2099-0001' not in path.read_text(encoding='utf-8')
+    assert 'quarantined' in (tmp_path / 'report.json').read_text(encoding='utf-8')
+
+
+@pytest.mark.parametrize('overrides,message', [
+    ({'cwe': 'CWE-79'}, 'requires a rationale'),
+    ({'cwe_rationale': 'because'}, 'requires a rationale'),
+    ({'cwe': 'CWE-123456', 'cwe_rationale': 'because'}, 'malformed'),
+    ({'cwe': 'cwe-79', 'cwe_rationale': 'because'}, 'malformed'),
+    ({'cwe': 'CWE-', 'cwe_rationale': 'because'}, 'malformed')],
+    ids=['no-rationale', 'no-cwe', 'six-digits', 'lowercase', 'no-number'])
+def test_cwe_needs_its_format_and_a_rationale(project, overrides, message):
+    context = build_context(project, ['match'])
+    with pytest.raises(InterpretationError, match=message):
+        validate_response(response(context, **overrides), context)
+
+
+def test_cwe_is_checked_for_format_only(project):
+    """SPEC-41 Q6: there is no catalogue, so a well-formed number that does not exist passes."""
+    context = build_context(project, ['match'])
+    finding = validate_response(response(context, cwe='CWE-99999', cwe_rationale='shape only'), context)[0]
+    assert finding.cwe == 'CWE-99999'
+
+
+CLAIM_TABLE = [
+    ('Fixes CVE-2099-0001.', {('CVE', 'CVE-2099-0001')}),
+    ('cve 2099 1234567 and CVE-2098-0002', {('CVE', 'CVE-2099-1234567'), ('CVE', 'CVE-2098-0002')}),
+    ('CVE-2099-123', set()),
+    ('RECVE-2099-0001', set()),
+    ('CWE-787, cwe 0020 and CWE-123456', {('CWE', 'CWE-787'), ('CWE', 'CWE-20')}),
+    ('CVSS 9.8', {('CVSS', 'CVSS 9.8')}),
+    ('CVSS: 10.0 (critical)', {('CVSS', 'CVSS 10.0')}),
+    ('CVSS base score of 7.5, high', {('CVSS', 'CVSS 7.5')}),
+    ('CVSS v3.1 base score 9.8', {('CVSS', 'CVSS 9.8')}),
+    ('CVSSv3 9.8 and CVSS3.1: 5.3', {('CVSS', 'CVSS 9.8'), ('CVSS', 'CVSS 5.3')}),
+    ('CVSS v3.1 is not assessed', set()),
+    ('CVSS is unknown. Adds 1.5 KiB.', set()),
+    ('CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H', {('CVSS', 'AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H')}),
+    ('score 9.8 without the keyword', set()),
+    ('', set()),
+    ('CWE: 787 and CWE.20', {('CWE', 'CWE-787'), ('CWE', 'CWE-20')}),
+    ('CVE:2099:0001', {('CVE', 'CVE-2099-0001')}),
+    ('CVE-2099-0001CVE-2098-0002', {('CVE', 'CVE-2099-0001'), ('CVE', 'CVE-2098-0002')}),
+    ('CVSS 9.8/10', {('CVSS', 'CVSS 9.8')}),
+    ('a 9.8 CVSS flaw', {('CVSS', 'CVSS 9.8')}),
+    ('rated 7.5-CVSS and 5.3 (CVSS)', {('CVSS', 'CVSS 7.5'), ('CVSS', 'CVSS 5.3')}),
+    (f'CVE-2099-{ARABIC_DIGITS} and CWE-{ARABIC_DIGITS}', {('CVE', 'CVE-2099-0001'), ('CWE', 'CWE-1')}),
+    ('version 3.1 CVSS and v3.1 CVSS', set()),
+    ('AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H', {('CVSS', 'AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H')}),
+    ('AV:N and AC:L alone', set()),
+    ('CVSS 3.1 base metrics', {('CVSS', 'CVSS 3.1')}),
+    ('CVSS 9.', set()),
+    ('CVSS\n9.8', set()),
+]
+
+
+@pytest.mark.parametrize('text,expected', CLAIM_TABLE, ids=[f'row-{n}' for n in range(len(CLAIM_TABLE))])
+def test_identifier_claim_grammar(text, expected):
+    from patchtrace.interpretation import identifier_claims
+    assert identifier_claims(text) == expected

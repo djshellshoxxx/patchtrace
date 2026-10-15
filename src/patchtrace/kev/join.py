@@ -1,133 +1,117 @@
-"""Exact-wording CVE join, freshness, snapshot delta and project-row builder for ``kev/1``. Pure.
+"""Exact CVE join, freshness and snapshot delta (KEV-integration-plan sections 4 to 7). Pure; the clock is a parameter.
 
-The CVE ID is the only join key (no Microsoft entry names a KB). IDs are ASCII only: a fullwidth or Arabic-Indic
-spelling is ``invalid-id``, never "not listed". Freshness counts whole UTC calendar days and takes ``now`` as an
-argument, so wall-clock time is never hidden input.
+KEV is context at the level of a CVE and it NEVER alters a ranking: nothing in this package imports the ranking
+code, no function here takes or returns a score, and the only ordering offered is the opt-in "listed first" reading
+order in ``view_model``. A CVE ID is joined by exact ASCII text: an ID that is not one is ``invalid-id`` (never "not
+listed"), and with no catalog loaded a valid ID is ``unavailable`` (never "not listed"), because neither says
+anything about the CVE.
 """
 from __future__ import annotations
 
-import datetime
 import re
 from collections.abc import Iterable
+from datetime import UTC, datetime
 
-from ..search.normalize import sanitize_text
 from . import limits
 from .contracts import (
     Freshness,
     KevCatalog,
-    KevCatalogMeta,
     KevChange,
-    KevContext,
-    KevContextLookup,
     KevDelta,
     KevEntry,
     KevError,
-    KevFacts,
     KevLookup,
-    context_id,
+    KevTracked,
+    LookupStatus,
+    clean_text,
+    is_cve_id,
+    utc,
 )
 
-CVE_ID = re.compile(r'CVE-[0-9]{4}-[0-9]{4,19}', re.ASCII)
+NOTE_INVALID = 'expected CVE-YYYY-NNNN with ASCII digits'
+NOTE_NO_CATALOG = 'no catalog is loaded'
+NOTE_FUTURE = "the catalog's release time is in the future; treat results as unverified"
+_SPLIT = re.compile(r'[\s,;]+')                                 # Unicode white space too, as pasted text carries it
 
 
-def normalize_cve_id(text: str) -> str | None:
-    """The canonical upper-case ID for ``text`` (edges trimmed, ASCII only), or None when it is not a CVE ID."""
-    candidate = text.strip()
-    if candidate.isascii():
-        candidate = candidate.upper()
-    return candidate if len(candidate) <= 24 and CVE_ID.fullmatch(candidate) else None
+def _limit_error() -> KevError:
+    return KevError('PT-KEV-LIMIT', f'more than {limits.MAX_LOOKUP_CVES} CVE IDs at once')
 
 
-def _released(meta: KevCatalogMeta) -> datetime.datetime:
-    return datetime.datetime.strptime(meta.date_released, '%Y-%m-%dT%H:%M:%SZ').replace(tzinfo=datetime.UTC)
+def split_cve_ids(text: str) -> tuple[str, ...]:
+    """The distinct tokens of typed or pasted text in first-seen order; ASCII tokens are upper-cased. Whether a token is
+    a CVE ID is decided later by ``lookup`` (a fullwidth token stays as typed and is reported invalid)."""
+    found: dict[str, None] = {}
+    for token in _SPLIT.split(text):
+        if token:
+            found[token.upper() if token.isascii() else token] = None
+            if len(found) > limits.MAX_LOOKUP_CVES:
+                raise _limit_error()
+    return tuple(found)
 
 
-def freshness(meta: KevCatalogMeta | None, now: datetime.datetime) -> tuple[Freshness, int | None]:
-    """(state, whole UTC days old). A release time after ``now`` is ``future`` with no age."""
-    if meta is None:
-        return 'unknown', None
-    released = _released(meta)
-    now = now.astimezone(datetime.UTC)
-    if released > now:
-        return 'future', None
-    days = (now.date() - released.date()).days
-    if days <= limits.FRESH_MAX_DAYS:
-        return 'fresh', days
-    return ('aging' if days <= limits.AGING_MAX_DAYS else 'stale'), days
+def freshness_of(date_released: str, now: datetime) -> tuple[Freshness, int]:
+    """How old a catalog is at ``now``: whole UTC calendar days since its release day (fresh up to 3, aging up to 14,
+    stale from 15), or ``future`` when the release instant is after ``now`` (a wrong clock or a wrong file)."""
+    if now.tzinfo is None or now.utcoffset() is None:
+        raise ValueError('now must be timezone-aware')
+    released, moment = utc(date_released), now.astimezone(UTC)
+    age = (moment.date() - released.date()).days
+    if released > moment:
+        return 'future', age
+    if age <= limits.FRESH_MAX_DAYS:
+        return 'fresh', age
+    return ('aging' if age <= limits.AGING_MAX_DAYS else 'stale'), age
 
 
-class KevIndex:
-    """O(1) CVE lookup over one snapshot."""
-
-    def __init__(self, catalog: KevCatalog | None) -> None:
-        self.catalog = catalog
-        self._by_id = {entry.cve_id: entry for entry in catalog.entries} if catalog else {}
-
-    def get(self, cve_id: str) -> KevEntry | None:
-        return self._by_id.get(cve_id)
-
-
-def lookup_one(index: KevIndex, raw: str, now: datetime.datetime) -> KevLookup:
-    meta = index.catalog.meta if index.catalog else None
-    state, age = freshness(meta, now)
-    notes = ('The catalog release time is in the future.',) if state == 'future' else ()
-    cve = normalize_cve_id(raw)
-    if cve is None:
-        return KevLookup(cve_id=sanitize_text(raw.strip(), 64) or '(empty)', status='invalid-id', freshness=state,
-                         age_days=age, snapshot_id=meta.snapshot_id if meta else None, notes=notes)
-    if meta is None:
-        return KevLookup(cve_id=cve, status='unavailable', freshness='unknown')
-    entry = index.get(cve)
-    return KevLookup(cve_id=cve, status='listed' if entry else 'not-listed', entry=entry, snapshot_id=meta.snapshot_id,
-                     freshness=state, age_days=age, notes=notes)
+def classify(catalog: KevCatalog | None, cve: str) -> tuple[LookupStatus, KevEntry | None]:
+    """The status of one ID and its entry; the cheap core of ``lookup`` that the column provider shares."""
+    if not is_cve_id(cve):
+        return 'invalid-id', None
+    if catalog is None:
+        return 'unavailable', None
+    entry = catalog.by_cve.get(cve)
+    return ('not-listed', None) if entry is None else ('listed', entry)
 
 
-def lookup(catalog: KevCatalog | None, cves: Iterable[str], now: datetime.datetime) -> tuple[KevLookup, ...]:
-    """One result per distinct input, in first-seen order. More than 5,000 inputs is a PT-KEV-LIMIT error."""
-    raws = list(cves)
-    if len(raws) > limits.MAX_LOOKUP_CVES:
-        raise KevError('PT-KEV-LIMIT', 'too many CVE IDs in one lookup')
-    index, out, seen = KevIndex(catalog), [], set()
-    for raw in raws:
-        result = lookup_one(index, raw, now)
-        if (result.status, result.cve_id) not in seen:
-            seen.add((result.status, result.cve_id))
-            out.append(result)
-    return tuple(out)
+def lookup(catalog: KevCatalog | None, cve_ids: Iterable[str], now: datetime) -> tuple[KevLookup, ...]:
+    """One ``KevLookup`` per distinct ID, in first-seen order. Total over any strings; at most 5,000 distinct IDs."""
+    ids = list(dict.fromkeys(cve_ids))
+    if len(ids) > limits.MAX_LOOKUP_CVES:
+        raise _limit_error()
+    freshness, age = freshness_of(catalog.meta.date_released, now) if catalog is not None else ('unknown', None)
+    rows = []
+    for cve in ids:
+        status, entry = classify(catalog, cve)
+        if status == 'invalid-id':
+            rows.append(KevLookup(cve_id=clean_text(cve, limits.MAX_ECHO_CHARS), status=status, notes=(NOTE_INVALID,)))
+        elif status == 'unavailable':
+            rows.append(KevLookup(cve_id=cve, status=status, notes=(NOTE_NO_CATALOG,)))
+        else:
+            rows.append(KevLookup(cve_id=cve, status=status, entry=entry, snapshot_id=catalog.meta.snapshot_id,
+                                  freshness=freshness, age_days=age,
+                                  notes=(NOTE_FUTURE,) if freshness == 'future' else ()))
+    return tuple(rows)
 
 
-def _facts(entry: KevEntry) -> KevFacts:
-    return KevFacts(ransomware_use=entry.ransomware_use, due_date=entry.due_date,
-                    forensic_triage=entry.forensic_triage, cwes=entry.cwes)
+def _tracked(entry: KevEntry) -> KevTracked:
+    return KevTracked(ransomware_use=entry.ransomware_use, due_date=entry.due_date,
+                      forensic_triage=entry.forensic_triage, cwes=entry.cwes)
 
 
 def diff(old: KevCatalog, new: KevCatalog) -> KevDelta:
-    """What changed from ``old`` to ``new``: ids are sorted, lists are capped at 500, counts are exact."""
-    before = {entry.cve_id: entry for entry in old.entries}
-    after = {entry.cve_id: entry for entry in new.entries}
-    added = sorted(after.keys() - before.keys())
-    removed = sorted(before.keys() - after.keys())
-    changed = [KevChange(cve_id=cve, before=_facts(before[cve]), after=_facts(after[cve]))
-               for cve in sorted(before.keys() & after.keys()) if _facts(before[cve]) != _facts(after[cve])]
+    """What changed between two catalogs: CVEs added (newest first), removed, and CVEs whose tracked fields differ
+    (ransomware use, CISA due date, forensic triage, weakness list). A reworded description is not a change."""
+    added = sorted(sorted((item for cve, item in new.by_cve.items() if cve not in old.by_cve),
+                          key=lambda item: item.cve_id), key=lambda item: item.date_added, reverse=True)
+    removed = sorted(cve for cve in old.by_cve if cve not in new.by_cve)
+    changed = []
+    for cve in sorted(new.by_cve.keys() & old.by_cve.keys()):
+        before, after = _tracked(old.by_cve[cve]), _tracked(new.by_cve[cve])
+        if before != after:
+            changed.append(KevChange(cve_id=cve, before=before, after=after))
     cap = limits.MAX_DELTA_IDS
     return KevDelta(from_snapshot_id=old.meta.snapshot_id, to_snapshot_id=new.meta.snapshot_id,
-                    from_catalog_version=old.meta.catalog_version, to_catalog_version=new.meta.catalog_version,
-                    added=tuple(added[:cap]), removed=tuple(removed[:cap]), changed=tuple(changed[:cap]),
-                    added_count=len(added), removed_count=len(removed), changed_count=len(changed))
-
-
-def make_context(catalog: KevCatalog, cves: Iterable[str], now: datetime.datetime, *, kb: str | None = None,
-                 release_date: str | None = None, orientation_verified: bool = False) -> KevContext:
-    """The ``kev-context`` project row for the valid, distinct CVEs among ``cves`` (at most 256)."""
-    ids = sorted({cve for cve in map(normalize_cve_id, cves) if cve})
-    if len(ids) > limits.MAX_PROJECT_CVES:
-        raise KevError('PT-KEV-LIMIT', 'too many CVE IDs for one project row')
-    rows = tuple(KevContextLookup(**{**result.model_dump(exclude={'entry'}),
-                                     'entry': result.entry.slim() if result.entry else None})
-                 for result in lookup(catalog, ids, now))
-    meta = catalog.meta
-    return KevContext(context_id=context_id(meta.snapshot_id, ids), created_at=now.astimezone(datetime.UTC)
-                      .strftime('%Y-%m-%dT%H:%M:%SZ'), snapshot_id=meta.snapshot_id,
-                      catalog_version=meta.catalog_version, date_released=meta.date_released,
-                      content_digest=meta.content_digest, source=meta.source, lookups=rows, kb=kb,
-                      release_date=release_date, orientation_verified=orientation_verified)
+                    added=tuple(item.cve_id for item in added[:cap]), removed=tuple(removed[:cap]),
+                    changed=tuple(changed[:cap]), added_count=len(added), removed_count=len(removed),
+                    changed_count=len(changed))

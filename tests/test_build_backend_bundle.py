@@ -154,8 +154,14 @@ class World:
     def _pin(self, entry: dict, blob: bytes) -> None:
         entry.update(sha256=hashlib.sha256(blob).hexdigest(), size=len(blob))
         if entry.get('status') == 'placeholder':
-            entry.update(status='pinned', digest_source='tofu')
+            entry.update(status='pinned', digest_source='git-rebuilt' if 'ghidriff' in entry['url'] else 'sigstore-verified')
         self.blobs[entry['url']] = blob
+
+    def source_builder(self, repo: str, commit: str, work: Path) -> Path:
+        self.calls.append(f'rebuild {repo} {commit}')
+        path = work / 'ghidriff-source.tar.gz'
+        path.write_bytes(self.tamper.get('source', self.source_tarball))
+        return path
 
     def write_pin(self) -> None:
         self.pin_path.write_text(json.dumps(self.pin, indent=1), encoding='utf-8')
@@ -214,6 +220,7 @@ def build(world: World, tmp_path: Path, runner: FakeRunner | None = None, **kwar
     kwargs.setdefault('compile_bytecode', False)
     return tool.build_backend(world.pin_path, world.platform, tmp_path / 'out', cache_dir=tmp_path / 'cache',
                               fetcher=world.fetcher, runner=runner or FakeRunner(), git_commit='f' * 40,
+                              source_builder=world.source_builder,
                               **kwargs)
 
 
@@ -243,7 +250,10 @@ def test_downloads_stay_inside_the_pin_and_site_packages_are_complete(tmp_path, 
     world = World(tmp_path, platform)
     result = build(world, tmp_path)
     pinned = {entry['url'] for entry in world.pin['wheels']['any']}
-    assert pinned <= set(world.calls) and all(url.startswith('https://') for url in world.calls)
+    urls = [c for c in world.calls if not c.startswith('rebuild ')]
+    assert pinned <= set(urls) and all(url.startswith('https://') for url in urls)
+    gh = world.pin['ghidriff']
+    assert world.calls.count(f'rebuild {gh["repo"]} {gh["sha"]}') == 1  # rebuilt from the commit, not downloaded
     site = (result.payload_dir / ('python/Lib/site-packages' if platform == 'windows'
                                   else 'python/lib/python3.12/site-packages'))
     dists = {p.name for p in site.iterdir()}
@@ -341,9 +351,9 @@ def test_digest_mismatch_is_a_hard_failure(tmp_path, target, same_size):
     url = {'ghidra': world.pin['components']['ghidra']['url'],
            'jdk': world.pin['components']['jdk-linux']['url'],
            'wheel': world.pin['wheels']['linux'][0]['url'],
-           'tarball': world.pin['ghidriff']['source_tarball']['url'],
+           'tarball': 'source',
            'sdist': world.pin['wheels']['any'][2]['url']}[target]
-    blob = bytearray(world.blobs[url])
+    blob = bytearray(world.source_tarball if url == 'source' else world.blobs[url])
     if same_size:
         blob[len(blob) // 2] ^= 1
     else:

@@ -1,0 +1,127 @@
+{
+  "$id": "https://patchtrace.local/schemas/rules/1/TargetRef.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "One scanned build. Records keep hashes and a display label, never a path. ``expect`` is the analyst's expectation\n(``unknown`` until set); ``advisory_says`` is shown beside the rule's own result and never merged with it.",
+  "properties": {
+    "advisory_says": {
+      "default": "unknown",
+      "enum": [
+        "affected",
+        "not_affected",
+        "fixed",
+        "under_investigation",
+        "contradictory",
+        "ambiguous",
+        "unknown"
+      ],
+      "title": "Advisory Says",
+      "type": "string"
+    },
+    "expect": {
+      "default": "unknown",
+      "enum": [
+        "hit",
+        "no-hit",
+        "unknown"
+      ],
+      "title": "Expect",
+      "type": "string"
+    },
+    "file_version": {
+      "anyOf": [
+        {
+          "pattern": "^[0-9]{1,5}(\\.[0-9]{1,5}){3}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "File Version"
+    },
+    "kb": {
+      "anyOf": [
+        {
+          "pattern": "^KB[0-9]{4,10}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Kb"
+    },
+    "label": {
+      "maxLength": 256,
+      "minLength": 1,
+      "title": "Label",
+      "type": "string"
+    },
+    "ordinal": {
+      "anyOf": [
+        {
+          "maximum": 8,
+          "minimum": 1,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Ordinal"
+    },
+    "role": {
+      "enum": [
+        "older-anchor",
+        "newer-anchor",
+        "series",
+        "extra",
+        "clean",
+        "control"
+      ],
+      "title": "Role",
+      "type": "string"
+    },
+    "sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Sha256",
+      "type": "string"
+    },
+    "size": {
+      "exclusiveMaximum": 1099511627776,
+      "minimum": 0,
+      "title": "Size",
+      "type": "integer"
+    },
+    "target_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+      "title": "Target Id",
+      "type": "string"
+    },
+    "toolchain_flag": {
+      "default": "unknown",
+      "enum": [
+        "none",
+        "toolchain-changed",
+        "packed",
+        "protected",
+        "unknown"
+      ],
+      "title": "Toolchain Flag",
+      "type": "string"
+    }
+  },
+  "required": [
+    "target_id",
+    "label",
+    "role",
+    "sha256",
+    "size"
+  ],
+  "title": "TargetRef",
+  "type": "object"
+}

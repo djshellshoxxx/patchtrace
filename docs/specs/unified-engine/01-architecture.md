@@ -57,7 +57,7 @@ Without E1 (no Ghidra configured, or extraction failed) the pipeline still runs 
 | `ladder/groups.py` | N:M duplicate and ICF alias groups | ir.reader | S2 |
 | `ladder/blocking.py` | candidate generation for 60k images (size/token/MinHash buckets) | ir.reader | S5 |
 | `ladder/residual.py` | P16 reference vectors, P17 BB votes, P18 layout gaps, P19 assignment with rejection | blocking, assign | S5 |
-| `ladder/assign.py` | pure-Python LAP (Jonker-Volgenant style) with reject cost, bucket cap L-31 | stdlib | S5 |
+| `ladder/assign.py` | pure-Python LAP (Jonker-Volgenant style) with reject cost, bucket cap L-24 | stdlib | S5 |
 | `pipeline.py` | stage orchestration (inputs -> result), cancel, partial status | everything above except UI | S0b..S5 |
 | `worker.py` | hidden `_worker` entry: request JSON -> result files in a private dir; spawned with `secondary.binexport_run.worker_argv()` (or a shared helper lifted from it in S0b, same tests) | pipeline | S0b |
 | `read_model.py` | Qt-free `UnifiedViewModel`, filters, sort keys, detail/provenance text | contracts, store, `secondary.evidence_view.sanitize_text` | S4 |

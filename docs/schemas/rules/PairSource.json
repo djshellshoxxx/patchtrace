@@ -1,0 +1,186 @@
+{
+  "$defs": {
+    "FunctionRef": {
+      "additionalProperties": false,
+      "description": "One side's function. ``size`` is known only with a verified extent (``.pdata`` or the unified IR); a leaf function\nwithout exception data has ``extent == 'unknown'`` and no size, so no bytes feature can be built from it.",
+      "properties": {
+        "extent": {
+          "enum": [
+            "pdata",
+            "unified-ir",
+            "unknown"
+          ],
+          "title": "Extent",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 256,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "rva": {
+          "maximum": 4294967295,
+          "minimum": 0,
+          "title": "Rva",
+          "type": "integer"
+        },
+        "size": {
+          "anyOf": [
+            {
+              "exclusiveMaximum": 4294967296,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Size"
+        }
+      },
+      "required": [
+        "rva",
+        "extent"
+      ],
+      "title": "FunctionRef",
+      "type": "object"
+    }
+  },
+  "$id": "https://patchtrace.local/schemas/rules/1/PairSource.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "The analyst-accepted changed-function pair. Eligibility (``materiality == 'material'`` or analyst confirmation) is a\ngate of the candidate, not a property of this fact record.",
+  "properties": {
+    "analyst_confirmed_material": {
+      "title": "Analyst Confirmed Material",
+      "type": "boolean"
+    },
+    "category": {
+      "enum": [
+        "modified",
+        "added",
+        "removed"
+      ],
+      "title": "Category",
+      "type": "string"
+    },
+    "cwe": {
+      "anyOf": [
+        {
+          "pattern": "^CWE-[1-9][0-9]{0,5}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Cwe"
+    },
+    "finding_id": {
+      "anyOf": [
+        {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Finding Id"
+    },
+    "match_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+      "title": "Match Id",
+      "type": "string"
+    },
+    "materiality": {
+      "enum": [
+        "unchanged",
+        "cosmetic",
+        "material",
+        "review",
+        "unknown"
+      ],
+      "title": "Materiality",
+      "type": "string"
+    },
+    "newer": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/FunctionRef"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "newer_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Newer Sha256",
+      "type": "string"
+    },
+    "older": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/FunctionRef"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "older_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Older Sha256",
+      "type": "string"
+    },
+    "project_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+      "title": "Project Id",
+      "type": "string"
+    },
+    "review": {
+      "const": "accepted",
+      "title": "Review",
+      "type": "string"
+    },
+    "revision": {
+      "minimum": 0,
+      "title": "Revision",
+      "type": "integer"
+    },
+    "run_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+      "title": "Run Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "project_id",
+    "revision",
+    "run_id",
+    "older_sha256",
+    "newer_sha256",
+    "match_id",
+    "category",
+    "review",
+    "materiality",
+    "analyst_confirmed_material"
+  ],
+  "title": "PairSource",
+  "type": "object"
+}

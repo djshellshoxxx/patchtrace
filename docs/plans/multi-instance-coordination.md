@@ -40,10 +40,12 @@ Owner instructions (binding): create two more cloud instances (B, C) and spread 
 | Interface | Producer | Consumers | Until it lands |
 |---|---|---|---|
 | Panel registry and shared widgets | A | B, C | build services and CLI only |
-| Anchor fabric (`AnchorSink` and reader) | A | B, C | no-op `AnchorSink` Protocol |
+| Anchor fabric (`AnchorSink` and reader) | A | B, C | no-op `AnchorSink` (`fabric.memory.NullAnchorSink`) |
 | Optional dependencies | B-0 | A, C | do not add dependencies |
 | Calibration artifact and metrics | C | A (Leads ranking), reports | display level stays `ordinal` |
 | Guide hooks (charter item 8) | every plan | C | none; C adds hooks late |
+
+Amended by FAB-0 (2026-10-14): `enrichment/storage.py` `KINDS` gains `anchor-batch` at FAB-1 and `anchor-pin` at FAB-4; the integrator makes that edit.
 
 ## 5. Start-up checklist (B and C)
 

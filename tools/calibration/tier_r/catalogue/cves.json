@@ -1,0 +1,1243 @@
+[
+ {
+  "contract": "case-card/1",
+  "id": "libpng-v1.6.50-to-v1.6.51",
+  "project": "libpng",
+  "upstream_git": "https://github.com/pnggroup/libpng.git",
+  "license_spdx": "Libpng-2.0",
+  "license_evidence": "LICENSE at 49363adcfaf098748d7a4c8c624ad8c45a8c3a86: PNG Reference Library License version 2 / Permission is hereby granted to use, copy, modify, and distribute this software ... without fee (sha256 16d9daaa...c49a; read at 2b978915 too, sha256 16d9daaa...c49a)",
+  "old": {
+   "ref": "v1.6.50",
+   "commit": "2b978915d82377df13fcbb1fb56660195ded868a"
+  },
+  "new": {
+   "ref": "v1.6.51",
+   "commit": "49363adcfaf098748d7a4c8c624ad8c45a8c3a86"
+  },
+  "kind": "cve-fix",
+  "cve": [
+   "CVE-2025-64505",
+   "CVE-2025-64506",
+   "CVE-2025-64720",
+   "CVE-2025-65018"
+  ],
+  "semantic_change": true,
+  "changed_functions": [
+   {
+    "name": "png_warning",
+    "file": "pngerror.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "png_image_read_direct",
+    "file": "pngread.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "png_set_quantize",
+    "file": "pngrtran.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "png_init_read_transformations",
+    "file": "pngrtran.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "png_do_read_transformations",
+    "file": "pngrtran.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "png_image_write_main",
+    "file": "pngwrite.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   }
+  ],
+  "unchanged_controls": [
+   "png_fp_sub",
+   "png_pow10",
+   "png_zfree"
+  ],
+  "build": {
+   "system": "single",
+   "mingw_ok": "yes",
+   "recipe_notes": "tier_r recipe libpng (mingw-gcc 13-win32 -O2 -g, explicit file list from recipes.json, libpng16.dll)"
+  },
+  "verification": {
+   "method": "tools.calibration.tier_r factory.run_card on fetched pins (mingw-gcc 13-win32 O2): 468 project functions, 396 unchanged, 6 changed, 65 ambiguous, 1 no-counterpart (bodies: 197 identical, 206 address-only, 64 different); git diff --numstat v1.6.50..v1.6.51 -- '*.c' '*.h': 17 files, +197/-440",
+   "files_changed": 17,
+   "functions_changed_count": 6,
+   "verified_by_agent_run": true,
+   "cve_source": "CHANGES (v1.6.51)"
+  },
+  "sources": [
+   "https://github.com/pnggroup/libpng/releases/tag/v1.6.51",
+   "https://github.com/pnggroup/libpng/blob/v1.6.51/CHANGES"
+  ],
+  "risks": [
+   "65 ambiguous record(s) (source changed with identical code, or induced by macro/header/inlining) are excluded from changed-set scoring by design.",
+   "The release diff bundles every change between the pins, not only the CVE fixes; the CVE ids come from the project changelog section of the new release."
+  ]
+ },
+ {
+  "contract": "case-card/1",
+  "id": "libpng-v1.6.53-to-v1.6.54",
+  "project": "libpng",
+  "upstream_git": "https://github.com/pnggroup/libpng.git",
+  "license_spdx": "Libpng-2.0",
+  "license_evidence": "LICENSE at 02f2b4f4699f0ef9111a6534f093b53732df4452: PNG Reference Library License version 2 / Permission is hereby granted to use, copy, modify, and distribute this software ... without fee (sha256 bdb0a645...a526; read at 4e3f57d5 too, sha256 16d9daaa...c49a)",
+  "old": {
+   "ref": "v1.6.53",
+   "commit": "4e3f57d50f552841550a36eabbb3fbcecacb7750"
+  },
+  "new": {
+   "ref": "v1.6.54",
+   "commit": "02f2b4f4699f0ef9111a6534f093b53732df4452"
+  },
+  "kind": "cve-fix",
+  "cve": [
+   "CVE-2026-22695",
+   "CVE-2026-22801"
+  ],
+  "semantic_change": true,
+  "changed_functions": [
+   {
+    "name": "png_image_read_direct_scaled",
+    "file": "pngread.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "png_write_image_8bit",
+    "file": "pngwrite.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "png_write_image_16bit",
+    "file": "pngwrite.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "png_image_write_main",
+    "file": "pngwrite.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   }
+  ],
+  "unchanged_controls": [
+   "png_fp_sub",
+   "png_pow10",
+   "png_zfree"
+  ],
+  "build": {
+   "system": "single",
+   "mingw_ok": "yes",
+   "recipe_notes": "tier_r recipe libpng (mingw-gcc 13-win32 -O2 -g, explicit file list from recipes.json, libpng16.dll)"
+  },
+  "verification": {
+   "method": "tools.calibration.tier_r factory.run_card on fetched pins (mingw-gcc 13-win32 O2): 468 project functions, 424 unchanged, 4 changed, 11 ambiguous, 0 no-counterpart (bodies: 229 identical, 234 address-only, 5 different); git diff --numstat v1.6.53..v1.6.54 -- '*.c' '*.h': 28 files, +1627/-1145",
+   "files_changed": 28,
+   "functions_changed_count": 4,
+   "verified_by_agent_run": true,
+   "cve_source": "CHANGES (v1.6.54)"
+  },
+  "sources": [
+   "https://github.com/pnggroup/libpng/releases/tag/v1.6.54",
+   "https://github.com/pnggroup/libpng/blob/v1.6.54/CHANGES"
+  ],
+  "risks": [
+   "11 ambiguous record(s) (source changed with identical code, or induced by macro/header/inlining) are excluded from changed-set scoring by design.",
+   "The release diff bundles every change between the pins, not only the CVE fixes; the CVE ids come from the project changelog section of the new release."
+  ]
+ },
+ {
+  "contract": "case-card/1",
+  "id": "libpng-v1.6.55-to-v1.6.56",
+  "project": "libpng",
+  "upstream_git": "https://github.com/pnggroup/libpng.git",
+  "license_spdx": "Libpng-2.0",
+  "license_evidence": "LICENSE at d5515b5b8be3901aac04e5bd8bd5c89f287bcd33: PNG Reference Library License version 2 / Permission is hereby granted to use, copy, modify, and distribute this software ... without fee (sha256 bdb0a645...a526; read at c3e30495 too, sha256 bdb0a645...a526)",
+  "old": {
+   "ref": "v1.6.55",
+   "commit": "c3e304954a9cfd154bc0dfbfea2b01cd61d6546d"
+  },
+  "new": {
+   "ref": "v1.6.56",
+   "commit": "d5515b5b8be3901aac04e5bd8bd5c89f287bcd33"
+  },
+  "kind": "cve-fix",
+  "cve": [
+   "CVE-2026-33416",
+   "CVE-2026-33636"
+  ],
+  "semantic_change": true,
+  "changed_functions": [
+   {
+    "name": "png_image_read_colormap",
+    "file": "pngread.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "png_image_read_and_map",
+    "file": "pngread.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "png_image_finish_read",
+    "file": "pngread.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "png_set_quantize",
+    "file": "pngrtran.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "png_read_transform_info",
+    "file": "pngrtran.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "png_set_eXIf_1",
+    "file": "pngset.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "png_set_hIST",
+    "file": "pngset.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "png_set_PLTE",
+    "file": "pngset.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "png_set_tRNS",
+    "file": "pngset.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "png_set_shift",
+    "file": "pngtrans.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "png_image_write_main",
+    "file": "pngwrite.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   }
+  ],
+  "unchanged_controls": [
+   "png_fp_sub",
+   "png_zalloc",
+   "png_zfree"
+  ],
+  "build": {
+   "system": "single",
+   "mingw_ok": "yes",
+   "recipe_notes": "tier_r recipe libpng (mingw-gcc 13-win32 -O2 -g, explicit file list from recipes.json, libpng16.dll)"
+  },
+  "verification": {
+   "method": "tools.calibration.tier_r factory.run_card on fetched pins (mingw-gcc 13-win32 O2): 468 project functions, 429 unchanged, 11 changed, 13 ambiguous, 0 no-counterpart (bodies: 178 identical, 276 address-only, 14 different); git diff --numstat v1.6.55..v1.6.56 -- '*.c' '*.h': 19 files, +294/-244",
+   "files_changed": 19,
+   "functions_changed_count": 11,
+   "verified_by_agent_run": true,
+   "cve_source": "CHANGES (v1.6.56)"
+  },
+  "sources": [
+   "https://github.com/pnggroup/libpng/releases/tag/v1.6.56",
+   "https://github.com/pnggroup/libpng/blob/v1.6.56/CHANGES"
+  ],
+  "risks": [
+   "13 ambiguous record(s) (source changed with identical code, or induced by macro/header/inlining) are excluded from changed-set scoring by design.",
+   "The release diff bundles every change between the pins, not only the CVE fixes; the CVE ids come from the project changelog section of the new release."
+  ]
+ },
+ {
+  "contract": "case-card/1",
+  "id": "expat-r_2_4_8-to-r_2_4_9",
+  "project": "expat",
+  "upstream_git": "https://github.com/libexpat/libexpat.git",
+  "license_spdx": "MIT",
+  "license_evidence": "expat/COPYING at d77291a4824d78e697c5dc2b8024fd65ab31e209: expat/COPYING: Copyright Thai Open Source Software Center Ltd and Clark Cooper / Expat maintainers. Permission is hereby granted, free of charge, to any person obtaining a copy of this software (MIT) (sha256 122f2c27...9534; read at 3bab6c09 too, sha256 8c6b5b6d...bdec)",
+  "old": {
+   "ref": "R_2_4_8",
+   "commit": "3bab6c09bbe8bf42d84b81563ddbcf4cca4be838"
+  },
+  "new": {
+   "ref": "R_2_4_9",
+   "commit": "d77291a4824d78e697c5dc2b8024fd65ab31e209"
+  },
+  "kind": "cve-fix",
+  "cve": [
+   "CVE-2022-40674"
+  ],
+  "semantic_change": true,
+  "changed_functions": [
+   {
+    "name": "processXmlDecl",
+    "file": "expat/lib/xmlparse.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "internalEntityProcessor",
+    "file": "expat/lib/xmlparse.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   }
+  ],
+  "unchanged_controls": [
+   "freeBindings",
+   "errorProcessor",
+   "normalizeLines"
+  ],
+  "build": {
+   "system": "single",
+   "mingw_ok": "yes",
+   "recipe_notes": "tier_r recipe expat (mingw-gcc 13-win32 -O2 -g, explicit file list from recipes.json, libexpat.dll)"
+  },
+  "verification": {
+   "method": "tools.calibration.tier_r factory.run_card on fetched pins (mingw-gcc 13-win32 O2): 288 project functions, 277 unchanged, 2 changed, 9 ambiguous, 0 no-counterpart (bodies: 177 identical, 104 address-only, 7 different); git diff --numstat R_2_4_8..R_2_4_9 -- '*.c' '*.h': 9 files, +108/-22",
+   "files_changed": 9,
+   "functions_changed_count": 2,
+   "verified_by_agent_run": true,
+   "cve_source": "expat/Changes (R_2_4_9)"
+  },
+  "sources": [
+   "https://github.com/libexpat/libexpat/releases/tag/R_2_4_9",
+   "https://github.com/libexpat/libexpat/blob/R_2_4_9/expat/Changes"
+  ],
+  "risks": [
+   "9 ambiguous record(s) (source changed with identical code, or induced by macro/header/inlining) are excluded from changed-set scoring by design.",
+   "The release diff bundles every change between the pins, not only the CVE fixes; the CVE ids come from the project changelog section of the new release."
+  ]
+ },
+ {
+  "contract": "case-card/1",
+  "id": "expat-r_2_6_1-to-r_2_6_2",
+  "project": "expat",
+  "upstream_git": "https://github.com/libexpat/libexpat.git",
+  "license_spdx": "MIT",
+  "license_evidence": "expat/COPYING at fa75b96546c069d17b8f80d91e0f4ef0cde3790d: expat/COPYING: Copyright Thai Open Source Software Center Ltd and Clark Cooper / Expat maintainers. Permission is hereby granted, free of charge, to any person obtaining a copy of this software (MIT) (sha256 122f2c27...9534; read at a590b2d5 too, sha256 122f2c27...9534)",
+  "old": {
+   "ref": "R_2_6_1",
+   "commit": "a590b2d5846865412182805b853dd91d18f38c8d"
+  },
+  "new": {
+   "ref": "R_2_6_2",
+   "commit": "fa75b96546c069d17b8f80d91e0f4ef0cde3790d"
+  },
+  "kind": "cve-fix",
+  "cve": [
+   "CVE-2024-28757"
+  ],
+  "semantic_change": true,
+  "changed_functions": [
+   {
+    "name": "storeEntityValue",
+    "file": "expat/lib/xmlparse.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   }
+  ],
+  "unchanged_controls": [
+   "freeBindings",
+   "errorProcessor",
+   "normalizeLines"
+  ],
+  "build": {
+   "system": "single",
+   "mingw_ok": "yes",
+   "recipe_notes": "tier_r recipe expat (mingw-gcc 13-win32 -O2 -g, explicit file list from recipes.json, libexpat.dll)"
+  },
+  "verification": {
+   "method": "tools.calibration.tier_r factory.run_card on fetched pins (mingw-gcc 13-win32 O2): 291 project functions, 283 unchanged, 1 changed, 7 ambiguous, 0 no-counterpart (bodies: 155 identical, 132 address-only, 4 different); git diff --numstat R_2_6_1..R_2_6_2 -- '*.c' '*.h': 5 files, +113/-5",
+   "files_changed": 5,
+   "functions_changed_count": 1,
+   "verified_by_agent_run": true,
+   "cve_source": "expat/Changes (R_2_6_2)"
+  },
+  "sources": [
+   "https://github.com/libexpat/libexpat/releases/tag/R_2_6_2",
+   "https://github.com/libexpat/libexpat/blob/R_2_6_2/expat/Changes"
+  ],
+  "risks": [
+   "7 ambiguous record(s) (source changed with identical code, or induced by macro/header/inlining) are excluded from changed-set scoring by design.",
+   "The release diff bundles every change between the pins, not only the CVE fixes; the CVE ids come from the project changelog section of the new release."
+  ]
+ },
+ {
+  "contract": "case-card/1",
+  "id": "expat-r_2_7_4-to-r_2_7_5",
+  "project": "expat",
+  "upstream_git": "https://github.com/libexpat/libexpat.git",
+  "license_spdx": "MIT",
+  "license_evidence": "expat/COPYING at f31adfd584b7f6c50bbf4d22eb928538ffc9145a: expat/COPYING: Copyright Thai Open Source Software Center Ltd and Clark Cooper / Expat maintainers. Permission is hereby granted, free of charge, to any person obtaining a copy of this software (MIT) (sha256 31b15de8...5e87; read at f5c2890d too, sha256 31b15de8...5e87)",
+  "old": {
+   "ref": "R_2_7_4",
+   "commit": "f5c2890d8ff91f88a018173d293a9bd02f76389e"
+  },
+  "new": {
+   "ref": "R_2_7_5",
+   "commit": "f31adfd584b7f6c50bbf4d22eb928538ffc9145a"
+  },
+  "kind": "cve-fix",
+  "cve": [
+   "CVE-2026-32776",
+   "CVE-2026-32777",
+   "CVE-2026-32778"
+  ],
+  "semantic_change": true,
+  "changed_functions": [
+   {
+    "name": "hashTableDestroy",
+    "file": "expat/lib/xmlparse.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "lookup",
+    "file": "expat/lib/xmlparse.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "processEntity",
+    "file": "expat/lib/xmlparse.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "handleUnknownEncoding",
+    "file": "expat/lib/xmlparse.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "parserInit",
+    "file": "expat/lib/xmlparse.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "defineAttribute",
+    "file": "expat/lib/xmlparse.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "nextScaffoldPart",
+    "file": "expat/lib/xmlparse.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "addBinding",
+    "file": "expat/lib/xmlparse.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "storeRawNames",
+    "file": "expat/lib/xmlparse.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "poolGrow",
+    "file": "expat/lib/xmlparse.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "setContext",
+    "file": "expat/lib/xmlparse.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "XML_ParserReset",
+    "file": "expat/lib/xmlparse.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "XML_SetEncoding",
+    "file": "expat/lib/xmlparse.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "XML_ParserFree",
+    "file": "expat/lib/xmlparse.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "parserCreate",
+    "file": "expat/lib/xmlparse.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "XML_ExternalEntityParserCreate",
+    "file": "expat/lib/xmlparse.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "XML_Parse",
+    "file": "expat/lib/xmlparse.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "XML_StopParser",
+    "file": "expat/lib/xmlparse.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "XML_GetParsingStatus",
+    "file": "expat/lib/xmlparse.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "XML_ExpatVersionInfo",
+    "file": "expat/lib/xmlparse.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "accountingDiffTolerated",
+    "file": "expat/lib/xmlparse.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "processXmlDecl",
+    "file": "expat/lib/xmlparse.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "doIgnoreSection",
+    "file": "expat/lib/xmlparse.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "epilogProcessor",
+    "file": "expat/lib/xmlparse.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "storeEntityValue",
+    "file": "expat/lib/xmlparse.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   }
+  ],
+  "unchanged_controls": [
+   "callProcessor",
+   "sip24_update",
+   "sip24_final"
+  ],
+  "build": {
+   "system": "single",
+   "mingw_ok": "yes",
+   "recipe_notes": "tier_r recipe expat (mingw-gcc 13-win32 -O2 -g, explicit file list from recipes.json, libexpat.dll)"
+  },
+  "verification": {
+   "method": "tools.calibration.tier_r factory.run_card on fetched pins (mingw-gcc 13-win32 O2): 296 project functions, 164 unchanged, 36 changed, 96 ambiguous, 0 no-counterpart (bodies: 145 identical, 112 address-only, 39 different); git diff --numstat R_2_7_4..R_2_7_5 -- '*.c' '*.h': 11 files, +146/-22; changed_functions lists the first 25 of 36 (sorted by file, name)",
+   "files_changed": 11,
+   "functions_changed_count": 36,
+   "verified_by_agent_run": true,
+   "cve_source": "expat/Changes (R_2_7_5)"
+  },
+  "sources": [
+   "https://github.com/libexpat/libexpat/releases/tag/R_2_7_5",
+   "https://github.com/libexpat/libexpat/blob/R_2_7_5/expat/Changes"
+  ],
+  "risks": [
+   "96 ambiguous record(s) (source changed with identical code, or induced by macro/header/inlining) are excluded from changed-set scoring by design.",
+   "The release diff bundles every change between the pins, not only the CVE fixes; the CVE ids come from the project changelog section of the new release."
+  ]
+ },
+ {
+  "contract": "case-card/1",
+  "id": "cjson-v1.7.17-to-v1.7.18",
+  "project": "cJSON",
+  "upstream_git": "https://github.com/DaveGamble/cJSON.git",
+  "license_spdx": "MIT",
+  "license_evidence": "LICENSE at acc76239bee01d8e9c858ae2cab296704e52d916: Copyright (c) Dave Gamble and cJSON contributors. Permission is hereby granted, free of charge, to any person obtaining a copy of this software (MIT) (sha256 a36dda20...6d5c; read at 87d8f096 too, sha256 a36dda20...6d5c)",
+  "old": {
+   "ref": "v1.7.17",
+   "commit": "87d8f0961a01bf09bef98ff89bae9fdec42181ee"
+  },
+  "new": {
+   "ref": "v1.7.18",
+   "commit": "acc76239bee01d8e9c858ae2cab296704e52d916"
+  },
+  "kind": "cve-fix",
+  "cve": [
+   "CVE-2024-31755"
+  ],
+  "semantic_change": true,
+  "changed_functions": [
+   {
+    "name": "cJSON_Delete",
+    "file": "cJSON.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "cJSON_SetValuestring",
+    "file": "cJSON.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   }
+  ],
+  "unchanged_controls": [
+   "parse_hex4",
+   "buffer_skip_whitespace",
+   "cJSON_GetErrorPtr"
+  ],
+  "build": {
+   "system": "single",
+   "mingw_ok": "yes",
+   "recipe_notes": "tier_r recipe cJSON (mingw-gcc 13-win32 -O2 -g, explicit file list from recipes.json, cjson.dll)"
+  },
+  "verification": {
+   "method": "tools.calibration.tier_r factory.run_card on fetched pins (mingw-gcc 13-win32 O2): 113 project functions, 105 unchanged, 2 changed, 6 ambiguous, 0 no-counterpart (bodies: 40 identical, 69 address-only, 4 different); git diff --numstat v1.7.17..v1.7.18 -- '*.c' '*.h': 4 files, +65/-4",
+   "files_changed": 4,
+   "functions_changed_count": 2,
+   "verified_by_agent_run": true,
+   "cve_source": "CHANGELOG.md (v1.7.18)"
+  },
+  "sources": [
+   "https://github.com/DaveGamble/cJSON/releases/tag/v1.7.18",
+   "https://github.com/DaveGamble/cJSON/blob/v1.7.18/CHANGELOG.md"
+  ],
+  "risks": [
+   "6 ambiguous record(s) (source changed with identical code, or induced by macro/header/inlining) are excluded from changed-set scoring by design.",
+   "The release diff bundles every change between the pins, not only the CVE fixes; the CVE ids come from the project changelog section of the new release."
+  ]
+ },
+ {
+  "contract": "case-card/1",
+  "id": "mbedtls-v3.6.2-to-v3.6.3",
+  "project": "mbedtls",
+  "upstream_git": "https://github.com/Mbed-TLS/mbedtls.git",
+  "license_spdx": "Apache-2.0",
+  "license_evidence": "LICENSE at 22098d41c6620ce07cf8a0134d37302355e1e5ef: LICENSE: Mbed TLS files are provided under a dual Apache-2.0 OR GPL-2.0-or-later license; users may choose which (Apache-2.0 recorded) (sha256 9b405ef4...d09b; read at 107ea89d too, sha256 9b405ef4...d09b)",
+  "old": {
+   "ref": "v3.6.2",
+   "commit": "107ea89daaefb9867ea9121002fbbdf926780e98"
+  },
+  "new": {
+   "ref": "v3.6.3",
+   "commit": "22098d41c6620ce07cf8a0134d37302355e1e5ef"
+  },
+  "kind": "cve-fix",
+  "cve": [
+   "CVE-2025-27809",
+   "CVE-2025-27810"
+  ],
+  "semantic_change": true,
+  "changed_functions": [
+   {
+    "name": "mbedtls_aesni_crypt_ecb",
+    "file": "library/aesni.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "mbedtls_mpi_core_exp_mod_optionally_safe",
+    "file": "library/bignum_core.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ccm_calculate_first_block_if_ready",
+    "file": "library/ccm.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "mbedtls_ecp_check_privkey",
+    "file": "library/ecp.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "mbedtls_high_level_strerr",
+    "file": "library/error.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "psa_import_key",
+    "file": "library/psa_crypto.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "mbedtls_psa_sign_hash_start",
+    "file": "library/psa_crypto.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "mbedtls_psa_verify_hash_start",
+    "file": "library/psa_crypto.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "psa_key_derivation_input_internal",
+    "file": "library/psa_crypto.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "psa_generate_derived_key_internal",
+    "file": "library/psa_crypto.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "psa_generate_key_custom",
+    "file": "library/psa_crypto.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "psa_crypto_local_input_free",
+    "file": "library/psa_crypto.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "psa_crypto_local_output_free",
+    "file": "library/psa_crypto.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "mbedtls_psa_ecp_generate_key",
+    "file": "library/psa_crypto_ecp.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "mbedtls_ecdsa_raw_to_der",
+    "file": "library/psa_util.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "mbedtls_ecdsa_der_to_raw",
+    "file": "library/psa_util.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "mbedtls_ssl_update_in_pointers",
+    "file": "library/ssl_msg.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "mbedtls_ssl_prepare_handshake_record",
+    "file": "library/ssl_msg.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "mbedtls_ssl_handle_message_type",
+    "file": "library/ssl_msg.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "mbedtls_ssl_session_reset_msg_layer",
+    "file": "library/ssl_tls.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "mbedtls_ssl_set_hostname",
+    "file": "library/ssl_tls.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "mbedtls_ssl_free",
+    "file": "library/ssl_tls.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "mbedtls_ssl_setup",
+    "file": "library/ssl_tls.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "mbedtls_ssl_context_save",
+    "file": "library/ssl_tls.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "mbedtls_ssl_write_finished",
+    "file": "library/ssl_tls.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   }
+  ],
+  "unchanged_controls": [
+   "mbedtls_aes_init",
+   "mbedtls_aes_xts_init",
+   "mbedtls_aes_xts_setkey_enc"
+  ],
+  "build": {
+   "system": "single",
+   "mingw_ok": "yes",
+   "recipe_notes": "tier_r recipe mbedtls (mingw-gcc 13-win32 -O2 -g, explicit file list from recipes.json, mbedtls.dll)"
+  },
+  "verification": {
+   "method": "tools.calibration.tier_r factory.run_card on fetched pins (mingw-gcc 13-win32 O2): 1573 project functions, 1382 unchanged, 29 changed, 156 ambiguous, 6 no-counterpart (bodies: 579 identical, 828 address-only, 148 different); git diff --numstat v3.6.2..v3.6.3 -- '*.c' '*.h': 136 files, +3438/-624; changed_functions lists the first 25 of 29 (sorted by file, name)",
+   "files_changed": 136,
+   "functions_changed_count": 29,
+   "verified_by_agent_run": true,
+   "cve_source": "ChangeLog (v3.6.3)"
+  },
+  "sources": [
+   "https://github.com/Mbed-TLS/mbedtls/releases/tag/v3.6.3",
+   "https://github.com/Mbed-TLS/mbedtls/blob/v3.6.3/ChangeLog"
+  ],
+  "risks": [
+   "156 ambiguous record(s) (source changed with identical code, or induced by macro/header/inlining) are excluded from changed-set scoring by design.",
+   "The release diff bundles every change between the pins, not only the CVE fixes; the CVE ids come from the project changelog section of the new release."
+  ]
+ },
+ {
+  "contract": "case-card/1",
+  "id": "mbedtls-v3.6.3-to-v3.6.4",
+  "project": "mbedtls",
+  "upstream_git": "https://github.com/Mbed-TLS/mbedtls.git",
+  "license_spdx": "Apache-2.0",
+  "license_evidence": "LICENSE at c765c831e5c2a0971410692f92f7a81d6ec65ec2: LICENSE: Mbed TLS files are provided under a dual Apache-2.0 OR GPL-2.0-or-later license; users may choose which (Apache-2.0 recorded) (sha256 9b405ef4...d09b; read at 22098d41 too, sha256 9b405ef4...d09b)",
+  "old": {
+   "ref": "v3.6.3",
+   "commit": "22098d41c6620ce07cf8a0134d37302355e1e5ef"
+  },
+  "new": {
+   "ref": "v3.6.4",
+   "commit": "c765c831e5c2a0971410692f92f7a81d6ec65ec2"
+  },
+  "kind": "cve-fix",
+  "cve": [
+   "CVE-2025-47917",
+   "CVE-2025-48965",
+   "CVE-2025-49087",
+   "CVE-2025-49600",
+   "CVE-2025-49601",
+   "CVE-2025-52496",
+   "CVE-2025-52497"
+  ],
+  "semantic_change": true,
+  "changed_functions": [
+   {
+    "name": "mbedtls_aesni_has_support",
+    "file": "library/aesni.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "mbedtls_asn1_write_raw_buffer",
+    "file": "library/asn1write.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "mbedtls_asn1_store_named_data",
+    "file": "library/asn1write.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "mbedtls_base64_decode",
+    "file": "library/base64.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "mbedtls_lmots_import_public_key",
+    "file": "library/lmots.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "mbedtls_lms_import_public_key",
+    "file": "library/lms.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "mbedtls_lms_verify",
+    "file": "library/lms.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "psa_key_derivation_start_hmac",
+    "file": "library/psa_crypto.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "psa_cipher_setup",
+    "file": "library/psa_crypto.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "psa_mac_setup",
+    "file": "library/psa_crypto.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "psa_aead_setup",
+    "file": "library/psa_crypto.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "psa_hash_clone",
+    "file": "library/psa_crypto.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "psa_key_derivation_tls12_prf_generate_next_block",
+    "file": "library/psa_crypto.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "psa_sign_hash_start",
+    "file": "library/psa_crypto.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "psa_verify_hash_start",
+    "file": "library/psa_crypto.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "psa_pake_setup",
+    "file": "library/psa_crypto.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ssl_parse_record_header",
+    "file": "library/ssl_msg.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "mbedtls_ssl_write_change_cipher_spec",
+    "file": "library/ssl_msg.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "mbedtls_ssl_parse_change_cipher_spec",
+    "file": "library/ssl_msg.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "tls_prf_generic",
+    "file": "library/ssl_tls.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "tls_prf_sha256",
+    "file": "library/ssl_tls.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "tls_prf_sha384",
+    "file": "library/ssl_tls.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ssl_tls12_populate_transform",
+    "file": "library/ssl_tls.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "mbedtls_ssl_handshake_step",
+    "file": "library/ssl_tls.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "mbedtls_ssl_session_reset_int",
+    "file": "library/ssl_tls.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   }
+  ],
+  "unchanged_controls": [
+   "mbedtls_aes_init",
+   "mbedtls_aes_xts_init",
+   "mbedtls_aes_xts_setkey_enc"
+  ],
+  "build": {
+   "system": "single",
+   "mingw_ok": "yes",
+   "recipe_notes": "tier_r recipe mbedtls (mingw-gcc 13-win32 -O2 -g, explicit file list from recipes.json, mbedtls.dll)"
+  },
+  "verification": {
+   "method": "tools.calibration.tier_r factory.run_card on fetched pins (mingw-gcc 13-win32 O2): 1576 project functions, 1441 unchanged, 40 changed, 88 ambiguous, 6 no-counterpart (bodies: 565 identical, 900 address-only, 93 different); git diff --numstat v3.6.3..v3.6.4 -- '*.c' '*.h': 125 files, +1317/-12903; changed_functions lists the first 25 of 40 (sorted by file, name)",
+   "files_changed": 125,
+   "functions_changed_count": 40,
+   "verified_by_agent_run": true,
+   "cve_source": "ChangeLog (v3.6.4)"
+  },
+  "sources": [
+   "https://github.com/Mbed-TLS/mbedtls/releases/tag/v3.6.4",
+   "https://github.com/Mbed-TLS/mbedtls/blob/v3.6.4/ChangeLog"
+  ],
+  "risks": [
+   "88 ambiguous record(s) (source changed with identical code, or induced by macro/header/inlining) are excluded from changed-set scoring by design.",
+   "The release diff bundles every change between the pins, not only the CVE fixes; the CVE ids come from the project changelog section of the new release."
+  ]
+ },
+ {
+  "contract": "case-card/1",
+  "id": "mbedtls-v3.6.4-to-v3.6.5",
+  "project": "mbedtls",
+  "upstream_git": "https://github.com/Mbed-TLS/mbedtls.git",
+  "license_spdx": "Apache-2.0",
+  "license_evidence": "LICENSE at e185d7fd85499c8ce5ca2a54f5cf8fe7dbe3f8df: LICENSE: Mbed TLS files are provided under a dual Apache-2.0 OR GPL-2.0-or-later license; users may choose which (Apache-2.0 recorded) (sha256 9b405ef4...d09b; read at c765c831 too, sha256 9b405ef4...d09b)",
+  "old": {
+   "ref": "v3.6.4",
+   "commit": "c765c831e5c2a0971410692f92f7a81d6ec65ec2"
+  },
+  "new": {
+   "ref": "v3.6.5",
+   "commit": "e185d7fd85499c8ce5ca2a54f5cf8fe7dbe3f8df"
+  },
+  "kind": "cve-fix",
+  "cve": [
+   "CVE-2025-54764",
+   "CVE-2025-59438"
+  ],
+  "semantic_change": true,
+  "changed_functions": [
+   {
+    "name": "mbedtls_mpi_gcd",
+    "file": "library/bignum.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "mbedtls_mpi_inv_mod",
+    "file": "library/bignum.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "mbedtls_get_pkcs_padding",
+    "file": "library/cipher.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "get_one_and_zeros_padding",
+    "file": "library/cipher.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "get_zeros_and_len_padding",
+    "file": "library/cipher.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "get_zeros_padding",
+    "file": "library/cipher.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "get_no_padding",
+    "file": "library/cipher.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "mbedtls_cipher_finish",
+    "file": "library/cipher.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "mbedtls_cipher_crypt",
+    "file": "library/cipher.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "mbedtls_ecdsa_sign_restartable",
+    "file": "library/ecdsa.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "mbedtls_ecdsa_verify_restartable",
+    "file": "library/ecdsa.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ecp_mul_comb_after_precomp",
+    "file": "library/ecp.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "psa_cipher_finish",
+    "file": "library/psa_crypto.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "psa_cipher_decrypt",
+    "file": "library/psa_crypto.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "mbedtls_psa_cipher_finish",
+    "file": "library/psa_crypto_cipher.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "mbedtls_psa_cipher_decrypt",
+    "file": "library/psa_crypto_cipher.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "mbedtls_rsa_gen_key",
+    "file": "library/rsa.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "mbedtls_rsa_deduce_primes",
+    "file": "library/rsa_alt_helpers.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "mbedtls_rsa_deduce_private_exponent",
+    "file": "library/rsa_alt_helpers.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   }
+  ],
+  "unchanged_controls": [
+   "mbedtls_aes_init",
+   "mbedtls_aes_xts_init",
+   "mbedtls_aes_xts_setkey_enc"
+  ],
+  "build": {
+   "system": "single",
+   "mingw_ok": "yes",
+   "recipe_notes": "tier_r recipe mbedtls (mingw-gcc 13-win32 -O2 -g, explicit file list from recipes.json, mbedtls.dll)"
+  },
+  "verification": {
+   "method": "tools.calibration.tier_r factory.run_card on fetched pins (mingw-gcc 13-win32 O2): 1582 project functions, 1505 unchanged, 19 changed, 49 ambiguous, 8 no-counterpart (bodies: 506 identical, 1021 address-only, 33 different); git diff --numstat v3.6.4..v3.6.5 -- '*.c' '*.h': 29 files, +970/-369",
+   "files_changed": 29,
+   "functions_changed_count": 19,
+   "verified_by_agent_run": true,
+   "cve_source": "ChangeLog (v3.6.5)"
+  },
+  "sources": [
+   "https://github.com/Mbed-TLS/mbedtls/releases/tag/v3.6.5",
+   "https://github.com/Mbed-TLS/mbedtls/blob/v3.6.5/ChangeLog"
+  ],
+  "risks": [
+   "49 ambiguous record(s) (source changed with identical code, or induced by macro/header/inlining) are excluded from changed-set scoring by design.",
+   "The release diff bundles every change between the pins, not only the CVE fixes; the CVE ids come from the project changelog section of the new release."
+  ]
+ },
+ {
+  "contract": "case-card/1",
+  "id": "brotli-v1.0.7-to-v1.0.8",
+  "project": "brotli",
+  "upstream_git": "https://github.com/google/brotli.git",
+  "license_spdx": "MIT",
+  "license_evidence": "LICENSE at db361a0bb901d6a71c7cbf1370d97b3703482e3b: Copyright (c) the Brotli Authors. Permission is hereby granted, free of charge, to any person obtaining a copy of this software (MIT) (sha256 3d180008...3c94; read at d6d98957 too, sha256 3d180008...3c94)",
+  "old": {
+   "ref": "v1.0.7",
+   "commit": "d6d98957ca8ccb1ef45922e978bb10efca0ea541"
+  },
+  "new": {
+   "ref": "v1.0.8",
+   "commit": "db361a0bb901d6a71c7cbf1370d97b3703482e3b"
+  },
+  "kind": "cve-fix",
+  "cve": [
+   "CVE-2020-8927"
+  ],
+  "semantic_change": true,
+  "changed_functions": [
+   {
+    "name": "CreateBackwardReferencesNH65",
+    "file": "c/enc/backward_references_inc.h",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "PrepareH5",
+    "file": "c/enc/hash_longest_match_inc.h",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "PrepareH6",
+    "file": "c/enc/hash_longest_match64_inc.h",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "PrepareH40",
+    "file": "c/enc/hash_forgetful_chain_inc.h",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "PrepareH41",
+    "file": "c/enc/hash_forgetful_chain_inc.h",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "PrepareH42",
+    "file": "c/enc/hash_forgetful_chain_inc.h",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "PrepareH65",
+    "file": "c/enc/hash_composite_inc.h",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "PrepareH35",
+    "file": "c/enc/hash_composite_inc.h",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "PrepareH55",
+    "file": "c/enc/hash_composite_inc.h",
+    "change": "source and code changed (factory label changed/source-diff)"
+   }
+  ],
+  "unchanged_controls": [
+   "RemapBlockIdsLiteral",
+   "RefineEntropyCodesDistance",
+   "RefineEntropyCodesCommand"
+  ],
+  "build": {
+   "system": "single",
+   "mingw_ok": "yes",
+   "recipe_notes": "tier_r recipe brotli (mingw-gcc 13-win32 -O2 -g, explicit file list from recipes.json, brotli.dll)"
+  },
+  "verification": {
+   "method": "tools.calibration.tier_r factory.run_card on fetched pins (mingw-gcc 13-win32 O2): 226 project functions, 6 unchanged, 9 changed, 175 ambiguous, 36 no-counterpart (bodies: 25 identical, 56 address-only, 109 different); git diff --numstat v1.0.7..v1.0.8 -- '*.c' '*.h': 60 files, +3960/-2402",
+   "files_changed": 60,
+   "functions_changed_count": 9,
+   "verified_by_agent_run": true,
+   "cve_source": "CHANGELOG.md (v1.1.0)"
+  },
+  "sources": [
+   "https://github.com/google/brotli/releases/tag/v1.0.8",
+   "https://github.com/google/brotli/blob/v1.1.0/CHANGELOG.md"
+  ],
+  "risks": [
+   "175 ambiguous record(s) (source changed with identical code, or induced by macro/header/inlining) are excluded from changed-set scoring by design.",
+   "The release diff bundles every change between the pins, not only the CVE fixes; the CVE ids come from the project changelog section of the new release."
+  ]
+ },
+ {
+  "contract": "case-card/1",
+  "id": "miniz-3.0.2-to-e680017",
+  "project": "miniz",
+  "upstream_git": "https://github.com/richgel999/miniz.git",
+  "license_spdx": "MIT",
+  "license_evidence": "LICENSE at e680017bae901240e8894062c0b0a3020eca42c1: Copyright RAD Game Tools and Valve Software / Rich Geldreich and Tenacious Software LLC. Permission is hereby granted, free of charge, to any person obtaining a copy of this software (MIT) (sha256 0115478d...46b3; read at 293d4db1 too, sha256 0115478d...46b3)",
+  "old": {
+   "ref": "3.0.2",
+   "commit": "293d4db1b7d0ffee9756d035b9ac6f7431ef8492"
+  },
+  "new": {
+   "ref": "e680017",
+   "commit": "e680017bae901240e8894062c0b0a3020eca42c1"
+  },
+  "kind": "cve-fix",
+  "cve": [
+   "CVE-2018-12913"
+  ],
+  "semantic_change": true,
+  "changed_functions": [
+   {
+    "name": "tinfl_decompress",
+    "file": "miniz_tinfl.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   }
+  ],
+  "unchanged_controls": [
+   "mz_adler32",
+   "mz_crc32"
+  ],
+  "build": {
+   "system": "single",
+   "mingw_ok": "yes",
+   "recipe_notes": "tier_r recipe miniz (mingw-gcc 13-win32 -O2 -g, explicit file list from recipes.json, miniz.dll)"
+  },
+  "verification": {
+   "method": "tools.calibration.tier_r factory.run_card on fetched pins (mingw-gcc 13-win32 O2): 140 project functions, 0 unchanged, 0 changed, 140 ambiguous, 0 no-counterpart (bodies: 94 identical, 45 address-only, 1 different); git diff --numstat 3.0.2..e680017 -- '*.c' '*.h': 1 files, +6/-0",
+   "files_changed": 1,
+   "functions_changed_count": 1,
+   "verified_by_agent_run": true,
+   "cve_source": "commit message of e680017"
+  },
+  "sources": [
+   "https://github.com/richgel999/miniz/commit/e680017bae901240e8894062c0b0a3020eca42c1",
+   "https://github.com/richgel999/miniz/compare/293d4db1b7d0ffee9756d035b9ac6f7431ef8492...e680017bae901240e8894062c0b0a3020eca42c1"
+  ],
+  "risks": [
+   "140 ambiguous record(s) (source changed with identical code, or induced by macro/header/inlining) are excluded from changed-set scoring by design.",
+   "Factory labels are all ambiguous (source span not found: tier_r/csrc.py skips the body of the file-level extern \"C\" block); the changed function comes from the git diff hunk header (6 lines added in tinfl_decompress, miniz_tinfl.c) and the controls have identical bodies per the factory body fact.",
+   "The release diff bundles every change between the pins, not only the CVE fixes; the CVE ids come from the project changelog section of the new release."
+  ]
+ }
+]

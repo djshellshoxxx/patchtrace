@@ -2,6 +2,7 @@
   "$id": "https://patchtrace.local/schemas/kev/1/KevEntry.json",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "additionalProperties": false,
+  "description": "One catalog entry in CISA's own words (cleaned to one line each), with the identity of its content.",
   "properties": {
     "contract": {
       "const": "kev/1",
@@ -10,12 +11,12 @@
       "type": "string"
     },
     "cve_id": {
-      "maxLength": 24,
       "pattern": "^CVE-[0-9]{4}-[0-9]{4,19}$",
       "title": "Cve Id",
       "type": "string"
     },
     "cwes": {
+      "default": [],
       "items": {
         "pattern": "^CWE-[0-9]{1,6}$",
         "type": "string"
@@ -51,16 +52,20 @@
     },
     "name": {
       "maxLength": 256,
+      "minLength": 0,
       "title": "Name",
       "type": "string"
     },
     "notes": {
+      "default": "",
       "maxLength": 4096,
+      "minLength": 0,
       "title": "Notes",
       "type": "string"
     },
     "product": {
       "maxLength": 256,
+      "minLength": 0,
       "title": "Product",
       "type": "string"
     },
@@ -76,16 +81,19 @@
     },
     "required_action": {
       "maxLength": 2048,
+      "minLength": 0,
       "title": "Required Action",
       "type": "string"
     },
     "short_description": {
       "maxLength": 4096,
+      "minLength": 0,
       "title": "Short Description",
       "type": "string"
     },
     "vendor_project": {
       "maxLength": 128,
+      "minLength": 0,
       "title": "Vendor Project",
       "type": "string"
     }
@@ -97,13 +105,11 @@
     "name",
     "date_added",
     "due_date",
-    "cwes",
     "ransomware_use",
     "forensic_triage",
-    "entry_digest",
     "short_description",
     "required_action",
-    "notes"
+    "entry_digest"
   ],
   "title": "KevEntry",
   "type": "object"

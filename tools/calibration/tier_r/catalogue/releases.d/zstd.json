@@ -1,0 +1,509 @@
+[
+ {
+  "contract": "case-card/1",
+  "id": "zstd-v1.4.9-to-v1.5.0",
+  "project": "zstd",
+  "upstream_git": "https://github.com/facebook/zstd.git",
+  "license_spdx": "BSD-3-Clause",
+  "license_evidence": "LICENSE at a488ba114ec17ea1054b9057c26a046fc122b3b6: BSD License / For Zstandard software / Redistribution and use in source and binary forms, with or without modification, are permitted (sha256 2c1a7fa7...1a0b; read at e4558ffd too, sha256 2c1a7fa7...1a0b)",
+  "old": {
+   "ref": "v1.4.9",
+   "commit": "e4558ffd1dc49399faf4ee5d85abed4386b4dcf5"
+  },
+  "new": {
+   "ref": "v1.5.0",
+   "commit": "a488ba114ec17ea1054b9057c26a046fc122b3b6"
+  },
+  "kind": "release",
+  "cve": [],
+  "semantic_change": true,
+  "changed_functions": [
+   {
+    "name": "HUF_writeCTable",
+    "file": "lib/compress/huf_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "HUF_compress_internal",
+    "file": "lib/compress/huf_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ZSTD_makeCCtxParamsFromCParams",
+    "file": "lib/compress/zstd_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ZSTD_buildSeqStore",
+    "file": "lib/compress/zstd_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ZSTD_estimateCCtxSize_usingCCtxParams_internal",
+    "file": "lib/compress/zstd_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ZSTD_copyBlockSequences",
+    "file": "lib/compress/zstd_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ZSTD_loadDictionaryContent",
+    "file": "lib/compress/zstd_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ZSTD_reset_matchState",
+    "file": "lib/compress/zstd_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ZSTD_resetCCtx_internal",
+    "file": "lib/compress/zstd_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ZSTD_cParam_getBounds",
+    "file": "lib/compress/zstd_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ZSTD_CCtxParams_setParameter",
+    "file": "lib/compress/zstd_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ZSTD_CCtx_setParameter",
+    "file": "lib/compress/zstd_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ZSTD_CCtxParams_getParameter",
+    "file": "lib/compress/zstd_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ZSTD_estimateCCtxSize_usingCCtxParams",
+    "file": "lib/compress/zstd_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ZSTD_estimateCCtxSize_usingCParams",
+    "file": "lib/compress/zstd_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ZSTD_estimateCStreamSize_usingCCtxParams",
+    "file": "lib/compress/zstd_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ZSTD_estimateCStreamSize_usingCParams",
+    "file": "lib/compress/zstd_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ZSTD_compressBlock_internal",
+    "file": "lib/compress/zstd_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ZSTD_compressContinue_internal",
+    "file": "lib/compress/zstd_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ZSTD_selectBlockCompressor",
+    "file": "lib/compress/zstd_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ZSTD_compressBegin_internal",
+    "file": "lib/compress/zstd_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ZSTD_initCDict_internal",
+    "file": "lib/compress/zstd_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ZSTD_compress_advanced",
+    "file": "lib/compress/zstd_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ZSTD_compress_usingDict",
+    "file": "lib/compress/zstd_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ZSTD_estimateCDictSize_advanced",
+    "file": "lib/compress/zstd_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   }
+  ],
+  "unchanged_controls": [
+   "FSE_versionNumber",
+   "FSE_isError",
+   "FSE_getErrorName"
+  ],
+  "build": {
+   "system": "single",
+   "mingw_ok": "yes",
+   "recipe_notes": "tier_r recipe zstd (mingw-gcc 13-win32 -O2 -g, explicit file list from recipes.json, libzstd.dll)"
+  },
+  "verification": {
+   "method": "tools.calibration.tier_r factory.run_card on fetched pins (mingw-gcc 13-win32 O2): 514 project functions, 234 unchanged, 42 changed, 206 ambiguous, 32 no-counterpart (bodies: 133 identical, 121 address-only, 228 different); git diff --numstat v1.4.9..v1.5.0 -- '*.c' '*.h': 191 files, +4675/-2398; changed_functions lists the first 25 of 42 (sorted by file, name)",
+   "files_changed": 191,
+   "functions_changed_count": 42,
+   "verified_by_agent_run": true
+  },
+  "sources": [
+   "https://github.com/facebook/zstd/releases/tag/v1.5.0",
+   "https://github.com/facebook/zstd/compare/v1.4.9...v1.5.0"
+  ],
+  "risks": [
+   "206 ambiguous record(s) (source changed with identical code, or induced by macro/header/inlining) are excluded from changed-set scoring by design."
+  ]
+ },
+ {
+  "contract": "case-card/1",
+  "id": "zstd-v1.5.5-to-v1.5.6",
+  "project": "zstd",
+  "upstream_git": "https://github.com/facebook/zstd.git",
+  "license_spdx": "BSD-3-Clause",
+  "license_evidence": "LICENSE at 794ea1b0afca0f020f4e57b6732332231fb23c70: BSD License / For Zstandard software / Redistribution and use in source and binary forms, with or without modification, are permitted (sha256 70552664...c9d8; read at 63779c79 too, sha256 70552664...c9d8)",
+  "old": {
+   "ref": "v1.5.5",
+   "commit": "63779c798237346c2b245c546c40b72a5a5913fe"
+  },
+  "new": {
+   "ref": "v1.5.6",
+   "commit": "794ea1b0afca0f020f4e57b6732332231fb23c70"
+  },
+  "kind": "release",
+  "cve": [],
+  "semantic_change": true,
+  "changed_functions": [
+   {
+    "name": "HUF_readCTable",
+    "file": "lib/compress/huf_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "HUF_getNbBitsFromCTable",
+    "file": "lib/compress/huf_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "HUF_validateCTable",
+    "file": "lib/compress/huf_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "HUF_compress_internal",
+    "file": "lib/compress/huf_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ZSTD_sizeof_matchState",
+    "file": "lib/compress/zstd_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ZSTD_copySequencesToSeqStoreExplicitBlockDelim",
+    "file": "lib/compress/zstd_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ZSTD_copyBlockSequences",
+    "file": "lib/compress/zstd_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ZSTD_copySequencesToSeqStoreNoBlockDelim",
+    "file": "lib/compress/zstd_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ZSTD_buildSeqStore",
+    "file": "lib/compress/zstd_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ZSTD_reset_matchState",
+    "file": "lib/compress/zstd_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ZSTD_resetCCtx_internal",
+    "file": "lib/compress/zstd_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ZSTD_CCtxParams_setParameter",
+    "file": "lib/compress/zstd_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ZSTD_estimateCCtxSize_usingCCtxParams",
+    "file": "lib/compress/zstd_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ZSTD_estimateCStreamSize_usingCCtxParams",
+    "file": "lib/compress/zstd_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ZSTD_compressBlock_internal",
+    "file": "lib/compress/zstd_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ZSTD_compressSeqStore_singleBlock",
+    "file": "lib/compress/zstd_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ZSTD_sequenceBound",
+    "file": "lib/compress/zstd_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ZSTD_referenceExternalSequences",
+    "file": "lib/compress/zstd_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ZSTD_loadCEntropy",
+    "file": "lib/compress/zstd_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ZSTD_freeCCtx",
+    "file": "lib/compress/zstd_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ZSTD_CCtx_reset",
+    "file": "lib/compress/zstd_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ZSTD_createCDict_advanced2",
+    "file": "lib/compress/zstd_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ZSTD_CCtx_init_compressStream2",
+    "file": "lib/compress/zstd_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ZSTD_generateSequences",
+    "file": "lib/compress/zstd_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ZSTD_registerSequenceProducer",
+    "file": "lib/compress/zstd_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   }
+  ],
+  "unchanged_controls": [
+   "FSE_versionNumber",
+   "FSE_isError",
+   "FSE_getErrorName"
+  ],
+  "build": {
+   "system": "single",
+   "mingw_ok": "yes",
+   "recipe_notes": "tier_r recipe zstd (mingw-gcc 13-win32 -O2 -g, explicit file list from recipes.json, libzstd.dll)"
+  },
+  "verification": {
+   "method": "tools.calibration.tier_r factory.run_card on fetched pins (mingw-gcc 13-win32 O2): 563 project functions, 233 unchanged, 63 changed, 252 ambiguous, 13 no-counterpart (bodies: 164 identical, 187 address-only, 199 different); git diff --numstat v1.5.5..v1.5.6 -- '*.c' '*.h': 92 files, +6763/-3320; changed_functions lists the first 25 of 63 (sorted by file, name)",
+   "files_changed": 92,
+   "functions_changed_count": 63,
+   "verified_by_agent_run": true
+  },
+  "sources": [
+   "https://github.com/facebook/zstd/releases/tag/v1.5.6",
+   "https://github.com/facebook/zstd/compare/v1.5.5...v1.5.6"
+  ],
+  "risks": [
+   "252 ambiguous record(s) (source changed with identical code, or induced by macro/header/inlining) are excluded from changed-set scoring by design."
+  ]
+ },
+ {
+  "contract": "case-card/1",
+  "id": "zstd-v1.5.6-to-v1.5.7",
+  "project": "zstd",
+  "upstream_git": "https://github.com/facebook/zstd.git",
+  "license_spdx": "BSD-3-Clause",
+  "license_evidence": "LICENSE at f8745da6ff1ad1e7bab384bd1f9d742439278e99: BSD License / For Zstandard software / Redistribution and use in source and binary forms, with or without modification, are permitted (sha256 70552664...c9d8; read at 794ea1b0 too, sha256 70552664...c9d8)",
+  "old": {
+   "ref": "v1.5.6",
+   "commit": "794ea1b0afca0f020f4e57b6732332231fb23c70"
+  },
+  "new": {
+   "ref": "v1.5.7",
+   "commit": "f8745da6ff1ad1e7bab384bd1f9d742439278e99"
+  },
+  "kind": "release",
+  "cve": [],
+  "semantic_change": true,
+  "changed_functions": [
+   {
+    "name": "ERR_getErrorString",
+    "file": "lib/common/error_private.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ZSTD_estimateCCtxSize_usingCCtxParams_internal",
+    "file": "lib/compress/zstd_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ZSTD_CCtxParams_init_internal",
+    "file": "lib/compress/zstd_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ZSTD_makeCCtxParamsFromCParams",
+    "file": "lib/compress/zstd_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ZSTD_overflowCorrectIfNeeded",
+    "file": "lib/compress/zstd_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ZSTD_loadDictionaryContent",
+    "file": "lib/compress/zstd_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ZSTD_buildSeqStore",
+    "file": "lib/compress/zstd_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ZSTD_resetCCtx_internal",
+    "file": "lib/compress/zstd_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ZSTD_initStaticCCtx",
+    "file": "lib/compress/zstd_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ZSTD_getSeqStore",
+    "file": "lib/compress/zstd_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ZSTD_cParam_getBounds",
+    "file": "lib/compress/zstd_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ZSTD_CCtxParams_setParameter",
+    "file": "lib/compress/zstd_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ZSTD_CCtx_setParameter",
+    "file": "lib/compress/zstd_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ZSTD_CCtxParams_getParameter",
+    "file": "lib/compress/zstd_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ZSTD_checkCParams",
+    "file": "lib/compress/zstd_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ZSTD_CCtx_setCParams",
+    "file": "lib/compress/zstd_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ZSTD_getCParamsFromCCtxParams",
+    "file": "lib/compress/zstd_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ZSTD_estimateCCtxSize_usingCCtxParams",
+    "file": "lib/compress/zstd_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ZSTD_estimateCStreamSize_usingCCtxParams",
+    "file": "lib/compress/zstd_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ZSTD_compressBlock_internal",
+    "file": "lib/compress/zstd_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ZSTD_compressSeqStore_singleBlock",
+    "file": "lib/compress/zstd_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ZSTD_buildEntropyStatisticsAndEstimateSubBlockSize",
+    "file": "lib/compress/zstd_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ZSTD_deriveBlockSplitsHelper",
+    "file": "lib/compress/zstd_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ZSTD_compressContinue_internal",
+    "file": "lib/compress/zstd_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   },
+   {
+    "name": "ZSTD_compressBegin_internal",
+    "file": "lib/compress/zstd_compress.c",
+    "change": "source and code changed (factory label changed/source-diff)"
+   }
+  ],
+  "unchanged_controls": [
+   "FSE_versionNumber",
+   "FSE_isError",
+   "FSE_getErrorName"
+  ],
+  "build": {
+   "system": "single",
+   "mingw_ok": "yes",
+   "recipe_notes": "tier_r recipe zstd (mingw-gcc 13-win32 -O2 -g, explicit file list from recipes.json, libzstd.dll)"
+  },
+  "verification": {
+   "method": "tools.calibration.tier_r factory.run_card on fetched pins (mingw-gcc 13-win32 O2): 575 project functions, 249 unchanged, 80 changed, 224 ambiguous, 19 no-counterpart (bodies: 237 identical, 172 address-only, 147 different); git diff --numstat v1.5.6..v1.5.7 -- '*.c' '*.h': 100 files, +4394/-2218; changed_functions lists the first 25 of 80 (sorted by file, name)",
+   "files_changed": 100,
+   "functions_changed_count": 80,
+   "verified_by_agent_run": true
+  },
+  "sources": [
+   "https://github.com/facebook/zstd/releases/tag/v1.5.7",
+   "https://github.com/facebook/zstd/compare/v1.5.6...v1.5.7"
+  ],
+  "risks": [
+   "224 ambiguous record(s) (source changed with identical code, or induced by macro/header/inlining) are excluded from changed-set scoring by design."
+  ]
+ }
+]

@@ -4,13 +4,12 @@
       "additionalProperties": false,
       "properties": {
         "after": {
-          "$ref": "#/$defs/KevFacts"
+          "$ref": "#/$defs/KevTracked"
         },
         "before": {
-          "$ref": "#/$defs/KevFacts"
+          "$ref": "#/$defs/KevTracked"
         },
         "cve_id": {
-          "maxLength": 24,
           "pattern": "^CVE-[0-9]{4}-[0-9]{4,19}$",
           "title": "Cve Id",
           "type": "string"
@@ -24,9 +23,9 @@
       "title": "KevChange",
       "type": "object"
     },
-    "KevFacts": {
+    "KevTracked": {
       "additionalProperties": false,
-      "description": "The entry fields whose change between snapshots is reported.",
+      "description": "The entry fields whose change matters to a reader of the delta.",
       "properties": {
         "cwes": {
           "items": {
@@ -69,17 +68,17 @@
         "forensic_triage",
         "cwes"
       ],
-      "title": "KevFacts",
+      "title": "KevTracked",
       "type": "object"
     }
   },
   "$id": "https://patchtrace.local/schemas/kev/1/KevDelta.json",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "additionalProperties": false,
+  "description": "Difference between two stored catalogs. Lists are cut at ``MAX_DELTA_IDS``; the counts are always the truth.",
   "properties": {
     "added": {
       "items": {
-        "maxLength": 24,
         "pattern": "^CVE-[0-9]{4}-[0-9]{4,19}$",
         "type": "string"
       },
@@ -88,7 +87,6 @@
       "type": "array"
     },
     "added_count": {
-      "maximum": 20000,
       "minimum": 0,
       "title": "Added Count",
       "type": "integer"
@@ -102,7 +100,6 @@
       "type": "array"
     },
     "changed_count": {
-      "maximum": 20000,
       "minimum": 0,
       "title": "Changed Count",
       "type": "integer"
@@ -113,12 +110,6 @@
       "title": "Contract",
       "type": "string"
     },
-    "from_catalog_version": {
-      "maxLength": 32,
-      "minLength": 1,
-      "title": "From Catalog Version",
-      "type": "string"
-    },
     "from_snapshot_id": {
       "pattern": "^[0-9a-f]{64}$",
       "title": "From Snapshot Id",
@@ -126,7 +117,6 @@
     },
     "removed": {
       "items": {
-        "maxLength": 24,
         "pattern": "^CVE-[0-9]{4}-[0-9]{4,19}$",
         "type": "string"
       },
@@ -135,16 +125,9 @@
       "type": "array"
     },
     "removed_count": {
-      "maximum": 20000,
       "minimum": 0,
       "title": "Removed Count",
       "type": "integer"
-    },
-    "to_catalog_version": {
-      "maxLength": 32,
-      "minLength": 1,
-      "title": "To Catalog Version",
-      "type": "string"
     },
     "to_snapshot_id": {
       "pattern": "^[0-9a-f]{64}$",
@@ -155,8 +138,6 @@
   "required": [
     "from_snapshot_id",
     "to_snapshot_id",
-    "from_catalog_version",
-    "to_catalog_version",
     "added",
     "removed",
     "changed",

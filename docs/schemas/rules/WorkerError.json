@@ -1,0 +1,52 @@
+{
+  "$id": "https://patchtrace.local/schemas/rules/1/WorkerError.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "code": {
+      "enum": [
+        "PT-RULE-INPUT",
+        "PT-RULE-LIMIT",
+        "PT-RULE-STALE",
+        "PT-RULE-INTEGRITY",
+        "PT-RULE-UNAVAILABLE",
+        "PT-RULE-ENGINE",
+        "PT-RULE-TIMEOUT",
+        "PT-RULE-CANCEL",
+        "PT-RULE-MASK",
+        "PT-RULE-DECODE",
+        "PT-RULE-COMPILE",
+        "PT-RULE-GATE",
+        "PT-RULE-STORAGE",
+        "PT-RULE-EXPORT"
+      ],
+      "title": "Code",
+      "type": "string"
+    },
+    "message": {
+      "maxLength": 400,
+      "minLength": 1,
+      "title": "Message",
+      "type": "string"
+    },
+    "reason": {
+      "anyOf": [
+        {
+          "pattern": "^[a-z0-9-]{1,48}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Reason"
+    }
+  },
+  "required": [
+    "code",
+    "message"
+  ],
+  "title": "WorkerError",
+  "type": "object"
+}

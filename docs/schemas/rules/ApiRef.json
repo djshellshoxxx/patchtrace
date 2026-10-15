@@ -1,0 +1,25 @@
+{
+  "$id": "https://patchtrace.local/schemas/rules/1/ApiRef.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "dll": {
+      "maxLength": 256,
+      "minLength": 1,
+      "title": "Dll",
+      "type": "string"
+    },
+    "name": {
+      "maxLength": 256,
+      "minLength": 1,
+      "title": "Name",
+      "type": "string"
+    }
+  },
+  "required": [
+    "dll",
+    "name"
+  ],
+  "title": "ApiRef",
+  "type": "object"
+}

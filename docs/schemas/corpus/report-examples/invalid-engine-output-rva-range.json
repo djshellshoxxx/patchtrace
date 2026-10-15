@@ -1,0 +1,34 @@
+{
+ "contract": "tier-r-engine-output/1",
+ "engine": "rz-diff",
+ "ignored_unaddressed": 0,
+ "implicit_unchanged": false,
+ "new_only_rvas": [
+  4176
+ ],
+ "newer_sha256": "197f7e03a9fffa9cc9a290cf406780b8ec08b2a2bf3d3fc84b5ccf6c9837ea75",
+ "old_only_rvas": [
+  4160
+ ],
+ "older_sha256": "116b7826bc4f22d202aac3a1999f2f25578bd3da084f71628ca7995720c2fd84",
+ "predictions": [
+  {
+   "changed": false,
+   "new_name": "fcn.180001000",
+   "new_rva": 4096,
+   "old_name": "fcn.180001000",
+   "old_rva": 4294967296,
+   "similarity_milli": 1000
+  },
+  {
+   "changed": true,
+   "new_name": null,
+   "new_rva": 4112,
+   "old_name": null,
+   "old_rva": 4112,
+   "similarity_milli": 874
+  }
+ ],
+ "symbols": "hidden",
+ "version": "0.9.1"
+}

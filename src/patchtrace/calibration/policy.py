@@ -10,10 +10,13 @@ from collections.abc import Mapping
 from dataclasses import dataclass
 from typing import Literal
 
-from .artifact import CalibrationArtifact, LoadResult, load_bundled
+from .artifact import CalibrationArtifact, LoadResult, load_bundled, windows_scope_ok
 from .features import FeatureRow
 from .predict import Prediction, predict
 
+# Mirrors tools.calibration.gates.G0_MIN['n_lineages'] (pinned equal by a test): an artifact whose calibration
+# domain rests on fewer independent code sets than this never raises the display level, whatever gates it carries.
+MIN_LINEAGES_FOR_CLAIM = 40
 DisplayLevel = Literal['ordinal', 'bands', 'numeric']
 Decision = Literal['auto-accept', 'review', 'likely-wrong', 'manual', 'abstain']
 
@@ -28,8 +31,10 @@ class PolicyResult:
 
 
 def artifact_display_level(artifact: CalibrationArtifact | None) -> DisplayLevel:
-    if artifact is None:
-        return 'ordinal'
+    if artifact is None or not windows_scope_ok(artifact):
+        return 'ordinal'  # synthetic (Tier R only) evidence can never raise the display level
+    if artifact.calibration_domain.n_lineages < MIN_LINEAGES_FOR_CLAIM:
+        return 'ordinal'  # too few independent code sets for any calibrated claim
     gates = artifact.evidence.gates
     if (artifact.status == 'numeric-ok' and artifact.policy.display == 'number'
             and all(gates.get(g) == 'pass' for g in ('G0', 'G2', 'G3'))):
