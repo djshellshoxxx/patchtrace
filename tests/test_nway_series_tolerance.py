@@ -1,4 +1,5 @@
 """SPEC-09b section 4: tolerant discovery, recoverable save and classified staleness."""
+import pytest
 from test_nway_series import builds, create, populated  # noqa: F401, F811  (fixture and helper reuse)
 
 from patchtrace.nway import series as store
@@ -79,3 +80,30 @@ def test_staleness_survives_a_damaged_pair_and_evaluates_others(builds, tmp_path
     stale = store.staleness(series, root / 'series.json')
     assert 0 in stale.pairs and 1 not in stale.pairs
     assert len(stale.reasons) == 1 and stale.reasons[0].startswith('pair 0')
+
+
+def test_ser1_save_refuses_oversized_series_before_writing(builds, tmp_path, capsys, monkeypatch):  # noqa: F811
+    root = tmp_path / 's'
+    assert create(capsys, builds[:3], root)[0] == 0
+    path = root / 'series.json'
+    series = store.load(path)
+    size = path.stat().st_size
+    path.unlink()
+    monkeypatch.setattr(store, 'MAX_SERIES_BYTES', size - 1)
+    with pytest.raises(store.NwayError, match='PT-NWAY-LIMIT'):
+        store.save(series, path)
+    assert not path.exists()
+
+
+def test_ser1_replace_corrupt_replaces_an_oversized_file(builds, tmp_path, capsys, monkeypatch):  # noqa: F811
+    root = tmp_path / 's'
+    assert create(capsys, builds[:3], root)[0] == 0
+    path = root / 'series.json'
+    series, good = store.load(path), path.read_bytes()
+    monkeypatch.setattr(store, 'MAX_SERIES_BYTES', len(good) + 10)
+    path.write_bytes(b' ' * (len(good) + 11))
+    with pytest.raises(store.NwayError, match='--replace-corrupt'):
+        store.save(series, path)
+    store.save(series, path, replace_corrupt=True)
+    assert path.read_bytes() == good
+    assert len(list(root.glob('series.json.corrupt-*'))) == 1
