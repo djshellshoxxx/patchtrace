@@ -95,7 +95,7 @@ def test_first_paint_sort_and_filter_stay_inside_the_budget(table, prepared_10k,
     model = table.table_model
     visible = table.viewport().height() // table.verticalHeader().defaultSectionSize() + 2
     ceiling = 7 * visible * CELLS_PER_ROW * 1.2 + 20
-    time_limit = 0.5 if size == 10_000 else 1.5  # >= the measured 29 ms and 235 ms by a wide margin; Windows CI re-measures
+    time_limit = 2.0 if size == 10_000 else 6.0  # wall time is only a coarse backstop on shared CI CPUs (measured 29 ms and 235 ms); the data() call ceiling above is the real gate
 
     for label, action in (('reset', lambda: table.set_prepared(prepared)),
                           ('sort', lambda: table.horizontalHeader().setSortIndicator(1, Qt.SortOrder.DescendingOrder)),
