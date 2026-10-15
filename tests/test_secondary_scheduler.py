@@ -1,6 +1,7 @@
 """SPEC-28 §5/§10: scheduler semantics. Fake engines are `sys.executable -c` argv (portable, no shebangs)."""
 from __future__ import annotations
 
+import hashlib
 import json
 import os
 import shutil
@@ -20,7 +21,7 @@ from patchtrace.secondary.registry import (
 )
 from patchtrace.secondary.scheduler import ProjectRef, run_engines
 
-OLD, NEW = 'a' * 64, 'b' * 64
+OLD_BYTES, NEW_BYTES = b'old-artifact', b'new-artifact'
 GOOD = json.dumps([{'similarity': 0.5, 'type': 'PARTIAL', 'original': {'addr': 1, 'name': 'f', 'size': 1},
                     'modified': {'addr': 2, 'name': 'g', 'size': 1}}])
 
@@ -71,7 +72,10 @@ def _alive(pid: int) -> bool:
 
 
 def project(tmp_path):
-    return ProjectRef(tmp_path / 'old', tmp_path / 'new', OLD, NEW)
+    (tmp_path / 'old').write_bytes(OLD_BYTES)
+    (tmp_path / 'new').write_bytes(NEW_BYTES)
+    return ProjectRef(tmp_path / 'old', tmp_path / 'new', hashlib.sha256(OLD_BYTES).hexdigest(),
+                      hashlib.sha256(NEW_BYTES).hexdigest())
 
 
 def go(tmp_path, registry, engines, **kw):

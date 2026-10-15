@@ -1288,7 +1288,8 @@ class EvidenceController(ControllerBase):
             return
         sides = {a.side: a.sha256 for a in project.artifacts}
         try:
-            match_set = import_bindiff(Path(path), sides['older'], sides['newer'])
+            raw_dir = Path(self.port.service.root) / 'runs' / run.id / 'raw' / 'secondary'
+            match_set = import_bindiff(Path(path), sides['older'], sides['newer'], preserve_dir=raw_dir)
             guard = Guard(project.id, run.id, run.raw_sha256, match_set.file_sha256)
             record_import(EnrichmentStore(self.port.service.store), guard, project.revision, match_set)
         except Exception as exc:  # noqa: BLE001 - shown as plain text
