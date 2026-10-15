@@ -57,8 +57,6 @@ def test_corrupt_deflate_data_is_a_typed_unreadable_refusal(tmp_path):
     assert info.value.reason in {'part-unreadable', 'part-truncated'}
 
 
-@pytest.mark.xfail(strict=True, reason='QA-S2-4: part_lines applies LINE_MAX_BYTES only to an unterminated tail, so a '
-                   'newline-terminated line above the 4 MiB cap is yielded to parse_line')
 def test_terminated_oversized_line_is_refused_by_the_reader(tmp_path):
     target = tmp_path / 'long'
     _gzip_bytes(target, b'{"x":"' + b'a' * (LINE_MAX_BYTES + 4096) + b'"}\n')
