@@ -242,3 +242,9 @@ def test_stored_anchors_come_from_the_imported_advisory(tmp_path):
                                                     retrieved_at='2099-03-01T00:00:00Z')
         found, _ = stored_anchors(service, 'CVE-2099-10001')
     assert found is not None and found.cve == 'CVE-2099-10001' and found.anchors
+
+
+def test_text_mode_never_prints_control_or_bidi_characters(tmp_path):
+    code, out, err = run(tmp_path, '--query', 'zz\x1b[31m‮qq')
+    assert code in (0, 2, 3, 4)
+    assert not [c for c in out + err if c != '\n' and c in '\x1b‮'], (out, err)
