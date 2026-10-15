@@ -78,7 +78,8 @@ def _read_bounded(path: Path, limit: int) -> bytes:
 
 
 def validate_binexport(path: Path, artifact_sha256: str, bindings=None) -> BinExportResult:
-    """In-process validation (no worker, no snapshot). Prefer `binexport_run.accept_binexport`."""
+    """Test-only in-process validation of hostile input (no worker, no deadline, no memory cap). Production code
+    must use `binexport_run.accept_binexport`."""
     path = Path(path)
     try:
         size = path.stat().st_size
