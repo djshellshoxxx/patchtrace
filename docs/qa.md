@@ -1004,3 +1004,6 @@ Goldens are derived from committed tool output, not from a new live capture; the
 
 ### [D8:live-buildenv]
 - Locally both cases record BLOCKED (no diec here); the job is dispatch-only. Not verified: any live run, including the golden equality and the provisioning step with `--engine diec`.
+
+### [LBL-20/21:tier-w-fetch-symbols]
+Automated: `tests/test_tier_w_fetch.py` (33 passed) and `tests/test_tier_w_symbols.py` (29 passed, 1 xfailed). The xfail is the live Ghidra export, recorded BLOCKED (no Ghidra on the runner). The live llvm-pdbutil parity test ran against the self-made PDB (LLVM 18.1.3). Not evidenced: any real Microsoft download or PDB (O1, owner only).
