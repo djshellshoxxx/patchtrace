@@ -560,3 +560,7 @@
 ### [UE4:code-panes]
 - [x] Decompiled-C side by side in `CodeDiffView` (stored part, honest unavailable), alignment gaps from the stored IR, hunk navigation, provenance per side, copy with provenance, all states, tooltips, accessible names; 100,000-line cap test
 - [ ] Integrator: write `decomp.jsonl.gz` (parts of the manifest, same line shape as `extract/decomp.py`) when the on-demand decompile ran; until then the C mode reports "not stored"
+
+### [LBL-prereg:tools]
+- [x] P-1 prereg hash tool, P-2 constants test, vendoring scan (PREREG 8.5 i and ii closed; 8.5 iii open).
+- [ ] Before the lock: run the vendoring scan over the Tier R per-lineage masked body hashes and apply merge proposals.
