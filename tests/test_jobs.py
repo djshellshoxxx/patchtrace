@@ -626,7 +626,7 @@ def test_memory_limit_outside_the_rlimit_range_is_rejected_before_spawn(tmp_path
     marker = tmp_path / 'started'
     with pytest.raises(ValueError, match='memory limit'):
         execute(tmp_path, f'import pathlib;pathlib.Path({str(marker)!r}).write_text("x")', memory_limit_bytes=limit)
-    time.sleep(0.5)
+    time.sleep(0.5)  # inherent: the absence of a spawn can only be observed by waiting; the child would write within ms
     assert not marker.exists()
 
 
@@ -641,7 +641,7 @@ def test_ignored_sigchld_fails_closed_instead_of_reporting_exit_zero(tmp_path):
             execute(tmp_path, f'import pathlib;pathlib.Path({str(marker)!r}).write_text("x")')
     finally:
         signal.signal(signal.SIGCHLD, previous)
-    time.sleep(0.3)
+    time.sleep(0.3)  # inherent: the absence of a spawn can only be observed by waiting
     assert not marker.exists()
 
 
