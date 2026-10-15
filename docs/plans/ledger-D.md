@@ -39,3 +39,11 @@ Session `session_01Mr844cQDLwXi9iMUoGmBXk`; branch `claude/instance-d-gui`; pare
 ## Update 2026-10-15 ~02:45Z: PR #58 MERGED as 21a005e
 GUI F2-F9 + follow-through, Unified panel (S4b), Leads dock (PIL C2), PIL D1/D2, WBQ S6/S9 Qt views, TaskRunner thread-safety fix (T15), unified frozen hook, rules timeout test fix, sigstore 4.5.0. All Linux/Windows checks green on b93a6ad. Branch reset to main.
 Local-only worker branches awaiting B: KB panels (72605cd) and WB1-WB3 panels (a338d6a..6620230), see master-todo T19.
+
+## Update 2026-10-15 ~04:00Z: audits, QA, research, fix pass
+- Audits (all in docs/audits/20261015-*.md, Haiku, read-only): reports-cli 0H/7M/8L; core-app 0H/3M/9L; secondary-engines 1H/4M/8L; acquisition-enrichment 0H/8M/5L; gui-framework 0H/8M/8L; tools-workflows 0H/3M/17L; pe-codetext-representations 0H/3M/11L; series-providers-calibration 0H/6M/14L; intelligence-kev-rules-fabric-pilot 0H/2M/2L; test-suite-hygiene 0H/8M/8L.
+- QA: tests/stress/ (GUI 45 pass + 1 strict xfail QA-GUI-1; fuzz 107 pass + 4 strict xfails). CLI/persistence QA still running.
+- Research notes in docs/research/: kb-msrc-sources, kb-winbindex-packages, vuln-data-feeds, tools-capa-floss-diec, yarax-and-rule-sources, qt-accessibility-windows, lbl-datasets-and-methods, ue-matching-literature, windows-signing-options. Ghidra headless note still running.
+- Fix pass launched (Sonnet, red test first, owner-decision items skipped: CORE-3, CLI-1/4/12): core+series, acquisition, secondary (SEC-1 High), GUI+ops, CLI/PE/fuzz/intel, test hygiene.
+- Open owner questions: pin digests permission (bundle blocker); C's branch restore; CORE-3; exit codes; LBL corpus size (38 vs 48 lineages) and prereg lock; signing; symbol-server legal; PR closes; dropped specs.
+- Running: UE gates + panes, LBL-11 + recipes/csrc, docs writer, QA CLI, R1 diagnostic runs queued on corpus-tier-r.
