@@ -871,7 +871,7 @@ class EvidenceController(ControllerBase):
     the dock, the View-menu entry, the shortcut and the layout; it calls the hooks only while the panel is shown."""
 
     def __init__(self, ctx: PanelContext, *, loader: Callable = load_evidence, run_execute: Callable | None = None,
-                 run_kw: dict | None = None, probe: Callable | None = None, auto_probe: bool = True,
+                 run_kw: dict | None = None, probe: Callable | None = None, auto_probe: bool = False,
                  bindiff_kw: dict | None = None):
         panel = EvidencePanel(ctx.settings)
         super().__init__(panel)
