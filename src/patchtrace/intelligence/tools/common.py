@@ -340,9 +340,12 @@ def _finite_float(text: str) -> float:
 
 def _no_duplicates(pairs: list[tuple[str, object]]) -> dict:
     out: dict = {}
+    seen: set[str] = set()
     for key, value in pairs:
-        if key in out:
+        folded = unicodedata.normalize('NFC', key)  # NFC and NFD spellings are one key, as for archive member names
+        if folded in seen:
             raise ValueError(f'duplicate key {key[:40]!r}')
+        seen.add(folded)
         out[key] = value
     return out
 
