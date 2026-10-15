@@ -107,8 +107,6 @@ def test_ir_json_line_rejects_hostile_lines(line):
         parse_json_line(line)
 
 
-@pytest.mark.xfail(strict=True, reason='QA-FUZZ-4: Winbindex strict loader rejects NaN/Infinity tokens but lets an '
-                                       'overflowing literal such as 1e999 parse to inf; the record is accepted')
 def test_winbindex_rejects_overflowing_float_literals():
     body = b'{"k": {"fileInfo": {"sha256": "' + b'a' * 64 + b'", "x": 1e999}}}'
     with pytest.raises(AcquisitionError):
