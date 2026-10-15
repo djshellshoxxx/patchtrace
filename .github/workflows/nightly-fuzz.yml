@@ -7,6 +7,8 @@ on:
       seconds:
         description: 'Fuzz duration in seconds'
         default: '900'
+permissions:
+  contents: read
 jobs:
   fuzz:
     # Linux-only: atheris does not support Windows, so Windows relies on the hypothesis tests (SPEC-10b section 10.2).

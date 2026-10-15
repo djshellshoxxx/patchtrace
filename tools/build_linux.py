@@ -399,7 +399,10 @@ def main(argv: list[str] | None = None) -> None:
     for name in DISTRIBUTIONS + [n for n in OPTIONAL_DISTRIBUTIONS if _installed(n)]:
         dist = importlib.metadata.distribution(name)
         versions[name] = dist.version
-        for file in dist.files or []:
+        files = dist.files
+        if not files:
+            raise RuntimeError(f'{name}: no installed file list; cannot copy its licenses')
+        for file in files:
             if any(word in file.name.lower() for word in ['license', 'copying', 'notice']):
                 source = Path(dist.locate_file(file))
                 if source.is_file():

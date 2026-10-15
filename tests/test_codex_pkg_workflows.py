@@ -75,7 +75,7 @@ def gate():
     return runpy.run_path(str(ROOT / 'tools' / 'release_gate.py'))
 
 
-@pytest.mark.xfail(strict=True, raises=AssertionError, reason='CODEX-1')
+@pytest.mark.xfail(strict=True, reason='CODEX-1')
 def test_remote_actions_are_immutable():
     mutable = []
     for name, source in workflow_sources():
@@ -87,7 +87,6 @@ def test_remote_actions_are_immutable():
     assert not mutable, '\n'.join(mutable)
 
 
-@pytest.mark.xfail(strict=True, raises=AssertionError, reason='CODEX-2')
 def test_every_job_has_timeout():
     missing = [f'{name}:{job}' for name, source in workflow_sources()
                for job, block in job_blocks(source).items()
@@ -95,7 +94,6 @@ def test_every_job_has_timeout():
     assert not missing, missing
 
 
-@pytest.mark.xfail(strict=True, raises=AssertionError, reason='CODEX-3')
 def test_pages_build_has_read_only_permissions():
     source = (WORKFLOWS / 'pages.yml').read_text(encoding='utf-8')
     build = job_blocks(source)['build']
@@ -103,7 +101,6 @@ def test_pages_build_has_read_only_permissions():
     assert not re.search(r'^      (?:pages|id-token): write', build, re.MULTILINE)
 
 
-@pytest.mark.xfail(strict=True, raises=AssertionError, reason='CODEX-4')
 def test_workflows_declare_permissions():
     missing = [name for name, source in workflow_sources()
                if not re.search(r'^permissions:', source, re.MULTILINE)
@@ -112,7 +109,7 @@ def test_workflows_declare_permissions():
     assert not missing, missing
 
 
-@pytest.mark.xfail(strict=True, raises=AssertionError, reason='CODEX-5')
+@pytest.mark.xfail(strict=True, reason='CODEX-5')
 def test_pip_downloads_require_hashes():
     unhashed = [name for name, source in workflow_sources()
                for script in run_scripts(source)
@@ -121,7 +118,7 @@ def test_pip_downloads_require_hashes():
     assert not unhashed, unhashed
 
 
-@pytest.mark.xfail(strict=True, raises=AssertionError, reason='CODEX-6')
+@pytest.mark.xfail(strict=True, reason='CODEX-6')
 def test_corpus_cache_does_not_skip_verification():
     source = (WORKFLOWS / 'corpus-tier-r.yml').read_text(encoding='utf-8')
     scripts = '\n'.join(run_scripts(source))
@@ -130,7 +127,6 @@ def test_corpus_cache_does_not_skip_verification():
     assert 'steps.ghidra-cache.outputs.cache-hit' not in scripts
 
 
-@pytest.mark.xfail(strict=True, raises=AssertionError, reason='CODEX-7')
 def test_gate_parse_error_cannot_publish_for_pr(gate):
     out, err = io.StringIO(), io.StringIO()
     gate['main'](['--event', 'pull_request', '--ref', 'refs/pull/1/merge'],
@@ -138,7 +134,6 @@ def test_gate_parse_error_cannot_publish_for_pr(gate):
     assert 'publish=true' not in out.getvalue(), out.getvalue()
 
 
-@pytest.mark.xfail(strict=True, raises=AssertionError, reason='CODEX-8')
 @pytest.mark.parametrize('trailer', ['skip-checks:true', 'skip-checks: true'])
 def test_skip_check_trailers_are_recognised(gate, trailer):
     message = f'Ordinary squash subject\n\n\n{trailer}\n'
