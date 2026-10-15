@@ -90,17 +90,24 @@ def test_read_only_project_directory_for_dry_run_and_persisting_rank(tmp_path, c
     if hasattr(os, 'geteuid') and os.geteuid() == 0:
         pytest.skip('running as root: directory permission bits do not stop root; runs on the non-root CI matrix')
     root = make_sample(tmp_path / 'case')
-    root.chmod(0o555)
+    folders = [root, *(path for path in root.rglob('*') if path.is_dir())]  # the store folder inside must be read-only too
+    for folder in folders:
+        folder.chmod(0o555)
     try:
         code, out, err = run_main(['rank', root, '--json', '--dry-run'], capsys)
         assert_clean(code, out, err)
         assert code == cli.OK, err[-500:]
+        before = {path: path.read_bytes() for path in root.rglob('*') if path.is_file() and path.name != '.patchtrace.lock'}
         code, out, err = run_main(['rank', root, '--json'], capsys)
         assert_clean(code, out, err)
-        assert code in {cli.ENVIRONMENT, cli.RUNTIME}, (code, err[-500:])
+        # `rank` without a persisting flag writes nothing but the lock file; with the folders read-only it must
+        # still answer with exactly one document, and no project file may change.
+        assert code in {cli.OK, cli.ENVIRONMENT, cli.RUNTIME}, (code, err[-500:])
         assert len(json_documents(out)) == 1
+        assert before == {path: path.read_bytes() for path in before}
     finally:
-        root.chmod(0o755)
+        for folder in folders:
+            folder.chmod(0o755)
 
 
 @pytest.mark.xfail(strict=True, reason='QA-CLI-3: cache verify on a --cache-dir that is a regular file exits 3 '

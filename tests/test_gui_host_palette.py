@@ -267,5 +267,11 @@ def test_the_main_window_menu_and_palette_shortcut_are_registered(main_window, q
     next(a for a in window.menuBar().actions()[titles.index('View')].menu().actions()
          if a.shortcut().toString() == 'Ctrl+Shift+P').trigger()
     assert window.panels.palette.isVisible()
-    labels = [window.panels.palette.results.item(r).text() for r in range(window.panels.palette.results.count())]
-    assert any(label.startswith('Project > Open') for label in labels) and any('Interpret selection' in label for label in labels)
+    palette = window.panels.palette
+
+    def labels_for(query):  # the empty query lists only the first PALETTE_RESULTS commands, and every panel adds six
+        palette.search.setText(query)
+        return [palette.results.item(r).text() for r in range(palette.results.count())]
+
+    assert any(label.startswith('Project > Open') for label in labels_for('Open'))
+    assert any('Interpret selection' in label for label in labels_for('Interpret'))
