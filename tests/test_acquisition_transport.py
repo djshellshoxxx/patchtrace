@@ -6,10 +6,10 @@ import threading
 import urllib.request
 
 import pytest
+from drip_server import drip_server
 
 from patchtrace.acquisition import transport as tr
 from patchtrace.acquisition.contracts import AcquisitionError, PlannedDownload
-from drip_server import drip_server
 
 NAME = 'afd.sys'
 URL = 'https://msdl.microsoft.com/download/symbols/afd.sys/D37888A1b2000/afd.sys'
