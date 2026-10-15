@@ -752,3 +752,5 @@
 
 - [x] D7 buildenv/timeline.py (pure) with tests
 - [ ] D7 seams: `PairSnapshot.build_env`, `BuildTimelineStrip` in `ui_series.py` (integrator)
+- [x] D9 tools/buildenv_value_gate.py with hand-computed goldens (synthetic)
+- [ ] D9 run on real Tier R M4 outcomes (needs UE S2/S3 outcomes and the known-answer factory)

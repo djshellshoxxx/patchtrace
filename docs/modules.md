@@ -1083,3 +1083,6 @@ Audit of `unified/` and `tools/unified/` (`docs/audits/20261015-unified-audit.md
 
 ### [D7:buildenv-timeline]
 `buildenv/timeline.py`: pure series timeline over 3-8 builds. Rows per fact family (toolchain, runtime, packing, managed, options) with cells `value`, `unknown` or `not-run` (firm facts only), one `Hop` per adjacent pair (never non-adjacent), `tools-differ` hop when the Detect It Easy setups differ, `change_after`. Reads stored rows through the `BuildEnvReader` port (`BuildEnvStore.latest` shape). The strip, `PairSnapshot.build_env` and `ui_series.py` wiring are Integrator asks.
+
+### [D9:buildenv-value-gate]
+`tools/buildenv_value_gate.py`: G-DIE-1 counter. Input `buildenv-value-gate-input/1` (M4 strata `toolchain-variant`, `aa`, `o0-vs-o2`, rows with truth), tags decided by the real `noise_map.tag_rows`; report `buildenv-value-gate/1` with raw counts per stratum, two checks (zero tags on controls, zero semantic leakage; `no-data` is never a pass) and no false-lead-reduction claim. Feeding it real Tier R M4 outcomes is an open step (needs the unified outcomes of the M4 pairs).

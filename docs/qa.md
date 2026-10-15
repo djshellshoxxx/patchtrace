@@ -997,3 +997,7 @@ Goldens are derived from committed tool output, not from a new live capture; the
 ### [D7:buildenv-timeline]
 - `tests/test_buildenv_timeline.py` (12): cells, adjacent hops only, not-run is not a difference, tool-version guard, header-only stays unknown, bounds.
 - Not verified: offscreen strip test (strip not built; needs the nway/ui_series seam).
+
+### [D9:buildenv-value-gate]
+- `tests/test_buildenv_value_gate.py` (12): hand-computed golden counts, control and leakage checks, no-data, determinism, input rejection, CLI.
+- Not verified: any real M4 pair; the targets are [inf] proposals.
