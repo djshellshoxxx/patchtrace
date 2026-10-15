@@ -19,8 +19,9 @@ from dataclasses import dataclass, field
 from pathlib import Path
 
 from ..common import canonical_json
+from . import msvc
 from .pe import loaded_view, read_pe
-from .toolchain import Toolchain, ToolError, run_tool, tool_env
+from .toolchain import Blocked, Toolchain, ToolError, run_tool, tool_env
 
 IMAGE_BASE = 0x180000000
 COPY_EXTS = frozenset({'.c', '.h', '.inc', '.def'})
@@ -52,7 +53,7 @@ class BuildError(RuntimeError):
 
 NUISANCES = ('icf', 'timestamp', 'guid', 'path')    # P1 of SPEC-31 08 s1 beside link order
 NUISANCE_EPOCH = 1700000000                          # the /timestamp the `timestamp` variant stamps instead of /Brepro
-PATH_MAPS = ('-ffile-compilation-dir=', '-ffile-prefix-map=', '-fdebug-prefix-map=')
+PATH_MAPS = ('-ffile-compilation-dir=', '-ffile-prefix-map=', '-fdebug-prefix-map=', '/d1trimfile:')
 
 
 def nuisance_compile(argv: Sequence[str], nuisance: str) -> list[str]:
@@ -69,12 +70,12 @@ def nuisance_link(profile: str, link: Sequence[str], nuisance: str) -> list[str]
     out = list(link)
     if nuisance in ('', 'path'):
         return out
-    if profile == 'msvc-free':
+    if profile in ('msvc-free', 'msvc'):         # both link with MSVC-style options (case-insensitive)
         if nuisance == 'icf':
-            return ['/opt:icf' if a == '/opt:noicf' else a for a in out]
+            return ['/opt:icf' if a.lower() == '/opt:noicf' else a for a in out]
         if nuisance == 'timestamp':
-            return [f'/timestamp:{NUISANCE_EPOCH}' if a == '/Brepro' else a for a in out]
-        return [a for a in out if a != '/Brepro']
+            return [f'/timestamp:{NUISANCE_EPOCH}' if a.lower() == '/brepro' else a for a in out]
+        return [a for a in out if a.lower() != '/brepro']
     if nuisance == 'guid':
         raise BuildError(f'nuisance guid needs the msvc-free profile, not {profile}')
     if nuisance == 'timestamp':
@@ -107,7 +108,7 @@ class BuildSpec:
     def __post_init__(self):
         if self.opt not in OPTS:
             raise BuildError(f'unknown optimisation level {self.opt}')
-        if self.profile not in ('msvc-free', 'mingw-gcc', 'mingw-clang'):
+        if self.profile not in ('msvc-free', 'mingw-gcc', 'mingw-clang', 'msvc'):
             raise BuildError(f'profile {self.profile} cannot build on this host')
         if self.link_order not in ('sorted', 'reversed', 'rotated'):
             raise BuildError('link_order must be sorted, reversed or rotated')
@@ -233,6 +234,8 @@ def _compile_argv(tools: Toolchain, spec: BuildSpec, src_dir: Path, rel: str, ob
     """Relative paths only, so that no scratch path reaches the image or the debug info: clang gets
     `-ffile-compilation-dir=.` (debug and coverage dirs; a prefix-map flag would itself be recorded in the CodeView
     build info), gcc gets `-ffile-prefix-map` (not recorded in DW_AT_producer)."""
+    if spec.profile == 'msvc':
+        return msvc.compile_argv(tools.path('cl'), spec, src_dir, rel, obj, include_dirs)
     flags = [f'-{spec.opt}', '-g', '-w']
     if spec.std:
         flags.append(f'-std={spec.std}')
@@ -262,6 +265,8 @@ def build(spec: BuildSpec, tools: Toolchain, store: Path, *, scratch_parent: Pat
     """Build one image. `store` is `<calib root>/known-answer`. Raises Blocked (tools) or BuildError."""
     from .toolchain import PROFILE_TOOLS
     tools.require(*PROFILE_TOOLS[spec.profile])
+    if status := tools.profile_status(spec.profile):    # a profile that only builds on another host
+        raise Blocked(status)
     root = Path(spec.source_root)
     if not root.is_dir():
         raise BuildError(f'source root {root} does not exist')
@@ -292,12 +297,15 @@ def _build_in(spec: BuildSpec, tools: Toolchain, store: Path, root: Path, scratc
         inputs.update({f'_dep/{name}/{k}': v for k, v in dep_inputs.items()})
         units += [f'_dep/{name}/{f}' for f in dep_files]
     include_dirs = list(spec.include_dirs) + sorted({f'_dep/{n}' for n, _, _ in spec.dependencies})
-    tool_dirs = sorted({str(Path(tools.path(n)).parent) for n in ('clang', 'lld-link', 'mingw-gcc')
+    tool_dirs = sorted({str(Path(tools.path(n)).parent) for n in ('clang', 'lld-link', 'mingw-gcc', 'cl', 'msvc-link')
                         if tools.get(n).ok})
-    env = tool_env(tmp=tmp, path_dirs=tool_dirs, extra={'SOURCE_DATE_EPOCH': str(spec.source_date_epoch)})
+    extra = {'SOURCE_DATE_EPOCH': str(spec.source_date_epoch)}
+    if spec.profile == 'msvc':
+        extra.update(msvc.env_extra(os.environ))
+    env = tool_env(tmp=tmp, path_dirs=tool_dirs, extra=extra)
     objs, templates = [], []
     for index, rel in enumerate(sorted(units)):
-        obj = f'../obj/{index:05d}.o'
+        obj = f'../obj/{index:05d}' + ('.obj' if spec.profile == 'msvc' else '.o')
         argv = nuisance_compile(_compile_argv(tools, spec, src_dir, rel, obj, include_dirs), spec.nuisance)
         templates.append(_template(argv, src_dir))
         try:
@@ -314,6 +322,8 @@ def _build_in(spec: BuildSpec, tools: Toolchain, store: Path, root: Path, scratc
                 f'/pdb:../out/{stem}.pdb', '/pdbaltpath:%_PDB%', f'/pdbsourcepath:{source_path}', '/Brepro',
                 '/opt:noref', '/opt:noicf', '/incremental:no', '/noimplib', f'/out:../out/{spec.output}', *linked,
                 runtime_lib]
+    elif spec.profile == 'msvc':
+        link = msvc.link_argv(tools.path('msvc-link'), spec, linked, stem)
     elif spec.profile == 'mingw-clang':
         link = [tools.path('clang'), '--target=x86_64-w64-windows-gnu', '-fuse-ld=lld', '-shared', '-o',
                 f'../out/{spec.output}', *linked, *link_lib_args(spec), '-Wl,--no-insert-timestamp',
@@ -337,8 +347,9 @@ def _build_in(spec: BuildSpec, tools: Toolchain, store: Path, root: Path, scratc
     if loaded_view(debug_img) != loaded_view(engine_img) or debug_img.image_base != engine_img.image_base:
         raise BuildError('stripping changed a loaded section: engine and debug images would disagree on RVAs')
     pdb_src = out_dir / f'{stem}.pdb'
-    compiler = 'mingw-gcc' if spec.profile == 'mingw-gcc' else 'clang'
-    versions = tools.versions(compiler, 'lld-link' if spec.profile == 'msvc-free' else compiler, 'llvm-strip')
+    compiler = {'mingw-gcc': 'mingw-gcc', 'msvc': 'cl'}.get(spec.profile, 'clang')
+    linker = {'msvc-free': 'lld-link', 'msvc': 'msvc-link'}.get(spec.profile, compiler)
+    versions = tools.versions(compiler, linker, 'llvm-strip')
     source_digest = _sha(canonical_json(sorted(inputs.items())))
     recipe = {'profile': spec.profile, 'opt': spec.opt, 'link_order': spec.link_order, 'std': spec.std,
               'compile': templates, 'link': _template(link, src_dir), 'versions': versions,

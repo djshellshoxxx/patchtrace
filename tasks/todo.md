@@ -560,3 +560,7 @@
 ### [UE4:code-panes]
 - [x] Decompiled-C side by side in `CodeDiffView` (stored part, honest unavailable), alignment gaps from the stored IR, hunk navigation, provenance per side, copy with provenance, all states, tooltips, accessible names; 100,000-line cap test
 - [ ] Integrator: write `decomp.jsonl.gz` (parts of the manifest, same line shape as `extract/decomp.py`) when the on-demand decompile ran; until then the C mode reports "not stored"
+
+### [LBL-08:msvc-leg]
+- [x] `msvc` profile, probing, host gating, nuisance variants, noise pairs, hermetic tests with fake `cl`/`link` (`tests/test_tier_r_msvc.py`)
+- [ ] Owner/CI: run the dispatch-only `msvc-advisory` job of `corpus-tier-r.yml` on windows-2022 (set repository variable TIER_R_MSVC=1) and check the recorded `cl` version, the `/d1trimfile` source-path normalisation and A/A byte identity; advisory until 10 green runs

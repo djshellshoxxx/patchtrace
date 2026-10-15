@@ -342,6 +342,11 @@ def noise_variants(base: BaseSource, tools: Toolchain) -> list[tuple[str, str, s
         out.append(('mingw-gcc', 'O2', 'mingw-clang', 'O2'))
     if base.profile == 'msvc-free' and tools.profile_status('mingw-gcc') is None:
         out.append(('msvc-free', 'O2', 'mingw-gcc', 'O2'))
+    # the real-compiler shift (LBL s2): the base profile against `cl`, and `cl` against the free MSVC-style leg
+    if base.profile in ('mingw-gcc', 'msvc-free') and tools.profile_status('msvc') is None:
+        out.append((base.profile, 'O2', 'msvc', 'O2'))
+    if base.profile == 'msvc' and tools.profile_status('msvc-free') is None:
+        out.append(('msvc', 'O2', 'msvc-free', 'O2'))
     return out
 
 

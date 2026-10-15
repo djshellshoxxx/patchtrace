@@ -155,7 +155,7 @@ def test_catalogue_check_is_clean(capsys):
 
 def test_toolchain_reports_profiles_and_blocked_rzdiff(capsys, monkeypatch):
     code, doc = run(capsys, 'toolchain')
-    assert code in (0, 3) and set(doc['profiles']) == {'msvc-free', 'mingw-gcc', 'mingw-clang'}
+    assert code in (0, 3) and set(doc['profiles']) == {'msvc-free', 'mingw-gcc', 'mingw-clang', 'msvc'}
     assert (code == 0) == (doc['status'] == 'ok')
 
 
