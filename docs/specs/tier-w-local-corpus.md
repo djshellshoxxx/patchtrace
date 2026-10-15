@@ -48,17 +48,43 @@ Lineage roles come from `lineage.assign_roles`. Recomputing lineages with body-h
 
 `corpus_id` must start with `tier-w-`. If coverage misses a class or has fewer than 6 files with pairs, the command fails (exit 2) unless `--allow-incomplete` is given; the shortfall is recorded either way.
 
-## 4. Fetch
-4.1 `fetch-plan` is offline and prints every URL. `fetch --consent-hosts msdl.microsoft.com` downloads only what the plan lists. Binaries take the existing acquisition path: `quarantine.create_staging` (mode 0700, under `<root>/tier-w/staging`), then `quarantine.acquire`, which wraps `Transport.download`. That path gives one redirect to `*.blob.core.windows.net`, a size cap equal to the planned size, SHA-256 and size checks against Winbindex, and identification. Only `pe` files with machine 0x8664 are accepted, then moved to `binary_path` and made read-only. `PlannedDownload.side` is always `older`; the field is ignored outside two-file projects. The provenance (`source_url`, `redirect_host` host only, `retrieved_at`, Winbindex record hash) goes into the ledger.
-4.2 PDB identity comes from the stored PE's CodeView RSDS record via `pe_overview.inspect_pe` (GUID, age, path). The PDB name is the path basename after splitting on `\` and `/`, and must match `[A-Za-z0-9._-]{1,128}` and end in `.pdb`. URL: `https://msdl.microsoft.com/download/symbols/<name>/<GUID 32 uppercase hex><age %X>/<name>`. The GUID uses Data1-3 decoded little-endian, which equals `uuid.UUID(bytes_le=...).hex.upper()`.
-4.3 PDB download goes through `SymbolTransport`, a subclass of `acquisition.transport.Transport` that reuses its open, retry and read machinery. It takes the same host allow-list, consent check and single redirect to the blob host. Because no hash is known in advance, a size cap applies instead: `--pdb-cap-mib`, default 512, maximum 2048. The SHA-256 is computed while streaming. The body must start with the MSF 7.00 magic, otherwise it is deleted (`PT-ACQ-VERIFY`). A 404 means not on the server; the fallback to a compressed `.pd_` file is not attempted. After download the stdlib MSF reader (section 5.4) must find the same GUID and DBI age as the CodeView record; on a mismatch the file is deleted and the event logged `pdb-rejected`. Accepted PDBs move read-only into the symbol-server layout.
-4.4 Operations:
-- Throttle: every HTTP request, including retries and probes, waits at least `--min-interval` seconds (default 2) after the previous one. The transport's `Retry-After` handling (<= 60 s) is kept.
-- `--max-files` bounds the downloads per run; the rest are recorded as `deferred`.
-- Resume: a binary whose final file re-hashes correctly, or a PDB whose ledger SHA-256 matches, is not fetched again.
-- Disk preflight: free space must be at least the missing binary bytes, plus a PDB estimate of max(4 MiB, 2 x binary size) capped at the PDB cap, plus 1 GiB of margin. The check runs again before each file.
-- Cancel: Ctrl-C or the `CANCEL` file. A watcher thread sets the transport's cancel event, so partial temporary files are removed and the ledger records `cancelled`.
-- Exit codes: 0 done, 1 some files failed, 2 configuration/consent/disk, 5 cancelled.
+## 4. Fetch and exact-preview consent
+
+Tier W fetch is two separate, previewed operations because a PDB URL cannot be derived until its PE has been fetched and its CodeView record has been inspected. No operation reuses consent from another command. Catalogue and resolve remain separate network operations governed by SPEC-08; this section covers selected image and PDB downloads.
+
+### 4.1 Binary fetch plan
+
+`fetch-plan` is offline. It reads a validated `tier-w-pairs/1` document and the referenced `tier-w-catalogue/1` documents, selects only the exact binary records needed by the named pair IDs, deduplicates binaries by SHA-256, and prints the complete plan before any network operation. Every entry shows the file name, SHA-256, expected byte count, build record hash, pair IDs that need it, and exact `https://msdl.microsoft.com/...` URL. It also shows excluded and deferred records with stable reason codes. A build is eligible only when its download class is direct or its candidate URL has already been resolved to one unique SizeOfImage. Unresolved candidates and update-package-only files are never guessed or fetched.
+
+The plan is a strict `tier-w-fetch-plan/1` JSON document with `tier: W`, `operation: binary`, sorted unique entries, and no local absolute paths, credentials, redirect URLs, or file contents. The command writes the exact preview bytes to a caller-selected local plan file and prints their SHA-256. The digest is SHA-256 of the entire UTF-8 file, including its final newline. Re-running `fetch-plan` produces byte-identical output for identical inputs and selection.
+
+`fetch` requires that plan file, the digest printed by `fetch-plan`, and `--consent-hosts msdl.microsoft.com`. Before opening a socket it re-reads and validates the plan, verifies the exact digest, recomputes the plan from the current pair/catalogue inputs, and requires byte equality. Consent is constructed over the plan's exact URL set as well as the exact host set; a host-only approval, stale digest, edited plan, added URL, or unknown URL is refused without network access. The signed Azure blob URL from the one permitted symbol-server redirect is accepted only by the transport's redirect rule for that request. Its URL and query are never printed, stored, or included in errors.
+
+### 4.2 Binary download and promotion
+
+Binary entries use SPEC-08 `Transport.download` and `quarantine.acquire` in a private staging directory under `<root>/tier-w/staging`. The cap is the expected size. The streamed SHA-256 and exact size must match the plan. Header inspection must identify a valid AMD64 PE (machine 0x8664); no binary is loaded or executed. Only then is it atomically promoted to the content-addressed `binary_path` and made read-only. A pre-existing destination is reused only after it independently passes the same file-size, SHA-256 and PE-identity checks.
+
+A 404 is `not-found`; a malformed response, hash/size mismatch, wrong machine, or invalid PE is `rejected`; transport exhaustion is `failed`; an item beyond `--max-files` is `deferred`; and cancellation is `cancelled`. One bad entry does not erase verified earlier entries. Partial temporary files are deleted. The command returns partial status (exit 1) for any failed, rejected, not-found, or deferred entry, configuration/consent/disk errors as exit 2, and cancellation as exit 5.
+
+### 4.3 PDB preview and download
+
+A PDB URL does not exist in the binary plan. After a binary has been verified and promoted, `pdb-plan` reads only that local PE's CodeView RSDS record using `pe_overview.inspect_pe`. It splits the CodeView path on both slash styles, validates the basename against `[A-Za-z0-9._-]{1,128}` and the `.pdb` suffix, and derives the URL as `https://msdl.microsoft.com/download/symbols/<name>/<GUID32-UPPER><age-HEX>/<name>`. GUID byte order is Data1-3 little-endian, equivalent to `uuid.UUID(bytes_le=...).hex.upper()`. Missing or invalid CodeView data produces an offline exclusion with a stable reason; no URL is guessed.
+
+`pdb-plan` prints and saves a strict `tier-w-fetch-plan/1` document with `operation: pdb`, one or more exact URLs, the PE SHA-256, PDB name, GUID, age, and the selected PDB cap. It prints the file SHA-256 as in §4.1. `fetch-pdb` requires the saved plan, its exact digest, and `--consent-hosts msdl.microsoft.com`; it performs the same no-socket-before-digest-and-recomputation checks. Each PDB is streamed to a private temporary file with a 512 MiB default cap and a configurable maximum of 2048 MiB. The download's SHA-256 is computed locally because the symbol server provides no trusted expected digest. Before promotion, the bytes must start with the MSF 7.00 magic and the bounded stdlib MSF reader must verify GUID and DBI age against the local PE's RSDS record. An identity mismatch or invalid MSF is deleted and recorded as `pdb-rejected`. Accepted PDBs are atomically promoted read-only to the existing symbol-server layout. HTTP 404 is `not-found`; compressed `.pd_` fallback is not attempted.
+
+The computed PDB SHA-256 proves only the identity of the local fetched bytes. It is not a Microsoft signature or authenticity claim. No PDB, Microsoft image, symbol map, label, name, URL query, or Tier-W report is written to the repository, CI artifacts, or an external service.
+
+### 4.4 Shared operation limits and provenance
+
+Every HTTP request, retry, and probe is throttled by at least `--min-interval` seconds (default 2); SPEC-08 Retry-After handling remains capped at 60 seconds. `--max-files` limits the total binary/PDB files attempted by one command; remaining entries are `deferred`. Disk preflight requires the bytes still missing, plus a PDB estimate of max(4 MiB, twice the binary size) capped by the selected PDB cap, plus 1 GiB margin. Repeat the preflight before every file.
+
+Resume trusts no path or ledger row alone: a binary is reused only after rechecking expected size, SHA-256, and AMD64 PE identity. A PDB is reused only when the expected symbol-server path is a non-symlink regular file whose size is within cap and whose MSF GUID/age matches the plan; its SHA-256 is recomputed. In both cases a missing or invalid file is fetched again and atomically replaced only after the new bytes pass validation.
+
+Ctrl-C and the local `CANCEL` file set the shared cancellation event. The transport checks it during retry waits, connection/read slices, and before promotion; temporary files are removed and the ledger records cancellation. The append-only hash-chained ledger records each plan digest and item state (`planned`, `fetched`, `reused`, `deferred`, `not-found`, `rejected`, `failed`, or `cancelled`), expected identity, actual digest/size when available, source URL without redirect query, redirect host only, retrieval time, and error code. Error text never contains signed URLs, credentials, or local paths.
+
+### 4.5 Verification contract for slice 20
+
+All automated tests use a fake opener and temporary self-made PE/PDB fixtures; they make zero external requests. Tests cover exact plan bytes/digest, stale and edited plans, host and URL consent, redirect boundaries, 404/retry/status handling, response/body caps, throttle, disk preflight, cancellation, resume rehash, wrong PE machine, bad PDB magic, wrong PDB GUID/age, atomic replacement, ledger integrity, and ensuring partial failure preserves prior verified entries. Live Winbindex/msdl access is a separate owner-machine check, recorded as passed, failed, or blocked; a fake opener never counts as live acceptance.
 
 ## 5. Symbol export (decision and contracts)
 5.1 Options evaluated (decision: (a) is primary; (d) supplies the PDB-level facts; (b) is optional; (c) is rejected):
