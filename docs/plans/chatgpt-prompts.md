@@ -82,3 +82,10 @@ Only describe features that appear in the repo files; mark anything else 'planne
 
 OUTPUT RULES: exhaustive; do not abbreviate or say 'and so on'. Emit each file as `=== FILE: <path> ===` with full content; one group or ten topics per message, ending `NEXT: <group>`; I reply `continue`. Mark uncertain statements UNVERIFIED.
 ```
+
+---
+
+## What to do with the output
+1. Copy each ChatGPT reply (all messages of one prompt, one after another) into a text file named `promptN-<topic>.md`.
+2. Put the file in `docs/inbox/chatgpt/` on branch `claude/instance-d-gui` (GitHub: Add file > Upload files or Create new file), or paste it to Claude in chat.
+3. Tell Claude. It runs `python tools/split_chatgpt_output.py docs/inbox/chatgpt/<file> --apply`, then workers lint, verify facts (SHAs, CVE ids, licences, field names) and run the tests before anything is merged.
