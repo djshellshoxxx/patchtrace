@@ -560,3 +560,8 @@
 ### [UE4:code-panes]
 - [x] Decompiled-C side by side in `CodeDiffView` (stored part, honest unavailable), alignment gaps from the stored IR, hunk navigation, provenance per side, copy with provenance, all states, tooltips, accessible names; 100,000-line cap test
 - [ ] Integrator: write `decomp.jsonl.gz` (parts of the manifest, same line shape as `extract/decomp.py`) when the on-demand decompile ran; until then the C mode reports "not stored"
+
+
+### [U3-U8:cli-pin]
+- [x] U3 S4 CLI polish (early usage errors, exit codes in help); Explain fragment path already built.
+- [x] U8 prep: pin checker and runbook. Open (owner, network): run docs/runbooks/bindiff-pin.md, flip `verified`; wire `bindiff_pin verify` into `unified-live-gates.yml`; first dispatch of that workflow.
