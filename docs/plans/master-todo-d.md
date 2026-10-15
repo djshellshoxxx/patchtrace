@@ -18,6 +18,12 @@ Tags: [BUILD] code to write, [SPEC] a spec is missing or thin, [PLAN] needs a sh
 - T13 [BUG] S: stale statuses in `REGISTRY.md` (F2-F10 of OUTSTANDING ledger).
 - T14 [OWNER] S: bundle pins: record `python-windows` and ghidriff tarball digests (verified by run 38661029764) - waits for owner permission.
 
+- T15 [BUG] M: TaskRunner/Lane: dropping the last runner reference or a gc run on a worker thread frees Qt wrappers off the GUI thread and can segfault in Shiboken `runDeletionInMainThread` (about half the time in tests that drop the runner). Harden `gui/qt/tasks.py` (own the runner from the host until shutdown, no Qt objects in worker closures, deterministic teardown); add a red test.
+- T16 [BUG] S: palette results are capped at 50, so the empty-query list loses entries as panels add commands (raise cap or group by panel).
+- T17 [BUG] S: `ColumnSpec.tip_id` is not served by `VirtualTableModel.headerData`; then register `strings.col.*` tips.
+- T18 [BUG] S: WB panels: reword `tooltip_data.ENTRIES['search.query']` ("safe" fails the claims sweep); `strings.cli.compute` should accept a store; strings delta carries changed rows only (All strings inventory shows no unchanged strings).
+- T19 [PLAN] S: push the local worker branches that wait on B (KB panels 72605cd, WB panels a338d6a..6620230) to a D-owned branch only after B's branch merges; until then they exist only in this container (risk: container reclaim): export them as patches under `docs/plans/pending-patches/` if B's merge is delayed more than 6 hours.
+
 ## B. Offline bundle (essential)
 - B1 [OWNER] pins permission (T14). B2 [BUILD] M: record pins, merge main, run full build both OS (dispatch `backend-bundle.yml`), fix what the first live run exposes (JPype/pyghidra headless on both OS), offline acceptance green (no network, read-only tree). B3 [BUILD] S: B9 docs (`docs/windows.md`, `docs/linux.md`, qa rows, SPEC-06 amendment). B4 [QA] M: bundle prerelease with sha256, size gates. B5 [BUG] M: CODEX-13/15 (C's PR). B6 [PLAN] S: JDK 21 vs 25 decision recorded (21.0.12.1 pinned).
 
