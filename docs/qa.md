@@ -1004,3 +1004,9 @@ Goldens are derived from committed tool output, not from a new live capture; the
 
 ### [D8:live-buildenv]
 - Locally both cases record BLOCKED (no diec here); the job is dispatch-only. Not verified: any live run, including the golden equality and the provisioning step with `--engine diec`.
+
+### [LBL-22:tier-w-labels]
+- Synthetic fixtures only: `tests/test_tier_w_labels.py`, `tests/test_tier_w_audit.py`. Not verified: any real symbol map.
+
+### [LBL-24:tier-w-aggregate]
+- `tests/test_tier_w_aggregate.py` (suppression at n < 30, no pooling, no names in output). Not verified: owner-run data.

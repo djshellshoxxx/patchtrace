@@ -1089,3 +1089,9 @@ Audit of `unified/` and `tools/unified/` (`docs/audits/20261015-unified-audit.md
 
 ### [D8:live-buildenv]
 `tests/test_live_buildenv.py` and job `live-buildenv` in `live-intel-tools.yml` (dispatch-only, Linux): real pinned `diec` on the synthetic `diec-same` and `diec-toolchain` pairs; the live toolchain verdict and change set must equal the committed-golden delta. Records `buildenv-diec` as passed, failed or blocked.
+
+### [LBL-22:tier-w-labels]
+`tools/calibration/tier_w/labels.py` (truth from symbol maps, candidate labels, N2/N9/N10/N3 and exported tags, detail records) and `audit.py` (seeded census/random sampler, blind queue, Clopper-Pearson weighted audit report). Pure; names stay in `tier-w-label-detail/1`.
+
+### [LBL-24:tier-w-aggregate]
+`tier_w/evaluate.py` (per engine and condition, Wilson item-level, circular guard) and `aggregate.py` (`tier-w-aggregate/1`, lineage bootstrap via evalcore, cells with n < 30 suppressed, no pooling). `tier-w-aggregate/1` joined `guard.TIER_W_CONTRACTS`.

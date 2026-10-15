@@ -755,3 +755,11 @@
 - [x] D9 tools/buildenv_value_gate.py with hand-computed goldens (synthetic)
 - [ ] D9 run on real Tier R M4 outcomes (needs UE S2/S3 outcomes and the known-answer factory)
 - [ ] D8 first dispatch of `live-buildenv` (Actions) and golden confirmation; stays BLOCKED locally without PATCHTRACE_DIEC
+
+### [LBL-22:tier-w-labels]
+- [x] LBL-22 labels.py and audit.py with synthetic goldens
+- [ ] LBL-22 wire to the runner (LBL-23) and real symbol maps (owner machine)
+
+### [LBL-24:tier-w-aggregate]
+- [x] LBL-24 evaluate.py and aggregate.py with goldens, guard contract list
+- [ ] LBL-24 run on a real Tier W evaluation (owner only, O1)
