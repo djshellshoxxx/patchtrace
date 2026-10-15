@@ -128,7 +128,7 @@ def main(argv=None):
     print(archive)
     if args.full:  # the lite smoke above is unchanged; backend/ is attached after it
         attach_backend(package, args.backend_payload, version=args.version, platform_key='windows', root=root,
-                       allow_internal_symlinks=False)
+                       allow_internal_symlinks=False, release=args.release)
         full = Path(shutil.make_archive(str(root / 'dist' / full_archive_name(args.version, 'windows')[:-4]),
                                         'zip', root_dir=root / 'dist', base_dir='PatchTrace'))
         check_archive_size(full)

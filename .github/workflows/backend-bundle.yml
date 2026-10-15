@@ -140,9 +140,14 @@ jobs:
             echo "report=$report"; echo "verify=$verify"
             echo "publish=$publish"; echo "tag=$tag"
           } >> "$GITHUB_OUTPUT"
-      - name: Pin release gate (placeholders must be resolved)
+      - name: Pin release gate (placeholders resolved; publish also needs every licence approval)
         if: steps.plan.outputs.build == 'true'
-        run: python tools/check_backend_pin.py --release
+        env:
+          PUBLISH: ${{ steps.plan.outputs.publish }}
+        run: |
+          extra=""
+          if [ "$PUBLISH" != true ]; then extra="--allow-unapproved-licenses"; fi
+          python tools/check_backend_pin.py --release $extra
       - name: Pin report (placeholders only, no build)
         if: steps.plan.outputs.report == 'true'
         run: |
