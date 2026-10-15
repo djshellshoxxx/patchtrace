@@ -1036,3 +1036,9 @@ Automated: `tests/test_ui_kev_panel.py` offscreen, `tools/qt_gate.py --repeat 5`
 
 ### [LBL-20/21:tier-w-fetch-symbols]
 Automated: `tests/test_tier_w_fetch.py` (33 passed) and `tests/test_tier_w_symbols.py` (29 passed, 1 xfailed). The xfail is the live Ghidra export, recorded BLOCKED (no Ghidra on the runner). The live llvm-pdbutil parity test ran against the self-made PDB (LLVM 18.1.3). Not evidenced: any real Microsoft download or PDB (O1, owner only).
+
+### [LBL-22:tier-w-labels]
+- Synthetic fixtures only: `tests/test_tier_w_labels.py`, `tests/test_tier_w_audit.py`. Not verified: any real symbol map.
+
+### [LBL-24:tier-w-aggregate]
+- `tests/test_tier_w_aggregate.py` (suppression at n < 30, no pooling, no names in output). Not verified: owner-run data.

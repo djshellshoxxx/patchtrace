@@ -1119,3 +1119,9 @@ Calls panel (id graph): `callgraph/panel.py` (PanelSpec), `panel_qt.py` (widgets
 
 ### [LBL-21:tier-w-symbols]
 `symbols.py` (pure `symbol-map/1` builder and `export_msf`, SPEC-33 s5.3 merge rule), `symbols_llvm.py` (strict LLVM 18 `llvm-pdbutil` adapter, parity-tested against the stdlib reader when the tool is installed), `ghidra_export_symbols.py` (Jython 2.7 and CPython 3 script) and `symbols_ghidra.py` (headless driver, private project/XDG dirs). The live Ghidra test is BLOCKED (xfail with reason) unless `PATCHTRACE_GHIDRA_DIR` points at Ghidra. Not built: `pyghidra` mode and the PDB-forcing pre-script (need a live Ghidra to verify).
+
+### [LBL-22:tier-w-labels]
+`tools/calibration/tier_w/labels.py` (truth from symbol maps, candidate labels, N2/N9/N10/N3 and exported tags, detail records) and `audit.py` (seeded census/random sampler, blind queue, Clopper-Pearson weighted audit report). Pure; names stay in `tier-w-label-detail/1`.
+
+### [LBL-24:tier-w-aggregate]
+`tier_w/evaluate.py` (per engine and condition, Wilson item-level, circular guard) and `aggregate.py` (`tier-w-aggregate/1`, lineage bootstrap via evalcore, cells with n < 30 suppressed, no pooling). `tier-w-aggregate/1` joined `guard.TIER_W_CONTRACTS`.

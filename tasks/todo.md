@@ -781,3 +781,11 @@ Done: dock with state matrix, consent, import, changes, copy, go to CVE. Open: r
 ### [LBL-20:fetch-transport] / [LBL-21:symbols]
 - [x] Fixture-tested `tier_w/fetch.py`, `transport.py`, `symbols.py`, `symbols_llvm.py`, `ghidra_export_symbols.py`, `symbols_ghidra.py` (`tests/test_tier_w_fetch.py`, `tests/test_tier_w_symbols.py`).
 - [ ] BLOCKED, owner/Windows runner: live msdl fetch, live Ghidra 12.0.4 export (`PATCHTRACE_GHIDRA_DIR`), `pyghidra` mode, PDB-forcing pre-script, adapter text for `fetch-plan`/`fetch`/`symbols` (LBL-25).
+
+### [LBL-22:tier-w-labels]
+- [x] LBL-22 labels.py and audit.py with synthetic goldens
+- [ ] LBL-22 wire to the runner (LBL-23) and real symbol maps (owner machine)
+
+### [LBL-24:tier-w-aggregate]
+- [x] LBL-24 evaluate.py and aggregate.py with goldens, guard contract list
+- [ ] LBL-24 run on a real Tier W evaluation (owner only, O1)
