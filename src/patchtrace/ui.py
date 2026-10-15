@@ -47,7 +47,7 @@ from .acquisition.transport import BLOB_SUFFIX, METADATA_HOST, SYMBOL_HOST, Acqu
 from .alignment import alignment_strategy, diff_hunks
 from .backend import BackendConfig, diagnose, parse_env_passthrough, quarantine_failed_run, run_comparison
 from .evidence import build_context, resolve_evidence
-from .gui.qt.codediff import clear_selections, compose_selections, row_selection
+from .gui.qt.codediff import clear_selections, compose_selections, row_selection, view_text
 from .gui.qt.host import PanelHost
 from .gui.qt.theme import DARK
 from .interpretation import interpret, system_prompt
@@ -2408,7 +2408,7 @@ class MainWindow(QMainWindow):
         self.match_label.setText(label)
         for side, text in (('older', older_text), ('newer', newer_text)):
             clear_selections(self.views[side], 'diff')
-            self.views[side].setPlainText(text[:MAX_VIEW_CHARS])
+            self.views[side].setPlainText(view_text(text))
 
     def _load_enrichment(self):
         """Show the stored ranking only when it was computed from the current run and pairings."""

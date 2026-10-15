@@ -96,6 +96,12 @@ def _capped(text: str) -> tuple[str, bool]:
     return sanitize_text(text[:MAX_VIEW_CHARS], MAX_VIEW_CHARS, multiline=True), len(text) > MAX_VIEW_CHARS
 
 
+def view_text(text: object) -> str:
+    """Untrusted text ready for a code pane: sanitized, bounded, and ending in the truncation notice when cut."""
+    shown, cut = _capped(str(text))
+    return shown + (f'\n{TRUNCATION_NOTICE}' if cut else '')
+
+
 class _Pane(QPlainTextEdit):
     def __init__(self, name: str, parent: QWidget | None = None) -> None:
         super().__init__(parent)
@@ -311,5 +317,5 @@ def _side(side: str) -> str:
     return side
 
 
-__all__ = ['CodeDiffView', 'LAYERS', 'MAX_VIEW_CHARS', 'TRUNCATION_NOTICE', 'clear_selections', 'compose_selections',
+__all__ = ['CodeDiffView', 'LAYERS', 'MAX_VIEW_CHARS', 'TRUNCATION_NOTICE', 'clear_selections', 'compose_selections', 'view_text',
            'hunk_background']
