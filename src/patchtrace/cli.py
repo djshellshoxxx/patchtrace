@@ -851,6 +851,13 @@ def _command_name(args) -> str:
     return getattr(args, 'command_label', None) or base
 
 
+def _json_envelope(args, argv: list[str]) -> tuple[bool, str]:
+    """Whether to emit a JSON envelope and its command label; before parsing finishes both come from argv."""
+    if args is not None:
+        return bool(getattr(args, 'json', False)), _command_name(args)
+    return '--json' in argv, argv[0] if argv and argv[0] in COMMANDS else 'patchtrace'
+
+
 def main(argv: list[str] | None = None) -> int:
     argv = sys.argv[1:] if argv is None else argv
     for stream in (sys.stdout, sys.stderr):
@@ -863,15 +870,17 @@ def main(argv: list[str] | None = None) -> int:
         return (getattr(args, 'handler', None) or HANDLERS[args.command])(args, cancel)
     except CliError as exc:
         print(f'error: {exc}', file=sys.stderr)
-        if args is not None and getattr(args, 'json', False):
-            sys.stdout.write(json.dumps({'contract': CLI_CONTRACT, 'command': _command_name(args), 'status': 'failed',
+        as_json, label = _json_envelope(args, argv)
+        if as_json:
+            sys.stdout.write(json.dumps({'contract': CLI_CONTRACT, 'command': label, 'status': 'failed',
                                          'result': None, 'warnings': [], 'error': str(exc)}, sort_keys=True) + '\n')
         return exc.code
     except KeyboardInterrupt:
         cancel.set()
         print('cancelled', file=sys.stderr)
-        if args is not None and getattr(args, 'json', False):
-            sys.stdout.write(json.dumps({'contract': CLI_CONTRACT, 'command': _command_name(args), 'status': 'cancelled',
+        as_json, label = _json_envelope(args, argv)
+        if as_json:
+            sys.stdout.write(json.dumps({'contract': CLI_CONTRACT, 'command': label, 'status': 'cancelled',
                                          'result': None, 'warnings': []}, sort_keys=True) + '\n')
         return CANCELLED
     except SystemExit as exc:  # --help

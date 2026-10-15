@@ -205,3 +205,11 @@ def test_cache_on_a_file_root_fails_cli_b_01(tmp_path, capsys):
         code, out, _ = run(["cache", action, "--cache-dir", str(afile), "--json"], capsys)
         doc = json.loads(out)
         assert code != 0 and doc["status"] == "failed" and "cache" in doc["error"], (action, code, doc)
+
+
+def test_usage_errors_emit_json_envelope_cli_b_02(project, capsys):
+    for argv, name in ((["rank", str(project), "--json", "--limit", "-1"], "rank"), (["bogus", "--json"], "patchtrace"),
+                       (["cache", "wipe", "--json"], "cache")):
+        code, out, _ = run(argv, capsys)
+        doc = json.loads(out)
+        assert code == 2 and doc["status"] == "failed" and doc["command"] == name and doc["error"], argv
