@@ -51,7 +51,7 @@ def make_world(tmp_path, monkeypatch):
     digests = catalogue.Digests(old=catalogue.tree_sha256(FE.checkout_dir(store, 'tinyproj', OLD)),
                                 new=catalogue.tree_sha256(FE.checkout_dir(store, 'tinyproj', NEW)))
     pins = catalogue.UnifiedPins(contract='unified-corpus-pins/1', pairs={CARD_ID: digests})
-    monkeypatch.setattr(catalogue, 'merged_book', lambda: book)
+    monkeypatch.setattr(catalogue, 'recipe_book', lambda: book)
     monkeypatch.setattr(catalogue, 'load_cards', lambda: (card,))
     monkeypatch.setattr(catalogue, 'load_pins', lambda: pins)
     return store, pins

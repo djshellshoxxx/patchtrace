@@ -25,24 +25,31 @@ def test_the_committed_catalogue_has_no_problems():
 
 
 def test_every_tier_r_project_of_the_spec_is_a_recipe_or_a_documented_exclusion():
-    book = catalogue.merged_book()
+    book = catalogue.recipe_book()
     built = {r.project for r in book.recipes}
     excluded = {e['project']: e['reason'] for e in catalogue.excluded()}
     assert set(catalogue.TIER_R_PROJECTS) <= built | set(excluded)
     assert all(len(excluded[p]) > 20 for p in set(catalogue.TIER_R_PROJECTS) - built)
 
 
-def test_only_permissive_licences_and_no_microsoft_data_in_the_new_recipes():
-    book = catalogue.load_recipes()
-    assert {r.license_spdx for r in book.recipes} <= PERMISSIVE_ONLY
-    text = (catalogue.HERE / 'recipes.json').read_text(encoding='utf-8').lower()
+def test_the_unified_catalogue_defines_no_recipe_of_its_own_and_holds_no_microsoft_data():
+    assert not (catalogue.HERE / 'recipes.json').exists(), 'recipes live only in the Tier R book'
+    assert {r.license_spdx for r in catalogue.recipe_book().recipes} <= PERMISSIVE_ONLY
+    text = (catalogue.HERE / 'cards.json').read_text(encoding='utf-8').lower()
     assert not [w for w in ('microsoft', 'winbindex', 'ntoskrnl', 'tier w') if w in text]
 
 
+def test_every_card_of_a_shared_project_uses_the_tier_r_recipe():
+    book = catalogue.recipe_book()
+    own = {c.id: c for c in C.load_cards((catalogue.HERE / 'cards.json').read_bytes())}
+    assert {c.project for c in own.values()} <= {r.project for r in book.recipes}
+    assert set(catalogue.SHARED_CARDS).isdisjoint(own)
+
+
 def test_every_release_pair_names_two_pinned_commits_of_a_known_recipe():
-    book = catalogue.merged_book()
+    book = catalogue.recipe_book()
     cards = catalogue.load_cards()
-    assert {c.project for c in cards} >= {'zlib', 'libpng', 'lua', 'mbedtls'}
+    assert {c.project for c in cards} >= {'zlib', 'libpng', 'lua'}
     for card in cards:
         recipe = book.get(card.project)
         assert recipe is not None, card.id
@@ -70,23 +77,16 @@ def test_the_new_cards_pass_the_corpus_input_checker():
 
 
 def _book_with(recipe: dict) -> C.RecipeBook:
-    base = json.loads((catalogue.HERE / 'recipes.json').read_text(encoding='utf-8'))
+    base = catalogue.recipe_book().model_dump(mode='json')
     base['recipes'] = [*base['recipes'], recipe]
     return C.RecipeBook.model_validate_json(json.dumps(base))
 
 
 def test_a_copyleft_recipe_is_refused_by_the_contract():
-    recipe = copy.deepcopy(json.loads((catalogue.HERE / 'recipes.json').read_text(encoding='utf-8'))['recipes'][0])
+    recipe = copy.deepcopy(catalogue.recipe_book().recipes[0].model_dump(mode='json'))
     recipe.update(project='gpl-lib', license_spdx='GPL-3.0-only')
     with pytest.raises(ValueError, match='permissive'):
         _book_with(recipe)
-
-
-def test_a_project_defined_by_both_catalogues_is_a_problem(monkeypatch):
-    zlib = copy.deepcopy(catalogue.spec32_book().get('zlib').model_dump(mode='json'))
-    clash = C.RecipeBook(contract='tier-r-recipes/1', recipes=(C.Recipe.model_validate_json(json.dumps(zlib)),))
-    monkeypatch.setattr(catalogue, 'load_recipes', lambda: clash)
-    assert any('zlib' in p and 'both' in p for p in catalogue.problems())
 
 
 def test_a_card_with_an_unpinned_commit_is_a_problem(monkeypatch):
@@ -97,18 +97,18 @@ def test_a_card_with_an_unpinned_commit_is_a_problem(monkeypatch):
 
 
 def test_a_dependency_that_is_not_a_pinned_recipe_is_a_problem(monkeypatch):
-    mine = catalogue.load_recipes()
+    mine = catalogue.recipe_book()
     libpng = mine.get('libpng')
     assert libpng.depends, 'the libpng recipe compiles zlib in'
     unpinned = libpng.depends[0].model_copy(update={'commit': 'e' * 40})
     broken = C.RecipeBook(contract='tier-r-recipes/1', recipes=tuple(
         r.model_copy(update={'depends': (unpinned,)}) if r.project == 'libpng' else r for r in mine.recipes))
-    monkeypatch.setattr(catalogue, 'load_recipes', lambda: broken)
+    monkeypatch.setattr(catalogue, 'recipe_book', lambda: broken)
     assert any('libpng' in p and 'dependency zlib' in p for p in catalogue.problems())
     ghost = libpng.depends[0].model_copy(update={'project': 'nonesuch'})
     ghosted = C.RecipeBook(contract='tier-r-recipes/1', recipes=tuple(
         r.model_copy(update={'depends': (ghost,)}) if r.project == 'libpng' else r for r in mine.recipes))
-    monkeypatch.setattr(catalogue, 'load_recipes', lambda: ghosted)
+    monkeypatch.setattr(catalogue, 'recipe_book', lambda: ghosted)
     assert any('dependency nonesuch' in p for p in catalogue.problems())
 
 

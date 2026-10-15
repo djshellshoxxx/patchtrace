@@ -16,7 +16,7 @@
    {"name": "png_XYZ_from_xy", "file": "png.c", "kind": "overflow-hardening", "change": "chroma calculations hardened against overflow (CHANGES, Version 1.6.44 of the pinned tree); source and code changed"}
   ],
   "unchanged_controls": ["png_pow10", "png_muldiv"],
-  "build": {"system": "other", "recipe_notes": "tools/unified/corpus recipe libpng (mingw-gcc -O2 -g, top-level png*.c, prebuilt pnglibconf.h, zlib v1.3.1 compiled in), libpng16.dll", "mingw_ok": "yes"},
+  "build": {"system": "other", "recipe_notes": "tools/calibration/tier_r recipe libpng (shared Tier R recipe, mingw-gcc 13-win32 -O2 -g, zlib v1.3.1 compiled in), libpng16.dll", "mingw_ok": "yes"},
   "verification": {
    "method": "tools.calibration.tier_r factory.run_card on the fetched pins (mingw-gcc 13-win32 -O2, Linux, local run, not CI): 460 project functions, 453 unchanged, 2 changed, 5 ambiguous, 0 disagreements; both declared functions confirmed changed",
    "functions_changed_count": 2,
@@ -46,7 +46,7 @@
    {"name": "luaV_execute", "file": "lvm.c", "change": "source and code changed (factory label changed/source-diff); the interpreter loop"}
   ],
   "unchanged_controls": ["index2value", "lua_rotate"],
-  "build": {"system": "other", "recipe_notes": "tools/unified/corpus recipe lua (mingw-gcc -O2 -g, top-level l*.c without lua.c luac.c onelua.c ltests.c, LUA_BUILD_AS_DLL), lua54.dll", "mingw_ok": "yes"},
+  "build": {"system": "other", "recipe_notes": "tools/calibration/tier_r recipe lua (shared Tier R recipe, mingw-gcc 13-win32 -O2 -g), lua54.dll", "mingw_ok": "yes"},
   "verification": {
    "method": "tools.calibration.tier_r factory.run_card on the fetched pins (mingw-gcc 13-win32 -O2, Linux, local run, not CI): 692 project functions, 624 unchanged, 30 changed, 27 ambiguous, 2 cosmetic, 9 no-counterpart, 0 disagreements",
    "functions_changed_count": 30,
@@ -54,35 +54,5 @@
   },
   "sources": ["https://github.com/lua/lua/commit/1ab3208a1fceb12fca8f24ba57d6e13c5bff15e3"],
   "risks": ["Ambiguous records (source or code changed without the other) are excluded from changed-set scoring by design.", "luaV_execute is one very large function: a stress for block-level and call-level matching, not a typical function."]
- },
- {
-  "contract": "case-card/1",
-  "id": "mbedtls-v3.6.0-to-v3.6.1",
-  "project": "mbedtls",
-  "upstream_git": "https://github.com/Mbed-TLS/mbedtls.git",
-  "license_spdx": "Apache-2.0",
-  "license_evidence": "LICENSE at 71c569d44bf3a8bd53d874c81ee8ac644dd6e9e3 (sha256 9b405ef4...ad09b, identical at v3.6.0): 'Mbed TLS files are provided under a dual Apache-2.0 OR GPL-2.0-or-later license. This means that users may choose which of these licenses they take the code under.' Taken under Apache-2.0 only.",
-  "old": {"ref": "v3.6.0", "commit": "2ca6c285a0dd3f33982dd57299012dacab1ff206"},
-  "new": {"ref": "v3.6.1", "commit": "71c569d44bf3a8bd53d874c81ee8ac644dd6e9e3"},
-  "kind": "release",
-  "cve": ["CVE-2024-45158"],
-  "semantic_change": true,
-  "changed_functions": [
-   {"name": "mbedtls_ecdsa_der_to_raw", "file": "library/psa_util.c", "kind": "security-fix", "change": "stack buffer overflow fix, CVE-2024-45158 (ChangeLog, 3.6.1 Security section of the pinned tree); source and code changed"},
-   {"name": "mbedtls_ecdsa_raw_to_der", "file": "library/psa_util.c", "kind": "security-fix", "change": "stack buffer overflow fix, CVE-2024-45158 (ChangeLog, 3.6.1 Security section of the pinned tree); source and code changed"},
-   {"name": "mbedtls_mpi_exp_mod", "file": "library/bignum.c", "change": "source and code changed (factory label changed/source-diff)"},
-   {"name": "mbedtls_mpi_core_exp_mod", "file": "library/bignum_core.c", "change": "source and code changed (factory label changed/source-diff)"},
-   {"name": "psa_get_and_lock_key_slot", "file": "library/psa_crypto_slot_management.c", "change": "source and code changed (factory label changed/source-diff)"},
-   {"name": "psa_generate_key", "file": "library/psa_crypto.c", "change": "source and code changed (factory label changed/source-diff)"}
-  ],
-  "unchanged_controls": ["aes_gen_tables", "mbedtls_aes_setkey_enc"],
-  "build": {"system": "other", "recipe_notes": "tools/unified/corpus recipe mbedtls (mingw-gcc -O2 -g, library/*.c without net_sockets.c, entropy and inet_pton bypass defines), mbedtls36.dll", "mingw_ok": "yes"},
-  "verification": {
-   "method": "tools.calibration.tier_r factory.run_card on the fetched pins (mingw-gcc 13-win32 -O2, Linux, local run, not CI): 1571 project functions, 1405 unchanged, 42 changed, 109 ambiguous, 15 no-counterpart, 0 disagreements; both CVE-2024-45158 functions declared as security-fix and confirmed changed",
-   "functions_changed_count": 42,
-   "verified_by_agent_run": true
-  },
-  "sources": ["https://github.com/Mbed-TLS/mbedtls/commit/71c569d44bf3a8bd53d874c81ee8ac644dd6e9e3"],
-  "risks": ["Ambiguous records (source or code changed without the other) are excluded from changed-set scoring by design.", "The entropy and socket layers are compiled out, so the image is a faithful sample of the library code but not a build anyone would ship."]
  }
 ]

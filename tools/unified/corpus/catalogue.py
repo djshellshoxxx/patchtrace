@@ -1,8 +1,9 @@
 """Tier R catalogue of the SPEC-31 gates (08-evaluation s2, 09-licensing s4): which open-source release pairs feed them.
 
-SPEC-32 (`tools/calibration/tier_r`) owns the contracts and the build/label factory and keeps its own catalogue
-(zlib). This module adds only the SPEC-31 view on top of it: recipes for the libraries the gates name, case cards of
-their adjacent release tags and `pins.json`, the SHA-256 of every pinned source tree. Images differ per compiler
+SPEC-32 (`tools/calibration/tier_r`) owns the contracts, the build/label factory and the recipes of every project it
+defines (zlib, libpng, Lua, mbedTLS, ...): this module defines no recipe and reads that one book, so the A/A, mutation
+and bench tools share it. It adds only the SPEC-31 view: case cards of adjacent release tags (`cards.json`; the zlib
+pair is Tier R's own card, referenced by id) and `pins.json`, the SHA-256 of every pinned source tree. Images differ per compiler
 version, so no image hash is pinned here; image hashes live in the run reports. Nothing in this module touches the
 network; fetching and building are in `cli.py`.
 """
@@ -23,6 +24,8 @@ HERE = Path(__file__).resolve().parent
 SPEC32 = HERE.parents[1] / 'calibration' / 'tier_r' / 'catalogue'
 # 08 s2 (Tier R row) and 09 s4: every one is a recipe or a documented exclusion.
 TIER_R_PROJECTS = ('zlib', 'libpng', 'sqlite3', 'lua', 'mbedtls')
+# Tier R cards this view reuses as they are (referenced, never redefined).
+SHARED_CARDS = ('zlib-v1.3-to-v1.3.1',)
 
 
 class _Strict(BaseModel):
@@ -45,25 +48,21 @@ def _read(path: Path) -> bytes:
     return data
 
 
-def spec32_book() -> C.RecipeBook:
+def recipe_book() -> C.RecipeBook:
+    """The single recipe book: SPEC-32's (Tier R)."""
     return C.load_recipes(_read(SPEC32 / 'recipes.json'))
 
 
-def load_recipes() -> C.RecipeBook:
-    return C.load_recipes(_read(HERE / 'recipes.json'))
-
-
-def merged_book() -> C.RecipeBook:
-    """SPEC-32's recipes plus this catalogue's (a project defined twice is an error, never silently overridden)."""
-    return C.RecipeBook(contract='tier-r-recipes/1', recipes=(*spec32_book().recipes, *load_recipes().recipes))
-
-
 def excluded() -> list[dict[str, str]]:
-    return [*spec32_book().excluded, *load_recipes().excluded]
+    return list(recipe_book().excluded)
 
 
 def load_cards() -> tuple[C.CaseCard, ...]:
-    return (*C.load_cards(_read(SPEC32 / 'releases.json')), *C.load_cards(_read(HERE / 'cards.json')))
+    tier_r = {c.id: c for c in C.load_cards(_read(SPEC32 / 'releases.json'))}
+    missing = [i for i in SHARED_CARDS if i not in tier_r]
+    if missing:
+        raise ValueError(f'Tier R card(s) not found: {", ".join(missing)}')
+    return (*(tier_r[i] for i in SHARED_CARDS), *C.load_cards(_read(HERE / 'cards.json')))
 
 
 def load_pins() -> UnifiedPins:
@@ -98,12 +97,8 @@ def _card_problems(card: C.CaseCard, book: C.RecipeBook) -> list[str]:
 
 def problems() -> list[str]:
     """Offline consistency findings of the committed catalogue (empty = consistent)."""
-    mine, base = load_recipes(), spec32_book()
-    clash = sorted({r.project for r in mine.recipes} & {r.project for r in base.recipes})
-    if clash:
-        return [f'recipe {p} is defined by both catalogues' for p in clash]
     out: list[str] = []
-    book = merged_book()
+    book = recipe_book()
     known = {r.project for r in book.recipes} | {e['project'] for e in excluded()}
     out += [f'Tier R project {p} is neither a recipe nor a documented exclusion'
             for p in TIER_R_PROJECTS if p not in known]

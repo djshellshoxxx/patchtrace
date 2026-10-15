@@ -67,7 +67,7 @@ def _fetch_side(book: C.RecipeBook, store: Path, tools: T.Toolchain, project: st
 
 
 def _fetch(args) -> int:
-    tools, store, book, pins = T.probe(), F.store_dir(), catalogue.merged_book(), catalogue.load_pins()
+    tools, store, book, pins = T.probe(), F.store_dir(), catalogue.recipe_book(), catalogue.load_pins()
     digests: dict[str, dict[str, str]] = {}
     for card in _select(args.pairs):
         for dep in book.get(card.project).depends:
@@ -85,7 +85,7 @@ def _fetch(args) -> int:
 
 
 def _build(args) -> int:
-    session, book = F.Session(T.probe(), F.store_dir()), catalogue.merged_book()
+    session, book = F.Session(T.probe(), F.store_dir()), catalogue.recipe_book()
     for card in _select(args.pairs):
         doc = F.run_card(session, book, card, opt=args.opt)
         F.write_doc(session.store, doc)
@@ -95,7 +95,7 @@ def _build(args) -> int:
 
 
 def _aa(args) -> int:
-    session, book, cards = F.Session(T.probe(), F.store_dir()), catalogue.merged_book(), catalogue.load_cards()
+    session, book, cards = F.Session(T.probe(), F.store_dir()), catalogue.recipe_book(), catalogue.load_cards()
     projects = args.projects.split(',') if args.projects != 'all' else sorted({c.project for c in cards})
     for project in projects:
         card = next((c for c in cards if c.project == project), None)
