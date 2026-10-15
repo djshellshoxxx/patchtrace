@@ -103,8 +103,9 @@ def test_read_only_project_directory_for_dry_run_and_persisting_rank(tmp_path, c
         root.chmod(0o755)
 
 
-@pytest.mark.xfail(strict=True, reason='QA-CLI-3: cache verify on a --cache-dir that is a regular file returns '
-                   'status "complete" with result.error "_Unsafe" and exit 0; it must fail with exit 2')
+@pytest.mark.xfail(strict=True, reason='QA-CLI-3: cache verify on a --cache-dir that is a regular file exits 3 '
+                   '(status "failed", error "_Unsafe"); the expected config exit is 2, but cache status on the same '
+                   'path is pinned at 3 by tests/test_cli.py: needs a decision on one exit code for both')
 def test_cache_verify_on_a_file_reports_failure(tmp_path, capsys):
     cache_file = tmp_path / 'cache-file'
     cache_file.write_text('not a directory\n', encoding='utf-8', newline='\n')
@@ -113,8 +114,6 @@ def test_cache_verify_on_a_file_reports_failure(tmp_path, capsys):
     assert code == cli.ENVIRONMENT, (code, out[-300:])
 
 
-@pytest.mark.xfail(strict=True, reason='QA-CLI-4: rank with an unusable --cache-dir runs without any cache and '
-                   'reports no warning; the user asked for a cache that was not used')
 def test_rank_reports_an_unusable_cache_dir(tmp_path, capsys):
     root = make_sample(tmp_path / 'case')
     cache_file = tmp_path / 'cache-file'

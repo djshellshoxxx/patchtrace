@@ -146,8 +146,6 @@ def test_json_mode_parse_failure_emits_one_document(argv, case_id, fixture_paths
     assert len(documents) == 1, out
 
 
-@pytest.mark.xfail(strict=True, reason='QA-CLI-2: an offline correlate accepts a malformed CVE id and reports '
-                   'exit 4 (complete evidence, zero entries) instead of rejecting it with exit 2')
 def test_offline_correlate_rejects_malformed_cve_id(fixture_paths, capsys):
     code, out, err = run_main(['correlate', fixture_paths['@case'], '--cve', 'bad'], capsys)
     assert code == cli.ENVIRONMENT, (code, err)
