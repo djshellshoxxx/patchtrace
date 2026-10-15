@@ -145,3 +145,64 @@ def test_visible_row_text_passes_the_banned_sweep():
     from test_strings_copy import assert_no_banned
     for row in rows():
         assert_no_banned(' '.join([row.change, row.sentence, row.description, row.cue_text]))
+
+
+# ---- function pairing (unknown is shown as unknown; a function is never guessed) ----------------------------------------
+
+def record_link(side, function_id, match, pair='modified', name='ParseHeader', ambiguous=False):
+    ref = FunctionRef(side=side, rva=0x1000, project_function_id=function_id, match_id=match, name=name,
+                      ambiguous=ambiguous)
+    return StringLink(tier='L4', join='exact', function=ref, pair_status=pair, lineage_group='ghidra:x',
+                      evidence_ref='f:line:1', line=1)
+
+
+def test_function_cell_names_the_function_and_says_how_it_is_paired():
+    (row,) = build_rows(delta(change('Bad %s width', links=[link('modified')])))
+    assert row.function_cell == 'ParseHeader (modified)' and row.pair == 'modified'
+    (unknown,) = build_rows(delta(change('Bad %s width', links=[link('unknown')])))
+    assert unknown.function_cell == 'ParseHeader (pairing unknown)'
+
+
+def test_function_cell_is_unknown_with_the_reason_when_no_pairing_exists():
+    (row,) = build_rows(delta(change('alpha text')), unknown_reason='the project has no completed analysis')
+    assert row.function_cell == 'Unknown: the project has no completed analysis' and row.function == ''
+    (plain,) = build_rows(delta(change('alpha text')))
+    assert plain.function_cell == 'No supported function link'
+
+
+def test_a_linked_string_keeps_its_function_even_when_pairing_is_partly_unknown():
+    (row,) = build_rows(delta(change('x text', links=[link()])), unknown_reason='whatever')
+    assert row.function_cell == 'ParseHeader (modified)'
+
+
+def test_ambiguous_names_are_not_guessed():
+    (row,) = build_rows(delta(change('x text', links=[record_link('newer', None, None, 'unknown', ambiguous=True)])))
+    assert row.function_cell == 'ParseHeader (ambiguous)' and row.open_target is None
+
+
+def test_open_target_uses_the_function_record_of_a_unique_match():
+    both = [record_link('older', 'fo', 'm9'), record_link('newer', 'fn', 'm9')]
+    (row,) = build_rows(delta(change('x text', status='both', links=both)))
+    assert row.function_ids == ('m9', 'fo', 'fn') and row.open_target == ('fo', 'older')
+    (newer,) = build_rows(delta(change('y text', links=[record_link('newer', 'fn', 'm9')])))
+    assert newer.open_target == ('fn', 'newer')
+
+
+def test_open_target_is_none_when_links_disagree_or_have_no_id():
+    split = [record_link('newer', 'f1', 'm1'), record_link('newer', 'f2', 'm2')]
+    (row,) = build_rows(delta(change('z text', links=split)))
+    assert row.open_target is None
+    (bare,) = build_rows(delta(change('w text', links=[record_link('newer', None, None)])))
+    assert bare.open_target is None
+
+
+def test_linked_only_filter_keeps_rows_with_a_function():
+    result = apply_filter(rows(), StringsFilter(linked_only=True))
+    assert [r.text for r in result.rows] == ['Bad %s width', 'old path C:\\x']
+
+
+def test_pairing_summary_counts_without_a_score():
+    all_rows = rows()
+    assert vm.pairing_summary(all_rows, None) == '2 of 5 strings have a function link.'
+    assert vm.pairing_summary(all_rows, 'the project has no completed analysis') == \
+        'Function pairing unknown: the project has no completed analysis.'

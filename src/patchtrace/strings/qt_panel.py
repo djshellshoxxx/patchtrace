@@ -40,6 +40,7 @@ from .panel import TIPS
 from .scan import ScanError
 from .view_model import (
     CLIPBOARD_ROWS,
+    PAIR_CELL,
     FilterResult,
     StringRowVM,
     StringsFilter,
@@ -47,6 +48,7 @@ from .view_model import (
     build_rows,
     copy_escaped,
     differing,
+    pairing_summary,
 )
 
 DETAIL_LIMIT = 8_192
@@ -68,6 +70,8 @@ class Request:
     older_sha256: str
     newer_sha256: str
     min_length: int = 4
+    root: Path | None = None       # the project folder and a read-only snapshot of its matches, for function pairing;
+    project: object | None = None  # without them every function is unknown, never guessed
 
 
 @dataclass(frozen=True, slots=True)
@@ -76,30 +80,42 @@ class Loaded:
     rows: tuple[StringRowVM, ...]
     changes: dict[str, StringChange]
     partial: tuple[tuple[str, str], ...] = ()  # (side, row limit) of each scan that stopped early
+    pairing_reason: str | None = None  # why no function pairing exists (None: it was built, a string may still have none)
 
 
 Loader = Callable[[Request, object, Report], Loaded]
 
 
 def scan_builtin(request: Request, token, report: Report) -> Loaded:
-    """Worker: read both files with the built-in scan (data reads only) and compare. No function pairing is
-    available to a worker, so no string carries a function link."""
-    from ..intelligence.tools.normalize import FunctionPairing
+    """Worker: read both files with the built-in scan (data reads only) and compare. Strings are linked to functions only
+    through `pairing.project_links` (evidence tiers L4 and L5 over the project's matches); with no analysis, no snapshot or
+    an unparsable image every function stays unknown."""
     from .cli import table_from_source
     from .delta import compute_delta
+    from .pairing import Image, inspect_image, project_links
     from .scan import DEFAULT_MAX_ROWS, BuiltinScanSource
+    sides = (('older', request.older, request.older_sha256), ('newer', request.newer, request.newer_sha256))
+    images: dict[str, Image] = {}
+    for side, path, sha in sides:
+        try:
+            images[side] = inspect_image(path, sha)
+        except StringsError:
+            images[side] = Image()   # the scan below reports the unreadable file; layout-dependent links are unknown
     tables, partial = {}, []
-    for n, (side, path, sha) in enumerate((('older', request.older, request.older_sha256),
-                                           ('newer', request.newer, request.newer_sha256)), 1):
+    for n, (side, path, sha) in enumerate(sides, 1):
         report(side, n, 2)
+        pe = images[side].pe
         source = BuiltinScanSource(path, artifact_sha256=sha, side=side, min_length=request.min_length,
+                                   offset_to_rva=(lambda off, pe=pe: pe.offset_to_rva(off)[0]) if pe else None,
                                    cancel=token.is_set)
         tables[side] = table_from_source(source.load())
         if any(s.state in ('truncated', 'failed') for s in tables[side].basis.stages.values()):
             partial.append((side, str(DEFAULT_MAX_ROWS)))
-    delta = compute_delta(tables['older'], tables['newer'], pairing=FunctionPairing.empty())
+    found = project_links(request.root, request.project, tables, images, [])
+    delta = compute_delta(tables['older'], tables['newer'], pairing=found.pairing, links=found.linked)
     sources = {'older': 'built-in scan', 'newer': 'built-in scan'}
-    return Loaded(delta, build_rows(delta, sources), {c.id: c for c in delta.changes}, tuple(partial))
+    return Loaded(delta, build_rows(delta, sources, unknown_reason=found.reason), {c.id: c for c in delta.changes},
+                  tuple(partial), found.reason)
 
 
 def _cell(value: str, empty: str) -> str:
@@ -112,7 +128,7 @@ COLUMNS = (
     ColumnSpec('type', 'Type', lambda r: r.type, width_em=16),
     ColumnSpec('older', 'Older', lambda r: _cell(r.older, 'No file offset'), width_em=22),
     ColumnSpec('newer', 'Newer', lambda r: _cell(r.newer, 'No file offset'), width_em=22),
-    ColumnSpec('function', 'Function', lambda r: r.function or 'No supported function link', width_em=28),
+    ColumnSpec('function', 'Function', lambda r: r.function_cell, width_em=34),
     ColumnSpec('cues', 'Cues', lambda r: r.cue_text, width_em=24),
     ColumnSpec('source', 'Source', lambda r: r.source or 'Not run', width_em=20))
 SPEC = TableSpec(row_key=lambda r: r.id, search_text=lambda r: r.text)
@@ -144,10 +160,14 @@ class StringsPanel(QWidget):
         self.noise = QCheckBox('Hide noise-like strings')
         self.noise.setObjectName('strings.filter.noise')
         self.noise.setAccessibleName('Hide noise-like strings')
+        self.linked = QCheckBox('Linked to a function only')
+        self.linked.setObjectName('strings.filter.linked')
+        self.linked.setAccessibleName('Show only strings that have a function link')
         for widget in (self.change, self.scope):
             top.addWidget(widget)
         top.addWidget(self.search, 1)
         top.addWidget(self.noise)
+        top.addWidget(self.linked)
         self.table = VirtualTable('Strings table')
         self.table.setObjectName('strings.table')
         self.detail = SafeTextView('Details of the selected string', limit=DETAIL_LIMIT, wrap=True)
@@ -166,13 +186,17 @@ class StringsPanel(QWidget):
         actions.addStretch(1)
         self.footer = PlainLabel(wrap=True, limit=400)
         self.footer.setObjectName('strings.basis')
+        self.pairing = PlainLabel(wrap=True, limit=400)
+        self.pairing.setObjectName('strings.pairing')
         column = QVBoxLayout(self)
         column.setContentsMargins(4, 4, 4, 4)
         column.addLayout(top)
         column.addWidget(body, 1)
         column.addLayout(actions)
+        column.addWidget(self.pairing)
         column.addWidget(self.footer)
         for widget, tip in ((self.search, 'strings.filter.text'), (self.noise, 'strings.filter.noise'),
+                            (self.linked, 'strings.filter.linked'),
                             (self.table, 'strings.table'), (self.detail, 'strings.detail')):
             apply_tip(widget, tip)
         self.setFocusProxy(self.table)
@@ -234,6 +258,7 @@ class StringsController(ControllerBase):
         for combo in (panel.change, panel.scope):
             combo.currentIndexChanged.connect(lambda _i: self._refilter())
         panel.noise.toggled.connect(lambda _c: self._refilter())
+        panel.linked.toggled.connect(lambda _c: self._refilter())
         panel.search.textChanged.connect(self._text_changed)
         table.selectionModel().currentRowChanged.connect(lambda *_: self._selection())
         table.table_model.modelReset.connect(self._selection)
@@ -299,7 +324,8 @@ class StringsController(ControllerBase):
         except (OSError, ValueError, LookupError) as exc:
             self.error = ('PT-STR-INPUT', f'the project needs an older and a newer artifact ({type(exc).__name__})')
             return self._render()
-        request = Request(key, Path(older), Path(newer), older_sha, newer_sha)
+        request = Request(key, Path(older), Path(newer), older_sha, newer_sha, root=self._root(),
+                          project=self._snapshot())
         self.generation += 1
         generation = self.generation
         self.error, self.cancelled, self.stale = None, False, False
@@ -316,6 +342,17 @@ class StringsController(ControllerBase):
             'strings-scan', work, lambda result: self._loaded(generation, request, result),
             lambda failure: self._failed(generation, failure),
             lambda progress: self._progressed(generation, progress))
+
+    def _snapshot(self):
+        """A read-only copy of the project record for the worker (never the service or its connection), or None."""
+        reader = getattr(self.port, 'project', None)
+        found = reader() if callable(reader) else None
+        copier = getattr(found, 'model_copy', None)
+        return copier() if callable(copier) else found
+
+    def _root(self) -> Path | None:
+        root = getattr(getattr(self.port, 'service', None), 'root', None)
+        return Path(root) if root is not None else None
 
     def cancel(self) -> None:
         if self.progress is None:
@@ -354,7 +391,7 @@ class StringsController(ControllerBase):
     def current_filter(self) -> StringsFilter:
         panel = self.panel
         return StringsFilter(change=panel.change.currentData(), scope=panel.scope.currentData(),
-                             hide_noise=panel.noise.isChecked())
+                             hide_noise=panel.noise.isChecked(), linked_only=panel.linked.isChecked())
 
     def _text_changed(self, text: str) -> None:
         self.panel.table.set_filter(sanitize_text(text, 200))
@@ -395,12 +432,16 @@ class StringsController(ControllerBase):
         buttons = self.panel.buttons
         self.panel.detail.setPlainText(self._detail(row) if row else '')
         buttons['copy'].setEnabled(row is not None)
-        buttons['function'].setEnabled(row is not None and len(row.function_ids) == 1)
+        buttons['function'].setEnabled(row is not None and row.open_target is not None)
         buttons['hex'].setEnabled(self._current_scan() and self._offset(row) is not None)
 
-    @staticmethod
-    def _detail(row: StringRowVM) -> str:
-        return '\n'.join((row.sentence, row.description, f'Older offsets: {row.older}', f'Newer offsets: {row.newer}',
+    def _detail(self, row: StringRowVM) -> str:
+        change = self.loaded.changes.get(row.id) if self.loaded else None
+        links = [f'Link {link.tier}: {sanitize_text(link.function.name or "unnamed function", 80)} '
+                 f'({PAIR_CELL[link.pair_status]}); evidence {sanitize_text(link.evidence_ref, 80)}'
+                 for link in (change.links if change else ())][:8]
+        return '\n'.join((row.sentence, row.description, f'Function: {row.function_cell}', *links,
+                          f'Older offsets: {row.older}', f'Newer offsets: {row.newer}',
                           f'Value SHA-256: {row.value_sha256}', f'String: {row.text}'))
 
     def _offset(self, row: StringRowVM | None) -> tuple[Side, int] | None:
@@ -423,9 +464,10 @@ class StringsController(ControllerBase):
 
     def open_function(self) -> None:
         row = self.current_row()
-        if row is None or len(row.function_ids) != 1 or self.key is None:
+        if row is None or row.open_target is None or self.key is None:
             return
-        anchor = AnchorRef('function', row.function_ids[0], row.sides[0], label=row.function).pinned(self.key)
+        function_id, side = row.open_target
+        anchor = AnchorRef('function', function_id, side, label=row.function).pinned(self.key)
         result = self.ctx.nav.navigate(anchor)
         if getattr(result, 'status', 'shown') != 'shown':
             self.ctx.shell.status(sanitize_text(getattr(result, 'message', '')))
@@ -485,7 +527,13 @@ class StringsController(ControllerBase):
         buttons['scan'].setText('Re-scan both builds' if self.loaded else 'Scan both builds')
         buttons['cancel'].setEnabled(running)
         self.panel.footer.setText(self._footer())
+        self.panel.pairing.setText(self._pairing())
         self._selection()
+
+    def _pairing(self) -> str:
+        if self.loaded is None:
+            return 'Function pairing: not loaded.'
+        return pairing_summary(self.loaded.rows, self.loaded.pairing_reason)
 
     def _footer(self) -> str:
         if self.loaded is None:
