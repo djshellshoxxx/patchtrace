@@ -138,6 +138,103 @@ class PairsDoc(_Strict):
     coverage: Coverage
 
 
+# ---- exact-preview fetch plan (s4) --------------------------------------------------------------------------
+
+class FetchInput(_Strict):
+    source: str = Field(min_length=1, max_length=160)
+    sha256: Sha256
+
+
+class FetchExclusion(_Strict):
+    file_name: str = Field(min_length=1, max_length=128, pattern=r'^[A-Za-z0-9._-]+$')
+    sha256: Sha256 | None = None
+    reason: Literal['unavailable', 'unresolved-size', 'no-codeview', 'not-x64', 'deferred']
+
+
+class FetchItem(_Strict):
+    kind: Literal['binary', 'pdb']
+    file_name: str = Field(min_length=1, max_length=128, pattern=r'^[A-Za-z0-9._-]+$')
+    source_url: str = Field(min_length=1, max_length=2048)
+    sha256: Sha256 | None = None
+    record_sha256: Sha256 | None = None
+    size: int | None = Field(default=None, ge=1, le=2**32 - 1)
+    cap_bytes: int = Field(ge=1, le=2 * 1024 * 1024 * 1024)
+    binary_sha256: Sha256 | None = None
+    guid: Guid | None = None
+    age: U32 | None = None
+    timestamp: U32 | None = None
+    size_of_image: U32 | None = None
+    pair_ids: tuple[Ident, ...] = Field(default=(), max_length=100_000)
+
+    @model_validator(mode='after')
+    def _valid_fetch_item(self):
+        from urllib.parse import urlsplit
+        from patchtrace.acquisition.contracts import SYMBOL_SERVER, symbol_server_url
+
+        parts = urlsplit(self.source_url)
+        if (parts.scheme != 'https' or parts.hostname != 'msdl.microsoft.com'
+                or parts.port not in (None, 443) or parts.username or parts.password
+                or parts.query or parts.fragment):
+            raise ValueError('fetch plan URL must be an exact HTTPS Microsoft symbol-server URL')
+        if self.pair_ids != tuple(sorted(set(self.pair_ids))):
+            raise ValueError('pair ids must be sorted and unique')
+        if self.kind == 'binary':
+            if (self.sha256 is None or self.record_sha256 is None or self.size is None
+                    or self.binary_sha256 is not None or self.guid is not None or self.age is not None
+                    or self.timestamp is None or self.size_of_image is None):
+                raise ValueError('binary entry has incomplete or mixed identity fields')
+            if self.cap_bytes != self.size:
+                raise ValueError('binary cap must equal its expected size')
+            expected = symbol_server_url(self.file_name.lower(), self.timestamp, self.size_of_image)
+            if self.file_name != self.file_name.lower() or self.source_url != expected:
+                raise ValueError('binary URL does not match its pinned identity')
+        else:
+            if (self.sha256 is not None or self.record_sha256 is not None or self.size is not None
+                    or self.binary_sha256 is None or self.guid is None or self.age is None
+                    or self.timestamp is not None or self.size_of_image is not None
+                    or not self.file_name.lower().endswith('.pdb')):
+                raise ValueError('PDB entry has incomplete or mixed identity fields')
+            guid_hex = self.guid.replace('-', '').upper()
+            name = self.file_name.lower()
+            expected = f'{SYMBOL_SERVER}/{name}/{guid_hex}{self.age:X}/{name}'
+            if self.file_name != name or self.source_url != expected:
+                raise ValueError('PDB URL does not match its CodeView identity')
+        return self
+
+
+class FetchPlan(_Strict):
+    contract: Literal['tier-w-fetch-plan/1']
+    tier: Literal['W']
+    operation: Literal['binary', 'pdb']
+    corpus_id: str = Field(pattern=r'^tier-w-[A-Za-z0-9._-]{1,57}$')
+    selected_pairs: tuple[Ident, ...] = Field(default=(), max_length=100_000)
+    max_files: int = Field(ge=1, le=100_000)
+    source_digests: tuple[FetchInput, ...] = Field(max_length=100_001)
+    input_plan_sha256: Sha256 | None = None
+    entries: tuple[FetchItem, ...] = Field(max_length=100_000)
+    exclusions: tuple[FetchExclusion, ...] = Field(default=(), max_length=100_000)
+
+    @model_validator(mode='after')
+    def _consistent(self):
+        if self.selected_pairs != tuple(sorted(set(self.selected_pairs))):
+            raise ValueError('selected pair ids must be sorted and unique')
+        source_names = [item.source for item in self.source_digests]
+        if source_names != sorted(set(source_names)):
+            raise ValueError('source digests must be sorted by unique source name')
+        if len(self.entries) > self.max_files:
+            raise ValueError('plan exceeds max_files')
+        if any(item.kind != self.operation for item in self.entries):
+            raise ValueError('entry kind does not match operation')
+        keys = [(item.sha256 or item.binary_sha256, item.file_name) for item in self.entries]
+        if keys != sorted(set(keys)):
+            raise ValueError('entries must be sorted and unique')
+        if self.operation == 'binary' and (self.input_plan_sha256 is not None or not self.selected_pairs):
+            raise ValueError('binary plan requires selected pairs and has no source plan')
+        if self.operation == 'pdb' and self.input_plan_sha256 is None:
+            raise ValueError('PDB plan must bind to the binary plan')
+        return self
+
+
 # ---- Ghidra raw output (s5.2) and symbol-map/1 (s5.3) ---------------------------------------------------------
 
 def _check_ranges(ranges: Sequence[Sequence[int]]) -> int:
@@ -339,6 +436,10 @@ def _load(model: type[BaseModel], data: bytes, limit: int, what: str):
     except ValidationError as exc:
         first = str(exc).splitlines()
         raise TierWError('PT-TIERW-INPUT', f'{what} invalid: {" ".join(first[:3])[:400]}') from None
+
+
+def load_fetch_plan(data: bytes) -> FetchPlan:
+    return _load(FetchPlan, data, DOC_LIMIT, 'Tier-W fetch plan')
 
 
 def load_catalogue(data: bytes) -> Catalogue:
