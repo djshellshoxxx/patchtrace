@@ -528,3 +528,6 @@
 - [ ] Integrator: add `leads` to `built` in `tests/test_gui_host_seam.py::test_the_shipped_manifest_builds_only_the_migrated_panels_and_has_no_problem` and to the dock list of `tests/test_tooltips.py::test_every_registry_id_is_applied_somewhere` (both fail on any new built panel until then). Decide `default_visible` for the dock (the plan wants it visible with a project; GUI open question 13).
 - [ ] A: a worker-safe `collect` (snapshot in, evidence out) so that Prepare leads does not hold the GUI thread while evidence is collected; public `collect.overview` (the dock imports `_overview`); a snapshot date in `Kev(not-in-snapshot)`; `store.load` split into pointer rows (GUI thread) and sidecar read (worker).
 - [ ] BLOCKED, live evidence: real UIA/NVDA/Narrator announcement of the status lines, high-contrast and 200 percent DPI look of the chips, Windows CI of the new tests.
+
+### [D:master-plan]
+- Master plan and categorized to-do list for finishing the project: `docs/plans/master-plan-d.md`, `docs/plans/master-todo-d.md`; panel specs prompt for ChatGPT: `docs/plans/chatgpt-panel-specs-prompt.md`.
