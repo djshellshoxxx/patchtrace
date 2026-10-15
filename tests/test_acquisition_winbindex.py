@@ -153,6 +153,21 @@ def test_strict_json_and_caps():
         wb.parse(gzip.compress(b'{}'), 'afd.sys', 'yesterday')
 
 
+@pytest.mark.parametrize('text', ['\ud800', 'a\udfffb'], ids=['high', 'low-inside'])
+def test_unpaired_surrogate_escape_is_a_typed_provider_error(text):
+    doc = record()
+    next(iter(doc.values()))['fileInfo']['version'] = text
+    with pytest.raises(AcquisitionError) as err:
+        parse(doc)
+    assert err.value.code == 'PT-ACQ-PROVIDER'
+
+
+def test_paired_surrogate_escape_still_parses():
+    doc = record()
+    next(iter(doc.values()))['fileInfo']['version'] = '\U0001f600'  # json.dumps escapes it as a pair
+    assert len(parse(doc).candidates) == 4
+
+
 def test_decompression_bomb_is_capped(monkeypatch):
     monkeypatch.setattr(wb, 'MAX_DECOMPRESSED', 1000)
     with pytest.raises(AcquisitionError) as err:

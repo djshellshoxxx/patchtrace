@@ -344,4 +344,4 @@ def test_show_pair_replaces_the_code_panes_and_clears_hunks(main_window):
     assert window._function_offsets == {} and window._hunks == [] and window.hunk_list.count() == 0
     assert window.match_label.text() == 'Panel pair'
     window.panels.port.show_pair('x' * 300_000, '', 'big')
-    assert len(window.views['older'].toPlainText()) == 200_000
+    assert window.views['older'].toPlainText().startswith('x' * 200_000 + '\n[View truncated')

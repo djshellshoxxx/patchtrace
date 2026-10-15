@@ -63,6 +63,7 @@ class SecondaryMatch(_Strict):
     flags: tuple[str, ...]
     algorithm: str = Field(min_length=1)
     match_type: str | None = None
+    basicblocks: int | None = Field(default=None, ge=0)  # BinDiff basic-block count; 0 marks a stub or thunk row
 
     @model_validator(mode='after')
     def consistent(self):

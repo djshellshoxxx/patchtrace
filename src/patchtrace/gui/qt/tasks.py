@@ -33,9 +33,11 @@ PROGRESS_INTERVAL_MS = 100       # 10 Hz, latest wins; 100,000 unthrottled emits
 JOIN_SECONDS = 5.0
 CHECKPOINT_WORK = 0.002          # sleep 1 ms after every 2 ms of CPU work (measured repaint p95 20 ms)
 CHECKPOINT_SLEEP = 0.001
-LEGACY_MODULES = ('ui_engine_setup', 'ui_series', 'ui_bundle_setup', 'ui_inspection')
+LEGACY_REGISTRIES = (('ui_engine_setup', '_LIVE_THREADS'), ('ui_series', '_LIVE_THREADS'),
+                     ('ui_bundle_setup', '_LIVE_THREADS'), ('ui_inspection', '_LIVE_THREADS'),
+                     ('ui', '_DISCOVERY_THREADS'), ('ui_bundle_setup', '_THREADS'))  # (module, thread-set name)
 
-_UNSAFE = re.compile('[\x00-\x1f\x7f-\x9f  ‪-‮⁦-⁩]')
+_UNSAFE = re.compile('[\x00-\x1f\x7f-\x9f\u2028\u2029\u061c\u200e\u200f\u202a-\u202e\u2066-\u2069]')
 
 
 def _clip(text: object, limit: int) -> str:
@@ -108,6 +110,12 @@ class _Task:
     def report(self, stage: str, done: int = 0, total: int | None = None, message: str = '') -> None:
         self.pending = (stage, done, total, message)
 
+    def release(self) -> None:
+        """Drop the body and the callbacks. A worker frame (or ``Thread._args``) can outlive the GUI thread's last
+        use of the task, and the callbacks capture controllers and models: their last reference must die on the GUI
+        thread, not on whichever thread unwinds last."""
+        self.fn = self.on_result = self.on_error = self.on_progress = None
+
 
 @dataclass(slots=True)
 class _Event:
@@ -118,7 +126,7 @@ class _Event:
     def release(self) -> None:
         """Drop the payload and the task body; only ever called on the GUI thread."""
         self.payload = None
-        self.task.fn = None
+        self.task.release()
 
 
 class _Hub(QObject):
@@ -192,7 +200,7 @@ def _execute(task: _Task, state: Any) -> _Event:
         return _Event('result', task, value)
     except TaskCancelled:
         return _Event('drop', task)
-    except Exception as exc:  # noqa: BLE001 - only the class crosses the thread boundary
+    except BaseException as exc:  # noqa: BLE001 - only the class crosses the thread boundary
         return _Event('error', task, TaskFailure(type(exc).__name__))
 
 
@@ -289,7 +297,7 @@ class TaskRunner:
 
     def _release_pending(self) -> None:
         for task in self._running:
-            task.fn = None
+            task.release()
         for event in self._parked.values():
             event.release()
         self._running.clear()
@@ -427,7 +435,7 @@ def _lane_loop(requests: queue.Queue, init: Callable[[], Any], close: Callable[[
         else:
             event = _execute(task, state)
         _post(event)
-        del event
+        del event, task
     if failure is None and close:
         with suppress(Exception):
             close(state)
@@ -457,9 +465,9 @@ def shutdown_live_runners(timeout: float = JOIN_SECONDS) -> list[str]:
 def legacy_threads() -> list[QThread]:
     """Alive QThreads held by the status-quo module registries; found through ``sys.modules`` (no import)."""
     found = []
-    for name in LEGACY_MODULES:
+    for name, registry in LEGACY_REGISTRIES:
         module = sys.modules.get(f'patchtrace.{name}')
-        found += [t for t in list(getattr(module, '_LIVE_THREADS', ())) if isValid(t) and t.isRunning()]
+        found += [t for t in list(getattr(module, registry, ())) if isValid(t) and t.isRunning()]
     return found
 
 

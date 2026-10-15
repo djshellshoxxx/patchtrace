@@ -155,10 +155,22 @@ def accept_binexport(path: Path, *, artifact_sha256: str, role: Literal['older',
         for leftover in (work / 'req.json', result):
             leftover.unlink(missing_ok=True)
         snapshot.chmod(0o400)
-        return AcceptedBinExport(snapshot, summary)
+        return AcceptedBinExport(_content_addressed(work, snapshot, summary.file_sha256), summary)
     except BaseException:
         _remove(work)  # no partial state; the user's original file is never touched
         raise
+
+
+def _content_addressed(work: Path, snapshot: Path, sha256: str) -> Path:
+    """Keep one snapshot per distinct file: repeated validations of the same bytes reuse the stored copy."""
+    final = work.parent / f'binexport-{sha256}'
+    kept = final / snapshot.name
+    if not (kept.is_file() and _sha256(kept) == sha256):
+        _remove(final)
+        os.replace(work, final)
+        return kept
+    _remove(work)
+    return kept
 
 
 def _read_result(result: Path, limits: BinExportLimits) -> WorkerResult:

@@ -41,6 +41,7 @@ def normalize_ghidriff(raw: dict, project: ComparisonProject, run_id: str) -> li
     if run_id not in {run.id for run in project.runs}:
         raise ValueError('PT-SCHEMA: normalization requires a project-owned analysis run')
     artifacts = {artifact.side: artifact for artifact in project.artifacts}
+    seen: set[tuple[str, str, str | None]] = set()
 
     def function(record, side: str) -> FunctionRecord:
         if not isinstance(record, dict) or not isinstance(record.get('name'), str) or not record['name']:
@@ -61,6 +62,10 @@ def normalize_ghidriff(raw: dict, project: ComparisonProject, run_id: str) -> li
             else:
                 raise ValueError('PT-SCHEMA: instructions must be a string list, integer hash or null')
         metadata['upstream_name'] = record['name']
+        identity = (side, record.get('fullname') or record['name'], record.get('address'))
+        if identity in seen:
+            raise ValueError('PT-SCHEMA: upstream function is repeated; shared evidence counts once')
+        seen.add(identity)
         return FunctionRecord(artifact_id=artifacts[side].id, run_id=run_id,
                               name=record.get('fullname') or record['name'], address=record.get('address'),
                               address_space='virtual' if record.get('address') else 'unknown',

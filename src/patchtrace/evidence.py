@@ -4,12 +4,36 @@ from __future__ import annotations
 import hashlib
 import json
 import math
+from collections.abc import Sequence
 
 from .models import AnalysisContext, ComparisonProject, EvidenceReference, FunctionRecord
 
 
 class EvidenceError(ValueError):
     pass
+
+
+MAX_NOTES, MAX_NOTE_TITLE, MAX_NOTE_TEXT = 8, 200, 6000
+Note = tuple[str, str, Sequence[str]]      # (title, text, omitted): plain text a caller wants in the preview
+
+
+def _unified_notes(notes: Sequence[Note], base: dict, max_chars: int, omissions: list[str]) -> dict:
+    """The optional `unified` section: notes in the caller's order, at most MAX_NOTES and a quarter of the budget, so the
+    code evidence is never starved. What does not fit is listed in the omissions, never cut."""
+    for title, text, _ in notes:
+        if not title.strip() or not text.strip() or len(title) > MAX_NOTE_TITLE or len(text) > MAX_NOTE_TEXT:
+            raise EvidenceError('PT-SCHEMA: a context note needs a title and text within their limits')
+    kept: list[dict] = []
+    for title, text, omitted in notes[:MAX_NOTES]:
+        entry = {'title': title, 'text': text}
+        if len(_json(kept + [entry])) > max_chars // 4 or len(_json(base | {'unified': kept + [entry]})) + 128 > max_chars:
+            omissions.append(f'unified {title[:80]}: omitted (context budget)')
+            continue
+        kept.append(entry)
+        omissions.extend(f'unified: {item}' for item in omitted)
+    if len(notes) > MAX_NOTES:
+        omissions.append(f'{len(notes) - MAX_NOTES} additional unified notes omitted')
+    return base | {'unified': kept} if kept else base
 
 
 def _json(value: object) -> str:
@@ -33,7 +57,8 @@ def _related(functions: dict[str, FunctionRecord], source: FunctionRecord,
     return candidates[0] if len(candidates) == 1 else None
 
 
-def build_context(project: ComparisonProject, match_ids: list[str], max_chars: int = 24000) -> AnalysisContext:
+def build_context(project: ComparisonProject, match_ids: list[str], max_chars: int = 24000, *,
+                  notes: Sequence[Note] = ()) -> AnalysisContext:
     if max_chars < 512:
         raise EvidenceError('PT-SCHEMA: context budget must be at least 512 characters')
     selected_ids = sorted(set(match_ids))
@@ -87,6 +112,8 @@ def build_context(project: ComparisonProject, match_ids: list[str], max_chars: i
     # Keep metadata honest; an oversized selection needs narrowing in the UI.
     if len(_json(base)) + 128 > max_chars:
         raise EvidenceError('PT-SCHEMA: selection metadata exceeds context budget; select fewer matches')
+    if notes:
+        base = _unified_notes(notes, base, max_chars, omissions)
     evidence: list[EvidenceReference] = []
     # Summarize excessive omission detail while retaining the full list in the context record.
     def payload_with(entries: list[EvidenceReference], omitted: list[str]) -> str:

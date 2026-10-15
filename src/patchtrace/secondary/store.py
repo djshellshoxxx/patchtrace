@@ -27,9 +27,13 @@ def publish_engine_set(store: EnrichmentStore, guard: Guard, current: Guard, rev
                          match_set.entry_id)
 
 
-def select_current(rows: list[Row]) -> tuple[list[Row], list[str]]:
-    """Newest non-stale row per engine (ties: higher entry id) plus notes naming superseded rows."""
-    live = sorted(((e, m) for e, m in rows if not e.stale), key=lambda v: (v[0].created, v[0].id), reverse=True)
+def select_current(rows: list[Row], pair: tuple[str, str] | None = None) -> tuple[list[Row], list[str]]:
+    """Newest non-stale row per engine (ties: higher entry id) plus notes naming superseded rows.
+
+    With `pair` (older, newer SHA-256) a row for that pair beats a newer row for another pair; an engine with no
+    row for the pair still yields its newest row so the caller can show it as stale."""
+    live = sorted(((e, m) for e, m in rows if not e.stale),
+                  key=lambda v: ((v[1].older_sha256, v[1].newer_sha256) == pair, v[0].created, v[0].id), reverse=True)
     chosen: dict[str, Row] = {}
     notes: list[str] = []
     for entry, match_set in live:
@@ -44,8 +48,9 @@ def select_current(rows: list[Row]) -> tuple[list[Row], list[str]]:
     return ordered, notes
 
 
-def current_sets(store: EnrichmentStore, current: Guard | None = None) -> list[Row]:
-    return select_current(load_secondary(store, current))[0]
+def current_sets(store: EnrichmentStore, current: Guard | None = None,
+                 pair: tuple[str, str] | None = None) -> list[Row]:
+    return select_current(load_secondary(store, current), pair)[0]
 
 
 def publish_run(store: EnrichmentStore, guard: Guard, current: Guard, revision: int, run: EngineRun) -> Entry:

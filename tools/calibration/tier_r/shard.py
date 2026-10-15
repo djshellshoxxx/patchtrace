@@ -29,6 +29,8 @@ import tempfile
 from collections.abc import Callable, Iterable, Sequence
 from pathlib import Path
 
+from patchtrace.calibration.scope import TIER_R_CLAIM
+
 from ..common import canonical_json, digest, r12
 from .contracts import COSMETIC_OPERATORS, PERMISSIVE_SPDX, SEMANTIC_OPERATORS, ContractError, load_report
 
@@ -603,7 +605,7 @@ def _fmt(value) -> str:
 
 
 def render_markdown(report: dict, prov: dict) -> str:
-    lines = ['# Tier R aggregate report', '',
+    lines = ['# Tier R aggregate report', '', f'> {TIER_R_CLAIM}', '',
              f'- report_sha256: `{report["report_sha256"]}`', f'- symbols: {report["symbols"]}',
              f'- plan: `{prov["plan_sha256"]}`, seed {prov["seed"]}, subset {prov["subset"]}, {len(prov["shards"])} shard(s)',
              f'- failing cases: {len(prov["failing_cases"])}', '', '## Engines', '',

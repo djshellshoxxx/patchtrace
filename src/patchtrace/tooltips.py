@@ -1072,11 +1072,11 @@ def _rich(text: str) -> str:
     return '<p style="white-space:pre-wrap">' + html.escape(text).replace('\n', '<br>') + '</p>'
 
 
-def apply_tooltip(target, tip_id: str, *, name: str | None = None, accessible: str = 'full', **values: object) -> None:
+def apply_tooltip(target, tip_id: str, *, name: str | None = None, accessible: str = 'what', **values: object) -> None:
     """Apply a registry entry to a QWidget or QAction (the work is `gui.tips.apply_tip`).
 
-    Sets toolTip and whatsThis on both, plus statusTip on actions and accessibleDescription on widgets. The legacy
-    description is the whole flattened text; panels pass ``accessible='what'`` for the short What line.
+    Sets toolTip and whatsThis on both, plus statusTip on actions and accessibleDescription on widgets. The description
+    is the short What line; pass ``accessible='full'`` for the whole flattened text.
     ``objectName`` is set to ``name`` (default: the ID) only when still empty. Dynamic IDs (those in TEMPLATES)
     take their values as keyword arguments.
     """

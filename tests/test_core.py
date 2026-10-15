@@ -409,3 +409,13 @@ def test_verified_reader_refuses_non_regular_file(tmp_path):
     os.mkfifo(fifo)
     with pytest.raises(ArtifactBytesError):
         VerifiedArtifactReader.open_path(fifo)
+
+
+def test_core2_normalizer_rejects_repeated_upstream_function(project):
+    run = AnalysisRun(status='completed')
+    candidate = project.project.model_copy(deep=True)
+    candidate.runs.append(run)
+    raw = sample_diff(candidate)
+    raw['functions']['modified'].append(copy.deepcopy(raw['functions']['modified'][0]))
+    with pytest.raises(ValueError, match='PT-SCHEMA: .*repeated'):
+        normalize_ghidriff(raw, candidate, run.id)

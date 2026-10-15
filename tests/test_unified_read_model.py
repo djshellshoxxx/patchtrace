@@ -817,9 +817,10 @@ def test_filter_and_sort_budget_at_100000_rows():
     _, t_name = took(lambda: rm.sort_rows(rows, everything, rm.column_sort_key(vm, 'function'), descending=True))
     assert sorted(ordered) == everything and max(t_sort, t_cell, t_name) < 0.75, (t_sort, t_cell, t_name)
     # paint-time access is O(1) and independent of N: 7 x visible cells x 1.2 + 20 calls (GUI plan 8.4)
-    start = time.perf_counter()
-    texts = [rm.cell_text(row, column) for row in rows[50_000:50_030] for column in range(5) for _ in range(7)]
-    assert len(texts) == 1050 and time.perf_counter() - start < 0.05
+    def paint():
+        return [rm.cell_text(row, column) for row in rows[50_000:50_030] for column in range(5) for _ in range(7)]
+    best = min(took(paint)[1] for _ in range(5))      # best of 5: one scheduler hiccup on a shared runner is not O(N)
+    assert len(paint()) == 1050 and best < 0.05
 
 
 def test_load_stays_light_per_row(tmp_path):

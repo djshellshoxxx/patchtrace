@@ -68,6 +68,7 @@ from .exchange import (
     read_report,
     write_refacts,
 )
+from .extract.decomp import DecompRecord, part_lines
 from .extract.runner import DecompileJob, ExtractProgress, decompile_side
 from .ir.pe_tables import read_pe_tables
 from .ir.place import list_ir
@@ -297,12 +298,12 @@ def _validate_sources(sources: Iterable[str]) -> tuple[str, ...]:
     return chosen
 
 
-def _stored_sets(service, sources: tuple[str, ...]) -> tuple[LoadedSecondary, ...]:
+def _stored_sets(service, sources: tuple[str, ...], pair: tuple[str, str] | None = None) -> tuple[LoadedSecondary, ...]:
     wanted = set(sources) & set(SECONDARY_ENGINES)
     if not wanted:
         return ()
     try:
-        rows = current_sets(EnrichmentStore(service.store))
+        rows = current_sets(EnrichmentStore(service.store), pair=pair)
     except (EnrichmentError, sqlite3.Error, ValueError):
         raise fail('PT-UNIFIED-STORE', 'secondary-unreadable') from None
     return tuple(LoadedSecondary(entry.id, match_set) for entry, match_set in rows if match_set.engine in wanted)
@@ -346,8 +347,8 @@ def make_plan(service, sources: Iterable[str] = ALL_SOURCES, *, limits: UnifiedL
     older, newer = _layouts(service)
     raw_path, raw_status = _raw_state(service.root, run)
     manual = snapshot_from_project(project, run.id, limits, manual_only=True)
-    secondary = _stored_sets(service, chosen)
     sides = {a.side: a.sha256 for a in project.artifacts}
+    secondary = _stored_sets(service, chosen, (sides['older'], sides['newer']) if {'older', 'newer'} <= sides.keys() else None)
     placed, note = (_find_ir(service.root, run.id, (sides['older'], older), (sides['newer'], newer)) if use_ir
                     else (None, None))
     base = Plan(project_id=project.id, revision=project.revision, run_id=run.id, raw_sha256=run.raw_sha256,
@@ -520,17 +521,19 @@ def _retained_gzf(request: UnifiedRequest, side: str) -> tuple[Path, str] | str:
 
 
 def _decompile(request: UnifiedRequest, pairs: tuple[tuple[int, int], ...], cancel: threading.Event, emit, runner,
-               limits: UnifiedLimits) -> tuple[dict[str, dict[int, str]], str | None]:
-    """The C text of the chosen functions, per side and RVA, from one extractor child per side (05 s2.8). The reason
-    is set when no text could be had (`no-backend`, `no-gzf`, `gzf-changed`, `timeout` or the extractor's slug); a
-    cancel is not a reason, it ends the run."""
+               limits: UnifiedLimits) -> tuple[dict[str, dict[int, str]], str | None, dict[str, dict[int, DecompRecord]]]:
+    """The C text of the chosen functions, per side and RVA, from one extractor child per side (05 s2.8), and the
+    validated records of the sides that ran (every status, for the stored part). The reason is set when no text could
+    be had (`no-backend`, `no-gzf`, `gzf-changed`, `timeout` or the extractor's slug); a cancel is not a reason, it
+    ends the run."""
     texts: dict[str, dict[int, str]] = {'older': {}, 'newer': {}}
+    records: dict[str, dict[int, DecompRecord]] = {}
     if request.backend is None:
-        return texts, 'no-backend'
+        return texts, 'no-backend', records
     programs = {side: _retained_gzf(request, side) for side in texts}
     unusable = next((found for found in programs.values() if isinstance(found, str)), None)
     if unusable is not None:
-        return texts, unusable
+        return texts, unusable, records
     sha = {'older': request.plan.older_sha256, 'newer': request.plan.newer_sha256}
     rvas = {'older': sorted({o for o, _ in pairs}), 'newer': sorted({n for _, n in pairs})}
 
@@ -547,15 +550,31 @@ def _decompile(request: UnifiedRequest, pairs: tuple[tuple[int, int], ...], canc
         except BudgetExhausted as exc:
             if exc.code == 'PT-UNIFIED-CANCEL':
                 raise
-            return texts, 'timeout'
+            return texts, 'timeout', records
         except UnifiedError as exc:
-            return texts, exc.reason or 'extract-failed'
+            return texts, exc.reason or 'extract-failed', records
         try:
+            records[side] = dict(output.records)
             texts[side] = {rva: rec.code for rva, rec in output.records.items()
                            if rec.status == 'ok' and rec.code is not None}
         finally:
             output.cleanup()
-    return texts, None
+    return texts, None, records
+
+
+def _store_decomp(staged: Path, records: dict[str, dict[int, DecompRecord]], limits: UnifiedLimits) -> tuple[str, ...]:
+    """Write the additive part `decomp.jsonl.gz` into the staged result (07 s6): the code pane reads it, readers that
+    do not know it ignore it. Its hash, size and record count are in the manifest. A part that cannot be stored costs
+    the text only, never the run: it comes back as a limitation."""
+    lines = part_lines(records, limits)
+    if not lines:
+        return ()
+    try:
+        store.add_part(staged, store.write_part(staged, store.DECOMP, lines, limits))
+    except UnifiedError as exc:
+        (staged / f'{store.DECOMP}.part').unlink(missing_ok=True)
+        return (f'decompile-part-skipped:{exc.reason or "store"}',)
+    return ()
 
 
 def _decompile_stage(started: float, pairs, texts, reason: str | None) -> tuple[StageRecord, tuple[str, ...]]:
@@ -611,12 +630,13 @@ def execute(request: UnifiedRequest, cancel: threading.Event | None = None,
             report = run_request(request_path, staged, cancel=cancel, emit=emit, limits=limits, registry=registry)
         if error is None and report is not None and report.refacts and request.decompile:
             began = time.monotonic()
-            texts, reason = _decompile(request, report.refacts, cancel, emit, runner, limits)
+            texts, reason, records = _decompile(request, report.refacts, cancel, emit, runner, limits)
             stage, notes = _decompile_stage(began, report.refacts, texts, reason)
             decompile_ms = stage.duration_ms
             if reason is None and any(o in texts['older'] and n in texts['newer'] for o, n in report.refacts):
                 report, tail, peak = _judge_again(request, report, texts, request_path, staged, private, cancel, emit,
                                                   runner, limits, registry)
+            notes = (*notes, *_store_decomp(staged, records, limits))
             if notes:
                 store.add_limitations(staged, notes)
     except UnifiedError as exc:
