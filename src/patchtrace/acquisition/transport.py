@@ -296,7 +296,10 @@ class Transport:
                 location = response.headers.get('Location')
                 if not location:
                     raise AcquisitionError('PT-ACQ-PROVIDER', 'redirect without Location')
-                target = urllib.parse.urljoin(url, location)
+                try:
+                    target = urllib.parse.urljoin(url, location)
+                except ValueError:
+                    raise AcquisitionError('PT-ACQ-NETWORK', 'invalid URL refused') from None
                 redirect_host = _check(target, blob=True)
                 response.close()
                 response = self._open('GET', target)

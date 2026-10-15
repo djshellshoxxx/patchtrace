@@ -326,3 +326,13 @@ def test_fetch_remains_fail_fast():
     with pytest.raises(EnrichmentError):
         it.fetch(plan, it.FetchConsent.for_plan(plan), opener=opener)
     assert len(opener.calls) == 1
+
+
+def test_malformed_redirect_location_is_typed_and_batch_survives():
+    bad = Resp(status=302, headers={'Location': 'https://[x'})
+    plan = it.plan_requests([CVE], ('msrc', 'nvd'))
+    clock = Clock()
+    results, errors = it.fetch_all(plan, it.FetchConsent.for_plan(plan), opener=Opener(bad, Resp()),
+                                   clock=clock, sleep=clock.sleep)
+    assert set(results[CVE]) == {'nvd'}
+    assert errors[(CVE, 'msrc')].code == 'PT-ENRICH-NETWORK' and '[x' not in str(errors[(CVE, 'msrc')])
