@@ -1,0 +1,182 @@
+{
+  "document_kind": "proposal-only-project-entry",
+  "document_kind_status": "AUTHOR-DEFINED data format; not a registered PatchTrace persisted contract",
+  "batch": "chatgpt-corpus-1",
+  "ordinal": 13,
+  "project": "llhttp",
+  "upstream_url": "https://github.com/nodejs/llhttp",
+  "upstream_git": "https://github.com/nodejs/llhttp.git",
+  "upstream_status": "Repository and licence file read through GitHub; candidate source-pin identity remains UNVERIFIED.",
+  "language": "C",
+  "family_proposal": "http-parser",
+  "why_suitable": "Generated HTTP state machines supply dense CFG and repetitive-block identity challenges complementary to hand-written parsers.",
+  "corpus_scope": "Committed generated C release branch/archive only. Never run npm, Node, TypeScript or upstream generation scripts.",
+  "admission": "BLOCKED_UNVERIFIED",
+  "admission_reason": "No selected 40-hex source commit, per-pin licence SHA-256, compile result, binary inventory or A/A result. This document is candidate data and must not enter the active recipe loader.",
+  "license": {
+    "spdx_election": "MIT",
+    "verification": "Default-branch licence text inspected; source files and every eventual release/fix pin remain UNVERIFIED.",
+    "license_file": "LICENSE",
+    "observed_license_blob_sha": "23682c03875844d5becc72ab477a3f9056b6d888",
+    "observed_license_blob_sha_kind": "Git blob identity returned by GitHub; NOT a source commit and NOT the required licence SHA-256",
+    "observed_license_url": "https://github.com/nodejs/llhttp/blob/main/LICENSE",
+    "how_to_verify": "After consented source fetch and selecting each pin, run git -C source show HEAD:LICENSE and sha256sum source/LICENSE; read notices for every compiled file and any embedded data.",
+    "election_note": "Preserve upstream notices. Do not infer that optional dependencies or examples share the library licence."
+  },
+  "source_pin": {
+    "commit": null,
+    "status": "UNVERIFIED; no hash fabricated",
+    "how_to_verify": "git -C source rev-parse --verify 'HEAD^{commit}'"
+  },
+  "build_system": {
+    "candidate": "Generated C release distribution; TypeScript generator prohibited",
+    "status": "UNVERIFIED at selected pins; no upstream build scripts may be executed"
+  },
+  "configuration": {
+    "policy": "Do not execute configure, CMake, make, Python, Tcl, npm or project generators. Compile only a reviewed pinned list with explicit argv through the existing bounded tool runner.",
+    "configure_command": null,
+    "configure_reason": "No configure command is allowed by SPEC-32 section 2. Use committed headers or explicit reviewed write/copy rules.",
+    "include_dirs": [
+      "include"
+    ],
+    "defines": [],
+    "authored_write_rules": [],
+    "write_rule_status": "No authored config header supplied in this candidate. If a pin requires one, stop BLOCKED until its complete reviewed text is provided.",
+    "sources": [
+      "src/api.c",
+      "src/http.c",
+      "src/llhttp.c"
+    ],
+    "exclude": [
+      "tests/**",
+      "test/**",
+      "examples/**",
+      "benchmarks/**",
+      "fuzz/**"
+    ],
+    "source_list_status": "UNVERIFIED candidate list, not a claim these files exist at any pin. Enumerate actual committed files before dispatch; freeze the expanded list and all included headers in the recipe digest.",
+    "how_to_verify": "git -C source ls-tree -r --name-only HEAD; compare each candidate path and review the chosen pin's build manifest without executing it."
+  },
+  "build_commands": {
+    "status": "UNVERIFIED proposed compiler invocations; not executed and not instructions to admit a recipe.",
+    "working_directory": "A private job directory outside the repository, with read-only pinned checkout mounted as source/ and an existing writable build/ directory.",
+    "environment": {
+      "SOURCE_DATE_EPOCH": "0",
+      "LC_ALL": "C",
+      "TZ": "UTC"
+    },
+    "mingw_x64_preview": [
+      "x86_64-w64-mingw32-gcc",
+      "-shared",
+      "-g",
+      "-O2",
+      "-std=c11",
+      "-ffile-prefix-map=source=.",
+      "-fdebug-prefix-map=source=.",
+      "-Wl,--no-insert-timestamp",
+      "-Wl,--image-base=0x180000000",
+      "-Wl,--export-all-symbols",
+      "-Isource/include",
+      "source/src/api.c",
+      "source/src/http.c",
+      "source/src/llhttp.c",
+      "-o",
+      "build/llhttp.debug.dll"
+    ],
+    "clang_linux_preview": [
+      "clang",
+      "-shared",
+      "-fPIC",
+      "-g",
+      "-O2",
+      "-std=c11",
+      "-ffile-prefix-map=source=.",
+      "-fdebug-prefix-map=source=.",
+      "-Isource/include",
+      "source/src/api.c",
+      "source/src/http.c",
+      "source/src/llhttp.c",
+      "-o",
+      "build/llhttp.native.so"
+    ],
+    "clang_linux_scope": "Native ELF compilation is a compiler-compatibility check only. It is not a PE corpus artifact and is never scored or committed.",
+    "argv_materialization": "For source patterns expand only against the reviewed pinned manifest, sort by POSIX relative path, and replace each pattern with the exact files. For authored files resolve from the private overlay. A literal '*' must never be passed as an input filename. Invoke the absolute compiler executable with shell=False.",
+    "production_compile": "For production, compile each enumerated translation unit to a uniquely named object with the same language, defines, include roots, debug and optimization flags. Link the sorted objects with the preview link flags and only the recorded libraries. Record complete per-object/link argv; do not infer arguments from this free text.",
+    "strip_preview": [
+      "llvm-strip",
+      "--strip-all",
+      "-o",
+      "build/llhttp.engine.dll",
+      "build/llhttp.debug.dll"
+    ],
+    "inspection_preview": [
+      "llvm-readobj",
+      "--file-headers",
+      "--sections",
+      "--coff-debug-directory",
+      "build/llhttp.debug.dll"
+    ],
+    "command_validation": "Compiler version, compiler path, MinGW sysroot, target support, language standard, link closure, emitted exports and strip behavior are all UNVERIFIED. Missing or unsupported tools return BLOCKED rather than a skipped success."
+  },
+  "expected_artifacts": {
+    "status": "Proposed names and UNVERIFIED size estimates; no built files exist from this task",
+    "debug_pe": "llhttp.debug.dll",
+    "engine_pe": "llhttp.engine.dll",
+    "import_library": "Not required; avoid extra import libraries unless the builder explicitly records and keeps them outside git.",
+    "pdb": "None expected on the proposed MinGW/DWARF profile. A Windows MSVC/PDB variant requires a separately verified recipe.",
+    "estimated_debug_image_mib": {
+      "low": 1,
+      "high": 12,
+      "basis": "Planning estimate only, UNVERIFIED; includes debug information"
+    },
+    "limits": {
+      "image_mib": 64,
+      "source_tree_mib": 512,
+      "source_files": 50000,
+      "compiler_call_seconds": 300
+    }
+  },
+  "determinism": {
+    "known_risks_status": "Project-specific candidate risks are UNVERIFIED until source inspection/build measurements. General controls follow SPEC-32.",
+    "project_specific": [
+      "The main branch may lack generated C; select and pin an upstream distribution containing all inputs.",
+      "Generator version is part of provenance even though generated output is consumed directly.",
+      "A generated state machine is one dependent lineage, not a function-level random split."
+    ],
+    "controls": [
+      "Pin toolchain and linker identities; record complete version output and recipe digest.",
+      "No -march=native, live CPU probing, unpinned dependency discovery or upstream generators.",
+      "Freeze optimization at O2 for natural pairs; O0/O1/O3/Os variants are separate nuisance strata.",
+      "Keep exact object ordering, source path maps, environment and link timestamp policy fixed.",
+      "Rebuild twice in distinct private paths and compare complete images; record differing sections instead of claiming reproducibility.",
+      "Retain debug images only for truth; run engines on stripped copies in directories with no symbol sidecars."
+    ]
+  },
+  "label_and_split_rules": {
+    "status": "No function labels, CVE claims or release pairs are created by this project entry.",
+    "lineage_proposal": "L-llhttp",
+    "grouping": "All releases, fixes, mutants and noise variants of this project inherit the same lineage. Merge inherited/forked/shared dependency identities before split assignment.",
+    "source_truth": "Use the existing C locator, debug inventory and source/body decision table; any missing span or contradictory evidence remains ambiguous.",
+    "prohibited_features": "Do not train on debug symbols, truth-side names, CVE text, fix commit metadata or labels generated by an LLM.",
+    "evaluation": "Per engine and per stratum only; shared origin counts once, conflicting evidence stays visible and unknown is not a negative vote. Tier R alone cannot promote probability display."
+  },
+  "acceptance_required": [
+    "Verify permissive licence and SHA-256 at every selected source pin and dependency pin.",
+    "Review the complete source/header list, generated literals and export behavior.",
+    "Compile without executing upstream scripts or target images; inspect x64 PE headers and debug inventory.",
+    "Verify stripped image code RVAs and body bytes against the debug image.",
+    "Run A/A rebuilds and report byte equality or concrete differences.",
+    "Build and label every accepted old/new pair; retain ambiguous and disagree records for review.",
+    "Run focused contract/corpus checks only in a later authorized execution environment; record attempted/completed/blocked/failed.",
+    "Keep all fetched sources, images, PDBs and engine outputs outside git. Only metadata and authored proposal text enter this branch."
+  ],
+  "verification_summary": {
+    "ran_code": false,
+    "ran_builds": false,
+    "ran_tests": false,
+    "verified_source_pins": false,
+    "verified_licenses_at_pins": false,
+    "read_default_branch_license": true,
+    "source_and_command_status": "UNVERIFIED"
+  }
+}
