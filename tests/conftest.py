@@ -5,6 +5,7 @@ blocked checks are printed in a `LIVE ACCEPTANCE BLOCKED` section. Each entry sa
 PATCHTRACE_LIVE_MOCKED=1 (set by the harness tests that run against fake executables) or `mocked=True`."""
 from __future__ import annotations
 
+import gc
 import json
 import os
 from pathlib import Path
@@ -14,6 +15,15 @@ from live_status import live_status_dir
 
 ROOT = Path(__file__).resolve().parents[1]
 LIVE_STATUS_KEY = pytest.StashKey[list]()
+
+
+@pytest.fixture(autouse=True)
+def _collect_qt_garbage(request):
+    """CI qt-gate segfaulted inside the cyclic GC on the GUI thread (Shiboken wrappers of earlier tests' widgets
+    collected while a later test's worker thread ran). Collect at each Qt test's end, when no worker is live."""
+    yield
+    if 'qtbot' in request.fixturenames:
+        gc.collect()
 
 
 
