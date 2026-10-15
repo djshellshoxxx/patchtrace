@@ -187,3 +187,12 @@ def test_unexpected_exception_maps_to_runtime_exit_with_json(monkeypatch, capsys
     assert cli.main(['rank', '--json', 'x']) == 3
     document = json.loads(capsys.readouterr().out)
     assert document['status'] == 'failed' and 'boom' in document['error']
+
+
+def test_text_mode_names_are_terminal_safe_wp01():
+    from types import SimpleNamespace as NS
+    hostile = 'f\x1b[2J\nforged‮evil\x9b'
+    match = NS(match_id='m', older=[NS(name=hostile)], newer=[])
+    names = cli._match_names([match])
+    assert names['m'] and not any(ord(c) < 32 or 0x7f <= ord(c) < 0xa0 or c == '‮' for c in names['m'])
+    assert '\\u001b' in names['m']

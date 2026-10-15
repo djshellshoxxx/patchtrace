@@ -187,6 +187,16 @@ def _emit(args, command: str, status: str, result, warnings: list[str], text: st
         sys.stdout.write(text + ('\n' if text and not text.endswith('\n') else ''))
 
 
+def _terminal_text(value: object) -> str:
+    """Untrusted text (symbol names from the target) for a terminal: controls and bidi marks become escapes."""
+    from .intelligence.reports import plain_text
+    return plain_text(value)
+
+
+def _match_names(matches) -> dict:
+    return {m.match_id: _terminal_text(' / '.join(sorted({f.name for f in m.older + m.newer}))) for m in matches}
+
+
 def _profile(args):
     """The selected AnalysisProfile, or None when --profile is absent. Explicit per-run options
     that the profile also defines are rejected rather than silently merged."""
@@ -315,7 +325,7 @@ def cmd_rank(args, cancel) -> int:
         _emit(args, 'rank', result.status.status, None, warnings, 'Ranking unavailable.')
         return RUNTIME
     entries = result.ranking.entries[:args.limit or None]
-    names = {m.match_id: ' / '.join(sorted({f.name for f in m.older + m.newer})) for m in result.views.matches}
+    names = _match_names(result.views.matches)
     payload = result.ranking.model_dump(mode='json')
     payload['entries'] = [e.model_dump(mode='json') | {'function': names.get(e.match_id, '')} for e in entries]
     payload['profile'] = _profile_info(profile)
@@ -474,7 +484,7 @@ def cmd_correlate(args, cancel) -> int:
     warnings += [f'{c}: CVE snapshot is stale; check its retrieval date' for c in result.contextual.stale_snapshots]
     status = 'partial' if (result.contextual.stale_snapshots or fetch_failed) \
         and result.contextual.status == 'complete' else result.contextual.status
-    names = {m.match_id: ' / '.join(sorted({f.name for f in m.older + m.newer})) for m in result.views.matches}
+    names = _match_names(result.views.matches)
     text = '\n'.join(f'{e.context_rank:>4} ctx {e.context_score:>3} base {e.base_score:>3} (#{e.base_rank}) '
                      f'+{e.adjustment:<2} {names.get(e.match_id, "")}' for e in result.contextual.entries)
     _emit(args, 'correlate', status, result.contextual.model_dump(mode='json') | {'profile': _profile_info(profile)},
@@ -721,7 +731,7 @@ def cmd_series(args, cancel) -> int:
     labels = {b.ordinal: b.label for b in series.builds}
     text = '\n'.join(
         f'{c.status:<12} {"STALE " if r["stale"] else ""}{c.weakest_match_type:<28} '
-        + ' -> '.join(f'[{labels[n.ordinal]}] {n.name or "?"}' + (f'@{n.address:x}' if n.address is not None else '')
+        + ' -> '.join(f'[{_terminal_text(labels[n.ordinal])}] {_terminal_text(n.name) if n.name else "?"}' + (f'@{n.address:x}' if n.address is not None else '')
                       for n in c.nodes)
         + ''.join(f' ({e.kind}@{labels[e.ordinal]})' for e in c.events)
         + (f' gaps:{",".join(labels[g] for g in c.gaps)}' if c.gaps else '')
