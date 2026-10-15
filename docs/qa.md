@@ -798,3 +798,10 @@ Not verified here: Windows; the frozen executable; a live backend for `rules pro
 | Not verified | Windows; NVDA/Narrator; DPI; high contrast; Consolas bold advance; pixel probe; the 20x single-session repeat (5x run) |
 ### [UE-S4b:ui-unified] Unified panel automated evidence (2026-10-15, Linux offscreen)
 - tests/test_ui_unified.py + tests/test_unified_panel_spec.py: 39 passed; `tools/qt_gate.py --repeat 20 tests/test_ui_unified.py`: 700 passed, no abort. Blocked, not run: Windows CI, NVDA/Narrator, DPI scaling.
+### [PIL-C2:leads]
+
+| Item | Evidence |
+|---|---|
+| Tests | `tests/test_pilot_read_model.py` (35), `tests/test_ui_leads.py` (61) offscreen on Linux; `python tools/qt_gate.py --repeat 6 tests/test_ui_leads.py`: 366 passed, no abort |
+| Known gates | one test per state L0-L8 and each gate and window banner; banned-string sweep over every producible string (stems `probab`, `likelihood`, `confidence`, `percent`, `vulnerab`, `exploit`, `proven`, `certain`, `verified`, `safe`, `secure`, with the sanctioned phrases removed); no enum slug and no percent sign in any cell; hostile names, notes and tooltips stay text; `a11y_audit` clean in every state; no new top-level window; late results dropped on a project switch; shutdown cancels and waits |
+| Not verified here | Windows; real screen readers; a PE-backed project (the resolver finds no row in the synthetic sample, so Go to function is only exercised with an injected resolver); the freeze of the GUI-thread collection on a large project |

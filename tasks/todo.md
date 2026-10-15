@@ -523,3 +523,8 @@
 - [x] Unified panel (`unified/panel.py`, `ui_unified.py`) on the GUI host, built against `read_model.py`; 39 focused tests, qt_gate x20 green.
 - [ ] Integrator: tests/test_tooltips.py needs `unified.dock`, `unified.tab`, `unified.source.unknown` in the `names` set of `test_every_registry_id_is_applied_somewhere` (no focusable control carries them); the Explain text should feed `build_context`/`ContextDialog` (ui.py) instead of the preview-only dialog.
 - [ ] Open: reader for stored IR disassembly / decompiled pair text (`pair_texts` hook) to fill the code panes for rows without a Ghidriff match; persist `unified/columns`.
+### [PIL-C2:leads]
+- [x] `pilot/read_model.py`, `pilot/panel.py`, `ui_leads.py`, `tests/test_pilot_read_model.py`, `tests/test_ui_leads.py`, `tests/leads_support.py`; qt_gate repeat 6 of `test_ui_leads.py`: 366 passed.
+- [ ] Integrator: add `leads` to `built` in `tests/test_gui_host_seam.py::test_the_shipped_manifest_builds_only_the_migrated_panels_and_has_no_problem` and to the dock list of `tests/test_tooltips.py::test_every_registry_id_is_applied_somewhere` (both fail on any new built panel until then). Decide `default_visible` for the dock (the plan wants it visible with a project; GUI open question 13).
+- [ ] A: a worker-safe `collect` (snapshot in, evidence out) so that Prepare leads does not hold the GUI thread while evidence is collected; public `collect.overview` (the dock imports `_overview`); a snapshot date in `Kev(not-in-snapshot)`; `store.load` split into pointer rows (GUI thread) and sidecar read (worker).
+- [ ] BLOCKED, live evidence: real UIA/NVDA/Narrator announcement of the status lines, high-contrast and 200 percent DPI look of the chips, Windows CI of the new tests.
