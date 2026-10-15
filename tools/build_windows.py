@@ -10,7 +10,13 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 # Pure shared helpers; importing build_linux runs no build.
-from build_linux import attach_backend, check_archive_size, full_archive_name, parse_args, sha256_file  # noqa: E402
+from build_linux import (  # noqa: E402
+    attach_backend,
+    check_archive_size,
+    full_archive_name,
+    parse_args,
+    sha256_file,
+)
 
 PROTOBUF_PIN = '7.36.2'
 # SPEC-10b §2/§9: BinExport2 notices; build refuses to publish without them.
