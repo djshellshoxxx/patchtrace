@@ -673,3 +673,119 @@
 
 ### [D:master-plan]
 - Master plan and categorized to-do list for finishing the project: `docs/plans/master-plan-d.md`, `docs/plans/master-todo-d.md`; panel specs prompt for ChatGPT: `docs/plans/chatgpt-panel-specs-prompt.md`.
+
+
+### [UE2-S6b:live-gates]
+- [x] G-U1, G-U2, G-U4 evaluators over `unified-outcomes/1`; G-U8 `ui-policy` tests named; live driver and workflow written; focused tests green on Linux
+- [ ] BLOCKED / not run: the first dispatch of `unified-live-gates.yml` (static checks only), the Windows leg, `live_pairs` against a real Ghidra (its pure parts are tested), mutant runs at 20 per class (about 240 Ghidriff runs, one job per class)
+- [x] superseded by [UE3-S6c:gates] below (G-U3, G-U6, G-U7, G-U4 chains, G-U1 P1 variants have evaluators; only the BinDiff oracle part of G-U3 stays blocked)
+
+
+### [UE3-S6c:gates]
+- [x] G-U1 P1 nuisance variants (generator and evaluator coverage); built only on the next live `unified-live-gates.yml` run (not dispatched here)
+- [x] G-U4 3-build chain (P1 chains) and COS-PSEUDO cross-tier check
+- [x] G-U3, G-U6, G-U7 evaluators (pure, synthetic fixtures); G-U3 stays `blocked` on the BinDiff pin even when its data pass
+- [x] `gates_u --inputs` assembler with numbers and decision line; workflow: mutants on both systems, integrity job (bench, G-U8 tests)
+- [ ] BLOCKED / not run: every live part; whether lld honours each nuisance as intended is known only from the first Tier R build
+
+
+### [UE2-U3U5:explain-columns]
+- [x] Explain fragment in `build_context` / the existing ContextDialog flow (rows with a Ghidriff match); `unified/columns` persisted; qt_gate x5 green on the Unified, columns, host-seam and tooltip tests
+- [ ] Open: rows without a Ghidriff match still use the own preview (build_context needs a stored match); Windows DPI and screen-reader passes
+
+
+### [UE2-U4U6:ir-text-real-gui]
+- [x] U6 IR text reader (`IrPairTexts`); U4 hermetic real-pipeline GUI test; qt_gate x5 green (Unified, columns, pipeline, host seam)
+- [ ] Open: decompiled C of S3b rows (`decomp.jsonl.gz`) is not yet read for the code panes; alignment gaps from `facts/align.py` are not drawn (the diff pane aligns the two texts itself); Windows (the worker child, DPI)
+
+
+### [UE4:code-panes]
+- [x] Decompiled-C side by side in `CodeDiffView` (stored part, honest unavailable), alignment gaps from the stored IR, hunk navigation, provenance per side, copy with provenance, all states, tooltips, accessible names; 100,000-line cap test
+- [ ] Integrator: write `decomp.jsonl.gz` (parts of the manifest, same line shape as `extract/decomp.py`) when the on-demand decompile ran; until then the C mode reports "not stored"
+
+### [LBL-14:ci-summary]
+- [x] ci_summary.py, nightly smoke+noise on ubuntu-24.04, determinism and status steps in the merge job (hermetic tests only).
+- [ ] First green scheduled run on Actions (not verified here).
+
+### [LBL-prereg:tools]
+- [x] P-1 prereg hash tool, P-2 constants test, vendoring scan (PREREG 8.5 i and ii closed; 8.5 iii open).
+- [ ] Before the lock: run the vendoring scan over the Tier R per-lineage masked body hashes and apply merge proposals.
+
+### [LBL-13:channels]
+- [x] Channel pack scorers with hand-computed goldens (synthetic inputs). Open: real inputs need FLOSS/capa runners (T track) and YARA-X for `rules`.
+
+
+### [U3-U8:cli-pin]
+- [x] U3 S4 CLI polish (early usage errors, exit codes in help); Explain fragment path already built.
+- [x] U8 prep: pin checker and runbook. Open (owner, network): run docs/runbooks/bindiff-pin.md, flip `verified`; wire `bindiff_pin verify` into `unified-live-gates.yml`; first dispatch of that workflow.
+
+### [LBL-08:msvc-leg]
+- [x] `msvc` profile, probing, host gating, nuisance variants, noise pairs, hermetic tests with fake `cl`/`link` (`tests/test_tier_r_msvc.py`)
+- [ ] Owner/CI: run the dispatch-only `msvc-advisory` job of `corpus-tier-r.yml` on windows-2022 (set repository variable TIER_R_MSVC=1) and check the recorded `cl` version, the `/d1trimfile` source-path normalisation and A/A byte identity; advisory until 10 green runs
+
+### [LBL-06:mutations-source]
+- [x] Nine added source operators with goldens, compile checks, determinism, recorded rejections, masked-body rule, profile gate
+- [ ] Open: the `locate/cases/cli` split of row 06 (the 25 operators are usable through `engine.apply_case`); `buf-resize` must land `review` in the evaluation (frame-only), checked by the evalcore row, not here
+
+### [U7:audit]
+- [x] Audit written, 4 Medium fixed with red tests
+- [ ] U7-05 BinDiff stub rows reach tier A alone (additive `SecondaryMatch.basicblocks` or IR-aware demotion before fusion)
+- [ ] U7-06 decide the budget policy for fusion and facts after a ladder deadline (partial result is lost today)
+- [ ] U7-07 trace-arg mutant class for G-U2
+
+### [LBL-07:mutations-ir-opt]
+- [x] LBL-07 IR layer + opt layer (`mutations/ir.py`, `mutations/opt_transforms.py`)
+- [ ] LBL-07 follow-up: add `opt` to `tier_r/toolchain.CANDIDATES` so `probe()` reports it; wire `agreement_by_operator` into the farm report; IR counterparts for the remaining semantic operators
+
+### [LBL-26:audit]
+- [x] Pre-lock audit docs/audits/20261015-lbl26-pre-lock-audit.md; 2 High and 4 Medium fixed with red tests
+- [ ] LBL-26 for C: wire guards.audit_identity_roles, natural-only rows, indeterminate worst-case bound, nested tau (audit C-1..C-8)
+- [ ] LBL-26 deferred D-01..D-12 (audit doc)
+
+### [WB2-G8:whole-program-sources]
+- [x] G8 sources built and tested (synthetic graphs, networkx oracle). Open: snapshot.py must merge `source.limitations`; G9 glue is integrator-owned (frozen files).
+
+### [WB3-S8:strings-run] (2026-10-15, Sonnet 5.5, worktree; Linux)
+- [x] `strings/run_service.py`, `ui_strings_run.py`, `tests/test_ui_strings_run.py`.
+- [ ] Wire `StringsRunController` into the Strings dock (needs S7b `ui_strings.py`); `ToolStore` built on the GUI thread.
+- [ ] Integrator: add `tests/test_live_strings.py` and `tests/fixtures/strings/goldens/**` to `.github/workflows/live-intel-tools.yml` paths and pytest list.
+
+- [x] D7 buildenv/timeline.py (pure) with tests
+- [ ] D7 seams: `PairSnapshot.build_env`, `BuildTimelineStrip` in `ui_series.py` (integrator)
+- [x] D9 tools/buildenv_value_gate.py with hand-computed goldens (synthetic)
+- [ ] D9 run on real Tier R M4 outcomes (needs UE S2/S3 outcomes and the known-answer factory)
+- [ ] D8 first dispatch of `live-buildenv` (Actions) and golden confirmation; stays BLOCKED locally without PATCHTRACE_DIEC
+
+### [WB1-S7:search-panel]
+- [x] Search dock on the panel framework (states Q0-Q12, paged rows, navigation, cancel, shutdown).
+- [ ] Kinds menu, saved searches, suggestion popup, hit-span delegate, F3/Shift+F3, feature-owned paged model (see commit notes).
+
+### [WB2-G5G6:calls-panel]
+- [ ] Calls panel follow-ups: graph.export_dot, graph.callsite, graph/* settings, Tree as a lazy model, entry paths.
+
+### [WB3-S7b:strings-panel]
+
+- [ ] Strings panel: wire function pairing and stored observations into the loader; FLOSS run/probe/consent, export, settings (`strings/*`), column tips.
+
+### [CAP-6:capabilities-panel]
+- [x] Capabilities dock (CAP-6a changes, CAP-6b setup, probe, preview, run) on the panel framework.
+- [ ] Integrator: no `ui.py` change needed; host Open-setup and Run-comparison remedies are not wired.
+- [ ] Not built: grouped tree model (flat table with a Group column), commands, C13 reparse refresh, reported-match count for C12.
+
+### [K3:kev-panel]
+Done: dock with state matrix, consent, import, changes, copy, go to CVE. Open: replace-anyway after a shrink refusal (needs a staged-install service API), kev/filter and kev/sort settings, network policy port.
+
+### [FAB-6:related]
+- [x] Related evidence panel, table-only first release. Open for the integrator: manifest slot, leads area, host wiring of `show_anchor`.
+
+### [LBL-20:fetch-transport] / [LBL-21:symbols]
+- [x] Fixture-tested `tier_w/fetch.py`, `transport.py`, `symbols.py`, `symbols_llvm.py`, `ghidra_export_symbols.py`, `symbols_ghidra.py` (`tests/test_tier_w_fetch.py`, `tests/test_tier_w_symbols.py`).
+- [ ] BLOCKED, owner/Windows runner: live msdl fetch, live Ghidra 12.0.4 export (`PATCHTRACE_GHIDRA_DIR`), `pyghidra` mode, PDB-forcing pre-script, adapter text for `fetch-plan`/`fetch`/`symbols` (LBL-25).
+
+### [LBL-22:tier-w-labels]
+- [x] LBL-22 labels.py and audit.py with synthetic goldens
+- [ ] LBL-22 wire to the runner (LBL-23) and real symbol maps (owner machine)
+
+### [LBL-24:tier-w-aggregate]
+- [x] LBL-24 evaluate.py and aggregate.py with goldens, guard contract list
+- [ ] LBL-24 run on a real Tier W evaluation (owner only, O1)

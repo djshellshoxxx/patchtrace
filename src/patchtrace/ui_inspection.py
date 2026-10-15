@@ -7,6 +7,7 @@ the Files dock. All domain logic lives in ``artifact_inspection``,
 """
 from __future__ import annotations
 
+import logging
 import threading
 from dataclasses import dataclass
 from pathlib import Path
@@ -59,8 +60,9 @@ class InspectionThread(QThread):
     def run(self):
         try:
             result = inspect_project_artifacts(self.project_id, self.artifacts, self.root, self.cancel.is_set)
-        except Exception as exc:  # noqa: BLE001 - surfaced to the user as text
-            self.inspection_failed.emit(f'{type(exc).__name__}: {exc}', self.key)
+        except Exception as exc:  # noqa: BLE001 - only the class crosses the thread boundary (GUI plan 8.5)
+            logging.getLogger(__name__).warning('File inspection failed', exc_info=True)
+            self.inspection_failed.emit(type(exc).__name__, self.key)
             return
         if self.cancel.is_set():
             result.close()
@@ -162,8 +164,9 @@ class RowsModel(QAbstractTableModel):
         return None
 
 
-def rows_view(model: RowsModel, widths_em: tuple[int, ...], tip_id: str) -> QTableView:
+def rows_view(model: RowsModel, widths_em: tuple[int, ...], tip_id: str, name: str) -> QTableView:
     view = QTableView()
+    view.setAccessibleName(name)
     view.setModel(model)
     view.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
     view.setSelectionBehavior(QAbstractItemView.SelectionBehavior.SelectRows)
@@ -186,8 +189,8 @@ class FilesController(ControllerBase):
         self.port = ctx.project
         self.window = self.port.window
         self.recorded, self.pe = RowsModel(RECORDED_HEADERS), RowsModel(PE_HEADERS)
-        self.recorded_view = rows_view(self.recorded, (18, 24), 'overview.table')
-        self.pe_view = rows_view(self.pe, (24, 22, 22, 10), 'overview.pe_table')
+        self.recorded_view = rows_view(self.recorded, (18, 24), 'overview.table', 'Recorded artifact fields')
+        self.pe_view = rows_view(self.pe, (24, 22, 22, 10), 'overview.pe_table', 'PE comparison fields')
         self.status = PlainLabel(IDLE_STATUS, wrap=True, limit=1000)
         explanation = PlainLabel(EXPLANATION, wrap=True, limit=1000)
         detail = QWidget()

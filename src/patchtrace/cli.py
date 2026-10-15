@@ -9,6 +9,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import re
 import sys
 import threading
 from pathlib import Path
@@ -16,6 +17,7 @@ from pathlib import Path
 from .backend_cli import cmd_backend
 from .backend_cli import register as register_backend
 from .diagnostics import redact_log
+from .hostile_text import escape_text
 from .intelligence import cli as intelligence_cli
 from .intelligence.tools import cli as intel_tools_cli  # SPEC-29 tools dispatcher (cheap import)
 
@@ -41,6 +43,15 @@ def _non_negative(value: str) -> int:
     if number < 0:
         raise argparse.ArgumentTypeError('must be 0 or greater')
     return number
+
+
+_CVE_ID = re.compile(r'CVE-\d{4}-\d{4,19}', re.ASCII)
+
+
+def _cve_id(value: str) -> str:
+    if not _CVE_ID.fullmatch(value):
+        raise argparse.ArgumentTypeError('must look like CVE-YYYY-NNNN')
+    return value
 
 
 def _parser(argv=()) -> argparse.ArgumentParser:
@@ -85,7 +96,7 @@ def _parser(argv=()) -> argparse.ArgumentParser:
     corr.add_argument('project', type=Path)
     cached(corr)
     profiled(corr)
-    corr.add_argument('--cve', action='append', required=True, metavar='CVE-YYYY-NNNN')
+    corr.add_argument('--cve', action='append', required=True, metavar='CVE-YYYY-NNNN', type=_cve_id)
     corr.add_argument('--snapshot', type=Path, action='append', default=[],
                       help='previously saved CVE snapshot JSON (offline)')
     corr.add_argument('--fetch', action='store_true', help='retrieve from providers (requires consent)')
@@ -183,8 +194,19 @@ def _emit(args, command: str, status: str, result, warnings: list[str], text: st
                                      'result': result, 'warnings': warnings}, sort_keys=True) + '\n')
     else:
         for warning in warnings:
-            print(f'warning: {warning}', file=sys.stderr)
+            print(f'warning: {escape_text(warning)}', file=sys.stderr)
+        text = escape_text(text, keep='\n')  # names and evidence are untrusted: no ESC or bidi controls reach a terminal
         sys.stdout.write(text + ('\n' if text and not text.endswith('\n') else ''))
+
+
+def _terminal_text(value: object, limit: int | None = 300) -> str:
+    """Untrusted text (symbol names from the target) for a terminal: controls and bidi marks become escapes."""
+    from .intelligence.reports import plain_text
+    return plain_text(value, limit)
+
+
+def _match_names(matches) -> dict:
+    return {m.match_id: _terminal_text(' / '.join(sorted({f.name for f in m.older + m.newer}))) for m in matches}
 
 
 def _profile(args):
@@ -243,6 +265,8 @@ def _open(project: Path):
         return ProjectService.open(project)
     except ValueError as exc:
         raise CliError(ENVIRONMENT, str(exc)) from None
+    except OSError as exc:  # e.g. a path that is too long: no absolute directory in the message
+        raise CliError(ENVIRONMENT, f'PT-STORAGE: project cannot be opened ({exc.strerror or type(exc).__name__})') from None
 
 
 def _with_cache(args, options, profile=None):
@@ -256,6 +280,8 @@ def _with_cache(args, options, profile=None):
         if getattr(args, 'refresh', False):
             raise CliError(ENVIRONMENT, '--refresh requires --cache-dir')
         return options
+    if args.cache_dir.exists() and not args.cache_dir.is_dir():
+        raise CliError(ENVIRONMENT, f'cache directory {args.cache_dir} is not a directory; no cache was used')
     import dataclasses
 
     from .enrichment.cache import CacheConfig, DerivedCache
@@ -315,7 +341,7 @@ def cmd_rank(args, cancel) -> int:
         _emit(args, 'rank', result.status.status, None, warnings, 'Ranking unavailable.')
         return RUNTIME
     entries = result.ranking.entries[:args.limit or None]
-    names = {m.match_id: ' / '.join(sorted({f.name for f in m.older + m.newer})) for m in result.views.matches}
+    names = _match_names(result.views.matches)
     payload = result.ranking.model_dump(mode='json')
     payload['entries'] = [e.model_dump(mode='json') | {'function': names.get(e.match_id, '')} for e in entries]
     payload['profile'] = _profile_info(profile)
@@ -474,7 +500,7 @@ def cmd_correlate(args, cancel) -> int:
     warnings += [f'{c}: CVE snapshot is stale; check its retrieval date' for c in result.contextual.stale_snapshots]
     status = 'partial' if (result.contextual.stale_snapshots or fetch_failed) \
         and result.contextual.status == 'complete' else result.contextual.status
-    names = {m.match_id: ' / '.join(sorted({f.name for f in m.older + m.newer})) for m in result.views.matches}
+    names = _match_names(result.views.matches)
     text = '\n'.join(f'{e.context_rank:>4} ctx {e.context_score:>3} base {e.base_score:>3} (#{e.base_rank}) '
                      f'+{e.adjustment:<2} {names.get(e.match_id, "")}' for e in result.contextual.entries)
     _emit(args, 'correlate', status, result.contextual.model_dump(mode='json') | {'profile': _profile_info(profile)},
@@ -496,6 +522,8 @@ def cmd_cache(args, cancel) -> int:
             result = cache.prune(args.target_bytes)
     except EnrichmentError as exc:
         raise CliError(ENVIRONMENT if exc.code == 'PT-ENRICH-CONFIG' else RUNTIME, str(exc)) from None
+    if 'error' in result:
+        raise CliError(ENVIRONMENT, f'cache at {args.cache_dir} is unusable ({result["error"]}); check the path and permissions')
     _emit(args, 'cache', 'complete', result, [], json.dumps(result, indent=2, sort_keys=True))
     return OK
 
@@ -721,7 +749,7 @@ def cmd_series(args, cancel) -> int:
     labels = {b.ordinal: b.label for b in series.builds}
     text = '\n'.join(
         f'{c.status:<12} {"STALE " if r["stale"] else ""}{c.weakest_match_type:<28} '
-        + ' -> '.join(f'[{labels[n.ordinal]}] {n.name or "?"}' + (f'@{n.address:x}' if n.address is not None else '')
+        + ' -> '.join(f'[{_terminal_text(labels[n.ordinal])}] {_terminal_text(n.name) if n.name else "?"}' + (f'@{n.address:x}' if n.address is not None else '')
                       for n in c.nodes)
         + ''.join(f' ({e.kind}@{labels[e.ordinal]})' for e in c.events)
         + (f' gaps:{",".join(labels[g] for g in c.gaps)}' if c.gaps else '')
@@ -768,7 +796,8 @@ def cmd_secondary(args, cancel) -> int:
         store = EnrichmentStore(service.store)
         if args.action == 'reconcile':
             from .secondary.store import select_current
-            chosen, superseded = select_current(load_secondary(store))
+            pair = (sides['older'].sha256, sides['newer'].sha256) if {'older', 'newer'} <= sides.keys() else None
+            chosen, superseded = select_current(load_secondary(store), pair)
             sets = [m for _, m in chosen]
             if not sets:
                 _emit(args, 'secondary reconcile', 'complete', {'reports': []}, [], 'No secondary match sets stored.')
@@ -803,7 +832,8 @@ def cmd_secondary(args, cancel) -> int:
         try:
             if args.action == 'import-bindiff':
                 from .secondary.bindiff import import_bindiff
-                match_set = import_bindiff(args.bindiff, sides['older'].sha256, sides['newer'].sha256)
+                match_set = import_bindiff(args.bindiff, sides['older'].sha256, sides['newer'].sha256,
+                                           preserve_dir=Path(service.root) / 'runs' / run.id / 'raw' / 'secondary')
             else:
                 return _secondary_run(args, cancel, service, store, run, sides)
         except SecondaryError as exc:
@@ -839,6 +869,13 @@ def _command_name(args) -> str:
     return getattr(args, 'command_label', None) or base
 
 
+def _json_envelope(args, argv: list[str]) -> tuple[bool, str]:
+    """Whether to emit a JSON envelope and its command label; before parsing finishes both come from argv."""
+    if args is not None:
+        return bool(getattr(args, 'json', False)), _command_name(args)
+    return '--json' in argv, argv[0] if argv and argv[0] in COMMANDS else 'patchtrace'
+
+
 def main(argv: list[str] | None = None) -> int:
     argv = sys.argv[1:] if argv is None else argv
     for stream in (sys.stdout, sys.stderr):
@@ -850,23 +887,27 @@ def main(argv: list[str] | None = None) -> int:
         args = _parser(argv).parse_args(argv)
         return (getattr(args, 'handler', None) or HANDLERS[args.command])(args, cancel)
     except CliError as exc:
-        print(f'error: {exc}', file=sys.stderr)
-        if args is not None and getattr(args, 'json', False):
-            sys.stdout.write(json.dumps({'contract': CLI_CONTRACT, 'command': _command_name(args), 'status': 'failed',
-                                         'result': None, 'warnings': [], 'error': str(exc)}, sort_keys=True) + '\n')
+        message = redact_log(str(exc))
+        print(f'error: {_terminal_text(message, 4000)}', file=sys.stderr)
+        as_json, label = _json_envelope(args, argv)
+        if as_json:
+            status = 'cancelled' if exc.code == CANCELLED else 'failed'
+            sys.stdout.write(json.dumps({'contract': CLI_CONTRACT, 'command': label, 'status': status,
+                                         'result': None, 'warnings': [], 'error': message}, sort_keys=True) + '\n')
         return exc.code
     except KeyboardInterrupt:
         cancel.set()
         print('cancelled', file=sys.stderr)
-        if args is not None and getattr(args, 'json', False):
-            sys.stdout.write(json.dumps({'contract': CLI_CONTRACT, 'command': _command_name(args), 'status': 'cancelled',
+        as_json, label = _json_envelope(args, argv)
+        if as_json:
+            sys.stdout.write(json.dumps({'contract': CLI_CONTRACT, 'command': label, 'status': 'cancelled',
                                          'result': None, 'warnings': []}, sort_keys=True) + '\n')
         return CANCELLED
     except SystemExit as exc:  # --help
         return int(exc.code or 0)
     except Exception as exc:  # contract: unexpected failures are runtime errors (3), never a bare traceback
         message = f'{type(exc).__name__}: {redact_log(str(exc))}'  # an exception may quote a header, URL or argv
-        print(f'error: {message}', file=sys.stderr)
+        print(f'error: {_terminal_text(message, 4000)}', file=sys.stderr)
         if args is not None and getattr(args, 'json', False):
             sys.stdout.write(json.dumps({'contract': CLI_CONTRACT, 'command': _command_name(args), 'status': 'failed',
                                          'result': None, 'warnings': [], 'error': message}, sort_keys=True) + '\n')

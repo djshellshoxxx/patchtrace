@@ -35,11 +35,11 @@ def _availability_text(action: QAction) -> str:
     return ''
 
 
-def _walk(actions: Iterable[QAction], trail: str, seen: set[int], skip: set[QAction]) -> Iterable[tuple[QAction, str]]:
+def _walk(actions: Iterable[QAction], trail: str, seen: set[QAction], skip: set[QAction]) -> Iterable[tuple[QAction, str]]:
     for action in actions:
-        if id(action) in seen or action in skip or action.isSeparator():
+        if action in seen or action in skip or action.isSeparator():
             continue
-        seen.add(id(action))
+        seen.add(action)
         text = action.text().replace('&', '').strip()
         menu = action.menu()
         if menu is not None:
@@ -52,7 +52,7 @@ def action_entries(window: QMainWindow, skip: set[QAction] = frozenset()) -> lis
     """Every action in the menus and toolbars, deduplicated (the toolbar repeats menu actions)."""
     roots: list[Iterable[QAction]] = [window.menuBar().actions()]
     roots += [bar.actions() for bar in window.findChildren(QToolBar)]
-    seen: set[int] = set()
+    seen: set[QAction] = set()
     entries = []
     for actions in roots:
         for action, title in _walk(actions, '', seen, set(skip)):

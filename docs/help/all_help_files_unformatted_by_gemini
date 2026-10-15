@@ -1,0 +1,979 @@
+Start here
+PatchTrace compares an explicitly chosen older and newer Windows binary. Use it to inspect changed functions, examine the evidence behind a proposed relationship, and record your conclusions.
+The documented desktop target is Windows 11 x64. The initial input contract accepts PE AMD64 executables, DLLs, and drivers. A filename extension does not establish the file format or architecture. PatchTrace validates the input headers.
+Choose your starting point:
+Your starting material	Start with
+No comparison data	Sample
+Two versions of one binary	New, then Run comparison
+An existing PatchTrace project	Open
+Raw Ghidriff JSON for your exact binary pair	Open the corresponding project, then Import JSON
+
+
+The desktop package includes its Python and Qt runtime. Running a native comparison requires a separately configured analysis backend. You can explore the sample, review imported results, and export reports without that backend.
+PatchTrace performs static analysis. It does not launch either target binary or install a driver input. External analysis tools run as separate processes.
+Keep three questions separate: whether functions correspond, what changed, and whether that change supports your research hypothesis. A matching score, attention score, or generated explanation does not answer all three.
+UNVERIFIED: availability of newer panels in a particular downloadable release must be checked against that release. Repository implementation records do not establish that every recorded feature is packaged.
+Sources: README.md; docs/windows.md; docs/modules.md; docs/qa.md.
+=== FILE: docs/help/02-windows-first-launch.md ===
+Open PatchTrace on Windows
+Download the Windows x64 distribution ZIP and its accompanying SHA-256 file from the project’s release page. Extract the entire archive into a directory your account can write to.
+Keep PatchTrace.exe, _internal, documentation, and licenses together. Run the extracted executable. Launching it inside the ZIP or copying only the executable leaves required files unavailable.
+You do not need a separate Python installation to open the packaged desktop application. Python used by the external comparison backend is a different installation.
+To inspect a downloaded archive’s hash in PowerShell, substitute its actual filename:
+Get-FileHash '.\PatchTrace-0.1.0-windows-x64.zip' -Algorithm SHA256
+Get-Content '.\PatchTrace-0.1.0-windows-x64.zip.sha256'
+
+Compare the hexadecimal values. A matching value establishes agreement with that checksum file; it does not independently establish who published either file.
+Choose Sample for an initial check. It should create a separate project and display authored comparison data without requiring Ghidra or an AI provider.
+Store your projects outside the extracted application directory. When updating, extract the replacement application separately and reopen your existing project.
+The cited packaging documentation describes an unsigned portable beta without an installer or elevation requirement.
+UNVERIFIED: successful launch on your Windows build, display configuration, and security software requires a local check. Automated startup tests do not establish screen-reader behavior or complete desktop compatibility.
+Sources: README.md, “Download and first launch”; docs/windows.md; docs/qa.md.
+=== FILE: docs/help/03-explore-the-sample.md ===
+Explore the sample
+Use Sample to learn the review workflow before configuring external tools. Choose a parent directory when prompted. PatchTrace creates a separate timestamped sample project.
+The sample contains an authored, synthetic bounds-check example and a curated finding. It is an exercise in navigating stored data. Opening it does not run a live model or analyze a real binary.
+1. Select the modified function in FUNCTION MATCHES.
+2. Read the older and newer representations in the paired panes.
+3. Use Next diff to navigate to the changed region.
+4. Choose Decompiled code, Assembly, or Metadata and examine the information available in each representation.
+5. Select the finding in FINDINGS & ANALYST REVIEW.
+6. Read its explanation, unknowns, and supporting evidence.
+7. Select an evidence entry and check the side and supplied line range it references.
+8. Enter an analyst conclusion and use Save finding review.
+9. Open Export, inspect the preview, and write a report.
+10. Close the project and reopen its directory with Open.
+An unavailable representation should be identified explicitly. Missing assembly must not be replaced with invented instructions.
+Each use of Sample creates a separate persistent project. Keep the exercise if you want to test saving, reopening, and exporting.
+A successful sample exercise confirms those paths for synthetic data. It does not establish native backend compatibility, general matching accuracy, or the correctness of generated interpretations.
+Sources: README.md, “Try the sample”; docs/specs/ui.md; docs/qa.md.
+=== FILE: docs/help/04-create-a-comparison-project.md ===
+Create a comparison project
+Create a project from two versions of the same Windows binary. Choose their chronological direction explicitly; PatchTrace does not infer older and newer from filenames or dates.
+1. Select New, or press Ctrl+N.
+2. Enter a project name.
+3. Choose the file for Older PE x64.
+4. Choose the file for Newer PE x64.
+5. Select an absent or empty New project directory.
+6. Review the two input paths.
+7. If reversed, use Swap older and newer in the dialog.
+8. Select Create project.
+You can browse for inputs or drop a local file into its corresponding field. Check which field receives the file before creating the project.
+Creation validates the binaries, computes their hashes, and stores project-owned copies. Your original files remain unchanged. Use Open to resume an existing project rather than selecting its directory as a new destination.
+If creation rejects an input, check its actual architecture and file format. A .dll, .exe, or .sys extension is insufficient. The documented initial contract requires PE AMD64.
+If creation rejects the destination, choose a new directory or inspect why the selected directory contains existing material. Do not empty a project directory to force creation.
+After creation, confirm the artifact headers before running analysis. Reversing an existing project is a separate operation with consequences for interpretation context.
+Sources: README.md, “Create a project”; docs/specs/ui.md; AGENTS.md.
+=== FILE: docs/help/05-run-a-comparison.md ===
+Run a native comparison
+A native comparison runs the configured Ghidriff and Ghidra backend against the project’s stored binary pair. Configure and diagnose the external dependencies in Setup first.
+1. Open the intended project.
+2. Check the older and newer artifact identities.
+3. Finish or cancel any active job.
+4. Select Run comparison, or press F5.
+5. Follow the job status, elapsed time, and diagnostic log.
+6. Wait for a terminal status before starting another operation.
+7. Select a resulting function match and inspect both sides.
+Progress can be indeterminate when the backend does not provide a measurable total. An indeterminate indicator alone does not establish that the process has stalled.
+PatchTrace supervises the external process, validates its output, and normalizes accepted results. Failed, invalid, timed-out, and cancelled attempts preserve previously committed results and retain diagnostic information.
+To stop, select Cancel job or press Esc. Cancellation is a request; wait for the final status. Do not treat the first click as confirmation that every backend process has exited.
+A successful comparison can contain no changed functions, particularly for identical inputs. Clear filters before concluding that results are missing.
+PatchTrace does not execute the target files. Backend process supervision is not an operating-system sandbox or an air-gap mechanism.
+If analysis fails, retain the error code and sanitized log. Dependency diagnosis alone does not establish that the complete installed tool combination can perform a native comparison.
+Sources: README.md, “Run a native comparison”; docs/specs/ui.md; docs/windows.md.
+=== FILE: docs/help/06-import-ghidriff-results.md ===
+Import an existing Ghidriff comparison
+Use Import JSON when a comparison has already been produced elsewhere. Import reviews existing analysis output; it does not rerun the native comparison backend.
+Prepare a PatchTrace project containing the exact older and newer binaries used for that output. Artifact identities and orientation must agree.
+1. Create or open the corresponding project.
+2. Wait for any active operation to finish.
+3. Select Import JSON.
+4. Choose the raw Ghidriff comparison JSON.
+5. Wait for validation and normalization.
+6. Read the final status before inspecting the imported matches.
+Raw comparison output commonly appears in Ghidriff’s output json directory with a .ghidriff.json filename. Select the actual comparison document rather than a rendered HTML or Markdown report.
+A PatchTrace exported report is also a different format. Renaming a report to .json does not make it an importable Ghidriff comparison.
+If import is rejected, check the binary hashes, older/newer direction, and upstream output contract. Renaming an unrelated binary does not repair an identity mismatch. The README identifies a pinned Ghidriff integration baseline; output from another revision may require compatibility verification.
+Validation and import run in the background. Failed or cancelled attempts must preserve prior committed results.
+Imported fields can be unavailable. In particular, an instruction hash cannot supply an assembly listing. Treat an explicit unavailable label as a limit of the retained evidence.
+Sources: README.md, “Import a comparison made elsewhere”; docs/specs/ui.md; docs/qa.md.
+=== FILE: docs/help/07-navigate-the-workspace.md ===
+Navigate the workspace
+The documented core workspace places function matches on the left, paired code in the center, findings and analyst review on the right, and job diagnostics below. Resize the window and drag dividers to allocate reading space.
+Start by selecting a function match. The code panes display the records associated with that relationship. Search names or addresses to narrow the list, then use category and review filters to focus your work.
+Categories describe relationships such as modified, added, removed, ambiguous, split, merged, and unmatched. They do not express severity. Review filters represent analyst decisions.
+Use these documented core shortcuts:
+Action	Shortcut
+New project	Ctrl+N
+Open project	Ctrl+O
+Save snapshot	Ctrl+S
+Run comparison	F5
+Request cancellation	Esc
+Interpret selection	Ctrl+I
+Export report	Ctrl+E
+Previous difference	Alt+Up
+Next difference	Alt+Down
+Workflow and dependencies	F1
+
+
+Controls may be disabled until a project, selection, or idle worker is available. Check the active job and selection before changing configuration.
+Planned: the GUI integration plan specifies a common dock host, command palette, layout reset, and keyboard commands for moving panels. Some framework components have implementation records, but complete migration and packaged availability are UNVERIFIED in the reviewed sources.
+Do not assume a missing dock command has the same availability as an established core action.
+Sources: README.md, “Workspace and GUI controls”; docs/specs/ui.md; docs/specs/program-e/GUI-integration-plan.md, sections 8.4–8.9; docs/modules.md.
+=== FILE: docs/help/08-read-paired-code.md ===
+Read older and newer code
+Select a function match to display its older and newer records. Check the artifact headers before interpreting the differences, especially after changing project orientation.
+The representation selector changes the material shown on both sides:
+Representation	Meaning
+Decompiled code	C-like output produced by the decompiler, rather than original source
+Assembly	Retained instruction text, when available
+Metadata	Recorded information about the selected records
+
+
+Use Previous diff, Next diff, or the changed-hunk selector to move between changed regions. Alt+Up and Alt+Down provide the documented keyboard routes.
+Alignment can insert blank display rows where line counts differ. These gaps are presentation aids. Equal display row numbers do not establish corresponding source lines or function identity.
+Sync scroll coordinates vertical movement between panes. It does not strengthen the evidence that the functions correspond.
+The viewer limits displayed text to 200,000 characters. Large text can also use a bounded alignment fallback. Check the displayed availability, truncation, and alignment information before treating the view as complete.
+Use Copy for a representation accompanied by project, artifact-hash, run, match, and function provenance.
+Unavailable assembly remains unavailable. PatchTrace must not manufacture instructions from an instruction hash.
+For byte-oriented representations, verify the selected scope and its provenance separately. Decompiled text is not evidence that an exact function byte range has been recovered.
+Sources: README.md, “Function navigation and paired code”; src/patchtrace/tooltips.py; docs/modules.md.
+=== FILE: docs/help/09-review-and-correct-matches.md ===
+Review and correct function relationships
+A function relationship is an engine proposal or an analyst correction. Review the relationship independently of any interpretation attached to it.
+Use the match review selector to record unreviewed, accepted, rejected, or needs-review. Accepting a relationship records your judgment; it does not automatically accept a finding.
+To correct a relationship:
+1. Select the match.
+2. Choose Correct match….
+3. Select the exact existing older and newer function records involved.
+4. Choose the relationship.
+5. Enter the required reason.
+6. Select Save correction.
+7. Inspect the resulting relationships and any stale findings.
+For an added function, select newer records only. For a removed function, select older records only. Split and merged relationships involve the corresponding multiple-function selections. Use ambiguous or unmatched when the association remains unresolved.
+Corrections operate within the relevant analysis run. They cannot borrow a function record from another run. Other relationships using the selected records are adjusted; unused remainders become unmatched.
+The correction preserves its reason and prior relationships rather than rewriting raw backend output.
+Project → Undo latest match correction restores the latest eligible correction. It is not a general undo for notes, reviews, or every project edit.
+A correction, correction undo, new comparison, import, or orientation change can make existing interpretations stale. Retained historical evidence must not silently navigate into unrelated current code.
+Sources: README.md, “Correct matches and record your review”; docs/specs/ui.md; AGENTS.md.
+=== FILE: docs/help/10-save-reopen-and-back-up.md ===
+Save, reopen, and back up a project
+A PatchTrace project includes project.sqlite3, copied inputs, raw comparison output, and run data. Keep the project directory and its companion files together.
+Review actions, corrections, notes, and accepted result imports persist through the project service. Use Save or Ctrl+S for an explicit snapshot. To resume work, choose Open or Ctrl+O and select the project directory.
+PatchTrace uses a writer lock to prevent concurrent editing. If the project is open in another instance, close it there before retrying. Do not remove an active lock to force a second writer.
+Create a complete backup before moving between versions that might require a schema migration:
+1. Finish or cancel the active job.
+2. Choose Project → Back up project….
+3. Select a parent directory outside the current project.
+4. Allow PatchTrace to create a new backup directory.
+5. Confirm the reported destination.
+The backup includes a SQLite backup and companion files. Copying only project.sqlite3 does not preserve the entire project.
+An exported report is also not a project backup. It contains selected reporting material rather than the complete working state.
+Project storage is local and is not encrypted by PatchTrace. Retained interpretation contexts and raw responses can contain decompiled code even when a report excludes function code.
+Keep projects outside the application directory so replacing the portable application does not replace your research.
+Sources: README.md, “Projects, backups, and data handling”; docs/windows.md; docs/specs/ui.md.
+NEXT: Help topics 11–20: backend setup, runtime discovery, offline bundle, settings, profiles, privacy, network consent, interpretation preview, findings, and evidence provenance.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ok next
+
+
+
+
+
+
+
+
+
+
+
+
+
+Worked for 1m 35s
+
+
+
+
+
+
+=== FILE: docs/help/11-configure-the-analysis-backend.md ===
+Configure the analysis backend
+Open Setup to select the external runtime used by Run comparison. The Python included with the desktop application does not replace this backend.
+Configure these paths:
+Field	What to select
+External Python executable	The python.exe in the environment where Ghidriff is installed
+Ghidra installation directory	The unpacked Ghidra root containing its application files
+Optional private Java home	The JDK installation directory, when using a dedicated Java runtime
+
+
+Select the actual files and directories. Do not select PatchTrace.exe as Python, a Ghidra ZIP as the installation directory, or the parent of the intended Ghidra installation.
+The README records a native fixture using Python 3.12.10, Ghidra 12.0.4, Temurin Java 25, and Ghidriff revision 4f5d895fcbb1eacd65efd81145922c15bb7e741d. That result covers the recorded combination and fixture.
+Select Diagnose dependencies, read the output, then Save setup. Diagnosis checks configured dependencies without executing either target binary. A successful diagnosis does not establish that every native comparison will complete.
+When using system Java, restart PatchTrace after changing environment variables. A configured private Java home applies to backend child processes without requiring a global Java change.
+If diagnosis fails, correct the reported dependency first. Repeatedly starting a comparison does not repair a missing interpreter, incompatible JDK, or incorrect Ghidra directory.
+UNVERIFIED: compatibility of another tool combination requires a native comparison check.
+Sources: README.md, “Install the comparison backend”; docs/specs/ui.md; src/patchtrace/tooltips.py.
+=== FILE: docs/help/12-find-existing-runtime-installations.md ===
+Find existing runtime installations
+Find existing installations searches bounded local locations for Python and Ghidra installations. Use it when the tools are already installed but their paths are not configured.
+Discovery reads local filesystem information. It does not download dependencies, install software, execute the discovered programs, or analyze a target binary.
+1. Open Setup.
+2. Select Find existing installations.
+3. Read the discovery output.
+4. Check any populated Python and Ghidra fields.
+5. Use Browse when you need to select a candidate explicitly.
+6. Select Diagnose dependencies.
+7. Review the diagnosis and select Save setup.
+A unique candidate can populate an empty field. An existing manually configured path is retained. Multiple candidates require an explicit choice rather than an arbitrary selection.
+The documented search includes the dedicated backend interpreter at:
+%LOCALAPPDATA%\PatchTrace-backend\Scripts\python.exe
+
+It also checks common Ghidra extraction locations. The search is bounded, so an installation elsewhere can remain undiscovered.
+If nothing appears, use Browse to select the external interpreter and unpacked Ghidra root. An empty result does not establish that the tools are absent from the computer.
+Discovery and diagnosis answer different questions. Discovery finds candidate paths. Diagnosis checks the selected configuration. A native comparison then exercises the complete backend workflow.
+UNVERIFIED: successful discovery in every customized, redirected, or synchronized Windows directory is not established by filesystem fixtures.
+Sources: README.md, “Windows setup”; docs/windows.md; src/patchtrace/tooltips.py.
+=== FILE: docs/help/13-install-an-offline-backend-bundle.md ===
+Install an offline backend bundle
+Experimental: the offline ZIP installer is documented and tested with synthetic packages. The reviewed offline guide states that an official, fully tested complete backend archive has not been published. Availability of an approved archive for your release is UNVERIFIED.
+The desktop ZIP alone does not provide Ghidra, Java, and Ghidriff. A backend bundle must contain a complete, compatible, relocatable runtime.
+When an approved bundle is available:
+1. Transfer the desktop package, backend ZIP, trusted archive checksum, and notices to the target computer.
+2. Open Setup.
+3. Enter the independently obtained checksum in Trusted offline ZIP checksum. The field accepts 64 lowercase hexadecimal characters.
+4. Select Install offline backend ZIP… and choose the local archive.
+5. Review the runtime identity and full archive hash before confirming installation.
+6. Wait for completion.
+7. Check the populated Python, Ghidra, and private Java paths.
+8. Select Diagnose dependencies, then Save setup.
+9. Compare a known compatible binary pair.
+The checksum field is optional in the documented interface. Supplying an independently trusted value binds the selected archive to that value. Internal inventory hashes establish file agreement, not publisher identity.
+Installation verifies and extracts files without executing the payload or downloading dependencies. Failed or cancelled installation preserves existing installations and projects.
+Disconnected Windows acceptance, native execution, and network isolation require separate checks. Disabling symbol lookup alone does not create an air gap.
+Sources: docs/offline-backend.md; docs/windows.md; src/patchtrace/tooltips.py.
+=== FILE: docs/help/14-backend-and-desktop-settings.md ===
+Backend and desktop settings
+Use Setup to edit backend paths and desktop preferences. Select Save setup to apply saved changes. Closing with Cancel discards unsaved setup edits.
+The documented numeric settings are:
+Setting	Documented range	Meaning
+Comparison timeout	10–86,400 seconds	Maximum permitted comparison duration
+Code font size	8–28 points	Text size in the code panes
+Interpretation context budget	512–200,000 characters	Bound used when selecting interpretation context
+
+
+The README records defaults of 3,600 seconds, 11 points, and 24,000 characters. A character budget is different from a provider’s token limit.
+Synchronize code scrolling stores the preferred paired-pane scrolling behavior.
+Allow Ghidriff symbol-server lookups is disabled by default. Enabling it permits the backend’s symbol retrieval feature to contact servers. This setting governs that feature; it does not isolate external processes from the network.
+Experimental: the tooltip registry describes an environment allowlist setting and additional environment-variable names to retain. The allowlist is documented as off by default pending local validation. Rejected passthrough names include PYTHONPATH, PYTHONHOME, LD_PRELOAD, and names ending in _OPTIONS.
+UNVERIFIED: availability of those experimental environment controls in your packaged release.
+Provider kind, endpoint, model, and request credential are entered in the interpretation preview. Credentials are not saved.
+Planned: user-configurable worker count and theme selection are described as future work in the core UI specification. Later framework plans require separate release verification.
+Sources: README.md; docs/specs/ui.md; src/patchtrace/tooltips.py.
+=== FILE: docs/help/15-analysis-profiles.md ===
+Use analysis profiles
+Analysis profiles control enrichment and ranking options. Open the Profiles tab in Setup, then select a profile to inspect its configuration.
+The default profile is read-only. Use New to start from default settings or Duplicate to copy a selected profile. Give the editable profile a name of up to 64 characters.
+The documented fields include:
+Field	Meaning
+Detector enabled	Whether the detector contributes to ranking
+Detector weight	Integer weight from 0 to 100
+Windows Feature IDs	Comma-separated unsigned 32-bit IDs; empty means all
+Symbol policy	Disabled or online
+Maximum snapshot age	Integer from 1 to 3,650 days
+Cache directory	Absolute directory; empty means no cache
+Cache budget	Integer from 1 to 1,024 GiB
+NVD provider	Whether the profile uses NVD advisory context
+MSRC provider	Whether the profile uses Microsoft advisory context
+
+
+Select Save profile to validate and write the edited profile. Resolve validation errors before relying on its settings. Saving Setup with unsaved profile edits prompts you to save those edits first.
+Deleting a profile requires confirmation. The default profile cannot be deleted.
+Weights affect attention ordering. They do not convert detector output into a calibrated estimate of a security property.
+Selecting an advisory provider does not authorize an immediate network request. Online operations still require their documented explicit action.
+UNVERIFIED: precedence between profile symbol policy and the backend symbol setting is not established by the reviewed user-facing descriptions. Check the effective run provenance.
+Sources: docs/specs/ui.md; src/patchtrace/tooltips.py; README.md.
+=== FILE: docs/help/16-local-data-and-privacy.md ===
+Understand local data and privacy
+A project stores more information than the visible comparison panes. Its contents include copied target inputs, a SQLite database, comparison output, run records, reviews, and notes.
+Interpretation can also retain the exact context and raw provider response. These records can contain decompiled code even when an exported report excludes function code. PatchTrace does not encrypt project storage.
+Desktop settings retain backend paths, window preferences, recent-project paths, and non-secret provider preferences. The documented interpretation credential is held in memory for the request and is not saved in settings or project records.
+Before sharing a report:
+1. Choose the intended finding scope.
+2. Check Include function code, which defaults to off.
+3. Check Include analyst notes, which defaults to on.
+4. Read the exact preview.
+5. Inspect names, notes, and technical details that remain.
+The documented report exporter redacts absolute source paths and excludes raw provider responses, API keys, and complete context payloads. These exclusions do not establish that every remaining field is appropriate for your recipient.
+Only selected findings limits the finding section. It does not anonymize all project or comparison metadata.
+A full backup includes the underlying project material. Treat it according to the copied binaries, retained code, and research notes it contains.
+Planned: separate user-facing export redaction controls are described as future work in the core UI specification.
+Sources: README.md, “Export and share results” and “Projects, backups, and data handling”; docs/specs/ui.md.
+=== FILE: docs/help/17-network-use-and-consent.md ===
+Understand network use and consent
+Network permission belongs to the operation you are reviewing. Starting a local comparison does not require configuring an AI provider.
+For interpretation, Interpret selection prepares a preview. Opening that preview sends no context. Send context issues the request to the selected endpoint. Cancelling the preview sends nothing.
+Check the provider kind and complete endpoint before sending. Loopback Ollama requests go to a service on the local computer. A remote OpenAI-compatible request sends the displayed context and system prompt to that service.
+Ghidriff symbol retrieval has a separate setting. It is disabled by default. Enabling symbol-server lookup permits that backend feature to make network requests. It is not consent for AI interpretation or a whole-system network policy.
+The reviewed acquisition tooltip describes separate confirmations for Winbindex metadata and binary retrieval. UNVERIFIED: its complete workflow and release availability require verification against the relevant acquisition sources before use.
+Selecting NVD or MSRC in an analysis profile configures a provider choice. It does not itself issue or authorize every possible request.
+After transmission starts, cancellation cannot recall material already sent. The interpretation transport has a documented request deadline, and cancellation can remain pending while waiting for data.
+For a disconnected workflow, prepare dependencies and local inputs beforehand and enforce isolation through the operating system or disconnected machine. PatchTrace settings alone do not establish an air gap.
+Sources: README.md; docs/windows.md; src/patchtrace/tooltips.py.
+=== FILE: docs/help/18-preview-and-send-interpretation-context.md ===
+Preview interpretation context
+Interpretation is optional. Select one or more function matches, wait for the current worker to finish, then choose Interpret selection or press Ctrl+I.
+Read all three preview sections:
+Section	What to inspect
+Exact context	The selected evidence and code supplied to the model
+Exact system prompt	Instructions accompanying that context
+Omitted / unavailable	Material excluded by budget or availability
+
+
+Check the match count, context digest, and approximate token estimate. The estimate does not guarantee that the request fits a particular model’s context window.
+Choose the provider kind, endpoint, and exact model name. The documented transports support loopback Ollama and HTTPS OpenAI-compatible Chat Completions. The openai label identifies the protocol; it does not establish compatibility with every service.
+Remote Ollama hosts, remote HTTP endpoints, endpoint redirects, environment-proxy forwarding, and native Anthropic Messages API are documented as unsupported.
+Enter the request credential when required. It remains in memory for that request. Provider, endpoint, and model preferences can be remembered, so inspect them each time.
+Select Send context only after reviewing the payload and destination. To change the character budget, edit Setup and reopen the preview to regenerate the context.
+Malformed responses or invalid citations produce a failed attempt rather than accepted findings.
+UNVERIFIED: live provider compatibility is an open acceptance item in the reviewed README. Mocked transport tests do not resolve it.
+Sources: README.md, “Optional AI interpretation”; docs/specs/ui.md; src/patchtrace/tooltips.py.
+=== FILE: docs/help/19-review-findings-and-record-conclusions.md ===
+Review findings and record conclusions
+Select a finding in FINDINGS & ANALYST REVIEW to inspect its explanation and supporting material.
+The documented finding display includes a summary, proposed fix purpose or category, hypothesis, model confidence label, preconditions, unknowns, proposed verification, alternatives, and any proposed CWE with rationale.
+Read the supporting evidence and counterevidence before recording a conclusion. A model confidence label is a statement from the interpretation workflow. The reviewed sources do not establish it as a calibrated measurement. Do not treat it as one.
+Use the finding filters to search text, select review status, or distinguish current and stale material.
+To record your review:
+1. Select the finding.
+2. Inspect its evidence and unknowns.
+3. Choose the finding review status.
+4. Enter an independent Analyst conclusion.
+5. Select Save finding review.
+For a separate annotation, choose Note on selected match or Note on selected finding, enter the text, then select Save note. A match review and a finding review are separate decisions.
+Use Inspect interpretation responses… to inspect retained response text and attempt information when output is malformed, rejected, or otherwise unclear. Raw response text is displayed as text.
+A new comparison, import, match correction, correction undo, or orientation swap can make a finding stale. Retain its historical meaning and generate a new interpretation when you need a hypothesis tied to the current comparison.
+Sources: README.md, “Findings and analyst review”; docs/specs/ui.md.
+=== FILE: docs/help/20-follow-evidence-and-check-provenance.md ===
+Follow evidence and check provenance
+Evidence links connect an interpretation to specific supplied records. Select a Support, Counterevidence, or alternative evidence entry to navigate to its recorded side and line range.
+Before relying on the location, check:
+1. The project and analysis run.
+2. The older or newer artifact identity.
+3. The function relationship being reviewed.
+4. The cited function and supplied line range.
+5. Whether the context is current or stale.
+6. Whether relevant material was omitted or unavailable.
+A valid citation establishes a traceable reference within the supplied context. It does not establish that the accompanying explanation is correct or that the selected function relationship is accurate.
+Decompiled line numbers refer to the retained decompiler text. Display alignment can insert gaps, so equal visible row numbers do not establish corresponding original lines.
+Use Bookmark selected evidence to retain an analyst annotation. Copying a code representation also includes documented project, artifact-hash, run, match, and function provenance.
+Stale evidence belongs to an earlier context. The documented interface shows a stale notice and retained historical context rather than redirecting its citation into current code.
+If a citation does not navigate, inspect its context status before assuming the line is missing. Reopening a current function does not repair a historical reference.
+Missing evidence remains unknown. An unavailable representation or omitted record does not establish that the behavior under investigation is absent.
+Sources: README.md; docs/specs/ui.md; src/patchtrace/tooltips.py; AGENTS.md.
+NEXT: Help topics 21–30: Evidence, Unified, Search, Graph, Strings, Capabilities, Build environment, Rules, KB search, and KEV panels.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+next
+
+
+
+
+
+
+
+
+
+
+
+
+
+Worked for 1m 54s
+
+
+
+
+
+
+=== FILE: docs/help/21-engine-evidence-panel.md ===
+Engine evidence panel
+Experimental. The reviewed source contains the Engine evidence panel and its controller. Availability in a particular downloadable package is UNVERIFIED.
+Open the panel with Ctrl+Shift+E when that command is available. It compares function relationships from stored Ghidriff, BinDiff, and rz-diff results.
+Read the verdict before comparing individual engine cells:
+Verdict	Meaning
+Agree	Engines with address-comparable records select the same endpoints as Ghidriff
+Contested	An engine selects a different endpoint
+Single engine	Only Ghidriff provides a comparable record
+Unknown	No usable engine output could be compared
+Engine-only record	A secondary relationship has no covering Ghidriff match
+
+
+Agreement concerns pairing. Engines can share disassembly artifacts, so agreement is not independent proof.
+Use the verdict filter, text search, and Hide agreed control to narrow review. Select a row to read its details. Go to match in navigator opens the associated primary match when navigation is available. Copy provenance preserves the selected evidence as plain text.
+The Engines tab provides engine status, probing, selected-engine execution, cancellation, and BinDiff setup or import controls. Opening the evidence view does not itself authorize running every engine.
+Native engine values retain their own scales. Do not average them or compare their numeric magnitudes across engines.
+For partial results, inspect which engines failed or were not run. Missing output is unknown, rather than disagreement. Stale output describes earlier inputs and remains reference material.
+Sources: src/patchtrace/secondary/evidence_panel.py; src/patchtrace/secondary/evidence_view.py; src/patchtrace/ui_evidence.py.
+=== FILE: docs/help/22-unified-panel.md ===
+Unified panel
+Experimental. The reviewed source contains the Unified panel declaration, controller, and read model. Its derived decisions are rule-based and uncalibrated. Packaged availability is UNVERIFIED.
+Use Ctrl+Shift+U when available. Unified combines stored engine evidence into a derived view while retaining each engine’s native values in separate columns.
+Run unified analysis requires an open project, a finished Ghidriff run, no competing job, and the documented unified/enabled setting. It writes a derived result without replacing the primary Ghidriff comparison.
+Use the pairing-decision, change-classification, change-class, and source filters to narrow the table. Search accepts function names and hexadecimal addresses. Unchanged and structurally cosmetic rows are collapsed by default; the summary retains their counts. The corresponding display control reveals them.
+Select a row to inspect support, contest, change facts, limitations, and provenance. Open it in the code panes before interpreting the classification. A correction is available only when the row maps to a Ghidriff match.
+Copy provenance copies selected rows. Explain previews bounded descriptive text; that preview does not transmit it.
+If extraction is unavailable, the result can use stored engine outputs without instruction-level change facts. Read that notice before drawing conclusions from missing detail.
+A partial result has incomplete evidence. A stale result describes changed inputs. Run again when a current result is needed. Cancellation leaves the previous result current rather than publishing unfinished work.
+Sources: src/patchtrace/unified/panel.py; src/patchtrace/unified/read_model.py; src/patchtrace/ui_unified.py.
+=== FILE: docs/help/23-search-panel.md ===
+Search panel
+Planned. The reviewed WB1 plan specifies this panel. Its manifest slot exists, but the corresponding panel declaration was unavailable during review. Working desktop availability is UNVERIFIED.
+Search is intended to find indexed project material across functions, code, strings, imports, exports, capabilities, build facts, advisories, notes, and findings. It is separate from the core navigator’s name-and-address filter.
+The planned entry shortcut is Ctrl+Shift+F. Enter a query, then choose side, kinds, scope, mode, and sort order. An empty query does not request the entire project.
+The planned modes include words, exact, prefix, substring, and similar. Similarity suggestions help discover names; they do not establish function correspondence.
+Results carry side, kind, location, change information, and an explanation of their reading order. Select a result to inspect its provenance and limitations before using Go to code or Show other side.
+Use Coverage… to check which source groups were indexed. An empty result is meaningful only within completed coverage. Failed or missing index segments leave absence unresolved.
+The design includes saved searches and Rebuild index. Rebuilding concerns the search index, rather than rerunning binary analysis.
+Planned keyboard behavior includes Enter to open a result, Space to focus details, and Ctrl+C to copy its reference. Search-specific Escape handling closes suggestions or clears the query without cancelling the comparison job.
+Sources: docs/specs/program-e/WB1-integration-plan.md, section 8; src/patchtrace/panel_manifest.py.
+=== FILE: docs/help/24-call-graph-panel.md ===
+Call graph panel
+Planned. The WB2 integration plan defines the graph workspace. Its panel declaration was unavailable during review; packaged behavior is UNVERIFIED.
+The planned Ctrl+Shift+G command opens views of stored call relationships. The workspace includes Changes, Neighbours, Tree, and Diagram views. An across-builds view is a later addition.
+Start with a selected function. Choose older, newer, or both sides; callers, callees, or both directions; and a bounded traversal depth. Follow selection is intended to track the main navigator.
+Use the textual neighbour table or tree to inspect relationships. The diagram provides spatial context, while the textual views provide the alternative needed for keyboard and screen-reader use.
+A missing edge does not establish that a call is absent from the program. The planned view depends on retained call lists, address and name resolution, and the stored change set. Unchanged functions may lack stored lists.
+When the view reports truncated neighbours, reduce depth or narrow filters. Increasing visible complexity does not recover evidence that was never stored.
+Planned actions include opening a function, showing an available call site, changing the traversal focus, returning through history, copying details, and exporting DOT.
+The design specifies arrow-key node navigation, Enter to open, Space to select, and +, -, and 0 for zoom and fit. Actual assistive-technology behavior requires Windows acceptance testing.
+Sources: docs/specs/program-e/WB2-integration-plan.md, section 8; src/patchtrace/panel_manifest.py.
+=== FILE: docs/help/25-strings-panel.md ===
+Strings panel
+Planned. The WB3 plan defines string extraction and comparison controls. The panel declaration was unavailable during review. Implemented and packaged coverage is UNVERIFIED.
+The planned entry shortcut is Ctrl+Shift+T. Start with the built-in scan for plain strings. FLOSS is a separate optional tool for additional extraction methods.
+Running FLOSS with emulation requires an explicit review step. It is distinct from the built-in byte scan and must not start merely because the panel opens.
+Before reading differences, inspect the comparison basis. The two sides need compatible extraction settings. A blocked basis requires rescanning with matching settings rather than interpreting inconsistent inventories.
+Planned row labels distinguish Only in newer, Only in older, Edited, In both, and Not compared. If a scan hits its limit, missing strings remain unresolved; they must not become definite added or removed claims.
+Filter by side, change, type, cue, length, text, or selected function. The detail view records links and provenance. Function attribution can be unavailable or indirect.
+Planned actions include opening an attributed function, opening an available byte offset, copying escaped text, and explicitly requesting exact text. Secret-looking values are redacted by default.
+No differences means no differences within that scan’s coverage. Text stored in unsupported encodings, compressed data, or encrypted data can remain outside it.
+UNVERIFIED: final dock placement differs between the older feature plan and the central manifest.
+Sources: docs/specs/program-e/WB3-integration-plan.md, section 8; src/patchtrace/panel_manifest.py.
+=== FILE: docs/help/26-capabilities-panel.md ===
+Capabilities panel
+Planned. The CAP plan specifies a capa-based comparison panel. The declared panel module was unavailable during review. Desktop availability is UNVERIFIED.
+The planned shortcut is Ctrl+Shift+A. The Changes tab compares stored capa recognition results against function relationships. Setup and run configures and explicitly runs the separate capa program.
+Opening the panel does not run capa. Select the intended executable and review the configured rules, backend, and timeout before starting extraction.
+Read each side’s state carefully:
+State	Meaning
+Present	capa reported the capability
+Absent	The relevant evaluation completed without that recognition
+Not evaluated	capa did not evaluate the function
+No function	The relationship has no function on that side
+
+
+The planned change labels include gained, lost, moved, unchanged, and not compared. A moved label is a candidate explanation. Recognition on both sides does not establish identical code.
+Group by namespace or function pair, then inspect Why capa matched. The matching features help distinguish a useful recognition from an irrelevant one.
+Detection differences can arise from analysis behavior. A capability appearing in output does not establish new program behavior, purpose, or a defect.
+Copy provenance to retain tool version, rule identity, options, artifact hashes, and cautions. Missing or stale evidence must remain visible.
+Screen-reader output and display scaling require manual Windows checks; interface specifications alone do not establish those results.
+Sources: docs/specs/program-e/CAP-integration-plan.md, section 8; src/patchtrace/panel_manifest.py.
+=== FILE: docs/help/27-build-environment-panel.md ===
+Build environment panel
+Planned. The DIE plan describes build-environment presentation, initially as a card in file inspection and later as a dock. The dock declaration was unavailable during review. Migration status is UNVERIFIED.
+Build-environment information helps explain differences introduced by compilers, linkers, packaging, or analysis conditions.
+The design combines PatchTrace’s header checks with stored Detect It Easy results. Without Detect It Easy, the interface should identify which local checks ran and which tool-derived names remain unavailable.
+Compare the older and newer values alongside their basis. A linker header field and a signature-based compiler identification are different kinds of evidence.
+A toolchain difference can explain some code changes without a source edit. It does not establish the cause of every changed function. Conversely, no detected toolchain difference does not establish identical compiler options.
+Packed, protected, managed, installer, and large-overlay notices describe limits on interpretation. PatchTrace does not unpack a target by executing it. An installer’s embedded application payload may remain unanalyzed.
+The planned Read with Detect It Easy action explicitly invokes the configured tool. Merely reading stored build facts does not run it.
+Use Technical details and Copy details to retain the underlying observations. A failed side should leave readable information from the other side available.
+The central manifest reserves Ctrl+Shift+B. The earlier card design specifies no global shortcut; availability depends on migration.
+Sources: docs/specs/program-e/DIE-integration-plan.md, section 8; src/patchtrace/panel_manifest.py.
+=== FILE: docs/help/28-detection-rules-panel.md ===
+Detection rules panel
+Planned. The YRX plan defines the detection-rules interface. Its panel declaration was unavailable during review. Desktop availability is UNVERIFIED.
+The manifest reserves Ctrl+Shift+R. The planned workspace includes candidates, a test grid, and saved rules.
+Start with a function pair and choose Propose. Inspect the proposed side, selected features, generated text, and checks before accepting a candidate. A candidate is not automatically a saved or exported rule.
+Feature cells distinguish present, absent after completed evaluation, and unknown when a producing tool is missing or failed.
+Use Accept, Reject, or Defer to record a decision. Acceptance requires a label and creates a retained rule version. Export is a separate action.
+Test the selected rule against explicit target builds and comparison files. Grid results distinguish:
+Result	Meaning
+Match	The tested file contains the rule’s recognized pattern
+No match	Testing completed without a match
+Not scanned	The file was not successfully evaluated
+Timeout or error	Evaluation did not establish a result
+
+
+Expected outcomes are analyst-defined test expectations. An unexpected result requires investigation rather than automatic relabelling.
+A pattern match identifies pattern presence. It does not establish whether a file contains a particular flaw or remediation.
+Review the test engine, target identities, and stale-grid notices before exporting. Planned history preserves accepted versions and decisions; it does not provide a general delete action.
+Sources: docs/specs/program-e/YRX-integration-plan.md, section 8; src/patchtrace/panel_manifest.py.
+=== FILE: docs/help/29-kb-and-cve-investigation-panel.md ===
+KB and CVE investigation panel
+Planned. The KB plan defines this dock and staged acquisition workflow. Its panel declaration was unavailable during review. End-to-end desktop availability is UNVERIFIED.
+The planned shortcut is Ctrl+Shift+K. Enter a KB number or CVE ID, then search advisory documents already on the computer. Local search does not fetch missing documents.
+Read the coverage statement before the results. It identifies checked documents and failures. “Not found” within those documents does not establish that a KB has no associated CVEs.
+The planned pages are Find, Updates, Files, Builds, Project, and Leads.
+Choose the product and architecture before interpreting update associations. Advisory mentions, vendor remediation relationships, and disputed applicability must remain distinct.
+An advisory may not identify a changed filename. Supply a component name or choose two local binaries instead of assuming the CVE identifies an exact pair.
+For candidate pairs, inspect byte identity, build lineage, and the proposed fix boundary separately. Index adjacency does not establish that a pair isolates the remediation.
+Plan network search… prepares request details without contacting a server. Download approval belongs to later acquisition steps and their exact request plan.
+Attaching advisory context records vendor statements and unresolved checks. It does not establish that a particular changed function implements the described remediation.
+After comparison, inspect the leads and their provenance. Missing coverage and ambiguous pairing must remain explicit.
+Sources: docs/specs/program-e/KB-integration-plan.md, section 8; src/patchtrace/panel_manifest.py.
+=== FILE: docs/help/30-kev-context-panel.md ===
+CISA KEV context panel
+Planned. The KEV plan specifies an exploitation-context dock. Its panel declaration was unavailable during review. Desktop availability and live update support are UNVERIFIED.
+The manifest reserves Ctrl+Shift+X. The panel is intended to look up CVE IDs in a locally retained CISA Known Exploited Vulnerabilities catalog.
+Import a supported catalog JSON file or review the exact request before downloading an update. Showing the panel does not authorize a download.
+The planned request preview identifies the destination, headers, response limit, and stored catalog behavior. It states that the catalog request sends no project data or CVE IDs.
+Read the catalog version, release time, retrieval source, and freshness alongside each lookup.
+Result	Interpretation
+Listed	The CVE appears in the selected catalog
+Not listed	The CVE does not appear in that snapshot
+Unavailable	No usable catalog supports the lookup
+Invalid ID	The supplied identifier failed validation
+
+
+“Not listed” does not establish absence of exploitation. An old catalog may lack later additions. Ransomware use marked unknown must remain unknown.
+CISA’s due date is catalog context. Applicability of a remediation obligation to your organization is outside this panel’s determination.
+The planned KEV-listed first option changes reading order only. It does not alter function rankings, pairing decisions, or evidence strength.
+Copy details with snapshot provenance when recording a lookup.
+Sources: docs/specs/program-e/KEV-integration-plan.md, section 8; src/patchtrace/panel_manifest.py.
+NEXT: Help topics 31–40: Leads, Series, Files, Guide, attention ranking, calibration limits, change classifications, stale results, partial results, and blocked or unsupported states.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+next
+
+
+
+
+
+
+
+
+
+
+
+
+
+Worked for 1m 55s
+
+
+
+
+
+
+=== FILE: docs/help/31-leads-panel.md ===
+Leads panel
+Experimental. The reviewed source contains the Leads panel, controller, and read model. Availability in a particular desktop release is UNVERIFIED.
+Use Ctrl+Shift+L when available. Leads organizes changed functions into an explainable reading order using stored comparison results, advisories, and previously computed signals.
+Choose an advisory context or No advisory (code evidence only). A different context can produce a different ordering for the same functions.
+The documented classes are:
+Class	How to read it
+Fits advisory	Stored evidence meets the workflow’s advisory-fit rules
+Needs review	Conflicting or contested evidence requires inspection
+Partial fit	Some expected evidence or applicability remains unresolved
+Code change	A change is recorded without advisory-fit assessment
+Changed, no fit	The function remains in the review queue without an established fit
+
+
+A class does not establish that a function contains or fixes the selected CVE.
+Select a lead to inspect supporting observations, counterevidence, unknowns, and alternatives. Tied leads share a rank range; do not infer a stronger distinction within that tie.
+Prepare leads computes a derived result from stored inputs. Refresh reloads stored results. Neither action downloads advisories or runs an external analysis tool.
+Pinning changes presentation while preserving the lead’s class. Dismissal records a review event without deleting the lead. Show dismissed leads to restore one.
+Read applicability and multiple-CVE notices before assigning a change to one advisory.
+Sources: src/patchtrace/pilot/panel.py; src/patchtrace/pilot/read_model.py; src/patchtrace/ui_leads.py.
+=== FILE: docs/help/32-series-panel.md ===
+Series panel
+Experimental. The reviewed source contains a Series dock declaration and controller. Older documentation also describes a separate Series window. Behavior in your installed release is UNVERIFIED.
+A series follows function relationships across explicitly ordered builds. The README describes three to eight builds, with an ordinary comparison project for each adjacent pair.
+Open a series.json through the Series file-opening action. The dock design provides one tab per opened series. Opening reads the series and its pair projects; it does not run comparisons.
+Select a chain, then inspect its individual hops. The documented tables include relationship categories, match types, native ratios, attention scores, pair state, and stale status.
+Adjacent relationships form an inferred chain. The README describes optional direct first-to-last comparison as a separate check. Even a direct confirmation concerns recorded correspondence, rather than proof of identical behavior throughout the series.
+Split, merged, and ambiguous relationships can end a chain. Do not join the remaining fragments by matching names alone.
+Use Open pair at this function to inspect an available hop in its ordinary comparison project. The action depends on the pair’s current readable state.
+Reload rereads the stored series view. Cancel load stops loading. Copy chain retains the displayed chain information.
+Closing a series tab does not delete its projects. Keep the series file and associated pair projects together when preserving the investigation.
+Sources: README.md, “Acquisition, build series and second-opinion engines”; src/patchtrace/nway/panel.py; src/patchtrace/ui_series.py.
+=== FILE: docs/help/33-files-panel.md ===
+Files panel
+Experimental. The reviewed source contains the Files panel declaration and controller. It replaces an earlier file-overview dialog. Packaged availability is UNVERIFIED.
+The Files panel compares recorded project fields and parsed PE information for the older and newer artifacts. It provides structural context before, or without, a Ghidriff comparison.
+Open a project before using the panel. Recorded fields can appear while the bounded inspection of project-owned artifact copies is still running.
+Check identity first: confirm the intended older and newer files, their recorded hashes, and the available size and metadata fields. Then inspect the parsed comparison.
+The module index describes inspection of PE headers, sections, directories, imports, exports, entropy, overlay, and certificate-table information. Individual fields can be unavailable or rejected when input structure cannot be read.
+A certificate table’s presence does not establish a valid signature or publisher trust. The module index places Authenticode trust checking in a separate Windows-specific component. UNVERIFIED: availability and native acceptance of that check in your release.
+Likewise, entropy or section layout can suggest packaging characteristics without establishing a particular packer or compressed payload.
+If one side fails inspection, read its error and retain the other side’s available information. Do not interpret a missing value as zero or an unchanged field.
+This panel reads files without executing target code or modifying the project. A completed structural inspection does not establish that function analysis will succeed.
+Sources: src/patchtrace/pe_overview/panel.py; src/patchtrace/ui_inspection.py; docs/modules.md.
+=== FILE: docs/help/34-guide-panel.md ===
+Guide panel
+Planned. The central manifest reserves a Guide panel and Ctrl+Shift+H. Its panel module was unavailable during review. A working contextual guide in a desktop release is UNVERIFIED.
+The GUI integration plan defines short teaching topics that features can supply. Each topic contains a meaning, up to four next steps, and references to relevant commands.
+The intended role is to explain the state or evidence you are reviewing. A capability difference, build-environment notice, or calibration limit can require a different explanation even when the selected function stays the same.
+Read the topic’s meaning before following its next steps. A teaching topic describes how to investigate; it does not add evidence to the comparison.
+When a topic refers to an unavailable feature, retain its planned status. Do not assume that a documented command has been built merely because a teaching topic names it.
+The established F1 action opens Workflow and dependencies help. That existing help action is separate from the planned contextual Guide dock.
+UNVERIFIED: Guide search, topic history, automatic selection behavior, and spotlight navigation were not established by a reviewed implementation. They must not be presented as working controls.
+Until the Guide panel is available, use the shipped workflow help and relevant Markdown topics. Check the underlying panel’s status and provenance before applying general instructions to a particular result.
+Sources: src/patchtrace/panel_manifest.py; docs/specs/program-e/GUI-integration-plan.md, section 8.2; README.md, shortcut table.
+=== FILE: docs/help/35-attention-ranking-and-change-signals.md ===
+Attention ranking and change signals
+After a completed comparison, choose Analysis → Rank changes or press Ctrl+R. The documented ranking runs deterministic detectors over changed hunks in one-to-one function relationships.
+Its integer attention score establishes a reading order. It does not estimate whether a function contains a flaw, whether a change fixes one, or whether a selected CVE applies.
+The documented detectors are:
+ID	Looks for
+BND	Added bounds checks near relevant uses
+INT	Comparison strictness or cast changes
+OVF	Overflow guards or checked arithmetic
+VAL	Validation calls or newly checked return values
+ERR	Predicate-controlled early error returns
+SIZE	Changed size arguments
+WIL	Changes enclosed by recognized feature gates
+SCRUB	Zeroing or masking before copying data out
+
+
+Detectors inspect decompiled text and have recognition limits. A reported signal requires inspection of its exact lines and surrounding code.
+Select a CHANGE SIGNALS entry to navigate to its recorded lines. Check the detector label, evidence availability, and selected profile.
+An unavailable score is different from a completed evaluation with no recognized signal. Missing decompiled text can prevent assessment.
+The list’s ordering selector returns to project order. Profile weights and disabled detectors affect ranking, so preserve the profile identity when comparing results.
+A new analysis run or manual match correction can make stored ranking stale. Use a current ranking when preparing a current report.
+Sources: README.md, “Rank changes, feature flags and CVE context”; src/patchtrace/tooltips.py.
+=== FILE: docs/help/36-read-calibration-and-confidence-labels.md ===
+Read calibration and confidence labels
+Experimental. Calibration infrastructure exists in the reviewed source. A released, validated model for your input domain is UNVERIFIED.
+Different labels answer different questions:
+Display	What it represents
+Engine-native value	That engine’s own measurement
+Detector confidence label	A rule’s evidence-strength category
+Attention score	Research ordering
+Model confidence label	A generated interpretation’s stated confidence
+Calibration display	An estimate permitted by a specific model and validation policy
+
+
+Do not transfer the meaning of one display to another.
+The reviewed calibration policy falls back to ordinal display when a usable qualifying artifact is unavailable. Synthetic-only evidence cannot promote the display to a Windows-system-file calibration claim.
+Read the scope notice and its evidence limits. Documented notices distinguish untested, tested on synthetic builds, tested on Windows files, degraded validation data, and expired validation data.
+Even a Windows-tested notice requires checking what was covered: code families, architectures, engine versions, compiler conditions, and the measured outcome.
+The policy supports bands or numeric display only when the artifact satisfies the corresponding gates and domain requirements. That code path does not establish that an eligible artifact ships.
+A calibrated measurement applies to its stated prediction target and domain. It is not a general estimate of vulnerability presence.
+When validation is missing, unreadable, expired, or outside scope, retain the reduced claim. Do not manually reinterpret ordinal ranks as percentages.
+Sources: src/patchtrace/calibration/policy.py; src/patchtrace/calibration/scope.py; docs/modules.md; README.md.
+=== FILE: docs/help/37-pairing-and-change-classifications.md ===
+Distinguish pairing from change classification
+Experimental: Unified classifications are implemented in the reviewed contracts and panel sources. Packaged availability is UNVERIFIED.
+A pairing decision describes the relationship between functions. A change classification describes what the available comparison evidence establishes about their differences. Read both.
+The Unified contract includes pairing decisions for matched, tentative, candidate, contested, ambiguous, older-only, newer-only, and unknown records.
+Its change classifications are:
+Classification	How to read it
+Unchanged	The comparison satisfies the recorded unchanged-proof rules
+Cosmetic	Differences satisfy a supported structural-cosmetic proof
+Material	Required semantic-change and supporting-channel rules are met
+Review	Available evidence requires further inspection
+Unknown	The available evidence does not establish a classification
+Not applicable	This classification does not apply to the relationship
+
+
+“Unchanged” is scoped to the recorded comparison and its rules. It does not establish equivalence under every possible execution.
+“Material” identifies a supported code difference. It does not identify its purpose or assign it to a CVE.
+Change classes can describe constants, comparisons, conditions, callees, calls, data references, structure offsets, control flow, blocks, strings, or presentation-related changes. Inspect the exact class and provenance rather than treating all differences alike.
+Older-only and newer-only records lack a two-sided counterpart. Do not interpret their classification as a comparison of two function bodies.
+If pairing is contested, review the identities before explaining the apparent code change.
+Sources: src/patchtrace/unified/contracts.py; src/patchtrace/unified/panel.py; src/patchtrace/unified/read_model.py.
+=== FILE: docs/help/38-stale-results.md ===
+Understand stale results
+A stale result describes an earlier set of inputs or assumptions. PatchTrace retains it for reference while identifying that it no longer describes the current comparison context.
+Changes that can invalidate derived results include a new Ghidriff run, changed artifact identity, reversed orientation, manual match correction, different stored engine outputs, changed advisory data, or changed analysis configuration. The applicable reasons depend on the feature.
+Read the stale notice before using the table or copying its conclusion. Historical evidence can remain useful when its original context is preserved.
+Choose the appropriate next action:
+Result	Next action
+Display loaded before a project change	Reload or refresh the view
+Derived analysis built from superseded inputs	Recompute the derived result
+Interpretation tied to an older context	Preview a new context and interpret the current selection
+Series hop from a changed pair project	Reload the series and inspect that pair
+Advisory context tied to different inputs	Review and reattach or rebuild through its supported workflow
+
+
+Refreshing a display is not always recomputation. For example, Leads Refresh reloads stored data, while Prepare leads creates a derived result.
+Stale citations must not silently navigate into a different current function. Review their retained historical context instead.
+Record the original run and artifact identities if your investigation intentionally discusses the earlier result. A stale label does not by itself establish that the historical observation was incorrect.
+Sources: README.md; src/patchtrace/gui/state.py; src/patchtrace/unified/read_model.py; src/patchtrace/pilot/read_model.py.
+=== FILE: docs/help/39-partial-and-missing-evidence.md ===
+Understand partial and missing evidence
+A partial result contains usable information alongside missing or incomplete evidence. Read the reason before interpreting an empty cell, absent row, or summary count.
+Examples include a failed secondary engine, unavailable extraction channel, unreadable artifact side, incomplete advisory coverage, or a scan stopped at a configured limit.
+Keep these states distinct:
+State	Meaning
+Not run	The operation did not evaluate this material
+Failed	Evaluation was attempted but did not yield a usable result
+Unsupported	The current tool or environment cannot provide it
+Unavailable	Required evidence cannot be supplied
+Completed without a result	Evaluation completed within its stated coverage
+
+
+Missing evidence is unknown. It does not count as engine disagreement, absent behavior, or an unsuccessful advisory fit.
+Inspect the affected channel or source, then decide whether to configure a missing tool, retry a failed operation, narrow the workload, or continue with explicitly limited coverage.
+Do not rerun every tool automatically. The useful next step depends on what evidence your current question requires.
+In a two-sided comparison, check whether both sides were evaluated under compatible settings. A complete newer-side scan cannot establish removal from an incomplete older-side scan.
+When copying or exporting a partial result, retain its limitations and source identities. A report without those qualifications can suggest broader coverage than the analysis achieved.
+Sources: src/patchtrace/gui/state.py; src/patchtrace/secondary/evidence_view.py; src/patchtrace/pilot/read_model.py; relevant Program E integration plans.
+=== FILE: docs/help/40-blocked-and-unsupported-states.md ===
+Resolve blocked and unsupported states
+A blocked panel lacks a prerequisite. An unsupported state identifies a capability the current environment cannot provide. Neither state means the comparison found no differences.
+The shared framework defines messages that identify the panel, reason, and available remedy. Read the adjacent explanation as well as any disabled-control tooltip.
+Common prerequisites include an open project, completed analysis, idle worker, configured tool, enabled feature, or Windows-specific capability.
+1. Read the complete state message.
+2. Identify the missing prerequisite.
+3. Use Open setup when offered.
+4. Select and explicitly diagnose or probe the required tool.
+5. Complete any prerequisite comparison or import.
+6. Return to the panel and retry its supported action.
+Selecting a tool path does not establish that the executable is compatible. A probe can execute the configured tool, so use the explicit probe action rather than expecting path discovery to perform it.
+Planned: a manifest slot whose panel module has not been built can remain absent from menus. This differs from an implemented panel that opens in a blocked state.
+A PT-GUI-FACTORY message means panel creation failed. Copy the available details and report the application version and panel name; changing target binaries is not an established remedy.
+Avoid repeated retries without changing the prerequisite. Preserve earlier results and use another available view when it answers your immediate question.
+Sources: src/patchtrace/gui/state.py; src/patchtrace/panel_manifest.py; docs/specs/program-e/GUI-integration-plan.md, section 8.2.
+NEXT: Help topics 41–50: remaining state messages, external engines, BinExport identity, byte views, exports, accessibility, keyboard navigation, and layout recovery.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+next
+
+
+
+
+
+
+
+
+
+
+
+
+
+Worked for 1m 33s
+
+
+
+
+
+
+=== FILE: docs/help/41-idle-loading-and-ready-states.md ===
+Read idle, loading, and ready states
+State messages describe the panel’s current work. They are separate from conclusions about the compared files.
+State	Meaning	Next step
+No project	The feature needs an open project	Create or open the intended project
+Idle	No result is available yet	Follow the stated preparation or run instruction
+Loading	The first result is being loaded	Wait, or use an offered cancellation action
+Refreshing	Existing content is being updated	Wait and check the resulting status
+Ready	The panel has completed its current preparation	Inspect coverage, filters, and provenance
+
+
+A ready panel can still contain rows marked unknown or not applicable. “Ready” describes completion of the view’s work, rather than completeness of every evidence channel.
+Some features show additional partial or stale notices alongside content. Read those notices before interpreting a ready table.
+When no counts are available, progress is indeterminate. This does not by itself establish that the operation has stopped responding.
+An idle panel is also different from a completed search with no matches. Check whether the prerequisite operation has run.
+If expected rows are missing, clear relevant filters and inspect coverage. Do not infer an empty analysis from an empty filtered table.
+Experimental: shared state infrastructure is implemented in the reviewed source. Individual panels may retain feature-specific wording while migration continues. Behavior in a particular package is UNVERIFIED.
+Sources: src/patchtrace/gui/state.py; src/patchtrace/secondary/evidence_view.py; src/patchtrace/unified/read_model.py.
+=== FILE: docs/help/42-errors-retries-and-cancellation.md ===
+Handle errors, retries, and cancellation
+An error describes an operation that could not complete. Read its code, message, and retained diagnostic details before retrying.
+The shared error message states that earlier results are unchanged. A failed new attempt must not be treated as a replacement for the last committed result.
+Use Copy details when offered. Preserve the application version, operation, relevant tool versions, error code, and sanitized diagnostic text.
+Choose the next action according to the failure:
+Failure	Next action
+Invalid configuration	Correct the identified field
+Missing dependency	Configure and diagnose the required tool
+Timeout	Inspect the log and workload before adjusting the limit
+Unreadable output	Check the producing tool and supported format
+Panel creation failure	Record PT-GUI-FACTORY details and report the panel
+
+
+Retry starts or repeats the feature’s operation. It does not establish that the underlying problem has been repaired.
+Cancellation can be cooperative. After requesting it, wait for the terminal status before starting conflicting work. An interpretation request cannot recall context already transmitted.
+A Cancelled message means the attempt ended without replacing earlier results. A Cancelling message means stopping is still in progress.
+Do not delete project files, active locks, or runtime directories to force a job to stop. Use the supported cancellation path and retain diagnostic information if shutdown fails.
+Sources: src/patchtrace/gui/state.py; README.md; docs/specs/ui.md.
+=== FILE: docs/help/43-limits-truncation-and-empty-results.md ===
+Read limits, truncation, and empty results
+PatchTrace bounds displayed text, table size, parsing, and external operations. A limit notice describes the portion that could be processed or shown.
+The core paired-text viewer documents a 200,000-character display cap. Larger records can contain material beyond the visible text. Alignment can also use a bounded fallback.
+The shared table state says Too many rows to display and asks you to narrow the filter. Feature-specific views can have different ceilings.
+Message or condition	What to check
+Too many rows	Narrow the feature’s filters
+Text truncated	Retain the notice when citing visible text
+Partial scan	Identify which side or source reached a limit
+No visible rows	Clear filters and inspect result status
+No matches after complete search	Read the search scope and coverage
+
+
+A display limit does not establish that later records are unimportant. A scan limit can prevent added-or-removed conclusions when one side’s inventory is incomplete.
+For a byte view, a short final page can simply mean the end of the selected scope. For a code view, unavailable text can mean the upstream result did not retain it.
+Do not interpret an empty filtered list as proof of identical binaries. Confirm that analysis completed, the intended run is active, and the requested evidence was available.
+UNVERIFIED: performance at a documented ceiling on your Windows machine requires local testing.
+Sources: README.md; src/patchtrace/gui/state.py; relevant Program E integration plans.
+=== FILE: docs/help/44-configure-secondary-engines.md ===
+Configure secondary comparison engines
+Experimental. Secondary-engine execution and BinDiff setup appear in the reviewed source. Compatibility of your installed tools and desktop package is UNVERIFIED.
+Secondary results supplement the primary Ghidriff comparison. Each engine retains its own relationships, values, and provenance.
+For BinDiff:
+1. Open the Engine evidence panel’s Engines tab.
+2. Expand the BinDiff setup section.
+3. Select the exact bindiff.exe.
+4. Choose Probe BinDiff.
+5. Review its version and capability result.
+6. Select and validate the older and newer BinExport files.
+7. Select BinDiff for Run selected engines when it becomes available.
+BinDiff discovery reads standard installation locations and configured hints. It does not search PATH or execute suggestions automatically. The explicit probe runs version and help checks.
+A newer BinDiff major version can remain untested even when its required options are present. Read the probe’s compatibility information.
+The README also documents an rz-diff runner with an optional explicit executable path and timeout. Its similarity is raw-byte Levenshtein, rather than a measurement interchangeable with BinDiff or Ghidriff values.
+A failed or unavailable engine leaves missing evidence. It does not cast a negative vote against another engine.
+Run only the engines needed for the investigation. Inspect agreement and disagreement in terms of function endpoints before interpreting the associated code changes.
+Sources: src/patchtrace/ui_engine_setup.py; src/patchtrace/runtime_discovery.py; src/patchtrace/tooltips.py; README.md.
+=== FILE: docs/help/45-check-binexport-identity-and-orientation.md ===
+Check BinExport identity and orientation
+Experimental. The reviewed BinDiff setup validates two BinExport inputs before enabling execution. Availability in a particular package is UNVERIFIED.
+BinDiff compares exported analysis structures. Each export must belong to the corresponding project artifact.
+Choose the export from the older file as the primary input and the export from the newer file as the secondary input. Use compatible address-basis settings on both sides.
+Select Validate .BinExport files and inspect the result. The documented validation checks structure, architecture, limits, identity, and pair orientation in an isolated checker.
+A SHA-256 executable identity must match the project’s recorded artifact hash. A conflicting SHA-256 remains a rejection.
+Some exporters supply an MD5 value, no executable identity, or another identifier that cannot establish SHA-256 binding. The documented Accept unbound option records your explicit assertion that the exports belong to these files.
+That assertion is a different evidence basis from a matching SHA-256. Preserve the distinction in your notes and reports.
+Changing an input path or project clears the prior validation and unbound confirmation. Revalidate after making a change.
+Cancelling validation leaves the exports unvalidated. Selecting paths alone does not make them eligible inputs.
+If validation rejects swapped or foreign exports, obtain the correct exports. Renaming files does not repair their artifact identity.
+Sources: src/patchtrace/tooltips.py, engine_setup.*; src/patchtrace/ui_engine_setup.py; docs/modules.md, BinExport2 and BinDiff entries.
+=== FILE: docs/help/46-read-hex-binary-and-base64.md ===
+Read Hex, Binary, and Base64 views
+Experimental. The reviewed tooltip registry and module index describe byte-oriented representations. Packaged behavior is UNVERIFIED.
+Choose Hex, Binary, or Base64 in the representation selector. These views render bytes from the project-owned artifact copies after checking their recorded SHA-256 identities.
+They do not encode the decompiled text.
+The documented scopes are:
+Scope	Meaning
+Whole file	File bytes from the beginning of the artifact
+Selected function entry	File bytes beginning at a mapped function entry
+
+
+Function-entry scope does not establish the function’s complete extent. Bytes displayed after its actual end can belong to another function or data.
+An entry must map through the PE section table to file-backed bytes. Virtual-only, ambiguous, or out-of-image addresses remain unavailable; a range must not be guessed.
+Pages contain 4,096 bytes. Both sides use the same logical page position within their chosen scopes. Different file layouts can place corresponding instructions at different offsets.
+Go to offset accepts a hexadecimal file offset and switches to whole-file scope. A file offset is different from an RVA or virtual address.
+Check scope, side, offset, and artifact identity when copying observations. Matching page numbers do not establish matching function bodies.
+If artifact verification fails, resolve the integrity issue before relying on displayed bytes. Do not bypass it by editing recorded hashes.
+Sources: src/patchtrace/tooltips.py, viewer.*; docs/modules.md, artifact bytes and raw view entries.
+=== FILE: docs/help/47-preview-and-export-reports.md ===
+Preview and export reports
+Choose Export or press Ctrl+E to produce a report from saved project data.
+1. Select Markdown, HTML, or JSON.
+2. Choose the destination file.
+3. Decide whether to include function code.
+4. Decide whether to include analyst notes.
+5. Choose selected findings only when that scope is required.
+6. Read the exact preview.
+7. Select Write report.
+Function code is excluded by default. Analyst notes are included by default. Only selected findings requires a finding selection in the main workspace.
+The preview reflects the selected format and options. Changing an option can change the output, so review the final preview before writing.
+The documented exporter redacts absolute source paths and excludes raw provider responses, API keys, and complete interpretation context payloads. Inspect names, notes, optional code, and remaining project metadata before sharing.
+HTML reports are documented as self-contained escaped content without scripts. That export format is separate from raw Ghidriff JSON.
+A report is not a full project backup and cannot substitute for the project’s database, inputs, and run files. A PatchTrace JSON report is also not automatically importable as a Ghidriff comparison.
+Write report can create or overwrite the destination. Choose a new filename when preserving an earlier report matters. Cancelling the export dialog writes nothing.
+Sources: README.md, “Export and share results”; src/patchtrace/tooltips.py, export.*; docs/specs/ui.md.
+=== FILE: docs/help/48-display-and-accessibility-preferences.md ===
+Adjust display and accessibility preferences
+Experimental: the reviewed framework source implements theme and motion handling. Real Windows behavior with your package, assistive technology, and display settings is UNVERIFIED.
+The newer framework provides View → Theme choices for Dark and System. This supersedes the older core UI specification’s statement that theme selection is planned, for builds containing that implementation.
+Windows high contrast overrides the selected variant. The framework removes its custom stylesheet and uses platform colors. Status meaning remains available through text, glyphs, and shape.
+The theme controller also reads the platform reduced-motion preference and adjusts supported Qt interface animations. This does not establish that every feature-specific movement has passed manual acceptance.
+Use Setup → Code font size to change code text within the documented 8–28-point range. This setting does not replace Windows display scaling or guarantee that every interface element scales identically.
+For keyboard use, follow the visible focus indicator. Table headers, values, states, and short control descriptions are intended to be exposed through Windows accessibility interfaces.
+A tooltip must not be the only way to discover a required action or limitation. Read adjacent status and explanatory text as well.
+UNVERIFIED: NVDA, Narrator, high contrast, reduced motion, and 100/150/200-percent DPI acceptance require recorded checks on the Windows build being distributed.
+Sources: src/patchtrace/gui/qt/theme.py; docs/specs/program-e/GUI-integration-plan.md, sections 8.6–8.7; docs/specs/ui.md.
+=== FILE: docs/help/49-keyboard-and-command-navigation.md ===
+Navigate panels with the keyboard
+Experimental: command-palette and panel-focus infrastructure exists in the reviewed framework source. Availability in your installed package is UNVERIFIED.
+Use Ctrl+Shift+P to open the command palette. Search for an action by name, inspect its availability, and activate the intended command.
+The host supplies commands to show or hide, focus, float or dock, and move each available dock panel. Moving supports left, right, top, and bottom areas.
+Use these documented framework shortcuts:
+Shortcut	Action
+Ctrl+Shift+P	Open command palette
+F6	Focus next workspace region
+Shift+F6	Focus previous workspace region
+Ctrl+Shift+E	Engine evidence
+Ctrl+Shift+U	Unified
+Ctrl+Shift+L	Leads
+
+
+Other panel shortcuts remain reserved even when their feature is planned. A reserved shortcut does not establish that the panel is available.
+Use Tab and Shift+Tab between controls. Use arrow keys within tables, trees, and option groups. Feature-specific actions such as Enter, Space, and Ctrl+C depend on the focused view.
+Escape behavior also depends on focus. It can dismiss a popup, clear a feature filter, close a dialog, or request cancellation. Read the feature’s instructions before relying on it during a running operation.
+Disabled commands can reflect a missing project, selection, dependency, or idle worker. Inspect the stated reason before retrying.
+Sources: src/patchtrace/gui/qt/commands.py; src/patchtrace/panel_manifest.py; README.md.
+=== FILE: docs/help/50-panel-layout-and-recovery.md ===
+Arrange and recover panel layout
+Experimental. The reviewed framework stores and restores dock layout and provides a reset action. Packaged availability is UNVERIFIED.
+Use the View menu or command palette to show a panel, focus it, move it to another dock area, or float it. Keyboard commands provide access when dock title-bar buttons are difficult to reach.
+Hiding a panel changes visibility. It does not delete its project data. A floating dock remains part of the application workspace.
+If an expected panel appears missing:
+1. Check whether its feature is implemented in your build.
+2. Use its Show command.
+3. Use Focus to activate its dock or tab.
+4. Move it to a visible dock area if necessary.
+5. Choose View → Reset panel layout when the saved arrangement is unusable.
+Reset reports Panel layout reset to defaults. It resets the layout rather than erasing analysis results or resetting backend paths.
+The framework validates its saved layout before restoration. If restoration fails, it reports Panel layout could not be restored; defaults were used.
+Default placement does not imply every panel opens automatically. Several panels are hidden until requested.
+A planned panel absent from the manifest’s loadable modules cannot be recovered by resetting layout. An implemented panel that fails creation should report a separate error.
+Keep the failure message when reporting repeated layout recovery problems.
+Sources: src/patchtrace/gui/qt/layout.py; src/patchtrace/gui/qt/commands.py; src/patchtrace/gui/qt/host.py; src/patchtrace/panel_manifest.py.
+NEXT: Help topics 51–60: orientation, feature gates, CVE context, acquisition, caches, integrity, diagnostic sharing, tooltips, scope boundaries, and a complete shortcut reference.

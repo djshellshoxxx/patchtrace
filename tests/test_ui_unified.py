@@ -22,10 +22,13 @@ from qt_support import (  # noqa: F401  (the fixtures are used by name)
 from unified_read_support import contested_row, make_row, material, publish, request
 
 import patchtrace.ui_unified as ui_unified
+from patchtrace.gui.pair_text import align_pair
+from patchtrace.gui.qt.theme import DARK
 from patchtrace.gui.tips import register_tips
-from patchtrace.ui_unified import NO_PAIR_TEXT, UnifiedPanel, UnifiedTableModel
+from patchtrace.ui_unified import UnifiedPanel, UnifiedTableModel
 from patchtrace.unified import pipeline, read_model, store
 from patchtrace.unified.exchange import fail
+from patchtrace.unified.pair_text import DECOMPILED, DISASSEMBLY, CodeChannel, RowCode
 from patchtrace.unified.panel import TEMPLATES, TIPS
 from patchtrace.unified.read_model import UnifiedLoadRequest, load_unified
 
@@ -224,21 +227,101 @@ def test_a_result_for_another_project_is_dropped(unified):
     assert controller.vm is shown
 
 
-def test_goto_selects_the_ghidriff_match_or_says_the_text_is_unavailable(unified):
+def test_goto_selects_the_ghidriff_match_for_a_mapped_row(unified):
     _, controller = loaded_controller(unified)
-    selected, shown = [], []
+    selected = []
     controller.nav = SimpleNamespace(
-        select_match=lambda match_id, clear_filters=False: selected.append((match_id, clear_filters)) or True,
-        show_pair=lambda *args: shown.append(args))
+        select_match=lambda match_id, clear_filters=False: selected.append((match_id, clear_filters)) or True)
     with_match = next(r for r in controller.vm.rows if r.ghidriff_match_id)
-    without = next(r for r in controller.vm.rows if r.ghidriff_match_id is None)
     controller.show_row(with_match)
-    controller.show_row(without)
     assert selected == [(with_match.ghidriff_match_id, True)]
-    assert shown == [(NO_PAIR_TEXT, NO_PAIR_TEXT, f'Unified row {without.function_label}: unavailable')]
-    controller.pair_texts = lambda vm, row: ('old', 'new', 'label')
-    controller.show_row(without)
-    assert shown[-1] == ('old', 'new', 'label')
+    assert controller.panel.code.status.full_text() == ui_unified.CODE_IN_MAIN
+
+
+def code_for(older='int f(void) { return 1; }', newer='int f(void) { return 2; }'):
+    pair = align_pair([older], [newer], [('replace', 0, 1, 0, 1)])
+    shown = CodeChannel(DECOMPILED, 'Decompiled on demand by Ghidra 12.0.4', pair, ('Older: f', 'Newer: f'))
+    return RowCode(shown, CodeChannel(DISASSEMBLY, 'Disassembly from ProgramIR', reason='no ir'))
+
+
+def unmatched(controller):
+    return next(r for r in controller.vm.rows if r.ghidriff_match_id is None)
+
+
+def test_goto_reads_the_code_off_the_gui_thread_and_shows_it_in_the_panel(unified):
+    _, controller = loaded_controller(unified)
+    threads = []
+    controller.nav = SimpleNamespace(select_match=lambda *a, **k: True)
+    controller.row_code = lambda vm, row: threads.append(threading.current_thread() is threading.main_thread()) or code_for()
+    controller.show_row(unmatched(controller))
+    assert controller.panel.code.status.full_text() == ui_unified.CODE_LOADING
+    wait_for(lambda: controller.panel.code.shown_mode() == DECOMPILED and controller.panel.code.view.hunks)
+    assert threads == [False] and 'return 2;' in controller.panel.code.view.panes['newer'].toPlainText()
+
+
+def test_a_slow_code_load_for_an_earlier_row_is_dropped(unified):
+    _, controller = loaded_controller(unified)
+    release = threading.Event()
+    controller.nav = SimpleNamespace(select_match=lambda *a, **k: True)
+    controller.row_code = lambda vm, row: release.wait(5) and code_for('first;', 'first;')
+    controller.show_row(unmatched(controller))
+    controller.row_code = lambda vm, row: code_for('second;', 'second;')
+    controller.show_row(unmatched(controller))
+    release.set()
+    wait_for(lambda: 'second;' in controller.panel.code.view.panes['older'].toPlainText())
+    QApplication.processEvents()
+    assert 'first;' not in controller.panel.code.view.panes['older'].toPlainText()
+
+
+def test_a_failed_code_read_is_stated_not_hidden(unified):
+    _, controller = loaded_controller(unified)
+    controller.nav = SimpleNamespace(select_match=lambda *a, **k: True)
+
+    def broken(vm, row):
+        raise ValueError('sidecar damaged')
+    controller.row_code = broken
+    controller.show_row(unmatched(controller))
+    wait_for(lambda: controller.panel.code.status.full_text().startswith('Code could not be read'))
+
+
+def test_a_mapped_row_goes_to_the_main_panes_and_the_view_says_so(unified):
+    _, controller = loaded_controller(unified)
+    controller.nav = SimpleNamespace(select_match=lambda *a, **k: True)
+    controller.row_code = lambda vm, row: pytest.fail('a mapped row is read by the main window')
+    controller.show_row(next(r for r in controller.vm.rows if r.ghidriff_match_id))
+    assert controller.panel.code.status.full_text() == ui_unified.CODE_IN_MAIN
+
+
+def test_selecting_another_row_or_project_empties_the_code_view(unified):
+    _, controller = loaded_controller(unified)
+    controller.nav = SimpleNamespace(select_match=lambda *a, **k: True)
+    controller.row_code = lambda vm, row: code_for()
+    row = unmatched(controller)
+    controller.show_row(row)
+    wait_for(lambda: controller.panel.code.view.hunks)
+    controller._row_changed(row)                         # the same row (a filter refresh) keeps its code
+    assert controller.panel.code.view.hunks
+    controller._row_changed(next(r for r in controller.vm.rows if r.row_id != row.row_id))
+    assert controller.panel.code.status.full_text() == ui_unified.CODE_HINT and not controller.panel.code.view.hunks
+    controller.show_row(row)
+    wait_for(lambda: controller.panel.code.view.hunks)
+    controller.project_changed(None)
+    assert controller.panel.code.status.full_text() == ui_unified.CODE_HINT
+
+
+def test_shutdown_cancels_the_code_load_and_closes_the_readers(unified):
+    _, controller = loaded_controller(unified)
+    closed = []
+    controller._code_source = SimpleNamespace(close=lambda: closed.append(True))
+    controller.shutdown()
+    assert closed == [True]
+
+
+def test_the_code_view_follows_the_theme(unified):
+    _, controller = unified
+    tokens = dataclasses.replace(DARK, surface_alt='#101010')
+    controller.theme_changed(tokens)
+    assert controller.panel.code.view._tokens is tokens
 
 
 def test_correct_match_opens_the_existing_dialog_over_the_selected_match(unified, monkeypatch):
@@ -258,8 +341,31 @@ def test_explain_previews_the_bounded_context_and_sends_nothing(unified, monkeyp
     monkeypatch.setattr(ui_unified.ExplainDialog, 'exec',
                         lambda self: seen.append(' '.join(label.text() for label in self.findChildren(
                             ui_unified.PlainLabel))))
-    controller.explain(controller.vm.rows[0])
+    row = next(r for r in controller.vm.rows if r.ghidriff_match_id is None)
+    controller.explain(row)
     assert seen and 'Nothing is sent from here' in seen[0]
+
+
+def test_explain_of_a_row_with_a_ghidriff_match_feeds_the_existing_context_preview(unified, monkeypatch):
+    window, controller = loaded_controller(unified)
+    calls = []
+    controller.nav = SimpleNamespace(select_match=lambda match_id, clear_filters=False: calls.append(match_id) or True)
+    monkeypatch.setattr(window, 'preview_interpretation', lambda *a, notes=(): calls.append(('preview', list(notes))))
+    monkeypatch.setattr(ui_unified.ExplainDialog, 'exec', lambda self: calls.append('own-dialog'))
+    row = next(r for r in controller.vm.rows if r.ghidriff_match_id)
+    controller.explain(row)
+    fragment = read_model.explain_context(controller.vm, row)
+    assert calls == [row.ghidriff_match_id, ('preview', [(fragment.title, fragment.text, fragment.omitted)])]
+
+
+def test_explain_falls_back_to_its_own_preview_when_the_match_is_not_in_the_navigator(unified, monkeypatch):
+    window, controller = loaded_controller(unified)
+    calls = []
+    controller.nav = SimpleNamespace(select_match=lambda match_id, clear_filters=False: False)
+    monkeypatch.setattr(window, 'preview_interpretation', lambda *a, notes=(): calls.append('preview'))
+    monkeypatch.setattr(ui_unified.ExplainDialog, 'exec', lambda self: calls.append('own-dialog'))
+    controller.explain(next(r for r in controller.vm.rows if r.ghidriff_match_id))
+    assert calls == ['own-dialog']
 
 
 def test_copy_provenance_uses_the_shell_clipboard(unified):

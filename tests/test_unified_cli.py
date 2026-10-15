@@ -488,3 +488,54 @@ def test_the_hidden_worker_runs_as_python_dash_m_with_the_c3_recipe(tmp_path):
     result = subprocess.run([*worker_argv(), 'unified', '_worker', '--self-check'], capture_output=True, text=True,
                             env=worker_env(), cwd=tmp_path, timeout=120)
     assert result.returncode == 0 and 'self-check ok' in result.stdout, result.stderr
+
+
+# --- S4 polish: usage errors before any project access, a document on every failure, exit codes in help ----------------
+
+@pytest.mark.parametrize('argv, message', [
+    (['run', '--timeout', '59'], '--timeout'), (['run', '--timeout', '86401'], '--timeout'),
+    (['run', '--timeout', 'soon'], 'invalid int'), (['show', '--limit', '-1'], '--limit'),
+    (['show', '--limit', 'many'], 'invalid int'), (['run', '--python', 'py'], '--python and --ghidra-dir'),
+    (['show', '--source', 'Bad_Id'], 'source id')],
+    ids=['timeout-low', 'timeout-high', 'timeout-text', 'limit-negative', 'limit-text', 'python-alone', 'source-id'])
+def test_usage_errors_exit_2_with_one_failed_document_before_the_project_is_opened(capsys, tmp_path, argv, message):
+    missing = tmp_path / 'never-created'
+    code, out, err = call(capsys, 'unified', argv[0], missing, '--json', *argv[1:])
+    doc = document(out)
+    assert code == 2 and doc['status'] == 'failed' and doc['result'] is None and doc['contract'] == 'enrichment-cli/1'
+    assert message in doc['error'] and 'does not exist' not in doc['error'] and doc['command'] in ('unified', f'unified {argv[0]}')
+    assert not missing.exists()
+
+
+@pytest.mark.parametrize('verb', ['run', 'show', 'explain', 'status'])
+def test_a_missing_project_is_a_failed_document_with_exit_2_in_every_verb(capsys, tmp_path, verb):
+    extra = ['--row', 'abcdef01'] if verb == 'explain' else []
+    code, out, _ = call(capsys, 'unified', verb, tmp_path / 'missing', '--json', *extra)
+    doc = document(out)
+    assert code == 2 and doc['status'] == 'failed' and doc['command'] == f'unified {verb}' and doc['error']
+
+
+def test_help_documents_the_exit_codes_and_the_json_document(capsys):
+    for argv in (['unified', '--help'], ['unified', 'run', '--help'], ['unified', 'show', '--help']):
+        assert cli.main(argv) == 0
+        text = ' '.join(capsys.readouterr().out.split())
+        for fragment in ('0 ok', '2 invalid argument', '3 runtime failure or partial', '5 cancelled', 'enrichment-cli/1'):
+            assert fragment in text, (argv, fragment)
+    cli.main(['unified', 'show', '--help'])
+    assert '4 no row listed' in ' '.join(capsys.readouterr().out.split())
+    cli.main(['unified', 'run', '--help'])
+    assert '4 only with --fail-on-none' in ' '.join(capsys.readouterr().out.split())
+
+
+def test_cancelled_run_prints_a_cancelled_document_with_exit_5(capsys, root, monkeypatch):
+    def cancelled(*_a, **_k):
+        raise UnifiedError('PT-UNIFIED-CANCEL', 'cancelled')
+    monkeypatch.setattr(pipeline, 'run_unified', cancelled)
+    code, doc, _ = run_json(capsys, root)
+    assert code == 5 and doc['status'] == 'cancelled' and doc['command'] == 'unified run'
+
+
+def test_the_timeout_bounds_match_the_limits():
+    from patchtrace.unified.limits import DEFAULT_LIMITS
+    assert (unified_cli.TIMEOUT_MIN, unified_cli.TIMEOUT_MAX) == (DEFAULT_LIMITS.l34_timeout_min_s,
+                                                                  DEFAULT_LIMITS.l34_timeout_max_s)

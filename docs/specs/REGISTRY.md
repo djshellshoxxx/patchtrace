@@ -81,6 +81,10 @@ Cite a spec as **repository path plus canonical alias**, for example `docs/specs
 | `docs/specs/anchor-fabric.md` | none (SPEC-48 assigned) | SPEC-48 | partial | fabric/ (contracts, ids, origins, ports, memory, store, pins, convert) | FAB-0, FAB-1, FAB-2, FAB-4 built; open: FAB-3 PIL adoption, FAB-5 CLI, FAB-6 related panel, Windows CI |
 | `docs/specs/report-export-contract-v2.md` | none (SPEC-50 assigned; was RPT2) | SPEC-50 | draft | reports.py (v1 only); v2 not built | Promoted from program-e; draft for build, v2 opt-in |
 | `docs/specs/unified-engine/12-features2-proposal.md` | SPEC-31 / 12 | SPEC-31/12 | proposal | none (text for the C9 owner, amendment A-07) | Proposal only; nothing built |
+| `docs/specs/unified-engine/13-remaining-work-plan.md` | SPEC-31 / 13 | SPEC-31/13 | plan | none (plan only) | Slices UE-R1..UE-R13; how-to steps in `docs/handoff/unified-engine.md` |
+| `docs/specs/panels/README.md` | none (index) | SPEC-54 (panels) | n/a | none | Index of per-panel specs, not a spec itself |
+| `docs/specs/panels/related.md` | none (SPEC-54 panel) | SPEC-54 | proposed | fabric/panel.py, fabric/related.py, ui_related.py | FAB-6 `related` panel contract, written from the code |
+| `docs/specs/panels/graph-inspection.md` | none (SPEC-47 panel) | SPEC-47 | proposed | callgraph/minimap.py, callgraph/minimap_qt.py, callgraph panel_data | Calls panel DOT export, call-site reveal, minimap |
 | `docs/specs/pe-version-authenticode.md` | none (SPEC-51 assigned); part D2 of SPEC-26 | SPEC-51 | partial | pe_overview/ (resources.py, version_info.py, manifest.py built; authenticode.py Windows-only) | D2-1 and D2-2 built; open: DER and embedded-signature digest, catalog check, compare rows, CLI and GUI tab |
 | `docs/specs/windows-release-signing-policy.md` | none (SPEC-52 assigned) | SPEC-52 | draft | none (policy); tools/build_windows.py, release workflow | Nothing is signed; owner decisions on a signing service are open |
 | `docs/specs/ghidriff-launcher-symbols.md` | none (SPEC-53 assigned) | SPEC-53 | draft | planned backend.py launcher; enrichment/cache.py | Not built; closes the local-only symbol policy item in tasks/todo.md |
