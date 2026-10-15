@@ -6,6 +6,7 @@ from collections.abc import Mapping, Sequence
 
 from . import metrics as M
 from .bootstrap import (
+    MAX_UNDEFINED_SHARE,
     cluster_bootstrap,
     cluster_bootstrap_many,
     coverage_stat,
@@ -52,14 +53,14 @@ def evaluate_profile(rows: Sequence[Row], preds: Mapping[str, float], *, tau: fl
     stats = {'brier': _metric(M.brier), 'brier_skill': _metric(M.brier_skill), 'ece': _metric(M.ece),
              'ece_eqmass10': _metric(M.ece_equal_mass), 'auc': _metric(M.auc), 'logloss': _metric(M.logloss)}
     for name, fn in stats.items():
-        out[name] = cluster_bootstrap(nat, preds, fn, b_count, (seed, name))
+        out[name] = cluster_bootstrap(nat, preds, fn, b_count, (seed, name), max_undefined=MAX_UNDEFINED_SHARE)
     null = ece_null(p, w, [r.group for r in nat], rho=residual_rho(p, y, [r.group for r in nat]),
                     sims=null_sims, seed=(seed, 'ece-null'))
     out['ece_null'] = ece_null_summary(out['ece']['point'], out['ece']['hi'], null)
     out['ece_l2_debiased'] = debiased_l2(p, y, w)
     if with_slope_ci:
         both = cluster_bootstrap_many(nat, preds, _metric(M.calib_slope_intercept), ('slope', 'intercept'),
-                                      b_count, (seed, 'slope-intercept'))
+                                      b_count, (seed, 'slope-intercept'), max_undefined=MAX_UNDEFINED_SHARE)
         out['slope'], out['intercept'] = both['slope'], both['intercept']
     else:
         slope, intercept = M.calib_slope_intercept(p, y, w)
@@ -67,8 +68,10 @@ def evaluate_profile(rows: Sequence[Row], preds: Mapping[str, float], *, tau: fl
     out['reliability_curve'] = M.reliability(p, y, w)
     out['coverage_precision_curve'] = M.downsample_curve(M.coverage_precision_curve(p, y, w, [r.abstain for r in nat]))
     if tau is not None:
-        out['precision'] = cluster_bootstrap(nat, preds, precision_stat(tau), b_count, (seed, 'prec'))
-        out['coverage'] = cluster_bootstrap(nat, preds, coverage_stat(tau), b_count, (seed, 'cov'))
+        out['precision'] = cluster_bootstrap(nat, preds, precision_stat(tau), b_count, (seed, 'prec'),
+                                           max_undefined=MAX_UNDEFINED_SHARE)
+        out['coverage'] = cluster_bootstrap(nat, preds, coverage_stat(tau), b_count, (seed, 'cov'),
+                                          max_undefined=MAX_UNDEFINED_SHARE)
         out['jackknife_precision'] = jackknife(nat, preds, precision_stat(tau))
         out['ltt'] = evaluate_frozen_tau(rows, preds, tau)
         if baselines:
