@@ -796,3 +796,5 @@ Not verified here: Windows; the frozen executable; a live backend for `rules pro
 | Tests | `tests/test_ui_pemeta.py` (39), `tests/test_ui_codetext.py` (34), offscreen, `tools/qt_gate.py --repeat 5` over both: 365 passed |
 | Budgets measured here (offscreen, Linux, shared CPU) | scroll window refresh 5-10 ms at 6.5k and 65k lines (gate 30 ms); 65k-line install adds about 135 ms per pane over a plain `setPlainText` (gate 450 ms); 100,000 API rows: table swap and 100,000 `data()` calls inside 3x the plan budget |
 | Not verified | Windows; NVDA/Narrator; DPI; high contrast; Consolas bold advance; pixel probe; the 20x single-session repeat (5x run) |
+### [UE-S4b:ui-unified] Unified panel automated evidence (2026-10-15, Linux offscreen)
+- tests/test_ui_unified.py + tests/test_unified_panel_spec.py: 39 passed; `tools/qt_gate.py --repeat 20 tests/test_ui_unified.py`: 700 passed, no abort. Blocked, not run: Windows CI, NVDA/Narrator, DPI scaling.
