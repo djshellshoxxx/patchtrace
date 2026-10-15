@@ -1,28 +1,18 @@
 # Capabilities panel
 
-Planned. The CAP plan specifies a capa-based comparison panel. The declared panel module was unavailable during review. Desktop availability is UNVERIFIED.
+The **Capabilities** panel shows capa rule matches for the older and newer build, and the changes between them by function pair. It is a bottom dock, shown with `Ctrl+Shift+A`, and it is tabbed with **Calls** and **Strings**. It needs an open project.
 
-The planned shortcut is Ctrl+Shift+A. The `Changes` tab compares stored capa recognition results against function relationships. `Setup and run` configures and explicitly runs the separate capa program.
+The panel has two tabs:
 
-Opening the panel does not run capa. Select the intended executable and review the configured rules, backend, and timeout before starting extraction.
+- **Changes** lists the capability changes. Filter with the search box (*Search capabilities by rule, namespace or function*) and group them with **Group capability changes by**. Checkboxes show **Show detection differences**, **Show building-block rules** and **Show unattributed capa matches**. **Go to pair** opens the selected function pair. **Copy provenance** keeps the tool version, rule and settings with the row. **Refresh** rereads the stored results.
+- **Setup and run** configures capa. **Browse...** selects the executable. **Probe** checks it. **Time limit per file** sets the limit. **Run...** shows a **Run preview**. Nothing starts until you choose **Confirm and run**. **Cancel preview** closes the preview without starting anything.
 
-Read each side’s state carefully:
+Opening the panel does not run capa. Read the preview before you confirm.
 
-| State | Meaning |
-|---|---|
-| `Present` | capa reported the capability |
-| `Absent` | The relevant evaluation completed without that recognition |
-| `Not evaluated` | capa did not evaluate the function |
-| `No function` | The relationship has no function on that side |
+A capability match is a static rule match. It is not a behavioural recording, and it does not show that the code runs under any input. A capability present in only one build can come from a code change or from different analysis conditions. A failed or unsupported run is unknown, not a negative result.
 
-The planned change labels include gained, lost, moved, unchanged, and not compared. A moved label is a candidate explanation. Recognition on both sides does not establish identical code.
+Capa output is an observation from one tool run. Check that both sides used the same tool version and rules before you read a difference as a change.
 
-Group by namespace or function pair, then inspect Why capa matched. The matching features help distinguish a useful recognition from an irrelevant one.
+The same data is available from the command line: [`patchtrace intel-tools`](62-cli-intel-tools.md).
 
-Detection differences can arise from analysis behavior. A capability appearing in output does not establish new program behavior, purpose, or a defect.
-
-`Copy provenance` to retain tool version, rule identity, options, artifact hashes, and cautions. Missing or stale evidence must remain visible.
-
-Screen-reader output and display scaling require manual Windows checks; interface specifications alone do not establish those results.
-
-Sources: docs/specs/program-e/CAP-integration-plan.md, section 8; src/patchtrace/panel_manifest.py.
+Sources: `src/patchtrace/intelligence/tools/capa_panel.py`, `src/patchtrace/intelligence/tools/capa_qt.py`.

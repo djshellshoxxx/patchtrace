@@ -1,28 +1,24 @@
 # Detection rules panel
 
-Planned. The YRX plan defines the detection-rules interface. Its panel declaration was unavailable during review. Desktop availability is UNVERIFIED.
+The **Detection rules** panel shows the proposed rules, the test grid and the saved rule versions for a project. It is a right dock, shown with `Ctrl+Shift+R`. It needs an open project.
 
-The manifest reserves Ctrl+Shift+R. The planned workspace includes candidates, a test grid, and saved rules.
+The panel has three tabs:
 
-Start with a function pair and choose Propose. Inspect the proposed side, selected features, generated text, and checks before accepting a candidate. A candidate is not automatically a saved or exported rule.
+- **Proposed rules** lists candidates. Search by name, function or label. Each row shows its decision: `Proposed`, `Accepted`, `Rejected` or `Deferred`.
+- **Test grid** shows how each build matched a rule version. Filter by build role, by result, or with **Unexpected results only**.
+- **Saved rules** lists the stored rule versions.
 
-Feature cells distinguish present, absent after completed evaluation, and unknown when a producing tool is missing or failed.
+Buttons: **Copy rule text** copies the exact text of the selected rule. **Open pair** goes to the changed function that the rule came from.
 
-Use Accept, Reject, or Defer to record a decision. Acceptance requires a label and creates a retained rule version. Export is a separate action.
+The panel shows stored results. It does not propose, accept or test rules. Use the command line for those steps:
 
-Test the selected rule against explicit target builds and comparison files. Grid results distinguish:
+- `patchtrace rules propose` creates candidates from one accepted changed-function pair. Nothing is accepted.
+- `patchtrace rules decide` accepts, rejects, defers or archives one candidate. Accepting needs `--label` and stores a version. It writes no file.
+- `patchtrace rules test` scans builds with one rule version.
+- `patchtrace rules export` saves one version as a `.yar` file on your computer. Nothing is uploaded.
 
-| Result | Meaning |
-|---|---|
-| `Match` | The tested file contains the rule’s recognized pattern |
-| `No match` | Testing completed without a match |
-| `Not scanned` | The file was not successfully evaluated |
-| `Timeout or error` | Evaluation did not establish a result |
+Test cells read `Match`, `No match`, `Timed out`, `Error` or `Not scanned`. A file that could not be read or was too large stays `Not scanned`. A match on a local test set does not show general selectivity. An unexpected result needs investigation, not a changed label.
 
-Expected outcomes are analyst-defined test expectations. **An unexpected result requires investigation rather than automatic relabelling.**
+See [`patchtrace rules`](71-cli-rules.md) for every verb.
 
-A pattern match identifies pattern presence. It does not establish whether a file contains a particular flaw or remediation.
-
-Review the test engine, target identities, and stale-grid notices before exporting. Planned history preserves accepted versions and decisions; it does not provide a general delete action.
-
-Sources: docs/specs/program-e/YRX-integration-plan.md, section 8; src/patchtrace/panel_manifest.py.
+Sources: `src/patchtrace/rules/panel.py`, `src/patchtrace/rules/qt_panel.py`, `src/patchtrace/rules/view_model.py`, `src/patchtrace/rules/cli.py`.

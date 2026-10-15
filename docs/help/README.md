@@ -1,6 +1,8 @@
 # PatchTrace help
 
-PatchTrace compares an explicitly chosen older and newer Windows binary.
+PatchTrace compares an explicitly chosen older and newer Windows binary. These pages explain each panel, each command-line verb, and the states you will see. Panel titles and button labels are written as the desktop shows them.
+
+Start with [Start here](01-start-here.md). For longer procedures, see the [repository guide](../guide/00-index.md).
 
 ## Getting started and projects
 
@@ -33,20 +35,22 @@ PatchTrace compares an explicitly chosen older and newer Windows binary.
 
 ## Panels
 
-- [Engine evidence panel](21-engine-evidence-panel.md) - Engine evidence panel
-- [Unified panel](22-unified-panel.md) - Unified panel
-- [Search panel](23-search-panel.md) - Search panel
-- [Call graph panel](24-call-graph-panel.md) - Call graph panel
-- [Strings panel](25-strings-panel.md) - Strings panel
-- [Capabilities panel](26-capabilities-panel.md) - Capabilities panel
-- [Build environment panel](27-build-environment-panel.md) - Build environment panel
-- [Detection rules panel](28-detection-rules-panel.md) - Detection rules panel
-- [KB and CVE investigation panel](29-kb-and-cve-investigation-panel.md) - KB and CVE investigation panel
-- [CISA KEV context panel](30-kev-context-panel.md) - CISA KEV context panel
-- [Leads panel](31-leads-panel.md) - Leads panel
-- [Series panel](32-series-panel.md) - Series panel
-- [Files panel](33-files-panel.md) - Files panel
-- [Guide panel](34-guide-panel.md) - Guide panel
+Each built panel is a dock. Open it from the **View** menu, or with its shortcut.
+
+- [Engine evidence panel](21-engine-evidence-panel.md) - `Engine evidence` (`Ctrl+Shift+E`)
+- [Unified panel](22-unified-panel.md) - `Unified` (`Ctrl+Shift+U`)
+- [Search panel](23-search-panel.md) - `Search` (`Ctrl+Shift+F`)
+- [Calls panel](24-call-graph-panel.md) - `Calls` (`Ctrl+Shift+G`)
+- [Strings panel](25-strings-panel.md) - `Strings` (`Ctrl+Shift+T`)
+- [Capabilities panel](26-capabilities-panel.md) - `Capabilities` (`Ctrl+Shift+A`)
+- [Build environment panel](27-build-environment-panel.md) - `Build environment` (`Ctrl+Shift+B`)
+- [Detection rules panel](28-detection-rules-panel.md) - `Detection rules` (`Ctrl+Shift+R`)
+- [KB and CVE panel](29-kb-and-cve-investigation-panel.md) - `KB and CVE` (`Ctrl+Shift+K`)
+- [Exploitation context panel](30-kev-context-panel.md) - `Exploitation context` (`Ctrl+Shift+X`)
+- [Leads panel](31-leads-panel.md) - `Leads` (`Ctrl+Shift+L`)
+- [Series panel](32-series-panel.md) - `Series` (no shortcut)
+- [Files panel](33-files-panel.md) - `Files` (no shortcut)
+- [Guide panel](34-guide-panel.md) - `Guide` (reserved; not built in this build)
 
 ## Reading results and states
 
@@ -69,3 +73,34 @@ PatchTrace compares an explicitly chosen older and newer Windows binary.
 - [Adjust display and accessibility preferences](48-display-and-accessibility-preferences.md) - Adjust display and accessibility preferences
 - [Navigate panels with the keyboard](49-keyboard-and-command-navigation.md) - Navigate panels with the keyboard
 - [Arrange and recover panel layout](50-panel-layout-and-recovery.md) - Arrange and recover panel layout
+
+## Reference
+
+- [Glossary](51-glossary.md) - Meanings of the terms used in these pages
+- [Troubleshooting](52-troubleshooting.md) - Offline use, consent prompts, locked projects and `PT-` error codes
+
+## Command-line verbs
+
+Every verb is also listed by `patchtrace --help`. Each page gives the verb's subcommands and the matching desktop control, when one exists.
+
+- [`rank`](53-cli-rank.md) - rank changed functions
+- [`flags`](54-cli-flags.md) - WIL feature-flag transitions
+- [`correlate`](55-cli-correlate.md) - rerank with CVE context
+- [`cache`](56-cli-cache.md) - inspect or maintain the derived cache
+- [`acquire`](57-cli-acquire.md) - download two builds from the Microsoft symbol server
+- [`series`](58-cli-series.md) - build series over adjacent pairs
+- [`secondary`](59-cli-secondary.md) - BinDiff, rz-diff and BinExport checks
+- [`intelligence`](60-cli-intelligence.md) - advisory (CSAF) import, fetch and explain
+- [`unified`](61-cli-unified.md) - derived, experimental unified result
+- [`intel-tools`](62-cli-intel-tools.md) - capa, FLOSS and Detect It Easy evidence
+- [`backend`](63-cli-backend.md) - bundled analysis runtime checks
+- [`build-env`](64-cli-build-env.md) - build environment of each file
+- [`fabric`](65-cli-fabric.md) - read stored anchors
+- [`graph`](66-cli-graph.md) - call-graph explorer over stored call lists
+- [`kb`](67-cli-kb.md) - KB and CVE correlation
+- [`kev`](68-cli-kev.md) - CISA KEV catalog
+- [`panels`](69-cli-panels.md) - list and check the panel manifest
+- [`pilot`](70-cli-pilot.md) - ordered leads for changed pairs
+- [`rules`](71-cli-rules.md) - detection rules
+- [`search`](72-cli-search.md) - offline search of a project
+- [`strings`](73-cli-strings.md) - string changes between the builds

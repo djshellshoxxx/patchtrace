@@ -1,19 +1,21 @@
 # Search panel
 
-Planned. The reviewed WB1 plan specifies this panel. Its manifest slot exists, but the corresponding panel declaration was unavailable during review. Working desktop availability is UNVERIFIED.
+The **Search** panel finds text across the saved names, strings, APIs, code, notes and advisories of a project. It is a bottom dock. Open it from the **View** menu or with `Ctrl+Shift+F`. It needs an open project. Search is offline: nothing is uploaded and no target runs.
 
-Search is intended to find indexed project material across functions, code, strings, imports, exports, capabilities, build facts, advisories, notes, and findings. It is separate from the core navigator’s name-and-address filter.
+Controls, as labelled in the panel:
 
-The planned entry shortcut is Ctrl+Shift+F. Enter a query, then choose side, kinds, scope, mode, and sort order. **An empty query does not request the entire project.**
+- **Search box.** Type the text to find.
+- **Side**: `Both`, `Older` or `Newer`. Results keep their side.
+- **Scope**: `Everything indexed` or `Changed only`.
+- **Mode**: `Auto`, `Words`, `Exact`, `Prefix`, `Substring` or `Similar`.
+- **Sort**: `Relevance`, `Change`, `Name` or `Address`.
+- **Search** runs the query. **Cancel** stops a running search or build. The status line then says *Cancelled. Earlier results are unchanged.*
+- **Build index** rebuilds the search index. It does not rerun the binary analysis.
+- **Coverage** shows which groups are indexed. Check it before you read an empty result as absence.
+- **Go to code** opens the selected result in the code panes. **Other side** shows the other build of that result. **Copy** copies the selected reference.
 
-The planned modes include words, exact, prefix, substring, and similar. Similarity suggestions help discover names; they do not establish function correspondence.
+Read results with care. A hit in a string, advisory or code record shows that the text was observed in that source. It does not show that a particular function uses it. A repeated name can belong to more than one function, so check the side and address.
 
-Results carry side, kind, location, change information, and an explanation of their reading order. Select a result to inspect its provenance and limitations before using `Go to code` or Show other side.
+The same search is available from the command line: [`patchtrace search`](72-cli-search.md).
 
-Use `Coverage…` to check which source groups were indexed. An empty result is meaningful only within completed coverage. Failed or missing index segments leave absence unresolved.
-
-The design includes saved searches and Rebuild index. Rebuilding concerns the search index, rather than rerunning binary analysis.
-
-Planned keyboard behavior includes `Enter` to open a result, `Space` to focus details, and `Ctrl+C` to copy its reference. Search-specific Escape handling closes suggestions or clears the query without cancelling the comparison job.
-
-Sources: docs/specs/program-e/WB1-integration-plan.md, section 8; src/patchtrace/panel_manifest.py.
+Sources: `src/patchtrace/search/panel.py`, `src/patchtrace/search/qt_panel.py`, `src/patchtrace/search/cli.py`.

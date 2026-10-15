@@ -22,9 +22,3 @@ A `PT-GUI-FACTORY` message means panel creation failed. Copy the available detai
 Avoid repeated retries without changing the prerequisite. Preserve earlier results and use another available view when it answers your immediate question.
 
 Sources: src/patchtrace/gui/state.py; src/patchtrace/panel_manifest.py; docs/specs/program-e/GUI-integration-plan.md, section 8.2.
-
-next
-
-Worked for 1m 33s
-
-<!-- FORMAT NOTE: The raw text contains stray scrape residue (“next” and “Worked for 1m 33s”) after the Sources line. It was left in place because it is part of the committed text; it looks like it should be removed. -->
