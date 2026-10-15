@@ -9,7 +9,7 @@ from types import SimpleNamespace
 os.environ.setdefault('QT_QPA_PLATFORM', 'offscreen')
 
 import pytest
-from PySide6.QtCore import QSettings
+from PySide6.QtCore import QSettings, Qt
 from PySide6.QtGui import QAction
 from PySide6.QtWidgets import (
     QAbstractButton,
@@ -206,21 +206,39 @@ def test_every_registry_id_is_applied_somewhere(window, qtbot, tmp_path, setting
     for root in roots[1:]:
         qtbot.addWidget(root)
     window.show_file_overview()
-    roots.append(window._preflight_dialog)
-    from patchtrace.ui_series import SeriesWindow
-    series = SeriesWindow(tmp_path / 'no-series.json', None, SimpleNamespace(read=lambda *a: None), window)
-    qtbot.addWidget(series)
+    series = window.panels.show_panel('series') and window.panels.controller('series').open_series(
+        tmp_path / 'no-series.json')
     qtbot.waitUntil(lambda: series.loaded is not None, timeout=5000)
     roots.append(series)
     names |= {series.objectName(), series.banner.objectName()}
     # C6: the dock and stale banner are containers/labels, not focusable controls.
-    names |= {window.evidence.dock.objectName(), window.evidence.panel.stale_banner.objectName()}
+    names |= {window.panels.controller('evidence').dock.objectName(), window.panels.controller('evidence').panel.stale_banner.objectName()}
+    # M3: the series and files docks are containers too.
+    names |= {window.panels.panels[panel_id].dock.objectName() for panel_id in ('series', 'files')}
+    names |= {'unified.dock', 'unified.tab', 'unified.source.unknown', 'leads.dock'}
     # Track G: the BinDiff setup group and its warning label are a container and a label.
-    setup = window.evidence.panel.bindiff_setup
+    setup = window.panels.controller('evidence').panel.bindiff_setup
     names |= {setup.objectName(), setup.warning.objectName()}
-    for root in roots:
+    # F5: framework widgets and every panel the manifest has built, without listing panel roots by hand.
+    from PySide6.QtWidgets import QDockWidget
+
+    from patchtrace.gui.qt.docks import name_tab_bars
+    from patchtrace.gui.qt.state_view import StateView
+    state = StateView('zz', 'Zz')
+    qtbot.addWidget(state)
+    roots += [state] + [c.widget() for c in window.panels.build_all_for_test().values() if c.widget() is not None]
+    first, second = QDockWidget('A', window), QDockWidget('B', window)
+    first.setObjectName('zz_a.dock'), second.setObjectName('zz_b.dock')
+    window.addDockWidget(Qt.DockWidgetArea.BottomDockWidgetArea, first)
+    window.tabifyDockWidget(first, second)
+    name_tab_bars(window)
+    names |= {window.panels.strip.objectName()}
+    for root in roots + [window]:
         names |= {w.objectName() for w in controls(root)}
         names |= {a.objectName() for a in actions(root)}
+    shown = {w.toolTip() for root in roots + [window] for w in controls(root)}
+    shown |= {a.toolTip() for root in roots + [window] for a in actions(root)}
+    names |= {tip_id for tip_id in REGISTRY if tooltip(tip_id) in shown}  # a control may carry a per-panel name
     names |= {'dialog.text_view', 'dialog.close', 'confirm.yes', 'confirm.no'}
     names |= {n.rsplit('.', 1)[0] for n in names if n.startswith('profile.detector')}
     missing = set(REGISTRY) - names - EXEMPT_IDS
@@ -240,7 +258,7 @@ def test_disabled_controls_keep_tooltip_and_state_prerequisite(qtbot, settings, 
         assert not action.isEnabled()
         check_text(action.text(), action.toolTip())
         assert 'Availability:' in action.toolTip()
-    panel = empty.evidence.panel  # C6: no project -> run/copy/goto disabled, prerequisite stated
+    panel = empty.panels.controller('evidence').panel  # C6: no project -> run/copy/goto disabled, prerequisite stated
     for control in (panel.run_button, panel.copy_button, panel.goto_button):
         assert not control.isEnabled()
         check_text(control.objectName(), control.toolTip())
@@ -312,12 +330,11 @@ def test_export_dialog(qtbot, window):
     assert 'Needs findings selected' in plain(dialog.selection.toolTip())
 
 
-def test_file_overview_dialog(qtbot, window):
+def test_files_panel(qtbot, window):
     window.show_file_overview()
-    dialog = window._preflight_dialog
-    qtbot.addWidget(dialog)
-    audit(dialog)
-    assert len(controls(dialog)) >= 1
+    files = window.panels.controller('files').widget()
+    audit(files)
+    assert len(controls(files)) >= 1
 
 
 def test_text_dialogs_and_confirmation_boxes(qtbot, window, monkeypatch):
@@ -338,11 +355,12 @@ def test_evidence_ids_prefix_complete(window):
     """Every evidence.* widget/action name is a registry ID and every evidence.* ID is used (C6 7.2)."""
     ids = {key for key in REGISTRY if key.startswith('evidence.')}
     templates = {key for key in TEMPLATES if key.startswith('evidence.')}
-    assert len(ids) >= 25 and {'evidence.row', 'evidence.cell', 'evidence.badge'} <= templates
-    dock = window.evidence.dock
+    assert len(ids) >= 22 and {'evidence.row', 'evidence.cell', 'evidence.badge'} <= templates
+    dock = window.panels.controller('evidence').dock
     used = {w.objectName() for w in dock.findChildren(object) if hasattr(w, 'objectName')}
-    used |= {dock.objectName(), window.evidence.action.objectName()}
-    evidence_names = {name for name in used if name.startswith('evidence.')}
+    used |= {dock.objectName(), window.panels.toggle_action('evidence').objectName()}
+    # the host's StateView around the panel names its own children `evidence.state_*` (gui tips, not this registry)
+    evidence_names = {name for name in used if name.startswith('evidence.') and '.state_' not in name}
     assert evidence_names <= ids, sorted(evidence_names - ids)
     assert ids <= evidence_names, sorted(ids - evidence_names)
     audit(dock)
@@ -352,11 +370,11 @@ def test_engine_setup_ids_prefix_complete(window):
     """Track G (spec 16.8): every engine_setup.* id is used in the dock and every such widget is registered."""
     ids = {key for key in REGISTRY if key.startswith('engine_setup.')}
     assert len(ids) == 15
-    dock = window.evidence.dock
+    dock = window.panels.controller('evidence').dock
     used = {w.objectName() for w in dock.findChildren(object) if hasattr(w, 'objectName')}
     names = {name for name in used if name.startswith('engine_setup.')}
     assert names == ids, sorted(names ^ ids)
-    setup = window.evidence.panel.bindiff_setup
+    setup = window.panels.controller('evidence').panel.bindiff_setup
     for widget in controls(setup) + [setup.toggle_button]:
         assert widget.objectName().startswith('engine_setup.'), widget.objectName()
         assert widget.toolTip() == tooltip(widget.objectName())

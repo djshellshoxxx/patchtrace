@@ -151,13 +151,12 @@ def window(qtbot, tmp_path):
 
 def test_file_overview_shows_parsed_pe_comparison(window, qtbot):
     window.show_file_overview()
+    files = window.panels.controller('files')
     qtbot.waitUntil(lambda: window._current_inspection() is not None, timeout=10000)
-    table = window._preflight_pe_table
-    assert table.rowCount() > 3
-    fields = [table.item(i, 0).text() for i in range(table.rowCount())]
+    assert files.pe.rowCount() > 3
+    fields = [row.values[0] for row in files.pe.rows]
     assert any('entry' in f.lower() or 'machine' in f.lower() for f in fields)
-    assert 'complete' in window._preflight_status.text()
-    window._preflight_dialog.close()
+    assert 'complete' in files.status.full_text()
 
 
 def test_hex_mode_shows_verified_bytes_and_highlights_differences(window, qtbot):
@@ -256,7 +255,5 @@ def test_trust_labels_never_claim_full_validity():
 def test_overview_table_has_authenticode_row(window, qtbot):
     window.show_file_overview()
     qtbot.waitUntil(lambda: window._current_inspection() is not None, timeout=10000)
-    table = window._preflight_pe_table
-    fields = [table.item(i, 0).text() for i in range(table.rowCount())]
+    fields = [row.values[0] for row in window.panels.controller('files').pe.rows]
     assert 'Authenticode (embedded, offline)' in fields
-    window._preflight_dialog.close()

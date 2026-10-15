@@ -312,6 +312,12 @@ Toolchain for every live line: Ghidra 12.0.4 PUBLIC (archive SHA-256 `c3b458661d
 | Frozen probe (Linux, PyInstaller 6.22.3) | a one-module entry importing only `patchtrace.backend`, built with the repository hooks directory | the hook fires from `backend.py`'s lazy import; the data file lands at `_internal/patchtrace/unified/extract/ghidra_script.py` and is byte-identical; `importlib.resources.files(...).read_bytes()` works in the frozen process |
 Found and fixed while building: `collect_data_files` collected nothing when a stale editable install shadowed the source tree (the hook now uses its own repository path); a sibling directory named `ghidra` next to the script would shadow Ghidra's Java package (the script now lives alone in `script/`); strict `.pdata` union equality confirmed only 17 of 38 MinGW primaries (alignment padding: tolerance rule, 38 of 38); a bare `[disp32]` / `[GS:0x30]` displacement was unlocated; `Ordinal_<n>` export placeholders were taken as aliases; raw bidi characters in regex literals were replaced by escapes; `.gitattributes` gaps closed (script LF so its hash is the same on every OS, notice bytes, fixtures).
 Not verified here, only the `live-unified` workflow can: everything on Windows (JVM, Job Object, pyghidra and paths on `windows-latest`), MSVC-built fixtures (operand typing and RVA-form switches were seen on clang and MinGW code only), a real Ghidriff-written GZF on Windows through `retain_gzf`, `content_digest` equality across operating systems on the same DLL bytes, the Windows frozen smoke U1 (and U2 once S0b lands) and the Windows PyInstaller hook, the FID `lib` marker, and BinDiff `--md_index` parity. Scale beyond 4,060 functions per side (L-35: 60k) was not measured.
+
+### [F2:qt-runtime]
+| Check | Method | Result |
+|---|---|---|
+| Qt runtime teardown | `python tools/qt_gate.py --repeat 20 tests/test_gui_tasks.py tests/test_gui_announce.py tests/test_gui_settings.py`, ONE session, `--keep-duplicates`, `PYTHONFAULTHANDLER=1`, Linux offscreen | 2260 passed (20 x 113), no abort |
+| Legacy coexistence | the same gate x3 over `test_evidence_ui.py` and `test_ui_engine_setup.py` plus the new files | 411 passed |
 ### [GUI:framework] Program E GUI framework: gates and manual rows (2026-10-14; GUI-F0, documentation only)
 - GUI-F0 (documentation only, no code or test change): `python -m pytest tests/test_spec_registry.py tests/test_workflows.py -q -p no:cacheprovider` gave 93 passed (Linux, Python 3.13.16). Link check of the 27 changed files: 54 references, 0 broken relative links; 18 planned module paths named in the amendments do not exist yet (expected until their slices land).
 - Slice gates for F1 to F9 (GUI plan section 9; every slice: ruff clean, red then green tests, full suite twice, Qt test files 20x, no stray files, a `docs/modules.md` row). F1: hypothesis on `sanitize_text`, ids and manifest; no-Qt subprocess; CLI exits 0/2/3/4/5. F1b: registry tests of 8.12, `test_cli_seam_budget`, frozen smoke A1 over `names()` (Windows CI, reported separately). F2: teardown matrix x20 with faulthandler; repaint under load; progress flood; lane state opened and closed on the lane thread. F3: dark stylesheet equals `DARK_STYLE`; contrast; hostile text; `a11y_audit`. F4: 10k and 100k call and time gates. F5: all of 8.8 for the host; seam budget; layout suite; full suite twice; 20x. F6a: caps, layers, hunk API, truncation, stub highlighter. F6b: 500/2,000 and 2,000/8,000 budgets. F7: simulated contrast provider; contrast per variant. F8: C6 and G suites unchanged, 20x. F9: `test_no_new_top_level_window`; series and overview suites.
@@ -498,6 +504,62 @@ Not verified here: Windows and GitHub Actions; any live Ollama or OpenAI-compati
 | Precision per pass and tier at 60k, against the generator's ground truth | S2 tier A 35,312 of 35,312 right; S2 tier B 21,894 of 21,896; S2 tier C 395 of 395; P16 tier C 162 of 162; P17 tier C 1 of 1; P18 tier C 1,213 of 1,214 (0.9992); P19 tier C 30 of 30. At 10k every pair right (P16 30, P18 178, P19 3). The stage adds 739 pairs at 60k (59,010 vs 58,271 for the S2 table alone on the same world) | REPORTED, not a claim: the generator keeps most of the layout (P18 contributes most pairs), edits whole functions at once, and has no hostile near-duplicates; the gate only asserts that the stage's own tier-B pairs are all right and that its pairs are >= 95 % right on this generator |
 | Determinism | `test_the_result_digest_is_stable_across_hash_seeds_and_processes` (3 interpreters, PYTHONHASHSEED 0/1/4242), row-order permutation, side-swap mirror and budget-prefix properties with the stage on; the MinHash golden vector was verified once against a naive loop sharing no code | identical digests |
 | Not verified here | Windows and the frozen EXE; Python 3.12 (CI pin); IR from real Ghidra or MSVC binaries (the mnemonic streams are synthetic); the cost of decoding real `ins` blobs; per-pass precision on Tier R (G-U3, S6); the spec constants (16 permutations, 4 x 4 bands, floor 0.6, margins 0.05, cosine 0.95, 1 nat) are untuned on real data | open, see tasks/todo.md [S5:residual] |
+
+### [F4:virtual-table] VirtualTable gates
+| Check | Method | Result |
+|---|---|---|
+| `data()` calls independent of N | `assert_lazy_model` at 10k and 100k, plus reset, sort and filter ceilings of 7 x visible cells x 1.2 + 20 | 462 calls at both sizes (ceiling about 725) |
+| Time | reset, sort, filter after processEvents, ceilings 0.5 s (10k) and 1.5 s (100k) | 7 to 39 ms measured on Linux |
+| Not verified here | Windows timings, real UI Automation output for the table | open |
+### [GUI-F3:widgets] GUI framework F3 (2026-10-14, local Linux worktree, PySide6 offscreen)
+| Check | Evidence |
+|---|---|
+| Dark stylesheet equals ui.DARK_STYLE | tests/test_gui_theme.py golden; every dark token pair meets 4.5:1 text and 3:1 non-text (contrast_problems empty) |
+| State copy, precedence, actions, announcements, hostile text, a11y_audit in all 12 states | tests/test_gui_state_view.py |
+| qt_gate repeat 10 over the five F3 files | 1,770 passed, no abort or surviving thread |
+| Not verified here | Windows, real screen readers, high contrast, DPI scaling, the frozen build |
+### [F6b:graph-canvas]
+| Check | Result |
+|---|---|
+| test_gui_graph_view.py and test_gui_qt_canvas.py, qt_gate repeat 5 | 295 passed, no abort or surviving thread |
+| Not verified here | Windows timings, real screen readers, DPI scaling |
+
+### [F6a:codediff]
+| Check | Evidence |
+|---|---|
+| Layers, hunk API, caps, truncation, hostile text, scroll sync, stub windowed highlighter survives set_pair | tests/test_gui_codediff.py, tests/test_gui_pair_text.py |
+| Not verified here | Windows rendering, screen readers, high contrast, highlighter cost at 65k lines |
+
+### [GUI-F5:host] GUI framework F5 (2026-10-14, local Linux worktree, PySide6 offscreen)
+| Check | Evidence |
+|---|---|
+| Shells, lazy build, replay, dirty, debounce, blocked, failed factory, ports, anchors | tests/test_gui_host.py (26 tests) |
+| Layout round trip, damaged blob (digest, schema, oversize, garbage, missing), reset, no "objectName not set" warning, tab bar names, View menu, central wrapper | tests/test_gui_host_layout.py |
+| Palette filter, recent, unavailable reasons, Enter, Escape (does not fire Cancel job), arrows, announcement, hostile titles, host commands, F6 cycle, Ctrl+Shift+P | tests/test_gui_host_palette.py |
+| ui.py budget, forbidden APIs (new code zero, legacy counts only shrink), one main window, accessibility audit of host widgets, legacy evidence dock survives the saved layout, shutdown | tests/test_gui_host_seam.py |
+| qt_gate repeat 5 over all GUI test files (1,133 per pass) | 5,665 passed, no abort or surviving thread (an earlier run on a loaded CPU failed F4's timing ceiling test `test_data_calls_are_independent_of_the_row_count` once, 0.095 s against 0.057 s; it passed on rerun) |
+| Not verified here | Windows, real screen readers, frozen build self-check, the 20x gate |
+
+CI job text for the integration owner (`.github/workflows/qa-windows.yml`, after the existing Qt steps; Linux PR job uses `--repeat 20`):
+```yaml
+      - name: GUI repeat gate
+        run: python tools/qt_gate.py --repeat 5
+        env:
+          QT_QPA_PLATFORM: offscreen
+```
+
+### [F8:evidence-migration]
+- Automated: tests/test_evidence_host.py, the C6 suites (test_evidence_ui.py, test_ui_engine_setup.py), test_tooltips.py, test_gui_host_seam.py; Qt gate `python tools/qt_gate.py --repeat 5` over them.
+- Manual, not run: the evidence panel as a dock in the saved layout on Windows (shortcut Ctrl+Shift+E, dock tabs with Unified later, floating on a second monitor), part of M23.
+### [F7:theme] Theme variants (manual M22 on Windows)
+1. View > Theme > System, then switch Windows between light and dark: window, tables, chips and code panes follow without restart; text stays readable.
+2. Turn on a Windows high-contrast theme (Alt+Left Shift+PrtScn): the stylesheet is gone, chips are outlined text with a 2 px edge and no fill, diff hunks are underlined, the focus ring is visible on every control; the Theme submenu shows the disabled note. Turn it off: the chosen variant returns.
+3. Settings > Accessibility > Visual effects > Animation effects off: menus and tooltips appear without fade or slide.
+Automated evidence uses a simulated provider only; no test touches real OS settings.
+
+### [F9:series-files-docks]
+- Automated: tests/test_ui_m3_docks.py, test_ui_series.py, test_alpha_integration.py, test_preflight_overview.py, test_ui_audit_p2.py, test_tooltips.py, test_gui_host_seam.py (incl. `test_no_new_top_level_window`); `python tools/qt_gate.py --repeat 5` over the default GUI set: 6,260 passed.
+- Manual, not run: Series tabs (open two files, close with the tab button and the keyboard) and the Files dock in the saved layout, floating and docked, on Windows.
 ### [RA-FIX-1:audit-fixes] Random audit 1 fixes RA-1, RA-4, RA-8, RA-9, RA-10 (2026-10-14, worktree on f94875c; Linux container, synthetic data only)
 - Red first: each new test file failed before its fix (entropy budget and layout 9 of 10, offline cache 10 of 11, hostile text 3 failures after the predicate existed, bench RSS 4 of 4, `-0.0` 1 of 1), for the reason the audit named (for example 263,024 bytes read by `layout_from_reader` on a 128 KiB image; `0.0 is None` for the RSS report). Green: 53 new tests in 1.5 s (`tests/test_pe_entropy_budget.py` 11, `test_intel_offline_cache.py` 11, `test_hostile_text.py` 27, `test_bench_enrichment_report.py` 4); no test measures wall time.
 - Recipe R1 at full size (96 sections over one 8 MiB range, 8,392,776 bytes): 34.3 s before (audit), 1.4 s after, status `partial`, warning `entropy_budget_exhausted`; the honest one-section file of the same size 0.5 s before and after. Recipe R4 and R6 are covered by scaled tests (`test_an_over_cap_legacy_index_survives_a_put_untouched`, `test_the_report_says_null_not_zero_without_the_resource_module`).
@@ -727,3 +789,19 @@ Automated evidence only: a fake interpreter answers the real `decompile` request
 | Known gates | append-only (same row no-op, other content refused), resume after a crash between decision and version, export golden, no bulk flag, accept and export are separate (no `.yar` after accept; one `rule-export` row and no version after export), a file that was not read is never `no match`, header without path or user name, secret strings refused, `rules` imports neither `yara_x`, `iced_x86` nor Qt | pinned by named tests |
 | Real child | `rules _rules-worker` answers a probe request file (exit 0, empty stdout) and refuses a bad one (exit 2); `rules test` through the real worker gives the expected grid | pass |
 Not verified here: Windows; the frozen executable; a live backend for `rules propose` (the tests use a fixture backend); a real series.
+
+### [WBQ-S6-S9:qt-modules]
+| Item | Evidence |
+|---|---|
+| Tests | `tests/test_ui_pemeta.py` (39), `tests/test_ui_codetext.py` (34), offscreen, `tools/qt_gate.py --repeat 5` over both: 365 passed |
+| Budgets measured here (offscreen, Linux, shared CPU) | scroll window refresh 5-10 ms at 6.5k and 65k lines (gate 30 ms); 65k-line install adds about 135 ms per pane over a plain `setPlainText` (gate 450 ms); 100,000 API rows: table swap and 100,000 `data()` calls inside 3x the plan budget |
+| Not verified | Windows; NVDA/Narrator; DPI; high contrast; Consolas bold advance; pixel probe; the 20x single-session repeat (5x run) |
+### [UE-S4b:ui-unified] Unified panel automated evidence (2026-10-15, Linux offscreen)
+- tests/test_ui_unified.py + tests/test_unified_panel_spec.py: 39 passed; `tools/qt_gate.py --repeat 20 tests/test_ui_unified.py`: 700 passed, no abort. Blocked, not run: Windows CI, NVDA/Narrator, DPI scaling.
+### [PIL-C2:leads]
+
+| Item | Evidence |
+|---|---|
+| Tests | `tests/test_pilot_read_model.py` (35), `tests/test_ui_leads.py` (61) offscreen on Linux; `python tools/qt_gate.py --repeat 6 tests/test_ui_leads.py`: 366 passed, no abort |
+| Known gates | one test per state L0-L8 and each gate and window banner; banned-string sweep over every producible string (stems `probab`, `likelihood`, `confidence`, `percent`, `vulnerab`, `exploit`, `proven`, `certain`, `verified`, `safe`, `secure`, with the sanctioned phrases removed); no enum slug and no percent sign in any cell; hostile names, notes and tooltips stay text; `a11y_audit` clean in every state; no new top-level window; late results dropped on a project switch; shutdown cancels and waits |
+| Not verified here | Windows; real screen readers; a PE-backed project (the resolver finds no row in the synthetic sample, so Go to function is only exercised with an injected resolver); the freeze of the GUI-thread collection on a large project |

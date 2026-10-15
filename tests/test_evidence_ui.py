@@ -10,13 +10,10 @@ import threading
 os.environ.setdefault('QT_QPA_PLATFORM', 'offscreen')
 
 import pytest
-from PySide6.QtCore import QCoreApplication, QEvent, QModelIndex, QSettings, Qt, QThread
+from PySide6.QtCore import QCoreApplication, QEvent, QModelIndex, QPoint, QSettings, Qt, QThread
 from PySide6.QtGui import QAccessible, QFont, QGuiApplication
 from PySide6.QtWidgets import QApplication, QStyleOptionViewItem, QWidget
 from test_evidence_view import (
-    NEW,
-    OLD,
-    RUN,
     bd,
     build,
     gmatch,
@@ -26,8 +23,11 @@ from test_evidence_view import (
 )
 
 from patchtrace import ui_evidence
+from patchtrace.gui.qt import tasks
+from patchtrace.gui.qt.table import ROW_ROLE, VirtualTableModel
 from patchtrace.secondary import evidence_panel_service as service_api
 from patchtrace.secondary.contracts import Capability
+from patchtrace.secondary.evidence_table import prepare_evidence_table
 from patchtrace.secondary.evidence_view import (
     FOOTER,
     STATE_TEXT,
@@ -38,23 +38,17 @@ from patchtrace.secondary.evidence_view import (
 from patchtrace.service import ProjectService
 from patchtrace.ui import MainWindow
 from patchtrace.ui_evidence import (
-    ADDRESS_ROLE,
-    EngineRunThread,
     EvidenceController,
     EvidenceDelegate,
     EvidencePanel,
-    EvidenceTableModel,
 )
 
 
 @pytest.fixture(autouse=True)
 def join_evidence_threads():
-    """Every evidence worker must be finished after each test; deferred deletes are flushed."""
+    """Every evidence task must be finished after each test; deferred deletes are flushed."""
     yield
-    for thread in list(ui_evidence._LIVE_THREADS):
-        if ui_evidence.thread_alive(thread):
-            thread.cancel.set()
-            assert thread.wait(5000), 'evidence worker still running after the test'
+    assert tasks.shutdown_live_runners(timeout=5) == [], 'evidence worker still running after the test'
     QApplication.processEvents()
     QCoreApplication.sendPostedEvents(None, QEvent.Type.DeferredDelete)
 
@@ -79,6 +73,10 @@ def visible(widget):
     return not widget.isHidden()
 
 
+def state_text_of(panel):
+    return panel.state_view.status_label().text()
+
+
 def show(panel, vm):
     panel.set_view_model(vm)
     return panel
@@ -92,7 +90,7 @@ def test_state_no_project_disables_everything(qtbot, settings):
     qtbot.addWidget(widget)
     widget.set_project(False)
     assert widget.status.text() == STATE_TEXT['no-project']
-    assert widget.stack.currentIndex() == 0
+    assert widget.state_view.kind == 'no-project' and not visible(widget.split)
     for control in (widget.filter, widget.search, widget.table, widget.copy_button, widget.goto_button,
                     widget.run_button, widget.refresh_button, widget.probe_button, widget.import_button):
         assert not control.isEnabled(), control.objectName()
@@ -100,20 +98,21 @@ def test_state_no_project_disables_everything(qtbot, settings):
 
 def test_state_no_engines_shows_ghidriff_only_message(panel):
     show(panel, build(sets=()))
-    assert panel.state_label.text() == STATE_TEXT['no-engines']
-    assert visible(panel.open_engines_button) and panel.open_engines_button.isEnabled()
-    panel.open_engines_button.click()
+    assert state_text_of(panel) == STATE_TEXT['no-engines']
+    setup = panel.state_view.action_button('setup')
+    assert visible(setup) and setup.isEnabled()
+    setup.click()
     assert panel.tabs.currentIndex() == 1
 
 
 def test_state_loading_shows_indeterminate_and_clears_table(panel):
     panel.set_loading(True)
-    assert panel.stack.currentIndex() == 0 and visible(panel.loading_bar)
-    assert panel.loading_bar.maximum() == 0 and panel.state_label.text() == STATE_TEXT['loading']
+    assert panel.state_view.kind == 'loading' and not visible(panel.split) and visible(panel.loading_bar)
+    assert panel.loading_bar.maximum() == 0 and state_text_of(panel) == STATE_TEXT['loading']
     assert not panel.filter.isEnabled()
     show(panel, build())
     panel.set_loading(True)  # refresh after a table was shown: no flicker, table stays
-    assert panel.stack.currentIndex() == 1 and panel.status.text() == STATE_TEXT['refreshing']
+    assert visible(panel.split) and panel.status.text() == STATE_TEXT['refreshing']
 
 
 def test_state_ready_three_engines_columns_headers_and_units(panel):
@@ -124,7 +123,7 @@ def test_state_ready_three_engines_columns_headers_and_units(panel):
     assert headers[2] == 'Ghidriff (baseline)\nmatch type (raw)'
     assert headers[3] == 'BinDiff 8\nsimilarity / algorithm'
     assert headers[4] == 'rz-diff 0.9.1\nbyte similarity (raw bytes)'
-    assert model.rowCount() == 4 and panel.stack.currentIndex() == 1
+    assert model.rowCount() == 4 and visible(panel.split)
     assert panel.footer.text() == FOOTER
     assert panel.status.text().startswith('Summary: 4 matches')
 
@@ -160,11 +159,13 @@ def test_state_partial_failed_engine_banner_and_other_columns_intact(panel):
 
 def test_state_failed_assembly_shows_error_and_retry(panel, qtbot):
     show(panel, build(sets=(standard_sets()[0], standard_sets()[0])))
-    assert panel.stack.currentIndex() == 0 and 'could not be assembled' in panel.state_label.text()
-    assert visible(panel.retry_button) and visible(panel.copy_error_button)
+    assert panel.state_view.kind == 'error' and not visible(panel.split)
+    assert 'could not be assembled' in state_text_of(panel)
+    retry, copy = panel.state_view.action_button('retry'), panel.state_view.action_button('copy')
+    assert visible(retry) and visible(copy)
     with qtbot.waitSignal(panel.refresh_requested, timeout=1000):
-        panel.retry_button.click()
-    panel.copy_error_button.click()
+        retry.click()
+    copy.click()
     assert 'PT-EVIDENCE-ASSEMBLY' in QGuiApplication.clipboard().text()
 
 
@@ -172,7 +173,7 @@ def test_state_stale_banner_greys_rows_disables_goto_keeps_copy(panel, qtbot):
     show(panel, build())
     panel.set_stale('the project changed after these results were loaded')
     assert visible(panel.stale_banner) and 'Engine evidence is stale' in panel.stale_banner.text()
-    assert panel.model.stale
+    assert panel.delegate.stale
     panel.table.selectRow(0)
     assert not panel.goto_button.isEnabled() and panel.copy_button.isEnabled()
     with qtbot.assertNotEmitted(panel.match_activated):
@@ -184,7 +185,7 @@ def test_state_stale_banner_greys_rows_disables_goto_keeps_copy(panel, qtbot):
 def test_state_unsupported_lists_reasons_and_offers_no_run(panel):
     outs = tuple(EngineOutcomeView(e, 'unsupported', message=f'{e} not installed') for e in ('bindiff', 'rz-diff'))
     show(panel, build(sets=(), outcomes=outs))
-    assert 'rz-diff not installed' in panel.state_label.text()
+    assert 'rz-diff not installed' in state_text_of(panel)
     panel.set_capabilities({'rz-diff': Capability(engine='rz-diff', supported=False, version=None, path='',
                                                   supports_json=False, reason='missing')})
     assert not panel.engine_checks['rz-diff'].isEnabled() and not panel.run_button.isEnabled()
@@ -194,7 +195,8 @@ def test_state_too_large_guard(panel, monkeypatch):
     from patchtrace.secondary import evidence_view
     monkeypatch.setattr(evidence_view, 'DISPLAY_ROW_CAP', 1)
     show(panel, build())
-    assert panel.stack.currentIndex() == 0 and 'Too many rows to display (4)' in panel.state_label.text()
+    assert panel.state_view.kind == 'too-large' and not visible(panel.split)
+    assert 'Too many rows to display (4)' in state_text_of(panel)
 
 
 # ---- untrusted text -------------------------------------------------------------------------------
@@ -216,7 +218,7 @@ def test_untrusted_function_name_is_plain_text(panel):
     detail = panel.detail.toPlainText()
     assert '<a href="x">algo</a>' in detail or '<b>pwn</b>' in detail
     assert not panel.detail.document().toHtml().count('<a href')
-    for label in (panel.status, panel.state_label, panel.stale_banner, panel.engines_label):
+    for label in (panel.status, panel.state_view.status_label(), panel.stale_banner, panel.engines_label):
         assert label.textFormat() == Qt.TextFormat.PlainText
 
 
@@ -372,7 +374,7 @@ def test_delegate_paints_every_state_without_error(panel, qtbot):
     panel.table.viewport().repaint()
     panel.set_stale('x')
     panel.table.viewport().repaint()
-    assert panel.model.data(panel.model.index(0, 0), ADDRESS_ROLE) == '30 > 40'
+    assert panel.model.data(panel.model.index(0, 0), ROW_ROLE).address_label == '30 > 40'
 
 
 # ---- performance gate (research flag F4) -----------------------------------------------------------
@@ -406,8 +408,9 @@ def test_large_models_stay_lazy_with_data_call_ceilings(panel, n):
     QApplication.processEvents()
     model = panel.model
     model.data_calls = 0
+    prepared = prepare_evidence_table(vm)  # the load worker does this; the GUI thread only swaps the pointer
     start = time.perf_counter()
-    show(panel, vm)
+    panel.set_view_model(vm, prepared)
     QApplication.processEvents()
     reset_time = time.perf_counter() - start
     ceiling = int(7 * visible_cells(panel.table) * 1.2) + 20
@@ -495,59 +498,64 @@ def test_close_window_while_loading_joins_thread(qtbot, tmp_path, settings):
         view = MainWindow(ProjectService.sample(tmp_path / f's{_}'), settings, tmp_path / 'profiles')
         qtbot.addWidget(view)
         gate = threading.Event()
-        view.evidence.loader = gated_loader(gate)
-        view.evidence.auto_probe = False
+        view.panels.controller('evidence').loader = gated_loader(gate)
+        view.panels.controller('evidence').auto_probe = False
         view.show()
-        view.evidence.action.trigger()
-        qtbot.waitUntil(lambda v=view: v.evidence.load_thread is not None, timeout=5000)
-        thread = view.evidence.load_thread
+        view.panels.show_panel('evidence')  # a layout saved by the previous window may already show the dock
+        qtbot.waitUntil(lambda v=view: v.panels.controller('evidence').load_token is not None, timeout=5000)
+        assert tasks.live_task_threads()
         threading.Timer(0.05, gate.set).start()
         view.close()  # closeEvent -> shutdown: cancel + join before the service closes
-        assert not ui_evidence.thread_alive(thread)
+        assert not tasks.live_task_threads()
 
 
 def test_project_switch_mid_load_drops_old_generation(window, qtbot, tmp_path):
     gate = threading.Event()
-    window.evidence.loader = gated_loader(gate)
-    window.evidence.auto_probe = False
+    window.panels.controller('evidence').loader = gated_loader(gate)
+    window.panels.controller('evidence').auto_probe = False
     window.show()
-    window.evidence.action.trigger()
-    qtbot.waitUntil(lambda: window.evidence.load_thread is not None, timeout=5000)
-    old_generation = window.evidence.generation
-    window.evidence.loader = service_api.load_evidence
+    window.panels.toggle_action('evidence').trigger()
+    qtbot.waitUntil(lambda: window.panels.controller('evidence').load_token is not None, timeout=5000)
+    old_generation = window.panels.controller('evidence').generation
+    window.panels.controller('evidence').loader = service_api.load_evidence
     window.set_service(ProjectService.sample(tmp_path / 'other'))
     gate.set()
-    qtbot.waitUntil(lambda: not window.evidence.panel.loading, timeout=5000)
-    assert window.evidence.generation > old_generation
-    assert window.evidence.panel.vm.project_id == window.project.id
+    qtbot.waitUntil(lambda: not window.panels.controller('evidence').panel.loading, timeout=5000)
+    assert window.panels.controller('evidence').generation > old_generation
+    assert window.panels.controller('evidence').panel.vm.project_id == window.project.id
 
 
-def test_started_thread_without_reference_survives_gc(qtbot):
+def test_started_task_without_reference_survives_gc(qtbot, tmp_path, settings):
     import gc
+    view = MainWindow(ProjectService.sample(tmp_path / 's'), settings, tmp_path / 'profiles')
+    qtbot.addWidget(view)
+    controller = view.panels.controller('evidence')
     gate = threading.Event()
-    request = service_api.EvidenceRequest('p', RUN, 0, OLD, NEW, (), ())
-    thread = ui_evidence.EvidenceLoadThread(request, gated_loader(gate))
-    thread.start()
-    del thread
-    gc.collect()  # the registry holds it: no 'QThread: Destroyed while thread is still running' abort
+    controller.loader = gated_loader(gate)
+    controller.auto_probe = False
+    controller.reload()
+    controller.load_token = None  # drop the only reference to the started task's token
+    gc.collect()  # the runner holds the task: the worker is neither collected nor aborted
     gate.set()
-    qtbot.waitUntil(lambda: not any(ui_evidence.thread_alive(t) for t in list(ui_evidence._LIVE_THREADS)),
-                    timeout=5000)
+    qtbot.waitUntil(lambda: not controller.panel.loading, timeout=5000)
+    assert controller.panel.vm.project_id == view.project.id
+    controller.shutdown()
+    view.service.close()
+    view.service = None
 
 
-def test_panel_deleted_while_thread_runs(qtbot, tmp_path, settings):
+def test_panel_deleted_while_task_runs(qtbot, tmp_path, settings):
     view = MainWindow(ProjectService.sample(tmp_path / 's'), settings, tmp_path / 'profiles')
     gate = threading.Event()
-    view.evidence.loader = gated_loader(gate)
-    view.evidence.auto_probe = False
-    view.evidence.reload()
-    thread = view.evidence.load_thread
-    assert thread.parent() is None  # never parented: deleting the panel cannot destroy it
-    view.evidence.dock.deleteLater()
+    view.panels.controller('evidence').loader = gated_loader(gate)
+    view.panels.controller('evidence').auto_probe = False
+    view.panels.controller('evidence').reload()
+    assert view.panels.controller('evidence').load_token is not None
+    view.panels.controller('evidence').dock.deleteLater()
     QCoreApplication.sendPostedEvents(None, QEvent.Type.DeferredDelete)
-    gate.set()
-    thread.wait()
-    view.evidence.shutdown()
+    gate.set()  # the result arrives for a deleted panel and is dropped
+    qtbot.waitUntil(lambda: not tasks.live_task_threads(), timeout=5000)
+    view.panels.controller('evidence').shutdown()
     view.service.close()
     view.service = None
     view.deleteLater()
@@ -561,34 +569,34 @@ def window(qtbot, tmp_path, settings):
     view = MainWindow(ProjectService.sample(tmp_path / 's'), settings, tmp_path / 'profiles')
     qtbot.addWidget(view)
     yield view
-    view.evidence.shutdown()
+    view.panels.controller('evidence').shutdown()
     if view.service:
         view.service.close()
         view.service = None
 
 
 def open_dock(window, qtbot):
-    window.evidence.auto_probe = False
+    window.panels.controller('evidence').auto_probe = False
     window.show()
-    window.evidence.action.trigger()
-    qtbot.waitUntil(lambda: window.evidence.panel.vm.state != 'no-project' and not window.evidence.panel.loading,
+    window.panels.toggle_action('evidence').trigger()
+    qtbot.waitUntil(lambda: window.panels.controller('evidence').panel.vm.state != 'no-project' and not window.panels.controller('evidence').panel.loading,
                     timeout=5000)
 
 
 def test_mainwindow_dock_loads_no_engines_and_action_shortcut(window, qtbot):
-    assert window.evidence.action.shortcut().toString() == 'Ctrl+Shift+E'
-    assert window.evidence.dock.isHidden()
+    assert window.panels.toggle_action('evidence').shortcut().toString() == 'Ctrl+Shift+E'
+    assert window.panels.controller('evidence').dock.isHidden()
     open_dock(window, qtbot)
-    assert window.evidence.panel.vm.state == 'no-engines'
+    assert window.panels.controller('evidence').panel.vm.state == 'no-engines'
 
 
 def test_mainwindow_seam_is_minimal():
     from pathlib import Path
     text = (Path(ui_evidence.__file__).parent / 'ui.py').read_text(encoding='utf-8')
-    assert 'EvidenceTableModel' not in text and 'EvidenceDelegate' not in text
+    assert 'EvidenceTable' not in text and 'EvidenceDelegate' not in text
     seam = [line for line in text.splitlines() if re.search(r'self\.evidence\b(?!_)', line) or 'EvidenceController' in line
             or "hasattr(self, 'evidence')" in line]
-    assert len(seam) <= 10, seam  # the coordination budget is <= 15 lines in ui.py
+    assert not seam, seam  # M1 and M2: the host is the only seam
 
 
 class FakeRun:
@@ -628,7 +636,7 @@ def supported():
 
 
 def start(window, qtbot, fake, engines=('rz-diff',)):
-    controller = window.evidence
+    controller = window.panels.controller('evidence')
     controller.run_execute = fake
     controller.capabilities = supported()
     controller.panel.set_capabilities(controller.capabilities)
@@ -648,7 +656,7 @@ def test_run_success_stores_set_on_gui_thread_and_refreshes(window, qtbot, tmp_p
     monkeypatch.setattr(service_api, 'persist_outcome', spy)
     fake = FakeRun(real_outcomes(window, tmp_path, ('rz-diff',)))
     controller = start(window, qtbot, fake)
-    qtbot.waitUntil(lambda: controller.run_thread is None, timeout=10000)
+    qtbot.waitUntil(lambda: controller.run_token is None, timeout=10000)
     qtbot.waitUntil(lambda: controller.panel.vm.engine('rz-diff').state == 'ready', timeout=5000)
     assert seen == [True]
     assert fake.thread is not QApplication.instance().thread()
@@ -659,7 +667,7 @@ def test_run_one_engine_fails_other_result_kept(window, qtbot, tmp_path):
     open_dock(window, qtbot)
     controller = start(window, qtbot, FakeRun(real_outcomes(window, tmp_path, ('rz-diff', 'bindiff'))),
                        ('rz-diff', 'bindiff'))
-    qtbot.waitUntil(lambda: controller.run_thread is None, timeout=10000)
+    qtbot.waitUntil(lambda: controller.run_token is None, timeout=10000)
     qtbot.waitUntil(lambda: controller.panel.vm.engine('rz-diff').state == 'ready', timeout=5000)
     assert controller.outcomes['bindiff'].status == 'failed'
     assert controller.panel.vm.engine('bindiff').state == 'failed'
@@ -679,7 +687,7 @@ def test_cancel_discards_and_marks_cancelled(window, qtbot, tmp_path):
     outcomes = service_api.execute_run(request, cancel, registry={'rz-diff': FakeRz(GOOD)}, env={})
     controller = start(window, qtbot, FakeRun(outcomes))
     controller.cancel_run()
-    qtbot.waitUntil(lambda: controller.run_thread is None, timeout=10000)
+    qtbot.waitUntil(lambda: controller.run_token is None, timeout=10000)
     assert controller.outcomes['rz-diff'].status == 'cancelled'
     from patchtrace.enrichment.storage import EnrichmentStore
     from patchtrace.secondary.store import current_sets
@@ -693,7 +701,7 @@ def test_project_switch_during_run_drops_result(window, qtbot, tmp_path):
     old_service = window.service
     window.set_service(ProjectService.sample(tmp_path / 'other'))
     gate.set()
-    qtbot.waitUntil(lambda: controller.run_thread is None, timeout=10000)
+    qtbot.waitUntil(lambda: controller.run_token is None, timeout=10000)
     from patchtrace.enrichment.storage import EnrichmentStore
     from patchtrace.secondary.store import current_sets
     assert current_sets(EnrichmentStore(window.service.store)) == []
@@ -702,7 +710,7 @@ def test_project_switch_during_run_drops_result(window, qtbot, tmp_path):
 
 def test_run_disabled_while_ghidriff_job_active(window, qtbot):
     open_dock(window, qtbot)
-    controller = window.evidence
+    controller = window.panels.controller('evidence')
     controller.panel.set_capabilities(supported())
     controller.panel.engine_checks['rz-diff'].setChecked(True)
     controller.update_controls()
@@ -718,10 +726,11 @@ def test_close_window_cancels_and_waits(window, qtbot, tmp_path):
     open_dock(window, qtbot)
     gate = threading.Event()
     controller = start(window, qtbot, FakeRun(real_outcomes(window, tmp_path, ('rz-diff',)), gate))
-    thread = controller.run_thread
+    assert controller.run_token is not None and tasks.live_task_threads()
     threading.Timer(0.2, gate.set).start()
     controller.shutdown()
-    assert not thread.isRunning() and controller.threads == []
+    assert controller.run_token is None
+    assert window.panels.tasks.shutdown() == [] and not tasks.live_task_threads()
 
 
 def test_worker_never_touches_widgets(window, qtbot, tmp_path, monkeypatch):
@@ -741,17 +750,17 @@ def test_worker_never_touches_widgets(window, qtbot, tmp_path, monkeypatch):
         loader_threads.append(QThread.currentThread() is not app_thread)
         assert isinstance(request, service_api.EvidenceRequest)
         return service_api.load_evidence(request, cancel)
-    window.evidence.loader = loader
-    window.evidence.reload()
-    qtbot.waitUntil(lambda: not window.evidence.panel.loading, timeout=5000)
+    window.panels.controller('evidence').loader = loader
+    window.panels.controller('evidence').reload()
+    qtbot.waitUntil(lambda: not window.panels.controller('evidence').panel.loading, timeout=5000)
     controller = start(window, qtbot, FakeRun(real_outcomes(window, tmp_path, ('rz-diff',))))
-    qtbot.waitUntil(lambda: controller.run_thread is None, timeout=10000)
+    qtbot.waitUntil(lambda: controller.run_token is None, timeout=10000)
     assert loader_threads and all(loader_threads) and violations == []
 
 
 def test_stale_generation_result_is_dropped(window, qtbot):
     open_dock(window, qtbot)
-    controller = window.evidence
+    controller = window.panels.controller('evidence')
     before = controller.panel.vm
     controller._model_ready(empty_model('failed', error='old'), controller.generation - 1)
     assert controller.panel.vm is before
@@ -770,29 +779,29 @@ def test_navigator_link_both_ways(window, qtbot):
     guard = Guard(project.id, run.id, run.raw_sha256, match_set.file_sha256)
     publish_engine_set(EnrichmentStore(window.service.store), guard, guard, project.revision, match_set)
     open_dock(window, qtbot)
-    panel = window.evidence.panel
+    panel = window.panels.controller('evidence').panel
     assert panel.vm.state in ('ready', 'partial'), panel.vm.error
     assert panel.select_match(match.id)
     panel.activate_current()
     assert window.current_match().id == match.id
     other = next(m for m in project.matches if m.id != match.id)
-    window.evidence.follow_match(other)
+    window.panels.controller('evidence').selection_changed(other.id)
     assert panel.current_row().match_id == other.id
 
 
-def test_engine_run_thread_reports_failure_class_only(qtbot, tmp_path):
+def test_engine_run_reports_failure_class_only(window, qtbot):
+    open_dock(window, qtbot)
+
     def boom(request, cancel, **kw):
         raise RuntimeError('secret-token')
-    request = service_api.RunRequest('p', 0, 7, ('rz-diff',), 1, 60, tmp_path, tmp_path, OLD, NEW, RUN)
-    thread = EngineRunThread(request, boom)
-    with qtbot.waitSignal(thread.run_failed, timeout=5000) as blocker:
-        thread.start()
-    thread.wait()
-    assert blocker.args == ['PT-SECONDARY-RUN: RuntimeError', 7]
+    controller = start(window, qtbot, boom)
+    qtbot.waitUntil(lambda: controller.run_token is None, timeout=10000)
+    status = controller.panel.run_status.text()
+    assert status == 'Engine run failed: PT-SECONDARY-RUN: RuntimeError' and 'secret-token' not in status
 
 
 def test_table_model_empty_is_safe():
-    model = EvidenceTableModel()
+    model = VirtualTableModel()
     assert model.rowCount() == 0 and model.data(model.index(0, 0)) is None
     assert model.rowCount(QModelIndex()) == 0
 
@@ -800,6 +809,20 @@ def test_table_model_empty_is_safe():
 def test_controller_without_project(qtbot, settings, tmp_path):
     empty = MainWindow(None, settings, tmp_path / 'profiles')
     qtbot.addWidget(empty)
-    assert isinstance(empty.evidence, EvidenceController)
-    assert empty.evidence.panel.status.text() == STATE_TEXT['no-project']
-    empty.evidence.shutdown()
+    assert isinstance(empty.panels.controller('evidence'), EvidenceController)
+    assert empty.panels.controller('evidence').panel.status.text() == STATE_TEXT['no-project']
+    empty.panels.controller('evidence').shutdown()
+
+
+def test_real_header_click_sorts_engine_columns_descending_first_then_toggles(panel, qtbot):
+    matches = [gmatch(f'm{i}', f'{0x10 + i:x}', f'{0x20 + i:x}', f'f{i}') for i in range(3)]
+    sets = (mset('bindiff', bd(0x10, 0x20, sim=500), bd(0x11, 0x21, sim=900)),)
+    show(panel, build(matches=matches, sets=sets))
+    panel.resize(1100, 500)
+    panel.show()
+    header = panel.table.horizontalHeader()
+    x = header.sectionViewportPosition(3) + 5
+    qtbot.mouseClick(header.viewport(), Qt.MouseButton.LeftButton, pos=QPoint(x, 5))
+    assert [panel.model.row_at(i).match_id for i in range(3)] == ['m1', 'm0', 'm2']
+    qtbot.mouseClick(header.viewport(), Qt.MouseButton.LeftButton, pos=QPoint(x, 5))
+    assert [panel.model.row_at(i).match_id for i in range(3)] == ['m0', 'm1', 'm2']

@@ -1,8 +1,7 @@
-"""SPEC-09b section 9: Series window states, filtering, intents and teardown (offscreen)."""
+"""SPEC-09b section 9: Series tab states, filtering, intents and teardown (offscreen)."""
 import threading
 
-import pytest
-from PySide6.QtCore import QSettings, Qt
+from PySide6.QtCore import Qt
 from PySide6.QtGui import QGuiApplication
 from test_nway_series import builds  # noqa: F401, F811  (fixture reuse)
 from test_nway_view_model import FakeReader, ids, ok, series_file  # noqa: F401, F811
@@ -12,17 +11,12 @@ from patchtrace import ui_series
 from patchtrace.nway.contracts import ChainEvent
 from patchtrace.nway.pair_access import PairSnapshot
 from patchtrace.nway.view_model import ChainRow, HopView, LoadedSeries
-from patchtrace.ui_series import SeriesWindow
+from patchtrace.ui_series import SeriesTab
 
 
-@pytest.fixture
-def settings(tmp_path):
-    return QSettings(str(tmp_path / 'ui.ini'), QSettings.Format.IniFormat)
-
-
-def make(qtbot, path, snapshots, settings=None):
+def make(qtbot, path, snapshots):
     reader = snapshots if hasattr(snapshots, 'read') else FakeReader(snapshots)
-    window = SeriesWindow(path, settings, reader)
+    window = SeriesTab(path, reader)
     qtbot.addWidget(window)
     qtbot.waitUntil(lambda: window.loaded is not None, timeout=5000)
     window.reader_probe = reader
@@ -97,7 +91,7 @@ def test_loading_state_then_ready(qtbot, series_file):  # noqa: F811
             gate.wait(5)
             return super().read(*args)
 
-    window = SeriesWindow(path, None, Slow({0: ok({}), 1: ok({})}))
+    window = SeriesTab(path, Slow({0: ok({}), 1: ok({})}))
     qtbot.addWidget(window)
     window.show()
     assert window.progress.isVisible() and not window.chain_table.isEnabled() and window.cancel_button.isEnabled()
@@ -161,7 +155,7 @@ def test_close_during_load_tears_down_thread_cleanly(qtbot, series_file):  # noq
             gate.wait(5)
             return super().read(*args)
 
-    window = SeriesWindow(path, None, Blocking({0: ok({}), 1: ok({})}))
+    window = SeriesTab(path, Blocking({0: ok({}), 1: ok({})}))
     qtbot.addWidget(window)
     thread = window.thread
     assert thread is not None and thread.isRunning()
@@ -181,7 +175,7 @@ def test_reload_cancels_previous_load(qtbot, series_file):  # noqa: F811
             gate.wait(5)
             return super().read(*args)
 
-    window = SeriesWindow(path, None, Blocking({0: ok({}), 1: ok({})}))
+    window = SeriesTab(path, Blocking({0: ok({}), 1: ok({})}))
     qtbot.addWidget(window)
     first = window.thread
     window.reload()

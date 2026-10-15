@@ -1,21 +1,26 @@
-"""Qt presentation for preliminary artifact inspection (SPEC-26 D, alpha).
+"""Qt presentation for preliminary artifact inspection (SPEC-26 D, alpha; GUI plan M3).
 
 Responsibility: run :func:`inspect_project_artifacts` on a dedicated QThread
 (independent of the analysis job worker) and render its immutable result into
-the File overview dialog. All domain logic lives in ``artifact_inspection``,
+the Files dock. All domain logic lives in ``artifact_inspection``,
 ``pe_overview`` and ``raw_view``; this module only moves results to widgets.
 """
 from __future__ import annotations
 
 import threading
+from dataclasses import dataclass
 from pathlib import Path
 
-from PySide6.QtCore import QThread, Signal
+from PySide6.QtCore import QAbstractTableModel, Qt, QThread, Signal
 from PySide6.QtGui import QFont
-from PySide6.QtWidgets import QAbstractItemView, QTableWidget, QTableWidgetItem
+from PySide6.QtWidgets import QAbstractItemView, QSplitter, QTableView, QVBoxLayout, QWidget
 
 from .artifact_inspection import ProjectInspection, inspect_project_artifacts
-from .tooltips import template
+from .gui.qt.docks import ControllerBase
+from .gui.qt.labels import PlainLabel
+from .gui.registry import PanelContext
+from .preflight import overview_rows
+from .tooltips import apply_tooltip, template
 
 # Never say "valid" or "fully trusted": revocation is not checked and catalog signatures are out of scope.
 TRUST_LABELS = {
@@ -26,6 +31,15 @@ TRUST_LABELS = {
     'unknown': 'result unknown',
     'unavailable': 'not checked on this platform',
 }
+RECORDED_HEADERS = ('Recorded field', 'OLDER', 'NEWER')
+PE_HEADERS = ('PE field', 'OLDER', 'NEWER', 'Status', 'Provenance')
+RECORDED_TIP = 'Saved project artifact metadata; no executable content is run or parsed.'
+EXPLANATION = (
+    'Recorded values were saved when this project was created. The PE comparison re-verifies each '
+    'project-owned artifact copy against its SHA-256 and parses headers with bounded read-only reads. Nothing is '
+    'executed. Certificate presence is not signature validity, and COFF timestamps can be forged.')
+IDLE_STATUS = 'File inspection not started.'
+RUNNING_STATUS = 'File inspection running: verifying hashes and parsing PE headers…'
 
 
 class InspectionThread(QThread):
@@ -68,51 +82,150 @@ def side_summary(inspection: ProjectInspection) -> str:
     return ' · '.join(parts)
 
 
-def fill_pe_table(table: QTableWidget, inspection: ProjectInspection) -> None:
-    """Populate field/older/newer/status/provenance rows. Values are plain text items."""
-    rows = inspection.comparisons
-    table.clear()
-    table.setColumnCount(5)
-    table.setHorizontalHeaderLabels(['PE field', 'OLDER', 'NEWER', 'Status', 'Provenance'])
-    table.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
-    if not rows:
-        table.setRowCount(1)
+@dataclass(frozen=True, slots=True)
+class TableRow:
+    values: tuple[str, ...]
+    tip: str
+    bold: bool = False
+
+
+def recorded_rows(project) -> tuple[TableRow, ...]:
+    artifacts = {artifact.side: artifact for artifact in project.artifacts}
+    return tuple(TableRow((row.field, row.older, row.newer), RECORDED_TIP)
+                 for row in overview_rows(artifacts['older'], artifacts['newer']))
+
+
+def pe_rows(inspection: ProjectInspection) -> tuple[TableRow, ...]:
+    """Field/older/newer/status/provenance rows. Values are plain text."""
+    rows = []
+    if not inspection.comparisons:
         reasons = '; '.join(f'{s}: {i.error or i.error_code}' for s, i in inspection.sides.items()
                             if i.overview is None) or 'No comparable PE fields.'
-        values = ('PE comparison unavailable', reasons, 'unavailable', 'unavailable',
-                  'Verified project artifacts; no comparable PE records')
-        for column, value in enumerate(values):
-            item = QTableWidgetItem(value)
-            item.setToolTip(template('overview.pe_row', field='PE comparison unavailable',
-                                     provenance='verified artifact inspection',
-                                     reason=reasons))
-            table.setItem(0, column, item)
-    else:
-        table.setRowCount(len(rows))
-        for index, row in enumerate(rows):
-            values = (row.field, row.older, row.newer, row.status, row.provenance)
-            for column, value in enumerate(values):
-                item = QTableWidgetItem(str(value))
-                item.setToolTip(template('overview.pe_row', field=row.field, provenance=row.provenance,
-                                         reason=row.reason))
-                if row.status == 'changed':
-                    font = QFont(item.font())
-                    font.setBold(True)
-                    item.setFont(font)
-                table.setItem(index, column, item)
+        rows.append(TableRow(('PE comparison unavailable', reasons, 'unavailable', 'unavailable',
+                              'Verified project artifacts; no comparable PE records'),
+                             template('overview.pe_row', field='PE comparison unavailable',
+                                      provenance='verified artifact inspection', reason=reasons)))
+    for row in inspection.comparisons:
+        rows.append(TableRow((row.field, row.older, row.newer, row.status, row.provenance),
+                             template('overview.pe_row', field=row.field, provenance=row.provenance,
+                                      reason=row.reason), row.status == 'changed'))
     trust = {side: inspection.sides[side].trust for side in ('older', 'newer')}
     if any(trust.values()):
-        index = table.rowCount()
-        table.setRowCount(index + 1)
         texts = [TRUST_LABELS.get(t.status, t.status) if t else 'not run' for t in trust.values()]
         status = 'unavailable' if not all(trust.values()) else (
             'unchanged' if trust['older'].status == trust['newer'].status else 'changed')
-        values = ('Authenticode (embedded, offline)', *texts, status, 'WinVerifyTrust, no revocation, no network')
         detail = ' | '.join(f'{s}: {t.detail}' for s, t in trust.items() if t)
-        for column, value in enumerate(values):
-            item = QTableWidgetItem(value)
-            item.setToolTip(template('overview.pe_row', field='Authenticode trust status',
-                                     provenance='WinVerifyTrust, embedded signatures only, no revocation',
-                                     reason=detail or 'Authenticode probe did not run.'))
-            table.setItem(index, column, item)
-    table.resizeColumnsToContents()
+        rows.append(TableRow(('Authenticode (embedded, offline)', *texts, status,
+                              'WinVerifyTrust, no revocation, no network'),
+                             template('overview.pe_row', field='Authenticode trust status',
+                                      provenance='WinVerifyTrust, embedded signatures only, no revocation',
+                                      reason=detail or 'Authenticode probe did not run.')))
+    return tuple(rows)
+
+
+class RowsModel(QAbstractTableModel):
+    """Read-only table of plain-text rows; a changed row is bold and every cell carries the row's tooltip."""
+
+    def __init__(self, headers: tuple[str, ...], parent=None):
+        super().__init__(parent)
+        self.headers = headers
+        self.rows: tuple[TableRow, ...] = ()
+
+    def set_rows(self, rows: tuple[TableRow, ...]) -> None:
+        self.beginResetModel()
+        self.rows = rows
+        self.endResetModel()
+
+    def rowCount(self, parent=None):
+        return 0 if parent is not None and parent.isValid() else len(self.rows)
+
+    def columnCount(self, parent=None):
+        return 0 if parent is not None and parent.isValid() else len(self.headers)
+
+    def headerData(self, section, orientation, role=Qt.ItemDataRole.DisplayRole):
+        if role == Qt.ItemDataRole.DisplayRole and orientation == Qt.Orientation.Horizontal:
+            return self.headers[section]
+        return None
+
+    def data(self, index, role=Qt.ItemDataRole.DisplayRole):
+        if not index.isValid():
+            return None
+        row = self.rows[index.row()]
+        if role == Qt.ItemDataRole.DisplayRole:
+            return row.values[index.column()]
+        if role == Qt.ItemDataRole.ToolTipRole:
+            return row.tip
+        if role == Qt.ItemDataRole.FontRole and row.bold:
+            font = QFont()
+            font.setBold(True)
+            return font
+        return None
+
+
+def rows_view(model: RowsModel, widths_em: tuple[int, ...], tip_id: str) -> QTableView:
+    view = QTableView()
+    view.setModel(model)
+    view.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
+    view.setSelectionBehavior(QAbstractItemView.SelectionBehavior.SelectRows)
+    view.verticalHeader().hide()  # row headers are exposed to UI Automation as accessibles
+    view.horizontalHeader().setStretchLastSection(True)
+    em = view.fontMetrics().horizontalAdvance('M')
+    for column, width in enumerate(widths_em):
+        view.setColumnWidth(column, width * em)
+    apply_tooltip(view, tip_id)
+    return view
+
+
+class FilesController(ControllerBase):
+    """The Files dock: recorded fields and the parsed PE comparison of the project's two artifacts. The inspection
+    itself stays with the main window (the raw view shares it); this renders its state and asks for a start."""
+
+    def __init__(self, ctx: PanelContext):
+        root = QWidget()
+        super().__init__(root)
+        self.port = ctx.project
+        self.window = self.port.window
+        self.recorded, self.pe = RowsModel(RECORDED_HEADERS), RowsModel(PE_HEADERS)
+        self.recorded_view = rows_view(self.recorded, (18, 24), 'overview.table')
+        self.pe_view = rows_view(self.pe, (24, 22, 22, 10), 'overview.pe_table')
+        self.status = PlainLabel(IDLE_STATUS, wrap=True, limit=1000)
+        explanation = PlainLabel(EXPLANATION, wrap=True, limit=1000)
+        detail = QWidget()
+        detail_layout = QVBoxLayout(detail)
+        detail_layout.setContentsMargins(0, 0, 0, 0)
+        detail_layout.addWidget(self.status)
+        detail_layout.addWidget(self.pe_view, 1)
+        splitter = QSplitter(Qt.Orientation.Horizontal)
+        splitter.addWidget(self.recorded_view)
+        splitter.addWidget(detail)
+        splitter.setStretchFactor(1, 1)
+        layout = QVBoxLayout(root)
+        layout.addWidget(explanation)
+        layout.addWidget(splitter, 1)
+        self.window.inspection_status.connect(self._inspection_status)
+
+    def focus_target(self) -> QWidget:
+        return self.pe_view
+
+    def project_changed(self, key: object) -> None:
+        self.refresh()
+
+    def refresh(self) -> None:
+        """Show the recorded fields now; use the current inspection, or start one."""
+        project = self.port.project()
+        self.recorded.set_rows(recorded_rows(project) if project else ())
+        inspection = self.window._current_inspection() if project else None
+        self.pe.set_rows(())
+        if inspection is not None:
+            self._inspection_status('File inspection complete · ' + side_summary(inspection))
+        elif project:
+            self.status.setText(RUNNING_STATUS)
+            self.window.start_inspection()
+        else:
+            self.status.setText(IDLE_STATUS)
+
+    def _inspection_status(self, text: str) -> None:
+        self.status.setText(text)
+        inspection = self.window._current_inspection()
+        if inspection is not None:
+            self.pe.set_rows(pe_rows(inspection))

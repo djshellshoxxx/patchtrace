@@ -313,13 +313,13 @@ def test_overlay_and_header_offsets_map_to_a_rva_only_where_the_loader_would():
 
 
 def test_a_real_timeout_becomes_timeout_cells_and_the_scanner_stays_usable():
-    """A condition loop over 16 MiB needs about 3.7 s here; the engine aborts it at the per-file limit. Its timer ticks
+    """A condition loop over 16 MiB needs about 3.7 s at 16 inner steps and eight times that at 128 (fast CI runners finished the 16-step loop before the limit);  the engine aborts it at the per-file limit. Its timer ticks
     once a second on a grid of its own, so a limit of T seconds fires between T-1 and T seconds after the scan starts
     (measured at offsets 0 to 0.9 s into the tick: 1.1 to 2.0 s for T=2)."""
     small = image(term(0), TERMINATE)
     big = image(term(0), TERMINATE, overlay=b'\x01' * (16 * MIB))
     absent = next(b for b in range(256) if b not in small and b != 1)
-    slow = rule(f'for all i in (0..filesize - 1): (for all j in (0..15): (uint8(i) != {absent})) and pe.is_pe')
+    slow = rule(f'for all i in (0..filesize - 1): (for all j in (0..127): (uint8(i) != {absent})) and pe.is_pe')
     rules = compile_rules(slow, IMPORT_ONLY, limits=c.WorkerLimits(target_timeout_s=2))
     assert rules.lint[0].ok and [d.code for d in rules.lint[0].warnings] == ['potentially_slow_loop']
     cells = rules.scan(big)

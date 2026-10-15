@@ -1,4 +1,4 @@
-"""Qt presentation for the read-only Series window (SPEC-09b section 6).
+"""Qt presentation for the read-only Series panel (SPEC-09b section 6, GUI plan M3): one tab per series.json.
 
 Responsibility: run :func:`patchtrace.nway.view_model.load_view` on a dedicated QThread and
 render the resulting immutable rows. All domain logic lives in ``nway.view_model`` and
@@ -8,29 +8,30 @@ Strings that come from series files or projects are always shown as plain text.
 from __future__ import annotations
 
 import threading
-import weakref
 from pathlib import Path
 
-from PySide6.QtCore import QAbstractTableModel, QEvent, QObject, QSettings, Qt, QThread, Signal
+from PySide6.QtCore import QAbstractTableModel, Qt, QThread, Signal
 from PySide6.QtGui import QGuiApplication
 from PySide6.QtWidgets import (
     QAbstractItemView,
     QCheckBox,
     QComboBox,
-    QFileDialog,
     QHBoxLayout,
     QLabel,
     QLineEdit,
-    QMainWindow,
     QProgressBar,
     QPushButton,
     QSpinBox,
     QSplitter,
     QTableView,
+    QTabWidget,
     QVBoxLayout,
     QWidget,
 )
 
+from .gui.qt.docks import ControllerBase
+from .gui.qt.labels import PlainLabel
+from .gui.registry import PanelContext
 from .nway.contracts import NwayError
 from .nway.pair_access import DiskPairReader, PairReader
 from .nway.view_model import (
@@ -62,7 +63,6 @@ REMEDY = 'Check that series.json is intact, or recreate it with `patchtrace seri
          '(add --replace-corrupt if it is damaged).'
 OPENABLE_PAIR_STATES = frozenset({'ok', 'changed'})
 _LIVE_THREADS: set[SeriesLoadThread] = set()  # a running QThread must never be garbage collected
-_WINDOWS: weakref.WeakValueDictionary[str, SeriesWindow] = weakref.WeakValueDictionary()
 
 
 def safe(text: object) -> str:
@@ -172,30 +172,25 @@ class HopModel(QAbstractTableModel):
                 hop.pair_state)[column]
 
 
-class SeriesWindow(QMainWindow):
-    """Non-modal, read-only view of one series.json. Emits intents; owns no domain logic."""
+class SeriesTab(QWidget):
+    """Read-only view of one series.json. Emits intents; owns no domain logic."""
     open_pair_requested = Signal(str, str)  # absolute pair project path, match id
 
-    def __init__(self, series_path: Path, settings: QSettings | None = None, reader: PairReader | None = None,
-                 parent: QWidget | None = None):
+    def __init__(self, series_path: Path, reader: PairReader | None = None, parent: QWidget | None = None):
         super().__init__(parent)
         self.series_path = Path(series_path).resolve()
-        self.settings = settings
         self.reader = reader or DiskPairReader()
         self.loaded: LoadedSeries | None = None
         self.view: SeriesView | None = None
         self.thread: SeriesLoadThread | None = None
-        self.setWindowTitle(f'Series · {safe(self.series_path.parent.name)} · PatchTrace')
         apply_tooltip(self, 'series.window')
         self._build()
-        self._restore_geometry()
         self.set_loading()
         self.reload()
 
     # ---- construction ------------------------------------------------------------------------
     def _build(self) -> None:
-        central = QWidget()
-        layout = QVBoxLayout(central)
+        layout = QVBoxLayout(self)
         bar = QHBoxLayout()
         self.reload_button = QPushButton('Reload')
         self.cancel_button = QPushButton('Cancel load')
@@ -256,7 +251,6 @@ class SeriesWindow(QMainWindow):
         self.splitter.addWidget(self.chain_table)
         self.splitter.addWidget(detail)
         layout.addWidget(self.splitter, 1)
-        self.setCentralWidget(central)
         for widget, tip in ((self.reload_button, 'series.reload'), (self.cancel_button, 'series.cancel_load'),
                             (self.filter_text, 'series.filter_text'), (self.filter_status, 'series.filter_status'),
                             (self.filter_event, 'series.filter_event'), (self.only_stale, 'series.only_stale'),
@@ -277,16 +271,6 @@ class SeriesWindow(QMainWindow):
         self.hop_table.selectionModel().selectionChanged.connect(self.update_buttons)
         self.open_pair.clicked.connect(self.request_open_pair)
         self.copy_chain.clicked.connect(self.copy_selected_chain)
-
-    def _restore_geometry(self) -> None:
-        self.resize(1100, 640)
-        if self.settings is not None:
-            try:
-                geometry = self.settings.value('series/geometry')
-                if geometry:
-                    self.restoreGeometry(geometry)
-            except (TypeError, RuntimeError):
-                pass
 
     # ---- loading -----------------------------------------------------------------------------
     def reload(self, *_) -> None:
@@ -428,66 +412,88 @@ class SeriesWindow(QMainWindow):
         self._retire_thread()
         if thread is not None:
             thread.wait(2000)  # on timeout the thread stays alive in _LIVE_THREADS until it finishes
-        if self.settings is not None:
-            self.settings.setValue('series/geometry', self.saveGeometry())
 
     def closeEvent(self, event) -> None:
         self.shutdown()
         super().closeEvent(event)
 
 
-class _ParentCloseFilter(QObject):
-    """Stops every open Series window's load thread when the main window closes."""
-
-    def eventFilter(self, obj, event):
-        if event.type() == QEvent.Type.Close:
-            for window in list(_WINDOWS.values()):
-                if window.parent() is obj:
-                    window.shutdown()
-        return False
 
 
-def _select_match(main, match_id: str) -> None:
-    navigator = getattr(main, 'navigator', None)
-    if navigator is None:
-        return
-    for i in range(navigator.count()):
-        if navigator.item(i).data(Qt.ItemDataRole.UserRole) == match_id:
-            navigator.setCurrentRow(i)
-            return
-
-
-def open_pair_in_main(main, pair_path: str, match_id: str) -> None:
+def open_pair_in_main(port, pair_path: str, match_id: str) -> None:
     """Switch the main window to the pair project (its usual open path) and select the match."""
     from .service import ProjectService
-    target = Path(pair_path)
+    main, target = port.window, Path(pair_path)
     service = getattr(main, 'service', None)
     if service is None or Path(service.root).resolve() != target.resolve():
         if main._guard(lambda: main.set_service(ProjectService.open(target))) is None and (
                 getattr(main, 'service', None) is None or Path(main.service.root).resolve() != target.resolve()):
             return
     if not match_id.startswith('raw:'):
-        _select_match(main, match_id)
+        port.select_match(match_id)
 
 
-def show_series_window(main, path: Path | None = None) -> SeriesWindow | None:
-    """Menu hook: choose a series.json (unless given) and show its single window."""
-    if path is None:
-        name, _ = QFileDialog.getOpenFileName(main, 'Open series.json', '', 'PatchTrace series (series.json);;JSON (*.json)')
-        if not name:
-            return None
-        path = Path(name)
-    key = str(Path(path).resolve())
-    window = _WINDOWS.get(key)
-    if window is None:
-        window = SeriesWindow(Path(key), getattr(main, 'settings', None), parent=main)
-        window.setAttribute(Qt.WidgetAttribute.WA_DeleteOnClose, True)
-        window.open_pair_requested.connect(lambda p, m: open_pair_in_main(main, p, m))
-        if not getattr(main, '_series_close_filter', None):
-            main._series_close_filter = _ParentCloseFilter(main)
-            main.installEventFilter(main._series_close_filter)
-        _WINDOWS[key] = window
-    window.show()
-    window.raise_()
-    window.activateWindow()
-    return window
+class SeriesController(ControllerBase):
+    """The Series dock: one closable tab per opened series.json, a single tab per file."""
+
+    def __init__(self, ctx: PanelContext):
+        root = QWidget()
+        super().__init__(root)
+        self.port = ctx.project
+        self._choose = ctx.shell.choose_file
+        self.tabs = QTabWidget()
+        self.tabs.setObjectName('series.tabs')
+        self.tabs.setTabsClosable(True)
+        self.tabs.setDocumentMode(True)
+        self.hint = PlainLabel('No series is open. Open a series.json to follow functions across builds.', wrap=True)
+        self.open_button = QPushButton('Open series.json…')
+        apply_tooltip(self.open_button, 'series.open_file')
+        layout = QVBoxLayout(root)
+        top = QHBoxLayout()
+        top.addWidget(self.open_button)
+        top.addWidget(self.hint, 1)
+        layout.addLayout(top)
+        layout.addWidget(self.tabs, 1)
+        self.tabs.hide()
+        self.open_button.clicked.connect(self.choose_and_open)
+        self.tabs.tabCloseRequested.connect(self.close_tab)
+
+    def focus_target(self) -> QWidget:
+        return self.tabs.currentWidget() or self.open_button
+
+    def choose_and_open(self) -> SeriesTab | None:
+        path = self._choose('Open series.json', 'PatchTrace series (series.json);;JSON (*.json)')
+        return None if path is None else self.open_series(path)
+
+    def open_series(self, path: Path) -> SeriesTab:
+        """Show the tab of `path`; one file never gets two tabs."""
+        series_path = Path(path).resolve()
+        tab = next((t for t in self._tabs() if t.series_path == series_path), None)
+        if tab is None:
+            tab = SeriesTab(series_path)
+            tab.open_pair_requested.connect(self._open_pair)
+            index = self.tabs.addTab(tab, safe(series_path.parent.name))
+            self.tabs.setTabToolTip(index, safe(series_path))
+            self.tabs.show()
+            self.hint.hide()
+        self.tabs.setCurrentWidget(tab)
+        return tab
+
+    def _tabs(self) -> list[SeriesTab]:
+        return [self.tabs.widget(i) for i in range(self.tabs.count())]
+
+    def _open_pair(self, pair_path: str, match_id: str) -> None:
+        open_pair_in_main(self.port, pair_path, match_id)
+
+    def close_tab(self, index: int) -> None:
+        tab = self.tabs.widget(index)
+        self.tabs.removeTab(index)
+        tab.shutdown()
+        tab.deleteLater()
+        if not self.tabs.count():
+            self.tabs.hide()
+            self.hint.show()
+
+    def shutdown(self) -> None:
+        for tab in self._tabs():
+            tab.shutdown()
