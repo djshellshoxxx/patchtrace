@@ -1,0 +1,118 @@
+{
+  "contract": "kb-fixture-documents/1",
+  "format": "synthetic-update-relationship-graph",
+  "status": "Hand-authored graph to exercise relationships. These nodes and edges are fictional.",
+  "updates": [
+    {
+      "update_id": "SYN-UPDATE-010",
+      "kb": "KB9000010",
+      "release": "2099-03",
+      "class": "cumulative",
+      "products": [
+        "SYN-PROD-01",
+        "SYN-PROD-02"
+      ],
+      "cves": [
+        "CVE-2099-20110",
+        "CVE-2099-20111"
+      ],
+      "supersedes": [
+        "SYN-UPDATE-009"
+      ],
+      "prerequisites": []
+    },
+    {
+      "update_id": "SYN-UPDATE-011",
+      "kb": "KB9000011",
+      "release": "2099-04",
+      "class": "checkpoint",
+      "products": [
+        "SYN-PROD-01"
+      ],
+      "cves": [
+        "CVE-2099-20110"
+      ],
+      "supersedes": [],
+      "prerequisites": [
+        "SYN-UPDATE-010"
+      ]
+    },
+    {
+      "update_id": "SYN-UPDATE-012",
+      "kb": "KB9000012",
+      "release": "2099-04",
+      "class": "monthly-cumulative",
+      "products": [
+        "SYN-PROD-01",
+        "SYN-PROD-03"
+      ],
+      "cves": [
+        "CVE-2099-20110",
+        "CVE-2099-20112",
+        "CVE-2099-20113"
+      ],
+      "supersedes": [
+        "SYN-UPDATE-011"
+      ],
+      "prerequisites": [
+        "SYN-UPDATE-011"
+      ]
+    },
+    {
+      "update_id": "SYN-UPDATE-013",
+      "kb": "KB9000013",
+      "release": "2099-05",
+      "class": "checkpoint-branch",
+      "products": [
+        "SYN-PROD-02"
+      ],
+      "cves": [
+        "CVE-2099-20112"
+      ],
+      "supersedes": [
+        "SYN-UPDATE-010"
+      ],
+      "prerequisites": [
+        "SYN-UPDATE-010"
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "update_id": "SYN-UPDATE-010",
+      "product_id": "SYN-PROD-01",
+      "cve": "CVE-2099-20110",
+      "relation": "synthetic-remediation"
+    },
+    {
+      "update_id": "SYN-UPDATE-010",
+      "product_id": "SYN-PROD-02",
+      "cve": "CVE-2099-20110",
+      "relation": "synthetic-remediation"
+    },
+    {
+      "update_id": "SYN-UPDATE-010",
+      "product_id": "SYN-PROD-01",
+      "cve": "CVE-2099-20111",
+      "relation": "synthetic-remediation"
+    },
+    {
+      "update_id": "SYN-UPDATE-012",
+      "product_id": "SYN-PROD-01",
+      "cve": "CVE-2099-20110",
+      "relation": "synthetic-remediation"
+    },
+    {
+      "update_id": "SYN-UPDATE-012",
+      "product_id": "SYN-PROD-03",
+      "cve": "CVE-2099-20112",
+      "relation": "synthetic-remediation"
+    },
+    {
+      "update_id": "SYN-UPDATE-012",
+      "product_id": "SYN-PROD-03",
+      "cve": "CVE-2099-20113",
+      "relation": "synthetic-remediation"
+    }
+  ]
+}
