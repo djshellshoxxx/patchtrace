@@ -285,6 +285,8 @@ class ProjectService:
                       category: str, reason: str) -> None:
         if not reason.strip():
             raise ValueError('PT-SCHEMA: manual correction requires an analyst reason')
+        if not older_ids and not newer_ids:
+            raise ValueError('PT-SCHEMA: correction must select at least one function')
         if len(older_ids + newer_ids) != len(set(older_ids + newer_ids)):
             raise ValueError('PT-SCHEMA: correction has duplicate selected function IDs')
         candidate = self.project.model_copy(deep=True)
