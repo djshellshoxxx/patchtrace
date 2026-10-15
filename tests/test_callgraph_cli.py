@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
 import subprocess
 import sys
 import threading
@@ -221,7 +222,11 @@ def test_series_with_a_missing_pair_project_is_partial_with_unknown_cells(tmp_pa
     root, chain = series_root(tmp_path / 'broken')
     from patchtrace.nway import series as store
     ref = store.load(root / store.SERIES_FILE).pair_projects[1]
-    shutil.rmtree(root / ref.path)
+    def _writable(func, path, _exc):  # copied artifacts are read-only; Windows refuses to delete those
+        os.chmod(path, 0o600)
+        func(path)
+
+    shutil.rmtree(root / ref.path, onexc=_writable)
     result = run('series', str(root), '--chain', chain, '--json')
     assert result.code == 3 and result.document['status'] == 'partial'
     assert any('unknown' in w for w in result.document['warnings'])
