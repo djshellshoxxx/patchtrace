@@ -789,3 +789,10 @@ Automated evidence only: a fake interpreter answers the real `decompile` request
 | Known gates | append-only (same row no-op, other content refused), resume after a crash between decision and version, export golden, no bulk flag, accept and export are separate (no `.yar` after accept; one `rule-export` row and no version after export), a file that was not read is never `no match`, header without path or user name, secret strings refused, `rules` imports neither `yara_x`, `iced_x86` nor Qt | pinned by named tests |
 | Real child | `rules _rules-worker` answers a probe request file (exit 0, empty stdout) and refuses a bad one (exit 2); `rules test` through the real worker gives the expected grid | pass |
 Not verified here: Windows; the frozen executable; a live backend for `rules propose` (the tests use a fixture backend); a real series.
+
+### [WBQ-S6-S9:qt-modules]
+| Item | Evidence |
+|---|---|
+| Tests | `tests/test_ui_pemeta.py` (39), `tests/test_ui_codetext.py` (34), offscreen, `tools/qt_gate.py --repeat 5` over both: 365 passed |
+| Budgets measured here (offscreen, Linux, shared CPU) | scroll window refresh 5-10 ms at 6.5k and 65k lines (gate 30 ms); 65k-line install adds about 135 ms per pane over a plain `setPlainText` (gate 450 ms); 100,000 API rows: table swap and 100,000 `data()` calls inside 3x the plan budget |
+| Not verified | Windows; NVDA/Narrator; DPI; high contrast; Consolas bold advance; pixel probe; the 20x single-session repeat (5x run) |

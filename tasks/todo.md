@@ -515,3 +515,7 @@
 ### [PIL-C2:read-model]
 - [x] pilot/read_model.py (tests/test_pilot_read_model.py)
 - [ ] ui_leads.py, leads.* tooltips, PANEL registration, reveal_location, storage prepare/commit split (GUI track)
+### [WBQ-S6-S9:qt-modules]
+- [x] S6 `pemeta_view.py`, `ui_pemeta.py`, `tests/test_ui_pemeta.py` (39 tests); S9 `codetext_view.py`, `ui_codetext.py`, `tests/test_ui_codetext.py` (34 tests); qt_gate x5 green (365 passed).
+- [ ] Integrator: Files panel hosts `PeMetaWidget` as a "Build facts" tab and feeds it a `PeMetaSnapshot` (needs WBQ S5 in `inspect.py`; S3 Rich header rows are not built); `ui.py` seam: `CodeTextController(self.old_view, self.new_view, announce=ctx.announce, live_base=...)`, `begin(...)` before and `finish()` after the `setPlainText` calls in `render_match`, `configure(colors, marks)` from QSettings `desktop/code_colors` and `desktop/token_marks` (default off), F8 and Shift+F8 actions calling `step_change(+1/-1)`, the label under the hunk selector, Setup rows; tooltip ids from `TIPS` in both UI modules move into `tooltips.py` or the panel specs.
+- [ ] BLOCKED, live evidence: NVDA and Narrator reading of the "Line changes" label, 125/150/200% DPI, Windows high contrast, bold advance in Consolas, pixel probe of syntax foreground on a hunk row.

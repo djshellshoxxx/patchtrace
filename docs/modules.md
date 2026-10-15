@@ -829,3 +829,10 @@ R5 contract notes: no persisted contract changed. Deviations from the card, all 
 
 ### [PIL-C2:read-model]
 | leads read model | src/patchtrace/pilot/read_model.py | Qt-free state resolution L0-L8, context choices, precomputed lead rows, banners, filter | pilot.report, store, review | built; ui_leads.py and the dock wait for the GUI panel registry |
+### [WBQ-S6-S9:qt-modules]
+| module | file | role | tests |
+|---|---|---|---|
+| pemeta_view | src/patchtrace/pemeta_view.py | Qt-free view-model of the PE "Build facts" tab: `SideMeta`/`PeMetaSnapshot` in, `FactRow`s, notes, `StateModel` and worker-side `prepare_meta` (`PreparedTable`s) out; plan section 8 copy; unknown is `unavailable`, never changed | tests/test_ui_pemeta.py |
+| ui_pemeta | src/patchtrace/ui_pemeta.py | `PeMetaWidget`: `StateView` over a facts `VirtualTable` and an imported-API `VirtualTable` with filter; Enter emits `show_callers(dll, name)`; exports `TIPS` | tests/test_ui_pemeta.py |
+| codetext_view | src/patchtrace/codetext_view.py | Qt-free: settings keys, copy, tips, `model_for_pair(PairText)`, `window_bounds`, `look` (palette role + mark with the contrast guard) | tests/test_ui_codetext.py |
+| ui_codetext | src/patchtrace/ui_codetext.py | `CodeTextController` + `CodeHighlighter`: windowed `QSyntaxHighlighter` per pane (window = visible +/- 80, model installed before the text), "Line changes" label, F8 walk (`step_change`), fail-closed notice, `set_suppress_colors` | tests/test_ui_codetext.py |
