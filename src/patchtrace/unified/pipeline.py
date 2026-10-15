@@ -297,12 +297,12 @@ def _validate_sources(sources: Iterable[str]) -> tuple[str, ...]:
     return chosen
 
 
-def _stored_sets(service, sources: tuple[str, ...]) -> tuple[LoadedSecondary, ...]:
+def _stored_sets(service, sources: tuple[str, ...], pair: tuple[str, str] | None = None) -> tuple[LoadedSecondary, ...]:
     wanted = set(sources) & set(SECONDARY_ENGINES)
     if not wanted:
         return ()
     try:
-        rows = current_sets(EnrichmentStore(service.store))
+        rows = current_sets(EnrichmentStore(service.store), pair=pair)
     except (EnrichmentError, sqlite3.Error, ValueError):
         raise fail('PT-UNIFIED-STORE', 'secondary-unreadable') from None
     return tuple(LoadedSecondary(entry.id, match_set) for entry, match_set in rows if match_set.engine in wanted)
@@ -346,8 +346,8 @@ def make_plan(service, sources: Iterable[str] = ALL_SOURCES, *, limits: UnifiedL
     older, newer = _layouts(service)
     raw_path, raw_status = _raw_state(service.root, run)
     manual = snapshot_from_project(project, run.id, limits, manual_only=True)
-    secondary = _stored_sets(service, chosen)
     sides = {a.side: a.sha256 for a in project.artifacts}
+    secondary = _stored_sets(service, chosen, (sides['older'], sides['newer']) if {'older', 'newer'} <= sides.keys() else None)
     placed, note = (_find_ir(service.root, run.id, (sides['older'], older), (sides['newer'], newer)) if use_ir
                     else (None, None))
     base = Plan(project_id=project.id, revision=project.revision, run_id=run.id, raw_sha256=run.raw_sha256,

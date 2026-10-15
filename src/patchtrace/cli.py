@@ -768,7 +768,8 @@ def cmd_secondary(args, cancel) -> int:
         store = EnrichmentStore(service.store)
         if args.action == 'reconcile':
             from .secondary.store import select_current
-            chosen, superseded = select_current(load_secondary(store))
+            pair = (sides['older'].sha256, sides['newer'].sha256) if {'older', 'newer'} <= sides.keys() else None
+            chosen, superseded = select_current(load_secondary(store), pair)
             sets = [m for _, m in chosen]
             if not sets:
                 _emit(args, 'secondary reconcile', 'complete', {'reports': []}, [], 'No secondary match sets stored.')

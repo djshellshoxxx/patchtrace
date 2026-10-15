@@ -49,3 +49,20 @@ def test_sec1_rzdiff_reads_verified_copy_not_original(tmp_path):
     out, seen = _run_rzdiff(older, newer, _sha(b'old'), _sha(b'new'))
     assert out.run.status == 'ok'
     assert str(older) not in seen[0] and str(newer) not in seen[0]
+
+
+def _row(entry_id, created, engine, older, newer):
+    from patchtrace.enrichment.storage import Entry, Guard
+    entry = Entry(id=entry_id, kind='secondary-matches', guard=Guard('p', 'r', 'x', 'y'), project_revision=1,
+                  created=created, status='complete', body={}, stale=False)
+    return entry, SimpleNamespace(engine=engine, older_sha256=older, newer_sha256=newer)
+
+
+def test_sec2_newer_row_for_another_pair_does_not_hide_current_pair():
+    from patchtrace.secondary.store import select_current
+    mine = _row('a', '2026-01-01T00:00:00', 'bindiff', 'o1', 'n1')
+    other = _row('b', '2026-02-01T00:00:00', 'bindiff', 'o2', 'n2')
+    chosen, _ = select_current([other, mine], pair=('o1', 'n1'))
+    assert [e.id for e, _ in chosen] == ['a']
+    chosen, _ = select_current([other, mine], pair=('o9', 'n9'))  # no row for the pair: newest, shown as stale
+    assert [e.id for e, _ in chosen] == ['b']
