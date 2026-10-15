@@ -10,7 +10,7 @@ Session `session_01Mr844cQDLwXi9iMUoGmBXk`; branch `claude/instance-d-gui`; pare
 | F4 VirtualTable | built, in branch (bbb92ad,f1d23cc); 47 tests, qt_gate 5x ok; open: TSV formula-prefix neutralisation, sort command for panels | |
 | F3 | built, in branch (a98bf40..1784c44); 177 tests, 10x gate ok | dark stylesheet == DARK_STYLE |
 | F6b GraphCanvas | built, in branch (a512c67); 59 tests, 5x gate ok; minimap not built | |
-| F8 evidence+engine-setup migration | built, in branch (a7ce5e2); 800 tests 5x; ui.py ceiling 25->17; threads/table/StateView migration + M4 not done (C6 tests drive legacy paths) | |
+| F8 evidence+engine-setup migration | built, in branch (a7ce5e2); 800 tests 5x; ui.py ceiling 25->17; threads/table/StateView migration + M4 done in the GUI2 follow-through (below) | |
 | F7 theme variants | built, in branch (2089c06,2fc7f58); 17 new tests, qt_gate 5x all GUI files 6295 passed; M22 blocked (Windows) | 
 | F9 | worker running | |
 | F6a CodeDiffView | built, in branch (d9ccfb6); 105 tests, 5x gate ok; ui.py M4 selection sites move in F8 | |
@@ -18,3 +18,4 @@ Session `session_01Mr844cQDLwXi9iMUoGmBXk`; branch `claude/instance-d-gui`; pare
 | F5, F6a/b, F7, F8, F9 | waiting on deps | GUI plan section 9 |
 | Panel wave | waits for F5 + feature view-models | |
 | Audits + `migration-readiness.md` | waits for features | |
+| GUI2 follow-through | done 2026-10-15; qt_gate 5x over all GUI files 6465 passed (6 commits after the merge of claude/instance-d-gui) | TSV formula prefixes neutralised in `build_tsv`; M4 selections via `compose_selections` (ui.py 3,077 lines, ceiling -65); evidence load/run/probe on `TaskRunner` (engine events through a drained queue so latest-wins progress cannot drop an outcome); evidence matches on `VirtualTable` (pure `secondary/evidence_table.py`, prepared in the load worker; `set_filter` row predicate and `ColumnSpec.tooltip` added); evidence state page on `StateView` (`text_limit`/`multiline` kwargs); tips `evidence.retry`, `evidence.copy_error`, `evidence.open_engines` removed, test_tooltips id floor 25 -> 22 |
