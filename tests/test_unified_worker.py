@@ -482,3 +482,10 @@ def test_self_check_imports_the_modules_of_this_slice(capsys):
                      'sources.manual', 'sources.secondary', 'fusion.components', 'fusion.arbiter', 'facts.pseudo',
                      'facts.channels', 'facts.verdict', 'exchange', 'compute', 'pipeline', 'worker', 'cli'}
     assert slice_modules <= set(worker.MODULES)
+
+
+def test_ladder_cap_hits_make_the_result_partial_except_neighbour_cap_ue_b_06():
+    for slug in ('ladder-limit-block-cap:3', 'ladder-limit-assign-time-cap:1', 'ladder-limit-callsite-cap:2',
+                 'ladder-limit-rehash-wave-cap:1', 'ladder-limit-assign-bucket-cap:4'):
+        assert compute.is_degrading(slug), slug
+    assert not compute.is_degrading('ladder-limit-neighbour-cap:3')

@@ -53,6 +53,10 @@ from .sources.secondary import SecondaryAdapter, bindiff_flags, read_loaded, sou
 
 TIMEOUT = 'timeout'    # limitation: the deadline passed after the ladder began; unfinished rows stay `unknown` (U7-06)
 DEGRADING_SUFFIXES = ('-address-basis-not-comparable', '-pair-mismatch')
+# 07 U4: a cap hit makes the result partial; `neighbour-cap` only trims context and keeps the result complete
+# (tools/unified/bench.py `_row_checks` agrees)
+DEGRADING_LIMITS = ('ladder-limit-block-cap', 'ladder-limit-assign-time-cap', 'ladder-limit-assign-bucket-cap',
+                    'ladder-limit-callsite-cap', 'ladder-limit-rehash-wave-cap')
 Sections = tuple[tuple[int, int], ...]
 
 
@@ -139,7 +143,7 @@ def plan_identity(inputs: SourceInputs, addr: AddressMap, sources: Iterable[str]
 def is_degrading(limitation: str) -> bool:
     """A limitation that makes the result `partial` (a missing or unusable input), as opposed to a plain note."""
     slug = limitation.split(':', 1)[0]
-    return slug in DEGRADING or slug == TIMEOUT or slug.endswith(DEGRADING_SUFFIXES)
+    return slug in DEGRADING or slug == TIMEOUT or slug in DEGRADING_LIMITS or slug.endswith(DEGRADING_SUFFIXES)
 
 
 def _ladder(ir: IrInputs, manual: AdapterOutput, limits: UnifiedLimits, budget: Budget, residual: bool) -> AdapterOutput:
