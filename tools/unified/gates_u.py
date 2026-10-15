@@ -33,6 +33,7 @@ from tools.calibration.bootstrap import MIN_GROUPS_HEADLINE
 from tools.calibration.common import digest, strict_json
 from tools.calibration.tier_r.contracts import ContractError, dump_json
 from tools.unified import bench, evaluators, outcomes
+from tools.unified.corpus import aa
 from tools.unified.corpus import manifest as corpus_manifest
 from tools.unified.mutations import classes
 
@@ -284,8 +285,9 @@ def corpus_facts(m: corpus_manifest.CorpusManifest | None) -> dict[str, dict]:
     lineages = len({p.lineage for p in gate3})
     return {
         'G-U1': {'P0': roles['P0'], 'P0_x_vs_x': sum(1 for p in m.pairs if p.role == 'P0' and p.x_vs_x),
-                 'P1': roles['P1'], 'P2': roles['P2'], 'pending_p1': [x.item for x in m.pending
-                                                                      if x.item.startswith('P1:')]},
+                 'P1': roles['P1'], 'P2': roles['P2'], 'P1_variants': sorted({p.variant for p in m.pairs if p.role == 'P1' and p.variant}),
+                 'pending_p1': [f'P1:{k}' for k in aa.P1_KINDS
+                                if k not in {p.variant for p in m.pairs if p.role == 'P1'}]},
         'G-U2': {'mutants_per_class': {c.id: mutants.get(c.id, 0) for c in classes.CLASSES},
                  'classes_below_minimum': [c.id for c in classes.CLASSES if mutants.get(c.id, 0) < MIN_MUTANTS_PER_CLASS],
                  'minimum': MIN_MUTANTS_PER_CLASS,

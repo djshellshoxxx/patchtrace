@@ -74,12 +74,12 @@ class BaseSource:
     tag: str = ''
 
     def spec(self, *, opt: str = 'O2', link_order: str = 'sorted', variant: str = '', root: Path | None = None,
-             profile: str | None = None) -> BuildSpec:
+             profile: str | None = None, nuisance: str = '') -> BuildSpec:
         return BuildSpec(project=self.project, source_root=Path(root or self.root), files=self.files,
                          output=self.output, profile=profile or self.profile, opt=opt, include_dirs=self.include_dirs,
                          defines=self.defines, cflags=self.cflags, generated=self.generated,
                          dependencies=self.dependencies, link_order=link_order, variant=variant,
-                         source_date_epoch=self.source_date_epoch, std=self.std)
+                         source_date_epoch=self.source_date_epoch, std=self.std, nuisance=nuisance)
 
 
 @dataclass
@@ -286,6 +286,27 @@ def run_aa(session: Session, base: BaseSource, *, opt: str = 'O2', layout: bool 
                                  functions=label_construction(sa, sc, label_source='same-source', semantic=False),
                                  case={'kind': 'link-order', 'order': order, 'opt': opt}))
     return docs
+
+
+def run_nuisance(session: Session, base: BaseSource, kinds: Sequence[str], *, opt: str = 'O2'
+                 ) -> tuple[list[dict], list[str]]:
+    """P1 pairs beyond link order: the rebuild `aa-a` against the same source built with one nuisance. An identical image
+    is kept (it is an X-versus-X pair, a stricter check); a variant the toolchain cannot build is listed as skipped."""
+    docs, skipped = [], []
+    a = session.build(base.spec(opt=opt, variant='aa-a'))
+    sa = session.side(a, base.root)
+    for kind in kinds:
+        try:
+            c = session.build(base.spec(opt=opt, variant=f'aa-{kind}', nuisance=kind))
+        except (Blocked, BuildError) as exc:
+            skipped.append(f'{kind}: {exc}'[:300])
+            continue
+        sc = session.side(c, base.root)
+        docs.append(finalize(pid=pair_id('aa', base.project, base.tag, opt, kind), stratum='aa', method='aa-layout',
+                             base_old=base, base_new=base, old=sa, new=sc, label_source='same-source',
+                             functions=label_construction(sa, sc, label_source='same-source', semantic=False),
+                             case={'kind': 'nuisance', 'nuisance': kind, 'opt': opt}))
+    return docs, skipped
 
 
 def noise_variants(base: BaseSource, tools: Toolchain) -> list[tuple[str, str, str, str]]:

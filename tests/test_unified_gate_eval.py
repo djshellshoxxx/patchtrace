@@ -15,6 +15,7 @@ from unified_s6_helpers import label_doc, mutation_doc  # noqa: E402
 
 from tools.calibration.tier_r.contracts import ContractError  # noqa: E402
 from tools.unified import gates_u, outcomes  # noqa: E402
+from tools.unified.corpus import aa  # noqa: E402
 from tools.unified.corpus import manifest as corpus_manifest  # noqa: E402
 from tools.unified.mutations import classes, templates  # noqa: E402
 
@@ -64,14 +65,32 @@ def good_aa():
 def test_g_u1_clean_aa_pairs_pass_the_data_but_the_unbuilt_p1_variants_keep_it_pending():
     g1 = gate(gates_u.build_report(inputs(aa_manifest(), good_aa())), 'G-U1')
     assert g1.status == 'pending'
-    assert any('P1:icf-toggle' in r for r in g1.reasons) and not any('fail' in r for r in g1.reasons)
+    assert any('P1:icf' in r for r in g1.reasons) and not any('fail' in r for r in g1.reasons)
     assert g1.observed['evaluated'] == {'aa-p0': 'pass', 'aa-p1': 'pass', 'aa-x': 'pass'}      # P2 is reported, never gated
 
 
-def test_g_u1_passes_when_nothing_is_pending():
-    m = aa_manifest()
-    done = m.model_copy(update={'pending': tuple(p for p in m.pending if not p.item.startswith('P1:'))})
-    assert gate(gates_u.build_report(inputs(done, good_aa())), 'G-U1').status == 'pass'
+def variant_docs():
+    return [label_doc(f'aa-v-{k}', 'aa', method='aa-layout', case={'kind': 'link-order' if k == 'link-order' else 'nuisance',
+                                                                   'nuisance': k}) for k in aa.P1_KINDS]
+
+
+def test_g_u1_passes_when_every_p1_variant_is_covered_and_clean():
+    docs = [label_doc('aa-x', 'aa', older='a' * 64, newer='a' * 64), label_doc('aa-p0', 'aa'), *variant_docs()]
+    m = corpus_manifest.build(docs, {})
+    assert {p.variant for p in m.pairs if p.role == 'P1'} == set(aa.P1_KINDS)
+    good = run('linux', *(pair(d, rows()) for d in docs))
+    g1 = gate(gates_u.build_report(inputs(m, good)), 'G-U1')
+    assert g1.status == 'pass' and g1.observed['p1_variants'] == {k: True for k in aa.P1_KINDS}
+
+
+def test_g_u1_a_material_row_in_one_nuisance_variant_fails_that_variant():
+    docs = [label_doc('aa-p0', 'aa'), *variant_docs()]
+    bad = rows()
+    bad[0] = R(older=bad[0].older, newer=bad[0].newer, decision='matched', materiality='material')
+    got = run('linux', *(pair(d, bad if d.pair_id == 'aa-v-icf' else rows()) for d in docs))
+    g1 = gate(gates_u.build_report(inputs(corpus_manifest.build(docs, {}), got)), 'G-U1')
+    assert g1.status == 'fail' and g1.observed['evaluated']['aa-v-icf'] == 'fail'
+    assert g1.observed['evaluated']['aa-v-path'] == 'pass'
 
 
 @pytest.mark.parametrize('bad', ['changed-row', 'one-sided', 'contested'], ids=['changed', 'one-sided', 'contested'])

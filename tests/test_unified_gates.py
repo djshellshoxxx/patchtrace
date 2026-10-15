@@ -18,6 +18,7 @@ from unified_s6_helpers import evaluated, label_doc, mutation_doc, row  # noqa: 
 
 from tools.calibration.tier_r.contracts import ContractError  # noqa: E402
 from tools.unified import bench, gates_u  # noqa: E402
+from tools.unified.corpus import aa  # noqa: E402
 from tools.unified.corpus import manifest as corpus_manifest  # noqa: E402
 from tools.unified.mutations import classes, templates  # noqa: E402
 
@@ -131,7 +132,7 @@ def test_readiness_counts_the_corpus_the_gates_will_read_and_flags_what_is_short
     assert g2['classes_below_minimum'] == [] and set(g2['mutants_per_class'].values()) == {20}
     assert {p['class'] for p in g2['pending_classes']} == {'moved-rva-call', 'try-scope'}
     g1 = by_id(full)['G-U1'].observed['corpus']
-    assert (g1['P0'], g1['P0_x_vs_x'], g1['P1'], g1['P2']) == (1, 1, 1, 1) and len(g1['pending_p1']) == 4
+    assert (g1['P0'], g1['P0_x_vs_x'], g1['P1'], g1['P2']) == (1, 1, 1, 1) and g1['pending_p1'] == [f'P1:{k}' for k in aa.P1_KINDS]
     short = gates_u.build_report(inputs(manifest=corpus(per_class=19)))
     assert set(by_id(short)['G-U2'].observed['corpus']['classes_below_minimum']) == {c.id for c in classes.CLASSES}
     g3 = by_id(full)['G-U3'].observed['corpus']

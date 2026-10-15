@@ -11,6 +11,7 @@ from collections import Counter
 from collections.abc import Sequence
 from typing import Any
 
+from tools.unified.corpus import aa
 from tools.unified.corpus import manifest as corpus_manifest
 from tools.unified.mutations import classes
 
@@ -68,7 +69,10 @@ def g_u1(manifest: corpus_manifest.CorpusManifest, sets: Sequence[OutcomeSet]) -
     if not pairs:
         reasons.append('the corpus manifest has no gated A/A pair (P0 or P1)')
     observed = {'evaluated': dict(sorted(evaluated.items())), 'p2_not_gated': sum(1 for p in manifest.pairs if p.role == 'P2')}
-    waiting = [f'pending: {p.item} ({p.reason.split(";")[0]})' for p in manifest.pending if p.item.startswith('P1:')]
+    covered = {p.variant for p in pairs if p.role == 'P1'}
+    waiting = [f'pending: P1:{kind} (no pair of this variant in the corpus manifest: not built, or not yet supplied)'
+               for kind in aa.P1_KINDS if kind not in covered]
+    observed['p1_variants'] = {kind: kind in covered for kind in aa.P1_KINDS}
     if failed:
         return 'fail', reasons, observed
     if missing or not pairs:

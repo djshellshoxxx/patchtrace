@@ -539,6 +539,11 @@
 - [ ] Still pending gates: G-U3 (IR-to-ladder adapter and a pinned BinDiff), G-U6 (SPEC-32 evaluation core), G-U7 (rows with atoms), G-U4 chain checks (third version per project), G-U1 P1 nuisance variants (BuildSpec link flags)
 
 
+### [UE3-S6c:gates]
+- [x] G-U1 P1 nuisance variants (generator and evaluator coverage); built only on the next live `unified-live-gates.yml` run (not dispatched here)
+- [ ] BLOCKED / not run: every live part; whether lld honours each nuisance as intended is known only from the first Tier R build
+
+
 ### [UE2-U3U5:explain-columns]
 - [x] Explain fragment in `build_context` / the existing ContextDialog flow (rows with a Ghidriff match); `unified/columns` persisted; qt_gate x5 green on the Unified, columns, host-seam and tooltip tests
 - [ ] Open: rows without a Ghidriff match still use the own preview (build_context needs a stored match); Windows DPI and screen-reader passes

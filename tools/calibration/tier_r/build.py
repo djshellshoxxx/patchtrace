@@ -50,6 +50,40 @@ class BuildError(RuntimeError):
     pass
 
 
+NUISANCES = ('icf', 'timestamp', 'guid', 'path')    # P1 of SPEC-31 08 s1 beside link order
+NUISANCE_EPOCH = 1700000000                          # the /timestamp the `timestamp` variant stamps instead of /Brepro
+PATH_MAPS = ('-ffile-compilation-dir=', '-ffile-prefix-map=', '-fdebug-prefix-map=')
+
+
+def nuisance_compile(argv: Sequence[str], nuisance: str) -> list[str]:
+    """`path`: the compile argv without the flags that keep the scratch directory out of the object files."""
+    if nuisance != 'path':
+        return list(argv)
+    return [a for a in argv if not a.startswith(PATH_MAPS)]
+
+
+def nuisance_link(profile: str, link: Sequence[str], nuisance: str) -> list[str]:
+    """The link argv of a nuisance variant. `icf` folds identical functions, `timestamp` stamps a fixed other time
+    instead of the /Brepro hash, `guid` drops /Brepro (time and GUID come from the linker's defaults). A variant a
+    profile's linker cannot express raises BuildError, and the corpus lists it as skipped."""
+    out = list(link)
+    if nuisance in ('', 'path'):
+        return out
+    if profile == 'msvc-free':
+        if nuisance == 'icf':
+            return ['/opt:icf' if a == '/opt:noicf' else a for a in out]
+        if nuisance == 'timestamp':
+            return [f'/timestamp:{NUISANCE_EPOCH}' if a == '/Brepro' else a for a in out]
+        return [a for a in out if a != '/Brepro']
+    if nuisance == 'guid':
+        raise BuildError(f'nuisance guid needs the msvc-free profile, not {profile}')
+    if nuisance == 'timestamp':
+        return [a for a in out if a != '-Wl,--no-insert-timestamp']
+    if profile != 'mingw-clang':
+        raise BuildError('nuisance icf needs lld (profile mingw-clang or msvc-free)')
+    return [*out, '-Wl,--icf=all']
+
+
 @dataclass(frozen=True)
 class BuildSpec:
     project: str
@@ -67,6 +101,7 @@ class BuildSpec:
     variant: str = ''
     source_date_epoch: int = 0
     std: str | None = None
+    nuisance: str = ''                  # '' or one of NUISANCES: a link/compile difference that must not change a verdict
 
     def __post_init__(self):
         if self.opt not in OPTS:
@@ -75,6 +110,8 @@ class BuildSpec:
             raise BuildError(f'profile {self.profile} cannot build on this host')
         if self.link_order not in ('sorted', 'reversed', 'rotated'):
             raise BuildError('link_order must be sorted, reversed or rotated')
+        if self.nuisance and self.nuisance not in NUISANCES:
+            raise BuildError(f'nuisance must be empty or one of {", ".join(NUISANCES)}')
         for rel in (*self.files, *self.include_dirs, *(g for g, _ in self.generated)):
             _check_rel(rel)
         if not self.files:
@@ -255,7 +292,7 @@ def _build_in(spec: BuildSpec, tools: Toolchain, store: Path, root: Path, scratc
     objs, templates = [], []
     for index, rel in enumerate(sorted(units)):
         obj = f'../obj/{index:05d}.o'
-        argv = _compile_argv(tools, spec, src_dir, rel, obj, include_dirs)
+        argv = nuisance_compile(_compile_argv(tools, spec, src_dir, rel, obj, include_dirs), spec.nuisance)
         templates.append(_template(argv, src_dir))
         try:
             run_tool(argv, cwd=src_dir, env=env, timeout=COMPILE_TIMEOUT, check=True)
@@ -277,6 +314,7 @@ def _build_in(spec: BuildSpec, tools: Toolchain, store: Path, root: Path, scratc
     else:
         link = [tools.path('mingw-gcc'), '-shared', '-o', f'../out/{spec.output}', *linked, '-static-libgcc',
                 '-Wl,--no-insert-timestamp', f'-Wl,--image-base={IMAGE_BASE:#x}']
+    link = nuisance_link(spec.profile, link, spec.nuisance)
     try:
         run_tool(link, cwd=src_dir, env=env, timeout=COMPILE_TIMEOUT, check=True)
     except ToolError as exc:
@@ -299,6 +337,8 @@ def _build_in(spec: BuildSpec, tools: Toolchain, store: Path, root: Path, scratc
               'compile': templates, 'link': _template(link, src_dir), 'versions': versions,
               'defines': list(spec.defines), 'cflags': list(spec.cflags), 'include_dirs': include_dirs,
               'source_date_epoch': spec.source_date_epoch}
+    if spec.nuisance:                   # added only when set, so every digest of an ordinary build stays as it was
+        recipe['nuisance'] = spec.nuisance
     recipe_digest = _sha(canonical_json(recipe))
     debug_sha = debug_img.sha256
     engine_sha = engine_img.sha256
