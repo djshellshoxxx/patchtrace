@@ -67,6 +67,7 @@ class BuildSpec:
     variant: str = ''
     source_date_epoch: int = 0
     std: str | None = None
+    libs: tuple[str, ...] = ()                            # bare import-library names, linked after the objects
 
     def __post_init__(self):
         if self.opt not in OPTS:
@@ -209,6 +210,11 @@ def _compile_argv(tools: Toolchain, spec: BuildSpec, src_dir: Path, rel: str, ob
             '-c', rel, '-o', obj]
 
 
+def link_lib_args(spec: BuildSpec) -> list[str]:
+    """`-l<name>` arguments for the mingw profiles (names are validated bare words in the recipe contract)."""
+    return [f'-l{name}' for name in spec.libs] if spec.profile in ('mingw-gcc', 'mingw-clang') else []
+
+
 def _template(argv: Sequence[str], src_dir: Path) -> list[str]:
     """argv with the scratch path replaced, so the recipe digest is independent of the build directory."""
     return [a.replace(str(src_dir), '<SRC>') for a in argv[1:]]
@@ -273,9 +279,10 @@ def _build_in(spec: BuildSpec, tools: Toolchain, store: Path, root: Path, scratc
                 runtime_lib]
     elif spec.profile == 'mingw-clang':
         link = [tools.path('clang'), '--target=x86_64-w64-windows-gnu', '-fuse-ld=lld', '-shared', '-o',
-                f'../out/{spec.output}', *linked, '-Wl,--no-insert-timestamp', f'-Wl,--image-base={IMAGE_BASE:#x}']
+                f'../out/{spec.output}', *linked, *link_lib_args(spec), '-Wl,--no-insert-timestamp',
+                f'-Wl,--image-base={IMAGE_BASE:#x}']
     else:
-        link = [tools.path('mingw-gcc'), '-shared', '-o', f'../out/{spec.output}', *linked, '-static-libgcc',
+        link = [tools.path('mingw-gcc'), '-shared', '-o', f'../out/{spec.output}', *linked, *link_lib_args(spec), '-static-libgcc',
                 '-Wl,--no-insert-timestamp', f'-Wl,--image-base={IMAGE_BASE:#x}']
     try:
         run_tool(link, cwd=src_dir, env=env, timeout=COMPILE_TIMEOUT, check=True)

@@ -72,6 +72,7 @@ class BaseSource:
     source_date_epoch: int = 0
     std: str | None = None
     tag: str = ''
+    libs: tuple[str, ...] = ()
 
     def spec(self, *, opt: str = 'O2', link_order: str = 'sorted', variant: str = '', root: Path | None = None,
              profile: str | None = None) -> BuildSpec:
@@ -79,7 +80,7 @@ class BaseSource:
                          output=self.output, profile=profile or self.profile, opt=opt, include_dirs=self.include_dirs,
                          defines=self.defines, cflags=self.cflags, generated=self.generated,
                          dependencies=self.dependencies, link_order=link_order, variant=variant,
-                         source_date_epoch=self.source_date_epoch, std=self.std)
+                         source_date_epoch=self.source_date_epoch, std=self.std, libs=self.libs)
 
 
 @dataclass
@@ -197,7 +198,7 @@ def recipe_base(book: C.RecipeBook, recipe: C.Recipe, ref: str, commit: str, sto
                       profile='mingw-gcc' if recipe.libc == 'mingw' else 'msvc-free',
                       include_dirs=tuple(eff['include_dirs']) or ('.',), defines=tuple(eff['defines']),
                       cflags=recipe.cflags, generated=tuple(generated), dependencies=tuple(deps),
-                      source_date_epoch=int(done.get('commit_time') or 0), tag=ref)
+                      source_date_epoch=int(done.get('commit_time') or 0), tag=ref, libs=tuple(eff['libs']))
 
 
 CARD_KIND_DEFAULT = {'bounds-only': 'bounds-check-change', 'constant-only': 'constant-change',
