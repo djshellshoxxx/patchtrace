@@ -6,7 +6,7 @@ Every headless verb, with a working example, the exit codes, and the JSON envelo
 
 ```bash
 patchtrace <verb> ...                          # installed; or PatchTrace.exe <verb> ... (frozen)
-PYTHONPATH=src python -m patchtrace.cli <verb> ...   # from a checkout
+PYTHONPATH=src python -m patchtrace <verb> ...       # from a checkout (python -m patchtrace.cli does nothing: cli.py has no __main__ guard)
 patchtrace                                     # no arguments: opens the desktop
 ```
 
