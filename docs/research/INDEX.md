@@ -24,3 +24,4 @@ Listing of every file under `docs/research/`, 2026-10-14. "Specs cited" lists SP
 | [unified-engine/03-ghidriff-rizin.md](unified-engine/03-ghidriff-rizin.md) | SPEC-11, SPEC-27 | - | 03 Ghidriff (+ Ghidra Version Tracking) and Rizin rz-diff as inputs to a unified diff engine |
 | [unified-engine/04-structural-matching-prior-art.md](unified-engine/04-structural-matching-prior-art.md) | - | - | 04 - Structural matching prior art (classical techniques) for the unified diff engine |
 | [unified-engine/05-fusion-and-noise-reduction.md](unified-engine/05-fusion-and-noise-reduction.md) | SPEC-27, SPEC-28, SPEC-30 | - | 05 - Evidence fusion and noise reduction (unified diff engine research) |
+| [ue-open-questions.md](ue-open-questions.md) | SPEC-31 | - | Unified engine open questions: research, decisions, owner questions |
