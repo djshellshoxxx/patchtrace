@@ -327,10 +327,20 @@ def test_linux_modes_are_applied_and_symlinks_become_copies(tmp_path):
 
 
 # ----- gates (each red) ----------------------------------------------------------------------------------
+def _pin_with_placeholder(tmp_path):
+    """The committed pin is fully resolved now; keep the refusal tests hermetic by re-opening one component."""
+    pin = json.loads(REAL_PIN.read_text(encoding='utf-8'))
+    pin['components']['python-windows'].update(status='placeholder', sha256='PLACEHOLDER-UNRESOLVED', size=None,
+                                               digest_source='none')
+    path = tmp_path / 'placeholder-pin.json'
+    path.write_text(json.dumps(pin), encoding='utf-8')
+    return path
+
+
 def test_unresolved_pin_placeholders_are_refused_before_any_download(tmp_path):
     calls = []
     with pytest.raises(tool.BundleBuildError) as caught:
-        tool.build_backend(REAL_PIN, 'linux', tmp_path / 'out', cache_dir=tmp_path / 'c',
+        tool.build_backend(_pin_with_placeholder(tmp_path), 'linux', tmp_path / 'out', cache_dir=tmp_path / 'c',
                            fetcher=lambda *a: calls.append(a), runner=FakeRunner())
     assert caught.value.code == 'PT-BUNDLE-PIN' and 'placeholder' in str(caught.value) and calls == []
 
@@ -743,8 +753,8 @@ def test_make_offline_bundle_cli_is_unchanged_and_uses_the_shared_module(tmp_pat
     assert legacy._builder().package_payload.__module__ == 'build_backend_bundle'
 
 
-def test_cli_build_refuses_the_committed_pin_with_a_clear_exit_code(tmp_path, capsys):
-    code = tool.main(['build', '--platform', 'linux', '--out', str(tmp_path / 'o'), '--pin', str(REAL_PIN)])
+def test_cli_build_refuses_a_pin_with_a_placeholder_with_a_clear_exit_code(tmp_path, capsys):
+    code = tool.main(['build', '--platform', 'linux', '--out', str(tmp_path / 'o'), '--pin', str(_pin_with_placeholder(tmp_path))])
     assert code == tool.EXIT_BUILD and 'PT-BUNDLE-PIN' in capsys.readouterr().err
 
 
