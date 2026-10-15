@@ -124,6 +124,20 @@ def test_escape_closes_the_palette_without_cancelling_the_job(qtbot, settings):
     assert window.focusWidget() is editor  # focus goes back where it was
 
 
+def test_escape_in_the_result_list_closes_the_palette_without_cancelling_the_job(qtbot, settings):
+    window, host = with_commands(qtbot, settings, [])
+    cancelled = []
+    cancel = QAction('Cancel job', window)
+    cancel.setShortcut(QKeySequence('Escape'))
+    cancel.triggered.connect(lambda: cancelled.append(1))
+    window.addAction(cancel)
+    activate(qtbot, window)
+    host.open_palette()
+    host.palette.results.setFocus()
+    qtbot.keyClick(host.palette.results, Qt.Key.Key_Escape)
+    assert host.palette.isHidden() and not cancelled
+
+
 def test_submenu_actions_all_reach_the_palette(qtbot):
     window = QMainWindow()
     qtbot.addWidget(window)
