@@ -226,6 +226,16 @@ REPLY at the end with only: PR URL, branch name, file count, and "NEXT: <what yo
 
 ---
 
+## PROMPT 12: Format the Gemini help files and research answer (download, no git)
+
+ChatGPT reads two raw files from the repository, formats them, and hands back ONE downloadable zip. Nothing is pasted into chat and nothing is written to GitHub. Unzip it into the repository root (or upload the zip itself to `docs/inbox/chatgpt/` and tell Claude).
+
+```
+(see the Prompt 12 text in chat; kept in sync with this file)
+```
+
+---
+
 ## What to do with the output
 0. Prompt 6 needs no copying: ChatGPT pushes its own branch `chatgpt/deferred-audit-fixes-1` and opens a draft PR. Tell Claude when it appears; Claude reviews the diff and lets CI decide.
 1. Copy each ChatGPT reply (prompts 1-5) (all messages of one prompt, one after another) into a text file named `promptN-<topic>.md`.
