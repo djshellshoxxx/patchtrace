@@ -84,3 +84,4 @@ Tags: [BUILD] code to write, [SPEC] a spec is missing or thin, [PLAN] needs a sh
 
 ## R. Release
 - R1 [BUILD] M: Windows alpha prerelease (after merge sweep). R2 [OWNER] signing, Pages source, logo, Monero address. R3 [BUILD] S: beta notes. No final release without the owner.
+- L7 [BUILD] S: add an additive `deltas` field (paired deltas with sd, minimum detectable delta, power, non-inferiority) to `tier-r-report/1` in `tools/calibration/tier_r/contracts.py`; `evaluate_full()` already returns them (LBL-11). Not produced yet: tier-precision and reliability curves; live Ghidriff run; first real BinDiff export-driven run.
