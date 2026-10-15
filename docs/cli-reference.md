@@ -1,14 +1,14 @@
 # CLI reference
 
-Generated 2026-10-14 from `argparse` (`patchtrace.cli._parser`) and the `cli_commands` registry, and organised by verb as in `docs/specs/cli-umbrella.md` (SPEC-44), which is the contract (per-verb exit-code table in its section 4, flag owners in section 5). Run any verb with `--help` for the live text. Internal worker verbs (`secondary _binexport-worker`, `unified _worker`) are omitted. Launch `patchtrace` without arguments to open the desktop.
+Generated 2026-10-14 from `argparse` (`patchtrace.cli._parser`) and the `cli_commands` registry, and organised by verb as in `docs/specs/cli-umbrella.md` (SPEC-44), which is the contract (per-verb exit-code table in its section 4, flag owners in section 5). Run any verb with `--help` for the live text. Internal worker verbs (`secondary _binexport-worker`, `unified _worker`, `rules _rules-worker`) are omitted. Launch `patchtrace` without arguments to open the desktop.
 
 ## Conventions
 
-- Invocation: `PYTHONPATH=src python -m patchtrace.cli <verb> ...` from a checkout, or `patchtrace <verb> ...` from an install.
+- Invocation: `PYTHONPATH=src python -m patchtrace <verb> ...` from a checkout (`src/patchtrace/__main__.py`; `cli.py` has no `__main__` guard, so `python -m patchtrace.cli` does nothing), or `patchtrace <verb> ...` from an install (`pyproject.toml` `[project.scripts]` points at `patchtrace.__main__:main`).
 - Output: the `enrichment-cli/1` envelope; `--json` where listed emits one JSON document on stdout.
-- Exit codes: 0 success; 2 invalid arguments, configuration or consent; 3 runtime failure; 4 legitimate no result; 5 cancelled. Some verbs map these differently, see SPEC-44 section 4.
+- Exit codes (`cli.py` module docstring, SPEC-44 section 4): 0 success; 2 invalid arguments, configuration or environment, including argparse errors; 3 runtime failure; 4 legitimate no result (complete evidence, zero rows); 5 cancelled. A `status: partial` result exits 0 for `rank` and `correlate`, and 3 for `flags`, `series create`, `secondary run`, `unified run`, `intelligence explain` and `intel-tools run`. Some verbs map these differently, see SPEC-44 section 4.
 - "Required: yes" covers positional arguments and required options. Examples show only the required arguments; replace placeholders with real values.
-- Verbs are either built in (`cli.py`) or discovered from `src/patchtrace/cli_commands/<verb>.py` (stdlib only, exports `COMMAND`; a file that fails to load is listed as unavailable and exits 3). Today the registry holds one verb: `panels`. Built-in verbs `unified`, `intelligence` and `intel-tools` register through package hooks.
+- Verbs are either built in (`cli.py`) or discovered from `src/patchtrace/cli_commands/<verb>.py` (stdlib only, exports `COMMAND`; a file that fails to load is listed as unavailable and exits 3). Today the registry holds five verbs: `fabric`, `kev`, `panels`, `pilot` and `rules` (listed by `python -m patchtrace --help`). Built-in verbs `unified`, `intelligence`, `intel-tools` and `backend` register through package hooks.
 
 ## `patchtrace rank`
 
@@ -68,7 +68,7 @@ Example: `patchtrace correlate <project> --cve <cve>`
 | Flag | Required | Meaning |
 |---|---|---|
 | `--json` | no | emit exactly one JSON document on stdout |
-| `action` | yes |  |
+| `action` | yes | one of `status`, `verify`, `prune` |
 | `--cache-dir CACHE_DIR` | yes |  |
 | `--target-bytes TARGET_BYTES` | no |  |
 
@@ -254,7 +254,10 @@ Derived, ordinal fusion of the stored engine outputs (experimental, derived, ord
 | `--json` | no | emit exactly one JSON document on stdout |
 | `project` | yes |  |
 | `--no-extract` | no | S0 mode: no instruction-level extraction (the only mode in this build) |
-| `--no-decompile` | no | accepted for later modes; no effect in S0 mode |
+| `--no-residual` | no | skip the residual passes P16-P19 of the ladder (another result, another id) |
+| `--no-decompile` | no | skip the on-demand decompile of review pairs (the constant-only pairs stay in review) |
+| `--python PYTHON` | no | external Python executable of the extractor (with `--ghidra-dir` it enables the decompile of review pairs) |
+| `--ghidra-dir GHIDRA_DIR` | no | Ghidra installation root (with `--python`) |
 | `--sources LIST` | no | comma list of ghidriff, bindiff, rz-diff, manual (default: all) (default ghidriff,bindiff,rz-diff,manual) |
 | `--isolate` | no | run the worker as a capped child process (default) (default True) |
 | `--in-process` | no | run in this process (tests and debugging) (default True) |
@@ -431,11 +434,60 @@ Example: `patchtrace panels list `
 
 Example: `patchtrace panels check `
 
+## `patchtrace fabric` (registry verb, `cli_commands/fabric.py`)
+
+Read the anchor fabric (read-only).
+
+| Verb | Flags |
+|---|---|
+| `fabric list` | `--project` (required), `--json`, `--kind`, `--side`, `--role`, `--subject`, `--limit` |
+| `fabric show` | `--project` (required), `--json`, `anchor_id` (required) |
+| `fabric resolve` | `--project` (required), `--json`, `--kind` (required), `--side`, `value` (required) |
+| `fabric stats` | `--project` (required), `--json` |
+
+## `patchtrace kev` (registry verb, `cli_commands/kev.py`)
+
+CISA KEV catalog: status, plan, fetch, import, lookup, diff, prune.
+
+| Verb | Flags |
+|---|---|
+| `kev status` | `--kev-dir`, `--json`, `--max-age-days` |
+| `kev plan` | `--json`, `--source` (required: `cisa-github` or `cisa-site`) |
+| `kev fetch` | `--kev-dir`, `--json`, `--source` (required: `cisa-github` or `cisa-site`), `--consent-hosts`, `--accept-shrink` |
+| `kev import` | `--kev-dir`, `--json`, `file` (required), `--accept-shrink` |
+| `kev lookup` | `--kev-dir`, `--json`, `cve`, `--from-cve-snapshot`, `--catalog`, `--md` |
+| `kev diff` | `--kev-dir`, `--json`, `--from`, `--to` |
+| `kev prune` | `--kev-dir`, `--json`, `--keep` (required), `--yes` |
+
+## `patchtrace pilot` (registry verb, `cli_commands/pilot.py`)
+
+Rank changed functions against an advisory: leads, why, review.
+
+| Verb | Flags |
+|---|---|
+| `pilot leads` | `project` (required), `--json`, `--cve`, `--assume-applies`, `--class` (`fit`, `review`, `partial`, `code`, `queue`), `--limit`, `--no-unified`, `--show-dismissed`, `--dry-run`, `--export` |
+| `pilot why` | `project` (required), `--json`, `--candidate` (required), `--cve` |
+| `pilot review` | `project` (required), `--json`, `--candidate` (required), `--action` (required: `pin`, `unpin`, `dismiss`, `restore`, `note`), `--cve`, `--text` |
+
+## `patchtrace rules` (registry verb, `cli_commands/rules.py`)
+
+Detection rules: probe, propose, show, decide, test, export, history.
+
+| Verb | Flags |
+|---|---|
+| `rules probe` | `--json` |
+| `rules propose` | `project` (required), `--json`, `--match` (required), `--direction` (`older`, `newer`, `both`), `--confirm-material` |
+| `rules show` | `project` (required), `--json`, `--candidate`, `--version` |
+| `rules decide` | `project` (required), `--json`, `--candidate` (required), `--accept`, `--reject`, `--defer`, `--archive`, `--label`, `--cve`, `--kb`, `--cwe`, `--note` |
+| `rules test` | `project` (required), `--json`, `--version` (required), `--series`, `--extra`, `--clean-dir`, `--expect`, `--timeout` |
+| `rules export` | `project` (required), `--json`, `--version` (required), `--out` (required), `--include-names`, `--allow-git-tree`, `--with-warnings` |
+| `rules history` | `project` (required), `--json`, `--lineage` |
+
 ## Specified but not built (planned)
 
 None of these exist in the parser today; each will arrive as a `cli_commands/<verb>.py` adapter and owns its own spec. Do not rely on them.
 
 | Verb | Source |
 |---|---|
-| `patch`, `search`, `graph`, `strings`, `kb`, `kev`, `build-env`, `rules`, `pe-meta`, `calibration` | planned verbs listed in SPEC-44 section 9 (GUI plan 8.12) |
+| `patch`, `search`, `graph`, `strings`, `kb`, `build-env`, `pe-meta`, `calibration` | planned verbs listed in SPEC-44 section 9 (GUI plan 8.12) |
 | `doctor`, `export`, `import`, `show`, `project` | proposals in SPEC-44 section 7 |

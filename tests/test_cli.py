@@ -187,3 +187,46 @@ def test_unexpected_exception_maps_to_runtime_exit_with_json(monkeypatch, capsys
     assert cli.main(['rank', '--json', 'x']) == 3
     document = json.loads(capsys.readouterr().out)
     assert document['status'] == 'failed' and 'boom' in document['error']
+
+
+def test_cancel_clierror_writes_cancelled_envelope(project, capsys, monkeypatch):
+    def cancelled(*_a, **_k):
+        raise cli.CliError(cli.CANCELLED, 'cancelled by test')
+    monkeypatch.setitem(cli.HANDLERS, 'rank', cancelled)
+    code, out, _ = run(['rank', str(project), '--json'], capsys)
+    assert code == 5 and json.loads(out)['status'] == 'cancelled'
+
+
+
+@pytest.mark.parametrize('argv', [['rank', '--json'], ['bogus', '--json']], ids=['missing-arg', 'bad-verb'])
+def test_json_usage_error_prints_envelope(argv, capsys):
+    code, out, _ = run(argv, capsys)
+    doc = json.loads(out)
+    assert code == 2 and doc['status'] == 'failed' and doc['contract'] == cli.CLI_CONTRACT and doc['error']
+
+
+
+def test_clierror_message_is_redacted(project, capsys, monkeypatch):
+    def leaky(*_a, **_k):
+        raise cli.CliError(cli.RUNTIME, 'bad profile apiKey=abcdef123456SECRET')
+    monkeypatch.setitem(cli.HANDLERS, 'rank', leaky)
+    code, out, err = run(['rank', str(project), '--json'], capsys)
+    assert code == 3 and 'abcdef123456SECRET' not in out + err and 'redacted' in out
+
+
+
+def test_cache_status_unusable_path_is_an_environment_error(tmp_path, capsys):
+    blocker = tmp_path / 'file'
+    blocker.write_text('x')
+    code, out, _ = run(['cache', 'status', '--cache-dir', str(blocker), '--json'], capsys)
+    assert code == 2 and json.loads(out)['status'] == 'failed'
+
+
+@pytest.mark.parametrize('name', ['evil\x1b[2J\x1b[31mNAME', 'gnp\u202eexe', 'c1\x9b2Jx'], ids=['esc', 'rlo', 'c1-csi'])
+def test_text_output_escapes_hostile_characters(name, capsys):
+    from argparse import Namespace
+    cli._emit(Namespace(json=False), 'rank', 'complete', None, [f'warn {name}'], f'  1 {name}\nsecond line')
+    captured = capsys.readouterr()
+    for stream in (captured.out, captured.err):
+        assert not any(ch in stream for ch in '\x1b\x9b\u202e')
+    assert captured.out.endswith('second line\n') and captured.out.count('\n') == 2

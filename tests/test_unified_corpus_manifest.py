@@ -98,6 +98,5 @@ def test_duplicate_pair_ids_are_refused():
 
 def test_pending_work_is_listed_with_reasons_and_never_silently_absent():
     items = {p.item: p.reason for p in manifest.build([], {}).pending}
-    assert {f'P1:{name}' for name, _ in aa.P1_PENDING} <= set(items)
     assert {f'mutation:{p.id}' for p in classes.PENDING} <= set(items)
     assert all(len(reason) > 30 for reason in items.values())

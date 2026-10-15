@@ -34,6 +34,10 @@ VERBS = ('run', 'show', 'explain', 'status')
 PREFIX_MIN = 8
 SOURCE_ID = re.compile(r'[a-z][a-z0-9-]{1,31}')
 NATIVE_NOTE = 'Native values are engine-specific and never combined.'
+TIMEOUT_MIN, TIMEOUT_MAX = 60, 86_400    # L-34, copied so that argparse can refuse early; a test keeps them equal
+EXIT_CODES = ('Exit codes: 0 ok; 2 invalid argument or environment, or nothing runnable; 3 runtime failure or '
+              'partial result; 5 cancelled.')
+JSON_NOTE = 'With --json stdout carries exactly one enrichment-cli/1 document, also when the command fails.'
 
 
 def _source_id(text: str) -> str:
@@ -42,14 +46,22 @@ def _source_id(text: str) -> str:
     return text
 
 
+def _check_timeout(seconds: int) -> None:
+    from ..cli import ENVIRONMENT, CliError
+    if not TIMEOUT_MIN <= seconds <= TIMEOUT_MAX:
+        raise CliError(ENVIRONMENT, f'--timeout must be {TIMEOUT_MIN} to {TIMEOUT_MAX} seconds')
+
+
 def register(sub, common, handlers) -> None:
     """Add the `unified` command to the top-level parser and its handler to `handlers`."""
     unified = sub.add_parser('unified', help=f'unified match analysis ({LABEL}); the Ghidriff result stays primary',
                              description=f'Derived, ordinal fusion of the stored engine outputs ({LABEL}). It never '
-                                         'changes the project, the Ghidriff results or any other stored result.')
+                                         'changes the project, the Ghidriff results or any other stored result. '
+                                         f'{EXIT_CODES} 4 is for `show` with no row listed. {JSON_NOTE}')
     actions = unified.add_subparsers(dest='action', required=True, parser_class=type(unified),
                                      metavar='{' + ','.join(VERBS) + '}')
-    run = common(actions.add_parser('run', help='compute and store the unified result for this project'))
+    run = common(actions.add_parser('run', help='compute and store the unified result for this project',
+                                    epilog=f'{EXIT_CODES} 4 only with --fail-on-none. {JSON_NOTE}'))
     run.add_argument('project', type=Path)
     run.add_argument('--no-extract', action='store_true',
                      help='S0 mode: use the stored engine outputs only, even when a ProgramIR is placed for the '
@@ -68,10 +80,11 @@ def register(sub, common, handlers) -> None:
                            help='run the worker as a capped child process (default)')
     isolation.add_argument('--in-process', dest='isolate', action='store_false',
                            help='run in this process (tests and debugging)')
-    run.add_argument('--timeout', type=int, default=3600, help='worker seconds (60..86400)')
+    run.add_argument('--timeout', type=int, default=3600, help=f'worker seconds ({TIMEOUT_MIN}..{TIMEOUT_MAX})')
     run.add_argument('--refresh', action='store_true', help='recompute even when a stored result has these inputs')
     run.add_argument('--fail-on-none', action='store_true', help='exit 4 when no row is material or review')
-    show = common(actions.add_parser('show', help='list rows of the current unified result, most important first'))
+    show = common(actions.add_parser('show', help='list rows of the current unified result, most important first',
+                                     epilog=f'{EXIT_CODES} 4 no row listed after filtering. {JSON_NOTE}'))
     show.add_argument('project', type=Path)
     show.add_argument('--decision', action='append', choices=DECISIONS, default=[], metavar='DECISION')
     show.add_argument('--change', action='append', choices=MATERIALITIES, default=[], metavar='CHANGE',
@@ -158,6 +171,7 @@ def _run(args, cancel) -> int:
     from ..cli import CANCELLED, ENVIRONMENT, NO_RESULTS, OK, RUNTIME, CliError, _emit, _open
     from . import pipeline
     from .limits import UnifiedError
+    _check_timeout(args.timeout)
     if bool(args.python) != bool(args.ghidra_dir):
         raise CliError(ENVIRONMENT, '--python and --ghidra-dir go together')
     backend = None
@@ -301,8 +315,10 @@ def _select(args, vm) -> tuple[list[int], int]:
 
 
 def _show(args, cancel) -> int:
-    from ..cli import NO_RESULTS, OK, RUNTIME, CliError, _emit
+    from ..cli import ENVIRONMENT, NO_RESULTS, OK, RUNTIME, CliError, _emit
     from . import read_model
+    if args.limit < 0:
+        raise CliError(ENVIRONMENT, '--limit takes a whole number of rows, 0 or more')
     request, warnings = _open_request(args)
     vm = _load_view(request, cancel)
     listed, hidden = _select(args, vm)

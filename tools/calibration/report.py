@@ -108,10 +108,38 @@ def render_markdown(report: Mapping) -> str:
             if isinstance(m, Mapping):
                 lines.append(f'| {name} | {m.get("point")} | [{m.get("lo")}, {m.get("hi")}] |')
         lines.append(f'\ntau = {res.get("tau")}, tau_low = {res.get("tau_low")}, n_groups = {res.get("n_groups")}')
+        if res.get('precision_basis'):
+            lines.append(f'\nprecision and coverage basis: {res["precision_basis"]} (tau was chosen on the same '
+                         'out-of-fold rows that give these numbers; they are not held-out values)')
+        lines += _undefined_lines(res.get('bootstrap_undefined')) + _indeterminate_lines(res.get('indeterminate'))
         if isinstance(res.get('shift'), Mapping):
             lines += _shift_lines(res['shift'])
     lines += ['', '## Blind spots', ''] + [f'- {b}' for b in report['blind_spots']] or ['- none listed']
     return '\n'.join(lines) + '\n'
+
+
+def _undefined_lines(block) -> list[str]:
+    bad = sorted(k for k, v in (block or {}).items() if v.get('refused'))
+    shares = [v['share'] for v in (block or {}).values() if v.get('share') is not None]
+    if not shares:
+        return []
+    return ['', f'bootstrap resamples with an undefined statistic: largest share {max(shares):.4f}'
+            + (f'; refused intervals: {", ".join(bad)}' if bad else '')]
+
+
+def _indeterminate_lines(block) -> list[str]:
+    if not block or not block.get('strata'):
+        return []
+    lines = ['', f'### Indeterminate candidates (flag above {block["flag_share"]})', '',
+             '| stratum | kept | indeterminate | share | flagged | precision | worst case precision | worst case coverage |',
+             '|---|---|---|---|---|---|---|---|']
+    for name, s in sorted(block['strata'].items()):
+        worst = s.get('worst_case') or {}
+        point = s.get('point') or {}
+        lines.append(f'| {name} | {s["rows"]} | {s["excluded_indeterminate"]} | {s["share"]:.4f} | '
+                     f'{"yes" if s["flagged"] else "no"} | {point.get("precision")} | {worst.get("precision")} | '
+                     f'{worst.get("coverage")} |')
+    return lines
 
 
 # ---- Tier R report (LBL-15) ---------------------------------------------------------------------------------------

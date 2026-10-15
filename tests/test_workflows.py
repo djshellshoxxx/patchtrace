@@ -59,3 +59,19 @@ def test_workflow_has_the_top_level_keys_github_requires(path):
     text = path.read_text(encoding='utf-8')
     for key in ('name', 'on', 'jobs'):
         assert re.search(rf'^{key}:', text, re.M), f'{path.name}: missing top-level `{key}:`'
+
+
+QA_WORKFLOW = WORKFLOWS[0].parent / 'qa-windows.yml'
+
+
+def test_qa_workflow_runs_the_qt_gate_at_20x_on_linux_and_5x_on_windows():
+    text = QA_WORKFLOW.read_text(encoding='utf-8')
+    assert re.search(r'os: ubuntu-latest\s+repeat: 20', text) and re.search(r'os: windows-latest\s+repeat: 5', text)
+    assert 'python tools/qt_gate.py --repeat ${{ matrix.repeat }}' in text
+
+
+def test_qa_workflow_reports_each_matrix_leg_to_the_release_notes():
+    text = QA_WORKFLOW.read_text(encoding='utf-8')
+    assert 'qa-leg-result.txt' in text
+    assert '--result "qa-ubuntu=$QA_LINUX"' in text and '--result "qa-windows=$QA_WINDOWS"' in text
+    assert '--result "qa-ubuntu=$QA_RESULT"' not in text

@@ -15,6 +15,7 @@ from pathlib import Path
 
 import pytest
 from binexport_builder import SHA, raw, valid
+from liveness_support import cancel_when_started, never_appears
 
 from patchtrace.jobs import run_process
 from patchtrace.secondary import binexport_run as run
@@ -195,14 +196,13 @@ def test_sleeping_worker_times_out_without_leftovers(monkeypatch, export, privat
 
 
 def test_cancel_mid_run_kills_worker_and_removes_private_dir(monkeypatch, export, private, tmp_path):
-    marker = tmp_path / 'still-running'
-    fake_worker(monkeypatch, f'time.sleep(1.5); open({str(marker)!r}, "w").write("x"); time.sleep(60)')
-    cancel = threading.Event()
-    threading.Timer(0.3, cancel.set).start()
-    error = failure(export, private, cancel=cancel)
+    marker, started = tmp_path / 'still-running', tmp_path / 'started'
+    fake_worker(monkeypatch, f'open({str(started)!r}, "w").write("x"); time.sleep(1.5); '
+                             f'open({str(marker)!r}, "w").write("x"); time.sleep(60)')
+    error = failure(export, private, cancel=cancel_when_started(started))
     assert (error.code, error.reason) == ('PT-SECONDARY-CANCEL', 'cancelled')
-    time.sleep(2)
-    assert not marker.exists() and list(private.iterdir()) == []
+    assert started.exists()             # the worker ran, so an absent marker means it was killed
+    assert never_appears(marker, within=2) and list(private.iterdir()) == []
 
 
 def test_worker_env_and_argv(monkeypatch):

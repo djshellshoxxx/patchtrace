@@ -102,10 +102,10 @@ class RunRequest:
             raise ValueError('a BinDiff setup needs the project raw folder')
 
 
-def select_sets(rows: Sequence[tuple[Entry, SecondaryMatchSet]]
+def select_sets(rows: Sequence[tuple[Entry, SecondaryMatchSet]], pair: tuple[str, str] | None = None
                 ) -> tuple[tuple[tuple[Entry, SecondaryMatchSet], ...], tuple[str, ...]]:
     """Newest non-stale set per engine (SPEC-28 C5); duplicates never reach reconcile/assess."""
-    chosen, notes = select_current(list(rows))
+    chosen, notes = select_current(list(rows), pair)
     engines = sorted({note.split(':', 1)[0] for note in notes})
     warnings = tuple(f'Multiple stored sets for {engine}; showing the newest.' for engine in engines)
     return tuple(chosen), warnings
@@ -117,7 +117,7 @@ def load_evidence(request: EvidenceRequest, cancel: Callable[[], bool] = lambda:
                   older_sha256=request.older_sha256, newer_sha256=request.newer_sha256,
                   calibration_level=request.calibration_level, generation=request.generation)
     try:
-        chosen, warnings = select_sets(request.sets)
+        chosen, warnings = select_sets(request.sets, (request.older_sha256, request.newer_sha256))
         stale = None
         for entry, match_set in chosen:
             if (match_set.older_sha256, match_set.newer_sha256) != (request.older_sha256, request.newer_sha256):

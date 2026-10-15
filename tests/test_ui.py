@@ -231,9 +231,9 @@ def test_cancelled_prepared_import_never_changes_revision(window, monkeypatch, q
 def test_context_budget_is_used_in_preview(window, monkeypatch):
     original = build_context
     seen = []
-    def capture(project, ids, max_chars):
+    def capture(project, ids, max_chars, **kwargs):
         seen.append(max_chars)
-        return original(project, ids, max_chars=max_chars)
+        return original(project, ids, max_chars=max_chars, **kwargs)
     window.settings.setValue('provider/context_budget', 12000)
     monkeypatch.setattr('patchtrace.ui.build_context', capture)
     monkeypatch.setattr(ContextDialog, 'exec', lambda dialog: QDialog.DialogCode.Rejected)

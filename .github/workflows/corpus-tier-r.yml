@@ -17,6 +17,10 @@ on:
       subset:
         description: smoke, suites, cards, mutations, noise or full
         default: smoke
+  schedule:
+    # Nightly smoke then noise on the pinned ubuntu-24.04 image; the heavy matrices stay dispatch-only.
+    - cron: '17 3 * * *'
+    - cron: '47 3 * * *'
   push:
     branches: [main]
     paths: ['tools/calibration/**', 'corpus/ours/**', '.github/workflows/corpus-tier-r.yml']
@@ -35,11 +39,14 @@ env:
   SHARDS: ${{ inputs.shards || '2' }}
   SEED: ${{ inputs.seed || '1' }}
   ENGINES: ${{ inputs.engines || 'rz-diff' }}
-  SUBSET: ${{ inputs.subset || 'smoke' }}
+  SUBSET: ${{ inputs.subset || (github.event.schedule == '47 3 * * *' && 'noise') || 'smoke' }}
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.ref }}
+  cancel-in-progress: true
 jobs:
   plan:
     name: plan
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 10
     outputs:
       matrix: ${{ steps.plan.outputs.matrix }}
@@ -63,7 +70,7 @@ jobs:
   shard:
     name: shard ${{ matrix.shard }} of ${{ matrix.of }}
     needs: plan
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 120
     strategy:
       fail-fast: false
@@ -147,7 +154,7 @@ jobs:
     name: merge
     needs: [plan, shard]
     if: always() && needs.plan.result == 'success'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
@@ -166,6 +173,18 @@ jobs:
           path: plan
       - name: Merge (fails on missing, duplicate or foreign shards)
         run: python -m tools.calibration.tier_r.shard merge --in shards --plan plan/plan.json --out merged
+      - name: Determinism (second merge of the same shards must give the same report_sha256)
+        run: |
+          python -m tools.calibration.tier_r.shard merge --in shards --plan plan/plan.json --out merged-again
+          python -m tools.calibration.ci_summary determinism merged merged-again
+      - name: CI status JSON (never silent, even when the shard set is rejected)
+        if: always()
+        run: |
+          mkdir -p merged
+          rc=0
+          python -m tools.calibration.ci_summary summarize --shards shards --plan plan/plan.json --out merged/ci-summary.json || rc=$?
+          cat merged/ci-summary.md >> "$GITHUB_STEP_SUMMARY"
+          exit $rc
       - name: Step summary
         if: always()
         run: |
@@ -198,4 +217,38 @@ jobs:
         with:
           name: tier-r-windows-advisory
           path: shard-out/shard-*.json
+          if-no-files-found: warn
+  msvc-advisory:
+    # LBL-08 optional MSVC `cl` leg: dispatch-only and enabled by the repository variable TIER_R_MSVC=1, advisory, pinned
+    # windows-2022. The dev-command action exports the Visual Studio environment; the job records the cl version.
+    name: msvc cl advisory (windows-2022)
+    if: github.event_name == 'workflow_dispatch' && vars.TIER_R_MSVC == '1'
+    runs-on: windows-2022
+    continue-on-error: true
+    timeout-minutes: 45
+    env:
+      PATCHTRACE_REQUIRE_MSVC: '1'
+      PATCHTRACE_LIVE_STATUS_DIR: msvc-status
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: 'python -m pip install --only-binary=:all: -e .[dev]'
+      - uses: ilammy/msvc-dev-cmd@v1.13.0
+        with:
+          arch: x64
+      - name: Toolchain report (records the cl version)
+        shell: bash
+        run: python -m tools.calibration.tier_r toolchain | tee msvc-toolchain.json
+      - name: Run the MSVC tests
+        shell: bash
+        run: python -m pytest tests/test_tier_r_msvc.py -q -p no:cacheprovider
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: tier-r-msvc-advisory
+          path: |
+            msvc-toolchain.json
+            msvc-status/
           if-no-files-found: warn
