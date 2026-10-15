@@ -242,6 +242,7 @@ class UnifiedViewModel:
     edit_groups: tuple[EditGroup, ...] = ()
     records: RecordSource | None = None
     error: str | None = None
+    result_dir: Path | None = None      # the published result directory (the ProgramIR sidecars are found from it)
 
 
 @dataclass(frozen=True)
@@ -599,7 +600,7 @@ def _assemble(req: UnifiedLoadRequest, manifest: UnifiedResultManifest, director
         display_level=calibration_display_level(), result_id=manifest.result_id, manifest=manifest,
         banners=tuple(banners), absent_sources=tuple(s.display for s in req.registry.sources if s.id not in ids),
         evidence_classes=MappingProxyType(dict(evidence)), edit_groups=groups,
-        records=SidecarRecords(directory, manifest, req.limits))
+        records=SidecarRecords(directory, manifest, req.limits), result_dir=directory)
 
 
 def _counts(rows: Sequence[UnifiedRowView]) -> dict[str, int]:

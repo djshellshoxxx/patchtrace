@@ -542,3 +542,8 @@
 ### [UE2-U3U5:explain-columns]
 - [x] Explain fragment in `build_context` / the existing ContextDialog flow (rows with a Ghidriff match); `unified/columns` persisted; qt_gate x5 green on the Unified, columns, host-seam and tooltip tests
 - [ ] Open: rows without a Ghidriff match still use the own preview (build_context needs a stored match); Windows DPI and screen-reader passes
+
+
+### [UE2-U4U6:ir-text-real-gui]
+- [x] U6 IR text reader (`IrPairTexts`); U4 hermetic real-pipeline GUI test; qt_gate x5 green (Unified, columns, pipeline, host seam)
+- [ ] Open: decompiled C of S3b rows (`decomp.jsonl.gz`) is not yet read for the code panes; alignment gaps from `facts/align.py` are not drawn (the diff pane aligns the two texts itself); Windows (the worker child, DPI)

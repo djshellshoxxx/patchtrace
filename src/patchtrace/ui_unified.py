@@ -34,6 +34,7 @@ from .gui.registry import PanelContext
 from .tooltips import apply_tooltip, template, tooltip
 from .unified import pipeline, read_model
 from .unified.limits import UnifiedError
+from .unified.pair_text import IrPairTexts
 from .unified.read_model import (
     Cancelled,
     UnifiedLoadRequest,
@@ -573,7 +574,8 @@ class UnifiedController(ControllerBase):
         self._copy_text = ctx.shell.copy_text
         self.nav = ctx.nav
         self.loader = loader
-        self.pair_texts = pair_texts
+        self._ir_texts = IrPairTexts() if pair_texts is None else None
+        self.pair_texts = pair_texts or self._ir_texts
         self.engine_busy = engine_busy or self._evidence_run_active
         self.vm: UnifiedViewModel | None = None
         self.dirty = True
@@ -647,6 +649,8 @@ class UnifiedController(ControllerBase):
     def shutdown(self) -> None:
         for channel in (LOAD_CHANNEL, RUN_CHANNEL, DETAIL_CHANNEL):
             self.tasks.cancel(channel)
+        if self._ir_texts is not None:
+            self._ir_texts.close()
 
     # -- load --
     def _backend(self):
