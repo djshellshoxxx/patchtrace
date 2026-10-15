@@ -610,3 +610,8 @@ def test_dropping_runners_in_a_subprocess_never_aborts(tmp_path):
     env = {**os.environ, 'QT_QPA_PLATFORM': 'offscreen', 'PYTHONFAULTHANDLER': '1'}
     done = subprocess.run([sys.executable, str(script)], env=env, capture_output=True, text=True, timeout=120)
     assert done.returncode == 0 and done.stdout.strip() == 'ok', done.stderr[-2000:]
+
+
+@pytest.mark.parametrize('char', ['؜', '‎', '‏', '‮', '⁦'], ids=['alm', 'lrm', 'rlm', 'rlo', 'lri'])
+def test_task_text_drops_every_bidi_control(char):
+    assert char not in tasks._clip(f'a{char}b', 10)

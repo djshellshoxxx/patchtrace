@@ -37,7 +37,7 @@ LEGACY_REGISTRIES = (('ui_engine_setup', '_LIVE_THREADS'), ('ui_series', '_LIVE_
                      ('ui_bundle_setup', '_LIVE_THREADS'), ('ui_inspection', '_LIVE_THREADS'),
                      ('ui', '_DISCOVERY_THREADS'), ('ui_bundle_setup', '_THREADS'))  # (module, thread-set name)
 
-_UNSAFE = re.compile('[\x00-\x1f\x7f-\x9f  ‪-‮⁦-⁩]')
+_UNSAFE = re.compile('[\x00-\x1f\x7f-\x9f\u2028\u2029\u061c\u200e\u200f\u202a-\u202e\u2066-\u2069]')
 
 
 def _clip(text: object, limit: int) -> str:
