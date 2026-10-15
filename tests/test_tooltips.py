@@ -354,7 +354,7 @@ def test_evidence_ids_prefix_complete(window):
     """Every evidence.* widget/action name is a registry ID and every evidence.* ID is used (C6 7.2)."""
     ids = {key for key in REGISTRY if key.startswith('evidence.')}
     templates = {key for key in TEMPLATES if key.startswith('evidence.')}
-    assert len(ids) >= 25 and {'evidence.row', 'evidence.cell', 'evidence.badge'} <= templates
+    assert len(ids) >= 22 and {'evidence.row', 'evidence.cell', 'evidence.badge'} <= templates
     dock = window.panels.controller('evidence').dock
     used = {w.objectName() for w in dock.findChildren(object) if hasattr(w, 'objectName')}
     used |= {dock.objectName(), window.panels.toggle_action('evidence').objectName()}

@@ -48,7 +48,6 @@ from PySide6.QtWidgets import (
     QPushButton,
     QSpinBox,
     QSplitter,
-    QStackedWidget,
     QStyle,
     QStyledItemDelegate,
     QTableView,
@@ -61,12 +60,15 @@ from shiboken6 import isValid
 from .gui.qt.docks import ControllerBase
 from .gui.qt.labels import PlainLabel
 from .gui.qt.settings import PanelSettings
+from .gui.qt.state_view import StateView
 from .gui.qt.table import ROW_ROLE, VirtualTable
 from .gui.qt.tasks import CancelToken, TaskCancelled
 from .gui.registry import PanelContext
+from .gui.state import StateModel
 from .gui.table_spec import Cancelled as TableCancelled
 from .gui.table_spec import PreparedTable
 from .gui.text import VIEW_LIMIT
+from .gui.tips import register_gui_tips
 from .secondary import evidence_panel_service as service_api
 from .secondary.evidence_panel_service import (
     DEFAULT_TIMEOUT,
@@ -385,43 +387,18 @@ class EvidencePanel(QWidget):
         self.partial_banner.setObjectName('evidence_partial_banner')
         self.partial_banner.setWordWrap(True)
         layout.addWidget(self.partial_banner)
-        self.stack = QStackedWidget()
-        layout.addWidget(self.stack, 1)
-        # Page 0: state message (E0, E1, E2, E5, E7, E8). Every control is constructed eagerly.
-        message = QWidget()
-        message_layout = QVBoxLayout(message)
-        self.state_label = PlainLabel('', wrap=True, limit=VIEW_LIMIT, multiline=True)
-        self.state_label.setObjectName('evidence_state_text')
-        self.state_label.setWordWrap(True)
-        self.state_label.setAlignment(Qt.AlignmentFlag.AlignTop | Qt.AlignmentFlag.AlignLeft)
-        message_layout.addWidget(self.state_label)
         self.loading_bar = QProgressBar()
         self.loading_bar.setObjectName('evidence_loading')
         self.loading_bar.setRange(0, 0)
         self.loading_bar.setAccessibleName('Loading engine evidence')
-        message_layout.addWidget(self.loading_bar)
-        buttons = QHBoxLayout()
-        self.retry_button = QPushButton('Retry')
-        apply_tooltip(self.retry_button, 'evidence.retry')
-        self.retry_button.setAccessibleName('Retry assembling engine evidence')
-        self.retry_button.clicked.connect(self.refresh_requested)
-        buttons.addWidget(self.retry_button)
-        self.copy_error_button = QPushButton('Copy details')
-        apply_tooltip(self.copy_error_button, 'evidence.copy_error')
-        self.copy_error_button.setAccessibleName('Copy engine evidence error details')
-        self.copy_error_button.clicked.connect(self.copy_error)
-        buttons.addWidget(self.copy_error_button)
-        self.open_engines_button = QPushButton('Open Engines tab')
-        apply_tooltip(self.open_engines_button, 'evidence.open_engines')
-        self.open_engines_button.setAccessibleName('Open the Engines tab')
-        self.open_engines_button.clicked.connect(lambda: self.tabs.setCurrentIndex(1))
-        buttons.addWidget(self.open_engines_button)
-        buttons.addStretch(1)
-        message_layout.addLayout(buttons)
-        message_layout.addStretch(1)
-        self.stack.addWidget(message)
-        # Page 1: table + detail.
-        split = QSplitter(Qt.Orientation.Vertical)
+        layout.addWidget(self.loading_bar)
+        register_gui_tips()  # idempotent; the host has done it already (the StateView buttons use these tips)
+        self.state_view = StateView('evidence.matches', 'Engine evidence matches', parent=page, text_limit=VIEW_LIMIT, multiline=True)
+        self.state_view.retry_requested.connect(self.refresh_requested)
+        self.state_view.setup_requested.connect(lambda: self.tabs.setCurrentIndex(1))
+        self.state_view.copy_requested.connect(self._copy_text)
+        layout.addWidget(self.state_view, 1)
+        split = self.split = QSplitter(Qt.Orientation.Vertical)
         split.setObjectName('evidence_split')
         self.table = EvidenceTable('Per-match engine evidence table')
         self.model = self.table.table_model
@@ -454,7 +431,7 @@ class EvidencePanel(QWidget):
         actions.addStretch(1)
         lower_layout.addLayout(actions)
         split.addWidget(lower)
-        self.stack.addWidget(split)
+        self.state_view.set_content(split)
         self._apply_metrics()
         self.tabs.addTab(page, 'Evidence')
 
@@ -727,10 +704,20 @@ class EvidencePanel(QWidget):
         QGuiApplication.clipboard().setText(format_provenance_blocks(self.vm, rows, self.show_index))
         self.status_message.emit(f'Copied provenance for {min(len(rows), 200)} match(es)')
 
-    def copy_error(self):
-        if self.vm.error:
-            QGuiApplication.clipboard().setText(
-                f'PatchTrace engine evidence error\nProject: {self.vm.project_id}\n{self.vm.error}')
+    @staticmethod
+    def _copy_text(text: str) -> None:
+        QGuiApplication.clipboard().setText(text)
+
+    def _state_model(self) -> StateModel:
+        """The words and actions of a state that shows no table; the copy is the evidence panel's own."""
+        vm = self.vm
+        text = state_text(vm)
+        if vm.state == 'failed':
+            report = f'PatchTrace engine evidence error\nProject: {vm.project_id}\n{vm.error}'
+            return StateModel('error', text, report, ('retry', 'copy'))
+        if vm.state in ('no-engines', 'unsupported'):
+            return StateModel('idle' if vm.state == 'no-engines' else 'unsupported', text, '', ('setup',))
+        return StateModel('too-large' if vm.state == 'too-large' else 'idle', text)
 
     # -- engines tab behaviour --
     def set_engine_rows(self, rows: Sequence[EngineRowView]) -> None:
@@ -847,16 +834,16 @@ class EvidencePanel(QWidget):
         state = 'no-project' if not self.has_project else vm.state
         table_state = state in ('ready', 'partial', 'stale') and self.shown_table
         loading_first = self.loading and not self.shown_table and self.has_project
-        self.stack.setCurrentIndex(1 if table_state and not loading_first else 0)
         if loading_first:
-            self.state_label.setText(STATE_TEXT['loading'])
-        elif not table_state:
-            self.state_label.setText(state_text(vm) if self.has_project else STATE_TEXT['no-project'])
+            model = StateModel('loading', STATE_TEXT['loading'])
+        elif table_state:
+            model = StateModel('ready', '')
+        elif not self.has_project:
+            model = StateModel('no-project', STATE_TEXT['no-project'])
+        else:
+            model = self._state_model()
+        self.state_view.set_state(model, has_content=table_state and not loading_first)
         self.loading_bar.setVisible(loading_first)
-        self.retry_button.setVisible(state == 'failed')
-        self.copy_error_button.setVisible(state == 'failed')
-        self.open_engines_button.setVisible(state in ('no-engines', 'unsupported'))
-        self.open_engines_button.setEnabled(self.has_project)
         self.stale_banner.setVisible(state == 'stale')
         self.stale_banner.setText(state_text(vm) if state == 'stale' else '')
         self.partial_banner.setVisible(state == 'partial')

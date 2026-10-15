@@ -511,8 +511,8 @@ def test_default_discoverer_reads_runtime_discovery_only(monkeypatch, tmp_path):
 
 
 PRE_EXISTING = ('tabs', 'filter', 'search', 'hide_agreed', 'show_index_box', 'copy_button', 'refresh_button',
-                'engines_label', 'status', 'stale_banner', 'partial_banner', 'state_label', 'loading_bar',
-                'retry_button', 'copy_error_button', 'open_engines_button', 'table', 'detail', 'goto_button',
+                'engines_label', 'status', 'stale_banner', 'partial_banner', 'state_view', 'loading_bar',
+                'table', 'detail', 'goto_button',
                 'engine_table', 'parallel', 'timeout', 'run_button', 'cancel_button', 'probe_button',
                 'import_button', 'run_progress', 'run_status', 'preview', 'engine_log', 'copy_details_button',
                 'footer')
@@ -533,6 +533,7 @@ def describe(widget) -> tuple:
 
 def fingerprint(panel) -> list:
     rows = [describe(getattr(panel, name)) for name in PRE_EXISTING]
+    rows.append(describe(panel.state_view.status_label()))
     rows += [describe(box) for box in panel.engine_checks.values()]
     rows.append(tuple(panel.tabs.tabText(i) for i in range(panel.tabs.count())))
     rows.append(tuple((r.engine, r.state, r.detail) for r in panel.engine_model.rows))

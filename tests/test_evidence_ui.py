@@ -73,6 +73,10 @@ def visible(widget):
     return not widget.isHidden()
 
 
+def state_text_of(panel):
+    return panel.state_view.status_label().text()
+
+
 def show(panel, vm):
     panel.set_view_model(vm)
     return panel
@@ -86,7 +90,7 @@ def test_state_no_project_disables_everything(qtbot, settings):
     qtbot.addWidget(widget)
     widget.set_project(False)
     assert widget.status.text() == STATE_TEXT['no-project']
-    assert widget.stack.currentIndex() == 0
+    assert widget.state_view.kind == 'no-project' and not visible(widget.split)
     for control in (widget.filter, widget.search, widget.table, widget.copy_button, widget.goto_button,
                     widget.run_button, widget.refresh_button, widget.probe_button, widget.import_button):
         assert not control.isEnabled(), control.objectName()
@@ -94,20 +98,21 @@ def test_state_no_project_disables_everything(qtbot, settings):
 
 def test_state_no_engines_shows_ghidriff_only_message(panel):
     show(panel, build(sets=()))
-    assert panel.state_label.text() == STATE_TEXT['no-engines']
-    assert visible(panel.open_engines_button) and panel.open_engines_button.isEnabled()
-    panel.open_engines_button.click()
+    assert state_text_of(panel) == STATE_TEXT['no-engines']
+    setup = panel.state_view.action_button('setup')
+    assert visible(setup) and setup.isEnabled()
+    setup.click()
     assert panel.tabs.currentIndex() == 1
 
 
 def test_state_loading_shows_indeterminate_and_clears_table(panel):
     panel.set_loading(True)
-    assert panel.stack.currentIndex() == 0 and visible(panel.loading_bar)
-    assert panel.loading_bar.maximum() == 0 and panel.state_label.text() == STATE_TEXT['loading']
+    assert panel.state_view.kind == 'loading' and not visible(panel.split) and visible(panel.loading_bar)
+    assert panel.loading_bar.maximum() == 0 and state_text_of(panel) == STATE_TEXT['loading']
     assert not panel.filter.isEnabled()
     show(panel, build())
     panel.set_loading(True)  # refresh after a table was shown: no flicker, table stays
-    assert panel.stack.currentIndex() == 1 and panel.status.text() == STATE_TEXT['refreshing']
+    assert visible(panel.split) and panel.status.text() == STATE_TEXT['refreshing']
 
 
 def test_state_ready_three_engines_columns_headers_and_units(panel):
@@ -118,7 +123,7 @@ def test_state_ready_three_engines_columns_headers_and_units(panel):
     assert headers[2] == 'Ghidriff (baseline)\nmatch type (raw)'
     assert headers[3] == 'BinDiff 8\nsimilarity / algorithm'
     assert headers[4] == 'rz-diff 0.9.1\nbyte similarity (raw bytes)'
-    assert model.rowCount() == 4 and panel.stack.currentIndex() == 1
+    assert model.rowCount() == 4 and visible(panel.split)
     assert panel.footer.text() == FOOTER
     assert panel.status.text().startswith('Summary: 4 matches')
 
@@ -154,11 +159,13 @@ def test_state_partial_failed_engine_banner_and_other_columns_intact(panel):
 
 def test_state_failed_assembly_shows_error_and_retry(panel, qtbot):
     show(panel, build(sets=(standard_sets()[0], standard_sets()[0])))
-    assert panel.stack.currentIndex() == 0 and 'could not be assembled' in panel.state_label.text()
-    assert visible(panel.retry_button) and visible(panel.copy_error_button)
+    assert panel.state_view.kind == 'error' and not visible(panel.split)
+    assert 'could not be assembled' in state_text_of(panel)
+    retry, copy = panel.state_view.action_button('retry'), panel.state_view.action_button('copy')
+    assert visible(retry) and visible(copy)
     with qtbot.waitSignal(panel.refresh_requested, timeout=1000):
-        panel.retry_button.click()
-    panel.copy_error_button.click()
+        retry.click()
+    copy.click()
     assert 'PT-EVIDENCE-ASSEMBLY' in QGuiApplication.clipboard().text()
 
 
@@ -178,7 +185,7 @@ def test_state_stale_banner_greys_rows_disables_goto_keeps_copy(panel, qtbot):
 def test_state_unsupported_lists_reasons_and_offers_no_run(panel):
     outs = tuple(EngineOutcomeView(e, 'unsupported', message=f'{e} not installed') for e in ('bindiff', 'rz-diff'))
     show(panel, build(sets=(), outcomes=outs))
-    assert 'rz-diff not installed' in panel.state_label.text()
+    assert 'rz-diff not installed' in state_text_of(panel)
     panel.set_capabilities({'rz-diff': Capability(engine='rz-diff', supported=False, version=None, path='',
                                                   supports_json=False, reason='missing')})
     assert not panel.engine_checks['rz-diff'].isEnabled() and not panel.run_button.isEnabled()
@@ -188,7 +195,8 @@ def test_state_too_large_guard(panel, monkeypatch):
     from patchtrace.secondary import evidence_view
     monkeypatch.setattr(evidence_view, 'DISPLAY_ROW_CAP', 1)
     show(panel, build())
-    assert panel.stack.currentIndex() == 0 and 'Too many rows to display (4)' in panel.state_label.text()
+    assert panel.state_view.kind == 'too-large' and not visible(panel.split)
+    assert 'Too many rows to display (4)' in state_text_of(panel)
 
 
 # ---- untrusted text -------------------------------------------------------------------------------
@@ -210,7 +218,7 @@ def test_untrusted_function_name_is_plain_text(panel):
     detail = panel.detail.toPlainText()
     assert '<a href="x">algo</a>' in detail or '<b>pwn</b>' in detail
     assert not panel.detail.document().toHtml().count('<a href')
-    for label in (panel.status, panel.state_label, panel.stale_banner, panel.engines_label):
+    for label in (panel.status, panel.state_view.status_label(), panel.stale_banner, panel.engines_label):
         assert label.textFormat() == Qt.TextFormat.PlainText
 
 
