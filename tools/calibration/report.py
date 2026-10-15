@@ -7,6 +7,8 @@ import math
 import sys
 from collections.abc import Mapping, Sequence
 
+from patchtrace.calibration.scope import BANNED_STEMS, TIER_R_CLAIM
+
 from .common import canonical_json, r12
 from .contracts import CalibrationReport
 from .gates import combine
@@ -16,6 +18,16 @@ SYNTHETIC_CLAIM = ('SYNTHETIC/PIPELINE VALIDATION ONLY: computed on generated da
 # Datasets whose ground truth is generated or built from open-source test builds: never a real-world claim,
 # whatever the caller passes as `synthetic`.
 SYNTHETIC_TIERS = frozenset({'synthetic', 'R', 'tier-r', 'r'})
+# Fixed prose of every Tier R report (LBL integration plan 7.3, 7.8). Same wording rules as the shipped scope copy:
+# no percent sign and none of the banned stems; the claim itself is `scope.TIER_R_CLAIM`, never re-typed here.
+TIER_R_LIMITS = (
+    'Tier R is built from test builds of open-source code with known answers; a pass here only shows that the '
+    'pipeline recovers those answers.',
+    'Tier R alone cannot evaluate G0, G2 or G3; they stay insufficient-data by construction (no Tier W families, '
+    'kinds, symbol audit or second annotator).',
+    'The artifact written from a Tier R run is experimental, displays nothing and is never bundled.',
+    'The shift ladder Tier W rung is not-run: it needs the owner machine.')
+TIER_R_FORBIDDEN = tuple(BANNED_STEMS) + ('accurate', 'validated for windows')
 REAL_CLAIM = ('Function-match correctness (target A) only, within the stated calibration domain; never a '
               'vulnerability probability.')
 
@@ -64,6 +76,24 @@ def verify_report(report: Mapping) -> bool:
     return hashlib.sha256(canonical_json(body)).hexdigest() == report.get('report_sha256')
 
 
+def _num(value) -> str:
+    return '-' if value is None else (f'{value:.3f}' if isinstance(value, float) else str(value))
+
+
+def _shift_lines(shift: Mapping) -> list[str]:
+    lines = ['', '### Shift ladder', '', f'tau = {shift.get("tau")}; {shift.get("note", "")}', '',
+             '| rung | held out | status | rows | precision (lo, hi) | coverage | ECE excess | OOD flagged | forced | note |',
+             '|---|---|---|---|---|---|---|---|---|---|']
+    for r in shift.get('rungs', ()):
+        prec = r.get('precision') or {}
+        interval = f'{_num(prec.get("point"))} ({_num(prec.get("lo"))}, {_num(prec.get("hi"))})' if prec else '-'
+        cov = (r.get('coverage') or {}).get('point')
+        lines.append(f'| {r["rung"]} | {r.get("held_out") or "-"} | {r["status"]} | {r.get("n_rows", 0)} | {interval} | '
+                     f'{_num(cov)} | {_num(r.get("ece_excess"))} | {_num(r.get("ood_flag_rate"))} | '
+                     f'{_num(r.get("forced_accuracy"))} | {str(r.get("reason") or "")[:80]} |')
+    return lines
+
+
 def render_markdown(report: Mapping) -> str:
     lines = [f'# Calibration report {report["report_sha256"][:12]}', '', f'> {report["claim"]}', '',
              f'- preregistration: `{report["prereg_sha256"]}`', f'- corpus manifest: `{report["corpus_manifest_sha256"]}`',
@@ -78,5 +108,61 @@ def render_markdown(report: Mapping) -> str:
             if isinstance(m, Mapping):
                 lines.append(f'| {name} | {m.get("point")} | [{m.get("lo")}, {m.get("hi")}] |')
         lines.append(f'\ntau = {res.get("tau")}, tau_low = {res.get("tau_low")}, n_groups = {res.get("n_groups")}')
+        if isinstance(res.get('shift'), Mapping):
+            lines += _shift_lines(res['shift'])
     lines += ['', '## Blind spots', ''] + [f'- {b}' for b in report['blind_spots']] or ['- none listed']
     return '\n'.join(lines) + '\n'
+
+
+# ---- Tier R report (LBL-15) ---------------------------------------------------------------------------------------
+
+class TierRReportError(ValueError):
+    """A Tier R report that would overstate what the evidence licenses."""
+
+
+def _tier_r_problems(report: Mapping) -> list[str]:
+    problems = []
+    if report.get('claim') != TIER_R_CLAIM:
+        problems.append('claim is not TIER_R_CLAIM')
+    if str((report.get('dataset') or {}).get('tier')) != 'R':
+        problems.append("dataset.tier is not 'R'")
+    gates = report.get('gates') or {}
+    for gate in ('G0', 'G2', 'G3'):
+        if (gates.get(gate) or {}).get('status') != 'insufficient-data':
+            problems.append(f'{gate} must be insufficient-data for Tier R alone')
+    if 'G1' not in gates:
+        problems.append('G1 missing')
+    for text in (report.get('claim', ''), *(t for t in report.get('blind_spots', ()) if t in TIER_R_LIMITS)):
+        hit = [stem for stem in TIER_R_FORBIDDEN if stem in str(text).lower()]
+        if hit:
+            problems.append(f'forbidden wording {hit} in {str(text)[:40]!r}')
+    return problems
+
+
+def verify_tier_r_report(report: Mapping) -> None:
+    """Raises `TierRReportError` unless the report carries the Tier R claim, evaluates only G1 and verifies."""
+    problems = _tier_r_problems(report)
+    if not verify_report(report):
+        problems.append('report SHA does not verify')
+    if problems:
+        raise TierRReportError('; '.join(problems))
+
+
+def make_tier_r_report(*, prereg_sha: str | None, corpus_manifest_sha: str | None, label_set_sha: str | None,
+                       tool_git: str, dataset: Mapping, per_profile: Mapping[str, Mapping],
+                       known_limits: Sequence[str] = (), amendments: Sequence[str] = ()) -> dict:
+    """`calibration-report/1` for a Tier R run: claim = TIER_R_CLAIM, dataset.tier = 'R', G1 as evaluated by the
+    caller, G0/G2/G3 forced to insufficient-data (they need Tier W evidence), fixed limits prose appended."""
+    base = make_report(prereg_sha=prereg_sha, corpus_manifest_sha=corpus_manifest_sha, label_set_sha=label_set_sha,
+                       tool_git=tool_git, dataset=dict(dataset, tier='R'), per_profile=per_profile, synthetic=True,
+                       known_limits=list(known_limits) + list(TIER_R_LIMITS), amendments=amendments)
+    base['claim'] = TIER_R_CLAIM
+    base.pop('report_sha256')
+    for gate, reason in (('G0', 'Tier R carries no Tier W families, kinds, symbol audit or second annotator'),
+                         ('G2', 'Tier R is never used for G2'), ('G3', 'Tier R is never used for G3')):
+        base['gates'][gate] = {'status': 'insufficient-data', 'reasons': [reason]}
+    base['gates'].setdefault('G1', {'status': 'insufficient-data', 'reasons': ['no Tier R pipeline results']})
+    base['report_sha256'] = hashlib.sha256(canonical_json(base)).hexdigest()
+    CalibrationReport.model_validate_json(canonical_json(base))
+    verify_tier_r_report(base)
+    return base

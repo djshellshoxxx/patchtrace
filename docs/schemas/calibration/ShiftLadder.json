@@ -1,0 +1,316 @@
+{
+  "$defs": {
+    "IntervalDoc": {
+      "additionalProperties": false,
+      "properties": {
+        "point": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Point"
+        },
+        "lo": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Lo"
+        },
+        "hi": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Hi"
+        },
+        "undefined": {
+          "default": 0,
+          "title": "Undefined",
+          "type": "integer"
+        },
+        "anti_conservative": {
+          "default": false,
+          "title": "Anti Conservative",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "point"
+      ],
+      "title": "IntervalDoc",
+      "type": "object"
+    },
+    "ShiftRung": {
+      "additionalProperties": false,
+      "properties": {
+        "rung": {
+          "enum": [
+            "grouped-cv-within-toolchain",
+            "leave-one-toolchain-out",
+            "leave-one-family-out",
+            "tier-w"
+          ],
+          "title": "Rung",
+          "type": "string"
+        },
+        "held_out": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Held Out"
+        },
+        "status": {
+          "enum": [
+            "ok",
+            "insufficient-data",
+            "not-run"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "reason": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reason"
+        },
+        "n_rows": {
+          "default": 0,
+          "title": "N Rows",
+          "type": "integer"
+        },
+        "n_positive": {
+          "default": 0,
+          "title": "N Positive",
+          "type": "integer"
+        },
+        "n_negative": {
+          "default": 0,
+          "title": "N Negative",
+          "type": "integer"
+        },
+        "n_groups": {
+          "default": 0,
+          "title": "N Groups",
+          "type": "integer"
+        },
+        "n_lineages": {
+          "default": 0,
+          "title": "N Lineages",
+          "type": "integer"
+        },
+        "excluded_shared_groups": {
+          "default": 0,
+          "title": "Excluded Shared Groups",
+          "type": "integer"
+        },
+        "precision": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/IntervalDoc"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "coverage": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/IntervalDoc"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "ece_excess": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Ece Excess"
+        },
+        "ood_flag_rate": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Ood Flag Rate"
+        },
+        "forced_accuracy": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Forced Accuracy"
+        },
+        "ood_abstain_accuracy": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Ood Abstain Accuracy"
+        },
+        "delta_precision": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Delta Precision"
+        },
+        "delta_precision_lo": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Delta Precision Lo"
+        },
+        "delta_precision_hi": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Delta Precision Hi"
+        },
+        "delta_coverage": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Delta Coverage"
+        }
+      },
+      "required": [
+        "rung",
+        "held_out",
+        "status"
+      ],
+      "title": "ShiftRung",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "contract": {
+      "const": "calibration-shift/1",
+      "title": "Contract",
+      "type": "string"
+    },
+    "tau": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Tau"
+    },
+    "baseline": {
+      "additionalProperties": {
+        "anyOf": [
+          {
+            "type": "number"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "title": "Baseline",
+      "type": "object"
+    },
+    "note": {
+      "title": "Note",
+      "type": "string"
+    },
+    "rungs": {
+      "items": {
+        "$ref": "#/$defs/ShiftRung"
+      },
+      "title": "Rungs",
+      "type": "array"
+    }
+  },
+  "required": [
+    "contract",
+    "tau",
+    "baseline",
+    "note",
+    "rungs"
+  ],
+  "title": "ShiftLadder",
+  "type": "object",
+  "$id": "https://patchtrace.local/schemas/calibration-shift/1/ShiftLadder.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}
