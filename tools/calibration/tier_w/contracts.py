@@ -158,6 +158,7 @@ class FetchItem(_Strict):
     sha256: Sha256 | None = None
     record_sha256: Sha256 | None = None
     size: int | None = Field(default=None, ge=1, le=2**32 - 1)
+    binary_size: int | None = Field(default=None, ge=1, le=2**32 - 1)
     cap_bytes: int = Field(ge=1, le=2 * 1024 * 1024 * 1024)
     binary_sha256: Sha256 | None = None
     guid: Guid | None = None
@@ -181,6 +182,7 @@ class FetchItem(_Strict):
         if self.kind == 'binary':
             if (self.sha256 is None or self.record_sha256 is None or self.size is None
                     or self.binary_sha256 is not None or self.guid is not None or self.age is not None
+                    or self.binary_size is not None
                     or self.timestamp is None or self.size_of_image is None):
                 raise ValueError('binary entry has incomplete or mixed identity fields')
             if self.cap_bytes != self.size:
