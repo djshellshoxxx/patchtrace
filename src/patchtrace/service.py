@@ -118,6 +118,8 @@ class ProjectService:
 
     def _prepare_analysis(self, raw_path: Path, run: AnalysisRun) -> PreparedImport:
         self.store._check_open()
+        if run.id in self._prepared:
+            raise ValueError('PT-SCHEMA: analysis run already has a prepared import; apply or discard it first')
         snapshot = self.project.model_copy(deep=True)
         source = Path(raw_path)
         if run.status != 'completed':
