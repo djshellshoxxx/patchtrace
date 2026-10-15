@@ -181,7 +181,7 @@ def test_cli_release_mode_refuses_the_committed_placeholders():
 
 def test_cli_release_mode_passes_once_resolved(pin, tmp_path):
     path = tmp_path / 'pin.json'
-    path.write_text(json.dumps(resolved(pin)), encoding='utf-8')
+    path.write_text(json.dumps(approved(resolved(pin))), encoding='utf-8')
     assert run_tool('--pin', str(path), '--release').returncode == 0
 
 
@@ -192,3 +192,94 @@ def test_cli_reports_malformed_pin(tmp_path):
     path.write_text('not json', encoding='utf-8')
     assert run_tool('--pin', str(path)).returncode == 1
     assert run_tool('--pin', str(tmp_path / 'missing.json')).returncode == 1
+
+
+# ---- license_policy (CODEX-15): an explicit, enforced gate for GPL-family components ----------------------
+
+def approved(data: dict) -> dict:
+    """Copy of the pin in which every shipped policy component carries owner approval."""
+    data = copy.deepcopy(data)
+    for entry in data['license_policy']['allowed'].values():
+        if entry['shipped']:
+            entry['owner_approved'] = True
+    return data
+
+
+def test_committed_policy_lists_exactly_the_known_gpl_family_components(pin):
+    allowed = pin['license_policy']['allowed']
+    assert set(allowed) == {'ghidriff', 'temurin-jdk', 'ghidra-GPL-dir'}
+    assert allowed['ghidriff']['owner_approved'] is True and allowed['ghidriff']['shipped'] is True
+    assert allowed['ghidra-GPL-dir']['shipped'] is False
+    assert allowed['temurin-jdk']['spdx'] == 'GPL-2.0-only WITH Classpath-exception-2.0'
+
+
+def test_ghidra_gpl_directory_is_stripped_not_kept(pin):
+    assert 'GPL/**' in pin['strip']['ghidra'] and 'GPL/**' not in pin['strip']['keep']
+
+
+@pytest.mark.parametrize(('spdx', 'expected'),
+                         [('GPL-3.0-only', True), ('LGPL-3.0-only OR GPL-2.0-only', True), ('AGPL-3.0-or-later', True),
+                          ('GPL-2.0-only WITH Classpath-exception-2.0', True), ('Apache-2.0', False),
+                          ('MIT', False), ('LicenseRef-GPLish-none', False)],
+                         ids=['gpl', 'lgpl-or', 'agpl', 'classpath', 'apache', 'mit', 'ref-substring'])
+def test_is_copyleft(spdx, expected):
+    assert checker.is_copyleft(spdx) is expected
+
+
+def test_unlisted_gpl_wheel_is_refused(pin):
+    pin['wheels']['any'][0]['spdx'] = 'AGPL-3.0-only'
+    problems = checker.validate_pin(pin)
+    assert any(p.startswith('PT-BUNDLE-LICENSE') for p in problems), problems
+
+
+def test_listed_component_with_changed_spdx_is_refused_again(pin):
+    pin['components']['jdk-linux']['spdx'] = 'GPL-3.0-only'
+    assert any(p.startswith('PT-BUNDLE-LICENSE') for p in checker.validate_pin(pin))
+
+
+@pytest.mark.parametrize('mutate', [lambda d: d['strip']['keep'].append('GPL/**'),
+                                    lambda d: d['strip']['ghidra'].remove('GPL/**'),
+                                    lambda d: d['license_policy']['allowed'].pop('ghidra-GPL-dir'),
+                                    lambda d: d['license_policy']['allowed']['temurin-jdk'].pop('rationale'),
+                                    lambda d: d['license_policy']['allowed']['temurin-jdk'].update(owner_approved='yes')],
+                         ids=['keep-gpl', 'unstrip-gpl', 'drop-gpl-entry', 'no-rationale', 'non-bool'])
+def test_policy_structure_is_enforced(pin, mutate):
+    mutate(pin)
+    assert checker.validate_pin(pin)
+
+
+def test_committed_pin_records_the_owner_jdk_approval(pin):
+    jdk = pin['license_policy']['allowed']['temurin-jdk']
+    assert jdk['owner_approved'] is True and jdk['approved_on'] == '2026-10-15' and jdk['approved_via']
+    assert checker.unapproved_licenses(pin) == []  # stripped GPL dir is not shipped, so never pending
+
+
+def test_pending_approval_is_reported_and_blocks_release_only(pin, tmp_path):
+    pin = json.loads(json.dumps(pin))
+    pin['license_policy']['allowed']['temurin-jdk']['owner_approved'] = False  # simulate a withdrawn approval
+    assert checker.unapproved_licenses(pin) == ['temurin-jdk']
+    path = tmp_path / 'pin.json'
+    path.write_text(json.dumps(resolved(pin)), encoding='utf-8')
+    plain = run_tool('--pin', str(path))
+    assert plain.returncode == 0 and 'WARNING' in plain.stderr and 'temurin-jdk' in plain.stderr
+    refused = run_tool('--pin', str(path), '--release')
+    assert refused.returncode == 4 and 'PT-BUNDLE-LICENSE' in refused.stderr
+    acceptance = run_tool('--pin', str(path), '--release', '--allow-unapproved-licenses')
+    assert acceptance.returncode == 0 and 'WARNING' in acceptance.stderr
+
+
+@pytest.mark.parametrize('component', ['ghidriff', 'temurin-jdk'])
+def test_flipping_an_approval_to_false_fails_the_release_gate(pin, tmp_path, component):
+    data = approved(resolved(pin))
+    path = tmp_path / 'pin.json'
+    path.write_text(json.dumps(data), encoding='utf-8')
+    assert run_tool('--pin', str(path), '--release').returncode == 0
+    data['license_policy']['allowed'][component]['owner_approved'] = False
+    path.write_text(json.dumps(data), encoding='utf-8')
+    assert run_tool('--pin', str(path), '--release').returncode == 4
+
+
+def test_shipped_ghidra_gpl_files_are_refused_while_stripped_by_policy(pin):
+    files = ['ghidra/LICENSE', 'ghidra/GPL/DemanglerGnu/readme.txt']
+    assert checker.shipped_gpl_dir_problems(files, pin)
+    assert checker.shipped_gpl_dir_problems(['ghidra/LICENSE'], pin) == []
