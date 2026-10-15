@@ -1,11 +1,11 @@
 """Gate report generator for SPEC-31 (08-evaluation s1): G-U1..G-U8 -> `gate-report/1`. Dev-only, never shipped.
 
 Slice S6a fixed the report contract, the status vocabulary and the registry of the eight gates, and it
-evaluated G-U5 from `bench-report/1` files and G-U8 from a pytest JUnit file plus attested CI steps. Slice S6b adds G-U1,
-G-U2 and G-U4 over `unified-outcomes/1` (`tools/unified/evaluators.py`). G-U3, G-U6 and G-U7 stay `pending` and say
-what they wait for and what they will read. For those gates the report already carries
-facts about the corpus they will read (counts from `unified-corpus-manifest/1`), so a missing mutant class or an
-anti-conservative lineage count is visible before any engine runs.
+evaluated G-U5 from `bench-report/1` files and G-U8 from a pytest JUnit file plus attested CI steps. Slice S6b added G-U1,
+G-U2 and G-U4 over `unified-outcomes/1` (`tools/unified/evaluators.py`); slice S6c adds G-U3, G-U6 and G-U7
+(`tools/unified/rowgates.py`, intervals from `tools/unified/cluster.py`). Every outcome gate also carries the facts of the
+corpus it reads (counts from `unified-corpus-manifest/1`), so a missing mutant class or an anti-conservative lineage count
+is visible before any engine runs.
 
 Statuses: `pass` / `fail` are verdicts on data; `insufficient-data` means the data supplied (or its size) cannot decide;
 `pending` means a slice that is not built yet; `blocked` marks a part that needs something outside the code (a pinned
@@ -32,7 +32,7 @@ from pydantic import BaseModel, ConfigDict, ValidationError
 from tools.calibration.bootstrap import MIN_GROUPS_HEADLINE
 from tools.calibration.common import digest, strict_json
 from tools.calibration.tier_r.contracts import ContractError, dump_json
-from tools.unified import bench, evaluators, outcomes
+from tools.unified import bench, evaluators, outcomes, rowgates
 from tools.unified.corpus import aa
 from tools.unified.corpus import manifest as corpus_manifest
 from tools.unified.mutations import classes
@@ -68,8 +68,6 @@ GATES = (
              'unified-outcomes/1 for every mutant pair: the verdict of the planted function, per class'),
     GateSpec('G-U3', 'are `matched` pairs right?', 'S2',
              'the ladder correspondence of every release pair joined to its label document, and parity-report/1',
-             needs=('IR-to-ladder adapter', 'S6b'), waits=('the ladder cannot read a real ProgramIR yet: the IrReader to IrSide adapter is not on the base, so '
-                    'no ladder pair exists for a real image; the evaluator is slice S6b',),
              blocked=('the BinDiff oracle part (MD index parity, tier A/B agreement) needs a pinned BinDiff: '
                       'tools/bindiff_pin.json has no verified assets',)),
     GateSpec('G-U4', 'is it deterministic and symmetric?', 'S0b / S3',
@@ -78,13 +76,9 @@ GATES = (
              'bench-report/1 from the Linux runner and from the Windows runner or the frozen EXE',
              waits=('the largest Tier R pair through the whole pipeline needs S3',)),
     GateSpec('G-U6', 'is it worth it?', 'S3',
-             'the unified-result/1 materiality and the best single legacy output on the same planted and A/A pairs',
-             needs=('S3', 'SPEC-32 evaluation core'), waits=('needs the S3 materiality and the scoring core of the SPEC-32 evaluation, which reads Ghidriff '
-                    'modified, BinDiff flags and rz-diff non-identical on the same pairs',)),
+             'unified-outcomes/1 rows with the legacy tools that flag them, on the planted and A/A pairs'),
     GateSpec('G-U7', 'is narrowed A-IND-1 safe?', 'S3',
-             'the unified-result/1 rows with their atoms: error rate by component pair and evidence-class pair',
-             needs=('S3',), waits=('rows matched via two tier-B atoms and their evidence classes come from the S3 fusion of real rows; '
-                    'classes with fewer than 30 such rows are reported insufficient-data, never assumed safe',)),
+             'unified-outcomes/1 rows with their supports and truth: error rate by component pair and evidence-class pair'),
     GateSpec('G-U8', 'did we break anything?', 'every slice',
              'a pytest JUnit file of the full suite and the attested CI steps'),
 )
@@ -268,7 +262,7 @@ def _g_u_outcomes(gate: GateSpec, inputs: Inputs, facts: dict[str, dict]) -> tup
     if gate.id == 'G-U4':
         status, reasons, observed = evaluators.g_u4(inputs.outcomes, inputs.manifest)
     else:
-        evaluate = evaluators.g_u1 if gate.id == 'G-U1' else evaluators.g_u2
+        evaluate = {'G-U1': evaluators.g_u1, 'G-U2': evaluators.g_u2, **rowgates.EVALUATORS}[gate.id]
         status, reasons, observed = evaluate(inputs.manifest, inputs.outcomes)
     return status, reasons, (), {**observed, 'corpus': facts.get(gate.id), 'runs': [o.run for o in inputs.outcomes]}
 
@@ -298,20 +292,13 @@ def corpus_facts(m: corpus_manifest.CorpusManifest | None) -> dict[str, dict]:
 
 # ---- report -----------------------------------------------------------------------------------------------------------------------
 
-def _waiting(gate: GateSpec, facts: dict[str, dict]) -> tuple[Status, list[str], tuple[str, ...], dict]:
-    reasons = [f'pending: {w}' for w in gate.waits] + [f'blocked: {b}' for b in gate.blocked]
-    return 'pending', reasons, gate.needs, {'consumes': gate.consumes, 'corpus': facts.get(gate.id)}
-
-
 def _evaluate(gate: GateSpec, inputs: Inputs, facts: dict[str, dict]) -> GateRow:
     if gate.id == 'G-U5':
         status, reasons, needs, observed = _g_u5(inputs)
-    elif gate.id in ('G-U1', 'G-U2', 'G-U4'):
-        status, reasons, needs, observed = _g_u_outcomes(gate, inputs, facts)
     elif gate.id == 'G-U8':
         status, reasons, needs, observed = _g_u8(inputs)
     else:
-        status, reasons, needs, observed = _waiting(gate, facts)
+        status, reasons, needs, observed = _g_u_outcomes(gate, inputs, facts)
     return GateRow(id=gate.id, question=gate.question, first_slice=gate.first_slice, status=status,
                    reasons=tuple(reasons), needs=needs, observed=observed)
 

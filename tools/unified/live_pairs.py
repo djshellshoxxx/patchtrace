@@ -61,8 +61,9 @@ def outcome_of(service: ProjectService, doc: C.KnownAnswerLabels, orientation: o
     """The rows of the current stored unified result of the project, reduced; nothing is recomputed."""
     loaded = pipeline.load_current(service, pipeline.make_plan(service))
     facts = {f.row_id: f for f in store.read_facts(loaded.directory, loaded.manifest)}
+    modified = frozenset(m.id for m in service.project.matches if m.category == 'modified')
     return outcomes.collect(store.read_rows(loaded.directory, loaded.manifest), doc, orientation=orientation,
-                            facts=facts)
+                            facts=facts, flagged={'ghidriff': modified})
 
 
 def analyse_pair(doc: C.KnownAnswerLabels, store_dir: Path, backend: BackendConfig, work: Path,
