@@ -30,6 +30,7 @@ from .contracts import (
     PairEdge,
 )
 
+MAX_NAME_CHARS = 4096  # the FunctionNode contract bound
 ONE_TO_ONE = frozenset({'modified', 'unchanged'})
 # Display order only (strongest first, following Ghidriff correlator order); never a score.
 # Analyst corrections rank first because they override the engine by contract.
@@ -267,7 +268,13 @@ def _describe(indexed: list[_Pair], ordinal: int, key: Key) -> FunctionRecord | 
 
 def _node(ordinal: int, key: Key, record) -> FunctionNode:
     address, name = _key_parts(key)
-    return FunctionNode(ordinal=ordinal, address=address, name=name if record is None else record.name)
+    if record is not None:
+        name = record.name
+    if name is not None and len(name) > MAX_NAME_CHARS:
+        raise NwayError('PT-NWAY-INPUT', f'a function name exceeds {MAX_NAME_CHARS} characters')
+    if address is None and not name:
+        raise NwayError('PT-NWAY-INPUT', 'a function has neither an address nor a name')
+    return FunctionNode(ordinal=ordinal, address=address, name=name or None)
 
 
 def extract_chains(hashes: Sequence[str], pairs: Sequence[ComparisonProject],
