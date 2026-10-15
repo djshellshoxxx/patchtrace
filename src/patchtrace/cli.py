@@ -187,10 +187,10 @@ def _emit(args, command: str, status: str, result, warnings: list[str], text: st
         sys.stdout.write(text + ('\n' if text and not text.endswith('\n') else ''))
 
 
-def _terminal_text(value: object) -> str:
+def _terminal_text(value: object, limit: int | None = 300) -> str:
     """Untrusted text (symbol names from the target) for a terminal: controls and bidi marks become escapes."""
     from .intelligence.reports import plain_text
-    return plain_text(value)
+    return plain_text(value, limit)
 
 
 def _match_names(matches) -> dict:
@@ -869,7 +869,7 @@ def main(argv: list[str] | None = None) -> int:
         args = _parser(argv).parse_args(argv)
         return (getattr(args, 'handler', None) or HANDLERS[args.command])(args, cancel)
     except CliError as exc:
-        print(f'error: {exc}', file=sys.stderr)
+        print(f'error: {_terminal_text(exc, 4000)}', file=sys.stderr)
         as_json, label = _json_envelope(args, argv)
         if as_json:
             sys.stdout.write(json.dumps({'contract': CLI_CONTRACT, 'command': label, 'status': 'failed',
@@ -887,7 +887,7 @@ def main(argv: list[str] | None = None) -> int:
         return int(exc.code or 0)
     except Exception as exc:  # contract: unexpected failures are runtime errors (3), never a bare traceback
         message = f'{type(exc).__name__}: {redact_log(str(exc))}'  # an exception may quote a header, URL or argv
-        print(f'error: {message}', file=sys.stderr)
+        print(f'error: {_terminal_text(message, 4000)}', file=sys.stderr)
         if args is not None and getattr(args, 'json', False):
             sys.stdout.write(json.dumps({'contract': CLI_CONTRACT, 'command': _command_name(args), 'status': 'failed',
                                          'result': None, 'warnings': [], 'error': message}, sort_keys=True) + '\n')

@@ -232,3 +232,8 @@ def test_interrupt_during_cli_dispatch_exits_cancelled_cli_b_04(monkeypatch, cap
     monkeypatch.setattr(sys, "argv", ["patchtrace", "rank", "x"])
     assert entry.main() == cli.CANCELLED
     assert capsys.readouterr().err.strip() == "cancelled"
+
+
+def test_text_mode_usage_error_is_terminal_safe_cli_b_09(project, capsys):
+    code, _, err = run(["rank", str(project), "\x1b[2J\u202e\x07"], capsys)
+    assert code == 2 and "\x1b" not in err and "\u202e" not in err and "\x07" not in err
