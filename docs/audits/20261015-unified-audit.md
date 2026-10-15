@@ -125,3 +125,11 @@ class), U7-08 (mirror check scope), U7-09 (remaining regex copies, shared `evide
   stub-basicblocks-0` and the limitation `bindiff-stub-rows-demoted:N`, so it stays a `candidate` with provenance and
   cannot reach `matched` alone. `None` behaves as before (`bindiff-stub-rows-not-identified` is now raised only then).
   Tests: `test_unified_fusion.py` (stub alone, stub plus agreeing source, non-stub, legacy row parses).
+
+### [U7-06:fixed] Deadline after the pass ladder keeps the partial result (2026-10-15)
+Decision (lead): keep the partial result. `compute_stage` runs fusion and the fact context under a cancel-only budget when
+the deadline is already spent after the ladder; the row loop stops at the deadline and the remaining pair rows are stored
+with their decision and materiality `unknown` (never negative). The manifest gets the degrading limitation `timeout`
+(plus `ladder-partial:deadline` when the ladder itself stopped), so the run ends `partial` (CLI exit 3, envelope status
+partial). A cancel still aborts. Red/green tests with a fake clock in `tests/test_unified_wire_compute.py`. Scope note: a
+deadline that passes before the ladder, or inside fusion of a run without ProgramIR, still ends as `PT-UNIFIED-TIMEOUT`.

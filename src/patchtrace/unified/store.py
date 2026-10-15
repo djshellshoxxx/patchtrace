@@ -63,6 +63,7 @@ RUN_KEEP = 8
 BACKUP_LABEL = 'unified-retention'
 MANIFEST = 'manifest.json'
 ROWS, FACTS = 'rows.jsonl.gz', 'facts.jsonl.gz'
+DECOMP = 'decomp.jsonl.gz'   # optional part of the on-demand decompile (S3b)
 MANIFEST_MAX_BYTES = 1024 * 1024
 LINE_MAX_BYTES = 4 * 1024 * 1024
 ORPHAN_RESULT_S = 300  # 02 s4: a result directory without a row is an orphan after 5 minutes
@@ -211,6 +212,20 @@ def add_limitations(directory: Path, notes: Iterable[str]) -> UnifiedResultManif
     part = Path(directory) / f'{MANIFEST}.part'
     part.write_bytes(dump_line(updated))
     _replace(part, Path(directory) / MANIFEST)
+    return updated
+
+
+def add_part(directory: Path, part: Part) -> UnifiedResultManifest:
+    """Add an optional part (`decomp.jsonl.gz`, S3b) to a staged result whose file `write_part` already wrote. The
+    manifest is rewritten; the result key does not cover the parts, and readers that do not know the part ignore it."""
+    manifest, _sha = read_manifest(directory)
+    document = manifest.model_dump(mode='json')
+    document['parts'] = sorted([*(p for p in document['parts'] if p['name'] != part.name), part.model_dump(mode='json')],
+                               key=lambda p: p['name'])
+    updated = UnifiedResultManifest.model_validate_json(json.dumps(document))
+    target = Path(directory) / f'{MANIFEST}.part'
+    target.write_bytes(dump_line(updated))
+    _replace(target, Path(directory) / MANIFEST)
     return updated
 
 
