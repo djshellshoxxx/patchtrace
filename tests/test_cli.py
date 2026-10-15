@@ -204,3 +204,12 @@ def test_json_usage_error_prints_envelope(argv, capsys):
     doc = json.loads(out)
     assert code == 2 and doc['status'] == 'failed' and doc['contract'] == cli.CLI_CONTRACT and doc['error']
 
+
+
+def test_clierror_message_is_redacted(project, capsys, monkeypatch):
+    def leaky(*_a, **_k):
+        raise cli.CliError(cli.RUNTIME, 'bad profile apiKey=abcdef123456SECRET')
+    monkeypatch.setitem(cli.HANDLERS, 'rank', leaky)
+    code, out, err = run(['rank', str(project), '--json'], capsys)
+    assert code == 3 and 'abcdef123456SECRET' not in out + err and 'redacted' in out
+
