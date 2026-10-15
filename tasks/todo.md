@@ -590,3 +590,7 @@
 - [ ] U7-05 BinDiff stub rows reach tier A alone (additive `SecondaryMatch.basicblocks` or IR-aware demotion before fusion)
 - [ ] U7-06 decide the budget policy for fusion and facts after a ladder deadline (partial result is lost today)
 - [ ] U7-07 trace-arg mutant class for G-U2
+
+### [LBL-07:mutations-ir-opt]
+- [x] LBL-07 IR layer + opt layer (`mutations/ir.py`, `mutations/opt_transforms.py`)
+- [ ] LBL-07 follow-up: add `opt` to `tier_r/toolchain.CANDIDATES` so `probe()` reports it; wire `agreement_by_operator` into the farm report; IR counterparts for the remaining semantic operators

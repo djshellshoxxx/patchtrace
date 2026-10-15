@@ -843,3 +843,7 @@ Automated only: `tests/test_calib_channels_*.py` (synthetic pairs). No channel v
 ### [LBL-08:msvc-cl]
 - Automated (Linux): argv, banner, host gating, nuisance variants and a build through fake `cl`/`link` pass; the real-compiler test records `blocked` (profile msvc builds only on a Windows host).
 - Not verified: any real `cl` build (A/A byte identity, PDB source-path normalisation via `/d1trimfile`, `llvm-strip` on a MSVC image, `llvm-pdbutil` inventory). Needs the windows-2022 advisory job.
+
+### [LBL-07:mutations-ir-opt]
+- `tests/test_mutations_ir.py` (27) and `tests/test_mutations_opt.py` (11): hand-computed IR goldens, fake process runner, and one real-tool test per layer that asserts BLOCKED when clang/opt is absent. Real clang/opt 18.1.3 on Linux: `mergefunc`, `always-inline`, `loop-extract`, `hotcoldsplit` change the module; `partial-inliner` returned `unchanged` on the sample (its trigger is narrow), reported as a rejected attempt, not a pass.
+- Not verified: the Windows runner (`opt` availability is [unverified] per the LBL plan); agreement rates on real mutants (needs the farm).
