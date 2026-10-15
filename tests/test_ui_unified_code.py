@@ -261,7 +261,7 @@ def test_every_control_is_named_focusable_tipped_and_plain(code):
     assert a11y_audit(code) == []
     for widget in (code.mode, code.previous_hunk, code.next_hunk, code.view.panes['older'], code.view.panes['newer'],
                    *copy_buttons(code).values()):
-        assert widget.objectName().startswith('unified.code_') and 'What:' in widget.toolTip(), widget.objectName()
+        assert widget.objectName().startswith(('unified.code_', 'codediff.')) and 'What:' in widget.toolTip(), widget.objectName()
         assert widget.accessibleDescription() and (widget.accessibleName() or isinstance(widget, QPushButton))
     assert code.status.accessibleName() == '' and code.hunk_label.accessibleName() == ''
     assert code.mode.accessibleName() == 'Code view'
