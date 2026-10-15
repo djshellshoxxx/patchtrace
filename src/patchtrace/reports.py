@@ -9,6 +9,7 @@ import re
 import tempfile
 from pathlib import Path
 
+from .hostile_text import escape_text, is_hostile
 from .models import ComparisonProject, ExportManifest
 
 MAX_REPORT_BYTES = 20 * 1024 * 1024
@@ -212,7 +213,9 @@ def _cell(value: str) -> str:
 
 
 def _render(data: dict, format: str) -> str:
-    serialized = json.dumps(data, indent=2, sort_keys=True, ensure_ascii=False)
+    # Outside the layout newline, hostile characters sit inside JSON strings, where the \uXXXX spelling is the same value.
+    serialized = ''.join(json.dumps(c)[1:-1] if is_hostile(c) and c != '\n' else c
+                         for c in json.dumps(data, indent=2, sort_keys=True, ensure_ascii=False))
     if format == 'json':
         return serialized + '\n'
     if format == 'html':
@@ -243,7 +246,7 @@ def _render(data: dict, format: str) -> str:
                              + html.escape(finding['review']) + '; stale: '
                              + str(finding['stale']).lower() + '</p></article>')
         parts += ['<h2>Evidence and provenance</h2><pre>', html.escape(serialized), '</pre></body></html>\n']
-        return ''.join(parts)
+        return escape_text(''.join(parts), keep='\n')
     parts = ['# PatchTrace report', '', _markdown_escape(data['name']), '',
              f'Project revision: {data["revision"]}', '']
     ranking = data.get('change_ranking')
@@ -263,7 +266,7 @@ def _render(data: dict, format: str) -> str:
                       'Review: ' + _markdown_escape(finding['review']) + '; stale: '
                       + str(finding['stale']).lower(), '']
     parts += ['## Evidence and provenance', '', _markdown_escape(serialized), '']
-    return '\n'.join(parts)
+    return escape_text('\n'.join(parts), keep='\n')
 
 
 def export_project(project: ComparisonProject, format: str, destination: Path, include_code: bool = False,
