@@ -131,3 +131,34 @@ def _eng(status, runs=0, failures=0):
 def test_engine_status_without_a_completed_run_is_blocked_or_failed(states, expected):
     from tools.calibration.tier_r import shard
     assert shard._engine_status([_eng(s, runs=1 if s == 'ok' else 0) for s in states])['status'] == expected
+
+
+# ---- D-09 duplicate predictions for one (old, new): order independent, deterministic, counted ---------------------------
+
+def _dup_preds():
+    from tools.calibration.evalcore.engines.common import Prediction
+    return [Prediction(0x1000, 0x1000, False, 1000, 'f', 'f'), Prediction(0x1000, 0x1000, True, 900, 'f', 'f'),
+            Prediction(0x1000, 0x1000, True, 900, 'f', 'f2'), Prediction(0x2000, 0x2000, False, 1000, 'g', 'g')]
+
+
+def test_dedupe_is_order_independent_and_counts_the_dropped_duplicates():
+    import itertools
+
+    from tools.calibration.evalcore.engines import common
+    preds = _dup_preds()
+    chosen = set()
+    for perm in itertools.permutations(preds):
+        kept, dropped = common.dedupe_predictions(perm)
+        assert dropped == 2 and len(kept) == 2
+        chosen.add(tuple(kept))
+    assert len(chosen) == 1
+
+
+def test_scorer_views_ignore_provider_order_and_the_report_carries_a_warning(monkeypatch):
+    from tools.calibration.evalcore.engines import common
+    from tools.calibration.tier_r import evaluate as E
+    preds = _dup_preds()
+    a = common.EngineOutput('rz-diff', 'ok', predictions=tuple(preds))
+    b = common.EngineOutput('rz-diff', 'ok', predictions=tuple(reversed(preds)))
+    assert common.to_engine_pairs(a, 'hidden') == common.to_engine_pairs(b, 'hidden')
+    assert E.duplicate_note('rz-diff', 2) == 'rz-diff: 2 duplicate predictions for one (old, new) resolved deterministically'

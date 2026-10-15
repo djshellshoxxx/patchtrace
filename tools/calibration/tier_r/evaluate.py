@@ -38,6 +38,7 @@ from ..evalcore.engines.common import (  # noqa: F401 - re-exported: the evaluat
     StaticProvider,
     blocked,
     clean,
+    dedupe_predictions,
     failed,
     from_match_set,
     to_engine_pairs,
@@ -56,6 +57,10 @@ COUNT_KEYS = ('pairs', 'truth_same', 'identity_tp', 'identity_fp', 'identity_fn'
 MAX_WRONG = 1000
 IMPLICIT_NOTE = ('ghidriff lists only added/deleted/modified functions: truth pairs it does not mention are counted as '
                  'matched and unchanged, so its identity numbers are an upper bound')
+
+
+def duplicate_note(engine: str, count: int) -> str:
+    return f'{engine}: {count} duplicate predictions for one (old, new) resolved deterministically'
 
 
 def engine_output_doc(out: EngineOutput, labels: C.KnownAnswerLabels, symbols: str) -> dict:
@@ -98,9 +103,7 @@ def score_pair(labels: C.KnownAnswerLabels, out: EngineOutput) -> tuple[dict[str
                 n['cosmetic_matched'] += 1
                 n['cosmetic_flagged'] += flagged
 
-    unique = {}
-    for p in out.predictions:
-        unique.setdefault((p.old_rva, p.new_rva), p)
+    unique = {(p.old_rva, p.new_rva): p for p in dedupe_predictions(out.predictions)[0]}
     mentioned_old = {p.old_rva for p in unique.values()} | set(out.old_only)
     mentioned_new = {p.new_rva for p in unique.values()} | set(out.new_only)
     for key in sorted(unique):
@@ -198,6 +201,7 @@ def evaluate_full(labels_docs: Sequence[C.KnownAnswerLabels], providers: Sequenc
     if symbols == 'visible':
         all_notes.append('symbols visible: engines saw the debug image; not comparable with hidden-symbol results')
     runs: dict[str, list[ER.Run]] = defaultdict(list)
+    duplicates: dict[str, int] = defaultdict(int)
     for provider in sorted(providers, key=lambda p: ENGINE_ORDER.index(p.engine)):
         acc = by_engine[provider.engine]
         for labels in docs:
@@ -210,10 +214,14 @@ def evaluate_full(labels_docs: Sequence[C.KnownAnswerLabels], providers: Sequenc
                 counts, wrong = score_pair(labels, out)
                 runs[provider.engine].append(ER.Run(labels, to_engine_pairs(out, symbols)))
                 wrong_all += wrong
+                dropped = dedupe_predictions(out.predictions)[1]
+                if dropped:
+                    duplicates[provider.engine] += dropped
                 sha = RS.output_sha256(engine_output_doc(out, labels, symbols))
                 if out.implicit_unchanged and IMPLICIT_NOTE not in all_notes:
                     all_notes.append(IMPLICIT_NOTE)
             acc.results.append((labels.pair_id, labels.stratum, out.status, out.reason, counts, sha, out.version))
+    all_notes += [duplicate_note(e, duplicates[e]) for e in ENGINE_ORDER if duplicates[e]]
     pairs, strata, engines = [], defaultdict(dict), []
     for engine in ENGINE_ORDER:
         if engine not in by_engine:
