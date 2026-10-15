@@ -36,7 +36,7 @@ from .read_text import clean
 DECOMPILED, DISASSEMBLY = 'decompiled', 'disassembly'
 CHANNELS = (DECOMPILED, DISASSEMBLY)
 MAX_LINES = 4000
-DECOMP_PART = 'decomp.jsonl.gz'
+DECOMP_PART = store.DECOMP
 NO_FUNCTION = 'No function on this side.'
 NOT_STORED = 'Disassembly text is not stored for this function in the ProgramIR.'
 NOT_IN_IR = 'This function is not in the stored ProgramIR.'
