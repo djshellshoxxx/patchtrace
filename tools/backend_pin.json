@@ -206,12 +206,4 @@
     "jdk": ["lib/src.zip", "jmods/**"],
     "keep": ["LICENSE", "licenses/**", "Ghidra/Processors/**", "Ghidra/Debug/**", "Ghidra/Features/**", "legal/**", "bin/javac*"]
   }
-
-    "ghidra": ["docs/**", "Extensions/**", "**/os/{other-OS}/**", "Ghidra/Features/Base/data/typeinfo/golang/**",
-               "Ghidra/Features/Jython/**", "Ghidra/Features/BSim/**", "Ghidra/Features/GhidraServer/**", "Ghidra/Debug/**"],
-    "ghidra_fid": ["Ghidra/Features/FunctionID/data/*.fidbf"],
-    "jdk": ["lib/src.zip", "jmods/**"],
-    "keep": ["LICENSE", "licenses/**", "GPL/**", "Ghidra/Processors/**", "Ghidra/Features/**", "legal/**", "bin/javac*"]
-  },
-  "jlink": {"modules": ["java.base", "java.desktop", "java.xml", "java.logging", "java.datatransfer", "java.management", "java.sql", "java.naming", "java.rmi", "java.scripting", "java.compiler", "java.net.http", "java.security.jgss", "java.prefs", "java.instrument", "jdk.unsupported", "jdk.xml.dom", "jdk.security.auth", "jdk.net", "jdk.management", "jdk.compiler", "jdk.crypto.ec", "jdk.zipfs", "jdk.charsets", "jdk.jdi", "jdk.jshell"]}
 }
