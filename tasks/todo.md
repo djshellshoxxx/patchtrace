@@ -511,3 +511,7 @@
 ### [PIL-D1:eval-core]
 - [x] metrics, ablation, gate, report (tests/test_pilot_eval_*.py)
 - [ ] arm runner over localize(), case/advisory loader, CLI: needs LBL M2/M5 pair labels and tools/calibration/pilot/advisories/<CVE>.json
+
+### [PIL-C2:read-model]
+- [x] pilot/read_model.py (tests/test_pilot_read_model.py)
+- [ ] ui_leads.py, leads.* tooltips, PANEL registration, reveal_location, storage prepare/commit split (GUI track)
