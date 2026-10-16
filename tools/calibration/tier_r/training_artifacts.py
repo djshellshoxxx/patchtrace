@@ -79,7 +79,12 @@ def _paths(root: Path, expected: dict[str, str], kind: str) -> dict[str, Path]:
     folder = root / kind
     if folder.is_symlink():
         raise ArtifactError(f'{kind}: linked folder is refused')
-    found = {p.name: p for p in folder.glob('*.json')} if folder.is_dir() else {}
+    found = {}
+    if folder.is_dir():
+        for path in folder.iterdir():
+            if path.is_symlink() or not path.is_file() or path.suffix != '.json':
+                raise ArtifactError(f'{kind}: non-JSON file, link or directory is forbidden')
+            found[path.name] = path
     if set(found) != set(expected):
         raise ArtifactError(f'{kind}: expected and actual artifact names differ (missing or unexpected files)')
     return found
