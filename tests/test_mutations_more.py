@@ -309,6 +309,31 @@ def test_labels_agree_with_the_source_layer_rule():
         assert (d.label, d.check) == ('changed', 'ok')
 
 
+def test_masked_body_coff_quoted_rip_string_symbols_are_addresses(monkeypatch):
+    """Windows Clang quotes MSVC string symbols; changing addresses is not changed code."""
+    from pathlib import Path
+    from types import SimpleNamespace
+
+    def compile_asm(argv, *, cwd, timeout):
+        mutated = '"hello!"' in Path(cwd, 'm.c').read_text(encoding='utf-8')
+        symbol = ('"??_C@_06GANFPHOD@hello?$CB?$AA@"' if mutated
+                  else '"??_C@_05CJBACGMB@hello?$AA@"')
+        Path(cwd, '_masked.s').write_text('\n'.join((
+            'shout:',
+            'movl %ecx, %edx',
+            f'leaq {symbol}(%rip), %rcx',
+            'jmp emit',
+            '.section .rdata,"dr"',
+        )), encoding='utf-8')
+        return SimpleNamespace(returncode=0)
+
+    monkeypatch.setattr(E, 'run_tool', compile_asm)
+    original = E._masked_function_asm(FILES, 'm.c', 'shout', 'clang', (), 1)
+    changed = E._masked_function_asm({'m.c': CODE.replace('"hello"', '"hello!"', 1)},
+                                     'm.c', 'shout', 'clang', (), 1)
+    assert original == changed == ('movl %ecx, %edx', 'leaq SYM(%rip), %rcx', 'jmp T')
+
+
 @pytest.mark.parametrize('boundary', ['.Lfunc_end0:', '.seh_endproc', '.def next;', '.section .rdata,"dr"', 'next:'])
 def test_masked_body_stops_at_function_boundary(monkeypatch, boundary):
     """COFF lacks ELF's .Lfunc_end; later functions/data must not affect target truth."""
