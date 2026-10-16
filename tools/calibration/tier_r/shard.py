@@ -87,15 +87,15 @@ def _load_json(path: Path):
     return json.loads(path.read_text(encoding='utf-8'))
 
 
-def _cards(root: Path) -> list[str]:
-    """Ids of buildable case cards: recipe exists for the project and the licence is permissive."""
+def _eligible_card_rows(root: Path) -> list[dict]:
+    """Only recipe-backed, permissively licensed case cards; keep their source pins for deduplication."""
     try:
         recipes = {r['project'] for r in _load_json(root / 'tools/calibration/tier_r/catalogue/recipes.json')['recipes']}
     except (OSError, ValueError, KeyError, TypeError):
         recipes = set()
     files = sorted((root / 'tools/calibration/tier_r/catalogue').glob('*.json')) + sorted(
         (root / 'corpus/catalog').glob('*.json'))
-    found = set()
+    found = []
     for path in files:
         if path.name == 'recipes.json':
             continue
@@ -106,8 +106,37 @@ def _cards(root: Path) -> list[str]:
         for card in data if isinstance(data, list) else ():
             if (isinstance(card, dict) and card.get('contract') == 'case-card/1' and card.get('project') in recipes
                     and card.get('license_spdx') in PERMISSIVE_SPDX and isinstance(card.get('id'), str)):
-                found.add(card['id'])
-    return sorted(found)
+                found.append(card)
+    return found
+
+
+def _cards(root: Path) -> list[str]:
+    return sorted({card['id'] for card in _eligible_card_rows(root)})
+
+
+def _recipe_probe_cases(root: Path, cards: Sequence[str], *, verb: str) -> set[str]:
+    """One representative per source pin, not per card edge. Duplicate edges would reuse factory pair IDs."""
+    if verb not in ('aa', 'noise'):
+        raise ShardError(f'unsupported recipe probe {verb!r}')
+    permitted = set(cards)
+    pins: dict[tuple[str, str], tuple[str, str]] = {}
+    for card in _eligible_card_rows(root):
+        if card['id'] not in permitted:
+            continue
+        for side in ('old', 'new'):
+            source = card.get(side)
+            if (not isinstance(source, dict) or not isinstance(source.get('ref'), str)
+                    or not source['ref'] or not isinstance(source.get('commit'), str)
+                    or not re.fullmatch(r'[0-9a-fA-F]{40}', source['commit'])):
+                raise ShardError(f"{card['id']}: invalid {side} pin (need ref and 40-hex commit)")
+            key = (card['project'], source['ref'])
+            commit = source['commit'].lower()
+            candidate = f"{verb}-card:{card['id']}:{side}"
+            previous = pins.get(key)
+            if previous and previous[0] != commit:
+                raise ShardError(f'{key[0]}:{key[1]} has conflicting commits across case cards')
+            pins[key] = (commit, min(candidate, previous[1]) if previous else candidate)
+    return {candidate for _, candidate in pins.values()}
 
 
 def _suites(root: Path) -> list[str]:
@@ -135,12 +164,12 @@ def enumerate_cases(root: Path, *, subset: str, seed: int, seeds_per_op: int = 1
         cases |= {f'suite:{s}' for s in suites} | {f'aa:{s}' for s in suites}
     if subset in ('cards', 'full'):
         cases |= {f'card:{c}' for c in cards}
-        cases |= {f'aa-card:{c}:{side}' for c in cards for side in ('old', 'new')}
+        cases |= _recipe_probe_cases(root, cards, verb='aa')
     if subset in ('mutations', 'full'):
         cases |= {f'mutate:{s}:{op}:{n}' for s in suites for op in ops for n in mutation_seeds(seed, seeds_per_op)}
     if subset in ('noise', 'full'):
         cases |= {f'noise:{s}' for s in suites}
-        cases |= {f'noise-card:{c}:{side}' for c in cards for side in ('old', 'new')}
+        cases |= _recipe_probe_cases(root, cards, verb='noise')
     for case in cases:
         refuse_microsoft(case)
     return sorted(cases)
