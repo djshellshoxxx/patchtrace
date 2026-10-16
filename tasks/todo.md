@@ -798,6 +798,7 @@ Implementation 0843de5: fixed COFF function boundaries affecting mutation labels
 ### [LBL-30:prereg-final-run-guard] (draft #85, 2026-10-16)
 - [x] Add strict LF/hash QA preregistration selection and explicit unlocked rehearsal path (implementation committed).
 - [x] Gate final locked-form reads behind single-use receipt, refuse smoke and repeat runs (implementation committed).
+- [x] Reject approved `--prereg` training without final receipt; validate on both OS runners (implementation committed; tests pending).
 - [x] Add temporary synthetic tests for hash mismatch, sign-off, final refusal, spent receipt and failure retention (tests committed).
 - [ ] Verify tests and full QA on Linux and Windows, including report contract and Ruff.
 - [ ] Record owner sign-off and freeze the actual C9 preregistration digest only after prereg audit; **no final run** was performed.
