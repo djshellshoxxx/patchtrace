@@ -142,7 +142,9 @@ def make_compile_checker(tools: Toolchain | None = None, *, flags: Sequence[str]
 
 
 _ASM_LABEL = re.compile(r'\.L[\w.$]+')
-_ASM_SYMBOL = re.compile(r'[\w.$@]+(?:[+-]\d+)?(?=\(%rip\))')
+# Windows COFF quotes decorated .rdata symbols (often embedding literal bytes) at RIP operands.
+# Their contents are addresses, not function-code changes; mask whole quoted tokens too.
+_ASM_SYMBOL = re.compile(r'(?:(?:"[^"]+")|[\w.$@]+(?:[+-]\d+)?)(?=\(%rip\))')
 _ASM_BRANCH = re.compile(r'^(call\w*|j\w+)\s+\S+$')
 
 
