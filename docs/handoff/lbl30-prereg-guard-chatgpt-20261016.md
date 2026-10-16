@@ -65,7 +65,10 @@ A SHA enters the model train key only when matched to the explicit `C9-PREREG-v1
 record. A draft rehearsal's SHA is *only* printed under `unlocked_rehearsal`.
 Final mode requires a manual `owner approval recorded` (or explicit accepted synonym)
 on that matching QA row. The marker is NOT cryptographically authenticated.
-Final mode prohibits a repository-local corpus root and smoke config, and refuses
+A matching `--prereg` alone is **not** sufficient to run training: the CLI now refuses
+all verified-SHA runs without `--final-locked-test`. This prevents the normal
+`run`/ `shift` path from bypassing the receipt. Direct Python APIs remain internal,
+not a substitute for locked evaluation.\nFinal mode prohibits a repository-local corpus root and smoke config, and refuses
 `shift`, unlocked mode, bare `--locked-form`, repeat runs and missing protocol.
 
 `run_locked_test` exclusively writes `locked-test-<SHA>.lock` BEFORE opening the
