@@ -77,3 +77,14 @@ Resumed PR #78 at f20cc572394a4365b399e3643532f71424ce9f4c. Current implementati
 
 ### Local interpreter diagnosis
 The incomplete full local run reported failures in test_evidence_host::test_loading_the_spec_imports_no_qt and test_evidence_table::test_the_module_imports_no_qt. Focused reproduction showed ModuleNotFoundError: patchtrace under python -I: pip had installed editable PatchTrace into user-site, which isolated mode correctly excludes. Created /tmp/patchtrace-verify-venv and installed .[dev,search,rules]; both tests then passed with no source/test changes. Use that virtual environment for further local testing. This does not make the earlier incomplete full run green. Current-head GitHub Linux/Windows CI remains the merge gate; documentation commits supersede earlier run IDs.
+
+## Continuation: fresh Windows QA failure and targeted follow-up (2026-10-16)
+
+Run [38883698492](https://github.com/djshellshoxxx/patchtrace/actions/runs/38883698492) on head `5f30a791` completed its Windows QA with **2 failed / 17,891 passed / 81 skipped / 6 xfailed** (53 min). This supersedes any earlier statement that current-head QA was all green. Failures:
+
+1. `tests/test_mutations_more.py::test_masked_body_rule_rejects_address_only_changes_and_records_them[string-literal-shout]`: no `NoMutationSite` raised. Windows COFF literal-symbol handling may differ by compiler; do not relax the label rule. Added regression for quoted/unquoted COFF decorated RIP labels, widened the address-operand mask, and modified the existing failure to print **actual before/after normalised function assembly** on future Windows failure. Linux/Windows native correctness of this repair is NOT YET VERIFIED.
+2. `tests/test_unified_read_model.py::test_filter_and_sort_budget_at_100000_rows`: default sort took 0.8823358 s against 0.75 s test budget, while source and function-column sort were 0.0699/0.0756 s. Added direct-index sorting fast path for the always-present default tuple key; existing `test_default_sort_fast_path_matches_generic_stable_order` checks ties/descending semantics. Windows budget acceptance NOT YET VERIFIED.
+
+Commits after the failed run include `1a9f246` (COFF fixture), `1e0b2cd` (mask), `0380502` (sort fast path), `3e62fee` (COFF quoted/unquoted cases), and `44f9adb` (diagnostic on native failure). Latest PR head should be looked up again before considering a merge; earlier corpus success 38883698797 is **stale as a merge gate** for this new head. GitHub triggers fresh full QA and corpus runs after updates. Do not merge #78 until ALL required current-head QA and corpus checks are green. No new native success is claimed.
+
+LBL-32 subsequent work is isolated in draft PR #82; it was forked at PR78's earlier 5f30a791. Update #82's ancestry with these post-fork fixes before its integration. Recipe A/A/noise is not a substitute for resolving these Windows correctness gates. Training `train=true` and real unified acceptance remain open.
