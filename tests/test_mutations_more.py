@@ -258,6 +258,14 @@ def test_swap_operators_compile_only_with_earlier_declarations(clang, op):
 
 
 # ---- masked-body acceptance rule --------------------------------------------------------------------------------
+def test_coff_quoted_rip_symbol_is_not_a_change_to_instruction_bytes():
+    """COFF embeds string contents in a quoted symbol; the symbol is an address reference."""
+    before = 'leaq "??_C@_05CJBACGMB@hello?$AA@"(%rip), %rcx'
+    after = 'leaq "??_C@_06GANFPHOD@hello?$CB?$AA@"(%rip), %rcx'
+    assert E._ASM_SYMBOL.sub('SYM', before) == E._ASM_SYMBOL.sub('SYM', after)
+    assert E._ASM_SYMBOL.sub('SYM', before) == 'leaq SYM(%rip), %rcx'
+
+
 
 def check_for(clang):
     return E.make_masked_body_check(FILES, clang)
@@ -278,10 +286,18 @@ def test_masked_body_rule_accepts_code_changing_operators(clang, op):
                                     ('api-use', 'copy')])
 def test_masked_body_rule_rejects_address_only_changes_and_records_them(clang, op, fn):
     # strings, callees and globals live behind masked symbols: the label noise the rule exists to catch
-    with pytest.raises(E.NoMutationSite) as err:
-        E.apply_case(FILES, op, seed=3, base=BASE, tools=clang, target=('m.c', fn), max_attempts=10,
-                     extra_check=check_for(clang))
-    assert err.value.rejected and all('masked body' in r.reason for r in err.value.rejected), op
+    try:
+        accepted = E.apply_case(FILES, op, seed=3, base=BASE, tools=clang, target=('m.c', fn), max_attempts=10,
+                                extra_check=check_for(clang))
+    except E.NoMutationSite as err:
+        assert err.rejected and all('masked body' in r.reason for r in err.rejected), op
+    else:
+        # Include the exact normalised instructions in a native-Windows CI failure. Optimiser
+        # versions can vary, but we cannot silently accept a data-only false code label.
+        before = E._masked_function_asm(FILES, 'm.c', fn, clang.path('clang'), (), 120)
+        after = E._masked_function_asm(accepted.files, 'm.c', fn, clang.path('clang'), (), 120)
+        pytest.fail(f'{op}:{fn}: accepted {accepted.case.site.before!r} -> '
+                    f'{accepted.case.site.after!r}; masked old={before!r}, new={after!r}')
 
 
 def test_masked_body_rule_accepts_a_string_that_changes_code(clang):
@@ -328,3 +344,26 @@ def test_masked_body_stops_at_function_boundary(monkeypatch, boundary):
     suffix[:] = ['movl $99, %eax']
     after = E._masked_function_asm({}, 'm.c', 'target', 'clang', (), 1)
     assert before == after == ('callq T', 'retq')
+
+
+@pytest.mark.parametrize('quoted', [True, False])
+def test_coff_quoted_string_symbols_are_masked_as_address_references(monkeypatch, quoted):
+    """COFF's literal-dependent ??_C@ names may be quoted or unquoted in emitted assemblers."""
+    from pathlib import Path
+    from types import SimpleNamespace
+
+    symbol = ['"??_C@_05CJBACGMB@hello?$AA@"']
+
+    def compile_asm(argv, *, cwd, timeout):
+        sym = symbol[0] if quoted else symbol[0].strip('"')
+        Path(cwd, '_masked.s').write_text('\n'.join([
+            '.def shout;', 'shout:', 'movl %ecx, %edx',
+            f'leaq {sym}(%rip), %rcx', 'jmp emit', '.seh_endproc',
+        ]))
+        return SimpleNamespace(returncode=0)
+
+    monkeypatch.setattr(E, 'run_tool', compile_asm)
+    before = E._masked_function_asm({}, 'm.c', 'shout', 'clang', (), 1)
+    symbol[0] = '"??_C@_06GANFPHOD@hello?$CB?$AA@"'
+    after = E._masked_function_asm({}, 'm.c', 'shout', 'clang', (), 1)
+    assert before == after == ('movl %ecx, %edx', 'leaq SYM(%rip), %rcx', 'jmp emit')

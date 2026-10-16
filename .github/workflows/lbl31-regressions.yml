@@ -1,0 +1,37 @@
+# Fast, additive Windows gate for expensive 100k-row sort and real-clang mutation-label tests.
+# Full QA and Windows standalone remains mandatory; this job does not replace it.
+name: Windows calibration and unified quick gate
+on:
+  pull_request:
+    paths:
+      - 'tools/calibration/mutations/**'
+      - 'tests/test_mutations_more.py'
+      - 'src/patchtrace/unified/read_model.py'
+      - 'tests/test_unified_read_model.py'
+      - '.github/workflows/lbl31-regressions.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  windows-focused:
+    runs-on: windows-latest
+    timeout-minutes: 25
+    env:
+      QT_QPA_PLATFORM: offscreen
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: "python -m pip install --only-binary=:all: -e '.[dev,search,rules]'"
+      - run: python -m pip check
+      - name: Mutation compiler and source-label acceptance
+        run: python -m pytest -q --tb=short tests/test_mutations_more.py
+      - name: Unified 100k-row sort and equivalence
+        run: python -m pytest -q --tb=short tests/test_unified_read_model.py -k 'sort'
+      - run: python -m ruff check tools/calibration/mutations/engine.py tests/test_mutations_more.py src/patchtrace/unified/read_model.py tests/test_unified_read_model.py
