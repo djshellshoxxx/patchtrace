@@ -143,7 +143,18 @@ def make_compile_checker(tools: Toolchain | None = None, *, flags: Sequence[str]
 
 _ASM_LABEL = re.compile(r'\.L[\w.$]+')
 _ASM_SYMBOL = re.compile(r'[\w.$@]+(?:[+-]\d+)?(?=\(%rip\))')
+_ASM_COFF_QUOTED = re.compile(r'"[^"\n]+"(?=\(%rip\))')
 _ASM_BRANCH = re.compile(r'^(call\w*|j\w+)\s+\S+$')
+
+
+def _mask_asm_address_operands(insn: str) -> str:
+    """Ignore address-only symbol churn, including quoted MSVC/COFF string-pool symbols.
+
+    Windows clang emits RIP-relative references such as `"??_C@_05...@"(%rip)` for literals. The unquoted
+    ELF-only matcher missed them and mislabelled address changes as changed target-function code.
+    Mask the quoted operand only when it is RIP-relative, preserving opcode, register and immediate changes.
+    """
+    return _ASM_SYMBOL.sub('SYM', _ASM_LABEL.sub('.L', _ASM_COFF_QUOTED.sub('SYM', insn)))
 
 
 def _masked_function_asm(files: Mapping[str, str], rel: str, name: str, clang: str, flags: Sequence[str],
@@ -172,7 +183,7 @@ def _masked_function_asm(files: Mapping[str, str], rel: str, name: str, clang: s
             break
         if not insn or insn.startswith('.') or insn.endswith(':'):
             continue
-        insn = _ASM_SYMBOL.sub('SYM', _ASM_LABEL.sub('.L', insn))
+        insn = _mask_asm_address_operands(insn)
         body.append(_ASM_BRANCH.sub(lambda m: m.group(1) + ' T', insn))
     return tuple(body)
 
