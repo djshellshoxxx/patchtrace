@@ -135,6 +135,24 @@ def test_recipe_cards_have_both_side_controls_in_plans(tree):
     assert S.enumerate_cases(tree, subset='cards', seed=1) == cards
 
 
+def test_recipe_controls_deduplicate_shared_adjacent_revision(tree):
+    """Adjacent release cards share one pin; it must be evaluated only once per control kind."""
+    path = tree / 'tools/calibration/tier_r/catalogue/releases.json'
+    cards = json.loads(path.read_text())
+    cards[0]['old'] = {'ref': 'vA', 'commit': 'a' * 40}
+    cards[0]['new'] = {'ref': 'vB', 'commit': 'b' * 40}
+    cards.append({'contract': 'case-card/1', 'id': 'zlib-b-to-c', 'project': 'zlib',
+                  'license_spdx': 'Zlib', 'old': {'ref': 'vB', 'commit': 'b' * 40},
+                  'new': {'ref': 'vC', 'commit': 'c' * 40}})
+    path.write_text(json.dumps(cards))
+    aa = [x for x in S.enumerate_cases(tree, subset='cards', seed=1) if x.startswith('aa-card:')]
+    noise = [x for x in S.enumerate_cases(tree, subset='noise', seed=1) if x.startswith('noise-card:')]
+    assert aa == ['aa-card:zlib-a-to-b:new', 'aa-card:zlib-a-to-b:old',
+                  'aa-card:zlib-b-to-c:new']
+    assert noise == ['noise-card:zlib-a-to-b:new', 'noise-card:zlib-a-to-b:old',
+                     'noise-card:zlib-b-to-c:new']
+
+
 @pytest.mark.parametrize(('kind', 'side'), [
     ('aa', 'old'), ('aa', 'new'), ('noise', 'old'), ('noise', 'new'),
 ])
