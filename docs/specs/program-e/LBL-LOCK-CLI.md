@@ -11,6 +11,8 @@ training CLI policy only; no persisted report schema or release calibration poli
 - `--prereg FILE`: read exact file bytes, refuse CR/CRLF, hash them with SHA-256, and require
   equality with the `C9-PREREG-v1` SHA recorded in `--qa` (default `docs/qa.md`).
   A missing, unreadable, or conflicting record is a usage error **before training input reads**.
+  A verified preregistration SHA **cannot execute a normal run**: training with this SHA
+  requires the exclusive final-run receipt. Use `--unlocked-prereg` on draft data for dev rehearsals.
 - `--prereg FILE --unlocked-prereg`: read and validate the draft, but pass *no preregistration
   SHA* to training. The CLI summary may include a draft SHA under `unlocked_rehearsal`;
   the report and artifact still carry the unlocked placeholder. The draft is never considered
