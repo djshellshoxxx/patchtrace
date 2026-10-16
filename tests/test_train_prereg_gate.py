@@ -90,6 +90,14 @@ def test_cli_rejects_unregistered_prereg_before_loading_rows(tmp_path, monkeypat
     assert "no recorded" in capsys.readouterr().err
 
 
+def test_approved_protocol_never_opens_locked_data_without_final_receipt(tmp_path, monkeypatch, capsys):
+    prereg, qa, _ = inputs(tmp_path)
+    monkeypatch.setattr(T, "_execute_training", lambda *a, **kw: pytest.fail("bypass of single-use lock"))
+    assert T.main(run_args(tmp_path, prereg, qa)) == T.USAGE
+    assert "--final-locked-test" in capsys.readouterr().err
+    assert not list(tmp_path.rglob("*.lock"))
+
+
 def test_cli_unlocked_rehearsal_uses_placeholder_sha(tmp_path, monkeypatch, capsys):
     prereg, qa, _ = inputs(tmp_path)
     qa.unlink()
