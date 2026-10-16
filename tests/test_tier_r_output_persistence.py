@@ -142,3 +142,39 @@ def test_training_artifacts_reject_missing_label_or_unexpected_file(tmp_path):
     (other / 'outputs' / 'extra.json').write_text('{}')
     with pytest.raises(TA.ArtifactError, match='unexpected'):
         TA.verify_training_artifacts([report], other)
+
+
+def test_shard_to_merge_training_artifacts_end_to_end_with_fake_provider(tmp_path):
+    """The production shard file remains aggregate-only; JSON sidecars reach the merge separately."""
+    from tools.calibration.tier_r import shard as S, training_artifacts as TA
+
+    plan = {'contract': S.PLAN_CONTRACT, 'seed': 4, 'subset': 'smoke',
+            'engines': ['rz-diff'], 'of': 1, 'cases_total': 1,
+            'shards': [{'shard': 0, 'cases': ['suite:_template/tiny']}],
+            'plan_sha256': '0' * 64}
+    plan['plan_sha256'] = S.digest(plan, 'plan_sha256')
+
+    def runner(argv, timeout, env):
+        scratch = Path(env['PATCHTRACE_CALIB_ROOT']) / 'known-answer'
+        labels = scratch / 'labels'
+        labels.mkdir(parents=True, exist_ok=True)
+        (labels / 'lbl31-synthetic.json').write_bytes(C.dump_json(LABELS.model_dump(mode='json')))
+        if argv[3] != 'evaluate':
+            return 0, json.dumps({'command': 'build-suite', 'status': 'ok'}), None
+        assert '--engines' in argv and '--engine' not in argv
+        outputs = Path(argv[argv.index('--outputs') + 1])
+        report = E.evaluate([LABELS], [provider()], output_dir=outputs, b_count=20)
+        path = scratch / 'reports' / 'synthetic.json'
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_bytes(C.dump_json(report))
+        return 0, json.dumps({'command': 'evaluate', 'status': 'ok',
+                              'report': str(path), 'outputs': str(outputs)}), None
+
+    artifact_dir = tmp_path / 'out' / 'training'
+    result = S.run_shard(plan, 0, runner=runner, artifacts_dir=artifact_dir)
+    assert result['reports'] and result['labels']
+    assert 'functions' not in json.dumps(result)
+    assert S.write_shard(result, tmp_path / 'out').exists()
+    aggregate, _ = S.merge(S.load_shards(tmp_path / 'out', plan=plan))
+    assert TA.verify_training_artifacts([aggregate], artifact_dir) == {'labels': 1, 'outputs': 1}
+    assert C.load_report(C.dump_json(aggregate)).pairs[0].status == 'ok'
