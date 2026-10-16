@@ -286,10 +286,18 @@ def test_masked_body_rule_accepts_code_changing_operators(clang, op):
                                     ('api-use', 'copy')])
 def test_masked_body_rule_rejects_address_only_changes_and_records_them(clang, op, fn):
     # strings, callees and globals live behind masked symbols: the label noise the rule exists to catch
-    with pytest.raises(E.NoMutationSite) as err:
-        E.apply_case(FILES, op, seed=3, base=BASE, tools=clang, target=('m.c', fn), max_attempts=10,
-                     extra_check=check_for(clang))
-    assert err.value.rejected and all('masked body' in r.reason for r in err.value.rejected), op
+    try:
+        accepted = E.apply_case(FILES, op, seed=3, base=BASE, tools=clang, target=('m.c', fn), max_attempts=10,
+                                extra_check=check_for(clang))
+    except E.NoMutationSite as err:
+        assert err.rejected and all('masked body' in r.reason for r in err.rejected), op
+    else:
+        # Include the exact normalised instructions in a native-Windows CI failure. Optimiser
+        # versions can vary, but we cannot silently accept a data-only false code label.
+        before = E._masked_function_asm(FILES, 'm.c', fn, clang.path('clang'), (), 120)
+        after = E._masked_function_asm(accepted.files, 'm.c', fn, clang.path('clang'), (), 120)
+        pytest.fail(f'{op}:{fn}: accepted {accepted.case.site.before!r} -> '
+                    f'{accepted.case.site.after!r}; masked old={before!r}, new={after!r}')
 
 
 def test_masked_body_rule_accepts_a_string_that_changes_code(clang):
