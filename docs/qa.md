@@ -1042,3 +1042,13 @@ Automated: `tests/test_tier_w_fetch.py` (33 passed) and `tests/test_tier_w_symbo
 
 ### [LBL-24:tier-w-aggregate]
 - `tests/test_tier_w_aggregate.py` (suppression at n < 30, no pooling, no names in output). Not verified: owner-run data.
+
+
+### LBL-31 continuation (2026-10-16)
+Implementation 0843de5: fixed COFF function boundaries affecting mutation labels, artifact table assertion, early operator validation, training-report retention and lint. Focused tests: 140 passed / 25 live-tool skips; unified gate fixtures: 98 passed; repository Ruff clean. Synthetic saved-output/training reports verified and deterministic. Full current-head Linux/Windows CI and live train=true dispatch remain pending; PR #78 is not merged. Exact results and continuation: docs/handoff/lbl31-output-persistence-chatgpt-20261015.md. Merge is explicitly authorized only after passing verification; next implementation slice LBL-32.
+
+
+### [LBL-30:prereg-final-run-guard] (2026-10-16, draft PR #85)
+- Source: `tools/calibration/prereg_gate.py` and `train.py`, synthetic `tests/test_train_prereg_gate.py`. Tests created before implementation. Local independent full-suite verification **not performed** because the GitHub-linked repository cannot be checked out in this runtime; current-head PR #85 Actions results are pending. Do not count test definitions as passing proof.
+- Protocol QA receipt `C9-PREREG-v1`: **not locked; owner sign-off not recorded; no final look executed**. CLI tests use throwaway temporary QA rows and corpus paths only.
+- Integration dependency PR #78, prior head `5f30a79`: Tier R sharded run 38883698797 successful, Ubuntu QA 38883698492 passed, Windows Qt gate passed, Windows full QA failed **2 / 17,891 passing / 81 skipped / 6 xfailed**. Failed names: `tests/test_mutations_more.py::test_masked_body_rule_rejects_address_only_changes_and_records_them[string-literal-shout]` (COFF MSVC quoted string-symbol normalization) and `tests/test_unified_read_model.py::test_filter_and_sort_budget_at_100000_rows` (sort 0.8823s above 0.75s). PR #78 branch advanced to `0fbe5a5` with a COFF normalization fix, but green Windows rerun **not yet observed**. No merge or release claims.

@@ -162,9 +162,14 @@ def _masked_function_asm(files: Mapping[str, str], rel: str, name: str, clang: s
         return None
     body: list[str] = []
     for line in lines[start + 1:]:
-        if line.startswith('.Lfunc_end'):
-            break
         insn = line.split('#', 1)[0].strip()
+        # COFF does not emit ELF's .Lfunc_end. Stop before the next
+        # function or data section so unrelated code cannot change this label.
+        directive = insn.split(maxsplit=1)[0] if insn else ''
+        if (insn.startswith('.Lfunc_end')
+                or directive in {'.seh_endproc', '.cfi_endproc', '.def', '.section', '.data', '.text'}
+                or (insn.endswith(':') and not insn.startswith(('.L', 'LBB')))):
+            break
         if not insn or insn.startswith('.') or insn.endswith(':'):
             continue
         insn = _ASM_SYMBOL.sub('SYM', _ASM_LABEL.sub('.L', insn))

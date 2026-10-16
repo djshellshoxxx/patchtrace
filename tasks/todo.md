@@ -789,3 +789,17 @@ Done: dock with state matrix, consent, import, changes, copy, go to CVE. Open: r
 ### [LBL-24:tier-w-aggregate]
 - [x] LBL-24 evaluate.py and aggregate.py with goldens, guard contract list
 - [ ] LBL-24 run on a real Tier W evaluation (owner only, O1)
+
+
+### LBL-31 continuation (2026-10-16)
+Implementation 0843de5: fixed COFF function boundaries affecting mutation labels, artifact table assertion, early operator validation, training-report retention and lint. Focused tests: 140 passed / 25 live-tool skips; unified gate fixtures: 98 passed; repository Ruff clean. Synthetic saved-output/training reports verified and deterministic. Full current-head Linux/Windows CI and live train=true dispatch remain pending; PR #78 is not merged. Exact results and continuation: docs/handoff/lbl31-output-persistence-chatgpt-20261015.md. Merge is explicitly authorized only after passing verification; next implementation slice LBL-32.
+
+
+### [LBL-30:prereg-final-run-guard] (draft #85, 2026-10-16)
+- [x] Add strict LF/hash QA preregistration selection and explicit unlocked rehearsal path (implementation committed).
+- [x] Gate final locked-form reads behind single-use receipt, refuse smoke and repeat runs (implementation committed).
+- [x] Reject approved `--prereg` training without final receipt; validate on both OS runners (implementation committed; tests pending).
+- [x] Add temporary synthetic tests for hash mismatch, sign-off, final refusal, spent receipt and failure retention (tests committed).
+- [ ] Verify tests and full QA on Linux and Windows, including report contract and Ruff.
+- [ ] Record owner sign-off and freeze the actual C9 preregistration digest only after prereg audit; **no final run** was performed.
+- [ ] Complete LBL-31 integration and unresolved Windows CI before any PR #85 merge.
