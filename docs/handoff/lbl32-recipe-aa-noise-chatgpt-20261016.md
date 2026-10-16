@@ -33,3 +33,15 @@ Branch `chatgpt/lbl32-recipe-aa-noise-20261016` forked from the LBL-31 head abov
 4. Continue LBL-32 recipe-source mutation only after completing its spec, then LBL-33 admitted C-recipe growth. Do not lock the preregistration, promote calibration from ordinal or assert unified accuracy before the real gates pass.
 
 No target binaries, Microsoft material, PDBs or model-generated commands were executed. No labels have been invented.
+
+## CI update and conflict-free ancestry sync (2026-10-16)
+
+The earlier #78 Windows QA result is no longer pending: [run 38883698492](https://github.com/djshellshoxxx/patchtrace/actions/runs/38883698492) ended Windows QA **failure** (2 failed, 17,891 passed, 81 skipped, 6 xfailed). The two exact failures are:
+- `tests/test_mutations_more.py::test_masked_body_rule_rejects_address_only_changes_and_records_them[string-literal-shout]` (compiler accepted a code-label change expected to be address/data-only). On #78, `engine.py`'s COFF operand normalization was expanded and tests now include quoted and unquoted decorated symbols; the native reproduction test will report before/after masked instructions if still failing. Do not weaken the acceptance rule or declare the gate fixed before native Windows success.
+- `tests/test_unified_read_model.py::test_filter_and_sort_budget_at_100000_rows` (default 0.8823358s vs 0.75s threshold). #78 adds a direct-index default-order sort fast path, retaining generic nullable-column handling and stable tie tests. The performance gate is not yet remeasured.
+
+New permanent targeted workflow `.github/workflows/lbl31-regressions.yml` on #78 provides Windows real-clang mutation tests and unified sort tests before the approximately 53-minute full QA finishes. [Quick-gate run 38890860906](https://github.com/djshellshoxxx/patchtrace/actions/runs/38890860906) and full current-head CI are newly queued at this checkpoint. **No merge is authorized by the current results.**
+
+#82 was originally branched off #78 at `5f30a791`. On 2026-10-16 its branch was updated via a non-force two-parent merge commit `600f7ee` (first parent #82 old HEAD `ebc162e`, second parent #78 current head `2019a37`), preserving six exclusive LBL-32 files and all #78 fixes. The newer `tests/test_unified_read_model.py` regression addition was explicitly carried forward in `3bb5590`. GitHub's comparison from #78 to #82 now lists **exactly six files**: this handoff, docs/modules.md, docs/specs/known-answer-corpus.md, tasks/todo.md, tests/test_tier_r_shard.py, tools/calibration/tier_r/shard.py. No main or claude/* refs were changed.
+
+Next reviewer: verify #78's latest head and *completed* quick/full Windows gate first; repair any remaining actual failure before marking ready/merging. Only then check the full QA/corpus gates for #82 and merge that dependent PR. The Tier R real recipe build acceptance, `train=true`, G1, unified live gates, Tier W, owner prereg lock and an accuracy claim remain unverified.
