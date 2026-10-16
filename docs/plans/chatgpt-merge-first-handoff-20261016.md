@@ -33,3 +33,17 @@ This is a **live-branch coordination note**, not an acceptance certificate. On e
 This coordination session inspected source branches, diffs and GitHub Actions jobs, including full failure logs for #61, #64 and #76. It did **not** clone/run the repository locally: the execution container could not resolve `github.com`; GitHub connector reads/writes worked. No synthetic evaluation was promoted to real-world accuracy. The active implementation work belongs to the original PR owners; this note is tracked on the dedicated `chatgpt/merge-first-handoff-20261016` branch for review.
 
 For the following session, begin with the real main head and open PR list; verify whether #78, #80, #79, #82 and #83 have progressed since this snapshot. Keep `tasks/todo.md` and `docs/qa.md` aligned when feature merges actually land.
+
+
+## Current-head follow-up: #78 Windows QA failure and independently isolated repair
+
+The earlier table's #78 "WAITING CI" status was superseded by [Windows QA run 38883698492](https://github.com/djshellshoxxx/patchtrace/actions/runs/38883698492), which completed with **2 failed, 17,891 passed, 81 skipped, 6 xfailed**. Exact failures:
+
+1. `tests/test_mutations_more.py::test_masked_body_rule_rejects_address_only_changes_and_records_them[string-literal-shout]`: a false positive still accepts a function whose only change is the address/decorated symbol of a string literal. The prior #78 COFF function-end repair cleared the `callee-swap` failure from #64 but did not mask quoted COFF RIP-relative relocation names.
+2. `tests/test_unified_read_model.py::test_filter_and_sort_budget_at_100000_rows`: the default sort took 0.8823 seconds versus the test's 0.75-second 5x shared-runner allowance; explicit column sorts took 0.0699 and 0.0756 seconds. Investigate repeatability and benchmark performance without relaxing acceptance merely to pass one noisy run.
+
+For item 1, a Linux Clang 17 cross-target (`x86_64-pc-windows-msvc`) synthetic C test confirmed that `emit("hello", v)` produces a quoted `"??_C@_05...hello..."` RIP-relative symbol and changing the literal decorates a different name even with otherwise identical function instructions. The original masking regex did not normalize those names; a standalone Python repro showed the mismatch.
+
+An isolated test-first repair now lives in **PR #92**, branch `chatgpt/lbl31-coff-quoted-rip-20261016` -> `chatgpt/lbl31-output-persistence-20261015`. Test commit `c72600debeae62445932e894b03726f3baae9539` adds `test_masked_body_ignores_msvc_coff_quoted_rip_symbols` with actual COFF assembly forms. Code commit `6e71bfabbf5ef75449b46981e9e822f7e555a6bf` masks entire double-quoted RIP operand symbol tokens, preserving bare symbol behavior. The standalone regex check succeeded, but **no current-head full repository Python/ruff or Windows Clang 20 test pass has been claimed yet**. Integrate #92 into #78 only with green QA on #92, then require new #78 current-head CI; the 100k-row failure is separately open.
+
+PR #81 remained closed without merge after discovering PR #80 already addressed the Java probe lint failure more thoroughly. PRs #85, #86, #88, #89 are parallel in-flight work on other areas; avoid duplicate patches and branch ownership conflicts.
