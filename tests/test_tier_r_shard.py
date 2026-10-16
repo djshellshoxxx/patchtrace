@@ -223,6 +223,25 @@ def test_run_shard_aggregate_only_and_deterministic(tree, tmp_path):
     assert path.name == 'shard-0.json'
 
 
+def test_nonidentical_aa_rebuild_is_a_failing_gate(tree):
+    """An A/A source-control violation must fail the shard and its merged provenance."""
+    plan = S.make_plan(tree, seed=4, shards=1, subset='cards')
+
+    def runner(argv, timeout, env):
+        step = argv[3:]
+        if step[0] == 'aa':
+            return 1, json.dumps({'command': 'aa', 'status': 'findings',
+                                  'not_byte_identical': ['aa-zlib-rebuild']}), None
+        return fake_runner(argv, timeout, env)
+
+    doc = S.run_shard(plan, 0, runner=runner)
+    aa = [case for case in doc['cases'] if case['id'].startswith('aa-card:')]
+    assert aa and all(case['status'] == 'failed' for case in aa)
+    assert all('A/A' in case['reason'] for case in aa)
+    _, provenance = S.merge([doc])
+    assert all(item in provenance['failing_cases'] for item in [case['id'] for case in aa])
+
+
 def test_run_shard_survives_failure_and_timeout(tree):
     plan = plan_for(tree, shards=1)
     doc = S.run_shard(plan, 0, runner=lambda a, t, e: fake_runner(a, t, e, fail=['arena'], hang=['loops']))
