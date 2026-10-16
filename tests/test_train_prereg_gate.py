@@ -159,7 +159,7 @@ def test_failed_final_run_still_consumes_the_single_use(tmp_path, monkeypatch):
 
 def test_final_requires_explicit_owner_signoff_in_the_matching_qa_row(tmp_path, monkeypatch):
     prereg, qa, digest = inputs(tmp_path)
-    qa.write_text(f"| C9-PREREG-v1 | {digest} | lock digest only |\\n")
+    qa.write_text(f"| C9-PREREG-v1 | {digest} | lock digest only |\n")
     monkeypatch.setattr(T, "_execute_training", lambda *a, **kw: pytest.fail("must not run"))
     args = run_args(tmp_path, prereg, qa, extra=("--locked-form", "--final-locked-test",
                                                   "--corpus-dir", str(tmp_path / "corpus")))
@@ -169,7 +169,7 @@ def test_final_requires_explicit_owner_signoff_in_the_matching_qa_row(tmp_path, 
 
 def test_owner_approval_elsewhere_does_not_authorize_an_unsigned_lock(tmp_path):
     prereg, qa, digest = inputs(tmp_path)
-    qa.write_text(f"| C9-PREREG-v1 | {digest} | pending |\\n| OTHER | owner approved |\\n")
+    qa.write_text(f"| C9-PREREG-v1 | {digest} | pending |\n| OTHER | owner approved |\n")
     with pytest.raises(G.PreregGateError, match="owner"):
         G.select(prereg, qa, require_signoff=True)
 
