@@ -1042,3 +1042,7 @@ Automated: `tests/test_tier_w_fetch.py` (33 passed) and `tests/test_tier_w_symbo
 
 ### [LBL-24:tier-w-aggregate]
 - `tests/test_tier_w_aggregate.py` (suppression at n < 30, no pooling, no names in output). Not verified: owner-run data.
+
+
+### LBL-31 continuation (2026-10-16)
+Implementation 0843de5: fixed COFF function boundaries affecting mutation labels, artifact table assertion, early operator validation, training-report retention and lint. Focused tests: 140 passed / 25 live-tool skips; unified gate fixtures: 98 passed; repository Ruff clean. Synthetic saved-output/training reports verified and deterministic. Full current-head Linux/Windows CI and live train=true dispatch remain pending; PR #78 is not merged. Exact results and continuation: docs/handoff/lbl31-output-persistence-chatgpt-20261015.md. Merge is explicitly authorized only after passing verification; next implementation slice LBL-32.

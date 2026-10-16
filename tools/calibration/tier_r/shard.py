@@ -32,6 +32,7 @@ from pathlib import Path
 from patchtrace.calibration.scope import TIER_R_CLAIM
 
 from ..common import canonical_json, digest, r12
+from . import training_artifacts as TA
 from .contracts import COSMETIC_OPERATORS, PERMISSIVE_SPDX, SEMANTIC_OPERATORS, ContractError, load_report
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
@@ -86,15 +87,15 @@ def _load_json(path: Path):
     return json.loads(path.read_text(encoding='utf-8'))
 
 
-def _cards(root: Path) -> list[str]:
-    """Ids of buildable case cards: recipe exists for the project and the licence is permissive."""
+def _eligible_card_rows(root: Path) -> list[dict]:
+    """Only recipe-backed, permissively licensed case cards; keep their source pins for deduplication."""
     try:
         recipes = {r['project'] for r in _load_json(root / 'tools/calibration/tier_r/catalogue/recipes.json')['recipes']}
     except (OSError, ValueError, KeyError, TypeError):
         recipes = set()
     files = sorted((root / 'tools/calibration/tier_r/catalogue').glob('*.json')) + sorted(
         (root / 'corpus/catalog').glob('*.json'))
-    found = set()
+    found = []
     for path in files:
         if path.name == 'recipes.json':
             continue
@@ -105,8 +106,39 @@ def _cards(root: Path) -> list[str]:
         for card in data if isinstance(data, list) else ():
             if (isinstance(card, dict) and card.get('contract') == 'case-card/1' and card.get('project') in recipes
                     and card.get('license_spdx') in PERMISSIVE_SPDX and isinstance(card.get('id'), str)):
-                found.add(card['id'])
-    return sorted(found)
+                found.append(card)
+    return found
+
+
+def _cards(root: Path) -> list[str]:
+    return sorted({card['id'] for card in _eligible_card_rows(root)})
+
+
+def _recipe_probe_cases(root: Path, cards: Sequence[str], *, verb: str) -> set[str]:
+    """One representative per source pin, not per card edge. Duplicate edges would reuse factory pair IDs."""
+    if verb not in ('aa', 'noise'):
+        raise ShardError(f'unsupported recipe probe {verb!r}')
+    permitted = set(cards)
+    pins: dict[tuple[str, str], tuple[str, str]] = {}
+    for card in _eligible_card_rows(root):
+        if card['id'] not in permitted:
+            continue
+        for side in ('old', 'new'):
+            source = card.get(side)
+            if (not isinstance(source, dict) or not isinstance(source.get('ref'), str)
+                    or not source['ref'] or not isinstance(source.get('commit'), str)
+                    or not re.fullmatch(r'[0-9a-fA-F]{40}', source['commit'])):
+                raise ShardError(f"{card['id']}: invalid {side} pin (need ref and 40-hex commit)")
+            # A harmless-looking card ID must not disguise a Windows or Tier W source ref.
+            refuse_microsoft(card['project'], source['ref'])
+            key = (card['project'], source['ref'])
+            commit = source['commit'].lower()
+            candidate = f"{verb}-card:{card['id']}:{side}"
+            previous = pins.get(key)
+            if previous and previous[0] != commit:
+                raise ShardError(f'{key[0]}:{key[1]} has conflicting commits across case cards')
+            pins[key] = (commit, min(candidate, previous[1]) if previous else candidate)
+    return {candidate for _, candidate in pins.values()}
 
 
 def _suites(root: Path) -> list[str]:
@@ -119,7 +151,7 @@ def mutation_seeds(seed: int, count: int) -> list[int]:
 
 
 def enumerate_cases(root: Path, *, subset: str, seed: int, seeds_per_op: int = 1) -> list[str]:
-    """Case ids (sorted, unique). Id grammar: card:ID | suite:G/N | mutate:G/N:OP:SEED | aa:G/N | noise:G/N."""
+    """Stable ids include aa-card:ID:SIDE and noise-card:ID:SIDE for permitted recipe pins."""
     if subset not in SUBSETS:
         raise ShardError(f'unknown subset {subset!r}; choose from {", ".join(SUBSETS)}')
     suites, cards = _suites(root), _cards(root)
@@ -134,16 +166,20 @@ def enumerate_cases(root: Path, *, subset: str, seed: int, seeds_per_op: int = 1
         cases |= {f'suite:{s}' for s in suites} | {f'aa:{s}' for s in suites}
     if subset in ('cards', 'full'):
         cases |= {f'card:{c}' for c in cards}
+        cases |= _recipe_probe_cases(root, cards, verb='aa')
     if subset in ('mutations', 'full'):
         cases |= {f'mutate:{s}:{op}:{n}' for s in suites for op in ops for n in mutation_seeds(seed, seeds_per_op)}
     if subset in ('noise', 'full'):
         cases |= {f'noise:{s}' for s in suites}
+        cases |= _recipe_probe_cases(root, cards, verb='noise')
     for case in cases:
         refuse_microsoft(case)
     return sorted(cases)
 
 
-_CASE = re.compile(r'^(card|suite|aa|noise):([A-Za-z0-9._/-]{1,128})$|^(mutate):([A-Za-z0-9._/-]{1,128}):([a-z0-9-]{1,32}):(\d{1,12})$')
+_CASE = re.compile(r'^(card|suite|aa|noise):([A-Za-z0-9._/-]{1,128})$'
+                   r'|^(mutate):([A-Za-z0-9._/-]{1,128}):([a-z0-9-]{1,32}):(\d{1,12})$'
+                   r'|^(aa-card|noise-card):([A-Za-z0-9._/-]{1,128}):(old|new)$')
 
 
 def case_steps(case_id: str) -> list[list[str]]:
@@ -156,6 +192,10 @@ def case_steps(case_id: str) -> list[list[str]]:
         if m.group(5) not in (*SEMANTIC_OPERATORS, *COSMETIC_OPERATORS):
             raise ShardError(f'unknown mutation operator in {case_id!r}')
         return [['mutate', '--suite', f'corpus/ours/{m.group(4)}', '--operator', m.group(5), '--seed', m.group(6)]]
+    if m.group(7):
+        verb = m.group(7).removesuffix('-card')
+        card, side = m.group(8), m.group(9)
+        return [['fetch', card], [verb, '--card', card, '--side', side]]
     kind, name = m.group(1), m.group(2)
     if kind == 'card':
         return [['fetch', name], ['build-card', name]]
@@ -369,7 +409,8 @@ def _report_problem(case_id: str, status: str, detail: str | None, stderr: str, 
 
 def run_shard(plan: dict, shard: int, *, timeout: int = DEFAULT_TIMEOUT, runner: Runner | None = None,
               python: str | None = None, scratch: Path | None = None, engines: Sequence[str] | None = None,
-              verify_plan: bool = True, log: Callable[[str], None] | None = None) -> dict:
+              verify_plan: bool = True, log: Callable[[str], None] | None = None,
+              artifacts_dir: Path | None = None) -> dict:
     runner = runner or default_runner       # looked up at call time so tests and callers can substitute it
     log = log or (lambda text: print(text, file=sys.stderr, flush=True))
     entry = next((s for s in plan['shards'] if s['shard'] == shard), None)
@@ -414,8 +455,10 @@ def run_shard(plan: dict, shard: int, *, timeout: int = DEFAULT_TIMEOUT, runner:
                 labels.append(meta)
         if not (os.environ.get('PATCHTRACE_TIER_R_NO_EVAL')):
             for engine in engines:
-                rc, out, reason, err = _call(runner, [py, '-m', 'tools.calibration.tier_r', 'evaluate', '--engine',
-                                                      engine, '--symbols', 'hidden'], timeout, env)
+                rc, out, reason, err = _call(runner, [py, '-m', 'tools.calibration.tier_r', 'evaluate', '--engines',
+                                                      engine, '--symbols', 'hidden',
+                                                      *(['--outputs', str(scope / 'known-answer' / 'outputs' / engine)]
+                                                        if artifacts_dir is not None else [])], timeout, env)
                 parsed = _summary(out)
                 if parsed is not None:
                     report_doc = _scratch_json(scope, parsed.get('report')) if isinstance(parsed.get('report'), str) else None
@@ -430,6 +473,12 @@ def run_shard(plan: dict, shard: int, *, timeout: int = DEFAULT_TIMEOUT, runner:
                     detail = failure_reason(rc, reason, parsed, err)
                     _report_problem(f'evaluate:{engine}', status, detail, err, log)
                 results.append({'id': f'evaluate:{engine}', 'status': status, 'reason': detail, 'digest': None})
+        if artifacts_dir is not None:
+            if not reports:
+                raise ShardError('cannot export training artifacts: no evaluator report was produced')
+            TA.export_training_artifacts(reports, scope / 'known-answer', artifacts_dir)
+            for artifact in sorted(Path(artifacts_dir).rglob('*.json')):
+                refuse_microsoft(artifact.read_text(encoding='utf-8'))
     doc = {'contract': SHARD_CONTRACT, 'shard': shard, 'of': plan['of'], 'seed': plan['seed'],
            'plan_sha256': plan['plan_sha256'], 'subset': plan['subset'], 'engines': engines,
            'cases': results, 'labels': sorted(labels, key=canonical_json), 'features': sorted(features, key=canonical_json),
@@ -672,10 +721,14 @@ def build_parser() -> argparse.ArgumentParser:
     r.add_argument('--subset', default='smoke')
     r.add_argument('--timeout', type=int, default=DEFAULT_TIMEOUT, help='seconds per case')
     r.add_argument('--out', type=Path, required=True)
+    r.add_argument('--collect-artifacts', action='store_true',
+                   help='export and verify labels plus successful engine outputs outside aggregate shard JSON')
     m = sub.add_parser('merge', help='fold shard files into one tier-r-report/1')
     m.add_argument('--in', dest='src', type=Path, required=True)
     m.add_argument('--plan', type=Path)
     m.add_argument('--out', type=Path, required=True)
+    m.add_argument('--artifacts', type=Path,
+                   help='require all successful engine and input label documents and verify SHA-256 before merge')
     return ap
 
 
@@ -707,7 +760,8 @@ def main(argv: Sequence[str] | None = None) -> int:
             return OK
         if args.cmd == 'run-shard':
             plan = _plan_from_args(args)
-            doc = run_shard(plan, args.shard, timeout=args.timeout, verify_plan=args.plan is not None)
+            doc = run_shard(plan, args.shard, timeout=args.timeout, verify_plan=args.plan is not None,
+                            artifacts_dir=(args.out / 'training' if args.collect_artifacts else None))
             path = write_shard(doc, args.out)
             bad = [c['id'] for c in doc['cases'] if c['status'] in ('failed', 'timeout')]
             blocked = [c['id'] for c in doc['cases'] if c['status'] == 'blocked']
@@ -716,6 +770,8 @@ def main(argv: Sequence[str] | None = None) -> int:
             return FINDINGS if bad else (BLOCKED if blocked else OK)
         plan = json.loads(args.plan.read_text(encoding='utf-8')) if args.plan else None
         report, prov = merge(load_shards(args.src, plan=plan))
+        if args.artifacts is not None:
+            TA.verify_training_artifacts([report], args.artifacts)
         write_merge(report, prov, args.out)
         print(json.dumps({'report_sha256': report['report_sha256'], 'merge_sha256': prov['merge_sha256'],
                           'shards': len(prov['shards']), 'failing_cases': len(prov['failing_cases'])}, sort_keys=True))

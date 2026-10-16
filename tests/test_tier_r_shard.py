@@ -25,7 +25,8 @@ def write_tree(tmp_path: Path) -> Path:
     cat = root / 'tools/calibration/tier_r/catalogue'
     cat.mkdir(parents=True)
     (cat / 'recipes.json').write_text(json.dumps({'recipes': [{'project': 'zlib'}, {'project': 'gpl-thing'}]}))
-    card = {'contract': 'case-card/1', 'id': 'zlib-a-to-b', 'project': 'zlib', 'license_spdx': 'Zlib'}
+    card = {'contract': 'case-card/1', 'id': 'zlib-a-to-b', 'project': 'zlib', 'license_spdx': 'Zlib',
+            'old': {'ref': 'v1', 'commit': 'a' * 40}, 'new': {'ref': 'v2', 'commit': 'b' * 40}}
     gpl = {'contract': 'case-card/1', 'id': 'gpl-a-to-b', 'project': 'gpl-thing', 'license_spdx': 'GPL-2.0-only'}
     norec = {'contract': 'case-card/1', 'id': 'x-a-to-b', 'project': 'x', 'license_spdx': 'MIT'}
     (cat / 'releases.json').write_text(json.dumps([card, gpl, norec]))
@@ -116,20 +117,131 @@ def test_plan_rejects_bad_arguments(tree, kwargs):
 
 
 def test_cards_filtered_by_recipe_and_licence(tree):
-    cards = [c for c in S.enumerate_cases(tree, subset='cards', seed=1)]
-    assert cards == ['card:zlib-a-to-b']
+    cards = S.enumerate_cases(tree, subset='cards', seed=1)
+    assert cards == ['aa-card:zlib-a-to-b:new', 'aa-card:zlib-a-to-b:old', 'card:zlib-a-to-b']
+
+
+def test_recipe_noise_planning_covers_both_pins_without_unlicensed_sources(tree):
+    noise = S.enumerate_cases(tree, subset='noise', seed=1)
+    assert {f'noise-card:zlib-a-to-b:{side}' for side in ('old', 'new')} <= set(noise)
+    assert all('gpl-' not in case and 'x-a-to-b' not in case for case in noise)
+    full = S.enumerate_cases(tree, subset='full', seed=1)
+    assert set(noise) <= set(full)
+    assert {'aa-card:zlib-a-to-b:old', 'aa-card:zlib-a-to-b:new'} <= set(full)
+
+
+
+def test_recipe_probes_dedupe_shared_pin_between_consecutive_cards(tree):
+    releases = tree / 'tools/calibration/tier_r/catalogue/releases.json'
+    original = json.loads(releases.read_text())
+    first = original[0]
+    successor = copy.deepcopy(first)
+    successor['id'] = 'zlib-b-to-c'
+    successor['old'] = dict(first['new'])
+    successor['new'] = {'ref': 'v3', 'commit': 'c' * 40}
+    releases.write_text(json.dumps([*original, successor]))
+    cards = S.enumerate_cases(tree, subset='cards', seed=1)
+    noise = S.enumerate_cases(tree, subset='noise', seed=1)
+    assert 'card:zlib-b-to-c' in cards
+    for kind, cases in (('aa', cards), ('noise', noise)):
+        probes = {case for case in cases if case.startswith(f'{kind}-card:')}
+        assert len(probes) == 3
+        assert f'{kind}-card:zlib-a-to-b:old' in probes
+        assert f'{kind}-card:zlib-a-to-b:new' in probes
+        assert f'{kind}-card:zlib-b-to-c:new' in probes
+        assert f'{kind}-card:zlib-b-to-c:old' not in probes
+    assert len(cards) == len(set(cards)) and len(noise) == len(set(noise))
+
+
+def test_recipe_probes_reject_conflicting_commits_for_one_project_ref(tree):
+    releases = tree / 'tools/calibration/tier_r/catalogue/releases.json'
+    original = json.loads(releases.read_text())
+    successor = copy.deepcopy(original[0])
+    successor['id'] = 'zlib-conflict'
+    successor['old'] = {'ref': 'v2', 'commit': 'd' * 40}
+    successor['new'] = {'ref': 'v3', 'commit': 'e' * 40}
+    releases.write_text(json.dumps([*original, successor]))
+    for subset in ('cards', 'noise', 'full'):
+        with pytest.raises(S.ShardError, match='conflicting commits'):
+            S.enumerate_cases(tree, subset=subset, seed=1)
+
+
+def test_recipe_probes_reject_missing_pin_metadata(tree):
+    releases = tree / 'tools/calibration/tier_r/catalogue/releases.json'
+    original = json.loads(releases.read_text())
+    del original[0]['new']
+    releases.write_text(json.dumps(original))
+    with pytest.raises(S.ShardError, match='invalid new pin'):
+        S.enumerate_cases(tree, subset='cards', seed=1)
+
+
+def test_recipe_probe_refuses_microsoft_derived_pin_with_innocent_card_id(tree):
+    releases = tree / 'tools/calibration/tier_r/catalogue/releases.json'
+    original = json.loads(releases.read_text())
+    original[0]['old']['ref'] = 'ntoskrnl.exe'
+    releases.write_text(json.dumps(original))
+    with pytest.raises(S.ShardError, match='refused'):
+        S.enumerate_cases(tree, subset='noise', seed=1)
+
+
+def test_card_recipe_controls_fetch_before_each_probe():
+    for verb in ('aa', 'noise'):
+        for side in ('old', 'new'):
+            case = f'{verb}-card:zlib-a-to-b:{side}'
+            assert S.case_steps(case) == [['fetch', 'zlib-a-to-b'],
+                                          [verb, '--card', 'zlib-a-to-b', '--side', side]]
+
+
+def test_shard_executes_recipe_aa_for_both_sides_with_fetch_first(tree, tmp_path):
+    plan = S.make_plan(tree, seed=1, shards=1, subset='cards')
+    calls = []
+
+    def capture(argv, timeout, env):
+        calls.append(argv[3:])
+        return fake_runner(argv, timeout, env)
+
+    doc = S.run_shard(plan, 0, runner=capture, scratch=tmp_path / 'scratch')
+    assert {case['id']: case['status'] for case in doc['cases']} == {
+        'aa-card:zlib-a-to-b:new': 'ok',
+        'aa-card:zlib-a-to-b:old': 'ok',
+        'card:zlib-a-to-b': 'ok',
+    }
+    for side in ('old', 'new'):
+        command = ['aa', '--card', 'zlib-a-to-b', '--side', side]
+        index = calls.index(command)
+        assert calls[index - 1] == ['fetch', 'zlib-a-to-b']
+
+
+def test_shard_executes_recipe_noise_for_both_sides_with_fetch_first(tree, tmp_path):
+    plan = S.make_plan(tree, seed=1, shards=1, subset='noise')
+    calls = []
+
+    def capture(argv, timeout, env):
+        calls.append(argv[3:])
+        return fake_runner(argv, timeout, env)
+
+    doc = S.run_shard(plan, 0, runner=capture, scratch=tmp_path / 'scratch')
+    statuses = {case['id']: case['status'] for case in doc['cases']}
+    assert statuses['noise-card:zlib-a-to-b:old'] == 'ok'
+    assert statuses['noise-card:zlib-a-to-b:new'] == 'ok'
+    for side in ('old', 'new'):
+        command = ['noise', '--card', 'zlib-a-to-b', '--side', side]
+        index = calls.index(command)
+        assert calls[index - 1] == ['fetch', 'zlib-a-to-b']
 
 
 def test_subset_smoke_contents(tree):
     cases = S.enumerate_cases(tree, subset='smoke', seed=3)
     assert 'suite:_template/tiny' in cases and 'card:zlib-a-to-b' in cases
+    assert not any(c.startswith(('aa-card:', 'noise-card:')) for c in cases)
     assert any(c.startswith('mutate:_template/tiny:cmp-flip:3000') for c in cases)
 
 
 # ---- refusal ---------------------------------------------------------------------------------------------------------
 
 @pytest.mark.parametrize('case', ['card:ntoskrnl.exe', 'suite:tier-w/afd', 'card:Microsoft-thing', 'aa:tw.pair',
-                                  'suite:x/system32'], ids=['kernel', 'tier-w', 'microsoft', 'tw-pair', 'system32'])
+                                  'suite:x/system32', 'aa-card:system32:old', 'noise-card:ntoskrnl:new'],
+                         ids=['kernel', 'tier-w', 'microsoft', 'tw-pair', 'system32', 'aa-recipe', 'noise-recipe'])
 def test_microsoft_cases_refused(case):
     with pytest.raises(S.ShardError, match='refused'):
         S.case_steps(case)
@@ -145,7 +257,10 @@ def test_output_inside_tier_w_refused(tmp_path):
         S.write_shard({'shard': 0}, tmp_path / 'tier-w' / 'out')
 
 
-@pytest.mark.parametrize('case', ['bogus', 'suite:../etc', 'mutate:g/n:nope:1', 'card:'], ids=['junk', 'dotdot', 'op', 'empty'])
+@pytest.mark.parametrize('case', ['bogus', 'suite:../etc', 'mutate:g/n:nope:1', 'card:',
+                                  'aa-card:zlib-a-to-b:both', 'noise-card:../escape:old', 'aa-card::old',
+                                  'noise-card:zlib-a-to-b:old:extra'],
+                         ids=['junk', 'dotdot', 'op', 'empty', 'bad-side', 'escape', 'empty-card', 'trailing'])
 def test_malformed_case_ids(case):
     with pytest.raises(S.ShardError):
         S.case_steps(case)
@@ -432,8 +547,8 @@ def test_workflow_structure_and_pins():
             assert '@v' in line, line
     yaml = pytest.importorskip('yaml')
     doc = yaml.safe_load(text)
-    assert set(doc['jobs']) == {'plan', 'shard', 'merge', 'windows-advisory', 'msvc-advisory'}
-    assert doc[True]['workflow_dispatch']['inputs'].keys() == {'shards', 'seed', 'engines', 'subset'}
+    assert set(doc['jobs']) == {'plan', 'shard', 'merge', 'train', 'windows-advisory', 'msvc-advisory'}
+    assert doc[True]['workflow_dispatch']['inputs'].keys() == {'shards', 'seed', 'engines', 'subset', 'train'}
     assert 'tools/calibration/**' in doc[True]['push']['paths']
     assert doc['jobs']['windows-advisory']['continue-on-error'] is True
     assert doc['jobs']['shard']['needs'] == 'plan' and set(doc['jobs']['merge']['needs']) == {'plan', 'shard'}
@@ -447,3 +562,42 @@ def test_cli_merge_missing_shard_exit_code(tree, tmp_path):
     plan, out = shard_dir(tree, tmp_path)
     next(iter(sorted(out.glob('shard-*.json')))).unlink()
     assert S.main(['merge', '--in', str(out), '--out', str(tmp_path / 'm')]) == 2
+
+
+def test_evaluation_uses_real_cli_engines_option(tree):
+    """Regression: the evaluator parser accepts --engines, not --engine."""
+    seen = []
+    def record(argv, timeout, env):
+        if argv[3] == 'evaluate':
+            seen.append(list(argv[3:]))
+        return fake_runner(argv, timeout, env)
+    plan = plan_for(tree, shards=1, subset='smoke')
+    S.run_shard(plan, 0, runner=record)
+    assert seen
+    assert all('--engines' in call and '--engine' not in call for call in seen)
+
+
+def test_training_workflow_never_runs_on_pr_or_nightly():
+    yaml = pytest.importorskip('yaml')
+    workflow = yaml.safe_load(WORKFLOW.read_text(encoding='utf-8'))
+    job = workflow['jobs']['train']
+    assert "workflow_dispatch" in job['if'] and "inputs.train == true" in job['if']
+    assert 'needs.merge.result' in job['if']
+    cmds = '\n'.join(str(s.get('run', '')) for s in job['steps'])
+    assert 'train run --labels training/labels --outputs training/outputs' in cmds
+    shard_steps = workflow['jobs']['shard']['steps']
+    assert any('--collect-artifacts' in str(s.get('run', '')) for s in shard_steps)
+    assert any(s.get('with', {}).get('path') == 'shard-out/training/'
+               for s in shard_steps)
+    merge = workflow['jobs']['merge']['steps']
+    assert any('--artifacts training' in str(s.get('run', '')) for s in merge)
+
+
+def test_training_report_survives_insufficient_data_exit():
+    yaml = pytest.importorskip('yaml')
+    job = yaml.safe_load(WORKFLOW.read_text(encoding='utf-8'))['jobs']['train']
+    verify = next(s for s in job['steps'] if s.get('name') == 'Verify training report')
+    upload = next(s for s in job['steps'] if s.get('with', {}).get('name') == 'tier-r-training-report')
+    # train intentionally exits 1 on insufficient data; preserve and verify its report.
+    assert verify.get('if') == 'always()'
+    assert upload.get('if') == 'always()'
