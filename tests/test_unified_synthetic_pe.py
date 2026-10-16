@@ -5,7 +5,7 @@ import struct
 from pathlib import Path
 
 import pytest
-from hypothesis import given, settings, strategies as st
+from hypothesis import HealthCheck, given, settings, strategies as st
 from unified_support.assembler import Assembler
 from unified_support.synthetic_pe import Function, Section, build_image
 
@@ -41,7 +41,8 @@ def test_assembler_refuses_ambiguity_and_invalid_encodings() -> None:
         Assembler().call("far").assemble(0, {"far": 2**40})
 
 
-@settings(max_examples=24, derandomize=True, deadline=None)
+@settings(max_examples=24, derandomize=True, deadline=None,
+          suppress_health_check=[HealthCheck.function_scoped_fixture])
 @given(st.integers(min_value=0, max_value=2**32 - 1), st.integers(min_value=0, max_value=64))
 def test_deterministic_image_and_real_pdata_parser(timestamp: int, padding: int, tmp_path: Path) -> None:
     # Hypothesis reuses tmp_path deliberately: a fixed file is replaced, never executed.
