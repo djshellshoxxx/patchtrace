@@ -447,3 +447,16 @@ def test_cli_merge_missing_shard_exit_code(tree, tmp_path):
     plan, out = shard_dir(tree, tmp_path)
     next(iter(sorted(out.glob('shard-*.json')))).unlink()
     assert S.main(['merge', '--in', str(out), '--out', str(tmp_path / 'm')]) == 2
+
+
+def test_evaluation_uses_real_cli_engines_option(tree):
+    """Regression: the evaluator parser accepts --engines, not --engine."""
+    seen = []
+    def record(argv, timeout, env):
+        if argv[3] == 'evaluate':
+            seen.append(list(argv[3:]))
+        return fake_runner(argv, timeout, env)
+    plan = plan_for(tree, shards=1, subset='smoke')
+    S.run_shard(plan, 0, runner=record)
+    assert seen
+    assert all('--engines' in call and '--engine' not in call for call in seen)
