@@ -338,17 +338,19 @@ def test_masked_body_stops_at_function_boundary(monkeypatch, boundary):
     assert before == after == ('callq T', 'retq')
 
 
-def test_coff_quoted_string_symbols_are_masked_as_address_references(monkeypatch):
-    """MSVC clang emits literal-dependent ??_C@ symbols with quotes, unlike ELF's .L.str."""
+@pytest.mark.parametrize('quoted', [True, False])
+def test_coff_quoted_string_symbols_are_masked_as_address_references(monkeypatch, quoted):
+    """COFF's literal-dependent ??_C@ names may be quoted or unquoted in emitted assemblers."""
     from pathlib import Path
     from types import SimpleNamespace
 
     symbol = ['"??_C@_05CJBACGMB@hello?$AA@"']
 
     def compile_asm(argv, *, cwd, timeout):
+        sym = symbol[0] if quoted else symbol[0].strip('"')
         Path(cwd, '_masked.s').write_text('\n'.join([
             '.def shout;', 'shout:', 'movl %ecx, %edx',
-            f'leaq {symbol[0]}(%rip), %rcx', 'jmp emit', '.seh_endproc',
+            f'leaq {sym}(%rip), %rcx', 'jmp emit', '.seh_endproc',
         ]))
         return SimpleNamespace(returncode=0)
 
