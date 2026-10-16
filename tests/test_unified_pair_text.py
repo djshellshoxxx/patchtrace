@@ -294,3 +294,23 @@ def test_opcodes_cover_both_sides_exactly_once():
     assert ops == [('equal', 0, 1, 0, 1), ('equal', 1, 2, 1, 2), ('replace', 2, 3, 2, 4), ('equal', 3, 4, 4, 5)]
     assert pair_text.ir_opcodes(['a'], [], []) == [('delete', 0, 1, 0, 0)]
     assert pair_text.ir_opcodes([], ['a'], []) == [('insert', 0, 0, 0, 1)]
+
+def test_code_source_cache_reloads_after_same_result_id_gains_a_decompile_part(world):
+    vm, source = world
+    row = row_named(vm, 'get_version')
+    assert source(vm, row).decompiled.reason == pair_text.NO_DECOMP
+    changed = with_decomp(vm, c_records(vm, row, 'int x = 3;', 'int x = 4;'))
+    rendered = source(changed, row).decompiled
+    assert rendered.pair is not None
+    assert 'int x = 3;' in str(rendered.pair.older)
+    assert 'int x = 4;' in str(rendered.pair.newer)
+
+
+def test_code_source_cache_reloads_when_verified_c_part_digest_changes(world):
+    vm, source = world
+    row = row_named(vm, 'get_version')
+    first = with_decomp(vm, c_records(vm, row, 'int first = 1;', 'int first = 2;'))
+    assert 'int first = 1;' in str(source(first, row).decompiled.pair.older)
+    second = with_decomp(vm, c_records(vm, row, 'int second = 1;', 'int second = 2;'))
+    pane = source(second, row).decompiled.pair
+    assert 'int second = 1;' in str(pane.older) and 'int first = 1;' not in str(pane.older)
