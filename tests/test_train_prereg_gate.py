@@ -173,6 +173,13 @@ def test_owner_approval_elsewhere_does_not_authorize_an_unsigned_lock(tmp_path):
     with pytest.raises(G.PreregGateError, match="owner"):
         G.select(prereg, qa, require_signoff=True)
 
+def test_locked_form_without_single_use_guard_is_rejected(tmp_path, monkeypatch):
+    prereg, qa, _ = inputs(tmp_path)
+    monkeypatch.setattr(T, "_execute_training", lambda *a, **kw: pytest.fail("must not read locked-role rows"))
+    assert T.main(run_args(tmp_path, prereg, qa, extra=("--locked-form",))) == T.USAGE
+    assert not list(tmp_path.rglob("*.lock"))
+
+
 def test_final_run_forbids_rehearsal_flag(tmp_path, monkeypatch):
     prereg, qa, _ = inputs(tmp_path)
     monkeypatch.setattr(T, "_execute_training", lambda *a, **kw: pytest.fail("must not execute"))
