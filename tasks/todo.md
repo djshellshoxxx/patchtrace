@@ -800,3 +800,5 @@ Implementation 0843de5: fixed COFF function boundaries affecting mutation labels
 - [ ] Dispatch `cards` and `noise` against real recipe pins; inspect and document A/A reproducibility, noise, status and failures per recipe. Synthetic runner tests are not live evidence.
 - [ ] Specify recipe `mutate` base through `factory.BaseSource` and build its independent tests; no recipe mutation support is claimed in this slice.
 - [ ] LBL-33 verified corpus admission, leak/noise audit and preregistration lock remain pending.
+
+- [x] LBL-32b: prevent duplicate Tier R A/A and noise labels when adjacent cards share a project/ref/commit; reject ambiguous or missing pinned metadata before plan dispatch. Test fixtures in `tests/test_tier_r_shard.py`; live CI remains pending.
