@@ -223,14 +223,15 @@ def test_run_shard_aggregate_only_and_deterministic(tree, tmp_path):
     assert path.name == 'shard-0.json'
 
 
-def test_nonidentical_aa_rebuild_is_a_failing_gate(tree):
+@pytest.mark.parametrize('returncode', [0, 1])
+def test_nonidentical_aa_rebuild_is_a_failing_gate(tree, returncode):
     """An A/A source-control violation must fail the shard and its merged provenance."""
     plan = S.make_plan(tree, seed=4, shards=1, subset='cards')
 
     def runner(argv, timeout, env):
         step = argv[3:]
         if step[0] == 'aa':
-            return 1, json.dumps({'command': 'aa', 'status': 'findings',
+            return returncode, json.dumps({'command': 'aa', 'status': 'findings',
                                   'not_byte_identical': ['aa-zlib-rebuild']}), None
         return fake_runner(argv, timeout, env)
 
