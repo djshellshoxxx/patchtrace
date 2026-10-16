@@ -328,3 +328,25 @@ def test_masked_body_stops_at_function_boundary(monkeypatch, boundary):
     suffix[:] = ['movl $99, %eax']
     after = E._masked_function_asm({}, 'm.c', 'target', 'clang', (), 1)
     assert before == after == ('callq T', 'retq')
+
+
+def test_masked_body_ignores_msvc_coff_quoted_rip_symbols(monkeypatch):
+    """Clang COFF quotes decorated .rdata names, embedding the changed literal in the symbol."""
+    from pathlib import Path
+    from types import SimpleNamespace
+
+    def compile_asm(_argv, *, cwd, timeout):
+        source = (Path(cwd) / 'm.c').read_text(encoding='utf-8')
+        symbol = ('"??_C@_05CJBACGMB@hello?$AA@"' if '"hello"' in source else
+                  '"??_C@_06GANFPHOD@hello?$CB?$AA@"')
+        (Path(cwd) / '_masked.s').write_text(
+            f'shout:\n\tmovl %ecx, %edx\n\tleaq {symbol}(%rip), %rcx\n\tjmp emit\n'
+            '\t.section .rdata,"dr"\n',
+            encoding='utf-8',
+        )
+        return SimpleNamespace(returncode=0)
+
+    monkeypatch.setattr(E, 'run_tool', compile_asm)
+    baseline = E._masked_function_asm({'m.c': 'emit("hello", v);'}, 'm.c', 'shout', 'clang', (), 1)
+    mutant = E._masked_function_asm({'m.c': 'emit("hello!", v);'}, 'm.c', 'shout', 'clang', (), 1)
+    assert baseline == mutant == ('movl %ecx, %edx', 'leaq SYM(%rip), %rcx', 'jmp T')
