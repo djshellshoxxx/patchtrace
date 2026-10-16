@@ -815,6 +815,11 @@ def sort_rows(rows: Sequence[UnifiedRowView], indices: Sequence[int],
               key: Callable[[UnifiedRowView], object] = _default_key, *, descending: bool = False) -> list[int]:
     """Stable order of `indices` by `key`; rows whose key is None stay last in either direction, and ties keep the
     given order (the default review order when `indices` came from `filter_rows`)."""
+    # The default key is always a complete tuple: avoid allocating 100,000
+    # intermediate (index, key) pairs and scanning them twice. Timsort remains
+    # stable for equal keys in ascending and descending review order.
+    if key is _default_key:
+        return sorted(indices, key=lambda i: rows[i].sort_keys, reverse=descending)
     keyed = [(i, key(rows[i])) for i in indices]
     present = sorted(((i, k) for i, k in keyed if k is not None), key=lambda pair: pair[1], reverse=descending)
     return [i for i, _ in present] + [i for i, k in keyed if k is None]
