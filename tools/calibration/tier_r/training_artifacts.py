@@ -6,8 +6,8 @@ artifact set is checked against the actual report pair digests and label digests
 from __future__ import annotations
 
 import hashlib
-from pathlib import Path
 from collections.abc import Iterable
+from pathlib import Path
 
 from ..common import canonical_json
 from . import contracts as C

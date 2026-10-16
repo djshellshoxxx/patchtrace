@@ -32,8 +32,8 @@ from pathlib import Path
 from patchtrace.calibration.scope import TIER_R_CLAIM
 
 from ..common import canonical_json, digest, r12
-from .contracts import COSMETIC_OPERATORS, PERMISSIVE_SPDX, SEMANTIC_OPERATORS, ContractError, load_report
 from . import training_artifacts as TA
+from .contracts import COSMETIC_OPERATORS, PERMISSIVE_SPDX, SEMANTIC_OPERATORS, ContractError, load_report
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
 PLAN_CONTRACT = 'tier-r-plan/1'

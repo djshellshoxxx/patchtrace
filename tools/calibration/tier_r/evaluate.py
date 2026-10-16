@@ -46,8 +46,8 @@ from ..evalcore.engines.common import (  # noqa: F401 - re-exported: the evaluat
 from ..evalcore.engines.ghidriff import GhidriffImportProvider, from_ghidriff  # noqa: F401
 from ..evalcore.engines.rzdiff import RzDiffProvider, image_path  # noqa: F401
 from . import contracts as C
-from . import report_schemas as RS
 from . import output_store as OS
+from . import report_schemas as RS
 
 ENGINES = ('rz-diff', 'bindiff', 'ghidriff', 'attention')   # the engines this module can drive or import
 ENGINE_ORDER = typing.get_args(C.Engine)         # report order of every engine, incl. unified and attention

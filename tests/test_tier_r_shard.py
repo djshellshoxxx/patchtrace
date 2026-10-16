@@ -476,3 +476,13 @@ def test_training_workflow_never_runs_on_pr_or_nightly():
                for s in shard_steps)
     merge = workflow['jobs']['merge']['steps']
     assert any('--artifacts training' in str(s.get('run', '')) for s in merge)
+
+
+def test_training_report_survives_insufficient_data_exit():
+    yaml = pytest.importorskip('yaml')
+    job = yaml.safe_load(WORKFLOW.read_text(encoding='utf-8'))['jobs']['train']
+    verify = next(s for s in job['steps'] if s.get('name') == 'Verify training report')
+    upload = next(s for s in job['steps'] if s.get('with', {}).get('name') == 'tier-r-training-report')
+    # train intentionally exits 1 on insufficient data; preserve and verify its report.
+    assert verify.get('if') == 'always()'
+    assert upload.get('if') == 'always()'

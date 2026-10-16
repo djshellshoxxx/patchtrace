@@ -195,6 +195,9 @@ def cmd_noise(args) -> tuple[int, dict]:
 
 
 def cmd_mutate(args) -> tuple[int, dict]:
+    from ..mutations.contracts import kind_of
+
+    kind_of(args.operator)  # Reject invalid requests before probing/building the base.
     session = _session(args)
     doc = F.run_mutation(session, _base(args, session), args.operator, args.seed, opt=args.opt)
     name = F.write_doc(session.store, doc).name

@@ -15,10 +15,12 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
 from test_tier_r_eval_metrics import FUNCS, make_labels  # noqa: E402
-from tools.calibration.tier_r import cli, contracts as C, evaluate as E  # noqa: E402
+
+from tools.calibration.tier_r import cli  # noqa: E402
+from tools.calibration.tier_r import contracts as C  # noqa: E402
+from tools.calibration.tier_r import evaluate as E  # noqa: E402
 from tools.calibration.tier_r import output_store as OS  # noqa: E402
 from tools.calibration.tier_r import report_schemas as RS  # noqa: E402
-
 
 LABELS = make_labels(FUNCS, pair_id='lbl31-synthetic')
 
@@ -146,7 +148,8 @@ def test_training_artifacts_reject_missing_label_or_unexpected_file(tmp_path):
 
 def test_shard_to_merge_training_artifacts_end_to_end_with_fake_provider(tmp_path):
     """The production shard file remains aggregate-only; JSON sidecars reach the merge separately."""
-    from tools.calibration.tier_r import shard as S, training_artifacts as TA
+    from tools.calibration.tier_r import shard as S
+    from tools.calibration.tier_r import training_artifacts as TA
 
     plan = {'contract': S.PLAN_CONTRACT, 'seed': 4, 'subset': 'smoke',
             'engines': ['rz-diff'], 'of': 1, 'cases_total': 1,
@@ -173,7 +176,17 @@ def test_shard_to_merge_training_artifacts_end_to_end_with_fake_provider(tmp_pat
     artifact_dir = tmp_path / 'out' / 'training'
     result = S.run_shard(plan, 0, runner=runner, artifacts_dir=artifact_dir)
     assert result['reports'] and result['labels']
-    assert 'functions' not in json.dumps(result)
+    def assert_no_function_tables(value):
+        if isinstance(value, dict):
+            for key, child in value.items():
+                if key == 'functions':
+                    assert type(child) is int  # Aggregate counts are allowed; function tables are not.
+                assert_no_function_tables(child)
+        elif isinstance(value, list):
+            for child in value:
+                assert_no_function_tables(child)
+
+    assert_no_function_tables(result)
     assert S.write_shard(result, tmp_path / 'out').exists()
     aggregate, _ = S.merge(S.load_shards(tmp_path / 'out', plan=plan))
     assert TA.verify_training_artifacts([aggregate], artifact_dir) == {'labels': 1, 'outputs': 1}

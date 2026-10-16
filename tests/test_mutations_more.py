@@ -307,3 +307,24 @@ def test_labels_agree_with_the_source_layer_rule():
         assert (d.label, d.change_kind, d.check) == ('changed', op, 'disagree')
         d = L.label_mutation(op, 't', [L.FunctionFact('t', True, True, False)])[0]
         assert (d.label, d.check) == ('changed', 'ok')
+
+
+@pytest.mark.parametrize('boundary', ['.Lfunc_end0:', '.seh_endproc', '.def next;', '.section .rdata,"dr"', 'next:'])
+def test_masked_body_stops_at_function_boundary(monkeypatch, boundary):
+    """COFF lacks ELF's .Lfunc_end; later functions/data must not affect target truth."""
+    from pathlib import Path
+    from types import SimpleNamespace
+
+    suffix = ['movl $7, %eax']
+
+    def compile_asm(argv, *, cwd, timeout):
+        Path(cwd, '_masked.s').write_text('\n'.join([
+            'target:', 'callq twice', 'retq', boundary, *suffix,
+        ]))
+        return SimpleNamespace(returncode=0)
+
+    monkeypatch.setattr(E, 'run_tool', compile_asm)
+    before = E._masked_function_asm({}, 'm.c', 'target', 'clang', (), 1)
+    suffix[:] = ['movl $99, %eax']
+    after = E._masked_function_asm({}, 'm.c', 'target', 'clang', (), 1)
+    assert before == after == ('callq T', 'retq')
