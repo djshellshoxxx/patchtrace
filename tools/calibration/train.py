@@ -798,6 +798,8 @@ def _run(args, only_shift: bool = False) -> tuple[int, dict]:
     final = bool(getattr(args, 'final_locked_test', False))
     unlocked = bool(getattr(args, 'unlocked_prereg', False))
     prereg_file = getattr(args, 'prereg', None)
+    if args.locked_form and not final:
+        raise TrainError('PT-KA-LOCK', '--locked-form requires --final-locked-test (one-look receipt)')
     if final:
         if only_shift or not args.locked_form or args.smoke or unlocked or not prereg_file:
             raise TrainError('PT-KA-LOCK', 'final locked test needs run, --locked-form, --prereg and full '
