@@ -793,3 +793,10 @@ Done: dock with state matrix, consent, import, changes, copy, go to CVE. Open: r
 
 ### LBL-31 continuation (2026-10-16)
 Implementation 0843de5: fixed COFF function boundaries affecting mutation labels, artifact table assertion, early operator validation, training-report retention and lint. Focused tests: 140 passed / 25 live-tool skips; unified gate fixtures: 98 passed; repository Ruff clean. Synthetic saved-output/training reports verified and deterministic. Full current-head Linux/Windows CI and live train=true dispatch remain pending; PR #78 is not merged. Exact results and continuation: docs/handoff/lbl31-output-persistence-chatgpt-20261015.md. Merge is explicitly authorized only after passing verification; next implementation slice LBL-32.
+
+### LBL-32 recipe A/A and noise extension (2026-10-16)
+- [x] Add exact `aa-card:<id>:old|new` and `noise-card:<id>:old|new` cases for permitted recipes, unchanged bounded smoke and suite cases, fetch-first CLI routing and invalid/Microsoft/Tier W refusal tests. Implemented on `chatgpt/lbl32-recipe-aa-noise-20261016`.
+- [ ] Pass repository-wide Linux and Windows CI on the LBL-32 PR, then merge after review.
+- [ ] Dispatch `cards` and `noise` against real recipe pins; inspect and document A/A reproducibility, noise, status and failures per recipe. Synthetic runner tests are not live evidence.
+- [ ] Specify recipe `mutate` base through `factory.BaseSource` and build its independent tests; no recipe mutation support is claimed in this slice.
+- [ ] LBL-33 verified corpus admission, leak/noise audit and preregistration lock remain pending.
