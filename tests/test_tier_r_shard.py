@@ -25,7 +25,8 @@ def write_tree(tmp_path: Path) -> Path:
     cat = root / 'tools/calibration/tier_r/catalogue'
     cat.mkdir(parents=True)
     (cat / 'recipes.json').write_text(json.dumps({'recipes': [{'project': 'zlib'}, {'project': 'gpl-thing'}]}))
-    card = {'contract': 'case-card/1', 'id': 'zlib-a-to-b', 'project': 'zlib', 'license_spdx': 'Zlib'}
+    card = {'contract': 'case-card/1', 'id': 'zlib-a-to-b', 'project': 'zlib', 'license_spdx': 'Zlib',
+            'old': {'ref': 'v1', 'commit': 'a' * 40}, 'new': {'ref': 'v2', 'commit': 'b' * 40}}
     gpl = {'contract': 'case-card/1', 'id': 'gpl-a-to-b', 'project': 'gpl-thing', 'license_spdx': 'GPL-2.0-only'}
     norec = {'contract': 'case-card/1', 'id': 'x-a-to-b', 'project': 'x', 'license_spdx': 'MIT'}
     (cat / 'releases.json').write_text(json.dumps([card, gpl, norec]))
@@ -127,6 +128,51 @@ def test_recipe_noise_planning_covers_both_pins_without_unlicensed_sources(tree)
     full = S.enumerate_cases(tree, subset='full', seed=1)
     assert set(noise) <= set(full)
     assert {'aa-card:zlib-a-to-b:old', 'aa-card:zlib-a-to-b:new'} <= set(full)
+
+
+
+def test_recipe_probes_dedupe_shared_pin_between_consecutive_cards(tree):
+    releases = tree / 'tools/calibration/tier_r/catalogue/releases.json'
+    original = json.loads(releases.read_text())
+    first = original[0]
+    successor = copy.deepcopy(first)
+    successor['id'] = 'zlib-b-to-c'
+    successor['old'] = dict(first['new'])
+    successor['new'] = {'ref': 'v3', 'commit': 'c' * 40}
+    releases.write_text(json.dumps([*original, successor]))
+    cards = S.enumerate_cases(tree, subset='cards', seed=1)
+    noise = S.enumerate_cases(tree, subset='noise', seed=1)
+    assert 'card:zlib-b-to-c' in cards
+    for kind, cases in (('aa', cards), ('noise', noise)):
+        probes = {case for case in cases if case.startswith(f'{kind}-card:')}
+        assert len(probes) == 3
+        assert f'{kind}-card:zlib-a-to-b:old' in probes
+        assert f'{kind}-card:zlib-a-to-b:new' in probes
+        assert f'{kind}-card:zlib-b-to-c:new' in probes
+        assert f'{kind}-card:zlib-b-to-c:old' not in probes
+    assert len(cards) == len(set(cards)) and len(noise) == len(set(noise))
+
+
+def test_recipe_probes_reject_conflicting_commits_for_one_project_ref(tree):
+    releases = tree / 'tools/calibration/tier_r/catalogue/releases.json'
+    original = json.loads(releases.read_text())
+    successor = copy.deepcopy(original[0])
+    successor['id'] = 'zlib-conflict'
+    successor['old'] = {'ref': 'v2', 'commit': 'd' * 40}
+    successor['new'] = {'ref': 'v3', 'commit': 'e' * 40}
+    releases.write_text(json.dumps([*original, successor]))
+    for subset in ('cards', 'noise', 'full'):
+        with pytest.raises(S.ShardError, match='conflicting commits'):
+            S.enumerate_cases(tree, subset=subset, seed=1)
+
+
+def test_recipe_probes_reject_missing_pin_metadata(tree):
+    releases = tree / 'tools/calibration/tier_r/catalogue/releases.json'
+    original = json.loads(releases.read_text())
+    del original[0]['new']
+    releases.write_text(json.dumps(original))
+    with pytest.raises(S.ShardError, match='invalid new pin'):
+        S.enumerate_cases(tree, subset='cards', seed=1)
 
 
 def test_card_recipe_controls_fetch_before_each_probe():
