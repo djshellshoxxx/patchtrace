@@ -313,6 +313,7 @@ class _Deep:
 
     def __init__(self, manifest: UnifiedResultManifest):
         self.manifest = manifest
+        self.check_decomp = any(p.name == DECOMP for p in manifest.parts)
         self.materiality: dict[str, str] = {}  # row_id -> materiality of every row seen
         self.facted: set[str] = set()
         self.row_rvas: set[tuple[str, int]] = set()
@@ -328,8 +329,9 @@ class _Deep:
         if not _row_id_ok(self.manifest, row) or row.row_id in self.materiality:
             raise _err('A unified row id is wrong or repeated', 'row-id')
         self.materiality[row.row_id] = row.materiality
-        self.row_rvas.update(('older', side.rva) for side in row.older)
-        self.row_rvas.update(('newer', side.rva) for side in row.newer)
+        if self.check_decomp:
+            self.row_rvas.update(('older', side.rva) for side in row.older)
+            self.row_rvas.update(('newer', side.rva) for side in row.newer)
         self.decisions[row.decision] += 1
         self.materialities[row.materiality] += 1
 
