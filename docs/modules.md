@@ -1141,3 +1141,5 @@ Calls panel (id graph): `callgraph/panel.py` (PanelSpec), `panel_qt.py` (widgets
 ### LBL-32 Tier R sharding extension (2026-10-16)
 
 `tools/calibration/tier_r/shard.py` owns deterministic, permitted-recipe planning for `aa-card:ID:old|new` and `noise-card:ID:old|new`. Its `case_steps` produces a fetch followed by a CLI `aa` or `noise` on exactly the named card side, without invoking Qt or embedding function tables in shard summaries. Fixtures and malformed/refused-case tests: `tests/test_tier_r_shard.py`. Real toolchain and two-OS gates remain separate.
+
+LBL-32b pin identity: `_eligible_card_rows` retains metadata for the existing permissive recipe filter; `_recipe_probe_cases` picks the lexicographically earliest card-side alias of each `(project, ref, commit)` source, and refuses a reused `(project, ref)` with a conflicting commit or malformed pin. This prevents the factory's project/ref-based pair IDs from being evaluated and exported twice across shards. Hermetic tests cover duplicate and collision cases.
