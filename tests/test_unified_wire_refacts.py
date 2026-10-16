@@ -245,3 +245,27 @@ def test_decompiled_c_retention_preserves_result_identity_when_refreshing(projec
     loaded = pipeline.load_current(project, pipeline.make_plan(project))
     assert after.result_id == before.result_id == loaded.manifest.result_id
     assert store.DECOMP in {p.name for p in loaded.manifest.parts}
+
+def test_single_sided_decompile_retains_only_real_code_without_promoting_a_pair(project, tmp_path):
+    from patchtrace.unified.pair_text import RowCodeSource
+
+    place_gzfs(project)
+    report = pipeline.run_unified(project, options(tmp_path, texts={'older': SHOWN['older']}))
+    manifest, _row, facts = keep_same(project)
+    assert facts.verdict == 'review' and stage(report, 'decompile').status == 'partial'
+    loaded = pipeline.load_current(project, pipeline.make_plan(project))
+    part = next(p for p in manifest.parts if p.name == store.DECOMP)
+    assert store.verify_result_dir(loaded.directory) == manifest
+    assert RowCodeSource._read_decomp(loaded.directory / store.DECOMP, part) == {
+        ('older', KEEP_SAME['older']): ('ok', SHOWN['older'])
+    }
+
+
+def test_changing_the_persisted_c_part_is_detected_before_it_can_be_read(project, tmp_path):
+    place_gzfs(project)
+    pipeline.run_unified(project, options(tmp_path, texts=SHOWN))
+    loaded = pipeline.load_current(project, pipeline.make_plan(project))
+    part_path = loaded.directory / store.DECOMP
+    part_path.write_bytes(part_path.read_bytes() + b'corrupt-trailing-data')
+    with pytest.raises(UnifiedError):
+        store.verify_result_dir(loaded.directory)
