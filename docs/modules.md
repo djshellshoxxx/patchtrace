@@ -1137,3 +1137,7 @@ Calls panel (id graph): `callgraph/panel.py` (PanelSpec), `panel_qt.py` (widgets
 
 ### [LBL-12:unified-adapter]
 `tools/calibration/evalcore/engines/unified.py` maps `unified-match/1` rows (result dir or `<pair_id>.unified.jsonl`) to evalcore predictions per LBL s7.1; synthetic fixtures only. Gap: a paired row with unknown materiality is left out of predictions because `Prediction.changed` is a bool (no "paired, flag abstained"); it is counted in `ignored_unaddressed`. Not yet wired into `tier_r/evaluate.py` `default_providers` (frozen to this slice).
+
+
+### [LBL-30:prereg-registration-and-one-look-guard] (2026-10-16; draft PR #85)
+Dev-only `tools/calibration/prereg_gate.py` verifies the exact LF C9 protocol digest against the QA record before `train.py` opens training inputs. Unapproved drafts require `--unlocked-prereg`; only the train summary reports their SHA and reports remain unlocked. An explicit owner-approved `--final-locked-test --locked-form --corpus-dir EXTERNAL` path consumes an exclusive `run_locked_test.py` receipt before reading any labels or engine outputs, and refuses repeats even after failure. `--locked-form` alone cannot bypass the receipt. Full CI pending; no actual final look has been executed. Spec: `docs/specs/program-e/LBL-LOCK-CLI.md`; tests: `tests/test_train_prereg_gate.py`.
