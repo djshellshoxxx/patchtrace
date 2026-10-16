@@ -298,6 +298,21 @@ def test_read_request_refuses_a_huge_or_missing_file(tmp_path):
     assert missing.value.reason == 'request-invalid'
 
 
+@pytest.mark.parametrize('payload', [
+    '{"ok":true,"ok":false}',
+    '{"ok":false,"reason":"first","reason":"second"}',
+    '{"ok":false,"stage_ms":{"calls":1,"calls":2}}',
+    '{"ok":false,"rows":NaN}',
+    '{"ok":false,"rows":1e999}',
+], ids=['duplicate-success', 'duplicate-reason', 'nested-duplicate',
+        'nonfinite-constant', 'overflow-float'])
+def test_read_worker_report_rejects_noncanonical_json(tmp_path, payload):
+    """An invalid report must never be interpreted as worker success."""
+    path = tmp_path / 'report.json'
+    path.write_text(payload, encoding='utf-8')
+    assert exchange.read_report(path) is None
+
+
 def test_reports_are_read_defensively(tmp_path):
     path = tmp_path / 'report.json'
     assert exchange.read_report(path) is None
