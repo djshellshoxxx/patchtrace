@@ -100,3 +100,39 @@ PDBs, downloaded Winbindex labels or GPL/AGPL implementation code.
 
 Integrator-only request: confirm appropriate LF attributes for these JSON/Markdown/Python fixtures
 without modifying existing repository attributes during this task.
+
+## 2026-10-16 continuation: canonical test collection repairs (PR follow-up)
+
+The two **known integration blockers** listed near the top have been addressed on the
+isolated branch `chatgpt/unified-fixture-collection-fix-20261016`, based on PR #71
+head `161a88345efc6484f4d7809fc6963a0193bd0057`.
+The complete corrected `-2` text was copied into its original canonical pytest
+filename, then the ignored `-2` duplicate deleted. Exact replacements:
+
+- `test_unified_synthetic_pe.py` now uses the Hypothesis
+  `HealthCheck.function_scoped_fixture` suppression for its explicitly reused
+  `tmp_path`; other health checks are still enforced.
+- `test_unified_fixture_gate_u6.py` now creates distinct simulated project
+  lineages through `label_doc` and preserves case metadata for each of its
+  scripted examples.
+
+This is a **collection/fixture correctness repair only**; production unified
+engine behavior, gate thresholds, contracts, source code and live acceptance
+are unchanged. The original superseded files no longer exist on this branch.
+They still exist on PR #71 until this fix is merged into that source branch.
+
+Verification remains **PENDING** until focused tests, `ruff`, and current-head
+Linux/Windows CI run. Start with:
+
+```sh
+QT_QPA_PLATFORM=offscreen python -m pytest -q \
+  tests/test_unified_synthetic_pe.py tests/test_unified_fixture_gate_u6.py
+python -m ruff check src tests tools
+```
+
+Then test all unified synthetic fixture files and the repository-wide suite.
+Review expected G-U3 oracle blockage and fixture-only evidence separately.
+Merge the fix branch into PR #71 only after its own current-head checks pass.
+PR #71 remains a draft and must not be merged into the integration branch
+until full checks, synthetic PE/gate parity and related acceptance pass.
+Do not mark G-U1..G-U8 live gate acceptance from scripted fixtures.
