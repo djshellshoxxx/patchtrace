@@ -68,7 +68,6 @@ from patchtrace.calibration.scope import SCOPE_TEXT
 from . import prereg as P
 from . import prereg_gate as PG
 from . import shift as SH
-from .run_locked_test import LockedTestError, run_locked_test
 from .bootstrap import MAX_UNDEFINED_SHARE
 from .common import Row, canonical_json, digest, strict_json
 from .contracts import ContractError as CorpusContractError
@@ -87,6 +86,7 @@ from .guards import (
 )
 from .lineage import CandidateIdentity, assign_roles, identity_groups
 from .report import TIER_R_CLAIM, make_tier_r_report, render_markdown, verify_tier_r_report
+from .run_locked_test import LockedTestError, run_locked_test
 from .tier_r import annotate as A
 from .tier_r import contracts as C
 from .tier_r import evaluate as E
