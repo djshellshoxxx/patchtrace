@@ -65,7 +65,10 @@ from patchtrace.calibration.artifact import parse_artifact
 from patchtrace.calibration.features import FEATURE_SCHEMA, SPEC_BY_NAME, feature_names
 from patchtrace.calibration.scope import SCOPE_TEXT
 
+from . import prereg as P
+from . import prereg_gate as PG
 from . import shift as SH
+from .run_locked_test import LockedTestError, run_locked_test
 from .bootstrap import MAX_UNDEFINED_SHARE
 from .common import Row, canonical_json, digest, strict_json
 from .contracts import ContractError as CorpusContractError
@@ -731,11 +734,12 @@ def _fit(rows, names, kinds, profile, cfg, key, versions, toolchains, lineages, 
 # ---- CLI --------------------------------------------------------------------------------------------------------------
 
 def _prereg_sha(path: str | None) -> str | None:
+    """Read exact LF protocol bytes; no implicit CRLF normalization or QA claim."""
     if not path:
         return None
     try:
-        return hashlib.sha256(Path(path).read_bytes()).hexdigest()
-    except OSError as exc:
+        return P.prereg_sha256(Path(path))
+    except (P.PreregError, OSError) as exc:
         raise TrainError('PT-KA-EVAL', f'preregistration unreadable: {exc}') from None
 
 
@@ -758,10 +762,11 @@ def _write(path: Path, data: bytes) -> None:
     path.write_bytes(data)
 
 
-def _run(args, only_shift: bool = False) -> tuple[int, dict]:
+def _execute_training(args, only_shift: bool, prereg_sha: str | None) -> tuple[int, dict]:
+    """Execute training only after preregistration validation (and final receipt if requested)."""
     docs, origin, extra = _inputs(args)
     cfg = TrainConfig.smoke_config() if args.smoke else TrainConfig()
-    result = run_training(docs, cfg, prereg_sha=_prereg_sha(args.prereg), tool_git=args.tool_git, origin=origin,
+    result = run_training(docs, cfg, prereg_sha=prereg_sha, tool_git=args.tool_git, origin=origin,
                           extra=extra, locked_requested=bool(args.locked_form))
     out = Path(args.out)
     summary = {'train_key': result.train_key, 'report_sha256': result.report['report_sha256'],
@@ -784,6 +789,48 @@ def _run(args, only_shift: bool = False) -> tuple[int, dict]:
         summary['artifact'] = (out / 'artifact.dev-only.json').as_posix()
     elif args.artifact:
         summary['artifact'] = None
+    return code, summary
+
+
+
+def _run(args, only_shift: bool = False) -> tuple[int, dict]:
+    """No preregistration claim without QA lock, and no final look without an exclusive receipt."""
+    final = bool(getattr(args, 'final_locked_test', False))
+    unlocked = bool(getattr(args, 'unlocked_prereg', False))
+    prereg_file = getattr(args, 'prereg', None)
+    if final:
+        if only_shift or not args.locked_form or args.smoke or unlocked or not prereg_file:
+            raise TrainError('PT-KA-LOCK', 'final locked test needs run, --locked-form, --prereg and full '
+                             'configuration; --smoke and --unlocked-prereg are prohibited')
+        if not getattr(args, 'corpus_dir', None):
+            raise TrainError('PT-KA-LOCK', 'final locked test requires explicit --corpus-dir outside the repository')
+        root = Path(args.corpus_dir).expanduser().resolve()
+        try:
+            root.relative_to(Path(__file__).resolve().parents[2])
+        except ValueError:
+            pass
+        else:
+            raise TrainError('PT-KA-LOCK', 'final locked-test corpus directory must be outside the repository')
+    try:
+        selection = PG.select(Path(prereg_file) if prereg_file else None,
+                              Path(getattr(args, 'qa', Path(__file__).resolve().parents[2] / 'docs' / 'qa.md')),
+                              allow_unlocked=unlocked)
+    except PG.PreregGateError as exc:
+        raise TrainError('PT-KA-PREREG', str(exc)) from None
+    if final:
+        try:
+            locked = run_locked_test(root, selection.sha,
+                                     lambda: _execute_training(args, only_shift, selection.sha))
+        except LockedTestError as exc:
+            raise TrainError('PT-KA-LOCK', str(exc)) from None
+        code, summary = locked['result']
+        summary['locked_test_receipt'] = locked['receipt']
+        return code, summary
+    code, summary = _execute_training(args, only_shift, selection.sha)
+    if selection.rehearsal_sha:
+        summary['unlocked_rehearsal'] = {
+            'source_sha256': selection.rehearsal_sha,
+            'note': 'Draft protocol inspected only; the training report uses an unlocked placeholder.'}
     return code, summary
 
 
@@ -817,7 +864,14 @@ def build_parser() -> argparse.ArgumentParser:
         p.add_argument('--rows', help='folder of tier-r-feature-rows/1 documents')
         p.add_argument('--merge', help='tier-r-merge/1 provenance file written by shard.py merge')
         p.add_argument('--aggregate', help='merged tier-r-report/1 aggregate to cross-check with --merge')
-        p.add_argument('--prereg', help='locked preregistration file; its SHA-256 enters the train key')
+        p.add_argument('--prereg', help='LF preregistration file; must match the C9-PREREG-v1 QA lock row')
+        p.add_argument('--qa', default=str(Path(__file__).resolve().parents[2] / 'docs' / 'qa.md'),
+                       help='QA file containing the recorded C9-PREREG-v1 digest (default: docs/qa.md)')
+        p.add_argument('--unlocked-prereg', action='store_true',
+                       help='inspect a draft protocol without claiming it is locked; the report uses the placeholder')
+        p.add_argument('--final-locked-test', action='store_true',
+                       help='single-use final run only; writes a durable receipt before opening the evaluation inputs')
+        p.add_argument('--corpus-dir', help='external corpus root for exclusive final-look receipt')
         p.add_argument('--out', required=True, help='output folder')
         p.add_argument('--locked-form', action='store_true',
                        help='a locked-test look is requested: halt (exit 1) with fewer than 12 locked-role lineages')
