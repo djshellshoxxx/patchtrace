@@ -157,6 +157,24 @@ def test_shard_executes_recipe_aa_for_both_sides_with_fetch_first(tree, tmp_path
         assert calls[index - 1] == ['fetch', 'zlib-a-to-b']
 
 
+def test_shard_executes_recipe_noise_for_both_sides_with_fetch_first(tree, tmp_path):
+    plan = S.make_plan(tree, seed=1, shards=1, subset='noise')
+    calls = []
+
+    def capture(argv, timeout, env):
+        calls.append(argv[3:])
+        return fake_runner(argv, timeout, env)
+
+    doc = S.run_shard(plan, 0, runner=capture, scratch=tmp_path / 'scratch')
+    statuses = {case['id']: case['status'] for case in doc['cases']}
+    assert statuses['noise-card:zlib-a-to-b:old'] == 'ok'
+    assert statuses['noise-card:zlib-a-to-b:new'] == 'ok'
+    for side in ('old', 'new'):
+        command = ['noise', '--card', 'zlib-a-to-b', '--side', side]
+        index = calls.index(command)
+        assert calls[index - 1] == ['fetch', 'zlib-a-to-b']
+
+
 def test_subset_smoke_contents(tree):
     cases = S.enumerate_cases(tree, subset='smoke', seed=3)
     assert 'suite:_template/tiny' in cases and 'card:zlib-a-to-b' in cases
