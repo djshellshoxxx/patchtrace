@@ -432,6 +432,13 @@ def run_shard(plan: dict, shard: int, *, timeout: int = DEFAULT_TIMEOUT, runner:
                 rc, out, reason, err = _call(runner, [py, '-m', 'tools.calibration.tier_r', *step], timeout, env)
                 parsed = _summary(out)
                 status = _classify(rc, reason, parsed)
+                # A/A is a negative control, not an ordinary finding. A single
+                # non-byte-identical rebuild invalidates the run's acceptance gate.
+                # Fail even if an adapter incorrectly exits zero with a bad list.
+                aa_bad = (step[0] == 'aa' and (rc == FINDINGS or
+                          bool(parsed and parsed.get('not_byte_identical'))))
+                if aa_bad:
+                    status = 'failed'
                 detail = None
                 if parsed is not None:
                     summary = sanitize(parsed)
@@ -441,7 +448,8 @@ def run_shard(plan: dict, shard: int, *, timeout: int = DEFAULT_TIMEOUT, runner:
                     detail = ' '.join(str(parsed.get('reason') or 'skipped').split())[:REASON_CHARS]
                     log(f'[SKIPPED] {case_id}: {detail}')
                 elif status in ('timeout', 'failed', 'blocked'):
-                    detail = failure_reason(rc, reason, parsed, err)
+                    detail = ('A/A rebuild produced non-identical images' if aa_bad
+                              else failure_reason(rc, reason, parsed, err))
                     _report_problem(case_id, status, detail, err, log)
                 elif rc:
                     detail = f'exit {rc}'
