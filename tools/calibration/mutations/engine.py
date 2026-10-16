@@ -144,7 +144,7 @@ def make_compile_checker(tools: Toolchain | None = None, *, flags: Sequence[str]
 _ASM_LABEL = re.compile(r'\.L[\w.$]+')
 # COFF quotes string literal symbols (for example "??_C@...@hello?$AA@").
 # They are address-only references just like unquoted ELF symbols, not code changes.
-_ASM_SYMBOL = re.compile(r'(?:"[^"\n]+"|[\w.$@]+(?:[+-]\d+)?)(?=\(%rip\))')
+_ASM_SYMBOL = re.compile(r'(?:"[^"\r\n]+"|[^\s,()]+)(?=\(%rip\))')
 _ASM_BRANCH = re.compile(r'^(call\w*|j\w+)\s+\S+$')
 
 
