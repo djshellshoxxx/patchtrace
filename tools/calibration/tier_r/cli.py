@@ -214,7 +214,8 @@ def cmd_evaluate(args) -> tuple[int, dict]:
     imports = Path(args.imports) if args.imports else store / 'imports'
     providers = E.default_providers(store, imports, rz_diff=args.rz_diff or os.environ.get('RZ_DIFF') or None,
                                     engines=engines)
-    report = E.evaluate(docs, providers, symbols=args.symbols)
+    output_dir = Path(args.outputs) if args.outputs else None
+    report = E.evaluate(docs, providers, symbols=args.symbols, output_dir=output_dir)
     out = Path(args.out) if args.out else store / 'reports' / f'tier-r-{args.symbols}-{report["report_sha256"][:12]}.json'
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_bytes(C.dump_json(report))
@@ -223,6 +224,8 @@ def cmd_evaluate(args) -> tuple[int, dict]:
     states = {e['engine']: e['status'] for e in report['engines']}
     doc = {'command': 'evaluate', 'report': out.as_posix(), 'report_sha256': report['report_sha256'],
            'engines': states, 'blocked': {e['engine']: e['reason'] for e in problems if e['status'] == 'blocked'}}
+    if output_dir is not None:
+        doc['outputs'] = output_dir.as_posix()
     if all(s == 'blocked' for s in states.values()):
         doc['status'] = 'blocked'
         return BLOCKED, doc
@@ -371,6 +374,7 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument('--engines', default=','.join(E.ENGINES))
     p.add_argument('--rz-diff', help='absolute path of rz-diff (default: PATH lookup)')
     p.add_argument('--out', help='report JSON path; a Markdown file is written beside it')
+    p.add_argument('--outputs', help='fresh directory for capped per-pair engine JSON; fails on existing contents')
     p = add('manifest', cmd_manifest, 'emit a calibration-corpus/1 manifest of the label documents')
     p.add_argument('--labels')
     p.add_argument('--out')
