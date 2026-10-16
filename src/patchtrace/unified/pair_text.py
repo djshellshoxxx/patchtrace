@@ -185,7 +185,8 @@ class RowCodeSource:
     def __init__(self) -> None:
         self._lock = threading.RLock()
         self._readers: dict[Path, IrReader] = {}
-        self._decomp: dict[Path, dict[tuple[str, int], tuple[str, str | None]] | None] = {}
+        self._decomp: dict[Path, tuple[tuple[str, int, int] | None,
+                                       dict[tuple[str, int], tuple[str, str | None]] | None]] = {}
 
     def close(self) -> None:
         with self._lock:
@@ -241,11 +242,15 @@ class RowCodeSource:
         """The verified records of the stored decompile part by (side, rva), None when the part is not there or does
         not verify (a result is never read from a part that disagrees with its manifest)."""
         directory = vm.result_dir
-        if directory in self._decomp:
-            return self._decomp[directory]
         part = next((p for p in vm.manifest.parts if p.name == DECOMP_PART), None)
+        identity = (part.sha256, part.bytes, part.records) if part is not None else None
+        cached = self._decomp.get(directory)
+        if cached is not None and cached[0] == identity:
+            return cached[1]
         found = None if part is None else self._read_decomp(directory / DECOMP_PART, part)
-        self._decomp[directory] = found
+        # Decompilation can upgrade the SAME result id in place. Never reuse a cached
+        # missing part or old text after the manifest's verified part identity changes.
+        self._decomp[directory] = (identity, found)
         return found
 
     @staticmethod
