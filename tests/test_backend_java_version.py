@@ -1,5 +1,5 @@
-from types import SimpleNamespace
 import threading
+from types import SimpleNamespace
 
 from patchtrace import backend
 from patchtrace.backend import BackendConfig
