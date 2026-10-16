@@ -116,20 +116,39 @@ def test_plan_rejects_bad_arguments(tree, kwargs):
 
 
 def test_cards_filtered_by_recipe_and_licence(tree):
-    cards = [c for c in S.enumerate_cases(tree, subset='cards', seed=1)]
-    assert cards == ['card:zlib-a-to-b']
+    cards = S.enumerate_cases(tree, subset='cards', seed=1)
+    assert cards == ['aa-card:zlib-a-to-b:new', 'aa-card:zlib-a-to-b:old', 'card:zlib-a-to-b']
+
+
+def test_recipe_noise_planning_covers_both_pins_without_unlicensed_sources(tree):
+    noise = S.enumerate_cases(tree, subset='noise', seed=1)
+    assert {f'noise-card:zlib-a-to-b:{side}' for side in ('old', 'new')} <= set(noise)
+    assert all('gpl-' not in case and 'x-a-to-b' not in case for case in noise)
+    full = S.enumerate_cases(tree, subset='full', seed=1)
+    assert set(noise) <= set(full)
+    assert {'aa-card:zlib-a-to-b:old', 'aa-card:zlib-a-to-b:new'} <= set(full)
+
+
+def test_card_recipe_controls_fetch_before_each_probe():
+    for verb in ('aa', 'noise'):
+        for side in ('old', 'new'):
+            case = f'{verb}-card:zlib-a-to-b:{side}'
+            assert S.case_steps(case) == [['fetch', 'zlib-a-to-b'],
+                                          [verb, '--card', 'zlib-a-to-b', '--side', side]]
 
 
 def test_subset_smoke_contents(tree):
     cases = S.enumerate_cases(tree, subset='smoke', seed=3)
     assert 'suite:_template/tiny' in cases and 'card:zlib-a-to-b' in cases
+    assert not any(c.startswith(('aa-card:', 'noise-card:')) for c in cases)
     assert any(c.startswith('mutate:_template/tiny:cmp-flip:3000') for c in cases)
 
 
 # ---- refusal ---------------------------------------------------------------------------------------------------------
 
 @pytest.mark.parametrize('case', ['card:ntoskrnl.exe', 'suite:tier-w/afd', 'card:Microsoft-thing', 'aa:tw.pair',
-                                  'suite:x/system32'], ids=['kernel', 'tier-w', 'microsoft', 'tw-pair', 'system32'])
+                                  'suite:x/system32', 'aa-card:system32:old', 'noise-card:ntoskrnl:new'],
+                         ids=['kernel', 'tier-w', 'microsoft', 'tw-pair', 'system32', 'aa-recipe', 'noise-recipe'])
 def test_microsoft_cases_refused(case):
     with pytest.raises(S.ShardError, match='refused'):
         S.case_steps(case)
@@ -145,7 +164,10 @@ def test_output_inside_tier_w_refused(tmp_path):
         S.write_shard({'shard': 0}, tmp_path / 'tier-w' / 'out')
 
 
-@pytest.mark.parametrize('case', ['bogus', 'suite:../etc', 'mutate:g/n:nope:1', 'card:'], ids=['junk', 'dotdot', 'op', 'empty'])
+@pytest.mark.parametrize('case', ['bogus', 'suite:../etc', 'mutate:g/n:nope:1', 'card:',
+                                  'aa-card:zlib-a-to-b:both', 'noise-card:../escape:old', 'aa-card::old',
+                                  'noise-card:zlib-a-to-b:old:extra'],
+                         ids=['junk', 'dotdot', 'op', 'empty', 'bad-side', 'escape', 'empty-card', 'trailing'])
 def test_malformed_case_ids(case):
     with pytest.raises(S.ShardError):
         S.case_steps(case)
