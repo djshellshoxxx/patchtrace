@@ -137,6 +137,26 @@ def test_card_recipe_controls_fetch_before_each_probe():
                                           [verb, '--card', 'zlib-a-to-b', '--side', side]]
 
 
+def test_shard_executes_recipe_aa_for_both_sides_with_fetch_first(tree, tmp_path):
+    plan = S.make_plan(tree, seed=1, shards=1, subset='cards')
+    calls = []
+
+    def capture(argv, timeout, env):
+        calls.append(argv[3:])
+        return fake_runner(argv, timeout, env)
+
+    doc = S.run_shard(plan, 0, runner=capture, scratch=tmp_path / 'scratch')
+    assert {case['id']: case['status'] for case in doc['cases']} == {
+        'aa-card:zlib-a-to-b:new': 'ok',
+        'aa-card:zlib-a-to-b:old': 'ok',
+        'card:zlib-a-to-b': 'ok',
+    }
+    for side in ('old', 'new'):
+        command = ['aa', '--card', 'zlib-a-to-b', '--side', side]
+        index = calls.index(command)
+        assert calls[index - 1] == ['fetch', 'zlib-a-to-b']
+
+
 def test_subset_smoke_contents(tree):
     cases = S.enumerate_cases(tree, subset='smoke', seed=3)
     assert 'suite:_template/tiny' in cases and 'card:zlib-a-to-b' in cases
