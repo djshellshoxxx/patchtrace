@@ -19,7 +19,7 @@ training CLI policy only; no persisted report schema or release calibration poli
 
 ## One-look final request
 
-The only final CLI path is `train run --final-locked-test --locked-form --prereg FILE
+The `--locked-form` switch by itself is refused: it may not inspect locked-role rows without the exclusive receipt.\n\nThe only final CLI path is `train run --final-locked-test --locked-form --prereg FILE
 --corpus-dir EXTERNAL --qa QA --out DIR`. It refuses `shift`, `--smoke`,
 `--unlocked-prereg`, missing protocol, and a lock directory inside the repository.
 The matching `C9-PREREG-v1` QA row must explicitly contain `owner approved`,
