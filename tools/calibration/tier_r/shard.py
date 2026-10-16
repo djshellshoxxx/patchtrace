@@ -120,7 +120,7 @@ def mutation_seeds(seed: int, count: int) -> list[int]:
 
 
 def enumerate_cases(root: Path, *, subset: str, seed: int, seeds_per_op: int = 1) -> list[str]:
-    """Case ids (sorted, unique). Id grammar: card:ID | suite:G/N | mutate:G/N:OP:SEED | aa:G/N | noise:G/N."""
+    """Stable ids include aa-card:ID:SIDE and noise-card:ID:SIDE for permitted recipe pins."""
     if subset not in SUBSETS:
         raise ShardError(f'unknown subset {subset!r}; choose from {", ".join(SUBSETS)}')
     suites, cards = _suites(root), _cards(root)
@@ -135,16 +135,20 @@ def enumerate_cases(root: Path, *, subset: str, seed: int, seeds_per_op: int = 1
         cases |= {f'suite:{s}' for s in suites} | {f'aa:{s}' for s in suites}
     if subset in ('cards', 'full'):
         cases |= {f'card:{c}' for c in cards}
+        cases |= {f'aa-card:{c}:{side}' for c in cards for side in ('old', 'new')}
     if subset in ('mutations', 'full'):
         cases |= {f'mutate:{s}:{op}:{n}' for s in suites for op in ops for n in mutation_seeds(seed, seeds_per_op)}
     if subset in ('noise', 'full'):
         cases |= {f'noise:{s}' for s in suites}
+        cases |= {f'noise-card:{c}:{side}' for c in cards for side in ('old', 'new')}
     for case in cases:
         refuse_microsoft(case)
     return sorted(cases)
 
 
-_CASE = re.compile(r'^(card|suite|aa|noise):([A-Za-z0-9._/-]{1,128})$|^(mutate):([A-Za-z0-9._/-]{1,128}):([a-z0-9-]{1,32}):(\d{1,12})$')
+_CASE = re.compile(r'^(card|suite|aa|noise):([A-Za-z0-9._/-]{1,128})$'
+                   r'|^(mutate):([A-Za-z0-9._/-]{1,128}):([a-z0-9-]{1,32}):(\d{1,12})$'
+                   r'|^(aa-card|noise-card):([A-Za-z0-9._/-]{1,128}):(old|new)$')
 
 
 def case_steps(case_id: str) -> list[list[str]]:
@@ -157,6 +161,10 @@ def case_steps(case_id: str) -> list[list[str]]:
         if m.group(5) not in (*SEMANTIC_OPERATORS, *COSMETIC_OPERATORS):
             raise ShardError(f'unknown mutation operator in {case_id!r}')
         return [['mutate', '--suite', f'corpus/ours/{m.group(4)}', '--operator', m.group(5), '--seed', m.group(6)]]
+    if m.group(7):
+        verb = m.group(7).removesuffix('-card')
+        card, side = m.group(8), m.group(9)
+        return [['fetch', card], [verb, '--card', card, '--side', side]]
     kind, name = m.group(1), m.group(2)
     if kind == 'card':
         return [['fetch', name], ['build-card', name]]
