@@ -814,7 +814,7 @@ def _run(args, only_shift: bool = False) -> tuple[int, dict]:
     try:
         selection = PG.select(Path(prereg_file) if prereg_file else None,
                               Path(getattr(args, 'qa', Path(__file__).resolve().parents[2] / 'docs' / 'qa.md')),
-                              allow_unlocked=unlocked)
+                              allow_unlocked=unlocked, require_signoff=final)
     except PG.PreregGateError as exc:
         raise TrainError('PT-KA-PREREG', str(exc)) from None
     if final:
