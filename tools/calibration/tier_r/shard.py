@@ -414,7 +414,7 @@ def run_shard(plan: dict, shard: int, *, timeout: int = DEFAULT_TIMEOUT, runner:
                 labels.append(meta)
         if not (os.environ.get('PATCHTRACE_TIER_R_NO_EVAL')):
             for engine in engines:
-                rc, out, reason, err = _call(runner, [py, '-m', 'tools.calibration.tier_r', 'evaluate', '--engine',
+                rc, out, reason, err = _call(runner, [py, '-m', 'tools.calibration.tier_r', 'evaluate', '--engines',
                                                       engine, '--symbols', 'hidden'], timeout, env)
                 parsed = _summary(out)
                 if parsed is not None:
