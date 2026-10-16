@@ -87,15 +87,15 @@ def _load_json(path: Path):
     return json.loads(path.read_text(encoding='utf-8'))
 
 
-def _cards(root: Path) -> list[str]:
-    """Ids of buildable case cards: recipe exists for the project and the licence is permissive."""
+def _card_data(root: Path) -> dict[str, dict]:
+    """Buildable, permissively licensed card records keyed by stable card id."""
     try:
         recipes = {r['project'] for r in _load_json(root / 'tools/calibration/tier_r/catalogue/recipes.json')['recipes']}
     except (OSError, ValueError, KeyError, TypeError):
         recipes = set()
     files = sorted((root / 'tools/calibration/tier_r/catalogue').glob('*.json')) + sorted(
         (root / 'corpus/catalog').glob('*.json'))
-    found = set()
+    found: dict[str, dict] = {}
     for path in files:
         if path.name == 'recipes.json':
             continue
@@ -106,9 +106,35 @@ def _cards(root: Path) -> list[str]:
         for card in data if isinstance(data, list) else ():
             if (isinstance(card, dict) and card.get('contract') == 'case-card/1' and card.get('project') in recipes
                     and card.get('license_spdx') in PERMISSIVE_SPDX and isinstance(card.get('id'), str)):
-                found.add(card['id'])
-    return sorted(found)
+                found.setdefault(card['id'], card)
+    return found
 
+
+def _cards(root: Path) -> list[str]:
+    return sorted(_card_data(root))
+
+
+def _card_controls(root: Path, cards: Sequence[str], kind: str) -> set[str]:
+    """Schedule each project/pin once: adjacent release cards often share one revision.
+
+    An incomplete candidate without a pinned commit is not silently conflated with another
+    candidate. The downstream strict card loader still rejects invalid input.
+    """
+    catalogue = _card_data(root)
+    unique: dict[tuple[str, ...], str] = {}
+    for card_id in cards:
+        card = catalogue[card_id]
+        for side in ('old', 'new'):
+            source = card.get(side)
+            commit = source.get('commit') if isinstance(source, dict) else None
+            if isinstance(commit, str) and re.fullmatch(r'[0-9a-fA-F]{40}', commit):
+                key = (card['project'], commit.lower())
+            else:
+                key = ('unverified', card_id, side)
+            case = f'{kind}-card:{card_id}:{side}'
+            if key not in unique or case < unique[key]:
+                unique[key] = case
+    return set(unique.values())
 
 def _suites(root: Path) -> list[str]:
     return sorted(p.parent.relative_to(root / 'corpus/ours').as_posix()
@@ -136,12 +162,12 @@ def enumerate_cases(root: Path, *, subset: str, seed: int, seeds_per_op: int = 1
     if subset in ('cards', 'full'):
         cases |= {f'card:{c}' for c in cards}
         # Recipe lineages previously received no A/A cases, only authored suites did.
-        cases |= {f'aa-card:{c}:{side}' for c in cards for side in ('old', 'new')}
+        cases |= _card_controls(root, cards, 'aa')
     if subset in ('mutations', 'full'):
         cases |= {f'mutate:{s}:{op}:{n}' for s in suites for op in ops for n in mutation_seeds(seed, seeds_per_op)}
     if subset in ('noise', 'full'):
         cases |= {f'noise:{s}' for s in suites}
-        cases |= {f'noise-card:{c}:{side}' for c in cards for side in ('old', 'new')}
+        cases |= _card_controls(root, cards, 'noise')
     for case in cases:
         refuse_microsoft(case)
     return sorted(cases)
