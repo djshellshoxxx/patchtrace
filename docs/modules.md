@@ -1137,3 +1137,7 @@ Calls panel (id graph): `callgraph/panel.py` (PanelSpec), `panel_qt.py` (widgets
 
 ### [LBL-12:unified-adapter]
 `tools/calibration/evalcore/engines/unified.py` maps `unified-match/1` rows (result dir or `<pair_id>.unified.jsonl`) to evalcore predictions per LBL s7.1; synthetic fixtures only. Gap: a paired row with unknown materiality is left out of predictions because `Prediction.changed` is a bool (no "paired, flag abstained"); it is counted in `ignored_unaddressed`. Not yet wired into `tier_r/evaluate.py` `default_providers` (frozen to this slice).
+
+### LBL-32 Tier R sharding extension (2026-10-16)
+
+`tools/calibration/tier_r/shard.py` owns deterministic, permitted-recipe planning for `aa-card:ID:old|new` and `noise-card:ID:old|new`. Its `case_steps` produces a fetch followed by a CLI `aa` or `noise` on exactly the named card side, without invoking Qt or embedding function tables in shard summaries. Fixtures and malformed/refused-case tests: `tests/test_tier_r_shard.py`. Real toolchain and two-OS gates remain separate.
