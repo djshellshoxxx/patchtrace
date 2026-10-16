@@ -175,6 +175,15 @@ def test_recipe_probes_reject_missing_pin_metadata(tree):
         S.enumerate_cases(tree, subset='cards', seed=1)
 
 
+def test_recipe_probe_refuses_microsoft_derived_pin_with_innocent_card_id(tree):
+    releases = tree / 'tools/calibration/tier_r/catalogue/releases.json'
+    original = json.loads(releases.read_text())
+    original[0]['old']['ref'] = 'ntoskrnl.exe'
+    releases.write_text(json.dumps(original))
+    with pytest.raises(S.ShardError, match='refused'):
+        S.enumerate_cases(tree, subset='noise', seed=1)
+
+
 def test_card_recipe_controls_fetch_before_each_probe():
     for verb in ('aa', 'noise'):
         for side in ('old', 'new'):
