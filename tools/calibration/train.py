@@ -819,13 +819,16 @@ def _run(args, only_shift: bool = False) -> tuple[int, dict]:
                               allow_unlocked=unlocked, require_signoff=final)
     except PG.PreregGateError as exc:
         raise TrainError('PT-KA-PREREG', str(exc)) from None
+    if selection.sha and not final:
+        raise TrainError('PT-KA-LOCK', 'an approved --prereg requires --final-locked-test; '
+                         'use --unlocked-prereg for dev-only rehearsal')
     if final:
         try:
             locked = run_locked_test(root, selection.sha,
-                                     lambda: _execute_training(args, only_shift, selection.sha))
+                                     lambda: {'execution': _execute_training(args, only_shift, selection.sha)})
         except LockedTestError as exc:
             raise TrainError('PT-KA-LOCK', str(exc)) from None
-        code, summary = locked['result']
+        code, summary = locked['result']['execution']
         summary['locked_test_receipt'] = locked['receipt']
         return code, summary
     code, summary = _execute_training(args, only_shift, selection.sha)
