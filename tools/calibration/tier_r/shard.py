@@ -129,6 +129,8 @@ def _recipe_probe_cases(root: Path, cards: Sequence[str], *, verb: str) -> set[s
                     or not source['ref'] or not isinstance(source.get('commit'), str)
                     or not re.fullmatch(r'[0-9a-fA-F]{40}', source['commit'])):
                 raise ShardError(f"{card['id']}: invalid {side} pin (need ref and 40-hex commit)")
+            # A harmless-looking card ID must not disguise a Windows or Tier W source ref.
+            refuse_microsoft(card['project'], source['ref'])
             key = (card['project'], source['ref'])
             commit = source['commit'].lower()
             candidate = f"{verb}-card:{card['id']}:{side}"
