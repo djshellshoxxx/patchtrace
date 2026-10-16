@@ -32,6 +32,7 @@ from pathlib import Path
 from patchtrace.calibration.scope import TIER_R_CLAIM
 
 from ..common import canonical_json, digest, r12
+from . import training_artifacts as TA
 from .contracts import COSMETIC_OPERATORS, PERMISSIVE_SPDX, SEMANTIC_OPERATORS, ContractError, load_report
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
@@ -369,7 +370,8 @@ def _report_problem(case_id: str, status: str, detail: str | None, stderr: str, 
 
 def run_shard(plan: dict, shard: int, *, timeout: int = DEFAULT_TIMEOUT, runner: Runner | None = None,
               python: str | None = None, scratch: Path | None = None, engines: Sequence[str] | None = None,
-              verify_plan: bool = True, log: Callable[[str], None] | None = None) -> dict:
+              verify_plan: bool = True, log: Callable[[str], None] | None = None,
+              artifacts_dir: Path | None = None) -> dict:
     runner = runner or default_runner       # looked up at call time so tests and callers can substitute it
     log = log or (lambda text: print(text, file=sys.stderr, flush=True))
     entry = next((s for s in plan['shards'] if s['shard'] == shard), None)
@@ -414,8 +416,10 @@ def run_shard(plan: dict, shard: int, *, timeout: int = DEFAULT_TIMEOUT, runner:
                 labels.append(meta)
         if not (os.environ.get('PATCHTRACE_TIER_R_NO_EVAL')):
             for engine in engines:
-                rc, out, reason, err = _call(runner, [py, '-m', 'tools.calibration.tier_r', 'evaluate', '--engine',
-                                                      engine, '--symbols', 'hidden'], timeout, env)
+                rc, out, reason, err = _call(runner, [py, '-m', 'tools.calibration.tier_r', 'evaluate', '--engines',
+                                                      engine, '--symbols', 'hidden',
+                                                      *(['--outputs', str(scope / 'known-answer' / 'outputs' / engine)]
+                                                        if artifacts_dir is not None else [])], timeout, env)
                 parsed = _summary(out)
                 if parsed is not None:
                     report_doc = _scratch_json(scope, parsed.get('report')) if isinstance(parsed.get('report'), str) else None
@@ -430,6 +434,12 @@ def run_shard(plan: dict, shard: int, *, timeout: int = DEFAULT_TIMEOUT, runner:
                     detail = failure_reason(rc, reason, parsed, err)
                     _report_problem(f'evaluate:{engine}', status, detail, err, log)
                 results.append({'id': f'evaluate:{engine}', 'status': status, 'reason': detail, 'digest': None})
+        if artifacts_dir is not None:
+            if not reports:
+                raise ShardError('cannot export training artifacts: no evaluator report was produced')
+            TA.export_training_artifacts(reports, scope / 'known-answer', artifacts_dir)
+            for artifact in sorted(Path(artifacts_dir).rglob('*.json')):
+                refuse_microsoft(artifact.read_text(encoding='utf-8'))
     doc = {'contract': SHARD_CONTRACT, 'shard': shard, 'of': plan['of'], 'seed': plan['seed'],
            'plan_sha256': plan['plan_sha256'], 'subset': plan['subset'], 'engines': engines,
            'cases': results, 'labels': sorted(labels, key=canonical_json), 'features': sorted(features, key=canonical_json),
@@ -672,10 +682,14 @@ def build_parser() -> argparse.ArgumentParser:
     r.add_argument('--subset', default='smoke')
     r.add_argument('--timeout', type=int, default=DEFAULT_TIMEOUT, help='seconds per case')
     r.add_argument('--out', type=Path, required=True)
+    r.add_argument('--collect-artifacts', action='store_true',
+                   help='export and verify labels plus successful engine outputs outside aggregate shard JSON')
     m = sub.add_parser('merge', help='fold shard files into one tier-r-report/1')
     m.add_argument('--in', dest='src', type=Path, required=True)
     m.add_argument('--plan', type=Path)
     m.add_argument('--out', type=Path, required=True)
+    m.add_argument('--artifacts', type=Path,
+                   help='require all successful engine and input label documents and verify SHA-256 before merge')
     return ap
 
 
@@ -707,7 +721,8 @@ def main(argv: Sequence[str] | None = None) -> int:
             return OK
         if args.cmd == 'run-shard':
             plan = _plan_from_args(args)
-            doc = run_shard(plan, args.shard, timeout=args.timeout, verify_plan=args.plan is not None)
+            doc = run_shard(plan, args.shard, timeout=args.timeout, verify_plan=args.plan is not None,
+                            artifacts_dir=(args.out / 'training' if args.collect_artifacts else None))
             path = write_shard(doc, args.out)
             bad = [c['id'] for c in doc['cases'] if c['status'] in ('failed', 'timeout')]
             blocked = [c['id'] for c in doc['cases'] if c['status'] == 'blocked']
@@ -716,6 +731,8 @@ def main(argv: Sequence[str] | None = None) -> int:
             return FINDINGS if bad else (BLOCKED if blocked else OK)
         plan = json.loads(args.plan.read_text(encoding='utf-8')) if args.plan else None
         report, prov = merge(load_shards(args.src, plan=plan))
+        if args.artifacts is not None:
+            TA.verify_training_artifacts([report], args.artifacts)
         write_merge(report, prov, args.out)
         print(json.dumps({'report_sha256': report['report_sha256'], 'merge_sha256': prov['merge_sha256'],
                           'shards': len(prov['shards']), 'failing_cases': len(prov['failing_cases'])}, sort_keys=True))

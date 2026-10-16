@@ -796,6 +796,18 @@ def synthetic_rows(count: int):
     return tuple(rows)
 
 
+def test_default_sort_fast_path_matches_generic_stable_order():
+    """The fast default-order path preserves every tie and reverse-order guarantee."""
+    rows = synthetic_rows(100)
+    indices = list(range(99, -1, -1))
+    for reverse in (False, True):
+        default = rm.sort_rows(rows, indices, descending=reverse)
+        # Wrapping the same key forces the generic nullable-column path.
+        generic = rm.sort_rows(rows, indices, lambda row: row.sort_keys, descending=reverse)
+        assert default == generic
+        assert sorted(default) == sorted(indices)
+
+
 def test_filter_and_sort_budget_at_100000_rows():
     """L-35: filter <= 100 ms and sort <= 150 ms at 100,000 rows, with the repo's 5x wall-clock slack."""
     rows = synthetic_rows(rm.DISPLAY_ROW_CAP)

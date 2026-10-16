@@ -46,6 +46,7 @@ from ..evalcore.engines.common import (  # noqa: F401 - re-exported: the evaluat
 from ..evalcore.engines.ghidriff import GhidriffImportProvider, from_ghidriff  # noqa: F401
 from ..evalcore.engines.rzdiff import RzDiffProvider, image_path  # noqa: F401
 from . import contracts as C
+from . import output_store as OS
 from . import report_schemas as RS
 
 ENGINES = ('rz-diff', 'bindiff', 'ghidriff', 'attention')   # the engines this module can drive or import
@@ -183,7 +184,8 @@ def evaluate(labels_docs: Sequence[C.KnownAnswerLabels], providers: Sequence[Pro
 
 def evaluate_full(labels_docs: Sequence[C.KnownAnswerLabels], providers: Sequence[Provider], *,
                   symbols: str = 'hidden', notes: Sequence[str] = (), max_wrong: int = MAX_WRONG,
-                  shift_lineages: Collection[str] = (), b_count: int = ER.boot.B_COUNT) -> tuple[dict, dict]:
+                  shift_lineages: Collection[str] = (), b_count: int = ER.boot.B_COUNT,
+                  output_dir: Path | None = None) -> tuple[dict, dict]:
     """(report, paired deltas). The deltas (engine vs engine, per stratum and population, with sd, minimum detectable
     delta and achieved power) have no field in `tier-r-report/1` yet, so they are returned beside it, not hashed in it.
     `b_count` is the lineage-bootstrap size (2,000; 500 in smoke)."""
@@ -192,6 +194,8 @@ def evaluate_full(labels_docs: Sequence[C.KnownAnswerLabels], providers: Sequenc
     docs = sorted(labels_docs, key=lambda d: d.pair_id)
     if len({d.pair_id for d in docs}) != len(docs):
         raise C.ContractError('duplicate pair_id in the evaluation set')
+    if output_dir is not None:
+        OS.prepare_output_dir(output_dir)
     by_engine = {p.engine: _EngineAcc() for p in providers}
     wrong_all: list[dict] = []
     all_notes = list(notes)
@@ -206,11 +210,18 @@ def evaluate_full(labels_docs: Sequence[C.KnownAnswerLabels], providers: Sequenc
             except Exception as exc:  # noqa: BLE001 - isolation: one pair must not end the run; only the class is kept
                 out = failed(provider.engine, f'provider raised {type(exc).__name__}')
             counts = sha = None
+            if out.status == 'ok' and output_dir is not None:
+                try:
+                    sha = OS.write_engine_output(output_dir, labels.pair_id,
+                                                 engine_output_doc(out, labels, symbols))
+                except OS.OutputError as exc:
+                    out = failed(provider.engine, f'engine output not persisted: {str(exc)[:250]}')
             if out.status == 'ok':
                 counts, wrong = score_pair(labels, out)
                 runs[provider.engine].append(ER.Run(labels, to_engine_pairs(out, symbols)))
                 wrong_all += wrong
-                sha = RS.output_sha256(engine_output_doc(out, labels, symbols))
+                if sha is None:
+                    sha = RS.output_sha256(engine_output_doc(out, labels, symbols))
                 if out.implicit_unchanged and IMPLICIT_NOTE not in all_notes:
                     all_notes.append(IMPLICIT_NOTE)
             acc.results.append((labels.pair_id, labels.stratum, out.status, out.reason, counts, sha, out.version))

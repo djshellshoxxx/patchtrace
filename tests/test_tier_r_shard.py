@@ -432,8 +432,8 @@ def test_workflow_structure_and_pins():
             assert '@v' in line, line
     yaml = pytest.importorskip('yaml')
     doc = yaml.safe_load(text)
-    assert set(doc['jobs']) == {'plan', 'shard', 'merge', 'windows-advisory', 'msvc-advisory'}
-    assert doc[True]['workflow_dispatch']['inputs'].keys() == {'shards', 'seed', 'engines', 'subset'}
+    assert set(doc['jobs']) == {'plan', 'shard', 'merge', 'train', 'windows-advisory', 'msvc-advisory'}
+    assert doc[True]['workflow_dispatch']['inputs'].keys() == {'shards', 'seed', 'engines', 'subset', 'train'}
     assert 'tools/calibration/**' in doc[True]['push']['paths']
     assert doc['jobs']['windows-advisory']['continue-on-error'] is True
     assert doc['jobs']['shard']['needs'] == 'plan' and set(doc['jobs']['merge']['needs']) == {'plan', 'shard'}
@@ -447,3 +447,42 @@ def test_cli_merge_missing_shard_exit_code(tree, tmp_path):
     plan, out = shard_dir(tree, tmp_path)
     next(iter(sorted(out.glob('shard-*.json')))).unlink()
     assert S.main(['merge', '--in', str(out), '--out', str(tmp_path / 'm')]) == 2
+
+
+def test_evaluation_uses_real_cli_engines_option(tree):
+    """Regression: the evaluator parser accepts --engines, not --engine."""
+    seen = []
+    def record(argv, timeout, env):
+        if argv[3] == 'evaluate':
+            seen.append(list(argv[3:]))
+        return fake_runner(argv, timeout, env)
+    plan = plan_for(tree, shards=1, subset='smoke')
+    S.run_shard(plan, 0, runner=record)
+    assert seen
+    assert all('--engines' in call and '--engine' not in call for call in seen)
+
+
+def test_training_workflow_never_runs_on_pr_or_nightly():
+    yaml = pytest.importorskip('yaml')
+    workflow = yaml.safe_load(WORKFLOW.read_text(encoding='utf-8'))
+    job = workflow['jobs']['train']
+    assert "workflow_dispatch" in job['if'] and "inputs.train == true" in job['if']
+    assert 'needs.merge.result' in job['if']
+    cmds = '\n'.join(str(s.get('run', '')) for s in job['steps'])
+    assert 'train run --labels training/labels --outputs training/outputs' in cmds
+    shard_steps = workflow['jobs']['shard']['steps']
+    assert any('--collect-artifacts' in str(s.get('run', '')) for s in shard_steps)
+    assert any(s.get('with', {}).get('path') == 'shard-out/training/'
+               for s in shard_steps)
+    merge = workflow['jobs']['merge']['steps']
+    assert any('--artifacts training' in str(s.get('run', '')) for s in merge)
+
+
+def test_training_report_survives_insufficient_data_exit():
+    yaml = pytest.importorskip('yaml')
+    job = yaml.safe_load(WORKFLOW.read_text(encoding='utf-8'))['jobs']['train']
+    verify = next(s for s in job['steps'] if s.get('name') == 'Verify training report')
+    upload = next(s for s in job['steps'] if s.get('with', {}).get('name') == 'tier-r-training-report')
+    # train intentionally exits 1 on insufficient data; preserve and verify its report.
+    assert verify.get('if') == 'always()'
+    assert upload.get('if') == 'always()'

@@ -17,6 +17,10 @@ on:
       subset:
         description: smoke, suites, cards, mutations, noise or full
         default: smoke
+      train:
+        description: Run a smoke-only, unlocked Tier R training pass after verified artifacts merge
+        type: boolean
+        default: false
   schedule:
     # Nightly smoke then noise on the pinned ubuntu-24.04 image; the heavy matrices stay dispatch-only.
     - cron: '17 3 * * *'
@@ -138,7 +142,7 @@ jobs:
         run: >-
           python -m tools.calibration.tier_r.shard run-shard
           --shard "${{ matrix.shard }}" --of "${{ matrix.of }}" --seed "$SEED" --plan-sha256 "${{ matrix.plan }}"
-          --cases "$SHARD_CASES" --engines "$ENGINES" --subset "$SUBSET" --out shard-out --timeout 1800
+          --cases "$SHARD_CASES" --engines "$ENGINES" --subset "$SUBSET" --out shard-out --timeout 1800 --collect-artifacts
       - name: Step summary
         if: always()
         shell: bash
@@ -150,6 +154,11 @@ jobs:
           name: tier-r-shard-${{ matrix.shard }}
           path: shard-out/shard-*.json
           if-no-files-found: warn
+      - uses: actions/upload-artifact@v4
+        with:
+          name: tier-r-training-${{ matrix.shard }}
+          path: shard-out/training/
+          if-no-files-found: error
   merge:
     name: merge
     needs: [plan, shard]
@@ -171,11 +180,16 @@ jobs:
         with:
           name: tier-r-plan
           path: plan
-      - name: Merge (fails on missing, duplicate or foreign shards)
-        run: python -m tools.calibration.tier_r.shard merge --in shards --plan plan/plan.json --out merged
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: tier-r-training-*
+          path: training
+          merge-multiple: true
+      - name: Merge (fails on missing, duplicate or foreign shards and altered training artifacts)
+        run: python -m tools.calibration.tier_r.shard merge --in shards --plan plan/plan.json --artifacts training --out merged
       - name: Determinism (second merge of the same shards must give the same report_sha256)
         run: |
-          python -m tools.calibration.tier_r.shard merge --in shards --plan plan/plan.json --out merged-again
+          python -m tools.calibration.tier_r.shard merge --in shards --plan plan/plan.json --artifacts training --out merged-again
           python -m tools.calibration.ci_summary determinism merged merged-again
       - name: CI status JSON (never silent, even when the shard set is rejected)
         if: always()
@@ -195,6 +209,37 @@ jobs:
           name: tier-r-aggregate
           path: merged/
           if-no-files-found: warn
+  train:
+    name: Tier R unlocked smoke training
+    needs: [plan, shard, merge]
+    if: github.event_name == 'workflow_dispatch' && inputs.train == true && needs.merge.result == 'success'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install -e .
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: tier-r-training-*
+          path: training
+          merge-multiple: true
+      - name: Train (unlocked, insufficient-data is an honest result)
+        run: python -m tools.calibration.train run --labels training/labels --outputs training/outputs --out train-out --smoke
+      - name: Verify training report
+        if: always()
+        run: python -m tools.calibration.train report train-out/report.json --out train-out/verified.md
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: tier-r-training-report
+          path: |
+            train-out/report.json
+            train-out/report.md
+            train-out/verified.md
+          if-no-files-found: error
   windows-advisory:
     # Advisory leg: the runner's LLVM clang and lld-link build freestanding suites; missing tools are BLOCKED, not fatal.
     name: windows advisory (smoke)
