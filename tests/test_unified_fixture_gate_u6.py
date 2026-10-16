@@ -5,7 +5,7 @@ UNVERIFIED: scripted measurements only; no legacy engine executed.
 """
 from __future__ import annotations
 
-from unified_s6_helpers import mutation_doc
+from unified_s6_helpers import label_doc
 from unified_support.gate_inputs import GOOD, pair, run
 from unified_support.statistics import paired_difference
 
@@ -14,7 +14,10 @@ from tools.unified.corpus import manifest as cm
 
 
 def inputs(n: int = 30, false_leads: int = 4, *, hide: bool = False, supplied: bool = True) -> tuple:
-    docs = [mutation_doc(f"scripted-constant-{i}", target="fixture_constant") for i in range(n)]
+    docs = [label_doc(f"scripted-constant-{i}", "mutation", target="fixture_constant",
+                      project=f"synthetic-p{i}",
+                      case={"unified_class": "constant", "target": "fixture_constant",
+                            "verdicts": ["material", "review"]}) for i in range(n)]
     pairs = []
     for doc in docs:
         clean = GOOD.rows(10)
