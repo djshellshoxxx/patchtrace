@@ -796,6 +796,15 @@ def synthetic_rows(count: int):
     return tuple(rows)
 
 
+@pytest.mark.parametrize('descending', [False, True], ids=['ascending', 'descending'])
+def test_default_sort_fast_path_preserves_stability_and_keys(descending):
+    """The default fast path must keep the precise review order and stable ties."""
+    rows = synthetic_rows(100)
+    indices = [31, 22, 24, 31, 3, 81, 0, 19, 75, 45]
+    expected = sorted(indices, key=lambda i: rows[i].sort_keys, reverse=descending)
+    assert rm.sort_rows(rows, indices, descending=descending) == expected
+
+
 def test_filter_and_sort_budget_at_100000_rows():
     """L-35: filter <= 100 ms and sort <= 150 ms at 100,000 rows, with the repo's 5x wall-clock slack."""
     rows = synthetic_rows(rm.DISPLAY_ROW_CAP)
