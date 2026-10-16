@@ -770,3 +770,39 @@ def test_a_truncated_part_is_a_typed_failure(case, tmp_path, name, cut):
             store.verify_result_dir(work)
     finally:
         (work / name).write_bytes(original)
+
+# --- UE-R3: optional C parts must pass deep verification before publication ----------------------------------------
+
+@pytest.mark.parametrize('document', [
+    {'side': 'wrong', 'rva': 0x1000, 'status': 'ok', 'code': 'int f;'},
+    {'side': 'older', 'rva': -1, 'status': 'ok', 'code': 'int f;'},
+    {'side': 'older', 'rva': 0x1000, 'status': 'ok', 'code': None},
+    {'side': 'older', 'rva': 0x1000, 'status': 'failed', 'code': 'int f;'},
+    {'side': 'older', 'rva': 0x7777, 'status': 'ok', 'code': 'int ghost;'},
+    {'side': 'older', 'rva': 0x1000, 'status': 'ok', 'code': 'int f;', 'extra': True},
+], ids=['side', 'negative-rva', 'null-ok', 'code-on-failure', 'foreign-rva', 'extra'])
+def test_decomp_part_rejects_invalid_but_rehashed_records(case, document):
+    staged, _manifest, _ = _stage(case)
+    part = store.write_part(staged, store.DECOMP, [document])
+    store.add_part(staged, part)
+    with pytest.raises(UnifiedError, match='decompile'):
+        store.verify_result_dir(staged)
+
+
+def test_decomp_part_rejects_duplicate_records_even_when_hashes_are_correct(case):
+    staged, _manifest, _ = _stage(case)
+    row = {'side': 'older', 'rva': 0x1000, 'status': 'ok', 'code': 'int f;'}
+    store.add_part(staged, store.write_part(staged, store.DECOMP, [row, row]))
+    with pytest.raises(UnifiedError, match='decompile'):
+        store.verify_result_dir(staged)
+
+
+def test_decomp_part_accepts_owned_rvas_and_preserves_the_result_key(case):
+    staged, before, _guard = _stage(case)
+    part = store.write_part(staged, store.DECOMP, [
+        {'side': 'older', 'rva': 0x1000, 'status': 'ok', 'code': 'int f;'},
+        {'side': 'newer', 'rva': 0x2000, 'status': 'ok', 'code': 'int f() { return 1; }'},
+    ])
+    after = store.add_part(staged, part)
+    assert store.verify_result_dir(staged) == after
+    assert after.result_id == before.result_id
