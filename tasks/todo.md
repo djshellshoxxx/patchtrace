@@ -793,3 +793,9 @@ Done: dock with state matrix, consent, import, changes, copy, go to CVE. Open: r
 
 ### LBL-31 continuation (2026-10-16)
 Implementation 0843de5: fixed COFF function boundaries affecting mutation labels, artifact table assertion, early operator validation, training-report retention and lint. Focused tests: 140 passed / 25 live-tool skips; unified gate fixtures: 98 passed; repository Ruff clean. Synthetic saved-output/training reports verified and deterministic. Full current-head Linux/Windows CI and live train=true dispatch remain pending; PR #78 is not merged. Exact results and continuation: docs/handoff/lbl31-output-persistence-chatgpt-20261015.md. Merge is explicitly authorized only after passing verification; next implementation slice LBL-32.
+
+### LBL-32 card A/A and noise continuation (2026-10-16)
+- [x] Red-first tests and implementation on stacked PR #79 (`chatgpt/lbl32-card-controls-20261016`), targeting PR #78. Planned both card sides, pinned project/commit deduplication, fetch in isolated shards, strict side/path/Tier W refusal.
+- [ ] Current-head Linux/Windows QA and Ruff for #79; live recipe-card `subset=cards` and `subset=noise` runs proving A/A byte identity and reporting toolchain noise, plus deterministic artifact merge. Fixture tests alone do not close this.
+- [ ] Verify PR #78's native Windows QA and repeat Qt gate before merging it into `claude/instance-d-gui`; then integrate stacked #79 after checks. LBL-31 unlocked `train=true` smoke remains distinct.
+- [ ] Recipe-source mutation, corpus expansion/admission and preregistration lock remain future work. Never promote calibration from ordinal on synthetic fixture evidence.

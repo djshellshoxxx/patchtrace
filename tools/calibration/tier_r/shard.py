@@ -87,15 +87,15 @@ def _load_json(path: Path):
     return json.loads(path.read_text(encoding='utf-8'))
 
 
-def _cards(root: Path) -> list[str]:
-    """Ids of buildable case cards: recipe exists for the project and the licence is permissive."""
+def _card_data(root: Path) -> dict[str, dict]:
+    """Buildable, permissively licensed card records keyed by stable card id."""
     try:
         recipes = {r['project'] for r in _load_json(root / 'tools/calibration/tier_r/catalogue/recipes.json')['recipes']}
     except (OSError, ValueError, KeyError, TypeError):
         recipes = set()
     files = sorted((root / 'tools/calibration/tier_r/catalogue').glob('*.json')) + sorted(
         (root / 'corpus/catalog').glob('*.json'))
-    found = set()
+    found: dict[str, dict] = {}
     for path in files:
         if path.name == 'recipes.json':
             continue
@@ -106,9 +106,35 @@ def _cards(root: Path) -> list[str]:
         for card in data if isinstance(data, list) else ():
             if (isinstance(card, dict) and card.get('contract') == 'case-card/1' and card.get('project') in recipes
                     and card.get('license_spdx') in PERMISSIVE_SPDX and isinstance(card.get('id'), str)):
-                found.add(card['id'])
-    return sorted(found)
+                found.setdefault(card['id'], card)
+    return found
 
+
+def _cards(root: Path) -> list[str]:
+    return sorted(_card_data(root))
+
+
+def _card_controls(root: Path, cards: Sequence[str], kind: str) -> set[str]:
+    """Schedule each project/pin once: adjacent release cards often share one revision.
+
+    An incomplete candidate without a pinned commit is not silently conflated with another
+    candidate. The downstream strict card loader still rejects invalid input.
+    """
+    catalogue = _card_data(root)
+    unique: dict[tuple[str, ...], str] = {}
+    for card_id in cards:
+        card = catalogue[card_id]
+        for side in ('old', 'new'):
+            source = card.get(side)
+            commit = source.get('commit') if isinstance(source, dict) else None
+            if isinstance(commit, str) and re.fullmatch(r'[0-9a-fA-F]{40}', commit):
+                key = (card['project'], commit.lower())
+            else:
+                key = ('unverified', card_id, side)
+            case = f'{kind}-card:{card_id}:{side}'
+            if key not in unique or case < unique[key]:
+                unique[key] = case
+    return set(unique.values())
 
 def _suites(root: Path) -> list[str]:
     return sorted(p.parent.relative_to(root / 'corpus/ours').as_posix()
@@ -120,7 +146,7 @@ def mutation_seeds(seed: int, count: int) -> list[int]:
 
 
 def enumerate_cases(root: Path, *, subset: str, seed: int, seeds_per_op: int = 1) -> list[str]:
-    """Case ids (sorted, unique). Id grammar: card:ID | suite:G/N | mutate:G/N:OP:SEED | aa:G/N | noise:G/N."""
+    """Deterministic case ids; card controls pin both recipe sides for A/A and toolchain noise."""
     if subset not in SUBSETS:
         raise ShardError(f'unknown subset {subset!r}; choose from {", ".join(SUBSETS)}')
     suites, cards = _suites(root), _cards(root)
@@ -135,16 +161,23 @@ def enumerate_cases(root: Path, *, subset: str, seed: int, seeds_per_op: int = 1
         cases |= {f'suite:{s}' for s in suites} | {f'aa:{s}' for s in suites}
     if subset in ('cards', 'full'):
         cases |= {f'card:{c}' for c in cards}
+        # Recipe lineages previously received no A/A cases, only authored suites did.
+        cases |= _card_controls(root, cards, 'aa')
     if subset in ('mutations', 'full'):
         cases |= {f'mutate:{s}:{op}:{n}' for s in suites for op in ops for n in mutation_seeds(seed, seeds_per_op)}
     if subset in ('noise', 'full'):
         cases |= {f'noise:{s}' for s in suites}
+        cases |= _card_controls(root, cards, 'noise')
     for case in cases:
         refuse_microsoft(case)
     return sorted(cases)
 
 
-_CASE = re.compile(r'^(card|suite|aa|noise):([A-Za-z0-9._/-]{1,128})$|^(mutate):([A-Za-z0-9._/-]{1,128}):([a-z0-9-]{1,32}):(\d{1,12})$')
+_CASE = re.compile(
+    r'^(card|suite|aa|noise):([A-Za-z0-9._/-]{1,128})$'
+    r'|^(mutate):([A-Za-z0-9._/-]{1,128}):([a-z0-9-]{1,32}):(\d{1,12})$'
+    r'|^(aa|noise)-card:([A-Za-z0-9._/-]{1,128}):(old|new)$'
+)
 
 
 def case_steps(case_id: str) -> list[list[str]]:
@@ -157,6 +190,11 @@ def case_steps(case_id: str) -> list[list[str]]:
         if m.group(5) not in (*SEMANTIC_OPERATORS, *COSMETIC_OPERATORS):
             raise ShardError(f'unknown mutation operator in {case_id!r}')
         return [['mutate', '--suite', f'corpus/ours/{m.group(4)}', '--operator', m.group(5), '--seed', m.group(6)]]
+    if m.group(7) is not None:
+        kind, name, side = m.group(7), m.group(8), m.group(9)
+        # Each shard has a private scratch store. Fetch pinned sources even if
+        # the plain card task was assigned to another shard.
+        return [['fetch', name], [kind, '--card', name, '--side', side]]
     kind, name = m.group(1), m.group(2)
     if kind == 'card':
         return [['fetch', name], ['build-card', name]]
@@ -394,6 +432,13 @@ def run_shard(plan: dict, shard: int, *, timeout: int = DEFAULT_TIMEOUT, runner:
                 rc, out, reason, err = _call(runner, [py, '-m', 'tools.calibration.tier_r', *step], timeout, env)
                 parsed = _summary(out)
                 status = _classify(rc, reason, parsed)
+                # A/A is a negative control, not an ordinary finding. A single
+                # non-byte-identical rebuild invalidates the run's acceptance gate.
+                # Fail even if an adapter incorrectly exits zero with a bad list.
+                aa_bad = (step[0] == 'aa' and (rc == FINDINGS or
+                          bool(parsed and parsed.get('not_byte_identical'))))
+                if aa_bad:
+                    status = 'failed'
                 detail = None
                 if parsed is not None:
                     summary = sanitize(parsed)
@@ -403,7 +448,8 @@ def run_shard(plan: dict, shard: int, *, timeout: int = DEFAULT_TIMEOUT, runner:
                     detail = ' '.join(str(parsed.get('reason') or 'skipped').split())[:REASON_CHARS]
                     log(f'[SKIPPED] {case_id}: {detail}')
                 elif status in ('timeout', 'failed', 'blocked'):
-                    detail = failure_reason(rc, reason, parsed, err)
+                    detail = ('A/A rebuild produced non-identical images' if aa_bad
+                              else failure_reason(rc, reason, parsed, err))
                     _report_problem(case_id, status, detail, err, log)
                 elif rc:
                     detail = f'exit {rc}'

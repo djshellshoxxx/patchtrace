@@ -120,6 +120,59 @@ def test_cards_filtered_by_recipe_and_licence(tree):
     assert cards == ['card:zlib-a-to-b']
 
 
+def test_recipe_cards_have_both_side_controls_in_plans(tree):
+    """Natural recipe lineages need A/A and noise checks, not only authored suites."""
+    card = 'zlib-a-to-b'
+    cards = S.enumerate_cases(tree, subset='cards', seed=1)
+    noise = S.enumerate_cases(tree, subset='noise', seed=1)
+    full = S.enumerate_cases(tree, subset='full', seed=1)
+    expected_aa = {f'aa-card:{card}:{side}' for side in ('old', 'new')}
+    expected_noise = {f'noise-card:{card}:{side}' for side in ('old', 'new')}
+    assert expected_aa <= set(cards)
+    assert expected_noise <= set(noise)
+    assert expected_aa | expected_noise <= set(full)
+    assert not any('gpl-a-to-b' in case or 'x-a-to-b' in case for case in full)
+    assert S.enumerate_cases(tree, subset='cards', seed=1) == cards
+
+
+def test_recipe_controls_deduplicate_shared_adjacent_revision(tree):
+    """Adjacent release cards share one pin; it must be evaluated only once per control kind."""
+    path = tree / 'tools/calibration/tier_r/catalogue/releases.json'
+    cards = json.loads(path.read_text())
+    cards[0]['old'] = {'ref': 'vA', 'commit': 'a' * 40}
+    cards[0]['new'] = {'ref': 'vB', 'commit': 'b' * 40}
+    cards.append({'contract': 'case-card/1', 'id': 'zlib-b-to-c', 'project': 'zlib',
+                  'license_spdx': 'Zlib', 'old': {'ref': 'vB', 'commit': 'b' * 40},
+                  'new': {'ref': 'vC', 'commit': 'c' * 40}})
+    path.write_text(json.dumps(cards))
+    aa = [x for x in S.enumerate_cases(tree, subset='cards', seed=1) if x.startswith('aa-card:')]
+    noise = [x for x in S.enumerate_cases(tree, subset='noise', seed=1) if x.startswith('noise-card:')]
+    assert aa == ['aa-card:zlib-a-to-b:new', 'aa-card:zlib-a-to-b:old',
+                  'aa-card:zlib-b-to-c:new']
+    assert noise == ['noise-card:zlib-a-to-b:new', 'noise-card:zlib-a-to-b:old',
+                     'noise-card:zlib-b-to-c:new']
+
+
+@pytest.mark.parametrize(('kind', 'side'), [
+    ('aa', 'old'), ('aa', 'new'), ('noise', 'old'), ('noise', 'new'),
+])
+def test_card_controls_fetch_pinned_source_before_build(kind, side):
+    card = 'zlib-a-to-b'
+    assert S.case_steps(f'{kind}-card:{card}:{side}') == [
+        ['fetch', card], [kind, '--card', card, '--side', side],
+    ]
+
+
+@pytest.mark.parametrize('case', [
+    'aa-card:zlib-a-to-b:left', 'noise-card:zlib-a-to-b:latest',
+    'aa-card:zlib-a-to-b:', 'aa-card:../secret:old',
+    'noise-card:Microsoft-kernel:new', 'aa-card:tier-w-file:old',
+])
+def test_card_controls_fail_closed_on_invalid_side_path_or_tier_w(case):
+    with pytest.raises(S.ShardError):
+        S.case_steps(case)
+
+
 def test_subset_smoke_contents(tree):
     cases = S.enumerate_cases(tree, subset='smoke', seed=3)
     assert 'suite:_template/tiny' in cases and 'card:zlib-a-to-b' in cases
@@ -168,6 +221,26 @@ def test_run_shard_aggregate_only_and_deterministic(tree, tmp_path):
     assert doc['labels'] and doc['reports']
     path = S.write_shard(doc, tmp_path / 'out')
     assert path.name == 'shard-0.json'
+
+
+@pytest.mark.parametrize('returncode', [0, 1])
+def test_nonidentical_aa_rebuild_is_a_failing_gate(tree, returncode):
+    """An A/A source-control violation must fail the shard and its merged provenance."""
+    plan = S.make_plan(tree, seed=4, shards=1, subset='cards')
+
+    def runner(argv, timeout, env):
+        step = argv[3:]
+        if step[0] == 'aa':
+            return returncode, json.dumps({'command': 'aa', 'status': 'findings',
+                                  'not_byte_identical': ['aa-zlib-rebuild']}), None
+        return fake_runner(argv, timeout, env)
+
+    doc = S.run_shard(plan, 0, runner=runner)
+    aa = [case for case in doc['cases'] if case['id'].startswith('aa-card:')]
+    assert aa and all(case['status'] == 'failed' for case in aa)
+    assert all('A/A' in case['reason'] for case in aa)
+    _, provenance = S.merge([doc])
+    assert all(item in provenance['failing_cases'] for item in [case['id'] for case in aa])
 
 
 def test_run_shard_survives_failure_and_timeout(tree):

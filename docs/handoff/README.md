@@ -9,6 +9,8 @@ The four files marked "this area" were written together. The other area files we
 | File | Purpose |
 |---|---|
 | `README.md` (this area) | Index, resume order, every open PR and branch with the next action |
+| `lbl32-card-controls-chatgpt-20261016.md` | Active LBL-32 stacked PR #79: current code, tests, deduplication, exact unverified/live gates and merge instructions |
+| `lbl31-output-persistence-chatgpt-20261015.md` | Current LBL-31 PR #78 implementation, verification, pending native Windows and train=true acceptance |
 | `00-how-we-work.md` (this area) | Working method: instances, worktrees, merge flow, CI workflows, push rules, invariants, cost rules, tool limits |
 | `qa-and-release.md` (this area) | QA plan, CI gates, beta build steps, what is not verified anywhere, release rules; ordered remaining checklist |
 | `owner-actions.md` (this area) | Everything only the owner can do, with plain steps |
