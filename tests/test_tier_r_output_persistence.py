@@ -107,3 +107,38 @@ def test_cli_rejects_reusing_directory_with_old_engine_outputs(tmp_path, monkeyp
     capsys.readouterr()
     assert cli.main(['evaluate', '--store', str(store), '--engines', 'rz-diff', '--outputs', str(outputs)]) == 2
     assert json.loads(capsys.readouterr().out)['status'] == 'error'
+
+
+def test_training_artifacts_copy_exact_scored_files_and_verify_tampering(tmp_path):
+    from tools.calibration.tier_r import training_artifacts as TA
+    store = tmp_path / 'known-answer'
+    labels = store / 'labels'
+    labels.mkdir(parents=True)
+    (labels / 'lbl31-synthetic.json').write_bytes(C.dump_json(LABELS.model_dump(mode='json')))
+    outputs = store / 'outputs' / 'rz-diff'
+    report = E.evaluate([LABELS], [provider()], output_dir=outputs, b_count=20)
+    artifacts = tmp_path / 'artifact'
+    assert TA.export_training_artifacts([report], store, artifacts) == {'labels': 1, 'outputs': 1}
+    assert TA.verify_training_artifacts([report], artifacts) == {'labels': 1, 'outputs': 1}
+    changed = artifacts / 'outputs' / 'lbl31-synthetic.rz-diff.json'
+    changed.write_bytes(changed.read_bytes() + b' ')
+    with pytest.raises(TA.ArtifactError, match='SHA-256 mismatch'):
+        TA.verify_training_artifacts([report], artifacts)
+
+
+def test_training_artifacts_reject_missing_label_or_unexpected_file(tmp_path):
+    from tools.calibration.tier_r import training_artifacts as TA
+    store = tmp_path / 'known-answer'
+    labels = store / 'labels'
+    labels.mkdir(parents=True)
+    (labels / 'lbl31-synthetic.json').write_bytes(C.dump_json(LABELS.model_dump(mode='json')))
+    report = E.evaluate([LABELS], [provider()], output_dir=store / 'outputs' / 'rz-diff', b_count=20)
+    (labels / 'lbl31-synthetic.json').unlink()
+    with pytest.raises(TA.ArtifactError, match='missing'):
+        TA.export_training_artifacts([report], store, tmp_path / 'artifact')
+    (labels / 'lbl31-synthetic.json').write_bytes(C.dump_json(LABELS.model_dump(mode='json')))
+    other = tmp_path / 'good'
+    TA.export_training_artifacts([report], store, other)
+    (other / 'outputs' / 'extra.json').write_text('{}')
+    with pytest.raises(TA.ArtifactError, match='unexpected'):
+        TA.verify_training_artifacts([report], other)
