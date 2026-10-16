@@ -336,3 +336,15 @@ def test_masked_body_stops_at_function_boundary(monkeypatch, boundary):
     suffix[:] = ['movl $99, %eax']
     after = E._masked_function_asm({}, 'm.c', 'target', 'clang', (), 1)
     assert before == after == ('callq T', 'retq')
+
+def test_windows_coff_mangled_string_symbol_is_only_an_address_not_a_code_change():
+    """Clang/COFF quotes MSVC string-pool symbols; their hashed names change with literal text."""
+    before = 'leaq "??_C@_05CJBACGMB@hello?$AA@"(%rip), %rcx'
+    after = 'leaq "??_C@_06GANFPHOD@hello?$CB?$AA@"(%rip), %rcx'
+    assert E._mask_asm_address_operands(before) == E._mask_asm_address_operands(after) == 'leaq SYM(%rip), %rcx'
+
+
+def test_windows_coff_quoted_symbol_mask_does_not_erase_opcode_or_register_changes():
+    base = 'leaq "??_C@_05CJBACGMB@hello?$AA@"(%rip), %rcx'
+    assert E._mask_asm_address_operands(base) != E._mask_asm_address_operands(base.replace('leaq', 'movq'))
+    assert E._mask_asm_address_operands(base) != E._mask_asm_address_operands(base.replace('%rcx', '%rdx'))
