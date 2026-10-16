@@ -1,0 +1,39 @@
+name: LBL-30 preregistration guard
+on:
+  pull_request:
+    paths:
+      - tools/calibration/train.py
+      - tools/calibration/prereg.py
+      - tools/calibration/prereg_gate.py
+      - tools/calibration/run_locked_test.py
+      - tests/test_train_prereg_gate.py
+      - tests/test_prereg_tools.py
+      - .github/workflows/lbl30-prereg-gate.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  prereg-unit:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 20
+    env:
+      QT_QPA_PLATFORM: offscreen
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install -y libegl1 libopengl0 libgl1
+      - run: "python -m pip install --only-binary=:all: -e '.[dev]'"
+      - run: python -m pytest -q -p no:cacheprovider tests/test_train_prereg_gate.py tests/test_prereg_tools.py
+      - run: python -m ruff check tools/calibration/prereg_gate.py tools/calibration/prereg.py tools/calibration/train.py tests/test_train_prereg_gate.py
