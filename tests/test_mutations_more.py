@@ -258,6 +258,14 @@ def test_swap_operators_compile_only_with_earlier_declarations(clang, op):
 
 
 # ---- masked-body acceptance rule --------------------------------------------------------------------------------
+def test_coff_quoted_rip_symbol_is_not_a_change_to_instruction_bytes():
+    """COFF embeds string contents in a quoted symbol; the symbol is an address reference."""
+    before = 'leaq "??_C@_05CJBACGMB@hello?$AA@"(%rip), %rcx'
+    after = 'leaq "??_C@_06GANFPHOD@hello?$CB?$AA@"(%rip), %rcx'
+    assert E._ASM_SYMBOL.sub('SYM', before) == E._ASM_SYMBOL.sub('SYM', after)
+    assert E._ASM_SYMBOL.sub('SYM', before) == 'leaq SYM(%rip), %rcx'
+
+
 
 def check_for(clang):
     return E.make_masked_body_check(FILES, clang)
