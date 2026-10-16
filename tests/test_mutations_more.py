@@ -336,3 +336,24 @@ def test_masked_body_stops_at_function_boundary(monkeypatch, boundary):
     suffix[:] = ['movl $99, %eax']
     after = E._masked_function_asm({}, 'm.c', 'target', 'clang', (), 1)
     assert before == after == ('callq T', 'retq')
+
+
+def test_coff_quoted_string_symbols_are_masked_as_address_references(monkeypatch):
+    """MSVC clang emits literal-dependent ??_C@ symbols with quotes, unlike ELF's .L.str."""
+    from pathlib import Path
+    from types import SimpleNamespace
+
+    symbol = ['"??_C@_05CJBACGMB@hello?$AA@"']
+
+    def compile_asm(argv, *, cwd, timeout):
+        Path(cwd, '_masked.s').write_text('\n'.join([
+            '.def shout;', 'shout:', 'movl %ecx, %edx',
+            f'leaq {symbol[0]}(%rip), %rcx', 'jmp emit', '.seh_endproc',
+        ]))
+        return SimpleNamespace(returncode=0)
+
+    monkeypatch.setattr(E, 'run_tool', compile_asm)
+    before = E._masked_function_asm({}, 'm.c', 'shout', 'clang', (), 1)
+    symbol[0] = '"??_C@_06GANFPHOD@hello?$CB?$AA@"'
+    after = E._masked_function_asm({}, 'm.c', 'shout', 'clang', (), 1)
+    assert before == after == ('movl %ecx, %edx', 'leaq SYM(%rip), %rcx', 'jmp emit')
