@@ -1,4 +1,11 @@
 # PatchTrace delivery tracker
+
+## Windows Setup release track (PR #95, 2026-10-17)
+- [x] Implement pinned NSIS per-user Windows installer on existing PyInstaller onedir runtime.
+- [x] Add portable extracted-ZIP and installed-frozen-executable smoke tests, checksums, and data-preserving uninstall logic.
+- [ ] Verify PR #95 on Windows CI, merge only after all release gates pass, and publish a new GitHub prerelease including Setup.exe + portable ZIP.
+- [ ] Verify actual published installer and ZIP assets, checksums and release commit SHA; complete clean Windows interactive GUI acceptance separately.
+
 - [x] M1 Research, contracts, schemas, ingestion, normalization
 - [x] M2 Backend and cancellation
 - [x] M3 Persistence, service and desktop
