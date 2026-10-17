@@ -42,6 +42,9 @@ jobs:
       - name: Frozen EXE headless smoke (A1-A4) and self-test
         if: runner.os == 'Windows'
         run: python tools/frozen_smoke.py dist/PatchTrace/PatchTrace.exe
+      - name: Install pinned NSIS compiler
+        if: runner.os == 'Windows'
+        run: choco install nsis --version=3.13 --yes --no-progress
       - name: Build per-user Windows installer
         if: runner.os == 'Windows'
         run: python tools/package_windows_installer.py
@@ -178,7 +181,7 @@ jobs:
           GATE_REASON: ${{ needs.release-gate.outputs.reason }}
         run: |
           cat > "$RUNNER_TEMP/preamble.md" <<'EOF'
-          Windows x64 desktop package. Extract the entire ZIP before launching PatchTrace.exe.
+          Windows x64 desktop package. Run the per-user Setup.exe installer or extract the portable ZIP before launching PatchTrace.exe.
           Linux x86-64 package (built on Ubuntu 22.04; smoke-tested on 22.04 and 24.04). Extract the tar.gz and run PatchTrace/PatchTrace.
           Linux X11 hosts need libegl1, libgl1, libfontconfig1, libxkbcommon-x11-0 and the Qt xcb libraries (libxcb-cursor0, libxcb-icccm4, libxcb-image0, libxcb-keysyms1, libxcb-randr0, libxcb-render-util0, libxcb-shape0, libxcb-xinerama0, libxcb-xkb1); see docs/linux.md.
           Python and Qt are bundled. Native binary comparison needs separately configured Ghidra, Java and Ghidriff.
