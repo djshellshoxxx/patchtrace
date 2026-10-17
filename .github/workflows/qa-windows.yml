@@ -42,6 +42,10 @@ jobs:
       - name: Frozen EXE headless smoke (A1-A4) and self-test
         if: runner.os == 'Windows'
         run: python tools/frozen_smoke.py dist/PatchTrace/PatchTrace.exe
+      - name: Extract and run portable Windows ZIP outside checkout
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: ./tools/test_windows_portable.ps1
       - name: Install pinned NSIS compiler
         if: runner.os == 'Windows'
         run: choco install nsis --version=3.13 --yes --no-progress
