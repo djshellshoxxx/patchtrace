@@ -52,9 +52,9 @@ def write_uninstall_manifest(bundle: Path, manifest: Path) -> None:
         raise FileNotFoundError(f"Frozen application is missing: {bundle / 'PatchTrace.exe'}")
 
     def nsis_path(relative: Path) -> str:
-        # An NSIS dollar sign is an escape prefix; literal filename dollars need $.
+        # An NSIS dollar sign is an escape prefix; literal filename dollars need $$.
         # Windows filename syntax excludes quotes and control characters.
-        return str(relative).replace("/", "\\").replace("$", "$")
+        return str(relative).replace("/", "\\").replace("$", "$$")
 
     entries = list(bundle.rglob("*"))
     if any(entry.is_symlink() for entry in entries):
