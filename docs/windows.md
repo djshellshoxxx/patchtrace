@@ -18,6 +18,11 @@ Build on Windows from source:
 py -3.12 -m pip install -e '.[dev]'
 py -3.12 -m pytest -q
 py -3.12 tools/build_windows.py
+# Install pinned NSIS 3.13, then produce the per-user installer:
+py -3.12 tools/package_windows_installer.py
+# On the Windows build host, verify ZIP and installer outside the checkout:
+pwsh -File tools/test_windows_portable.ps1
+pwsh -File tools/test_windows_installer.ps1
 ```
 The build creates an onedir distribution, copies licenses/help/specs, archives it and computes SHA-256. Windows CI also compiles installer/PatchTrace.iss with Inno Setup into PatchTrace-Windows-x64-Setup.exe, writes a SHA-256 sidecar, installs it under a path containing spaces and Unicode, runs the installed frozen self-test, and silently uninstalls it. The installer compiler is build-only and is not needed on user systems. Beta binaries are unsigned. Keep Qt DLLs replaceable in the onedir distribution. Update by unpacking a new version separately; projects are never overwritten by updater. Back up projects before future schema migration.
 
