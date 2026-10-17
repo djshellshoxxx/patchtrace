@@ -26,6 +26,14 @@ $exe = Join-Path $installDir "PatchTrace.exe"
 if (-not (Test-Path $exe -PathType Leaf)) {
     throw "Installed PatchTrace.exe was not found at $exe."
 }
+# A project created inside the chosen install directory must survive uninstallation.
+$insideProject = Join-Path $installDir "projects/keep-inside-project.txt"
+New-Item -ItemType Directory -Path (Split-Path $insideProject -Parent) -Force | Out-Null
+Set-Content -LiteralPath $insideProject -Value "in-place user project sentinel"
+$uninstallKey = "HKCU:\Software\Microsoft\Windows\CurrentVersion\Uninstall\PatchTrace"
+if (-not (Test-Path $uninstallKey)) {
+    throw "Installer did not register with per-user Windows Apps/Uninstall."
+}
 if (-not (Test-Path $shortcutPath -PathType Leaf)) {
     throw "Start Menu shortcut was not created at $shortcutPath."
 }
@@ -59,8 +67,14 @@ $remove = Start-Process -FilePath $uninstaller -ArgumentList "/S" -Wait -PassThr
 if ($remove.ExitCode -ne 0) {
     throw "Uninstaller exited with code $($remove.ExitCode)."
 }
-if (Test-Path $installDir) {
-    throw "Uninstall left application files in $installDir."
+if (Test-Path $exe -PathType Leaf) {
+    throw "Uninstall left PatchTrace.exe in $installDir."
+}
+if (-not (Test-Path $insideProject -PathType Leaf)) {
+    throw "Uninstall deleted user-created data inside the install directory."
+}
+if (Test-Path $uninstallKey) {
+    throw "Uninstall left the per-user Windows Apps entry behind."
 }
 if (Test-Path $shortcutPath) {
     throw "Uninstall left the Start Menu shortcut behind."
@@ -68,4 +82,5 @@ if (Test-Path $shortcutPath) {
 if (-not (Test-Path $projectData -PathType Leaf)) {
     throw "Uninstall removed user project data outside the application directory."
 }
-Write-Host "Installer install, Qt/runtime checks, frozen self-test, uninstall, and project-data preservation passed."
+Remove-Item -LiteralPath $installDir -Recurse -Force
+Write-Host "Installer registration, Qt/runtime checks, frozen self-test, non-destructive uninstall passed."
