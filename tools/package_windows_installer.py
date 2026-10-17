@@ -42,6 +42,45 @@ def sha256(path: Path) -> str:
     return digest.hexdigest()
 
 
+def write_uninstall_manifest(bundle: Path, manifest: Path) -> None:
+    """Generate a fail-safe NSIS uninstall list from *only* bundled file paths.
+
+    Never recursively delete $INSTDIR: users may have created projects inside it.
+    All directory removals must be non-recursive and happen deepest first.
+    """
+    if not (bundle / "PatchTrace.exe").is_file():
+        raise FileNotFoundError(f"Frozen application is missing: {bundle / 'PatchTrace.exe'}")
+
+    def nsis_path(relative: Path) -> str:
+        # An NSIS dollar sign is an escape prefix; literal filename dollars need $.
+        # Windows filename syntax excludes quotes and control characters.
+        return str(relative).replace("/", "\\").replace("$", "$")
+
+    entries = list(bundle.rglob("*"))
+    if any(entry.is_symlink() for entry in entries):
+        raise ValueError("Symlink in frozen distribution: cannot generate safe uninstall manifest")
+    files = sorted((entry.relative_to(bundle) for entry in entries if entry.is_file()),
+                   key=lambda path: str(path).casefold())
+    dirs = sorted((entry.relative_to(bundle) for entry in entries if entry.is_dir()),
+                  key=lambda path: (-len(path.parts), str(path).casefold()))
+    lines = [
+        "; Auto-generated from the frozen Windows distribution. Do not hand edit.",
+        "; Remove installed files only; do not delete user-created files or projects.",
+    ]
+    for file in files:
+        lines.append(f'  Delete "$INSTDIR\\{nsis_path(file)}"')
+    lines.extend([
+        '  Delete "$INSTDIR\\licenses\\installer\\COPYING"',
+        '  Delete "$INSTDIR\\Uninstall.exe"',
+        '  RMDir "$INSTDIR\\licenses\\installer"',
+    ])
+    for directory in dirs:
+        lines.append(f'  RMDir "$INSTDIR\\{nsis_path(directory)}"')
+    lines.append('  RMDir "$INSTDIR"')
+    manifest.parent.mkdir(parents=True, exist_ok=True)
+    manifest.write_text("\n".join(lines) + "\n", encoding="utf-8")
+
+
 def main() -> int:
     if sys.platform != "win32":
         raise SystemExit("The Windows installer must be built on Windows.")
@@ -55,6 +94,7 @@ def main() -> int:
     if not any(bundle.rglob("qwindows.dll")):
         raise FileNotFoundError("Frozen bundle is missing the Qt Windows platform plugin.")
 
+    write_uninstall_manifest(bundle, root / 'dist' / 'PatchTrace-Uninstall.nsh')
     compiler = find_compiler()
     version = subprocess.run(
         [str(compiler), "-VERSION"], check=True, capture_output=True, text=True
