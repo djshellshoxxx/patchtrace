@@ -6,19 +6,16 @@ param(
 $ErrorActionPreference = "Stop"
 $installerPath = (Resolve-Path $Installer).Path
 $installDir = Join-Path $env:RUNNER_TEMP "PatchTrace Installer Smoke 研究"
-$shortcutPath = Join-Path $env:APPDATA "Microsoft/Windows/Start Menu/Programs/PatchTrace.lnk"
+$shortcutPath = Join-Path $env:APPDATA "Microsoft/Windows/Start Menu/Programs/PatchTrace/PatchTrace.lnk"
+$projectDataDir = Join-Path $env:RUNNER_TEMP "PatchTrace User Project Data"
+$projectData = Join-Path $projectDataDir "keep-this-project.txt"
+New-Item -ItemType Directory -Path $projectDataDir -Force | Out-Null
+Set-Content -LiteralPath $projectData -Value "user project data sentinel"
 
 if (Test-Path $installDir) {
     Remove-Item -LiteralPath $installDir -Recurse -Force
 }
-
-$installArgs = @(
-    "/VERYSILENT",
-    "/SUPPRESSMSGBOXES",
-    "/NORESTART",
-    "/CURRENTUSER",
-    "/DIR=`"$installDir`""
-)
+$installArgs = "/S /D=`"$installDir`""
 $install = Start-Process -FilePath $installerPath -ArgumentList $installArgs -Wait -PassThru
 if ($install.ExitCode -ne 0) {
     throw "Installer exited with code $($install.ExitCode)."
@@ -36,6 +33,10 @@ $qtWindows = Get-ChildItem -LiteralPath $installDir -Filter "qwindows.dll" -File
 if (-not $qtCore -or -not $qtWindows) {
     throw "The installed app is missing required Qt runtime files or the Windows platform plugin."
 }
+$nsisNotice = Join-Path $installDir "licenses/installer/COPYING"
+if (-not (Test-Path $nsisNotice -PathType Leaf)) {
+    throw "The NSIS redistribution notice is missing from the installed app."
+}
 
 $previousQpa = $env:QT_QPA_PLATFORM
 try {
@@ -49,13 +50,11 @@ finally {
     $env:QT_QPA_PLATFORM = $previousQpa
 }
 
-$uninstaller = Join-Path $installDir "unins000.exe"
+$uninstaller = Join-Path $installDir "Uninstall.exe"
 if (-not (Test-Path $uninstaller -PathType Leaf)) {
-    throw "Inno Setup uninstaller was not installed."
+    throw "NSIS uninstaller was not installed."
 }
-$remove = Start-Process -FilePath $uninstaller -ArgumentList @(
-    "/VERYSILENT", "/SUPPRESSMSGBOXES", "/NORESTART"
-) -Wait -PassThru
+$remove = Start-Process -FilePath $uninstaller -ArgumentList "/S" -Wait -PassThru
 if ($remove.ExitCode -ne 0) {
     throw "Uninstaller exited with code $($remove.ExitCode)."
 }
@@ -65,4 +64,7 @@ if (Test-Path $installDir) {
 if (Test-Path $shortcutPath) {
     throw "Uninstall left the Start Menu shortcut behind."
 }
-Write-Host "Installer install, Qt/runtime checks, frozen self-test, and uninstall passed."
+if (-not (Test-Path $projectData -PathType Leaf)) {
+    throw "Uninstall removed user project data outside the application directory."
+}
+Write-Host "Installer install, Qt/runtime checks, frozen self-test, uninstall, and project-data preservation passed."
