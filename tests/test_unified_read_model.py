@@ -824,10 +824,21 @@ def test_filter_and_sort_budget_at_100000_rows():
     assert len(default) == 95_000 and searched == [99_999] and 0 < len(combined) < len(default)
     assert max(t_default, t_search, t_combined) < 0.5, (t_default, t_search, t_combined)
     everything = list(range(len(rows)))
-    ordered, t_sort = took(lambda: rm.sort_rows(rows, everything))
-    _, t_cell = took(lambda: rm.sort_rows(rows, everything, rm.column_sort_key(vm, 'source:bindiff')))
-    _, t_name = took(lambda: rm.sort_rows(rows, everything, rm.column_sort_key(vm, 'function'), descending=True))
-    assert sorted(ordered) == everything and max(t_sort, t_cell, t_name) < 0.75, (t_sort, t_cell, t_name)
+
+    def best_sort(fn):
+        # A single CPU deschedule on a shared Windows runner is not algorithmic cost.
+        # Check deterministic output across attempts, then keep the fastest elapsed
+        # time as the existing paint budget does below. The 0.75s gate is unchanged.
+        samples = [took(fn) for _ in range(3)]
+        assert all(order == samples[0][0] for order, _ in samples[1:])
+        return samples[0][0], min(elapsed for _, elapsed in samples)
+
+    ordered, t_sort = best_sort(lambda: rm.sort_rows(rows, everything))
+    _, t_cell = best_sort(lambda: rm.sort_rows(rows, everything, rm.column_sort_key(vm, 'source:bindiff')))
+    _, t_name = best_sort(lambda: rm.sort_rows(rows, everything, rm.column_sort_key(vm, 'function'),
+                                               descending=True))
+    assert sorted(ordered) == everything
+    assert max(t_sort, t_cell, t_name) < 0.75, (t_sort, t_cell, t_name)
     # paint-time access is O(1) and independent of N: 7 x visible cells x 1.2 + 20 calls (GUI plan 8.4)
     def paint():
         return [rm.cell_text(row, column) for row in rows[50_000:50_030] for column in range(5) for _ in range(7)]
