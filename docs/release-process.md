@@ -6,10 +6,10 @@ How a PatchTrace prerelease is produced and published. Sources: `tools/release_g
 
 A push to `main` (or a `v*` tag) runs `qa-windows.yml`:
 
-1. `qa` on Ubuntu and Windows: the test suite and Ruff. The Windows job also builds the one-folder package with `tools/build_windows.py`, runs the frozen-app smoke (`tools/frozen_smoke.py dist/PatchTrace/PatchTrace.exe`, includes the self-test) and uploads `PatchTrace-0.1.0-windows-x64.zip` and its `.sha256`. The Linux build job uploads `PatchTrace-0.1.0-linux-x86_64.tar.gz` and its `.sha256`.
+1. `qa` on Ubuntu and Windows: the test suite and Ruff. The Windows job also builds the one-folder package with `tools/build_windows.py`, runs the frozen-app smoke (`tools/frozen_smoke.py dist/PatchTrace/PatchTrace.exe`, includes the self-test) and checks a clean portable ZIP extraction under a Unicode path, builds the NSIS 3.13 per-user installer, verifies installation/frozen startup/uninstallation while retaining user-created project files, and uploads the Windows ZIP, Setup.exe, and both `.sha256` sidecars. The Linux build job uploads `PatchTrace-0.1.0-linux-x86_64.tar.gz` and its `.sha256`.
 2. `linux-smoke` downloads the Linux artifact, checks `sha256sum -c`, extracts it and runs the offscreen self-test on Ubuntu 22.04 and 24.04.
 3. `release-gate` runs `tools/release_gate.py` and decides whether to publish.
-4. `release` runs only if the ref is a `v*` tag or the gate says `publish=true`, and only after `qa`, `linux-smoke` and `release-gate` succeeded. It generates evidence notes (`tools/milestone_notes.py`; if that fails, a static preamble is used and the release is neither blocked nor faked), then creates a GitHub **prerelease** named `PatchTrace beta <run number>` tagged `v0.1.0-beta.<run number>` (or the pushed tag) at the run's commit, with the zip, tar.gz and checksum files attached.
+4. `release` runs only if the ref is a `v*` tag or the gate says `publish=true`, and only after `qa`, `linux-smoke` and `release-gate` succeeded. It generates evidence notes (`tools/milestone_notes.py`; if that fails, a static preamble is used and the release is neither blocked nor faked), then creates a GitHub **prerelease** named `PatchTrace beta <run number>` tagged `v0.1.0-beta.<run number>` (or the pushed tag) at the run's commit, with the Windows ZIP, Windows Setup.exe, Linux tar.gz, and their SHA-256 checksum files attached.
 
 Pull-request and other non-push events never publish. A push to any ref other than `main` or a tag never publishes.
 
@@ -43,7 +43,8 @@ GitHub refuses `GITHUB_TOKEN` publication when the head commit adds or changes f
 
 | Package | Built on | Smoke test |
 |---|---|---|
-| Windows x64 zip, one-folder PyInstaller build | Windows CI | Frozen EXE headless smoke and self-test |
+| Windows x64 zip, one-folder PyInstaller build | Windows CI | Frozen EXE headless smoke, self-test and clean ZIP extraction outside checkout |
+| Windows x64 installer, per-user NSIS 3.13 | Windows CI | Install to Unicode/spaces path, verify frozen startup, Start Menu, Apps registration, uninstall and data retention |
 | Windows x64 per-user Setup installer | Windows CI with build-only Inno Setup | Install, Qt/runtime checks, frozen self-test, uninstall |
 | Linux x86-64 tar.gz (executable bit preserved) | Ubuntu 22.04, older glibc baseline | Offscreen and Xvfb on 22.04 and 24.04 |
 | Full zero-download bundle (`-full` archives) | `backend-bundle.yml`, manual dispatch or tag | Not published yet. A tag push builds and runs acceptance but never publishes; only `publish_prerelease=true` attaches assets, and only to a prerelease |
@@ -54,7 +55,7 @@ Alpha and beta prereleases stay **unsigned**, and release notes say so, includin
 
 ## Verify assets before announcing
 
-1. Download the zip, tar.gz and `.sha256` files from the release page.
+1. Download the Windows ZIP, Windows Setup.exe, Linux tar.gz and each corresponding `.sha256` file from the release page.
 2. `sha256sum -c` (Linux) or `Get-FileHash ... -Algorithm SHA256` (Windows) must equal the sidecar and the hashes in the notes.
 3. Check the release is marked **Pre-release** and its tag commit is the intended `main` commit.
 4. Read the notes: they list job results (`qa-ubuntu`, `qa-windows`, `linux-smoke`), test counts and which acceptance gates are still open. Do not copy a claim that the notes do not make.
