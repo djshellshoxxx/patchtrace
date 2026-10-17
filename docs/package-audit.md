@@ -25,3 +25,8 @@ PatchTrace source imports `PySide6.QtCore`, `QtGui`, and `QtWidgets`; the frozen
 ## Release follow-up
 
 Before a subsequent release, repeat the ZIP/inventory comparison after any dependency, Qt plugin, or packaging change. Record the supplier/build provenance for the OpenSSL DLLs so the version-resource match can be tied to the included binaries. An interactive check of DLL replacement and the full desktop UI remains distinct from the automated frozen self-test.
+
+
+## Per-user Windows installer follow-up (2026-10-17)
+
+The Windows CI packaging change adds an Inno Setup per-user wrapper around the already-tested dist/PatchTrace one-folder bundle. The installer requires Windows x64, targets the current user's LocalAppData, adds a Start Menu shortcut, and has no setup-time downloads, administrator requirement, custom actions or runtime prerequisites. The compiler is a CI build dependency, not a user dependency. The installer is unsigned, consistent with SPEC-52. CI verifies install, Qt DLL/plugin presence, the packaged --self-test, and uninstall from a temporary path containing spaces and Unicode. This row records the implemented acceptance gate; pass status is pending the final Windows workflow run on the release branch.
