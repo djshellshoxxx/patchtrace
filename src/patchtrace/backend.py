@@ -433,7 +433,18 @@ def quarantine_failed_run(root: Path, run: AnalysisRun, error: str) -> AnalysisR
     return run.model_copy(deep=True, update={'status': 'failed', 'error': message, 'raw_path': raw_path})
 
 
-RAW_ADAPTER_VERSION = 'patchtrace-ghidriff-adapter/1'
+RAW_ADAPTER_VERSION = 'patchtrace-ghidriff-adapter/2'  # serialized Ghidriff analysis changes raw output provenance
+
+
+def _ghidriff_threading_args() -> tuple[str, ...]:
+    """Avoid Ghidra script-load lock contention in concurrent old/new analysis.
+
+    Ghidriff defaults to --threaded. Its --no-threaded flag serializes import,
+    analysis and diff within the one Ghidriff process. Independent secondary
+    engines retain their own scheduling; no global engine lock is introduced.
+    """
+    return ('--no-threaded',)
+
 
 
 def _open_raw_cache(config: BackendConfig, backend_version: str, settings: dict,
@@ -588,7 +599,8 @@ def run_comparison(config: BackendConfig, project: ComparisonProject, root: Path
                     '-m', 'ghidriff',
                     str(paths['older']), str(paths['newer']), '--output-path',
                     str(_validated_ghidra_output_path(raw)),
-                    '--project-location', str(engine_project), '--gzfs-path', str(engine_gzfs)]
+                    '--project-location', str(engine_project), '--gzfs-path', str(engine_gzfs),
+                    *_ghidriff_threading_args()]
             if not config.allow_symbol_downloads:
                 argv.append('--no-symbols')
             result = run_process(argv, cwd=Path(config.ghidra_dir), env=_environment(config, ghidra_settings),
