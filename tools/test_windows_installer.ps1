@@ -15,7 +15,8 @@ Set-Content -LiteralPath $projectData -Value "user project data sentinel"
 if (Test-Path $installDir) {
     Remove-Item -LiteralPath $installDir -Recurse -Force
 }
-$installArgs = "/S /D=`"$installDir`""
+# NSIS requires /D= to be the final unquoted argument, including when the path has spaces.
+$installArgs = "/S /D=$installDir"
 $install = Start-Process -FilePath $installerPath -ArgumentList $installArgs -Wait -PassThru
 if ($install.ExitCode -ne 0) {
     throw "Installer exited with code $($install.ExitCode)."
