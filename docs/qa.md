@@ -946,6 +946,21 @@ Not verified here: Windows; the frozen executable; a live backend for `rules pro
 | Check | Evidence | Result |
 |---|---|---|
 | Full suite | `QT_QPA_PLATFORM=offscreen python -m pytest -q` | 15,716 passed, 12 failed, 83 skipped, 4 xfailed in 1,711.93 s |
-| Locally reproducible product issues | `tests/test_site_screens.py::test_renderer_draws_the_real_gui_offscreen`; `tests/test_tier_r_eval_cli.py::test_mutate_unknown_operator_is_an_error_not_blocked` | failures need fixes: screenshot helper references the removed `MainWindow.evidence` attribute; unknown mutation operator returns exit 3 where the CLI contract expects 2 |
+| Locally reproducible product issues | screenshot renderer and unknown mutation operator failures listed above | both fixed; combined rerun of `tests/test_site_screens.py` and `tests/test_tier_r_eval_cli.py`: 27 passed, 2 skipped |
 | Environment-limited failures | isolated `python -I` import checks, local AF_UNIX socket test, and three time-budget tests | `-I` subprocesses cannot see this environment's editable install (`ModuleNotFoundError`); AF_UNIX creation is denied by the container; budget tests failed under full-suite load but the 26 relevant cases passed in isolation |
 | Cross-runner confirmation | GitHub Actions run 39456546905 on Windows and Ubuntu | both runners passed the complete pytest suite and Ruff; Windows later failed only at the NSIS installer compile step, tracked under PR #95 |
+
+### [site-screens:files-panel] Site screenshot renderer follows the current panel UI (2026-10-20, Linux offscreen)
+| Check | Evidence | Result |
+|---|---|---|
+| Screenshot generation | `QT_QPA_PLATFORM=offscreen python tools/site/render_screenshots.py --only overview` | rendered current Files dock at 1440x900; synthetic project; no engine probing |
+| Site screenshot suite | `QT_QPA_PLATFORM=offscreen python -m pytest -q tests/test_site_screens.py` | 12 passed |
+| Lint and patch hygiene | `python -m ruff check tools/site/render_screenshots.py tests/test_site_screens.py`; `git diff --check` | clean |
+| Updated visual asset | `site/assets/screens/overview.png`, `.webp`, `screens.json` | reflects the Files dock in the workspace rather than the removed overview dialog |
+
+### [T9:mutation-cli-usage] Unknown mutation operator validation (2026-10-20, Linux container)
+| Check | Evidence | Result |
+|---|---|---|
+| Regression test | `QT_QPA_PLATFORM=offscreen python -m pytest -q tests/test_tier_r_eval_cli.py` | 15 passed, 2 skipped; compiler/toolchain acceptance cases remain blocked because Clang/LLVM tools are not installed/on PATH |
+| Lint and patch hygiene | `python -m ruff check tools/calibration/tier_r/cli.py tests/test_tier_r_eval_cli.py`; `git diff --check` | clean |
+| Behavior | Unknown `mutate --operator` is rejected as a usage error before probing compiler tools; JSON status is `error` and exit code is 2 | pass |

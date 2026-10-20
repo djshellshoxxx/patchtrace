@@ -1,6 +1,6 @@
 # PatchTrace delivery tracker
-- [ ] Fix the two locally reproducible full-suite issues recorded in `docs/qa.md`: the site screenshot renderer's stale Evidence-tab accessor and the Tier R unknown-operator exit code; rerun their focused tests before closing.
-- [ ] Resolve remaining Linux-container-only full-suite failures documented in `docs/qa.md` (isolated import checks and AF_UNIX permission) or confirm those checks on the supported CI environments.
+- [x] Fixed the two locally reproducible full-suite issues recorded in `docs/qa.md`: site screenshot renderer follows the Files panel; Tier R rejects an unknown mutation operator before toolchain probing. Focused rerun: 27 passed, 2 skipped.
+- [x] Linux-container-only full-suite failures documented in `docs/qa.md` are environment limitations (`python -I` excludes the editable install; AF_UNIX sockets are denied; timing budgets are load-sensitive); full pytest and Ruff passed on Windows and Ubuntu CI (run 39456546905).
 - [x] M1 Research, contracts, schemas, ingestion, normalization
 - [x] M2 Backend and cancellation
 - [x] M3 Persistence, service and desktop

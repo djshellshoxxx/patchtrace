@@ -193,6 +193,9 @@ def cmd_noise(args) -> tuple[int, dict]:
 
 
 def cmd_mutate(args) -> tuple[int, dict]:
+    from ..mutations.contracts import OPERATORS
+    if args.operator not in OPERATORS:
+        raise Usage(f'unknown mutation operator {args.operator!r}; choose from {list(OPERATORS)}')
     session = _session(args)
     doc = F.run_mutation(session, _base(args, session), args.operator, args.seed, opt=args.opt)
     name = F.write_doc(session.store, doc).name
