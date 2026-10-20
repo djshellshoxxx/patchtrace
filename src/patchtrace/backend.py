@@ -433,7 +433,19 @@ def quarantine_failed_run(root: Path, run: AnalysisRun, error: str) -> AnalysisR
     return run.model_copy(deep=True, update={'status': 'failed', 'error': message, 'raw_path': raw_path})
 
 
-RAW_ADAPTER_VERSION = 'patchtrace-ghidriff-adapter/1'
+RAW_ADAPTER_VERSION = 'patchtrace-ghidriff-adapter/2'  # serialized Ghidriff analysis changes raw output provenance
+
+
+def _ghidriff_argv(config: BackendConfig, older: Path, newer: Path, raw: Path,
+                   engine_project: Path, engine_gzfs: Path) -> list[str]:
+    """Build a sequential Ghidriff invocation, testable without launching Java."""
+    argv = [str(Path(config.python_executable).resolve()), *(('-I', '-X', 'utf8') if config.bundle else ()),
+            '-m', 'ghidriff', str(older), str(newer), '--output-path',
+            str(_validated_ghidra_output_path(raw)), '--project-location',
+            str(engine_project), '--gzfs-path', str(engine_gzfs), '--no-threaded']
+    if not config.allow_symbol_downloads:
+        argv.append('--no-symbols')
+    return argv
 
 
 def _open_raw_cache(config: BackendConfig, backend_version: str, settings: dict,
@@ -584,13 +596,7 @@ def run_comparison(config: BackendConfig, project: ComparisonProject, root: Path
             engine_gzfs = _validated_ghidra_output_path(scratch_root / 'gzfs')
             ghidra_settings = scratch_root / 'ghidra-settings'
             ghidra_settings.mkdir()
-            argv = [str(Path(config.python_executable).resolve()), *(('-I', '-X', 'utf8') if config.bundle else ()),
-                    '-m', 'ghidriff',
-                    str(paths['older']), str(paths['newer']), '--output-path',
-                    str(_validated_ghidra_output_path(raw)),
-                    '--project-location', str(engine_project), '--gzfs-path', str(engine_gzfs)]
-            if not config.allow_symbol_downloads:
-                argv.append('--no-symbols')
+            argv = _ghidriff_argv(config, paths['older'], paths['newer'], raw, engine_project, engine_gzfs)
             result = run_process(argv, cwd=Path(config.ghidra_dir), env=_environment(config, ghidra_settings),
                                  cancel=cancel,
                                  timeout_seconds=config.timeout_seconds,
