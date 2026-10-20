@@ -2,7 +2,7 @@
 
 !define APP_NAME "PatchTrace"
 !define APP_EXE "PatchTrace.exe"
-!define REPO_ROOT "${__FILEDIR__}.."
+!define REPO_ROOT "${__FILEDIR__}\.."
 !ifndef APP_VERSION
   !define APP_VERSION "0.1.0"
 !endif

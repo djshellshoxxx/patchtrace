@@ -42,7 +42,7 @@ def test_uninstaller_manifest_rejects_missing_executable(tmp_path: Path):
 
 def test_nsis_installer_script_uses_generated_manifest():
     script = (ROOT / "installer" / "PatchTrace.nsi").read_text(encoding="utf-8")
-    assert '!define REPO_ROOT "${__FILEDIR__}.."' in script
+    assert '!define REPO_ROOT "${__FILEDIR__}\\.."' in script
     assert '!include "${REPO_ROOT}\\dist\\PatchTrace-Uninstall.nsh"' in script
     assert 'RMDir /r "$INSTDIR"' not in script
     assert 'Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\PatchTrace' in script
