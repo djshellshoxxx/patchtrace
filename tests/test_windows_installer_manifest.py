@@ -42,6 +42,15 @@ def test_uninstaller_manifest_rejects_missing_executable(tmp_path: Path):
 
 def test_nsis_installer_script_uses_generated_manifest():
     script = (ROOT / "installer" / "PatchTrace.nsi").read_text(encoding="utf-8")
-    assert '!include "dist\\PatchTrace-Uninstall.nsh"' in script
+    assert '!define REPO_ROOT "${__FILEDIR__}.."' in script
+    assert '!include "${REPO_ROOT}\\dist\\PatchTrace-Uninstall.nsh"' in script
     assert 'RMDir /r "$INSTDIR"' not in script
     assert 'Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\PatchTrace' in script
+
+
+def test_nsis_source_paths_are_anchored_to_repository_root():
+    script = (ROOT / "installer" / "PatchTrace.nsi").read_text(encoding="utf-8")
+    assert '!insertmacro MUI_PAGE_LICENSE "${REPO_ROOT}\\LICENSE"' in script
+    assert 'File /r "${REPO_ROOT}\\dist\\PatchTrace\\*"' in script
+    assert 'File "${REPO_ROOT}\\third_party\\notices\\nsis-3.13\\COPYING"' in script
+    assert 'OutFile "${REPO_ROOT}\\dist\\PatchTrace-Windows-x64-Setup.exe"' in script

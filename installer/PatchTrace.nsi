@@ -2,13 +2,14 @@
 
 !define APP_NAME "PatchTrace"
 !define APP_EXE "PatchTrace.exe"
+!define REPO_ROOT "${__FILEDIR__}.."
 !ifndef APP_VERSION
   !define APP_VERSION "0.1.0"
 !endif
 
 Unicode true
 Name "${APP_NAME}"
-OutFile "dist\PatchTrace-Windows-x64-Setup.exe"
+OutFile "${REPO_ROOT}\dist\PatchTrace-Windows-x64-Setup.exe"
 InstallDir "$LOCALAPPDATA\Programs\PatchTrace"
 InstallDirRegKey HKCU "Software\PatchTrace" "InstallDir"
 RequestExecutionLevel user
@@ -22,7 +23,7 @@ VIAddVersionKey "ProductVersion" "${APP_VERSION}"
 VIAddVersionKey "FileDescription" "PatchTrace Windows x64 Setup"
 VIAddVersionKey "LegalCopyright" "Copyright PatchTrace contributors"
 
-!insertmacro MUI_PAGE_LICENSE "LICENSE"
+!insertmacro MUI_PAGE_LICENSE "${REPO_ROOT}\LICENSE"
 !insertmacro MUI_PAGE_DIRECTORY
 !insertmacro MUI_PAGE_INSTFILES
 !insertmacro MUI_UNPAGE_CONFIRM
@@ -32,9 +33,9 @@ VIAddVersionKey "LegalCopyright" "Copyright PatchTrace contributors"
 Section "Install"
   SetShellVarContext current
   SetOutPath "$INSTDIR"
-  File /r "dist\PatchTrace\*"
+  File /r "${REPO_ROOT}\dist\PatchTrace\*"
   SetOutPath "$INSTDIR\licenses\installer"
-  File "third_party\notices\nsis-3.13\COPYING"
+  File "${REPO_ROOT}\third_party\notices\nsis-3.13\COPYING"
   WriteUninstaller "$INSTDIR\Uninstall.exe"
   WriteRegStr HKCU "Software\PatchTrace" "InstallDir" "$INSTDIR"
   WriteRegStr HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\PatchTrace" "DisplayName" "PatchTrace"
@@ -55,5 +56,5 @@ Section "Uninstall"
   RMDir "$SMPROGRAMS\PatchTrace"
   DeleteRegKey HKCU "Software\PatchTrace"
   DeleteRegKey HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\PatchTrace"
-  !include "dist\PatchTrace-Uninstall.nsh"
+  !include "${REPO_ROOT}\dist\PatchTrace-Uninstall.nsh"
 SectionEnd
