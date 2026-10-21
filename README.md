@@ -385,5 +385,6 @@ The published beta passed 93 Windows tests, 91 Linux tests with two Windows-only
 | [QA record](docs/qa.md) | Repaired audit defects, test evidence, and unresolved acceptance checks. |
 | [Package audit](docs/package-audit.md) | Frozen runtime contents and dependency notice evidence. |
 | [Delivery tracker](tasks/todo.md) | Implemented milestones and remaining live acceptance. |
+| [Wiki source](docs/wiki/Home.md) | User guide, developer guide, architecture rationale and codebase map (copy for the GitHub wiki). |
 
 UI code stays separate from ingestion, backend lifecycle, persistence, evidence, providers, and reporting. See [AGENTS.md](AGENTS.md) for contributor rules. When adding a substantial module, update the module index and applicable specification before implementing it.
