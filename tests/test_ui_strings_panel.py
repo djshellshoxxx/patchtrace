@@ -407,3 +407,109 @@ def test_loading_the_declaration_imports_no_qt():
             'bad = [m for m in sys.modules if m.startswith(("PySide6", "patchtrace.ui_", "patchtrace.gui.qt"))]; '
             'sys.exit(1 if bad else 0)')
     assert subprocess.run([sys.executable, '-I', '-c', code], check=False).returncode == 0
+
+
+# ---- function pairing --------------------------------------------------------------------------------------------
+
+def paired_loaded(*changes, reason=None):
+    d = delta(*changes)
+    return Loaded(d, build_rows(d, unknown_reason=reason), {c.id: c for c in d.changes}, (), reason)
+
+
+def function_column(controller) -> list[str]:
+    return [texts[5] for texts in table_texts(controller)]
+
+
+def test_function_column_says_unknown_with_the_reason_when_no_pairing_exists(qtbot):
+    reason = 'the project has no completed analysis with matched functions'
+    controller, *_ = start(qtbot, lambda *_: paired_loaded(change('alpha text', tier=3), reason=reason))
+    assert function_column(controller) == [f'Unknown: {reason}']
+    assert reason in controller.panel.pairing.full_text()
+
+
+def test_function_column_names_a_linked_function_and_its_pair_state(qtbot):
+    from test_strings_view_model import record_link
+    linked = paired_loaded(change('linked text', tier=1, links=[record_link('newer', 'fn-1', 'm7')]),
+                           change('plain text', tier=3))
+    controller, *_ = start(qtbot, lambda *_: linked)
+    assert function_column(controller) == ['ParseHeader (modified)', 'No supported function link']
+    assert controller.panel.pairing.full_text() == '1 of 2 strings have a function link.'
+
+
+def test_open_function_opens_the_function_record_of_a_unique_match(qtbot):
+    from test_strings_view_model import record_link
+    both = [record_link('older', 'fo', 'm9'), record_link('newer', 'fn', 'm9')]
+    controller, nav, *_ = start(qtbot, lambda *_: paired_loaded(change('shared text', status='edited', links=both)))
+    controller.panel.table.selectRow(0)
+    assert controller.panel.buttons['function'].isEnabled()
+    controller.open_function()
+    anchor = nav.anchors[0]
+    assert (anchor.kind, anchor.key, anchor.side) == ('function', 'fo', 'older')
+
+
+def test_open_function_stays_disabled_when_two_functions_use_the_string(qtbot):
+    from test_strings_view_model import record_link
+    split = [record_link('newer', 'f1', 'm1'), record_link('newer', 'f2', 'm2')]
+    controller, nav, *_ = start(qtbot, lambda *_: paired_loaded(change('split text', links=split)))
+    controller.panel.table.selectRow(0)
+    assert not controller.panel.buttons['function'].isEnabled()
+    controller.open_function()
+    assert nav.anchors == []
+
+
+def test_linked_only_filter_hides_unlinked_strings_and_changes_no_store(qtbot):
+    from test_strings_view_model import record_link
+    linked = paired_loaded(change('linked text', tier=1, links=[record_link('newer', 'fn-1', 'm7')]),
+                           change('plain text', tier=3))
+    controller, *_ = start(qtbot, lambda *_: linked)
+    assert len(table_texts(controller)) == 2
+    controller.panel.linked.setChecked(True)
+    qtbot.waitUntil(lambda: len(table_texts(controller)) == 1, timeout=5000)
+    assert table_texts(controller)[0][1] == 'linked text' and len(controller.loaded.rows) == 2
+
+
+def test_the_scan_reads_the_project_snapshot_and_root_for_pairing(qtbot):
+    seen = []
+    project = FakeProject()
+    snapshot = SimpleNamespace(id='p', matches=[], runs=[])
+    project.project = lambda: snapshot
+    project.service = SimpleNamespace(root='/the/root')
+
+    def loader(request, token, report):
+        seen.append(request)
+        return SAMPLE
+    controller, *_ = start(qtbot, loader, project=project)
+    assert seen[0].project is snapshot and Path(seen[0].root) == Path('/the/root')
+
+
+def test_the_real_scan_links_a_literal_to_its_function_and_leaves_the_rest_unlinked(tmp_path):
+    from strings_pe import synergy_pair
+    from test_strings_links import project as make_project
+    from test_strings_links import record
+    pair = synergy_pair()
+    older, newer = tmp_path / 'older.bin', tmp_path / 'newer.bin'
+    older.write_bytes(pair.older)
+    newer.write_bytes(pair.newer)
+    code_old = 'void ParseHeader(void)\n{\n  log("bad header (%s)\\n");\n}\n'
+    code_new = 'void ParseHeader(void)\n{\n  log("bad header (%.64s)\\n");\n}\n'
+    matches, *_ = make_project([record('older', 'ParseHeader', code_old)], [record('newer', 'ParseHeader', code_new)])
+    snapshot = SimpleNamespace(id='p', matches=matches,
+                               runs=[SimpleNamespace(id='r', status='completed', raw_path=None, raw_sha256=None)])
+    request = Request(key(), older, newer, hashlib.sha256(pair.older).hexdigest(),
+                      hashlib.sha256(pair.newer).hexdigest(), root=tmp_path, project=snapshot)
+    loaded = scan_builtin(request, threading.Event(), lambda *a: None)
+    assert loaded.pairing_reason is None
+    by_text = {row.text: row for row in loaded.rows}
+    assert by_text['bad header (%.64s)'].function_cell == 'ParseHeader (modified)'
+    assert by_text['debug dump of internal state'].function_cell == 'No supported function link'
+
+
+def test_the_real_scan_without_a_project_reports_pairing_unknown(tmp_path):
+    older, newer = tmp_path / 'a.bin', tmp_path / 'b.bin'
+    older.write_bytes(b'\x00\x01common text\x00removed message\x00')
+    newer.write_bytes(b'\x00\x01common text\x00added message\x00')
+    request = Request(key(), older, newer, hashlib.sha256(older.read_bytes()).hexdigest(),
+                      hashlib.sha256(newer.read_bytes()).hexdigest())
+    loaded = scan_builtin(request, threading.Event(), lambda *a: None)
+    assert loaded.pairing_reason and 'analysis' in loaded.pairing_reason
+    assert all(r.function_cell.startswith('Unknown: ') for r in loaded.rows)

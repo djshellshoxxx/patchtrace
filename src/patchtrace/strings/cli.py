@@ -12,6 +12,10 @@ import argparse
 import threading
 from dataclasses import dataclass, field
 from pathlib import Path
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from .pairing import Image
 
 ACTIONS = ('list', 'delta', 'explain', 'scan', 'export')
 SOURCES = ('auto', 'floss', 'builtin')
@@ -119,32 +123,6 @@ def _artifacts(service) -> dict:
     return found
 
 
-@dataclass
-class _Image:
-    pe: object | None = None
-    overview: object | None = None
-
-
-def _inspect(path: Path, sha256: str) -> _Image:
-    """PE layout and import names of one verified artifact; an unparsable image just has no RVAs."""
-    from ..artifact_bytes import ArtifactBytesError, VerifiedArtifactReader
-    from ..intelligence.tools.common import ToolError
-    from ..intelligence.tools.normalize import PeMap
-    from ..pe_overview import inspect_pe
-    try:
-        reader = VerifiedArtifactReader.open_path(path, sha256)
-    except ArtifactBytesError as exc:
-        raise _fail(f'the artifact cannot be read ({exc.code})') from None
-    try:
-        overview = inspect_pe(reader)
-        try:
-            return _Image(PeMap.from_reader(reader), overview)
-        except ToolError:
-            return _Image(None, overview)
-    finally:
-        reader.close()
-
-
 def _floss_source(store, artifact):
     from .sources import FlossEvidenceSource
     found = store.latest('floss', artifact.side)
@@ -157,7 +135,7 @@ def _floss_source(store, artifact):
         consent_sha256=run.options.get('emulation_consent_sha256'), raw_sha256=raw_sha)
 
 
-def _source(args, service, store, artifact, image: _Image, cancel: threading.Event):
+def _source(args, service, store, artifact, image: Image, cancel: threading.Event):
     from .scan import BuiltinScanSource
     if args.source != 'builtin':
         floss = _floss_source(store, artifact)
@@ -172,7 +150,7 @@ def _source(args, service, store, artifact, image: _Image, cancel: threading.Eve
         cancel=cancel.is_set), 'builtin-scan'
 
 
-def _imports(image: _Image) -> tuple[frozenset[str], frozenset[str]]:
+def _imports(image: Image) -> tuple[frozenset[str], frozenset[str]]:
     overview = image.overview
     imports = overview.imports.dlls if overview and overview.imports else ()
     exports = overview.exports.names if overview and overview.exports else ()
@@ -197,31 +175,9 @@ def _load_anchors(path: Path | None):
 
 def _links(service, tables: dict, images: dict, notes: list[str]):
     """Pairing and function links when the project has a completed analysis and parsable images, else none."""
-    from ..intelligence.tools.normalize import FunctionPairing
-    from ..nway.contracts import NwayError
-    from ..nway.series import current_run_id, read_raw_matches
-    from .contracts import StringsError
-    from .links import SideFunctions, link_strings
-    project = service.project
-    run_id = current_run_id(project)
-    if not project.matches or run_id is None or any(images[s].pe is None for s in tables):
-        return FunctionPairing.empty(), None
-    try:
-        raw, raw_notes = read_raw_matches(service.root, project)
-    except NwayError as exc:
-        notes.append(f'function pairing unavailable: {exc}')
-        return FunctionPairing.empty(), None
-    pes = {side: images[side].pe for side in tables}
-    pairing = FunctionPairing.from_project(
-        project.matches, raw, older_base=pes['older'].image_base, newer_base=pes['newer'].image_base,
-        older_size=pes['older'].size_of_image, newer_size=pes['newer'].size_of_image, notes=raw_notes)
-    functions = {side: SideFunctions.from_matches(project.matches, side, pes[side].image_base,
-                                                  pes[side].size_of_image) for side in tables}
-    try:
-        return pairing, link_strings(tables, pairing=pairing, functions=functions, ghidra_group=f'ghidra:{run_id}')
-    except StringsError as exc:
-        notes.append(f'function links unavailable: {exc.message}')
-        return pairing, None
+    from .pairing import project_links
+    found = project_links(service.root, service.project, tables, images, notes)
+    return found.pairing, found.linked
 
 
 def compute(args, service, cancel: threading.Event) -> Computed:
@@ -233,7 +189,8 @@ def compute(args, service, cancel: threading.Event) -> Computed:
     artifacts = _artifacts(service)
     anchors = _load_anchors(args.anchors)
     store = ToolStore(EnrichmentStore(service.store), service.root, service.project.id, service.project.revision)
-    images = {side: _inspect(service.root / a.relative_path, a.sha256) for side, a in artifacts.items()}
+    from .pairing import inspect_image
+    images = {side: inspect_image(service.root / a.relative_path, a.sha256) for side, a in artifacts.items()}
     tables, sources, notes = {}, {}, []
     for side, artifact in artifacts.items():
         source, sources[side] = _source(args, service, store, artifact, images[side], cancel)
@@ -350,7 +307,8 @@ def _scan(args, service, cancel) -> int:
     args.source, args.anchors = 'builtin', None
     rows = []
     for side, artifact in _artifacts(service).items():
-        image = _inspect(service.root / artifact.relative_path, artifact.sha256)
+        from .pairing import inspect_image
+        image = inspect_image(service.root / artifact.relative_path, artifact.sha256)
         source, _label = _source(args, service, None, artifact, image, cancel)
         table = table_from_source(source.load())
         basis = table.basis
