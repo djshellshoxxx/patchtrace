@@ -23,7 +23,7 @@
 - [x] Cached-PDB `FileExistsError` under `--no-symbols`: per-run isolated Ghidra settings (PR #9). Native Windows CI 2026-10-12: plain Ghidriff reproduces; PatchTrace passes with persisted store (with/without PDB at embedded path) and clean. User clfs.sys binaries not supplied/tested.
 - [x] Linux x86-64 onedir build (`tools/build_linux.py`, CI `linux-package`/`linux-smoke`); local offscreen + Xvfb self-test pass
 - [ ] Verify live Ghidriff analysis from frozen Linux build
-- [ ] Local-only symbol policy: needs PatchTrace-owned Ghidriff launcher (CLI cannot set empty symbol URLs)
+- [x] Local-only symbol policy (SPEC-53 GHR-1..3 + CLI flags): PatchTrace-owned launcher forces an empty server list in `local` mode (hermetic fake-ghidriff tests); [ ] Setup radios/PDB folder list, Profiles `local` value, diagnose launcher lines; [ ] GHR-5 native air-gap matrix (real Ghidriff/Ghidra, OS network block) - until then "no servers" is configuration, not an air-gap claim
 - [x] Phase 2 B1-B4, storage, pipeline, CLI (rank/flags/correlate/cache), desktop Rank changes, report export (SPEC-07, PatchTrace-authored)
 - [ ] Reconcile SPEC-07 with the supplied handoff package and validate its 9 valid / 9 invalid examples (package not supplied)
 - [ ] Derived-cache hit objective 500 ms at 10,000 pairs (measured 3.1 s); UI responsiveness at 10,000 pairs unmeasured
