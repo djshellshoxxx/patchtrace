@@ -67,7 +67,8 @@ QA_WORKFLOW = WORKFLOWS[0].parent / 'qa-windows.yml'
 def test_qa_workflow_runs_the_qt_gate_at_20x_on_linux_and_5x_on_windows():
     text = QA_WORKFLOW.read_text(encoding='utf-8')
     assert re.search(r'os: ubuntu-latest\s+repeat: 20', text) and re.search(r'os: windows-latest\s+repeat: 5', text)
-    assert 'python tools/qt_gate.py --repeat ${{ matrix.repeat }}' in text
+    assert 'python tools/qt_gate.py --repeat ${{ matrix.repeat }} --shard ${{ matrix.shard }}' in text
+    assert len(re.findall(r'repeat: 20\s+shard: \d/4', text)) == 4 and re.search(r'repeat: 5\s+shard: 1/1', text)
 
 
 def test_qa_workflow_reports_each_matrix_leg_to_the_release_notes():

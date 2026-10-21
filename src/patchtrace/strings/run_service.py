@@ -18,8 +18,9 @@ from ..intelligence.tools.common import ToolError
 from ..intelligence.tools.floss import FlossConfig
 from ..intelligence.tools.store import ToolStore
 from ..jobs import run_process
-from .cli import _artifacts, _inspect, table_from_source
+from .cli import _artifacts, table_from_source
 from .contracts import StringsError
+from .pairing import inspect_image as _inspect
 from .scan import BuiltinScanSource, ScanError
 from .sources import FlossEvidenceSource
 from .table import StringTable

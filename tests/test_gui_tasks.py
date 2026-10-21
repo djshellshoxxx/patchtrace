@@ -493,6 +493,17 @@ def test_qt_gate_lists_the_files_repeat_times_in_one_session():
             gate.build_command(*bad)
 
 
+def test_qt_gate_shards_cover_every_file_exactly_once_and_reject_bad_specs():
+    gate = _qt_gate()
+    files = [f'tests/{name}.py' for name in 'abcdefg']
+    slices = [gate.shard_files(files, f'{k}/3') for k in (1, 2, 3)]
+    assert sorted(f for part in slices for f in part) == files and slices[0] == ['tests/a.py', 'tests/d.py', 'tests/g.py']
+    assert gate.shard_files(files, '1/1') == files
+    for bad in ('0/3', '4/3', '1/0', 'x', '1-3', ''):
+        with pytest.raises(ValueError):
+            gate.shard_files(files, bad)
+
+
 def test_qt_gate_environment_enables_faulthandler_and_offscreen():
     env = _qt_gate().environment({})
     assert env == {'QT_QPA_PLATFORM': 'offscreen', 'PYTHONFAULTHANDLER': '1'}

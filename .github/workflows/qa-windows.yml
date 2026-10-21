@@ -68,11 +68,24 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
+        # One pass of the GUI files takes about 5 minutes on a runner, so 20 repeats of all of them overrun any sane
+        # timeout; the Linux repeat count stays 20 but the files are dealt over four legs.
         include:
           - os: ubuntu-latest
             repeat: 20
+            shard: 1/4
+          - os: ubuntu-latest
+            repeat: 20
+            shard: 2/4
+          - os: ubuntu-latest
+            repeat: 20
+            shard: 3/4
+          - os: ubuntu-latest
+            repeat: 20
+            shard: 4/4
           - os: windows-latest
             repeat: 5
+            shard: 1/1
     runs-on: ${{ matrix.os }}
     timeout-minutes: 120
     env:
@@ -87,7 +100,7 @@ jobs:
       - if: runner.os == 'Linux'
         run: sudo apt-get update && sudo apt-get install -y libegl1 libopengl0 libgl1
       - run: "python -m pip install --only-binary=:all: -e '.[dev,search,rules]'"
-      - run: python tools/qt_gate.py --repeat ${{ matrix.repeat }}
+      - run: python tools/qt_gate.py --repeat ${{ matrix.repeat }} --shard ${{ matrix.shard }}
   linux-package:
     needs: qa
     runs-on: ubuntu-22.04
