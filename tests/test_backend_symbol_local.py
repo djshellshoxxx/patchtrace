@@ -160,7 +160,7 @@ def test_config_validation_and_argv(env, tmp_path):
         assert any('PT-SYMBOL-MODE' in e for e in backend._config_errors(cfg)), bad
     local = _LocalSymbols(Path('/s/ptlaunch.py'), Path('/s/r.json'), Path('/s/symbols'), ('a.pdb',))
     argv = _ghidriff_argv(base, Path('/o'), Path('/n'), tmp_path / 'raw', tmp_path / 'p', tmp_path / 'g', local)
-    assert '--no-symbols' not in argv and argv[argv.index('--') + 1:][:2] == ['/o', '/n']
+    assert '--no-symbols' not in argv and argv[argv.index('--') + 1:][:2] == [str(Path('/o')), str(Path('/n'))]
     assert argv[argv.index('--pt-mode') + 1] == 'local' and argv[-2:] == ['--symbols-path', '/s/symbols']
     off = _ghidriff_argv(BackendConfig(base.python_executable, base.ghidra_dir), Path('/o'), Path('/n'),
                          tmp_path / 'raw', tmp_path / 'p', tmp_path / 'g')
