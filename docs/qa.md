@@ -194,6 +194,36 @@ Not verified here: Windows; the frozen executable; a live backend for `rules pro
 | Known gates | one test per state L0-L8 and each gate and window banner; banned-string sweep over every producible string (stems `probab`, `likelihood`, `confidence`, `percent`, `vulnerab`, `exploit`, `proven`, `certain`, `verified`, `safe`, `secure`, with the sanctioned phrases removed); no enum slug and no percent sign in any cell; hostile names, notes and tooltips stay text; `a11y_audit` clean in every state; no new top-level window; late results dropped on a project switch; shutdown cancels and waits |
 | Not verified here | Windows; real screen readers; a PE-backed project (the resolver finds no row in the synthetic sample, so Go to function is only exercised with an injected resolver); the freeze of the GUI-thread collection on a large project |
 
+### [T9:extern-c-linkage] C source function locator regression (2026-10-20, Linux container)
+| Check | Evidence | Result |
+|---|---|---|
+| Focused tests | `QT_QPA_PLATFORM=offscreen python -m pytest -q tests/test_tier_r_csrc.py tests/test_mutations_ops.py` | 29 passed, 23 skipped; skips are compiler-backed mutation acceptance checks because Clang is not installed/on PATH |
+| Lint and patch hygiene | `python -m ruff check tools/calibration/tier_r/csrc.py tests/test_tier_r_csrc.py`; `git diff --check` | clean |
+| Scope | `find_functions` tests cover definitions before, inside, and after `extern "C" {}` linkage blocks plus standalone `extern "C"` declarations | pass |
+| Independent review | reviewed parser boundary handling and tests | approved; tests do not invoke a C/C++ preprocessor |
+
+### Full-suite Linux container run (2026-10-20; CPython 3.12)
+| Check | Evidence | Result |
+|---|---|---|
+| Full suite | `QT_QPA_PLATFORM=offscreen python -m pytest -q` | 15,716 passed, 12 failed, 83 skipped, 4 xfailed in 1,711.93 s |
+| Locally reproducible product issues | screenshot renderer and unknown mutation operator failures listed above | both fixed; combined rerun of `tests/test_site_screens.py` and `tests/test_tier_r_eval_cli.py`: 27 passed, 2 skipped |
+| Environment-limited failures | isolated `python -I` import checks, local AF_UNIX socket test, and three time-budget tests | `-I` subprocesses cannot see this environment's editable install (`ModuleNotFoundError`); AF_UNIX creation is denied by the container; budget tests failed under full-suite load but the 26 relevant cases passed in isolation |
+| Cross-runner confirmation | GitHub Actions run 39456546905 on Windows and Ubuntu | both runners passed the complete pytest suite and Ruff; Windows later failed only at the NSIS installer compile step, tracked under PR #95 |
+
+### [site-screens:files-panel] Site screenshot renderer follows the current panel UI (2026-10-20, Linux offscreen)
+| Check | Evidence | Result |
+|---|---|---|
+| Screenshot generation | `QT_QPA_PLATFORM=offscreen python tools/site/render_screenshots.py --only overview` | rendered current Files dock at 1440x900; synthetic project; no engine probing |
+| Site screenshot suite | `QT_QPA_PLATFORM=offscreen python -m pytest -q tests/test_site_screens.py` | 12 passed |
+| Lint and patch hygiene | `python -m ruff check tools/site/render_screenshots.py tests/test_site_screens.py`; `git diff --check` | clean |
+| Updated visual asset | `site/assets/screens/overview.png`, `.webp`, `screens.json` | reflects the Files dock in the workspace rather than the removed overview dialog |
+
+### [T9:mutation-cli-usage] Unknown mutation operator validation (2026-10-20, Linux container)
+| Check | Evidence | Result |
+|---|---|---|
+| Regression test | `QT_QPA_PLATFORM=offscreen python -m pytest -q tests/test_tier_r_eval_cli.py` | 15 passed, 2 skipped; compiler/toolchain acceptance cases remain blocked because Clang/LLVM tools are not installed/on PATH |
+| Lint and patch hygiene | `python -m ruff check tools/calibration/tier_r/cli.py tests/test_tier_r_eval_cli.py`; `git diff --check` | clean |
+| Behavior | Unknown `mutate --operator` is rejected as a usage error before probing compiler tools; JSON status is `error` and exit code is 2 | pass |
 ### Windows installer source-path fix (PR #95 follow-up)
 - GitHub Actions run 39012939220 failed compiling `installer/PatchTrace.nsi`: NSIS could not open the relative `LICENSE` path from the script's directory.
 - Anchored installer input and output paths to `${__FILEDIR__}..` with `REPO_ROOT`; added static regression coverage for the license, bundle, notice, generated uninstaller manifest, and output paths.

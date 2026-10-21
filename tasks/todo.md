@@ -1,4 +1,6 @@
 # PatchTrace delivery tracker
+- [x] Fixed the two locally reproducible full-suite issues recorded in `docs/qa.md`: site screenshot renderer follows the Files panel; Tier R rejects an unknown mutation operator before toolchain probing. Focused rerun: 27 passed, 2 skipped.
+- [x] Linux-container-only full-suite failures documented in `docs/qa.md` are environment limitations (`python -I` excludes the editable install; AF_UNIX sockets are denied; timing budgets are load-sensitive); full pytest and Ruff passed on Windows and Ubuntu CI (run 39456546905).
 
 ## Windows Setup release track (PR #95, 2026-10-17)
 - [x] Implement pinned NSIS per-user Windows installer on existing PyInstaller onedir runtime.

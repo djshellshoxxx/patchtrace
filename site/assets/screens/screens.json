@@ -35,13 +35,13 @@
     },
     {
       "id": "overview",
-      "title": "PE file overview",
-      "alt": "The File overview dialog. A first table lists recorded fields for the older and newer files (name, size, size change, SHA-256, hash comparison, format). A status line reads file inspection complete. A second, longer table lists parsed PE fields for both files, such as machine type AMD64, characteristics, entry point, image base, alignment and subsystem.",
-      "caption": "File overview: recorded metadata plus a bounded, read-only PE comparison that works before any analysis is run.",
-      "width": 1180,
-      "height": 960,
-      "png_bytes": 148252,
-      "webp_bytes": 75138
+      "title": "Files panel",
+      "alt": "The PatchTrace workspace with the Files dock open below it. The dock compares recorded fields for the older and newer files (name, size, size change, SHA-256, hash comparison, format) with parsed PE fields for both files, including machine type AMD64, characteristics, entry point, image base, alignment and subsystem. The status line reports file inspection complete.",
+      "caption": "Files panel: recorded metadata and a bounded, read-only PE comparison alongside the workspace.",
+      "width": 1440,
+      "height": 900,
+      "png_bytes": 208850,
+      "webp_bytes": 116530
     },
     {
       "id": "export",
