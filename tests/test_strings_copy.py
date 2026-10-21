@@ -16,7 +16,7 @@ from patchtrace.tooltips import TooltipEntry
 EXPECTED_TIPS = (
     ['strings.dock', 'strings.action', 'strings.table', 'strings.export']
     + [f'strings.col.{k}' for k in 'change string type older newer function cues source'.split()]
-    + [f'strings.filter.{k}' for k in 'change type side cue minlen text scope noise'.split()]
+    + [f'strings.filter.{k}' for k in 'change type side cue minlen text linked scope noise'.split()]
     + [f'strings.run.{k}' for k in ('builtin', 'floss', 'emulation')]
     + [f'strings.{k}' for k in 'cancel probe browse basis detail rescan'.split()]
     + ['strings.copy.safe', 'strings.copy.exact', 'strings.open.function', 'strings.open.hex'])
