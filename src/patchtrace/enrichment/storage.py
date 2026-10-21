@@ -227,7 +227,10 @@ class EnrichmentStore:
         self.ensure()
         if self.read_only:
             raise EnrichmentError('PT-ENRICH-STALE', 'project enrichment data was written by a newer PatchTrace')
-        text = json.dumps(body, sort_keys=True, separators=(',', ':'), ensure_ascii=False, allow_nan=False)
+        try:
+            text = json.dumps(body, sort_keys=True, separators=(',', ':'), ensure_ascii=False, allow_nan=False)
+        except ValueError as exc:  # NaN or infinity in the body
+            raise EnrichmentError('PT-ENRICH-INPUT', 'enrichment result contains a non-finite number') from exc
         size = len(text.encode('utf-8'))
         if size > MAX_ROW:
             raise EnrichmentError('PT-ENRICH-LIMIT', 'enrichment result exceeds 32 MiB row limit')

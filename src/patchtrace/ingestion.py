@@ -8,6 +8,7 @@ import struct
 import tempfile
 from pathlib import Path
 
+from .hostile_text import is_hostile
 from .models import Artifact
 
 MAX_ARTIFACT_BYTES = 1024 * 1024 * 1024
@@ -32,8 +33,10 @@ def safe_path(root: Path, relative: str) -> Path:
 
 
 def display_text(text: str) -> str:
-    """Keep code units UTF-8 cannot encode (invalid file-name bytes, lone surrogates) visible and storable."""
-    return text.encode('utf-8', 'backslashreplace').decode('utf-8')
+    """Keep code units UTF-8 cannot encode (invalid file-name bytes, lone surrogates) visible and storable;
+    control, bidirectional and other format characters become `?` (the file is addressed by path and hash)."""
+    escaped = text.encode('utf-8', 'backslashreplace').decode('utf-8')
+    return ''.join('?' if is_hostile(char) else char for char in escaped)
 
 
 def file_fingerprint(path: Path) -> tuple:

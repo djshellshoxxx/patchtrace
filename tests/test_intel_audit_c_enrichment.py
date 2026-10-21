@@ -167,6 +167,19 @@ def test_c09_snapshot_files_beyond_the_size_cap_are_refused_unread(project, tmp_
     assert code == 2 and 'cannot load snapshot big.json' in err and 'exceeds' in err, err
 
 
+@pytest.mark.parametrize('field, value, needle', [
+    ('snapshot_id', '0' * 64, 'snapshot_id'),
+    ('retrieved_at', 'yesterday', 'retrieved_at'),
+    ('retrieved_at', '2026-01-01T00:00:00', 'retrieved_at'),
+], ids=['forged-id', 'unparseable-time', 'naive-time'])
+def test_acq10_import_checks_snapshot_identity_and_time(field, value, needle):
+    good = snap().model_dump(mode='json')
+    bad = {**good, field: value}
+    with pytest.raises(EnrichmentError) as info:
+        cve.parse_snapshots(json.dumps([good, bad]).encode())
+    assert info.value.code == 'PT-ENRICH-INPUT' and 'snapshot 1' in str(info.value) and needle in str(info.value)
+
+
 def test_c09_the_loader_reports_typed_errors_for_every_refusal():
     good = json.dumps(snap().model_dump(mode='json')).encode()
     assert [s.cve_id for s in cve.parse_snapshots(good)] == [CVE_ID]

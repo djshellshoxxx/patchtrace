@@ -43,7 +43,7 @@ from .ir.ladder_port import ReaderMnemonics, ReaderSide
 from .ir.reader import IrReader
 from .ladder.engine import run_ladder
 from .ladder.residual import pass_table, table_digest
-from .limits import DEFAULT_LIMITS, Budget, UnifiedError, UnifiedLimits
+from .limits import DEFAULT_LIMITS, Budget, BudgetExhausted, UnifiedError, UnifiedLimits
 from .registry import REGISTRY, Registry
 from .sources import DEGRADING, AdapterOutput, GhidriffRun, RawGhidriff, SourceInputs, read_snapshot
 from .sources.ghidriff import GhidriffAdapter, load_raw
@@ -51,7 +51,12 @@ from .sources.ladder import anchor_pairs, ladder_output
 from .sources.manual import ManualAdapter, manual_digest_of
 from .sources.secondary import SecondaryAdapter, bindiff_flags, read_loaded, source_ref_of
 
+TIMEOUT = 'timeout'    # limitation: the deadline passed after the ladder began; unfinished rows stay `unknown` (U7-06)
 DEGRADING_SUFFIXES = ('-address-basis-not-comparable', '-pair-mismatch')
+# 07 U4: a cap hit makes the result partial; `neighbour-cap` only trims context and keeps the result complete
+# (tools/unified/bench.py `_row_checks` agrees)
+DEGRADING_LIMITS = ('ladder-limit-block-cap', 'ladder-limit-assign-time-cap', 'ladder-limit-assign-bucket-cap',
+                    'ladder-limit-callsite-cap', 'ladder-limit-rehash-wave-cap')
 Sections = tuple[tuple[int, int], ...]
 
 
@@ -138,7 +143,7 @@ def plan_identity(inputs: SourceInputs, addr: AddressMap, sources: Iterable[str]
 def is_degrading(limitation: str) -> bool:
     """A limitation that makes the result `partial` (a missing or unusable input), as opposed to a plain note."""
     slug = limitation.split(':', 1)[0]
-    return slug in DEGRADING or slug.endswith(DEGRADING_SUFFIXES)
+    return slug in DEGRADING or slug == TIMEOUT or slug in DEGRADING_LIMITS or slug.endswith(DEGRADING_SUFFIXES)
 
 
 def _ladder(ir: IrInputs, manual: AdapterOutput, limits: UnifiedLimits, budget: Budget, residual: bool) -> AdapterOutput:
@@ -187,19 +192,32 @@ def compute_stage(inputs: SourceInputs, addr: AddressMap, *, result_dir: Path, s
     groups = [g for o in outputs for g in o.groups]
     nodes = arbiter.merge_nodes(o.nodes for o in outputs)
     say('fusion')
-    decided = arbiter.decide(atoms, groups, nodes, registry=registry, budget=budget, limits=limits)
+    if budget.cancel is not None and budget.cancel.is_set():
+        budget.check()                              # a cancel always aborts; only a spent deadline keeps the partial
+    # U7-06: a deadline the ladder already spent must not discard its partial result, so fusion and the fact context
+    # (bounded work over the ladder's output) run under a cancel-only budget and the row loop below stops by itself.
+    late = ir is not None and budget.expired()
+    shared = Budget(None, budget.cancel, check_every=budget.check_every, clock=budget.clock) if late else budget
+    decided = arbiter.decide(atoms, groups, nodes, registry=registry, budget=shared, limits=limits)
     say('facts')
     sides = None if ir is None else IrSides(ir.older, ir.newer, ir.older_sections, ir.newer_sections,
                                             identical=inputs.older_sha256 == inputs.newer_sha256)
     context = FactsContext.build(older_sha256=inputs.older_sha256, newer_sha256=inputs.newer_sha256, addr=addr,
                                  matches=inputs.matches, rows=decided, bindiff_flags=bindiff_flags(scoped, addr),
-                                 limits=limits, ir_sides=sides, budget=budget)
+                                 limits=limits, ir_sides=sides, budget=shared)
     rows: list[UnifiedMatch] = []
     facts = []
     judged_pairs = []
+    truncated = False
     for d in decided:
-        budget.tick()
-        if d.pair is not None and d.decision in ('matched', 'tentative', 'candidate', 'contested'):
+        if not truncated:
+            try:
+                budget.tick()
+            except BudgetExhausted as exc:
+                if exc.code == 'PT-UNIFIED-CANCEL':
+                    raise
+                truncated = True                    # the rest keep their decision and an `unknown` materiality
+        if not truncated and d.pair is not None and d.decision in ('matched', 'tentative', 'candidate', 'contested'):
             row_id = keys.row_id(inputs.older_sha256, inputs.newer_sha256, d.older, d.newer)
             judged = verdict.judge(row_id, d.decision, context.collect(d), limits)
             facts.append(judged.facts)
@@ -211,6 +229,8 @@ def compute_stage(inputs: SourceInputs, addr: AddressMap, *, result_dir: Path, s
             rows.append(arbiter.to_match(d, nodes, inputs.older_sha256, inputs.newer_sha256))
     say('write')
     limitations = sorted({*(['ir-not-extracted'] if ir is None else []), *(x for o in outputs for x in o.limitations)})
+    if truncated or 'ladder-partial:deadline' in limitations:
+        limitations = sorted({*limitations, TIMEOUT})
     status = 'partial' if any(is_degrading(x) for x in limitations) else 'complete'
     refs = (None, None) if ir is None else ir.refs()
     manifest = store.write_result(

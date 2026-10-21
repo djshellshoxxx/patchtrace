@@ -341,7 +341,9 @@ class KevStore:
         metas = self.list_snapshots()
         pointer, _ = self._read_pointer()
         kept = {meta.snapshot_id for meta in metas[:keep]} | ({pointer.snapshot_id} if pointer else set())
-        kept_hashes = {meta.raw_sha256 for meta in metas if meta.snapshot_id in kept}
+        # The pointer's own hash too: its description may be unreadable, and a local import has no other copy.
+        kept_hashes = {meta.raw_sha256 for meta in metas if meta.snapshot_id in kept} | (
+            {pointer.raw_sha256} if pointer else set())
         removed, files, freed = [], 0, 0
 
         def delete(path: Path) -> None:

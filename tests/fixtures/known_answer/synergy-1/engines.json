@@ -1,0 +1,59 @@
+{
+ "contract": "synergy-1-engines",
+ "note": "SYNTHETIC hand-written engine outputs reduced to EnginePairs (LBL s5); RVAs are decimal; native = engine similarity in [0, 1]; order_key is smaller = more suspicious",
+ "engines": [
+  {
+   "engine": "ghidriff",
+   "version": "0.8.0-synthetic",
+   "symbols": "hidden",
+   "implicit_unchanged": true,
+   "pairs": [
+    {"old_rva": 4208, "new_rva": 4208, "identity": "paired", "flag": true, "native": 0.71, "order_key": [0.71, "f09"]},
+    {"old_rva": 4160, "new_rva": 4160, "identity": "paired", "flag": true, "native": 0.74, "order_key": [0.74, "f05"]},
+    {"old_rva": 4256, "new_rva": 4256, "identity": "paired", "flag": true, "native": 0.8, "order_key": [0.8, "f11"]},
+    {"old_rva": 4240, "new_rva": 4240, "identity": "paired", "flag": true, "native": 0.86, "order_key": [0.86, "f07"]},
+    {"old_rva": 4128, "new_rva": 4128, "identity": "paired", "flag": true, "native": 0.93, "order_key": [0.93, "f03"]}
+   ]
+  },
+  {
+   "engine": "rz-diff",
+   "version": "0.9.1-synthetic",
+   "symbols": "hidden",
+   "implicit_unchanged": false,
+   "pairs": [
+    {"old_rva": 4096, "new_rva": 4096, "identity": "paired", "flag": true, "native": 0.99, "order_key": [0.99, "f01"]},
+    {"old_rva": 4112, "new_rva": 4112, "identity": "paired", "flag": false, "native": 1.0, "order_key": null},
+    {"old_rva": 4128, "new_rva": 4128, "identity": "paired", "flag": true, "native": 0.97, "order_key": [0.97, "f03"]},
+    {"old_rva": 4144, "new_rva": 4144, "identity": "paired", "flag": false, "native": 1.0, "order_key": null},
+    {"old_rva": 4160, "new_rva": 4160, "identity": "paired", "flag": true, "native": 0.62, "order_key": [0.62, "f05"]},
+    {"old_rva": 4176, "new_rva": 4176, "identity": "paired", "flag": false, "native": 1.0, "order_key": null},
+    {"old_rva": 4192, "new_rva": 4192, "identity": "paired", "flag": false, "native": 1.0, "order_key": null},
+    {"old_rva": 4208, "new_rva": 4208, "identity": "paired", "flag": true, "native": 0.75, "order_key": [0.75, "f09"]},
+    {"old_rva": 4224, "new_rva": 4224, "identity": "paired", "flag": false, "native": 1.0, "order_key": null},
+    {"old_rva": 4240, "new_rva": 4240, "identity": "paired", "flag": true, "native": 0.69, "order_key": [0.69, "f07"]},
+    {"old_rva": 4256, "new_rva": 4256, "identity": "paired", "flag": true, "native": 0.66, "order_key": [0.66, "f11"]},
+    {"old_rva": null, "new_rva": 4288, "identity": "unpaired", "flag": null, "native": null, "order_key": null}
+   ]
+  },
+  {
+   "engine": "unified",
+   "version": "unified-result/1-synthetic",
+   "symbols": "hidden",
+   "implicit_unchanged": false,
+   "pairs": [
+    {"old_rva": 4096, "new_rva": 4096, "identity": "paired", "flag": false, "native": null, "order_key": null},
+    {"old_rva": 4112, "new_rva": 4112, "identity": "paired", "flag": true, "native": null, "order_key": [1, -1, 4112]},
+    {"old_rva": 4128, "new_rva": 4128, "identity": "paired", "flag": false, "native": null, "order_key": null},
+    {"old_rva": 4144, "new_rva": 4144, "identity": "paired", "flag": false, "native": null, "order_key": null},
+    {"old_rva": 4160, "new_rva": 4160, "identity": "paired", "flag": false, "native": null, "order_key": null},
+    {"old_rva": 4176, "new_rva": 4176, "identity": "paired", "flag": false, "native": null, "order_key": null},
+    {"old_rva": 4192, "new_rva": 4192, "identity": "paired", "flag": false, "native": null, "order_key": null},
+    {"old_rva": 4208, "new_rva": 4208, "identity": "paired", "flag": false, "native": null, "order_key": null},
+    {"old_rva": 4224, "new_rva": 4224, "identity": "paired", "flag": true, "native": null, "order_key": [0, -1, 4224]},
+    {"old_rva": 4240, "new_rva": 4240, "identity": "paired", "flag": true, "native": null, "order_key": [0, -1, 4240]},
+    {"old_rva": 4256, "new_rva": 4256, "identity": "paired", "flag": false, "native": null, "order_key": null},
+    {"old_rva": null, "new_rva": 4288, "identity": "unpaired", "flag": null, "native": null, "order_key": null}
+   ]
+  }
+ ]
+}

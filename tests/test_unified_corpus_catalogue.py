@@ -17,7 +17,8 @@ from tools.calibration import corpus  # noqa: E402
 from tools.calibration.tier_r import contracts as C  # noqa: E402
 from tools.unified.corpus import catalogue  # noqa: E402
 
-PERMISSIVE_ONLY = {'MIT', 'Apache-2.0', 'BSD-2-Clause', 'BSD-3-Clause', 'Zlib', 'ISC', 'Libpng-2.0', 'blessing'}
+PERMISSIVE_ONLY = {'MIT', 'Apache-2.0', 'BSD-2-Clause', 'BSD-3-Clause', 'Zlib', 'ISC', 'Libpng-2.0', 'blessing',
+                   'BSD-3-Clause WITH PCRE2-exception'}
 
 
 def test_the_committed_catalogue_has_no_problems():

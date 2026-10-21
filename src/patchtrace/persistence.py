@@ -17,6 +17,7 @@ import socket
 import sqlite3
 import stat
 import tempfile
+import unicodedata
 from pathlib import Path
 from uuid import uuid4
 
@@ -36,10 +37,12 @@ _HISTORY_STATS = 'SELECT COUNT(*), MAX(sequence) FROM history'
 
 def strict_json(text: str) -> dict:
     def pairs(items):
-        value = {}
+        value, seen = {}, set()
         for key, item in items:
-            if key in value:
+            folded = unicodedata.normalize('NFC', key)  # NFC and NFD spellings are one key, as for archive member names
+            if folded in seen:
                 raise ValueError(f'PT-SCHEMA: duplicate JSON key {key}')
+            seen.add(folded)
             value[key] = item
         return value
     def invalid_constant(value):
@@ -281,7 +284,8 @@ class ProjectStore:
             except OSError as exc:
                 raise ValueError(f'PT-STORAGE: project directory cannot be created: {exc.strerror or exc}') from exc
         if not self.root.is_dir():
-            raise ValueError('PT-STORAGE: project directory does not exist')
+            raise ValueError('PT-STORAGE: project path is not a directory' if self.root.exists()
+                             else 'PT-STORAGE: project directory does not exist')
         self.lock = ProjectLock(self.root)
         created_database = False
         try:
