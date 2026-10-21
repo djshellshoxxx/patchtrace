@@ -67,6 +67,7 @@ from .service import ProjectService
 from .tooltips import apply_tooltip, apply_tooltips
 from .ui_bundle_setup import BundleSetup
 from .ui_inspection import InspectionThread, side_summary
+from .ui_symbols import SymbolChoice
 
 REVIEWS = ['unreviewed', 'accepted', 'rejected', 'needs-review']
 CATEGORIES = ['modified', 'added', 'removed', 'ambiguous', 'split', 'merged', 'unmatched', 'unchanged']
@@ -1015,7 +1016,7 @@ class SetupDialog(QDialog):
             form.addRow(name, row)
         self.allow_symbol_downloads = QCheckBox('Allow Ghidriff symbol-server lookups (may access the Internet)')
         self.allow_symbol_downloads.setChecked(settings.value('backend/allow_symbol_downloads', False, type=bool))
-        form.addRow(self.allow_symbol_downloads)
+        self.symbols = SymbolChoice(form, settings, self.allow_symbol_downloads)  # SPEC-53 local PDB mode
         self.restrict_env = QCheckBox('Restrict backend environment to an allowlist (experimental)')
         self.restrict_env.setChecked(settings.value('backend/restrict_env', False, type=bool))
         form.addRow(self.restrict_env)
@@ -1135,9 +1136,8 @@ class SetupDialog(QDialog):
         return BackendConfig(python_executable=self.python.text().strip(), ghidra_dir=self.ghidra.text().strip(),
                              timeout_seconds=self.timeout.value(),
                              allow_symbol_downloads=self.allow_symbol_downloads.isChecked(),
-                             java_home=self.java_home.text().strip(),
-                             restrict_env=self.restrict_env.isChecked(),
-                             env_passthrough=parse_env_passthrough(self.env_passthrough.text()))
+                             java_home=self.java_home.text().strip(), restrict_env=self.restrict_env.isChecked(),
+                             env_passthrough=parse_env_passthrough(self.env_passthrough.text()), **self.symbols.kwargs())
 
     def check_dependencies(self):
         if self.worker and self.worker.isRunning():
@@ -2568,7 +2568,7 @@ class MainWindow(QMainWindow):
                              ghidra_dir=str(self.settings.value('backend/ghidra', '')),
                              timeout_seconds=setting_int(self.settings, 'backend/timeout', 3600, 10, 86400),
                              allow_symbol_downloads=allow_symbols,
-                             java_home=str(self.settings.value('backend/java_home', '')),
+                             java_home=str(self.settings.value('backend/java_home', '')), **SymbolChoice.saved(self.settings, consent),
                              restrict_env=self.settings.value('backend/restrict_env', False, type=bool),
                              env_passthrough=parse_env_passthrough(str(self.settings.value('backend/env_passthrough', ''))),
                              # Raw-output reuse (SPEC-07 §13) is opt-in via the selected profile's cache_dir.
@@ -2985,7 +2985,7 @@ class MainWindow(QMainWindow):
         self.settings.setValue('backend/restrict_env', dialog.restrict_env.isChecked())
         self.settings.setValue('backend/env_passthrough', dialog.env_passthrough.text().strip())
         self.settings.setValue('backend/timeout', dialog.timeout.value())
-        self.settings.setValue('backend/allow_symbol_downloads', dialog.allow_symbol_downloads.isChecked())
+        dialog.symbols.save(self.settings)
         self.settings.setValue('desktop/font_size', dialog.font_size.value())
         self.settings.setValue('provider/context_budget', dialog.context_budget.value())
         self.settings.setValue('desktop/sync', dialog.sync.isChecked())

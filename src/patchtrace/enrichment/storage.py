@@ -56,7 +56,10 @@ KINDS = frozenset({'signals', 'ranking', 'wil', 'cve-snapshot', 'contextual', 'p
                    'anchor-batch',
                    # Program E (FAB-4): the analyst's pins on anchors, append-only events. Same rule: never derived,
                    # so retention never deletes them and no producer retraction can reach them.
-                   'anchor-pin'})
+                   'anchor-pin',
+                   # SPEC-DA-01 Mode A: an imported Diaphora result (diaphora/1). Imported evidence, never derived,
+                   # so retention never deletes it; no extension_version bump, as `anchor-batch`.
+                   'diaphora-matches'})
 
 # Retention (SPEC-07h H1). Only recomputable derived kinds are ever deleted; imported evidence
 # (`secondary-matches`), `cve-snapshot` and unknown kinds are never evicted.

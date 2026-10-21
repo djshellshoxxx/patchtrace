@@ -18,7 +18,7 @@ Listing of every file under `docs/specs/`, 2026-10-14. SPEC number and status co
 | [cli-umbrella.md](cli-umbrella.md) | SPEC-44 | draft | CLI umbrella contract (SPEC-44) |
 | [completeness-audit.md](completeness-audit.md) | none (audit; cite by path) | n/a | Specification and implementation completeness audit |
 | [csaf-cve-interpretation-engine.md](csaf-cve-interpretation-engine.md) | SPEC-35 (renamed) | draft | Microsoft CSAF CVE Interpretation Engine (SPEC-28) |
-| [diaphora-optional-engine.md](diaphora-optional-engine.md) | SPEC-DA-01 | approved | SPEC-DA-01: Optional Diaphora comparison technique for PatchTrace |
+| [diaphora-optional-engine.md](diaphora-optional-engine.md) | SPEC-DA-01 | partial (Mode A) | SPEC-DA-01: Optional Diaphora comparison technique for PatchTrace |
 | [enrichment-hardening-backlog.md](enrichment-hardening-backlog.md) | SPEC-07h | partial | SPEC-07h: Enrichment hardening backlog (P1 items of the 2026-10-14 audit) |
 | [enrichment.md](enrichment.md) | SPEC-07 | partial | SPEC-07: Phase 2 enrichment — change signals, ranking, WIL, CVE context, cache |
 | [ghidriff-launcher-symbols.md](ghidriff-launcher-symbols.md) | SPEC-53 | draft | PatchTrace-owned Ghidriff launcher and symbol policy (SPEC-53) |
