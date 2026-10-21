@@ -39,3 +39,8 @@ def resolve_mode(symbol_mode: str, allow_symbol_downloads: bool) -> str:
 def cache_policy(mode: str) -> str:
     """RuntimeFingerprint.symbol_policy for a mode: off -> disabled, local -> local, online -> online."""
     return {'off': 'disabled', 'local': 'local', 'online': 'online'}[mode]
+
+
+def parse_symbol_dirs(text: str) -> tuple[str, ...]:
+    """Folder list typed in Setup: semicolon-separated (a colon is part of a Windows drive), blanks dropped."""
+    return tuple(dict.fromkeys(part.strip() for part in str(text).split(';') if part.strip()))

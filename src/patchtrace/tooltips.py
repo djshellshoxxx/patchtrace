@@ -503,6 +503,17 @@ REGISTRY: dict[str, TooltipEntry] = {
         'Symbols improve names but contact a symbol server.',
         'When on, comparison may make network requests. When off, none are made.',
         'Applies to Ghidriff symbol lookups only.'),
+    'setup.symbol_local': _e(
+        'Name functions from PDB symbol files you already have, without any network access.',
+        'Symbols improve names; this keeps every lookup on your machine.',
+        'PatchTrace copies only a PDB whose GUID and age match the binary into a private per-run folder and '
+        'tells Ghidra to use no symbol servers. Off by default.',
+        'Cannot be combined with Internet symbol lookups.'),
+    'setup.symbol_dirs': _e(
+        'Folders searched for PDB files, separated by semicolons, at most 16.',
+        'Only a PDB named in the binary and matching its GUID and age is used; others are skipped.',
+        'Saved with Save setup. Folders are searched one level deep by exact file name.',
+        availability='Used only when local PDB mode is on.'),
     'setup.timeout': _e(
         'Seconds a comparison may run before it is stopped, a whole number from 10 to 86400.',
         'Prevents a stuck backend from running forever.', 'Saved with Save setup.'),
