@@ -232,10 +232,10 @@ Not verified here: Windows; the frozen executable; a live backend for `rules pro
 ### SPEC-53 local symbol mode and launcher (2026-10-21, Linux container)
 | Check | Evidence | Result |
 |---|---|---|
-| Staging, PDB identity reader, launcher, backend integration, CLI flag validation | `QT_QPA_PLATFORM=offscreen python -m pytest -q tests/test_symbols_staging.py tests/test_ptlaunch.py tests/test_backend_symbol_local.py tests/test_nway_series.py` | see PR description for the final counts |
+| Staging, PDB identity reader, launcher, backend integration, CLI flag validation | `QT_QPA_PLATFORM=offscreen python -m pytest -q tests/test_symbols_staging.py tests/test_ptlaunch.py tests/test_backend_symbol_local.py tests/test_nway_series.py` | full suite 15584 passed, 6 failed (pre-existing, rapidfuzz extra not installed), 286 skipped |
 | Scope of the evidence | all runs use a FAKE `ghidriff` package and synthetic PDBs/PEs | Not evidence that real Ghidriff 4f5d895 or Ghidra 12.0.4 honours an empty server list; not an air-gap test (GHR-5 open, needs Windows and an OS-level network block) |
 ### SPEC-DA-01 Diaphora Mode A import (2026-10-21, Linux container)
 | Check | Evidence | Result |
 |---|---|---|
-| Guard, parser, address mapping, provenance, store, bridge, CLI, schemas | `QT_QPA_PLATFORM=offscreen python -m pytest -q tests/test_diaphora_import.py tests/test_diaphora_cli.py tests/test_diaphora_schemas.py` | see PR description for the final counts |
+| Guard, parser, address mapping, provenance, store, bridge, CLI, schemas | `QT_QPA_PLATFORM=offscreen python -m pytest -q tests/test_diaphora_import.py tests/test_diaphora_cli.py tests/test_diaphora_schemas.py` | full suite 15584 passed, 6 failed (pre-existing, rapidfuzz extra not installed), 286 skipped |
 | Scope of the evidence | synthetic result databases only (`tests/diaphora_support.py`), never produced by Diaphora; no real Diaphora, IDA or Hex-Rays run | Not evidence of compatibility with Diaphora 3.4.3 output (EA text encoding, ratio range and `type` strings are assumptions). The live gate and value-over-Ghidriff evaluation are open |
