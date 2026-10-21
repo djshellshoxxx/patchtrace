@@ -46,7 +46,6 @@ from .acquisition.contracts import AUTHENTICITY_NOTE, AcquisitionError, validate
 from .acquisition.transport import BLOB_SUFFIX, METADATA_HOST, SYMBOL_HOST, AcquisitionConsent, Transport
 from .alignment import alignment_strategy, diff_hunks
 from .backend import BackendConfig, diagnose, parse_env_passthrough, quarantine_failed_run, run_comparison
-from .symbols.modes import parse_symbol_dirs
 from .evidence import build_context, resolve_evidence
 from .gui.qt.codediff import clear_selections, compose_selections, row_selection
 from .gui.qt.host import PanelHost
@@ -65,6 +64,7 @@ from .runtime_discovery import (
     require_bundle_ok,
 )
 from .service import ProjectService
+from .symbols.modes import parse_symbol_dirs
 from .tooltips import apply_tooltip, apply_tooltips
 from .ui_bundle_setup import BundleSetup
 from .ui_inspection import InspectionThread, side_summary
