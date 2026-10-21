@@ -690,3 +690,8 @@
 - [x] Add Windows CI install/self-test/uninstall acceptance and include installer plus SHA-256 sidecar in the Windows artifact.
 - [ ] Confirm current-head Linux and Windows pytest/Ruff, Windows frozen smoke, installer build and installer lifecycle test.
 - [ ] Merge through the established PR checks and publish a new beta release containing the installer. The installer workflow change must be followed by a later non-workflow release-triggering commit per docs/release-process.md workflow-file hazard.
+
+### [DA-A] Optional Diaphora result import (SPEC-DA-01 Mode A, 2026-10-21)
+- [x] Contracts, hostile-input sqlite guard, result import, address map, provenance binding, Ghidriff bridge, store kind `diaphora-matches`, CLI `diaphora inspect|import|show`, generated schemas (synthetic fixtures only)
+- [ ] Verify against a real Diaphora 3.4.3 `.diaphora` result (EA text encoding, ratio range, `type` strings are assumptions); pinned release SHA
+- [ ] Export-DB import (functions, blocks, CFG, compilation units), `signals`, `context`, `ui_diaphora.py`, HTML-safe report namespace; Mode B runner/probe (external Python + Diaphora, `jobs.run_process`, cache key per spec); Mode C licensed IDA export; license review before any distribution

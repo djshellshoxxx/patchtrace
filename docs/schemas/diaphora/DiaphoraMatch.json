@@ -1,0 +1,166 @@
+{
+  "$id": "https://patchtrace.local/schemas/diaphora/1/DiaphoraMatch.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "address_status": {
+      "enum": [
+        "verified-rva",
+        "external-ea-only",
+        "ambiguous"
+      ],
+      "title": "Address Status",
+      "type": "string"
+    },
+    "category": {
+      "enum": [
+        "best",
+        "partial",
+        "unreliable",
+        "multimatch"
+      ],
+      "title": "Category",
+      "type": "string"
+    },
+    "heuristic": {
+      "maxLength": 4096,
+      "title": "Heuristic",
+      "type": "string"
+    },
+    "index": {
+      "minimum": 0,
+      "title": "Index",
+      "type": "integer"
+    },
+    "newer_ea": {
+      "maximum": 18446744073709551615,
+      "minimum": 0,
+      "title": "Newer Ea",
+      "type": "integer"
+    },
+    "newer_ea_text": {
+      "maxLength": 4096,
+      "title": "Newer Ea Text",
+      "type": "string"
+    },
+    "newer_name": {
+      "maxLength": 4096,
+      "title": "Newer Name",
+      "type": "string"
+    },
+    "newer_nodes": {
+      "anyOf": [
+        {
+          "minimum": 0,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Newer Nodes"
+    },
+    "newer_rva": {
+      "anyOf": [
+        {
+          "maximum": 18446744073709551615,
+          "minimum": 0,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Newer Rva"
+    },
+    "older_ea": {
+      "maximum": 18446744073709551615,
+      "minimum": 0,
+      "title": "Older Ea",
+      "type": "integer"
+    },
+    "older_ea_text": {
+      "maxLength": 4096,
+      "title": "Older Ea Text",
+      "type": "string"
+    },
+    "older_name": {
+      "maxLength": 4096,
+      "title": "Older Name",
+      "type": "string"
+    },
+    "older_nodes": {
+      "anyOf": [
+        {
+          "minimum": 0,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Older Nodes"
+    },
+    "older_rva": {
+      "anyOf": [
+        {
+          "maximum": 18446744073709551615,
+          "minimum": 0,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Older Rva"
+    },
+    "ratio_milli": {
+      "anyOf": [
+        {
+          "maximum": 1000,
+          "minimum": 0,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Ratio Milli"
+    },
+    "ratio_text": {
+      "maxLength": 4096,
+      "title": "Ratio Text",
+      "type": "string"
+    },
+    "ratio_transform": {
+      "enum": [
+        "direct",
+        "capped-bonus",
+        "unavailable"
+      ],
+      "title": "Ratio Transform",
+      "type": "string"
+    }
+  },
+  "required": [
+    "index",
+    "category",
+    "older_ea_text",
+    "newer_ea_text",
+    "older_ea",
+    "newer_ea",
+    "older_rva",
+    "newer_rva",
+    "older_name",
+    "newer_name",
+    "ratio_text",
+    "ratio_milli",
+    "ratio_transform",
+    "older_nodes",
+    "newer_nodes",
+    "heuristic",
+    "address_status"
+  ],
+  "title": "DiaphoraMatch",
+  "type": "object"
+}

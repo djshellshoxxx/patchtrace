@@ -1,0 +1,304 @@
+{
+  "DiaphoraDiffManifest": {
+    "invalid": [
+      {
+        "example": {
+          "contract": "diaphora-diff/1",
+          "diaphora_version": "3.4.3",
+          "newer_binary_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "older_binary_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "orientation": "older->newer",
+          "result_sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+          "unexpected_field": 1
+        },
+        "reason": "extra fields are forbidden"
+      },
+      {
+        "example": {
+          "contract": "diaphora-diff/1",
+          "diaphora_version": "3.4.3",
+          "newer_binary_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "older_binary_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "orientation": "older->newer",
+          "result_sha256": "XYZ"
+        },
+        "reason": "a SHA-256 is 64 lower-case hex digits"
+      }
+    ],
+    "valid": {
+      "contract": "diaphora-diff/1",
+      "diaphora_version": "3.4.3",
+      "newer_binary_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "older_binary_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "orientation": "older->newer",
+      "result_sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+    }
+  },
+  "DiaphoraMatch": {
+    "invalid": [
+      {
+        "example": {
+          "address_status": "verified-rva",
+          "category": "best",
+          "heuristic": "Same name",
+          "index": 0,
+          "newer_ea": 6442455056,
+          "newer_ea_text": "180001010",
+          "newer_name": "sub_new",
+          "newer_nodes": 6,
+          "newer_rva": 4112,
+          "older_ea": 6442455040,
+          "older_ea_text": "180001000",
+          "older_name": "sub_old",
+          "older_nodes": 5,
+          "older_rva": 4096,
+          "ratio_milli": 980,
+          "ratio_text": "0.980",
+          "ratio_transform": "direct",
+          "unexpected_field": 1
+        },
+        "reason": "extra fields are forbidden"
+      },
+      {
+        "example": {
+          "address_status": "verified-rva",
+          "category": "great",
+          "heuristic": "Same name",
+          "index": 0,
+          "newer_ea": 6442455056,
+          "newer_ea_text": "180001010",
+          "newer_name": "sub_new",
+          "newer_nodes": 6,
+          "newer_rva": 4112,
+          "older_ea": 6442455040,
+          "older_ea_text": "180001000",
+          "older_name": "sub_old",
+          "older_nodes": 5,
+          "older_rva": 4096,
+          "ratio_milli": 980,
+          "ratio_text": "0.980",
+          "ratio_transform": "direct"
+        },
+        "reason": "only best, partial, unreliable and multimatch exist"
+      }
+    ],
+    "valid": {
+      "address_status": "verified-rva",
+      "category": "best",
+      "heuristic": "Same name",
+      "index": 0,
+      "newer_ea": 6442455056,
+      "newer_ea_text": "180001010",
+      "newer_name": "sub_new",
+      "newer_nodes": 6,
+      "newer_rva": 4112,
+      "older_ea": 6442455040,
+      "older_ea_text": "180001000",
+      "older_name": "sub_old",
+      "older_nodes": 5,
+      "older_rva": 4096,
+      "ratio_milli": 980,
+      "ratio_text": "0.980",
+      "ratio_transform": "direct"
+    }
+  },
+  "DiaphoraMatchSet": {
+    "invalid": [
+      {
+        "example": {
+          "contract": "diaphora/1",
+          "duplicate_rows": 0,
+          "engine": "diaphora",
+          "engine_version": "3.4.3",
+          "limitations": [
+            "Diaphora ratio is a Diaphora-specific heuristic similarity, not a BinDiff confidence or a probability.",
+            "Pseudocode, microcode and graph evidence from Diaphora is often correlated with Ghidriff; agreement is not independent proof.",
+            "Imported rows were produced outside PatchTrace; only the file and pair hashes are verified here."
+          ],
+          "matches": [
+            {
+              "address_status": "verified-rva",
+              "category": "best",
+              "heuristic": "Same name",
+              "index": 0,
+              "newer_ea": 6442455056,
+              "newer_ea_text": "180001010",
+              "newer_name": "sub_new",
+              "newer_nodes": 6,
+              "newer_rva": 4112,
+              "older_ea": 6442455040,
+              "older_ea_text": "180001000",
+              "older_name": "sub_old",
+              "older_nodes": 5,
+              "older_rva": 4096,
+              "ratio_milli": 980,
+              "ratio_text": "0.980",
+              "ratio_transform": "direct"
+            }
+          ],
+          "newer_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "older_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "orientation": "older->newer",
+          "result_sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+          "trust": "manifest-bound",
+          "unexpected_field": 1,
+          "unmatched": [
+            {
+              "address_status": "verified-rva",
+              "ea": 6442457088,
+              "ea_text": "180001800",
+              "index": 0,
+              "name": "sub_only_old",
+              "rva": 6144,
+              "side": "older",
+              "source_side": "primary"
+            }
+          ]
+        },
+        "reason": "extra fields are forbidden"
+      },
+      {
+        "example": {
+          "contract": "diaphora/1",
+          "duplicate_rows": 0,
+          "engine": "diaphora",
+          "engine_version": "3.4.3",
+          "limitations": [
+            "Diaphora ratio is a Diaphora-specific heuristic similarity, not a BinDiff confidence or a probability.",
+            "Pseudocode, microcode and graph evidence from Diaphora is often correlated with Ghidriff; agreement is not independent proof.",
+            "Imported rows were produced outside PatchTrace; only the file and pair hashes are verified here."
+          ],
+          "matches": [
+            {
+              "address_status": "verified-rva",
+              "category": "best",
+              "heuristic": "Same name",
+              "index": 0,
+              "newer_ea": 6442455056,
+              "newer_ea_text": "180001010",
+              "newer_name": "sub_new",
+              "newer_nodes": 6,
+              "newer_rva": 4112,
+              "older_ea": 6442455040,
+              "older_ea_text": "180001000",
+              "older_name": "sub_old",
+              "older_nodes": 5,
+              "older_rva": 4096,
+              "ratio_milli": 980,
+              "ratio_text": "0.980",
+              "ratio_transform": "direct"
+            }
+          ],
+          "newer_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "older_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "orientation": "older->newer",
+          "result_sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+          "trust": "verified",
+          "unmatched": [
+            {
+              "address_status": "verified-rva",
+              "ea": 6442457088,
+              "ea_text": "180001800",
+              "index": 0,
+              "name": "sub_only_old",
+              "rva": 6144,
+              "side": "older",
+              "source_side": "primary"
+            }
+          ]
+        },
+        "reason": "trust is manifest-bound or user-attested"
+      }
+    ],
+    "valid": {
+      "contract": "diaphora/1",
+      "duplicate_rows": 0,
+      "engine": "diaphora",
+      "engine_version": "3.4.3",
+      "limitations": [
+        "Diaphora ratio is a Diaphora-specific heuristic similarity, not a BinDiff confidence or a probability.",
+        "Pseudocode, microcode and graph evidence from Diaphora is often correlated with Ghidriff; agreement is not independent proof.",
+        "Imported rows were produced outside PatchTrace; only the file and pair hashes are verified here."
+      ],
+      "matches": [
+        {
+          "address_status": "verified-rva",
+          "category": "best",
+          "heuristic": "Same name",
+          "index": 0,
+          "newer_ea": 6442455056,
+          "newer_ea_text": "180001010",
+          "newer_name": "sub_new",
+          "newer_nodes": 6,
+          "newer_rva": 4112,
+          "older_ea": 6442455040,
+          "older_ea_text": "180001000",
+          "older_name": "sub_old",
+          "older_nodes": 5,
+          "older_rva": 4096,
+          "ratio_milli": 980,
+          "ratio_text": "0.980",
+          "ratio_transform": "direct"
+        }
+      ],
+      "newer_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "older_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "orientation": "older->newer",
+      "result_sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+      "trust": "manifest-bound",
+      "unmatched": [
+        {
+          "address_status": "verified-rva",
+          "ea": 6442457088,
+          "ea_text": "180001800",
+          "index": 0,
+          "name": "sub_only_old",
+          "rva": 6144,
+          "side": "older",
+          "source_side": "primary"
+        }
+      ]
+    }
+  },
+  "DiaphoraUnmatched": {
+    "invalid": [
+      {
+        "example": {
+          "address_status": "verified-rva",
+          "ea": 6442457088,
+          "ea_text": "180001800",
+          "index": 0,
+          "name": "sub_only_old",
+          "rva": 6144,
+          "side": "older",
+          "source_side": "primary",
+          "unexpected_field": 1
+        },
+        "reason": "extra fields are forbidden"
+      },
+      {
+        "example": {
+          "address_status": "verified-rva",
+          "ea": 6442457088,
+          "ea_text": "180001800",
+          "index": 0,
+          "name": "sub_only_old",
+          "rva": 6144,
+          "side": "both",
+          "source_side": "primary"
+        },
+        "reason": "a side is older or newer"
+      }
+    ],
+    "valid": {
+      "address_status": "verified-rva",
+      "ea": 6442457088,
+      "ea_text": "180001800",
+      "index": 0,
+      "name": "sub_only_old",
+      "rva": 6144,
+      "side": "older",
+      "source_side": "primary"
+    }
+  }
+}
