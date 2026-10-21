@@ -12,6 +12,7 @@ from pathlib import Path
 
 from .bodyhash import Disassembly, body_fact, disassemble, hash_functions
 from .build import BuildResult
+from .contracts import masked_body_must_match
 from .csrc import FunctionDef, Source, compare_spans
 from .debuginfo import ImageFunction, Inventory, inventory
 from .pe import read_pe
@@ -171,9 +172,12 @@ def label_diff(old: SideData, new: SideData, *, label_source: str,
             label, kind, note = 'ambiguous', None, 'source span not found'
         check = 'unchecked'
         if name in declared_changed:
-            check = 'ok' if label in ('changed', 'ambiguous') else 'disagree'
+            # D-04: an ambiguous row is explained but not verified; it must not count as agreement (plan 4.5).
+            check = {'changed': 'ok', 'ambiguous': 'unchecked'}.get(label, 'disagree')
             if check == 'disagree':
                 note = (note + '; ' if note else '') + f'card declares a change, evidence says {label}'
+            elif check == 'unchecked':
+                note = (note + '; ' if note else '') + 'card declares a change, evidence is ambiguous: not verified'
         elif name in declared_unchanged:
             check = 'ok' if label != 'changed' else 'disagree'
             if check == 'disagree':
@@ -211,6 +215,8 @@ def label_construction(old: SideData, new: SideData, *, label_source: str, seman
             note = ''
             if label == 'changed' and body != 'different':
                 check, note = 'disagree', 'planted semantic change left the masked body unchanged'
+            elif label == 'cosmetic' and masked_body_must_match(kind) and body not in ('identical', 'address-only'):
+                check, note = 'disagree', 'planted cosmetic change altered the masked body'
             out.append(_record(j, identity='same', label=label, kind=kind, body=body, source='planted-mutation',
                                check=check, notes=note))
             continue

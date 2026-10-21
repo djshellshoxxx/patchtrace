@@ -19,7 +19,7 @@ from patchtrace.calibration.artifact import CONTRACT, digest, parse_artifact
 from patchtrace.calibration.features import FEATURE_SCHEMA
 
 from .ablation import run_ablations
-from .baselines import all_baselines
+from .baselines import all_baselines, unavailable
 from .common import Row, canonical_json, r12
 from .cv import CVConfig, FittedModel, final_model, nested_cv
 from .evaluate import evaluate_profile
@@ -169,6 +169,7 @@ def run_pipeline(rows: Sequence[Row], *, names: Sequence[str], kinds: Sequence[s
                                   ood_hard=nested.ood_hard if continuous_idx else None,
                                   b_count=b_count, null_sims=null_sims)
     evaluation['n_dev_natural'] = sum(r.stratum == 'natural' for r in rows)
+    evaluation['baselines_unavailable'] = unavailable(names)
     evaluation['dev_neg'] = dev_negatives(rows)
     evaluation['dev_lineages'] = evaluation['n_groups']
     evaluation['tau_selection'] = {'tau': tau, 'tau_low': tau_low}

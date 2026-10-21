@@ -41,6 +41,22 @@ class EngineOutput:
     ignored_unaddressed: int = 0
 
 
+def _choice_key(p: Prediction) -> tuple:
+    """Total order over the duplicates of one (old, new): higher native similarity first (unknown last), then the
+    unflagged one (an engine that does not consistently claim a change does not get a flag), then names, order key."""
+    return (-1 if p.similarity_milli is None else 0, -(p.similarity_milli or 0), p.changed, p.old_name or '',
+            p.new_name or '', repr(p.order_key))
+
+
+def dedupe_predictions(predictions) -> tuple[list[Prediction], int]:
+    """(one prediction per (old, new) in a provider-order-independent choice, number of dropped duplicates) (D-09)."""
+    groups: dict[tuple[int, int], list[Prediction]] = {}
+    for p in predictions:
+        groups.setdefault((p.old_rva, p.new_rva), []).append(p)
+    kept = [min(groups[k], key=_choice_key) for k in sorted(groups)]
+    return kept, sum(len(v) - 1 for v in groups.values())
+
+
 def blocked(engine: str, reason: str) -> EngineOutput:
     return EngineOutput(engine, 'blocked', reason=clean(reason))
 
@@ -94,11 +110,8 @@ def from_match_set(engine: str, match_set: SecondaryMatchSet, image_base: int) -
 def to_engine_pairs(out: EngineOutput, symbols: str) -> EP.EnginePairs:
     """The scorer-neutral view of one engine run. Flagged rows are ordered by ascending native similarity, then
     name (an unknown similarity sorts last), unless the output carries its own `order_key` (attention, unified)."""
-    rows, seen = [], set()
-    for p in out.predictions:
-        if (p.old_rva, p.new_rva) in seen:
-            continue
-        seen.add((p.old_rva, p.new_rva))
+    rows = []
+    for p in dedupe_predictions(out.predictions)[0]:
         key = None
         if p.changed:
             sim = math.inf if p.similarity_milli is None else p.similarity_milli

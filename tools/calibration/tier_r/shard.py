@@ -482,7 +482,13 @@ def _engine_status(rows: list[dict]) -> dict:
     versions = {r['version'] for r in rows if r.get('version')}
     if len(versions) > 1:
         raise ShardError(f'engine {rows[0]["engine"]} ran with different versions: {sorted(versions)}')
-    status = (next(iter(states)) if len(states) == 1 else 'partial')
+    if len(states) == 1:
+        status = next(iter(states))
+    elif not states & {'ok', 'partial'}:
+        # D-08: no run completed anywhere, so say the worst thing that happened instead of 'partial'
+        status = max(states, key=lambda x: STATUS_ORDER.get(x, 0))
+    else:
+        status = 'partial'
     if sum(r['failures'] for r in rows) and status == 'ok':
         status = 'partial'
     reason = '; '.join(sorted({r['reason'] for r in rows if r.get('reason')}))[:500] or None
