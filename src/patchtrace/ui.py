@@ -64,10 +64,10 @@ from .runtime_discovery import (
     require_bundle_ok,
 )
 from .service import ProjectService
-from .symbols.modes import parse_symbol_dirs
 from .tooltips import apply_tooltip, apply_tooltips
 from .ui_bundle_setup import BundleSetup
 from .ui_inspection import InspectionThread, side_summary
+from .ui_symbols import SymbolChoice
 
 REVIEWS = ['unreviewed', 'accepted', 'rejected', 'needs-review']
 CATEGORIES = ['modified', 'added', 'removed', 'ambiguous', 'split', 'merged', 'unmatched', 'unchanged']
@@ -1016,17 +1016,7 @@ class SetupDialog(QDialog):
             form.addRow(name, row)
         self.allow_symbol_downloads = QCheckBox('Allow Ghidriff symbol-server lookups (may access the Internet)')
         self.allow_symbol_downloads.setChecked(settings.value('backend/allow_symbol_downloads', False, type=bool))
-        form.addRow(self.allow_symbol_downloads)
-        # SPEC-53 local mode: PDBs from analyst-chosen folders, Ghidra gets an empty server list (no network).
-        self.symbol_local = QCheckBox('Use matching PDB files from the folders below (no network)')
-        self.symbol_local.setChecked(str(settings.value('backend/symbol_mode', '')) == 'local')
-        form.addRow(self.symbol_local)
-        self.symbol_dirs = QLineEdit(str(settings.value('backend/symbol_dirs', '')))
-        self.symbol_dirs.setPlaceholderText('PDB folders, separated by semicolons (at most 16)')
-        form.addRow('PDB folders', self.symbol_dirs)
-        self.allow_symbol_downloads.toggled.connect(self._symbol_choice_changed)
-        self.symbol_local.toggled.connect(self._symbol_choice_changed)
-        self._symbol_choice_changed()
+        self.symbols = SymbolChoice(form, settings, self.allow_symbol_downloads)  # SPEC-53 local PDB mode
         self.restrict_env = QCheckBox('Restrict backend environment to an allowlist (experimental)')
         self.restrict_env.setChecked(settings.value('backend/restrict_env', False, type=bool))
         form.addRow(self.restrict_env)
@@ -1070,8 +1060,7 @@ class SetupDialog(QDialog):
         layout.addWidget(self.check)
         apply_tooltips(self, {
             'python': 'setup.python', 'ghidra': 'setup.ghidra_dir', 'java_home': 'setup.java_home',
-            'allow_symbol_downloads': 'setup.symbol_downloads', 'symbol_local': 'setup.symbol_local',
-            'symbol_dirs': 'setup.symbol_dirs', 'timeout': 'setup.timeout',
+            'allow_symbol_downloads': 'setup.symbol_downloads', 'timeout': 'setup.timeout',
             'restrict_env': 'setup.restrict_env', 'env_passthrough': 'setup.env_passthrough',
             'font_size': 'setup.font_size', 'context_budget': 'setup.context_budget', 'sync': 'setup.sync',
             'diagnostics': 'setup.diagnostics', 'find': 'setup.find', 'bundle_sha': 'setup.bundle_sha',
@@ -1143,26 +1132,12 @@ class SetupDialog(QDialog):
         if value:
             edit.setText(value)
 
-    def _symbol_choice_changed(self, *_):
-        online = self.allow_symbol_downloads.isChecked()   # online and local are exclusive; online needs its consent
-        self.symbol_local.setEnabled(not online)
-        self.symbol_dirs.setEnabled(self.symbol_local.isChecked() and not online)
-
-    def symbol_mode(self) -> str:
-        if self.allow_symbol_downloads.isChecked():
-            return 'online'
-        return 'local' if self.symbol_local.isChecked() else 'off'
-
     def config(self):
-        local = self.symbol_mode() == 'local'
         return BackendConfig(python_executable=self.python.text().strip(), ghidra_dir=self.ghidra.text().strip(),
                              timeout_seconds=self.timeout.value(),
                              allow_symbol_downloads=self.allow_symbol_downloads.isChecked(),
-                             symbol_mode='local' if local else '',
-                             symbol_pdb_dirs=parse_symbol_dirs(self.symbol_dirs.text()) if local else (),
-                             java_home=self.java_home.text().strip(),
-                             restrict_env=self.restrict_env.isChecked(),
-                             env_passthrough=parse_env_passthrough(self.env_passthrough.text()))
+                             java_home=self.java_home.text().strip(), restrict_env=self.restrict_env.isChecked(),
+                             env_passthrough=parse_env_passthrough(self.env_passthrough.text()), **self.symbols.kwargs())
 
     def check_dependencies(self):
         if self.worker and self.worker.isRunning():
@@ -2589,17 +2564,11 @@ class MainWindow(QMainWindow):
         # The Setup checkbox is the explicit network consent. A non-default profile can only
         # narrow it (online requires both); it can never enable symbol downloads on its own.
         allow_symbols = consent if profile.name == 'default' else (consent and profile.symbol_policy == 'online')
-        # SPEC-53: local PDB mode needs no network consent, so it is independent of the profile's online policy;
-        # it is never combined with online lookups.
-        local = not allow_symbols and str(self.settings.value('backend/symbol_mode', '')) == 'local'
         config = BackendConfig(python_executable=str(self.settings.value('backend/python', '')),
                              ghidra_dir=str(self.settings.value('backend/ghidra', '')),
                              timeout_seconds=setting_int(self.settings, 'backend/timeout', 3600, 10, 86400),
                              allow_symbol_downloads=allow_symbols,
-                             symbol_mode='local' if local else '',
-                             symbol_pdb_dirs=(parse_symbol_dirs(str(self.settings.value('backend/symbol_dirs', '')))
-                                              if local else ()),
-                             java_home=str(self.settings.value('backend/java_home', '')),
+                             java_home=str(self.settings.value('backend/java_home', '')), **SymbolChoice.saved(self.settings, consent),
                              restrict_env=self.settings.value('backend/restrict_env', False, type=bool),
                              env_passthrough=parse_env_passthrough(str(self.settings.value('backend/env_passthrough', ''))),
                              # Raw-output reuse (SPEC-07 §13) is opt-in via the selected profile's cache_dir.
@@ -3016,9 +2985,7 @@ class MainWindow(QMainWindow):
         self.settings.setValue('backend/restrict_env', dialog.restrict_env.isChecked())
         self.settings.setValue('backend/env_passthrough', dialog.env_passthrough.text().strip())
         self.settings.setValue('backend/timeout', dialog.timeout.value())
-        self.settings.setValue('backend/allow_symbol_downloads', dialog.allow_symbol_downloads.isChecked())
-        self.settings.setValue('backend/symbol_mode', dialog.symbol_mode())
-        self.settings.setValue('backend/symbol_dirs', dialog.symbol_dirs.text().strip())
+        dialog.symbols.save(self.settings)
         self.settings.setValue('desktop/font_size', dialog.font_size.value())
         self.settings.setValue('provider/context_budget', dialog.context_budget.value())
         self.settings.setValue('desktop/sync', dialog.sync.isChecked())
