@@ -382,3 +382,10 @@ Automated: `tests/test_tier_w_fetch.py` (33 passed) and `tests/test_tier_w_symbo
 | Setup behavior and tooltip audit | `QT_QPA_PLATFORM=offscreen python -m pytest -q tests/test_tooltips.py::test_setup_dialog_all_tabs_and_profiles tests/test_ui_symbol_local.py` | 7 passed in 51.77 s; covers radio exclusivity, legacy online migration, local config persistence, folder deduplication/removal, 16-folder cap, accessible names and Setup tooltip coverage |
 | Lint and patch hygiene | `python -m ruff check src tests tools`; `git diff --check` | clean |
 | Scope | Qt offscreen tests only | No Windows visual, DPI, screen reader, or real Ghidriff/air-gap evidence; GHR-5 remains open. |
+
+### [SPEC-53:profile-local] Profile symbol-policy narrowing (2026-10-22, Linux)
+| Check | Evidence | Result |
+|---|---|---|
+| Profile validation, digest, GUI, settings matrix, schema regeneration | `QT_QPA_PLATFORM=offscreen python -m pytest -q tests/test_profiles.py tests/test_ui_profiles.py tests/test_unified_contracts.py::test_generate_schemas_reproduces_committed_files` | 55 passed in 73.46 s; local policy has a new digest, and a named profile cannot enable a mode above Setup |
+| Schema | `docs/schemas/profile/AnalysisProfile.json` regenerated | `symbol_policy` enum is `disabled | local | online`; prior enum values and digest inputs remain unchanged |
+| Lint and patch hygiene | `python -m ruff check src tests tools`; `git diff --check` | clean |

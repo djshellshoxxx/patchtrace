@@ -68,7 +68,7 @@ from .service import ProjectService
 from .tooltips import apply_tooltip, apply_tooltips
 from .ui_bundle_setup import BundleSetup
 from .ui_inspection import InspectionThread, side_summary
-from .ui_symbols import SymbolChoice
+from .ui_symbols import SymbolChoice, config_kwargs, configured_symbol_mode, effective_profile_symbol_mode
 
 REVIEWS = ['unreviewed', 'accepted', 'rejected', 'needs-review']
 CATEGORIES = ['modified', 'added', 'removed', 'ambiguous', 'split', 'merged', 'unmatched', 'unchanged']
@@ -776,7 +776,7 @@ class ProfilesPanel(QWidget):
         self.feature_ids.setPlaceholderText('Empty = all features; else comma-separated uint32 IDs')
         form.addRow('WIL feature filter', self.feature_ids)
         self.symbol_policy = QComboBox()
-        self.symbol_policy.addItems(['disabled', 'online'])
+        self.symbol_policy.addItems(['disabled', 'local', 'online'])
         form.addRow('Symbol policy', self.symbol_policy)
         self.providers = {name: QCheckBox(name) for name in ('nvd', 'msrc')}
         provider_row = QWidget()
@@ -2562,14 +2562,15 @@ class MainWindow(QMainWindow):
     def backend_config(self):
         profile = self.analysis_profile()[0]
         consent = self.settings.value('backend/allow_symbol_downloads', False, type=bool)
-        # The Setup checkbox is the explicit network consent. A non-default profile can only
-        # narrow it (online requires both); it can never enable symbol downloads on its own.
-        allow_symbols = consent if profile.name == 'default' else (consent and profile.symbol_policy == 'online')
+        configured = configured_symbol_mode(self.settings, consent)
+        effective = effective_profile_symbol_mode(configured, profile.symbol_policy, profile.is_default)
+        symbol_dirs = str(self.settings.value('backend/symbol_dirs', ''))
         config = BackendConfig(python_executable=str(self.settings.value('backend/python', '')),
                              ghidra_dir=str(self.settings.value('backend/ghidra', '')),
                              timeout_seconds=setting_int(self.settings, 'backend/timeout', 3600, 10, 86400),
-                             allow_symbol_downloads=allow_symbols,
-                             java_home=str(self.settings.value('backend/java_home', '')), **SymbolChoice.saved(self.settings, consent),
+                             allow_symbol_downloads=effective == 'online',
+                             java_home=str(self.settings.value('backend/java_home', '')),
+                             **config_kwargs(effective == 'local', symbol_dirs),
                              restrict_env=self.settings.value('backend/restrict_env', False, type=bool),
                              env_passthrough=parse_env_passthrough(str(self.settings.value('backend/env_passthrough', ''))),
                              # Raw-output reuse (SPEC-07 §13) is opt-in via the selected profile's cache_dir.

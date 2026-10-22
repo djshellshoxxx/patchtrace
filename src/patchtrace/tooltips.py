@@ -600,8 +600,8 @@ REGISTRY: dict[str, TooltipEntry] = {
         'Restricts the WIL detector to features you care about.',
         'Saved with the profile.', availability=_DEFAULT_RO),
     'profile.symbol_policy': _e(
-        'Symbol policy: disabled or online.', 'Controls whether symbol lookups may use the network.',
-        'Saved with the profile; online permits network lookups.',
+        'Symbol policy: disabled, local, or online.', 'Controls whether a profile may use local PDB folders or network lookups.',
+        'A profile can narrow the Setup symbol mode, never widen it. Local uses only matching PDBs from Setup folders; online also requires Setup consent.',
         availability=_DEFAULT_RO),
     'profile.max_age': _e(
         'Maximum age in days of enrichment snapshots, a whole number from 1 to 3650.',

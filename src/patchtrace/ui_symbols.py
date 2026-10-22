@@ -129,11 +129,33 @@ class SymbolChoice:
 
     @staticmethod
     def saved(settings, online_consent: bool) -> dict:
-        """BackendConfig keywords from saved settings (local mode only without online consent)."""
-        local = not online_consent and str(settings.value('backend/symbol_mode', '')) == 'local'
-        return config_kwargs(local, str(settings.value('backend/symbol_dirs', '')))
+        """BackendConfig keywords from the saved Setup mode."""
+        mode = configured_symbol_mode(settings, online_consent)
+        return config_kwargs(mode == 'local', str(settings.value('backend/symbol_dirs', '')))
 
 
 def config_kwargs(local: bool, dirs_text: str) -> dict:
     """BackendConfig keywords for local PDB mode; blank symbol_mode preserves legacy behavior."""
     return {'symbol_mode': 'local', 'symbol_pdb_dirs': parse_symbol_dirs(dirs_text)} if local else {}
+
+
+def configured_symbol_mode(settings, online_consent: bool) -> str:
+    """Read the Setup ceiling, migrating the legacy consent boolean and failing closed on contradictions."""
+    saved = str(settings.value('backend/symbol_mode', ''))
+    if not saved:
+        return 'online' if online_consent else 'off'
+    if saved not in SYMBOL_MODES:
+        return 'off'
+    if (saved == 'online') != online_consent:
+        return 'off'
+    return saved
+
+
+def effective_profile_symbol_mode(configured: str, policy: str, is_default: bool) -> str:
+    """A named profile can narrow Setup's symbol mode but cannot turn symbols on beyond its ceiling."""
+    if is_default:
+        return configured if configured in SYMBOL_MODES else 'off'
+    requested = {'disabled': 'off', 'local': 'local', 'online': 'online'}.get(policy, 'off')
+    rank = {'off': 0, 'local': 1, 'online': 2}
+    configured = configured if configured in rank else 'off'
+    return min((configured, requested), key=rank.__getitem__)

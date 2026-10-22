@@ -18,6 +18,7 @@ Working branch: `codex/patchtrace-completion-20261022`.
 - After the COFF parser fix, the expanded PR #100 + parser regression batch passed: **314 passed, 24 skipped in 63.91 s**. Skips are compiler-backed and Clang is absent locally.
 - `python -m ruff check src tests tools` passed on the combined tree before the COFF parser fix; it will be rerun after this checkpoint.
 - Completed the feasible SPEC-53 Setup control slice: Off/Local/Online radio group, bounded local-folder list with add/remove, accessible names, an empty-list explanation, and legacy online-setting migration. The regression batch with the Setup tooltip audit passed **7 tests**; Ruff and diff hygiene are clean.
+- Added `local` to `profile/1` and the Profiles editor. Named profiles now narrow the Setup mode (`off < local < online`) and cannot enable symbols above it; default profile follows Setup. Existing `disabled`/`online` digest values remain unchanged; the generated schema includes the additive enum. Profile/model/UI/schema regression batch: **55 passed**.
 - PR #100's latest recorded Actions at head `66e9adc50fb118c04e5e24eacd0c221ca483a130` passed Linux and Windows QA and native Windows Ghidriff acceptance. These runs validate PR #100 by itself, not the combined continuation branch.
 
 ## Current blockers and unverified claims
