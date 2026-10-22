@@ -30,6 +30,7 @@ from PySide6.QtWidgets import (
     QPlainTextEdit,
     QProgressBar,
     QPushButton,
+    QRadioButton,
     QScrollArea,
     QSpinBox,
     QSplitter,
@@ -1014,7 +1015,7 @@ class SetupDialog(QDialog):
             button.clicked.connect(lambda checked=False, e=edit, d=directory: self.browse(e, d))
             horizontal.addWidget(button)
             form.addRow(name, row)
-        self.allow_symbol_downloads = QCheckBox('Allow Ghidriff symbol-server lookups (may access the Internet)')
+        self.allow_symbol_downloads = QRadioButton('Allow Ghidriff symbol-server lookups (may access the Internet)')
         self.allow_symbol_downloads.setChecked(settings.value('backend/allow_symbol_downloads', False, type=bool))
         self.symbols = SymbolChoice(form, settings, self.allow_symbol_downloads)  # SPEC-53 local PDB mode
         self.restrict_env = QCheckBox('Restrict backend environment to an allowlist (experimental)')

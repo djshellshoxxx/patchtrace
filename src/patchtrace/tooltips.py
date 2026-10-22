@@ -503,6 +503,10 @@ REGISTRY: dict[str, TooltipEntry] = {
         'Symbols improve names but contact a symbol server.',
         'When on, comparison may make network requests. When off, none are made.',
         'Applies to Ghidriff symbol lookups only.'),
+    'setup.symbol_off': _e(
+        'Disable symbol loading for the comparison.',
+        'This is the default and requires no symbol files or network access.',
+        'Use local folders to name functions from matching PDBs without network access, or choose online with explicit consent.'),
     'setup.symbol_local': _e(
         'Name functions from PDB symbol files you already have, without any network access.',
         'Symbols improve names; this keeps every lookup on your machine.',

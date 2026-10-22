@@ -811,9 +811,10 @@ Done: dock with state matrix, consent, import, changes, copy, go to CVE. Open: r
 - [x] Reproduce and fix quoted-symbol normalization and COFF function/data boundaries in masked-body acceptance; local synthetic regression tests pass.
 - [x] Run combined PR #100 and COFF regression batch: 314 passed, 24 skipped in 63.91 s; compiler-backed cases skipped without Clang.
 - [x] Run Ruff on the combined tree before the COFF fix; [ ] rerun after the fix and docs checkpoint.
-- [ ] Validate the fix on current-head Windows CI with real Clang; confirm `string-literal-shout` and `callee-swap-dispatch` both pass. Current CI trigger is blocked because this workspace has no GitHub push credential.
+- [ ] Validate the fix on current-head Windows CI with real Clang; confirm `string-literal-shout` and `callee-swap-dispatch` both pass. The PR branch now has the exact local tree via Git Data API, but that ref update did not trigger Actions; a Contents API commit or owner-side push is needed.
 - [ ] Run full Linux pytest, Ruff, and current-head Linux/Windows QA, GUI repetition, frozen smoke, portable ZIP and installer lifecycle on the combined branch. Local full pytest and collection attempts remained CPU-bound for 10+ and 2+ minutes respectively and were interrupted; no complete local result is claimed.
-- [ ] Complete remaining feasible SPEC-53 work: Setup radio/list controls, Profiles `local` digest semantics, diagnostics, GHR-5 native air-gap evidence, and decide whether GHR-6 is in release scope.
+- [x] SPEC-53 Setup three-radio mode group and accessible PDB folder list with Add/Remove, empty-list guidance, and legacy online migration.
+- [ ] Complete remaining feasible SPEC-53 work: Profiles `local` digest semantics, diagnostics, GHR-5 native air-gap evidence, and decide whether GHR-6 is in release scope.
 - [ ] Continue SPEC-DA-01 by dependency order: validate real Diaphora 3.4.3 output before relying on guessed schema details; then implement export import, bounded signals/context, GUI, Mode B, and only pursue Mode C after licensed Windows and distribution review.
 - [ ] Inspect open PRs and handoffs for independent unmerged work; deduplicate overlapping LBL-31/LBL-32 and Java/UE changes before porting. Merge only after their current-head checks pass.
 - [ ] Generate and validate Windows x64 release artifacts only from the tested combined source state; record hashes and CI run URLs. Do not claim real Ghidriff/Diaphora or owner-only UI evidence from synthetic tests.
