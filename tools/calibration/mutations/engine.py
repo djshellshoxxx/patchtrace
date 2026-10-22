@@ -142,7 +142,9 @@ def make_compile_checker(tools: Toolchain | None = None, *, flags: Sequence[str]
 
 
 _ASM_LABEL = re.compile(r'\.L[\w.$]+')
-_ASM_SYMBOL = re.compile(r'[\w.$@]+(?:[+-]\d+)?(?=\(%rip\))')
+# Clang/COFF quotes MSVC-decorated string constants ("??_C@...") unlike ELF labels.
+# The complete RIP-relative symbol is address metadata even when its spelling or length changes.
+_ASM_SYMBOL = re.compile(r'(?:"[^"]+"|[\w.$@]+)(?:[+-]\d+)?(?=\(%rip\))')
 _ASM_BRANCH = re.compile(r'^(call\w*|j\w+)\s+\S+$')
 
 
@@ -162,9 +164,14 @@ def _masked_function_asm(files: Mapping[str, str], rel: str, name: str, clang: s
         return None
     body: list[str] = []
     for line in lines[start + 1:]:
-        if line.startswith('.Lfunc_end'):
-            break
         insn = line.split('#', 1)[0].strip()
+        # COFF does not emit ELF's .Lfunc_end. Stop before the next function or data section
+        # so unrelated code and constants cannot change this function's semantic label.
+        directive = insn.split(maxsplit=1)[0] if insn else ''
+        if (insn.startswith('.Lfunc_end')
+                or directive in {'.seh_endproc', '.cfi_endproc', '.def', '.section', '.data', '.text'}
+                or (insn.endswith(':') and not insn.startswith(('.L', 'LBB')))):
+            break
         if not insn or insn.startswith('.') or insn.endswith(':'):
             continue
         insn = _ASM_SYMBOL.sub('SYM', _ASM_LABEL.sub('.L', insn))

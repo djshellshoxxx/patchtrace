@@ -1,4 +1,13 @@
 # PatchTrace delivery tracker
+- [x] Fixed the two locally reproducible full-suite issues recorded in `docs/qa.md`: site screenshot renderer follows the Files panel; Tier R rejects an unknown mutation operator before toolchain probing. Focused rerun: 27 passed, 2 skipped.
+- [x] Linux-container-only full-suite failures documented in `docs/qa.md` are environment limitations (`python -I` excludes the editable install; AF_UNIX sockets are denied; timing budgets are load-sensitive); full pytest and Ruff passed on Windows and Ubuntu CI (run 39456546905).
+
+## Windows Setup release track (PR #95, 2026-10-17)
+- [x] Implement pinned NSIS per-user Windows installer on existing PyInstaller onedir runtime.
+- [x] Add portable extracted-ZIP and installed-frozen-executable smoke tests, checksums, and data-preserving uninstall logic.
+- [ ] Verify PR #95 on Windows CI, merge only after all release gates pass, and publish a new GitHub prerelease including Setup.exe + portable ZIP.
+- [ ] Verify actual published installer and ZIP assets, checksums and release commit SHA; complete clean Windows interactive GUI acceptance separately.
+
 - [x] M1 Research, contracts, schemas, ingestion, normalization
 - [x] M2 Backend and cancellation
 - [x] M3 Persistence, service and desktop
@@ -14,7 +23,7 @@
 - [x] Cached-PDB `FileExistsError` under `--no-symbols`: per-run isolated Ghidra settings (PR #9). Native Windows CI 2026-10-12: plain Ghidriff reproduces; PatchTrace passes with persisted store (with/without PDB at embedded path) and clean. User clfs.sys binaries not supplied/tested.
 - [x] Linux x86-64 onedir build (`tools/build_linux.py`, CI `linux-package`/`linux-smoke`); local offscreen + Xvfb self-test pass
 - [ ] Verify live Ghidriff analysis from frozen Linux build
-- [ ] Local-only symbol policy: needs PatchTrace-owned Ghidriff launcher (CLI cannot set empty symbol URLs)
+- [x] Local-only symbol policy (SPEC-53 GHR-1..3 + CLI flags): PatchTrace-owned launcher forces an empty server list in `local` mode (hermetic fake-ghidriff tests); [x] Setup checkbox + folder field (`backend/symbol_mode`); [ ] radio group/list widget, Profiles `local` value, diagnose launcher lines; [ ] GHR-5 native air-gap matrix (real Ghidriff/Ghidra, OS network block) - until then "no servers" is configuration, not an air-gap claim
 - [x] Phase 2 B1-B4, storage, pipeline, CLI (rank/flags/correlate/cache), desktop Rank changes, report export (SPEC-07, PatchTrace-authored)
 - [ ] Reconcile SPEC-07 with the supplied handoff package and validate its 9 valid / 9 invalid examples (package not supplied)
 - [ ] Derived-cache hit objective 500 ms at 10,000 pairs (measured 3.1 s); UI responsiveness at 10,000 pairs unmeasured
@@ -789,3 +798,27 @@ Done: dock with state matrix, consent, import, changes, copy, go to CVE. Open: r
 ### [LBL-24:tier-w-aggregate]
 - [x] LBL-24 evaluate.py and aggregate.py with goldens, guard contract list
 - [ ] LBL-24 run on a real Tier W evaluation (owner only, O1)
+## Windows per-user installer delivery (2026-10-17)
+
+- [x] Add Inno Setup definition, compiler wrapper and portable-bundle dependency preflights on codex/windows-setup-installer-20261017.
+- [x] Add Windows CI install/self-test/uninstall acceptance and include installer plus SHA-256 sidecar in the Windows artifact.
+- [ ] Confirm current-head Linux and Windows pytest/Ruff, Windows frozen smoke, installer build and installer lifecycle test.
+- [ ] Merge through the established PR checks and publish a new beta release containing the installer. The installer workflow change must be followed by a later non-workflow release-triggering commit per docs/release-process.md workflow-file hazard.
+
+### Codex continuation (2026-10-22)
+- [x] Select the newest broad integration baseline (`claude/instance-d-gui`), update it with current `main`, and port PR #100's eight commits on an isolated branch.
+- [x] Install declared `dev`, `search`, and `rules` extras; verify the six PR #100 search failures disappear with pinned RapidFuzz installed.
+- [x] Reproduce and fix quoted-symbol normalization and COFF function/data boundaries in masked-body acceptance; local synthetic regression tests pass.
+- [x] Run combined PR #100 and COFF regression batch: 314 passed, 24 skipped in 63.91 s; compiler-backed cases skipped without Clang.
+- [x] Run Ruff on the combined tree before the COFF fix; [ ] rerun after the fix and docs checkpoint.
+- [ ] Validate the fix on current-head Windows CI with real Clang; confirm `string-literal-shout` and `callee-swap-dispatch` both pass. Current CI trigger is blocked because this workspace has no GitHub push credential.
+- [ ] Run full Linux pytest, Ruff, and current-head Linux/Windows QA, GUI repetition, frozen smoke, portable ZIP and installer lifecycle on the combined branch. Local full pytest and collection attempts remained CPU-bound for 10+ and 2+ minutes respectively and were interrupted; no complete local result is claimed.
+- [ ] Complete remaining feasible SPEC-53 work: Setup radio/list controls, Profiles `local` digest semantics, diagnostics, GHR-5 native air-gap evidence, and decide whether GHR-6 is in release scope.
+- [ ] Continue SPEC-DA-01 by dependency order: validate real Diaphora 3.4.3 output before relying on guessed schema details; then implement export import, bounded signals/context, GUI, Mode B, and only pursue Mode C after licensed Windows and distribution review.
+- [ ] Inspect open PRs and handoffs for independent unmerged work; deduplicate overlapping LBL-31/LBL-32 and Java/UE changes before porting. Merge only after their current-head checks pass.
+- [ ] Generate and validate Windows x64 release artifacts only from the tested combined source state; record hashes and CI run URLs. Do not claim real Ghidriff/Diaphora or owner-only UI evidence from synthetic tests.
+
+### [DA-A] Optional Diaphora result import (SPEC-DA-01 Mode A, 2026-10-21)
+- [x] Contracts, hostile-input sqlite guard, result import, address map, provenance binding, Ghidriff bridge, store kind `diaphora-matches`, CLI `diaphora inspect|import|show`, generated schemas (synthetic fixtures only)
+- [ ] Verify against a real Diaphora 3.4.3 `.diaphora` result (EA text encoding, ratio range, `type` strings are assumptions); pinned release SHA
+- [ ] Export-DB import (functions, blocks, CFG, compilation units), `signals`, `context`, `ui_diaphora.py`, HTML-safe report namespace; Mode B runner/probe (external Python + Diaphora, `jobs.run_process`, cache key per spec); Mode C licensed IDA export; license review before any distribution

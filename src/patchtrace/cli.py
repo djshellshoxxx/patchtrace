@@ -20,6 +20,7 @@ from .diagnostics import redact_log
 from .hostile_text import escape_text
 from .intelligence import cli as intelligence_cli
 from .intelligence.tools import cli as intel_tools_cli  # SPEC-29 tools dispatcher (cheap import)
+from .symbols import cli_args as symbol_args
 
 COMMANDS = ('rank', 'flags', 'correlate', 'cache', 'acquire', 'series', 'secondary', 'intelligence', 'unified',
             'intel-tools', 'backend')
@@ -143,6 +144,7 @@ def _parser(argv=()) -> argparse.ArgumentParser:
     create.add_argument('--ghidra-dir', default='', help='Ghidra installation root for --run')
     create.add_argument('--timeout', type=int, default=3600, help='per-pair analysis timeout seconds')
     create.add_argument('--cache-dir', type=Path, default=None, help='raw-output cache for --run')
+    symbol_args.add_arguments(create)
     secondary = sub.add_parser('secondary', help='second-opinion match sets: BinDiff import, rz-diff (SPEC-10/11)')
     sec = secondary.add_subparsers(dest='action', required=True, parser_class=_Parser)
     imp = common(sec.add_parser('import-bindiff', help='import a genuine .BinDiff result for this exact pair'))
@@ -686,9 +688,9 @@ def cmd_series(args, cancel) -> int:
             if not args.python or not args.ghidra_dir:
                 raise CliError(ENVIRONMENT, '--run requires --python and --ghidra-dir')
             config = BackendConfig(python_executable=args.python, ghidra_dir=args.ghidra_dir,
-                                   timeout_seconds=args.timeout,
+                                   timeout_seconds=args.timeout, **symbol_args.backend_kwargs(args),
                                    cache_dir=str(args.cache_dir.resolve()) if args.cache_dir else '')
-        elif args.python or args.ghidra_dir or args.cache_dir:
+        elif args.python or args.ghidra_dir or args.cache_dir or symbol_args.given(args):
             raise CliError(ENVIRONMENT, '--python/--ghidra-dir/--cache-dir apply only with --run')
         try:
             plan = store.prepare(args.builds, args.root, args.labels, args.direct)

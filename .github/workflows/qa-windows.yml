@@ -49,6 +49,20 @@ jobs:
         if: always()
         shell: bash
         run: echo "${{ job.status }}" > qa-leg-result.txt
+      - name: Extract and run portable Windows ZIP outside checkout
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: ./tools/test_windows_portable.ps1
+      - name: Install pinned NSIS compiler
+        if: runner.os == 'Windows'
+        run: choco install nsis --version=3.13 --yes --no-progress
+      - name: Build per-user Windows installer
+        if: runner.os == 'Windows'
+        run: python tools/package_windows_installer.py
+      - name: Install, launch, and uninstall the setup package
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: ./tools/test_windows_installer.ps1
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -63,6 +77,8 @@ jobs:
           path: |
             dist/PatchTrace-0.1.0-windows-x64.zip
             dist/PatchTrace-0.1.0-windows-x64.zip.sha256
+            dist/PatchTrace-Windows-x64-Setup.exe
+            dist/PatchTrace-Windows-x64-Setup.exe.sha256
   # Repeats the GUI test files in one pytest session to expose teardown aborts and thread leaks (GUI plan 8.8).
   qt-gate:
     strategy:
@@ -203,6 +219,15 @@ jobs:
         with:
           path: src-tree
           persist-credentials: false
+      - name: Verify Windows portable hash and add canonical Portable.zip release asset
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd release
+          sha256sum -c PatchTrace-0.1.0-windows-x64.zip.sha256
+          cp PatchTrace-0.1.0-windows-x64.zip PatchTrace-Windows-x64-Portable.zip
+          sha256sum PatchTrace-Windows-x64-Portable.zip > PatchTrace-Windows-x64-Portable.zip.sha256
+          sha256sum -c PatchTrace-Windows-x64-Portable.zip.sha256
       # Evidence text only: no token use, no change to which jobs gate this one. Falls back to the static
       # preamble if generation fails, so a notes problem can never block or fake a release.
       - name: Generate release notes
@@ -221,7 +246,7 @@ jobs:
           QA_LINUX=${QA_LINUX:-$QA_RESULT}
           QA_WINDOWS=${QA_WINDOWS:-$QA_RESULT}
           cat > "$RUNNER_TEMP/preamble.md" <<'EOF'
-          Windows x64 desktop package. Extract the entire ZIP before launching PatchTrace.exe.
+          Windows x64 desktop package. Run the per-user Setup.exe installer or extract the portable ZIP before launching PatchTrace.exe.
           Linux x86-64 package (built on Ubuntu 22.04; smoke-tested on 22.04 and 24.04). Extract the tar.gz and run PatchTrace/PatchTrace.
           Linux X11 hosts need libegl1, libgl1, libfontconfig1, libxkbcommon-x11-0 and the Qt xcb libraries (libxcb-cursor0, libxcb-icccm4, libxcb-image0, libxcb-keysyms1, libxcb-randr0, libxcb-render-util0, libxcb-shape0, libxcb-xinerama0, libxcb-xkb1); see docs/linux.md.
           Python and Qt are bundled. Native binary comparison needs separately configured Ghidra, Java and Ghidriff.

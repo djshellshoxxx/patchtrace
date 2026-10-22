@@ -1,6 +1,6 @@
 # Windows setup and standalone packaging
 
-Desktop target: Windows 11 x64. Extract the complete distribution ZIP into a user-writable location and run PatchTrace.exe. The package includes Python/Qt; it does not include Ghidra, Java, Ghidriff or local LLM weights. The app opens its sample and imports supported diff files without an analysis runtime.
+Desktop target: Windows 10/11 x64. Choose either the per-user Setup installer or the portable ZIP. Setup installs the complete one-folder app under the current user's LocalAppData, creates a Start Menu shortcut, and does not request elevation. The portable ZIP can be extracted to a user-writable directory. Both include the Python and Qt desktop runtime; neither includes Ghidra, Java, Ghidriff or local LLM weights. The app opens its sample and imports supported diff files without an analysis runtime. The installer can be removed through Windows Apps or its Start Menu uninstaller; PatchTrace project files are stored separately and are not removed with the application.
 
 Alternatively, PatchTrace now supports importing a prepared offline backend ZIP from Setup, with complete SHA-256 inventory verification, cancellable atomic extraction and private child-process Java configuration. A *genuine official complete runtime bundle* remains subject to legal review and clean air-gapped Windows acceptance; the importer alone is not proof that one exists. See [offline backend guide](offline-backend.md).
 
@@ -18,7 +18,12 @@ Build on Windows from source:
 py -3.12 -m pip install -e '.[dev]'
 py -3.12 -m pytest -q
 py -3.12 tools/build_windows.py
+# Install pinned NSIS 3.13, then produce the per-user installer:
+py -3.12 tools/package_windows_installer.py
+# On the Windows build host, verify ZIP and installer outside the checkout:
+pwsh -File tools/test_windows_portable.ps1
+pwsh -File tools/test_windows_installer.ps1
 ```
-The build creates an onedir distribution, copies licenses/help/specs, archives it and computes SHA-256. Unsigned beta package; no installer/elevation needed. Keep Qt DLLs replaceable in onedir distribution. Update by unpacking a new version separately; projects are never overwritten by updater. Back up projects before future schema migration.
+The build creates an onedir distribution, copies licenses/help/specs, archives it and computes SHA-256. Windows CI also compiles installer/PatchTrace.iss with Inno Setup into PatchTrace-Windows-x64-Setup.exe, writes a SHA-256 sidecar, installs it under a path containing spaces and Unicode, runs the installed frozen self-test, and silently uninstalls it. The installer compiler is build-only and is not needed on user systems. Beta binaries are unsigned. Keep Qt DLLs replaceable in the onedir distribution. Update by unpacking a new version separately; projects are never overwritten by updater. Back up projects before future schema migration.
 
 Clean-machine QA procedure: open Sample; compare the expected ordinary bounds check; save/reopen; export all three formats; configure native dependencies; compare source-built known-patch fixtures; cancel analysis and check Task Manager for residual backend/Java processes; configure local/remote model with exact context preview; verify cited evidence navigation; resize, tab through controls and change font. Record actual Windows version/dependency versions and outcomes in docs/qa.md. User hands-on QA begins only when a real Windows package is available.

@@ -53,7 +53,7 @@ def test_mutate_plants_builds_and_labels_a_tiny_suite_pair(record_live_status, c
 def test_mutate_unknown_operator_is_an_error_not_blocked(capsys, store):
     code, doc = run(capsys, 'mutate', '--suite', str(ROOT / 'corpus/ours/_template/tiny'), '--operator', 'nope',
                     '--seed', '1')
-    assert code == 2 and doc['status'] == 'error'
+    assert code == 2 and doc['status'] == 'error' and 'unknown mutation operator' in doc['error']
 
 
 def test_aa_and_noise_default_to_the_first_suite_version(monkeypatch, tmp_path):

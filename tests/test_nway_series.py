@@ -322,3 +322,16 @@ def test_tampered_raw_output_is_rejected(builds, tmp_path, capsys):
     # Through the CLI, ProjectService.open already refuses the changed raw file.
     code, doc, _ = create(capsys, builds[:3], root)
     assert code == 2 and 'preserved raw output' in doc['error']
+
+
+def test_symbol_flags_are_validated_before_any_work(capsys, builds, tmp_path):
+    """SPEC-53 section 8: online needs explicit consent, PDB folders only fit local mode, flags need --run."""
+    root = tmp_path / 's'
+    python, ghidra = sys.executable, str(tmp_path)
+    run_args = ['--run', '--python', python, '--ghidra-dir', ghidra]
+    code, doc, _ = create(capsys, builds[:3], root, *run_args, '--symbols', 'online')
+    assert code == 2 and 'PT-SYMBOL-NETWORK-REFUSED' in json.dumps(doc)
+    code, doc, _ = create(capsys, builds[:3], root, *run_args, '--symbol-dir', str(tmp_path))
+    assert code == 2 and 'PT-SYMBOL-MODE' in json.dumps(doc)
+    code, doc, _ = create(capsys, builds[:3], root, '--symbols', 'local')
+    assert code == 2 and not root.exists()
