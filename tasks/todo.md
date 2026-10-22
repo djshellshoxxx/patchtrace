@@ -789,3 +789,7 @@ Done: dock with state matrix, consent, import, changes, copy, go to CVE. Open: r
 ### [LBL-24:tier-w-aggregate]
 - [x] LBL-24 evaluate.py and aggregate.py with goldens, guard contract list
 - [ ] LBL-24 run on a real Tier W evaluation (owner only, O1)
+
+### [NW-P2B: N-way external limitations verification, 2026-10-16]
+- [x] Supersedes the earlier unchecked P2b row above. The EXTERNAL source/target skip count and pair-note text are already implemented in `src/patchtrace/nway/graph.py`, propagated by `nway/series.py`, and covered at the parser level by `tests/test_nway_graph.py::test_nway_external_skips_are_counted`. SPEC-09 A-05 and SPEC-28 A-06 status amendments are already present; do not rebuild this slice.
+- [ ] New regression `tests/test_nway_series.py::test_external_raw_match_skips_survive_series_persistence` adds real imported-pair -> series.json note/chain determinism coverage. Current-head Linux/Windows CI **not yet verified**. Do not mark this new integration-test gate passing without running it.
