@@ -181,3 +181,12 @@ Tier W anchors (local USER corpus, `PATCHTRACE_CALIB_ROOT`): ntoskrnl 10.0.22621
 - [ ] Flag toggle present in Setup, default OFF; `decision_ready` true only after the above, and the owner approved U-05 in writing.
 - [ ] Deferred findings U7-06..U7-18 either fixed with a test or recorded as accepted in the audit file.
 - [ ] No Microsoft binary, PDB or Winbindex label committed; no probability words in the UI; `tasks/todo.md`, `docs/modules.md`, `docs/qa.md` updated.
+
+## Continuation 2026-10-16: UE-R7 U7-12 P15 unknown-callee correctness slice
+
+- Isolated branch: `chatgpt/ue-r7-p15-unresolved-20261016-a` from integration head `53f366e8b50ac60a95bdb3734b815daac82cd63d`. No edits to the shared integration branch, main, or active LBL-31/LBL-32 worker branches.
+- Spec amended: `docs/specs/unified-engine/04-matching-pipeline.md` P15 rule requires every call site to resolve to an import key, self-reference, or already matched callee. A direct site with unknown callee and no import key cannot prove exact equivalence.
+- Red regression tests committed before implementation: `tests/test_unified_p15_unresolved.py` tests unknown/unknown, mixed known/unknown, identified import retained, and unknown versus identified import. On the prior implementation, the first two regressions would emit a P15 tier-A pair because both sides shared `('?', jump)`.
+- Implementation: `src/patchtrace/unified/ladder/passes.py` makes P15 abstain for the whole caller on any unknown callee instead of generating a generic token. `LADDER_VERSION` advanced to `ladder/2` so `pass_table_digest` and downstream config identity change; previously computed matches must not be treated as equivalent.
+- Verification status: **CI pending**. The new tests use synthetic minimal ladder states and are not live Ghidra corpus acceptance. Before merge run `PYTHONPATH=src:. python -m pytest -q tests/test_unified_p15_unresolved.py tests/test_unified_ladder_core.py tests/test_unified_ladder_properties.py`, full Linux/Windows QA and `python -m ruff check src tests tools`; inspect any changed golden/config digest assertions. G-U1..G-U8 remain unverified live and the unified feature flag stays OFF.
+- Follow-up after green checks: merge the isolated PR to `claude/instance-d-gui` with a merge commit and verify target ancestry, then continue UE-R7 remaining findings or UE-R1/UE-R2 integration/live gates without claiming fixture tests are accuracy measurements. Do not merge unrelated draft branches.
