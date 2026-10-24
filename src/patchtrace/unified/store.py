@@ -313,19 +313,25 @@ class _Deep:
 
     def __init__(self, manifest: UnifiedResultManifest):
         self.manifest = manifest
+        self.check_decomp = any(p.name == DECOMP for p in manifest.parts)
         self.materiality: dict[str, str] = {}  # row_id -> materiality of every row seen
         self.facted: set[str] = set()
+        self.row_rvas: set[tuple[str, int]] = set()
+        self.decompiled: set[tuple[str, int]] = set()
         self.decisions = dict.fromkeys(DECISIONS, 0)
         self.materialities = dict.fromkeys(MATERIALITIES, 0)
 
     def feed(self, name: str):
-        return {ROWS: self.row, FACTS: self.fact}.get(name)
+        return {ROWS: self.row, FACTS: self.fact, DECOMP: self.decomp}.get(name)
 
     def row(self, line: bytes) -> None:
         row = parse_line(line, UnifiedMatch)
         if not _row_id_ok(self.manifest, row) or row.row_id in self.materiality:
             raise _err('A unified row id is wrong or repeated', 'row-id')
         self.materiality[row.row_id] = row.materiality
+        if self.check_decomp:
+            self.row_rvas.update(('older', side.rva) for side in row.older)
+            self.row_rvas.update(('newer', side.rva) for side in row.newer)
         self.decisions[row.decision] += 1
         self.materialities[row.materiality] += 1
 
@@ -334,6 +340,22 @@ class _Deep:
         if self.materiality.get(fact.row_id) != fact.verdict or fact.row_id in self.facted:
             raise _err('Change facts do not match their row', 'facts-row')
         self.facted.add(fact.row_id)
+
+    def decomp(self, line: bytes) -> None:
+        """Reject a rehashed but forged code part before its result pointer can be published."""
+        try:
+            doc = json.loads(line.decode('utf-8'), object_pairs_hook=_no_duplicate_keys)
+        except (ValueError, RecursionError, UnicodeDecodeError):
+            raise _err('A decompiled code record is invalid', 'decompile-invalid') from None
+        if (type(doc) is not dict or set(doc) != {'side', 'rva', 'status', 'code'}
+                or doc['side'] not in ('older', 'newer') or type(doc['rva']) is not int
+                or doc['status'] not in ('ok', 'failed', 'timeout')
+                or (doc['status'] == 'ok') != (type(doc['code']) is str)):
+            raise _err('A decompiled code record is invalid', 'decompile-invalid')
+        key = (doc['side'], doc['rva'])
+        if key not in self.row_rvas or key in self.decompiled:
+            raise _err('A decompiled code record has a foreign or repeated RVA', 'decompile-rva')
+        self.decompiled.add(key)
 
     def finish(self) -> None:
         if Counts.of_tallies(self.decisions, self.materialities) != self.manifest.counts:

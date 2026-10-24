@@ -215,3 +215,57 @@ def test_a_refacts_request_without_programir_is_refused_by_the_schema(project, t
     base['refacts'] = described.model_dump()
     with pytest.raises(ValueError):
         exchange.WorkerRequest.model_validate(base)
+
+# --- UE-R3: the code viewer must receive persisted, digest-bound C text ------------------------------
+
+def test_on_demand_c_is_in_the_published_manifest_and_readable_without_rerunning_ghidra(project, tmp_path):
+    from patchtrace.unified.pair_text import RowCodeSource
+
+    place_gzfs(project)
+    report = pipeline.run_unified(project, options(tmp_path, texts=SHOWN))
+    loaded = pipeline.load_current(project, pipeline.make_plan(project))
+    assert report.result_id == loaded.manifest.result_id
+    part = next(p for p in loaded.manifest.parts if p.name == store.DECOMP)
+    assert store.verify_result_dir(loaded.directory) == loaded.manifest
+    saved = RowCodeSource._read_decomp(loaded.directory / store.DECOMP, part)
+    assert saved == {(side, KEEP_SAME[side]): ('ok', SHOWN[side]) for side in ('older', 'newer')}
+    assert part.records == 2
+
+
+def test_no_decompilation_produces_no_claimed_c_part(project, tmp_path):
+    pipeline.run_unified(project, options(tmp_path))
+    manifest, _row, _facts = keep_same(project)
+    assert store.DECOMP not in {p.name for p in manifest.parts}
+
+
+def test_decompiled_c_retention_preserves_result_identity_when_refreshing(project, tmp_path):
+    place_gzfs(project)
+    before = pipeline.run_unified(project, options(tmp_path))
+    after = pipeline.run_unified(project, options(tmp_path, texts=SHOWN, refresh=True))
+    loaded = pipeline.load_current(project, pipeline.make_plan(project))
+    assert after.result_id == before.result_id == loaded.manifest.result_id
+    assert store.DECOMP in {p.name for p in loaded.manifest.parts}
+
+def test_single_sided_decompile_retains_only_real_code_without_promoting_a_pair(project, tmp_path):
+    from patchtrace.unified.pair_text import RowCodeSource
+
+    place_gzfs(project)
+    report = pipeline.run_unified(project, options(tmp_path, texts={'older': SHOWN['older']}))
+    manifest, _row, facts = keep_same(project)
+    assert facts.verdict == 'review' and stage(report, 'decompile').status == 'partial'
+    loaded = pipeline.load_current(project, pipeline.make_plan(project))
+    part = next(p for p in manifest.parts if p.name == store.DECOMP)
+    assert store.verify_result_dir(loaded.directory) == manifest
+    assert RowCodeSource._read_decomp(loaded.directory / store.DECOMP, part) == {
+        ('older', KEEP_SAME['older']): ('ok', SHOWN['older'])
+    }
+
+
+def test_changing_the_persisted_c_part_is_detected_before_it_can_be_read(project, tmp_path):
+    place_gzfs(project)
+    pipeline.run_unified(project, options(tmp_path, texts=SHOWN))
+    loaded = pipeline.load_current(project, pipeline.make_plan(project))
+    part_path = loaded.directory / store.DECOMP
+    part_path.write_bytes(part_path.read_bytes() + b'corrupt-trailing-data')
+    with pytest.raises(UnifiedError):
+        store.verify_result_dir(loaded.directory)

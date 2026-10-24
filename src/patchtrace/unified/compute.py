@@ -21,7 +21,7 @@ from pathlib import Path
 from ..enrichment.identity import domain_id
 from . import keys, store
 from .addressing import AddressMap, PeLayout
-from .contracts import ChangeFacts, IrRef, ResultKeyInputs, SourceRef, UnifiedMatch, UnifiedResultManifest
+from .contracts import ChangeFacts, IrRef, ResultKeyInputs, SourceRef, UnifiedMatch, UnifiedResultManifest, strip_unsafe
 from .exchange import (
     ALL_SOURCES,
     StageEvent,
@@ -252,6 +252,26 @@ def compute_result(inputs: SourceInputs, addr: AddressMap, *, result_dir: Path, 
                          budget=budget, emit=emit, created_utc=created_utc, ir=ir, residual=residual).manifest
 
 
+def retain_decompiled_text(directory: Path, refacts: WorkerRefacts, texts: dict[str, dict[int, str]],
+                           limits: UnifiedLimits = DEFAULT_LIMITS) -> UnifiedResultManifest:
+    """Persist available on-demand C under the existing result id.
+
+    The decompiler output is untrusted display text, not a truth label. Only requested RVAs may be stored; a failed
+    side has no record and the Code view reports it missing. The strict part writer enforces line and total size caps,
+    and add_part binds the bytes and count to the manifest before publication.
+    """
+    requested = {('older', old) for old, _new in refacts.pairs} | {
+        ('newer', new) for _old, new in refacts.pairs
+    }
+    records = [{'side': side, 'rva': rva, 'status': 'ok',
+                'code': strip_unsafe(texts[side][rva], keep_layout=True)}
+               for side, rva in sorted(requested) if rva in texts[side]]
+    if not records:
+        return store.read_manifest(directory)[0]
+    part = store.write_part(directory, store.DECOMP, records, limits)
+    return store.add_part(directory, part)
+
+
 def refacts_stage(inputs: SourceInputs, addr: AddressMap, *, result_dir: Path, ir: IrInputs, refacts: WorkerRefacts,
                   sources: Iterable[str] = ALL_SOURCES, registry: Registry = REGISTRY,
                   limits: UnifiedLimits = DEFAULT_LIMITS, budget: Budget | None = None,
@@ -274,7 +294,7 @@ def refacts_stage(inputs: SourceInputs, addr: AddressMap, *, result_dir: Path, i
     texts = {side: refacts.texts(side) for side in ('older', 'newer')}
     usable = [pair for pair in refacts.pairs if pair[0] in texts['older'] and pair[1] in texts['newer']]
     if not usable:
-        return manifest
+        return retain_decompiled_text(result_dir, refacts, texts, limits)
     rows = list(store.read_rows(result_dir, manifest, limits))
     facts = list(store.read_facts(result_dir, manifest, limits))
     decided = [arbiter.decided_from_match(row) for row in rows]
@@ -301,13 +321,14 @@ def refacts_stage(inputs: SourceInputs, addr: AddressMap, *, result_dir: Path, i
                                           extra_hints=judged.hints, flags=judged.flags)
     if emit is not None:
         emit(StageEvent('refacts', 1, 1))
-    return store.write_result(
+    store.write_result(
         result_dir, older_sha256=manifest.older_sha256, newer_sha256=manifest.newer_sha256,
         ghidriff_run_id=manifest.ghidriff_run_id, ghidriff_raw_sha256=manifest.ghidriff_raw_sha256,
         ir_older=manifest.ir_older, ir_newer=manifest.ir_newer, sources=manifest.sources,
         manual_digest=manifest.manual_digest, config_digest=manifest.config_digest, status=manifest.status,
         limitations=manifest.limitations, rows=rows, facts=[again.get(f.row_id, f) for f in facts],
         created_utc=manifest.created_utc, limits=limits)
+    return retain_decompiled_text(result_dir, refacts, texts, limits)
 
 
 def _check_ir_side(side: str, reader: IrReader, spec: WorkerIr, artifact_sha256: str, other_sha256: str,
