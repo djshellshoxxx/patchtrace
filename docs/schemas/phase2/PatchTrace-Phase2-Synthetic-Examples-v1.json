@@ -1,0 +1,685 @@
+{
+  "$comment": "Synthetic specification examples only, not authentic CVE data. Each valid/invalid object individually validates/fails against the contract oneOf. Semantic formula/provenance hashes are illustrative and require runtime semantic validators.",
+  "valid": {
+    "EvidenceRefV1": {
+      "schema_version": 1,
+      "id": "1111111111111111111111111111111111111111111111111111111111111111",
+      "diff_id": "2222222222222222222222222222222222222222222222222222222222222222",
+      "project_id": "synthetic-project",
+      "run_id": "synthetic-run",
+      "artifact_sha256": "3333333333333333333333333333333333333333333333333333333333333333",
+      "side": "newer",
+      "occurrence_id": "4444444444444444444444444444444444444444444444444444444444444444",
+      "source_kind": "decompile",
+      "raw_sha256": "5555555555555555555555555555555555555555555555555555555555555555",
+      "json_pointer": "/functions/modified/0/new/code",
+      "line_start": 3,
+      "line_end": 5,
+      "address_kind": "va",
+      "address_hex": "0x0",
+      "excerpt_sha256": "6666666666666666666666666666666666666666666666666666666666666666",
+      "quality": "text-heuristic"
+    },
+    "FeatureGateV1": {
+      "schema_version": 1,
+      "algorithm_version": "wil/1",
+      "config_digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "input_digests": [
+        "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+      ],
+      "created_utc": "2026-10-11T12:00:00Z",
+      "status": "complete",
+      "warnings": [],
+      "provenance": [
+        {
+          "source": "synthetic-unit-fixture",
+          "not_authentic_binary_evidence": true
+        }
+      ],
+      "feature_id": 326875449,
+      "feature_name": null,
+      "original_symbol": "Feature_326875449",
+      "original_artifact_hash": "3333333333333333333333333333333333333333333333333333333333333333",
+      "resolution_source": "embedded-symbol",
+      "resolved_symbol_hash": null,
+      "old_sites": [],
+      "new_sites": [
+        {
+          "schema_version": 1,
+          "id": "1111111111111111111111111111111111111111111111111111111111111111",
+          "diff_id": "2222222222222222222222222222222222222222222222222222222222222222",
+          "project_id": "synthetic-project",
+          "run_id": "synthetic-run",
+          "artifact_sha256": "3333333333333333333333333333333333333333333333333333333333333333",
+          "side": "newer",
+          "occurrence_id": "4444444444444444444444444444444444444444444444444444444444444444",
+          "source_kind": "decompile",
+          "raw_sha256": "5555555555555555555555555555555555555555555555555555555555555555",
+          "json_pointer": "/functions/modified/0/new/code",
+          "line_start": 3,
+          "line_end": 5,
+          "address_kind": "va",
+          "address_hex": "0x0",
+          "excerpt_sha256": "6666666666666666666666666666666666666666666666666666666666666666",
+          "quality": "text-heuristic"
+        }
+      ],
+      "gated_pairings": [
+        "7777777777777777777777777777777777777777777777777777777777777777"
+      ],
+      "condition_evidence": [
+        {
+          "schema_version": 1,
+          "id": "1111111111111111111111111111111111111111111111111111111111111111",
+          "diff_id": "2222222222222222222222222222222222222222222222222222222222222222",
+          "project_id": "synthetic-project",
+          "run_id": "synthetic-run",
+          "artifact_sha256": "3333333333333333333333333333333333333333333333333333333333333333",
+          "side": "newer",
+          "occurrence_id": "4444444444444444444444444444444444444444444444444444444444444444",
+          "source_kind": "decompile",
+          "raw_sha256": "5555555555555555555555555555555555555555555555555555555555555555",
+          "json_pointer": "/functions/modified/0/new/code",
+          "line_start": 3,
+          "line_end": 5,
+          "address_kind": "va",
+          "address_hex": "0x0",
+          "excerpt_sha256": "6666666666666666666666666666666666666666666666666666666666666666",
+          "quality": "text-heuristic"
+        }
+      ],
+      "control_relation": "heuristic-lexical",
+      "transition": "introduced",
+      "confidence_tier": "moderate",
+      "nested_parent_feature_ids": [],
+      "detector_version": "WIL-SYM/1"
+    },
+    "ChangeSignalV1": {
+      "schema_version": 1,
+      "algorithm_version": "signals/1",
+      "config_digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "input_digests": [
+        "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+      ],
+      "created_utc": "2026-10-11T12:00:00Z",
+      "status": "complete",
+      "warnings": [],
+      "provenance": [
+        {
+          "source": "synthetic-unit-fixture",
+          "not_authentic_binary_evidence": true
+        }
+      ],
+      "signal_id": "8888888888888888888888888888888888888888888888888888888888888888",
+      "detector_id": "SCRUB",
+      "detector_version": "SCRUB/1",
+      "pairing_id": "7777777777777777777777777777777777777777777777777777777777777777",
+      "category": "sensitive-field-scrub",
+      "change_group_id": "9999999999999999999999999999999999999999999999999999999999999999",
+      "base_weight": 34,
+      "evidence_quality": "text-heuristic",
+      "confidence_tier": "moderate",
+      "refs": [
+        {
+          "schema_version": 1,
+          "id": "1111111111111111111111111111111111111111111111111111111111111111",
+          "diff_id": "2222222222222222222222222222222222222222222222222222222222222222",
+          "project_id": "synthetic-project",
+          "run_id": "synthetic-run",
+          "artifact_sha256": "3333333333333333333333333333333333333333333333333333333333333333",
+          "side": "newer",
+          "occurrence_id": "4444444444444444444444444444444444444444444444444444444444444444",
+          "source_kind": "decompile",
+          "raw_sha256": "5555555555555555555555555555555555555555555555555555555555555555",
+          "json_pointer": "/functions/modified/0/new/code",
+          "line_start": 3,
+          "line_end": 5,
+          "address_kind": "va",
+          "address_hex": "0x0",
+          "excerpt_sha256": "6666666666666666666666666666666666666666666666666666666666666666",
+          "quality": "text-heuristic"
+        }
+      ],
+      "explanation": "Synthetic test: compare/restore around copied field",
+      "old_presence": true,
+      "new_presence": true,
+      "ignored_unsupported": false
+    },
+    "RankingConfigV1": {
+      "schema_version": 1,
+      "id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "score_version": "attention/1",
+      "weights": {
+        "BND": 30,
+        "INT": 22,
+        "OVF": 28,
+        "VAL": 20,
+        "ERR": 12,
+        "SIZE": 24,
+        "WIL": 12,
+        "SCRUB": 34
+      },
+      "confidence_multipliers": {
+        "strong": 100,
+        "moderate": 70,
+        "weak": 35,
+        "unavailable": 0
+      },
+      "per_group_cap": 40,
+      "total_cap": 80,
+      "disabled_detectors": []
+    },
+    "FunctionRankingV1": {
+      "schema_version": 1,
+      "algorithm_version": "attention/1",
+      "config_digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "input_digests": [
+        "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+      ],
+      "created_utc": "2026-10-11T12:00:00Z",
+      "status": "complete",
+      "warnings": [],
+      "provenance": [
+        {
+          "source": "synthetic-unit-fixture",
+          "not_authentic_binary_evidence": true
+        }
+      ],
+      "pairing_id": "7777777777777777777777777777777777777777777777777777777777777777",
+      "project_match_id": "synthetic-match",
+      "score": 50,
+      "signal_ids": [
+        "8888888888888888888888888888888888888888888888888888888888888888"
+      ],
+      "group_subtotals": {
+        "9999999999999999999999999999999999999999999999999999999999999999": 40
+      },
+      "evidence_coverage": "decompiled-only",
+      "match_certainty": "upstream-reported",
+      "missing_reasons": [
+        "typed p-code missing"
+      ],
+      "tie_key": "7777777777777777777777777777777777777777777777777777777777777777"
+    },
+    "CVEContextV1": {
+      "schema_version": 1,
+      "algorithm_version": "cve/1",
+      "config_digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "input_digests": [
+        "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+      ],
+      "created_utc": "2026-10-11T12:00:00Z",
+      "status": "complete",
+      "warnings": [],
+      "provenance": [
+        {
+          "source": "synthetic-unit-fixture",
+          "not_authentic_binary_evidence": true
+        }
+      ],
+      "cve_id": "CVE-2026-50697",
+      "descriptions": [
+        {
+          "provider_id": "synthetic-NVD",
+          "source_digest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "value": "Synthetic description: memory information disclosure",
+          "field_path": "/cve/descriptions/0/value"
+        }
+      ],
+      "cwes": [
+        {
+          "provider_id": "synthetic-NVD",
+          "source_digest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "value": "CWE-200",
+          "field_path": "/cve/weaknesses/0"
+        }
+      ],
+      "products": [],
+      "severity_records": [],
+      "published_utc": "2026-10-11T12:00:00Z",
+      "modified_utc": "2026-10-11T12:00:00Z",
+      "retrieved_utc": "2026-10-11T12:00:00Z",
+      "snapshot_digest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+      "disagreement_flags": []
+    },
+    "ContextualRankingV1": {
+      "schema_version": 1,
+      "algorithm_version": "cve/1",
+      "config_digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "input_digests": [
+        "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+      ],
+      "created_utc": "2026-10-11T12:00:00Z",
+      "status": "complete",
+      "warnings": [],
+      "provenance": [
+        {
+          "source": "synthetic-unit-fixture",
+          "not_authentic_binary_evidence": true
+        }
+      ],
+      "pairing_id": "7777777777777777777777777777777777777777777777777777777777777777",
+      "cve_snapshot_digest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+      "base_ranking_digest": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+      "base_score": 50,
+      "context_evidence": [
+        {
+          "rule_id": "technical-identifier",
+          "rule_version": "cve/1",
+          "contribution": 12,
+          "source_field": "/cve/descriptions/0/value",
+          "provider_id": "synthetic-NVD",
+          "source_digest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "signal_ids": [
+            "8888888888888888888888888888888888888888888888888888888888888888"
+          ],
+          "evidence_ids": [
+            "1111111111111111111111111111111111111111111111111111111111111111"
+          ],
+          "matching_tokens": [
+            "memory",
+            "disclosure"
+          ]
+        }
+      ],
+      "adjustment": 12,
+      "context_score": 62,
+      "original_rank": 1,
+      "contextual_rank": 1
+    },
+    "CacheManifestV1": {
+      "schema_version": 1,
+      "entry_key": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+      "stage_kind": "signals",
+      "input_digests": [
+        "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+      ],
+      "config_digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "tool_digest": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+      "files": [
+        {
+          "relative_path": "result.json",
+          "sha256": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+          "size": 84
+        }
+      ],
+      "created_utc": "2026-10-11T12:00:00Z",
+      "last_access_utc": "2026-10-11T12:00:00Z",
+      "state": "complete",
+      "total_bytes": 84,
+      "algorithm_version": "signals/1",
+      "integrity_algorithm": "sha256"
+    },
+    "PipelineExecutionV1": {
+      "schema_version": 1,
+      "algorithm_version": "pipeline/1",
+      "config_digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "input_digests": [
+        "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+      ],
+      "created_utc": "2026-10-11T12:00:00Z",
+      "status": "complete",
+      "warnings": [],
+      "provenance": [
+        {
+          "source": "synthetic-unit-fixture",
+          "not_authentic_binary_evidence": true
+        }
+      ],
+      "project_id": "synthetic-project",
+      "run_id": "synthetic-run",
+      "revision": 1,
+      "stage_statuses": {
+        "signals": {
+          "status": "complete",
+          "result_digest": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+          "reason": null
+        }
+      },
+      "effective_offline": true,
+      "cache_policy": "disabled",
+      "error_code": null
+    }
+  },
+  "invalid": {
+    "EvidenceRefV1": {
+      "schema_version": 1,
+      "id": "1111111111111111111111111111111111111111111111111111111111111111",
+      "diff_id": "2222222222222222222222222222222222222222222222222222222222222222",
+      "project_id": "synthetic-project",
+      "run_id": "synthetic-run",
+      "artifact_sha256": "3333333333333333333333333333333333333333333333333333333333333333",
+      "side": "newer",
+      "occurrence_id": "4444444444444444444444444444444444444444444444444444444444444444",
+      "source_kind": "decompile",
+      "raw_sha256": "5555555555555555555555555555555555555555555555555555555555555555",
+      "json_pointer": "/functions/modified/0/new/code",
+      "line_start": 3,
+      "line_end": 0,
+      "address_kind": "va",
+      "address_hex": "0x0",
+      "excerpt_sha256": "6666666666666666666666666666666666666666666666666666666666666666",
+      "quality": "text-heuristic"
+    },
+    "FeatureGateV1": {
+      "schema_version": 1,
+      "algorithm_version": "wil/1",
+      "config_digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "input_digests": [
+        "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+      ],
+      "created_utc": "2026-10-11T12:00:00Z",
+      "status": "complete",
+      "warnings": [],
+      "provenance": [
+        {
+          "source": "synthetic-unit-fixture",
+          "not_authentic_binary_evidence": true
+        }
+      ],
+      "feature_id": -1,
+      "feature_name": null,
+      "original_symbol": "Feature_326875449",
+      "original_artifact_hash": "3333333333333333333333333333333333333333333333333333333333333333",
+      "resolution_source": "embedded-symbol",
+      "resolved_symbol_hash": null,
+      "old_sites": [],
+      "new_sites": [
+        {
+          "schema_version": 1,
+          "id": "1111111111111111111111111111111111111111111111111111111111111111",
+          "diff_id": "2222222222222222222222222222222222222222222222222222222222222222",
+          "project_id": "synthetic-project",
+          "run_id": "synthetic-run",
+          "artifact_sha256": "3333333333333333333333333333333333333333333333333333333333333333",
+          "side": "newer",
+          "occurrence_id": "4444444444444444444444444444444444444444444444444444444444444444",
+          "source_kind": "decompile",
+          "raw_sha256": "5555555555555555555555555555555555555555555555555555555555555555",
+          "json_pointer": "/functions/modified/0/new/code",
+          "line_start": 3,
+          "line_end": 5,
+          "address_kind": "va",
+          "address_hex": "0x0",
+          "excerpt_sha256": "6666666666666666666666666666666666666666666666666666666666666666",
+          "quality": "text-heuristic"
+        }
+      ],
+      "gated_pairings": [
+        "7777777777777777777777777777777777777777777777777777777777777777"
+      ],
+      "condition_evidence": [
+        {
+          "schema_version": 1,
+          "id": "1111111111111111111111111111111111111111111111111111111111111111",
+          "diff_id": "2222222222222222222222222222222222222222222222222222222222222222",
+          "project_id": "synthetic-project",
+          "run_id": "synthetic-run",
+          "artifact_sha256": "3333333333333333333333333333333333333333333333333333333333333333",
+          "side": "newer",
+          "occurrence_id": "4444444444444444444444444444444444444444444444444444444444444444",
+          "source_kind": "decompile",
+          "raw_sha256": "5555555555555555555555555555555555555555555555555555555555555555",
+          "json_pointer": "/functions/modified/0/new/code",
+          "line_start": 3,
+          "line_end": 5,
+          "address_kind": "va",
+          "address_hex": "0x0",
+          "excerpt_sha256": "6666666666666666666666666666666666666666666666666666666666666666",
+          "quality": "text-heuristic"
+        }
+      ],
+      "control_relation": "heuristic-lexical",
+      "transition": "introduced",
+      "confidence_tier": "moderate",
+      "nested_parent_feature_ids": [],
+      "detector_version": "WIL-SYM/1"
+    },
+    "ChangeSignalV1": {
+      "schema_version": 1,
+      "algorithm_version": "signals/1",
+      "config_digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "input_digests": [
+        "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+      ],
+      "created_utc": "2026-10-11T12:00:00Z",
+      "status": "complete",
+      "warnings": [],
+      "provenance": [
+        {
+          "source": "synthetic-unit-fixture",
+          "not_authentic_binary_evidence": true
+        }
+      ],
+      "signal_id": "8888888888888888888888888888888888888888888888888888888888888888",
+      "detector_id": "SCRUB",
+      "detector_version": "SCRUB/1",
+      "pairing_id": "7777777777777777777777777777777777777777777777777777777777777777",
+      "category": "sensitive-field-scrub",
+      "change_group_id": "9999999999999999999999999999999999999999999999999999999999999999",
+      "base_weight": 101,
+      "evidence_quality": "text-heuristic",
+      "confidence_tier": "moderate",
+      "refs": [
+        {
+          "schema_version": 1,
+          "id": "1111111111111111111111111111111111111111111111111111111111111111",
+          "diff_id": "2222222222222222222222222222222222222222222222222222222222222222",
+          "project_id": "synthetic-project",
+          "run_id": "synthetic-run",
+          "artifact_sha256": "3333333333333333333333333333333333333333333333333333333333333333",
+          "side": "newer",
+          "occurrence_id": "4444444444444444444444444444444444444444444444444444444444444444",
+          "source_kind": "decompile",
+          "raw_sha256": "5555555555555555555555555555555555555555555555555555555555555555",
+          "json_pointer": "/functions/modified/0/new/code",
+          "line_start": 3,
+          "line_end": 5,
+          "address_kind": "va",
+          "address_hex": "0x0",
+          "excerpt_sha256": "6666666666666666666666666666666666666666666666666666666666666666",
+          "quality": "text-heuristic"
+        }
+      ],
+      "explanation": "Synthetic test: compare/restore around copied field",
+      "old_presence": true,
+      "new_presence": true,
+      "ignored_unsupported": false
+    },
+    "RankingConfigV1": {
+      "schema_version": 1,
+      "id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "score_version": "attention/1",
+      "weights": {
+        "BND": -1,
+        "INT": 22,
+        "OVF": 28,
+        "VAL": 20,
+        "ERR": 12,
+        "SIZE": 24,
+        "WIL": 12,
+        "SCRUB": 34
+      },
+      "confidence_multipliers": {
+        "strong": 100,
+        "moderate": 70,
+        "weak": 35,
+        "unavailable": 0
+      },
+      "per_group_cap": 40,
+      "total_cap": 80,
+      "disabled_detectors": []
+    },
+    "FunctionRankingV1": {
+      "schema_version": 1,
+      "algorithm_version": "attention/1",
+      "config_digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "input_digests": [
+        "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+      ],
+      "created_utc": "2026-10-11T12:00:00Z",
+      "status": "complete",
+      "warnings": [],
+      "provenance": [
+        {
+          "source": "synthetic-unit-fixture",
+          "not_authentic_binary_evidence": true
+        }
+      ],
+      "pairing_id": "7777777777777777777777777777777777777777777777777777777777777777",
+      "project_match_id": "synthetic-match",
+      "score": 101,
+      "signal_ids": [
+        "8888888888888888888888888888888888888888888888888888888888888888"
+      ],
+      "group_subtotals": {
+        "9999999999999999999999999999999999999999999999999999999999999999": 40
+      },
+      "evidence_coverage": "decompiled-only",
+      "match_certainty": "upstream-reported",
+      "missing_reasons": [
+        "typed p-code missing"
+      ],
+      "tie_key": "7777777777777777777777777777777777777777777777777777777777777777"
+    },
+    "CVEContextV1": {
+      "schema_version": 1,
+      "algorithm_version": "cve/1",
+      "config_digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "input_digests": [
+        "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+      ],
+      "created_utc": "2026-10-11T12:00:00Z",
+      "status": "complete",
+      "warnings": [],
+      "provenance": [
+        {
+          "source": "synthetic-unit-fixture",
+          "not_authentic_binary_evidence": true
+        }
+      ],
+      "cve_id": "NOT-CVE",
+      "descriptions": [
+        {
+          "provider_id": "synthetic-NVD",
+          "source_digest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "value": "Synthetic description: memory information disclosure",
+          "field_path": "/cve/descriptions/0/value"
+        }
+      ],
+      "cwes": [
+        {
+          "provider_id": "synthetic-NVD",
+          "source_digest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "value": "CWE-200",
+          "field_path": "/cve/weaknesses/0"
+        }
+      ],
+      "products": [],
+      "severity_records": [],
+      "published_utc": "2026-10-11T12:00:00Z",
+      "modified_utc": "2026-10-11T12:00:00Z",
+      "retrieved_utc": "2026-10-11T12:00:00Z",
+      "snapshot_digest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+      "disagreement_flags": []
+    },
+    "ContextualRankingV1": {
+      "schema_version": 1,
+      "algorithm_version": "cve/1",
+      "config_digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "input_digests": [
+        "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+      ],
+      "created_utc": "2026-10-11T12:00:00Z",
+      "status": "complete",
+      "warnings": [],
+      "provenance": [
+        {
+          "source": "synthetic-unit-fixture",
+          "not_authentic_binary_evidence": true
+        }
+      ],
+      "pairing_id": "7777777777777777777777777777777777777777777777777777777777777777",
+      "cve_snapshot_digest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+      "base_ranking_digest": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+      "base_score": 50,
+      "context_evidence": [
+        {
+          "rule_id": "technical-identifier",
+          "rule_version": "cve/1",
+          "contribution": 12,
+          "source_field": "/cve/descriptions/0/value",
+          "provider_id": "synthetic-NVD",
+          "source_digest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "signal_ids": [
+            "8888888888888888888888888888888888888888888888888888888888888888"
+          ],
+          "evidence_ids": [
+            "1111111111111111111111111111111111111111111111111111111111111111"
+          ],
+          "matching_tokens": [
+            "memory",
+            "disclosure"
+          ]
+        }
+      ],
+      "adjustment": 31,
+      "context_score": 62,
+      "original_rank": 1,
+      "contextual_rank": 1
+    },
+    "CacheManifestV1": {
+      "schema_version": 1,
+      "entry_key": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+      "stage_kind": "signals",
+      "input_digests": [
+        "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+      ],
+      "config_digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "tool_digest": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+      "files": [
+        {
+          "relative_path": "result.json",
+          "sha256": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+          "size": 84
+        }
+      ],
+      "created_utc": "2026-10-11T12:00:00Z",
+      "last_access_utc": "2026-10-11T12:00:00Z",
+      "state": "writing",
+      "total_bytes": 84,
+      "algorithm_version": "signals/1",
+      "integrity_algorithm": "sha256"
+    },
+    "PipelineExecutionV1": {
+      "schema_version": 1,
+      "algorithm_version": "pipeline/1",
+      "config_digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "input_digests": [
+        "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+      ],
+      "created_utc": "2026-10-11T12:00:00Z",
+      "status": "complete",
+      "warnings": [],
+      "provenance": [
+        {
+          "source": "synthetic-unit-fixture",
+          "not_authentic_binary_evidence": true
+        }
+      ],
+      "project_id": "synthetic-project",
+      "run_id": "synthetic-run",
+      "revision": -1,
+      "stage_statuses": {
+        "signals": {
+          "status": "complete",
+          "result_digest": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+          "reason": null
+        }
+      },
+      "effective_offline": true,
+      "cache_policy": "disabled",
+      "error_code": null
+    }
+  }
+}

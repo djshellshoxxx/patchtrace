@@ -47,3 +47,6 @@ tests/fixtures/kev/** text eol=lf
 tools/unified/corpus/** text eol=lf
 tests/fixtures/rules/** text eol=lf
 *.yar text eol=lf
+
+# Phase 2 handoff reference copies: byte-exact LF text
+docs/specs/phase2/** text eol=lf
