@@ -37,8 +37,18 @@ def register(sec, common) -> None:
     check.add_argument('--accept-unbound', action='store_true',
                        help='I confirm this file belongs to the artifact although its executable_id is not a '
                             'SHA-256 (MD5/empty ids from IDA); recorded as id_binding')
-    worker = sec.add_parser('_binexport-worker', help=argparse.SUPPRESS)
+    worker = sec.add_parser('_binexport-worker')
+    _hide_from_help(sec, '_binexport-worker')
     worker.add_argument('--request', required=True)
+
+
+def _hide_from_help(sub, name: str) -> None:
+    """Drop a subcommand from the parent's help listing while keeping it parseable.
+
+    argparse.add_parser(help=SUPPRESS) still adds a pseudo-action whose help text is the literal
+    '==SUPPRESS==' (Python 3.12), so the hidden worker used to appear in `secondary --help`.
+    """
+    sub._choices_actions = [a for a in sub._choices_actions if a.dest != name]
 
 
 def dispatch(args, cancel: threading.Event) -> int:
