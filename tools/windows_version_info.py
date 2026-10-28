@@ -1,0 +1,185 @@
+"""Generate the PyInstaller version resource for PatchTrace.exe (SPEC-52 WIN-1). Build tool; never shipped.
+
+PyInstaller reads this file with `eval()`, so nothing from the environment reaches it unchecked: the label, commit
+and copyright line are validated against strict patterns and every string is written with `repr()`. The output is
+deterministic (no timestamps): the same inputs give the same bytes.
+
+Label rules (`release_label`) mirror the release job in .github/workflows/qa-windows.yml:
+- a `v<label>` tag build uses `<label>` (its numeric base must equal the package version);
+- a push to main uses `<version>-beta.<run number>`, the tag the release job would create;
+- anything else (pull request, manual dispatch, local) uses `<version>-dev[.<run number>]`.
+
+No CompanyName is written: SPEC-52 forbids wording that implies a publisher identity for unsigned builds.
+
+    python tools/windows_version_info.py --out build/windows-resources/version-info.txt
+"""
+from __future__ import annotations
+
+import argparse
+import os
+import re
+import subprocess
+import sys
+from collections.abc import Mapping, Sequence
+from dataclasses import dataclass
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]
+LABEL_RE = re.compile(r'^(\d{1,5})\.(\d{1,5})\.(\d{1,5})(?:-([0-9A-Za-z]{1,16}(?:\.[0-9A-Za-z]{1,16}){0,3}))?$')
+COMMIT_RE = re.compile(r'^[0-9a-f]{7,40}$')
+COPYRIGHT_RE = re.compile(r'^Copyright \(c\) [0-9]{4}(?:-[0-9]{4})? [A-Za-z0-9 .,&-]{1,80}$')
+VS_FF_PRERELEASE = 0x2
+EXE_NAME = 'PatchTrace.exe'
+
+
+@dataclass(frozen=True)
+class VersionFields:
+    label: str
+    quad: tuple[int, int, int, int]
+    commit: str
+    copyright: str
+
+    @property
+    def prerelease(self) -> bool:
+        return '-' in self.label
+
+    def strings(self) -> dict[str, str]:
+        """The StringFileInfo table, in the order written."""
+        return {
+            'Comments': f'Unsigned build of commit {self.commit}',
+            'FileDescription': 'PatchTrace',
+            'FileVersion': self.label,
+            'InternalName': 'PatchTrace',
+            'LegalCopyright': self.copyright,
+            'OriginalFilename': EXE_NAME,
+            'ProductName': 'PatchTrace',
+            'ProductVersion': self.label,
+        }
+
+
+def _parts(label: str) -> tuple[int, int, int]:
+    match = LABEL_RE.match(label)
+    if not match:
+        raise ValueError(f'PT-BUILD: version label {label!r} is not <major>.<minor>.<patch>[-<tag>]')
+    numbers = tuple(int(part) for part in match.group(1, 2, 3))
+    if any(number > 0xFFFF for number in numbers):
+        raise ValueError(f'PT-BUILD: version label {label!r} has a part above 65535')
+    return numbers  # type: ignore[return-value]
+
+
+def run_number(env: Mapping[str, str]) -> int:
+    text = env.get('GITHUB_RUN_NUMBER', '')
+    if not text:
+        return 0
+    if not text.isascii() or not text.isdigit() or int(text) > 0xFFFF:
+        raise ValueError(f'PT-BUILD: GITHUB_RUN_NUMBER {text!r} is not a number in 0..65535')
+    return int(text)
+
+
+def release_label(version: str, env: Mapping[str, str]) -> str:
+    _parts(version)
+    ref = env.get('GITHUB_REF', '')
+    if ref.startswith('refs/tags/v'):
+        label = ref[len('refs/tags/v'):]
+        if _parts(label) != _parts(version):
+            raise ValueError(f'PT-BUILD: tag {ref!r} does not match the package version {version}')
+        return label
+    run = run_number(env)
+    if ref == 'refs/heads/main' and env.get('GITHUB_EVENT_NAME') == 'push':
+        return f'{version}-beta.{run}'
+    return f'{version}-dev.{run}' if run else f'{version}-dev'
+
+
+def copyright_line(license_text: str) -> str:
+    for line in license_text.splitlines():
+        line = line.strip()
+        if line.startswith('Copyright'):
+            if not COPYRIGHT_RE.match(line):
+                raise ValueError(f'PT-BUILD: unexpected copyright line {line!r}')
+            return line
+    raise ValueError('PT-BUILD: LICENSE has no copyright line')
+
+
+def make_fields(label: str, commit: str, build: int, copyright: str) -> VersionFields:
+    major, minor, patch = _parts(label)
+    if not 0 <= build <= 0xFFFF:
+        raise ValueError(f'PT-BUILD: build number {build} is outside 0..65535')
+    if not COMMIT_RE.match(commit):
+        raise ValueError(f'PT-BUILD: commit {commit!r} is not a lowercase hex SHA')
+    if not COPYRIGHT_RE.match(copyright):
+        raise ValueError(f'PT-BUILD: unexpected copyright line {copyright!r}')
+    return VersionFields(label, (major, minor, patch, build), commit, copyright)
+
+
+def render(fields: VersionFields) -> str:
+    """PyInstaller's VSVersionInfo text format (the names are defined in PyInstaller.utils.win32.versioninfo)."""
+    quad = '({}, {}, {}, {})'.format(*fields.quad)
+    flags = VS_FF_PRERELEASE if fields.prerelease else 0
+    rows = ',\n'.join(f'        StringStruct({key!r}, {value!r})' for key, value in fields.strings().items())
+    return (
+        '# UTF-8\n'
+        '# Generated by tools/windows_version_info.py (SPEC-52 WIN-1). Do not edit.\n'
+        'VSVersionInfo(\n'
+        '  ffi=FixedFileInfo(\n'
+        f'    filevers={quad},\n'
+        f'    prodvers={quad},\n'
+        '    mask=0x3f,\n'
+        f'    flags={flags:#x},\n'
+        '    OS=0x40004,\n'
+        '    fileType=0x1,\n'
+        '    subtype=0x0,\n'
+        '    date=(0, 0)\n'
+        '  ),\n'
+        '  kids=[\n'
+        '    StringFileInfo([\n'
+        "      StringTable('040904B0', [\n"
+        f'{rows}\n'
+        '      ])\n'
+        '    ]),\n'
+        "    VarFileInfo([VarStruct('Translation', [1033, 1200])])\n"
+        '  ]\n'
+        ')\n'
+    )
+
+
+def current_commit(env: Mapping[str, str], root: Path = ROOT) -> str:
+    """GITHUB_SHA on CI, else `git rev-parse HEAD` (argument list, no shell); validated either way."""
+    commit = env.get('GITHUB_SHA', '').strip().lower()
+    if not commit:
+        result = subprocess.run(['git', 'rev-parse', '--verify', 'HEAD'], cwd=root, capture_output=True,
+                                text=True, timeout=30, check=False)
+        commit = result.stdout.strip().lower() if result.returncode == 0 else ''
+    if not COMMIT_RE.match(commit):
+        raise ValueError('PT-BUILD: cannot determine the commit being built (set GITHUB_SHA or build from git)')
+    return commit
+
+
+def fields_for_build(version: str, env: Mapping[str, str] | None = None, root: Path = ROOT) -> VersionFields:
+    env = os.environ if env is None else env
+    return make_fields(release_label(version, env), current_commit(env, root), run_number(env),
+                       copyright_line((root / 'LICENSE').read_text(encoding='utf-8')))
+
+
+def write(fields: VersionFields, out: Path) -> Path:
+    out.parent.mkdir(parents=True, exist_ok=True)
+    staged = out.with_name(out.name + '.tmp')
+    staged.write_text(render(fields), encoding='utf-8', newline='\n')
+    os.replace(staged, out)
+    return out
+
+
+def main(argv: Sequence[str] | None = None) -> int:
+    sys.path.insert(0, str(Path(__file__).resolve().parent))
+    from build_linux import VERSION
+
+    parser = argparse.ArgumentParser(description='Write the PyInstaller version resource for PatchTrace.exe.')
+    parser.add_argument('--out', type=Path, required=True)
+    parser.add_argument('--version', default=VERSION)
+    args = parser.parse_args(argv)
+    fields = fields_for_build(args.version)
+    print(write(fields, args.out), fields.label, fields.commit)
+    return 0
+
+
+if __name__ == '__main__':
+    raise SystemExit(main())
