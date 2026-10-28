@@ -1875,8 +1875,10 @@ class MainWindow(QMainWindow):
         self.job_label.setText('Error · ' + message)
         self.logs.appendPlainText('ERROR: ' + message)
         self.statusBar().showMessage(message)
-        box = QMessageBox(QMessageBox.Icon.Critical, 'PatchTrace · action failed', message, parent=self)
+        box = QMessageBox(QMessageBox.Icon.Critical, 'PatchTrace · action failed', message,
+                          QMessageBox.StandardButton.Ok, parent=self)
         box.setTextFormat(Qt.TextFormat.PlainText)
+        apply_tooltip(box.button(QMessageBox.StandardButton.Ok), 'error.dismiss')
         box.exec()
 
     def set_service(self, service):
@@ -2243,9 +2245,15 @@ class MainWindow(QMainWindow):
     def swap_orientation(self):
         if not self.service:
             return
-        answer = QMessageBox.question(self, 'Swap orientation',
-                                      'Reverse older and newer? Existing interpretation contexts and findings will become stale.')
-        if answer == QMessageBox.StandardButton.Yes:
+        box = QMessageBox(QMessageBox.Icon.Question, 'Swap orientation',
+                          'Reverse older and newer? Existing interpretation contexts and findings '
+                          'will become stale.',
+                          QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No, self)
+        box.setTextFormat(Qt.TextFormat.PlainText)
+        # The swap makes existing findings stale, so a stray Enter must not confirm it.
+        box.setDefaultButton(QMessageBox.StandardButton.No)
+        confirm_tips(box)
+        if box.exec() == QMessageBox.StandardButton.Yes:
             self._guard(self.service.swap_orientation)
             self.refresh()
 

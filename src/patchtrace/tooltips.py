@@ -717,6 +717,11 @@ REGISTRY: dict[str, TooltipEntry] = {
         'The described action proceeds.'),
     'confirm.no': _e(
         'Decline and stop.', 'Leaves things as they are.', 'The described action does not happen.'),
+    'error.dismiss': _e(
+        'Closes this error message.', 'Lets you read the failure before you continue.',
+        'Nothing else changes. The message is also kept in the job log, and the action is not retried.',
+        'The text is the error PatchTrace reported for the action that just failed; it may quote backend output.',
+        'Shown whenever an action fails.'),
     # ---- Series window (SPEC-09b) ------------------------------------------------------------
     'action.series': _e(
         'Open a read-only tab over a stored series.json of three or more builds of one binary.',

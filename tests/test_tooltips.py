@@ -227,6 +227,11 @@ def test_every_registry_id_is_applied_somewhere(window, qtbot, tmp_path, setting
     state = StateView('zz', 'Zz')
     qtbot.addWidget(state)
     roots += [state] + [c.widget() for c in window.panels.build_all_for_test().values() if c.widget() is not None]
+    # The critical error box is built per failure; show one so its dismiss tip is audited like the rest.
+    error_boxes = []
+    monkeypatch.setattr(QMessageBox, 'exec', lambda self: error_boxes.append(self) or 0)
+    window.show_error('coverage probe')
+    roots += error_boxes
     first, second = QDockWidget('A', window), QDockWidget('B', window)
     first.setObjectName('zz_a.dock'), second.setObjectName('zz_b.dock')
     window.addDockWidget(Qt.DockWidgetArea.BottomDockWidgetArea, first)
@@ -349,6 +354,47 @@ def test_text_dialogs_and_confirmation_boxes(qtbot, window, monkeypatch):
     confirm_tips(box)
     audit(box)
     assert box.button(QMessageBox.StandardButton.Yes).objectName() == 'confirm.yes'
+
+
+def test_swap_orientation_confirmation_uses_registry_buttons(window, monkeypatch):
+    # An instance box exposes its Yes/No buttons to the registry; the static helper hides them from the audit.
+    boxes, static_calls = [], []
+    monkeypatch.setattr(QMessageBox, 'question',
+                        lambda *args, **kwargs: static_calls.append(args) or QMessageBox.StandardButton.No)
+    monkeypatch.setattr(QMessageBox, 'exec', lambda self: boxes.append(self) or QMessageBox.StandardButton.No)
+    window.swap_orientation()
+    assert not static_calls, 'swap confirmation must not use the static QMessageBox.question helper'
+    assert len(boxes) == 1
+    assert boxes[0].textFormat() == Qt.TextFormat.PlainText
+    for standard, tip_id in ((QMessageBox.StandardButton.Yes, 'confirm.yes'),
+                             (QMessageBox.StandardButton.No, 'confirm.no')):
+        button = boxes[0].button(standard)
+        assert button.objectName() == tip_id
+        assert button.toolTip() == tooltip(tip_id)
+
+
+@pytest.mark.parametrize('answer, swapped', [(QMessageBox.StandardButton.Yes, ['swap']),
+                                             (QMessageBox.StandardButton.No, [])])
+def test_swap_orientation_answer_controls_the_swap(window, monkeypatch, answer, swapped):
+    calls = []
+    monkeypatch.setattr(window.service, 'swap_orientation', lambda: calls.append('swap'))
+    monkeypatch.setattr(QMessageBox, 'question', lambda *args, **kwargs: answer)
+    monkeypatch.setattr(QMessageBox, 'exec', lambda self: answer)
+    window.swap_orientation()
+    assert calls == swapped
+
+
+def test_critical_error_box_dismiss_button_uses_registry_tip(window, monkeypatch):
+    boxes = []
+    monkeypatch.setattr(QMessageBox, 'exec', lambda self: boxes.append(self) or 0)
+    window.show_error('probe failure')
+    assert len(boxes) == 1
+    ok = boxes[0].button(QMessageBox.StandardButton.Ok)
+    assert ok is not None
+    assert ok.objectName() == 'error.dismiss'
+    assert ok.toolTip() == tooltip('error.dismiss')
+    assert boxes[0].textFormat() == Qt.TextFormat.PlainText
+    assert 'ERROR: probe failure' in window.logs.toPlainText()
 
 
 def test_evidence_ids_prefix_complete(window):

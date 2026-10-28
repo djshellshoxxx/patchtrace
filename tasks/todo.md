@@ -1,4 +1,5 @@
 # PatchTrace delivery tracker
+- [ ] Owner action (external, not code): GitHub Pages deploy is red on every recent `main` push that touches `site/**` (all eight pages.yml runs from 14 to 21 Oct failed, run numbers 8 to 15; latest on `e093ade`: run 39594045154). The site build and its tests pass (242 passed, 1 skipped); `actions/configure-pages` fails with `Not Found` because Pages is not enabled for GitHub Actions. Fix: Settings → Pages → Build and deployment → Source: GitHub Actions.
 - [x] Fixed the two locally reproducible full-suite issues recorded in `docs/qa.md`: site screenshot renderer follows the Files panel; Tier R rejects an unknown mutation operator before toolchain probing. Focused rerun: 27 passed, 2 skipped.
 - [x] Linux-container-only full-suite failures documented in `docs/qa.md` are environment limitations (`python -I` excludes the editable install; AF_UNIX sockets are denied; timing budgets are load-sensitive); full pytest and Ruff passed on Windows and Ubuntu CI (run 39456546905).
 
@@ -41,7 +42,7 @@
 - [x] Full code audit (5 areas, 2026-10-12): see docs/qa.md
 - [ ] Assemble, license-audit and publish a **real relocatable offline Python 3.12 / ghidriff / pyghidra / Ghidra / JDK** payload. Validate from fully disconnected Windows 11 and known-patch fixture; currently only synthetic archive/import tests exist.
 - [ ] Add clean Windows disk-space, user-profile path-length, antivirus-lock and full-stack offline smoke checks before claiming no-setup beta.
-- [x] SPEC-26 A tooltip registry (#24): 143 entries + templates, enumeration tests; [ ] static QMessageBox helpers, per-row item templates, theme/DPI tests
+- [x] SPEC-26 A tooltip registry (#24): 143 entries + templates, enumeration tests; [x] static QMessageBox helpers (swap orientation and critical error box, 2026-10-28); [ ] per-row item templates, theme/DPI tests
 - [x] SPEC-26 B raw views: Hex/Binary/Base64 of verified original bytes, whole-file and from-function-entry scopes, paging, go-to offset, diff-line highlight (#23 + integration); [ ] verified function extents, async page reads, persisted per-hash results
 - [x] SPEC-26 C diff navigation crossing functions (#15); raw modes explain absence of text hunks
 - [x] SPEC-26 D preliminary PE inspection (#22 + integration): headers, sections, imports/exports, entropy, overlay, certificate table, RSDS, checksum, field comparison in File overview; Authenticode probe (embedded, no revocation) shown; [ ] signed/trusted/revoked Windows acceptance, catalog signatures, version info/manifest, dock/tab presentation, persistence keyed by artifact hash
