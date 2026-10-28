@@ -1093,3 +1093,12 @@ def apply_tooltips(owner, mapping: dict[str, str]) -> None:
     """Apply many static entries: ``{attribute_name_on_owner: tip_id}``."""
     for attribute, tip_id in mapping.items():
         apply_tooltip(getattr(owner, attribute), tip_id)
+
+
+def confirm_tips(box) -> None:
+    """Registry tooltips for the Yes/No buttons of a QMessageBox. The enum comes from the box, so no Qt import."""
+    standards = box.StandardButton
+    for standard, tip_id in ((standards.Yes, 'confirm.yes'), (standards.No, 'confirm.no')):
+        button = box.button(standard)
+        if button is not None:
+            apply_tooltip(button, tip_id)

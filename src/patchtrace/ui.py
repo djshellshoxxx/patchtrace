@@ -64,7 +64,7 @@ from .runtime_discovery import (
     require_bundle_ok,
 )
 from .service import ProjectService
-from .tooltips import apply_tooltip, apply_tooltips
+from .tooltips import apply_tooltip, apply_tooltips, confirm_tips
 from .ui_bundle_setup import BundleSetup
 from .ui_inspection import InspectionThread, side_summary
 
@@ -172,15 +172,6 @@ def dialog_buttons(dialog, accepted='OK', scope=None):
     buttons.accepted.connect(dialog.accept)
     buttons.rejected.connect(dialog.reject)
     return buttons
-
-
-def confirm_tips(box):
-    """Registry tooltips for the Yes/No buttons of a confirmation message box."""
-    for standard, tip_id in ((QMessageBox.StandardButton.Yes, 'confirm.yes'),
-                             (QMessageBox.StandardButton.No, 'confirm.no')):
-        button = box.button(standard)
-        if button is not None:
-            apply_tooltip(button, tip_id)
 
 
 def text_dialog(parent, title, text):
