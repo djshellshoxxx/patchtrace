@@ -110,5 +110,10 @@ The user has authorized autonomous modular implementation and merge **after pass
   `tasks/todo.md` (Windows alpha track).
 - Alpha tag: `v0.1.0-alpha.1` (annotated) on the reviewed commit only after its full Windows and Linux run is green;
   the tag run itself gates the release on `qa`, `qa-windows`, `windows-validate`, `linux-smoke` and the gate.
+- `ebbef02` failed `qa (windows-latest)` (Windows accepts a lone surrogate in a path component); fixed in `79e6fea`.
+  `79e6fea` is the alpha candidate: every QA, package, validate, smoke and native Ghidriff job green on that SHA,
+  local full suite 15825 passed. The agent session's tag push got HTTP 403 (branch-only access), so
+  `v0.1.0-alpha.1` is **not** pushed and nothing is published; the owner pushes the annotated tag on `79e6fea`, then
+  verifies the prerelease per `docs/specs/windows-acceptance-and-milestone-builds.md` 1.3.
 - Next bounded tasks: F5 import memory limit (owner decision first); SPEC-26 A row tooltips (six `plain_tip` sites in
   `ui.py`, keep it at or below 3077 lines); WIN-2 `SHA256SUMS`; WIN-6 About dialog.

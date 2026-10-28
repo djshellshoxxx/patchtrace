@@ -9,6 +9,7 @@
 - [x] Setup.exe `.sha256` sidecar was CRLF on Windows (failed `sha256sum -c`); fixed and verified in `windows-validate` and the release job.
 - [x] Report export keeps a differing earlier file (`<stem>.previous-<sha8><suffix>`) instead of replacing it silently.
 - [x] Hostile-input sweep: F1, F3, F4, F6, F7, F8 fixed with regressions (SECURITY_REVIEW.md).
+- [ ] Push the annotated `v0.1.0-alpha.1` tag on `79e6fea` (owner: the agent session gets HTTP 403 on tag pushes; all candidate gates are green) and verify the prerelease assets and SHA-256 (acceptance spec 1.3).
 - [ ] F5: Ghidriff import uses about 16 KB per function record (owner limits decision: function cap or leaner model).
 - [ ] SPEC-07 500 ms cache-hit objective: 1.31 s measured; needs a persisted ranking stage (contract change) or an owner relaxation.
 - [ ] SPEC-52 WIN-2 (SHA256SUMS), WIN-3 (policy check), WIN-5 (signing, owner), WIN-6 (About dialog); WIN-1 manifest.

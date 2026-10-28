@@ -42,4 +42,6 @@ security findings in `SECURITY_REVIEW.md`, the session handoff in `docs/plans/cl
 - A commit that changes `.github/workflows/*` and is then tagged by the release action may get HTTP 403 when the
   action creates the tag (SPEC-52 WIN-4 note). Push the `v*` tag yourself on a commit whose own diff does not touch
   workflows.
+- Cloud agent sessions cannot push tags: `git push origin refs/tags/...` gets HTTP 403 (only the session branch
+  is writable). The owner pushes `v*` tags; the tag run then builds, re-validates and publishes.
 - `gh` has no valid token in these sessions; use the GitHub MCP tools for runs, jobs, logs and releases.
