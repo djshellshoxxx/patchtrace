@@ -673,7 +673,8 @@ def test_the_gate_outputs_are_publish_milestones_and_reason_from_the_gate_step()
 
 def test_the_release_job_needs_the_gate_and_runs_for_a_tag_or_a_gate_yes_only():
     block = BLOCKS['release']
-    assert needs_of(block) == ['qa', 'linux-smoke', 'release-gate']
+    # qa is Linux QA, qa-windows the Windows QA and windows-validate the test of the uploaded Windows build.
+    assert needs_of(block) == ['qa', 'qa-windows', 'windows-validate', 'linux-smoke', 'release-gate']
     assert job_key(block, 'if') == (
         "startsWith(github.ref, 'refs/tags/v') || needs.release-gate.outputs.publish == 'true'")
 
