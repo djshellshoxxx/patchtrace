@@ -34,9 +34,14 @@ def clock_moment(clock) -> Callable[[], datetime]:
 
 
 def _stored(directory: Path) -> bool:
-    """Whether the folder holds anything but leftover temporaries (what tells "unreadable" from "not loaded")."""
+    """Whether the store's own files exist, leftover temporaries aside (what tells "unreadable" from "not loaded").
+    Only the pointer and the two store folders are looked at, never the rest of a folder passed as ``--kev-dir``."""
     try:
-        return any(path.is_file() and not path.name.endswith(kev_store.TMP_SUFFIX) for path in directory.rglob('*'))
+        if (directory / kev_store.CURRENT_FILE).is_file():
+            return True
+        return any(path.is_file() and not path.name.endswith(kev_store.TMP_SUFFIX)
+                   for name in (kev_store.META_DIR, kev_store.SNAPSHOT_DIR) if (directory / name).is_dir()
+                   for path in (directory / name).iterdir())
     except OSError:
         return True
 

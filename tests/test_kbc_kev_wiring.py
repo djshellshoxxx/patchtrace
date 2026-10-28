@@ -239,3 +239,12 @@ def test_leads_imports_no_kev_internals():
     tree = ast.parse(Path(leads_module.__file__).read_text(encoding='utf-8'))
     modules = {node.module or '' for node in ast.walk(tree) if isinstance(node, ast.ImportFrom)}
     assert not any('kev' in name for name in modules)
+
+
+def test_unrelated_files_in_the_folder_are_not_a_catalog(tmp_path):
+    folder = tmp_path / 'kev'
+    (folder / 'notes').mkdir(parents=True)
+    (folder / 'notes' / 'readme.txt').write_text('x', encoding='utf-8')
+    (folder / kev_store.SNAPSHOT_DIR).mkdir()
+    (folder / kev_store.SNAPSHOT_DIR / ('a' * 64 + '.json.gz' + kev_store.TMP_SUFFIX)).write_bytes(b'')
+    assert load_exploitation(folder, MOMENT).source.state == 'not-loaded'
