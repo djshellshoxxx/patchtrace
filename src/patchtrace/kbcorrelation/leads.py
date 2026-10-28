@@ -7,7 +7,7 @@ Rules that keep the claim small:
   (the map and the confidences arrive as :class:`Alignment`, bound by the caller); every other function goes to
   ``unattributed``, which is always listed. Several groups per function are allowed, one :class:`LeadRow` each.
 * inside a group the engine's own order is kept; groups sort by (KEV listed, supporting channel set, CVE id). KEV is a
-  group header chip only: it moves a group, never a function within it.
+  group header chip only: it moves a group, never a function within it, and it never counts as supporting evidence.
 * the only number shown is the engine's attention order, labelled as such; channels are listed in words, never counted.
   Missing or unavailable evidence is ``unknown`` or ``not-run``, never a negative vote. Contested engine verdicts keep
   the lead and say so.
@@ -57,6 +57,8 @@ TEXT_GUARD = 'absence of a signal is not a negative finding'
 BASIS_RANKED = 'attention order {rank} of {total} (the engine\'s own order, not a measure of risk)'
 BASIS_UNRANKED = 'no attention order (the engine did not rank this change)'
 KEV_TEXTS = {'no-snapshot': 'KEV: not loaded', 'not-listed': 'KEV: not in the loaded snapshot'}
+KevSourceState = Literal['loaded', 'not-loaded', 'unreadable']
+TEXT_KEV_NOT_LOADED = 'KEV: not loaded.'
 UNATTRIBUTED = 'unattributed'
 _LINE_SEPARATORS = str.maketrans({'\u2028': ' ', '\u2029': ' '})
 
@@ -114,17 +116,25 @@ class Alignment:
 
 @dataclass(frozen=True)
 class KevFact:
+    """What the loaded KEV snapshot says about one CVE. ``snapshot_sha256`` is the snapshot id; the catalog version,
+    freshness and age come from a real snapshot (``adapters.kev``) and stay None for a bare fact."""
     state: KevState
     date_added: str | None = None
     snapshot_sha256: str | None = None
+    catalog_version: str | None = None
+    freshness: str | None = None
+    age_days: int | None = None
 
 
 class ExploitationLookup(Protocol):
+    """Answers one CVE. A lookup may also carry ``source`` (a :class:`KevSource`); one without it is reported as
+    not loaded at report level (capability probe, plan 9 K8)."""
+
     def status(self, cve: str) -> KevFact: ...
 
 
 class NullExploitation:
-    """KEV is not loaded (the adapter is slice K8): every answer is 'not loaded'."""
+    """KEV is not loaded: every answer is 'not loaded'."""
 
     def status(self, cve: str) -> KevFact:
         return KevFact('no-snapshot')
@@ -156,6 +166,23 @@ class NotApplicableCve(Record):
     text: Short
 
 
+class KevSource(Record):
+    """The KEV snapshot behind every group's KEV chip, for the whole report: identity, origin and age, or why there is
+    none. ``unreadable`` means catalogs are stored but none could be read; it says nothing about any CVE."""
+    state: KevSourceState = 'not-loaded'
+    text: Short = TEXT_KEV_NOT_LOADED
+    snapshot_id: Sha256 | None = None
+    catalog_version: Short | None = None
+    date_released: Short | None = None
+    retrieved_at: Short | None = None
+    source: Short | None = None
+    authenticity: Short | None = None
+    freshness: Short | None = None
+    age_days: int | None = None
+    banner: Short | None = None
+    notes: tuple[Short, ...] = ()
+
+
 class LeadsReport(Contract):
     state: LeadsState
     text: Short
@@ -173,6 +200,7 @@ class LeadsReport(Contract):
     limitations: tuple[Short, ...] = ()
     truncated: int = 0
     hooks: tuple[Hook, ...] = ()
+    kev_source: KevSource = KevSource()
 
 
 # ---------------------------------------------------------------------------------------------- chips
@@ -224,10 +252,30 @@ def _member_chips(card: CveCard, rules: Sequence[str], row: EngineRow, hits: Seq
     )
 
 
+def _snapshot_clause(kev: KevFact) -> str:
+    """`` (catalog V, N days old)`` for a fact from a real snapshot; empty for a bare fact. A stale or future-dated
+    snapshot says so, because a CVE it does not list may have been added since."""
+    if kev.catalog_version is None:
+        return ''
+    if kev.freshness == 'future':
+        age = 'release time in the future; check this computer\'s clock'
+    elif kev.age_days is None:
+        age = 'age not known'
+    else:
+        age = 'today' if kev.age_days == 0 else '1 day old' if kev.age_days == 1 else f'{kev.age_days} days old'
+        if kev.freshness == 'stale':
+            age += '; it may lack newer entries'
+    return f' (catalog {kev.catalog_version}, {age})'
+
+
 def _kev_chip(kev: KevFact) -> Chip:
+    clause = _snapshot_clause(kev)
     if kev.state == 'listed':
-        return _chip('exploitation', 'supports', f'KEV listed {kev.date_added or "(date unknown)"}; '
+        return _chip('exploitation', 'supports', f'KEV listed {kev.date_added or "(date unknown)"}{clause}; '
                                                  'a CVE-level fact, not about this function')
+    if kev.state == 'not-listed' and clause:
+        return _chip('exploitation', 'neutral', f'{KEV_TEXTS["not-listed"]}{clause}; not listed does not mean not '
+                                                'exploited')
     return _chip('exploitation', 'not-run' if kev.state == 'no-snapshot' else 'neutral', KEV_TEXTS[kev.state])
 
 
@@ -266,7 +314,10 @@ def _order(rows: Iterable[EngineRow]) -> list[EngineRow]:
 
 
 def _supporting(leads: Sequence[LeadRow]) -> frozenset[str]:
-    return frozenset(c.channel for lead in leads for c in lead.chips if c.state == 'supports')
+    """Channels that support a group's leads. ``exploitation`` is a CVE-level fact, never evidence about a function, so
+    KEV moves a group only through its own sort key and never strengthens the evidence count."""
+    return frozenset(c.channel for lead in leads for c in lead.chips
+                     if c.state == 'supports' and c.channel != 'exploitation')
 
 
 def _group(card: CveCard, rules: Sequence[str], leads: list[LeadRow], kev: KevFact) -> LeadGroup:
@@ -330,7 +381,13 @@ def build_leads(bundle: ContextBundle | None, view: EngineView | None, *, alignm
         coverage_text=tuple(coverage_text(c) for c in report.coverage) if report else (), groups=tuple(groups),
         unattributed=tuple(loose), not_applicable=_not_applicable(elsewhere),
         mention_only=tuple(sorted(set(mention_only))), unknowns=tuple(report.unknowns) if report else (),
-        limitations=tuple(report.limitations) if report else (), truncated=dropped, hooks=_hooks(state))
+        limitations=tuple(report.limitations) if report else (), truncated=dropped, hooks=_hooks(state),
+        kev_source=_kev_source(kev))
+
+
+def _kev_source(kev: ExploitationLookup) -> KevSource:
+    source = getattr(kev, 'source', None)
+    return source if isinstance(source, KevSource) else KevSource()
 
 
 def _hooks(state: LeadsState) -> tuple[Hook, ...]:
@@ -358,7 +415,9 @@ def lead_summary(lead: LeadRow) -> str:
 
 
 def render_text(report: LeadsReport) -> str:
-    lines = [*report.coverage_text, report.text]
+    kev = report.kev_source
+    lines = [*report.coverage_text, report.text, kev.text, *([kev.banner] if kev.banner else []),
+             *(f'KEV note: {note}' for note in kev.notes)]
     ordinal = 0
 
     def emit(lead: LeadRow) -> None:

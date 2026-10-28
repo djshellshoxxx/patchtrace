@@ -157,6 +157,8 @@ def register(sub) -> None:
     leads.add_argument('project', metavar='PROJECT')
     leads.add_argument('--cve', metavar='CVE', help='show one CVE group only')
     leads.add_argument('--limit', type=_positive, metavar='N', help='at most N leads per group')
+    leads.add_argument('--kev-dir', type=Path, metavar='DIR', help='KEV catalog folder of "patchtrace kev" (read only; '
+                       'default: its usual folder)')
 
 
 def _positive(text: str) -> int:
@@ -166,8 +168,8 @@ def _positive(text: str) -> int:
 
 
 def cmd_leads(args, context, out) -> int:
-    outcome = leads_outcome(context.service(args), context.engine or RealEngine(), args.project, kev=context.kev,
-                            cve=args.cve, limit=args.limit)
+    outcome = leads_outcome(context.service(args), context.engine or RealEngine(), args.project,
+                            kev=context.exploitation(args.kev_dir), cve=args.cve, limit=args.limit)
     return present(out, 'kb leads', args, outcome)
 
 

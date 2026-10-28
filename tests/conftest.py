@@ -44,3 +44,11 @@ def pytest_terminal_summary(terminalreporter, exitstatus, config):
         terminalreporter.write_sep('=', 'LIVE ACCEPTANCE BLOCKED')
         for entry in blocked:
             terminalreporter.write_line(f'LIVE ACCEPTANCE BLOCKED: {entry["engine"]} ({entry["reason"]})')
+
+
+@pytest.fixture(autouse=True)
+def _no_real_kev_catalog(monkeypatch, tmp_path_factory):
+    """``kb leads`` reads the KEV catalog in use from the user's data folder by default; point that at an empty
+    folder so no test depends on a catalog installed on the machine that runs it."""
+    from patchtrace.kbcorrelation.adapters import kev as kev_adapter
+    monkeypatch.setattr(kev_adapter, 'default_kev_dir', lambda: tmp_path_factory.getbasetemp() / 'no-kev-catalog')

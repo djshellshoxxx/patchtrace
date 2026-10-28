@@ -331,6 +331,9 @@
 ### [K4a:kbcorrelation-leads] KB-CVE correlator K4a (2026-10-14)
 - [x] `leads`, `cli_leads` (`kb leads PROJECT [--cve] [--limit]`), `view_model`; E0 synergy golden `tests/fixtures/kbcorrelation/expected/synergy-leads.json` (baseline scores 26/25, 36/25, 36/35 reproduced); KEV never reorders functions; contested stays contested; stale on swapped orientation; lineage counts once.
 - [ ] NOT done / open: `patchtrace/cli.py` `kb` hook (integrator, see K3); run id in the stale fingerprint (needs the context row to record it); KEV, unified and secondary adapters (K8: `RealEngine` moves to `adapters/engine.py`); unified MAT-ANCHOR and anchor-coincidence membership; `.gitattributes` line for `tests/fixtures/kbcorrelation/expected/*.json`.
+### [K8a:kbc-kev-adapter] KEV in `kb leads` (2026-10-28)
+- [x] `kbcorrelation/adapters/kev.py` over the existing `kev` store and `KevColumnProvider`; `kb leads --kev-dir`; default folder of `patchtrace kev`; `LeadsReport.kev_source` provenance; stale/future/unreadable/not-loaded states; KEV excluded from supporting evidence; `tests/test_kbc_kev_wiring.py`.
+- [ ] open: KEV for `kb explain`/`kb export` cards (still `kev: not-loaded` in `service.py`); `kev_snapshot_sha` in the context key stays None because KEV is applied when leads are read, not when context is attached (decide in the KB plan whether the attach key should carry it); pilot `collect.py` still passes `NO_CATALOG`; KEV-plan K4 item 9 and the GUI KB dock (K4b) consumer of `kev_source`.
 ### [K5w:pairs-plan-glue]
 - [x] K3/K5 glue: `kb pairs` / `kb plan` over the offline file index; tests `tests/test_kbc_pairs_index.py`.
 - [ ] `kb index import` accepting a Winbindex record (today the file is placed in `<workspace>/winbindex/` by hand); E1 network `PairPlan`.

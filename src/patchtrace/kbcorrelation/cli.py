@@ -28,7 +28,7 @@ class Context:
     """Builds the production service lazily so ``--help`` and argument errors never import ``intelligence``."""
     env: object | None = None
     engine: object | None = None  # EngineEvidence for ``kb leads`` (default: the stored ranking of the project)
-    kev: object | None = None  # ExploitationLookup (K8); default: KEV not loaded
+    kev: object | None = None  # ExploitationLookup (K8); default: the local KEV catalog in use, read at first need
 
     def _env(self):
         if self.env is None:
@@ -39,6 +39,15 @@ class Context:
     def service(self, args):
         from .service import KbService
         return KbService(workspace_root(args), self._env())
+
+    def exploitation(self, kev_dir: Path | None):
+        """The injected lookup, else the catalog ``patchtrace kev`` keeps under ``kev_dir`` (default folder when None),
+        answered at the KB clock's moment. Offline and read-only; a missing or damaged store reads as not loaded."""
+        if self.kev is None:
+            from .adapters import kev as kev_adapter
+            self.kev = kev_adapter.load_exploitation(kev_dir or kev_adapter.default_kev_dir(),
+                                                     kev_adapter.clock_moment(self._env().clock))
+        return self.kev
 
     def index_ports(self) -> IndexPorts:
         env = self._env()
