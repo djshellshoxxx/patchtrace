@@ -687,6 +687,14 @@ def test_a_pull_request_cannot_reach_the_release_job():
     assert not re.search(r'always\(\)|cancelled\(\)|failure\(\)|success\(\)', job_key(BLOCKS['release'], 'if'))
 
 
+def test_third_party_actions_in_the_release_job_are_pinned_to_a_commit():
+    """The release job holds contents: write and the release bytes: a moved upstream tag must not change it."""
+    used = re.findall(r'^\s*(?:- )?uses: (\S+)', BLOCKS['release'], re.M)
+    third_party = [action for action in used if not action.startswith('actions/')]
+    assert third_party, 'expected the release action'
+    assert all(re.fullmatch(r'[\w.-]+/[\w.-]+@[0-9a-f]{40}', action) for action in third_party), third_party
+
+
 def test_only_the_release_job_can_write_repository_contents():
     assert re.search(r'^permissions:\n  contents: read\n(?=\S)', TEXT, re.M)   # the default every other job inherits
     writers = [job for job, block in BLOCKS.items() if re.search(r'contents: write', block)]

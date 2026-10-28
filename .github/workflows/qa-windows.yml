@@ -288,7 +288,9 @@ jobs:
             --result "qa-ubuntu=$QA_RESULT" --result "qa-windows=$QA_WINDOWS_RESULT" --result "linux-smoke=$SMOKE_RESULT" \
             --preamble "$RUNNER_TEMP/preamble.md" --output "$RUNNER_TEMP/notes.md" \
             || { echo "::warning::milestone_notes failed; using static preamble only"; cp "$RUNNER_TEMP/preamble.md" "$RUNNER_TEMP/notes.md"; }
-      - uses: softprops/action-gh-release@v2
+      # Third-party action in the only contents: write job: pinned to the commit v2 / v2.6.2 named on 2026-10-28,
+      # so a moved tag cannot change what publishes the release. Bump deliberately.
+      - uses: softprops/action-gh-release@3bb12739c298aeb8a4eeaf626c5b8d85266b0e65  # v2.6.2
         with:
           prerelease: true
           tag_name: ${{ startsWith(github.ref, 'refs/tags/') && github.ref_name || format('v0.1.0-beta.{0}', github.run_number) }}

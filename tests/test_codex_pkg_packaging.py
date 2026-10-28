@@ -48,6 +48,15 @@ def test_runtime_requirements_have_exact_pins():
     assert not loose, loose
 
 
+def test_build_backend_and_dev_tools_are_exact_pins():
+    """The build backend and the QA tool chain are pinned too, so a CI run is reproducible (calibration-dev is an
+    optional, never-installed cross-check and keeps its bounded range)."""
+    document = manifest()
+    requirements = document['build-system']['requires'] + document['project']['optional-dependencies']['dev']
+    loose = [requirement for requirement in requirements if not re.fullmatch(r'[\w.-]+==[^*,;\s]+', requirement)]
+    assert not loose, loose
+
+
 def test_all_declared_dependencies_have_pin_or_upper_bound():
     document = manifest()
     requirements = document['build-system']['requires'] + document['project']['dependencies']
