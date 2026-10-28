@@ -229,3 +229,19 @@ Not verified here: Windows; the frozen executable; a live backend for `rules pro
 - Anchored installer input and output paths to `${__FILEDIR__}..` with `REPO_ROOT`; added static regression coverage for the license, bundle, notice, generated uninstaller manifest, and output paths.
 - Local verification on Linux: `QT_QPA_PLATFORM=offscreen python -m pytest -q tests/test_windows_installer_manifest.py` (4 passed); `python -m ruff check tests/test_windows_installer_manifest.py` clean; `git diff --check` clean.
 - Not verified yet: compile with pinned NSIS 3.13 and run installer lifecycle on Windows CI.
+
+### [SPEC-26-A2] Swap-orientation confirmation and critical error box tooltips (2026-10-28, Linux container; PR #102)
+| Check | Evidence | Result |
+|---|---|---|
+| Baseline on `e093ade` | `QT_QPA_PLATFORM=offscreen python -m pytest -q tests/test_tooltips.py tests/test_inspection_row_tooltips.py tests/test_gui_core_registry.py tests/test_spec_registry.py tests/test_ui.py` | 205 passed; needs `libegl1` (without it the Qt import fails, `libEGL.so.1` missing) |
+| Red | the same new tests before the source change | 2 failed as expected (static `QMessageBox.question` was used; no OK button existed before `exec()`), 3 passed |
+| Green | the same set after the change | 209 passed |
+| Seam budget | `tests/test_gui_host_seam.py::test_ui_seam_budget`, ceiling `UI_LINES_BEFORE_F5 + UI_TRANSITIONAL_CEILING` = 3077 | `1ae38be` made `ui.py` 3085 lines and failed; `ff9ae7e` moves `confirm_tips` to `tooltips.py`, `ui.py` is 3076 lines |
+| Optional extras | CI installs `.[dev,search,rules]`; `rapidfuzz` and `yara-x` tests need them | without them 6 tests fail locally (environment); with them the focused set including the search tests: 268 passed |
+| Full suite, `1ae38be`, no extras | `python -m pytest -q` | 7 failed, 15455 passed, 296 skipped: the seam budget (real) and 6 `rapidfuzz` tests (environment) |
+| Full suite, `ff9ae7e`, venv `python` as symlink | `python -m pytest -q` | 1 failed, 15765 passed: `test_parent_never_imports_yara_x` (environment: `Path(sys.executable).resolve()` reached `/usr/bin/python3.13`, which lacks the venv's `yara_x`) |
+| Full suite, `ff9ae7e`, venv `python` as a real copy | `python -m pytest -q` | 15766 passed, 33 skipped, 4 xfailed, 1 warning, exit 0 (812.99 s) |
+| Lint | `python -m ruff check src tests tools` | All checks passed |
+| CI, `1ae38be` | QA ubuntu-latest (run 40618683386) and windows-latest: each failed only `test_ui_seam_budget` (3085 > 3077) | fixed in `ff9ae7e` |
+| CI, `ff9ae7e` | QA run 40620142858 (ubuntu-latest, windows-latest, linux-smoke on 22.04 and 24.04, linux-package); native run 40620142864 (5 jobs) | all success; `release` and `release-gate` skipped by design |
+| Not verified | Clean interactive Windows GUI acceptance; GitHub Pages deploy (external repository setting; runs 8 to 15 failed at `configure-pages`) | blocked, owner action |

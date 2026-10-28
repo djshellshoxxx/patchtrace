@@ -72,3 +72,31 @@ Alpha can have incomplete specs if explicitly labelled. Produce a Windows standa
 Return one compact status report: current main/PR SHA; exact issue/CI blockers **with links**; implemented modules/GUI controls; files changed; tests and Windows build/run numbers; downloadable alpha artifact URL if produced; accepted/incomplete/unverified checklist; PRs opened/merged; next 3 priority slices. If a task cannot be completed because of permissions, mark it blocked with required maintainer action instead of repeatedly spending tokens retrying.
 
 The user has authorized autonomous modular implementation and merge **after passing checks**. Do not stop to ask about routine decisions. Stop only for credentials, external repo settings, destructive operations, unapproved external transmission or a genuine product-scope choice that cannot be reasonably inferred.
+
+## Progress log, 2026-10-28 (branch `claude/patchtrace-haiku-agent-motpbx`)
+
+**Baseline, checked live on GitHub (the snapshot above is older):**
+- `main` = `e093ade3e66eebf915d1c93c75cf18c033c2abb5` (#97). The working branch started at the same SHA.
+- CI on `main`: "QA and Windows standalone" succeeded (run 39594045167). "GitHub Pages" failed (run 39594045154). Every Pages run from 2026-10-14 to 2026-10-21 (run numbers 8 to 15) failed at `configure-pages` with "Pages not enabled": an external repository setting, see `tasks/todo.md`.
+- Open PRs are drafts from parallel workers. PR #100 (SPEC-53 and SPEC-DA-01) also edits `src/patchtrace/tooltips.py` and `src/patchtrace/ui.py`, in small hunks. This slice does not duplicate it.
+
+**This slice (SPEC-26 requirement A, second slice; QA detail in `docs/qa.md`, entry SPEC-26-A2):**
+- Swap-orientation confirmation: instance box with the `confirm.yes` and `confirm.no` registry tips, plain text, default button No.
+- Critical error box: explicit OK button with the new `error.dismiss` registry tip.
+- `confirm_tips` moved from `ui.py` to `tooltips.py`, because `tests/test_gui_host_seam.py` caps `ui.py` at 3077 lines.
+- Commits: `1ae38be` (feature; CI failed the seam budget on both QA jobs), then `ff9ae7e` (budget fix, all CI green). Draft PR [#102](https://github.com/djshellshoxxx/patchtrace/pull/102).
+
+**Environment notes for the next worker:**
+- Qt tests need `libegl1` (`apt-get install -y libegl1`).
+- Install with `pip install -e '.[dev,search,rules]'`, the same extras CI installs.
+- The venv's `python` must be a real file, not a symlink: `tests/test_rules_worker.py` uses `Path(sys.executable).resolve()`.
+- Keep `ui.py` at or below 3077 lines. Put new helpers in the registry or Qt modules instead of growing it.
+
+**Blocked, needs owner action (external, not code):**
+- GitHub Pages: Settings → Pages → Source: GitHub Actions.
+- Clean interactive Windows GUI acceptance: needs a Windows machine.
+- Release publication: not re-verified on this commit.
+
+**Next bounded tasks (SPEC-26 A, in order):**
+1. Replace the six `plain_tip` row and label tooltip call sites in `ui.py` with registry templates, with tests. Keep `ui.py` within its budget.
+2. Both-theme and display-scaling tooltip tests, from the spec's "Still open" list.
