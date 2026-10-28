@@ -3,10 +3,21 @@
 - [x] Fixed the two locally reproducible full-suite issues recorded in `docs/qa.md`: site screenshot renderer follows the Files panel; Tier R rejects an unknown mutation operator before toolchain probing. Focused rerun: 27 passed, 2 skipped.
 - [x] Linux-container-only full-suite failures documented in `docs/qa.md` are environment limitations (`python -I` excludes the editable install; AF_UNIX sockets are denied; timing budgets are load-sensitive); full pytest and Ruff passed on Windows and Ubuntu CI (run 39456546905).
 
+## Windows alpha track (PR #102, 2026-10-28)
+- [x] SPEC-52 WIN-1: version resource (label from the release ref, commit in Comments, no CompanyName) and exe icon from the owner mark; build reads the exe back with pe_overview; window icon and `--self-test` icon check. Manifest skipped (spec fallback).
+- [x] CI: Linux gate on pull requests; `qa-windows`, `windows-package`, `windows-validate` (tests the uploaded bytes) on main, tags and dispatch; tag-named releases; release action SHA-pinned; exact dev pins.
+- [x] Setup.exe `.sha256` sidecar was CRLF on Windows (failed `sha256sum -c`); fixed and verified in `windows-validate` and the release job.
+- [x] Report export keeps a differing earlier file (`<stem>.previous-<sha8><suffix>`) instead of replacing it silently.
+- [x] Hostile-input sweep: F1, F3, F4, F6, F7, F8 fixed with regressions (SECURITY_REVIEW.md).
+- [ ] F5: Ghidriff import uses about 16 KB per function record (owner limits decision: function cap or leaner model).
+- [ ] SPEC-07 500 ms cache-hit objective: 1.31 s measured; needs a persisted ranking stage (contract change) or an owner relaxation.
+- [ ] SPEC-52 WIN-2 (SHA256SUMS), WIN-3 (policy check), WIN-5 (signing, owner), WIN-6 (About dialog); WIN-1 manifest.
+- [ ] Clean interactive Windows GUI acceptance of the alpha (DPI, tooltips, raw views, export), SmartScreen and Defender behaviour (manual, Windows hardware).
+
 ## Windows Setup release track (PR #95, 2026-10-17)
 - [x] Implement pinned NSIS per-user Windows installer on existing PyInstaller onedir runtime.
 - [x] Add portable extracted-ZIP and installed-frozen-executable smoke tests, checksums, and data-preserving uninstall logic.
-- [ ] Verify PR #95 on Windows CI, merge only after all release gates pass, and publish a new GitHub prerelease including Setup.exe + portable ZIP.
+- [x] Verify PR #95 on Windows CI, merge only after all release gates pass, and publish a new GitHub prerelease including Setup.exe + portable ZIP (merged as 08f6a5f; prerelease v0.1.0-beta.505).
 - [ ] Verify actual published installer and ZIP assets, checksums and release commit SHA; complete clean Windows interactive GUI acceptance separately.
 
 - [x] M1 Research, contracts, schemas, ingestion, normalization

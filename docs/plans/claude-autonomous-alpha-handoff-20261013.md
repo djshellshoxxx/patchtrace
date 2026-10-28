@@ -100,3 +100,15 @@ The user has authorized autonomous modular implementation and merge **after pass
 **Next bounded tasks (SPEC-26 A, in order):**
 1. Replace the six `plain_tip` row and label tooltip call sites in `ui.py` with registry templates, with tests. Keep `ui.py` within its budget.
 2. Both-theme and display-scaling tooltip tests, from the spec's "Still open" list.
+
+## Progress log, 2026-10-28 (second session on the same branch: Windows alpha)
+
+- Commits after `430eca0`: `9121bbc` WIN-1 version resource and icon; `1089112` CI split; `ce43458` exact pins, SHA-pinned
+  release action, SPEC_STATUS.md, NOTES.md; `62a4bb3` export backup; `475bd2d` Setup sidecar CRLF; `90dfc49` LF
+  attribute for packaged resources; `47d3a40` parser boundary hardening; then the records commit.
+- Evidence and open items: `docs/qa.md` (WIN-ALPHA), `SECURITY_REVIEW.md`, `SPEC_STATUS.md`, `NOTES.md`,
+  `tasks/todo.md` (Windows alpha track).
+- Alpha tag: `v0.1.0-alpha.1` (annotated) on the reviewed commit only after its full Windows and Linux run is green;
+  the tag run itself gates the release on `qa`, `qa-windows`, `windows-validate`, `linux-smoke` and the gate.
+- Next bounded tasks: F5 import memory limit (owner decision first); SPEC-26 A row tooltips (six `plain_tip` sites in
+  `ui.py`, keep it at or below 3077 lines); WIN-2 `SHA256SUMS`; WIN-6 About dialog.

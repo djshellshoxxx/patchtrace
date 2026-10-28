@@ -245,3 +245,22 @@ Not verified here: Windows; the frozen executable; a live backend for `rules pro
 | CI, `1ae38be` | QA ubuntu-latest (run 40618683386) and windows-latest: each failed only `test_ui_seam_budget` (3085 > 3077) | fixed in `ff9ae7e` |
 | CI, `ff9ae7e` | QA run 40620142858 (ubuntu-latest, windows-latest, linux-smoke on 22.04 and 24.04, linux-package); native run 40620142864 (5 jobs) | all success; `release` and `release-gate` skipped by design |
 | Not verified | Clean interactive Windows GUI acceptance; GitHub Pages deploy (external repository setting; runs 8 to 15 failed at `configure-pages`) | blocked, owner action |
+
+### [WIN-ALPHA] Windows alpha: version resource, icon, CI split, sidecar and parser hardening (2026-10-28, PR #102)
+| Check | Evidence | Result |
+|---|---|---|
+| CI timings before | QA run 40620142858 on `ff9ae7e` (PR event) | 25m20s wall clock; `qa (windows-latest)` 22m47s critical path (pytest 19m32s); `linux-package` waited on it |
+| Build resources | `tests/test_windows_build_resources.py` (Linux) | 35 passed; includes PyInstaller's own serializer (Windows struct sizes) read back by `patchtrace.pe_overview` |
+| Windows build with resources | `windows-package`, runs 40625345051 (`1089112`) and 40626210012 (`475bd2d`) | success; `build_windows.py` checked label, commit and icon group on the built exe and the frozen `--self-test` (icon included) |
+| Validation of the uploaded bytes | `windows-validate`, run 40625345051 | **failed**: `PatchTrace-Windows-x64-Setup.exe.sha256` ended in CRLF (`sha256sum -c` looked for `...Setup.exe\r`) |
+| Same, after the fix | `windows-validate`, run 40626210012 | success: both sidecars verified, frozen smoke and self-test (26 s), portable ZIP, installer install/launch/uninstall |
+| Windows pytest | `qa (windows-latest)`, run 40626210012 | 1 failed, 15780 passed: the packaged mark checked out with CRLF; fixed by `.gitattributes` (`src/patchtrace/resources/** text eol=lf`) in `90dfc49` |
+| Linux | `qa (ubuntu-latest)`, `linux-package`, run 40626210012 | success |
+| Full local suite | `python -m pytest -q` on `475bd2d` (Python 3.13, CI extras, real interpreter copy) | 15809 passed, 33 skipped, 4 xfailed, exit 0 (1020.8 s) |
+| Export backup | `tests/test_report_export_backup.py` + export/UI tests | 170 passed |
+| Hostile-input regressions | `tests/test_hostile_input_fuzz_regressions.py`; focused sweep of 119 affected test files | 14 passed (13 fail on the previous code); 4829 passed, 5 skipped |
+| Lint | `python -m ruff check src tests tools` | All checks passed |
+| Not verified | Clean interactive Windows GUI, DPI and SmartScreen; live Ghidra/BinDiff/rizin runs; signing (none) | external / owner |
+
+The candidate commit's own Windows and Linux runs, and the release assets if published, are listed in the PR and the
+release notes.

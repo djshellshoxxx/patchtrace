@@ -120,6 +120,10 @@ Summary: DONE 4 | PARTIAL 61 | EXTERNAL 13 | MISSING 18 (9 draft or proposal not
 | workbench/README.md | PT-WB (index) | N/A (index) | none | Index for PT-WB-01 to PT-WB-04. |
 | yara-x-rule-workflow.md | SPEC-47 (draft) | PARTIAL (draft) | src/patchtrace/rules/ (22 files; R0 to R5 tags; engine.py imports yara_x); cli_commands/rules.py; pyproject rules extra yara-x==1.21.0 | Frozen smoke R1 and R2 checks and Windows CI (tracker); spec status line "no rules package" is stale. |
 
+## This run (2026-10-28, PR #102)
+
+Built on the branch: SPEC-26 A swap/critical box tooltips; SPEC-52 WIN-1 (no manifest) and part of WIN-4; report export backup (architecture.md "Reports"); parser boundary hardening (SECURITY_REVIEW.md F1, F3, F4, F6, F7, F8). Measured and left open with evidence: SPEC-07 500 ms objective (1.31 s), Ghidriff import memory (F5). Release evidence: docs/qa.md WIN-ALPHA.
+
 ## Registry drift
 
 Registry (`docs/specs/REGISTRY.md`) against code at `e093ade`:
