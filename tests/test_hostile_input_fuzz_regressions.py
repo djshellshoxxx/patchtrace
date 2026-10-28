@@ -86,14 +86,17 @@ def test_winbindex_lone_surrogate_is_an_acquisition_error():
 
 # ---- F8: crafted relative paths inside a project file -------------------------------------------------------------
 
-@pytest.mark.parametrize('relative', ['artifacts/a\x00b', 'artifacts/' + 'x' * 300, 'artifacts/\ud800'])
+@pytest.mark.parametrize('relative', ['artifacts/a\x00b', 'artifacts/' + 'x' * 300, 'artifacts/\ud800',
+                                      'artifacts/' + 'é' * 128])  # 256 UTF-8 bytes
 def test_safe_path_refuses_unusable_components_with_a_storage_error(tmp_path, relative):
-    with pytest.raises(ValueError, match='PT-STORAGE'):
+    # Refused by PatchTrace itself on every OS; Windows would accept the lone surrogate (qa-windows on ebbef02).
+    with pytest.raises(ValueError, match='PT-STORAGE: project path has an invalid or over-long component'):
         safe_path(tmp_path, relative)
 
 
-def test_safe_path_still_accepts_a_normal_relative_path(tmp_path):
-    assert safe_path(tmp_path, 'artifacts/older.bin') == tmp_path.resolve() / 'artifacts' / 'older.bin'
+@pytest.mark.parametrize('relative', ['artifacts/older.bin', 'artifacts/' + 'é' * 127 + 'x'])  # 255 bytes
+def test_safe_path_still_accepts_a_normal_relative_path(tmp_path, relative):
+    assert safe_path(tmp_path, relative) == tmp_path.resolve() / relative
 
 
 # ---- F7: rz-diff and BinDiff tool output ----------------------------------------------------------------------------

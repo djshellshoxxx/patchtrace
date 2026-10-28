@@ -260,6 +260,7 @@ Not verified here: Windows; the frozen executable; a live backend for `rules pro
 | Export backup | `tests/test_report_export_backup.py` + export/UI tests | 170 passed |
 | Hostile-input regressions | `tests/test_hostile_input_fuzz_regressions.py`; focused sweep of 119 affected test files | 14 passed (13 fail on the previous code); 4829 passed, 5 skipped |
 | Lint | `python -m ruff check src tests tools` | All checks passed |
+| Candidate `ebbef02` | QA run 40630578680 (dispatch), Ghidriff run 40630581903, full local suite | Linux qa, `windows-package`, `windows-validate`, linux-smoke (22.04, 24.04), native Ghidriff: success; local 15823 passed. `qa (windows-latest)` **failed** 1 of 15795: Windows accepts a lone surrogate in a path component, so `safe_path` let `artifacts/\ud800` through; the check is now OS-independent and the test asserts the PatchTrace message (red on Linux before the fix). Not tagged |
 | Not verified | Clean interactive Windows GUI, DPI and SmartScreen; live Ghidra/BinDiff/rizin runs; signing (none) | external / owner |
 
 The candidate commit's own Windows and Linux runs, and the release assets if published, are listed in the PR and the
