@@ -20,13 +20,19 @@ def safe_path(root: Path, relative: str) -> Path:
     rel = Path(relative)
     if not relative or rel.is_absolute() or '..' in rel.parts or '\\' in relative or ':' in relative:
         raise ValueError('PT-STORAGE: project path must be relative and contained')
+    if '\x00' in relative or any(len(part.encode('utf-8', 'surrogatepass')) > 255 for part in rel.parts):
+        raise ValueError('PT-STORAGE: project path has an invalid or over-long component')
     candidate = base / rel
-    for part in (candidate, *candidate.parents):
-        if part == base:
-            break
-        if part.is_symlink():
-            raise ValueError('PT-STORAGE: project files cannot be symlinks')
-    if not candidate.resolve().is_relative_to(base):
+    try:
+        for part in (candidate, *candidate.parents):
+            if part == base:
+                break
+            if part.is_symlink():
+                raise ValueError('PT-STORAGE: project files cannot be symlinks')
+        contained = candidate.resolve().is_relative_to(base)
+    except (OSError, UnicodeError):
+        raise ValueError('PT-STORAGE: project path cannot be checked on this file system') from None
+    if not contained:
         raise ValueError('PT-STORAGE: project path escapes project root')
     return candidate
 

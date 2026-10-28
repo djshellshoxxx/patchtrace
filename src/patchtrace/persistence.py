@@ -34,6 +34,26 @@ HISTORY_BACKUP_LABEL = 'history-prune'
 _HISTORY_STATS = 'SELECT COUNT(*), MAX(sequence) FROM history'
 
 
+# Deepest accepted JSON nesting. Real inputs (Ghidriff results, series, reports) stay far below it; deeper documents
+# used to pass parsing and then fail inside pydantic (dump at ~250 levels, deepcopy at ~500) after the raw bytes were
+# staged into the project. The decoder's own recursion limit is interpreter-dependent, so the bound is explicit.
+MAX_JSON_DEPTH = 128
+
+
+def _within_depth(value, limit: int = MAX_JSON_DEPTH) -> bool:
+    """Iterative so the check itself cannot recurse; counts arrays and objects, `[[]]` has depth 2."""
+    stack = [(value, 1)]
+    while stack:
+        item, depth = stack.pop()
+        children = item.values() if isinstance(item, dict) else item if isinstance(item, list) else None
+        if children is None:
+            continue
+        if depth > limit:
+            return False
+        stack.extend((child, depth + 1) for child in children if isinstance(child, (dict, list)))
+    return True
+
+
 def strict_json(text: str) -> dict:
     def pairs(items):
         value = {}
@@ -58,6 +78,8 @@ def strict_json(text: str) -> dict:
     try:
         value = json.loads(text, object_pairs_hook=pairs, parse_constant=invalid_constant,
                            parse_float=finite_float, parse_int=bounded_int)
+        if not _within_depth(value):
+            raise ValueError(f'PT-SCHEMA: JSON nesting exceeds {MAX_JSON_DEPTH} levels')
         # A lone surrogate escape (\\ud800) parses but cannot be stored or hashed as UTF-8.
         json.dumps(value, ensure_ascii=False).encode('utf-8')
         return value
