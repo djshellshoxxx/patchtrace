@@ -229,3 +229,41 @@ Not verified here: Windows; the frozen executable; a live backend for `rules pro
 - Anchored installer input and output paths to `${__FILEDIR__}..` with `REPO_ROOT`; added static regression coverage for the license, bundle, notice, generated uninstaller manifest, and output paths.
 - Local verification on Linux: `QT_QPA_PLATFORM=offscreen python -m pytest -q tests/test_windows_installer_manifest.py` (4 passed); `python -m ruff check tests/test_windows_installer_manifest.py` clean; `git diff --check` clean.
 - Not verified yet: compile with pinned NSIS 3.13 and run installer lifecycle on Windows CI.
+
+### [SPEC-26-A2] Swap-orientation confirmation and critical error box tooltips (2026-10-28, Linux container; PR #102)
+| Check | Evidence | Result |
+|---|---|---|
+| Baseline on `e093ade` | `QT_QPA_PLATFORM=offscreen python -m pytest -q tests/test_tooltips.py tests/test_inspection_row_tooltips.py tests/test_gui_core_registry.py tests/test_spec_registry.py tests/test_ui.py` | 205 passed; needs `libegl1` (without it the Qt import fails, `libEGL.so.1` missing) |
+| Red | the same new tests before the source change | 2 failed as expected (static `QMessageBox.question` was used; no OK button existed before `exec()`), 3 passed |
+| Green | the same set after the change | 209 passed |
+| Seam budget | `tests/test_gui_host_seam.py::test_ui_seam_budget`, ceiling `UI_LINES_BEFORE_F5 + UI_TRANSITIONAL_CEILING` = 3077 | `1ae38be` made `ui.py` 3085 lines and failed; `ff9ae7e` moves `confirm_tips` to `tooltips.py`, `ui.py` is 3076 lines |
+| Optional extras | CI installs `.[dev,search,rules]`; `rapidfuzz` and `yara-x` tests need them | without them 6 tests fail locally (environment); with them the focused set including the search tests: 268 passed |
+| Full suite, `1ae38be`, no extras | `python -m pytest -q` | 7 failed, 15455 passed, 296 skipped: the seam budget (real) and 6 `rapidfuzz` tests (environment) |
+| Full suite, `ff9ae7e`, venv `python` as symlink | `python -m pytest -q` | 1 failed, 15765 passed: `test_parent_never_imports_yara_x` (environment: `Path(sys.executable).resolve()` reached `/usr/bin/python3.13`, which lacks the venv's `yara_x`) |
+| Full suite, `ff9ae7e`, venv `python` as a real copy | `python -m pytest -q` | 15766 passed, 33 skipped, 4 xfailed, 1 warning, exit 0 (812.99 s) |
+| Lint | `python -m ruff check src tests tools` | All checks passed |
+| CI, `1ae38be` | QA ubuntu-latest (run 40618683386) and windows-latest: each failed only `test_ui_seam_budget` (3085 > 3077) | fixed in `ff9ae7e` |
+| CI, `ff9ae7e` | QA run 40620142858 (ubuntu-latest, windows-latest, linux-smoke on 22.04 and 24.04, linux-package); native run 40620142864 (5 jobs) | all success; `release` and `release-gate` skipped by design |
+| Not verified | Clean interactive Windows GUI acceptance; GitHub Pages deploy (external repository setting; runs 8 to 15 failed at `configure-pages`) | blocked, owner action |
+
+### [WIN-ALPHA] Windows alpha: version resource, icon, CI split, sidecar and parser hardening (2026-10-28, PR #102)
+| Check | Evidence | Result |
+|---|---|---|
+| CI timings before | QA run 40620142858 on `ff9ae7e` (PR event) | 25m20s wall clock; `qa (windows-latest)` 22m47s critical path (pytest 19m32s); `linux-package` waited on it |
+| Build resources | `tests/test_windows_build_resources.py` (Linux) | 35 passed; includes PyInstaller's own serializer (Windows struct sizes) read back by `patchtrace.pe_overview` |
+| Windows build with resources | `windows-package`, runs 40625345051 (`1089112`) and 40626210012 (`475bd2d`) | success; `build_windows.py` checked label, commit and icon group on the built exe and the frozen `--self-test` (icon included) |
+| Validation of the uploaded bytes | `windows-validate`, run 40625345051 | **failed**: `PatchTrace-Windows-x64-Setup.exe.sha256` ended in CRLF (`sha256sum -c` looked for `...Setup.exe\r`) |
+| Same, after the fix | `windows-validate`, run 40626210012 | success: both sidecars verified, frozen smoke and self-test (26 s), portable ZIP, installer install/launch/uninstall |
+| Windows pytest | `qa (windows-latest)`, run 40626210012 | 1 failed, 15780 passed: the packaged mark checked out with CRLF; fixed by `.gitattributes` (`src/patchtrace/resources/** text eol=lf`) in `90dfc49` |
+| Linux | `qa (ubuntu-latest)`, `linux-package`, run 40626210012 | success |
+| Full local suite | `python -m pytest -q` on `475bd2d` (Python 3.13, CI extras, real interpreter copy) | 15809 passed, 33 skipped, 4 xfailed, exit 0 (1020.8 s) |
+| Export backup | `tests/test_report_export_backup.py` + export/UI tests | 170 passed |
+| Hostile-input regressions | `tests/test_hostile_input_fuzz_regressions.py`; focused sweep of 119 affected test files | 14 passed (13 fail on the previous code); 4829 passed, 5 skipped |
+| Lint | `python -m ruff check src tests tools` | All checks passed |
+| Candidate `ebbef02` | QA run 40630578680 (dispatch), Ghidriff run 40630581903, full local suite | Linux qa, `windows-package`, `windows-validate`, linux-smoke (22.04, 24.04), native Ghidriff: success; local 15823 passed. `qa (windows-latest)` **failed** 1 of 15795: Windows accepts a lone surrogate in a path component, so `safe_path` let `artifacts/\ud800` through; the check is now OS-independent and the test asserts the PatchTrace message (red on Linux before the fix). Not tagged |
+| Candidate `79e6fea` (fix) | QA run 40634102611 (dispatch), Ghidriff run 40634105367, full local suite | `qa (ubuntu-latest)`, `qa (windows-latest)`, `windows-package`, `windows-validate`, `linux-package`, linux-smoke (22.04, 24.04), native Ghidriff: all success; local 15825 passed, 33 skipped, 4 xfailed, exit 0. Milestone criteria 1-2 met on this SHA |
+| Alpha tag | `git push origin refs/tags/v0.1.0-alpha.1` (annotated, peels to `79e6fea`) from the agent session | **blocked**: HTTP 403 on every attempt; the session may push only its own branch. Owner pushes the tag; no release published |
+| Not verified | Clean interactive Windows GUI, DPI and SmartScreen; live Ghidra/BinDiff/rizin runs; signing (none) | external / owner |
+
+The candidate commit's own Windows and Linux runs, and the release assets if published, are listed in the PR and the
+release notes.

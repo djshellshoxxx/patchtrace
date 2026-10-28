@@ -77,9 +77,11 @@ def _reject_constant(name):
 
 def strict_json(text: bytes):
     try:
-        return json.loads(text.decode('utf-8'), object_pairs_hook=_no_duplicates,
-                          parse_constant=_reject_constant)
-    except (UnicodeDecodeError, ValueError, RecursionError):
+        value = json.loads(text.decode('utf-8'), object_pairs_hook=_no_duplicates,
+                           parse_constant=_reject_constant)
+        json.dumps(value, ensure_ascii=False).encode('utf-8')  # a lone surrogate escape cannot be hashed later
+        return value
+    except (UnicodeError, ValueError, RecursionError):
         raise AcquisitionError('PT-ACQ-PROVIDER', 'Winbindex record is not strict JSON') from None
 
 

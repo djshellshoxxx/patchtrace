@@ -717,6 +717,11 @@ REGISTRY: dict[str, TooltipEntry] = {
         'The described action proceeds.'),
     'confirm.no': _e(
         'Decline and stop.', 'Leaves things as they are.', 'The described action does not happen.'),
+    'error.dismiss': _e(
+        'Closes this error message.', 'Lets you read the failure before you continue.',
+        'Nothing else changes. The message is also kept in the job log, and the action is not retried.',
+        'The text is the error PatchTrace reported for the action that just failed; it may quote backend output.',
+        'Shown whenever an action fails.'),
     # ---- Series window (SPEC-09b) ------------------------------------------------------------
     'action.series': _e(
         'Open a read-only tab over a stored series.json of three or more builds of one binary.',
@@ -1088,3 +1093,12 @@ def apply_tooltips(owner, mapping: dict[str, str]) -> None:
     """Apply many static entries: ``{attribute_name_on_owner: tip_id}``."""
     for attribute, tip_id in mapping.items():
         apply_tooltip(getattr(owner, attribute), tip_id)
+
+
+def confirm_tips(box) -> None:
+    """Registry tooltips for the Yes/No buttons of a QMessageBox. The enum comes from the box, so no Qt import."""
+    standards = box.StandardButton
+    for standard, tip_id in ((standards.Yes, 'confirm.yes'), (standards.No, 'confirm.no')):
+        button = box.button(standard)
+        if button is not None:
+            apply_tooltip(button, tip_id)

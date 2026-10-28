@@ -266,6 +266,42 @@ def _render(data: dict, format: str) -> str:
     return '\n'.join(parts)
 
 
+def previous_copy_path(destination: Path, data: bytes) -> Path:
+    """Where an overwritten export's earlier bytes are kept: `<stem>.previous-<sha256[:8]><suffix>` beside it."""
+    digest = hashlib.sha256(data).hexdigest()[:8]
+    return destination.with_name(f'{destination.stem}.previous-{digest}{destination.suffix}')
+
+
+def _keep_previous(destination: Path, content: bytes) -> Path | None:
+    """Back up an existing destination whose bytes differ from `content`; never overwrite an earlier backup.
+
+    The dialog's default destination is a fixed `exports/report.<ext>`, so without this every export silently
+    replaced the previous one. A file larger than any report is refused rather than read or replaced: the path
+    most likely names something that is not a PatchTrace report.
+    """
+    try:
+        if not destination.is_file():
+            return None
+        if destination.stat().st_size > MAX_REPORT_BYTES:
+            raise ExportError(f'PT-EXPORT: {destination.name} exists and is larger than any report; '
+                              'choose another destination')
+        previous = destination.read_bytes()
+    except FileNotFoundError:
+        return None
+    if previous == content:
+        return None
+    backup = previous_copy_path(destination, previous)
+    try:
+        fd = os.open(backup, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
+    except FileExistsError:
+        return backup  # these exact bytes are already kept
+    with os.fdopen(fd, 'wb') as stream:
+        stream.write(previous)
+        stream.flush()
+        os.fsync(stream.fileno())
+    return backup
+
+
 def export_project(project: ComparisonProject, format: str, destination: Path, include_code: bool = False,
                    include_notes: bool = True, finding_ids: list[str] | None = None,
                    enrichment: dict | None = None) -> ExportManifest:
@@ -284,6 +320,7 @@ def export_project(project: ComparisonProject, format: str, destination: Path, i
             stream.write(content)
             stream.flush()
             os.fsync(stream.fileno())
+        _keep_previous(destination, content)  # before the replace: a failed backup leaves the old file in place
         os.replace(staged, destination)
     except OSError:
         raise ExportError('PT-EXPORT: cannot write report; check destination permissions and free space') from None

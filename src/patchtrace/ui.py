@@ -64,7 +64,7 @@ from .runtime_discovery import (
     require_bundle_ok,
 )
 from .service import ProjectService
-from .tooltips import apply_tooltip, apply_tooltips
+from .tooltips import apply_tooltip, apply_tooltips, confirm_tips
 from .ui_bundle_setup import BundleSetup
 from .ui_inspection import InspectionThread, side_summary
 
@@ -172,15 +172,6 @@ def dialog_buttons(dialog, accepted='OK', scope=None):
     buttons.accepted.connect(dialog.accept)
     buttons.rejected.connect(dialog.reject)
     return buttons
-
-
-def confirm_tips(box):
-    """Registry tooltips for the Yes/No buttons of a confirmation message box."""
-    for standard, tip_id in ((QMessageBox.StandardButton.Yes, 'confirm.yes'),
-                             (QMessageBox.StandardButton.No, 'confirm.no')):
-        button = box.button(standard)
-        if button is not None:
-            apply_tooltip(button, tip_id)
 
 
 def text_dialog(parent, title, text):
@@ -1875,8 +1866,10 @@ class MainWindow(QMainWindow):
         self.job_label.setText('Error · ' + message)
         self.logs.appendPlainText('ERROR: ' + message)
         self.statusBar().showMessage(message)
-        box = QMessageBox(QMessageBox.Icon.Critical, 'PatchTrace · action failed', message, parent=self)
+        box = QMessageBox(QMessageBox.Icon.Critical, 'PatchTrace · action failed', message,
+                          QMessageBox.StandardButton.Ok, parent=self)
         box.setTextFormat(Qt.TextFormat.PlainText)
+        apply_tooltip(box.button(QMessageBox.StandardButton.Ok), 'error.dismiss')
         box.exec()
 
     def set_service(self, service):
@@ -2243,9 +2236,15 @@ class MainWindow(QMainWindow):
     def swap_orientation(self):
         if not self.service:
             return
-        answer = QMessageBox.question(self, 'Swap orientation',
-                                      'Reverse older and newer? Existing interpretation contexts and findings will become stale.')
-        if answer == QMessageBox.StandardButton.Yes:
+        box = QMessageBox(QMessageBox.Icon.Question, 'Swap orientation',
+                          'Reverse older and newer? Existing interpretation contexts and findings '
+                          'will become stale.',
+                          QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No, self)
+        box.setTextFormat(Qt.TextFormat.PlainText)
+        # The swap makes existing findings stale, so a stray Enter must not confirm it.
+        box.setDefaultButton(QMessageBox.StandardButton.No)
+        confirm_tips(box)
+        if box.exec() == QMessageBox.StandardButton.Yes:
             self._guard(self.service.swap_orientation)
             self.refresh()
 

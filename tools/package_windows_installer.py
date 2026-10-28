@@ -34,6 +34,14 @@ def find_compiler() -> Path:
     )
 
 
+def write_checksum(path: Path) -> Path:
+    """Write `<sha256>  <name>\\n` beside `path` as bytes: text mode on Windows would end the line with CRLF, and
+    `sha256sum -c` then looks for a file whose name ends in a carriage return (as the ZIP sidecar once did)."""
+    checksum = path.with_name(path.name + ".sha256")
+    checksum.write_bytes(f"{sha256(path)}  {path.name}\n".encode("ascii"))
+    return checksum
+
+
 def sha256(path: Path) -> str:
     digest = hashlib.sha256()
     with path.open("rb") as stream:
@@ -114,8 +122,7 @@ def main() -> int:
     installer = root / "dist" / "PatchTrace-Windows-x64-Setup.exe"
     if not installer.is_file() or installer.stat().st_size == 0:
         raise RuntimeError(f"NSIS did not produce a valid installer: {installer}")
-    checksum = installer.with_name(installer.name + ".sha256")
-    checksum.write_text(f"{sha256(installer)}  {installer.name}\n", encoding="ascii")
+    write_checksum(installer)
     print(f"NSIS {NSIS_VERSION} installer: {installer}")
     print(f"SHA-256: {sha256(installer)}")
     return 0

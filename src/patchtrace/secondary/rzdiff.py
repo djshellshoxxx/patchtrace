@@ -39,7 +39,7 @@ _VERSION = re.compile(r'^rz-diff (\d+)\.(\d+)\.(\d+)\b')
 
 def parse_version(text: str) -> tuple[str, tuple[int, int, int]] | None:
     for line in text.splitlines():
-        if match := _VERSION.match(line.strip()):
+        if (match := _VERSION.match(line.strip())) and all(len(g) <= 9 for g in match.groups()):
             numbers = tuple(int(g) for g in match.groups())
             return '.'.join(match.groups()), numbers  # type: ignore[return-value]
     return None
@@ -105,7 +105,8 @@ def parse_output(stdout: str, version: str, older_sha256: str, newer_sha256: str
         raise _fail('rz-diff produced no output')
     try:
         document = json.loads(stdout, object_pairs_hook=_no_duplicates, parse_constant=_reject_constant)
-    except ValueError as exc:
+        json.dumps(document, ensure_ascii=False).encode('utf-8')  # lone surrogate escapes cannot be stored
+    except (ValueError, RecursionError) as exc:
         if isinstance(exc, SecondaryError):
             raise
         raise _fail('rz-diff output is not valid JSON') from None
