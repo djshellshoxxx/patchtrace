@@ -48,6 +48,7 @@ from .plan import index_plan, local_plan
 from .ports import AdvisoryPort, ClockPort, ProjectPort
 from .products import clean_text
 from .recovery import repair
+from .sources.cvrf import SourceError, load_json
 from .store import AttachRequest, Fault, KbcStoreError, ProjectAttachment, WorkspaceStore, atomic_write
 from .workflow import Event
 
@@ -123,6 +124,9 @@ def _fail(code: str, message: str) -> KbcStoreError:
     return KbcStoreError(code, message)
 
 
+MIN_PAIR_PREFIX = 8
+
+
 def parse_lead(raw: str) -> tuple[str, str]:
     text = raw.strip()
     try:
@@ -193,12 +197,20 @@ class KbService:
         if months:
             names = [m.strip() for m in months.split(',') if m.strip()]
         if scope_file is not None:
+            # The strict source-document JSON rules apply: no duplicate keys, NaN or invalid UTF-8, bounded depth,
+            # and both values must be lists of strings (issue #105 BUG-KBC-3).
+            bad = _fail('PT-KBC-SCOPE', 'the scope file is not JSON with "months" and "doc_ids" lists of strings')
             try:
-                data = json.loads(self._read_small(scope_file))
-                names += list(data.get('months', []))
-                doc_ids += list(data.get('doc_ids', []))
-            except (ValueError, AttributeError, TypeError):
-                raise _fail('PT-KBC-SCOPE', 'the scope file is not JSON with "months" and "doc_ids" lists') from None
+                data = load_json(self._read_small(scope_file))
+            except SourceError:
+                raise bad from None
+            if not isinstance(data, dict):
+                raise bad
+            for key, target in (('months', names), ('doc_ids', doc_ids)):
+                values = data.get(key, [])
+                if not isinstance(values, list) or not all(isinstance(v, str) for v in values):
+                    raise bad
+                target += values
         if not names and not doc_ids:
             return None
         if len(set(names)) > MAX_SEARCH_MONTHS:
@@ -213,7 +225,7 @@ class KbService:
             raise _fail('PT-KBC-SCOPE', 'the scope names an invalid month (YYYY-Mon) or document id') from None
 
     @staticmethod
-    def _read_small(path: Path) -> str:
+    def _read_small(path: Path) -> bytes:
         try:
             with open(path, 'rb') as handle:
                 data = handle.read(SCOPE_FILE_BYTES + 1)
@@ -221,7 +233,7 @@ class KbService:
             raise _fail('PT-KBC-INPUT', 'the scope file cannot be read') from None
         if len(data) > SCOPE_FILE_BYTES:
             raise _fail('PT-KBC-SCOPE', 'the scope file is too large')
-        return data.decode('utf-8', errors='replace')
+        return data
 
     @staticmethod
     def _lookup(index: ReverseIndex, kind: str, value: str, scope: SearchScope | None, scope_id: str | None,
@@ -479,10 +491,14 @@ class KbService:
         every = [pair for res in found for pair in res.pairs]
         if pair_id is None:
             return next((p for p in every if p.grade != 'X'), None)
-        pair = next((p for p in every if p.pair_id.startswith(pair_id)), None)
-        if pair is None:
+        if len(pair_id) < MIN_PAIR_PREFIX:
+            raise _fail('PT-KBC-INPUT', f'name a pair by at least {MIN_PAIR_PREFIX} characters of its id')
+        matches = {p.pair_id: p for p in every if p.pair_id.startswith(pair_id)}
+        if len(matches) > 1:                        # never pick one silently (issue #105 BUG-KBC-9)
+            raise _fail('PT-KBC-INPUT', f'{len(matches)} pairs start with that prefix; give more of the id')
+        if not matches:
             raise _fail('PT-KBC-INPUT', 'that pair is not a candidate for this lead; list them with "kb pairs"')
-        return pair
+        return next(iter(matches.values()))
 
     def plan(self, investigation: str, *, pair_id: str | None = None, product: str | None = None,
              files: Iterable[str] = ()) -> Outcome:

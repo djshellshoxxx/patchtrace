@@ -108,8 +108,18 @@ def _group_key(doc: ImportedDocument) -> tuple:
     return ('cvrf-month', s.release_id) if s.kind == 'cvrf-month' else (s.kind, doc.tracking_id or s.doc_id)
 
 
+def _instant(value: str | None) -> datetime:
+    """The UTC instant of a stored release timestamp; the earliest instant when absent or unreadable."""
+    try:
+        return datetime.fromisoformat(value).astimezone(UTC) if value else datetime.min.replace(tzinfo=UTC)
+    except ValueError:
+        return datetime.min.replace(tzinfo=UTC)
+
+
 def _revision_key(doc: ImportedDocument) -> tuple:
-    return (doc.source.current_release_date or '', doc.source.doc_id)
+    """Newer release instant wins, ties by document id. Instants, not strings: '...00.5Z' sorted before '...00Z'
+    and '10:00+05:00' after '08:00Z' as text (issue #105 BUG-KBC-6)."""
+    return (_instant(doc.source.current_release_date), doc.source.doc_id)
 
 
 def distinct_groups(edges: Iterable[KbCveEdge]) -> tuple[EdgeGroup, ...]:
