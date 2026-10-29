@@ -264,3 +264,17 @@ class SectionMap:
     def rva_to_offset(self, rva: int) -> int | None:
         ranges = self.rva_to_file_ranges(rva, 1)
         return ranges[0].file_offset if ranges else None
+
+    def backed_prefix(self, rva: int, want: int) -> tuple[int, int] | None:
+        """(file offset, length) of the longest prefix of [rva, rva+want) that one section backs in the file, or
+        None when `rva` itself is not backed. A bulk read of `want` bytes from `rva_to_offset` would run into the
+        next section's file bytes when the structure straddles two sections (issue #105 BUG-PE-3)."""
+        first = self.rva_to_file_ranges(rva, 1)
+        if not first or want <= 0:
+            return None
+        region = next(r for r in self.regions if r.start <= rva < r.start + r.extent)
+        end = min(rva + want, region.start + region.backed)
+        for other in self.regions:
+            if other is not region and rva < other.start < end:
+                end = other.start
+        return first[0].file_offset, end - rva

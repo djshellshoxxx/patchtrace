@@ -8,7 +8,7 @@ import struct
 import time
 
 import pytest
-from pe_builder import RDATA, PeSpec, SectionSpec, build_pe_ex
+from pe_builder import CODE, DATA, RDATA, PeSpec, SectionSpec, build_pe_ex
 from strings_pe import builtin_table
 
 from patchtrace.artifact_bytes import VerifiedArtifactReader
@@ -170,3 +170,18 @@ def test_str2_one_long_string_does_not_make_joins_quadratic():
     _link_xrefs('older', table, SideFunctions('older', (), {}, {}), FunctionPairing.empty(),
                 GhidriffStrings(entries, 'x'), 'g', {})
     assert time.perf_counter() - started < 4.0               # about 6.6 s on main, about 0.5 s after the fix
+
+
+def test_pe3_a_clr_header_straddling_two_sections_is_not_read_from_the_next_one(tmp_path):
+    from patchtrace.pe_overview.build_facts import collect_build_facts
+    cor = struct.pack('<IHHIII', 72, 2, 5, 0, 0, 1) + b'\0' * (72 - 20)       # a valid-looking COR20 header
+    text = b'\x90' * 0x1F8 + cor[:8]                                         # only 8 bytes lie inside .text
+    data, _ = build_pe_ex(PeSpec(sections=[SectionSpec('.text', text, CODE),
+                                           SectionSpec('.data', cor[8:] + b'\0' * 0x100, DATA)],
+                                 extra_directories={14: (0x1000 + 0x1F8, 72)}))
+    path = tmp_path / 'straddle.bin'
+    path.write_bytes(data)
+    with VerifiedArtifactReader.open_path(path) as reader:
+        facts = collect_build_facts(reader, inspect_pe(reader))
+    assert facts.clr is None                       # main reported ClrFacts(header_size=72, runtime 2.5, ILONLY)
+
