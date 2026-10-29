@@ -336,6 +336,7 @@
 ### [K8a:kbc-kev-adapter] KEV in `kb leads` (2026-10-28)
 - [x] `kbcorrelation/adapters/kev.py` over the existing `kev` store and `KevColumnProvider`; `kb leads --kev-dir`; default folder of `patchtrace kev`; `LeadsReport.kev_source` provenance; stale/future/unreadable/not-loaded states; KEV excluded from supporting evidence.
 - [ ] Tests for the KEV adapter path: `tests/test_kbc_kev_wiring.py` was removed at the owner's request (2026-10-29); re-add coverage when the owner agrees (the removed file is in git at `6331817`).
+- [x] 2026-10-29: `LeadsViewModel.status_lines` (report text, stale reasons, KEV source, banner, notes) and the copy block name the KEV snapshot and stale reasons; `tests/test_kbc_view_model_status.py`.
 - [ ] open: KEV for `kb explain`/`kb export` cards (still `kev: not-loaded` in `service.py`); `kev_snapshot_sha` in the context key stays None because KEV is applied when leads are read, not when context is attached (decide in the KB plan whether the attach key should carry it); pilot `collect.py` still passes `NO_CATALOG`; KEV-plan K4 item 9 and the GUI KB dock (K4b) consumer of `kev_source`.
 ### [K5w:pairs-plan-glue]
 - [x] K3/K5 glue: `kb pairs` / `kb plan` over the offline file index; tests `tests/test_kbc_pairs_index.py`.
