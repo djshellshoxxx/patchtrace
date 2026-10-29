@@ -47,3 +47,6 @@ tests/fixtures/kev/** text eol=lf
 tools/unified/corpus/** text eol=lf
 tests/fixtures/rules/** text eol=lf
 *.yar text eol=lf
+tests/fixtures/known_answer/** text eol=lf
+docs/plans/c9-preregistration-v1.md text eol=lf
+src/patchtrace/ghidriff_launch/ptlaunch.py text eol=lf

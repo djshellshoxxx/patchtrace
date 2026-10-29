@@ -7,7 +7,9 @@ text, navigation and the copy block all come from here. Rows are built once into
 and the state word.
 
 Rows alternate group header rows and lead rows in the report's order. Navigation (``goto``) is off for header rows, for
-stale reports and for leads without a match id.
+stale reports and for leads without a match id. ``status_lines`` are the page's banner lines: the report text, why it
+is stale (``stale_reasons``), and where its KEV facts come from (``kev_source``), so the dock never has to read the
+report's fields itself.
 """
 from __future__ import annotations
 
@@ -25,6 +27,8 @@ TEXT_EMPTY = 'The stored ranking lists no changed functions for this project.'
 GLYPHS = {'supports': '+', 'contradicts': '!', 'neutral': '=', 'unknown': '?', 'not-run': '-'}
 _ORDER = re.compile(r'attention order ([0-9]+) of ([0-9]+)')
 ALL_GROUPS = 'all'
+STALE_REASON_TEXT = {'file-pair': 'Stale: the file pair differs from the one the context was prepared for.',
+                     'advisory-revision': 'Stale: a newer revision of a source advisory has been imported.'}
 UNATTRIBUTED_HEADER = 'unattributed (always visible)'
 
 
@@ -61,6 +65,9 @@ def _copy_block(lead: LeadRow, report: LeadsReport) -> str:
     lines = [f'Function: {_text(lead.subject, 200)}', f'CVE group: {lead.group}', f'Lead: {lead.lead_id}',
              f'Basis: {_text(lead.rank_basis)}', f'Run: {lead.nav.run_id or "none"}',
              f'Project revision: {lead.nav.project_revision}', f'Context: {report.context_key or "none"}',
+             f'KEV: {report.kev_source.catalog_version or report.kev_source.state}'
+             + (f' (snapshot {report.kev_source.snapshot_id})' if report.kev_source.snapshot_id else ''),
+             *(f'Stale: {reason}' for reason in report.stale_reasons),
              *chip_lines(lead), *(_text(f'Limit: {x}') for x in report.limitations)]
     return '\n'.join(lines)[:COPY_LIMIT]
 
@@ -138,6 +145,15 @@ class LeadsViewModel:
 
     def copy_block(self, row: int) -> str:
         return self._rows[row].copy_text
+
+    @property
+    def status_lines(self) -> tuple[str, ...]:
+        """Banner lines in reading order: the report text, one line per stale reason, the KEV source, its age banner
+        and its notes. Plain text; the first line is never empty."""
+        kev = self.report.kev_source
+        lines = [self.report.text, *(STALE_REASON_TEXT[r] for r in self.report.stale_reasons), kev.text,
+                 *([kev.banner] if kev.banner else []), *(f'KEV note: {n}' for n in kev.notes)]
+        return tuple(_text(line, 1000) for line in lines)
 
     def group_options(self) -> tuple[str, ...]:
         return (ALL_GROUPS, *(g.group for g in self.report.groups), 'unattributed')

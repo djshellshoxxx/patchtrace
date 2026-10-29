@@ -35,6 +35,7 @@ import re
 import xml.etree.ElementTree as ET
 from collections.abc import Iterable
 from dataclasses import dataclass
+from datetime import UTC, datetime
 
 from pydantic import ValidationError
 
@@ -219,11 +220,18 @@ def parse_fixed_build(text: object) -> str | None:
 
 
 def normal_timestamp(value: object) -> str | None:
+    """A release date or timestamp in a fixed shape that is also a real instant (2099-13-45 and 25:61:61 match
+    the shape but are not; issue #105 BUG-KBC-6), else None."""
     if not isinstance(value, str):
         return None
-    if _DATE.fullmatch(value):
-        return value + 'T00:00:00Z'
-    return value if _STAMP.fullmatch(value) else None
+    stamp = value + 'T00:00:00Z' if _DATE.fullmatch(value) else value if _STAMP.fullmatch(value) else None
+    if stamp is None:
+        return None
+    try:
+        datetime.fromisoformat(stamp).astimezone(UTC)
+    except (ValueError, OverflowError):
+        return None
+    return stamp
 
 
 def make_edge(*, kb: str, cve: str, scope_id: str, relation: str, doc_id: str, ptr: str, assertion: str,
@@ -438,7 +446,12 @@ def _json_vulnerability(index: int, item, problems: list[Problem], limits: KbcLi
     cwe = item.get('cwe')
     cwe_id = cwe.get('id') if isinstance(cwe, dict) else None
     rems = []
-    for ri, rem in enumerate(item.get('remediations') or ()):
+    raw_rems = item.get('remediations') or ()
+    if not isinstance(raw_rems, list | tuple):          # 5, true, 3.5 crashed enumerate (issue #105 BUG-KBC-1)
+        problems.append(Problem('ROW_SHAPE', pointer('vulnerabilities', index, 'remediations'),
+                                'remediations is not an array'))
+        raw_rems = ()
+    for ri, rem in enumerate(raw_rems):
         rat = pointer('vulnerabilities', index, 'remediations', ri)
         parsed = _json_remediation(ri, rat, rem, problems, limits)
         if parsed is not None:
@@ -529,22 +542,28 @@ def _xml_root(raw: bytes, limits: KbcLimits) -> ET.Element:
     parser = ET.XMLPullParser(events=('start', 'end'))
     nodes = depth = 0
     root = None
+
+    def drain() -> None:
+        nonlocal nodes, depth, root
+        for event, element in parser.read_events():
+            if event == 'start':
+                nodes += 1
+                depth += 1
+                root = element if root is None else root
+                if nodes > limits.cvrf_json_nodes or depth > limits.cvrf_depth:
+                    raise SourceError('PT-KBC-LIMIT', 'the XML document exceeds the node or depth limit')
+            else:
+                depth -= 1
+                if any(len(v) > MAX_STRING for v in element.attrib.values()) \
+                        or len(element.text or '') > MAX_STRING:
+                    raise SourceError('PT-KBC-LIMIT', 'the XML document has an over-long value')
+
     try:
         for start in range(0, len(text), 65536):
             parser.feed(text[start:start + 65536].encode('utf-8'))
-            for event, element in parser.read_events():
-                if event == 'start':
-                    nodes += 1
-                    depth += 1
-                    root = element if root is None else root
-                    if nodes > limits.cvrf_json_nodes or depth > limits.cvrf_depth:
-                        raise SourceError('PT-KBC-LIMIT', 'the XML document exceeds the node or depth limit')
-                else:
-                    depth -= 1
-                    if any(len(v) > MAX_STRING for v in element.attrib.values()) \
-                            or len(element.text or '') > MAX_STRING:
-                        raise SourceError('PT-KBC-LIMIT', 'the XML document has an over-long value')
+            drain()
         parser.close()
+        drain()     # expat may defer large tokens until close(); their events must pass the limits too (#105 KBC-8)
     except ET.ParseError as exc:
         raise SourceError('PT-KBC-SOURCE', f'the document is not well-formed XML ({safe_label(str(exc), 80)})'
                           ) from None
@@ -666,6 +685,7 @@ def build_edges(document: CvrfDocument, doc_id: str, limits: KbcLimits = DEFAULT
     edges: dict[str, KbCveEdge] = {}
     statuses: dict[tuple, StatusRow] = {}
     cards: list[CveCard] = []
+    work = 0                     # edge constructions so far, duplicates included (BUG-KBC-2)
     for vuln in document.vulnerabilities:
         if vuln.cve in document.ambiguous_cves:
             continue
@@ -680,7 +700,8 @@ def build_edges(document: CvrfDocument, doc_id: str, limits: KbcLimits = DEFAULT
             statuses[(vuln.cve, scope.scope_id, status.value, status.pointer)] = StatusRow(
                 vuln.cve, scope.scope_id, status.value, status_class(status.value), status.pointer)
         for rem in vuln.remediations:
-            _edges_for_remediation(document, doc_id, vuln, rem, scope_by_pid, by_pid, edges, problems)
+            work += _edges_for_remediation(document, doc_id, vuln, rem, scope_by_pid, by_pid, edges, problems,
+                                           limits.cvrf_edges_per_doc, work)
             if len(edges) > limits.cvrf_edges_per_doc:
                 raise SourceError('PT-KBC-LIMIT', f'the document yields more than {limits.cvrf_edges_per_doc} edges')
     ordered = tuple(sorted(edges.values(), key=edge_sort_key))
@@ -693,12 +714,18 @@ def build_edges(document: CvrfDocument, doc_id: str, limits: KbcLimits = DEFAULT
         vulnerabilities=len(document.vulnerabilities))
 
 
-def _edges_for_remediation(document, doc_id, vuln, rem, scope_by_pid, by_pid, edges, problems) -> None:
+def _edges_for_remediation(document, doc_id, vuln, rem, scope_by_pid, by_pid, edges, problems, limit: int,
+                           work: int) -> int:
+    """Add the remediation's edges and return how many edge constructions it cost. ``limit`` (the edge limit) also
+    bounds the constructions for the whole document, ``work`` of them already spent, deduplicated or not: many product ids of one scope times many KBs used to
+    build millions of duplicate edges before the edge limit could fire (issue #105 BUG-KBC-2)."""
     kbs: list[str] = []
     mentions: list[str] = []
     if rem.type == REMEDIATION_VENDOR_FIX:
-        for line in rem.description.splitlines():
-            line = line.strip()
+        # Lines end at '\n' only: splitlines() also splits on VT, FS, NEL and U+2028, which made two edges out of a
+        # line a person sees as one (issue #105 BUG-KBC-10). Only ASCII blanks are trimmed.
+        for line in rem.description.split('\n'):
+            line = line.strip(' \t\r')
             if not line:
                 continue
             try:
@@ -710,7 +737,10 @@ def _edges_for_remediation(document, doc_id, vuln, rem, scope_by_pid, by_pid, ed
     else:
         mentions.extend(find_kb_tokens(rem.description))
     if not kbs and not mentions:
-        return
+        return 0
+    cost = len(rem.product_ids) * len(set(kbs) | set(mentions))
+    if work + cost > limit:                         # the edge limit, applied before the work instead of after it
+        raise SourceError('PT-KBC-LIMIT', f'the document yields more than {limit} edges')
     build = parse_fixed_build(rem.fixed_build)
     if rem.fixed_build is not None and build is None:
         problems.append(Problem('FIXED_BUILD_UNPARSED', rem.pointer + '/fixed_build', 'not a build number'))
@@ -748,3 +778,4 @@ def _edges_for_remediation(document, doc_id, vuln, rem, scope_by_pid, by_pid, ed
                 edges[edge.edge_id] = edge
         except ValidationError:
             problems.append(Problem('ROW_SHAPE', rem.pointer, 'a value exceeds its contract bounds; no edge'))
+    return cost

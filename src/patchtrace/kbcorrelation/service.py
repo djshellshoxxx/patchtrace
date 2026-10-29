@@ -41,6 +41,7 @@ from .contracts import (
 from .export import EXTENSIONS, to_json, to_markdown
 from .ids import KbSyntaxError, normalise_cve, normalise_kb_edge
 from .index import Lookup, ReverseIndex
+from .leads import CARD_KEV, ExploitationLookup, NullExploitation, kev_source_of, kev_text
 from .limits import MAX_SEARCH_MONTHS
 from .lineage import IndexRow
 from .pairs import LocalFile
@@ -48,6 +49,7 @@ from .plan import index_plan, local_plan
 from .ports import AdvisoryPort, ClockPort, ProjectPort
 from .products import clean_text
 from .recovery import repair
+from .sources.cvrf import SourceError, load_json
 from .store import AttachRequest, Fault, KbcStoreError, ProjectAttachment, WorkspaceStore, atomic_write
 from .workflow import Event
 
@@ -123,6 +125,9 @@ def _fail(code: str, message: str) -> KbcStoreError:
     return KbcStoreError(code, message)
 
 
+MIN_PAIR_PREFIX = 8
+
+
 def parse_lead(raw: str) -> tuple[str, str]:
     text = raw.strip()
     try:
@@ -193,12 +198,20 @@ class KbService:
         if months:
             names = [m.strip() for m in months.split(',') if m.strip()]
         if scope_file is not None:
+            # The strict source-document JSON rules apply: no duplicate keys, NaN or invalid UTF-8, bounded depth,
+            # and both values must be lists of strings (issue #105 BUG-KBC-3).
+            bad = _fail('PT-KBC-SCOPE', 'the scope file is not JSON with "months" and "doc_ids" lists of strings')
             try:
-                data = json.loads(self._read_small(scope_file))
-                names += list(data.get('months', []))
-                doc_ids += list(data.get('doc_ids', []))
-            except (ValueError, AttributeError, TypeError):
-                raise _fail('PT-KBC-SCOPE', 'the scope file is not JSON with "months" and "doc_ids" lists') from None
+                data = load_json(self._read_small(scope_file))
+            except SourceError:
+                raise bad from None
+            if not isinstance(data, dict):
+                raise bad
+            for key, target in (('months', names), ('doc_ids', doc_ids)):
+                values = data.get(key, [])
+                if not isinstance(values, list) or not all(isinstance(v, str) for v in values):
+                    raise bad
+                target += values
         if not names and not doc_ids:
             return None
         if len(set(names)) > MAX_SEARCH_MONTHS:
@@ -213,7 +226,7 @@ class KbService:
             raise _fail('PT-KBC-SCOPE', 'the scope names an invalid month (YYYY-Mon) or document id') from None
 
     @staticmethod
-    def _read_small(path: Path) -> str:
+    def _read_small(path: Path) -> bytes:
         try:
             with open(path, 'rb') as handle:
                 data = handle.read(SCOPE_FILE_BYTES + 1)
@@ -221,7 +234,7 @@ class KbService:
             raise _fail('PT-KBC-INPUT', 'the scope file cannot be read') from None
         if len(data) > SCOPE_FILE_BYTES:
             raise _fail('PT-KBC-SCOPE', 'the scope file is too large')
-        return data.decode('utf-8', errors='replace')
+        return data
 
     @staticmethod
     def _lookup(index: ReverseIndex, kind: str, value: str, scope: SearchScope | None, scope_id: str | None,
@@ -475,14 +488,22 @@ class KbService:
 
     @staticmethod
     def _pick_pair(found, pair_id: str | None):
-        """The pair named by ``pair_id`` (a prefix), else the first unblocked candidate, else None."""
+        """The explicitly named pair, else the sole distinct unblocked candidate; never infer a choice from order."""
         every = [pair for res in found for pair in res.pairs]
         if pair_id is None:
-            return next((p for p in every if p.grade != 'X'), None)
-        pair = next((p for p in every if p.pair_id.startswith(pair_id)), None)
-        if pair is None:
+            viable = {p.pair_id: p for p in every if p.grade != 'X'}
+            if len(viable) > 1:
+                raise _fail('PT-KBC-INPUT', f'{len(viable)} viable pairs remain; list them with \"kb pairs\" '
+                            'and select one with --pair')
+            return next(iter(viable.values()), None)
+        if len(pair_id) < MIN_PAIR_PREFIX:
+            raise _fail('PT-KBC-INPUT', f'name a pair by at least {MIN_PAIR_PREFIX} characters of its id')
+        matches = {p.pair_id: p for p in every if p.pair_id.startswith(pair_id)}
+        if len(matches) > 1:                        # never pick one silently (issue #105 BUG-KBC-9)
+            raise _fail('PT-KBC-INPUT', f'{len(matches)} pairs start with that prefix; give more of the id')
+        if not matches:
             raise _fail('PT-KBC-INPUT', 'that pair is not a candidate for this lead; list them with "kb pairs"')
-        return pair
+        return next(iter(matches.values()))
 
     def plan(self, investigation: str, *, pair_id: str | None = None, product: str | None = None,
              files: Iterable[str] = ()) -> Outcome:
@@ -550,13 +571,16 @@ class KbService:
     # ------------------------------------------------------------------------------------------ import-pair
 
     def import_pair(self, investigation: str, older: str, newer: str, directory: str, *, name: str | None = None,
-                    confirm_same_component: bool = False, dry_run: bool = False) -> Outcome:
+                    confirm_same_component: bool = False, dry_run: bool = False,
+                    expected_pair_id: str | None = None) -> Outcome:
         older_f, newer_f = self.env.inspect(older), self.env.inspect(newer)
         with self._open() as ws:
             rev = None if investigation == 'new' else self._get(ws, investigation)
             scope_id = rev.selected_scope_id if rev and rev.selected_scope_id else UNSELECTED_SCOPE
             pair = pr.propose_manual(older_f, newer_f, scope_id=scope_id,
                                      confirm_same_component=confirm_same_component)
+            if expected_pair_id is not None and pair.pair_id != expected_pair_id:
+                raise _fail('PT-KBC-STALE', 'the binary pair or product changed after preview; review the pair again')
             plan = local_plan(pair)
             if pair.grade == 'X':
                 return self._blocked(pair)
@@ -695,7 +719,10 @@ class KbService:
             raise _fail('PT-KBC-VERIFY', 'a stored advisory context failed validation') from None
         return sorted(bundles, key=lambda b: (b.base_revision, b.context_key))
 
-    def explain(self, project_dir: str, cve: str | None) -> Outcome:
+    def explain(self, project_dir: str, cve: str | None, *, kev: ExploitationLookup | None = None) -> Outcome:
+        """The stored context of a project. ``kev`` (the catalog in use, read now) sets each card's KEV state and adds
+        ``kev_source``; the stored bundle is never changed (KB-integration-plan A-13)."""
+        lookup = kev or NullExploitation()
         bundles = self._project_bundles(project_dir)
         if not bundles:
             return Outcome(4, 'unavailable', {'contract': 'kbcorrelation/1', 'cves': []}, TEXT_KB17)
@@ -705,14 +732,16 @@ class KbService:
         for card, profile, hypothesis in zip(bundle.context.cards, bundle.cwe_profiles, bundle.hypotheses,
                                              strict=True):
             if wanted is None or card.cve == wanted:
-                rows.append({'cve': card.cve, 'card': _card_dict(card),
+                fact = lookup.status(card.cve)
+                rows.append({'cve': card.cve, 'card': _card_dict(card.model_copy(update={'kev': CARD_KEV[fact.state]})),
+                             'kev_text': kev_text(fact),
                              'cwe_status': profile.status,
                              'hypotheses': [h.model_dump(mode='json') for h in hypothesis.hypotheses],
                              'hypothesis_unknowns': list(hypothesis.unknowns)})
         result = {'contract': 'kbcorrelation/1', 'context_key': bundle.context_key, 'cves': rows,
                   'coverage': [c.model_dump(mode='json') for c in bundle.context.coverage],
                   'unknowns': list(bundle.context.unknowns), 'limitations': list(bundle.context.limitations),
-                  'hooks': list(bundle.context.hooks)}
+                  'hooks': list(bundle.context.hooks), 'kev_source': kev_source_of(lookup).model_dump(mode='json')}
         if not rows:
             return Outcome(4, 'unavailable', result, f'{wanted} is not part of this project\'s advisory context.')
         lines = []
@@ -722,11 +751,14 @@ class KbService:
             if card['stated_cwe']:
                 lines.append(f'  {card["stated_cwe"]} {card["stated_by"]}')
             lines += [f'  Hypothesis {h["rule_id"]}: {"; ".join(h["expected_operations"])}' for h in row['hypotheses']]
-            lines.append(f'  Applicability: {card["applicability"]}; KEV: {card["kev"]}')
+            lines.append(f'  Applicability: {card["applicability"]}; {row["kev_text"]}')
         lines += [f'Unknown: {u}' for u in bundle.context.unknowns] + [f'Limit: {x}' for x in bundle.context.limitations]
+        lines.append(kev_source_of(lookup).text)
         return Outcome(0, 'complete', result, '\n'.join(lines))
 
-    def export(self, project_dir: str, target: str, *, overwrite: bool) -> Outcome:
+    def export(self, project_dir: str, target: str, *, overwrite: bool,
+               kev: ExploitationLookup | None = None) -> Outcome:
+        """JSON is the stored bundle byte for byte; Markdown applies ``kev`` (the catalog in use) when it is given."""
         path = Path(target)
         fmt = EXTENSIONS.get(path.suffix.lower())
         if fmt is None:
@@ -737,7 +769,7 @@ class KbService:
         if not bundles:
             return Outcome(4, 'unavailable', {'contract': 'kbcorrelation/1', 'written': False}, TEXT_KB17)
         bundle = bundles[-1]
-        data = to_json(bundle) if fmt == 'json' else to_markdown(bundle, self.env.escape).encode('utf-8')
+        data = to_json(bundle) if fmt == 'json' else to_markdown(bundle, self.env.escape, kev).encode('utf-8')
         try:
             atomic_write(path, data)
         except OSError:

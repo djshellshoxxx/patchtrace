@@ -30,6 +30,8 @@ def _readable(smap: SectionMap, rva: int, want: int) -> int:
 
 
 def _name_at(ctx: Ctx, smap: SectionMap, rva: int) -> tuple[str, bool] | None:
+    if rva == 0:                                    # RVA 0 is the DOS header, never a name (issue #105 BUG-PE-2)
+        return None
     available = _readable(smap, rva, ctx.limits.max_name_length + 1)
     if not available:
         return None

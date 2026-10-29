@@ -432,7 +432,7 @@ def test_workflow_structure_and_pins():
             assert '@v' in line, line
     yaml = pytest.importorskip('yaml')
     doc = yaml.safe_load(text)
-    assert set(doc['jobs']) == {'plan', 'shard', 'merge', 'windows-advisory'}
+    assert set(doc['jobs']) == {'plan', 'shard', 'merge', 'windows-advisory', 'msvc-advisory'}
     assert doc[True]['workflow_dispatch']['inputs'].keys() == {'shards', 'seed', 'engines', 'subset'}
     assert 'tools/calibration/**' in doc[True]['push']['paths']
     assert doc['jobs']['windows-advisory']['continue-on-error'] is True

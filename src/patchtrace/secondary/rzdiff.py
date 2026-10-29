@@ -8,7 +8,6 @@ partially recovered match list would look complete.
 from __future__ import annotations
 
 import hashlib
-import json
 import re
 import tempfile
 import threading
@@ -16,6 +15,7 @@ from collections.abc import Callable, Mapping
 from pathlib import Path
 
 from ..jobs import run_process
+from ..persistence import strict_json
 from .contracts import (
     RZDIFF_LIMITATIONS,
     Capability,
@@ -34,7 +34,7 @@ PROBE_TIMEOUT = 30
 TYPES = frozenset({'COMPLETE', 'PARTIAL', 'UNLIKE'})
 ENTRY_KEYS = frozenset({'similarity', 'type', 'original', 'modified'})
 SIDE_KEYS = frozenset({'addr', 'name', 'size'})
-_VERSION = re.compile(r'^rz-diff (\d+)\.(\d+)\.(\d+)\b')
+_VERSION = re.compile(r'^rz-diff ([0-9]{1,9})\.([0-9]{1,9})\.([0-9]{1,9})\b')
 
 
 def parse_version(text: str) -> tuple[str, tuple[int, int, int]] | None:
@@ -74,17 +74,6 @@ def _fail(message: str) -> SecondaryError:
     return SecondaryError('PT-SECONDARY-INPUT', message)
 
 
-def _no_duplicates(pairs):
-    keys = [k for k, _ in pairs]
-    if len(set(keys)) != len(keys):
-        raise _fail('duplicate key in rz-diff JSON object')
-    return dict(pairs)
-
-
-def _reject_constant(name):
-    raise _fail(f'non-finite number {name} in rz-diff JSON')
-
-
 def _side(value, index: int, label: str) -> tuple[int, str] | None:
     if value is None:
         return None
@@ -101,14 +90,20 @@ def _side(value, index: int, label: str) -> tuple[int, str] | None:
 
 
 def parse_output(stdout: str, version: str, older_sha256: str, newer_sha256: str) -> SecondaryMatchSet:
+    if len(stdout) > STDOUT_LIMIT:
+        raise SecondaryError('PT-SECONDARY-LIMIT', 'rz-diff output exceeds 64 MiB')
+    try:
+        data = stdout.encode('utf-8')
+    except UnicodeEncodeError:
+        raise _fail('rz-diff output is not valid UTF-8') from None
+    if len(data) > STDOUT_LIMIT:
+        raise SecondaryError('PT-SECONDARY-LIMIT', 'rz-diff output exceeds 64 MiB')
     if not stdout.strip():
         raise _fail('rz-diff produced no output')
     try:
-        document = json.loads(stdout, object_pairs_hook=_no_duplicates, parse_constant=_reject_constant)
-    except ValueError as exc:
-        if isinstance(exc, SecondaryError):
-            raise
-        raise _fail('rz-diff output is not valid JSON') from None
+        document = strict_json(stdout)
+    except ValueError:
+        raise _fail('rz-diff output is not valid strict JSON') from None
     if not isinstance(document, list):
         raise _fail('rz-diff output is not a JSON array')
     matches = []
@@ -133,7 +128,7 @@ def parse_output(stdout: str, version: str, older_sha256: str, newer_sha256: str
             flags=(), algorithm='levenshtein-bytes', match_type=entry['type']))
     return SecondaryMatchSet(engine='rz-diff', engine_version=version, older_sha256=older_sha256,
                              newer_sha256=newer_sha256,
-                             file_sha256=hashlib.sha256(stdout.encode('utf-8')).hexdigest(),
+                             file_sha256=hashlib.sha256(data).hexdigest(),
                              matches=tuple(matches), limitations=RZDIFF_LIMITATIONS)
 
 

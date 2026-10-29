@@ -22,6 +22,7 @@ import time
 import zlib
 from collections.abc import Callable, Mapping
 from dataclasses import dataclass
+from datetime import UTC, datetime, timedelta
 from pathlib import Path
 from typing import Literal
 
@@ -318,7 +319,7 @@ class KevStore:
             except KevError:
                 pass                                             # stored but damaged: write it again
         current = self._current_meta()
-        older = current is not None and meta.date_released < current.date_released
+        older = current is not None and _ranks_below(meta, current, now)
         if current is not None and not older and not accept_shrink and (
                 meta.entry_count * 100 < current.entry_count * limits.SHRINK_KEEP_PERCENT):
             raise KevError('PT-KEV-SHRINK', f'the new catalog has {current.entry_count - meta.entry_count} fewer '
@@ -331,9 +332,10 @@ class KevStore:
         _publish(self._root, CURRENT_FILE, _json(pointer), self._sleep)
         return InstallResult('installed', meta.snapshot_id, meta.snapshot_id)
 
-    def prune(self, keep: int, *, yes: bool = False) -> PruneResult:
+    def prune(self, keep: int, *, yes: bool = False, now: datetime | None = None) -> PruneResult:
         """The only deletion: stored catalogs beyond the ``keep`` newest (the one in use always stays), snapshot files
-        nothing refers to and the temporary files a crash left behind."""
+        nothing refers to and the temporary files a crash left behind. With ``now``, an unreferenced snapshot written
+        in the last ``UNREFERENCED_GRACE_SECONDS`` is kept: it may belong to an install still in progress."""
         if not yes:
             raise KevError('PT-KEV-INPUT', 'pruning deletes stored catalogs; confirm it with --yes')
         if type(keep) is not int or keep < 1:
@@ -341,7 +343,9 @@ class KevStore:
         metas = self.list_snapshots()
         pointer, _ = self._read_pointer()
         kept = {meta.snapshot_id for meta in metas[:keep]} | ({pointer.snapshot_id} if pointer else set())
-        kept_hashes = {meta.raw_sha256 for meta in metas if meta.snapshot_id in kept}
+        # The pointer's own hash too: its description may be unreadable, and a local import has no other copy.
+        kept_hashes = {meta.raw_sha256 for meta in metas if meta.snapshot_id in kept} | (
+            {pointer.raw_sha256} if pointer else set())
         removed, files, freed = [], 0, 0
 
         def delete(path: Path) -> None:
@@ -358,13 +362,43 @@ class KevStore:
         if snapshots.is_dir():
             for path in sorted(snapshots.glob(f'*{SNAPSHOT_SUFFIX}')):
                 stem = path.name[:-len(SNAPSHOT_SUFFIX)]
-                if _ID.fullmatch(stem) and stem not in kept_hashes:
+                if _ID.fullmatch(stem) and stem not in kept_hashes and not _recent(path, now):
                     delete(path)
         for directory in (self._root, snapshots, self._root / META_DIR):
             if directory.is_dir():
                 for path in sorted(directory.glob(f'*{TMP_SUFFIX}')):
                     delete(path)
         return PruneResult(tuple(removed), files, freed)
+
+
+FUTURE_TOLERANCE = timedelta(days=1)
+UNREFERENCED_GRACE_SECONDS = 600
+
+
+def _instant(value: str) -> datetime:
+    return datetime.fromisoformat(value.replace('Z', '+00:00')).astimezone(UTC)
+
+
+def _ranks_below(new: KevCatalogMeta, current: KevCatalogMeta, now: str) -> bool:
+    """Whether ``new`` must not replace ``current``. A catalog released more than a day after ``now`` (a wrong file,
+    a wrong clock or a hostile mirror) never outranks one that is not, and never blocks one either; otherwise the
+    later release wins (issue #105 BUG-KEV-1)."""
+    limit = _instant(now) + FUTURE_TOLERANCE
+    new_future, current_future = _instant(new.date_released) > limit, _instant(current.date_released) > limit
+    if new_future != current_future:
+        return new_future
+    return new.date_released < current.date_released
+
+
+def _recent(path: Path, now: datetime | None) -> bool:
+    """A snapshot written in the last few minutes may belong to an install that has not written its description
+    yet; prune leaves it for a later run (issue #105 BUG-KEV-3). The caller passes the clock."""
+    if now is None:
+        return False
+    try:
+        return now.timestamp() - path.stat().st_mtime < UNREFERENCED_GRACE_SECONDS
+    except OSError:
+        return False
 
 
 def _json(record) -> bytes:

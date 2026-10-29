@@ -102,11 +102,14 @@ def _verify(path: Path, check: str, queries: Sequence[str] = (),
         return f'{type(exc).__name__} while reading the copy', None
 
 
-def _remember(path: Path, facts: _Facts | None) -> None:
-    fingerprint = _fingerprint(path)
-    if fingerprint is not None:
-        with _LOCK:
-            _VERIFIED[str(path)] = (fingerprint, facts)
+def _remember(path: Path, facts: _Facts | None, checked: tuple[int, int] | None) -> bool:
+    """Cache a verdict for `checked`, the fingerprint taken before the check. False (nothing cached) if
+    the file changed while it was being checked, because the verdict then describes another file."""
+    if checked is None or _fingerprint(path) != checked:
+        return False
+    with _LOCK:
+        _VERIFIED[str(path)] = (checked, facts)
+    return True
 
 
 def _cached(path: Path) -> tuple[bool, _Facts | None]:
@@ -159,8 +162,10 @@ def find_verified_backup(root: Path, label: str, *, project_id: str | None = Non
     for candidate in _candidates(Path(root), label):
         known, facts = _cached(candidate)
         if not known:
+            checked = _fingerprint(candidate)
             problem, facts = _verify(candidate, 'quick_check')
-            _remember(candidate, facts if problem is None else None)
+            if not _remember(candidate, facts if problem is None else None, checked):
+                continue
         if _acceptable(facts, project_id, snapshot_sha, require_tables):
             return candidate
     return None
@@ -188,9 +193,12 @@ def write_verified_backup(root: Path, connection: sqlite3.Connection, label: str
         finally:
             copy.close()
         _after_copy(part)
+        checked = _fingerprint(part)
         problem, facts = _verify(part, 'integrity_check', queries, expected)
         if problem is not None or facts is None:
             raise BackupError(f'PT-STORAGE: pre-{label} database backup failed verification ({problem})')
+        if _fingerprint(part) != checked:
+            raise BackupError(f'PT-STORAGE: pre-{label} database backup changed during verification')
         part.replace(target)
     except BackupError:
         part.unlink(missing_ok=True)
@@ -198,7 +206,7 @@ def write_verified_backup(root: Path, connection: sqlite3.Connection, label: str
     except (sqlite3.Error, OSError, ValueError) as exc:
         part.unlink(missing_ok=True)
         raise BackupError(f'PT-STORAGE: pre-{label} database backup failed ({type(exc).__name__})') from exc
-    _remember(target, facts)
+    _remember(target, facts, checked)  # rename keeps size and mtime; a mismatch just means "verify again"
     return target
 
 

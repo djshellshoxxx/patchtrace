@@ -7,6 +7,9 @@ on:
   workflow_dispatch:
 permissions:
   contents: read
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.ref }}
+  cancel-in-progress: true
 jobs:
   qa:
     strategy:
@@ -14,7 +17,7 @@ jobs:
       matrix:
         os: [ubuntu-latest, windows-latest]
     runs-on: ${{ matrix.os }}
-    timeout-minutes: 60
+    timeout-minutes: 120
     env:
       QT_QPA_PLATFORM: offscreen
     steps:
@@ -42,6 +45,10 @@ jobs:
       - name: Frozen EXE headless smoke (A1-A4) and self-test
         if: runner.os == 'Windows'
         run: python tools/frozen_smoke.py dist/PatchTrace/PatchTrace.exe
+      - name: Record this matrix leg's own result for the release notes
+        if: always()
+        shell: bash
+        run: echo "${{ job.status }}" > qa-leg-result.txt
       - name: Extract and run portable Windows ZIP outside checkout
         if: runner.os == 'Windows'
         shell: pwsh
@@ -60,7 +67,9 @@ jobs:
         if: always()
         with:
           name: qa-${{ runner.os }}
-          path: qa-results.xml
+          path: |
+            qa-results.xml
+            qa-leg-result.txt
       - uses: actions/upload-artifact@v4
         if: runner.os == 'Windows' && success()
         with:
@@ -70,6 +79,44 @@ jobs:
             dist/PatchTrace-0.1.0-windows-x64.zip.sha256
             dist/PatchTrace-Windows-x64-Setup.exe
             dist/PatchTrace-Windows-x64-Setup.exe.sha256
+  # Repeats the GUI test files in one pytest session to expose teardown aborts and thread leaks (GUI plan 8.8).
+  qt-gate:
+    strategy:
+      fail-fast: false
+      matrix:
+        # One pass of the GUI files takes about 5 minutes on a runner, so 20 repeats of all of them overrun any sane
+        # timeout; the Linux repeat count stays 20 but the files are dealt over four legs.
+        include:
+          - os: ubuntu-latest
+            repeat: 20
+            shard: 1/4
+          - os: ubuntu-latest
+            repeat: 20
+            shard: 2/4
+          - os: ubuntu-latest
+            repeat: 20
+            shard: 3/4
+          - os: ubuntu-latest
+            repeat: 20
+            shard: 4/4
+          - os: windows-latest
+            repeat: 5
+            shard: 1/1
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 120
+    env:
+      QT_QPA_PLATFORM: offscreen
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install -y libegl1 libopengl0 libgl1
+      - run: "python -m pip install --only-binary=:all: -e '.[dev,search,rules]'"
+      - run: python tools/qt_gate.py --repeat ${{ matrix.repeat }} --shard ${{ matrix.shard }}
   linux-package:
     needs: qa
     runs-on: ubuntu-22.04
@@ -193,6 +240,11 @@ jobs:
           GATE_MILESTONES: ${{ needs.release-gate.outputs.milestones }}
           GATE_REASON: ${{ needs.release-gate.outputs.reason }}
         run: |
+          # Each matrix leg uploads its own status; the aggregate is only the fallback when a file is missing.
+          QA_LINUX=$(tr -d '[:space:]' < qa-results/qa-Linux/qa-leg-result.txt 2>/dev/null || true)
+          QA_WINDOWS=$(tr -d '[:space:]' < qa-results/qa-Windows/qa-leg-result.txt 2>/dev/null || true)
+          QA_LINUX=${QA_LINUX:-$QA_RESULT}
+          QA_WINDOWS=${QA_WINDOWS:-$QA_RESULT}
           cat > "$RUNNER_TEMP/preamble.md" <<'EOF'
           Windows x64 desktop package. Run the per-user Setup.exe installer or extract the portable ZIP before launching PatchTrace.exe.
           Linux x86-64 package (built on Ubuntu 22.04; smoke-tested on 22.04 and 24.04). Extract the tar.gz and run PatchTrace/PatchTrace.
@@ -205,7 +257,7 @@ jobs:
           python3 src-tree/tools/milestone_notes.py --tag "$TAG" --sha "$GITHUB_SHA" --ref-kind "$REF_KIND" \
             --run-url "$RUN_URL" --run-number "$GITHUB_RUN_NUMBER" --assets release \
             --junit linux=qa-results/qa-Linux/qa-results.xml --junit windows=qa-results/qa-Windows/qa-results.xml \
-            --result "qa-ubuntu=$QA_RESULT" --result "qa-windows=$QA_RESULT" --result "linux-smoke=$SMOKE_RESULT" \
+            --result "qa-ubuntu=$QA_LINUX" --result "qa-windows=$QA_WINDOWS" --result "linux-smoke=$SMOKE_RESULT" \
             --preamble "$RUNNER_TEMP/preamble.md" --output "$RUNNER_TEMP/notes.md" \
             || { echo "::warning::milestone_notes failed; using static preamble only"; cp "$RUNNER_TEMP/preamble.md" "$RUNNER_TEMP/notes.md"; }
       - uses: softprops/action-gh-release@v2

@@ -503,6 +503,21 @@ REGISTRY: dict[str, TooltipEntry] = {
         'Symbols improve names but contact a symbol server.',
         'When on, comparison may make network requests. When off, none are made.',
         'Applies to Ghidriff symbol lookups only.'),
+    'setup.symbol_off': _e(
+        'Disable symbol loading for the comparison.',
+        'This is the default and requires no symbol files or network access.',
+        'Use local folders to name functions from matching PDBs without network access, or choose online with explicit consent.'),
+    'setup.symbol_local': _e(
+        'Name functions from PDB symbol files you already have, without any network access.',
+        'Symbols improve names; this keeps every lookup on your machine.',
+        'PatchTrace copies only a PDB whose GUID and age match the binary into a private per-run folder and '
+        'tells Ghidra to use no symbol servers. Off by default.',
+        'Cannot be combined with Internet symbol lookups.'),
+    'setup.symbol_dirs': _e(
+        'Folders searched for PDB files, separated by semicolons, at most 16.',
+        'Only a PDB named in the binary and matching its GUID and age is used; others are skipped.',
+        'Saved with Save setup. Folders are searched one level deep by exact file name.',
+        availability='Used only when local PDB mode is on.'),
     'setup.timeout': _e(
         'Seconds a comparison may run before it is stopped, a whole number from 10 to 86400.',
         'Prevents a stuck backend from running forever.', 'Saved with Save setup.'),
@@ -585,8 +600,8 @@ REGISTRY: dict[str, TooltipEntry] = {
         'Restricts the WIL detector to features you care about.',
         'Saved with the profile.', availability=_DEFAULT_RO),
     'profile.symbol_policy': _e(
-        'Symbol policy: disabled or online.', 'Controls whether symbol lookups may use the network.',
-        'Saved with the profile; online permits network lookups.',
+        'Symbol policy: disabled, local, or online.', 'Controls whether a profile may use local PDB folders or network lookups.',
+        'A profile can narrow the Setup symbol mode, never widen it. Local uses only matching PDBs from Setup folders; online also requires Setup consent.',
         availability=_DEFAULT_RO),
     'profile.max_age': _e(
         'Maximum age in days of enrichment snapshots, a whole number from 1 to 3650.',
@@ -1072,11 +1087,11 @@ def _rich(text: str) -> str:
     return '<p style="white-space:pre-wrap">' + html.escape(text).replace('\n', '<br>') + '</p>'
 
 
-def apply_tooltip(target, tip_id: str, *, name: str | None = None, accessible: str = 'full', **values: object) -> None:
+def apply_tooltip(target, tip_id: str, *, name: str | None = None, accessible: str = 'what', **values: object) -> None:
     """Apply a registry entry to a QWidget or QAction (the work is `gui.tips.apply_tip`).
 
-    Sets toolTip and whatsThis on both, plus statusTip on actions and accessibleDescription on widgets. The legacy
-    description is the whole flattened text; panels pass ``accessible='what'`` for the short What line.
+    Sets toolTip and whatsThis on both, plus statusTip on actions and accessibleDescription on widgets. The description
+    is the short What line; pass ``accessible='full'`` for the whole flattened text.
     ``objectName`` is set to ``name`` (default: the ID) only when still empty. Dynamic IDs (those in TEMPLATES)
     take their values as keyword arguments.
     """

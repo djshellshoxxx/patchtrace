@@ -16,6 +16,8 @@ from pathlib import Path
 
 from patchtrace.jobs import ProcessResult, run_process
 
+from . import msvc
+
 OUTPUT_LIMIT = 256 * 1024 * 1024
 DEFAULT_TIMEOUT = 300.0
 TOOL_ENV_PREFIX = 'PATCHTRACE_KA_'   # e.g. PATCHTRACE_KA_CLANG=/opt/llvm/bin/clang overrides discovery
@@ -30,13 +32,19 @@ CANDIDATES: dict[str, tuple[str, ...]] = {
     'llvm-dwarfdump': tuple('llvm-dwarfdump' + v for v in _V),
     'llvm-strip': tuple('llvm-strip' + v for v in _V),
     'mingw-gcc': ('x86_64-w64-mingw32-gcc', 'x86_64-w64-mingw32-gcc-win32') + (('gcc',) if os.name == 'nt' else ()),
+    'cl': ('cl',),
+    'msvc-link': ('link',),             # on a POSIX host `link` is coreutils: the banner check in probe rejects it
     'git': ('git',),
 }
+# tools whose `--version` probe must print a Microsoft banner (cl prints it on stderr, link on stdout)
+BANNERS = {'cl': msvc.CL_MARKER, 'msvc-link': msvc.LINK_MARKER}
 PROFILE_TOOLS: dict[str, tuple[str, ...]] = {
     'msvc-free': ('clang', 'lld-link', 'llvm-pdbutil', 'llvm-objdump', 'llvm-nm', 'llvm-strip'),
     'mingw-gcc': ('mingw-gcc', 'llvm-dwarfdump', 'llvm-objdump', 'llvm-nm', 'llvm-strip'),
     'mingw-clang': ('clang', 'mingw-gcc', 'llvm-dwarfdump', 'llvm-objdump', 'llvm-nm', 'llvm-strip'),
+    'msvc': ('cl', 'msvc-link', 'llvm-pdbutil', 'llvm-objdump', 'llvm-nm', 'llvm-strip'),
 }
+HOST_ONLY = {'msvc': 'nt'}   # profile -> the only `os.name` that can build it
 _POSIX_KEEP = ('LANG',)
 _WINDOWS_KEEP = ('SYSTEMROOT', 'WINDIR', 'SYSTEMDRIVE', 'PATHEXT', 'COMSPEC', 'NUMBER_OF_PROCESSORS',
                  'PROCESSOR_ARCHITECTURE')
@@ -67,6 +75,7 @@ class Tool:
 @dataclass
 class Toolchain:
     tools: dict[str, Tool] = field(default_factory=dict)
+    host: str = os.name
 
     def get(self, name: str) -> Tool:
         return self.tools.get(name) or Tool(name, None, reason=f'{name} was not probed')
@@ -84,6 +93,8 @@ class Toolchain:
 
     def profile_status(self, profile: str) -> str | None:
         """None when the profile can build here, else the BLOCKED reason."""
+        if HOST_ONLY.get(profile, self.host) != self.host:
+            return f'profile {profile} builds only on a Windows host (this host is {self.host})'
         missing = [f'{n} ({self.get(n).reason})' for n in PROFILE_TOOLS.get(profile, ()) if not self.get(n).ok]
         return None if not missing else 'missing ' + ', '.join(missing)
 
@@ -125,7 +136,13 @@ def probe(environ: Mapping[str, str] | None = None, names: Sequence[str] | None 
             continue
         try:
             result = run_tool([found, '--version'], timeout=60)
-            version = _first_line(result.log_tail or result.stderr_tail)
+            if name in BANNERS:
+                version = msvc.banner_line(result.stderr_tail + '\n' + result.log_tail, BANNERS[name])
+                if version is None:
+                    chain.tools[name] = Tool(name, None, reason=f'{found} is not the Microsoft tool (no banner)')
+                    continue
+            else:
+                version = _first_line(result.log_tail or result.stderr_tail)
         except (OSError, ValueError, ToolError) as exc:
             chain.tools[name] = Tool(name, None, reason=f'cannot run --version: {type(exc).__name__}')
             continue

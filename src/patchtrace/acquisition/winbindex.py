@@ -7,10 +7,12 @@ from __future__ import annotations
 
 import hashlib
 import json
+import math
 import re
 import unicodedata
 import zlib
 from dataclasses import dataclass
+from datetime import date as _calendar_date
 
 from .contracts import (
     UINT32_MAX,
@@ -27,7 +29,7 @@ MAX_DECOMPRESSED = 256 * 1024 * 1024
 MAX_PROBES = 256
 PAGE = 0x1000
 _SHA = re.compile(r'[0-9a-f]{64}')
-_DATE = re.compile(r'\d{4}-\d{2}-\d{2}')
+_DATE_SHAPE = re.compile(r'[0-9]{4}-[0-9]{2}-[0-9]{2}')  # ASCII only: \d also matches other scripts' digits
 REQUIRED = ('sha256', 'size', 'machineType', 'timestamp')
 
 
@@ -62,6 +64,9 @@ def decompress(data: bytes) -> bytes:
     return out
 
 
+_SURROGATE_ESCAPE = re.compile(rb'\\u[dD][89a-fA-F]')
+
+
 def _no_duplicates(pairs):
     result = {}
     for key, value in pairs:
@@ -75,10 +80,20 @@ def _reject_constant(name):
     raise ValueError(f'non-finite number {name}')
 
 
+def _finite_float(literal: str) -> float:
+    number = float(literal)  # an overflowing literal such as 1e999 never reaches parse_constant
+    if not math.isfinite(number):
+        _reject_constant(literal[:40])
+    return number
+
+
 def strict_json(text: bytes):
     try:
-        return json.loads(text.decode('utf-8'), object_pairs_hook=_no_duplicates,
-                          parse_constant=_reject_constant)
+        value = json.loads(text.decode('utf-8'), object_pairs_hook=_no_duplicates,
+                           parse_constant=_reject_constant, parse_float=_finite_float)
+        if _SURROGATE_ESCAPE.search(text):
+            _canonical(value)  # an unpaired surrogate is legal JSON but not text; this raises on it
+        return value
     except (UnicodeDecodeError, ValueError, RecursionError):
         raise AcquisitionError('PT-ACQ-PROVIDER', 'Winbindex record is not strict JSON') from None
 
@@ -92,7 +107,26 @@ def _opt_uint(info: dict, key: str) -> int | None:
     return value if _uint(value) else None
 
 
+class _DateShape:
+    """``fullmatch`` for a real calendar day written ``YYYY-MM-DD`` in ASCII digits."""
+
+    @staticmethod
+    def fullmatch(value: str) -> bool:
+        if not _DATE_SHAPE.fullmatch(value):
+            return False
+        try:
+            _calendar_date.fromisoformat(value)
+        except ValueError:
+            return False
+        return True
+
+
+_DATE = _DateShape()
+
+
 def _canonical(value) -> bytes:
+    """Hashed form of one entry. Raises ``UnicodeEncodeError`` for a lone surrogate, which callers count as a
+    malformed entry (the JSON parser accepts ``\\ud800``; UTF-8 cannot encode it)."""
     return json.dumps(value, sort_keys=True, separators=(',', ':'), ensure_ascii=False).encode('utf-8')
 
 
@@ -108,9 +142,11 @@ def _kbs(windows: dict) -> tuple[tuple[str, ...], tuple[KbRef, ...]]:
             info = info if isinstance(info, dict) else {}
             date = info.get('releaseDate')
             release = info.get('releaseVersion')
-            ref = KbRef(kb=kb[:64] or '?',
+            # Keys and versions are provider text that reaches a terminal: control, format and separator
+            # characters are replaced (``_clean``) before anything is kept.
+            ref = KbRef(kb=_clean(kb, 64).strip() or '?',
                         release_date=date if isinstance(date, str) and _DATE.fullmatch(date) else None,
-                        release_version=release if isinstance(release, str) else None)
+                        release_version=_clean(release, 64) if isinstance(release, str) else None)
             kbs[(ref.kb, ref.release_date or '', ref.release_version or '')] = ref
     return tuple(sorted(versions)), tuple(kbs[k] for k in sorted(kbs))
 
@@ -145,14 +181,18 @@ def parse(data: bytes, file_name: str, data_date: str, *, compressed: bool = Tru
         windows = entry.get('windowsVersions')
         versions, kbs = _kbs(windows) if isinstance(windows, dict) else ((), ())
         version = info.get('version')
+        try:
+            record_sha256 = hashlib.sha256(_canonical(entry)).hexdigest()
+        except UnicodeEncodeError:
+            skipped += 1
+            continue
         candidates.append(BuildCandidate(
             file_name=file_name, sha256=key, size=info['size'], machine_type=info['machineType'],
             timestamp=info['timestamp'], virtual_size=virtual_size,
             last_section_va=va if download == 'candidates' else None,
             last_section_raw=raw if download == 'candidates' else None,
-            version=version if isinstance(version, str) else None, windows_versions=versions, kbs=kbs,
-            download=download, source=f'winbindex@{data_date}',
-            record_sha256=hashlib.sha256(_canonical(entry)).hexdigest()))
+            version=_clean(version, 200) if isinstance(version, str) else None, windows_versions=versions,
+            kbs=kbs, download=download, source=f'winbindex@{data_date}', record_sha256=record_sha256))
     candidates.sort(key=lambda c: (min((k.release_date for k in c.kbs if k.release_date), default=''),
                                    c.sha256))
     warnings = (f'{skipped} Winbindex entries skipped: missing or invalid required fields',) if skipped else ()
@@ -252,8 +292,10 @@ def heading_class(heading: str | None) -> str:
 
 
 def _clean(text: str, limit: int) -> str:
-    # Advisory-adjacent text is untrusted: drop control and format (bidi) characters, then bound it.
-    return ''.join(' ' if unicodedata.category(c).startswith('C') else c for c in text)[:limit]
+    # Advisory-adjacent text is untrusted: drop control and format (bidi) characters and the Unicode line and
+    # paragraph separators (Zl, Zp), then bound it.
+    return ''.join(' ' if unicodedata.category(c)[0] == 'C' or unicodedata.category(c) in ('Zl', 'Zp') else c
+                   for c in text)[:limit]
 
 
 def _variant(info: dict) -> str:
@@ -349,7 +391,11 @@ def parse_rows(data: bytes, file_name: str, data_date: str, *, compressed: bool 
                 or info.get('sha256', key) != key):
             skipped += 1
             continue
-        found, bad = _entry_rows(file_name, key, entry, info, f'winbindex@{data_date}')
+        try:
+            found, bad = _entry_rows(file_name, key, entry, info, f'winbindex@{data_date}')
+        except UnicodeEncodeError:                  # a lone surrogate somewhere in the entry
+            skipped += 1
+            continue
         rows.extend(found)
         skipped_bodies += bad
     rows.sort(key=lambda r: (r.version_key, r.release_date or '', r.release_version or '', r.kb or '', r.sha256))

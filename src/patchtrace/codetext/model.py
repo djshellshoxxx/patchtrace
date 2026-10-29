@@ -190,7 +190,10 @@ class CodeTextModel:
     def _comment_rows(self, side: Side) -> frozenset[int]:
         if side not in self._open_comments:
             text = '\n'.join(self._lines[side])
-            self._open_comments[side] = open_comment_lines(text) if self.language == 'c' else frozenset()
+            # Every row is tokenized on demand, so the comment state must cover every row, not only the first
+            # MAX_DOCUMENT_CHARS of the pane (the pass is linear; issue #105 BUG-CODE-1).
+            self._open_comments[side] = (open_comment_lines(text, max_chars=len(text)) if self.language == 'c'
+                                         else frozenset())
         return self._open_comments[side]
 
     def row_marks(self, row: int) -> RowMarks | None:

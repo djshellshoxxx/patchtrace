@@ -228,3 +228,12 @@ def test_committed_ledger_if_present_is_valid_and_cited():
         if e.state != 'unvalidated':
             assert e.report_sha256 in qa
     json.loads(LEDGER_PATH.read_text(encoding='utf-8'))
+
+
+def test_ser5_notice_ignores_an_expired_entry_in_a_live_ledger():
+    led = load_ledger(canonical_json(ledger_doc([entry(
+        state='windows-validated', evidence_tiers=['tier-w'], scope_ids=['x64-only'],
+        measured_on='2026-09-01', expires='2026-10-01')])), today=dt.date(2026, 9, 15))
+    assert led.reason == 'ok'
+    assert notice('bands', led, {}).state == 'untested'
+    assert not notice('bands', led, {}).provenance_lines

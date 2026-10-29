@@ -64,7 +64,7 @@ class ImportedDocument:
                 'edges': sum(1 for e in rows if e.relation not in MINOR_RELATIONS),
                 'mention_only': sum(1 for e in rows if e.relation == 'mention-only'),
                 'disputed': sum(1 for e in rows if e.relation == 'disputed'),
-                'edge_rows': len(rows), 'scopes': len(self.scopes),
+                'edge_rows': len(rows), 'scopes': len({s.scope_id for s in self.scopes}),  # distinct (#105 KBC-13)
                 'problems': sum(1 for p in self.problems if p.level != 'info')}
 
     def summary(self) -> dict:

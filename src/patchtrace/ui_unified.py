@@ -16,6 +16,7 @@ from PySide6.QtGui import QAction, QKeySequence
 from PySide6.QtWidgets import (
     QAbstractItemView,
     QCheckBox,
+    QComboBox,
     QDialog,
     QHBoxLayout,
     QLineEdit,
@@ -28,12 +29,14 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 
+from .gui.qt.codediff import CodeDiffView
 from .gui.qt.docks import ControllerBase
 from .gui.qt.labels import PlainLabel, SafeTextView
 from .gui.registry import PanelContext
 from .tooltips import apply_tooltip, template, tooltip
 from .unified import pipeline, read_model
 from .unified.limits import UnifiedError
+from .unified.pair_text import CHANNELS, DECOMPILED, DISASSEMBLY, RowCode, RowCodeSource
 from .unified.read_model import (
     Cancelled,
     UnifiedLoadRequest,
@@ -45,14 +48,17 @@ from .unified.registry import REGISTRY
 
 ROW_ROLE = Qt.ItemDataRole.UserRole
 SEARCH_DEBOUNCE_MS = 150
+COLUMNS_DEBOUNCE_MS = 250
 DEFAULT_CHANGES = ('material', 'review', 'unknown', 'not-applicable')   # 07 s7; cosmetic/unchanged are counted
 CANCELLED_TEXT = 'Cancelled; earlier results unchanged.'
 LOADING_DETAIL = 'Loading details...'
-FLAG_OFF_REASON = 'Unified analysis is off: turn on the unified/enabled setting to run it.'
-NO_PAIR_TEXT = ('Disassembly from ProgramIR is not stored for this pair, and decompiled code is unavailable. '
-                'Nothing is shown rather than a guess.')
-LOAD_CHANNEL, RUN_CHANNEL, DETAIL_CHANNEL = 'unified-load', 'unified-run', 'unified-detail'
-PairTexts = Callable[[UnifiedViewModel, UnifiedRowView], 'tuple[str, str, str] | None']
+FLAG_OFF_REASON = 'Select Enable unified analysis to turn on the unified/enabled setting.'
+CODE_HINT = 'Select a row and press Enter to show its code here.'
+CODE_LOADING = 'Loading code...'
+CODE_IN_MAIN = "This row maps to a Ghidriff match; its code is shown in the main window's code panes."
+CODE_MODES = {DECOMPILED: 'Decompiled C', DISASSEMBLY: 'Disassembly'}
+LOAD_CHANNEL, RUN_CHANNEL, DETAIL_CHANNEL, CODE_CHANNEL = 'unified-load', 'unified-run', 'unified-detail', 'unified-code'
+RowCodeReader = Callable[[UnifiedViewModel, UnifiedRowView], RowCode]
 
 
 # ---- table ----------------------------------------------------------------------------------------------------
@@ -254,6 +260,111 @@ def _button(text: str, name: str, tip_id: str) -> QPushButton:
     return button
 
 
+class UnifiedCodeView(QWidget):
+    """The code of the selected row: older and newer side by side in a `CodeDiffView`, one aligned row per line, with
+    gaps where a side has no counterpart. The mode picks decompiled C or the stored disassembly; a mode without text
+    keeps its place in the list, marked unavailable, and shows its reason instead of code. Widgets only: the text
+    comes from `RowCodeSource`, which reads the result off the GUI thread."""
+
+    def __init__(self, parent: QWidget | None = None) -> None:
+        super().__init__(parent)
+        self._code: RowCode | None = None
+        self._preferred = DECOMPILED
+        self.view = CodeDiffView()
+        self.view.setObjectName('unified.code_view')
+        self.mode = QComboBox()
+        self.mode.setObjectName('unified.code_mode')
+        self.mode.setAccessibleName('Code view')
+        for channel in CHANNELS:
+            self.mode.addItem(CODE_MODES[channel], channel)
+        self.previous_hunk = _button('Previous change', 'unified.code_prev', 'unified.code_prev')
+        self.next_hunk = _button('Next change', 'unified.code_next', 'unified.code_next')
+        self.hunk_label = PlainLabel(limit=120)
+        self.hunk_label.setAccessibleName('')       # empty, so a setText announces itself (C6 s1.8)
+        self.status = PlainLabel(wrap=True, limit=600)
+        self.status.setAccessibleName('')
+        apply_tooltip(self.mode, 'unified.code_mode')
+        apply_tooltip(self.view.panes['older'], 'unified.code_older')
+        apply_tooltip(self.view.panes['newer'], 'unified.code_newer')
+        for button in self.view.findChildren(QPushButton):
+            apply_tooltip(button, 'unified.code_copy', name='unified.code_copy')
+        controls = QHBoxLayout()
+        for widget in (self.mode, self.previous_hunk, self.next_hunk, self.hunk_label):
+            controls.addWidget(widget)
+        controls.addStretch(1)
+        layout = QVBoxLayout(self)
+        layout.setContentsMargins(0, 0, 0, 0)
+        layout.addLayout(controls)
+        layout.addWidget(self.status)
+        layout.addWidget(self.view, 1)
+        self.mode.activated.connect(self._mode_chosen)
+        self.previous_hunk.clicked.connect(self._previous)
+        self.next_hunk.clicked.connect(self._next)
+        self.view.hunk_changed.connect(self._hunk_changed)
+        self.show_message(CODE_HINT)
+
+    def set_tokens(self, tokens) -> None:
+        self.view.set_tokens(tokens)
+
+    def show_message(self, text: str) -> None:
+        """No code: one message in both panes, no hunks."""
+        self._code = None
+        self.view.set_message(text)
+        self.status.setText(text)
+        self._refresh_modes()
+
+    def show_code(self, code: RowCode) -> None:
+        """Show the preferred mode when it has text, else the other one, else the preferred mode's reason."""
+        self._code = code
+        self._render(self._preferred if code.channel(self._preferred).pair is not None
+                     else next((c for c in CHANNELS if code.channel(c).pair is not None), self._preferred))
+
+    def shown_mode(self) -> str:
+        return self.mode.currentData()
+
+    def _mode_chosen(self, _index: int = 0) -> None:
+        self._preferred = self.shown_mode()
+        if self._code is not None:
+            self._render(self._preferred)
+
+    def _render(self, mode: str) -> None:
+        code = self._code
+        channel = code.channel(mode)
+        self._refresh_modes()
+        self.mode.setCurrentIndex(CHANNELS.index(mode))
+        if channel.pair is None:
+            self.view.set_message(f'{channel.label} is unavailable: {channel.reason}')
+            self.status.setText(f'{channel.label}: unavailable. {channel.reason}')
+            return
+        self.view.set_pair(channel.pair, channel.provenance)
+        other = code.channel(DISASSEMBLY if mode == DECOMPILED else DECOMPILED)
+        text = channel.label
+        if mode == DISASSEMBLY and other.pair is None:
+            text += f'; decompiled code unavailable for this pair ({other.reason})'
+        self.status.setText('. '.join([text, *channel.notes]))
+
+    def _refresh_modes(self) -> None:
+        for index, channel in enumerate(CHANNELS):
+            missing = self._code is not None and self._code.channel(channel).pair is None
+            self.mode.setItemText(index, CODE_MODES[channel] + (' (unavailable)' if missing else ''))
+        self.mode.setEnabled(self._code is not None)
+
+    def _next(self) -> None:
+        if not self.view.next_hunk() and self.view.hunks:
+            self.hunk_label.setText(f'Change {len(self.view.hunks)} of {len(self.view.hunks)}; no further change')
+
+    def _previous(self) -> None:
+        if not self.view.previous_hunk() and self.view.hunks:
+            self.hunk_label.setText(f'Change 1 of {len(self.view.hunks)}; no earlier change')
+
+    def _hunk_changed(self, index: int) -> None:
+        count = len(self.view.hunks)
+        self.previous_hunk.setEnabled(count > 0)
+        self.next_hunk.setEnabled(count > 0)
+        self.hunk_label.setText('No changes' if not count else f'{count} changes' if index < 0
+                                else f'Change {index + 1} of {count}')
+
+
 class UnifiedPanel(QWidget):
     """Widgets only. Every control exists from the start (hidden when it does not apply) so the tooltip and
     accessibility enumerations find it. The controller owns what to load and when."""
@@ -268,10 +379,14 @@ class UnifiedPanel(QWidget):
     copy_requested = Signal(object)     # list of rows
     explain_requested = Signal(object)
     filters_changed = Signal()
+    columns_changed = Signal()          # a user resize settled (debounced); never emitted for our own sizing
 
     def __init__(self, parent: QWidget | None = None) -> None:
         super().__init__(parent)
         self.setAccessibleName('Unified comparison')
+        self._user_widths: dict[str, int] = {}
+        self._column_keys: tuple[str, ...] = ()
+        self._sizing = False
         self.model = UnifiedTableModel(self)
         self.header = PlainLabel(wrap=True, limit=600)
         self.status = PlainLabel(wrap=True, limit=600)
@@ -280,6 +395,10 @@ class UnifiedPanel(QWidget):
         self.banner.setMaximumHeight(72)
         apply_tooltip(self.banner, 'unified.stale_banner')
         self.run_button = _button('Run unified', 'unified.run', 'unified.run')
+        self.enable_analysis = QCheckBox('Enable unified analysis')
+        self.enable_analysis.setObjectName('unified.enable')
+        self.enable_analysis.setAccessibleName('Enable unified analysis')
+        apply_tooltip(self.enable_analysis, 'unified.enable')
         self.cancel_button = _button('Cancel', 'unified.cancel', 'unified.cancel')
         self.retry_button = _button('Retry', 'unified.retry', 'unified.retry')
         self.copy_error_button = _button('Copy details', 'unified.copy_error', 'unified.copy_error')
@@ -322,6 +441,7 @@ class UnifiedPanel(QWidget):
         self.detail = SafeTextView('Unified row details', wrap=True)
         self.detail.setObjectName('unified.detail')
         apply_tooltip(self.detail, 'unified.detail')
+        self.code = UnifiedCodeView()
         self.goto_button = _button('Go to match', 'unified.goto', 'unified.goto')
         self.correct_button = _button('Correct match...', 'unified.correct', 'unified.correct')
         self.copy_button = _button('Copy provenance', 'unified.copy', 'unified.copy')
@@ -329,6 +449,11 @@ class UnifiedPanel(QWidget):
         self._timer = QTimer(self)
         self._timer.setSingleShot(True)
         self._timer.setInterval(SEARCH_DEBOUNCE_MS)
+        self._columns_timer = QTimer(self)
+        self._columns_timer.setSingleShot(True)
+        self._columns_timer.setInterval(COLUMNS_DEBOUNCE_MS)
+        self._columns_timer.timeout.connect(self.columns_changed)
+        self.table.horizontalHeader().sectionResized.connect(self._section_resized)
         self._layout_widgets()
         self._connect()
         for button in (self.cancel_button, self.retry_button, self.copy_error_button):
@@ -337,7 +462,7 @@ class UnifiedPanel(QWidget):
 
     def _layout_widgets(self) -> None:
         top = QHBoxLayout()
-        for widget in (self.run_button, self.cancel_button, self.retry_button, self.copy_error_button,
+        for widget in (self.enable_analysis, self.run_button, self.cancel_button, self.retry_button, self.copy_error_button,
                        self.view_switch):
             top.addWidget(widget)
         top.addStretch(1)
@@ -358,7 +483,9 @@ class UnifiedPanel(QWidget):
         splitter = QSplitter(Qt.Orientation.Vertical)
         splitter.addWidget(self.table)
         splitter.addWidget(lower)
+        splitter.addWidget(self.code)
         splitter.setStretchFactor(0, 2)
+        splitter.setStretchFactor(2, 2)
         layout = QVBoxLayout(self)
         layout.addWidget(self.header)
         layout.addLayout(top)
@@ -424,11 +551,37 @@ class UnifiedPanel(QWidget):
         self.banner.setPlainText('\n'.join(vm.banners[1:] if vm.state in ('U4', 'U6') else vm.banners))
         self.banner.setVisible(bool(self.banner.toPlainText()))
         self._set_sources(vm)
-        self.model.set_view_model(vm)
+        self._sizing = True
+        try:
+            self.model.set_view_model(vm)
+            self._size_columns(vm)
+        finally:
+            self._sizing = False
         self.apply_filters()
         self.retry_button.setVisible(vm.state == 'U5')
         self.copy_error_button.setVisible(vm.state == 'U5')
         self.cancel_button.setVisible(vm.state == 'U2')
+
+    def set_column_widths(self, widths: Mapping[str, int]) -> None:
+        """The remembered widths (already validated by the controller); they apply at the next view model."""
+        self._user_widths = dict(widths)
+
+    def user_widths(self) -> dict[str, int]:
+        return dict(self._user_widths)
+
+    def _size_columns(self, vm: UnifiedViewModel) -> None:
+        spec = read_model.columns(vm)
+        self._column_keys = tuple(c.key for c in spec)
+        em = self.table.fontMetrics().averageCharWidth()
+        header = self.table.horizontalHeader()
+        for index, column in enumerate(spec):
+            header.resizeSection(index, self._user_widths.get(column.key) or em * column.width_em)
+
+    def _section_resized(self, index: int, _old: int, new: int) -> None:
+        if self._sizing or not 0 <= index < len(self._column_keys):
+            return
+        self._user_widths[self._column_keys[index]] = new
+        self._columns_timer.start()
 
     def _set_sources(self, vm: UnifiedViewModel) -> None:
         """Every registry source is listed (so the choice does not move between results); an id this build does not
@@ -524,7 +677,7 @@ class UnifiedController(ControllerBase):
     it still belongs to the project that asked (the key is compared on the GUI thread, 07 s9)."""
 
     def __init__(self, ctx: PanelContext, *, loader: Callable = read_model.load_unified,
-                 pair_texts: PairTexts | None = None, engine_busy: Callable[[], bool] | None = None) -> None:
+                 row_code: RowCodeReader | None = None, engine_busy: Callable[[], bool] | None = None) -> None:
         panel = UnifiedPanel()
         super().__init__(panel)
         self.panel = panel
@@ -537,15 +690,20 @@ class UnifiedController(ControllerBase):
         self._copy_text = ctx.shell.copy_text
         self.nav = ctx.nav
         self.loader = loader
-        self.pair_texts = pair_texts
+        self._code_source = RowCodeSource() if row_code is None else None
+        self.row_code = row_code or self._code_source
         self.engine_busy = engine_busy or self._evidence_run_active
         self.vm: UnifiedViewModel | None = None
         self.dirty = True
         self.loaded_key = None
         self.last_error = ''
         self.detail_generation = 0
+        self.code_generation = 0
+        self.code_row_id: str | None = None
         self._restore_filters()
+        self._restore_columns()
         panel.run_requested.connect(self.start_run)
+        panel.enable_analysis.toggled.connect(self._set_enabled)
         panel.retry_requested.connect(self.start_run)
         panel.cancel_requested.connect(self.cancel_run)
         panel.copy_error_requested.connect(self._copy_error)
@@ -555,7 +713,9 @@ class UnifiedController(ControllerBase):
         panel.correct_requested.connect(self.correct)
         panel.copy_requested.connect(self.copy_provenance)
         panel.explain_requested.connect(self.explain)
+        panel.code.set_tokens(ctx.shell.theme)
         panel.filters_changed.connect(self._save_filters)
+        panel.columns_changed.connect(self._save_columns)
         self.update_controls()
 
     # -- settings (each read validated; a bad value is the default) --
@@ -567,6 +727,12 @@ class UnifiedController(ControllerBase):
                 button.set_checked(saved)
         panel.show_hidden.setChecked(self.settings.get_bool('view/show_hidden', False))
 
+    def _restore_columns(self) -> None:
+        self.panel.set_column_widths(read_model.parse_column_widths(self.settings.get_list('columns', ())))
+
+    def _save_columns(self) -> None:
+        self.settings.set('columns', read_model.format_column_widths(self.panel.user_widths()))
+
     def _save_filters(self) -> None:
         panel = self.panel
         self.settings.set('filters/decisions', sorted(panel.decision_filter.checked()))
@@ -577,9 +743,13 @@ class UnifiedController(ControllerBase):
     def focus_target(self) -> QWidget:
         return self.panel.table
 
+    def theme_changed(self, tokens: object) -> None:
+        self.panel.code.set_tokens(tokens)
+
     def project_changed(self, key) -> None:
         self.tasks.cancel(RUN_CHANNEL)
         self.tasks.cancel(DETAIL_CHANNEL)
+        self._reset_code()
         if key is None:
             self.loaded_key = None
             self._show(self.loader(UnifiedLoadRequest(None)))
@@ -601,8 +771,10 @@ class UnifiedController(ControllerBase):
             self.panel.select_match(match_id)
 
     def shutdown(self) -> None:
-        for channel in (LOAD_CHANNEL, RUN_CHANNEL, DETAIL_CHANNEL):
+        for channel in (LOAD_CHANNEL, RUN_CHANNEL, DETAIL_CHANNEL, CODE_CHANNEL):
             self.tasks.cancel(channel)
+        if self._code_source is not None:
+            self._code_source.close()
 
     # -- load --
     def _backend(self):
@@ -647,6 +819,10 @@ class UnifiedController(ControllerBase):
         self._announce(vm.state_text if vm.state != 'U3' else read_model.summary_text(vm))
 
     # -- run --
+    def _set_enabled(self, enabled: bool) -> None:
+        self.settings.set('enabled', enabled)
+        self.update_controls()
+
     def run_availability(self) -> tuple[bool, str]:
         if self.port.project() is None:
             return False, 'Needs an open project.'
@@ -659,6 +835,9 @@ class UnifiedController(ControllerBase):
         return True, ''
 
     def update_controls(self) -> None:
+        self.panel.enable_analysis.blockSignals(True)
+        self.panel.enable_analysis.setChecked(self.settings.get_bool('enabled', False))
+        self.panel.enable_analysis.blockSignals(False)
         enabled, reason = self.run_availability()
         self.panel.update_controls(enabled, reason)
         row = self.panel.current_row()
@@ -734,6 +913,8 @@ class UnifiedController(ControllerBase):
     # -- rows --
     def _row_changed(self, row: UnifiedRowView | None) -> None:
         self.detail_generation += 1
+        if row is None or row.row_id != self.code_row_id:
+            self._reset_code()
         self.update_controls()
         if row is None or self.vm is None:
             self.panel.set_detail('')
@@ -748,15 +929,43 @@ class UnifiedController(ControllerBase):
         if generation == self.detail_generation:
             self.panel.set_detail(text)
 
+    def _reset_code(self) -> None:
+        """The code view shows the row it was asked for; any other selection (or project) empties it, and a load
+        still in flight is dropped."""
+        self.code_generation += 1
+        self.code_row_id = None
+        self.tasks.cancel(CODE_CHANNEL)
+        self.panel.code.show_message(CODE_HINT)
+
     def show_row(self, row: UnifiedRowView) -> None:
-        """Rows that map to a Ghidriff match render exactly as today; other rows show stored pair text or say so."""
+        """Rows that map to a Ghidriff match render exactly as today; other rows show the stored decompiled C or
+        disassembly in the code view of this panel (read off the GUI thread), or say why there is none."""
         if row.ghidriff_match_id is not None:
             if not self.nav.select_match(row.ghidriff_match_id, clear_filters=True):
                 self._status('That Ghidriff match is not in the navigator.')
+                return
+            self._reset_code()
+            self.code_row_id = row.row_id
+            self.panel.code.show_message(CODE_IN_MAIN)
             return
-        texts = self.pair_texts(self.vm, row) if self.pair_texts and self.vm else None
-        older, newer, label = texts or (NO_PAIR_TEXT, NO_PAIR_TEXT, f'Unified row {row.function_label}: unavailable')
-        self.nav.show_pair(older, newer, label)
+        if self.vm is None:
+            return
+        vm = self.vm
+        self._reset_code()
+        self.code_row_id, generation = row.row_id, self.code_generation
+        self.panel.code.show_message(CODE_LOADING)
+        self.tasks.submit(CODE_CHANNEL, lambda token, report: self.row_code(vm, row),
+                          on_result=partial(self._code_ready, generation),
+                          on_error=partial(self._code_failed, generation))
+
+    def _code_ready(self, generation: int, code: RowCode) -> None:
+        if generation == self.code_generation:
+            self.panel.code.show_code(code)
+            self._announce(self.panel.code.status.full_text())
+
+    def _code_failed(self, generation: int, failure) -> None:
+        if generation == self.code_generation:
+            self.panel.code.show_message(f'Code could not be read: {failure.text}')
 
     def correct(self, row: UnifiedRowView | None) -> None:
         if row is None or row.ghidriff_match_id is None or not self.nav.select_match(row.ghidriff_match_id, True):
@@ -773,6 +982,10 @@ class UnifiedController(ControllerBase):
         fragment = read_model.explain_context(self.vm, row) if row is not None and self.vm else None
         if fragment is None:
             self._status('No context could be built for this row.')
+            return
+        if row.ghidriff_match_id is not None and self.nav.select_match(row.ghidriff_match_id, True):
+            # D-30: the text reaches an AI only inside the existing, explicit context preview of the selected match
+            self.window.preview_interpretation(notes=[(fragment.title, fragment.text, fragment.omitted)])
             return
         ExplainDialog(fragment.title, fragment.text, fragment.omitted, self.window).exec()
 

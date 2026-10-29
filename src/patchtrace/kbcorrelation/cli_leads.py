@@ -48,7 +48,10 @@ def _change(match) -> str:
 
 
 class RealEngine:
-    """``EngineEvidence`` over the stored default-profile ranking and signals (``enrichment.pipeline.load_default``)."""
+    """``EngineEvidence`` over the stored default-profile ranking and signals (``enrichment.pipeline.load_default``).
+    After ``read`` returns None, ``note`` holds the pipeline's reason (empty when nothing was ever ranked)."""
+
+    note = ''
 
     def read(self, project_dir: str) -> EngineView | None:
         from ..enrichment.pipeline import load_default
@@ -60,7 +63,7 @@ class RealEngine:
         except Exception:
             raise KbcStoreError('PT-KBC-STORAGE', 'the project cannot be opened') from None
         try:
-            result, sets, _ = load_default(EnrichmentStore(service.store), service.project)
+            result, sets, self.note = load_default(EnrichmentStore(service.store), service.project)
             if result is None:
                 return None
             views = build_views(service.project)
@@ -80,19 +83,23 @@ class RealEngine:
         return EngineView(views.revision, views.run_id, views.older_sha256, views.newer_sha256, tuple(rows))
 
 
-def _elsewhere(service: KbService, bundle: ContextBundle) -> tuple[list[NotApplicable], list[str]]:
-    """CVEs of the bundle's source documents that the context leaves out: other products only, or a mention only."""
+def _elsewhere(service: KbService, bundle: ContextBundle) -> tuple[list[NotApplicable], list[str], list[str]]:
+    """CVEs of the bundle's source documents that the context leaves out (other products only, or a mention only), and
+    the bundle's source documents that a newer imported revision has replaced (``ReverseIndex.active_ids``). A source
+    no longer in the workspace is not called replaced: that is unknown, not newer."""
     if not (service.root / DB_NAME).is_file():
-        return [], []
+        return [], [], []
     with service._open(create=False) as ws:
         index, _ = load_index(ws, service.ports)
         try:
             rev = ws.current_revision(bundle.investigation_id)
         except ValidationError:
             rev = None
+    active = index.active_ids()
+    replaced = sorted(s.doc_id for s in bundle.sources if index.get(s.doc_id) is not None and s.doc_id not in active)
     mine = {bundle.scope_id} if bundle.scope_id else set(rev.scope_ids if rev else ())
     if not mine:
-        return [], []
+        return [], [], replaced
     known = {c.cve for c in bundle.context.cards}
     edges: dict[str, list] = defaultdict(list)
     names: dict[str, str] = {}
@@ -115,7 +122,7 @@ def _elsewhere(service: KbService, bundle: ContextBundle) -> tuple[list[NotAppli
             elsewhere.append(NotApplicable(cve, products, cwes.get(cve)))
         elif any(e.relation == 'mention-only' for e in edges[cve]):
             mentions.append(cve)
-    return elsewhere, mentions
+    return elsewhere, mentions, replaced
 
 
 def leads_outcome(service: KbService, engine, project_dir: str, *, kev: ExploitationLookup | None = None,
@@ -126,9 +133,10 @@ def leads_outcome(service: KbService, engine, project_dir: str, *, kev: Exploita
     if bundle is None and view is None:
         return Outcome(4, 'unavailable', {'contract': 'kbcorrelation/1', 'state': 'no-advisory'}, TEXT_KB17)
     wanted = _cve(cve)
-    elsewhere, mentions = _elsewhere(service, bundle) if bundle else ([], [])
+    elsewhere, mentions, replaced = _elsewhere(service, bundle) if bundle else ([], [], [])
     report = build_leads(bundle, view, alignment=alignment or default_alignment(), kev=kev, elsewhere=elsewhere,
-                         mention_only=mentions, only_cve=wanted, limit=limit)
+                         mention_only=mentions, only_cve=wanted, limit=limit, replaced_sources=replaced,
+                         engine_note=getattr(engine, 'note', '') if view is None else '')
     return _present(report, wanted)
 
 
@@ -157,6 +165,8 @@ def register(sub) -> None:
     leads.add_argument('project', metavar='PROJECT')
     leads.add_argument('--cve', metavar='CVE', help='show one CVE group only')
     leads.add_argument('--limit', type=_positive, metavar='N', help='at most N leads per group')
+    leads.add_argument('--kev-dir', type=Path, metavar='DIR', help='KEV catalog folder of "patchtrace kev" (read only; '
+                       'default: its usual folder)')
 
 
 def _positive(text: str) -> int:
@@ -166,8 +176,8 @@ def _positive(text: str) -> int:
 
 
 def cmd_leads(args, context, out) -> int:
-    outcome = leads_outcome(context.service(args), context.engine or RealEngine(), args.project, kev=context.kev,
-                            cve=args.cve, limit=args.limit)
+    outcome = leads_outcome(context.service(args), context.engine or RealEngine(), args.project,
+                            kev=context.exploitation(args.kev_dir), cve=args.cve, limit=args.limit)
     return present(out, 'kb leads', args, outcome)
 
 

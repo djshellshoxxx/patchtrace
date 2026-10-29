@@ -53,7 +53,7 @@ NO_CATALOG = 'No KEV catalog is loaded. Use "patchtrace kev fetch" or "patchtrac
 _NO_ENTRY = '-'
 _RANSOMWARE = {'known': 'Known', 'unknown': 'Unknown', 'unrecognized': 'Not recognized'}
 _TRIAGE = {'yes': 'Yes', 'no': 'No', 'unrecognized': 'Not recognized'}
-_MARKDOWN_SPECIAL = re.compile(r'([\\`*_{}\[\]<>()#+!|~&])')
+_MARKDOWN_SPECIAL = re.compile(r'([\\`*_{}\[\]<>()#+!|~&:./@])')  # : . / @ too: no autolinks (issue #105)
 
 
 # --- parser ---------------------------------------------------------------------------------------------------
@@ -364,7 +364,7 @@ def _diff(args, cancel, service: KevService) -> int:
 
 
 def _prune(args, cancel, service: KevService) -> int:
-    done = service.store.prune(args.keep, yes=args.yes)
+    done = service.store.prune(args.keep, yes=args.yes, now=service.now())
     kept = len(service.store.list_snapshots())
     count = len(done.removed)
     emit(args, args.command_label, 'complete',

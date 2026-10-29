@@ -79,3 +79,7 @@ A recurring routine wakes this session. On each wake: list workers and open PRs;
 |---|---|---|
 | E-0 PR #42 | merged 67e5a6c; prerelease v0.1.0-beta.202 pending verification | release job run 38558039288 |
 | E-1 research | not started | |
+
+## 8. PatchWatch and open-source reuse workstream (2026-10-26)
+
+Owner-requested planning addition. See [feature-by-feature implementation plan](patchwatch-open-source-reuse-roadmap-20261026.md) and [source audit/integration notes](../research/patchwatch-integration-notes-20261026.md). This adds PW-01 through PW-12 (KB CSV/MSU enumeration, SUG ingestion, verified pairs, orchestration, AI triage/synthesis/deep analysis, Qt CVE dashboard, export, storage, diagnostics) and OS-01 through OS-12 open-source integration investigations. Documentation only: no code implemented or existing acceptance gate waived. Reconcile with current main and open PRs before beginning each slice; preserve existing owner priorities unless explicitly changed.

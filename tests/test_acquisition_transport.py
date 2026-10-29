@@ -6,6 +6,7 @@ import threading
 import urllib.request
 
 import pytest
+from drip_server import drip_server
 
 from patchtrace.acquisition import transport as tr
 from patchtrace.acquisition.contracts import AcquisitionError, PlannedDownload
@@ -306,3 +307,49 @@ def test_download_has_a_total_deadline(tmp_path):
     with pytest.raises(tr.AcquisitionError) as info:
         t.download(planned(), consent(URL), tmp_path)
     assert info.value.recoverable and 'timeout' in str(info.value)
+
+
+def test_slow_drip_download_stops_at_the_total_deadline(tmp_path, monkeypatch):
+    import time
+    local, close = drip_server(40, 0.2)  # 8 s of dripping against a 1 s deadline
+    monkeypatch.setattr(tr, 'DOWNLOAD_DEADLINE', 1.0)
+    t, _ = make(lambda method, url, headers, timeout: tr.urllib_open(method, local, headers, timeout))
+    started = time.monotonic()
+    try:
+        with pytest.raises(AcquisitionError) as exc:
+            t.download(planned(body=b'x' * 40), consent(URL), tmp_path)
+    finally:
+        close()
+    assert exc.value.code == 'PT-ACQ-NETWORK' and 'timeout' in str(exc.value)
+    assert time.monotonic() - started < 4
+
+
+def test_slow_drip_download_observes_cancel(tmp_path):
+    import time
+    local, close = drip_server(40, 0.2)
+    cancel = threading.Event()
+    threading.Timer(0.5, cancel.set).start()
+    t, _ = make(lambda method, url, headers, timeout: tr.urllib_open(method, local, headers, timeout), cancel=cancel)
+    started = time.monotonic()
+    try:
+        with pytest.raises(AcquisitionError) as exc:
+            t.download(planned(body=b'x' * 40), consent(URL), tmp_path)
+    finally:
+        close()
+    assert exc.value.code == 'PT-ACQ-CANCEL' and time.monotonic() - started < 4
+
+
+def test_http_protocol_error_is_typed_network_error(tmp_path):
+    import http.client
+    t, _ = make(Opener(http.client.BadStatusLine('NOT-HTTP garbage')))
+    with pytest.raises(AcquisitionError) as exc:
+        t.download(planned(), consent(URL), tmp_path)
+    assert exc.value.code == 'PT-ACQ-NETWORK' and 'garbage' not in str(exc.value)
+
+
+def test_malformed_redirect_location_is_typed_network_error(tmp_path):
+    opener = Opener(Resp(302, headers={'Location': 'https://[x'}))
+    t, _ = make(opener)
+    with pytest.raises(AcquisitionError) as exc:
+        t.download(planned(), consent(URL), tmp_path)
+    assert exc.value.code == 'PT-ACQ-NETWORK' and '[x' not in str(exc.value) and len(opener.calls) == 1

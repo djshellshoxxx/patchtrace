@@ -9,11 +9,13 @@ import re
 import tempfile
 from pathlib import Path
 
+from .hostile_text import escape_text, is_hostile
 from .models import ComparisonProject, ExportManifest
 
 MAX_REPORT_BYTES = 20 * 1024 * 1024
 SAFE_SETTING_KEYS = {'timeout_seconds', 'allow_symbol_downloads', 'older_sha256', 'newer_sha256', 'python_version',
-                     'pyghidra_version', 'ghidra_version', 'java_runtime_version'}
+                     'pyghidra_version', 'ghidra_version', 'java_runtime_version', 'symbol_mode',
+                     'symbol_input_digest', 'launcher_version', 'staged_symbols'}
 
 
 class ExportError(ValueError):
@@ -52,6 +54,21 @@ def _clean(value):
     return value
 
 
+def _safe_staged(value) -> list[dict] | None:
+    """Names and hashes of staged PDBs only (SPEC-53); anything malformed drops the whole key."""
+    if not isinstance(value, list) or len(value) > 64:
+        return None
+    rows = []
+    for row in value:
+        if (not isinstance(row, dict) or set(row) != {'name', 'guid_age', 'sha256'}
+                or not isinstance(row['name'], str) or not re.fullmatch(r'[\w.+@ -]{1,255}', row['name'])
+                or not isinstance(row['guid_age'], str) or not re.fullmatch('[0-9A-F]{33,40}', row['guid_age'])
+                or not isinstance(row['sha256'], str) or not re.fullmatch('[0-9a-f]{64}', row['sha256'])):
+            return None
+        rows.append({'name': row['name'], 'guid_age': row['guid_age'], 'sha256': row['sha256']})
+    return rows
+
+
 def _safe_settings(settings: dict) -> dict:
     result = {}
     for key in sorted(SAFE_SETTING_KEYS & settings.keys()):
@@ -62,6 +79,16 @@ def _safe_settings(settings: dict) -> dict:
         elif key == 'timeout_seconds':
             if type(value) is int and 1 <= value <= 86400:
                 result[key] = value
+        elif key == 'symbol_mode':
+            if value in ('off', 'local', 'online'):
+                result[key] = value
+        elif key == 'symbol_input_digest':
+            if isinstance(value, str) and re.fullmatch('[0-9a-f]{64}', value):
+                result[key] = value
+        elif key == 'staged_symbols':
+            rows = _safe_staged(value)
+            if rows is not None:
+                result[key] = rows
         elif key.endswith('_sha256'):
             if isinstance(value, str) and re.fullmatch('[0-9a-f]{64}', value):
                 result[key] = value
@@ -212,7 +239,9 @@ def _cell(value: str) -> str:
 
 
 def _render(data: dict, format: str) -> str:
-    serialized = json.dumps(data, indent=2, sort_keys=True, ensure_ascii=False)
+    # Outside the layout newline, hostile characters sit inside JSON strings, where the \uXXXX spelling is the same value.
+    serialized = ''.join(json.dumps(c)[1:-1] if is_hostile(c) and c != '\n' else c
+                         for c in json.dumps(data, indent=2, sort_keys=True, ensure_ascii=False))
     if format == 'json':
         return serialized + '\n'
     if format == 'html':
@@ -243,7 +272,7 @@ def _render(data: dict, format: str) -> str:
                              + html.escape(finding['review']) + '; stale: '
                              + str(finding['stale']).lower() + '</p></article>')
         parts += ['<h2>Evidence and provenance</h2><pre>', html.escape(serialized), '</pre></body></html>\n']
-        return ''.join(parts)
+        return escape_text(''.join(parts), keep='\n')
     parts = ['# PatchTrace report', '', _markdown_escape(data['name']), '',
              f'Project revision: {data["revision"]}', '']
     ranking = data.get('change_ranking')
@@ -263,7 +292,62 @@ def _render(data: dict, format: str) -> str:
                       'Review: ' + _markdown_escape(finding['review']) + '; stale: '
                       + str(finding['stale']).lower(), '']
     parts += ['## Evidence and provenance', '', _markdown_escape(serialized), '']
-    return '\n'.join(parts)
+    return escape_text('\n'.join(parts), keep='\n')
+
+
+def previous_copy_path(destination: Path, data: bytes) -> Path:
+    """Where an overwritten export's earlier bytes are kept: `<stem>.previous-<sha256[:8]><suffix>` beside it."""
+    digest = hashlib.sha256(data).hexdigest()[:8]
+    return destination.with_name(f'{destination.stem}.previous-{digest}{destination.suffix}')
+
+
+def _keep_previous(destination: Path, content: bytes) -> Path | None:
+    """Back up an existing destination whose bytes differ from `content`; never overwrite an earlier backup.
+
+    The dialog's default destination is a fixed `exports/report.<ext>`, so without this every export silently
+    replaced the previous one. A file larger than any report is refused rather than read or replaced: the path
+    most likely names something that is not a PatchTrace report.
+    """
+    try:
+        if not destination.is_file():
+            return None
+        if destination.stat().st_size > MAX_REPORT_BYTES:
+            raise ExportError(f'PT-EXPORT: {destination.name} exists and is larger than any report; '
+                              'choose another destination')
+        with destination.open('rb') as stream:
+            previous = stream.read(MAX_REPORT_BYTES + 1)
+        if len(previous) > MAX_REPORT_BYTES:
+            raise ExportError('PT-EXPORT: existing report grew beyond the report cap; choose another destination')
+    except FileNotFoundError:
+        return None
+    if previous == content:
+        return None
+    backup = previous_copy_path(destination, previous)
+    try:
+        fd = os.open(backup, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
+    except FileExistsError:
+        if backup.is_symlink() or not backup.is_file():
+            raise ExportError('PT-EXPORT: previous report backup is not a regular file; '
+                              'choose another destination') from None
+        with backup.open('rb') as stream:
+            matches = stream.read(len(previous) + 1) == previous
+        if not matches:
+            raise ExportError('PT-EXPORT: previous report backup does not match; choose another destination') from None
+        return backup
+    try:
+        with os.fdopen(fd, 'wb') as stream:
+            stream.write(previous)
+            stream.flush()
+            os.fsync(stream.fileno())
+    except BaseException:
+        # Only the exclusive creator may remove its failed copy. A later retry also verifies bytes,
+        # so inability to clean up can never turn an incomplete copy into a successful preservation.
+        try:
+            backup.unlink(missing_ok=True)
+        except OSError:
+            pass
+        raise
+    return backup
 
 
 def export_project(project: ComparisonProject, format: str, destination: Path, include_code: bool = False,
@@ -284,6 +368,7 @@ def export_project(project: ComparisonProject, format: str, destination: Path, i
             stream.write(content)
             stream.flush()
             os.fsync(stream.fileno())
+        _keep_previous(destination, content)  # before the replace: a failed backup leaves the old file in place
         os.replace(staged, destination)
     except OSError:
         raise ExportError('PT-EXPORT: cannot write report; check destination permissions and free space') from None

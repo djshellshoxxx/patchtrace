@@ -29,6 +29,8 @@ import tempfile
 from collections.abc import Callable, Iterable, Sequence
 from pathlib import Path
 
+from patchtrace.calibration.scope import TIER_R_CLAIM
+
 from ..common import canonical_json, digest, r12
 from .contracts import COSMETIC_OPERATORS, PERMISSIVE_SPDX, SEMANTIC_OPERATORS, ContractError, load_report
 
@@ -480,7 +482,13 @@ def _engine_status(rows: list[dict]) -> dict:
     versions = {r['version'] for r in rows if r.get('version')}
     if len(versions) > 1:
         raise ShardError(f'engine {rows[0]["engine"]} ran with different versions: {sorted(versions)}')
-    status = (next(iter(states)) if len(states) == 1 else 'partial')
+    if len(states) == 1:
+        status = next(iter(states))
+    elif not states & {'ok', 'partial'}:
+        # D-08: no run completed anywhere, so say the worst thing that happened instead of 'partial'
+        status = max(states, key=lambda x: STATUS_ORDER.get(x, 0))
+    else:
+        status = 'partial'
     if sum(r['failures'] for r in rows) and status == 'ok':
         status = 'partial'
     reason = '; '.join(sorted({r['reason'] for r in rows if r.get('reason')}))[:500] or None
@@ -603,7 +611,7 @@ def _fmt(value) -> str:
 
 
 def render_markdown(report: dict, prov: dict) -> str:
-    lines = ['# Tier R aggregate report', '',
+    lines = ['# Tier R aggregate report', '', f'> {TIER_R_CLAIM}', '',
              f'- report_sha256: `{report["report_sha256"]}`', f'- symbols: {report["symbols"]}',
              f'- plan: `{prov["plan_sha256"]}`, seed {prov["seed"]}, subset {prov["subset"]}, {len(prov["shards"])} shard(s)',
              f'- failing cases: {len(prov["failing_cases"])}', '', '## Engines', '',
