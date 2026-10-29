@@ -135,3 +135,38 @@ def test_code1_comment_state_covers_rows_past_the_document_cap():
     last = len(rows) - 1
     assert last in model._comment_rows('older')
     assert {span.style_key.role for span in model.spans('older', last, rows[last])} == {'comment'}
+
+
+def _string_row(index: int, length: int, rva: int, text: str | None = None) -> SourceRow:
+    value = (text or f's{index}').encode()
+    return SourceRow(hashlib.sha256(value).digest(), value.decode(), length, 'static', 'ASCII', rva, rva, None, None,
+                     None, None, 'verified-bytes')
+
+
+def test_str2_contains_join_matches_a_brute_force_oracle():
+    from patchtrace.strings.links import _join_row, _previous_longer, _single
+    rng = random.Random(7)
+    rows = [_string_row(i, rng.randrange(1, 60), rng.randrange(0x1000, 0x1800), rng.choice([None, 'dup']))
+            for i in range(300)]
+    located = sorted(((r.rva, r.length, r) for r in rows), key=lambda item: item[:2])
+    starts = [item[0] for item in located]
+    ends = [start + span for start, span, _ in located]
+    earlier = _previous_longer(ends)
+    for rva in range(0x0ff0, 0x1850):
+        exact = [row for start, _, row in located if start == rva]
+        expected = (_single(exact, 'exact') if exact else
+                    _single([row for start, span, row in reversed(located) if start < rva < start + span],
+                            'contains'))
+        assert _join_row(rva, located, starts, ends, earlier) == expected, hex(rva)
+
+
+def test_str2_one_long_string_does_not_make_joins_quadratic():
+    from patchtrace.strings.links import GhidriffString, GhidriffStrings, _link_xrefs
+    count = 100_000
+    rows = [_string_row(i, 6, 0x10000 + 8 * i) for i in range(count)] + [_string_row(count, 1_000_000, 0x1000)]
+    table = builtin_table('older', 'a' * 64, rows)
+    entries = tuple(GhidriffString('older', 0x10000 + 8 * ((i * 97) % count) + 3, ('f',)) for i in range(2000))
+    started = time.perf_counter()
+    _link_xrefs('older', table, SideFunctions('older', (), {}, {}), FunctionPairing.empty(),
+                GhidriffStrings(entries, 'x'), 'g', {})
+    assert time.perf_counter() - started < 4.0               # about 6.6 s on main, about 0.5 s after the fix
