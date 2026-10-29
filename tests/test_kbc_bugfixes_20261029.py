@@ -198,3 +198,11 @@ def test_kbc11_a_newer_store_opens_read_only_through_a_relative_path(tmp_path, m
         assert store.read_only
     finally:
         store.close()
+
+
+def test_kbc13_two_product_ids_of_one_scope_count_as_one_scope():
+    raw = json.dumps({'dialect': 'cvrf-json/0', 'document': {'release_id': '2099-Feb'},
+                      'product_tree': [{'product_id': 'A', 'name': PRODUCT}, {'product_id': 'B', 'name': PRODUCT}],
+                      'vulnerabilities': [{'cve': 'CVE-2099-0001', 'remediations': [
+                          {'type': 2, 'description': 'KB5000001', 'product_ids': ['A', 'B']}]}]}).encode()
+    assert import_bytes(raw, now=NOW).counts()['scopes'] == 1
