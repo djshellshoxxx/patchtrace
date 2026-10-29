@@ -51,10 +51,11 @@ def test_java_version_stops_after_second_timeout(monkeypatch, tmp_path):
 def test_java_version_does_not_retry_non_timeout_failures(monkeypatch, tmp_path):
     config = _configured_probe(monkeypatch, tmp_path)
     calls = []
+    current = []
 
     def fake_run_process(_argv, *, timeout_seconds, **_kwargs):
         calls.append(timeout_seconds)
-        return outcome
+        return current[0]
 
     monkeypatch.setattr(backend, 'run_process', fake_run_process)
     for outcome in (
@@ -63,6 +64,7 @@ def test_java_version_does_not_retry_non_timeout_failures(monkeypatch, tmp_path)
         _result(returncode=1, log_tail='java failed'),
         _result(log_tail='unrecognized version text'),
     ):
+        current[:] = [outcome]
         calls.clear()
         assert backend._java_version(config) == 'unknown'
         assert calls == [15]

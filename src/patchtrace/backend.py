@@ -280,6 +280,7 @@ def _java_version(config: BackendConfig, cancel: threading.Event | None = None) 
 
     return 'unknown'
 
+
 def _probe_backend(config: BackendConfig, cancel: threading.Event | None = None) -> dict:
     # Metadata and find_spec do not import ghidriff or start Java.
     code = (
