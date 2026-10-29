@@ -247,19 +247,38 @@ def _java_executable(config: BackendConfig) -> str | None:
 
 
 def _java_version(config: BackendConfig, cancel: threading.Event | None = None) -> str:
-    """Probed JVM version, or 'unknown' (which makes raw output uncacheable)."""
+    """Probed JVM version, or 'unknown' (which makes raw output uncacheable).
+
+    A cold JVM may exceed the initial probe timeout. Retry that timeout once
+    with a longer bound; cancellation and other failures return immediately.
+    """
     java = _java_executable(config)
     if java is None:
         return 'unknown'
-    try:
-        result = run_process([java, '-version'], cwd=Path(config.ghidra_dir), env=_environment(config),
-                             cancel=cancel or threading.Event(), timeout_seconds=15, log_limit=4096)
-    except OSError:
-        return 'unknown'
-    if result.reason or result.returncode:
-        return 'unknown'
-    match = re.search(r'version "([A-Za-z0-9_.+-]{1,64})"', result.log_tail)
-    return match.group(1) if match else 'unknown'
+
+    cancel_event = cancel or threading.Event()
+    for attempt, timeout_seconds in enumerate((15, 30)):
+        try:
+            result = run_process(
+                [java, '-version'],
+                cwd=Path(config.ghidra_dir),
+                env=_environment(config),
+                cancel=cancel_event,
+                timeout_seconds=timeout_seconds,
+                log_limit=4096,
+            )
+        except OSError:
+            return 'unknown'
+
+        if result.reason == 'timeout' and attempt == 0 and not cancel_event.is_set():
+            continue
+        if result.reason or result.returncode:
+            return 'unknown'
+
+        match = re.search(r'version "([A-Za-z0-9_.+-]{1,64})"', result.log_tail)
+        return match.group(1) if match else 'unknown'
+
+    return 'unknown'
 
 
 def _probe_backend(config: BackendConfig, cancel: threading.Event | None = None) -> dict:
