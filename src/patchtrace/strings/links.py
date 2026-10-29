@@ -298,13 +298,13 @@ def _link_literals(side: Side, table: StringTable, functions: SideFunctions, pai
 
 def _link_prefixes(side: Side, table: StringTable, prefixes: list, functions: SideFunctions,
                    pairing: FunctionPairing, group: str, found: dict[LinkKey, list[StringLink]]) -> None:
-    shown = sorted((row.display, row) for row in table)
-    displays = [item[0] for item in shown]
+    shown = sorted(table, key=lambda row: row.display)    # never compares rows: equal displays are legal (#105)
+    displays = [row.display for row in shown]
     for wide, text, hit in prefixes:
         needle = display_text(text, limit=len(text) * 10 + 4)
         index, taken = bisect_left(displays, needle), 0
         while index < len(shown) and displays[index].startswith(needle) and taken < MAX_PREFIX_HITS:
-            row = shown[index][1]
+            row = shown[index]
             if (row.encoding == _WIDE) == wide and row.length > len(text):
                 found.setdefault(_row_key(side, row), []).append(_literal_link(side, hit, 'contains', functions,
                                                                                pairing, group))

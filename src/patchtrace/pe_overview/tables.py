@@ -96,7 +96,7 @@ class PeTables:
             stop = min(end, region.start + region.extent)
             backed_end = region.start + region.backed
             if cursor < backed_end:
-                take = min(stop, backed_end)
+                take = min(stop, backed_end, cursor + MAX_READ_BYTES)   # the reader caps one read (#105 BUG-PE-1)
                 data = self.reader.read(region.file_offset + cursor - region.start, take - cursor)
                 out += data.ljust(take - cursor, b'\0')
                 cursor = take
@@ -111,7 +111,9 @@ class PeTables:
         ranges = self.smap.rva_to_file_ranges(rva, length)
         if not ranges or len(ranges) != 1 or ranges[0].length != length:
             return None
-        return self.reader.read(ranges[0].file_offset, length, clip=False)
+        start = ranges[0].file_offset
+        return b''.join(self.reader.read(start + done, min(MAX_READ_BYTES, length - done), clip=False)
+                        for done in range(0, length, MAX_READ_BYTES))
 
     def rva_to_offset(self, rva: int) -> int | None:
         return self.smap.rva_to_offset(rva)
