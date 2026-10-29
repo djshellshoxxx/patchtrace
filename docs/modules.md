@@ -1048,3 +1048,10 @@ R5 contract notes: no persisted contract changed. Deviations from the card, all 
 | suite runner | tools/run_test_suite.py | Runs pytest the way CI does (`QT_QPA_PLATFORM=offscreen`, `-p no:cacheprovider`, `-n N --dist loadfile` when the local-only `pytest-xdist` is installed). Before the run it reports missing Qt system libraries and missing CI extras (rapidfuzz, yara_x, iced_x86). It writes the full log to a file and prints only the summary and the failing node ids. `--base REF` re-runs each failure on a temporary detached worktree of REF and labels it `also fails on base` or `new`. |
 | KEV fixture | tools/make_kev_catalog.py | Writes a synthetic CISA-format KEV catalog (`--cve CVE[@dateAdded]`, `--released`, `--version`, `--ransomware`). The production parser checks it before writing, so `patchtrace kev import` always accepts it. Used for manual `kb leads --kev-dir` checks. |
 | tests | tests/test_dev_test_tools.py (3) | catalog round trip through `parse_catalog`, malformed CVE refused, failure and summary parsing of the runner |
+
+### [K8b:kbc-kev-explain-export] KEV in `kb explain` and the Markdown export (2026-10-29; KB-integration-plan A-13)
+
+| Module | Files | Responsibility |
+|---|---|---|
+| explain/export | src/patchtrace/kbcorrelation/{service,export,cli,leads}.py | `kb explain ... [--kev-dir]` sets each card's KEV state from the catalog in use (`leads.CARD_KEV`), adds `kev_text` per CVE and `kev_source`; `kb export FILE.md [--kev-dir]` writes the KEV sentence per CVE and a `KEV source` header line (escaped like all advisory text). The JSON export is the stored bundle byte for byte, and the stored context and its key never change. `leads.kev_text` and `leads.kev_source_of` are the shared wording. |
+| tests | tests/test_kbc_kev_explain_export.py (5) | explain with and without a catalog, JSON export unchanged by KEV, Markdown names the state and snapshot (escaped), stored context unchanged |

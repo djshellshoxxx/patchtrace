@@ -79,7 +79,7 @@ Files changed overall: `src/patchtrace/kbcorrelation/{adapters/__init__.py,adapt
 
 ## 4. Ready queue (do in this order; each is independent of #100 and #102)
 
-1. **Decide and wire KEV into `kb explain`, `kb export` and the `kb search` edge rows.**
+1. **DONE 2026-10-29 for explain and Markdown export (KB plan A-13, option (a)); `kb search` edge rows still open.** Original note:
    `kbcorrelation/service.py` still writes `'kev': 'not-loaded'` (`_edge_dict`, around line 142), and
    `CveCard.kev: Literal['listed','not-in-snapshot','not-loaded']` is **persisted at attach time** inside the
    `kb-context` bundle. `context.context_key` hard-codes `'kev_snapshot_sha': None`. Spec first (AGENTS.md): add an

@@ -321,6 +321,14 @@ def _order(rows: Iterable[EngineRow]) -> list[EngineRow]:
     return sorted(rows, key=lambda r: (r.attention_rank is None, r.attention_rank or 0, r.match_id))
 
 
+CARD_KEV = {'listed': 'listed', 'not-listed': 'not-in-snapshot', 'no-snapshot': 'not-loaded'}
+
+
+def kev_text(kev: KevFact) -> str:
+    """The one KEV sentence for a CVE, as the leads chip shows it (``kb explain`` and the Markdown export reuse it)."""
+    return _kev_chip(kev).text
+
+
 def _supporting(leads: Sequence[LeadRow]) -> frozenset[str]:
     """Channels that support a group's leads. ``exploitation`` is a CVE-level fact, never evidence about a function, so
     KEV moves a group only through its own sort key and never strengthens the evidence count."""
@@ -396,10 +404,11 @@ def build_leads(bundle: ContextBundle | None, view: EngineView | None, *, alignm
         unattributed=tuple(loose), not_applicable=_not_applicable(elsewhere),
         mention_only=tuple(sorted(set(mention_only))), unknowns=tuple(report.unknowns) if report else (),
         limitations=tuple(report.limitations) if report else (), truncated=dropped, hooks=_hooks(state),
-        kev_source=_kev_source(kev))
+        kev_source=kev_source_of(kev))
 
 
-def _kev_source(kev: ExploitationLookup) -> KevSource:
+def kev_source_of(kev: ExploitationLookup | None) -> KevSource:
+    """The lookup's ``source`` when it has one (capability probe), else 'not loaded'."""
     source = getattr(kev, 'source', None)
     return source if isinstance(source, KevSource) else KevSource()
 

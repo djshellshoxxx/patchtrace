@@ -41,6 +41,7 @@ from .contracts import (
 from .export import EXTENSIONS, to_json, to_markdown
 from .ids import KbSyntaxError, normalise_cve, normalise_kb_edge
 from .index import Lookup, ReverseIndex
+from .leads import CARD_KEV, ExploitationLookup, NullExploitation, kev_source_of, kev_text
 from .limits import MAX_SEARCH_MONTHS
 from .lineage import IndexRow
 from .pairs import LocalFile
@@ -695,7 +696,10 @@ class KbService:
             raise _fail('PT-KBC-VERIFY', 'a stored advisory context failed validation') from None
         return sorted(bundles, key=lambda b: (b.base_revision, b.context_key))
 
-    def explain(self, project_dir: str, cve: str | None) -> Outcome:
+    def explain(self, project_dir: str, cve: str | None, *, kev: ExploitationLookup | None = None) -> Outcome:
+        """The stored context of a project. ``kev`` (the catalog in use, read now) sets each card's KEV state and adds
+        ``kev_source``; the stored bundle is never changed (KB-integration-plan A-13)."""
+        lookup = kev or NullExploitation()
         bundles = self._project_bundles(project_dir)
         if not bundles:
             return Outcome(4, 'unavailable', {'contract': 'kbcorrelation/1', 'cves': []}, TEXT_KB17)
@@ -705,14 +709,16 @@ class KbService:
         for card, profile, hypothesis in zip(bundle.context.cards, bundle.cwe_profiles, bundle.hypotheses,
                                              strict=True):
             if wanted is None or card.cve == wanted:
-                rows.append({'cve': card.cve, 'card': _card_dict(card),
+                fact = lookup.status(card.cve)
+                rows.append({'cve': card.cve, 'card': _card_dict(card.model_copy(update={'kev': CARD_KEV[fact.state]})),
+                             'kev_text': kev_text(fact),
                              'cwe_status': profile.status,
                              'hypotheses': [h.model_dump(mode='json') for h in hypothesis.hypotheses],
                              'hypothesis_unknowns': list(hypothesis.unknowns)})
         result = {'contract': 'kbcorrelation/1', 'context_key': bundle.context_key, 'cves': rows,
                   'coverage': [c.model_dump(mode='json') for c in bundle.context.coverage],
                   'unknowns': list(bundle.context.unknowns), 'limitations': list(bundle.context.limitations),
-                  'hooks': list(bundle.context.hooks)}
+                  'hooks': list(bundle.context.hooks), 'kev_source': kev_source_of(lookup).model_dump(mode='json')}
         if not rows:
             return Outcome(4, 'unavailable', result, f'{wanted} is not part of this project\'s advisory context.')
         lines = []
@@ -722,11 +728,14 @@ class KbService:
             if card['stated_cwe']:
                 lines.append(f'  {card["stated_cwe"]} {card["stated_by"]}')
             lines += [f'  Hypothesis {h["rule_id"]}: {"; ".join(h["expected_operations"])}' for h in row['hypotheses']]
-            lines.append(f'  Applicability: {card["applicability"]}; KEV: {card["kev"]}')
+            lines.append(f'  Applicability: {card["applicability"]}; {row["kev_text"]}')
         lines += [f'Unknown: {u}' for u in bundle.context.unknowns] + [f'Limit: {x}' for x in bundle.context.limitations]
+        lines.append(kev_source_of(lookup).text)
         return Outcome(0, 'complete', result, '\n'.join(lines))
 
-    def export(self, project_dir: str, target: str, *, overwrite: bool) -> Outcome:
+    def export(self, project_dir: str, target: str, *, overwrite: bool,
+               kev: ExploitationLookup | None = None) -> Outcome:
+        """JSON is the stored bundle byte for byte; Markdown applies ``kev`` (the catalog in use) when it is given."""
         path = Path(target)
         fmt = EXTENSIONS.get(path.suffix.lower())
         if fmt is None:
@@ -737,7 +746,7 @@ class KbService:
         if not bundles:
             return Outcome(4, 'unavailable', {'contract': 'kbcorrelation/1', 'written': False}, TEXT_KB17)
         bundle = bundles[-1]
-        data = to_json(bundle) if fmt == 'json' else to_markdown(bundle, self.env.escape).encode('utf-8')
+        data = to_json(bundle) if fmt == 'json' else to_markdown(bundle, self.env.escape, kev).encode('utf-8')
         try:
             atomic_write(path, data)
         except OSError:
