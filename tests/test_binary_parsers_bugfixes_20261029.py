@@ -126,3 +126,12 @@ def test_str3_the_format_cue_is_linear_and_still_matches_real_formats():
     assert time.perf_counter() - started < 1.0              # about 12 s on main
     for text in ('%d', '%05d', '%010.3f', '%-8s', '%*d', '%I64u', '%#x', '%+.2e'):
         assert cues._FORMAT.search(text), text
+
+
+def test_code1_comment_state_covers_rows_past_the_document_cap():
+    from patchtrace.codetext import MAX_DOCUMENT_CHARS, CodeTextModel
+    rows = ['/* a comment that is never closed'] + ['int x = 1;'] * (MAX_DOCUMENT_CHARS // 10 + 1000)
+    model = CodeTextModel(rows, rows, 'c', paired=[])
+    last = len(rows) - 1
+    assert last in model._comment_rows('older')
+    assert {span.style_key.role for span in model.spans('older', last, rows[last])} == {'comment'}
