@@ -1040,3 +1040,11 @@ R5 contract notes: no persisted contract changed. Deviations from the card, all 
 | leads | src/patchtrace/kbcorrelation/leads.py | `LeadsReport.stale_reasons` (`file-pair`, `advisory-revision`); the stale text names only the reasons that hold (the old text also claimed an analysis-run check that did not exist). A replaced advisory turns navigation off but keeps the binary-identity chip, because the files are still the pair the context was made for. `engine_note` replaces "not ranked yet" with the pipeline's reason when the stored ranking is behind the analysis or from an older algorithm. |
 | CLI | src/patchtrace/kbcorrelation/cli_leads.py | `_elsewhere` also returns the bundle sources that `ReverseIndex.active_ids` no longer holds active (a newer imported revision of the same month or CSAF tracking id); a source missing from the workspace is not called replaced. `RealEngine.note` keeps `load_default`'s reason. |
 | tests | none | `tests/test_kbc_leads_freshness.py` was removed at the owner's request on 2026-10-29; both freshness cases are untested. Re-adding coverage is an open item in `tasks/todo.md` K4a. |
+
+### [DEV-TOOLS:test-tools] Reusable testing tools (2026-10-29)
+
+| Module | Files | Responsibility |
+|---|---|---|
+| suite runner | tools/run_test_suite.py | Runs pytest the way CI does (`QT_QPA_PLATFORM=offscreen`, `-p no:cacheprovider`, `-n N --dist loadfile` when the local-only `pytest-xdist` is installed). Before the run it reports missing Qt system libraries and missing CI extras (rapidfuzz, yara_x, iced_x86). It writes the full log to a file and prints only the summary and the failing node ids. `--base REF` re-runs each failure on a temporary detached worktree of REF and labels it `also fails on base` or `new`. |
+| KEV fixture | tools/make_kev_catalog.py | Writes a synthetic CISA-format KEV catalog (`--cve CVE[@dateAdded]`, `--released`, `--version`, `--ransomware`). The production parser checks it before writing, so `patchtrace kev import` always accepts it. Used for manual `kb leads --kev-dir` checks. |
+| tests | tests/test_dev_test_tools.py (3) | catalog round trip through `parse_catalog`, malformed CVE refused, failure and summary parsing of the runner |

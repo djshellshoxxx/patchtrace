@@ -129,6 +129,15 @@ QT_QPA_PLATFORM=offscreen python -m pytest -q tests/test_kbc_leads.py tests/test
 python -m ruff check src tests tools
 QT_QPA_PLATFORM=offscreen python -m pytest -q -p no:cacheprovider > full.log 2>&1; grep -E '^(FAILED|ERROR)' full.log; tail -1 full.log
 ```
+Reusable tools added on 2026-10-29, so you do not have to recreate them:
+- `python tools/run_test_suite.py --workers 4 --base origin/main [pytest args]` runs the suite like CI, keeps the log
+  in `build/test-suite.log`, and labels each failure `[also fails on base]` or `[new]` by re-running it on a temporary
+  worktree of the base ref.
+- `python tools/make_kev_catalog.py OUT.json --cve CVE-2099-20001@2099-02-12 --released 2099-02-14T12:00:00Z` writes
+  a synthetic KEV catalog that the production parser accepts. Then run `patchtrace kev import OUT.json --kev-dir D` and
+  `patchtrace kb leads PROJECT --kev-dir D`.
+- Bug-search reproductions are posted on issue #105, each with its script.
+
 For a fast full run, `pip install pytest-xdist` (local only, not a repo dependency) and add `-n 4 --dist loadfile`.
 That takes about 4.5 min on 4 cores; a serial run takes hours. The synergy golden regenerates with
 `KBC_REGEN_GOLDEN=1 pytest tests/test_kbc_synergy.py -k golden`, but only when an intended change alters it, and the
