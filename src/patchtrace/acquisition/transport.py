@@ -379,13 +379,14 @@ class Transport:
                 raise AcquisitionError('PT-ACQ-PROVIDER', f'download returned HTTP {response.status}')
             fd, name = tempfile.mkstemp(prefix='.download-', dir=directory)
             path = Path(name)
+            out = os.fdopen(fd, 'wb')               # owns the descriptor before any callback can raise
             digest = hashlib.sha256()
             size = reported = 0
             step = max(planned.size // 100, 1)
             try:
                 if progress:
                     progress(0, planned.size)
-                with os.fdopen(fd, 'wb') as out:
+                with out:
                     def sink(chunk: bytes) -> None:
                         nonlocal size, reported
                         size += len(chunk)
@@ -404,6 +405,7 @@ class Transport:
                 if digest.hexdigest() != planned.sha256:
                     raise AcquisitionError('PT-ACQ-VERIFY', 'SHA-256 does not match the Winbindex record')
             except BaseException:
+                out.close()                         # idempotent; closes the file when progress(0) raised
                 path.unlink(missing_ok=True)
                 raise
             return Downloaded(path, digest.hexdigest(), size, planned.url, redirect_host, _stamp(self.now()))
