@@ -18,6 +18,7 @@ PatchTrace already has the **structure of a calibration system**: typed feature 
 3. [Corpus, evaluation, and reproducibility runbook](03-data-and-experiment-runbook.md) — build/admission pipeline, working CLI syntax, manifests, gate reporting, locked-test protocol, expected evidence files and executable acceptance matrix.
 4. [False-match, shift, artifact, and UI engineering](04-robustness-policy-and-ui.md) — failure taxonomy, OOD behavior, proposed fixes, feature ablations, analyst-facing explanations, regression fixtures, and cross-layer policy.
 5. [Prioritized implementation handoff and R6 dependencies](05-engineering-handoff.md) — owner-aware tasks, review gates, evidence register, acceptance criteria, blockers and copy-ready QA/tracker updates.
+6. [Executed dependence illustration](06-dependence-toy.md) — analytic toy calculation showing why naive function-level iid risk testing fails when functions share lineages; **not** a PatchTrace performance estimate.
 
 The files above are deliberately separate from runtime contracts and any locked preregistration. Research alternatives are **not permission to silently change frozen C9 thresholds or the shipped model schema**.
 
