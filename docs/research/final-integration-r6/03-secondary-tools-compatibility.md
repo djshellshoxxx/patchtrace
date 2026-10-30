@@ -68,7 +68,7 @@ Potentially dangerous cases: an exported file whose metadata hash is absent (e.g
 
 ## 6. BinDiff 8: native CLI and result schema
 
-The existing native research [`docs/research/phase-c/bindiff-automation.md`](../../phase-c/bindiff-automation.md) directly measured BinDiff 8 Linux portable behavior:
+The existing native research [`docs/research/phase-c/bindiff-automation.md`](../phase-c/bindiff-automation.md) directly measured BinDiff 8 Linux portable behavior:
 - `bindiff --version` exit 0, text begins `BinDiff 8`. `--help` can exit **1 even on successful help**; the probe must parse the expected output rather than treating exit 1 as unconditional failure.
 - CLI executable path must resolve to the headless `bindiff` binary; `bindiff_ui` symlink or `--ui` triggers GUI. Never pass untrusted `--flagfile`/`--fromenv`, directory inputs or user config from HOME.
 - The headless CLI reads user configuration unless forced to an explicit empty private config `{}`; a user algorithm config changed reported similarity materially in prior research. Existing `bindiff_run.py` must enforce a private config and output directory.
