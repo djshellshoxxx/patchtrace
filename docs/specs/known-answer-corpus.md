@@ -207,7 +207,11 @@ no-recipe; evaluation metrics on hand-computed match sets; report determinism; a
    is idempotent; conflicting bytes at an existing content key fail before the
    legacy record is replaced. This additive storage rule changes neither the
    receipt content contract nor `BuildResult`. Lost historical receipts require
-   actual rebuilds; they cannot be inferred from an artifact hash.
+   actual rebuilds; they cannot be inferred from an artifact hash. The store
+   filesystem must permit same-filesystem hard links for complete, exclusive
+   publication. Other link failures are reported as `BuildError` with the actual
+   OS reason and leave the legacy receipt unchanged; a partial-file fallback is
+   not permitted.
 5. A cached `SideData` carries the `BuildResult` and source context that produced
    its facts. Cache reuse must therefore bind the build specification, recipe
    digest, source digest, debug-artifact digest and resolved source root. Equal

@@ -460,6 +460,12 @@ Validation recorded for the research handoff:
   blocking issue within their stated scopes. They are not GitHub APPROVE reviews.
   A real Ghidriff/rz-diff/unified run through the hardened CLI returned 0 and kept
   all explicit observations, metrics and unified row digests equal to the original.
+- External Qodo follow-up: malformed-suite endpoints now fail before probing;
+  unsupported/denied hard-link publication raises a clear `BuildError` while
+  preserving previous receipts; an inaccurate cleanup comment was corrected.
+  The six-file integrated regression selection passed **69 tests in 12.20 s**;
+  full Ruff passed. Store support without hard links was not added, and the
+  complete-atomic-publication invariant was retained. See the review follow-up.
 - No native Windows, true MSVC or verified BinDiff/BinExport result is claimed.
   Packaging is unchanged. Final-head GitHub CI/review remains a merge gate.
 - Sonar at a02a1774 reported 3.9% new-code duplication, limit 3%. At 0271f186 its
@@ -468,6 +474,9 @@ Validation recorded for the research handoff:
   confines receipts to new private-work JSON files, rejects traversal/symlinks
   and uses exclusive creation. The exact annotation is retained; final Sonar
   re-analysis remains required. No exclusions or thresholds were changed.
+- Sonar passed at de72e150 (zero new issues, zero security hotspots, 2.7% new-code
+  duplication). The later review follow-up needs its own current-head checks;
+  a prior passing checkpoint is not substituted for them.
 - Main remained a04f5a2 at final reconciliation; coordinator PR #126 remains open
   on its own branch. The unified live workflow is dispatch-only and the available
   connector cannot dispatch a new revision; an old-run rerun is not new-head evidence.

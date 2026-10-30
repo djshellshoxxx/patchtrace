@@ -73,6 +73,9 @@ def persist_build_record(debug_dir: Path, record: Mapping) -> Path:
         except FileExistsError:
             if target.is_symlink() or not target.is_file() or target.read_bytes() != data:
                 raise BuildError(f'build receipt integrity mismatch: {target.name}') from None
+        except OSError as exc:
+            raise BuildError('atomic build receipt publication requires a store that permits hard links: '
+                             f'{exc}') from exc
     (Path(debug_dir) / 'build.json').write_bytes(data)
     return target
 

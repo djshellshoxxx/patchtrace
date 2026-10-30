@@ -116,6 +116,14 @@ unverified and no accepted BinExport inputs were provisioned for this pilot.
 The blocker is explicit; it is not a zero score or evidence that BinDiff is
 incompatible. No trust flag or licensing assertion was changed to bypass it.
 
+The immutable build-receipt guarantee requires a store that supports and permits
+same-filesystem hard links. Filesystems or policies that prohibit that operation
+are unsupported for complete atomic receipt publication. The explicit failure
+preserves previous receipts; an exclusive-create/write fallback was rejected
+because it would expose partially written canonical content. This compatibility
+limit does not affect the measured Linux store and remains relevant to portable
+or network-backed stores.
+
 The initial full test invocation was restricted from opening local sockets. Its
 interrupted failure counts are retained as an invalid acceptance environment;
 the subsequent localhost-enabled run is reported separately in QA. A separate

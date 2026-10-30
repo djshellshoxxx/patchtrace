@@ -86,6 +86,11 @@ directories. Compare hidden-symbol images first; visible-symbol results are a
 separate experiment. Run pinned Ghidriff first, then rz-diff and compatible
 unified/BinDiff adapters. No target DLL/EXE is executed.
 
+Before tool probing or matrix execution, the research build wrapper must check
+that every pair endpoint names a declared suite version. A schema-valid but
+cross-reference-invalid suite is an input error with an explicit pair/version
+diagnostic; it must not reach a dictionary lookup or begin a partial matrix.
+
 Record process status, wall time, binary sizes and labelled function counts. Peak
 memory is measured only where a process-tree method is available; otherwise it
 is unavailable. Warm/cold cache definitions and repeat runs must be explicit.
@@ -106,6 +111,14 @@ must fail. There is no label-schema or `BuildResult` interface change. Rebuild t
 affected configurations to recover actual receipts; do not reconstruct historical
 execution by guessing flags from the labels. Tests cover distinct recipes sharing
 one artifact, repeat writes and integrity failures.
+
+Complete, exclusive receipt publication requires a store that permits local
+same-filesystem hard links. Unsupported, denied or otherwise failed publication
+must raise an explicit `BuildError`, retain the OS reason, clean staging and leave
+the previous legacy receipt unchanged. An exclusive-create/write fallback would
+expose a partial canonical receipt to readers, so it is not an equivalent atomic
+publication method. Stores without hard-link support remain unsupported for this
+receipt guarantee; there is no inferred capability or silent loss of provenance.
 
 The same experiment exposed `Session.side` reusing a `SideData` object, including
 its older `BuildResult`, based only on equal debug bytes. Three O3 endpoint

@@ -1,6 +1,7 @@
 """R1: one artifact can have several build recipes; preserve every observed receipt."""
 from __future__ import annotations
 
+import errno
 import hashlib
 import json
 import os
@@ -64,3 +65,23 @@ def test_observing_new_build_does_not_invent_receipt_for_legacy_history(tmp_path
 
     assert list((tmp_path / 'builds').iterdir()) == [observed]
     assert json.loads(observed.read_bytes())['recipe']['opt'] == 'O2'
+
+
+@pytest.mark.parametrize(('code', 'reason'), [
+    (errno.EOPNOTSUPP, 'hard links unsupported'),
+    (errno.EACCES, 'hard links denied'),
+], ids=['unsupported-filesystem', 'permission-denied'])
+def test_failed_atomic_publication_preserves_existing_provenance(tmp_path, monkeypatch, code, reason):
+    original = B.persist_build_record(tmp_path, record('O2'))
+    legacy = (tmp_path / 'build.json').read_bytes()
+
+    def unavailable(*_args, **_kwargs):
+        raise OSError(code, reason)
+
+    monkeypatch.setattr(B.os, 'link', unavailable)
+    with pytest.raises(B.BuildError, match=reason):
+        B.persist_build_record(tmp_path, record('O3'))
+
+    assert (tmp_path / 'build.json').read_bytes() == legacy
+    assert list((tmp_path / 'builds').iterdir()) == [original]
+    assert json.loads(original.read_bytes()) == record('O2')

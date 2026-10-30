@@ -876,6 +876,10 @@ Research, implemented pilot, reproducible commands and acceptance limits:
 - [x] Repair cached-native execution attribution and CLI receipt-output safety;
   preserve existing files and snapshots, record the original Sonar annotation,
   independently review the correction and rerun actual engines with equal results.
+- [x] Reproduce and fix Qodo's malformed-suite preflight finding; explicitly report
+  hard-link publication failure without partial receipts, document unsupported
+  store capability, and correct the cleanup comment. Integrated follow-up: 69
+  tests passed. Active R2–R8 ownership is recorded in the final handoff.
 - [ ] Close exact-head Linux/Windows CI, relevant native CI and independent merge
   review; inspect Sonar re-analysis of the concrete receipt-output repair. Dispatch
   the native workflow on the final revision using a workflow-capable connection.

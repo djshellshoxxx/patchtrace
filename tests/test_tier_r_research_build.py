@@ -7,6 +7,7 @@ from types import SimpleNamespace
 
 import pytest
 
+from tools.calibration.tier_r import contracts as C
 from tools.calibration.tier_r import factory as F
 from tools.calibration.tier_r import research_build as R
 from tools.calibration.tier_r.build import BuildError
@@ -17,7 +18,7 @@ def substituted_factory(monkeypatch, tmp_path):
     """Keep real BaseSource specs and label persistence; substitute every native/tool/label operation."""
     specs = []
     finalized = []
-    suite = SimpleNamespace(suite='unit-pilot', project='defined', pairs=[
+    suite = SimpleNamespace(suite='unit-pilot', project='defined', versions=('v1', 'v2'), pairs=[
         SimpleNamespace(old='v1', new='v2', intent='Unit fixture only', truth=())])
     bases = {v: F.BaseSource(project='defined', lineage='L-unit', family='synthetic',
                             source={'suite': 'unit/defined', 'version': v, 'license_spdx': 'MIT'},
@@ -123,3 +124,47 @@ def test_cli_writes_json_receipt_and_reports_blocked(substituted_factory, tmp_pa
     saved = json.loads(output.read_text())
     assert saved['status'] == 'blocked'
     assert json.loads(capsys.readouterr().out) == saved
+
+
+@pytest.fixture
+def suite_with_undeclared_endpoint(tmp_path):
+    def write(side):
+        folder = tmp_path / 'input-suite'
+        folder.mkdir()
+        for version in ('v1', 'v2'):
+            (folder / version).mkdir()
+            (folder / version / 'sample.c').write_text('unsigned keep(unsigned x) { return x; }\n')
+        pair = {'old': 'v1', 'new': 'v2', 'truth': []}
+        pair[side] = 'missing'
+        raw = json.dumps({'contract': 'suite/1', 'suite': 'unit', 'project': 'defined',
+                          'license_spdx': 'MIT', 'versions': ['v1', 'v2'], 'pairs': [pair]}).encode()
+        loaded = C.load_suite(raw)
+        assert getattr(loaded.pairs[0], side) == 'missing'
+        assert 'missing' not in loaded.versions, 'real Suite model permits the invalid relationship'
+        (folder / 'suite.json').write_bytes(raw)
+        return folder
+    return write
+
+
+@pytest.mark.parametrize('side', ['old', 'new'])
+def test_real_suite_undeclared_endpoints_fail_before_probe(monkeypatch, tmp_path,
+                                                         suite_with_undeclared_endpoint, side):
+    suite_dir = suite_with_undeclared_endpoint(side)
+    monkeypatch.setattr(R, 'probe', lambda: pytest.fail('undeclared endpoint reached tool probing'))
+    with pytest.raises(ValueError, match=f"pair 1 {side} version 'missing'"):
+        R.build_pilot(tmp_path / 'store', profiles=('msvc-free',), opts=('O2',), suite_dir=suite_dir)
+    assert not (tmp_path / 'store').exists()
+
+
+@pytest.mark.parametrize('side', ['old', 'new'])
+def test_cli_undeclared_endpoint_returns_usage_error_without_output(monkeypatch, tmp_path, capsys,
+                                                                 suite_with_undeclared_endpoint, side):
+    suite_dir = suite_with_undeclared_endpoint(side)
+    output = tmp_path / 'receipt.json'
+    monkeypatch.setattr(R, 'probe', lambda: pytest.fail('invalid CLI suite reached tool probing'))
+    code = R.main(['--store', str(tmp_path / 'store'), '--output', str(output), '--suite', str(suite_dir),
+                   '--profiles', 'msvc-free', '--opts', 'O2'])
+    assert code == 2
+    message = json.loads(capsys.readouterr().out)
+    assert message['status'] == 'error' and f"{side} version 'missing'" in message['reason']
+    assert not output.exists() and not (tmp_path / 'store').exists()

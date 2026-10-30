@@ -62,6 +62,12 @@ Do not claim image-hash reproducibility with different compiler, linker, runtime
 headers or library versions. A review digest mismatch is a reason to inspect and
 re-review a new build, not to edit the expected hash until it passes.
 
+The corpus store must permit same-filesystem hard links for atomic, exclusive
+publication of complete immutable build receipts. A store that disallows them
+is unsupported for this guarantee. Publication reports the actual OS failure
+and preserves the previous legacy receipt; it does not fall back to exposing a
+partially written content-addressed file.
+
 Verified native archives used here:
 
 - [Ghidra 12.0.4 release ZIP](https://github.com/NationalSecurityAgency/ghidra/releases/download/Ghidra_12.0.4_build/ghidra_12.0.4_PUBLIC_20260303.zip),
@@ -232,3 +238,26 @@ quality gate. The priority R2 work is the concrete conditional-branch store
 classification defect, followed by hidden-name discovery controls, structural
 truth and recipe-backed real-project expansion. All R1 examples remain dev-only;
 do not tune on a locked test while closing these defects.
+
+### Concurrent research at the final review checkpoint
+
+Main remained `a04f5a2` when this snapshot was checked. Other research branches
+are active and their PRs must not be treated as merged implementation:
+
+| Work | Active PR | Coordination boundary |
+|---|---|---|
+| R2 matching, evidence preservation and scaling | [#131](https://github.com/djshellshoxxx/patchtrace/pull/131) | Coordinate matching/fact fixes and use R1's exact reviewed inputs and pre-fix results; its native and synthetic measurements are separate experiments |
+| R3 semantic proofs and compiler noise | [#129](https://github.com/djshellshoxxx/patchtrace/pull/129) | Coordinate the conditional-branch/store finding before editing shared semantic facts |
+| R4 vulnerability/product provenance | [#130](https://github.com/djshellshoxxx/patchtrace/pull/130) | Keep compiled-change detection separate from CVE-to-function attribution |
+| R5 calibration | [#132](https://github.com/djshellshoxxx/patchtrace/pull/132) | All R1 cases remain development-only; no locked-test or numeric-confidence claim |
+| R6 integration dossier | [#133](https://github.com/djshellshoxxx/patchtrace/pull/133) | Reconcile this handoff and final gate evidence with coordinator #126 |
+| R7 advanced analysis | [#134](https://github.com/djshellshoxxx/patchtrace/pull/134) | Synthetic slicing/pattern evidence is separate from native truth admission |
+| R8 proof uncertainty | [#135](https://github.com/djshellshoxxx/patchtrace/pull/135) | Coordinate shared pseudo/fact normalization and preserve R1 baseline measurements |
+
+At code checkpoint `de72e150bb9f40a18dffbc0960226677555e4431`, Sonar passed with
+zero new issues and 2.7% new-code duplication. External Qodo review then identified
+a malformed-suite preflight gap, a filesystem capability limit and an inaccurate
+cleanup comment; the follow-up dispositions are in
+`results/external-review-followup.md`. The PR was marked ready to obtain external
+review, which is not merge approval. Current Linux/Windows/Qt jobs and the final
+published revision's checks must still be inspected on PR #128.

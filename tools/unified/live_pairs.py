@@ -150,7 +150,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     args.out.parent.mkdir(parents=True, exist_ok=True)
     args.out.write_bytes(outcomes.dump(outcomes.build(args.run, f'{platform.system()}-{platform.release()}', done)))
     print(f'{len(done)} outcomes written to {args.out}')
-    # Native logs remain in the temporary project; retain only a bounded failure explanation.
+    # Temporary projects and their native logs were deleted above; retain the bounded failure explanation.
     # Write an empty sidecar after success so an earlier failure file cannot describe this output.
     diagnostics = '\n'.join(failed).encode('utf-8', errors='replace')
     if len(diagnostics) > 65_536:

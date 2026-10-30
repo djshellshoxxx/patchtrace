@@ -3,22 +3,22 @@
   "baseline": "a04f5a299a8d4afef023261e52e08d14678cf1e7",
   "current_changed_python_file_sha256": {
     "tests/test_binexport_isolation.py": "b824d4c9b913ddd4738efeea6615f25cb7bc4f7fd0237766380ccb87c79fc6ea",
-    "tests/test_tier_r_build_receipts_r1.py": "71803a45cedfb6b0bf203daca0a9cb3cbe1f1786c375c5bba780d21af9c26aa4",
+    "tests/test_tier_r_build_receipts_r1.py": "58dddcf1bd002cc11da029ab97361426b47a61755c212c5a87a6a4ecd4638970",
     "tests/test_tier_r_label_promotion_r1.py": "05534291703906cdf550f16f66f30ad8e2db671928825d134980cec4c6784d4b",
     "tests/test_tier_r_research_audit.py": "b1b10218457c7d4ee4ab266fa3fa381f9328e29b05d47b1598db7985b0187a2d",
-    "tests/test_tier_r_research_build.py": "2fceadedaf1b8c26ad98cd52259650b60a9b063a8017238c84a5a94f5b330c4c",
+    "tests/test_tier_r_research_build.py": "d9ceb1e1bcb7e3c866c39ce4c2903101509076ee309fdc6e415185f6b1d720f5",
     "tests/test_tier_r_research_observers.py": "fce8545a37a95730a776399ec0fbf62906a798919c8be350c292c186642231ac",
     "tests/test_tier_r_research_pilot.py": "c3d26f895835d1240ebf3ba6d46b51497f64c62f4a5e9107d15588c087f6dd01",
     "tests/test_tier_r_session_provenance_r1.py": "f7a3432a33baa5f6458b82b3b5f5711d5fc6607c808591364f9caf962daef8b3",
     "tests/test_unified_live_pairs_r1.py": "97265d445f73d94451999443652d177578edaced239365a1319f540a5e58124a",
-    "tools/calibration/tier_r/build.py": "2cb73ab9c981526bff0526cebbee1813e421f39382be43d4c89789cfa5c4f220",
+    "tools/calibration/tier_r/build.py": "d597a55948d985b8adeb62cdc656a434a4b5ef86528fabc64f9fca3144bc52c8",
     "tools/calibration/tier_r/factory.py": "4823c20a882a759794611cbffb71302b1836bb56d1be7d1c2b22bd94edf77ec2",
     "tools/calibration/tier_r/labeler.py": "702b8d0e147ac83381f3133b5a4a57140b716d5b8409d24f90b6986f687ac86a",
     "tools/calibration/tier_r/research_audit.py": "47ac4e26c4b6339e3a8547867eca4cd402f88931069bc8e35a00fd9b870cb465",
-    "tools/calibration/tier_r/research_build.py": "f908da63895d9048e0c3ec4db3987c4de7ed87a0f9087ae1cb89c9f235faf806",
+    "tools/calibration/tier_r/research_build.py": "7e9cdfdf8f7f7f428c3119e9ceeee5ded470d2df1655f183f95d5e3fdab80a3f",
     "tools/calibration/tier_r/research_observers.py": "d7fec05bd00a9f7d9644ca0c1a4d76ecb19dd2546306df1bdd298a7724a6000e",
     "tools/calibration/tier_r/research_pilot.py": "88b83e8fac526a69a745b4e937a3d83859ad543e6945a580ed7dbc9cf6f45bed",
-    "tools/unified/live_pairs.py": "519df759e92f185424b7093f52ae223e24cfb6943ab04d3a1a6b7f24f6acf9e1"
+    "tools/unified/live_pairs.py": "58403e0ba08f3420501331d9d8c8cb910e37d018c221d4fb294ba6bef976fcbb"
   },
   "external_gate_note": "Final GitHub CI, Sonar re-analysis and required independent review must be read from the PR. Local passing evidence does not override them. The unified live workflow is dispatch-only; no workflow-dispatch operation is exposed by the available connector.",
   "final_matrix_metadata": "matrix-provenance-validation.json",
@@ -125,6 +125,71 @@
       "summary": "10 failed, 1 passed, 18 deselected in 0.97s"
     }
   },
+  "post_external_review": {
+    "dispositions": "external-review-followup.md",
+    "full_ruff": "passed",
+    "git_diff_check": "passed",
+    "integrated_regressions": {
+      "exit_code": 0,
+      "node_files": [
+        "tests/test_tier_r_build_receipts_r1.py",
+        "tests/test_tier_r_research_build.py",
+        "tests/test_tier_r_factory.py",
+        "tests/test_tier_r_session_provenance_r1.py",
+        "tests/test_unified_live_pairs_r1.py",
+        "tests/test_tier_r_research_pilot.py"
+      ],
+      "passed": 69,
+      "path_at_execution": "/tmp/patchtrace-r1-external-review-regressions.log",
+      "seconds": 12.2,
+      "sha256": "1d9574ee57a27117151eccd564c89752c586f37af14b8a1d88e2e5f057bb2982",
+      "summary": "69 passed in 12.20s"
+    },
+    "receipt_portability_green": {
+      "passed": 6,
+      "path_at_execution": "/tmp/patchtrace-r1-receipts-portability-green.log",
+      "seconds": 0.51,
+      "sha256": "e47c2b4a07710a12b6743639e2c35f4a5824af3a30c584242088525bc541c563",
+      "summary": "6 passed in 0.51s"
+    },
+    "receipt_portability_red": {
+      "evidence_location": "observed tool output; no saved full red log",
+      "failed": 2,
+      "passed": 4,
+      "seconds": 0.52
+    },
+    "reviewed_checkpoint": "de72e150bb9f40a18dffbc0960226677555e4431",
+    "scope_note": "Overlapping regression selections. Original native results, source fixtures and labels were not rewritten. Stores that disallow same-filesystem hard links remain unsupported for complete atomic build receipts.",
+    "sonar_historical_checkpoint": {
+      "check_id": 124371678875,
+      "final_head_acceptance": false,
+      "new_code_duplication_percent": 2.7,
+      "new_issues": 0,
+      "security_hotspots": 0,
+      "sha": "de72e150bb9f40a18dffbc0960226677555e4431",
+      "status": "success"
+    },
+    "suite_endpoint_red_green": "suite-endpoint-red-green.json"
+  },
+  "pre_external_review_python_file_sha256": {
+    "tests/test_binexport_isolation.py": "b824d4c9b913ddd4738efeea6615f25cb7bc4f7fd0237766380ccb87c79fc6ea",
+    "tests/test_tier_r_build_receipts_r1.py": "71803a45cedfb6b0bf203daca0a9cb3cbe1f1786c375c5bba780d21af9c26aa4",
+    "tests/test_tier_r_label_promotion_r1.py": "05534291703906cdf550f16f66f30ad8e2db671928825d134980cec4c6784d4b",
+    "tests/test_tier_r_research_audit.py": "b1b10218457c7d4ee4ab266fa3fa381f9328e29b05d47b1598db7985b0187a2d",
+    "tests/test_tier_r_research_build.py": "2fceadedaf1b8c26ad98cd52259650b60a9b063a8017238c84a5a94f5b330c4c",
+    "tests/test_tier_r_research_observers.py": "fce8545a37a95730a776399ec0fbf62906a798919c8be350c292c186642231ac",
+    "tests/test_tier_r_research_pilot.py": "c3d26f895835d1240ebf3ba6d46b51497f64c62f4a5e9107d15588c087f6dd01",
+    "tests/test_tier_r_session_provenance_r1.py": "f7a3432a33baa5f6458b82b3b5f5711d5fc6607c808591364f9caf962daef8b3",
+    "tests/test_unified_live_pairs_r1.py": "97265d445f73d94451999443652d177578edaced239365a1319f540a5e58124a",
+    "tools/calibration/tier_r/build.py": "2cb73ab9c981526bff0526cebbee1813e421f39382be43d4c89789cfa5c4f220",
+    "tools/calibration/tier_r/factory.py": "4823c20a882a759794611cbffb71302b1836bb56d1be7d1c2b22bd94edf77ec2",
+    "tools/calibration/tier_r/labeler.py": "702b8d0e147ac83381f3133b5a4a57140b716d5b8409d24f90b6986f687ac86a",
+    "tools/calibration/tier_r/research_audit.py": "47ac4e26c4b6339e3a8547867eca4cd402f88931069bc8e35a00fd9b870cb465",
+    "tools/calibration/tier_r/research_build.py": "f908da63895d9048e0c3ec4db3987c4de7ed87a0f9087ae1cb89c9f235faf806",
+    "tools/calibration/tier_r/research_observers.py": "d7fec05bd00a9f7d9644ca0c1a4d76ecb19dd2546306df1bdd298a7724a6000e",
+    "tools/calibration/tier_r/research_pilot.py": "88b83e8fac526a69a745b4e937a3d83859ad543e6945a580ed7dbc9cf6f45bed",
+    "tools/unified/live_pairs.py": "519df759e92f185424b7093f52ae223e24cfb6943ab04d3a1a6b7f24f6acf9e1"
+  },
   "prior_published_checkpoint": "0271f1869ccba0697c5bf6f797432bb7c6ec54d4",
   "r1_merge_acceptance_claimed": false,
   "recorded_at_utc": "2026-10-30T23:41:14.985964+00:00",
@@ -132,5 +197,6 @@
     "final-integration-review.md",
     "output-safety-review.md"
   ],
-  "target_binaries_executed": false
+  "target_binaries_executed": false,
+  "updated_after_external_review_at_utc": "2026-10-30T23:54:37.158610+00:00"
 }

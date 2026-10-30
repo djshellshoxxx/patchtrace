@@ -59,6 +59,10 @@ def build_pilot(store: Path, *, profiles: Sequence[str] = PROFILES, opts: Sequen
         raise ValueError(f'opts must be a nonempty selection of {OPTS}')
     suite_dir = Path(suite_dir or DEFAULT_SUITE).resolve()
     suite, bases = F.suite_bases(suite_dir)
+    for index, pair in enumerate(suite.pairs, start=1):
+        for side, version in (('old', pair.old), ('new', pair.new)):
+            if version not in suite.versions or version not in bases:
+                raise ValueError(f"suite pair {index} {side} version {version!r} is not a declared available version")
     cells = [(profile, opt, pair, F.pair_id('research', profile, opt, suite.suite, suite.project,
                                           pair.old, pair.new))
              for profile in profiles for opt in opts for pair in suite.pairs]
