@@ -154,12 +154,24 @@ def test_strict_json_and_caps():
 
 
 @pytest.mark.parametrize('text', ['\ud800', 'a\udfffb'], ids=['high', 'low-inside'])
-def test_unpaired_surrogate_escape_is_a_typed_provider_error(text):
+def test_unpaired_surrogate_entry_is_skipped_without_losing_valid_siblings(text):
+    # Escaped lone surrogates are legal JSON escapes but cannot be encoded by
+    # the canonical UTF-8 record hash. Reject only the hostile entry, not the
+    # entire provider document or its other, valid candidates.
     doc = record()
-    next(iter(doc.values()))['fileInfo']['version'] = text
-    with pytest.raises(AcquisitionError) as err:
-        parse(doc)
-    assert err.value.code == 'PT-ACQ-PROVIDER'
+    bad_sha = next(iter(doc))
+    doc[bad_sha]['fileInfo']['version'] = text
+    baseline = parse(record())
+    result = parse(doc)
+    assert result.skipped == 1
+    assert result.warnings and '1 Winbindex entries skipped' in result.warnings[0]
+    assert result.candidates == tuple(c for c in baseline.candidates if c.sha256 != bad_sha)
+
+    # The newer KB-per-row ingestion path has the same per-entry isolation.
+    baseline_rows = wb.parse_rows(gz(record()), 'afd.sys', '2026-10-12')
+    result_rows = wb.parse_rows(gz(doc), 'afd.sys', '2026-10-12')
+    assert result_rows.skipped == baseline_rows.skipped + 1
+    assert result_rows.rows == tuple(r for r in baseline_rows.rows if r.sha256 != bad_sha)
 
 
 def test_paired_surrogate_escape_still_parses():
