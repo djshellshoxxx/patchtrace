@@ -151,7 +151,6 @@ def configured_symbol_mode(settings, online_consent: bool) -> str:
     return saved
 
 
-
 def effective_backend_symbol_mode(settings, profile) -> str:
     """Resolve the saved Setup ceiling and the profile restriction without enabling implicit network access."""
     consent = settings.value('backend/allow_symbol_downloads', False, type=bool)
