@@ -52,6 +52,19 @@ def test_acq2_a_lone_surrogate_skips_one_entry_instead_of_failing_the_record():
     assert rows.skipped == 1
 
 
+def test_acq2_strict_json_rejects_lone_surrogate_outside_entry_scoped_parsing():
+    with pytest.raises(AcquisitionError, match='PT-ACQ-PROVIDER'):
+        winbindex.strict_json(b'{"metadata":"\\ud800"}')
+
+
+def test_acq2_valid_surrogate_pair_is_accepted_in_index_entry():
+    data = record(extra={'note': '\U0001f600'})
+    result = winbindex.parse(data, 'ntdll.dll', '2026-01-01')
+    assert len(result.candidates) == 1 and result.skipped == 0
+    rows = winbindex.parse_rows(data, 'ntdll.dll', '2026-01-01')
+    assert rows.skipped == 0
+
+
 @pytest.mark.parametrize('bad', ['٢٠٢٤-٠١-٠١', '2024-99-99', '2024-02-30'])
 def test_acq3_non_ascii_or_impossible_release_dates_are_dropped(bad):
     data = record(windows={'22H2': {'KB5000001': {'updateInfo': {'releaseDate': bad}}}})
