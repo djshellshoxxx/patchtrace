@@ -460,11 +460,26 @@ def _output_scan(directory: Path) -> str | None:
 
 def _keep_launcher_report(source: Path, target: Path) -> None:
     """Copy the (size-capped) launcher report out of scratch before it is removed; absence is validated later."""
+    staged = None
     try:
         if source.is_file() and not source.is_symlink() and source.stat().st_size <= 64 * 1024:
-            target.write_bytes(source.read_bytes())
+            with source.open('rb') as stream:
+                payload = stream.read(64 * 1024 + 1)
+            if len(payload) > 64 * 1024:
+                return
+            # Replace a destination link itself, never follow it to overwrite an unrelated file.
+            with tempfile.NamedTemporaryFile(dir=target.parent, prefix='ptlaunch-report-', delete=False) as stream:
+                staged = Path(stream.name)
+                stream.write(payload)
+            os.replace(staged, target)
     except OSError:
         pass
+    finally:
+        if staged is not None:
+            try:
+                staged.unlink(missing_ok=True)
+            except OSError:
+                pass
 
 
 def _remove_scratch(path: Path, attempts: int = 5) -> str | None:

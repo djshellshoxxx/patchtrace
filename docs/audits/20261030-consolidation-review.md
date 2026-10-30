@@ -61,3 +61,25 @@ and rz-diff interoperability, real MSRC/Winbindex/provider captures, extraction-
 acceptance, cancellation/result preservation, GUI discoverability and Windows release acceptance remain
 separate work items. Existing tests do not establish all these gates. No overall completion percentage
 or project-complete claim is made.
+
+
+## Connected SonarCloud check triage
+
+PR #124's initial check `124005071516` reports an E security/C reliability gate. Findings were read from its 50 GitHub annotations, not inferred from the rating. Two genuine command-option boundaries in `tools/run_test_suite.py` were corrected: terminate Git options before the caller's base ref and pytest options before node IDs derived from logs. The old `--base=--lock` path was reproduced creating a locked worktree instead of selecting a ref. The direct caller's documented pytest arguments remain supported.
+
+The launcher-report copy also now reads at most 64 KiB + 1 and atomically replaces its destination: a size-check/read race cannot retain excess data and a destination link cannot overwrite a different file. Two regressions fail before the fix. The MSVC action in the imported corpus workflow is pinned to `0b201ec74fa43914dc39ae48a89fd1d8cb592756`, dereferenced from the verified upstream annotated v1.13.0 tag.
+
+Manually reviewed findings that do not establish defects:
+
+| Finding | Evidence / disposition |
+|---|---|
+| CLI output paths in test runner, ci_summary, live_pairs, buildenv_value_gate, bindiff_pin | Explicit caller-selected `--log`, `--out` or `--github-output`; imported document contents do not select a destination. Confining them to the checkout would break intended absolute output paths. |
+| Launcher report file content called path traversal | Report bytes are content, not a destination path; call site supplies fixed `quarantine/ptlaunch-report.json`. Bounded/atomic retention is strengthened separately. |
+| `_subjects` variable tuple lengths | Tuple is a collection of zero/one/many CVEs, iterated by the caller, never positionally unpacked. |
+| `_content_addressed` same return | Both branches return the same canonical path after intentionally different retention/deduplication side effects. |
+| KEV optional provider | Non-None metadata implies a snapshot with a required KevColumnProvider; same-thread rendering does not yield between reads. |
+| Same-expression mutation assertions | Invoke computation twice to verify seed/input determinism; not an existing object's `x == x`. |
+| Bidirectional characters in tests | Intentional hostile-input sanitization fixtures, not executable control flow. |
+| Source-installed Ghidriff in advisory live workflow | Exact Git revision is pinned; building the external source is deliberate native integration, not an unbounded package selection. |
+
+No Sonar rule was disabled, issue state changed, or required protection bypassed. This triage does not make the remote gate green; track its actual state separately.

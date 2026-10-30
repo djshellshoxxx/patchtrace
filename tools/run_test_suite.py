@@ -77,11 +77,12 @@ def triage(ids: list[str], base: str, log: Path, env: dict[str, str]) -> dict[st
     """For each node id: True when it also fails on ``base``."""
     work = Path(tempfile.mkdtemp(prefix='pt-base-'))
     tree = work / 'tree'
-    subprocess.run(['git', '-C', str(ROOT), 'worktree', 'add', '--detach', '-q', str(tree), base], check=True)
+    subprocess.run(['git', '-C', str(ROOT), 'worktree', 'add', '--detach', '-q', '--', str(tree), base], check=True)
     try:
         base_env = dict(env, PYTHONPATH=str(tree / 'src') + os.pathsep + env.get('PYTHONPATH', ''))
         present = [i for i in ids if (tree / i.split('::')[0]).exists()]
-        _, text = run(pytest_command(1, present), tree, log, base_env) if present else (0, '')
+        # These are node ids copied from test output, not caller-selected pytest options.
+        _, text = run(pytest_command(1, ['--', *present]), tree, log, base_env) if present else (0, '')
         failing = set(failing_ids(text))
         return {i: (i in failing) if i in present else False for i in ids}
     finally:

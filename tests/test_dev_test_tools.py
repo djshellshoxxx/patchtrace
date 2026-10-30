@@ -51,3 +51,27 @@ def test_run_test_suite_reads_failures_and_the_summary_line():
     assert tool.summary_line('nothing here') == '(no pytest summary line; see the log)'
     command = tool.pytest_command(1, ['-k', 'x'])
     assert command[1:6] == ['-m', 'pytest', '-q', '-p', 'no:cacheprovider'] and command[-2:] == ['-k', 'x']
+
+
+def test_run_test_suite_keeps_base_and_reported_nodes_out_of_option_parsing(tmp_path, monkeypatch):
+    tool = _load('run_test_suite')
+    work = tmp_path / 'base'
+    work.mkdir()
+    tree = work / 'tree'
+    tree.mkdir()
+    (tree / '--help').touch()
+    (tree / 'test_a.py').touch()
+    monkeypatch.setattr(tool.tempfile, 'mkdtemp', lambda **kwargs: str(work))
+    git_calls = []
+    monkeypatch.setattr(tool.subprocess, 'run', lambda argv, **kwargs: git_calls.append(argv))
+    pytest_calls = []
+
+    def run(argv, cwd, log, env):
+        pytest_calls.append(argv)
+        return 1, 'FAILED test_a.py::test_x - failure\n'
+
+    monkeypatch.setattr(tool, 'run', run)
+    assert tool.triage(['--help', 'test_a.py::test_x'], '--lock', tmp_path / 'log', {}) == {
+        '--help': False, 'test_a.py::test_x': True}
+    assert git_calls[0][-3:] == ['--', str(tree), '--lock']
+    assert pytest_calls[0][-3:] == ['--', '--help', 'test_a.py::test_x']

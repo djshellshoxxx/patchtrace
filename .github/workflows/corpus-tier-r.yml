@@ -235,7 +235,7 @@ jobs:
         with:
           python-version: '3.12'
       - run: 'python -m pip install --only-binary=:all: -e .[dev]'
-      - uses: ilammy/msvc-dev-cmd@v1.13.0
+      - uses: ilammy/msvc-dev-cmd@0b201ec74fa43914dc39ae48a89fd1d8cb592756 # v1.13.0, verified annotated tag
         with:
           arch: x64
       - name: Toolchain report (records the cl version)
