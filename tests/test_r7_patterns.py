@@ -124,3 +124,31 @@ def test_qualifying_guard_plus_unresolved_other_control_abstains():
     r = assess(new=new)
     assert r.status == 'inconclusive'
     assert 'missing-control:unknown' in r.unknowns
+
+
+def test_two_operand_ghidra_cbranch_uses_last_operand_as_condition():
+    new = (op('cmp', 0x2000, 'INT_LESSEQUAL', ('param:length', 'param:cap'), 'u:valid'),
+           op('br', 0x2002, 'CBRANCH', ('const:0x2004', 'u:valid')),
+           op('new', 0x2004, 'STORE', ('param:buffer', 'param:length'), ctrl=('br',)))
+    r = assess(new=new)
+    assert r.status == 'candidate'
+    assert r.evidence_uids == ('cmp', 'br', 'new')
+
+
+def test_unsupported_cbranch_arity_abstains():
+    new = (op('cmp', 0x2000, 'INT_LESSEQUAL', ('param:length', 'param:cap'), 'u:valid'),
+           op('br', 0x2002, 'CBRANCH', ('const:0', 'u:valid', 'param:extra')),
+           op('new', 0x2004, 'STORE', ('param:buffer', 'param:length'), ctrl=('br',)))
+    r = assess(new=new)
+    assert r.status == 'inconclusive'
+    assert 'opaque-control:br' in r.unknowns
+
+
+def test_multiple_valid_control_order_is_deterministic():
+    head = (op('cmp', 0x2000, 'INT_LESSEQUAL', ('param:length', 'param:cap'), 'u:ok'),
+            op('br', 0x2002, 'CBRANCH', ('u:ok',)),
+            op('cmp2', 0x2006, 'INT_LESS', ('param:length', 'param:cap'), 'u:ok2'),
+            op('br2', 0x2008, 'CBRANCH', ('u:ok2',)))
+    first = (*head, op('new', 0x2010, 'STORE', ('param:buffer', 'param:length'), ctrl=('br2', 'br')))
+    second = (*head, op('new', 0x2010, 'STORE', ('param:buffer', 'param:length'), ctrl=('br', 'br2')))
+    assert assess(new=first) == assess(new=second)
