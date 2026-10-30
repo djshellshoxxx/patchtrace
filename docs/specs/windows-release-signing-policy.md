@@ -19,7 +19,7 @@ Not built here: purchase of a certificate or enrolment (owner action), SmartScre
 
 | claim | source | retrieved | confidence |
 |---|---|---|---|
-| Windows build is `--onedir --console --hide-console hide-early`, no `--icon`, no `--version-file`, no `--manifest`; archive `PatchTrace-0.1.0-windows-x64.zip` plus `.zip.sha256` (`<sha256>  <name>\n`); `file-inventory.json` and `dependency-versions.json` inside | `tools/build_windows.py` (this repo) | 2026-10-14 | high |
+| Windows build is `--onedir --console --hide-console hide-early`, with `--icon` and `--version-file` since 2026-10-30 (WIN-1, section 9), no `--manifest`; archive `PatchTrace-0.1.0-windows-x64.zip` plus `.zip.sha256` (`<sha256>  <name>\n`); `file-inventory.json` and `dependency-versions.json` inside | `tools/build_windows.py` (this repo) | 2026-10-14 | high |
 | Release job: `permissions: contents: write`, `softprops/action-gh-release@v2`, `prerelease: true`, tag `v0.1.0-beta.<run_number>` or the pushed `v*` tag, name hard-coded "PatchTrace beta N" | `.github/workflows/qa-windows.yml` (this repo) | 2026-10-14 | high |
 | Publishing returned HTTP 403 "Resource not accessible by integration" when a commit changes `.github/workflows/*`; the zip then exists only as an Actions artifact | `docs/plans/claude-autonomous-alpha-handoff-20261013.md` B1; `windows-acceptance-and-milestone-builds.md` 1.1 | 2026-10-14 | high |
 | Repo licence MIT, copyright "Circuit Drift Labs" | `LICENSE` (this repo) | 2026-10-14 | high |
@@ -126,6 +126,11 @@ GUI: the existing Help menu (`ui.py`, `help_menu`) has no About entry today; add
 | WIN-4 | Workflow: policy step, derive release name/body from `github.ref_name`, optional attestation step | `.github/workflows/qa-windows.yml` | WIN-3 | sonnet | S | **expect 403 on publish when the workflow changes in the head commit**: this slice lands alone in its own PR and is verified on the next unrelated push | keep current workflow |
 | WIN-5 | Signing job (disabled by `if: vars.SIGNING_ENABLED == 'true'`) | `.github/workflows/sign-windows.yml` (new) | WIN-4, owner decision | sonnet; opus only for the key-custody review | M | dry run with a throwaway local test key on a fixture exe, never a real key; job skipped by default | leave off |
 | WIN-6 | About dialog lines | `ui.py` Help menu (shared file: serialize with other `ui.py` edits via the integration owner) | WIN-2 | sonnet | S | offscreen test of the three lines | omit GUI |
+
+Status 2026-10-30 (ported from draft PR #102 onto current main):
+
+- **WIN-1 built without the manifest** (the fallback above): `tools/windows_version_info.py` writes the version file (ProductVersion and FileVersion = release label: `v<label>` tag, `<version>-beta.<run>` on a main push, `<version>-dev[.<run>]` otherwise; Comments `Unsigned build of commit <sha>`; no CompanyName), `tools/windows_icon.py` the `.ico` (PNG frames of the owner mark `src/patchtrace/resources/patchtrace-mark.svg`, byte-identical to `site/assets/cdl-mark.svg`), and `tools/build_windows.py` reads the built exe back with `tools/check_windows_exe.py` (pe_overview) and fails on a wrong label or commit or a missing icon group. The same mark is the runtime window icon (`patchtrace.app_icon`); `--self-test` fails when it does not load. Gate evidence: the Windows CI job that runs `tools/build_windows.py`; locally, PyInstaller's own serializer round-trips through pe_overview (tests/test_windows_build_resources.py).
+- WIN-2 .. WIN-6: not built.
 
 ## 10. Amendments, test and QA plan
 

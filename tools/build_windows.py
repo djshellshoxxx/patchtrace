@@ -10,6 +10,9 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 # Pure shared helpers; importing build_linux runs no build.
+import check_windows_exe  # noqa: E402
+import windows_icon  # noqa: E402
+import windows_version_info  # noqa: E402
 from build_linux import (  # noqa: E402
     attach_backend,
     check_archive_size,
@@ -46,32 +49,43 @@ def require_upb_protobuf():
                            "(pip install --only-binary=:all: -e '.[dev]')")
 
 
+def pyinstaller_command(root: Path, icon: Path, version_file: Path) -> list[str]:
+    return [sys.executable, '-m', 'PyInstaller', '--noconfirm', '--clean',
+            # Console subsystem so headless commands return output and exit codes to the
+            # invoking shell; the bootloader hides a console the process owns (double-click),
+            # leaving an inherited terminal attached (PyInstaller >= 6, SPEC-05 §3.2).
+            '--onedir', '--console', '--hide-console', 'hide-early', '--name', 'PatchTrace',
+            # SPEC-52 WIN-1: file icon and version resource (no manifest: PyInstaller's default asInvoker one stays).
+            '--icon', str(icon), '--version-file', str(version_file),
+            '--exclude-module', 'PySide6.QtWebEngineCore',
+            '--exclude-module', 'PySide6.QtWebEngineQuick',
+            '--exclude-module', 'PySide6.QtWebEngineWidgets',
+            '--exclude-module', 'PySide6.QtPdf',
+            '--exclude-module', 'PySide6.QtPdfWidgets',
+            '--additional-hooks-dir', str(root / 'tools' / 'pyinstaller_hooks'),
+            '--paths', str(root / 'src'),
+            str(root / 'tools' / 'desktop_entry.py')]
+
+
 def main(argv=None):
     args = parse_args(argv)
     if sys.platform != 'win32':
         raise SystemExit('Build on Windows: PyInstaller cannot cross-compile the Windows runtime.')
     root = Path(__file__).resolve().parents[1]
     require_upb_protobuf()
-    subprocess.run([sys.executable, '-m', 'PyInstaller', '--noconfirm', '--clean',
-                    # Console subsystem so headless commands return output and exit codes to the
-                    # invoking shell; the bootloader hides a console the process owns (double-click),
-                    # leaving an inherited terminal attached (PyInstaller >= 6, SPEC-05 §3.2).
-                    '--onedir', '--console', '--hide-console', 'hide-early', '--name', 'PatchTrace',
-                    '--exclude-module', 'PySide6.QtWebEngineCore',
-                    '--exclude-module', 'PySide6.QtWebEngineQuick',
-                    '--exclude-module', 'PySide6.QtWebEngineWidgets',
-                    '--exclude-module', 'PySide6.QtPdf',
-                    '--exclude-module', 'PySide6.QtPdfWidgets',
-                    '--additional-hooks-dir', str(root / 'tools' / 'pyinstaller_hooks'),
-                    '--paths', str(root / 'src'),
-                    str(root / 'tools' / 'desktop_entry.py')], cwd=root, check=True)
+    resources = root / 'build' / 'windows-resources'
+    fields = windows_version_info.fields_for_build(args.version, root=root)
+    version_file = windows_version_info.write(fields, resources / 'version-info.txt')
+    icon = resources / 'PatchTrace.ico'
+    icon.write_bytes(windows_icon.pack_ico(windows_icon.render_frames()))
+    subprocess.run(pyinstaller_command(root, icon, version_file), cwd=root, check=True)
     package = root / 'dist' / 'PatchTrace'
     shutil.copy2(root / 'LICENSE', package / 'LICENSE.txt')
     shutil.copy2(root / 'README.md', package / 'README.md')
     shutil.copytree(root / 'docs', package / 'docs', dirs_exist_ok=True)
     notices = package / 'licenses'
     notices.mkdir(exist_ok=True)
-    versions = {'Python': sys.version.split()[0]}
+    versions = {'Python': sys.version.split()[0], 'PatchTrace': fields.label, 'PatchTrace commit': fields.commit}
     bundled_notices = root / 'third_party' / 'notices'
     required = ['qtbase-6.12.0/LICENSES/LGPL-3.0-only.txt',
                 'pyside-setup-6.12.0/LICENSES/LGPL-3.0-only.txt',
@@ -131,6 +145,11 @@ def main(argv=None):
         raise RuntimeError('Ghidriff launcher data file is missing or differs from the source tree')
     (package / 'file-inventory.json').write_text(json.dumps(inventory, indent=2), encoding='utf-8')
     subprocess.run([str(package / 'PatchTrace.exe'), '--self-test'], timeout=60, check=True)
+    # Read the built file back with PatchTrace's own PE reader: the release must name the commit it came from.
+    issues = check_windows_exe.problems(check_windows_exe.read_resources(package / 'PatchTrace.exe'),
+                                        fields.label, fields.commit)
+    if issues:
+        raise RuntimeError('; '.join(issues))
     # Frozen headless smoke: help must reach stdout and exit 0 without Qt.
     cli = subprocess.run([str(package / 'PatchTrace.exe'), 'rank', '--help'], timeout=60,
                          capture_output=True, text=True)
