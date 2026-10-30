@@ -1,0 +1,1220 @@
+{
+  "observed_date": "2026-10-30",
+  "repository": "djshellshoxxx/patchtrace",
+  "baseline_sha": "a04f5a299a8d4afef023261e52e08d14678cf1e7",
+  "baseline_tree": "2aee54f7216b16a6a412f9188de674fc68287e43",
+  "branch": "codex/r2-unified-matching-research-20261030",
+  "branches": [
+    {
+      "name": "access-test-noprefix",
+      "sha": "726a371ab34d4589b0456d059865ade6b82fac88"
+    },
+    {
+      "name": "audit/ai-reports",
+      "sha": "dd6402b9c00d5aae79f152f4fe5ce0fa8597dc24"
+    },
+    {
+      "name": "audit/core",
+      "sha": "fae13b2ed3043ddce00bbf387e386e93e7b3ee06"
+    },
+    {
+      "name": "audit/desktop",
+      "sha": "4d5e48ab7df30f6318a8f3177b37ac98741e2b1f"
+    },
+    {
+      "name": "audit/enrichment",
+      "sha": "cbc5b079ad2c8cdea4ec161b1afe9ac554b8ed39"
+    },
+    {
+      "name": "audit/integration",
+      "sha": "f6505928d8264343caa33f878deb253626752944"
+    },
+    {
+      "name": "audit/runtime",
+      "sha": "9f32a6ecbd056249373b82bc1e814bd938da8c70"
+    },
+    {
+      "name": "chatgpt/corpus-1",
+      "sha": "b7a0f0a45d2de1462367d877b7386091b4d275ce"
+    },
+    {
+      "name": "chatgpt/deferred-audit-fixes-1",
+      "sha": "2174837f3172c3ff2a3c676da106f42b55648a70"
+    },
+    {
+      "name": "chatgpt/ghidriff-sequential-lock-fix-20261017",
+      "sha": "f6b7545bcc7a161440ab7119233c204510571370"
+    },
+    {
+      "name": "chatgpt/help-docs-1",
+      "sha": "e5bee6fe157c90a40f2d9f458768e2169ce123e5"
+    },
+    {
+      "name": "chatgpt/java-probe-boundaries-20261016",
+      "sha": "09bb4519d7d8e9ff8f40abcba7e11cb297d8b61e"
+    },
+    {
+      "name": "chatgpt/java-probe-ci-fix-20261016",
+      "sha": "0254841e3e635ed717e35abcf83021f001d7df29"
+    },
+    {
+      "name": "chatgpt/java-probe-qa-fix-20261016",
+      "sha": "89500e12068656fa1958443ef634064effcbc40b"
+    },
+    {
+      "name": "chatgpt/kb-fixtures-1",
+      "sha": "781b36fb60e775ce01bf0c114e6a17b609fdb475"
+    },
+    {
+      "name": "chatgpt/lbl30-prereg-guard-20261016",
+      "sha": "6ae2c079e6cafa2b7bd5396cac443cd34ba7138a"
+    },
+    {
+      "name": "chatgpt/lbl31-coff-quoted-rip-20261016",
+      "sha": "6e71bfabbf5ef75449b46981e9e822f7e555a6bf"
+    },
+    {
+      "name": "chatgpt/lbl31-coff-symbol-mask-20261016",
+      "sha": "9622704d5c751d55700c4b642111131a7135d139"
+    },
+    {
+      "name": "chatgpt/lbl31-output-persistence-20261015",
+      "sha": "2019a37fa65fc37f4758469143c2daadc07e0098"
+    },
+    {
+      "name": "chatgpt/lbl31-windows-qa-fixes-20261016-a",
+      "sha": "ddb2ff077a21c1f0053ba8079564f6f86c3e155f"
+    },
+    {
+      "name": "chatgpt/lbl32-card-controls-20261016",
+      "sha": "9513bc05229dd7a8460fc229d7420154d61498db"
+    },
+    {
+      "name": "chatgpt/lbl32-recipe-aa-noise-20261016",
+      "sha": "eaa30013794a9bd0fedc9ec34bbe374d6db0cfc9"
+    },
+    {
+      "name": "chatgpt/merge-first-handoff-20261016",
+      "sha": "19153f10780e783bc931739dd26db97d8eaf2b92"
+    },
+    {
+      "name": "chatgpt/nway-external-note-qa-20261016",
+      "sha": "8c7288276d3e49b7794b7fd80db4b02d5891cf00"
+    },
+    {
+      "name": "chatgpt/panels-1",
+      "sha": "cfd7cfff52f4f9b8b1264e8b7d70ef1bbef2d63f"
+    },
+    {
+      "name": "chatgpt/patchwatch-reuse-roadmap-20261026",
+      "sha": "4eabf8dff2c4094681da70c7bd85ecd0da5aed9f"
+    },
+    {
+      "name": "chatgpt/ue-r3-retain-decompiled-20261016",
+      "sha": "ebbd621d4f557905892aee5f7cf8cb7b0e2addc2"
+    },
+    {
+      "name": "chatgpt/ue-r7-p15-unresolved-20261016-a",
+      "sha": "292dc3953dd2b8f157752d12251aff68b6e5bda5"
+    },
+    {
+      "name": "chatgpt/ue-r7-strict-worker-report-20261016-a",
+      "sha": "9c5f9a42b499133b842b14b9619bf8390010e1ff"
+    },
+    {
+      "name": "chatgpt/unified-fixture-collection-fix-20261016",
+      "sha": "941c617b6854291e2448cad6d7d5710a24a8543d"
+    },
+    {
+      "name": "chatgpt/unified-fixtures-1",
+      "sha": "161a88345efc6484f4d7809fc6963a0193bd0057"
+    },
+    {
+      "name": "chatgpt/unified-sort-perf-qa-20261016",
+      "sha": "27b0a48bb8007f504b4a127a099136a6ea5c00b7"
+    },
+    {
+      "name": "claude/access-test-1791773355",
+      "sha": "726a371ab34d4589b0456d059865ade6b82fac88"
+    },
+    {
+      "name": "claude/audit-beta",
+      "sha": "c93ff945b9b523abe0b829247137105788a5ea27"
+    },
+    {
+      "name": "claude/awesome-ramanujan-o3pxx3-ci",
+      "sha": "0bf1f8309e8425ba34199657009d3055215336f1"
+    },
+    {
+      "name": "claude/awesome-ramanujan-o3pxx3-hostile",
+      "sha": "077b04e681ac74b20c0ff8bf367aa720c277f2d2"
+    },
+    {
+      "name": "claude/awesome-ramanujan-o3pxx3-win1",
+      "sha": "7ac57759f3b9b332eaafb48c82f366566892f1b1"
+    },
+    {
+      "name": "claude/bugfix-kbc-20261029",
+      "sha": "653f384d1ca60b7e943bd658698e0989d826b696"
+    },
+    {
+      "name": "claude/bugfix-kev-acq-20261029",
+      "sha": "fbe58d800da27aff2544c6a478f0a591ff7dad3b"
+    },
+    {
+      "name": "claude/bugfix-strings-pe-20261029",
+      "sha": "7ae041e79e419159299c32df98b8e69ab176e859"
+    },
+    {
+      "name": "claude/bundle-license-gate",
+      "sha": "d3617acf9af7834582b4962a8c149969a7d55a22"
+    },
+    {
+      "name": "claude/clever-clarke-s4nhi6",
+      "sha": "502402684b0d0aa35d7719bb5a3467de035982bc"
+    },
+    {
+      "name": "claude/compassionate-goldberg-5uuqks",
+      "sha": "198eb21e8813b28de361422cfe3c002bdb9e3970"
+    },
+    {
+      "name": "claude/fix-deadline-test",
+      "sha": "22ff025a7710d07d7ad74be2c8f7cc0b4db0daf7"
+    },
+    {
+      "name": "claude/instance-b-features",
+      "sha": "e492092ff360ee22d576ce6266a31dfe8d614ab4"
+    },
+    {
+      "name": "claude/instance-c-research",
+      "sha": "cebf38a30ce3d4967ed00a4773f8f9898a9ea708"
+    },
+    {
+      "name": "claude/instance-d-gui",
+      "sha": "2fa113889d1ffee6b68496993d3b3b6ebb0ba035"
+    },
+    {
+      "name": "claude/java-version-retry-integration",
+      "sha": "45fa67ad7e924cb4e2df1cd487c04a2c0ddab381"
+    },
+    {
+      "name": "claude/jolly-fermi-eghaxy",
+      "sha": "99f8328ce89d02f200cf9fbc5852d9801761af28"
+    },
+    {
+      "name": "claude/modest-hamilton-kz2gta",
+      "sha": "8d958f0a1950a29c1d1cef9525a114654f4c9904"
+    },
+    {
+      "name": "claude/patchtrace-cli-dotpath-spec-er6hha",
+      "sha": "62b9a3de4d1036a6e4b9bd2618372f4042b15f7f"
+    },
+    {
+      "name": "claude/patchtrace-features",
+      "sha": "66e9adc50fb118c04e5e24eacd0c221ca483a130"
+    },
+    {
+      "name": "claude/patchtrace-haiku-agent-motpbx",
+      "sha": "9fddf99e2635e28129b2deda0ff155b00d9ba471"
+    },
+    {
+      "name": "claude/quirky-curie-n5pxf5",
+      "sha": "a5593fa58b2ead6ecf6adfe045db242232cd52a3"
+    },
+    {
+      "name": "claude/symbol-policy-isolated-settings",
+      "sha": "5db597257decc219db520c0dab8369b4d4e2ea5e"
+    },
+    {
+      "name": "codex/agent-skills-spec56-20261014",
+      "sha": "4467d1f3c6e113a7da808a67e8dee9d4aa5083d8"
+    },
+    {
+      "name": "codex/audit-1",
+      "sha": "c2070cf8b4e7b0ade76cb000a5805009754eec55"
+    },
+    {
+      "name": "codex/audit-2",
+      "sha": "08b12f1b279d917736cfc17d4b8e447c8f552616"
+    },
+    {
+      "name": "codex/deep-review-consolidation-20261030",
+      "sha": "95e09548a82202ae4cfd9380522f36513da87a66"
+    },
+    {
+      "name": "codex/essential-integration-20261029",
+      "sha": "5ed624e91468c410f2cf738ed4e36c2be3e0201d"
+    },
+    {
+      "name": "codex/fix-pr110-ci-gates-20261029",
+      "sha": "c0d1c38aee74461969ff0a8b4d61179c3dbb9b0b"
+    },
+    {
+      "name": "codex/gui-bounded-ambiguous-candidates-20261029",
+      "sha": "3287cb3d36052bd6e44420f631ed033baf939d64"
+    },
+    {
+      "name": "codex/java-version-retry-20261015",
+      "sha": "8ee61c623fa37c5a219f912cf7870bfeddcb1f70"
+    },
+    {
+      "name": "codex/patchtrace-beta",
+      "sha": "c7937246a5bf3f1a09c7d121c0d438088b02040c"
+    },
+    {
+      "name": "codex/pr110-ci-repairs-20261029",
+      "sha": "bb42828d05b775c59b73a7bbd02c0113b9b9bb3b"
+    },
+    {
+      "name": "codex/pr110-kb-arch-scope-20261029",
+      "sha": "40e02daf93c8e13a94b74f5b80d86c1680fea7ad"
+    },
+    {
+      "name": "codex/pr110-persistence-feedback-20261029",
+      "sha": "3e9cedb012b4c82da3b0e5f9bc977ecd7313b64c"
+    },
+    {
+      "name": "codex/pr110-qa-wbjson-diaphora-help-20261029",
+      "sha": "aba4c2001a6b093f7f8cdc8b0ac20ab074ed57b8"
+    },
+    {
+      "name": "codex/pr111-bounded-nav-into-integration-20261029",
+      "sha": "025300f8e169556f84b6a8cfed20413e0a26b019"
+    },
+    {
+      "name": "codex/t9-qa-20261020",
+      "sha": "ecc4f2054c00dc2b324bb71134595c48dc4b6a18"
+    },
+    {
+      "name": "codex/tier-w-fetch-20261015",
+      "sha": "5b7b2591e616e8c28c05c7070661b33e2ca0435c"
+    },
+    {
+      "name": "codex/windows-setup-installer-20261017",
+      "sha": "9c5fe67bd10a5d1342440bb8ea6a524cca3ce1f2"
+    },
+    {
+      "name": "docs/claude-autonomous-alpha-handoff-20261013",
+      "sha": "1038d3f13f214d55c28ceeb51c1c13c9b43b1d3f"
+    },
+    {
+      "name": "docs/csaf-patch-intelligence-specs",
+      "sha": "24244831ec443fa19555586835e71da6dd4aac98"
+    },
+    {
+      "name": "docs/diaphora-optional-engine-20261014",
+      "sha": "b75ac57d85c75e8d61c61af8d104119bb1c65587"
+    },
+    {
+      "name": "docs/dockable-workspace-spec-20261030",
+      "sha": "6a1e3ce348a7e5f67bbabfe388315812cc830b03"
+    },
+    {
+      "name": "docs/nway-matches",
+      "sha": "f748cc48ea07b9af189d967979aa078610550eea"
+    },
+    {
+      "name": "docs/readme-and-wiki",
+      "sha": "ad8fbe9f2f041653760c02e9d18a91a66dd11c39"
+    },
+    {
+      "name": "docs/semantic-ghidra-roadmap",
+      "sha": "8b9ebc01bb221a60ee65838dfdafd59d66e15f5d"
+    },
+    {
+      "name": "docs/spec-31-kb-cve-correlation-20261014",
+      "sha": "9088bf0e2e452c5d792f2a9e6e879f417e9fc120"
+    },
+    {
+      "name": "docs/spec-32-kb-patch-search-20261014",
+      "sha": "d0ceb56f30f81f881f1f25fb4d1dba772ff476b9"
+    },
+    {
+      "name": "docs/specs-plan",
+      "sha": "a5194581396b67395a0ae8453d73eec5ab024e54"
+    },
+    {
+      "name": "docs/workbench-search-graph-floss-20261014",
+      "sha": "af15701d13b516662a36f20a00ece01b8462160f"
+    },
+    {
+      "name": "feat/acquisition",
+      "sha": "293362a2d8cee7d5cc373439436945888b3b805a"
+    },
+    {
+      "name": "feat/acquisition-gui",
+      "sha": "7ae34d8fa26a6b6c8b7acf40f5c16d99643151ce"
+    },
+    {
+      "name": "feat/alpha-ui-integration",
+      "sha": "c7ed1d90a890afa9eb67c238f9f52f458db96432"
+    },
+    {
+      "name": "feat/artifact-bytes-seam",
+      "sha": "91b35d09afd29e9c78169a3b095d9ea3be6c31b1"
+    },
+    {
+      "name": "feat/byte-representations",
+      "sha": "303bc452d0bb6cd46ee67f731f64ec951e1ee215"
+    },
+    {
+      "name": "feat/enrichment-cache",
+      "sha": "0368fd9b5453ab50166c08cf8dfc493e57b0ee52"
+    },
+    {
+      "name": "feat/enrichment-contracts",
+      "sha": "010d809d2581d3a8ed8208e83325ba29f91b2419"
+    },
+    {
+      "name": "feat/enrichment-cve",
+      "sha": "49bf245583d040a8b29d80daee8666d8c7f7b8d4"
+    },
+    {
+      "name": "feat/enrichment-signals",
+      "sha": "e96441a1a90478d5b06e7b0d9b4320695a2018ed"
+    },
+    {
+      "name": "feat/enrichment-wil",
+      "sha": "9a6999a0e644ef03670d10fc0b08524345c6c709"
+    },
+    {
+      "name": "feat/local-runtime-discovery",
+      "sha": "b9198705ab4c144746214c1e42c15b6098063009"
+    },
+    {
+      "name": "feat/nway",
+      "sha": "44d431788bcc55429a033049ed997fa33c92289b"
+    },
+    {
+      "name": "feat/pe-overview",
+      "sha": "4b78a6d3c0015a5fd46d557cde6cc8f0a583795b"
+    },
+    {
+      "name": "feat/phase2-finish",
+      "sha": "86afe3f6563b71e1fff5ed56a907f29c6703b96e"
+    },
+    {
+      "name": "feat/phase3-batch",
+      "sha": "3581b520207b464b35a7baa39d188fb4f2a08cf1"
+    },
+    {
+      "name": "feat/profiles",
+      "sha": "d21b5917a66041cb1ffa4f46931e551e55f3165a"
+    },
+    {
+      "name": "feat/raw-cache",
+      "sha": "28bc476713fc9b77b876cfc8f5454760ea23d4e0"
+    },
+    {
+      "name": "feat/secondary",
+      "sha": "b932ae1a1c8916aeac7be2d49ce27c24717f2846"
+    },
+    {
+      "name": "feat/tooltip-registry",
+      "sha": "0a3843ea2abe37d42ff0291d621fa9a7c9744bbc"
+    },
+    {
+      "name": "feat/verified-offline-runtime-bundle",
+      "sha": "1724503d01be7aee13cb43a3a7a28b8a9ff54ece"
+    },
+    {
+      "name": "feature/alpha-file-overview-20261013",
+      "sha": "476016590be5cd1315613759af18ff61c7c27851"
+    },
+    {
+      "name": "feature/evidence-reconciliation-confidence",
+      "sha": "ddda35f40b94c145b2a9a9b68509b4ddb76a090a"
+    },
+    {
+      "name": "feature/gui-inspection-preview",
+      "sha": "8b94227a81b71841c65783c775f704a538d35710"
+    },
+    {
+      "name": "fix/backend-exit-diagnostics",
+      "sha": "bc00a6912dde57482a301bf64ef6fbc3f324cb92"
+    },
+    {
+      "name": "fix/explicit-offline-symbol-policy",
+      "sha": "2e6618762ab6e15e5be0be60aec3fb8f56af44f3"
+    },
+    {
+      "name": "fix/ghidra-dot-paths",
+      "sha": "5c3b1df94c0d2a908bb0459caceb336912527555"
+    },
+    {
+      "name": "fix/isolate-ghidra-scratch",
+      "sha": "7ea7272311271a540a188e5d0de6d3aaa8864611"
+    },
+    {
+      "name": "fix/pe-inspection-row-tooltips-20261013",
+      "sha": "0182a8035d64071fc88b5f299edc3ef3760946b5"
+    },
+    {
+      "name": "fix/pr110-ci-regressions-20261029",
+      "sha": "979ddfad860c95ceabeb5b670b771900b5617098"
+    },
+    {
+      "name": "haiku/cli-help-suppress-20261027",
+      "sha": "37940b706f117f9786109433aed7751eca4e52a6"
+    },
+    {
+      "name": "haiku/phase2-handoff-import-20261027",
+      "sha": "4522030ff3ff76d720a5efc33953aaa5e5837398"
+    },
+    {
+      "name": "haiku/skills-manifest-import-20261027",
+      "sha": "039b0ef8a5d0cb5136aca72be5c65d11867c19af"
+    },
+    {
+      "name": "main",
+      "sha": "a04f5a299a8d4afef023261e52e08d14678cf1e7"
+    },
+    {
+      "name": "security/offline-bundle-no-overwrite-20261013",
+      "sha": "a39cab81de3e0eeadf57e6255d2fe3e131b3294a"
+    }
+  ],
+  "open_prs": [
+    {
+      "number": 127,
+      "title": "Specify modular dockable workspaces and simpler default layouts",
+      "branch": "docs/dockable-workspace-spec-20261030",
+      "sha": "6a1e3ce348a7e5f67bbabfe388315812cc830b03",
+      "base": "main",
+      "draft": true,
+      "updated_at": "2026-10-30T14:44:38Z",
+      "ancestor_of_baseline": null
+    },
+    {
+      "number": 126,
+      "title": "docs: integrated essential alpha milestone ledger and handoff",
+      "branch": "claude/modest-hamilton-kz2gta",
+      "sha": "8d958f0a1950a29c1d1cef9525a114654f4c9904",
+      "base": "main",
+      "draft": true,
+      "updated_at": "2026-10-30T13:35:14Z",
+      "ancestor_of_baseline": null
+    },
+    {
+      "number": 125,
+      "title": "docs: next-milestone dev prompt for integrated essential alpha",
+      "branch": "claude/compassionate-goldberg-5uuqks",
+      "sha": "198eb21e8813b28de361422cfe3c002bdb9e3970",
+      "base": "main",
+      "draft": true,
+      "updated_at": "2026-10-30T12:56:25Z",
+      "ancestor_of_baseline": null
+    },
+    {
+      "number": 102,
+      "title": "Windows alpha: exe version resource and icon, CI split, release integrity and parser hardening, SPEC-26 A tooltips",
+      "branch": "claude/patchtrace-haiku-agent-motpbx",
+      "sha": "9fddf99e2635e28129b2deda0ff155b00d9ba471",
+      "base": "main",
+      "draft": true,
+      "updated_at": "2026-10-30T07:40:04Z",
+      "ancestor_of_baseline": false,
+      "relevant_diff_files": [
+        "src/patchtrace/secondary/bindiff_probe.py",
+        "src/patchtrace/secondary/rzdiff.py"
+      ],
+      "matching_current_files": [
+        "src/patchtrace/secondary/bindiff_probe.py"
+      ],
+      "different_current_files": [
+        "src/patchtrace/secondary/rzdiff.py"
+      ]
+    },
+    {
+      "number": 100,
+      "title": "SPEC-53 local symbol mode + launcher; SPEC-DA-01 Diaphora Mode A import",
+      "branch": "claude/patchtrace-features",
+      "sha": "66e9adc50fb118c04e5e24eacd0c221ca483a130",
+      "base": "main",
+      "draft": true,
+      "updated_at": "2026-10-21T13:58:49Z",
+      "ancestor_of_baseline": false,
+      "relevant_diff_files": [],
+      "matching_current_files": [],
+      "different_current_files": []
+    },
+    {
+      "number": 98,
+      "title": "Add wiki pages and link them from README",
+      "branch": "docs/readme-and-wiki",
+      "sha": "ad8fbe9f2f041653760c02e9d18a91a66dd11c39",
+      "base": "main",
+      "draft": true,
+      "updated_at": "2026-10-21T09:17:07Z",
+      "ancestor_of_baseline": false,
+      "relevant_diff_files": [],
+      "matching_current_files": [],
+      "different_current_files": []
+    },
+    {
+      "number": 94,
+      "title": "QA: make Unified 100k-row sort budget resilient to runner descheduling",
+      "branch": "chatgpt/unified-sort-perf-qa-20261016",
+      "sha": "27b0a48bb8007f504b4a127a099136a6ea5c00b7",
+      "base": "chatgpt/lbl31-output-persistence-20261015",
+      "draft": false,
+      "updated_at": "2026-10-16T10:58:30Z",
+      "ancestor_of_baseline": false,
+      "relevant_diff_files": [
+        ".github/workflows/corpus-tier-r.yml",
+        "tests/test_unified_read_model.py",
+        "tools/calibration/mutations/engine.py",
+        "tools/calibration/tier_r/cli.py",
+        "tools/calibration/tier_r/evaluate.py",
+        "tools/calibration/tier_r/output_store.py",
+        "tools/calibration/tier_r/shard.py",
+        "tools/calibration/tier_r/training_artifacts.py"
+      ],
+      "matching_current_files": [],
+      "different_current_files": [
+        ".github/workflows/corpus-tier-r.yml",
+        "tests/test_unified_read_model.py",
+        "tools/calibration/mutations/engine.py",
+        "tools/calibration/tier_r/cli.py",
+        "tools/calibration/tier_r/evaluate.py",
+        "tools/calibration/tier_r/output_store.py",
+        "tools/calibration/tier_r/shard.py",
+        "tools/calibration/tier_r/training_artifacts.py"
+      ]
+    },
+    {
+      "number": 90,
+      "title": "test: replace two defective unified fixture originals",
+      "branch": "chatgpt/unified-fixture-collection-fix-20261016",
+      "sha": "941c617b6854291e2448cad6d7d5710a24a8543d",
+      "base": "chatgpt/unified-fixtures-1",
+      "draft": false,
+      "updated_at": "2026-10-16T10:53:50Z",
+      "ancestor_of_baseline": false,
+      "relevant_diff_files": [
+        "tests/fixtures/unified/synthetic_read_model.json",
+        "tests/test_unified_fixture_fusion_properties.py",
+        "tests/test_unified_fixture_gate_u1.py",
+        "tests/test_unified_fixture_gate_u2.py",
+        "tests/test_unified_fixture_gate_u3.py",
+        "tests/test_unified_fixture_gate_u4.py",
+        "tests/test_unified_fixture_gate_u5.py",
+        "tests/test_unified_fixture_gate_u6.py",
+        "tests/test_unified_fixture_gate_u7.py",
+        "tests/test_unified_fixture_read_model_golden.py",
+        "tests/test_unified_fixture_statistics.py",
+        "tests/test_unified_fixture_timing.py",
+        "tests/test_unified_synthetic_pairs.py",
+        "tests/test_unified_synthetic_pe.py",
+        "tests/unified_support/assembler.py",
+        "tests/unified_support/fixture-gaps.md",
+        "tests/unified_support/gate_inputs.py",
+        "tests/unified_support/nuisance.py",
+        "tests/unified_support/pairs.py",
+        "tests/unified_support/statistical-plan.md",
+        "tests/unified_support/statistics.py",
+        "tests/unified_support/synthetic_pe.py",
+        "tests/unified_support/timing.py"
+      ],
+      "matching_current_files": [
+        "tests/fixtures/unified/synthetic_read_model.json",
+        "tests/test_unified_fixture_gate_u1.py",
+        "tests/test_unified_fixture_gate_u2.py",
+        "tests/test_unified_fixture_gate_u3.py",
+        "tests/test_unified_fixture_gate_u4.py",
+        "tests/test_unified_fixture_gate_u5.py",
+        "tests/test_unified_fixture_gate_u6.py",
+        "tests/test_unified_fixture_gate_u7.py",
+        "tests/test_unified_fixture_read_model_golden.py",
+        "tests/test_unified_fixture_statistics.py",
+        "tests/test_unified_fixture_timing.py",
+        "tests/unified_support/assembler.py",
+        "tests/unified_support/gate_inputs.py",
+        "tests/unified_support/nuisance.py",
+        "tests/unified_support/pairs.py",
+        "tests/unified_support/statistical-plan.md",
+        "tests/unified_support/statistics.py",
+        "tests/unified_support/synthetic_pe.py"
+      ],
+      "different_current_files": [
+        "tests/test_unified_fixture_fusion_properties.py",
+        "tests/test_unified_synthetic_pairs.py",
+        "tests/test_unified_synthetic_pe.py",
+        "tests/unified_support/fixture-gaps.md",
+        "tests/unified_support/timing.py"
+      ]
+    },
+    {
+      "number": 86,
+      "title": "UE-R3: persist bounded on-demand Ghidra C into unified result sidecars",
+      "branch": "chatgpt/ue-r3-retain-decompiled-20261016",
+      "sha": "ebbd621d4f557905892aee5f7cf8cb7b0e2addc2",
+      "base": "claude/instance-d-gui",
+      "draft": true,
+      "updated_at": "2026-10-16T10:59:23Z",
+      "ancestor_of_baseline": false,
+      "relevant_diff_files": [
+        "src/patchtrace/unified/compute.py",
+        "src/patchtrace/unified/pair_text.py",
+        "src/patchtrace/unified/store.py",
+        "tests/test_unified_pair_text.py",
+        "tests/test_unified_store.py",
+        "tests/test_unified_wire_refacts.py"
+      ],
+      "matching_current_files": [
+        "src/patchtrace/unified/pair_text.py",
+        "tests/test_unified_pair_text.py"
+      ],
+      "different_current_files": [
+        "src/patchtrace/unified/compute.py",
+        "src/patchtrace/unified/store.py",
+        "tests/test_unified_store.py",
+        "tests/test_unified_wire_refacts.py"
+      ]
+    },
+    {
+      "number": 85,
+      "title": "LBL-30: verify preregistration and enforce single-use final training",
+      "branch": "chatgpt/lbl30-prereg-guard-20261016",
+      "sha": "6ae2c079e6cafa2b7bd5396cac443cd34ba7138a",
+      "base": "claude/instance-d-gui",
+      "draft": true,
+      "updated_at": "2026-10-16T11:01:25Z",
+      "ancestor_of_baseline": false,
+      "relevant_diff_files": [
+        ".github/workflows/corpus-tier-r.yml",
+        "tools/calibration/mutations/engine.py",
+        "tools/calibration/prereg_gate.py",
+        "tools/calibration/tier_r/cli.py",
+        "tools/calibration/tier_r/evaluate.py",
+        "tools/calibration/tier_r/output_store.py",
+        "tools/calibration/tier_r/shard.py",
+        "tools/calibration/tier_r/training_artifacts.py",
+        "tools/calibration/train.py"
+      ],
+      "matching_current_files": [],
+      "different_current_files": [
+        ".github/workflows/corpus-tier-r.yml",
+        "tools/calibration/mutations/engine.py",
+        "tools/calibration/prereg_gate.py",
+        "tools/calibration/tier_r/cli.py",
+        "tools/calibration/tier_r/evaluate.py",
+        "tools/calibration/tier_r/output_store.py",
+        "tools/calibration/tier_r/shard.py",
+        "tools/calibration/tier_r/training_artifacts.py",
+        "tools/calibration/train.py"
+      ]
+    },
+    {
+      "number": 82,
+      "title": "LBL-32: two-sided recipe A/A and noise cases in Tier R planner",
+      "branch": "chatgpt/lbl32-recipe-aa-noise-20261016",
+      "sha": "eaa30013794a9bd0fedc9ec34bbe374d6db0cfc9",
+      "base": "claude/instance-d-gui",
+      "draft": true,
+      "updated_at": "2026-10-16T11:08:16Z",
+      "ancestor_of_baseline": false,
+      "relevant_diff_files": [
+        ".github/workflows/corpus-tier-r.yml",
+        "docs/specs/known-answer-corpus.md",
+        "src/patchtrace/unified/read_model.py",
+        "tests/test_unified_read_model.py",
+        "tools/calibration/mutations/engine.py",
+        "tools/calibration/tier_r/cli.py",
+        "tools/calibration/tier_r/evaluate.py",
+        "tools/calibration/tier_r/output_store.py",
+        "tools/calibration/tier_r/shard.py",
+        "tools/calibration/tier_r/training_artifacts.py"
+      ],
+      "matching_current_files": [],
+      "different_current_files": [
+        ".github/workflows/corpus-tier-r.yml",
+        "docs/specs/known-answer-corpus.md",
+        "src/patchtrace/unified/read_model.py",
+        "tests/test_unified_read_model.py",
+        "tools/calibration/mutations/engine.py",
+        "tools/calibration/tier_r/cli.py",
+        "tools/calibration/tier_r/evaluate.py",
+        "tools/calibration/tier_r/output_store.py",
+        "tools/calibration/tier_r/shard.py",
+        "tools/calibration/tier_r/training_artifacts.py"
+      ]
+    },
+    {
+      "number": 79,
+      "title": "LBL-32: run pinned recipe-card A/A and noise controls on both sides",
+      "branch": "chatgpt/lbl32-card-controls-20261016",
+      "sha": "9513bc05229dd7a8460fc229d7420154d61498db",
+      "base": "chatgpt/lbl31-output-persistence-20261015",
+      "draft": true,
+      "updated_at": "2026-10-16T10:58:26Z",
+      "ancestor_of_baseline": false,
+      "relevant_diff_files": [
+        ".github/workflows/corpus-tier-r.yml",
+        "tools/calibration/mutations/engine.py",
+        "tools/calibration/tier_r/cli.py",
+        "tools/calibration/tier_r/evaluate.py",
+        "tools/calibration/tier_r/output_store.py",
+        "tools/calibration/tier_r/shard.py",
+        "tools/calibration/tier_r/training_artifacts.py"
+      ],
+      "matching_current_files": [],
+      "different_current_files": [
+        ".github/workflows/corpus-tier-r.yml",
+        "tools/calibration/mutations/engine.py",
+        "tools/calibration/tier_r/cli.py",
+        "tools/calibration/tier_r/evaluate.py",
+        "tools/calibration/tier_r/output_store.py",
+        "tools/calibration/tier_r/shard.py",
+        "tools/calibration/tier_r/training_artifacts.py"
+      ]
+    },
+    {
+      "number": 78,
+      "title": "LBL-31: persist Tier R engine outputs and transfer verified training artifacts",
+      "branch": "chatgpt/lbl31-output-persistence-20261015",
+      "sha": "2019a37fa65fc37f4758469143c2daadc07e0098",
+      "base": "claude/instance-d-gui",
+      "draft": true,
+      "updated_at": "2026-10-16T11:08:14Z",
+      "ancestor_of_baseline": false,
+      "relevant_diff_files": [
+        ".github/workflows/corpus-tier-r.yml",
+        "src/patchtrace/unified/read_model.py",
+        "tests/test_unified_read_model.py",
+        "tools/calibration/mutations/engine.py",
+        "tools/calibration/tier_r/cli.py",
+        "tools/calibration/tier_r/evaluate.py",
+        "tools/calibration/tier_r/output_store.py",
+        "tools/calibration/tier_r/shard.py",
+        "tools/calibration/tier_r/training_artifacts.py"
+      ],
+      "matching_current_files": [],
+      "different_current_files": [
+        ".github/workflows/corpus-tier-r.yml",
+        "src/patchtrace/unified/read_model.py",
+        "tests/test_unified_read_model.py",
+        "tools/calibration/mutations/engine.py",
+        "tools/calibration/tier_r/cli.py",
+        "tools/calibration/tier_r/evaluate.py",
+        "tools/calibration/tier_r/output_store.py",
+        "tools/calibration/tier_r/shard.py",
+        "tools/calibration/tier_r/training_artifacts.py"
+      ]
+    },
+    {
+      "number": 72,
+      "title": "docs: specify Program E panels and coordinated build plan",
+      "branch": "chatgpt/panels-1",
+      "sha": "cfd7cfff52f4f9b8b1264e8b7d70ef1bbef2d63f",
+      "base": "claude/instance-d-gui",
+      "draft": true,
+      "updated_at": "2026-10-15T05:12:33Z",
+      "ancestor_of_baseline": false,
+      "relevant_diff_files": [],
+      "matching_current_files": [],
+      "different_current_files": []
+    },
+    {
+      "number": 71,
+      "title": "Draft: unified synthetic fixtures and gate evaluator tests (partial, unverified)",
+      "branch": "chatgpt/unified-fixtures-1",
+      "sha": "161a88345efc6484f4d7809fc6963a0193bd0057",
+      "base": "claude/instance-d-gui",
+      "draft": true,
+      "updated_at": "2026-10-15T05:09:58Z",
+      "ancestor_of_baseline": false,
+      "relevant_diff_files": [
+        "tests/fixtures/unified/synthetic_read_model.json",
+        "tests/test_unified_fixture_fusion_properties.py",
+        "tests/test_unified_fixture_gate_u1.py",
+        "tests/test_unified_fixture_gate_u2.py",
+        "tests/test_unified_fixture_gate_u3.py",
+        "tests/test_unified_fixture_gate_u4.py",
+        "tests/test_unified_fixture_gate_u5.py",
+        "tests/test_unified_fixture_gate_u6-2.py",
+        "tests/test_unified_fixture_gate_u6.py",
+        "tests/test_unified_fixture_gate_u7.py",
+        "tests/test_unified_fixture_read_model_golden.py",
+        "tests/test_unified_fixture_statistics.py",
+        "tests/test_unified_fixture_timing.py",
+        "tests/test_unified_synthetic_pairs.py",
+        "tests/test_unified_synthetic_pe-2.py",
+        "tests/test_unified_synthetic_pe.py",
+        "tests/unified_support/assembler.py",
+        "tests/unified_support/fixture-gaps.md",
+        "tests/unified_support/gate_inputs.py",
+        "tests/unified_support/nuisance.py",
+        "tests/unified_support/pairs.py",
+        "tests/unified_support/statistical-plan.md",
+        "tests/unified_support/statistics.py",
+        "tests/unified_support/synthetic_pe.py",
+        "tests/unified_support/timing.py"
+      ],
+      "matching_current_files": [
+        "tests/fixtures/unified/synthetic_read_model.json",
+        "tests/test_unified_fixture_gate_u1.py",
+        "tests/test_unified_fixture_gate_u2.py",
+        "tests/test_unified_fixture_gate_u3.py",
+        "tests/test_unified_fixture_gate_u4.py",
+        "tests/test_unified_fixture_gate_u5.py",
+        "tests/test_unified_fixture_gate_u7.py",
+        "tests/test_unified_fixture_read_model_golden.py",
+        "tests/test_unified_fixture_statistics.py",
+        "tests/test_unified_fixture_timing.py",
+        "tests/unified_support/assembler.py",
+        "tests/unified_support/fixture-gaps.md",
+        "tests/unified_support/gate_inputs.py",
+        "tests/unified_support/nuisance.py",
+        "tests/unified_support/pairs.py",
+        "tests/unified_support/statistical-plan.md",
+        "tests/unified_support/statistics.py",
+        "tests/unified_support/synthetic_pe.py"
+      ],
+      "different_current_files": [
+        "tests/test_unified_fixture_fusion_properties.py",
+        "tests/test_unified_fixture_gate_u6-2.py",
+        "tests/test_unified_fixture_gate_u6.py",
+        "tests/test_unified_synthetic_pairs.py",
+        "tests/test_unified_synthetic_pe-2.py",
+        "tests/test_unified_synthetic_pe.py",
+        "tests/unified_support/timing.py"
+      ]
+    },
+    {
+      "number": 70,
+      "title": "docs: add first 25 Prompt 5 help topics",
+      "branch": "chatgpt/help-docs-1",
+      "sha": "e5bee6fe157c90a40f2d9f458768e2169ce123e5",
+      "base": "claude/instance-d-gui",
+      "draft": true,
+      "updated_at": "2026-10-15T05:05:26Z",
+      "ancestor_of_baseline": false,
+      "relevant_diff_files": [
+        "docs/help/07-unified-panel.md"
+      ],
+      "matching_current_files": [],
+      "different_current_files": [
+        "docs/help/07-unified-panel.md"
+      ]
+    },
+    {
+      "number": 69,
+      "title": "Add synthetic KB patch-search fixtures and QA",
+      "branch": "chatgpt/kb-fixtures-1",
+      "sha": "781b36fb60e775ce01bf0c114e6a17b609fdb475",
+      "base": "claude/instance-d-gui",
+      "draft": true,
+      "updated_at": "2026-10-15T05:05:14Z",
+      "ancestor_of_baseline": false,
+      "relevant_diff_files": [
+        "tests/test_kb_synthetic_fixture_corpus.py"
+      ],
+      "matching_current_files": [],
+      "different_current_files": [
+        "tests/test_kb_synthetic_fixture_corpus.py"
+      ]
+    },
+    {
+      "number": 68,
+      "title": "Corpus batch 1: 24 candidate recipes and continuation plan",
+      "branch": "chatgpt/corpus-1",
+      "sha": "b7a0f0a45d2de1462367d877b7386091b4d275ce",
+      "base": "claude/instance-d-gui",
+      "draft": true,
+      "updated_at": "2026-10-15T05:05:05Z",
+      "ancestor_of_baseline": false,
+      "relevant_diff_files": [
+        "docs/plans/chatgpt-corpus-1-continuation.md",
+        "tools/calibration/catalogue/hiredis-candidate.json",
+        "tools/calibration/catalogue/http-parser-candidate.json",
+        "tools/calibration/catalogue/inih-candidate.json",
+        "tools/calibration/catalogue/jsmn-candidate.json",
+        "tools/calibration/catalogue/jsoncpp-candidate.json",
+        "tools/calibration/catalogue/libhydrogen-candidate.json",
+        "tools/calibration/catalogue/libogg-candidate.json",
+        "tools/calibration/catalogue/libspng-candidate.json",
+        "tools/calibration/catalogue/libtomcrypt-candidate.json",
+        "tools/calibration/catalogue/libtommath-candidate.json",
+        "tools/calibration/catalogue/libvterm-candidate.json",
+        "tools/calibration/catalogue/llhttp-candidate.json",
+        "tools/calibration/catalogue/monocypher-candidate.json",
+        "tools/calibration/catalogue/nanopb-candidate.json",
+        "tools/calibration/catalogue/nghttp2-candidate.json",
+        "tools/calibration/catalogue/parson-candidate.json",
+        "tools/calibration/catalogue/protobuf-c-candidate.json",
+        "tools/calibration/catalogue/pugixml-candidate.json",
+        "tools/calibration/catalogue/qoi-candidate.json",
+        "tools/calibration/catalogue/snappy-candidate.json",
+        "tools/calibration/catalogue/speex-candidate.json",
+        "tools/calibration/catalogue/tinycbor-candidate.json",
+        "tools/calibration/catalogue/tinyxml2-candidate.json",
+        "tools/calibration/catalogue/yyjson-candidate.json"
+      ],
+      "matching_current_files": [],
+      "different_current_files": [
+        "docs/plans/chatgpt-corpus-1-continuation.md",
+        "tools/calibration/catalogue/hiredis-candidate.json",
+        "tools/calibration/catalogue/http-parser-candidate.json",
+        "tools/calibration/catalogue/inih-candidate.json",
+        "tools/calibration/catalogue/jsmn-candidate.json",
+        "tools/calibration/catalogue/jsoncpp-candidate.json",
+        "tools/calibration/catalogue/libhydrogen-candidate.json",
+        "tools/calibration/catalogue/libogg-candidate.json",
+        "tools/calibration/catalogue/libspng-candidate.json",
+        "tools/calibration/catalogue/libtomcrypt-candidate.json",
+        "tools/calibration/catalogue/libtommath-candidate.json",
+        "tools/calibration/catalogue/libvterm-candidate.json",
+        "tools/calibration/catalogue/llhttp-candidate.json",
+        "tools/calibration/catalogue/monocypher-candidate.json",
+        "tools/calibration/catalogue/nanopb-candidate.json",
+        "tools/calibration/catalogue/nghttp2-candidate.json",
+        "tools/calibration/catalogue/parson-candidate.json",
+        "tools/calibration/catalogue/protobuf-c-candidate.json",
+        "tools/calibration/catalogue/pugixml-candidate.json",
+        "tools/calibration/catalogue/qoi-candidate.json",
+        "tools/calibration/catalogue/snappy-candidate.json",
+        "tools/calibration/catalogue/speex-candidate.json",
+        "tools/calibration/catalogue/tinycbor-candidate.json",
+        "tools/calibration/catalogue/tinyxml2-candidate.json",
+        "tools/calibration/catalogue/yyjson-candidate.json"
+      ]
+    },
+    {
+      "number": 67,
+      "title": "Deferred audit fixes: Ghidriff integrity, isolated launches and consent",
+      "branch": "chatgpt/deferred-audit-fixes-1",
+      "sha": "2174837f3172c3ff2a3c676da106f42b55648a70",
+      "base": "claude/instance-d-gui",
+      "draft": true,
+      "updated_at": "2026-10-15T05:01:34Z",
+      "ancestor_of_baseline": false,
+      "relevant_diff_files": [],
+      "matching_current_files": [],
+      "different_current_files": []
+    },
+    {
+      "number": 61,
+      "title": "Add Caveman and PatchTrace agent skills with spec-first workflow (SPEC-56)",
+      "branch": "codex/agent-skills-spec56-20261014",
+      "sha": "4467d1f3c6e113a7da808a67e8dee9d4aa5083d8",
+      "base": "main",
+      "draft": false,
+      "updated_at": "2026-10-15T01:14:12Z",
+      "ancestor_of_baseline": false,
+      "relevant_diff_files": [],
+      "matching_current_files": [],
+      "different_current_files": []
+    }
+  ],
+  "workflows": [
+    {
+      "id": 41063115449,
+      "name": "Unified live gates (SPEC-31 S6b, advisory)",
+      "sha": "a04f5a299a8d4afef023261e52e08d14678cf1e7",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/41063115449"
+    },
+    {
+      "id": 41060959715,
+      "name": "Live rizin rz-diff acceptance",
+      "sha": "a04f5a299a8d4afef023261e52e08d14678cf1e7",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/41060959715"
+    },
+    {
+      "id": 41060959579,
+      "name": "Corpus Tier R (sharded)",
+      "sha": "a04f5a299a8d4afef023261e52e08d14678cf1e7",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/41060959579"
+    },
+    {
+      "id": 41060959854,
+      "name": "Native Windows Ghidriff acceptance",
+      "sha": "a04f5a299a8d4afef023261e52e08d14678cf1e7",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/41060959854"
+    },
+    {
+      "id": 41060959558,
+      "name": "Live unified extraction (SPEC-31 S1)",
+      "sha": "a04f5a299a8d4afef023261e52e08d14678cf1e7",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/41060959558"
+    },
+    {
+      "id": 41060959610,
+      "name": "QA and Windows standalone",
+      "sha": "a04f5a299a8d4afef023261e52e08d14678cf1e7",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/41060959610"
+    }
+  ],
+  "unified_live_jobs": [
+    {
+      "id": 124087550789,
+      "name": "bench and integrity tests (ubuntu-latest)",
+      "conclusion": "failure"
+    },
+    {
+      "id": 124087551019,
+      "name": "bench and integrity tests (windows-latest)",
+      "conclusion": "success"
+    },
+    {
+      "id": 124087551041,
+      "name": "build the pairs, the A/A pairs and the mutants (Linux)",
+      "conclusion": "success"
+    },
+    {
+      "id": 124094490545,
+      "name": "A/A and release pairs, both orientations (ubuntu-latest)",
+      "conclusion": "failure"
+    },
+    {
+      "id": 124094490578,
+      "name": "A/A and release pairs, both orientations (windows-latest)",
+      "conclusion": "failure"
+    },
+    {
+      "id": 124094490983,
+      "name": "planted mutants of the class bound (ubuntu-latest)",
+      "conclusion": "failure"
+    },
+    {
+      "id": 124094490995,
+      "name": "planted mutants of the class index-swap (ubuntu-latest)",
+      "conclusion": "failure"
+    },
+    {
+      "id": 124094491026,
+      "name": "planted mutants of the class signedness (ubuntu-latest)",
+      "conclusion": "failure"
+    },
+    {
+      "id": 124094491040,
+      "name": "planted mutants of the class comparison (ubuntu-latest)",
+      "conclusion": "failure"
+    },
+    {
+      "id": 124094491047,
+      "name": "planted mutants of the class branch-swap (ubuntu-latest)",
+      "conclusion": "failure"
+    },
+    {
+      "id": 124094491050,
+      "name": "planted mutants of the class global-swap (windows-latest)",
+      "conclusion": "failure"
+    },
+    {
+      "id": 124094491056,
+      "name": "planted mutants of the class constant (ubuntu-latest)",
+      "conclusion": "failure"
+    },
+    {
+      "id": 124094491058,
+      "name": "planted mutants of the class removed-check (ubuntu-latest)",
+      "conclusion": "failure"
+    },
+    {
+      "id": 124094491062,
+      "name": "planted mutants of the class callee-swap (ubuntu-latest)",
+      "conclusion": "failure"
+    },
+    {
+      "id": 124094491080,
+      "name": "planted mutants of the class index-swap (windows-latest)",
+      "conclusion": "failure"
+    },
+    {
+      "id": 124094491082,
+      "name": "planted mutants of the class global-swap (ubuntu-latest)",
+      "conclusion": "failure"
+    },
+    {
+      "id": 124094491087,
+      "name": "planted mutants of the class field-offset (ubuntu-latest)",
+      "conclusion": "failure"
+    },
+    {
+      "id": 124094491100,
+      "name": "planted mutants of the class removed-check (windows-latest)",
+      "conclusion": "failure"
+    },
+    {
+      "id": 124094491110,
+      "name": "planted mutants of the class callee-swap (windows-latest)",
+      "conclusion": "failure"
+    },
+    {
+      "id": 124094491123,
+      "name": "planted mutants of the class added-block (ubuntu-latest)",
+      "conclusion": "failure"
+    },
+    {
+      "id": 124094491138,
+      "name": "planted mutants of the class signedness (windows-latest)",
+      "conclusion": "failure"
+    },
+    {
+      "id": 124094491247,
+      "name": "planted mutants of the class constant (windows-latest)",
+      "conclusion": "failure"
+    },
+    {
+      "id": 124094491296,
+      "name": "planted mutants of the class field-offset (windows-latest)",
+      "conclusion": "failure"
+    },
+    {
+      "id": 124094491395,
+      "name": "planted mutants of the class comparison (windows-latest)",
+      "conclusion": "failure"
+    },
+    {
+      "id": 124094491425,
+      "name": "planted mutants of the class buf-resize (windows-latest)",
+      "conclusion": "failure"
+    },
+    {
+      "id": 124094491461,
+      "name": "planted mutants of the class branch-swap (windows-latest)",
+      "conclusion": "failure"
+    },
+    {
+      "id": 124094491492,
+      "name": "planted mutants of the class bound (windows-latest)",
+      "conclusion": "failure"
+    },
+    {
+      "id": 124094491530,
+      "name": "planted mutants of the class buf-resize (ubuntu-latest)",
+      "conclusion": "failure"
+    },
+    {
+      "id": 124094491660,
+      "name": "planted mutants of the class added-block (windows-latest)",
+      "conclusion": "failure"
+    },
+    {
+      "id": 124122131077,
+      "name": "gate report (advisory, never strict)",
+      "conclusion": "success"
+    }
+  ],
+  "rulesets": [],
+  "local_r1_observation": {
+    "path": "/workspace/scratch/a55b59b3e326/patchtrace",
+    "branch": "codex/r1-ground-truth-research-20261030",
+    "head": "a04f5a299a8d4afef023261e52e08d14678cf1e7",
+    "modified": false,
+    "interpretation": "R1 work owned by a separate session; no changes made there."
+  }
+}
