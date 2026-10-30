@@ -154,12 +154,17 @@ def test_strict_json_and_caps():
 
 
 @pytest.mark.parametrize('text', ['\ud800', 'a\udfffb'], ids=['high', 'low-inside'])
-def test_unpaired_surrogate_escape_is_a_typed_provider_error(text):
+def test_unpaired_surrogate_escape_skips_only_the_invalid_entry(text):
     doc = record()
-    next(iter(doc.values()))['fileInfo']['version'] = text
-    with pytest.raises(AcquisitionError) as err:
-        parse(doc)
-    assert err.value.code == 'PT-ACQ-PROVIDER'
+    bad_sha = next(iter(doc))
+    doc[bad_sha]['fileInfo']['version'] = text
+    result = parse(doc)
+    assert result.skipped == 1
+    assert bad_sha not in {c.sha256 for c in result.candidates}
+    assert len(result.candidates) == len(doc) - 1
+    rows = wb.parse_rows(gz(doc), 'afd.sys', '2026-10-12')
+    assert rows.skipped == 1
+    assert bad_sha not in {r.sha256 for r in rows.rows}
 
 
 def test_paired_surrogate_escape_still_parses():
