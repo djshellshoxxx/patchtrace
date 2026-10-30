@@ -183,9 +183,16 @@ def score(cells: Sequence[CellResult], targets: Sequence[TargetRef], directions:
 
 
 def rescored(run: MatrixRun, targets: Sequence[TargetRef], versions: Sequence[RuleVersion]) -> MatrixRun:
-    """A stored run with the current expectations (the cache key does not cover them)."""
-    cells = score(run.cells, targets, [direction_of(v) for v in versions])
-    return run.model_copy(update={'targets': tuple(targets), 'cells': cells})
+    """A stored run with the current expectations (the cache key does not cover them). The key ignores the order of
+    files and rules, so each cell is found by the file's and the rule's hash, never by position (#105 BUG-RULE-1)."""
+    width = len(run.rules)
+    stored = {(t.sha256, r.rule_sha256): run.cells[i * width + j]
+              for i, t in enumerate(run.targets) for j, r in enumerate(run.rules)}
+    by_rule = {r.rule_sha256: r for r in run.rules}
+    rules = tuple(by_rule[v.rule_sha256] for v in versions)
+    cells = score([stored[(t.sha256, r.rule_sha256)] for t in targets for r in rules], targets,
+                  [direction_of(v) for v in versions])
+    return run.model_copy(update={'targets': tuple(targets), 'rules': rules, 'cells': cells})
 
 
 def cache_key(versions: Sequence[RuleVersion], targets: Sequence[TargetRef], engine_version: str, timeout_s: int,

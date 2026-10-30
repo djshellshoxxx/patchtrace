@@ -236,6 +236,23 @@ def test_a_stored_run_is_scored_again_with_new_expectations_and_the_key_ignores_
     assert grid.cache_key == matrix.cache_key([older_rule], changed, grid.engine.version, 30)
 
 
+def test_a_stored_run_reused_in_another_order_keeps_each_result_on_its_own_file_and_rule(world, older_rule, newer_rule):
+    """#105 BUG-RULE-1: the key ignores order, so a reused run must remap cells by hash, not by position."""
+    entries, _ = world.entries(series=world.series)
+    grid = run(entries, [older_rule, newer_rule])
+    targets, versions = [e.target for e in reversed(entries)], [newer_rule, older_rule]
+    assert grid.cache_key == matrix.cache_key(versions, targets, grid.engine.version, 30)
+    again = matrix.rescored(grid, targets, versions)
+    assert [t.target_id for t in again.targets] == [t.target_id for t in targets]
+    assert [r.rule_sha256 for r in again.rules] == [v.rule_sha256 for v in versions]
+    was = {(t.label, r.rule_sha256): grid.cells[i * 2 + j].state
+           for i, t in enumerate(grid.targets) for j, r in enumerate(grid.rules)}
+    now = {(t.label, r.rule_sha256): again.cells[i * 2 + j].state
+           for i, t in enumerate(again.targets) for j, r in enumerate(again.rules)}
+    assert now == was
+    assert (by_label(again, 1)['0-V1.dll'].verdict, by_label(again, 0)['3-V2.dll'].verdict) == ('as-expected',) * 2
+
+
 def test_no_path_reaches_the_record(world, older_rule):
     entries, _ = world.entries(series=world.series, clean_dir=world.clean)
     text = run(entries, [older_rule]).model_dump_json()
