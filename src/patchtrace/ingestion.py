@@ -21,7 +21,12 @@ def safe_path(root: Path, relative: str) -> Path:
     rel = Path(relative)
     if not relative or rel.is_absolute() or '..' in rel.parts or '\\' in relative or ':' in relative:
         raise ValueError('PT-STORAGE: project path must be relative and contained')
-    if '\x00' in relative or any(len(part.encode('utf-8', 'surrogatepass')) > 255 for part in rel.parts):
+    # Checked here, not left to the OS: Windows accepts lone surrogates in names that POSIX file systems refuse.
+    try:
+        too_long = any(len(part.encode('utf-8')) > 255 for part in rel.parts)
+    except UnicodeEncodeError:
+        too_long = True
+    if '\x00' in relative or too_long:
         raise ValueError('PT-STORAGE: project path has an invalid or over-long component')
     candidate = base / rel
     try:
