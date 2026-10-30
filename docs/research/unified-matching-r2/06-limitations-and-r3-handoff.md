@@ -38,7 +38,7 @@ rejection of alternative research directions.
 | Conflicts deterministic and tested | Existing properties plus new seed, witness, cap and manual regressions | Focused local evidence passes; current-head Windows/cross-platform gate required |
 | Important false-match categories covered | Seventeen-category taxonomy, existing invariants and new executable defects | Important concrete defects covered; prevalence and unrepresented compiler transformations unknown |
 | Improvements measured before/after | Atom serialization, witness retention, native helper coverage, access-count and timing evidence | Supported within each stated experiment; no claimed global accuracy gain |
-| No demonstrated high-impact regression | Focused tests and independent production review | Full-suite/CI outcome remains mandatory; an unchecked head is not accepted |
+| No demonstrated high-impact regression | Focused tests, independent production review, completed full-run failure-set audit and successful environment recovery | No additional failure found in the full run; current-head CI remains mandatory and the selected recovery is not a fresh green full-suite invocation |
 | Explanations preserve provenance | Existing contracts plus witness/manual/leftover repairs | Improved; bounded omitted evidence and full relation provenance gaps remain |
 | Performance limits documented | 1k/10k/50k/100k synthetic shapes, bounded 200-row LAP and memory | Documented; whole-pipeline real-program scale remains open |
 | Required tests and CI pass | Exact results in report 05 | Open until current-head required checks and unresolved findings are addressed |
@@ -55,9 +55,9 @@ to choose thresholds in this work.
 | ID / priority | Finding and consequence | Next bounded action | Owner / evidence needed to close |
 |---|---|---|---|
 | R2-L01 / P0 | Real-world ground truth and complete native outputs are insufficient for precision/recall acceptance | Finish R1 label admission, pin development/validation/locked lineage roles, then run the existing unified evaluators on unchanged defaults | R1 corpus owner plus R2 evaluator; independently admitted labels and exact denominators |
-| R2-L02 / P0 | Advisory live gates wrote zero outcomes; A/A `identical` backend status is incompatible with the harness's completed-run requirement | Reproduce the smallest A/A case, preserve failure logs, repair only the harness/retention path with a regression, rerun G-U1–G-U8 | R1/live-gate owner; genuine Ghidriff/IR records, no fabricated primary run or omission credit |
+| R2-L02 / P0 | Baseline advisory live gates wrote zero outcomes; A/A `identical` status does not satisfy the harness's completed-run requirement | Inspect R1 #128's proposed live-pair/configuration/failure-receipt and workflow repairs, then rerun G-U1–G-U8 on the integrated head; explicit A/A refusal alone is not passing evidence | R1/live-gate owner; genuine Ghidriff/IR records, no fabricated primary run or omission credit |
 | R2-L03 / P0 | rizin 0.9.1 singleton path reverses sides while ordinary multi-function paths do not | Preserve the 1→1, 1→2, 2→1 and 2→2 probes; obtain reliable producer orientation/count metadata or fail closed when ownership cannot be established | Secondary adapter/upstream owner; pinned native regression, same-address ambiguity cases, preserved raw output and versioned cache policy |
-| R2-L04 / P0 | Current-head security/review/Windows gates are incomplete or failing at the first implementation checkpoint | Retrieve exact findings through supported interfaces; repair demonstrated issues; rerun and inspect each required job at the new SHA | Integration owner; no suppression, skipped review or baseline pass counted as approval |
+| R2-L04 / P0 | Security/review/Windows gates are incomplete or failing at inspected implementation checkpoints | Retain each checkpoint's exact annotations, repair demonstrated report/input/provenance defects, and inspect each required job at the final SHA | Integration owner; no suppression, skipped review or baseline pass counted as approval |
 | R2-L05 / P1 | Ladder groups are counted but not persisted; existing exclusive group semantics cannot express an inlined helper overlapping its host's 1:1 relation | Specify typed relation membership, explicit candidate edges, containment regions and separate exclusivity rules before migration | Unified contract owner; additive schema/migration plan and split/merge/inline/outline tests |
 | R2-L06 / P1 | Native split/merge examples generate no automatic group at all | Distinguish group-generation recall from adapter loss; add bounded reviewed block/region coverage examples through the R1 corpus | R1 + matching owner; no Cartesian-product truth or forced 1:1 fallback |
 | R2-L07 / P1 | P02 export-key algorithm is tested but production never passes export maps | Use the existing bounded PE export table over verified bytes, define aliases/ordinals/forwarders/data exports/truncation, carry identity-bound maps to the worker | Unified/PE owner; compute/persistence regression proving P02 rather than P03, and policy digest update |
@@ -134,6 +134,12 @@ proof version and R2's matching-policy version when integrating. Likewise use
 coordination and [R6 #133](https://github.com/djshellshoxxx/patchtrace/pull/133) for
 the final integration ledger. This handoff supplies evidence and remaining
 questions to those workstreams rather than creating a competing implementation.
+The later [R7 #134](https://github.com/djshellshoxxx/patchtrace/pull/134) slicing
+prototypes and [R8 #135](https://github.com/djshellshoxxx/patchtrace/pull/135)
+literal/opaque-token research are adjacent work. R8 shares the fusion/noise
+specification and advances `canon/2`; preserve that invalidation separately from
+R2 `matching/2` and R3's proof version. These proposals are not native acceptance
+of the combined system. Current file-level ownership is recorded in report 00.
 
 R3 studies semantic change conditional on explicitly qualified correspondence.
 It should consume the persisted unified manifest/rows/facts and original source

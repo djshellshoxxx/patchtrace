@@ -22,18 +22,39 @@ from datetime import UTC, datetime
 from pathlib import Path
 
 if __package__:
-    from .r2_paths import report_destination, write_report_json
+    from .r2_paths import regular_input, report_destination, write_report_json
 else:
-    from r2_paths import report_destination, write_report_json
+    from r2_paths import regular_input, report_destination, write_report_json
 
 ROOT = Path(__file__).resolve().parents[2]
 SHAS = ('bed3ef087fd07161a14154d38c683b3f648611114bf9794bf91fba123d6f2d48',
         'd3837c837ffff4eb90342b2b9d5d29cd023f72d3858c3a405a015cc180e963b4')
+MAX_INPUT_BYTES = 256 * 1024 * 1024  # bounded developer-selected DLL/executable inputs
+MAX_ACCEPTANCE_BYTES = 4 * 1024 * 1024
 
 
 def digest(path):
-    with Path(path).open('rb') as stream:
-        return hashlib.file_digest(stream, 'sha256').hexdigest()
+    result = hashlib.sha256()
+    with regular_input(path, max_bytes=MAX_INPUT_BYTES).open('rb') as stream:
+        for chunk in iter(lambda: stream.read(1024 * 1024), b''):
+            result.update(chunk)
+    return result.hexdigest()
+
+
+def read_acceptance(path):
+    selected = regular_input(path, max_bytes=MAX_ACCEPTANCE_BYTES)
+    with selected.open('rb') as stream:
+        content = stream.read(MAX_ACCEPTANCE_BYTES + 1)
+    if len(content) > MAX_ACCEPTANCE_BYTES:
+        raise ValueError('selected input exceeds size limit')
+    return json.loads(content)
+
+
+def write_raw_jsonl(path, content):
+    # The caller supplies a fixed side label beneath the fresh private work root.
+    # Exclusive creation refuses an unexpected existing leaf, including a dangling symlink.
+    with Path(path).open('xb') as stream:
+        stream.write(content)
 
 
 def main(argv=None):
@@ -95,9 +116,10 @@ def main(argv=None):
     sides, readers = {}, []
     extracted = {}
     try:
+        args.rz_diff = regular_input(args.rz_diff, max_bytes=MAX_INPUT_BYTES)
         paths = []
         for label, sha in zip(('older', 'newer'), SHAS, strict=True):
-            source = args.pilot_store / 'images' / sha / 'cjson.dll'
+            source = regular_input(args.pilot_store / 'images' / sha / 'cjson.dll', max_bytes=MAX_INPUT_BYTES)
             if digest(source) != sha:
                 raise ValueError(f'{label} source SHA mismatch')
             target = work / f'{label}.dll'
@@ -116,7 +138,7 @@ def main(argv=None):
             result = side.run('analyze')
             extracted[label] = result
             raw_path = work / f'{label}-native-ir.jsonl'
-            raw_path.write_bytes(result['jsonl'])
+            write_raw_jsonl(raw_path, result['jsonl'])
             records = function_lines(result['jsonl'])
             report['sides'][label].update(status='ok', wall_s=time.perf_counter() - start,
                 probe=result['probe'], manifest=result['manifest'].model_dump(mode='json'),
@@ -184,7 +206,7 @@ def main(argv=None):
             report['rizin_error'] = str(outcome.error)
             rz_atoms = ()
         # Review identities enter only this reporting phase, after all matcher executions.
-        acceptance = json.loads(args.acceptance.read_text())
+        acceptance = read_acceptance(args.acceptance)
         report['review'] = {'acceptance_sha256': digest(args.acceptance),
             'labels_digest_sha256': acceptance['labels_digest_sha256'], 'accepted_count': len(acceptance['accepted_keys']),
             'unaccepted_count': len(acceptance['ambiguous_keys']), 'kind': acceptance['review_kind'],

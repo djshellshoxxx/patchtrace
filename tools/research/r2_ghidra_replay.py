@@ -1,7 +1,8 @@
 """Replay preserved native Ghidra IR through another production tree, without extraction.
 
-Invoke with absolute PYTHONPATH=<production>/src:<production>/tests. Inputs are opened
-read-only; all new compute parts live in a fresh private --work directory under an
+Invoke with absolute PYTHONPATH=<production>/src:<production>/tests. --preserved
+explicitly selects the input directory; baseline work_directory is metadata only.
+Inputs are opened read-only; all new compute parts live in a fresh private --work directory under an
 existing trusted parent. Existing work roots and symlinks are rejected. The explicit
 --output report is fresh and confined to this script checkout's research results
 directory, and is written once after replay. This is a policy/integration
@@ -31,14 +32,37 @@ from patchtrace.unified.ir.reader import IrReader
 from patchtrace.unified.ladder.engine import run_ladder
 from patchtrace.unified.ladder.residual import pass_table
 from patchtrace.unified.sources import GhidriffRun, RawGhidriff, SourceInputs
-from tools.research.r2_paths import report_destination, write_report_json
+from tools.research.r2_paths import regular_input, report_destination, write_report_json
 
 ROOT = Path(__file__).resolve().parents[2]
 CASE_KINDS = frozenset({'constant-changed', 'condition-changed', 'added-check', 'moved', 'split', 'merged'})
+MAX_INPUT_BYTES = 1024 * 1024 * 1024
+MAX_BASELINE_BYTES = 32 * 1024 * 1024
 
 
-def digest(path: Path) -> str:
-    return hashlib.sha256(path.read_bytes()).hexdigest()
+def _chunks(path: Path, max_bytes: int):
+    selected = regular_input(path, max_bytes=max_bytes)
+    with selected.open('rb') as stream:
+        total = 0
+        while block := stream.read(min(1024 * 1024, max_bytes + 1 - total)):
+            total += len(block)
+            if total > max_bytes:
+                raise ValueError('selected input exceeds size limit')
+            yield block
+
+
+def digest(path: Path, *, max_bytes: int = MAX_INPUT_BYTES) -> str:
+    value = hashlib.sha256()
+    for block in _chunks(path, max_bytes):
+        value.update(block)
+    return value.hexdigest()
+
+
+def read_baseline(path: Path) -> dict:
+    baseline = json.loads(b''.join(_chunks(path, MAX_BASELINE_BYTES)))
+    if not isinstance(baseline, dict) or not isinstance(baseline.get('cases'), list):
+        raise ValueError('baseline must contain a case list')
+    return baseline
 
 
 def git(root: Path, *args: str) -> str:
@@ -81,7 +105,19 @@ def replay(case: dict, preserved: Path, work: Path) -> dict:
     try:
         for label in ('older', 'newer'):
             artifacts.append(VerifiedArtifactReader.open_path(case_dir / f'{label}.dll'))
+            actual_sha = artifacts[-1].sha256
+            baseline_manifest = case['compute']['manifest']
+            if (actual_sha != before[f'{label}_dll'] or actual_sha != case['artifact_sha256'][label]
+                    or actual_sha != baseline_manifest[f'{label}_sha256']):
+                raise ValueError(f'{label} artifact identity disagrees with baseline')
             readers.append(IrReader.open(case_dir / f'{label}-1-ir', verify=True))
+            manifest = readers[-1].manifest
+            expected = baseline_manifest[f'ir_{label}']
+            layout = layout_from_reader(artifacts[-1])
+            if (manifest.artifact_sha256 != actual_sha or manifest.ir_key != expected['ir_key']
+                    or manifest.content_digest != expected['content_digest']
+                    or (manifest.image_base, manifest.size_of_image) != (layout.image_base, layout.size_of_image)):
+                raise ValueError(f'{label} ProgramIR identity disagrees with verified artifact or baseline')
         layouts = AddressMap(*(layout_from_reader(a) for a in artifacts))
         sections = [tuple((s.start, s.end) for s in read_pe_tables(a).sections) for a in artifacts]
         ir = compute.IrInputs(*readers, *sections)
@@ -93,7 +129,7 @@ def replay(case: dict, preserved: Path, work: Path) -> dict:
             'group_count': len(correspondence.groups),
             'older_only': [{'fid': item.fid, 'reason': item.reason} for item in correspondence.older_only],
             'newer_only': [{'fid': item.fid, 'reason': item.reason} for item in correspondence.newer_only]}
-        inputs = SourceInputs(case['artifact_sha256']['older'], case['artifact_sha256']['newer'],
+        inputs = SourceInputs(artifacts[0].sha256, artifacts[1].sha256,
                               GhidriffRun('r2-native-ladder-only', 'not-run',
                                           RawGhidriff(status='missing', sha256=hashlib.sha256(b'').hexdigest())),
                               matches=())
@@ -143,6 +179,8 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--production-root', type=Path, required=True)
     parser.add_argument('--baseline', type=Path, required=True)
+    parser.add_argument('--preserved', type=Path, required=True,
+                        help='Explicit directory of preserved inputs; baseline work_directory is never followed')
     parser.add_argument('--work', type=Path, required=True, help='New private directory; parent must exist')
     parser.add_argument('--output', type=Path, required=True,
                         help='Fresh report inside this script checkout docs/research/unified-matching-r2/results')
@@ -153,20 +191,24 @@ def main() -> None:
     root = args.production_root.resolve()
     if not Path(patchtrace.__file__).resolve().is_relative_to(root / 'src'):
         raise RuntimeError('PYTHONPATH did not select the requested production source')
-    baseline = json.loads(args.baseline.read_text())
+    baseline = read_baseline(args.baseline)
+    preserved = args.preserved.resolve(strict=True)
+    if not preserved.is_dir():
+        raise ValueError('preserved inputs must be a directory')
     # Atomic creation rejects existing directories, regular files and even dangling symlinks.
     args.work = args.work.absolute()
     args.work.mkdir(mode=0o700)
     report = {'started_utc': datetime.now(UTC).isoformat(), 'production_before': tree(root),
               'match_policy_version': compute.MATCH_POLICY_VERSION,
               'loaded_patchtrace': str(Path(patchtrace.__file__).resolve()),
-              'baseline_report_sha256': digest(args.baseline),
-              'preserved_native_inputs': baseline['work_directory'], 'work_directory': str(args.work),
+              'baseline_report_sha256': digest(args.baseline, max_bytes=MAX_BASELINE_BYTES),
+              'baseline_declared_work_directory': baseline.get('work_directory'),
+              'preserved_native_inputs': str(preserved), 'work_directory': str(args.work),
               'native_extraction_repeated': False, 'target_execution': False, 'accuracy_claim': False,
               'sources': 'Same ladder-only inputs as baseline; real primary Ghidriff run is not included as atoms.',
               'cases': []}
     for case in baseline['cases']:
-        row = replay(case, Path(baseline['work_directory']), args.work)
+        row = replay(case, preserved, args.work)
         report['cases'].append(row)
         print(json.dumps({'kind': row['kind'], 'status': row['status'],
                           'comparison': row.get('comparison'),

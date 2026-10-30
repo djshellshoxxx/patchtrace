@@ -303,9 +303,37 @@ External archive/executable paths remain explicit caller-selected inputs. Rizin
 checks that they resolve to bounded regular files, then verifies the pinned
 archive digest and equality with its exact executable member before execution.
 Reading an explicitly selected file for verification is distinct from a report
-write escaping its intended destination. The current-head analysis must determine
-the remaining gate status; these changes do not retroactively make the failed
-checkpoint green.
+write escaping its intended destination. These changes do not retroactively make
+the failed checkpoint green.
+
+At the later `e09ed227` checkpoint, Sonar again failed, with new-code security
+rating E and three annotations: replay digest input, cJSON digest input, and the
+cJSON raw JSONL write. Exact records are retained in
+[security-checkpoint-e09.json](results/security-checkpoint-e09.json). Independent
+inspection found that JSONL bytes do not choose the destination: it is a fixed
+older/newer filename under the newly created private work root. No annotation
+was suppressed or marked approved. Nevertheless, meaningful additional defects
+were reproduced and corrected:
+
+- Replay could combine verified DLLs and internally valid IR with contradictory
+  artifact/key/content declarations from the baseline. Five identity regressions
+  reached compute before the fix; the runner now validates DLL SHA, IR artifact,
+  key, content digest and image layout before matching. `SourceInputs` uses the
+  actual verified artifact SHA values. All six original native inputs passed a
+  read-only check at the new provenance boundary, with unchanged hashes and no
+  repeated extraction, matching or native execution.
+- Replay now requires an explicit `--preserved` directory. The baseline report's
+  `work_directory` is retained as metadata and cannot silently select read roots.
+  Selected baseline/IR/DLL reads are bounded regular-file reads with streaming
+  hashing; directories, FIFOs and oversize inputs are refused.
+- cJSON selected DLL/tool inputs and review JSON are bounded regular files.
+  Raw JSONL uses exclusive creation. Tests reproduce and prevent overwriting a
+  preexisting leaf or following live/dangling leaf symlinks. Its red run was
+  7 failed/3 passed; the combined targeted green run was 25 passed in 2.61 s.
+
+These are research-runner input/provenance repairs, not altered production
+matching or repeated native accuracy evidence. The final integrated selection
+below covers them; the security gate still requires analysis of the new head.
 
 The local runtime is Python 3.12.14, pytest 9.2.0, Hypothesis 6.170.14, Ruff
 0.17.3 and PySide6 6.12.0. The interpreter is
@@ -316,17 +344,25 @@ checkout is `/workspace/scratch/9b177a4979cd/patchtrace-r2`.
 |---|---|
 | Unmodified focused baseline (`test_unified_*.py`, `test_secondary*.py`, `test_bindiff_*.py`) | 2,509 passed, 1 pre-existing xfailed; 258.99 s |
 | Integrated R2 + keys/wire/fusion/CFG selection | 203 passed; 3.99 s |
-| Expanded integrated selection after all research-tool safety changes | 248 passed; 5.72 s; copied validation interpreter with existing read-only dependencies |
+| Expanded integrated selection after report/work-directory safety changes | 248 passed; 5.72 s; copied validation interpreter with existing read-only dependencies |
+| Final integrated selection after replay provenance and cJSON input repairs | 268 passed; 6.41 s; same copied interpreter; overlaps the prior selections |
 | Independent integrated cache/leftover/cap/wire review selection | 19 passed; 3.96 s |
 | Independent B+B predicate comparison | 10,000 seeded cases agree with exhaustive eligible-pair predicate |
 | Independent graph semantic comparison | 2,832 cases agree before/after/oracle |
 | Ruff / whitespace at implementation checkpoint | All checks passed / clean |
-| Full local Linux suite | Running at this checkpoint; final outcome is recorded before handoff |
+| Full local Linux suite, original restricted runtime | 18,141 passed, 303 skipped, 6 xfailed, 47 failed, 9 errors, 1 warning; 1,754.52 s. All 56 failed/error IDs exactly match the baseline-reproduced environment failures below |
 | Current-head cross-platform/native CI | Pending at checkpoint; baseline results are in report 00 |
 
 ### Full-run environment diagnosis and recovery
 
-The ongoing full run's identified 56 failing/error IDs were rerun unchanged on a
+The completed original full run reported **18,141 passed, 303 skipped, 6 xfailed,
+47 failed and 9 errors in 1,754.52 seconds**. An independent comparison confirms
+that its exact 56 failed/error node IDs, including FAILED-versus-ERROR status,
+are identical to the selected environment-triage set; no additional failure was
+found. The log SHA-256 is
+`229479fe80ccb5cd79725caf82eeee8b1c9b5bf0d1eef22930cdc9a3cb28fae0`.
+
+Those 56 failing/error IDs were rerun unchanged on a
 detached exact baseline and current R2. Both produced **47 failed, 9 errors**
 (2.13 s baseline, 1.70 s R2), with identical short-summary node IDs. Fifty-five
 cases fail at `socket.socket` construction with `PermissionError: [Errno 1]
@@ -334,6 +370,9 @@ Operation not permitted`, before application transport/consent logic. The other
 test resolves `sys.executable` through a venv symlink to the base interpreter,
 which lacks `google.protobuf`, and obtains `protobuf_missing` instead of its
 expected `protobuf_not_upb`.
+R1 #128 subsequently proposed the test's `.resolve()` to `.absolute()` correction;
+R2 leaves that separately owned change in its PR and records the successful
+runtime-only recovery here.
 
 An isolated scratch validation venv uses a copied interpreter, the same read-only
 base packages, and a path to the original venv dependencies. It neither installs
@@ -348,9 +387,20 @@ counted as a test pass.
 
 The copied interpreter is
 `/workspace/scratch/9b177a4979cd/r2-validation-venv/bin/python`. The final expanded
-248-test integration selection also passes with it. The original full run and
+268-test integration selection also passes with it. The original full run and
 its final count remain separate evidence; a repaired rerun of selected failures
 must not be described as an independently green complete-suite invocation.
+The five changed production files are byte-identical to the core snapshot on
+which the full run started. Later research-runner safety changes are covered by
+the expanded focused selection; the full run is not attributed to those later
+script revisions. Counts, source hashes and exact failure IDs are retained in
+[validation.json](results/validation.json) and
+[test-environment-triage.json](results/test-environment-triage.json).
+
+The full log also retains explicit live-acceptance blocks: unconfigured BinDiff,
+DiE, capa and FLOSS; an absent `tests/capa_pairs_pe.py` move-pair builder; and the
+Tier R MSVC leg requiring Windows. The selected runtime recovery does not close
+these gates. The sole warning is the deliberate duplicate-ZIP-entry fixture.
 
 The existing strict xfail concerning support display for two same-class components
 remains explicit. It is not reported as a pass, and no confidence policy was
@@ -363,7 +413,7 @@ Exact focused integration command, from the R2 checkout:
 ```bash
 PYTHONPATH=/workspace/scratch/9b177a4979cd/patchtrace-r2/src:/workspace/scratch/9b177a4979cd/patchtrace-r2/tests \
 QT_QPA_PLATFORM=offscreen \
-/workspace/scratch/a55b59b3e326/patchtrace-venv/bin/python -m pytest -q \
+/workspace/scratch/9b177a4979cd/r2-validation-venv/bin/python -m pytest -q \
   tests/test_r2_*.py tests/test_unified_keys.py tests/test_unified_wire_compute.py \
   tests/test_unified_fusion.py tests/test_unified_ir_graph.py
 
@@ -383,14 +433,21 @@ the first native probe before replaying. The JSON remains the durable record;
 the repository does not commit tool distributions, target DLLs, GZFs or private
 Tier W data.
 
+The current replay CLI additionally requires explicit input selection, for example
+`--preserved /tmp/patchtrace-r2-native-20261030`. Use the directory produced by
+your original probe and a fresh work directory/report filename. Historical JSON
+records retain their original command lines; they are not rewritten to pretend
+the later checks existed when those measurements were taken.
+
 ## Current acceptance boundary
 
 The repository's baseline advisory unified run reported success overall while
 27 jobs failed and the actual G-U1–G-U8 gate report was NOT READY. It measured zero
-matched rows. The first R2 implementation checkpoint has CI in progress and a
-failing SonarCloud new-code security rating; exact path annotations were retrieved
-and concrete report/work-directory defects repaired in later commits. A later
-head requires its own analysis and is not waived through the old gate. CodeRabbit skipped automatic
+matched rows. Inspected R2 implementation checkpoints have incomplete CI and
+failed SonarCloud new-code security ratings; exact path annotations were retrieved
+and concrete report/work-directory/input/provenance defects repaired in later
+commits. A later head requires its own analysis and is not waived through the old
+gate. CodeRabbit skipped automatic
 review because the PR is draft. These observations are not approvals.
 
 No held-out lineage evaluation, calibrated probability claim, native BinDiff

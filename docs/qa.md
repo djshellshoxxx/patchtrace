@@ -421,13 +421,21 @@ Research index: [unified-matching-r2](research/unified-matching-r2/README.md).
 - Unmodified focused baseline: **2509 passed, 1 xfailed** (258.99 s). Integrated
   core regression selection: **203 passed** (3.99 s). After research-tool safety
   integration, the expanded selection is **248 passed** (5.72 s), using an isolated
-  copied interpreter with read-only existing dependencies. **Ruff passes**.
-- Full Linux run: still completing at this checkpoint. Its 56 identified failing
-  IDs reproduced identically on exact baseline and R2: **47 failed, 9 errors**.
+  copied interpreter with read-only existing dependencies. After final replay
+  provenance and cJSON input repairs, **268 passed** (6.41 s). These selections
+  overlap and are not summed. **Ruff passes**.
+- Full Linux run in the original restricted runtime: **18,141 passed, 303 skipped,
+  6 xfailed, 47 failed, 9 errors, 1 warning in 1,754.52 s**. The exact 56 failed/error
+  IDs and statuses match the triage set, with no additional failures. They
+  reproduced identically on exact baseline and R2: **47 failed, 9 errors**.
   Fifty-five failed at prohibited socket creation; one resolved the venv symlink
   to a base interpreter without protobuf. Using approved local-socket access and
   a copied validation interpreter, **all 56 passed** (30.43 s). No test was skipped,
   weakened or rewritten for this recovery; the original failing run remains recorded.
+  This selected rerun is not a new green complete-suite invocation. Production
+  modules remained byte-identical during the full run; later research-script
+  safety changes have the separate focused coverage above. Optional native-tool,
+  absent capa move-builder and Windows MSVC acceptance blocks remain explicit.
 - Native Ghidra: 12 successful extractions over six authored PE pairs, then successful
   replay of all six preserved IR pairs. Split/merge helpers now survive as W/E-UNKNOWN
   one-sided observations; automatic N:M remains absent. A real Ghidriff run completed
@@ -445,6 +453,12 @@ Research index: [unified-matching-r2](research/unified-matching-r2/README.md).
   confined atomic report publication, no-clobber defaults, fresh private work roots
   and replay-kind validation. Exact Sonar annotations are retained; a new head still
   needs its own security analysis, Windows/native checks and independent review.
+- A later failed security checkpoint prompted bounded selected-file reads,
+  exclusive raw-JSONL creation and replay DLL/IR/baseline identity checks before
+  matching. Replay now requires explicit `--preserved` inputs. Five mismatched
+  identities previously reached compute; regressions now prevent that. All six
+  original native cases passed read-only provenance checks with unchanged hashes;
+  extraction, matching and native processes were not repeated for this hardening.
 - No target binaries, locked tests, deployments or releases were executed. Original
   primary records and concurrent R1/R3/R5/R6 work remain intact. Real-world accuracy,
   native BinDiff, P02 production export wiring, Diaphora unified integration, complete

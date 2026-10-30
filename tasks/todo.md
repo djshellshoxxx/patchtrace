@@ -876,10 +876,17 @@ were unimplemented; historical entries remain intact.
 - [x] Run focused/property/store regressions and independent reviews; expanded
       integration selection 248 passed; Ruff clean. Reproduce 56 full-run failures on
       baseline, then pass all 56 under corrected authorized validation runtime.
+- [x] Finish and independently audit the original full Linux run: 18,141 passed,
+      303 skipped, 6 xfailed, 47 failed, 9 errors; exact failure set matches the 56
+      baseline-reproduced and successfully recovered environment cases. Retain the
+      original failing run and its scope separately from the selected recovery.
 - [x] Repair demonstrated research report/work-directory handling issues without
       suppressing security checks or rerunning native evidence under changed labels.
+- [x] Bind replay to explicit selected inputs and verified DLL/IR/baseline identities;
+      bound cJSON input reads and exclusively create raw receipts. Final integrated
+      selection 268 passed (6.41 s); original native measurements remain unchanged.
 - [ ] Close current-head full Linux/Windows/native/security/review gates before merge;
-      final original full-run outcome belongs in QA and report 05.
+      local full-run outcome and runtime recovery are recorded in QA and report 05.
 - [ ] Coordinate with R1 #128 and R5 #132 on admitted development/held-out populations,
       candidate recall, error dependence and calibration; do not tune locked tests.
 - [ ] Resolve rz-diff singleton orientation with reliable producer metadata or

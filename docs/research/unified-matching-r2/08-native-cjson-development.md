@@ -105,10 +105,12 @@ PYTHONDONTWRITEBYTECODE=1 /workspace/scratch/a55b59b3e326/patchtrace-venv/bin/py
   --ghidra-dir /workspace/scratch/a55b59b3e326/research-tools/ghidra_12.0.4_PUBLIC \
   --rz-diff /workspace/scratch/a55b59b3e326/research-tools/rizin/bin/rz-diff \
   --acceptance /workspace/scratch/a55b59b3e326/patchtrace/docs/research/ground-truth-corpus/results/cjson-acceptance.json \
-  --work /tmp/patchtrace-r2-cjson-native-20261030 \
-  --output docs/research/unified-matching-r2/results/native-cjson.json
+  --work /tmp/patchtrace-r2-cjson-reproduction-20261030 \
+  --output docs/research/unified-matching-r2/results/reproduction/native-cjson.json
 ```
 
-Use a fresh `--work` path for another run; the runner refuses to overwrite its work directory. The recorded run completed successfully, both derived results passed deep verification, and Ruff passed for the research script. A full test suite was not repeated for this research-only addition; root owns integration validation. No source labels, production algorithms, target binaries or R1 artifacts were edited.
+Both `--work` and `--output` must be fresh for each reproduction. The runner refuses reused work roots or existing reports, and confines reports to this script checkout's R2 results subtree; select another fresh filename if the example has already been run. The original committed receipt remains unchanged. Selected DLL/executable inputs must resolve to regular files of at most 256 MiB, and the review JSON to a regular file of at most 4 MiB. SHA-256 verification streams the selected files. Raw extractor JSONL uses exclusive creation under the fresh private work root, refusing unexpected existing leaves or symlinks. These checks assume stable caller-selected inputs; they do not claim a concurrent-filesystem sandbox.
+
+The recorded run completed successfully, both derived results passed deep verification, and Ruff passed for the research script. Later selected-input/publication hardening was tested without rerunning native analysis, so it does not rewrite the historical native timing or evidence. A full test suite was not repeated for this research-only addition; root owns integration validation. No source labels, production algorithms, target binaries or R1 artifacts were edited.
 
 Precision, F1, false-positive rate, broad correspondence recall, specificity, calibration and independent-lineage confidence intervals remain **unestimated**. A defensible conclusion is limited to two reviewed positive correspondences and their materiality outputs on this exact exported-symbol build. Additional accepted negative/unchanged labels, more project lineages, hidden-symbol controls, native MSVC/Windows work and semantic explanation review remain necessary for broader acceptance.

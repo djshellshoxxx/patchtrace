@@ -47,14 +47,16 @@ def invoke_setup(tool, name, work, tmp_path, monkeypatch, *, output=None):
                 '--work', str(work), '--output', str(output)]
     else:
         baseline = tmp_path / 'baseline.json'
-        baseline.write_text(json.dumps({'cases': [], 'work_directory': str(tmp_path / 'preserved')}))
+        preserved = tmp_path / 'preserved'
+        preserved.mkdir(exist_ok=True)
+        baseline.write_text(json.dumps({'cases': [], 'work_directory': str(preserved)}))
 
         def metadata_not_needed(_root):
             raise AfterSetup
 
         monkeypatch.setattr(tool, 'tree', metadata_not_needed)
         argv = [name, '--production-root', str(ROOT), '--baseline', str(baseline),
-                '--work', str(work), '--output', str(output)]
+                '--preserved', str(preserved), '--work', str(work), '--output', str(output)]
     monkeypatch.setattr(sys, 'argv', argv)
     return output
 

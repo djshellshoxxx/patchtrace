@@ -66,6 +66,26 @@ analysis; it did not mutate the R1 checkout, store, labels, tools or calibration
 state. The review is explicitly unblinded and accepts only two positive records.
 See [the native cJSON report](08-native-cjson-development.md).
 
+At 23:33 UTC, a further read-only reconciliation found **29 open PRs**. Exact
+heads and overlap observations are in
+[ownership-checkpoint-final.json](results/ownership-checkpoint-final.json).
+R1 #128 at `0271f186` now includes the `Path(sys.executable).absolute()` test
+correction for the venv-context failure reproduced by R2, plus live-pair backend
+configuration/analysis retention, failure receipts, executable permissions and
+EGL/OpenGL workflow repairs. Those remain R1-owned. Its explicit A/A shortcut
+refusal is not the independent analysis needed to pass A/A acceptance.
+
+[R7 #134](https://github.com/djshellshoxxx/patchtrace/pull/134) adds bounded slicing
+research prototypes; [R8 #135](https://github.com/djshellshoxxx/patchtrace/pull/135)
+changes adjacent L2 pseudo-token normalization and `canon/2` registry identity;
+[integration QA #136](https://github.com/djshellshoxxx/patchtrace/pull/136) preserves
+synthetic KB fixtures/protocol tests from a different base. R6 #133 has advanced
+to `3010f289` and remains a documentation dossier. None of these five reviewed
+PR file lists changes an R2 production or R2 test path. Shared tracker overlap is
+R1/R7; R8 shares the fusion/noise specification. Preserve R2 `matching/2`, R8
+`canon/2` and R3 proof-version changes together during later integration. No
+other contributor's changes were adopted or branches altered by this work.
+
 The previous coordinator ledger is at
 [its exact head](https://github.com/djshellshoxxx/patchtrace/blob/8d958f0a1950a29c1d1cef9525a114654f4c9904/docs/plans/milestone-ledger-20261030.md).
 It reports #124 merged and several competing repair PRs closed. R2 rechecked
