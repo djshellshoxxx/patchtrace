@@ -104,3 +104,4 @@ Every verb is also listed by `patchtrace --help`. Each page gives the verb's sub
 - [`rules`](71-cli-rules.md) - detection rules
 - [`search`](72-cli-search.md) - offline search of a project
 - [`strings`](73-cli-strings.md) - string changes between the builds
+- [`diaphora`](74-cli-diaphora.md) - inspect, import, and show existing optional Diaphora comparisons
