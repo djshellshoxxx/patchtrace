@@ -76,6 +76,9 @@ class SourceSpec:                           # registry row (D-08); adding a sour
 ## 6. Manual corrections (analyst)
 `FunctionMatch` rows with `manual=True` of the project snapshot -> tier-M atoms (1:1) or groups (split/merged/ambiguous categories). Corrections always come from the existing `ProjectService.correct_match` flow (D-29). `manual_digest` (02 s5) makes every correction change `result_key`, so the read model shows U6 "stale: a manual correction changed the inputs".
 
+### 6.1 In-house ladder leftovers (R2 clarification, 2026-10-30)
+`Correspondence.older_only` and `newer_only` become one-sided `pt-ladder` atoms, tier W, class E-UNKNOWN, cardinality `1:1`, step `unmatched-<reason>`, with a reference to the source function ID and bounded native reason/hints. Their RVA, name and kind are resolved from the verified ProgramIR reader; invalid function IDs and a correspondence RVA that disagrees with the reader fail with `PT-UNIFIED-INTERNAL` / `leftover-identity`. With no other proposal these produce `older-only` / `newer-only` rows, materiality `not-applicable`; they never assert added/removed. With another source's pairing, they remain one-sided observations under D-14, do not add support or a contest, and preserve that pairing's decision. An unfinished partial run keeps its `unfinished` reason and `ladder-partial:<stop_reason>` limitation. `unmatched-*` steps use the registry's existing F-PT-STRUCT fallback and cannot corroborate because their tier is W and class is E-UNKNOWN. Ladder groups remain counted as `ladder-groups-not-shown`; their potentially overlapping memberships are not forced into exclusive group claims. No persisted contract changes; changed row coverage requires the unified engine/config version bump.
+
 ## 7. IR producers other than Ghidra (03 s1)
 
 | Producer | Mapping into `ir-extract/1` | Limits |

@@ -1,0 +1,290 @@
+{
+  "observed_utc": "2026-10-30 23:14:14 UTC",
+  "integration_baseline": "a04f5a299a8d4afef023261e52e08d14678cf1e7",
+  "r2_remote_checkpoint": "c704a39c8ece56c3215c1d765d79e7f4780ddcbd",
+  "local_equivalent_commit": "c91a35da90b542ee4e09e0557ff8366100d3531c",
+  "identical_tree": "077d4c84739987654092b895c4765e30ee11f0be",
+  "open_pr_count": 26,
+  "research_prs": [
+    {
+      "number": 133,
+      "title": "R6: comprehensive engineer-ready final integration and release acceptance notes",
+      "head": "4cc178e7762cc22f32b4c62f4c4779eb24747aa5",
+      "branch": "research/r6-final-integration-engineering-notes-20261030",
+      "draft": true,
+      "url": "https://github.com/djshellshoxxx/patchtrace/pull/133"
+    },
+    {
+      "number": 132,
+      "title": "R5: calibration research, statistical validation audit and developer handoff",
+      "head": "4d9d9051aea87319847a0b321a14d37b95cb8abd",
+      "branch": "chatgpt/r5-calibration-research-20261030",
+      "draft": true,
+      "url": "https://github.com/djshellshoxxx/patchtrace/pull/132"
+    },
+    {
+      "number": 131,
+      "title": "R2: unified matching research, evidence preservation and measured scaling fixes",
+      "head": "c704a39c8ece56c3215c1d765d79e7f4780ddcbd",
+      "branch": "codex/r2-unified-matching-research-20261030",
+      "draft": true,
+      "url": "https://github.com/djshellshoxxx/patchtrace/pull/131"
+    },
+    {
+      "number": 130,
+      "title": "R4 research: CVE/KB/product/build/binary provenance and function evidence",
+      "head": "ff570bdd784d02f745e4ad21d8aa7b4f1f776344",
+      "branch": "research/r4-vulnerability-correlation-20261030",
+      "draft": true,
+      "url": "https://github.com/djshellshoxxx/patchtrace/pull/130"
+    },
+    {
+      "number": 129,
+      "title": "R3 research: semantic-change proofs, compiler noise and guarded PE comparisons",
+      "head": "2698b9a04d33b2d04f49c1ab737636539c6ef6f7",
+      "branch": "chatgpt/semantic-analysis-r3-20261030",
+      "draft": true,
+      "url": "https://github.com/djshellshoxxx/patchtrace/pull/129"
+    },
+    {
+      "number": 128,
+      "title": "R1: research and validate the ground-truth binary corpus",
+      "head": "a02a1774a1617441072f4a8770348cc22038eeac",
+      "branch": "codex/r1-ground-truth-research-20261030",
+      "draft": true,
+      "url": "https://github.com/djshellshoxxx/patchtrace/pull/128"
+    },
+    {
+      "number": 127,
+      "title": "Specify modular dockable workspaces and simpler default layouts",
+      "head": "6a1e3ce348a7e5f67bbabfe388315812cc830b03",
+      "branch": "docs/dockable-workspace-spec-20261030",
+      "draft": true,
+      "url": "https://github.com/djshellshoxxx/patchtrace/pull/127"
+    },
+    {
+      "number": 126,
+      "title": "docs: integrated essential alpha milestone ledger and handoff",
+      "head": "8d958f0a1950a29c1d1cef9525a114654f4c9904",
+      "branch": "claude/modest-hamilton-kz2gta",
+      "draft": true,
+      "url": "https://github.com/djshellshoxxx/patchtrace/pull/126"
+    },
+    {
+      "number": 125,
+      "title": "docs: next-milestone dev prompt for integrated essential alpha",
+      "head": "198eb21e8813b28de361422cfe3c002bdb9e3970",
+      "branch": "claude/compassionate-goldberg-5uuqks",
+      "draft": true,
+      "url": "https://github.com/djshellshoxxx/patchtrace/pull/125"
+    }
+  ],
+  "checks": [
+    {
+      "id": 124361419010,
+      "name": "linux",
+      "status": "queued",
+      "conclusion": null,
+      "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/41141949459/job/124361419010"
+    },
+    {
+      "id": 124358586310,
+      "name": "release-gate",
+      "status": "completed",
+      "conclusion": "skipped",
+      "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/41141949450/job/124358586310"
+    },
+    {
+      "id": 124358585209,
+      "name": "qa (windows-latest)",
+      "status": "queued",
+      "conclusion": null,
+      "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/41141949450/job/124358585209"
+    },
+    {
+      "id": 124358585135,
+      "name": "qt-gate (ubuntu-latest, 20, 3/4)",
+      "status": "queued",
+      "conclusion": null,
+      "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/41141949450/job/124358585135"
+    },
+    {
+      "id": 124358585096,
+      "name": "qt-gate (windows-latest, 5, 1/1)",
+      "status": "queued",
+      "conclusion": null,
+      "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/41141949450/job/124358585096"
+    },
+    {
+      "id": 124358585078,
+      "name": "qt-gate (ubuntu-latest, 20, 4/4)",
+      "status": "queued",
+      "conclusion": null,
+      "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/41141949450/job/124358585078"
+    },
+    {
+      "id": 124358585058,
+      "name": "qt-gate (ubuntu-latest, 20, 2/4)",
+      "status": "queued",
+      "conclusion": null,
+      "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/41141949450/job/124358585058"
+    },
+    {
+      "id": 124358585031,
+      "name": "qt-gate (ubuntu-latest, 20, 1/4)",
+      "status": "queued",
+      "conclusion": null,
+      "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/41141949450/job/124358585031"
+    },
+    {
+      "id": 124358584791,
+      "name": "qa (ubuntu-latest)",
+      "status": "in_progress",
+      "conclusion": null,
+      "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/41141949450/job/124358584791"
+    },
+    {
+      "id": 124358466264,
+      "name": "SonarCloud Code Analysis",
+      "status": "completed",
+      "conclusion": "failure",
+      "url": "https://github.com/djshellshoxxx/patchtrace/runs/124358466264"
+    },
+    {
+      "id": 124358096818,
+      "name": "CodeRabbit",
+      "status": "completed",
+      "conclusion": "skipped",
+      "url": "https://github.com/djshellshoxxx/patchtrace/runs/124358096818"
+    },
+    {
+      "id": 124358077391,
+      "name": "native (patchtrace-seeded-store-no-adjacent-pdb)",
+      "status": "queued",
+      "conclusion": null,
+      "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/41141949559/job/124358077391"
+    },
+    {
+      "id": 124358077351,
+      "name": "native (patchtrace-seeded-store)",
+      "status": "queued",
+      "conclusion": null,
+      "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/41141949559/job/124358077351"
+    },
+    {
+      "id": 124358077285,
+      "name": "native (raw-cache-hit)",
+      "status": "queued",
+      "conclusion": null,
+      "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/41141949559/job/124358077285"
+    },
+    {
+      "id": 124358077278,
+      "name": "native (repro-plain-ghidriff)",
+      "status": "queued",
+      "conclusion": null,
+      "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/41141949559/job/124358077278"
+    },
+    {
+      "id": 124358076983,
+      "name": "native (patchtrace-clean)",
+      "status": "queued",
+      "conclusion": null,
+      "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/41141949559/job/124358076983"
+    },
+    {
+      "id": 124358076261,
+      "name": "windows",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/41141949459/job/124358076261"
+    },
+    {
+      "id": 124358055849,
+      "name": "native (patchtrace-seeded-store)",
+      "status": "queued",
+      "conclusion": null,
+      "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/41141943164/job/124358055849"
+    },
+    {
+      "id": 124358055828,
+      "name": "native (patchtrace-seeded-store-no-adjacent-pdb)",
+      "status": "queued",
+      "conclusion": null,
+      "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/41141943164/job/124358055828"
+    },
+    {
+      "id": 124358055754,
+      "name": "native (raw-cache-hit)",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/41141943164/job/124358055754"
+    },
+    {
+      "id": 124358055740,
+      "name": "native (repro-plain-ghidriff)",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/41141943164/job/124358055740"
+    },
+    {
+      "id": 124358055536,
+      "name": "native (patchtrace-clean)",
+      "status": "queued",
+      "conclusion": null,
+      "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/41141943164/job/124358055536"
+    },
+    {
+      "id": 124358055529,
+      "name": "windows",
+      "status": "in_progress",
+      "conclusion": null,
+      "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/41141943147/job/124358055529"
+    }
+  ],
+  "sonar_annotations": {
+    "check_run": 124358466264,
+    "source": "https://api.github.com/repos/djshellshoxxx/patchtrace/check-runs/124358466264/annotations",
+    "retrieval": "Public GET via approved escalated curl; GitHub connector did not expose annotations. Sonar issue API returned HTTP403.",
+    "annotations": [
+      {
+        "path": "tools/research/r2_rizin_probe.py",
+        "line": 273,
+        "title": "Path Traversal via faulty LLM-supplied CLI arguments in r2_rizin_probe.orientation_diagnostics()",
+        "issue": "AaGPDZ8J-9rQenDngoZZ"
+      },
+      {
+        "path": "tools/research/r2_rizin_probe.py",
+        "line": 128,
+        "title": "Path Traversal via faulty LLM-supplied CLI arguments in r2_rizin_probe.main()",
+        "issue": "AaGPDZ8J-9rQenDngoZb"
+      },
+      {
+        "path": "tools/research/r2_rizin_probe.py",
+        "line": 40,
+        "title": "Path Traversal via faulty LLM-supplied CLI arguments in r2_rizin_probe.digest()",
+        "issue": "AaGPDZ8J-9rQenDngoZc"
+      },
+      {
+        "path": "tools/research/r2_ghidra_probe.py",
+        "line": 44,
+        "title": "Path Traversal via faulty LLM-supplied CLI arguments in r2_ghidra_probe.write()",
+        "issue": "AaGPDZ8G-9rQenDngoZY"
+      },
+      {
+        "path": "tools/research/r2_graph_benchmark.py",
+        "line": 179,
+        "title": "Path Traversal via faulty LLM-supplied CLI arguments",
+        "issue": "AaGPDZ4d-9rQenDngoZX"
+      },
+      {
+        "path": "tools/research/r2_rizin_probe.py",
+        "line": 292,
+        "title": "Path Traversal via faulty LLM-supplied CLI arguments",
+        "issue": "AaGPDZ8J-9rQenDngoZa"
+      }
+    ]
+  },
+  "ownership_note": "R1 PR128 corpus/harness, R3 PR129 facts/verdict and registry proof version, R5 PR132 calibration research, R6 PR133 integration research. No other contributor changes adopted by R2.",
+  "acceptance": "Draft; representative real-world accuracy, complete current-head CI/review and automatic N:M remain open."
+}

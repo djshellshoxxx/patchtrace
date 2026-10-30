@@ -1,0 +1,192 @@
+{
+  "acceptance": "Open; future source changes and later heads require their own checks.",
+  "baseline": "a04f5a299a8d4afef023261e52e08d14678cf1e7",
+  "checks": [
+    {
+      "conclusion": "skipped",
+      "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/41144483843/job/124366624679",
+      "id": 124366624679,
+      "name": "release-gate",
+      "status": "completed",
+      "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/41144483843/job/124366624679"
+    },
+    {
+      "conclusion": null,
+      "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/41144483843/job/124366623403",
+      "id": 124366623403,
+      "name": "qt-gate (ubuntu-latest, 20, 4/4)",
+      "status": "queued",
+      "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/41144483843/job/124366623403"
+    },
+    {
+      "conclusion": null,
+      "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/41144483843/job/124366623322",
+      "id": 124366623322,
+      "name": "qt-gate (windows-latest, 5, 1/1)",
+      "status": "queued",
+      "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/41144483843/job/124366623322"
+    },
+    {
+      "conclusion": null,
+      "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/41144483843/job/124366623166",
+      "id": 124366623166,
+      "name": "qt-gate (ubuntu-latest, 20, 3/4)",
+      "status": "queued",
+      "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/41144483843/job/124366623166"
+    },
+    {
+      "conclusion": null,
+      "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/41144483843/job/124366623128",
+      "id": 124366623128,
+      "name": "qt-gate (ubuntu-latest, 20, 1/4)",
+      "status": "in_progress",
+      "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/41144483843/job/124366623128"
+    },
+    {
+      "conclusion": null,
+      "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/41144483843/job/124366623107",
+      "id": 124366623107,
+      "name": "qt-gate (ubuntu-latest, 20, 2/4)",
+      "status": "queued",
+      "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/41144483843/job/124366623107"
+    },
+    {
+      "conclusion": null,
+      "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/41144483843/job/124366623095",
+      "id": 124366623095,
+      "name": "qa (ubuntu-latest)",
+      "status": "in_progress",
+      "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/41144483843/job/124366623095"
+    },
+    {
+      "conclusion": null,
+      "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/41144483843/job/124366622829",
+      "id": 124366622829,
+      "name": "qa (windows-latest)",
+      "status": "in_progress",
+      "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/41144483843/job/124366622829"
+    },
+    {
+      "conclusion": "failure",
+      "details_url": "https://sonarcloud.io/dashboard?id=djshellshoxxx_patchtrace&pullRequest=131",
+      "id": 124366515551,
+      "name": "SonarCloud Code Analysis",
+      "status": "completed",
+      "url": "https://github.com/djshellshoxxx/patchtrace/runs/124366515551"
+    },
+    {
+      "conclusion": null,
+      "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/41144483834/job/124366369490",
+      "id": 124366369490,
+      "name": "native (patchtrace-clean)",
+      "status": "queued",
+      "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/41144483834/job/124366369490"
+    },
+    {
+      "conclusion": null,
+      "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/41144483834/job/124366369489",
+      "id": 124366369489,
+      "name": "native (patchtrace-seeded-store-no-adjacent-pdb)",
+      "status": "queued",
+      "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/41144483834/job/124366369489"
+    },
+    {
+      "conclusion": null,
+      "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/41144483834/job/124366369439",
+      "id": 124366369439,
+      "name": "native (repro-plain-ghidriff)",
+      "status": "queued",
+      "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/41144483834/job/124366369439"
+    },
+    {
+      "conclusion": null,
+      "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/41144483834/job/124366369427",
+      "id": 124366369427,
+      "name": "native (raw-cache-hit)",
+      "status": "queued",
+      "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/41144483834/job/124366369427"
+    },
+    {
+      "conclusion": null,
+      "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/41144483834/job/124366369243",
+      "id": 124366369243,
+      "name": "native (patchtrace-seeded-store)",
+      "status": "in_progress",
+      "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/41144483834/job/124366369243"
+    },
+    {
+      "conclusion": "skipped",
+      "details_url": "https://coderabbit.ai?utm_source=cr_app&utm_medium=github",
+      "id": 124366257715,
+      "name": "CodeRabbit",
+      "status": "completed",
+      "url": "https://github.com/djshellshoxxx/patchtrace/runs/124366257715"
+    },
+    {
+      "conclusion": null,
+      "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/41144483845/job/124366244420",
+      "id": 124366244420,
+      "name": "windows",
+      "status": "in_progress",
+      "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/41144483845/job/124366244420"
+    }
+  ],
+  "identical_tree": "83da5d131ba0a073d4a1b0d0fda4127dda98d536",
+  "later_repairs_local_source_commit": "e84f81e9c7eb95527091ec9db5bf99472c516a39",
+  "local_equivalent_commit": "c126d4098f78a073ea0c1dc55f785952dd90ffd6",
+  "observed_utc": "2026-10-30 23:30:16 UTC",
+  "remote_checkpoint": "e09ed227c17fffab551eb36ac23fd7176b4b16d7",
+  "review": {
+    "coderabbit": "skipped because draft",
+    "github_pr_reviews": 0,
+    "independent_local_review": "documented in validation.json; not an owner approval"
+  },
+  "security_gate": {
+    "analysis_status": "Independent inspection found no content-controlled filename at the cJSON raw JSONL sink. Later committed fixes bound selected reads, exclusively create raw JSONL, require explicit replay input directory, and verify DLL/IR/baseline identity before matching. No annotation suppressed, gate clearance claimed or owner approval inferred.",
+    "annotation_source": "https://api.github.com/repos/djshellshoxxx/patchtrace/check-runs/124366515551/annotations",
+    "annotations": [
+      {
+        "annotation_level": "failure",
+        "blob_href": "https://github.com/djshellshoxxx/patchtrace/blob/e09ed227c17fffab551eb36ac23fd7176b4b16d7/tools/research/r2_ghidra_replay.py",
+        "end_column": null,
+        "end_line": 41,
+        "message": "\nSee more on https://sonarcloud.io/project/issues?id=djshellshoxxx_patchtrace&issues=AaGPI5nuXNMz9q3Dsidx&open=AaGPI5nuXNMz9q3Dsidx&pullRequest=131",
+        "path": "tools/research/r2_ghidra_replay.py",
+        "raw_details": null,
+        "start_column": null,
+        "start_line": 41,
+        "title": "Path Traversal via faulty LLM-supplied CLI arguments in r2_ghidra_replay.digest()"
+      },
+      {
+        "annotation_level": "failure",
+        "blob_href": "https://github.com/djshellshoxxx/patchtrace/blob/e09ed227c17fffab551eb36ac23fd7176b4b16d7/tools/research/r2_cjson_probe.py",
+        "end_column": null,
+        "end_line": 119,
+        "message": "\nSee more on https://sonarcloud.io/project/issues?id=djshellshoxxx_patchtrace&issues=AaGPI5kpXNMz9q3Dsidv&open=AaGPI5kpXNMz9q3Dsidv&pullRequest=131",
+        "path": "tools/research/r2_cjson_probe.py",
+        "raw_details": null,
+        "start_column": null,
+        "start_line": 119,
+        "title": "Path Traversal via file content in r2_cjson_probe.main()"
+      },
+      {
+        "annotation_level": "failure",
+        "blob_href": "https://github.com/djshellshoxxx/patchtrace/blob/e09ed227c17fffab551eb36ac23fd7176b4b16d7/tools/research/r2_cjson_probe.py",
+        "end_column": null,
+        "end_line": 35,
+        "message": "\nSee more on https://sonarcloud.io/project/issues?id=djshellshoxxx_patchtrace&issues=AaGPI5kpXNMz9q3Dsidw&open=AaGPI5kpXNMz9q3Dsidw&pullRequest=131",
+        "path": "tools/research/r2_cjson_probe.py",
+        "raw_details": null,
+        "start_column": null,
+        "start_line": 35,
+        "title": "Path Traversal via faulty LLM-supplied CLI arguments in r2_cjson_probe.digest()"
+      }
+    ],
+    "annotations_count": 3,
+    "check_run": 124366515551,
+    "not_approved": true,
+    "rating": "E",
+    "required_rating": "A",
+    "result": "failure"
+  }
+}
