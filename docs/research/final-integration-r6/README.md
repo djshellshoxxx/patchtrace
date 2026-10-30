@@ -53,7 +53,7 @@ Every file is written to guide an engineer who starts with an actual checkout. C
 
 ## Immediate critical path
 
-`
+```text
 SOURCE RECONCILIATION
   -> coordinate shared files, import verified R1/R2/R3 work
   -> repair native live-pairs result persistence and preserve actual failures
@@ -65,7 +65,7 @@ SOURCE RECONCILIATION
   -> real secondary backends, recovery, privacy and clean-Windows acceptance
   -> release gate and published SHA-verified build
   -> only then reconsider feature default and optional numeric calibration
-`
+```
 
 The prerequisite chains are not strictly serial: MSRC source research, native tool provisioning, Windows GUI validation and independent security tests can proceed alongside corpus work in separate files/worktrees. A single integration owner must approve any shared contract changes.
 
