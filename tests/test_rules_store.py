@@ -173,6 +173,25 @@ def test_a_large_grid_goes_to_a_hash_verified_sidecar(tmp_path, candidate, monke
     assert rules.tests() == [] and rules.skipped == [f'rule-test:{run.run_id}']
 
 
+@pytest.mark.parametrize('bad', [b'{"not json', b'\xff\xfe', b'[' * 100_000], ids=['json', 'utf8', 'deep'])
+def test_a_sidecar_that_passes_its_hash_but_is_not_json_is_skipped(tmp_path, candidate, monkeypatch, bad):
+    """#105 BUG-RULE-4: a tampered sidecar with a matching hash must be skipped and listed, never raise."""
+    rules = rule_store(tmp_path)
+    _, version = accepted(candidate)
+    run = a_run(version, cells=1)
+    monkeypatch.setattr(store, 'INLINE_LIMIT', 10)
+    rules.add_test(run, candidate.source)
+    (sidecar,) = (tmp_path / 'project' / 'rules' / 'tests').glob('*.json')
+    sidecar.write_bytes(bad)
+    row = rows(rules, store.TEST)[0]['id']
+    body = rules.enrichment.entries(store.TEST)[0].body
+    body['sidecar_sha256'] = hashlib.sha256(bad).hexdigest()
+    text = json.dumps(body, sort_keys=True, separators=(',', ':'))
+    rules.enrichment.store.connection.execute('UPDATE enrichment_entries SET body=?, body_sha256=? WHERE id=?', (
+        text, hashlib.sha256(text.encode()).hexdigest(), row))
+    assert rules.tests() == [] and rules.skipped == [f'rule-test:{run.run_id}']
+
+
 def test_tests_are_listed_newest_first_and_only_a_complete_run_is_a_cache_hit(tmp_path, candidate):
     rules = rule_store(tmp_path)
     _, version = accepted(candidate)

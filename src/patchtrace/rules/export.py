@@ -16,6 +16,9 @@ from collections.abc import Mapping
 from dataclasses import dataclass
 from datetime import UTC, datetime
 from pathlib import Path
+from typing import Annotated
+
+from pydantic import TypeAdapter, ValidationError
 
 from .. import __version__
 from ..enrichment.identity import domain_id
@@ -147,11 +150,19 @@ def _in_git_tree(folder: Path) -> bool:
     return any((parent / '.git').exists() for parent in (folder, *folder.parents))
 
 
+_BASENAME = TypeAdapter(Annotated[str, *ExportRecord.model_fields['basename'].metadata])
+
+
 def write(plan: ExportPlan, version: RuleVersion, out: Path, *, allow_git_tree: bool = False,
           now: datetime | None = None) -> ExportRecord:
     """Creates `out` (never replaces a file), LF line ends, and returns the record to store: the basename and the hash."""
     if out.suffix != '.yar':
         raise RuleError('PT-RULE-EXPORT', 'The file name must end in .yar', reason='suffix')
+    try:    # the record must hold the name; check before the file exists, never after (#105 BUG-RULE-3)
+        _BASENAME.validate_python(out.name)
+    except ValidationError:
+        raise RuleError('PT-RULE-EXPORT', 'The file name is too long or not plain text (at most 128 characters)',
+                        reason='name') from None
     folder = out.resolve().parent
     if not folder.is_dir():
         raise RuleError('PT-RULE-EXPORT', 'The folder of the file does not exist', reason='no-folder')
