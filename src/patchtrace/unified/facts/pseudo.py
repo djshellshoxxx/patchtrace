@@ -11,6 +11,7 @@ The scanner is hand-written around `re.match` and `str.find` so hostile text can
 from __future__ import annotations
 
 import ast
+import hashlib
 import re
 from dataclasses import dataclass
 
@@ -105,6 +106,17 @@ def _scan(code: str) -> list[tuple[str, str]]:
     return out
 
 
+def _opaque_number(kind: str, text: str) -> str:
+    """Versioned, bounded and content-distinguishing fallback for unparseable numeric tokens.
+
+    The historical first-40-character fallback collapsed arbitrarily different
+    hostile/overflowed tokens. SHA-256 is used only as a token *identity* key,
+    never as proof of semantic equivalence or code safety.
+    """
+    digest = hashlib.sha256(text.encode('utf-8', 'surrogatepass')).hexdigest()
+    return f'{"c" if kind == "char" else "n"}:{len(text)}:{digest}'
+
+
 def _number(kind: str, text: str) -> str:
     """Conservative canon/2: equal values are not enough if literal types may differ.
 
@@ -118,7 +130,7 @@ def _number(kind: str, text: str) -> str:
             digits = text.rstrip('uUlL')
             suffix = text[len(digits):].lower()
             if suffix not in ('', 'u', 'l', 'll', 'ul', 'lu', 'ull', 'llu'):
-                return f'n:{text[:40]}'
+                return _opaque_number(kind, text)
             radix = ('hex' if kind == 'hex' else
                      'oct' if len(digits) > 1 and digits.startswith('0') else 'dec')
             value = int(digits, {'hex': 16, 'oct': 8, 'dec': 10}[radix])
@@ -137,12 +149,12 @@ def _number(kind: str, text: str) -> str:
             value = ast.literal_eval(text)
             if isinstance(value, str) and len(value) == 1:
                 return f'#{ord(value)}'
-            return f'c:{text[:40]}'
+            return _opaque_number(kind, text)
     except (ValueError, SyntaxError, MemoryError, RecursionError):
-        return f'{"c" if kind == "char" else "n"}:{text[:40]}'
+        return _opaque_number(kind, text)
     if kind == 'float':
         return f'f:{text[:-1]}:f' if text.lower().endswith('f') else f'f:{text}'
-    return f'n:{text[:40]}'
+    return _opaque_number(kind, text)
 
 
 def canonicalize(code: str, side: str, labels, addr: AddressMap, basis: str,
