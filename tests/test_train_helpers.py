@@ -15,7 +15,7 @@ from tools.calibration.tier_r import contracts as C  # noqa: E402
 from tools.calibration.tier_r import schemas as S  # noqa: E402
 
 PROFILES = ('mingw-gcc', 'mingw-clang', 'msvc-free')
-METHOD = {'authored': ('suite', 'authored-truth'), 'aa': ('aa-rebuild', 'same-source'),
+METHOD = {'release': ('release-pair', 'source-diff'), 'authored': ('suite', 'authored-truth'), 'aa': ('aa-rebuild', 'same-source'),
           'noise': ('toolchain-noise', 'same-source'), 'mutation': ('mutation', 'planted-mutation')}
 
 
@@ -23,7 +23,7 @@ def sha(text: str) -> str:
     return hashlib.sha256(text.encode()).hexdigest()
 
 
-def make_pair_labels(lineage: str, *, stratum: str = 'authored', n_funcs: int = 24, toolchain: str = 'mingw-gcc',
+def make_pair_labels(lineage: str, *, stratum: str = 'release', n_funcs: int = 24, toolchain: str = 'mingw-gcc',
                      family: str = 'fam0', tag: str | None = None) -> C.KnownAnswerLabels:
     method, source = METHOD[stratum]
     tag = tag or f'{lineage}-{stratum}'
@@ -94,7 +94,7 @@ def write_world(folder: Path, *, n_lineages: int = 14, n_funcs: int = 24, engine
     out_dir.mkdir(parents=True, exist_ok=True)
     for i in range(n_lineages):
         lineage = f'proj{i:02d}'
-        strata = ['authored'] + (['aa', 'mutation'] if controls and i < 3 else [])
+        strata = ['release'] + (['aa', 'mutation'] if controls and i < 3 else [])
         for stratum in strata:
             labels = make_pair_labels(lineage, stratum=stratum, n_funcs=n_funcs, toolchain=PROFILES[i % 3],
                                       family=f'fam{i % 4}',

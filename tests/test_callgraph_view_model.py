@@ -195,7 +195,7 @@ def test_hostile_names_stay_plain_in_every_view(label):
 
 def test_tooltip_table_is_complete_plain_and_audited():
     ids = ('dock action tabs side direction depth show_unresolved changed_only hide_noise follow changes_table '
-           'table tree diagram minimap detail open callsite focus back copy export_dot status').split()
+           'table tree diagram minimap detail open callsite focus back copy export_dot status edges callsites').split()
     assert set(vm.GRAPH_TIPS) == {f'graph.{i}' for i in ids}
     assert set(vm.GRAPH_TIP_TEMPLATES) == {'graph.row', 'graph.cell', 'graph.node'}
     for entry in (*vm.GRAPH_TIPS.values(), *vm.GRAPH_TIP_TEMPLATES.values()):

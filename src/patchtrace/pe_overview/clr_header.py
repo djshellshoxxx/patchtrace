@@ -27,8 +27,8 @@ class ClrFacts:
 
 
 def _metadata_version(ctx: Ctx, smap: SectionMap, rva: int, size: int) -> str | None:
-    off = smap.rva_to_offset(rva) if rva and size >= 16 else None
-    head = ctx.read(off, 16 + MAX_METADATA_VERSION) if off is not None else b''
+    span = smap.backed_prefix(rva, 16 + MAX_METADATA_VERSION) if rva and size >= 16 else None
+    head = ctx.read(*span) if span is not None else b''
     if len(head) < 16 or head[:4] != b'BSJB':
         return None
     length = min(struct.unpack_from('<I', head, 12)[0], MAX_METADATA_VERSION, len(head) - 16)
@@ -36,8 +36,8 @@ def _metadata_version(ctx: Ctx, smap: SectionMap, rva: int, size: int) -> str | 
 
 
 def parse_clr_header(ctx: Ctx, smap: SectionMap, rva: int, size: int) -> ClrFacts | None:
-    off = smap.rva_to_offset(rva) if size >= COR20_SIZE else None
-    raw = ctx.read(off, COR20_SIZE) if off is not None else b''
+    span = smap.backed_prefix(rva, COR20_SIZE) if size >= COR20_SIZE else None
+    raw = ctx.read(*span) if span is not None else b''
     if len(raw) < COR20_SIZE:
         return None
     cb, major, minor, md_rva, md_size, flags = struct.unpack_from('<IHHIII', raw, 0)

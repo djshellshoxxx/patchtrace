@@ -188,7 +188,9 @@ def read_report(path: Path) -> WorkerReport | None:
     try:
         if Path(path).stat().st_size > EXCHANGE_MAX_BYTES:
             return None
-        return WorkerReport.model_validate_json(Path(path).read_text(encoding='utf-8'))
+        text = Path(path).read_text(encoding='utf-8')
+        strict_json(text)
+        return WorkerReport.model_validate_json(text)
     except (OSError, ValueError):
         return None
 

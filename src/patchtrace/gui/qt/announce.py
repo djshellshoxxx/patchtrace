@@ -15,7 +15,7 @@ from PySide6.QtGui import QAccessible, QAccessibleAnnouncementEvent
 
 COALESCE_SECONDS = 1.5
 MAX_LENGTH = 200
-_UNSAFE = re.compile('[\x00-\x1f\x7f-\x9f  ‪-‮⁦-⁩]')
+_UNSAFE = re.compile('[\x00-\x1f\x7f-\x9f\u2028\u2029\u061c\u200e\u200f\u202a-\u202e\u2066-\u2069]')
 
 Sender = Callable[[QObject, str, bool], None]
 

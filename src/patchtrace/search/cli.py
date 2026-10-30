@@ -28,7 +28,6 @@ KINDS = ('function', 'code', 'asm', 'string', 'import', 'export', 'capability', 
 MODES = ('auto', 'words', 'exact', 'prefix', 'substring', 'similar')
 SORTS = ('relevance', 'change', 'name', 'address')
 LOCKED = 'the project is open in another PatchTrace window or process; close the desktop and try again'
-NO_ANCHORS = 'anchor search is not available in this build'
 Opener = Callable[[Path], tuple[object, object]]  # path -> (ProjectService-shaped, attention port or None)
 
 
@@ -67,7 +66,8 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument('--cache-dir', type=Path, metavar='D')
     parser.add_argument('--status', action='store_true', help='coverage, segment digests and staleness')
     parser.add_argument('--probe', action='store_true', help='runtime capabilities; needs no project')
-    parser.add_argument('--anchors-from', metavar='CVE-ID')
+    parser.add_argument('--anchors-from', metavar='CVE-ID', help='search the anchors of a stored advisory for this CVE '
+                        'and report per-anchor coverage (offline; run `intelligence import` first)')
     parser.add_argument('--json', action='store_true', help='emit exactly one JSON document on stdout')
     return parser
 
@@ -169,15 +169,14 @@ def _text(result) -> str:
     return '\n'.join(lines)
 
 
-def _search(args, out, err, service) -> int:
+def _search(args, out, err, service, anchors=None) -> int:
     from patchtrace.search.contracts import SearchRequest
     from patchtrace.search.errors import SearchError
     from patchtrace.search.query import parse_query
-    if args.anchors_from:
-        try:
-            import patchtrace.search.anchors  # noqa: F401  (slice S10 adds the module)
-        except ImportError:
-            raise SearchError('PT-SEARCH-CAPABILITY', NO_ANCHORS) from None
+    if args.anchors_from:  # the S10 bridge: per-anchor coverage from the stored advisories
+        from patchtrace.search import anchor_cli
+        from patchtrace.search.normalize import sanitize_text
+        return anchor_cli.run(args, out, service, anchors, _emit, lambda value: sanitize_text(value, 200))
     if not (args.query or args.kind):
         raise SearchError('PT-SEARCH-QUERY', 'give --query, or browse with --kind')
     plan = parse_query(_query_text(args), mode=args.mode)
@@ -193,7 +192,7 @@ def _search(args, out, err, service) -> int:
 
 # ----------------------------------------------------------------------------------------------- main
 
-def _run(args, out, err, opener: Opener, extra_specs) -> int:
+def _run(args, out, err, opener: Opener, extra_specs, anchors=None) -> int:
     from patchtrace.search import paths
     from patchtrace.search.service import SearchService
     if args.probe:
@@ -207,7 +206,7 @@ def _run(args, out, err, opener: Opener, extra_specs) -> int:
         cache = (paths.validate_cache_root(args.cache_dir.resolve(), Path(handle.root)) if args.cache_dir
                  else paths.default_cache_root())
         service = SearchService(handle, cache, attention=attention, extra_specs=extra_specs)
-        return _status(args, out, service) if args.status else _search(args, out, err, service)
+        return _status(args, out, service) if args.status else _search(args, out, err, service, anchors)
     finally:
         close = getattr(handle, 'close', None)
         if close is not None:
@@ -215,14 +214,14 @@ def _run(args, out, err, opener: Opener, extra_specs) -> int:
 
 
 def main(argv: list[str] | None = None, *, opener: Opener | None = None, extra_specs=None,
-         stdout=None, stderr=None) -> int:
-    """Run ``search ...``. ``opener`` and ``extra_specs`` replace the production ports (tests)."""
+         stdout=None, stderr=None, anchors=None) -> int:
+    """Run ``search ...``. ``opener``, ``extra_specs`` and ``anchors`` replace the production ports (tests)."""
     from patchtrace.search.errors import SearchError
     argv = list(sys.argv[1:] if argv is None else argv)
     out, err = stdout or sys.stdout, stderr or sys.stderr
     try:
         args = build_parser().parse_args(argv)
-        return _run(args, out, err, opener or _open_project, extra_specs)
+        return _run(args, out, err, opener or _open_project, extra_specs, anchors)
     except SearchUsage as exc:
         return _fail(out, err, argv, ENVIRONMENT, str(exc))
     except SearchError as exc:

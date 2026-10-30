@@ -60,6 +60,7 @@ def _unsupported(engine, path: str, reason: str) -> Capability:
 
 class RzDiffAdapter:
     id: EngineId = 'rz-diff'
+    reads_artifacts = True  # the scheduler hands it hash-verified private copies
 
     def __init__(self, executable: str = 'rz-diff'):
         self.executable = executable

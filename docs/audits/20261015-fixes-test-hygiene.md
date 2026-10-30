@@ -1,0 +1,16 @@
+# Test hygiene fixes (follows 20261015-test-suite-hygiene.md)
+
+Date: 2026-10-15. Base: `claude/instance-d-gui` (fast-forwarded). Focused tests run niced with `QT_QPA_PLATFORM=offscreen`; `ruff check tests tools/live_*_probe.py` clean. The full suite was not run.
+
+| id | commit | status | notes |
+|---|---|---|---|
+| TST-1 | 5a0bc16 | fixed | `live_kev_probe`/`live_nvd_probe` derive `mocked` from the seams used (replaced reachability, runner, schema reader or HTTP opener). Fake-transport tests assert `mocked is True`; a positive control proves the label can be False. Deferred: renaming `test_live_*` mocked modules to `test_probe_*` (many doc and ledger references; docstrings already say mocked) and the `mocked: False` in `tools/provision_intel_tools.py` (provisioning of a synthetic cached asset; separate label decision). |
+| TST-2 | 0d887ec | fixed | `record_live_status(..., mocked=None)` reads `PATCHTRACE_LIVE_MOCKED=1`; the fake-executable harness sets it. Without `PATCHTRACE_LIVE_STATUS_DIR` the status directory is a temp dir removed at exit (a plain run no longer writes `build/live-status`; confirmed it did before). Controls: flag False when unset, directory outside `build/`. |
+| TST-3 | 09a8c32 | fixed | `tests/liveness_support.py` (`heartbeat_stopped`, `never_appears`, `cancel_when_started`) refuse to pass when the child never ran; controls in `tests/test_liveness_support.py`. Applied to bindiff_run, jobs, rules_worker (timeout tree and cancel), binexport_isolation (cancel). The rules timeout test now uses a 4 s wall (`TREE_WALL`) so the grandchild provably starts. |
+| TST-4 | 88996e9 | partly fixed | Replaced: secondary_scheduler (tree kill, pid liveness), unified_extract_runner heartbeat, gui_tasks burn start (event), plus the TST-3 sites. Commented as inherent: jobs (2 spawn-absence waits), artifact_bytes (mtime tick). Left: sleeps inside polling loops, child-process source strings and simulated-work fakes (`test_ui_engine_setup` 0.4 s probers, `test_unified_decompile_runner` progress mode); these are deterministic delays, not synchronisation. |
+| TST-5 | 4d976f4 | fixed | Loosened only: paint-time bound keeps 0.05 s as best of 5; five 0.5 s bounds became 2.5 s (5x) with the regression magnitude in a comment. `test_cli_registry.py:271` already documents 5x slack, unchanged. |
+| TST-6 | none | already done on base | `.gitattributes` already has `tests/fixtures/intel_tools/** text eol=lf`; `git check-attr eol` reports `lf` for the manifest. No edit made. |
+| TST-7 | ce6da5f | fixed | 15 CODEX markers now `raises=AssertionError`. Deferred: the four `strict=True` xfails in `tests/stress/` (QA-FUZZ-1/3/4, QA-GUI-1) belong to other workers and were not in the audit count. |
+| TST-8 | none | skipped | Per instruction; the new files use `encoding='utf-8', newline='\n'`. |
+
+Environment notes: the disk was full (other workers' venvs), so no venv was created in `FIX6/`; tests ran with the FIX4 scratch venv plus `PYTHONPATH=<worktree>/src` (import path verified to be the worktree). Stale `/tmp/pytest-of-root/pytest-*` dirs were removed to free space. Pre-existing failure, unrelated: `test_rules_worker.py::test_parent_never_imports_yara_x` (its subprocess uses `/usr/bin/python3.13`, which lacks `yara_x`).

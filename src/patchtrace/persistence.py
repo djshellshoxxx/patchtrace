@@ -17,6 +17,7 @@ import socket
 import sqlite3
 import stat
 import tempfile
+import unicodedata
 from pathlib import Path
 from uuid import uuid4
 
@@ -34,12 +35,34 @@ HISTORY_BACKUP_LABEL = 'history-prune'
 _HISTORY_STATS = 'SELECT COUNT(*), MAX(sequence) FROM history'
 
 
+# Deepest accepted JSON nesting. Real inputs (Ghidriff results, series, reports) stay far below it; deeper documents
+# used to pass parsing and then fail inside pydantic (dump at ~250 levels, deepcopy at ~500) after the raw bytes were
+# staged into the project. The decoder's own recursion limit is interpreter-dependent, so the bound is explicit.
+MAX_JSON_DEPTH = 128
+
+
+def _within_depth(value, limit: int = MAX_JSON_DEPTH) -> bool:
+    """Iterative so the check itself cannot recurse; counts arrays and objects, `[[]]` has depth 2."""
+    stack = [(value, 1)]
+    while stack:
+        item, depth = stack.pop()
+        children = item.values() if isinstance(item, dict) else item if isinstance(item, list) else None
+        if children is None:
+            continue
+        if depth > limit:
+            return False
+        stack.extend((child, depth + 1) for child in children if isinstance(child, (dict, list)))
+    return True
+
+
 def strict_json(text: str) -> dict:
     def pairs(items):
-        value = {}
+        value, seen = {}, set()
         for key, item in items:
-            if key in value:
+            folded = unicodedata.normalize('NFC', key)  # NFC and NFD spellings are one key, as for archive member names
+            if folded in seen:
                 raise ValueError(f'PT-SCHEMA: duplicate JSON key {key}')
+            seen.add(folded)
             value[key] = item
         return value
     def invalid_constant(value):
@@ -58,6 +81,8 @@ def strict_json(text: str) -> dict:
     try:
         value = json.loads(text, object_pairs_hook=pairs, parse_constant=invalid_constant,
                            parse_float=finite_float, parse_int=bounded_int)
+        if not _within_depth(value):
+            raise ValueError(f'PT-SCHEMA: JSON nesting exceeds {MAX_JSON_DEPTH} levels')
         # A lone surrogate escape (\\ud800) parses but cannot be stored or hashed as UTF-8.
         json.dumps(value, ensure_ascii=False).encode('utf-8')
         return value
@@ -281,7 +306,8 @@ class ProjectStore:
             except OSError as exc:
                 raise ValueError(f'PT-STORAGE: project directory cannot be created: {exc.strerror or exc}') from exc
         if not self.root.is_dir():
-            raise ValueError('PT-STORAGE: project directory does not exist')
+            raise ValueError('PT-STORAGE: project path is not a directory' if self.root.exists()
+                             else 'PT-STORAGE: project directory does not exist')
         self.lock = ProjectLock(self.root)
         created_database = False
         try:

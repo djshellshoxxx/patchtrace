@@ -14,12 +14,14 @@ From `.github/workflows/qa-windows.yml`:
 
 | Trigger | Jobs that run | Publishes a GitHub prerelease? |
 |---|---|---|
-| `push` to `main` | `qa` (ubuntu-latest, windows-latest), `linux-package`, `linux-smoke` (22.04, 24.04), `release-gate`, `release` | Only if `qa` and `linux-smoke` succeed and the release gate says so (every third counted merge, see the release gate paragraph below). Tag `v0.1.0-beta.<run_number>` |
+| `push` to `main` | `qa` (ubuntu-latest, windows-latest), `qt-gate` (Linux and Windows), `linux-package`, `linux-smoke` (22.04, 24.04), `release-gate`, `release` | Only if `qa`, `qt-gate` and `linux-smoke` succeed and the release gate says so (every third counted merge, see the release gate paragraph below). Tag `v0.1.0-beta.<run_number>` |
 | `push` of a tag matching `v*` | same jobs | Yes. The tag name is used as the release tag |
 | `pull_request`, `workflow_dispatch` | QA jobs only | No |
 
 - `live-backend.yml` (native Ghidriff matrix) never publishes. It is a gate for the same SHA.
 - The `release` job has no `paths` filter; the release gate (paragraph below) limits publication to every third counted merge, and a docs-only merge that carries a skip marker neither runs the workflow nor counts.
+- `linux-package` requires both `qa` and `qt-gate`. `release` directly requires `qa`, `qt-gate`, `linux-smoke` and `release-gate`; its condition retains GitHub's implicit success check. A tag or `publish=true` cannot bypass a failed, cancelled or skipped GUI gate. The cadence gate's fail-open policy does not bypass acceptance checks.
+- Each `qa` matrix leg records `job.status` after its final acceptance step (including Windows portable and installer acceptance), immediately before the always-run evidence artifact upload. Release notes read these per-leg results and use the aggregate QA result only when a status file is missing.
 - `run_number` counts every run of the workflow, including PR and failed runs. Observed tags therefore have gaps (beta.118, .120, .127, .129, .131).
 - Release body is hard-coded and says "beta"; `target_commitish` is `github.sha`.
 - Uploaded release assets (`release/*`): `PatchTrace-0.1.0-windows-x64.zip`, `PatchTrace-0.1.0-windows-x64.zip.sha256`, `PatchTrace-0.1.0-linux-x86_64.tar.gz`, `PatchTrace-0.1.0-linux-x86_64.tar.gz.sha256`. The version `0.1.0` is hard-coded in `pyproject.toml`, both build scripts and the workflow, so the tag is not in the filenames.
@@ -31,7 +33,7 @@ From `.github/workflows/qa-windows.yml`:
 
 A commit is a **milestone candidate** only when all of these hold on that exact SHA:
 
-1. `qa (ubuntu-latest)`, `qa (windows-latest)`, `linux-smoke (ubuntu-22.04)` and `linux-smoke (ubuntu-24.04)` are green.
+1. `qa (ubuntu-latest)`, `qa (windows-latest)`, every `qt-gate` matrix leg, `linux-smoke (ubuntu-22.04)` and `linux-smoke (ubuntu-24.04)` are green.
 2. `Native Windows Ghidriff acceptance` is green when `src/**`, `tools/live_*`, `tools/seed_symbol_cache.py` or `tests/fixtures/**` changed.
 3. The automated additions in section 2 are green (once implemented).
 4. The release notes (section 4) list every open gate. No manual check is marked passed without a row in the section 3 record.

@@ -15,7 +15,8 @@ CUE_VOCABULARY = (
 MAX_CUES = 8
 ADVISORY_MIN_LENGTH = 8
 
-_FORMAT = re.compile(r'%[-+ #0]*(?:\d+|\*)?(?:\.(?:\d+|\*))?(?:hh|h|ll|l|j|z|t|L|I32|I64|I)?[diouxXeEfgGaAcCsSpn]')
+# A width never starts with 0 (that is the 0 flag), so flags and width cannot both match a run of zeros: linear (#105).
+_FORMAT = re.compile(r'%[-+ #0]*(?:[1-9][0-9]*|\*)?(?:\.(?:[0-9]+|\*))?(?:hh|h|ll|l|j|z|t|L|I32|I64|I)?[diouxXeEfgGaAcCsSpn]')
 _REGISTRY = re.compile(r'(?:HKEY_[A-Z_]+|HK(?:LM|CU|CR|U|CC))\\|\\Registry\\(?:Machine|User)|'
                        r'(?:Software|System\\CurrentControlSet)\\', re.IGNORECASE)
 _URL = re.compile(r'\b(?:https?|ftps?|file|wss?|ldaps?|smb)://\S+', re.IGNORECASE)

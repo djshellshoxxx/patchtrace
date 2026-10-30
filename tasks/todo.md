@@ -23,7 +23,7 @@
 - [x] Cached-PDB `FileExistsError` under `--no-symbols`: per-run isolated Ghidra settings (PR #9). Native Windows CI 2026-10-12: plain Ghidriff reproduces; PatchTrace passes with persisted store (with/without PDB at embedded path) and clean. User clfs.sys binaries not supplied/tested.
 - [x] Linux x86-64 onedir build (`tools/build_linux.py`, CI `linux-package`/`linux-smoke`); local offscreen + Xvfb self-test pass
 - [ ] Verify live Ghidriff analysis from frozen Linux build
-- [ ] Local-only symbol policy: needs PatchTrace-owned Ghidriff launcher (CLI cannot set empty symbol URLs)
+- [x] Local-only symbol policy (SPEC-53 GHR-1..3 + CLI flags): PatchTrace-owned launcher forces an empty server list in `local` mode (hermetic fake-ghidriff tests); [x] Setup checkbox + folder field (`backend/symbol_mode`); [ ] radio group/list widget, Profiles `local` value, diagnose launcher lines; [ ] GHR-5 native air-gap matrix (real Ghidriff/Ghidra, OS network block) - until then "no servers" is configuration, not an air-gap claim
 - [x] Phase 2 B1-B4, storage, pipeline, CLI (rank/flags/correlate/cache), desktop Rank changes, report export (SPEC-07, PatchTrace-authored)
 - [ ] Reconcile SPEC-07 with the supplied handoff package and validate its 9 valid / 9 invalid examples (package not supplied)
 - [ ] Derived-cache hit objective 500 ms at 10,000 pairs (measured 3.1 s); UI responsiveness at 10,000 pairs unmeasured
@@ -330,7 +330,15 @@
 
 ### [K4a:kbcorrelation-leads] KB-CVE correlator K4a (2026-10-14)
 - [x] `leads`, `cli_leads` (`kb leads PROJECT [--cve] [--limit]`), `view_model`; E0 synergy golden `tests/fixtures/kbcorrelation/expected/synergy-leads.json` (baseline scores 26/25, 36/25, 36/35 reproduced); KEV never reorders functions; contested stays contested; stale on swapped orientation; lineage counts once.
-- [ ] NOT done / open: `patchtrace/cli.py` `kb` hook (integrator, see K3); run id in the stale fingerprint (needs the context row to record it); KEV, unified and secondary adapters (K8: `RealEngine` moves to `adapters/engine.py`); unified MAT-ANCHOR and anchor-coincidence membership; `.gitattributes` line for `tests/fixtures/kbcorrelation/expected/*.json`.
+- [x] 2026-10-28 freshness follow-up: replaced advisory revision makes leads stale (`stale_reasons`); a ranking behind the analysis run is reported with the pipeline's reason, never as "not ranked yet" (`load_default` already guards the run, so no run id is needed in the context fingerprint for leads).
+- [ ] Tests for the freshness follow-up: `tests/test_kbc_leads_freshness.py` was removed at the owner's request (2026-10-29); the replaced-revision and stale-ranking cases have no regression test now (the removed file is in git at `3da7119`).
+- [ ] NOT done / open: `patchtrace/cli.py` `kb` hook (integrator, see K3; `cli_commands/kb.py` exists on main); KEV, unified and secondary adapters (K8: `RealEngine` moves to `adapters/engine.py`); unified MAT-ANCHOR and anchor-coincidence membership; `.gitattributes` line for `tests/fixtures/kbcorrelation/expected/*.json`.
+### [K8a:kbc-kev-adapter] KEV in `kb leads` (2026-10-28)
+- [x] `kbcorrelation/adapters/kev.py` over the existing `kev` store and `KevColumnProvider`; `kb leads --kev-dir`; default folder of `patchtrace kev`; `LeadsReport.kev_source` provenance; stale/future/unreadable/not-loaded states; KEV excluded from supporting evidence.
+- [ ] Tests for the KEV adapter path: `tests/test_kbc_kev_wiring.py` was removed at the owner's request (2026-10-29); re-add coverage when the owner agrees (the removed file is in git at `6331817`).
+- [x] 2026-10-29: `LeadsViewModel.status_lines` (report text, stale reasons, KEV source, banner, notes) and the copy block name the KEV snapshot and stale reasons; `tests/test_kbc_view_model_status.py`.
+- [x] 2026-10-29 KB plan A-13: KEV applied when read in `kb explain` and the Markdown `kb export` (`--kev-dir`); JSON export and stored context unchanged; `kev_snapshot_sha` stays None by decision; `tests/test_kbc_kev_explain_export.py`.
+- [ ] open: KEV on `kb search` edge rows (`service._edge_dict` still `not-loaded`); pilot `collect.py` still passes `NO_CATALOG`; KEV-plan K4 item 9 and the GUI KB dock (K4b) consumer of `kev_source`.
 ### [K5w:pairs-plan-glue]
 - [x] K3/K5 glue: `kb pairs` / `kb plan` over the offline file index; tests `tests/test_kbc_pairs_index.py`.
 - [ ] `kb index import` accepting a Winbindex record (today the file is placed in `<workspace>/winbindex/` by hand); E1 network `PairPlan`.
@@ -684,9 +692,162 @@
 - Master plan and categorized to-do list for finishing the project: `docs/plans/master-plan-d.md`, `docs/plans/master-todo-d.md`; panel specs prompt for ChatGPT: `docs/plans/chatgpt-panel-specs-prompt.md`.
 
 
+### [UE2-S6b:live-gates]
+- [x] G-U1, G-U2, G-U4 evaluators over `unified-outcomes/1`; G-U8 `ui-policy` tests named; live driver and workflow written; focused tests green on Linux
+- [ ] BLOCKED / not run: the first dispatch of `unified-live-gates.yml` (static checks only), the Windows leg, `live_pairs` against a real Ghidra (its pure parts are tested), mutant runs at 20 per class (about 240 Ghidriff runs, one job per class)
+- [x] superseded by [UE3-S6c:gates] below (G-U3, G-U6, G-U7, G-U4 chains, G-U1 P1 variants have evaluators; only the BinDiff oracle part of G-U3 stays blocked)
+
+
+### [UE3-S6c:gates]
+- [x] G-U1 P1 nuisance variants (generator and evaluator coverage); built only on the next live `unified-live-gates.yml` run (not dispatched here)
+- [x] G-U4 3-build chain (P1 chains) and COS-PSEUDO cross-tier check
+- [x] G-U3, G-U6, G-U7 evaluators (pure, synthetic fixtures); G-U3 stays `blocked` on the BinDiff pin even when its data pass
+- [x] `gates_u --inputs` assembler with numbers and decision line; workflow: mutants on both systems, integrity job (bench, G-U8 tests)
+- [ ] BLOCKED / not run: every live part; whether lld honours each nuisance as intended is known only from the first Tier R build
+
+
+### [UE2-U3U5:explain-columns]
+- [x] Explain fragment in `build_context` / the existing ContextDialog flow (rows with a Ghidriff match); `unified/columns` persisted; qt_gate x5 green on the Unified, columns, host-seam and tooltip tests
+- [ ] Open: rows without a Ghidriff match still use the own preview (build_context needs a stored match); Windows DPI and screen-reader passes
+
+
+### [UE2-U4U6:ir-text-real-gui]
+- [x] U6 IR text reader (`IrPairTexts`); U4 hermetic real-pipeline GUI test; qt_gate x5 green (Unified, columns, pipeline, host seam)
+- [ ] Open: decompiled C of S3b rows (`decomp.jsonl.gz`) is not yet read for the code panes; alignment gaps from `facts/align.py` are not drawn (the diff pane aligns the two texts itself); Windows (the worker child, DPI)
+
+
+### [UE4:code-panes]
+- [x] Decompiled-C side by side in `CodeDiffView` (stored part, honest unavailable), alignment gaps from the stored IR, hunk navigation, provenance per side, copy with provenance, all states, tooltips, accessible names; 100,000-line cap test
+- [ ] Integrator: write `decomp.jsonl.gz` (parts of the manifest, same line shape as `extract/decomp.py`) when the on-demand decompile ran; until then the C mode reports "not stored"
+
+### [LBL-14:ci-summary]
+- [x] ci_summary.py, nightly smoke+noise on ubuntu-24.04, determinism and status steps in the merge job (hermetic tests only).
+- [ ] First green scheduled run on Actions (not verified here).
+
+### [LBL-prereg:tools]
+- [x] P-1 prereg hash tool, P-2 constants test, vendoring scan (PREREG 8.5 i and ii closed; 8.5 iii open).
+- [ ] Before the lock: run the vendoring scan over the Tier R per-lineage masked body hashes and apply merge proposals.
+
+### [LBL-13:channels]
+- [x] Channel pack scorers with hand-computed goldens (synthetic inputs). Open: real inputs need FLOSS/capa runners (T track) and YARA-X for `rules`.
+
+
+### [U3-U8:cli-pin]
+- [x] U3 S4 CLI polish (early usage errors, exit codes in help); Explain fragment path already built.
+- [x] U8 prep: pin checker and runbook. Open (owner, network): run docs/runbooks/bindiff-pin.md, flip `verified`; wire `bindiff_pin verify` into `unified-live-gates.yml`; first dispatch of that workflow.
+
+### [LBL-08:msvc-leg]
+- [x] `msvc` profile, probing, host gating, nuisance variants, noise pairs, hermetic tests with fake `cl`/`link` (`tests/test_tier_r_msvc.py`)
+- [ ] Owner/CI: run the dispatch-only `msvc-advisory` job of `corpus-tier-r.yml` on windows-2022 (set repository variable TIER_R_MSVC=1) and check the recorded `cl` version, the `/d1trimfile` source-path normalisation and A/A byte identity; advisory until 10 green runs
+
+### [LBL-06:mutations-source]
+- [x] Nine added source operators with goldens, compile checks, determinism, recorded rejections, masked-body rule, profile gate
+- [ ] Open: the `locate/cases/cli` split of row 06 (the 25 operators are usable through `engine.apply_case`); `buf-resize` must land `review` in the evaluation (frame-only), checked by the evalcore row, not here
+
+### [U7:audit]
+- [x] Audit written, 4 Medium fixed with red tests
+- [ ] U7-05 BinDiff stub rows reach tier A alone (additive `SecondaryMatch.basicblocks` or IR-aware demotion before fusion)
+- [ ] U7-06 decide the budget policy for fusion and facts after a ladder deadline (partial result is lost today)
+- [ ] U7-07 trace-arg mutant class for G-U2
+
+### [LBL-07:mutations-ir-opt]
+- [x] LBL-07 IR layer + opt layer (`mutations/ir.py`, `mutations/opt_transforms.py`)
+- [ ] LBL-07 follow-up: add `opt` to `tier_r/toolchain.CANDIDATES` so `probe()` reports it; wire `agreement_by_operator` into the farm report; IR counterparts for the remaining semantic operators
+
+### [LBL-26:audit]
+- [x] Pre-lock audit docs/audits/20261015-lbl26-pre-lock-audit.md; 2 High and 4 Medium fixed with red tests
+- [ ] LBL-26 for C: wire guards.audit_identity_roles, natural-only rows, indeterminate worst-case bound, nested tau (audit C-1..C-8)
+- [ ] LBL-26 deferred D-01..D-12 (audit doc)
+
+### [WB2-G8:whole-program-sources]
+- [x] G8 sources built and tested (synthetic graphs, networkx oracle). Open: snapshot.py must merge `source.limitations`; G9 glue is integrator-owned (frozen files).
+
+### [WB3-S8:strings-run] (2026-10-15, Sonnet 5.5, worktree; Linux)
+- [x] `strings/run_service.py`, `ui_strings_run.py`, `tests/test_ui_strings_run.py`.
+- [ ] Wire `StringsRunController` into the Strings dock (needs S7b `ui_strings.py`); `ToolStore` built on the GUI thread.
+- [ ] Integrator: add `tests/test_live_strings.py` and `tests/fixtures/strings/goldens/**` to `.github/workflows/live-intel-tools.yml` paths and pytest list.
+
+- [x] D7 buildenv/timeline.py (pure) with tests
+- [ ] D7 seams: `PairSnapshot.build_env`, `BuildTimelineStrip` in `ui_series.py` (integrator)
+- [x] D9 tools/buildenv_value_gate.py with hand-computed goldens (synthetic)
+- [ ] D9 run on real Tier R M4 outcomes (needs UE S2/S3 outcomes and the known-answer factory)
+- [ ] D8 first dispatch of `live-buildenv` (Actions) and golden confirmation; stays BLOCKED locally without PATCHTRACE_DIEC
+
+### [WB1-S7:search-panel]
+- [x] Search dock on the panel framework (states Q0-Q12, paged rows, navigation, cancel, shutdown).
+- [ ] Kinds menu, saved searches, suggestion popup, hit-span delegate, F3/Shift+F3, feature-owned paged model (see commit notes).
+
+### [WB2-G5G6:calls-panel]
+- [ ] Calls panel follow-ups: graph.export_dot, graph.callsite, graph/* settings, Tree as a lazy model, entry paths.
+
+### [WB3-S7b:strings-panel]
+
+- [ ] Strings panel: wire function pairing and stored observations into the loader; FLOSS run/probe/consent, export, settings (`strings/*`), column tips.
+
+### [CAP-6:capabilities-panel]
+- [x] Capabilities dock (CAP-6a changes, CAP-6b setup, probe, preview, run) on the panel framework.
+- [ ] Integrator: no `ui.py` change needed; host Open-setup and Run-comparison remedies are not wired.
+- [ ] Not built: grouped tree model (flat table with a Group column), commands, C13 reparse refresh, reported-match count for C12.
+
+### [K3:kev-panel]
+Done: dock with state matrix, consent, import, changes, copy, go to CVE. Open: replace-anyway after a shrink refusal (needs a staged-install service API), kev/filter and kev/sort settings, network policy port.
+
+### [FAB-6:related]
+- [x] Related evidence panel, table-only first release. Open for the integrator: manifest slot, leads area, host wiring of `show_anchor`.
+
+### [LBL-20:fetch-transport] / [LBL-21:symbols]
+- [x] Fixture-tested `tier_w/fetch.py`, `transport.py`, `symbols.py`, `symbols_llvm.py`, `ghidra_export_symbols.py`, `symbols_ghidra.py` (`tests/test_tier_w_fetch.py`, `tests/test_tier_w_symbols.py`).
+- [ ] BLOCKED, owner/Windows runner: live msdl fetch, live Ghidra 12.0.4 export (`PATCHTRACE_GHIDRA_DIR`), `pyghidra` mode, PDB-forcing pre-script, adapter text for `fetch-plan`/`fetch`/`symbols` (LBL-25).
+
+### [LBL-22:tier-w-labels]
+- [x] LBL-22 labels.py and audit.py with synthetic goldens
+- [ ] LBL-22 wire to the runner (LBL-23) and real symbol maps (owner machine)
+
+### [LBL-24:tier-w-aggregate]
+- [x] LBL-24 evaluate.py and aggregate.py with goldens, guard contract list
+- [ ] LBL-24 run on a real Tier W evaluation (owner only, O1)
 ## Windows per-user installer delivery (2026-10-17)
 
 - [x] Add Inno Setup definition, compiler wrapper and portable-bundle dependency preflights on codex/windows-setup-installer-20261017.
 - [x] Add Windows CI install/self-test/uninstall acceptance and include installer plus SHA-256 sidecar in the Windows artifact.
 - [ ] Confirm current-head Linux and Windows pytest/Ruff, Windows frozen smoke, installer build and installer lifecycle test.
 - [ ] Merge through the established PR checks and publish a new beta release containing the installer. The installer workflow change must be followed by a later non-workflow release-triggering commit per docs/release-process.md workflow-file hazard.
+
+### Codex continuation (2026-10-22)
+- [x] Select the newest broad integration baseline (`claude/instance-d-gui`), update it with current `main`, and port PR #100's eight commits on an isolated branch.
+- [x] Install declared `dev`, `search`, and `rules` extras; verify the six PR #100 search failures disappear with pinned RapidFuzz installed.
+- [x] Reproduce and fix quoted-symbol normalization and COFF function/data boundaries in masked-body acceptance; local synthetic regression tests pass.
+- [x] Run combined PR #100 and COFF regression batch: 314 passed, 24 skipped in 63.91 s; compiler-backed cases skipped without Clang.
+- [x] Run Ruff on the combined tree before the COFF fix; [ ] rerun after the fix and docs checkpoint.
+- [ ] Validate the fix on current-head Windows CI with real Clang; confirm `string-literal-shout` and `callee-swap-dispatch` both pass. PR #64 now points to the published profile-policy slice (`f0af3fe2b4bfd6a8413d6d3cec093238d34e9d93`), but no Actions run exists for this head; only an owner-side authenticated push or workflow dispatch can start the required checks from this workspace.
+- [ ] Run full Linux pytest, Ruff, and current-head Linux/Windows QA, GUI repetition, frozen smoke, portable ZIP and installer lifecycle on the combined branch. Local full pytest and collection attempts remained CPU-bound for 10+ and 2+ minutes respectively and were interrupted; no complete local result is claimed.
+- [x] SPEC-53 Setup three-radio mode group and accessible PDB folder list with Add/Remove, empty-list guidance, and legacy online migration.
+- [x] SPEC-53 profile `local` policy; new profile digest is distinct while old `disabled`/`online` digests remain stable, and per-profile policy only narrows the Setup mode.
+- [ ] Complete remaining feasible SPEC-53 work: diagnostics, GHR-5 native air-gap evidence, and decide whether GHR-6 is in release scope.
+- [ ] Continue SPEC-DA-01 by dependency order: validate real Diaphora 3.4.3 output before relying on guessed schema details; then implement export import, bounded signals/context, GUI, Mode B, and only pursue Mode C after licensed Windows and distribution review.
+- [ ] Inspect open PRs and handoffs for independent unmerged work; deduplicate overlapping LBL-31/LBL-32 and Java/UE changes before porting. Merge only after their current-head checks pass.
+- [ ] Generate and validate Windows x64 release artifacts only from the tested combined source state; record hashes and CI run URLs. Do not claim real Ghidriff/Diaphora or owner-only UI evidence from synthetic tests.
+
+### [DA-A] Optional Diaphora result import (SPEC-DA-01 Mode A, 2026-10-21)
+- [x] Contracts, hostile-input sqlite guard, result import, address map, provenance binding, Ghidriff bridge, store kind `diaphora-matches`, CLI `diaphora inspect|import|show`, generated schemas (synthetic fixtures only)
+- [ ] Verify against a real Diaphora 3.4.3 `.diaphora` result (EA text encoding, ratio range, `type` strings are assumptions); pinned release SHA
+- [ ] Export-DB import (functions, blocks, CFG, compilation units), `signals`, `context`, `ui_diaphora.py`, HTML-safe report namespace; Mode B runner/probe (external Python + Diaphora, `jobs.run_process`, cache key per spec); Mode C licensed IDA export; license review before any distribution
+
+### [NW-P2B: N-way external limitations verification, 2026-10-16]
+- [x] Supersedes the earlier unchecked P2b row above. The EXTERNAL source/target skip count and pair-note text are already implemented in `src/patchtrace/nway/graph.py`, propagated by `nway/series.py`, and covered at the parser level by `tests/test_nway_graph.py::test_nway_external_skips_are_counted`. SPEC-09 A-05 and SPEC-28 A-06 status amendments are already present; do not rebuild this slice.
+- [ ] New regression `tests/test_nway_series.py::test_external_raw_match_skips_survive_series_persistence` adds real imported-pair -> series.json note/chain determinism coverage. Current-head Linux/Windows CI **not yet verified**. Do not mark this new integration-test gate passing without running it.
+
+
+### 2026-10-30 consolidation delivery
+
+- [x] Repair colliding Windows 10/11 client scope identities; retain historical contexts and refuse stale selected scopes.
+- [x] Preserve prior unified verdict/code parts after skipped, failed or partial decompile refresh.
+- [x] Selectively port #67 missing launch/input/consent/import safeguards and #102 hostile-parser/checksum fixes; preserve local symbols and Windows PR QA.
+- [ ] Finish combined full-suite and exact-head Linux/Windows/Qt/native packaging gates; merge only reviewed passing combined source.
+- [ ] Reconcile remaining #69 synthetic fixtures and #72 proposed essential specs against current contracts; preserve source branches.
+- [ ] Preserve and separately reconcile #102 Windows branding/version work; avoid its PR Windows-QA skip policy.
+- [ ] Before locked calibration, reconcile #78 output/artifact persistence, #79 A/A hard-failure guard, #82 recipe pin-collision controls and #85 final-look receipt guard.
+- [ ] Continue essential end-to-end/live acceptance using `docs/handoff/autonomous-continuation-20261030.md`; current source and checks override stale handoffs.
+
+- [x] Reconcile substantive Qodo review: Qt release dependency/status evidence, G-U1 endpoint coverage, optional decompile write rollback, stale KB/KEV/Diaphora ownership, calibration grouping/leak audits, staged archive handoff and cancellable PDB discovery.
+- [ ] Validate the final combined review repairs on their own published head; merge and close only proven superseded work after acceptance.

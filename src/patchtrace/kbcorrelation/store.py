@@ -149,7 +149,8 @@ class WorkspaceStore:
             version = self.db.execute('PRAGMA user_version').fetchone()[0]
             if version > SCHEMA_VERSION:
                 self.db.close()
-                self.db = sqlite3.connect(f'{path.as_uri()}?mode=ro', uri=True, timeout=5, isolation_level=None)
+                self.db = sqlite3.connect(f'{path.resolve().as_uri()}?mode=ro', uri=True, timeout=5,
+                                          isolation_level=None)   # resolve: a relative root has no file URI (#105)
                 self.read_only = True
             elif version == 0:
                 self._create()
@@ -593,7 +594,9 @@ class ProjectAttachment:
         return body, failure
 
     def _attach_context(self, op_id: str, body: dict, context: tuple[tuple[str, bytes], ...]) -> dict:
-        """`kb attach --repair` with a rebuilt context: add the missing rows to an already created project."""
+        """`kb attach --repair` with a rebuilt context: add the missing sidecars and rows to an already created
+        project. The sidecars are written here too: a first attach can fail before them (issue #105 BUG-KBC-4)."""
+        self._sidecars(body)
         self._rows(body, context)
         body = self._cas(op_id, {**body, 'link_state': 'attached'}, 'context_attached', flag='cas_final', final=True)
         self._record(body, True)
@@ -631,6 +634,13 @@ class ProjectAttachment:
         return path
 
     def _sidecars(self, body: dict) -> None:
+        try:
+            self._write_sidecars(body)
+        except OSError as exc:                      # disk full, permissions, a file in the way (issue #105 KBC-5)
+            raise KbcStoreError('PT-KBC-STORAGE', 'a project sidecar could not be written',
+                                details={'cause': type(exc).__name__}) from exc
+
+    def _write_sidecars(self, body: dict) -> None:
         directory = Path(body['directory'])
         rev = _revision_of(body)
         budget = self.ws.limits.project_sources_bytes

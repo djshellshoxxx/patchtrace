@@ -42,6 +42,8 @@ def test_profiles_dir_derives_from_settings_file(settings, tmp_path):
 def test_panel_create_edit_duplicate_delete(qtbot, tmp_path, monkeypatch):
     panel = ProfilesPanel(tmp_path / 'profiles')
     qtbot.addWidget(panel)
+    assert [panel.symbol_policy.itemText(i) for i in range(panel.symbol_policy.count())] == [
+        'disabled', 'local', 'online']
     assert panel.selected_name() == 'default' and not panel.save_button.isEnabled()
     assert not panel.delete_button.isEnabled()
     panel.new_button.click()
@@ -180,6 +182,27 @@ def test_backend_config_symbol_consent_and_cache_dir_from_profile(window, tmp_pa
     window.settings.setValue('backend/allow_symbol_downloads', False)
     _select(window, AnalysisProfile(name='wide', symbol_policy='online'))
     assert window.backend_config().allow_symbol_downloads is False  # profile alone never enables network
+
+
+def test_local_profile_narrows_setup_symbol_modes(window, tmp_path):
+    from patchtrace.enrichment.profiles import AnalysisProfile
+    window.settings.setValue('backend/allow_symbol_downloads', False)
+    window.settings.setValue('backend/symbol_mode', 'off')
+    window.settings.setValue('backend/symbol_dirs', str(tmp_path))
+    _select(window, AnalysisProfile(name='local', symbol_policy='local'))
+    assert window.backend_config().symbol_mode == ''  # profile cannot enable symbols when Setup is Off
+
+    window.settings.setValue('backend/symbol_mode', 'local')
+    config = window.backend_config()
+    assert config.symbol_mode == 'local' and config.symbol_pdb_dirs == (str(tmp_path),)
+    _select(window, AnalysisProfile(name='disabled', symbol_policy='disabled'))
+    assert window.backend_config().symbol_mode == ''
+
+    window.settings.setValue('backend/symbol_mode', 'online')
+    window.settings.setValue('backend/allow_symbol_downloads', True)
+    _select(window, AnalysisProfile(name='local-only', symbol_policy='local'))
+    config = window.backend_config()
+    assert config.symbol_mode == 'local' and not config.allow_symbol_downloads
 
 
 def test_cached_run_is_labelled_in_match_tooltip(window):

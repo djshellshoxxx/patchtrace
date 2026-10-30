@@ -25,6 +25,7 @@ from PySide6.QtWidgets import (
 from .. import graph_view as gv
 from ..graph_view import GraphEdgeView, GraphNodeView
 from ..registry import GRAPH_EDGES, GRAPH_NODES
+from ..tips import apply_tip, register_gui_tips
 from .metrics import Metrics
 from .theme import DARK, ThemeTokens, chip_text_color
 
@@ -65,6 +66,8 @@ class GraphCanvas(QGraphicsView):
         self._level = gv.detail_level(self._zoom)
         self.setObjectName('graph.canvas')
         self.setAccessibleName('Graph')
+        register_gui_tips()
+        apply_tip(self, 'gui.graph')
         self.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
         self.setDragMode(QGraphicsView.DragMode.ScrollHandDrag)
         self.setBackgroundBrush(QBrush(QColor(tokens.surface_alt)))

@@ -8,7 +8,7 @@ import json
 import kbc_helpers as h
 import pytest
 from kbc_k1_support import no_sockets  # noqa: F401
-from kbc_k3_support import NOW, Kb
+from kbc_k3_support import NOW, Kb, write_pair
 from kbc_k5_support import FIXTURES, record
 
 from patchtrace.kbcorrelation import wiring
@@ -90,6 +90,49 @@ def test_the_selected_product_and_entered_names_come_from_earlier_steps(ready):
     assert kb('components', inv, '--product', scopes['client'], '--file', NET)[0] == 0
     code, doc, _ = kb('pairs', inv)  # no flags: the product and name are the investigation's
     assert code == 0 and doc['result']['pairs'][0]['file_name'] == NET
+
+
+def test_legacy_product_identity_is_retained_but_cannot_resolve_current_pairs(kb, monkeypatch):
+    from patchtrace.kbcorrelation import products
+    from patchtrace.kbcorrelation.contracts import domain_id
+
+    def legacy_id(facts):
+        informative = facts.family != 'unknown' and facts.release is not None and not facts.conflicts
+        return domain_id('kbc.scope', 1, {
+            'family': facts.family, 'release': facts.release, 'architecture': facts.architecture,
+            'channel': facts.channel, 'edition': facts.edition, 'build': None,
+            'name': None if informative else facts.name_key})
+
+    with monkeypatch.context() as previous:
+        previous.setattr(products, 'scope_id_for', legacy_id)
+        load_month(kb)
+        inv, scopes = investigation(kb)
+        assert kb('components', inv, '--product', scopes['client'], '--file', NET)[0] == 0
+        older, newer = write_pair(kb.workspace.parent)
+        project = kb.workspace.parent / 'legacy-project'
+        assert kb('import-pair', inv, '--older', str(older), '--newer', str(newer),
+                  '--project', str(project))[0] == 0
+        old_export = kb.workspace.parent / 'legacy-before.json'
+        assert kb('export', str(project), str(old_export))[0] == 0
+    save_record(kb, NET)
+    with WorkspaceStore(kb.workspace) as ws:
+        before = ws.current_revision(inv).model_dump_json()
+    code, doc, _ = kb('products', inv)
+    assert code == 2 and 'repeat the search' in doc['error']
+    assert 'no product' not in doc['error']
+    code, doc, _ = kb('pairs', inv, '--product', scopes['client'], '--file', NET)
+    assert code != 0 and 'repeat the search' in str(doc)
+    with WorkspaceStore(kb.workspace) as ws:
+        assert ws.current_revision(inv).model_dump_json() == before
+    after_export = kb.workspace.parent / 'legacy-after.json'
+    assert kb('export', str(project), str(after_export))[0] == 0
+    assert after_export.read_bytes() == old_export.read_bytes()
+    assert json.loads(after_export.read_bytes())['scope_id'] == scopes['client']
+    # A new explicit search returns the corrected scope and can resolve the retained index bytes.
+    fresh, current = investigation(kb)
+    assert current['client'] != scopes['client']
+    code, doc, _ = kb('pairs', fresh, '--product', current['client'], '--file', NET)
+    assert code == 0 and doc['result']['pairs']
 
 
 def test_newest_record_wins_and_gzip_is_read(ready):

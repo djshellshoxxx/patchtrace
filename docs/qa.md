@@ -193,6 +193,115 @@ Not verified here: Windows; the frozen executable; a live backend for `rules pro
 | Tests | `tests/test_pilot_read_model.py` (35), `tests/test_ui_leads.py` (61) offscreen on Linux; `python tools/qt_gate.py --repeat 6 tests/test_ui_leads.py`: 366 passed, no abort |
 | Known gates | one test per state L0-L8 and each gate and window banner; banned-string sweep over every producible string (stems `probab`, `likelihood`, `confidence`, `percent`, `vulnerab`, `exploit`, `proven`, `certain`, `verified`, `safe`, `secure`, with the sanctioned phrases removed); no enum slug and no percent sign in any cell; hostile names, notes and tooltips stay text; `a11y_audit` clean in every state; no new top-level window; late results dropped on a project switch; shutdown cancels and waits |
 | Not verified here | Windows; real screen readers; a PE-backed project (the resolver finds no row in the synthetic sample, so Go to function is only exercised with an injected resolver); the freeze of the GUI-thread collection on a large project |
+### [QA-CLI:stress] CLI and persistence stress (2026-10-15, Linux, root host)
+
+| Item | Evidence |
+|---|---|
+| Tests | `tests/stress/test_cli_stress_{verbs,paths,concurrency,recovery,perf}.py`: 158 collected, 150 passed, 1 skipped (read-only directory, root), 7 strict xfail; 22.9 s |
+| Open bugs (xfail) | QA-CLI-1 (Medium) `--json` parse failure prints no document; QA-CLI-2 (Low) offline `correlate --cve bad` exits 4; QA-CLI-3 (Medium) `cache verify` on a file `--cache-dir` exits 0 `complete` with `_Unsafe`; QA-CLI-4 (Low) `rank` ignores an unusable `--cache-dir` silently |
+| Measured, not gated | 10k-pair cold 5-7 s, cache hit 1.5-3 s (objective 500 ms not met), peak RSS 547 MiB (objective 512 MiB); details in `docs/audits/20261015-qa-cli-persistence.md` |
+| Not verified | Windows; read-only directory as a non-root user |
+
+
+### [UE4:code-panes] Unified code view
+| Item | Result |
+|---|---|
+| Tests | `tests/test_unified_pair_text.py`, `tests/test_ui_unified_code.py`, `tests/test_ui_unified.py`, `tests/test_ui_unified_pipeline.py` offscreen on Linux; `python tools/qt_gate.py --repeat 5` over the Unified files |
+| Known gates | every code state, hostile text in code, provenance and notes, accessibility audit, tooltip registry, a 100,000 line function (capped with the notice, only hunks inside the cut navigable), a tampered or malformed decompile part is not shown |
+| Not verified here | Windows; real screen readers; real decompiled text (no pipeline writes the part yet, the tests store C with the product's part writer) |
+
+### [LBL-02-04:tranche-recipes] libdeflate, stb, c-ares recipes (2026-10-15, Linux, mingw-w64 gcc 13-win32)
+- Network-verified: peeled tag commits (ls-remote of tags) for libdeflate v1.15-v1.24 and c-ares cares-1_26_0 to v1.30.0; stb has no tags (five version-bump commits, all ancestors of master); every licence file hashed from the pinned commit.
+- Built here: `tier_r fetch` and `build-card --opt O2` for all 13 new cards (libdeflate 5, stb 4, c-ares 4), 0 disagreements after the declared lists were taken from the factory labels; `aa` byte-identical for libdeflate v1.19, stb_image-2.26 and cares-1_28_0. c-ares needed `Recipe.libs` wired into the link line (ws2_32, iphlpapi, advapi32).
+- Not verified: the same runs on an Actions runner (R1); the untagged c-ares pins 035c4c37 and a804c04d (CVE-2024-25629 pair) were hashed but no card was built from them; the Windows MSVC leg.
+
+### [LBL-14:ci-summary]
+Automated: tests/test_ci_summary.py (counts, 90% warning, error status, determinism, workflow invariants). Not run: the nightly schedule and the determinism step on a real runner (needs main plus Actions).
+
+### [LBL-prereg:tools]
+Automated evidence only: `python -m tools.calibration.prereg --qa docs/qa.md` verifies the recorded `C9-PREREG-v1` SHA after the lock; no lock exists yet.
+
+### [LBL-13:channels]
+Automated only: `tests/test_calib_channels_*.py` (synthetic pairs). No channel value is claimed on real builds; `rules` is blocked until YARA-X is available.
+
+
+### [U3-U8:cli-pin]
+- Automated: `tests/test_unified_cli.py` and `tests/test_unified_bindiff_pin.py` (hermetic). Blocked on the owner: BinDiff v8 digest verification (needs an independent network path and the issuer key), so G-U3 oracle part is not run.
+
+### [LBL-08:msvc-cl]
+- Automated (Linux): argv, banner, host gating, nuisance variants and a build through fake `cl`/`link` pass; the real-compiler test records `blocked` (profile msvc builds only on a Windows host).
+- Not verified: any real `cl` build (A/A byte identity, PDB source-path normalisation via `/d1trimfile`, `llvm-strip` on a MSVC image, `llvm-pdbutil` inventory). Needs the windows-2022 advisory job.
+
+### [LBL-07:mutations-ir-opt]
+- `tests/test_mutations_ir.py` (27) and `tests/test_mutations_opt.py` (11): hand-computed IR goldens, fake process runner, and one real-tool test per layer that asserts BLOCKED when clang/opt is absent. Real clang/opt 18.1.3 on Linux: `mergefunc`, `always-inline`, `loop-extract`, `hotcoldsplit` change the module; `partial-inliner` returned `unchanged` on the sample (its trigger is narrow), reported as a rejected attempt, not a pass.
+- Not verified: the Windows runner (`opt` availability is [unverified] per the LBL plan); agreement rates on real mutants (needs the farm).
+
+
+### [WB2-G8:whole-program-sources]
+Automated only: `pytest tests/test_callgraph_sources.py` (14). No live BinExport/IR acceptance run.
+
+
+### [WB3-S9:strings-live]
+| check | evidence |
+|---|---|
+| goldens equal what the committed FLOSS 3.1.1 output yields through the run service (no tool needed) | `tests/test_live_strings.py::test_goldens_match_the_committed_floss_output` |
+| pinned FLOSS on the synthetic pair equals the goldens (Linux CI; Windows advisory leg) | `tests/test_live_strings.py::test_pinned_floss_reproduces_the_string_goldens`; BLOCKED here: `PATCHTRACE_FLOSS` is not provisioned, the test records `blocked` and prints `LIVE ACCEPTANCE BLOCKED` |
+| run orchestration: consent hash recorded, cancel, stale, project switch | `tests/test_ui_strings_run.py` (fake FLOSS, synthetic pairs) |
+Goldens are derived from committed tool output, not from a new live capture; they become real-run goldens only when CI passes the live test. Real-binary string counts, Windows onefile start time and AV behaviour stay owner or CI items.
+
+### [STRESS2:stress-deep-2]
+- Automated (Linux, synthetic, seeded): tests/stress/test_stress2_{pilot,kev,kbcorrelation,enrichment_store,unified_parts,rules}.py; 78 passed, 5 strict xfail. Scale knob PATCHTRACE_STRESS_SCALE (default 1).
+- Defects (product code unchanged): QA-S2-1 pilot universe() echoes caller CVE text into PilotError.message; QA-S2-2 project store connection is bound to its creating thread (lock-serialised writer threads all fail with ProgrammingError); QA-S2-3 NaN in an enrichment body escapes as ValueError, not PT-ENRICH-INPUT; QA-S2-4 unified part_lines does not enforce the 4 MiB line cap on newline-terminated lines; QA-S2-5 rules not_mostly_wildcards(0,0) raises ZeroDivisionError.
+- Not exercised: YARA-X lint path (yara_x not installed in the worker venv); unified retention with many published results (needs staged result dirs).
+
+### [D7:buildenv-timeline]
+- `tests/test_buildenv_timeline.py` (12): cells, adjacent hops only, not-run is not a difference, tool-version guard, header-only stays unknown, bounds.
+- Not verified: offscreen strip test (strip not built; needs the nway/ui_series seam).
+
+### [D9:buildenv-value-gate]
+- `tests/test_buildenv_value_gate.py` (12): hand-computed golden counts, control and leakage checks, no-data, determinism, input rejection, CLI.
+- Not verified: any real M4 pair; the targets are [inf] proposals.
+
+### [D8:live-buildenv]
+- Locally both cases record BLOCKED (no diec here); the job is dispatch-only. Not verified: any live run, including the golden equality and the provisioning step with `--engine diec`.
+
+
+### [WB1-S7:search-panel]
+Automated: `tests/test_ui_search_panel.py` (offscreen, 29 tests, `tools/qt_gate.py --repeat 5` clean). Not verified: real index on a project, Windows, screen readers.
+
+
+### [WB2-G5G6:calls-panel]
+Offscreen: `QT_QPA_PLATFORM=offscreen python tools/qt_gate.py --repeat 5 tests/test_ui_graph_panel.py`. Screen-reader and high-contrast passes are owner gates, not done.
+
+
+### [WB3-S7b:strings-panel]
+
+Automated: `tests/test_ui_strings_panel.py` (offscreen, qt_gate x5). Owner-only: NVDA and Narrator pass, high-contrast and DPI check of the Strings dock.
+
+
+### [CAP-6:capabilities-panel]
+| Item | Result |
+|---|---|
+| Tests | `tests/test_ui_capabilities_panel.py` (35) offscreen on Linux; `python tools/qt_gate.py --repeat 5 tests/test_ui_capabilities_panel.py`: 175 passed |
+| Not verified | Windows; screen readers; a real capa program; a PE-backed project (all data through injected fakes) |
+
+
+### [K3:kev-panel]
+Automated: `tests/test_ui_kev_panel.py` offscreen, `tools/qt_gate.py --repeat 5` clean. Not verified: NVDA/Narrator, high contrast, live CISA download.
+
+
+### [FAB-6:related]
+| Tests | `tests/test_ui_related_panel.py` (35) offscreen on Linux; `python tools/qt_gate.py --repeat 5 tests/test_ui_related_panel.py`: 175 passed |
+| Not verified here | Windows; screen readers; the real project store read from a worker thread (reader is injected) |
+
+### [LBL-20/21:tier-w-fetch-symbols]
+Automated: `tests/test_tier_w_fetch.py` (33 passed) and `tests/test_tier_w_symbols.py` (29 passed, 1 xfailed). The xfail is the live Ghidra export, recorded BLOCKED (no Ghidra on the runner). The live llvm-pdbutil parity test ran against the self-made PDB (LLVM 18.1.3). Not evidenced: any real Microsoft download or PDB (O1, owner only).
+
+### [LBL-22:tier-w-labels]
+- Synthetic fixtures only: `tests/test_tier_w_labels.py`, `tests/test_tier_w_audit.py`. Not verified: any real symbol map.
+
+### [LBL-24:tier-w-aggregate]
+- `tests/test_tier_w_aggregate.py` (suppression at n < 30, no pooling, no names in output). Not verified: owner-run data.
 
 ### [T9:extern-c-linkage] C source function locator regression (2026-10-20, Linux container)
 | Check | Evidence | Result |
@@ -229,3 +338,67 @@ Not verified here: Windows; the frozen executable; a live backend for `rules pro
 - Anchored installer input and output paths to `${__FILEDIR__}..` with `REPO_ROOT`; added static regression coverage for the license, bundle, notice, generated uninstaller manifest, and output paths.
 - Local verification on Linux: `QT_QPA_PLATFORM=offscreen python -m pytest -q tests/test_windows_installer_manifest.py` (4 passed); `python -m ruff check tests/test_windows_installer_manifest.py` clean; `git diff --check` clean.
 - Not verified yet: compile with pinned NSIS 3.13 and run installer lifecycle on Windows CI.
+### SPEC-53 local symbol mode and launcher (2026-10-21, Linux container)
+| Check | Evidence | Result |
+|---|---|---|
+| Staging, PDB identity reader, launcher, backend integration, CLI flag validation | `QT_QPA_PLATFORM=offscreen python -m pytest -q tests/test_symbols_staging.py tests/test_ptlaunch.py tests/test_backend_symbol_local.py tests/test_nway_series.py` | full suite 15584 passed, 6 failed (pre-existing, rapidfuzz extra not installed), 286 skipped |
+| Scope of the evidence | all runs use a FAKE `ghidriff` package and synthetic PDBs/PEs | Not evidence that real Ghidriff 4f5d895 or Ghidra 12.0.4 honours an empty server list; not an air-gap test (GHR-5 open, needs Windows and an OS-level network block) |
+### SPEC-DA-01 Diaphora Mode A import (2026-10-21, Linux container)
+| Check | Evidence | Result |
+|---|---|---|
+| Guard, parser, address mapping, provenance, store, bridge, CLI, schemas | `QT_QPA_PLATFORM=offscreen python -m pytest -q tests/test_diaphora_import.py tests/test_diaphora_cli.py tests/test_diaphora_schemas.py` | full suite 15584 passed, 6 failed (pre-existing, rapidfuzz extra not installed), 286 skipped |
+| Scope of the evidence | synthetic result databases only (`tests/diaphora_support.py`), never produced by Diaphora; no real Diaphora, IDA or Hex-Rays run | Not evidence of compatibility with Diaphora 3.4.3 output (EA text encoding, ratio range and `type` strings are assumptions). The live gate and value-over-Ghidriff evaluation are open |
+
+### Continuation integration checkpoint (2026-10-22)
+| Check | Evidence | Result |
+|---|---|---|
+| Missing optional dependency diagnosis | Before installing the declared `search` extra, `tests/test_search_capability.py` and `tests/test_search_synergy.py` had 6 failures; after installing pinned `rapidfuzz==3.14.6`, the same tests passed | 37 passed; failures were dependency-installation failures, not PR #100 regressions |
+| Combined PR #100 feature tests | `QT_QPA_PLATFORM=offscreen python -m pytest -q tests/test_symbols_staging.py tests/test_backend_symbol_local.py tests/test_ptlaunch.py tests/test_ui_symbol_local.py tests/test_diaphora_cli.py tests/test_diaphora_import.py tests/test_diaphora_schemas.py tests/test_mutations_more.py` | 128 passed, 23 skipped; compiler-dependent cases are BLOCKED because Clang is absent in this container |
+| Lint | `python -m ruff check src tests tools` | clean on the combined tree before the current mutation investigation |
+| Integration source state | Isolated `codex/patchtrace-completion-20261022`: PR #64 integration branch + current `main` + eight PR #100 commits | Not yet run through full Linux/Windows CI |
+| Prior Windows regression gate | PR #64 QA run `39559162804`, merge SHA `a815670a48ae05a1ca7b2e8c2850cb880d57f825` | FAILED: 2 mutation tests (`string-literal-shout`, `callee-swap-dispatch`), 17,988 passed, 79 skipped, 6 xfailed. Must reproduce/fix and verify on Windows before release |
+| PR #100 standalone gate | Actions at `66e9adc50fb118c04e5e24eacd0c221ca483a130`: QA Windows/Linux and native Windows Ghidriff acceptance | Passed on PR #100 alone; does not validate the combined branch |
+
+### [LBL-WIN-COFF:masked-body] COFF semantic-label false positives (2026-10-22)
+| Check | Evidence | Result |
+|---|---|---|
+| Red regression fixtures | Added `test_masked_body_coff_quoted_rip_string_symbols_are_addresses` and five parameterized `test_masked_body_stops_at_function_boundary` cases; before the code change these produced **5 failures, 1 pass** | Reproduces quoted MSVC `??_C@...` RIP operand drift and missing COFF `.seh_endproc`, `.def`, `.section`, and next-symbol boundaries without requiring Clang |
+| Fixed parser + focused suite | `QT_QPA_PLATFORM=offscreen python -m pytest -q tests/test_mutations_more.py::test_masked_body_coff_quoted_rip_string_symbols_are_addresses tests/test_mutations_more.py::test_masked_body_stops_at_function_boundary tests/test_mutations_more.py` | 36 passed, 23 skipped; all compiler-backed skipped cases are BLOCKED because Clang is absent |
+| Lint and patch hygiene | `python -m ruff check tools/calibration/mutations/engine.py tests/test_mutations_more.py`; `git diff --check` | clean |
+| Required remaining verification | Current-head Windows QA using its real Clang 20.1.8; specifically recheck `string-literal-shout` and `callee-swap-dispatch` | PENDING; synthetic assembly tests do not replace native compiler evidence |
+
+### Continuation branch verification follow-up (2026-10-22)
+| Check | Evidence | Result |
+|---|---|---|
+| Combined PR #100 and COFF regression suites | `QT_QPA_PLATFORM=offscreen python -m pytest -q tests/test_diaphora_import.py tests/test_diaphora_schemas.py tests/test_diaphora_cli.py tests/test_symbols_staging.py tests/test_symbols_decoration.py tests/test_backend_symbol_local.py tests/test_ui_symbol_local.py tests/test_ptlaunch.py tests/test_mutations_more.py` | 314 passed, 24 skipped in 63.91 s; compiler-backed mutation cases skipped because Clang is not installed |
+| Full-suite attempt | `QT_QPA_PLATFORM=offscreen python -m pytest -q` | Interrupted after nearly 10 minutes at about 1% progress; run remained CPU-bound. A separate `--collect-only` attempt was also interrupted after over 2 minutes without completing discovery. No full-suite result is claimed. |
+| Branch publication | GitHub Git Data API created commit `b8e0a6705cfda603e0ee0d0cf831731eda58cf08` from exact local tree `fd7fa581cf1c7f28ba08676991efdb2b36aeaeff`; ref update used expected prior head `fb3645350f8f38d61dc507d7751377696aa1bcc3` | PR #64 head advanced; tree hash matched local `HEAD` exactly. Shell `git push` remains unavailable because no Git credential is exposed. |
+| Current-head CI | Actions query `actions/runs?head_sha=f0af3fe2b4bfd6a8413d6d3cec093238d34e9d93` | No workflow runs had been created at query time. Git Data and Contents API commits advanced the PR head, but did not create Actions runs; an owner-side authenticated push or workflow dispatch is still required. |
+| Release status | Combined continuation branch | Not release-ready: current-head Windows/Linux CI, frozen Windows smoke, and installer lifecycle remain unverified. |
+
+### [SPEC-53:setup-modes] Symbol mode radios and local PDB folder list (2026-10-22, Linux offscreen)
+| Check | Evidence | Result |
+|---|---|---|
+| Setup behavior and tooltip audit | `QT_QPA_PLATFORM=offscreen python -m pytest -q tests/test_tooltips.py::test_setup_dialog_all_tabs_and_profiles tests/test_ui_symbol_local.py` | 7 passed in 51.77 s; covers radio exclusivity, legacy online migration, local config persistence, folder deduplication/removal, 16-folder cap, accessible names and Setup tooltip coverage |
+| Lint and patch hygiene | `python -m ruff check src tests tools`; `git diff --check` | clean |
+| Scope | Qt offscreen tests only | No Windows visual, DPI, screen reader, or real Ghidriff/air-gap evidence; GHR-5 remains open. |
+
+### [SPEC-53:profile-local] Profile symbol-policy narrowing (2026-10-22, Linux)
+| Check | Evidence | Result |
+|---|---|---|
+| Profile validation, digest, GUI, settings matrix, schema regeneration | `QT_QPA_PLATFORM=offscreen python -m pytest -q tests/test_profiles.py tests/test_ui_profiles.py tests/test_unified_contracts.py::test_generate_schemas_reproduces_committed_files` | 55 passed in 73.46 s; local policy has a new digest, and a named profile cannot enable a mode above Setup |
+| Schema | `docs/schemas/profile/AnalysisProfile.json` regenerated | `symbol_policy` enum is `disabled | local | online`; prior enum values and digest inputs remain unchanged |
+| Lint and patch hygiene | `python -m ruff check src tests tools`; `git diff --check` | clean |
+
+
+## 2026-10-30 consolidation review
+
+Baseline PR #123 head `99f8328` passed QA run `41004210486` and native Windows Ghidriff run `41004210319`; these validate the baseline only. The new consolidation selectively ports #67 launch/consent/import safeguards and #102 parser/checksum protections, fixes client product-scope identity and failed decompile refresh preservation, and corrects hidden worker help. See `docs/audits/20261030-consolidation-review.md` for findings and source dispositions.
+
+Local focused checks: 149 parser/GUI tests; 175 unified tests; 155 KB tests; 262 backend/core tests with 3 skips; 53 independent safety-review tests; 7 installer/help tests. These runs overlap and must not be added. `python -m pip check` and `python -m ruff check src tests tools` passed. Full combined `QT_QPA_PLATFORM=offscreen python -m pytest -q` is running. New exact-head Linux/Windows QA, repeated Qt, native Ghidriff and packaging are pending; no completion/native acceptance claim is made.
+
+Consolidation verification follow-up: the first user-site test run was stopped because isolated subprocesses could not import a user-site editable install. A dedicated venv was installed and its isolated import verified. The complete venv suite at the first consolidation snapshot reported **18,258 passed, 136 skipped, 7 xfailed, 4 failed** in 347.91 s. One failure is the executor denying AF_UNIX socket creation (PermissionError); three are synthetic secret-redaction children formerly injected via cwd. Their fixtures now invoke an explicit absolute fake script while retaining production -I/private-cwd arguments and all redaction assertions. A separate real symlinked venv regression exposed base-interpreter selection from Path.resolve; probe and analysis now preserve the selected absolute executable path. The new runtime suite passes **46 tests**. The final combined full suite and remote gates must validate these corrections. No AF_UNIX test has been removed or skipped to hide the host restriction.
+
+Final runtime integration full run at `8bf483c`: **18,265 passed, 135 skipped, 7 xfailed, 2 failed** in 362.09 s. The remaining product-independent AF_UNIX denial is unchanged. The other failure was the old corpus workflow test requiring every action use a mutable version tag; it rejected the verified MSVC full commit pin. The assertion now validates that exact approved commit while retaining existing checks for other actions. The actual workflow structure is also checked with PyYAML installed locally. A final rerun follows this test-only correction.
+
+Full d34efeb snapshot before final Qodo repairs: **18,304 passed, 128 skipped, 7 xfailed, 1 failed** in 371.25 s. Only failure: executor denies AF_UNIX socket creation. Final substantive Qodo findings are repaired and focused-tested (see 20261030-consolidation-review.md); a new combined full suite and exact-head GitHub gates follow. Schema regeneration completed without schema-file changes.

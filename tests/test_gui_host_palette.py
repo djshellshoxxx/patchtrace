@@ -7,10 +7,11 @@ from host_support import make_host, private_tooltip_registry, spec  # noqa: F401
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QAction, QGuiApplication, QKeySequence
 from PySide6.QtTest import QTest
-from PySide6.QtWidgets import QApplication, QPlainTextEdit
+from PySide6.QtWidgets import QApplication, QMainWindow, QPlainTextEdit
 from qt_support import HOSTILE_PARAMS, join_gui_threads, main_window, settings, top_level_windows  # noqa: F401
 
 from patchtrace.gui.capabilities import Availability
+from patchtrace.gui.qt.commands import action_entries
 from patchtrace.gui.qt.palette import RECENT_KEY, PaletteEntry, matches
 from patchtrace.gui.registry import PALETTE_RESULTS, CommandSpec
 from patchtrace.tooltips import TooltipEntry
@@ -121,6 +122,36 @@ def test_escape_closes_the_palette_without_cancelling_the_job(qtbot, settings):
     qtbot.keyClick(host.palette.search, Qt.Key.Key_Escape)
     assert host.palette.isHidden() and not cancelled
     assert window.focusWidget() is editor  # focus goes back where it was
+
+
+def test_escape_in_the_result_list_closes_the_palette_without_cancelling_the_job(qtbot, settings):
+    window, host = with_commands(qtbot, settings, [])
+    cancelled = []
+    cancel = QAction('Cancel job', window)
+    cancel.setShortcut(QKeySequence('Escape'))
+    cancel.triggered.connect(lambda: cancelled.append(1))
+    window.addAction(cancel)
+    activate(qtbot, window)
+    host.open_palette()
+    host.palette.results.setFocus()
+    qtbot.keyClick(host.palette.results, Qt.Key.Key_Escape)
+    assert host.palette.isHidden() and not cancelled
+
+
+def test_submenu_actions_all_reach_the_palette(qtbot):
+    window = QMainWindow()
+    qtbot.addWidget(window)
+    for number in range(50):
+        menu = window.menuBar().addMenu(f'Menu {number}')
+        menu.addAction(f'Top {number}').setObjectName(f'top.{number}')
+        sub = menu.addMenu(f'Sub {number}')
+        for leaf in range(3):
+            sub.addAction(f'Leaf {number} {leaf}').setObjectName(f'leaf.{number}.{leaf}')
+        menu.addAction(f'Tail {number}').setObjectName(f'tail.{number}')
+    ids = {item.id for item in action_entries(window)}
+    expected = {f'{kind}.{n}' for n in range(50) for kind in ('top', 'tail')}
+    expected |= {f'leaf.{n}.{k}' for n in range(50) for k in range(3)}
+    assert expected <= ids
 
 
 def test_arrow_keys_move_the_selection_without_leaving_the_search_box(qtbot, settings):
@@ -236,5 +267,11 @@ def test_the_main_window_menu_and_palette_shortcut_are_registered(main_window, q
     next(a for a in window.menuBar().actions()[titles.index('View')].menu().actions()
          if a.shortcut().toString() == 'Ctrl+Shift+P').trigger()
     assert window.panels.palette.isVisible()
-    labels = [window.panels.palette.results.item(r).text() for r in range(window.panels.palette.results.count())]
-    assert any(label.startswith('Project > Open') for label in labels) and any('Interpret selection' in label for label in labels)
+    palette = window.panels.palette
+
+    def labels_for(query):  # the empty query lists only the first PALETTE_RESULTS commands, and every panel adds six
+        palette.search.setText(query)
+        return [palette.results.item(r).text() for r in range(palette.results.count())]
+
+    assert any(label.startswith('Project > Open') for label in labels_for('Open'))
+    assert any('Interpret selection' in label for label in labels_for('Interpret'))

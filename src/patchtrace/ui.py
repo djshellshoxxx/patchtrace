@@ -30,6 +30,7 @@ from PySide6.QtWidgets import (
     QPlainTextEdit,
     QProgressBar,
     QPushButton,
+    QRadioButton,
     QScrollArea,
     QSpinBox,
     QSplitter,
@@ -47,7 +48,7 @@ from .acquisition.transport import BLOB_SUFFIX, METADATA_HOST, SYMBOL_HOST, Acqu
 from .alignment import alignment_strategy, diff_hunks
 from .backend import BackendConfig, diagnose, parse_env_passthrough, quarantine_failed_run, run_comparison
 from .evidence import build_context, resolve_evidence
-from .gui.qt.codediff import clear_selections, compose_selections, row_selection
+from .gui.qt.codediff import clear_selections, compose_selections, row_selection, view_text
 from .gui.qt.host import PanelHost
 from .gui.qt.theme import DARK
 from .interpretation import interpret, system_prompt
@@ -67,6 +68,9 @@ from .service import ProjectService
 from .tooltips import apply_tooltip, apply_tooltips
 from .ui_bundle_setup import BundleSetup
 from .ui_inspection import InspectionThread, side_summary
+from .ui_persistence import commit_and_report
+from .ui_profiles import PROFILE_SETTING, profiles_dir, selected_profile
+from .ui_symbols import SymbolChoice, config_kwargs, configured_symbol_mode, effective_profile_symbol_mode
 
 REVIEWS = ['unreviewed', 'accepted', 'rejected', 'needs-review']
 CATEGORIES = ['modified', 'added', 'removed', 'ambiguous', 'split', 'merged', 'unmatched', 'unchanged']
@@ -692,32 +696,6 @@ class AcquisitionDialog(QDialog):
         self.log.appendPlainText(f'Project created: {self.service.root}')
 
 
-PROFILE_SETTING = 'analysis/profile'
-
-
-def profiles_dir(settings) -> Path:
-    """Profiles live beside an INI/file-backed QSettings; native Windows settings are in the
-    registry, so the headless default directory (shared with the CLI) is used instead."""
-    from .enrichment.profiles import default_profiles_dir
-    name = settings.fileName()
-    if settings.format() == QSettings.Format.IniFormat or (name and Path(name).is_absolute()
-                                                           and not name.startswith('\\HKEY')):
-        return Path(name).parent / 'profiles'
-    return default_profiles_dir()
-
-
-def selected_profile(settings, directory: Path):
-    """(profile, warning). A missing or invalid selected profile falls back to the default, loudly."""
-    from .enrichment.profiles import DEFAULT_PROFILE, ProfileError, ProfileStore
-    name = settings.value(PROFILE_SETTING, 'default')
-    if not isinstance(name, str) or name == 'default':
-        return DEFAULT_PROFILE, ''
-    try:
-        return ProfileStore(directory).get(name), ''
-    except ProfileError as exc:
-        return DEFAULT_PROFILE, f'Profile {name!r} unavailable ({exc}); using default.'
-
-
 class ProfilesPanel(QWidget):
     """List, create, duplicate, edit and delete analysis profiles. The default is read-only."""
 
@@ -774,7 +752,7 @@ class ProfilesPanel(QWidget):
         self.feature_ids.setPlaceholderText('Empty = all features; else comma-separated uint32 IDs')
         form.addRow('WIL feature filter', self.feature_ids)
         self.symbol_policy = QComboBox()
-        self.symbol_policy.addItems(['disabled', 'online'])
+        self.symbol_policy.addItems(['disabled', 'local', 'online'])
         form.addRow('Symbol policy', self.symbol_policy)
         self.providers = {name: QCheckBox(name) for name in ('nvd', 'msrc')}
         provider_row = QWidget()
@@ -1013,9 +991,9 @@ class SetupDialog(QDialog):
             button.clicked.connect(lambda checked=False, e=edit, d=directory: self.browse(e, d))
             horizontal.addWidget(button)
             form.addRow(name, row)
-        self.allow_symbol_downloads = QCheckBox('Allow Ghidriff symbol-server lookups (may access the Internet)')
+        self.allow_symbol_downloads = QRadioButton('Allow Ghidriff symbol-server lookups (may access the Internet)')
         self.allow_symbol_downloads.setChecked(settings.value('backend/allow_symbol_downloads', False, type=bool))
-        form.addRow(self.allow_symbol_downloads)
+        self.symbols = SymbolChoice(form, settings, self.allow_symbol_downloads)  # SPEC-53 local PDB mode
         self.restrict_env = QCheckBox('Restrict backend environment to an allowlist (experimental)')
         self.restrict_env.setChecked(settings.value('backend/restrict_env', False, type=bool))
         form.addRow(self.restrict_env)
@@ -1135,9 +1113,8 @@ class SetupDialog(QDialog):
         return BackendConfig(python_executable=self.python.text().strip(), ghidra_dir=self.ghidra.text().strip(),
                              timeout_seconds=self.timeout.value(),
                              allow_symbol_downloads=self.allow_symbol_downloads.isChecked(),
-                             java_home=self.java_home.text().strip(),
-                             restrict_env=self.restrict_env.isChecked(),
-                             env_passthrough=parse_env_passthrough(self.env_passthrough.text()))
+                             java_home=self.java_home.text().strip(), restrict_env=self.restrict_env.isChecked(),
+                             env_passthrough=parse_env_passthrough(self.env_passthrough.text()), **self.symbols.kwargs())
 
     def check_dependencies(self):
         if self.worker and self.worker.isRunning():
@@ -1980,8 +1957,7 @@ class MainWindow(QMainWindow):
 
     def save_project(self):
         if self.service:
-            self._guard(self.service.save)
-            self.statusBar().showMessage('Project saved')
+            commit_and_report(self, self.service.save, 'Project saved')
 
     def refresh(self):
         self._updating = True
@@ -2408,7 +2384,7 @@ class MainWindow(QMainWindow):
         self.match_label.setText(label)
         for side, text in (('older', older_text), ('newer', newer_text)):
             clear_selections(self.views[side], 'diff')
-            self.views[side].setPlainText(text[:MAX_VIEW_CHARS])
+            self.views[side].setPlainText(view_text(text))
 
     def _load_enrichment(self):
         """Show the stored ranking only when it was computed from the current run and pairings."""
@@ -2533,23 +2509,23 @@ class MainWindow(QMainWindow):
         item = self.evidence_list.currentItem()
         if item:
             evidence_id = item.data(Qt.ItemDataRole.UserRole)
-            self._guard(lambda: self.service.annotate(evidence_id, 'Evidence bookmarked by analyst', kind='bookmark'))
-            self.statusBar().showMessage('Evidence bookmark saved.')
+            commit_and_report(self, lambda: self.service.annotate(
+                evidence_id, 'Evidence bookmarked by analyst', kind='bookmark'), 'Evidence bookmark saved.')
 
     def review_finding(self):
         if self._finding:
-            self._guard(lambda: self.service.review_finding(self._finding.id, self.finding_review.currentText(),
-                                                            self.conclusion.toPlainText()))
-            self.refresh_findings()
+            if commit_and_report(self, lambda: self.service.review_finding(
+                    self._finding.id, self.finding_review.currentText(), self.conclusion.toPlainText())):
+                self.refresh_findings()
 
     def save_note(self):
         target = self._finding if self.note_target.currentIndex() == 1 else self.current_match()
         text = self.notes.toPlainText().strip()
         if target and text:
-            self._guard(lambda: self.service.annotate(target.id, text, kind='note'))
-            self.notes.clear()
-            self.refresh_findings()
-            self.statusBar().showMessage('Analyst note saved.')
+            if commit_and_report(self, lambda: self.service.annotate(target.id, text, kind='note'),
+                                 'Analyst note saved.'):
+                self.notes.clear()
+                self.refresh_findings()
 
     def inspect_responses(self):
         records = []
@@ -2561,14 +2537,15 @@ class MainWindow(QMainWindow):
     def backend_config(self):
         profile = self.analysis_profile()[0]
         consent = self.settings.value('backend/allow_symbol_downloads', False, type=bool)
-        # The Setup checkbox is the explicit network consent. A non-default profile can only
-        # narrow it (online requires both); it can never enable symbol downloads on its own.
-        allow_symbols = consent if profile.name == 'default' else (consent and profile.symbol_policy == 'online')
+        configured = configured_symbol_mode(self.settings, consent)
+        effective = effective_profile_symbol_mode(configured, profile.symbol_policy, profile.is_default)
+        symbol_dirs = str(self.settings.value('backend/symbol_dirs', ''))
         config = BackendConfig(python_executable=str(self.settings.value('backend/python', '')),
                              ghidra_dir=str(self.settings.value('backend/ghidra', '')),
                              timeout_seconds=setting_int(self.settings, 'backend/timeout', 3600, 10, 86400),
-                             allow_symbol_downloads=allow_symbols,
+                             allow_symbol_downloads=effective == 'online',
                              java_home=str(self.settings.value('backend/java_home', '')),
+                             **config_kwargs(effective == 'local', symbol_dirs),
                              restrict_env=self.settings.value('backend/restrict_env', False, type=bool),
                              env_passthrough=parse_env_passthrough(str(self.settings.value('backend/env_passthrough', ''))),
                              # Raw-output reuse (SPEC-07 §13) is opt-in via the selected profile's cache_dir.
@@ -2845,14 +2822,14 @@ class MainWindow(QMainWindow):
             self.refresh()
         self.start_job('Importing Ghidriff JSON', lambda cancel, event: service.prepare_import(Path(path)), commit)
 
-    def preview_interpretation(self):
+    def preview_interpretation(self, *_, notes=()):
         if not self.project or self.worker:
             return
         match_ids = [item.data(Qt.ItemDataRole.UserRole) for item in self.navigator.selectedItems()]
         if not match_ids:
             return
         budget = setting_int(self.settings, 'provider/context_budget', 24000, 512, 200000)
-        context = self._guard(lambda: build_context(self.project, match_ids, max_chars=budget))
+        context = self._guard(lambda: build_context(self.project, match_ids, max_chars=budget, notes=notes))
         if context is None:
             return
         dialog = ContextDialog(context, self.settings, self)
@@ -2985,7 +2962,7 @@ class MainWindow(QMainWindow):
         self.settings.setValue('backend/restrict_env', dialog.restrict_env.isChecked())
         self.settings.setValue('backend/env_passthrough', dialog.env_passthrough.text().strip())
         self.settings.setValue('backend/timeout', dialog.timeout.value())
-        self.settings.setValue('backend/allow_symbol_downloads', dialog.allow_symbol_downloads.isChecked())
+        dialog.symbols.save(self.settings)
         self.settings.setValue('desktop/font_size', dialog.font_size.value())
         self.settings.setValue('provider/context_budget', dialog.context_budget.value())
         self.settings.setValue('desktop/sync', dialog.sync.isChecked())

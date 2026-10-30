@@ -63,6 +63,7 @@ NOISE_WHY = {
     'order': 'Change classes that often come from register allocation, layout or unwind data when the toolchain '
              'differs; the row may be listed after rows without such a cause.',
     'tag': 'Change classes that can come from code generation when the toolchain differs; the row is only marked.'}
+TIMELINE_TOOLS_DIFFER = 'tool versions differ'
 SUMMARY_TEXT = '{n} of {total} review rows are of kinds a toolchain change can produce'
 
 REASONS = {
@@ -110,7 +111,7 @@ TEACH = {hook.id: hook for hook in (
 
 def deck_texts() -> tuple[str, ...]:
     """Every fixed user-visible string, for the banned-word sweep."""
-    flat = [DISCLAIMER, ROW_CHIP, ROW_CHIP_DETAIL, SUMMARY_TEXT, *STATES.values(), *NOISE_WHY.values(),
+    flat = [DISCLAIMER, ROW_CHIP, ROW_CHIP_DETAIL, SUMMARY_TEXT, TIMELINE_TOOLS_DIFFER, *STATES.values(), *NOISE_WHY.values(),
             *REASONS.values(), *FACT_LABELS.values(), *STATUS_TEXT.values(), *BASIS_TEXT.values(), *GLYPHS.values()]
     flat += [text for pair in NOTICES.values() for text in pair]
     flat += [text for hook in TEACH.values() for text in (hook.meaning, *hook.next_steps)]

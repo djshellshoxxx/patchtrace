@@ -384,8 +384,12 @@ def _attempt(url, headers, opener, cancel, clock, deadline, now) -> tuple[bytes,
                 location = response.headers.get('Location')
                 if not location:
                     raise EnrichmentError('PT-ENRICH-PROVIDER', 'redirect without Location')
-                target = urllib.parse.urljoin(url, location)
-                if urllib.parse.urlsplit(target).hostname != urllib.parse.urlsplit(url).hostname:
+                try:
+                    target = urllib.parse.urljoin(url, location)
+                    moved = urllib.parse.urlsplit(target).hostname != urllib.parse.urlsplit(url).hostname
+                except ValueError:
+                    raise EnrichmentError('PT-ENRICH-NETWORK', 'invalid URL refused') from None
+                if moved:
                     # The NVD key is for NVD only; never forward it to another allowlisted host.
                     headers = {k: v for k, v in headers.items() if k not in KEY_HEADER.values()}
                 url = target

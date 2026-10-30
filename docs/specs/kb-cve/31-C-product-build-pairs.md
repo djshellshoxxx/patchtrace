@@ -8,6 +8,12 @@ A Microsoft KB number is not a unique product/build/file tuple. Require distinct
 
 Define ProductScopeRef as (ProductScopeId, verification_state, evidence_ids, conflict_ids). User selections persist an assertion (may lower ambiguity) but do not change vendor verification status. A file present across Windows client/server with identical SHA may be reused as the *same bytes*, not evidence the Windows products are equivalent.
 
+Known Windows client generations must remain distinct even when release labels coincide (Windows 10 22H2 and Windows 11 22H2). Their scope identity uses `kbc.scope` version 2 with the derived `winbindex_key` (`10-22H2` versus `11-22H2`) alongside the existing dimensions. Scopes without a known client key retain the version 1 formula. This is an identity correction, not a claim of verified product mapping.
+
+Compatibility: immutable stored contexts, pair records, decisions and investigation history retain their original identifiers; a legacy scope ID must never be guessed or rebound to one of the new generations. The reverse index is rebuilt from retained raw advisory bytes. An investigation whose selected product is absent from that rebuilt index must refuse index pairing with an explicit instruction to repeat the search and select the product again. Existing context exports remain historical records. The persisted SQL edge dictionaries remain historical ingestion data; current correlation uses the reparsed reverse index. No destructive migration or implicit historical-context rewrite occurs.
+
+Product listing must also refuse a stale investigation with that refresh instruction when any stored scope no longer exists in the rebuilt index, including a mixed list with surviving server scopes. It must not claim that a legacy mapping loss means the lead has no products or that a partial surviving list is complete.
+
 ## C2. Partial-order update graph
 
 Represent product-specific release instances, not global KB nodes:
