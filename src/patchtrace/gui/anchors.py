@@ -81,9 +81,14 @@ class NavResult:
 
     @classmethod
     def ambiguous(cls, label: str, candidates: Iterable[AnchorRef]) -> NavResult:
-        found = tuple(candidates)
-        return cls('ambiguous', f'{len(found)} candidates match {sanitize_text(label)}. Choose one.',
-                   found[:MAX_CANDIDATES], 'PT-GUI-NAV-AMBIGUOUS')
+        found: list[AnchorRef] = []
+        count = 0
+        for candidate in candidates:
+            count += 1
+            if len(found) < MAX_CANDIDATES:
+                found.append(candidate)
+        return cls('ambiguous', f'{count} candidates match {sanitize_text(label)}. Choose one.',
+                   tuple(found), 'PT-GUI-NAV-AMBIGUOUS')
 
     @classmethod
     def blocked(cls, title: str, reason: str) -> NavResult:
