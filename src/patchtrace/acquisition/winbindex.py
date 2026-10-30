@@ -64,9 +64,6 @@ def decompress(data: bytes) -> bytes:
     return out
 
 
-_SURROGATE_ESCAPE = re.compile(rb'\\u[dD][89a-fA-F]')
-
-
 def _no_duplicates(pairs):
     result = {}
     for key, value in pairs:
@@ -89,11 +86,10 @@ def _finite_float(literal: str) -> float:
 
 def strict_json(text: bytes):
     try:
-        value = json.loads(text.decode('utf-8'), object_pairs_hook=_no_duplicates,
-                           parse_constant=_reject_constant, parse_float=_finite_float)
-        if _SURROGATE_ESCAPE.search(text):
-            _canonical(value)  # an unpaired surrogate is legal JSON but not text; this raises on it
-        return value
+        # Syntax is document-wide; entry-specific Unicode is checked when hashing each record,
+        # so one bad Winbindex entry does not discard unrelated valid builds.
+        return json.loads(text.decode('utf-8'), object_pairs_hook=_no_duplicates,
+                          parse_constant=_reject_constant, parse_float=_finite_float)
     except (UnicodeDecodeError, ValueError, RecursionError):
         raise AcquisitionError('PT-ACQ-PROVIDER', 'Winbindex record is not strict JSON') from None
 
@@ -178,14 +174,14 @@ def parse(data: bytes, file_name: str, data_date: str, *, compressed: bool = Tru
             download = 'candidates'
         else:
             download = 'unavailable'
-        windows = entry.get('windowsVersions')
-        versions, kbs = _kbs(windows) if isinstance(windows, dict) else ((), ())
-        version = info.get('version')
         try:
             record_sha256 = hashlib.sha256(_canonical(entry)).hexdigest()
         except UnicodeEncodeError:
             skipped += 1
             continue
+        windows = entry.get('windowsVersions')
+        versions, kbs = _kbs(windows) if isinstance(windows, dict) else ((), ())
+        version = info.get('version')
         candidates.append(BuildCandidate(
             file_name=file_name, sha256=key, size=info['size'], machine_type=info['machineType'],
             timestamp=info['timestamp'], virtual_size=virtual_size,
