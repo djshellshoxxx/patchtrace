@@ -851,3 +851,19 @@ Done: dock with state matrix, consent, import, changes, copy, go to CVE. Open: r
 
 - [x] Reconcile substantive Qodo review: Qt release dependency/status evidence, G-U1 endpoint coverage, optional decompile write rollback, stale KB/KEV/Diaphora ownership, calibration grouping/leak audits, staged archive handoff and cancellable PDB discovery.
 - [ ] Validate the final combined review repairs on their own published head; merge and close only proven superseded work after acceptance.
+
+## Controlled branch consolidation (2026-10-30; integration coordinator)
+
+- [x] Read `AGENTS.md`, `CLAUDE.md`, module index and latest handoff; pin verified initial main `a04f5a299a8d4afef023261e52e08d14678cf1e7`.
+- [x] Create unowned, non-force-pushed `integration/controlled-consolidation-20261030` from exact pinned main.
+- [x] Record all 126 observed remote branch refs, 28 open PRs, draft/stack metadata and conservative dispositions: `docs/branch-pr-inventory-2026-10-30.md`. This does **not** establish unpublished worktree state.
+- [x] Preserve all six independent PR #98 wiki-source Markdown blobs and adapt README link onto modern main without overwriting it; leave original branch and PR open for final reconciliation.
+- [ ] Inspect and reconcile all previously open PRs against **current** main and current integration, not stale merge heads; record per-PR reviews, unresolved threads, unique diff, exact-head CI and final disposition before closure.
+- [ ] Root-cause PR #61 Windows QA failure before considering its AGENTS/CLAUDE policy and skills changes.
+- [ ] Review PR #102 unique Windows alpha fixes without taking its incompatible workflow/packaging changes wholesale.
+- [ ] Reconcile #69 KB fixtures and #70/#72 help/panel documentation against current contracts; retain #78/#79/#82/#85 calibration guards pending verified research/calibration dependency.
+- [ ] Leave active draft research R1–R8 and PR #126's code branch unchanged; recheck ownership and source SHA before selective integration.
+- [ ] Run offscreen full `pytest`, Ruff and schema generation in a real checkout; record actual counts. Environment for this chat has GitHub API but no checkout/network clone. Do not claim these were run.
+- [ ] Open draft integration PR for exact-head Linux/Windows QA, check every job's status and conclusion, and diagnose true failures. For code changes also require native Ghidriff / secondary acceptance; for GUI/packaging require frozen executable smoke.
+- [ ] Perform final semantic conflict/security/persistence/GUI audit, repair with reproducing tests, then merge integration PR to main only when current-head reviews/checks permit.
+- [ ] Update feature-completion and final branch/PR disposition with main/integration SHAs, merged changes and remaining unique work.
