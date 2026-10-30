@@ -82,3 +82,13 @@ Change `pseudo._number` to:
 ## 6. Residual threats and handoff
 
 The scanner also has limited coverage of C exponent-only decimal floating tokens (e.g. `1e3`) and target-specific integer suffixes (`i64`); these are not repaired by R8-LIT-01 and should be kept conservative until lexer tests characterize Ghidra-produced text. C++ literal types can differ further. Decompiler output may lose the original source spelling; no token normalization can recover a distinction already discarded by the extractor. Address-operand matching, EH-EQ, and IR target consistency remain necessary for stronger proof classifications.
+
+## 7. Additional adversarial red/green: R8-LIT-02 fallback-key collision
+
+A separate **source-level** collision was reproduced after R8-LIT-01: Python 3.13 raises a `ValueError` when converting a huge (>4300-digit) integer token under the default integer-string limit. The old and first R8 candidate `_number` returned `n:${text[:40]}` on parsing failure. The two different strings `'9' * 5000 + '1'` and `'9' * 5000 + '2'` therefore produced the **same** 42-character canonical token. Likewise invalid octal literals with the same first 40 characters collided. This is an adversarial text-level issue; no real Ghidra output with such tokens was observed.
+
+**Correction:** `_opaque_number` now uses `n:<full_character_count>:<SHA-256 of the entire UTF-8 token>` (or `c:` for a char literal). The hash is used as a bounded identity key, **not semantic equivalence proof**. The original 40-character truncation is gone, and `canon` version 2 covers this modification. Regression `test_r8_unparseable_numeric_text_cannot_collide_by_truncated_prefix` is committed under `tests/test_r8_literal_types.py`.
+
+**Isolated evidence:** before this small correction, the distinct 5001-character numerals produced equal tokens; after correction, a local source-equivalent pytest suite with the original four numeric controls plus the malformed-key case ran **6 passed in 0.04 s**. This does not establish full repository CI success or the behavior of actual native decompilers.
+
+**Residual:** a SHA-256 digest is not an injective mapping of arbitrary-length text, so this reduces practical collision risk rather than providing a mathematical identity proof. To eliminate even that residual from proof rules, an extractor could mark invalid/overflowed numeric tokens as `unavailable` and require analyst review. That change requires an explicit typed state contract and separate regression, not a silent amendment to `ChangeFacts`.
