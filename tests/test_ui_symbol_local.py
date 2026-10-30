@@ -78,5 +78,6 @@ def test_local_mode_persists_and_reaches_backend_config(window, tmp_path, monkey
     assert window.settings.value('backend/symbol_mode') == 'local'
     cfg = window.backend_config()
     assert cfg.symbol_mode == 'local' and cfg.symbol_pdb_dirs == (str(tmp_path),) and not cfg.allow_symbol_downloads
-    window.settings.setValue('backend/allow_symbol_downloads', True)     # online consent wins; never both
-    assert window.backend_config().symbol_mode == '' and window.backend_config().allow_symbol_downloads
+    # A conflicting legacy consent flag must not override the saved local-only policy or allow network access.
+    window.settings.setValue('backend/allow_symbol_downloads', True)
+    assert window.backend_config().symbol_mode == '' and not window.backend_config().allow_symbol_downloads
