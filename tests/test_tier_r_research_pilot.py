@@ -89,3 +89,103 @@ def test_wrong_project_binding_fails_before_reusing_primary():
 def test_unknown_matched_materiality_is_abstention_on_change():
     observations, _ = P.unified_observations([row([1], [2], 'matched', 'not-applicable')])
     assert observations == [(1, 2, None)]
+
+
+@pytest.mark.parametrize(('backend', 'resumed', 'settings', 'provenance', 'executed'), [
+    ('ghidriff', False, {}, 'executed-now', True),
+    ('ghidriff', True, {}, 'persisted-native', False),
+    ('ghidriff-import', False, {}, 'persisted-import-or-sample', False),
+    ('ghidriff-import', False, {'cache_origin': {}}, 'persisted-import-or-sample', False),
+    ('ghidriff', False, {'cache_origin': {'run_id': 'previous'}}, 'persisted-native-cache', False),
+    ('ghidriff', True, {'cache_origin': {}}, 'persisted-native-cache', False),
+    ('ghidriff', False, {'cache_origin': None}, 'persisted-native-cache', False),
+])
+def test_execution_provenance_never_credits_cached_imported_or_resumed_runs(
+        backend, resumed, settings, provenance, executed):
+    """Metadata-only unit cases; these substitutes do not establish any native execution."""
+    run = SimpleNamespace(backend=backend, settings=settings)
+    observed = P._execution_provenance(run, resumed=resumed)
+    assert observed == {'execution_provenance': provenance, 'native_execution_in_this_invocation': executed}
+
+
+def pilot_cli(tmp_path, monkeypatch, output, *, work=None, during_run=None):
+    """Exercise real CLI file handling; the substitute proves no native compatibility."""
+    monkeypatch.chdir(tmp_path)
+    source = tmp_path / 'labels.json'
+    source.write_bytes(C.dump_json(labels().model_dump(mode='json')))
+    work = work or tmp_path / 'work'
+    calls = []
+    def fake_run(*_args, **_kwargs):
+        calls.append(True)
+        work.mkdir(parents=True, exist_ok=True)
+        if during_run:
+            during_run()
+        return {'engines': {'ghidriff': {'status': 'ok'}}}
+    monkeypatch.setattr(P, 'run_pilot', fake_run)
+    code = P.main(['--labels', str(source), '--store', str(tmp_path / 'store'),
+                   '--work', str(work), '--output', str(output), '--ghidra-dir', str(tmp_path / 'ghidra')])
+    return code, calls
+
+
+@pytest.mark.parametrize('kind', ['outside', 'traversal', 'relative', 'nested', 'extension', 'repository'])
+def test_cli_rejects_unsafe_receipt_before_engine_work(tmp_path, monkeypatch, kind):
+    work = tmp_path / 'work'
+    output = {'outside': tmp_path / 'unrelated.json', 'traversal': work / '..' / 'escaped.json',
+              'relative': P.Path('receipt.json'), 'nested': work / 'primary' / 'receipt.json',
+              'extension': work / 'record.py', 'repository': tmp_path / 'repo' / 'receipt.json'}[kind]
+    if kind == 'repository':
+        work = output.parent
+        monkeypatch.setattr(P, '__file__', str(work / 'tools' / 'calibration' / 'tier_r' / 'research_pilot.py'))
+    code, calls = pilot_cli(tmp_path, monkeypatch, output, work=work)
+    assert code == 2
+    assert calls == []
+    assert not output.exists()
+
+
+def test_cli_preserves_existing_receipt_before_engine_work(tmp_path, monkeypatch):
+    output = tmp_path / 'work' / 'receipt.json'
+    output.parent.mkdir()
+    output.write_bytes(b'original receipt')
+    code, calls = pilot_cli(tmp_path, monkeypatch, output)
+    assert code == 2
+    assert calls == []
+    assert output.read_bytes() == b'original receipt'
+
+
+@pytest.mark.parametrize('kind', ['file', 'work-directory'])
+def test_cli_rejects_symlinked_receipt_paths(tmp_path, monkeypatch, kind):
+    work = tmp_path / 'work'
+    target = tmp_path / 'original.json'
+    target.write_bytes(b'original input')
+    output = work / 'receipt.json'
+    try:
+        if kind == 'file':
+            work.mkdir()
+            output.symlink_to(target)
+        else:
+            actual = tmp_path / 'actual'
+            actual.mkdir()
+            work.symlink_to(actual, target_is_directory=True)
+    except OSError as exc:
+        pytest.skip(f'host cannot create symlinks: {exc}')
+    code, calls = pilot_cli(tmp_path, monkeypatch, output)
+    assert code == 2
+    assert calls == []
+    assert target.read_bytes() == b'original input'
+
+
+def test_cli_exclusively_publishes_new_contained_receipt(tmp_path, monkeypatch):
+    output = tmp_path / 'work' / 'receipt.json'
+    code, calls = pilot_cli(tmp_path, monkeypatch, output)
+    assert code == 0
+    assert calls == [True]
+    assert P.strict_json(output.read_bytes()) == {'engines': {'ghidriff': {'status': 'ok'}}}
+
+
+def test_cli_preserves_receipt_created_during_analysis(tmp_path, monkeypatch):
+    output = tmp_path / 'work' / 'receipt.json'
+    code, calls = pilot_cli(tmp_path, monkeypatch, output,
+                            during_run=lambda: output.write_bytes(b'concurrent receipt'))
+    assert code == 2
+    assert calls == [True]
+    assert output.read_bytes() == b'concurrent receipt'

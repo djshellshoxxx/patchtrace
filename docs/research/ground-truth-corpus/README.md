@@ -71,6 +71,13 @@ native A/A control succeeded twice with identical bytes and distinct basenames,
 observing all 21 project correspondences; its change verdicts remain unknown.
 No target binary was executed and no held-out test was consumed.
 
+The localhost-enabled Linux suite completed with **18,212 passed, 303 skipped
+and 6 expected failures**; focused regressions separately cover the final
+provenance and receipt-safety corrections. The [final integration review](results/final-integration-review.md)
+records its automated scope and independence limits. Final GitHub checks and
+required independent review still govern integration; the research PR is
+[#128](https://github.com/djshellshoxxx/patchtrace/pull/128).
+
 ## Repository reconciliation
 
 The live default branch is `main`, at the baseline above. PR

@@ -122,12 +122,23 @@ the subsequent localhost-enabled run is reported separately in QA. A separate
 test-only venv interpreter fix preserves the selected interpreter instead of
 dereferencing its symlink into an interpreter without installed dependencies.
 
-The PR's Sonar check reported 3.9% new-code duplication against a 3% limit at
-checkpoint `a02a1774a1617441072f4a8770348cc22038eeac`. Public Sonar component and
-duplication APIs returned CloudFront HTTP 403, so exact file/block attribution
-was unavailable. This specific PR failure is not attributed to the unrelated
-main-branch failure. No threshold or analysis exclusion was changed. Final-head
-CI/review status is recorded in the handoff; a draft PR is not merged acceptance.
+Sonar reported 3.9% new-code duplication against a 3% limit at checkpoint
+`a02a1774a1617441072f4a8770348cc22038eeac`. At the later checkpoint
+`0271f1869ccba0697c5bf6f797432bb7c6ec54d4`, its reported failing condition changed
+to a **C security rating** (a grade, not a language designation). Public Sonar
+APIs remained blocked by CloudFront HTTP 403, but the public GitHub annotation
+identified unchecked `args.output.write_bytes(...)` receipt publication in the
+pilot CLI. The exact annotation is preserved. A regression-tested correction
+now confines new receipts to the selected private work directory and refuses
+overwrites, traversal and symlink components. Final Sonar acceptance still
+requires an external re-analysis; neither an older failure nor a local repair
+is claimed as a final passing gate. No threshold or exclusion was changed.
+
+The full localhost-enabled Linux run passed with 18,212 tests, 303 skips and
+6 expected failures. Final focused regressions cover changes made during/after
+that long run. The dispatch-only unified live workflow and required independent
+GitHub review remain separate gates; the available connector cannot dispatch a
+new workflow. A draft PR and local automated reviews do not satisfy those gates.
 
 ## Priority follow-ups with concrete acceptance conditions
 

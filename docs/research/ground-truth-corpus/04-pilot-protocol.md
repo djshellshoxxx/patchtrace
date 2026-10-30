@@ -69,6 +69,17 @@ is not inferred from factory success. The original label document is preserved.
 These experimental receipts are research notes, not a new persisted product
 contract. Unit substitutes prove orchestration invariants only.
 
+The pilot CLI receipt must be a new `.json` file directly inside the explicitly
+selected absolute private work directory, outside the repository. Reject relative
+paths, `..` components, symlinked path components and existing destinations before
+starting engines. Recheck containment at publication and use exclusive creation
+so a destination created during analysis cannot be overwritten. This boundary
+protects existing files and snapshots from a mistaken output argument; it is not
+a sandbox against another local process that can replace the user's private
+directory while the command is running. Historical receipts retain their original
+locations; new invocations use `--output "$R1_RUNS/case/receipt.json"` alongside
+`--work "$R1_RUNS/case"`.
+
 Build with the existing Tier R factory; record actual compiler/tool versions,
 recipe digests, commands, source hashes and artifacts. Rebuild in distinct scratch
 directories. Compare hidden-symbol images first; visible-symbol results are a

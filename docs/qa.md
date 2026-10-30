@@ -436,9 +436,12 @@ unblinded review leaves 111 candidate labels unresolved and preserves 92 exports
 Compiler-noise failure analysis identifies a conditional-branch/store evidence
 bug for separate production work; original results remain unchanged.
 
-Validation recorded so far:
+Validation recorded for the research handoff:
 
-- Final focused regression/native-factory group: **139 passed in 30.69 s**.
+- Focused regression/native-factory group after output-safety repair:
+  **156 passed in 30.90 s**. The final import-with-cache precedence regression
+  then passed in the complete pilot file: **30 passed in 0.98 s**. These overlap
+  and must not be added. Earlier 139/145-test checkpoints remain historical.
 - Full Ruff (`src tests tools`): **passed**.
 - Corpus integrity with explicit Clang 18: **0 findings**, 26 suites/89 versions;
   catalogue consistency: 51 cards/16 recipes/0 problems; canonical schema drift: 5 passed
@@ -448,14 +451,30 @@ Validation recorded so far:
 - First restricted full pytest was interrupted after socket PermissionErrors:
  47 failed, 13,114 passed, 300 skipped, 4 xfailed, 3 errors; this is **not acceptance**.
   Its unrelated venv-symlink test assumption was independently reproduced/fixed.
-- The localhost-enabled full Linux run is still being collected at this checkpoint;
-  its final result will be appended below rather than inferred from partial output.
+- The localhost-enabled full Linux run completed: **18,212 passed, 303 skipped,
+  6 xfailed, 1 warning in 1,805.40 s**. The warning is the intentional duplicate-ZIP
+  fixture. Build/cache changes landed during that long run and final pilot
+  corrections followed it; focused tests cover those deltas. This full count is
+  not represented as validation of the final committed tree.
+- Final local automated integration and output-safety reviews found no remaining
+  blocking issue within their stated scopes. They are not GitHub APPROVE reviews.
+  A real Ghidriff/rz-diff/unified run through the hardened CLI returned 0 and kept
+  all explicit observations, metrics and unified row digests equal to the original.
 - No native Windows, true MSVC or verified BinDiff/BinExport result is claimed.
   Packaging is unchanged. Final-head GitHub CI/review remains a merge gate.
-- Sonar at checkpoint a02a1774 reported 3.9% new-code duplication, limit 3%; component
-  attribution APIs returned CloudFront 403. No exclusions or threshold were changed.
+- Sonar at a02a1774 reported 3.9% new-code duplication, limit 3%. At 0271f186 its
+  failure changed to a C security rating; a recovered public GitHub annotation
+  identified unchecked receipt-output publication. The regression-tested repair
+  confines receipts to new private-work JSON files, rejects traversal/symlinks
+  and uses exclusive creation. The exact annotation is retained; final Sonar
+  re-analysis remains required. No exclusions or thresholds were changed.
+- Main remained a04f5a2 at final reconciliation; coordinator PR #126 remains open
+  on its own branch. The unified live workflow is dispatch-only and the available
+  connector cannot dispatch a new revision; an old-run rerun is not new-head evidence.
 
 Exact evidence and failure histories live under
 `docs/research/ground-truth-corpus/results/`, including source/binary reviews,
 raw-observation receipts, immutable build receipts and the final metadata audit.
+`results/final-validation.json` includes exact log hashes and the retained full
+Linux log; `results/final-cli-repeatability.json` records the final native check.
 Do not call R1 merged/release-ready or the 14-project/15-case corpus validated.

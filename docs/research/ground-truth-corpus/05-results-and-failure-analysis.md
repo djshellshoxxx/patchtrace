@@ -270,5 +270,8 @@ deterministic when the observed correspondences are.
 
 See [limitations](06-limitations-and-open-questions.md), the
 [executable handoff](07-handoff-and-reproduction.md), `docs/qa.md` and
-`tasks/todo.md` for validation status and outstanding gates. None of these
+`tasks/todo.md` for validation status and outstanding gates. A final fresh native
+run through the receipt-safety correction again preserved all observations,
+metrics and unified row digests; its exact command and scoped comparison are in
+[`final-cli-repeatability.json`](results/final-cli-repeatability.json). None of these
 measurements is a release-acceptance or general calibrated-probability claim.

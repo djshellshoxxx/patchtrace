@@ -1,0 +1,14 @@
+[
+  {
+    "path": "tools/calibration/tier_r/research_pilot.py",
+    "blob_href": "https://github.com/djshellshoxxx/patchtrace/blob/0271f1869ccba0697c5bf6f797432bb7c6ec54d4/tools/calibration/tier_r/research_pilot.py",
+    "start_line": 261,
+    "start_column": null,
+    "end_line": 261,
+    "end_column": null,
+    "annotation_level": "failure",
+    "title": "Path Traversal via faulty LLM-supplied CLI arguments in research_pilot.main()",
+    "message": "\nSee more on https://sonarcloud.io/project/issues?id=djshellshoxxx_patchtrace&issues=AaGPJOAQLh6Xm1Y7X9X1&open=AaGPJOAQLh6Xm1Y7X9X1&pullRequest=128",
+    "raw_details": null
+  }
+]

@@ -1,7 +1,7 @@
 # R1 handoff and reproduction
 
 Branch: `codex/r1-ground-truth-research-20261030`.
-Draft PR: [#128](https://github.com/djshellshoxxx/patchtrace/pull/128).
+Research PR: [#128](https://github.com/djshellshoxxx/patchtrace/pull/128).
 Integration baseline: `a04f5a299a8d4afef023261e52e08d14678cf1e7`.
 The baseline was rechecked during execution and remained unchanged. The first
 research checkpoint is `a02a1774a1617441072f4a8770348cc22038eeac`; later PR commits
@@ -118,18 +118,25 @@ single invocation does that for the reviewed name-visible GCC O2 fixture:
 "$R1_PY" -m tools.calibration.tier_r.research_pilot \
   --labels "$R1_STORE/labels/research-mingw-gcc-O2-r1-pilot-defined-v1-v2.json" \
   --store "$R1_STORE" --work "$R1_RUNS/gcc-o2-cold-1" \
-  --output "$R1_RUNS/gcc-o2-cold-1.json" \
+  --output "$R1_RUNS/gcc-o2-cold-1/receipt.json" \
   --ghidra-dir "$R1_GHIDRA" --java-home "$R1_JAVA" \
   --rz-diff "$R1_RZDIFF" --unified \
   --review docs/research/ground-truth-corpus/results/acceptance-mingw-gcc-o2.json
 ```
 
+The receipt must be a new `.json` file directly inside the absolute work
+directory. Relative paths, traversal, symlinks and existing destinations are
+rejected before engines start; publication uses exclusive creation. Earlier
+receipts retain their historical locations, but those locations are not examples
+of the hardened CLI's current output policy.
+
 Use a new work directory for an independent repetition. Compare explicit
 observation sequences, metrics and unified row digests; raw JSON may include
 different timing/project metadata. The runner reports cold analysis and a
 subsequent verified unified cache hit separately. Imported or resumed primary
-evidence is identified through its backend/run identity; it is not described as
-a newly executed native run. `--primary-project PATH` can consume a previously
+evidence is identified through its backend/run identity; a `cache_origin` marker
+also prevents fresh-execution credit, even when no primary project was supplied.
+`--primary-project PATH` can consume a previously
 completed project after artifact/raw-digest validation.
 
 The pilot CLI returns 1 for an engine failure, 3 if no engine produced a usable
@@ -195,12 +202,28 @@ option: use the existing regenerate-and-compare tests under temporary directorie
 No schema content or version was changed. Native runs and substituted unit tests
 are reported separately.
 
-The first restricted full invocation was interrupted after confirmed socket
-permission failures; it is not acceptance. The localhost-enabled full run,
-post-fix focused regressions, Ruff and final-head CI are recorded in QA. The
-receipt/cache fixes were added while the long full run was in progress; the
-focused native factory/provenance tests cover those additions, and exact-head
-GitHub CI remains the integration gate.
+The localhost-enabled full Linux invocation completed with **18,212 passed,
+303 skipped, 6 xfailed and one warning in 1,805.40 seconds**. The warning is from
+the intentional duplicate-ZIP-entry rejection fixture. Missing optional live
+tools and native MSVC remain separately blocked; skips are not acceptance.
+The earlier restricted invocation was interrupted after confirmed socket
+permission failures and is not a passing run.
+
+The receipt/cache fixes were added during the long full invocation and the final
+cached-execution/output-safety corrections followed it. Focused native factory
+and provenance/CLI regressions cover those final deltas. Exact-head GitHub CI
+remains the integration gate; the full count is not misrepresented as a run of
+the final published tree. See `results/final-validation.json` and QA for commands,
+log hashes and the final focused result.
+
+At checkpoint `0271f1869ccba0697c5bf6f797432bb7c6ec54d4`, Sonar reported a C security
+rating and annotated unchecked receipt publication. The exact annotation is
+preserved in `results/sonar-checkpoint-0271-annotation.json`; the CLI now enforces
+the output policy above. This supersedes the older duplication-only checkpoint
+description, but the repair still needs the final external gate result. No
+threshold or analysis exclusion was changed. The unified live workflow is
+dispatch-only; this connector has no workflow-dispatch operation, and rerunning
+an old run would not validate a new source revision.
 
 Reconcile with current main and coordinator PR #126 before merging shared QA or
 task notes. Inspect final Windows/Linux/native checks and obtain the required

@@ -103,6 +103,19 @@ def _failure(exc: Exception) -> dict:
     return {'status': 'failed', 'error_type': type(exc).__name__, 'reason': str(exc)[:2000]}
 
 
+def _execution_provenance(run, *, resumed: bool) -> dict:
+    """Describe recorded execution without granting fresh credit to cached or reused output."""
+    if run.backend != 'ghidriff':
+        provenance, executed = 'persisted-import-or-sample', False
+    elif 'cache_origin' in run.settings:
+        provenance, executed = 'persisted-native-cache', False
+    elif resumed:
+        provenance, executed = 'persisted-native', False
+    else:
+        provenance, executed = 'executed-now', True
+    return {'execution_provenance': provenance, 'native_execution_in_this_invocation': executed}
+
+
 def _score(truth, observations: list) -> dict:
     return {'observations': observations, 'metrics': supplemental_metrics(truth, observations)}
 
@@ -193,11 +206,7 @@ def run_pilot(doc: C.KnownAnswerLabels, store: Path, backend: BackendConfig, wor
             engines['ghidriff'] = {'status': 'ok', 'raw_sha256': run.raw_sha256, 'raw_path': str(raw_path),
                                   'resumed_primary': primary_project is not None,
                                   'run_id': run.id, 'backend': run.backend, 'backend_version': run.backend_version,
-                                  'execution_provenance': ('executed-now' if primary_project is None else
-                                                           'persisted-native' if run.backend == 'ghidriff' else
-                                                           'persisted-import-or-sample'),
-                                  'native_execution_in_this_invocation': primary_project is None
-                                  and run.backend == 'ghidriff',
+                                  **_execution_provenance(run, resumed=primary_project is not None),
                                   'wall_s': None if primary_project else time.monotonic() - start,
                                   'settings': run.settings, 'stats': raw.get('stats'), 'coverage': coverage,
                                   **_score(truth, observed)}
@@ -235,12 +244,30 @@ def run_pilot(doc: C.KnownAnswerLabels, store: Path, backend: BackendConfig, wor
     return result
 
 
+def _receipt_path(work: Path, output: Path) -> Path:
+    """Bind a new receipt to the selected private work root before any engine work."""
+    work, output = Path(work), Path(output)
+    if any(not path.is_absolute() or '..' in path.parts for path in (work, output)):
+        raise ValueError('work and receipt paths must be absolute without traversal')
+    if any(part.is_symlink() for path in (work, output) for part in (path, *path.parents)):
+        raise ValueError('work and receipt paths cannot contain symlinks')
+    root = work.resolve()
+    if root.is_relative_to(Path(__file__).resolve().parents[3]):
+        raise ValueError('private work and receipt must be outside the repository')
+    if output.parent.resolve() != root or output.suffix != '.json':
+        raise ValueError('receipt must be a new .json file directly inside the private work directory')
+    target = safe_path(root, output.name)
+    if target.exists():
+        raise ValueError('receipt already exists; choose a new work directory or receipt name')
+    return target
+
+
 def main(argv: Sequence[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--labels', type=Path, required=True)
     parser.add_argument('--store', type=Path, required=True)
     parser.add_argument('--work', type=Path, required=True)
-    parser.add_argument('--output', type=Path, required=True)
+    parser.add_argument('--output', type=Path, required=True, help='new absolute .json path directly inside --work')
     parser.add_argument('--ghidra-dir', type=Path, required=True)
     parser.add_argument('--java-home', default='')
     parser.add_argument('--python', default=sys.executable)
@@ -251,14 +278,16 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser.add_argument('--primary-project', type=Path)
     args = parser.parse_args(argv)
     try:
+        output = _receipt_path(args.work, args.output)
         doc = C.load_labels(args.labels.read_bytes())
         review = None if args.review is None else strict_json(args.review.read_bytes())
         backend = BackendConfig(str(Path(args.python).absolute()), str(args.ghidra_dir.resolve()),
                                 args.timeout, java_home=args.java_home, retain_gzf=True)
         receipt = run_pilot(doc, args.store, backend, args.work, rz_diff=args.rz_diff, unified=args.unified,
                             review=review, primary_project=args.primary_project)
-        args.output.parent.mkdir(parents=True, exist_ok=True)
-        args.output.write_bytes(C.dump_json(receipt))
+        data = C.dump_json(receipt)
+        with _receipt_path(args.work, output).open('xb') as stream:
+            stream.write(data)
         print(f'{doc.pair_id}: ' + ', '.join(f'{name}={value["status"]}' for name, value in receipt['engines'].items()))
         if any(v['status'] == 'failed' for v in receipt['engines'].values()):
             return 1

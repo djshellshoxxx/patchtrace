@@ -860,18 +860,25 @@ Research, implemented pilot, reproducible commands and acceptance limits:
 
 - [x] Reconcile main a04f5a2 and historical/current corpus ownership; dedicated branch
   and draft PR #128, preserving coordinator PR #126 and all original snapshots.
-- [x] Primary-source survey and licence/pin ledger:102 unique commit edges,
- 35 security cards,25 upstream repositories,16 recipe projects; no duplicate mirror counts.
+- [x] Primary-source survey and licence/pin ledger: 102 unique commit edges,
+  35 security cards, 25 upstream repositories, 16 recipe projects; no duplicate mirror counts.
 - [x] Defined-domain 16-mutation suite; independent source/debug/disassembly review;
- 18 accepted O2 records/configuration and4 intrinsically ambiguous records retained.
+  18 accepted O2 records/configuration and 4 intrinsically ambiguous records retained.
 - [x] Actual 15-cell compiler/optimization builds, independent A/A rebuilds,
- LLVM outlining: 21 → 22 functions, genuine Ghidriff/rz-diff/unified observations and repeats.
+  LLVM outlining: 21 → 22 functions, genuine Ghidriff/rz-diff/unified observations and repeats.
 - [x] Explicit metrics, complete denominator/unknown accounting, partition audits,
- immutable build receipts and full-context analysis caching, all using existing contracts.
+  immutable build receipts and full-context analysis caching, all using existing contracts.
 - [x] Two selected cJSON compiled security checks reviewed; strict scope/unblinding
- and 92 visible export names disclosed. Other111labels remain unaccepted.
+  and 92 visible export names disclosed. Other 111 labels remain unaccepted.
+- [x] Full localhost-enabled Linux run: 18,212 passed, 303 skipped, 6 xfailed;
+  final deltas covered by 156 focused tests and the overlapping final 30-test
+  pilot file. Full Ruff passed. Exact snapshot limits and logs are in QA.
+- [x] Repair cached-native execution attribution and CLI receipt-output safety;
+  preserve existing files and snapshots, record the original Sonar annotation,
+  independently review the correction and rerun actual engines with equal results.
 - [ ] Close exact-head Linux/Windows CI, relevant native CI and independent merge
- review; retain reported Sonar gate until exact PR-specific attribution is available.
+  review; inspect Sonar re-analysis of the concrete receipt-output repair. Dispatch
+  the native workflow on the final revision using a workflow-capable connection.
 - [ ] R2 production correctness: conditional Jcc is incorrectly treated as a store
  by facts/operands.is_store. Use `results/failure-analysis-addendum.md` exact counterexample
  and IR/fact hashes; coordinate ownership, regress conditional branches versus real stores,

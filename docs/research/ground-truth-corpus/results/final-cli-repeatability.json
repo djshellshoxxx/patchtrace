@@ -1,0 +1,56 @@
+{
+  "argv": [
+    "/workspace/scratch/a55b59b3e326/patchtrace-venv/bin/python",
+    "-m",
+    "tools.calibration.tier_r.research_pilot",
+    "--labels",
+    "/workspace/scratch/a55b59b3e326/r1-pilot-store/labels/research-mingw-gcc-O2-r1-pilot-defined-v1-v2.json",
+    "--store",
+    "/workspace/scratch/a55b59b3e326/r1-pilot-store",
+    "--work",
+    "/workspace/scratch/a55b59b3e326/r1-evidence/final-safe-cli",
+    "--output",
+    "/workspace/scratch/a55b59b3e326/r1-evidence/final-safe-cli/receipt.json",
+    "--ghidra-dir",
+    "/workspace/scratch/a55b59b3e326/research-tools/ghidra_12.0.4_PUBLIC",
+    "--java-home",
+    "/usr/lib/jvm/java-21-openjdk-amd64",
+    "--python",
+    "/workspace/scratch/a55b59b3e326/patchtrace-venv/bin/python",
+    "--rz-diff",
+    "/workspace/scratch/a55b59b3e326/research-tools/rizin/bin/rz-diff",
+    "--unified",
+    "--review",
+    "docs/research/ground-truth-corpus/results/acceptance-mingw-gcc-o2.json"
+  ],
+  "baseline_receipt": "pilot-mingw-gcc-o2.json",
+  "comparisons": {
+    "ghidriff": {
+      "metrics_equal": true,
+      "observations_equal": true,
+      "status": "ok",
+      "wall_s": 24.373944908999874
+    },
+    "rz-diff": {
+      "metrics_equal": true,
+      "observations_equal": true,
+      "status": "ok",
+      "wall_s": 4.670525916999395
+    },
+    "unified": {
+      "metrics_equal": true,
+      "observations_equal": true,
+      "row_digest_equal": true,
+      "status": "ok",
+      "wall_s": 23.635158596999645
+    }
+  },
+  "exit_code": 0,
+  "ghidriff_execution_provenance": "executed-now",
+  "native_execution_in_this_invocation": true,
+  "new_receipt": "pilot-mingw-gcc-o2-final-cli.json",
+  "purpose": "Real native repetition verifies the output-safety CLI path and scientific-result stability.",
+  "receipt_sha256": "1b3742f1157493e029d8eee09cb4373a427f6dbddd7adcdc3509d4550a6bb94c",
+  "scope_note": "This fresh native run followed output-path hardening and preceded the non-native import/cache precedence tweak. That tweak does not affect the fresh native branch. Original receipts are unchanged.",
+  "target_executed": false
+}

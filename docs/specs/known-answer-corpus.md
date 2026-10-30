@@ -213,6 +213,12 @@ no-recipe; evaluation metrics on hand-computed match sets; report determinism; a
    digest, source digest, debug-artifact digest and resolved source root. Equal
    artifact bytes do not authorize replacing an O3/variant/source-context record
    with an earlier O2 record. Identical complete contexts may still reuse analysis.
+6. The development pilot CLI may publish a receipt only as a new `.json` file
+   directly inside its absolute private work directory outside the repository.
+   Reject traversal, symlink components and existing destinations before engine
+   work; exclusive creation must preserve a destination appearing during the run.
+   This is an output safety boundary, not a new persisted schema or a claim of
+   isolation from hostile writers to the user's private directory.
 
 ### [D:known-answer-factory] 2026-10-14 build amendments
 1. Built and tested: s3 inputs I1 (recipe contract), I2/I3 (case cards via `factory.run_card`), I4 (suites via `factory.run_suite` with cross-check); s4 profiles `msvc-free`, `mingw-gcc`, `mingw-clang`; s5 inventory and hashes; s6 contract; s7 decision table; s9 A/A rebuild, layout and noise (`factory.run_aa`, `factory.run_noise`).
