@@ -169,3 +169,9 @@ def test_indirect_decompiler_effect_and_unknown_opcode_are_declared():
            op("b", 0x1002, "INDIRECT", ["u:x"], "u:y")]
     r = slice_ops(ops, "b", SCOPE)
     assert {"unknown-op:MAGIC:a", "indirect-effect:b"} <= set(r.unknowns)
+
+
+def test_known_but_unmodelled_pcode_effect_abstains():
+    r = slice_ops([op('x', 0x1000, 'UNIMPLEMENTED', ['param:x'], 'u:x')], 'x', SCOPE)
+    assert 'opaque-effect:x' in r.unknowns
+    assert r.status == 'incomplete'
