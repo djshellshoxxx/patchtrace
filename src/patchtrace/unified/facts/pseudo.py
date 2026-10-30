@@ -106,11 +106,31 @@ def _scan(code: str) -> list[tuple[str, str]]:
 
 
 def _number(kind: str, text: str) -> str:
+    """Conservative canon/2: equal values are not enough if literal types may differ.
+
+    On AMD64 C targets, the signedness/width chosen for an integer literal can
+    depend on its suffix and, above INT32_MAX, its radix. A float suffix also
+    changes the expression type. Preserve these hints instead of giving a weak
+    decompiler-based cosmetic proof when the type cannot be established.
+    """
     try:
-        if kind == 'hex':
-            return f'#{int(text.rstrip("uUlL"), 16)}'
-        if kind == 'dec':
-            return f'#{int(text.rstrip("uUlL"))}'
+        if kind in ('hex', 'dec'):
+            digits = text.rstrip('uUlL')
+            suffix = text[len(digits):].lower()
+            if suffix not in ('', 'u', 'l', 'll', 'ul', 'lu', 'ull', 'llu'):
+                return f'n:{text[:40]}'
+            radix = ('hex' if kind == 'hex' else
+                     'oct' if len(digits) > 1 and digits.startswith('0') else 'dec')
+            value = int(digits, {'hex': 16, 'oct': 8, 'dec': 10}[radix])
+            if suffix:
+                # Both 'uL' and 'Lu' mean unsigned long; preserve type hints.
+                canonical_suffix = ('u' if 'u' in suffix else '') + 'l' * suffix.count('l')
+                return f'#{value}:{canonical_suffix}'
+            if value > 0x7FFFFFFF:
+                # The first representable C type can differ between decimal
+                # (signed-only) and hexadecimal/octal (also unsigned) literals.
+                return f'#{value}:{radix}'
+            return f'#{value}'
         if kind == 'char':
             if len(text) == 3 and text[1] != '\\':
                 return f'#{ord(text[1])}'
@@ -120,7 +140,9 @@ def _number(kind: str, text: str) -> str:
             return f'c:{text[:40]}'
     except (ValueError, SyntaxError, MemoryError, RecursionError):
         return f'{"c" if kind == "char" else "n"}:{text[:40]}'
-    return f'f:{text.rstrip("fF") if text.lower().endswith("f") else text}'
+    if kind == 'float':
+        return f'f:{text[:-1]}:f' if text.lower().endswith('f') else f'f:{text}'
+    return f'n:{text[:40]}'
 
 
 def canonicalize(code: str, side: str, labels, addr: AddressMap, basis: str,
