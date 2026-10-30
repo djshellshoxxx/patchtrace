@@ -377,6 +377,7 @@ The published beta passed 93 Windows tests, 91 Linux tests with two Windows-only
 
 | Documentation | Purpose |
 |---|---|
+| [Wiki-style guides](docs/wiki/Home.md) | Source pages for quick-start, developer orientation, codebase map, and design rationale; these files are versioned here, not automatically published to the separate GitHub Wiki. |
 | [Module index](docs/modules.md) | Module responsibilities, boundaries, dependencies, and test seams. |
 | [Architecture](docs/specs/architecture.md) | Runtime, project, ingestion, process, and alignment contracts. |
 | [Schemas](docs/specs/schemas.md) | Versioned record contracts and generated schema/example links. |
