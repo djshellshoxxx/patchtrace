@@ -1,5 +1,20 @@
 # Module index
 
+## R1 corpus research extension (2026-10-30)
+
+`tools/calibration/tier_r/research_audit.py` adds pure partition-leakage checks and
+explicit-observation metric supplements over the existing Tier R contracts. It
+does not create another builder, rewrite labels, calibrate confidence or change
+production matching. Protocol: `docs/research/ground-truth-corpus/04-pilot-protocol.md`.
+Tests: `tests/test_tier_r_research_audit.py`. The source pilot remains a normal
+`suite/1` under `corpus/ours/r1-pilot/defined/`.
+
+| Research module | Responsibility | Tests |
+|---|---|---|
+| `tools/calibration/tier_r/research_build.py` | Orchestrate the existing suite factory across explicit compiler profiles and optimization levels; preserve blocked entries and export visibility | `tests/test_tier_r_research_build.py` |
+| `tools/calibration/tier_r/research_observers.py` | Read actual Ghidriff address observations with separate image bases and unknown change verdicts; no omitted-row credit | `tests/test_tier_r_research_observers.py` |
+| `tools/calibration/tier_r/research_pilot.py` | Run or resume a primary project, then production rz-diff/unified adapters; keep raw evidence and bounded experimental receipts outside the worktree | `tests/test_tier_r_research_pilot.py` |
+
 Stable IDs are independent of filenames. Public interfaces in SPEC-01 and schemas in SPEC-02 are source of truth. Module implementations remain independently usable without Qt.
 
 | ID | File | Responsibility and public interface | Dependencies | Ownership / test seam |
