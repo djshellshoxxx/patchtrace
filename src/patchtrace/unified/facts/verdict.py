@@ -88,8 +88,11 @@ def judge(row_id: str, decision: str, ev: Evidence, limits: UnifiedLimits = DEFA
 def _pseudo_proof(ev: Evidence, states, classes: set[str], semantic: list, targets_ok: bool) -> bool:
     """COS-PSEUDO/1: the canonical pseudo-code is equal, nothing else says otherwise (decompiler-relative, listed)."""
     unmapped = ev.ir.pseudo_unmapped if ev.ir is not None else 0
+    # IR supplies an EH-EQ state. Unreadable / unsupported unwind metadata cannot corroborate a benign change.
+    # Keep the S0 (no IR) fallback decompiler-relative rather than changing its historical proof contract.
+    eh_ok = ev.eh in ('equal', 'absent') if ev.ir is not None else ev.eh != 'differs'
     return (not semantic and states.get('C4') == states.get('C5') == states.get('C6') == 'equal' and targets_ok
-            and ev.eh != 'differs' and unmapped == 0 and not classes & PSEUDO_BLOCKERS)
+            and eh_ok and unmapped == 0 and not classes & PSEUDO_BLOCKERS)
 
 
 def _ir_proof(ev: Evidence, states, classes: set[str], semantic: list, targets_ok: bool, omitted: int) -> str | None:
