@@ -15,8 +15,10 @@ import sys
 from collections.abc import Sequence
 from pathlib import Path
 
+from .. import vendoring_scan as V
 from ..label import AnnotationLog
 from . import annotate as A
+from . import bodyrecord as BR
 from . import contracts as C
 from . import evaluate as E
 from . import factory as F
@@ -270,6 +272,24 @@ def cmd_annotate(args) -> tuple[int, dict]:
                 'records': len(records), 'blocked_engines': blocked, **summary, **stats}
 
 
+def cmd_vendoring(args) -> tuple[int, dict]:
+    if not 0 < args.threshold <= 1 or args.hub_max_lineages < 1:
+        raise Usage('vendoring: --threshold must be in (0, 1] and --hub-max-lineages at least 1')
+    store = _store(args)
+    folder = Path(args.bodies) if args.bodies else store / 'bodies'
+    bodies = BR.load_folder(folder) if folder.is_dir() else {}
+    if not bodies:
+        raise Usage(f'vendoring: no *{BR.SUFFIX} records in {folder.as_posix()}')
+    result = V.scan(bodies, threshold=args.threshold, hub_max_lineages=args.hub_max_lineages)
+    out = Path(args.out) if args.out else store / 'vendoring-proposals.json'
+    out.parent.mkdir(parents=True, exist_ok=True)
+    out.write_bytes(C.dump_json({'threshold': args.threshold, 'hub_max_lineages': args.hub_max_lineages,
+                                 'lineages': len(bodies), **V.to_json(result)}))
+    return (FINDINGS if result.proposals else OK), {
+        'command': 'vendoring', 'status': 'proposals' if result.proposals else 'ok', 'proposals': out.as_posix(),
+        'lineages': len(bodies), 'merge_proposals': len(result.proposals), 'hub_bodies': len(result.hub_bodies)}
+
+
 def cmd_schemas(args) -> tuple[int, dict]:
     root = Path(args.out)
     written = [p.as_posix() for p in S.write_all(root)] + [p.as_posix() for p in RS.write_all(root)]
@@ -366,6 +386,11 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument('--out')
     p.add_argument('--engines', default='', help='optional engines whose predicted pairs become candidates')
     p.add_argument('--imports')
+    p = add('vendoring', cmd_vendoring, 'propose lineage merges from shared masked bodies (merge-only, PREREG 2.4)')
+    p.add_argument('--bodies', help='folder of *.bodies.json (default <store>/bodies)')
+    p.add_argument('--threshold', type=float, required=True)
+    p.add_argument('--hub-max-lineages', type=int, required=True)
+    p.add_argument('--out')
     p = add('schemas', cmd_schemas, 'regenerate docs/schemas/corpus (contracts and report schemas)', store=False)
     p.add_argument('--out', default=str(REPO / 'docs' / 'schemas' / 'corpus'))
     add('catalogue-check', cmd_catalogue_check, 'offline consistency of recipes and case cards', store=False)

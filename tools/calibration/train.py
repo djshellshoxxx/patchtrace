@@ -23,6 +23,25 @@ Feature adapter limits (stated, not hidden): engine outputs carry RVAs, a change
 are 0, and engine-agreement flags compare which engines proposed the same pair. Columns that are constant over the
 whole run are dropped before fitting (label-free) and counted. BinDiff outputs are not used until BinExport pairs exist.
 Exit codes as SPEC-32 s12: 0 ok, 1 findings (leakage), 2 usage or contract error, 3 BLOCKED (input not available here).
+
+LBL-26 "for C" items (docs/audits/20261015-lbl26-pre-lock-audit.md):
+* C-1 `guards.audit_identity_roles` runs after the identity grouping; a function body shared by lineages of different
+  roles halts the run (`PT-KA-LEAK`, exit 1, report still written with every gate insufficient-data, no fit).
+* C-2 per pair stratum the indeterminate share is reported; above `INDETERMINATE_FLAG_SHARE` the stratum is flagged and a
+  `worst_case` (indeterminate read as y = 0) sits next to the point result.
+* C-3 only candidates of natural pairs (`annotate.NATURAL_STRATA`) enter the calibrator, tau and every headline; all other
+  rows are counted in `dataset.adversarial_table` and never scored as evidence.
+* C-4 no run-wide median is fitted before CV: a missing feature is filled with the constant 0.0 and carries the
+  `.missing`/`X.absent_*` family flags (label-free and independent of every other row).
+* C-5 tau is chosen on the same out-of-fold rows that give the reported precision and coverage, so the report labels that
+  precision `dev-selected` (`precision_basis`); nested tau selection is a follow-up.
+* C-6 fewer than 30 lineages with natural evidence rows (`MIN_LINEAGES_EVALUATED`; `--smoke` lowers this to the CV group
+  floor and says so), or, when a locked form is requested (`--locked-form`), fewer than 12 lineages in the locked-test
+  role, halt with exit 1 and a report whose gates are insufficient-data. A split-audit violation still stops before any
+  row exists. The determinism re-run (same inputs, identical `report_sha256`) is a CI step (`ci_summary determinism`),
+  not a check inside this process.
+* C-8 the headline bootstrap intervals are refused when more than `bootstrap.MAX_UNDEFINED_SHARE` of the resamples have
+  an undefined statistic; the shares are listed in `bootstrap_undefined` of the profile.
 """
 from __future__ import annotations
 
@@ -47,13 +66,23 @@ from patchtrace.calibration.features import FEATURE_SCHEMA, SPEC_BY_NAME, featur
 from patchtrace.calibration.scope import SCOPE_TEXT
 
 from . import shift as SH
+from .bootstrap import MAX_UNDEFINED_SHARE
 from .common import Row, canonical_json, digest, strict_json
 from .contracts import ContractError as CorpusContractError
 from .cv import CVConfig, CVError
-from .fit import impute, medians, run_pipeline
+from .fit import run_pipeline
 from .gates import evaluate_gates
-from .guards import RowError, audit_manifest, canonical_manifest_sha256, evidence_pairs, validate_rows
-from .lineage import CandidateIdentity, identity_groups
+from .guards import (
+    MIN_LINEAGES_HEADLINE,
+    MIN_LINEAGES_LOCKED,
+    RowError,
+    audit_identity_roles,
+    audit_manifest,
+    canonical_manifest_sha256,
+    evidence_pairs,
+    validate_rows,
+)
+from .lineage import CandidateIdentity, assign_roles, identity_groups
 from .report import TIER_R_CLAIM, make_tier_r_report, render_markdown, verify_tier_r_report
 from .tier_r import annotate as A
 from .tier_r import contracts as C
@@ -73,6 +102,14 @@ HUB_MAX_LINEAGES = 3
 # Minimum sample before any fit (below: report with every gate insufficient-data, never a number).
 FIT_MIN = {'rows': 200, 'positives': 30, 'negatives': 30}
 EXCLUDED_KEYS = ('indeterminate', 'unlabelled-side')
+# PROPOSED (LBL-26 C-2, PREREG s3; record in the lock commit): above this indeterminate share a stratum is flagged.
+INDETERMINATE_FLAG_SHARE = 0.05
+# LBL-26 C-6: lineages among the evaluated natural rows (anti-conservative bootstrap below) and in a requested locked role.
+MIN_LINEAGES_EVALUATED = MIN_LINEAGES_HEADLINE
+MIN_LINEAGES_LOCKED_ROLE = MIN_LINEAGES_LOCKED
+NATURAL_STRATA = A.NATURAL_STRATA
+HEADLINE_METRICS = ('brier', 'brier_skill', 'ece', 'ece_eqmass10', 'auc', 'logloss', 'slope', 'intercept', 'precision',
+                    'coverage')
 
 
 class TrainError(Exception):
@@ -406,25 +443,61 @@ def assemble(docs: Sequence[PairRows], tool_git: str = 'unknown') -> Bundle:
     return Bundle(list(docs), manifest, audit, evidence, controls)
 
 
+def pair_roles(bundle: Bundle) -> dict[str, str]:
+    """Role of every evidence lineage, from the manifest's recorded split (salt and pre-declared shift lineages)."""
+    split = bundle.manifest.get('split', {})
+    lineages = {d.lineage for d in bundle.docs if d.pair_id in bundle.evidence_ids}
+    return assign_roles(lineages, split.get('salt', ''), split.get('shift_test_lineages', ()))
+
+
+def _indeterminate_counts(docs: Sequence[PairRows]) -> dict[str, dict]:
+    """Per pair stratum: kept candidates, excluded candidates (all reasons) and indeterminate ones."""
+    out: dict[str, dict] = {}
+    for d in docs:
+        s = out.setdefault(d.stratum, {'rows': 0, 'excluded': 0, 'indeterminate': 0, 'class': 'natural'
+                                       if d.stratum in NATURAL_STRATA else 'adversarial'})
+        s['rows'] += len(d.rows)
+        s['excluded'] += sum(d.excluded.values())
+        s['indeterminate'] += d.excluded.get('indeterminate', 0)
+    return out
+
+
 def build_rows(bundle: Bundle, cfg: TrainConfig) -> tuple[list[Row], dict[str, SH.RowInfo], list[str], list[str], dict]:
-    """(rows, row info, kept column names, kinds, stats). Rows are imputed with run-wide medians and constant columns
-    are dropped (both label-free)."""
+    """(natural rows, row info, kept column names, kinds, stats). Only candidates of natural pairs become rows (LBL-26
+    C-3); the others are counted in `stats['adversarial_table']`. A missing feature is filled with 0.0 and keeps its
+    `.missing` family flag (C-4: no statistic is fitted on other rows); constant columns are dropped (label-free).
+    Natural candidates alone define grouping and hub counts. `stats['identity_leaks']` combines natural-only and
+    all-evidence audits for function identities shared by lineages of different roles (C-1)."""
     docs = [d for d in bundle.docs if d.pair_id in bundle.evidence_ids]
     cols = docs[0].columns if docs else feature_names('G')
     entries = [(d, r) for d in docs for r in d.rows]
-    cand = [CandidateIdentity(r.id, d.lineage, r.identities) for d, r in entries]
+    nat = [(d, r) for d, r in entries if d.stratum in NATURAL_STRATA]
+    cand = [CandidateIdentity(r.id, d.lineage, r.identities) for d, r in nat]
     grouping = identity_groups(cand, hub_max_lineages=cfg.hub_max_lineages) if cand else None
-    dicts = [dict(zip(cols, r.x, strict=True)) for _, r in entries]
-    med = medians(dicts, cols)
-    full = [impute(d, cols, med) for d in dicts]
+    roles = pair_roles(bundle)
+    leaks = [] if grouping is None else audit_identity_roles(cand, roles, hubs=grouping.hub_identities)
+    if len(nat) != len(entries):
+        # Stress rows remain audited, but cannot change natural folds or mask a natural leak as a hub.
+        audit_cand = [CandidateIdentity(r.id, d.lineage, r.identities) for d, r in entries]
+        audit_grouping = identity_groups(audit_cand, hub_max_lineages=cfg.hub_max_lineages)
+        leaks = sorted(set(leaks) | set(audit_identity_roles(audit_cand, roles, hubs=audit_grouping.hub_identities)))
+    full = [tuple(0.0 if v is None else float(v) for v in r.x) for _, r in nat]
     keep = [j for j in range(len(cols)) if len({v[j] for v in full}) > 1]
     names = [cols[j] for j in keep]
     kinds = [SPEC_BY_NAME[n].kind for n in names]
     rows, info = [], {}
-    for (d, r), vec in zip(entries, full, strict=True):
+    for (d, r), vec in zip(nat, full, strict=True):
         rows.append(Row(r.id, grouping.group_of[r.id], tuple(vec[j] for j in keep), r.y, 1.0, 'natural',
                         d.profile, d.stratum))
         info[r.id] = SH.RowInfo(toolchain_of(d.older), d.family, d.lineage)
+    adversarial: dict[str, dict] = {}
+    for d in docs:
+        if d.stratum not in NATURAL_STRATA:
+            t = adversarial.setdefault(d.stratum, {'pairs': 0, 'rows': 0, 'positives': 0, 'negatives': 0})
+            t['pairs'] += 1
+            t['rows'] += len(d.rows)
+            t['positives'] += sum(r.y for r in d.rows)
+            t['negatives'] += sum(1 - r.y for r in d.rows)
     excluded: Counter = Counter()
     for d in docs:
         excluded.update(d.excluded)
@@ -433,7 +506,9 @@ def build_rows(bundle: Bundle, cfg: TrainConfig) -> tuple[list[Row], dict[str, S
              'hub_identities': 0 if grouping is None else len(grouping.hub_identities),
              'merged_lineages': 0 if grouping is None else grouping.merged_lineages,
              'largest_group_share': 0.0 if grouping is None else grouping.largest_share,
-             'pairs_without_rows': sorted(d.pair_id for d in docs if not d.rows)}
+             'pairs_without_rows': sorted(d.pair_id for d in docs if not d.rows),
+             'adversarial_table': dict(sorted(adversarial.items())), 'identity_leaks': leaks,
+             'indeterminate_counts': dict(sorted(_indeterminate_counts(docs).items()))}
     return rows, info, names, kinds, stats
 
 
@@ -452,6 +527,64 @@ def sample_guard(rows: Sequence[Row], cfg: TrainConfig) -> list[str]:
     groups = len({r.group for r in rows})
     if groups < cfg.k_outer + cfg.k_inner:
         out.append(f'CV groups {groups} < {cfg.k_outer + cfg.k_inner} (k_outer + k_inner)')
+    return out
+
+
+def lineage_guard(lineages: Sequence[str], roles: Mapping[str, str], cfg: TrainConfig, *,
+                  locked_requested: bool = False) -> list[str]:
+    """Reasons the run halts (exit 1) before any fit (LBL-26 C-6): too few lineages among the evaluated natural rows and,
+    only when a locked form is requested, too few lineages in the locked-test role. `--smoke` lowers the first floor to
+    the CV group floor (the report says it is a smoke run)."""
+    floor = cfg.k_outer + cfg.k_inner if cfg.smoke else MIN_LINEAGES_EVALUATED
+    out = []
+    if len(set(lineages)) < floor:
+        out.append(f'lineages among evaluated evidence rows {len(set(lineages))} < {floor}')
+    if locked_requested:
+        locked = sum(1 for lid in set(lineages) if roles.get(lid) == 'locked-test')
+        if locked < MIN_LINEAGES_LOCKED_ROLE:
+            out.append(f'lineages in the locked-test role {locked} < {MIN_LINEAGES_LOCKED_ROLE}')
+    return out
+
+
+def indeterminate_report(counts: Mapping[str, Mapping], rows: Sequence[Row], oof: Mapping[str, float] | None,
+                         tau: float | None) -> dict:
+    """Per pair stratum: indeterminate share = indeterminate / (kept + all excluded candidates); above the flag share the
+    stratum also gets `worst_case` at the frozen tau with every indeterminate candidate read as y = 0 (LBL-26 C-2): all
+    of them are assumed accepted for precision (`TP / (accepted + k)`) and none for coverage (`accepted / (n + k)`), the
+    pessimistic bound that needs no features of the dropped candidates."""
+    out = {}
+    for stratum, c in sorted(counts.items()):
+        total = c['rows'] + c['excluded']
+        share = c['indeterminate'] / total if total else 0.0
+        flagged = share > INDETERMINATE_FLAG_SHARE
+        entry = {'class': c['class'], 'rows': c['rows'], 'excluded_indeterminate': c['indeterminate'],
+                 'excluded_total': c['excluded'], 'share': share, 'flagged': flagged, 'point': None,
+                 'worst_case': None}
+        members = [r for r in rows if r.subtype == stratum]
+        if c['class'] == 'natural' and tau is not None and oof is not None and members:
+            acc = [r for r in members if oof[r.id] >= tau]
+            tp = sum(r.y for r in acc)
+            k = c['indeterminate']
+            entry['point'] = {'precision': tp / len(acc) if acc else None, 'coverage': len(acc) / len(members)}
+            if flagged:
+                entry['worst_case'] = {
+                    'assumption': 'indeterminate read as y = 0, all assumed accepted for precision and none for '
+                                  'coverage',
+                    'k': k, 'precision': tp / (len(acc) + k) if acc or k else None,
+                    'coverage': len(acc) / (len(members) + k)}
+        out[stratum] = entry
+    return {'flag_share': INDETERMINATE_FLAG_SHARE, 'strata': out,
+            'flagged': sorted(k for k, v in out.items() if v['flagged'])}
+
+
+def bootstrap_undefined(evaluation: Mapping) -> dict:
+    """Undefined-resample counts, shares and refusals of the headline intervals (LBL-26 C-8)."""
+    out = {}
+    for name in HEADLINE_METRICS:
+        iv = evaluation.get(name)
+        if isinstance(iv, Mapping) and 'undefined' in iv:
+            out[name] = {'undefined': iv['undefined'], 'share': iv.get('undefined_share'),
+                         'refused': bool(iv.get('refused')), 'max_share': MAX_UNDEFINED_SHARE}
     return out
 
 
@@ -489,10 +622,12 @@ class TrainResult:
     artifact: dict | None
     shift: dict
     train_key: str
+    halt: tuple[str, ...] = ()
 
 
 def run_training(docs: Sequence[PairRows], cfg: TrainConfig | None = None, *, prereg_sha: str | None = None,
-                 tool_git: str = 'unknown', origin: str = 'rows', extra: Mapping | None = None) -> TrainResult:
+                 tool_git: str = 'unknown', origin: str = 'rows', extra: Mapping | None = None,
+                 locked_requested: bool = False) -> TrainResult:
     cfg = cfg or TrainConfig()
     bundle = assemble(docs, tool_git)
     manifest_sha = canonical_manifest_sha256(bundle.manifest)
@@ -503,7 +638,13 @@ def run_training(docs: Sequence[PairRows], cfg: TrainConfig | None = None, *, pr
                     config_digest=cfg.digest(), prereg_sha=prereg_sha)
     profile = bundle.docs[0].profile
     rows, info, names, kinds, stats = build_rows(bundle, cfg)
+    leaks = stats.pop('identity_leaks')
+    ind_counts = stats.pop('indeterminate_counts')
     lineages = sorted({d.lineage for d in bundle.docs if d.pair_id in bundle.evidence_ids})
+    halt = [f'PT-KA-LEAK: {leak}' for leak in leaks[:5]] + ([f'PT-KA-LEAK: {len(leaks) - 5} more identity leaks']
+                                                           if len(leaks) > 5 else [])
+    halt += lineage_guard(sorted({info[r.id].lineage for r in rows}), pair_roles(bundle), cfg,
+                          locked_requested=locked_requested)
     toolchains = sorted({toolchain_of(d.older) for d in bundle.docs if d.pair_id in bundle.evidence_ids})
     versions: dict[str, set[str]] = {}
     for d in bundle.docs:
@@ -516,12 +657,13 @@ def run_training(docs: Sequence[PairRows], cfg: TrainConfig | None = None, *, pr
                'n_pairs': len(bundle.docs), 'n_pairs_evidence': len(bundle.evidence_ids),
                'controls_excluded': dict(sorted(bundle.controls.items())), 'n_lineages': len(lineages),
                'n_families': len({info[r.id].family for r in rows}), 'toolchains': toolchains,
-               'n_natural': len(rows), 'n_positive': pos, 'n_negative': len(rows) - pos,
+               'n_natural': len(rows), 'n_lineages_natural': len({info[r.id].lineage for r in rows}), 'n_positive': pos, 'n_negative': len(rows) - pos,
                'engines': {e: sorted(v) for e, v in sorted(versions.items())}, 'engine_runs': len(runs),
                'roles': bundle.audit.get('roles', {}), 'audit_warnings': bundle.audit['warnings'],
                'columns_used': len(names), 'claim_scope': 'pipeline-check-on-test-builds', **stats, **dict(extra or {})}
-    reasons = sample_guard(rows, cfg)
+    reasons = halt + sample_guard(rows, cfg)
     evaluation = None
+    oof = tau_value = None
     artifact = None
     ladder = SH.ladder_not_run('no fit was run: ' + '; '.join(reasons) if reasons else 'no fit was run')
     if not reasons:
@@ -532,27 +674,36 @@ def run_training(docs: Sequence[PairRows], cfg: TrainConfig | None = None, *, pr
         except (CVError, RowError) as exc:
             reasons = [f'fit not possible: {str(exc)[:300]}']
         else:
-            evaluation, artifact = result.evaluation, result.artifact
+            evaluation, artifact, oof = result.evaluation, result.artifact, result.oof
             base = {'coverage': (evaluation.get('coverage') or {}).get('point')}
             prec = evaluation.get('precision') or {}
             base.update(precision=prec.get('point'), precision_lo=prec.get('lo'), precision_hi=prec.get('hi'))
             tau = (evaluation.get('tau_selection') or {}).get('tau')
+            tau_value = None if tau is None else tau['tau']
+            evaluation['precision_basis'] = 'dev-selected'
+            evaluation['bootstrap_undefined'] = bootstrap_undefined(evaluation)
             ladder = SH.run_ladder(rows, info, kinds=kinds, cv=_cv(cfg, kinds), tau=None if tau is None else tau['tau'],
                                    baseline=base, cfg=SH.LadderConfig(cfg.rung_b_count, cfg.rung_null_sims))
+    indeterminate = indeterminate_report(ind_counts, rows, oof, tau_value)
     gates = tier_r_gates(evaluation, reasons)
     per = dict(evaluation) if evaluation is not None else {
         'status': 'insufficient-data', 'reasons': list(reasons), 'n_natural': len(rows),
         'n_groups': len({r.group for r in rows})}
     per['gates'] = gates
     per['shift'] = ladder
+    per['indeterminate'] = indeterminate
     report = make_tier_r_report(
         prereg_sha=prereg_sha, corpus_manifest_sha=manifest_sha, label_set_sha=label_set_sha, tool_git=tool_git,
         dataset=dataset, per_profile={profile: per},
         known_limits=[f'insufficient: {r}' for r in reasons] +
+        [f'indeterminate share above {INDETERMINATE_FLAG_SHARE} in stratum {k}: read the worst-case block, not only the '
+         'point result' for k in indeterminate['flagged']] +
+        [f'headline interval refused (more than {MAX_UNDEFINED_SHARE} of resamples undefined): {k}'
+         for k, v in sorted((per.get('bootstrap_undefined') or {}).items()) if v['refused']] +
         ([] if prereg_sha else ['preregistration not locked: the run key uses the placeholder']) +
         (['smoke configuration: reduced bootstrap and CV effort, not the preregistered values'] if cfg.smoke else []),
         amendments=[])
-    return TrainResult(report, artifact, ladder, key)
+    return TrainResult(report, artifact, ladder, key, tuple(halt))
 
 
 def _cv(cfg: TrainConfig, kinds: Sequence[str]) -> CVConfig:
@@ -618,25 +769,29 @@ def _run(args, only_shift: bool = False) -> tuple[int, dict]:
     docs, origin, extra = _inputs(args)
     cfg = TrainConfig.smoke_config() if args.smoke else TrainConfig()
     result = run_training(docs, cfg, prereg_sha=_prereg_sha(args.prereg), tool_git=args.tool_git, origin=origin,
-                          extra=extra)
+                          extra=extra, locked_requested=bool(args.locked_form))
     out = Path(args.out)
     summary = {'train_key': result.train_key, 'report_sha256': result.report['report_sha256'],
                'gates': {g: v['status'] for g, v in sorted(result.report['gates'].items())}}
+    code = FINDINGS if result.halt else OK                    # LBL-26 C-1/C-6: halted runs still write their report
+    if result.halt:
+        summary.update(halt=list(result.halt))
     if only_shift:
         _write(out / 'shift.json', canonical_json(result.shift) + b'\n')
         summary.update(command='shift', status='ok', shift=(out / 'shift.json').as_posix(),
                        rungs=[{'rung': r['rung'], 'held_out': r['held_out'], 'status': r['status']}
                               for r in result.shift['rungs']])
-        return OK, summary
+        summary['status'] = 'halted' if result.halt else 'ok'
+        return code, summary
     _write(out / 'report.json', canonical_json(result.report) + b'\n')
     _write(out / 'report.md', render_markdown(result.report).encode('utf-8'))
-    summary.update(command='run', status='ok', report=(out / 'report.json').as_posix())
+    summary.update(command='run', status='halted' if result.halt else 'ok', report=(out / 'report.json').as_posix())
     if args.artifact and result.artifact is not None:
         _write(out / 'artifact.dev-only.json', canonical_json(result.artifact) + b'\n')
         summary['artifact'] = (out / 'artifact.dev-only.json').as_posix()
     elif args.artifact:
         summary['artifact'] = None
-    return OK, summary
+    return code, summary
 
 
 def _report(args) -> tuple[int, dict]:
@@ -671,6 +826,8 @@ def build_parser() -> argparse.ArgumentParser:
         p.add_argument('--aggregate', help='merged tier-r-report/1 aggregate to cross-check with --merge')
         p.add_argument('--prereg', help='locked preregistration file; its SHA-256 enters the train key')
         p.add_argument('--out', required=True, help='output folder')
+        p.add_argument('--locked-form', action='store_true',
+                       help='a locked-test look is requested: halt (exit 1) with fewer than 12 locked-role lineages')
         p.add_argument('--tool-git', default='unknown')
         p.add_argument('--smoke', action='store_true', help='reduced effort (recorded in the report)')
         p.add_argument('--artifact', action='store_true',

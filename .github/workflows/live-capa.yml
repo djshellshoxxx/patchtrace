@@ -1,0 +1,63 @@
+name: Live capa pairs acceptance
+# Real pinned capa 9.4.0 (tools/intel_tools_pin.json, trust-on-first-use values) on the SYNTHETIC capa-api pair; the
+# resulting capa-pairs/1 delta is compared with tests/fixtures/intel_tools/expected-pairs-capa-api.json (CAP-8).
+# Dispatch only and ADVISORY: never a required check. Linux is the strict leg (PATCHTRACE_REQUIRE_LIVE_CAPA=1: an
+# unavailable or unpinned capa fails); Windows is advisory and records failures without failing the job. Integrity
+# failures (download, size or SHA-256 mismatch) fail both. The tool is downloaded, verified and extracted by
+# tools/provision_intel_tools.py, never installed or executed by it.
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  live-capa:
+    name: live capa pairs (${{ matrix.os }})
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-22.04
+            pin_os: linux
+            advisory: false
+            provision_flags: ''
+          - os: windows-latest
+            pin_os: windows
+            advisory: true
+            provision_flags: '--advisory'
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 60
+    env:
+      PATCHTRACE_LIVE_STATUS_DIR: ${{ github.workspace }}/build/live-status
+      QT_QPA_PLATFORM: offscreen
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Qt runtime libraries (pytest-qt imports Qt)
+        if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install -y libegl1 libopengl0 libgl1
+      - run: python -m pip install -e .[dev]
+      - uses: actions/cache@v4
+        with:
+          path: build/capa-cache
+          key: capa-${{ matrix.pin_os }}-${{ hashFiles('tools/intel_tools_pin.json') }}
+      - name: Provision pinned tools (download + verify + extract; never executes them)
+        shell: bash
+        run: python tools/provision_intel_tools.py --os ${{ matrix.pin_os }} --engine capa ${{ matrix.provision_flags }} --github-env "$GITHUB_ENV"
+      - name: Live capa pair tests (records passed / failed / blocked)
+        continue-on-error: ${{ matrix.advisory }}
+        shell: bash
+        env:
+          PATCHTRACE_REQUIRE_LIVE_CAPA: ${{ matrix.advisory && '0' || '1' }}
+        run: python -m pytest -rA tests/test_live_capa_pairs.py
+      - name: Live status summary
+        if: always()
+        shell: bash
+        run: python tools/check_live_status.py --summary "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: live-capa-${{ matrix.pin_os }}
+          path: build/live-status/
+          if-no-files-found: warn

@@ -122,6 +122,10 @@ class RuntimeFingerprint:
             # Online symbol servers can change answers over time without any local
             # input changing, so the output is not a function of the key.
             return False, 'online symbol policy'
+        if (self.symbol_policy.strip().lower() == 'local'
+                and not re.fullmatch(r'[0-9a-f]{64}', self.symbol_input_digest)):
+            # Local PDBs change the answer, so the key must carry their hashes (SPEC-53 section 7.1).
+            return False, 'local symbol policy without a staged-PDB digest'
         return True, 'eligible'
 
     def raw_key(self, older_sha256: str, newer_sha256: str) -> str:
@@ -264,19 +268,19 @@ class DerivedCache:
         path = self._lock_path(stage, key)
         for _attempt in range(2):
             owner = _new_owner()
-            try:
-                fd = os.open(path, os.O_WRONLY | os.O_CREAT | os.O_EXCL | getattr(os, 'O_BINARY', 0), 0o600)
-            except FileExistsError:
-                if not self._recover(path, _HELD_LOCKS):
-                    return None
-                continue
             with _REGISTRY_LOCK:
                 _HELD_LOCKS.add(owner['nonce'])
             try:
-                with os.fdopen(fd, 'wb') as handle:
-                    handle.write(json.dumps(owner).encode())
+                _publish_owner(path, owner)
+            except FileExistsError:
+                with _REGISTRY_LOCK:
+                    _HELD_LOCKS.discard(owner['nonce'])
+                if not self._recover(path, _HELD_LOCKS):
+                    return None
+                continue
             except OSError:
-                self._unlock(stage, key, owner['nonce'])
+                with _REGISTRY_LOCK:
+                    _HELD_LOCKS.discard(owner['nonce'])
                 raise
             return owner['nonce']
         return None
@@ -331,6 +335,8 @@ class DerivedCache:
             raise _Corrupt('manifest names another entry')
         if stage == RAW_STAGE and manifest.size > self.config.raw_max_bytes:
             raise _Corrupt('raw entry exceeds bound')
+        if manifest.size > self.config.budget_bytes:  # put() never admits more, so this is damage
+            raise _Corrupt('entry exceeds budget')
         try:
             with open(payload_path, 'rb') as handle:
                 payload = handle.read(manifest.size + 1)
@@ -471,7 +477,7 @@ class DerivedCache:
         try:
             try:
                 self._safe_dir(path.parent, create=True)
-                _write_file(path, json.dumps(owner).encode())
+                _publish_owner(path, owner)
                 created = True
             except (OSError, _Unsafe):
                 pass  # in-process registry still protects against our own prune
@@ -521,8 +527,20 @@ class DerivedCache:
                 total += os.lstat(entry / name).st_size
         return total
 
+    def _quarantine_items(self) -> list[tuple[int, Path, int]]:
+        """(mtime, path, bytes) of quarantined entries; they count toward the budget and go first."""
+        qdir = self._base / 'quarantine'
+        try:
+            if not self._safe_dir(qdir, create=False):
+                return []
+            return [(os.lstat(p).st_mtime_ns, p, self._entry_bytes(p))
+                    for p in qdir.iterdir() if not _is_link_or_junction(p)]
+        except (OSError, _Unsafe):
+            return []
+
     def _usage(self) -> int:
-        return sum(self._entry_bytes(e) for _s, _k, e in self._entries())
+        return (sum(self._entry_bytes(e) for _s, _k, e in self._entries())
+                + sum(size for _m, _p, size in self._quarantine_items()))
 
     def _leased(self, stage: str, key: str) -> bool:
         shard = self._shard(stage, key)
@@ -614,7 +632,7 @@ class DerivedCache:
         if type(target) is not int or target < 0:
             raise _config_error('target_bytes must be a non-negative integer')
         result = {'removed': 0, 'freed_bytes': 0, 'skipped_leased': 0, 'skipped_locked': 0,
-                  'bytes': 0, 'staging_removed': 0, 'locks_recovered': 0}
+                  'bytes': 0, 'staging_removed': 0, 'locks_recovered': 0, 'quarantine_removed': 0}
         if self.config.no_cache:
             return result
         try:
@@ -626,7 +644,15 @@ class DerivedCache:
                 except OSError:
                     clock = 0  # incomplete entries are the first to go
                 candidates.append((clock, stage, key, entry, self._entry_bytes(entry)))
-            total = sum(c[4] for c in candidates)
+            quarantined = self._quarantine_items()
+            total = sum(c[4] for c in candidates) + sum(size for _m, _p, size in quarantined)
+            for _mtime, path, size in sorted(quarantined, key=lambda q: q[0]):
+                if total <= target:
+                    break
+                _discard_staging(path)
+                if not path.exists():
+                    total -= size
+                    result['quarantine_removed'] += 1
             for _clock, stage, key, entry, size in sorted(candidates):
                 if total <= target:
                     break
@@ -666,10 +692,33 @@ class _Corrupt(Exception):
 
 def _write_file(path: Path, data: bytes) -> None:
     fd = os.open(path, os.O_WRONLY | os.O_CREAT | os.O_EXCL | getattr(os, 'O_BINARY', 0), 0o600)
-    with os.fdopen(fd, 'wb') as handle:
+    try:
+        stream = os.fdopen(fd, 'wb')
+    except BaseException:
+        os.close(fd)  # an open handle would keep the file undeletable on Windows
+        raise
+    with stream as handle:
         handle.write(data)
         handle.flush()
         os.fsync(handle.fileno())
+
+
+def _publish_owner(path: Path, owner: dict) -> None:
+    """Create `path` already holding its owner record, or raise FileExistsError. A hard link is an
+    exclusive create that exposes complete content, so a crash cannot leave an empty lock or lease."""
+    tmp = path.with_name(f'{path.name}.new-{owner["nonce"]}')
+    try:
+        data = json.dumps(owner).encode()
+        _write_file(tmp, data)
+        try:
+            os.link(tmp, path)
+        except FileExistsError:
+            raise
+        except OSError:  # no hard links here (FAT, some network shares): plain exclusive create
+            _write_file(path, data)
+    finally:
+        with contextlib.suppress(OSError):
+            os.unlink(tmp)
 
 
 # Separate seams so tests can simulate a crash at each promotion point.

@@ -63,6 +63,7 @@ RUN_KEEP = 8
 BACKUP_LABEL = 'unified-retention'
 MANIFEST = 'manifest.json'
 ROWS, FACTS = 'rows.jsonl.gz', 'facts.jsonl.gz'
+DECOMP = 'decomp.jsonl.gz'   # optional part of the on-demand decompile (S3b)
 MANIFEST_MAX_BYTES = 1024 * 1024
 LINE_MAX_BYTES = 4 * 1024 * 1024
 ORPHAN_RESULT_S = 300  # 02 s4: a result directory without a row is an orphan after 5 minutes
@@ -72,6 +73,7 @@ _RUN_DIR = re.compile(r'[A-Za-z0-9][A-Za-z0-9._-]{0,127}')
 _RESULT_ID = re.compile(r'[0-9a-f]{64}')
 _RESULT_DIR = re.compile(r'[0-9a-f]{16}')
 _STAGING_DIR = re.compile(r'tmp-[0-9a-f]{16}')
+_PREVIOUS_DIR = re.compile(r'prev-[0-9a-f]{16}-[0-9a-f]{16}')
 _LONGEST_TAIL = len('tmp-') + len('/rows.jsonl.gz.part')  # below results/<16 hex>: a staging dir's part file
 
 
@@ -214,6 +216,20 @@ def add_limitations(directory: Path, notes: Iterable[str]) -> UnifiedResultManif
     return updated
 
 
+def add_part(directory: Path, part: Part) -> UnifiedResultManifest:
+    """Add an optional part (`decomp.jsonl.gz`, S3b) to a staged result whose file `write_part` already wrote. The
+    manifest is rewritten; the result key does not cover the parts, and readers that do not know the part ignore it."""
+    manifest, _sha = read_manifest(directory)
+    document = manifest.model_dump(mode='json')
+    document['parts'] = sorted([*(p for p in document['parts'] if p['name'] != part.name), part.model_dump(mode='json')],
+                               key=lambda p: p['name'])
+    updated = UnifiedResultManifest.model_validate_json(json.dumps(document))
+    target = Path(directory) / f'{MANIFEST}.part'
+    target.write_bytes(dump_line(updated))
+    _replace(target, Path(directory) / MANIFEST)
+    return updated
+
+
 # --- verification and reading (pure file I/O; any thread) ---------------------------------------------------------
 
 def read_manifest(directory: Path) -> tuple[UnifiedResultManifest, str]:
@@ -249,6 +265,8 @@ def part_lines(path: Path, limits: UnifiedLimits = DEFAULT_LIMITS) -> Iterator[b
                 buffer += chunk
                 *complete, buffer = buffer.split(b'\n')
                 for line in complete:
+                    if len(line) > LINE_MAX_BYTES:
+                        raise _err('A unified result line is too long', 'line-too-long')
                     yield line + b'\n'
                 if len(buffer) > LINE_MAX_BYTES:
                     raise _err('A unified result line is too long', 'line-too-long')
@@ -294,21 +312,28 @@ class _Deep:
     first). A staged directory comes from a worker process: matching hashes prove integrity, not that the content
     is what the manifest claims."""
 
-    def __init__(self, manifest: UnifiedResultManifest):
+    def __init__(self, manifest: UnifiedResultManifest, limits: UnifiedLimits):
         self.manifest = manifest
+        self.limits = limits
+        self.check_decomp = any(p.name == DECOMP for p in manifest.parts)
         self.materiality: dict[str, str] = {}  # row_id -> materiality of every row seen
         self.facted: set[str] = set()
+        self.row_rvas: set[tuple[str, int]] = set()
+        self.decompiled: set[tuple[str, int]] = set()
         self.decisions = dict.fromkeys(DECISIONS, 0)
         self.materialities = dict.fromkeys(MATERIALITIES, 0)
 
     def feed(self, name: str):
-        return {ROWS: self.row, FACTS: self.fact}.get(name)
+        return {ROWS: self.row, FACTS: self.fact, DECOMP: self.decomp}.get(name)
 
     def row(self, line: bytes) -> None:
         row = parse_line(line, UnifiedMatch)
         if not _row_id_ok(self.manifest, row) or row.row_id in self.materiality:
             raise _err('A unified row id is wrong or repeated', 'row-id')
         self.materiality[row.row_id] = row.materiality
+        if self.check_decomp:
+            self.row_rvas.update(('older', side.rva) for side in row.older)
+            self.row_rvas.update(('newer', side.rva) for side in row.newer)
         self.decisions[row.decision] += 1
         self.materialities[row.materiality] += 1
 
@@ -317,6 +342,31 @@ class _Deep:
         if self.materiality.get(fact.row_id) != fact.verdict or fact.row_id in self.facted:
             raise _err('Change facts do not match their row', 'facts-row')
         self.facted.add(fact.row_id)
+
+    def decomp(self, line: bytes) -> None:
+        """Reject a rehashed but forged code part before its result pointer can be published."""
+        try:
+            doc = strict_json(line.decode('utf-8'))
+        except (ValueError, RecursionError, UnicodeDecodeError):
+            raise _err('A decompiled code record is invalid', 'decompile-invalid') from None
+        if (type(doc) is not dict or set(doc) != {'side', 'rva', 'status', 'code'}
+                or doc['side'] not in ('older', 'newer') or type(doc['rva']) is not int
+                or doc['status'] not in ('ok', 'failed', 'timeout')
+                or (doc['status'] == 'ok' and (type(doc['code']) is not str or not doc['code']))
+                or (doc['status'] != 'ok' and doc['code'] is not None)):
+            raise _err('A decompiled code record is invalid', 'decompile-invalid')
+        if doc['code'] is not None:
+            try:
+                doc['code'].encode('utf-8')
+            except UnicodeEncodeError:
+                raise _err('A decompiled code record is invalid', 'decompile-invalid') from None
+            if (len(doc['code']) > self.limits.l29_pseudo_chars
+                    or doc['code'].count('\n') + 1 > self.limits.l29_pseudo_lines):
+                raise _err('A decompiled code record exceeds its bounds', 'decompile-invalid')
+        key = (doc['side'], doc['rva'])
+        if key not in self.row_rvas or key in self.decompiled:
+            raise _err('A decompiled code record has a foreign or repeated RVA', 'decompile-rva')
+        self.decompiled.add(key)
 
     def finish(self) -> None:
         if Counts.of_tallies(self.decisions, self.materialities) != self.manifest.counts:
@@ -338,7 +388,7 @@ def _verify(directory: Path, *, expected_result_id: str | None = None, expected_
     names = {MANIFEST, *(p.name for p in manifest.parts)}
     if {p.name for p in directory.iterdir()} != names:
         raise _err('The unified result directory holds unexpected files', 'unexpected-files')
-    checks = _Deep(manifest) if deep else None
+    checks = _Deep(manifest, limits) if deep else None
     for part in sorted(manifest.parts, key=lambda p: p.name != ROWS):  # rows before facts: facts link to rows
         path = directory / part.name
         if path.is_symlink() or not path.is_file():
@@ -463,6 +513,11 @@ class PublishedResult:
     deleted_rows: int
 
 
+def _previous_path(final: Path, manifest_sha: str) -> Path:
+    """Recoverable sibling selected by the committed pointer's full, verified manifest hash."""
+    return final.with_name(f'prev-{final.name}-{manifest_sha[:16]}')
+
+
 def publish_result(enrichment: EnrichmentStore, staged: Path, *, guard: Guard, current: Guard, revision: int,
                    limits: UnifiedLimits = DEFAULT_LIMITS, upgrade: bool = False) -> PublishedResult:
     """Verify a staged result (deeply: it comes from a worker), check that it belongs to this project, rename it
@@ -487,6 +542,7 @@ def publish_result(enrichment: EnrichmentStore, staged: Path, *, guard: Guard, c
     final = safe_path(root, relative)
     staged = Path(staged)
     in_place = staged.resolve() == final.resolve()
+    previous = None
     if final.exists() and not in_place:
         try:
             existing, existing_sha = _verify(final, limits=limits, deep=False)
@@ -499,31 +555,51 @@ def publish_result(enrichment: EnrichmentStore, staged: Path, *, guard: Guard, c
         elif existing.result_id != manifest.result_id:
             raise _err('Another result already uses this sidecar directory', 'dir-collision')
         elif existing.model_copy(update={'created_utc': manifest.created_utc}) != manifest and upgrade:
-            trash = final.with_name(f'tmp-{secrets.token_hex(8)}')
-            _replace(final, trash)
-            _rmtree(trash)
+            previous = _previous_path(final, existing_sha)
+            _check_path_length(root, str(previous.relative_to(root)))
+            if previous.exists():
+                _verify(previous, expected_result_id=existing.result_id,
+                        expected_manifest_sha256=existing_sha, limits=limits, deep=False)
+                _rmtree(final)  # an interrupted earlier attempt already preserved this exact generation
+            else:
+                _replace(final, previous)
         elif existing.model_copy(update={'created_utc': manifest.created_utc}) != manifest:
             raise _err('The same result id was produced with different content', 'result-drift',
                        'PT-UNIFIED-INTERNAL')
         else:  # idempotent re-publish: the verified directory is already in place and is the one that counts
             manifest, manifest_sha = existing, existing_sha
-    if not final.exists():
-        final.parent.mkdir(parents=True, exist_ok=True)
-        _replace(staged, final)
-    elif not in_place:
-        _rmtree(staged)
-    if hashlib.sha256((final / MANIFEST).read_bytes()).hexdigest() != manifest_sha:
-        raise _err('The unified result manifest changed while it was published', 'manifest-hash-mismatch')
-    pointer = UnifiedResultPointerV2(
-        result_id=manifest.result_id, relative_dir=relative, manifest_sha256=manifest_sha, status=manifest.status,
-        counts=manifest.counts, config_digest=manifest.config_digest, older_sha256=manifest.older_sha256,
-        newer_sha256=manifest.newer_sha256)
     try:
-        entry = enrichment.publish(RESULT_KIND, guard, current, revision, manifest.status, _body(pointer, limits),
-                                   manifest.result_id)
-    except EnrichmentError as exc:
-        raise _err('The unified pointer row could not be stored', 'enrichment-limit'
-                   if exc.code == 'PT-ENRICH-LIMIT' else 'pointer-publish') from None
+        if not final.exists():
+            final.parent.mkdir(parents=True, exist_ok=True)
+            _replace(staged, final)
+        elif not in_place:
+            _rmtree(staged)
+        if hashlib.sha256((final / MANIFEST).read_bytes()).hexdigest() != manifest_sha:
+            raise _err('The unified result manifest changed while it was published', 'manifest-hash-mismatch')
+        pointer = UnifiedResultPointerV2(
+            result_id=manifest.result_id, relative_dir=relative, manifest_sha256=manifest_sha, status=manifest.status,
+            counts=manifest.counts, config_digest=manifest.config_digest, older_sha256=manifest.older_sha256,
+            newer_sha256=manifest.newer_sha256)
+        try:
+            entry = enrichment.publish(RESULT_KIND, guard, current, revision, manifest.status, _body(pointer, limits),
+                                       manifest.result_id)
+        except EnrichmentError as exc:
+            raise _err('The unified pointer row could not be stored', 'enrichment-limit'
+                       if exc.code == 'PT-ENRICH-LIMIT' else 'pointer-publish') from None
+    except BaseException:
+        if previous is not None:
+            try:
+                if final.exists():
+                    _rmtree(final)
+                _replace(previous, final)
+            except (OSError, UnifiedError):
+                pass  # readers can still recover the exact committed generation from `previous`
+        raise
+    if previous is not None:
+        try:
+            _rmtree(previous)
+        except OSError:
+            pass  # committed replacement is current; the orphan sweep can remove this later
     deleted = 0
     try:
         deleted = apply_unified_retention(enrichment, protect=(manifest.result_id,), limits=limits)
@@ -589,8 +665,17 @@ def _open(enrichment: EnrichmentStore, entry: Entry, pointer: UnifiedResultPoint
     publish verified deeply) and the row must agree with it: same run, raw output, pair, status, counts and
     config, and a directory inside its own run. Raises UnifiedError or ValueError (unsafe path)."""
     directory = safe_path(enrichment.store.root, pointer.relative_dir)
-    manifest, _sha = _verify(directory, expected_result_id=pointer.result_id,
-                             expected_manifest_sha256=pointer.manifest_sha256, limits=limits, deep=False)
+    try:
+        manifest, _sha = _verify(directory, expected_result_id=pointer.result_id,
+                                 expected_manifest_sha256=pointer.manifest_sha256, limits=limits, deep=False)
+    except UnifiedError as original:
+        previous = _previous_path(directory, pointer.manifest_sha256)
+        try:
+            manifest, _sha = _verify(previous, expected_result_id=pointer.result_id,
+                                     expected_manifest_sha256=pointer.manifest_sha256, limits=limits, deep=False)
+        except UnifiedError:
+            raise original from None
+        directory = previous
     pair = (getattr(pointer, 'older_sha256', manifest.older_sha256), getattr(pointer, 'newer_sha256',
                                                                            manifest.newer_sha256))
     if (pointer.relative_dir != result_relative_dir(manifest.ghidriff_run_id, manifest.result_id)
@@ -809,10 +894,14 @@ def sweep_orphans(enrichment: EnrichmentStore, run_id: str) -> int:
         return 0
     rows, skipped, _newer = _pointers(enrichment)
     stored = {p.relative_dir.rsplit('/', 1)[1] for _e, p in rows} | {i[:16] for i in skipped}
+    preserved = {_previous_path(Path(p.relative_dir), p.manifest_sha256).name for _e, p in rows}
     now, removed = time.time(), 0
     for child in sorted(parent.iterdir()):
         staging = _STAGING_DIR.fullmatch(child.name) is not None
-        if not staging and (not _RESULT_DIR.fullmatch(child.name) or child.name in stored):
+        previous = _PREVIOUS_DIR.fullmatch(child.name) is not None
+        if previous and (skipped or child.name in preserved):
+            continue
+        if not staging and not previous and (not _RESULT_DIR.fullmatch(child.name) or child.name in stored):
             continue
         try:
             age = now - child.stat().st_mtime

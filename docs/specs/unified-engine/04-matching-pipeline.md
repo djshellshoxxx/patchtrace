@@ -77,11 +77,14 @@ def find(st, p, pool_a, pool_b, tail, rnd, budget, cap='A', chain=()):
 | P12 string-set | sorted rare string SHA-256 set (L-13/L-14) | >= L-16 elements | B | F-PT-STRUCT | O(refs) | BinDiff/VT string refs (live here, inert in BinDiff, R04 s0.4) |
 | P13 import-callee-set | sorted called import keys | >= L-16 elements | B | F-PT-STRUCT | O(calls) | Diaphora import-names idea (own code) |
 | P14 const-set | sorted rare constants (L-15) | >= L-16 elements | B | as P04 | O(consts) | Diaphora "same rare constants" idea (own code) |
-| P15 rehash-exact | `h1` recomputed with call/xref targets replaced by matched pair ids | unmatched, >= 1 call, after the first fixpoint | A if every substituted pair is tier A/M, else B | F-PT-STRUCT | O(insns of unmatched) | R04 s4.14 |
+| P15 rehash-exact | `h1` recomputed with call/xref targets replaced by matched pair ids | unmatched, >= 1 call, after the first fixpoint; every call target must be resolved to an import key, self-reference or existing matched pair | A if every substituted pair is tier A/M, else B | F-PT-STRUCT | O(insns of unmatched) | R04 s4.14 |
+
 | P16 ref-vector | VT reference vector (s6.2) | candidates from blocking only | B (>= 2 feature types) / C | F-PT-STRUCT | O(blocked pairs) | VT Reference correlators (clean-room) |
 | P17 bb-vote | rare block `h1` votes (L-25) | blocks >= 4 instructions | C | F-PT-STRUCT | O(blocks) | DarunGrim/binkit idea |
 | P18 layout-gap | singleton gap between monotone anchors (L-26) | size ratio L-21 | C | F-PT-STRUCT | O(n) | BinDiff address sequence, Diaphora local affinity |
 | P19 assignment | LAP with reject cost on blocked buckets (s6.4) | bucket <= L-24 | C | F-PT-STRUCT | O(k^3) per bucket | QBinDiff/BinSlayer idea |
+**P15 unresolved-target rule (UE-R7/U7-12):** A direct call with no import key and an unresolved callee (`callee < 0`) excludes the entire caller from P15 rehash matching. It is not a shared `?` token: two otherwise identical wrappers can call unrelated external targets. Do not accept P15 at tier A/B from an incomplete call-site substitution. Identified imports, self-calls, and previously matched call targets keep their existing treatment. Bump the ladder version used by `pass_table_digest` when implementing this correction so cached config identities cannot reuse the previous semantics.
+
 Stages: T0 = P00-P03, T1 = P04-P05, T2 = P06-P11, T3 = P12-P14, then P15; T4/T5 = P16-P19 (S5 only). Basic-block matching inside accepted pairs is NOT part of L1 (it is L2 alignment, 05 s2), unlike BinDiff. Each pass also carries an evidence class (05 s1.1: P01-P03 E-NAME, P04-P09 E-BODY, P10 E-CFG, P11/P13/P15 E-CALL, P12/P14 E-DATA, P16/P17/P19 E-RESID, P18 E-LAYOUT); tier-B corroboration needs two classes and two components. P02 export names are symbols in Ghidra's table (source IMPORTED [own]), so P02 and P03 never corroborate each other.
 
 ## 5. Propagation to a fixpoint (`ladder/propagate.py`)

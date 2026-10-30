@@ -110,6 +110,23 @@ def test_all_pairs_obey_the_grade_rules():
             assert pair.grade == 'X' and pair.lineage_state == 'incompatible'
 
 
+@pytest.mark.parametrize('architecture', ['arm64', 'x86', 'unknown'])
+def test_unsupported_product_scope_architecture_blocks_amd64_index_pairs(architecture):
+    # Even two internally compatible x64 rows do not belong to a non-x64 selected product.
+    result = resolve('KB5097000', sc=scope(arch=architecture))
+    assert result.pairs == () and result.blockers == ('ARCH',)
+    assert 'AMD64' in result.note
+
+
+def test_arm64_product_name_does_not_resolve_to_amd64_index_pair():
+    from patchtrace.kbcorrelation.products import scope_for
+
+    product = scope_for('a' * 64, 'arm-product', 'Windows 11 Version 24H2 for ARM64-based Systems')
+    assert product.winbindex_key == '11-24H2' and product.architecture == 'arm64'
+    result = resolve('KB5097000', sc=product)
+    assert result.pairs == () and result.blockers == ('ARCH',)
+
+
 def test_arm64_side_is_a_hard_block():
     doc = record()
     doc[SHA['Y']]['fileInfo']['machineType'] = 43620

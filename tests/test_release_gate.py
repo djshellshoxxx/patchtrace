@@ -673,9 +673,32 @@ def test_the_gate_outputs_are_publish_milestones_and_reason_from_the_gate_step()
 
 def test_the_release_job_needs_the_gate_and_runs_for_a_tag_or_a_gate_yes_only():
     block = BLOCKS['release']
-    assert needs_of(block) == ['qa', 'linux-smoke', 'release-gate']
+    assert needs_of(block) == ['qa', 'qt-gate', 'linux-smoke', 'release-gate']
     assert job_key(block, 'if') == (
         "startsWith(github.ref, 'refs/tags/v') || needs.release-gate.outputs.publish == 'true'")
+
+
+def test_gui_gate_blocks_packaging_and_publication_even_when_the_cadence_gate_says_yes():
+    assert needs_of(BLOCKS['linux-package']) == ['qa', 'qt-gate']
+    # Without an explicit status function GitHub prepends success() to job conditions. A tag or a
+    # fail-open cadence decision therefore cannot bypass failed, cancelled or skipped required QA.
+    for job in ('linux-package', 'release'):
+        assert 'qt-gate' in needs_of(BLOCKS[job])
+        condition = job_key(BLOCKS[job], 'if') or ''
+        assert not re.search(r'\b(?:always|cancelled|failure|success)\s*\(', condition)
+
+
+def test_matrix_leg_status_is_captured_after_all_acceptance_steps_before_artifact_uploads():
+    steps = steps_of(BLOCKS['qa'])
+    recorder = next(i for i, step in enumerate(steps) if 'name: Record this matrix leg' in step)
+    assert re.search(r'^        if: always\(\)$', steps[recorder], re.M)
+    assert 'echo "${{ job.status }}" > qa-leg-result.txt' in steps[recorder]
+    for command in ('tools/frozen_smoke.py', 'tools/test_windows_portable.ps1',
+                    'tools/package_windows_installer.py', 'tools/test_windows_installer.ps1'):
+        assert next(i for i, step in enumerate(steps) if command in step) < recorder
+    assert steps[recorder + 1:]
+    assert all('uses: actions/upload-artifact@v4' in step for step in steps[recorder + 1:])
+    assert 'if: always()' in steps[recorder + 1]
 
 
 def test_a_pull_request_cannot_reach_the_release_job():

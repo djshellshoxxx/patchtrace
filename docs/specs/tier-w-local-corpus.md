@@ -2,7 +2,8 @@
 
 Status (2026-10-14, wave W1, synthetic and self-made validation only):
 - **Built:** s2 layout and strict contracts; s3 catalogue, `resolve` and pair/manifest builder (library API, no CLI yet); s5.4 MSF reader; s6.3 relocation-masked body hash plus `.pdata` and export tables; s12 guard with its `corpus.py` hook; s13 self-made fixtures.
-- **Deferred to the next wave:** s4 fetch, s5.2/5.3/5.5 exporters and the symbol-map writer, s6.1/6.2/6.4 labels and tags, s7 audit, s9 runner, s10 evaluation, s11 CLI, and the runbook.
+- **Built (2026-10-15, LBL-20/21, fixture tests only):** s4 fetch library (`fetch.py`, `transport.py`); s5.3 symbol-map builder, s5.5 llvm-pdbutil adapter, s5.2 headless Ghidra script and driver. Still open: `pyghidra` mode, PDB-forcing pre-script and live Ghidra/msdl runs (owner or Windows runner).
+- **Deferred to the next wave:** s6.1/6.2/6.4 labels and tags, s7 audit, s9 runner, s10 evaluation, s11 CLI, and the runbook.
 - **Manual evidence:** one Ghidra 12.0.4 headless trial (Jython 2.7.4) force-loaded a self-made PDB with no symbol-server access. The function body sizes equalled the PDB code sizes. The trial was run by hand and is not a committed test.
 
 Winbindex and msdl.microsoft.com were unreachable from the build sandbox (egress proxy: CONNECT 403). No Microsoft file was fetched, parsed or labelled. Refines `calibration-corpus-and-model.md` (SPEC-28/C9) sections 3.1 Tier W, 3.2-3.4, 4.2, 5.2-5.5 and 14 (C9-2, C9-10). If the two documents disagree on Tier W, this file wins for tooling and C9 wins for methodology. Never shipped: `tools/` is excluded from every package.

@@ -1,6 +1,6 @@
 # SPEC-DA-01: Optional Diaphora comparison technique for PatchTrace
 
-Status: developer-ready DESIGN; no code implemented. 2026-10-14. See ../research/diaphora-feature-study-20261014.md and ../plans/diaphora-integration.md. Upstream reference: Diaphora 3.4.3; verify pinned release SHA in implementation.
+Status: partial. Mode A (import of an existing `.diaphora` result) built 2026-10-21: contracts, sqlite guard, result import, address map, provenance, Ghidriff bridge, store kind `diaphora-matches`, CLI `diaphora inspect|import|show`, generated schemas. Tests use SYNTHETIC result databases built to the `save_results()` layout below; nothing was checked against a real Diaphora 3.4.3 output, so address encoding, ratio range and type strings are unverified assumptions (parser fails closed on anything else). Not built: export-DB import, `signals`, `context`, GUI, Mode B runner/probe, Mode C. Design text below is unchanged. (Earlier status: developer-ready DESIGN; no code implemented. 2026-10-14.) See ../research/diaphora-feature-study-20261014.md and ../plans/diaphora-integration.md. Upstream reference: Diaphora 3.4.3; verify pinned release SHA in implementation.
 
 ## Goal / invariants
 Integrate Diaphora as an explicitly OPTIONAL engine which adds function-matching evidence and potential patch indicators. Ghidriff remains primary and the default; existing analysis and manual corrections cannot be overwritten by a secondary proposal. No IDA, Hex-Rays or Diaphora installation is required for normal PatchTrace. Never execute analyzed binaries, install external tools automatically, run user-provided Python scripts, upload data, or treat similarity as verified vulnerability confidence. Offline-only by default.
@@ -19,6 +19,8 @@ Observed current modules: src/patchtrace/secondary/{contracts,registry,runs,sche
 
 **Never persist Diaphora as secondary/2 directly or as engine-run/1 without compatibility work.** Older PatchTrace will fail strict parsing on an unknown engine and may lose access to normal project workflows. First implement new additive enrichment kinds 'diaphora-matches' and 'diaphora-runs', with versioned 'diaphora/1' and 'diaphora-run/1' records, leaving old secondary rows unchanged. Extend KINDS and storage tests. In-memory provide an adapter-neutral proposal bridge for reconciliation. Later, only after migrations/old-reader tests, unify through a new versioned secondary/3 or adapter layer, not a silent enum widening in the old persisted kind.
 Store data behind ProjectStore/EnrichmentStore owner-thread guard; current-snapshot validation before commit, additive schema only. Large code should remain in bounded content-addressed sidecar data rather than duplicate 32 MiB DB rows.
+
+Stored match sets are current only when the project has a completed analysis run with a raw-result SHA, and the entry guard names that run. Without such a run (including removed runs or a run changed to failed), return no current sets even if artifact hashes still match. Retain the historical enrichment entries; a current read never promotes them by pair identity alone.
 
 ## Module architecture: pure core, subprocess adapter, Qt shell
 Register module IDs in docs/modules.md before any implementation:

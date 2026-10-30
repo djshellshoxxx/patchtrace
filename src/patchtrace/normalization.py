@@ -41,6 +41,7 @@ def normalize_ghidriff(raw: dict, project: ComparisonProject, run_id: str) -> li
     if run_id not in {run.id for run in project.runs}:
         raise ValueError('PT-SCHEMA: normalization requires a project-owned analysis run')
     artifacts = {artifact.side: artifact for artifact in project.artifacts}
+    seen: set[tuple[str, str, str | None]] = set()
 
     def function(record, side: str) -> FunctionRecord:
         if not isinstance(record, dict) or not isinstance(record.get('name'), str) or not record['name']:
@@ -61,6 +62,10 @@ def normalize_ghidriff(raw: dict, project: ComparisonProject, run_id: str) -> li
             else:
                 raise ValueError('PT-SCHEMA: instructions must be a string list, integer hash or null')
         metadata['upstream_name'] = record['name']
+        identity = (side, record.get('fullname') or record['name'], record.get('address'))
+        if identity in seen:
+            raise ValueError('PT-SCHEMA: upstream function is repeated; shared evidence counts once')
+        seen.add(identity)
         return FunctionRecord(artifact_id=artifacts[side].id, run_id=run_id,
                               name=record.get('fullname') or record['name'], address=record.get('address'),
                               address_space='virtual' if record.get('address') else 'unknown',
@@ -80,7 +85,7 @@ def normalize_ghidriff(raw: dict, project: ComparisonProject, run_id: str) -> li
         diff_types = _strings(item.get('diff_type', []), 'diff_type')
         ratio = item.get('ratio')
         if ratio is not None and (isinstance(ratio, bool) or not isinstance(ratio, (int, float))
-                                  or not math.isfinite(ratio) or not 0 <= ratio <= 1):
+                                  or not 0 <= ratio <= 1 or not math.isfinite(ratio)):
             raise ValueError('PT-SCHEMA: upstream ratio must be a finite number from zero to one')
         old, new = function(item['old'], 'older'), function(item['new'], 'newer')
         old.metadata['diff_types'] = diff_types

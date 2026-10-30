@@ -298,6 +298,21 @@ def test_read_request_refuses_a_huge_or_missing_file(tmp_path):
     assert missing.value.reason == 'request-invalid'
 
 
+@pytest.mark.parametrize('payload', [
+    '{"ok":true,"ok":false}',
+    '{"ok":false,"reason":"first","reason":"second"}',
+    '{"ok":false,"stage_ms":{"calls":1,"calls":2}}',
+    '{"ok":false,"rows":NaN}',
+    '{"ok":false,"rows":1e999}',
+], ids=['duplicate-success', 'duplicate-reason', 'nested-duplicate',
+        'nonfinite-constant', 'overflow-float'])
+def test_read_worker_report_rejects_noncanonical_json(tmp_path, payload):
+    """An invalid report must never be interpreted as worker success."""
+    path = tmp_path / 'report.json'
+    path.write_text(payload, encoding='utf-8')
+    assert exchange.read_report(path) is None
+
+
 def test_reports_are_read_defensively(tmp_path):
     path = tmp_path / 'report.json'
     assert exchange.read_report(path) is None
@@ -482,3 +497,10 @@ def test_self_check_imports_the_modules_of_this_slice(capsys):
                      'sources.manual', 'sources.secondary', 'fusion.components', 'fusion.arbiter', 'facts.pseudo',
                      'facts.channels', 'facts.verdict', 'exchange', 'compute', 'pipeline', 'worker', 'cli'}
     assert slice_modules <= set(worker.MODULES)
+
+
+def test_ladder_cap_hits_make_the_result_partial_except_neighbour_cap_ue_b_06():
+    for slug in ('ladder-limit-block-cap:3', 'ladder-limit-assign-time-cap:1', 'ladder-limit-callsite-cap:2',
+                 'ladder-limit-rehash-wave-cap:1', 'ladder-limit-assign-bucket-cap:4'):
+        assert compute.is_degrading(slug), slug
+    assert not compute.is_degrading('ladder-limit-neighbour-cap:3')

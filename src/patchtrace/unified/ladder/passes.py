@@ -28,7 +28,7 @@ from .side import K_EXTERNAL, SideData
 from .state import State
 from .types import FAMILY_BYTES, TIER_RANK
 
-LADDER_VERSION = 'ladder/1'
+LADDER_VERSION = 'ladder/2'
 FAMILY_STRUCT = 'F-PT-STRUCT'
 P15_MAX_WAVES = 8
 _SQ = (math.sqrt(2), math.sqrt(3), math.sqrt(5), math.sqrt(7), math.sqrt(11), math.sqrt(13))
@@ -249,7 +249,10 @@ def _rehash_keys(st: State, side_letter: str):
             if ikey:
                 tokens.append(('I', ikey, jump))
             elif callee < 0:
-                tokens.append(('?', jump))
+                # An unknown callee could refer to a different target on each side.
+                # A generic '?' token is not exact identity evidence.
+                tokens = None
+                break
             elif callee == f:
                 tokens.append(('S', jump))
             elif mate[callee] >= 0:

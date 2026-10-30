@@ -161,7 +161,7 @@ def test_replacing_the_content_removes_the_old_one_from_the_layout(qtbot, view):
     view.set_content(first)
     view.set_content(second)
     view.show_conditions({'ready': {}})
-    assert view.layout().indexOf(first) == -1 and second.isVisibleTo(view)
+    assert view.layout().indexOf(first) == -1 and second.isVisibleTo(view) and first.isHidden()
 
 
 def test_changes_are_announced_once_and_errors_assertively(view, announcer):

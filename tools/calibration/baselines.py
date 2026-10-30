@@ -10,6 +10,7 @@ Ranking scorers (M0, M0b, M2) need no calibration: H4 compares FDR at equal cove
 """
 from __future__ import annotations
 
+import math
 from collections.abc import Sequence
 
 from .common import Row
@@ -31,12 +32,22 @@ def m0b(rows, names):
     return column_scores(rows, names, 'R.similarity')
 
 
-def m2(rows, names):
-    idx = {n: j for j, n in enumerate(names)}
+M2_COLUMNS = (('X.agree_B', 20.0), ('X.agree_R', 8.0))
 
-    def get(r, n):
-        return r.x[idx[n]] if n in idx else 0.0
-    return {r.id: min(83.0, 55.0 + 20.0 * get(r, 'X.agree_B') + 8.0 * get(r, 'X.agree_R')) for r in rows}
+
+def m2(rows, names):
+    """None when neither agreement column exists (D-07): a missing column is not a negative vote, and a constant
+    scorer would be a weak baseline for H4. With one column present only that term is scored."""
+    idx = {n: j for j, n in enumerate(names)}
+    terms = [(idx[c], wt) for c, wt in M2_COLUMNS if c in idx]
+    if not terms:
+        return None
+    return {r.id: min(83.0, 55.0 + math.fsum(wt * r.x[j] for j, wt in terms)) for r in rows}
+
+
+def unavailable(names: Sequence[str]) -> list[str]:
+    """Baselines that cannot be scored for this column set (reported, not replaced by a constant)."""
+    return [] if any(c in names for c, _ in M2_COLUMNS) else ['M2']
 
 
 def restrict(rows: Sequence[Row], names: Sequence[str], keep: Sequence[str]) -> list[Row]:

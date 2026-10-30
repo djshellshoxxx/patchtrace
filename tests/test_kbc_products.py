@@ -5,7 +5,7 @@ import pytest
 from kbc_k1_support import no_sockets  # noqa: F401
 
 from patchtrace.kbcorrelation import alias_catalog, products
-from patchtrace.kbcorrelation.contracts import ProductScope
+from patchtrace.kbcorrelation.contracts import ProductScope, domain_id
 
 pytestmark = pytest.mark.usefixtures('no_sockets')
 D1, D2 = '1' * 64, '2' * 64
@@ -55,6 +55,28 @@ def test_scope_id_ignores_document_and_wording_but_not_architecture():
     b = products.scope_for(D2, 'B', 'WINDOWS 11  version 24h2 for   x64-based systems')
     c = products.scope_for(D1, 'C', 'Windows 11 Version 24H2 for ARM64-based Systems')
     assert a.scope_id == b.scope_id != c.scope_id
+
+
+@pytest.mark.parametrize('release', ['21H2', '22H2'])
+def test_client_generations_with_the_same_release_never_merge(release):
+    ten = products.scope_for(D1, 'TEN', f'Windows 10 Version {release} for x64-based Systems')
+    eleven = products.scope_for(D1, 'ELEVEN', f'Windows 11 Version {release} for x64-based Systems')
+    assert ten.scope_id != eleven.scope_id
+    assert products.merge_scopes((ten, eleven)) == products.merge_scopes((eleven, ten))
+    merged = products.merge_scopes((ten, eleven))
+    assert len(merged) == 2
+    assert {(s.winbindex_key, tuple(r.product_id for r in s.source_product_ids)) for s in merged} == {
+        (f'10-{release}', ('TEN',)), (f'11-{release}', ('ELEVEN',))}
+
+
+@pytest.mark.parametrize('name', ['Windows Server 2022 x64', 'Example OS 24H2 x64', 'Office 2019'])
+def test_non_client_scope_identity_keeps_the_legacy_formula(name):
+    facts = products.derive(name)
+    informative = facts.family != 'unknown' and facts.release is not None and not facts.conflicts
+    legacy_key = {'family': facts.family, 'release': facts.release, 'architecture': facts.architecture,
+                  'channel': facts.channel, 'edition': facts.edition, 'build': None,
+                  'name': None if informative else facts.name_key}
+    assert products.scope_for(D1, 'P', name).scope_id == domain_id('kbc.scope', 1, legacy_key)
 
 
 def test_uninformative_names_do_not_merge():

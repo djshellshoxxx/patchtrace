@@ -10,6 +10,7 @@ from __future__ import annotations
 from collections.abc import Iterable
 from dataclasses import dataclass
 
+from ..tier_r.contracts import masked_body_must_match
 from .contracts import kind_of
 
 
@@ -63,6 +64,10 @@ def label_mutation(operator: str, target: str, facts: Iterable[FunctionFact], *,
             if semantic and not semantic_accepted(f.masked_equal):
                 out.append(Decision(f.name, label, kind, 'disagree',
                                     'planted semantic change left the masked body unchanged'))
+            elif masked_body_must_match(operator) and f.masked_equal is not True:
+                out.append(Decision(f.name, label, kind, 'disagree',
+                                    'planted cosmetic change altered the masked body' if f.masked_equal is False
+                                    else 'masked body not comparable for a cosmetic change'))
             else:
                 out.append(Decision(f.name, label, kind, 'ok'))
         elif semantic and f.masked_equal is False:

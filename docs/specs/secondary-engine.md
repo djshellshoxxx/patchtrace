@@ -27,3 +27,18 @@ Similarity is raw-byte Levenshtein: not semantic, sensitive to relocations and a
 ## 6. Acceptance
 
 Parser tests from a trimmed real rz-diff JSON output and synthetic malformed variants (non-array, wrong types, missing keys, similarity > 1, exit 0 with empty stdout); probe version parsing; timeout/cancel via fake child; address mapping and one-sided records; reconciliation display shared with SPEC-10. Live (recorded, optional): Linux CI job installing the pinned rizin release and diffing the compiled fixture DLLs.
+
+
+## 7. Parser-boundary hardening (2026-10-29)
+
+The public output parser enforces the same 64 MiB UTF-8 byte ceiling as the process
+adapter, before JSON decoding. It uses the project's strict JSON loader: duplicate
+keys, non-finite values, unpaired surrogate escapes and excessive nesting are
+`PT-SECONDARY-INPUT`, never a Python exception or an unpersistable accepted result.
+The recorded output digest remains the SHA-256 of the original UTF-8 stdout bytes;
+valid Unicode names and escaped surrogate pairs retain their exact text.
+
+Version components use one to nine ASCII decimal digits each. Malformed or oversized
+versions make the capability probe unsupported, without integer-conversion errors.
+This bounds parsing only; versions accepted by the existing ≥ 0.9.0 policy keep
+that policy and the unified adapter's untested-version limitation.

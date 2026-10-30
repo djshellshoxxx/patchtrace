@@ -20,6 +20,7 @@ import time
 from pathlib import Path
 
 import pytest
+from liveness_support import cancel_when_started, heartbeat_code, heartbeat_stopped, never_appears
 
 import patchtrace.rules as rules_package
 from patchtrace.rules import contracts as c
@@ -34,6 +35,7 @@ RULE = c.WorkerRule(name='r1', text='import "pe"\nrule PT_0123456789ab_older: pa
 ABSENT = str(Path(tempfile.gettempdir()).resolve() / 'patchtrace-rules-test-absent.bin')  # absolute on every OS
 TARGET = c.WorkerTarget(target_id='t1', path=ABSENT, size=1)
 SHORT = RuleLimits(run_wall_s=1, target_timeout_min_s=1, target_timeout_s=1)  # 1 s wall clock for the fake children
+TREE_WALL = RuleLimits(run_wall_s=4, target_timeout_min_s=1, target_timeout_s=1)  # time for the grandchild to start
 
 
 def example_rule_text() -> str:
@@ -255,23 +257,20 @@ def test_a_sleeping_worker_times_out_without_leftovers(monkeypatch, scratch):
 
 def test_worker_timeout_kills_child_tree(monkeypatch, scratch, tmp_path):
     """A grandchild that outlives the worker would keep running (and holding files): the whole tree is killed."""
-    marker = tmp_path / 'grandchild-survived'
-    fake_worker(monkeypatch, 'subprocess.Popen([sys.executable, "-c", "import time; time.sleep(2.5); '
-                             f'open({str(marker)!r}, \'w\').write(\'x\')"])\ntime.sleep(60)')
-    assert failure(scan, scratch, SHORT).code == 'PT-RULE-TIMEOUT'
-    time.sleep(3.5)
-    assert not marker.exists()
+    beat = tmp_path / 'grandchild-beat'
+    fake_worker(monkeypatch, f'subprocess.Popen([sys.executable, "-c", {heartbeat_code(beat)!r}])\ntime.sleep(60)')
+    assert failure(scan, scratch, TREE_WALL).code == 'PT-RULE-TIMEOUT'
+    assert heartbeat_stopped(beat)      # also fails when the grandchild never started: no vacuous pass
 
 
 def test_cancel_mid_run_kills_the_worker_and_removes_the_scratch(monkeypatch, scratch, tmp_path):
-    marker = tmp_path / 'still-running'
-    fake_worker(monkeypatch, f'time.sleep(1.5)\nopen({str(marker)!r}, "w").write("x")\ntime.sleep(60)')
-    cancel = threading.Event()
-    threading.Timer(0.3, cancel.set).start()
-    error = failure(scan, scratch, cancel=cancel)
+    marker, started = tmp_path / 'still-running', tmp_path / 'started'
+    fake_worker(monkeypatch, f'open({str(started)!r}, "w").write("x")\ntime.sleep(1.5)\n'
+                             f'open({str(marker)!r}, "w").write("x")\ntime.sleep(60)')
+    error = failure(scan, scratch, cancel=cancel_when_started(started))
     assert (error.code, error.reason) == ('PT-RULE-CANCEL', 'cancelled') and error.exit_code == 5
-    time.sleep(2)
-    assert not marker.exists() and list(scratch.iterdir()) == []
+    assert started.exists()             # the worker ran, so an absent marker means it was killed
+    assert never_appears(marker, within=2) and list(scratch.iterdir()) == []
 
 
 def test_a_cancel_that_is_already_set_never_starts_a_child(monkeypatch, scratch):

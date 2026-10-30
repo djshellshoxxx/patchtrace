@@ -353,6 +353,7 @@ E0 = K0, K0f, K1, K2, K3, K4a, K4b (K1 and K2 in parallel, K4a and K4b in parall
 | A-10 | `intelligence/anchors.py`, `contracts.py` | public `text_anchors()`; `Anchor.source` gains `cvrf-title`, `cvrf-note`, `cvrf-tag` (additive, schema regenerated). Fallback: a KB-local copy plus a drift test |
 | A-11 | `docs/specs/workbench/01-search-fts5-rapidfuzz.md` s4 | `SearchSourceRef.field` gains `advisory`; the extractor calls `AdvisoryTextSource` |
 | A-12 | `docs/modules.md`, `tasks/todo.md`, `docs/qa.md`, `tools/frozen_smoke.py`, `pyproject.toml`, `tests/test_tooltips.py`, `.gitattributes` | KB rows; frozen smoke imports `kbcorrelation`; pytest marker `live_kbc` (no package data or PyInstaller datas are needed); KB dock names in the registry audit roots; LF for `tests/fixtures/kbcorrelation/**` and `docs/schemas/kbcorrelation/**` |
+| A-13 (2026-10-29, K8 KEV part) | `kbcorrelation/{adapters/kev,leads,cli,cli_leads,service,view_model}.py`, `export.py` | KEV is applied **when a context is read, never when it is attached**: `kb leads`, `kb explain` and the Markdown `kb export` read the catalog in use of `patchtrace kev` (`--kev-dir`, default folder) through `adapters.kev.load_exploitation`. The stored `kb-context` bundle, its `CveCard.kev` (`not-loaded` at attach) and the context key (`kev_snapshot_sha` stays None) are unchanged, so a KEV update never makes a context stale. The JSON export stays the stored bundle byte for byte (a record of what was attached). The Markdown export and the explain result name the KEV state per CVE and the snapshot (version, id, age) they were read from, under a separate `kev_source`. Rejected alternative: recording the snapshot at attach (it would freeze an old KEV state into the context and invalidate every context on each catalog update). |
 
 ### 10.1 E0 acceptance script (`tests/test_kbc_e0_e2e.py`, offline, sockets denied)
 1. `kb index import cvrf-2099-Feb.json --json` -> 0; 1 document, 4 edges, 1 mention-only, coverage `complete_in_scope`. A malformed file -> 2 and the index is unchanged.
@@ -387,3 +388,10 @@ E0 = K0, K0f, K1, K2, K3, K4a, K4b (K1 and K2 in parallel, K4a and K4b in parall
 13. CVRF 32 MiB cap: default 32 MiB until L1; above it a memory-capped child process (C3 pattern).
 14. A KB section in the main report export: default later; `kb export` first.
 15. How an offline user obtains a CVRF JSON file is unverified (whether the API serves JSON to a browser, L1): default `kb index plan` prints the exact URLs and the Accept header to use on another machine, and a CSAF document alone still supports CVE-first; add XML CVRF import only if L1 shows JSON is not served. This is the main risk to the usefulness of E0.
+
+### Essential workflow selection and timestamp clarification (2026-10-29)
+`kb plan` and `kb acquire` may omit `--pair` only when exactly one distinct unblocked pair remains. More than one viable pair returns `PT-KBC-INPUT` before request planning or acquisition and asks for a unique pair id; display ordering never implies analyst selection. Duplicate occurrences of one pair id do not create ambiguity. An explicit id retains the minimum eight-character, unique-prefix rule.
+
+CVRF release timestamps must be representable UTC instants, including after applying their stated offset. Out-of-range UTC conversion is a `DATE_INVALID` row problem. The reverse index treats such legacy stored dates as unknown, never an uncaught exception.
+
+A GUI local-pair approval supplies `expected_pair_id` from its dry-run preview to `KbService.import_pair`. A new hash/product-scope identity is refused with `PT-KBC-STALE` before approval, journal or project creation. The creation path retains its own ingestion identity checks after this preview guard.
