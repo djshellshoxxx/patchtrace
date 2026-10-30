@@ -130,7 +130,7 @@ A scratch prototype of A1-A3 over the repo's real `normalize_ghidriff` reproduce
 | GL-01 claims per snapshot | 250,000 (IR sources: 150k nodes, 600k edges) |
 | GL-02 label | 512 stored, 120 shown |
 | GL-03 query | depth <= 4; nodes 100 default, 500 max (table 2,000); edges 250 / 2,000; 64 neighbours per node then "+N more" |
-| GL-04 paths | <= 5 paths, length <= 12, visit budget 200,000 |
+| GL-04 paths | <= 5 paths, length <= 12, visit budget 200,000 (each stack push and each successor examined costs one visit; #105 CG-1) |
 | GL-05 closure | count exact, listed <= 2,000 |
 | GL-06 delta | <= 500 changes per function, 100 shown |
 | GL-07 groups | >= 2 changed pairs, <= 200 groups |
