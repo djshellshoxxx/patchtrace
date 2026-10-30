@@ -45,10 +45,6 @@ jobs:
       - name: Frozen EXE headless smoke (A1-A4) and self-test
         if: runner.os == 'Windows'
         run: python tools/frozen_smoke.py dist/PatchTrace/PatchTrace.exe
-      - name: Record this matrix leg's own result for the release notes
-        if: always()
-        shell: bash
-        run: echo "${{ job.status }}" > qa-leg-result.txt
       - name: Extract and run portable Windows ZIP outside checkout
         if: runner.os == 'Windows'
         shell: pwsh
@@ -63,6 +59,10 @@ jobs:
         if: runner.os == 'Windows'
         shell: pwsh
         run: ./tools/test_windows_installer.ps1
+      - name: Record this matrix leg's own result for the release notes
+        if: always()
+        shell: bash
+        run: echo "${{ job.status }}" > qa-leg-result.txt
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -118,7 +118,7 @@ jobs:
       - run: "python -m pip install --only-binary=:all: -e '.[dev,search,rules]'"
       - run: python tools/qt_gate.py --repeat ${{ matrix.repeat }} --shard ${{ matrix.shard }}
   linux-package:
-    needs: qa
+    needs: [qa, qt-gate]
     runs-on: ubuntu-22.04
     timeout-minutes: 30
     steps:
@@ -195,7 +195,7 @@ jobs:
         run: python tools/release_gate.py --head "$GITHUB_SHA" --event "$GITHUB_EVENT_NAME" --ref "$GITHUB_REF" >> "$GITHUB_OUTPUT"
   release:
     if: startsWith(github.ref, 'refs/tags/v') || needs.release-gate.outputs.publish == 'true'
-    needs: [qa, linux-smoke, release-gate]
+    needs: [qa, qt-gate, linux-smoke, release-gate]
     runs-on: ubuntu-latest
     timeout-minutes: 20
     permissions:

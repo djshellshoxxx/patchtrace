@@ -247,6 +247,8 @@ class KevController(ControllerBase):
         self.network_allowed = network_allowed
         self.chooser = chooser or self.shell.choose_file
         self.epoch = 0
+        self._rows_generation = 0
+        self._rows_pending = False
         self.key = None
         self.snapshot: pm.Snapshot | None = None
         self.view: pm.KevView | None = None
@@ -321,6 +323,8 @@ class KevController(ControllerBase):
 
     def _advance(self) -> None:
         self.epoch += 1
+        self._rows_generation += 1
+        self._rows_pending = self.view is not None
         for channel in CHANNELS:
             self.tasks.cancel(channel)
 
@@ -347,17 +351,27 @@ class KevController(ControllerBase):
         if self._closed or self.snapshot is None:
             return
         epoch, provider, ids = self.epoch, self.snapshot.provider, self.ids
+        self._rows_generation += 1
+        generation = self._rows_generation
+        self._rows_pending = True
+        self._selection()
         filter_mode, sort_mode = self.panel.filter.currentData(), self.panel.sort.currentData()
         self.tasks.submit(ROWS, lambda token, _report: pm.prepare_view(provider, ids, filter_mode, sort_mode, token),
-                          lambda view: self._rows_ready(epoch, view), lambda failure: self._failed(epoch, failure))
+                          lambda view: self._rows_ready(epoch, generation, view),
+                          lambda failure: self._rows_failed(epoch, generation, failure))
         self._render()
 
-    def _rows_ready(self, epoch: int, view: pm.KevView) -> None:
-        if epoch != self.epoch or self._closed:
+    def _rows_ready(self, epoch: int, generation: int, view: pm.KevView) -> None:
+        if epoch != self.epoch or generation != self._rows_generation or self._closed:
             return
+        self._rows_pending = False
         self.view = view
         self.panel.table.set_prepared(view.prepared)
         self._render()
+
+    def _rows_failed(self, epoch: int, generation: int, failure) -> None:
+        if generation == self._rows_generation:
+            self._failed(epoch, failure)
 
     def _failed(self, epoch: int, failure) -> None:
         if epoch != self.epoch or self._closed:
@@ -515,6 +529,8 @@ class KevController(ControllerBase):
     # ---- selection, copy, go to ----------------------------------------------------------------------
 
     def current_row(self) -> pm.KevRow | None:
+        if self._rows_pending:
+            return None
         index = self.panel.table.currentIndex()
         return index.data(ROW_ROLE) if index.isValid() else None
 
@@ -558,6 +574,8 @@ class KevController(ControllerBase):
             kind = 'refreshing' if self.snapshot else 'loading'
             text = self.panel.progress.full_text() if self.operation in ('fetch', 'import') else STATE_TEXT['loading']
             return StateModel(kind, text), has
+        if self._rows_pending:
+            return StateModel('refreshing' if self.view is not None else 'loading', STATE_TEXT['loading']), has
         if meta is None and self.loaded_once:
             blocked = not self.network_allowed()
             return StateModel('blocked' if blocked else 'idle', STATE_TEXT['blocked' if blocked else 'no-catalog']), has

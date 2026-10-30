@@ -90,6 +90,33 @@ def test_reimport_replaces_the_same_row(pair, tmp_path, capsys):
         assert len(stored_sets(service)) == 1
 
 
+@pytest.mark.parametrize('run_state', ['absent', 'failed', 'missing-raw'])
+def test_stored_results_need_a_current_completed_run_and_are_preserved(pair, tmp_path, capsys, run_state):
+    from patchtrace.diaphora.service import stored_sets
+    from patchtrace.enrichment.storage import EnrichmentStore
+
+    assert jdia(['import', pair, '--diff', result_file(tmp_path), '--user-attest-pair'], capsys)[0] == 0
+    with ProjectService.open(pair) as service:
+        original = service.project
+        saved = stored_sets(service)
+        assert len(saved) == 1
+        changed = original.model_copy(deep=True)
+        if run_state == 'absent':
+            changed.runs.clear()
+        elif run_state == 'failed':
+            for run in changed.runs:
+                run.status = 'failed'
+        else:
+            for run in changed.runs:
+                run.raw_sha256 = None
+        # A guarded read of a different project snapshot must not revive old rows by pair SHA alone.
+        service.project = changed
+        assert stored_sets(service) == []
+        assert len(list(EnrichmentStore(service.store).entries(KIND))) == 1
+        service.project = original
+        assert stored_sets(service) == saved
+
+
 def test_manifest_binding_and_tamper(pair, tmp_path, capsys):
     path = result_file(tmp_path)
     import hashlib

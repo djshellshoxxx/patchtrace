@@ -345,7 +345,9 @@ def _probe_backend(config: BackendConfig, cancel: threading.Event | None = None)
             raise ValueError('Python is too old')
         return metadata
     except (ValueError, TypeError, KeyError):
-        raise RuntimeError('PT-BACKEND: install ghidriff in the selected Python 3.10+ environment') from None
+        raise RuntimeError('PT-BACKEND: install ghidriff and its dependencies in the selected Python 3.10+ '
+                           "environment's own site-packages (for example, a venv); isolated mode ignores "
+                           '--user installs and PYTHONPATH') from None
 
 
 def _bundle_line(config: BackendConfig) -> str:

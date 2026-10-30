@@ -110,6 +110,9 @@ An optional `decomp.jsonl.gz` part is deeply verified before publication: strict
 `side`, `rva`, `status`, `code`; side/RVA must occur in a result row and may occur once; `ok` requires nonempty
 bounded UTF-8 text, and `failed`/`timeout` require null. The display cache is keyed by the manifest part hash,
 bytes and record count, because a valid decompile refresh can change the part without changing the result id.
+Failure to write this optional part, including an OS error while registering it in the manifest, removes its
+temporary and unregistered final files and restores the prior staged manifest before continuing with a limitation.
+If rollback or cleanup cannot complete, publication fails rather than accepting an inconsistent result directory.
 
 ```python
 class Atom(_Strict):                      # one piece of pairing evidence from one source

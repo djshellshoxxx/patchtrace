@@ -147,6 +147,59 @@ def test_authored_rows_not_in_natural_table(docs, monkeypatch):
     assert 'authored' not in (res.report['per_profile']['G+R'].get('strata') or {})
 
 
+def test_excluded_authored_bridge_does_not_change_natural_groups_or_metrics(docs):
+    roles = assign_roles([d.lineage for d in docs], 'c9-v1')
+    a, b = [d for d in docs if roles[d.lineage] == 'dev'][:2]
+    lineage = next(f'bridge{i}' for i in range(100)
+                   if assign_roles([f'bridge{i}'], 'c9-v1')[f'bridge{i}'] == 'dev')
+    raw = authored_doc(lineage).model_dump(mode='json')
+    raw['rows'][0]['identities'] = [a.rows[0].identities[0], b.rows[0].identities[0]]
+    extra = T.load_pair_rows(canonical_json(T._finish(raw)))
+    before = T.build_rows(T.assemble(docs), SMOKE)
+    after = T.build_rows(T.assemble([*docs, extra]), SMOKE)
+    assert {r.id: r.group for r in before[0]} == {r.id: r.group for r in after[0]}
+    assert before[:4] == after[:4]
+    for field in ('merged_lineages', 'largest_group_share', 'seen_body', 'hub_identities'):
+        assert before[4][field] == after[4][field]
+    assert after[4]['adversarial_table']['authored']['rows'] == len(extra.rows)
+    baseline = T.run_training(docs, SMOKE)
+    bridged = T.run_training([*docs, extra], SMOKE)
+    assert not baseline.halt and not bridged.halt
+    base_profile = baseline.report['per_profile']['G+R']
+    bridged_profile = bridged.report['per_profile']['G+R']
+    # The authored exclusion accounting grows; the natural fit and headline metrics stay identical.
+    assert {k: v for k, v in base_profile.items() if k != 'indeterminate'} == {
+        k: v for k, v in bridged_profile.items() if k != 'indeterminate'}
+    assert base_profile['indeterminate']['strata']['release'] == bridged_profile['indeterminate']['strata']['release']
+
+
+def test_excluded_authored_cross_role_identity_remains_in_split_audit(docs, monkeypatch):
+    no_fit(monkeypatch)
+    roles = assign_roles([d.lineage for d in docs], 'c9-v1')
+    natural = next(d for d in docs if roles[d.lineage] == 'dev')
+    lineage = next(f'audit{i}' for i in range(100)
+                   if assign_roles([f'audit{i}'], 'c9-v1')[f'audit{i}'] == 'locked-test')
+    raw = authored_doc(lineage).model_dump(mode='json')
+    identity = natural.rows[0].identities[0]
+    raw['rows'][0]['identities'] = [identity]
+    extra = T.load_pair_rows(canonical_json(T._finish(raw)))
+    result = T.run_training([*docs, extra], SMOKE)
+    assert result.halt and any('PT-KA-LEAK' in reason and identity in reason for reason in result.halt)
+
+
+def test_excluded_authored_rows_cannot_turn_a_natural_leak_into_a_hub(docs, monkeypatch):
+    no_fit(monkeypatch)
+    leaky = shared_identity_docs(docs)
+    extras = []
+    for i in range(3):
+        raw = authored_doc(f'hubpadding{i}').model_dump(mode='json')
+        raw['rows'][0]['identities'] = ['src:shared_body|lib/shared.c']
+        extras.append(T.load_pair_rows(canonical_json(T._finish(raw))))
+    result = T.run_training([*leaky, *extras], SMOKE)
+    assert result.halt and any('PT-KA-LEAK' in reason and 'src:shared_body|lib/shared.c' in reason
+                               for reason in result.halt)
+
+
 # ---- C-4 imputation ------------------------------------------------------------------------------------------------
 
 def test_missing_fill_does_not_depend_on_other_rows(docs):

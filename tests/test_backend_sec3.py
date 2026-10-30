@@ -13,6 +13,14 @@ from patchtrace.backend import BackendConfig
 from patchtrace.jobs import ProcessResult
 
 
+def test_sec3_missing_package_explains_isolated_environment(monkeypatch, tmp_path):
+    monkeypatch.setattr(backend, 'run_process', lambda *args, **kwargs: ProcessResult(
+        0, json.dumps({'python': '3.12.0', 'available': False}), None))
+    config = BackendConfig(str(tmp_path / 'python'), str(tmp_path / 'ghidra'))
+    with pytest.raises(RuntimeError, match=r'own site-packages.*--user.*PYTHONPATH'):
+        backend._probe_backend(config)
+
+
 def test_sec3_probe_and_analysis_preserve_the_selected_virtual_environment(tmp_path):
     environment = tmp_path / 'runtime'
     venv.EnvBuilder(with_pip=False, symlinks=backend.os.name != 'nt').create(environment)

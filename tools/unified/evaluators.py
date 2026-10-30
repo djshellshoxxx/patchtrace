@@ -45,6 +45,20 @@ def _aa_problems(role: str, outcome: PairOutcome) -> list[str]:
     return out
 
 
+def _coverage_problems(pair: corpus_manifest.ManifestPair, outcome: PairOutcome) -> list[str]:
+    if outcome.labels_sha256 != pair.labels_sha256:
+        return ['outcome label digest differs from the corpus manifest']
+    if pair.older_rvas is None or pair.newer_rvas is None:
+        return ['manifest has no expected RVA coverage; rebuild it from the labels']
+    problems = []
+    for side, expected in (('older', pair.older_rvas), ('newer', pair.newer_rvas)):
+        observed = {rva for row in outcome.rows for rva in getattr(row, side)}
+        missing = set(expected) - observed
+        if missing:
+            problems.append(f'missing {len(missing)} of {len(expected)} expected {side} RVAs')
+    return problems
+
+
 def g_u1(manifest: corpus_manifest.CorpusManifest, sets: Sequence[OutcomeSet]) -> Result:
     pairs = [p for p in manifest.pairs if p.role in ('P0', 'P1') and p.gated]
     reasons: list[str] = []
@@ -58,13 +72,17 @@ def g_u1(manifest: corpus_manifest.CorpusManifest, sets: Sequence[OutcomeSet]) -
             continue
         state = 'pass'
         for run, outcome in runs:
+            coverage = _coverage_problems(pair, outcome)
             problems = ([f'no rows in the result of run {run}'] if not outcome.rows else
                         _x_vs_x_problems(outcome) if pair.x_vs_x else _aa_problems(pair.role, outcome))
-            if not outcome.rows:
-                missing, state = True, 'insufficient-data'
-            elif problems:
+            if outcome.rows and problems:
                 failed, state = True, 'fail'
-            reasons += [f'{pair.pair_id} ({pair.role}{" X vs X" if pair.x_vs_x else ""}) run {run}: {p}' for p in problems]
+            if not outcome.rows or coverage:
+                missing = True
+                if state != 'fail':
+                    state = 'insufficient-data'
+            reasons += [f'{pair.pair_id} ({pair.role}{" X vs X" if pair.x_vs_x else ""}) run {run}: {p}'
+                        for p in [*problems, *coverage]]
         evaluated[pair.pair_id] = state
     if not pairs:
         reasons.append('the corpus manifest has no gated A/A pair (P0 or P1)')

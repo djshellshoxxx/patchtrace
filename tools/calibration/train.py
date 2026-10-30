@@ -466,14 +466,21 @@ def build_rows(bundle: Bundle, cfg: TrainConfig) -> tuple[list[Row], dict[str, S
     """(natural rows, row info, kept column names, kinds, stats). Only candidates of natural pairs become rows (LBL-26
     C-3); the others are counted in `stats['adversarial_table']`. A missing feature is filled with 0.0 and keeps its
     `.missing` family flag (C-4: no statistic is fitted on other rows); constant columns are dropped (label-free).
-    `stats['identity_leaks']` lists function identities shared by lineages of different roles (C-1)."""
+    Natural candidates alone define grouping and hub counts. `stats['identity_leaks']` combines natural-only and
+    all-evidence audits for function identities shared by lineages of different roles (C-1)."""
     docs = [d for d in bundle.docs if d.pair_id in bundle.evidence_ids]
     cols = docs[0].columns if docs else feature_names('G')
     entries = [(d, r) for d in docs for r in d.rows]
-    cand = [CandidateIdentity(r.id, d.lineage, r.identities) for d, r in entries]
-    grouping = identity_groups(cand, hub_max_lineages=cfg.hub_max_lineages) if cand else None
-    leaks = [] if grouping is None else audit_identity_roles(cand, pair_roles(bundle), hubs=grouping.hub_identities)
     nat = [(d, r) for d, r in entries if d.stratum in NATURAL_STRATA]
+    cand = [CandidateIdentity(r.id, d.lineage, r.identities) for d, r in nat]
+    grouping = identity_groups(cand, hub_max_lineages=cfg.hub_max_lineages) if cand else None
+    roles = pair_roles(bundle)
+    leaks = [] if grouping is None else audit_identity_roles(cand, roles, hubs=grouping.hub_identities)
+    if len(nat) != len(entries):
+        # Stress rows remain audited, but cannot change natural folds or mask a natural leak as a hub.
+        audit_cand = [CandidateIdentity(r.id, d.lineage, r.identities) for d, r in entries]
+        audit_grouping = identity_groups(audit_cand, hub_max_lineages=cfg.hub_max_lineages)
+        leaks = sorted(set(leaks) | set(audit_identity_roles(audit_cand, roles, hubs=audit_grouping.hub_identities)))
     full = [tuple(0.0 if v is None else float(v) for v in r.x) for _, r in nat]
     keep = [j for j in range(len(cols)) if len({v[j] for v in full}) > 1]
     names = [cols[j] for j in keep]

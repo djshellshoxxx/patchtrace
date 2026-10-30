@@ -87,3 +87,25 @@ No Sonar rule was disabled, issue state changed, or required protection bypassed
 ## Final runtime integration correction
 
 A real symlinked virtual-environment regression reproduced loss of installed Ghidriff when the backend resolved the Python executable to its base binary. Both probe and analysis now preserve the configured absolute executable path, keeping isolation while selecting the intended site-packages. The full suite also exposed three fake secret-redaction children that depended on cwd module injection; these now invoke an explicit test-only script while retaining all redaction/positive-control assertions. The first complete venv run counted 18,258 passed, 136 skipped, 7 xfailed and four failures (those three fixtures plus host-denied AF_UNIX). The corrected runtime focused suite passes 46 tests; final combined and remote checks remain required.
+
+## Qodo substantive review reconciliation
+
+The connected reviewer identified further real defects. Each was checked against source and repaired before merge:
+
+| Finding | Repair / regression |
+|---|---|
+| Repeated Qt failures do not gate release | Release and Linux packaging depend on qt-gate; retain implicit success() so tags/cadence cannot bypass it. |
+| Acceptance status recorded too early | Record each QA leg after portable/installer acceptance and before artifact upload. |
+| G-U1 passes incomplete A/A outcomes | New manifests include expected per-side labelled RVA endpoints; require full coverage and label-digest binding, allowing grouped endpoints. Legacy manifests still roundtrip but cannot attest coverage. |
+| Decompile filesystem/add-part errors abort otherwise valid runs or leave orphan parts | Catch typed/storage errors, restore the staged manifest and remove optional partial/final files; unsafe cleanup fails closed. Preserve prior committed refresh generation. |
+| Old Diaphora results visible without a completed run | Require completed current run with raw digest and matching guard; retain historical rows. |
+| Legacy KB products look absent/partially complete | Missing stored scopes yield explicit repeat-search/reselection instructions without rewriting history. |
+| KEV Copy/Go acts on previous query during replacement | Mark old rows pending, suppress actions and use per-request generation to reject late success/failure callbacks. |
+| Excluded adversarial samples alter calibration folds or hide leaks as hubs | Natural-only fold/hub grouping plus independent natural/all-evidence leakage audits. Tests preserve fit metrics and refusal on real leaks. |
+| Archive handoff overwrites checkout before review | Require member validation, private staged extraction and reviewed selective copying. |
+| PDB folder scans ignore cancellation | Check before discovery, each want/folder/entry and copies; propagate PT-CANCEL and clean partial copies. |
+| Isolated runtime setup gives unclear user-site failure | Explain selected-environment site-packages/venv requirement in dependency errors and Setup help; retain isolation. |
+
+Focused evidence: 308 unified tests plus 11 final manifest checks; 140 KB/KEV/Diaphora tests; 138 release/workflow checks; 114 calibration tests with one native-tools skip; 30 symbol/backend checks; 37 backend CLI/probe checks. Counts overlap and are not summed. Public schema regeneration produced no changed schema files; additive corpus coverage fields are tool-internal and covered by manifest roundtrip/digest tests.
+
+The full d34efeb snapshot before these final Qodo repairs reported 18,304 passed,128 skipped,7 xfailed and only the host AF_UNIX denial in 371.25 seconds. This is not claimed as acceptance of the subsequent repairs; the new combined source requires its own full and exact-head remote checks.

@@ -74,6 +74,24 @@ def test_counts_and_digests_are_copied_from_the_documents():
     pair = manifest.build([doc], {}).pairs[0]
     assert (pair.functions, pair.by_label, pair.labels_sha256) == (2, {'unchanged': 2}, doc.digest_sha256)
     assert pair.older.sha256 == 'a' * 64 and pair.newer.file_name == 'x.dll'
+    assert pair.older_rvas == pair.newer_rvas == (0x1000, 0x1100)
+
+
+def test_a_legacy_manifest_without_endpoint_metadata_round_trips():
+    from tools.calibration.common import digest
+    document = json.loads(manifest.dump(manifest.build(sample(), {})))
+    for pair in document['pairs']:
+        pair.pop('older_rvas')
+        pair.pop('newer_rvas')
+    document['manifest_sha256'] = digest(document, 'manifest_sha256')
+    raw = C.dump_json(document)
+    loaded = manifest.load(raw)
+    assert all(pair.older_rvas is None and pair.newer_rvas is None for pair in loaded.pairs)
+    assert manifest.load(manifest.dump(loaded)) == loaded
+    pair = loaded.pairs[0]
+    assert 'older_rvas' not in pair.model_dump(exclude_none=True)
+    assert 'newer_rvas' not in pair.model_dump(exclude={'older_rvas', 'newer_rvas'})
+    assert manifest.load(manifest.dump(loaded)).manifest_sha256 == document['manifest_sha256']
 
 
 def test_the_manifest_is_the_same_for_every_input_order_and_its_digest_is_checked():

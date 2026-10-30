@@ -228,7 +228,7 @@ REPLY at the end with only: PR URL, branch name, file count, and "NEXT: <what yo
 
 ## PROMPT 12: Format the Gemini help files and research answer (download, no git)
 
-ChatGPT reads two raw files from the repository, formats them, and hands back ONE downloadable zip. Nothing is pasted into chat and nothing is written to GitHub. Unzip it into the repository root (or upload the zip itself to `docs/inbox/chatgpt/` and tell Claude).
+ChatGPT reads two raw files from the repository, formats them, and hands back ONE downloadable zip. Nothing is pasted into chat and nothing is written to GitHub. Treat the archive as unreviewed input: list its members first and reject absolute paths, traversal components, links, duplicate destinations and unexpected files. Extract accepted regular files into a new private temporary directory without overwriting existing files or following links. Review the staged contents and proposed repository diff, then copy only approved files into the checkout; never extract directly over the repository root or run generated content during review. Alternatively, retain the unopened archive under `docs/inbox/chatgpt/` for this same staged review.
 
 ```
 (see the Prompt 12 text in chat; kept in sync with this file)

@@ -117,6 +117,9 @@ def test_legacy_product_identity_is_retained_but_cannot_resolve_current_pairs(kb
     save_record(kb, NET)
     with WorkspaceStore(kb.workspace) as ws:
         before = ws.current_revision(inv).model_dump_json()
+    code, doc, _ = kb('products', inv)
+    assert code == 2 and 'repeat the search' in doc['error']
+    assert 'no product' not in doc['error']
     code, doc, _ = kb('pairs', inv, '--product', scopes['client'], '--file', NET)
     assert code != 0 and 'repeat the search' in str(doc)
     with WorkspaceStore(kb.workspace) as ws:

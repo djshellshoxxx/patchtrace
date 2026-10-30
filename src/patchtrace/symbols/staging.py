@@ -92,11 +92,18 @@ def validate_dirs(dirs: Sequence[str]) -> list[Path]:
     return out
 
 
-def _candidates(directory: Path, name: str):
+def _check_cancel(cancel: Callable[[], bool] | None) -> None:
+    if cancel is not None and cancel():
+        raise SymbolError('PT-CANCEL', 'PDB staging cancelled')
+
+
+def _candidates(directory: Path, name: str, cancel: Callable[[], bool] | None = None):
+    _check_cancel(cancel)
     lowered = name.lower()
     try:
         with os.scandir(directory) as it:
             for entry in it:
+                _check_cancel(cancel)
                 if entry.name.lower() == lowered:
                     yield Path(entry.path)
     except OSError:
@@ -114,8 +121,7 @@ def _copy(source: Path, target: Path, cancel: Callable[[], bool] | None) -> tupl
         target.parent.mkdir(parents=True, exist_ok=True)
         with open(target, 'xb') as dst:
             while True:
-                if cancel is not None and cancel():
-                    raise SymbolError('PT-SYMBOL-PDB-INVALID', 'staging cancelled')
+                _check_cancel(cancel)
                 chunk = src.read(CHUNK)
                 if not chunk:
                     break
@@ -140,10 +146,12 @@ def stage_symbols(wants: Sequence[Want], dirs: Sequence[str | Path], dest: Path,
                   read_identity: Callable[[Path], PdbIdentity] = read_pdb_identity,
                   cancel: Callable[[], bool] | None = None) -> StagingResult:
     """Stage every wanted PDB whose own identity matches; skip the rest with a reason. Never raises on a bad PDB."""
+    _check_cancel(cancel)
     folders = validate_dirs([str(d) for d in dirs])
     staged: dict[tuple[str, str], StagedSymbol] = {}
     skipped: list[SkippedSymbol] = []
     for want in wants:
+        _check_cancel(cancel)
         key = (want.pdb_name, want.guid_age)
         if key in staged:
             prior = staged[key]
@@ -156,7 +164,7 @@ def stage_symbols(wants: Sequence[Want], dirs: Sequence[str | Path], dest: Path,
         reason = 'not_found'
         done = False
         for folder in folders:
-            for cand in _candidates(folder, want.pdb_name):
+            for cand in _candidates(folder, want.pdb_name, cancel):
                 target = Path(dest) / want.pdb_name / want.guid_age / want.pdb_name
                 try:
                     if cand.is_symlink() or cand.stat().st_size > MAX_PDB_BYTES:
@@ -166,8 +174,9 @@ def stage_symbols(wants: Sequence[Want], dirs: Sequence[str | Path], dest: Path,
                     identity = read_identity(target)
                 except (OSError, SymbolError) as exc:
                     _discard(target)
-                    if cancel is not None and cancel():
-                        raise SymbolError('PT-CANCEL', 'PDB staging cancelled') from None
+                    if isinstance(exc, SymbolError) and exc.code == 'PT-CANCEL':
+                        raise
+                    _check_cancel(cancel)
                     reason = 'too_large' if 'too_large' in str(exc) else 'unreadable'
                     continue
                 if identity.guid.lower() != want.guid:

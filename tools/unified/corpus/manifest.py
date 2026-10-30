@@ -12,7 +12,7 @@ import json
 from collections.abc import Iterable, Mapping
 from typing import Literal
 
-from pydantic import BaseModel, ConfigDict, ValidationError
+from pydantic import BaseModel, ConfigDict, ValidationError, model_serializer
 
 from tools.calibration.common import digest, strict_json
 from tools.calibration.tier_r import contracts as C
@@ -59,6 +59,16 @@ class ManifestPair(_Strict):
     by_label: dict[str, int]
     mutation: MutationFacts | None = None
     variant: str = ''                 # P1 only: `link-order` or the nuisance (icf, timestamp, guid, path)
+    older_rvas: tuple[C.Rva, ...] | None = None   # None: legacy manifest, cannot attest endpoint coverage
+    newer_rvas: tuple[C.Rva, ...] | None = None
+
+    @model_serializer(mode='wrap')
+    def _omit_legacy_coverage(self, handler):
+        data = handler(self)
+        for key in ('older_rvas', 'newer_rvas'):
+            if data.get(key) is None:
+                data.pop(key, None)
+        return data
 
 
 class Pending(_Strict):
@@ -98,7 +108,9 @@ def _pair(doc: C.KnownAnswerLabels, role: str) -> ManifestPair:
         lineage=doc.lineage, x_vs_x=doc.older.sha256 == doc.newer.sha256, older=image(doc.older),
         newer=image(doc.newer), labels_sha256=doc.digest_sha256, functions=doc.summary.functions,
         by_label=dict(doc.summary.by_label), mutation=mutation,
-        variant=aa.variant_of(doc) if role == 'P1' else '')
+        variant=aa.variant_of(doc) if role == 'P1' else '',
+        older_rvas=tuple(sorted({f.old_rva for f in doc.functions if f.old_rva is not None})),
+        newer_rvas=tuple(sorted({f.new_rva for f in doc.functions if f.new_rva is not None})))
 
 
 def pending() -> tuple[Pending, ...]:

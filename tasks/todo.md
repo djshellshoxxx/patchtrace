@@ -848,3 +848,6 @@ Done: dock with state matrix, consent, import, changes, copy, go to CVE. Open: r
 - [ ] Preserve and separately reconcile #102 Windows branding/version work; avoid its PR Windows-QA skip policy.
 - [ ] Before locked calibration, reconcile #78 output/artifact persistence, #79 A/A hard-failure guard, #82 recipe pin-collision controls and #85 final-look receipt guard.
 - [ ] Continue essential end-to-end/live acceptance using `docs/handoff/autonomous-continuation-20261030.md`; current source and checks override stale handoffs.
+
+- [x] Reconcile substantive Qodo review: Qt release dependency/status evidence, G-U1 endpoint coverage, optional decompile write rollback, stale KB/KEV/Diaphora ownership, calibration grouping/leak audits, staged archive handoff and cancellable PDB discovery.
+- [ ] Validate the final combined review repairs on their own published head; merge and close only proven superseded work after acceptance.

@@ -10,6 +10,11 @@ Rule (AGENTS.md): mocked/fake tests are never live evidence; live and corpus res
 
 ## 1. Gates (all must pass before the feature flag defaults to ON, U-05)
 
+G-U1 requires coverage of every labelled older and newer RVA in each outcome, bound to the manifest's label digest.
+The manifest records the unique expected RVAs per side; aliases share one RVA, and merged/group rows cover all of
+their endpoints. Row counts alone cannot establish coverage. Missing endpoints, a label-digest mismatch, or a legacy
+manifest without endpoint coverage metadata make the data insufficient; an observed verdict violation still fails.
+
 | Gate | Question | Metric and threshold | Data | First slice able to run it |
 |---|---|---|---|---|
 | G-U1 A/A null | does the engine invent changes? | X vs X: 100 % `unchanged`, 0 contested, 0 one-sided; P0 (same commit rebuilt): 0 `material`, `review` <= 0.1 % of rows [inf]; P1 nuisance (link order, `/ORDER`, `/OPT:ICF` toggle, timestamp/GUID/path): 0 `material` | Tier R A/A recipes (s2) | S3 (S0b for X vs X) |

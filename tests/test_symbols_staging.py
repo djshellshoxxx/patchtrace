@@ -4,6 +4,8 @@ from __future__ import annotations
 import os
 import struct
 import uuid
+from contextlib import contextmanager
+from types import SimpleNamespace
 
 import pytest
 
@@ -172,3 +174,53 @@ def test_staged_limit(tmp_path, monkeypatch):
     wants = [staging.want_from_codeview('older', cv('a.pdb')), staging.want_from_codeview('older', cv('b.pdb'))]
     res = staging.stage_symbols(wants, [d], tmp_path / 's')
     assert len(res.staged) == 1 and res.skipped[0].reason == 'limit'
+
+
+def test_cancel_during_large_nonmatching_folder_scan_stops_and_closes_iterator(tmp_path, monkeypatch):
+    d = folder(tmp_path)
+    seen = 0
+    closed = False
+
+    def entries():
+        nonlocal seen
+        for i in range(100_000):
+            seen += 1
+            yield SimpleNamespace(name=f'unrelated-{i}.txt')
+
+    @contextmanager
+    def scan(directory):
+        nonlocal closed
+        assert directory == d
+        try:
+            yield entries()
+        finally:
+            closed = True
+
+    monkeypatch.setattr(staging.os, 'scandir', scan)
+    with pytest.raises(modes.SymbolError) as exc:
+        staging.stage_symbols([staging.want_from_codeview('older', cv('missing.pdb'))], [d], tmp_path / 'store',
+                              cancel=lambda: seen >= 12)
+    assert exc.value.code == 'PT-CANCEL'
+    assert seen == 12 and closed
+    assert not (tmp_path / 'store').exists()
+
+
+def test_cancel_during_copy_preserves_cancellation_and_removes_partial_copy(tmp_path):
+    d = folder(tmp_path)
+    source = d / 'foo.pdb'
+    source.write_bytes(make_pdb(G1, 3))
+    want = staging.want_from_codeview('older', cv('foo.pdb'))
+    target = tmp_path / 'store' / want.pdb_name / want.guid_age / want.pdb_name
+    cancelled = False
+
+    def cancel():
+        nonlocal cancelled
+        if target.exists() and not cancelled:
+            cancelled = True
+            return True
+        return False
+
+    with pytest.raises(modes.SymbolError) as exc:
+        staging.stage_symbols([want], [d], tmp_path / 'store', cancel=cancel)
+    assert exc.value.code == 'PT-CANCEL'
+    assert cancelled and source.exists() and not target.exists()

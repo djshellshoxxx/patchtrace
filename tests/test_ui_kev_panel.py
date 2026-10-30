@@ -26,7 +26,7 @@ from qt_support import (  # noqa: F401
 from patchtrace import ui_kev_model as pm
 from patchtrace.gui import registry
 from patchtrace.gui.anchors import NavResult
-from patchtrace.gui.qt.tasks import TaskRunner
+from patchtrace.gui.qt.tasks import TaskFailure, TaskRunner
 from patchtrace.kev.contracts import KevError, plan_for
 from patchtrace.kev.panel import PANEL
 from patchtrace.kev.service import KevService
@@ -360,6 +360,52 @@ def test_show_cves_fills_the_lookup_from_another_view(qtbot, tmp_path):
     assert [r[0] for r in rows(controller)] == [LISTED, ABSENT]
 
 
+def test_pending_lookup_retains_rows_but_cannot_copy_or_navigate_old_selection(qtbot, tmp_path, monkeypatch):
+    controller, nav, shell, _ = start(qtbot, tmp_path)
+    look(qtbot, controller, LISTED)
+    select(qtbot, controller, LISTED)
+    gate, started = threading.Event(), threading.Event()
+    real = pm.prepare_view
+
+    def delayed(provider, ids, filter_mode, sort_mode, cancel):
+        started.set()
+        gate.wait(5)
+        return real(provider, ids, filter_mode, sort_mode, cancel)
+
+    monkeypatch.setattr(pm, 'prepare_view', delayed)
+    try:
+        controller.lookup(ABSENT)
+        qtbot.waitUntil(started.is_set, timeout=5000)
+        assert rows(controller)[0][0] == LISTED  # retained previous results, not the current query
+        assert state(controller)[0] == 'refreshing'
+        assert controller.panel.detail.toPlainText() == ''
+        assert not controller.panel.buttons['copy'].isEnabled()
+        assert not controller.panel.buttons['goto'].isEnabled()
+        controller.copy()
+        controller.go()
+        assert shell.copied == [] and nav.anchors == []
+    finally:
+        gate.set()
+    settle(qtbot, controller)
+    assert [r[0] for r in rows(controller)] == [ABSENT]
+    select(qtbot, controller, ABSENT)
+    controller.copy()
+    controller.go()
+    assert ABSENT in shell.copied[-1] and nav.anchors[-1].key == ABSENT
+
+
+def test_older_lookup_callbacks_cannot_overwrite_current_rows_or_error(qtbot, tmp_path):
+    controller, *_ = start(qtbot, tmp_path)
+    look(qtbot, controller, LISTED)
+    epoch, generation, previous = controller.epoch, controller._rows_generation, controller.view
+    look(qtbot, controller, ABSENT)
+    current = controller.view
+    controller._rows_ready(epoch, generation, previous)
+    controller._rows_failed(epoch, generation, TaskFailure('OldQueryError'))
+    assert controller.view is current and controller.error is None
+    assert [r[0] for r in rows(controller)] == [ABSENT]
+
+
 def test_show_changes_needs_two_catalogs(qtbot, tmp_path):
     controller, _, shell, _ = start(qtbot, tmp_path)
     assert not controller.panel.buttons['changes'].isEnabled()
@@ -446,7 +492,7 @@ def test_a_late_result_after_a_project_switch_is_dropped(qtbot, tmp_path):
     old_epoch, view = controller.epoch, controller.view
     controller.project_changed(FakeProject(run_id='run-2').key())
     settle(qtbot, controller)
-    controller._rows_ready(old_epoch, pm.KevView(view.prepared, 99, 99))
+    controller._rows_ready(old_epoch, controller._rows_generation, pm.KevView(view.prepared, 99, 99))
     controller._loaded(old_epoch, controller.snapshot)
     controller._installed(old_epoch, KevError('PT-KEV-STORAGE', 'x'))
     assert controller.view.total == 1 and controller.error is None

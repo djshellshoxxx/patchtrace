@@ -157,7 +157,9 @@ def test_an_incomplete_decompile_refresh_preserves_the_committed_result(project,
     elif failure == 'partial':
         refresh = options(tmp_path, texts={'older': SHOWN['older']}, refresh=True)
     elif failure == 'part-failed':
-        monkeypatch.setattr(pipeline, '_store_decomp', lambda *args: ('decompile-part-skipped:part-too-large',))
+        def fail_store(*args):
+            raise OSError('simulated code part registration failure')
+        monkeypatch.setattr(store, 'add_part', fail_store)
     else:
         def fail_decompile(*args, **kwargs):
             raise UnifiedError('PT-UNIFIED-UNSUPPORTED', 'decompiler unavailable', reason='decompiler-unavailable')
@@ -167,6 +169,20 @@ def test_an_incomplete_decompile_refresh_preserves_the_committed_result(project,
     assert error.value.reason == 'result-drift'
     assert keep_same(project)[2].verdict == 'material'
     assert {p.name: p.read_bytes() for p in first.directory.iterdir()} == committed
+
+
+def test_a_code_part_io_error_keeps_a_new_run_and_its_computed_facts(project, tmp_path, monkeypatch):
+    place_gzfs(project)
+
+    def fail_register(*args):
+        raise OSError('simulated code part registration failure')
+
+    monkeypatch.setattr(store, 'add_part', fail_register)
+    report = pipeline.run_unified(project, options(tmp_path, texts=SHOWN))
+    assert report.status == 'ok' and 'decompile-part-skipped:io-error' in report.limitations
+    assert keep_same(project)[2].verdict == 'material'
+    assert store.verify_result_dir(report.directory).result_id == report.result_id
+    assert not (report.directory / store.DECOMP).exists()
 
 
 def test_a_function_the_decompiler_failed_on_leaves_the_pair_in_review_and_is_counted(project, tmp_path):

@@ -316,6 +316,9 @@ class KbService:
             index, _ = load_index(ws, self.ports)
         wanted = set(rev.scope_ids)
         scopes = [_scope_dict(s) for s in index.scopes() if s.scope_id in wanted]
+        if wanted - {s['scope_id'] for s in scopes}:
+            raise _fail('PT-KBC-INPUT', 'the product mapping is no longer current; repeat the search '
+                        'and select the product again before listing products')
         result = {'contract': 'kbcorrelation/1', 'investigation_id': rev.investigation_id,
                   'selected_scope_id': rev.selected_scope_id, 'products': scopes}
         if not scopes:

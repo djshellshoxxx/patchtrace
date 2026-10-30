@@ -569,11 +569,28 @@ def _store_decomp(staged: Path, records: dict[str, dict[int, DecompRecord]], lim
     lines = part_lines(records, limits)
     if not lines:
         return ()
+    manifest_path = staged / store.MANIFEST
+    previous = None
     try:
+        with manifest_path.open('rb') as stream:
+            previous = stream.read(store.MANIFEST_MAX_BYTES + 1)
+        if len(previous) > store.MANIFEST_MAX_BYTES:
+            raise fail('PT-UNIFIED-STORE', 'manifest-too-large')
         store.add_part(staged, store.write_part(staged, store.DECOMP, lines, limits))
-    except UnifiedError as exc:
-        (staged / f'{store.DECOMP}.part').unlink(missing_ok=True)
-        return (f'decompile-part-skipped:{exc.reason or "store"}',)
+    except (UnifiedError, OSError) as exc:
+        try:
+            if previous is not None and len(previous) <= store.MANIFEST_MAX_BYTES:
+                with manifest_path.open('rb') as stream:
+                    current = stream.read(store.MANIFEST_MAX_BYTES + 1)
+                if current != previous:
+                    temporary = staged / f'{store.MANIFEST}.part'
+                    temporary.write_bytes(previous)
+                    os.replace(temporary, manifest_path)
+            for name in (store.DECOMP, f'{store.DECOMP}.part', f'{store.MANIFEST}.part'):
+                (staged / name).unlink(missing_ok=True)
+        except OSError:
+            raise fail('PT-UNIFIED-STORE', 'decompile-cleanup-failed') from None
+        return (f'decompile-part-skipped:{getattr(exc, "reason", None) or "io-error"}',)
     return ()
 
 

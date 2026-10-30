@@ -72,6 +72,55 @@ def test_a_part_over_the_size_limit_costs_the_text_not_the_result(tmp_path):
     store.verify_result_dir(directory)
 
 
+@pytest.mark.parametrize('failure', ['write', 'register', 'registered', 'register-unified'])
+def test_failed_optional_part_storage_rolls_back_and_keeps_the_result_valid(tmp_path, monkeypatch, failure):
+    before, directory = staged_result(tmp_path)
+    original = {p.name: p.read_bytes() for p in directory.iterdir()}
+    real_add = store.add_part
+
+    def fail_write(staged, name, *args):
+        (staged / f'{name}.part').write_bytes(b'partial gzip')
+        raise OSError('simulated write failure')
+
+    def fail_register(staged, part):
+        if failure == 'registered':
+            real_add(staged, part)
+        else:
+            (staged / f'{store.MANIFEST}.part').write_bytes(b'partial manifest')
+        if failure == 'register-unified':
+            from patchtrace.unified.limits import UnifiedError
+            raise UnifiedError('PT-UNIFIED-STORE', 'simulated registration failure', reason='replace-failed')
+        raise OSError('simulated registration failure')
+
+    monkeypatch.setattr(store, 'write_part' if failure == 'write' else 'add_part',
+                        fail_write if failure == 'write' else fail_register)
+    notes = pipeline._store_decomp(directory, {'older': {0x1000: rec('older', 0x1000)}}, DEFAULT_LIMITS)
+    assert len(notes) == 1 and notes[0].startswith('decompile-part-skipped:')
+    assert {p.name: p.read_bytes() for p in directory.iterdir()} == original
+    assert store.verify_result_dir(directory) == before
+
+
+def test_optional_part_cleanup_failure_refuses_publication(tmp_path, monkeypatch):
+    _before, directory = staged_result(tmp_path)
+
+    def fail_register(*args):
+        raise OSError('simulated registration failure')
+
+    original_unlink = type(directory).unlink
+
+    def fail_cleanup(path, *args, **kwargs):
+        if path == directory / store.DECOMP:
+            raise OSError('simulated cleanup failure')
+        return original_unlink(path, *args, **kwargs)
+
+    monkeypatch.setattr(store, 'add_part', fail_register)
+    monkeypatch.setattr(type(directory), 'unlink', fail_cleanup)
+    from patchtrace.unified.limits import UnifiedError
+    with pytest.raises(UnifiedError) as error:
+        pipeline._store_decomp(directory, {'older': {0x1000: rec('older', 0x1000)}}, DEFAULT_LIMITS)
+    assert error.value.code == 'PT-UNIFIED-STORE' and error.value.reason == 'decompile-cleanup-failed'
+
+
 def fake_request(tmp_path):
     plan = SimpleNamespace(run_id='r1', older_sha256='a' * 64, newer_sha256='b' * 64)
     return SimpleNamespace(root=tmp_path, plan=plan, backend=object(), gzf_recorded={}, total_ram_bytes=None,

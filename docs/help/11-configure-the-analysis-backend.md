@@ -16,6 +16,8 @@ The README records a native fixture using Python 3.12.10, Ghidra 12.0.4, Temurin
 
 Select `Diagnose dependencies,` read the output, then `Save setup.` Diagnosis checks configured dependencies without executing either target binary. A successful diagnosis does not establish that every native comparison will complete.
 
+The backend runs Python in isolated mode. Install Ghidriff and its dependencies in that interpreter's own environment, preferably a dedicated virtual environment, and select its `python.exe` (Windows) or `bin/python` (Linux). Packages installed only with `pip install --user` or supplied through `PYTHONPATH` are ignored. The executable path keeps the selected virtual environment even when it is a symlink to a base Python binary.
+
 When using system Java, restart PatchTrace after changing environment variables. A configured private Java home applies to backend child processes without requiring a global Java change.
 
 If diagnosis fails, correct the reported dependency first. Repeatedly starting a comparison does not repair a missing interpreter, incompatible JDK, or incorrect Ghidra directory.

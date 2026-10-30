@@ -140,6 +140,47 @@ def test_g_u1_a_failure_in_any_run_fails_even_if_another_run_is_clean():
     assert g1.status == 'fail'
 
 
+@pytest.mark.parametrize('role', ['P0', 'P1', 'X/X'])
+def test_g_u1_partial_nonempty_results_do_not_pass(role):
+    doc = label_doc('aa-partial', 'aa', method='aa-layout' if role == 'P1' else 'aa-rebuild',
+                    newer='a' * 64 if role == 'X/X' else 'b' * 64)
+    # One valid row is not evidence about the other labelled function at 0x1100.
+    status, reasons, observed = evaluators.g_u1(corpus_manifest.build([doc], {}), [run('linux', pair(doc, rows(1)))])
+    assert status == 'insufficient-data'
+    assert observed['evaluated']['aa-partial'] == 'insufficient-data'
+    assert any('missing' in reason and 'RVA' in reason for reason in reasons)
+
+
+def test_g_u1_coverage_uses_endpoints_not_row_count_or_duplicate_endpoints():
+    doc = label_doc('aa-group', 'aa', method='aa-layout')
+    manifest = corpus_manifest.build([doc], {})
+    merged = R(older=(0x1000, 0x1100), newer=(0x1000, 0x1100), decision='ambiguous', materiality='unknown')
+    assert evaluators.g_u1(manifest, [run('linux', pair(doc, [merged]))])[0] == 'pending'
+    repeated = rows(1) * manifest.pairs[0].functions
+    assert evaluators.g_u1(manifest, [run('linux', pair(doc, repeated))])[0] == 'insufficient-data'
+
+
+@pytest.mark.parametrize('side', ['older', 'newer'])
+def test_g_u1_missing_one_sides_endpoint_is_not_hidden_by_an_extra_unlabelled_function(side):
+    doc = label_doc('aa-side-coverage', 'aa', method='aa-layout')
+    row = R(older=(0x1000, 0x1100), newer=(0x1000, 0x1100), decision='ambiguous', materiality='unknown')
+    row = row.model_copy(update={side: (0x1000, 0x2200)})
+    status, reasons, _ = evaluators.g_u1(corpus_manifest.build([doc], {}), [run('linux', pair(doc, [row]))])
+    assert status == 'insufficient-data'
+    assert any(f'expected {side} RVAs' in reason for reason in reasons)
+
+
+def test_g_u1_legacy_manifest_and_other_label_digest_cannot_establish_coverage():
+    doc = label_doc('aa-coverage', 'aa')
+    manifest = corpus_manifest.build([doc], {})
+    legacy = manifest.model_copy(update={'pairs': (manifest.pairs[0].model_copy(
+        update={'older_rvas': None, 'newer_rvas': None}),)})
+    good = run('linux', pair(doc, rows()))
+    assert evaluators.g_u1(legacy, [good])[0] == 'insufficient-data'
+    foreign = good.model_copy(update={'pairs': (good.pairs[0].model_copy(update={'labels_sha256': 'f' * 64}),)})
+    assert evaluators.g_u1(manifest, [foreign])[0] == 'insufficient-data'
+
+
 def run_named(outcome_set, name):
     return outcomes.build(name, 'Windows-11', outcome_set.pairs)
 

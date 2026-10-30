@@ -59,6 +59,8 @@ def stored_sets(service) -> list[tuple[Entry, DiaphoraMatchSet]]:
     """Valid stored sets for the current pair, newest first. A row failing validation is skipped, never fatal."""
     project = service.project
     run = next((r for r in reversed(project.runs) if r.status == 'completed' and r.raw_sha256), None)
+    if run is None:
+        return []
     store = EnrichmentStore(service.store)
     out = []
     pair = {a.side: a.sha256 for a in project.artifacts}
@@ -69,7 +71,7 @@ def stored_sets(service) -> list[tuple[Entry, DiaphoraMatchSet]]:
             continue
         if (match_set.older_sha256, match_set.newer_sha256) != (pair.get('older'), pair.get('newer')):
             continue
-        if run is not None and entry.guard.run_id != run.id:
+        if entry.guard.run_id != run.id:
             continue    # attached to another analysis run
         out.append((entry, match_set))
     return out
