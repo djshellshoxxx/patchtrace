@@ -10,21 +10,21 @@
 ```text
 $ cd /mnt/data/patchtrace_r7
 $ python3 -m pytest -q tests/test_r7_patterns.py tests/test_r7_slicing.py
-........................................                                 [100%]
-40 passed in 0.08s
+............................................                             [100%]
+44 passed in 0.08s
 $ python3 -m compileall -q tools/research/r7 tests/test_r7_slicing.py tests/test_r7_patterns.py
 [success, no output]
 ```
 
 Coverage by example: cross-side provenance syntax rejection; transitive SSA def-use and explicit control edges; negative unrelated guard; forward dependencies; within-graph-only completeness; missing definition; ambiguous non-SSA multiple definitions; unlisted control; memory alias and indirect call unknown flags; deterministic cyclic graph; depth/node caps/frontier; input size bounded before full iterator materialization; malformed opcode and field rejection; cancellation; missing seed and unsupported direction. Source tests are under `tests/test_r7_slicing.py`.
 
-Tests were written against behavior first. Two additional red failures prompted slicing hardening: unbounded materialization of generator inputs, and false silence for `INDIRECT` and unrecognized P-code opcodes. The pattern pilot was also developed red/green: a qualified guard plus an unresolved other control edge initially emitted a candidate and now correctly abstains. Current slicer subtotal is **27 passed**; structural pattern subtotal is **13 passed**; combined **40 passed, 0 failed, 0 skipped**. This is not an integrated baseline regression run.
+Tests were written against behavior first. Two additional red failures prompted slicing hardening: unbounded materialization of generator inputs, and false silence for `INDIRECT` and unrecognized P-code opcodes. The pattern pilot was also developed red/green: a qualified guard plus an unresolved other control edge initially emitted a candidate and now correctly abstains. Current slicer subtotal is **28 passed**; structural pattern subtotal is **16 passed**; combined **44 passed, 0 failed, 0 skipped**. This is not an integrated baseline regression run.
 
 ## Synthetic structural pattern pilot
 
 `tools/research/r7/patterns.py` implements an explicitly **nonsecurity** structural guard-to-memory-operation hypothesis, with outcomes `candidate`, `not-observed`, or `inconclusive`. The caller supplies already-matched old/new sink IDs, SSA-like inputs and declared control dependencies; no Ghidra provenance, actual postdominators, alias analysis or branch polarity is verified.
 
-13 focused test cases cover one synthetic positive; unrelated-value, already-guarded-old and missing-control negatives; ambiguous definition, unresolved old/new control, mixed unknown control, mismatched sinks; invalid scopes, missing sink, bounded generator, and no CWE/definitive verdict field. These are behavioral regression checks, **not** empirical TP/FP/TN/FN on binary truth labels.
+16 focused test cases cover one synthetic positive; unrelated-value, already-guarded-old and missing-control negatives; ambiguous definition, unresolved old/new control, mixed unknown control, mismatched sinks; invalid scopes, missing sink, bounded generator, and no CWE/definitive verdict field. Additional regression probes cover Ghidra two-input CBRANCH (target then condition), malformed branch operand count, deterministic evidence under reordered control references and opaque UNIMPLEMENTED operations. These are behavioral regression checks, **not** empirical TP/FP/TN/FN on binary truth labels.
 
 ## Synthetic benchmark
 
