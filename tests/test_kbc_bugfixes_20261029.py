@@ -1,4 +1,4 @@
-"""Regression tests for issue #105 BUG-KBC-1..11 (KB/CVE correlator). Offline; synthetic documents only."""
+"""Regression tests for issue #105 BUG-KBC-1..13 (KB/CVE correlator). Offline; synthetic documents only."""
 from __future__ import annotations
 
 import json
@@ -17,6 +17,7 @@ from patchtrace.kbcorrelation.recovery import repair
 from patchtrace.kbcorrelation.service import KbService
 from patchtrace.kbcorrelation.sources import cvrf
 from patchtrace.kbcorrelation.sources.importer import import_bytes
+from patchtrace.kbcorrelation.sources.scope import files_scope
 from patchtrace.kbcorrelation.store import KbcStoreError, ProjectAttachment, WorkspaceStore
 
 NOW = '2099-03-01T00:00:00Z'
@@ -207,3 +208,22 @@ def test_kbc13_two_product_ids_of_one_scope_count_as_one_scope():
                       'vulnerabilities': [{'cve': 'CVE-2099-0001', 'remediations': [
                           {'type': 2, 'description': 'KB5000001', 'product_ids': ['A', 'B']}]}]}).encode()
     assert import_bytes(raw, now=NOW).counts()['scopes'] == 1
+
+
+def test_kbc12_a_named_superseded_file_says_its_hit_is_not_counted():
+    index = ReverseIndex()
+    older = import_bytes(json_doc({'cve': 'CVE-2099-0001', 'remediations': [
+        {'type': 2, 'description': 'KB1111', 'product_ids': ['P1']}]}, date='2099-02-13T00:00:00Z'), now=NOW)
+    newer = import_bytes(json_doc({'cve': 'CVE-2099-0001', 'remediations': [
+        {'type': 2, 'description': 'KB2222', 'product_ids': ['P1']}]}, date='2099-03-05T00:00:00Z'), now=NOW)
+    index.add(older)
+    index.add(newer)
+    got = index.lookup_kb('KB1111', scope=files_scope([older.doc_id]), now=NOW)
+    # Status still reflects active revisions only; the text must not read as a plain negative for the named file.
+    assert got.status == 'not_observed' and [e.kb for e in got.superseded] == ['KB1111']
+    named = [w for w in got.warnings if w.startswith('NAMED_SUPERSEDED')]
+    assert len(named) == 1 and older.doc_id[:12] in named[0]
+    # A named active file, or a superseded hit outside the named files, adds no such warning.
+    assert not any(w.startswith('NAMED_SUPERSEDED') for w in
+                   index.lookup_kb('KB2222', scope=files_scope([newer.doc_id]), now=NOW).warnings)
+    assert not any(w.startswith('NAMED_SUPERSEDED') for w in index.lookup_kb('KB1111', now=NOW).warnings)

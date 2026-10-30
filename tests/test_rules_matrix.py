@@ -144,8 +144,10 @@ def test_an_expectations_file_turns_a_series_build_into_a_scored_row(world, olde
 
 
 @pytest.mark.parametrize('text', ['[]', '{"a": "maybe"}', '{"a": 1}', 'not json', '{"x.exe": "hit", "x.exe": "hit"}',
-                                  '{"x.exe": "hit", "x.exe": "unknown"}', '{"x.exe": "hit"}' + ' ' * (1 << 20)],
-                         ids=['list', 'word', 'number', 'text', 'dup-same-value', 'dup-other-value', 'too-large'])
+                                  '{"x.exe": "hit", "x.exe": "unknown"}', '{"x.exe": "hit"}' + ' ' * (1 << 20),
+                                  '[' * 100_000],
+                         ids=['list', 'word', 'number', 'text', 'dup-same-value', 'dup-other-value', 'too-large',
+                              'deep-105-rule5'])
 def test_a_bad_expectations_file_is_refused(tmp_path, text):
     path = tmp_path / 'expect.json'
     path.write_text(text, encoding='utf-8')
@@ -236,6 +238,23 @@ def test_a_stored_run_is_scored_again_with_new_expectations_and_the_key_ignores_
     assert grid.cache_key == matrix.cache_key([older_rule], changed, grid.engine.version, 30)
 
 
+def test_a_stored_run_reused_in_another_order_keeps_each_result_on_its_own_file_and_rule(world, older_rule, newer_rule):
+    """#105 BUG-RULE-1: the key ignores order, so a reused run must remap cells by hash, not by position."""
+    entries, _ = world.entries(series=world.series)
+    grid = run(entries, [older_rule, newer_rule])
+    targets, versions = [e.target for e in reversed(entries)], [newer_rule, older_rule]
+    assert grid.cache_key == matrix.cache_key(versions, targets, grid.engine.version, 30)
+    again = matrix.rescored(grid, targets, versions)
+    assert [t.target_id for t in again.targets] == [t.target_id for t in targets]
+    assert [r.rule_sha256 for r in again.rules] == [v.rule_sha256 for v in versions]
+    was = {(t.label, r.rule_sha256): grid.cells[i * 2 + j].state
+           for i, t in enumerate(grid.targets) for j, r in enumerate(grid.rules)}
+    now = {(t.label, r.rule_sha256): again.cells[i * 2 + j].state
+           for i, t in enumerate(again.targets) for j, r in enumerate(again.rules)}
+    assert now == was
+    assert (by_label(again, 1)['0-V1.dll'].verdict, by_label(again, 0)['3-V2.dll'].verdict) == ('as-expected',) * 2
+
+
 def test_no_path_reaches_the_record(world, older_rule):
     entries, _ = world.entries(series=world.series, clean_dir=world.clean)
     text = run(entries, [older_rule]).model_dump_json()
@@ -277,6 +296,23 @@ def test_the_caps_of_a_run_are_enforced_before_anything_is_scanned(world):
     with pytest.raises(RuleError) as caught:                                    # the anchors and the series are all rows
         world.entries(series=world.series, limits=RuleLimits(series_targets=2))
     assert (caught.value.code, caught.value.reason) == ('PT-RULE-LIMIT', 'series')
+
+
+@pytest.mark.skipif(not Path('/dev/zero').exists(), reason='needs a character device such as /dev/zero')
+def test_a_device_as_an_extra_build_is_refused_without_reading_it(world):
+    """#105 BUG-RULE-6: `--extra /dev/zero` (or a FIFO) was hashed with no regular-file check and never returned."""
+    outcome = []
+
+    def gather():
+        try:
+            world.entries(extra=[Path('/dev/zero')])
+        except RuleError as exc:
+            outcome.append((exc.code, exc.reason))
+
+    worker = threading.Thread(target=gather, daemon=True)
+    worker.start()
+    worker.join(timeout=10)
+    assert not worker.is_alive() and outcome == [('PT-RULE-INPUT', 'not-a-file')]
 
 
 def test_a_file_or_folder_that_cannot_be_read_is_a_bad_selection(world, tmp_path):
