@@ -68,7 +68,7 @@ from .service import ProjectService
 from .tooltips import apply_tooltip, apply_tooltips
 from .ui_bundle_setup import BundleSetup
 from .ui_inspection import InspectionThread, side_summary
-from .ui_symbols import SymbolChoice, config_kwargs, configured_symbol_mode, effective_profile_symbol_mode
+from .ui_symbols import SymbolChoice, config_kwargs, profile_symbol_settings
 
 REVIEWS = ['unreviewed', 'accepted', 'rejected', 'needs-review']
 CATEGORIES = ['modified', 'added', 'removed', 'ambiguous', 'split', 'merged', 'unmatched', 'unchanged']
@@ -2561,10 +2561,7 @@ class MainWindow(QMainWindow):
 
     def backend_config(self):
         profile = self.analysis_profile()[0]
-        consent = self.settings.value('backend/allow_symbol_downloads', False, type=bool)
-        configured = configured_symbol_mode(self.settings, consent)
-        effective = effective_profile_symbol_mode(configured, profile.symbol_policy, profile.is_default)
-        symbol_dirs = str(self.settings.value('backend/symbol_dirs', ''))
+        effective, symbol_dirs = profile_symbol_settings(self.settings, profile)
         config = BackendConfig(python_executable=str(self.settings.value('backend/python', '')),
                              ghidra_dir=str(self.settings.value('backend/ghidra', '')),
                              timeout_seconds=setting_int(self.settings, 'backend/timeout', 3600, 10, 86400),
