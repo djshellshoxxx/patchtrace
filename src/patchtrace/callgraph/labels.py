@@ -5,7 +5,7 @@ import re
 from typing import NamedTuple
 
 _DEFAULT = re.compile(r'^FUN_([0-9a-fA-F]+)$')
-_COUNT_SUFFIX = re.compile(r'^(.+)-(\d+)$')
+_COUNT_SUFFIX = re.compile(r'^(.+)-([0-9]{1,9})$')  # ASCII, bounded: int() of 4300+ digits raises (#105 CG-2)
 _ORDINAL = re.compile(r'^#(\d+)$')
 _LIB_SUFFIXES = ('.dll', '.drv', '.so')
 _EXTERNAL_PREFIX = 'EXTERNAL:'
