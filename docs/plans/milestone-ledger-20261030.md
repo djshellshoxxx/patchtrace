@@ -45,8 +45,26 @@ No branch other than #125's was pushed in the hour before this check, so no conf
 
 | Time (UTC) | Action | SHA / link | Result |
 |---|---|---|---|
-| 13:10 | ledger created | branch `claude/modest-hamilton-kz2gta` | — |
+| 13:10 | ledger created, draft PR | [#126](https://github.com/djshellshoxxx/patchtrace/pull/126) | — |
+| 13:09 | **merged #124** (merge commit, expected head `95e0954`) | main `a04f5a299a8d4afef023261e52e08d14678cf1e7` (parents `5214720`, `95e0954`) | push QA run [41060959610](https://github.com/djshellshoxxx/patchtrace/actions/runs/41060959610) started |
+| 13:25 | closed #110 #112 #113 #114 #115 #117 #119 #122 #123 as superseded by #124 | comment on each with evidence | see M-B table |
+
+## M-B evidence (superseded PRs)
+
+| PR | Head | Method | Result |
+|---|---|---|---|
+| #110 | `5ed624e` | `git merge-base --is-ancestor` vs `a04f5a2` | ancestor |
+| #113 | `979ddfa` | ancestor check | ancestor (chosen repair alternative) |
+| #123 | `99f8328` | ancestor check | ancestor (#124 baseline) |
+| #117 | `025300f` | added lines of `c1e21ef..head` present in main tree | 35/35 present |
+| #119 | `3e9cedb` | same | 73/73 present |
+| #122 | `40e02da` | same | 16/16 present |
+| #112 | `aba4c20` | PR test files run against main | 1 fail: asserts standalone `winbindex.strict_json` rejects lone surrogate; on main only `parse`/`parse_rows` call it and both validate per entry → contract without caller, no behaviour lost |
+| #114 | `c0d1c38` | same | 1 fail: same contract via PR-only `allow_entry_surrogates` kwarg; symbol-consent tests pass |
+| #115 | `bb42828` | same | all pass |
+
+Script: line-presence check over `git diff -U0 base..head` added lines (len ≥ 6) against `git show origin/main:<file>`. Alternative-PR tests run in a detached worktree of `a04f5a2` (42 passed, 2 failed as above).
 
 ## Next executable step
 
-Merge #124 with a merge commit (expected head `95e0954`), then watch the push QA run on the new `main` head.
+Wait for push QA run 41060959610 on `a04f5a2`; record per-leg results and Windows artifacts (M-A/M-C); check release job for B1 403 (M-D).
