@@ -152,3 +152,20 @@ def test_missing_seed_is_refused():
 def test_direction_is_checked():
     with pytest.raises(ValueError, match="direction"):
         slice_ops(graph(), "a", SCOPE, direction="sideways")
+
+
+def test_iterable_input_limit_stops_consumption_before_unbounded_generator():
+    def long_generator():
+        for i in range(4098):
+            if i > 4096:
+                raise AssertionError("read beyond maximum allowed input")
+            yield op(f"n{i}", i, "COPY")
+    with pytest.raises(ValueError, match="too many"):
+        slice_ops(long_generator(), "n0", SCOPE)
+
+
+def test_indirect_decompiler_effect_and_unknown_opcode_are_declared():
+    ops = [op("a", 0x1000, "MAGIC", ["param:x"], "u:x"),
+           op("b", 0x1002, "INDIRECT", ["u:x"], "u:y")]
+    r = slice_ops(ops, "b", SCOPE)
+    assert {"unknown-op:MAGIC:a", "indirect-effect:b"} <= set(r.unknowns)
