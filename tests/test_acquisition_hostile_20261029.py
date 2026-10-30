@@ -56,7 +56,7 @@ def test_acq2_strict_json_rejects_surrogates_and_duplicate_keys_by_default():
     bad_surrogate = b'{"note": "\\uD800"}'
     with pytest.raises(AcquisitionError, match='PT-ACQ-PROVIDER'):
         winbindex.strict_json(bad_surrogate)
-    assert winbindex.strict_json(bad_surrogate, allow_entry_surrogates=True)['note'] == '\\ud800'
+    assert winbindex.strict_json(bad_surrogate, allow_entry_surrogates=True)['note'] == chr(0xD800)
     with pytest.raises(AcquisitionError, match='PT-ACQ-PROVIDER'):
         winbindex.strict_json(b'{"item": 1, "item": 2}', allow_entry_surrogates=True)
 
