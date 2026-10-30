@@ -83,3 +83,13 @@ def test_r8_small_equivalent_integer_spellings_remain_compatible():
 
     assert canon("0x100").tokens == canon("256").tokens
     assert canon("010").tokens == canon("8").tokens
+
+
+def test_r8_unparseable_numeric_text_cannot_collide_by_truncated_prefix():
+    """Python's bounded int parser rejects huge numerals; fallback must retain whole-text identity."""
+    a, b = "9" * 5000 + "1", "9" * 5000 + "2"
+    assert a[:40] == b[:40] and a != b
+    assert pseudo._number("dec", a) != pseudo._number("dec", b)
+    # Invalid octal literals also take the conservative unknown-text path.
+    a, b = "0" + "7" * 50 + "8", "0" + "7" * 50 + "9"
+    assert pseudo._number("dec", a) != pseudo._number("dec", b)
