@@ -24,13 +24,27 @@ Use this workspace to test **false benign claims first**, distinguish source-cod
 
 - [Prioritized uncertainty register](uncertainty-register.md)
 - [Typed literal proof counterexamples, compiler digests, corrective contract](01-typed-literal-counterexamples.md)
-- [Experimental scripts and regression tests](../../../../tests/test_r8_literal_types.py) (when checked in)
+- [ICF export-alias identity counterexample](02-icf-function-identity.md)
+- [Executable ICF compiler probe](../../../tools/research/r8_icf_probe.py)
+- [Experimental scripts and regression tests](../../../tests/test_r8_literal_types.py) (when checked in)
 - [R8 follow-up and release gates](uncertainty-register.md#integration-and-release-gates)
 
 ## Current decisions
 
-1. Preserve typed distinctions whenever the normalizer cannot *prove* C literal values have the same effective type. Explicit suffixes must not disappear.
+1. **Implemented in R8 branch, not merged:** preserve typed distinctions when literal values can have different C types, correct octal parsing, and increment `canon` channel version to 2. A source-equivalent isolated pytest check passed 5/5 after first reproducing 4 failing cases; full repository pytest remains **pending**.
 2. Do not infer equivalence from same tokens without complete target/IR/EH evidence; `COS-PSEUDO` remains a named decompiler-relative statement, not a behavior proof.
 3. Preserve existing same-type value normalization, e.g. `0x100` and `256` both have type `int` under the Windows x64 C model.
 4. Any normative change to canonicalization must increment the `canon` channel version in `registry.py` to invalidate cached `config_digest`/result keys. Coordinate the nearby active R3 `COS-PSEUDO` version edit.
 5. All remaining R8 categories are **open** until explicitly tested; an empty gate is not a passing gate.
+
+## Second measured counterexample: R8-IDENT-02
+
+Clang-cl/LLD 17 compiled the same AMD64 COFF object with exported `first` and `second` definitions. With `/opt:icf`, both names point to RVA `0x1000`. With `/opt:noicf`, `first` is `0x1000`, `second` is `0x1010`. Two independent temporary-directory runs with `/Brepro` produced equal output hashes. The [reproducible compiler-only probe](../../../tools/research/r8_icf_probe.py) returned `status=PASS`; no DLL was executed. This validates source-vs-RVA nonuniqueness, **not a defect in PatchTrace's current matcher**. R1/R2 must test native extractor/matcher behavior before claiming any correction. See [experiment](02-icf-function-identity.md).
+
+## Verification at last R8 checkpoint
+
+- R8 draft PR #135; baseline `a04f5a2`; main production defaults unchanged.
+- Portable source-level numeric red/green: isolated baseline 4 failed + 1 passed, amended copy 5 passed; repository-integrated pytest **not run here**.
+- Static compiler examples: GCC 14.2 and Clang 17 Win64 COFF differ as expected; ICF export identity: 2/2 separate runs PASS.
+- GitHub Actions full QA and native Windows jobs automatically started on the research branch, but exact-head success is **not verified**. Earlier cancelled superseded runs are not pass/fail evidence.
+- No source/Ghidra/Microsoft binary executed; no target binary committed or externally uploaded; research code opt-in only.
