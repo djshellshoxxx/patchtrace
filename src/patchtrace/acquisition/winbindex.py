@@ -94,7 +94,7 @@ def strict_json(text: bytes, *, per_entry_text_validation: bool = False):
         if _SURROGATE_ESCAPE.search(text) and not per_entry_text_validation:
             _canonical(value)  # strict callers reject invalid text; index parsers validate each entry separately
         return value
-    except (UnicodeDecodeError, ValueError, RecursionError):
+    except (UnicodeError, ValueError, RecursionError):
         raise AcquisitionError('PT-ACQ-PROVIDER', 'Winbindex record is not strict JSON') from None
 
 
