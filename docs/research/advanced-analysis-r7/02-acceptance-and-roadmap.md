@@ -8,7 +8,7 @@
 | Item | Verified run / state | Limits |
 |---|---|---|
 | Synthetic ephemeral P-code-shaped bounded def-use/control slicer | **IMPLEMENTED** `tools/research/r7/slicer.py` | User-supplied control edges and hash fields have syntactic validation, **not** Ghidra/artefact provenance authentication |
-| Synthetic unit tests | **40 passed**, **0 failed**, **0 skipped**, Linux CPython 3.13.5, `python3 -m pytest -q tests/test_r7_patterns.py tests/test_r7_slicing.py` | 27 slicing + 13 pattern tests on tiny hand-authored graphs; no real PE/native Ghidra |
+| Synthetic unit tests | **44 passed**, **0 failed**, **0 skipped**, Linux CPython 3.13.5, `python3 -m pytest -q tests/test_r7_patterns.py tests/test_r7_slicing.py` | 28 slicing + 16 pattern tests on tiny hand-authored graphs; no real PE/native Ghidra |
 | Syntax check | `python3 -m compileall -q tools/research/r7 tests/test_r7_slicing.py tests/test_r7_patterns.py tests/test_r7_patterns.py`: passed | Not a full-project Ruff/Pytest gate |
 | Synthetic guard-to-sink motif prototype | **IMPLEMENTED** `tools/research/r7/patterns.py`; `R7-STRUCTURAL-GUARD-DELTA/0` outcomes `candidate` / `not-observed` / `inconclusive` | Caller-provided old/new matching, control edges and SSA labels; no CWE, exploitability or security proof |
 | Static trace / generator caps | Tests include memory/call/indirect unknowns, missing/ambiguous definitions, missing controls, bounded depth/node frontier, unknown opcode, duplicate IDs, invalid scope, generator cap, cancellation | Does not prove actual coverage or correctness of unobserved dependencies |
@@ -23,7 +23,7 @@
 
 ### Local red-green observations
 
-The original 25 tests passed for the first isolated prototype. Added failing regression tests for (1) unbounded `list(ops)` generator materialization and (2) missing unknown flags for `INDIRECT`/unrecognized opcodes. Changed implementation to read at most `MAX_INPUT_OPS + 1` elements and disclose unknown operation/effect classes. Slicer subtotal **27/27 passed**. An additional red-green pattern case caught a qualified new guard incorrectly ignoring a second unresolved control; it now abstains. Pattern subtotal **13/13 passed**; combined **40/40 passed**. These verify intended local behavior only; baseline native Ghidra and integrated Windows tests remain unrun.
+The original 25 tests passed for the first isolated prototype. Added failing regression tests for (1) unbounded `list(ops)` generator materialization and (2) missing unknown flags for `INDIRECT`/unrecognized opcodes. Changed implementation to read at most `MAX_INPUT_OPS + 1` elements and disclose unknown operation/effect classes. Slicer subtotal **28/28 passed**. An additional red-green pattern case caught a qualified new guard incorrectly ignoring a second unresolved control; it now abstains. Pattern subtotal **16/16 passed**; combined **44/44 passed**. These verify intended local behavior only; baseline native Ghidra and integrated Windows tests remain unrun.
 
 ### Reproducible synthetic benchmark
 
@@ -161,7 +161,7 @@ A benchmark **without labeled real binary truth** must never be counted as patte
 
 **P2 — authenticated graph + slicing:** Build SSA input mapping and concrete postdominator control-dependence on CFG; verified program/IR owner IDs. Separate unknown RAM alias and opaque call effects. Use R7 slicer as learning prototype; change or replace it only after tests show deficiencies. Prove no edges cross function/artifact/run ownership. Native validation **not yet done**.
 
-**P3 — pattern prototypes:** The synthetic guard-to-memory-operation candidate exists and has 13 focused regression cases, but does not establish control dominance or a security fix. Extend with (a) proven bounds/length vs memory access and (b) arithmetic width/overflow vs allocation/copy; require real positive/hard negatives, source controls and compiler-noise trials. No validated production classifier exists.
+**P3 — pattern prototypes:** The synthetic guard-to-memory-operation candidate exists and has 16 focused regression cases, but does not establish control dominance or a security fix. Extend with (a) proven bounds/length vs memory access and (b) arithmetic width/overflow vs allocation/copy; require real positive/hard negatives, source controls and compiler-noise trials. No validated production classifier exists.
 
 **P4 — bounded cross-function analysis:** Include direct call argument/return checks for 1-2 hops, record imported and indirect unresolved edges, evaluate incremental true explanation coverage. Not done.
 
@@ -177,8 +177,8 @@ A benchmark **without labeled real binary truth** must never be counted as patte
 
 | Technique | Current research decision | Evidence / rationale |
 |---|---|---|
-| Bounded synthetic def-use slicing | **PROMISING — MORE VALIDATION REQUIRED** | 27 local tests + bounded synthetic benchmark; not native/control dominance/alias proof |
-| Synthetic guard-to-sink motif | **PROMISING — MORE VALIDATION REQUIRED** | 13 local positive/negative/abstention tests; declared graph/control edges only, no security classification |
+| Bounded synthetic def-use slicing | **PROMISING — MORE VALIDATION REQUIRED** | 28 local tests + bounded synthetic benchmark; not native/control dominance/alias proof |
+| Synthetic guard-to-sink motif | **PROMISING — MORE VALIDATION REQUIRED** | 16 local positive/negative/abstention tests; declared graph/control edges only, no security classification |
 | High-P-code semantic delta extraction | **PROMISING — MORE VALIDATION REQUIRED** | Official `getHighFunction`/PcodeOps API exists, no verified extraction against PatchTrace GZF yet |
 | Deterministic guard-to-sink patterns | **PROMISING — MORE VALIDATION REQUIRED** | Patch motifs supported by prior literature/existing hints; no R7 detector/precision measures |
 | Bounded cross-function context | **PROMISING — MORE VALIDATION REQUIRED** | Existing call graph; no verified context/alias semantics or result yet |
