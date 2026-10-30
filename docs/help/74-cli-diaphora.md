@@ -4,7 +4,7 @@ Read and import an **existing** Diaphora comparison result as optional function-
 
 ```
 patchtrace diaphora inspect RESULT.diaphora [--json]
-patchtrace diaphora import PROJECT --diff RESULT.diaphora [--manifest FILE | --user-attest-pair] [--json]
+patchtrace diaphora import PROJECT --diff RESULT.diaphora [--manifest FILE] [--user-attest-pair] [--json]
 patchtrace diaphora show PROJECT [--json]
 ```
 
