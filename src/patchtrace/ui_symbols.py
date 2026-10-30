@@ -159,3 +159,11 @@ def effective_profile_symbol_mode(configured: str, policy: str, is_default: bool
     rank = {'off': 0, 'local': 1, 'online': 2}
     configured = configured if configured in rank else 'off'
     return min((configured, requested), key=rank.__getitem__)
+
+
+def profile_symbol_settings(settings, profile) -> tuple[str, str]:
+    """Resolve the effective profile mode and configured PDB directories for the desktop backend."""
+    consent = settings.value('backend/allow_symbol_downloads', False, type=bool)
+    configured = configured_symbol_mode(settings, consent)
+    return (effective_profile_symbol_mode(configured, profile.symbol_policy, profile.is_default),
+            str(settings.value('backend/symbol_dirs', '')))
