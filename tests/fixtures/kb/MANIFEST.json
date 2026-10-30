@@ -1,0 +1,47 @@
+{
+  "contract": "patch-search-synthetic-fixtures/1",
+  "status": "Synthetic fixture metadata only; hashes, encoded byte lengths, upstream dialects, package-field compatibility and redistribution status were not independently verified.",
+  "advisory_documents": {
+    "cvrf_v3": {
+      "path": "tests/fixtures/kb/cvrf_v3_synthetic.json",
+      "documents": 20,
+      "additional_documents_present_in_file": 4,
+      "selection": "SYN-CVRF-001 through SYN-CVRF-020 are the 20 manifest corpus documents; the four additional entries are supplemental adversarial variants and are not counted toward 60."
+    },
+    "csaf": {
+      "path": "tests/fixtures/kb/csaf_synthetic.json",
+      "documents": 20,
+      "selection": "all 20 documents"
+    },
+    "vex": {
+      "path": "tests/fixtures/kb/vex_synthetic.json",
+      "documents": 20,
+      "selection": "all 20 documents"
+    }
+  },
+  "fixture_document_count": 60,
+  "metadata_only": {
+    "winbindex": "tests/fixtures/kb/winbindex_synthetic.json",
+    "update_packages": "tests/fixtures/kb/update_packages_synthetic.json"
+  },
+  "common_provenance": {
+    "origin": "hand-authored synthetic fixture data; no real Microsoft or Winbindex content",
+    "upstream_uri": null,
+    "retrieved_at": null,
+    "sha256": "UNVERIFIED",
+    "byte_length": "UNVERIFIED",
+    "license": "UNVERIFIED: repository license and fixture redistribution status have not been rechecked"
+  },
+  "identifiers": {
+    "kb_prefix": "KB9000001 and later; synthetic only",
+    "cve_prefix": "CVE-2099-; synthetic only",
+    "product_prefix": "SYN-PROD-; synthetic only"
+  },
+  "scope_notes": [
+    "No binaries or package payload bytes are present.",
+    "URLs use example.invalid when a URL appears.",
+    "The CVRF JSON/0 dialect is an existing repository test placeholder; it is not evidence of the live MSRC CVRF v3 wire shape.",
+    "CSAF/VEX field compatibility with the repository validator is UNVERIFIED.",
+    "Winbindex-style fields are synthetic and their exact provider schema is UNVERIFIED."
+  ]
+}
