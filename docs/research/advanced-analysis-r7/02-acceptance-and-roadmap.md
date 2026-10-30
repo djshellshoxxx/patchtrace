@@ -1,37 +1,38 @@
 # R7 / 02 — Experiment results, acceptance design, engineering roadmap and unresolved gates
 
-**Checkpoint:** 2026-10-30. **Implementation basis:** \`research/r7-advanced-binary-analysis-20261030\` from main \`a04f5a299a8d4afef023261e52e08d14678cf1e7\`. Research only; no product contract or materiality decision was changed.  
-**Read with:** [README](README.md), [methods](01-literature-and-methods.md), [synthetic-benchmark.json](synthetic-benchmark.json), \`tools/research/r7/slicer.py\`, \`tests/test_r7_slicing.py\`.
+**Checkpoint:** 2026-10-30. **Implementation basis:** `research/r7-advanced-binary-analysis-20261030` from main `a04f5a299a8d4afef023261e52e08d14678cf1e7`. Research only; no product contract or materiality decision was changed.  
+**Read with:** [README](README.md), [methods](01-literature-and-methods.md), [synthetic-benchmark.json](synthetic-benchmark.json), `tools/research/r7/slicer.py`, `tools/research/r7/patterns.py`, `tests/test_r7_slicing.py`, `tests/test_r7_patterns.py`.
 
 ## 1. What actually executed — versus what remains a hypothesis
 
 | Item | Verified run / state | Limits |
 |---|---|---|
-| Synthetic ephemeral P-code-shaped bounded def-use/control slicer | **IMPLEMENTED** \`tools/research/r7/slicer.py\` | User-supplied control edges and hash fields have syntactic validation, **not** Ghidra/artefact provenance authentication |
-| Synthetic unit tests | **27 passed**, **0 failed**, **0 skipped**, Linux CPython 3.13.5, \`python3 -m pytest -q tests/test_r7_slicing.py\` | Tiny hand-authored graphs; no real PE, no native Ghidra; test harness imported only research prototype |
-| Syntax check | \`python3 -m compileall -q tools/research/r7 tests/test_r7_slicing.py\`: passed | Not a full-project Ruff/Pytest gate |
+| Synthetic ephemeral P-code-shaped bounded def-use/control slicer | **IMPLEMENTED** `tools/research/r7/slicer.py` | User-supplied control edges and hash fields have syntactic validation, **not** Ghidra/artefact provenance authentication |
+| Synthetic unit tests | **40 passed**, **0 failed**, **0 skipped**, Linux CPython 3.13.5, `python3 -m pytest -q tests/test_r7_patterns.py tests/test_r7_slicing.py` | 27 slicing + 13 pattern tests on tiny hand-authored graphs; no real PE/native Ghidra |
+| Syntax check | `python3 -m compileall -q tools/research/r7 tests/test_r7_slicing.py tests/test_r7_patterns.py tests/test_r7_patterns.py`: passed | Not a full-project Ruff/Pytest gate |
+| Synthetic guard-to-sink motif prototype | **IMPLEMENTED** `tools/research/r7/patterns.py`; `R7-STRUCTURAL-GUARD-DELTA/0` outcomes `candidate` / `not-observed` / `inconclusive` | Caller-provided old/new matching, control edges and SSA labels; no CWE, exploitability or security proof |
 | Static trace / generator caps | Tests include memory/call/indirect unknowns, missing/ambiguous definitions, missing controls, bounded depth/node frontier, unknown opcode, duplicate IDs, invalid scope, generator cap, cancellation | Does not prove actual coverage or correctness of unobserved dependencies |
 | Synthetic benchmark | **Executed**; data and harness committed; see below | No baseline full PatchTrace run; no measured security detection |
 | P-code native extractor | **NOT EXECUTED / not implemented** | No analyzed GZF/native Ghidra environment in this research execution |
 | Real binary patch precision/recall | **NOT MEASURED** | Requires expert-labelled corpus R1 and cross-compiler R3 |
-| Interprocedural call/alias summary | **NOT IMPLEMENTED** | Existing \`ProgramIR\` has callgraph, but not authenticated effects/param mapping |
-| Rule taxonomy & CWE mapping | **RESEARCH-ONLY classification proposal**, not executable detector | No claimed security accuracy |
+| Interprocedural call/alias summary | **NOT IMPLEMENTED** | Existing `ProgramIR` has callgraph, but not authenticated effects/param mapping |
+| Rule taxonomy & CWE mapping | 14-category **research-only** taxonomy; one **synthetic structural guard motif** implemented, no CWE classifier | No claimed real-binary accuracy |
 | AI interpreter/model benchmark | **NOT EXECUTED** | Local/remote provider consent, models, known-answer annotations required |
 | Symbolic solver | **NOT EXECUTED** | Limited feasibility memo only, no Z3 integration |
 | Full Linux/Windows CI | **NOT VERIFIED** | Must inspect exact PR head results; local environment lacks full checkout |
 
 ### Local red-green observations
 
-The original 25 tests passed for the first isolated prototype. Added failing regression tests for (1) unbounded \`list(ops)\` generator materialization and (2) missing unknown flags for \`INDIRECT\`/unrecognized opcodes. Changed implementation to read at most \`MAX_INPUT_OPS + 1\` elements and disclose unknown operation/effect classes. Expanded local suite **27/27 passed** after the fixes. These verify intended local behavior only; baseline native Ghidra and integrated Windows tests remain unrun.
+The original 25 tests passed for the first isolated prototype. Added failing regression tests for (1) unbounded `list(ops)` generator materialization and (2) missing unknown flags for `INDIRECT`/unrecognized opcodes. Changed implementation to read at most `MAX_INPUT_OPS + 1` elements and disclose unknown operation/effect classes. Slicer subtotal **27/27 passed**. An additional red-green pattern case caught a qualified new guard incorrectly ignoring a second unresolved control; it now abstains. Pattern subtotal **13/13 passed**; combined **40/40 passed**. These verify intended local behavior only; baseline native Ghidra and integrated Windows tests remain unrun.
 
 ### Reproducible synthetic benchmark
 
 Run from repository root (requires Python >=3.12, no network, no paid provider):
-\`\`\`bash
-python3 -m pytest -q tests/test_r7_slicing.py
+```bash
+python3 -m pytest -q tests/test_r7_patterns.py tests/test_r7_slicing.py
 python3 -m tools.research.r7.bench
 python3 -m compileall -q tools/research/r7 tests/test_r7_slicing.py
-\`\`\`
+```
 
 | Synthetic operations | Slice sites | Input-site reduction | Median of 30 (ms) | p95 (ms) | Slice-only peak tracemalloc |
 |---:|---:|---:|---:|---:|---:|
@@ -39,11 +40,11 @@ python3 -m compileall -q tools/research/r7 tests/test_r7_slicing.py
 | 1,024 | 8 | 99.22% | 0.3861 | 0.4314 | 262.70 KiB |
 | 4,096 | 8 | 99.80% | 1.8314 | 2.3387 | 1,036.01 KiB |
 
-Platform: Python 3.13.5, Linux-6.18.57-x86_64-with-glibc2.41. Every input consists of independent eight-operation \`INT_ADD\` chains using uniquely named SSA variables. The selected seed is the final operation; the expected backward slice consists of eight sites. Graph construction happens **outside** timed and traced region. \`median_ms\` measures one whole slicing call including its graph-index build but not synthetic operation creation; peak tracemalloc is from one call, not process RSS or native Ghidra heap. Cache/warmup, CPU affinity, background noise and cross-machine replication were not controlled. These numbers must never be reported as a security-detector speed/accuracy metric. The source JSON preserves the observed values.
+Platform: Python 3.13.5, Linux-6.18.57-x86_64-with-glibc2.41. Every input consists of independent eight-operation `INT_ADD` chains using uniquely named SSA variables. The selected seed is the final operation; the expected backward slice consists of eight sites. Graph construction happens **outside** timed and traced region. `median_ms` measures one whole slicing call including its graph-index build but not synthetic operation creation; peak tracemalloc is from one call, not process RSS or native Ghidra heap. Cache/warmup, CPU affinity, background noise and cross-machine replication were not controlled. These numbers must never be reported as a security-detector speed/accuracy metric. The source JSON preserves the observed values.
 
 ## 2. Candidate pattern taxonomy and fixture specification
 
-Every rule is a **candidate** hint until validated against both old/new binary behavior, source/state and sink evidence. Reuse existing \`enrichment/signals\` BND/INT/OVF/VAL/ERR/SIZE/SCRUB and \`intelligence/hypotheses\` rules without changing their conclusions. The following *unimplemented* root-cause constraints are the extra research dimension.
+Every rule is a **candidate** hint until validated against both old/new binary behavior, source/state and sink evidence. Reuse existing `enrichment/signals` BND/INT/OVF/VAL/ERR/SIZE/SCRUB and `intelligence/hypotheses` rules without changing their conclusions. The following *unimplemented* root-cause constraints are the extra research dimension.
 
 | Candidate pattern | Machine-evidence minimum | Positive fixture construction | Negative / compiler-noise fixture |
 |---|---|---|---|
@@ -86,13 +87,13 @@ MITRE source: https://cwe.mitre.org/documents/cwe_usage/guidance.html and https:
 | Authorized-identity access-policy bypass | CWE-863 only with verified policy and access sink | Distinguish missing auth vs incorrect authorization; unverified role state |
 | Unsafe resource use after release | CWE-416 if lifetime/reachability proved | Cleanup change with no possible later use |
 
-Each mapping output must preserve: candidate CWE; hierarchy specificity; MITRE mapping permission verified; physical evidence (run/side/hash/RVA/operation/guard/sink); alternatives; counters; distinct \`origin = binary-derived\` versus \`origin = advisory-claim\`; and explicit \`insufficient-evidence\` state. External advisory CWE is not a discovered binary CWE. **No R7 CWE classifier was run on real binaries.**
+Each mapping output must preserve: candidate CWE; hierarchy specificity; MITRE mapping permission verified; physical evidence (run/side/hash/RVA/operation/guard/sink); alternatives; counters; distinct `origin = binary-derived` versus `origin = advisory-claim`; and explicit `insufficient-evidence` state. External advisory CWE is not a discovered binary CWE. **No R7 CWE classifier was run on real binaries.**
 
 ## 4. Explainable finding contract proposal — reuse first
 
-Do **not** introduce a parallel permanent \`finding\` or \`intelligence/1\` contract. Add a research-only **read model** that can be mapped to existing \`UnifiedMatch\`, \`ChangeFacts\`, persisted evidence context and \`IntelligenceReport\`; propose an additive version only after owners and tests approve. Required fields for a later contract:
+Do **not** introduce a parallel permanent `finding` or `intelligence/1` contract. Add a research-only **read model** that can be mapped to existing `UnifiedMatch`, `ChangeFacts`, persisted evidence context and `IntelligenceReport`; propose an additive version only after owners and tests approve. Required fields for a later contract:
 
-\`\`\`text
+```text
 finding_id                       stable derived hash, versioned recipe
 comparison_run_id                persisted owner, not arbitrary user text
 older/newer_artifact_sha256      exact validated artifacts
@@ -109,9 +110,9 @@ analyst_review                   separately authenticated analyst-only state
 toolchain                        Ghidra/pyghidra/Java/IR and tool versions + digests
 analysis_limits                  caps reached + incompleteness status
 schema_version                   versioned format with migration/degradation semantics
-\`\`\`
+```
 
-Acceptance: immutable source facts, deterministic JSON canonicalization, owner-consistent typed IDs, no path traversal or unbounded text, exact hash confirmation, no counterevidence elision, deterministic UI navigation to the actual binary and corresponding lines, stable behaviour on missing source. A model response **must not** update \`UnifiedMatch\`, materiality, severity, CVE association, origin, or analyst review.
+Acceptance: immutable source facts, deterministic JSON canonicalization, owner-consistent typed IDs, no path traversal or unbounded text, exact hash confirmation, no counterevidence elision, deterministic UI navigation to the actual binary and corresponding lines, stable behaviour on missing source. A model response **must not** update `UnifiedMatch`, materiality, severity, CVE association, origin, or analyst review.
 
 ## 5. AI explanation fidelity protocol (planned; no provider runs)
 
@@ -131,11 +132,11 @@ Report metrics with exact denominators and Wilson/confidence intervals where app
 
 ### Root-cause reasoning prompt contracts (proposed)
 
-Fact extractor produces only: \`observations[]\` with evidence IDs and old/new side, \`assumptions[]\`, \`unknowns[]\`, \`candidate_hypotheses[]\` (evidence references, counterevidence, alternative), \`verification_tasks[]\`. Reject claims about exploitability, vulnerable CVE or security fix without independently verified support. Store model text as a failed or hypothetical result until deterministic evidence verification succeeds. Distinguish *analyst conclusion* in a separate owner-controlled step.
+Fact extractor produces only: `observations[]` with evidence IDs and old/new side, `assumptions[]`, `unknowns[]`, `candidate_hypotheses[]` (evidence references, counterevidence, alternative), `verification_tasks[]`. Reject claims about exploitability, vulnerable CVE or security fix without independently verified support. Store model text as a failed or hypothetical result until deterministic evidence verification succeeds. Distinguish *analyst conclusion* in a separate owner-controlled step.
 
 ## 6. Comparative evaluation matrix
 
-Use \`corpus/ours/cwe-patterns\`, R1 known-answer and R3 compiler-noise matrix, R2 matching uncertainty, R4 advisory provenance, R5 calibration holdouts. Never use the same lineage/family or compiler-repacked adjacent pair in both training and locked evaluation. A/A and cross-opt same-source fixtures are **negative** security controls. Rejected matches cannot contribute positive semantic evidence.
+Use `corpus/ours/cwe-patterns`, R1 known-answer and R3 compiler-noise matrix, R2 matching uncertainty, R4 advisory provenance, R5 calibration holdouts. Never use the same lineage/family or compiler-repacked adjacent pair in both training and locked evaluation. A/A and cross-opt same-source fixtures are **negative** security controls. Rejected matches cannot contribute positive semantic evidence.
 
 | Gate | Measure / denominator | Baseline | Prototype / accept requirement |
 |---|---|---|---|
@@ -160,7 +161,7 @@ A benchmark **without labeled real binary truth** must never be counted as patte
 
 **P2 — authenticated graph + slicing:** Build SSA input mapping and concrete postdominator control-dependence on CFG; verified program/IR owner IDs. Separate unknown RAM alias and opaque call effects. Use R7 slicer as learning prototype; change or replace it only after tests show deficiencies. Prove no edges cross function/artifact/run ownership. Native validation **not yet done**.
 
-**P3 — pattern prototypes:** Start two classes: (a) bounds/length vs memory access, (b) arithmetic width/overflow vs allocation/copy; each requires real positive and hard negatives, same-source and compiler-noise controls. No classifier currently exists.
+**P3 — pattern prototypes:** The synthetic guard-to-memory-operation candidate exists and has 13 focused regression cases, but does not establish control dominance or a security fix. Extend with (a) proven bounds/length vs memory access and (b) arithmetic width/overflow vs allocation/copy; require real positive/hard negatives, source controls and compiler-noise trials. No validated production classifier exists.
 
 **P4 — bounded cross-function analysis:** Include direct call argument/return checks for 1-2 hops, record imported and indirect unresolved edges, evaluate incremental true explanation coverage. Not done.
 
@@ -177,7 +178,8 @@ A benchmark **without labeled real binary truth** must never be counted as patte
 | Technique | Current research decision | Evidence / rationale |
 |---|---|---|
 | Bounded synthetic def-use slicing | **PROMISING — MORE VALIDATION REQUIRED** | 27 local tests + bounded synthetic benchmark; not native/control dominance/alias proof |
-| High-P-code semantic delta extraction | **PROMISING — MORE VALIDATION REQUIRED** | Official \`getHighFunction\`/PcodeOps API exists, no verified extraction against PatchTrace GZF yet |
+| Synthetic guard-to-sink motif | **PROMISING — MORE VALIDATION REQUIRED** | 13 local positive/negative/abstention tests; declared graph/control edges only, no security classification |
+| High-P-code semantic delta extraction | **PROMISING — MORE VALIDATION REQUIRED** | Official `getHighFunction`/PcodeOps API exists, no verified extraction against PatchTrace GZF yet |
 | Deterministic guard-to-sink patterns | **PROMISING — MORE VALIDATION REQUIRED** | Patch motifs supported by prior literature/existing hints; no R7 detector/precision measures |
 | Bounded cross-function context | **PROMISING — MORE VALIDATION REQUIRED** | Existing call graph; no verified context/alias semantics or result yet |
 | Automated CWE root-cause classification | **DEFER** | MITRE requires cause-specific evidence; no trusted labeled validation, vendor metadata risk |
@@ -190,8 +192,8 @@ None is **READY FOR INTEGRATION**. Labels are decisions based on current limited
 ## 9. Reliability / security gate
 
 - **Input:** untrusted PE, GZF, JSONL, SQLite, advisory, C decompile, symbol names and model output; strict structural/version/hash/owner validation before use; no direct execution of target binary.
-- **Resource:** byte and record caps before materializing lists; read bounded streams; external Ghidra child isolation, cancellation and timeouts; check processes/temporary dirs; bound decompiler calls, call depth, slices, model contexts and response bodies. Python's \`tracemalloc\` is not process RSS; separately measure Java RSS.
-- **Persistence:** no write of unverified sidecar into \`ProgramIR\`; preserve previously committed outputs on error; atomic temp replacement and digest; older incompatible schema reads must fail closed and not corrupt project.
+- **Resource:** byte and record caps before materializing lists; read bounded streams; external Ghidra child isolation, cancellation and timeouts; check processes/temporary dirs; bound decompiler calls, call depth, slices, model contexts and response bodies. Python's `tracemalloc` is not process RSS; separately measure Java RSS.
+- **Persistence:** no write of unverified sidecar into `ProgramIR`; preserve previously committed outputs on error; atomic temp replacement and digest; older incompatible schema reads must fail closed and not corrupt project.
 - **Execution:** no model-suggested commands, no automatic uploads, no external target execution, no unaudited dynamic instrumentation. Local only by default; explicit remote request preview and consent.
 - **Output:** evidence references are immutable owner-checked paths/IDs; escape HTML/Markdown; never trust a prompt-injected binary string as instructions; prevent misattribution from fabricated function labels/addresses.
 - **Licensing:** no GPL Ghidriff copied into product; no borrowed research implementation without license check; optional tools remain separate until review.
@@ -204,18 +206,18 @@ None is **READY FOR INTEGRATION**. Labels are decisions based on current limited
 | 2 existing inventory | **Delivered**, baseline main and R1–R6 owners |
 | 3 P-code feasibility | **Design/official APIs delivered**, native probe still open |
 | 4 slicing research and prototype | **Synthetic prototype delivered**, native missing |
-| 5 patch-pattern taxonomy | **Delivered as design**, detectors/fixtures missing |
+| 5 patch-pattern taxonomy | **14-category design plus synthetic guard-to-sink motif**, native fixtures and broader detectors missing |
 | 6 cross-function evaluation | **Research/design only**, no measured improvement |
 | 7 optional symbolic feasibility | **Memo delivered**, solver experiments pending |
 | 8 AI explanation benchmark | **Evaluation protocol delivered**, no model runs |
 | 9 CWE evaluation | **Mapping policy delivered**, no labeled test run |
 | 10 evidence-backed findings contract | **Additive read-model proposal**, contract not accepted |
-| 11 prototype implementations | **Bounded slicing only**, other types open |
+| 11 prototype implementations | **Synthetic bounded slicing and guard-to-sink motif**; native extractors and other types open |
 | 12 comparative benchmark | **Synthetic throughput only**, baseline comparison missing |
 | 13 resource measurements | **Local tracemalloc/time only**, no native Java/Windows RSS |
 | 14 security/reliability review | **Threat/controls design**, native adversarial run missing |
 | 15 production integration roadmap | **Delivered**, with staged ownership gates |
-| 16 update root docs/qa.md + tasks/todo.md | **Pending concurrency review**; both changed in active R3 PR #129 |
+| 16 update root docs/qa.md + tasks/todo.md | **tasks/todo.md updated** with isolated R7 section; root `docs/qa.md` remains protected because connector truncates source and R3 PR #129 edits it; R7 `qa.md` holds full record |
 | 17 limitations/unresolved questions | **Delivered**, above and R7 README |
 | 18 GitHub verified PR | **Draft #134 opened**, exact-head remote CI not yet accepted |
 
@@ -226,6 +228,6 @@ None is **READY FOR INTEGRATION**. Labels are decisions based on current limited
 - Construct an expert-labeled R7 fixture manifest with independent positive/negative controls across toolchains; calculate baseline first.
 - Run native validation before changing product public contracts or UI.
 - Inspect exact-head CI on draft #134; local no-clone environment supports only research-module Pytest/compileall.
-- Coordinate root QA/todo edits with R3 owner (or append non-overlapping R7 sections after review), then update PR text and handoff. No force-push, no bypass of protection, no merge before review.
+- Preserve the root `tasks/todo.md` R7 section; coordinate root `docs/qa.md` with R3 owner, after safe full-file source retrieval. Update PR text and handoff. No force-push, no bypass of protection, no merge before review.
 
 **Release/merge status:** prototype research is not a production engine change; R7 acceptance criteria are **NOT COMPLETE**. No vulnerability detection or CWE accuracy has been demonstrated.
