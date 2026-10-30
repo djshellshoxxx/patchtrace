@@ -140,8 +140,8 @@ def test_ambiguity_consumes_one_shot_generator_in_order():
 
 
 def test_ambiguity_bounds_peak_memory_for_large_stream():
-    from itertools import repeat
     import tracemalloc
+    from itertools import repeat
 
     candidate = AnchorRef('match', 'repeated')
     tracemalloc.start()
