@@ -26,7 +26,8 @@ ONE_SIDED = ('older-only', 'newer-only', 'ambiguous')
 # Delta classes that no proof may carry: semantic ones, unprovable ones, block changes and the classes that stay
 # `review` by rule (a frame or register change is a real change the decompiler may not show: R-14).
 PROOF_BLOCKERS = frozenset({*SEMANTIC_CLASSES, *UNPROVABLE_CLASSES, *BLOCK_CLASSES, 'frame', 'register-only', 'eh'})
-PSEUDO_BLOCKERS = frozenset({*SEMANTIC_CLASSES, *UNPROVABLE_CLASSES, *BLOCK_CLASSES, 'frame', 'eh'})
+PSEUDO_BLOCKERS = frozenset({*SEMANTIC_CLASSES, *UNPROVABLE_CLASSES, *BLOCK_CLASSES, 'frame',
+                             'register-only', 'eh'})
 
 
 @dataclass(frozen=True)
