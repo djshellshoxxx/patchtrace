@@ -68,6 +68,7 @@ from .service import ProjectService
 from .tooltips import apply_tooltip, apply_tooltips
 from .ui_bundle_setup import BundleSetup
 from .ui_inspection import InspectionThread, side_summary
+from .ui_profiles import PROFILE_SETTING, profiles_dir, selected_profile
 from .ui_symbols import SymbolChoice, config_kwargs, configured_symbol_mode, effective_profile_symbol_mode
 
 REVIEWS = ['unreviewed', 'accepted', 'rejected', 'needs-review']
@@ -692,32 +693,6 @@ class AcquisitionDialog(QDialog):
         finally:
             quarantine.remove_staging(staging)
         self.log.appendPlainText(f'Project created: {self.service.root}')
-
-
-PROFILE_SETTING = 'analysis/profile'
-
-
-def profiles_dir(settings) -> Path:
-    """Profiles live beside an INI/file-backed QSettings; native Windows settings are in the
-    registry, so the headless default directory (shared with the CLI) is used instead."""
-    from .enrichment.profiles import default_profiles_dir
-    name = settings.fileName()
-    if settings.format() == QSettings.Format.IniFormat or (name and Path(name).is_absolute()
-                                                           and not name.startswith('\\HKEY')):
-        return Path(name).parent / 'profiles'
-    return default_profiles_dir()
-
-
-def selected_profile(settings, directory: Path):
-    """(profile, warning). A missing or invalid selected profile falls back to the default, loudly."""
-    from .enrichment.profiles import DEFAULT_PROFILE, ProfileError, ProfileStore
-    name = settings.value(PROFILE_SETTING, 'default')
-    if not isinstance(name, str) or name == 'default':
-        return DEFAULT_PROFILE, ''
-    try:
-        return ProfileStore(directory).get(name), ''
-    except ProfileError as exc:
-        return DEFAULT_PROFILE, f'Profile {name!r} unavailable ({exc}); using default.'
 
 
 class ProfilesPanel(QWidget):
