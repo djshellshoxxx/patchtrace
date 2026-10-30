@@ -132,7 +132,7 @@ Expected locked outcome includes separate exact metrics for each G, G+R, G+B and
 | G1 | Tier R pipeline on valid known-answer samples, reproducible engineering runs with native tools | Failed backend, zero outcomes, unrun compiler or invalid metrics -> pipeline not accepted |
 | G2 | Per-profile data minimums; precision point >=.95, CI lower >=.90 and width <=.10; coverage point >=.40, lower >=.30; Brier skill CI lower >0; FDR comparator benefit, tau, OOD and subgroup gates | No probability bands |
 | G3 | G2 plus precision lower >=.93, width <=.06; coverage >=.50, lower >=.40; null-ECE excess .03/upper .05; slope/intercept intervals; FDR relative reduction >=.25, shift precision >=.90; independent second annotator and verified owner signoff, reproducibility, frozen EXE smoke, UI caveat | No numeric probability |
-| Safety/CI | Artifact/schema corruption rejected, calibrated results never override contested, snapshots immutable, no target execution/network, Windows/Linus actual tests, package integrity | No promotion/merge |
+| Safety/CI | Artifact/schema corruption rejected, calibrated results never override contested, snapshots immutable, no target execution/network, Windows/Linux actual tests, package integrity | No promotion/merge |
 
 The gate thresholds come from tools/calibration/gates.py and the C9 draft, not observed measurements. A source-built Tier R pass cannot substitute for a Tier W Windows proof. Any stratum with too few independent groups is insufficient, not automatically passing.
 
