@@ -151,6 +151,14 @@ def configured_symbol_mode(settings, online_consent: bool) -> str:
     return saved
 
 
+
+def effective_backend_symbol_mode(settings, profile) -> str:
+    """Resolve the saved Setup ceiling and the profile restriction without enabling implicit network access."""
+    consent = settings.value('backend/allow_symbol_downloads', False, type=bool)
+    configured = configured_symbol_mode(settings, consent)
+    return effective_profile_symbol_mode(configured, profile.symbol_policy, profile.is_default)
+
+
 def effective_profile_symbol_mode(configured: str, policy: str, is_default: bool) -> str:
     """A named profile can narrow Setup's symbol mode but cannot turn symbols on beyond its ceiling."""
     if is_default:
