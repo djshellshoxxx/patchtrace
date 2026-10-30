@@ -3,8 +3,8 @@
 ## R7 advanced security analysis research (draft PR #134, 2026-10-30)
 - [x] Reconcile main `a04f5a299a8d4afef023261e52e08d14678cf1e7`, owner R1–R6 PRs #128–#133; start isolated `research/r7-advanced-binary-analysis-20261030` from main.
 - [x] Document preexisting ProgramIR/Ghidra/unified/intelligence/calibration capabilities and scope boundaries; publish R7 primary literature, API methods, experimental findings, taxonomy and acceptance roadmap in `docs/research/advanced-analysis-r7/`.
-- [x] Research-only bounded synthetic P-code-shaped def-use/control slicer and fail-closed boundary regressions: local focused slicer subtotal `27 passed` on CPython 3.13.5; **40 total** after adding 13 structural-pattern tests; `compileall` passed. No native Ghidra coverage is implied.
-- [x] Add isolated guard-to-memory-sink structural candidate (`tools/research/r7/patterns.py`) with old/new negative controls and unknown-state abstention; 13/13 synthetic tests passed; no CWE or proof of exploitability.
+- [x] Research-only bounded synthetic P-code-shaped def-use/control slicer and fail-closed boundary regressions: local focused slicer subtotal `28 passed` on CPython 3.13.5; **44 total** after adding 16 structural-pattern tests; `compileall` passed. No native Ghidra coverage is implied.
+- [x] Add isolated guard-to-memory-sink structural candidate (`tools/research/r7/patterns.py`) with old/new negative controls and unknown-state abstention; 16/16 synthetic tests passed; no CWE or proof of exploitability.
 - [x] Execute reproducible synthetic benchmark (128/1,024/4,096 ops, 30 repetitions) and commit harness + JSON; **not** real-binary precision/recall or process RSS.
 - [ ] Verify exact-head #134 Linux and Windows CI; consecutive earlier PR pushes cancelled preceding runs, not a passing check. Full repo suite unavailable in research environment.
 - [ ] Obtain analyzed fixture GZF and supported Ghidra/pyghidra; extract high P-code with exact provenance; validate native mapping vs `program-ir/1`, Windows/PE/MSVC and negative controls.
