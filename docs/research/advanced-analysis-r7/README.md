@@ -36,7 +36,7 @@ These are observations from the stated baseline, not promises that all paths are
 - `tools/research/r7/slicer.py`: small, deterministic *ephemeral* def-use graph prototype for high-P-code-shaped **synthetic** facts; bounded backward/forward traversals; provenance as caller-supplied metadata, not verified against a binary. Does not parse executable files or execute target code. Does not alter `program-ir/1`.
 - `tests/test_r7_slicing.py`: positive/negative/edge cases, truncation, alias and unknown-path assertions.
 - `tools/research/r7/patterns.py`: a conservative **synthetic** new-predicate-to-memory-sink motif that only emits candidate/not-observed/inconclusive; never security certainty, CWE or real control dominance.
-- `tests/test_r7_patterns.py`: 13 positive/negative/abstention fixtures; in combination with slicing, **40 local synthetic tests passed**.
+- `tests/test_r7_patterns.py`: 16 positive/negative/abstention fixtures; in combination with slicing, **44 local synthetic tests passed**.
 - `docs/research/advanced-analysis-r7/qa.md`: exact local commands, environment, pass counts, CI/native blockers and run limitations; root `docs/qa.md` remains unchanged to preserve concurrent R3 work and because source fetch was truncated.
 - `tools/research/r7/bench.py`: synthetic throughput and peak-memory study, not native Ghidra acceptance.
 - `01-literature-and-methods.md`: primary references, semantics, comparisons, limitations, licenses and feasibility.
