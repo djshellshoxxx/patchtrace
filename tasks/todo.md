@@ -1,4 +1,19 @@
 # PatchTrace delivery tracker
+
+## R7 advanced security analysis research (draft PR #134, 2026-10-30)
+- [x] Reconcile main `a04f5a299a8d4afef023261e52e08d14678cf1e7`, owner R1–R6 PRs #128–#133; start isolated `research/r7-advanced-binary-analysis-20261030` from main.
+- [x] Document preexisting ProgramIR/Ghidra/unified/intelligence/calibration capabilities and scope boundaries; publish R7 primary literature, API methods, experimental findings, taxonomy and acceptance roadmap in `docs/research/advanced-analysis-r7/`.
+- [x] Research-only bounded synthetic P-code-shaped def-use/control slicer and fail-closed boundary regressions: local focused slicer subtotal `28 passed` on CPython 3.13.5; **44 total** after adding 16 structural-pattern tests; `compileall` passed. No native Ghidra coverage is implied.
+- [x] Add isolated guard-to-memory-sink structural candidate (`tools/research/r7/patterns.py`) with old/new negative controls and unknown-state abstention; 16/16 synthetic tests passed; no CWE or proof of exploitability.
+- [x] Execute reproducible synthetic benchmark (128/1,024/4,096 ops, 30 repetitions) and commit harness + JSON; **not** real-binary precision/recall or process RSS.
+- [ ] Verify exact-head #134 Linux and Windows CI; consecutive earlier PR pushes cancelled preceding runs, not a passing check. Full repo suite unavailable in research environment.
+- [ ] Obtain analyzed fixture GZF and supported Ghidra/pyghidra; extract high P-code with exact provenance; validate native mapping vs `program-ir/1`, Windows/PE/MSVC and negative controls.
+- [ ] Prove CFG/postdominator control edges and alias/call unknown handling on actual binaries; calibrate slicing against matched old/new source/sink sites.
+- [ ] Develop positive and negative cross-compiler security-pattern fixtures and run bounded cross-function tests with proper lineage split; measure TP/FP/TN/FN and runtime/RSS versus existing engine.
+- [ ] Benchmark AI evidence entailment and CWE mapping with expert-known answers and explicit local/remote privacy consent; optional bounded symbolic reasoning only when empirical benefit justified.
+- [ ] Coordinate `docs/qa.md` edit with R3 (same root file edited in active PR #129), and repair source-fetch truncation before attempting any whole-file replacement; retain R7 QA record in research docs meanwhile.
+- [ ] After reviewed test/CI/owner clearance, merge verified research-only changes and separately evaluate production promotion; never claim automatic vulnerability verification.
+
 - [x] Fixed the two locally reproducible full-suite issues recorded in `docs/qa.md`: site screenshot renderer follows the Files panel; Tier R rejects an unknown mutation operator before toolchain probing. Focused rerun: 27 passed, 2 skipped.
 - [x] Linux-container-only full-suite failures documented in `docs/qa.md` are environment limitations (`python -I` excludes the editable install; AF_UNIX sockets are denied; timing budgets are load-sensitive); full pytest and Ruff passed on Windows and Ubuntu CI (run 39456546905).
 
