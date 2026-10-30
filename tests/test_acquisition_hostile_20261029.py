@@ -52,6 +52,15 @@ def test_acq2_a_lone_surrogate_skips_one_entry_instead_of_failing_the_record():
     assert rows.skipped == 1
 
 
+def test_acq2_strict_json_rejects_surrogates_and_duplicate_keys_by_default():
+    bad_surrogate = b'{"note": "\\uD800"}'
+    with pytest.raises(AcquisitionError, match='PT-ACQ-PROVIDER'):
+        winbindex.strict_json(bad_surrogate)
+    assert winbindex.strict_json(bad_surrogate, allow_entry_surrogates=True)['note'] == '\\ud800'
+    with pytest.raises(AcquisitionError, match='PT-ACQ-PROVIDER'):
+        winbindex.strict_json(b'{"item": 1, "item": 2}', allow_entry_surrogates=True)
+
+
 @pytest.mark.parametrize('bad', ['٢٠٢٤-٠١-٠١', '2024-99-99', '2024-02-30'])
 def test_acq3_non_ascii_or_impossible_release_dates_are_dropped(bad):
     data = record(windows={'22H2': {'KB5000001': {'updateInfo': {'releaseDate': bad}}}})
