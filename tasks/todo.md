@@ -851,3 +851,14 @@ Done: dock with state matrix, consent, import, changes, copy, go to CVE. Open: r
 
 - [x] Reconcile substantive Qodo review: Qt release dependency/status evidence, G-U1 endpoint coverage, optional decompile write rollback, stale KB/KEV/Diaphora ownership, calibration grouping/leak audits, staged archive handoff and cancellable PDB discovery.
 - [ ] Validate the final combined review repairs on their own published head; merge and close only proven superseded work after acceptance.
+
+### [SPEC-31:R3] Semantic-change research / QA checkpoint (2026-10-30, draft PR #129)
+
+- [x] Reconcile SPEC-31 L1/L2 source and existing Tier R/G-U mutation infrastructure; document methods, tool constraints and R4 handoff under `docs/research/semantic-analysis-r3/`.
+- [x] Execute a compiler/disassembler-only 30-build E1 sample: GCC/Clang/COFF; observe constant, comparison and target-reference changes. **Do not count as PatchTrace verdict accuracy.**
+- [x] Add a spec-first targeted correction and regression tests for R3-PC01 (IR pseudo-proof with EH `unavailable`) and R3-PC08 (IR `register-only` with equal pseudo-code); version the proof implementation. Code committed, **tests not locally executed**.
+- [ ] Inspect exact-head PR #129 Actions and any baseline/branch conflicts. Run Linux pytest/Ruff, native Windows Ghidriff, Windows pytest/packaging where affected, preserve failures and independent review before merging.
+- [ ] Run G-U1–G-U8 on actual linked PE AMD64 and locked Tier R data; publish function-level confusion matrix, false-unchanged, false-cosmetic, false-material, review/unknown rates, runtime and peak RSS. Do not tune on locked test.
+- [ ] Complete and validate pending `moved-rva-call` and `try-scope` native fixtures, guard-flag controls, indirect targets and SEH metadata; correct only measured false-benign behavior.
+- [ ] Evaluate bounded P-code/SSA and optional solver pilot *only if* existing IR/C6 underperforms on a reproducible class; no mandatory dependency or new semantic engine.
+- [ ] After research and test/CI acceptance, merge reviewed compatible work without overwriting active worker branches; update R3 dossier and R4 provenance handoff with exact measured results.
