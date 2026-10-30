@@ -1,0 +1,2719 @@
+{
+  "cases": [
+    {
+      "artifact_sha256": {
+        "newer": "5ce1d80a29811c6383846b564e1b05bff1115c34cfa143c2b792336eecd5dab1",
+        "older": "6462d1618dcddb702dde929094522539c297fb0a2a17fd6083812df17000e1fd"
+      },
+      "compute": {
+        "correct_matched_one_to_one_pairs": 1,
+        "decision_counts": {
+          "matched": 1
+        },
+        "facts": [
+          {
+            "channels": [
+              [
+                "C0",
+                "differs"
+              ],
+              [
+                "C1",
+                "differs"
+              ],
+              [
+                "C2",
+                "differs"
+              ],
+              [
+                "C3",
+                "differs"
+              ],
+              [
+                "C4",
+                "equal"
+              ],
+              [
+                "C5",
+                "differs"
+              ],
+              [
+                "C6",
+                "unavailable"
+              ],
+              [
+                "C7",
+                "unavailable"
+              ],
+              [
+                "C8",
+                "unavailable"
+              ]
+            ],
+            "contract": "change-facts/1",
+            "deltas": [
+              {
+                "channel": "C2",
+                "cls": "constant",
+                "new": "MOV RAX,0x12",
+                "newer_rva": 4096,
+                "old": "MOV RAX,0x11",
+                "older_rva": 4096
+              }
+            ],
+            "deltas_omitted": 0,
+            "eh": "equal",
+            "limits_hit": [],
+            "proof": null,
+            "row_id": "1a9c9dc6b247954140352faba5a220499a88932e8868c4fddda4938ee16b22d9",
+            "second_channel": null,
+            "targets": [
+              0,
+              0,
+              0
+            ],
+            "verdict": "review"
+          }
+        ],
+        "manifest": {
+          "config_digest": "7ea1a3d0a255e0764bf4351ba78b344085a83becde9031502c3cefda4a4dca79",
+          "contract": "unified-result/1",
+          "counts": {
+            "decisions": {
+              "ambiguous": 0,
+              "candidate": 0,
+              "contested": 0,
+              "matched": 1,
+              "newer_only": 0,
+              "older_only": 0,
+              "tentative": 0,
+              "unknown": 0
+            },
+            "materiality": {
+              "cosmetic": 0,
+              "material": 0,
+              "not_applicable": 0,
+              "review": 1,
+              "unchanged": 0,
+              "unknown": 0
+            }
+          },
+          "created_utc": "2026-10-30T22:56:57+00:00",
+          "engine_version": "ude/1",
+          "ghidriff_raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "ghidriff_run_id": "r2-native-ladder-only",
+          "ir_newer": {
+            "content_digest": "b2ac16e3dbf6922d17bad298976d206fb27bde3132c915897289a05dfdad3923",
+            "functions": 1,
+            "ir_key": "a517dea4e9e72867b9d1a410799ec34ddde2cb3a99f22c89a5c1a5583a6d769e",
+            "producer_mode": "analyze"
+          },
+          "ir_older": {
+            "content_digest": "cdcef1c049d1f6fb4f008d8ecbc18bd386bdb5928bb49063e49742e0f8deeb29",
+            "functions": 1,
+            "ir_key": "db2cef29cdb73c21e05860000e88e5111e5e6965a7979e111c3877cf34e116e9",
+            "producer_mode": "analyze"
+          },
+          "limitations": [],
+          "manual_digest": "a9adbdc4d34f2c90e9f3672b7e6bff65fe419699a061e2bb54c61b9bc41a7505",
+          "newer_sha256": "5ce1d80a29811c6383846b564e1b05bff1115c34cfa143c2b792336eecd5dab1",
+          "older_sha256": "6462d1618dcddb702dde929094522539c297fb0a2a17fd6083812df17000e1fd",
+          "orientation": "older->newer",
+          "parts": [
+            {
+              "bytes": 523,
+              "name": "facts.jsonl.gz",
+              "records": 1,
+              "sha256": "a3ee3b6618a8036e673d8e17dfb8f600bb40de38f7373b475d48080e808ead5b"
+            },
+            {
+              "bytes": 609,
+              "name": "rows.jsonl.gz",
+              "records": 1,
+              "sha256": "6d1abf1198c4448aa97c6576ee6d30a176a1fa04fdbdbbb8136fbe33c87dfc6f"
+            }
+          ],
+          "result_id": "2086f60d76f7dafd681db9771d60c7bf3d53642f3c208d8efc65fc2e971215dc",
+          "sources": [],
+          "status": "complete"
+        },
+        "matched_one_to_one_pairs": [
+          [
+            4096,
+            4096
+          ]
+        ],
+        "materiality_counts": {
+          "review": 1
+        },
+        "note": "N:M construction relations are not flattened into one-to-one truth.",
+        "rows": [
+          {
+            "atoms": [
+              {
+                "cardinality": "1:1",
+                "cls": "E-NAME",
+                "native": [
+                  [
+                    "round",
+                    "1"
+                  ]
+                ],
+                "newer_rva": 4096,
+                "older_rva": 4096,
+                "ref": "r1",
+                "source": "pt-ladder",
+                "step": "P03-name-exact",
+                "tier": "A"
+              }
+            ],
+            "change_classes": [
+              "constant"
+            ],
+            "contest": null,
+            "contract": "unified-match/1",
+            "decision": "matched",
+            "flags": [
+              "pdata-confirmed",
+              "tiny"
+            ],
+            "ghidriff_match_id": null,
+            "hints": [],
+            "materiality": "review",
+            "newer": [
+              {
+                "kind": "function",
+                "name": "entry",
+                "rva": 4096
+              }
+            ],
+            "older": [
+              {
+                "kind": "function",
+                "name": "entry",
+                "rva": 4096
+              }
+            ],
+            "row_id": "1a9c9dc6b247954140352faba5a220499a88932e8868c4fddda4938ee16b22d9",
+            "support": [
+              {
+                "atom_index": 0,
+                "component": "K1",
+                "tier": "A"
+              }
+            ]
+          }
+        ],
+        "sources": "native Ghidra IR -> production ladder/fusion/facts; no Ghidriff/manual/secondary atoms",
+        "truth_one_to_one_pairs": [
+          [
+            4096,
+            4096
+          ]
+        ],
+        "wall_s": 0.02682368600017071
+      },
+      "kind": "constant-changed",
+      "seed": 0,
+      "sides": {
+        "newer": {
+          "extract_seconds_rounded_by_existing_Side": 9.6,
+          "functions": [
+            {
+              "flags": [],
+              "instruction_count": 3,
+              "name": "entry",
+              "rva": 4096
+            }
+          ],
+          "ingest_seconds_rounded_by_existing_Side": 0.0,
+          "ir_jsonl_sha256": "3915d7f695197b1d8a7f63ae79e1fc88165ae1796732d15c19667db2ad3713d1",
+          "manifest": {
+            "artifact_sha256": "5ce1d80a29811c6383846b564e1b05bff1115c34cfa143c2b792336eecd5dab1",
+            "content_digest": "b2ac16e3dbf6922d17bad298976d206fb27bde3132c915897289a05dfdad3923",
+            "contract": "program-ir/1",
+            "counts": {
+              "blocks": 1,
+              "call_edges": 0,
+              "consts": 2,
+              "functions": 1,
+              "imports": 0,
+              "instructions": 3,
+              "mask_unlocated": 0,
+              "pdata_confirmed": 1,
+              "refs": 0,
+              "strings": 0,
+              "thunks": 0
+            },
+            "created_utc": "2026-10-30T22:56:57+00:00",
+            "file_sha256": "e6f5b3649e1980cbea8559740cb98faff4c3b9c2a3179445d0cef88a6f0beb7f",
+            "image_base": 6442450944,
+            "ingest_version": "ir-ingest/1",
+            "ir_key": "a517dea4e9e72867b9d1a410799ec34ddde2cb3a99f22c89a5c1a5583a6d769e",
+            "limits_hit": [],
+            "norm_version": "norm/1",
+            "producer": {
+              "analysis_options_digest": "d80983d41dcc0b7ac38311e89b0bbc09496cbf0c8a4ed3e9e2e0df3722eb0db0",
+              "ghidra": "12.0.4",
+              "gzf_sha256": null,
+              "java": "21.0.12",
+              "kind": "ghidra",
+              "mode": "analyze",
+              "pyghidra": "3.0.2",
+              "python": "3.12.14",
+              "script_sha256": "7676f631fb825551569f04f6b32828b771694a8d49d86e8d15a0a120f6f26fd9",
+              "symbols": "none"
+            },
+            "program_sha256": "5ce1d80a29811c6383846b564e1b05bff1115c34cfa143c2b792336eecd5dab1",
+            "size_of_image": 20480,
+            "warnings": []
+          },
+          "probe": {
+            "ghidra": "12.0.4",
+            "java": "21.0.12",
+            "pyghidra": "3.0.2",
+            "python": "3.12.14",
+            "script_sha256": "7676f631fb825551569f04f6b32828b771694a8d49d86e8d15a0a120f6f26fd9"
+          },
+          "stderr_tail": "",
+          "wall_extract_plus_ingest_s": 9.627817502000198
+        },
+        "older": {
+          "extract_seconds_rounded_by_existing_Side": 10.3,
+          "functions": [
+            {
+              "flags": [],
+              "instruction_count": 3,
+              "name": "entry",
+              "rva": 4096
+            }
+          ],
+          "ingest_seconds_rounded_by_existing_Side": 0.0,
+          "ir_jsonl_sha256": "3b4ebb9eb1a18d434e23d66f5bd254f86ba96509718b0c4d39c42b9a51c60ecb",
+          "manifest": {
+            "artifact_sha256": "6462d1618dcddb702dde929094522539c297fb0a2a17fd6083812df17000e1fd",
+            "content_digest": "cdcef1c049d1f6fb4f008d8ecbc18bd386bdb5928bb49063e49742e0f8deeb29",
+            "contract": "program-ir/1",
+            "counts": {
+              "blocks": 1,
+              "call_edges": 0,
+              "consts": 2,
+              "functions": 1,
+              "imports": 0,
+              "instructions": 3,
+              "mask_unlocated": 0,
+              "pdata_confirmed": 1,
+              "refs": 0,
+              "strings": 0,
+              "thunks": 0
+            },
+            "created_utc": "2026-10-30T22:56:48+00:00",
+            "file_sha256": "a9f386b400bd54a7135064c38c33c1f877764cad1c5b9a62b650e7d20ecfd03b",
+            "image_base": 6442450944,
+            "ingest_version": "ir-ingest/1",
+            "ir_key": "db2cef29cdb73c21e05860000e88e5111e5e6965a7979e111c3877cf34e116e9",
+            "limits_hit": [],
+            "norm_version": "norm/1",
+            "producer": {
+              "analysis_options_digest": "d80983d41dcc0b7ac38311e89b0bbc09496cbf0c8a4ed3e9e2e0df3722eb0db0",
+              "ghidra": "12.0.4",
+              "gzf_sha256": null,
+              "java": "21.0.12",
+              "kind": "ghidra",
+              "mode": "analyze",
+              "pyghidra": "3.0.2",
+              "python": "3.12.14",
+              "script_sha256": "7676f631fb825551569f04f6b32828b771694a8d49d86e8d15a0a120f6f26fd9",
+              "symbols": "none"
+            },
+            "program_sha256": "6462d1618dcddb702dde929094522539c297fb0a2a17fd6083812df17000e1fd",
+            "size_of_image": 20480,
+            "warnings": []
+          },
+          "probe": {
+            "ghidra": "12.0.4",
+            "java": "21.0.12",
+            "pyghidra": "3.0.2",
+            "python": "3.12.14",
+            "script_sha256": "7676f631fb825551569f04f6b32828b771694a8d49d86e8d15a0a120f6f26fd9"
+          },
+          "stderr_tail": "",
+          "wall_extract_plus_ingest_s": 10.332662629999959
+        }
+      },
+      "status": "complete",
+      "symbol_visibility": "Fixture exports are present and visible to Ghidra and the ladder; no PDB/downloads.",
+      "truth": [
+        {
+          "change": "constant-changed",
+          "newer_rvas": [
+            4096
+          ],
+          "older_rvas": [
+            4096
+          ]
+        }
+      ],
+      "truth_origin": "existing unified_support.pairs.pair_for; known by construction, not inferred from symbols"
+    },
+    {
+      "artifact_sha256": {
+        "newer": "c0d28324588a888e717b569216d852142a79c9530e395ce8ad4c3fd8e7b44ad6",
+        "older": "165caa52667f65bedd9de50f2540bc61aa3090d719f87f8279ad38a54ef29ce8"
+      },
+      "compute": {
+        "correct_matched_one_to_one_pairs": 1,
+        "decision_counts": {
+          "matched": 1
+        },
+        "facts": [
+          {
+            "channels": [
+              [
+                "C0",
+                "differs"
+              ],
+              [
+                "C1",
+                "differs"
+              ],
+              [
+                "C2",
+                "differs"
+              ],
+              [
+                "C3",
+                "equal"
+              ],
+              [
+                "C4",
+                "equal"
+              ],
+              [
+                "C5",
+                "equal"
+              ],
+              [
+                "C6",
+                "unavailable"
+              ],
+              [
+                "C7",
+                "unavailable"
+              ],
+              [
+                "C8",
+                "unavailable"
+              ]
+            ],
+            "contract": "change-facts/1",
+            "deltas": [
+              {
+                "channel": "C2",
+                "cls": "condition",
+                "new": "JNC 0x180001018",
+                "newer_rva": 4096,
+                "old": "JC 0x180001018",
+                "older_rva": 4096
+              }
+            ],
+            "deltas_omitted": 0,
+            "eh": "equal",
+            "limits_hit": [],
+            "proof": null,
+            "row_id": "ca392147cd56d9b72fd5e28ecf6de17b9a6b1a41e855a4bd1e715dc1bb6a573d",
+            "second_channel": null,
+            "targets": [
+              0,
+              0,
+              1
+            ],
+            "verdict": "review"
+          }
+        ],
+        "manifest": {
+          "config_digest": "7ea1a3d0a255e0764bf4351ba78b344085a83becde9031502c3cefda4a4dca79",
+          "contract": "unified-result/1",
+          "counts": {
+            "decisions": {
+              "ambiguous": 0,
+              "candidate": 0,
+              "contested": 0,
+              "matched": 1,
+              "newer_only": 0,
+              "older_only": 0,
+              "tentative": 0,
+              "unknown": 0
+            },
+            "materiality": {
+              "cosmetic": 0,
+              "material": 0,
+              "not_applicable": 0,
+              "review": 1,
+              "unchanged": 0,
+              "unknown": 0
+            }
+          },
+          "created_utc": "2026-10-30T22:57:17+00:00",
+          "engine_version": "ude/1",
+          "ghidriff_raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "ghidriff_run_id": "r2-native-ladder-only",
+          "ir_newer": {
+            "content_digest": "f496e421701f219ec5a17992cba10432e882793dfae4b5e1d0161e87a8cd588f",
+            "functions": 1,
+            "ir_key": "d18a632176323b78013b2cc71d8c12154555a8736564daf8d1d1d5300d8bde9f",
+            "producer_mode": "analyze"
+          },
+          "ir_older": {
+            "content_digest": "e153432e6e9d078626a7482a488a267bc92710c202ffd832ad80c2bc0353ca63",
+            "functions": 1,
+            "ir_key": "5819f8788d8a39e5c592bcad86e0427cb5918155b4c0e8c0c2f30f3bf5e3b2d9",
+            "producer_mode": "analyze"
+          },
+          "limitations": [],
+          "manual_digest": "a9adbdc4d34f2c90e9f3672b7e6bff65fe419699a061e2bb54c61b9bc41a7505",
+          "newer_sha256": "c0d28324588a888e717b569216d852142a79c9530e395ce8ad4c3fd8e7b44ad6",
+          "older_sha256": "165caa52667f65bedd9de50f2540bc61aa3090d719f87f8279ad38a54ef29ce8",
+          "orientation": "older->newer",
+          "parts": [
+            {
+              "bytes": 525,
+              "name": "facts.jsonl.gz",
+              "records": 1,
+              "sha256": "178b84d97d6e310b278453f987c9802242f41941841e28be35c0418993401524"
+            },
+            {
+              "bytes": 603,
+              "name": "rows.jsonl.gz",
+              "records": 1,
+              "sha256": "cc5423aa8e46f27f6688522db34142f4cdd5c75ad66934da309424c438743dde"
+            }
+          ],
+          "result_id": "6e3436c3a78509cbd7505751d560b7240816cfe8dd861061081fc28117dd273c",
+          "sources": [],
+          "status": "complete"
+        },
+        "matched_one_to_one_pairs": [
+          [
+            4096,
+            4096
+          ]
+        ],
+        "materiality_counts": {
+          "review": 1
+        },
+        "note": "N:M construction relations are not flattened into one-to-one truth.",
+        "rows": [
+          {
+            "atoms": [
+              {
+                "cardinality": "1:1",
+                "cls": "E-NAME",
+                "native": [
+                  [
+                    "round",
+                    "1"
+                  ]
+                ],
+                "newer_rva": 4096,
+                "older_rva": 4096,
+                "ref": "r1",
+                "source": "pt-ladder",
+                "step": "P03-name-exact",
+                "tier": "A"
+              }
+            ],
+            "change_classes": [
+              "condition"
+            ],
+            "contest": null,
+            "contract": "unified-match/1",
+            "decision": "matched",
+            "flags": [
+              "pdata-confirmed"
+            ],
+            "ghidriff_match_id": null,
+            "hints": [],
+            "materiality": "review",
+            "newer": [
+              {
+                "kind": "function",
+                "name": "entry",
+                "rva": 4096
+              }
+            ],
+            "older": [
+              {
+                "kind": "function",
+                "name": "entry",
+                "rva": 4096
+              }
+            ],
+            "row_id": "ca392147cd56d9b72fd5e28ecf6de17b9a6b1a41e855a4bd1e715dc1bb6a573d",
+            "support": [
+              {
+                "atom_index": 0,
+                "component": "K1",
+                "tier": "A"
+              }
+            ]
+          }
+        ],
+        "sources": "native Ghidra IR -> production ladder/fusion/facts; no Ghidriff/manual/secondary atoms",
+        "truth_one_to_one_pairs": [
+          [
+            4096,
+            4096
+          ]
+        ],
+        "wall_s": 0.003476433999821893
+      },
+      "kind": "condition-changed",
+      "seed": 0,
+      "sides": {
+        "newer": {
+          "extract_seconds_rounded_by_existing_Side": 9.1,
+          "functions": [
+            {
+              "flags": [],
+              "instruction_count": 6,
+              "name": "entry",
+              "rva": 4096
+            }
+          ],
+          "ingest_seconds_rounded_by_existing_Side": 0.0,
+          "ir_jsonl_sha256": "969d712381a73d7641c668704cbd8de436a4847ed18e9655dd5263fd1a7d27f9",
+          "manifest": {
+            "artifact_sha256": "c0d28324588a888e717b569216d852142a79c9530e395ce8ad4c3fd8e7b44ad6",
+            "content_digest": "f496e421701f219ec5a17992cba10432e882793dfae4b5e1d0161e87a8cd588f",
+            "contract": "program-ir/1",
+            "counts": {
+              "blocks": 3,
+              "call_edges": 0,
+              "consts": 3,
+              "functions": 1,
+              "imports": 0,
+              "instructions": 6,
+              "mask_unlocated": 0,
+              "pdata_confirmed": 1,
+              "refs": 1,
+              "strings": 0,
+              "thunks": 0
+            },
+            "created_utc": "2026-10-30T22:57:17+00:00",
+            "file_sha256": "7d4bb91500229ddcce0f5c97646bbcf3b55bd634ed7c5fa53caccefaaa7ac27c",
+            "image_base": 6442450944,
+            "ingest_version": "ir-ingest/1",
+            "ir_key": "d18a632176323b78013b2cc71d8c12154555a8736564daf8d1d1d5300d8bde9f",
+            "limits_hit": [],
+            "norm_version": "norm/1",
+            "producer": {
+              "analysis_options_digest": "d80983d41dcc0b7ac38311e89b0bbc09496cbf0c8a4ed3e9e2e0df3722eb0db0",
+              "ghidra": "12.0.4",
+              "gzf_sha256": null,
+              "java": "21.0.12",
+              "kind": "ghidra",
+              "mode": "analyze",
+              "pyghidra": "3.0.2",
+              "python": "3.12.14",
+              "script_sha256": "7676f631fb825551569f04f6b32828b771694a8d49d86e8d15a0a120f6f26fd9",
+              "symbols": "none"
+            },
+            "program_sha256": "c0d28324588a888e717b569216d852142a79c9530e395ce8ad4c3fd8e7b44ad6",
+            "size_of_image": 20480,
+            "warnings": []
+          },
+          "probe": {
+            "ghidra": "12.0.4",
+            "java": "21.0.12",
+            "pyghidra": "3.0.2",
+            "python": "3.12.14",
+            "script_sha256": "7676f631fb825551569f04f6b32828b771694a8d49d86e8d15a0a120f6f26fd9"
+          },
+          "stderr_tail": "",
+          "wall_extract_plus_ingest_s": 9.131867781999972
+        },
+        "older": {
+          "extract_seconds_rounded_by_existing_Side": 10.1,
+          "functions": [
+            {
+              "flags": [],
+              "instruction_count": 6,
+              "name": "entry",
+              "rva": 4096
+            }
+          ],
+          "ingest_seconds_rounded_by_existing_Side": 0.0,
+          "ir_jsonl_sha256": "cc0c875446f55a78dfd0087572d5e53788862602df37ad026fffdff66adff499",
+          "manifest": {
+            "artifact_sha256": "165caa52667f65bedd9de50f2540bc61aa3090d719f87f8279ad38a54ef29ce8",
+            "content_digest": "e153432e6e9d078626a7482a488a267bc92710c202ffd832ad80c2bc0353ca63",
+            "contract": "program-ir/1",
+            "counts": {
+              "blocks": 3,
+              "call_edges": 0,
+              "consts": 3,
+              "functions": 1,
+              "imports": 0,
+              "instructions": 6,
+              "mask_unlocated": 0,
+              "pdata_confirmed": 1,
+              "refs": 1,
+              "strings": 0,
+              "thunks": 0
+            },
+            "created_utc": "2026-10-30T22:57:07+00:00",
+            "file_sha256": "b47c791faa64b3ea3f26856736990db40976593c830d856f0d76f1e09cf31143",
+            "image_base": 6442450944,
+            "ingest_version": "ir-ingest/1",
+            "ir_key": "5819f8788d8a39e5c592bcad86e0427cb5918155b4c0e8c0c2f30f3bf5e3b2d9",
+            "limits_hit": [],
+            "norm_version": "norm/1",
+            "producer": {
+              "analysis_options_digest": "d80983d41dcc0b7ac38311e89b0bbc09496cbf0c8a4ed3e9e2e0df3722eb0db0",
+              "ghidra": "12.0.4",
+              "gzf_sha256": null,
+              "java": "21.0.12",
+              "kind": "ghidra",
+              "mode": "analyze",
+              "pyghidra": "3.0.2",
+              "python": "3.12.14",
+              "script_sha256": "7676f631fb825551569f04f6b32828b771694a8d49d86e8d15a0a120f6f26fd9",
+              "symbols": "none"
+            },
+            "program_sha256": "165caa52667f65bedd9de50f2540bc61aa3090d719f87f8279ad38a54ef29ce8",
+            "size_of_image": 20480,
+            "warnings": []
+          },
+          "probe": {
+            "ghidra": "12.0.4",
+            "java": "21.0.12",
+            "pyghidra": "3.0.2",
+            "python": "3.12.14",
+            "script_sha256": "7676f631fb825551569f04f6b32828b771694a8d49d86e8d15a0a120f6f26fd9"
+          },
+          "stderr_tail": "",
+          "wall_extract_plus_ingest_s": 10.055299147999904
+        }
+      },
+      "status": "complete",
+      "symbol_visibility": "Fixture exports are present and visible to Ghidra and the ladder; no PDB/downloads.",
+      "truth": [
+        {
+          "change": "condition-changed",
+          "newer_rvas": [
+            4096
+          ],
+          "older_rvas": [
+            4096
+          ]
+        }
+      ],
+      "truth_origin": "existing unified_support.pairs.pair_for; known by construction, not inferred from symbols"
+    },
+    {
+      "artifact_sha256": {
+        "newer": "a75d363152dc8b7888634e90530950d1bec3186132797826979c9f9942c3d2df",
+        "older": "6462d1618dcddb702dde929094522539c297fb0a2a17fd6083812df17000e1fd"
+      },
+      "compute": {
+        "correct_matched_one_to_one_pairs": 0,
+        "decision_counts": {
+          "candidate": 1
+        },
+        "facts": [
+          {
+            "channels": [
+              [
+                "C0",
+                "differs"
+              ],
+              [
+                "C1",
+                "differs"
+              ],
+              [
+                "C2",
+                "differs"
+              ],
+              [
+                "C3",
+                "differs"
+              ],
+              [
+                "C4",
+                "equal"
+              ],
+              [
+                "C5",
+                "differs"
+              ],
+              [
+                "C6",
+                "unavailable"
+              ],
+              [
+                "C7",
+                "unavailable"
+              ],
+              [
+                "C8",
+                "unavailable"
+              ]
+            ],
+            "contract": "change-facts/1",
+            "deltas": [
+              {
+                "channel": "C2",
+                "cls": "block-added",
+                "new": "CMP RCX,0x0",
+                "newer_rva": 4096,
+                "old": null,
+                "older_rva": null
+              },
+              {
+                "channel": "C2",
+                "cls": "block-added",
+                "new": "MOV RAX,0x0",
+                "newer_rva": 4127,
+                "old": null,
+                "older_rva": null
+              },
+              {
+                "channel": "C5",
+                "cls": "constant",
+                "new": "0x0",
+                "newer_rva": 4096,
+                "old": null,
+                "older_rva": null
+              },
+              {
+                "channel": "C5",
+                "cls": "constant",
+                "new": "0x0",
+                "newer_rva": 4096,
+                "old": null,
+                "older_rva": null
+              }
+            ],
+            "deltas_omitted": 0,
+            "eh": "equal",
+            "limits_hit": [],
+            "proof": null,
+            "row_id": "2fb2e3250e8f7fd982685a01670b3f2e9e954a8cb3913cd99fc2a12f699fa93f",
+            "second_channel": "C3",
+            "targets": [
+              0,
+              0,
+              0
+            ],
+            "verdict": "material"
+          }
+        ],
+        "manifest": {
+          "config_digest": "7ea1a3d0a255e0764bf4351ba78b344085a83becde9031502c3cefda4a4dca79",
+          "contract": "unified-result/1",
+          "counts": {
+            "decisions": {
+              "ambiguous": 0,
+              "candidate": 1,
+              "contested": 0,
+              "matched": 0,
+              "newer_only": 0,
+              "older_only": 0,
+              "tentative": 0,
+              "unknown": 0
+            },
+            "materiality": {
+              "cosmetic": 0,
+              "material": 1,
+              "not_applicable": 0,
+              "review": 0,
+              "unchanged": 0,
+              "unknown": 0
+            }
+          },
+          "created_utc": "2026-10-30T22:57:36+00:00",
+          "engine_version": "ude/1",
+          "ghidriff_raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "ghidriff_run_id": "r2-native-ladder-only",
+          "ir_newer": {
+            "content_digest": "fd7b2e50983f28c255bb17ef48ddc37b66ddf181fa67300f9ba95ad0ea007633",
+            "functions": 1,
+            "ir_key": "f0ada37ee975e3bcabab6850ab333113fe648b56b0154ab56dcc1e8696312af4",
+            "producer_mode": "analyze"
+          },
+          "ir_older": {
+            "content_digest": "cdcef1c049d1f6fb4f008d8ecbc18bd386bdb5928bb49063e49742e0f8deeb29",
+            "functions": 1,
+            "ir_key": "db2cef29cdb73c21e05860000e88e5111e5e6965a7979e111c3877cf34e116e9",
+            "producer_mode": "analyze"
+          },
+          "limitations": [],
+          "manual_digest": "a9adbdc4d34f2c90e9f3672b7e6bff65fe419699a061e2bb54c61b9bc41a7505",
+          "newer_sha256": "a75d363152dc8b7888634e90530950d1bec3186132797826979c9f9942c3d2df",
+          "older_sha256": "6462d1618dcddb702dde929094522539c297fb0a2a17fd6083812df17000e1fd",
+          "orientation": "older->newer",
+          "parts": [
+            {
+              "bytes": 801,
+              "name": "facts.jsonl.gz",
+              "records": 1,
+              "sha256": "18326c1697d9ebcff0c4b6fd263773964f99c10ec381e0e512b1a5898dd6d351"
+            },
+            {
+              "bytes": 627,
+              "name": "rows.jsonl.gz",
+              "records": 1,
+              "sha256": "5dc904dec0a63bbd8a0aedc1f75f3f7410fa933f12a9d7ff48ef0ed8415a0d67"
+            }
+          ],
+          "result_id": "702d1e842b6a86240c7e33dad6885a92622daad6775a0b6dba28d70161ae22e4",
+          "sources": [],
+          "status": "complete"
+        },
+        "matched_one_to_one_pairs": [],
+        "materiality_counts": {
+          "material": 1
+        },
+        "note": "N:M construction relations are not flattened into one-to-one truth.",
+        "rows": [
+          {
+            "atoms": [
+              {
+                "cardinality": "1:1",
+                "cls": "E-NAME",
+                "native": [
+                  [
+                    "round",
+                    "1"
+                  ]
+                ],
+                "newer_rva": 4096,
+                "older_rva": 4096,
+                "ref": "r1",
+                "source": "pt-ladder",
+                "step": "P03-name-exact",
+                "tier": "C"
+              }
+            ],
+            "change_classes": [
+              "block-added",
+              "constant"
+            ],
+            "contest": null,
+            "contract": "unified-match/1",
+            "decision": "candidate",
+            "flags": [
+              "pdata-confirmed",
+              "tiny"
+            ],
+            "ghidriff_match_id": null,
+            "hints": [],
+            "materiality": "material",
+            "newer": [
+              {
+                "kind": "function",
+                "name": "entry",
+                "rva": 4096
+              }
+            ],
+            "older": [
+              {
+                "kind": "function",
+                "name": "entry",
+                "rva": 4096
+              }
+            ],
+            "row_id": "2fb2e3250e8f7fd982685a01670b3f2e9e954a8cb3913cd99fc2a12f699fa93f",
+            "support": [
+              {
+                "atom_index": 0,
+                "component": "K1",
+                "tier": "C"
+              }
+            ]
+          }
+        ],
+        "sources": "native Ghidra IR -> production ladder/fusion/facts; no Ghidriff/manual/secondary atoms",
+        "truth_one_to_one_pairs": [
+          [
+            4096,
+            4096
+          ]
+        ],
+        "wall_s": 0.00375015000008716
+      },
+      "kind": "added-check",
+      "seed": 0,
+      "sides": {
+        "newer": {
+          "extract_seconds_rounded_by_existing_Side": 10.7,
+          "functions": [
+            {
+              "flags": [],
+              "instruction_count": 7,
+              "name": "entry",
+              "rva": 4096
+            }
+          ],
+          "ingest_seconds_rounded_by_existing_Side": 0.0,
+          "ir_jsonl_sha256": "0de3d048bf4b7503e46c0f9341d1abfa0618e7e9ceb064efd57045b1d51ca931",
+          "manifest": {
+            "artifact_sha256": "a75d363152dc8b7888634e90530950d1bec3186132797826979c9f9942c3d2df",
+            "content_digest": "fd7b2e50983f28c255bb17ef48ddc37b66ddf181fa67300f9ba95ad0ea007633",
+            "contract": "program-ir/1",
+            "counts": {
+              "blocks": 3,
+              "call_edges": 0,
+              "consts": 4,
+              "functions": 1,
+              "imports": 0,
+              "instructions": 7,
+              "mask_unlocated": 0,
+              "pdata_confirmed": 1,
+              "refs": 1,
+              "strings": 0,
+              "thunks": 0
+            },
+            "created_utc": "2026-10-30T22:57:36+00:00",
+            "file_sha256": "d2b19719798dbc8cbe85360dff7f2a4dd15bbd373689c65f314976288329054a",
+            "image_base": 6442450944,
+            "ingest_version": "ir-ingest/1",
+            "ir_key": "f0ada37ee975e3bcabab6850ab333113fe648b56b0154ab56dcc1e8696312af4",
+            "limits_hit": [],
+            "norm_version": "norm/1",
+            "producer": {
+              "analysis_options_digest": "d80983d41dcc0b7ac38311e89b0bbc09496cbf0c8a4ed3e9e2e0df3722eb0db0",
+              "ghidra": "12.0.4",
+              "gzf_sha256": null,
+              "java": "21.0.12",
+              "kind": "ghidra",
+              "mode": "analyze",
+              "pyghidra": "3.0.2",
+              "python": "3.12.14",
+              "script_sha256": "7676f631fb825551569f04f6b32828b771694a8d49d86e8d15a0a120f6f26fd9",
+              "symbols": "none"
+            },
+            "program_sha256": "a75d363152dc8b7888634e90530950d1bec3186132797826979c9f9942c3d2df",
+            "size_of_image": 20480,
+            "warnings": []
+          },
+          "probe": {
+            "ghidra": "12.0.4",
+            "java": "21.0.12",
+            "pyghidra": "3.0.2",
+            "python": "3.12.14",
+            "script_sha256": "7676f631fb825551569f04f6b32828b771694a8d49d86e8d15a0a120f6f26fd9"
+          },
+          "stderr_tail": "",
+          "wall_extract_plus_ingest_s": 10.707308482999906
+        },
+        "older": {
+          "extract_seconds_rounded_by_existing_Side": 9.1,
+          "functions": [
+            {
+              "flags": [],
+              "instruction_count": 3,
+              "name": "entry",
+              "rva": 4096
+            }
+          ],
+          "ingest_seconds_rounded_by_existing_Side": 0.0,
+          "ir_jsonl_sha256": "3b4ebb9eb1a18d434e23d66f5bd254f86ba96509718b0c4d39c42b9a51c60ecb",
+          "manifest": {
+            "artifact_sha256": "6462d1618dcddb702dde929094522539c297fb0a2a17fd6083812df17000e1fd",
+            "content_digest": "cdcef1c049d1f6fb4f008d8ecbc18bd386bdb5928bb49063e49742e0f8deeb29",
+            "contract": "program-ir/1",
+            "counts": {
+              "blocks": 1,
+              "call_edges": 0,
+              "consts": 2,
+              "functions": 1,
+              "imports": 0,
+              "instructions": 3,
+              "mask_unlocated": 0,
+              "pdata_confirmed": 1,
+              "refs": 0,
+              "strings": 0,
+              "thunks": 0
+            },
+            "created_utc": "2026-10-30T22:57:26+00:00",
+            "file_sha256": "a9f386b400bd54a7135064c38c33c1f877764cad1c5b9a62b650e7d20ecfd03b",
+            "image_base": 6442450944,
+            "ingest_version": "ir-ingest/1",
+            "ir_key": "db2cef29cdb73c21e05860000e88e5111e5e6965a7979e111c3877cf34e116e9",
+            "limits_hit": [],
+            "norm_version": "norm/1",
+            "producer": {
+              "analysis_options_digest": "d80983d41dcc0b7ac38311e89b0bbc09496cbf0c8a4ed3e9e2e0df3722eb0db0",
+              "ghidra": "12.0.4",
+              "gzf_sha256": null,
+              "java": "21.0.12",
+              "kind": "ghidra",
+              "mode": "analyze",
+              "pyghidra": "3.0.2",
+              "python": "3.12.14",
+              "script_sha256": "7676f631fb825551569f04f6b32828b771694a8d49d86e8d15a0a120f6f26fd9",
+              "symbols": "none"
+            },
+            "program_sha256": "6462d1618dcddb702dde929094522539c297fb0a2a17fd6083812df17000e1fd",
+            "size_of_image": 20480,
+            "warnings": []
+          },
+          "probe": {
+            "ghidra": "12.0.4",
+            "java": "21.0.12",
+            "pyghidra": "3.0.2",
+            "python": "3.12.14",
+            "script_sha256": "7676f631fb825551569f04f6b32828b771694a8d49d86e8d15a0a120f6f26fd9"
+          },
+          "stderr_tail": "",
+          "wall_extract_plus_ingest_s": 9.120589623999876
+        }
+      },
+      "status": "complete",
+      "symbol_visibility": "Fixture exports are present and visible to Ghidra and the ladder; no PDB/downloads.",
+      "truth": [
+        {
+          "change": "added-check",
+          "newer_rvas": [
+            4096
+          ],
+          "older_rvas": [
+            4096
+          ]
+        }
+      ],
+      "truth_origin": "existing unified_support.pairs.pair_for; known by construction, not inferred from symbols"
+    },
+    {
+      "artifact_sha256": {
+        "newer": "e318c3596f77db11a60c51a7b8463bc7d69386264b97cc331b280ebc37a790f1",
+        "older": "6462d1618dcddb702dde929094522539c297fb0a2a17fd6083812df17000e1fd"
+      },
+      "compute": {
+        "correct_matched_one_to_one_pairs": 1,
+        "decision_counts": {
+          "matched": 1
+        },
+        "facts": [
+          {
+            "channels": [
+              [
+                "C0",
+                "equal"
+              ],
+              [
+                "C1",
+                "equal"
+              ],
+              [
+                "C2",
+                "equal"
+              ],
+              [
+                "C3",
+                "equal"
+              ],
+              [
+                "C4",
+                "equal"
+              ],
+              [
+                "C5",
+                "equal"
+              ],
+              [
+                "C6",
+                "unavailable"
+              ],
+              [
+                "C7",
+                "unavailable"
+              ],
+              [
+                "C8",
+                "unavailable"
+              ]
+            ],
+            "contract": "change-facts/1",
+            "deltas": [],
+            "deltas_omitted": 0,
+            "eh": "equal",
+            "limits_hit": [],
+            "proof": "UNCH/1",
+            "row_id": "f8ca0e096c746165b5c2606581b9531d54bb9234928a1f224684b5a83daf562d",
+            "second_channel": null,
+            "targets": [
+              0,
+              0,
+              0
+            ],
+            "verdict": "unchanged"
+          }
+        ],
+        "manifest": {
+          "config_digest": "7ea1a3d0a255e0764bf4351ba78b344085a83becde9031502c3cefda4a4dca79",
+          "contract": "unified-result/1",
+          "counts": {
+            "decisions": {
+              "ambiguous": 0,
+              "candidate": 0,
+              "contested": 0,
+              "matched": 1,
+              "newer_only": 0,
+              "older_only": 0,
+              "tentative": 0,
+              "unknown": 0
+            },
+            "materiality": {
+              "cosmetic": 0,
+              "material": 0,
+              "not_applicable": 0,
+              "review": 0,
+              "unchanged": 1,
+              "unknown": 0
+            }
+          },
+          "created_utc": "2026-10-30T22:57:57+00:00",
+          "engine_version": "ude/1",
+          "ghidriff_raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "ghidriff_run_id": "r2-native-ladder-only",
+          "ir_newer": {
+            "content_digest": "deaced18af8ebb0811baa70645ec4741cb9764bcbaf7e6b5e38fc2fb856e9f8c",
+            "functions": 1,
+            "ir_key": "59588cbc11540c87d1a067814ae8b5cabaad2eb42e484a4f1b41ecfa85613503",
+            "producer_mode": "analyze"
+          },
+          "ir_older": {
+            "content_digest": "cdcef1c049d1f6fb4f008d8ecbc18bd386bdb5928bb49063e49742e0f8deeb29",
+            "functions": 1,
+            "ir_key": "db2cef29cdb73c21e05860000e88e5111e5e6965a7979e111c3877cf34e116e9",
+            "producer_mode": "analyze"
+          },
+          "limitations": [],
+          "manual_digest": "a9adbdc4d34f2c90e9f3672b7e6bff65fe419699a061e2bb54c61b9bc41a7505",
+          "newer_sha256": "e318c3596f77db11a60c51a7b8463bc7d69386264b97cc331b280ebc37a790f1",
+          "older_sha256": "6462d1618dcddb702dde929094522539c297fb0a2a17fd6083812df17000e1fd",
+          "orientation": "older->newer",
+          "parts": [
+            {
+              "bytes": 411,
+              "name": "facts.jsonl.gz",
+              "records": 1,
+              "sha256": "ee5d5ac6a79dc8aaf1505d519dc6e6f1e73b11a0dd4e9ead752f1d89ae742a78"
+            },
+            {
+              "bytes": 602,
+              "name": "rows.jsonl.gz",
+              "records": 1,
+              "sha256": "41b582d0ee4f4c4f30a04690512ea807e3689e6f52148637e65776e6db3e0453"
+            }
+          ],
+          "result_id": "0783cc764b1b7951ee91c071ef1b4d45a3a21d9ab045961370f51416c44558eb",
+          "sources": [],
+          "status": "complete"
+        },
+        "matched_one_to_one_pairs": [
+          [
+            4096,
+            4160
+          ]
+        ],
+        "materiality_counts": {
+          "unchanged": 1
+        },
+        "note": "N:M construction relations are not flattened into one-to-one truth.",
+        "rows": [
+          {
+            "atoms": [
+              {
+                "cardinality": "1:1",
+                "cls": "E-NAME",
+                "native": [
+                  [
+                    "round",
+                    "1"
+                  ]
+                ],
+                "newer_rva": 4160,
+                "older_rva": 4096,
+                "ref": "r1",
+                "source": "pt-ladder",
+                "step": "P03-name-exact",
+                "tier": "A"
+              }
+            ],
+            "change_classes": [],
+            "contest": null,
+            "contract": "unified-match/1",
+            "decision": "matched",
+            "flags": [
+              "pdata-confirmed",
+              "tiny"
+            ],
+            "ghidriff_match_id": null,
+            "hints": [],
+            "materiality": "unchanged",
+            "newer": [
+              {
+                "kind": "function",
+                "name": "entry",
+                "rva": 4160
+              }
+            ],
+            "older": [
+              {
+                "kind": "function",
+                "name": "entry",
+                "rva": 4096
+              }
+            ],
+            "row_id": "f8ca0e096c746165b5c2606581b9531d54bb9234928a1f224684b5a83daf562d",
+            "support": [
+              {
+                "atom_index": 0,
+                "component": "K1",
+                "tier": "A"
+              }
+            ]
+          }
+        ],
+        "sources": "native Ghidra IR -> production ladder/fusion/facts; no Ghidriff/manual/secondary atoms",
+        "truth_one_to_one_pairs": [
+          [
+            4096,
+            4160
+          ]
+        ],
+        "wall_s": 0.0030641630000900477
+      },
+      "kind": "moved",
+      "seed": 0,
+      "sides": {
+        "newer": {
+          "extract_seconds_rounded_by_existing_Side": 9.7,
+          "functions": [
+            {
+              "flags": [],
+              "instruction_count": 3,
+              "name": "entry",
+              "rva": 4160
+            }
+          ],
+          "ingest_seconds_rounded_by_existing_Side": 0.0,
+          "ir_jsonl_sha256": "b7c715a5ef9821bf3a004a6bfae8268661564c110ddddb1ea4498f124c954ed6",
+          "manifest": {
+            "artifact_sha256": "e318c3596f77db11a60c51a7b8463bc7d69386264b97cc331b280ebc37a790f1",
+            "content_digest": "deaced18af8ebb0811baa70645ec4741cb9764bcbaf7e6b5e38fc2fb856e9f8c",
+            "contract": "program-ir/1",
+            "counts": {
+              "blocks": 1,
+              "call_edges": 0,
+              "consts": 2,
+              "functions": 1,
+              "imports": 0,
+              "instructions": 3,
+              "mask_unlocated": 0,
+              "pdata_confirmed": 1,
+              "refs": 0,
+              "strings": 0,
+              "thunks": 0
+            },
+            "created_utc": "2026-10-30T22:57:57+00:00",
+            "file_sha256": "73f206349868e7be70d203ba4563ac35313f443fa24fba84d49d13324ee8ca4a",
+            "image_base": 6442450944,
+            "ingest_version": "ir-ingest/1",
+            "ir_key": "59588cbc11540c87d1a067814ae8b5cabaad2eb42e484a4f1b41ecfa85613503",
+            "limits_hit": [],
+            "norm_version": "norm/1",
+            "producer": {
+              "analysis_options_digest": "d80983d41dcc0b7ac38311e89b0bbc09496cbf0c8a4ed3e9e2e0df3722eb0db0",
+              "ghidra": "12.0.4",
+              "gzf_sha256": null,
+              "java": "21.0.12",
+              "kind": "ghidra",
+              "mode": "analyze",
+              "pyghidra": "3.0.2",
+              "python": "3.12.14",
+              "script_sha256": "7676f631fb825551569f04f6b32828b771694a8d49d86e8d15a0a120f6f26fd9",
+              "symbols": "none"
+            },
+            "program_sha256": "e318c3596f77db11a60c51a7b8463bc7d69386264b97cc331b280ebc37a790f1",
+            "size_of_image": 20480,
+            "warnings": []
+          },
+          "probe": {
+            "ghidra": "12.0.4",
+            "java": "21.0.12",
+            "pyghidra": "3.0.2",
+            "python": "3.12.14",
+            "script_sha256": "7676f631fb825551569f04f6b32828b771694a8d49d86e8d15a0a120f6f26fd9"
+          },
+          "stderr_tail": "",
+          "wall_extract_plus_ingest_s": 9.690844834000018
+        },
+        "older": {
+          "extract_seconds_rounded_by_existing_Side": 10.8,
+          "functions": [
+            {
+              "flags": [],
+              "instruction_count": 3,
+              "name": "entry",
+              "rva": 4096
+            }
+          ],
+          "ingest_seconds_rounded_by_existing_Side": 0.0,
+          "ir_jsonl_sha256": "3b4ebb9eb1a18d434e23d66f5bd254f86ba96509718b0c4d39c42b9a51c60ecb",
+          "manifest": {
+            "artifact_sha256": "6462d1618dcddb702dde929094522539c297fb0a2a17fd6083812df17000e1fd",
+            "content_digest": "cdcef1c049d1f6fb4f008d8ecbc18bd386bdb5928bb49063e49742e0f8deeb29",
+            "contract": "program-ir/1",
+            "counts": {
+              "blocks": 1,
+              "call_edges": 0,
+              "consts": 2,
+              "functions": 1,
+              "imports": 0,
+              "instructions": 3,
+              "mask_unlocated": 0,
+              "pdata_confirmed": 1,
+              "refs": 0,
+              "strings": 0,
+              "thunks": 0
+            },
+            "created_utc": "2026-10-30T22:57:47+00:00",
+            "file_sha256": "a9f386b400bd54a7135064c38c33c1f877764cad1c5b9a62b650e7d20ecfd03b",
+            "image_base": 6442450944,
+            "ingest_version": "ir-ingest/1",
+            "ir_key": "db2cef29cdb73c21e05860000e88e5111e5e6965a7979e111c3877cf34e116e9",
+            "limits_hit": [],
+            "norm_version": "norm/1",
+            "producer": {
+              "analysis_options_digest": "d80983d41dcc0b7ac38311e89b0bbc09496cbf0c8a4ed3e9e2e0df3722eb0db0",
+              "ghidra": "12.0.4",
+              "gzf_sha256": null,
+              "java": "21.0.12",
+              "kind": "ghidra",
+              "mode": "analyze",
+              "pyghidra": "3.0.2",
+              "python": "3.12.14",
+              "script_sha256": "7676f631fb825551569f04f6b32828b771694a8d49d86e8d15a0a120f6f26fd9",
+              "symbols": "none"
+            },
+            "program_sha256": "6462d1618dcddb702dde929094522539c297fb0a2a17fd6083812df17000e1fd",
+            "size_of_image": 20480,
+            "warnings": []
+          },
+          "probe": {
+            "ghidra": "12.0.4",
+            "java": "21.0.12",
+            "pyghidra": "3.0.2",
+            "python": "3.12.14",
+            "script_sha256": "7676f631fb825551569f04f6b32828b771694a8d49d86e8d15a0a120f6f26fd9"
+          },
+          "stderr_tail": "",
+          "wall_extract_plus_ingest_s": 10.802873582999837
+        }
+      },
+      "status": "complete",
+      "symbol_visibility": "Fixture exports are present and visible to Ghidra and the ladder; no PDB/downloads.",
+      "truth": [
+        {
+          "change": "moved",
+          "newer_rvas": [
+            4160
+          ],
+          "older_rvas": [
+            4096
+          ]
+        }
+      ],
+      "truth_origin": "existing unified_support.pairs.pair_for; known by construction, not inferred from symbols"
+    },
+    {
+      "artifact_sha256": {
+        "newer": "a8d5944d442535f1998183524f0b98058cf0273cef9cd59357779309c9d607ac",
+        "older": "6462d1618dcddb702dde929094522539c297fb0a2a17fd6083812df17000e1fd"
+      },
+      "compute": {
+        "correct_matched_one_to_one_pairs": 0,
+        "decision_counts": {
+          "matched": 1
+        },
+        "facts": [
+          {
+            "channels": [
+              [
+                "C0",
+                "differs"
+              ],
+              [
+                "C1",
+                "differs"
+              ],
+              [
+                "C2",
+                "differs"
+              ],
+              [
+                "C3",
+                "differs"
+              ],
+              [
+                "C4",
+                "differs"
+              ],
+              [
+                "C5",
+                "differs"
+              ],
+              [
+                "C6",
+                "unavailable"
+              ],
+              [
+                "C7",
+                "unavailable"
+              ],
+              [
+                "C8",
+                "unavailable"
+              ]
+            ],
+            "contract": "change-facts/1",
+            "deltas": [
+              {
+                "channel": "C2",
+                "cls": "call-added",
+                "new": "CALL 0x180001010",
+                "newer_rva": 4096,
+                "old": null,
+                "older_rva": null
+              },
+              {
+                "channel": "C2",
+                "cls": "call-added",
+                "new": "CALL 0x180001020",
+                "newer_rva": 4101,
+                "old": null,
+                "older_rva": null
+              },
+              {
+                "channel": "C5",
+                "cls": "constant",
+                "new": null,
+                "newer_rva": null,
+                "old": "0x11",
+                "older_rva": 4096
+              },
+              {
+                "channel": "C5",
+                "cls": "constant",
+                "new": null,
+                "newer_rva": null,
+                "old": "0x3",
+                "older_rva": 4106
+              },
+              {
+                "channel": "C2",
+                "cls": "unknown",
+                "new": null,
+                "newer_rva": null,
+                "old": "ADD RAX,0x3",
+                "older_rva": 4106
+              },
+              {
+                "channel": "C2",
+                "cls": "unknown",
+                "new": null,
+                "newer_rva": null,
+                "old": "MOV RAX,0x11",
+                "older_rva": 4096
+              }
+            ],
+            "deltas_omitted": 0,
+            "eh": "equal",
+            "limits_hit": [],
+            "proof": null,
+            "row_id": "6ed077eb49090dc74892775ab758563c60f7aed1f32bc50e2f6357bcc535a588",
+            "second_channel": "C4",
+            "targets": [
+              0,
+              0,
+              0
+            ],
+            "verdict": "material"
+          }
+        ],
+        "manifest": {
+          "config_digest": "7ea1a3d0a255e0764bf4351ba78b344085a83becde9031502c3cefda4a4dca79",
+          "contract": "unified-result/1",
+          "counts": {
+            "decisions": {
+              "ambiguous": 0,
+              "candidate": 0,
+              "contested": 0,
+              "matched": 1,
+              "newer_only": 0,
+              "older_only": 0,
+              "tentative": 0,
+              "unknown": 0
+            },
+            "materiality": {
+              "cosmetic": 0,
+              "material": 1,
+              "not_applicable": 0,
+              "review": 0,
+              "unchanged": 0,
+              "unknown": 0
+            }
+          },
+          "created_utc": "2026-10-30T22:58:18+00:00",
+          "engine_version": "ude/1",
+          "ghidriff_raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "ghidriff_run_id": "r2-native-ladder-only",
+          "ir_newer": {
+            "content_digest": "2dfe8e0729f11468984494c37f786e9cafe9de5da87112ee5de19647a844221d",
+            "functions": 3,
+            "ir_key": "68d8831d95f299e513bdb6d0c9b804d126934b24d2712dc9abd90ffddc27cd78",
+            "producer_mode": "analyze"
+          },
+          "ir_older": {
+            "content_digest": "cdcef1c049d1f6fb4f008d8ecbc18bd386bdb5928bb49063e49742e0f8deeb29",
+            "functions": 1,
+            "ir_key": "db2cef29cdb73c21e05860000e88e5111e5e6965a7979e111c3877cf34e116e9",
+            "producer_mode": "analyze"
+          },
+          "limitations": [],
+          "manual_digest": "a9adbdc4d34f2c90e9f3672b7e6bff65fe419699a061e2bb54c61b9bc41a7505",
+          "newer_sha256": "a8d5944d442535f1998183524f0b98058cf0273cef9cd59357779309c9d607ac",
+          "older_sha256": "6462d1618dcddb702dde929094522539c297fb0a2a17fd6083812df17000e1fd",
+          "orientation": "older->newer",
+          "parts": [
+            {
+              "bytes": 1009,
+              "name": "facts.jsonl.gz",
+              "records": 1,
+              "sha256": "d0ab95a92b0eb16d38cecdda64e67d77b48ac3a05270976bcab3fb1fce74ca19"
+            },
+            {
+              "bytes": 634,
+              "name": "rows.jsonl.gz",
+              "records": 1,
+              "sha256": "ab4e5f2ec97ecddec977b9f8558b5a69dcfc0301752832350d92309c68d6c9b0"
+            }
+          ],
+          "result_id": "dbca569180d39068a2ad9e7cd1256ee5d5d5bb5bd191ee34143fa00282f66d14",
+          "sources": [],
+          "status": "complete"
+        },
+        "matched_one_to_one_pairs": [
+          [
+            4096,
+            4096
+          ]
+        ],
+        "materiality_counts": {
+          "material": 1
+        },
+        "note": "N:M construction relations are not flattened into one-to-one truth.",
+        "rows": [
+          {
+            "atoms": [
+              {
+                "cardinality": "1:1",
+                "cls": "E-NAME",
+                "native": [
+                  [
+                    "round",
+                    "1"
+                  ]
+                ],
+                "newer_rva": 4096,
+                "older_rva": 4096,
+                "ref": "r1",
+                "source": "pt-ladder",
+                "step": "P03-name-exact",
+                "tier": "A"
+              }
+            ],
+            "change_classes": [
+              "call-added",
+              "constant",
+              "unknown"
+            ],
+            "contest": null,
+            "contract": "unified-match/1",
+            "decision": "matched",
+            "flags": [
+              "pdata-confirmed",
+              "tiny"
+            ],
+            "ghidriff_match_id": null,
+            "hints": [],
+            "materiality": "material",
+            "newer": [
+              {
+                "kind": "function",
+                "name": "entry",
+                "rva": 4096
+              }
+            ],
+            "older": [
+              {
+                "kind": "function",
+                "name": "entry",
+                "rva": 4096
+              }
+            ],
+            "row_id": "6ed077eb49090dc74892775ab758563c60f7aed1f32bc50e2f6357bcc535a588",
+            "support": [
+              {
+                "atom_index": 0,
+                "component": "K1",
+                "tier": "A"
+              }
+            ]
+          }
+        ],
+        "sources": "native Ghidra IR -> production ladder/fusion/facts; no Ghidriff/manual/secondary atoms",
+        "truth_one_to_one_pairs": [],
+        "wall_s": 0.003094752999913908
+      },
+      "kind": "split",
+      "seed": 0,
+      "sides": {
+        "newer": {
+          "extract_seconds_rounded_by_existing_Side": 10.5,
+          "functions": [
+            {
+              "flags": [],
+              "instruction_count": 3,
+              "name": "entry",
+              "rva": 4096
+            },
+            {
+              "flags": [],
+              "instruction_count": 2,
+              "name": "head",
+              "rva": 4112
+            },
+            {
+              "flags": [],
+              "instruction_count": 2,
+              "name": "tail",
+              "rva": 4128
+            }
+          ],
+          "ingest_seconds_rounded_by_existing_Side": 0.0,
+          "ir_jsonl_sha256": "10e1fccfda8dd95fc0d4791dbe8cdf38763cd5b46a36d7faac16d55b8c4b65c1",
+          "manifest": {
+            "artifact_sha256": "a8d5944d442535f1998183524f0b98058cf0273cef9cd59357779309c9d607ac",
+            "content_digest": "2dfe8e0729f11468984494c37f786e9cafe9de5da87112ee5de19647a844221d",
+            "contract": "program-ir/1",
+            "counts": {
+              "blocks": 3,
+              "call_edges": 2,
+              "consts": 2,
+              "functions": 3,
+              "imports": 0,
+              "instructions": 7,
+              "mask_unlocated": 0,
+              "pdata_confirmed": 3,
+              "refs": 2,
+              "strings": 0,
+              "thunks": 0
+            },
+            "created_utc": "2026-10-30T22:58:17+00:00",
+            "file_sha256": "461d69b59a36b9d9f32e8111dbcf5f9359b1f5528369d3b8b9210600d4b2beb6",
+            "image_base": 6442450944,
+            "ingest_version": "ir-ingest/1",
+            "ir_key": "68d8831d95f299e513bdb6d0c9b804d126934b24d2712dc9abd90ffddc27cd78",
+            "limits_hit": [],
+            "norm_version": "norm/1",
+            "producer": {
+              "analysis_options_digest": "d80983d41dcc0b7ac38311e89b0bbc09496cbf0c8a4ed3e9e2e0df3722eb0db0",
+              "ghidra": "12.0.4",
+              "gzf_sha256": null,
+              "java": "21.0.12",
+              "kind": "ghidra",
+              "mode": "analyze",
+              "pyghidra": "3.0.2",
+              "python": "3.12.14",
+              "script_sha256": "7676f631fb825551569f04f6b32828b771694a8d49d86e8d15a0a120f6f26fd9",
+              "symbols": "none"
+            },
+            "program_sha256": "a8d5944d442535f1998183524f0b98058cf0273cef9cd59357779309c9d607ac",
+            "size_of_image": 20480,
+            "warnings": []
+          },
+          "probe": {
+            "ghidra": "12.0.4",
+            "java": "21.0.12",
+            "pyghidra": "3.0.2",
+            "python": "3.12.14",
+            "script_sha256": "7676f631fb825551569f04f6b32828b771694a8d49d86e8d15a0a120f6f26fd9"
+          },
+          "stderr_tail": "",
+          "wall_extract_plus_ingest_s": 10.533070268999836
+        },
+        "older": {
+          "extract_seconds_rounded_by_existing_Side": 10.0,
+          "functions": [
+            {
+              "flags": [],
+              "instruction_count": 3,
+              "name": "entry",
+              "rva": 4096
+            }
+          ],
+          "ingest_seconds_rounded_by_existing_Side": 0.0,
+          "ir_jsonl_sha256": "3b4ebb9eb1a18d434e23d66f5bd254f86ba96509718b0c4d39c42b9a51c60ecb",
+          "manifest": {
+            "artifact_sha256": "6462d1618dcddb702dde929094522539c297fb0a2a17fd6083812df17000e1fd",
+            "content_digest": "cdcef1c049d1f6fb4f008d8ecbc18bd386bdb5928bb49063e49742e0f8deeb29",
+            "contract": "program-ir/1",
+            "counts": {
+              "blocks": 1,
+              "call_edges": 0,
+              "consts": 2,
+              "functions": 1,
+              "imports": 0,
+              "instructions": 3,
+              "mask_unlocated": 0,
+              "pdata_confirmed": 1,
+              "refs": 0,
+              "strings": 0,
+              "thunks": 0
+            },
+            "created_utc": "2026-10-30T22:58:07+00:00",
+            "file_sha256": "a9f386b400bd54a7135064c38c33c1f877764cad1c5b9a62b650e7d20ecfd03b",
+            "image_base": 6442450944,
+            "ingest_version": "ir-ingest/1",
+            "ir_key": "db2cef29cdb73c21e05860000e88e5111e5e6965a7979e111c3877cf34e116e9",
+            "limits_hit": [],
+            "norm_version": "norm/1",
+            "producer": {
+              "analysis_options_digest": "d80983d41dcc0b7ac38311e89b0bbc09496cbf0c8a4ed3e9e2e0df3722eb0db0",
+              "ghidra": "12.0.4",
+              "gzf_sha256": null,
+              "java": "21.0.12",
+              "kind": "ghidra",
+              "mode": "analyze",
+              "pyghidra": "3.0.2",
+              "python": "3.12.14",
+              "script_sha256": "7676f631fb825551569f04f6b32828b771694a8d49d86e8d15a0a120f6f26fd9",
+              "symbols": "none"
+            },
+            "program_sha256": "6462d1618dcddb702dde929094522539c297fb0a2a17fd6083812df17000e1fd",
+            "size_of_image": 20480,
+            "warnings": []
+          },
+          "probe": {
+            "ghidra": "12.0.4",
+            "java": "21.0.12",
+            "pyghidra": "3.0.2",
+            "python": "3.12.14",
+            "script_sha256": "7676f631fb825551569f04f6b32828b771694a8d49d86e8d15a0a120f6f26fd9"
+          },
+          "stderr_tail": "",
+          "wall_extract_plus_ingest_s": 10.046881507000307
+        }
+      },
+      "status": "complete",
+      "symbol_visibility": "Fixture exports are present and visible to Ghidra and the ladder; no PDB/downloads.",
+      "truth": [
+        {
+          "change": "split",
+          "newer_rvas": [
+            4096,
+            4112,
+            4128
+          ],
+          "older_rvas": [
+            4096
+          ]
+        }
+      ],
+      "truth_origin": "existing unified_support.pairs.pair_for; known by construction, not inferred from symbols"
+    },
+    {
+      "artifact_sha256": {
+        "newer": "6462d1618dcddb702dde929094522539c297fb0a2a17fd6083812df17000e1fd",
+        "older": "a8d5944d442535f1998183524f0b98058cf0273cef9cd59357779309c9d607ac"
+      },
+      "compute": {
+        "correct_matched_one_to_one_pairs": 0,
+        "decision_counts": {
+          "matched": 1
+        },
+        "facts": [
+          {
+            "channels": [
+              [
+                "C0",
+                "differs"
+              ],
+              [
+                "C1",
+                "differs"
+              ],
+              [
+                "C2",
+                "differs"
+              ],
+              [
+                "C3",
+                "differs"
+              ],
+              [
+                "C4",
+                "differs"
+              ],
+              [
+                "C5",
+                "differs"
+              ],
+              [
+                "C6",
+                "unavailable"
+              ],
+              [
+                "C7",
+                "unavailable"
+              ],
+              [
+                "C8",
+                "unavailable"
+              ]
+            ],
+            "contract": "change-facts/1",
+            "deltas": [
+              {
+                "channel": "C2",
+                "cls": "call-removed",
+                "new": null,
+                "newer_rva": null,
+                "old": "CALL 0x180001010",
+                "older_rva": 4096
+              },
+              {
+                "channel": "C2",
+                "cls": "call-removed",
+                "new": null,
+                "newer_rva": null,
+                "old": "CALL 0x180001020",
+                "older_rva": 4101
+              },
+              {
+                "channel": "C5",
+                "cls": "constant",
+                "new": "0x11",
+                "newer_rva": 4096,
+                "old": null,
+                "older_rva": null
+              },
+              {
+                "channel": "C5",
+                "cls": "constant",
+                "new": "0x3",
+                "newer_rva": 4106,
+                "old": null,
+                "older_rva": null
+              },
+              {
+                "channel": "C2",
+                "cls": "unknown",
+                "new": "ADD RAX,0x3",
+                "newer_rva": 4106,
+                "old": null,
+                "older_rva": null
+              },
+              {
+                "channel": "C2",
+                "cls": "unknown",
+                "new": "MOV RAX,0x11",
+                "newer_rva": 4096,
+                "old": null,
+                "older_rva": null
+              }
+            ],
+            "deltas_omitted": 0,
+            "eh": "equal",
+            "limits_hit": [],
+            "proof": null,
+            "row_id": "7c5e9d99694f0250f5e7285d8af6bd3cb6453ae3e032543c3dfb3c933efa124f",
+            "second_channel": "C4",
+            "targets": [
+              0,
+              0,
+              0
+            ],
+            "verdict": "material"
+          }
+        ],
+        "manifest": {
+          "config_digest": "7ea1a3d0a255e0764bf4351ba78b344085a83becde9031502c3cefda4a4dca79",
+          "contract": "unified-result/1",
+          "counts": {
+            "decisions": {
+              "ambiguous": 0,
+              "candidate": 0,
+              "contested": 0,
+              "matched": 1,
+              "newer_only": 0,
+              "older_only": 0,
+              "tentative": 0,
+              "unknown": 0
+            },
+            "materiality": {
+              "cosmetic": 0,
+              "material": 1,
+              "not_applicable": 0,
+              "review": 0,
+              "unchanged": 0,
+              "unknown": 0
+            }
+          },
+          "created_utc": "2026-10-30T22:58:37+00:00",
+          "engine_version": "ude/1",
+          "ghidriff_raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "ghidriff_run_id": "r2-native-ladder-only",
+          "ir_newer": {
+            "content_digest": "cdcef1c049d1f6fb4f008d8ecbc18bd386bdb5928bb49063e49742e0f8deeb29",
+            "functions": 1,
+            "ir_key": "db2cef29cdb73c21e05860000e88e5111e5e6965a7979e111c3877cf34e116e9",
+            "producer_mode": "analyze"
+          },
+          "ir_older": {
+            "content_digest": "2dfe8e0729f11468984494c37f786e9cafe9de5da87112ee5de19647a844221d",
+            "functions": 3,
+            "ir_key": "68d8831d95f299e513bdb6d0c9b804d126934b24d2712dc9abd90ffddc27cd78",
+            "producer_mode": "analyze"
+          },
+          "limitations": [],
+          "manual_digest": "a9adbdc4d34f2c90e9f3672b7e6bff65fe419699a061e2bb54c61b9bc41a7505",
+          "newer_sha256": "6462d1618dcddb702dde929094522539c297fb0a2a17fd6083812df17000e1fd",
+          "older_sha256": "a8d5944d442535f1998183524f0b98058cf0273cef9cd59357779309c9d607ac",
+          "orientation": "older->newer",
+          "parts": [
+            {
+              "bytes": 1013,
+              "name": "facts.jsonl.gz",
+              "records": 1,
+              "sha256": "ac6a9ee9137d0c74f55d06af9d28399c3539e62b9b75e1eb1089a474f64b9301"
+            },
+            {
+              "bytes": 636,
+              "name": "rows.jsonl.gz",
+              "records": 1,
+              "sha256": "67fda3d062b5fe95d633bbf795f26b4f07f1b4dbbc99bf834f1f1631912acc86"
+            }
+          ],
+          "result_id": "4caf96235543704ce6b8a6335b2922c5f249239560b7540aedac0602a3e02958",
+          "sources": [],
+          "status": "complete"
+        },
+        "matched_one_to_one_pairs": [
+          [
+            4096,
+            4096
+          ]
+        ],
+        "materiality_counts": {
+          "material": 1
+        },
+        "note": "N:M construction relations are not flattened into one-to-one truth.",
+        "rows": [
+          {
+            "atoms": [
+              {
+                "cardinality": "1:1",
+                "cls": "E-NAME",
+                "native": [
+                  [
+                    "round",
+                    "1"
+                  ]
+                ],
+                "newer_rva": 4096,
+                "older_rva": 4096,
+                "ref": "r1",
+                "source": "pt-ladder",
+                "step": "P03-name-exact",
+                "tier": "A"
+              }
+            ],
+            "change_classes": [
+              "call-removed",
+              "constant",
+              "unknown"
+            ],
+            "contest": null,
+            "contract": "unified-match/1",
+            "decision": "matched",
+            "flags": [
+              "pdata-confirmed",
+              "tiny"
+            ],
+            "ghidriff_match_id": null,
+            "hints": [],
+            "materiality": "material",
+            "newer": [
+              {
+                "kind": "function",
+                "name": "entry",
+                "rva": 4096
+              }
+            ],
+            "older": [
+              {
+                "kind": "function",
+                "name": "entry",
+                "rva": 4096
+              }
+            ],
+            "row_id": "7c5e9d99694f0250f5e7285d8af6bd3cb6453ae3e032543c3dfb3c933efa124f",
+            "support": [
+              {
+                "atom_index": 0,
+                "component": "K1",
+                "tier": "A"
+              }
+            ]
+          }
+        ],
+        "sources": "native Ghidra IR -> production ladder/fusion/facts; no Ghidriff/manual/secondary atoms",
+        "truth_one_to_one_pairs": [],
+        "wall_s": 0.003681029999825114
+      },
+      "kind": "merged",
+      "seed": 0,
+      "sides": {
+        "newer": {
+          "extract_seconds_rounded_by_existing_Side": 10.0,
+          "functions": [
+            {
+              "flags": [],
+              "instruction_count": 3,
+              "name": "entry",
+              "rva": 4096
+            }
+          ],
+          "ingest_seconds_rounded_by_existing_Side": 0.0,
+          "ir_jsonl_sha256": "3b4ebb9eb1a18d434e23d66f5bd254f86ba96509718b0c4d39c42b9a51c60ecb",
+          "manifest": {
+            "artifact_sha256": "6462d1618dcddb702dde929094522539c297fb0a2a17fd6083812df17000e1fd",
+            "content_digest": "cdcef1c049d1f6fb4f008d8ecbc18bd386bdb5928bb49063e49742e0f8deeb29",
+            "contract": "program-ir/1",
+            "counts": {
+              "blocks": 1,
+              "call_edges": 0,
+              "consts": 2,
+              "functions": 1,
+              "imports": 0,
+              "instructions": 3,
+              "mask_unlocated": 0,
+              "pdata_confirmed": 1,
+              "refs": 0,
+              "strings": 0,
+              "thunks": 0
+            },
+            "created_utc": "2026-10-30T22:58:37+00:00",
+            "file_sha256": "a9f386b400bd54a7135064c38c33c1f877764cad1c5b9a62b650e7d20ecfd03b",
+            "image_base": 6442450944,
+            "ingest_version": "ir-ingest/1",
+            "ir_key": "db2cef29cdb73c21e05860000e88e5111e5e6965a7979e111c3877cf34e116e9",
+            "limits_hit": [],
+            "norm_version": "norm/1",
+            "producer": {
+              "analysis_options_digest": "d80983d41dcc0b7ac38311e89b0bbc09496cbf0c8a4ed3e9e2e0df3722eb0db0",
+              "ghidra": "12.0.4",
+              "gzf_sha256": null,
+              "java": "21.0.12",
+              "kind": "ghidra",
+              "mode": "analyze",
+              "pyghidra": "3.0.2",
+              "python": "3.12.14",
+              "script_sha256": "7676f631fb825551569f04f6b32828b771694a8d49d86e8d15a0a120f6f26fd9",
+              "symbols": "none"
+            },
+            "program_sha256": "6462d1618dcddb702dde929094522539c297fb0a2a17fd6083812df17000e1fd",
+            "size_of_image": 20480,
+            "warnings": []
+          },
+          "probe": {
+            "ghidra": "12.0.4",
+            "java": "21.0.12",
+            "pyghidra": "3.0.2",
+            "python": "3.12.14",
+            "script_sha256": "7676f631fb825551569f04f6b32828b771694a8d49d86e8d15a0a120f6f26fd9"
+          },
+          "stderr_tail": "",
+          "wall_extract_plus_ingest_s": 10.03265280000005
+        },
+        "older": {
+          "extract_seconds_rounded_by_existing_Side": 9.9,
+          "functions": [
+            {
+              "flags": [],
+              "instruction_count": 3,
+              "name": "entry",
+              "rva": 4096
+            },
+            {
+              "flags": [],
+              "instruction_count": 2,
+              "name": "head",
+              "rva": 4112
+            },
+            {
+              "flags": [],
+              "instruction_count": 2,
+              "name": "tail",
+              "rva": 4128
+            }
+          ],
+          "ingest_seconds_rounded_by_existing_Side": 0.0,
+          "ir_jsonl_sha256": "10e1fccfda8dd95fc0d4791dbe8cdf38763cd5b46a36d7faac16d55b8c4b65c1",
+          "manifest": {
+            "artifact_sha256": "a8d5944d442535f1998183524f0b98058cf0273cef9cd59357779309c9d607ac",
+            "content_digest": "2dfe8e0729f11468984494c37f786e9cafe9de5da87112ee5de19647a844221d",
+            "contract": "program-ir/1",
+            "counts": {
+              "blocks": 3,
+              "call_edges": 2,
+              "consts": 2,
+              "functions": 3,
+              "imports": 0,
+              "instructions": 7,
+              "mask_unlocated": 0,
+              "pdata_confirmed": 3,
+              "refs": 2,
+              "strings": 0,
+              "thunks": 0
+            },
+            "created_utc": "2026-10-30T22:58:27+00:00",
+            "file_sha256": "461d69b59a36b9d9f32e8111dbcf5f9359b1f5528369d3b8b9210600d4b2beb6",
+            "image_base": 6442450944,
+            "ingest_version": "ir-ingest/1",
+            "ir_key": "68d8831d95f299e513bdb6d0c9b804d126934b24d2712dc9abd90ffddc27cd78",
+            "limits_hit": [],
+            "norm_version": "norm/1",
+            "producer": {
+              "analysis_options_digest": "d80983d41dcc0b7ac38311e89b0bbc09496cbf0c8a4ed3e9e2e0df3722eb0db0",
+              "ghidra": "12.0.4",
+              "gzf_sha256": null,
+              "java": "21.0.12",
+              "kind": "ghidra",
+              "mode": "analyze",
+              "pyghidra": "3.0.2",
+              "python": "3.12.14",
+              "script_sha256": "7676f631fb825551569f04f6b32828b771694a8d49d86e8d15a0a120f6f26fd9",
+              "symbols": "none"
+            },
+            "program_sha256": "a8d5944d442535f1998183524f0b98058cf0273cef9cd59357779309c9d607ac",
+            "size_of_image": 20480,
+            "warnings": []
+          },
+          "probe": {
+            "ghidra": "12.0.4",
+            "java": "21.0.12",
+            "pyghidra": "3.0.2",
+            "python": "3.12.14",
+            "script_sha256": "7676f631fb825551569f04f6b32828b771694a8d49d86e8d15a0a120f6f26fd9"
+          },
+          "stderr_tail": "",
+          "wall_extract_plus_ingest_s": 9.943182318000254
+        }
+      },
+      "status": "complete",
+      "symbol_visibility": "Fixture exports are present and visible to Ghidra and the ladder; no PDB/downloads.",
+      "truth": [
+        {
+          "change": "merged",
+          "newer_rvas": [
+            4096
+          ],
+          "older_rvas": [
+            4096,
+            4112,
+            4128
+          ]
+        }
+      ],
+      "truth_origin": "existing unified_support.pairs.pair_for; known by construction, not inferred from symbols"
+    }
+  ],
+  "extractor_script_sha256": "7676f631fb825551569f04f6b32828b771694a8d49d86e8d15a0a120f6f26fd9",
+  "finished_utc": "2026-10-30T22:58:50.449213+00:00",
+  "ghidra_properties": "#Tue Mar 03 14:10:12 EST 2026\napplication.build.date=2026-Mar-03 1410 EST\napplication.build.date.short=20260303\napplication.gradle.max=\napplication.gradle.min=8.5\napplication.java.compiler=21\napplication.java.max=\napplication.java.min=21\napplication.layout.version=3\napplication.name=Ghidra\napplication.python.supported=3.14, 3.13, 3.12, 3.11, 3.10, 3.9\napplication.release.marking=\napplication.release.name=PUBLIC\napplication.revision.ghidra=e40ed13014025f82488b1f8f7bca566894ac376b\napplication.revision.ghidra.bin=c01a3dc15723ee195531e3d6e60b170cdc22a5d5\napplication.revision.ghidra.ext-u=32088a1f966b800afc9ab2d32ddac6468e4c95ca\napplication.version=12.0.4\n",
+  "ghidra_properties_sha256": "5b171b044c3883a4b4a7a6287d35c4dbf12858aaff1d95a9aac8402215bcaa94",
+  "ghidriff_primary_attempt": {
+    "error": null,
+    "events": [
+      {
+        "message": "Checking copied input hashes and external analysis runtime",
+        "stage": "preflight"
+      },
+      {
+        "message": "Ghidriff is performing static analysis; detailed counts are unavailable",
+        "stage": "analysis"
+      },
+      {
+        "message": "rted: 3 analyzed: 3\nINFO | ghidriff | p2 sym count: reported: 3 analyzed: 3\nINFO | ghidriff | Found unmatched: 0 matched: 3 symbols\nINFO  Hashing symbols in 6462d1618dcddb702dde929094522539c297fb0a2a17fd6083812df17000e1fd.bin (ConsoleTaskMonitor)  \nINFO  Hashing symbols in 5ce1d80a29811c6383846b564e1b05bff1115c34cfa143c2b792336eecd5dab1.bin (ConsoleTaskMonitor)  \nINFO  Eliminate non-unique matches (ConsoleTaskMonitor)  \nINFO  Finding symbol matches (ConsoleTaskMonitor)  \nINFO | ghidriff | Exec time: 0.0030 secs\nINFO | ghidriff | Match count 5\nINFO | ghidriff | Counter({('SymbolsHash',): 1})\nINFO | ghidriff | Running correlator: ExactBytesFunctionHasher\nINFO | ghidriff | name: ExactBytesFunctionHasher one_to_one: True one_to_many: False\nINFO  Hashing functions in 6462d1618dcddb702dde929094522539c297fb0a2a17fd6083812df17000e1fd.bin (ConsoleTaskMonitor)  \nINFO  Hashing functions in 5ce1d80a29811c6383846b564e1b05bff1115c34cfa143c2b792336eecd5dab1.bin (ConsoleTaskMonitor)  \nINFO  Finding function matches (ConsoleTaskMonitor)  \nINFO | ghidriff | Match count: 0\nINFO | ghidriff | ExactBytesFunctionHasher Exec time: 0.0008 secs\nINFO | ghidriff | Running correlator: ExactInstructionsFunctionHasher\nINFO | ghidriff | name: ExactInstructionsFunctionHasher one_to_one: True one_to_many: False\nINFO | ghidriff | Match count: 0\nINFO | ghidriff | ExactInstructionsFunctionHasher Exec time: 0.0003 secs\nINFO | ghidriff | Running correlator: StructuralGraphExactHash\nINFO | ghidriff | name: StructuralGraphExactHash one_to_one: True one_to_many: False\nINFO | ghidriff | Match count: 0\nINFO | ghidriff | StructuralGraphExactHash Exec time: 0.0013 secs\nINFO | ghidriff | Running correlator: ExactMnemonicsFunctionHasher\nINFO | ghidriff | name: ExactMnemonicsFunctionHasher one_to_one: True one_to_many: False\nINFO | ghidriff | Match count: 0\nINFO | ghidriff | ExactMnemonicsFunctionHasher Exec time: 0.0001 secs\nINFO | ghidriff | Running correlator: BSIM\nINFO | ghidriff | name: BSIM one_to_one: True one_to_many: False\nINFO | ghidriff | Starting BSIM correlator\nINFO | ghidriff | Match Set 0 - 1 matches [Correlator=Manual Match]\nINFO | ghidriff | Match Set -1 - 0 matches [Correlator=Implied Match]\nINFO  BSim Program Correlator could not find any seeds (BSimProgramCorrelator)  \nINFO | ghidriff | Match Set 1 - 0 matches [Correlator=BSim Function Matching]\nINFO | ghidriff | BSIM Exec time: 0.0853 secs\nINFO | ghidriff | Running correlator: BulkInstructionHash\nINFO | ghidriff | name: BulkInstructionHash one_to_one: True one_to_many: False\nINFO | ghidriff | Match count: 0\nINFO | ghidriff | BulkInstructionHash Exec time: 0.0002 secs\nINFO | ghidriff | Running correlator: SigCallingCalledHasher\nINFO | ghidriff | name: SigCallingCalledHasher one_to_one: True one_to_many: False\nINFO | ghidriff | Match count: 0\nINFO | ghidriff | SigCallingCalledHasher Exec time: 0.0003 secs\nINFO | ghidriff | Running correlator: StringsRefsHasher\nINFO | ghidriff | name: StringsRefsHasher one_to_one: True one_to_many: False\nINFO | ghidriff | Match count: 0\nINFO | ghidriff | StringsRefsHasher Exec time: 0.0002 secs\nINFO | ghidriff | Running correlator: StrUniqueFuncRefsHasher\nINFO | ghidriff | name: StrUniqueFuncRefsHasher one_to_one: True one_to_many: False\nINFO | ghidriff | Match count: 0\nINFO | ghidriff | StrUniqueFuncRefsHasher Exec time: 0.0001 secs\nINFO | ghidriff | Running correlator: SwitchSigHasher\nINFO | ghidriff | name: SwitchSigHasher one_to_one: True one_to_many: False\nINFO | ghidriff | Match count: 0\nINFO | ghidriff | SwitchSigHasher Exec time: 0.0001 secs\nINFO | ghidriff | Running correlator: StructuralGraphHash\nINFO | ghidriff | name: StructuralGraphHash one_to_one: True one_to_many: True\nINFO | ghidriff | Match count: 0\nINFO | ghidriff | StructuralGraphHash Exec time: 0.0001 secs\nINFO | ghidriff | Running correlator: BulkBasicBlockMnemonicHash\nINFO | ghidriff | name: BulkBasicBlockMnemonicHash one_to_one: True one_to_many: True\nINFO | ghidriff | Match count: 0\nINFO | ghidriff | BulkBasicBlockMnemonicHash Exec time: 0.0001 secs\nINFO | ghidriff | Running correlator: SigCallingCalledHasher\nINFO | ghidriff | name: SigCallingCalledHasher one_to_one: True one_to_many: False\nINFO | ghidriff | Match count: 0\nINFO | ghidriff | SigCallingCalledHasher Exec time: 0.0002 secs\nINFO | ghidriff | Running correlator: StringsRefsHasher\nINFO | ghidriff | name: StringsRefsHasher one_to_one: True one_to_many: False\nINFO | ghidriff | Match count: 0\nINFO | ghidriff | StringsRefsHasher Exec time: 0.0002 secs\nINFO | ghidriff | Running correlator: StrUniqueFuncRefsHasher\nINFO | ghidriff | name: StrUniqueFuncRefsHasher one_to_one: True one_to_many: False\nINFO | ghidriff | Match count: 0\nINFO | ghidriff | StrUniqueFuncRefsHasher Exec time: 0.0002 secs\nINFO | ghidriff | Running correlator: SwitchSigHasher\nINFO | ghidriff | name: SwitchSigHasher one_to_one: True one_to_many: False\nINFO | ghidriff | Match count: 0\nINFO | ghidriff | SwitchSigHasher Exec time: 0.0002 secs\nINFO | ghidriff | Counter({('SymbolsHash',): 1})\nINFO | ghidriff | Running correlator: Implied matches on p1:0 p2:0\nINFO | ghidriff | p1 missing = 0\nINFO | ghidriff | p2 missing = 0\nINFO | ghidriff | Externs - deleted: 0 added: 0 matched:0\nINFO | ghidriff | Generating matches json...\nINFO | ghidriff | Deduping symbols and functions...\nINFO | ghidriff | Sorting symbols and strings...\nINFO | ghidriff | Sorting functions...\nINFO | ghidriff | Starting esym lookups for 0 symbols using 1 threads\nINFO | ghidriff | Finished diffing old program: 6462d1618dcddb702dde929094522539c297fb0a2a17fd6083812df17000e1fd.bin\nINFO | ghidriff | Finished diffing program: 5ce1d80a29811c6383846b564e1b05bff1115c34cfa143c2b792336eecd5dab1.bin\nINFO | ghidriff | Writing md diff...\nINFO | ghidriff | Generating markdown from {'added_funcs_len': 0, 'deleted_funcs_len': 0, 'modified_funcs_len': 0, 'added_symbols_len': 0, 'deleted_symbols_len': 0, 'diff_time': 0.7299008369445801, 'deleted_strings_len': 0, 'added_strings_len': 0, 'match_types': Counter({'SymbolsHash': 1}), 'items_to_process': 0, 'diff_types': Counter(), 'unmatched_funcs_len': 0, 'total_funcs_len': 2, 'matched_funcs_len': 2, 'matched_funcs_with_code_changes_len': 0, 'matched_funcs_with_non_code_changes_len': 0, 'matched_funcs_no_changes_len': 2, 'match_func_similarity_percent': '100.0000%', 'func_match_overall_percent': '100.0000%', 'first_matches': Counter({'SymbolsHash': 1})}\nINFO | ghidriff | Known Command line: ghidriff --project-location /tmp/patchtrace-r2-native-20261030/tmp/patchtrace-ghidra-qiw1079t/projects --project-name ghidriff --symbols-path symbols --gzfs-path /tmp/patchtrace-r2-native-20261030/tmp/patchtrace-ghidra-qiw1079t/gzfs --no-symbols --log-level INFO --file-log-level INFO --log-path ghidriff.log --min-func-len 10 --gdt [] --bsim --max-ram-percent 60.0 --jvm-args [] --decompiler-timeout 60 --max-section-funcs 200 6462d1618dcddb702dde929094522539c297fb0a2a17fd6083812df17000e1fd.bin 5ce1d80a29811c6383846b564e1b05bff1115c34cfa143c2b792336eecd5dab1.bin\nINFO | ghidriff | Extra Command line: --engine VersionTrackingDiff --output-path /tmp/patchtrace-r2-native-20261030/primary-project/runs/quarantine-6a4410aa-84a8-4f6b-9b9c-2d3ced9caba7/raw\nINFO | ghidriff | Writing pdiff json...\nINFO | ghidriff | Writing matches json...\nINFO | ghidriff | Wrote /tmp/patchtrace-r2-native-20261030/primary-project/runs/quarantine-6a4410aa-84a8-4f6b-9b9c-2d3ced9caba7/raw/6462d1618dcddb702dde929094522539c297fb0a2a17fd6083812df17000e1fd.bin-5ce1d80a29811c6383846b564e1b05bff1115c34cfa143c2b792336eecd5dab1.bin.ghidriff.md (size: 19K)\nINFO | ghidriff | Wrote /tmp/patchtrace-r2-native-20261030/primary-project/runs/quarantine-6a4410aa-84a8-4f6b-9b9c-2d3ced9caba7/raw/json/6462d1618dcddb702dde929094522539c297fb0a2a17fd6083812df17000e1fd.bin-5ce1d80a29811c6383846b564e1b05bff1115c34cfa143c2b792336eecd5dab1.bin.ghidriff.json (size: 21K)\nINFO | ghidriff | Wrote /tmp/patchtrace-r2-native-20261030/primary-project/runs/quarantine-6a4410aa-84a8-4f6b-9b9c-2d3ced9caba7/raw/json/6462d1618dcddb702dde929094522539c297fb0a2a17fd6083812df17000e1fd.bin-5ce1d80a29811c6383846b564e1b05bff1115c34cfa143c2b792336eecd5dab1.bin.ghidriff.matches.json (size: 0K)\n",
+        "stage": "log"
+      },
+      {
+        "message": "Raw static analysis saved; normalization is ready",
+        "stage": "completed"
+      }
+    ],
+    "raw_document": {
+      "functions": {
+        "added": [],
+        "deleted": [],
+        "modified": []
+      },
+      "html_credits": "\n<sub>Generated with <code>ghidriff</code> version: 1.0.0 on 2026-10-30T23:58:50</sub>",
+      "matches": {
+        "address_matches": {
+          "180001000": [
+            [
+              "180001000",
+              [
+                "SymbolsHash"
+              ]
+            ]
+          ]
+        },
+        "name_matches": {
+          "entry": [
+            [
+              "entry",
+              [
+                "SymbolsHash"
+              ]
+            ]
+          ]
+        }
+      },
+      "md_credits": "\n<sub>Generated with `ghidriff` version: 1.0.0 on 2026-10-30T23:58:50</sub>",
+      "new_meta": {
+        "# of Bytes": "3072",
+        "# of Data Type Categories": "3",
+        "# of Data Types": "29",
+        "# of Defined Data": "14",
+        "# of Functions": "1",
+        "# of Instructions": "3",
+        "# of Memory Blocks": "5",
+        "# of Symbols": "3",
+        "Address Size": "64",
+        "Analyzed": "true",
+        "Compiler": "unknown",
+        "Compiler ID": "windows",
+        "Created With Ghidra Version": "12.0.4",
+        "Date Created": "Fri Oct 30 23:58:43 CET 2026",
+        "Endian": "Little",
+        "Executable Format": "Portable Executable (PE)",
+        "Executable Location": "/tmp/patchtrace-r2-native-20261030/tmp/patchtrace-ghidra-qiw1079t/inputs/newer/5ce1d80a29811c6383846b564e1b05bff1115c34cfa143c2b792336eecd5dab1.bin",
+        "Executable MD5": "77a794f8477a81ae6b127bb30a6d48a2",
+        "Executable SHA256": "5ce1d80a29811c6383846b564e1b05bff1115c34cfa143c2b792336eecd5dab1",
+        "FSRL": "file:///tmp/patchtrace-r2-native-20261030/tmp/patchtrace-ghidra-qiw1079t/inputs/newer/5ce1d80a29811c6383846b564e1b05bff1115c34cfa143c2b792336eecd5dab1.bin?MD5=77a794f8477a81ae6b127bb30a6d48a2",
+        "Language ID": "x86:LE:64:default (4.6)",
+        "Maximum Address": "1800041ff",
+        "Minimum Address": "180000000",
+        "Preferred Root Namespace Category": "",
+        "Processor": "x86",
+        "Program Name": "5ce1d80a29811c6383846b564e1b05bff1115c34cfa143c2b792336eecd5dab1.bin",
+        "Relocatable": "false",
+        "SectionAlignment": "4096",
+        "Should Ask To Analyze": "false"
+      },
+      "old_meta": {
+        "# of Bytes": "3072",
+        "# of Data Type Categories": "3",
+        "# of Data Types": "29",
+        "# of Defined Data": "14",
+        "# of Functions": "1",
+        "# of Instructions": "3",
+        "# of Memory Blocks": "5",
+        "# of Symbols": "3",
+        "Address Size": "64",
+        "Analyzed": "true",
+        "Compiler": "unknown",
+        "Compiler ID": "windows",
+        "Created With Ghidra Version": "12.0.4",
+        "Date Created": "Fri Oct 30 23:58:43 CET 2026",
+        "Endian": "Little",
+        "Executable Format": "Portable Executable (PE)",
+        "Executable Location": "/tmp/patchtrace-r2-native-20261030/tmp/patchtrace-ghidra-qiw1079t/inputs/older/6462d1618dcddb702dde929094522539c297fb0a2a17fd6083812df17000e1fd.bin",
+        "Executable MD5": "8168b4bba4cc2c266238be91ae49a344",
+        "Executable SHA256": "6462d1618dcddb702dde929094522539c297fb0a2a17fd6083812df17000e1fd",
+        "FSRL": "file:///tmp/patchtrace-r2-native-20261030/tmp/patchtrace-ghidra-qiw1079t/inputs/older/6462d1618dcddb702dde929094522539c297fb0a2a17fd6083812df17000e1fd.bin?MD5=8168b4bba4cc2c266238be91ae49a344",
+        "Language ID": "x86:LE:64:default (4.6)",
+        "Maximum Address": "1800041ff",
+        "Minimum Address": "180000000",
+        "Preferred Root Namespace Category": "",
+        "Processor": "x86",
+        "Program Name": "6462d1618dcddb702dde929094522539c297fb0a2a17fd6083812df17000e1fd.bin",
+        "Relocatable": "false",
+        "SectionAlignment": "4096",
+        "Should Ask To Analyze": "false"
+      },
+      "program_options": {
+        "5ce1d80a29811c6383846b564e1b05bff1115c34cfa143c2b792336eecd5dab1.bin": {
+          "Analyzers": {
+            "ASCII Strings": "true",
+            "ASCII Strings.Create Strings Containing Existing Strings": "true",
+            "ASCII Strings.Create Strings Containing References": "true",
+            "ASCII Strings.Force Model Reload": "false",
+            "ASCII Strings.Minimum String Length": "LEN_5",
+            "ASCII Strings.Model File": "StringModel.sng",
+            "ASCII Strings.Require Null Termination for String": "true",
+            "ASCII Strings.Search Only in Accessible Memory Blocks": "true",
+            "ASCII Strings.String Start Alignment": "ALIGN_1",
+            "ASCII Strings.String end alignment": "4",
+            "Aggressive Instruction Finder": "false",
+            "Aggressive Instruction Finder.Create Analysis Bookmarks": "true",
+            "Apply Data Archives": "true",
+            "Apply Data Archives.Archive Chooser": "[Auto-Detect]",
+            "Apply Data Archives.Create Analysis Bookmarks": "true",
+            "Apply Data Archives.GDT User File Archive Path": null,
+            "Apply Data Archives.User Project Archive Path": null,
+            "Call Convention ID": "true",
+            "Call Convention ID.Analysis Decompiler Timeout (sec)": "60",
+            "Call-Fixup Installer": "true",
+            "Condense Filler Bytes": "false",
+            "Condense Filler Bytes.Filler Value": "Auto",
+            "Condense Filler Bytes.Minimum number of sequential bytes": "1",
+            "Create Address Tables": "true",
+            "Create Address Tables.Allow Offcut References": "false",
+            "Create Address Tables.Auto Label Table": "false",
+            "Create Address Tables.Create Analysis Bookmarks": "true",
+            "Create Address Tables.Maxmimum Pointer Distance": "16777215",
+            "Create Address Tables.Minimum Pointer Address": "4132",
+            "Create Address Tables.Minimum Table Size": "2",
+            "Create Address Tables.Pointer Alignment": "1",
+            "Create Address Tables.Relocation Table Guide": "true",
+            "Create Address Tables.Table Alignment": "4",
+            "Data Reference": "true",
+            "Data Reference.Address Table Alignment": "1",
+            "Data Reference.Address Table Minimum Size": "2",
+            "Data Reference.Align End of Strings": "false",
+            "Data Reference.Ascii String References": "true",
+            "Data Reference.Create Address Tables": "true",
+            "Data Reference.Minimum String Length": "5",
+            "Data Reference.References to Pointers": "true",
+            "Data Reference.Relocation Table Guide": "true",
+            "Data Reference.Respect Execute Flag": "true",
+            "Data Reference.Subroutine References": "true",
+            "Data Reference.Switch Table References": "false",
+            "Data Reference.Unicode String References": "true",
+            "Decompiler Parameter ID": "true",
+            "Decompiler Parameter ID.Analysis Clear Level": "ANALYSIS",
+            "Decompiler Parameter ID.Analysis Decompiler Timeout (sec)": "60",
+            "Decompiler Parameter ID.Commit Data Types": "true",
+            "Decompiler Parameter ID.Commit Void Return Values": "false",
+            "Decompiler Parameter ID.Prototype Evaluation": "__fastcall",
+            "Decompiler Switch Analysis": "true",
+            "Decompiler Switch Analysis.Analysis Decompiler Timeout (sec)": "60",
+            "Demangler Microsoft": "true",
+            "Demangler Microsoft.Apply Function Calling Conventions": "true",
+            "Demangler Microsoft.Apply Function Signatures": "true",
+            "Demangler Microsoft.C-Style Symbol Interpretation": "FUNCTION_IF_EXISTS",
+            "Demangler Microsoft.Demangle Only Known Mangled Symbols": "false",
+            "Disassemble Entry Points": "true",
+            "Disassemble Entry Points.Respect Execute Flag": "true",
+            "Embedded Media": "true",
+            "Embedded Media.Create Analysis Bookmarks": "true",
+            "External Entry References": "true",
+            "Function ID": "true",
+            "Function ID.Always Apply FID Labels": "false",
+            "Function ID.Create Analysis Bookmarks": "true",
+            "Function ID.Instruction Count Threshold": "14.6",
+            "Function ID.Multiple Match Threshold": "30.0",
+            "Function Start Search": "true",
+            "Function Start Search.Bookmark Functions": "false",
+            "Function Start Search.Search Data Blocks": "false",
+            "Non-Returning Functions - Discovered": "true",
+            "Non-Returning Functions - Discovered.Create Analysis Bookmarks": "true",
+            "Non-Returning Functions - Discovered.Function Non-return Threshold": "3",
+            "Non-Returning Functions - Discovered.Repair Flow Damage": "true",
+            "Non-Returning Functions - Known": "true",
+            "Non-Returning Functions - Known.Create Analysis Bookmarks": "true",
+            "PDB MSDIA": "false",
+            "PDB MSDIA.Search untrusted symbol servers": "false",
+            "PDB Universal": "false",
+            "PDB Universal.Import Source Line Info": "true",
+            "PDB Universal.Search untrusted symbol servers": "false",
+            "Reference": "true",
+            "Reference.Address Table Alignment": "1",
+            "Reference.Address Table Minimum Size": "2",
+            "Reference.Align End of Strings": "false",
+            "Reference.Ascii String References": "true",
+            "Reference.Create Address Tables": "true",
+            "Reference.Minimum String Length": "5",
+            "Reference.References to Pointers": "true",
+            "Reference.Relocation Table Guide": "true",
+            "Reference.Respect Execute Flag": "true",
+            "Reference.Subroutine References": "true",
+            "Reference.Switch Table References": "false",
+            "Reference.Unicode String References": "true",
+            "Scalar Operand References": "true",
+            "Scalar Operand References.Relocation Table Guide": "true",
+            "Shared Return Calls": "true",
+            "Shared Return Calls.Allow Conditional Jumps": "false",
+            "Shared Return Calls.Assume Contiguous Functions Only": "true",
+            "Stack": "true",
+            "Stack.Create Local Variables": "true",
+            "Stack.Create Param Variables": "false",
+            "Stack.Max Threads": "2",
+            "Subroutine References": "true",
+            "Subroutine References.Create Thunks Early": "true",
+            "Variadic Function Signature Override": "false",
+            "Variadic Function Signature Override.Create Analysis Bookmarks": "false",
+            "WindowsPE x86 Propagate External Parameters": "false",
+            "WindowsResourceReference": "true",
+            "WindowsResourceReference.Create Analysis Bookmarks": "true",
+            "x86 Constant Reference Analyzer": "true",
+            "x86 Constant Reference Analyzer.Create Data from pointer": "false",
+            "x86 Constant Reference Analyzer.Function parameter/return Pointer analysis": "true",
+            "x86 Constant Reference Analyzer.Max Threads": "2",
+            "x86 Constant Reference Analyzer.Min absolute reference": "4",
+            "x86 Constant Reference Analyzer.Require pointer param data type": "false",
+            "x86 Constant Reference Analyzer.Speculative reference max": "256",
+            "x86 Constant Reference Analyzer.Speculative reference min": "1024",
+            "x86 Constant Reference Analyzer.Stored Value Pointer analysis": "true",
+            "x86 Constant Reference Analyzer.Trust values read from writable memory": "true"
+          },
+          "Decompiler": {
+            "Prototype Evaluation": "__fastcall"
+          },
+          "Program Information": {
+            "Analyzed": "true",
+            "Compiler": "unknown",
+            "Created With Ghidra Version": "12.0.4",
+            "Date Created": "Fri Oct 30 23:58:43 CET 2026",
+            "Executable Format": "Portable Executable (PE)",
+            "Executable Location": "/tmp/patchtrace-r2-native-20261030/tmp/patchtrace-ghidra-qiw1079t/inputs/newer/5ce1d80a29811c6383846b564e1b05bff1115c34cfa143c2b792336eecd5dab1.bin",
+            "Executable MD5": "77a794f8477a81ae6b127bb30a6d48a2",
+            "Executable SHA256": "5ce1d80a29811c6383846b564e1b05bff1115c34cfa143c2b792336eecd5dab1",
+            "FSRL": "file:///tmp/patchtrace-r2-native-20261030/tmp/patchtrace-ghidra-qiw1079t/inputs/newer/5ce1d80a29811c6383846b564e1b05bff1115c34cfa143c2b792336eecd5dab1.bin?MD5=77a794f8477a81ae6b127bb30a6d48a2",
+            "Preferred Root Namespace Category": "",
+            "Relocatable": "false",
+            "SectionAlignment": "4096",
+            "Should Ask To Analyze": "false"
+          },
+          "Specification Extensions": {
+            "FormatVersion": "0",
+            "VersionCounter": "0"
+          }
+        },
+        "6462d1618dcddb702dde929094522539c297fb0a2a17fd6083812df17000e1fd.bin": {
+          "Analyzers": {
+            "ASCII Strings": "true",
+            "ASCII Strings.Create Strings Containing Existing Strings": "true",
+            "ASCII Strings.Create Strings Containing References": "true",
+            "ASCII Strings.Force Model Reload": "false",
+            "ASCII Strings.Minimum String Length": "LEN_5",
+            "ASCII Strings.Model File": "StringModel.sng",
+            "ASCII Strings.Require Null Termination for String": "true",
+            "ASCII Strings.Search Only in Accessible Memory Blocks": "true",
+            "ASCII Strings.String Start Alignment": "ALIGN_1",
+            "ASCII Strings.String end alignment": "4",
+            "Aggressive Instruction Finder": "false",
+            "Aggressive Instruction Finder.Create Analysis Bookmarks": "true",
+            "Apply Data Archives": "true",
+            "Apply Data Archives.Archive Chooser": "[Auto-Detect]",
+            "Apply Data Archives.Create Analysis Bookmarks": "true",
+            "Apply Data Archives.GDT User File Archive Path": null,
+            "Apply Data Archives.User Project Archive Path": null,
+            "Call Convention ID": "true",
+            "Call Convention ID.Analysis Decompiler Timeout (sec)": "60",
+            "Call-Fixup Installer": "true",
+            "Condense Filler Bytes": "false",
+            "Condense Filler Bytes.Filler Value": "Auto",
+            "Condense Filler Bytes.Minimum number of sequential bytes": "1",
+            "Create Address Tables": "true",
+            "Create Address Tables.Allow Offcut References": "false",
+            "Create Address Tables.Auto Label Table": "false",
+            "Create Address Tables.Create Analysis Bookmarks": "true",
+            "Create Address Tables.Maxmimum Pointer Distance": "16777215",
+            "Create Address Tables.Minimum Pointer Address": "4132",
+            "Create Address Tables.Minimum Table Size": "2",
+            "Create Address Tables.Pointer Alignment": "1",
+            "Create Address Tables.Relocation Table Guide": "true",
+            "Create Address Tables.Table Alignment": "4",
+            "Data Reference": "true",
+            "Data Reference.Address Table Alignment": "1",
+            "Data Reference.Address Table Minimum Size": "2",
+            "Data Reference.Align End of Strings": "false",
+            "Data Reference.Ascii String References": "true",
+            "Data Reference.Create Address Tables": "true",
+            "Data Reference.Minimum String Length": "5",
+            "Data Reference.References to Pointers": "true",
+            "Data Reference.Relocation Table Guide": "true",
+            "Data Reference.Respect Execute Flag": "true",
+            "Data Reference.Subroutine References": "true",
+            "Data Reference.Switch Table References": "false",
+            "Data Reference.Unicode String References": "true",
+            "Decompiler Parameter ID": "true",
+            "Decompiler Parameter ID.Analysis Clear Level": "ANALYSIS",
+            "Decompiler Parameter ID.Analysis Decompiler Timeout (sec)": "60",
+            "Decompiler Parameter ID.Commit Data Types": "true",
+            "Decompiler Parameter ID.Commit Void Return Values": "false",
+            "Decompiler Parameter ID.Prototype Evaluation": "__fastcall",
+            "Decompiler Switch Analysis": "true",
+            "Decompiler Switch Analysis.Analysis Decompiler Timeout (sec)": "60",
+            "Demangler Microsoft": "true",
+            "Demangler Microsoft.Apply Function Calling Conventions": "true",
+            "Demangler Microsoft.Apply Function Signatures": "true",
+            "Demangler Microsoft.C-Style Symbol Interpretation": "FUNCTION_IF_EXISTS",
+            "Demangler Microsoft.Demangle Only Known Mangled Symbols": "false",
+            "Disassemble Entry Points": "true",
+            "Disassemble Entry Points.Respect Execute Flag": "true",
+            "Embedded Media": "true",
+            "Embedded Media.Create Analysis Bookmarks": "true",
+            "External Entry References": "true",
+            "Function ID": "true",
+            "Function ID.Always Apply FID Labels": "false",
+            "Function ID.Create Analysis Bookmarks": "true",
+            "Function ID.Instruction Count Threshold": "14.6",
+            "Function ID.Multiple Match Threshold": "30.0",
+            "Function Start Search": "true",
+            "Function Start Search.Bookmark Functions": "false",
+            "Function Start Search.Search Data Blocks": "false",
+            "Non-Returning Functions - Discovered": "true",
+            "Non-Returning Functions - Discovered.Create Analysis Bookmarks": "true",
+            "Non-Returning Functions - Discovered.Function Non-return Threshold": "3",
+            "Non-Returning Functions - Discovered.Repair Flow Damage": "true",
+            "Non-Returning Functions - Known": "true",
+            "Non-Returning Functions - Known.Create Analysis Bookmarks": "true",
+            "PDB MSDIA": "false",
+            "PDB MSDIA.Search untrusted symbol servers": "false",
+            "PDB Universal": "false",
+            "PDB Universal.Import Source Line Info": "true",
+            "PDB Universal.Search untrusted symbol servers": "false",
+            "Reference": "true",
+            "Reference.Address Table Alignment": "1",
+            "Reference.Address Table Minimum Size": "2",
+            "Reference.Align End of Strings": "false",
+            "Reference.Ascii String References": "true",
+            "Reference.Create Address Tables": "true",
+            "Reference.Minimum String Length": "5",
+            "Reference.References to Pointers": "true",
+            "Reference.Relocation Table Guide": "true",
+            "Reference.Respect Execute Flag": "true",
+            "Reference.Subroutine References": "true",
+            "Reference.Switch Table References": "false",
+            "Reference.Unicode String References": "true",
+            "Scalar Operand References": "true",
+            "Scalar Operand References.Relocation Table Guide": "true",
+            "Shared Return Calls": "true",
+            "Shared Return Calls.Allow Conditional Jumps": "false",
+            "Shared Return Calls.Assume Contiguous Functions Only": "true",
+            "Stack": "true",
+            "Stack.Create Local Variables": "true",
+            "Stack.Create Param Variables": "false",
+            "Stack.Max Threads": "2",
+            "Subroutine References": "true",
+            "Subroutine References.Create Thunks Early": "true",
+            "Variadic Function Signature Override": "false",
+            "Variadic Function Signature Override.Create Analysis Bookmarks": "false",
+            "WindowsPE x86 Propagate External Parameters": "false",
+            "WindowsResourceReference": "true",
+            "WindowsResourceReference.Create Analysis Bookmarks": "true",
+            "x86 Constant Reference Analyzer": "true",
+            "x86 Constant Reference Analyzer.Create Data from pointer": "false",
+            "x86 Constant Reference Analyzer.Function parameter/return Pointer analysis": "true",
+            "x86 Constant Reference Analyzer.Max Threads": "2",
+            "x86 Constant Reference Analyzer.Min absolute reference": "4",
+            "x86 Constant Reference Analyzer.Require pointer param data type": "false",
+            "x86 Constant Reference Analyzer.Speculative reference max": "256",
+            "x86 Constant Reference Analyzer.Speculative reference min": "1024",
+            "x86 Constant Reference Analyzer.Stored Value Pointer analysis": "true",
+            "x86 Constant Reference Analyzer.Trust values read from writable memory": "true"
+          },
+          "Decompiler": {
+            "Prototype Evaluation": "__fastcall"
+          },
+          "Program Information": {
+            "Analyzed": "true",
+            "Compiler": "unknown",
+            "Created With Ghidra Version": "12.0.4",
+            "Date Created": "Fri Oct 30 23:58:43 CET 2026",
+            "Executable Format": "Portable Executable (PE)",
+            "Executable Location": "/tmp/patchtrace-r2-native-20261030/tmp/patchtrace-ghidra-qiw1079t/inputs/older/6462d1618dcddb702dde929094522539c297fb0a2a17fd6083812df17000e1fd.bin",
+            "Executable MD5": "8168b4bba4cc2c266238be91ae49a344",
+            "Executable SHA256": "6462d1618dcddb702dde929094522539c297fb0a2a17fd6083812df17000e1fd",
+            "FSRL": "file:///tmp/patchtrace-r2-native-20261030/tmp/patchtrace-ghidra-qiw1079t/inputs/older/6462d1618dcddb702dde929094522539c297fb0a2a17fd6083812df17000e1fd.bin?MD5=8168b4bba4cc2c266238be91ae49a344",
+            "Preferred Root Namespace Category": "",
+            "Relocatable": "false",
+            "SectionAlignment": "4096",
+            "Should Ask To Analyze": "false"
+          },
+          "Specification Extensions": {
+            "FormatVersion": "0",
+            "VersionCounter": "0"
+          }
+        }
+      },
+      "stats": {
+        "added_funcs_len": 0,
+        "added_strings_len": 0,
+        "added_symbols_len": 0,
+        "deleted_funcs_len": 0,
+        "deleted_strings_len": 0,
+        "deleted_symbols_len": 0,
+        "diff_time": 0.7299008369445801,
+        "diff_types": {},
+        "first_matches": {
+          "SymbolsHash": 1
+        },
+        "func_match_overall_percent": "100.0000%",
+        "items_to_process": 0,
+        "match_func_similarity_percent": "100.0000%",
+        "match_types": {
+          "SymbolsHash": 1
+        },
+        "matched_funcs_len": 2,
+        "matched_funcs_no_changes_len": 2,
+        "matched_funcs_with_code_changes_len": 0,
+        "matched_funcs_with_non_code_changes_len": 0,
+        "modified_funcs_len": 0,
+        "total_funcs_len": 2,
+        "unmatched_funcs_len": 0
+      },
+      "strings": {
+        "added": [],
+        "deleted": []
+      },
+      "symbols": {
+        "added": [],
+        "deleted": []
+      }
+    },
+    "raw_sha256": "1cfe2b85b80e54860b3c4e315bba6edb6d9ff5f817fd8d38fb86f3373796b629",
+    "status": "completed",
+    "wall_s": 12.451381940999909
+  },
+  "java_version": "openjdk version \"21.0.12\" 2026-07-21\nOpenJDK Runtime Environment (build 21.0.12+8-1-24.04-Ubuntu)\nOpenJDK 64-Bit Server VM (build 21.0.12+8-1-24.04-Ubuntu, mixed mode, sharing)\n",
+  "native_extraction": true,
+  "platform": "Linux-6.18.57-x86_64-with-glibc2.39",
+  "production_baseline": "a04f5a299a8d4afef023261e52e08d14678cf1e7",
+  "python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+  "research_only": true,
+  "source_commit": "c1fbecfee1046b499a08183f8a499a79df0aebac",
+  "started_utc": "2026-10-30T22:56:37.859419+00:00",
+  "synthetic_only": true,
+  "target_execution": false,
+  "versions": {
+    "JPype1": "1.5.2",
+    "ghidriff": "1.0.0",
+    "pyghidra": "3.0.2"
+  },
+  "work_directory": "/tmp/patchtrace-r2-native-20261030"
+}

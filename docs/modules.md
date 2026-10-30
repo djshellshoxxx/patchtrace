@@ -2,6 +2,21 @@
 
 Stable IDs are independent of filenames. Public interfaces in SPEC-01 and schemas in SPEC-02 are source of truth. Module implementations remain independently usable without Qt.
 
+## R2 matching research and regressions (2026-10-30)
+
+| Module | Responsibility | Verification / boundary |
+|---|---|---|
+| `tools/research/r2_graph_benchmark.py` | Reuse existing synthetic IR fixtures for pass ablations, candidate caps, exact/residual scale, MD collision and CFG loop-count measurements; deterministic counts plus wall/CPU/RSS evidence. | Development only; no new corpus or runtime dependency; results under `docs/research/unified-matching-r2/results/graph-*.json`. |
+| `tools/research/r2_rizin_probe.py` | Bounded native rz-diff evaluation of existing authored synthetic PE fixtures through the production adapter. | Development only; target images are never executed; exact tool/image hashes and unscorable N:M cases are reported. |
+| `tools/research/r2_ghidra_probe.py` | Bounded Ghidra extraction and unified matching probes over existing authored PE fixtures. | Development only; isolated external analysis process, no locked-test tuning; native evidence separate from synthetic IR evidence. |
+| `unified/fusion/arbiter.py`, `unified/sources/ladder.py`, `unified/read_text.py` | Stable complete evidence order, retained corroboration/opposition, classified impossible atom caps, one-sided IR leftovers and analyst-group attribution. | `tests/test_r2_fusion_regressions.py`; persisted schema unchanged. |
+| `unified/ir/cfg.py` | Dominator-tree intervals replace repeated ancestor walks when counting back edges. | `tests/test_r2_cfg_performance.py`; output equivalence and operation-count regression, unchanged dominator algorithm. |
+| `unified/compute.py` | `MATCH_POLICY_VERSION` enters the existing pass-table/configuration digest to invalidate changed derived results while retaining reusable IR and legacy result readability. | `tests/test_r2_cache_version.py`; wire engine remains `ude/1`. |
+
+Research findings and acceptance boundaries: [R2 index](research/unified-matching-r2/README.md).
+
+## Existing module catalogue
+
 | ID | File | Responsibility and public interface | Dependencies | Ownership / test seam |
 |---|---|---|---|---|
 | contracts | models.py | Versioned validated artifact/project/run/function/match/evidence/context/finding/job/export records | pydantic | Pure data; schema and invariant tests |

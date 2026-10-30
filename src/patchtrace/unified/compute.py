@@ -52,6 +52,7 @@ from .sources.manual import ManualAdapter, manual_digest_of
 from .sources.secondary import SecondaryAdapter, bindiff_flags, read_loaded, source_ref_of
 
 TIMEOUT = 'timeout'    # limitation: the deadline passed after the ladder began; unfinished rows stay `unknown` (U7-06)
+MATCH_POLICY_VERSION = 'matching/2'  # R2 adapter/fusion evidence policy; rekeys results, never ProgramIR or wire schema
 DEGRADING_SUFFIXES = ('-address-basis-not-comparable', '-pair-mismatch')
 # 07 U4: a cap hit makes the result partial; `neighbour-cap` only trims context and keeps the result complete
 # (tools/unified/bench.py `_row_checks` agrees)
@@ -100,7 +101,8 @@ def pass_tables_digest(registry: Registry = REGISTRY, *, residual: bool = True) 
     """The `pass_table_digest` input of `keys.config_digest`: the executable ladder table (with the residual passes
     unless backup B-07 skips them, `residual.table_digest`) together with the registry's pass rows, which decide the
     family and evidence class of every atom the ladder makes."""
-    return domain_id('unified-pass-tables', 1, {'registry': registry.pass_table_digest(),
+    return domain_id('unified-pass-tables', 1, {'match_policy': MATCH_POLICY_VERSION,
+                                                'registry': registry.pass_table_digest(),
                                                 'ladder': table_digest(pass_table(residual=residual))})
 
 

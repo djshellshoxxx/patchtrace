@@ -206,6 +206,15 @@ In-memory only (frozen dataclasses, never persisted): `IrReader` / `FunctionTabl
 | `ingest_limits_digest` | canonical JSON of the limits that change IR content: L-01, L-02, L-05, L-06, L-07, L-11 | a ladder or facts threshold change never invalidates IR (which costs Ghidra minutes to hours, R-09) |
 Timestamps, absolute paths and display preferences are never hashed (SPEC-07 s3 rule).
 
+R2 (2026-10-30): `compute.pass_tables_digest` also covers `match_policy`, initially
+`matching/2`, alongside the existing registry and executable ladder digests. This
+version identifies content-affecting adapter/fusion/explanation policy, including
+canonical atom ordering, complete corroboration witnesses and retained unmatched
+IR observations. Future changes to that policy must revise this version. It
+invalidates derived result/configuration keys without changing ProgramIR identity,
+the `unified-result/1` schema or its `engine_version='ude/1'` field. Existing results
+remain readable as stale evidence; they are never overwritten under the same key.
+
 ## 6. Limits (single source of numbers)
 Defaults of `UnifiedLimits`; each is enforced or measured by the named code, bench or test. Other files repeat a number only next to its L-id.
 
