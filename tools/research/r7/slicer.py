@@ -9,12 +9,25 @@ from __future__ import annotations
 import re
 from collections import defaultdict, deque
 from dataclasses import dataclass
+from itertools import islice
 from typing import Callable, Iterable, Literal
 
 _SHA = re.compile(r"[0-9a-f]{64}\Z")
 _TOKEN = re.compile(r"[A-Za-z0-9_.:-]{1,128}\Z")
 _OPCODE = re.compile(r"[A-Z][A-Z0-9_]{0,31}\Z")
 MAX_INPUT_OPS = 4096
+# Explicit scope: unfamiliar p-code operations cannot be given complete-graph status.
+_KNOWN = frozenset("""COPY LOAD STORE BRANCH CBRANCH BRANCHIND CALL CALLIND CALLOTHER RETURN
+MULTIEQUAL INDIRECT PIECE SUBPIECE CAST PTRADD PTRSUB INT_EQUAL INT_NOTEQUAL
+INT_SLESS INT_SLESSEQUAL INT_LESS INT_LESSEQUAL INT_ZEXT INT_SEXT
+INT_ADD INT_SUB INT_CARRY INT_SCARRY INT_SBORROW INT_2COMP INT_NEGATE
+INT_XOR INT_AND INT_OR INT_LEFT INT_RIGHT INT_SRIGHT INT_MULT INT_DIV
+INT_SDIV INT_REM INT_SREM BOOL_NEGATE BOOL_XOR BOOL_AND BOOL_OR
+FLOAT_EQUAL FLOAT_NOTEQUAL FLOAT_LESS FLOAT_LESSEQUAL FLOAT_NAN
+FLOAT_ADD FLOAT_DIV FLOAT_MULT FLOAT_SUB FLOAT_NEG FLOAT_ABS FLOAT_SQRT
+FLOAT_INT2FLOAT FLOAT_FLOAT2FLOAT FLOAT_TRUNC FLOAT_CEIL FLOAT_FLOOR
+FLOAT_ROUND CPOOLREF NEW INSERT EXTRACT POPCOUNT LZCOUNT SEGMENTOP
+UNIMPLEMENTED""".split())
 
 
 class SliceCancelled(Exception):
@@ -117,7 +130,7 @@ def slice_ops(
         raise ValueError("invalid max_depth")
     if cancelled is not None and cancelled():
         raise SliceCancelled()
-    items = list(ops)
+    items = list(islice(ops, MAX_INPUT_OPS + 1))
     if len(items) > MAX_INPUT_OPS:
         raise ValueError("too many operations")
     by_id: dict[str, Op] = {}
@@ -158,6 +171,10 @@ def slice_ops(
             break
         seen.add(uid)
         item = by_id[uid]
+        if item.opcode not in _KNOWN:
+            unknowns.add(f"unknown-op:{item.opcode}:{uid}")
+        if item.opcode == "INDIRECT":
+            unknowns.add(f"indirect-effect:{uid}")
         if item.opcode in ("LOAD", "STORE"):
             unknowns.add(f"memory-alias:{uid}")
         if item.opcode in ("CALL", "CALLIND", "CALLOTHER"):
