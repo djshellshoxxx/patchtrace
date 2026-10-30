@@ -673,7 +673,8 @@ def test_the_gate_outputs_are_publish_milestones_and_reason_from_the_gate_step()
 
 def test_the_release_job_needs_the_gate_and_runs_for_a_tag_or_a_gate_yes_only():
     block = BLOCKS['release']
-    assert needs_of(block) == ['qa', 'linux-smoke', 'release-gate']
+    # qa is Linux QA, qa-windows the Windows QA and windows-validate the test of the uploaded Windows build.
+    assert needs_of(block) == ['qa', 'qa-windows', 'windows-validate', 'linux-smoke', 'release-gate']
     assert job_key(block, 'if') == (
         "startsWith(github.ref, 'refs/tags/v') || needs.release-gate.outputs.publish == 'true'")
 
@@ -699,6 +700,39 @@ def test_gate_outputs_reach_the_release_notes_only_through_environment_variables
     assert '"$GATE_REASON"' in notes and '"$GATE_MILESTONES"' in notes
     for job in ('release-gate', 'release'):
         assert not [text for text in run_texts(BLOCKS[job]) if '${{' in text]
+
+
+def test_third_party_actions_in_the_release_job_are_pinned_to_a_commit():
+    """The release job holds contents: write and the release bytes: a moved upstream tag must not change it."""
+    used = re.findall(r'^\s*(?:- )?uses: (\S+)', BLOCKS['release'], re.M)
+    third_party = [action for action in used if not action.startswith('actions/')]
+    assert third_party, 'expected the release action'
+    assert all(re.fullmatch(r'[\w.-]+/[\w.-]+@[0-9a-f]{40}', action) for action in third_party), third_party
+
+
+@pytest.mark.parametrize('job', ['qa', 'qa-windows', 'qt-gate', 'windows-package', 'windows-validate'])
+def test_required_gates_and_the_windows_build_run_on_pull_requests(job):
+    """qa and qt-gate on Linux and Windows are the required merge checks; the Windows package is built and validated
+    on every pull request too, so no job that proves the Windows deliverable may be skipped for a pull request."""
+    assert job_key(BLOCKS[job], 'if') in (None, ''), job
+    assert re.search(r'^  pull_request:', WORKFLOW.read_text(encoding='utf-8'), re.M)
+
+
+def test_the_windows_build_is_validated_from_the_uploaded_bytes_and_the_release_rechecks_them():
+    validate = BLOCKS['windows-validate']
+    assert needs_of(validate) == ['windows-package']
+    assert 'name: PatchTrace-windows-x64' in validate and 'download-artifact' in validate
+    for block in (validate, BLOCKS['release']):
+        assert 'sha256sum -c PatchTrace-0.1.0-windows-x64.zip.sha256' in block
+        assert 'sha256sum -c PatchTrace-Windows-x64-Setup.exe.sha256' in block
+    assert 'tools/frozen_smoke.py dist/PatchTrace/PatchTrace.exe' in validate
+    assert 'build_windows.py' not in validate and 'build_windows.py' in BLOCKS['windows-package']
+
+
+def test_runs_that_can_publish_are_never_cancelled_by_a_newer_run():
+    text = WORKFLOW.read_text(encoding='utf-8')
+    assert "cancel-in-progress: ${{ github.event_name == 'pull_request' }}" in text
+    assert "github.event_name == 'pull_request' && github.ref || github.run_id" in text
 
 
 def test_the_workflow_command_line_is_accepted_by_the_tool():

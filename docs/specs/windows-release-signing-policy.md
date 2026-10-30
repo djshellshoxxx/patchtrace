@@ -20,7 +20,7 @@ Not built here: purchase of a certificate or enrolment (owner action), SmartScre
 | claim | source | retrieved | confidence |
 |---|---|---|---|
 | Windows build is `--onedir --console --hide-console hide-early`, no `--icon`, no `--version-file`, no `--manifest`; archive `PatchTrace-0.1.0-windows-x64.zip` plus `.zip.sha256` (`<sha256>  <name>\n`); `file-inventory.json` and `dependency-versions.json` inside | `tools/build_windows.py` (this repo) | 2026-10-14 | high |
-| Release job: `permissions: contents: write`, `softprops/action-gh-release@v2`, `prerelease: true`, tag `v0.1.0-beta.<run_number>` or the pushed `v*` tag, name hard-coded "PatchTrace beta N" | `.github/workflows/qa-windows.yml` (this repo) | 2026-10-14 | high |
+| Release job: `permissions: contents: write`, `softprops/action-gh-release` (v2, SHA-pinned to v2.6.2 `3bb1273` since 2026-10-30), `prerelease: true`, tag `v0.1.0-beta.<run_number>` or the pushed `v*` tag, name hard-coded "PatchTrace beta N" | `.github/workflows/qa-windows.yml` (this repo) | 2026-10-14 | high |
 | Publishing returned HTTP 403 "Resource not accessible by integration" when a commit changes `.github/workflows/*`; the zip then exists only as an Actions artifact | `docs/plans/claude-autonomous-alpha-handoff-20261013.md` B1; `windows-acceptance-and-milestone-builds.md` 1.1 | 2026-10-14 | high |
 | Repo licence MIT, copyright "Circuit Drift Labs" | `LICENSE` (this repo) | 2026-10-14 | high |
 | PyInstaller 6.22.3 pinned; bootloader is an executable inside the folder that is the only PatchTrace-built PE | `pyproject.toml` dev extra, `build_windows.py` | 2026-10-14 | high |

@@ -1,32 +1,72 @@
 name: QA and Windows standalone
+# Required per-PR gates: qa and qt-gate on Linux and Windows. The Windows package is built once (windows-package)
+# and its uploaded bytes are validated (windows-validate) in parallel with Windows pytest, so the release attaches
+# exactly what was tested. Only image files are path-ignored: 80+ tests read the markdown under docs/ and the
+# package ships docs/.
 on:
   push:
     branches: [main]
     tags: ['v*']
+    paths-ignore: ['**/*.png', '**/*.jpg', '**/*.jpeg', '**/*.gif', '**/*.webp']
   pull_request:
+    paths-ignore: ['**/*.png', '**/*.jpg', '**/*.jpeg', '**/*.gif', '**/*.webp']
   workflow_dispatch:
 permissions:
   contents: read
+# A newer push supersedes a pull-request run. Push, tag and manual runs can publish a release, so each gets its own
+# group (the run id) and is never cancelled by another run.
 concurrency:
-  group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.ref }}
-  cancel-in-progress: true
+  group: ${{ github.workflow }}-${{ github.event_name == 'pull_request' && github.ref || github.run_id }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 jobs:
   qa:
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-latest, windows-latest]
-    runs-on: ${{ matrix.os }}
+    name: qa (ubuntu-latest)
+    runs-on: ubuntu-latest
     timeout-minutes: 120
     env:
       QT_QPA_PLATFORM: offscreen
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - if: runner.os == 'Linux'
-        run: sudo apt-get update && sudo apt-get install -y libegl1 libopengl0 libgl1
+          cache: pip
+          cache-dependency-path: pyproject.toml
+      - run: sudo apt-get update && sudo apt-get install -y libegl1 libopengl0 libgl1
+      - run: "python -m pip install --only-binary=:all: -e '.[dev,search,rules]'"
+      - run: python -m pip check
+      - name: protobuf equals the pin and runs the upb backend (SPEC-10b)
+        run: python tools/check_protobuf_runtime.py
+      - run: python -m pytest -q --junitxml=qa-results.xml
+      - run: python -m ruff check src tests tools
+      - name: Record this job's own result for the release notes
+        if: always()
+        shell: bash
+        run: echo "${{ job.status }}" > qa-leg-result.txt
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: qa-Linux
+          path: |
+            qa-results.xml
+            qa-leg-result.txt
+  qa-windows:
+    name: qa (windows-latest)
+    runs-on: windows-latest
+    timeout-minutes: 120
+    env:
+      QT_QPA_PLATFORM: offscreen
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: pyproject.toml
       - run: "python -m pip install --only-binary=:all: -e '.[dev,search,rules]'"
       - run: python -m pip check
       - name: protobuf equals the pin and runs the upb backend (SPEC-10b)
@@ -34,51 +74,93 @@ jobs:
       - run: python -m pytest -q --junitxml=qa-results.xml
       - run: python -m ruff check src tests tools
       - name: BinExport worker memory cap measurement (SPEC-10b U7, non-gating)
-        if: runner.os == 'Windows'
         continue-on-error: true
         timeout-minutes: 10
         run: |
           python tools/qa_binexport_memcap.py --caps 64,96,112,128,256
           python tools/qa_binexport_memcap.py --alloc --caps 128,256
-      - if: runner.os == 'Windows'
-        run: python tools/build_windows.py
-      - name: Frozen EXE headless smoke (A1-A4) and self-test
-        if: runner.os == 'Windows'
-        run: python tools/frozen_smoke.py dist/PatchTrace/PatchTrace.exe
-      - name: Record this matrix leg's own result for the release notes
+      - name: Record this job's own result for the release notes
         if: always()
         shell: bash
         run: echo "${{ job.status }}" > qa-leg-result.txt
-      - name: Extract and run portable Windows ZIP outside checkout
-        if: runner.os == 'Windows'
-        shell: pwsh
-        run: ./tools/test_windows_portable.ps1
-      - name: Install pinned NSIS compiler
-        if: runner.os == 'Windows'
-        run: choco install nsis --version=3.13 --yes --no-progress
-      - name: Build per-user Windows installer
-        if: runner.os == 'Windows'
-        run: python tools/package_windows_installer.py
-      - name: Install, launch, and uninstall the setup package
-        if: runner.os == 'Windows'
-        shell: pwsh
-        run: ./tools/test_windows_installer.ps1
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: qa-${{ runner.os }}
+          name: qa-Windows
           path: |
             qa-results.xml
             qa-leg-result.txt
+  # Build once: the frozen package (with its version resource and icon checked by build_windows.py) and the Setup
+  # installer are built here; windows-validate tests the uploaded bytes, which are the ones the release attaches.
+  windows-package:
+    runs-on: windows-latest
+    timeout-minutes: 45
+    env:
+      QT_QPA_PLATFORM: offscreen
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: pyproject.toml
+      - run: "python -m pip install --only-binary=:all: -e '.[dev,search,rules]'"
+      - name: protobuf equals the pin and runs the upb backend (SPEC-10b)
+        run: python tools/check_protobuf_runtime.py
+      - run: python tools/build_windows.py
+      - name: Install pinned NSIS compiler
+        run: choco install nsis --version=3.13 --yes --no-progress
+      - name: Build per-user Windows installer
+        run: python tools/package_windows_installer.py
       - uses: actions/upload-artifact@v4
-        if: runner.os == 'Windows' && success()
         with:
           name: PatchTrace-windows-x64
+          if-no-files-found: error
           path: |
             dist/PatchTrace-0.1.0-windows-x64.zip
             dist/PatchTrace-0.1.0-windows-x64.zip.sha256
             dist/PatchTrace-Windows-x64-Setup.exe
             dist/PatchTrace-Windows-x64-Setup.exe.sha256
+  windows-validate:
+    needs: windows-package
+    runs-on: windows-latest
+    timeout-minutes: 45
+    env:
+      QT_QPA_PLATFORM: offscreen
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: pyproject.toml
+      # frozen_smoke.py writes its project and series fixtures with the host interpreter (the source tree).
+      - run: "python -m pip install --only-binary=:all: -e '.[dev,search,rules]'"
+      - uses: actions/download-artifact@v4
+        with:
+          name: PatchTrace-windows-x64
+          path: dist
+      - name: Verify the downloaded hashes and unpack the portable ZIP
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd dist
+          sha256sum -c PatchTrace-0.1.0-windows-x64.zip.sha256
+          sha256sum -c PatchTrace-Windows-x64-Setup.exe.sha256
+          python -m zipfile -e PatchTrace-0.1.0-windows-x64.zip .
+          test -f PatchTrace/PatchTrace.exe
+      - name: Frozen EXE headless smoke (A1-A4) and self-test
+        run: python tools/frozen_smoke.py dist/PatchTrace/PatchTrace.exe
+      - name: Extract and run portable Windows ZIP outside checkout
+        shell: pwsh
+        run: ./tools/test_windows_portable.ps1
+      - name: Install, launch, and uninstall the setup package
+        shell: pwsh
+        run: ./tools/test_windows_installer.ps1
   # Repeats the GUI test files in one pytest session to expose teardown aborts and thread leaks (GUI plan 8.8).
   qt-gate:
     strategy:
@@ -123,9 +205,13 @@ jobs:
     timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+          cache: pip
+          cache-dependency-path: pyproject.toml
       - run: sudo apt-get update && sudo apt-get install -y libegl1 libopengl0 libgl1 libxcb-cursor0 libxkbcommon-x11-0 xvfb
       - run: "python -m pip install --only-binary=:all: -e '.[dev,search,rules]'"
       - run: python tools/check_protobuf_runtime.py
@@ -195,7 +281,7 @@ jobs:
         run: python tools/release_gate.py --head "$GITHUB_SHA" --event "$GITHUB_EVENT_NAME" --ref "$GITHUB_REF" >> "$GITHUB_OUTPUT"
   release:
     if: startsWith(github.ref, 'refs/tags/v') || needs.release-gate.outputs.publish == 'true'
-    needs: [qa, linux-smoke, release-gate]
+    needs: [qa, qa-windows, windows-validate, linux-smoke, release-gate]
     runs-on: ubuntu-latest
     timeout-minutes: 20
     permissions:
@@ -219,12 +305,13 @@ jobs:
         with:
           path: src-tree
           persist-credentials: false
-      - name: Verify Windows portable hash and add canonical Portable.zip release asset
+      - name: Verify Windows portable and Setup hashes and add canonical Portable.zip release asset
         shell: bash
         run: |
           set -euo pipefail
           cd release
           sha256sum -c PatchTrace-0.1.0-windows-x64.zip.sha256
+          sha256sum -c PatchTrace-Windows-x64-Setup.exe.sha256
           cp PatchTrace-0.1.0-windows-x64.zip PatchTrace-Windows-x64-Portable.zip
           sha256sum PatchTrace-Windows-x64-Portable.zip > PatchTrace-Windows-x64-Portable.zip.sha256
           sha256sum -c PatchTrace-Windows-x64-Portable.zip.sha256
@@ -236,15 +323,16 @@ jobs:
           REF_KIND: ${{ startsWith(github.ref, 'refs/tags/') && 'tag' || 'main' }}
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
           QA_RESULT: ${{ needs.qa.result }}
+          QA_WINDOWS_RESULT: ${{ needs.qa-windows.result }}
           SMOKE_RESULT: ${{ needs.linux-smoke.result }}
           GATE_MILESTONES: ${{ needs.release-gate.outputs.milestones }}
           GATE_REASON: ${{ needs.release-gate.outputs.reason }}
         run: |
-          # Each matrix leg uploads its own status; the aggregate is only the fallback when a file is missing.
+          # Each QA job uploads its own status; the job result is only the fallback when a file is missing.
           QA_LINUX=$(tr -d '[:space:]' < qa-results/qa-Linux/qa-leg-result.txt 2>/dev/null || true)
           QA_WINDOWS=$(tr -d '[:space:]' < qa-results/qa-Windows/qa-leg-result.txt 2>/dev/null || true)
           QA_LINUX=${QA_LINUX:-$QA_RESULT}
-          QA_WINDOWS=${QA_WINDOWS:-$QA_RESULT}
+          QA_WINDOWS=${QA_WINDOWS:-$QA_WINDOWS_RESULT}
           cat > "$RUNNER_TEMP/preamble.md" <<'EOF'
           Windows x64 desktop package. Run the per-user Setup.exe installer or extract the portable ZIP before launching PatchTrace.exe.
           Linux x86-64 package (built on Ubuntu 22.04; smoke-tested on 22.04 and 24.04). Extract the tar.gz and run PatchTrace/PatchTrace.
@@ -260,11 +348,13 @@ jobs:
             --result "qa-ubuntu=$QA_LINUX" --result "qa-windows=$QA_WINDOWS" --result "linux-smoke=$SMOKE_RESULT" \
             --preamble "$RUNNER_TEMP/preamble.md" --output "$RUNNER_TEMP/notes.md" \
             || { echo "::warning::milestone_notes failed; using static preamble only"; cp "$RUNNER_TEMP/preamble.md" "$RUNNER_TEMP/notes.md"; }
-      - uses: softprops/action-gh-release@v2
+      # Third-party action in the only contents: write job: pinned to the commit tags v2 and v2.6.2 named on
+      # 2026-10-30 (git ls-remote), so a moved tag cannot change what publishes the release. Bump deliberately.
+      - uses: softprops/action-gh-release@3bb12739c298aeb8a4eeaf626c5b8d85266b0e65  # v2.6.2
         with:
           prerelease: true
           tag_name: ${{ startsWith(github.ref, 'refs/tags/') && github.ref_name || format('v0.1.0-beta.{0}', github.run_number) }}
           target_commitish: ${{ github.sha }}
-          name: PatchTrace beta ${{ github.run_number }} (Windows x64, Linux x86-64)
+          name: ${{ startsWith(github.ref, 'refs/tags/') && format('PatchTrace {0} (Windows x64, Linux x86-64)', github.ref_name) || format('PatchTrace beta {0} (Windows x64, Linux x86-64)', github.run_number) }}
           body_path: ${{ runner.temp }}/notes.md
           files: release/*

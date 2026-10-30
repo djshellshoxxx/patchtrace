@@ -56,6 +56,15 @@ def test_counts_results_and_assets(tmp_path):
     assert 'Not implemented or not run: A6 native' in text
 
 
+def test_the_setup_installer_is_listed_with_its_digest(tmp_path):
+    # beta.543 attached PatchTrace-Windows-x64-Setup.exe but its notes listed only the ZIP and the tar.gz.
+    assets = tmp_path / 'assets'
+    assets.mkdir()
+    (assets / 'PatchTrace-Windows-x64-Setup.exe').write_bytes(b'MZ-setup')
+    text = gen(tmp_path, '--assets', str(assets))
+    assert '- PatchTrace-Windows-x64-Setup.exe - 8 bytes - SHA-256 ' in text
+
+
 def test_manual_pass_needs_evidence_and_all_18_close_the_gate(tmp_path):
     manual = tmp_path / 'm.json'
     manual.write_text(json.dumps({'M01': {'result': 'pass'}, 'M02': {'result': 'fail', 'evidence': 'x'}}))

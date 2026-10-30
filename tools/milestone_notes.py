@@ -26,7 +26,7 @@ from pathlib import Path
 MANUAL_IDS = tuple(f'M{i:02d}' for i in range(1, 19))
 STATES = ('success', 'failure', 'cancelled', 'skipped', 'not-run')
 RESULT_NAMES = ('qa-ubuntu', 'qa-windows', 'linux-smoke', 'live-backend', 'live-rizin')
-ASSET_NAMES = ('PatchTrace-0.1.0-windows-x64.zip', 'PatchTrace-0.1.0-linux-x86_64.tar.gz')
+ASSET_NAMES = ('PatchTrace-0.1.0-windows-x64.zip', 'PatchTrace-Windows-x64-Setup.exe', 'PatchTrace-0.1.0-linux-x86_64.tar.gz')
 
 # Automated checks that exist in the repository. Update when new checks land; the spec lists the rest.
 SECTION2_RAN = ('A1 help for all 7 commands, A2 usage error, A3 missing project, A4 --self-test, A5 JSON contract, '
