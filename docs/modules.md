@@ -4,8 +4,8 @@ Stable IDs are independent of filenames. Public interfaces in SPEC-01 and schema
 
 | ID | File | Responsibility and public interface | Dependencies | Ownership / test seam |
 |---|---|---|---|---|
-| R7 research-only slicer | tools/research/r7/slicer.py | bounded ephemeral synthetic P-code-shaped SSA def-use/declared control-edge exploration, explicit unknowns, no Ghidra parse, no persisted evidence, not a production component | stdlib only | tests/test_r7_slicing.py (27 synthetic tests); native provenance and accuracy NOT verified |
-| R7 research-only pattern candidate | tools/research/r7/patterns.py | conservative hypothetical declared guard-to-load/store delta; requires externally matched sinks; no automatic security/CWE verdicts | R7 slicer pure contract | tests/test_r7_patterns.py (13 synthetic tests); no native fixtures or accuracy |
+| R7 research-only slicer | tools/research/r7/slicer.py | bounded ephemeral synthetic P-code-shaped SSA def-use/declared control-edge exploration, explicit unknowns, no Ghidra parse, no persisted evidence, not a production component | stdlib only | tests/test_r7_slicing.py (28 synthetic tests); native provenance and accuracy NOT verified |
+| R7 research-only pattern candidate | tools/research/r7/patterns.py | conservative hypothetical declared guard-to-load/store delta; requires externally matched sinks; no automatic security/CWE verdicts | R7 slicer pure contract | tests/test_r7_patterns.py (16 synthetic tests); no native fixtures or accuracy |
 | R7 synthetic benchmark | tools/research/r7/bench.py | independent 8-operation-chain graphs; 30-run local wall-time and tracemalloc, research-only | R7 slicer | docs/research/advanced-analysis-r7/synthetic-benchmark.json; NOT process RSS or binary accuracy |
 | contracts | models.py | Versioned validated artifact/project/run/function/match/evidence/context/finding/job/export records | pydantic | Pure data; schema and invariant tests |
 | ingestion | ingestion.py | inspect_artifact and immutable copies; PE AMD64 validation | contracts | Disk staging; synthetic PE fixtures |
