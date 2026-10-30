@@ -1,0 +1,424 @@
+{
+  "command": "research-build",
+  "entries": [
+    {
+      "disagreements": 0,
+      "labels_digest_sha256": "728dda3cdf9affc5ef5d3a5a6f6932bd3ab03e71e4846cd6bd5f1cefab8738e6",
+      "labels_path": "/workspace/scratch/a55b59b3e326/r1-pilot-store/labels/research-mingw-clang-O0-r1-pilot-defined-v1-v2.json",
+      "newer": {
+        "build": {
+          "compiler": "clang",
+          "compiler_version": "Ubuntu clang version 18.1.3 (1ubuntu1)",
+          "link_order": "sorted",
+          "opt": "O0",
+          "profile": "mingw-clang",
+          "recipe_digest": "0cacef0330335414ab2c1fa1b06419f9701eb6834617fd86401734f9b456766e",
+          "variant": "v2"
+        },
+        "debug_sha256": "e200cb1ec43c998966b9c0fd0944de058532c700a027fea16c74732b00daed3a",
+        "file_name": "defined.dll",
+        "image_base": 6442450944,
+        "pdb_sha256": null,
+        "sha256": "9ddd8494080a743fb8fe360dc4a1132b73cdbbea33fc52f5a6458ad84880767a",
+        "size": 14336,
+        "source": {
+          "commit": null,
+          "git": null,
+          "license_spdx": "MIT",
+          "mutation": null,
+          "ref": null,
+          "suite": "r1-pilot/defined",
+          "version": "v2"
+        }
+      },
+      "notes": [
+        "Development fixtures; authored labels require independent binary review. No engine was evaluated.",
+        "Built target images are never executed. Stock profile flags are unchanged.",
+        "Equal endpoint code can make named correspondence ambiguous; see the suite README.",
+        "MinGW stock linking may automatically export function names; stripping debug information does not remove export names. Treat this as a potentially name-visible condition pending PE inspection."
+      ],
+      "older": {
+        "build": {
+          "compiler": "clang",
+          "compiler_version": "Ubuntu clang version 18.1.3 (1ubuntu1)",
+          "link_order": "sorted",
+          "opt": "O0",
+          "profile": "mingw-clang",
+          "recipe_digest": "0cacef0330335414ab2c1fa1b06419f9701eb6834617fd86401734f9b456766e",
+          "variant": "v1"
+        },
+        "debug_sha256": "d2b4b9a1b1906b4fe4fe850b9f65dde4a6624ee0fb06a139e7a755420450698c",
+        "file_name": "defined.dll",
+        "image_base": 6442450944,
+        "pdb_sha256": null,
+        "sha256": "7545a3c93a5d7c40a80ccf95278dcb31af32ea2596bf8e6a5ba726dfeff425d4",
+        "size": 14336,
+        "source": {
+          "commit": null,
+          "git": null,
+          "license_spdx": "MIT",
+          "mutation": null,
+          "ref": null,
+          "suite": "r1-pilot/defined",
+          "version": "v1"
+        }
+      },
+      "opt": "O0",
+      "pair_id": "research-mingw-clang-O0-r1-pilot-defined-v1-v2",
+      "problem_count": 0,
+      "problems": [],
+      "profile": "mingw-clang",
+      "stage": "complete",
+      "status": "built"
+    },
+    {
+      "disagreements": 0,
+      "labels_digest_sha256": "5a4cbbfe911713adb7e2187a52f2314d201feee00b703fe49e7104bcfc3ee5c2",
+      "labels_path": "/workspace/scratch/a55b59b3e326/r1-pilot-store/labels/research-mingw-clang-O1-r1-pilot-defined-v1-v2.json",
+      "newer": {
+        "build": {
+          "compiler": "clang",
+          "compiler_version": "Ubuntu clang version 18.1.3 (1ubuntu1)",
+          "link_order": "sorted",
+          "opt": "O1",
+          "profile": "mingw-clang",
+          "recipe_digest": "0c1ee243ab223003b4957c099e3acf8efa7ad4998a07d13ac0bf8a11025f5e4a",
+          "variant": "v2"
+        },
+        "debug_sha256": "22b5fea7731b1ca1bf09ee9b8706c9a16f75020e2d5e9f0c7ea04186a357fa37",
+        "file_name": "defined.dll",
+        "image_base": 6442450944,
+        "pdb_sha256": null,
+        "sha256": "906e5258d9b825a60f62f9ce1f66765e71b4da59ca940cb61b6416c453e72d96",
+        "size": 13312,
+        "source": {
+          "commit": null,
+          "git": null,
+          "license_spdx": "MIT",
+          "mutation": null,
+          "ref": null,
+          "suite": "r1-pilot/defined",
+          "version": "v2"
+        }
+      },
+      "notes": [
+        "Development fixtures; authored labels require independent binary review. No engine was evaluated.",
+        "Built target images are never executed. Stock profile flags are unchanged.",
+        "Equal endpoint code can make named correspondence ambiguous; see the suite README.",
+        "MinGW stock linking may automatically export function names; stripping debug information does not remove export names. Treat this as a potentially name-visible condition pending PE inspection."
+      ],
+      "older": {
+        "build": {
+          "compiler": "clang",
+          "compiler_version": "Ubuntu clang version 18.1.3 (1ubuntu1)",
+          "link_order": "sorted",
+          "opt": "O1",
+          "profile": "mingw-clang",
+          "recipe_digest": "0c1ee243ab223003b4957c099e3acf8efa7ad4998a07d13ac0bf8a11025f5e4a",
+          "variant": "v1"
+        },
+        "debug_sha256": "eca30e64d0ee65fa4f0c4db4c49e14aba57855cba1841208c5676e42d63426e5",
+        "file_name": "defined.dll",
+        "image_base": 6442450944,
+        "pdb_sha256": null,
+        "sha256": "9a2f16979163ccf62963429a61d6e88c8b5c565805f077557c0949837902a133",
+        "size": 13312,
+        "source": {
+          "commit": null,
+          "git": null,
+          "license_spdx": "MIT",
+          "mutation": null,
+          "ref": null,
+          "suite": "r1-pilot/defined",
+          "version": "v1"
+        }
+      },
+      "opt": "O1",
+      "pair_id": "research-mingw-clang-O1-r1-pilot-defined-v1-v2",
+      "problem_count": 0,
+      "problems": [],
+      "profile": "mingw-clang",
+      "stage": "complete",
+      "status": "built"
+    },
+    {
+      "disagreements": 0,
+      "labels_digest_sha256": "c7ecb3eff971b910cb552bb93fcc8aa2da22711968b10ccb8393923fee6b4ef6",
+      "labels_path": "/workspace/scratch/a55b59b3e326/r1-pilot-store/labels/research-mingw-clang-O2-r1-pilot-defined-v1-v2.json",
+      "newer": {
+        "build": {
+          "compiler": "clang",
+          "compiler_version": "Ubuntu clang version 18.1.3 (1ubuntu1)",
+          "link_order": "sorted",
+          "opt": "O2",
+          "profile": "mingw-clang",
+          "recipe_digest": "f979a758d9a10eb87d6df89de45081a75a331fe7c970250532dae9a1af4e22c0",
+          "variant": "v2"
+        },
+        "debug_sha256": "28f292aa6252d3eee918344f0214f1d684d8b7e84635c953ab9857c4817cd672",
+        "file_name": "defined.dll",
+        "image_base": 6442450944,
+        "pdb_sha256": null,
+        "sha256": "0c1830e3f970934b3dbf0c9ff627d15337ff858a0941cd40b0c8eb65bbe877bf",
+        "size": 13312,
+        "source": {
+          "commit": null,
+          "git": null,
+          "license_spdx": "MIT",
+          "mutation": null,
+          "ref": null,
+          "suite": "r1-pilot/defined",
+          "version": "v2"
+        }
+      },
+      "notes": [
+        "Development fixtures; authored labels require independent binary review. No engine was evaluated.",
+        "Built target images are never executed. Stock profile flags are unchanged.",
+        "Equal endpoint code can make named correspondence ambiguous; see the suite README.",
+        "MinGW stock linking may automatically export function names; stripping debug information does not remove export names. Treat this as a potentially name-visible condition pending PE inspection."
+      ],
+      "older": {
+        "build": {
+          "compiler": "clang",
+          "compiler_version": "Ubuntu clang version 18.1.3 (1ubuntu1)",
+          "link_order": "sorted",
+          "opt": "O2",
+          "profile": "mingw-clang",
+          "recipe_digest": "f979a758d9a10eb87d6df89de45081a75a331fe7c970250532dae9a1af4e22c0",
+          "variant": "v1"
+        },
+        "debug_sha256": "696d8ec0becd77f2f737b9ab1f8b66f7f6fe179494d522e6019269a1d30cb3a7",
+        "file_name": "defined.dll",
+        "image_base": 6442450944,
+        "pdb_sha256": null,
+        "sha256": "f6164cc7eb8bbfc2b56b7176e78f3e2473f838e6f24117dfc1fe11e89ef96203",
+        "size": 13312,
+        "source": {
+          "commit": null,
+          "git": null,
+          "license_spdx": "MIT",
+          "mutation": null,
+          "ref": null,
+          "suite": "r1-pilot/defined",
+          "version": "v1"
+        }
+      },
+      "opt": "O2",
+      "pair_id": "research-mingw-clang-O2-r1-pilot-defined-v1-v2",
+      "problem_count": 0,
+      "problems": [],
+      "profile": "mingw-clang",
+      "stage": "complete",
+      "status": "built"
+    },
+    {
+      "disagreements": 0,
+      "labels_digest_sha256": "988b6a29ecda8b9c83867f8064e83d02f2f9882916293c7f315cd8d9b21ed316",
+      "labels_path": "/workspace/scratch/a55b59b3e326/r1-pilot-store/labels/research-mingw-clang-O3-r1-pilot-defined-v1-v2.json",
+      "newer": {
+        "build": {
+          "compiler": "clang",
+          "compiler_version": "Ubuntu clang version 18.1.3 (1ubuntu1)",
+          "link_order": "sorted",
+          "opt": "O3",
+          "profile": "mingw-clang",
+          "recipe_digest": "6a0546f00a1f2a484042f8edb9593567d61e54bb42817ef8e07548d3dfd96a5e",
+          "variant": "v2"
+        },
+        "debug_sha256": "60f787c4bf6d419a8d79a27f3d0f074dc013a006e26514808739de1aa2ec4639",
+        "file_name": "defined.dll",
+        "image_base": 6442450944,
+        "pdb_sha256": null,
+        "sha256": "2efe262b2f9c7bd554134054078e116c27fb02be2d9dfec45e2fd27e77436bda",
+        "size": 13312,
+        "source": {
+          "commit": null,
+          "git": null,
+          "license_spdx": "MIT",
+          "mutation": null,
+          "ref": null,
+          "suite": "r1-pilot/defined",
+          "version": "v2"
+        }
+      },
+      "notes": [
+        "Development fixtures; authored labels require independent binary review. No engine was evaluated.",
+        "Built target images are never executed. Stock profile flags are unchanged.",
+        "Equal endpoint code can make named correspondence ambiguous; see the suite README.",
+        "MinGW stock linking may automatically export function names; stripping debug information does not remove export names. Treat this as a potentially name-visible condition pending PE inspection."
+      ],
+      "older": {
+        "build": {
+          "compiler": "clang",
+          "compiler_version": "Ubuntu clang version 18.1.3 (1ubuntu1)",
+          "link_order": "sorted",
+          "opt": "O2",
+          "profile": "mingw-clang",
+          "recipe_digest": "f979a758d9a10eb87d6df89de45081a75a331fe7c970250532dae9a1af4e22c0",
+          "variant": "v1"
+        },
+        "debug_sha256": "696d8ec0becd77f2f737b9ab1f8b66f7f6fe179494d522e6019269a1d30cb3a7",
+        "file_name": "defined.dll",
+        "image_base": 6442450944,
+        "pdb_sha256": null,
+        "sha256": "f6164cc7eb8bbfc2b56b7176e78f3e2473f838e6f24117dfc1fe11e89ef96203",
+        "size": 13312,
+        "source": {
+          "commit": null,
+          "git": null,
+          "license_spdx": "MIT",
+          "mutation": null,
+          "ref": null,
+          "suite": "r1-pilot/defined",
+          "version": "v1"
+        }
+      },
+      "opt": "O3",
+      "pair_id": "research-mingw-clang-O3-r1-pilot-defined-v1-v2",
+      "problem_count": 0,
+      "problems": [],
+      "profile": "mingw-clang",
+      "stage": "complete",
+      "status": "built"
+    },
+    {
+      "disagreements": 0,
+      "labels_digest_sha256": "0c40374426eaa4de26a1cfabaffc04949c92ed608341bc62519b701b42048935",
+      "labels_path": "/workspace/scratch/a55b59b3e326/r1-pilot-store/labels/research-mingw-clang-Os-r1-pilot-defined-v1-v2.json",
+      "newer": {
+        "build": {
+          "compiler": "clang",
+          "compiler_version": "Ubuntu clang version 18.1.3 (1ubuntu1)",
+          "link_order": "sorted",
+          "opt": "Os",
+          "profile": "mingw-clang",
+          "recipe_digest": "84e33aa3d2c8291e4dd788e387c2894bbd06c749f57ad661943c28b341a667aa",
+          "variant": "v2"
+        },
+        "debug_sha256": "c4e314e1db860a1c1c106967ac58a5378938d5a59889735e2aeaa35d1b6d2671",
+        "file_name": "defined.dll",
+        "image_base": 6442450944,
+        "pdb_sha256": null,
+        "sha256": "14687f9f65b5c022ae22c63d08fe5e4d415dca04a1d431189c9381a2c5daae38",
+        "size": 12800,
+        "source": {
+          "commit": null,
+          "git": null,
+          "license_spdx": "MIT",
+          "mutation": null,
+          "ref": null,
+          "suite": "r1-pilot/defined",
+          "version": "v2"
+        }
+      },
+      "notes": [
+        "Development fixtures; authored labels require independent binary review. No engine was evaluated.",
+        "Built target images are never executed. Stock profile flags are unchanged.",
+        "Equal endpoint code can make named correspondence ambiguous; see the suite README.",
+        "MinGW stock linking may automatically export function names; stripping debug information does not remove export names. Treat this as a potentially name-visible condition pending PE inspection."
+      ],
+      "older": {
+        "build": {
+          "compiler": "clang",
+          "compiler_version": "Ubuntu clang version 18.1.3 (1ubuntu1)",
+          "link_order": "sorted",
+          "opt": "Os",
+          "profile": "mingw-clang",
+          "recipe_digest": "84e33aa3d2c8291e4dd788e387c2894bbd06c749f57ad661943c28b341a667aa",
+          "variant": "v1"
+        },
+        "debug_sha256": "3dc5173f13710766e1b1d12a604e12ec57af1cbcf2be2c61fa913b86e36c2503",
+        "file_name": "defined.dll",
+        "image_base": 6442450944,
+        "pdb_sha256": null,
+        "sha256": "a007ff842dc0975b0fb33db563a07bd434233cbc872a17405faee62798cb3d26",
+        "size": 12800,
+        "source": {
+          "commit": null,
+          "git": null,
+          "license_spdx": "MIT",
+          "mutation": null,
+          "ref": null,
+          "suite": "r1-pilot/defined",
+          "version": "v1"
+        }
+      },
+      "opt": "Os",
+      "pair_id": "research-mingw-clang-Os-r1-pilot-defined-v1-v2",
+      "problem_count": 0,
+      "problems": [],
+      "profile": "mingw-clang",
+      "stage": "complete",
+      "status": "built"
+    }
+  ],
+  "notes": [
+    "Development fixtures; authored labels require independent binary review. No engine was evaluated.",
+    "Built target images are never executed. Stock profile flags are unchanged.",
+    "Equal endpoint code can make named correspondence ambiguous; see the suite README."
+  ],
+  "status": "built",
+  "store": "/workspace/scratch/a55b59b3e326/r1-pilot-store",
+  "suite": {
+    "directory": "/workspace/scratch/a55b59b3e326/patchtrace/corpus/ours/r1-pilot/defined",
+    "project": "defined",
+    "suite": "r1-pilot"
+  },
+  "tools": {
+    "cl": {
+      "path": null,
+      "reason": "not installed (not on PATH)",
+      "version": null
+    },
+    "clang": {
+      "path": "/usr/bin/clang-18",
+      "reason": null,
+      "version": "Ubuntu clang version 18.1.3 (1ubuntu1)"
+    },
+    "git": {
+      "path": "/usr/local/bin/git",
+      "reason": null,
+      "version": "git version 2.51.1"
+    },
+    "lld-link": {
+      "path": "/usr/bin/lld-link",
+      "reason": null,
+      "version": "Ubuntu LLD 18.1.3"
+    },
+    "llvm-dwarfdump": {
+      "path": "/usr/bin/llvm-dwarfdump-18",
+      "reason": null,
+      "version": "Ubuntu LLVM version 18.1.3"
+    },
+    "llvm-nm": {
+      "path": "/usr/bin/llvm-nm-18",
+      "reason": null,
+      "version": "llvm-nm, compatible with GNU nm"
+    },
+    "llvm-objdump": {
+      "path": "/usr/bin/llvm-objdump-18",
+      "reason": null,
+      "version": "Ubuntu LLVM version 18.1.3"
+    },
+    "llvm-pdbutil": {
+      "path": "/usr/bin/llvm-pdbutil-18",
+      "reason": null,
+      "version": "Ubuntu LLVM version 18.1.3"
+    },
+    "llvm-strip": {
+      "path": "/usr/bin/llvm-strip-18",
+      "reason": null,
+      "version": "llvm-strip, compatible with GNU strip"
+    },
+    "mingw-gcc": {
+      "path": "/usr/bin/x86_64-w64-mingw32-gcc",
+      "reason": null,
+      "version": "x86_64-w64-mingw32-gcc (GCC) 13-win32"
+    },
+    "msvc-link": {
+      "path": null,
+      "reason": "/usr/bin/link is not the Microsoft tool (no banner)",
+      "version": null
+    }
+  }
+}

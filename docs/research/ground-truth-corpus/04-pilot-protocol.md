@@ -84,6 +84,25 @@ change is implied.
 
 ## Demonstrated existing live-harness failures
 
+The pilot also reproduced a build-provenance collision: Clang O2 and O3 can emit
+the same debug image, while `images/<debug_sha>/build.json` retains only the last
+recipe. Artifact identity is many-to-one with build provenance. Preserve that
+legacy last-build file for compatibility, and additionally persist every complete
+`tier-r-build/1` receipt as `images/<debug_sha>/builds/<receipt_sha256>.json`, where
+the filename hashes the exact serialized receipt bytes. Repeated identical
+receipts are idempotent; pre-existing bytes that disagree with the content key
+must fail. There is no label-schema or `BuildResult` interface change. Rebuild the
+affected configurations to recover actual receipts; do not reconstruct historical
+execution by guessing flags from the labels. Tests cover distinct recipes sharing
+one artifact, repeat writes and integrity failures.
+
+The same experiment exposed `Session.side` reusing a `SideData` object, including
+its older `BuildResult`, based only on equal debug bytes. Three O3 endpoint
+records consequently carried O2 configuration metadata. Preserve the first
+receipts as failed provenance evidence; then bind the cache to full build/source
+context and rerun the matrix. This changes metadata correctness and cache scope,
+not source labels or matching decisions.
+
 The prior live gate run is linked in the README. Fix only defects with regression
 evidence in the dev-only harness. A backend `identical` shortcut is not genuine
 Ghidriff execution; absent outcomes cannot satisfy A/A acceptance. Persist a real

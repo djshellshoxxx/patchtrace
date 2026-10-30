@@ -1,0 +1,28 @@
+{
+ "receipts": [
+  {
+   "bytes": 1273505,
+   "commit": "87d8f0961a01bf09bef98ff89bae9fdec42181ee",
+   "commit_time": 1703557476,
+   "contract": "tier-r-fetch/1",
+   "files": 228,
+   "license_file": "LICENSE",
+   "license_sha256": "a36dda207c36db5818729c54e7ad4e8b0c6fba847491ba64f372c1a2037b6d5c",
+   "subject": "Release 1.7.17",
+   "url": "https://github.com/DaveGamble/cJSON.git",
+   "verified": true
+  },
+  {
+   "bytes": 1272122,
+   "commit": "cb8693b058ba302f4829ec6d03f609ac6f848546",
+   "commit_time": 1688527339,
+   "contract": "tier-r-fetch/1",
+   "files": 228,
+   "license_file": "LICENSE",
+   "license_sha256": "a36dda207c36db5818729c54e7ad4e8b0c6fba847491ba64f372c1a2037b6d5c",
+   "subject": "Release 1.7.16 (#770)",
+   "url": "https://github.com/DaveGamble/cJSON.git",
+   "verified": true
+  }
+ ]
+}

@@ -103,3 +103,47 @@ These are distinct physical RVAs, so they are **not observed ICF aliasing**. `/o
 The accompanying `acceptance.json` binds this review to the exact label digest and canonical keys `[file,name,variant,old_rva,new_rva]`. It retains all 22 reviewed identities, identifies the four ambiguous names, and selects **18 records** for strict identity evaluation: **16 same-identity pairs** (13 changed, 2 unchanged, 1 cosmetic) plus 2 authored one-sided records. The four excluded-from-strict-scoring records retain reviewed source/binary evidence, but their intrinsic identity caveat is explicit. Original labels are untouched. Filtering is a transient evaluation view, not relabeling to fit predictions.
 
 No human review, independent rebuild by this reviewer, actual engine accuracy, peak memory, runtime performance, native Windows compatibility, MSVC compatibility, other optimization profile or later unwind-table variant is established here. Those require their own receipts and must not inherit this review's binary acceptance merely from identical source names.
+
+## Separately reviewed MinGW GCC O2 cohort: export names visible
+
+The same automated independent reviewer subsequently inspected the stock **MinGW GCC `13-win32`, O2** artifacts for `research-mingw-gcc-O2-r1-pilot-defined-v1-v2`, without reading matching-engine results. Source files are exactly the current reviewed hashes in the first table. The build receipts retain those hashes and recipe digest `e2406474b56cb867a7379124f7c906305eb009d0ba6c3e7f134d0e0c13fefd02`; the compile configuration is C11, O2, debug information and source/debug path remapping. Stock linking uses `-shared -static-libgcc -Wl,--no-insert-timestamp` with image base `0x180000000`. This is a distinct profile from the earlier freestanding Clang `/noentry /nodefaultlib` build.
+
+| Artifact | Older SHA-256 | Newer SHA-256 |
+|---|---|---|
+| Stripped `defined.dll` | `c03b76a0e6db62ac35c5f4fa727f38cafdcfb5e7b8544c327b4c9587f8707b58` | `e2bb62115ca712b92bdd2382ec4071a08f37de89eaca0ed2ec07a03476bcec00` |
+| Debug `defined.dll` | `82507c9e80aa0493860ca0b56a7400ec67dbda7ae3a32185aa19aaefa5b1b701` | `61d1c3f6444c3066ab5ebb13f9072ed97135fc05ac324016329555f4df1a5d0c` |
+| Build receipt | `89dfb0eea80d7ca3f414cf6edea532097beb122872afe036a5a767c94e4dd20b` | `0734e959d5d692588d9a457fcf317d521cb1fce32755f76320a226f956c41633` |
+
+Exact label-file SHA-256: `2c463d1bfd85bbef86b2056e437e46f8b668f91dbb48d058f123393271e504f2`.
+Validated label content digest: `9653f54f4e56ab0510be07fdb40ad4f88cf2047002831c79708672b9869599fe`.
+
+Raw `llvm-dwarfdump-18 --debug-info --recurse-depth=1` output independently identifies 21 project subprograms per side with declaration file `./r1.c`. Their actual `DW_AT_low_pc`/`DW_AT_high_pc` ranges exactly match every label extent. The source lines and declared pointer-return type of `r1_allocation_size` also agree with the corrected source. The embedded DWARF is bound by the debug image hash; there is no separate PDB in this profile. Every function's debug/stripped bytes and the normalized loaded-section view agree.
+
+**This cohort exposes source names.** `llvm-readobj-18 --coff-exports` reports exactly 21 `r1_*` exported source-function names per stripped DLL, with the correct per-side RVAs. Stripped COFF symbol count is zero, but stripping does not remove PE export names. The actual engine images contain `.edata`, `.pdata`, `.xdata`, `.CRT`, `.idata` and other MinGW runtime sections. The supplied labels separately report 68 runtime functions, outside the 21 authored project definitions; that runtime count was not independently reclassified by this reviewer. Treat resulting matching measurements as a name-visible/export-visible cohort and never pool them into a name-hidden accuracy claim. Source names remain insufficient as the sole truth basis; the review also checked source construction, debug binding, actual bytes and instructions.
+
+Independent project-range disassembly inspection confirms all 16 mutations survive this compilation and the four controls remain exactly raw-identical at their own source-lineage endpoints:
+
+| Function | Old RVA/size → new RVA/size | Reviewed MinGW GCC observation |
+|---|---|---|
+| `r1_integer_constant` | `1390/4 → 1390/4` | LEA displacement `0x11 → 0x1d`. |
+| `r1_comparison` | `13a0/14 → 13a0/14` | Compare threshold `0xd → 0xe`, followed by the same borrow-derived selection. |
+| `r1_branch_inversion` | `13b0/15 → 13b0/15` | Conditional move `cmove → cmovne` after the same mask and branch-value calculations. |
+| `r1_bounds_added` | `13c0/38 → 13c0/54` | Adds logical comparison `cmp r8d,edx; setae` to the rejection predicate. |
+| `r1_bounds_removed` | `13f0/54 → 1400/38` | Removes the logical comparison while keeping the physical-capacity rejection. |
+| `r1_pointer_offset` | `1430/22 → 1430/22` | Byte load displacement `1 → 2`. |
+| `r1_array_index` | `1450/22 → 1450/22` | Adds `add edx,1` before the mask and load; alignment padding changes, so size happens to remain equal. |
+| `r1_overflow_guard` | `1470/8 → 1470/22` | Adds threshold `0x40000000` and conditional selection of `0xffffffff`. |
+| `r1_signedness` | `1480/9 → 1490/9` | Signed `setle →` unsigned `setbe`, both comparing against 7. |
+| `r1_allocation_size` | `1490/35 → 14a0/35` | Callback argument displacement `8 → 0x10`; indirect tail jump remains. |
+| `r1_loop_bound` | `14c0/68 → 14d0/72` | v1 zero-count early return and index `< limit` loop become an inclusive pointer-end loop that reads one element at count zero. |
+| `r1_call_target` | `1510/38 → 1520/38` | Callback destination selected from descriptor offset `0 → 8`, while both slot checks remain. |
+| `r1_error_handling` | `1540/8 → 1550/11` | Initial failure result `0 → 0xffffffff`; success conditional move remains. |
+| `r1_null_validation` | `1550/3 → 1560/12` | Adds pointer test and conditional value selection versus `0xffffffff`. |
+| `r1_structure_field` | `1560/22 → 1570/22` | Load displacement `0 → 4`. |
+| `r1_security_flag` | `1580/6 → 1590/6` | OR mask `1 → 5`. |
+
+Controls `r1_primary`, `r1_secondary`, `r1_unchanged` and `r1_cosmetic` have equal raw bodies at their own old/new extents. Removed `r1_removed` is present only at old `15d0/6`; added `r1_added` is present only at new `15e0/4`, consistent with authored source construction and export tables.
+
+The project-only exact-byte scan finds the same three cross-name duplicate groups and no additional names requiring exclusion: the 4-byte add-17 group has hash `fa5b7eab57dd503aa341dd700389cb02e61dc21b29c0f2f0161329300ae705bd`; old bounds-added/new bounds-removed has hash `498b3e99bfa9318b474214a116e87879a7a55166347c31725a9d7ce5fccba12f` (38 bytes); old bounds-removed/new bounds-added has hash `af03715c0d21a2ec5d58309c6ba72161e48b8d3e076480a55cd4828a0d9ee623` (54 bytes). Their RVAs are distinct. Despite names being visible in this cohort, the predetermined conservative four-record ambiguity exclusion is retained, supporting a consistent strict subset rather than adapting selection to matching results.
+
+`acceptance-mingw-gcc-o2.json` binds this review to the exact label digest, source/artifact hashes, inspector-output hashes and stable key partition: **18 accepted records** (13 changed, 2 unchanged, 1 cosmetic, 2 no-counterpart) and **4 ambiguous records**. Its evidence explicitly records the name-visible condition. This extends independent binary review only to the stated MinGW GCC O2 hashes; it establishes neither native-engine success nor name-hidden generalization, target execution, human adjudication, or other configurations.

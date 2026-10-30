@@ -14,6 +14,8 @@ Tests: `tests/test_tier_r_research_audit.py`. The source pilot remains a normal
 | `tools/calibration/tier_r/research_build.py` | Orchestrate the existing suite factory across explicit compiler profiles and optimization levels; preserve blocked entries and export visibility | `tests/test_tier_r_research_build.py` |
 | `tools/calibration/tier_r/research_observers.py` | Read actual Ghidriff address observations with separate image bases and unknown change verdicts; no omitted-row credit | `tests/test_tier_r_research_observers.py` |
 | `tools/calibration/tier_r/research_pilot.py` | Run or resume a primary project, then production rz-diff/unified adapters; keep raw evidence and bounded experimental receipts outside the worktree | `tests/test_tier_r_research_pilot.py` |
+| `tools/calibration/tier_r/build.py` receipt persistence | Keep every build provenance record by receipt-content hash, including distinct recipes that emit the same artifact; retain legacy last-build file | `tests/test_tier_r_build_receipts_r1.py` |
+| `tools/calibration/tier_r/factory.py` analysis cache | Bind cached `SideData` to full build/source context so equal artifacts retain their own configuration metadata | `tests/test_tier_r_session_provenance_r1.py` |
 
 Stable IDs are independent of filenames. Public interfaces in SPEC-01 and schemas in SPEC-02 are source of truth. Module implementations remain independently usable without Qt.
 

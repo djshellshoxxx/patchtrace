@@ -200,6 +200,19 @@ no-recipe; evaluation metrics on hand-computed match sets; report determinism; a
 3. The R1 pilot, observations and unresolved requirements are recorded in
    `docs/research/ground-truth-corpus/`. Existing Tier R, Tier W, lineage,
    preregistration and evaluator contracts remain the integration boundary.
+4. Several build recipes can emit the same debug artifact. `build.json` retains
+   its legacy last-build meaning and must not be treated as the unique provenance
+   of an artifact. Additionally retain every exact `tier-r-build/1` receipt under
+   `images/<debug_sha>/builds/<sha256-of-receipt-bytes>.json`. An identical receipt
+   is idempotent; conflicting bytes at an existing content key fail before the
+   legacy record is replaced. This additive storage rule changes neither the
+   receipt content contract nor `BuildResult`. Lost historical receipts require
+   actual rebuilds; they cannot be inferred from an artifact hash.
+5. A cached `SideData` carries the `BuildResult` and source context that produced
+   its facts. Cache reuse must therefore bind the build specification, recipe
+   digest, source digest, debug-artifact digest and resolved source root. Equal
+   artifact bytes do not authorize replacing an O3/variant/source-context record
+   with an earlier O2 record. Identical complete contexts may still reuse analysis.
 
 ### [D:known-answer-factory] 2026-10-14 build amendments
 1. Built and tested: s3 inputs I1 (recipe contract), I2/I3 (case cards via `factory.run_card`), I4 (suites via `factory.run_suite` with cross-check); s4 profiles `msvc-free`, `mingw-gcc`, `mingw-clang`; s5 inventory and hashes; s6 contract; s7 decision table; s9 A/A rebuild, layout and noise (`factory.run_aa`, `factory.run_noise`).

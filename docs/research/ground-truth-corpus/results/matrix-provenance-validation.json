@@ -1,0 +1,226 @@
+{
+ "built_cells": 15,
+ "corrected_endpoint_metadata": [
+  {
+   "corrected": {
+    "compiler": "clang",
+    "compiler_version": "Ubuntu clang version 18.1.3 (1ubuntu1)",
+    "link_order": "sorted",
+    "opt": "O3",
+    "profile": "msvc-free",
+    "recipe_digest": "0862a1984cab2f1a93623eb20c01cc83b5855ddaef1dea337cc28821c7944bdc",
+    "variant": "v1"
+   },
+   "pair": "research-msvc-free-O3-r1-pilot-defined-v1-v2",
+   "previous": {
+    "compiler": "clang",
+    "compiler_version": "Ubuntu clang version 18.1.3 (1ubuntu1)",
+    "link_order": "sorted",
+    "opt": "O2",
+    "profile": "msvc-free",
+    "recipe_digest": "7c7b7d39a28c605d990b52c7d2386168f8adfef803a172daa55aaa7b861f6417",
+    "variant": "v1"
+   },
+   "side": "older"
+  },
+  {
+   "corrected": {
+    "compiler": "clang",
+    "compiler_version": "Ubuntu clang version 18.1.3 (1ubuntu1)",
+    "link_order": "sorted",
+    "opt": "O3",
+    "profile": "msvc-free",
+    "recipe_digest": "0862a1984cab2f1a93623eb20c01cc83b5855ddaef1dea337cc28821c7944bdc",
+    "variant": "v2"
+   },
+   "pair": "research-msvc-free-O3-r1-pilot-defined-v1-v2",
+   "previous": {
+    "compiler": "clang",
+    "compiler_version": "Ubuntu clang version 18.1.3 (1ubuntu1)",
+    "link_order": "sorted",
+    "opt": "O2",
+    "profile": "msvc-free",
+    "recipe_digest": "7c7b7d39a28c605d990b52c7d2386168f8adfef803a172daa55aaa7b861f6417",
+    "variant": "v2"
+   },
+   "side": "newer"
+  },
+  {
+   "corrected": {
+    "compiler": "clang",
+    "compiler_version": "Ubuntu clang version 18.1.3 (1ubuntu1)",
+    "link_order": "sorted",
+    "opt": "O3",
+    "profile": "mingw-clang",
+    "recipe_digest": "6a0546f00a1f2a484042f8edb9593567d61e54bb42817ef8e07548d3dfd96a5e",
+    "variant": "v1"
+   },
+   "pair": "research-mingw-clang-O3-r1-pilot-defined-v1-v2",
+   "previous": {
+    "compiler": "clang",
+    "compiler_version": "Ubuntu clang version 18.1.3 (1ubuntu1)",
+    "link_order": "sorted",
+    "opt": "O2",
+    "profile": "mingw-clang",
+    "recipe_digest": "f979a758d9a10eb87d6df89de45081a75a331fe7c970250532dae9a1af4e22c0",
+    "variant": "v1"
+   },
+   "side": "older"
+  }
+ ],
+ "engine_debug_pdb_hashes_unchanged_from_rebuild": true,
+ "immutable_recipe_bindings": [
+  {
+   "pair_id": "research-msvc-free-O0-r1-pilot-defined-v1-v2",
+   "receipt": "ef162c385937b849faa0f4bd7669df663f57d11c8fd068184816d14b524b3f1a.json",
+   "side": "older"
+  },
+  {
+   "pair_id": "research-msvc-free-O0-r1-pilot-defined-v1-v2",
+   "receipt": "02eff01ce5e5cdd81959c059146e30bc0323e77ba50360973ff9baa030940163.json",
+   "side": "newer"
+  },
+  {
+   "pair_id": "research-msvc-free-O1-r1-pilot-defined-v1-v2",
+   "receipt": "d53253c186ba501641809b3c6ecdb7a7b6c46124bcb5ee834b28ff79f33ab4fd.json",
+   "side": "older"
+  },
+  {
+   "pair_id": "research-msvc-free-O1-r1-pilot-defined-v1-v2",
+   "receipt": "9268a5c7bb65570279bddc216bb3760bdcaf1ee68f7b28c60b246b9e72d3149d.json",
+   "side": "newer"
+  },
+  {
+   "pair_id": "research-msvc-free-O2-r1-pilot-defined-v1-v2",
+   "receipt": "f4facea3fd4fa5d08ea9223d917be3cb15e0f311c5afa6a7ab93bfa7dac6250b.json",
+   "side": "older"
+  },
+  {
+   "pair_id": "research-msvc-free-O2-r1-pilot-defined-v1-v2",
+   "receipt": "cb7653eb2522abeba4645d21a96f44c9cbb55c7e8a94376e96dfb89de1ae1e84.json",
+   "side": "newer"
+  },
+  {
+   "pair_id": "research-msvc-free-O3-r1-pilot-defined-v1-v2",
+   "receipt": "f24e95f1e4b070060659a02aff595968de0b75e0713c237170cc90044f1fa979.json",
+   "side": "older"
+  },
+  {
+   "pair_id": "research-msvc-free-O3-r1-pilot-defined-v1-v2",
+   "receipt": "703e7283f1c6e6820066c44db4eb4131d30364d8a2559376fac58e9a1f56717e.json",
+   "side": "newer"
+  },
+  {
+   "pair_id": "research-msvc-free-Os-r1-pilot-defined-v1-v2",
+   "receipt": "ed1030bd40fdcc5896149aa6308ea8c030f690dd756c5b73fc5911c9bf21df32.json",
+   "side": "older"
+  },
+  {
+   "pair_id": "research-msvc-free-Os-r1-pilot-defined-v1-v2",
+   "receipt": "12a6741d9d066226fd3c183cbb1464fabd32e9d28d472da4b5026c741f37deea.json",
+   "side": "newer"
+  },
+  {
+   "pair_id": "research-mingw-gcc-O0-r1-pilot-defined-v1-v2",
+   "receipt": "a7a9a274ecd7d0abeef324c5816db02a916eba9103eca8a4ece2786a701342d1.json",
+   "side": "older"
+  },
+  {
+   "pair_id": "research-mingw-gcc-O0-r1-pilot-defined-v1-v2",
+   "receipt": "7abf2e788123fc7e861411b206b029d02cd673c57f4150efd02bb8c29f3b230a.json",
+   "side": "newer"
+  },
+  {
+   "pair_id": "research-mingw-gcc-O1-r1-pilot-defined-v1-v2",
+   "receipt": "9729d9eb340988bf3ff203001a561e36325f2525a046af499bed88e24d9333f9.json",
+   "side": "older"
+  },
+  {
+   "pair_id": "research-mingw-gcc-O1-r1-pilot-defined-v1-v2",
+   "receipt": "3de6b5a3c207445a121e3fe38f634bfedcb7c2807ccabce80d95484a92e38837.json",
+   "side": "newer"
+  },
+  {
+   "pair_id": "research-mingw-gcc-O2-r1-pilot-defined-v1-v2",
+   "receipt": "89dfb0eea80d7ca3f414cf6edea532097beb122872afe036a5a767c94e4dd20b.json",
+   "side": "older"
+  },
+  {
+   "pair_id": "research-mingw-gcc-O2-r1-pilot-defined-v1-v2",
+   "receipt": "0734e959d5d692588d9a457fcf317d521cb1fce32755f76320a226f956c41633.json",
+   "side": "newer"
+  },
+  {
+   "pair_id": "research-mingw-gcc-O3-r1-pilot-defined-v1-v2",
+   "receipt": "c9decd8c800fbfe12a4614d95a1385d322a2ef948ce9657cd938ba751d94a25e.json",
+   "side": "older"
+  },
+  {
+   "pair_id": "research-mingw-gcc-O3-r1-pilot-defined-v1-v2",
+   "receipt": "b6d1f9aa9a0ba277a09b5649faad62f66f4d2a53a2fc0fb6ed21dcd05cdf68e8.json",
+   "side": "newer"
+  },
+  {
+   "pair_id": "research-mingw-gcc-Os-r1-pilot-defined-v1-v2",
+   "receipt": "06ad67324fc1ac2a00abeb450dd77aa0ae0698846874ce37c5faf83ae0675963.json",
+   "side": "older"
+  },
+  {
+   "pair_id": "research-mingw-gcc-Os-r1-pilot-defined-v1-v2",
+   "receipt": "8b503f77dd9cc006d7daa4b4ff36f8f0ab545b5db2837dd92180ae5b539fd2f0.json",
+   "side": "newer"
+  },
+  {
+   "pair_id": "research-mingw-clang-O0-r1-pilot-defined-v1-v2",
+   "receipt": "ba1261e9552f7544881888577df4f80c19ccf9343d76c555a6e90dadb277566d.json",
+   "side": "older"
+  },
+  {
+   "pair_id": "research-mingw-clang-O0-r1-pilot-defined-v1-v2",
+   "receipt": "c3d8a1379c3c2e2b72342fa2c730ad8b64e246b0f203fb65250499a8e6ec44d5.json",
+   "side": "newer"
+  },
+  {
+   "pair_id": "research-mingw-clang-O1-r1-pilot-defined-v1-v2",
+   "receipt": "8ded7733a301edef8b203f902e4f82077e3e87fe05d316a02fc0a8505f87f7b5.json",
+   "side": "older"
+  },
+  {
+   "pair_id": "research-mingw-clang-O1-r1-pilot-defined-v1-v2",
+   "receipt": "4ba9a6212ac0e12926a531a03b52aac9f6249117572094afbaee7dc24cde10c3.json",
+   "side": "newer"
+  },
+  {
+   "pair_id": "research-mingw-clang-O2-r1-pilot-defined-v1-v2",
+   "receipt": "d6568fb47762a1c5994f72262863d7a957c77bde657aad4162ada09a7b76c719.json",
+   "side": "older"
+  },
+  {
+   "pair_id": "research-mingw-clang-O2-r1-pilot-defined-v1-v2",
+   "receipt": "13cdbb54e8a80806a9d6dffc1441f276eac081de526514c994a727e776d57e0c.json",
+   "side": "newer"
+  },
+  {
+   "pair_id": "research-mingw-clang-O3-r1-pilot-defined-v1-v2",
+   "receipt": "69d37677a82072776305e324104b138960eff6dd25133f1cc18a78d98e176ef5.json",
+   "side": "older"
+  },
+  {
+   "pair_id": "research-mingw-clang-O3-r1-pilot-defined-v1-v2",
+   "receipt": "6c3fe6a100b42f621bac84abc40cc2e7e193fe00a8b88b2acbc698bd15d64e19.json",
+   "side": "newer"
+  },
+  {
+   "pair_id": "research-mingw-clang-Os-r1-pilot-defined-v1-v2",
+   "receipt": "b3123d5d7bea3c349c79e14f0d900e7f76d78c787783715ac807c8d35110335d.json",
+   "side": "older"
+  },
+  {
+   "pair_id": "research-mingw-clang-Os-r1-pilot-defined-v1-v2",
+   "receipt": "c7142e5c918973f18c9f12b0948b2f03e311ae74317d3c10dae086203bd54dab.json",
+   "side": "newer"
+  }
+ ],
+ "labels_loaded": 23,
+ "verified_endpoints": 30
+}

@@ -1,0 +1,728 @@
+{
+  "accepted_keys": [
+    [
+      "r1.c",
+      "r1_added",
+      null,
+      null,
+      5600
+    ],
+    [
+      "r1.c",
+      "r1_comparison",
+      null,
+      5024,
+      5024
+    ],
+    [
+      "r1.c",
+      "r1_branch_inversion",
+      null,
+      5040,
+      5040
+    ],
+    [
+      "r1.c",
+      "r1_pointer_offset",
+      null,
+      5168,
+      5168
+    ],
+    [
+      "r1.c",
+      "r1_array_index",
+      null,
+      5200,
+      5200
+    ],
+    [
+      "r1.c",
+      "r1_overflow_guard",
+      null,
+      5232,
+      5232
+    ],
+    [
+      "r1.c",
+      "r1_signedness",
+      null,
+      5248,
+      5264
+    ],
+    [
+      "r1.c",
+      "r1_allocation_size",
+      null,
+      5264,
+      5280
+    ],
+    [
+      "r1.c",
+      "r1_loop_bound",
+      null,
+      5312,
+      5328
+    ],
+    [
+      "r1.c",
+      "r1_call_target",
+      null,
+      5392,
+      5408
+    ],
+    [
+      "r1.c",
+      "r1_error_handling",
+      null,
+      5440,
+      5456
+    ],
+    [
+      "r1.c",
+      "r1_null_validation",
+      null,
+      5456,
+      5472
+    ],
+    [
+      "r1.c",
+      "r1_structure_field",
+      null,
+      5472,
+      5488
+    ],
+    [
+      "r1.c",
+      "r1_security_flag",
+      null,
+      5504,
+      5520
+    ],
+    [
+      "r1.c",
+      "r1_secondary",
+      null,
+      5536,
+      5552
+    ],
+    [
+      "r1.c",
+      "r1_unchanged",
+      null,
+      5552,
+      5568
+    ],
+    [
+      "r1.c",
+      "r1_cosmetic",
+      null,
+      5568,
+      5584
+    ],
+    [
+      "r1.c",
+      "r1_removed",
+      null,
+      5584,
+      null
+    ]
+  ],
+  "ambiguous_keys": [
+    [
+      "r1.c",
+      "r1_integer_constant",
+      null,
+      5008,
+      5008
+    ],
+    [
+      "r1.c",
+      "r1_bounds_added",
+      null,
+      5056,
+      5056
+    ],
+    [
+      "r1.c",
+      "r1_bounds_removed",
+      null,
+      5104,
+      5120
+    ],
+    [
+      "r1.c",
+      "r1_primary",
+      null,
+      5520,
+      5536
+    ]
+  ],
+  "ambiguous_names": [
+    "r1_bounds_added",
+    "r1_bounds_removed",
+    "r1_integer_constant",
+    "r1_primary"
+  ],
+  "duplicate_raw_body_groups": [
+    {
+      "body_sha256": "498b3e99bfa9318b474214a116e87879a7a55166347c31725a9d7ce5fccba12f",
+      "members": [
+        {
+          "name": "r1_bounds_added",
+          "rva": 5056,
+          "side": "older",
+          "size": 38
+        },
+        {
+          "name": "r1_bounds_removed",
+          "rva": 5120,
+          "side": "newer",
+          "size": 38
+        }
+      ]
+    },
+    {
+      "body_sha256": "af03715c0d21a2ec5d58309c6ba72161e48b8d3e076480a55cd4828a0d9ee623",
+      "members": [
+        {
+          "name": "r1_bounds_removed",
+          "rva": 5104,
+          "side": "older",
+          "size": 54
+        },
+        {
+          "name": "r1_bounds_added",
+          "rva": 5056,
+          "side": "newer",
+          "size": 54
+        }
+      ]
+    },
+    {
+      "body_sha256": "fa5b7eab57dd503aa341dd700389cb02e61dc21b29c0f2f0161329300ae705bd",
+      "members": [
+        {
+          "name": "r1_integer_constant",
+          "rva": 5008,
+          "side": "older",
+          "size": 4
+        },
+        {
+          "name": "r1_primary",
+          "rva": 5520,
+          "side": "older",
+          "size": 4
+        },
+        {
+          "name": "r1_primary",
+          "rva": 5536,
+          "side": "newer",
+          "size": 4
+        }
+      ]
+    }
+  ],
+  "evidence": [
+    {
+      "all_label_extents_match_dwarf": true,
+      "all_label_extents_match_exports": true,
+      "build_receipt_sha256": "89dfb0eea80d7ca3f414cf6edea532097beb122872afe036a5a767c94e4dd20b",
+      "compiler_versions": {
+        "llvm-strip": "llvm-strip, compatible with GNU strip",
+        "mingw-gcc": "x86_64-w64-mingw32-gcc (GCC) 13-win32"
+      },
+      "debug_sha256": "82507c9e80aa0493860ca0b56a7400ec67dbda7ae3a32185aa19aaefa5b1b701",
+      "dwarf_project_procedures": 21,
+      "engine_sha256": "c03b76a0e6db62ac35c5f4fa727f38cafdcfb5e7b8544c327b4c9587f8707b58",
+      "exported_source_function_names": [
+        "r1_allocation_size",
+        "r1_array_index",
+        "r1_bounds_added",
+        "r1_bounds_removed",
+        "r1_branch_inversion",
+        "r1_call_target",
+        "r1_comparison",
+        "r1_cosmetic",
+        "r1_error_handling",
+        "r1_integer_constant",
+        "r1_loop_bound",
+        "r1_null_validation",
+        "r1_overflow_guard",
+        "r1_pointer_offset",
+        "r1_primary",
+        "r1_removed",
+        "r1_secondary",
+        "r1_security_flag",
+        "r1_signedness",
+        "r1_structure_field",
+        "r1_unchanged"
+      ],
+      "inspector_outputs_sha256": {
+        "dwarf": "304b30364d3804c20c938dbe3c3a6fe1fe963e320cdc1e00e0d0f5bc8f332df0",
+        "exports": "cb09df69c8b8db0de1a14b6d3321e2b4a55dc05fe6b52becf8e669594dc5eaf2",
+        "project_disassembly": "8ccab32054ea2a4d74fb8d6f71992240335b4597fa154b5d16dfea77db85699c"
+      },
+      "loaded_section_equivalence": true,
+      "name_visibility": "21 source-function names survive in PE exports",
+      "pdb_sha256": null,
+      "recipe_digest": "e2406474b56cb867a7379124f7c906305eb009d0ba6c3e7f134d0e0c13fefd02",
+      "sections": [
+        ".text",
+        ".data",
+        ".rdata",
+        ".pdata",
+        ".xdata",
+        ".bss",
+        ".edata",
+        ".idata",
+        ".CRT",
+        ".tls",
+        ".reloc"
+      ],
+      "side": "older",
+      "source_hash_matches_receipt": true,
+      "stripped_coff_symbol_count": 0
+    },
+    {
+      "all_label_extents_match_dwarf": true,
+      "all_label_extents_match_exports": true,
+      "build_receipt_sha256": "0734e959d5d692588d9a457fcf317d521cb1fce32755f76320a226f956c41633",
+      "compiler_versions": {
+        "llvm-strip": "llvm-strip, compatible with GNU strip",
+        "mingw-gcc": "x86_64-w64-mingw32-gcc (GCC) 13-win32"
+      },
+      "debug_sha256": "61d1c3f6444c3066ab5ebb13f9072ed97135fc05ac324016329555f4df1a5d0c",
+      "dwarf_project_procedures": 21,
+      "engine_sha256": "e2bb62115ca712b92bdd2382ec4071a08f37de89eaca0ed2ec07a03476bcec00",
+      "exported_source_function_names": [
+        "r1_added",
+        "r1_allocation_size",
+        "r1_array_index",
+        "r1_bounds_added",
+        "r1_bounds_removed",
+        "r1_branch_inversion",
+        "r1_call_target",
+        "r1_comparison",
+        "r1_cosmetic",
+        "r1_error_handling",
+        "r1_integer_constant",
+        "r1_loop_bound",
+        "r1_null_validation",
+        "r1_overflow_guard",
+        "r1_pointer_offset",
+        "r1_primary",
+        "r1_secondary",
+        "r1_security_flag",
+        "r1_signedness",
+        "r1_structure_field",
+        "r1_unchanged"
+      ],
+      "inspector_outputs_sha256": {
+        "dwarf": "4175844bba841ace70c7dae9ad93a910c765f5a1c61056074326f79e4c6bf508",
+        "exports": "0d6bc65d357804a632985457b70872c1c5afba846784344aa0ebf7bb83800e37",
+        "project_disassembly": "6e4af3d98e86ac12dd47a0333430b079d6df5a34e1e55808ff887f4e720f4809"
+      },
+      "loaded_section_equivalence": true,
+      "name_visibility": "21 source-function names survive in PE exports",
+      "pdb_sha256": null,
+      "recipe_digest": "e2406474b56cb867a7379124f7c906305eb009d0ba6c3e7f134d0e0c13fefd02",
+      "sections": [
+        ".text",
+        ".data",
+        ".rdata",
+        ".pdata",
+        ".xdata",
+        ".bss",
+        ".edata",
+        ".idata",
+        ".CRT",
+        ".tls",
+        ".reloc"
+      ],
+      "side": "newer",
+      "source_hash_matches_receipt": true,
+      "stripped_coff_symbol_count": 0
+    }
+  ],
+  "functions": [
+    {
+      "key": [
+        "r1.c",
+        "r1_added",
+        null,
+        null,
+        5600
+      ],
+      "label": "no-counterpart",
+      "name": "r1_added",
+      "new_body_sha256": "3bb3e26778a39b58230a508cec94643111e70867c57af13b89090232b5844ccc",
+      "new_size": 4,
+      "old_body_sha256": null,
+      "old_size": null,
+      "raw_equal": null
+    },
+    {
+      "key": [
+        "r1.c",
+        "r1_integer_constant",
+        null,
+        5008,
+        5008
+      ],
+      "label": "changed",
+      "name": "r1_integer_constant",
+      "new_body_sha256": "4ccfa277b42512689ccadffe5c3bce07fc13bfedd86eee84a74ca12141091da7",
+      "new_size": 4,
+      "old_body_sha256": "fa5b7eab57dd503aa341dd700389cb02e61dc21b29c0f2f0161329300ae705bd",
+      "old_size": 4,
+      "raw_equal": false
+    },
+    {
+      "key": [
+        "r1.c",
+        "r1_comparison",
+        null,
+        5024,
+        5024
+      ],
+      "label": "changed",
+      "name": "r1_comparison",
+      "new_body_sha256": "36dd721eb42cfc738a4d0b97ce21229e6d0367b28c8a3dcd748f971435679386",
+      "new_size": 14,
+      "old_body_sha256": "58f8c1e3c3fea7bbfde6acdf18786e8732422c4f781acce4343022bc949faf9d",
+      "old_size": 14,
+      "raw_equal": false
+    },
+    {
+      "key": [
+        "r1.c",
+        "r1_branch_inversion",
+        null,
+        5040,
+        5040
+      ],
+      "label": "changed",
+      "name": "r1_branch_inversion",
+      "new_body_sha256": "3e0f8510d461c2e476116864c947ff4e0b1a45edae8d5110ae7eaf08b469946e",
+      "new_size": 15,
+      "old_body_sha256": "c745b2bb60680002b6c23cbf58e2ae695d15787f484c66cf56b5cba7ff0297f1",
+      "old_size": 15,
+      "raw_equal": false
+    },
+    {
+      "key": [
+        "r1.c",
+        "r1_bounds_added",
+        null,
+        5056,
+        5056
+      ],
+      "label": "changed",
+      "name": "r1_bounds_added",
+      "new_body_sha256": "af03715c0d21a2ec5d58309c6ba72161e48b8d3e076480a55cd4828a0d9ee623",
+      "new_size": 54,
+      "old_body_sha256": "498b3e99bfa9318b474214a116e87879a7a55166347c31725a9d7ce5fccba12f",
+      "old_size": 38,
+      "raw_equal": false
+    },
+    {
+      "key": [
+        "r1.c",
+        "r1_bounds_removed",
+        null,
+        5104,
+        5120
+      ],
+      "label": "changed",
+      "name": "r1_bounds_removed",
+      "new_body_sha256": "498b3e99bfa9318b474214a116e87879a7a55166347c31725a9d7ce5fccba12f",
+      "new_size": 38,
+      "old_body_sha256": "af03715c0d21a2ec5d58309c6ba72161e48b8d3e076480a55cd4828a0d9ee623",
+      "old_size": 54,
+      "raw_equal": false
+    },
+    {
+      "key": [
+        "r1.c",
+        "r1_pointer_offset",
+        null,
+        5168,
+        5168
+      ],
+      "label": "changed",
+      "name": "r1_pointer_offset",
+      "new_body_sha256": "bb0a11e6b8b02ee4bb14f3d571092675092dfd3866af9b6916b6b5c215cac450",
+      "new_size": 22,
+      "old_body_sha256": "daded2818bb76cc10722fa6b6dda6707e1fcc7500e1b70e5bb2f7bebda952789",
+      "old_size": 22,
+      "raw_equal": false
+    },
+    {
+      "key": [
+        "r1.c",
+        "r1_array_index",
+        null,
+        5200,
+        5200
+      ],
+      "label": "changed",
+      "name": "r1_array_index",
+      "new_body_sha256": "ce09744b5eb05eaf6084e7e6467f80068d917c5a849daeb1a46c2e1590d7bb98",
+      "new_size": 22,
+      "old_body_sha256": "983ae5c1620e20ac16430ccffa0b0feaf1a3a425551d32cd993c4db41e622446",
+      "old_size": 22,
+      "raw_equal": false
+    },
+    {
+      "key": [
+        "r1.c",
+        "r1_overflow_guard",
+        null,
+        5232,
+        5232
+      ],
+      "label": "changed",
+      "name": "r1_overflow_guard",
+      "new_body_sha256": "839d3ea087e03343f1d5fe10f0ad382b8061bbe3c184963a9b7f4eb9b704e33a",
+      "new_size": 22,
+      "old_body_sha256": "5fe1f11b3e4a2a8006c2c9717d9f38deacc7cb4b4c0a255e4cafd68da6eb601a",
+      "old_size": 8,
+      "raw_equal": false
+    },
+    {
+      "key": [
+        "r1.c",
+        "r1_signedness",
+        null,
+        5248,
+        5264
+      ],
+      "label": "changed",
+      "name": "r1_signedness",
+      "new_body_sha256": "0a25640b9a5359601b7f3c2dd290addc6216846ca8abe30f6fb8a869b75ac321",
+      "new_size": 9,
+      "old_body_sha256": "423a17013f0e249dc98c334a0228e147be989b6bf3899a6722e00d00575c5d8f",
+      "old_size": 9,
+      "raw_equal": false
+    },
+    {
+      "key": [
+        "r1.c",
+        "r1_allocation_size",
+        null,
+        5264,
+        5280
+      ],
+      "label": "changed",
+      "name": "r1_allocation_size",
+      "new_body_sha256": "7a4645bc32a972515512a2ffc49cc7000869f0ebf0f746526b7c722bc2c7e49e",
+      "new_size": 35,
+      "old_body_sha256": "73e2941db693edb1f2937416475e23033bfa531df4b2456336b8b9f334e88590",
+      "old_size": 35,
+      "raw_equal": false
+    },
+    {
+      "key": [
+        "r1.c",
+        "r1_loop_bound",
+        null,
+        5312,
+        5328
+      ],
+      "label": "changed",
+      "name": "r1_loop_bound",
+      "new_body_sha256": "41da937d5d6b500125e0b6e70611689ccac015d4f721cb9885810ad80f2e33fd",
+      "new_size": 72,
+      "old_body_sha256": "d41a24f3df66fd631ed98f77f39359246dacbba8da99644592eae2b4cc93a1b1",
+      "old_size": 68,
+      "raw_equal": false
+    },
+    {
+      "key": [
+        "r1.c",
+        "r1_call_target",
+        null,
+        5392,
+        5408
+      ],
+      "label": "changed",
+      "name": "r1_call_target",
+      "new_body_sha256": "e374a34716fa44afea35a8ac3858218087d6cab808519a601b1e0bc914247e04",
+      "new_size": 38,
+      "old_body_sha256": "e8e67e8a1a652ac97186417643fcd2d0c9ef7770907dbc77046597f83f97c89d",
+      "old_size": 38,
+      "raw_equal": false
+    },
+    {
+      "key": [
+        "r1.c",
+        "r1_error_handling",
+        null,
+        5440,
+        5456
+      ],
+      "label": "changed",
+      "name": "r1_error_handling",
+      "new_body_sha256": "67ff1fbe6b407d40608db2afe53ff5d80abfcf58f9ad090e47d78895f44152c0",
+      "new_size": 11,
+      "old_body_sha256": "344be6ed7f17706b09bfe7a80491507606aed8f95a1ead45eed12b353c85fd69",
+      "old_size": 8,
+      "raw_equal": false
+    },
+    {
+      "key": [
+        "r1.c",
+        "r1_null_validation",
+        null,
+        5456,
+        5472
+      ],
+      "label": "changed",
+      "name": "r1_null_validation",
+      "new_body_sha256": "84a3e3c8a2081f92f150d9652ece4e92389b470ccbfc50e2f019399b003171fb",
+      "new_size": 12,
+      "old_body_sha256": "9dbdd75a2520874388427ea903f2a414435e178f0eb872d390d8b5369b840f91",
+      "old_size": 3,
+      "raw_equal": false
+    },
+    {
+      "key": [
+        "r1.c",
+        "r1_structure_field",
+        null,
+        5472,
+        5488
+      ],
+      "label": "changed",
+      "name": "r1_structure_field",
+      "new_body_sha256": "9d667d4292f5766ec6a3985e56a026682aa9cda9b2b298a8b4b25e46f6aaeadb",
+      "new_size": 22,
+      "old_body_sha256": "4a7b9cd3fb3ad9645da23da237f5bc21d04d4a43d69d5bcd0185490951ae1a90",
+      "old_size": 22,
+      "raw_equal": false
+    },
+    {
+      "key": [
+        "r1.c",
+        "r1_security_flag",
+        null,
+        5504,
+        5520
+      ],
+      "label": "changed",
+      "name": "r1_security_flag",
+      "new_body_sha256": "7cf60f260dbfcb67d9afba791febe2f383eb7556b07cb37d81bab9fc706e69be",
+      "new_size": 6,
+      "old_body_sha256": "9766a272fcf70ead1bf116b6aa18f1ef1691d6a1205d76d138b6e0ec42970c7d",
+      "old_size": 6,
+      "raw_equal": false
+    },
+    {
+      "key": [
+        "r1.c",
+        "r1_primary",
+        null,
+        5520,
+        5536
+      ],
+      "label": "unchanged",
+      "name": "r1_primary",
+      "new_body_sha256": "fa5b7eab57dd503aa341dd700389cb02e61dc21b29c0f2f0161329300ae705bd",
+      "new_size": 4,
+      "old_body_sha256": "fa5b7eab57dd503aa341dd700389cb02e61dc21b29c0f2f0161329300ae705bd",
+      "old_size": 4,
+      "raw_equal": true
+    },
+    {
+      "key": [
+        "r1.c",
+        "r1_secondary",
+        null,
+        5536,
+        5552
+      ],
+      "label": "unchanged",
+      "name": "r1_secondary",
+      "new_body_sha256": "c43708d49cff54107eac55868396bf0b59ff0c156e0e408e1d837d2691afd619",
+      "new_size": 6,
+      "old_body_sha256": "c43708d49cff54107eac55868396bf0b59ff0c156e0e408e1d837d2691afd619",
+      "old_size": 6,
+      "raw_equal": true
+    },
+    {
+      "key": [
+        "r1.c",
+        "r1_unchanged",
+        null,
+        5552,
+        5568
+      ],
+      "label": "unchanged",
+      "name": "r1_unchanged",
+      "new_body_sha256": "ab9490f0b705fee23d20c139d4d4c5b98321894849174ee655122de8efe8134e",
+      "new_size": 6,
+      "old_body_sha256": "ab9490f0b705fee23d20c139d4d4c5b98321894849174ee655122de8efe8134e",
+      "old_size": 6,
+      "raw_equal": true
+    },
+    {
+      "key": [
+        "r1.c",
+        "r1_cosmetic",
+        null,
+        5568,
+        5584
+      ],
+      "label": "cosmetic",
+      "name": "r1_cosmetic",
+      "new_body_sha256": "1c54f4c0da884c93a6a6c6ef8a043b7b1ba5501f2ef3ad3b9211792063b5d1cb",
+      "new_size": 8,
+      "old_body_sha256": "1c54f4c0da884c93a6a6c6ef8a043b7b1ba5501f2ef3ad3b9211792063b5d1cb",
+      "old_size": 8,
+      "raw_equal": true
+    },
+    {
+      "key": [
+        "r1.c",
+        "r1_removed",
+        null,
+        5584,
+        null
+      ],
+      "label": "no-counterpart",
+      "name": "r1_removed",
+      "new_body_sha256": null,
+      "new_size": null,
+      "old_body_sha256": "17f7006eaa37f5592571070a912dcabc8ff7adbf45f00a19826baa15aba6cd41",
+      "old_size": 6,
+      "raw_equal": null
+    }
+  ],
+  "labels_digest_sha256": "9653f54f4e56ab0510be07fdb40ad4f88cf2047002831c79708672b9869599fe",
+  "labels_sha256": "2c463d1bfd85bbef86b2056e437e46f8b668f91dbb48d058f123393271e504f2",
+  "limitations": [
+    "No human adjudication",
+    "No target execution",
+    "No independent rebuild by reviewer",
+    "No native engine output read or used as truth",
+    "Exported source names are visible; results must be a separate name-visible cohort",
+    "Runtime/CRT functions are outside the21 project definitions; supplied labels report68 runtime functions",
+    "Same a priori four ambiguity exclusions retained despite visible names"
+  ],
+  "pair_id": "research-mingw-gcc-O2-r1-pilot-defined-v1-v2",
+  "review_kind": "independent-automated-source-and-binary-review",
+  "reviewer": "/root/truth_audit",
+  "reviewer_provenance": {
+    "human_review": false,
+    "kind": "automated-independent-agent",
+    "matching_engine_outputs_read": false,
+    "separate_from_fixture_author": true,
+    "target_execution": false
+  },
+  "scope": "MinGW GCC13-win32 O2 stock profile with21 source names auto-exported per side; not a name-hidden result",
+  "source_sha": {
+    "v1": "5f0468899fbc95fa4026c3c74b0731a5ab412fe017bbddbed00ad7b0d97acb5f",
+    "v2": "34d8d9f2a1c83c58565ed1885df192c5550e55b9ebb1716d978f8f1c51db27b7"
+  },
+  "status": "source-and-binary-evidence-reviewed-with-identity-ambiguity"
+}

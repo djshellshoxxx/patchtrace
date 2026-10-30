@@ -85,11 +85,11 @@ class BaseSource:
 
 @dataclass
 class Session:
-    """Caches builds and analyses within one run so a base image is built and parsed once."""
+    """Cache builds and source-bound analyses without conflating equal bytes from different build provenance."""
     tools: Toolchain
     store: Path
     builds: dict[BuildSpec, BuildResult] = field(default_factory=dict)
-    sides: dict[str, SideData] = field(default_factory=dict)
+    sides: dict[tuple[BuildSpec, str, str, str, Path], SideData] = field(default_factory=dict)
 
     def build(self, spec: BuildSpec) -> BuildResult:
         if spec not in self.builds:
@@ -97,9 +97,11 @@ class Session:
         return self.builds[spec]
 
     def side(self, result: BuildResult, source_root: Path) -> SideData:
-        if result.debug_sha256 not in self.sides:
-            self.sides[result.debug_sha256] = analyze(result, self.tools, source_root)
-        return self.sides[result.debug_sha256]
+        # SideData retains the BuildResult and source lookup context, not just parsed image bytes.
+        key = (result.spec, result.debug_sha256, result.recipe_digest, result.source_digest, Path(source_root).resolve())
+        if key not in self.sides:
+            self.sides[key] = analyze(result, self.tools, source_root)
+        return self.sides[key]
 
 
 def finalize(*, pid: str, stratum: str, method: str, base_old: BaseSource, base_new: BaseSource,

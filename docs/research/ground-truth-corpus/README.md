@@ -11,9 +11,11 @@ factory, existing evaluation/lineage APIs and immutable derived unified results.
 This is a research and benchmark task, not authority to tune production matching
 decisions on the final test set.
 
-**R1 is in progress. No new real-engine accuracy result or completion claim is
-made by this initial checkpoint.** Existing catalogue coverage, build success,
-label admission and engine acceptance are different milestones.
+**The research and implemented pilot now include genuine engine results, repeat
+builds, independent source/binary reviews and preserved failures. Integration
+acceptance remains subject to final CI/review gates; the larger coverage targets
+are not complete.** Existing catalogue coverage, build success, label admission
+and engine acceptance remain different milestones.
 
 The research is divided into primary-source literature/dataset evaluation,
 ground-truth and metric soundness, real patch provenance, and a reproducible
@@ -21,6 +23,53 @@ pilot. Findings are recorded as verified observations, source-reported claims,
 design decisions, or open questions. References are attached to the claims they
 support. Public dataset/tool code licences do not grant blanket redistribution
 rights over third-party binaries.
+
+## Read the findings
+
+| Report | Purpose |
+|---|---|
+| [01 — Literature and datasets](01-literature-and-datasets.md) | Primary papers and official tools/datasets, identities, licences, construction methods, leakage and suitability |
+| [02 — Truth and evaluation](02-ground-truth-and-evaluation.md) | Admission rules, source/debug/binary evidence, explicit metric denominators and partition design |
+| [03 — Real patch candidates](03-real-world-patch-candidates.md) | All 35 security cards, 102 commit edges, 16 recipe projects, exact pins and weak associations |
+| [04 — Pilot protocol](04-pilot-protocol.md) | Spec-first implementation boundary and demonstrated provenance/harness defects |
+| [05 — Results and failures](05-results-and-failure-analysis.md) | Real builds, accepted populations, engine observations, repeatability, resources and failure analysis |
+| [06 — Limitations](06-limitations-and-open-questions.md) | What each research question can answer, open gates and concrete next work |
+| [07 — Handoff](07-handoff-and-reproduction.md) | Reproduction commands, dependencies, ownership and integration instructions |
+
+The numerical result worth investigating is specific: on one reviewed,
+export-name-visible MinGW O2 fixture, Ghidriff and unified recovered **16/16
+accepted paired identities**; Ghidriff supplied explicit change signals for
+**6/13** accepted material changes, while unified classified **11/13** as material
+and left two for review. Four intrinsically ambiguous identities were excluded
+before scoring, and two one-sided interfaces were not explicitly observed.
+The corresponding fully name-hidden freestanding input produced **zero
+discovered functions**. These conditions cannot be pooled into a general
+accuracy claim. The [result receipts](05-results-and-failure-analysis.md#matching-and-change-observations)
+record all observations and denominators.
+
+Two selected cJSON security-check changes were independently traced through
+pinned source, DWARF and compiled guards, then observed by Ghidriff and unified.
+The review is unblinded, limited to those two functions, and the binaries retain
+92 export names; 111 other label records remain unresolved. A real same-source
+GCC/Clang control exposed three unified material flags, including a concrete
+conditional-branch/store evidence defect documented for the next production
+task. No matching algorithm or threshold was changed to improve these results.
+
+Fifteen profile/optimization cells build using the existing factory. Two actual
+provenance defects were fixed: recipes that emit the same artifact now retain
+separate immutable receipts, and cached analysis cannot substitute another
+configuration's `BuildResult`. Thirty final matrix endpoints were checked, three
+incorrect O3 metadata records were repaired by rerunning the factory, and the
+engine/debug/PDB hashes remained unchanged. The
+[provenance validation](results/matrix-provenance-validation.json) is separate
+from accuracy validation.
+
+The repository now contains 23 strict pilot label documents, development-only
+partition audits, exact review overlays, immutable build receipts, actual
+observation arrays, control experiments and a detailed handoff. The additional
+native A/A control succeeded twice with identical bytes and distinct basenames,
+observing all 21 project correspondences; its change verdicts remain unknown.
+No target binary was executed and no held-out test was consumed.
 
 ## Repository reconciliation
 

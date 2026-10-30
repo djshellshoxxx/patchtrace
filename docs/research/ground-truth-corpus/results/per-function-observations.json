@@ -1,0 +1,622 @@
+{
+ "functions": [
+  {
+   "engines": {
+    "bindiff": {
+     "changed": null,
+     "observed": false
+    },
+    "ghidriff": {
+     "changed": null,
+     "observed": false
+    },
+    "rz-diff": {
+     "changed": null,
+     "observed": false
+    },
+    "unified": {
+     "changed": null,
+     "observed": false
+    }
+   },
+   "kind": null,
+   "label": "no-counterpart",
+   "name": "r1_added",
+   "new_rva": 5600,
+   "new_size": 4,
+   "old_rva": null,
+   "old_size": null,
+   "review": "accepted"
+  },
+  {
+   "engines": {
+    "bindiff": {
+     "changed": null,
+     "observed": false
+    },
+    "ghidriff": {
+     "changed": null,
+     "observed": true
+    },
+    "rz-diff": {
+     "changed": null,
+     "observed": false
+    },
+    "unified": {
+     "changed": true,
+     "observed": true
+    }
+   },
+   "kind": "constant-change",
+   "label": "changed",
+   "name": "r1_integer_constant",
+   "new_rva": 5008,
+   "new_size": 4,
+   "old_rva": 5008,
+   "old_size": 4,
+   "review": "ambiguous"
+  },
+  {
+   "engines": {
+    "bindiff": {
+     "changed": null,
+     "observed": false
+    },
+    "ghidriff": {
+     "changed": null,
+     "observed": true
+    },
+    "rz-diff": {
+     "changed": null,
+     "observed": false
+    },
+    "unified": {
+     "changed": true,
+     "observed": true
+    }
+   },
+   "kind": "comparison-change",
+   "label": "changed",
+   "name": "r1_comparison",
+   "new_rva": 5024,
+   "new_size": 14,
+   "old_rva": 5024,
+   "old_size": 14,
+   "review": "accepted"
+  },
+  {
+   "engines": {
+    "bindiff": {
+     "changed": null,
+     "observed": false
+    },
+    "ghidriff": {
+     "changed": null,
+     "observed": true
+    },
+    "rz-diff": {
+     "changed": null,
+     "observed": false
+    },
+    "unified": {
+     "changed": true,
+     "observed": true
+    }
+   },
+   "kind": "comparison-change",
+   "label": "changed",
+   "name": "r1_branch_inversion",
+   "new_rva": 5040,
+   "new_size": 15,
+   "old_rva": 5040,
+   "old_size": 15,
+   "review": "accepted"
+  },
+  {
+   "engines": {
+    "bindiff": {
+     "changed": null,
+     "observed": false
+    },
+    "ghidriff": {
+     "changed": true,
+     "observed": true
+    },
+    "rz-diff": {
+     "changed": null,
+     "observed": false
+    },
+    "unified": {
+     "changed": null,
+     "observed": true
+    }
+   },
+   "kind": "bounds-check-added",
+   "label": "changed",
+   "name": "r1_bounds_added",
+   "new_rva": 5056,
+   "new_size": 54,
+   "old_rva": 5056,
+   "old_size": 38,
+   "review": "ambiguous"
+  },
+  {
+   "engines": {
+    "bindiff": {
+     "changed": null,
+     "observed": false
+    },
+    "ghidriff": {
+     "changed": true,
+     "observed": true
+    },
+    "rz-diff": {
+     "changed": null,
+     "observed": false
+    },
+    "unified": {
+     "changed": null,
+     "observed": true
+    }
+   },
+   "kind": "bounds-check-removed",
+   "label": "changed",
+   "name": "r1_bounds_removed",
+   "new_rva": 5120,
+   "new_size": 38,
+   "old_rva": 5104,
+   "old_size": 54,
+   "review": "ambiguous"
+  },
+  {
+   "engines": {
+    "bindiff": {
+     "changed": null,
+     "observed": false
+    },
+    "ghidriff": {
+     "changed": null,
+     "observed": true
+    },
+    "rz-diff": {
+     "changed": null,
+     "observed": false
+    },
+    "unified": {
+     "changed": true,
+     "observed": true
+    }
+   },
+   "kind": "other",
+   "label": "changed",
+   "name": "r1_pointer_offset",
+   "new_rva": 5168,
+   "new_size": 22,
+   "old_rva": 5168,
+   "old_size": 22,
+   "review": "accepted"
+  },
+  {
+   "engines": {
+    "bindiff": {
+     "changed": null,
+     "observed": false
+    },
+    "ghidriff": {
+     "changed": true,
+     "observed": true
+    },
+    "rz-diff": {
+     "changed": null,
+     "observed": false
+    },
+    "unified": {
+     "changed": true,
+     "observed": true
+    }
+   },
+   "kind": "other",
+   "label": "changed",
+   "name": "r1_array_index",
+   "new_rva": 5200,
+   "new_size": 22,
+   "old_rva": 5200,
+   "old_size": 22,
+   "review": "accepted"
+  },
+  {
+   "engines": {
+    "bindiff": {
+     "changed": null,
+     "observed": false
+    },
+    "ghidriff": {
+     "changed": true,
+     "observed": true
+    },
+    "rz-diff": {
+     "changed": null,
+     "observed": false
+    },
+    "unified": {
+     "changed": true,
+     "observed": true
+    }
+   },
+   "kind": "bounds-check-added",
+   "label": "changed",
+   "name": "r1_overflow_guard",
+   "new_rva": 5232,
+   "new_size": 22,
+   "old_rva": 5232,
+   "old_size": 8,
+   "review": "accepted"
+  },
+  {
+   "engines": {
+    "bindiff": {
+     "changed": null,
+     "observed": false
+    },
+    "ghidriff": {
+     "changed": null,
+     "observed": true
+    },
+    "rz-diff": {
+     "changed": null,
+     "observed": false
+    },
+    "unified": {
+     "changed": null,
+     "observed": true
+    }
+   },
+   "kind": "comparison-change",
+   "label": "changed",
+   "name": "r1_signedness",
+   "new_rva": 5264,
+   "new_size": 9,
+   "old_rva": 5248,
+   "old_size": 9,
+   "review": "accepted"
+  },
+  {
+   "engines": {
+    "bindiff": {
+     "changed": null,
+     "observed": false
+    },
+    "ghidriff": {
+     "changed": null,
+     "observed": true
+    },
+    "rz-diff": {
+     "changed": null,
+     "observed": false
+    },
+    "unified": {
+     "changed": true,
+     "observed": true
+    }
+   },
+   "kind": "constant-change",
+   "label": "changed",
+   "name": "r1_allocation_size",
+   "new_rva": 5280,
+   "new_size": 35,
+   "old_rva": 5264,
+   "old_size": 35,
+   "review": "accepted"
+  },
+  {
+   "engines": {
+    "bindiff": {
+     "changed": null,
+     "observed": false
+    },
+    "ghidriff": {
+     "changed": true,
+     "observed": true
+    },
+    "rz-diff": {
+     "changed": null,
+     "observed": false
+    },
+    "unified": {
+     "changed": true,
+     "observed": true
+    }
+   },
+   "kind": "loop-bound-change",
+   "label": "changed",
+   "name": "r1_loop_bound",
+   "new_rva": 5328,
+   "new_size": 72,
+   "old_rva": 5312,
+   "old_size": 68,
+   "review": "accepted"
+  },
+  {
+   "engines": {
+    "bindiff": {
+     "changed": null,
+     "observed": false
+    },
+    "ghidriff": {
+     "changed": null,
+     "observed": true
+    },
+    "rz-diff": {
+     "changed": null,
+     "observed": false
+    },
+    "unified": {
+     "changed": null,
+     "observed": true
+    }
+   },
+   "kind": "other",
+   "label": "changed",
+   "name": "r1_call_target",
+   "new_rva": 5408,
+   "new_size": 38,
+   "old_rva": 5392,
+   "old_size": 38,
+   "review": "accepted"
+  },
+  {
+   "engines": {
+    "bindiff": {
+     "changed": null,
+     "observed": false
+    },
+    "ghidriff": {
+     "changed": true,
+     "observed": true
+    },
+    "rz-diff": {
+     "changed": null,
+     "observed": false
+    },
+    "unified": {
+     "changed": true,
+     "observed": true
+    }
+   },
+   "kind": "error-handling-change",
+   "label": "changed",
+   "name": "r1_error_handling",
+   "new_rva": 5456,
+   "new_size": 11,
+   "old_rva": 5440,
+   "old_size": 8,
+   "review": "accepted"
+  },
+  {
+   "engines": {
+    "bindiff": {
+     "changed": null,
+     "observed": false
+    },
+    "ghidriff": {
+     "changed": true,
+     "observed": true
+    },
+    "rz-diff": {
+     "changed": null,
+     "observed": false
+    },
+    "unified": {
+     "changed": true,
+     "observed": true
+    }
+   },
+   "kind": "null-check-added",
+   "label": "changed",
+   "name": "r1_null_validation",
+   "new_rva": 5472,
+   "new_size": 12,
+   "old_rva": 5456,
+   "old_size": 3,
+   "review": "accepted"
+  },
+  {
+   "engines": {
+    "bindiff": {
+     "changed": null,
+     "observed": false
+    },
+    "ghidriff": {
+     "changed": true,
+     "observed": true
+    },
+    "rz-diff": {
+     "changed": null,
+     "observed": false
+    },
+    "unified": {
+     "changed": true,
+     "observed": true
+    }
+   },
+   "kind": "other",
+   "label": "changed",
+   "name": "r1_structure_field",
+   "new_rva": 5488,
+   "new_size": 22,
+   "old_rva": 5472,
+   "old_size": 22,
+   "review": "accepted"
+  },
+  {
+   "engines": {
+    "bindiff": {
+     "changed": null,
+     "observed": false
+    },
+    "ghidriff": {
+     "changed": null,
+     "observed": true
+    },
+    "rz-diff": {
+     "changed": null,
+     "observed": false
+    },
+    "unified": {
+     "changed": true,
+     "observed": true
+    }
+   },
+   "kind": "constant-change",
+   "label": "changed",
+   "name": "r1_security_flag",
+   "new_rva": 5520,
+   "new_size": 6,
+   "old_rva": 5504,
+   "old_size": 6,
+   "review": "accepted"
+  },
+  {
+   "engines": {
+    "bindiff": {
+     "changed": null,
+     "observed": false
+    },
+    "ghidriff": {
+     "changed": null,
+     "observed": true
+    },
+    "rz-diff": {
+     "changed": null,
+     "observed": false
+    },
+    "unified": {
+     "changed": false,
+     "observed": true
+    }
+   },
+   "kind": null,
+   "label": "unchanged",
+   "name": "r1_primary",
+   "new_rva": 5536,
+   "new_size": 4,
+   "old_rva": 5520,
+   "old_size": 4,
+   "review": "ambiguous"
+  },
+  {
+   "engines": {
+    "bindiff": {
+     "changed": null,
+     "observed": false
+    },
+    "ghidriff": {
+     "changed": null,
+     "observed": true
+    },
+    "rz-diff": {
+     "changed": null,
+     "observed": false
+    },
+    "unified": {
+     "changed": false,
+     "observed": true
+    }
+   },
+   "kind": null,
+   "label": "unchanged",
+   "name": "r1_secondary",
+   "new_rva": 5552,
+   "new_size": 6,
+   "old_rva": 5536,
+   "old_size": 6,
+   "review": "accepted"
+  },
+  {
+   "engines": {
+    "bindiff": {
+     "changed": null,
+     "observed": false
+    },
+    "ghidriff": {
+     "changed": null,
+     "observed": true
+    },
+    "rz-diff": {
+     "changed": null,
+     "observed": false
+    },
+    "unified": {
+     "changed": false,
+     "observed": true
+    }
+   },
+   "kind": null,
+   "label": "unchanged",
+   "name": "r1_unchanged",
+   "new_rva": 5568,
+   "new_size": 6,
+   "old_rva": 5552,
+   "old_size": 6,
+   "review": "accepted"
+  },
+  {
+   "engines": {
+    "bindiff": {
+     "changed": null,
+     "observed": false
+    },
+    "ghidriff": {
+     "changed": null,
+     "observed": true
+    },
+    "rz-diff": {
+     "changed": null,
+     "observed": false
+    },
+    "unified": {
+     "changed": false,
+     "observed": true
+    }
+   },
+   "kind": "cosmetic",
+   "label": "cosmetic",
+   "name": "r1_cosmetic",
+   "new_rva": 5584,
+   "new_size": 8,
+   "old_rva": 5568,
+   "old_size": 8,
+   "review": "accepted"
+  },
+  {
+   "engines": {
+    "bindiff": {
+     "changed": null,
+     "observed": false
+    },
+    "ghidriff": {
+     "changed": null,
+     "observed": false
+    },
+    "rz-diff": {
+     "changed": null,
+     "observed": false
+    },
+    "unified": {
+     "changed": null,
+     "observed": false
+    }
+   },
+   "kind": null,
+   "label": "no-counterpart",
+   "name": "r1_removed",
+   "new_rva": null,
+   "new_size": null,
+   "old_rva": 5584,
+   "old_size": 6,
+   "review": "accepted"
+  }
+ ],
+ "labels_sha256": "9653f54f4e56ab0510be07fdb40ad4f88cf2047002831c79708672b9869599fe",
+ "pair_id": "research-mingw-gcc-O2-r1-pilot-defined-v1-v2"
+}

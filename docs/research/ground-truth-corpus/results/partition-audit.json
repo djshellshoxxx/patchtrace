@@ -1,0 +1,288 @@
+{
+ "actual": {
+  "findings": [],
+  "pairs": 23,
+  "passed": true,
+  "scope": "supplied identifiers only; near duplicates and unrecorded fragments are not certified"
+ },
+ "labels": [
+  {
+   "digest_sha256": "1792c140953da1e24c01e697731f3f9d3e5e0065e8358418d3f1fe1aed19e26f",
+   "pair_id": "aa-defined-v1-O2-rebuild"
+  },
+  {
+   "digest_sha256": "bce0f84260d125168b2142888547438b810abb4189d8688e1778699995025e92",
+   "pair_id": "aa-defined-v1-mingw-gcc-O2-rebuild"
+  },
+  {
+   "digest_sha256": "3e33941f984951fde5ee28870da9aaad8a7b3e6560a974e6d691ee908e3debe3",
+   "pair_id": "cjson-1.7.16-to-1.7.17-O2"
+  },
+  {
+   "digest_sha256": "81fe7c29372134b2ba1efa5f958ee42629e22c71b722089e7dfc02085afaac8c",
+   "pair_id": "noise-defined-v1-mingw-gcc-O2-mingw-clang-O2"
+  },
+  {
+   "digest_sha256": "a49fac036302ab463018d22c76aeb0de5bde43adb9db3ed3ac50be4b1dc9f415",
+   "pair_id": "noise-defined-v1-msvc-free-O0-msvc-free-O2"
+  },
+  {
+   "digest_sha256": "ab00e8abc4f8f62bd7cd67d4ca1e70266d77f281ce69831b5ac87812541355a9",
+   "pair_id": "noise-defined-v1-msvc-free-O2-mingw-gcc-O2"
+  },
+  {
+   "digest_sha256": "08939af3c162e5dee94f3abe317aa098f8672b32e601a4f75fddf19a0db82445",
+   "pair_id": "noise-defined-v1-msvc-free-O2-msvc-free-Os"
+  },
+  {
+   "digest_sha256": "24ba952fbde62663524fa3a62033fdf7adfdaadafc8a7f803860a5c171522964",
+   "pair_id": "ours-r1-pilot-defined-v1-v2-O2"
+  },
+  {
+   "digest_sha256": "728dda3cdf9affc5ef5d3a5a6f6932bd3ab03e71e4846cd6bd5f1cefab8738e6",
+   "pair_id": "research-mingw-clang-O0-r1-pilot-defined-v1-v2"
+  },
+  {
+   "digest_sha256": "5a4cbbfe911713adb7e2187a52f2314d201feee00b703fe49e7104bcfc3ee5c2",
+   "pair_id": "research-mingw-clang-O1-r1-pilot-defined-v1-v2"
+  },
+  {
+   "digest_sha256": "c7ecb3eff971b910cb552bb93fcc8aa2da22711968b10ccb8393923fee6b4ef6",
+   "pair_id": "research-mingw-clang-O2-r1-pilot-defined-v1-v2"
+  },
+  {
+   "digest_sha256": "db7f567538c5351ef1f678046b24c24234f8efe8b1bd029696aff7c9c718b6cb",
+   "pair_id": "research-mingw-clang-O3-r1-pilot-defined-v1-v2"
+  },
+  {
+   "digest_sha256": "0c40374426eaa4de26a1cfabaffc04949c92ed608341bc62519b701b42048935",
+   "pair_id": "research-mingw-clang-Os-r1-pilot-defined-v1-v2"
+  },
+  {
+   "digest_sha256": "4a3561213e075e703483e56b1d6e32b48c29df098ee4fe48e9a79eeb19a88390",
+   "pair_id": "research-mingw-gcc-O0-r1-pilot-defined-v1-v2"
+  },
+  {
+   "digest_sha256": "7d4f75d473f56ddaa90ab75de2804c27b16133902f13c895f9dcbd0dd4eab65d",
+   "pair_id": "research-mingw-gcc-O1-r1-pilot-defined-v1-v2"
+  },
+  {
+   "digest_sha256": "9653f54f4e56ab0510be07fdb40ad4f88cf2047002831c79708672b9869599fe",
+   "pair_id": "research-mingw-gcc-O2-r1-pilot-defined-v1-v2"
+  },
+  {
+   "digest_sha256": "11309c26c1a58fb6c9cce9e76d0a3249972604ed5c8acd6c787b94039325a2b2",
+   "pair_id": "research-mingw-gcc-O3-r1-pilot-defined-v1-v2"
+  },
+  {
+   "digest_sha256": "2cf055a19d0b9bdfeef738168bd4dbb026f48bdb31766b0568822490424303e4",
+   "pair_id": "research-mingw-gcc-Os-r1-pilot-defined-v1-v2"
+  },
+  {
+   "digest_sha256": "ef7b61f5b875fd32b67578b7a674833aa012192804afc8f1f34229246e71bad8",
+   "pair_id": "research-msvc-free-O0-r1-pilot-defined-v1-v2"
+  },
+  {
+   "digest_sha256": "bfcab80e96339372a4c4bb06996d874e7ccf0a6dc98803b4af33a7eb25a96ed8",
+   "pair_id": "research-msvc-free-O1-r1-pilot-defined-v1-v2"
+  },
+  {
+   "digest_sha256": "c4235b376af73f6a25b8517f3847dc0893e5e50fc64d11b70af3d84a1d1b39d6",
+   "pair_id": "research-msvc-free-O2-r1-pilot-defined-v1-v2"
+  },
+  {
+   "digest_sha256": "d2999a57024e0e6d886148bd0b40fde97b5360362097929cdd296c1932dc44e9",
+   "pair_id": "research-msvc-free-O3-r1-pilot-defined-v1-v2"
+  },
+  {
+   "digest_sha256": "329795ee16c44a8c2f559cab0735234b0b47fb00342214807f942270ae48f200",
+   "pair_id": "research-msvc-free-Os-r1-pilot-defined-v1-v2"
+  }
+ ],
+ "negative_control": {
+  "purpose": "deliberately assign one compiler variant to validation; not an actual held-out partition",
+  "result": {
+   "findings": [
+    {
+     "key": "82507c9e80aa0493860ca0b56a7400ec67dbda7ae3a32185aa19aaefa5b1b701",
+     "kind": "artifact",
+     "pair_ids": [
+      "aa-defined-v1-mingw-gcc-O2-rebuild",
+      "noise-defined-v1-mingw-gcc-O2-mingw-clang-O2",
+      "noise-defined-v1-msvc-free-O2-mingw-gcc-O2",
+      "research-mingw-gcc-O2-r1-pilot-defined-v1-v2"
+     ],
+     "roles": [
+      "dev",
+      "validation"
+     ]
+    },
+    {
+     "key": "c03b76a0e6db62ac35c5f4fa727f38cafdcfb5e7b8544c327b4c9587f8707b58",
+     "kind": "artifact",
+     "pair_ids": [
+      "aa-defined-v1-mingw-gcc-O2-rebuild",
+      "noise-defined-v1-mingw-gcc-O2-mingw-clang-O2",
+      "noise-defined-v1-msvc-free-O2-mingw-gcc-O2",
+      "research-mingw-gcc-O2-r1-pilot-defined-v1-v2"
+     ],
+     "roles": [
+      "dev",
+      "validation"
+     ]
+    },
+    {
+     "key": "L-ours-r1-pilot-defined",
+     "kind": "lineage",
+     "pair_ids": [
+      "aa-defined-v1-O2-rebuild",
+      "aa-defined-v1-mingw-gcc-O2-rebuild",
+      "noise-defined-v1-mingw-gcc-O2-mingw-clang-O2",
+      "noise-defined-v1-msvc-free-O0-msvc-free-O2",
+      "noise-defined-v1-msvc-free-O2-mingw-gcc-O2",
+      "noise-defined-v1-msvc-free-O2-msvc-free-Os",
+      "ours-r1-pilot-defined-v1-v2-O2",
+      "research-mingw-clang-O0-r1-pilot-defined-v1-v2",
+      "research-mingw-clang-O1-r1-pilot-defined-v1-v2",
+      "research-mingw-clang-O2-r1-pilot-defined-v1-v2",
+      "research-mingw-clang-O3-r1-pilot-defined-v1-v2",
+      "research-mingw-clang-Os-r1-pilot-defined-v1-v2",
+      "research-mingw-gcc-O0-r1-pilot-defined-v1-v2",
+      "research-mingw-gcc-O1-r1-pilot-defined-v1-v2",
+      "research-mingw-gcc-O2-r1-pilot-defined-v1-v2",
+      "research-mingw-gcc-O3-r1-pilot-defined-v1-v2",
+      "research-mingw-gcc-Os-r1-pilot-defined-v1-v2",
+      "research-msvc-free-O0-r1-pilot-defined-v1-v2",
+      "research-msvc-free-O1-r1-pilot-defined-v1-v2",
+      "research-msvc-free-O2-r1-pilot-defined-v1-v2",
+      "research-msvc-free-O3-r1-pilot-defined-v1-v2",
+      "research-msvc-free-Os-r1-pilot-defined-v1-v2"
+     ],
+     "roles": [
+      "dev",
+      "validation"
+     ]
+    },
+    {
+     "key": "defined",
+     "kind": "project",
+     "pair_ids": [
+      "aa-defined-v1-O2-rebuild",
+      "aa-defined-v1-mingw-gcc-O2-rebuild",
+      "noise-defined-v1-mingw-gcc-O2-mingw-clang-O2",
+      "noise-defined-v1-msvc-free-O0-msvc-free-O2",
+      "noise-defined-v1-msvc-free-O2-mingw-gcc-O2",
+      "noise-defined-v1-msvc-free-O2-msvc-free-Os",
+      "ours-r1-pilot-defined-v1-v2-O2",
+      "research-mingw-clang-O0-r1-pilot-defined-v1-v2",
+      "research-mingw-clang-O1-r1-pilot-defined-v1-v2",
+      "research-mingw-clang-O2-r1-pilot-defined-v1-v2",
+      "research-mingw-clang-O3-r1-pilot-defined-v1-v2",
+      "research-mingw-clang-Os-r1-pilot-defined-v1-v2",
+      "research-mingw-gcc-O0-r1-pilot-defined-v1-v2",
+      "research-mingw-gcc-O1-r1-pilot-defined-v1-v2",
+      "research-mingw-gcc-O2-r1-pilot-defined-v1-v2",
+      "research-mingw-gcc-O3-r1-pilot-defined-v1-v2",
+      "research-mingw-gcc-Os-r1-pilot-defined-v1-v2",
+      "research-msvc-free-O0-r1-pilot-defined-v1-v2",
+      "research-msvc-free-O1-r1-pilot-defined-v1-v2",
+      "research-msvc-free-O2-r1-pilot-defined-v1-v2",
+      "research-msvc-free-O3-r1-pilot-defined-v1-v2",
+      "research-msvc-free-Os-r1-pilot-defined-v1-v2"
+     ],
+     "roles": [
+      "dev",
+      "validation"
+     ]
+    },
+    {
+     "key": "[\"suite\",\"r1-pilot/defined\",\"v1\"]",
+     "kind": "source",
+     "pair_ids": [
+      "aa-defined-v1-O2-rebuild",
+      "aa-defined-v1-mingw-gcc-O2-rebuild",
+      "noise-defined-v1-mingw-gcc-O2-mingw-clang-O2",
+      "noise-defined-v1-msvc-free-O0-msvc-free-O2",
+      "noise-defined-v1-msvc-free-O2-mingw-gcc-O2",
+      "noise-defined-v1-msvc-free-O2-msvc-free-Os",
+      "ours-r1-pilot-defined-v1-v2-O2",
+      "research-mingw-clang-O0-r1-pilot-defined-v1-v2",
+      "research-mingw-clang-O1-r1-pilot-defined-v1-v2",
+      "research-mingw-clang-O2-r1-pilot-defined-v1-v2",
+      "research-mingw-clang-O3-r1-pilot-defined-v1-v2",
+      "research-mingw-clang-Os-r1-pilot-defined-v1-v2",
+      "research-mingw-gcc-O0-r1-pilot-defined-v1-v2",
+      "research-mingw-gcc-O1-r1-pilot-defined-v1-v2",
+      "research-mingw-gcc-O2-r1-pilot-defined-v1-v2",
+      "research-mingw-gcc-O3-r1-pilot-defined-v1-v2",
+      "research-mingw-gcc-Os-r1-pilot-defined-v1-v2",
+      "research-msvc-free-O0-r1-pilot-defined-v1-v2",
+      "research-msvc-free-O1-r1-pilot-defined-v1-v2",
+      "research-msvc-free-O2-r1-pilot-defined-v1-v2",
+      "research-msvc-free-O3-r1-pilot-defined-v1-v2",
+      "research-msvc-free-Os-r1-pilot-defined-v1-v2"
+     ],
+     "roles": [
+      "dev",
+      "validation"
+     ]
+    },
+    {
+     "key": "[\"suite\",\"r1-pilot/defined\",\"v2\"]",
+     "kind": "source",
+     "pair_ids": [
+      "ours-r1-pilot-defined-v1-v2-O2",
+      "research-mingw-clang-O0-r1-pilot-defined-v1-v2",
+      "research-mingw-clang-O1-r1-pilot-defined-v1-v2",
+      "research-mingw-clang-O2-r1-pilot-defined-v1-v2",
+      "research-mingw-clang-O3-r1-pilot-defined-v1-v2",
+      "research-mingw-clang-Os-r1-pilot-defined-v1-v2",
+      "research-mingw-gcc-O0-r1-pilot-defined-v1-v2",
+      "research-mingw-gcc-O1-r1-pilot-defined-v1-v2",
+      "research-mingw-gcc-O2-r1-pilot-defined-v1-v2",
+      "research-mingw-gcc-O3-r1-pilot-defined-v1-v2",
+      "research-mingw-gcc-Os-r1-pilot-defined-v1-v2",
+      "research-msvc-free-O0-r1-pilot-defined-v1-v2",
+      "research-msvc-free-O1-r1-pilot-defined-v1-v2",
+      "research-msvc-free-O2-r1-pilot-defined-v1-v2",
+      "research-msvc-free-O3-r1-pilot-defined-v1-v2",
+      "research-msvc-free-Os-r1-pilot-defined-v1-v2"
+     ],
+     "roles": [
+      "dev",
+      "validation"
+     ]
+    }
+   ],
+   "pairs": 23,
+   "passed": false,
+   "scope": "supplied identifiers only; near duplicates and unrecorded fragments are not certified"
+  }
+ },
+ "roles": {
+  "aa-defined-v1-O2-rebuild": "dev",
+  "aa-defined-v1-mingw-gcc-O2-rebuild": "dev",
+  "cjson-1.7.16-to-1.7.17-O2": "dev",
+  "noise-defined-v1-mingw-gcc-O2-mingw-clang-O2": "dev",
+  "noise-defined-v1-msvc-free-O0-msvc-free-O2": "dev",
+  "noise-defined-v1-msvc-free-O2-mingw-gcc-O2": "dev",
+  "noise-defined-v1-msvc-free-O2-msvc-free-Os": "dev",
+  "ours-r1-pilot-defined-v1-v2-O2": "dev",
+  "research-mingw-clang-O0-r1-pilot-defined-v1-v2": "dev",
+  "research-mingw-clang-O1-r1-pilot-defined-v1-v2": "dev",
+  "research-mingw-clang-O2-r1-pilot-defined-v1-v2": "dev",
+  "research-mingw-clang-O3-r1-pilot-defined-v1-v2": "dev",
+  "research-mingw-clang-Os-r1-pilot-defined-v1-v2": "dev",
+  "research-mingw-gcc-O0-r1-pilot-defined-v1-v2": "dev",
+  "research-mingw-gcc-O1-r1-pilot-defined-v1-v2": "dev",
+  "research-mingw-gcc-O2-r1-pilot-defined-v1-v2": "dev",
+  "research-mingw-gcc-O3-r1-pilot-defined-v1-v2": "dev",
+  "research-mingw-gcc-Os-r1-pilot-defined-v1-v2": "dev",
+  "research-msvc-free-O0-r1-pilot-defined-v1-v2": "dev",
+  "research-msvc-free-O1-r1-pilot-defined-v1-v2": "dev",
+  "research-msvc-free-O2-r1-pilot-defined-v1-v2": "dev",
+  "research-msvc-free-O3-r1-pilot-defined-v1-v2": "dev",
+  "research-msvc-free-Os-r1-pilot-defined-v1-v2": "dev"
+ },
+ "scope": "All development; no locked test consumed."
+}

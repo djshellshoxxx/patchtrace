@@ -1,0 +1,511 @@
+{
+ "case": {
+  "intent": "Candidate source truth for16 named mutation categories. Every common-domain operation uses defined arithmetic and in-bounds access; logical-bounds and NULL policy checks deliberately avoid unsafe old-version execution. See README ledger; authored labels are not accepted binary ground truth until checked independently.",
+  "new": "v2",
+  "old": "v1",
+  "problems": [],
+  "project": "defined",
+  "suite": "r1-pilot"
+ },
+ "contract": "known-answer-labels/1",
+ "digest_sha256": "c4235b376af73f6a25b8517f3847dc0893e5e50fc64d11b70af3d84a1d1b39d6",
+ "family": "synthetic",
+ "functions": [
+  {
+   "body": "n/a",
+   "change_kind": null,
+   "check": "ok",
+   "file": "r1.c",
+   "identity": "no-counterpart",
+   "label": "no-counterpart",
+   "label_source": "authored-truth",
+   "name": "r1_added",
+   "new_rva": 4720,
+   "new_size": 4,
+   "notes": "",
+   "old_rva": null,
+   "old_size": null,
+   "taxonomy": [
+    "N7"
+   ],
+   "variant": null
+  },
+  {
+   "body": "different",
+   "change_kind": "constant-change",
+   "check": "ok",
+   "file": "r1.c",
+   "identity": "same",
+   "label": "changed",
+   "label_source": "authored-truth",
+   "name": "r1_integer_constant",
+   "new_rva": 4096,
+   "new_size": 4,
+   "notes": "Candidate authored source truth; binary survival pending independent review. Unsigned addition literal 17 -> 29; defined for every uint32_t value.",
+   "old_rva": 4096,
+   "old_size": 4,
+   "taxonomy": [
+    "N6"
+   ],
+   "variant": null
+  },
+  {
+   "body": "different",
+   "change_kind": "comparison-change",
+   "check": "ok",
+   "file": "r1.c",
+   "identity": "same",
+   "label": "changed",
+   "label_source": "authored-truth",
+   "name": "r1_comparison",
+   "new_rva": 4112,
+   "new_size": 17,
+   "notes": "Candidate authored source truth; binary survival pending independent review. Strict comparison becomes inclusive; distinguishing input value=13.",
+   "old_rva": 4112,
+   "old_size": 17,
+   "taxonomy": [
+    "N6"
+   ],
+   "variant": null
+  },
+  {
+   "body": "different",
+   "change_kind": "comparison-change",
+   "check": "ok",
+   "file": "r1.c",
+   "identity": "same",
+   "label": "changed",
+   "label_source": "authored-truth",
+   "name": "r1_branch_inversion",
+   "new_rva": 4144,
+   "new_size": 13,
+   "notes": "Candidate authored source truth; binary survival pending independent review. Invert bit-test condition with unchanged branch bodies; flags=0,value=0 gives 35 -> 85.",
+   "old_rva": 4144,
+   "old_size": 13,
+   "taxonomy": [
+    "N6"
+   ],
+   "variant": null
+  },
+  {
+   "body": "different",
+   "change_kind": "bounds-check-added",
+   "check": "ok",
+   "file": "r1.c",
+   "identity": "same",
+   "label": "changed",
+   "label_source": "authored-truth",
+   "name": "r1_bounds_added",
+   "new_rva": 4160,
+   "new_size": 34,
+   "notes": "Candidate authored source truth; binary survival pending independent review. Both versions retain physical 16-byte bounds; v2 adds logical-length rejection. data must designate 16 initialized bytes. No old-version out-of-bounds behavior is claimed.",
+   "old_rva": 4160,
+   "old_size": 29,
+   "taxonomy": [
+    "N6"
+   ],
+   "variant": null
+  },
+  {
+   "body": "different",
+   "change_kind": "bounds-check-removed",
+   "check": "ok",
+   "file": "r1.c",
+   "identity": "same",
+   "label": "changed",
+   "label_source": "authored-truth",
+   "name": "r1_bounds_removed",
+   "new_rva": 4208,
+   "new_size": 29,
+   "notes": "Candidate authored source truth; binary survival pending independent review. Remove logical-length rejection while preserving physical 16-byte bounds; same total defined input domain as bounds_added.",
+   "old_rva": 4192,
+   "old_size": 34,
+   "taxonomy": [
+    "N6"
+   ],
+   "variant": null
+  },
+  {
+   "body": "different",
+   "change_kind": "other",
+   "check": "ok",
+   "file": "r1.c",
+   "identity": "same",
+   "label": "changed",
+   "label_source": "authored-truth",
+   "name": "r1_pointer_offset",
+   "new_rva": 4240,
+   "new_size": 16,
+   "notes": "Candidate authored source truth; binary survival pending independent review. Pointer offset 1 -> 2; non-NULL data must designate an array of at least four initialized bytes in both versions.",
+   "old_rva": 4240,
+   "old_size": 16,
+   "taxonomy": [
+    "N6"
+   ],
+   "variant": null
+  },
+  {
+   "body": "different",
+   "change_kind": "other",
+   "check": "ok",
+   "file": "r1.c",
+   "identity": "same",
+   "label": "changed",
+   "label_source": "authored-truth",
+   "name": "r1_array_index",
+   "new_rva": 4256,
+   "new_size": 21,
+   "notes": "Candidate authored source truth; binary survival pending independent review. Index rotates modulo four; uint32 addition wraps before mask, so every index is defined. Same four-byte initialized array domain.",
+   "old_rva": 4256,
+   "old_size": 19,
+   "taxonomy": [
+    "N6"
+   ],
+   "variant": null
+  },
+  {
+   "body": "different",
+   "change_kind": "bounds-check-added",
+   "check": "ok",
+   "file": "r1.c",
+   "identity": "same",
+   "label": "changed",
+   "label_source": "authored-truth",
+   "name": "r1_overflow_guard",
+   "new_rva": 4288,
+   "new_size": 22,
+   "notes": "Candidate authored source truth; binary survival pending independent review. v1 unsigned wrap is intentional defined behavior; v2 rejects multiplication overflow. count=0x40000000 gives 0 -> UINT32_MAX.",
+   "old_rva": 4288,
+   "old_size": 8,
+   "taxonomy": [
+    "N6"
+   ],
+   "variant": null
+  },
+  {
+   "body": "different",
+   "change_kind": "comparison-change",
+   "check": "ok",
+   "file": "r1.c",
+   "identity": "same",
+   "label": "changed",
+   "label_source": "authored-truth",
+   "name": "r1_signedness",
+   "new_rva": 4320,
+   "new_size": 9,
+   "notes": "Candidate authored source truth; binary survival pending independent review. Convert negative int32 to uint32 using defined modulo conversion; delta=-1 gives 1 -> 0. No signed arithmetic or unsigned-to-signed cast.",
+   "old_rva": 4304,
+   "old_size": 9,
+   "taxonomy": [
+    "N6"
+   ],
+   "variant": null
+  },
+  {
+   "body": "different",
+   "change_kind": "constant-change",
+   "check": "ok",
+   "file": "r1.c",
+   "identity": "same",
+   "label": "changed",
+   "label_source": "authored-truth",
+   "name": "r1_allocation_size",
+   "new_rva": 4336,
+   "new_size": 32,
+   "notes": "Candidate authored source truth; binary survival pending independent review. Allocation request via caller callback: 4*count+8 -> 4*count+16 for count<=32, maximum144 bytes. Fixture neither implements allocation nor dereferences returned pointer.",
+   "old_rva": 4320,
+   "old_size": 32,
+   "taxonomy": [
+    "N6"
+   ],
+   "variant": null
+  },
+  {
+   "body": "different",
+   "change_kind": "loop-bound-change",
+   "check": "ok",
+   "file": "r1.c",
+   "identity": "same",
+   "label": "changed",
+   "label_source": "authored-truth",
+   "name": "r1_loop_bound",
+   "new_rva": 4368,
+   "new_size": 178,
+   "notes": "Candidate authored source truth; binary survival pending independent review. Read limit vs limit+1 bytes; limit<=8. Both versions require nine initialized bytes, including count=0; maximum nine loop iterations and sum2295.",
+   "old_rva": 4352,
+   "old_size": 111,
+   "taxonomy": [
+    "N6"
+   ],
+   "variant": null
+  },
+  {
+   "body": "different",
+   "change_kind": "other",
+   "check": "ok",
+   "file": "r1.c",
+   "identity": "same",
+   "label": "changed",
+   "label_source": "authored-truth",
+   "name": "r1_call_target",
+   "new_rva": 4560,
+   "new_size": 31,
+   "notes": "Candidate authored source truth; binary survival pending independent review. Choose primary -> secondary callback slot. Both callbacks must be ABI-compatible, defined and terminating for value; valid descriptor with null slots is rejected. Slot offsets survive address masking more directly than changing a direct call symbol.",
+   "old_rva": 4464,
+   "old_size": 31,
+   "taxonomy": [
+    "N6"
+   ],
+   "variant": null
+  },
+  {
+   "body": "different",
+   "change_kind": "error-handling-change",
+   "check": "ok",
+   "file": "r1.c",
+   "identity": "same",
+   "label": "changed",
+   "label_source": "authored-truth",
+   "name": "r1_error_handling",
+   "new_rva": 4592,
+   "new_size": 9,
+   "notes": "Candidate authored source truth; binary survival pending independent review. Failure status previously returned0; v2 returns UINT32_MAX; success path unchanged.",
+   "old_rva": 4496,
+   "old_size": 8,
+   "taxonomy": [
+    "N6"
+   ],
+   "variant": null
+  },
+  {
+   "body": "different",
+   "change_kind": "null-check-added",
+   "check": "ok",
+   "file": "r1.c",
+   "identity": "same",
+   "label": "changed",
+   "label_source": "authored-truth",
+   "name": "r1_null_validation",
+   "new_rva": 4608,
+   "new_size": 11,
+   "notes": "Candidate authored source truth; binary survival pending independent review. Adds policy validation of marker; neither version dereferences it. Defined for NULL or a valid object pointer; NULL,value=7 gives7 -> UINT32_MAX. This is not a formerly unsafe dereference fix.",
+   "old_rva": 4512,
+   "old_size": 3,
+   "taxonomy": [
+    "N6"
+   ],
+   "variant": null
+  },
+  {
+   "body": "different",
+   "change_kind": "other",
+   "check": "ok",
+   "file": "r1.c",
+   "identity": "same",
+   "label": "changed",
+   "label_source": "authored-truth",
+   "name": "r1_structure_field",
+   "new_rva": 4624,
+   "new_size": 15,
+   "notes": "Candidate authored source truth; binary survival pending independent review. Select requested offset0 -> granted offset4, with unchanged struct layout verified by static assertions. Valid record{3,9} gives3 ->9.",
+   "old_rva": 4528,
+   "old_size": 14,
+   "taxonomy": [
+    "N6"
+   ],
+   "variant": null
+  },
+  {
+   "body": "different",
+   "change_kind": "constant-change",
+   "check": "ok",
+   "file": "r1.c",
+   "identity": "same",
+   "label": "changed",
+   "label_source": "authored-truth",
+   "name": "r1_security_flag",
+   "new_rva": 4640,
+   "new_size": 6,
+   "notes": "Candidate authored source truth; binary survival pending independent review. Enable mandatory integrity-check policy bit4 in addition to existing bit1; this is a named fixture policy, not a claim about real software security.",
+   "old_rva": 4544,
+   "old_size": 6,
+   "taxonomy": [
+    "N6"
+   ],
+   "variant": null
+  },
+  {
+   "body": "identical",
+   "change_kind": null,
+   "check": "ok",
+   "file": "r1.c",
+   "identity": "same",
+   "label": "unchanged",
+   "label_source": "authored-truth",
+   "name": "r1_primary",
+   "new_rva": 4656,
+   "new_size": 4,
+   "notes": "Byte-identical source definition; binary equality/identity remains a build check.",
+   "old_rva": 4560,
+   "old_size": 4,
+   "taxonomy": [],
+   "variant": null
+  },
+  {
+   "body": "identical",
+   "change_kind": null,
+   "check": "ok",
+   "file": "r1.c",
+   "identity": "same",
+   "label": "unchanged",
+   "label_source": "authored-truth",
+   "name": "r1_secondary",
+   "new_rva": 4672,
+   "new_size": 6,
+   "notes": "Byte-identical source definition; binary equality/identity remains a build check.",
+   "old_rva": 4576,
+   "old_size": 6,
+   "taxonomy": [],
+   "variant": null
+  },
+  {
+   "body": "identical",
+   "change_kind": null,
+   "check": "ok",
+   "file": "r1.c",
+   "identity": "same",
+   "label": "unchanged",
+   "label_source": "authored-truth",
+   "name": "r1_unchanged",
+   "new_rva": 4688,
+   "new_size": 6,
+   "notes": "Byte-identical source definition; binary equality/identity remains a build check.",
+   "old_rva": 4592,
+   "old_size": 6,
+   "taxonomy": [],
+   "variant": null
+  },
+  {
+   "body": "identical",
+   "change_kind": "cosmetic",
+   "check": "ok",
+   "file": "r1.c",
+   "identity": "same",
+   "label": "cosmetic",
+   "label_source": "authored-truth",
+   "name": "r1_cosmetic",
+   "new_rva": 4704,
+   "new_size": 8,
+   "notes": "Spacing/comment only, identical significant tokens and line count. Candidate cosmetic label until binary body checked.",
+   "old_rva": 4608,
+   "old_size": 8,
+   "taxonomy": [],
+   "variant": null
+  },
+  {
+   "body": "n/a",
+   "change_kind": null,
+   "check": "ok",
+   "file": "r1.c",
+   "identity": "no-counterpart",
+   "label": "no-counterpart",
+   "label_source": "authored-truth",
+   "name": "r1_removed",
+   "new_rva": null,
+   "new_size": null,
+   "notes": "",
+   "old_rva": 4624,
+   "old_size": 6,
+   "taxonomy": [
+    "N7"
+   ],
+   "variant": null
+  }
+ ],
+ "label_source": "authored-truth",
+ "lineage": "L-ours-r1-pilot-defined",
+ "method": "suite",
+ "newer": {
+  "build": {
+   "compiler": "clang",
+   "compiler_version": "Ubuntu clang version 18.1.3 (1ubuntu1)",
+   "link_order": "sorted",
+   "opt": "O2",
+   "profile": "msvc-free",
+   "recipe_digest": "7c7b7d39a28c605d990b52c7d2386168f8adfef803a172daa55aaa7b861f6417",
+   "variant": "v2"
+  },
+  "debug_sha256": "06c94142f18866a90ec4921967328742cd7f02f2838e90d9a7afc3a21471fd3c",
+  "file_name": "defined.dll",
+  "image_base": 6442450944,
+  "pdb_sha256": "2708495f313ecbf997d9364b91510a0db5ca9cc26959b7830ed84cf314073063",
+  "sha256": "e4e283fe1f3ed243fd96ce618a2c57962c8d389f5abbc842ec44e30e0b4aad21",
+  "size": 2048,
+  "source": {
+   "commit": null,
+   "git": null,
+   "license_spdx": "MIT",
+   "mutation": null,
+   "ref": null,
+   "suite": "r1-pilot/defined",
+   "version": "v2"
+  }
+ },
+ "notes": [
+  "Development fixtures; authored labels require independent binary review. No engine was evaluated.",
+  "Built target images are never executed. Stock profile flags are unchanged.",
+  "Equal endpoint code can make named correspondence ambiguous; see the suite README.",
+  "No export names are injected. A stripped no-entry DLL may expose no discoverable function starts; zero discovery is an observability finding, not matching success. This is Clang, not MSVC cl."
+ ],
+ "older": {
+  "build": {
+   "compiler": "clang",
+   "compiler_version": "Ubuntu clang version 18.1.3 (1ubuntu1)",
+   "link_order": "sorted",
+   "opt": "O2",
+   "profile": "msvc-free",
+   "recipe_digest": "7c7b7d39a28c605d990b52c7d2386168f8adfef803a172daa55aaa7b861f6417",
+   "variant": "v1"
+  },
+  "debug_sha256": "f206bda693761c5e6e673e480728ac12feac2befb81c3b525ff843c8e6e0a698",
+  "file_name": "defined.dll",
+  "image_base": 6442450944,
+  "pdb_sha256": "32be1ec6acc07eb01460122d8b03116aaaadd8df1069724d172c67b266e27724",
+  "sha256": "7d423eacb44b23538623887f82450f08d9bb670ede9b400ddf82b646afd66c58",
+  "size": 2048,
+  "source": {
+   "commit": null,
+   "git": null,
+   "license_spdx": "MIT",
+   "mutation": null,
+   "ref": null,
+   "suite": "r1-pilot/defined",
+   "version": "v1"
+  }
+ },
+ "pair_id": "research-msvc-free-O2-r1-pilot-defined-v1-v2",
+ "project": "defined",
+ "reproducibility": null,
+ "stratum": "authored",
+ "summary": {
+  "absent_functions": 0,
+  "by_body": {
+   "different": 16,
+   "identical": 4,
+   "n/a": 2
+  },
+  "by_identity": {
+   "no-counterpart": 2,
+   "same": 20
+  },
+  "by_label": {
+   "changed": 16,
+   "cosmetic": 1,
+   "no-counterpart": 2,
+   "unchanged": 3
+  },
+  "disagreements": 0,
+  "functions": 22,
+  "runtime_functions": 0
+ }
+}

@@ -402,3 +402,60 @@ Consolidation verification follow-up: the first user-site test run was stopped b
 Final runtime integration full run at `8bf483c`: **18,265 passed, 135 skipped, 7 xfailed, 2 failed** in 362.09 s. The remaining product-independent AF_UNIX denial is unchanged. The other failure was the old corpus workflow test requiring every action use a mutable version tag; it rejected the verified MSVC full commit pin. The assertion now validates that exact approved commit while retaining existing checks for other actions. The actual workflow structure is also checked with PyYAML installed locally. A final rerun follows this test-only correction.
 
 Full d34efeb snapshot before final Qodo repairs: **18,304 passed, 128 skipped, 7 xfailed, 1 failed** in 371.25 s. Only failure: executor denies AF_UNIX socket creation. Final substantive Qodo findings are repaired and focused-tested (see 20261030-consolidation-review.md); a new combined full suite and exact-head GitHub gates follow. Schema regeneration completed without schema-file changes.
+
+
+## [R1-20261030] Ground-truth research and real pilot (PR #128)
+
+Branch `codex/r1-ground-truth-research-20261030`, baseline
+`a04f5a299a8d4afef023261e52e08d14678cf1e7`. Full report and executable handoff:
+[`docs/research/ground-truth-corpus/README.md`](research/ground-truth-corpus/README.md).
+This is development research; no target DLL/EXE was executed and no locked test
+or calibration threshold was consumed.
+
+Verified implementation extends the existing Tier R factory/contracts: explicit
+engine observers, accepted-review overlays, unconditional material-detection
+metrics, partition intersection checks, compiler-matrix and native pilot CLIs.
+Fixed ambiguous authored-unchanged admission, completed-primary persistence in
+the live unified harness, lost ZIP executable modes/Linux GL dependencies,
+immutable many-recipe build receipts, and SideData cache provenance. A test-only
+interpreter path repair preserves venv dependencies. Production matching
+algorithms and persisted schemas remain unchanged.
+
+Actual experiment evidence: 15 cells/30 endpoints built; all emitted engine,
+debug and PDB hashes survived the provenance rebuilds; three O3 endpoint metadata
+records were repaired. Independent automated source/binary review admitted 18
+records per reviewed O2 configuration (16 paired/2 one-sided), keeping four
+intrinsic ambiguities aside. Ghidriff/unified found zero functions on the
+name-hidden freestanding case. With MinGW exports visible, both recovered 16/16
+accepted pairs; Ghidriff supplied 6/13 generic change signals, unified 11/13 material
+classifications with two review outcomes. Repeated native observations/metrics
+and unified row digests agree. The direct native A/A control genuinely ran twice
+and observed 21/21 project pairs; no unchanged classification was inferred.
+Two cJSON security guards were inspected and detected by Ghidriff/unified; its
+unblinded review leaves 111 candidate labels unresolved and preserves 92 exports.
+Compiler-noise failure analysis identifies a conditional-branch/store evidence
+bug for separate production work; original results remain unchanged.
+
+Validation recorded so far:
+
+- Final focused regression/native-factory group: **139 passed in 30.69 s**.
+- Full Ruff (`src tests tools`): **passed**.
+- Corpus integrity with explicit Clang 18: **0 findings**, 26 suites/89 versions;
+  catalogue consistency: 51 cards/16 recipes/0 problems; canonical schema drift: 5 passed
+  and catalogue/mirror tests: 2 passed. No schema files regenerated in the worktree.
+- Published pilot labels: 23 strict/digest-valid documents, all development.
+  Deliberate cross-role variant assignment produces 6 leakage findings.
+- First restricted full pytest was interrupted after socket PermissionErrors:
+ 47 failed, 13,114 passed, 300 skipped, 4 xfailed, 3 errors; this is **not acceptance**.
+  Its unrelated venv-symlink test assumption was independently reproduced/fixed.
+- The localhost-enabled full Linux run is still being collected at this checkpoint;
+  its final result will be appended below rather than inferred from partial output.
+- No native Windows, true MSVC or verified BinDiff/BinExport result is claimed.
+  Packaging is unchanged. Final-head GitHub CI/review remains a merge gate.
+- Sonar at checkpoint a02a1774 reported 3.9% new-code duplication, limit 3%; component
+  attribution APIs returned CloudFront 403. No exclusions or threshold were changed.
+
+Exact evidence and failure histories live under
+`docs/research/ground-truth-corpus/results/`, including source/binary reviews,
+raw-observation receipts, immutable build receipts and the final metadata audit.
+Do not call R1 merged/release-ready or the 14-project/15-case corpus validated.

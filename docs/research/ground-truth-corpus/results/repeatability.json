@@ -1,0 +1,15 @@
+{
+ "ghidriff": {
+  "metrics_identical": true,
+  "observations_identical": true
+ },
+ "rz-diff": {
+  "metrics_identical": true,
+  "observations_identical": true
+ },
+ "unified": {
+  "metrics_identical": true,
+  "observations_identical": true
+ },
+ "unified_rows_sha256_identical": true
+}

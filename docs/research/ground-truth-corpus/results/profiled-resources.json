@@ -1,0 +1,32 @@
+{
+  "argv": [
+    "/workspace/scratch/a55b59b3e326/patchtrace-venv/bin/python",
+    "-m",
+    "tools.calibration.tier_r.research_pilot",
+    "--labels",
+    "/workspace/scratch/a55b59b3e326/r1-pilot-store/labels/research-mingw-gcc-O2-r1-pilot-defined-v1-v2.json",
+    "--store",
+    "/workspace/scratch/a55b59b3e326/r1-pilot-store",
+    "--work",
+    "/workspace/scratch/a55b59b3e326/r1-evidence/pilot-mingw-gcc-o2-profiled",
+    "--output",
+    "/workspace/scratch/a55b59b3e326/r1-evidence/pilot-mingw-gcc-o2-profiled.json",
+    "--ghidra-dir",
+    "/workspace/scratch/a55b59b3e326/research-tools/ghidra_12.0.4_PUBLIC",
+    "--java-home",
+    "/usr/lib/jvm/java-21-openjdk-amd64",
+    "--rz-diff",
+    "/workspace/scratch/a55b59b3e326/research-tools/rizin/bin/rz-diff",
+    "--unified",
+    "--review",
+    "docs/research/ground-truth-corpus/results/acceptance-mingw-gcc-o2.json"
+  ],
+  "exit_code": 0,
+  "wall_s": 49.91345604800017,
+  "platform": "Linux",
+  "maximum_single_completed_child_rss_bytes": 1117360128,
+  "user_cpu_s": 110.100904,
+  "system_cpu_s": 5.3309940000000005,
+  "memory_scope": "Linux getrusage(RUSAGE_CHILDREN).ru_maxrss: largest completed child, NOT the sum of concurrent process-tree RSS; fresh wrapper process and one pilot CLI child",
+  "peak_process_tree_rss_bytes": null
+}

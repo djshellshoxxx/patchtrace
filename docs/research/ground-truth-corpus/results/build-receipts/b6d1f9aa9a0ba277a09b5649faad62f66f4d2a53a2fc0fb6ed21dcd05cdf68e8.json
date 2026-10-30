@@ -1,0 +1,53 @@
+{
+ "contract": "tier-r-build/1",
+ "debug_sha256": "2aa30a0fe1880d6a0bc69dd90a37d021fbbf51ea5c4b16ebda63a6327d514071",
+ "inputs": {
+  "r1.c": "34d8d9f2a1c83c58565ed1885df192c5550e55b9ebb1716d978f8f1c51db27b7"
+ },
+ "output": "defined.dll",
+ "pdb_sha256": null,
+ "project": "defined",
+ "recipe": {
+  "cflags": [],
+  "compile": [
+   [
+    "-ffile-prefix-map=<SRC>=.",
+    "-fdebug-prefix-map=<SRC>=.",
+    "-O3",
+    "-g",
+    "-w",
+    "-std=c11",
+    "-I.",
+    "-c",
+    "r1.c",
+    "-o",
+    "../obj/00000.o"
+   ]
+  ],
+  "defines": [],
+  "include_dirs": [
+   "."
+  ],
+  "link": [
+   "-shared",
+   "-o",
+   "../out/defined.dll",
+   "../obj/00000.o",
+   "-static-libgcc",
+   "-Wl,--no-insert-timestamp",
+   "-Wl,--image-base=0x180000000"
+  ],
+  "link_order": "sorted",
+  "opt": "O3",
+  "profile": "mingw-gcc",
+  "source_date_epoch": 0,
+  "std": "c11",
+  "versions": {
+   "llvm-strip": "llvm-strip, compatible with GNU strip",
+   "mingw-gcc": "x86_64-w64-mingw32-gcc (GCC) 13-win32"
+  }
+ },
+ "recipe_digest": "852040d7832c6f22f1c8e63907e10954a4c50f9041823c55969aae693f87c09f",
+ "sha256": "627cadb54de9130594b8bd4f50b230a025d681754276920d56a0bba95130835e",
+ "source_digest": "dcadc9048c842a474e922ddbab333ff8097566c6e7834ed7c9cd2e75318af9c7"
+}
