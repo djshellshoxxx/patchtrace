@@ -184,6 +184,23 @@ no-recipe; evaluation metrics on hand-computed match sets; report determinism; a
   adopt; found cases arrive as `case-card/1` and are ingested without code changes.
 
 ## 16. Amendments (append-only)
+### [R1-20261030] Research admission and authored-declaration cross-check
+
+1. Existing `known-answer-labels/1` files remain compatible. `check: ok` means
+   that the authored declaration was actually established by the factory's
+   available evidence; an `ambiguous` label cannot satisfy an authored
+   `unchanged` declaration. It remains `unchecked`, like an ambiguous declared
+   change. No ambiguity may be promoted merely because it is not `changed`.
+2. `body: address-only` is a legacy masked-disassembly equality observation,
+   not a semantic-equivalence proof. In particular, its RIP-relative and
+   image-valued-immediate masks do not prove that operand targets correspond.
+   Research must record this limitation and require independent target evidence
+   before admitting a cosmetic label. This clarification does not rewrite
+   historical labels or change production matching decisions.
+3. The R1 pilot, observations and unresolved requirements are recorded in
+   `docs/research/ground-truth-corpus/`. Existing Tier R, Tier W, lineage,
+   preregistration and evaluator contracts remain the integration boundary.
+
 ### [D:known-answer-factory] 2026-10-14 build amendments
 1. Built and tested: s3 inputs I1 (recipe contract), I2/I3 (case cards via `factory.run_card`), I4 (suites via `factory.run_suite` with cross-check); s4 profiles `msvc-free`, `mingw-gcc`, `mingw-clang`; s5 inventory and hashes; s6 contract; s7 decision table; s9 A/A rebuild, layout and noise (`factory.run_aa`, `factory.run_noise`).
 2. Determinism facts found while building: clang must get `-ffile-compilation-dir=.` (a `-ffile-prefix-map` argument is itself recorded in the CodeView build info) plus `-gno-codeview-command-line`; lld-link needs `/pdbsourcepath:` (it absolutises relative CodeView paths and records cwd in S_ENVBLOCK), so PDB paths read `/ka-src/<rel>` and are mapped back; llvm-pdbutil prints `addr = SSSS:OOOO` in decimal; `llvm-strip` rewrites the debug directory's PointerToRawData, which the RVA check masks; multi-call tools (lld-link -> lld) must not be symlink-resolved.
