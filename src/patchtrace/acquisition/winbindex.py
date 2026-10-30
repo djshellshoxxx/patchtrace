@@ -87,12 +87,12 @@ def _finite_float(literal: str) -> float:
     return number
 
 
-def strict_json(text: bytes):
+def strict_json(text: bytes, *, allow_entry_surrogates: bool = False):
     try:
         value = json.loads(text.decode('utf-8'), object_pairs_hook=_no_duplicates,
                            parse_constant=_reject_constant, parse_float=_finite_float)
-        if _SURROGATE_ESCAPE.search(text):
-            _canonical(value)  # an unpaired surrogate is legal JSON but not text; this raises on it
+        if not allow_entry_surrogates and _SURROGATE_ESCAPE.search(text):
+            _canonical(value)  # a standalone JSON document must not contain unpaired surrogates
         return value
     except (UnicodeDecodeError, ValueError, RecursionError):
         raise AcquisitionError('PT-ACQ-PROVIDER', 'Winbindex record is not strict JSON') from None
@@ -156,7 +156,7 @@ def parse(data: bytes, file_name: str, data_date: str, *, compressed: bool = Tru
     file_name = validate_file_name(file_name)
     if not _DATE.fullmatch(data_date):
         raise AcquisitionError('PT-ACQ-INPUT', 'data date must be YYYY-MM-DD')
-    document = strict_json(decompress(data) if compressed else data)
+    document = strict_json(decompress(data) if compressed else data, allow_entry_surrogates=True)
     if not isinstance(document, dict):
         raise AcquisitionError('PT-ACQ-PROVIDER', 'Winbindex record must be a JSON object')
     candidates = []
@@ -380,7 +380,7 @@ def parse_rows(data: bytes, file_name: str, data_date: str, *, compressed: bool 
     file_name = validate_file_name(file_name)
     if not _DATE.fullmatch(data_date):
         raise AcquisitionError('PT-ACQ-INPUT', 'data date must be YYYY-MM-DD')
-    document = strict_json(decompress(data) if compressed else data)
+    document = strict_json(decompress(data) if compressed else data, allow_entry_surrogates=True)
     if not isinstance(document, dict):
         raise AcquisitionError('PT-ACQ-PROVIDER', 'Winbindex record must be a JSON object')
     rows: list[WinbindexRow] = []
