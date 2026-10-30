@@ -39,7 +39,7 @@ _VERSION = re.compile(r'^rz-diff ([0-9]{1,9})\.([0-9]{1,9})\.([0-9]{1,9})\b')
 
 def parse_version(text: str) -> tuple[str, tuple[int, int, int]] | None:
     for line in text.splitlines():
-        if match := _VERSION.match(line.strip()):
+        if (match := _VERSION.match(line.strip())) and all(len(g) <= 9 for g in match.groups()):
             numbers = tuple(int(g) for g in match.groups())
             return '.'.join(match.groups()), numbers  # type: ignore[return-value]
     return None

@@ -85,7 +85,7 @@ def normalize_ghidriff(raw: dict, project: ComparisonProject, run_id: str) -> li
         diff_types = _strings(item.get('diff_type', []), 'diff_type')
         ratio = item.get('ratio')
         if ratio is not None and (isinstance(ratio, bool) or not isinstance(ratio, (int, float))
-                                  or not math.isfinite(ratio) or not 0 <= ratio <= 1):
+                                  or not 0 <= ratio <= 1 or not math.isfinite(ratio)):
             raise ValueError('PT-SCHEMA: upstream ratio must be a finite number from zero to one')
         old, new = function(item['old'], 'older'), function(item['new'], 'newer')
         old.metadata['diff_types'] = diff_types

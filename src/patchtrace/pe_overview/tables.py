@@ -46,6 +46,33 @@ def _placeholder(text: str) -> bool:
     return text.startswith('<') and text.endswith('>')
 
 
+def parse_base_relocations(data: bytes, warnings: list[str]) -> list[tuple[int, int]]:
+    """(RVA, width) of every relocation in a .reloc directory. Every entry, including zero-width ABSOLUTE padding,
+    counts toward MAX_RELOCS, and a block's declared count is checked before it is walked, so a huge zero-filled
+    (virtual) directory is refused at once. An unknown type is reported once and masked as 8 bytes."""
+    pos, seen, entries, unknown = 0, 0, [], set()
+    while pos + 8 <= len(data):
+        page, block = struct.unpack_from('<II', data, pos)
+        if block == 0 and page == 0:
+            break
+        if block < 8 or pos + block > len(data) or block % 2:
+            raise PeTableError('malformed base relocation block')
+        seen += (block - 8) // 2
+        if seen > MAX_RELOCS:
+            raise PeTableError('too many base relocations')
+        for i in range((block - 8) // 2):
+            (entry,) = struct.unpack_from('<H', data, pos + 8 + 2 * i)
+            kind, offset = entry >> 12, entry & 0xFFF
+            width = RELOC_WIDTH.get(kind, 8)
+            if kind not in RELOC_WIDTH and kind not in unknown:
+                unknown.add(kind)
+                warnings.append(f'relocation type {kind} masked as 8 bytes')
+            if width:
+                entries.append((page + offset, width))
+        pos += block
+    return entries
+
+
 class PeTables:
     """A verified, read-only PE: its overview plus lazily parsed tables. The reader stays the caller's to close."""
 
@@ -183,26 +210,7 @@ class PeTables:
             self._relocs = ([], [])
             return self._relocs
         rva, size = found
-        data = self.read_rva(rva, size)
-        pos, entries, unknown = 0, [], set()
-        while pos + 8 <= len(data):
-            page, block = struct.unpack_from('<II', data, pos)
-            if block == 0 and page == 0:
-                break
-            if block < 8 or pos + block > len(data) or block % 2:
-                raise PeTableError('malformed base relocation block')
-            for i in range((block - 8) // 2):
-                (entry,) = struct.unpack_from('<H', data, pos + 8 + 2 * i)
-                kind, offset = entry >> 12, entry & 0xFFF
-                width = RELOC_WIDTH.get(kind, 8)
-                if kind not in RELOC_WIDTH and kind not in unknown:
-                    unknown.add(kind)
-                    self.warnings.append(f'relocation type {kind} masked as 8 bytes')
-                if width:
-                    entries.append((page + offset, width))
-                    if len(entries) > MAX_RELOCS:
-                        raise PeTableError('too many base relocations')
-            pos += block
+        entries = parse_base_relocations(self.read_rva(rva, size), self.warnings)
         entries.sort()
         self._relocs = ([e[0] for e in entries], [e[1] for e in entries])
         return self._relocs
