@@ -173,6 +173,8 @@ def slice_ops(
         item = by_id[uid]
         if item.opcode not in _KNOWN:
             unknowns.add(f"unknown-op:{item.opcode}:{uid}")
+        if item.opcode in ("UNIMPLEMENTED", "CPOOLREF", "NEW", "SEGMENTOP"):
+            unknowns.add(f"opaque-effect:{uid}")
         if item.opcode == "INDIRECT":
             unknowns.add(f"indirect-effect:{uid}")
         if item.opcode in ("LOAD", "STORE"):
