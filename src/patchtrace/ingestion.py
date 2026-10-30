@@ -6,6 +6,7 @@ import os
 import stat
 import struct
 import tempfile
+from itertools import chain
 from pathlib import Path
 
 from .hostile_text import is_hostile
@@ -121,6 +122,32 @@ def validate_pe(path: Path) -> None:
                 raise ValueError('PT-INPUT: PE section raw data is out of bounds')
 
 
+def _validate_pe_prefix(header: bytes, size: int) -> None:
+    """Reject invalid headers in the first 64 KiB before writing the input copy."""
+    if size < 64 or len(header) < 64:
+        raise ValueError('PT-INPUT: PE input size is invalid (maximum 1 GiB)')
+    if header[:2] != b'MZ':
+        raise ValueError('PT-INPUT: missing DOS MZ header')
+    offset = struct.unpack_from('<I', header, 0x3C)[0]
+    if offset < 64 or offset > size - 26:
+        raise ValueError('PT-INPUT: PE header offset is out of bounds')
+    if offset + 26 > len(header):
+        return  # A later header is checked by validate_pe on the completed copy.
+    pe = header[offset:offset + 26]
+    if pe[:4] != b'PE\0\0':
+        raise ValueError('PT-INPUT: missing PE signature')
+    if struct.unpack_from('<H', pe, 4)[0] != 0x8664:
+        raise ValueError('PT-INPUT: only PE AMD64 inputs are supported')
+    optional_size = struct.unpack_from('<H', pe, 20)[0]
+    if optional_size < 112 or offset + 24 + optional_size > size:
+        raise ValueError('PT-INPUT: truncated PE optional header')
+    if struct.unpack_from('<H', pe, 24)[0] != 0x20B:
+        raise ValueError('PT-INPUT: PE32+ optional header required')
+    section_count = struct.unpack_from('<H', pe, 6)[0]
+    if section_count < 1 or offset + 24 + optional_size + section_count * 40 > size:
+        raise ValueError('PT-INPUT: PE section table is truncated or empty')
+
+
 def inspect_artifact(path: Path, side: str, root: Path) -> Artifact:
     if side not in {'older', 'newer'}:
         raise ValueError('PT-INPUT: explicit older/newer side required')
@@ -146,7 +173,9 @@ def inspect_artifact(path: Path, side: str, root: Path) -> Artifact:
                 before.st_dev, before.st_ino, before.st_size, before.st_mtime_ns
             ):
                 raise ValueError('PT-INPUT: source changed before copying')
-            for chunk in iter(lambda: original.read(CHUNK_SIZE), b''):
+            header = original.read(65536)
+            _validate_pe_prefix(header, opened.st_size)
+            for chunk in chain((header,), iter(lambda: original.read(CHUNK_SIZE), b'')):
                 copied += len(chunk)
                 if copied > MAX_ARTIFACT_BYTES:
                     raise ValueError('PT-INPUT: source grew beyond 1 GiB while copying')

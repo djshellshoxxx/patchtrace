@@ -54,3 +54,18 @@ def test_nsis_source_paths_are_anchored_to_repository_root():
     assert 'File /r "${REPO_ROOT}\\dist\\PatchTrace\\*"' in script
     assert 'File "${REPO_ROOT}\\third_party\\notices\\nsis-3.13\\COPYING"' in script
     assert 'OutFile "${REPO_ROOT}\\dist\\PatchTrace-Windows-x64-Setup.exe"' in script
+
+
+def test_installer_checksum_sidecar_is_lf_only_and_verifiable(tmp_path: Path):
+    # Regression: the Setup sidecar was written in text mode, so on Windows it ended in CRLF and
+    # `sha256sum -c` failed with "PatchTrace-Windows-x64-Setup.exe\r: No such file" (windows-validate, run 40625345051).
+    import hashlib
+
+    installer = tmp_path / "PatchTrace-Windows-x64-Setup.exe"
+    installer.write_bytes(b"MZ installer bytes")
+    sidecar = HELPERS["write_checksum"](installer)
+    expected = f"{hashlib.sha256(b'MZ installer bytes').hexdigest()}  {installer.name}\n".encode("ascii")
+    assert sidecar.name == "PatchTrace-Windows-x64-Setup.exe.sha256"
+    assert sidecar.read_bytes() == expected and b"\r" not in sidecar.read_bytes()
+    source = (ROOT / "tools" / "package_windows_installer.py").read_text(encoding="utf-8")
+    assert "write_checksum(installer)" in source and '.sha256")\n    checksum.write_text' not in source

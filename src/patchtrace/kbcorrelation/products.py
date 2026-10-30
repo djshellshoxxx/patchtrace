@@ -140,6 +140,11 @@ def scope_id_for(facts: ProductFacts) -> str:
     key = {'family': facts.family, 'release': facts.release, 'architecture': facts.architecture,
            'channel': facts.channel, 'edition': facts.edition, 'build': None,
            'name': None if informative else facts.name_key}
+    if facts.family == 'windows-client' and facts.winbindex_key is not None:
+        # Release labels overlap between Windows 10 and 11. Preserve that generation in identity;
+        # v1 scopes without a client key and historical persisted records retain their identifiers.
+        key['winbindex_key'] = facts.winbindex_key
+        return domain_id('kbc.scope', 2, key)
     return domain_id('kbc.scope', 1, key)
 
 

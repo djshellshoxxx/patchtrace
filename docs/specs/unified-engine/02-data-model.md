@@ -94,6 +94,10 @@ Key columns (computed by `ir/features.py`, all 64-bit `blake2b(digest_size=8)` s
 Layout: `runs/<ghidriff_run_id>/unified/results/<result_id[:16]>/{manifest.json, rows.jsonl.gz, facts.jsonl.gz}` (inside `runs/`, so backups copy it; full id in the manifest). Write path: worker writes into a private temp dir; owner verifies every part hash, `os.replace`s the directory, then publishes the pointer row (D-07). Readers trust a directory only if the pointer row exists AND every hash matches; otherwise state "stale: re-run" (never a crash).
 
 Same-id decompile refreshes preserve the previously committed directory until the replacement pointer commits.
+Only a completed decompile stage with text for every requested pair and a successfully stored code part permits
+a same-id replacement. A skipped,
+failed or partial decompile must preserve any previously committed result and its code part; differing content
+is refused as `result-drift`, as for a refresh with decompilation disabled.
 Before replacing it, the owner moves the prior directory to a sibling
 `prev-<result_id[:16]>-<previous_manifest_sha256[:16]>`; installation or pointer failures restore it.
 If the process stops before rollback, readers may use only that exact sibling after verifying its full manifest hash,

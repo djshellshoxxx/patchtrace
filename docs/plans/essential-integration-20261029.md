@@ -45,3 +45,8 @@ Focused worker suites and full combined runs are recorded in the final continuat
 - Offline investigation and explicit pair preview/creation must be exposed in the GUI, with cancellation and no target execution.
 - Fresh native BinDiff, rz-diff, Ghidra and Windows evidence must be recorded independently of unit tests.
 - Every feature must distinguish implemented, integrated, automated-tested, native-verified, GUI-exposed and merged-to-main states. No overall completion percentage is inferred from file counts.
+
+
+## 2026-10-30 reconciliation correction
+
+The earlier #67 row was an intention, not a complete integration: private verified input copies, isolated external launches/probes, preview-bound consent and import/diagnostic/PE guards were absent at #123. These are now selectively ported with regressions in the consolidation candidate. Known-client product identity and unified failed-refresh preservation are also repaired. #69 and #72 remain proposed fixture/spec work pending current-contract reconciliation, not silently merged. #102 author work remains preserved; essential parser/checksum changes are selected without its Windows PR-QA restructuring. See `docs/audits/20261030-consolidation-review.md` and the 2026-10-30 QA/todo entries for exact evidence and pending gates.

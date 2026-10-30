@@ -734,10 +734,14 @@ def publish(service, request: UnifiedRequest, output: WorkerOutput, *, enrichmen
         manifest = store.verify_result_dir(output.staged, expected_result_id=expected.result_id, limits=limits)
         stages.append(_stage('verify', t))
         t = time.monotonic()
+        # A skipped or incomplete attempt must not replace a committed decompile and its verdicts.
         published = store.publish_result(enrichment, output.staged, guard=plan.guard(expected.result_id),
                                          current=_current_guard(service.project, expected.result_id),
                                          revision=service.project.revision, limits=limits,
-                                         upgrade=bool(output.stages))
+                                         upgrade=any(stage.stage == 'decompile' and stage.status == 'ok'
+                                                     for stage in output.stages)
+                                         and not any(note.startswith('decompile-part-skipped:')
+                                                     for note in output.notes))
         stages.append(_stage('publish', t))
     except UnifiedError as error:
         _discard(output.staged)

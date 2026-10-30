@@ -62,6 +62,28 @@ def env(tmp_path, monkeypatch):
         e.update(PYTHONPATH=str(tmp_path / 'fake'), FAKE_TRACE=str(trace))
         return e
 
+    real_run = backend.run_process
+
+    def run_fake(argv, **kwargs):
+        # Explicit test injection keeps production -I, private cwd and launcher routing intact.
+        assert argv[1:4] == ['-I', '-X', 'utf8']
+        scratch = Path(kwargs['cwd'])
+        assert scratch != ghidra and (scratch / 'ghidra-settings').is_dir()
+        if '--pt-mode' in argv:
+            start = argv.index('--') + 1
+            for side, value in zip(('older', 'newer'), argv[start:start + 2], strict=True):
+                snapshot = Path(value)
+                assert snapshot == scratch / 'inputs' / side / f'{side}.exe'
+                assert snapshot.read_bytes() == (tmp_path / f'{side}.exe').read_bytes()
+            bootstrap = ('import runpy,sys;sys.path.insert(0,sys.argv.pop(1));'
+                         'script=sys.argv.pop(1);sys.argv[0]=script;runpy.run_path(script,run_name="__main__")')
+            argv = [*argv[:4], '-c', bootstrap, str(tmp_path / 'fake'), *argv[4:]]
+        else:
+            index = argv.index('-m')
+            argv = [*argv[:index], str(fake / '__main__.py'), *argv[index + 2:]]
+        return real_run(argv, **kwargs)
+
+    monkeypatch.setattr(backend, 'run_process', run_fake)
     monkeypatch.setattr(backend, '_environment', environment)
     monkeypatch.setattr(backend, '_probe_backend', lambda *_: {
         'python': '3.12.0', 'ghidriff': 'fake-test-only', 'pyghidra': 'fake-test-only', 'available': True})

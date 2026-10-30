@@ -425,7 +425,10 @@ class KbService:
                 raise _fail('PT-KBC-INPUT', 'that product is not one of the products listed for the lead')
             rev = rev.model_copy(update={'selected_scope_id': scope_id})
             index, _ = load_index(ws, self.ports)
-            scope = next(s for s in index.scopes() if s.scope_id == scope_id)
+            scope = next((s for s in index.scopes() if s.scope_id == scope_id), None)
+            if scope is None:
+                raise _fail('PT-KBC-INPUT', 'the selected product mapping is no longer current; repeat the search '
+                            'and select the product again before resolving pairs')
             entered = sorted({*names, *(d.next for d in ws.decisions(rev.investigation_id)
                                         if d.op == 'component-name')})
             cards, refs = self._lead_cards(index, rev, ws)

@@ -389,3 +389,10 @@ Automated: `tests/test_tier_w_fetch.py` (33 passed) and `tests/test_tier_w_symbo
 | Profile validation, digest, GUI, settings matrix, schema regeneration | `QT_QPA_PLATFORM=offscreen python -m pytest -q tests/test_profiles.py tests/test_ui_profiles.py tests/test_unified_contracts.py::test_generate_schemas_reproduces_committed_files` | 55 passed in 73.46 s; local policy has a new digest, and a named profile cannot enable a mode above Setup |
 | Schema | `docs/schemas/profile/AnalysisProfile.json` regenerated | `symbol_policy` enum is `disabled | local | online`; prior enum values and digest inputs remain unchanged |
 | Lint and patch hygiene | `python -m ruff check src tests tools`; `git diff --check` | clean |
+
+
+## 2026-10-30 consolidation review
+
+Baseline PR #123 head `99f8328` passed QA run `41004210486` and native Windows Ghidriff run `41004210319`; these validate the baseline only. The new consolidation selectively ports #67 launch/consent/import safeguards and #102 parser/checksum protections, fixes client product-scope identity and failed decompile refresh preservation, and corrects hidden worker help. See `docs/audits/20261030-consolidation-review.md` for findings and source dispositions.
+
+Local focused checks: 149 parser/GUI tests; 175 unified tests; 155 KB tests; 262 backend/core tests with 3 skips; 53 independent safety-review tests; 7 installer/help tests. These runs overlap and must not be added. `python -m pip check` and `python -m ruff check src tests tools` passed. Full combined `QT_QPA_PLATFORM=offscreen python -m pytest -q` is running. New exact-head Linux/Windows QA, repeated Qt, native Ghidriff and packaging are pending; no completion/native acceptance claim is made.

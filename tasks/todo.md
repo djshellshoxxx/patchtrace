@@ -836,3 +836,15 @@ Done: dock with state matrix, consent, import, changes, copy, go to CVE. Open: r
 ### [NW-P2B: N-way external limitations verification, 2026-10-16]
 - [x] Supersedes the earlier unchecked P2b row above. The EXTERNAL source/target skip count and pair-note text are already implemented in `src/patchtrace/nway/graph.py`, propagated by `nway/series.py`, and covered at the parser level by `tests/test_nway_graph.py::test_nway_external_skips_are_counted`. SPEC-09 A-05 and SPEC-28 A-06 status amendments are already present; do not rebuild this slice.
 - [ ] New regression `tests/test_nway_series.py::test_external_raw_match_skips_survive_series_persistence` adds real imported-pair -> series.json note/chain determinism coverage. Current-head Linux/Windows CI **not yet verified**. Do not mark this new integration-test gate passing without running it.
+
+
+### 2026-10-30 consolidation delivery
+
+- [x] Repair colliding Windows 10/11 client scope identities; retain historical contexts and refuse stale selected scopes.
+- [x] Preserve prior unified verdict/code parts after skipped, failed or partial decompile refresh.
+- [x] Selectively port #67 missing launch/input/consent/import safeguards and #102 hostile-parser/checksum fixes; preserve local symbols and Windows PR QA.
+- [ ] Finish combined full-suite and exact-head Linux/Windows/Qt/native packaging gates; merge only reviewed passing combined source.
+- [ ] Reconcile remaining #69 synthetic fixtures and #72 proposed essential specs against current contracts; preserve source branches.
+- [ ] Preserve and separately reconcile #102 Windows branding/version work; avoid its PR Windows-QA skip policy.
+- [ ] Before locked calibration, reconcile #78 output/artifact persistence, #79 A/A hard-failure guard, #82 recipe pin-collision controls and #85 final-look receipt guard.
+- [ ] Continue essential end-to-end/live acceptance using `docs/handoff/autonomous-continuation-20261030.md`; current source and checks override stale handoffs.

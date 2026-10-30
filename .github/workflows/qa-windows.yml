@@ -225,6 +225,7 @@ jobs:
           set -euo pipefail
           cd release
           sha256sum -c PatchTrace-0.1.0-windows-x64.zip.sha256
+          sha256sum -c PatchTrace-Windows-x64-Setup.exe.sha256
           cp PatchTrace-0.1.0-windows-x64.zip PatchTrace-Windows-x64-Portable.zip
           sha256sum PatchTrace-Windows-x64-Portable.zip > PatchTrace-Windows-x64-Portable.zip.sha256
           sha256sum -c PatchTrace-Windows-x64-Portable.zip.sha256

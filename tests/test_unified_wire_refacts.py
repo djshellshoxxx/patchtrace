@@ -142,6 +142,33 @@ def test_a_text_that_does_not_show_the_edit_promotes_nothing(project, tmp_path):
     assert (facts.verdict, facts.second_channel) == ('review', None) and dict(facts.channels)['C6'] == 'equal'
 
 
+@pytest.mark.parametrize('failure', ['no-backend', 'no-gzf', 'partial', 'failed', 'part-failed'])
+def test_an_incomplete_decompile_refresh_preserves_the_committed_result(project, tmp_path, monkeypatch, failure):
+    place_gzfs(project)
+    first = pipeline.run_unified(project, options(tmp_path, texts=SHOWN))
+    committed = {p.name: p.read_bytes() for p in first.directory.iterdir()}
+    assert keep_same(project)[2].verdict == 'material'
+    refresh = options(tmp_path, texts=SHOWN, refresh=True)
+    if failure == 'no-backend':
+        refresh = options(tmp_path, refresh=True)
+    elif failure == 'no-gzf':
+        for path in (project.root / 'runs' / project.project.runs[-1].id / 'unified' / 'gzf').iterdir():
+            path.unlink()
+    elif failure == 'partial':
+        refresh = options(tmp_path, texts={'older': SHOWN['older']}, refresh=True)
+    elif failure == 'part-failed':
+        monkeypatch.setattr(pipeline, '_store_decomp', lambda *args: ('decompile-part-skipped:part-too-large',))
+    else:
+        def fail_decompile(*args, **kwargs):
+            raise UnifiedError('PT-UNIFIED-UNSUPPORTED', 'decompiler unavailable', reason='decompiler-unavailable')
+        monkeypatch.setattr(pipeline, 'decompile_side', fail_decompile)
+    with pytest.raises(UnifiedError) as error:
+        pipeline.run_unified(project, refresh)
+    assert error.value.reason == 'result-drift'
+    assert keep_same(project)[2].verdict == 'material'
+    assert {p.name: p.read_bytes() for p in first.directory.iterdir()} == committed
+
+
 def test_a_function_the_decompiler_failed_on_leaves_the_pair_in_review_and_is_counted(project, tmp_path):
     place_gzfs(project)
     report = pipeline.run_unified(project, options(tmp_path, texts={'older': SHOWN['older']}))   # nothing for newer
