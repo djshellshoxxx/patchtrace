@@ -45,6 +45,27 @@ or superseding implementations. Source and tests determine current status.
 PR review submissions for #78, #86, #94 and #102 were empty at inspection. This
 is absence of review evidence, not approval. R2 does not close or merge these PRs.
 
+### Later ownership checkpoint
+
+At 2026-10-30 23:14 UTC, main still resolves to the same baseline and the open PR
+count is 26. New research work is now explicit: [R1 #128](https://github.com/djshellshoxxx/patchtrace/pull/128),
+[R3 #129](https://github.com/djshellshoxxx/patchtrace/pull/129),
+[R4 #130](https://github.com/djshellshoxxx/patchtrace/pull/130),
+[R5 #132](https://github.com/djshellshoxxx/patchtrace/pull/132) and
+[R6 #133](https://github.com/djshellshoxxx/patchtrace/pull/133), alongside R2 #131.
+R1 owns corpus, labels, live-pair harness and its workflow repairs. R3 changes
+`facts/verdict.py` and the COS-PSEUDO proof version in `registry.py`; R2 does not
+copy or override those L2 changes. R5 owns calibration research and R6 integration
+research. Shared QA/task/module/spec documents need additive conflict resolution
+when these branches integrate. Exact observed heads and current R2 checkpoint
+checks are in [integration-checkpoint.json](results/integration-checkpoint.json).
+
+R1's later local development artifacts include a reviewed cJSON release pair.
+R2 reused only verified read-only inputs and made private copies for native
+analysis; it did not mutate the R1 checkout, store, labels, tools or calibration
+state. The review is explicitly unblinded and accepts only two positive records.
+See [the native cJSON report](08-native-cjson-development.md).
+
 The previous coordinator ledger is at
 [its exact head](https://github.com/djshellshoxxx/patchtrace/blob/8d958f0a1950a29c1d1cef9525a114654f4c9904/docs/plans/milestone-ledger-20261030.md).
 It reports #124 merged and several competing repair PRs closed. R2 rechecked

@@ -1,7 +1,9 @@
 """Bounded native Ghidra extraction and production unified compute on existing synthetic PE pairs.
 
 Never executes target binaries or accesses a corpus/calibration/locked evaluation.
-Keep work in a private directory; only the JSON summary is intended for commit.
+The work root must be new, under an existing trusted parent; existing roots and
+symlinks are rejected. The fresh --output report is confined to this checkout's
+research results directory; checkpoints update only the report created by this run.
 """
 from __future__ import annotations
 
@@ -21,7 +23,7 @@ from datetime import UTC, datetime
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-sys.path[:0] = [str(ROOT / 'src'), str(ROOT / 'tests'), str(ROOT / 'tools')]
+sys.path[:0] = [str(ROOT), str(ROOT / 'src'), str(ROOT / 'tests'), str(ROOT / 'tools')]
 
 from live_unified_check import Side, function_lines  # noqa: E402
 from unified_support.pairs import pair_for  # noqa: E402
@@ -33,15 +35,11 @@ from patchtrace.unified.addressing import AddressMap, layout_from_reader  # noqa
 from patchtrace.unified.extract import script_sha256  # noqa: E402
 from patchtrace.unified.ir.reader import IrReader  # noqa: E402
 from patchtrace.unified.sources import GhidriffRun, RawGhidriff, SourceInputs  # noqa: E402
+from tools.research.r2_paths import report_destination, write_report_json  # noqa: E402
 
 
 def sha(data: bytes) -> str:
     return hashlib.sha256(data).hexdigest()
-
-
-def write(path: Path, document: dict) -> None:
-    path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(json.dumps(document, indent=2, sort_keys=True) + '\n', encoding='utf-8')
 
 
 def failure(exc: Exception) -> dict:
@@ -151,13 +149,28 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--python', required=True)
     parser.add_argument('--ghidra-dir', type=Path, required=True)
-    parser.add_argument('--work', type=Path, required=True)
-    parser.add_argument('--output', type=Path, required=True)
+    parser.add_argument('--work', type=Path, required=True, help='New private directory; parent must exist')
+    parser.add_argument('--output', type=Path, required=True,
+                        help='Fresh report inside this checkout docs/research/unified-matching-r2/results')
     parser.add_argument('--kinds', default='constant-changed,condition-changed,added-check,moved,split,merged')
     parser.add_argument('--primary-attempt', action='store_true')
     args = parser.parse_args()
-    work = args.work.resolve()
-    work.mkdir(parents=True, exist_ok=True)
+    args.output = report_destination(args.output, checkout_root=ROOT)
+    if args.output.exists():
+        raise FileExistsError('report already exists; choose a fresh report destination')
+    # Do not resolve the final component: a dangling symlink must fail, not create its target.
+    work = args.work.absolute()
+    work.mkdir(mode=0o700)
+    report = {'research_only': True, 'status': 'initializing', 'cases': []}
+    output_created = False
+
+    def save() -> None:
+        nonlocal output_created
+        write_report_json(args.output, report, checkout_root=ROOT, replace=output_created)
+        output_created = True
+
+    # Claim a new report atomically before metadata subprocesses or native extraction.
+    save()
     for name in ('tmp', 'cache', 'config', 'data'):
         (work / name).mkdir(exist_ok=True)
     tempfile.tempdir = str(work / 'tmp')
@@ -168,7 +181,7 @@ def main() -> None:
     backend = BackendConfig(args.python, str(args.ghidra_dir.resolve()), timeout_seconds=120,
                             no_cache=True, restrict_env=True)
     properties = (args.ghidra_dir / 'Ghidra/application.properties').read_text()
-    report = {'research_only': True, 'synthetic_only': True, 'native_extraction': True,
+    report.update({'synthetic_only': True, 'native_extraction': True, 'status': 'running',
               'source_commit': subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=ROOT, text=True).strip(),
               'production_baseline': 'a04f5a299a8d4afef023261e52e08d14678cf1e7',
               'started_utc': datetime.now(UTC).isoformat(), 'platform': platform.platform(),
@@ -177,15 +190,16 @@ def main() -> None:
               'java_version': subprocess.run(['java', '-version'], capture_output=True, text=True).stderr,
               'ghidra_properties': properties, 'ghidra_properties_sha256': sha(properties.encode()),
               'extractor_script_sha256': script_sha256(), 'work_directory': str(work),
-              'target_execution': False, 'cases': []}
-    write(args.output, report)
+              'target_execution': False})
+    save()
     for kind in args.kinds.split(','):
         report['cases'].append(probe_pair(kind, backend, work))
-        write(args.output, report)
+        save()
     if args.primary_attempt:
         report['ghidriff_primary_attempt'] = primary_attempt(backend, work)
     report['finished_utc'] = datetime.now(UTC).isoformat()
-    write(args.output, report)
+    report['status'] = 'finished'
+    save()
     print(json.dumps({'cases': [(c['kind'], c['status']) for c in report['cases']],
                       'ghidriff': report.get('ghidriff_primary_attempt', {}).get('status')}), flush=True)
 

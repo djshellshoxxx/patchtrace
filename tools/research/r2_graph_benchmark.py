@@ -18,7 +18,7 @@ from collections import Counter
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-sys.path[:0] = [str(ROOT / 'src'), str(ROOT / 'tests')]
+sys.path[:0] = [str(ROOT), str(ROOT / 'src'), str(ROOT / 'tests')]
 
 from unified_ir_builder import generate_pair  # noqa: E402
 from unified_residual_support import DenseMnemonics, GeneratedMnemonics, dense_world  # noqa: E402
@@ -33,6 +33,7 @@ from patchtrace.unified.ladder.residual import pass_table, residual_passes  # no
 from patchtrace.unified.ladder.side import SideData  # noqa: E402
 from patchtrace.unified.ladder.state import State  # noqa: E402
 from patchtrace.unified.limits import DEFAULT_LIMITS, Budget  # noqa: E402
+from tools.research.r2_paths import report_destination, write_report_json  # noqa: E402
 
 
 def stamp():
@@ -172,9 +173,10 @@ if __name__ == '__main__':
     parser.add_argument('--omit', default='')
     parser.add_argument('--output', type=Path)
     args = parser.parse_args()
+    if args.output:
+        args.output = report_destination(args.output, checkout_root=ROOT)
     result = run(args)
     text = json.dumps(result, sort_keys=True, indent=2) + '\n'
     if args.output:
-        args.output.parent.mkdir(parents=True, exist_ok=True)
-        args.output.write_text(text, encoding='utf-8')
+        write_report_json(args.output, result, checkout_root=ROOT)
     print(text)

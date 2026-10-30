@@ -402,3 +402,51 @@ Consolidation verification follow-up: the first user-site test run was stopped b
 Final runtime integration full run at `8bf483c`: **18,265 passed, 135 skipped, 7 xfailed, 2 failed** in 362.09 s. The remaining product-independent AF_UNIX denial is unchanged. The other failure was the old corpus workflow test requiring every action use a mutable version tag; it rejected the verified MSVC full commit pin. The assertion now validates that exact approved commit while retaining existing checks for other actions. The actual workflow structure is also checked with PyYAML installed locally. A final rerun follows this test-only correction.
 
 Full d34efeb snapshot before final Qodo repairs: **18,304 passed, 128 skipped, 7 xfailed, 1 failed** in 371.25 s. Only failure: executor denies AF_UNIX socket creation. Final substantive Qodo findings are repaired and focused-tested (see 20261030-consolidation-review.md); a new combined full suite and exact-head GitHub gates follow. Schema regeneration completed without schema-file changes.
+
+
+## R2 unified matching research (2026-10-30)
+
+Baseline `a04f5a299a8d4afef023261e52e08d14678cf1e7`; branch
+`codex/r2-unified-matching-research-20261030`; [draft PR #131](https://github.com/djshellshoxxx/patchtrace/pull/131).
+Research index: [unified-matching-r2](research/unified-matching-r2/README.md).
+
+- Executed primary-source review, source inventory, 23 generated-fixture ablations,
+  bounded LAP/candidate-cap tests and 1k/10k/50k/100k synthetic scale measurements.
+  These are not held-out real-world accuracy results.
+- Regression-backed production repairs preserve native atom ordering, B+B witnesses,
+  strongest opposing evidence, analyst-group attribution and IR-only unmatched
+  observations; impossible evidence caps fail explicitly. Dominator-tree intervals
+  reduce the measured 10k-chain back-edge phase from 1.552340 to 0.027999 seconds.
+  `matching/2` rekeys changed derived results without changing wire `ude/1` or IR keys.
+- Unmodified focused baseline: **2509 passed, 1 xfailed** (258.99 s). Integrated
+  core regression selection: **203 passed** (3.99 s). After research-tool safety
+  integration, the expanded selection is **248 passed** (5.72 s), using an isolated
+  copied interpreter with read-only existing dependencies. **Ruff passes**.
+- Full Linux run: still completing at this checkpoint. Its 56 identified failing
+  IDs reproduced identically on exact baseline and R2: **47 failed, 9 errors**.
+  Fifty-five failed at prohibited socket creation; one resolved the venv symlink
+  to a base interpreter without protobuf. Using approved local-socket access and
+  a copied validation interpreter, **all 56 passed** (30.43 s). No test was skipped,
+  weakened or rewritten for this recovery; the original failing run remains recorded.
+- Native Ghidra: 12 successful extractions over six authored PE pairs, then successful
+  replay of all six preserved IR pairs. Split/merge helpers now survive as W/E-UNKNOWN
+  one-sided observations; automatic N:M remains absent. A real Ghidriff run completed
+  but omitted a constructed constant edit from modified-function output; IR facts
+  preserve the delta. These cases are symbol-assisted and not broad accuracy evidence.
+- R1 cJSON development reuse: exact copied DLLs, 262 extracted functions per side,
+  both independently reviewed positive functions matched/P03:A and material with
+  and without rz-diff. Rz-diff parsed 169 records and proposed neither reviewed pair;
+  other predictions are unreviewed. Two positive records, visible exports and unblinded
+  review cannot establish precision, specificity or independent-lineage accuracy.
+- Native rizin 0.9.1: 20/22 authored-fixture attempts fail strict parsing after empty
+  native output; two parsed cases reverse sides under a singleton condition. Five
+  diagnostics and pinned upstream code confirm the conditional defect. No global swap.
+- Research-tool output/work-directory issues were reproduced and repaired with
+  confined atomic report publication, no-clobber defaults, fresh private work roots
+  and replay-kind validation. Exact Sonar annotations are retained; a new head still
+  needs its own security analysis, Windows/native checks and independent review.
+- No target binaries, locked tests, deployments or releases were executed. Original
+  primary records and concurrent R1/R3/R5/R6 work remain intact. Real-world accuracy,
+  native BinDiff, P02 production export wiring, Diaphora unified integration, complete
+  group persistence and final current-head CI remain open. Full commands, metrics,
+  failures and ownership are in reports 00–08.

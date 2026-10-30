@@ -1,0 +1,71 @@
+{
+  "acceptance": {
+    "automatic_nm": "incomplete",
+    "current_head_windows_ci": "pending",
+    "merge": "draft_not_merged",
+    "native_bindiff": "not_run",
+    "representative_real_world_accuracy": "open"
+  },
+  "baseline": "a04f5a299a8d4afef023261e52e08d14678cf1e7",
+  "baseline_focused": {
+    "duration_s": 258.99,
+    "passed": 2509,
+    "selection": [
+      "tests/test_unified_*.py",
+      "tests/test_secondary*.py",
+      "tests/test_bindiff_*.py"
+    ],
+    "xfailed": 1
+  },
+  "full_original_run": {
+    "log_path": "/tmp/patchtrace-r2-full-tests.log",
+    "runtime": "original venv, default socket-restricted execution",
+    "source_core": "matching/2; production files unchanged since a248c721d8d9565a5293413b3f2550d734202074",
+    "status": "running"
+  },
+  "independent_review": {
+    "cfg_oracle_comparisons": 2832,
+    "corroboration_predicate_cases": 10000,
+    "duration_s": 3.96,
+    "focused_passed": 19,
+    "production_findings": []
+  },
+  "integrated_core": {
+    "duration_s": 3.99,
+    "passed": 203
+  },
+  "integrated_with_research_safety": {
+    "duration_s": 5.72,
+    "failed": 0,
+    "passed": 248,
+    "selection": [
+      "tests/test_r2_*.py",
+      "tests/test_unified_keys.py",
+      "tests/test_unified_wire_compute.py",
+      "tests/test_unified_fusion.py",
+      "tests/test_unified_ir_graph.py"
+    ],
+    "source_head": "64a3c566f8d86f721d4541eb689ebb57d0391c21"
+  },
+  "native_evidence": [
+    "native-ghidra.json",
+    "native-ghidra-current.json",
+    "native-rizin.json",
+    "native-cjson.json"
+  ],
+  "production_changed_paths_sha256": {
+    "src/patchtrace/unified/compute.py": "eeed739158175d8c7d82dc719000284e6c2d2b8ef0b284331d7a05a675af72a9",
+    "src/patchtrace/unified/fusion/arbiter.py": "236a21365bed25661b134a583135047aa32942c82f14912d52de46036674c03a",
+    "src/patchtrace/unified/ir/cfg.py": "b88f3b696b2a09d079724560735959f1d0ff52225dfeb73d5776b5933cb293c8",
+    "src/patchtrace/unified/read_text.py": "f0c6fcac8cbb30c775e274e4197e0cb7f536af63f87c2f6d830e131674bb989c",
+    "src/patchtrace/unified/sources/ladder.py": "1157e4ad0518ff02a29c3f938a526cc6b3450c99692627104874bf44d97042d9"
+  },
+  "ruff": "passed",
+  "runtime_failure_recovery": {
+    "details": "test-environment-triage.json",
+    "duration_s": 30.43,
+    "passed": 56,
+    "selected": 56
+  },
+  "whitespace": "passed"
+}

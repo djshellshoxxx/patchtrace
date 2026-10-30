@@ -2,12 +2,14 @@
 
 Uses the production scheduler, allow-listed environment, adapter and strict parser.
 Only fixture hashes/truth, parsed native observations and small raw streams are saved.
+Report writes stay in the checkout results directory; existing reports require the
+explicit append operation. Archive/tool reads remain explicit caller selections,
+bounded regular files, and are verified by pin and exact archive-member equality.
 """
 from __future__ import annotations
 
 import argparse
 import hashlib
-import json
 import os
 import platform
 import struct
@@ -20,7 +22,7 @@ from collections import Counter, defaultdict
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-sys.path[:0] = [str(ROOT / 'src'), str(ROOT / 'tests')]
+sys.path[:0] = [str(ROOT), str(ROOT / 'src'), str(ROOT / 'tests')]
 
 from unified_support.nuisance import nuisance_pair  # noqa: E402
 from unified_support.pairs import KINDS, pair_for  # noqa: E402
@@ -29,6 +31,12 @@ from patchtrace.jobs import run_process  # noqa: E402
 from patchtrace.secondary.engine_env import engine_env  # noqa: E402
 from patchtrace.secondary.registry import build_registry  # noqa: E402
 from patchtrace.secondary.scheduler import ProjectRef, run_engines  # noqa: E402
+from tools.research.r2_paths import (  # noqa: E402
+    read_report_json,
+    regular_input,
+    report_destination,
+    write_report_json,
+)
 
 PIN = '0.9.1'
 ARCHIVE_SHA256 = '9102249a9f0b6319c5334a2e5cf8d9cc3f2035e1d3def027c41f6a90f647e8cf'
@@ -37,7 +45,7 @@ RELEASE_URL = 'https://github.com/rizinorg/rizin/releases/download/v0.9.1/rizin-
 
 def digest(path):
     h = hashlib.sha256()
-    with Path(path).open('rb') as stream:
+    with regular_input(path, max_bytes=512 * 1024 * 1024).open('rb') as stream:
         for chunk in iter(lambda: stream.read(1024 * 1024), b''):
             h.update(chunk)
     return h.hexdigest()
@@ -115,10 +123,12 @@ def main(args):
                         'Archive pin was recorded in repository CI from an official-asset stream; not upstream-published checksum.']}
 
     def save():
-        args.output.parent.mkdir(parents=True, exist_ok=True)
-        args.output.write_text(json.dumps(result, indent=2, sort_keys=True) + '\n', encoding='utf-8')
+        write_report_json(args.output, result, checkout_root=ROOT, replace=args.output_created)
+        args.output_created = True
 
     save()
+    args.archive = regular_input(args.archive, max_bytes=512 * 1024 * 1024)
+    args.rz_diff = regular_input(args.rz_diff, max_bytes=256 * 1024 * 1024)
     result['tool'] = {'path': str(args.rz_diff.resolve()), 'executable_sha256': digest(args.rz_diff),
                       'archive_path': str(args.archive.resolve()), 'archive_sha256': digest(args.archive),
                       'expected_archive_sha256': ARCHIVE_SHA256, 'release_url': RELEASE_URL,
@@ -216,7 +226,8 @@ def main(args):
 
 def orientation_diagnostics(args):
     """Append raw side-order diagnostics without rewriting the initial production attempts."""
-    result = json.loads(args.output.read_text())
+    result = read_report_json(args.output, checkout_root=ROOT)
+    args.rz_diff = regular_input(args.rz_diff, max_bytes=256 * 1024 * 1024)
     if digest(args.rz_diff) != result['tool']['executable_sha256']:
         raise ValueError('orientation probe executable changed since initial verification')
     shift = nuisance_pair('address-shift', 0)
@@ -270,7 +281,7 @@ def orientation_diagnostics(args):
         'analysis': 'rz-diff.c2365-2385 always analyzes both files for -t functions; -B is not needed on this path.',
         'empty_output': 'core_diff_show2132-2164 returns void on no file0 functions; graphs_files later marks success, hence exit0 with empty stdout and stderr diagnostic.'}
     result['diagnostic_findings'] = [x for x in result.get('diagnostic_findings', []) if 'Native help' not in x]
-    args.output.write_text(json.dumps(result, indent=2, sort_keys=True) + '\n', encoding='utf-8')
+    write_report_json(args.output, result, checkout_root=ROOT, replace=True)
     return 0
 
 
@@ -284,12 +295,19 @@ if __name__ == '__main__':
     parser.add_argument('--append-orientation', action='store_true')
     args = parser.parse_args()
     try:
+        args.output = report_destination(args.output, checkout_root=ROOT)
+    except ValueError as exc:
+        parser.error(str(exc))
+    args.output_created = False
+    try:
         status = orientation_diagnostics(args) if args.append_orientation else main(args)
     except Exception as exc:  # preserve native evidence on setup/runtime failures
-        result = json.loads(args.output.read_text()) if args.output.exists() else {}
-        result.update(status='failed', fatal_error=f'{type(exc).__name__}: {exc}')
-        args.output.parent.mkdir(parents=True, exist_ok=True)
-        args.output.write_text(json.dumps(result, indent=2, sort_keys=True) + '\n', encoding='utf-8')
-        print(result['fatal_error'], file=sys.stderr)
+        message = f'{type(exc).__name__}: {exc}'
+        # Never clobber an earlier report when the initial exclusive publication failed.
+        if args.output_created or args.append_orientation:
+            result = read_report_json(args.output, checkout_root=ROOT) if args.output.exists() else {}
+            result.update(status='failed', fatal_error=message)
+            write_report_json(args.output, result, checkout_root=ROOT, replace=True)
+        print(message, file=sys.stderr)
         status = 1
     sys.exit(status)

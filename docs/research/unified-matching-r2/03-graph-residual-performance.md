@@ -163,12 +163,12 @@ The script is Linux-only because of the `resource` RSS method. From the reposito
 
 ```bash
 PY=/workspace/scratch/a55b59b3e326/patchtrace-venv/bin/python
-"$PY" tools/research/r2_graph_benchmark.py --mode exact --n 100000 --output /tmp/graph-exact.json
-"$PY" tools/research/r2_graph_benchmark.py --mode residual --n 100000 --output /tmp/graph-residual.json
-"$PY" tools/research/r2_graph_benchmark.py --mode common --n 100000 --output /tmp/graph-common.json
-"$PY" tools/research/r2_graph_benchmark.py --mode ambiguous --n 200 --output /tmp/graph-ambiguous.json
-"$PY" tools/research/r2_graph_benchmark.py --mode assignment --n 200 --output /tmp/graph-assignment.json
-"$PY" tools/research/r2_graph_benchmark.py --mode generated --n 1000 --omit P10 --output /tmp/graph-ablation.json
+"$PY" tools/research/r2_graph_benchmark.py --mode exact --n 100000 --output docs/research/unified-matching-r2/results/reproduction/graph-exact.json
+"$PY" tools/research/r2_graph_benchmark.py --mode residual --n 100000 --output docs/research/unified-matching-r2/results/reproduction/graph-residual.json
+"$PY" tools/research/r2_graph_benchmark.py --mode common --n 100000 --output docs/research/unified-matching-r2/results/reproduction/graph-common.json
+"$PY" tools/research/r2_graph_benchmark.py --mode ambiguous --n 200 --output docs/research/unified-matching-r2/results/reproduction/graph-ambiguous.json
+"$PY" tools/research/r2_graph_benchmark.py --mode assignment --n 200 --output docs/research/unified-matching-r2/results/reproduction/graph-assignment.json
+"$PY" tools/research/r2_graph_benchmark.py --mode generated --n 1000 --omit P10 --output docs/research/unified-matching-r2/results/reproduction/graph-ablation.json
 PYTHONHASHSEED=321 "$PY" tools/research/r2_graph_benchmark.py --mode residual --n 1000
 "$PY" tools/research/r2_graph_benchmark.py --mode collision
 "$PY" tools/research/r2_graph_benchmark.py --mode cfg --n 10000
@@ -209,3 +209,5 @@ All URLs retrieved 2026-10-30. Documentation URLs are mutable; the implemented M
 * **S8** Cooper, Harvey and Kennedy, *A Simple, Fast Dominance Algorithm*: https://www.clear.rice.edu/comp512/Lectures/Papers/TR06-33870-Dom.pdf .
 * **S9** NetworkX WL graph-hash API, directed/hash-version warning: https://networkx.org/documentation/stable/reference/algorithms/generated/networkx.algorithms.graph_hashing.weisfeiler_lehman_graph_hash.html .
 * **S10** QBinDiff WL/BOWLSH API: https://diffing.quarkslab.com/qbindiff/doc/source/api/features.html ; similarity feature/matrix model: https://diffing.quarkslab.com/qbindiff/doc/source/features.html .
+
+Current runner note: report files must be fresh destinations inside this checkout's `docs/research/unified-matching-r2/results/` subtree. The commands above use a `reproduction/` directory; choose a new filename if it already exists. Historical JSON records retain their original invocation paths. The runner no longer accepts arbitrary `/tmp` report destinations.
