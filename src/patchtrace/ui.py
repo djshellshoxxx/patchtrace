@@ -68,6 +68,7 @@ from .service import ProjectService
 from .tooltips import apply_tooltip, apply_tooltips
 from .ui_bundle_setup import BundleSetup
 from .ui_inspection import InspectionThread, side_summary
+from .ui_persistence import commit_and_report
 from .ui_symbols import SymbolChoice, config_kwargs, profile_symbol_settings
 
 REVIEWS = ['unreviewed', 'accepted', 'rejected', 'needs-review']
@@ -1981,8 +1982,7 @@ class MainWindow(QMainWindow):
 
     def save_project(self):
         if self.service:
-            self._guard(self.service.save)
-            self.statusBar().showMessage('Project saved')
+            commit_and_report(self, self.service.save, 'Project saved')
 
     def refresh(self):
         self._updating = True
@@ -2534,23 +2534,23 @@ class MainWindow(QMainWindow):
         item = self.evidence_list.currentItem()
         if item:
             evidence_id = item.data(Qt.ItemDataRole.UserRole)
-            self._guard(lambda: self.service.annotate(evidence_id, 'Evidence bookmarked by analyst', kind='bookmark'))
-            self.statusBar().showMessage('Evidence bookmark saved.')
+            commit_and_report(self, lambda: self.service.annotate(
+                evidence_id, 'Evidence bookmarked by analyst', kind='bookmark'), 'Evidence bookmark saved.')
 
     def review_finding(self):
         if self._finding:
-            self._guard(lambda: self.service.review_finding(self._finding.id, self.finding_review.currentText(),
-                                                            self.conclusion.toPlainText()))
-            self.refresh_findings()
+            if commit_and_report(self, lambda: self.service.review_finding(
+                    self._finding.id, self.finding_review.currentText(), self.conclusion.toPlainText())):
+                self.refresh_findings()
 
     def save_note(self):
         target = self._finding if self.note_target.currentIndex() == 1 else self.current_match()
         text = self.notes.toPlainText().strip()
         if target and text:
-            self._guard(lambda: self.service.annotate(target.id, text, kind='note'))
-            self.notes.clear()
-            self.refresh_findings()
-            self.statusBar().showMessage('Analyst note saved.')
+            if commit_and_report(self, lambda: self.service.annotate(target.id, text, kind='note'),
+                                 'Analyst note saved.'):
+                self.notes.clear()
+                self.refresh_findings()
 
     def inspect_responses(self):
         records = []
