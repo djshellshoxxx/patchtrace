@@ -56,7 +56,7 @@ The files above are deliberately separate from runtime contracts and any locked 
 | Calibration overlap | [#85](https://github.com/djshellshoxxx/patchtrace/pull/85) preregistration; [#78](https://github.com/djshellshoxxx/patchtrace/pull/78) output persistence; [#79](https://github.com/djshellshoxxx/patchtrace/pull/79) and [#82](https://github.com/djshellshoxxx/patchtrace/pull/82) recipe/noise controls; [#68](https://github.com/djshellshoxxx/patchtrace/pull/68) corpus candidates |
 | Coordination | [#126](https://github.com/djshellshoxxx/patchtrace/pull/126) owns milestone ledger and shared QA/handoff reconciliation |
 | Existing C9 protocol | [docs/plans/c9-preregistration-v1.md](../../plans/c9-preregistration-v1.md) is a **draft**, with lock SHA placeholder and pending owner sign-off; do not regard final test as released |
-| Historical Tier R G-U note | R1 [README](../ground-truth-corpus/README.md) on #128 reports 273 built pairs but zero A/A outcomes in the observed failed live gate; these are **not** precision/recall measurements |
+| Historical Tier R G-U note | R1 [README](https://github.com/djshellshoxxx/patchtrace/blob/codex/r1-ground-truth-research-20261030/docs/research/ground-truth-corpus/README.md) on #128 reports 273 built pairs but zero A/A outcomes in the observed failed live gate; these are **not** precision/recall measurements |
 
 **Ownership:** This R5 PR owns only docs/research/calibration-r5/. It does not modify shared specs, QA/tracker files, calibration runtime, corpus files or active R1/R3/R4 branches. Specific change proposals are prepared for a subsequent integrator-owned and regression-tested slice.
 
