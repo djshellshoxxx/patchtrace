@@ -51,16 +51,18 @@ def _inspect(by_id: dict[str, Op], sink: Op) -> tuple[str, tuple[str, ...], set[
         if item.output is not None:
             defs[item.output].append(item)
     incomplete: set[str] = set()
-    observed: tuple[str, ...] = ()
+    observed: list[tuple[str, ...]] = []
     for control_id in sink.controls:
         branch = by_id.get(control_id)
         if branch is None:
             incomplete.add(f'missing-control:{control_id}')
             continue
-        if branch.opcode != 'CBRANCH' or not branch.inputs:
+        if branch.opcode != 'CBRANCH' or len(branch.inputs) not in (1, 2):
             incomplete.add('opaque-control:' + control_id)
             continue
-        pred = branch.inputs[0]
+        # Ghidra CBRANCH: operand 0 is branch target, operand 1 is condition.
+        # One-input normalized test fixtures retain only the condition.
+        pred = branch.inputs[-1]
         candidates = defs.get(pred, [])
         if len(candidates) != 1:
             incomplete.add(('multiple' if candidates else 'missing') + f'-defs:{pred}')
@@ -72,11 +74,11 @@ def _inspect(by_id: dict[str, Op], sink: Op) -> tuple[str, tuple[str, ...], set[
         common = set(cmp_op.inputs).intersection(sink.inputs)
         if not any(not v.startswith('const:') for v in common):
             continue
-        observed = (cmp_op.uid, branch.uid, sink.uid)
+        observed.append((cmp_op.uid, branch.uid, sink.uid))
     if incomplete:
         return ('unknown', (), incomplete)
     if observed:
-        return ('observed', observed, set())
+        return ('observed', min(observed, key=lambda ids: (by_id[ids[0]].rva, by_id[ids[1]].rva, ids)), set())
     return ('absent', (), set())
 
 
