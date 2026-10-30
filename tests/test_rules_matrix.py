@@ -298,6 +298,23 @@ def test_the_caps_of_a_run_are_enforced_before_anything_is_scanned(world):
     assert (caught.value.code, caught.value.reason) == ('PT-RULE-LIMIT', 'series')
 
 
+@pytest.mark.skipif(not Path('/dev/zero').exists(), reason='needs a character device such as /dev/zero')
+def test_a_device_as_an_extra_build_is_refused_without_reading_it(world):
+    """#105 BUG-RULE-6: `--extra /dev/zero` (or a FIFO) was hashed with no regular-file check and never returned."""
+    outcome = []
+
+    def gather():
+        try:
+            world.entries(extra=[Path('/dev/zero')])
+        except RuleError as exc:
+            outcome.append((exc.code, exc.reason))
+
+    worker = threading.Thread(target=gather, daemon=True)
+    worker.start()
+    worker.join(timeout=10)
+    assert not worker.is_alive() and outcome == [('PT-RULE-INPUT', 'not-a-file')]
+
+
 def test_a_file_or_folder_that_cannot_be_read_is_a_bad_selection(world, tmp_path):
     for kw in ({'extra': [tmp_path / 'missing.dll']}, {'series': tmp_path / 'missing-folder'}):
         with pytest.raises(RuleError) as caught:

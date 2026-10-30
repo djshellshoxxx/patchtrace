@@ -13,7 +13,9 @@ other build is unscored until the analyst says what to expect.
 from __future__ import annotations
 
 import hashlib
+import os
 import re
+import stat
 import threading
 from collections import Counter
 from collections.abc import Callable, Iterable, Mapping, Sequence
@@ -60,9 +62,15 @@ def direction_of(version: RuleVersion) -> str:
 # --- the builds ------------------------------------------------------------------------------------------------------
 
 def _digest(path: Path) -> tuple[str, int]:
+    """SHA-256 and size of a regular file. A device, FIFO or socket is refused before it is opened (a FIFO's open
+    blocks, /dev/zero never ends) and again on the open handle, so a swap in between is caught (#105 BUG-RULE-6)."""
     sha, size = hashlib.sha256(), 0
     try:
+        if not stat.S_ISREG(os.stat(path).st_mode):
+            raise RuleError('PT-RULE-INPUT', 'A file of the test is not a regular file', reason='not-a-file')
         with open(path, 'rb') as handle:
+            if not stat.S_ISREG(os.fstat(handle.fileno()).st_mode):
+                raise RuleError('PT-RULE-INPUT', 'A file of the test is not a regular file', reason='not-a-file')
             while chunk := handle.read(READ_CHUNK):
                 sha.update(chunk)
                 size += len(chunk)
