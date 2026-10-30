@@ -402,3 +402,16 @@ Consolidation verification follow-up: the first user-site test run was stopped b
 Final runtime integration full run at `8bf483c`: **18,265 passed, 135 skipped, 7 xfailed, 2 failed** in 362.09 s. The remaining product-independent AF_UNIX denial is unchanged. The other failure was the old corpus workflow test requiring every action use a mutable version tag; it rejected the verified MSVC full commit pin. The assertion now validates that exact approved commit while retaining existing checks for other actions. The actual workflow structure is also checked with PyYAML installed locally. A final rerun follows this test-only correction.
 
 Full d34efeb snapshot before final Qodo repairs: **18,304 passed, 128 skipped, 7 xfailed, 1 failed** in 371.25 s. Only failure: executor denies AF_UNIX socket creation. Final substantive Qodo findings are repaired and focused-tested (see 20261030-consolidation-review.md); a new combined full suite and exact-head GitHub gates follow. Schema regeneration completed without schema-file changes.
+
+### [SPEC-31:R3] Semantic-change research and proof guards (2026-10-30)
+
+| Validation | Evidence | State |
+|---|---|---|
+| Branch and scope | Draft PR #129, baseline `a04f5a299a8d4afef023261e52e08d14678cf1e7`; `docs/research/semantic-analysis-r3/` | Research dossier and 10-pair static disassembly record committed; **not** R3 acceptance |
+| Compilation-only E1 | 6 freestanding C variants × GCC 14.2 O0/O2, Clang 17 O0/O2, Clang 17 x86-64 COFF O2 | **30 compiler commands successful**; output disassembled, relocation symbols compared; target code **never executed** |
+| Source-level proof defects R3-PC01/08 | `facts/verdict.py`, `registry.py`, `tests/test_unified_verdict_ir.py` | IR pseudo-proof tightened: EH must be `equal`/`absent`; `register-only` blocks; S0 preserved; `COS-PSEUDO/1` implementation version bumped to 2. **New tests added, not locally executed** |
+| Full Linux and Windows CI on PR #129 exact latest SHA | https://github.com/djshellshoxxx/patchtrace/pull/129/checks | **Pending until CI completes**, not passed |
+| Real PE target/SEH negative fixtures and SPEC-31 G-U corpus | `docs/research/semantic-analysis-r3/experiment-and-benchmark.md` | **Not run**; false-benign rate, material precision, timing and peak RSS **unmeasured** |
+| Research completeness | `methods-and-tools.md`, `r4-handoff.md`, `README.md` | Primary literature and source inspection documented; R3 validation/benchmark still open |
+
+Do not merge the draft on documentation or synthetic-object evidence alone. Verify exact-head pytest, Ruff, native Windows, G-U2 material→benign check, linked PE target mapping and reviewer clearance.
