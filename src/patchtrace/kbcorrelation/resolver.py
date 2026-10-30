@@ -126,6 +126,10 @@ def resolve(rows: Sequence[IndexRow], *, kb: str, scope: ProductScope, file_name
     if scope.family == 'windows-server':
         return _empty(kb, file_name, scope, scope.winbindex_key, ('SERVER_NOT_COVERED',),
                       reason_text('SERVER_NOT_COVERED'), skipped_rows)
+    if scope.architecture != SUPPORTED_ARCH:
+        return _empty(kb, file_name, scope, scope.winbindex_key, ('ARCH',),
+                      f'File-index pairing supports Windows client AMD64 only; selected product is {scope.architecture}.',
+                      skipped_rows)
     if scope.winbindex_key is None:
         return _empty(kb, file_name, scope, None, ('NO_NEWER',), NO_KEY, skipped_rows)
     line = timeline((r for r in rows if r.build.file_name == file_name), scope.winbindex_key)
