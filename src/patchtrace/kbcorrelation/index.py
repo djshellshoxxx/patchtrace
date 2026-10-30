@@ -249,9 +249,13 @@ class ReverseIndex:
         active = self.active_ids()
         chosen: list[KbCveEdge] = []
         old: list[KbCveEdge] = []
+        named = set(scope.doc_ids) if scope.kind in ('provided_files', 'mixed') else set()
+        named_old: list[str] = []  # explicitly named files that are superseded yet match (#105 KBC-12)
         for doc in picked:
             rows = [e for e in doc.edges if match(e)]
             (chosen if doc.doc_id in active else old).extend(rows)
+            if rows and doc.doc_id in named and doc.doc_id not in active:
+                named_old.append(doc.doc_id)
         excluded: dict[str, int] = {}
         if scope_id is not None:
             for edge in chosen:
@@ -278,7 +282,8 @@ class ReverseIndex:
         return Lookup(query_kind=query_kind, query=query, status=status, coverage=coverage, edges=edges,
                       groups=distinct_groups(edges), mention_only=mention, disputed=disputed,
                       superseded=superseded, scopes=scopes, excluded=tuple(sorted(excluded.items())), cards=cards,
-                      warnings=self._warnings(coverage, picked, edges, mention, disputed, superseded, status))
+                      warnings=self._warnings(coverage, picked, edges, mention, disputed, superseded, status,
+                                              sorted(named_old)))
 
     @staticmethod
     def _status(coverage: Coverage, edges: tuple[KbCveEdge, ...]) -> str:
@@ -289,7 +294,7 @@ class ReverseIndex:
         return 'found' if edges else 'not_observed'
 
     @staticmethod
-    def _warnings(coverage, picked, edges, mention, disputed, superseded, status) -> tuple[str, ...]:
+    def _warnings(coverage, picked, edges, mention, disputed, superseded, status, named_old=()) -> tuple[str, ...]:
         out = []
         if status == 'partial':
             out.append('PARTIAL: some requested documents are not loaded or unreadable; absence proves nothing')
@@ -308,6 +313,10 @@ class ReverseIndex:
             out.append('DISPUTED: a negative product status contradicts the fix; the row is left out of leads')
         if superseded:
             out.append('SUPERSEDED: older revisions of a loaded document are retained and listed apart')
+        if named_old:
+            shown = ', '.join(d[:12] for d in named_old[:5]) + (f' and {len(named_old) - 5} more' if len(named_old) > 5 else '')
+            out.append(f'NAMED_SUPERSEDED: {shown} named in the scope is not the active revision of its month; its '
+                       'matching rows are listed under superseded and are not counted in the status')
         out.append(REVISION_LAG_NOTE[0].upper() + REVISION_LAG_NOTE[1:])
         return tuple(out)
 

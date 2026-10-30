@@ -188,6 +188,7 @@ Mapping rule: remediation vendor_fix category is NOT necessarily a KB article. O
 Cross-revision conflicts:
 - retain every immutable snapshot with revision/tracking timestamp;
 - select a UI-preferred current source using explicit revision ordering but do not destroy alternate claims;
+- when an explicit-file scope (`provided_files` or `mixed`) names a superseded revision whose rows match the query, the status still counts only active revisions, and the lookup adds a `NAMED_SUPERSEDED` warning naming that file, so `not_observed` never reads as a negative answer for the named file (#105 KBC-12);
 - if an older version says known_affected and newer says fixed, show timeline, not arbitrary "conflict";
 - if two current overlapping records disagree about known_not_affected, mark product-vulnerability status disputed;
 - preserve the provenance of group expansion.
