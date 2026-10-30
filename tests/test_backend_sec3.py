@@ -1,6 +1,8 @@
 """SEC-3: external Python argv and cwd isolation, without starting a child."""
 import json
+import subprocess
 import threading
+import venv
 from pathlib import Path
 
 import pytest
@@ -9,6 +11,21 @@ from test_jobs import fake_runtime  # noqa: F401 - pytest fixture reuse
 from patchtrace import backend
 from patchtrace.backend import BackendConfig
 from patchtrace.jobs import ProcessResult
+
+
+def test_sec3_probe_and_analysis_preserve_the_selected_virtual_environment(tmp_path):
+    environment = tmp_path / 'runtime'
+    venv.EnvBuilder(with_pip=False, symlinks=backend.os.name != 'nt').create(environment)
+    python = environment / ('Scripts/python.exe' if backend.os.name == 'nt' else 'bin/python')
+    site = Path(subprocess.check_output(
+        [str(python), '-I', '-c', 'import sysconfig; print(sysconfig.get_path("purelib"))'], text=True).strip())
+    (site / 'ghidriff').mkdir()
+    (site / 'ghidriff' / '__init__.py').write_text('', encoding='utf-8')
+    config = BackendConfig(str(python), str(tmp_path / 'ghidra'))
+    assert backend._probe_backend(config)['available']
+    argv = backend._ghidriff_argv(config, tmp_path / 'old.dll', tmp_path / 'new.dll',
+                                 tmp_path / 'raw', tmp_path / 'project', tmp_path / 'gzfs')
+    assert argv[0] == str(python.absolute()) and argv[1:4] == ['-I', '-X', 'utf8']
 
 
 @pytest.mark.parametrize('bundle', [False, True], ids=['external', 'bundle'])

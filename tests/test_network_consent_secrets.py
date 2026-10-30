@@ -119,6 +119,15 @@ def job(tmp_path, monkeypatch, network_guard):
     (ghidra / 'Ghidra' / 'application.properties').write_text('application.version=12.0.4')
     (ghidra / 'ghidriff').mkdir()
     (ghidra / 'ghidriff' / '__init__.py').write_text('')
+    real_run = backend.run_process
+
+    def run_fake(argv, **kwargs):
+        # The synthetic child is a script, not an installed Ghidriff package. Keep production isolation.
+        index = argv.index('-m')
+        assert argv[index + 1] == 'ghidriff' and '-I' in argv
+        return real_run([*argv[:index], str(ghidra / 'ghidriff' / '__main__.py'), *argv[index + 2:]], **kwargs)
+
+    monkeypatch.setattr(backend, 'run_process', run_fake)
     artifacts = []
     for side, content in (('older', b'old-static-data'), ('newer', b'new-static-data')):
         (root / f'{side}.bin').write_bytes(content)

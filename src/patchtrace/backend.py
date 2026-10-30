@@ -326,7 +326,7 @@ def _probe_backend(config: BackendConfig, cancel: threading.Event | None = None)
         '"available":u.find_spec("ghidriff") is not None}))'
     )
     with tempfile.TemporaryDirectory(prefix='patchtrace-probe-') as scratch:
-        result = run_process([str(Path(config.python_executable).resolve()), '-I', '-X', 'utf8', '-c', code],
+        result = run_process([os.path.abspath(config.python_executable), '-I', '-X', 'utf8', '-c', code],
                              cwd=Path(scratch), env=_environment(config),
                              cancel=cancel or threading.Event(), timeout_seconds=15, log_limit=16384)
     if result.reason == 'cancelled':
@@ -555,7 +555,8 @@ def _ghidriff_argv(config: BackendConfig, older: Path, newer: Path, raw: Path,
 
     `local` (SPEC-53) routes the call through the PatchTrace launcher with symbols on and an empty server list.
     """
-    python = [str(Path(config.python_executable).resolve()), '-I', '-X', 'utf8']
+    # Preserve a venv's executable symlink: resolving it selects the base interpreter's site-packages.
+    python = [os.path.abspath(config.python_executable), '-I', '-X', 'utf8']
     args = [str(older), str(newer), '--output-path', str(_validated_ghidra_output_path(raw)),
             '--project-location', str(engine_project), '--gzfs-path', str(engine_gzfs), '--no-threaded']
     if local is not None:

@@ -83,3 +83,7 @@ Manually reviewed findings that do not establish defects:
 | Source-installed Ghidriff in advisory live workflow | Exact Git revision is pinned; building the external source is deliberate native integration, not an unbounded package selection. |
 
 No Sonar rule was disabled, issue state changed, or required protection bypassed. This triage does not make the remote gate green; track its actual state separately.
+
+## Final runtime integration correction
+
+A real symlinked virtual-environment regression reproduced loss of installed Ghidriff when the backend resolved the Python executable to its base binary. Both probe and analysis now preserve the configured absolute executable path, keeping isolation while selecting the intended site-packages. The full suite also exposed three fake secret-redaction children that depended on cwd module injection; these now invoke an explicit test-only script while retaining all redaction/positive-control assertions. The first complete venv run counted 18,258 passed, 136 skipped, 7 xfailed and four failures (those three fixtures plus host-denied AF_UNIX). The corrected runtime focused suite passes 46 tests; final combined and remote checks remain required.
