@@ -95,7 +95,7 @@ def test_the_decompiler_proof_is_listed_and_needs_zero_unmapped_labels():
 
 
 def test_r3_ir_pseudo_equality_requires_eh_eq_but_s0_remains_decompiler_relative():
-    """R3-PC01: a missing EH signature is not evidence of unchanged EH when IR is loaded."""
+    """R3-PC01/08: unavailable EH and register-only changes cannot pass the IR pseudo proof."""
     from dataclasses import replace
 
     states = {'C0': 'differs', 'C1': 'differs', 'C6': 'equal'}
@@ -105,6 +105,9 @@ def test_r3_ir_pseudo_equality_requires_eh_eq_but_s0_remains_decompiler_relative
     assert pair(ev(states, ir=no_structural_proof, eh='differs')) == ('review', None)
     assert pair(ev(states, ir=no_structural_proof, eh='equal')) == ('cosmetic', 'COS-PSEUDO/1')
     assert pair(ev(states, ir=no_structural_proof, eh='absent')) == ('cosmetic', 'COS-PSEUDO/1')
+    # Register changes are observable under the ABI and must not be erased by a similar decompiler result.
+    assert pair(ev(states, ir=no_structural_proof, eh='equal',
+                   deltas=[delta('register-only')])) == ('review', None)
 
     # The no-IR fallback remains a weak, displayed decompiler-relative proof.
     s0_states = {'C0': 'unavailable', 'C1': 'unavailable', 'C6': 'equal'}
