@@ -122,6 +122,10 @@ class RuntimeFingerprint:
             # Online symbol servers can change answers over time without any local
             # input changing, so the output is not a function of the key.
             return False, 'online symbol policy'
+        if (self.symbol_policy.strip().lower() == 'local'
+                and not re.fullmatch(r'[0-9a-f]{64}', self.symbol_input_digest)):
+            # Local PDBs change the answer, so the key must carry their hashes (SPEC-53 section 7.1).
+            return False, 'local symbol policy without a staged-PDB digest'
         return True, 'eligible'
 
     def raw_key(self, older_sha256: str, newer_sha256: str) -> str:

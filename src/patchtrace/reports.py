@@ -13,7 +13,8 @@ from .models import ComparisonProject, ExportManifest
 
 MAX_REPORT_BYTES = 20 * 1024 * 1024
 SAFE_SETTING_KEYS = {'timeout_seconds', 'allow_symbol_downloads', 'older_sha256', 'newer_sha256', 'python_version',
-                     'pyghidra_version', 'ghidra_version', 'java_runtime_version'}
+                     'pyghidra_version', 'ghidra_version', 'java_runtime_version', 'symbol_mode',
+                     'symbol_input_digest', 'launcher_version', 'staged_symbols'}
 
 
 class ExportError(ValueError):
@@ -52,6 +53,21 @@ def _clean(value):
     return value
 
 
+def _safe_staged(value) -> list[dict] | None:
+    """Names and hashes of staged PDBs only (SPEC-53); anything malformed drops the whole key."""
+    if not isinstance(value, list) or len(value) > 64:
+        return None
+    rows = []
+    for row in value:
+        if (not isinstance(row, dict) or set(row) != {'name', 'guid_age', 'sha256'}
+                or not isinstance(row['name'], str) or not re.fullmatch(r'[\w.+@ -]{1,255}', row['name'])
+                or not isinstance(row['guid_age'], str) or not re.fullmatch('[0-9A-F]{33,40}', row['guid_age'])
+                or not isinstance(row['sha256'], str) or not re.fullmatch('[0-9a-f]{64}', row['sha256'])):
+            return None
+        rows.append({'name': row['name'], 'guid_age': row['guid_age'], 'sha256': row['sha256']})
+    return rows
+
+
 def _safe_settings(settings: dict) -> dict:
     result = {}
     for key in sorted(SAFE_SETTING_KEYS & settings.keys()):
@@ -62,6 +78,16 @@ def _safe_settings(settings: dict) -> dict:
         elif key == 'timeout_seconds':
             if type(value) is int and 1 <= value <= 86400:
                 result[key] = value
+        elif key == 'symbol_mode':
+            if value in ('off', 'local', 'online'):
+                result[key] = value
+        elif key == 'symbol_input_digest':
+            if isinstance(value, str) and re.fullmatch('[0-9a-f]{64}', value):
+                result[key] = value
+        elif key == 'staged_symbols':
+            rows = _safe_staged(value)
+            if rows is not None:
+                result[key] = rows
         elif key.endswith('_sha256'):
             if isinstance(value, str) and re.fullmatch('[0-9a-f]{64}', value):
                 result[key] = value
