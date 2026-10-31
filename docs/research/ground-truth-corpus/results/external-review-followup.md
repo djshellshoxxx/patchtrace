@@ -150,3 +150,16 @@ issues, zero security hotspots and 2.6% new-code duplication. This remains a
 historical observation; final-head external checks and independent approval
 must be inspected before merge. No branch protections or quality thresholds
 were changed.
+
+### Additional editorial observation
+
+The review also included an unverified readability observation about compressed
+prose such as `returns0` and `by5`. Those forms were confirmed in the source-suite
+README and corrected to ordinary spaced prose, along with analogous size,
+offset, bit and XOR descriptions. This editorial change does not alter either
+C source file, the suite specification or compiled artifacts. Historical
+generated label intent/notes strings remain exact evidence: changing their
+wording would change canonical label digests and invalidate existing review
+bindings. A future generator-text cleanup must create a new explicitly bound
+label/review generation rather than silently rewriting these records. No new
+behavioral test is claimed for the Markdown-only edit.

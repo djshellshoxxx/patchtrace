@@ -35,13 +35,13 @@ All sixteen rows below map to `changed` candidate entries in `suite.json`. The r
 | `r1_array_index` | Array indexing; `index&3u` → `(index+1u)&3u` | data=[4,5,6,7],index=0 yields 4 → 5 | Different wrapped ring slot; UINT32_MAX+1 is defined before masking |
 | `r1_overflow_guard` | Overflow check; insert `count>UINT32_MAX/4u` rejection before multiply | count=0x40000000 yields 0 → UINT32_MAX | Replaces defined unsigned wrap with an explicit error policy; no signed overflow |
 | `r1_signedness` | Signedness; `delta<8` → `(uint32_t)delta<8u` | delta=-1 yields 1 → 0 | Negative input classification changes using defined conversion |
-| `r1_allocation_size` | Allocation size; callback request `4*count+8` → `4*count+16` | count=2 passes size16 → size24 to a valid recording callback | The callback argument is observable, even if it returns NULL in both versions; pointer result need not differ |
+| `r1_allocation_size` | Allocation size; callback request `4*count+8` → `4*count+16` | count=2 passes size 16 → size 24 to a valid recording callback | The callback argument is observable, even if it returns NULL in both versions; pointer result need not differ |
 | `r1_loop_bound` | Loop bound; `index<limit` → `index<=limit` | nine-byte data with data[0]=5,count=0 yields 0 → 5 | Includes one more initialized array element; both loops bounded |
 | `r1_call_target` | Call target; `operations->primary(value)` → `operations->secondary(value)` | slots={r1_primary,r1_secondary},value=0 yields 17 → 45 | Calls a different callback. Descriptor-slot offset changes, avoiding sole reliance on a masked direct-call relocation |
-| `r1_error_handling` | Error handling; nonzero status returns0 → UINT32_MAX | status=1,value=9 yields 0 → UINT32_MAX | Distinct failure result with same success behavior |
+| `r1_error_handling` | Error handling; nonzero status returns 0 → UINT32_MAX | status=1,value=9 yields 0 → UINT32_MAX | Distinct failure result with same success behavior |
 | `r1_null_validation` | NULL validation; ignore marker → reject NULL | marker=NULL,value=7 yields 7 → UINT32_MAX | Adds policy validation without dereferencing marker in either version |
-| `r1_structure_field` | Structure field offset; `record->requested` → `record->granted` | valid record{requested=3,granted=9} yields 3 → 9 | Field load changes from offset0 to offset4; layout itself is constant |
-| `r1_security_flag` | Security-relevant flag; `flags\|1u` → `flags\|5u` | flags=0 yields 1 → 5 | Adds fixture-defined mandatory integrity-check bit4; no real product/CVE assertion |
+| `r1_structure_field` | Structure field offset; `record->requested` → `record->granted` | valid record{requested=3,granted=9} yields 3 → 9 | Field load changes from offset 0 to offset 4; layout itself is constant |
+| `r1_security_flag` | Security-relevant flag; `flags\|1u` → `flags\|5u` | flags=0 yields 1 → 5 | Adds fixture-defined mandatory integrity-check bit 4; no real product/CVE assertion |
 
 A distinguishing witness establishes existential source behavior difference, not that all inputs produce different values. For example, callback slots may intentionally reference the same function, logical length may cover the selected index, a flag may already be set, or the extra loop element may be zero. The fixture names and descriptions encode intended policy for a synthetic program; there is no claim of discovered vulnerabilities.
 
@@ -50,10 +50,10 @@ A distinguishing witness establishes existential source behavior difference, not
 | Function | Candidate relationship | Source proof and limitation |
 |---|---|---|
 | `r1_primary` | unchanged | Exact definition in both versions: value+0x11 modulo 2^32; external helper for call-target witness |
-| `r1_secondary` | unchanged | Exact definition in both versions: value XOR0x2d; distinct behavior from primary |
-| `r1_unchanged` | unchanged | Exact definition in both versions: rotate-left by5 using shifts5 and27, both less than32 |
+| `r1_secondary` | unchanged | Exact definition in both versions: value XOR 0x2d; distinct behavior from primary |
+| `r1_unchanged` | unchanged | Exact definition in both versions: rotate-left by 5 using shifts 5 and 27, both less than 32 |
 | `r1_cosmetic` | cosmetic | Spacing and comment change only; significant token stream and source line count identical. Body equality still requires compiler/artifact review |
-| `r1_removed` | removed | Only v1 defines value XOR0x39; no renamed correspondence to `r1_added` |
+| `r1_removed` | removed | Only v1 defines value XOR 0x39; no renamed correspondence to `r1_added` |
 | `r1_added` | added | Only v2 defines value+0x67 modulo 2^32; behavior differs from removed interface |
 
 The added and removed interfaces deliberately do not have a one-to-one rename relationship. A matcher may propose one from proximity or shape; that proposal must not rewrite the authored lineage. Preservation of unmatched functions is checked against the actual linked artifact and its independently obtained inventory.
