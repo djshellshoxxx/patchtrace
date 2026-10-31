@@ -5,8 +5,8 @@ import json
 from pathlib import Path
 
 import pytest
+from kbc_k1_support import import_doc, no_sockets  # noqa: F401 - pytest fixture registration
 
-from kbc_k1_support import import_doc, json_bytes
 from patchtrace.kbcorrelation.sources.cvrf import SourceError, parse_cvrf
 
 ROOT = Path(__file__).resolve().parent / "fixtures" / "kb"
@@ -44,8 +44,10 @@ def test_unknown_product_id_does_not_become_a_wildcard_edge() -> None:
 
 def test_non_ascii_kb_lookalike_does_not_become_a_remediation() -> None:
     """A visually similar non-ASCII KB suffix does not normalize as a numeric KB identifier."""
-    raw = raw_cases()["confusable-kb"]["raw"]
-    imported = import_doc(json.loads(raw))
+    raw = (ROOT / "confusable_kb.json").read_text(encoding="utf-8")
+    document = json.loads(raw)
+    assert document["vulnerabilities"][0]["remediations"][0]["description"] == "KB90000\u0417"
+    imported = import_doc(document)
     assert not any(edge.relation == "vendor-remediation" for edge in imported.edges)
 
 

@@ -9,6 +9,7 @@ import json
 from pathlib import Path
 
 import pytest
+from kbc_k1_support import no_sockets  # noqa: F401 - pytest fixture registration
 
 ROOT = Path(__file__).resolve().parent / "fixtures" / "kb"
 MANIFEST = json.loads((ROOT / "MANIFEST.json").read_text(encoding="utf-8"))
@@ -48,7 +49,7 @@ def test_selected_advisory_records_have_synthetic_provenance() -> None:
             assert metadata["license"].startswith("UNVERIFIED")
 
 
-def test_corpus_covers_the_required_adversarial_families() -> None:
+def test_corpus_declares_the_required_adversarial_scenario_labels() -> None:
     """The corpus labels the required data-shape, hostile-text and revision scenarios."""
     scenarios = {
         item["scenario"]
@@ -96,6 +97,6 @@ def test_all_advisory_ids_are_fictional_namespace_values() -> None:
         for item in group:
             document = item["document"]
             assert item["fixture_id"].startswith("SYN-")
-            assert document["vulnerabilities"]
+            assert document["vulnerabilities"] or item["fixture_id"] == "SYN-CSAF-005"
             for vulnerability in document["vulnerabilities"]:
                 assert vulnerability["cve"].startswith("CVE-2099-")

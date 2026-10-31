@@ -5,7 +5,6 @@ import json
 from pathlib import Path
 
 import pytest
-
 from kb_crash_harness import CHECKPOINTS, CRASH_EXIT_CODE, Injection
 
 ROOT = Path(__file__).resolve().parent / "fixtures" / "kb"
