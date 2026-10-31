@@ -142,3 +142,7 @@ Gates only the owner or Windows hardware can close and that are reported separat
 3. Include the Linux tarball in the attestation? Default yes, same step.
 4. Show the Mark-of-the-Web guidance? Default: one README sentence ("if Windows warns, compare the SHA-256 first"), no instruction to disable SmartScreen or add Defender exclusions, ever.
 5. Version number: `0.1.0` is hard-coded in six places; WIN-1 introduces one `src/patchtrace/__init__.py` source of truth only if the owner approves editing it (default: generator reads `pyproject.toml`).
+
+## WIN-1 continuation amendment (2026-10-30)
+
+The selective PR #102 metadata/icon reconciliation is governed by the WIN-1 acceptance amendment in `windows-acceptance-and-milestone-builds.md`. It is a candidate until exact-source Windows CI passes. The historical no-installer statement in section 1 is superseded by the existing per-user NSIS installer in `docs/release-process.md`; no new installer or signing path is introduced. Historical source observations in section 2 are dated evidence, not claims about this candidate. Manifest work remains deferred under WIN-1 fallback. Windows version-resource labels require a numeric `<major>.<minor>.<patch>` base (each component at most 65535); unsupported archive-only labels must fail clearly before freezing.
