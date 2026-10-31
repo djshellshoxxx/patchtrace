@@ -20,6 +20,7 @@ import os
 import re
 import subprocess
 import sys
+import tempfile
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 from pathlib import Path
@@ -162,9 +163,18 @@ def fields_for_build(version: str, env: Mapping[str, str] | None = None, root: P
 
 def write(fields: VersionFields, out: Path) -> Path:
     out.parent.mkdir(parents=True, exist_ok=True)
-    staged = out.with_name(out.name + '.tmp')
-    staged.write_text(render(fields), encoding='utf-8', newline='\n')
-    os.replace(staged, out)
+    staged = None
+    try:
+        with tempfile.NamedTemporaryFile(mode='w', encoding='utf-8', newline='\n',
+                                         prefix='.patchtrace-version-', suffix='.tmp',
+                                         dir=out.parent, delete=False) as stream:
+            staged = Path(stream.name)
+            stream.write(render(fields))
+        os.replace(staged, out)
+        staged = None
+    finally:
+        if staged is not None:
+            staged.unlink(missing_ok=True)
     return out
 
 

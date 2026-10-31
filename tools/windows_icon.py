@@ -12,6 +12,7 @@ import argparse
 import os
 import struct
 import sys
+import tempfile
 from collections.abc import Sequence
 from pathlib import Path
 
@@ -59,9 +60,17 @@ def main(argv: Sequence[str] | None = None) -> int:
     args = parser.parse_args(argv)
     data = pack_ico(render_frames())
     args.out.parent.mkdir(parents=True, exist_ok=True)
-    staged = args.out.with_name(args.out.name + '.tmp')
-    staged.write_bytes(data)
-    os.replace(staged, args.out)
+    staged = None
+    try:
+        with tempfile.NamedTemporaryFile(mode='wb', prefix='.patchtrace-icon-', suffix='.tmp',
+                                         dir=args.out.parent, delete=False) as stream:
+            staged = Path(stream.name)
+            stream.write(data)
+        os.replace(staged, args.out)
+        staged = None
+    finally:
+        if staged is not None:
+            staged.unlink(missing_ok=True)
     print(args.out)
     return 0
 
