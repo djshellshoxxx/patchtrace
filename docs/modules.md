@@ -1193,3 +1193,14 @@ Calls panel (id graph): `callgraph/panel.py` (PanelSpec), `panel_qt.py` (widgets
 |---|---|---|
 | `kbcorrelation/investigation_qt.py` | Offline KB/CVE investigation controls and controller: advisory import, local search, explicit product scope, verified local pair preview and isolated new-project creation over existing service contracts and TaskRunner. No socket APIs or target execution. | `tests/test_ui_kb_investigation.py` |
 
+
+### Matching/semantic reconciliation (October 31 UTC continuation)
+
+Existing `unified/fusion/arbiter.py`, `unified/sources/ladder.py`, `unified/read_text.py`,
+`unified/ir/cfg.py` and `unified/compute.py` retain R2's complete matching witnesses,
+verified one-sided IR observations, analyst attribution and bounded CFG queries.
+`unified/facts/{pseudo,channels,anchors,verdict}.py` retain typed literal identity
+through rendering and value anchoring and abstain on IR exception/register uncertainty.
+Cache policy includes `matching/2`, `canon/2` and `COS-PSEUDO/1` implementation version 2;
+wire/ProgramIR contracts are unchanged. Regression sources and independent acceptance
+boundaries are recorded in `docs/plans/milestone-ledger-20261030.md`.

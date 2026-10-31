@@ -198,6 +198,10 @@ def facts_lines(facts: ChangeFacts | None) -> list[str]:
 
 def reason_text(match: UnifiedMatch) -> str:
     """Why the row has its decision, from the row alone (fixed templates, no numbers about confidence)."""
+    manual_group = next((hint.removeprefix('manual-group:') for hint in match.hints
+                         if hint.startswith('manual-group:')), None)
+    if manual_group is not None:
+        return f'Set by an analyst correction; group type: {clean(manual_group, 64)}.'
     decision = match.decision
     if decision == 'matched':
         if any(s.tier == 'M' for s in match.support):

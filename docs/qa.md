@@ -494,3 +494,34 @@ completed both orientations with known-endpoint unchanged outcomes. Neither
 result establishes required corpus or full Windows release acceptance.
 See [continuation verification](qa/continuation-verification-20261030.md) for
 source-tree equivalence, native receipts, failed node, draft PRs and open gates.
+
+## Matching/semantic continuation — October 30 Pacific / October 31 UTC
+
+Candidate #144 builds on #143, preserves original #129/#131/#135 refs and combines
+R2 matching/evidence/CFG repairs with R3/R8 semantic corrections. Extra integrated
+regressions cover LLP64 signed-L radix, exponent floats, typed-key fact consumers,
+and rejection of false machine anchors from type-only literal exchanges. Scoped
+independent reviews approved after repairs. Latest combined focused selection:
+136 passed; counts overlap earlier receipts and are not summed. Ruff passed and
+schema regeneration produced no tracked schema changes. Stable-source full pytest
+started at `c592b680eb1013f02c8472e544bbdb417e11fdde`; results pending here.
+Native corpus/Windows package and release acceptance remain open. See the single
+extended coordinator `docs/plans/milestone-ledger-20261030.md` and its linked
+135-branch/100-registry-entry content inventory. No main merge, source deletion,
+confidence promotion or target execution occurred in this continuation.
+
+Final continuation receipt: `docs/qa/completion-verification-20261031.json`.
+Stable #144 product source 59ff5ad: full suite after competing full runs finished
+**18,446 passed / 1 failed / 136 skipped / 7 xfailed**, 334.80 s. Same sole
+rule-export ancestor-Git-marker failure reproduced on main (18,342 passed /
+1 failed in the complete serial baseline) and in isolation; protection retained.
+Earlier concurrent full run's two timing failures are retained in the receipt;
+both rechecks and later full-suite executions pass unchanged. Unified Qt repeat
+5: **285 passed**. Pinned real Linux smoke: bounds material, signed-L/float/exponent
+review, identical UNCH/1; all five persist backend/GZF/IR/unified results and
+original hashes. These authored visible-name cases are not corpus/Windows/full
+G-U/air-gap acceptance. Initial fixture-setup failures are preserved separately.
+#143 exact-head QA/Qt/Windows package/Linux smoke now passes at a7f13e1; it does
+not validate later #144 changes. #144/#145/#146 and canonical main acceptance
+remain open. See the extended single milestone ledger for exact source/PR/gate
+mapping and pending native dispatch authentication.

@@ -63,10 +63,10 @@ def _offsets(counter: Counter) -> set[int]:
     return found
 
 
-def _shows(counter: Counter, value: int | None, *, offsets: bool = False) -> bool:
+def _shows(counter: Counter, value: int | None) -> bool:
     if value is None:
         return True
-    return bool(_literal_forms(value) & counter.keys()) or (offsets and value in _offsets(counter))
+    return bool(_literal_forms(value) & counter.keys())
 
 
 def _call_anchor(delta: Delta, info: DeltaInfo, inp: AnchorInputs) -> str | None:
@@ -110,11 +110,14 @@ def anchor_for(delta: Delta, info: DeltaInfo, inp: AnchorInputs) -> str | None:
     if cls in ('constant', 'struct-offset'):
         if info.values == (None, None):
             return None
-        removed, added = _removed_added(old.numbers, new.numbers)
+        # Project before subtraction: a suffix-only swap must not invent a numeric value change.
+        old_values, new_values = (tuple(t.partition(':')[0] if t.startswith('#') else t for t in c.numbers)
+                                  for c in (old, new))
+        removed, added = _removed_added(old_values, new_values)
         removed_tokens, added_tokens = _removed_added(old.tokens, new.tokens)
         offsets = cls == 'struct-offset'
-        return 'C6' if (_shows(removed, info.values[0]) or (offsets and _shows(removed_tokens, info.values[0], offsets=True))) \
-            and (_shows(added, info.values[1]) or (offsets and _shows(added_tokens, info.values[1], offsets=True))) \
+        return 'C6' if (_shows(removed, info.values[0]) or (offsets and info.values[0] in _offsets(removed_tokens))) \
+            and (_shows(added, info.values[1]) or (offsets and info.values[1] in _offsets(added_tokens))) \
             else None
     if cls in ('comparison', 'condition'):
         return 'C6' if (Counter(old.relational) != Counter(new.relational)
