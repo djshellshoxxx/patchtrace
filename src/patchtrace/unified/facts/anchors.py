@@ -66,7 +66,9 @@ def _offsets(counter: Counter) -> set[int]:
 def _shows(counter: Counter, value: int | None, *, offsets: bool = False) -> bool:
     if value is None:
         return True
-    return bool(_literal_forms(value) & counter.keys()) or (offsets and value in _offsets(counter))
+    # Type hints remain in C5/C6 equality; a machine-value anchor compares the numeric part only.
+    values = {token.partition(':')[0] for token in counter if token.startswith('#')}
+    return bool(_literal_forms(value) & values) or (offsets and value in _offsets(counter))
 
 
 def _call_anchor(delta: Delta, info: DeltaInfo, inp: AnchorInputs) -> str | None:

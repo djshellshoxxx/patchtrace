@@ -57,13 +57,29 @@ class PairMap:
 
 def _show_number(token: str) -> str:
     if token.startswith('#'):
-        value = int(token[1:])
-        return str(value) if -9 <= value <= 9 else (f'0x{value:x}' if value >= 0 else f'-0x{-value:x}')
-    return token[2:] if token[:2] in ('f:', 'c:', 'n:') else token
+        number, _, qualifier = token[1:].partition(':')
+        value = int(number)
+        hints = qualifier.split(':')
+        radix = hints[-1]
+        suffix = hints[0] if hints[0] in ('u', 'l', 'll', 'ul', 'ull') else ''
+        if radix == 'dec':
+            text = str(value)
+        elif radix == 'oct':
+            text = f'0{value:o}'
+        else:
+            text = str(value) if -9 <= value <= 9 else (f'0x{value:x}' if value >= 0 else f'-0x{-value:x}')
+        return text + suffix
+    if token.startswith('f:'):
+        text = token[2:]
+        return text[:-2] + 'f' if text.endswith(':f') else text
+    return token[2:] if token[:2] in ('c:', 'n:') else token
 
 
 def _number_key(token: str) -> tuple:
-    return (0, int(token[1:]), '') if token.startswith('#') else (1, 0, token)
+    if token.startswith('#'):
+        number, _, qualifier = token[1:].partition(':')
+        return (0, int(number), qualifier)
+    return (1, 0, token)
 
 
 def _short(text: object) -> str:

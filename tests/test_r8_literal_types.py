@@ -109,3 +109,24 @@ def test_reconciled_semantic_versions_each_invalidate_cached_results():
     old_proof = replace(REGISTRY, proof_versions=tuple(
         (name, 1 if name == 'COS-PSEUDO/1' else version) for name, version in REGISTRY.proof_versions))
     assert len({current, compute_config_digest(old_canon), compute_config_digest(old_proof)}) == 3
+
+
+@pytest.mark.parametrize(('old', 'new'), [('16', '16L'), ('2147483648L', '0x80000000L'), ('256U', '512U')])
+def test_typed_literal_changes_reach_facts_without_crashing_or_erasing_type(old, new):
+    from test_unified_facts import context, decided, judged, pair_match
+
+    row = decided(0x1000, 0x1080)
+    m = pair_match(f'int f(int a) {{ return a < {old}; }}', f'int f(int a) {{ return a < {new}; }}')
+    facts = judged(context([m], [row]), row).facts
+    assert facts.verdict == 'review'
+    deltas = [d for d in facts.deltas if d.cls == 'constant']
+    assert len(deltas) == 1 and deltas[0].old != deltas[0].new
+
+
+def test_suffixed_value_changes_still_anchor_the_same_machine_constant_delta(tmp_path):
+    from test_unified_anchors import CMP_NEW, CMP_OLD, verdict_of
+
+    old = 'int f(int a) { if (a > 0x100U) { return 1; } return 0; }'
+    new = 'int f(int a) { if (a > 0x200U) { return 1; } return 0; }'
+    facts = verdict_of(tmp_path, CMP_OLD, CMP_NEW, old, new)
+    assert (facts.verdict, facts.second_channel) == ('material', 'C6')
