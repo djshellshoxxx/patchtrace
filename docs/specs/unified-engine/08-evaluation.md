@@ -106,3 +106,7 @@ orientation checks. A skipped, unsupported, failed or cancelled attempt remains
 explicitly excluded, not a synthetic unchanged proof. Empty `modified` lists
 do not automatically prove unchanged source semantics. Pin and verify Linux and
 Windows runs and G-U1..G-U8 at the exact commit before GT-01 acceptance.
+
+Each pair/orientation owns its extraction staging workspace. An ingest or IR
+placement failure may retain partial staging for diagnosis, but must not make a
+later independent comparison fail because of a leftover staging directory.
