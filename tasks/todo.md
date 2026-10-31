@@ -856,5 +856,5 @@ Done: dock with state matrix, consent, import, changes, copy, go to CVE. Open: r
 
 - [x] PT-WIN1: selectively port owner mark/version resource; preserve current launch/extractor inventory and workflow policy; add exact upstream QtSvg notices. Source `5429e84`.
 - [x] PT-WIN1-REVIEW: independently reproduce and repair hidden/capped/duplicate version identity; source `78ff0c7`; 310 integrated focused tests and Ruff pass.
-- [ ] PT-WIN1-ACCEPT: finish complete integrated-suite verification, actual Linux frozen candidate and exact-source Windows resource/portable/installer CI. Implementation is present; release acceptance remains BLOCKED. See `docs/qa.md` and latest integration-ledger continuation.
+- [ ] PT-WIN1-ACCEPT: full integrated run recorded (18,358 passed, one host Git-marker failure; unchanged failing node passes in non-Git temp), Linux build/frozen smoke/checksum PASS. Exact-source Windows resource/portable/installer CI remains queued; release acceptance BLOCKED. Draft PR #147 and `docs/qa.md` hold evidence. No assertion/guard weakened.
 - [ ] Preserve #102 author branch and other active repair stacks; this port does not establish all of #102 is superseded.
