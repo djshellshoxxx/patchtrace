@@ -28,7 +28,7 @@ def test_flag_default_and_boolean_validation():
                for error in backend._config_errors(forged))
 
 
-def test_equal_images_only_analyzed_when_native_opt_in(fake_runtime):  # noqa: F811 - fixture reuse
+def test_equal_images_only_analyzed_when_native_opt_in(fake_runtime):  # noqa: F811 - imported pytest fixture
     root, package, project, config = fake_runtime
     content = (root / 'older.bin').read_bytes()
     (root / 'newer.bin').write_bytes(content)

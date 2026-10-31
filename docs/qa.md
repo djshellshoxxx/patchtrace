@@ -457,3 +457,26 @@ Remaining: final-source full suite, exact-head Linux/Windows QA and repeated Qt,
 real native corpus workflow with evaluated denominators and all required G-U gates,
 then reviewed integration and release acceptance. Advisory-green parents do not
 establish child-job acceptance.
+## GT-01 local repair checkpoint (2026-10-30, Windows)
+
+Base: PR #140 b87193d1dd30635fce33986f80ceade136507a1a; isolated project venv, Python 3.14.5. Original 7-Zip quarantine inspection confirms 105,077,223 bytes of JSON against a 104,857,600-byte ceiling; hashes and limitations are in [the diagnosis](plans/gt01-native-output-diagnosis-20261030.md). Original files were preserved.
+
+- Red reporting regressions: **7 failed, 2 passed in 54.13 s** against unchanged backend messages (both corrected A/A fixture orientations passed).
+- Focused backend/harness selection: **74 passed, 4 skipped in 89.95 s** across test_jobs, test_unified_live_force_identical, test_unified_live_pairs, test_unified_live_pairs_r1, test_unified_live_workflow and test_unified_live_native_failure_details. Fake external processes are not native acceptance.
+- Full repository Ruff and git diff --check passed.
+- Isolated Windows Qt discovery reproduction: **1 passed in 31.34 s**. The earlier repeated-CI timeout remains unresolved; one pass does not establish stability.
+- Full offscreen suite and a local installed-runtime native A/A smoke are running at this checkpoint. No completed full/native result is claimed. The smoke uses synthetic PE bytes and Ghidra 12.1.4/Ghidriff 1.0.0; it is not the pinned cross-platform G-U matrix.
+- Required new-head Linux/Windows CI, repeated Qt, evaluated native G-U1–G-U8 and applicable independent review remain open. Workflow dispatch is blocked: connector has no dispatch operation, CLI has no authenticated session and the available browser is signed out. No merge or GT-01 completion is claimed.
+
+
+### GT-01 concurrent-source reconciliation
+
+The Windows coordinator advanced #140 to `fb91cff6d91c77a2c539c896b670d81180dcc637`
+while the Linux repair was being verified. A guarded ref update did not move
+that branch. Both append-only QA/todo sections and the Windows output-diagnostic
+repair are retained in the local reconciliation. Combined focused backend/harness
+checks: **87 passed, 3 skipped** in 7.34 s; Ruff and patch hygiene clean.
+The complete Linux run started from the earlier `b705659` source snapshot;
+it cannot attest the subsequent concurrent diagnostic changes. New combined-head
+CI remains required. The independent extraction repair is published separately
+so the active coordinator's branch is not overwritten.

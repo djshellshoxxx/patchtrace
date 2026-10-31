@@ -880,3 +880,12 @@ Done: dock with state matrix, consent, import, changes, copy, go to CVE. Open: r
   merely because tiny authored smokes or advisory workflow parents pass.
 - [ ] Reconcile #136 fixture tests against current parser contracts; source #69
   remains preserved, and protocol tests do not establish application crash recovery.
+## GT-01 output diagnostics and acceptance checkpoint (2026-10-30)
+
+- [x] Read-only original 7-Zip quarantine inventory and hashes; confirm output-limit and preserve raw/Markdown diagnostics.
+- [x] Correct PR #140's identical-input fixture to aa without changing the strict label contract; repair three lint findings.
+- [x] Red/green distinct output-limit/unsafe-output-path/output-check-failed diagnostics, including post-exit guard checks and retained failed artifacts; focused 74 passed, 4 skipped.
+- [ ] Complete full local offscreen suite and local native smoke; record actual results.
+- [ ] Resolve/verify repeated Windows Qt discovery timeout (isolated reproduction passes once).
+- [ ] Obtain workflow-capable authentication; dispatch full pinned native matrix on the new exact head and verify evaluated denominators and G-U1–G-U8.
+- [ ] Complete required exact-head cross-platform checks and independent review; merge accepted stack, verify target branch, then write the post-merge handoff. GT-02/GT-03 remain outside this milestone.

@@ -787,10 +787,14 @@ def run_comparison(config: BackendConfig, project: ComparisonProject, root: Path
             raise RuntimeError('PT-CANCEL: analysis cancelled; partial output retained in quarantine')
         if result.reason == 'timeout':
             raise RuntimeError('PT-BACKEND: analysis timed out; increase the configured timeout and retry')
-        if result.reason == 'output-check-failed' or _output_error(raw) == 'output-check-failed':
-            raise RuntimeError('PT-BACKEND: output directory could not be inspected; partial output quarantined')
-        if result.reason or _output_error(raw):
-            raise RuntimeError('PT-BACKEND: unsafe or oversized JSON output; partial output quarantined')
+        output_reason = result.reason or _output_error(raw)
+        if output_reason:
+            detail = {
+                'output-limit': f'oversized JSON output [output-limit]: combined JSON exceeds {JSON_LIMIT} bytes',
+                'unsafe-output-path': 'unsafe output path [unsafe-output-path]',
+                'output-check-failed': 'output directory could not be inspected [output-check-failed]',
+            }.get(output_reason, 'output validation failed')
+            raise RuntimeError(f'PT-BACKEND: {detail}; partial output quarantined')
         if local is not None:
             from .ghidriff_launch.validate import check_exit, validate_run
             check_exit(result.returncode, sanitized_log)
