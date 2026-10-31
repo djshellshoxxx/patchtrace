@@ -867,3 +867,37 @@ Done: dock with state matrix, consent, import, changes, copy, go to CVE. Open: r
 - [ ] Open draft integration PR for exact-head Linux/Windows QA, check every job's status and conclusion, and diagnose true failures. For code changes also require native Ghidriff / secondary acceptance; for GUI/packaging require frozen executable smoke.
 - [ ] Perform final semantic conflict/security/persistence/GUI audit, repair with reproducing tests, then merge integration PR to main only when current-head reviews/checks permit.
 - [ ] Update feature-completion and final branch/PR disposition with main/integration SHAs, merged changes and remaining unique work.
+
+
+### GT-01 executable continuation (2026-10-30 Pacific)
+- [x] Reproduce and repair #140's invalid equal-byte test fixtures and lint findings.
+- [x] Reproduce extraction-failure contamination of later orientations; isolate
+  staging per comparison, run 30 focused tests and independent review.
+- [x] Verify real Linux changed-pair and two identical-byte backend/GZF/IR/unified
+  static smokes; retain bounded authored-fixture receipt in docs/qa. No corpus gate claim.
+- [ ] Complete final-source full suite and exact-head Linux/Windows/repeated-Qt gates.
+- [ ] Obtain qualifying native G-U1..G-U8 denominators; do not promote #139/#140
+  merely because tiny authored smokes or advisory workflow parents pass.
+- [ ] Reconcile #136 fixture tests against current parser contracts; source #69
+  remains preserved, and protocol tests do not establish application crash recovery.
+## GT-01 output diagnostics and acceptance checkpoint (2026-10-30)
+
+- [x] Read-only original 7-Zip quarantine inventory and hashes; confirm output-limit and preserve raw/Markdown diagnostics.
+- [x] Correct PR #140's identical-input fixture to aa without changing the strict label contract; repair three lint findings.
+- [x] Red/green distinct output-limit/unsafe-output-path/output-check-failed diagnostics, including post-exit guard checks and retained failed artifacts; focused 74 passed, 4 skipped.
+- [ ] Complete full local offscreen suite and local native smoke; record actual results.
+- [ ] Resolve/verify repeated Windows Qt discovery timeout (isolated reproduction passes once).
+- [ ] Obtain workflow-capable authentication; dispatch full pinned native matrix on the new exact head and verify evaluated denominators and G-U1–G-U8.
+- [ ] Complete required exact-head cross-platform checks and independent review; merge accepted stack, verify target branch, then write the post-merge handoff. GT-02/GT-03 remain outside this milestone.
+
+
+### Published continuation verification (2026-10-30 Pacific)
+- [x] Publish independently reviewed extraction recovery as draft #141 and KB
+  fixture repairs as draft #142 without overwriting active author branches.
+- [x] Record full combined local run: 18,384 passed, one sandbox-marker export
+  failure, 126 skipped, 7 xfailed; Ruff/schema/hygiene checked.
+- [x] Record #141's five passing native Windows Ghidriff jobs and two real Linux
+  same-image live-harness outcomes; keep their limited scope explicit.
+- [ ] Verify final exact-head full Linux/Windows/Qt/package checks and qualifying
+  native corpus G-U gates before integration; keep clean Windows GUI and actual
+  release asset acceptance open. Details: docs/qa/continuation-verification-20261030.md.

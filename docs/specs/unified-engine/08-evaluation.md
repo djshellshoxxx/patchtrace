@@ -86,3 +86,27 @@ Strict pydantic models, deterministic JSON (sorted keys, LF, no timestamps), nev
 | `gate-report/1` | `tools/unified/gates_u.py` | one row per gate with a status, reasons, what it needs and observed facts; statuses: `pass` and `fail` are verdicts on data, `insufficient-data` means the data cannot decide, `pending` means a slice that is not built, `blocked` means something outside the code (a pinned BinDiff, a Windows runner); inputs with their SHA-256; `flag.decision_ready` is true only when G-U1..G-U6 pass (U-05); `report_sha256` |
 
 Rules: a gate that cannot run is never `pass`; a skipped required test is `blocked`, not a pass; G-U8 maps each of its checks to named tests (the tool's test keeps the names real); the planted-mutant classes are `tools/unified/mutations/classes.py`, tied to the G-U2 row by a test; the report is advisory (exit 0) unless `--strict`. JSON Schemas for these four contracts are not generated.
+
+
+## GT-01 native A/A gate: opt-in identical-input comparison (2026-10-30)
+
+The normal application preserves its existing identical-hash shortcut and reports
+`identical`, not a completed analysis. The dev-only unified-live-gates harness may
+opt into a **genuine native** Ghidriff comparison when the labelled older/newer
+images have exactly equal SHA-256. In that case it disables cached raw analysis,
+passes the pinned Ghidriff `--force-diff` switch, and gives the copied images
+side-distinct basenames without changing their bytes. Distinct basenames are
+required by the observed Ghidra ProgramDB transaction failure in R1 PR #128
+(`docs/research/ground-truth-corpus/results/native-aa-control.md`).
+
+An A/A result can enter the acceptance denominator only after actual successful
+native exit, raw JSON ownership validation, two valid retained GZF/IR sides,
+ProjectService completed-run persistence, unified result generation, and proper
+orientation checks. A skipped, unsupported, failed or cancelled attempt remains
+explicitly excluded, not a synthetic unchanged proof. Empty `modified` lists
+do not automatically prove unchanged source semantics. Pin and verify Linux and
+Windows runs and G-U1..G-U8 at the exact commit before GT-01 acceptance.
+
+Each pair/orientation owns its extraction staging workspace. An ingest or IR
+placement failure may retain partial staging for diagnosis, but must not make a
+later independent comparison fail because of a leftover staging directory.
