@@ -39,7 +39,7 @@ Mean of 20 equally weighted feature scores: **74.3%** (descriptive **planning pr
 
 ### 1. PE ingestion and validation — 88% estimated / 12% remaining
 
-- **Implementation inspected / relevant files:** `src/patchtrace/src/patchtrace/ingestion.py`; `src/patchtrace/pe_overview/inspect.py` (paths under `tools/` remain relative to repository root). These are code anchors, not an assertion that every function in the package was exhaustively reviewed.
+- **Implementation inspected / relevant files:** `src/patchtrace/src/patchtrace/ingestion.py`; `src/patchtrace/pe_overview/inspect.py` (repository-relative `tools/` paths remain rooted at repository root). These are code anchors, not an assertion that every function in the package was exhaustively reviewed.
 - **Specific remaining gap:** PE bounds, Authenticode/catalog and malicious/OneDrive cases on clean Windows.
 - **Development ticket / dependency:** GT-09. **Priority P1**, effort **M** (S 1–2d, M 3–5d, L 1–2w, XL 2–4w of one engineer; very uncertain for native licensing/corpus). **Research owner:** R8. Research must be merged only after exact-head QA. 
 - **Required verification:** focused adversarial unit/integration tests, unchanged source/artifact/run identity, relevant Linux/Windows QA and a dated real/native acceptance receipt; record explicit `unknown` and `not observed` states instead of silent success.
@@ -102,7 +102,7 @@ Mean of 20 equally weighted feature scores: **74.3%** (descriptive **planning pr
 
 ### 10. Confidence calibration — 59% estimated / 41% remaining
 
-- **Implementation inspected / relevant files:** `src/patchtrace/calibration/predict.py`; `src/patchtrace/calibration/ood.py`; `src/patchtrace/tools/calibration/` (paths under `tools/` remain relative to repository root). These are code anchors, not an assertion that every function in the package was exhaustively reviewed.
+- **Implementation inspected / relevant files:** `src/patchtrace/calibration/predict.py`; `src/patchtrace/calibration/ood.py`; `tools/calibration/` (paths under `tools/` remain relative to repository root). These are code anchors, not an assertion that every function in the package was exhaustively reviewed.
 - **Specific remaining gap:** Lineage-held-out Tier W labels, locked preregistration, trustworthy metrics and promotion gate.
 - **Development ticket / dependency:** GT-05. **Priority P1**, effort **XL** (S 1–2d, M 3–5d, L 1–2w, XL 2–4w of one engineer; very uncertain for native licensing/corpus). **Research owner:** R1/R5. Research must be merged only after exact-head QA. 
 - **Required verification:** focused adversarial unit/integration tests, unchanged source/artifact/run identity, relevant Linux/Windows QA and a dated real/native acceptance receipt; record explicit `unknown` and `not observed` states instead of silent success.
@@ -165,14 +165,14 @@ Mean of 20 equally weighted feature scores: **74.3%** (descriptive **planning pr
 
 ### 19. Performance/scalability — 60% estimated / 40% remaining
 
-- **Implementation inspected / relevant files:** `src/patchtrace/unified/ladder/`; `src/patchtrace/tools/unified/bench.py`; `src/patchtrace/tools/bench_enrichment.py` (paths under `tools/` remain relative to repository root). These are code anchors, not an assertion that every function in the package was exhaustively reviewed.
+- **Implementation inspected / relevant files:** `src/patchtrace/unified/ladder/`; `tools/unified/bench.py`; `tools/bench_enrichment.py` (paths under `tools/` remain relative to repository root). These are code anchors, not an assertion that every function in the package was exhaustively reviewed.
 - **Specific remaining gap:** Native 100k and real large PE, Windows RSS/time and GUI first paint/scroll deadlines.
 - **Development ticket / dependency:** GT-05,GT-12. **Priority P1**, effort **L** (S 1–2d, M 3–5d, L 1–2w, XL 2–4w of one engineer; very uncertain for native licensing/corpus). **Research owner:** R2/R5. Research must be merged only after exact-head QA. 
 - **Required verification:** focused adversarial unit/integration tests, unchanged source/artifact/run identity, relevant Linux/Windows QA and a dated real/native acceptance receipt; record explicit `unknown` and `not observed` states instead of silent success.
 
 ### 20. Windows packaging/release — 72% estimated / 28% remaining
 
-- **Implementation inspected / relevant files:** `src/patchtrace/tools/build_windows.py`; `src/patchtrace/tools/package_windows_installer.py`; `src/patchtrace/tools/release_gate.py` (paths under `tools/` remain relative to repository root). These are code anchors, not an assertion that every function in the package was exhaustively reviewed.
+- **Implementation inspected / relevant files:** `tools/build_windows.py`; `tools/package_windows_installer.py`; `tools/release_gate.py` (paths under `tools/` remain relative to repository root). These are code anchors, not an assertion that every function in the package was exhaustively reviewed.
 - **Specific remaining gap:** Exact-head verified assets, clean Win11, signed/trusted policy, air-gapped runtime bundle optional.
 - **Development ticket / dependency:** GT-09,GT-13. **Priority P0**, effort **L** (S 1–2d, M 3–5d, L 1–2w, XL 2–4w of one engineer; very uncertain for native licensing/corpus). **Research owner:** R6. Research must be merged only after exact-head QA. 
 - **Required verification:** focused adversarial unit/integration tests, unchanged source/artifact/run identity, relevant Linux/Windows QA and a dated real/native acceptance receipt; record explicit `unknown` and `not observed` states instead of silent success.
