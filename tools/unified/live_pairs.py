@@ -106,8 +106,10 @@ def analyse_pair(doc: C.KnownAnswerLabels, store_dir: Path, backend: BackendConf
             raise RuntimeError(reason)
         service.apply_analysis(raw_path, run)
         gzf = service.root / 'runs' / run.id / 'unified' / 'gzf'
+        extraction_work = service.root / 'extraction-work'
+        extraction_work.mkdir()
         for label, dll, other in (('older', old, new), ('newer', new, old)):
-            sides[label] = Side(label, dll, file_sha256(other), backend, work)
+            sides[label] = Side(label, dll, file_sha256(other), backend, extraction_work)
             program = gzf / f'{label}.gzf'
             built = sides[label].run('gzf', program, file_sha256(program))
             place_ir(service.root, run.id, built['directory'])
