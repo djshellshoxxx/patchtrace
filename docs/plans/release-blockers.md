@@ -73,3 +73,16 @@ The exact-main CI native Windows Ghidriff matrix and standard QA are genuine **s
 - [R4 MSRC placeholder analysis](https://github.com/djshellshoxxx/patchtrace/pull/130)
 - [R6 final integration dossier](https://github.com/djshellshoxxx/patchtrace/pull/133)
 - [Latest prerelease](https://github.com/djshellshoxxx/patchtrace/releases/tag/v0.1.0-beta.543)
+
+
+## 2026-10-30 exact-job failure-log follow-up — GT-01 diagnostic checkpoint
+
+The assessment subsequently fetched raw GitHub Actions logs from [unified gate run 41063115449](https://github.com/djshellshoxxx/patchtrace/actions/runs/41063115449), instead of inferring root causes from job summaries. Distinguish the following independently:
+
+- **Ubuntu benchmark/integrity** job `124087550789`: `pytest` fails during `pytestqt` initialization with `ImportError: libEGL.so.1: cannot open shared object file: No such file or directory` (job log line ~319, exit 3). This specifically evidences a runner's missing Qt-linked runtime library, **not** a demonstrated source-code logic defect. Required: add/verify proper Linux EGL runtime dependency for this job, then rerun exact head.
+- **Ubuntu A/A and release pairs** job `124094490545`: A/A path/rebuild cases report `RuntimeError: Ghidriff run identical: None`. Other same-build transformations and release comparisons report `PT-BACKEND: ghidriff exited with code 1; Filesystem permissions or locks prevent Ghidra analysis; check writable paths; inspect analysis.log`. The message is a *classifier*, not proof filesystem permissions caused the upstream failure. Required: preserve/fetch the exact `analysis.log`, original argv and project scratch paths to determine actual cause. Determine whether byte-identical A/A cases should be recorded as a valid unchanged control or as a skipped, explicitly excluded case.
+- **Windows A/A and release pairs** job `124094490578`: A/A path/rebuild cases report `Ghidriff run identical: None`; others report `UnifiedError: PT-UNIFIED-INPUT: The unified inputs are not usable [no-completed-run]`. This is an observed missing prerequisite completed Ghidriff run, not proof that unified matching produced an incorrect verdict. Trace comparison state and run identity before touching the matcher.
+- **Next red-first action:** separate runner provisioning, identical-input control semantics, underlying native Ghidriff execution/analysis output, and resulting unified no-completed-run precondition into independent repros. Preserve the failed result artifacts; treat no evaluated rows as insufficient data. Only after repairing actual causes should rerun A/A and changed pairs in both orientations and compute real G-U denominators. Do not simply suppress these failures or loosen thresholds.
+
+These log snippets were observed from the named 2026-10-30 run; no fix or new CI run is claimed.
+
