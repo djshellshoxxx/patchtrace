@@ -413,3 +413,47 @@ Full d34efeb snapshot before final Qodo repairs: **18,304 passed, 128 skipped, 7
 - **PR #126 is active code, not documentation-only:** observed head `8d958f0a1950a29c1d1cef9525a114654f4c9904`, 9 ahead / 0 behind main, modifies callgraph, KB, detection rules and tests despite a docs-style title; reserve worker branch and require its own exact-head acceptance. R1–R8 research PRs received same-day updates and are preserved untouched.
 - **Not run on new integration branch:** local offscreen pytest, Ruff, schema generation, Linux/Windows CI, live native Ghidriff/secondary engines, Windows frozen smoke. This environment has GitHub repository API access but **no local PatchTrace checkout and no network path for Git clone** (`git ls-remote` fails DNS resolution). Do not interpret these as passing. Open an integration PR to trigger GitHub Actions; verify checks on its exact resulting head before marking ready.
 - **Acceptance stop rule:** main remains unchanged, no code changes may be promoted merely because docs-only code is green. PRs are not closed until all unique source content has merged into main and equivalence is established.
+
+
+## GT-01 executable verification continuation (2026-10-30 Pacific)
+
+This entry supersedes the earlier no-checkout limitation for this session only.
+Reviewed source: PR #140 `b87193d1dd30635fce33986f80ceade136507a1a`, stacked on
+#139; neither draft is accepted or merged by this entry.
+
+- Reproduced both invalid A/A regression fixtures (equal hashes incorrectly labelled
+  `release`) and two Ruff findings; corrected the fixture stratum and import/fixture
+  registration annotations without relaxing the label contract.
+- Independent review found failed extraction staging could poison the next pair or
+  orientation. The new regression first failed twice with `FileExistsError`, then
+  passed after comparison-owned extraction staging. The real project store and
+  unified pipeline remain exercised; the external runner is synthetic in this test.
+- Focused GT-01 suites: **30 passed**. `python -m ruff check src tests tools` and
+  `git diff --check`: clean. Independent review approved the recovery repair.
+- Real Linux static smoke: pinned Ghidriff `4f5d895`, PyGhidra 3.0.2, verified
+  Ghidra 12.0.4 archive, OpenJDK 21.0.12.1, authored one-function PE fixtures
+  compiled with Zig 0.17.0. Changed pair: completed/imported, `read_item` modified,
+  unified `material`. Two independent equal-byte controls: completed/imported,
+  two hash-verified retained GZF sides each, extracted IR, current unified result,
+  `read_item` unchanged. Receipt: [gt01-native-smoke-20261030.json](qa/gt01-native-smoke-20261030.json).
+  No target DLL ran. These tiny exported-name-visible fixtures are not a Tier R,
+  G-U1..G-U8, different-image orientation, Windows or general accuracy claim.
+- An initial native launch failed during JDK auto-selection under the read-only
+  host home; successful attempts use the supported explicit JDK/restricted-env
+  configuration. The failed project/log is retained in session scratch.
+- Initial parallel full run: **18,290 passed, 49 failed, 9 errors, 126 skipped,
+  7 xfailed** in 476.79 s. Socket creation was denied by the shell network sandbox;
+  two subprocess cases resolved the symlinked venv interpreter to its unprovisioned
+  base. A copied venv interpreter and explicit shell network capability made
+  **36 environment rechecks pass**. The rule-export check still sees the sandbox's
+  empty read-only `/tmp/.git` marker as a repository; no production protection was
+  weakened to conceal that host artifact. A final complete run is pending.
+- Prior #140 remote QA run [41152314039](https://github.com/djshellshoxxx/patchtrace/actions/runs/41152314039)
+  failed on those two invalid A/A fixtures on both OSes; its Windows repeated-Qt
+  leg also timed out in discovery. The discovery check passes **30 repetitions**
+  locally, but that is not Windows confirmation and the remote gate stays open.
+
+Remaining: final-source full suite, exact-head Linux/Windows QA and repeated Qt,
+real native corpus workflow with evaluated denominators and all required G-U gates,
+then reviewed integration and release acceptance. Advisory-green parents do not
+establish child-job acceptance.

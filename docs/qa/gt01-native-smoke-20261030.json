@@ -1,0 +1,388 @@
+{
+  "backend": [
+    {
+      "case": "changed",
+      "error": null,
+      "gzf_verified": true,
+      "matches": 1,
+      "persisted_status": "completed",
+      "raw_sha256": "06c2eee566f99559df4acddff055be2d569d04972650cd6075b75a24f49d82ac",
+      "read_item": [
+        {
+          "category": "modified"
+        }
+      ],
+      "settings": {
+        "allow_symbol_downloads": false,
+        "force_identical_diff": true,
+        "ghidra_settings": "isolated-per-run",
+        "ghidra_version": "12.0.4",
+        "gzf": {
+          "newer": {
+            "bytes": 25783,
+            "name": "dd54afee56733770431ac2e9a7c5b430460742598388f16bc1e97de465a79800.bin-223d90.gzf",
+            "sha256": "8e8ca64d3c8819b41601663d41786389e6ff18e7eedf75e43f0c426fd5e1bfbc"
+          },
+          "older": {
+            "bytes": 25367,
+            "name": "f76907f0258502fbb737fd925c6558a5aac5ae47689407bb4c28d908d9565348.bin-a95bac.gzf",
+            "sha256": "af8defda3de450ec7f8c135b4628d8cc78f77bd83874df44a19eb51841d6a4d0"
+          }
+        },
+        "java_runtime_version": "unverified",
+        "newer_sha256": "dd54afee56733770431ac2e9a7c5b430460742598388f16bc1e97de465a79800",
+        "older_sha256": "f76907f0258502fbb737fd925c6558a5aac5ae47689407bb4c28d908d9565348",
+        "pyghidra_version": "3.0.2",
+        "python_version": "3.12.14",
+        "symbol_policy": "disabled",
+        "timeout_seconds": 300
+      },
+      "status": "completed"
+    },
+    {
+      "case": "aa-forward",
+      "error": null,
+      "gzf_verified": true,
+      "matches": 0,
+      "persisted_status": "completed",
+      "raw_sha256": "1315fdfb72ff7363587076b8f45b49f96d4bc52ceb4a1ac8c794096a98037fb6",
+      "read_item": [],
+      "settings": {
+        "allow_symbol_downloads": false,
+        "force_identical_diff": true,
+        "ghidra_settings": "isolated-per-run",
+        "ghidra_version": "12.0.4",
+        "gzf": {
+          "newer": {
+            "bytes": 25367,
+            "name": "newer-f76907f0258502fbb737fd925c6558a5aac5ae47689407bb4c28d908d9565348.bin-a95bac.gzf",
+            "sha256": "4fad2020eee4d92f162b5cdf89fd9eebbb074b8c94a8bf7238ddabb68863f9dc"
+          },
+          "older": {
+            "bytes": 25394,
+            "name": "older-f76907f0258502fbb737fd925c6558a5aac5ae47689407bb4c28d908d9565348.bin-a95bac.gzf",
+            "sha256": "4e47aa98f882f2e70f91ad3a4cf0518b4843f962a11b1028dde6b9c44faed68b"
+          }
+        },
+        "java_runtime_version": "unverified",
+        "newer_sha256": "f76907f0258502fbb737fd925c6558a5aac5ae47689407bb4c28d908d9565348",
+        "older_sha256": "f76907f0258502fbb737fd925c6558a5aac5ae47689407bb4c28d908d9565348",
+        "pyghidra_version": "3.0.2",
+        "python_version": "3.12.14",
+        "symbol_policy": "disabled",
+        "timeout_seconds": 300
+      },
+      "status": "completed"
+    },
+    {
+      "case": "aa-swapped",
+      "error": null,
+      "gzf_verified": true,
+      "matches": 0,
+      "persisted_status": "completed",
+      "raw_sha256": "eeec6dd0363e07644639e53bd14a760d5accf7d3b205867c2a491c4d55f3c082",
+      "read_item": [],
+      "settings": {
+        "allow_symbol_downloads": false,
+        "force_identical_diff": true,
+        "ghidra_settings": "isolated-per-run",
+        "ghidra_version": "12.0.4",
+        "gzf": {
+          "newer": {
+            "bytes": 25413,
+            "name": "newer-f76907f0258502fbb737fd925c6558a5aac5ae47689407bb4c28d908d9565348.bin-a95bac.gzf",
+            "sha256": "21a1dff84360b99f57feaee99a861550ce79319457343a16391e43eaf6bfaedf"
+          },
+          "older": {
+            "bytes": 25345,
+            "name": "older-f76907f0258502fbb737fd925c6558a5aac5ae47689407bb4c28d908d9565348.bin-a95bac.gzf",
+            "sha256": "4b0e537ae89732c1a52cf70b403e361c9a5add80371cc5c72c67054ed44f1c88"
+          }
+        },
+        "java_runtime_version": "unverified",
+        "newer_sha256": "f76907f0258502fbb737fd925c6558a5aac5ae47689407bb4c28d908d9565348",
+        "older_sha256": "f76907f0258502fbb737fd925c6558a5aac5ae47689407bb4c28d908d9565348",
+        "pyghidra_version": "3.0.2",
+        "python_version": "3.12.14",
+        "symbol_policy": "disabled",
+        "timeout_seconds": 300
+      },
+      "status": "completed"
+    }
+  ],
+  "compile_command": "zig cc -target x86_64-windows-gnu -shared -nostdlib -Wl,--no-entry -fno-sanitize=all -O0 -o <old|new>.dll tests/fixtures/<old|new>.c",
+  "compiler": "Zig 0.17.0",
+  "config": {
+    "force_identical_diff": true,
+    "no_cache": true,
+    "restrict_env": true,
+    "retain_gzf": true,
+    "symbols": "off"
+  },
+  "date_utc": "2026-10-31",
+  "dependencies": {
+    "JPype1": "1.5.2",
+    "ghidriff": "1.0.0",
+    "pyghidra": "3.0.2"
+  },
+  "ghidra": "12.0.4",
+  "ghidra_archive_sha256": "c3b458661d69e26e203d739c0c82d143cc8a4a29d9e571f099c2cf4bda62a120",
+  "ghidriff_revision": "4f5d895fcbb1eacd65efd81145922c15bb7e741d",
+  "input_hashes": {
+    "tests/fixtures/new.c": "1b908b80063d6aba5648e75ec3661990699481138966c0876dbd2de3554d5cf8",
+    "tests/fixtures/old.c": "b0d28c94a901b3b188034ae0112f6dbbba09cfae946d97f115dbdf1165e370e3",
+    "work/native/minimal/new.dll": "dd54afee56733770431ac2e9a7c5b430460742598388f16bc1e97de465a79800",
+    "work/native/minimal/old.dll": "f76907f0258502fbb737fd925c6558a5aac5ae47689407bb4c28d908d9565348"
+  },
+  "jdk": "OpenJDK 21.0.12.1 Debian",
+  "limitations": [
+    "No target DLL was executed.",
+    "The two A/A runs independently analyze the same old.dll bytes; they do not test swapping a distinct pair.",
+    "No source/debug names were hidden; PE export read_item is visible.",
+    "These are authored one-function fixtures compiled with Zig, not the preregistered Tier R corpus or pinned CI toolchain.",
+    "No Windows, BinDiff oracle, large-corpus accuracy, resource gate or release acceptance is established.",
+    "An initial launcher attempt without explicit private JDK selection failed; the successful attempts use supported restricted-env Java selection."
+  ],
+  "platform": "Linux-6.18.57-x86_64-with-glibc2.41",
+  "python": "3.12.14",
+  "scope": "Linux authored one-function static-analysis smoke; not G-U1..G-U8 acceptance",
+  "source_parent": "b87193d1dd30635fce33986f80ceade136507a1a",
+  "unified": [
+    {
+      "case": "changed",
+      "rows": [
+        {
+          "atoms": [
+            {
+              "cardinality": "1:1",
+              "cls": "E-NAME",
+              "native": [
+                [
+                  "ratio",
+                  "0.44"
+                ],
+                [
+                  "match types",
+                  "SymbolsHash"
+                ]
+              ],
+              "newer_rva": 4096,
+              "older_rva": 4096,
+              "ref": "4c8f526c-c05c-418e-b65d-b66c88ed51d6",
+              "source": "ghidriff",
+              "step": "SymbolsHash",
+              "tier": "A"
+            },
+            {
+              "cardinality": "1:1",
+              "cls": "E-NAME",
+              "native": [
+                [
+                  "round",
+                  "1"
+                ]
+              ],
+              "newer_rva": 4096,
+              "older_rva": 4096,
+              "ref": "r1",
+              "source": "pt-ladder",
+              "step": "P03-name-exact",
+              "tier": "A"
+            }
+          ],
+          "change_classes": [
+            "block-added",
+            "eh",
+            "constant",
+            "cfg",
+            "frame",
+            "unknown"
+          ],
+          "contest": null,
+          "contract": "unified-match/1",
+          "decision": "matched",
+          "flags": [
+            "pdata-confirmed"
+          ],
+          "ghidriff_match_id": "4c8f526c-c05c-418e-b65d-b66c88ed51d6",
+          "hints": [
+            "ghidriff-diff-types:code,length,sig"
+          ],
+          "materiality": "material",
+          "newer": [
+            {
+              "kind": "function",
+              "name": "read_item",
+              "rva": 4096
+            }
+          ],
+          "older": [
+            {
+              "kind": "function",
+              "name": "read_item",
+              "rva": 4096
+            }
+          ],
+          "row_id": "4c0ad3f63594a60719572fd4c0adbe30238bd20234ec9590e95df596d8f0821f",
+          "support": [
+            {
+              "atom_index": 0,
+              "component": "K1",
+              "tier": "A"
+            }
+          ]
+        }
+      ],
+      "state": "current"
+    },
+    {
+      "case": "aa-forward",
+      "rows": [
+        {
+          "atoms": [
+            {
+              "cardinality": "1:1",
+              "cls": "E-NAME",
+              "native": [
+                [
+                  "match types",
+                  "SymbolsHash"
+                ]
+              ],
+              "newer_rva": 4096,
+              "older_rva": 4096,
+              "ref": "raw:1000",
+              "source": "ghidriff",
+              "step": "SymbolsHash",
+              "tier": "A"
+            },
+            {
+              "cardinality": "1:1",
+              "cls": "E-NAME",
+              "native": [
+                [
+                  "round",
+                  "1"
+                ]
+              ],
+              "newer_rva": 4096,
+              "older_rva": 4096,
+              "ref": "r1",
+              "source": "pt-ladder",
+              "step": "P03-name-exact",
+              "tier": "A"
+            }
+          ],
+          "change_classes": [],
+          "contest": null,
+          "contract": "unified-match/1",
+          "decision": "matched",
+          "flags": [
+            "pdata-confirmed"
+          ],
+          "ghidriff_match_id": null,
+          "hints": [],
+          "materiality": "unchanged",
+          "newer": [
+            {
+              "kind": "function",
+              "name": "read_item",
+              "rva": 4096
+            }
+          ],
+          "older": [
+            {
+              "kind": "function",
+              "name": "read_item",
+              "rva": 4096
+            }
+          ],
+          "row_id": "d372ce243c22e56b777dc0d529c016748b722d936d8bd59301a02b9db990347f",
+          "support": [
+            {
+              "atom_index": 0,
+              "component": "K1",
+              "tier": "A"
+            }
+          ]
+        }
+      ],
+      "state": "current"
+    },
+    {
+      "case": "aa-swapped",
+      "rows": [
+        {
+          "atoms": [
+            {
+              "cardinality": "1:1",
+              "cls": "E-NAME",
+              "native": [
+                [
+                  "match types",
+                  "SymbolsHash"
+                ]
+              ],
+              "newer_rva": 4096,
+              "older_rva": 4096,
+              "ref": "raw:1000",
+              "source": "ghidriff",
+              "step": "SymbolsHash",
+              "tier": "A"
+            },
+            {
+              "cardinality": "1:1",
+              "cls": "E-NAME",
+              "native": [
+                [
+                  "round",
+                  "1"
+                ]
+              ],
+              "newer_rva": 4096,
+              "older_rva": 4096,
+              "ref": "r1",
+              "source": "pt-ladder",
+              "step": "P03-name-exact",
+              "tier": "A"
+            }
+          ],
+          "change_classes": [],
+          "contest": null,
+          "contract": "unified-match/1",
+          "decision": "matched",
+          "flags": [
+            "pdata-confirmed"
+          ],
+          "ghidriff_match_id": null,
+          "hints": [],
+          "materiality": "unchanged",
+          "newer": [
+            {
+              "kind": "function",
+              "name": "read_item",
+              "rva": 4096
+            }
+          ],
+          "older": [
+            {
+              "kind": "function",
+              "name": "read_item",
+              "rva": 4096
+            }
+          ],
+          "row_id": "d372ce243c22e56b777dc0d529c016748b722d936d8bd59301a02b9db990347f",
+          "support": [
+            {
+              "atom_index": 0,
+              "component": "K1",
+              "tier": "A"
+            }
+          ]
+        }
+      ],
+      "state": "current"
+    }
+  ],
+  "working_change": "pair-owned extraction staging and test fixture repairs"
+}

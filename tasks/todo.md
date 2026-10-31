@@ -867,3 +867,16 @@ Done: dock with state matrix, consent, import, changes, copy, go to CVE. Open: r
 - [ ] Open draft integration PR for exact-head Linux/Windows QA, check every job's status and conclusion, and diagnose true failures. For code changes also require native Ghidriff / secondary acceptance; for GUI/packaging require frozen executable smoke.
 - [ ] Perform final semantic conflict/security/persistence/GUI audit, repair with reproducing tests, then merge integration PR to main only when current-head reviews/checks permit.
 - [ ] Update feature-completion and final branch/PR disposition with main/integration SHAs, merged changes and remaining unique work.
+
+
+### GT-01 executable continuation (2026-10-30 Pacific)
+- [x] Reproduce and repair #140's invalid equal-byte test fixtures and lint findings.
+- [x] Reproduce extraction-failure contamination of later orientations; isolate
+  staging per comparison, run 30 focused tests and independent review.
+- [x] Verify real Linux changed-pair and two identical-byte backend/GZF/IR/unified
+  static smokes; retain bounded authored-fixture receipt in docs/qa. No corpus gate claim.
+- [ ] Complete final-source full suite and exact-head Linux/Windows/repeated-Qt gates.
+- [ ] Obtain qualifying native G-U1..G-U8 denominators; do not promote #139/#140
+  merely because tiny authored smokes or advisory workflow parents pass.
+- [ ] Reconcile #136 fixture tests against current parser contracts; source #69
+  remains preserved, and protocol tests do not establish application crash recovery.
