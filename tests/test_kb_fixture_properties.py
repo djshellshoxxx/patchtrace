@@ -3,12 +3,11 @@ from __future__ import annotations
 
 import copy
 
+import kbc_helpers as helpers
 import pytest
 from hypothesis import given, settings
 from hypothesis import strategies as st
-
-import kbc_helpers as helpers
-from kbc_k1_support import import_doc, projection
+from kbc_k1_support import import_doc, no_sockets, projection  # noqa: F401 - pytest fixture registration
 
 pytestmark = pytest.mark.usefixtures("no_sockets")
 

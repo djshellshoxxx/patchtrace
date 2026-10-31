@@ -4,8 +4,8 @@ from __future__ import annotations
 from pathlib import Path
 
 import pytest
+from kbc_k1_support import import_doc, no_sockets  # noqa: F401 - pytest fixture registration
 
-from kbc_k1_support import import_doc
 from patchtrace.kbcorrelation.sources.cvrf import parse_cvrf
 
 ROOT = Path(__file__).resolve().parent / "fixtures" / "kb"

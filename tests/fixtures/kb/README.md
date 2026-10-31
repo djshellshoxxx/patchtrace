@@ -8,4 +8,16 @@ The existing repository uses a synthetic `cvrf-json/0` importer dialect. This fi
 
 The corpus spans cumulative and checkpoint updates, supersedence, many-to-many relationships, product and architecture variants, withdrawn/re-issued advisories, malformed and missing data, duplicate identifiers, oversized text and arrays, deep nesting, hostile markup, Unicode confusables, BOM/CRLF metadata, numeric strings, status conflicts, and package/delta metadata. Metadata names describing a format do not prove the repository currently supports its reconstruction.
 
-No test execution or network lookup was performed for this change.
+The original author did not execute these fixtures. The 2026-10-30 reconciliation
+repairs fixture registration, tests an unknown CVRF remediation type derived from
+the known-issue case, retains the intentionally empty CSAF document, and adds
+a separate raw Unicode lookalike containing an actual Cyrillic character. The
+original double-escaped case remains intact for provenance. Encoding checks now
+exercise the importer: BOM is refused by the current contract; CRLF is accepted.
+
+Scenario names are authored labels, not proof of boundary coverage. In particular,
+the named oversized/deep and VEX multi-item scenarios are not all large, deeply
+nested, or multi-item. CSAF/VEX structural checks do not validate the production
+advisory importer. Package/relationship checks validate fixture metadata only;
+the crash harness validates an injection protocol, not application recovery.
+This corpus is not evidence of live provider compatibility or release acceptance.

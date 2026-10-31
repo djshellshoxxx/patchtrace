@@ -5,8 +5,7 @@ import json
 from pathlib import Path
 
 import pytest
-
-from kbc_k1_support import import_doc
+from kbc_k1_support import import_doc, no_sockets  # noqa: F401 - pytest fixture registration
 
 ROOT = Path(__file__).resolve().parent / "fixtures" / "kb"
 pytestmark = pytest.mark.usefixtures("no_sockets")
@@ -35,6 +34,10 @@ def test_type_five_fixture_cannot_create_remediation_edge() -> None:
 def test_unknown_remediation_type_is_not_confirmed_as_a_kb_fix() -> None:
     """An unknown synthetic remediation type cannot be promoted to a confirmed remediation."""
     payload = json.loads((ROOT / "cvrf_v3_synthetic.json").read_text(encoding="utf-8"))
-    case = next(item for item in payload["documents"] if item["scenario"] == "unknown-remediation-type")
-    imported = import_doc(case["document"])
+    case = next(item for item in payload["documents"] if item["scenario"] == "type5-known-issue")
+    document = case["document"]
+    for vulnerability in document["vulnerabilities"]:
+        for remediation in vulnerability["remediations"]:
+            remediation["type"] = 99
+    imported = import_doc(document)
     assert not any(edge.relation == "vendor-remediation" for edge in imported.edges)
