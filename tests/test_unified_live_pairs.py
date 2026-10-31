@@ -66,3 +66,62 @@ def test_a_label_document_without_a_unique_planted_function_is_a_contract_error(
     broken = doc.model_copy(update={'functions': tuple(f for f in doc.functions if f.label != 'changed')})
     with pytest.raises(ContractError, match='exactly one planted'):
         outcomes.planted_of(broken)
+
+
+def test_live_pair_commits_completed_native_run_before_unified(tmp_path, monkeypatch):
+    """Regression for 41063115449: a raw backend return is not a project run."""
+    from types import SimpleNamespace
+
+    from patchtrace.backend import BackendConfig
+
+    doc = label_doc('rel', 'release')
+    older = tmp_path / 'old.dll'
+    newer = tmp_path / 'new.dll'
+    older.write_bytes(b'old')
+    newer.write_bytes(b'new')
+    monkeypatch.setattr(live_pairs, 'image_path',
+                        lambda _store, side: older if side == doc.older else newer)
+
+    class Service:
+        root = tmp_path / 'case'
+
+        def __init__(self):
+            self.project = SimpleNamespace(runs=[])
+            self.imports = []
+
+        def apply_analysis(self, path, run):
+            self.imports.append((path, run))
+            self.project.runs.append(run)
+
+        def close(self):
+            pass
+
+    service = Service()
+    native = SimpleNamespace(id='native-run', status='completed', error=None)
+    raw = tmp_path / 'native.json'
+    monkeypatch.setattr(live_pairs.ProjectService, 'create', lambda *args: service)
+    monkeypatch.setattr(live_pairs.backend_module, 'run_comparison',
+                        lambda *args: (raw, native))
+
+    class Side:
+        def __init__(self, *args):
+            pass
+
+        def run(self, *args):
+            return {'directory': tmp_path}
+
+        def close(self):
+            pass
+
+    monkeypatch.setattr(live_pairs, 'Side', Side)
+    monkeypatch.setattr(live_pairs, 'file_sha256', lambda _: '0' * 64)
+    monkeypatch.setattr(live_pairs, 'place_ir', lambda *args: None)
+
+    def run_unified(owned_service, _options):
+        assert owned_service.project.runs == [native], 'native run was not committed'
+        assert owned_service.imports == [(raw, native)], 'raw output was not imported'
+
+    monkeypatch.setattr(live_pairs.pipeline, 'run_unified', run_unified)
+    monkeypatch.setattr(live_pairs, 'outcome_of', lambda *args: 'evaluated')
+    backend = BackendConfig(sys.executable, str(tmp_path), 1800)
+    assert live_pairs.analyse_pair(doc, tmp_path, backend, tmp_path, 'forward') == 'evaluated'
