@@ -425,3 +425,15 @@ Full d34efeb snapshot before final Qodo repairs: **18,304 passed, 128 skipped, 7
 - Pending: diagnostic logs, real native BinExport/BinDiff/rz-diff acceptance, verified CVE/KB product/build pairing, OS-level process/egress isolation, clean Win11 end-to-end GUI/installer, current-head release receipt, code owner coordination and source/fixture PR disposition.
 - Cross-reference [prepared development tickets](plans/development-dependency-map.md), [parallel workstreams](plans/parallel-development-plan.md), [release gates](plans/release-blockers.md). Shared records remain under #126 coordination; this additive assessment is proposed for review, not an assertion that #126 is complete.
 
+
+## 2026-10-30 supplementary QA log inspection (assessment PR #137)
+
+The assessment subsequently fetched raw GitHub Actions logs from [unified gate run 41063115449](https://github.com/djshellshoxxx/patchtrace/actions/runs/41063115449), instead of inferring root causes from job summaries. Distinguish the following independently:
+
+- **Ubuntu benchmark/integrity** job `124087550789`: `pytest` fails during `pytestqt` initialization with `ImportError: libEGL.so.1: cannot open shared object file: No such file or directory` (job log line ~319, exit 3). This specifically evidences a runner's missing Qt-linked runtime library, **not** a demonstrated source-code logic defect. Required: add/verify proper Linux EGL runtime dependency for this job, then rerun exact head.
+- **Ubuntu A/A and release pairs** job `124094490545`: A/A path/rebuild cases report `RuntimeError: Ghidriff run identical: None`. Other same-build transformations and release comparisons report `PT-BACKEND: ghidriff exited with code 1; Filesystem permissions or locks prevent Ghidra analysis; check writable paths; inspect analysis.log`. The message is a *classifier*, not proof filesystem permissions caused the upstream failure. Required: preserve/fetch the exact `analysis.log`, original argv and project scratch paths to determine actual cause. Determine whether byte-identical A/A cases should be recorded as a valid unchanged control or as a skipped, explicitly excluded case.
+- **Windows A/A and release pairs** job `124094490578`: A/A path/rebuild cases report `Ghidriff run identical: None`; others report `UnifiedError: PT-UNIFIED-INPUT: The unified inputs are not usable [no-completed-run]`. This is an observed missing prerequisite completed Ghidriff run, not proof that unified matching produced an incorrect verdict. Trace comparison state and run identity before touching the matcher.
+- **Next red-first action:** separate runner provisioning, identical-input control semantics, underlying native Ghidriff execution/analysis output, and resulting unified no-completed-run precondition into independent repros. Preserve the failed result artifacts; treat no evaluated rows as insufficient data. Only after repairing actual causes should rerun A/A and changed pairs in both orientations and compute real G-U denominators. Do not simply suppress these failures or loosen thresholds.
+
+These log snippets were observed from the named 2026-10-30 run; no fix or new CI run is claimed.
+
