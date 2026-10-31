@@ -851,3 +851,10 @@ Done: dock with state matrix, consent, import, changes, copy, go to CVE. Open: r
 
 - [x] Reconcile substantive Qodo review: Qt release dependency/status evidence, G-U1 endpoint coverage, optional decompile write rollback, stale KB/KEV/Diaphora ownership, calibration grouping/leak audits, staged archive handoff and cancellable PDB discovery.
 - [ ] Validate the final combined review repairs on their own published head; merge and close only proven superseded work after acceptance.
+
+### WIN-1 selective PR #102 reconciliation (2026-10-30 continuation)
+
+- [x] PT-WIN1: selectively port owner mark/version resource; preserve current launch/extractor inventory and workflow policy; add exact upstream QtSvg notices. Source `5429e84`.
+- [x] PT-WIN1-REVIEW: independently reproduce and repair hidden/capped/duplicate version identity; source `78ff0c7`; 310 integrated focused tests and Ruff pass.
+- [ ] PT-WIN1-ACCEPT: finish complete integrated-suite verification, actual Linux frozen candidate and exact-source Windows resource/portable/installer CI. Implementation is present; release acceptance remains BLOCKED. See `docs/qa.md` and latest integration-ledger continuation.
+- [ ] Preserve #102 author branch and other active repair stacks; this port does not establish all of #102 is superseded.

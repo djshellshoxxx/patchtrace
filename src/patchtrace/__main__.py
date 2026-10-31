@@ -28,11 +28,16 @@ def main() -> int:
     app = QApplication.instance() or QApplication(sys.argv)
     app.setApplicationName('PatchTrace')
     app.setOrganizationName('PatchTrace')
+    from .app_icon import app_icon
+
+    app.setWindowIcon(app_icon())
     if self_test:
         from PySide6.QtCore import QSettings
 
         from .optional_deps import summary_line
         from .service import ProjectService
+        if app.windowIcon().isNull():
+            raise RuntimeError('Application icon did not load: the packaged mark is missing or invalid')
         print(summary_line())  # frozen_smoke asserts the guarded imports survive PyInstaller
         with tempfile.TemporaryDirectory(prefix='patchtrace-self-test-') as directory:
             root = Path(directory)

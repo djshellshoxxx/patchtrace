@@ -1,0 +1,12 @@
+Qt SVG 6.12.0
+Upstream: https://github.com/qt/qtsvg
+Tag: v6.12.0
+Commit: 883a58532078d003cefef0a549bfe9f885ce41f5
+Obtained from the official Qt GitHub mirror through the GitHub connector, 2026-10-30.
+LICENSES and REUSE.toml are verbatim upstream files at this commit.
+SOURCE-HEADERS.txt records copyright/SPDX lines from all 51 src/svg C++ sources/headers.
+No src/3rdparty subtree or qt_attribution.json was present in the recursive upstream tree.
+QtSvg is used to render the packaged owner mark. LGPL-3.0-only is the selected
+redistribution alternative; Qt shared libraries remain replaceable. Corresponding
+source: https://github.com/qt/qtsvg/tree/883a58532078d003cefef0a549bfe9f885ce41f5
+The exact frozen inventory and matching wheel versions must accompany each package.

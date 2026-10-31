@@ -42,3 +42,7 @@ These are upstream license texts and source references, not a complete SBOM. PyS
 
 - `binexport-2bff7af/`: `binexport2.proto` and `LICENSE` (Apache-2.0) from [google/binexport](https://github.com/google/binexport) commit `2bff7af27af206354b2a90a9de566dc6bbae3e1b`, copied unmodified; `PROVENANCE.txt` records URLs, SHA-256s and the tool that compiled the shipped descriptor set (an Apache-2.0 derivative of the .proto). The repository has no NOTICE file.
 - `protobuf-7.36.2/`: BSD-3-Clause `LICENSE` from the `protobuf` 7.36.2 wheel's `dist-info`; `MANIFEST.txt` records the wheel SHA-256s. The build scripts also copy the installed distribution's license files.
+
+## Qt SVG 6.12.0 (WIN-1 owner-mark rendering)
+
+`qtsvg-6.12.0/` retains the official Qt source license texts, REUSE metadata, source-header copyright/SPDX notices and pinned provenance at commit `883a58532078d003cefef0a549bfe9f885ce41f5`. See its `PROVENANCE.txt` for the corresponding-source URL and inventory scope. Both desktop builders require these notices when collecting the QtSvg runtime; replaceable Qt shared libraries remain required. Exact frozen-package evidence is separate from this source notice inventory.

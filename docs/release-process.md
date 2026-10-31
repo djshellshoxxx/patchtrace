@@ -45,7 +45,6 @@ GitHub refuses `GITHUB_TOKEN` publication when the head commit adds or changes f
 |---|---|---|
 | Windows x64 zip, one-folder PyInstaller build | Windows CI | Frozen EXE headless smoke, self-test and clean ZIP extraction outside checkout |
 | Windows x64 installer, per-user NSIS 3.13 | Windows CI | Install to Unicode/spaces path, verify frozen startup, Start Menu, Apps registration, uninstall and data retention |
-| Windows x64 per-user Setup installer | Windows CI with build-only Inno Setup | Install, Qt/runtime checks, frozen self-test, uninstall |
 | Linux x86-64 tar.gz (executable bit preserved) | Ubuntu 22.04, older glibc baseline | Offscreen and Xvfb on 22.04 and 24.04 |
 | Full zero-download bundle (`-full` archives) | `backend-bundle.yml`, manual dispatch or tag | Not published yet. A tag push builds and runs acceptance but never publishes; only `publish_prerelease=true` attaches assets, and only to a prerelease |
 

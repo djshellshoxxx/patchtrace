@@ -402,3 +402,21 @@ Consolidation verification follow-up: the first user-site test run was stopped b
 Final runtime integration full run at `8bf483c`: **18,265 passed, 135 skipped, 7 xfailed, 2 failed** in 362.09 s. The remaining product-independent AF_UNIX denial is unchanged. The other failure was the old corpus workflow test requiring every action use a mutable version tag; it rejected the verified MSVC full commit pin. The assertion now validates that exact approved commit while retaining existing checks for other actions. The actual workflow structure is also checked with PyYAML installed locally. A final rerun follows this test-only correction.
 
 Full d34efeb snapshot before final Qodo repairs: **18,304 passed, 128 skipped, 7 xfailed, 1 failed** in 371.25 s. Only failure: executor denies AF_UNIX socket creation. Final substantive Qodo findings are repaired and focused-tested (see 20261030-consolidation-review.md); a new combined full suite and exact-head GitHub gates follow. Schema regeneration completed without schema-file changes.
+
+## WIN-1 selective reconciliation (2026-10-30 continuation)
+
+Source: `5429e84` + review repair `78ff0c7` on `codex/windows-branding-reconcile-20261030`; ported from PR #102 commit `9121bbc`, preserving its author attribution and current launcher/extractor checks. No workflow policy or schema changes. Independent review reproduced hidden extra version blocks and duplicate identity fields; generated single-block/single-table/unique-key enforcement now refuses these. QtSvg pinned source notices accompany runtime collection.
+
+| Check | Result | Evidence / limitation |
+|---|---|---|
+| Integrated focused packaging / resources / PE / CLI | PASS | 310 passed in 4.16 s; `work/integrated-focused.log` |
+| Independent resource review | PASS | 64 tests passed on worker `676ca38`; headless CLI imports no Qt; no remaining actionable finding within this scope |
+| Ruff / patch hygiene / dependency consistency | PASS | Full `ruff check src tests tools`, `git diff --check`, pip check |
+| Local initial-main baseline | BLOCKED / interrupted | Product source unchanged from `a04f5a2`; local run showed failures/errors and reached 88% before coordinator termination to avoid duplicating the complete remote baseline. Exit143, no final counts; log retained at `work/baseline-pytest.log`. No local full-baseline pass claimed. |
+| Exact-main remote baseline | PASS | See authoritative run/job counts and URLs in the latest `docs/plans/essential-integration-20261029.md` continuation entry; not candidate evidence |
+| Full combined candidate suite | Pending | Run on frozen integrated source; final log/receipt and candidate PR report will carry actual outcome, including reproduced baseline failures |
+| Linux frozen candidate | Pending | Actual build/self-test to be attempted; source unit tests are not frozen evidence |
+| Windows resource embedding / portable / installer | BLOCKED pending exact-source Windows CI | Cannot cross-compile or substitute Linux fixtures for Windows acceptance |
+| Overall essential release / G-U1–G-U8 | BLOCKED | Actual main advisory report has zero evaluated native outcomes; active repair stacks retained, no release claim |
+
+Latest candidate verification is reported with the candidate PR and retained command logs. No release or tag published; no cloud resources provisioned. Development venv and worker source are retained until safe integration/handoff.
