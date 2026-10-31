@@ -19,6 +19,8 @@ calibration-dev = ["scikit-learn>=1.5,<2"]
 patchtrace = "patchtrace.__main__:main"
 [tool.setuptools.packages.find]
 where = ["src"]
+[tool.setuptools.package-data]
+patchtrace = ["resources/*.svg"]
 [tool.pytest.ini_options]
 pythonpath = ["src"]
 testpaths = ["tests"]

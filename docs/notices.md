@@ -75,3 +75,7 @@ For every beta build, create and review these records against the actual install
 - Ghidra RPC: `README.md` (MIT notice declaration), `pyproject.toml`, `docs/install.md`.
 - GhidrAssist: `LICENSE`, `build.gradle`.
 - PatchWatch: `LICENSE`, `NOTICE`, `crates/patchwatch/Cargo.toml`.
+
+## Qt SVG runtime for the owner mark (WIN-1 candidate)
+
+`patchtrace.app_icon` uses QtSvg from the existing pinned PySide6 6.12.0 distribution to render the packaged owner mark. Windows and Linux builds must retain replaceable Qt SVG libraries and ship `third_party/notices/qtsvg-6.12.0/` with the existing Qt/PySide notices. The pinned upstream record is Qt `qtsvg` tag `v6.12.0`, commit `883a58532078d003cefef0a549bfe9f885ce41f5`; its provenance, exact license texts/REUSE metadata and source copyright/SPDX headers are retained. LGPL-3.0-only is the selected Qt library redistribution alternative; the BSD source-header notices are retained too. This source inventory does not substitute for inspecting the exact frozen Windows/Linux package. The candidate must pass frozen icon self-test and executable-resource read-back before its new packaging gate is accepted.

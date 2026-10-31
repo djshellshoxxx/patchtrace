@@ -1193,3 +1193,10 @@ Calls panel (id graph): `callgraph/panel.py` (PanelSpec), `panel_qt.py` (widgets
 |---|---|---|
 | `kbcorrelation/investigation_qt.py` | Offline KB/CVE investigation controls and controller: advisory import, local search, explicit product scope, verified local pair preview and isolated new-project creation over existing service contracts and TaskRunner. No socket APIs or target execution. | `tests/test_ui_kb_investigation.py` |
 
+
+## Windows branding reconciliation (SPEC-52 WIN-1)
+
+| Module | Files | Responsibility | Verification |
+|---|---|---|---|
+| Application mark | `src/patchtrace/app_icon.py`, `resources/patchtrace-mark.svg` | Render the existing owner mark through QtSvg for window and build icons; packaged data hook | Offscreen render and package-data tests |
+| Windows executable identity | `tools/windows_version_info.py`, `windows_icon.py`, `check_windows_exe.py` | Deterministic validated version metadata/ICO generation and bounded read-back gate, no target execution | PyInstaller version serializer round trip and hostile/missing resource tests; real Windows build separately required |
