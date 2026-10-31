@@ -112,3 +112,16 @@ def test_the_integrity_job_runs_the_tests_the_g_u8_checks_name(doc):
     from tools.unified import gates_u
     modules = {t.split('::')[0] for c in gates_u.G_U8_CHECKS for t in c.tests}
     assert all(f'tests/{m}.py' in run_text(doc['jobs']['integrity']) for m in modules)
+
+
+def test_ubuntu_integrity_has_egl_runtime_before_qt_pytest(doc):
+    """Run 41063115449 failed at pytest startup without libEGL.so.1."""
+    steps = doc['jobs']['integrity']['steps']
+    provision = [index for index, step in enumerate(steps)
+                 if 'libegl1' in str(step.get('run', '')) and 'apt-get install' in str(step.get('run', ''))]
+    pytest_steps = [index for index, step in enumerate(steps)
+                    if 'python -m pytest' in str(step.get('run', ''))]
+    assert provision and pytest_steps
+    assert min(provision) < min(pytest_steps)
+    assert any('runner.os' in str(steps[index].get('if', '')) and 'Linux' in str(steps[index]['if'])
+               for index in provision), 'install native Linux dependency only on Ubuntu'
