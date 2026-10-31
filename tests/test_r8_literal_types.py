@@ -130,3 +130,12 @@ def test_suffixed_value_changes_still_anchor_the_same_machine_constant_delta(tmp
     new = 'int f(int a) { if (a > 0x200U) { return 1; } return 0; }'
     facts = verdict_of(tmp_path, CMP_OLD, CMP_NEW, old, new)
     assert (facts.verdict, facts.second_channel) == ('material', 'C6')
+
+
+def test_type_only_literal_swaps_do_not_anchor_an_unrelated_machine_value_change(tmp_path):
+    from test_unified_anchors import CMP_NEW, CMP_OLD, verdict_of
+
+    old = 'int f(int a) { if (a > 0x100U) { return 0x200; } return 0; }'
+    new = 'int f(int a) { if (a > 0x100) { return 0x200U; } return 0; }'
+    facts = verdict_of(tmp_path, CMP_OLD, CMP_NEW, old, new)
+    assert (facts.verdict, facts.second_channel) == ('review', None)

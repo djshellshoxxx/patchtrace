@@ -284,3 +284,5 @@ On the Windows x64 LLP64 target, a signed `L` suffix does not remove radix-depen
 Exponent-form floating constants with no decimal point (such as `010e1`) must be scanned as one float token before octal integer normalization. Otherwise `010e1` (100.0) can collide with `8e1` (80.0) in both C5 and C6. Preserve exponent and suffix spelling conservatively.
 
 Typed integer keys must remain usable by downstream facts: sort by numeric value with type/radix as a deterministic tie-break, render the retained type/radix as C literal syntax, and compare numeric value forms only for MAT-ANCHOR corroboration of an independently observed machine constant delta. Keep full typed keys for C5/C6 equality; a type-only edit cannot fabricate a machine delta.
+
+For machine-value corroboration, project typed numeric tokens to value keys before multiset subtraction. Type-only suffix exchanges between two unchanged values must not manufacture a removed/added value pair. Preserve the original typed counters for C5/C6 equality and display.
