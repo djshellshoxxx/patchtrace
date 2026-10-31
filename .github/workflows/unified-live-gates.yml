@@ -180,6 +180,9 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+      - name: Install Ubuntu Qt EGL runtime
+        if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install -y --no-install-recommends libegl1
       - run: "python -m pip install --only-binary=:all: -e '.[dev]'"
       - name: Bench report (G-U5)
         run: python -m tools.unified.bench --sizes 10000,60000 --out "out/bench-$RUNNER_OS.json"

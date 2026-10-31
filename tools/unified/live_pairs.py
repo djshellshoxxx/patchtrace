@@ -75,9 +75,26 @@ def analyse_pair(doc: C.KnownAnswerLabels, store_dir: Path, backend: BackendConf
     service = ProjectService.create(old, new, doc.pair_id, work / f'{doc.pair_id}-{orientation}')
     sides: dict[str, Side] = {}
     try:
-        _, run = backend_module.run_comparison(retaining, service.project, service.root, threading.Event(), lambda _e: None)
+        raw_path, run = backend_module.run_comparison(retaining, service.project, service.root,
+                                                      threading.Event(), lambda _e: None)
         if run.status != 'completed':
-            raise RuntimeError(f'Ghidriff run {run.status}: {run.error}')
+            # A/A identical-byte controls are NOT successful native evaluations: preserve the
+            # distinct status without producing a fabricated zero-change result.
+            reason = f'Ghidriff run {run.status}: {run.error}'
+            if run.status == 'failed':
+                # The backend has already redacted and written this log into its private
+                # quarantine. Surface a bounded tail in the CI job log before work cleanup;
+                # the old live workflow otherwise lost the real native failure evidence.
+                log = Path(raw_path) / 'analysis.log'
+                if log.is_file() and not log.is_symlink():
+                    tail = backend_module.redact_log(
+                        log.read_text(encoding='utf-8', errors='replace')[-4096:], 2048)
+                    if tail:
+                        reason += f' [analysis.log tail: {tail}]'
+            raise RuntimeError(reason)
+        # run_comparison writes the raw result but deliberately does NOT mutate
+        # ProjectService. Unified planning requires a persisted completed native run.
+        service.apply_analysis(raw_path, run)
         gzf = service.root / 'runs' / run.id / 'unified' / 'gzf'
         for label, dll, other in (('older', old, new), ('newer', new, old)):
             sides[label] = Side(label, dll, file_sha256(other), backend, work)
