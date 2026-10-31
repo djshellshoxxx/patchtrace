@@ -889,3 +889,15 @@ Done: dock with state matrix, consent, import, changes, copy, go to CVE. Open: r
 - [ ] Resolve/verify repeated Windows Qt discovery timeout (isolated reproduction passes once).
 - [ ] Obtain workflow-capable authentication; dispatch full pinned native matrix on the new exact head and verify evaluated denominators and G-U1–G-U8.
 - [ ] Complete required exact-head cross-platform checks and independent review; merge accepted stack, verify target branch, then write the post-merge handoff. GT-02/GT-03 remain outside this milestone.
+
+
+### Published continuation verification (2026-10-30 Pacific)
+- [x] Publish independently reviewed extraction recovery as draft #141 and KB
+  fixture repairs as draft #142 without overwriting active author branches.
+- [x] Record full combined local run: 18,384 passed, one sandbox-marker export
+  failure, 126 skipped, 7 xfailed; Ruff/schema/hygiene checked.
+- [x] Record #141's five passing native Windows Ghidriff jobs and two real Linux
+  same-image live-harness outcomes; keep their limited scope explicit.
+- [ ] Verify final exact-head full Linux/Windows/Qt/package checks and qualifying
+  native corpus G-U gates before integration; keep clean Windows GUI and actual
+  release asset acceptance open. Details: docs/qa/continuation-verification-20261030.md.

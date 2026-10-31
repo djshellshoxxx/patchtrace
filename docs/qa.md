@@ -480,3 +480,17 @@ The complete Linux run started from the earlier `b705659` source snapshot;
 it cannot attest the subsequent concurrent diagnostic changes. New combined-head
 CI remains required. The independent extraction repair is published separately
 so the active coordinator's branch is not overwritten.
+
+
+## Complete combined continuation check (2026-10-30 Pacific)
+
+Combined tested tree `fc27f77c9c822b114d3479bf36efe89aa2b32c17`:
+**18,384 passed, 1 failed, 126 skipped, 7 xfailed** in 389.17 s. The sole
+failure is the rule-export test observing the sandbox's read-only `/tmp/.git`
+marker. Full Ruff and patch hygiene passed; schema regeneration changed no
+schemas. Exact-head PR #141 native Windows Ghidriff run 41166712588 passed
+all five scoped jobs. Actual Linux live-pair harness same-image controls
+completed both orientations with known-endpoint unchanged outcomes. Neither
+result establishes required corpus or full Windows release acceptance.
+See [continuation verification](qa/continuation-verification-20261030.md) for
+source-tree equivalence, native receipts, failed node, draft PRs and open gates.
