@@ -851,3 +851,58 @@ Done: dock with state matrix, consent, import, changes, copy, go to CVE. Open: r
 
 - [x] Reconcile substantive Qodo review: Qt release dependency/status evidence, G-U1 endpoint coverage, optional decompile write rollback, stale KB/KEV/Diaphora ownership, calibration grouping/leak audits, staged archive handoff and cancellable PDB discovery.
 - [ ] Validate the final combined review repairs on their own published head; merge and close only proven superseded work after acceptance.
+
+
+## [R1-20261030] Ground-truth corpus research handoff — PR #128
+
+Research, implemented pilot, reproducible commands and acceptance limits:
+`docs/research/ground-truth-corpus/README.md` and `07-handoff-and-reproduction.md`.
+
+- [x] Reconcile main a04f5a2 and historical/current corpus ownership; dedicated branch
+  and draft PR #128, preserving coordinator PR #126 and all original snapshots.
+- [x] Primary-source survey and licence/pin ledger: 102 unique commit edges,
+  35 security cards, 25 upstream repositories, 16 recipe projects; no duplicate mirror counts.
+- [x] Defined-domain 16-mutation suite; independent source/debug/disassembly review;
+  18 accepted O2 records/configuration and 4 intrinsically ambiguous records retained.
+- [x] Actual 15-cell compiler/optimization builds, independent A/A rebuilds,
+  LLVM outlining: 21 → 22 functions, genuine Ghidriff/rz-diff/unified observations and repeats.
+- [x] Explicit metrics, complete denominator/unknown accounting, partition audits,
+  immutable build receipts and full-context analysis caching, all using existing contracts.
+- [x] Two selected cJSON compiled security checks reviewed; strict scope/unblinding
+  and 92 visible export names disclosed. Other 111 labels remain unaccepted.
+- [x] Full localhost-enabled Linux run: 18,212 passed, 303 skipped, 6 xfailed;
+  final deltas covered by 156 focused tests and the overlapping final 30-test
+  pilot file. Full Ruff passed. Exact snapshot limits and logs are in QA.
+- [x] Repair cached-native execution attribution and CLI receipt-output safety;
+  preserve existing files and snapshots, record the original Sonar annotation,
+  independently review the correction and rerun actual engines with equal results.
+- [x] Reproduce and fix Qodo's malformed-suite preflight finding; explicitly report
+  hard-link publication failure without partial receipts, document unsupported
+  store capability, and correct the cleanup comment. Integrated follow-up: 69
+  tests passed. Active R2–R8 ownership is recorded in the final handoff.
+- [x] Address seven CodeRabbit findings: protect matrix receipt publication,
+  recover two exact hidden-build receipts, bind a persisted hidden replay to its
+  review hash, repair reproduction/table snippets, and preserve historical audit
+  scopes. Actual rebuilds corrected five control labels' variant metadata only;
+  all original artifact/function facts and native observations remain unchanged.
+  Current strict audit: 23 labels, 39 receipt files / 36 unique hashes; final
+  focused group 175 passed, full Ruff passed. See external-review-followup.md.
+- [ ] Extend build provenance deliberately to retain executable invocation
+  spelling and tool binary identity. The measured lld-link/lld-link-18 alias
+  changes PDB/CodeView metadata even when normalized recipe digests match;
+  reproduction pins now close the specific accepted cases without changing schemas.
+- [ ] Close exact-head Linux/Windows CI, relevant native CI and independent merge
+  review; inspect Sonar re-analysis of the concrete receipt-output repair. Dispatch
+  the native workflow on the final revision using a workflow-capable connection.
+- [ ] R2 production correctness: conditional Jcc is incorrectly treated as a store
+ by facts/operands.is_store. Use `results/failure-analysis-addendum.md` exact counterexample
+ and IR/fact hashes; coordinate ownership, regress conditional branches versus real stores,
+ preserve R1 pre-fix outcomes, and rerun held-out controls without tuning on this fixture.
+- [ ] Add discovery-controlled hidden-name inputs and explicit many-to-many structural
+ truth/scoring; do not force split/merge/outline cases into unique-RVA labels.
+- [ ] Provision verified BinDiff/BinExport and true MSVC/Windows native experiments.
+- [ ] Independently validate real-project chains toward 14 projects/three consecutive pairs
+ and 15 security cases using the candidate ledger; catalogue entries/historical builds are
+ not fresh acceptance. Preserve Brotli/miniz quarantine and PostgreSQL ownership exclusion.
+- [ ] Preregister project/template/vendor-fragment partitions before any calibration;
+ pilot remains development-only. Add controlled size scaling/process-tree memory study.

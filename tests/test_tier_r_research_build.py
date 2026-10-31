@@ -1,0 +1,267 @@
+"""Unit-only orchestration evidence using substitute builds, never native acceptance or target execution."""
+from __future__ import annotations
+
+import json
+from pathlib import Path
+from types import SimpleNamespace
+
+import pytest
+
+from tools.calibration.tier_r import contracts as C
+from tools.calibration.tier_r import factory as F
+from tools.calibration.tier_r import research_build as R
+from tools.calibration.tier_r.build import BuildError
+
+
+@pytest.fixture
+def substituted_factory(monkeypatch, tmp_path):
+    """Keep real BaseSource specs and label persistence; substitute every native/tool/label operation."""
+    specs = []
+    finalized = []
+    suite = SimpleNamespace(suite='unit-pilot', project='defined', versions=('v1', 'v2'), pairs=[
+        SimpleNamespace(old='v1', new='v2', intent='Unit fixture only', truth=())])
+    bases = {v: F.BaseSource(project='defined', lineage='L-unit', family='synthetic',
+                            source={'suite': 'unit/defined', 'version': v, 'license_spdx': 'MIT'},
+                            root=tmp_path / v, files=('r1.c',), output='defined.dll',
+                            cflags=('-fno-builtin',), std='c11', tag=v) for v in ('v1', 'v2')}
+    chain = SimpleNamespace(profile_status=lambda profile: None, describe=lambda: {'unit_only': True})
+    monkeypatch.setattr(R, 'probe', lambda: chain)
+    monkeypatch.setattr(F, 'suite_bases', lambda path: (suite, bases))
+
+    class Session:
+        def __init__(self, tools, store):
+            self.store = store
+
+        def build(self, spec):
+            specs.append(spec)
+            if spec.profile == 'mingw-gcc':
+                raise BuildError('unit substitute: compiler failed')
+            return SimpleNamespace(spec=spec)
+
+        def side(self, result, root):
+            return SimpleNamespace(build=result)
+
+    monkeypatch.setattr(F, 'Session', Session)
+    monkeypatch.setattr(R, 'label_authored', lambda *args: ([], []))
+
+    def finalize(**kwargs):
+        finalized.append(kwargs)
+        return {'pair_id': kwargs['pid'], 'digest_sha256': 'd' * 64,
+                'older': {'sha256': 'a' * 64}, 'newer': {'sha256': 'b' * 64},
+                'summary': {'disagreements': len(kwargs['case']['problems'])}}
+
+    monkeypatch.setattr(F, 'finalize', finalize)
+    return SimpleNamespace(specs=specs, finalized=finalized, chain=chain)
+
+
+def test_profile_opt_ids_preserve_all_cells_without_overwrite(substituted_factory, tmp_path):
+    receipt = R.build_pilot(tmp_path / 'store', profiles=('msvc-free', 'mingw-clang'), opts=('O0', 'O2'))
+    entries = receipt['entries']
+    assert len(entries) == 4 and len({e['pair_id'] for e in entries}) == 4
+    assert receipt['status'] == 'built'
+    for entry in entries:
+        assert entry['profile'] in entry['pair_id'] and entry['opt'] in entry['pair_id']
+        saved = json.loads(Path(entry['labels_path']).read_text())
+        assert saved['pair_id'] == entry['pair_id']
+    assert len(list((tmp_path / 'store' / 'labels').glob('*.json'))) == 4
+    assert {spec.opt for spec in substituted_factory.specs} == {'O0', 'O2'}
+    assert {spec.profile for spec in substituted_factory.specs} == {'msvc-free', 'mingw-clang'}
+    assert all(spec.cflags == ('-fno-builtin',) for spec in substituted_factory.specs), 'no new flags'
+    assert any('export' in note.lower() for e in entries for note in e['notes'])
+    assert all(call['stratum'] == 'authored' and call['label_source'] == 'authored-truth'
+               for call in substituted_factory.finalized)
+    json.dumps(receipt)
+
+
+def test_compile_failure_is_blocked_and_later_configurations_continue(substituted_factory, tmp_path):
+    receipt = R.build_pilot(tmp_path / 'store', profiles=('mingw-gcc', 'msvc-free'), opts=('O2',))
+    assert receipt['status'] == 'partial'
+    first, second = receipt['entries']
+    assert first['status'] == 'blocked' and first['stage'] == 'build'
+    assert first['error_type'] == 'BuildError' and 'compiler failed' in first['reason']
+    assert 'labels_path' not in first
+    assert second['status'] == 'built' and Path(second['labels_path']).is_file()
+
+
+def test_unavailable_toolchain_does_not_attempt_build(substituted_factory, tmp_path):
+    substituted_factory.chain.profile_status = lambda profile: 'unit substitute: compiler unavailable'
+    receipt = R.build_pilot(tmp_path / 'store', profiles=('msvc-free',), opts=('O2',))
+    assert receipt['status'] == 'blocked'
+    assert receipt['entries'][0]['stage'] == 'toolchain'
+    assert substituted_factory.specs == []
+
+
+@pytest.mark.parametrize(('profiles', 'opts'), [
+    (('unknown',), ('O2',)), (('msvc-free',), ('Ofast',)), ((), ('O2',)),
+    (('msvc-free',), ()), (('msvc-free', 'msvc-free'), ('O2',))])
+def test_invalid_configuration_fails_before_probing(monkeypatch, tmp_path, profiles, opts):
+    monkeypatch.setattr(R, 'probe', lambda: pytest.fail('invalid input reached tool probing'))
+    with pytest.raises(ValueError):
+        R.build_pilot(tmp_path / 'store', profiles=profiles, opts=opts)
+
+
+def test_relative_and_repository_stores_rejected_before_probing(monkeypatch):
+    monkeypatch.setattr(R, 'probe', lambda: pytest.fail('unsafe store reached tool probing'))
+    for store in (Path('relative-store'), R.REPO / 'generated-test-store'):
+        with pytest.raises(ValueError):
+            R.build_pilot(store, profiles=('msvc-free',), opts=('O2',))
+
+
+def test_authored_disagreements_remain_findings_not_passes(substituted_factory, monkeypatch, tmp_path):
+    monkeypatch.setattr(R, 'label_authored', lambda *args: ([], ['unit-only body disagreement']))
+    receipt = R.build_pilot(tmp_path / 'store', profiles=('msvc-free',), opts=('O2',))
+    assert receipt['status'] == 'findings'
+    assert receipt['entries'][0]['status'] == 'findings'
+    assert receipt['entries'][0]['disagreements'] == 1
+    assert substituted_factory.finalized[0]['case']['problems'] == ['unit-only body disagreement']
+
+
+def test_cli_writes_json_receipt_and_reports_blocked(substituted_factory, tmp_path, capsys):
+    output = tmp_path / 'receipt.json'
+    code = R.main(['--store', str(tmp_path / 'store'), '--output', str(output),
+                   '--profiles', 'mingw-gcc', '--opts', 'O2'])
+    assert code == 3
+    saved = json.loads(output.read_text())
+    assert saved['status'] == 'blocked'
+    assert json.loads(capsys.readouterr().out) == saved
+
+
+@pytest.fixture
+def suite_with_undeclared_endpoint(tmp_path):
+    def write(side):
+        folder = tmp_path / 'input-suite'
+        folder.mkdir()
+        for version in ('v1', 'v2'):
+            (folder / version).mkdir()
+            (folder / version / 'sample.c').write_text('unsigned keep(unsigned x) { return x; }\n')
+        pair = {'old': 'v1', 'new': 'v2', 'truth': []}
+        pair[side] = 'missing'
+        raw = json.dumps({'contract': 'suite/1', 'suite': 'unit', 'project': 'defined',
+                          'license_spdx': 'MIT', 'versions': ['v1', 'v2'], 'pairs': [pair]}).encode()
+        loaded = C.load_suite(raw)
+        assert getattr(loaded.pairs[0], side) == 'missing'
+        assert 'missing' not in loaded.versions, 'real Suite model permits the invalid relationship'
+        (folder / 'suite.json').write_bytes(raw)
+        return folder
+    return write
+
+
+@pytest.mark.parametrize('side', ['old', 'new'])
+def test_real_suite_undeclared_endpoints_fail_before_probe(monkeypatch, tmp_path,
+                                                         suite_with_undeclared_endpoint, side):
+    suite_dir = suite_with_undeclared_endpoint(side)
+    monkeypatch.setattr(R, 'probe', lambda: pytest.fail('undeclared endpoint reached tool probing'))
+    with pytest.raises(ValueError, match=f"pair 1 {side} version 'missing'"):
+        R.build_pilot(tmp_path / 'store', profiles=('msvc-free',), opts=('O2',), suite_dir=suite_dir)
+    assert not (tmp_path / 'store').exists()
+
+
+@pytest.mark.parametrize('side', ['old', 'new'])
+def test_cli_undeclared_endpoint_returns_usage_error_without_output(monkeypatch, tmp_path, capsys,
+                                                                 suite_with_undeclared_endpoint, side):
+    suite_dir = suite_with_undeclared_endpoint(side)
+    output = tmp_path / 'receipt.json'
+    monkeypatch.setattr(R, 'probe', lambda: pytest.fail('invalid CLI suite reached tool probing'))
+    code = R.main(['--store', str(tmp_path / 'store'), '--output', str(output), '--suite', str(suite_dir),
+                   '--profiles', 'msvc-free', '--opts', 'O2'])
+    assert code == 2
+    message = json.loads(capsys.readouterr().out)
+    assert message['status'] == 'error' and f"{side} version 'missing'" in message['reason']
+    assert not output.exists() and not (tmp_path / 'store').exists()
+
+
+@pytest.mark.parametrize('kind', ['existing', 'destination-symlink', 'dangling-destination',
+                                 'parent-symlink', 'dangling-parent', 'relative', 'not-json', 'repository'])
+def test_cli_invalid_receipt_is_rejected_before_building(monkeypatch, tmp_path, capsys, kind):
+    """Receipt validation must precede even a substituted native runner and preserve existing bytes."""
+    original = tmp_path / 'original.json'
+    original.write_bytes(b'prior evidence')
+    output = tmp_path / 'receipt.json'
+    if kind == 'existing':
+        output = original
+    elif kind in {'destination-symlink', 'dangling-destination', 'parent-symlink', 'dangling-parent'}:
+        link = output if 'destination' in kind else tmp_path / 'alias'
+        destination = original if kind == 'destination-symlink' else tmp_path / 'missing'
+        if kind == 'parent-symlink':
+            destination = tmp_path / 'real-parent'
+            destination.mkdir()
+        try:
+            link.symlink_to(destination, target_is_directory='parent' in kind)
+        except (OSError, NotImplementedError):
+            pytest.skip('host cannot create test symlinks')
+        if 'parent' in kind:
+            output = link / 'receipt.json'
+    elif kind == 'relative':
+        output = Path('relative-receipt.json')
+    elif kind == 'not-json':
+        output = tmp_path / 'receipt.txt'
+    else:
+        output = R.REPO / 'forbidden-r1-unit-receipt.json'
+    monkeypatch.setattr(R, 'build_pilot', lambda *args, **kwargs: pytest.fail('invalid receipt reached build'))
+    code = R.main(['--store', str(tmp_path / 'store'), '--output', str(output)])
+    assert code == 2
+    assert json.loads(capsys.readouterr().out)['status'] == 'error'
+    assert original.read_bytes() == b'prior evidence'
+    if kind not in {'existing', 'destination-symlink'}:
+        assert not output.exists()
+
+
+def test_cli_file_appearing_during_build_is_not_replaced(monkeypatch, tmp_path, capsys):
+    output = tmp_path / 'receipt.json'
+
+    def concurrent_build(*args, **kwargs):
+        output.write_bytes(b'another run owns this receipt')
+        return {'status': 'built', 'unit_only': True}
+
+    monkeypatch.setattr(R, 'build_pilot', concurrent_build)
+    assert R.main(['--store', str(tmp_path / 'store'), '--output', str(output)]) == 2
+    assert json.loads(capsys.readouterr().out)['status'] == 'error'
+    assert output.read_bytes() == b'another run owns this receipt'
+
+
+def test_cli_parent_symlink_appearing_during_build_cannot_redirect_receipt(monkeypatch, tmp_path, capsys):
+    output = tmp_path / 'new-parent' / 'receipt.json'
+    other = tmp_path / 'other'
+    other.mkdir()
+    probe_link = tmp_path / 'probe-link'
+    try:
+        probe_link.symlink_to(other, target_is_directory=True)
+        probe_link.unlink()
+    except (OSError, NotImplementedError):
+        pytest.skip('host cannot create test symlinks')
+
+    def concurrent_build(*args, **kwargs):
+        output.parent.symlink_to(other, target_is_directory=True)
+        return {'status': 'built', 'unit_only': True}
+
+    monkeypatch.setattr(R, 'build_pilot', concurrent_build)
+    assert R.main(['--store', str(tmp_path / 'store'), '--output', str(output)]) == 2
+    assert json.loads(capsys.readouterr().out)['status'] == 'error'
+    assert not (other / 'receipt.json').exists()
+
+
+def test_cli_exclusive_publication_refuses_file_appearing_at_open(monkeypatch, tmp_path, capsys):
+    """Exercise the real filesystem race at the final open, rather than merely asserting an open mode."""
+    output = tmp_path / 'receipt.json'
+    original_open = Path.open
+
+    def raced_open(path, mode='r', *args, **kwargs):
+        if path == output and any(flag in mode for flag in 'wax'):
+            with original_open(path, 'xb') as other:
+                other.write(b'late competing receipt')
+        return original_open(path, mode, *args, **kwargs)
+
+    monkeypatch.setattr(R, 'build_pilot', lambda *args, **kwargs: {'status': 'built', 'unit_only': True})
+    monkeypatch.setattr(Path, 'open', raced_open)
+    assert R.main(['--store', str(tmp_path / 'store'), '--output', str(output)]) == 2
+    assert json.loads(capsys.readouterr().out)['status'] == 'error'
+    assert output.read_bytes() == b'late competing receipt'
+
+
+def test_cli_new_json_receipt_creates_validated_parents_and_publishes(monkeypatch, tmp_path, capsys):
+    output = tmp_path / 'new' / 'nested' / 'receipt.json'
+    receipt = {'status': 'built', 'unit_only': True}
+    monkeypatch.setattr(R, 'build_pilot', lambda *args, **kwargs: receipt)
+    assert R.main(['--store', str(tmp_path / 'store'), '--output', str(output)]) == 0
+    assert json.loads(output.read_bytes()) == receipt
+    assert json.loads(capsys.readouterr().out) == receipt

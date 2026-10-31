@@ -402,3 +402,122 @@ Consolidation verification follow-up: the first user-site test run was stopped b
 Final runtime integration full run at `8bf483c`: **18,265 passed, 135 skipped, 7 xfailed, 2 failed** in 362.09 s. The remaining product-independent AF_UNIX denial is unchanged. The other failure was the old corpus workflow test requiring every action use a mutable version tag; it rejected the verified MSVC full commit pin. The assertion now validates that exact approved commit while retaining existing checks for other actions. The actual workflow structure is also checked with PyYAML installed locally. A final rerun follows this test-only correction.
 
 Full d34efeb snapshot before final Qodo repairs: **18,304 passed, 128 skipped, 7 xfailed, 1 failed** in 371.25 s. Only failure: executor denies AF_UNIX socket creation. Final substantive Qodo findings are repaired and focused-tested (see 20261030-consolidation-review.md); a new combined full suite and exact-head GitHub gates follow. Schema regeneration completed without schema-file changes.
+
+
+## [R1-20261030] Ground-truth research and real pilot (PR #128)
+
+Branch `codex/r1-ground-truth-research-20261030`, baseline
+`a04f5a299a8d4afef023261e52e08d14678cf1e7`. Full report and executable handoff:
+[`docs/research/ground-truth-corpus/README.md`](research/ground-truth-corpus/README.md).
+This is development research; no target DLL/EXE was executed and no locked test
+or calibration threshold was consumed.
+
+Verified implementation extends the existing Tier R factory/contracts: explicit
+engine observers, accepted-review overlays, unconditional material-detection
+metrics, partition intersection checks, compiler-matrix and native pilot CLIs.
+Fixed ambiguous authored-unchanged admission, completed-primary persistence in
+the live unified harness, lost ZIP executable modes/Linux GL dependencies,
+immutable many-recipe build receipts, and SideData cache provenance. A test-only
+interpreter path repair preserves venv dependencies. Production matching
+algorithms and persisted schemas remain unchanged.
+
+Actual experiment evidence: 15 cells/30 endpoints built; all emitted engine,
+debug and PDB hashes survived the provenance rebuilds; three O3 endpoint metadata
+records were repaired. Independent automated source/binary review admitted 18
+records per reviewed O2 configuration (16 paired/2 one-sided), keeping four
+intrinsic ambiguities aside. Ghidriff/unified found zero functions on the
+name-hidden freestanding case. With MinGW exports visible, both recovered 16/16
+accepted pairs; Ghidriff supplied 6/13 generic change signals, unified 11/13 material
+classifications with two review outcomes. Repeated native observations/metrics
+and unified row digests agree. The direct native A/A control genuinely ran twice
+and observed 21/21 project pairs; no unchanged classification was inferred.
+Two cJSON security guards were inspected and detected by Ghidriff/unified; its
+unblinded review leaves 111 candidate labels unresolved and preserves 92 exports.
+Compiler-noise failure analysis identifies a conditional-branch/store evidence
+bug for separate production work; original results remain unchanged.
+
+Validation recorded for the research handoff:
+
+- Focused regression/native-factory group after output-safety repair:
+  **156 passed in 30.90 s**. The final import-with-cache precedence regression
+  then passed in the complete pilot file: **30 passed in 0.98 s**. These overlap
+  and must not be added. Earlier 139/145-test checkpoints remain historical.
+- Full Ruff (`src tests tools`): **passed**.
+- Corpus integrity with explicit Clang 18: **0 findings**, 26 suites/89 versions;
+  catalogue consistency: 51 cards/16 recipes/0 problems; canonical schema drift: 5 passed
+  and catalogue/mirror tests: 2 passed. No schema files regenerated in the worktree.
+- Published pilot labels: 23 strict/digest-valid documents, all development.
+  Deliberate cross-role variant assignment produces 6 leakage findings.
+- First restricted full pytest was interrupted after socket PermissionErrors:
+ 47 failed, 13,114 passed, 300 skipped, 4 xfailed, 3 errors; this is **not acceptance**.
+  Its unrelated venv-symlink test assumption was independently reproduced/fixed.
+- The localhost-enabled full Linux run completed: **18,212 passed, 303 skipped,
+  6 xfailed, 1 warning in 1,805.40 s**. The warning is the intentional duplicate-ZIP
+  fixture. Build/cache changes landed during that long run and final pilot
+  corrections followed it; focused tests cover those deltas. This full count is
+  not represented as validation of the final committed tree.
+- Final local automated integration and output-safety reviews found no remaining
+  blocking issue within their stated scopes. They are not GitHub APPROVE reviews.
+  A real Ghidriff/rz-diff/unified run through the hardened CLI returned 0 and kept
+  all explicit observations, metrics and unified row digests equal to the original.
+- External Qodo follow-up: malformed-suite endpoints now fail before probing;
+  unsupported/denied hard-link publication raises a clear `BuildError` while
+  preserving previous receipts; an inaccurate cleanup comment was corrected.
+  The six-file integrated regression selection passed **69 tests in 12.20 s**;
+  full Ruff passed. Store support without hard links was not added, and the
+  complete-atomic-publication invariant was retained. See the review follow-up.
+- No native Windows, true MSVC or verified BinDiff/BinExport result is claimed.
+  Packaging is unchanged. Final-head GitHub CI/review remains a merge gate.
+- Sonar at a02a1774 reported 3.9% new-code duplication, limit 3%. At 0271f186 its
+  failure changed to a C security rating; a recovered public GitHub annotation
+  identified unchecked receipt-output publication. The regression-tested repair
+  confines receipts to new private-work JSON files, rejects traversal/symlinks
+  and uses exclusive creation. The exact annotation is retained; final Sonar
+  re-analysis remains required. No exclusions or thresholds were changed.
+- Sonar passed at de72e150 (zero new issues, zero security hotspots, 2.7% new-code
+  duplication). The later review follow-up needs its own current-head checks;
+  a prior passing checkpoint is not substituted for them.
+- Main remained a04f5a2 at final reconciliation; coordinator PR #126 remains open
+  on its own branch. The unified live workflow is dispatch-only and the available
+  connector cannot dispatch a new revision; an old-run rerun is not new-head evidence.
+
+Exact evidence and failure histories live under
+`docs/research/ground-truth-corpus/results/`, including source/binary reviews,
+raw-observation receipts, immutable build receipts and the final metadata audit.
+`results/final-validation.json` includes exact log hashes and the retained full
+Linux log; `results/final-cli-repeatability.json` records the final native check.
+Do not call R1 merged/release-ready or the 14-project/15-case corpus validated.
+
+### R1 external-review closure checkpoint — 2026-10-31
+
+CodeRabbit's seven findings are individually dispositioned in
+[`results/external-review-followup.md`](research/ground-truth-corpus/results/external-review-followup.md).
+The matrix CLI now rejects existing/symlinked receipt destinations before
+building and uses exclusive publication. Red/green evidence: 9 failed/18 passed,
+then 27 passed; independent read-only review reran the same 27 tests successfully.
+The final integrated regression group passed **175 tests in 31.62 s**, and full
+Ruff passed. These overlap earlier focused counts and are not added to them.
+
+Real fixed-cache rebuilds reproduced both A/A profiles and four compiler-noise
+comparisons. Five active labels needed only a variant-field/digest correction;
+the original bytes are archived, and every artifact/function/RVA/body/truth fact
+is unchanged. Two missing original hidden-pilot receipts were recovered or
+reproduced exactly. The current audit passes **23 unique strict labels** and
+**39 receipt files / 36 unique hashes**; its deliberate partition negative
+control still reports six findings. Historical 22-label integrity and earlier
+partition snapshots remain clearly scoped. The original native/control JSON
+and engine observations are unchanged.
+
+Pin executable invocation spelling as well as versions: `lld-link-18` versus
+`lld-link` changed embedded PDB/CodeView metadata and whole-image hashes while
+corresponding code sections remained identical. Selecting recorded original
+paths reproduced accepted hashes. Existing normalized recipe digests omit
+`argv[0]`; this specific gap is documented, not claimed repaired by a new schema.
+The hidden receipt replay now explicitly binds its review-file hash and reports
+persisted-native evidence, with no new matching-engine execution credit.
+
+SonarCloud passed on `0d14548` with zero new issues, zero security hotspots and
+2.6% duplication. Final revision checks remain required. The original full
+18,212-test run retains its snapshot limitation; this checkpoint does not turn
+it into a full run of the final tree. Native Windows/MSVC/BinDiff and the
+dispatch-only unified workflow remain separate acceptance requirements.

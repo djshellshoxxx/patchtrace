@@ -22,7 +22,7 @@ from patchtrace.secondary import binexport_run as run
 from patchtrace.secondary.binexport_limits import MIB, BinExportLimits
 from patchtrace.secondary.contracts import SecondaryError
 
-PY = str(Path(sys.executable).resolve())
+PY = str(Path(sys.executable).absolute())
 
 
 def accept(path, private, *, cancel=None, **kw):

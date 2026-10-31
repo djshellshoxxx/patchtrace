@@ -1,0 +1,1385 @@
+{
+  "builds": [
+    {
+      "build_record": "/workspace/scratch/a55b59b3e326/r1-controls-store/images/66908cc4642bb149aad74a23d1e641807edb874da008c3b488f5e74fb462b6ea/build.json",
+      "cflags": [],
+      "debug_image": "/workspace/scratch/a55b59b3e326/r1-controls-store/images/66908cc4642bb149aad74a23d1e641807edb874da008c3b488f5e74fb462b6ea/defined.dll",
+      "debug_sha256": "66908cc4642bb149aad74a23d1e641807edb874da008c3b488f5e74fb462b6ea",
+      "debug_symbol_count": 21,
+      "engine_image": "/workspace/scratch/a55b59b3e326/r1-controls-store/images/36d607e334544fcf98f81f77f46468e559ac849b01f1fd4f930c0a6ab5192294/defined.dll",
+      "engine_sections": [
+        ".text",
+        ".rdata"
+      ],
+      "engine_sha256": "36d607e334544fcf98f81f77f46468e559ac849b01f1fd4f930c0a6ab5192294",
+      "engine_symbol_count": 0,
+      "export_count": 0,
+      "export_names": [],
+      "opt": "O2",
+      "pdb": "/workspace/scratch/a55b59b3e326/r1-controls-store/images/66908cc4642bb149aad74a23d1e641807edb874da008c3b488f5e74fb462b6ea/defined.pdb",
+      "pdb_sha256": "d69c89940cb99ef44ceb750a869206ae781978df36f5bca3ed2ae85d373f7473",
+      "profile": "msvc-free",
+      "recipe": {
+        "cflags": [],
+        "compile": [
+          [
+            "--target=x86_64-pc-windows-msvc",
+            "-ffreestanding",
+            "-mno-stack-arg-probe",
+            "-gcodeview",
+            "-gno-codeview-command-line",
+            "-ffile-compilation-dir=.",
+            "-O2",
+            "-g",
+            "-w",
+            "-std=c11",
+            "-I.",
+            "-c",
+            "r1.c",
+            "-o",
+            "../obj/00000.o"
+          ]
+        ],
+        "defines": [],
+        "include_dirs": [
+          "."
+        ],
+        "link": [
+          "/dll",
+          "/noentry",
+          "/nodefaultlib",
+          "/machine:x64",
+          "/debug",
+          "/debug:symtab",
+          "/pdb:../out/defined.pdb",
+          "/pdbaltpath:%_PDB%",
+          "/pdbsourcepath:/ka-src",
+          "/Brepro",
+          "/opt:noref",
+          "/opt:noicf",
+          "/incremental:no",
+          "/noimplib",
+          "/out:../out/defined.dll",
+          "../obj/00000.o",
+          "../rt/ka_rt.lib"
+        ],
+        "link_order": "sorted",
+        "opt": "O2",
+        "profile": "msvc-free",
+        "source_date_epoch": 0,
+        "std": "c11",
+        "versions": {
+          "clang": "Ubuntu clang version 18.1.3 (1ubuntu1)",
+          "lld-link": "Ubuntu LLD 18.1.3",
+          "llvm-strip": "llvm-strip, compatible with GNU strip"
+        }
+      },
+      "recipe_digest": "7c7b7d39a28c605d990b52c7d2386168f8adfef803a172daa55aaa7b861f6417",
+      "source_digest": "d776bc0df2c58884115081ebc9cdf5277dac5cecd37b813285f8984414affc9b",
+      "variant": "aa-a"
+    },
+    {
+      "build_record": "/workspace/scratch/a55b59b3e326/r1-controls-store/images/66908cc4642bb149aad74a23d1e641807edb874da008c3b488f5e74fb462b6ea/build.json",
+      "cflags": [],
+      "debug_image": "/workspace/scratch/a55b59b3e326/r1-controls-store/images/66908cc4642bb149aad74a23d1e641807edb874da008c3b488f5e74fb462b6ea/defined.dll",
+      "debug_sha256": "66908cc4642bb149aad74a23d1e641807edb874da008c3b488f5e74fb462b6ea",
+      "debug_symbol_count": 21,
+      "engine_image": "/workspace/scratch/a55b59b3e326/r1-controls-store/images/36d607e334544fcf98f81f77f46468e559ac849b01f1fd4f930c0a6ab5192294/defined.dll",
+      "engine_sections": [
+        ".text",
+        ".rdata"
+      ],
+      "engine_sha256": "36d607e334544fcf98f81f77f46468e559ac849b01f1fd4f930c0a6ab5192294",
+      "engine_symbol_count": 0,
+      "export_count": 0,
+      "export_names": [],
+      "opt": "O2",
+      "pdb": "/workspace/scratch/a55b59b3e326/r1-controls-store/images/66908cc4642bb149aad74a23d1e641807edb874da008c3b488f5e74fb462b6ea/defined.pdb",
+      "pdb_sha256": "d69c89940cb99ef44ceb750a869206ae781978df36f5bca3ed2ae85d373f7473",
+      "profile": "msvc-free",
+      "recipe": {
+        "cflags": [],
+        "compile": [
+          [
+            "--target=x86_64-pc-windows-msvc",
+            "-ffreestanding",
+            "-mno-stack-arg-probe",
+            "-gcodeview",
+            "-gno-codeview-command-line",
+            "-ffile-compilation-dir=.",
+            "-O2",
+            "-g",
+            "-w",
+            "-std=c11",
+            "-I.",
+            "-c",
+            "r1.c",
+            "-o",
+            "../obj/00000.o"
+          ]
+        ],
+        "defines": [],
+        "include_dirs": [
+          "."
+        ],
+        "link": [
+          "/dll",
+          "/noentry",
+          "/nodefaultlib",
+          "/machine:x64",
+          "/debug",
+          "/debug:symtab",
+          "/pdb:../out/defined.pdb",
+          "/pdbaltpath:%_PDB%",
+          "/pdbsourcepath:/ka-src",
+          "/Brepro",
+          "/opt:noref",
+          "/opt:noicf",
+          "/incremental:no",
+          "/noimplib",
+          "/out:../out/defined.dll",
+          "../obj/00000.o",
+          "../rt/ka_rt.lib"
+        ],
+        "link_order": "sorted",
+        "opt": "O2",
+        "profile": "msvc-free",
+        "source_date_epoch": 0,
+        "std": "c11",
+        "versions": {
+          "clang": "Ubuntu clang version 18.1.3 (1ubuntu1)",
+          "lld-link": "Ubuntu LLD 18.1.3",
+          "llvm-strip": "llvm-strip, compatible with GNU strip"
+        }
+      },
+      "recipe_digest": "7c7b7d39a28c605d990b52c7d2386168f8adfef803a172daa55aaa7b861f6417",
+      "source_digest": "d776bc0df2c58884115081ebc9cdf5277dac5cecd37b813285f8984414affc9b",
+      "variant": "aa-b"
+    },
+    {
+      "build_record": "/workspace/scratch/a55b59b3e326/r1-controls-store/images/ad3f8e58dc37b06d94e9e2895d70274ec710602378f78347a87141e425cdb7b0/build.json",
+      "cflags": [],
+      "debug_image": "/workspace/scratch/a55b59b3e326/r1-controls-store/images/ad3f8e58dc37b06d94e9e2895d70274ec710602378f78347a87141e425cdb7b0/defined.dll",
+      "debug_sha256": "ad3f8e58dc37b06d94e9e2895d70274ec710602378f78347a87141e425cdb7b0",
+      "debug_symbol_count": 21,
+      "engine_image": "/workspace/scratch/a55b59b3e326/r1-controls-store/images/b79e088363e9dfa3132313849a4936972e208a6703ce99683dc389ec755049dd/defined.dll",
+      "engine_sections": [
+        ".text",
+        ".rdata"
+      ],
+      "engine_sha256": "b79e088363e9dfa3132313849a4936972e208a6703ce99683dc389ec755049dd",
+      "engine_symbol_count": 0,
+      "export_count": 0,
+      "export_names": [],
+      "opt": "O0",
+      "pdb": "/workspace/scratch/a55b59b3e326/r1-controls-store/images/ad3f8e58dc37b06d94e9e2895d70274ec710602378f78347a87141e425cdb7b0/defined.pdb",
+      "pdb_sha256": "a06df01100db236c44838aab0c9c9b3ce01b839b16b1dca5e111ac34da5369df",
+      "profile": "msvc-free",
+      "recipe": {
+        "cflags": [],
+        "compile": [
+          [
+            "--target=x86_64-pc-windows-msvc",
+            "-ffreestanding",
+            "-mno-stack-arg-probe",
+            "-gcodeview",
+            "-gno-codeview-command-line",
+            "-ffile-compilation-dir=.",
+            "-O0",
+            "-g",
+            "-w",
+            "-std=c11",
+            "-I.",
+            "-c",
+            "r1.c",
+            "-o",
+            "../obj/00000.o"
+          ]
+        ],
+        "defines": [],
+        "include_dirs": [
+          "."
+        ],
+        "link": [
+          "/dll",
+          "/noentry",
+          "/nodefaultlib",
+          "/machine:x64",
+          "/debug",
+          "/debug:symtab",
+          "/pdb:../out/defined.pdb",
+          "/pdbaltpath:%_PDB%",
+          "/pdbsourcepath:/ka-src",
+          "/Brepro",
+          "/opt:noref",
+          "/opt:noicf",
+          "/incremental:no",
+          "/noimplib",
+          "/out:../out/defined.dll",
+          "../obj/00000.o",
+          "../rt/ka_rt.lib"
+        ],
+        "link_order": "sorted",
+        "opt": "O0",
+        "profile": "msvc-free",
+        "source_date_epoch": 0,
+        "std": "c11",
+        "versions": {
+          "clang": "Ubuntu clang version 18.1.3 (1ubuntu1)",
+          "lld-link": "Ubuntu LLD 18.1.3",
+          "llvm-strip": "llvm-strip, compatible with GNU strip"
+        }
+      },
+      "recipe_digest": "653f7ef40d7fe76a02cd6dab9d1c497ed2b17ad713d0b39df1ab09fe57b41d5f",
+      "source_digest": "d776bc0df2c58884115081ebc9cdf5277dac5cecd37b813285f8984414affc9b",
+      "variant": "noise-msvc-free-o0"
+    },
+    {
+      "build_record": "/workspace/scratch/a55b59b3e326/r1-controls-store/images/66908cc4642bb149aad74a23d1e641807edb874da008c3b488f5e74fb462b6ea/build.json",
+      "cflags": [],
+      "debug_image": "/workspace/scratch/a55b59b3e326/r1-controls-store/images/66908cc4642bb149aad74a23d1e641807edb874da008c3b488f5e74fb462b6ea/defined.dll",
+      "debug_sha256": "66908cc4642bb149aad74a23d1e641807edb874da008c3b488f5e74fb462b6ea",
+      "debug_symbol_count": 21,
+      "engine_image": "/workspace/scratch/a55b59b3e326/r1-controls-store/images/36d607e334544fcf98f81f77f46468e559ac849b01f1fd4f930c0a6ab5192294/defined.dll",
+      "engine_sections": [
+        ".text",
+        ".rdata"
+      ],
+      "engine_sha256": "36d607e334544fcf98f81f77f46468e559ac849b01f1fd4f930c0a6ab5192294",
+      "engine_symbol_count": 0,
+      "export_count": 0,
+      "export_names": [],
+      "opt": "O2",
+      "pdb": "/workspace/scratch/a55b59b3e326/r1-controls-store/images/66908cc4642bb149aad74a23d1e641807edb874da008c3b488f5e74fb462b6ea/defined.pdb",
+      "pdb_sha256": "d69c89940cb99ef44ceb750a869206ae781978df36f5bca3ed2ae85d373f7473",
+      "profile": "msvc-free",
+      "recipe": {
+        "cflags": [],
+        "compile": [
+          [
+            "--target=x86_64-pc-windows-msvc",
+            "-ffreestanding",
+            "-mno-stack-arg-probe",
+            "-gcodeview",
+            "-gno-codeview-command-line",
+            "-ffile-compilation-dir=.",
+            "-O2",
+            "-g",
+            "-w",
+            "-std=c11",
+            "-I.",
+            "-c",
+            "r1.c",
+            "-o",
+            "../obj/00000.o"
+          ]
+        ],
+        "defines": [],
+        "include_dirs": [
+          "."
+        ],
+        "link": [
+          "/dll",
+          "/noentry",
+          "/nodefaultlib",
+          "/machine:x64",
+          "/debug",
+          "/debug:symtab",
+          "/pdb:../out/defined.pdb",
+          "/pdbaltpath:%_PDB%",
+          "/pdbsourcepath:/ka-src",
+          "/Brepro",
+          "/opt:noref",
+          "/opt:noicf",
+          "/incremental:no",
+          "/noimplib",
+          "/out:../out/defined.dll",
+          "../obj/00000.o",
+          "../rt/ka_rt.lib"
+        ],
+        "link_order": "sorted",
+        "opt": "O2",
+        "profile": "msvc-free",
+        "source_date_epoch": 0,
+        "std": "c11",
+        "versions": {
+          "clang": "Ubuntu clang version 18.1.3 (1ubuntu1)",
+          "lld-link": "Ubuntu LLD 18.1.3",
+          "llvm-strip": "llvm-strip, compatible with GNU strip"
+        }
+      },
+      "recipe_digest": "7c7b7d39a28c605d990b52c7d2386168f8adfef803a172daa55aaa7b861f6417",
+      "source_digest": "d776bc0df2c58884115081ebc9cdf5277dac5cecd37b813285f8984414affc9b",
+      "variant": "noise-msvc-free-o2"
+    },
+    {
+      "build_record": "/workspace/scratch/a55b59b3e326/r1-controls-store/images/b9b07163121db9b0fe0bb6cf1268836de2c5620b2cf7ed3f66874ded1c43409d/build.json",
+      "cflags": [],
+      "debug_image": "/workspace/scratch/a55b59b3e326/r1-controls-store/images/b9b07163121db9b0fe0bb6cf1268836de2c5620b2cf7ed3f66874ded1c43409d/defined.dll",
+      "debug_sha256": "b9b07163121db9b0fe0bb6cf1268836de2c5620b2cf7ed3f66874ded1c43409d",
+      "debug_symbol_count": 21,
+      "engine_image": "/workspace/scratch/a55b59b3e326/r1-controls-store/images/12e45c789c827f8fb317dc6aba2467cf5c3d6f79c1c0a21a4d6aa75ae047fdfc/defined.dll",
+      "engine_sections": [
+        ".text",
+        ".rdata"
+      ],
+      "engine_sha256": "12e45c789c827f8fb317dc6aba2467cf5c3d6f79c1c0a21a4d6aa75ae047fdfc",
+      "engine_symbol_count": 0,
+      "export_count": 0,
+      "export_names": [],
+      "opt": "Os",
+      "pdb": "/workspace/scratch/a55b59b3e326/r1-controls-store/images/b9b07163121db9b0fe0bb6cf1268836de2c5620b2cf7ed3f66874ded1c43409d/defined.pdb",
+      "pdb_sha256": "00dd05fe4955a245db1c4d1c1a769fbc7b3c1166b04e41c1ef88782650777ce6",
+      "profile": "msvc-free",
+      "recipe": {
+        "cflags": [],
+        "compile": [
+          [
+            "--target=x86_64-pc-windows-msvc",
+            "-ffreestanding",
+            "-mno-stack-arg-probe",
+            "-gcodeview",
+            "-gno-codeview-command-line",
+            "-ffile-compilation-dir=.",
+            "-Os",
+            "-g",
+            "-w",
+            "-std=c11",
+            "-I.",
+            "-c",
+            "r1.c",
+            "-o",
+            "../obj/00000.o"
+          ]
+        ],
+        "defines": [],
+        "include_dirs": [
+          "."
+        ],
+        "link": [
+          "/dll",
+          "/noentry",
+          "/nodefaultlib",
+          "/machine:x64",
+          "/debug",
+          "/debug:symtab",
+          "/pdb:../out/defined.pdb",
+          "/pdbaltpath:%_PDB%",
+          "/pdbsourcepath:/ka-src",
+          "/Brepro",
+          "/opt:noref",
+          "/opt:noicf",
+          "/incremental:no",
+          "/noimplib",
+          "/out:../out/defined.dll",
+          "../obj/00000.o",
+          "../rt/ka_rt.lib"
+        ],
+        "link_order": "sorted",
+        "opt": "Os",
+        "profile": "msvc-free",
+        "source_date_epoch": 0,
+        "std": "c11",
+        "versions": {
+          "clang": "Ubuntu clang version 18.1.3 (1ubuntu1)",
+          "lld-link": "Ubuntu LLD 18.1.3",
+          "llvm-strip": "llvm-strip, compatible with GNU strip"
+        }
+      },
+      "recipe_digest": "f39b6fe13ac56a5255c6111abd2b564250c9c462ab4bddfa41989886f982eb76",
+      "source_digest": "d776bc0df2c58884115081ebc9cdf5277dac5cecd37b813285f8984414affc9b",
+      "variant": "noise-msvc-free-os"
+    },
+    {
+      "build_record": "/workspace/scratch/a55b59b3e326/r1-controls-store/images/82507c9e80aa0493860ca0b56a7400ec67dbda7ae3a32185aa19aaefa5b1b701/build.json",
+      "cflags": [],
+      "debug_image": "/workspace/scratch/a55b59b3e326/r1-controls-store/images/82507c9e80aa0493860ca0b56a7400ec67dbda7ae3a32185aa19aaefa5b1b701/defined.dll",
+      "debug_sha256": "82507c9e80aa0493860ca0b56a7400ec67dbda7ae3a32185aa19aaefa5b1b701",
+      "debug_symbol_count": 977,
+      "engine_image": "/workspace/scratch/a55b59b3e326/r1-controls-store/images/c03b76a0e6db62ac35c5f4fa727f38cafdcfb5e7b8544c327b4c9587f8707b58/defined.dll",
+      "engine_sections": [
+        ".text",
+        ".data",
+        ".rdata",
+        ".pdata",
+        ".xdata",
+        ".bss",
+        ".edata",
+        ".idata",
+        ".CRT",
+        ".tls",
+        ".reloc"
+      ],
+      "engine_sha256": "c03b76a0e6db62ac35c5f4fa727f38cafdcfb5e7b8544c327b4c9587f8707b58",
+      "engine_symbol_count": 0,
+      "export_count": 21,
+      "export_names": [
+        "r1_allocation_size",
+        "r1_array_index",
+        "r1_bounds_added",
+        "r1_bounds_removed",
+        "r1_branch_inversion",
+        "r1_call_target",
+        "r1_comparison",
+        "r1_cosmetic",
+        "r1_error_handling",
+        "r1_integer_constant",
+        "r1_loop_bound",
+        "r1_null_validation",
+        "r1_overflow_guard",
+        "r1_pointer_offset",
+        "r1_primary",
+        "r1_removed",
+        "r1_secondary",
+        "r1_security_flag",
+        "r1_signedness",
+        "r1_structure_field",
+        "r1_unchanged"
+      ],
+      "opt": "O2",
+      "pdb": null,
+      "pdb_sha256": null,
+      "profile": "mingw-gcc",
+      "recipe": {
+        "cflags": [],
+        "compile": [
+          [
+            "-ffile-prefix-map=<SRC>=.",
+            "-fdebug-prefix-map=<SRC>=.",
+            "-O2",
+            "-g",
+            "-w",
+            "-std=c11",
+            "-I.",
+            "-c",
+            "r1.c",
+            "-o",
+            "../obj/00000.o"
+          ]
+        ],
+        "defines": [],
+        "include_dirs": [
+          "."
+        ],
+        "link": [
+          "-shared",
+          "-o",
+          "../out/defined.dll",
+          "../obj/00000.o",
+          "-static-libgcc",
+          "-Wl,--no-insert-timestamp",
+          "-Wl,--image-base=0x180000000"
+        ],
+        "link_order": "sorted",
+        "opt": "O2",
+        "profile": "mingw-gcc",
+        "source_date_epoch": 0,
+        "std": "c11",
+        "versions": {
+          "llvm-strip": "llvm-strip, compatible with GNU strip",
+          "mingw-gcc": "x86_64-w64-mingw32-gcc (GCC) 13-win32"
+        }
+      },
+      "recipe_digest": "e2406474b56cb867a7379124f7c906305eb009d0ba6c3e7f134d0e0c13fefd02",
+      "source_digest": "d776bc0df2c58884115081ebc9cdf5277dac5cecd37b813285f8984414affc9b",
+      "variant": "noise-mingw-gcc-o2"
+    },
+    {
+      "build_record": "/workspace/scratch/a55b59b3e326/r1-controls-store/images/82507c9e80aa0493860ca0b56a7400ec67dbda7ae3a32185aa19aaefa5b1b701/build.json",
+      "cflags": [],
+      "debug_image": "/workspace/scratch/a55b59b3e326/r1-controls-store/images/82507c9e80aa0493860ca0b56a7400ec67dbda7ae3a32185aa19aaefa5b1b701/defined.dll",
+      "debug_sha256": "82507c9e80aa0493860ca0b56a7400ec67dbda7ae3a32185aa19aaefa5b1b701",
+      "debug_symbol_count": 977,
+      "engine_image": "/workspace/scratch/a55b59b3e326/r1-controls-store/images/c03b76a0e6db62ac35c5f4fa727f38cafdcfb5e7b8544c327b4c9587f8707b58/defined.dll",
+      "engine_sections": [
+        ".text",
+        ".data",
+        ".rdata",
+        ".pdata",
+        ".xdata",
+        ".bss",
+        ".edata",
+        ".idata",
+        ".CRT",
+        ".tls",
+        ".reloc"
+      ],
+      "engine_sha256": "c03b76a0e6db62ac35c5f4fa727f38cafdcfb5e7b8544c327b4c9587f8707b58",
+      "engine_symbol_count": 0,
+      "export_count": 21,
+      "export_names": [
+        "r1_allocation_size",
+        "r1_array_index",
+        "r1_bounds_added",
+        "r1_bounds_removed",
+        "r1_branch_inversion",
+        "r1_call_target",
+        "r1_comparison",
+        "r1_cosmetic",
+        "r1_error_handling",
+        "r1_integer_constant",
+        "r1_loop_bound",
+        "r1_null_validation",
+        "r1_overflow_guard",
+        "r1_pointer_offset",
+        "r1_primary",
+        "r1_removed",
+        "r1_secondary",
+        "r1_security_flag",
+        "r1_signedness",
+        "r1_structure_field",
+        "r1_unchanged"
+      ],
+      "opt": "O2",
+      "pdb": null,
+      "pdb_sha256": null,
+      "phase": "linker-recovery-retry",
+      "profile": "mingw-gcc",
+      "recipe": {
+        "cflags": [],
+        "compile": [
+          [
+            "-ffile-prefix-map=<SRC>=.",
+            "-fdebug-prefix-map=<SRC>=.",
+            "-O2",
+            "-g",
+            "-w",
+            "-std=c11",
+            "-I.",
+            "-c",
+            "r1.c",
+            "-o",
+            "../obj/00000.o"
+          ]
+        ],
+        "defines": [],
+        "include_dirs": [
+          "."
+        ],
+        "link": [
+          "-shared",
+          "-o",
+          "../out/defined.dll",
+          "../obj/00000.o",
+          "-static-libgcc",
+          "-Wl,--no-insert-timestamp",
+          "-Wl,--image-base=0x180000000"
+        ],
+        "link_order": "sorted",
+        "opt": "O2",
+        "profile": "mingw-gcc",
+        "source_date_epoch": 0,
+        "std": "c11",
+        "versions": {
+          "llvm-strip": "llvm-strip, compatible with GNU strip",
+          "mingw-gcc": "x86_64-w64-mingw32-gcc (GCC) 13-win32"
+        }
+      },
+      "recipe_digest": "e2406474b56cb867a7379124f7c906305eb009d0ba6c3e7f134d0e0c13fefd02",
+      "source_digest": "d776bc0df2c58884115081ebc9cdf5277dac5cecd37b813285f8984414affc9b",
+      "variant": "noise-mingw-gcc-o2"
+    },
+    {
+      "build_record": "/workspace/scratch/a55b59b3e326/r1-controls-store/images/696d8ec0becd77f2f737b9ab1f8b66f7f6fe179494d522e6019269a1d30cb3a7/build.json",
+      "cflags": [],
+      "debug_image": "/workspace/scratch/a55b59b3e326/r1-controls-store/images/696d8ec0becd77f2f737b9ab1f8b66f7f6fe179494d522e6019269a1d30cb3a7/defined.dll",
+      "debug_sha256": "696d8ec0becd77f2f737b9ab1f8b66f7f6fe179494d522e6019269a1d30cb3a7",
+      "debug_symbol_count": 323,
+      "engine_image": "/workspace/scratch/a55b59b3e326/r1-controls-store/images/f6164cc7eb8bbfc2b56b7176e78f3e2473f838e6f24117dfc1fe11e89ef96203/defined.dll",
+      "engine_sections": [
+        ".text",
+        ".rdata",
+        ".buildid",
+        ".data",
+        ".pdata",
+        ".tls",
+        ".reloc"
+      ],
+      "engine_sha256": "f6164cc7eb8bbfc2b56b7176e78f3e2473f838e6f24117dfc1fe11e89ef96203",
+      "engine_symbol_count": 0,
+      "export_count": 21,
+      "export_names": [
+        "r1_allocation_size",
+        "r1_array_index",
+        "r1_bounds_added",
+        "r1_bounds_removed",
+        "r1_branch_inversion",
+        "r1_call_target",
+        "r1_comparison",
+        "r1_cosmetic",
+        "r1_error_handling",
+        "r1_integer_constant",
+        "r1_loop_bound",
+        "r1_null_validation",
+        "r1_overflow_guard",
+        "r1_pointer_offset",
+        "r1_primary",
+        "r1_removed",
+        "r1_secondary",
+        "r1_security_flag",
+        "r1_signedness",
+        "r1_structure_field",
+        "r1_unchanged"
+      ],
+      "opt": "O2",
+      "pdb": null,
+      "pdb_sha256": null,
+      "phase": "linker-recovery-retry",
+      "profile": "mingw-clang",
+      "recipe": {
+        "cflags": [],
+        "compile": [
+          [
+            "--target=x86_64-w64-windows-gnu",
+            "-ffile-compilation-dir=.",
+            "-O2",
+            "-g",
+            "-w",
+            "-std=c11",
+            "-I.",
+            "-c",
+            "r1.c",
+            "-o",
+            "../obj/00000.o"
+          ]
+        ],
+        "defines": [],
+        "include_dirs": [
+          "."
+        ],
+        "link": [
+          "--target=x86_64-w64-windows-gnu",
+          "-fuse-ld=lld",
+          "-shared",
+          "-o",
+          "../out/defined.dll",
+          "../obj/00000.o",
+          "-Wl,--no-insert-timestamp",
+          "-Wl,--image-base=0x180000000"
+        ],
+        "link_order": "sorted",
+        "opt": "O2",
+        "profile": "mingw-clang",
+        "source_date_epoch": 0,
+        "std": "c11",
+        "versions": {
+          "clang": "Ubuntu clang version 18.1.3 (1ubuntu1)",
+          "llvm-strip": "llvm-strip, compatible with GNU strip"
+        }
+      },
+      "recipe_digest": "f979a758d9a10eb87d6df89de45081a75a331fe7c970250532dae9a1af4e22c0",
+      "source_digest": "d776bc0df2c58884115081ebc9cdf5277dac5cecd37b813285f8984414affc9b",
+      "variant": "noise-mingw-clang-o2"
+    }
+  ],
+  "command": "PYTHONPATH=src:. /workspace/scratch/a55b59b3e326/patchtrace-venv/bin/python /tmp/patchtrace-r1-controls.py",
+  "date": "2026-10-30",
+  "experiment_script_sha256": "7216f9208532bf3108f22967dfc034b5de528bb50befe12750c8c357d1ce57e1",
+  "experiments": [
+    {
+      "api": "F.run_aa(session,base,opt=\"O2\",layout=True)",
+      "elapsed_seconds": 1.2489761639999415,
+      "kind": "aa",
+      "layout_status": "not-applicable: one source translation unit and no dependencies; run_aa emits no link-order variants",
+      "pairs": [
+        {
+          "body_counts": {
+            "identical": 21
+          },
+          "case": {
+            "kind": "rebuild",
+            "opt": "O2"
+          },
+          "label_counts": {
+            "unchanged": 21
+          },
+          "labels_digest_sha256": "1792c140953da1e24c01e697731f3f9d3e5e0065e8358418d3f1fe1aed19e26f",
+          "labels_file_sha256": "b03bd0f6d71f3236c1b477093d7160effd46dfb72178479c0e98a61e77bf73e5",
+          "labels_path": "/workspace/scratch/a55b59b3e326/r1-controls-store/labels/aa-defined-v1-O2-rebuild.json",
+          "newer": {
+            "build": {
+              "compiler": "clang",
+              "compiler_version": "Ubuntu clang version 18.1.3 (1ubuntu1)",
+              "link_order": "sorted",
+              "opt": "O2",
+              "profile": "msvc-free",
+              "recipe_digest": "7c7b7d39a28c605d990b52c7d2386168f8adfef803a172daa55aaa7b861f6417",
+              "variant": "aa-a"
+            },
+            "debug_sha256": "66908cc4642bb149aad74a23d1e641807edb874da008c3b488f5e74fb462b6ea",
+            "file_name": "defined.dll",
+            "image_base": 6442450944,
+            "pdb_sha256": "d69c89940cb99ef44ceb750a869206ae781978df36f5bca3ed2ae85d373f7473",
+            "sha256": "36d607e334544fcf98f81f77f46468e559ac849b01f1fd4f930c0a6ab5192294",
+            "size": 2048,
+            "source": {
+              "commit": null,
+              "git": null,
+              "license_spdx": "MIT",
+              "mutation": null,
+              "ref": null,
+              "suite": "r1-pilot/defined",
+              "version": "v1"
+            }
+          },
+          "older": {
+            "build": {
+              "compiler": "clang",
+              "compiler_version": "Ubuntu clang version 18.1.3 (1ubuntu1)",
+              "link_order": "sorted",
+              "opt": "O2",
+              "profile": "msvc-free",
+              "recipe_digest": "7c7b7d39a28c605d990b52c7d2386168f8adfef803a172daa55aaa7b861f6417",
+              "variant": "aa-a"
+            },
+            "debug_sha256": "66908cc4642bb149aad74a23d1e641807edb874da008c3b488f5e74fb462b6ea",
+            "file_name": "defined.dll",
+            "image_base": 6442450944,
+            "pdb_sha256": "d69c89940cb99ef44ceb750a869206ae781978df36f5bca3ed2ae85d373f7473",
+            "sha256": "36d607e334544fcf98f81f77f46468e559ac849b01f1fd4f930c0a6ab5192294",
+            "size": 2048,
+            "source": {
+              "commit": null,
+              "git": null,
+              "license_spdx": "MIT",
+              "mutation": null,
+              "ref": null,
+              "suite": "r1-pilot/defined",
+              "version": "v1"
+            }
+          },
+          "pair_id": "aa-defined-v1-O2-rebuild",
+          "reproducibility": {
+            "byte_identical": true,
+            "detail": "engine and debug images rebuilt in two different scratch directories",
+            "differing_bytes": 0,
+            "differing_sections": []
+          },
+          "summary": {
+            "absent_functions": 0,
+            "by_body": {
+              "identical": 21
+            },
+            "by_identity": {
+              "same": 21
+            },
+            "by_label": {
+              "unchanged": 21
+            },
+            "disagreements": 0,
+            "functions": 21,
+            "runtime_functions": 0
+          }
+        }
+      ],
+      "status": "built"
+    },
+    {
+      "api": "F.run_noise(session,base,variants=[('msvc-free', 'O0', 'msvc-free', 'O2')])",
+      "elapsed_seconds": 1.1403643829999055,
+      "kind": "noise",
+      "pairs": [
+        {
+          "body_counts": {
+            "different": 21
+          },
+          "case": {
+            "kind": "toolchain",
+            "newer": "msvc-free/O2",
+            "older": "msvc-free/O0"
+          },
+          "label_counts": {
+            "unchanged": 21
+          },
+          "labels_digest_sha256": "a49fac036302ab463018d22c76aeb0de5bde43adb9db3ed3ac50be4b1dc9f415",
+          "labels_file_sha256": "9abfa4415ef02dbfdae2618e710c947d54ae79ab470a8b8411be70f5a8ac3368",
+          "labels_path": "/workspace/scratch/a55b59b3e326/r1-controls-store/labels/noise-defined-v1-msvc-free-O0-msvc-free-O2.json",
+          "newer": {
+            "build": {
+              "compiler": "clang",
+              "compiler_version": "Ubuntu clang version 18.1.3 (1ubuntu1)",
+              "link_order": "sorted",
+              "opt": "O2",
+              "profile": "msvc-free",
+              "recipe_digest": "7c7b7d39a28c605d990b52c7d2386168f8adfef803a172daa55aaa7b861f6417",
+              "variant": "aa-a"
+            },
+            "debug_sha256": "66908cc4642bb149aad74a23d1e641807edb874da008c3b488f5e74fb462b6ea",
+            "file_name": "defined.dll",
+            "image_base": 6442450944,
+            "pdb_sha256": "d69c89940cb99ef44ceb750a869206ae781978df36f5bca3ed2ae85d373f7473",
+            "sha256": "36d607e334544fcf98f81f77f46468e559ac849b01f1fd4f930c0a6ab5192294",
+            "size": 2048,
+            "source": {
+              "commit": null,
+              "git": null,
+              "license_spdx": "MIT",
+              "mutation": null,
+              "ref": null,
+              "suite": "r1-pilot/defined",
+              "version": "v1"
+            }
+          },
+          "older": {
+            "build": {
+              "compiler": "clang",
+              "compiler_version": "Ubuntu clang version 18.1.3 (1ubuntu1)",
+              "link_order": "sorted",
+              "opt": "O0",
+              "profile": "msvc-free",
+              "recipe_digest": "653f7ef40d7fe76a02cd6dab9d1c497ed2b17ad713d0b39df1ab09fe57b41d5f",
+              "variant": "noise-msvc-free-o0"
+            },
+            "debug_sha256": "ad3f8e58dc37b06d94e9e2895d70274ec710602378f78347a87141e425cdb7b0",
+            "file_name": "defined.dll",
+            "image_base": 6442450944,
+            "pdb_sha256": "a06df01100db236c44838aab0c9c9b3ce01b839b16b1dca5e111ac34da5369df",
+            "sha256": "b79e088363e9dfa3132313849a4936972e208a6703ce99683dc389ec755049dd",
+            "size": 2560,
+            "source": {
+              "commit": null,
+              "git": null,
+              "license_spdx": "MIT",
+              "mutation": null,
+              "ref": null,
+              "suite": "r1-pilot/defined",
+              "version": "v1"
+            }
+          },
+          "pair_id": "noise-defined-v1-msvc-free-O0-msvc-free-O2",
+          "reproducibility": null,
+          "summary": {
+            "absent_functions": 0,
+            "by_body": {
+              "different": 21
+            },
+            "by_identity": {
+              "same": 21
+            },
+            "by_label": {
+              "unchanged": 21
+            },
+            "disagreements": 0,
+            "functions": 21,
+            "runtime_functions": 0
+          }
+        }
+      ],
+      "skipped": [],
+      "status": "built",
+      "variant": [
+        "msvc-free",
+        "O0",
+        "msvc-free",
+        "O2"
+      ]
+    },
+    {
+      "api": "F.run_noise(session,base,variants=[('msvc-free', 'O2', 'msvc-free', 'Os')])",
+      "elapsed_seconds": 0.8464461009998558,
+      "kind": "noise",
+      "pairs": [
+        {
+          "body_counts": {
+            "different": 1,
+            "identical": 20
+          },
+          "case": {
+            "kind": "toolchain",
+            "newer": "msvc-free/Os",
+            "older": "msvc-free/O2"
+          },
+          "label_counts": {
+            "unchanged": 21
+          },
+          "labels_digest_sha256": "08939af3c162e5dee94f3abe317aa098f8672b32e601a4f75fddf19a0db82445",
+          "labels_file_sha256": "ab1a3b2149996911fdc4106fe1d39ec9f6ce57c86d4a401a652c1751a324a08a",
+          "labels_path": "/workspace/scratch/a55b59b3e326/r1-controls-store/labels/noise-defined-v1-msvc-free-O2-msvc-free-Os.json",
+          "newer": {
+            "build": {
+              "compiler": "clang",
+              "compiler_version": "Ubuntu clang version 18.1.3 (1ubuntu1)",
+              "link_order": "sorted",
+              "opt": "Os",
+              "profile": "msvc-free",
+              "recipe_digest": "f39b6fe13ac56a5255c6111abd2b564250c9c462ab4bddfa41989886f982eb76",
+              "variant": "noise-msvc-free-os"
+            },
+            "debug_sha256": "b9b07163121db9b0fe0bb6cf1268836de2c5620b2cf7ed3f66874ded1c43409d",
+            "file_name": "defined.dll",
+            "image_base": 6442450944,
+            "pdb_sha256": "00dd05fe4955a245db1c4d1c1a769fbc7b3c1166b04e41c1ef88782650777ce6",
+            "sha256": "12e45c789c827f8fb317dc6aba2467cf5c3d6f79c1c0a21a4d6aa75ae047fdfc",
+            "size": 1536,
+            "source": {
+              "commit": null,
+              "git": null,
+              "license_spdx": "MIT",
+              "mutation": null,
+              "ref": null,
+              "suite": "r1-pilot/defined",
+              "version": "v1"
+            }
+          },
+          "older": {
+            "build": {
+              "compiler": "clang",
+              "compiler_version": "Ubuntu clang version 18.1.3 (1ubuntu1)",
+              "link_order": "sorted",
+              "opt": "O2",
+              "profile": "msvc-free",
+              "recipe_digest": "7c7b7d39a28c605d990b52c7d2386168f8adfef803a172daa55aaa7b861f6417",
+              "variant": "aa-a"
+            },
+            "debug_sha256": "66908cc4642bb149aad74a23d1e641807edb874da008c3b488f5e74fb462b6ea",
+            "file_name": "defined.dll",
+            "image_base": 6442450944,
+            "pdb_sha256": "d69c89940cb99ef44ceb750a869206ae781978df36f5bca3ed2ae85d373f7473",
+            "sha256": "36d607e334544fcf98f81f77f46468e559ac849b01f1fd4f930c0a6ab5192294",
+            "size": 2048,
+            "source": {
+              "commit": null,
+              "git": null,
+              "license_spdx": "MIT",
+              "mutation": null,
+              "ref": null,
+              "suite": "r1-pilot/defined",
+              "version": "v1"
+            }
+          },
+          "pair_id": "noise-defined-v1-msvc-free-O2-msvc-free-Os",
+          "reproducibility": null,
+          "summary": {
+            "absent_functions": 0,
+            "by_body": {
+              "different": 1,
+              "identical": 20
+            },
+            "by_identity": {
+              "same": 21
+            },
+            "by_label": {
+              "unchanged": 21
+            },
+            "disagreements": 0,
+            "functions": 21,
+            "runtime_functions": 0
+          }
+        }
+      ],
+      "skipped": [],
+      "status": "built",
+      "variant": [
+        "msvc-free",
+        "O2",
+        "msvc-free",
+        "Os"
+      ]
+    },
+    {
+      "api": "F.run_noise(session,base,variants=[('msvc-free', 'O2', 'mingw-gcc', 'O2')])",
+      "elapsed_seconds": 0.3708230949996505,
+      "kind": "noise",
+      "pairs": [
+        {
+          "body_counts": {
+            "different": 11,
+            "identical": 10
+          },
+          "case": {
+            "kind": "toolchain",
+            "newer": "mingw-gcc/O2",
+            "older": "msvc-free/O2"
+          },
+          "label_counts": {
+            "unchanged": 21
+          },
+          "labels_digest_sha256": "ab00e8abc4f8f62bd7cd67d4ca1e70266d77f281ce69831b5ac87812541355a9",
+          "labels_file_sha256": "1f0fbf1b746788a6e65c3c08654a8e656d39b5cecd8d7ecbeca383b2cc86add7",
+          "labels_path": "/workspace/scratch/a55b59b3e326/r1-controls-store/labels/noise-defined-v1-msvc-free-O2-mingw-gcc-O2.json",
+          "newer": {
+            "build": {
+              "compiler": "mingw-gcc",
+              "compiler_version": "x86_64-w64-mingw32-gcc (GCC) 13-win32",
+              "link_order": "sorted",
+              "opt": "O2",
+              "profile": "mingw-gcc",
+              "recipe_digest": "e2406474b56cb867a7379124f7c906305eb009d0ba6c3e7f134d0e0c13fefd02",
+              "variant": "noise-mingw-gcc-o2"
+            },
+            "debug_sha256": "82507c9e80aa0493860ca0b56a7400ec67dbda7ae3a32185aa19aaefa5b1b701",
+            "file_name": "defined.dll",
+            "image_base": 6442450944,
+            "pdb_sha256": null,
+            "sha256": "c03b76a0e6db62ac35c5f4fa727f38cafdcfb5e7b8544c327b4c9587f8707b58",
+            "size": 14336,
+            "source": {
+              "commit": null,
+              "git": null,
+              "license_spdx": "MIT",
+              "mutation": null,
+              "ref": null,
+              "suite": "r1-pilot/defined",
+              "version": "v1"
+            }
+          },
+          "older": {
+            "build": {
+              "compiler": "clang",
+              "compiler_version": "Ubuntu clang version 18.1.3 (1ubuntu1)",
+              "link_order": "sorted",
+              "opt": "O2",
+              "profile": "msvc-free",
+              "recipe_digest": "7c7b7d39a28c605d990b52c7d2386168f8adfef803a172daa55aaa7b861f6417",
+              "variant": "aa-a"
+            },
+            "debug_sha256": "66908cc4642bb149aad74a23d1e641807edb874da008c3b488f5e74fb462b6ea",
+            "file_name": "defined.dll",
+            "image_base": 6442450944,
+            "pdb_sha256": "d69c89940cb99ef44ceb750a869206ae781978df36f5bca3ed2ae85d373f7473",
+            "sha256": "36d607e334544fcf98f81f77f46468e559ac849b01f1fd4f930c0a6ab5192294",
+            "size": 2048,
+            "source": {
+              "commit": null,
+              "git": null,
+              "license_spdx": "MIT",
+              "mutation": null,
+              "ref": null,
+              "suite": "r1-pilot/defined",
+              "version": "v1"
+            }
+          },
+          "pair_id": "noise-defined-v1-msvc-free-O2-mingw-gcc-O2",
+          "reproducibility": null,
+          "summary": {
+            "absent_functions": 0,
+            "by_body": {
+              "different": 11,
+              "identical": 10
+            },
+            "by_identity": {
+              "same": 21
+            },
+            "by_label": {
+              "unchanged": 21
+            },
+            "disagreements": 0,
+            "functions": 21,
+            "runtime_functions": 34
+          }
+        }
+      ],
+      "skipped": [],
+      "status": "built",
+      "variant": [
+        "msvc-free",
+        "O2",
+        "mingw-gcc",
+        "O2"
+      ]
+    },
+    {
+      "api": "F.run_noise(session,base,variants=[('mingw-gcc', 'O2', 'mingw-clang', 'O2')])",
+      "elapsed_seconds": 0.10799445000020569,
+      "kind": "noise",
+      "pairs": [],
+      "skipped": [
+        "mingw-gcc-O2 vs mingw-clang-O2: link: clang-18 failed (1): clang-18: error: invalid linker name in argument '-fuse-ld=lld'\n"
+      ],
+      "status": "not-emitted",
+      "variant": [
+        "mingw-gcc",
+        "O2",
+        "mingw-clang",
+        "O2"
+      ]
+    },
+    {
+      "after": {
+        "ir_defined_symbols": [
+          "r1_allocation_size",
+          "r1_array_index",
+          "r1_bounds_added",
+          "r1_bounds_removed",
+          "r1_branch_inversion",
+          "r1_call_target",
+          "r1_comparison",
+          "r1_cosmetic",
+          "r1_error_handling",
+          "r1_integer_constant",
+          "r1_loop_bound",
+          "r1_loop_bound.extracted",
+          "r1_null_validation",
+          "r1_overflow_guard",
+          "r1_pointer_offset",
+          "r1_primary",
+          "r1_removed",
+          "r1_secondary",
+          "r1_security_flag",
+          "r1_signedness",
+          "r1_structure_field",
+          "r1_unchanged"
+        ],
+        "ir_path": "/workspace/scratch/a55b59b3e326/r1-controls-store/structure/after.ll",
+        "ir_sha256": "1c779c07be545a2a478166902aec9625e31ac14ae5932fe98cbe52c75ae0147a",
+        "nm_path": "/workspace/scratch/a55b59b3e326/r1-controls-store/structure/after.nm.txt",
+        "nm_text": "00000000 a @feat.00\n000001f0 T r1_allocation_size\n00000180 T r1_array_index\n00000060 T r1_bounds_added\n000000c0 T r1_bounds_removed\n00000030 T r1_branch_inversion\n000002e0 T r1_call_target\n00000010 T r1_comparison\n00000400 T r1_cosmetic\n00000340 T r1_error_handling\n00000000 T r1_integer_constant\n00000250 T r1_loop_bound\n00000420 t r1_loop_bound.extracted\n00000370 T r1_null_validation\n000001d0 T r1_overflow_guard\n00000140 T r1_pointer_offset\n000003d0 T r1_primary\n00000410 T r1_removed\n000003e0 T r1_secondary\n000003c0 T r1_security_flag\n000001e0 T r1_signedness\n00000380 T r1_structure_field\n000003f0 T r1_unchanged\n",
+        "object_bytes": 2344,
+        "object_path": "/workspace/scratch/a55b59b3e326/r1-controls-store/structure/after.obj",
+        "object_sha256": "455df31224214c60de33b1d1ceb10cdaa7dabeacf26420dd40b563e02fbe8d7b"
+      },
+      "before": {
+        "ir_defined_symbols": [
+          "r1_allocation_size",
+          "r1_array_index",
+          "r1_bounds_added",
+          "r1_bounds_removed",
+          "r1_branch_inversion",
+          "r1_call_target",
+          "r1_comparison",
+          "r1_cosmetic",
+          "r1_error_handling",
+          "r1_integer_constant",
+          "r1_loop_bound",
+          "r1_null_validation",
+          "r1_overflow_guard",
+          "r1_pointer_offset",
+          "r1_primary",
+          "r1_removed",
+          "r1_secondary",
+          "r1_security_flag",
+          "r1_signedness",
+          "r1_structure_field",
+          "r1_unchanged"
+        ],
+        "ir_path": "/workspace/scratch/a55b59b3e326/r1-controls-store/structure/before.ll",
+        "ir_sha256": "96dfd67443fd73110658e2ac7bd1ea606ebe8941db435af4c12490e24fcad5fc",
+        "nm_path": "/workspace/scratch/a55b59b3e326/r1-controls-store/structure/before.nm.txt",
+        "nm_text": "00000000 a @feat.00\n00000220 T r1_allocation_size\n000001a0 T r1_array_index\n00000070 T r1_bounds_added\n000000d0 T r1_bounds_removed\n00000030 T r1_branch_inversion\n00000330 T r1_call_target\n00000010 T r1_comparison\n00000480 T r1_cosmetic\n00000390 T r1_error_handling\n00000000 T r1_integer_constant\n00000280 T r1_loop_bound\n000003d0 T r1_null_validation\n000001f0 T r1_overflow_guard\n00000150 T r1_pointer_offset\n00000440 T r1_primary\n00000490 T r1_removed\n00000450 T r1_secondary\n00000430 T r1_security_flag\n00000200 T r1_signedness\n000003f0 T r1_structure_field\n00000460 T r1_unchanged\n",
+        "object_bytes": 2290,
+        "object_path": "/workspace/scratch/a55b59b3e326/r1-controls-store/structure/before.obj",
+        "object_sha256": "e302f4805b3f245403e790abfe9745b4abbea34711ed49c04663e2e112d032ef"
+      },
+      "before_symbols": [
+        "r1_allocation_size",
+        "r1_array_index",
+        "r1_bounds_added",
+        "r1_bounds_removed",
+        "r1_branch_inversion",
+        "r1_call_target",
+        "r1_comparison",
+        "r1_cosmetic",
+        "r1_error_handling",
+        "r1_integer_constant",
+        "r1_loop_bound",
+        "r1_null_validation",
+        "r1_overflow_guard",
+        "r1_pointer_offset",
+        "r1_primary",
+        "r1_removed",
+        "r1_secondary",
+        "r1_security_flag",
+        "r1_signedness",
+        "r1_structure_field",
+        "r1_unchanged"
+      ],
+      "elapsed_seconds": 0.15910669699997015,
+      "kind": "structure",
+      "n_tag": "N4",
+      "new_symbols": [
+        "r1_loop_bound.extracted"
+      ],
+      "operator": "loop-extract",
+      "opt_path": "/usr/bin/opt-18",
+      "opt_version": "Ubuntu LLVM version 18.1.3\n  Optimized build.\n  Default target: x86_64-pc-linux-gnu\n  Host CPU: znver4",
+      "pipeline": {
+        "args": [],
+        "n_tag": "N4",
+        "pipeline": "function(mem2reg,loop-simplify),loop-extract"
+      },
+      "reason": null,
+      "removed_symbols": [],
+      "scope": "IR and COFF object only; no linked structural-pair labels or engine evaluation",
+      "source_noinline_preserved": true,
+      "status": "ok"
+    },
+    {
+      "api": "F.run_noise(session,base,variants=[('mingw-gcc', 'O2', 'mingw-clang', 'O2')])",
+      "elapsed_seconds": 0.8015867669996624,
+      "environment_change": "Integration owner installed distro lld metapackage with apt install lld; /usr/bin/ld.lld now available. No source, flags or factory code changed.",
+      "generic_linker_path": "/usr/bin/ld.lld",
+      "generic_linker_version": "Ubuntu LLD 18.1.3 (compatible with GNU linkers)",
+      "kind": "noise-retry",
+      "pairs": [
+        {
+          "body_counts": {
+            "different": 11,
+            "identical": 10
+          },
+          "case": {
+            "kind": "toolchain",
+            "newer": "mingw-clang/O2",
+            "older": "mingw-gcc/O2"
+          },
+          "label_counts": {
+            "unchanged": 21
+          },
+          "labels_digest_sha256": "81fe7c29372134b2ba1efa5f958ee42629e22c71b722089e7dfc02085afaac8c",
+          "labels_file_sha256": "6da0829cd4731dc6da592b3c9753b6e33648836c710040fdd2dbe9874889b223",
+          "labels_path": "/workspace/scratch/a55b59b3e326/r1-controls-store/labels/noise-defined-v1-mingw-gcc-O2-mingw-clang-O2.json",
+          "newer": {
+            "build": {
+              "compiler": "clang",
+              "compiler_version": "Ubuntu clang version 18.1.3 (1ubuntu1)",
+              "link_order": "sorted",
+              "opt": "O2",
+              "profile": "mingw-clang",
+              "recipe_digest": "f979a758d9a10eb87d6df89de45081a75a331fe7c970250532dae9a1af4e22c0",
+              "variant": "noise-mingw-clang-o2"
+            },
+            "debug_sha256": "696d8ec0becd77f2f737b9ab1f8b66f7f6fe179494d522e6019269a1d30cb3a7",
+            "file_name": "defined.dll",
+            "image_base": 6442450944,
+            "pdb_sha256": null,
+            "sha256": "f6164cc7eb8bbfc2b56b7176e78f3e2473f838e6f24117dfc1fe11e89ef96203",
+            "size": 13312,
+            "source": {
+              "commit": null,
+              "git": null,
+              "license_spdx": "MIT",
+              "mutation": null,
+              "ref": null,
+              "suite": "r1-pilot/defined",
+              "version": "v1"
+            }
+          },
+          "older": {
+            "build": {
+              "compiler": "mingw-gcc",
+              "compiler_version": "x86_64-w64-mingw32-gcc (GCC) 13-win32",
+              "link_order": "sorted",
+              "opt": "O2",
+              "profile": "mingw-gcc",
+              "recipe_digest": "e2406474b56cb867a7379124f7c906305eb009d0ba6c3e7f134d0e0c13fefd02",
+              "variant": "noise-mingw-gcc-o2"
+            },
+            "debug_sha256": "82507c9e80aa0493860ca0b56a7400ec67dbda7ae3a32185aa19aaefa5b1b701",
+            "file_name": "defined.dll",
+            "image_base": 6442450944,
+            "pdb_sha256": null,
+            "sha256": "c03b76a0e6db62ac35c5f4fa727f38cafdcfb5e7b8544c327b4c9587f8707b58",
+            "size": 14336,
+            "source": {
+              "commit": null,
+              "git": null,
+              "license_spdx": "MIT",
+              "mutation": null,
+              "ref": null,
+              "suite": "r1-pilot/defined",
+              "version": "v1"
+            }
+          },
+          "pair_id": "noise-defined-v1-mingw-gcc-O2-mingw-clang-O2",
+          "reproducibility": null,
+          "summary": {
+            "absent_functions": 0,
+            "by_body": {
+              "different": 11,
+              "identical": 10
+            },
+            "by_identity": {
+              "same": 21
+            },
+            "by_label": {
+              "unchanged": 21
+            },
+            "disagreements": 0,
+            "functions": 21,
+            "runtime_functions": 68
+          }
+        }
+      ],
+      "skipped": [],
+      "status": "built",
+      "variant": [
+        "mingw-gcc",
+        "O2",
+        "mingw-clang",
+        "O2"
+      ]
+    }
+  ],
+  "export_inspection": "Read IMAGE_EXPORT_DIRECTORY NumberOfNames and AddressOfNames with the existing bounded read_pe reader; no target execution.",
+  "no_engine_evaluation": true,
+  "no_target_execution": true,
+  "retry_command": "PYTHONPATH=src:. /workspace/scratch/a55b59b3e326/patchtrace-venv/bin/python /tmp/patchtrace-r1-control-retry.py",
+  "retry_script_sha256": "c1776776d0acad4d91cdcd080edf9945d102b145a3e7542e034cd3d3c0a407f8",
+  "source_sha256": "5f0468899fbc95fa4026c3c74b0731a5ab412fe017bbddbed00ad7b0d97acb5f",
+  "store": "/workspace/scratch/a55b59b3e326/r1-controls-store",
+  "suite": "r1-pilot/defined/v1",
+  "suite_json_sha256": "4a6f4ef6ad1aa12448191d3b16d1beebbc51dea0143168b4894758f4d5a01e13",
+  "tools": {
+    "cl": {
+      "path": null,
+      "reason": "not installed (not on PATH)",
+      "version": null
+    },
+    "clang": {
+      "path": "/usr/bin/clang-18",
+      "reason": null,
+      "version": "Ubuntu clang version 18.1.3 (1ubuntu1)"
+    },
+    "git": {
+      "path": "/usr/local/bin/git",
+      "reason": null,
+      "version": "git version 2.51.1"
+    },
+    "lld-link": {
+      "path": "/usr/bin/lld-link-18",
+      "reason": null,
+      "version": "Ubuntu LLD 18.1.3"
+    },
+    "llvm-dwarfdump": {
+      "path": "/usr/bin/llvm-dwarfdump-18",
+      "reason": null,
+      "version": "Ubuntu LLVM version 18.1.3"
+    },
+    "llvm-nm": {
+      "path": "/usr/bin/llvm-nm-18",
+      "reason": null,
+      "version": "llvm-nm, compatible with GNU nm"
+    },
+    "llvm-objdump": {
+      "path": "/usr/bin/llvm-objdump-18",
+      "reason": null,
+      "version": "Ubuntu LLVM version 18.1.3"
+    },
+    "llvm-pdbutil": {
+      "path": "/usr/bin/llvm-pdbutil-18",
+      "reason": null,
+      "version": "Ubuntu LLVM version 18.1.3"
+    },
+    "llvm-strip": {
+      "path": "/usr/bin/llvm-strip-18",
+      "reason": null,
+      "version": "llvm-strip, compatible with GNU strip"
+    },
+    "mingw-gcc": {
+      "path": "/usr/bin/x86_64-w64-mingw32-gcc",
+      "reason": null,
+      "version": "x86_64-w64-mingw32-gcc (GCC) 13-win32"
+    },
+    "msvc-link": {
+      "path": null,
+      "reason": "/usr/bin/link is not the Microsoft tool (no banner)",
+      "version": null
+    }
+  },
+  "true_msvc_status": "profile msvc builds only on a Windows host (this host is posix)",
+  "verification": {
+    "ir_and_coff_hashes_rechecked": true,
+    "no_engine_evaluation": true,
+    "strict_label_documents_reloaded": 5,
+    "successful_build_instances_rehashed": 8
+  }
+}

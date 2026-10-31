@@ -1,0 +1,849 @@
+{
+  "command": "research-build",
+  "entries": [
+    {
+      "disagreements": 0,
+      "labels_digest_sha256": "5a487aaf7574b0a08cabdbb6731d923d4c5598ad91efa4fc9336a7b37d0172ac",
+      "labels_path": "/workspace/scratch/a55b59b3e326/r1-pilot-store/labels/research-msvc-free-O0-r1-pilot-defined-v1-v2.json",
+      "newer": {
+        "build": {
+          "compiler": "clang",
+          "compiler_version": "Ubuntu clang version 18.1.3 (1ubuntu1)",
+          "link_order": "sorted",
+          "opt": "O0",
+          "profile": "msvc-free",
+          "recipe_digest": "653f7ef40d7fe76a02cd6dab9d1c497ed2b17ad713d0b39df1ab09fe57b41d5f",
+          "variant": "v2"
+        },
+        "debug_sha256": "835f6f8f7ebfb5dec3104b1364b50b567125dd3228e81177534ee5c8f6a2f74e",
+        "file_name": "defined.dll",
+        "image_base": 6442450944,
+        "pdb_sha256": "be28405deaae2dde86a1a67ac0ef1cce07395e08cebf025bd22c28e37cbbae76",
+        "sha256": "7a6c6abdf655ae6446064d867af772b211c0ce73915f57982c3039b9f4015c9d",
+        "size": 2560,
+        "source": {
+          "commit": null,
+          "git": null,
+          "license_spdx": "MIT",
+          "mutation": null,
+          "ref": null,
+          "suite": "r1-pilot/defined",
+          "version": "v2"
+        }
+      },
+      "notes": [
+        "Development fixtures; authored labels require independent binary review. No engine was evaluated.",
+        "Built target images are never executed. Stock profile flags are unchanged.",
+        "Equal endpoint code can make named correspondence ambiguous; see the suite README.",
+        "No export names are injected. A stripped no-entry DLL may expose no discoverable function starts; zero discovery is an observability finding, not matching success. This is Clang, not MSVC cl."
+      ],
+      "older": {
+        "build": {
+          "compiler": "clang",
+          "compiler_version": "Ubuntu clang version 18.1.3 (1ubuntu1)",
+          "link_order": "sorted",
+          "opt": "O0",
+          "profile": "msvc-free",
+          "recipe_digest": "653f7ef40d7fe76a02cd6dab9d1c497ed2b17ad713d0b39df1ab09fe57b41d5f",
+          "variant": "v1"
+        },
+        "debug_sha256": "ad3f8e58dc37b06d94e9e2895d70274ec710602378f78347a87141e425cdb7b0",
+        "file_name": "defined.dll",
+        "image_base": 6442450944,
+        "pdb_sha256": "a06df01100db236c44838aab0c9c9b3ce01b839b16b1dca5e111ac34da5369df",
+        "sha256": "b79e088363e9dfa3132313849a4936972e208a6703ce99683dc389ec755049dd",
+        "size": 2560,
+        "source": {
+          "commit": null,
+          "git": null,
+          "license_spdx": "MIT",
+          "mutation": null,
+          "ref": null,
+          "suite": "r1-pilot/defined",
+          "version": "v1"
+        }
+      },
+      "opt": "O0",
+      "pair_id": "research-msvc-free-O0-r1-pilot-defined-v1-v2",
+      "problem_count": 0,
+      "problems": [],
+      "profile": "msvc-free",
+      "stage": "complete",
+      "status": "built"
+    },
+    {
+      "disagreements": 0,
+      "labels_digest_sha256": "d2a0ae20c251774f2255b0afda1dd77d447f5d8f011a5887a0dcc6d64f249b08",
+      "labels_path": "/workspace/scratch/a55b59b3e326/r1-pilot-store/labels/research-msvc-free-O1-r1-pilot-defined-v1-v2.json",
+      "newer": {
+        "build": {
+          "compiler": "clang",
+          "compiler_version": "Ubuntu clang version 18.1.3 (1ubuntu1)",
+          "link_order": "sorted",
+          "opt": "O1",
+          "profile": "msvc-free",
+          "recipe_digest": "4dfc7beb9fc5edcf75788c9d2259ed854c89b8e1fd62419504812decb4867a97",
+          "variant": "v2"
+        },
+        "debug_sha256": "abd9e9638a05ad212833aea67f59dba37c3fc1a8e22ed8f18190b2d9d767cbc0",
+        "file_name": "defined.dll",
+        "image_base": 6442450944,
+        "pdb_sha256": "fff0975ac04c6d58f129ad8a4afc15f9f1a15bc8d5a5dc943e93c818b807b7fd",
+        "sha256": "f41d0df868217a719a44091414cebc5356f1794f47bc26fea728f4d171fdcb51",
+        "size": 1536,
+        "source": {
+          "commit": null,
+          "git": null,
+          "license_spdx": "MIT",
+          "mutation": null,
+          "ref": null,
+          "suite": "r1-pilot/defined",
+          "version": "v2"
+        }
+      },
+      "notes": [
+        "Development fixtures; authored labels require independent binary review. No engine was evaluated.",
+        "Built target images are never executed. Stock profile flags are unchanged.",
+        "Equal endpoint code can make named correspondence ambiguous; see the suite README.",
+        "No export names are injected. A stripped no-entry DLL may expose no discoverable function starts; zero discovery is an observability finding, not matching success. This is Clang, not MSVC cl."
+      ],
+      "older": {
+        "build": {
+          "compiler": "clang",
+          "compiler_version": "Ubuntu clang version 18.1.3 (1ubuntu1)",
+          "link_order": "sorted",
+          "opt": "O1",
+          "profile": "msvc-free",
+          "recipe_digest": "4dfc7beb9fc5edcf75788c9d2259ed854c89b8e1fd62419504812decb4867a97",
+          "variant": "v1"
+        },
+        "debug_sha256": "f24799e6cf05d2b5a632ee0fec2280e49131e8406e03a21b380c9cc15e384b08",
+        "file_name": "defined.dll",
+        "image_base": 6442450944,
+        "pdb_sha256": "07b3955d66e69f0302a901c34b332d3f9898e272e3157f7393b942216e2a5e32",
+        "sha256": "ffba1e8f6eadfb890301249caf3c17da6105ef93ee641cc6637079ae64f6c184",
+        "size": 1536,
+        "source": {
+          "commit": null,
+          "git": null,
+          "license_spdx": "MIT",
+          "mutation": null,
+          "ref": null,
+          "suite": "r1-pilot/defined",
+          "version": "v1"
+        }
+      },
+      "opt": "O1",
+      "pair_id": "research-msvc-free-O1-r1-pilot-defined-v1-v2",
+      "problem_count": 0,
+      "problems": [],
+      "profile": "msvc-free",
+      "stage": "complete",
+      "status": "built"
+    },
+    {
+      "disagreements": 0,
+      "labels_digest_sha256": "9435586f81337101dbf9542ce403038a855337f6249862fb3d7662f0301aa59e",
+      "labels_path": "/workspace/scratch/a55b59b3e326/r1-pilot-store/labels/research-msvc-free-O2-r1-pilot-defined-v1-v2.json",
+      "newer": {
+        "build": {
+          "compiler": "clang",
+          "compiler_version": "Ubuntu clang version 18.1.3 (1ubuntu1)",
+          "link_order": "sorted",
+          "opt": "O2",
+          "profile": "msvc-free",
+          "recipe_digest": "7c7b7d39a28c605d990b52c7d2386168f8adfef803a172daa55aaa7b861f6417",
+          "variant": "v2"
+        },
+        "debug_sha256": "6418f198b730f03c7c1a5c70c395e8fee07637fb98e18c509e5205ee1eafb730",
+        "file_name": "defined.dll",
+        "image_base": 6442450944,
+        "pdb_sha256": "02ce5f3648be28b3e3b56cb5e7f8550a314c503b95bb229a0ebd65c21f6c35d0",
+        "sha256": "7b856e5df7916986c3370062990027f4222ae38185006d667a4cd68e365eb5f4",
+        "size": 2048,
+        "source": {
+          "commit": null,
+          "git": null,
+          "license_spdx": "MIT",
+          "mutation": null,
+          "ref": null,
+          "suite": "r1-pilot/defined",
+          "version": "v2"
+        }
+      },
+      "notes": [
+        "Development fixtures; authored labels require independent binary review. No engine was evaluated.",
+        "Built target images are never executed. Stock profile flags are unchanged.",
+        "Equal endpoint code can make named correspondence ambiguous; see the suite README.",
+        "No export names are injected. A stripped no-entry DLL may expose no discoverable function starts; zero discovery is an observability finding, not matching success. This is Clang, not MSVC cl."
+      ],
+      "older": {
+        "build": {
+          "compiler": "clang",
+          "compiler_version": "Ubuntu clang version 18.1.3 (1ubuntu1)",
+          "link_order": "sorted",
+          "opt": "O2",
+          "profile": "msvc-free",
+          "recipe_digest": "7c7b7d39a28c605d990b52c7d2386168f8adfef803a172daa55aaa7b861f6417",
+          "variant": "v1"
+        },
+        "debug_sha256": "66908cc4642bb149aad74a23d1e641807edb874da008c3b488f5e74fb462b6ea",
+        "file_name": "defined.dll",
+        "image_base": 6442450944,
+        "pdb_sha256": "d69c89940cb99ef44ceb750a869206ae781978df36f5bca3ed2ae85d373f7473",
+        "sha256": "36d607e334544fcf98f81f77f46468e559ac849b01f1fd4f930c0a6ab5192294",
+        "size": 2048,
+        "source": {
+          "commit": null,
+          "git": null,
+          "license_spdx": "MIT",
+          "mutation": null,
+          "ref": null,
+          "suite": "r1-pilot/defined",
+          "version": "v1"
+        }
+      },
+      "opt": "O2",
+      "pair_id": "research-msvc-free-O2-r1-pilot-defined-v1-v2",
+      "problem_count": 0,
+      "problems": [],
+      "profile": "msvc-free",
+      "stage": "complete",
+      "status": "built"
+    },
+    {
+      "disagreements": 0,
+      "labels_digest_sha256": "abd2871c67e843d5eb02a8c26d1d68f8ce206f44b4b850daf1b797ec582922c1",
+      "labels_path": "/workspace/scratch/a55b59b3e326/r1-pilot-store/labels/research-msvc-free-O3-r1-pilot-defined-v1-v2.json",
+      "newer": {
+        "build": {
+          "compiler": "clang",
+          "compiler_version": "Ubuntu clang version 18.1.3 (1ubuntu1)",
+          "link_order": "sorted",
+          "opt": "O2",
+          "profile": "msvc-free",
+          "recipe_digest": "7c7b7d39a28c605d990b52c7d2386168f8adfef803a172daa55aaa7b861f6417",
+          "variant": "v2"
+        },
+        "debug_sha256": "6418f198b730f03c7c1a5c70c395e8fee07637fb98e18c509e5205ee1eafb730",
+        "file_name": "defined.dll",
+        "image_base": 6442450944,
+        "pdb_sha256": "02ce5f3648be28b3e3b56cb5e7f8550a314c503b95bb229a0ebd65c21f6c35d0",
+        "sha256": "7b856e5df7916986c3370062990027f4222ae38185006d667a4cd68e365eb5f4",
+        "size": 2048,
+        "source": {
+          "commit": null,
+          "git": null,
+          "license_spdx": "MIT",
+          "mutation": null,
+          "ref": null,
+          "suite": "r1-pilot/defined",
+          "version": "v2"
+        }
+      },
+      "notes": [
+        "Development fixtures; authored labels require independent binary review. No engine was evaluated.",
+        "Built target images are never executed. Stock profile flags are unchanged.",
+        "Equal endpoint code can make named correspondence ambiguous; see the suite README.",
+        "No export names are injected. A stripped no-entry DLL may expose no discoverable function starts; zero discovery is an observability finding, not matching success. This is Clang, not MSVC cl."
+      ],
+      "older": {
+        "build": {
+          "compiler": "clang",
+          "compiler_version": "Ubuntu clang version 18.1.3 (1ubuntu1)",
+          "link_order": "sorted",
+          "opt": "O2",
+          "profile": "msvc-free",
+          "recipe_digest": "7c7b7d39a28c605d990b52c7d2386168f8adfef803a172daa55aaa7b861f6417",
+          "variant": "v1"
+        },
+        "debug_sha256": "66908cc4642bb149aad74a23d1e641807edb874da008c3b488f5e74fb462b6ea",
+        "file_name": "defined.dll",
+        "image_base": 6442450944,
+        "pdb_sha256": "d69c89940cb99ef44ceb750a869206ae781978df36f5bca3ed2ae85d373f7473",
+        "sha256": "36d607e334544fcf98f81f77f46468e559ac849b01f1fd4f930c0a6ab5192294",
+        "size": 2048,
+        "source": {
+          "commit": null,
+          "git": null,
+          "license_spdx": "MIT",
+          "mutation": null,
+          "ref": null,
+          "suite": "r1-pilot/defined",
+          "version": "v1"
+        }
+      },
+      "opt": "O3",
+      "pair_id": "research-msvc-free-O3-r1-pilot-defined-v1-v2",
+      "problem_count": 0,
+      "problems": [],
+      "profile": "msvc-free",
+      "stage": "complete",
+      "status": "built"
+    },
+    {
+      "disagreements": 0,
+      "labels_digest_sha256": "1d95b643a556948a2a5983bd800243778c90321999c46b1bb81495abbb59169f",
+      "labels_path": "/workspace/scratch/a55b59b3e326/r1-pilot-store/labels/research-msvc-free-Os-r1-pilot-defined-v1-v2.json",
+      "newer": {
+        "build": {
+          "compiler": "clang",
+          "compiler_version": "Ubuntu clang version 18.1.3 (1ubuntu1)",
+          "link_order": "sorted",
+          "opt": "Os",
+          "profile": "msvc-free",
+          "recipe_digest": "f39b6fe13ac56a5255c6111abd2b564250c9c462ab4bddfa41989886f982eb76",
+          "variant": "v2"
+        },
+        "debug_sha256": "2d04472eb3380fc86d9f82397c5e4b4920f3b6a9ca1eac6dad92f49627d6f33d",
+        "file_name": "defined.dll",
+        "image_base": 6442450944,
+        "pdb_sha256": "90d97c6e9bc23191d973c8f839c514e8868f2febbf7264456a0a040457b439d2",
+        "sha256": "9cd91f0c61c92efd0144bacd0dc7c72a80c368489d27cba6711392f64d234fe4",
+        "size": 1536,
+        "source": {
+          "commit": null,
+          "git": null,
+          "license_spdx": "MIT",
+          "mutation": null,
+          "ref": null,
+          "suite": "r1-pilot/defined",
+          "version": "v2"
+        }
+      },
+      "notes": [
+        "Development fixtures; authored labels require independent binary review. No engine was evaluated.",
+        "Built target images are never executed. Stock profile flags are unchanged.",
+        "Equal endpoint code can make named correspondence ambiguous; see the suite README.",
+        "No export names are injected. A stripped no-entry DLL may expose no discoverable function starts; zero discovery is an observability finding, not matching success. This is Clang, not MSVC cl."
+      ],
+      "older": {
+        "build": {
+          "compiler": "clang",
+          "compiler_version": "Ubuntu clang version 18.1.3 (1ubuntu1)",
+          "link_order": "sorted",
+          "opt": "Os",
+          "profile": "msvc-free",
+          "recipe_digest": "f39b6fe13ac56a5255c6111abd2b564250c9c462ab4bddfa41989886f982eb76",
+          "variant": "v1"
+        },
+        "debug_sha256": "b9b07163121db9b0fe0bb6cf1268836de2c5620b2cf7ed3f66874ded1c43409d",
+        "file_name": "defined.dll",
+        "image_base": 6442450944,
+        "pdb_sha256": "00dd05fe4955a245db1c4d1c1a769fbc7b3c1166b04e41c1ef88782650777ce6",
+        "sha256": "12e45c789c827f8fb317dc6aba2467cf5c3d6f79c1c0a21a4d6aa75ae047fdfc",
+        "size": 1536,
+        "source": {
+          "commit": null,
+          "git": null,
+          "license_spdx": "MIT",
+          "mutation": null,
+          "ref": null,
+          "suite": "r1-pilot/defined",
+          "version": "v1"
+        }
+      },
+      "opt": "Os",
+      "pair_id": "research-msvc-free-Os-r1-pilot-defined-v1-v2",
+      "problem_count": 0,
+      "problems": [],
+      "profile": "msvc-free",
+      "stage": "complete",
+      "status": "built"
+    },
+    {
+      "disagreements": 0,
+      "labels_digest_sha256": "4a3561213e075e703483e56b1d6e32b48c29df098ee4fe48e9a79eeb19a88390",
+      "labels_path": "/workspace/scratch/a55b59b3e326/r1-pilot-store/labels/research-mingw-gcc-O0-r1-pilot-defined-v1-v2.json",
+      "newer": {
+        "build": {
+          "compiler": "mingw-gcc",
+          "compiler_version": "x86_64-w64-mingw32-gcc (GCC) 13-win32",
+          "link_order": "sorted",
+          "opt": "O0",
+          "profile": "mingw-gcc",
+          "recipe_digest": "4b83009bfecc98ae93b2fe9e16de06d0013a6f4942d9b7f85c6039b92237e45b",
+          "variant": "v2"
+        },
+        "debug_sha256": "6166e2228cfd68cd0fab0596a66897517dc6558e0bb08edb46cd3962b6ebcf1f",
+        "file_name": "defined.dll",
+        "image_base": 6442450944,
+        "pdb_sha256": null,
+        "sha256": "16d726a7a8a9ff232a6ea1a04a8f217a9e6cf50a87df3aaadcb6461cb3393fce",
+        "size": 14848,
+        "source": {
+          "commit": null,
+          "git": null,
+          "license_spdx": "MIT",
+          "mutation": null,
+          "ref": null,
+          "suite": "r1-pilot/defined",
+          "version": "v2"
+        }
+      },
+      "notes": [
+        "Development fixtures; authored labels require independent binary review. No engine was evaluated.",
+        "Built target images are never executed. Stock profile flags are unchanged.",
+        "Equal endpoint code can make named correspondence ambiguous; see the suite README.",
+        "MinGW stock linking may automatically export function names; stripping debug information does not remove export names. Treat this as a potentially name-visible condition pending PE inspection."
+      ],
+      "older": {
+        "build": {
+          "compiler": "mingw-gcc",
+          "compiler_version": "x86_64-w64-mingw32-gcc (GCC) 13-win32",
+          "link_order": "sorted",
+          "opt": "O0",
+          "profile": "mingw-gcc",
+          "recipe_digest": "4b83009bfecc98ae93b2fe9e16de06d0013a6f4942d9b7f85c6039b92237e45b",
+          "variant": "v1"
+        },
+        "debug_sha256": "0501f7fb62a5c3294e4e4bf08b0d099ebaff142d5e4a5952da51a01d9539a134",
+        "file_name": "defined.dll",
+        "image_base": 6442450944,
+        "pdb_sha256": null,
+        "sha256": "4e21c41f27b40b91a3fe5a88efcedc1799354cec7db0a516ee8f90646a3e7cca",
+        "size": 14848,
+        "source": {
+          "commit": null,
+          "git": null,
+          "license_spdx": "MIT",
+          "mutation": null,
+          "ref": null,
+          "suite": "r1-pilot/defined",
+          "version": "v1"
+        }
+      },
+      "opt": "O0",
+      "pair_id": "research-mingw-gcc-O0-r1-pilot-defined-v1-v2",
+      "problem_count": 0,
+      "problems": [],
+      "profile": "mingw-gcc",
+      "stage": "complete",
+      "status": "built"
+    },
+    {
+      "disagreements": 0,
+      "labels_digest_sha256": "7d4f75d473f56ddaa90ab75de2804c27b16133902f13c895f9dcbd0dd4eab65d",
+      "labels_path": "/workspace/scratch/a55b59b3e326/r1-pilot-store/labels/research-mingw-gcc-O1-r1-pilot-defined-v1-v2.json",
+      "newer": {
+        "build": {
+          "compiler": "mingw-gcc",
+          "compiler_version": "x86_64-w64-mingw32-gcc (GCC) 13-win32",
+          "link_order": "sorted",
+          "opt": "O1",
+          "profile": "mingw-gcc",
+          "recipe_digest": "ae0f603107e8168408c25da4a09e1d901feca3791ad9c04ab03915a685b3ace7",
+          "variant": "v2"
+        },
+        "debug_sha256": "45b297e66f78868ea17a23ea3aec6bded5cc45d831b391a723d55391c4167aeb",
+        "file_name": "defined.dll",
+        "image_base": 6442450944,
+        "pdb_sha256": null,
+        "sha256": "cabdeecfe96fee909e35af62dc61a382043c4bef9bf0c3754a7e3f765d9b664b",
+        "size": 13824,
+        "source": {
+          "commit": null,
+          "git": null,
+          "license_spdx": "MIT",
+          "mutation": null,
+          "ref": null,
+          "suite": "r1-pilot/defined",
+          "version": "v2"
+        }
+      },
+      "notes": [
+        "Development fixtures; authored labels require independent binary review. No engine was evaluated.",
+        "Built target images are never executed. Stock profile flags are unchanged.",
+        "Equal endpoint code can make named correspondence ambiguous; see the suite README.",
+        "MinGW stock linking may automatically export function names; stripping debug information does not remove export names. Treat this as a potentially name-visible condition pending PE inspection."
+      ],
+      "older": {
+        "build": {
+          "compiler": "mingw-gcc",
+          "compiler_version": "x86_64-w64-mingw32-gcc (GCC) 13-win32",
+          "link_order": "sorted",
+          "opt": "O1",
+          "profile": "mingw-gcc",
+          "recipe_digest": "ae0f603107e8168408c25da4a09e1d901feca3791ad9c04ab03915a685b3ace7",
+          "variant": "v1"
+        },
+        "debug_sha256": "098e9a77b304cbe129dd07f27da44facbab9899645db332fadba66b4d092706e",
+        "file_name": "defined.dll",
+        "image_base": 6442450944,
+        "pdb_sha256": null,
+        "sha256": "8297e76f2e2092dc65c5e8bf880112a2cb2e571fd178929f9c3323314472d94c",
+        "size": 13824,
+        "source": {
+          "commit": null,
+          "git": null,
+          "license_spdx": "MIT",
+          "mutation": null,
+          "ref": null,
+          "suite": "r1-pilot/defined",
+          "version": "v1"
+        }
+      },
+      "opt": "O1",
+      "pair_id": "research-mingw-gcc-O1-r1-pilot-defined-v1-v2",
+      "problem_count": 0,
+      "problems": [],
+      "profile": "mingw-gcc",
+      "stage": "complete",
+      "status": "built"
+    },
+    {
+      "disagreements": 0,
+      "labels_digest_sha256": "9653f54f4e56ab0510be07fdb40ad4f88cf2047002831c79708672b9869599fe",
+      "labels_path": "/workspace/scratch/a55b59b3e326/r1-pilot-store/labels/research-mingw-gcc-O2-r1-pilot-defined-v1-v2.json",
+      "newer": {
+        "build": {
+          "compiler": "mingw-gcc",
+          "compiler_version": "x86_64-w64-mingw32-gcc (GCC) 13-win32",
+          "link_order": "sorted",
+          "opt": "O2",
+          "profile": "mingw-gcc",
+          "recipe_digest": "e2406474b56cb867a7379124f7c906305eb009d0ba6c3e7f134d0e0c13fefd02",
+          "variant": "v2"
+        },
+        "debug_sha256": "61d1c3f6444c3066ab5ebb13f9072ed97135fc05ac324016329555f4df1a5d0c",
+        "file_name": "defined.dll",
+        "image_base": 6442450944,
+        "pdb_sha256": null,
+        "sha256": "e2bb62115ca712b92bdd2382ec4071a08f37de89eaca0ed2ec07a03476bcec00",
+        "size": 14336,
+        "source": {
+          "commit": null,
+          "git": null,
+          "license_spdx": "MIT",
+          "mutation": null,
+          "ref": null,
+          "suite": "r1-pilot/defined",
+          "version": "v2"
+        }
+      },
+      "notes": [
+        "Development fixtures; authored labels require independent binary review. No engine was evaluated.",
+        "Built target images are never executed. Stock profile flags are unchanged.",
+        "Equal endpoint code can make named correspondence ambiguous; see the suite README.",
+        "MinGW stock linking may automatically export function names; stripping debug information does not remove export names. Treat this as a potentially name-visible condition pending PE inspection."
+      ],
+      "older": {
+        "build": {
+          "compiler": "mingw-gcc",
+          "compiler_version": "x86_64-w64-mingw32-gcc (GCC) 13-win32",
+          "link_order": "sorted",
+          "opt": "O2",
+          "profile": "mingw-gcc",
+          "recipe_digest": "e2406474b56cb867a7379124f7c906305eb009d0ba6c3e7f134d0e0c13fefd02",
+          "variant": "v1"
+        },
+        "debug_sha256": "82507c9e80aa0493860ca0b56a7400ec67dbda7ae3a32185aa19aaefa5b1b701",
+        "file_name": "defined.dll",
+        "image_base": 6442450944,
+        "pdb_sha256": null,
+        "sha256": "c03b76a0e6db62ac35c5f4fa727f38cafdcfb5e7b8544c327b4c9587f8707b58",
+        "size": 14336,
+        "source": {
+          "commit": null,
+          "git": null,
+          "license_spdx": "MIT",
+          "mutation": null,
+          "ref": null,
+          "suite": "r1-pilot/defined",
+          "version": "v1"
+        }
+      },
+      "opt": "O2",
+      "pair_id": "research-mingw-gcc-O2-r1-pilot-defined-v1-v2",
+      "problem_count": 0,
+      "problems": [],
+      "profile": "mingw-gcc",
+      "stage": "complete",
+      "status": "built"
+    },
+    {
+      "disagreements": 0,
+      "labels_digest_sha256": "11309c26c1a58fb6c9cce9e76d0a3249972604ed5c8acd6c787b94039325a2b2",
+      "labels_path": "/workspace/scratch/a55b59b3e326/r1-pilot-store/labels/research-mingw-gcc-O3-r1-pilot-defined-v1-v2.json",
+      "newer": {
+        "build": {
+          "compiler": "mingw-gcc",
+          "compiler_version": "x86_64-w64-mingw32-gcc (GCC) 13-win32",
+          "link_order": "sorted",
+          "opt": "O3",
+          "profile": "mingw-gcc",
+          "recipe_digest": "852040d7832c6f22f1c8e63907e10954a4c50f9041823c55969aae693f87c09f",
+          "variant": "v2"
+        },
+        "debug_sha256": "2aa30a0fe1880d6a0bc69dd90a37d021fbbf51ea5c4b16ebda63a6327d514071",
+        "file_name": "defined.dll",
+        "image_base": 6442450944,
+        "pdb_sha256": null,
+        "sha256": "627cadb54de9130594b8bd4f50b230a025d681754276920d56a0bba95130835e",
+        "size": 14336,
+        "source": {
+          "commit": null,
+          "git": null,
+          "license_spdx": "MIT",
+          "mutation": null,
+          "ref": null,
+          "suite": "r1-pilot/defined",
+          "version": "v2"
+        }
+      },
+      "notes": [
+        "Development fixtures; authored labels require independent binary review. No engine was evaluated.",
+        "Built target images are never executed. Stock profile flags are unchanged.",
+        "Equal endpoint code can make named correspondence ambiguous; see the suite README.",
+        "MinGW stock linking may automatically export function names; stripping debug information does not remove export names. Treat this as a potentially name-visible condition pending PE inspection."
+      ],
+      "older": {
+        "build": {
+          "compiler": "mingw-gcc",
+          "compiler_version": "x86_64-w64-mingw32-gcc (GCC) 13-win32",
+          "link_order": "sorted",
+          "opt": "O3",
+          "profile": "mingw-gcc",
+          "recipe_digest": "852040d7832c6f22f1c8e63907e10954a4c50f9041823c55969aae693f87c09f",
+          "variant": "v1"
+        },
+        "debug_sha256": "aac9d5169da75c1b9b37150996d706968dabca43b70a2690d704e9bf41926a40",
+        "file_name": "defined.dll",
+        "image_base": 6442450944,
+        "pdb_sha256": null,
+        "sha256": "10e3b60ded66f4e021a7c5135acc07ab93067a752492a0dd842087cddc19a815",
+        "size": 14336,
+        "source": {
+          "commit": null,
+          "git": null,
+          "license_spdx": "MIT",
+          "mutation": null,
+          "ref": null,
+          "suite": "r1-pilot/defined",
+          "version": "v1"
+        }
+      },
+      "opt": "O3",
+      "pair_id": "research-mingw-gcc-O3-r1-pilot-defined-v1-v2",
+      "problem_count": 0,
+      "problems": [],
+      "profile": "mingw-gcc",
+      "stage": "complete",
+      "status": "built"
+    },
+    {
+      "disagreements": 0,
+      "labels_digest_sha256": "2cf055a19d0b9bdfeef738168bd4dbb026f48bdb31766b0568822490424303e4",
+      "labels_path": "/workspace/scratch/a55b59b3e326/r1-pilot-store/labels/research-mingw-gcc-Os-r1-pilot-defined-v1-v2.json",
+      "newer": {
+        "build": {
+          "compiler": "mingw-gcc",
+          "compiler_version": "x86_64-w64-mingw32-gcc (GCC) 13-win32",
+          "link_order": "sorted",
+          "opt": "Os",
+          "profile": "mingw-gcc",
+          "recipe_digest": "933961fffd853257c65846ebe31f9af23517e277c3718d952172d1db84991d36",
+          "variant": "v2"
+        },
+        "debug_sha256": "6240e0530f76e9eb56bb8e139b6e1f9e067fbad46bb54cbb918edc3230fa60f3",
+        "file_name": "defined.dll",
+        "image_base": 6442450944,
+        "pdb_sha256": null,
+        "sha256": "c6d8fc138eb4809c6751b490fe47138f0ba242c1ad1fbb5bd86678f721464849",
+        "size": 13824,
+        "source": {
+          "commit": null,
+          "git": null,
+          "license_spdx": "MIT",
+          "mutation": null,
+          "ref": null,
+          "suite": "r1-pilot/defined",
+          "version": "v2"
+        }
+      },
+      "notes": [
+        "Development fixtures; authored labels require independent binary review. No engine was evaluated.",
+        "Built target images are never executed. Stock profile flags are unchanged.",
+        "Equal endpoint code can make named correspondence ambiguous; see the suite README.",
+        "MinGW stock linking may automatically export function names; stripping debug information does not remove export names. Treat this as a potentially name-visible condition pending PE inspection."
+      ],
+      "older": {
+        "build": {
+          "compiler": "mingw-gcc",
+          "compiler_version": "x86_64-w64-mingw32-gcc (GCC) 13-win32",
+          "link_order": "sorted",
+          "opt": "Os",
+          "profile": "mingw-gcc",
+          "recipe_digest": "933961fffd853257c65846ebe31f9af23517e277c3718d952172d1db84991d36",
+          "variant": "v1"
+        },
+        "debug_sha256": "9a90753bec7a2b0a5ee51281a9248dfcfc674ad4257f201772ac0c48ccd1990b",
+        "file_name": "defined.dll",
+        "image_base": 6442450944,
+        "pdb_sha256": null,
+        "sha256": "a0ebcdfb4f2fc74b3ffdbf6cd999a8b4c5db820781daf163ea59d8f79b6f664d",
+        "size": 13824,
+        "source": {
+          "commit": null,
+          "git": null,
+          "license_spdx": "MIT",
+          "mutation": null,
+          "ref": null,
+          "suite": "r1-pilot/defined",
+          "version": "v1"
+        }
+      },
+      "opt": "Os",
+      "pair_id": "research-mingw-gcc-Os-r1-pilot-defined-v1-v2",
+      "problem_count": 0,
+      "problems": [],
+      "profile": "mingw-gcc",
+      "stage": "complete",
+      "status": "built"
+    },
+    {
+      "error_type": "BuildError",
+      "notes": [
+        "Development fixtures; authored labels require independent binary review. No engine was evaluated.",
+        "Built target images are never executed. Stock profile flags are unchanged.",
+        "Equal endpoint code can make named correspondence ambiguous; see the suite README.",
+        "MinGW stock linking may automatically export function names; stripping debug information does not remove export names. Treat this as a potentially name-visible condition pending PE inspection."
+      ],
+      "opt": "O0",
+      "pair_id": "research-mingw-clang-O0-r1-pilot-defined-v1-v2",
+      "profile": "mingw-clang",
+      "reason": "link: clang-18 failed (1): clang-18: error: invalid linker name in argument '-fuse-ld=lld'\n",
+      "stage": "build",
+      "status": "blocked"
+    },
+    {
+      "error_type": "BuildError",
+      "notes": [
+        "Development fixtures; authored labels require independent binary review. No engine was evaluated.",
+        "Built target images are never executed. Stock profile flags are unchanged.",
+        "Equal endpoint code can make named correspondence ambiguous; see the suite README.",
+        "MinGW stock linking may automatically export function names; stripping debug information does not remove export names. Treat this as a potentially name-visible condition pending PE inspection."
+      ],
+      "opt": "O1",
+      "pair_id": "research-mingw-clang-O1-r1-pilot-defined-v1-v2",
+      "profile": "mingw-clang",
+      "reason": "link: clang-18 failed (1): clang-18: error: invalid linker name in argument '-fuse-ld=lld'\n",
+      "stage": "build",
+      "status": "blocked"
+    },
+    {
+      "error_type": "BuildError",
+      "notes": [
+        "Development fixtures; authored labels require independent binary review. No engine was evaluated.",
+        "Built target images are never executed. Stock profile flags are unchanged.",
+        "Equal endpoint code can make named correspondence ambiguous; see the suite README.",
+        "MinGW stock linking may automatically export function names; stripping debug information does not remove export names. Treat this as a potentially name-visible condition pending PE inspection."
+      ],
+      "opt": "O2",
+      "pair_id": "research-mingw-clang-O2-r1-pilot-defined-v1-v2",
+      "profile": "mingw-clang",
+      "reason": "link: clang-18 failed (1): clang-18: error: invalid linker name in argument '-fuse-ld=lld'\n",
+      "stage": "build",
+      "status": "blocked"
+    },
+    {
+      "error_type": "BuildError",
+      "notes": [
+        "Development fixtures; authored labels require independent binary review. No engine was evaluated.",
+        "Built target images are never executed. Stock profile flags are unchanged.",
+        "Equal endpoint code can make named correspondence ambiguous; see the suite README.",
+        "MinGW stock linking may automatically export function names; stripping debug information does not remove export names. Treat this as a potentially name-visible condition pending PE inspection."
+      ],
+      "opt": "O3",
+      "pair_id": "research-mingw-clang-O3-r1-pilot-defined-v1-v2",
+      "profile": "mingw-clang",
+      "reason": "link: clang-18 failed (1): clang-18: error: invalid linker name in argument '-fuse-ld=lld'\n",
+      "stage": "build",
+      "status": "blocked"
+    },
+    {
+      "error_type": "BuildError",
+      "notes": [
+        "Development fixtures; authored labels require independent binary review. No engine was evaluated.",
+        "Built target images are never executed. Stock profile flags are unchanged.",
+        "Equal endpoint code can make named correspondence ambiguous; see the suite README.",
+        "MinGW stock linking may automatically export function names; stripping debug information does not remove export names. Treat this as a potentially name-visible condition pending PE inspection."
+      ],
+      "opt": "Os",
+      "pair_id": "research-mingw-clang-Os-r1-pilot-defined-v1-v2",
+      "profile": "mingw-clang",
+      "reason": "link: clang-18 failed (1): clang-18: error: invalid linker name in argument '-fuse-ld=lld'\n",
+      "stage": "build",
+      "status": "blocked"
+    }
+  ],
+  "notes": [
+    "Development fixtures; authored labels require independent binary review. No engine was evaluated.",
+    "Built target images are never executed. Stock profile flags are unchanged.",
+    "Equal endpoint code can make named correspondence ambiguous; see the suite README."
+  ],
+  "status": "partial",
+  "store": "/workspace/scratch/a55b59b3e326/r1-pilot-store",
+  "suite": {
+    "directory": "/workspace/scratch/a55b59b3e326/patchtrace/corpus/ours/r1-pilot/defined",
+    "project": "defined",
+    "suite": "r1-pilot"
+  },
+  "tools": {
+    "cl": {
+      "path": null,
+      "reason": "not installed (not on PATH)",
+      "version": null
+    },
+    "clang": {
+      "path": "/usr/bin/clang-18",
+      "reason": null,
+      "version": "Ubuntu clang version 18.1.3 (1ubuntu1)"
+    },
+    "git": {
+      "path": "/usr/local/bin/git",
+      "reason": null,
+      "version": "git version 2.51.1"
+    },
+    "lld-link": {
+      "path": "/usr/bin/lld-link-18",
+      "reason": null,
+      "version": "Ubuntu LLD 18.1.3"
+    },
+    "llvm-dwarfdump": {
+      "path": "/usr/bin/llvm-dwarfdump-18",
+      "reason": null,
+      "version": "Ubuntu LLVM version 18.1.3"
+    },
+    "llvm-nm": {
+      "path": "/usr/bin/llvm-nm-18",
+      "reason": null,
+      "version": "llvm-nm, compatible with GNU nm"
+    },
+    "llvm-objdump": {
+      "path": "/usr/bin/llvm-objdump-18",
+      "reason": null,
+      "version": "Ubuntu LLVM version 18.1.3"
+    },
+    "llvm-pdbutil": {
+      "path": "/usr/bin/llvm-pdbutil-18",
+      "reason": null,
+      "version": "Ubuntu LLVM version 18.1.3"
+    },
+    "llvm-strip": {
+      "path": "/usr/bin/llvm-strip-18",
+      "reason": null,
+      "version": "llvm-strip, compatible with GNU strip"
+    },
+    "mingw-gcc": {
+      "path": "/usr/bin/x86_64-w64-mingw32-gcc",
+      "reason": null,
+      "version": "x86_64-w64-mingw32-gcc (GCC) 13-win32"
+    },
+    "msvc-link": {
+      "path": null,
+      "reason": "/usr/bin/link is not the Microsoft tool (no banner)",
+      "version": null
+    }
+  }
+}

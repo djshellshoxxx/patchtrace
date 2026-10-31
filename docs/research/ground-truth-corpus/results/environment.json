@@ -1,0 +1,32 @@
+{
+ "baseline": "a04f5a299a8d4afef023261e52e08d14678cf1e7",
+ "date": "2026-10-30",
+ "ghidra": "12.0.4",
+ "ghidra_archive_sha256": "c3b458661d69e26e203d739c0c82d143cc8a4a29d9e571f099c2cf4bda62a120",
+ "ghidriff_commit": "4f5d895fcbb1eacd65efd81145922c15bb7e741d",
+ "java_home": "/usr/lib/jvm/java-21-openjdk-amd64",
+ "machine": "x86_64",
+ "notes": [
+  "clang-18/lld-18/llvm-18 and MinGW GCC13-win32",
+  "generic lld package added after recorded initial MinGW Clang failure",
+  "symbol downloads disabled; MinGW PE export names remain visible",
+  "wall measurements shared host with test/build processes; not isolated performance benchmarks"
+ ],
+ "os": "Linux",
+ "packages": {
+  "JPype1": "1.5.2",
+  "PySide6": "6.12.0",
+  "ghidriff": "1.0.0",
+  "hypothesis": "6.170.14",
+  "protobuf": "7.36.2",
+  "pydantic": "2.13.5",
+  "pyghidra": "3.0.2",
+  "pytest": "9.2.0",
+  "ruff": "0.17.3"
+ },
+ "python": "3.12.14",
+ "release": "6.18.57",
+ "rizin": "0.9.1",
+ "rizin_archive_sha256": "9102249a9f0b6319c5334a2e5cf8d9cc3f2035e1d3def027c41f6a90f647e8cf",
+ "targets_executed": false
+}

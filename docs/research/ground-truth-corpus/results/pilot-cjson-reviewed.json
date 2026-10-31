@@ -1,0 +1,10135 @@
+{
+ "engines": {
+  "bindiff": {
+   "reason": "no verified BinDiff/BinExport configured for this pilot",
+   "status": "blocked"
+  },
+  "ghidriff": {
+   "backend": "ghidriff",
+   "backend_version": "1.0.0",
+   "coverage": {
+    "address_edges": {
+     "external": 47,
+     "image": 221,
+     "input": 268
+    },
+    "address_keys": {
+     "external": 47,
+     "image": 221,
+     "input": 268
+    },
+    "scope": "image VA only; validated EXTERNAL pairs are unscored; caller retains raw hash"
+   },
+   "execution_provenance": "persisted-native",
+   "metrics": {
+    "counts": {
+     "ambiguous_predictions": 111,
+     "ambiguous_truth_records": 111,
+     "conflicting_pairs": 0,
+     "duplicate_observations": 0,
+     "explicit_unpaired_endpoints": 0,
+     "identity_fn": 0,
+     "identity_fp": 0,
+     "identity_tp": 2,
+     "material_detected": 2,
+     "material_missed": 0,
+     "material_not_flagged": 0,
+     "material_unknown": 0,
+     "material_unmatched": 0,
+     "negative_flagged": 0,
+     "unknown_change_pairs": 0,
+     "unlabelled_predictions": 108,
+     "unmatched_endpoints": 0,
+     "unmatched_truth_pairs": 0
+    },
+    "denominators": {
+     "eligible_endpoints": 4,
+     "f1": 4,
+     "material_truth_pairs": 2,
+     "negative_candidate_edges": null,
+     "negative_truth_pairs": 0,
+     "scored_predictions": 2,
+     "truth_pairs": 2,
+     "truth_records": 113
+    },
+    "implicit_unchanged_requested": false,
+    "rates": {
+     "correspondence_false_positive_rate": null,
+     "false_discovery_rate": 0.0,
+     "identity_f1": 1.0,
+     "identity_false_negative_rate": 0.0,
+     "identity_precision": 1.0,
+     "identity_recall": 1.0,
+     "material_detection_recall": 1.0,
+     "negative_flag_rate": null,
+     "truth_ambiguity_rate": 0.9823008849557522,
+     "unknown_change_rate": 0.0,
+     "unmatched_endpoint_rate": 0.0,
+     "unmatched_truth_pair_rate": 0.0
+    },
+    "scope": "explicit observations only; supplied labels require independent acceptance audit"
+   },
+   "native_execution_in_this_invocation": false,
+   "observations": [
+    [
+     4096,
+     4096,
+     null
+    ],
+    [
+     4112,
+     4112,
+     null
+    ],
+    [
+     4576,
+     4576,
+     null
+    ],
+    [
+     4928,
+     4928,
+     null
+    ],
+    [
+     4960,
+     4960,
+     null
+    ],
+    [
+     4976,
+     4976,
+     null
+    ],
+    [
+     5008,
+     5008,
+     null
+    ],
+    [
+     5120,
+     5120,
+     null
+    ],
+    [
+     5904,
+     5904,
+     null
+    ],
+    [
+     6000,
+     6000,
+     null
+    ],
+    [
+     6048,
+     6048,
+     null
+    ],
+    [
+     6304,
+     6304,
+     null
+    ],
+    [
+     6944,
+     6944,
+     null
+    ],
+    [
+     7152,
+     7152,
+     null
+    ],
+    [
+     7200,
+     7200,
+     null
+    ],
+    [
+     8736,
+     8736,
+     null
+    ],
+    [
+     9056,
+     9056,
+     null
+    ],
+    [
+     9296,
+     9296,
+     null
+    ],
+    [
+     9312,
+     9312,
+     null
+    ],
+    [
+     9344,
+     9344,
+     null
+    ],
+    [
+     9376,
+     9376,
+     null
+    ],
+    [
+     9440,
+     9440,
+     null
+    ],
+    [
+     9680,
+     9680,
+     null
+    ],
+    [
+     9808,
+     9808,
+     null
+    ],
+    [
+     11072,
+     11072,
+     null
+    ],
+    [
+     11136,
+     11136,
+     true
+    ],
+    [
+     11312,
+     11328,
+     null
+    ],
+    [
+     11760,
+     11776,
+     null
+    ],
+    [
+     11840,
+     11856,
+     null
+    ],
+    [
+     11904,
+     11920,
+     null
+    ],
+    [
+     11920,
+     11936,
+     null
+    ],
+    [
+     11936,
+     11952,
+     null
+    ],
+    [
+     11952,
+     11968,
+     null
+    ],
+    [
+     12128,
+     12144,
+     null
+    ],
+    [
+     12240,
+     12256,
+     null
+    ],
+    [
+     12288,
+     12304,
+     null
+    ],
+    [
+     12352,
+     12368,
+     null
+    ],
+    [
+     12368,
+     12384,
+     null
+    ],
+    [
+     12384,
+     12400,
+     null
+    ],
+    [
+     12416,
+     12432,
+     null
+    ],
+    [
+     12512,
+     12528,
+     null
+    ],
+    [
+     12528,
+     12544,
+     null
+    ],
+    [
+     12544,
+     12560,
+     null
+    ],
+    [
+     12768,
+     12784,
+     null
+    ],
+    [
+     12960,
+     12976,
+     null
+    ],
+    [
+     13088,
+     13104,
+     null
+    ],
+    [
+     13216,
+     13232,
+     null
+    ],
+    [
+     13344,
+     13360,
+     null
+    ],
+    [
+     13488,
+     13504,
+     null
+    ],
+    [
+     13696,
+     13712,
+     null
+    ],
+    [
+     13904,
+     13920,
+     null
+    ],
+    [
+     14112,
+     14128,
+     null
+    ],
+    [
+     14240,
+     14256,
+     null
+    ],
+    [
+     14368,
+     14384,
+     null
+    ],
+    [
+     14480,
+     14496,
+     null
+    ],
+    [
+     14560,
+     14576,
+     null
+    ],
+    [
+     14656,
+     14672,
+     null
+    ],
+    [
+     14784,
+     14800,
+     null
+    ],
+    [
+     14928,
+     14944,
+     null
+    ],
+    [
+     14976,
+     14992,
+     null
+    ],
+    [
+     15024,
+     15040,
+     true
+    ],
+    [
+     15216,
+     15248,
+     null
+    ],
+    [
+     15392,
+     15424,
+     null
+    ],
+    [
+     15472,
+     15504,
+     null
+    ],
+    [
+     15648,
+     15680,
+     null
+    ],
+    [
+     15824,
+     15856,
+     null
+    ],
+    [
+     15888,
+     15920,
+     null
+    ],
+    [
+     15952,
+     15984,
+     null
+    ],
+    [
+     16016,
+     16048,
+     null
+    ],
+    [
+     16080,
+     16112,
+     null
+    ],
+    [
+     16240,
+     16272,
+     null
+    ],
+    [
+     16400,
+     16432,
+     null
+    ],
+    [
+     16464,
+     16496,
+     null
+    ],
+    [
+     16528,
+     16560,
+     null
+    ],
+    [
+     16592,
+     16624,
+     null
+    ],
+    [
+     16752,
+     16784,
+     null
+    ],
+    [
+     16816,
+     16848,
+     null
+    ],
+    [
+     16880,
+     16912,
+     null
+    ],
+    [
+     17168,
+     17200,
+     null
+    ],
+    [
+     17520,
+     17552,
+     null
+    ],
+    [
+     17872,
+     17904,
+     null
+    ],
+    [
+     18224,
+     18256,
+     null
+    ],
+    [
+     18640,
+     18672,
+     null
+    ],
+    [
+     19008,
+     19040,
+     null
+    ],
+    [
+     19040,
+     19072,
+     null
+    ],
+    [
+     19072,
+     19104,
+     null
+    ],
+    [
+     19104,
+     19136,
+     null
+    ],
+    [
+     19136,
+     19168,
+     null
+    ],
+    [
+     19168,
+     19200,
+     null
+    ],
+    [
+     19200,
+     19232,
+     null
+    ],
+    [
+     19232,
+     19264,
+     null
+    ],
+    [
+     19264,
+     19296,
+     null
+    ],
+    [
+     19296,
+     19328,
+     null
+    ],
+    [
+     19328,
+     19360,
+     null
+    ],
+    [
+     19856,
+     19888,
+     null
+    ],
+    [
+     19872,
+     19904,
+     null
+    ],
+    [
+     19888,
+     19920,
+     null
+    ],
+    [
+     19936,
+     19968,
+     null
+    ],
+    [
+     20128,
+     20160,
+     null
+    ],
+    [
+     20512,
+     20544,
+     null
+    ],
+    [
+     20800,
+     20832,
+     null
+    ],
+    [
+     20944,
+     20976,
+     null
+    ],
+    [
+     21440,
+     21472,
+     null
+    ],
+    [
+     21888,
+     21920,
+     null
+    ],
+    [
+     22240,
+     22272,
+     null
+    ],
+    [
+     22720,
+     22752,
+     null
+    ],
+    [
+     23200,
+     23232,
+     null
+    ],
+    [
+     24224,
+     24256,
+     null
+    ],
+    [
+     26064,
+     26096,
+     null
+    ],
+    [
+     26576,
+     26608,
+     null
+    ],
+    [
+     26592,
+     26624,
+     null
+    ],
+    [
+     26608,
+     26640,
+     null
+    ],
+    [
+     26704,
+     26736,
+     null
+    ],
+    [
+     26800,
+     26832,
+     null
+    ],
+    [
+     26832,
+     26864,
+     null
+    ],
+    [
+     26928,
+     26960,
+     null
+    ],
+    [
+     27024,
+     27056,
+     null
+    ],
+    [
+     27072,
+     27104,
+     null
+    ],
+    [
+     27120,
+     27152,
+     null
+    ],
+    [
+     27136,
+     27168,
+     null
+    ],
+    [
+     27152,
+     27184,
+     null
+    ],
+    [
+     27264,
+     27296,
+     null
+    ],
+    [
+     27376,
+     27408,
+     null
+    ],
+    [
+     27456,
+     27488,
+     null
+    ],
+    [
+     27584,
+     27616,
+     null
+    ],
+    [
+     27616,
+     27648,
+     null
+    ],
+    [
+     27664,
+     27696,
+     null
+    ],
+    [
+     27824,
+     27856,
+     null
+    ],
+    [
+     27936,
+     27968,
+     null
+    ],
+    [
+     28304,
+     28336,
+     null
+    ],
+    [
+     29168,
+     29200,
+     null
+    ],
+    [
+     29296,
+     29328,
+     null
+    ],
+    [
+     29424,
+     29456,
+     null
+    ],
+    [
+     29584,
+     29616,
+     null
+    ],
+    [
+     29840,
+     29872,
+     null
+    ],
+    [
+     29888,
+     29920,
+     null
+    ],
+    [
+     29968,
+     30000,
+     null
+    ],
+    [
+     30144,
+     30176,
+     null
+    ],
+    [
+     30272,
+     30304,
+     null
+    ],
+    [
+     30336,
+     30368,
+     null
+    ],
+    [
+     30464,
+     30496,
+     null
+    ],
+    [
+     30528,
+     30560,
+     null
+    ],
+    [
+     30672,
+     30704,
+     null
+    ],
+    [
+     30880,
+     30912,
+     null
+    ],
+    [
+     30976,
+     31008,
+     null
+    ],
+    [
+     31232,
+     31264,
+     null
+    ],
+    [
+     31296,
+     31328,
+     null
+    ],
+    [
+     31440,
+     31472,
+     null
+    ],
+    [
+     31552,
+     31584,
+     null
+    ],
+    [
+     31712,
+     31744,
+     null
+    ],
+    [
+     31872,
+     31904,
+     null
+    ],
+    [
+     31984,
+     32016,
+     null
+    ],
+    [
+     45888,
+     45920,
+     null
+    ],
+    [
+     45968,
+     46000,
+     null
+    ],
+    [
+     46048,
+     46080,
+     null
+    ],
+    [
+     46112,
+     46144,
+     null
+    ],
+    [
+     46304,
+     46336,
+     null
+    ],
+    [
+     47248,
+     47280,
+     null
+    ],
+    [
+     47296,
+     47328,
+     null
+    ],
+    [
+     47552,
+     47584,
+     null
+    ],
+    [
+     53888,
+     53920,
+     null
+    ],
+    [
+     54048,
+     54080,
+     null
+    ],
+    [
+     54208,
+     54240,
+     null
+    ],
+    [
+     54608,
+     54640,
+     null
+    ],
+    [
+     54848,
+     54880,
+     null
+    ],
+    [
+     54944,
+     54976,
+     null
+    ],
+    [
+     55360,
+     55392,
+     null
+    ],
+    [
+     55696,
+     55728,
+     null
+    ],
+    [
+     55776,
+     55808,
+     null
+    ],
+    [
+     55936,
+     55968,
+     null
+    ],
+    [
+     57248,
+     57280,
+     null
+    ],
+    [
+     58192,
+     58224,
+     null
+    ],
+    [
+     58528,
+     58560,
+     null
+    ],
+    [
+     59520,
+     59552,
+     null
+    ],
+    [
+     59744,
+     59776,
+     null
+    ],
+    [
+     59904,
+     59936,
+     null
+    ],
+    [
+     60128,
+     60160,
+     null
+    ],
+    [
+     60480,
+     60512,
+     null
+    ],
+    [
+     61696,
+     61728,
+     null
+    ],
+    [
+     64272,
+     64304,
+     null
+    ],
+    [
+     64336,
+     64368,
+     null
+    ],
+    [
+     64464,
+     64496,
+     null
+    ],
+    [
+     64512,
+     64544,
+     null
+    ],
+    [
+     64896,
+     64928,
+     null
+    ],
+    [
+     70560,
+     70592,
+     null
+    ],
+    [
+     72880,
+     72912,
+     null
+    ],
+    [
+     73152,
+     73184,
+     null
+    ],
+    [
+     73216,
+     73248,
+     null
+    ],
+    [
+     73376,
+     73408,
+     null
+    ],
+    [
+     74416,
+     74448,
+     null
+    ],
+    [
+     74656,
+     74688,
+     null
+    ],
+    [
+     74736,
+     74768,
+     null
+    ],
+    [
+     74992,
+     75024,
+     null
+    ],
+    [
+     75104,
+     75136,
+     null
+    ],
+    [
+     75296,
+     75328,
+     null
+    ],
+    [
+     75488,
+     75520,
+     null
+    ],
+    [
+     75856,
+     75888,
+     null
+    ],
+    [
+     76256,
+     76288,
+     null
+    ],
+    [
+     76560,
+     76592,
+     null
+    ],
+    [
+     76640,
+     76672,
+     null
+    ],
+    [
+     77104,
+     77136,
+     null
+    ],
+    [
+     77376,
+     77408,
+     null
+    ],
+    [
+     77664,
+     77696,
+     null
+    ],
+    [
+     77712,
+     77744,
+     null
+    ],
+    [
+     77968,
+     78000,
+     null
+    ],
+    [
+     78128,
+     78160,
+     null
+    ],
+    [
+     78208,
+     78240,
+     null
+    ],
+    [
+     78336,
+     78368,
+     null
+    ],
+    [
+     78448,
+     78480,
+     null
+    ],
+    [
+     78496,
+     78528,
+     null
+    ],
+    [
+     78544,
+     78576,
+     null
+    ],
+    [
+     78592,
+     78624,
+     null
+    ],
+    [
+     78736,
+     78768,
+     null
+    ],
+    [
+     78816,
+     78848,
+     null
+    ],
+    [
+     79088,
+     79120,
+     null
+    ],
+    [
+     79120,
+     79152,
+     null
+    ],
+    [
+     79344,
+     79376,
+     null
+    ],
+    [
+     79456,
+     79488,
+     null
+    ],
+    [
+     79792,
+     79824,
+     null
+    ],
+    [
+     79904,
+     79936,
+     null
+    ],
+    [
+     80192,
+     80224,
+     null
+    ]
+   ],
+   "raw_path": "/workspace/scratch/a55b59b3e326/r1-evidence/cjson-1.7.16-to-1.7.17-O2-primary/runs/96ee689b-d7c7-4ceb-a538-b2b2dd081c4d/raw/json/bed3ef087fd07161a14154d38c683b3f648611114bf9794bf91fba123d6f2d48.bin-d3837c837ffff4eb90342b2b9d5d29cd023f72d3858c3a405a015cc180e963b4.bin.ghidriff.json",
+   "raw_sha256": "9332275ec0aec89c4e2acaf63c75cfaa1b21a22f00550a546af18ff03a0e4621",
+   "resumed_primary": true,
+   "run_id": "96ee689b-d7c7-4ceb-a538-b2b2dd081c4d",
+   "settings": {
+    "allow_symbol_downloads": false,
+    "ghidra_settings": "isolated-per-run",
+    "ghidra_version": "12.0.4",
+    "gzf": {
+     "newer": {
+      "bytes": 516507,
+      "name": "d3837c837ffff4eb90342b2b9d5d29cd023f72d3858c3a405a015cc180e963b4.bin-490363.gzf",
+      "sha256": "c597209b29324cd5c6ad5d4c3b94cd2934e9c89f43f1ad035ef2a1702e46bf9f"
+     },
+     "older": {
+      "bytes": 515781,
+      "name": "bed3ef087fd07161a14154d38c683b3f648611114bf9794bf91fba123d6f2d48.bin-5336fc.gzf",
+      "sha256": "fa3c8593cb1748a5a68ef0592e570e9aacc6c856fe0979f9bd9aeaf4b320686c"
+     }
+    },
+    "java_runtime_version": "unverified",
+    "newer_sha256": "d3837c837ffff4eb90342b2b9d5d29cd023f72d3858c3a405a015cc180e963b4",
+    "older_sha256": "bed3ef087fd07161a14154d38c683b3f648611114bf9794bf91fba123d6f2d48",
+    "pyghidra_version": "3.0.2",
+    "python_version": "3.12.14",
+    "symbol_policy": "disabled",
+    "timeout_seconds": 600
+   },
+   "stats": {
+    "added_funcs_len": 0,
+    "added_strings_len": 0,
+    "added_symbols_len": 0,
+    "deleted_funcs_len": 0,
+    "deleted_strings_len": 0,
+    "deleted_symbols_len": 0,
+    "diff_time": 3.743587017059326,
+    "diff_types": {
+     "address": 1,
+     "code": 2,
+     "length": 2
+    },
+    "first_matches": {
+     "ExactBytesFunctionHasher": 64,
+     "ExactInstructionsFunctionHasher": 62,
+     "SymbolsHash": 142
+    },
+    "func_match_overall_percent": "100.0000%",
+    "items_to_process": 2,
+    "match_func_similarity_percent": "99.6764%",
+    "match_types": {
+     "ExactBytesFunctionHasher": 64,
+     "ExactInstructionsFunctionHasher": 62,
+     "ExternalsName": 47,
+     "SymbolsHash": 142
+    },
+    "matched_funcs_len": 618,
+    "matched_funcs_no_changes_len": 616,
+    "matched_funcs_with_code_changes_len": 2,
+    "matched_funcs_with_non_code_changes_len": 0,
+    "modified_funcs_len": 2,
+    "total_funcs_len": 618,
+    "unmatched_funcs_len": 0
+   },
+   "status": "ok",
+   "wall_s": null
+  },
+  "rz-diff": {
+   "metrics": {
+    "counts": {
+     "ambiguous_predictions": 42,
+     "ambiguous_truth_records": 111,
+     "conflicting_pairs": 0,
+     "duplicate_observations": 0,
+     "explicit_unpaired_endpoints": 0,
+     "identity_fn": 2,
+     "identity_fp": 0,
+     "identity_tp": 0,
+     "material_detected": 0,
+     "material_missed": 2,
+     "material_not_flagged": 0,
+     "material_unknown": 0,
+     "material_unmatched": 2,
+     "negative_flagged": 0,
+     "unknown_change_pairs": 0,
+     "unlabelled_predictions": 127,
+     "unmatched_endpoints": 4,
+     "unmatched_truth_pairs": 2
+    },
+    "denominators": {
+     "eligible_endpoints": 4,
+     "f1": 2,
+     "material_truth_pairs": 2,
+     "negative_candidate_edges": null,
+     "negative_truth_pairs": 0,
+     "scored_predictions": 0,
+     "truth_pairs": 2,
+     "truth_records": 113
+    },
+    "implicit_unchanged_requested": false,
+    "rates": {
+     "correspondence_false_positive_rate": null,
+     "false_discovery_rate": null,
+     "identity_f1": 0.0,
+     "identity_false_negative_rate": 1.0,
+     "identity_precision": null,
+     "identity_recall": 0.0,
+     "material_detection_recall": 0.0,
+     "negative_flag_rate": null,
+     "truth_ambiguity_rate": 0.9823008849557522,
+     "unknown_change_rate": null,
+     "unmatched_endpoint_rate": 1.0,
+     "unmatched_truth_pair_rate": 1.0
+    },
+    "scope": "explicit observations only; supplied labels require independent acceptance audit"
+   },
+   "observations": [
+    [
+     4112,
+     4112,
+     true
+    ],
+    [
+     4960,
+     4960,
+     true
+    ],
+    [
+     5008,
+     5008,
+     false
+    ],
+    [
+     5120,
+     5120,
+     false
+    ],
+    [
+     5904,
+     5904,
+     false
+    ],
+    [
+     6000,
+     19920,
+     true
+    ],
+    [
+     6048,
+     6048,
+     true
+    ],
+    [
+     6944,
+     6944,
+     true
+    ],
+    [
+     7152,
+     19920,
+     true
+    ],
+    [
+     7200,
+     7200,
+     true
+    ],
+    [
+     9056,
+     9056,
+     true
+    ],
+    [
+     9680,
+     9680,
+     false
+    ],
+    [
+     9808,
+     9808,
+     true
+    ],
+    [
+     12352,
+     12368,
+     true
+    ],
+    [
+     12368,
+     12384,
+     true
+    ],
+    [
+     12416,
+     12432,
+     false
+    ],
+    [
+     12512,
+     12528,
+     true
+    ],
+    [
+     14368,
+     14384,
+     false
+    ],
+    [
+     14656,
+     14672,
+     true
+    ],
+    [
+     14784,
+     14800,
+     true
+    ],
+    [
+     14928,
+     14944,
+     true
+    ],
+    [
+     14976,
+     14992,
+     true
+    ],
+    [
+     15824,
+     15856,
+     true
+    ],
+    [
+     16240,
+     16272,
+     true
+    ],
+    [
+     16752,
+     16784,
+     true
+    ],
+    [
+     16816,
+     16848,
+     true
+    ],
+    [
+     18224,
+     18256,
+     true
+    ],
+    [
+     19136,
+     19168,
+     false
+    ],
+    [
+     19200,
+     19232,
+     false
+    ],
+    [
+     19232,
+     19264,
+     false
+    ],
+    [
+     19264,
+     19296,
+     false
+    ],
+    [
+     19328,
+     19360,
+     true
+    ],
+    [
+     19856,
+     19888,
+     true
+    ],
+    [
+     19872,
+     19904,
+     true
+    ],
+    [
+     19888,
+     19920,
+     false
+    ],
+    [
+     19936,
+     19968,
+     true
+    ],
+    [
+     20128,
+     20160,
+     false
+    ],
+    [
+     20512,
+     20544,
+     true
+    ],
+    [
+     20800,
+     20832,
+     false
+    ],
+    [
+     20944,
+     20976,
+     true
+    ],
+    [
+     21440,
+     21472,
+     true
+    ],
+    [
+     21888,
+     21920,
+     true
+    ],
+    [
+     22240,
+     22272,
+     true
+    ],
+    [
+     22720,
+     22752,
+     true
+    ],
+    [
+     23200,
+     23232,
+     true
+    ],
+    [
+     24224,
+     24256,
+     true
+    ],
+    [
+     26064,
+     26096,
+     true
+    ],
+    [
+     27584,
+     27616,
+     true
+    ],
+    [
+     27824,
+     27856,
+     true
+    ],
+    [
+     27936,
+     27968,
+     true
+    ],
+    [
+     28304,
+     28336,
+     true
+    ],
+    [
+     29168,
+     29200,
+     true
+    ],
+    [
+     29584,
+     29616,
+     true
+    ],
+    [
+     30144,
+     30176,
+     true
+    ],
+    [
+     30272,
+     30496,
+     true
+    ],
+    [
+     30464,
+     30496,
+     true
+    ],
+    [
+     30864,
+     30896,
+     false
+    ],
+    [
+     30880,
+     30912,
+     false
+    ],
+    [
+     30944,
+     30992,
+     false
+    ],
+    [
+     30960,
+     30992,
+     false
+    ],
+    [
+     30976,
+     31008,
+     true
+    ],
+    [
+     31232,
+     31264,
+     false
+    ],
+    [
+     31296,
+     31328,
+     false
+    ],
+    [
+     31440,
+     31472,
+     false
+    ],
+    [
+     31552,
+     31584,
+     false
+    ],
+    [
+     31712,
+     31744,
+     false
+    ],
+    [
+     31872,
+     31904,
+     false
+    ],
+    [
+     31984,
+     32016,
+     true
+    ],
+    [
+     45968,
+     46000,
+     false
+    ],
+    [
+     46048,
+     46080,
+     false
+    ],
+    [
+     46112,
+     46144,
+     false
+    ],
+    [
+     46304,
+     46336,
+     false
+    ],
+    [
+     47248,
+     47280,
+     false
+    ],
+    [
+     47296,
+     47328,
+     false
+    ],
+    [
+     47552,
+     47584,
+     true
+    ],
+    [
+     53888,
+     53920,
+     true
+    ],
+    [
+     54048,
+     54080,
+     true
+    ],
+    [
+     54208,
+     54240,
+     false
+    ],
+    [
+     54608,
+     54640,
+     true
+    ],
+    [
+     54848,
+     54880,
+     false
+    ],
+    [
+     54944,
+     54976,
+     false
+    ],
+    [
+     55360,
+     55392,
+     false
+    ],
+    [
+     55696,
+     55728,
+     true
+    ],
+    [
+     55776,
+     55808,
+     false
+    ],
+    [
+     55936,
+     55968,
+     false
+    ],
+    [
+     57248,
+     57280,
+     false
+    ],
+    [
+     58192,
+     58224,
+     false
+    ],
+    [
+     58528,
+     58560,
+     false
+    ],
+    [
+     59520,
+     59552,
+     false
+    ],
+    [
+     59744,
+     59776,
+     false
+    ],
+    [
+     59904,
+     59936,
+     false
+    ],
+    [
+     60128,
+     60160,
+     false
+    ],
+    [
+     60480,
+     60512,
+     false
+    ],
+    [
+     61696,
+     61728,
+     true
+    ],
+    [
+     64272,
+     64304,
+     false
+    ],
+    [
+     64464,
+     64496,
+     false
+    ],
+    [
+     64512,
+     64544,
+     false
+    ],
+    [
+     64896,
+     64928,
+     true
+    ],
+    [
+     70560,
+     70592,
+     true
+    ],
+    [
+     72880,
+     72912,
+     false
+    ],
+    [
+     73152,
+     73184,
+     false
+    ],
+    [
+     73216,
+     73248,
+     true
+    ],
+    [
+     73376,
+     73408,
+     true
+    ],
+    [
+     74416,
+     74448,
+     true
+    ],
+    [
+     74736,
+     74768,
+     true
+    ],
+    [
+     74992,
+     75024,
+     true
+    ],
+    [
+     75104,
+     75136,
+     false
+    ],
+    [
+     75296,
+     75328,
+     true
+    ],
+    [
+     75488,
+     75520,
+     false
+    ],
+    [
+     75856,
+     75888,
+     true
+    ],
+    [
+     76256,
+     76288,
+     false
+    ],
+    [
+     76560,
+     76592,
+     false
+    ],
+    [
+     76640,
+     76672,
+     false
+    ],
+    [
+     77104,
+     77136,
+     false
+    ],
+    [
+     77376,
+     77408,
+     false
+    ],
+    [
+     77712,
+     77744,
+     false
+    ],
+    [
+     77968,
+     78000,
+     false
+    ],
+    [
+     78128,
+     78160,
+     false
+    ],
+    [
+     78208,
+     78240,
+     false
+    ],
+    [
+     78336,
+     78368,
+     false
+    ],
+    [
+     78448,
+     78480,
+     false
+    ],
+    [
+     78496,
+     78528,
+     false
+    ],
+    [
+     78544,
+     78576,
+     false
+    ],
+    [
+     78592,
+     78624,
+     true
+    ],
+    [
+     78736,
+     78768,
+     false
+    ],
+    [
+     79344,
+     79376,
+     false
+    ],
+    [
+     79456,
+     79488,
+     true
+    ],
+    [
+     79792,
+     79824,
+     true
+    ],
+    [
+     80192,
+     80224,
+     true
+    ],
+    [
+     80304,
+     80336,
+     true
+    ],
+    [
+     80312,
+     80344,
+     true
+    ],
+    [
+     80320,
+     80352,
+     true
+    ],
+    [
+     80328,
+     80360,
+     true
+    ],
+    [
+     80336,
+     80368,
+     true
+    ],
+    [
+     80344,
+     80376,
+     true
+    ],
+    [
+     80352,
+     80384,
+     true
+    ],
+    [
+     80360,
+     80392,
+     true
+    ],
+    [
+     80368,
+     80400,
+     true
+    ],
+    [
+     80376,
+     80408,
+     true
+    ],
+    [
+     80384,
+     80416,
+     true
+    ],
+    [
+     80392,
+     80424,
+     true
+    ],
+    [
+     80400,
+     80432,
+     true
+    ],
+    [
+     80408,
+     80440,
+     true
+    ],
+    [
+     80416,
+     80448,
+     true
+    ],
+    [
+     80424,
+     80456,
+     true
+    ],
+    [
+     80432,
+     80464,
+     true
+    ],
+    [
+     80440,
+     80472,
+     true
+    ],
+    [
+     80448,
+     80480,
+     true
+    ],
+    [
+     80456,
+     80592,
+     true
+    ],
+    [
+     80464,
+     80496,
+     true
+    ],
+    [
+     80472,
+     80504,
+     true
+    ],
+    [
+     80480,
+     80512,
+     true
+    ],
+    [
+     80488,
+     80520,
+     true
+    ],
+    [
+     80496,
+     80528,
+     true
+    ],
+    [
+     80504,
+     80536,
+     true
+    ],
+    [
+     80512,
+     80544,
+     true
+    ],
+    [
+     80520,
+     80552,
+     true
+    ],
+    [
+     80528,
+     80560,
+     true
+    ],
+    [
+     80536,
+     80568,
+     true
+    ],
+    [
+     80544,
+     80576,
+     true
+    ],
+    [
+     80552,
+     80584,
+     true
+    ],
+    [
+     80560,
+     80592,
+     true
+    ],
+    [
+     80568,
+     80600,
+     true
+    ],
+    [
+     80576,
+     80608,
+     true
+    ],
+    [
+     null,
+     6000,
+     null
+    ],
+    [
+     null,
+     7152,
+     null
+    ],
+    [
+     null,
+     30304,
+     null
+    ],
+    [
+     null,
+     30976,
+     null
+    ],
+    [
+     null,
+     80488,
+     null
+    ]
+   ],
+   "reason": null,
+   "status": "ok",
+   "version": "0.9.1",
+   "wall_s": 2.9387544239998533
+  },
+  "unified": {
+   "coverage": {
+    "abstained_rows": 5,
+    "decisions": {
+     "candidate": 5,
+     "matched": 254
+    },
+    "materialities": {
+     "cosmetic": 144,
+     "material": 2,
+     "review": 10,
+     "unchanged": 103
+    },
+    "rows": 259
+   },
+   "extraction": {
+    "newer": {
+     "artifact_sha256": "d3837c837ffff4eb90342b2b9d5d29cd023f72d3858c3a405a015cc180e963b4",
+     "content_digest": "42e77dd326bd69dce6461f0e642a7c5b152206061329edbd06f8fe79dbb1de38",
+     "extract_seconds": 10.1,
+     "ingest_seconds": 0.9
+    },
+    "older": {
+     "artifact_sha256": "bed3ef087fd07161a14154d38c683b3f648611114bf9794bf91fba123d6f2d48",
+     "content_digest": "f53b4f19da7aef48ae6e8eb42429842b4571c4a871750d54d336ad47b7045b66",
+     "extract_seconds": 7.4,
+     "ingest_seconds": 0.8
+    }
+   },
+   "metrics": {
+    "counts": {
+     "ambiguous_predictions": 111,
+     "ambiguous_truth_records": 111,
+     "conflicting_pairs": 0,
+     "duplicate_observations": 0,
+     "explicit_unpaired_endpoints": 0,
+     "identity_fn": 0,
+     "identity_fp": 0,
+     "identity_tp": 2,
+     "material_detected": 2,
+     "material_missed": 0,
+     "material_not_flagged": 0,
+     "material_unknown": 0,
+     "material_unmatched": 0,
+     "negative_flagged": 0,
+     "unknown_change_pairs": 0,
+     "unlabelled_predictions": 141,
+     "unmatched_endpoints": 0,
+     "unmatched_truth_pairs": 0
+    },
+    "denominators": {
+     "eligible_endpoints": 4,
+     "f1": 4,
+     "material_truth_pairs": 2,
+     "negative_candidate_edges": null,
+     "negative_truth_pairs": 0,
+     "scored_predictions": 2,
+     "truth_pairs": 2,
+     "truth_records": 113
+    },
+    "implicit_unchanged_requested": false,
+    "rates": {
+     "correspondence_false_positive_rate": null,
+     "false_discovery_rate": 0.0,
+     "identity_f1": 1.0,
+     "identity_false_negative_rate": 0.0,
+     "identity_precision": 1.0,
+     "identity_recall": 1.0,
+     "material_detection_recall": 1.0,
+     "negative_flag_rate": null,
+     "truth_ambiguity_rate": 0.9823008849557522,
+     "unknown_change_rate": 0.0,
+     "unmatched_endpoint_rate": 0.0,
+     "unmatched_truth_pair_rate": 0.0
+    },
+    "scope": "explicit observations only; supplied labels require independent acceptance audit"
+   },
+   "observations": [
+    [
+     4096,
+     4096,
+     false
+    ],
+    [
+     4112,
+     4112,
+     null
+    ],
+    [
+     4576,
+     4576,
+     null
+    ],
+    [
+     4928,
+     4928,
+     false
+    ],
+    [
+     4960,
+     4960,
+     false
+    ],
+    [
+     4976,
+     4976,
+     false
+    ],
+    [
+     5008,
+     5008,
+     false
+    ],
+    [
+     5120,
+     5120,
+     false
+    ],
+    [
+     5904,
+     5904,
+     false
+    ],
+    [
+     6000,
+     6000,
+     false
+    ],
+    [
+     6048,
+     6048,
+     false
+    ],
+    [
+     6304,
+     6304,
+     false
+    ],
+    [
+     6944,
+     6944,
+     false
+    ],
+    [
+     7152,
+     7152,
+     false
+    ],
+    [
+     7200,
+     7200,
+     false
+    ],
+    [
+     8736,
+     8736,
+     false
+    ],
+    [
+     9056,
+     9056,
+     false
+    ],
+    [
+     9296,
+     9296,
+     false
+    ],
+    [
+     9312,
+     9312,
+     false
+    ],
+    [
+     9344,
+     9344,
+     false
+    ],
+    [
+     9376,
+     9376,
+     null
+    ],
+    [
+     9440,
+     9440,
+     null
+    ],
+    [
+     9680,
+     9680,
+     false
+    ],
+    [
+     9808,
+     9808,
+     false
+    ],
+    [
+     11072,
+     11072,
+     false
+    ],
+    [
+     11136,
+     11136,
+     true
+    ],
+    [
+     11312,
+     11328,
+     false
+    ],
+    [
+     11760,
+     11776,
+     false
+    ],
+    [
+     11840,
+     11856,
+     false
+    ],
+    [
+     11904,
+     11920,
+     false
+    ],
+    [
+     11920,
+     11936,
+     false
+    ],
+    [
+     11936,
+     11952,
+     false
+    ],
+    [
+     11952,
+     11968,
+     false
+    ],
+    [
+     12128,
+     12144,
+     false
+    ],
+    [
+     12240,
+     12256,
+     false
+    ],
+    [
+     12288,
+     12304,
+     false
+    ],
+    [
+     12352,
+     12368,
+     false
+    ],
+    [
+     12368,
+     12384,
+     false
+    ],
+    [
+     12384,
+     12400,
+     false
+    ],
+    [
+     12416,
+     12432,
+     false
+    ],
+    [
+     12512,
+     12528,
+     false
+    ],
+    [
+     12528,
+     12544,
+     false
+    ],
+    [
+     12544,
+     12560,
+     false
+    ],
+    [
+     12768,
+     12784,
+     false
+    ],
+    [
+     12960,
+     12976,
+     false
+    ],
+    [
+     13088,
+     13104,
+     false
+    ],
+    [
+     13216,
+     13232,
+     false
+    ],
+    [
+     13344,
+     13360,
+     false
+    ],
+    [
+     13488,
+     13504,
+     false
+    ],
+    [
+     13696,
+     13712,
+     false
+    ],
+    [
+     13904,
+     13920,
+     false
+    ],
+    [
+     14112,
+     14128,
+     false
+    ],
+    [
+     14240,
+     14256,
+     false
+    ],
+    [
+     14368,
+     14384,
+     false
+    ],
+    [
+     14480,
+     14496,
+     false
+    ],
+    [
+     14560,
+     14576,
+     false
+    ],
+    [
+     14656,
+     14672,
+     false
+    ],
+    [
+     14784,
+     14800,
+     false
+    ],
+    [
+     14928,
+     14944,
+     false
+    ],
+    [
+     14976,
+     14992,
+     false
+    ],
+    [
+     15024,
+     15040,
+     true
+    ],
+    [
+     15216,
+     15248,
+     false
+    ],
+    [
+     15392,
+     15424,
+     false
+    ],
+    [
+     15472,
+     15504,
+     false
+    ],
+    [
+     15648,
+     15680,
+     false
+    ],
+    [
+     15824,
+     15856,
+     false
+    ],
+    [
+     15888,
+     15920,
+     false
+    ],
+    [
+     15952,
+     15984,
+     false
+    ],
+    [
+     16016,
+     16048,
+     false
+    ],
+    [
+     16080,
+     16112,
+     false
+    ],
+    [
+     16240,
+     16272,
+     false
+    ],
+    [
+     16400,
+     16432,
+     false
+    ],
+    [
+     16464,
+     16496,
+     false
+    ],
+    [
+     16528,
+     16560,
+     false
+    ],
+    [
+     16592,
+     16624,
+     false
+    ],
+    [
+     16752,
+     16784,
+     false
+    ],
+    [
+     16816,
+     16848,
+     false
+    ],
+    [
+     16880,
+     16912,
+     false
+    ],
+    [
+     17168,
+     17200,
+     false
+    ],
+    [
+     17520,
+     17552,
+     false
+    ],
+    [
+     17872,
+     17904,
+     false
+    ],
+    [
+     18224,
+     18256,
+     false
+    ],
+    [
+     18640,
+     18672,
+     false
+    ],
+    [
+     19008,
+     19040,
+     false
+    ],
+    [
+     19040,
+     19072,
+     false
+    ],
+    [
+     19072,
+     19104,
+     false
+    ],
+    [
+     19104,
+     19136,
+     false
+    ],
+    [
+     19136,
+     19168,
+     false
+    ],
+    [
+     19168,
+     19200,
+     false
+    ],
+    [
+     19200,
+     19232,
+     false
+    ],
+    [
+     19232,
+     19264,
+     false
+    ],
+    [
+     19264,
+     19296,
+     false
+    ],
+    [
+     19296,
+     19328,
+     false
+    ],
+    [
+     19328,
+     19360,
+     false
+    ],
+    [
+     19856,
+     19888,
+     false
+    ],
+    [
+     19872,
+     19904,
+     false
+    ],
+    [
+     19888,
+     19920,
+     false
+    ],
+    [
+     19936,
+     19968,
+     false
+    ],
+    [
+     20128,
+     20160,
+     false
+    ],
+    [
+     20512,
+     20544,
+     false
+    ],
+    [
+     20800,
+     20832,
+     false
+    ],
+    [
+     20944,
+     20976,
+     false
+    ],
+    [
+     21440,
+     21472,
+     false
+    ],
+    [
+     21888,
+     21920,
+     false
+    ],
+    [
+     22240,
+     22272,
+     false
+    ],
+    [
+     22720,
+     22752,
+     false
+    ],
+    [
+     23200,
+     23232,
+     false
+    ],
+    [
+     24224,
+     24256,
+     false
+    ],
+    [
+     26064,
+     26096,
+     false
+    ],
+    [
+     26576,
+     26608,
+     false
+    ],
+    [
+     26592,
+     26624,
+     false
+    ],
+    [
+     26608,
+     26640,
+     false
+    ],
+    [
+     26704,
+     26736,
+     false
+    ],
+    [
+     26800,
+     26832,
+     false
+    ],
+    [
+     26832,
+     26864,
+     false
+    ],
+    [
+     26928,
+     26960,
+     false
+    ],
+    [
+     27024,
+     27056,
+     false
+    ],
+    [
+     27072,
+     27104,
+     false
+    ],
+    [
+     27120,
+     27152,
+     false
+    ],
+    [
+     27136,
+     27168,
+     false
+    ],
+    [
+     27152,
+     27184,
+     false
+    ],
+    [
+     27264,
+     27296,
+     false
+    ],
+    [
+     27376,
+     27408,
+     null
+    ],
+    [
+     27456,
+     27488,
+     null
+    ],
+    [
+     27584,
+     27616,
+     false
+    ],
+    [
+     27616,
+     27648,
+     false
+    ],
+    [
+     27664,
+     27696,
+     null
+    ],
+    [
+     27824,
+     27856,
+     false
+    ],
+    [
+     27936,
+     27968,
+     false
+    ],
+    [
+     28304,
+     28336,
+     null
+    ],
+    [
+     29168,
+     29200,
+     false
+    ],
+    [
+     29296,
+     29328,
+     false
+    ],
+    [
+     29424,
+     29456,
+     false
+    ],
+    [
+     29584,
+     29616,
+     null
+    ],
+    [
+     29840,
+     29872,
+     false
+    ],
+    [
+     29888,
+     29920,
+     false
+    ],
+    [
+     29968,
+     30000,
+     false
+    ],
+    [
+     30144,
+     30176,
+     false
+    ],
+    [
+     30272,
+     30304,
+     false
+    ],
+    [
+     30336,
+     30368,
+     false
+    ],
+    [
+     30464,
+     30496,
+     false
+    ],
+    [
+     30528,
+     30560,
+     false
+    ],
+    [
+     30672,
+     30704,
+     null
+    ],
+    [
+     30880,
+     30912,
+     false
+    ],
+    [
+     30976,
+     31008,
+     false
+    ],
+    [
+     31232,
+     31264,
+     false
+    ],
+    [
+     31296,
+     31328,
+     false
+    ],
+    [
+     31440,
+     31472,
+     false
+    ],
+    [
+     31552,
+     31584,
+     false
+    ],
+    [
+     31712,
+     31744,
+     false
+    ],
+    [
+     31872,
+     31904,
+     false
+    ],
+    [
+     31984,
+     32016,
+     false
+    ],
+    [
+     45888,
+     45920,
+     false
+    ],
+    [
+     45968,
+     46000,
+     false
+    ],
+    [
+     46048,
+     46080,
+     false
+    ],
+    [
+     46112,
+     46144,
+     false
+    ],
+    [
+     46304,
+     46336,
+     false
+    ],
+    [
+     47248,
+     47280,
+     false
+    ],
+    [
+     47296,
+     47328,
+     false
+    ],
+    [
+     47552,
+     47584,
+     false
+    ],
+    [
+     53888,
+     53920,
+     false
+    ],
+    [
+     54048,
+     54080,
+     false
+    ],
+    [
+     54208,
+     54240,
+     false
+    ],
+    [
+     54608,
+     54640,
+     false
+    ],
+    [
+     54848,
+     54880,
+     false
+    ],
+    [
+     54944,
+     54976,
+     false
+    ],
+    [
+     55360,
+     55392,
+     false
+    ],
+    [
+     55696,
+     55728,
+     false
+    ],
+    [
+     55776,
+     55808,
+     false
+    ],
+    [
+     55936,
+     55968,
+     false
+    ],
+    [
+     57248,
+     57280,
+     false
+    ],
+    [
+     58192,
+     58224,
+     false
+    ],
+    [
+     58528,
+     58560,
+     false
+    ],
+    [
+     59520,
+     59552,
+     false
+    ],
+    [
+     59744,
+     59776,
+     false
+    ],
+    [
+     59904,
+     59936,
+     false
+    ],
+    [
+     60128,
+     60160,
+     false
+    ],
+    [
+     60480,
+     60512,
+     false
+    ],
+    [
+     61696,
+     61728,
+     false
+    ],
+    [
+     64272,
+     64304,
+     false
+    ],
+    [
+     64336,
+     64368,
+     false
+    ],
+    [
+     64464,
+     64496,
+     false
+    ],
+    [
+     64512,
+     64544,
+     false
+    ],
+    [
+     64896,
+     64928,
+     false
+    ],
+    [
+     70560,
+     70592,
+     false
+    ],
+    [
+     72880,
+     72912,
+     false
+    ],
+    [
+     73152,
+     73184,
+     false
+    ],
+    [
+     73216,
+     73248,
+     false
+    ],
+    [
+     73376,
+     73408,
+     false
+    ],
+    [
+     74416,
+     74448,
+     false
+    ],
+    [
+     74656,
+     74688,
+     false
+    ],
+    [
+     74736,
+     74768,
+     false
+    ],
+    [
+     74992,
+     75024,
+     false
+    ],
+    [
+     75104,
+     75136,
+     false
+    ],
+    [
+     75296,
+     75328,
+     false
+    ],
+    [
+     75488,
+     75520,
+     false
+    ],
+    [
+     75856,
+     75888,
+     false
+    ],
+    [
+     76256,
+     76288,
+     false
+    ],
+    [
+     76560,
+     76592,
+     false
+    ],
+    [
+     76640,
+     76672,
+     false
+    ],
+    [
+     77104,
+     77136,
+     false
+    ],
+    [
+     77376,
+     77408,
+     false
+    ],
+    [
+     77664,
+     77696,
+     false
+    ],
+    [
+     77712,
+     77744,
+     false
+    ],
+    [
+     77968,
+     78000,
+     false
+    ],
+    [
+     78128,
+     78160,
+     false
+    ],
+    [
+     78208,
+     78240,
+     false
+    ],
+    [
+     78336,
+     78368,
+     false
+    ],
+    [
+     78448,
+     78480,
+     false
+    ],
+    [
+     78496,
+     78528,
+     false
+    ],
+    [
+     78544,
+     78576,
+     false
+    ],
+    [
+     78592,
+     78624,
+     false
+    ],
+    [
+     78736,
+     78768,
+     false
+    ],
+    [
+     78816,
+     78848,
+     false
+    ],
+    [
+     79088,
+     79120,
+     false
+    ],
+    [
+     79120,
+     79152,
+     false
+    ],
+    [
+     79344,
+     79376,
+     false
+    ],
+    [
+     79456,
+     79488,
+     false
+    ],
+    [
+     79792,
+     79824,
+     false
+    ],
+    [
+     79904,
+     79936,
+     false
+    ],
+    [
+     80192,
+     80224,
+     false
+    ],
+    [
+     80304,
+     80336,
+     false
+    ],
+    [
+     80312,
+     80344,
+     false
+    ],
+    [
+     80320,
+     80352,
+     false
+    ],
+    [
+     80328,
+     80360,
+     false
+    ],
+    [
+     80336,
+     80368,
+     false
+    ],
+    [
+     80344,
+     80376,
+     false
+    ],
+    [
+     80352,
+     80384,
+     false
+    ],
+    [
+     80360,
+     80392,
+     false
+    ],
+    [
+     80368,
+     80400,
+     false
+    ],
+    [
+     80376,
+     80408,
+     false
+    ],
+    [
+     80384,
+     80416,
+     false
+    ],
+    [
+     80400,
+     80432,
+     false
+    ],
+    [
+     80408,
+     80440,
+     false
+    ],
+    [
+     80416,
+     80448,
+     false
+    ],
+    [
+     80424,
+     80456,
+     false
+    ],
+    [
+     80432,
+     80464,
+     false
+    ],
+    [
+     80448,
+     80480,
+     false
+    ],
+    [
+     80456,
+     80488,
+     false
+    ],
+    [
+     80464,
+     80496,
+     false
+    ],
+    [
+     80472,
+     80504,
+     false
+    ],
+    [
+     80480,
+     80512,
+     false
+    ],
+    [
+     80488,
+     80520,
+     false
+    ],
+    [
+     80496,
+     80528,
+     false
+    ],
+    [
+     80504,
+     80536,
+     false
+    ],
+    [
+     80512,
+     80544,
+     false
+    ],
+    [
+     80520,
+     80552,
+     false
+    ],
+    [
+     80528,
+     80560,
+     false
+    ],
+    [
+     80536,
+     80568,
+     false
+    ],
+    [
+     80544,
+     80576,
+     false
+    ],
+    [
+     80552,
+     80584,
+     false
+    ],
+    [
+     80560,
+     80592,
+     false
+    ],
+    [
+     80568,
+     80600,
+     false
+    ],
+    [
+     80576,
+     80608,
+     false
+    ]
+   ],
+   "outcome": {
+    "labels_sha256": "529ff3ab0fb52a2c8857c58e221c6669daa6674a34661c3940663eb6b07bba91",
+    "legacy_tools": [
+     "ghidriff"
+    ],
+    "orientation": "forward",
+    "pair_id": "cjson-1.7.16-to-1.7.17-O2",
+    "planted": null,
+    "rows": [
+     {
+      "basis": [
+       {
+        "cls": "E-BODY",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "ExactInstructionsFunctionHasher",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": false,
+      "legacy": [],
+      "materiality": "cosmetic",
+      "newer": [
+       4096
+      ],
+      "older": [
+       4096
+      ],
+      "proof": "COS-ADDR/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-BODY",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "ExactInstructionsFunctionHasher",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": false,
+      "legacy": [],
+      "materiality": "review",
+      "newer": [
+       4112
+      ],
+      "older": [
+       4112
+      ],
+      "proof": "",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-BODY",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "ExactInstructionsFunctionHasher",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": true,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": false,
+      "legacy": [],
+      "materiality": "review",
+      "newer": [
+       4576
+      ],
+      "older": [
+       4576
+      ],
+      "proof": "",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-NAME",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "SymbolsHash",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": true,
+      "legacy": [],
+      "materiality": "unchanged",
+      "newer": [
+       4928
+      ],
+      "older": [
+       4928
+      ],
+      "proof": "UNCH/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-BODY",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "ExactInstructionsFunctionHasher",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": false,
+      "legacy": [],
+      "materiality": "cosmetic",
+      "newer": [
+       4960
+      ],
+      "older": [
+       4960
+      ],
+      "proof": "COS-ADDR/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-BODY",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "ExactBytesFunctionHasher",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": true,
+      "legacy": [],
+      "materiality": "unchanged",
+      "newer": [
+       4976
+      ],
+      "older": [
+       4976
+      ],
+      "proof": "UNCH/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-BODY",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "ExactBytesFunctionHasher",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": true,
+      "legacy": [],
+      "materiality": "unchanged",
+      "newer": [
+       5008
+      ],
+      "older": [
+       5008
+      ],
+      "proof": "UNCH/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-BODY",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "ExactBytesFunctionHasher",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": true,
+      "legacy": [],
+      "materiality": "unchanged",
+      "newer": [
+       5120
+      ],
+      "older": [
+       5120
+      ],
+      "proof": "UNCH/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-BODY",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "ExactBytesFunctionHasher",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": true,
+      "legacy": [],
+      "materiality": "unchanged",
+      "newer": [
+       5904
+      ],
+      "older": [
+       5904
+      ],
+      "proof": "UNCH/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-BODY",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "ExactInstructionsFunctionHasher",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": false,
+      "legacy": [],
+      "materiality": "cosmetic",
+      "newer": [
+       6000
+      ],
+      "older": [
+       6000
+      ],
+      "proof": "COS-ADDR/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-BODY",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "ExactInstructionsFunctionHasher",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": false,
+      "legacy": [],
+      "materiality": "cosmetic",
+      "newer": [
+       6048
+      ],
+      "older": [
+       6048
+      ],
+      "proof": "COS-ADDR/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-BODY",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "ExactInstructionsFunctionHasher",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": false,
+      "legacy": [],
+      "materiality": "cosmetic",
+      "newer": [
+       6304
+      ],
+      "older": [
+       6304
+      ],
+      "proof": "COS-ADDR/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-BODY",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "ExactInstructionsFunctionHasher",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": false,
+      "legacy": [],
+      "materiality": "cosmetic",
+      "newer": [
+       6944
+      ],
+      "older": [
+       6944
+      ],
+      "proof": "COS-ADDR/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-BODY",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "ExactInstructionsFunctionHasher",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": false,
+      "legacy": [],
+      "materiality": "cosmetic",
+      "newer": [
+       7152
+      ],
+      "older": [
+       7152
+      ],
+      "proof": "COS-ADDR/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-BODY",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "ExactInstructionsFunctionHasher",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": false,
+      "legacy": [],
+      "materiality": "cosmetic",
+      "newer": [
+       7200
+      ],
+      "older": [
+       7200
+      ],
+      "proof": "COS-ADDR/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-BODY",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "ExactInstructionsFunctionHasher",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": false,
+      "legacy": [],
+      "materiality": "cosmetic",
+      "newer": [
+       8736
+      ],
+      "older": [
+       8736
+      ],
+      "proof": "COS-ADDR/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-BODY",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "ExactInstructionsFunctionHasher",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": false,
+      "legacy": [],
+      "materiality": "cosmetic",
+      "newer": [
+       9056
+      ],
+      "older": [
+       9056
+      ],
+      "proof": "COS-ADDR/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-NAME",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "SymbolsHash",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": true,
+      "legacy": [],
+      "materiality": "unchanged",
+      "newer": [
+       9296
+      ],
+      "older": [
+       9296
+      ],
+      "proof": "UNCH/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-NAME",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "SymbolsHash",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": true,
+      "legacy": [],
+      "materiality": "unchanged",
+      "newer": [
+       9312
+      ],
+      "older": [
+       9312
+      ],
+      "proof": "UNCH/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-NAME",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "SymbolsHash",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": true,
+      "legacy": [],
+      "materiality": "unchanged",
+      "newer": [
+       9344
+      ],
+      "older": [
+       9344
+      ],
+      "proof": "UNCH/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-NAME",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "SymbolsHash",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": true,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": true,
+      "legacy": [],
+      "materiality": "review",
+      "newer": [
+       9376
+      ],
+      "older": [
+       9376
+      ],
+      "proof": "",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-NAME",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "SymbolsHash",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": true,
+      "legacy": [],
+      "materiality": "review",
+      "newer": [
+       9440
+      ],
+      "older": [
+       9440
+      ],
+      "proof": "",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-NAME",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "SymbolsHash",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": true,
+      "legacy": [],
+      "materiality": "unchanged",
+      "newer": [
+       9680
+      ],
+      "older": [
+       9680
+      ],
+      "proof": "UNCH/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-BODY",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "ExactInstructionsFunctionHasher",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": false,
+      "legacy": [],
+      "materiality": "cosmetic",
+      "newer": [
+       9808
+      ],
+      "older": [
+       9808
+      ],
+      "proof": "COS-ADDR/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-NAME",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "SymbolsHash",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": true,
+      "legacy": [],
+      "materiality": "unchanged",
+      "newer": [
+       11072
+      ],
+      "older": [
+       11072
+      ],
+      "proof": "UNCH/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-NAME",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "SymbolsHash",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": true,
+      "decision": "matched",
+      "edited": "edited",
+      "ghidriff_exact": true,
+      "legacy": [
+       "ghidriff"
+      ],
+      "materiality": "material",
+      "newer": [
+       11136
+      ],
+      "older": [
+       11136
+      ],
+      "proof": "",
+      "truth": "right"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-NAME",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "SymbolsHash",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": true,
+      "legacy": [],
+      "materiality": "cosmetic",
+      "newer": [
+       11328
+      ],
+      "older": [
+       11312
+      ],
+      "proof": "COS-ADDR/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-NAME",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "SymbolsHash",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": true,
+      "legacy": [],
+      "materiality": "cosmetic",
+      "newer": [
+       11776
+      ],
+      "older": [
+       11760
+      ],
+      "proof": "COS-ADDR/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-NAME",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "SymbolsHash",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": true,
+      "legacy": [],
+      "materiality": "cosmetic",
+      "newer": [
+       11856
+      ],
+      "older": [
+       11840
+      ],
+      "proof": "COS-ADDR/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-NAME",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "SymbolsHash",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": true,
+      "legacy": [],
+      "materiality": "unchanged",
+      "newer": [
+       11920
+      ],
+      "older": [
+       11904
+      ],
+      "proof": "UNCH/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-NAME",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "SymbolsHash",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": true,
+      "legacy": [],
+      "materiality": "cosmetic",
+      "newer": [
+       11936
+      ],
+      "older": [
+       11920
+      ],
+      "proof": "COS-ADDR/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-NAME",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "SymbolsHash",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": true,
+      "legacy": [],
+      "materiality": "cosmetic",
+      "newer": [
+       11952
+      ],
+      "older": [
+       11936
+      ],
+      "proof": "COS-ADDR/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-NAME",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "SymbolsHash",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": true,
+      "legacy": [],
+      "materiality": "cosmetic",
+      "newer": [
+       11968
+      ],
+      "older": [
+       11952
+      ],
+      "proof": "COS-ADDR/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-NAME",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "SymbolsHash",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": true,
+      "legacy": [],
+      "materiality": "cosmetic",
+      "newer": [
+       12144
+      ],
+      "older": [
+       12128
+      ],
+      "proof": "COS-ADDR/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-NAME",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "SymbolsHash",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": true,
+      "legacy": [],
+      "materiality": "unchanged",
+      "newer": [
+       12256
+      ],
+      "older": [
+       12240
+      ],
+      "proof": "UNCH/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-NAME",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "SymbolsHash",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": true,
+      "legacy": [],
+      "materiality": "unchanged",
+      "newer": [
+       12304
+      ],
+      "older": [
+       12288
+      ],
+      "proof": "UNCH/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-NAME",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "SymbolsHash",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": true,
+      "legacy": [],
+      "materiality": "cosmetic",
+      "newer": [
+       12368
+      ],
+      "older": [
+       12352
+      ],
+      "proof": "COS-ADDR/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-NAME",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "SymbolsHash",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": true,
+      "legacy": [],
+      "materiality": "cosmetic",
+      "newer": [
+       12384
+      ],
+      "older": [
+       12368
+      ],
+      "proof": "COS-ADDR/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-NAME",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "SymbolsHash",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": true,
+      "legacy": [],
+      "materiality": "cosmetic",
+      "newer": [
+       12400
+      ],
+      "older": [
+       12384
+      ],
+      "proof": "COS-ADDR/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-NAME",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "SymbolsHash",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": true,
+      "legacy": [],
+      "materiality": "unchanged",
+      "newer": [
+       12432
+      ],
+      "older": [
+       12416
+      ],
+      "proof": "UNCH/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-NAME",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "SymbolsHash",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": true,
+      "legacy": [],
+      "materiality": "cosmetic",
+      "newer": [
+       12528
+      ],
+      "older": [
+       12512
+      ],
+      "proof": "COS-ADDR/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-NAME",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "SymbolsHash",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": true,
+      "legacy": [],
+      "materiality": "cosmetic",
+      "newer": [
+       12544
+      ],
+      "older": [
+       12528
+      ],
+      "proof": "COS-ADDR/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-NAME",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "SymbolsHash",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": true,
+      "legacy": [],
+      "materiality": "cosmetic",
+      "newer": [
+       12560
+      ],
+      "older": [
+       12544
+      ],
+      "proof": "COS-ADDR/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-NAME",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "SymbolsHash",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": true,
+      "legacy": [],
+      "materiality": "cosmetic",
+      "newer": [
+       12784
+      ],
+      "older": [
+       12768
+      ],
+      "proof": "COS-ADDR/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-NAME",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "SymbolsHash",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": true,
+      "legacy": [],
+      "materiality": "cosmetic",
+      "newer": [
+       12976
+      ],
+      "older": [
+       12960
+      ],
+      "proof": "COS-ADDR/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-NAME",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "SymbolsHash",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": true,
+      "legacy": [],
+      "materiality": "cosmetic",
+      "newer": [
+       13104
+      ],
+      "older": [
+       13088
+      ],
+      "proof": "COS-ADDR/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-NAME",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "SymbolsHash",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": true,
+      "legacy": [],
+      "materiality": "cosmetic",
+      "newer": [
+       13232
+      ],
+      "older": [
+       13216
+      ],
+      "proof": "COS-ADDR/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-NAME",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "SymbolsHash",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": true,
+      "legacy": [],
+      "materiality": "cosmetic",
+      "newer": [
+       13360
+      ],
+      "older": [
+       13344
+      ],
+      "proof": "COS-ADDR/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-NAME",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "SymbolsHash",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": true,
+      "legacy": [],
+      "materiality": "cosmetic",
+      "newer": [
+       13504
+      ],
+      "older": [
+       13488
+      ],
+      "proof": "COS-ADDR/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-NAME",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "SymbolsHash",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": true,
+      "legacy": [],
+      "materiality": "cosmetic",
+      "newer": [
+       13712
+      ],
+      "older": [
+       13696
+      ],
+      "proof": "COS-ADDR/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-NAME",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "SymbolsHash",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": true,
+      "legacy": [],
+      "materiality": "cosmetic",
+      "newer": [
+       13920
+      ],
+      "older": [
+       13904
+      ],
+      "proof": "COS-ADDR/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-NAME",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "SymbolsHash",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": true,
+      "legacy": [],
+      "materiality": "cosmetic",
+      "newer": [
+       14128
+      ],
+      "older": [
+       14112
+      ],
+      "proof": "COS-ADDR/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-NAME",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "SymbolsHash",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": true,
+      "legacy": [],
+      "materiality": "cosmetic",
+      "newer": [
+       14256
+      ],
+      "older": [
+       14240
+      ],
+      "proof": "COS-ADDR/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-NAME",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "SymbolsHash",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": true,
+      "legacy": [],
+      "materiality": "unchanged",
+      "newer": [
+       14384
+      ],
+      "older": [
+       14368
+      ],
+      "proof": "UNCH/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-NAME",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "SymbolsHash",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": true,
+      "legacy": [],
+      "materiality": "unchanged",
+      "newer": [
+       14496
+      ],
+      "older": [
+       14480
+      ],
+      "proof": "UNCH/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-NAME",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "SymbolsHash",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": true,
+      "legacy": [],
+      "materiality": "cosmetic",
+      "newer": [
+       14576
+      ],
+      "older": [
+       14560
+      ],
+      "proof": "COS-ADDR/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-NAME",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "SymbolsHash",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": true,
+      "legacy": [],
+      "materiality": "cosmetic",
+      "newer": [
+       14672
+      ],
+      "older": [
+       14656
+      ],
+      "proof": "COS-ADDR/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-NAME",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "SymbolsHash",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": true,
+      "legacy": [],
+      "materiality": "cosmetic",
+      "newer": [
+       14800
+      ],
+      "older": [
+       14784
+      ],
+      "proof": "COS-ADDR/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-NAME",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "SymbolsHash",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": true,
+      "legacy": [],
+      "materiality": "cosmetic",
+      "newer": [
+       14944
+      ],
+      "older": [
+       14928
+      ],
+      "proof": "COS-ADDR/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-NAME",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "SymbolsHash",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": true,
+      "legacy": [],
+      "materiality": "cosmetic",
+      "newer": [
+       14992
+      ],
+      "older": [
+       14976
+      ],
+      "proof": "COS-ADDR/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-NAME",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "SymbolsHash",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": true,
+      "decision": "matched",
+      "edited": "edited",
+      "ghidriff_exact": true,
+      "legacy": [
+       "ghidriff"
+      ],
+      "materiality": "material",
+      "newer": [
+       15040
+      ],
+      "older": [
+       15024
+      ],
+      "proof": "",
+      "truth": "right"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-NAME",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "SymbolsHash",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": true,
+      "legacy": [],
+      "materiality": "cosmetic",
+      "newer": [
+       15248
+      ],
+      "older": [
+       15216
+      ],
+      "proof": "COS-ADDR/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-NAME",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "SymbolsHash",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": true,
+      "legacy": [],
+      "materiality": "unchanged",
+      "newer": [
+       15424
+      ],
+      "older": [
+       15392
+      ],
+      "proof": "UNCH/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-NAME",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "SymbolsHash",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": true,
+      "legacy": [],
+      "materiality": "cosmetic",
+      "newer": [
+       15504
+      ],
+      "older": [
+       15472
+      ],
+      "proof": "COS-ADDR/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-NAME",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "SymbolsHash",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": true,
+      "legacy": [],
+      "materiality": "cosmetic",
+      "newer": [
+       15680
+      ],
+      "older": [
+       15648
+      ],
+      "proof": "COS-ADDR/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-NAME",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "SymbolsHash",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": true,
+      "legacy": [],
+      "materiality": "cosmetic",
+      "newer": [
+       15856
+      ],
+      "older": [
+       15824
+      ],
+      "proof": "COS-ADDR/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-NAME",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "SymbolsHash",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": true,
+      "legacy": [],
+      "materiality": "cosmetic",
+      "newer": [
+       15920
+      ],
+      "older": [
+       15888
+      ],
+      "proof": "COS-ADDR/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-NAME",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "SymbolsHash",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": true,
+      "legacy": [],
+      "materiality": "cosmetic",
+      "newer": [
+       15984
+      ],
+      "older": [
+       15952
+      ],
+      "proof": "COS-ADDR/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-NAME",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "SymbolsHash",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": true,
+      "legacy": [],
+      "materiality": "cosmetic",
+      "newer": [
+       16048
+      ],
+      "older": [
+       16016
+      ],
+      "proof": "COS-ADDR/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-NAME",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "SymbolsHash",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": true,
+      "legacy": [],
+      "materiality": "cosmetic",
+      "newer": [
+       16112
+      ],
+      "older": [
+       16080
+      ],
+      "proof": "COS-ADDR/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-NAME",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "SymbolsHash",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": true,
+      "legacy": [],
+      "materiality": "cosmetic",
+      "newer": [
+       16272
+      ],
+      "older": [
+       16240
+      ],
+      "proof": "COS-ADDR/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-NAME",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "SymbolsHash",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": true,
+      "legacy": [],
+      "materiality": "cosmetic",
+      "newer": [
+       16432
+      ],
+      "older": [
+       16400
+      ],
+      "proof": "COS-ADDR/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-NAME",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "SymbolsHash",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": true,
+      "legacy": [],
+      "materiality": "cosmetic",
+      "newer": [
+       16496
+      ],
+      "older": [
+       16464
+      ],
+      "proof": "COS-ADDR/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-NAME",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "SymbolsHash",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": true,
+      "legacy": [],
+      "materiality": "cosmetic",
+      "newer": [
+       16560
+      ],
+      "older": [
+       16528
+      ],
+      "proof": "COS-ADDR/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-NAME",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "SymbolsHash",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": true,
+      "legacy": [],
+      "materiality": "cosmetic",
+      "newer": [
+       16624
+      ],
+      "older": [
+       16592
+      ],
+      "proof": "COS-ADDR/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-NAME",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "SymbolsHash",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": true,
+      "legacy": [],
+      "materiality": "cosmetic",
+      "newer": [
+       16784
+      ],
+      "older": [
+       16752
+      ],
+      "proof": "COS-ADDR/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-NAME",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "SymbolsHash",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": true,
+      "legacy": [],
+      "materiality": "cosmetic",
+      "newer": [
+       16848
+      ],
+      "older": [
+       16816
+      ],
+      "proof": "COS-ADDR/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-NAME",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "SymbolsHash",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": true,
+      "legacy": [],
+      "materiality": "cosmetic",
+      "newer": [
+       16912
+      ],
+      "older": [
+       16880
+      ],
+      "proof": "COS-ADDR/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-NAME",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "SymbolsHash",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": true,
+      "legacy": [],
+      "materiality": "cosmetic",
+      "newer": [
+       17200
+      ],
+      "older": [
+       17168
+      ],
+      "proof": "COS-ADDR/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-NAME",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "SymbolsHash",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": true,
+      "legacy": [],
+      "materiality": "cosmetic",
+      "newer": [
+       17552
+      ],
+      "older": [
+       17520
+      ],
+      "proof": "COS-ADDR/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-NAME",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "SymbolsHash",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": true,
+      "legacy": [],
+      "materiality": "cosmetic",
+      "newer": [
+       17904
+      ],
+      "older": [
+       17872
+      ],
+      "proof": "COS-ADDR/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-NAME",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "SymbolsHash",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": true,
+      "legacy": [],
+      "materiality": "cosmetic",
+      "newer": [
+       18256
+      ],
+      "older": [
+       18224
+      ],
+      "proof": "COS-ADDR/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-NAME",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "SymbolsHash",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": true,
+      "legacy": [],
+      "materiality": "cosmetic",
+      "newer": [
+       18672
+      ],
+      "older": [
+       18640
+      ],
+      "proof": "COS-ADDR/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-NAME",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "SymbolsHash",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": true,
+      "legacy": [],
+      "materiality": "unchanged",
+      "newer": [
+       19040
+      ],
+      "older": [
+       19008
+      ],
+      "proof": "UNCH/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-NAME",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "SymbolsHash",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": true,
+      "legacy": [],
+      "materiality": "unchanged",
+      "newer": [
+       19072
+      ],
+      "older": [
+       19040
+      ],
+      "proof": "UNCH/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-NAME",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "SymbolsHash",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": true,
+      "legacy": [],
+      "materiality": "unchanged",
+      "newer": [
+       19104
+      ],
+      "older": [
+       19072
+      ],
+      "proof": "UNCH/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-NAME",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "SymbolsHash",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": true,
+      "legacy": [],
+      "materiality": "unchanged",
+      "newer": [
+       19136
+      ],
+      "older": [
+       19104
+      ],
+      "proof": "UNCH/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-NAME",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "SymbolsHash",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": true,
+      "legacy": [],
+      "materiality": "unchanged",
+      "newer": [
+       19168
+      ],
+      "older": [
+       19136
+      ],
+      "proof": "UNCH/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-NAME",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "SymbolsHash",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": true,
+      "legacy": [],
+      "materiality": "unchanged",
+      "newer": [
+       19200
+      ],
+      "older": [
+       19168
+      ],
+      "proof": "UNCH/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-NAME",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "SymbolsHash",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": true,
+      "legacy": [],
+      "materiality": "unchanged",
+      "newer": [
+       19232
+      ],
+      "older": [
+       19200
+      ],
+      "proof": "UNCH/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-NAME",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "SymbolsHash",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": true,
+      "legacy": [],
+      "materiality": "unchanged",
+      "newer": [
+       19264
+      ],
+      "older": [
+       19232
+      ],
+      "proof": "UNCH/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-NAME",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "SymbolsHash",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": true,
+      "legacy": [],
+      "materiality": "unchanged",
+      "newer": [
+       19296
+      ],
+      "older": [
+       19264
+      ],
+      "proof": "UNCH/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-NAME",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "SymbolsHash",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": true,
+      "legacy": [],
+      "materiality": "unchanged",
+      "newer": [
+       19328
+      ],
+      "older": [
+       19296
+      ],
+      "proof": "UNCH/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-NAME",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "SymbolsHash",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": true,
+      "legacy": [],
+      "materiality": "cosmetic",
+      "newer": [
+       19360
+      ],
+      "older": [
+       19328
+      ],
+      "proof": "COS-ADDR/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-NAME",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "SymbolsHash",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": true,
+      "legacy": [],
+      "materiality": "cosmetic",
+      "newer": [
+       19888
+      ],
+      "older": [
+       19856
+      ],
+      "proof": "COS-ADDR/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-NAME",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "SymbolsHash",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": true,
+      "legacy": [],
+      "materiality": "cosmetic",
+      "newer": [
+       19904
+      ],
+      "older": [
+       19872
+      ],
+      "proof": "COS-ADDR/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-BODY",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "ExactBytesFunctionHasher",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": true,
+      "legacy": [],
+      "materiality": "unchanged",
+      "newer": [
+       19920
+      ],
+      "older": [
+       19888
+      ],
+      "proof": "UNCH/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-BODY",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "ExactInstructionsFunctionHasher",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": false,
+      "legacy": [],
+      "materiality": "cosmetic",
+      "newer": [
+       19968
+      ],
+      "older": [
+       19936
+      ],
+      "proof": "COS-ADDR/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-BODY",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "ExactBytesFunctionHasher",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": true,
+      "legacy": [],
+      "materiality": "unchanged",
+      "newer": [
+       20160
+      ],
+      "older": [
+       20128
+      ],
+      "proof": "UNCH/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-BODY",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "ExactInstructionsFunctionHasher",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": false,
+      "legacy": [],
+      "materiality": "cosmetic",
+      "newer": [
+       20544
+      ],
+      "older": [
+       20512
+      ],
+      "proof": "COS-ADDR/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-BODY",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "ExactBytesFunctionHasher",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": true,
+      "legacy": [],
+      "materiality": "unchanged",
+      "newer": [
+       20832
+      ],
+      "older": [
+       20800
+      ],
+      "proof": "UNCH/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-BODY",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "ExactInstructionsFunctionHasher",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": false,
+      "legacy": [],
+      "materiality": "cosmetic",
+      "newer": [
+       20976
+      ],
+      "older": [
+       20944
+      ],
+      "proof": "COS-ADDR/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-BODY",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "ExactInstructionsFunctionHasher",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": false,
+      "legacy": [],
+      "materiality": "cosmetic",
+      "newer": [
+       21472
+      ],
+      "older": [
+       21440
+      ],
+      "proof": "COS-ADDR/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-BODY",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "ExactInstructionsFunctionHasher",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": false,
+      "legacy": [],
+      "materiality": "cosmetic",
+      "newer": [
+       21920
+      ],
+      "older": [
+       21888
+      ],
+      "proof": "COS-ADDR/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-BODY",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "ExactInstructionsFunctionHasher",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": false,
+      "legacy": [],
+      "materiality": "cosmetic",
+      "newer": [
+       22272
+      ],
+      "older": [
+       22240
+      ],
+      "proof": "COS-ADDR/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-BODY",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "ExactInstructionsFunctionHasher",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": false,
+      "legacy": [],
+      "materiality": "cosmetic",
+      "newer": [
+       22752
+      ],
+      "older": [
+       22720
+      ],
+      "proof": "COS-ADDR/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-BODY",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "ExactInstructionsFunctionHasher",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": false,
+      "legacy": [],
+      "materiality": "cosmetic",
+      "newer": [
+       23232
+      ],
+      "older": [
+       23200
+      ],
+      "proof": "COS-ADDR/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-BODY",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "ExactInstructionsFunctionHasher",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": false,
+      "legacy": [],
+      "materiality": "cosmetic",
+      "newer": [
+       24256
+      ],
+      "older": [
+       24224
+      ],
+      "proof": "COS-ADDR/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-NAME",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "SymbolsHash",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": true,
+      "legacy": [],
+      "materiality": "cosmetic",
+      "newer": [
+       26096
+      ],
+      "older": [
+       26064
+      ],
+      "proof": "COS-ADDR/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-NAME",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "SymbolsHash",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": true,
+      "legacy": [],
+      "materiality": "unchanged",
+      "newer": [
+       26608
+      ],
+      "older": [
+       26576
+      ],
+      "proof": "UNCH/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-NAME",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "SymbolsHash",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": true,
+      "legacy": [],
+      "materiality": "unchanged",
+      "newer": [
+       26624
+      ],
+      "older": [
+       26592
+      ],
+      "proof": "UNCH/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-NAME",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "SymbolsHash",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": true,
+      "legacy": [],
+      "materiality": "unchanged",
+      "newer": [
+       26640
+      ],
+      "older": [
+       26608
+      ],
+      "proof": "UNCH/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-NAME",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "SymbolsHash",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": true,
+      "legacy": [],
+      "materiality": "unchanged",
+      "newer": [
+       26736
+      ],
+      "older": [
+       26704
+      ],
+      "proof": "UNCH/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-NAME",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "SymbolsHash",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": true,
+      "legacy": [],
+      "materiality": "unchanged",
+      "newer": [
+       26832
+      ],
+      "older": [
+       26800
+      ],
+      "proof": "UNCH/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-NAME",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "SymbolsHash",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": true,
+      "legacy": [],
+      "materiality": "cosmetic",
+      "newer": [
+       26864
+      ],
+      "older": [
+       26832
+      ],
+      "proof": "COS-ADDR/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-NAME",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "SymbolsHash",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": true,
+      "legacy": [],
+      "materiality": "cosmetic",
+      "newer": [
+       26960
+      ],
+      "older": [
+       26928
+      ],
+      "proof": "COS-ADDR/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-NAME",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "SymbolsHash",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": true,
+      "legacy": [],
+      "materiality": "unchanged",
+      "newer": [
+       27056
+      ],
+      "older": [
+       27024
+      ],
+      "proof": "UNCH/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-NAME",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "SymbolsHash",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": true,
+      "legacy": [],
+      "materiality": "unchanged",
+      "newer": [
+       27104
+      ],
+      "older": [
+       27072
+      ],
+      "proof": "UNCH/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-NAME",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "SymbolsHash",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": true,
+      "legacy": [],
+      "materiality": "unchanged",
+      "newer": [
+       27152
+      ],
+      "older": [
+       27120
+      ],
+      "proof": "UNCH/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-NAME",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "SymbolsHash",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": true,
+      "legacy": [],
+      "materiality": "unchanged",
+      "newer": [
+       27168
+      ],
+      "older": [
+       27136
+      ],
+      "proof": "UNCH/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-NAME",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "SymbolsHash",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": true,
+      "legacy": [],
+      "materiality": "unchanged",
+      "newer": [
+       27184
+      ],
+      "older": [
+       27152
+      ],
+      "proof": "UNCH/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-NAME",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "SymbolsHash",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": true,
+      "legacy": [],
+      "materiality": "unchanged",
+      "newer": [
+       27296
+      ],
+      "older": [
+       27264
+      ],
+      "proof": "UNCH/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-BODY",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "ExactInstructionsFunctionHasher",
+        "tier": "A"
+       },
+       {
+        "cls": "E-BODY",
+        "component": "K2",
+        "source": "pt-bytes",
+        "step": "P05-masked-exact",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": false,
+      "legacy": [],
+      "materiality": "review",
+      "newer": [
+       27408
+      ],
+      "older": [
+       27376
+      ],
+      "proof": "",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-BODY",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "ExactInstructionsFunctionHasher",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": false,
+      "legacy": [],
+      "materiality": "review",
+      "newer": [
+       27488
+      ],
+      "older": [
+       27456
+      ],
+      "proof": "",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-BODY",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "ExactInstructionsFunctionHasher",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": false,
+      "legacy": [],
+      "materiality": "cosmetic",
+      "newer": [
+       27616
+      ],
+      "older": [
+       27584
+      ],
+      "proof": "COS-ADDR/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-NAME",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "SymbolsHash",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": true,
+      "legacy": [],
+      "materiality": "unchanged",
+      "newer": [
+       27648
+      ],
+      "older": [
+       27616
+      ],
+      "proof": "UNCH/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-NAME",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "SymbolsHash",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": true,
+      "legacy": [],
+      "materiality": "review",
+      "newer": [
+       27696
+      ],
+      "older": [
+       27664
+      ],
+      "proof": "",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-LAYOUT",
+        "component": "K1",
+        "source": "pt-ladder",
+        "step": "P18-layout-gap",
+        "tier": "C"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "candidate",
+      "edited": "",
+      "ghidriff_exact": false,
+      "legacy": [],
+      "materiality": "unchanged",
+      "newer": [
+       27840
+      ],
+      "older": [
+       27808
+      ],
+      "proof": "UNCH/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-BODY",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "ExactInstructionsFunctionHasher",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": false,
+      "legacy": [],
+      "materiality": "cosmetic",
+      "newer": [
+       27856
+      ],
+      "older": [
+       27824
+      ],
+      "proof": "COS-ADDR/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-BODY",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "ExactInstructionsFunctionHasher",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": false,
+      "legacy": [],
+      "materiality": "cosmetic",
+      "newer": [
+       27968
+      ],
+      "older": [
+       27936
+      ],
+      "proof": "COS-ADDR/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-BODY",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "ExactInstructionsFunctionHasher",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": false,
+      "legacy": [],
+      "materiality": "review",
+      "newer": [
+       28336
+      ],
+      "older": [
+       28304
+      ],
+      "proof": "",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-BODY",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "ExactInstructionsFunctionHasher",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": false,
+      "legacy": [],
+      "materiality": "cosmetic",
+      "newer": [
+       29200
+      ],
+      "older": [
+       29168
+      ],
+      "proof": "COS-ADDR/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-BODY",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "ExactInstructionsFunctionHasher",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": false,
+      "legacy": [],
+      "materiality": "cosmetic",
+      "newer": [
+       29328
+      ],
+      "older": [
+       29296
+      ],
+      "proof": "COS-ADDR/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-BODY",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "ExactInstructionsFunctionHasher",
+        "tier": "A"
+       },
+       {
+        "cls": "E-BODY",
+        "component": "K2",
+        "source": "pt-bytes",
+        "step": "P05-masked-exact",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": false,
+      "legacy": [],
+      "materiality": "cosmetic",
+      "newer": [
+       29456
+      ],
+      "older": [
+       29424
+      ],
+      "proof": "COS-ADDR/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-BODY",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "ExactInstructionsFunctionHasher",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": true,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": false,
+      "legacy": [],
+      "materiality": "review",
+      "newer": [
+       29616
+      ],
+      "older": [
+       29584
+      ],
+      "proof": "",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-BODY",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "ExactBytesFunctionHasher",
+        "tier": "A"
+       },
+       {
+        "cls": "E-BODY",
+        "component": "K2",
+        "source": "pt-bytes",
+        "step": "P04-bytes-exact",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": true,
+      "legacy": [],
+      "materiality": "unchanged",
+      "newer": [
+       29872
+      ],
+      "older": [
+       29840
+      ],
+      "proof": "UNCH/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-BODY",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "ExactBytesFunctionHasher",
+        "tier": "A"
+       },
+       {
+        "cls": "E-BODY",
+        "component": "K2",
+        "source": "pt-bytes",
+        "step": "P04-bytes-exact",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": true,
+      "legacy": [],
+      "materiality": "unchanged",
+      "newer": [
+       29920
+      ],
+      "older": [
+       29888
+      ],
+      "proof": "UNCH/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-BODY",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "ExactInstructionsFunctionHasher",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": false,
+      "legacy": [],
+      "materiality": "cosmetic",
+      "newer": [
+       30000
+      ],
+      "older": [
+       29968
+      ],
+      "proof": "COS-ADDR/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-BODY",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "ExactInstructionsFunctionHasher",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": false,
+      "legacy": [],
+      "materiality": "cosmetic",
+      "newer": [
+       30176
+      ],
+      "older": [
+       30144
+      ],
+      "proof": "COS-ADDR/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-BODY",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "ExactInstructionsFunctionHasher",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": false,
+      "legacy": [],
+      "materiality": "cosmetic",
+      "newer": [
+       30304
+      ],
+      "older": [
+       30272
+      ],
+      "proof": "COS-ADDR/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-BODY",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "ExactInstructionsFunctionHasher",
+        "tier": "A"
+       },
+       {
+        "cls": "E-BODY",
+        "component": "K2",
+        "source": "pt-bytes",
+        "step": "P05-masked-exact",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": false,
+      "legacy": [],
+      "materiality": "cosmetic",
+      "newer": [
+       30368
+      ],
+      "older": [
+       30336
+      ],
+      "proof": "COS-ADDR/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-BODY",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "ExactInstructionsFunctionHasher",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": false,
+      "legacy": [],
+      "materiality": "cosmetic",
+      "newer": [
+       30496
+      ],
+      "older": [
+       30464
+      ],
+      "proof": "COS-ADDR/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-BODY",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "ExactInstructionsFunctionHasher",
+        "tier": "A"
+       },
+       {
+        "cls": "E-BODY",
+        "component": "K2",
+        "source": "pt-bytes",
+        "step": "P05-masked-exact",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": false,
+      "legacy": [],
+      "materiality": "cosmetic",
+      "newer": [
+       30560
+      ],
+      "older": [
+       30528
+      ],
+      "proof": "COS-ADDR/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-BODY",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "ExactInstructionsFunctionHasher",
+        "tier": "A"
+       },
+       {
+        "cls": "E-BODY",
+        "component": "K2",
+        "source": "pt-bytes",
+        "step": "P05-masked-exact",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": false,
+      "legacy": [],
+      "materiality": "review",
+      "newer": [
+       30704
+      ],
+      "older": [
+       30672
+      ],
+      "proof": "",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-LAYOUT",
+        "component": "K1",
+        "source": "pt-ladder",
+        "step": "P18-layout-gap",
+        "tier": "C"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "candidate",
+      "edited": "",
+      "ghidriff_exact": false,
+      "legacy": [],
+      "materiality": "unchanged",
+      "newer": [
+       30896
+      ],
+      "older": [
+       30864
+      ],
+      "proof": "UNCH/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-BODY",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "ExactBytesFunctionHasher",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": true,
+      "legacy": [],
+      "materiality": "unchanged",
+      "newer": [
+       30912
+      ],
+      "older": [
+       30880
+      ],
+      "proof": "UNCH/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-CALL",
+        "component": "K1",
+        "source": "pt-ladder",
+        "step": "PV-implied-match",
+        "tier": "C"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "candidate",
+      "edited": "",
+      "ghidriff_exact": false,
+      "legacy": [],
+      "materiality": "unchanged",
+      "newer": [
+       30976
+      ],
+      "older": [
+       30944
+      ],
+      "proof": "UNCH/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-CALL",
+        "component": "K1",
+        "source": "pt-ladder",
+        "step": "PV-implied-match",
+        "tier": "C"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "candidate",
+      "edited": "",
+      "ghidriff_exact": false,
+      "legacy": [],
+      "materiality": "unchanged",
+      "newer": [
+       30992
+      ],
+      "older": [
+       30960
+      ],
+      "proof": "UNCH/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-BODY",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "ExactInstructionsFunctionHasher",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": false,
+      "legacy": [],
+      "materiality": "cosmetic",
+      "newer": [
+       31008
+      ],
+      "older": [
+       30976
+      ],
+      "proof": "COS-ADDR/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-BODY",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "ExactBytesFunctionHasher",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": true,
+      "legacy": [],
+      "materiality": "unchanged",
+      "newer": [
+       31264
+      ],
+      "older": [
+       31232
+      ],
+      "proof": "UNCH/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-BODY",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "ExactBytesFunctionHasher",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": true,
+      "legacy": [],
+      "materiality": "unchanged",
+      "newer": [
+       31328
+      ],
+      "older": [
+       31296
+      ],
+      "proof": "UNCH/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-BODY",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "ExactBytesFunctionHasher",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": true,
+      "legacy": [],
+      "materiality": "unchanged",
+      "newer": [
+       31472
+      ],
+      "older": [
+       31440
+      ],
+      "proof": "UNCH/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-BODY",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "ExactBytesFunctionHasher",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": true,
+      "legacy": [],
+      "materiality": "unchanged",
+      "newer": [
+       31584
+      ],
+      "older": [
+       31552
+      ],
+      "proof": "UNCH/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-BODY",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "ExactBytesFunctionHasher",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": true,
+      "legacy": [],
+      "materiality": "unchanged",
+      "newer": [
+       31744
+      ],
+      "older": [
+       31712
+      ],
+      "proof": "UNCH/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-BODY",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "ExactBytesFunctionHasher",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": true,
+      "legacy": [],
+      "materiality": "unchanged",
+      "newer": [
+       31904
+      ],
+      "older": [
+       31872
+      ],
+      "proof": "UNCH/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-BODY",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "ExactInstructionsFunctionHasher",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": false,
+      "legacy": [],
+      "materiality": "cosmetic",
+      "newer": [
+       32016
+      ],
+      "older": [
+       31984
+      ],
+      "proof": "COS-ADDR/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-BODY",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "ExactBytesFunctionHasher",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": true,
+      "legacy": [],
+      "materiality": "unchanged",
+      "newer": [
+       45920
+      ],
+      "older": [
+       45888
+      ],
+      "proof": "UNCH/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-BODY",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "ExactBytesFunctionHasher",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": true,
+      "legacy": [],
+      "materiality": "unchanged",
+      "newer": [
+       46000
+      ],
+      "older": [
+       45968
+      ],
+      "proof": "UNCH/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-BODY",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "ExactBytesFunctionHasher",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": true,
+      "legacy": [],
+      "materiality": "unchanged",
+      "newer": [
+       46080
+      ],
+      "older": [
+       46048
+      ],
+      "proof": "UNCH/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-BODY",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "ExactBytesFunctionHasher",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": true,
+      "legacy": [],
+      "materiality": "unchanged",
+      "newer": [
+       46144
+      ],
+      "older": [
+       46112
+      ],
+      "proof": "UNCH/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-BODY",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "ExactBytesFunctionHasher",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": true,
+      "legacy": [],
+      "materiality": "unchanged",
+      "newer": [
+       46336
+      ],
+      "older": [
+       46304
+      ],
+      "proof": "UNCH/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-BODY",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "ExactBytesFunctionHasher",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": true,
+      "legacy": [],
+      "materiality": "unchanged",
+      "newer": [
+       47280
+      ],
+      "older": [
+       47248
+      ],
+      "proof": "UNCH/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-BODY",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "ExactBytesFunctionHasher",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": true,
+      "legacy": [],
+      "materiality": "unchanged",
+      "newer": [
+       47328
+      ],
+      "older": [
+       47296
+      ],
+      "proof": "UNCH/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-BODY",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "ExactInstructionsFunctionHasher",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": false,
+      "legacy": [],
+      "materiality": "cosmetic",
+      "newer": [
+       47584
+      ],
+      "older": [
+       47552
+      ],
+      "proof": "COS-ADDR/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-BODY",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "ExactInstructionsFunctionHasher",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": false,
+      "legacy": [],
+      "materiality": "cosmetic",
+      "newer": [
+       53920
+      ],
+      "older": [
+       53888
+      ],
+      "proof": "COS-ADDR/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-BODY",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "ExactInstructionsFunctionHasher",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": false,
+      "legacy": [],
+      "materiality": "cosmetic",
+      "newer": [
+       54080
+      ],
+      "older": [
+       54048
+      ],
+      "proof": "COS-ADDR/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-BODY",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "ExactBytesFunctionHasher",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": true,
+      "legacy": [],
+      "materiality": "unchanged",
+      "newer": [
+       54240
+      ],
+      "older": [
+       54208
+      ],
+      "proof": "UNCH/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-BODY",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "ExactInstructionsFunctionHasher",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": false,
+      "legacy": [],
+      "materiality": "cosmetic",
+      "newer": [
+       54640
+      ],
+      "older": [
+       54608
+      ],
+      "proof": "COS-ADDR/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-BODY",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "ExactBytesFunctionHasher",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": true,
+      "legacy": [],
+      "materiality": "unchanged",
+      "newer": [
+       54880
+      ],
+      "older": [
+       54848
+      ],
+      "proof": "UNCH/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-BODY",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "ExactBytesFunctionHasher",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": true,
+      "legacy": [],
+      "materiality": "unchanged",
+      "newer": [
+       54976
+      ],
+      "older": [
+       54944
+      ],
+      "proof": "UNCH/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-BODY",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "ExactBytesFunctionHasher",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": true,
+      "legacy": [],
+      "materiality": "unchanged",
+      "newer": [
+       55392
+      ],
+      "older": [
+       55360
+      ],
+      "proof": "UNCH/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-BODY",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "ExactInstructionsFunctionHasher",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": false,
+      "legacy": [],
+      "materiality": "cosmetic",
+      "newer": [
+       55728
+      ],
+      "older": [
+       55696
+      ],
+      "proof": "COS-ADDR/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-BODY",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "ExactBytesFunctionHasher",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": true,
+      "legacy": [],
+      "materiality": "unchanged",
+      "newer": [
+       55808
+      ],
+      "older": [
+       55776
+      ],
+      "proof": "UNCH/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-BODY",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "ExactBytesFunctionHasher",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": true,
+      "legacy": [],
+      "materiality": "unchanged",
+      "newer": [
+       55968
+      ],
+      "older": [
+       55936
+      ],
+      "proof": "UNCH/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-BODY",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "ExactBytesFunctionHasher",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": true,
+      "legacy": [],
+      "materiality": "unchanged",
+      "newer": [
+       57280
+      ],
+      "older": [
+       57248
+      ],
+      "proof": "UNCH/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-BODY",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "ExactBytesFunctionHasher",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": true,
+      "legacy": [],
+      "materiality": "unchanged",
+      "newer": [
+       58224
+      ],
+      "older": [
+       58192
+      ],
+      "proof": "UNCH/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-BODY",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "ExactBytesFunctionHasher",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": true,
+      "legacy": [],
+      "materiality": "unchanged",
+      "newer": [
+       58560
+      ],
+      "older": [
+       58528
+      ],
+      "proof": "UNCH/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-BODY",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "ExactBytesFunctionHasher",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": true,
+      "legacy": [],
+      "materiality": "unchanged",
+      "newer": [
+       59552
+      ],
+      "older": [
+       59520
+      ],
+      "proof": "UNCH/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-BODY",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "ExactBytesFunctionHasher",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": true,
+      "legacy": [],
+      "materiality": "unchanged",
+      "newer": [
+       59776
+      ],
+      "older": [
+       59744
+      ],
+      "proof": "UNCH/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-BODY",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "ExactBytesFunctionHasher",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": true,
+      "legacy": [],
+      "materiality": "unchanged",
+      "newer": [
+       59936
+      ],
+      "older": [
+       59904
+      ],
+      "proof": "UNCH/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-BODY",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "ExactBytesFunctionHasher",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": true,
+      "legacy": [],
+      "materiality": "unchanged",
+      "newer": [
+       60160
+      ],
+      "older": [
+       60128
+      ],
+      "proof": "UNCH/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-BODY",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "ExactBytesFunctionHasher",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": true,
+      "legacy": [],
+      "materiality": "unchanged",
+      "newer": [
+       60512
+      ],
+      "older": [
+       60480
+      ],
+      "proof": "UNCH/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-BODY",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "ExactInstructionsFunctionHasher",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": false,
+      "legacy": [],
+      "materiality": "cosmetic",
+      "newer": [
+       61728
+      ],
+      "older": [
+       61696
+      ],
+      "proof": "COS-ADDR/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-BODY",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "ExactBytesFunctionHasher",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": true,
+      "legacy": [],
+      "materiality": "unchanged",
+      "newer": [
+       64304
+      ],
+      "older": [
+       64272
+      ],
+      "proof": "UNCH/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-BODY",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "ExactBytesFunctionHasher",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": true,
+      "legacy": [],
+      "materiality": "unchanged",
+      "newer": [
+       64368
+      ],
+      "older": [
+       64336
+      ],
+      "proof": "UNCH/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-BODY",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "ExactBytesFunctionHasher",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": true,
+      "legacy": [],
+      "materiality": "unchanged",
+      "newer": [
+       64496
+      ],
+      "older": [
+       64464
+      ],
+      "proof": "UNCH/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-BODY",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "ExactBytesFunctionHasher",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": true,
+      "legacy": [],
+      "materiality": "unchanged",
+      "newer": [
+       64544
+      ],
+      "older": [
+       64512
+      ],
+      "proof": "UNCH/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-BODY",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "ExactInstructionsFunctionHasher",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": false,
+      "legacy": [],
+      "materiality": "cosmetic",
+      "newer": [
+       64928
+      ],
+      "older": [
+       64896
+      ],
+      "proof": "COS-ADDR/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-BODY",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "ExactInstructionsFunctionHasher",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": false,
+      "legacy": [],
+      "materiality": "cosmetic",
+      "newer": [
+       70592
+      ],
+      "older": [
+       70560
+      ],
+      "proof": "COS-ADDR/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-BODY",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "ExactBytesFunctionHasher",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": true,
+      "legacy": [],
+      "materiality": "unchanged",
+      "newer": [
+       72912
+      ],
+      "older": [
+       72880
+      ],
+      "proof": "UNCH/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-BODY",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "ExactBytesFunctionHasher",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": true,
+      "legacy": [],
+      "materiality": "unchanged",
+      "newer": [
+       73184
+      ],
+      "older": [
+       73152
+      ],
+      "proof": "UNCH/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-BODY",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "ExactInstructionsFunctionHasher",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": false,
+      "legacy": [],
+      "materiality": "cosmetic",
+      "newer": [
+       73248
+      ],
+      "older": [
+       73216
+      ],
+      "proof": "COS-ADDR/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-BODY",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "ExactInstructionsFunctionHasher",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": false,
+      "legacy": [],
+      "materiality": "cosmetic",
+      "newer": [
+       73408
+      ],
+      "older": [
+       73376
+      ],
+      "proof": "COS-ADDR/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-BODY",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "ExactInstructionsFunctionHasher",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": false,
+      "legacy": [],
+      "materiality": "cosmetic",
+      "newer": [
+       74448
+      ],
+      "older": [
+       74416
+      ],
+      "proof": "COS-ADDR/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-BODY",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "ExactInstructionsFunctionHasher",
+        "tier": "A"
+       },
+       {
+        "cls": "E-BODY",
+        "component": "K2",
+        "source": "pt-bytes",
+        "step": "P05-masked-exact",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": false,
+      "legacy": [],
+      "materiality": "cosmetic",
+      "newer": [
+       74688
+      ],
+      "older": [
+       74656
+      ],
+      "proof": "COS-ADDR/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-BODY",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "ExactInstructionsFunctionHasher",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": false,
+      "legacy": [],
+      "materiality": "cosmetic",
+      "newer": [
+       74768
+      ],
+      "older": [
+       74736
+      ],
+      "proof": "COS-ADDR/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-BODY",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "ExactInstructionsFunctionHasher",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": false,
+      "legacy": [],
+      "materiality": "cosmetic",
+      "newer": [
+       75024
+      ],
+      "older": [
+       74992
+      ],
+      "proof": "COS-ADDR/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-BODY",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "ExactBytesFunctionHasher",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": true,
+      "legacy": [],
+      "materiality": "unchanged",
+      "newer": [
+       75136
+      ],
+      "older": [
+       75104
+      ],
+      "proof": "UNCH/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-BODY",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "ExactInstructionsFunctionHasher",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": false,
+      "legacy": [],
+      "materiality": "cosmetic",
+      "newer": [
+       75328
+      ],
+      "older": [
+       75296
+      ],
+      "proof": "COS-ADDR/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-BODY",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "ExactBytesFunctionHasher",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": true,
+      "legacy": [],
+      "materiality": "unchanged",
+      "newer": [
+       75520
+      ],
+      "older": [
+       75488
+      ],
+      "proof": "UNCH/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-BODY",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "ExactInstructionsFunctionHasher",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": false,
+      "legacy": [],
+      "materiality": "cosmetic",
+      "newer": [
+       75888
+      ],
+      "older": [
+       75856
+      ],
+      "proof": "COS-ADDR/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-BODY",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "ExactBytesFunctionHasher",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": true,
+      "legacy": [],
+      "materiality": "unchanged",
+      "newer": [
+       76288
+      ],
+      "older": [
+       76256
+      ],
+      "proof": "UNCH/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-BODY",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "ExactBytesFunctionHasher",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": true,
+      "legacy": [],
+      "materiality": "unchanged",
+      "newer": [
+       76592
+      ],
+      "older": [
+       76560
+      ],
+      "proof": "UNCH/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-BODY",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "ExactBytesFunctionHasher",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": true,
+      "legacy": [],
+      "materiality": "unchanged",
+      "newer": [
+       76672
+      ],
+      "older": [
+       76640
+      ],
+      "proof": "UNCH/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-BODY",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "ExactBytesFunctionHasher",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": true,
+      "legacy": [],
+      "materiality": "unchanged",
+      "newer": [
+       77136
+      ],
+      "older": [
+       77104
+      ],
+      "proof": "UNCH/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-BODY",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "ExactBytesFunctionHasher",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": true,
+      "legacy": [],
+      "materiality": "unchanged",
+      "newer": [
+       77408
+      ],
+      "older": [
+       77376
+      ],
+      "proof": "UNCH/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-BODY",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "ExactBytesFunctionHasher",
+        "tier": "A"
+       },
+       {
+        "cls": "E-BODY",
+        "component": "K2",
+        "source": "pt-bytes",
+        "step": "P04-bytes-exact",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": true,
+      "legacy": [],
+      "materiality": "unchanged",
+      "newer": [
+       77696
+      ],
+      "older": [
+       77664
+      ],
+      "proof": "UNCH/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-BODY",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "ExactBytesFunctionHasher",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": true,
+      "legacy": [],
+      "materiality": "unchanged",
+      "newer": [
+       77744
+      ],
+      "older": [
+       77712
+      ],
+      "proof": "UNCH/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-BODY",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "ExactBytesFunctionHasher",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": true,
+      "legacy": [],
+      "materiality": "unchanged",
+      "newer": [
+       78000
+      ],
+      "older": [
+       77968
+      ],
+      "proof": "UNCH/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-BODY",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "ExactBytesFunctionHasher",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": true,
+      "legacy": [],
+      "materiality": "unchanged",
+      "newer": [
+       78160
+      ],
+      "older": [
+       78128
+      ],
+      "proof": "UNCH/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-BODY",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "ExactBytesFunctionHasher",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": true,
+      "legacy": [],
+      "materiality": "unchanged",
+      "newer": [
+       78240
+      ],
+      "older": [
+       78208
+      ],
+      "proof": "UNCH/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-BODY",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "ExactBytesFunctionHasher",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": true,
+      "legacy": [],
+      "materiality": "unchanged",
+      "newer": [
+       78368
+      ],
+      "older": [
+       78336
+      ],
+      "proof": "UNCH/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-BODY",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "ExactBytesFunctionHasher",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": true,
+      "legacy": [],
+      "materiality": "unchanged",
+      "newer": [
+       78480
+      ],
+      "older": [
+       78448
+      ],
+      "proof": "UNCH/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-BODY",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "ExactBytesFunctionHasher",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": true,
+      "legacy": [],
+      "materiality": "unchanged",
+      "newer": [
+       78528
+      ],
+      "older": [
+       78496
+      ],
+      "proof": "UNCH/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-BODY",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "ExactBytesFunctionHasher",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": true,
+      "legacy": [],
+      "materiality": "unchanged",
+      "newer": [
+       78576
+      ],
+      "older": [
+       78544
+      ],
+      "proof": "UNCH/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-BODY",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "ExactInstructionsFunctionHasher",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": false,
+      "legacy": [],
+      "materiality": "cosmetic",
+      "newer": [
+       78624
+      ],
+      "older": [
+       78592
+      ],
+      "proof": "COS-ADDR/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-BODY",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "ExactBytesFunctionHasher",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": true,
+      "legacy": [],
+      "materiality": "unchanged",
+      "newer": [
+       78768
+      ],
+      "older": [
+       78736
+      ],
+      "proof": "UNCH/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-BODY",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "ExactBytesFunctionHasher",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": true,
+      "legacy": [],
+      "materiality": "unchanged",
+      "newer": [
+       78848
+      ],
+      "older": [
+       78816
+      ],
+      "proof": "UNCH/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-BODY",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "ExactBytesFunctionHasher",
+        "tier": "A"
+       },
+       {
+        "cls": "E-BODY",
+        "component": "K2",
+        "source": "pt-bytes",
+        "step": "P04-bytes-exact",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": true,
+      "legacy": [],
+      "materiality": "unchanged",
+      "newer": [
+       79120
+      ],
+      "older": [
+       79088
+      ],
+      "proof": "UNCH/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-BODY",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "ExactBytesFunctionHasher",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": true,
+      "legacy": [],
+      "materiality": "unchanged",
+      "newer": [
+       79152
+      ],
+      "older": [
+       79120
+      ],
+      "proof": "UNCH/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-BODY",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "ExactBytesFunctionHasher",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": true,
+      "legacy": [],
+      "materiality": "unchanged",
+      "newer": [
+       79376
+      ],
+      "older": [
+       79344
+      ],
+      "proof": "UNCH/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-BODY",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "ExactInstructionsFunctionHasher",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": false,
+      "legacy": [],
+      "materiality": "cosmetic",
+      "newer": [
+       79488
+      ],
+      "older": [
+       79456
+      ],
+      "proof": "COS-ADDR/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-BODY",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "ExactInstructionsFunctionHasher",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": false,
+      "legacy": [],
+      "materiality": "cosmetic",
+      "newer": [
+       79824
+      ],
+      "older": [
+       79792
+      ],
+      "proof": "COS-ADDR/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-BODY",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "ExactInstructionsFunctionHasher",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": false,
+      "legacy": [],
+      "materiality": "cosmetic",
+      "newer": [
+       79936
+      ],
+      "older": [
+       79904
+      ],
+      "proof": "COS-ADDR/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-BODY",
+        "component": "K1",
+        "source": "ghidriff",
+        "step": "ExactInstructionsFunctionHasher",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": false,
+      "legacy": [],
+      "materiality": "cosmetic",
+      "newer": [
+       80224
+      ],
+      "older": [
+       80192
+      ],
+      "proof": "COS-ADDR/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-NAME",
+        "component": "K1",
+        "source": "pt-ladder",
+        "step": "P01-import-key",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": false,
+      "legacy": [],
+      "materiality": "cosmetic",
+      "newer": [
+       80336
+      ],
+      "older": [
+       80304
+      ],
+      "proof": "COS-ADDR/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-NAME",
+        "component": "K1",
+        "source": "pt-ladder",
+        "step": "P01-import-key",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": false,
+      "legacy": [],
+      "materiality": "cosmetic",
+      "newer": [
+       80344
+      ],
+      "older": [
+       80312
+      ],
+      "proof": "COS-ADDR/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-NAME",
+        "component": "K1",
+        "source": "pt-ladder",
+        "step": "P01-import-key",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": false,
+      "legacy": [],
+      "materiality": "cosmetic",
+      "newer": [
+       80352
+      ],
+      "older": [
+       80320
+      ],
+      "proof": "COS-ADDR/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-NAME",
+        "component": "K1",
+        "source": "pt-ladder",
+        "step": "P01-import-key",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": false,
+      "legacy": [],
+      "materiality": "cosmetic",
+      "newer": [
+       80360
+      ],
+      "older": [
+       80328
+      ],
+      "proof": "COS-ADDR/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-NAME",
+        "component": "K1",
+        "source": "pt-ladder",
+        "step": "P01-import-key",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": false,
+      "legacy": [],
+      "materiality": "cosmetic",
+      "newer": [
+       80368
+      ],
+      "older": [
+       80336
+      ],
+      "proof": "COS-ADDR/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-NAME",
+        "component": "K1",
+        "source": "pt-ladder",
+        "step": "P01-import-key",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": false,
+      "legacy": [],
+      "materiality": "cosmetic",
+      "newer": [
+       80376
+      ],
+      "older": [
+       80344
+      ],
+      "proof": "COS-ADDR/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-NAME",
+        "component": "K1",
+        "source": "pt-ladder",
+        "step": "P01-import-key",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": false,
+      "legacy": [],
+      "materiality": "cosmetic",
+      "newer": [
+       80384
+      ],
+      "older": [
+       80352
+      ],
+      "proof": "COS-ADDR/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-NAME",
+        "component": "K1",
+        "source": "pt-ladder",
+        "step": "P01-import-key",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": false,
+      "legacy": [],
+      "materiality": "cosmetic",
+      "newer": [
+       80392
+      ],
+      "older": [
+       80360
+      ],
+      "proof": "COS-ADDR/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-NAME",
+        "component": "K1",
+        "source": "pt-ladder",
+        "step": "P01-import-key",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": false,
+      "legacy": [],
+      "materiality": "cosmetic",
+      "newer": [
+       80400
+      ],
+      "older": [
+       80368
+      ],
+      "proof": "COS-ADDR/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-NAME",
+        "component": "K1",
+        "source": "pt-ladder",
+        "step": "P01-import-key",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": false,
+      "legacy": [],
+      "materiality": "cosmetic",
+      "newer": [
+       80408
+      ],
+      "older": [
+       80376
+      ],
+      "proof": "COS-ADDR/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-NAME",
+        "component": "K1",
+        "source": "pt-ladder",
+        "step": "P01-import-key",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": false,
+      "legacy": [],
+      "materiality": "cosmetic",
+      "newer": [
+       80416
+      ],
+      "older": [
+       80384
+      ],
+      "proof": "COS-ADDR/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-NAME",
+        "component": "K1",
+        "source": "pt-ladder",
+        "step": "P01-import-key",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": false,
+      "legacy": [],
+      "materiality": "cosmetic",
+      "newer": [
+       80432
+      ],
+      "older": [
+       80400
+      ],
+      "proof": "COS-ADDR/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-NAME",
+        "component": "K1",
+        "source": "pt-ladder",
+        "step": "P01-import-key",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": false,
+      "legacy": [],
+      "materiality": "cosmetic",
+      "newer": [
+       80440
+      ],
+      "older": [
+       80408
+      ],
+      "proof": "COS-ADDR/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-NAME",
+        "component": "K1",
+        "source": "pt-ladder",
+        "step": "P01-import-key",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": false,
+      "legacy": [],
+      "materiality": "cosmetic",
+      "newer": [
+       80448
+      ],
+      "older": [
+       80416
+      ],
+      "proof": "COS-ADDR/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-NAME",
+        "component": "K1",
+        "source": "pt-ladder",
+        "step": "P01-import-key",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": false,
+      "legacy": [],
+      "materiality": "cosmetic",
+      "newer": [
+       80456
+      ],
+      "older": [
+       80424
+      ],
+      "proof": "COS-ADDR/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-NAME",
+        "component": "K1",
+        "source": "pt-ladder",
+        "step": "P01-import-key",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": false,
+      "legacy": [],
+      "materiality": "cosmetic",
+      "newer": [
+       80464
+      ],
+      "older": [
+       80432
+      ],
+      "proof": "COS-ADDR/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-NAME",
+        "component": "K1",
+        "source": "pt-ladder",
+        "step": "P01-import-key",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": false,
+      "legacy": [],
+      "materiality": "cosmetic",
+      "newer": [
+       80480
+      ],
+      "older": [
+       80448
+      ],
+      "proof": "COS-ADDR/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-NAME",
+        "component": "K1",
+        "source": "pt-ladder",
+        "step": "P01-import-key",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": false,
+      "legacy": [],
+      "materiality": "cosmetic",
+      "newer": [
+       80488
+      ],
+      "older": [
+       80456
+      ],
+      "proof": "COS-ADDR/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-NAME",
+        "component": "K1",
+        "source": "pt-ladder",
+        "step": "P01-import-key",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": false,
+      "legacy": [],
+      "materiality": "cosmetic",
+      "newer": [
+       80496
+      ],
+      "older": [
+       80464
+      ],
+      "proof": "COS-ADDR/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-NAME",
+        "component": "K1",
+        "source": "pt-ladder",
+        "step": "P01-import-key",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": false,
+      "legacy": [],
+      "materiality": "cosmetic",
+      "newer": [
+       80504
+      ],
+      "older": [
+       80472
+      ],
+      "proof": "COS-ADDR/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-NAME",
+        "component": "K1",
+        "source": "pt-ladder",
+        "step": "P01-import-key",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": false,
+      "legacy": [],
+      "materiality": "cosmetic",
+      "newer": [
+       80512
+      ],
+      "older": [
+       80480
+      ],
+      "proof": "COS-ADDR/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-NAME",
+        "component": "K1",
+        "source": "pt-ladder",
+        "step": "P01-import-key",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": false,
+      "legacy": [],
+      "materiality": "cosmetic",
+      "newer": [
+       80520
+      ],
+      "older": [
+       80488
+      ],
+      "proof": "COS-ADDR/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-NAME",
+        "component": "K1",
+        "source": "pt-ladder",
+        "step": "P01-import-key",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": false,
+      "legacy": [],
+      "materiality": "cosmetic",
+      "newer": [
+       80528
+      ],
+      "older": [
+       80496
+      ],
+      "proof": "COS-ADDR/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-NAME",
+        "component": "K1",
+        "source": "pt-ladder",
+        "step": "P01-import-key",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": false,
+      "legacy": [],
+      "materiality": "cosmetic",
+      "newer": [
+       80536
+      ],
+      "older": [
+       80504
+      ],
+      "proof": "COS-ADDR/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-NAME",
+        "component": "K1",
+        "source": "pt-ladder",
+        "step": "P01-import-key",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": false,
+      "legacy": [],
+      "materiality": "cosmetic",
+      "newer": [
+       80544
+      ],
+      "older": [
+       80512
+      ],
+      "proof": "COS-ADDR/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-NAME",
+        "component": "K1",
+        "source": "pt-ladder",
+        "step": "P01-import-key",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": false,
+      "legacy": [],
+      "materiality": "cosmetic",
+      "newer": [
+       80552
+      ],
+      "older": [
+       80520
+      ],
+      "proof": "COS-ADDR/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-NAME",
+        "component": "K1",
+        "source": "pt-ladder",
+        "step": "P01-import-key",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": false,
+      "legacy": [],
+      "materiality": "cosmetic",
+      "newer": [
+       80560
+      ],
+      "older": [
+       80528
+      ],
+      "proof": "COS-ADDR/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-NAME",
+        "component": "K1",
+        "source": "pt-ladder",
+        "step": "P01-import-key",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": false,
+      "legacy": [],
+      "materiality": "cosmetic",
+      "newer": [
+       80568
+      ],
+      "older": [
+       80536
+      ],
+      "proof": "COS-ADDR/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-NAME",
+        "component": "K1",
+        "source": "pt-ladder",
+        "step": "P01-import-key",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": false,
+      "legacy": [],
+      "materiality": "cosmetic",
+      "newer": [
+       80576
+      ],
+      "older": [
+       80544
+      ],
+      "proof": "COS-ADDR/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-NAME",
+        "component": "K1",
+        "source": "pt-ladder",
+        "step": "P01-import-key",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": false,
+      "legacy": [],
+      "materiality": "cosmetic",
+      "newer": [
+       80584
+      ],
+      "older": [
+       80552
+      ],
+      "proof": "COS-ADDR/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-NAME",
+        "component": "K1",
+        "source": "pt-ladder",
+        "step": "P01-import-key",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": false,
+      "legacy": [],
+      "materiality": "cosmetic",
+      "newer": [
+       80592
+      ],
+      "older": [
+       80560
+      ],
+      "proof": "COS-ADDR/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-NAME",
+        "component": "K1",
+        "source": "pt-ladder",
+        "step": "P01-import-key",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": false,
+      "legacy": [],
+      "materiality": "cosmetic",
+      "newer": [
+       80600
+      ],
+      "older": [
+       80568
+      ],
+      "proof": "COS-ADDR/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-NAME",
+        "component": "K1",
+        "source": "pt-ladder",
+        "step": "P01-import-key",
+        "tier": "A"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "matched",
+      "edited": "",
+      "ghidriff_exact": false,
+      "legacy": [],
+      "materiality": "cosmetic",
+      "newer": [
+       80608
+      ],
+      "older": [
+       80576
+      ],
+      "proof": "COS-ADDR/1",
+      "truth": "unknown"
+     },
+     {
+      "basis": [
+       {
+        "cls": "E-CALL",
+        "component": "K1",
+        "source": "pt-ladder",
+        "step": "PV-implied-match",
+        "tier": "C"
+       }
+      ],
+      "cheap_semantic": false,
+      "decision": "candidate",
+      "edited": "",
+      "ghidriff_exact": false,
+      "legacy": [],
+      "materiality": "cosmetic",
+      "newer": [
+       80720
+      ],
+      "older": [
+       80688
+      ],
+      "proof": "COS-ADDR/1",
+      "truth": "unknown"
+     }
+    ],
+    "rows_sha256": "e5ff2d8bec6ff54e22b2638bc86c521a0d31e74a40a30189332825764ca4ae04"
+   },
+   "status": "cached",
+   "wall_s": 19.297521551000045,
+   "warm_cache": {
+    "rows_sha256": "e5ff2d8bec6ff54e22b2638bc86c521a0d31e74a40a30189332825764ca4ae04",
+    "status": "cached",
+    "wall_s": 0.021986905000176193
+   }
+  }
+ },
+ "labels_sha256": "3e33941f984951fde5ee28870da9aaad8a7b3e6560a974e6d691ee908e3debe3",
+ "memory_note": "not measured; wall clocks are sequential local observations, not isolated benchmarks",
+ "newer": {
+  "build": {
+   "compiler": "mingw-gcc",
+   "compiler_version": "x86_64-w64-mingw32-gcc (GCC) 13-win32",
+   "link_order": "sorted",
+   "opt": "O2",
+   "profile": "mingw-gcc",
+   "recipe_digest": "e5a534d3e773d9ca4e30e709f20e04cd4fa10ad0216795f4be39e2ee3018ce96",
+   "variant": "new"
+  },
+  "debug_sha256": "9492b937cc3750baa2ab47a397c4a8b4efa423a8427dbf0e71b286bef76016a1",
+  "file_name": "cjson.dll",
+  "image_base": 6442450944,
+  "pdb_sha256": null,
+  "sha256": "d3837c837ffff4eb90342b2b9d5d29cd023f72d3858c3a405a015cc180e963b4",
+  "size": 96256,
+  "source": {
+   "commit": "87d8f0961a01bf09bef98ff89bae9fdec42181ee",
+   "git": "https://github.com/DaveGamble/cJSON.git",
+   "license_spdx": "MIT",
+   "mutation": null,
+   "ref": "v1.7.17",
+   "suite": null,
+   "version": null
+  }
+ },
+ "older": {
+  "build": {
+   "compiler": "mingw-gcc",
+   "compiler_version": "x86_64-w64-mingw32-gcc (GCC) 13-win32",
+   "link_order": "sorted",
+   "opt": "O2",
+   "profile": "mingw-gcc",
+   "recipe_digest": "cd60e3942adccb955c2768d980a48f5ae75d8011a69fa2caaba2ced453eba12c",
+   "variant": "old"
+  },
+  "debug_sha256": "450c7ac3650a27f3bbc8ff15fe296c813ae7169e6ac71e4cd6f013af353cbdfa",
+  "file_name": "cjson.dll",
+  "image_base": 6442450944,
+  "pdb_sha256": null,
+  "sha256": "bed3ef087fd07161a14154d38c683b3f648611114bf9794bf91fba123d6f2d48",
+  "size": 96256,
+  "source": {
+   "commit": "cb8693b058ba302f4829ec6d03f609ac6f848546",
+   "git": "https://github.com/DaveGamble/cJSON.git",
+   "license_spdx": "MIT",
+   "mutation": null,
+   "ref": "v1.7.16",
+   "suite": null,
+   "version": null
+  }
+ },
+ "pair_id": "cjson-1.7.16-to-1.7.17-O2",
+ "peak_process_tree_memory_bytes": null,
+ "platform": "Linux-6.18.57-x86_64-with-glibc2.39",
+ "python": "3.12.14",
+ "target_executed": false,
+ "truth_scope": {
+  "accepted_records": 2,
+  "ambiguous_records": 111,
+  "original_labels_sha256": "3e33941f984951fde5ee28870da9aaad8a7b3e6560a974e6d691ee908e3debe3",
+  "review_kind": "selected-security-guard-survival-unblinded",
+  "review_sha256": "59060e2c4d87c1ea64ebf979aa7fdbaa395e49e230f8f244077edc7b933b9a27",
+  "reviewer": "Codex /root/literature; unblinded independent-mechanism source/DWARF/binary review",
+  "selection_sha256": "529ff3ab0fb52a2c8857c58e221c6669daa6674a34661c3940663eb6b07bba91",
+  "status": "reviewed-selection"
+ }
+}

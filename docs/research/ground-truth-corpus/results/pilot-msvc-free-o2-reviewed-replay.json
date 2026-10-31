@@ -1,0 +1,205 @@
+{
+ "engines": {
+  "bindiff": {
+   "reason": "no verified BinDiff/BinExport configured for this pilot",
+   "status": "blocked"
+  },
+  "ghidriff": {
+   "backend": "ghidriff",
+   "backend_version": "1.0.0",
+   "coverage": {
+    "address_edges": {
+     "external": 0,
+     "image": 0,
+     "input": 0
+    },
+    "address_keys": {
+     "external": 0,
+     "image": 0,
+     "input": 0
+    },
+    "scope": "image VA only; validated EXTERNAL pairs are unscored; caller retains raw hash"
+   },
+   "execution_provenance": "persisted-native",
+   "metrics": {
+    "counts": {
+     "ambiguous_predictions": 0,
+     "ambiguous_truth_records": 4,
+     "conflicting_pairs": 0,
+     "duplicate_observations": 0,
+     "explicit_unpaired_endpoints": 0,
+     "identity_fn": 16,
+     "identity_fp": 0,
+     "identity_tp": 0,
+     "material_detected": 0,
+     "material_missed": 13,
+     "material_not_flagged": 0,
+     "material_unknown": 0,
+     "material_unmatched": 13,
+     "negative_flagged": 0,
+     "unknown_change_pairs": 0,
+     "unlabelled_predictions": 0,
+     "unmatched_endpoints": 34,
+     "unmatched_truth_pairs": 16
+    },
+    "denominators": {
+     "eligible_endpoints": 34,
+     "f1": 16,
+     "material_truth_pairs": 13,
+     "negative_candidate_edges": null,
+     "negative_truth_pairs": 3,
+     "scored_predictions": 0,
+     "truth_pairs": 16,
+     "truth_records": 22
+    },
+    "implicit_unchanged_requested": false,
+    "rates": {
+     "correspondence_false_positive_rate": null,
+     "false_discovery_rate": null,
+     "identity_f1": 0.0,
+     "identity_false_negative_rate": 1.0,
+     "identity_precision": null,
+     "identity_recall": 0.0,
+     "material_detection_recall": 0.0,
+     "negative_flag_rate": 0.0,
+     "truth_ambiguity_rate": 0.18181818181818182,
+     "unknown_change_rate": null,
+     "unmatched_endpoint_rate": 1.0,
+     "unmatched_truth_pair_rate": 1.0
+    },
+    "scope": "explicit observations only; supplied labels require independent acceptance audit"
+   },
+   "native_execution_in_this_invocation": false,
+   "observations": [],
+   "raw_path": "/workspace/scratch/a55b59b3e326/r1-evidence/hidden-review-replay/project-snapshot/runs/3072a59f-2f30-4935-85f5-5713ad24c8f9/raw/json/36d607e334544fcf98f81f77f46468e559ac849b01f1fd4f930c0a6ab5192294.bin-7b856e5df7916986c3370062990027f4222ae38185006d667a4cd68e365eb5f4.bin.ghidriff.json",
+   "raw_sha256": "1eca4a13c930fc78c5a0e1482d1f87040d38ab494919bd47698136ee5720e60c",
+   "resumed_primary": true,
+   "run_id": "3072a59f-2f30-4935-85f5-5713ad24c8f9",
+   "settings": {
+    "allow_symbol_downloads": false,
+    "ghidra_settings": "isolated-per-run",
+    "ghidra_version": "12.0.4",
+    "gzf": {
+     "newer": {
+      "bytes": 22940,
+      "name": "7b856e5df7916986c3370062990027f4222ae38185006d667a4cd68e365eb5f4.bin-b65392.gzf",
+      "sha256": "cd823b1a4e34d55e8a98eed3ebf9eeb13d400921f5c9c9a8a3c64a405ba48a59"
+     },
+     "older": {
+      "bytes": 22866,
+      "name": "36d607e334544fcf98f81f77f46468e559ac849b01f1fd4f930c0a6ab5192294.bin-6d2bbc.gzf",
+      "sha256": "6a7725e15ac00f4db003aa644afe83b5516650b4269de2cf3e05bf0467623104"
+     }
+    },
+    "java_runtime_version": "unverified",
+    "newer_sha256": "7b856e5df7916986c3370062990027f4222ae38185006d667a4cd68e365eb5f4",
+    "older_sha256": "36d607e334544fcf98f81f77f46468e559ac849b01f1fd4f930c0a6ab5192294",
+    "pyghidra_version": "3.0.2",
+    "python_version": "3.12.14",
+    "symbol_policy": "disabled",
+    "timeout_seconds": 600
+   },
+   "stats": {
+    "added_funcs_len": 0,
+    "added_strings_len": 0,
+    "added_symbols_len": 0,
+    "deleted_funcs_len": 0,
+    "deleted_strings_len": 0,
+    "deleted_symbols_len": 0,
+    "diff_time": 0.8266408443450928,
+    "diff_types": {},
+    "first_matches": {},
+    "func_match_overall_percent": 0.0,
+    "items_to_process": 0,
+    "match_func_similarity_percent": 0.0,
+    "match_types": {},
+    "matched_funcs_len": 0,
+    "matched_funcs_no_changes_len": 0,
+    "matched_funcs_with_code_changes_len": 0,
+    "matched_funcs_with_non_code_changes_len": 0,
+    "modified_funcs_len": 0,
+    "total_funcs_len": 0,
+    "unmatched_funcs_len": 0
+   },
+   "status": "ok",
+   "wall_s": null
+  },
+  "rz-diff": {
+   "reason": "no executable selected",
+   "status": "not-run"
+  },
+  "unified": {
+   "reason": "not selected or no completed primary run",
+   "status": "not-run"
+  }
+ },
+ "labels_sha256": "24ba952fbde62663524fa3a62033fdf7adfdaadafc8a7f803860a5c171522964",
+ "memory_note": "not measured; wall clocks are sequential local observations, not isolated benchmarks",
+ "newer": {
+  "build": {
+   "compiler": "clang",
+   "compiler_version": "Ubuntu clang version 18.1.3 (1ubuntu1)",
+   "link_order": "sorted",
+   "opt": "O2",
+   "profile": "msvc-free",
+   "recipe_digest": "7c7b7d39a28c605d990b52c7d2386168f8adfef803a172daa55aaa7b861f6417",
+   "variant": "v2"
+  },
+  "debug_sha256": "6418f198b730f03c7c1a5c70c395e8fee07637fb98e18c509e5205ee1eafb730",
+  "file_name": "defined.dll",
+  "image_base": 6442450944,
+  "pdb_sha256": "02ce5f3648be28b3e3b56cb5e7f8550a314c503b95bb229a0ebd65c21f6c35d0",
+  "sha256": "7b856e5df7916986c3370062990027f4222ae38185006d667a4cd68e365eb5f4",
+  "size": 2048,
+  "source": {
+   "commit": null,
+   "git": null,
+   "license_spdx": "MIT",
+   "mutation": null,
+   "ref": null,
+   "suite": "r1-pilot/defined",
+   "version": "v2"
+  }
+ },
+ "older": {
+  "build": {
+   "compiler": "clang",
+   "compiler_version": "Ubuntu clang version 18.1.3 (1ubuntu1)",
+   "link_order": "sorted",
+   "opt": "O2",
+   "profile": "msvc-free",
+   "recipe_digest": "7c7b7d39a28c605d990b52c7d2386168f8adfef803a172daa55aaa7b861f6417",
+   "variant": "v1"
+  },
+  "debug_sha256": "66908cc4642bb149aad74a23d1e641807edb874da008c3b488f5e74fb462b6ea",
+  "file_name": "defined.dll",
+  "image_base": 6442450944,
+  "pdb_sha256": "d69c89940cb99ef44ceb750a869206ae781978df36f5bca3ed2ae85d373f7473",
+  "sha256": "36d607e334544fcf98f81f77f46468e559ac849b01f1fd4f930c0a6ab5192294",
+  "size": 2048,
+  "source": {
+   "commit": null,
+   "git": null,
+   "license_spdx": "MIT",
+   "mutation": null,
+   "ref": null,
+   "suite": "r1-pilot/defined",
+   "version": "v1"
+  }
+ },
+ "pair_id": "ours-r1-pilot-defined-v1-v2-O2",
+ "peak_process_tree_memory_bytes": null,
+ "platform": "Linux-6.18.57-x86_64-with-glibc2.39",
+ "python": "3.12.14",
+ "target_executed": false,
+ "truth_scope": {
+  "accepted_records": 18,
+  "ambiguous_records": 4,
+  "original_labels_sha256": "24ba952fbde62663524fa3a62033fdf7adfdaadafc8a7f803860a5c171522964",
+  "review_kind": "independent-automated-source-and-binary-review",
+  "review_sha256": "42ecde50f6427ac436ca311366c0b5069c22022abbc7a11cd7458a8cfad5ce04",
+  "reviewer": "/root/truth_audit",
+  "selection_sha256": "d05dd6acc75d9e2e2d86f510912ecb413531b4eb60be89a3a959f357ffb50174",
+  "status": "reviewed-selection"
+ }
+}

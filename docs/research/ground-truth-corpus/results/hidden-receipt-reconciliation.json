@@ -1,0 +1,133 @@
+{
+  "acceptance_file_sha256": "3870ad566ee3858bafc32ad41caa4aad216e3b753674e55aac9cfccf7bbdadd0",
+  "accepted_labels_digest_sha256": "24ba952fbde62663524fa3a62033fdf7adfdaadafc8a7f803860a5c171522964",
+  "accepted_pair_id": "ours-r1-pilot-defined-v1-v2-O2",
+  "fresh_rebuild_configurations": 2,
+  "fresh_rebuild_exact_artifact_and_receipt_matches": 2,
+  "historical_exact_receipt_byte_sets_found": 1,
+  "interpretation": [
+    "The historical newer file was not recovered; a newly executed build reproduced its exact previously recorded content hash and all accepted artifact hashes.",
+    "Recipe digest is not a unique source/build/artifact identifier. Full receipt binds source inputs/source_digest, recipe/tool versions and actual engine/debug/PDB hashes.",
+    "Other matrix receipts with the same recipe or even source digest are not substitutes unless every accepted artifact hash also matches.",
+    "No original acceptance, source review, native result JSON or label file was edited."
+  ],
+  "matrix_comparisons": [
+    {
+      "different_record_fields": [
+        "debug_sha256",
+        "pdb_sha256",
+        "sha256"
+      ],
+      "linker_executable_paths_in_pdb_envblock": {
+        "matrix": "/usr/bin/lld-link",
+        "original": "/usr/bin/lld-link-18"
+      },
+      "matrix_receipt_sha256": "f4facea3fd4fa5d08ea9223d917be3cb15e0f311c5afa6a7ab93bfa7dac6250b",
+      "metadata_interpretation": "Invocation-path-dependent PDB metadata is an observed effective input; _template omits executable argv[0] while recipes record version banners. Recipe equality does not establish byte-identical debug metadata.",
+      "original_receipt_sha256": "a30d0f685b2d9f196a04f7e0f6c9ae709c3970d85c7aba5b28e199f2e7c792d3",
+      "pdb_symbols_dump_sha256": [
+        "a6c187a365d2763009528299c9dbbb8728f3111350edcb91bb7c64af803c5e90",
+        "560e891e9b00261c03210a4136914ffe6379793bd52343d3ed2d4f99e57c1e92"
+      ],
+      "same_inputs": true,
+      "same_recipe_object": true,
+      "same_source_digest": true,
+      "symbols_dump_identical_after_linker_path_normalization": true,
+      "text_section_raw_sha256": [
+        "b11be2989d9310fc2e7a31d1d54f930c8598c1957f26283ceaa073d184574821",
+        "b11be2989d9310fc2e7a31d1d54f930c8598c1957f26283ceaa073d184574821"
+      ],
+      "text_sections_identical": true
+    },
+    {
+      "different_record_fields": [
+        "debug_sha256",
+        "pdb_sha256",
+        "sha256"
+      ],
+      "linker_executable_paths_in_pdb_envblock": {
+        "matrix": "/usr/bin/lld-link",
+        "original": "/usr/bin/lld-link-18"
+      },
+      "matrix_receipt_sha256": "cb7653eb2522abeba4645d21a96f44c9cbb55c7e8a94376e96dfb89de1ae1e84",
+      "metadata_interpretation": "Invocation-path-dependent PDB metadata is an observed effective input; _template omits executable argv[0] while recipes record version banners. Recipe equality does not establish byte-identical debug metadata.",
+      "original_receipt_sha256": "15dcb4f875438ef750a9e5444230ade8cb3e3f32773d0fb80ba59304ecbf1a6f",
+      "pdb_symbols_dump_sha256": [
+        "84e1651636c58002c753d821ae9aa14fafff268ef8ec0e6f37f5e7fd480fd486",
+        "3aa956fe1b63a55cd64a14afd717e7c165ed241d6aee2558683681feb88db79e"
+      ],
+      "same_inputs": true,
+      "same_recipe_object": true,
+      "same_source_digest": true,
+      "symbols_dump_identical_after_linker_path_normalization": true,
+      "text_section_raw_sha256": [
+        "7709d6dab7e5d42756b0c71ef019436f88d3bad07a9ff14a59a903ec927dc9ef",
+        "7709d6dab7e5d42756b0c71ef019436f88d3bad07a9ff14a59a903ec927dc9ef"
+      ],
+      "text_sections_identical": true
+    }
+  ],
+  "new_committed_receipt_files": 2,
+  "no_guessed_flags_or_historical_receipt_construction": true,
+  "original_acceptance_and_labels_modified": false,
+  "original_receipt_files_scanned": 81,
+  "rebuild_code_commit": "0d14548eef118ac32789da1e410fc1aa6b9f27f2",
+  "receipts": [
+    {
+      "accepted_debug_sha256": "66908cc4642bb149aad74a23d1e641807edb874da008c3b488f5e74fb462b6ea",
+      "accepted_engine_sha256": "36d607e334544fcf98f81f77f46468e559ac849b01f1fd4f930c0a6ab5192294",
+      "accepted_pdb_sha256": "d69c89940cb99ef44ceb750a869206ae781978df36f5bca3ed2ae85d373f7473",
+      "all_artifact_bytes_rehashed_and_matched": true,
+      "committed_receipt_path": "docs/research/ground-truth-corpus/results/build-receipts/a30d0f685b2d9f196a04f7e0f6c9ae709c3970d85c7aba5b28e199f2e7c792d3.json",
+      "fresh_rebuild_target_execution": false,
+      "freshly_executed_rebuild_receipt_path": "/workspace/scratch/a55b59b3e326/r1-hidden-receipt-rebuild/images/66908cc4642bb149aad74a23d1e641807edb874da008c3b488f5e74fb462b6ea/builds/a30d0f685b2d9f196a04f7e0f6c9ae709c3970d85c7aba5b28e199f2e7c792d3.json",
+      "historical_exact_bytes_found_before_rebuild": true,
+      "historical_recovery_path": "/workspace/scratch/a55b59b3e326/r1-controls-store/images/66908cc4642bb149aad74a23d1e641807edb874da008c3b488f5e74fb462b6ea/build.json",
+      "inputs": {
+        "r1.c": "5f0468899fbc95fa4026c3c74b0731a5ab412fe017bbddbed00ad7b0d97acb5f"
+      },
+      "original_expected_receipt_hash_reproduced": true,
+      "receipt_sha256": "a30d0f685b2d9f196a04f7e0f6c9ae709c3970d85c7aba5b28e199f2e7c792d3",
+      "recipe_digest": "7c7b7d39a28c605d990b52c7d2386168f8adfef803a172daa55aaa7b861f6417",
+      "side": "older",
+      "source_digest": "d776bc0df2c58884115081ebc9cdf5277dac5cecd37b813285f8984414affc9b",
+      "versions": {
+        "clang": "Ubuntu clang version 18.1.3 (1ubuntu1)",
+        "lld-link": "Ubuntu LLD 18.1.3",
+        "llvm-strip": "llvm-strip, compatible with GNU strip"
+      }
+    },
+    {
+      "accepted_debug_sha256": "6418f198b730f03c7c1a5c70c395e8fee07637fb98e18c509e5205ee1eafb730",
+      "accepted_engine_sha256": "7b856e5df7916986c3370062990027f4222ae38185006d667a4cd68e365eb5f4",
+      "accepted_pdb_sha256": "02ce5f3648be28b3e3b56cb5e7f8550a314c503b95bb229a0ebd65c21f6c35d0",
+      "all_artifact_bytes_rehashed_and_matched": true,
+      "committed_receipt_path": "docs/research/ground-truth-corpus/results/build-receipts/15dcb4f875438ef750a9e5444230ade8cb3e3f32773d0fb80ba59304ecbf1a6f.json",
+      "fresh_rebuild_target_execution": false,
+      "freshly_executed_rebuild_receipt_path": "/workspace/scratch/a55b59b3e326/r1-hidden-receipt-rebuild/images/6418f198b730f03c7c1a5c70c395e8fee07637fb98e18c509e5205ee1eafb730/builds/15dcb4f875438ef750a9e5444230ade8cb3e3f32773d0fb80ba59304ecbf1a6f.json",
+      "historical_exact_bytes_found_before_rebuild": false,
+      "historical_recovery_path": null,
+      "inputs": {
+        "r1.c": "34d8d9f2a1c83c58565ed1885df192c5550e55b9ebb1716d978f8f1c51db27b7"
+      },
+      "original_expected_receipt_hash_reproduced": true,
+      "receipt_sha256": "15dcb4f875438ef750a9e5444230ade8cb3e3f32773d0fb80ba59304ecbf1a6f",
+      "recipe_digest": "7c7b7d39a28c605d990b52c7d2386168f8adfef803a172daa55aaa7b861f6417",
+      "side": "newer",
+      "source_digest": "dcadc9048c842a474e922ddbab333ff8097566c6e7834ed7c9cd2e75318af9c7",
+      "versions": {
+        "clang": "Ubuntu clang version 18.1.3 (1ubuntu1)",
+        "lld-link": "Ubuntu LLD 18.1.3",
+        "llvm-strip": "llvm-strip, compatible with GNU strip"
+      }
+    }
+  ],
+  "recorded_at_utc": "2026-10-31T00:02:47Z",
+  "recorded_date_utc": "2026-10-31",
+  "review_kind": "independent-automated-receipt-recovery-and-real-rebuild",
+  "reviewer": "/root/truth_audit",
+  "source": "current corpus/ours/r1-pilot/defined suite_bases; stock msvc-free O2 BuildSpec variants v1/v2",
+  "store": "/workspace/scratch/a55b59b3e326/r1-hidden-receipt-rebuild",
+  "tool_selection": "explicit /usr/bin/{clang,lld-link,llvm-pdbutil,llvm-objdump,llvm-nm,llvm-strip}-18; versions match original receipt",
+  "total_committed_receipt_files": 34
+}

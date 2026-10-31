@@ -1,0 +1,68 @@
+{
+ "contract": "tier-r-build/1",
+ "debug_sha256": "ad3f8e58dc37b06d94e9e2895d70274ec710602378f78347a87141e425cdb7b0",
+ "inputs": {
+  "r1.c": "5f0468899fbc95fa4026c3c74b0731a5ab412fe017bbddbed00ad7b0d97acb5f"
+ },
+ "output": "defined.dll",
+ "pdb_sha256": "a06df01100db236c44838aab0c9c9b3ce01b839b16b1dca5e111ac34da5369df",
+ "project": "defined",
+ "recipe": {
+  "cflags": [],
+  "compile": [
+   [
+    "--target=x86_64-pc-windows-msvc",
+    "-ffreestanding",
+    "-mno-stack-arg-probe",
+    "-gcodeview",
+    "-gno-codeview-command-line",
+    "-ffile-compilation-dir=.",
+    "-O0",
+    "-g",
+    "-w",
+    "-std=c11",
+    "-I.",
+    "-c",
+    "r1.c",
+    "-o",
+    "../obj/00000.o"
+   ]
+  ],
+  "defines": [],
+  "include_dirs": [
+   "."
+  ],
+  "link": [
+   "/dll",
+   "/noentry",
+   "/nodefaultlib",
+   "/machine:x64",
+   "/debug",
+   "/debug:symtab",
+   "/pdb:../out/defined.pdb",
+   "/pdbaltpath:%_PDB%",
+   "/pdbsourcepath:/ka-src",
+   "/Brepro",
+   "/opt:noref",
+   "/opt:noicf",
+   "/incremental:no",
+   "/noimplib",
+   "/out:../out/defined.dll",
+   "../obj/00000.o",
+   "../rt/ka_rt.lib"
+  ],
+  "link_order": "sorted",
+  "opt": "O0",
+  "profile": "msvc-free",
+  "source_date_epoch": 0,
+  "std": "c11",
+  "versions": {
+   "clang": "Ubuntu clang version 18.1.3 (1ubuntu1)",
+   "lld-link": "Ubuntu LLD 18.1.3",
+   "llvm-strip": "llvm-strip, compatible with GNU strip"
+  }
+ },
+ "recipe_digest": "653f7ef40d7fe76a02cd6dab9d1c497ed2b17ad713d0b39df1ab09fe57b41d5f",
+ "sha256": "b79e088363e9dfa3132313849a4936972e208a6703ce99683dc389ec755049dd",
+ "source_digest": "d776bc0df2c58884115081ebc9cdf5277dac5cecd37b813285f8984414affc9b"
+}

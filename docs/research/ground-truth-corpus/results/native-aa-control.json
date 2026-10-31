@@ -1,0 +1,919 @@
+{
+  "date": "2026-10-30",
+  "engine_execution": "direct ghidriff CLI --force-diff; product backend identical shortcut not used",
+  "environment": {
+    "GHIDRA_INSTALL_DIR": "/workspace/scratch/a55b59b3e326/research-tools/ghidra_12.0.4_PUBLIC",
+    "JAVA_HOME": "/usr/lib/jvm/java-21-openjdk-amd64",
+    "JAVA_HOME_OVERRIDE": "/usr/lib/jvm/java-21-openjdk-amd64"
+  },
+  "ghidriff_engine_module": {
+    "path": "/workspace/scratch/a55b59b3e326/patchtrace-venv/lib/python3.12/site-packages/ghidriff/ghidra_diff_engine.py",
+    "sha256": "00defe3c6b08babaf37928062554a54b773c49da081728d17e36aaae88ad7ae7"
+  },
+  "ghidriff_version": "1.0.0",
+  "image_sha256": "c03b76a0e6db62ac35c5f4fa727f38cafdcfb5e7b8544c327b4c9587f8707b58",
+  "java_version": "openjdk version \"21.0.12\" 2026-07-21\nOpenJDK Runtime Environment (build 21.0.12+8-1-24.04-Ubuntu)\nOpenJDK 64-Bit Server VM (build 21.0.12+8-1-24.04-Ubuntu, mixed mode, sharing)\n",
+  "label_summary": {
+    "absent_functions": 0,
+    "by_body": {
+      "identical": 21
+    },
+    "by_identity": {
+      "same": 21
+    },
+    "by_label": {
+      "unchanged": 21
+    },
+    "disagreements": 0,
+    "functions": 21,
+    "runtime_functions": 68
+  },
+  "labels_digest_sha256": "9d9a2c79fd0101a0e4d58db0949795d7c6c576236528610c48017b54bf8e379e",
+  "labels_file_sha256": "f9dd2823212a8a5330bb1d3c96e0511d6a9c0a4726487c98c8ee2debe4d73934",
+  "labels_path": "/workspace/scratch/a55b59b3e326/r1-native-aa-store/labels/aa-defined-v1-O2-rebuild.json",
+  "memory_status": "not measured: optional /usr/bin/time is absent; process launch failed before native engine start, then retried without the optional wrapper.",
+  "names_scope": "21 named PE exports visible in engine images; --no-symbols disables external/debug lookup, not export names",
+  "newer": {
+    "build": {
+      "compiler": "mingw-gcc",
+      "compiler_version": "x86_64-w64-mingw32-gcc (GCC) 13-win32",
+      "link_order": "sorted",
+      "opt": "O2",
+      "profile": "mingw-gcc",
+      "recipe_digest": "e2406474b56cb867a7379124f7c906305eb009d0ba6c3e7f134d0e0c13fefd02",
+      "variant": "aa-a"
+    },
+    "debug_sha256": "82507c9e80aa0493860ca0b56a7400ec67dbda7ae3a32185aa19aaefa5b1b701",
+    "file_name": "defined.dll",
+    "image_base": 6442450944,
+    "pdb_sha256": null,
+    "sha256": "c03b76a0e6db62ac35c5f4fa727f38cafdcfb5e7b8544c327b4c9587f8707b58",
+    "size": 14336,
+    "source": {
+      "commit": null,
+      "git": null,
+      "license_spdx": "MIT",
+      "mutation": null,
+      "ref": null,
+      "suite": "r1-pilot/defined",
+      "version": "v1"
+    }
+  },
+  "no_target_execution": true,
+  "older": {
+    "build": {
+      "compiler": "mingw-gcc",
+      "compiler_version": "x86_64-w64-mingw32-gcc (GCC) 13-win32",
+      "link_order": "sorted",
+      "opt": "O2",
+      "profile": "mingw-gcc",
+      "recipe_digest": "e2406474b56cb867a7379124f7c906305eb009d0ba6c3e7f134d0e0c13fefd02",
+      "variant": "aa-a"
+    },
+    "debug_sha256": "82507c9e80aa0493860ca0b56a7400ec67dbda7ae3a32185aa19aaefa5b1b701",
+    "file_name": "defined.dll",
+    "image_base": 6442450944,
+    "pdb_sha256": null,
+    "sha256": "c03b76a0e6db62ac35c5f4fa727f38cafdcfb5e7b8544c327b4c9587f8707b58",
+    "size": 14336,
+    "source": {
+      "commit": null,
+      "git": null,
+      "license_spdx": "MIT",
+      "mutation": null,
+      "ref": null,
+      "suite": "r1-pilot/defined",
+      "version": "v1"
+    }
+  },
+  "opt": "O2",
+  "preflight_finding": "Initial experiment wrapper omitted required build_child_env for_tool argument and failed before launching an engine; corrected to for_tool=ghidra.",
+  "profile": "mingw-gcc",
+  "repeatability": {
+    "interpretation": "Observed deterministic image-scope correspondences for two direct native force runs; full raw JSON differs. No general accuracy/materiality claim.",
+    "same_image_observations": true,
+    "same_observations_digest": true,
+    "same_raw_file_bytes": false,
+    "scope": "two fresh Ghidra settings/project/output/gzf directories; distinct older.dll/newer.dll basenames with identical bytes;21visiblePEexports; raw metadata/timing may differ"
+  },
+  "reproducibility": {
+    "byte_identical": true,
+    "detail": "engine and debug images rebuilt in two different scratch directories",
+    "differing_bytes": 0,
+    "differing_sections": []
+  },
+  "runs": [
+    {
+      "argv": [
+        "/workspace/scratch/a55b59b3e326/patchtrace-venv/bin/python",
+        "-I",
+        "-X",
+        "utf8",
+        "-m",
+        "ghidriff",
+        "/workspace/scratch/a55b59b3e326/r1-native-aa-store/inputs/older/defined.dll",
+        "/workspace/scratch/a55b59b3e326/r1-native-aa-store/inputs/newer/defined.dll",
+        "--force-diff",
+        "--no-symbols",
+        "--no-threaded",
+        "--output-path",
+        "/workspace/scratch/a55b59b3e326/r1-native-aa-store/native-1/raw",
+        "--project-location",
+        "/workspace/scratch/a55b59b3e326/r1-native-aa-store/native-1/projects",
+        "--gzfs-path",
+        "/workspace/scratch/a55b59b3e326/r1-native-aa-store/native-1/gzfs",
+        "--log-path",
+        "/workspace/scratch/a55b59b3e326/r1-native-aa-store/native-1/ghidriff.log"
+      ],
+      "cwd": "/workspace/scratch/a55b59b3e326/r1-native-aa-store/native-1",
+      "log_path": "/workspace/scratch/a55b59b3e326/r1-native-aa-store/native-1/process.log",
+      "log_sha256": "a61aa530a3022dbd4bf16db72ec7ad32184a7273714e86c62eee069cfaffb261",
+      "raw_candidates": [],
+      "reason": null,
+      "returncode": 1,
+      "run": 1,
+      "status": "process-failed",
+      "stdout_total": 2142,
+      "time_path": "/workspace/scratch/a55b59b3e326/r1-native-aa-store/native-1/process-time.txt",
+      "wall_seconds": 0.7610316029999922
+    },
+    {
+      "XDG_CONFIG_HOME": "/workspace/scratch/a55b59b3e326/r1-native-aa-store/native-settings-1/settings",
+      "argv": [
+        "/workspace/scratch/a55b59b3e326/patchtrace-venv/bin/python",
+        "-I",
+        "-X",
+        "utf8",
+        "-m",
+        "ghidriff",
+        "/workspace/scratch/a55b59b3e326/r1-native-aa-store/inputs/older/defined.dll",
+        "/workspace/scratch/a55b59b3e326/r1-native-aa-store/inputs/newer/defined.dll",
+        "--force-diff",
+        "--no-symbols",
+        "--no-threaded",
+        "--output-path",
+        "/workspace/scratch/a55b59b3e326/r1-native-aa-store/native-settings-1/raw",
+        "--project-location",
+        "/workspace/scratch/a55b59b3e326/r1-native-aa-store/native-settings-1/projects",
+        "--gzfs-path",
+        "/workspace/scratch/a55b59b3e326/r1-native-aa-store/native-settings-1/gzfs",
+        "--log-path",
+        "/workspace/scratch/a55b59b3e326/r1-native-aa-store/native-settings-1/ghidriff.log"
+      ],
+      "cwd": "/workspace/scratch/a55b59b3e326/r1-native-aa-store/native-settings-1",
+      "environment_change": "Use existing build_child_env settings_dir/XDG_CONFIG_HOME inside writable run directory; initial restricted-root settings failure retained.",
+      "log_path": "/workspace/scratch/a55b59b3e326/r1-native-aa-store/native-settings-1/process.log",
+      "log_sha256": "3b96989e0362d44da82eb18da50e2135c4966987f548755f735e58314c889f04",
+      "raw_candidates": [],
+      "reason": null,
+      "returncode": 1,
+      "run": 2,
+      "settings_recovery_attempt": 1,
+      "status": "process-failed",
+      "stdout_total": 10095,
+      "wall_seconds": 16.250934422000228
+    },
+    {
+      "XDG_CONFIG_HOME": "/workspace/scratch/a55b59b3e326/r1-native-aa-store/native-distinct-name-1/settings",
+      "argv": [
+        "/workspace/scratch/a55b59b3e326/patchtrace-venv/bin/python",
+        "-I",
+        "-X",
+        "utf8",
+        "-m",
+        "ghidriff",
+        "/workspace/scratch/a55b59b3e326/r1-native-aa-store/inputs/older.dll",
+        "/workspace/scratch/a55b59b3e326/r1-native-aa-store/inputs/newer.dll",
+        "--force-diff",
+        "--no-symbols",
+        "--no-threaded",
+        "--output-path",
+        "/workspace/scratch/a55b59b3e326/r1-native-aa-store/native-distinct-name-1/raw",
+        "--project-location",
+        "/workspace/scratch/a55b59b3e326/r1-native-aa-store/native-distinct-name-1/projects",
+        "--gzfs-path",
+        "/workspace/scratch/a55b59b3e326/r1-native-aa-store/native-distinct-name-1/gzfs",
+        "--log-path",
+        "/workspace/scratch/a55b59b3e326/r1-native-aa-store/native-distinct-name-1/ghidriff.log"
+      ],
+      "binding": "production verify_diff_identity and normalize_ghidriff accepted",
+      "construction_project_rva_coverage": {
+        "expected_pairs": 21,
+        "explicit_change_flags": {
+          "None": 53
+        },
+        "missing_expected_rva_pairs": 0,
+        "observed_expected_rva_pairs": 21,
+        "unscored_other_image_pairs": 32
+      },
+      "coverage": {
+        "address_edges": {
+          "external": 22,
+          "image": 53,
+          "input": 75
+        },
+        "address_keys": {
+          "external": 22,
+          "image": 53,
+          "input": 75
+        },
+        "scope": "image VA only; validated EXTERNAL pairs are unscored; caller retains raw hash"
+      },
+      "cwd": "/workspace/scratch/a55b59b3e326/r1-native-aa-store/native-distinct-name-1",
+      "distinct_basename_attempt": 1,
+      "environment_change": "Fresh writable per-run settings/project/gzf/output directories as in preceding settings recovery; no engine option changes.",
+      "function_categories": {
+        "added": 0,
+        "deleted": 0,
+        "modified": 0
+      },
+      "image_observation_count": 53,
+      "image_observations": [
+        [
+          4096,
+          4096,
+          null
+        ],
+        [
+          4112,
+          4112,
+          null
+        ],
+        [
+          4576,
+          4576,
+          null
+        ],
+        [
+          4928,
+          4928,
+          null
+        ],
+        [
+          4960,
+          4960,
+          null
+        ],
+        [
+          4976,
+          4976,
+          null
+        ],
+        [
+          5008,
+          5008,
+          null
+        ],
+        [
+          5024,
+          5024,
+          null
+        ],
+        [
+          5040,
+          5040,
+          null
+        ],
+        [
+          5056,
+          5056,
+          null
+        ],
+        [
+          5104,
+          5104,
+          null
+        ],
+        [
+          5168,
+          5168,
+          null
+        ],
+        [
+          5200,
+          5200,
+          null
+        ],
+        [
+          5232,
+          5232,
+          null
+        ],
+        [
+          5248,
+          5248,
+          null
+        ],
+        [
+          5264,
+          5264,
+          null
+        ],
+        [
+          5312,
+          5312,
+          null
+        ],
+        [
+          5392,
+          5392,
+          null
+        ],
+        [
+          5440,
+          5440,
+          null
+        ],
+        [
+          5456,
+          5456,
+          null
+        ],
+        [
+          5472,
+          5472,
+          null
+        ],
+        [
+          5504,
+          5504,
+          null
+        ],
+        [
+          5520,
+          5520,
+          null
+        ],
+        [
+          5536,
+          5536,
+          null
+        ],
+        [
+          5552,
+          5552,
+          null
+        ],
+        [
+          5568,
+          5568,
+          null
+        ],
+        [
+          5584,
+          5584,
+          null
+        ],
+        [
+          5600,
+          5600,
+          null
+        ],
+        [
+          5680,
+          5680,
+          null
+        ],
+        [
+          5808,
+          5808,
+          null
+        ],
+        [
+          5840,
+          5840,
+          null
+        ],
+        [
+          5888,
+          5888,
+          null
+        ],
+        [
+          6048,
+          6048,
+          null
+        ],
+        [
+          6160,
+          6160,
+          null
+        ],
+        [
+          6528,
+          6528,
+          null
+        ],
+        [
+          7392,
+          7392,
+          null
+        ],
+        [
+          7520,
+          7520,
+          null
+        ],
+        [
+          7648,
+          7648,
+          null
+        ],
+        [
+          7808,
+          7808,
+          null
+        ],
+        [
+          8064,
+          8064,
+          null
+        ],
+        [
+          8112,
+          8112,
+          null
+        ],
+        [
+          8192,
+          8192,
+          null
+        ],
+        [
+          8368,
+          8368,
+          null
+        ],
+        [
+          8496,
+          8496,
+          null
+        ],
+        [
+          8560,
+          8560,
+          null
+        ],
+        [
+          8688,
+          8688,
+          null
+        ],
+        [
+          8752,
+          8752,
+          null
+        ],
+        [
+          8896,
+          8896,
+          null
+        ],
+        [
+          9104,
+          9104,
+          null
+        ],
+        [
+          9200,
+          9200,
+          null
+        ],
+        [
+          9248,
+          9248,
+          null
+        ],
+        [
+          9280,
+          9280,
+          null
+        ],
+        [
+          9504,
+          9504,
+          null
+        ]
+      ],
+      "image_observations_sha256": "134f6977b4fb960664ad6cbcba4838c2af40ea8c11a4591f2b11b1f347e76d76",
+      "input_name_condition": "older.dll and newer.dll, SHA-256-identical bytes; original same-basename failures retained.",
+      "log_path": "/workspace/scratch/a55b59b3e326/r1-native-aa-store/native-distinct-name-1/process.log",
+      "log_sha256": "1167cbcd2af2c012e6c87b9039ab79bde7d155567fa54c2ed1f65c2da340de51",
+      "raw_candidates": [
+        "/workspace/scratch/a55b59b3e326/r1-native-aa-store/native-distinct-name-1/raw/json/older.dll-newer.dll.ghidriff.json"
+      ],
+      "raw_path": "/workspace/scratch/a55b59b3e326/r1-native-aa-store/native-distinct-name-1/raw/json/older.dll-newer.dll.ghidriff.json",
+      "raw_sha256": "81e7647bb284d0a7ab72bedf36725cadf0ac84036b29e0d0a0ee5df29a0dea6a",
+      "reason": null,
+      "returncode": 0,
+      "run": 3,
+      "stats": {
+        "added_funcs_len": 0,
+        "added_strings_len": 0,
+        "added_symbols_len": 0,
+        "deleted_funcs_len": 0,
+        "deleted_strings_len": 0,
+        "deleted_symbols_len": 0,
+        "diff_time": 3.4396767616271973,
+        "diff_types": {},
+        "first_matches": {
+          "ExactBytesFunctionHasher": 29,
+          "SymbolsHash": 46
+        },
+        "func_match_overall_percent": "100.0000%",
+        "items_to_process": 0,
+        "match_func_similarity_percent": "100.0000%",
+        "match_types": {
+          "ExactBytesFunctionHasher": 29,
+          "ExternalsName": 22,
+          "SymbolsHash": 46
+        },
+        "matched_funcs_len": 188,
+        "matched_funcs_no_changes_len": 188,
+        "matched_funcs_with_code_changes_len": 0,
+        "matched_funcs_with_non_code_changes_len": 0,
+        "modified_funcs_len": 0,
+        "total_funcs_len": 188,
+        "unmatched_funcs_len": 0
+      },
+      "status": "observed",
+      "stdout_total": 20891,
+      "wall_seconds": 22.67719397000019
+    },
+    {
+      "XDG_CONFIG_HOME": "/workspace/scratch/a55b59b3e326/r1-native-aa-store/native-distinct-name-2/settings",
+      "argv": [
+        "/workspace/scratch/a55b59b3e326/patchtrace-venv/bin/python",
+        "-I",
+        "-X",
+        "utf8",
+        "-m",
+        "ghidriff",
+        "/workspace/scratch/a55b59b3e326/r1-native-aa-store/inputs/older.dll",
+        "/workspace/scratch/a55b59b3e326/r1-native-aa-store/inputs/newer.dll",
+        "--force-diff",
+        "--no-symbols",
+        "--no-threaded",
+        "--output-path",
+        "/workspace/scratch/a55b59b3e326/r1-native-aa-store/native-distinct-name-2/raw",
+        "--project-location",
+        "/workspace/scratch/a55b59b3e326/r1-native-aa-store/native-distinct-name-2/projects",
+        "--gzfs-path",
+        "/workspace/scratch/a55b59b3e326/r1-native-aa-store/native-distinct-name-2/gzfs",
+        "--log-path",
+        "/workspace/scratch/a55b59b3e326/r1-native-aa-store/native-distinct-name-2/ghidriff.log"
+      ],
+      "binding": "production verify_diff_identity and normalize_ghidriff accepted",
+      "construction_project_rva_coverage": {
+        "expected_pairs": 21,
+        "explicit_change_flags": {
+          "None": 53
+        },
+        "missing_expected_rva_pairs": 0,
+        "observed_expected_rva_pairs": 21,
+        "unscored_other_image_pairs": 32
+      },
+      "coverage": {
+        "address_edges": {
+          "external": 22,
+          "image": 53,
+          "input": 75
+        },
+        "address_keys": {
+          "external": 22,
+          "image": 53,
+          "input": 75
+        },
+        "scope": "image VA only; validated EXTERNAL pairs are unscored; caller retains raw hash"
+      },
+      "cwd": "/workspace/scratch/a55b59b3e326/r1-native-aa-store/native-distinct-name-2",
+      "distinct_basename_attempt": 2,
+      "environment_change": "Fresh writable per-run settings/project/gzf/output directories as in preceding settings recovery; no engine option changes.",
+      "function_categories": {
+        "added": 0,
+        "deleted": 0,
+        "modified": 0
+      },
+      "image_observation_count": 53,
+      "image_observations": [
+        [
+          4096,
+          4096,
+          null
+        ],
+        [
+          4112,
+          4112,
+          null
+        ],
+        [
+          4576,
+          4576,
+          null
+        ],
+        [
+          4928,
+          4928,
+          null
+        ],
+        [
+          4960,
+          4960,
+          null
+        ],
+        [
+          4976,
+          4976,
+          null
+        ],
+        [
+          5008,
+          5008,
+          null
+        ],
+        [
+          5024,
+          5024,
+          null
+        ],
+        [
+          5040,
+          5040,
+          null
+        ],
+        [
+          5056,
+          5056,
+          null
+        ],
+        [
+          5104,
+          5104,
+          null
+        ],
+        [
+          5168,
+          5168,
+          null
+        ],
+        [
+          5200,
+          5200,
+          null
+        ],
+        [
+          5232,
+          5232,
+          null
+        ],
+        [
+          5248,
+          5248,
+          null
+        ],
+        [
+          5264,
+          5264,
+          null
+        ],
+        [
+          5312,
+          5312,
+          null
+        ],
+        [
+          5392,
+          5392,
+          null
+        ],
+        [
+          5440,
+          5440,
+          null
+        ],
+        [
+          5456,
+          5456,
+          null
+        ],
+        [
+          5472,
+          5472,
+          null
+        ],
+        [
+          5504,
+          5504,
+          null
+        ],
+        [
+          5520,
+          5520,
+          null
+        ],
+        [
+          5536,
+          5536,
+          null
+        ],
+        [
+          5552,
+          5552,
+          null
+        ],
+        [
+          5568,
+          5568,
+          null
+        ],
+        [
+          5584,
+          5584,
+          null
+        ],
+        [
+          5600,
+          5600,
+          null
+        ],
+        [
+          5680,
+          5680,
+          null
+        ],
+        [
+          5808,
+          5808,
+          null
+        ],
+        [
+          5840,
+          5840,
+          null
+        ],
+        [
+          5888,
+          5888,
+          null
+        ],
+        [
+          6048,
+          6048,
+          null
+        ],
+        [
+          6160,
+          6160,
+          null
+        ],
+        [
+          6528,
+          6528,
+          null
+        ],
+        [
+          7392,
+          7392,
+          null
+        ],
+        [
+          7520,
+          7520,
+          null
+        ],
+        [
+          7648,
+          7648,
+          null
+        ],
+        [
+          7808,
+          7808,
+          null
+        ],
+        [
+          8064,
+          8064,
+          null
+        ],
+        [
+          8112,
+          8112,
+          null
+        ],
+        [
+          8192,
+          8192,
+          null
+        ],
+        [
+          8368,
+          8368,
+          null
+        ],
+        [
+          8496,
+          8496,
+          null
+        ],
+        [
+          8560,
+          8560,
+          null
+        ],
+        [
+          8688,
+          8688,
+          null
+        ],
+        [
+          8752,
+          8752,
+          null
+        ],
+        [
+          8896,
+          8896,
+          null
+        ],
+        [
+          9104,
+          9104,
+          null
+        ],
+        [
+          9200,
+          9200,
+          null
+        ],
+        [
+          9248,
+          9248,
+          null
+        ],
+        [
+          9280,
+          9280,
+          null
+        ],
+        [
+          9504,
+          9504,
+          null
+        ]
+      ],
+      "image_observations_sha256": "134f6977b4fb960664ad6cbcba4838c2af40ea8c11a4591f2b11b1f347e76d76",
+      "input_name_condition": "older.dll and newer.dll, SHA-256-identical bytes; original same-basename failures retained.",
+      "log_path": "/workspace/scratch/a55b59b3e326/r1-native-aa-store/native-distinct-name-2/process.log",
+      "log_sha256": "dfb22b487ba6d97ce3b22a1a0e83c4f365037a013f8f3c9bfea4bf88707e2bac",
+      "raw_candidates": [
+        "/workspace/scratch/a55b59b3e326/r1-native-aa-store/native-distinct-name-2/raw/json/older.dll-newer.dll.ghidriff.json"
+      ],
+      "raw_path": "/workspace/scratch/a55b59b3e326/r1-native-aa-store/native-distinct-name-2/raw/json/older.dll-newer.dll.ghidriff.json",
+      "raw_sha256": "12e6642d25d2e15d7929f56c20659a7e1175fd1b6b5062d09774fc881839c297",
+      "reason": null,
+      "returncode": 0,
+      "run": 4,
+      "stats": {
+        "added_funcs_len": 0,
+        "added_strings_len": 0,
+        "added_symbols_len": 0,
+        "deleted_funcs_len": 0,
+        "deleted_strings_len": 0,
+        "deleted_symbols_len": 0,
+        "diff_time": 3.4353139400482178,
+        "diff_types": {},
+        "first_matches": {
+          "ExactBytesFunctionHasher": 29,
+          "SymbolsHash": 46
+        },
+        "func_match_overall_percent": "100.0000%",
+        "items_to_process": 0,
+        "match_func_similarity_percent": "100.0000%",
+        "match_types": {
+          "ExactBytesFunctionHasher": 29,
+          "ExternalsName": 22,
+          "SymbolsHash": 46
+        },
+        "matched_funcs_len": 188,
+        "matched_funcs_no_changes_len": 188,
+        "matched_funcs_with_code_changes_len": 0,
+        "matched_funcs_with_non_code_changes_len": 0,
+        "modified_funcs_len": 0,
+        "total_funcs_len": 188,
+        "unmatched_funcs_len": 0
+      },
+      "status": "observed",
+      "stdout_total": 20891,
+      "wall_seconds": 22.778953255000033
+    }
+  ],
+  "same_basename_diagnostic": {
+    "causality": "Distinct basenames removed the failure in the two observed retries; no upstream fix/root-cause proof claimed.",
+    "observed": "Ghidriff logged Duplicate file detected for newer/defined.dll and loaded defined.dll-68aa04 twice as ProgramDB before the transaction failure."
+  },
+  "source_sha256": "5f0468899fbc95fa4026c3c74b0731a5ab412fe017bbddbed00ad7b0d97acb5f",
+  "status": "completed-native-aa-visible-exports",
+  "store": "/workspace/scratch/a55b59b3e326/r1-native-aa-store",
+  "verification": "Both successful raw files rehashed, production-bound, projected and independently re-observed before report."
+}

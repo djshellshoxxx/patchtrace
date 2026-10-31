@@ -1,0 +1,54 @@
+{
+ "contract": "tier-r-build/1",
+ "debug_sha256": "28f292aa6252d3eee918344f0214f1d684d8b7e84635c953ab9857c4817cd672",
+ "inputs": {
+  "r1.c": "34d8d9f2a1c83c58565ed1885df192c5550e55b9ebb1716d978f8f1c51db27b7"
+ },
+ "output": "defined.dll",
+ "pdb_sha256": null,
+ "project": "defined",
+ "recipe": {
+  "cflags": [],
+  "compile": [
+   [
+    "--target=x86_64-w64-windows-gnu",
+    "-ffile-compilation-dir=.",
+    "-O2",
+    "-g",
+    "-w",
+    "-std=c11",
+    "-I.",
+    "-c",
+    "r1.c",
+    "-o",
+    "../obj/00000.o"
+   ]
+  ],
+  "defines": [],
+  "include_dirs": [
+   "."
+  ],
+  "link": [
+   "--target=x86_64-w64-windows-gnu",
+   "-fuse-ld=lld",
+   "-shared",
+   "-o",
+   "../out/defined.dll",
+   "../obj/00000.o",
+   "-Wl,--no-insert-timestamp",
+   "-Wl,--image-base=0x180000000"
+  ],
+  "link_order": "sorted",
+  "opt": "O2",
+  "profile": "mingw-clang",
+  "source_date_epoch": 0,
+  "std": "c11",
+  "versions": {
+   "clang": "Ubuntu clang version 18.1.3 (1ubuntu1)",
+   "llvm-strip": "llvm-strip, compatible with GNU strip"
+  }
+ },
+ "recipe_digest": "f979a758d9a10eb87d6df89de45081a75a331fe7c970250532dae9a1af4e22c0",
+ "sha256": "0c1830e3f970934b3dbf0c9ff627d15337ff858a0941cd40b0c8eb65bbe877bf",
+ "source_digest": "dcadc9048c842a474e922ddbab333ff8097566c6e7834ed7c9cd2e75318af9c7"
+}

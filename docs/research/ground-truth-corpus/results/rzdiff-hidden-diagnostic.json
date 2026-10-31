@@ -1,0 +1,14 @@
+{
+  "argv": [
+    "/workspace/scratch/a55b59b3e326/research-tools/rizin/bin/rz-diff",
+    "-C",
+    "-j",
+    "-t",
+    "functions",
+    "/workspace/scratch/a55b59b3e326/r1-pilot-store/images/36d607e334544fcf98f81f77f46468e559ac849b01f1fd4f930c0a6ab5192294/defined.dll",
+    "/workspace/scratch/a55b59b3e326/r1-pilot-store/images/7b856e5df7916986c3370062990027f4222ae38185006d667a4cd68e365eb5f4/defined.dll"
+  ],
+  "returncode": 0,
+  "stdout": "",
+  "stderr": "ERROR: rz-diff: No functions found in file0.\n"
+}

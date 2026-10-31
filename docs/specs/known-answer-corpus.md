@@ -184,6 +184,60 @@ no-recipe; evaluation metrics on hand-computed match sets; report determinism; a
   adopt; found cases arrive as `case-card/1` and are ingested without code changes.
 
 ## 16. Amendments (append-only)
+### [R1-20261030] Research admission and authored-declaration cross-check
+
+1. Existing `known-answer-labels/1` files remain compatible. `check: ok` means
+   that the authored declaration was actually established by the factory's
+   available evidence; an `ambiguous` label cannot satisfy an authored
+   `unchanged` declaration. It remains `unchecked`, like an ambiguous declared
+   change. No ambiguity may be promoted merely because it is not `changed`.
+2. `body: address-only` is a legacy masked-disassembly equality observation,
+   not a semantic-equivalence proof. In particular, its RIP-relative and
+   image-valued-immediate masks do not prove that operand targets correspond.
+   Research must record this limitation and require independent target evidence
+   before admitting a cosmetic label. This clarification does not rewrite
+   historical labels or change production matching decisions.
+3. The R1 pilot, observations and unresolved requirements are recorded in
+   `docs/research/ground-truth-corpus/`. Existing Tier R, Tier W, lineage,
+   preregistration and evaluator contracts remain the integration boundary.
+4. Several build recipes can emit the same debug artifact. `build.json` retains
+   its legacy last-build meaning and must not be treated as the unique provenance
+   of an artifact. Additionally retain every exact `tier-r-build/1` receipt under
+   `images/<debug_sha>/builds/<sha256-of-receipt-bytes>.json`. An identical receipt
+   is idempotent; conflicting bytes at an existing content key fail before the
+   legacy record is replaced. This additive storage rule changes neither the
+   receipt content contract nor `BuildResult`. Lost historical receipts require
+   actual rebuilds; they cannot be inferred from an artifact hash. The store
+   filesystem must permit same-filesystem hard links for complete, exclusive
+   publication. Other link failures are reported as `BuildError` with the actual
+   OS reason and leave the legacy receipt unchanged; a partial-file fallback is
+   not permitted.
+5. A cached `SideData` carries the `BuildResult` and source context that produced
+   its facts. Cache reuse must therefore bind the build specification, recipe
+   digest, source digest, debug-artifact digest and resolved source root. Equal
+   artifact bytes do not authorize replacing an O3/variant/source-context record
+   with an earlier O2 record. Identical complete contexts may still reuse analysis.
+6. The development pilot CLI may publish a receipt only as a new `.json` file
+   directly inside its absolute private work directory outside the repository.
+   Reject traversal, symlink components and existing destinations before engine
+   work; exclusive creation must preserve a destination appearing during the run.
+   This is an output safety boundary, not a new persisted schema or a claim of
+   isolation from hostile writers to the user's private directory.
+7. The development matrix CLI likewise requires a new absolute `.json` output
+   outside the repository. It has no `--work` containment argument. Validate the
+   original destination spelling and reject destination/ancestor symlinks and
+   existing files before builds; recheck after builds and parent creation, then
+   publish with exclusive creation. Preserve a competing destination appearing
+   during the run. This protects existing evidence from mistaken invocations;
+   it does not isolate publication from hostile concurrent parent replacement.
+8. A normalized recipe digest is not complete execution identity. The current
+   command template omits executable `argv[0]`; an invocation alias such as
+   `lld-link-18` versus `lld-link` can change embedded PDB metadata and full output
+   hashes. Bind source inputs, recipe/tool configuration, actual invocation pins
+   and engine/debug/PDB hashes when reproducing an accepted case. Historical
+   recipe digests remain unchanged; invocation identity is recorded in the R1
+   reconciliation evidence pending a separately reviewed contract enhancement.
+
 ### [D:known-answer-factory] 2026-10-14 build amendments
 1. Built and tested: s3 inputs I1 (recipe contract), I2/I3 (case cards via `factory.run_card`), I4 (suites via `factory.run_suite` with cross-check); s4 profiles `msvc-free`, `mingw-gcc`, `mingw-clang`; s5 inventory and hashes; s6 contract; s7 decision table; s9 A/A rebuild, layout and noise (`factory.run_aa`, `factory.run_noise`).
 2. Determinism facts found while building: clang must get `-ffile-compilation-dir=.` (a `-ffile-prefix-map` argument is itself recorded in the CodeView build info) plus `-gno-codeview-command-line`; lld-link needs `/pdbsourcepath:` (it absolutises relative CodeView paths and records cwd in S_ENVBLOCK), so PDB paths read `/ka-src/<rel>` and are mapped back; llvm-pdbutil prints `addr = SSSS:OOOO` in decimal; `llvm-strip` rewrites the debug directory's PointerToRawData, which the RVA check masks; multi-call tools (lld-link -> lld) must not be symlink-resolved.

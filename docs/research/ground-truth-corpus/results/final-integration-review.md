@@ -1,0 +1,33 @@
+# R1 final integration review
+
+Reviewer: `/root/patch_candidates`, automated agent. Review baseline: `0271f1869ccba0697c5bf6f797432bb7c6ec54d4`, plus the bounded provenance correction described below. Date: 2026-10-30 UTC. This is a local code/evidence review for an R1 draft, not a GitHub APPROVE review, human approval, production matching acceptance, or confirmation of required external quality gates.
+
+The reviewer previously authored the source pilot, build-matrix helper and several experiment reports. Review of those components is therefore an integration/self-review, not a claim of fresh independent authorship separation. The runner/audit/observer and shared build/cache fixes were authored by other workers. Existing independent component reviews remain separately documented. No native experiment or target execution was performed during this integration pass.
+
+## Scope and result
+
+Inspected `research_pilot.py`, `research_build.py`, `research_audit.py`, `research_observers.py`, the small `Session.side` cache correction and immutable build-receipt publication, and the result README/05 summary against committed JSON evidence. After the correction below, no additional blocking correctness or provenance issue was found within this bounded scope. This does not claim the absence of all defects or satisfy repository CI/security gates.
+
+The runner binds review overlays to the exact pair and label digest, partitions accepted/ambiguous keys completely, preserves original labels, validates primary artifact identity and raw-byte hashes, and keeps source truth separate from observations. The image projection retains original raw data and explicitly counts excluded EXTERNAL edges. Unknown change verdicts remain unknown. Unmatched material truth stays in the material denominator; correspondence FPR remains undefined without a negative-edge universe. The review did not identify scoring by omission or a truth-derived substitute for engine output.
+
+The provenance cache fix now keys `SideData` by the build specification, debug hash, recipe/source digests and resolved source root, which matches the object’s retained provenance. Immutable receipt publication hashes the complete serialized record and uses exclusive hard-link publication so concurrent readers do not see a partially created canonical receipt; a corrupted pre-existing receipt is refused. The legacy `build.json` remains a last-build compatibility view and is not the authoritative receipt for a particular requested cell. No matcher or semantic threshold changes are part of these fixes.
+
+## Finding and correction: cached output must not count as a fresh native run
+
+The initial runner labelled any completed new-project Ghidriff result `executed-now` whenever `primary_project` was absent. The existing production backend can instead return completed raw output from its cache, identifying that reuse with `run.settings['cache_origin']`. Such a result does not start the matching engine in the current invocation. This was a medium-severity provenance defect in the public research API, even though the published CLI experiments left `BackendConfig.cache_dir` empty and are unaffected.
+
+The integration owner authorized a bounded correction to `research_pilot.py` and its test file. A small metadata helper now classifies **presence** of `cache_origin` conservatively as `persisted-native-cache` with `native_execution_in_this_invocation=false`, including empty/null origin values and resumed cached runs. Other imported/sample results remain non-executed, resumed native output remains `persisted-native`, and only a fresh `backend='ghidriff'` result without a cache-origin marker receives `executed-now`/true. The helper is used by the runner receipt rather than duplicating conditions inline.
+
+Six metadata-only unit cases cover fresh native, resumed native, imported output, cache output, resumed empty-cache metadata and null-cache metadata. They failed before the helper existed and passed after implementation. These substitutes test classification logic and are explicitly not native-execution evidence. The complete pilot test file passed **18 tests in 0.94 seconds**; focused Ruff passed for both changed Python files. No raw experiment result, ground-truth overlay, fixture, engine option or emitted image was rewritten as part of the correction.
+
+## Evidence consistency checks
+
+- **23 published label documents** loaded through the strict existing loader, with 23 unique pair IDs. The explicit compiler-qualified published native A/A copy is distinct from the original external-store generic pair ID; original provenance remains recorded.
+- **15 final matrix cells and 30 endpoints** carry the requested profile/optimization metadata. The three corrected O3 endpoint records are described in the provenance report; earlier receipts are retained.
+- **32 immutable build-receipt files** have SHA-256 content hashes equal to their filenames.
+- **47 local Markdown links** in the existing ground-truth report tree were resolved; no broken local targets were found. This check did not certify external URL availability or every Markdown anchor.
+- README/05 headline metrics agree with published JSON: reviewed visible-export mutation identity coverage is 16/16; material signals are 6/13 for Ghidriff and 11/13 for unified, with four ambiguous records excluded and two one-sided records unresolved. Hidden-profile project coverage is zero. The cJSON review admits two material pairs and leaves 111 records unresolved. The exploratory compiler-noise result contains three unified material flags.
+- Independently recomputed explicit set-intersection identity/material counts agree with the stored metrics for the reviewed visible-export mutation pair, hidden mutation pair, reviewed cJSON subset and compiler-noise control. This arithmetic check did not use engine execution or change the metric implementation.
+- Native A/A JSON records two successful direct force runs with equal 53-observation image sequences, all 21 project RVA pairs, 32 other image pairs and 22 excluded EXTERNAL edges. Raw JSON hashes differ and change flags remain unknown, matching the report’s scoped repeatability claim.
+
+The results retain material limits: visible export names, development-only partitions, unblinded cJSON review, shared Ghidra evidence between primary and unified, compiler-noise false material flags, incomplete project/patch coverage, real Microsoft compiler unavailability, and outstanding external/release gates. The review supports a bounded research handoff with those limits, not an R1 completion or production-release declaration.

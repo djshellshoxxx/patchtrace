@@ -1,0 +1,27 @@
+{
+  "changed_files": [
+    "tools/calibration/tier_r/research_build.py",
+    "tests/test_tier_r_research_build.py"
+  ],
+  "experiments_rewritten": false,
+  "finding": "Schema-valid suite pairs can name undeclared versions; research_build previously reaches probe then raises KeyError during base lookup.",
+  "green": {
+    "command": "python -m pytest -q tests/test_tier_r_research_build.py",
+    "passed": 15,
+    "seconds": 0.74
+  },
+  "interpreter": "/workspace/scratch/a55b59b3e326/patchtrace-venv/bin/python",
+  "lint": {
+    "command": "python -m ruff check tools/calibration/tier_r/research_build.py tests/test_tier_r_research_build.py",
+    "result": "All checks passed"
+  },
+  "native_execution": false,
+  "ownership_released": true,
+  "red": {
+    "command": "python -m pytest -q tests/test_tier_r_research_build.py -k undeclared",
+    "deselected": 11,
+    "failed": 4,
+    "failure": "Both old/new public API cases and both old/new CLI cases reached the probe sentinel instead of preflight ValueError. Real C.load_suite accepted missing endpoint in every fixture.",
+    "seconds": 0.8
+  }
+}
