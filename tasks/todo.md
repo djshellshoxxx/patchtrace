@@ -867,3 +867,24 @@ Done: dock with state matrix, consent, import, changes, copy, go to CVE. Open: r
 - [ ] Open draft integration PR for exact-head Linux/Windows QA, check every job's status and conclusion, and diagnose true failures. For code changes also require native Ghidriff / secondary acceptance; for GUI/packaging require frozen executable smoke.
 - [ ] Perform final semantic conflict/security/persistence/GUI audit, repair with reproducing tests, then merge integration PR to main only when current-head reviews/checks permit.
 - [ ] Update feature-completion and final branch/PR disposition with main/integration SHAs, merged changes and remaining unique work.
+
+
+## Post-consolidation release-development backlog — 2026-10-30 assessment (owner-reviewed before merge)
+
+Assessment: `docs/post-consolidation-gap-analysis-20261030`, implementation baseline main `a04f5a299a8d4afef023261e52e08d14678cf1e7`; integration parent `f18687fd035b67961c1072af84f8c2b3442979e0`. Matrix [development-gap-analysis.md](../docs/plans/development-gap-analysis.md), [issue bodies/dependency map](../docs/plans/development-dependency-map.md), [A–G ownership](../docs/plans/parallel-development-plan.md), [release gates](../docs/plans/release-blockers.md). These tasks are not claimed completed.
+
+- [x] Establish detached assessment branch from integration SHA, preserve main/worker branches, inspect live repository tree, CI, R1–R8 PRs, source anchors, instructions, release records and relevant specs.
+- [x] Publish provisional 20-feature scored matrix plus explicit evidence limitations (implementation/test/native evidence and 74.3% equal-weight planning mean, **not a release completion certificate**).
+- [x] Prepare GT-00..GT-14 deduplicatable task/acceptance bodies, phase dependency diagram and exclusive A–G workstreams; do not open duplicates of issues #35/#36/#39/#104/#105/#116/#118/#120/#121.
+- [ ] **GT-00 P0:** revalidate PRs, exact commits, review/ownership and preserve #128–#136; coordinator owns shared trackers.
+- [ ] **GT-01 / RB-01 P0:** diagnose [unified live gate run 41063115449](https://github.com/djshellshoxxx/patchtrace/actions/runs/41063115449) (27 child fails, 0 evaluated pairs); reproduce; make full per-OS positive/negative denominators and G-U status credible.
+- [ ] **GT-02 / GT-04 P0:** review/merge verified independent R2 #131 evidence repairs with R3 #129 and R8 #135 canonicalization/false-benign regression; no parallel core edits until owner yields.
+- [ ] **GT-03 P0:** native BinExport2/BinDiff/rz-diff current-contract oracle, identity/orientation and persistence/GUI acceptance; record external BinDiff pin/license blocker.
+- [ ] **GT-06 / GT-07 P0–P1:** real MSRC/CSAF scope lineage, verified Winbindex/cumulative KB→pair evidence and Windows MSDelta acceptance; use R4 #130 and #136 fixtures.
+- [ ] **GT-08 P0:** end-to-end Qt patch search→analysis→manual review→report with failure/unknown/cancellation states and user-visible provenance.
+- [ ] **GT-10 P0:** system OS deny-egress and Windows process-tree/hostile-file regression, immutable result preservation.
+- [ ] **GT-05 / GT-12 P1:** independently labelled Tier R/Tier W accuracy, numeric confidence gated off until locked holdout; native large PE memory/latency measured on Windows.
+- [ ] **GT-09 / GT-13 P0:** exact candidate head ZIP+Setup checksums/clean Windows known-patch smoke and strict release attestation (not old prerelease .543).
+- [ ] **GT-14 P1:** selectively disposition #69/#136, #72, #102, #78/#79/#82/#85; preserve unique work and Windows PR QA.
+- [ ] **GT-11 P2 optional:** live local/remote AI provider acceptance with explicit consent and citation security, no vulnerability proof.
+
