@@ -52,3 +52,8 @@ Reanalysis, orientation swap, manual match change or settings change increments 
 
 ## Error taxonomy
 PT-INPUT invalid/unreadable/changed/oversize/incompatible input; PT-SCHEMA unknown or malformed contract; PT-BACKEND missing/version/execution/timeout; use the pure `diagnostics.describe_backend_exit(code, sanitized_log_tail)` classifier for a *known* runtime failure (Ghidra dot-prefixed workspace, incompatible Java bytecode/JDK, missing Ghidriff module, Java heap exhaustion, full disk, permissions), and preserve original exit code and full bounded analysis log; unknown failures keep the generic error. Fixed category strings must not echo untrusted or secret-containing log text. PT-CANCEL cancellation; PT-PROVIDER transport/status/malformed/ungrounded; PT-STORAGE lock/corruption/disk-full; PT-EXPORT write failure. UI retains previous committed data, gives actionable message and recovery control. No silent empty success.
+
+
+### Backend output rejection diagnostics (GT-01, 2026-10-30)
+
+Keep the combined 100 MiB JSON ceiling and path guards. A failed output check must retain a distinct fixed reason marker in the PT-BACKEND error and quarantined failure.txt: `[output-limit]` for oversized combined JSON (include the byte ceiling), `[unsafe-output-path]` for a rejected path, and `[output-check-failed]` for unreadable output. Apply the same classification to a guard stop during execution and a rejection found after process exit. Cancellation and timeout keep their existing precedence. Preserve partial diagnostic artifacts and prior completed runs; never import rejected JSON as a completed result.

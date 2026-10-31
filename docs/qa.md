@@ -413,3 +413,15 @@ Full d34efeb snapshot before final Qodo repairs: **18,304 passed, 128 skipped, 7
 - **PR #126 is active code, not documentation-only:** observed head `8d958f0a1950a29c1d1cef9525a114654f4c9904`, 9 ahead / 0 behind main, modifies callgraph, KB, detection rules and tests despite a docs-style title; reserve worker branch and require its own exact-head acceptance. R1–R8 research PRs received same-day updates and are preserved untouched.
 - **Not run on new integration branch:** local offscreen pytest, Ruff, schema generation, Linux/Windows CI, live native Ghidriff/secondary engines, Windows frozen smoke. This environment has GitHub repository API access but **no local PatchTrace checkout and no network path for Git clone** (`git ls-remote` fails DNS resolution). Do not interpret these as passing. Open an integration PR to trigger GitHub Actions; verify checks on its exact resulting head before marking ready.
 - **Acceptance stop rule:** main remains unchanged, no code changes may be promoted merely because docs-only code is green. PRs are not closed until all unique source content has merged into main and equivalence is established.
+
+
+## GT-01 local repair checkpoint (2026-10-30, Windows)
+
+Base: PR #140 b87193d1dd30635fce33986f80ceade136507a1a; isolated project venv, Python 3.14.5. Original 7-Zip quarantine inspection confirms 105,077,223 bytes of JSON against a 104,857,600-byte ceiling; hashes and limitations are in [the diagnosis](plans/gt01-native-output-diagnosis-20261030.md). Original files were preserved.
+
+- Red reporting regressions: **7 failed, 2 passed in 54.13 s** against unchanged backend messages (both corrected A/A fixture orientations passed).
+- Focused backend/harness selection: **74 passed, 4 skipped in 89.95 s** across test_jobs, test_unified_live_force_identical, test_unified_live_pairs, test_unified_live_pairs_r1, test_unified_live_workflow and test_unified_live_native_failure_details. Fake external processes are not native acceptance.
+- Full repository Ruff and git diff --check passed.
+- Isolated Windows Qt discovery reproduction: **1 passed in 31.34 s**. The earlier repeated-CI timeout remains unresolved; one pass does not establish stability.
+- Full offscreen suite and a local installed-runtime native A/A smoke are running at this checkpoint. No completed full/native result is claimed. The smoke uses synthetic PE bytes and Ghidra 12.1.4/Ghidriff 1.0.0; it is not the pinned cross-platform G-U matrix.
+- Required new-head Linux/Windows CI, repeated Qt, evaluated native G-U1–G-U8 and applicable independent review remain open. Workflow dispatch is blocked: connector has no dispatch operation, CLI has no authenticated session and the available browser is signed out. No merge or GT-01 completion is claimed.

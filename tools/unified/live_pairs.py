@@ -73,7 +73,12 @@ def analyse_pair(doc: C.KnownAnswerLabels, store_dir: Path, backend: BackendConf
     old, new = image_path(store_dir, doc.older), image_path(store_dir, doc.newer)
     if orientation == 'swapped':
         old, new = new, old
-    retaining = replace(backend, retain_gzf=True)
+    identical = doc.older.sha256 == doc.newer.sha256
+    # Never substitute the default identical shortcut or cached JSON for a
+    # native unchanged control. Normal comparison policy remains untouched.
+    retaining = (replace(backend, retain_gzf=True, force_identical_diff=True,
+                         no_cache=True, refresh=False) if identical
+                 else replace(backend, retain_gzf=True))
     service = ProjectService.create(old, new, doc.pair_id, work / f'{doc.pair_id}-{orientation}')
     sides: dict[str, Side] = {}
     try:
