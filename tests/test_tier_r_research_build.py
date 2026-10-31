@@ -265,3 +265,27 @@ def test_cli_new_json_receipt_creates_validated_parents_and_publishes(monkeypatc
     assert R.main(['--store', str(tmp_path / 'store'), '--output', str(output)]) == 0
     assert json.loads(output.read_bytes()) == receipt
     assert json.loads(capsys.readouterr().out) == receipt
+
+
+def test_post_build_publication_conflict_keeps_the_complete_matrix_on_stdout(monkeypatch, tmp_path, capsys):
+    output = tmp_path / 'receipt.json'
+    receipt = {'status': 'built', 'entries': [{'pair_id': 'preserved-pair', 'sha256': 'a' * 64}]}
+
+    def build(*args, **kwargs):
+        output.write_bytes(b'competing receipt')
+        return receipt
+
+    monkeypatch.setattr(R, 'build_pilot', build)
+    assert R.main(['--store', str(tmp_path / 'store'), '--output', str(output)]) == 2
+    result = json.loads(capsys.readouterr().out)
+    assert result['status'] == 'error' and result['receipt'] == receipt
+    assert output.read_bytes() == b'competing receipt'
+
+
+def test_pre_build_path_failure_does_not_invent_a_matrix_receipt(monkeypatch, tmp_path, capsys):
+    output = tmp_path / 'receipt.json'
+    output.write_bytes(b'prior evidence')
+    monkeypatch.setattr(R, 'build_pilot', lambda *a, **k: pytest.fail('invalid destination reached build'))
+    assert R.main(['--store', str(tmp_path / 'store'), '--output', str(output)]) == 2
+    assert 'receipt' not in json.loads(capsys.readouterr().out)
+    assert output.read_bytes() == b'prior evidence'

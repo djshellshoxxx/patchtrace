@@ -135,6 +135,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser.add_argument('--profiles', default=','.join(PROFILES), help='comma-separated stock Tier R profiles')
     parser.add_argument('--opts', default=','.join(OPTS), help='comma-separated optimization levels')
     args = parser.parse_args(argv)
+    receipt = None
     try:
         _new_receipt_path(args.output)
         receipt = build_pilot(args.store, profiles=args.profiles.split(','), opts=args.opts.split(','),
@@ -145,7 +146,10 @@ def main(argv: Sequence[str] | None = None) -> int:
         with _new_receipt_path(args.output).open('xb') as stream:
             stream.write(text.encode('utf-8'))
     except (ValueError, OSError) as exc:
-        print(json.dumps({'command': 'research-build', 'status': 'error', 'reason': str(exc)[:4000]}))
+        error = {'command': 'research-build', 'status': 'error', 'reason': str(exc)[:4000]}
+        if receipt is not None:
+            error['receipt'] = receipt
+        print(json.dumps(error))
         return 2
     print(text, end='')
     return {'built': 0, 'findings': 1, 'partial': 1, 'blocked': 3}[receipt['status']]
