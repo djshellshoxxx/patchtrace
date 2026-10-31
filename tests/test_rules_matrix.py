@@ -320,3 +320,55 @@ def test_a_file_or_folder_that_cannot_be_read_is_a_bad_selection(world, tmp_path
         with pytest.raises(RuleError) as caught:
             world.entries(**kw)
         assert caught.value.code == 'PT-RULE-INPUT'
+
+
+def test_rescore_keeps_distinct_versions_with_identical_rule_content(world, older_rule):
+    other = older_rule.__class__.model_validate({**older_rule.model_dump(), 'version_id': 'f' * 64})
+    entries, _ = world.entries(series=world.series)
+    grid = run(entries, [older_rule, other])
+    from patchtrace.rules.contracts import MatrixRun
+    cells = (CellResult(state='timeout'), CellResult(state='no-hit', hits=0), *grid.cells[2:])
+    grid = MatrixRun.model_validate({**grid.model_dump(), 'cells': cells})
+    again = matrix.rescored(grid, grid.targets, [other, older_rule])
+    assert [r.version_id for r in again.rules] == [other.version_id, older_rule.version_id]
+    assert [c.state for c in again.cells[:2]] == ['no-hit', 'timeout']
+    assert MatrixRun.model_validate(again.model_dump()) == again
+    renamed = other.__class__.model_validate({**other.model_dump(), 'version_id': 'e' * 64})
+    with pytest.raises(RuleError) as caught:
+        matrix.rescored(grid, grid.targets, [renamed, older_rule])
+    assert caught.value.reason == 'cache-identity'
+
+
+@pytest.mark.skipif(not hasattr(os, 'mkfifo'), reason='POSIX FIFO replacement regression')
+def test_regular_file_replaced_by_fifo_before_open_does_not_block(tmp_path):
+    import subprocess
+    import sys
+
+    path = tmp_path / 'input.bin'
+    path.write_bytes(b'regular input')
+    code = '''
+import os, pathlib, sys
+from patchtrace.rules import matrix
+from patchtrace.rules.errors import RuleError
+path = pathlib.Path(sys.argv[1])
+real_stat = os.stat
+swapped = False
+def stat_then_swap(p, *args, **kwargs):
+    global swapped
+    info = real_stat(p, *args, **kwargs)
+    if pathlib.Path(p) == path and not swapped:
+        swapped = True
+        path.unlink()
+        os.mkfifo(path)
+    return info
+matrix.os.stat = stat_then_swap
+try:
+    matrix._digest(path)
+except RuleError as exc:
+    assert exc.reason == 'not-a-file'
+else:
+    raise AssertionError('FIFO accepted')
+'''
+    result = subprocess.run([sys.executable, '-c', code, str(path)], capture_output=True, text=True, timeout=3,
+                            env={**os.environ, 'PYTHONPATH': str(Path(__file__).resolve().parents[1] / 'src')})
+    assert result.returncode == 0, result.stderr
