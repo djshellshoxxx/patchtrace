@@ -1,16 +1,17 @@
-"""`canon/1`: canonical pseudo-code over Ghidriff's stored decompiler text (05 s2.4, s6). Pure and linear.
+"""`canon/2`: canonical pseudo-code over Ghidriff's stored decompiler text (05 s2.4, s6). Pure and linear.
 
 Comments and whitespace are dropped; locals, parameters and temporaries are alpha-renamed by first occurrence;
 `LAB_`/`switchD_`/`caseD_` labels (they stay inside the function) are renamed by first occurrence; function labels
 become the token of the matched row they map to, else a numbered unmapped token; data labels are always unmapped
 without DATA-MAP (S0); with it (`data_labels`, S3) a data label that DATA-MAP/1 maps becomes the token of its datum pair
-on both sides. Literals are compared by value; strings, operators, casts and call names are kept exactly.
+on both sides. Literals retain type-relevant suffix and radix hints; strings, operators, casts and call names are kept exactly.
 An alpha-renamed unmapped label could hide a swapped global (R-02), so `Canon.unmapped` > 0 forbids COS-PSEUDO/1.
 The scanner is hand-written around `re.match` and `str.find` so hostile text cannot make it quadratic.
 """
 from __future__ import annotations
 
 import ast
+import hashlib
 import re
 from dataclasses import dataclass
 
@@ -105,22 +106,57 @@ def _scan(code: str) -> list[tuple[str, str]]:
     return out
 
 
+def _opaque_number(kind: str, text: str) -> str:
+    """Versioned, bounded and content-distinguishing fallback for unparseable numeric tokens.
+
+    The historical first-40-character fallback collapsed arbitrarily different
+    hostile/overflowed tokens. SHA-256 is used only as a token *identity* key,
+    never as proof of semantic equivalence or code safety.
+    """
+    digest = hashlib.sha256(text.encode('utf-8', 'surrogatepass')).hexdigest()
+    return f'{"c" if kind == "char" else "n"}:{len(text)}:{digest}'
+
+
 def _number(kind: str, text: str) -> str:
+    """Conservative canon/2: equal values are not enough if literal types may differ.
+
+    On AMD64 C targets, the signedness/width chosen for an integer literal can
+    depend on its suffix and, above INT32_MAX, its radix. A float suffix also
+    changes the expression type. Preserve these hints instead of giving a weak
+    decompiler-based cosmetic proof when the type cannot be established.
+    """
     try:
-        if kind == 'hex':
-            return f'#{int(text.rstrip("uUlL"), 16)}'
-        if kind == 'dec':
-            return f'#{int(text.rstrip("uUlL"))}'
+        if kind in ('hex', 'dec'):
+            digits = text.rstrip('uUlL')
+            suffix = text[len(digits):].lower()
+            if suffix not in ('', 'u', 'l', 'll', 'ul', 'lu', 'ull', 'llu'):
+                return _opaque_number(kind, text)
+            radix = ('hex' if kind == 'hex' else
+                     'oct' if len(digits) > 1 and digits.startswith('0') else 'dec')
+            value = int(digits, {'hex': 16, 'oct': 8, 'dec': 10}[radix])
+            if suffix:
+                # Both 'uL' and 'Lu' mean unsigned long; preserve type hints.
+                canonical_suffix = ('u' if 'u' in suffix else '') + 'l' * suffix.count('l')
+                signed_bound = 0x7FFFFFFFFFFFFFFF if suffix == 'll' else 0x7FFFFFFF
+                radix_hint = f':{radix}' if 'u' not in suffix and value > signed_bound else ''
+                return f'#{value}:{canonical_suffix}{radix_hint}'
+            if value > 0x7FFFFFFF:
+                # The first representable C type can differ between decimal
+                # (signed-only) and hexadecimal/octal (also unsigned) literals.
+                return f'#{value}:{radix}'
+            return f'#{value}'
         if kind == 'char':
             if len(text) == 3 and text[1] != '\\':
                 return f'#{ord(text[1])}'
             value = ast.literal_eval(text)
             if isinstance(value, str) and len(value) == 1:
                 return f'#{ord(value)}'
-            return f'c:{text[:40]}'
+            return _opaque_number(kind, text)
     except (ValueError, SyntaxError, MemoryError, RecursionError):
-        return f'{"c" if kind == "char" else "n"}:{text[:40]}'
-    return f'f:{text.rstrip("fF") if text.lower().endswith("f") else text}'
+        return _opaque_number(kind, text)
+    if kind == 'float':
+        return f'f:{text[:-1]}:f' if text.lower().endswith('f') else f'f:{text}'
+    return _opaque_number(kind, text)
 
 
 def canonicalize(code: str, side: str, labels, addr: AddressMap, basis: str,
