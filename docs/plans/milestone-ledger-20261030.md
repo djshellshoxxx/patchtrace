@@ -218,3 +218,83 @@ failures do not fabricate receipts; prior output bytes are preserved. It is not
 incorporated in #144 because the broader R1 parent has separate acceptance and
 review dependencies. Do not merge a passing small repair to imply parent corpus
 acceptance.
+
+### Final continuation evidence (2026-10-31 UTC)
+
+The refreshed inventory now covers **138 remote refs / 39 PRs**, including this
+continuation's three preserved repair branches. Dispositions: 21 incorporated
+by ancestry, 5 with exact changed-path content, 112 retained for semantic
+reconciliation. These are snapshot classifications, not permission to delete.
+
+**Stable product source tested:** `59ff5ad1379c0a787d92f62d732686c1dd0e65b4`;
+subsequent changes in this checkpoint are evidence/documentation only. Receipt:
+[completion-verification-20261031.json](../qa/completion-verification-20261031.json).
+
+| Verification | Actual result / limitation |
+|---|---|
+| Main baseline, full serial offscreen pytest | **18,342 passed, 1 failed, 136 skipped, 7 xfailed**, 1799.03 s |
+| Reconciled source, full four-worker suite under concurrent full-suite load | **18,444 passed, 3 failed, 136 skipped, 7 xfailed**; unchanged ASM timing and 100k related-panel timing gates failed plus host Git marker |
+| Those two timing gates, unchanged separate recheck | **2 passed**, 3.36 s; not represented as a new green full run |
+| Reconciled source, complete suite after competing full runs finished | **18,446 passed, 1 failed, 136 skipped, 7 xfailed**, 334.80 s; both timing gates pass unchanged |
+| Remaining failure on main and repaired source | `tests/test_rules_actions.py::test_the_preview_is_exactly_the_file_and_never_replaces`: sandbox's ancestor `.git`; isolated reproduction still fails. Protection/test unchanged. |
+| Unified GUI, repeated five times | **285 passed**, 78.58 s; Linux offscreen only |
+| Worker/GUI interpreter recheck | **94 passed**, 36.11 s; final-tree installed interpreter |
+| Ruff, dependency check, schema generation, diff hygiene | pass; no generated schema drift |
+| Fresh real pinned Linux backend/GZF/IR/unified smoke | **5 completed cases**: bounds `material`; signed-L, float and exponent `review`; identical `UNCH/1`. No target executed. |
+| Original #143 exact-head QA | Run `41167705216`: both full suites, every repeated Qt leg, Windows frozen/portable/installer, Linux package and both Linux smoke jobs passed. PR release jobs skipped as expected. This validates #143 only. |
+| #144 final-head cross-platform/native CI | Queued at snapshot; not accepted. Full G-U dispatch still awaits workflow-capable CLI authentication. |
+
+The earlier mixed-source diagnostic run counted 18,353 passed / 8 failed and
+is not acceptance: code/policy changes occurred while it ran. Result-ID mismatches
+were observed, and the original editable installation also pointed at another
+checkout. A separate copied interpreter installed for the final source passes
+the worker/GUI recheck. All failed-node lists and log SHA-256s are retained in
+the machine-readable verification receipt; no failure is silently relabelled.
+
+Native receipt: [native-reconciliation-smoke-20261031.json](../qa/native-reconciliation-smoke-20261031.json),
+with the exact executed driver beside it. Independent review rehashed **33**
+source/artifact/raw/GZF items and checked stored verdicts. Explicit limits:
+authored one-function cases, visible export names, no held-out/Tier R/Windows/
+BinDiff/full G-U/air-gap claim. Ghidra did not retain original `L`/`f` spellings;
+exponent IR content digests are equal and C6 unavailable, so its review is not a
+demonstrated literal-delta detector. Backend Java version stays `unverified`;
+separate configured Java 21 executable inventory is recorded without rewriting it.
+
+Initial native setup is preserved in a separate receipt: four missing-source
+setup failures plus one actual native A/A pass. The first compile retry picked
+up only the source created before a cache-path error. Corrected attempt v2 wrote
+all eight sources first, verified all eight successful compilations and PE files,
+then ran five new complete comparisons. No setup failure was counted as native success.
+
+### Coordinator repair and review-thread disposition
+
+- [#146](https://github.com/djshellshoxxx/patchtrace/pull/146), head
+  `798e11ef345ed7a7a65508a466eaf77ee85ef77c`, preserves #126 and fixes two
+  independently reviewed rule-matrix defects: duplicate-content version/cell
+  collapse, and blocking POSIX FIFO replacement before fstat. Red: 2 reproduced
+  failures. Final focused suite: **157 passed** in 19.42 s; Ruff/diff clean.
+  Requested version IDs, differing stored observations and ambiguous fallback
+  are covered. Windows special-device race remains unverified; exact-head full
+  CI is pending. An intermediate stronger fixture omitted `hits=0`; corrected
+  before the final passing run, with no product validation weakened.
+- R1 documentary threads `PRRT_kwDOVEPRFc6yLbej`, `...Lbev`, `...Lbew` resolved
+  only after verifying committed receipt hashes/artifact fields, all five
+  historical/current label-file bindings, unchanged original receipt and the
+  canonical review digest in the replay. No new native run was credited for a
+  persisted replay. Resolution replies are on #128; source evidence was not edited.
+- R1 parent-replacement TOCTOU remains open. Evidence-loss repair #145 is still
+  separate and must pass required CI/adoption before its parent thread resolves.
+- No main merge, final release, source deletion, forced update, protection bypass,
+  target execution or numerical-confidence promotion occurred.
+
+Remaining work is the entire open matrix, not just release polish. Continue from
+[the exact handoff](../handoff/autonomous-continuation-20261031.md), refetch heads,
+finish required gates and integrate accepted repairs before the remaining
+committed dependencies and optional-research adoption decisions.
+
+Synthetic ladder/ingest benchmark at the same product source completed and its
+report validates (`counts_sha256` starts `47911197`). 10k ladder 0.87 s; 60k
+ladder 5.54 s / total sides+ladder 7.47 s / 507 MiB peak; 60k ingest 82.56 s /
+63 MiB peak. All applicable unchanged gates pass. Facts/read-model/UI costs remain
+explicitly pending; this is not real-program/native end-to-end G-U5 acceptance.
+See `docs/qa/reconciliation-bench-20261031.json` and the verification receipt.

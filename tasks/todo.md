@@ -911,3 +911,9 @@ Done: dock with state matrix, consent, import, changes, copy, go to CVE. Open: r
 - [ ] Obtain workflow-capable CLI authentication (owner provisioning) and dispatch the pinned G-U matrix at the final combined source; no dispatch claimed yet.
 - [x] Publish isolated R1 receipt-evidence preservation repair at 8c9eafc (29 focused tests); independent review approved. Parent-replacement TOCTOU and parent acceptance remain open.
 - [ ] Complete remaining committed registry/issue/todo requirements after essential acceptance, including source correlation, secondary engines, calibration safeguards, adopted analyst workflows and release gates. Preserve optional research exclusions.
+
+- [x] Complete stable-source #144 full local verification: 18,446 passed, one unchanged host Git-marker failure; five-repeat Unified Qt 285 passed; no threshold/test protection weakened.
+- [x] Run fresh pinned Linux native backend/GZF/IR/unified smoke on the repaired source: five completed authored cases with preserved original hashes; independent evidence audit verified 33 hashes. Full corpus/Windows/BinDiff/held-out acceptance remains open.
+- [x] Publish #146 coordinator rule-matrix repairs (798e11e), 157 focused tests, independent review; original #126 untouched. Full exact-head CI and Windows special-device evidence pending.
+- [x] Resolve three R1 documentary provenance threads after independent hash/binding verification; retain parent TOCTOU and unadopted receipt-publication repair as open.
+- [ ] Refetch #144/#145/#146 and all parent heads; finish required exact-head CI/native corpus gates, then reviewed passing merges and post-merge canonical verification. No completion claim before remaining committed feature/release/branch dispositions are accepted.

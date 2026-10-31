@@ -1,5 +1,5 @@
 {
-  "observed_utc": "2026-10-31T05:11:48.751339+00:00",
+  "observed_utc": "2026-10-31T05:29:27.851137+00:00",
   "repository": "djshellshoxxx/patchtrace",
   "canonical": "a04f5a299a8d4afef023261e52e08d14678cf1e7",
   "verification_candidate": "a7f13e13ffb512f8e9621753a0ae162d78942f3b",
@@ -5706,6 +5706,159 @@
       "next_action": "retain ref; review unique changed content and required checks before closure or deletion"
     },
     {
+      "branch": "codex/coordinator-rule-repairs-20261031",
+      "head": "798e11ef345ed7a7a65508a466eaf77ee85ef77c",
+      "merge_base": "a04f5a299a8d4afef023261e52e08d14678cf1e7",
+      "pr": {
+        "number": 146,
+        "head": "codex/coordinator-rule-repairs-20261031",
+        "head_sha": "798e11ef345ed7a7a65508a466eaf77ee85ef77c",
+        "base": "claude/modest-hamilton-kz2gta",
+        "base_sha": "8d958f0a1950a29c1d1cef9525a114654f4c9904",
+        "draft": true,
+        "runs": [
+          {
+            "id": 41172562182,
+            "name": "QA and Windows standalone",
+            "status": "queued",
+            "conclusion": null,
+            "run_number": 686,
+            "jobs_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/runs/41172562182/jobs",
+            "logs_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/runs/41172562182/logs",
+            "workflow_id": 381129157
+          },
+          {
+            "id": 41172562184,
+            "name": "Native Windows Ghidriff acceptance",
+            "status": "queued",
+            "conclusion": null,
+            "run_number": 455,
+            "jobs_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/runs/41172562184/jobs",
+            "logs_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/runs/41172562184/logs",
+            "workflow_id": 381129156
+          }
+        ],
+        "url": "https://github.com/djshellshoxxx/patchtrace/pull/146"
+      },
+      "changed_paths": [
+        {
+          "path": "docs/plans/milestone-ledger-20261030.md",
+          "change": "A",
+          "source_blob": "101771c769b8a79a605385d46f8de1d88439ace6",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "docs/specs/kb-patch-search-source-adapters.md",
+          "change": "M",
+          "source_blob": "9ee316bc478401253aa516c9f3ac878260795a20",
+          "canonical_blob": "162515012baf1196fb055268a7a8b117301e736c",
+          "exact_current_content": false
+        },
+        {
+          "path": "docs/specs/program-e/WB2-integration-plan.md",
+          "change": "M",
+          "source_blob": "076aad21ec25c25ec8c34ab6a744d059ee319522",
+          "canonical_blob": "3c8f1fdc7864e056a417d9c93a824fa61d9bfe2d",
+          "exact_current_content": false
+        },
+        {
+          "path": "docs/specs/yara-x-rule-workflow.md",
+          "change": "M",
+          "source_blob": "4db7a640d441717fbf65b8ef26fcb8fd489adaf4",
+          "canonical_blob": "435283d1bb8f3fc0b1ef2d8a11b4544de28364bd",
+          "exact_current_content": false
+        },
+        {
+          "path": "src/patchtrace/callgraph/algo.py",
+          "change": "M",
+          "source_blob": "64b230a248a3cc156a0380bfc2283187e5c5b133",
+          "canonical_blob": "879d6f7c7b590479d7629b1b5cfaa3f989e28589",
+          "exact_current_content": false
+        },
+        {
+          "path": "src/patchtrace/callgraph/labels.py",
+          "change": "M",
+          "source_blob": "8c8c183b4d98c680bc34de0d13d21ca446f2174b",
+          "canonical_blob": "b47a1c676cae1e4813573e939e95f24fa2d596d4",
+          "exact_current_content": false
+        },
+        {
+          "path": "src/patchtrace/kbcorrelation/index.py",
+          "change": "M",
+          "source_blob": "17ae3fd1145942ae0723cdf1e102a28e3783a854",
+          "canonical_blob": "3dd37e2ea223b0b7fdcb0f4b3e6eedb763b3789c",
+          "exact_current_content": false
+        },
+        {
+          "path": "src/patchtrace/rules/export.py",
+          "change": "M",
+          "source_blob": "49d0614cdd18e7df21f3ff95ef4a260f9296cbe8",
+          "canonical_blob": "5662bf05ef11d27d6488a063bdc921f7ffd1aba2",
+          "exact_current_content": false
+        },
+        {
+          "path": "src/patchtrace/rules/matrix.py",
+          "change": "M",
+          "source_blob": "c30d6fbdea224e40d1e60b075020c79a01bd5ec3",
+          "canonical_blob": "cf60f1e712fe49d0d90c06146e60a2cd3cd0bc60",
+          "exact_current_content": false
+        },
+        {
+          "path": "src/patchtrace/rules/store.py",
+          "change": "M",
+          "source_blob": "0aa5a5fc3d73677d8a3584bfae62e39adcc9e7f0",
+          "canonical_blob": "fb25a9c48391575cfe35feb94ab951d5af01ad9a",
+          "exact_current_content": false
+        },
+        {
+          "path": "tests/test_callgraph_algo.py",
+          "change": "M",
+          "source_blob": "3120898ce1fbc88805808271d555da049a5439f9",
+          "canonical_blob": "4891962d4c87471ee9095ed2e5f6f7f85dc08ec7",
+          "exact_current_content": false
+        },
+        {
+          "path": "tests/test_callgraph_labels.py",
+          "change": "M",
+          "source_blob": "c26d27e0f041ebcef675207c5e093118b9f0d1c0",
+          "canonical_blob": "3f9c716dbfdf6bae11379301ce4b777bdd5b0e53",
+          "exact_current_content": false
+        },
+        {
+          "path": "tests/test_kbc_bugfixes_20261029.py",
+          "change": "M",
+          "source_blob": "8ca9309d872366c9e98e1f3c31e057bd5a2f2079",
+          "canonical_blob": "11978403efc58f1c37d7e42aa37bc6378777998f",
+          "exact_current_content": false
+        },
+        {
+          "path": "tests/test_rules_export.py",
+          "change": "M",
+          "source_blob": "c6eacb28e13ed7db15a30b196daccd67dbb42a45",
+          "canonical_blob": "8a46e460677a413f8825293f705a2f5d018cff49",
+          "exact_current_content": false
+        },
+        {
+          "path": "tests/test_rules_matrix.py",
+          "change": "M",
+          "source_blob": "ffe46b4ea056f1e1dd9a8192390a584624fb1a84",
+          "canonical_blob": "fccffe95c1e05ff3373e5f37391a1872a0944219",
+          "exact_current_content": false
+        },
+        {
+          "path": "tests/test_rules_store.py",
+          "change": "M",
+          "source_blob": "2a9f7b509f4677e63d922b6a5df26eaeda21e8d1",
+          "canonical_blob": "6ce0fa6343985f8dbb0561d5b17b15e702eefb64",
+          "exact_current_content": false
+        }
+      ],
+      "disposition": "preserve-needs-semantic-reconciliation",
+      "verification": "ancestry/content comparison only; no acceptance inferred",
+      "next_action": "retain ref; review unique changed content and required checks before closure or deletion"
+    },
+    {
       "branch": "codex/deep-review-consolidation-20261030",
       "head": "95e09548a82202ae4cfd9380522f36513da87a66",
       "merge_base": "95e09548a82202ae4cfd9380522f36513da87a66",
@@ -8203,6 +8356,1125 @@
       "next_action": "retain ref; review unique changed content and required checks before closure or deletion"
     },
     {
+      "branch": "codex/r1-receipt-publication-20261031",
+      "head": "8c9eafc79b007a963453d8edf6cb40c804c9bc3d",
+      "merge_base": "a04f5a299a8d4afef023261e52e08d14678cf1e7",
+      "pr": {
+        "number": 145,
+        "head": "codex/r1-receipt-publication-20261031",
+        "head_sha": "8c9eafc79b007a963453d8edf6cb40c804c9bc3d",
+        "base": "codex/r1-ground-truth-research-20261030",
+        "base_sha": "04bd023df566f43939296f7df1766e46186e7fff",
+        "draft": true,
+        "runs": [
+          {
+            "id": 41171803277,
+            "name": "QA and Windows standalone",
+            "status": "in_progress",
+            "conclusion": null,
+            "run_number": 684,
+            "jobs_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/runs/41171803277/jobs",
+            "logs_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/runs/41171803277/logs",
+            "workflow_id": 381129157
+          },
+          {
+            "id": 41171803288,
+            "name": "Corpus Tier R (sharded)",
+            "status": "completed",
+            "conclusion": "success",
+            "run_number": 175,
+            "jobs_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/runs/41171803288/jobs",
+            "logs_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/runs/41171803288/logs",
+            "workflow_id": 384784176
+          }
+        ],
+        "url": "https://github.com/djshellshoxxx/patchtrace/pull/145"
+      },
+      "changed_paths": [
+        {
+          "path": ".github/workflows/unified-live-gates.yml",
+          "change": "M",
+          "source_blob": "81b6bc76d8d0a89bb459edc27d4935bd797f5edf",
+          "canonical_blob": "1bcab625b9c1a15e1f0829ac2d47a847caea2e0c",
+          "exact_current_content": false
+        },
+        {
+          "path": "corpus/ours/r1-pilot/defined/README.md",
+          "change": "A",
+          "source_blob": "4df66dd77bb634a99c3722b1659ec62062257eef",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "corpus/ours/r1-pilot/defined/suite.json",
+          "change": "A",
+          "source_blob": "ca723ceef4ac1728995889cca30d25c8488d0126",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "corpus/ours/r1-pilot/defined/v1/r1.c",
+          "change": "A",
+          "source_blob": "ae179c3390f051fbc99ce56efc57cc706e7a823d",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "corpus/ours/r1-pilot/defined/v2/r1.c",
+          "change": "A",
+          "source_blob": "3ee1a709969541ef2402e331fc901032fe6dd289",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "docs/modules.md",
+          "change": "M",
+          "source_blob": "8cbf3767b4c014ce590977ecb44cbee052078221",
+          "canonical_blob": "2e6d62c9408ba81fef12f4a3836065731adc52e8",
+          "exact_current_content": false
+        },
+        {
+          "path": "docs/qa.md",
+          "change": "M",
+          "source_blob": "db9185e1f33504008d2cf94893a862ca657b4d23",
+          "canonical_blob": "aced3c1c2bc55db6623c84a6f85b6bf66c55ce41",
+          "exact_current_content": false
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/01-literature-and-datasets.md",
+          "change": "A",
+          "source_blob": "8b2a19c22d9ea3f6ea81542b3ae21edc61442c90",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/02-ground-truth-and-evaluation.md",
+          "change": "A",
+          "source_blob": "9c617f00bab68dba4dce623f29c0597d3d63120a",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/03-real-world-patch-candidates.md",
+          "change": "A",
+          "source_blob": "7db42974f0ab710734cf879969d4e16432558980",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/04-pilot-protocol.md",
+          "change": "A",
+          "source_blob": "7ab6b425d50a23b30f896dd7a1ccb3a6573020c2",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/05-results-and-failure-analysis.md",
+          "change": "A",
+          "source_blob": "820a51e24e42b382253defff9842402c42d15d84",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/06-limitations-and-open-questions.md",
+          "change": "A",
+          "source_blob": "dc8482db4cb52a903de11f24b3e2d3b19e3351e4",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/07-handoff-and-reproduction.md",
+          "change": "A",
+          "source_blob": "75101ed7e2585d228bbd226c7ac6b1d4e107570d",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/README.md",
+          "change": "A",
+          "source_blob": "ff3a4209405a4dd5947f70c4d11e57b2d01eca10",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/acceptance-mingw-gcc-o2.json",
+          "change": "A",
+          "source_blob": "c34914f1b4bf0287715b3157e97007d4abd28900",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/acceptance.json",
+          "change": "A",
+          "source_blob": "de323f7e24ed581618665905d145fc2d5a3a96b8",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/build-matrix-clang-retry.json",
+          "change": "A",
+          "source_blob": "4bc89531de565a7104c920314db86bb9ae149ac4",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/build-matrix-final.json",
+          "change": "A",
+          "source_blob": "fcd543cd1d2bf0253b6c5810ca9c9f1ce0c956e3",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/build-matrix-provenance-rebuild.json",
+          "change": "A",
+          "source_blob": "717ac371fca29c621521ea246d8866ed31eb0e15",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/build-matrix.json",
+          "change": "A",
+          "source_blob": "c70902c9c3d014eb9fb9e7077174ffb00d36d7e0",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/build-receipts/02eff01ce5e5cdd81959c059146e30bc0323e77ba50360973ff9baa030940163.json",
+          "change": "A",
+          "source_blob": "8412691c7061c6ae64c9e8160ed2f306cdb1a019",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/build-receipts/06ad67324fc1ac2a00abeb450dd77aa0ae0698846874ce37c5faf83ae0675963.json",
+          "change": "A",
+          "source_blob": "9bad91c748742da6b33111e96c30fca2500ff2d7",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/build-receipts/0734e959d5d692588d9a457fcf317d521cb1fce32755f76320a226f956c41633.json",
+          "change": "A",
+          "source_blob": "d4c16cc468d60ab7862867e15676560e69d3e0db",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/build-receipts/12a6741d9d066226fd3c183cbb1464fabd32e9d28d472da4b5026c741f37deea.json",
+          "change": "A",
+          "source_blob": "11d17fa093e6a4e16c1bfaa3407cc070f6a555f8",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/build-receipts/13cdbb54e8a80806a9d6dffc1441f276eac081de526514c994a727e776d57e0c.json",
+          "change": "A",
+          "source_blob": "d950b4f56a29666ccabddb7ea02a523ce0913ae0",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/build-receipts/15dcb4f875438ef750a9e5444230ade8cb3e3f32773d0fb80ba59304ecbf1a6f.json",
+          "change": "A",
+          "source_blob": "fe7c81c1836912c2f73d39d5215135642a4e5123",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/build-receipts/3de6b5a3c207445a121e3fe38f634bfedcb7c2807ccabce80d95484a92e38837.json",
+          "change": "A",
+          "source_blob": "5d2fba8bea1a2aa34355db08d34e97b545069dfa",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/build-receipts/4ba9a6212ac0e12926a531a03b52aac9f6249117572094afbaee7dc24cde10c3.json",
+          "change": "A",
+          "source_blob": "9eb8bdd9a1b5a9eb0ffd67a7c613adb5abe51d86",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/build-receipts/5c823560e8c6df4df81aa5342236f81ee29308523425215e09894ed0ecb9c972.json",
+          "change": "A",
+          "source_blob": "cb5acf855e3b3b5cf0edcce609baf61f47479a22",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/build-receipts/69d37677a82072776305e324104b138960eff6dd25133f1cc18a78d98e176ef5.json",
+          "change": "A",
+          "source_blob": "b3b2d2d41c794ffa1af141f189f916ca2fa5813e",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/build-receipts/6c3fe6a100b42f621bac84abc40cc2e7e193fe00a8b88b2acbc698bd15d64e19.json",
+          "change": "A",
+          "source_blob": "f60d2dc0dcb1bcdce759bf212e61ea4c49985c90",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/build-receipts/703e7283f1c6e6820066c44db4eb4131d30364d8a2559376fac58e9a1f56717e.json",
+          "change": "A",
+          "source_blob": "7f859d1273529db697291001cb0742a6d4f0d1f2",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/build-receipts/7abf2e788123fc7e861411b206b029d02cd673c57f4150efd02bb8c29f3b230a.json",
+          "change": "A",
+          "source_blob": "8ca6701602ca2010e57681576de09c8663920878",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/build-receipts/89dfb0eea80d7ca3f414cf6edea532097beb122872afe036a5a767c94e4dd20b.json",
+          "change": "A",
+          "source_blob": "dfd34ad6307982f9b78a7d6815b476c4d759e123",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/build-receipts/8b503f77dd9cc006d7daa4b4ff36f8f0ab545b5db2837dd92180ae5b539fd2f0.json",
+          "change": "A",
+          "source_blob": "5f31b46e8857c77c270f1bcb61a710a652888d53",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/build-receipts/8ded7733a301edef8b203f902e4f82077e3e87fe05d316a02fc0a8505f87f7b5.json",
+          "change": "A",
+          "source_blob": "68135b0c698167ec609535ed4703707e24adeebe",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/build-receipts/9268a5c7bb65570279bddc216bb3760bdcaf1ee68f7b28c60b246b9e72d3149d.json",
+          "change": "A",
+          "source_blob": "cd4d6fbf7bd17b8731259dad5c628d1b14a22ab0",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/build-receipts/9729d9eb340988bf3ff203001a561e36325f2525a046af499bed88e24d9333f9.json",
+          "change": "A",
+          "source_blob": "3355ce5d25cb5edf6075b940f7749255a2ea7e96",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/build-receipts/a30d0f685b2d9f196a04f7e0f6c9ae709c3970d85c7aba5b28e199f2e7c792d3.json",
+          "change": "A",
+          "source_blob": "26f01ba2d2376ba4f3d0912423a548b1d0713dcb",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/build-receipts/a7a9a274ecd7d0abeef324c5816db02a916eba9103eca8a4ece2786a701342d1.json",
+          "change": "A",
+          "source_blob": "1951f0a9c440e84207fde54347cd36382554b566",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/build-receipts/b3123d5d7bea3c349c79e14f0d900e7f76d78c787783715ac807c8d35110335d.json",
+          "change": "A",
+          "source_blob": "ad2bfbd85399a3c46167a7ab8352ab4fd8135029",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/build-receipts/b6d1f9aa9a0ba277a09b5649faad62f66f4d2a53a2fc0fb6ed21dcd05cdf68e8.json",
+          "change": "A",
+          "source_blob": "8c96f13ba03629d9192c4d1f2d0ca405ef0ed57b",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/build-receipts/ba1261e9552f7544881888577df4f80c19ccf9343d76c555a6e90dadb277566d.json",
+          "change": "A",
+          "source_blob": "c22471013b380abe5449a09d33f726ead9669652",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/build-receipts/c3d8a1379c3c2e2b72342fa2c730ad8b64e246b0f203fb65250499a8e6ec44d5.json",
+          "change": "A",
+          "source_blob": "c3f7f425b341ed4fc64fbc748b5f5a67143cbb60",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/build-receipts/c7142e5c918973f18c9f12b0948b2f03e311ae74317d3c10dae086203bd54dab.json",
+          "change": "A",
+          "source_blob": "18bae17211a24a89517f6b9c35258a2d699bdbf1",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/build-receipts/c9decd8c800fbfe12a4614d95a1385d322a2ef948ce9657cd938ba751d94a25e.json",
+          "change": "A",
+          "source_blob": "3cedaf51351a95aaf710d60d45c17e9875411f76",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/build-receipts/cb7653eb2522abeba4645d21a96f44c9cbb55c7e8a94376e96dfb89de1ae1e84.json",
+          "change": "A",
+          "source_blob": "5a0d778039946337bbc2786daa2f14dafa770285",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/build-receipts/d53253c186ba501641809b3c6ecdb7a7b6c46124bcb5ee834b28ff79f33ab4fd.json",
+          "change": "A",
+          "source_blob": "6edf5bf7b04fb40adc8d054acdd462ed1ed4da38",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/build-receipts/d6568fb47762a1c5994f72262863d7a957c77bde657aad4162ada09a7b76c719.json",
+          "change": "A",
+          "source_blob": "71d791675243262c164c7b72978e832633e370af",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/build-receipts/ed1030bd40fdcc5896149aa6308ea8c030f690dd756c5b73fc5911c9bf21df32.json",
+          "change": "A",
+          "source_blob": "82a0ac8b2235736af8a063ad9b442d46547778da",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/build-receipts/ef162c385937b849faa0f4bd7669df663f57d11c8fd068184816d14b524b3f1a.json",
+          "change": "A",
+          "source_blob": "99226a161d2b0ae323df5051d02c5784df105c34",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/build-receipts/f1622c4c9b3fec287511b110ba78cd70a6cf44692a50fa9a0e1adc7a787e43c8.json",
+          "change": "A",
+          "source_blob": "6ed7a7f54a86d42609a62e054844a4a7702bde69",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/build-receipts/f24e95f1e4b070060659a02aff595968de0b75e0713c237170cc90044f1fa979.json",
+          "change": "A",
+          "source_blob": "f5c4113178f4ea7f7dff5075eb1c028f92506cd3",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/build-receipts/f4facea3fd4fa5d08ea9223d917be3cb15e0f311c5afa6a7ab93bfa7dac6250b.json",
+          "change": "A",
+          "source_blob": "a6ffcd0e0e478ad602166c80bbd43c09999144db",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/cjson-acceptance.json",
+          "change": "A",
+          "source_blob": "de3e6a9301f3483008250d7b5dac579b0dbb951e",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/cjson-review.md",
+          "change": "A",
+          "source_blob": "abec204b79b0bc0c02b65be538fee8904121ddf0",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/coderabbit-regressions.log",
+          "change": "A",
+          "source_blob": "b6fa2864b3835c72a33dfdc6be90b7893e98d913",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/coderabbit-research-build-green.log",
+          "change": "A",
+          "source_blob": "2f719022652506be3493d81c28f9b6deec80aadd",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/coderabbit-research-build-integration.log",
+          "change": "A",
+          "source_blob": "f9f9dbc9bbd7d606d35b5888b6ea33d311ef37a4",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/coderabbit-research-build-red.log",
+          "change": "A",
+          "source_blob": "e3a23185b9ed69ab3f2bc4c0326aa40e3a63a5b9",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/controls-and-structure.json",
+          "change": "A",
+          "source_blob": "4742dda09c17de1702bf91103dfbfa66b8309981",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/controls-and-structure.md",
+          "change": "A",
+          "source_blob": "da2b6fca4dbe12121795c8e08740ccd52863532f",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/environment.json",
+          "change": "A",
+          "source_blob": "6436cc08a5c49f3df1064659abe1c5f97e2d06a6",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/external-review-followup.md",
+          "change": "A",
+          "source_blob": "a58acf26541364a0149cb928d3ce774800858c2c",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/failure-analysis-addendum.md",
+          "change": "A",
+          "source_blob": "f2b421b1679196346fe57376b4f11ce49ae35a95",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/final-cli-repeatability.json",
+          "change": "A",
+          "source_blob": "738c1fcdbda663b0ae41784084a44a14da328d6b",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/final-integration-review.md",
+          "change": "A",
+          "source_blob": "f94e342aa4f809a581357263c994aed4bee0a628",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/final-label-integrity.json",
+          "change": "A",
+          "source_blob": "a3d49e18f33325db7c3d2ee0935c70424e96bfe1",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/final-partition-audit.json",
+          "change": "A",
+          "source_blob": "7b817b018dfa65fd5babd211ef780337433a3955",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/final-validation.json",
+          "change": "A",
+          "source_blob": "0c1021f9514a8028a11b28c95ac4ddb4f1ccd7e8",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/full-linux-pytest.log",
+          "change": "A",
+          "source_blob": "52f23bebf130eba05a3942e4a2dbff8a94274520",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/hidden-receipt-reconciliation.json",
+          "change": "A",
+          "source_blob": "b78d18c94ce1cd926e0497b610ce9bc1c6e27d36",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/hidden-receipt-reconciliation.md",
+          "change": "A",
+          "source_blob": "34055438e6ac447f1f3093cc7b56e1452ff6962f",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/hidden-review-binding-reconciliation.json",
+          "change": "A",
+          "source_blob": "bcd2a817458fa6f133280d91a0d02b7f5402af92",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/historical-labels/08939af3c162e5dee94f3abe317aa098f8672b32e601a4f75fddf19a0db82445-noise-defined-v1-msvc-free-O2-msvc-free-Os.json",
+          "change": "A",
+          "source_blob": "59ccc9370e41bb8baf6b9eec046f59cfcc55a0ca",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/historical-labels/1792c140953da1e24c01e697731f3f9d3e5e0065e8358418d3f1fe1aed19e26f-aa-defined-v1-O2-rebuild.json",
+          "change": "A",
+          "source_blob": "67d4caf41c2e93f4055a6fa912f153f5a615b304",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/historical-labels/a49fac036302ab463018d22c76aeb0de5bde43adb9db3ed3ac50be4b1dc9f415-noise-defined-v1-msvc-free-O0-msvc-free-O2.json",
+          "change": "A",
+          "source_blob": "3c287ee304defc128e7bc9f376cea9409f357c3f",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/historical-labels/ab00e8abc4f8f62bd7cd67d4ca1e70266d77f281ce69831b5ac87812541355a9-noise-defined-v1-msvc-free-O2-mingw-gcc-O2.json",
+          "change": "A",
+          "source_blob": "44b1bfac125e04e1ad3879218173da6d32cbc3dc",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/historical-labels/bce0f84260d125168b2142888547438b810abb4189d8688e1778699995025e92-aa-defined-v1-mingw-gcc-O2-rebuild.json",
+          "change": "A",
+          "source_blob": "83add7c94e04ce6a44cd200a0cfd2c627926ccb9",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/implementation-review.md",
+          "change": "A",
+          "source_blob": "750c4b7f59bb7ef4272dbb9ad4e9ca6c140913e6",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/integrity-gates.json",
+          "change": "A",
+          "source_blob": "4fc397c4cb241d3367684cb2213ee6c1b42a363a",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/label-provenance-corrections.json",
+          "change": "A",
+          "source_blob": "184d787bd58c3af8d77ad02229fa7da6f0d7977f",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/labels/aa-defined-v1-O2-rebuild.json",
+          "change": "A",
+          "source_blob": "74bdbc99a55c00bcac54619e6fe378495641c6fb",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/labels/aa-defined-v1-mingw-gcc-O2-rebuild.json",
+          "change": "A",
+          "source_blob": "8ac683e69b813e2d82a7854b63fd88b172aa9e4d",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/labels/cjson-1.7.16-to-1.7.17-O2.json",
+          "change": "A",
+          "source_blob": "7f32e47ddc2d902096c6e9fcfa8b29d8aad320c5",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/labels/noise-defined-v1-mingw-gcc-O2-mingw-clang-O2.json",
+          "change": "A",
+          "source_blob": "07775d4bc16ce28aecc0c017e24be2af849187b5",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/labels/noise-defined-v1-msvc-free-O0-msvc-free-O2.json",
+          "change": "A",
+          "source_blob": "e952e99638257f63095a0b0a6ea619e86a7363a2",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/labels/noise-defined-v1-msvc-free-O2-mingw-gcc-O2.json",
+          "change": "A",
+          "source_blob": "829e95f8c5d13271a40b6b28a8ddca55b9f31e35",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/labels/noise-defined-v1-msvc-free-O2-msvc-free-Os.json",
+          "change": "A",
+          "source_blob": "4f3bb174dfa9c2fe607790683a65cc4fbf30e42a",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/labels/ours-r1-pilot-defined-v1-v2-O2.json",
+          "change": "A",
+          "source_blob": "dfccb0c32fe478d4dff0271405f377dab881103c",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/labels/research-mingw-clang-O0-r1-pilot-defined-v1-v2.json",
+          "change": "A",
+          "source_blob": "2783d244193cea09182af382ccb6dcbeddb86771",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/labels/research-mingw-clang-O1-r1-pilot-defined-v1-v2.json",
+          "change": "A",
+          "source_blob": "94f40f8e6f9ad09a9b1fed1dd3490853e97f98ad",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/labels/research-mingw-clang-O2-r1-pilot-defined-v1-v2.json",
+          "change": "A",
+          "source_blob": "df754baba8c80503f781b4ecfcb1444e73b70d6e",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/labels/research-mingw-clang-O3-r1-pilot-defined-v1-v2.json",
+          "change": "A",
+          "source_blob": "33b614755378f687e1b86d0172a4008878ab87d5",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/labels/research-mingw-clang-Os-r1-pilot-defined-v1-v2.json",
+          "change": "A",
+          "source_blob": "4c5c711af985d3eb835866353f7fc87b28044f06",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/labels/research-mingw-gcc-O0-r1-pilot-defined-v1-v2.json",
+          "change": "A",
+          "source_blob": "641137f6c3c1e951b08759b04a86402f167ae1da",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/labels/research-mingw-gcc-O1-r1-pilot-defined-v1-v2.json",
+          "change": "A",
+          "source_blob": "140a9a804cb812d264aeb5044295b5062310d36f",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/labels/research-mingw-gcc-O2-r1-pilot-defined-v1-v2.json",
+          "change": "A",
+          "source_blob": "b8ea0fd5d5db97bf1e66a897d3f5aa9db124b46f",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/labels/research-mingw-gcc-O3-r1-pilot-defined-v1-v2.json",
+          "change": "A",
+          "source_blob": "a70bbc33f4da1befa9cf8479e05b77a70b90f3ac",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/labels/research-mingw-gcc-Os-r1-pilot-defined-v1-v2.json",
+          "change": "A",
+          "source_blob": "1f365f00e2ffeb19b8c599adbfeb29e70b9e3d99",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/labels/research-msvc-free-O0-r1-pilot-defined-v1-v2.json",
+          "change": "A",
+          "source_blob": "da08e176db28793477fd4c54e07a47f451b01676",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/labels/research-msvc-free-O1-r1-pilot-defined-v1-v2.json",
+          "change": "A",
+          "source_blob": "eb687bd4bb1ea577058dd9bb9647c71965229e07",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/labels/research-msvc-free-O2-r1-pilot-defined-v1-v2.json",
+          "change": "A",
+          "source_blob": "6c7f57e3968ae3cce6a9ffc8afde978cc42e9792",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/labels/research-msvc-free-O3-r1-pilot-defined-v1-v2.json",
+          "change": "A",
+          "source_blob": "695f544e4264c8c99f83e7544f5bbed9cb6e33c3",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/labels/research-msvc-free-Os-r1-pilot-defined-v1-v2.json",
+          "change": "A",
+          "source_blob": "d1e15e71ea375c5145e20a1e99e99c8d89e0df54",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/matrix-provenance-validation.json",
+          "change": "A",
+          "source_blob": "000d8eeace77bc150012a4a5d50ae63b953b2ee6",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/native-aa-control.json",
+          "change": "A",
+          "source_blob": "aa0bbf48e6179df6151f4b7260ac413907291a04",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/native-aa-control.md",
+          "change": "A",
+          "source_blob": "82a1ca148b1f8c74a8141e55ffcaada89900f2dc",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/native-aa-provenance-correction.json",
+          "change": "A",
+          "source_blob": "c6f9aad7fcc812931f5286b4f561add07f66156b",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/native-aa-provenance-correction.md",
+          "change": "A",
+          "source_blob": "c70cf6cf604f3b357665cfd38e558511a3f44eff",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/native-aa-recovered-build-receipts/89dfb0eea80d7ca3f414cf6edea532097beb122872afe036a5a767c94e4dd20b.json",
+          "change": "A",
+          "source_blob": "dfd34ad6307982f9b78a7d6815b476c4d759e123",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/native-aa-recovered-build-receipts/950a443ec7bba59fdd6098517755b9aaa69a56a584c583cd9609a5943916d095.json",
+          "change": "A",
+          "source_blob": "1d49e6a07bcb63b85f8098a0305c4bd9d3c9bb9b",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/native-aa-recovered-build-receipts/a30d0f685b2d9f196a04f7e0f6c9ae709c3970d85c7aba5b28e199f2e7c792d3.json",
+          "change": "A",
+          "source_blob": "26f01ba2d2376ba4f3d0912423a548b1d0713dcb",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/native-aa-recovered-build-receipts/d6568fb47762a1c5994f72262863d7a957c77bde657aad4162ada09a7b76c719.json",
+          "change": "A",
+          "source_blob": "71d791675243262c164c7b72978e832633e370af",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/native-aa-recovered-build-receipts/d88845cbf96c21820a2f66b76ad5149d921e2a57cf4a976b2f2752338bada060.json",
+          "change": "A",
+          "source_blob": "598c67c55b384a23a16d32338a4ac303798e31cb",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/output-safety-review.md",
+          "change": "A",
+          "source_blob": "0ebd3fa313a64a5733a6928113d98c69256ea623",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/partition-audit.json",
+          "change": "A",
+          "source_blob": "c4e127df727baf53e43a2eed12ee52d0cdd8a565",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/per-function-observations.json",
+          "change": "A",
+          "source_blob": "def39564841e8a87ebc3507dca26f6c1d547ed06",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/pilot-cjson-o2.json",
+          "change": "A",
+          "source_blob": "86e8a5fa07c25e3c69683792c1088911697eb9a8",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/pilot-cjson-reviewed.json",
+          "change": "A",
+          "source_blob": "eb633e84c207b6a2ed3a46afb4ef97e19d18abf1",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/pilot-compiler-noise.json",
+          "change": "A",
+          "source_blob": "f169ad1294e6883e4361e9824dc86ecbee775341",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/pilot-mingw-gcc-o2-final-cli.json",
+          "change": "A",
+          "source_blob": "91a0a8d94b837f31b8b20aabbc095b114f732663",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/pilot-mingw-gcc-o2-profiled.json",
+          "change": "A",
+          "source_blob": "14854575bd2a8fe8cb02d83384630ac3a430a8c9",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/pilot-mingw-gcc-o2-repeat.json",
+          "change": "A",
+          "source_blob": "8bd23c63d46189767a1961fb366d2678186259b7",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/pilot-mingw-gcc-o2.json",
+          "change": "A",
+          "source_blob": "196509e0c0bb0fedcad8ddbd35956bf9304d1e64",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/pilot-msvc-free-o2-reviewed-replay.json",
+          "change": "A",
+          "source_blob": "a97709fc8fc9a41520f23b144ba23148ac4bd3e3",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/pilot-msvc-free-o2.json",
+          "change": "A",
+          "source_blob": "0d487487fa119966e94ee1b9dbeee3ba08b12bff",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/profiled-resources.json",
+          "change": "A",
+          "source_blob": "8206d8080ffd71f3dbb4581f0834b14859a3e965",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/repeatability.json",
+          "change": "A",
+          "source_blob": "6ce4e55557b24dfde088ce0c23d74f9ba5a015b2",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/rzdiff-hidden-diagnostic.json",
+          "change": "A",
+          "source_blob": "530879137ce1c0237f2c5e3d0337ee8f9b721f0d",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/sonar-checkpoint-0271-annotation.json",
+          "change": "A",
+          "source_blob": "cb07d166431d9c484599cd6e23d4004d9c355f3d",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/source-and-binary-review.md",
+          "change": "A",
+          "source_blob": "c7c3f455d472f1d0c9d3bbe575cf3310f5168d19",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/source-fetch-receipts.json",
+          "change": "A",
+          "source_blob": "c430133556363beec22f3391ea30f76689fc11dc",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "docs/research/ground-truth-corpus/results/suite-endpoint-red-green.json",
+          "change": "A",
+          "source_blob": "77301b06d88aa9bf4b91dadd07a962db324fa2f1",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "docs/specs/known-answer-corpus.md",
+          "change": "M",
+          "source_blob": "f1fcff7647a46892aff496c90ccb876db87c7785",
+          "canonical_blob": "03a297ce7bb9f59af641f96f471f96c040d40890",
+          "exact_current_content": false
+        },
+        {
+          "path": "tasks/todo.md",
+          "change": "M",
+          "source_blob": "7e0cc4f1cb516a6a4874b4a74591d958cf392036",
+          "canonical_blob": "7f78c9eeb4e977e537d3ded04ac3776fd154ccf4",
+          "exact_current_content": false
+        },
+        {
+          "path": "tests/test_binexport_isolation.py",
+          "change": "M",
+          "source_blob": "f3bfa55904e1fa926d60e2e9afc7b64c1f239380",
+          "canonical_blob": "1be37eac00c3f4433fa9ca79119359a3c7dd30a6",
+          "exact_current_content": false
+        },
+        {
+          "path": "tests/test_tier_r_build_receipts_r1.py",
+          "change": "A",
+          "source_blob": "5d88eb4e779a45a563c3a2f8d446adbc74059dd3",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "tests/test_tier_r_label_promotion_r1.py",
+          "change": "A",
+          "source_blob": "4f12f0685d68112dac5841ac0f1696fe4b522825",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "tests/test_tier_r_research_audit.py",
+          "change": "A",
+          "source_blob": "7fa15b951b008541dbc0fa18e8b07d2e111ea66d",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "tests/test_tier_r_research_build.py",
+          "change": "A",
+          "source_blob": "b7c9b66566fb64e26a602f8a772a3576e3a743c3",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "tests/test_tier_r_research_observers.py",
+          "change": "A",
+          "source_blob": "f7c306f2df077f51a6fb023f9e1b3e27a7d50506",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "tests/test_tier_r_research_pilot.py",
+          "change": "A",
+          "source_blob": "b378e2e1ca8d4bb47c2d5530066aa92198238551",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "tests/test_tier_r_session_provenance_r1.py",
+          "change": "A",
+          "source_blob": "e626d36832773f3ebac1b6903bfadfbced5744e2",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "tests/test_unified_live_pairs_r1.py",
+          "change": "A",
+          "source_blob": "30e915793b8ef8d0661792c5cb2896499e9e4c46",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "tools/calibration/tier_r/build.py",
+          "change": "M",
+          "source_blob": "1fcac0ff2acf713def95c3bba7e9ef4b27f41320",
+          "canonical_blob": "50a3ea05257b058c937f3b353faeedc2b9f3a5c3",
+          "exact_current_content": false
+        },
+        {
+          "path": "tools/calibration/tier_r/factory.py",
+          "change": "M",
+          "source_blob": "61e08c41e977314c369c0e5e7077098c7696d417",
+          "canonical_blob": "02b06820cd888dc66850f7f1cdc93aace7b7abcc",
+          "exact_current_content": false
+        },
+        {
+          "path": "tools/calibration/tier_r/labeler.py",
+          "change": "M",
+          "source_blob": "d6983d035783c5f99aba75783f2964c8c99b2402",
+          "canonical_blob": "1bf892957a605186df8f38b56d6fd9387d447f81",
+          "exact_current_content": false
+        },
+        {
+          "path": "tools/calibration/tier_r/research_audit.py",
+          "change": "A",
+          "source_blob": "d3557898bea65af152bee3dd7cbe1c74e055f6d4",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "tools/calibration/tier_r/research_build.py",
+          "change": "A",
+          "source_blob": "3d29b6e033243e300650a4d330ac0b0d2dfcc4f7",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "tools/calibration/tier_r/research_observers.py",
+          "change": "A",
+          "source_blob": "2f9ba4cc82f3e3a1783cca23cc9e692d30f30f3b",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "tools/calibration/tier_r/research_pilot.py",
+          "change": "A",
+          "source_blob": "39c279319557167bf7566752335e0daae3cf30ff",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "tools/unified/live_pairs.py",
+          "change": "M",
+          "source_blob": "c0c4d1ffa43b16b60ff1375dce30a9f3e478bacd",
+          "canonical_blob": "57cd4804998e62cd327e91574cfadc3b3fcb6e00",
+          "exact_current_content": false
+        }
+      ],
+      "disposition": "preserve-needs-semantic-reconciliation",
+      "verification": "ancestry/content comparison only; no acceptance inferred",
+      "next_action": "retain ref; review unique changed content and required checks before closure or deletion"
+    },
+    {
       "branch": "codex/r2-unified-matching-research-20261030",
       "head": "b3ceb8b30d7a83da5e22c231c3b8c28179246816",
       "merge_base": "a04f5a299a8d4afef023261e52e08d14678cf1e7",
@@ -8944,6 +10216,610 @@
           "change": "A",
           "source_blob": "525ddd44940aa6a20bff67a70924ccbdece82f89",
           "canonical_blob": null,
+          "exact_current_content": false
+        }
+      ],
+      "disposition": "preserve-needs-semantic-reconciliation",
+      "verification": "ancestry/content comparison only; no acceptance inferred",
+      "next_action": "retain ref; review unique changed content and required checks before closure or deletion"
+    },
+    {
+      "branch": "codex/semantic-proof-reconciliation-20261031",
+      "head": "59ff5ad1379c0a787d92f62d732686c1dd0e65b4",
+      "merge_base": "a04f5a299a8d4afef023261e52e08d14678cf1e7",
+      "pr": {
+        "number": 144,
+        "head": "codex/semantic-proof-reconciliation-20261031",
+        "head_sha": "59ff5ad1379c0a787d92f62d732686c1dd0e65b4",
+        "base": "codex/essential-combined-verification-20261030",
+        "base_sha": "a7f13e13ffb512f8e9621753a0ae162d78942f3b",
+        "draft": true,
+        "runs": [
+          {
+            "id": 41171811649,
+            "name": "QA and Windows standalone",
+            "status": "queued",
+            "conclusion": null,
+            "run_number": 685,
+            "jobs_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/runs/41171811649/jobs",
+            "logs_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/runs/41171811649/logs",
+            "workflow_id": 381129157
+          },
+          {
+            "id": 41171811607,
+            "name": "Native Windows Ghidriff acceptance",
+            "status": "queued",
+            "conclusion": null,
+            "run_number": 453,
+            "jobs_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/runs/41171811607/jobs",
+            "logs_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/runs/41171811607/logs",
+            "workflow_id": 381129156
+          },
+          {
+            "id": 41171811611,
+            "name": "Live unified extraction (SPEC-31 S1)",
+            "status": "queued",
+            "conclusion": null,
+            "run_number": 103,
+            "jobs_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/runs/41171811611/jobs",
+            "logs_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/runs/41171811611/logs",
+            "workflow_id": 384606855
+          }
+        ],
+        "url": "https://github.com/djshellshoxxx/patchtrace/pull/144"
+      },
+      "changed_paths": [
+        {
+          "path": ".github/workflows/unified-live-gates.yml",
+          "change": "M",
+          "source_blob": "81b6bc76d8d0a89bb459edc27d4935bd797f5edf",
+          "canonical_blob": "1bcab625b9c1a15e1f0829ac2d47a847caea2e0c",
+          "exact_current_content": false
+        },
+        {
+          "path": "README.md",
+          "change": "M",
+          "source_blob": "508d270f6506a6b8367d25acda4dfa2c1f98ee7b",
+          "canonical_blob": "2997ba5d0dcc084ad6a60856b9c58af789f5e9e2",
+          "exact_current_content": false
+        },
+        {
+          "path": "docs/branch-pr-inventory-2026-10-30.md",
+          "change": "A",
+          "source_blob": "508523dbde5655bb26651ea967e86d03aa3fc473",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "docs/integration/pr-gates-01.md",
+          "change": "A",
+          "source_blob": "e20a93c3fa482d6a7701db1a1f1f419d6bcd769e",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "docs/integration/pr-gates-02.md",
+          "change": "A",
+          "source_blob": "e33b3b57d1201a508d77889821942f712782e3f9",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "docs/integration/pr-gates-03.md",
+          "change": "A",
+          "source_blob": "228fe2f9b8cc82d7cb0c4aebc8b090f96e9c1c7c",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "docs/integration/pr-gates-04.md",
+          "change": "A",
+          "source_blob": "1df7117beb517559d6447c84900d5ab73d25da08",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "docs/integration/pr-gates-05.md",
+          "change": "A",
+          "source_blob": "d9ff48e3d5ed77c063da944ae501ab21d86912ae",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "docs/integration/pr-gates-06.md",
+          "change": "A",
+          "source_blob": "24ce0d83d3c384eb7f769d2b41178c8dee870997",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "docs/modules.md",
+          "change": "M",
+          "source_blob": "dfde2a9686b46fe4f2026a1451925065599b5e62",
+          "canonical_blob": "2e6d62c9408ba81fef12f4a3836065731adc52e8",
+          "exact_current_content": false
+        },
+        {
+          "path": "docs/plans/gt01-native-output-diagnosis-20261030.md",
+          "change": "A",
+          "source_blob": "224528232358d8b46e438033e47d1932e28836de",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "docs/plans/gt01-overlap-disposition-20261030.md",
+          "change": "A",
+          "source_blob": "00e9b49f958d02bc35e3474f45294acf29a7d5c1",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "docs/plans/milestone-ledger-20261030.md",
+          "change": "A",
+          "source_blob": "896c1df551fe90a44d90925c76f44c55987e37f5",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "docs/qa.md",
+          "change": "M",
+          "source_blob": "53f7a56722ee858a697bcdb157b4b3326df681e8",
+          "canonical_blob": "aced3c1c2bc55db6623c84a6f85b6bf66c55ce41",
+          "exact_current_content": false
+        },
+        {
+          "path": "docs/qa/completion-inventory-20261031.json",
+          "change": "A",
+          "source_blob": "c2fdf74aa3f93d1109435e28b460e01c629e3fed",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "docs/qa/continuation-verification-20261030.md",
+          "change": "A",
+          "source_blob": "1e136dd6d3df0aed8ce4dc1759a2cdf71ce58c0a",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "docs/qa/gt01-harness-smoke-20261030.json",
+          "change": "A",
+          "source_blob": "00ae3225d24caf484a2f06b55f3455c536db0947",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "docs/qa/gt01-native-smoke-20261030.json",
+          "change": "A",
+          "source_blob": "7957c484b7f6777fbe67c7461dd1795b2d30cc97",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "docs/qa/kb-fixture-reconciliation-20261030.md",
+          "change": "A",
+          "source_blob": "c3bc8fcfaba8c6a3df21e95f7590a522c4a14755",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "docs/research/deep-uncertainty-r8/01-typed-literal-counterexamples.md",
+          "change": "A",
+          "source_blob": "722f04706d1e00bd5e57dcb4c0c61a7bb222584c",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "docs/specs/architecture.md",
+          "change": "M",
+          "source_blob": "98787d2266fbf3ba6e8a275a3e98ac971f739069",
+          "canonical_blob": "8907d713471eed6915ec937111ecde406b7322e6",
+          "exact_current_content": false
+        },
+        {
+          "path": "docs/specs/unified-engine/05-fusion-and-noise.md",
+          "change": "M",
+          "source_blob": "28fc5b9c3a18865336584844cf8c19a96ea2aaa8",
+          "canonical_blob": "75596e6e368384f5c3f46cb1a48470b7f9e44316",
+          "exact_current_content": false
+        },
+        {
+          "path": "docs/specs/unified-engine/08-evaluation.md",
+          "change": "M",
+          "source_blob": "e4d649d8053901c79c500dbed8a99f4cc9cdb16f",
+          "canonical_blob": "ecc4805783ce10d216b73c0d0910904a3edc0236",
+          "exact_current_content": false
+        },
+        {
+          "path": "docs/wiki/Architecture-and-Design-Rationale.md",
+          "change": "A",
+          "source_blob": "edf393c1146d4e6efb662b3e48b2e0728e98054f",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "docs/wiki/Codebase-Map.md",
+          "change": "A",
+          "source_blob": "9c46c4691d44cf97249305da8834c401829aede7",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "docs/wiki/Developer-Guide.md",
+          "change": "A",
+          "source_blob": "eb1055607761103f9655d5cad641f04bac363c54",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "docs/wiki/Home.md",
+          "change": "A",
+          "source_blob": "0d887469e77d4c7e93d11e95a1b318a378da091a",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "docs/wiki/User-Guide.md",
+          "change": "A",
+          "source_blob": "7e00f06b84b949c75b125dc041355eb8df2940f6",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "docs/wiki/_Sidebar.md",
+          "change": "A",
+          "source_blob": "9b07d4666227983aa4c85679defeda1fe9d1037c",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "src/patchtrace/backend.py",
+          "change": "M",
+          "source_blob": "85b45313858ce44da87e97dba0d8dd456b7372e3",
+          "canonical_blob": "422cc1efbbf85009b0c9ff434b336488ea37268a",
+          "exact_current_content": false
+        },
+        {
+          "path": "src/patchtrace/unified/compute.py",
+          "change": "M",
+          "source_blob": "5bdf1caf56e62658150233b056055735de4759a0",
+          "canonical_blob": "d4ecbecc1e25fbfc214b8cee2e92af07d8b813b0",
+          "exact_current_content": false
+        },
+        {
+          "path": "src/patchtrace/unified/facts/anchors.py",
+          "change": "M",
+          "source_blob": "ef4a87f5cee7f16edca18f60a826051169c3c9da",
+          "canonical_blob": "096b4a936881fece02bc51315eb0f019b3388374",
+          "exact_current_content": false
+        },
+        {
+          "path": "src/patchtrace/unified/facts/channels.py",
+          "change": "M",
+          "source_blob": "5707a805e97e8f70c21f7715fce6e3753ec1a549",
+          "canonical_blob": "36fb82bbeebfe0d80c52fcd61328d9db2749e075",
+          "exact_current_content": false
+        },
+        {
+          "path": "src/patchtrace/unified/facts/pseudo.py",
+          "change": "M",
+          "source_blob": "33e6427540f0d51f414532f5ce305118f2419aff",
+          "canonical_blob": "7a7f78d40d95e9e7c57a878ba7bfcd27e73ebe2c",
+          "exact_current_content": false
+        },
+        {
+          "path": "src/patchtrace/unified/facts/verdict.py",
+          "change": "M",
+          "source_blob": "cc6b902801b1374a426afed0d5d89e2c14ef9f75",
+          "canonical_blob": "e12b538b3775bc0ab6e3095bbe4be0e693c8c1ec",
+          "exact_current_content": false
+        },
+        {
+          "path": "src/patchtrace/unified/fusion/arbiter.py",
+          "change": "M",
+          "source_blob": "cc40ea6322cc9392dcc868971b81edc8e3aa8a22",
+          "canonical_blob": "6ca6a306f79cf4ea5fd54315fe152b155e35e9d2",
+          "exact_current_content": false
+        },
+        {
+          "path": "src/patchtrace/unified/ir/cfg.py",
+          "change": "M",
+          "source_blob": "1c40dcc459ee0d5192348fbb57d66d167228d717",
+          "canonical_blob": "96a1315605e5400798340572680e2ea6d45ed3fa",
+          "exact_current_content": false
+        },
+        {
+          "path": "src/patchtrace/unified/read_text.py",
+          "change": "M",
+          "source_blob": "96392bbf547a824c0a153e2724a2acdd74c6d06f",
+          "canonical_blob": "6ce862c56888cc752f0e7329988dd7890eb32fe1",
+          "exact_current_content": false
+        },
+        {
+          "path": "src/patchtrace/unified/registry.py",
+          "change": "M",
+          "source_blob": "fbff370c9c3e7846f341f94c153e5aa7b381f362",
+          "canonical_blob": "4a17ef15549aa4ed91b1dcc89be615eb69934cc1",
+          "exact_current_content": false
+        },
+        {
+          "path": "src/patchtrace/unified/sources/ladder.py",
+          "change": "M",
+          "source_blob": "20cf8286c9606992afb8323bbef032f9834b8191",
+          "canonical_blob": "01340e5c1895df4ee9cc735ebda3decded69dab8",
+          "exact_current_content": false
+        },
+        {
+          "path": "tasks/todo.md",
+          "change": "M",
+          "source_blob": "43cc7a712dd1d83a6f5b48d0d2a6e0dbf582d6fa",
+          "canonical_blob": "7f78c9eeb4e977e537d3ded04ac3776fd154ccf4",
+          "exact_current_content": false
+        },
+        {
+          "path": "tests/fixtures/kb/CONTRACT_CONFLICTS.md",
+          "change": "A",
+          "source_blob": "0c29db2e10a519190cf064bd22a990a60e4b7e1a",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "tests/fixtures/kb/MANIFEST.json",
+          "change": "A",
+          "source_blob": "0d118ece562a162b52cf36063432ede1827eefa7",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "tests/fixtures/kb/README.md",
+          "change": "A",
+          "source_blob": "5acd42b6ec77f9032c4579e9026fcbd18fe26d45",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "tests/fixtures/kb/confusable_kb.json",
+          "change": "A",
+          "source_blob": "38d6a178d9ccd2c68423f1b980061949aea80063",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "tests/fixtures/kb/crash_points.json",
+          "change": "A",
+          "source_blob": "1fb33fb0b6fc88d4f450986743ad0731a77cf0fd",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "tests/fixtures/kb/csaf_synthetic.json",
+          "change": "A",
+          "source_blob": "89ec6af24dd6910f5b4401aad3b2a472dd921718",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "tests/fixtures/kb/cvrf_bom.json",
+          "change": "A",
+          "source_blob": "5d406e5738b28c50a46fbcd21dfde3a247add658",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "tests/fixtures/kb/cvrf_crlf.json",
+          "change": "A",
+          "source_blob": "3a6b1a2c18140e1f065f2eddb4f0d63462c540ca",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "tests/fixtures/kb/cvrf_v3_synthetic.json",
+          "change": "A",
+          "source_blob": "a6ef72395bf5cb1a793ee65fdf741f1552259a0d",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "tests/fixtures/kb/raw_adversarial_inputs.json",
+          "change": "A",
+          "source_blob": "df7299c50f70af31f606dafaab6c01ef87422148",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "tests/fixtures/kb/update_packages_synthetic.json",
+          "change": "A",
+          "source_blob": "13958b24664844eee4a67eb44d1bc70a038f0ffa",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "tests/fixtures/kb/update_relationships_synthetic.json",
+          "change": "A",
+          "source_blob": "8e79cdf92c72144197c95ea97d1b43db0175e4ef",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "tests/fixtures/kb/vex_synthetic.json",
+          "change": "A",
+          "source_blob": "a9ed72d829486713c128b6820cfe878f2334a074",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "tests/fixtures/kb/winbindex_synthetic.json",
+          "change": "A",
+          "source_blob": "0776dc46f9d83412b8c816e61826ca1d826f5bbf",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "tests/kb_crash_harness.py",
+          "change": "A",
+          "source_blob": "3de2c4be158b8f1b2049dbc1b424fee4ea8dbc5b",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "tests/kb_fixture_performance_plan.md",
+          "change": "A",
+          "source_blob": "423d25f1073499e66d6ed3679b52c21e016b53b2",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "tests/test_jobs.py",
+          "change": "M",
+          "source_blob": "a7811cd7b4c62f43e6aa41468d0dca87fad860a3",
+          "canonical_blob": "adea5624784139486279037f60337197bb8eadb6",
+          "exact_current_content": false
+        },
+        {
+          "path": "tests/test_kb_crash_injection_protocol.py",
+          "change": "A",
+          "source_blob": "0d2e6e3f667326c6b42bee12aed0214e3069c5a7",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "tests/test_kb_cvrf_fixture_import.py",
+          "change": "A",
+          "source_blob": "b38ba7e49f902d9650b2b027392c3b0e53e0eb1a",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "tests/test_kb_fixture_encoding.py",
+          "change": "A",
+          "source_blob": "b77e7e5024b5978e83b50c3b0f9fff31de30f43c",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "tests/test_kb_fixture_properties.py",
+          "change": "A",
+          "source_blob": "6551f9aee6c3171c77c56088776727e63a52bd93",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "tests/test_kb_metadata_fixture_boundaries.py",
+          "change": "A",
+          "source_blob": "7d8ceb221f0a93883d4bcc08ef548958f00e347f",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "tests/test_kb_offline_fixture_import.py",
+          "change": "A",
+          "source_blob": "2a29ed39cd8ac606c7c7414bcf47f53d10a0f6c4",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "tests/test_kb_raw_adversarial_inputs.py",
+          "change": "A",
+          "source_blob": "369f9463b2469461faeaa87860a94142fe157fc4",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "tests/test_kb_synthetic_fixture_corpus.py",
+          "change": "A",
+          "source_blob": "3b66f517b158d9564bfa588d4acddd6cc4d427b8",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "tests/test_kb_update_relationships.py",
+          "change": "A",
+          "source_blob": "5da8b6c997f13fe74172018e29ca7828a0cb1049",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "tests/test_r2_cache_version.py",
+          "change": "A",
+          "source_blob": "5320af8ea111a10822a1eb9c0a38da5c5e057c8b",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "tests/test_r2_cfg_performance.py",
+          "change": "A",
+          "source_blob": "a9075a81de5b8c563db195c419502eea392a5db6",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "tests/test_r2_fusion_regressions.py",
+          "change": "A",
+          "source_blob": "b114764b43b07d49069b975ffa7a136a9315c9ed",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "tests/test_r8_literal_types.py",
+          "change": "A",
+          "source_blob": "c904c9de30f85ba15b6f0b531ca2a8f0bc3bc584",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "tests/test_unified_live_force_identical.py",
+          "change": "A",
+          "source_blob": "3063078726c2bbd72cb1c4657ad1b8938db22be9",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "tests/test_unified_live_native_failure_details.py",
+          "change": "A",
+          "source_blob": "f095ab4124df7fc1534193cbc1ffa64253e240ec",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "tests/test_unified_live_pairs.py",
+          "change": "M",
+          "source_blob": "fe972e8b9d4773dabed098ebc891c6c80b590e86",
+          "canonical_blob": "a44daeb3372fc3447a623142d6996025ea571cc9",
+          "exact_current_content": false
+        },
+        {
+          "path": "tests/test_unified_live_pairs_r1.py",
+          "change": "A",
+          "source_blob": "e74148116d943756c82a6e08c7071b8b5d57ec72",
+          "canonical_blob": null,
+          "exact_current_content": false
+        },
+        {
+          "path": "tests/test_unified_live_workflow.py",
+          "change": "M",
+          "source_blob": "826265a10789acf4faf66f69e52200951686b311",
+          "canonical_blob": "f00b26f6ab491fbf06baf7bec63c7d168c620203",
+          "exact_current_content": false
+        },
+        {
+          "path": "tests/test_unified_verdict_ir.py",
+          "change": "M",
+          "source_blob": "20265df210862036165d5375d4278a727dd5fe66",
+          "canonical_blob": "6ec03b30827522de2b1439368501b596ccc55837",
+          "exact_current_content": false
+        },
+        {
+          "path": "tests/test_unified_wire_compute.py",
+          "change": "M",
+          "source_blob": "dc66fceb3bf400bc67fe60c465724f58dc50ab3f",
+          "canonical_blob": "24c38e3be4c990c7a995f15264d6e9ea65499e03",
+          "exact_current_content": false
+        },
+        {
+          "path": "tools/unified/live_pairs.py",
+          "change": "M",
+          "source_blob": "5dbb45630c08f9639a27d4f5517570b6af48b070",
+          "canonical_blob": "57cd4804998e62cd327e91574cfadc3b3fcb6e00",
           "exact_current_content": false
         }
       ],
@@ -15131,6 +17007,7 @@
       "codex/essential-combined-verification-20261030",
       "codex/gt01-extraction-recovery-20261030",
       "codex/kb-fixture-contract-repairs-20261030",
+      "codex/semantic-proof-reconciliation-20261031",
       "docs/post-consolidation-gap-analysis-20261030",
       "docs/readme-and-wiki",
       "feat/enrichment-contracts",
@@ -15165,7 +17042,9 @@
       "claude/patchtrace-haiku-agent-motpbx",
       "claude/symbol-policy-isolated-settings",
       "codex/r1-ground-truth-research-20261030",
+      "codex/r1-receipt-publication-20261031",
       "codex/r2-unified-matching-research-20261030",
+      "codex/semantic-proof-reconciliation-20261031",
       "codex/tier-w-fetch-20261015",
       "docs/specs-plan",
       "feat/alpha-ui-integration",
@@ -15208,7 +17087,9 @@
       "codex/gt01-extraction-recovery-20261030",
       "codex/kb-fixture-contract-repairs-20261030",
       "codex/r1-ground-truth-research-20261030",
+      "codex/r1-receipt-publication-20261031",
       "codex/r2-unified-matching-research-20261030",
+      "codex/semantic-proof-reconciliation-20261031",
       "codex/t9-qa-20261020",
       "codex/windows-setup-installer-20261017",
       "docs/post-consolidation-gap-analysis-20261030",
@@ -15253,6 +17134,7 @@
       "claude/symbol-policy-isolated-settings",
       "codex/essential-combined-verification-20261030",
       "codex/gt01-extraction-recovery-20261030",
+      "codex/semantic-proof-reconciliation-20261031",
       "feat/acquisition",
       "feat/nway",
       "feat/phase2-finish",
@@ -15332,7 +17214,9 @@
       "codex/gt01-extraction-recovery-20261030",
       "codex/kb-fixture-contract-repairs-20261030",
       "codex/r1-ground-truth-research-20261030",
+      "codex/r1-receipt-publication-20261031",
       "codex/r2-unified-matching-research-20261030",
+      "codex/semantic-proof-reconciliation-20261031",
       "codex/t9-qa-20261020",
       "codex/windows-setup-installer-20261017",
       "docs/post-consolidation-gap-analysis-20261030",
@@ -15362,6 +17246,7 @@
       "claude/symbol-policy-isolated-settings",
       "codex/essential-combined-verification-20261030",
       "codex/gt01-extraction-recovery-20261030",
+      "codex/semantic-proof-reconciliation-20261031",
       "feat/verified-offline-runtime-bundle",
       "fix/backend-exit-diagnostics",
       "fix/explicit-offline-symbol-policy",
@@ -15639,6 +17524,7 @@
       "claude/symbol-policy-isolated-settings",
       "codex/essential-combined-verification-20261030",
       "codex/gt01-extraction-recovery-20261030",
+      "codex/semantic-proof-reconciliation-20261031",
       "docs/specs-plan",
       "feat/profiles",
       "feat/raw-cache",
@@ -15824,144 +17710,168 @@
       "chatgpt/kb-fixtures-1",
       "codex/essential-combined-verification-20261030",
       "codex/kb-fixture-contract-repairs-20261030",
+      "codex/semantic-proof-reconciliation-20261031",
       "integration/kb-fixtures-pr69-20261030"
     ],
     "tests/fixtures/kb/MANIFEST.json": [
       "chatgpt/kb-fixtures-1",
       "codex/essential-combined-verification-20261030",
       "codex/kb-fixture-contract-repairs-20261030",
+      "codex/semantic-proof-reconciliation-20261031",
       "integration/kb-fixtures-pr69-20261030"
     ],
     "tests/fixtures/kb/README.md": [
       "chatgpt/kb-fixtures-1",
       "codex/essential-combined-verification-20261030",
       "codex/kb-fixture-contract-repairs-20261030",
+      "codex/semantic-proof-reconciliation-20261031",
       "integration/kb-fixtures-pr69-20261030"
     ],
     "tests/fixtures/kb/crash_points.json": [
       "chatgpt/kb-fixtures-1",
       "codex/essential-combined-verification-20261030",
       "codex/kb-fixture-contract-repairs-20261030",
+      "codex/semantic-proof-reconciliation-20261031",
       "integration/kb-fixtures-pr69-20261030"
     ],
     "tests/fixtures/kb/csaf_synthetic.json": [
       "chatgpt/kb-fixtures-1",
       "codex/essential-combined-verification-20261030",
       "codex/kb-fixture-contract-repairs-20261030",
+      "codex/semantic-proof-reconciliation-20261031",
       "integration/kb-fixtures-pr69-20261030"
     ],
     "tests/fixtures/kb/cvrf_bom.json": [
       "chatgpt/kb-fixtures-1",
       "codex/essential-combined-verification-20261030",
       "codex/kb-fixture-contract-repairs-20261030",
+      "codex/semantic-proof-reconciliation-20261031",
       "integration/kb-fixtures-pr69-20261030"
     ],
     "tests/fixtures/kb/cvrf_crlf.json": [
       "chatgpt/kb-fixtures-1",
       "codex/essential-combined-verification-20261030",
       "codex/kb-fixture-contract-repairs-20261030",
+      "codex/semantic-proof-reconciliation-20261031",
       "integration/kb-fixtures-pr69-20261030"
     ],
     "tests/fixtures/kb/cvrf_v3_synthetic.json": [
       "chatgpt/kb-fixtures-1",
       "codex/essential-combined-verification-20261030",
       "codex/kb-fixture-contract-repairs-20261030",
+      "codex/semantic-proof-reconciliation-20261031",
       "integration/kb-fixtures-pr69-20261030"
     ],
     "tests/fixtures/kb/raw_adversarial_inputs.json": [
       "chatgpt/kb-fixtures-1",
       "codex/essential-combined-verification-20261030",
       "codex/kb-fixture-contract-repairs-20261030",
+      "codex/semantic-proof-reconciliation-20261031",
       "integration/kb-fixtures-pr69-20261030"
     ],
     "tests/fixtures/kb/update_packages_synthetic.json": [
       "chatgpt/kb-fixtures-1",
       "codex/essential-combined-verification-20261030",
       "codex/kb-fixture-contract-repairs-20261030",
+      "codex/semantic-proof-reconciliation-20261031",
       "integration/kb-fixtures-pr69-20261030"
     ],
     "tests/fixtures/kb/update_relationships_synthetic.json": [
       "chatgpt/kb-fixtures-1",
       "codex/essential-combined-verification-20261030",
       "codex/kb-fixture-contract-repairs-20261030",
+      "codex/semantic-proof-reconciliation-20261031",
       "integration/kb-fixtures-pr69-20261030"
     ],
     "tests/fixtures/kb/vex_synthetic.json": [
       "chatgpt/kb-fixtures-1",
       "codex/essential-combined-verification-20261030",
       "codex/kb-fixture-contract-repairs-20261030",
+      "codex/semantic-proof-reconciliation-20261031",
       "integration/kb-fixtures-pr69-20261030"
     ],
     "tests/fixtures/kb/winbindex_synthetic.json": [
       "chatgpt/kb-fixtures-1",
       "codex/essential-combined-verification-20261030",
       "codex/kb-fixture-contract-repairs-20261030",
+      "codex/semantic-proof-reconciliation-20261031",
       "integration/kb-fixtures-pr69-20261030"
     ],
     "tests/kb_crash_harness.py": [
       "chatgpt/kb-fixtures-1",
       "codex/essential-combined-verification-20261030",
       "codex/kb-fixture-contract-repairs-20261030",
+      "codex/semantic-proof-reconciliation-20261031",
       "integration/kb-fixtures-pr69-20261030"
     ],
     "tests/kb_fixture_performance_plan.md": [
       "chatgpt/kb-fixtures-1",
       "codex/essential-combined-verification-20261030",
       "codex/kb-fixture-contract-repairs-20261030",
+      "codex/semantic-proof-reconciliation-20261031",
       "integration/kb-fixtures-pr69-20261030"
     ],
     "tests/test_kb_crash_injection_protocol.py": [
       "chatgpt/kb-fixtures-1",
       "codex/essential-combined-verification-20261030",
       "codex/kb-fixture-contract-repairs-20261030",
+      "codex/semantic-proof-reconciliation-20261031",
       "integration/kb-fixtures-pr69-20261030"
     ],
     "tests/test_kb_cvrf_fixture_import.py": [
       "chatgpt/kb-fixtures-1",
       "codex/essential-combined-verification-20261030",
       "codex/kb-fixture-contract-repairs-20261030",
+      "codex/semantic-proof-reconciliation-20261031",
       "integration/kb-fixtures-pr69-20261030"
     ],
     "tests/test_kb_fixture_encoding.py": [
       "chatgpt/kb-fixtures-1",
       "codex/essential-combined-verification-20261030",
       "codex/kb-fixture-contract-repairs-20261030",
+      "codex/semantic-proof-reconciliation-20261031",
       "integration/kb-fixtures-pr69-20261030"
     ],
     "tests/test_kb_fixture_properties.py": [
       "chatgpt/kb-fixtures-1",
       "codex/essential-combined-verification-20261030",
       "codex/kb-fixture-contract-repairs-20261030",
+      "codex/semantic-proof-reconciliation-20261031",
       "integration/kb-fixtures-pr69-20261030"
     ],
     "tests/test_kb_metadata_fixture_boundaries.py": [
       "chatgpt/kb-fixtures-1",
       "codex/essential-combined-verification-20261030",
       "codex/kb-fixture-contract-repairs-20261030",
+      "codex/semantic-proof-reconciliation-20261031",
       "integration/kb-fixtures-pr69-20261030"
     ],
     "tests/test_kb_offline_fixture_import.py": [
       "chatgpt/kb-fixtures-1",
       "codex/essential-combined-verification-20261030",
       "codex/kb-fixture-contract-repairs-20261030",
+      "codex/semantic-proof-reconciliation-20261031",
       "integration/kb-fixtures-pr69-20261030"
     ],
     "tests/test_kb_raw_adversarial_inputs.py": [
       "chatgpt/kb-fixtures-1",
       "codex/essential-combined-verification-20261030",
       "codex/kb-fixture-contract-repairs-20261030",
+      "codex/semantic-proof-reconciliation-20261031",
       "integration/kb-fixtures-pr69-20261030"
     ],
     "tests/test_kb_synthetic_fixture_corpus.py": [
       "chatgpt/kb-fixtures-1",
       "codex/essential-combined-verification-20261030",
       "codex/kb-fixture-contract-repairs-20261030",
+      "codex/semantic-proof-reconciliation-20261031",
       "integration/kb-fixtures-pr69-20261030"
     ],
     "tests/test_kb_update_relationships.py": [
       "chatgpt/kb-fixtures-1",
       "codex/essential-combined-verification-20261030",
       "codex/kb-fixture-contract-repairs-20261030",
+      "codex/semantic-proof-reconciliation-20261031",
       "integration/kb-fixtures-pr69-20261030"
     ],
     ".github/workflows/corpus-tier-r.yml": [
@@ -16102,7 +18012,8 @@
     ],
     "docs/specs/known-answer-corpus.md": [
       "chatgpt/lbl32-recipe-aa-noise-20261016",
-      "codex/r1-ground-truth-research-20261030"
+      "codex/r1-ground-truth-research-20261030",
+      "codex/r1-receipt-publication-20261031"
     ],
     "docs/plans/claude-autonomous-alpha-handoff-20261013.md": [
       "chatgpt/merge-first-handoff-20261016",
@@ -16112,15 +18023,26 @@
     "docs/specs/unified-engine/05-fusion-and-noise.md": [
       "chatgpt/semantic-analysis-r3-20261030",
       "codex/r2-unified-matching-research-20261030",
+      "codex/semantic-proof-reconciliation-20261031",
       "research/r8-deep-uncertainty-20261030"
+    ],
+    "src/patchtrace/unified/facts/verdict.py": [
+      "chatgpt/semantic-analysis-r3-20261030",
+      "codex/semantic-proof-reconciliation-20261031"
     ],
     "src/patchtrace/unified/registry.py": [
       "chatgpt/semantic-analysis-r3-20261030",
+      "codex/semantic-proof-reconciliation-20261031",
       "research/r8-deep-uncertainty-20261030"
+    ],
+    "tests/test_unified_verdict_ir.py": [
+      "chatgpt/semantic-analysis-r3-20261030",
+      "codex/semantic-proof-reconciliation-20261031"
     ],
     "src/patchtrace/unified/compute.py": [
       "chatgpt/ue-r3-retain-decompiled-20261016",
-      "codex/r2-unified-matching-research-20261030"
+      "codex/r2-unified-matching-research-20261030",
+      "codex/semantic-proof-reconciliation-20261031"
     ],
     "tests/fixtures/unified/synthetic_read_model.json": [
       "chatgpt/unified-fixture-collection-fix-20261016",
@@ -16395,9 +18317,67 @@
       "claude/symbol-policy-isolated-settings",
       "feat/enrichment-contracts"
     ],
+    "docs/plans/milestone-ledger-20261030.md": [
+      "claude/modest-hamilton-kz2gta",
+      "codex/coordinator-rule-repairs-20261031",
+      "codex/semantic-proof-reconciliation-20261031"
+    ],
     "docs/specs/kb-patch-search-source-adapters.md": [
       "claude/modest-hamilton-kz2gta",
+      "codex/coordinator-rule-repairs-20261031",
       "docs/spec-32-kb-patch-search-20261014"
+    ],
+    "docs/specs/program-e/WB2-integration-plan.md": [
+      "claude/modest-hamilton-kz2gta",
+      "codex/coordinator-rule-repairs-20261031"
+    ],
+    "src/patchtrace/callgraph/algo.py": [
+      "claude/modest-hamilton-kz2gta",
+      "codex/coordinator-rule-repairs-20261031"
+    ],
+    "src/patchtrace/callgraph/labels.py": [
+      "claude/modest-hamilton-kz2gta",
+      "codex/coordinator-rule-repairs-20261031"
+    ],
+    "src/patchtrace/kbcorrelation/index.py": [
+      "claude/modest-hamilton-kz2gta",
+      "codex/coordinator-rule-repairs-20261031"
+    ],
+    "src/patchtrace/rules/export.py": [
+      "claude/modest-hamilton-kz2gta",
+      "codex/coordinator-rule-repairs-20261031"
+    ],
+    "src/patchtrace/rules/matrix.py": [
+      "claude/modest-hamilton-kz2gta",
+      "codex/coordinator-rule-repairs-20261031"
+    ],
+    "src/patchtrace/rules/store.py": [
+      "claude/modest-hamilton-kz2gta",
+      "codex/coordinator-rule-repairs-20261031"
+    ],
+    "tests/test_callgraph_algo.py": [
+      "claude/modest-hamilton-kz2gta",
+      "codex/coordinator-rule-repairs-20261031"
+    ],
+    "tests/test_callgraph_labels.py": [
+      "claude/modest-hamilton-kz2gta",
+      "codex/coordinator-rule-repairs-20261031"
+    ],
+    "tests/test_kbc_bugfixes_20261029.py": [
+      "claude/modest-hamilton-kz2gta",
+      "codex/coordinator-rule-repairs-20261031"
+    ],
+    "tests/test_rules_export.py": [
+      "claude/modest-hamilton-kz2gta",
+      "codex/coordinator-rule-repairs-20261031"
+    ],
+    "tests/test_rules_matrix.py": [
+      "claude/modest-hamilton-kz2gta",
+      "codex/coordinator-rule-repairs-20261031"
+    ],
+    "tests/test_rules_store.py": [
+      "claude/modest-hamilton-kz2gta",
+      "codex/coordinator-rule-repairs-20261031"
     ],
     "tools/generate_schemas.py": [
       "claude/patchtrace-cli-dotpath-spec-er6hha",
@@ -16481,6 +18461,8 @@
       "codex/essential-combined-verification-20261030",
       "codex/gt01-extraction-recovery-20261030",
       "codex/r1-ground-truth-research-20261030",
+      "codex/r1-receipt-publication-20261031",
+      "codex/semantic-proof-reconciliation-20261031",
       "repair/gt01-consolidated-native-evidence-20261030",
       "repair/gt01-native-identical-controls-20261030",
       "repair/gt01-unified-live-gates-20261030"
@@ -16489,6 +18471,7 @@
       "codex/essential-combined-verification-20261030",
       "codex/gt01-extraction-recovery-20261030",
       "codex/kb-fixture-contract-repairs-20261030",
+      "codex/semantic-proof-reconciliation-20261031",
       "docs/post-consolidation-gap-analysis-20261030",
       "integration/controlled-consolidation-20261030",
       "integration/kb-fixtures-pr69-20261030",
@@ -16500,6 +18483,7 @@
       "codex/essential-combined-verification-20261030",
       "codex/gt01-extraction-recovery-20261030",
       "codex/kb-fixture-contract-repairs-20261030",
+      "codex/semantic-proof-reconciliation-20261031",
       "docs/post-consolidation-gap-analysis-20261030",
       "integration/controlled-consolidation-20261030",
       "integration/kb-fixtures-pr69-20261030",
@@ -16511,6 +18495,7 @@
       "codex/essential-combined-verification-20261030",
       "codex/gt01-extraction-recovery-20261030",
       "codex/kb-fixture-contract-repairs-20261030",
+      "codex/semantic-proof-reconciliation-20261031",
       "docs/post-consolidation-gap-analysis-20261030",
       "integration/controlled-consolidation-20261030",
       "integration/kb-fixtures-pr69-20261030",
@@ -16522,6 +18507,7 @@
       "codex/essential-combined-verification-20261030",
       "codex/gt01-extraction-recovery-20261030",
       "codex/kb-fixture-contract-repairs-20261030",
+      "codex/semantic-proof-reconciliation-20261031",
       "docs/post-consolidation-gap-analysis-20261030",
       "integration/controlled-consolidation-20261030",
       "integration/kb-fixtures-pr69-20261030",
@@ -16533,6 +18519,7 @@
       "codex/essential-combined-verification-20261030",
       "codex/gt01-extraction-recovery-20261030",
       "codex/kb-fixture-contract-repairs-20261030",
+      "codex/semantic-proof-reconciliation-20261031",
       "docs/post-consolidation-gap-analysis-20261030",
       "integration/controlled-consolidation-20261030",
       "integration/kb-fixtures-pr69-20261030",
@@ -16544,6 +18531,7 @@
       "codex/essential-combined-verification-20261030",
       "codex/gt01-extraction-recovery-20261030",
       "codex/kb-fixture-contract-repairs-20261030",
+      "codex/semantic-proof-reconciliation-20261031",
       "docs/post-consolidation-gap-analysis-20261030",
       "integration/controlled-consolidation-20261030",
       "integration/kb-fixtures-pr69-20261030",
@@ -16555,6 +18543,7 @@
       "codex/essential-combined-verification-20261030",
       "codex/gt01-extraction-recovery-20261030",
       "codex/kb-fixture-contract-repairs-20261030",
+      "codex/semantic-proof-reconciliation-20261031",
       "docs/post-consolidation-gap-analysis-20261030",
       "integration/controlled-consolidation-20261030",
       "integration/kb-fixtures-pr69-20261030",
@@ -16565,31 +18554,45 @@
     "docs/plans/gt01-native-output-diagnosis-20261030.md": [
       "codex/essential-combined-verification-20261030",
       "codex/gt01-extraction-recovery-20261030",
+      "codex/semantic-proof-reconciliation-20261031",
       "repair/gt01-native-identical-controls-20261030"
     ],
     "docs/plans/gt01-overlap-disposition-20261030.md": [
       "codex/essential-combined-verification-20261030",
       "codex/gt01-extraction-recovery-20261030",
+      "codex/semantic-proof-reconciliation-20261031",
       "repair/gt01-consolidated-native-evidence-20261030",
       "repair/gt01-native-identical-controls-20261030"
     ],
+    "docs/qa/continuation-verification-20261030.md": [
+      "codex/essential-combined-verification-20261030",
+      "codex/semantic-proof-reconciliation-20261031"
+    ],
+    "docs/qa/gt01-harness-smoke-20261030.json": [
+      "codex/essential-combined-verification-20261030",
+      "codex/semantic-proof-reconciliation-20261031"
+    ],
     "docs/qa/gt01-native-smoke-20261030.json": [
       "codex/essential-combined-verification-20261030",
-      "codex/gt01-extraction-recovery-20261030"
+      "codex/gt01-extraction-recovery-20261030",
+      "codex/semantic-proof-reconciliation-20261031"
     ],
     "docs/qa/kb-fixture-reconciliation-20261030.md": [
       "codex/essential-combined-verification-20261030",
-      "codex/kb-fixture-contract-repairs-20261030"
+      "codex/kb-fixture-contract-repairs-20261030",
+      "codex/semantic-proof-reconciliation-20261031"
     ],
     "docs/specs/unified-engine/08-evaluation.md": [
       "codex/essential-combined-verification-20261030",
       "codex/gt01-extraction-recovery-20261030",
+      "codex/semantic-proof-reconciliation-20261031",
       "repair/gt01-native-identical-controls-20261030"
     ],
     "docs/wiki/Architecture-and-Design-Rationale.md": [
       "codex/essential-combined-verification-20261030",
       "codex/gt01-extraction-recovery-20261030",
       "codex/kb-fixture-contract-repairs-20261030",
+      "codex/semantic-proof-reconciliation-20261031",
       "docs/post-consolidation-gap-analysis-20261030",
       "docs/readme-and-wiki",
       "integration/controlled-consolidation-20261030",
@@ -16602,6 +18605,7 @@
       "codex/essential-combined-verification-20261030",
       "codex/gt01-extraction-recovery-20261030",
       "codex/kb-fixture-contract-repairs-20261030",
+      "codex/semantic-proof-reconciliation-20261031",
       "docs/post-consolidation-gap-analysis-20261030",
       "docs/readme-and-wiki",
       "integration/controlled-consolidation-20261030",
@@ -16614,6 +18618,7 @@
       "codex/essential-combined-verification-20261030",
       "codex/gt01-extraction-recovery-20261030",
       "codex/kb-fixture-contract-repairs-20261030",
+      "codex/semantic-proof-reconciliation-20261031",
       "docs/post-consolidation-gap-analysis-20261030",
       "docs/readme-and-wiki",
       "integration/controlled-consolidation-20261030",
@@ -16626,6 +18631,7 @@
       "codex/essential-combined-verification-20261030",
       "codex/gt01-extraction-recovery-20261030",
       "codex/kb-fixture-contract-repairs-20261030",
+      "codex/semantic-proof-reconciliation-20261031",
       "docs/post-consolidation-gap-analysis-20261030",
       "docs/readme-and-wiki",
       "integration/controlled-consolidation-20261030",
@@ -16638,6 +18644,7 @@
       "codex/essential-combined-verification-20261030",
       "codex/gt01-extraction-recovery-20261030",
       "codex/kb-fixture-contract-repairs-20261030",
+      "codex/semantic-proof-reconciliation-20261031",
       "docs/post-consolidation-gap-analysis-20261030",
       "docs/readme-and-wiki",
       "integration/controlled-consolidation-20261030",
@@ -16650,6 +18657,7 @@
       "codex/essential-combined-verification-20261030",
       "codex/gt01-extraction-recovery-20261030",
       "codex/kb-fixture-contract-repairs-20261030",
+      "codex/semantic-proof-reconciliation-20261031",
       "docs/post-consolidation-gap-analysis-20261030",
       "docs/readme-and-wiki",
       "integration/controlled-consolidation-20261030",
@@ -16660,22 +18668,26 @@
     ],
     "tests/fixtures/kb/confusable_kb.json": [
       "codex/essential-combined-verification-20261030",
-      "codex/kb-fixture-contract-repairs-20261030"
+      "codex/kb-fixture-contract-repairs-20261030",
+      "codex/semantic-proof-reconciliation-20261031"
     ],
     "tests/test_unified_live_force_identical.py": [
       "codex/essential-combined-verification-20261030",
       "codex/gt01-extraction-recovery-20261030",
+      "codex/semantic-proof-reconciliation-20261031",
       "repair/gt01-native-identical-controls-20261030"
     ],
     "tests/test_unified_live_native_failure_details.py": [
       "codex/essential-combined-verification-20261030",
       "codex/gt01-extraction-recovery-20261030",
+      "codex/semantic-proof-reconciliation-20261031",
       "repair/gt01-consolidated-native-evidence-20261030",
       "repair/gt01-native-identical-controls-20261030"
     ],
     "tests/test_unified_live_pairs.py": [
       "codex/essential-combined-verification-20261030",
       "codex/gt01-extraction-recovery-20261030",
+      "codex/semantic-proof-reconciliation-20261031",
       "repair/gt01-consolidated-native-evidence-20261030",
       "repair/gt01-native-identical-controls-20261030",
       "repair/gt01-unified-live-gates-20261030"
@@ -16684,12 +18696,15 @@
       "codex/essential-combined-verification-20261030",
       "codex/gt01-extraction-recovery-20261030",
       "codex/r1-ground-truth-research-20261030",
+      "codex/r1-receipt-publication-20261031",
+      "codex/semantic-proof-reconciliation-20261031",
       "repair/gt01-consolidated-native-evidence-20261030",
       "repair/gt01-native-identical-controls-20261030"
     ],
     "tests/test_unified_live_workflow.py": [
       "codex/essential-combined-verification-20261030",
       "codex/gt01-extraction-recovery-20261030",
+      "codex/semantic-proof-reconciliation-20261031",
       "repair/gt01-consolidated-native-evidence-20261030",
       "repair/gt01-native-identical-controls-20261030",
       "repair/gt01-unified-live-gates-20261030"
@@ -16698,6 +18713,8 @@
       "codex/essential-combined-verification-20261030",
       "codex/gt01-extraction-recovery-20261030",
       "codex/r1-ground-truth-research-20261030",
+      "codex/r1-receipt-publication-20261031",
+      "codex/semantic-proof-reconciliation-20261031",
       "repair/gt01-consolidated-native-evidence-20261030",
       "repair/gt01-native-identical-controls-20261030",
       "repair/gt01-unified-live-gates-20261030"
@@ -16729,6 +18746,638 @@
     "tests/test_gui_core_anchors.py": [
       "codex/gui-bounded-ambiguous-candidates-20261029",
       "codex/pr111-bounded-nav-into-integration-20261029"
+    ],
+    "corpus/ours/r1-pilot/defined/README.md": [
+      "codex/r1-ground-truth-research-20261030",
+      "codex/r1-receipt-publication-20261031"
+    ],
+    "corpus/ours/r1-pilot/defined/suite.json": [
+      "codex/r1-ground-truth-research-20261030",
+      "codex/r1-receipt-publication-20261031"
+    ],
+    "corpus/ours/r1-pilot/defined/v1/r1.c": [
+      "codex/r1-ground-truth-research-20261030",
+      "codex/r1-receipt-publication-20261031"
+    ],
+    "corpus/ours/r1-pilot/defined/v2/r1.c": [
+      "codex/r1-ground-truth-research-20261030",
+      "codex/r1-receipt-publication-20261031"
+    ],
+    "docs/research/ground-truth-corpus/01-literature-and-datasets.md": [
+      "codex/r1-ground-truth-research-20261030",
+      "codex/r1-receipt-publication-20261031"
+    ],
+    "docs/research/ground-truth-corpus/02-ground-truth-and-evaluation.md": [
+      "codex/r1-ground-truth-research-20261030",
+      "codex/r1-receipt-publication-20261031"
+    ],
+    "docs/research/ground-truth-corpus/03-real-world-patch-candidates.md": [
+      "codex/r1-ground-truth-research-20261030",
+      "codex/r1-receipt-publication-20261031"
+    ],
+    "docs/research/ground-truth-corpus/04-pilot-protocol.md": [
+      "codex/r1-ground-truth-research-20261030",
+      "codex/r1-receipt-publication-20261031"
+    ],
+    "docs/research/ground-truth-corpus/05-results-and-failure-analysis.md": [
+      "codex/r1-ground-truth-research-20261030",
+      "codex/r1-receipt-publication-20261031"
+    ],
+    "docs/research/ground-truth-corpus/06-limitations-and-open-questions.md": [
+      "codex/r1-ground-truth-research-20261030",
+      "codex/r1-receipt-publication-20261031"
+    ],
+    "docs/research/ground-truth-corpus/07-handoff-and-reproduction.md": [
+      "codex/r1-ground-truth-research-20261030",
+      "codex/r1-receipt-publication-20261031"
+    ],
+    "docs/research/ground-truth-corpus/README.md": [
+      "codex/r1-ground-truth-research-20261030",
+      "codex/r1-receipt-publication-20261031"
+    ],
+    "docs/research/ground-truth-corpus/results/acceptance-mingw-gcc-o2.json": [
+      "codex/r1-ground-truth-research-20261030",
+      "codex/r1-receipt-publication-20261031"
+    ],
+    "docs/research/ground-truth-corpus/results/acceptance.json": [
+      "codex/r1-ground-truth-research-20261030",
+      "codex/r1-receipt-publication-20261031"
+    ],
+    "docs/research/ground-truth-corpus/results/build-matrix-clang-retry.json": [
+      "codex/r1-ground-truth-research-20261030",
+      "codex/r1-receipt-publication-20261031"
+    ],
+    "docs/research/ground-truth-corpus/results/build-matrix-final.json": [
+      "codex/r1-ground-truth-research-20261030",
+      "codex/r1-receipt-publication-20261031"
+    ],
+    "docs/research/ground-truth-corpus/results/build-matrix-provenance-rebuild.json": [
+      "codex/r1-ground-truth-research-20261030",
+      "codex/r1-receipt-publication-20261031"
+    ],
+    "docs/research/ground-truth-corpus/results/build-matrix.json": [
+      "codex/r1-ground-truth-research-20261030",
+      "codex/r1-receipt-publication-20261031"
+    ],
+    "docs/research/ground-truth-corpus/results/build-receipts/02eff01ce5e5cdd81959c059146e30bc0323e77ba50360973ff9baa030940163.json": [
+      "codex/r1-ground-truth-research-20261030",
+      "codex/r1-receipt-publication-20261031"
+    ],
+    "docs/research/ground-truth-corpus/results/build-receipts/06ad67324fc1ac2a00abeb450dd77aa0ae0698846874ce37c5faf83ae0675963.json": [
+      "codex/r1-ground-truth-research-20261030",
+      "codex/r1-receipt-publication-20261031"
+    ],
+    "docs/research/ground-truth-corpus/results/build-receipts/0734e959d5d692588d9a457fcf317d521cb1fce32755f76320a226f956c41633.json": [
+      "codex/r1-ground-truth-research-20261030",
+      "codex/r1-receipt-publication-20261031"
+    ],
+    "docs/research/ground-truth-corpus/results/build-receipts/12a6741d9d066226fd3c183cbb1464fabd32e9d28d472da4b5026c741f37deea.json": [
+      "codex/r1-ground-truth-research-20261030",
+      "codex/r1-receipt-publication-20261031"
+    ],
+    "docs/research/ground-truth-corpus/results/build-receipts/13cdbb54e8a80806a9d6dffc1441f276eac081de526514c994a727e776d57e0c.json": [
+      "codex/r1-ground-truth-research-20261030",
+      "codex/r1-receipt-publication-20261031"
+    ],
+    "docs/research/ground-truth-corpus/results/build-receipts/15dcb4f875438ef750a9e5444230ade8cb3e3f32773d0fb80ba59304ecbf1a6f.json": [
+      "codex/r1-ground-truth-research-20261030",
+      "codex/r1-receipt-publication-20261031"
+    ],
+    "docs/research/ground-truth-corpus/results/build-receipts/3de6b5a3c207445a121e3fe38f634bfedcb7c2807ccabce80d95484a92e38837.json": [
+      "codex/r1-ground-truth-research-20261030",
+      "codex/r1-receipt-publication-20261031"
+    ],
+    "docs/research/ground-truth-corpus/results/build-receipts/4ba9a6212ac0e12926a531a03b52aac9f6249117572094afbaee7dc24cde10c3.json": [
+      "codex/r1-ground-truth-research-20261030",
+      "codex/r1-receipt-publication-20261031"
+    ],
+    "docs/research/ground-truth-corpus/results/build-receipts/5c823560e8c6df4df81aa5342236f81ee29308523425215e09894ed0ecb9c972.json": [
+      "codex/r1-ground-truth-research-20261030",
+      "codex/r1-receipt-publication-20261031"
+    ],
+    "docs/research/ground-truth-corpus/results/build-receipts/69d37677a82072776305e324104b138960eff6dd25133f1cc18a78d98e176ef5.json": [
+      "codex/r1-ground-truth-research-20261030",
+      "codex/r1-receipt-publication-20261031"
+    ],
+    "docs/research/ground-truth-corpus/results/build-receipts/6c3fe6a100b42f621bac84abc40cc2e7e193fe00a8b88b2acbc698bd15d64e19.json": [
+      "codex/r1-ground-truth-research-20261030",
+      "codex/r1-receipt-publication-20261031"
+    ],
+    "docs/research/ground-truth-corpus/results/build-receipts/703e7283f1c6e6820066c44db4eb4131d30364d8a2559376fac58e9a1f56717e.json": [
+      "codex/r1-ground-truth-research-20261030",
+      "codex/r1-receipt-publication-20261031"
+    ],
+    "docs/research/ground-truth-corpus/results/build-receipts/7abf2e788123fc7e861411b206b029d02cd673c57f4150efd02bb8c29f3b230a.json": [
+      "codex/r1-ground-truth-research-20261030",
+      "codex/r1-receipt-publication-20261031"
+    ],
+    "docs/research/ground-truth-corpus/results/build-receipts/89dfb0eea80d7ca3f414cf6edea532097beb122872afe036a5a767c94e4dd20b.json": [
+      "codex/r1-ground-truth-research-20261030",
+      "codex/r1-receipt-publication-20261031"
+    ],
+    "docs/research/ground-truth-corpus/results/build-receipts/8b503f77dd9cc006d7daa4b4ff36f8f0ab545b5db2837dd92180ae5b539fd2f0.json": [
+      "codex/r1-ground-truth-research-20261030",
+      "codex/r1-receipt-publication-20261031"
+    ],
+    "docs/research/ground-truth-corpus/results/build-receipts/8ded7733a301edef8b203f902e4f82077e3e87fe05d316a02fc0a8505f87f7b5.json": [
+      "codex/r1-ground-truth-research-20261030",
+      "codex/r1-receipt-publication-20261031"
+    ],
+    "docs/research/ground-truth-corpus/results/build-receipts/9268a5c7bb65570279bddc216bb3760bdcaf1ee68f7b28c60b246b9e72d3149d.json": [
+      "codex/r1-ground-truth-research-20261030",
+      "codex/r1-receipt-publication-20261031"
+    ],
+    "docs/research/ground-truth-corpus/results/build-receipts/9729d9eb340988bf3ff203001a561e36325f2525a046af499bed88e24d9333f9.json": [
+      "codex/r1-ground-truth-research-20261030",
+      "codex/r1-receipt-publication-20261031"
+    ],
+    "docs/research/ground-truth-corpus/results/build-receipts/a30d0f685b2d9f196a04f7e0f6c9ae709c3970d85c7aba5b28e199f2e7c792d3.json": [
+      "codex/r1-ground-truth-research-20261030",
+      "codex/r1-receipt-publication-20261031"
+    ],
+    "docs/research/ground-truth-corpus/results/build-receipts/a7a9a274ecd7d0abeef324c5816db02a916eba9103eca8a4ece2786a701342d1.json": [
+      "codex/r1-ground-truth-research-20261030",
+      "codex/r1-receipt-publication-20261031"
+    ],
+    "docs/research/ground-truth-corpus/results/build-receipts/b3123d5d7bea3c349c79e14f0d900e7f76d78c787783715ac807c8d35110335d.json": [
+      "codex/r1-ground-truth-research-20261030",
+      "codex/r1-receipt-publication-20261031"
+    ],
+    "docs/research/ground-truth-corpus/results/build-receipts/b6d1f9aa9a0ba277a09b5649faad62f66f4d2a53a2fc0fb6ed21dcd05cdf68e8.json": [
+      "codex/r1-ground-truth-research-20261030",
+      "codex/r1-receipt-publication-20261031"
+    ],
+    "docs/research/ground-truth-corpus/results/build-receipts/ba1261e9552f7544881888577df4f80c19ccf9343d76c555a6e90dadb277566d.json": [
+      "codex/r1-ground-truth-research-20261030",
+      "codex/r1-receipt-publication-20261031"
+    ],
+    "docs/research/ground-truth-corpus/results/build-receipts/c3d8a1379c3c2e2b72342fa2c730ad8b64e246b0f203fb65250499a8e6ec44d5.json": [
+      "codex/r1-ground-truth-research-20261030",
+      "codex/r1-receipt-publication-20261031"
+    ],
+    "docs/research/ground-truth-corpus/results/build-receipts/c7142e5c918973f18c9f12b0948b2f03e311ae74317d3c10dae086203bd54dab.json": [
+      "codex/r1-ground-truth-research-20261030",
+      "codex/r1-receipt-publication-20261031"
+    ],
+    "docs/research/ground-truth-corpus/results/build-receipts/c9decd8c800fbfe12a4614d95a1385d322a2ef948ce9657cd938ba751d94a25e.json": [
+      "codex/r1-ground-truth-research-20261030",
+      "codex/r1-receipt-publication-20261031"
+    ],
+    "docs/research/ground-truth-corpus/results/build-receipts/cb7653eb2522abeba4645d21a96f44c9cbb55c7e8a94376e96dfb89de1ae1e84.json": [
+      "codex/r1-ground-truth-research-20261030",
+      "codex/r1-receipt-publication-20261031"
+    ],
+    "docs/research/ground-truth-corpus/results/build-receipts/d53253c186ba501641809b3c6ecdb7a7b6c46124bcb5ee834b28ff79f33ab4fd.json": [
+      "codex/r1-ground-truth-research-20261030",
+      "codex/r1-receipt-publication-20261031"
+    ],
+    "docs/research/ground-truth-corpus/results/build-receipts/d6568fb47762a1c5994f72262863d7a957c77bde657aad4162ada09a7b76c719.json": [
+      "codex/r1-ground-truth-research-20261030",
+      "codex/r1-receipt-publication-20261031"
+    ],
+    "docs/research/ground-truth-corpus/results/build-receipts/ed1030bd40fdcc5896149aa6308ea8c030f690dd756c5b73fc5911c9bf21df32.json": [
+      "codex/r1-ground-truth-research-20261030",
+      "codex/r1-receipt-publication-20261031"
+    ],
+    "docs/research/ground-truth-corpus/results/build-receipts/ef162c385937b849faa0f4bd7669df663f57d11c8fd068184816d14b524b3f1a.json": [
+      "codex/r1-ground-truth-research-20261030",
+      "codex/r1-receipt-publication-20261031"
+    ],
+    "docs/research/ground-truth-corpus/results/build-receipts/f1622c4c9b3fec287511b110ba78cd70a6cf44692a50fa9a0e1adc7a787e43c8.json": [
+      "codex/r1-ground-truth-research-20261030",
+      "codex/r1-receipt-publication-20261031"
+    ],
+    "docs/research/ground-truth-corpus/results/build-receipts/f24e95f1e4b070060659a02aff595968de0b75e0713c237170cc90044f1fa979.json": [
+      "codex/r1-ground-truth-research-20261030",
+      "codex/r1-receipt-publication-20261031"
+    ],
+    "docs/research/ground-truth-corpus/results/build-receipts/f4facea3fd4fa5d08ea9223d917be3cb15e0f311c5afa6a7ab93bfa7dac6250b.json": [
+      "codex/r1-ground-truth-research-20261030",
+      "codex/r1-receipt-publication-20261031"
+    ],
+    "docs/research/ground-truth-corpus/results/cjson-acceptance.json": [
+      "codex/r1-ground-truth-research-20261030",
+      "codex/r1-receipt-publication-20261031"
+    ],
+    "docs/research/ground-truth-corpus/results/cjson-review.md": [
+      "codex/r1-ground-truth-research-20261030",
+      "codex/r1-receipt-publication-20261031"
+    ],
+    "docs/research/ground-truth-corpus/results/coderabbit-regressions.log": [
+      "codex/r1-ground-truth-research-20261030",
+      "codex/r1-receipt-publication-20261031"
+    ],
+    "docs/research/ground-truth-corpus/results/coderabbit-research-build-green.log": [
+      "codex/r1-ground-truth-research-20261030",
+      "codex/r1-receipt-publication-20261031"
+    ],
+    "docs/research/ground-truth-corpus/results/coderabbit-research-build-integration.log": [
+      "codex/r1-ground-truth-research-20261030",
+      "codex/r1-receipt-publication-20261031"
+    ],
+    "docs/research/ground-truth-corpus/results/coderabbit-research-build-red.log": [
+      "codex/r1-ground-truth-research-20261030",
+      "codex/r1-receipt-publication-20261031"
+    ],
+    "docs/research/ground-truth-corpus/results/controls-and-structure.json": [
+      "codex/r1-ground-truth-research-20261030",
+      "codex/r1-receipt-publication-20261031"
+    ],
+    "docs/research/ground-truth-corpus/results/controls-and-structure.md": [
+      "codex/r1-ground-truth-research-20261030",
+      "codex/r1-receipt-publication-20261031"
+    ],
+    "docs/research/ground-truth-corpus/results/environment.json": [
+      "codex/r1-ground-truth-research-20261030",
+      "codex/r1-receipt-publication-20261031"
+    ],
+    "docs/research/ground-truth-corpus/results/external-review-followup.md": [
+      "codex/r1-ground-truth-research-20261030",
+      "codex/r1-receipt-publication-20261031"
+    ],
+    "docs/research/ground-truth-corpus/results/failure-analysis-addendum.md": [
+      "codex/r1-ground-truth-research-20261030",
+      "codex/r1-receipt-publication-20261031"
+    ],
+    "docs/research/ground-truth-corpus/results/final-cli-repeatability.json": [
+      "codex/r1-ground-truth-research-20261030",
+      "codex/r1-receipt-publication-20261031"
+    ],
+    "docs/research/ground-truth-corpus/results/final-integration-review.md": [
+      "codex/r1-ground-truth-research-20261030",
+      "codex/r1-receipt-publication-20261031"
+    ],
+    "docs/research/ground-truth-corpus/results/final-label-integrity.json": [
+      "codex/r1-ground-truth-research-20261030",
+      "codex/r1-receipt-publication-20261031"
+    ],
+    "docs/research/ground-truth-corpus/results/final-partition-audit.json": [
+      "codex/r1-ground-truth-research-20261030",
+      "codex/r1-receipt-publication-20261031"
+    ],
+    "docs/research/ground-truth-corpus/results/final-validation.json": [
+      "codex/r1-ground-truth-research-20261030",
+      "codex/r1-receipt-publication-20261031"
+    ],
+    "docs/research/ground-truth-corpus/results/full-linux-pytest.log": [
+      "codex/r1-ground-truth-research-20261030",
+      "codex/r1-receipt-publication-20261031"
+    ],
+    "docs/research/ground-truth-corpus/results/hidden-receipt-reconciliation.json": [
+      "codex/r1-ground-truth-research-20261030",
+      "codex/r1-receipt-publication-20261031"
+    ],
+    "docs/research/ground-truth-corpus/results/hidden-receipt-reconciliation.md": [
+      "codex/r1-ground-truth-research-20261030",
+      "codex/r1-receipt-publication-20261031"
+    ],
+    "docs/research/ground-truth-corpus/results/hidden-review-binding-reconciliation.json": [
+      "codex/r1-ground-truth-research-20261030",
+      "codex/r1-receipt-publication-20261031"
+    ],
+    "docs/research/ground-truth-corpus/results/historical-labels/08939af3c162e5dee94f3abe317aa098f8672b32e601a4f75fddf19a0db82445-noise-defined-v1-msvc-free-O2-msvc-free-Os.json": [
+      "codex/r1-ground-truth-research-20261030",
+      "codex/r1-receipt-publication-20261031"
+    ],
+    "docs/research/ground-truth-corpus/results/historical-labels/1792c140953da1e24c01e697731f3f9d3e5e0065e8358418d3f1fe1aed19e26f-aa-defined-v1-O2-rebuild.json": [
+      "codex/r1-ground-truth-research-20261030",
+      "codex/r1-receipt-publication-20261031"
+    ],
+    "docs/research/ground-truth-corpus/results/historical-labels/a49fac036302ab463018d22c76aeb0de5bde43adb9db3ed3ac50be4b1dc9f415-noise-defined-v1-msvc-free-O0-msvc-free-O2.json": [
+      "codex/r1-ground-truth-research-20261030",
+      "codex/r1-receipt-publication-20261031"
+    ],
+    "docs/research/ground-truth-corpus/results/historical-labels/ab00e8abc4f8f62bd7cd67d4ca1e70266d77f281ce69831b5ac87812541355a9-noise-defined-v1-msvc-free-O2-mingw-gcc-O2.json": [
+      "codex/r1-ground-truth-research-20261030",
+      "codex/r1-receipt-publication-20261031"
+    ],
+    "docs/research/ground-truth-corpus/results/historical-labels/bce0f84260d125168b2142888547438b810abb4189d8688e1778699995025e92-aa-defined-v1-mingw-gcc-O2-rebuild.json": [
+      "codex/r1-ground-truth-research-20261030",
+      "codex/r1-receipt-publication-20261031"
+    ],
+    "docs/research/ground-truth-corpus/results/implementation-review.md": [
+      "codex/r1-ground-truth-research-20261030",
+      "codex/r1-receipt-publication-20261031"
+    ],
+    "docs/research/ground-truth-corpus/results/integrity-gates.json": [
+      "codex/r1-ground-truth-research-20261030",
+      "codex/r1-receipt-publication-20261031"
+    ],
+    "docs/research/ground-truth-corpus/results/label-provenance-corrections.json": [
+      "codex/r1-ground-truth-research-20261030",
+      "codex/r1-receipt-publication-20261031"
+    ],
+    "docs/research/ground-truth-corpus/results/labels/aa-defined-v1-O2-rebuild.json": [
+      "codex/r1-ground-truth-research-20261030",
+      "codex/r1-receipt-publication-20261031"
+    ],
+    "docs/research/ground-truth-corpus/results/labels/aa-defined-v1-mingw-gcc-O2-rebuild.json": [
+      "codex/r1-ground-truth-research-20261030",
+      "codex/r1-receipt-publication-20261031"
+    ],
+    "docs/research/ground-truth-corpus/results/labels/cjson-1.7.16-to-1.7.17-O2.json": [
+      "codex/r1-ground-truth-research-20261030",
+      "codex/r1-receipt-publication-20261031"
+    ],
+    "docs/research/ground-truth-corpus/results/labels/noise-defined-v1-mingw-gcc-O2-mingw-clang-O2.json": [
+      "codex/r1-ground-truth-research-20261030",
+      "codex/r1-receipt-publication-20261031"
+    ],
+    "docs/research/ground-truth-corpus/results/labels/noise-defined-v1-msvc-free-O0-msvc-free-O2.json": [
+      "codex/r1-ground-truth-research-20261030",
+      "codex/r1-receipt-publication-20261031"
+    ],
+    "docs/research/ground-truth-corpus/results/labels/noise-defined-v1-msvc-free-O2-mingw-gcc-O2.json": [
+      "codex/r1-ground-truth-research-20261030",
+      "codex/r1-receipt-publication-20261031"
+    ],
+    "docs/research/ground-truth-corpus/results/labels/noise-defined-v1-msvc-free-O2-msvc-free-Os.json": [
+      "codex/r1-ground-truth-research-20261030",
+      "codex/r1-receipt-publication-20261031"
+    ],
+    "docs/research/ground-truth-corpus/results/labels/ours-r1-pilot-defined-v1-v2-O2.json": [
+      "codex/r1-ground-truth-research-20261030",
+      "codex/r1-receipt-publication-20261031"
+    ],
+    "docs/research/ground-truth-corpus/results/labels/research-mingw-clang-O0-r1-pilot-defined-v1-v2.json": [
+      "codex/r1-ground-truth-research-20261030",
+      "codex/r1-receipt-publication-20261031"
+    ],
+    "docs/research/ground-truth-corpus/results/labels/research-mingw-clang-O1-r1-pilot-defined-v1-v2.json": [
+      "codex/r1-ground-truth-research-20261030",
+      "codex/r1-receipt-publication-20261031"
+    ],
+    "docs/research/ground-truth-corpus/results/labels/research-mingw-clang-O2-r1-pilot-defined-v1-v2.json": [
+      "codex/r1-ground-truth-research-20261030",
+      "codex/r1-receipt-publication-20261031"
+    ],
+    "docs/research/ground-truth-corpus/results/labels/research-mingw-clang-O3-r1-pilot-defined-v1-v2.json": [
+      "codex/r1-ground-truth-research-20261030",
+      "codex/r1-receipt-publication-20261031"
+    ],
+    "docs/research/ground-truth-corpus/results/labels/research-mingw-clang-Os-r1-pilot-defined-v1-v2.json": [
+      "codex/r1-ground-truth-research-20261030",
+      "codex/r1-receipt-publication-20261031"
+    ],
+    "docs/research/ground-truth-corpus/results/labels/research-mingw-gcc-O0-r1-pilot-defined-v1-v2.json": [
+      "codex/r1-ground-truth-research-20261030",
+      "codex/r1-receipt-publication-20261031"
+    ],
+    "docs/research/ground-truth-corpus/results/labels/research-mingw-gcc-O1-r1-pilot-defined-v1-v2.json": [
+      "codex/r1-ground-truth-research-20261030",
+      "codex/r1-receipt-publication-20261031"
+    ],
+    "docs/research/ground-truth-corpus/results/labels/research-mingw-gcc-O2-r1-pilot-defined-v1-v2.json": [
+      "codex/r1-ground-truth-research-20261030",
+      "codex/r1-receipt-publication-20261031"
+    ],
+    "docs/research/ground-truth-corpus/results/labels/research-mingw-gcc-O3-r1-pilot-defined-v1-v2.json": [
+      "codex/r1-ground-truth-research-20261030",
+      "codex/r1-receipt-publication-20261031"
+    ],
+    "docs/research/ground-truth-corpus/results/labels/research-mingw-gcc-Os-r1-pilot-defined-v1-v2.json": [
+      "codex/r1-ground-truth-research-20261030",
+      "codex/r1-receipt-publication-20261031"
+    ],
+    "docs/research/ground-truth-corpus/results/labels/research-msvc-free-O0-r1-pilot-defined-v1-v2.json": [
+      "codex/r1-ground-truth-research-20261030",
+      "codex/r1-receipt-publication-20261031"
+    ],
+    "docs/research/ground-truth-corpus/results/labels/research-msvc-free-O1-r1-pilot-defined-v1-v2.json": [
+      "codex/r1-ground-truth-research-20261030",
+      "codex/r1-receipt-publication-20261031"
+    ],
+    "docs/research/ground-truth-corpus/results/labels/research-msvc-free-O2-r1-pilot-defined-v1-v2.json": [
+      "codex/r1-ground-truth-research-20261030",
+      "codex/r1-receipt-publication-20261031"
+    ],
+    "docs/research/ground-truth-corpus/results/labels/research-msvc-free-O3-r1-pilot-defined-v1-v2.json": [
+      "codex/r1-ground-truth-research-20261030",
+      "codex/r1-receipt-publication-20261031"
+    ],
+    "docs/research/ground-truth-corpus/results/labels/research-msvc-free-Os-r1-pilot-defined-v1-v2.json": [
+      "codex/r1-ground-truth-research-20261030",
+      "codex/r1-receipt-publication-20261031"
+    ],
+    "docs/research/ground-truth-corpus/results/matrix-provenance-validation.json": [
+      "codex/r1-ground-truth-research-20261030",
+      "codex/r1-receipt-publication-20261031"
+    ],
+    "docs/research/ground-truth-corpus/results/native-aa-control.json": [
+      "codex/r1-ground-truth-research-20261030",
+      "codex/r1-receipt-publication-20261031"
+    ],
+    "docs/research/ground-truth-corpus/results/native-aa-control.md": [
+      "codex/r1-ground-truth-research-20261030",
+      "codex/r1-receipt-publication-20261031"
+    ],
+    "docs/research/ground-truth-corpus/results/native-aa-provenance-correction.json": [
+      "codex/r1-ground-truth-research-20261030",
+      "codex/r1-receipt-publication-20261031"
+    ],
+    "docs/research/ground-truth-corpus/results/native-aa-provenance-correction.md": [
+      "codex/r1-ground-truth-research-20261030",
+      "codex/r1-receipt-publication-20261031"
+    ],
+    "docs/research/ground-truth-corpus/results/native-aa-recovered-build-receipts/89dfb0eea80d7ca3f414cf6edea532097beb122872afe036a5a767c94e4dd20b.json": [
+      "codex/r1-ground-truth-research-20261030",
+      "codex/r1-receipt-publication-20261031"
+    ],
+    "docs/research/ground-truth-corpus/results/native-aa-recovered-build-receipts/950a443ec7bba59fdd6098517755b9aaa69a56a584c583cd9609a5943916d095.json": [
+      "codex/r1-ground-truth-research-20261030",
+      "codex/r1-receipt-publication-20261031"
+    ],
+    "docs/research/ground-truth-corpus/results/native-aa-recovered-build-receipts/a30d0f685b2d9f196a04f7e0f6c9ae709c3970d85c7aba5b28e199f2e7c792d3.json": [
+      "codex/r1-ground-truth-research-20261030",
+      "codex/r1-receipt-publication-20261031"
+    ],
+    "docs/research/ground-truth-corpus/results/native-aa-recovered-build-receipts/d6568fb47762a1c5994f72262863d7a957c77bde657aad4162ada09a7b76c719.json": [
+      "codex/r1-ground-truth-research-20261030",
+      "codex/r1-receipt-publication-20261031"
+    ],
+    "docs/research/ground-truth-corpus/results/native-aa-recovered-build-receipts/d88845cbf96c21820a2f66b76ad5149d921e2a57cf4a976b2f2752338bada060.json": [
+      "codex/r1-ground-truth-research-20261030",
+      "codex/r1-receipt-publication-20261031"
+    ],
+    "docs/research/ground-truth-corpus/results/output-safety-review.md": [
+      "codex/r1-ground-truth-research-20261030",
+      "codex/r1-receipt-publication-20261031"
+    ],
+    "docs/research/ground-truth-corpus/results/partition-audit.json": [
+      "codex/r1-ground-truth-research-20261030",
+      "codex/r1-receipt-publication-20261031"
+    ],
+    "docs/research/ground-truth-corpus/results/per-function-observations.json": [
+      "codex/r1-ground-truth-research-20261030",
+      "codex/r1-receipt-publication-20261031"
+    ],
+    "docs/research/ground-truth-corpus/results/pilot-cjson-o2.json": [
+      "codex/r1-ground-truth-research-20261030",
+      "codex/r1-receipt-publication-20261031"
+    ],
+    "docs/research/ground-truth-corpus/results/pilot-cjson-reviewed.json": [
+      "codex/r1-ground-truth-research-20261030",
+      "codex/r1-receipt-publication-20261031"
+    ],
+    "docs/research/ground-truth-corpus/results/pilot-compiler-noise.json": [
+      "codex/r1-ground-truth-research-20261030",
+      "codex/r1-receipt-publication-20261031"
+    ],
+    "docs/research/ground-truth-corpus/results/pilot-mingw-gcc-o2-final-cli.json": [
+      "codex/r1-ground-truth-research-20261030",
+      "codex/r1-receipt-publication-20261031"
+    ],
+    "docs/research/ground-truth-corpus/results/pilot-mingw-gcc-o2-profiled.json": [
+      "codex/r1-ground-truth-research-20261030",
+      "codex/r1-receipt-publication-20261031"
+    ],
+    "docs/research/ground-truth-corpus/results/pilot-mingw-gcc-o2-repeat.json": [
+      "codex/r1-ground-truth-research-20261030",
+      "codex/r1-receipt-publication-20261031"
+    ],
+    "docs/research/ground-truth-corpus/results/pilot-mingw-gcc-o2.json": [
+      "codex/r1-ground-truth-research-20261030",
+      "codex/r1-receipt-publication-20261031"
+    ],
+    "docs/research/ground-truth-corpus/results/pilot-msvc-free-o2-reviewed-replay.json": [
+      "codex/r1-ground-truth-research-20261030",
+      "codex/r1-receipt-publication-20261031"
+    ],
+    "docs/research/ground-truth-corpus/results/pilot-msvc-free-o2.json": [
+      "codex/r1-ground-truth-research-20261030",
+      "codex/r1-receipt-publication-20261031"
+    ],
+    "docs/research/ground-truth-corpus/results/profiled-resources.json": [
+      "codex/r1-ground-truth-research-20261030",
+      "codex/r1-receipt-publication-20261031"
+    ],
+    "docs/research/ground-truth-corpus/results/repeatability.json": [
+      "codex/r1-ground-truth-research-20261030",
+      "codex/r1-receipt-publication-20261031"
+    ],
+    "docs/research/ground-truth-corpus/results/rzdiff-hidden-diagnostic.json": [
+      "codex/r1-ground-truth-research-20261030",
+      "codex/r1-receipt-publication-20261031"
+    ],
+    "docs/research/ground-truth-corpus/results/sonar-checkpoint-0271-annotation.json": [
+      "codex/r1-ground-truth-research-20261030",
+      "codex/r1-receipt-publication-20261031"
+    ],
+    "docs/research/ground-truth-corpus/results/source-and-binary-review.md": [
+      "codex/r1-ground-truth-research-20261030",
+      "codex/r1-receipt-publication-20261031"
+    ],
+    "docs/research/ground-truth-corpus/results/source-fetch-receipts.json": [
+      "codex/r1-ground-truth-research-20261030",
+      "codex/r1-receipt-publication-20261031"
+    ],
+    "docs/research/ground-truth-corpus/results/suite-endpoint-red-green.json": [
+      "codex/r1-ground-truth-research-20261030",
+      "codex/r1-receipt-publication-20261031"
+    ],
+    "tests/test_binexport_isolation.py": [
+      "codex/r1-ground-truth-research-20261030",
+      "codex/r1-receipt-publication-20261031"
+    ],
+    "tests/test_tier_r_build_receipts_r1.py": [
+      "codex/r1-ground-truth-research-20261030",
+      "codex/r1-receipt-publication-20261031"
+    ],
+    "tests/test_tier_r_label_promotion_r1.py": [
+      "codex/r1-ground-truth-research-20261030",
+      "codex/r1-receipt-publication-20261031"
+    ],
+    "tests/test_tier_r_research_audit.py": [
+      "codex/r1-ground-truth-research-20261030",
+      "codex/r1-receipt-publication-20261031"
+    ],
+    "tests/test_tier_r_research_build.py": [
+      "codex/r1-ground-truth-research-20261030",
+      "codex/r1-receipt-publication-20261031"
+    ],
+    "tests/test_tier_r_research_observers.py": [
+      "codex/r1-ground-truth-research-20261030",
+      "codex/r1-receipt-publication-20261031"
+    ],
+    "tests/test_tier_r_research_pilot.py": [
+      "codex/r1-ground-truth-research-20261030",
+      "codex/r1-receipt-publication-20261031"
+    ],
+    "tests/test_tier_r_session_provenance_r1.py": [
+      "codex/r1-ground-truth-research-20261030",
+      "codex/r1-receipt-publication-20261031"
+    ],
+    "tools/calibration/tier_r/build.py": [
+      "codex/r1-ground-truth-research-20261030",
+      "codex/r1-receipt-publication-20261031"
+    ],
+    "tools/calibration/tier_r/factory.py": [
+      "codex/r1-ground-truth-research-20261030",
+      "codex/r1-receipt-publication-20261031"
+    ],
+    "tools/calibration/tier_r/labeler.py": [
+      "codex/r1-ground-truth-research-20261030",
+      "codex/r1-receipt-publication-20261031"
+    ],
+    "tools/calibration/tier_r/research_audit.py": [
+      "codex/r1-ground-truth-research-20261030",
+      "codex/r1-receipt-publication-20261031"
+    ],
+    "tools/calibration/tier_r/research_build.py": [
+      "codex/r1-ground-truth-research-20261030",
+      "codex/r1-receipt-publication-20261031"
+    ],
+    "tools/calibration/tier_r/research_observers.py": [
+      "codex/r1-ground-truth-research-20261030",
+      "codex/r1-receipt-publication-20261031"
+    ],
+    "tools/calibration/tier_r/research_pilot.py": [
+      "codex/r1-ground-truth-research-20261030",
+      "codex/r1-receipt-publication-20261031"
+    ],
+    "src/patchtrace/unified/fusion/arbiter.py": [
+      "codex/r2-unified-matching-research-20261030",
+      "codex/semantic-proof-reconciliation-20261031"
+    ],
+    "src/patchtrace/unified/ir/cfg.py": [
+      "codex/r2-unified-matching-research-20261030",
+      "codex/semantic-proof-reconciliation-20261031"
+    ],
+    "src/patchtrace/unified/read_text.py": [
+      "codex/r2-unified-matching-research-20261030",
+      "codex/semantic-proof-reconciliation-20261031"
+    ],
+    "src/patchtrace/unified/sources/ladder.py": [
+      "codex/r2-unified-matching-research-20261030",
+      "codex/semantic-proof-reconciliation-20261031"
+    ],
+    "tests/test_r2_cache_version.py": [
+      "codex/r2-unified-matching-research-20261030",
+      "codex/semantic-proof-reconciliation-20261031"
+    ],
+    "tests/test_r2_cfg_performance.py": [
+      "codex/r2-unified-matching-research-20261030",
+      "codex/semantic-proof-reconciliation-20261031"
+    ],
+    "tests/test_r2_fusion_regressions.py": [
+      "codex/r2-unified-matching-research-20261030",
+      "codex/semantic-proof-reconciliation-20261031"
+    ],
+    "tests/test_unified_wire_compute.py": [
+      "codex/r2-unified-matching-research-20261030",
+      "codex/semantic-proof-reconciliation-20261031"
+    ],
+    "docs/research/deep-uncertainty-r8/01-typed-literal-counterexamples.md": [
+      "codex/semantic-proof-reconciliation-20261031",
+      "research/r8-deep-uncertainty-20261030"
+    ],
+    "src/patchtrace/unified/facts/pseudo.py": [
+      "codex/semantic-proof-reconciliation-20261031",
+      "research/r8-deep-uncertainty-20261030"
+    ],
+    "tests/test_r8_literal_types.py": [
+      "codex/semantic-proof-reconciliation-20261031",
+      "research/r8-deep-uncertainty-20261030"
     ],
     "tests/test_ui_acquisition.py": [
       "feat/acquisition-gui",
@@ -19844,5 +22493,31 @@
         "threads": []
       }
     ]
+  },
+  "followup": {
+    "new_prs": [
+      {
+        "number": 144,
+        "source": "59ff5ad1379c0a787d92f62d732686c1dd0e65b4"
+      },
+      {
+        "number": 145,
+        "source": "8c9eafc79b007a963453d8edf6cb40c804c9bc3d"
+      },
+      {
+        "number": 146,
+        "source": "798e11ef345ed7a7a65508a466eaf77ee85ef77c"
+      }
+    ],
+    "r1_documentary_threads_resolved": [
+      "PRRT_kwDOVEPRFc6yLbej",
+      "PRRT_kwDOVEPRFc6yLbev",
+      "PRRT_kwDOVEPRFc6yLbew"
+    ],
+    "r1_open_threads": [
+      "PRRT_kwDOVEPRFc6yLs2o",
+      "PRRT_kwDOVEPRFc6yLs2w"
+    ],
+    "note": "Evidence-loss repair for the second open R1 thread is on #145, not incorporated in its parent; do not resolve until adopted. All original refs preserved."
   }
 }

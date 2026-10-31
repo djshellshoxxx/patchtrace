@@ -1,0 +1,759 @@
+{
+  "source_commit": "59ff5ad1379c0a787d92f62d732686c1dd0e65b4",
+  "dirty_paths": [
+    "docs/qa/completion-inventory-20261031.json"
+  ],
+  "platform": "Linux-6.18.57-x86_64-with-glibc2.41",
+  "versions": {
+    "ghidriff": "1.0.0",
+    "pyghidra": "3.0.2",
+    "JPype1": "1.5.2",
+    "ziglang": "0.17.0"
+  },
+  "ghidriff_revision": "4f5d895fcbb1eacd65efd81145922c15bb7e741d",
+  "ghidra_archive_sha256": "c3b458661d69e26e203d739c0c82d143cc8a4a29d9e571f099c2cf4bda62a120",
+  "source_inputs": {
+    "bounds-new.c": {
+      "sha256": "1b908b80063d6aba5648e75ec3661990699481138966c0876dbd2de3554d5cf8",
+      "text": "/* Same exported function with an explicit invalid-index guard. */\n__declspec(dllexport) int read_item(const int *items, int length, int index) {\n    if (items == 0 || index < 0 || index >= length) return -1;\n    return items[index];\n}\n"
+    },
+    "bounds-old.c": {
+      "sha256": "b0d28c94a901b3b188034ae0112f6dbbba09cfae946d97f115dbdf1165e370e3",
+      "text": "/* Benign static bounds-check regression fixture; never executed by PatchTrace. */\n__declspec(dllexport) int read_item(const int *items, int length, int index) {\n    return items[index];\n}\n"
+    },
+    "exponent-new.c": {
+      "sha256": "acdd75d248f8ae4e9c9cae687c9928d97b120e16c676855f3ef2afb506eab4db",
+      "text": "__declspec(dllexport) double calc(void) { return 8e1; }\n"
+    },
+    "exponent-old.c": {
+      "sha256": "bb281a0dce917f37f6a712d98a5a982692db27ac281e30d3553bc429774c32b6",
+      "text": "__declspec(dllexport) double calc(void) { return 010e1; }\n"
+    },
+    "float-new.c": {
+      "sha256": "2e4ab105ca8b7c39c13bf60af69c4e80bea1f8f7faa93bb705a12777d57b609b",
+      "text": "__declspec(dllexport) float calc(float x) { return x + 0.1; }\n"
+    },
+    "float-old.c": {
+      "sha256": "c6351798f4d857074ebc633ed22e304518517eca3a2e31e3703a55e49dff7cf9",
+      "text": "__declspec(dllexport) float calc(float x) { return x + 0.1f; }\n"
+    },
+    "long-new.c": {
+      "sha256": "5fed5627997c8bf2b08473d562d15eb0a40166b8dda9cc16fdf9bbe373d01a4f",
+      "text": "__declspec(dllexport) int compare(int x) { return x < 0x80000000L; }\n"
+    },
+    "long-old.c": {
+      "sha256": "470e8352ecbf42c710103b0e74404248accc020d2d9c4bd046073a50c92ceabd",
+      "text": "__declspec(dllexport) int compare(int x) { return x < 2147483648L; }\n"
+    }
+  },
+  "compile_commands": [
+    [
+      "/workspace/work/patchtrace-native-venv/bin/python",
+      "-m",
+      "ziglang",
+      "cc",
+      "-target",
+      "x86_64-windows-gnu",
+      "-shared",
+      "-nostdlib",
+      "-Wl,--no-entry",
+      "-fno-sanitize=all",
+      "-O0",
+      "-o",
+      "/workspace/work/native-smoke-v2/inputs/bounds-new.dll",
+      "/workspace/work/native-smoke-v2/inputs/bounds-new.c"
+    ],
+    [
+      "/workspace/work/patchtrace-native-venv/bin/python",
+      "-m",
+      "ziglang",
+      "cc",
+      "-target",
+      "x86_64-windows-gnu",
+      "-shared",
+      "-nostdlib",
+      "-Wl,--no-entry",
+      "-fno-sanitize=all",
+      "-O0",
+      "-o",
+      "/workspace/work/native-smoke-v2/inputs/bounds-old.dll",
+      "/workspace/work/native-smoke-v2/inputs/bounds-old.c"
+    ],
+    [
+      "/workspace/work/patchtrace-native-venv/bin/python",
+      "-m",
+      "ziglang",
+      "cc",
+      "-target",
+      "x86_64-windows-gnu",
+      "-shared",
+      "-nostdlib",
+      "-Wl,--no-entry",
+      "-fno-sanitize=all",
+      "-O0",
+      "-o",
+      "/workspace/work/native-smoke-v2/inputs/exponent-new.dll",
+      "/workspace/work/native-smoke-v2/inputs/exponent-new.c"
+    ],
+    [
+      "/workspace/work/patchtrace-native-venv/bin/python",
+      "-m",
+      "ziglang",
+      "cc",
+      "-target",
+      "x86_64-windows-gnu",
+      "-shared",
+      "-nostdlib",
+      "-Wl,--no-entry",
+      "-fno-sanitize=all",
+      "-O0",
+      "-o",
+      "/workspace/work/native-smoke-v2/inputs/exponent-old.dll",
+      "/workspace/work/native-smoke-v2/inputs/exponent-old.c"
+    ],
+    [
+      "/workspace/work/patchtrace-native-venv/bin/python",
+      "-m",
+      "ziglang",
+      "cc",
+      "-target",
+      "x86_64-windows-gnu",
+      "-shared",
+      "-nostdlib",
+      "-Wl,--no-entry",
+      "-fno-sanitize=all",
+      "-O0",
+      "-o",
+      "/workspace/work/native-smoke-v2/inputs/float-new.dll",
+      "/workspace/work/native-smoke-v2/inputs/float-new.c"
+    ],
+    [
+      "/workspace/work/patchtrace-native-venv/bin/python",
+      "-m",
+      "ziglang",
+      "cc",
+      "-target",
+      "x86_64-windows-gnu",
+      "-shared",
+      "-nostdlib",
+      "-Wl,--no-entry",
+      "-fno-sanitize=all",
+      "-O0",
+      "-o",
+      "/workspace/work/native-smoke-v2/inputs/float-old.dll",
+      "/workspace/work/native-smoke-v2/inputs/float-old.c"
+    ],
+    [
+      "/workspace/work/patchtrace-native-venv/bin/python",
+      "-m",
+      "ziglang",
+      "cc",
+      "-target",
+      "x86_64-windows-gnu",
+      "-shared",
+      "-nostdlib",
+      "-Wl,--no-entry",
+      "-fno-sanitize=all",
+      "-O0",
+      "-o",
+      "/workspace/work/native-smoke-v2/inputs/long-new.dll",
+      "/workspace/work/native-smoke-v2/inputs/long-new.c"
+    ],
+    [
+      "/workspace/work/patchtrace-native-venv/bin/python",
+      "-m",
+      "ziglang",
+      "cc",
+      "-target",
+      "x86_64-windows-gnu",
+      "-shared",
+      "-nostdlib",
+      "-Wl,--no-entry",
+      "-fno-sanitize=all",
+      "-O0",
+      "-o",
+      "/workspace/work/native-smoke-v2/inputs/long-old.dll",
+      "/workspace/work/native-smoke-v2/inputs/long-old.c"
+    ]
+  ],
+  "cases": [
+    {
+      "name": "bounds",
+      "expected": "changed",
+      "status": "passed",
+      "older_sha256": "4de15a4090f14c80567e8c881a6011086bab992bd3798c97989e23e0d01565bc",
+      "newer_sha256": "ab76eedf527f8c8cd0ff1fcd13892720255aecf7a16295e3bc505b006ad54ef6",
+      "backend_status": "completed",
+      "run_id": "690b7378-69ba-441c-a49e-4833e813c9f7",
+      "backend_error": null,
+      "settings": {
+        "timeout_seconds": 300,
+        "allow_symbol_downloads": false,
+        "symbol_policy": "disabled",
+        "ghidra_settings": "isolated-per-run",
+        "older_sha256": "4de15a4090f14c80567e8c881a6011086bab992bd3798c97989e23e0d01565bc",
+        "newer_sha256": "ab76eedf527f8c8cd0ff1fcd13892720255aecf7a16295e3bc505b006ad54ef6",
+        "force_identical_diff": true,
+        "python_version": "3.12.14",
+        "pyghidra_version": "3.0.2",
+        "ghidra_version": "12.0.4",
+        "java_runtime_version": "unverified",
+        "gzf": {
+          "older": {
+            "name": "4de15a4090f14c80567e8c881a6011086bab992bd3798c97989e23e0d01565bc.bin-e9a3f7.gzf",
+            "sha256": "e905a44a3faf6e13ecf2d6685642a64d4d441cb8c6325fc140748542a6a8860e",
+            "bytes": 25398
+          },
+          "newer": {
+            "name": "ab76eedf527f8c8cd0ff1fcd13892720255aecf7a16295e3bc505b006ad54ef6.bin-832f86.gzf",
+            "sha256": "f09d231473deea64613dfb175e47c8e1fc2d8acb2be959af48b9334062e91882",
+            "bytes": 25743
+          }
+        }
+      },
+      "raw_sha256": "5d50559f92686ff3ba52e98df4f8d35186c396db20b4f1c7f47f2090c22a207c",
+      "backend_functions": [
+        {
+          "category": "modified",
+          "older": [
+            {
+              "name": "read_item",
+              "address": "180001000",
+              "code": "\nundefined4 read_item(longlong param_1,undefined8 param_2,int param_3)\n\n{\n                    /* 0x1000  1  read_item */\n  return *(undefined4 *)(param_1 + (longlong)param_3 * 4);\n}\n\n"
+            }
+          ],
+          "newer": [
+            {
+              "name": "read_item",
+              "address": "180001000",
+              "code": "\nundefined4 read_item(longlong param_1,int param_2,int param_3)\n\n{\n  undefined4 local_c;\n  \n                    /* 0x1000  1  read_item */\n  if (((param_1 == 0) || (param_3 < 0)) || (param_2 <= param_3)) {\n    local_c = 0xffffffff;\n  }\n  else {\n    local_c = *(undefined4 *)(param_1 + (longlong)param_3 * 4);\n  }\n  return local_c;\n}\n\n"
+            }
+          ]
+        }
+      ],
+      "gzf": {
+        "older": {
+          "sha256": "e905a44a3faf6e13ecf2d6685642a64d4d441cb8c6325fc140748542a6a8860e",
+          "bytes": 25398
+        },
+        "newer": {
+          "sha256": "f09d231473deea64613dfb175e47c8e1fc2d8acb2be959af48b9334062e91882",
+          "bytes": 25743
+        }
+      },
+      "ir": {
+        "older": {
+          "content_digest": "7b43ee117f2676c2eeba697ee223dfea4f9073e3dc420e333af649ddacb4c3fd",
+          "functions": 1
+        },
+        "newer": {
+          "content_digest": "6c3678f97410034d9f00613a6727ab61dd35b7137d0e1b2fce58c5fa278ad244",
+          "functions": 1
+        }
+      },
+      "result_id": "56e91bf6aa506fc5f762b21e764e6afbf6c24d1822efd22e906bb7d360123d49",
+      "manifest_status": "complete",
+      "rows": [
+        {
+          "older": [
+            [
+              "read_item",
+              4096
+            ]
+          ],
+          "newer": [
+            [
+              "read_item",
+              4096
+            ]
+          ],
+          "decision": "matched",
+          "verdict": "material",
+          "proof": null,
+          "classes": [
+            "block-added",
+            "block-added",
+            "block-added",
+            "block-added",
+            "block-added",
+            "constant",
+            "constant",
+            "constant",
+            "constant",
+            "cfg",
+            "frame",
+            "frame",
+            "frame",
+            "frame",
+            "frame",
+            "unknown",
+            "unknown",
+            "unknown",
+            "unknown",
+            "unknown",
+            "unknown",
+            "unknown"
+          ],
+          "channels": {
+            "C0": "differs",
+            "C1": "differs",
+            "C2": "differs",
+            "C3": "differs",
+            "C4": "equal",
+            "C5": "differs",
+            "C6": "differs",
+            "C7": "unavailable",
+            "C8": "unavailable"
+          },
+          "eh": "differs"
+        }
+      ],
+      "elapsed_seconds": 22.25
+    },
+    {
+      "name": "signed-long",
+      "expected": "changed",
+      "status": "passed",
+      "older_sha256": "3f9e5cba8a2acd1923d8a0736a4c7c2dbf4dd61c7f1aec0fd8e9a08bc2ee1993",
+      "newer_sha256": "d41edea6576a4bea1fb640db6d890575307947d09555067c6e06a73643d17bbf",
+      "backend_status": "completed",
+      "run_id": "cc166077-ec1d-441e-ba50-0e9075eb4cff",
+      "backend_error": null,
+      "settings": {
+        "timeout_seconds": 300,
+        "allow_symbol_downloads": false,
+        "symbol_policy": "disabled",
+        "ghidra_settings": "isolated-per-run",
+        "older_sha256": "3f9e5cba8a2acd1923d8a0736a4c7c2dbf4dd61c7f1aec0fd8e9a08bc2ee1993",
+        "newer_sha256": "d41edea6576a4bea1fb640db6d890575307947d09555067c6e06a73643d17bbf",
+        "force_identical_diff": true,
+        "python_version": "3.12.14",
+        "pyghidra_version": "3.0.2",
+        "ghidra_version": "12.0.4",
+        "java_runtime_version": "unverified",
+        "gzf": {
+          "older": {
+            "name": "3f9e5cba8a2acd1923d8a0736a4c7c2dbf4dd61c7f1aec0fd8e9a08bc2ee1993.bin-2aba40.gzf",
+            "sha256": "17f8c02f4a1efe2f4ed3348dc223fdda3fc10355634e32ccaf7083374879cac8",
+            "bytes": 25024
+          },
+          "newer": {
+            "name": "d41edea6576a4bea1fb640db6d890575307947d09555067c6e06a73643d17bbf.bin-f2d995.gzf",
+            "sha256": "026e5da79107d983cc37d1de7fdc2b99cc32ca81b7378a3cf9a7247b72a0995f",
+            "bytes": 24966
+          }
+        }
+      },
+      "raw_sha256": "28f78a7838748c8f4d0bc74500571c74b16693369a7997ea3f3addfbecc25a58",
+      "backend_functions": [
+        {
+          "category": "modified",
+          "older": [
+            {
+              "name": "compare",
+              "address": "180001000",
+              "code": "\nbool compare(int param_1)\n\n{\n                    /* 0x1000  1  compare */\n  return (longlong)param_1 < 0x80000000;\n}\n\n"
+            }
+          ],
+          "newer": [
+            {
+              "name": "compare",
+              "address": "180001000",
+              "code": "\nbool compare(uint param_1)\n\n{\n                    /* 0x1000  1  compare */\n  return param_1 < 0x80000000;\n}\n\n"
+            }
+          ]
+        }
+      ],
+      "gzf": {
+        "older": {
+          "sha256": "17f8c02f4a1efe2f4ed3348dc223fdda3fc10355634e32ccaf7083374879cac8",
+          "bytes": 25024
+        },
+        "newer": {
+          "sha256": "026e5da79107d983cc37d1de7fdc2b99cc32ca81b7378a3cf9a7247b72a0995f",
+          "bytes": 24966
+        }
+      },
+      "ir": {
+        "older": {
+          "content_digest": "bd41cdd8ecddc5de22e636f96e6454f3e530b0defa4be3350622296469842a2a",
+          "functions": 1
+        },
+        "newer": {
+          "content_digest": "fceed7abc8cbf0b8a320a4965d728581372e519d82d3bc574c6d3f6df8c8ea07",
+          "functions": 1
+        }
+      },
+      "result_id": "3bc98c4896b9bd21a86e3f5c59526172dea6703d1eea33c1b1165dcbdb1acf4f",
+      "manifest_status": "complete",
+      "rows": [
+        {
+          "older": [
+            [
+              "compare",
+              4096
+            ]
+          ],
+          "newer": [
+            [
+              "compare",
+              4096
+            ]
+          ],
+          "decision": "matched",
+          "verdict": "review",
+          "proof": null,
+          "classes": [
+            "unknown",
+            "unknown",
+            "unknown",
+            "unknown",
+            "unknown",
+            "unknown"
+          ],
+          "channels": {
+            "C0": "differs",
+            "C1": "differs",
+            "C2": "differs",
+            "C3": "differs",
+            "C4": "equal",
+            "C5": "equal",
+            "C6": "differs",
+            "C7": "unavailable",
+            "C8": "unavailable"
+          },
+          "eh": "equal"
+        }
+      ],
+      "elapsed_seconds": 23.76
+    },
+    {
+      "name": "float",
+      "expected": "changed",
+      "status": "passed",
+      "older_sha256": "5959bf3c6cd5c7a8068bfc8bdeda8d98a65c3a86673f05bc71ea8db6de3c4085",
+      "newer_sha256": "f8625fc5379d783b3c887c4b27fbfcffd1d09b9fb17b151c603354bdcd0cbf12",
+      "backend_status": "completed",
+      "run_id": "fdba1f36-ff50-4079-ae7b-57fb8024ceb5",
+      "backend_error": null,
+      "settings": {
+        "timeout_seconds": 300,
+        "allow_symbol_downloads": false,
+        "symbol_policy": "disabled",
+        "ghidra_settings": "isolated-per-run",
+        "older_sha256": "5959bf3c6cd5c7a8068bfc8bdeda8d98a65c3a86673f05bc71ea8db6de3c4085",
+        "newer_sha256": "f8625fc5379d783b3c887c4b27fbfcffd1d09b9fb17b151c603354bdcd0cbf12",
+        "force_identical_diff": true,
+        "python_version": "3.12.14",
+        "pyghidra_version": "3.0.2",
+        "ghidra_version": "12.0.4",
+        "java_runtime_version": "unverified",
+        "gzf": {
+          "older": {
+            "name": "5959bf3c6cd5c7a8068bfc8bdeda8d98a65c3a86673f05bc71ea8db6de3c4085.bin-8a3c7d.gzf",
+            "sha256": "f5f154038bb9ee2cc1c46a5c68a5b1c399d8c9069ccc0cd68ee971a543b8a2b0",
+            "bytes": 24925
+          },
+          "newer": {
+            "name": "f8625fc5379d783b3c887c4b27fbfcffd1d09b9fb17b151c603354bdcd0cbf12.bin-f77270.gzf",
+            "sha256": "66380ebb9fada0f580591a3afe7e6728ad188fd96b2514898bfc70c47f2a0a39",
+            "bytes": 25061
+          }
+        }
+      },
+      "raw_sha256": "0596d2e4993a10c477d2f06fde8e820d91933c701e0e06c77956db420e9db735",
+      "backend_functions": [
+        {
+          "category": "modified",
+          "older": [
+            {
+              "name": "calc",
+              "address": "180001000",
+              "code": "\nfloat calc(float param_1)\n\n{\n                    /* 0x1000  1  calc */\n  return param_1 + 0.1;\n}\n\n"
+            }
+          ],
+          "newer": [
+            {
+              "name": "calc",
+              "address": "180001000",
+              "code": "\nundefined8 calc(float param_1)\n\n{\n                    /* 0x1000  1  calc */\n  return CONCAT44((int)((ulonglong)((double)param_1 + 0.1) >> 0x20),(float)((double)param_1 + 0.1));\n}\n\n"
+            }
+          ]
+        }
+      ],
+      "gzf": {
+        "older": {
+          "sha256": "f5f154038bb9ee2cc1c46a5c68a5b1c399d8c9069ccc0cd68ee971a543b8a2b0",
+          "bytes": 24925
+        },
+        "newer": {
+          "sha256": "66380ebb9fada0f580591a3afe7e6728ad188fd96b2514898bfc70c47f2a0a39",
+          "bytes": 25061
+        }
+      },
+      "ir": {
+        "older": {
+          "content_digest": "76e51653838a31bd91914f466f76379fbfc509743ae4de4a95a19cc13f8bd43c",
+          "functions": 1
+        },
+        "newer": {
+          "content_digest": "d3289970a45f4474a6e56005ede46221a5d6c975c8f23c9fe421ffe4dfe61adb",
+          "functions": 1
+        }
+      },
+      "result_id": "60ff69e1adce9829140be58f9a420ed5e4f5df50cd3215cc48889d5a52a684e7",
+      "manifest_status": "complete",
+      "rows": [
+        {
+          "older": [
+            [
+              "calc",
+              4096
+            ]
+          ],
+          "newer": [
+            [
+              "calc",
+              4096
+            ]
+          ],
+          "decision": "matched",
+          "verdict": "review",
+          "proof": null,
+          "classes": [
+            "unknown",
+            "unknown",
+            "unknown",
+            "unknown",
+            "unknown",
+            "unknown"
+          ],
+          "channels": {
+            "C0": "differs",
+            "C1": "differs",
+            "C2": "differs",
+            "C3": "differs",
+            "C4": "equal",
+            "C5": "equal",
+            "C6": "differs",
+            "C7": "unavailable",
+            "C8": "unavailable"
+          },
+          "eh": "equal"
+        }
+      ],
+      "elapsed_seconds": 21.6
+    },
+    {
+      "name": "exponent",
+      "expected": "changed",
+      "status": "passed",
+      "older_sha256": "82c9be98e35c5ef979474118f0cf3f01330ba3415e0459012c099a05363a53c5",
+      "newer_sha256": "66f677d5e282310458af8ee48a68dd619ee71a601444fccc5a4704bc8acdb2c7",
+      "backend_status": "completed",
+      "run_id": "c808a356-d218-44af-b450-626252421645",
+      "backend_error": null,
+      "settings": {
+        "timeout_seconds": 300,
+        "allow_symbol_downloads": false,
+        "symbol_policy": "disabled",
+        "ghidra_settings": "isolated-per-run",
+        "older_sha256": "82c9be98e35c5ef979474118f0cf3f01330ba3415e0459012c099a05363a53c5",
+        "newer_sha256": "66f677d5e282310458af8ee48a68dd619ee71a601444fccc5a4704bc8acdb2c7",
+        "force_identical_diff": true,
+        "python_version": "3.12.14",
+        "pyghidra_version": "3.0.2",
+        "ghidra_version": "12.0.4",
+        "java_runtime_version": "unverified",
+        "gzf": {
+          "older": {
+            "name": "82c9be98e35c5ef979474118f0cf3f01330ba3415e0459012c099a05363a53c5.bin-50d8b0.gzf",
+            "sha256": "9ec89de12049abad0bbb2d83aae0fbe27f1876f4eec98f8f7f2c8ef1b5621e2e",
+            "bytes": 24549
+          },
+          "newer": {
+            "name": "66f677d5e282310458af8ee48a68dd619ee71a601444fccc5a4704bc8acdb2c7.bin-e3a50c.gzf",
+            "sha256": "b421df4bb3522f3476c77609f00040159a311ca4a801f9d2d400f8cf13defae9",
+            "bytes": 24476
+          }
+        }
+      },
+      "raw_sha256": "c7f0eefb7a37136e964ec43f11a70bdad16843544071a2c4a04a5c05084659ca",
+      "backend_functions": [],
+      "gzf": {
+        "older": {
+          "sha256": "9ec89de12049abad0bbb2d83aae0fbe27f1876f4eec98f8f7f2c8ef1b5621e2e",
+          "bytes": 24549
+        },
+        "newer": {
+          "sha256": "b421df4bb3522f3476c77609f00040159a311ca4a801f9d2d400f8cf13defae9",
+          "bytes": 24476
+        }
+      },
+      "ir": {
+        "older": {
+          "content_digest": "bc6ca9bc2428d1c1faa1c29451035e2869855682845f5c5b7add0e79bd242dd1",
+          "functions": 1
+        },
+        "newer": {
+          "content_digest": "bc6ca9bc2428d1c1faa1c29451035e2869855682845f5c5b7add0e79bd242dd1",
+          "functions": 1
+        }
+      },
+      "result_id": "0105d65b67104a74eaec38e0cf42315fb30182b79edff42045f0b4fbe0095bfc",
+      "manifest_status": "complete",
+      "rows": [
+        {
+          "older": [
+            [
+              "calc",
+              4096
+            ]
+          ],
+          "newer": [
+            [
+              "calc",
+              4096
+            ]
+          ],
+          "decision": "matched",
+          "verdict": "review",
+          "proof": null,
+          "classes": [],
+          "channels": {
+            "C0": "equal",
+            "C1": "equal",
+            "C2": "equal",
+            "C3": "equal",
+            "C4": "equal",
+            "C5": "equal",
+            "C6": "unavailable",
+            "C7": "unavailable",
+            "C8": "unavailable"
+          },
+          "eh": "equal"
+        }
+      ],
+      "elapsed_seconds": 22.93
+    },
+    {
+      "name": "identical",
+      "expected": "unchanged",
+      "status": "passed",
+      "older_sha256": "4de15a4090f14c80567e8c881a6011086bab992bd3798c97989e23e0d01565bc",
+      "newer_sha256": "4de15a4090f14c80567e8c881a6011086bab992bd3798c97989e23e0d01565bc",
+      "backend_status": "completed",
+      "run_id": "ebea5296-cf55-40d7-89bd-6d31b621ce8d",
+      "backend_error": null,
+      "settings": {
+        "timeout_seconds": 300,
+        "allow_symbol_downloads": false,
+        "symbol_policy": "disabled",
+        "ghidra_settings": "isolated-per-run",
+        "older_sha256": "4de15a4090f14c80567e8c881a6011086bab992bd3798c97989e23e0d01565bc",
+        "newer_sha256": "4de15a4090f14c80567e8c881a6011086bab992bd3798c97989e23e0d01565bc",
+        "force_identical_diff": true,
+        "python_version": "3.12.14",
+        "pyghidra_version": "3.0.2",
+        "ghidra_version": "12.0.4",
+        "java_runtime_version": "unverified",
+        "gzf": {
+          "older": {
+            "name": "older-4de15a4090f14c80567e8c881a6011086bab992bd3798c97989e23e0d01565bc.bin-e9a3f7.gzf",
+            "sha256": "d7ff3d32dfc9dc5760bbff19e33c2ea019791660565702bf171bf71b56095401",
+            "bytes": 25372
+          },
+          "newer": {
+            "name": "newer-4de15a4090f14c80567e8c881a6011086bab992bd3798c97989e23e0d01565bc.bin-e9a3f7.gzf",
+            "sha256": "33f047caba2e458b0dd45c060978bd689763b11b5f31b2f3522adc601221ffe3",
+            "bytes": 25394
+          }
+        }
+      },
+      "raw_sha256": "0c77ad283971aefcf89e1df6739515128aa1fa4abbf979765552966e7e0764b7",
+      "backend_functions": [],
+      "gzf": {
+        "older": {
+          "sha256": "d7ff3d32dfc9dc5760bbff19e33c2ea019791660565702bf171bf71b56095401",
+          "bytes": 25372
+        },
+        "newer": {
+          "sha256": "33f047caba2e458b0dd45c060978bd689763b11b5f31b2f3522adc601221ffe3",
+          "bytes": 25394
+        }
+      },
+      "ir": {
+        "older": {
+          "content_digest": "7b43ee117f2676c2eeba697ee223dfea4f9073e3dc420e333af649ddacb4c3fd",
+          "functions": 1
+        },
+        "newer": {
+          "content_digest": "7b43ee117f2676c2eeba697ee223dfea4f9073e3dc420e333af649ddacb4c3fd",
+          "functions": 1
+        }
+      },
+      "result_id": "c1733da20e8dcbd73888b00172867259860edb768dfeb77fd9667116bf00cc78",
+      "manifest_status": "complete",
+      "rows": [
+        {
+          "older": [
+            [
+              "read_item",
+              4096
+            ]
+          ],
+          "newer": [
+            [
+              "read_item",
+              4096
+            ]
+          ],
+          "decision": "matched",
+          "verdict": "unchanged",
+          "proof": "UNCH/1",
+          "classes": [],
+          "channels": {
+            "C0": "equal",
+            "C1": "equal",
+            "C2": "equal",
+            "C3": "equal",
+            "C4": "equal",
+            "C5": "equal",
+            "C6": "unavailable",
+            "C7": "unavailable",
+            "C8": "unavailable"
+          },
+          "eh": "equal"
+        }
+      ],
+      "elapsed_seconds": 23.82
+    }
+  ],
+  "scope": "Authored exported-name-visible one-function Linux native smoke. No target executed; no Tier R, held-out, BinDiff, Windows, air-gap or full G-U acceptance claim.",
+  "policies": {
+    "matching": "matching/2",
+    "channels": {
+      "C0": 1,
+      "C1": 1,
+      "C2": 1,
+      "C3": 1,
+      "C4": 1,
+      "C4n": 1,
+      "C5": 1,
+      "C5t": 1,
+      "C6": 1,
+      "C8": 1,
+      "align": 1,
+      "canon": 2,
+      "datamap": 1,
+      "eh-eq": 1
+    },
+    "proofs": {
+      "COS-ADDR/1": 1,
+      "COS-LAYOUT/1": 1,
+      "COS-PSEUDO/1": 2,
+      "UNCH/1": 1
+    }
+  },
+  "compiler_binary_sha256": "7c61539af19fa4082c94848f1c2b57b89e76dc6cfd5bd4c57764c3caf8f82272"
+}
