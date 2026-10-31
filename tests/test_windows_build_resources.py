@@ -425,3 +425,86 @@ def test_frozen_mark_requires_svg_bytes_library_and_pinned_notices(tmp_path, pla
     (fixture_root / 'third_party/notices/qtsvg-6.12.0/LICENSES/LGPL-3.0-only.txt').unlink()
     with pytest.raises(RuntimeError, match='notice'):
         build_linux.check_desktop_mark(package, fixture_root, platform_key)
+
+
+# ---- build-output staging preserves unrelated pre-existing paths ------------------------------------------
+
+def _write_generated_resource(kind, out):
+    if kind == 'version':
+        fields = wvi.make_fields('0.1.0', COMMIT, 0, COPYRIGHT)
+        assert wvi.write(fields, out) == out
+    else:
+        assert windows_icon.main(['--out', str(out)]) == 0
+
+
+@pytest.mark.parametrize('kind', ['version', 'icon'])
+@pytest.mark.parametrize('existing_stage', ['file', 'symlink'])
+def test_generators_preserve_preexisting_stage_and_symlink_target(tmp_path, qapp, kind, existing_stage):
+    out = tmp_path / 'caller-selected' / 'resource.out'
+    out.parent.mkdir()
+    stale = out.with_name(out.name + '.tmp')
+    victim = tmp_path / 'unrelated.txt'
+    victim.write_bytes(b'preserve unrelated contents')
+    if existing_stage == 'symlink':
+        try:
+            stale.symlink_to(victim)
+        except OSError as exc:
+            pytest.skip(f'host cannot create symlinks: {exc}')
+    else:
+        stale.write_bytes(b'preserve old stage')
+    _write_generated_resource(kind, out)
+    assert victim.read_bytes() == b'preserve unrelated contents'
+    assert stale.is_symlink() == (existing_stage == 'symlink')
+    assert stale.read_bytes() == (b'preserve unrelated contents' if existing_stage == 'symlink' else b'preserve old stage')
+    assert not out.is_symlink()
+    if kind == 'version':
+        assert out.read_bytes().startswith(b'# UTF-8\n') and b'\r\n' not in out.read_bytes()
+    else:
+        assert struct.unpack_from('<HHH', out.read_bytes()) == (0, 1, len(ICON_SIZES))
+    assert set(out.parent.iterdir()) == {out, stale}
+
+
+@pytest.mark.parametrize('kind', ['version', 'icon'])
+def test_generators_remove_owned_stage_after_failed_replace(tmp_path, qapp, monkeypatch, kind):
+    out = tmp_path / 'resource.out'
+    out.write_bytes(b'previous selected output')
+    stale = out.with_name(out.name + '.tmp')
+    stale.write_bytes(b'preserve unrelated stage')
+
+    def denied(source, destination):
+        raise PermissionError('synthetic replacement denial')
+
+    monkeypatch.setattr(os, 'replace', denied)
+    with pytest.raises(PermissionError, match='synthetic replacement denial'):
+        _write_generated_resource(kind, out)
+    assert out.read_bytes() == b'previous selected output'
+    assert stale.read_bytes() == b'preserve unrelated stage'
+    assert set(tmp_path.iterdir()) == {out, stale}
+
+
+@pytest.mark.parametrize('kind', ['version', 'icon'])
+def test_generators_remove_owned_stage_after_partial_write(tmp_path, qapp, monkeypatch, kind):
+    import tempfile
+    from contextlib import contextmanager
+
+    out = tmp_path / 'resource.out'
+    out.write_bytes(b'previous selected output')
+    create = tempfile.NamedTemporaryFile
+
+    @contextmanager
+    def fail_during_write(*args, **kwargs):
+        with create(*args, **kwargs) as stream:
+            class FailingWrite:
+                name = stream.name
+
+                def write(self, data):
+                    stream.write(data[:1])
+                    raise OSError('synthetic partial-write failure')
+
+            yield FailingWrite()
+
+    monkeypatch.setattr(tempfile, 'NamedTemporaryFile', fail_during_write)
+    with pytest.raises(OSError, match='synthetic partial-write failure'):
+        _write_generated_resource(kind, out)
+    assert out.read_bytes() == b'previous selected output'
+    assert set(tmp_path.iterdir()) == {out}
