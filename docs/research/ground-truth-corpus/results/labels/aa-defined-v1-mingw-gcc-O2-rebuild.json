@@ -6,7 +6,7 @@
   "original_pair_id": "aa-defined-v1-O2-rebuild"
  },
  "contract": "known-answer-labels/1",
- "digest_sha256": "bce0f84260d125168b2142888547438b810abb4189d8688e1778699995025e92",
+ "digest_sha256": "a6a8ff0fafca6df5afcdee88e909deaaf24a12d808d04a1513ad8e6f2777739c",
  "family": "synthetic",
  "functions": [
   {
@@ -378,7 +378,7 @@
    "opt": "O2",
    "profile": "mingw-gcc",
    "recipe_digest": "e2406474b56cb867a7379124f7c906305eb009d0ba6c3e7f134d0e0c13fefd02",
-   "variant": "aa-a"
+   "variant": "aa-b"
   },
   "debug_sha256": "82507c9e80aa0493860ca0b56a7400ec67dbda7ae3a32185aa19aaefa5b1b701",
   "file_name": "defined.dll",

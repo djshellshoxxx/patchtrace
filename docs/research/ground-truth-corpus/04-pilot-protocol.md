@@ -91,6 +91,15 @@ that every pair endpoint names a declared suite version. A schema-valid but
 cross-reference-invalid suite is an input error with an explicit pair/version
 diagnostic; it must not reach a dictionary lookup or begin a partial matrix.
 
+The build-matrix CLI also requires a new absolute `.json` output outside the
+repository. Reject an existing destination and symlinked destination/parent
+components before building, preserving the original path for a second check
+before publication. Use exclusive creation so a destination appearing during
+the build cannot be replaced. Unlike the native pilot, this command has no
+`--work` directory and does not impose that separate direct-child policy.
+The boundary addresses mistaken output arguments, not hostile replacement of
+private parent directories by another process.
+
 Record process status, wall time, binary sizes and labelled function counts. Peak
 memory is measured only where a process-tree method is available; otherwise it
 is unavailable. Warm/cold cache definitions and repeat runs must be explicit.

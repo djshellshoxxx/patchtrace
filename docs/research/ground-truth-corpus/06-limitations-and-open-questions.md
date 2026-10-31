@@ -105,6 +105,30 @@ reproduction.
 
 ## Tool and platform blockers
 
+### Effective build identity and historical labels
+
+The normalized recipe omits executable invocation spelling. Reproduction proved
+that `/usr/bin/lld-link-18` and `/usr/bin/lld-link` can embed different PDB
+metadata despite equal source/recipe digests and version banners. Pinning the
+recorded original tool paths reproduced the accepted hidden and control
+artifact hashes; code sections were identical in the mismatching attempt.
+The exact evidence is in [hidden receipt reconciliation](results/hidden-receipt-reconciliation.md)
+and [control provenance recovery](results/native-aa-provenance-correction.md).
+This closes the specific missing receipt references without claiming the
+existing recipe digest captures every effective input. A contract enhancement
+should distinguish invocation spelling, tool binary identity and normalized
+arguments while preserving historical digests.
+
+Five control labels needed variant-metadata corrections after actual rebuilds.
+Their original documents and digest mappings are retained; the original native
+observations and function truths did not change. Current inventory consumers
+must use `final-label-integrity.json` and `final-partition-audit.json`. Older
+audit files are historical snapshots, not interchangeable current inventories.
+The reviewed hidden receipt replay adds its missing explicit review-file hash
+without claiming another matching-engine run or rewriting the original receipt.
+
+### Unavailable engines, platforms and external gates
+
 True MSVC is unavailable on this POSIX host. The `msvc-free` profile is Clang
 targeting the Microsoft ABI; it must never be reported as a Microsoft compiler
 run. Windows native engine determinism remains unverified even if unrelated
@@ -139,14 +163,17 @@ identified unchecked `args.output.write_bytes(...)` receipt publication in the
 pilot CLI. The exact annotation is preserved. A regression-tested correction
 now confines new receipts to the selected private work directory and refuses
 overwrites, traversal and symlink components. Final Sonar acceptance still
-requires an external re-analysis; neither an older failure nor a local repair
-is claimed as a final passing gate. No threshold or exclusion was changed.
+requires a check of the final revision. Sonar passed at the subsequent
+`de72e150` and `0d14548` checkpoints with zero new issues and zero security
+hotspots; those historical passes do not certify a later commit. No threshold
+or exclusion was changed.
 
 The full localhost-enabled Linux run passed with 18,212 tests, 303 skips and
 6 expected failures. Final focused regressions cover changes made during/after
 that long run. The dispatch-only unified live workflow and required independent
 GitHub review remain separate gates; the available connector cannot dispatch a
-new workflow. A draft PR and local automated reviews do not satisfy those gates.
+new workflow. PR #128 is ready for review; its local automated reviews do not
+satisfy an independent human approval requirement.
 
 ## Priority follow-ups with concrete acceptance conditions
 

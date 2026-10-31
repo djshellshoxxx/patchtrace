@@ -1,12 +1,13 @@
 {
   "additional_integrity_gates": "integrity-gates.json",
+  "additional_integrity_gates_scope": "Historical corpus/schema checks and earlier 22-label inventory; not the current active label audit.",
   "baseline": "a04f5a299a8d4afef023261e52e08d14678cf1e7",
   "current_changed_python_file_sha256": {
     "tests/test_binexport_isolation.py": "b824d4c9b913ddd4738efeea6615f25cb7bc4f7fd0237766380ccb87c79fc6ea",
     "tests/test_tier_r_build_receipts_r1.py": "58dddcf1bd002cc11da029ab97361426b47a61755c212c5a87a6a4ecd4638970",
     "tests/test_tier_r_label_promotion_r1.py": "05534291703906cdf550f16f66f30ad8e2db671928825d134980cec4c6784d4b",
     "tests/test_tier_r_research_audit.py": "b1b10218457c7d4ee4ab266fa3fa381f9328e29b05d47b1598db7985b0187a2d",
-    "tests/test_tier_r_research_build.py": "d9ceb1e1bcb7e3c866c39ce4c2903101509076ee309fdc6e415185f6b1d720f5",
+    "tests/test_tier_r_research_build.py": "02ccefb557694249e88f54dbf18036ba8114fe5fb2357d9100a1ed5de5a86872",
     "tests/test_tier_r_research_observers.py": "fce8545a37a95730a776399ec0fbf62906a798919c8be350c292c186642231ac",
     "tests/test_tier_r_research_pilot.py": "c3d26f895835d1240ebf3ba6d46b51497f64c62f4a5e9107d15588c087f6dd01",
     "tests/test_tier_r_session_provenance_r1.py": "f7a3432a33baa5f6458b82b3b5f5711d5fc6607c808591364f9caf962daef8b3",
@@ -15,10 +16,24 @@
     "tools/calibration/tier_r/factory.py": "4823c20a882a759794611cbffb71302b1836bb56d1be7d1c2b22bd94edf77ec2",
     "tools/calibration/tier_r/labeler.py": "702b8d0e147ac83381f3133b5a4a57140b716d5b8409d24f90b6986f687ac86a",
     "tools/calibration/tier_r/research_audit.py": "47ac4e26c4b6339e3a8547867eca4cd402f88931069bc8e35a00fd9b870cb465",
-    "tools/calibration/tier_r/research_build.py": "7e9cdfdf8f7f7f428c3119e9ceeee5ded470d2df1655f183f95d5e3fdab80a3f",
+    "tools/calibration/tier_r/research_build.py": "545d990152ea17e3369e6e348a214a45873075bf787d430b89c3ec2336fabfe5",
     "tools/calibration/tier_r/research_observers.py": "d7fec05bd00a9f7d9644ca0c1a4d76ecb19dd2546306df1bdd298a7724a6000e",
     "tools/calibration/tier_r/research_pilot.py": "88b83e8fac526a69a745b4e937a3d83859ad543e6945a580ed7dbc9cf6f45bed",
     "tools/unified/live_pairs.py": "58403e0ba08f3420501331d9d8c8cb910e37d018c221d4fb294ba6bef976fcbb"
+  },
+  "current_label_integrity": {
+    "path": "final-label-integrity.json",
+    "receipt_files": 39,
+    "sha256": "ecc1f4fbf8c0b634fa459841f5026dc457438af5cfa71dbe757173455ff043a4",
+    "strict_unique_labels": 23,
+    "unique_receipt_hashes": 36
+  },
+  "current_partition_audit": {
+    "actual_passed": true,
+    "actual_roles": "all dev",
+    "deliberate_negative_control_findings": 6,
+    "path": "final-partition-audit.json",
+    "sha256": "a4f29cd8a24cb993495fd232f9b7ce2de8f917a63227f2b06c94bf3c368a43c1"
   },
   "external_gate_note": "Final GitHub CI, Sonar re-analysis and required independent review must be read from the PR. Local passing evidence does not override them. The unified live workflow is dispatch-only; no workflow-dispatch operation is exposed by the available connector.",
   "final_matrix_metadata": "matrix-provenance-validation.json",
@@ -125,6 +140,93 @@
       "summary": "10 failed, 1 passed, 18 deselected in 0.97s"
     }
   },
+  "post_coderabbit_review": {
+    "control_provenance_reconciliation": "native-aa-provenance-correction.json",
+    "dispositions": "external-review-followup.md",
+    "finding_ids": [
+      4429457695,
+      4429457709,
+      4429457714,
+      4429457719,
+      4429457726,
+      4429457729,
+      4429457734
+    ],
+    "full_ruff": {
+      "command": "python -m ruff check src tests tools",
+      "status": "passed"
+    },
+    "git_diff_check": "passed",
+    "hidden_receipt_reconciliation": "hidden-receipt-reconciliation.json",
+    "hidden_review_binding": "hidden-review-binding-reconciliation.json",
+    "independent_code_review": {
+      "exit_code": 0,
+      "log_scope": "Observed independent tool output; no separate retained full log.",
+      "passed": 27,
+      "result": "No blocking defect within mistaken-CLI/private-directory scope; parent replacement after final check is not hostile-process isolation.",
+      "reviewer": "/root/truth_audit",
+      "seconds": 0.61
+    },
+    "independent_evidence_review": {
+      "result": "Recovered receipts, replay digests, exact five metadata-only label differences and unchanged fourth noise label verified. Corrected mislabeled historical Markdown hash and publication status; recorded observed preflight code checkpoint with dirty-worktree caveat.",
+      "reviewer": "/root/literature"
+    },
+    "integrated_regressions": {
+      "bytes": 261,
+      "exit_code": 0,
+      "node_files": [
+        "tests/test_tier_r_build_receipts_r1.py",
+        "tests/test_tier_r_session_provenance_r1.py",
+        "tests/test_tier_r_factory.py",
+        "tests/test_tier_r_research_pilot.py",
+        "tests/test_tier_r_research_build.py",
+        "tests/test_tier_r_research_observers.py",
+        "tests/test_tier_r_research_audit.py",
+        "tests/test_tier_r_label_promotion_r1.py",
+        "tests/test_unified_live_pairs_r1.py",
+        "tests/test_binexport_isolation.py"
+      ],
+      "passed": 175,
+      "path_at_execution": "/tmp/patchtrace-r1-coderabbit-regressions.log",
+      "retained_log": "coderabbit-regressions.log",
+      "seconds": 31.62,
+      "sha256": "3ff7f3aad03eb47ddafc4944608205b590d1c6ad10b30948e5f3acad05ba80fa",
+      "summary": "175 passed in 31.62s"
+    },
+    "label_correction_map": "label-provenance-corrections.json",
+    "matrix_cache_receipt_selection": {
+      "bytes": 99,
+      "exit_code": 0,
+      "passed": 39,
+      "path_at_execution": "/tmp/patchtrace-r1-research-build-integration.log",
+      "retained_log": "coderabbit-research-build-integration.log",
+      "seconds": 0.86,
+      "sha256": "e006d30d299f69465b12e885aa1be5536f0ca9bd1f1fe7309c89247a65881c43",
+      "summary": "39 passed in 0.86s"
+    },
+    "matrix_output_green": {
+      "bytes": 99,
+      "exit_code": 0,
+      "passed": 27,
+      "path_at_execution": "/tmp/patchtrace-r1-research-build-green.log",
+      "retained_log": "coderabbit-research-build-green.log",
+      "seconds": 0.69,
+      "sha256": "60167cf6ec7e5abc82c4e73946eed442b41016e78d7cee91f7f2f804a086852e",
+      "summary": "27 passed in 0.69s"
+    },
+    "matrix_output_red": {
+      "bytes": 8316,
+      "failed": 9,
+      "passed": 18,
+      "path_at_execution": "/tmp/patchtrace-r1-research-build-red.log",
+      "retained_log": "coderabbit-research-build-red.log",
+      "seconds": 0.82,
+      "sha256": "5debde650bc3ab037ae49d03cd432c120803f4bfb50aed102d933d4f19b3e727",
+      "summary": "9 failed, 18 passed in 0.82s"
+    },
+    "pre_followup_checkpoint": "0d14548eef118ac32789da1e410fc1aa6b9f27f2",
+    "scope_note": "All focused selections overlap; do not sum. Actual fresh source builds support metadata corrections, but original engine observations/results remain unchanged and no new engine run is credited by this follow-up. Original full-Linux snapshot limits still apply."
+  },
   "post_external_review": {
     "dispositions": "external-review-followup.md",
     "full_ruff": "passed",
@@ -171,6 +273,25 @@
     },
     "suite_endpoint_red_green": "suite-endpoint-red-green.json"
   },
+  "pre_coderabbit_review_python_file_sha256": {
+    "tests/test_binexport_isolation.py": "b824d4c9b913ddd4738efeea6615f25cb7bc4f7fd0237766380ccb87c79fc6ea",
+    "tests/test_tier_r_build_receipts_r1.py": "58dddcf1bd002cc11da029ab97361426b47a61755c212c5a87a6a4ecd4638970",
+    "tests/test_tier_r_label_promotion_r1.py": "05534291703906cdf550f16f66f30ad8e2db671928825d134980cec4c6784d4b",
+    "tests/test_tier_r_research_audit.py": "b1b10218457c7d4ee4ab266fa3fa381f9328e29b05d47b1598db7985b0187a2d",
+    "tests/test_tier_r_research_build.py": "d9ceb1e1bcb7e3c866c39ce4c2903101509076ee309fdc6e415185f6b1d720f5",
+    "tests/test_tier_r_research_observers.py": "fce8545a37a95730a776399ec0fbf62906a798919c8be350c292c186642231ac",
+    "tests/test_tier_r_research_pilot.py": "c3d26f895835d1240ebf3ba6d46b51497f64c62f4a5e9107d15588c087f6dd01",
+    "tests/test_tier_r_session_provenance_r1.py": "f7a3432a33baa5f6458b82b3b5f5711d5fc6607c808591364f9caf962daef8b3",
+    "tests/test_unified_live_pairs_r1.py": "97265d445f73d94451999443652d177578edaced239365a1319f540a5e58124a",
+    "tools/calibration/tier_r/build.py": "d597a55948d985b8adeb62cdc656a434a4b5ef86528fabc64f9fca3144bc52c8",
+    "tools/calibration/tier_r/factory.py": "4823c20a882a759794611cbffb71302b1836bb56d1be7d1c2b22bd94edf77ec2",
+    "tools/calibration/tier_r/labeler.py": "702b8d0e147ac83381f3133b5a4a57140b716d5b8409d24f90b6986f687ac86a",
+    "tools/calibration/tier_r/research_audit.py": "47ac4e26c4b6339e3a8547867eca4cd402f88931069bc8e35a00fd9b870cb465",
+    "tools/calibration/tier_r/research_build.py": "7e9cdfdf8f7f7f428c3119e9ceeee5ded470d2df1655f183f95d5e3fdab80a3f",
+    "tools/calibration/tier_r/research_observers.py": "d7fec05bd00a9f7d9644ca0c1a4d76ecb19dd2546306df1bdd298a7724a6000e",
+    "tools/calibration/tier_r/research_pilot.py": "88b83e8fac526a69a745b4e937a3d83859ad543e6945a580ed7dbc9cf6f45bed",
+    "tools/unified/live_pairs.py": "58403e0ba08f3420501331d9d8c8cb910e37d018c221d4fb294ba6bef976fcbb"
+  },
   "pre_external_review_python_file_sha256": {
     "tests/test_binexport_isolation.py": "b824d4c9b913ddd4738efeea6615f25cb7bc4f7fd0237766380ccb87c79fc6ea",
     "tests/test_tier_r_build_receipts_r1.py": "71803a45cedfb6b0bf203daca0a9cb3cbe1f1786c375c5bba780d21af9c26aa4",
@@ -195,8 +316,10 @@
   "recorded_at_utc": "2026-10-30T23:41:14.985964+00:00",
   "reviews": [
     "final-integration-review.md",
-    "output-safety-review.md"
+    "output-safety-review.md",
+    "external-review-followup.md"
   ],
   "target_binaries_executed": false,
+  "updated_after_coderabbit_review_at_utc": "2026-10-31T00:14:08.658128+00:00",
   "updated_after_external_review_at_utc": "2026-10-30T23:54:37.158610+00:00"
 }

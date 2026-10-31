@@ -880,6 +880,17 @@ Research, implemented pilot, reproducible commands and acceptance limits:
   hard-link publication failure without partial receipts, document unsupported
   store capability, and correct the cleanup comment. Integrated follow-up: 69
   tests passed. Active R2–R8 ownership is recorded in the final handoff.
+- [x] Address seven CodeRabbit findings: protect matrix receipt publication,
+  recover two exact hidden-build receipts, bind a persisted hidden replay to its
+  review hash, repair reproduction/table snippets, and preserve historical audit
+  scopes. Actual rebuilds corrected five control labels' variant metadata only;
+  all original artifact/function facts and native observations remain unchanged.
+  Current strict audit: 23 labels, 39 receipt files / 36 unique hashes; final
+  focused group 175 passed, full Ruff passed. See external-review-followup.md.
+- [ ] Extend build provenance deliberately to retain executable invocation
+  spelling and tool binary identity. The measured lld-link/lld-link-18 alias
+  changes PDB/CodeView metadata even when normalized recipe digests match;
+  reproduction pins now close the specific accepted cases without changing schemas.
 - [ ] Close exact-head Linux/Windows CI, relevant native CI and independent merge
   review; inspect Sonar re-analysis of the concrete receipt-output repair. Dispatch
   the native workflow on the final revision using a workflow-capable connection.

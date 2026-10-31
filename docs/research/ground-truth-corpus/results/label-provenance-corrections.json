@@ -1,0 +1,120 @@
+{
+  "changes": [
+    {
+      "active_path": "docs/research/ground-truth-corpus/results/labels/aa-defined-v1-mingw-gcc-O2-rebuild.json",
+      "actual_rebuild_path": "/workspace/scratch/a55b59b3e326/r1-native-aa-provenance-store-2/labels/aa-defined-v1-mingw-gcc-O2-rebuild.json",
+      "artifact_and_function_truth_unchanged": true,
+      "current_file_sha256": "45dfc53ee927aefdb011d396dda881eb3496586b75bb03c212682d9dd3c6a68c",
+      "field_changes": [
+        {
+          "after": "a6a8ff0fafca6df5afcdee88e909deaaf24a12d808d04a1513ad8e6f2777739c",
+          "before": "bce0f84260d125168b2142888547438b810abb4189d8688e1778699995025e92",
+          "field": "digest_sha256"
+        },
+        {
+          "after": "aa-b",
+          "before": "aa-a",
+          "field": "newer.build.variant"
+        }
+      ],
+      "historical_file_sha256": "abbf60aaa07dceebe85d91a87e0e2f4184b881d0814c928f74deab63b5dcafa2",
+      "historical_path": "docs/research/ground-truth-corpus/results/historical-labels/bce0f84260d125168b2142888547438b810abb4189d8688e1778699995025e92-aa-defined-v1-mingw-gcc-O2-rebuild.json",
+      "new_digest_sha256": "a6a8ff0fafca6df5afcdee88e909deaaf24a12d808d04a1513ad8e6f2777739c",
+      "old_digest_sha256": "bce0f84260d125168b2142888547438b810abb4189d8688e1778699995025e92"
+    },
+    {
+      "active_path": "docs/research/ground-truth-corpus/results/labels/aa-defined-v1-O2-rebuild.json",
+      "actual_rebuild_path": "/workspace/scratch/a55b59b3e326/r1-controls-provenance-versioned-store/clang-aa/labels/aa-defined-v1-O2-rebuild.json",
+      "artifact_and_function_truth_unchanged": true,
+      "current_file_sha256": "f5c608a04dca678b2bb4f3b61333c5d627b4acb99aec3d85214934a6ebf46c58",
+      "field_changes": [
+        {
+          "after": "49e2c720f47aa51e4f1d75eacc7024ecdb88cf5dc7bca15e0987712f216f83a7",
+          "before": "1792c140953da1e24c01e697731f3f9d3e5e0065e8358418d3f1fe1aed19e26f",
+          "field": "digest_sha256"
+        },
+        {
+          "after": "aa-b",
+          "before": "aa-a",
+          "field": "newer.build.variant"
+        }
+      ],
+      "historical_file_sha256": "b03bd0f6d71f3236c1b477093d7160effd46dfb72178479c0e98a61e77bf73e5",
+      "historical_path": "docs/research/ground-truth-corpus/results/historical-labels/1792c140953da1e24c01e697731f3f9d3e5e0065e8358418d3f1fe1aed19e26f-aa-defined-v1-O2-rebuild.json",
+      "new_digest_sha256": "49e2c720f47aa51e4f1d75eacc7024ecdb88cf5dc7bca15e0987712f216f83a7",
+      "old_digest_sha256": "1792c140953da1e24c01e697731f3f9d3e5e0065e8358418d3f1fe1aed19e26f"
+    },
+    {
+      "active_path": "docs/research/ground-truth-corpus/results/labels/noise-defined-v1-msvc-free-O0-msvc-free-O2.json",
+      "actual_rebuild_path": "/workspace/scratch/a55b59b3e326/r1-controls-provenance-versioned-store/noise/labels/noise-defined-v1-msvc-free-O0-msvc-free-O2.json",
+      "artifact_and_function_truth_unchanged": true,
+      "current_file_sha256": "055fdf57115017124aa1f15977c29bab971382c371a9c430cda5f3ca44f0177d",
+      "field_changes": [
+        {
+          "after": "e14ec54f3ad6d3e98ea4eca15b57027b2d3fca5386d11be3bdf192e4010828ab",
+          "before": "a49fac036302ab463018d22c76aeb0de5bde43adb9db3ed3ac50be4b1dc9f415",
+          "field": "digest_sha256"
+        },
+        {
+          "after": "noise-msvc-free-o2",
+          "before": "aa-a",
+          "field": "newer.build.variant"
+        }
+      ],
+      "historical_file_sha256": "9abfa4415ef02dbfdae2618e710c947d54ae79ab470a8b8411be70f5a8ac3368",
+      "historical_path": "docs/research/ground-truth-corpus/results/historical-labels/a49fac036302ab463018d22c76aeb0de5bde43adb9db3ed3ac50be4b1dc9f415-noise-defined-v1-msvc-free-O0-msvc-free-O2.json",
+      "new_digest_sha256": "e14ec54f3ad6d3e98ea4eca15b57027b2d3fca5386d11be3bdf192e4010828ab",
+      "old_digest_sha256": "a49fac036302ab463018d22c76aeb0de5bde43adb9db3ed3ac50be4b1dc9f415"
+    },
+    {
+      "active_path": "docs/research/ground-truth-corpus/results/labels/noise-defined-v1-msvc-free-O2-msvc-free-Os.json",
+      "actual_rebuild_path": "/workspace/scratch/a55b59b3e326/r1-controls-provenance-versioned-store/noise/labels/noise-defined-v1-msvc-free-O2-msvc-free-Os.json",
+      "artifact_and_function_truth_unchanged": true,
+      "current_file_sha256": "0719dae8a556adec1b863d9cfcf4c983d8bfef5a9ba774fb547dff731c49f708",
+      "field_changes": [
+        {
+          "after": "493e916f8e181d49e770ad9f7e0d1b07b3a948db1d795ff6401ed957686103bd",
+          "before": "08939af3c162e5dee94f3abe317aa098f8672b32e601a4f75fddf19a0db82445",
+          "field": "digest_sha256"
+        },
+        {
+          "after": "noise-msvc-free-o2",
+          "before": "aa-a",
+          "field": "older.build.variant"
+        }
+      ],
+      "historical_file_sha256": "ab1a3b2149996911fdc4106fe1d39ec9f6ce57c86d4a401a652c1751a324a08a",
+      "historical_path": "docs/research/ground-truth-corpus/results/historical-labels/08939af3c162e5dee94f3abe317aa098f8672b32e601a4f75fddf19a0db82445-noise-defined-v1-msvc-free-O2-msvc-free-Os.json",
+      "new_digest_sha256": "493e916f8e181d49e770ad9f7e0d1b07b3a948db1d795ff6401ed957686103bd",
+      "old_digest_sha256": "08939af3c162e5dee94f3abe317aa098f8672b32e601a4f75fddf19a0db82445"
+    },
+    {
+      "active_path": "docs/research/ground-truth-corpus/results/labels/noise-defined-v1-msvc-free-O2-mingw-gcc-O2.json",
+      "actual_rebuild_path": "/workspace/scratch/a55b59b3e326/r1-controls-provenance-versioned-store/noise/labels/noise-defined-v1-msvc-free-O2-mingw-gcc-O2.json",
+      "artifact_and_function_truth_unchanged": true,
+      "current_file_sha256": "e79e2a7f22f5f5a805246f316454f0f9259d59f2196d7648063a4560331b8f6b",
+      "field_changes": [
+        {
+          "after": "3e6b8993516328e25e504ab18337bb5d45ec19124054b2d8e2ef81c49bf73d6b",
+          "before": "ab00e8abc4f8f62bd7cd67d4ca1e70266d77f281ce69831b5ac87812541355a9",
+          "field": "digest_sha256"
+        },
+        {
+          "after": "noise-msvc-free-o2",
+          "before": "aa-a",
+          "field": "older.build.variant"
+        }
+      ],
+      "historical_file_sha256": "1f0fbf1b746788a6e65c3c08654a8e656d39b5cecd8d7ecbeca383b2cc86add7",
+      "historical_path": "docs/research/ground-truth-corpus/results/historical-labels/ab00e8abc4f8f62bd7cd67d4ca1e70266d77f281ce69831b5ac87812541355a9-noise-defined-v1-msvc-free-O2-mingw-gcc-O2.json",
+      "new_digest_sha256": "3e6b8993516328e25e504ab18337bb5d45ec19124054b2d8e2ef81c49bf73d6b",
+      "old_digest_sha256": "ab00e8abc4f8f62bd7cd67d4ca1e70266d77f281ce69831b5ac87812541355a9"
+    }
+  ],
+  "date_utc": "2026-10-31T00:09:58.256330+00:00",
+  "evidence": "native-aa-provenance-correction.json",
+  "historical_native_and_control_json_preserved": true,
+  "native_engine_rerun": false,
+  "scope": "Five variant-metadata corrections from actual fixed-cache rebuilds; original artifact hashes, source/function/RVA/body/truth records and engine observations are unchanged.",
+  "target_binaries_executed": false
+}

@@ -36,6 +36,19 @@ def _outside_repository(path: Path) -> Path:
     return path
 
 
+def _new_receipt_path(path: Path) -> Path:
+    """Check the original CLI spelling before resolving aliases or starting builds."""
+    path = Path(path)
+    if not path.is_absolute() or path.suffix != '.json':
+        raise ValueError('receipt must be an absolute .json path outside the repository')
+    if any(part.is_symlink() for part in (path, *path.parents)):
+        raise ValueError('receipt destination and parent paths cannot contain symlinks')
+    target = _outside_repository(path)
+    if target.exists():
+        raise ValueError('receipt already exists; choose a new output path')
+    return target
+
+
 def _visibility(profile: str) -> str:
     if profile == 'msvc-free':
         return ('No export names are injected. A stripped no-entry DLL may expose no discoverable function starts; '
@@ -117,18 +130,20 @@ def build_pilot(store: Path, *, profiles: Sequence[str] = PROFILES, opts: Sequen
 def main(argv: Sequence[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--store', required=True, type=Path, help='absolute artifact store outside the repository')
-    parser.add_argument('--output', required=True, type=Path, help='absolute JSON receipt outside the repository')
+    parser.add_argument('--output', required=True, type=Path, help='new absolute .json receipt outside the repository')
     parser.add_argument('--suite', type=Path, default=DEFAULT_SUITE)
     parser.add_argument('--profiles', default=','.join(PROFILES), help='comma-separated stock Tier R profiles')
     parser.add_argument('--opts', default=','.join(OPTS), help='comma-separated optimization levels')
     args = parser.parse_args(argv)
     try:
-        output = _outside_repository(args.output)
+        _new_receipt_path(args.output)
         receipt = build_pilot(args.store, profiles=args.profiles.split(','), opts=args.opts.split(','),
                               suite_dir=args.suite)
         text = json.dumps(receipt, indent=2, sort_keys=True) + '\n'
+        output = _new_receipt_path(args.output)
         output.parent.mkdir(parents=True, exist_ok=True)
-        output.write_text(text, encoding='utf-8')
+        with _new_receipt_path(args.output).open('xb') as stream:
+            stream.write(text.encode('utf-8'))
     except (ValueError, OSError) as exc:
         print(json.dumps({'command': 'research-build', 'status': 'error', 'reason': str(exc)[:4000]}))
         return 2

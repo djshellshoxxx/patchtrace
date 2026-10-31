@@ -41,7 +41,7 @@ All sixteen rows below map to `changed` candidate entries in `suite.json`. The r
 | `r1_error_handling` | Error handling; nonzero status returns0 → UINT32_MAX | status=1,value=9 yields 0 → UINT32_MAX | Distinct failure result with same success behavior |
 | `r1_null_validation` | NULL validation; ignore marker → reject NULL | marker=NULL,value=7 yields 7 → UINT32_MAX | Adds policy validation without dereferencing marker in either version |
 | `r1_structure_field` | Structure field offset; `record->requested` → `record->granted` | valid record{requested=3,granted=9} yields 3 → 9 | Field load changes from offset0 to offset4; layout itself is constant |
-| `r1_security_flag` | Security-relevant flag; `flags|1u` → `flags|5u` | flags=0 yields 1 → 5 | Adds fixture-defined mandatory integrity-check bit4; no real product/CVE assertion |
+| `r1_security_flag` | Security-relevant flag; `flags\|1u` → `flags\|5u` | flags=0 yields 1 → 5 | Adds fixture-defined mandatory integrity-check bit4; no real product/CVE assertion |
 
 A distinguishing witness establishes existential source behavior difference, not that all inputs produce different values. For example, callback slots may intentionally reference the same function, logical length may cover the selected index, a flag may already be set, or the extra loop element may be zero. The fixture names and descriptions encode intended policy for a synthetic program; there is no claim of discovered vulnerabilities.
 

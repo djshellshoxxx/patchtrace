@@ -4,7 +4,7 @@
   "opt": "O2"
  },
  "contract": "known-answer-labels/1",
- "digest_sha256": "1792c140953da1e24c01e697731f3f9d3e5e0065e8358418d3f1fe1aed19e26f",
+ "digest_sha256": "49e2c720f47aa51e4f1d75eacc7024ecdb88cf5dc7bca15e0987712f216f83a7",
  "family": "synthetic",
  "functions": [
   {
@@ -376,7 +376,7 @@
    "opt": "O2",
    "profile": "msvc-free",
    "recipe_digest": "7c7b7d39a28c605d990b52c7d2386168f8adfef803a172daa55aaa7b861f6417",
-   "variant": "aa-a"
+   "variant": "aa-b"
   },
   "debug_sha256": "66908cc4642bb149aad74a23d1e641807edb874da008c3b488f5e74fb462b6ea",
   "file_name": "defined.dll",

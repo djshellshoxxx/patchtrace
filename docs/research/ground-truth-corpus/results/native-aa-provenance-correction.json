@@ -1,0 +1,808 @@
+{
+  "additional_actual_build_instances": [
+    {
+      "build_spec": {
+        "cflags": [],
+        "defines": [],
+        "dependencies": [],
+        "files": [
+          "r1.c"
+        ],
+        "generated": [],
+        "include_dirs": [
+          "."
+        ],
+        "libs": [],
+        "link_order": "sorted",
+        "nuisance": "",
+        "opt": "O2",
+        "output": "defined.dll",
+        "profile": "msvc-free",
+        "project": "defined",
+        "source_date_epoch": 0,
+        "source_root": "/workspace/scratch/a55b59b3e326/patchtrace/corpus/ours/r1-pilot/defined/v1",
+        "std": "c11",
+        "variant": "aa-a"
+      },
+      "debug_sha256": "66908cc4642bb149aad74a23d1e641807edb874da008c3b488f5e74fb462b6ea",
+      "engine_sha256": "36d607e334544fcf98f81f77f46468e559ac849b01f1fd4f930c0a6ab5192294",
+      "immutable_actual_receipts": [
+        "docs/research/ground-truth-corpus/results/native-aa-recovered-build-receipts/a30d0f685b2d9f196a04f7e0f6c9ae709c3970d85c7aba5b28e199f2e7c792d3.json"
+      ],
+      "observed_variant": "aa-a",
+      "opt": "O2",
+      "pdb_sha256": "d69c89940cb99ef44ceb750a869206ae781978df36f5bca3ed2ae85d373f7473",
+      "profile": "msvc-free",
+      "recipe_digest": "7c7b7d39a28c605d990b52c7d2386168f8adfef803a172daa55aaa7b861f6417",
+      "source_digest": "d776bc0df2c58884115081ebc9cdf5277dac5cecd37b813285f8984414affc9b",
+      "store": "/workspace/scratch/a55b59b3e326/r1-controls-provenance-versioned-store/clang-aa"
+    },
+    {
+      "build_spec": {
+        "cflags": [],
+        "defines": [],
+        "dependencies": [],
+        "files": [
+          "r1.c"
+        ],
+        "generated": [],
+        "include_dirs": [
+          "."
+        ],
+        "libs": [],
+        "link_order": "sorted",
+        "nuisance": "",
+        "opt": "O2",
+        "output": "defined.dll",
+        "profile": "msvc-free",
+        "project": "defined",
+        "source_date_epoch": 0,
+        "source_root": "/workspace/scratch/a55b59b3e326/patchtrace/corpus/ours/r1-pilot/defined/v1",
+        "std": "c11",
+        "variant": "aa-b"
+      },
+      "debug_sha256": "66908cc4642bb149aad74a23d1e641807edb874da008c3b488f5e74fb462b6ea",
+      "engine_sha256": "36d607e334544fcf98f81f77f46468e559ac849b01f1fd4f930c0a6ab5192294",
+      "immutable_actual_receipts": [
+        "docs/research/ground-truth-corpus/results/native-aa-recovered-build-receipts/a30d0f685b2d9f196a04f7e0f6c9ae709c3970d85c7aba5b28e199f2e7c792d3.json"
+      ],
+      "observed_variant": "aa-b",
+      "opt": "O2",
+      "pdb_sha256": "d69c89940cb99ef44ceb750a869206ae781978df36f5bca3ed2ae85d373f7473",
+      "profile": "msvc-free",
+      "recipe_digest": "7c7b7d39a28c605d990b52c7d2386168f8adfef803a172daa55aaa7b861f6417",
+      "source_digest": "d776bc0df2c58884115081ebc9cdf5277dac5cecd37b813285f8984414affc9b",
+      "store": "/workspace/scratch/a55b59b3e326/r1-controls-provenance-versioned-store/clang-aa"
+    },
+    {
+      "build_spec": {
+        "cflags": [],
+        "defines": [],
+        "dependencies": [],
+        "files": [
+          "r1.c"
+        ],
+        "generated": [],
+        "include_dirs": [
+          "."
+        ],
+        "libs": [],
+        "link_order": "sorted",
+        "nuisance": "",
+        "opt": "O0",
+        "output": "defined.dll",
+        "profile": "msvc-free",
+        "project": "defined",
+        "source_date_epoch": 0,
+        "source_root": "/workspace/scratch/a55b59b3e326/patchtrace/corpus/ours/r1-pilot/defined/v1",
+        "std": "c11",
+        "variant": "noise-msvc-free-o0"
+      },
+      "debug_sha256": "ad3f8e58dc37b06d94e9e2895d70274ec710602378f78347a87141e425cdb7b0",
+      "engine_sha256": "b79e088363e9dfa3132313849a4936972e208a6703ce99683dc389ec755049dd",
+      "immutable_actual_receipts": [
+        "docs/research/ground-truth-corpus/results/native-aa-recovered-build-receipts/950a443ec7bba59fdd6098517755b9aaa69a56a584c583cd9609a5943916d095.json"
+      ],
+      "observed_variant": "noise-msvc-free-o0",
+      "opt": "O0",
+      "pdb_sha256": "a06df01100db236c44838aab0c9c9b3ce01b839b16b1dca5e111ac34da5369df",
+      "profile": "msvc-free",
+      "recipe_digest": "653f7ef40d7fe76a02cd6dab9d1c497ed2b17ad713d0b39df1ab09fe57b41d5f",
+      "source_digest": "d776bc0df2c58884115081ebc9cdf5277dac5cecd37b813285f8984414affc9b",
+      "store": "/workspace/scratch/a55b59b3e326/r1-controls-provenance-versioned-store/noise"
+    },
+    {
+      "build_spec": {
+        "cflags": [],
+        "defines": [],
+        "dependencies": [],
+        "files": [
+          "r1.c"
+        ],
+        "generated": [],
+        "include_dirs": [
+          "."
+        ],
+        "libs": [],
+        "link_order": "sorted",
+        "nuisance": "",
+        "opt": "O2",
+        "output": "defined.dll",
+        "profile": "msvc-free",
+        "project": "defined",
+        "source_date_epoch": 0,
+        "source_root": "/workspace/scratch/a55b59b3e326/patchtrace/corpus/ours/r1-pilot/defined/v1",
+        "std": "c11",
+        "variant": "noise-msvc-free-o2"
+      },
+      "debug_sha256": "66908cc4642bb149aad74a23d1e641807edb874da008c3b488f5e74fb462b6ea",
+      "engine_sha256": "36d607e334544fcf98f81f77f46468e559ac849b01f1fd4f930c0a6ab5192294",
+      "immutable_actual_receipts": [
+        "docs/research/ground-truth-corpus/results/native-aa-recovered-build-receipts/a30d0f685b2d9f196a04f7e0f6c9ae709c3970d85c7aba5b28e199f2e7c792d3.json"
+      ],
+      "observed_variant": "noise-msvc-free-o2",
+      "opt": "O2",
+      "pdb_sha256": "d69c89940cb99ef44ceb750a869206ae781978df36f5bca3ed2ae85d373f7473",
+      "profile": "msvc-free",
+      "recipe_digest": "7c7b7d39a28c605d990b52c7d2386168f8adfef803a172daa55aaa7b861f6417",
+      "source_digest": "d776bc0df2c58884115081ebc9cdf5277dac5cecd37b813285f8984414affc9b",
+      "store": "/workspace/scratch/a55b59b3e326/r1-controls-provenance-versioned-store/noise"
+    },
+    {
+      "build_spec": {
+        "cflags": [],
+        "defines": [],
+        "dependencies": [],
+        "files": [
+          "r1.c"
+        ],
+        "generated": [],
+        "include_dirs": [
+          "."
+        ],
+        "libs": [],
+        "link_order": "sorted",
+        "nuisance": "",
+        "opt": "Os",
+        "output": "defined.dll",
+        "profile": "msvc-free",
+        "project": "defined",
+        "source_date_epoch": 0,
+        "source_root": "/workspace/scratch/a55b59b3e326/patchtrace/corpus/ours/r1-pilot/defined/v1",
+        "std": "c11",
+        "variant": "noise-msvc-free-os"
+      },
+      "debug_sha256": "b9b07163121db9b0fe0bb6cf1268836de2c5620b2cf7ed3f66874ded1c43409d",
+      "engine_sha256": "12e45c789c827f8fb317dc6aba2467cf5c3d6f79c1c0a21a4d6aa75ae047fdfc",
+      "immutable_actual_receipts": [
+        "docs/research/ground-truth-corpus/results/native-aa-recovered-build-receipts/d88845cbf96c21820a2f66b76ad5149d921e2a57cf4a976b2f2752338bada060.json"
+      ],
+      "observed_variant": "noise-msvc-free-os",
+      "opt": "Os",
+      "pdb_sha256": "00dd05fe4955a245db1c4d1c1a769fbc7b3c1166b04e41c1ef88782650777ce6",
+      "profile": "msvc-free",
+      "recipe_digest": "f39b6fe13ac56a5255c6111abd2b564250c9c462ab4bddfa41989886f982eb76",
+      "source_digest": "d776bc0df2c58884115081ebc9cdf5277dac5cecd37b813285f8984414affc9b",
+      "store": "/workspace/scratch/a55b59b3e326/r1-controls-provenance-versioned-store/noise"
+    },
+    {
+      "build_spec": {
+        "cflags": [],
+        "defines": [],
+        "dependencies": [],
+        "files": [
+          "r1.c"
+        ],
+        "generated": [],
+        "include_dirs": [
+          "."
+        ],
+        "libs": [],
+        "link_order": "sorted",
+        "nuisance": "",
+        "opt": "O2",
+        "output": "defined.dll",
+        "profile": "mingw-gcc",
+        "project": "defined",
+        "source_date_epoch": 0,
+        "source_root": "/workspace/scratch/a55b59b3e326/patchtrace/corpus/ours/r1-pilot/defined/v1",
+        "std": "c11",
+        "variant": "noise-mingw-gcc-o2"
+      },
+      "debug_sha256": "82507c9e80aa0493860ca0b56a7400ec67dbda7ae3a32185aa19aaefa5b1b701",
+      "engine_sha256": "c03b76a0e6db62ac35c5f4fa727f38cafdcfb5e7b8544c327b4c9587f8707b58",
+      "immutable_actual_receipts": [
+        "docs/research/ground-truth-corpus/results/native-aa-recovered-build-receipts/89dfb0eea80d7ca3f414cf6edea532097beb122872afe036a5a767c94e4dd20b.json"
+      ],
+      "observed_variant": "noise-mingw-gcc-o2",
+      "opt": "O2",
+      "pdb_sha256": null,
+      "profile": "mingw-gcc",
+      "recipe_digest": "e2406474b56cb867a7379124f7c906305eb009d0ba6c3e7f134d0e0c13fefd02",
+      "source_digest": "d776bc0df2c58884115081ebc9cdf5277dac5cecd37b813285f8984414affc9b",
+      "store": "/workspace/scratch/a55b59b3e326/r1-controls-provenance-versioned-store/noise"
+    },
+    {
+      "build_spec": {
+        "cflags": [],
+        "defines": [],
+        "dependencies": [],
+        "files": [
+          "r1.c"
+        ],
+        "generated": [],
+        "include_dirs": [
+          "."
+        ],
+        "libs": [],
+        "link_order": "sorted",
+        "nuisance": "",
+        "opt": "O2",
+        "output": "defined.dll",
+        "profile": "mingw-clang",
+        "project": "defined",
+        "source_date_epoch": 0,
+        "source_root": "/workspace/scratch/a55b59b3e326/patchtrace/corpus/ours/r1-pilot/defined/v1",
+        "std": "c11",
+        "variant": "noise-mingw-clang-o2"
+      },
+      "debug_sha256": "696d8ec0becd77f2f737b9ab1f8b66f7f6fe179494d522e6019269a1d30cb3a7",
+      "engine_sha256": "f6164cc7eb8bbfc2b56b7176e78f3e2473f838e6f24117dfc1fe11e89ef96203",
+      "immutable_actual_receipts": [
+        "docs/research/ground-truth-corpus/results/native-aa-recovered-build-receipts/d6568fb47762a1c5994f72262863d7a957c77bde657aad4162ada09a7b76c719.json"
+      ],
+      "observed_variant": "noise-mingw-clang-o2",
+      "opt": "O2",
+      "pdb_sha256": null,
+      "profile": "mingw-clang",
+      "recipe_digest": "f979a758d9a10eb87d6df89de45081a75a331fe7c970250532dae9a1af4e22c0",
+      "source_digest": "d776bc0df2c58884115081ebc9cdf5277dac5cecd37b813285f8984414affc9b",
+      "store": "/workspace/scratch/a55b59b3e326/r1-controls-provenance-versioned-store/noise"
+    }
+  ],
+  "additional_clang_aa_correction": {
+    "engine_debug_pdb_hashes_unchanged": true,
+    "field_changes": [
+      {
+        "after": "49e2c720f47aa51e4f1d75eacc7024ecdb88cf5dc7bca15e0987712f216f83a7",
+        "before": "1792c140953da1e24c01e697731f3f9d3e5e0065e8358418d3f1fe1aed19e26f",
+        "field": "digest_sha256"
+      },
+      {
+        "after": "aa-b",
+        "before": "aa-a",
+        "field": "newer.build.variant"
+      }
+    ],
+    "fresh_actual_label_digest_sha256": "49e2c720f47aa51e4f1d75eacc7024ecdb88cf5dc7bca15e0987712f216f83a7",
+    "fresh_actual_label_path": "/workspace/scratch/a55b59b3e326/r1-controls-provenance-versioned-store/clang-aa/labels/aa-defined-v1-O2-rebuild.json",
+    "fresh_variants": [
+      "aa-a",
+      "aa-b"
+    ],
+    "function_rva_body_truth_unchanged": true,
+    "original_canonical_file_sha256": "b03bd0f6d71f3236c1b477093d7160effd46dfb72178479c0e98a61e77bf73e5",
+    "original_canonical_path": "docs/research/ground-truth-corpus/results/labels/aa-defined-v1-O2-rebuild.json",
+    "original_label_digest_sha256": "1792c140953da1e24c01e697731f3f9d3e5e0065e8358418d3f1fe1aed19e26f",
+    "original_variants": [
+      "aa-a",
+      "aa-a"
+    ]
+  },
+  "code_checkpoint_evidence": {
+    "basis": "Executing worker recorded git rev-parse --short HEAD before fresh native A/A; reflog shows no HEAD movement during native and versioned-control rebuilds. Direct factory/build/labeler/toolchain/contracts/pe/bodyhash/debuginfo/csrc/jobs dependencies have no working-tree diff against this checkpoint.",
+    "limitation": "No per-run commit/hash snapshot was embedded in the rebuild receipt at launch. Unpublished research_build wrapper/tests and documentation edits existed; direct F.run_aa/run_noise drivers did not invoke that wrapper. This is not a certified pristine-tree claim.",
+    "matching_clang_label_mtime_utc": "2026-10-31T00:04:53Z",
+    "native_label_mtime_utc": "2026-10-31T00:02:06Z",
+    "noise_label_mtimes_utc": "2026-10-31T00:04:54Z\u201300:04:55Z"
+  },
+  "corrected_reproduction_report_sha256": "d5a79158385ae01ddc59bda7d2b4af1ec463a6ee05535f1634c9835e0f07c890",
+  "correction_summary": {
+    "aa_labels_with_confirmed_variant_error": 2,
+    "engine_debug_pdb_hashes_unchanged_for_proposed_replacements": true,
+    "function_rva_body_truth_unchanged": true,
+    "matching_rebuilds_use_recorded_original_tool_paths": true,
+    "native_engine_rerun": false,
+    "noise_labels_unchanged": 1,
+    "noise_labels_with_confirmed_variant_error": 3,
+    "original_experiment_json_preserved": true,
+    "original_report_files_preserved": false,
+    "reproduction_markdown_import_corrected": true
+  },
+  "date": "2026-10-31",
+  "elapsed_build_and_analysis_seconds": 0.690742897999371,
+  "engine_debug_pdb_hashes_equal_original": true,
+  "existing_native_raw_bindings": [
+    {
+      "coverage": {
+        "address_edges": {
+          "external": 22,
+          "image": 53,
+          "input": 75
+        },
+        "address_keys": {
+          "external": 22,
+          "image": 53,
+          "input": 75
+        },
+        "scope": "image VA only; validated EXTERNAL pairs are unscored; caller retains raw hash"
+      },
+      "image_observation_count": 53,
+      "image_observations_sha256": "134f6977b4fb960664ad6cbcba4838c2af40ea8c11a4591f2b11b1f347e76d76",
+      "observations_equal_original": true,
+      "production_identity_binding": "accepted against proposed corrected labels",
+      "raw_path": "/workspace/scratch/a55b59b3e326/r1-native-aa-store/native-distinct-name-1/raw/json/older.dll-newer.dll.ghidriff.json",
+      "raw_sha256": "81e7647bb284d0a7ab72bedf36725cadf0ac84036b29e0d0a0ee5df29a0dea6a"
+    },
+    {
+      "coverage": {
+        "address_edges": {
+          "external": 22,
+          "image": 53,
+          "input": 75
+        },
+        "address_keys": {
+          "external": 22,
+          "image": 53,
+          "input": 75
+        },
+        "scope": "image VA only; validated EXTERNAL pairs are unscored; caller retains raw hash"
+      },
+      "image_observation_count": 53,
+      "image_observations_sha256": "134f6977b4fb960664ad6cbcba4838c2af40ea8c11a4591f2b11b1f347e76d76",
+      "observations_equal_original": true,
+      "production_identity_binding": "accepted against proposed corrected labels",
+      "raw_path": "/workspace/scratch/a55b59b3e326/r1-native-aa-store/native-distinct-name-2/raw/json/older.dll-newer.dll.ghidriff.json",
+      "raw_sha256": "12e6642d25d2e15d7929f56c20659a7e1175fd1b6b5062d09774fc881839c297"
+    }
+  ],
+  "finding": "CodeRabbit4429457726: old Session.side debug-hash cache conflated aa-b SideData provenance with aa-a on identical artifacts",
+  "fresh_actual_build_instances": [
+    {
+      "build_spec": {
+        "cflags": [],
+        "defines": [],
+        "dependencies": [],
+        "files": [
+          "r1.c"
+        ],
+        "generated": [],
+        "include_dirs": [
+          "."
+        ],
+        "libs": [],
+        "link_order": "sorted",
+        "nuisance": "",
+        "opt": "O2",
+        "output": "defined.dll",
+        "profile": "mingw-gcc",
+        "project": "defined",
+        "source_date_epoch": 0,
+        "source_root": "/workspace/scratch/a55b59b3e326/patchtrace/corpus/ours/r1-pilot/defined/v1",
+        "std": "c11",
+        "variant": "aa-a"
+      },
+      "debug_path": "/workspace/scratch/a55b59b3e326/r1-native-aa-provenance-store-2/images/82507c9e80aa0493860ca0b56a7400ec67dbda7ae3a32185aa19aaefa5b1b701/defined.dll",
+      "debug_sha256": "82507c9e80aa0493860ca0b56a7400ec67dbda7ae3a32185aa19aaefa5b1b701",
+      "engine_path": "/workspace/scratch/a55b59b3e326/r1-native-aa-provenance-store-2/images/c03b76a0e6db62ac35c5f4fa727f38cafdcfb5e7b8544c327b4c9587f8707b58/defined.dll",
+      "engine_sha256": "c03b76a0e6db62ac35c5f4fa727f38cafdcfb5e7b8544c327b4c9587f8707b58",
+      "immutable_actual_receipts": [
+        "docs/research/ground-truth-corpus/results/native-aa-recovered-build-receipts/89dfb0eea80d7ca3f414cf6edea532097beb122872afe036a5a767c94e4dd20b.json"
+      ],
+      "observed_variant": "aa-a",
+      "pdb_path": null,
+      "pdb_sha256": null,
+      "recipe_digest": "e2406474b56cb867a7379124f7c906305eb009d0ba6c3e7f134d0e0c13fefd02",
+      "source_digest": "d776bc0df2c58884115081ebc9cdf5277dac5cecd37b813285f8984414affc9b"
+    },
+    {
+      "build_spec": {
+        "cflags": [],
+        "defines": [],
+        "dependencies": [],
+        "files": [
+          "r1.c"
+        ],
+        "generated": [],
+        "include_dirs": [
+          "."
+        ],
+        "libs": [],
+        "link_order": "sorted",
+        "nuisance": "",
+        "opt": "O2",
+        "output": "defined.dll",
+        "profile": "mingw-gcc",
+        "project": "defined",
+        "source_date_epoch": 0,
+        "source_root": "/workspace/scratch/a55b59b3e326/patchtrace/corpus/ours/r1-pilot/defined/v1",
+        "std": "c11",
+        "variant": "aa-b"
+      },
+      "debug_path": "/workspace/scratch/a55b59b3e326/r1-native-aa-provenance-store-2/images/82507c9e80aa0493860ca0b56a7400ec67dbda7ae3a32185aa19aaefa5b1b701/defined.dll",
+      "debug_sha256": "82507c9e80aa0493860ca0b56a7400ec67dbda7ae3a32185aa19aaefa5b1b701",
+      "engine_path": "/workspace/scratch/a55b59b3e326/r1-native-aa-provenance-store-2/images/c03b76a0e6db62ac35c5f4fa727f38cafdcfb5e7b8544c327b4c9587f8707b58/defined.dll",
+      "engine_sha256": "c03b76a0e6db62ac35c5f4fa727f38cafdcfb5e7b8544c327b4c9587f8707b58",
+      "immutable_actual_receipts": [
+        "docs/research/ground-truth-corpus/results/native-aa-recovered-build-receipts/89dfb0eea80d7ca3f414cf6edea532097beb122872afe036a5a767c94e4dd20b.json"
+      ],
+      "observed_variant": "aa-b",
+      "pdb_path": null,
+      "pdb_sha256": null,
+      "recipe_digest": "e2406474b56cb867a7379124f7c906305eb009d0ba6c3e7f134d0e0c13fefd02",
+      "source_digest": "d776bc0df2c58884115081ebc9cdf5277dac5cecd37b813285f8984414affc9b"
+    }
+  ],
+  "fresh_actual_label_digest_sha256": "98cb60a6e8485608092fb8fb08cf7ff195ff958c0bc1544bde98c9204ac4adee",
+  "fresh_actual_label_path": "/workspace/scratch/a55b59b3e326/r1-native-aa-provenance-store-2/labels/aa-defined-v1-O2-rebuild.json",
+  "fresh_actual_label_variants": [
+    "aa-a",
+    "aa-b"
+  ],
+  "fresh_label_summary": {
+    "absent_functions": 0,
+    "by_body": {
+      "identical": 21
+    },
+    "by_identity": {
+      "same": 21
+    },
+    "by_label": {
+      "unchanged": 21
+    },
+    "disagreements": 0,
+    "functions": 21,
+    "runtime_functions": 68
+  },
+  "fresh_reproducibility": {
+    "byte_identical": true,
+    "detail": "engine and debug images rebuilt in two different scratch directories",
+    "differing_bytes": 0,
+    "differing_sections": []
+  },
+  "fresh_side_cache_entries": 2,
+  "fresh_store": "/workspace/scratch/a55b59b3e326/r1-native-aa-provenance-store-2",
+  "historical_controls_receipt_file_sha256": "70c865ccfe275ac8bc8a9728051355d4f852c56fe88b01cc9f9b1ef34bcee021",
+  "historical_controls_report_checkpoint": "0d14548eef118ac32789da1e410fc1aa6b9f27f2",
+  "historical_controls_report_file_sha256": "f236c7301a5799fcdc2e93bca77715ddc64e406e0f65ffbea17c3168dd7ee0cb",
+  "new_control_store": "/workspace/scratch/a55b59b3e326/r1-controls-provenance-versioned-store",
+  "no_engine_rerun": true,
+  "no_target_execution": true,
+  "noise_labels_needing_variant_correction": 3,
+  "noise_metadata_audit": [
+    {
+      "engine_debug_pdb_hashes_unchanged": true,
+      "field_changes": [
+        {
+          "after": "e14ec54f3ad6d3e98ea4eca15b57027b2d3fca5386d11be3bdf192e4010828ab",
+          "before": "a49fac036302ab463018d22c76aeb0de5bde43adb9db3ed3ac50be4b1dc9f415",
+          "field": "digest_sha256"
+        },
+        {
+          "after": "noise-msvc-free-o2",
+          "before": "aa-a",
+          "field": "newer.build.variant"
+        }
+      ],
+      "fresh_actual_label_digest_sha256": "e14ec54f3ad6d3e98ea4eca15b57027b2d3fca5386d11be3bdf192e4010828ab",
+      "fresh_actual_label_path": "/workspace/scratch/a55b59b3e326/r1-controls-provenance-versioned-store/noise/labels/noise-defined-v1-msvc-free-O0-msvc-free-O2.json",
+      "fresh_variants": [
+        "noise-msvc-free-o0",
+        "noise-msvc-free-o2"
+      ],
+      "function_rva_body_truth_unchanged": true,
+      "original_canonical_file_sha256": "9abfa4415ef02dbfdae2618e710c947d54ae79ab470a8b8411be70f5a8ac3368",
+      "original_canonical_path": "docs/research/ground-truth-corpus/results/labels/noise-defined-v1-msvc-free-O0-msvc-free-O2.json",
+      "original_label_digest_sha256": "a49fac036302ab463018d22c76aeb0de5bde43adb9db3ed3ac50be4b1dc9f415",
+      "original_variants": [
+        "noise-msvc-free-o0",
+        "aa-a"
+      ],
+      "requested_variant": [
+        "msvc-free",
+        "O0",
+        "msvc-free",
+        "O2"
+      ]
+    },
+    {
+      "engine_debug_pdb_hashes_unchanged": true,
+      "field_changes": [
+        {
+          "after": "493e916f8e181d49e770ad9f7e0d1b07b3a948db1d795ff6401ed957686103bd",
+          "before": "08939af3c162e5dee94f3abe317aa098f8672b32e601a4f75fddf19a0db82445",
+          "field": "digest_sha256"
+        },
+        {
+          "after": "noise-msvc-free-o2",
+          "before": "aa-a",
+          "field": "older.build.variant"
+        }
+      ],
+      "fresh_actual_label_digest_sha256": "493e916f8e181d49e770ad9f7e0d1b07b3a948db1d795ff6401ed957686103bd",
+      "fresh_actual_label_path": "/workspace/scratch/a55b59b3e326/r1-controls-provenance-versioned-store/noise/labels/noise-defined-v1-msvc-free-O2-msvc-free-Os.json",
+      "fresh_variants": [
+        "noise-msvc-free-o2",
+        "noise-msvc-free-os"
+      ],
+      "function_rva_body_truth_unchanged": true,
+      "original_canonical_file_sha256": "ab1a3b2149996911fdc4106fe1d39ec9f6ce57c86d4a401a652c1751a324a08a",
+      "original_canonical_path": "docs/research/ground-truth-corpus/results/labels/noise-defined-v1-msvc-free-O2-msvc-free-Os.json",
+      "original_label_digest_sha256": "08939af3c162e5dee94f3abe317aa098f8672b32e601a4f75fddf19a0db82445",
+      "original_variants": [
+        "aa-a",
+        "noise-msvc-free-os"
+      ],
+      "requested_variant": [
+        "msvc-free",
+        "O2",
+        "msvc-free",
+        "Os"
+      ]
+    },
+    {
+      "engine_debug_pdb_hashes_unchanged": true,
+      "field_changes": [
+        {
+          "after": "3e6b8993516328e25e504ab18337bb5d45ec19124054b2d8e2ef81c49bf73d6b",
+          "before": "ab00e8abc4f8f62bd7cd67d4ca1e70266d77f281ce69831b5ac87812541355a9",
+          "field": "digest_sha256"
+        },
+        {
+          "after": "noise-msvc-free-o2",
+          "before": "aa-a",
+          "field": "older.build.variant"
+        }
+      ],
+      "fresh_actual_label_digest_sha256": "3e6b8993516328e25e504ab18337bb5d45ec19124054b2d8e2ef81c49bf73d6b",
+      "fresh_actual_label_path": "/workspace/scratch/a55b59b3e326/r1-controls-provenance-versioned-store/noise/labels/noise-defined-v1-msvc-free-O2-mingw-gcc-O2.json",
+      "fresh_variants": [
+        "noise-msvc-free-o2",
+        "noise-mingw-gcc-o2"
+      ],
+      "function_rva_body_truth_unchanged": true,
+      "original_canonical_file_sha256": "1f0fbf1b746788a6e65c3c08654a8e656d39b5cecd8d7ecbeca383b2cc86add7",
+      "original_canonical_path": "docs/research/ground-truth-corpus/results/labels/noise-defined-v1-msvc-free-O2-mingw-gcc-O2.json",
+      "original_label_digest_sha256": "ab00e8abc4f8f62bd7cd67d4ca1e70266d77f281ce69831b5ac87812541355a9",
+      "original_variants": [
+        "aa-a",
+        "noise-mingw-gcc-o2"
+      ],
+      "requested_variant": [
+        "msvc-free",
+        "O2",
+        "mingw-gcc",
+        "O2"
+      ]
+    },
+    {
+      "engine_debug_pdb_hashes_unchanged": true,
+      "field_changes": [],
+      "fresh_actual_label_digest_sha256": "81fe7c29372134b2ba1efa5f958ee42629e22c71b722089e7dfc02085afaac8c",
+      "fresh_actual_label_path": "/workspace/scratch/a55b59b3e326/r1-controls-provenance-versioned-store/noise/labels/noise-defined-v1-mingw-gcc-O2-mingw-clang-O2.json",
+      "fresh_variants": [
+        "noise-mingw-gcc-o2",
+        "noise-mingw-clang-o2"
+      ],
+      "function_rva_body_truth_unchanged": true,
+      "original_canonical_file_sha256": "6da0829cd4731dc6da592b3c9753b6e33648836c710040fdd2dbe9874889b223",
+      "original_canonical_path": "docs/research/ground-truth-corpus/results/labels/noise-defined-v1-mingw-gcc-O2-mingw-clang-O2.json",
+      "original_label_digest_sha256": "81fe7c29372134b2ba1efa5f958ee42629e22c71b722089e7dfc02085afaac8c",
+      "original_variants": [
+        "noise-mingw-gcc-o2",
+        "noise-mingw-clang-o2"
+      ],
+      "requested_variant": [
+        "mingw-gcc",
+        "O2",
+        "mingw-clang",
+        "O2"
+      ]
+    }
+  ],
+  "nonmatching_default_invocation_attempt": {
+    "actual_label_digest_sha256": "63bebc049aac234867cdc3d1adae7abae244c88236e1e998af1ecb8be56e4005",
+    "actual_label_path": "/workspace/scratch/a55b59b3e326/r1-controls-provenance-store/clang-aa/labels/aa-defined-v1-O2-rebuild.json",
+    "debug_sha256": "f206bda693761c5e6e673e480728ac12feac2befb81c3b525ff843c8e6e0a698",
+    "differing_byte_count_factory": 36,
+    "differing_sections": [
+      "headers",
+      ".rdata"
+    ],
+    "engine_sha256": "7d423eacb44b23538623887f82450f08d9bb670ede9b400ddf82b646afd66c58",
+    "finding": "Recorded source and normalized recipe/banner digests do not bind executable invocation spelling embedded in PDB. No automatic artifact replacement or reuse was accepted for this attempt.",
+    "full_artifacts_match_original": false,
+    "new_text_sha256": "4926036299d49a651612d609ed552e95c1f0fa08718d177e54cb0f642f5c7b18",
+    "original_text_sha256": "4926036299d49a651612d609ed552e95c1f0fa08718d177e54cb0f642f5c7b18",
+    "pdb_env_evidence": [
+      {
+        "command": [
+          "/usr/bin/llvm-pdbutil-18",
+          "dump",
+          "--symbols",
+          "/workspace/scratch/a55b59b3e326/r1-controls-store/images/66908cc4642bb149aad74a23d1e641807edb874da008c3b488f5e74fb462b6ea/defined.pdb"
+        ],
+        "kind": "original",
+        "matching_lines": [
+          "         - /usr/bin/lld-link-18"
+        ],
+        "pdb_path": "/workspace/scratch/a55b59b3e326/r1-controls-store/images/66908cc4642bb149aad74a23d1e641807edb874da008c3b488f5e74fb462b6ea/defined.pdb"
+      },
+      {
+        "command": [
+          "/usr/bin/llvm-pdbutil-18",
+          "dump",
+          "--symbols",
+          "/workspace/scratch/a55b59b3e326/r1-controls-provenance-store/clang-aa/images/f206bda693761c5e6e673e480728ac12feac2befb81c3b525ff843c8e6e0a698/defined.pdb"
+        ],
+        "kind": "nonmatching_default_invocation",
+        "matching_lines": [
+          "         - /usr/bin/lld-link"
+        ],
+        "pdb_path": "/workspace/scratch/a55b59b3e326/r1-controls-provenance-store/clang-aa/images/f206bda693761c5e6e673e480728ac12feac2befb81c3b525ff843c8e6e0a698/defined.pdb"
+      }
+    ],
+    "pdb_sha256": "32be1ec6acc07eb01460122d8b03116aaaadd8df1069724d172c67b266e27724",
+    "text_bytes_equal": true
+  },
+  "observed_head_checkpoint_at_preflight": "0d14548eef118ac32789da1e410fc1aa6b9f27f2",
+  "original_canonical_label": "docs/research/ground-truth-corpus/results/labels/aa-defined-v1-mingw-gcc-O2-rebuild.json",
+  "original_canonical_label_digest_sha256": "bce0f84260d125168b2142888547438b810abb4189d8688e1778699995025e92",
+  "original_canonical_label_file_sha256": "abbf60aaa07dceebe85d91a87e0e2f4184b881d0814c928f74deab63b5dcafa2",
+  "original_canonical_label_variants": [
+    "aa-a",
+    "aa-a"
+  ],
+  "original_external_label": "/workspace/scratch/a55b59b3e326/r1-native-aa-store/labels/aa-defined-v1-O2-rebuild.json",
+  "original_external_label_digest_sha256": "9d9a2c79fd0101a0e4d58db0949795d7c6c576236528610c48017b54bf8e379e",
+  "original_external_label_variants": [
+    "aa-a",
+    "aa-a"
+  ],
+  "original_native_receipt": "docs/research/ground-truth-corpus/results/native-aa-control.json",
+  "original_native_receipt_file_sha256": "6746eba2955ee0ef2afcfe21ac98aece63bb3e05521ebd7f33b8ed7ea3927895",
+  "original_tool_invocation_pins": {
+    "clang": "/usr/bin/clang-18",
+    "git": "/usr/local/bin/git",
+    "lld-link": "/usr/bin/lld-link-18",
+    "llvm-dwarfdump": "/usr/bin/llvm-dwarfdump-18",
+    "llvm-nm": "/usr/bin/llvm-nm-18",
+    "llvm-objdump": "/usr/bin/llvm-objdump-18",
+    "llvm-pdbutil": "/usr/bin/llvm-pdbutil-18",
+    "llvm-strip": "/usr/bin/llvm-strip-18",
+    "mingw-gcc": "/usr/bin/x86_64-w64-mingw32-gcc"
+  },
+  "proposal_field_changes": [
+    {
+      "after": "a6a8ff0fafca6df5afcdee88e909deaaf24a12d808d04a1513ad8e6f2777739c",
+      "before": "bce0f84260d125168b2142888547438b810abb4189d8688e1778699995025e92",
+      "field": "digest_sha256"
+    },
+    {
+      "after": "aa-b",
+      "before": "aa-a",
+      "field": "newer.build.variant"
+    }
+  ],
+  "proposal_label_digest_sha256": "a6a8ff0fafca6df5afcdee88e909deaaf24a12d808d04a1513ad8e6f2777739c",
+  "proposal_label_pair_id": "aa-defined-v1-mingw-gcc-O2-rebuild",
+  "proposal_label_path": "/workspace/scratch/a55b59b3e326/r1-native-aa-provenance-store-2/labels/aa-defined-v1-mingw-gcc-O2-rebuild.json",
+  "publication_action": "Integration owner preserves historical canonical label then publishes the proposed compiler-qualified label and regenerates partition/integrity metadata; this worker did not change either original label or native receipt.",
+  "publication_resolution": "Five matching corrected labels integrated; exact original byte sets archived and mapped in label-provenance-corrections.json. Current inventory and partition audits are final-label-integrity.json and final-partition-audit.json.",
+  "reproduction_markdown_change": "Added missing opt_transforms import in two snippets; original experiment JSON and experimental facts are unchanged.",
+  "source_sha256": "5f0468899fbc95fa4026c3c74b0731a5ab412fe017bbddbed00ad7b0d97acb5f",
+  "tools": {
+    "cl": {
+      "path": null,
+      "reason": "not installed (not on PATH)",
+      "version": null
+    },
+    "clang": {
+      "path": "/usr/bin/clang-18",
+      "reason": null,
+      "version": "Ubuntu clang version 18.1.3 (1ubuntu1)"
+    },
+    "git": {
+      "path": "/usr/local/bin/git",
+      "reason": null,
+      "version": "git version 2.51.1"
+    },
+    "lld-link": {
+      "path": "/usr/bin/lld-link",
+      "reason": null,
+      "version": "Ubuntu LLD 18.1.3"
+    },
+    "llvm-dwarfdump": {
+      "path": "/usr/bin/llvm-dwarfdump-18",
+      "reason": null,
+      "version": "Ubuntu LLVM version 18.1.3"
+    },
+    "llvm-nm": {
+      "path": "/usr/bin/llvm-nm-18",
+      "reason": null,
+      "version": "llvm-nm, compatible with GNU nm"
+    },
+    "llvm-objdump": {
+      "path": "/usr/bin/llvm-objdump-18",
+      "reason": null,
+      "version": "Ubuntu LLVM version 18.1.3"
+    },
+    "llvm-pdbutil": {
+      "path": "/usr/bin/llvm-pdbutil-18",
+      "reason": null,
+      "version": "Ubuntu LLVM version 18.1.3"
+    },
+    "llvm-strip": {
+      "path": "/usr/bin/llvm-strip-18",
+      "reason": null,
+      "version": "llvm-strip, compatible with GNU strip"
+    },
+    "mingw-gcc": {
+      "path": "/usr/bin/x86_64-w64-mingw32-gcc",
+      "reason": null,
+      "version": "x86_64-w64-mingw32-gcc (GCC) 13-win32"
+    },
+    "msvc-link": {
+      "path": null,
+      "reason": "/usr/bin/link is not the Microsoft tool (no banner)",
+      "version": null
+    }
+  },
+  "versioned_rebuild_tools": {
+    "cl": {
+      "path": null,
+      "reason": "not installed (not on PATH)",
+      "version": null
+    },
+    "clang": {
+      "path": "/usr/bin/clang-18",
+      "reason": null,
+      "version": "Ubuntu clang version 18.1.3 (1ubuntu1)"
+    },
+    "git": {
+      "path": "/usr/local/bin/git",
+      "reason": null,
+      "version": "git version 2.51.1"
+    },
+    "lld-link": {
+      "path": "/usr/bin/lld-link-18",
+      "reason": null,
+      "version": "Ubuntu LLD 18.1.3"
+    },
+    "llvm-dwarfdump": {
+      "path": "/usr/bin/llvm-dwarfdump-18",
+      "reason": null,
+      "version": "Ubuntu LLVM version 18.1.3"
+    },
+    "llvm-nm": {
+      "path": "/usr/bin/llvm-nm-18",
+      "reason": null,
+      "version": "llvm-nm, compatible with GNU nm"
+    },
+    "llvm-objdump": {
+      "path": "/usr/bin/llvm-objdump-18",
+      "reason": null,
+      "version": "Ubuntu LLVM version 18.1.3"
+    },
+    "llvm-pdbutil": {
+      "path": "/usr/bin/llvm-pdbutil-18",
+      "reason": null,
+      "version": "Ubuntu LLVM version 18.1.3"
+    },
+    "llvm-strip": {
+      "path": "/usr/bin/llvm-strip-18",
+      "reason": null,
+      "version": "llvm-strip, compatible with GNU strip"
+    },
+    "mingw-gcc": {
+      "path": "/usr/bin/x86_64-w64-mingw32-gcc",
+      "reason": null,
+      "version": "x86_64-w64-mingw32-gcc (GCC) 13-win32"
+    },
+    "msvc-link": {
+      "path": null,
+      "reason": "/usr/bin/link is not the Microsoft tool (no banner)",
+      "version": null
+    }
+  }
+}

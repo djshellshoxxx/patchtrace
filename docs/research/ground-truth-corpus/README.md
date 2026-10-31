@@ -1,6 +1,6 @@
 # R1: ground-truth corpus research
 
-Research date: 2026-10-30. Baseline: [`a04f5a299a8d4afef023261e52e08d14678cf1e7`](https://github.com/djshellshoxxx/patchtrace/commit/a04f5a299a8d4afef023261e52e08d14678cf1e7).
+Research dates: 2026-10-30–31. Baseline: [`a04f5a299a8d4afef023261e52e08d14678cf1e7`](https://github.com/djshellshoxxx/patchtrace/commit/a04f5a299a8d4afef023261e52e08d14678cf1e7).
 Working branch: `codex/r1-ground-truth-research-20261030`.
 
 ## Purpose and current status
@@ -71,9 +71,20 @@ native A/A control succeeded twice with identical bytes and distinct basenames,
 observing all 21 project correspondences; its change verdicts remain unknown.
 No target binary was executed and no held-out test was consumed.
 
+The external review follow-up recovered two missing hidden-pilot receipts and
+used real rebuilds to correct five control labels' variant metadata. Exact
+historical labels remain available; accepted artifact hashes and matching
+observations are unchanged. The [current integrity inventory](results/final-label-integrity.json)
+checks 23 active labels and 39 receipt files representing 36 unique hashes.
+Reproduction now explicitly pins linker invocation paths: an alias embedded in
+PDB metadata can change full artifact hashes even with equal normalized recipe
+digests. [Review dispositions](results/external-review-followup.md) link every
+finding to its correction or explicit limitation.
+
 The localhost-enabled Linux suite completed with **18,212 passed, 303 skipped
 and 6 expected failures**; focused regressions separately cover the final
-provenance and receipt-safety corrections. The [final integration review](results/final-integration-review.md)
+provenance and receipt-safety corrections, including **175 tests** in the last
+focused group. The [final integration review](results/final-integration-review.md)
 records its automated scope and independence limits. Final GitHub checks and
 required independent review still govern integration; the research PR is
 [#128](https://github.com/djshellshoxxx/patchtrace/pull/128).

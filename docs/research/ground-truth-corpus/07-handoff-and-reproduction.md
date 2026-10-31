@@ -103,12 +103,26 @@ cell. Its process exit codes are 0 for built, 1 for findings/partial availabilit
 3 for all blocked, and 2 for invalid invocation. It invokes the existing factory;
 it does not create alternate compiler recipes or execute targets.
 
+Choose a new absolute `.json` output outside the repository for every matrix
+invocation. Existing receipts and symlinked destination/parent paths are refused
+before building and rechecked before exclusive publication. The matrix wrapper
+does not take `--work`; the native pilot's contained-output rule below is separate.
+
 Inspect `<store>/labels/` with the existing strict `C.load_labels` loader. Require
 the requested profile/optimization on **both endpoints**, not just in the matrix
 entry name. For each side, select its immutable build receipt by recipe digest,
 source inputs and artifact hashes under `images/<debug_sha>/builds/`. Do not use
 the legacy last-build `build.json` as unique provenance. Repeat into another
 scratch build context and compare engine/debug/PDB hashes separately.
+
+The recipe template drops executable `argv[0]`. Exact tool invocation paths
+therefore remain an additional input: this host's generic `lld-link` and
+versioned `lld-link-18` embedded different PDB paths and changed whole-image
+hashes despite identical corresponding code sections. The measured matrix used
+the generic linker path; the original hidden and Clang control artifacts used
+the versioned path. Preserve these distinct conditions, pin actual tool versions
+and invocation spellings, and verify accepted output hashes before applying a
+review. See [the recovered original receipts](results/hidden-receipt-reconciliation.md).
 
 The source review covers exact O2 artifacts. Other matrix cells have authored
 cross-checks and observed body facts, not automatic independent acceptance.
@@ -152,9 +166,17 @@ BinDiff may remain blocked even when the overall command returns 0. A missing
 observation is not an unchanged prediction.
 
 For the reviewed hidden-name case, first emit the original suite pair ID used
-by its review:
+by its review. On this recorded Linux toolchain, use its original invocation
+paths explicitly; another tool installation needs equivalent verified inputs
+and a fresh review if accepted artifact hashes differ:
 
 ```bash
+PATCHTRACE_KA_CLANG=/usr/bin/clang-18 \
+PATCHTRACE_KA_LLD_LINK=/usr/bin/lld-link-18 \
+PATCHTRACE_KA_LLVM_PDBUTIL=/usr/bin/llvm-pdbutil-18 \
+PATCHTRACE_KA_LLVM_OBJDUMP=/usr/bin/llvm-objdump-18 \
+PATCHTRACE_KA_LLVM_NM=/usr/bin/llvm-nm-18 \
+PATCHTRACE_KA_LLVM_STRIP=/usr/bin/llvm-strip-18 \
 "$R1_PY" -m tools.calibration.tier_r build-suite \
   corpus/ours/r1-pilot/defined --store "$R1_STORE" --opt O2
 ```
@@ -163,6 +185,14 @@ Then use `ours-r1-pilot-defined-v1-v2-O2.json` and `results/acceptance.json` in 
 pilot invocation. Zero discovery and the rz-diff empty-output failure are
 expected observations under the measured stock condition, not successful
 accuracy gates.
+
+The original hidden-run receipt is retained with its historical omission of
+`truth_scope.review_sha256`. The separately published
+[current-runner replay](results/pilot-msvc-free-o2-reviewed-replay.json) and
+[binding reconciliation](results/hidden-review-binding-reconciliation.json)
+bind the exact review file to a private copy of the completed primary evidence.
+They report persisted evidence and no new engine execution; observations,
+metrics and the selected-truth digest remain equal to the original.
 
 For cJSON:
 
@@ -187,6 +217,18 @@ published native A/A label has an explicit compiler-qualified research ID to
 avoid the older factory's cross-store `aa-defined-v1-O2-rebuild` name collision;
 its original pair ID/digest are retained in `case`.
 
+The [control correction record](results/native-aa-provenance-correction.md)
+documents actual fixed-cache rebuilds of both A/A cases and four noise cases.
+Five active labels now carry the correct endpoint variant metadata. Their
+exact original bytes are retained under `results/historical-labels/`, mapped
+by [label-provenance-corrections.json](results/label-provenance-corrections.json).
+Use [final-label-integrity.json](results/final-label-integrity.json) and
+[final-partition-audit.json](results/final-partition-audit.json) for the current
+23-label inventory. Older integrity and partition files remain historical
+snapshots, including their original digests. Actual native/control experiment
+JSON is unchanged; the structural reproduction Markdown only adds its missing
+`opt_transforms` import.
+
 ## Validation and next integration step
 
 Run the repository gates in an environment that allows the local listeners used
@@ -202,8 +244,10 @@ QT_QPA_PLATFORM=offscreen "$R1_PY" -m pytest -q
   tests/test_tier_r_label_promotion_r1.py tests/test_unified_live_pairs_r1.py
 ```
 
-`results/integrity-gates.json` records the additional full corpus, licence/card
-and canonical schema drift checks. `tools/generate_schemas.py` has no `--check`
+`results/integrity-gates.json` records historical full corpus, licence/card
+and canonical schema drift checks plus an earlier 22-label inventory. The
+current 23-label and receipt audit is `results/final-label-integrity.json`.
+`tools/generate_schemas.py` has no `--check`
 option: use the existing regenerate-and-compare tests under temporary directories.
 No schema content or version was changed. Native runs and substituted unit tests
 are reported separately.
@@ -221,6 +265,12 @@ and provenance/CLI regressions cover those final deltas. Exact-head GitHub CI
 remains the integration gate; the full count is not misrepresented as a run of
 the final published tree. See `results/final-validation.json` and QA for commands,
 log hashes and the final focused result.
+
+The final external-review regression selection passed **175 tests in 31.62 s**,
+including the matrix output guard and actual factory tests. Full Ruff passed.
+Earlier 156/30/69-test selections are historical overlapping scopes and are not
+added to this total. The review follow-up records the red/green evidence and
+independent read-only reviews of code and provenance.
 
 At checkpoint `0271f1869ccba0697c5bf6f797432bb7c6ec54d4`, Sonar reported a C security
 rating and annotated unchecked receipt publication. The exact annotation is

@@ -487,3 +487,37 @@ raw-observation receipts, immutable build receipts and the final metadata audit.
 `results/final-validation.json` includes exact log hashes and the retained full
 Linux log; `results/final-cli-repeatability.json` records the final native check.
 Do not call R1 merged/release-ready or the 14-project/15-case corpus validated.
+
+### R1 external-review closure checkpoint — 2026-10-31
+
+CodeRabbit's seven findings are individually dispositioned in
+[`results/external-review-followup.md`](research/ground-truth-corpus/results/external-review-followup.md).
+The matrix CLI now rejects existing/symlinked receipt destinations before
+building and uses exclusive publication. Red/green evidence: 9 failed/18 passed,
+then 27 passed; independent read-only review reran the same 27 tests successfully.
+The final integrated regression group passed **175 tests in 31.62 s**, and full
+Ruff passed. These overlap earlier focused counts and are not added to them.
+
+Real fixed-cache rebuilds reproduced both A/A profiles and four compiler-noise
+comparisons. Five active labels needed only a variant-field/digest correction;
+the original bytes are archived, and every artifact/function/RVA/body/truth fact
+is unchanged. Two missing original hidden-pilot receipts were recovered or
+reproduced exactly. The current audit passes **23 unique strict labels** and
+**39 receipt files / 36 unique hashes**; its deliberate partition negative
+control still reports six findings. Historical 22-label integrity and earlier
+partition snapshots remain clearly scoped. The original native/control JSON
+and engine observations are unchanged.
+
+Pin executable invocation spelling as well as versions: `lld-link-18` versus
+`lld-link` changed embedded PDB/CodeView metadata and whole-image hashes while
+corresponding code sections remained identical. Selecting recorded original
+paths reproduced accepted hashes. Existing normalized recipe digests omit
+`argv[0]`; this specific gap is documented, not claimed repaired by a new schema.
+The hidden receipt replay now explicitly binds its review-file hash and reports
+persisted-native evidence, with no new matching-engine execution credit.
+
+SonarCloud passed on `0d14548` with zero new issues, zero security hotspots and
+2.6% duplication. Final revision checks remain required. The original full
+18,212-test run retains its snapshot limitation; this checkpoint does not turn
+it into a full run of the final tree. Native Windows/MSVC/BinDiff and the
+dispatch-only unified workflow remain separate acceptance requirements.

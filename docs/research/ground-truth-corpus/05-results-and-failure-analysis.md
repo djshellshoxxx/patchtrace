@@ -229,8 +229,38 @@ Two reproducible defects were independent of matching algorithms:
 The earlier receipts preserve the failures; they are not authoritative final
 configuration metadata. The repair changes provenance/cache scope, not function
 truth or emitted machine bytes. [Immutable build receipts](results/build-receipts/)
-contain full compiler/linker argv templates, actual versions, source input hashes,
+contain normalized compiler/linker argument templates, actual versions, source input hashes,
 recipe/source digests and output hashes.
+
+External review exposed the same old cache defect in both A/A labels and three
+compiler-noise labels: the affected endpoint carried `aa-a` instead of its
+actual `aa-b` or `noise-msvc-free-o2` variant. Fresh fixed-cache builds reproduced
+every original engine/debug/PDB hash and every function, RVA and body/truth
+record. Only the variant field and canonical label digest changed. The five
+original documents are preserved under `results/historical-labels/`; the
+[publication mapping](results/label-provenance-corrections.json) binds them to
+the corrected active files. The original native/control experiment JSON and
+engine observations remain unchanged. See the [actual recovery evidence](results/native-aa-provenance-correction.md).
+
+The review also found two original hidden-pilot receipt references missing from
+the published matrix inventory. One exact historical receipt was recovered;
+fresh stock builds reproduced both exact receipt hashes and accepted artifact
+triples. Those files are now present, with the recovery method distinguished
+from historical-file recovery in [the reconciliation](results/hidden-receipt-reconciliation.md).
+The matrix receipts could not substitute for them: `/usr/bin/lld-link-18` and
+`/usr/bin/lld-link` embed different executable paths in PDB metadata even with
+equal source inputs, normalized recipe and tool banners. In this measured pair,
+the code sections are identical while PDB/CodeView metadata and whole-image
+hashes differ. The template omits executable `argv[0]`, so a recipe digest alone
+does not identify every effective build input. Reproduction must pin invocation
+spelling as well as versions and artifact hashes.
+
+The original hidden-run receipt also predates the explicit `review_sha256`
+field. It remains intact. A [current-runner replay](results/pilot-msvc-free-o2-reviewed-replay.json)
+of a private copy of the completed primary project now records the exact review
+hash. Its raw bytes, observations, metrics and selected-truth digest equal the
+original. The [binding record](results/hidden-review-binding-reconciliation.json)
+explicitly reports `persisted-native` and no fresh matching-engine execution.
 
 ## Metrics, partitions and performance scope
 
@@ -243,12 +273,19 @@ denominators are JSON null. Correspondence FPR remains null because no verified
 negative candidate-edge universe was specified; false discovery rate is a
 different quantity.
 
-The [partition audit](results/partition-audit.json) records all published pilot
+The [current partition audit](results/final-partition-audit.json) records all 23 active pilot
 cases as development. A deliberately invalid assignment of one compiler variant
 to validation is detected through six shared-identity keys. An all-development
 pass is not held-out validation, and exact-key leakage checks do not certify the
 absence of near duplicates or vendored fragments. No locked test or calibration
 threshold was selected or consumed.
+
+The [current integrity record](results/final-label-integrity.json) strictly loads
+all 23 active labels and verifies all 39 published receipt files, representing
+36 unique receipt hashes. Identical recipes can legitimately share receipts.
+`integrity-gates.json` retains its earlier 22-label snapshot and corpus/schema
+observations; `partition-audit.json` retains its earlier label digests. Neither
+historical file is represented as an audit of the corrected active inventory.
 
 Wall times are local observations on a shared host. The first visible-export
 GCC run took 24.728 s for primary analysis, 24.723 s for extraction/unified work

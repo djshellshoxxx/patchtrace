@@ -85,3 +85,68 @@ The final handoff records active R2–R8 PRs. These follow-ups modify only the R
 research wrapper, build-receipt error reporting, tests and research notes. The
 conditional-branch/store production defect remains a separately coordinated
 matching/semantic-analysis task, with the original R1 evidence preserved.
+
+## CodeRabbit follow-up — 2026-10-31
+
+CodeRabbit's later review supplied seven concrete findings. The response keeps
+historical experiment records intact and makes current evidence independently
+checkable. No original engine result was replaced to improve a score.
+
+| Review comment | Disposition and evidence |
+|---|---|
+| [4429457695](https://github.com/djshellshoxxx/patchtrace/pull/128#discussion_r4429457695): table pipes | Escape the two bitwise-OR pipes in the source-suite README so the flags row renders in the correct columns. Source code is unchanged. |
+| [4429457709](https://github.com/djshellshoxxx/patchtrace/pull/128#discussion_r4429457709): missing accepted build receipts | Recover one exact historical receipt and reproduce both complete receipt hashes and accepted artifact triples with real stock builds. Add the two missing files. [Recovery evidence](hidden-receipt-reconciliation.md) explains why equal normalized recipe digests did not make the matrix artifacts interchangeable. |
+| [4429457714](https://github.com/djshellshoxxx/patchtrace/pull/128#discussion_r4429457714): missing structural import | Add `from tools.calibration.mutations import opt_transforms as O` to both reproduction snippets. The actual structural experiment JSON and its measured results remain unchanged. |
+| [4429457719](https://github.com/djshellshoxxx/patchtrace/pull/128#discussion_r4429457719): stale integrity inventory | Preserve the original 22-label gate snapshot; add an actual [current 23-label integrity audit](final-label-integrity.json) and [partition audit](final-partition-audit.json), with explicit historical scope. |
+| [4429457726](https://github.com/djshellshoxxx/patchtrace/pull/128#discussion_r4429457726): stale A/A variant | Rebuild both A/A cases and all four noise cases using the fixed cache and original tool paths. Five labels change only one variant field plus their digest; all artifact/function facts match. Archive original label bytes and publish [exact mappings](label-provenance-corrections.json). [Recovery evidence](native-aa-provenance-correction.md) binds the original native results to the corrected metadata without fresh-engine credit. |
+| [4429457729](https://github.com/djshellshoxxx/patchtrace/pull/128#discussion_r4429457729): missing review-file hash | Preserve the historical hidden receipt, and run the current reader over a private copy of its validated primary project. The [replay binding](hidden-review-binding-reconciliation.json) records the exact review hash and equal observations, metrics and selection digest. It explicitly reports persisted-native evidence and no new matching-engine execution. |
+| [4429457734](https://github.com/djshellshoxxx/patchtrace/pull/128#discussion_r4429457734): matrix output overwrite | Validate a new absolute `.json` path outside the repository before building; reject existing files and destination/ancestor symlinks; recheck after builds and parent creation; publish with exclusive `xb`. Tests preserve competing files appearing during builds and at the final open. |
+
+### What the rebuilds established
+
+The original hidden/Clang-control PDBs embed `/usr/bin/lld-link-18`; the matrix
+and the first default-discovery control retry embed `/usr/bin/lld-link`.
+Version banners and normalized recipes match, but PDB/CodeView and whole-image
+hashes differ. Corresponding code sections are identical. Explicitly selecting
+the recorded original paths reproduces the accepted artifact hashes. This is
+an observed input-identity gap because `build._template` omits executable
+`argv[0]`; it is recorded as a limitation and reproduction requirement, not
+concealed as unexplained nondeterminism or fixed by changing historical digests.
+
+The current active inventory contains 23 strict, unique label documents, all
+development-only. The six deliberately induced cross-partition findings remain
+unchanged. All 39 published receipt files match their content-addressed names;
+they represent 36 unique hashes because some actual control builds share full
+compiler receipts. Five historical label copies preserve the original metadata
+and digests. The original native/control experiment JSON is unchanged.
+
+### Verification and independent review
+
+The matrix destination tests first exposed **9 failures with 18 passing tests
+in 0.82 s**. After repair the entire file passed **27 tests in 0.69 s**; a
+combined matrix/cache/receipt selection passed **39 tests in 0.86 s**. A separate
+read-only reviewer independently reran the 27-test file, all passing in 0.61 s,
+and found no blocking defect. The guarantee concerns mistaken invocations in
+private directories; it does not claim isolation from a hostile process that
+replaces a parent directory after the final check.
+
+The final integrated selection passed **175 tests in 31.62 s**. It includes
+actual factory/compiler tests as well as unit/orchestration substitutes. Full
+repository Ruff passed. Exact log hashes and retained logs are recorded in
+`final-validation.json`; these overlapping runs must not be summed. No full
+Linux or native-engine rerun is implied by these focused counts.
+
+An independent read-only provenance review verified the two recovered hidden
+receipts, replay binding, five exact historical-to-current label diffs and
+unchanged fourth noise label. It found one documentation binding issue: the
+corrected structural Markdown hash had been named historical. The record now
+retains both the original checkpoint hash and corrected reproduction-document
+hash, and distinguishes the import-only Markdown edit from immutable experiment
+JSON. The native correction's observed preflight checkpoint has an explicit
+dirty-worktree/no-per-run-code-snapshot caveat.
+
+SonarCloud also passed at the subsequent `0d14548` checkpoint with zero new
+issues, zero security hotspots and 2.6% new-code duplication. This remains a
+historical observation; final-head external checks and independent approval
+must be inspected before merge. No branch protections or quality thresholds
+were changed.

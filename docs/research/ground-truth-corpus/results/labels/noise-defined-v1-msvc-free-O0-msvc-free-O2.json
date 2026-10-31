@@ -5,7 +5,7 @@
   "older": "msvc-free/O0"
  },
  "contract": "known-answer-labels/1",
- "digest_sha256": "a49fac036302ab463018d22c76aeb0de5bde43adb9db3ed3ac50be4b1dc9f415",
+ "digest_sha256": "e14ec54f3ad6d3e98ea4eca15b57027b2d3fca5386d11be3bdf192e4010828ab",
  "family": "synthetic",
  "functions": [
   {
@@ -377,7 +377,7 @@
    "opt": "O2",
    "profile": "msvc-free",
    "recipe_digest": "7c7b7d39a28c605d990b52c7d2386168f8adfef803a172daa55aaa7b861f6417",
-   "variant": "aa-a"
+   "variant": "noise-msvc-free-o2"
   },
   "debug_sha256": "66908cc4642bb149aad74a23d1e641807edb874da008c3b488f5e74fb462b6ea",
   "file_name": "defined.dll",

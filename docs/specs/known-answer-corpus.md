@@ -223,6 +223,20 @@ no-recipe; evaluation metrics on hand-computed match sets; report determinism; a
    work; exclusive creation must preserve a destination appearing during the run.
    This is an output safety boundary, not a new persisted schema or a claim of
    isolation from hostile writers to the user's private directory.
+7. The development matrix CLI likewise requires a new absolute `.json` output
+   outside the repository. It has no `--work` containment argument. Validate the
+   original destination spelling and reject destination/ancestor symlinks and
+   existing files before builds; recheck after builds and parent creation, then
+   publish with exclusive creation. Preserve a competing destination appearing
+   during the run. This protects existing evidence from mistaken invocations;
+   it does not isolate publication from hostile concurrent parent replacement.
+8. A normalized recipe digest is not complete execution identity. The current
+   command template omits executable `argv[0]`; an invocation alias such as
+   `lld-link-18` versus `lld-link` can change embedded PDB metadata and full output
+   hashes. Bind source inputs, recipe/tool configuration, actual invocation pins
+   and engine/debug/PDB hashes when reproducing an accepted case. Historical
+   recipe digests remain unchanged; invocation identity is recorded in the R1
+   reconciliation evidence pending a separately reviewed contract enhancement.
 
 ### [D:known-answer-factory] 2026-10-14 build amendments
 1. Built and tested: s3 inputs I1 (recipe contract), I2/I3 (case cards via `factory.run_card`), I4 (suites via `factory.run_suite` with cross-check); s4 profiles `msvc-free`, `mingw-gcc`, `mingw-clang`; s5 inventory and hashes; s6 contract; s7 decision table; s9 A/A rebuild, layout and noise (`factory.run_aa`, `factory.run_noise`).

@@ -168,3 +168,100 @@ def test_cli_undeclared_endpoint_returns_usage_error_without_output(monkeypatch,
     message = json.loads(capsys.readouterr().out)
     assert message['status'] == 'error' and f"{side} version 'missing'" in message['reason']
     assert not output.exists() and not (tmp_path / 'store').exists()
+
+
+@pytest.mark.parametrize('kind', ['existing', 'destination-symlink', 'dangling-destination',
+                                 'parent-symlink', 'dangling-parent', 'relative', 'not-json', 'repository'])
+def test_cli_invalid_receipt_is_rejected_before_building(monkeypatch, tmp_path, capsys, kind):
+    """Receipt validation must precede even a substituted native runner and preserve existing bytes."""
+    original = tmp_path / 'original.json'
+    original.write_bytes(b'prior evidence')
+    output = tmp_path / 'receipt.json'
+    if kind == 'existing':
+        output = original
+    elif kind in {'destination-symlink', 'dangling-destination', 'parent-symlink', 'dangling-parent'}:
+        link = output if 'destination' in kind else tmp_path / 'alias'
+        destination = original if kind == 'destination-symlink' else tmp_path / 'missing'
+        if kind == 'parent-symlink':
+            destination = tmp_path / 'real-parent'
+            destination.mkdir()
+        try:
+            link.symlink_to(destination, target_is_directory='parent' in kind)
+        except (OSError, NotImplementedError):
+            pytest.skip('host cannot create test symlinks')
+        if 'parent' in kind:
+            output = link / 'receipt.json'
+    elif kind == 'relative':
+        output = Path('relative-receipt.json')
+    elif kind == 'not-json':
+        output = tmp_path / 'receipt.txt'
+    else:
+        output = R.REPO / 'forbidden-r1-unit-receipt.json'
+    monkeypatch.setattr(R, 'build_pilot', lambda *args, **kwargs: pytest.fail('invalid receipt reached build'))
+    code = R.main(['--store', str(tmp_path / 'store'), '--output', str(output)])
+    assert code == 2
+    assert json.loads(capsys.readouterr().out)['status'] == 'error'
+    assert original.read_bytes() == b'prior evidence'
+    if kind not in {'existing', 'destination-symlink'}:
+        assert not output.exists()
+
+
+def test_cli_file_appearing_during_build_is_not_replaced(monkeypatch, tmp_path, capsys):
+    output = tmp_path / 'receipt.json'
+
+    def concurrent_build(*args, **kwargs):
+        output.write_bytes(b'another run owns this receipt')
+        return {'status': 'built', 'unit_only': True}
+
+    monkeypatch.setattr(R, 'build_pilot', concurrent_build)
+    assert R.main(['--store', str(tmp_path / 'store'), '--output', str(output)]) == 2
+    assert json.loads(capsys.readouterr().out)['status'] == 'error'
+    assert output.read_bytes() == b'another run owns this receipt'
+
+
+def test_cli_parent_symlink_appearing_during_build_cannot_redirect_receipt(monkeypatch, tmp_path, capsys):
+    output = tmp_path / 'new-parent' / 'receipt.json'
+    other = tmp_path / 'other'
+    other.mkdir()
+    probe_link = tmp_path / 'probe-link'
+    try:
+        probe_link.symlink_to(other, target_is_directory=True)
+        probe_link.unlink()
+    except (OSError, NotImplementedError):
+        pytest.skip('host cannot create test symlinks')
+
+    def concurrent_build(*args, **kwargs):
+        output.parent.symlink_to(other, target_is_directory=True)
+        return {'status': 'built', 'unit_only': True}
+
+    monkeypatch.setattr(R, 'build_pilot', concurrent_build)
+    assert R.main(['--store', str(tmp_path / 'store'), '--output', str(output)]) == 2
+    assert json.loads(capsys.readouterr().out)['status'] == 'error'
+    assert not (other / 'receipt.json').exists()
+
+
+def test_cli_exclusive_publication_refuses_file_appearing_at_open(monkeypatch, tmp_path, capsys):
+    """Exercise the real filesystem race at the final open, rather than merely asserting an open mode."""
+    output = tmp_path / 'receipt.json'
+    original_open = Path.open
+
+    def raced_open(path, mode='r', *args, **kwargs):
+        if path == output and any(flag in mode for flag in 'wax'):
+            with original_open(path, 'xb') as other:
+                other.write(b'late competing receipt')
+        return original_open(path, mode, *args, **kwargs)
+
+    monkeypatch.setattr(R, 'build_pilot', lambda *args, **kwargs: {'status': 'built', 'unit_only': True})
+    monkeypatch.setattr(Path, 'open', raced_open)
+    assert R.main(['--store', str(tmp_path / 'store'), '--output', str(output)]) == 2
+    assert json.loads(capsys.readouterr().out)['status'] == 'error'
+    assert output.read_bytes() == b'late competing receipt'
+
+
+def test_cli_new_json_receipt_creates_validated_parents_and_publishes(monkeypatch, tmp_path, capsys):
+    output = tmp_path / 'new' / 'nested' / 'receipt.json'
+    receipt = {'status': 'built', 'unit_only': True}
+    monkeypatch.setattr(R, 'build_pilot', lambda *args, **kwargs: receipt)
+    assert R.main(['--store', str(tmp_path / 'store'), '--output', str(output)]) == 0
+    assert json.loads(output.read_bytes()) == receipt
+    assert json.loads(capsys.readouterr().out) == receipt

@@ -103,6 +103,8 @@ The existing `tools.calibration.mutations.opt_transforms` infrastructure was ins
 The source was emitted as Windows-target IR through:
 
 ```python
+from tools.calibration.mutations import opt_transforms as O
+
 before = O.emit_opt_input(
     F.read_sources(base.root), 'r1.c', tools,
     flags=('--target=x86_64-pc-windows-msvc',),
@@ -145,6 +147,7 @@ From the repository with its current source and installed toolchain, use the exi
 from pathlib import Path
 from tools.calibration.tier_r import factory as F
 from tools.calibration.tier_r.toolchain import probe
+from tools.calibration.mutations import opt_transforms as O
 
 suite, bases = F.suite_bases(Path('corpus/ours/r1-pilot/defined'))
 base = bases['v1']

@@ -1,0 +1,106 @@
+...............FFFFF.F.FFF.                                              [100%]
+=================================== FAILURES ===================================
+________ test_cli_invalid_receipt_is_rejected_before_building[existing] ________
+tests/test_tier_r_research_build.py:201: in test_cli_invalid_receipt_is_rejected_before_building
+    code = R.main(['--store', str(tmp_path / 'store'), '--output', str(output)])
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tools/calibration/tier_r/research_build.py:127: in main
+    receipt = build_pilot(args.store, profiles=args.profiles.split(','), opts=args.opts.split(','),
+tests/test_tier_r_research_build.py:200: in <lambda>
+    monkeypatch.setattr(R, 'build_pilot', lambda *args, **kwargs: pytest.fail('invalid receipt reached build'))
+                                                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: invalid receipt reached build
+__ test_cli_invalid_receipt_is_rejected_before_building[destination-symlink] ___
+tests/test_tier_r_research_build.py:201: in test_cli_invalid_receipt_is_rejected_before_building
+    code = R.main(['--store', str(tmp_path / 'store'), '--output', str(output)])
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tools/calibration/tier_r/research_build.py:127: in main
+    receipt = build_pilot(args.store, profiles=args.profiles.split(','), opts=args.opts.split(','),
+tests/test_tier_r_research_build.py:200: in <lambda>
+    monkeypatch.setattr(R, 'build_pilot', lambda *args, **kwargs: pytest.fail('invalid receipt reached build'))
+                                                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: invalid receipt reached build
+__ test_cli_invalid_receipt_is_rejected_before_building[dangling-destination] __
+tests/test_tier_r_research_build.py:201: in test_cli_invalid_receipt_is_rejected_before_building
+    code = R.main(['--store', str(tmp_path / 'store'), '--output', str(output)])
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tools/calibration/tier_r/research_build.py:127: in main
+    receipt = build_pilot(args.store, profiles=args.profiles.split(','), opts=args.opts.split(','),
+tests/test_tier_r_research_build.py:200: in <lambda>
+    monkeypatch.setattr(R, 'build_pilot', lambda *args, **kwargs: pytest.fail('invalid receipt reached build'))
+                                                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: invalid receipt reached build
+_____ test_cli_invalid_receipt_is_rejected_before_building[parent-symlink] _____
+tests/test_tier_r_research_build.py:201: in test_cli_invalid_receipt_is_rejected_before_building
+    code = R.main(['--store', str(tmp_path / 'store'), '--output', str(output)])
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tools/calibration/tier_r/research_build.py:127: in main
+    receipt = build_pilot(args.store, profiles=args.profiles.split(','), opts=args.opts.split(','),
+tests/test_tier_r_research_build.py:200: in <lambda>
+    monkeypatch.setattr(R, 'build_pilot', lambda *args, **kwargs: pytest.fail('invalid receipt reached build'))
+                                                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: invalid receipt reached build
+____ test_cli_invalid_receipt_is_rejected_before_building[dangling-parent] _____
+tests/test_tier_r_research_build.py:201: in test_cli_invalid_receipt_is_rejected_before_building
+    code = R.main(['--store', str(tmp_path / 'store'), '--output', str(output)])
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tools/calibration/tier_r/research_build.py:127: in main
+    receipt = build_pilot(args.store, profiles=args.profiles.split(','), opts=args.opts.split(','),
+tests/test_tier_r_research_build.py:200: in <lambda>
+    monkeypatch.setattr(R, 'build_pilot', lambda *args, **kwargs: pytest.fail('invalid receipt reached build'))
+                                                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: invalid receipt reached build
+________ test_cli_invalid_receipt_is_rejected_before_building[not-json] ________
+tests/test_tier_r_research_build.py:201: in test_cli_invalid_receipt_is_rejected_before_building
+    code = R.main(['--store', str(tmp_path / 'store'), '--output', str(output)])
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tools/calibration/tier_r/research_build.py:127: in main
+    receipt = build_pilot(args.store, profiles=args.profiles.split(','), opts=args.opts.split(','),
+tests/test_tier_r_research_build.py:200: in <lambda>
+    monkeypatch.setattr(R, 'build_pilot', lambda *args, **kwargs: pytest.fail('invalid receipt reached build'))
+                                                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: invalid receipt reached build
+_____________ test_cli_file_appearing_during_build_is_not_replaced _____________
+tests/test_tier_r_research_build.py:217: in test_cli_file_appearing_during_build_is_not_replaced
+    assert R.main(['--store', str(tmp_path / 'store'), '--output', str(output)]) == 2
+E   AssertionError: assert 0 == 2
+E    +  where 0 = <function main at 0x7f18fa07e980>(['--store', '/tmp/pytest-of-root/pytest-88/test_cli_file_appearing_during0/store', '--output', '/tmp/pytest-of-root/pytest-88/test_cli_file_appearing_during0/receipt.json'])
+E    +    where <function main at 0x7f18fa07e980> = R.main
+----------------------------- Captured stdout call -----------------------------
+{
+  "status": "built",
+  "unit_only": true
+}
+____ test_cli_parent_symlink_appearing_during_build_cannot_redirect_receipt ____
+tests/test_tier_r_research_build.py:238: in test_cli_parent_symlink_appearing_during_build_cannot_redirect_receipt
+    assert R.main(['--store', str(tmp_path / 'store'), '--output', str(output)]) == 2
+E   AssertionError: assert 0 == 2
+E    +  where 0 = <function main at 0x7f18fa07e980>(['--store', '/tmp/pytest-of-root/pytest-88/test_cli_parent_symlink_appear0/store', '--output', '/tmp/pytest-of-root/pytest-88/test_cli_parent_symlink_appear0/new-parent/receipt.json'])
+E    +    where <function main at 0x7f18fa07e980> = R.main
+----------------------------- Captured stdout call -----------------------------
+{
+  "status": "built",
+  "unit_only": true
+}
+________ test_cli_exclusive_publication_refuses_file_appearing_at_open _________
+tests/test_tier_r_research_build.py:256: in test_cli_exclusive_publication_refuses_file_appearing_at_open
+    assert R.main(['--store', str(tmp_path / 'store'), '--output', str(output)]) == 2
+E   AssertionError: assert 0 == 2
+E    +  where 0 = <function main at 0x7f18fa07e980>(['--store', '/tmp/pytest-of-root/pytest-88/test_cli_exclusive_publication0/store', '--output', '/tmp/pytest-of-root/pytest-88/test_cli_exclusive_publication0/receipt.json'])
+E    +    where <function main at 0x7f18fa07e980> = R.main
+----------------------------- Captured stdout call -----------------------------
+{
+  "status": "built",
+  "unit_only": true
+}
+=========================== short test summary info ============================
+FAILED tests/test_tier_r_research_build.py::test_cli_invalid_receipt_is_rejected_before_building[existing]
+FAILED tests/test_tier_r_research_build.py::test_cli_invalid_receipt_is_rejected_before_building[destination-symlink]
+FAILED tests/test_tier_r_research_build.py::test_cli_invalid_receipt_is_rejected_before_building[dangling-destination]
+FAILED tests/test_tier_r_research_build.py::test_cli_invalid_receipt_is_rejected_before_building[parent-symlink]
+FAILED tests/test_tier_r_research_build.py::test_cli_invalid_receipt_is_rejected_before_building[dangling-parent]
+FAILED tests/test_tier_r_research_build.py::test_cli_invalid_receipt_is_rejected_before_building[not-json]
+FAILED tests/test_tier_r_research_build.py::test_cli_file_appearing_during_build_is_not_replaced
+FAILED tests/test_tier_r_research_build.py::test_cli_parent_symlink_appearing_during_build_cannot_redirect_receipt
+FAILED tests/test_tier_r_research_build.py::test_cli_exclusive_publication_refuses_file_appearing_at_open
+9 failed, 18 passed in 0.82s
