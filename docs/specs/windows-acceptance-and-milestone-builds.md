@@ -223,3 +223,15 @@ Clean Windows 11 checklist (section 3): <n> pass, <n> fail, <n> not-run. Record:
 
 - Limitations: unsigned beta; Ghidra, Java and Ghidriff external. Release publication: <published | not published (403), Actions artifact only>.
 ```
+
+## WIN-1 reconciliation acceptance (2026-10-30)
+
+Port the executable/window owner mark and version resource from PR #102 commit `9121bbc3e307c9641a47df475fbeecec1a7e6f71`, preserving current workflow policy and launcher/extractor inventory checks. Generate validated release labels and fixed version fields from the existing package/build version and CI ref/run; include the source commit in Comments and dependency-versions.json. Unsigned builds must not invent CompanyName. Use the byte-identical existing `site/assets/cdl-mark.svg`; package it for the window icon and render PNG frames into the executable ICO. Keep PyInstaller's default manifest.
+
+Before archiving, read back the executable with the bounded PE parser and reject missing/incomplete version information, mismatched string/fixed versions or commit, and missing/empty/unreadable icon groups. Validate actual referenced icon payloads, rather than accepting an empty group directory. Linux tests prove generation/parser/rendering only; frozen Windows startup, resource read-back and installer acceptance require exact-head Windows CI. No signing, publisher-identity or Windows-acceptance claim follows from synthetic fixtures.
+
+Read-back compares both fixed file/product quads with the explicit build fields (including the run/build component), and string versions with the exact release label. The general PE parser pads a three-component string prefix with zero, so its `fixed_vs_string:FileVersion` / `fixed_vs_string:ProductVersion` observations are expected for a nonzero CI build component. Only these two observations may be ignored when the independent exact string and quad checks pass; cross-resource conflicts, malformed/incomplete blocks, and all other contradictions still fail. Source-commit provenance requires the full 40-character lowercase Git SHA.
+
+The generated PatchTrace executable must have exactly one RT_VERSION leaf/block, matching PyInstaller 6.22.3's single resource-ID-1 version writer. Reject additional version leaves before accepting primary-block identity; this build-only checker is not a general multi-language PE acceptance tool. This prevents a parser cap or alternate stale-commit/publisher block from hiding behind the primary block. Resource/version context warnings are incomplete evidence and must also refuse publication.
+
+Within that version block, require one StringFileInfo language/codepage and unique string keys before building the identity dictionary. Duplicate identity fields or alternate language tables must not be collapsed with last-wins semantics. The generated version writer emits this canonical single-table shape.
