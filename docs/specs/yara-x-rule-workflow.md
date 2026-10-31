@@ -289,3 +289,17 @@ Nothing in this file changes an existing file. The integrator applies:
 4. `docs/specs/program-e/YRX-integration-plan.md` section 10 and `docs/specs/three-tool-evidence-adapters.md`: the plan cites the derived-evidence rule as SPEC-29; the canonical alias for that file is SPEC-36 (REGISTRY table A). Use the alias in any cross-reference.
 5. `docs/plans/ledger-B.md` line 10: the package name there is `yarax/`; this spec says `rules/` (section 9, first row).
 6. `docs/modules.md`, `tasks/todo.md` and `docs/qa.md`: append the workflow blocks when a slice is built; none is appended by this spec.
+
+### Cached grid identity and regular-file acquisition clarification (October 31 UTC)
+
+Cached rescoring must retain each requested rule-version ID and each original
+cell observation when distinct versions share identical rule text. Match stable
+row/column identities with their content hashes first. Content-only fallback is
+permitted only for one unambiguous stored observation; otherwise report a cache
+integrity error instead of choosing a last-wins observation. Validate the final
+grid's unique IDs and shape after remapping.
+
+Extra-build hashing checks regular-file status both before open and on the open
+handle. On POSIX, acquire the handle nonblocking so a regular file replaced by a
+FIFO cannot stall before the second check. This does not claim Windows named-pipe
+or device race acceptance without native verification.
