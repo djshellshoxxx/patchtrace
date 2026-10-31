@@ -327,7 +327,7 @@ def test_rescore_keeps_distinct_versions_with_identical_rule_content(world, olde
     entries, _ = world.entries(series=world.series)
     grid = run(entries, [older_rule, other])
     from patchtrace.rules.contracts import MatrixRun
-    cells = (CellResult(state='timeout'), CellResult(state='no-hit'), *grid.cells[2:])
+    cells = (CellResult(state='timeout'), CellResult(state='no-hit', hits=0), *grid.cells[2:])
     grid = MatrixRun.model_validate({**grid.model_dump(), 'cells': cells})
     again = matrix.rescored(grid, grid.targets, [other, older_rule])
     assert [r.version_id for r in again.rules] == [other.version_id, older_rule.version_id]
