@@ -49,6 +49,8 @@ def test_r8_same_type_suffix_variants_and_small_hex_decimal_values_remain_equal(
         ("2147483648", "2147483648U"),
         ("2147483648", "0x80000000"),
         ("0.1f", "0.1"),
+        ("010e1", "8e1"),
+        ("010E+1f", "8E+1f"),
     ],
 )
 def test_r8_c6_tokens_and_c5_literal_sets_retain_type_relevant_edits(

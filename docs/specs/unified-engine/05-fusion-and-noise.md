@@ -280,3 +280,5 @@ Integration asks (S3 does not edit `compute.py`, `worker.py` or `fusion/arbiter.
 ### Reconciled literal contract clarification
 
 On the Windows x64 LLP64 target, a signed `L` suffix does not remove radix-dependent type selection above `INT32_MAX`: `2147483648L` and `0x80000000L` must remain distinct. Preserve radix for signed long literals above that bound (and signed long-long above `INT64_MAX`), while keeping small same-type spellings equivalent. Both `canon` channel version 2 and `COS-PSEUDO/1` proof implementation version 2 participate in the configuration digest. This is a conservative proof correction, not native acceptance.
+
+Exponent-form floating constants with no decimal point (such as `010e1`) must be scanned as one float token before octal integer normalization. Otherwise `010e1` (100.0) can collide with `8e1` (80.0) in both C5 and C6. Preserve exponent and suffix spelling conservatively.
