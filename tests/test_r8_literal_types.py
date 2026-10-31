@@ -139,3 +139,14 @@ def test_type_only_literal_swaps_do_not_anchor_an_unrelated_machine_value_change
     new = 'int f(int a) { if (a > 0x100) { return 0x200U; } return 0; }'
     facts = verdict_of(tmp_path, CMP_OLD, CMP_NEW, old, new)
     assert (facts.verdict, facts.second_channel) == ('review', None)
+
+
+def test_type_only_literal_swaps_do_not_anchor_an_unrelated_struct_offset(tmp_path):
+    from test_unified_anchors import verdict_of
+
+    old_ins = [('load_m', 'EAX', 'RBX', 0x10), ('ret',)]
+    new_ins = [('load_m', 'EAX', 'RBX', 0x20), ('ret',)]
+    old = 'int f(long p) { return *(int *)(p + 0x10) + 0x20U; }'
+    new = 'int f(long p) { return *(int *)(p + 0x10U) + 0x20; }'
+    facts = verdict_of(tmp_path, old_ins, new_ins, old, new)
+    assert (facts.verdict, facts.second_channel) == ('review', None)
