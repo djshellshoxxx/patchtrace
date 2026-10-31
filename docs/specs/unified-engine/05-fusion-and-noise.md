@@ -286,3 +286,11 @@ Exponent-form floating constants with no decimal point (such as `010e1`) must be
 Typed integer keys must remain usable by downstream facts: sort by numeric value with type/radix as a deterministic tie-break, render the retained type/radix as C literal syntax, and compare numeric value forms only for MAT-ANCHOR corroboration of an independently observed machine constant delta. Keep full typed keys for C5/C6 equality; a type-only edit cannot fabricate a machine delta.
 
 For machine-value corroboration, project typed numeric tokens to value keys before multiset subtraction. Type-only suffix exchanges between two unchanged values must not manufacture a removed/added value pair. Preserve the original typed counters for C5/C6 equality and display.
+
+## R2 matching/evidence reconciliation (matching/2)
+
+A persisted automatic B+B acceptance must retain its complete witness: two different dependency components and two different known evidence classes. Support indexes must identify that witness, even under the atom cap, while preserving strongest opposition. Reject an impossible cap explicitly rather than publishing an accepted row without its justification. Native display fields break serialization ties without adding votes or changing strength.
+
+Unmatched verified IR functions become one-sided W/E-UNKNOWN observations with their original reason/hints, without votes against another engine's pair or claims of source-level addition/removal. Analyst groups retain explicit analyst attribution; overlapping automatic N:M groups remain counted as a limitation. Dominator ancestry uses tree intervals after immediate-dominator construction; preserve loop counts including repeated edges and unreachable nodes.
+
+The matching policy advances to `matching/2` in the pass-table/configuration digest. Preserve the independent `canon/2` and `COS-PSEUDO/1` implementation version 2; ProgramIR and persisted wire identities remain unchanged. Source: R2 PR #131 at b3ceb8b30d7a83da5e22c231c3b8c28179246816. Native held-out and cross-platform acceptance remain separate gates.

@@ -11,7 +11,6 @@ from __future__ import annotations
 from collections import defaultdict
 from collections.abc import Callable, Iterable, Mapping, Sequence
 from dataclasses import dataclass, field
-from itertools import combinations
 
 from .. import keys
 from ..contracts import Atom, Contest, SideRef, Support, UnifiedMatch
@@ -23,6 +22,22 @@ from .components import components_for
 MAX_HINTS = 32
 ONE_SIDED_SORT = 2**33
 STRONG_TIERS = ('M', 'A', 'B')
+
+
+def _corroborating_pair(atoms: Sequence[Atom], component: Callable) -> tuple[Atom, Atom] | None:
+    """A deterministic witness of D-32; duplicate observations add no work or voting weight."""
+    seen: dict[tuple[str, str], Atom] = {}
+    for atom in atoms:
+        if atom.tier not in ('A', 'B') or atom.cls == 'E-UNKNOWN':
+            continue
+        family_class = (component(atom), atom.cls)
+        if family_class in seen:
+            continue
+        for (other_component, other_class), other in seen.items():
+            if family_class[0] != other_component and atom.cls != other_class:
+                return other, atom
+        seen[family_class] = atom
+    return None
 
 
 @dataclass(frozen=True)
@@ -83,7 +98,7 @@ def decide(atoms: Sequence[Atom], groups: Sequence[SourceGroup], nodes: Mapping 
     def key(a: Atom) -> tuple:
         return (int(component(a)[1:]), -TIER_RANK[a.tier], a.source, a.step,
                 -1 if a.older_rva is None else a.older_rva, -1 if a.newer_rva is None else a.newer_rva, a.cls,
-                a.cardinality, a.ref or '')
+                a.cardinality, a.ref or '', a.native)
 
     for group in groups:  # an unregistered source is a bug, found before anything is decided
         for a in group.atoms:
@@ -184,7 +199,7 @@ def decide(atoms: Sequence[Atom], groups: Sequence[SourceGroup], nodes: Mapping 
         if any(a.tier == 'A' for a in best.values()):
             return 'matched'
         usable = [a for a in al if a.tier in ('A', 'B') and a.cls != 'E-UNKNOWN']
-        if any(component(x) != component(y) and x.cls != y.cls for x, y in combinations(usable, 2)):
+        if _corroborating_pair(usable, component) is not None:
             return 'matched'
         return 'tentative' if usable else 'candidate'
 
@@ -285,7 +300,18 @@ def _assemble(older, newer, decision, chosen_atoms, against_atoms, extra_atoms, 
     strongest: dict[str, Atom] = {}
     for a in chosen:  # `chosen` is sorted by (component, tier desc), so the first per component is the strongest
         strongest.setdefault(component(a), a)
+    # Max-pooling alone can retain two E-BODY atoms while discarding the E-DATA atom that actually justified
+    # B+B acceptance. Keep that complete witness, and make support point to it, before filling the audit cap.
+    # A/M acceptance still preserves the strongest atom per component without changing the selected evidence.
+    if supported and not any(a.tier in ('M', 'A') for a in chosen):
+        witness = _corroborating_pair(chosen, component)
+        if witness is not None:
+            for a in witness:
+                strongest[component(a)] = a
     must = list(strongest.values())
+    if len(must) + reserve > cap:
+        raise UnifiedError('PT-UNIFIED-LIMIT', 'L-39 cannot retain the required support and contest evidence',
+                           reason='atoms-cap')
     rest = sorted((a for a in chosen if a not in must), key=lambda a: (-TIER_RANK[a.tier], key(a)))
     keep_chosen = must + rest[:max(0, cap - reserve - len(must))]
     room = cap - len(keep_chosen)
@@ -297,7 +323,8 @@ def _assemble(older, newer, decision, chosen_atoms, against_atoms, extra_atoms, 
     support: dict[str, Support] = {}
     for index, a in enumerate(final):
         if supported and a in chosen_set and a.older_rva is not None and a.newer_rva is not None:
-            support.setdefault(component(a), Support(component=component(a), tier=a.tier, atom_index=index))
+            if a == strongest[component(a)]:
+                support[component(a)] = Support(component=component(a), tier=a.tier, atom_index=index)
     against_index = tuple(i for i, a in enumerate(final) if a in against_set)
     contest = None
     if against_index:

@@ -178,7 +178,13 @@ def test_the_residual_stage_runs_and_backup_b07_switches_it_off(tmp_path):
     assert len(gap) == 1 and gap[0].decision == 'candidate'
     assert [(a.source, a.step, a.tier) for a in gap[0].atoms] == [('pt-ladder', 'P18-layout-gap', 'C')]
     assert full.counts.decisions.candidate == 1 and skipped.counts.decisions.candidate == 0
-    assert [r.older[0].rva for r in store.read_rows(skipped_dir, skipped)] == [0x1000, 0x1200]
+    skipped_rows = list(store.read_rows(skipped_dir, skipped))
+    assert [r.older[0].rva for r in skipped_rows if r.older and r.newer] == [0x1000, 0x1200]
+    assert [(r.older[0].rva, r.decision) for r in skipped_rows if r.older and not r.newer] == [
+        (0x1100, 'older-only')]
+    assert [(r.newer[0].rva, r.decision) for r in skipped_rows if r.newer and not r.older] == [
+        (0x1100, 'newer-only')]
+    assert all(not r.support and r.contest is None for r in skipped_rows if not (r.older and r.newer))
     assert full.result_id != skipped.result_id and full.config_digest != skipped.config_digest
 
 
