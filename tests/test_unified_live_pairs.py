@@ -86,6 +86,7 @@ def test_live_pair_commits_completed_native_run_before_unified(tmp_path, monkeyp
         root = tmp_path / 'case'
 
         def __init__(self):
+            self.root.mkdir()
             self.project = SimpleNamespace(runs=[])
             self.imports = []
 

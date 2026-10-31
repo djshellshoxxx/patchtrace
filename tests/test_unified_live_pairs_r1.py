@@ -37,7 +37,9 @@ def images(tmp_path):
 
 
 @pytest.mark.parametrize('orientation', ['forward', 'swapped'])
-def test_completed_primary_is_persisted_before_real_unified_consumption(tmp_path, monkeypatch, orientation):
+@pytest.mark.parametrize('failed_extraction_first', [False, True])
+def test_completed_primary_is_persisted_before_real_unified_consumption(
+        tmp_path, monkeypatch, orientation, failed_extraction_first):
     """Dropping apply_analysis leaves no completed run and makes the real pipeline reject the project."""
     doc = images(tmp_path)
     backend = BackendConfig('synthetic-python', '/synthetic-ghidra', 123, java_home='/synthetic-java',
@@ -63,11 +65,20 @@ def test_completed_primary_is_persisted_before_real_unified_consumption(tmp_path
         return raw, run
 
     class SyntheticSide:
-        def __init__(self, *args):
-            pass
+        fail_next = failed_extraction_first
+
+        def __init__(self, label, dll, other_sha256, backend, work):
+            self.label, self.work = label, work
 
         def run(self, *args):
-            return {'directory': tmp_path}
+            # The real Side creates this before ingesting. A failed ingest leaves
+            # it behind; a later comparison must have its own staging directory.
+            built = self.work / f'{self.label}-1-ir'
+            built.mkdir()
+            if SyntheticSide.fail_next:
+                SyntheticSide.fail_next = False
+                raise RuntimeError('synthetic ingest failed after staging')
+            return {'directory': built}
 
         def close(self):
             pass
@@ -79,6 +90,10 @@ def test_completed_primary_is_persisted_before_real_unified_consumption(tmp_path
     monkeypatch.setattr(live_pairs.pipeline, 'run_unified',
                         lambda service, options: real_unified(service, replace(options, isolate=False)))
     work = tmp_path / 'work'
+    if failed_extraction_first:
+        first = 'swapped' if orientation == 'forward' else 'forward'
+        with pytest.raises(RuntimeError, match='synthetic ingest failed after staging'):
+            live_pairs.analyse_pair(doc, tmp_path, backend, work, first)
     result = live_pairs.analyse_pair(doc, tmp_path, backend, work, orientation)
     assert result.orientation == orientation and result.rows
     assert any(row.materiality == 'material' for row in result.rows)
