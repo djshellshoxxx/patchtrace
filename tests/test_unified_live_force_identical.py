@@ -28,7 +28,7 @@ def test_flag_default_and_boolean_validation():
                for error in backend._config_errors(forged))
 
 
-def test_equal_images_only_analyzed_when_native_opt_in(fake_runtime):
+def test_equal_images_only_analyzed_when_native_opt_in(fake_runtime):  # noqa: F811 - imported pytest fixture
     root, package, project, config = fake_runtime
     content = (root / 'older.bin').read_bytes()
     (root / 'newer.bin').write_bytes(content)
@@ -70,7 +70,7 @@ def test_equal_images_only_analyzed_when_native_opt_in(fake_runtime):
 @pytest.mark.parametrize('orientation', ['forward', 'swapped'])
 def test_harness_never_counts_an_identical_shortcut(tmp_path, monkeypatch, orientation):
     digest = '0' * 64
-    doc = label_doc('native-aa', 'release', older=digest, newer=digest)
+    doc = label_doc('native-aa', 'aa', older=digest, newer=digest)
     image = tmp_path / 'image.dll'
     image.write_bytes(b'not-executed')
     seen = []

@@ -867,3 +867,14 @@ Done: dock with state matrix, consent, import, changes, copy, go to CVE. Open: r
 - [ ] Open draft integration PR for exact-head Linux/Windows QA, check every job's status and conclusion, and diagnose true failures. For code changes also require native Ghidriff / secondary acceptance; for GUI/packaging require frozen executable smoke.
 - [ ] Perform final semantic conflict/security/persistence/GUI audit, repair with reproducing tests, then merge integration PR to main only when current-head reviews/checks permit.
 - [ ] Update feature-completion and final branch/PR disposition with main/integration SHAs, merged changes and remaining unique work.
+
+
+## GT-01 output diagnostics and acceptance checkpoint (2026-10-30)
+
+- [x] Read-only original 7-Zip quarantine inventory and hashes; confirm output-limit and preserve raw/Markdown diagnostics.
+- [x] Correct PR #140's identical-input fixture to aa without changing the strict label contract; repair three lint findings.
+- [x] Red/green distinct output-limit/unsafe-output-path/output-check-failed diagnostics, including post-exit guard checks and retained failed artifacts; focused 74 passed, 4 skipped.
+- [ ] Complete full local offscreen suite and local native smoke; record actual results.
+- [ ] Resolve/verify repeated Windows Qt discovery timeout (isolated reproduction passes once).
+- [ ] Obtain workflow-capable authentication; dispatch full pinned native matrix on the new exact head and verify evaluated denominators and G-U1–G-U8.
+- [ ] Complete required exact-head cross-platform checks and independent review; merge accepted stack, verify target branch, then write the post-merge handoff. GT-02/GT-03 remain outside this milestone.
