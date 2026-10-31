@@ -6,9 +6,10 @@ from __future__ import annotations
 
 from types import SimpleNamespace
 
+from unified_s6_helpers import label_doc
+
 from patchtrace.backend import BackendConfig
 from tools.unified import live_pairs
-from unified_s6_helpers import label_doc
 
 
 def test_failed_native_both_orientations_keep_redacted_log_without_completion(tmp_path, monkeypatch):
