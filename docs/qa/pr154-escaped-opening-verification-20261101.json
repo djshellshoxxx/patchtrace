@@ -1,0 +1,46 @@
+{
+  "commit": "b6b5495c98b2e102141184d30600892d87c2784c",
+  "parent": "5e008a5e0590a2b7ce325e1e1abdc422e798999b",
+  "branch": "codex/prereg-markdown-boundary-20261101",
+  "red": {
+    "failed": 6,
+    "passed": 91,
+    "seconds": 0.9
+  },
+  "final": {
+    "passed": 138,
+    "seconds": 1.04,
+    "includes_all_previous_123": true
+  },
+  "whole_ruff": "passed src tests tools",
+  "diff_check": "passed",
+  "protected_training_frozen_finalguard": "unchanged versus918653c",
+  "real_corpus_used": false,
+  "final_look_consumed": false,
+  "root_repro": "pr154-escaped-opening-baseline-20261101.json",
+  "primary_sources": "pr154-escaped-opening-primary-20261101.json",
+  "logs": {
+    "pr154-escaped-opening-green-20261101.log": {
+      "sha256": "457e26ef1c0e8ca73efbfb3351708fac02eb74d611ffcd612d09b260a3ddc102",
+      "bytes": 180
+    },
+    "pr154-escaped-opening-red-20261101.log": {
+      "sha256": "901ca154ad5534dd0c518eebddc60d9f259f33263d9d7cf8dc9968d3f3bd8581",
+      "bytes": 14285
+    }
+  },
+  "production_sha256": {
+    "tools/calibration/prereg_gate.py": "30e1f275dfe1f731b8e65aeed0939fc46e0971ce1b7f5e1008563ca3e918d992",
+    "tools/calibration/train.py": "b2017475ccb96310f2dc1b568f2196e07583ac7bc08560fb83829b8d85ed2f20"
+  },
+  "independent_review": {
+    "status": "approved combined final scope; no blocker",
+    "commit": "b6b5495c98b2e102141184d30600892d87c2784c",
+    "reviewer": "/root/ci_review",
+    "tests_passed": 138,
+    "seconds": 1.13,
+    "scoped_ruff": "passed",
+    "full_range_diff_check": "918653c..HEAD clean",
+    "earlier_5e008_alone_approval": "withdrawn"
+  }
+}
