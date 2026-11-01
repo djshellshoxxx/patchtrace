@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+import json
 import platform
 import sys
 import threading
@@ -29,6 +30,7 @@ from ..common import canonical_json, strict_json
 from ..evalcore.engines.ghidriff import MAX_IMPORT_BYTES, normalized
 from ..evalcore.engines.rzdiff import RzDiffProvider
 from . import contracts as C
+from .receipts import validate_spelling, write_new_receipt
 from .research_audit import supplemental_metrics
 from .research_observers import ghidriff_observations
 
@@ -247,10 +249,13 @@ def run_pilot(doc: C.KnownAnswerLabels, store: Path, backend: BackendConfig, wor
 def _receipt_path(work: Path, output: Path) -> Path:
     """Bind a new receipt to the selected private work root before any engine work."""
     work, output = Path(work), Path(output)
+    validate_spelling(output)
     if any(not path.is_absolute() or '..' in path.parts for path in (work, output)):
         raise ValueError('work and receipt paths must be absolute without traversal')
     if any(part.is_symlink() for path in (work, output) for part in (path, *path.parents)):
         raise ValueError('work and receipt paths cannot contain symlinks')
+    if work.is_relative_to(Path(__file__).resolve().parents[3]):
+        raise ValueError('private work and receipt must be outside the repository')
     root = work.resolve()
     if root.is_relative_to(Path(__file__).resolve().parents[3]):
         raise ValueError('private work and receipt must be outside the repository')
@@ -277,8 +282,9 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser.add_argument('--review', type=Path)
     parser.add_argument('--primary-project', type=Path)
     args = parser.parse_args(argv)
+    receipt = None
     try:
-        output = _receipt_path(args.work, args.output)
+        _receipt_path(args.work, args.output)
         doc = C.load_labels(args.labels.read_bytes())
         review = None if args.review is None else strict_json(args.review.read_bytes())
         backend = BackendConfig(str(Path(args.python).absolute()), str(args.ghidra_dir.resolve()),
@@ -286,14 +292,17 @@ def main(argv: Sequence[str] | None = None) -> int:
         receipt = run_pilot(doc, args.store, backend, args.work, rz_diff=args.rz_diff, unified=args.unified,
                             review=review, primary_project=args.primary_project)
         data = C.dump_json(receipt)
-        with _receipt_path(args.work, output).open('xb') as stream:
-            stream.write(data)
+        _receipt_path(args.work, args.output)
+        write_new_receipt(args.output, data)
         print(f'{doc.pair_id}: ' + ', '.join(f'{name}={value["status"]}' for name, value in receipt['engines'].items()))
         if any(v['status'] == 'failed' for v in receipt['engines'].values()):
             return 1
         return 0 if any(v['status'] in {'ok', 'cached', 'partial'} for v in receipt['engines'].values()) else 3
     except (ValueError, OSError) as exc:
         print(f'pilot error: {exc}', file=sys.stderr)
+        if receipt is not None:
+            print(json.dumps({'command': 'research-pilot', 'status': 'error',
+                              'reason': str(exc)[:4000], 'receipt': receipt}))
         return 2
 
 

@@ -1210,3 +1210,7 @@ Calls panel (id graph): `callgraph/panel.py` (PanelSpec), `panel_qt.py` (widgets
 |---|---|---|
 | `kbcorrelation/investigation_qt.py` | Offline KB/CVE investigation controls and controller: advisory import, local search, explicit product scope, verified local pair preview and isolated new-project creation over existing service contracts and TaskRunner. No socket APIs or target execution. | `tests/test_ui_kb_investigation.py` |
 
+
+### R1 receipt publication (2026-11-01)
+
+`tools/calibration/tier_r/receipts.py`: dev-only new receipt publication; POSIX directory-relative no-follow opens and ancestor identity checks, Windows directory-listing handles denying write/delete sharing and reparse/device rejection. Used by `research_build.py` and `research_pilot.py`; exclusive creation with no unsafe fallback. Tests: `tests/test_tier_r_receipt_parent_race.py`.
