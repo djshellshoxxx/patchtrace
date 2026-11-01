@@ -31,6 +31,7 @@ from .cvrf import (
     SourceError,
     StatusRow,
     build_edges,
+    guard_json_dialect,
     load_json,
     parse_cvrf,
     parse_json_document,
@@ -126,6 +127,7 @@ def _import_plain(raw: bytes, now: str, advisory: AdvisoryPort | None, limits: K
     if head != b'{':
         raise SourceError('PT-KBC-SOURCE', 'CVRF dialect unknown: the document is neither a JSON object nor XML')
     value = load_json(raw, limits)
+    guard_json_dialect(value)
     document = value.get('document') if isinstance(value, dict) else None
     if isinstance(value, dict) and 'dialect' not in value and isinstance(document, dict) \
             and 'csaf_version' in document:

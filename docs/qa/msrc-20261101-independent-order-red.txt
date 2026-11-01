@@ -1,0 +1,17 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+______ test_fetch_boundary_retains_existing_authenticity_and_month_checks ______
+tests/test_kbc_msrc_cvrf.py:316: in test_fetch_boundary_retains_existing_authenticity_and_month_checks
+    from patchtrace.kbcorrelation.sources.cvrf_fetch import FetchedDocument, to_imported
+src/patchtrace/kbcorrelation/sources/cvrf_fetch.py:35: in <module>
+    from ...acquisition import transport as tr
+src/patchtrace/acquisition/transport.py:12: in <module>
+    import http.client
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/http/client.py:1498: in <module>
+    import ssl
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/ssl.py:959: in <module>
+    class SSLSocket(socket):
+E   TypeError: function() argument 'code' must be code, not str
+=========================== short test summary info ============================
+FAILED tests/test_kbc_msrc_cvrf.py::test_fetch_boundary_retains_existing_authenticity_and_month_checks
+1 failed in 0.49s

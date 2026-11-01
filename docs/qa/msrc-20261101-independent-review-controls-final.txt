@@ -1,0 +1,5 @@
+{"projection_exact_scalar_matches": 394}
+{"paired_xml_type3_memberships": 2684, "document_status2": "Final"}
+{"release": "2024-Aug", "sha256": "adc6f7efbe64e7fe8c23a7a9d69efb1969ed33501c802b3a456812957375d2da", "bytes": 2652455, "counts": {"vulnerabilities": 298, "edges": 1951, "mention_only": 0, "disputed": 0, "edge_rows": 1951, "scopes": 279, "problems": 286}, "all_edges_statuses_problems_resolved": true}
+{"release": "2026-Oct", "sha256": "6cc40e5d3f2036d14b0413ad6604ca20a6a3ca9e97079c51ea8cfbc3f0f22c68", "bytes": 29658577, "counts": {"vulnerabilities": 3424, "edges": 29694, "mention_only": 0, "disputed": 0, "edge_rows": 29694, "scopes": 407, "problems": 3359}, "all_edges_statuses_problems_resolved": true}
+{"independent_limit_controls": 5, "unknown_enum_controls": 8, "result": "pass"}

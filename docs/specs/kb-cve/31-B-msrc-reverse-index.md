@@ -59,6 +59,55 @@ Example synthetic normalized claim:
 
 CVE count is counted per distinct canonical CVE and product row, while records from different months/revisions remain separately visible. Do not collapse a KB mentioned by a revision into a new vendor-remediation edge without checking the kind.
 
+### B3.1. Bounded native MSRC monthly JSON adapter (2026-11-01)
+
+`msrc-cvrf-json/1` accepts the native v3 API monthly JSON structure captured from the official
+`/cvrf/2024-Aug` and `/cvrf/2026-Oct` routes. The prior `cvrf-json/0` and `cvrf-xml/0`
+synthetic dialects remain supported; native XML and unknown structural dialects remain unsupported.
+Dispatch requires native `DocumentType.Value = Security Update`, a monthly
+`DocumentTracking.Identification.ID.Value`, final document status `2` (paired official XML says
+`Final`), `ProductTree.FullProductName[]`, and `Vulnerability[]`. Document `Version` is revision
+metadata, not a format-version declaration. Wrong root shapes, mixed synthetic/native/CSAF markers,
+and unverified document-status codes fail with `PT-KBC-SOURCE`. The public importer applies the
+ambiguity guard before dispatching to either the CVRF parser or the real CSAF validator; neither
+dialect may hide contradictory fields as tolerated extensions.
+
+Read native fields directly; do not convert to a fictional lowercase document. Edge/status/problem
+pointers use the original key case and array positions, e.g. `/Vulnerability/193/Remediations/0`.
+Source IDs/digests and stored raw objects refer to the exact imported bytes. Derived factual fixtures
+are explicitly labelled projections with both capture and fixture hashes and upstream index maps;
+their pointers resolve in the fixture, not the full capture. Local import remains unverified, and
+fetch authenticity still comes exclusively from the existing consented transport. No network route,
+consent, host policy, binary acquisition or CVE-to-function proof changes in this adapter.
+
+`FullProductName` is the product dictionary, following the pinned official PowerShell sample.
+Do not re-expand the duplicate descriptive `Branch` tree or fabricate product groups. Duplicate
+product IDs are ambiguous and produce no edges. Keep release/architecture distinctions from the
+existing candidate-only product catalogue. Type `2` remediation `Description.Value` must contain
+an exact KB per line; other types cannot make vendor-remediation edges. `FixedBuild`, `SubType`, and
+the vendor's spelled `Supercedence` field are retained conservatively (comma-separated exact KBs,
+not prose extraction). No URL/title/note scan manufactures remediation facts. Invalid or oversized
+fields are diagnosed without truncating a partial KB into a claim.
+
+Only numeric product status `3` is mapped to `Known Affected`: the paired official JSON/XML
+capture establishes identical CVE/product memberships. Other numeric values, including `4`, are
+retained as unknown status rows with their original membership pointers and a diagnostic; this
+slice does **not** claim their meaning. Unknown/missing/malformed status applicability withholds
+native vendor-fix rows for the affected product (or vulnerability when membership is malformed),
+never silently treating it as affected or not-affected. Known negative/disputed behavior in the
+existing synthetic and CSAF adapters is unchanged. Wider native enum support remains an open
+compatibility gate requiring primary evidence, not guessed enum order.
+
+All document and vulnerability revision histories remain in the raw snapshot; the pure native
+parser also retains revision numbers, raw dates and pointers. A native current-release timestamp
+without a zone is diagnosed and is **not** coerced to UTC or retrieval time. A same-month group
+containing native snapshots with unknown revision instants, or tied distinct native snapshots,
+keeps all snapshots active with `REVISION_ORDER_UNKNOWN`; no digest tie-break declares one newest.
+Comparable explicit-zone revisions retain normal latest-instant selection and all prior history.
+This is a bounded adapter acceptance, not full GT06 completion, complete historical MSRC coverage,
+or evidence that a CVE was repaired in any particular function. The existing 32 MiB implementation
+limit remains unchanged; captures exceeding limits fail explicitly.
+
 ## B4. Source conflict and update semantics
 
 Advisory revision ordering is defined by provider tracking revision sequence and issued/updated fields when available; raw retrieval timestamp is NOT a substitute for advisory revision. Handle revocation: latest vendor revision may withdraw or narrow earlier product applicability; mark affected earlier links 'superseded' and retain source snapshot.
