@@ -1,0 +1,63 @@
+{
+  "base": "25bfc9626bfa18d0b73d3897f8cfe50949df5733",
+  "head": "59e80beb4d12f7e05f76b65f900390d33902853f",
+  "commit": "Reuse verified immutable source bytes and bound identity preparation",
+  "changed_paths": [
+    "docs/specs/multi-engine-orchestration.md",
+    "docs/specs/unified-engine/02-data-model.md",
+    "src/patchtrace/enrichment/storage.py",
+    "src/patchtrace/secondary/__init__.py",
+    "src/patchtrace/unified/compute.py",
+    "src/patchtrace/unified/keys.py",
+    "src/patchtrace/unified/pipeline.py",
+    "src/patchtrace/unified/sources/__init__.py",
+    "src/patchtrace/unified/sources/manual.py",
+    "src/patchtrace/unified/sources/secondary.py",
+    "tests/test_unified_identity_budget_20261101.py"
+  ],
+  "source_sha256": {
+    "docs/specs/multi-engine-orchestration.md": "da826ec086a4cb749961a6578be47f673a7b2854d11f9b282a3f1c984549ff7f",
+    "docs/specs/unified-engine/02-data-model.md": "d3229559439840618fef730526f89ff1d5e45bf6b560eec03f016069c1876215",
+    "src/patchtrace/enrichment/storage.py": "e908d0ca8651a87e23281f92b006bfe17a6d3aa8752f4bf46817e8d75f8c9321",
+    "src/patchtrace/secondary/__init__.py": "6f67371db224b9464422d57be358c1d03e1fc7db8be5b6a0c40a8ebc55add598",
+    "src/patchtrace/unified/compute.py": "8682411da325f90849428bf23cccb1c25ceb5a0e879473e07085e571bc80f9d0",
+    "src/patchtrace/unified/keys.py": "97b41a1b565bd9bfca4bf97dc601cd89d18805b9177c398b7844e84bea5e11b4",
+    "src/patchtrace/unified/pipeline.py": "4d4813784746a7b221bfa6d09697d0e32686346a0a71461d42e7627a068611b3",
+    "src/patchtrace/unified/sources/__init__.py": "78c2cab2edecc59081c0fd6bf38b618bec9cc3263a853ff98fe333b4beb323c9",
+    "src/patchtrace/unified/sources/manual.py": "c7291844266d579ae501b6ce4ca423803cfa68f15587d8c62a614d6f7316be49",
+    "src/patchtrace/unified/sources/secondary.py": "319810c276e3f0eda4307d43a93693829cad16e84daa00cd5d64112c03a23e4d",
+    "tests/test_unified_identity_budget_20261101.py": "202dfc473d2bccf62fc4b6941bb0606943cafe2df31a7c6fd90ee9659a1123e4"
+  },
+  "evidence": {
+    "red": "3 targeted cancellation/cache/owner-serialization failures",
+    "final_offscreen_subset": "261 passed,28 deselected in6.92s",
+    "earlier_overlapping_pure_store_batch": "206 passed in3.43s",
+    "ruff": "src tests tools passed",
+    "schema_generation": "passed,no drift",
+    "diff_hygiene": "passed",
+    "worktree": "clean"
+  },
+  "preserved_attempts": {
+    "integration_without_offscreen": "Aborted at QApplication setup; missing QT_QPA_PLATFORM=offscreen,not acceptance. Corrected environment used for final bounded run."
+  },
+  "log_sha256": {
+    "identity-budget-red-20261101.log": "ba4bdcb85ffd383e7add66a1faa61b4e764878d2cb2280e7930d8659e5033a2a",
+    "identity-budget-final-focused-20261101.log": "5a942d18c22c648740eb7ffe8337116847fd823cc5e748ff3afe24efb1a726c0",
+    "identity-budget-integration-20261101.log": "7969d95bd27e7f2bce485ff357242a5f809df49e744fea7a2c8934b7eeca1bd4",
+    "identity-budget-integration-offscreen-20261101.log": "2ad9aa0dded55b6e4856c35c6997f8c1ec5e0be4299d0c261b6d4e3090c68197"
+  },
+  "semantics": [
+    "EnrichmentStore exposes exact already-verified immutable body JSON/checksum; no NFC in existing store encoding.",
+    "Owner repeated planning performs no SecondaryMatchSet.model_dump or per-record hashing/sorting.",
+    "Worker independently rehashes/revalidates transported body; unchecked transported digest is never trusted.",
+    "Per-immutable-instance source/order caches reset on dataclasses.replace; no original-entry-ID global cache.",
+    "Typed tuple ordering replaces SHA-per-record sorting; added passes and chunked encoding check budgets.",
+    "Original Atom.ref and upstream raw file SHA retained; old wire schema remains readable.",
+    "Invalid historical secondary rows keep existing skip-with-warning behavior; no new visible limitation is claimed."
+  ],
+  "limitations": [
+    "Independent review/adoption/full cross-platform/native gates pending.",
+    "Original4 boundary regression receipts remain separate; these test counts overlap and are not additive.",
+    "No full or performance suite run concurrently with root verification."
+  ]
+}

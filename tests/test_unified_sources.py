@@ -248,27 +248,29 @@ def test_bindiff_algorithm_tier_map_and_stub_rows_are_a_recorded_limitation():
     assert dict(first.native) == {'similarity': '0.97', 'confidence': '0.99',
                                   'algorithm': 'function: name hash matching'}
     assert out.limitations == ('bindiff-stub-rows-not-identified',)
-    assert out.source_refs == (SourceRef(source='bindiff', entry_id='bd-entry', file_sha256='d' * 64, version='8.0'),)
+    [ref] = out.source_refs
+    assert (ref.source, ref.file_sha256, ref.version) == ('bindiff', 'd' * 64, '8.0')
+    assert len(ref.entry_id) == 64 and ref.entry_id != 'bd-entry'  # normalized content, not mutable store slot
 
 
 def test_bindiff_alternatives_become_rank_atoms():
     candidate = bd(0x1000, 0x1100, 'function: hash matching')
     other = bd(0x1000, 0x1180, 'function: hash matching')
     rows = [bd(0x1000, 0x1080)]
-    alts = [alternative('older', 0x1000, candidate, rank=2), alternative('older', 0x1000, other, rank=3),
-            alternative('older', 0x1000, bd(0x1000, 0x1200), rank=2, source='rz-diff')]
+    alts = [alternative('older', 0x1000, candidate, rank=2), alternative('older', 0x1000, other, rank=3)]
     out = run(SecondaryAdapter(), inputs([], secondary=[loaded(bindiff_set(rows, alternatives=alts))]))
     ranked = {(a.older_rva, a.newer_rva): a for a in out.atoms if 'alt-rank' in a.step}
     assert set(ranked) == {(0x1000, 0x1100), (0x1000, 0x1180)}
     assert (ranked[(0x1000, 0x1100)].step, ranked[(0x1000, 0x1100)].tier, ranked[(0x1000, 0x1100)].cls) == (
         'hash matching alt-rank-2', 'C', 'E-BODY')
     assert ranked[(0x1000, 0x1180)].step == 'hash matching alt-rank-3'
-    assert len(out.atoms) == 3  # the primary row plus two bindiff alternatives; the rz-diff-sourced one is not used
+    assert len(out.atoms) == 3  # the primary row plus two identity-consistent bindiff alternatives
 
 
 def test_rzdiff_shared_newer_endpoint_is_non_exclusive():
-    rows = [rz(0x1000, 0x1080), rz(0x1010, 0x1080), rz(0x1100, 0x1180), rz(0x1200, None), rz(None, 0x1300)]
-    out = run(SecondaryAdapter(), inputs([], secondary=[loaded(rzdiff_set(rows))]))
+    rows = [rz(0x1000, 0x1080, version='0.9.0'), rz(0x1010, 0x1080, version='0.9.0'),
+            rz(0x1100, 0x1180, version='0.9.0'), rz(0x1200, None, version='0.9.0'), rz(None, 0x1300, version='0.9.0')]
+    out = run(SecondaryAdapter(), inputs([], secondary=[loaded(rzdiff_set(rows, version='0.9.0'))]))
     found = pairs(out)
     assert found[(0x1000, 0x1080)].cardinality == found[(0x1010, 0x1080)].cardinality == 'non-exclusive'
     assert found[(0x1100, 0x1180)].cardinality == '1:1'
@@ -278,8 +280,11 @@ def test_rzdiff_shared_newer_endpoint_is_non_exclusive():
 
 
 def test_rzdiff_similarity_text_is_native_only():
-    a = run(SecondaryAdapter(), inputs([], secondary=[loaded(rzdiff_set([rz(0x1000, 0x1080, sim=100)]))]))
-    b = run(SecondaryAdapter(), inputs([], secondary=[loaded(rzdiff_set([rz(0x1000, 0x1080, sim=999)]))]))
+    # Unaffected synthetic version isolates display-only scoring; 0.9.1 is quarantined separately.
+    a = run(SecondaryAdapter(), inputs([], secondary=[loaded(rzdiff_set(
+        [rz(0x1000, 0x1080, sim=100, version='0.9.0')], version='0.9.0'))]))
+    b = run(SecondaryAdapter(), inputs([], secondary=[loaded(rzdiff_set(
+        [rz(0x1000, 0x1080, sim=999, version='0.9.0')], version='0.9.0'))]))
     strip = [[(x.source, x.step, x.tier, x.cls, x.cardinality, x.older_rva, x.newer_rva) for x in o.atoms]
              for o in (a, b)]
     assert strip[0] == strip[1] and a.atoms != b.atoms  # only the display text differs
@@ -296,7 +301,9 @@ def test_secondary_set_of_another_pair_is_refused_with_a_limitation_but_stays_an
     out = run(SecondaryAdapter(), inputs([], secondary=[loaded(foreign, 'bd-entry')]))
     assert out.atoms == () and out.limitations == ('bindiff-pair-mismatch',)
     # the refusal changes the result (it is degrading), so the set is part of its identity: same id, same content
-    assert out.source_refs == (SourceRef(source='bindiff', entry_id='bd-entry', file_sha256='d' * 64, version='8.0'),)
+    [ref] = out.source_refs
+    assert (ref.source, ref.file_sha256, ref.version) == ('bindiff', 'd' * 64, '8.0')
+    assert len(ref.entry_id) == 64 and ref.entry_id != 'bd-entry'  # refused content also participates in identity
 
 
 def test_secondary_set_with_mixed_address_basis_is_not_comparable():

@@ -1,0 +1,62 @@
+{
+  "file": "2024-Aug.json",
+  "elapsed_s": 0.203,
+  "counts": {
+    "vulnerabilities": 298,
+    "edges": 1951,
+    "mention_only": 0,
+    "disputed": 0,
+    "edge_rows": 1951,
+    "scopes": 279,
+    "problems": 286
+  },
+  "source": {
+    "contract": "kbcorrelation/1",
+    "doc_id": "6da8de0921c8a702d227e4fbfbc1f2d806758302a04e80fb9fa8f6f5eeab9a03",
+    "kind": "cvrf-month",
+    "sha256": "adc6f7efbe64e7fe8c23a7a9d69efb1969ed33501c802b3a456812957375d2da",
+    "size": 2652455,
+    "origin": "local-import",
+    "uri": null,
+    "retrieved_at": "2026-11-01T12:00:00Z",
+    "release_id": "2024-Aug",
+    "current_release_date": null,
+    "dialect": "msrc-cvrf-json/1",
+    "parser_version": 1,
+    "authenticity": "unverified-local-file",
+    "lineage": "msrc",
+    "object_path": "objects/ad/adc6f7efbe64e7fe8c23a7a9d69efb1969ed33501c802b3a456812957375d2da.gz"
+  },
+  "problem_codes": {
+    "DATE_ZONE_UNKNOWN": 1,
+    "KB_UNPARSED": 282,
+    "FIXED_BUILD_UNPARSED": 2,
+    "CWE_MULTIPLE": 1
+  },
+  "sample_edge": {
+    "contract": "kbcorrelation/1",
+    "edge_id": "543155be17aea4003045383e28f521a9287ddaa7b5b7e2289698bda8837e4de9",
+    "kb": "KB5041160",
+    "cve": "CVE-2024-38193",
+    "scope_id": "69764c202840de4de63b57f1a66536c89bb58f0742eaa70352c488529ce1d718",
+    "relation": "vendor-remediation",
+    "ref": {
+      "doc_id": "6da8de0921c8a702d227e4fbfbc1f2d806758302a04e80fb9fa8f6f5eeab9a03",
+      "pointer": "/Vulnerability/193/Remediations/6",
+      "assertion": "advisory_fact"
+    },
+    "release_id": "2024-Aug",
+    "fixed_build": "20348.2655",
+    "supersedes": [
+      "KB5040437"
+    ],
+    "sub_type": "Security Update",
+    "product_status": {
+      "value": "Known Affected",
+      "pointer": "/Vulnerability/193/ProductStatuses/0/ProductID/6"
+    },
+    "conflict_ids": [],
+    "lineage": "msrc"
+  },
+  "all_edge_and_problem_pointers_resolved": true
+}

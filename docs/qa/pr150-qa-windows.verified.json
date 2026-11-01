@@ -1,0 +1,390 @@
+{
+  "artifact_id": 13083314705,
+  "file": "pr150-qa-windows.zip",
+  "outer_sha256": "e950f1561f2add21c0f1bfc3ae3bb42c4dfb71702e980487c5d07f00616552e9",
+  "members": [
+    "qa-results.xml",
+    "qa-leg-result.txt"
+  ],
+  "inner_packages": [],
+  "suite": {
+    "name": "pytest",
+    "errors": "0",
+    "failures": "0",
+    "skipped": "99",
+    "tests": "18607",
+    "time": "2494.342",
+    "timestamp": "2026-11-01T11:59:33.713377+00:00",
+    "hostname": "runnervmdaln5"
+  },
+  "receipt_tests": [
+    {
+      "class": "tests.test_tier_r_build_receipts_r1",
+      "name": "test_distinct_recipes_for_one_artifact_retain_both_receipts",
+      "seconds": "0.011",
+      "outcomes": []
+    },
+    {
+      "class": "tests.test_tier_r_build_receipts_r1",
+      "name": "test_equal_rebuild_is_idempotent_without_rewriting_immutable_record",
+      "seconds": "0.010",
+      "outcomes": []
+    },
+    {
+      "class": "tests.test_tier_r_build_receipts_r1",
+      "name": "test_tampered_existing_receipt_fails_and_preserves_legacy_record",
+      "seconds": "0.012",
+      "outcomes": []
+    },
+    {
+      "class": "tests.test_tier_r_build_receipts_r1",
+      "name": "test_observing_new_build_does_not_invent_receipt_for_legacy_history",
+      "seconds": "0.007",
+      "outcomes": []
+    },
+    {
+      "class": "tests.test_tier_r_build_receipts_r1",
+      "name": "test_failed_atomic_publication_preserves_existing_provenance[unsupported-filesystem]",
+      "seconds": "0.008",
+      "outcomes": []
+    },
+    {
+      "class": "tests.test_tier_r_build_receipts_r1",
+      "name": "test_failed_atomic_publication_preserves_existing_provenance[permission-denied]",
+      "seconds": "0.009",
+      "outcomes": []
+    },
+    {
+      "class": "tests.test_tier_r_receipt_parent_race",
+      "name": "test_parent_replacement_at_final_create_cannot_redirect_receipt[False-build]",
+      "seconds": "0.000",
+      "outcomes": [
+        "skipped"
+      ]
+    },
+    {
+      "class": "tests.test_tier_r_receipt_parent_race",
+      "name": "test_parent_replacement_at_final_create_cannot_redirect_receipt[False-pilot]",
+      "seconds": "0.000",
+      "outcomes": [
+        "skipped"
+      ]
+    },
+    {
+      "class": "tests.test_tier_r_receipt_parent_race",
+      "name": "test_parent_replacement_at_final_create_cannot_redirect_receipt[True-build]",
+      "seconds": "0.000",
+      "outcomes": [
+        "skipped"
+      ]
+    },
+    {
+      "class": "tests.test_tier_r_receipt_parent_race",
+      "name": "test_parent_replacement_at_final_create_cannot_redirect_receipt[True-pilot]",
+      "seconds": "0.000",
+      "outcomes": [
+        "skipped"
+      ]
+    },
+    {
+      "class": "tests.test_tier_r_receipt_parent_race",
+      "name": "test_late_existing_receipt_preserves_all_run_evidence[build]",
+      "seconds": "0.007",
+      "outcomes": []
+    },
+    {
+      "class": "tests.test_tier_r_receipt_parent_race",
+      "name": "test_late_existing_receipt_preserves_all_run_evidence[pilot]",
+      "seconds": "0.011",
+      "outcomes": []
+    },
+    {
+      "class": "tests.test_tier_r_receipt_parent_race",
+      "name": "test_link_substituted_between_missing_parent_creation_and_open_is_rejected",
+      "seconds": "0.000",
+      "outcomes": [
+        "skipped"
+      ]
+    },
+    {
+      "class": "tests.test_tier_r_receipt_parent_race",
+      "name": "test_special_destination_is_never_opened_or_replaced[fifo]",
+      "seconds": "0.000",
+      "outcomes": [
+        "skipped"
+      ]
+    },
+    {
+      "class": "tests.test_tier_r_receipt_parent_race",
+      "name": "test_special_destination_is_never_opened_or_replaced[symlink]",
+      "seconds": "0.000",
+      "outcomes": [
+        "skipped"
+      ]
+    },
+    {
+      "class": "tests.test_tier_r_receipt_parent_race",
+      "name": "test_special_destination_is_never_opened_or_replaced[hardlink]",
+      "seconds": "0.000",
+      "outcomes": [
+        "skipped"
+      ]
+    },
+    {
+      "class": "tests.test_tier_r_receipt_parent_race",
+      "name": "test_write_failure_preserves_complete_completed_receipt[build]",
+      "seconds": "0.006",
+      "outcomes": []
+    },
+    {
+      "class": "tests.test_tier_r_receipt_parent_race",
+      "name": "test_write_failure_preserves_complete_completed_receipt[pilot]",
+      "seconds": "0.011",
+      "outcomes": []
+    },
+    {
+      "class": "tests.test_tier_r_receipt_parent_race",
+      "name": "test_failed_stream_construction_closes_the_created_descriptor",
+      "seconds": "0.000",
+      "outcomes": [
+        "skipped"
+      ]
+    },
+    {
+      "class": "tests.test_tier_r_receipt_parent_race",
+      "name": "test_missing_anchoring_primitive_fails_before_creating_any_output",
+      "seconds": "0.000",
+      "outcomes": [
+        "skipped"
+      ]
+    },
+    {
+      "class": "tests.test_tier_r_receipt_parent_race",
+      "name": "test_windows_open_parents_deny_replacement_during_publication[False-build]",
+      "seconds": "0.020",
+      "outcomes": []
+    },
+    {
+      "class": "tests.test_tier_r_receipt_parent_race",
+      "name": "test_windows_open_parents_deny_replacement_during_publication[False-pilot]",
+      "seconds": "0.018",
+      "outcomes": []
+    },
+    {
+      "class": "tests.test_tier_r_receipt_parent_race",
+      "name": "test_windows_open_parents_deny_replacement_during_publication[True-build]",
+      "seconds": "0.014",
+      "outcomes": []
+    },
+    {
+      "class": "tests.test_tier_r_receipt_parent_race",
+      "name": "test_windows_open_parents_deny_replacement_during_publication[True-pilot]",
+      "seconds": "0.019",
+      "outcomes": []
+    },
+    {
+      "class": "tests.test_tier_r_receipt_parent_race",
+      "name": "test_windows_in_place_junction_mutation_is_denied[build]",
+      "seconds": "0.017",
+      "outcomes": []
+    },
+    {
+      "class": "tests.test_tier_r_receipt_parent_race",
+      "name": "test_windows_in_place_junction_mutation_is_denied[pilot]",
+      "seconds": "0.021",
+      "outcomes": []
+    },
+    {
+      "class": "tests.test_tier_r_receipt_parent_race",
+      "name": "test_windows_existing_reparse_writer_blocks_publication[build]",
+      "seconds": "0.006",
+      "outcomes": []
+    },
+    {
+      "class": "tests.test_tier_r_receipt_parent_race",
+      "name": "test_windows_existing_reparse_writer_blocks_publication[pilot]",
+      "seconds": "0.011",
+      "outcomes": []
+    },
+    {
+      "class": "tests.test_tier_r_receipt_parent_race",
+      "name": "test_windows_junction_parent_is_rejected_before_work[build]",
+      "seconds": "0.014",
+      "outcomes": []
+    },
+    {
+      "class": "tests.test_tier_r_receipt_parent_race",
+      "name": "test_windows_junction_parent_is_rejected_before_work[pilot]",
+      "seconds": "0.016",
+      "outcomes": []
+    },
+    {
+      "class": "tests.test_tier_r_receipt_parent_race",
+      "name": "test_windows_special_path_is_rejected_before_build[NUL.json]",
+      "seconds": "0.003",
+      "outcomes": []
+    },
+    {
+      "class": "tests.test_tier_r_receipt_parent_race",
+      "name": "test_windows_special_path_is_rejected_before_build[COM1.json]",
+      "seconds": "0.003",
+      "outcomes": []
+    },
+    {
+      "class": "tests.test_tier_r_receipt_parent_race",
+      "name": "test_windows_special_path_is_rejected_before_build[receipt.json:stream.json]",
+      "seconds": "0.003",
+      "outcomes": []
+    },
+    {
+      "class": "tests.test_tier_r_receipt_parent_race",
+      "name": "test_windows_special_path_is_rejected_before_build[alias. /receipt.json]",
+      "seconds": "0.003",
+      "outcomes": []
+    },
+    {
+      "class": "tests.test_tier_r_research_build",
+      "name": "test_cli_writes_json_receipt_and_reports_blocked",
+      "seconds": "0.015",
+      "outcomes": []
+    },
+    {
+      "class": "tests.test_tier_r_research_build",
+      "name": "test_cli_invalid_receipt_is_rejected_before_building[existing]",
+      "seconds": "0.004",
+      "outcomes": []
+    },
+    {
+      "class": "tests.test_tier_r_research_build",
+      "name": "test_cli_invalid_receipt_is_rejected_before_building[destination-symlink]",
+      "seconds": "0.004",
+      "outcomes": []
+    },
+    {
+      "class": "tests.test_tier_r_research_build",
+      "name": "test_cli_invalid_receipt_is_rejected_before_building[dangling-destination]",
+      "seconds": "0.005",
+      "outcomes": []
+    },
+    {
+      "class": "tests.test_tier_r_research_build",
+      "name": "test_cli_invalid_receipt_is_rejected_before_building[parent-symlink]",
+      "seconds": "0.006",
+      "outcomes": []
+    },
+    {
+      "class": "tests.test_tier_r_research_build",
+      "name": "test_cli_invalid_receipt_is_rejected_before_building[dangling-parent]",
+      "seconds": "0.004",
+      "outcomes": []
+    },
+    {
+      "class": "tests.test_tier_r_research_build",
+      "name": "test_cli_invalid_receipt_is_rejected_before_building[relative]",
+      "seconds": "0.004",
+      "outcomes": []
+    },
+    {
+      "class": "tests.test_tier_r_research_build",
+      "name": "test_cli_invalid_receipt_is_rejected_before_building[not-json]",
+      "seconds": "0.004",
+      "outcomes": []
+    },
+    {
+      "class": "tests.test_tier_r_research_build",
+      "name": "test_cli_invalid_receipt_is_rejected_before_building[repository]",
+      "seconds": "0.004",
+      "outcomes": []
+    },
+    {
+      "class": "tests.test_tier_r_research_build",
+      "name": "test_cli_parent_symlink_appearing_during_build_cannot_redirect_receipt",
+      "seconds": "0.006",
+      "outcomes": []
+    },
+    {
+      "class": "tests.test_tier_r_research_build",
+      "name": "test_cli_new_json_receipt_creates_validated_parents_and_publishes",
+      "seconds": "0.015",
+      "outcomes": []
+    },
+    {
+      "class": "tests.test_tier_r_research_build",
+      "name": "test_pre_build_path_failure_does_not_invent_a_matrix_receipt",
+      "seconds": "0.004",
+      "outcomes": []
+    },
+    {
+      "class": "tests.test_tier_r_research_pilot",
+      "name": "test_cli_rejects_unsafe_receipt_before_engine_work[outside]",
+      "seconds": "0.007",
+      "outcomes": []
+    },
+    {
+      "class": "tests.test_tier_r_research_pilot",
+      "name": "test_cli_rejects_unsafe_receipt_before_engine_work[traversal]",
+      "seconds": "0.005",
+      "outcomes": []
+    },
+    {
+      "class": "tests.test_tier_r_research_pilot",
+      "name": "test_cli_rejects_unsafe_receipt_before_engine_work[relative]",
+      "seconds": "0.005",
+      "outcomes": []
+    },
+    {
+      "class": "tests.test_tier_r_research_pilot",
+      "name": "test_cli_rejects_unsafe_receipt_before_engine_work[nested]",
+      "seconds": "0.007",
+      "outcomes": []
+    },
+    {
+      "class": "tests.test_tier_r_research_pilot",
+      "name": "test_cli_rejects_unsafe_receipt_before_engine_work[extension]",
+      "seconds": "0.005",
+      "outcomes": []
+    },
+    {
+      "class": "tests.test_tier_r_research_pilot",
+      "name": "test_cli_rejects_unsafe_receipt_before_engine_work[repository]",
+      "seconds": "0.007",
+      "outcomes": []
+    },
+    {
+      "class": "tests.test_tier_r_research_pilot",
+      "name": "test_cli_preserves_existing_receipt_before_engine_work",
+      "seconds": "0.008",
+      "outcomes": []
+    },
+    {
+      "class": "tests.test_tier_r_research_pilot",
+      "name": "test_cli_rejects_symlinked_receipt_paths[file]",
+      "seconds": "0.008",
+      "outcomes": []
+    },
+    {
+      "class": "tests.test_tier_r_research_pilot",
+      "name": "test_cli_rejects_symlinked_receipt_paths[work-directory]",
+      "seconds": "0.008",
+      "outcomes": []
+    },
+    {
+      "class": "tests.test_tier_r_research_pilot",
+      "name": "test_cli_exclusively_publishes_new_contained_receipt",
+      "seconds": "0.019",
+      "outcomes": []
+    },
+    {
+      "class": "tests.test_tier_r_research_pilot",
+      "name": "test_cli_preserves_receipt_created_during_analysis",
+      "seconds": "0.033",
+      "outcomes": []
+    },
+    {
+      "class": "tests.test_unified_corpus_catalogue",
+      "name": "test_tree_digest_is_stable_order_free_and_ignores_the_fetch_receipt",
+      "seconds": "0.012",
+      "outcomes": []
+    }
+  ]
+}

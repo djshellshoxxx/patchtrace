@@ -28,14 +28,14 @@ GOOD = json.dumps([{'similarity': 0.5, 'type': 'PARTIAL', 'original': {'addr': 1
 
 
 class PyEngine(RzDiffAdapter):
-    """rz-diff parsing, but the 'executable' is this Python running a snippet."""
+    """Unaffected synthetic rz-diff schema version; the executable is Python, never native compatibility evidence."""
 
     def __init__(self, code: str, engine_id='rz-diff'):
         super().__init__()
         self.code, self.id = code, engine_id
 
     def probe(self, job_env, cancel):
-        return Capability(engine='rz-diff', supported=True, version='0.9.1', path=sys.executable,
+        return Capability(engine='rz-diff', supported=True, version='0.9.0', path=sys.executable,
                           supports_json=True)
 
     def argv(self, cap, job):

@@ -1,0 +1,28 @@
+"""Only tiny, real Qt path controls; deliberate no-ops are negative controls, never acceptance results."""
+from tools.unified import bench, bench_workloads
+from patchtrace.ui_unified import UnifiedTableModel
+
+for method in ('sort', 'filter'):
+    name = 'sort' if method == 'sort' else 'set_filter'
+    original = getattr(UnifiedTableModel, name)
+    if method == 'sort':
+        setattr(UnifiedTableModel, name, lambda self, *a, **k: None)
+    else:
+        def no_filter(self, **filters):
+            if 'search' not in filters:
+                return original(self, **filters)
+        setattr(UnifiedTableModel, name, no_filter)
+    try:
+        work = bench_workloads.ui_calls(25, 23, 13)
+    finally:
+        setattr(UnifiedTableModel, name, original)
+    result = bench.report(bench.evaluate([bench._row('ui_calls', 25, work=work)]), {})
+    assert result.verdict == 'fail'
+    assert any(c.name == 'ui-operations-correct' and not c.ok for c in result.rows[0].checks)
+    print(f'PASS: real Qt {method} no-op rejected; correctness={work["counts"][method+"_correct"]}, '
+          f'filtered_rows={work["counts"]["filtered_rows"]}')
+
+failed = bench.measure('facts', 25, seed=23, insns=13, timeout=0.000001)
+assert failed['status'] == 'failed' and failed['error'].startswith('timeout')
+assert failed['counts'] == {'seed':23, 'requested_insns':13}
+print('PASS: timed-out fresh child retains replay inputs and failed status')

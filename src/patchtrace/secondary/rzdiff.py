@@ -18,10 +18,13 @@ from ..jobs import run_process
 from ..persistence import strict_json
 from .contracts import (
     RZDIFF_LIMITATIONS,
+    RZDIFF_ORIENTATION_LIMITATION,
+    RZDIFF_ORIENTATION_WARNING,
     Capability,
     SecondaryError,
     SecondaryMatch,
     SecondaryMatchSet,
+    rzdiff_orientation_unverified,
     to_milli,
 )
 
@@ -67,6 +70,9 @@ def probe(executable: Path, env: Mapping[str, str], cancel: threading.Event | No
     if numbers < MIN_VERSION:
         return Capability(engine='rz-diff', supported=False, version=text, path=path, supports_json=False,
                           reason=f'rz-diff {text} is older than 0.9.0')
+    if rzdiff_orientation_unverified(text):
+        return Capability(engine='rz-diff', supported=False, version=text, path=path, supports_json=False,
+                          reason=RZDIFF_ORIENTATION_WARNING)
     return Capability(engine='rz-diff', supported=True, version=text, path=path, supports_json=True)
 
 
@@ -126,6 +132,10 @@ def parse_output(stdout: str, version: str, older_sha256: str, newer_sha256: str
             older_name=older[1] if older else None, newer_name=newer[1] if newer else None,
             similarity_milli=milli, similarity_text=text, confidence_milli=None, confidence_text=None,
             flags=(), algorithm='levenshtein-bytes', match_type=entry['type']))
+    if matches and rzdiff_orientation_unverified(version):
+        raise SecondaryError('PT-SECONDARY-ORIENTATION',
+                             f'{RZDIFF_ORIENTATION_WARNING} stdout SHA-256 {hashlib.sha256(data).hexdigest()}',
+                             kind=RZDIFF_ORIENTATION_LIMITATION, reason='conditional-side-order')
     return SecondaryMatchSet(engine='rz-diff', engine_version=version, older_sha256=older_sha256,
                              newer_sha256=newer_sha256,
                              file_sha256=hashlib.sha256(data).hexdigest(),

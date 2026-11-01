@@ -1,0 +1,175 @@
+{
+ "contract": "bench-report/1",
+ "counts_sha256": "6113f566e466cf1009cf5a8381dfd9e7f129e0895a97c71efc8a4642b345703d",
+ "environment": {
+  "cpu_count": 9,
+  "machine": "x86_64",
+  "platform": "Linux-6.18.57-x86_64-with-glibc2.39",
+  "python": "3.12.14"
+ },
+ "pending": [
+  {
+   "limit": "l35_facts_5000_s",
+   "limit_value": 60,
+   "needs": "measurement",
+   "stage": "facts",
+   "what": "change facts for 5,000 changed pairs; missing sizes 5000"
+  },
+  {
+   "limit": "informational",
+   "limit_value": 0,
+   "needs": "measurement",
+   "stage": "read_model",
+   "what": "persisted read-model build at 10k and 100k rows (no L-35 build-time limit); missing sizes 10000, 100000"
+  },
+  {
+   "limit": "l35_first_paint_ms|l35_sort_ms|l35_filter_ms",
+   "limit_value": 200,
+   "needs": "measurement",
+   "stage": "ui_calls",
+   "what": "first paint, sort and filter at 10k and 100k rows; C6 data() ceilings and 100k L-35 timings; missing sizes 10000, 100000"
+  }
+ ],
+ "rows": [
+  {
+   "checks": [
+    {
+     "detail": "25 pairs, 20 machine changes, 25 nonbenign verdicts, 0 limited",
+     "name": "facts-complete",
+     "ok": false
+    }
+   ],
+   "counts": {
+    "generated_pairs": 25,
+    "limited": 0,
+    "machine_changed": 20,
+    "mutation_families": 5,
+    "newer_instructions": 435,
+    "nonbenign": 25,
+    "older_instructions": 435,
+    "pairs": 25,
+    "verdict_material": 5,
+    "verdict_review": 20,
+    "with_deltas": 25,
+    "workload": "synthetic-ir-changed-pairs"
+   },
+   "derived": {},
+   "error": null,
+   "gates": [],
+   "n": 25,
+   "peak_rss_bytes": 48177152,
+   "seconds": {
+    "context": 0.0004314190009608865,
+    "facts": 0.026065933001518715,
+    "generate": 0.004381781996926293,
+    "ingest": 0.03550745699976687,
+    "total": 0.0264973520024796
+   },
+   "stage": "facts",
+   "status": "measured"
+  },
+  {
+   "checks": [
+    {
+     "detail": "25 distinct persisted rows, state U3, 3 sources",
+     "name": "read-complete",
+     "ok": true
+    }
+   ],
+   "counts": {
+    "expected_filtered": 3,
+    "generated_rows": 25,
+    "materiality_kinds": 5,
+    "result_id": "40e8ee18f9f8d15eaac2dee5cedd8b8edc5263ab8a9b0c9577c3b0a293df7768",
+    "rows": 25,
+    "sources": 3,
+    "state": "U3",
+    "unique_rows": 25,
+    "workload": "synthetic-persisted-mixed-rows"
+   },
+   "derived": {},
+   "error": null,
+   "gates": [],
+   "n": 25,
+   "peak_rss_bytes": 44486656,
+   "seconds": {
+    "prepare": 0.004922796000755625,
+    "read_model": 0.0037904720011283644
+   },
+   "stage": "read_model",
+   "status": "measured"
+  },
+  {
+   "checks": [
+    {
+     "detail": "25 distinct persisted rows, state U3, 3 sources",
+     "name": "read-complete",
+     "ok": true
+    },
+    {
+     "detail": "25 shown; 3 filtered",
+     "name": "ui-operations-correct",
+     "ok": true
+    },
+    {
+     "detail": "504 data() calls, 72 visible cells, ceiling 624",
+     "name": "first_paint-calls",
+     "ok": true
+    },
+    {
+     "detail": "504 data() calls, 72 visible cells, ceiling 624",
+     "name": "sort-calls",
+     "ok": true
+    },
+    {
+     "detail": "126 data() calls, 18 visible cells, ceiling 171",
+     "name": "filter-calls",
+     "ok": true
+    }
+   ],
+   "counts": {
+    "expected_filtered": 3,
+    "filter_correct": 1,
+    "filter_data_calls": 126,
+    "filter_paints": 1,
+    "filter_visible_cells": 18,
+    "filtered_rows": 3,
+    "first_paint_data_calls": 504,
+    "first_paint_paints": 1,
+    "first_paint_visible_cells": 72,
+    "generated_rows": 25,
+    "materiality_kinds": 5,
+    "qt_platform": "offscreen",
+    "qt_style": "fusion",
+    "qt_version": "6.12.0",
+    "result_id": "40e8ee18f9f8d15eaac2dee5cedd8b8edc5263ab8a9b0c9577c3b0a293df7768",
+    "rows": 25,
+    "shown_rows": 25,
+    "sort_correct": 1,
+    "sort_data_calls": 504,
+    "sort_paints": 1,
+    "sort_visible_cells": 72,
+    "sources": 3,
+    "state": "U3",
+    "unique_rows": 25,
+    "workload": "synthetic-persisted-mixed-rows"
+   },
+   "derived": {},
+   "error": null,
+   "gates": [],
+   "n": 25,
+   "peak_rss_bytes": 104177664,
+   "seconds": {
+    "filter": 0.0015598079990013503,
+    "first_paint": 0.010926831000688253,
+    "prepare": 0.004178035000222735,
+    "read_model": 0.0039013089990476146,
+    "sort": 0.0061106689972803
+   },
+   "stage": "ui_calls",
+   "status": "measured"
+  }
+ ],
+ "slack": 5,
+ "verdict": "fail"
+}

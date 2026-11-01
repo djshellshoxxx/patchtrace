@@ -3,6 +3,7 @@
 Fake rz-diff (portable launcher from tests/fake_exe.py) dumps the environment it received; mocked engine,
 so this is wiring evidence only, not live rizin compatibility.
 """
+# Unaffected synthetic producer version exercises generic behavior; not native compatibility evidence.
 from __future__ import annotations
 
 import json
@@ -24,7 +25,7 @@ def test_secondary_run_child_env_is_allow_listed(project, tmp_path, capsys, monk
     dumps.mkdir()
     source = ("import json, os, sys, uuid\n"
               f"open(os.path.join({str(dumps)!r}, uuid.uuid4().hex + '.json'), 'w').write(json.dumps(dict(os.environ)))\n"
-              "if sys.argv[1:] == ['-v']:\n    print('rz-diff 0.9.1')\n    sys.exit(0)\n"
+              "if sys.argv[1:] == ['-v']:\n    print('rz-diff 0.9.0')\n    sys.exit(0)\n"
               f"print({GOOD!r})\n")
     exe = str(make_fake_exe(tmp_path / 'bin', 'rz-diff', source))
     code, doc = run_cli(root, '--rz-diff', exe, '--engine', 'rz-diff', '--no-cache', capsys=capsys)

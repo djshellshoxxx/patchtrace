@@ -1,4 +1,5 @@
 """C6 pure evidence view-model (docs/specs/multi-engine-evidence-panel.md §3, §10.1)."""
+# Unaffected synthetic producer version exercises generic behavior; not native compatibility evidence.
 from __future__ import annotations
 
 import os
@@ -61,7 +62,7 @@ def bd(older, newer, sim=970, conf=910, algo='name hash matching', name=None):
 
 
 def rz(older, newer, sim=880):
-    return SecondaryMatch(engine='rz-diff', engine_version='0.9.1', older_address=older, newer_address=newer,
+    return SecondaryMatch(engine='rz-diff', engine_version='0.9.0', older_address=older, newer_address=newer,
                           older_name=None, newer_name=None, similarity_milli=sim, similarity_text=f'{sim / 1000}',
                           confidence_milli=None, confidence_text=None, flags=(), algorithm='levenshtein-bytes')
 
@@ -69,7 +70,7 @@ def rz(older, newer, sim=880):
 def mset(engine, *rows, older=OLD, newer=NEW, alternatives=()):
     limits = BINDIFF_LIMITATIONS if engine == 'bindiff' else RZDIFF_LIMITATIONS
     return SecondaryMatchSet(contract='secondary/2', engine=engine,
-                             engine_version='8' if engine == 'bindiff' else '0.9.1', older_sha256=older,
+                             engine_version='8' if engine == 'bindiff' else '0.9.0', older_sha256=older,
                              newer_sha256=newer, file_sha256=('c' if engine == 'bindiff' else 'd') * 64,
                              image_base_subtracted='no', matches=tuple(rows), limitations=limits,
                              alternatives=tuple(alternatives))

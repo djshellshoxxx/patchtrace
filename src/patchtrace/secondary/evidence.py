@@ -10,7 +10,8 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Literal
 
-from .reconcile import Reconciliation, ReconciliationReport
+from .contracts import RZDIFF_ORIENTATION_WARNING, rzdiff_orientation_unverified
+from .reconcile import Reconciliation, ReconciliationReport, quarantine_report
 
 Verdict = Literal['corroborated', 'contested', 'single-engine', 'insufficient']
 Tier = Literal['high', 'moderate', 'low', 'unassessed']
@@ -49,6 +50,9 @@ def assess_reports(reports: tuple[ReconciliationReport, ...]) -> EvidenceAssessm
     """
     if not reports:
         return EvidenceAssessment((), (), ('No secondary engines ran; cross-engine evidence unavailable.',))
+    orientation_warnings = ((RZDIFF_ORIENTATION_WARNING,) if any(
+        r.engine == 'rz-diff' and rzdiff_orientation_unverified(r.engine_version) for r in reports) else ())
+    reports = tuple(quarantine_report(report) for report in reports)
     engine_names = [r.engine for r in reports]
     if len(set(engine_names)) != len(engine_names):
         raise ValueError('one report per distinct secondary engine required')
@@ -99,5 +103,6 @@ def assess_reports(reports: tuple[ReconciliationReport, ...]) -> EvidenceAssessm
         ('Scores are ordinal, uncalibrated indices of function MATCH corroboration only; '
          'never vulnerability probability, patch validity, exploitability, or independent proof.',
          'Function matching and semantic security findings require separate validation.',
-         'Engine agreement may reflect shared disassembly or compiler artifacts; do not average upstream scores.')
+         'Engine agreement may reflect shared disassembly or compiler artifacts; do not average upstream scores.',
+         *orientation_warnings)
     )

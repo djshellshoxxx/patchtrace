@@ -1,0 +1,106 @@
+{
+ "contract": "bench-report/1",
+ "counts_sha256": "b1534df1fefd8a67d761c762bf8cdc9a8cebc7d625883540356df1b489ccb9e8",
+ "environment": {
+  "cpu_count": 9,
+  "machine": "x86_64",
+  "platform": "Linux-6.18.57-x86_64-with-glibc2.39",
+  "python": "3.12.14",
+  "source_commit": "1f5f0b808149a30d222a35937667b36a5407bc0d",
+  "source_tracked_dirty": 0
+ },
+ "pending": [
+  {
+   "limit": "l35_facts_5000_s",
+   "limit_value": 60,
+   "needs": "measurement",
+   "stage": "facts",
+   "what": "change facts for 5,000 changed pairs; missing sizes 5000"
+  },
+  {
+   "limit": "l35_first_paint_ms|l35_sort_ms|l35_filter_ms",
+   "limit_value": 200,
+   "needs": "measurement",
+   "stage": "ui_calls",
+   "what": "first paint, sort and filter at 10k and 100k rows; C6 data() ceilings and 100k L-35 timings; missing sizes 10000, 100000"
+  }
+ ],
+ "rows": [
+  {
+   "checks": [
+    {
+     "detail": "10000 distinct persisted rows, state U3, 3 sources",
+     "name": "read-complete",
+     "ok": true
+    }
+   ],
+   "counts": {
+    "expected_filtered": 1000,
+    "facts_records": 10000,
+    "facts_sha256": "803f0f851d00786fbc0ca50ca83d0671ad1e51054a0afdce224f64512070f829",
+    "generated_rows": 10000,
+    "materiality_kinds": 5,
+    "populated_cells": 30000,
+    "requested_insns": 50,
+    "result_id": "40e8ee18f9f8d15eaac2dee5cedd8b8edc5263ab8a9b0c9577c3b0a293df7768",
+    "rows": 10000,
+    "rows_sha256": "7dc002406a9d8f41883dd5ef6c2e9ad4aee995b336a48960b5778de8c7423616",
+    "seed": 1,
+    "sources": 3,
+    "state": "U3",
+    "unique_rows": 10000,
+    "workload": "synthetic-persisted-mixed-rows"
+   },
+   "derived": {},
+   "error": null,
+   "gates": [],
+   "n": 10000,
+   "peak_rss_bytes": 137547776,
+   "seconds": {
+    "prepare": 1.6990270019996387,
+    "read_model": 0.9469700029985688
+   },
+   "stage": "read_model",
+   "status": "measured"
+  },
+  {
+   "checks": [
+    {
+     "detail": "100000 distinct persisted rows, state U3, 3 sources",
+     "name": "read-complete",
+     "ok": true
+    }
+   ],
+   "counts": {
+    "expected_filtered": 10000,
+    "facts_records": 100000,
+    "facts_sha256": "eeac170973328eace5597e89cfb0d99b7e6f4f2c67c26548e1fe4753c5dd0ce6",
+    "generated_rows": 100000,
+    "materiality_kinds": 5,
+    "populated_cells": 300000,
+    "requested_insns": 50,
+    "result_id": "40e8ee18f9f8d15eaac2dee5cedd8b8edc5263ab8a9b0c9577c3b0a293df7768",
+    "rows": 100000,
+    "rows_sha256": "41821c463635b79a6728a9668239313109c680a9d3df6b7b6150e62ddf48fb0d",
+    "seed": 1,
+    "sources": 3,
+    "state": "U3",
+    "unique_rows": 100000,
+    "workload": "synthetic-persisted-mixed-rows"
+   },
+   "derived": {},
+   "error": null,
+   "gates": [],
+   "n": 100000,
+   "peak_rss_bytes": 1000124416,
+   "seconds": {
+    "prepare": 19.566154849999293,
+    "read_model": 9.33026279099795
+   },
+   "stage": "read_model",
+   "status": "measured"
+  }
+ ],
+ "slack": 5,
+ "verdict": "insufficient-data"
+}

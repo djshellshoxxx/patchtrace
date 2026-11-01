@@ -11,7 +11,7 @@ import hashlib
 import json
 from collections import Counter
 from collections.abc import Iterable, Mapping
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Annotated, Any, Literal, Protocol, runtime_checkable
 
@@ -26,7 +26,8 @@ MAX_FUNCTIONS_PER_SIDE = 1024
 LINE_MAX_BYTES = 256 * 1024 * 1024
 Category = Literal['modified', 'added', 'removed', 'unmatched', 'ambiguous', 'split', 'merged', 'unchanged']
 Short = Annotated[str, Field(max_length=64)]
-DEGRADING = frozenset({'raw-missing', 'raw-hash-mismatch', 'raw-unparsable', 'ladder-partial'})
+DEGRADING = frozenset({'raw-missing', 'raw-hash-mismatch', 'raw-unparsable', 'ladder-partial',
+                      'rz-diff-orientation-unverified'})
 
 
 class _Strict(BaseModel):
@@ -75,6 +76,23 @@ class GhidriffRun:
 class LoadedSecondary:
     entry_id: str
     match_set: Any  # secondary.contracts.SecondaryMatchSet
+    # Bound to this frozen validated model, never a mutable entry-id cache. replace() resets these.
+    _body_json: str | None = field(default=None, init=False, compare=False, repr=False)
+    _body_sha256: str | None = field(default=None, init=False, compare=False, repr=False)
+    _source_ref: Any = field(default=None, init=False, compare=False, repr=False)
+    _ordered: Any = field(default=None, init=False, compare=False, repr=False)
+
+    @classmethod
+    def from_verified_body(cls, entry_id: str, match_set, body: str, sha256: str) -> LoadedSecondary:
+        """Internal boundary: model parsed from these exact, already integrity-verified immutable bytes.
+
+        Owner input comes from EnrichmentStore.entries/load_secondary; worker input is independently
+        hashed and validated by read_loaded. No caller-supplied checksum from a transport is trusted.
+        """
+        value = cls(entry_id, match_set)
+        object.__setattr__(value, '_body_json', body)
+        object.__setattr__(value, '_body_sha256', sha256)
+        return value
 
 
 @dataclass(frozen=True)
@@ -84,6 +102,7 @@ class SourceInputs:
     run: GhidriffRun
     matches: tuple[SnapshotMatch, ...]
     secondary: tuple[LoadedSecondary, ...] = ()
+    _manual_digest: str | None = field(default=None, init=False, compare=False, repr=False)
 
 
 @dataclass(frozen=True)

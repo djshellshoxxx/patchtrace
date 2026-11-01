@@ -1,0 +1,28 @@
+{
+  "argv": [
+    "/workspace/scratch/142cb233d750/bench-venv/bin/python",
+    "-m",
+    "tools.unified.bench",
+    "--stages",
+    "ui_calls",
+    "--seed",
+    "1",
+    "--insns",
+    "50",
+    "--out",
+    "/workspace/scratch/142cb233d750/gt12-bench-20261101/ui_calls-initial.json"
+  ],
+  "cwd": "/workspace/scratch/142cb233d750/wt-bench",
+  "before": {
+    "commit": "1f5f0b808149a30d222a35937667b36a5407bc0d",
+    "dirty_tracked": []
+  },
+  "started_utc": "2026-11-01T12:49:34.218048+00:00",
+  "scope": "Synthetic generated IR/persisted records/offscreen Qt. No native engine or target execution.",
+  "returncode": 0,
+  "elapsed_seconds": 29.982,
+  "after": {
+    "commit": "1f5f0b808149a30d222a35937667b36a5407bc0d",
+    "dirty_tracked": []
+  }
+}

@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import math
+import re
 from typing import Annotated, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, model_serializer, model_validator
@@ -20,6 +21,17 @@ ErrorCode = Literal['PT-SECONDARY-INPUT', 'PT-SECONDARY-PAIR', 'PT-SECONDARY-ORI
                     'PT-SECONDARY-CACHE']
 MAX_ALTERNATIVES_PER_ANCHOR = 8
 MAX_ALTERNATIVES = 50_000
+RZDIFF_ORIENTATION_LIMITATION = 'rz-diff-orientation-unverified'
+RZDIFF_ORIENTATION_WARNING = (
+    'rz-diff 0.9.1 orientation is unverified: its singleton branch reverses side ownership. '
+    'Historical raw evidence is retained; matching votes and endpoint links are unavailable without a verified witness.'
+)
+_RZDIFF_ORIENTATION_AFFECTED = re.compile(r'^0{1,9}\.0{0,8}9\.0{0,8}1(?![0-9])')
+
+
+def rzdiff_orientation_unverified(version: str) -> bool:
+    """Pure known-producer policy; a suffix/version string cannot attest a patched executable."""
+    return _RZDIFF_ORIENTATION_AFFECTED.match(version.strip()) is not None
 
 RZDIFF_LIMITATIONS = (
     'rz-diff similarity is raw-byte Levenshtein: not semantic, sensitive to relocations and address shifts.',
@@ -90,6 +102,15 @@ class AlternativeMatch(_Strict):
     source: Literal['rz-diff', 'bindiff', 'ghidriff-baseline']
     rank: int = Field(ge=1)
 
+    @model_validator(mode='after')
+    def consistent(self):
+        if self.source != self.candidate.engine:
+            raise ValueError('alternative source differs from candidate engine')
+        address = getattr(self.candidate, f'{self.anchor_side}_address')
+        if address is None or address != self.anchor_address:
+            raise ValueError('alternative anchor differs from candidate endpoint')
+        return self
+
 
 class SecondaryMatchSet(_Strict):
     contract: Literal['secondary/1', 'secondary/2'] = 'secondary/1'
@@ -123,6 +144,10 @@ class SecondaryMatchSet(_Strict):
             raise ValueError('PT-SECONDARY-LIMIT: too many alternative matches')
         per_anchor: dict[tuple[str, int], int] = {}
         for alt in self.alternatives:
+            alt.consistent()
+            if (alt.source != self.engine or alt.candidate.engine != self.engine
+                    or alt.candidate.engine_version != self.engine_version):
+                raise ValueError('alternative engine or version differs from set engine')
             key = (alt.anchor_side, alt.anchor_address)
             per_anchor[key] = per_anchor.get(key, 0) + 1
             if per_anchor[key] > MAX_ALTERNATIVES_PER_ANCHOR:

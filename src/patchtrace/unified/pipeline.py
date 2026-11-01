@@ -306,7 +306,9 @@ def _stored_sets(service, sources: tuple[str, ...], pair: tuple[str, str] | None
         rows = current_sets(EnrichmentStore(service.store), pair=pair)
     except (EnrichmentError, sqlite3.Error, ValueError):
         raise fail('PT-UNIFIED-STORE', 'secondary-unreadable') from None
-    return tuple(LoadedSecondary(entry.id, match_set) for entry, match_set in rows if match_set.engine in wanted)
+    return tuple(LoadedSecondary.from_verified_body(entry.id, match_set, entry.body_json, entry.body_sha256)
+                 if entry.body_json is not None and entry.body_sha256 is not None else LoadedSecondary(entry.id, match_set)
+                 for entry, match_set in rows if match_set.engine in wanted)
 
 
 def _producer(manifest: ProgramIrManifest) -> tuple:

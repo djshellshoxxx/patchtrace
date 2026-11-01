@@ -1,0 +1,9 @@
+PASS: all 13 retained-file SHA-256 values match
+PASS: facts report strict/digest valid, copied bytes unchanged, exact clean source, interval 2026-11-01T12:48:23.490307+00:00 to 2026-11-01T12:48:49.546307+00:00
+PASS: read_model report strict/digest valid, copied bytes unchanged, exact clean source, interval 2026-11-01T12:48:56.253523+00:00 to 2026-11-01T12:49:28.824523+00:00
+PASS: ui_calls report strict/digest valid, copied bytes unchanged, exact clean source, interval 2026-11-01T12:49:34.218048+00:00 to 2026-11-01T12:50:04.200048+00:00
+PASS: three stage invocation intervals are serial
+PASS: combined report exactly equals fresh aggregation/re-evaluation of unchanged initial rows
+PASS: exact counts/paint/selectivity/cross-size checks hold; 100k raw sort target miss and CI allowance pass both retained
+PASS: failed initial smoke retained; later tiny smoke remains insufficient-data
+PASS: evidence commits do not alter independently reviewed/measured harness bytes

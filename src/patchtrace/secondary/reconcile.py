@@ -13,7 +13,13 @@ from typing import Literal
 
 from ..enrichment.identity import parse_address
 from ..models import FunctionMatch
-from .contracts import AlternativeMatch, SecondaryMatch, SecondaryMatchSet
+from .contracts import (
+    RZDIFF_ORIENTATION_WARNING,
+    AlternativeMatch,
+    SecondaryMatch,
+    SecondaryMatchSet,
+    rzdiff_orientation_unverified,
+)
 
 Status = Literal['agreement', 'disagreement', 'absent', 'not-comparable']
 
@@ -57,7 +63,23 @@ def _endpoints(match: FunctionMatch) -> tuple[int | None, int | None] | None:
     return older, newer
 
 
+def quarantine_report(report: ReconciliationReport) -> ReconciliationReport:
+    """Old normalized reports cannot attest the side ownership their producer omitted."""
+    if report.engine != 'rz-diff' or not rzdiff_orientation_unverified(report.engine_version):
+        return report
+    rows = tuple(replace(row, status='not-comparable', older_address=None, newer_address=None, secondary=(),
+                         alternatives=(), alternative_rank=None, disagreement_kind=None,
+                         note=RZDIFF_ORIENTATION_WARNING) for row in report.rows)
+    return replace(report, rows=rows, secondary_only=(),
+                   limitations=tuple(dict.fromkeys((*report.limitations, RZDIFF_ORIENTATION_WARNING))))
+
+
 def reconcile(matches: Iterable[FunctionMatch], secondary: SecondaryMatchSet) -> ReconciliationReport:
+    if secondary.engine == 'rz-diff' and rzdiff_orientation_unverified(secondary.engine_version):
+        rows = tuple(Reconciliation(match.id, 'not-comparable', None, None, (), RZDIFF_ORIENTATION_WARNING)
+                     for match in matches)
+        return ReconciliationReport(secondary.engine, secondary.engine_version, rows, (),
+                                    tuple(dict.fromkeys((*secondary.limitations, RZDIFF_ORIENTATION_WARNING))))
     by_older: dict[int, list[SecondaryMatch]] = defaultdict(list)
     by_newer: dict[int, list[SecondaryMatch]] = defaultdict(list)
     for record in secondary.matches:

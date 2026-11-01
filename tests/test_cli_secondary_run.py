@@ -1,4 +1,5 @@
 """SPEC-28 §7: `secondary run` exit codes, JSON document, cache and alias (fake rz-diff executables)."""
+# Unaffected synthetic producer version exercises generic behavior; not native compatibility evidence.
 from __future__ import annotations
 
 import json
@@ -26,7 +27,7 @@ def project(tmp_path):
 
 def fake_rz(tmp_path, output=GOOD, code=0):
     source = ("import sys\n"
-              "if sys.argv[1:] == ['-v']:\n    print('rz-diff 0.9.1')\n    sys.exit(0)\n"
+              "if sys.argv[1:] == ['-v']:\n    print('rz-diff 0.9.0')\n    sys.exit(0)\n"
               f"print({output!r})\nsys.exit({code})\n")
     return str(make_fake_exe(tmp_path / 'bin', 'rz-diff', source))
 

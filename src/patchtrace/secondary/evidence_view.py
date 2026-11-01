@@ -458,6 +458,7 @@ def _search_key(older_name: str, newer_name: str, raws: Iterable[str | None], in
 
 def engine_infos(sets: Sequence[SecondaryMatchSet], outcomes: Sequence[EngineOutcomeView],
                  older_sha256: str, newer_sha256: str, ghidriff_version: str | None = None) -> tuple[EngineInfo, ...]:
+    from .contracts import RZDIFF_ORIENTATION_WARNING, rzdiff_orientation_unverified
     by_engine = {s.engine: s for s in sets}
     last = {o.engine: o for o in outcomes}
     infos = [EngineInfo('ghidriff', 'Ghidriff (baseline)', 'baseline', 'Primary result in the project',
@@ -472,6 +473,13 @@ def engine_infos(sets: Sequence[SecondaryMatchSet], outcomes: Sequence[EngineOut
             version = _line(match_set.engine_version, 40)
             pair_ok = (match_set.older_sha256, match_set.newer_sha256) == (older_sha256, newer_sha256)
             detail = f'stored set {match_set.file_sha256[:12]}'
+            if engine == 'rz-diff' and rzdiff_orientation_unverified(match_set.engine_version):
+                infos.append(EngineInfo(engine, f'{name} {version}', 'unsupported' if pair_ok else 'stale',
+                                        _line(f'{detail}; {RZDIFF_ORIENTATION_WARNING}'), match_set.file_sha256,
+                                        match_set.older_sha256, match_set.newer_sha256,
+                                        tuple(_line(x) for x in (*match_set.limitations, RZDIFF_ORIENTATION_WARNING)),
+                                        version))
+                continue
             if failed:
                 detail += f'; latest run {outcome.status}: {_line(outcome.error_code or "", 40)}'.rstrip(': ')
             infos.append(EngineInfo(engine, f'{name} {version}', 'ready' if pair_ok else 'stale', detail,

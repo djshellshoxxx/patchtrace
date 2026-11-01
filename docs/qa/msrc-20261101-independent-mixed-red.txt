@@ -1,0 +1,4 @@
+Traceback (most recent call last):
+  File "/workspace/scratch/142cb233d750/reconciliation/msrc-independent-mixed-control.py", line 15, in <module>
+    raise AssertionError(f'mixed native/CSAF accepted: {doc.source.dialect}, counts={doc.counts()}')
+AssertionError: mixed native/CSAF accepted: csaf/2.0, counts={'vulnerabilities': 2, 'edges': 2, 'mention_only': 0, 'disputed': 0, 'edge_rows': 2, 'scopes': 5, 'problems': 0}

@@ -33,7 +33,7 @@ from .contracts import (
 )
 from .ids import canonical_kb, cve_sort_key, is_cve, kb_sort_key
 from .products import merge_scopes
-from .sources.cvrf import StatusRow
+from .sources.cvrf import DIALECT_MSRC, StatusRow
 from .sources.importer import ImportedDocument
 from .sources.scope import (
     REVISION_LAG_NOTE,
@@ -122,6 +122,17 @@ def _revision_key(doc: ImportedDocument) -> tuple:
     return (_instant(doc.source.current_release_date), doc.source.doc_id)
 
 
+def _native_revision_ambiguous(docs: list[ImportedDocument]) -> bool:
+    if not any(d.source.dialect == DIALECT_MSRC for d in docs):
+        return False
+    # An unzoned native time is not an instant. Neither retrieval time, a raw digest, nor an
+    # unverified interpretation of RevisionHistory.Number can safely pick the current snapshot.
+    if any(d.source.current_release_date is None for d in docs):
+        return True
+    newest = max(_instant(d.source.current_release_date) for d in docs)
+    return sum(_instant(d.source.current_release_date) == newest for d in docs) > 1
+
+
 def distinct_groups(edges: Iterable[KbCveEdge]) -> tuple[EdgeGroup, ...]:
     grouped: dict[tuple, list[KbCveEdge]] = {}
     for edge in edges:
@@ -167,13 +178,17 @@ class ReverseIndex:
         return tuple(sorted(self._docs.values(), key=key))
 
     def active_ids(self) -> frozenset[str]:
-        """Per release month (or CSAF tracking id) the revision with the newest release date, ties by document id."""
-        best: dict[tuple, ImportedDocument] = {}
+        """Newest comparable vendor instant; native unknown/tied revisions remain active, never hash-ordered."""
+        groups: dict[tuple, list[ImportedDocument]] = {}
         for doc in self._docs.values():
-            have = best.get(_group_key(doc))
-            if have is None or _revision_key(doc) > _revision_key(have):
-                best[_group_key(doc)] = doc
-        return frozenset(d.doc_id for d in best.values())
+            groups.setdefault(_group_key(doc), []).append(doc)
+        active = set()
+        for docs in groups.values():
+            if _native_revision_ambiguous(docs):
+                active.update(d.doc_id for d in docs)
+            else:
+                active.add(max(docs, key=_revision_key).doc_id)
+        return frozenset(active)
 
     def corpus_digest(self) -> str:
         return corpus_digest(self._docs)
@@ -308,6 +323,12 @@ class ReverseIndex:
             out.append('DISPUTED: a negative product status contradicts the fix; the row is left out of leads')
         if superseded:
             out.append('SUPERSEDED: older revisions of a loaded document are retained and listed apart')
+        groups: dict[tuple, list[ImportedDocument]] = {}
+        for doc in picked:
+            groups.setdefault(_group_key(doc), []).append(doc)
+        if any(_native_revision_ambiguous(docs) for docs in groups.values()):
+            out.append('REVISION_ORDER_UNKNOWN: native revision instants are missing or tied; snapshots remain '
+                       'active without a newest-revision claim')
         out.append(REVISION_LAG_NOTE[0].upper() + REVISION_LAG_NOTE[1:])
         return tuple(out)
 

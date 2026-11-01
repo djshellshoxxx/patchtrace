@@ -10,9 +10,28 @@ Optionally run rz-diff on the project's artifact pair to obtain a second, indepe
 
 `rz-diff -v` (version line) must report ≥ 0.9.0; otherwise `unsupported` with the observed version. Detection never installs anything. Capability record: `{engine: 'rz-diff', version, path, supports_json: true}`.
 
+2026-11-01 safety amendment: the known affected 0.9.1 producer is **unsupported until a verified orientation
+witness is available**. Its singleton matching branch reverses `original`/`modified`; the ordinary branch
+retains argument order, and the output omits the exact recovered input0 cardinality selecting the branch.
+The retained #131 recordings include identical JSON bytes with opposite side semantics. JSON shape/row
+counts, names, exports, ProgramIR or Ghidriff function counts are not that witness. No global swap is allowed.
+The observed version is retained with a user-readable orientation diagnosis, before scheduler cache lookup.
+This is a partial safety quarantine, not completion of native orientation acceptance; workflow pins remain unchanged.
+
 ## 3. Invocation and parsing
 
 `rz-diff -C -j -t functions <older> <newer>` with argv list (no shell), cwd = private temp, stdout bounded at 64 MiB, stderr tail 2 MiB, wall-clock timeout default 1,800 s (configurable 60–86,400), process-tree kill on cancel/timeout (existing `jobs.run_process`). Exit 0 = ran; non-zero = error with stderr tail. Stdout must parse as a strict JSON array of objects `{similarity: number 0..1, type: 'COMPLETE'|'PARTIAL'|'UNLIKE', original: {addr:int, name:str, size:int}|null, modified: {…}|null}`; empty/invalid output is an error even with exit 0. Addresses are unsigned VAs.
+
+Nonempty, structurally valid 0.9.1 output is rejected as `PT-SECONDARY-ORIENTATION`, kind
+`rz-diff-orientation-unverified`, with its exact stdout SHA-256; it is never normalized into guessed side-owned
+matches or converted to a successful empty set. Empty stdout retains `PT-SECONDARY-INPUT`. Retained stored
+sets/raw evidence are preserved. Active unified/reconciliation/evidence/calibration consumers quarantine known
+affected sets/reports: no matching vote, contest, numeric feature or engine-only endpoint link; explicit
+not-comparable/unsupported orientation warning with original version/raw digest. Unified input provenance stays
+in the manifest and makes the result partial; the matching-policy version invalidates pre-quarantine caches.
+Historical recorded replay is regression evidence only, not a fresh native run. The pinned live gate honestly
+fails while this producer has no witness. Next bounded work is a verified same-version preflight of the exact
+pre-serialization recovered input0 list, using approved tools, or a verified upstream side-semantics repair.
 
 ## 4. Records
 

@@ -1,5 +1,44 @@
 # Autonomous continuation — November 1, 2026
 
+## Latest coordination checkpoint (supersedes the initial snapshot below)
+
+Canonical main is now **6579ed83211b7ff2039e3152728ac1cddc3e93d6**. Independent export fix **#149 is merged**, after all applicable exact-head full Linux/Windows, Qt, native, quality and package/smoke gates passed. Its merged tree equals tested tree4da0e0ba4b23c5a3c1e582ab931a3160c3608f57. Main checkout was fast-forwarded cleanly; original author refs remain retained.
+
+Current combined product checkpoint is local **64534b1b1e75245c8582380b1f6187c404549d52** (tree `087ea18b96325c90d1fa1a8581c71e1644f8cebd`), following reviewed code checkpoint **57d223d49464b10ae6ca9da7c95d2e9bfb8cf392**. The latest source also includes independently reviewed RD-F03 backend alignment; its full local SHA/tree are recorded in the publication metadata. This commit includes main, reviewed identity repairs, native MSRC JSON, GT12 measurement harness, recorded-protocol gate, and rz-diff0.9.1 defensive quarantine. The next evidence-only publication retains these product bytes. Previous published #152 head 22546ab6a993a95c0879319b7fd58acccbfbdcc5 is historical; the PR description pins the new API-generated commit/tree. API metadata differs from local commits; exact trees are verified before ref updates.
+
+| Slice | Current status / exact remote head | Next action |
+|---|---|---|
+| #149 report protection | **DONE / merged 6579ed8** | Main verification tree equals accepted source; do not treat broader #116 as fully resolved |
+| #150 receipts | Draft 2fdac2ea9042985ac3c98545d38ac3461d00f4cc; all 14 native Windows controls passed, full Windows: 18,508 passed / 93 skipped / 6 xfailed, full Linux and all Qt passed | Sonar seven path annotations and #145/#128 parent acceptance remain open; no parent qualification from child success |
+| #151 storage | Ready 1e7eeff05cf9406c77b51b9b1100c4be2953d1d6; merged main into branch,48 new combined checks passed | Inspect fresh QA41308803000/native41308803013; prior head's results cannot qualify the update |
+| #153 real MSRC JSON | Ready cf6620f0d6977d85c4434d48519e722a1738a7f0; reviewed, main-integrated: 379 checks passed | Fresh QA41308806119/native41308806128; broader GT06/servicing/XML/status coverage remains open |
+| #154 recorded protocol identity | Ready 4aa99f7bd989765000c6ebd659c9565030a48849; independently reviewed 102 cases, coordinator main-port 112 cases | Full exact-head checks before merge; not owner sign-off or final-evaluation consumption |
+| Identity/manual ambiguity/alternatives | Reviewed source 4578c90, integrated; main port `65857d4` independently checked after 28 meaningful baseline failures; coordinator 128 checks passed | Publish separate repair and qualify its own gates |
+| Rz-diff0.9.1 | Reviewed defensive source e8319b9 integrated; historical27-record replay: 20 INPUT / 7 ORIENTATION refusals | Live gate explicitly blocked/nonzero. Exact same-version recovered-list witness remains READY research; no global swap or native compatibility claim |
+| GT12 facts/read-model/UI | Reviewed harness 1f5f0b8 and preserved first-attempt receipts; integrated | Raw 100k sort: 299.84 ms, above the 150 ms target but passes unchanged 750 ms CI allowance; stable Windows/native/fullG-U5 still open |
+| RD-F03 alignment | Reviewed source `78c5266`, integrated as `64534b1`; 92 focused tests, 2,200 alignment checks and 2,523 page acceptance/rejection controls passed independently | The RVA/physical-page inconsistency was repaired. Opt-in backend only; UI, navigation, native performance and broader v2 work remain READY |
+| GT05 normalized output evidence | IN_PROGRESS in a separate worktree; existing digest without persisted document reproduced/under repair | Bind canonical bytes/provider/images/run ownership, preserve prior reports; attention default contract requires narrow schema review |
+
+Current combined bounded check: **428 passed in 13.77 s** across identity/rz policy/MSRC/contracts/Qt/prereg/benchmark tests; whole-tree Ruff, pip check, general schema regeneration and KBC check passed with zero drift. Earlier integrated identity/MSRC/lifecycle 398 and policy/identity 253 checks passed; their scopes overlap and must not be summed. One initial coordinator command used a native-only venv missing pytest and ran no tests; copied development environment supplies actual results.
+
+The isolated required full serial suite on **f005c6674e0d7e7e151668494bb9c5a299f2635b**, tree `e214401ccf5d3187cd9c5c17295f2460d9ae5580`, finished with **18,702 passed, 3 failed, 138 skipped, 7 xfailed** in 1,731.42 s. This covers identity/MSRC/GT12 plus earlier fixes, **not later rz-diff/prereg/RD source**. The unchanged GUI architecture guard rejected seven `processEvents()` calls in `gui/qt/kb_selftest.py`; the Unix-socket test encountered documented host EPERM; the refused-secondary test's literal `entry_id == 'foreign'` assertion conflicts with the amended derived-content identity contract and needs independent provenance review. Both source-related failures are under isolated repair; no gate was weakened. Prechecks passed (Ruff/pip/protobuf/general+KBC schemas), source remained clean, and no retry replaced this result. [Complete first-run receipt](../qa/full-verification-f005c66-20261101.md) and [original logs/JUnit/provenance archive](../qa/full-verification-f005c66-20261101.tar.gz) preserve failures, skips and xfails. The temporary failed-worker manifests vanished before retention; this limitation is recorded.
+
+Downloaded #149 package bytes were checked against outer artifact digests and inner sidecars. Actual package SHA256 values:
+
+| Package | SHA256 | GitHub candidate artifact |
+|---|---|---|
+| Windows portable | 86240d631fe823b9d39308b05c40b996ed2fe5e5d85a04d162cfdd0738099e74 | [artifact13083663511](https://github.com/djshellshoxxx/patchtrace/actions/runs/41303990158/artifacts/13083663511) |
+| Windows installer | 03d911fae7ffdd933ae7d5158bbbcc3adfead7f87d767049f715268eed1094b9 | Same Windows artifact |
+| Linux tar.gz | dcc9607eddee0e4ab95aef9e61e304294fb9557246b3d631b5809e0c5038e839 | [artifact13083992472](https://github.com/djshellshoxxx/patchtrace/actions/runs/41303990158/artifacts/13083992472) |
+
+Those downloadable packages cover merged export protection, not the later combined source. #152 final frozen F8/branding/package acceptance remains pending. Native five-control evidence below covers241f445 only; later changes need their own native confirmation. Sonar on published22546ab reproduces only the two known #147 CLI output findings; no suppression/disposition invented.
+
+Complete refreshed branch snapshot [remote-heads-checkpoint-20261101.json](../qa/remote-heads-checkpoint-20261101.json) contains 144 remote heads/45 open PRs before the later #154 creation (now one additional branch/open PR). Original 139 retained heads are listed individually in the earlier table; unpublished original-owner activity remains unknown. New source-only worktrees are retained and mapped by task/branch; no branches were deleted. Semantic reconciliation of every original unique branch is still unfinished.
+
+Recorded GT12 review scripts were changed from optimization-sensitive asserts to explicit RuntimeError checks and rerun under `python -O`. Correct standalone command requires `PYTHONPATH=.:src:tests`; initial incomplete module paths failed imports and ran no validation. Exact original scripts are also preserved as `.py.original.txt` records with SHA256 values in `historical-review-scripts-20261101.json`; benchmark source, thresholds and measured results did not change.
+
+**Unfinished agent-doable work remains substantial.** Continue independent qualification/merges, exact-head CI and failure diagnosis, native witness/corpus safeguards, remaining source/acquisition/security/lifecycle/provider/packaging and adopted v2 tasks. This checkpoint is not project completion or release readiness. Historical narrative follows for original failures, access gaps and restart commands.
+
 **Engineering checkpoint, not project completion or release acceptance.** The owner authorizes all accepted agent-executable scope, reviewed passing merges, and candidate artifacts. Continue after blocked native/release tasks. Never weaken gates, discard adopted v2 work, execute compared binaries, upload Tier W inputs, or publish a final release.
 
 ## Source and ownership

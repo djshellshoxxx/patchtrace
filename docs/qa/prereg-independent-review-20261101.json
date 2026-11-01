@@ -1,0 +1,31 @@
+{
+  "review_date": "2026-11-01",
+  "reviewer": "cancel_fix",
+  "worktree": "/workspace/scratch/142cb233d750/wt-corpus",
+  "head": "42a3d5dee13ac4ff87436a66f787c6b3b5e093ad",
+  "tree": "943a4dccfbdbc3437d0c3598baa4e82374bb0a9b",
+  "verdict": "no remaining concrete blocker within recorded protocol identity scope",
+  "command": "QT_QPA_PLATFORM=offscreen PYTHONPATH=src /workspace/scratch/142cb233d750/venv-corpus/bin/python -m pytest -q tests/test_train_prereg_selection.py tests/test_prereg_tools.py tests/test_prereg_constants.py tests/test_train_lbl26.py::test_identity_shared_across_roles_stops_the_run tests/test_train_lbl26.py::test_excluded_authored_cross_role_identity_remains_in_split_audit tests/test_train_lbl26.py::test_excluded_authored_rows_cannot_turn_a_natural_leak_into_a_hub",
+  "observed_result": "102 passed in 1.40s",
+  "raw_log_retained": false,
+  "evidence_note": "This receipt transcribes the independent tool execution result and source review; no separate full stdout log was saved. It is not a new test execution.",
+  "other_checks": [
+    "Scoped Ruff passed for tools/calibration/prereg_gate.py, train.py, tests/test_train_prereg_selection.py",
+    "git diff --check passed and worktree clean",
+    "Independent fenced/comment/pre/script/style/nested-list/multiline-HTML false-lock probes all rejected",
+    "Exact visible record accepted; explicit rehearsal selection.sha is None and rehearsal_sha is the inspected digest",
+    "Production SHA256 entries in docs/qa/corpus-safeguards-20261101.json match files",
+    "AST comparison to241f445: only functional bodies _prereg_sha/_run/build_parser changed; run_training adds only docstring",
+    "Frozen protocol, lineage.py, guards.py, run_locked_test.py byte-identical to241f445"
+  ],
+  "closed_findings": [
+    "Raw pipe row inside fenced/commented/indented examples could falsely select verified SHA",
+    "Raw HTML blocks/nested-list fences/multiline raw HTML could falsely select verified SHA"
+  ],
+  "scope_limits": [
+    "Protocol identity only, not owner sign-off or pre-lock approval",
+    "Declared-final CLI wrapper/single-use acceptance remains separate",
+    "Normalized-output transfer, both-side recipe A/A/noise, native/OOD/promotion gates remain open",
+    "No real corpus evaluation, real final lock, heavy training, remote writes, or source edits performed by this reviewer"
+  ]
+}

@@ -1,0 +1,29 @@
+{
+  "source_commit": "1f5f0b808149a30d222a35937667b36a5407bc0d",
+  "production_baseline": "241f445bf3e2e1bc4083aac47ac074b3fd3b795b",
+  "reviewed_by": "independent receipt_fix agent before acceptance runs",
+  "scope": "Synthetic facts5k, persisted read_model10k/100k and offscreen Qt ui_calls10k/100k only. No native/Windows/full G-U5 claim.",
+  "acceptance_attempts_per_stage": 1,
+  "threshold_changes": false,
+  "host_conditions": {
+    "stages_serial": true,
+    "full_or_other_performance_jobs": false,
+    "possible_contention": "Coordinator reported a short integration-focused pytest starting about 12:50 UTC; ui_calls interval was 12:49:34.218048 to approximately 12:50:04.200048 UTC. Possible overlap in final seconds; no causal attribution or rerun.",
+    "raw_sort_target": "100k sort 299.84 ms exceeds L35 raw150 ms target; passes existing 5x CI allowance750 ms."
+  },
+  "files": {
+    "gt12-facts-20261101.json": "f22f6939339731b24ec7bcd5d2105ec3d640fc9f9af34f7f81b01d893c97ce20",
+    "gt12-facts-20261101.log": "fd1438da6d3696ba6455dd0f27b4194d5839f95ffd14d6e3d3e23d2e84047a6c",
+    "gt12-facts-20261101.invocation.json": "058ce432ebe2b97fd13283769dec17e72ed64b9b449babe388e2b51e0304e78c",
+    "gt12-read-model-20261101.json": "11427a60710dd5c072b09575e4bda7c53a57ec9b887544bf732f8c15c12296e7",
+    "gt12-read-model-20261101.log": "c498a530805a7adf7ebba53123779584e7e2667226648e2b040c0d74163ed18b",
+    "gt12-read-model-20261101.invocation.json": "e8bf9044dd1c2e76337185cab40c13c7b44677e1489346c565ff8906a8d9a732",
+    "gt12-ui-calls-20261101.json": "403e6f327ed2bad352d9ef322fbe6db540c8f5c2eed1eddf5bc7dafb289f1e34",
+    "gt12-ui-calls-20261101.log": "052fd13ead081a6fc9ddfe35e2250cffd7c1c7add7477c225e2a88de2e9edaae",
+    "gt12-ui-calls-20261101.invocation.json": "a335de729a833959c79f3662d617573e6d942393a2ae3f36d1e3d24b3bd7be95",
+    "gt12-combined-20261101.json": "24803120da895c0fd78ea2de7347a2b3904a1699ccd5a2a85c860162c0bb5cbf",
+    "gt12-smoke-initial-20261101.json": "6217b3253e89fd38a7b6235078e233ea35faafa71620d504bed79f60d362083a",
+    "gt12-run-stage-20261101.py": "b8ae3e06fd9a9e218d1d2ce68f0439a2a711a44a2de374411957a3feb9107f2a",
+    "gt12-smoke-4c8f9a6-20261101.json": "677712f9a1378033389aae70325cb54d1169b122daec4b06504ba87f7f11bb57"
+  }
+}

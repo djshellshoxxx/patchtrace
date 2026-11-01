@@ -15,6 +15,8 @@ from patchtrace.secondary.contracts import Capability, SecondaryError
 from patchtrace.secondary.rzdiff import parse_output, parse_version, probe, run_rzdiff
 
 OLD, NEW = 'a' * 64, 'b' * 64
+# Unaffected synthetic label for schema/process tests; never native compatibility evidence.
+SCHEMA_TEST_VERSION = '0.9.0'
 FIXTURE = Path(__file__).parent / 'fixtures' / 'secondary' / 'rzdiff-functions.json'
 
 
@@ -22,7 +24,7 @@ def fake(tmp_path, body: str) -> Path:
     return make_fake_exe(tmp_path, 'rz-diff', f'import sys, time, os\n{body}\n')
 
 
-def cap(path='/opt/rz-diff', version='0.9.1'):
+def cap(path='/opt/rz-diff', version=SCHEMA_TEST_VERSION):
     return Capability(engine='rz-diff', supported=True, version=version, path=str(path), supports_json=True)
 
 
@@ -33,8 +35,8 @@ def artifacts(tmp_path):
     return older, newer
 
 
-def test_fixture_parses_with_one_sided_records():
-    result = parse_output(FIXTURE.read_text(), '0.9.1', OLD, NEW)
+def test_fixture_schema_parses_for_synthetic_unaffected_producer():
+    result = parse_output(FIXTURE.read_text(), SCHEMA_TEST_VERSION, OLD, NEW)
     assert result.engine == 'rz-diff' and len(result.matches) == 4
     full, partial, removed, added = result.matches
     assert (full.similarity_milli, full.match_type) == (1000, 'COMPLETE')
@@ -97,7 +99,7 @@ def runner_returning(log, code=0, reason=None, seen=None):
 
 
 @pytest.mark.parametrize('log, code, supported, version', [
-    ('rz-diff 0.9.1 @ linux-x86-64\n', 0, True, '0.9.1'),
+    ('rz-diff 0.9.1 @ linux-x86-64\n', 0, False, '0.9.1'),
     ('rz-diff 0.9.0 @ linux-x86-64\n', 0, True, '0.9.0'),
     ('rz-diff 0.8.2 @ linux-x86-64\n', 0, False, '0.8.2'),
     ('garbage', 0, False, None),
@@ -168,14 +170,14 @@ def test_real_fake_executable_end_to_end(tmp_path):
     older, newer = artifacts(tmp_path)
     exe = fake(tmp_path, f'''
 if sys.argv[1:] == ["-v"]:
-    print("rz-diff 0.9.1 @ linux-x86-64")
+    print("rz-diff 0.9.0 @ synthetic-test")
     sys.exit(0)
 assert sys.argv[1:5] == ["-C", "-j", "-t", "functions"], sys.argv
 assert os.getcwd() != {str(tmp_path)!r}
 sys.stdout.write(open({str(FIXTURE)!r}).read())
 ''')
     capability = probe(exe, dict(os.environ))
-    assert capability.supported and capability.version == '0.9.1'
+    assert capability.supported and capability.version == SCHEMA_TEST_VERSION
     result = run_rzdiff(capability, older, newer, OLD, NEW, env=dict(os.environ), cancel=threading.Event())
     assert len(result.matches) == 4
 
@@ -258,7 +260,7 @@ def test_valid_unicode_name_round_trips_without_changing_evidence_hash():
     import hashlib
 
     text = variant(original={'addr': 1, 'name': 'café_𝄞', 'size': 1})
-    result = parse_output(text, '0.9.1', OLD, NEW)
+    result = parse_output(text, SCHEMA_TEST_VERSION, OLD, NEW)
     assert result.matches[0].older_name == 'café_𝄞'
     assert json.loads(result.model_dump_json())['matches'][0]['older_name'] == 'café_𝄞'
     assert result.file_sha256 == hashlib.sha256(text.encode('utf-8')).hexdigest()

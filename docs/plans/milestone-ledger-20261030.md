@@ -364,3 +364,20 @@ Four issue #120 boundaries were directly reproduced on integrated source `f8b2bb
 | Final public release and genuine desktop/accessibility sign-off | HUMAN_ONLY | Final release not authorized; human usability evidence not replaced by offscreen checks | Provide qualified candidate artifacts and exact owner checklist only after available engineering work |
 
 This remains a restartable engineering checkpoint, not a claim that all agent work or the full project is complete. Main merge status and later exact-head results must be appended in the final handoff; the initial 139-branch inventory predates this run's new branches/PRs.
+
+
+### Post-merge/source checkpoint — November 1
+
+This entry supersedes earlier pending states only for the named slices. **#149 is DONE**, merged as `6579ed83211b7ff2039e3152728ac1cddc3e93d6` after full Linux/Windows, repeated Qt, native, Sonar, CodeRabbit and package/smoke gates. Tested and merged trees equal `4da0e0b`. Downloaded package checksums are in the dated handoff and QA records. Broader issue #116 remains open.
+
+#150 now has **14/14 native Windows parent/junction/writer/device controls passing**, verified in downloaded JUnit, plus full QA/Qt/package checks. Sonar and parent acceptance remain open. #151 and #153 incorporate current main at `1e7eeff` / `cf6620f`; fresh exact-head checks are pending, with 48 / 379 coordinator checks passing. Independent #154 at `4aa99f7` binds recorded protocol identity before corpus access: 102 independent and 112 main-port checks passed. No final evaluation or numerical promotion occurred.
+
+Combined code checkpoint `57d223d` includes reviewed identity, MSRC, rz-diff quarantine, GT12 and preregistration repairs. Its 428 bounded checks, Ruff, pip and schema checks passed. Later `64534b1` adds independently reviewed RD-F03 backend alignment; its page metadata finding is fixed, with UI/navigation/native performance still READY. Main-only identity repair is reviewed separately before publication after 28 meaningful baseline failures.
+
+A separate full run at `f005c66` has two failure markers awaiting final traces; it does not cover later rz-diff, preregistration or alignment changes. Do not call it a clean full pass or qualify later source from it.
+
+GT12 synthetic first-attempt measurements are verified: 5k facts 3.995 s; 10k/100k read model 0.947/9.330 s (informational); 100k UI paint/sort/filter 14.84/299.84/45.04 ms. All operations used 504 data calls at both sizes. Sort misses the raw 150 ms target but passes the unchanged 750 ms CI allowance. Possible brief overlap with a short test is recorded; no favorable retry. Windows/native/full G-U5 remain READY.
+
+The rz-diff defensive repair is READY_FOR_REVIEW on combined source. Active associative consumers abstain and old unified cache identities change. The unchanged live workflow remains blocked/nonzero. A verified same-version witness remains READY research, not automatically external or human-only. GT05 normalized output persistence is IN_PROGRESS with attention schema compatibility under review.
+
+All other accepted workstreams and retained v2 requirements remain open in the existing matrix. The dated handoff gives current refs, evidence, owners, unfinished agent work and precise access/human boundaries.

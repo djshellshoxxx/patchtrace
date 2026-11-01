@@ -1,0 +1,5 @@
+ui_calls n=10000    measured prepare 1.47s read_model 0.89s first_paint 0.01s sort 0.02s filter 0.01s | 181 MiB | informational
+ui_calls n=100000   measured prepare 16.98s read_model 8.58s first_paint 0.01s sort 0.30s filter 0.05s | 1004 MiB | l35_first_paint_ms:pass l35_sort_ms:pass l35_filter_ms:pass
+pending  facts: needs measurement, limit l35_facts_5000_s = 60 (change facts for 5,000 changed pairs; missing sizes 5000)
+pending  read_model: needs measurement, limit informational = 0 (persisted read-model build at 10k and 100k rows (no L-35 build-time limit); missing sizes 10000, 100000)
+verdict pass, counts_sha256 f36283e3124174a95b96f4829663cf4fa39090da4aa2d1b76387a04ea53edd8a

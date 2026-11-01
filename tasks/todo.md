@@ -930,3 +930,23 @@ Done: dock with state matrix, consent, import, changes, copy, go to CVE. Open: r
 - [x] PT-KB-GUI implementation + review: local advisory import/search/explicit product/local pair preview/new-only project creation; safe cancel/partial retention; main-thread adoption with original-project rollback.
 - [ ] PT-SAFETY-INTEGRATE acceptance: final product024a00b fully exercised (18,348 passed, one host Git-marker failure; unchanged isolated rerun passed), Linux build/self-test/frozen smoke/checksum/Ruff PASS. Publication is BLOCKED by automatic approval review pending explicit destination authorization; new Windows/native acceptance cannot start until publication. No global release-ready claim.
 - [ ] PR147 current-head Windows packaging and Sonar disposition after LF/output staging repairs; do not close original PR102 by partial adoption.
+
+## 2026-11-01 isolated report destination repair
+
+- [x] Selectively reconcile PR #148's independent existing-report safety fix (project ownership, evidence aliases, committed read without recovery) on main; no KB workflow/adoption or unaccepted stack dependency imported.
+- [x] Exact-head independent review and all Linux/Windows QA/Qt/native/package/smoke gates passed for focused PR #149; merged as `6579ed83211b7ff2039e3152728ac1cddc3e93d6` on November 1. Combined feature acceptance remains separate.
+
+### GT12 bounded benchmark harness (2026-11-01)
+
+- [x] Implement and independently review facts 5k, persisted read-model 10k/100k, and real offscreen Qt paint/sort/filter stages without changing L-35/C6 budgets.
+- [x] Run the new acceptance sizes serially on checkpoint `1f5f0b8`; all CI allowances/exact calls pass, initial results retained. Details: `docs/qa/gt12-benchmark-20261101.md`.
+- [ ] Full G-U5 remains open: earlier ladder/ingest evidence and failures, largest Tier R, Windows/frozen performance and final integrated source still need their own gates. Qt 100k sort measured 299.84 ms, above raw150 ms target; possible brief focused-test overlap recorded, no retry or threshold change.
+
+- [ ] November 1 GT-05: review/integrate the narrow QA-bound preregistration selection repair (18 red → 255 bounded pass/1 missing-native-tools skip). Retain #78 normalized output persistence, #79/#82 both-side recipe controls, #85 final-look CLI integration, fresh pin/license audit and pre-lock/held-out gates as separate READY work; see `docs/qa/corpus-safeguards-20261101.md`. No locked evaluation or probability promotion occurred.
+
+### November 1 integration checkpoint follow-up
+
+- [x] Integrate independently reviewed identity, real MSRC JSON, GT12 harness, preregistration identity, RZ0.9.1 quarantine and opt-in RD-F03 backend; retain exact source scopes and original failures.
+- [ ] Repair and independently verify full-suite GUI event-pumping violation and refused-secondary identity assertion; preserve host AF_UNIX failure and original full-suite receipts.
+- [ ] Finish normalized-output persistence and real-loader replay review, publish independent main identity repair, qualify current #151/#153/#154 CI and merge passing independent slices.
+- [ ] Repeat required full/Qt/native/frozen/package acceptance on stable final combined source after reviewed fixes. Native witness, broader corpus/source/security/lifecycle/provider and retained v2 requirements remain open.

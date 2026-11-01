@@ -1,0 +1,26 @@
+[
+  {
+    "path": "gt12-independent-receipt-check-20261101.py.original.txt",
+    "local_source_commit": "a38c3179d1020e6e830daa37bcbd01ab1e0ad642",
+    "sha256": "ef852ef3dd28b47140e9ea25e61ff7ab5a14481c3a317aa9661f510054135fef",
+    "note": "Historical exact script; current executable copy uses explicit checks retained under optimization."
+  },
+  {
+    "path": "gt12-independent-controls-20261101.py.original.txt",
+    "local_source_commit": "a38c3179d1020e6e830daa37bcbd01ab1e0ad642",
+    "sha256": "8adec71f1d184a0de0d0fc2d13d0b1bc3ede364f0f6c8d660b617141134d5542",
+    "note": "Historical exact script; current executable copy uses explicit checks retained under optimization."
+  },
+  {
+    "path": "msrc-20261101-independent-review-controls.py.original.txt",
+    "local_source_commit": "37bea53",
+    "sha256": "36933fb9bc6253e74a849b4ac5ca3003d0ed8fc444a73faa947030424c7c33f1",
+    "note": "Historical exact script; current executable copy uses explicit checks retained under optimization."
+  },
+  {
+    "path": "msrc-20261101-independent-mixed-control.py.original.txt",
+    "local_source_commit": "37bea53",
+    "sha256": "53a569061d86fdb314d3d5c005086fe1eeae4a6982c0e5284190c6c04f09fabe",
+    "note": "Historical exact script; current executable copy uses explicit checks retained under optimization."
+  }
+]

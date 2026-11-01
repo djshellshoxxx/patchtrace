@@ -1,0 +1,3 @@
+PASS: real Qt sort no-op rejected; correctness=0, filtered_rows=3
+PASS: real Qt filter no-op rejected; correctness=0, filtered_rows=25
+PASS: timed-out fresh child retains replay inputs and failed status

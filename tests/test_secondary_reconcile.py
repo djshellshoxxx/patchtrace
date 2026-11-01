@@ -1,4 +1,5 @@
 """SPEC-10 §5 / SPEC-11: reconciliation by address and enrichment storage of secondary sets."""
+# Unaffected synthetic producer version exercises generic behavior; not native compatibility evidence.
 from __future__ import annotations
 
 import pytest
@@ -24,13 +25,13 @@ def gmatch(ident, older=None, newer=None, category='modified'):
 
 
 def sm(older, newer):
-    return SecondaryMatch(engine='rz-diff', engine_version='0.9.1', older_address=older, newer_address=newer,
+    return SecondaryMatch(engine='rz-diff', engine_version='0.9.0', older_address=older, newer_address=newer,
                           older_name=None, newer_name=None, similarity_milli=500, similarity_text='0.5',
                           confidence_milli=None, confidence_text=None, flags=(), algorithm='levenshtein-bytes')
 
 
 def mset(*matches):
-    return SecondaryMatchSet(engine='rz-diff', engine_version='0.9.1', older_sha256=OLD, newer_sha256=NEW,
+    return SecondaryMatchSet(engine='rz-diff', engine_version='0.9.0', older_sha256=OLD, newer_sha256=NEW,
                              file_sha256='c' * 64, matches=matches, limitations=('raw bytes',))
 
 
@@ -71,7 +72,7 @@ def test_match_contract_rejects_inconsistent_records():
                        older_name=None, newer_name=None, similarity_milli=1, similarity_text='0.001',
                        confidence_milli=1, confidence_text='0.001', flags=(), algorithm='x')
     with pytest.raises(ValueError):
-        SecondaryMatch(engine='rz-diff', engine_version='0.9.1', older_address=1, newer_address=1,
+        SecondaryMatch(engine='rz-diff', engine_version='0.9.0', older_address=1, newer_address=1,
                        older_name=None, newer_name=None, similarity_milli=1001, similarity_text='1.001',
                        confidence_milli=None, confidence_text=None, flags=(), algorithm='levenshtein-bytes')
 

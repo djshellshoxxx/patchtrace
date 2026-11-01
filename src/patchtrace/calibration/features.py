@@ -12,6 +12,7 @@ from dataclasses import dataclass
 from typing import Literal
 
 from ..models import FunctionMatch
+from ..secondary.contracts import RZDIFF_ORIENTATION_WARNING, rzdiff_orientation_unverified
 from ..secondary.reconcile import Reconciliation, ReconciliationReport
 
 FEATURE_SCHEMA = 'features/1'
@@ -179,6 +180,8 @@ def extract(match: FunctionMatch, reports: Iterable[ReconciliationReport],
 
     def abstain(status: RowStatus, reason: str) -> FeatureRow:
         return FeatureRow(match.id, status, None, (), (), versions, reason)
+    if any(r.engine == 'rz-diff' and rzdiff_orientation_unverified(r.engine_version) for r in reports):
+        return abstain('not-comparable', RZDIFF_ORIENTATION_WARNING)
     if len(match.older) > 1 or len(match.newer) > 1 or any(r.status == 'not-comparable' for r in rows.values()):
         return abstain('not-comparable', 'many-to-many or unparsable endpoints')
     if any(r.status == 'disagreement' for r in rows.values()):
