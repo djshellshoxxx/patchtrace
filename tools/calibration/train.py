@@ -6,7 +6,10 @@ of the engine outputs in `features/1` column order, and the engine-run digests. 
 (`--rows`), or taken from the `features` list of a `shard.py merge` provenance file (`--merge`, optionally checked
 against its `--aggregate` report). Nothing but aggregate-safe tables travels between CI shards and this run.
 
-Order of work, each step failing closed: split audit (`guards.audit_manifest` must have no violation, else `PT-KA-LEAK`,
+The CLI validates recorded preregistration identity before opening corpus inputs; an explicit rehearsal retains the
+unlocked report/key. The library `run_training` accepts an already caller-validated protocol SHA.
+Order of work after input loading, each step failing closed: split audit (`guards.audit_manifest` must have no violation,
+else `PT-KA-LEAK`,
 exit 1) -> controls (A/A, noise, mutation pairs) are excluded from evidence and counted -> rows (indeterminate and
 ambiguous candidates excluded and counted; groups from `lineage.identity_groups(hub_max_lineages=3)`) -> minimum-sample
 guards (below them: a report with every gate `insufficient-data`, no fit) -> `fit.run_pipeline` (grouped nested CV,
@@ -65,6 +68,8 @@ from patchtrace.calibration.artifact import parse_artifact
 from patchtrace.calibration.features import FEATURE_SCHEMA, SPEC_BY_NAME, feature_names
 from patchtrace.calibration.scope import SCOPE_TEXT
 
+from . import prereg as P
+from . import prereg_gate as PG
 from . import shift as SH
 from .bootstrap import MAX_UNDEFINED_SHARE
 from .common import Row, canonical_json, digest, strict_json
@@ -628,6 +633,7 @@ class TrainResult:
 def run_training(docs: Sequence[PairRows], cfg: TrainConfig | None = None, *, prereg_sha: str | None = None,
                  tool_git: str = 'unknown', origin: str = 'rows', extra: Mapping | None = None,
                  locked_requested: bool = False) -> TrainResult:
+    """Run the pure pipeline; any protocol SHA must already have been validated by the caller."""
     cfg = cfg or TrainConfig()
     bundle = assemble(docs, tool_git)
     manifest_sha = canonical_manifest_sha256(bundle.manifest)
@@ -738,11 +744,12 @@ def _fit(rows, names, kinds, profile, cfg, key, versions, toolchains, lineages, 
 # ---- CLI --------------------------------------------------------------------------------------------------------------
 
 def _prereg_sha(path: str | None) -> str | None:
+    """Read exact LF protocol bytes; the CLI additionally validates its QA record."""
     if not path:
         return None
     try:
-        return hashlib.sha256(Path(path).read_bytes()).hexdigest()
-    except OSError as exc:
+        return P.prereg_sha256(Path(path))
+    except (P.PreregError, OSError) as exc:
         raise TrainError('PT-KA-EVAL', f'preregistration unreadable: {exc}') from None
 
 
@@ -766,13 +773,25 @@ def _write(path: Path, data: bytes) -> None:
 
 
 def _run(args, only_shift: bool = False) -> tuple[int, dict]:
+    try:
+        selection = PG.select(Path(args.prereg) if args.prereg else None, Path(args.qa),
+                              allow_unlocked=args.unlocked_prereg)
+    except PG.PreregGateError as exc:
+        raise TrainError('PT-KA-PREREG', str(exc)) from None
+    if selection.sha and args.smoke:
+        raise TrainError('PT-KA-PREREG', '--smoke uses reduced configuration; select --unlocked-prereg for rehearsal')
     docs, origin, extra = _inputs(args)
     cfg = TrainConfig.smoke_config() if args.smoke else TrainConfig()
-    result = run_training(docs, cfg, prereg_sha=_prereg_sha(args.prereg), tool_git=args.tool_git, origin=origin,
+    result = run_training(docs, cfg, prereg_sha=selection.sha, tool_git=args.tool_git, origin=origin,
                           extra=extra, locked_requested=bool(args.locked_form))
     out = Path(args.out)
     summary = {'train_key': result.train_key, 'report_sha256': result.report['report_sha256'],
                'gates': {g: v['status'] for g, v in sorted(result.report['gates'].items())}}
+    if selection.rehearsal_sha:
+        summary['unlocked_rehearsal'] = {
+            'source_sha256': selection.rehearsal_sha,
+            'note': 'Protocol inspected for rehearsal; the report and train key retain the unlocked placeholder.',
+        }
     code = FINDINGS if result.halt else OK                    # LBL-26 C-1/C-6: halted runs still write their report
     if result.halt:
         summary.update(halt=list(result.halt))
@@ -824,7 +843,11 @@ def build_parser() -> argparse.ArgumentParser:
         p.add_argument('--rows', help='folder of tier-r-feature-rows/1 documents')
         p.add_argument('--merge', help='tier-r-merge/1 provenance file written by shard.py merge')
         p.add_argument('--aggregate', help='merged tier-r-report/1 aggregate to cross-check with --merge')
-        p.add_argument('--prereg', help='locked preregistration file; its SHA-256 enters the train key')
+        p.add_argument('--prereg', help='LF protocol file; must match one C9-PREREG-v1 QA digest row')
+        p.add_argument('--qa', default=str(Path(__file__).resolve().parents[2] / 'docs' / 'qa.md'),
+                       help='QA file containing the recorded protocol digest (default: docs/qa.md)')
+        p.add_argument('--unlocked-prereg', action='store_true',
+                       help='inspect a protocol for rehearsal; the report and train key remain unlocked')
         p.add_argument('--out', required=True, help='output folder')
         p.add_argument('--locked-form', action='store_true',
                        help='a locked-test look is requested: halt (exit 1) with fewer than 12 locked-role lineages')
