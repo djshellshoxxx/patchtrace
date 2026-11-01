@@ -857,3 +857,8 @@ Done: dock with state matrix, consent, import, changes, copy, go to CVE. Open: r
 - [x] Reproduce/fix metadata-only backup trust and bind verified publication to fresh bytes; preserve live rows on failure.
 - [x] Reproduce/fix sliding Diaphora row-query deadlines and small-query cancellation without inventing a whole-import scope.
 - [ ] Merge these independently reviewed fixes only after exact-head applicable QA gates; native Windows is not inferred from Linux. Issue #121 memory caps and its other findings remain separate.
+
+## 2026-11-01 isolated report destination repair
+
+- [x] Selectively reconcile PR #148's independent existing-report safety fix (project ownership, evidence aliases, committed read without recovery) on main; no KB workflow/adoption or unaccepted stack dependency imported.
+- [ ] Exact-head independent review and Linux/Windows QA/packaging for this focused PR; mark merged only after those checks pass.

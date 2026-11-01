@@ -410,3 +410,9 @@ Base main `a04f5a299a8d4afef023261e52e08d14678cf1e7`. Issue #121 backup metadata
 Issue #121 Diaphora row deadline failure reproduced in three cases (sliding budget, interleaved count, small-query cancellation). Each row query now retains its original budget across yields, with explicit checks around fetches and deterministic cursor cleanup. Seven regressions preserve independent per-query scope; 65 Diaphora tests and independent two-iterator checks passed. This does not implement a whole-import memory cap.
 
 These two isolated source repairs retain all other issue findings and do not qualify the broad native/unified feature candidates. Combined focused checks and full Ruff passed; exact-head Linux/Windows/full-suite/native CI must be recorded before merge.
+
+## 2026-11-01 isolated report destination repair
+
+Baseline `a04f5a299a8d4afef023261e52e08d14678cf1e7`: the imported 13 destination/export cases fail (including the existing GUI export overwriting a protected destination; new service API absent). The narrow port from `c3868d8335a8f32f676905032dc1a6d0e9f22fd6` retains project-owned path checks, persisted snapshot reads without recovery, and one GUI call change. Independent of new KB investigation, cancellation and adoption features. Source tests and CI evidence will be appended below; neither earlier #148 green jobs nor future integration checks substitute for this exact head.
+
+Focused validation: `QT_QPA_PLATFORM=offscreen python -m pytest -q tests/test_export_destination_guard.py tests/test_report_export_backup.py tests/test_service_storage_audit.py` passed; whole-tree Ruff passed. An initial command named nonexistent test files and ran no tests; corrected command above is the evidence. Full suite and native CI remain pending until recorded.

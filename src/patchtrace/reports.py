@@ -350,9 +350,41 @@ def _keep_previous(destination: Path, content: bytes) -> Path | None:
     return backup
 
 
+def _check_destination(project: ComparisonProject, destination: Path, root: Path | None) -> None:
+    """Protect owned project state before any export filesystem mutation; not a TOCTOU sandbox."""
+    if destination.is_symlink():
+        raise ExportError('PT-EXPORT: report destination must not be a symlink')
+    if root is None:
+        return
+    try:
+        root = root.resolve()
+        exports = root / 'exports'
+        resolved = destination.resolve()
+        lexical = Path(os.path.abspath(destination))
+        for path in (lexical, resolved):
+            if path.is_relative_to(root) and not path.is_relative_to(exports):
+                raise ExportError('PT-EXPORT: choose exports/ or a destination outside the project')
+        evidence = [root / a.relative_path for a in project.artifacts]
+        evidence += [root / r.raw_path for r in project.runs if r.raw_path]
+        if resolved in {path.resolve() for path in evidence}:
+            raise ExportError('PT-EXPORT: report destination is retained project evidence')
+        if destination.exists():
+            # Namespace checks already protect internal stores. Alias checks stay finite:
+            # registered evidence plus reserved SQLite companions and the project lock.
+            protected = [root / name for name in ('project.sqlite3', 'project.sqlite3-wal',
+                         'project.sqlite3-shm', 'project.sqlite3-journal', '.patchtrace.lock')]
+            for path in [*evidence, *protected]:
+                if path.is_file() and destination.samefile(path):
+                    raise ExportError('PT-EXPORT: report destination aliases protected project data')
+    except (OSError, RuntimeError) as exc:
+        raise ExportError('PT-EXPORT: cannot verify destination ownership; choose another destination') from exc
+
+
 def export_project(project: ComparisonProject, format: str, destination: Path, include_code: bool = False,
                    include_notes: bool = True, finding_ids: list[str] | None = None,
-                   enrichment: dict | None = None) -> ExportManifest:
+                   enrichment: dict | None = None, *, project_root: Path | None = None) -> ExportManifest:
+    destination = Path(destination)
+    _check_destination(project, destination, project_root)
     if format not in {'json', 'html', 'md'}:
         raise ExportError('PT-EXPORT: supported formats are json, html, and md')
     data = _snapshot(project, include_code, include_notes, finding_ids, enrichment)
