@@ -1,0 +1,1201 @@
+{
+  "$defs": {
+    "CoverageRow": {
+      "additionalProperties": false,
+      "properties": {
+        "attempted": {
+          "minimum": 0,
+          "title": "Attempted",
+          "type": "integer"
+        },
+        "blocked": {
+          "minimum": 0,
+          "title": "Blocked",
+          "type": "integer"
+        },
+        "completed": {
+          "minimum": 0,
+          "title": "Completed",
+          "type": "integer"
+        },
+        "engine": {
+          "enum": [
+            "rz-diff",
+            "bindiff",
+            "ghidriff",
+            "unified",
+            "attention"
+          ],
+          "title": "Engine",
+          "type": "string"
+        },
+        "failed": {
+          "minimum": 0,
+          "title": "Failed",
+          "type": "integer"
+        },
+        "stratum": {
+          "enum": [
+            "release",
+            "cve",
+            "control",
+            "mutation",
+            "aa",
+            "noise",
+            "authored"
+          ],
+          "title": "Stratum",
+          "type": "string"
+        }
+      },
+      "required": [
+        "engine",
+        "stratum",
+        "attempted",
+        "completed",
+        "blocked",
+        "failed"
+      ],
+      "title": "CoverageRow",
+      "type": "object"
+    },
+    "CurveBin": {
+      "additionalProperties": false,
+      "properties": {
+        "hi": {
+          "title": "Hi",
+          "type": "number"
+        },
+        "lo": {
+          "title": "Lo",
+          "type": "number"
+        },
+        "n": {
+          "minimum": 0,
+          "title": "N",
+          "type": "integer"
+        },
+        "precision": {
+          "anyOf": [
+            {
+              "maximum": 1.0,
+              "minimum": 0.0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Precision"
+        }
+      },
+      "required": [
+        "lo",
+        "hi",
+        "n"
+      ],
+      "title": "CurveBin",
+      "type": "object"
+    },
+    "CurveBlock": {
+      "additionalProperties": false,
+      "properties": {
+        "bins": {
+          "items": {
+            "$ref": "#/$defs/CurveBin"
+          },
+          "maxItems": 64,
+          "title": "Bins",
+          "type": "array"
+        },
+        "engine": {
+          "anyOf": [
+            {
+              "enum": [
+                "rz-diff",
+                "bindiff",
+                "ghidriff",
+                "unified",
+                "attention"
+              ],
+              "type": "string"
+            },
+            {
+              "const": "model",
+              "type": "string"
+            }
+          ],
+          "title": "Engine"
+        },
+        "kind": {
+          "enum": [
+            "native-precision",
+            "tier-precision",
+            "reliability"
+          ],
+          "title": "Kind",
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind",
+        "engine",
+        "bins"
+      ],
+      "title": "CurveBlock",
+      "type": "object"
+    },
+    "EngineStatus": {
+      "additionalProperties": false,
+      "properties": {
+        "engine": {
+          "enum": [
+            "rz-diff",
+            "bindiff",
+            "ghidriff",
+            "unified",
+            "attention"
+          ],
+          "title": "Engine",
+          "type": "string"
+        },
+        "failures": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Failures",
+          "type": "integer"
+        },
+        "reason": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reason"
+        },
+        "runs": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Runs",
+          "type": "integer"
+        },
+        "status": {
+          "enum": [
+            "ok",
+            "partial",
+            "blocked",
+            "failed"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "version": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Version"
+        }
+      },
+      "required": [
+        "engine",
+        "status"
+      ],
+      "title": "EngineStatus",
+      "type": "object"
+    },
+    "InputRef": {
+      "additionalProperties": false,
+      "properties": {
+        "labels_digest": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Labels Digest",
+          "type": "string"
+        },
+        "pair_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,95}$",
+          "title": "Pair Id",
+          "type": "string"
+        },
+        "stratum": {
+          "enum": [
+            "release",
+            "cve",
+            "control",
+            "mutation",
+            "aa",
+            "noise",
+            "authored"
+          ],
+          "title": "Stratum",
+          "type": "string"
+        }
+      },
+      "required": [
+        "pair_id",
+        "stratum",
+        "labels_digest"
+      ],
+      "title": "InputRef",
+      "type": "object"
+    },
+    "Interval": {
+      "additionalProperties": false,
+      "description": "Lineage-bootstrap interval; `undefined` when too few lineages, `anti_conservative` below 30 lineages.",
+      "properties": {
+        "anti_conservative": {
+          "default": false,
+          "title": "Anti Conservative",
+          "type": "boolean"
+        },
+        "hi": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Hi"
+        },
+        "lo": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Lo"
+        },
+        "point": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Point"
+        },
+        "undefined": {
+          "default": false,
+          "title": "Undefined",
+          "type": "boolean"
+        }
+      },
+      "title": "Interval",
+      "type": "object"
+    },
+    "LabelCell": {
+      "additionalProperties": false,
+      "properties": {
+        "abstained": {
+          "minimum": 0,
+          "title": "Abstained",
+          "type": "integer"
+        },
+        "flagged": {
+          "minimum": 0,
+          "title": "Flagged",
+          "type": "integer"
+        },
+        "paired_correct": {
+          "minimum": 0,
+          "title": "Paired Correct",
+          "type": "integer"
+        },
+        "paired_wrong": {
+          "minimum": 0,
+          "title": "Paired Wrong",
+          "type": "integer"
+        },
+        "rate": {
+          "$ref": "#/$defs/Interval"
+        },
+        "unpaired": {
+          "minimum": 0,
+          "title": "Unpaired",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "paired_correct",
+        "paired_wrong",
+        "unpaired",
+        "abstained",
+        "flagged",
+        "rate"
+      ],
+      "title": "LabelCell",
+      "type": "object"
+    },
+    "Metrics": {
+      "additionalProperties": false,
+      "properties": {
+        "ambiguous_records": {
+          "minimum": 0,
+          "title": "Ambiguous Records",
+          "type": "integer"
+        },
+        "changed_fn": {
+          "minimum": 0,
+          "title": "Changed Fn",
+          "type": "integer"
+        },
+        "changed_fp": {
+          "minimum": 0,
+          "title": "Changed Fp",
+          "type": "integer"
+        },
+        "changed_precision": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Changed Precision"
+        },
+        "changed_recall": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Changed Recall"
+        },
+        "changed_tp": {
+          "minimum": 0,
+          "title": "Changed Tp",
+          "type": "integer"
+        },
+        "changed_truth": {
+          "minimum": 0,
+          "title": "Changed Truth",
+          "type": "integer"
+        },
+        "cosmetic_flagged": {
+          "minimum": 0,
+          "title": "Cosmetic Flagged",
+          "type": "integer"
+        },
+        "cosmetic_matched": {
+          "minimum": 0,
+          "title": "Cosmetic Matched",
+          "type": "integer"
+        },
+        "fp_rate": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Fp Rate"
+        },
+        "identity_fn": {
+          "minimum": 0,
+          "title": "Identity Fn",
+          "type": "integer"
+        },
+        "identity_fp": {
+          "minimum": 0,
+          "title": "Identity Fp",
+          "type": "integer"
+        },
+        "identity_precision": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Identity Precision"
+        },
+        "identity_recall": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Identity Recall"
+        },
+        "identity_tp": {
+          "minimum": 0,
+          "title": "Identity Tp",
+          "type": "integer"
+        },
+        "ignored_predictions": {
+          "minimum": 0,
+          "title": "Ignored Predictions",
+          "type": "integer"
+        },
+        "matched_negatives": {
+          "minimum": 0,
+          "title": "Matched Negatives",
+          "type": "integer"
+        },
+        "pairs": {
+          "minimum": 0,
+          "title": "Pairs",
+          "type": "integer"
+        },
+        "truth_same": {
+          "minimum": 0,
+          "title": "Truth Same",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "pairs",
+        "truth_same",
+        "identity_tp",
+        "identity_fp",
+        "identity_fn",
+        "identity_precision",
+        "identity_recall",
+        "changed_truth",
+        "changed_tp",
+        "changed_fp",
+        "changed_fn",
+        "changed_precision",
+        "changed_recall",
+        "matched_negatives",
+        "fp_rate",
+        "cosmetic_matched",
+        "cosmetic_flagged",
+        "ignored_predictions",
+        "ambiguous_records"
+      ],
+      "title": "Metrics",
+      "type": "object"
+    },
+    "OutputCredit": {
+      "additionalProperties": false,
+      "description": "Exact retained content and owner metadata behind one successful report pair/engine reference.",
+      "properties": {
+        "engine": {
+          "enum": [
+            "rz-diff",
+            "bindiff",
+            "ghidriff",
+            "attention"
+          ],
+          "title": "Engine",
+          "type": "string"
+        },
+        "newer_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Newer Sha256",
+          "type": "string"
+        },
+        "older_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Older Sha256",
+          "type": "string"
+        },
+        "output_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Output Sha256",
+          "type": "string"
+        },
+        "pair_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,95}$",
+          "title": "Pair Id",
+          "type": "string"
+        },
+        "report_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Report Sha256",
+          "type": "string"
+        },
+        "symbols": {
+          "enum": [
+            "hidden",
+            "visible"
+          ],
+          "title": "Symbols",
+          "type": "string"
+        },
+        "version": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Version"
+        }
+      },
+      "required": [
+        "pair_id",
+        "engine",
+        "report_sha256",
+        "output_sha256",
+        "older_sha256",
+        "newer_sha256",
+        "symbols"
+      ],
+      "title": "OutputCredit",
+      "type": "object"
+    },
+    "PairResult": {
+      "additionalProperties": false,
+      "properties": {
+        "engine": {
+          "enum": [
+            "rz-diff",
+            "bindiff",
+            "ghidriff",
+            "unified",
+            "attention"
+          ],
+          "title": "Engine",
+          "type": "string"
+        },
+        "metrics": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Metrics"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "output_sha256": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Output Sha256"
+        },
+        "pair_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,95}$",
+          "title": "Pair Id",
+          "type": "string"
+        },
+        "reason": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reason"
+        },
+        "status": {
+          "enum": [
+            "ok",
+            "blocked",
+            "failed"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "stratum": {
+          "enum": [
+            "release",
+            "cve",
+            "control",
+            "mutation",
+            "aa",
+            "noise",
+            "authored"
+          ],
+          "title": "Stratum",
+          "type": "string"
+        }
+      },
+      "required": [
+        "pair_id",
+        "stratum",
+        "engine",
+        "status"
+      ],
+      "title": "PairResult",
+      "type": "object"
+    },
+    "Quantiles": {
+      "additionalProperties": false,
+      "properties": {
+        "n": {
+          "minimum": 0,
+          "title": "N",
+          "type": "integer"
+        },
+        "q05": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Q05"
+        },
+        "q25": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Q25"
+        },
+        "q50": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Q50"
+        },
+        "q75": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Q75"
+        },
+        "q95": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Q95"
+        }
+      },
+      "required": [
+        "n"
+      ],
+      "title": "Quantiles",
+      "type": "object"
+    },
+    "RankBlock": {
+      "additionalProperties": false,
+      "properties": {
+        "found_in_pool": {
+          "minimum": 0,
+          "title": "Found In Pool",
+          "type": "integer"
+        },
+        "hit_at": {
+          "additionalProperties": {
+            "$ref": "#/$defs/Interval"
+          },
+          "title": "Hit At",
+          "type": "object"
+        },
+        "lineages": {
+          "minimum": 0,
+          "title": "Lineages",
+          "type": "integer"
+        },
+        "mean_rank": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Mean Rank"
+        },
+        "mrr": {
+          "$ref": "#/$defs/Interval"
+        },
+        "ndcg10": {
+          "$ref": "#/$defs/Interval"
+        },
+        "pairs": {
+          "minimum": 0,
+          "title": "Pairs",
+          "type": "integer"
+        },
+        "pool_median": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Pool Median"
+        },
+        "population": {
+          "enum": [
+            "real-fix",
+            "planted"
+          ],
+          "title": "Population",
+          "type": "string"
+        },
+        "tie_rule": {
+          "const": "midrank",
+          "default": "midrank",
+          "title": "Tie Rule",
+          "type": "string"
+        }
+      },
+      "required": [
+        "population",
+        "pairs",
+        "lineages",
+        "found_in_pool",
+        "hit_at",
+        "mrr",
+        "ndcg10"
+      ],
+      "title": "RankBlock",
+      "type": "object"
+    },
+    "ShiftBlock": {
+      "additionalProperties": false,
+      "properties": {
+        "descriptors": {
+          "additionalProperties": {
+            "$ref": "#/$defs/Quantiles"
+          },
+          "title": "Descriptors",
+          "type": "object"
+        },
+        "n_lineages": {
+          "minimum": 0,
+          "title": "N Lineages",
+          "type": "integer"
+        },
+        "shares": {
+          "additionalProperties": {
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "type": "number"
+          },
+          "title": "Shares",
+          "type": "object"
+        }
+      },
+      "required": [
+        "descriptors",
+        "shares",
+        "n_lineages"
+      ],
+      "title": "ShiftBlock",
+      "type": "object"
+    },
+    "TierRReport": {
+      "additionalProperties": false,
+      "properties": {
+        "contract": {
+          "const": "tier-r-report/1",
+          "title": "Contract",
+          "type": "string"
+        },
+        "coverage": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/CoverageRow"
+          },
+          "title": "Coverage",
+          "type": "array"
+        },
+        "curves": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/CurveBlock"
+          },
+          "title": "Curves",
+          "type": "array"
+        },
+        "engines": {
+          "items": {
+            "$ref": "#/$defs/EngineStatus"
+          },
+          "title": "Engines",
+          "type": "array"
+        },
+        "inputs": {
+          "items": {
+            "$ref": "#/$defs/InputRef"
+          },
+          "title": "Inputs",
+          "type": "array"
+        },
+        "labels": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "additionalProperties": {
+                  "additionalProperties": {
+                    "$ref": "#/$defs/LabelCell"
+                  },
+                  "type": "object"
+                },
+                "type": "object"
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Labels"
+        },
+        "lineages": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Lineages"
+        },
+        "notes": {
+          "default": [],
+          "items": {
+            "maxLength": 500,
+            "type": "string"
+          },
+          "title": "Notes",
+          "type": "array"
+        },
+        "pairs": {
+          "items": {
+            "$ref": "#/$defs/PairResult"
+          },
+          "title": "Pairs",
+          "type": "array"
+        },
+        "rank": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "additionalProperties": {
+                  "$ref": "#/$defs/RankBlock"
+                },
+                "type": "object"
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Rank"
+        },
+        "report_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Report Sha256",
+          "type": "string"
+        },
+        "scope_ids": {
+          "default": [],
+          "items": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,95}$",
+            "type": "string"
+          },
+          "maxItems": 32,
+          "title": "Scope Ids",
+          "type": "array"
+        },
+        "shift": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ShiftBlock"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "strata": {
+          "additionalProperties": {
+            "additionalProperties": {
+              "$ref": "#/$defs/Metrics"
+            },
+            "type": "object"
+          },
+          "title": "Strata",
+          "type": "object"
+        },
+        "symbols": {
+          "enum": [
+            "hidden",
+            "visible"
+          ],
+          "title": "Symbols",
+          "type": "string"
+        },
+        "wrong_matches": {
+          "items": {
+            "$ref": "#/$defs/WrongMatch"
+          },
+          "maxItems": 5000,
+          "title": "Wrong Matches",
+          "type": "array"
+        },
+        "wrong_matches_truncated": {
+          "minimum": 0,
+          "title": "Wrong Matches Truncated",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "contract",
+        "symbols",
+        "inputs",
+        "engines",
+        "strata",
+        "pairs",
+        "wrong_matches",
+        "wrong_matches_truncated",
+        "report_sha256"
+      ],
+      "title": "TierRReport",
+      "type": "object"
+    },
+    "WrongMatch": {
+      "additionalProperties": false,
+      "properties": {
+        "engine": {
+          "enum": [
+            "rz-diff",
+            "bindiff",
+            "ghidriff",
+            "unified",
+            "attention"
+          ],
+          "title": "Engine",
+          "type": "string"
+        },
+        "expected_new_rva": {
+          "anyOf": [
+            {
+              "maximum": 4294967295,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Expected New Rva"
+        },
+        "expected_old_rva": {
+          "anyOf": [
+            {
+              "maximum": 4294967295,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Expected Old Rva"
+        },
+        "kind": {
+          "enum": [
+            "wrong-counterpart",
+            "paired-no-counterpart",
+            "paired-unlabelled"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "new_name": {
+          "anyOf": [
+            {
+              "maxLength": 512,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "New Name"
+        },
+        "new_rva": {
+          "anyOf": [
+            {
+              "maximum": 4294967295,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "New Rva"
+        },
+        "old_name": {
+          "anyOf": [
+            {
+              "maxLength": 512,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Old Name"
+        },
+        "old_rva": {
+          "anyOf": [
+            {
+              "maximum": 4294967295,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Old Rva"
+        },
+        "pair_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,95}$",
+          "title": "Pair Id",
+          "type": "string"
+        },
+        "similarity_milli": {
+          "anyOf": [
+            {
+              "maximum": 1000,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Similarity Milli"
+        }
+      },
+      "required": [
+        "pair_id",
+        "engine",
+        "kind",
+        "old_rva",
+        "new_rva"
+      ],
+      "title": "WrongMatch",
+      "type": "object"
+    }
+  },
+  "$id": "https://patchtrace.local/schemas/tier-r-output-credits/1/OutputCredits.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "Local completed-run integrity record; no signature or claim of historical unmarked-run credit.",
+  "properties": {
+    "contract": {
+      "const": "tier-r-output-credits/1",
+      "title": "Contract",
+      "type": "string"
+    },
+    "outputs": {
+      "items": {
+        "$ref": "#/$defs/OutputCredit"
+      },
+      "maxItems": 1000000,
+      "title": "Outputs",
+      "type": "array"
+    },
+    "reports": {
+      "items": {
+        "$ref": "#/$defs/TierRReport"
+      },
+      "maxItems": 10000,
+      "minItems": 1,
+      "title": "Reports",
+      "type": "array"
+    }
+  },
+  "required": [
+    "contract",
+    "reports",
+    "outputs"
+  ],
+  "title": "OutputCredits",
+  "type": "object"
+}
