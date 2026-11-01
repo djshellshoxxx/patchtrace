@@ -1058,6 +1058,8 @@ R5 contract notes: no persisted contract changed. Deviations from the card, all 
 ### [LBL-prereg:tools]
 `tools/calibration/prereg.py` recomputes or verifies the C9 preregistration SHA-256 (read-only, never writes the lock). `tools/calibration/vendoring_scan.py` proposes lineage merges from shared masked body hashes (merge-only, hubs excluded, threshold and hub limit required). `tests/test_prereg_constants.py` pins the cv/threshold/gates/ece_null/metrics constants to the preregistration.
 
+`tools/calibration/prereg_gate.py` selects exact LF protocol bytes against one unambiguous `C9-PREREG-v1` QA table row before the training CLI opens corpus inputs. Explicit unlocked rehearsal retains the placeholder report/key; reduced-effort smoke cannot claim a verified protocol. `tests/test_train_prereg_selection.py` checks rejection before input access and real small constructed reports. This is protocol identity validation, not pre-lock approval or final-look acceptance; the single-use final-run CLI wrapper remains separate.
+
 ### [LBL-13:channels]
 `tools/calibration/channels/{strings,capabilities,environment,rules,leadlist}.py` (dev-only): one scorer per channel pack, each returning its own `PackReport` (intervals by lineage bootstrap from `evalcore.boot`, exact counts, gate booleans). Packs are never pooled; `rules` is `blocked` while `yara_x` is missing. `leadlist` evaluates the LBL s7.6 conditions (precision above base rate, A/A false-lead rate <= 0.1 %, hit@10 non-inferiority -0.02, one improved slice); below 30 lineages a condition is undefined, never passed.
 

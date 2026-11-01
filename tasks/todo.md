@@ -856,3 +856,5 @@ Done: dock with state matrix, consent, import, changes, copy, go to CVE. Open: r
 
 - [x] Selectively reconcile PR #148's independent existing-report safety fix (project ownership, evidence aliases, committed read without recovery) on main; no KB workflow/adoption or unaccepted stack dependency imported.
 - [ ] Exact-head independent review and Linux/Windows QA/packaging for this focused PR; mark merged only after those checks pass.
+
+- [ ] November 1 GT-05: review/integrate the narrow QA-bound preregistration selection repair (18 red → 255 bounded pass/1 missing-native-tools skip). Retain #78 normalized output persistence, #79/#82 both-side recipe controls, #85 final-look CLI integration, fresh pin/license audit and pre-lock/held-out gates as separate READY work; see `docs/qa/corpus-safeguards-20261101.md`. No locked evaluation or probability promotion occurred.

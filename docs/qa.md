@@ -408,3 +408,26 @@ Full d34efeb snapshot before final Qodo repairs: **18,304 passed, 128 skipped, 7
 Baseline `a04f5a299a8d4afef023261e52e08d14678cf1e7`: the imported 13 destination/export cases fail (including the existing GUI export overwriting a protected destination; new service API absent). The narrow port from `c3868d8335a8f32f676905032dc1a6d0e9f22fd6` retains project-owned path checks, persisted snapshot reads without recovery, and one GUI call change. Independent of new KB investigation, cancellation and adoption features. Source tests and CI evidence will be appended below; neither earlier #148 green jobs nor future integration checks substitute for this exact head.
 
 Focused validation: `QT_QPA_PLATFORM=offscreen python -m pytest -q tests/test_export_destination_guard.py tests/test_report_export_backup.py tests/test_service_storage_audit.py` passed; whole-tree Ruff passed. An initial command named nonexistent test files and ran no tests; corrected command above is the evidence. Full suite and native CI remain pending until recorded.
+
+### November 1 corpus safeguards and preregistration identity
+
+Selective comparison of preserved #78/#79/#82/#85 against coordinator source `241f445` confirms missing output persistence, two-sided recipe A/A/noise planner cases and final-run CLI guard. The narrow preregistration identity repair rejects unrecorded/mismatched/ambiguous QA rows before corpus reads, and explicitly keeps rehearsal reports unlocked. Initial regression 18 failed/1 passed; repaired bounded integration 255 passed/1 native-tool skip (68.85 s); full Ruff passes. This is not final-evaluation or numeric-confidence acceptance. Independent review and combined cross-OS checks remain pending. Full source/remaining-work map and evidence: [corpus-safeguards-20261101.md](qa/corpus-safeguards-20261101.md).
+
+Preregistration review follow-up: fenced/commented/indented example rows could still be accepted at first review; 8 new failures reproduced. Excluded them without changing real record identity or locked data. Final bounded selection/tools/constants checks: 74 passed (0.88 s), full Ruff passed; independent final review pending. Historical red evidence retained in the linked corpus safeguard record.
+
+Final preregistration format follow-up: independent review found raw HTML and list-nested code contexts could still resemble lock records. The supported format now requires column-zero rows and rejects unsupported raw HTML/multiline code with a controlled error. Existing QA prose compatibility and final selection/tools/constants checks pass: 99 passed (1.02 s), full Ruff clean. Review source/results are retained in the corpus safeguard record; no real final look was consumed.
+
+Independent preregistration identity review complete: `cancel_fix` cleared source `42a3d5dee13ac4ff87436a66f787c6b3b5e093ad` with 102 focused checks passing (1.40 s), original false-lock probes replayed, source hashes verified and unchanged lineage/frozen/final-gate boundaries confirmed. This supersedes pending-review notes above; integration/full/cross-OS and remaining GT-05 acceptance remain separate.
+
+External #154 parser follow-up: actual comment-fragment, whole-digest-cell and inline-code/comment boundaries
+reproduced; escaped-pipe false cells and optional trailing delimiter were also verified. Original new regression
+run:21 failed/61 passed; repaired selection/tools/constants:123 passed. Before-input probes used only synthetic
+protocol/QA files and a mocked corpus boundary. No actual corpus, final look, approval authority or frozen
+protocol changed. Preserved closed #155 overlap was inspected; its intended cases are covered while its
+prefix-comment false-lock regression is refused. [Detailed source/disposition/evidence](qa/prereg-markdown-review-20261101.md).
+
+Root review found an additional escaped-opening backtick false lock on5e008a5, so its earlier approval
+is withdrawn pending follow-up. A closed multiline comment reproduced verification and mocked corpus-boundary
+access. Source-backed opening-escape handling now preserves literal backslashes inside established code;
+new red6 failed/91 passed, repaired selection/tools/constants138 passed (all prior123 included), whole Ruff/diff
+clean. No real corpus or final evaluation was read. Independent exact-follow-up review remains required.
