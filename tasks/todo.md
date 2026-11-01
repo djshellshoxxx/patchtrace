@@ -856,3 +856,10 @@ Done: dock with state matrix, consent, import, changes, copy, go to CVE. Open: r
 
 - [x] Selectively reconcile PR #148's independent existing-report safety fix (project ownership, evidence aliases, committed read without recovery) on main; no KB workflow/adoption or unaccepted stack dependency imported.
 - [ ] Exact-head independent review and Linux/Windows QA/packaging for this focused PR; mark merged only after those checks pass.
+
+### GT05 bounded normalized output retention (2026-11-01)
+
+- [x] Reproduce missing source documents behind actual CLI output digests and selectively reconcile #78 retention against current scoring. Fresh exclusive run directories, exact canonical bytes, atomic no-overwrite publication, truthful failure metrics and attention ranking fields are covered by 164 focused passes (2 native-tool BLOCKED skips). See `docs/qa/corpus-output-persistence-20261101.md`.
+- [x] Independent output-retention review cleared `ad35469`: 164 focused passes/2 native-tool BLOCKED skips, production-loader/two-rank replay and failure/no-key differential controls. Reader metadata-loss finding closed.
+- [ ] Coordinator integration and exact-source cross-OS gates remain pending; library persistence is explicitly opt-in.
+- [ ] #78 verified shard/merge transfer and the remaining GT05 growth/source/pin/license, both-side recipe controls, pre-lock/native lineage/OOD, single-use-final CLI and guarded-promotion acceptance remain open. No real locked evaluation consumed or numeric confidence promoted.

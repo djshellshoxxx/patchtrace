@@ -24,6 +24,7 @@ OUT = Path('docs/schemas/corpus')
 EXAMPLES = 'report-examples'
 OUTPUT_CONTRACT = 'tier-r-engine-output/1'
 MAX_PREDICTIONS = 1_000_000
+OrderKeyPart = int | Annotated[float, Field(allow_inf_nan=False)] | Annotated[str, Field(max_length=512)]
 
 
 class _Strict(BaseModel):
@@ -37,12 +38,13 @@ class PredictionDoc(_Strict):
     similarity_milli: int | None = Field(default=None, ge=0, le=1000)
     old_name: str | None = Field(default=None, max_length=512)
     new_name: str | None = Field(default=None, max_length=512)
+    order_key: tuple[OrderKeyPart, ...] | None = Field(default=None, max_length=16)
 
 
 class EngineOutputDoc(_Strict):
     """One engine's answer for one pair, reduced to RVAs: the only thing the scorer reads."""
     contract: Literal['tier-r-engine-output/1']
-    engine: Literal['rz-diff', 'bindiff', 'ghidriff']
+    engine: Literal['rz-diff', 'bindiff', 'ghidriff', 'attention']
     version: str | None = Field(default=None, max_length=200)
     symbols: Literal['hidden', 'visible']
     older_sha256: C.Sha256
@@ -118,9 +120,14 @@ def _invalid(base: dict, mutate: Callable[[dict], None], *, redigest: bool = Fal
 
 def examples() -> dict[str, dict]:
     report, output = example_report(), example_engine_output()
+    attention = copy.deepcopy(output)
+    attention.update(engine='attention', version='constructed-control')
+    for rank, prediction in enumerate(attention['predictions'], 1):
+        prediction['order_key'] = [rank]
     return {
         'valid-report-synthetic.json': report,
         'valid-engine-output-rz-diff.json': output,
+        'valid-engine-output-attention.json': attention,
         'invalid-report-metric-negative.json': _invalid(
             report, lambda d: d['strata']['authored']['rz-diff'].update(identity_tp=-1), redigest=True),
         'invalid-report-unknown-engine.json': _invalid(
