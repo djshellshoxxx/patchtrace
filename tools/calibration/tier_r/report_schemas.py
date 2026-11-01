@@ -15,15 +15,19 @@ from collections.abc import Callable
 from pathlib import Path
 from typing import Annotated, Literal
 
-from pydantic import BaseModel, ConfigDict, Field, ValidationError
+from pydantic import BaseModel, ConfigDict, Field, ValidationError, model_validator
 
 from ..common import canonical_json, digest, strict_json
+from ..evalcore.engines import common as EC
 from . import contracts as C
 
 OUT = Path('docs/schemas/corpus')
 EXAMPLES = 'report-examples'
 OUTPUT_CONTRACT = 'tier-r-engine-output/1'
+CREDITS_CONTRACT = 'tier-r-output-credits/1'
 MAX_PREDICTIONS = 1_000_000
+MAX_OUTPUT_BYTES = 64 * 1024 * 1024
+Engine = Literal['rz-diff', 'bindiff', 'ghidriff', 'attention']
 OrderKeyPart = int | Annotated[float, Field(allow_inf_nan=False)] | Annotated[str, Field(max_length=512)]
 
 
@@ -44,7 +48,7 @@ class PredictionDoc(_Strict):
 class EngineOutputDoc(_Strict):
     """One engine's answer for one pair, reduced to RVAs: the only thing the scorer reads."""
     contract: Literal['tier-r-engine-output/1']
-    engine: Literal['rz-diff', 'bindiff', 'ghidriff', 'attention']
+    engine: Engine
     version: str | None = Field(default=None, max_length=200)
     symbols: Literal['hidden', 'visible']
     older_sha256: C.Sha256
@@ -55,20 +59,107 @@ class EngineOutputDoc(_Strict):
     new_only_rvas: tuple[Annotated[int, Field(ge=0, le=2**32 - 1)], ...] = Field(default=(), max_length=MAX_PREDICTIONS)
     ignored_unaddressed: int = Field(default=0, ge=0)
 
+    @model_validator(mode='after')
+    def comparable_ranking(self):
+        """Validate the actual deduplicated scorer keys, including absent-key fallback, without changing them."""
+        pairs = EC.to_engine_pairs(engine_output_from_doc(self), self.symbols)
+        try:
+            sorted(row.order_key for row in pairs.pairs if row.flag)
+        except TypeError:
+            raise ValueError('effective flagged ordering keys are not mutually comparable') from None
+        return self
+
+
+def engine_output_from_doc(doc: EngineOutputDoc) -> EC.EngineOutput:
+    """Reconstruct every producer field used by existing scoring/replay, including optional ranking keys."""
+    predictions = tuple(EC.Prediction(p.old_rva, p.new_rva, p.changed, p.similarity_milli,
+                                     p.old_name, p.new_name, p.order_key) for p in doc.predictions)
+    return EC.EngineOutput(doc.engine, 'ok', version=doc.version, predictions=predictions,
+                           old_only=frozenset(doc.old_only_rvas), new_only=frozenset(doc.new_only_rvas),
+                           implicit_unchanged=doc.implicit_unchanged, ignored_unaddressed=doc.ignored_unaddressed)
+
+
+class _InMemoryEngineOutputDoc(EngineOutputDoc):
+    """Existing evaluator vocabulary, never a persisted output/credit wire contract."""
+    engine: C.Engine
+
+
+def _validate_output_document(document: dict, model: type[EngineOutputDoc]) -> EngineOutputDoc:
+    """Check bounded Python input before encoding; normalize only JSON arrays, never scalar values/defaults."""
+    try:
+        if not isinstance(document, dict) or set(document) - EngineOutputDoc.model_fields.keys():
+            raise ValueError('expected an engine-output object with known fields')
+        data = dict(document)
+        for field in ('predictions', 'old_only_rvas', 'new_only_rvas'):
+            if field not in data:
+                continue
+            rows = data[field]
+            if not isinstance(rows, list | tuple) or len(rows) > MAX_PREDICTIONS:
+                raise ValueError(f'{field} must be a bounded array')
+            if field != 'predictions':
+                data[field] = tuple(rows)
+                continue
+            checked = []
+            for row in rows:
+                if not isinstance(row, dict):
+                    raise ValueError('prediction must be an object')
+                item = dict(row)
+                key = item.get('order_key')
+                if key is not None:
+                    if not isinstance(key, list | tuple) or len(key) > 16:
+                        raise ValueError('order_key must be a bounded array')
+                    item['order_key'] = tuple(key)
+                checked.append(PredictionDoc.model_validate(item))
+            data[field] = tuple(checked)
+        return model.model_validate(data)
+    except (ValidationError, ValueError, TypeError) as exc:
+        raise C.ContractError(f'engine output invalid: {str(exc)[:300]}') from None
+
+
+def validate_engine_output_document(document: dict) -> EngineOutputDoc:
+    """Validate only the existing four-engine persisted-output vocabulary."""
+    return _validate_output_document(document, EngineOutputDoc)
+
+
+def validate_provider_output_document(document: dict) -> EngineOutputDoc:
+    """Preserve existing in-memory unified evaluation with identical field/ranking validation."""
+    return _validate_output_document(document, _InMemoryEngineOutputDoc)
+
 
 def load_engine_output(data: bytes) -> EngineOutputDoc:
     try:
-        strict_json(data)
-        return EngineOutputDoc.model_validate_json(data)
-    except (ValidationError, ValueError) as exc:
+        if len(data) > MAX_OUTPUT_BYTES:
+            raise ValueError('engine output exceeds 64 MiB')
+        document = strict_json(data)
+    except (ValueError, RecursionError) as exc:
         raise C.ContractError(f'engine output invalid: {str(exc)[:300]}') from None
+    return validate_engine_output_document(document)
+
+
+class OutputCredit(_Strict):
+    """Exact retained content and owner metadata behind one successful report pair/engine reference."""
+    pair_id: C.Ident
+    engine: Engine
+    report_sha256: C.Sha256
+    output_sha256: C.Sha256
+    older_sha256: C.Sha256
+    newer_sha256: C.Sha256
+    symbols: Literal['hidden', 'visible']
+    version: str | None = Field(default=None, max_length=200)
+
+
+class OutputCredits(_Strict):
+    """Local completed-run integrity record; no signature or claim of historical unmarked-run credit."""
+    contract: Literal['tier-r-output-credits/1']
+    reports: tuple[C.TierRReport, ...] = Field(min_length=1, max_length=10_000)
+    outputs: tuple[OutputCredit, ...] = Field(max_length=MAX_PREDICTIONS)
 
 
 def output_sha256(doc: dict) -> str:
     return hashlib.sha256(canonical_json(doc)).hexdigest()
 
 
-SCHEMAS = ((EngineOutputDoc, OUTPUT_CONTRACT),)
+SCHEMAS = ((EngineOutputDoc, OUTPUT_CONTRACT), (OutputCredits, CREDITS_CONTRACT))
 
 
 def render() -> dict[str, str]:

@@ -863,3 +863,9 @@ Done: dock with state matrix, consent, import, changes, copy, go to CVE. Open: r
 - [x] Independent output-retention review cleared `ad35469`: 164 focused passes/2 native-tool BLOCKED skips, production-loader/two-rank replay and failure/no-key differential controls. Reader metadata-loss finding closed.
 - [ ] Coordinator integration and exact-source cross-OS gates remain pending; library persistence is explicitly opt-in.
 - [ ] #78 verified shard/merge transfer and the remaining GT05 growth/source/pin/license, both-side recipe controls, pre-lock/native lineage/OOD, single-use-final CLI and guarded-promotion acceptance remain open. No real locked evaluation consumed or numeric confidence promoted.
+
+### PR #157 credited replay follow-up (2026-11-01)
+- [x] Reproduce incompatible ranking keys, encode-before-validation and valid failed-artifact adoption by the actual loader; repair producer validation and new managed-run report-bound replay with meaningful CLI/reader controls (237 passed, 2 native-tool BLOCKED skips).
+- [x] Preserve old no-key bytes/ranking and private in-memory unified support; keep persisted engine vocabulary unchanged; expose legacy unmarked replay as unverified rather than infer historical credit.
+- [ ] Independent final review, coordinator integration/cross-OS and verified transfer integration remain pending; broader locked training/final-run/promotion safeguards are not completed by this slice. See `docs/qa/output-credited-replay-20261101.md`.
+- [x] Independent credited-replay review approved exact source `5c26af9` with 119 passes/1 native-tool BLOCKED skip and direct scalar/failed-valid-artifact controls; no remaining bounded source blocker. Integration/cross-OS/transfer and broader safeguards above remain open.
