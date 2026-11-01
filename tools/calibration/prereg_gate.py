@@ -12,7 +12,7 @@ from pathlib import Path
 
 from . import prereg
 
-_SHA = re.compile(r'(?<![A-Za-z0-9])[0-9a-f]{64}(?![A-Za-z0-9])')
+_SHA = re.compile(r'[0-9a-f]{64}')
 _FENCE = re.compile(r'^ {0,3}(`{3,}|~{3,})(.*)$')
 _BACKTICKS = re.compile(r'`+')
 _RAW_HTML = re.compile(r'<(?:[!?]|/?[A-Za-z][A-Za-z0-9-]*(?=[\s/>]|$))')
@@ -28,6 +28,18 @@ class Selection:
     rehearsal_sha: str | None = None
 
 
+def _opening_backticks(line: str, position: int = 0) -> re.Match[str] | None:
+    """Find an opener outside code; an escape consumes only the first tick."""
+    while opening := _BACKTICKS.search(line, position):
+        before = opening.start()
+        while before and line[before - 1] == '\\':
+            before -= 1
+        if (opening.start() - before) % 2 == 0:
+            return opening
+        position = opening.start() + 1
+    return None
+
+
 def _check_plain_markup(line: str) -> None:
     """Refuse raw HTML and unsupported multiline code rather than guessing visibility.
 
@@ -36,7 +48,7 @@ def _check_plain_markup(line: str) -> None:
     """
     plain = ''
     position = 0
-    while opening := _BACKTICKS.search(line, position):
+    while opening := _opening_backticks(line, position):
         plain += line[position:opening.start()]
         closing = next((match for match in _BACKTICKS.finditer(line, opening.end())
                         if len(match[0]) == len(opening[0])), None)
@@ -58,7 +70,7 @@ def _visible_lines(text: str) -> Iterator[str]:
     fence = ''
     commented = False
     for line in text.splitlines():
-        record_at_start = line.startswith('|')
+        record_at_start = not commented and line.startswith('|')
         if fence:
             closing = line.lstrip(' ')
             marker = closing.rstrip(' \t')
@@ -66,6 +78,13 @@ def _visible_lines(text: str) -> Iterator[str]:
                     and all(c == fence[0] for c in marker)):
                 fence = ''
             continue
+        if not commented:
+            opening = _FENCE.match(line)
+            if opening:
+                fence = opening[1]
+                continue
+            if line.expandtabs(4).startswith('    '):
+                continue
         visible = ''
         while line:
             if commented:
@@ -75,6 +94,15 @@ def _visible_lines(text: str) -> Iterator[str]:
                 line, commented = line[end + 3:], False
             else:
                 start = line.find('<!--')
+                code = _opening_backticks(line)
+                if code is not None and (start < 0 or code.start() < start):
+                    closing = next((match for match in _BACKTICKS.finditer(line, code.end())
+                                    if len(match[0]) == len(code[0])), None)
+                    if closing is None:
+                        raise PreregGateError('unsupported QA format: inline code spans must close on the same line')
+                    visible += line[:closing.end()]
+                    line = line[closing.end():]
+                    continue
                 if start < 0:
                     visible += line
                     break
@@ -91,15 +119,30 @@ def _visible_lines(text: str) -> Iterator[str]:
             yield visible
 
 
+def _table_cells(line: str) -> list[str]:
+    """Split simple pipe rows; escaped pipes cannot manufacture extra cells."""
+    cells: list[list[str]] = [[]]
+    escaped = False
+    for char in line[1:]:
+        if char == '|' and not escaped:
+            cells.append([])
+        else:
+            cells[-1].append(char)
+        escaped = not escaped if char == '\\' else False
+    if not cells[-1]:
+        cells.pop()  # Optional unescaped trailing delimiter.
+    return [''.join(cell).strip() for cell in cells]
+
+
 def _recorded_sha(text: str) -> str:
     rows = []
     for line in _visible_lines(text):
         line = line.strip()
-        if not line.startswith('|') or not line.endswith('|'):
+        if not line.startswith('|'):
             continue
-        cells = [cell.strip() for cell in line[1:-1].split('|')]
+        cells = _table_cells(line)
         if prereg.QA_ROW in cells:
-            rows.append((cells.count(prereg.QA_ROW), _SHA.findall(line)))
+            rows.append((cells.count(prereg.QA_ROW), [cell for cell in cells if _SHA.fullmatch(cell)]))
     if len(rows) != 1 or rows[0][0] != 1 or len(rows[0][1]) != 1:
         raise PreregGateError(f'need one unambiguous {prereg.QA_ROW} QA table row with one SHA-256')
     return rows[0][1][0]
