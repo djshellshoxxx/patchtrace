@@ -148,6 +148,58 @@ functions; cosmetic and `ambiguous` counts reported apart; the wrong-match list 
 counterparts. Output `tier-r-report/1` JSON (deterministic, `report_sha256` over canonical JSON) and Markdown rendered from it.
 Mocked/synthetic engine output in tests is never live evidence (AGENTS.md).
 
+### Normalized output retention (LBL-31, November 1, 2026)
+
+The `evaluate` CLI retains every successful normalized engine response whose
+canonical byte SHA-256 appears in its report. Each evaluation exclusively creates
+a fresh directory under the selected store's `outputs/<run-token>`; `--outputs`
+may select another **nonexisting** directory. Existing directories, including
+empty ones and links/reparse points, are never reused. Filenames bind the validated
+pair id and engine, and JSON binds ordered image hashes, symbol mode and producer
+version. A provider may not return a different engine identity; duplicate provider
+owners are rejected before execution. The report's existing label digests and
+pair/engine keys remain the reference contract, without adding paths or random
+run tokens to its deterministic bytes.
+
+Normalized JSON is strict, canonical and capped at 64 MiB while serializing. A
+staged file is flushed/fsynced, then published with an atomic no-overwrite hard
+link; unsupported filesystems or publication errors fail that pair with no output
+digest, metrics or successful-run credit. No overwrite fallback is permitted.
+Previously completed outputs remain intact. The fresh directory's filesystem
+identity is checked before and after publication; changed ownership is a failure,
+not successful evidence under another run. This does not claim a lock against an
+arbitrary same-user hostile process or full power-loss durability on every OS.
+An integrity failure after publication can leave an uncredited file. Transfer
+consumers must verify successful report references, not adopt directory contents.
+
+CLI JSON reports and their Markdown companions are also published without
+replacement. Default filenames remain under the selected store's `reports/` and
+include the fresh run token; equal evaluations retain equal report bytes/digests
+but different paths. Explicit `--out` cannot replace an existing JSON/Markdown
+file. A report-write failure preserves already retained engine outputs and earlier
+reports. The CLI summary returns the actual `outputs` path. Library callers opt
+in with `evaluate_full(..., output_dir=...)`; without it they retain the existing
+in-memory evaluator behavior and must not claim file retention.
+
+The existing `tier-r-engine-output/1` kind vocabulary gains `attention`, which
+the evaluator/CLI already support. Its prediction `order_key`, already emitted by
+the producer, is an optional tuple of at most 16 strict integer, finite float or
+string values (at most 512 characters per string). Attention's production key is
+one integer rank; the bounds cover that provider without altering its ordering.
+Missing keys stay omitted in producer bytes. Validation is a check on the original
+canonical bytes, never a reserialization of model defaults or coerced values.
+The existing normalized-output reader must preserve the optional key when it
+reconstructs predictions, so replay uses the same ranking. This does not add
+attention to the calibration feature-engine set or change fitting/scoring rules.
+Existing documents retain their bytes and meaning. This is an additive `/1`
+vocabulary/field extension: older strict readers reject the new kind or field
+safely; this is not universal reader compatibility or a numerical-confidence
+claim. No `unified` producer or new engine default is added. This is a selective
+adoption of preserved PR #78 (`2019a37f`, repository MIT license); its older
+duplicate-scoring behavior and replace-after-existence-check writer are not
+imported. Verified shard/merge artifact transfer remains a separate acceptance
+task; none of this authorizes Tier W redistribution or a final evaluation.
+
 ## 11. Lineage, roles and existing tooling
 Lineage = project (`L-<project>`; suites `L-ours-<suite>-<project>`); mutants, A/A and noise pairs inherit the lineage of
 their base source so grouped CV (SPEC-28 s4) never splits a function identity across folds; `family` comes from the recipe.

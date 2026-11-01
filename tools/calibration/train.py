@@ -240,7 +240,7 @@ def toolchain_of(side: C.ImageSide) -> str:
 
 
 def _output_from_doc(doc: RS.EngineOutputDoc) -> E.EngineOutput:
-    preds = tuple(E.Prediction(p.old_rva, p.new_rva, p.changed, p.similarity_milli, p.old_name, p.new_name)
+    preds = tuple(E.Prediction(p.old_rva, p.new_rva, p.changed, p.similarity_milli, p.old_name, p.new_name, p.order_key)
                   for p in doc.predictions)
     return E.EngineOutput(doc.engine, 'ok', version=doc.version, predictions=preds,
                           old_only=frozenset(doc.old_only_rvas), new_only=frozenset(doc.new_only_rvas),
