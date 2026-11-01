@@ -862,3 +862,6 @@ Done: dock with state matrix, consent, import, changes, copy, go to CVE. Open: r
 
 - [x] Selectively reconcile PR #148's independent existing-report safety fix (project ownership, evidence aliases, committed read without recovery) on main; no KB workflow/adoption or unaccepted stack dependency imported.
 - [ ] Exact-head independent review and Linux/Windows QA/packaging for this focused PR; mark merged only after those checks pass.
+
+- [x] Reproduce and independently repair PR151 backup timestamp/pending-file collisions without overwriting prior evidence; 39 focused tests pass.
+- [ ] Qualify the updated storage head on full Windows/Linux/Qt/package/native gates before merge; existing prior-head success is historical.

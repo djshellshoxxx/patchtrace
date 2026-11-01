@@ -86,18 +86,18 @@ def test_corruption_after_sqlite_check_cannot_enter_the_verdict_cache(service, m
     assert backup.exists(), 'failed verification must preserve prior evidence'
 
 
-def test_published_copy_changed_after_rename_is_not_returned_as_verified(service, monkeypatch):
-    original_replace = Path.replace
+def test_published_copy_changed_after_link_is_not_returned_as_verified(service, monkeypatch):
+    original_link = os.link
     published = []
 
-    def replace_then_corrupt(path, target):
-        result = original_replace(path, target)
+    def link_then_corrupt(path, target, **kwargs):
+        result = original_link(path, target, **kwargs)
         if path.name.endswith('.sqlite3.part'):
             _change_bytes_preserving_metadata(Path(target))
             published.append(Path(target))
         return result
 
-    monkeypatch.setattr(Path, 'replace', replace_then_corrupt)
+    monkeypatch.setattr(os, 'link', link_then_corrupt)
     with pytest.raises(verified_backup.BackupError, match='changed during publication'):
         verified_backup.write_verified_backup(service.root, service.store.connection, 'history-prune')
     assert len(published) == 1 and published[0].exists()
@@ -131,4 +131,71 @@ def test_edit_to_already_hashed_bytes_with_restored_mtime_is_not_trusted(service
             return self.digest.hexdigest()
 
     monkeypatch.setattr(verified_backup.hashlib, 'sha256', MutatingHash)
+    assert verified_backup.trusted_backup(service.root, 'history-prune') is None
+
+
+def _fixed_backup_clock(monkeypatch):
+    from datetime import UTC, datetime
+
+    instant = datetime(2026, 11, 1, 13, 0, tzinfo=UTC)
+
+    class FixedClock:
+        @staticmethod
+        def now(_timezone):
+            return instant
+
+    monkeypatch.setattr(verified_backup, 'datetime', FixedClock)
+    return instant.strftime('%Y%m%dT%H%M%S%fZ')
+
+
+def test_timestamp_collision_preserves_previous_verified_backup(service, monkeypatch):
+    _fixed_backup_clock(monkeypatch)
+    first = verified_backup.write_verified_backup(service.root, service.store.connection, 'history-prune')
+    original = first.read_bytes()
+    _save(service, 'new snapshot after backup')
+    monkeypatch.setattr(verified_backup, '_remember', lambda *args: False)
+    with pytest.raises(verified_backup.BackupError):
+        verified_backup.write_verified_backup(service.root, service.store.connection, 'history-prune')
+    assert first.read_bytes() == original
+    assert not list((service.root / 'backups').glob('*.part'))
+
+
+def test_preexisting_pending_copy_is_neither_reused_nor_removed(service, monkeypatch):
+    stamp = _fixed_backup_clock(monkeypatch)
+    directory = service.root / 'backups'
+    directory.mkdir(exist_ok=True)
+    prior = directory / f'project-pre-history-prune-{stamp}.sqlite3.part'
+    original = b'previous interrupted evidence; never an owned temporary'
+    prior.write_bytes(original)
+    backup = verified_backup.write_verified_backup(service.root, service.store.connection, 'history-prune')
+    assert prior.read_bytes() == original
+    assert backup.is_file() and backup != prior
+    assert list(directory.glob('*.part')) == [prior]
+
+
+def test_destination_created_during_publication_survives(service, monkeypatch):
+    original_link = os.link
+    raced = []
+
+    def competing_publish(source, target, **kwargs):
+        target = Path(target)
+        target.write_bytes(b'previous writer completed first')
+        raced.append(target)
+        return original_link(source, target, **kwargs)
+
+    monkeypatch.setattr(os, 'link', competing_publish)
+    with pytest.raises(verified_backup.BackupError):
+        verified_backup.write_verified_backup(service.root, service.store.connection, 'history-prune')
+    assert len(raced) == 1 and raced[0].read_bytes() == b'previous writer completed first'
+    assert not list((service.root / 'backups').glob('*.part'))
+
+
+def test_unsupported_atomic_publication_fails_closed(service, monkeypatch):
+    def unavailable(*args, **kwargs):
+        raise NotImplementedError('no hard links on this filesystem')
+
+    monkeypatch.setattr(os, 'link', unavailable)
+    with pytest.raises(verified_backup.BackupError):
+        verified_backup.write_verified_backup(service.root, service.store.connection, 'history-prune')
+    assert not list((service.root / 'backups').iterdir())
     assert verified_backup.trusted_backup(service.root, 'history-prune') is None
