@@ -1,9 +1,9 @@
 """Verified SQLite backups taken before any prune deletes rows (SPEC-07h H1/H2, Phase D amendment).
 
 Rule: no backup, no deletion. A new backup is written with the SQLite backup API into
-`backups/project-pre-<label>-<UTC stamp>.sqlite3.part`; the writing connection is closed, the file is
+an exclusively created `backups/project-pre-<label>-<UTC stamp>-*.sqlite3.part`; the writing connection is closed, the file is
 re-opened read-only and must pass `PRAGMA integrity_check` and answer the caller's identity queries
-(snapshot hash, row counts) exactly like the live database. Only then is it renamed to its final name,
+(snapshot hash, row counts) exactly like the live database. Only then is it hard-linked to an unused final name,
 so a crash or a failed check never leaves a half-trusted file under the trusted name.
 
 An existing backup is trusted only after the same read-only re-open with `PRAGMA quick_check`, a
@@ -21,6 +21,7 @@ import hashlib
 import os
 import sqlite3
 import stat
+import tempfile
 import threading
 from collections.abc import Sequence
 from dataclasses import dataclass
@@ -227,12 +228,20 @@ def write_verified_backup(root: Path, connection: sqlite3.Connection, label: str
         directory.mkdir(exist_ok=True)
         stamp = datetime.now(UTC).strftime('%Y%m%dT%H%M%S%fZ')
         target = safe_path(root, f'{BACKUP_DIR}/project-pre-{label}-{stamp}.sqlite3')
-        part = safe_path(root, f'{BACKUP_DIR}/project-pre-{label}-{stamp}.sqlite3.part')
         expected = _answers(connection, queries)
     except (sqlite3.Error, OSError, ValueError) as exc:
         raise BackupError(f'PT-STORAGE: pre-{label} database backup could not be prepared '
                           f'({type(exc).__name__})') from exc
+    part: Path | None = None
+    owned: tuple[int, int] | None = None
     try:
+        descriptor, name = tempfile.mkstemp(prefix=f'project-pre-{label}-{stamp}-', suffix='.sqlite3.part', dir=directory)
+        part = Path(name)
+        try:
+            info = os.fstat(descriptor)
+            owned = info.st_dev, info.st_ino
+        finally:
+            os.close(descriptor)
         copy = sqlite3.connect(part)
         try:
             connection.backup(copy)
@@ -247,13 +256,21 @@ def write_verified_backup(root: Path, connection: sqlite3.Connection, label: str
             raise BackupError(f'PT-STORAGE: pre-{label} database backup failed verification ({problem})')
         if _fingerprint(part) != checked:
             raise BackupError(f'PT-STORAGE: pre-{label} database backup changed during verification')
-        part.replace(target)
+        os.link(part, target, follow_symlinks=False)
     except BackupError:
-        part.unlink(missing_ok=True)
         raise
-    except (sqlite3.Error, OSError, ValueError) as exc:
-        part.unlink(missing_ok=True)
+    except (sqlite3.Error, OSError, ValueError, NotImplementedError) as exc:
         raise BackupError(f'PT-STORAGE: pre-{label} database backup failed ({type(exc).__name__})') from exc
+    finally:
+        if part is not None and owned is not None:
+            try:
+                info = part.lstat()
+                if (info.st_dev, info.st_ino) == owned:
+                    part.unlink()
+            except OSError:
+                # An untrusted leftover is not a verified backup. Never remove
+                # the published name or a replacement temporary owned elsewhere.
+                pass
     # A caller may prune immediately when this returns. Do not return success
     # when the published name no longer contains the bytes that SQLite checked.
     if not _remember(target, facts, checked):

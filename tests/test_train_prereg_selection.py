@@ -236,3 +236,95 @@ def test_html_as_code_is_allowed_before_a_visible_record(tmp_path, protocol, exa
     path, qa, sha = protocol
     qa.write_text(example + f'\n\n| C9-PREREG-v1 | {sha} |\n', encoding='utf-8')
     assert select(path, qa).sha == sha
+
+
+@pytest.mark.parametrize('text', [
+    '<!-- hidden\n| --> | C9-PREREG-v1 | {sha} |',
+    '<!-- hidden\n| -->| C9-PREREG-v1 | {sha} |',
+    '| C9-PREREG-v1 | {sha}-draft |',
+    '| C9-PREREG-v1 | draft-{sha} |',
+    '| C9-PREREG-v1 | ({sha}) |',
+    '| note\\| C9-PREREG-v1 | {sha} |',
+])
+@pytest.mark.parametrize('command', ['run', 'shift'])
+def test_review_nonrecords_fail_select_and_before_corpus_access(
+        tmp_path, protocol, monkeypatch, text, command):
+    from tools.calibration.prereg_gate import PreregGateError, select
+
+    path, qa, sha = protocol
+    qa.write_text(text.format(sha=sha) + '\n', encoding='utf-8')
+    with pytest.raises(PreregGateError):
+        select(path, qa)
+    monkeypatch.setattr(T, '_inputs', lambda *_: pytest.fail('corpus opened for a false QA record'))
+    with pytest.raises(T.TrainError, match='PT-KA-PREREG'):
+        T._run(args_for(tmp_path, protocol, command=command), only_shift=command == 'shift')
+    assert not (tmp_path / 'out').exists()
+
+
+@pytest.mark.parametrize('example', [
+    'Literal `<!--` is code.',
+    'Literal `<!-- -->` is code.',
+    'Literal ``<!-- `literal` -->`` is code.',
+    'Literal `<!--` then <!-- actual comment --> prose.',
+    '<!-- comment with `unmatched literal -->\nLiteral `<!--` is code.',
+    '    <!-- indented code with `unmatched literal',
+])
+def test_code_comment_markers_do_not_hide_later_visible_record(tmp_path, protocol, example):
+    from tools.calibration.prereg_gate import select
+
+    path, qa, sha = protocol
+    qa.write_text(example + f'\n\n| C9-PREREG-v1 | {sha} |\n', encoding='utf-8')
+    assert select(path, qa).sha == sha
+
+
+@pytest.mark.parametrize('ending', ['', ' |', ' | note', ' | note |', r' | note\|literal', r' | note\|literal |'])
+def test_record_trailing_pipe_is_optional_and_escaped_note_pipe_stays_text(tmp_path, protocol, ending):
+    from tools.calibration.prereg_gate import select
+
+    path, qa, sha = protocol
+    qa.write_text(f'| C9-PREREG-v1 | {sha}{ending}\n', encoding='utf-8')
+    assert select(path, qa).sha == sha
+
+
+@pytest.mark.parametrize('slashes', [1, 3])
+def test_escaped_opening_ticks_cannot_protect_a_comment_hidden_record(tmp_path, protocol, slashes):
+    from tools.calibration.prereg_gate import PreregGateError, select
+
+    path, qa, sha = protocol
+    prefix = '\\' * slashes
+    qa.write_text(f'literal {prefix}`<!-- \\`\n| C9-PREREG-v1 | {sha} |\n-->\n', encoding='utf-8')
+    with pytest.raises(PreregGateError):
+        select(path, qa)
+
+
+@pytest.mark.parametrize('command', ['run', 'shift'])
+def test_escaped_opening_comment_record_fails_before_corpus_access(
+        tmp_path, protocol, monkeypatch, command):
+    _, qa, sha = protocol
+    qa.write_text(f'literal \\`<!-- \\`\n| C9-PREREG-v1 | {sha} |\n-->\n', encoding='utf-8')
+    monkeypatch.setattr(T, '_inputs', lambda *_: pytest.fail('corpus opened for comment-hidden identity'))
+    with pytest.raises(T.TrainError, match='PT-KA-PREREG'):
+        T._run(args_for(tmp_path, protocol, command=command), only_shift=command == 'shift')
+    assert not (tmp_path / 'out').exists()
+
+
+@pytest.mark.parametrize('outside_slashes', [0, 2, 4])
+@pytest.mark.parametrize('ticks', [1, 2, 3])
+def test_backslashes_inside_established_code_do_not_escape_closing_ticks(
+        tmp_path, protocol, outside_slashes, ticks):
+    from tools.calibration.prereg_gate import select
+
+    path, qa, sha = protocol
+    prefix, marker = '\\' * outside_slashes, '`' * ticks
+    qa.write_text(f'literal {prefix}{marker}<!-- \\{marker}\n| C9-PREREG-v1 | {sha} |\n-->\n',
+                  encoding='utf-8')
+    assert select(path, qa).sha == sha
+
+
+@pytest.mark.parametrize('example', [r'literal \` tick', r'literal \``<!-- \`'])
+def test_escaped_first_tick_is_literal_without_consuming_remaining_ticks(tmp_path, protocol, example):
+    from tools.calibration.prereg_gate import select
+
+    path, qa, sha = protocol
+    qa.write_text(example + f'\n| C9-PREREG-v1 | {sha} |\n', encoding='utf-8')
+    assert select(path, qa).sha == sha

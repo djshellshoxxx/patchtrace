@@ -599,3 +599,48 @@ Independent preregistration identity review complete: `cancel_fix` cleared sourc
 Product source `64534b1b1e75245c8582380b1f6187c404549d52` (tree `087ea18b96325c90d1fa1a8581c71e1644f8cebd`) adds reviewed identity, MSRC, benchmark, preregistration, RZ quarantine and opt-in RD-F03 alignment. Combined bounded checks: 428 passed (13.77 s); RD root review: 92 passed (0.93 s). Source scopes overlap and are not summed. All source/receipt hashes remain in the dated handoff and linked QA records.
 
 Frozen earlier source `f005c66` full suite: **18,702 passed, 3 failed, 138 skipped, 7 xfailed**, 1,731.42 s. Failures are GUI event pumping, host AF_UNIX EPERM and a refused-source identity expectation under contract review. No retry or suppression. Full Ruff, dependency/protobuf checks and both schema checks passed without drift. [Receipt](qa/full-verification-f005c66-20261101.md) and [original evidence](qa/full-verification-f005c66-20261101.tar.gz). This run excludes later RZ/prereg/RD changes. Overall combined acceptance remains open.
+
+### GT05 normalized output persistence (2026-11-01)
+
+Against checkpoint `06b56a6`, actual CLI reports referenced normalized output digests with no retained source document; original regressions failed 3/3. The narrow #78 reconciliation now uses fresh exclusive run directories and atomic no-overwrite publication, and fails a pair without metrics when evidence cannot be retained. Earlier outputs/reports survive later failures. The actual attention provider exposed an already-produced field/schema mismatch; its bounded ranking key and engine kind now validate without changing original output bytes or scoring. Old strict readers reject these additive `/1` fields/kind safely.
+
+Independent review exposed loss of the ranking field in the production output reader; the one-field reconstruction fix and actual-loader regression preserve it. Final focused checks: **164 passed, 2 native-tool skips** in 3.09 s; whole Ruff/diff clean. All inputs are constructed; production attention import/ranking/loader/replay is exercised, but no native accuracy or real corpus/final evaluation is claimed. Final independent review/integration and verified shard-transfer remain pending. Exact source/license adoption, preserved red/green logs, schema limits and remaining requirements: [output retention receipt](qa/corpus-output-persistence-20261101.md).
+
+Independent review now clears source `ad35469860d402c4dfa86f041be3ce6996323465` (tree `bb7bd51dc64b08cc6fd33d8d7c90f4bf72b47841`): 164 independent passes, 2 native-tool BLOCKED skips in 3.30 s, extra production-reader/failure controls and old-byte/decoder differential all pass. The sole reader finding is closed; exact source hashes match. Evidence-only follow-up preserves the original runs and raw logs. Coordinator integration/cross-OS and verified transfer remain open.
+
+PR151 backup publication follow-up: actual fixed-clock/pending-file regressions2failed before repair; reviewed exclusive-stage/non-replacing publication39 tests passed (independent39 plus live-save failure controls). Prior evidence and no-prune-on-failure preserved; exact newhead CI required. See `docs/qa/backup-publication-collision-20261101.md`.
+
+## Rizin original-runtime witness research (2026-11-01)
+
+Fresh bounded controls on the approved original 0.9.1 Linux archive/member reproduced conditional
+orientation, identical output with reversed inputs, zero/absent-function exit0 diagnostics and the
+source-bound selected-function singleton case. Full raw/control/config/digest evidence is in
+`docs/research/rzdiff-witness-native-20261101.json`; this is research, not GT/native compatibility acceptance.
+All 675 runtime files and six input artifacts remained byte-identical. A privately extracted, verified GDB
+observer failed before inferior startup with host `ptrace: Operation not permitted`; no bypass was attempted.
+The all-function same-run witness remains unproven, so production quarantine and the nonzero live gate remain.
+
+External #154 parser follow-up: actual comment-fragment, whole-digest-cell and inline-code/comment boundaries
+reproduced; escaped-pipe false cells and optional trailing delimiter were also verified. Original new regression
+run:21 failed/61 passed; repaired selection/tools/constants:123 passed. Before-input probes used only synthetic
+protocol/QA files and a mocked corpus boundary. No actual corpus, final look, approval authority or frozen
+protocol changed. Preserved closed #155 overlap was inspected; its intended cases are covered while its
+prefix-comment false-lock regression is refused. [Detailed source/disposition/evidence](qa/prereg-markdown-review-20261101.md).
+
+Root review found an additional escaped-opening backtick false lock on5e008a5, so its earlier approval
+is withdrawn pending follow-up. A closed multiline comment reproduced verification and mocked corpus-boundary
+access. Source-backed opening-escape handling now preserves literal backslashes inside established code;
+new red6 failed/91 passed, repaired selection/tools/constants138 passed (all prior123 included), whole Ruff/diff
+clean. No real corpus or final evaluation was read. Independent exact-follow-up review remains required.
+
+Independent main657 port `522fe1b` plus receipt `5a95772` preserves all reviewed source/schema/test hashes and main's original QA/todo prefixes. Scoped checks plus corpus contract/schema drift pass **188 tests, 2 native-tool BLOCKED skips in 3.90 s**, with actual imports resolved to the new worktree, full Ruff and diff hygiene clean. Independent review transfers unchanged after explicit source/owned-diff equivalence checks. No preregistration branch dependency or remote publication is introduced.
+
+### PR #157 credited replay boundary (2026-11-01)
+
+Independent review reproduced incompatible ordering keys reaching a ranking TypeError, and a valid failed-publication artifact being adopted by the actual loader. New managed runs now finalize explicit successful-report credit and the reader rechecks exact bytes/ownership; preserved failed files are uncredited. Producer scalar validation precedes encoding/scoring on both paths, with unchanged strict limits and in-memory unified compatibility. Legacy unmarked folders remain visibly unverified and can be refused; historical success is not inferred. Initial controls: 11 failed/4 passed; final bounded selection: **237 passed, 2 native-tool BLOCKED skips**, 5 expected legacy warnings in 4.70 s; whole Ruff, pip check and diff clean. No actual corpus/final evaluation was consumed. Independent final review, integration, cross-OS and broader acceptance remain open; see [credited replay receipt](qa/output-credited-replay-20261101.md).
+
+Independent credited-replay review approved source `5c26af904a28dd41aaacb3a60f9826037a85980d` / tree `f57a7dd2c210b773956bf218ad088295a03f93ff`: 119 separate passes, 1 native-tool BLOCKED skip, 11 expected legacy diagnostics in 26.55 s, plus direct strict-scalar/post-link valid-JSON controls and schema/lint checks. The selection includes existing bounded synthetic training-pipeline regressions; no actual corpus/final evaluation or native acceptance is claimed. This supersedes pending review only; integration/cross-OS/transfer and broader safeguards remain open.
+
+## Combined source verification — 2026-11-01 14:32 UTC
+
+Source `78722316df82bd606402c9c8af3db87ab11a3e53`: 216 passed, 1 native-tool PATH skip, 14 expected warnings in 27.55 s for credited replay/persistence/synthetic training/preregistration. Whole Ruff/pip/general+corpus schema/KBC checks passed. Earlier full f005c66 failed 3 tests; its two source findings are now reviewed repairs, with no fresh full run claimed. Original failures retained. [Current evidence](qa/integration-checkpoint2-20261101.json); [current status and ownership](handoff/autonomous-continuation-20261101.md).

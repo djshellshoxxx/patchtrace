@@ -32,37 +32,21 @@ def main() -> int:
 
     app.setWindowIcon(app_icon())
     if self_test:
-        from PySide6.QtCore import QSettings
-
         from .optional_deps import summary_line
-        from .service import ProjectService
         if app.windowIcon().isNull():
             raise RuntimeError('Application icon did not load: the packaged mark is missing or invalid')
         print(summary_line())  # frozen_smoke asserts the guarded imports survive PyInstaller
         with tempfile.TemporaryDirectory(prefix='patchtrace-self-test-') as directory:
             root = Path(directory)
-            service = ProjectService.sample(root / 'sample')
-            settings = QSettings(str(root / 'settings.ini'), QSettings.Format.IniFormat)
-            window = MainWindow(service=service, settings=settings)
+            from .gui.qt.kb_selftest import MARKER, run_selftest
             try:
-                window.show()
-                app.processEvents()
-                if not window.navigator.count() or 'SYNTHETIC SAMPLE' not in window.project_label.text():
-                    raise RuntimeError('Desktop self-test did not display sample matches')
-                problems = window.panels.self_check()  # every manifest module imported, every panel built once
-                if problems:
-                    raise RuntimeError('Panel self-check failed: ' + '; '.join(problems))
+                run_selftest(app, root)
             finally:
-                # Release the project lock/SQLite connection even on failure so cleanup can proceed.
-                window.close()
-                app.processEvents()
-            from .gui.qt.kb_selftest import MARKER, run_journey
-            run_journey(app, root)
-            print(MARKER)
-            # Windows cannot remove immutable copied artifacts until permissions are restored.
-            for path in root.rglob('*'):
-                if path.is_file():
-                    path.chmod(0o600)
+                # Windows also needs permissions restored when a journey assertion fails.
+                for path in root.rglob('*'):
+                    if path.is_file():
+                        path.chmod(0o600)
+        print(MARKER)
         return 0
     window = MainWindow()
     window.show()

@@ -226,6 +226,8 @@ the cache. Never cache by mutable store entry id alone. Record ordering uses typ
 per-record JSON/SHA passes. Added preparation/hashing checks cancellation at entry and per record/chunk;
 cancelled/incomplete work cannot publish an identity cache. JSON hashing streams chunks rather than making
 another complete JSON byte buffer. Manual snapshots likewise reuse their digest within immutable SourceInputs.
+Both compute and second-pass refacts identity/secondary-flag preparation use the caller's active budget;
+cancellation or an expired deadline aborts before rewriting the staged result.
 The content digest hashes compact, sorted-key, ASCII-escaped JSON before domain separation, preserving
 exact string code points. Secondary matches/alternatives are canonically ordered by their complete record
 content for fallback identity and adapter traversal (including name/flag tie-breaking); reordering them changes

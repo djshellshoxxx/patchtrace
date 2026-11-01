@@ -950,3 +950,42 @@ Done: dock with state matrix, consent, import, changes, copy, go to CVE. Open: r
 - [ ] Repair and independently verify full-suite GUI event-pumping violation and refused-secondary identity assertion; preserve host AF_UNIX failure and original full-suite receipts.
 - [ ] Finish normalized-output persistence and real-loader replay review, publish independent main identity repair, qualify current #151/#153/#154 CI and merge passing independent slices.
 - [ ] Repeat required full/Qt/native/frozen/package acceptance on stable final combined source after reviewed fixes. Native witness, broader corpus/source/security/lifecycle/provider and retained v2 requirements remain open.
+
+### GT05 bounded normalized output retention (2026-11-01)
+
+- [x] Reproduce missing source documents behind actual CLI output digests and selectively reconcile #78 retention against current scoring. Fresh exclusive run directories, exact canonical bytes, atomic no-overwrite publication, truthful failure metrics and attention ranking fields are covered by 164 focused passes (2 native-tool BLOCKED skips). See `docs/qa/corpus-output-persistence-20261101.md`.
+- [x] Independent output-retention review cleared `ad35469`: 164 focused passes/2 native-tool BLOCKED skips, production-loader/two-rank replay and failure/no-key differential controls. Reader metadata-loss finding closed.
+- [ ] Coordinator integration and exact-source cross-OS gates remain pending; library persistence is explicitly opt-in.
+- [ ] #78 verified shard/merge transfer and the remaining GT05 growth/source/pin/license, both-side recipe controls, pre-lock/native lineage/OOD, single-use-final CLI and guarded-promotion acceptance remain open. No real locked evaluation consumed or numeric confidence promoted.
+
+- [ ] Exact-head independent review and Linux/Windows QA/packaging for this focused PR; mark merged only after those checks pass.
+
+- [x] Reproduce and independently repair PR151 backup timestamp/pending-file collisions without overwriting prior evidence; 39 focused tests pass.
+- [ ] Qualify the updated storage head on full Windows/Linux/Qt/package/native gates before merge; existing prior-head success is historical.
+
+## READY: Rizin 0.9.1 original-producer same-run witness (2026-11-01)
+
+- [ ] Establish a supported source-bound observation of the actual all-function input0 recovered list
+  in the original pinned producer, or specify a distinct, hash-bound instrumented research producer and
+  prove its own contract. Current host denies ptrace before inferior startup; do not bypass it. A distinct
+  build cannot retroactively attest original producer output. Separate `aflc`/configuration cores and
+  repeated equal counts are insufficient. Independent review is required before any quarantine lift.
+- [x] Acquire the existing official 0.9.1 archive and verify API/CI/member digests; run 13 bounded original-tool
+  controls with raw streams, configuration observation and before/after input/runtime manifests. The scoped
+  `-0` singleton control establishes its own branch only. Evidence: `docs/research/rzdiff-witness-native-20261101.json`.
+
+### PR #157 credited replay follow-up (2026-11-01)
+- [x] Reproduce incompatible ranking keys, encode-before-validation and valid failed-artifact adoption by the actual loader; repair producer validation and new managed-run report-bound replay with meaningful CLI/reader controls (237 passed, 2 native-tool BLOCKED skips).
+- [x] Preserve old no-key bytes/ranking and private in-memory unified support; keep persisted engine vocabulary unchanged; expose legacy unmarked replay as unverified rather than infer historical credit.
+- [ ] Independent final review, coordinator integration/cross-OS and verified transfer integration remain pending; broader locked training/final-run/promotion safeguards are not completed by this slice. See `docs/qa/output-credited-replay-20261101.md`.
+- [x] Independent credited-replay review approved exact source `5c26af9` with 119 passes/1 native-tool BLOCKED skip and direct scalar/failed-valid-artifact controls; no remaining bounded source blocker. Integration/cross-OS/transfer and broader safeguards above remain open.
+
+## Current executable checkpoint — 2026-11-01 14:32 UTC
+
+- [x] Integrate independently reviewed F8 event-loop, backup collision, unified identity worker/Budget, preregistration Markdown and managed output-credit repairs; preserve original failures.
+- [x] Record 13 pinned original Rizin controls without lifting quarantine; two authored LLVM build/mutation controls passed.
+- [ ] Finish transfer, RD UI status geometry and concrete MSRC review findings; independently review and publish coherent slices.
+- [ ] Qualify fresh exact-head #151/#153/#154/#156/#157 gates and merge only when all applicable conditions pass.
+- [ ] Finish native BinExport/BinDiff evidence and independent review; preserve approved pins and trust limits.
+- [ ] Run required immutable combined full suite and native/frozen/package gates after current integrations; no full success claim yet.
+- [ ] Complete live issue/branch semantic reconciliation and remaining accepted v2/source/acquisition/provider/isolation/performance work. Current handoff names exact external/human-only boundaries; overall agent execution remains unfinished.

@@ -111,6 +111,13 @@ coverage only: a source run is not a frozen Windows result, and neither replaces
 the remaining real-source, native-engine, DLL/signature, PA30 or human DPI/usability
 acceptance evidence.
 
+The self-test owns one top-level Qt application event loop. Timer-owned continuations yield between actions
+and while awaiting worker completion; manual event pumping, sleep polling and nested event loops are forbidden.
+Intermediate window closes must not quit the application. Step timeout or exception closes owned windows and
+workers, restores the isolated workspace environment and the prior last-window quit policy, and propagates
+failure outside the Qt callback. The success marker is emitted only after terminal journey success. Invocation
+from a non-GUI thread or an already-running event loop is rejected before creating the scratch workspace.
+
 ## Acquisition completion identity (2026-10-31 essential repair)
 
 A consented index acquisition must bind completion to the exact product scope and investigation revision used to build its plan, including an explicit `--product` that differs from the saved selection. Reopen the workspace under its existing lock and compare the captured revision before committing a scope selection or attaching project context. A concurrent revision change returns `PT-KBC-STALE`; it must not create or attach a project or overwrite the newer investigation. Initially unselected and previously other-architecture investigations must persist the explicitly selected preview scope on successful completion. Keep preview acquisition plan identity distinct from any conservative local/manual verification pair identity; do not silently claim they are the same or promote index-only lineage. Retain provenance connecting acquisition plan and attached verified bytes. Reuse existing history/transaction and failure-preservation contracts; no schema change unless explicitly required and amended first.

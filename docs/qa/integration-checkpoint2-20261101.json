@@ -1,0 +1,73 @@
+{
+  "source": "78722316df82bd606402c9c8af3db87ab11a3e53",
+  "tree": "f53a3ccd11d2f36abcce529ddf2e4a4043220c85",
+  "main": "6579ed83211b7ff2039e3152728ac1cddc3e93d6",
+  "msrc_private_capture_archive": {
+    "filename": "patchtrace-msrc-public-captures-20261101.zip",
+    "sha256": "cc24be6fc45caed964d9883cc5f92e62be973b5d35583013c4de2f2cfc4d0f44",
+    "note": "Exact public advisory captures preserved privately for reproducibility; no owner-local TierW material."
+  },
+  "artifacts": {
+    "full-verification-f005c66-20261101.tar.gz": {
+      "bytes": 380833,
+      "sha256": "b21623aece124f0927364749cdf9374973ba9c1eb11ab86be7268bd186266db3"
+    },
+    "rzdiff-native-provenance-20261101.tar.gz": {
+      "bytes": 93479,
+      "sha256": "8bec4778a78d03148ca34a396ff69e06f2455ea64af40199e6655b1263f12b5c"
+    },
+    "rz-fixtures-20261101.tar.gz": {
+      "bytes": 30993,
+      "sha256": "0bfaa7f5d518543349f53b90b669a1972dd1e5e7a8346a19830cab392798cc60"
+    },
+    "llvm-native-controls-20261101.tar.gz": {
+      "bytes": 11129,
+      "sha256": "e95da1b8419f9cc38687b1fea1b2ca2f27d30bbc2fd466dd0874ea4f5e52027c"
+    },
+    "identity-followup-20261101.tar.gz": {
+      "bytes": 27390,
+      "sha256": "5dc82bb3818f7a6ddcac19caeda1011d0a01811efab663abdd4001abe3ab7c1e"
+    },
+    "pr154-markdown-independent-review-20261101.json": {
+      "bytes": 1068,
+      "sha256": "30d4951cf8b3e8d03bf89430f593a41244e0dacd53b7ef32904a32599a85ee32"
+    },
+    "checkpoint2-schema.log.gz": {
+      "bytes": 309,
+      "sha256": "d6a7a6c751046ea0ace872f353702e8a03172bfc71d3b34d8179868a9433b4c8"
+    },
+    "pr157-credited-replay-independent-review-20261101.json": {
+      "bytes": 2832,
+      "sha256": "67b9f24dc4ae887d9a2ebf7411e3a7bf7766c09f205ace24709865ca8ff281f6"
+    },
+    "output-prereg-integrated-checkpoint2.log.gz": {
+      "bytes": 848,
+      "sha256": "a86c83995dd7b86e5afc6d1686a1d7a5beb995a1d5015557730bb6fc24115504"
+    }
+  },
+  "recorded_at": "2026-11-01T14:32:58.451184+00:00",
+  "full_suite_on_this_source": "not run; earlier f005c66 failed result retained",
+  "bounded_check": {
+    "passed": 216,
+    "skipped": 1,
+    "warnings": 14,
+    "seconds": 27.55,
+    "command": "QT_QPA_PLATFORM=offscreen PYTHONPATH=.:src:tests /workspace/scratch/142cb233d750/venv-final/bin/python -m pytest -q --tb=short tests/test_tier_r_credited_replay.py tests/test_tier_r_output_persistence.py tests/test_train_pipeline.py tests/test_train_prereg_selection.py",
+    "skip_scope": "native LLVM tools omitted from this command PATH; separate authored native controls retained"
+  },
+  "checks": [
+    "whole-tree Ruff passed",
+    "pip check passed",
+    "general/corpus schema regeneration and KBC check: zero drift",
+    "source-range diff hygiene passed"
+  ],
+  "remote_heads": {
+    "main": "6579ed83211b7ff2039e3152728ac1cddc3e93d6",
+    "151": "ad63416348c122ade8419b11686164be09bb2af3",
+    "152_prior": "953c0e9a8d0c01b475614928a0cd568c0577bb9c",
+    "153": "141f8176d4dbcebe23dada481a4fe8660a332dcb",
+    "154": "f27d23a80ee49573ccca54cdf036427f57eebb2a",
+    "156": "4eebea4a5389af16bffe32a2bf9285c406d95fb1",
+    "157": "aff72cddc902f31a2cf44dea9c48797edabc1c30"
+  }
+}

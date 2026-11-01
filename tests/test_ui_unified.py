@@ -421,7 +421,8 @@ def test_enabling_does_not_bypass_active_engine_gate(unified, qtbot):
 
 def run_fakes(monkeypatch, order, *, block=True):
     """prepare/execute/publish stand-ins; `order` records which thread each ran on (True = the GUI thread)."""
-    monkeypatch.setattr(pipeline, 'prepare', lambda service, options=None: SimpleNamespace(plan=None))
+    monkeypatch.setattr(pipeline, 'capture_request', lambda service, options=None: SimpleNamespace(plan=None))
+    monkeypatch.setattr(pipeline, 'resolve_request', lambda request, **kwargs: request)
 
     def execute(request_, cancel, emit):
         order.append(('execute', threading.current_thread() is threading.main_thread()))

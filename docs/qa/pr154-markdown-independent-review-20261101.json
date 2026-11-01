@@ -1,0 +1,24 @@
+{
+  "date": "2026-11-01",
+  "reviewer": "ci_review",
+  "head": "b6b5495c98b2e102141184d30600892d87c2784c",
+  "base": "918653c",
+  "disposition": "approved combined final only",
+  "history": "Initial approval of 5e008a5 missed escaped opener semantics. Root identified escaped backtick causing comment-hidden row acceptance; initial approval withdrawn. Final b6b5495 consumes exactly one escaped opening tick, preserves remaining run and treats backslashes literally inside established code spans.",
+  "checks": [
+    {
+      "command": "tests/test_train_prereg_selection.py tests/test_prereg_tools.py tests/test_prereg_constants.py",
+      "result": "138 passed in 1.13s"
+    },
+    {
+      "command": "scoped Ruff",
+      "result": "All checks passed"
+    },
+    {
+      "command": "git diff --check 918653c HEAD",
+      "result": "clean"
+    }
+  ],
+  "limits": "Recorded identity only, no owner approval/lock authority/final evaluation/corpus consumption. No protected training/frozen/finalguard edits.",
+  "receipt_kind": "Reviewer summary; not a saved raw log."
+}

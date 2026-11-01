@@ -71,7 +71,7 @@ def test_affected_probe_is_explicit_and_cannot_reuse_old_scheduler_cache(tmp_pat
     old.write_bytes(b'older bytes')
     new.write_bytes(b'newer bytes')
     old_sha, new_sha = hashlib.sha256(old.read_bytes()).hexdigest(), hashlib.sha256(new.read_bytes()).hexdigest()
-    cached = rzdiff_set([rz(0x1000, 0x1080)], older=old_sha, newer=new_sha)
+    cached = rzdiff_set([rz(0x1000, 0x1080, version='0.9.1')], version='0.9.1', older=old_sha, newer=new_sha)
     original = cached.model_dump_json()
     calls = []
 
@@ -93,7 +93,7 @@ def test_affected_probe_is_explicit_and_cannot_reuse_old_scheduler_cache(tmp_pat
 
 
 def test_stored_affected_sets_retain_provenance_but_emit_no_endpoint_claims(tmp_path):
-    old = rzdiff_set([rz(0x1000, 0x1100)])
+    old = rzdiff_set([rz(0x1000, 0x1100, version='0.9.1')], version='0.9.1')
     primary = match('primary', 'modified', [func('old', 0x1000)], [func('new', 0x1080)], types=['SymbolsHash'])
     data = inputs([primary], secondary=[loaded(old, 'preserved-original-entry')])
     output = SecondaryAdapter().atoms(data, addr_map(), Budget())
@@ -131,7 +131,8 @@ def _primary():
 
 def test_retained_report_cannot_supply_matching_vote_calibration_or_actionable_engine_only_links():
     primary = _primary()
-    unknown = rzdiff_set([rz(0x1000, 0x1080), rz(0x1200, 0x1280)])
+    unknown = rzdiff_set([rz(0x1000, 0x1080, version='0.9.1'), rz(0x1200, 0x1280, version='0.9.1')],
+                         version='0.9.1')
     original = unknown.model_dump_json()
     report = reconcile([primary], unknown)
     assert report.rows[0].status == 'not-comparable' and report.rows[0].secondary == ()

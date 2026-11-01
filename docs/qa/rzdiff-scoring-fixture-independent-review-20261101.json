@@ -1,0 +1,18 @@
+{
+  "reviewer": "/root/cancel_fix",
+  "date": "2026-11-01",
+  "reviewed_commit": "424e867c2d96c6e0f0550e296a4b9e376b1a2742",
+  "changed_file": "tests/test_tier_r_eval_metrics.py",
+  "test_sha256": "f35087f1c952ffd3b41f70fa7ddf53bcb70be37efad412fc3aacca8e8ea562a0",
+  "verdict": "PASS: faithful synthetic scoring controls with explicit known-version quarantine negatives; no production or native-gate change",
+  "checks": [
+    "AST comparison proves all pre-existing test functions are unchanged except the two 0.9.1-to-0.9.0 literals in explicitly synthetic arithmetic/one-sided parser controls.",
+    "Four added negative cases use the same raw JSON shapes, require PT-SECONDARY-ORIENTATION for 0.9.1, and assert the SHA-256 of the exact raw stdout in the refusal diagnostic.",
+    "SPEC-11 keeps the known affected producer quarantined pending a verified witness; supported-policy synthetic arithmetic is not credited as fresh native orientation evidence.",
+    "Commit touches only this test file; runtime parser, scheduler/consumer quarantine, workflow pins and native gates are unchanged."
+  ],
+  "independent_test_command": "QT_QPA_PLATFORM=offscreen PYTHONPATH=src /workspace/scratch/142cb233d750/full-venv/bin/python -m pytest -q tests/test_tier_r_eval_metrics.py tests/test_rzdiff_orientation_20261101.py",
+  "independent_result": "56 passed in 0.85s",
+  "raw_log": "/workspace/scratch/142cb233d750/reconciliation/rzdiff-scoring-fixture-independent-green.log",
+  "limits": "No full suite, live/native execution, runtime edits or remote writes by reviewer. Known 0.9.1 native orientation acceptance remains unresolved."
+}

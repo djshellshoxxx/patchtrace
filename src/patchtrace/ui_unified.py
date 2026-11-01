@@ -35,7 +35,7 @@ from .gui.qt.labels import PlainLabel, SafeTextView
 from .gui.registry import PanelContext
 from .tooltips import apply_tooltip, template, tooltip
 from .unified import pipeline, read_model
-from .unified.limits import UnifiedError
+from .unified.limits import Budget, UnifiedError
 from .unified.pair_text import CHANNELS, DECOMPILED, DISASSEMBLY, RowCode, RowCodeSource
 from .unified.read_model import (
     Cancelled,
@@ -696,6 +696,8 @@ class UnifiedController(ControllerBase):
         self.vm: UnifiedViewModel | None = None
         self.dirty = True
         self.loaded_key = None
+        self._load_generation = 0
+        self._resolved_plan = None
         self.last_error = ''
         self.detail_generation = 0
         self.code_generation = 0
@@ -751,6 +753,9 @@ class UnifiedController(ControllerBase):
         self.tasks.cancel(DETAIL_CHANNEL)
         self._reset_code()
         if key is None:
+            self.tasks.cancel(LOAD_CHANNEL)
+            self._load_generation += 1
+            self._resolved_plan = None
             self.loaded_key = None
             self._show(self.loader(UnifiedLoadRequest(None)))
         else:
@@ -771,6 +776,8 @@ class UnifiedController(ControllerBase):
             self.panel.select_match(match_id)
 
     def shutdown(self) -> None:
+        self._resolved_plan = None
+        self._load_generation += 1
         for channel in (LOAD_CHANNEL, RUN_CHANNEL, DETAIL_CHANNEL, CODE_CHANNEL):
             self.tasks.cancel(channel)
         if self._code_source is not None:
@@ -788,14 +795,33 @@ class UnifiedController(ControllerBase):
         return bool(backend and backend.python_executable and backend.ghidra_dir)
 
     def reload(self) -> None:
+        self._load_generation += 1
+        generation = self._load_generation
         service = self.window.service
         if service is None or self.port.project() is None:
+            self.tasks.cancel(LOAD_CHANNEL)
+            self._resolved_plan = None
             self._show(self.loader(UnifiedLoadRequest(None)))
             return
         key = self.port.key()
-        request = read_model.request_from_service(service, extraction_configured=self._extraction_configured())
+        configured = self._extraction_configured()
+        try:
+            captured = pipeline.capture_plan(service)
+        except UnifiedError:
+            captured = None  # retained results remain stale when no current plan can be captured
         self.loaded_key, self.dirty = key, False
         self.panel.show_text_state('load', read_model.progress_text('loading', 0, None))
+        previous = self._resolved_plan
+        self.tasks.submit(
+            LOAD_CHANNEL, lambda token, report: None if captured is None else pipeline.resolve_plan(
+                captured, budget=Budget(cancel=token), previous=previous),
+            on_result=partial(self._plan_loaded, service, key, generation, configured), on_error=self._load_failed)
+
+    def _plan_loaded(self, service, key, generation, configured, plan) -> None:
+        if (self.window.service is not service or key != self.port.key() or generation != self._load_generation):
+            return
+        self._resolved_plan = plan
+        request = read_model.request_from_plan(service, plan, extraction_configured=configured)
         self.tasks.submit(LOAD_CHANNEL, lambda token, report: self.loader(request, token),
                           on_result=partial(self._loaded, key), on_error=self._load_failed)
 
@@ -858,15 +884,22 @@ class UnifiedController(ControllerBase):
             return
         service, key = self.window.service, self.port.key()
         try:
-            request = pipeline.prepare(service, pipeline.UnifiedOptions(backend=self._backend()))
+            captured = pipeline.capture_request(service, pipeline.UnifiedOptions(backend=self._backend()))
         except UnifiedError as error:
             self._run_error(read_model.error_text(error))
             return
         self.panel.show_text_state('U2', read_model.progress_text('prepare', 0, None))
+        previous = self._resolved_plan
+
+        def work(token, report):
+            request = pipeline.resolve_request(captured, cancel=token, previous=previous)
+            output = pipeline.execute(request, token, lambda event: report(event.stage, event.done, event.total))
+            return request, output
+
         self.tasks.submit(
-            RUN_CHANNEL, lambda token, report: pipeline.execute(
-                request, token, lambda event: report(event.stage, event.done, event.total)),
-            on_result=partial(self._run_finished, request, service, key), on_error=self._run_error_task,
+            RUN_CHANNEL, work,
+            on_result=lambda completed: self._run_finished(completed[0], service, key, completed[1]),
+            on_error=self._run_error_task,
             on_progress=self._progress)
         self.update_controls()
 

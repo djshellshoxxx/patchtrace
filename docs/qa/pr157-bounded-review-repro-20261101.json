@@ -1,0 +1,38 @@
+{
+  "mixed_order_keys": {
+    "schema_and_loader_accepted": true,
+    "keys": [
+      [
+        1
+      ],
+      [
+        "first"
+      ]
+    ],
+    "ranking_exception": "'<' not supported between instances of 'str' and 'int'",
+    "exception_type": "TypeError"
+  },
+  "schema_after_encoding": {
+    "invalid_scalar_characters": 513,
+    "encoded_chunks_before_rejection": [
+      515
+    ],
+    "rejection": "normalized output contract invalid: engine output invalid: 1 validation error for EngineOutputDoc\npredictions.0.old_name\n  String should have at most "
+  },
+  "uncredited_reader": {
+    "reported_status": "failed",
+    "reported_digest": null,
+    "adopted_outputs": 1,
+    "adopted_name": "valid but uncredited mutation"
+  },
+  "long_name_retention": {
+    "characters": 513,
+    "without_retention": "ok",
+    "with_retention": "failed",
+    "reason": "normalized output not retained: normalized output contract invalid: engine output invalid: 1 validation error for EngineOutputDoc predictions.0.old_name   String should have at most 512 characters [type=string_too_long, input_value='xxxxxxxxxxxxxxxxxxxxxxxx...xxxxxxxxxxxxxxxxxxxxxx"
+  },
+  "parent_folder": {
+    "exception_type": "TrainError",
+    "reason": "PT-KA-EVAL: retained-synthetic.rz-diff.json: second engine output for the same pair and engine"
+  }
+}

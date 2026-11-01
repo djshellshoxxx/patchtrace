@@ -1,0 +1,23 @@
+{
+  "reviewer": "/root/cancel_fix",
+  "date": "2026-11-01",
+  "worktree": "/workspace/scratch/142cb233d750/wt-rz-fixtures",
+  "base": "d317c7941429fa189dbcff88749935a2b885cd71",
+  "reviewed_commit": "91ea120785a380e9d2a8acfb14f05db56a298899",
+  "reviewed_tree": "13f0613163ff033f6d70364d2f9c97d2c235c701",
+  "worktree_clean": true,
+  "tested_hash_map": "/workspace/scratch/142cb233d750/reconciliation/rzdiff-shared-fixtures-independent-tested-files.json",
+  "hash_binding": "All three tested fixture/test file hashes exactly match the clean final commit.",
+  "verdict": "PASS: adapted synthetic positive fixtures preserve all quarantine negatives and existing assertions; no native gate weakened",
+  "checks": [
+    "AST differential confirms shared fixture functions/data differ only in the two declared 0.9.1-to-0.9.0 defaults; the new module disclaimer explicitly rejects any native compatibility/side-ownership claim.",
+    "Every rz row and rzdiff_set in all three quarantine constructions explicitly carries 0.9.1. All pre-existing negative assertions, statuses, raw evidence and consumer checks are unchanged.",
+    "CLI positive controls change only the two displayed fixture-version expectations. Row counts, materiality, contest counts, columns, provenance and remaining assertions are unchanged.",
+    "Standalone historical SourceRef/version controls remain unchanged. Runtime parser/consumer code, pins, recorded native witness data and native orientation acceptance are untouched.",
+    "Scoped Ruff and git diff --check passed."
+  ],
+  "independent_command": "QT_QPA_PLATFORM=offscreen PYTHONPATH=src /workspace/scratch/142cb233d750/full-venv/bin/python -m pytest -q --tb=short tests/test_unified_worker.py tests/test_unified_sources.py tests/test_rzdiff_orientation_20261101.py tests/test_unified_cli_show.py",
+  "independent_result": "129 passed in 1.69s",
+  "raw_log": "/workspace/scratch/142cb233d750/reconciliation/rzdiff-shared-fixtures-independent-green.log",
+  "limits": "Focused synthetic controls only; no full suite, live native run, runtime edits or remote writes by reviewer. Known 0.9.1 quarantine and missing native orientation witness remain explicit."
+}

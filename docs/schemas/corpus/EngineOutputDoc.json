@@ -45,6 +45,33 @@
           "title": "Old Rva",
           "type": "integer"
         },
+        "order_key": {
+          "anyOf": [
+            {
+              "items": {
+                "anyOf": [
+                  {
+                    "type": "integer"
+                  },
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "maxLength": 512,
+                    "type": "string"
+                  }
+                ]
+              },
+              "maxItems": 16,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Order Key"
+        },
         "similarity_milli": {
           "anyOf": [
             {
@@ -83,7 +110,8 @@
       "enum": [
         "rz-diff",
         "bindiff",
-        "ghidriff"
+        "ghidriff",
+        "attention"
       ],
       "title": "Engine",
       "type": "string"

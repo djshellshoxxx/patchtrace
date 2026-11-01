@@ -56,6 +56,8 @@ Stable IDs are independent of filenames. Public interfaces in SPEC-01 and schema
 
 Every substantial future module must be added here before implementation. UI must not own analysis logic; provider must not own project state.
 
+| Rizin count observation research | tools/research/rzdiff_count_observation.py | Fixed static-query argv and bounded retained-capture decoder; always denies orientation authorization, no execution or policy change | persistence.strict_json, stdlib | tests/test_rzdiff_count_observation.py; synthetic only; docs/research/rzdiff-orientation-witness-20261101.md |
+
 ## Phase C6 evidence panel modules (SPEC-28 evidence panel, owner C6)
 
 | Module | Files | Responsibility | Depends on | Tests |
@@ -284,7 +286,7 @@ S2 notes (for S0b, S1, S5 and the integration owner):
 | unified fusion | src/patchtrace/unified/fusion/{components,arbiter}.py | independence components (union-find over D-tags), evidence classes, claims, contests, groups, deterministic row order; no averaging, no numbers | registry, sources | tests/test_unified_fusion.py |
 | unified S0 facts | src/patchtrace/unified/facts/{__init__,pseudo,channels,verdict}.py | canon/1 pseudo-code, channels C4n/C5t/C6/C8, COS-PSEUDO/1 and anchored-second-channel verdicts | fusion, sources | tests/test_unified_facts.py |
 | unified exchange / compute | src/patchtrace/unified/{exchange,compute}.py | worker request/report models and file helpers; `plan_identity` (result id BEFORE the run), `compute_result`, `run_request` (pure, no project DB) | facts, fusion, sources, store | tests/test_unified_worker.py |
-| unified pipeline | src/patchtrace/unified/pipeline.py | owner side: `make_plan`/`prepare`/`cached`/`execute`/`publish`/`run_unified`; worker child through `jobs.run_process` + C3 `worker_argv`/`worker_env`/OOM rule, L-42 cap; `unified-run` rows; read helpers | compute, exchange, store, jobs, secondary.binexport_run | tests/test_unified_pipeline.py |
+| unified pipeline | src/patchtrace/unified/pipeline.py | owner capture (`capture_plan`/`capture_request`), budgeted task identity resolution (`resolve_plan`/`resolve_request`), synchronous `make_plan`/`prepare`, `cached`/`execute`/`publish`/`run_unified`; worker child through `jobs.run_process` + C3 `worker_argv`/`worker_env`/OOM rule, L-42 cap; `unified-run` rows; read helpers | compute, exchange, store, jobs, secondary.binexport_run | tests/test_unified_pipeline.py, tests/test_unified_plan_capture_20261101.py, tests/test_unified_owner_identity_20261101.py |
 | unified worker / CLI | src/patchtrace/unified/{worker,cli}.py | hidden `unified _worker` (exit codes, `--self-check`); `unified run/show/explain/status`, registered by 4 lines in `patchtrace/cli.py` | compute, exchange, pipeline | tests/test_unified_worker.py, tests/test_unified_cli.py, tests/test_unified_import_dag.py |
 ### [S1:extraction-ir] SPEC-31 S1 built (2026-10-14)
 | Module | Files | Responsibility | Depends on | Verification |
@@ -486,6 +488,7 @@ S8 notes: integrator wires `SearchService(extra_specs=lambda req: tool_specs(Too
 | Module | Files | Responsibility | Depends on | Tests |
 |---|---|---|---|---|
 | tier-r evaluator | tools/calibration/tier_r/evaluate.py | per-engine, per-stratum identity and changed-set precision/recall, FP rate, wrong-match list; engine front ends (rz-diff via production registry/scheduler, `.BinDiff` and Ghidriff JSON imports; absent = BLOCKED); deterministic `tier-r-report/1` + Markdown | secondary registry/scheduler/bindiff, normalization, tier_r.contracts | tests/test_tier_r_eval_metrics.py, test_tier_r_eval_engines.py, test_tier_r_eval_report.py |
+| normalized output retention | tools/calibration/tier_r/output_store.py; evaluator/CLI and train reader wiring | Fresh exclusive run directory, strict pre-serialization producer validation, capped canonical bytes and atomic no-overwrite publication. Managed marker plus finalized report/credit manifest bind successful references to exact replay bytes; failed evidence is retained but not adopted. Legacy loose folders remain unverified compatibility; no Tier W transfer or final-look acceptance. | tier_r.report_schemas, calibration.common | tests/test_tier_r_output_persistence.py; tests/test_tier_r_credited_replay.py; constructed outputs/imports and production attention ranking/replay |
 | report schemas | tools/calibration/tier_r/report_schemas.py | `tier-r-engine-output/1` schema, report examples (synthetic) into docs/schemas/corpus/ | tier_r.contracts, evaluate | test_tier_r_eval_report.py |
 | manifest / annotate | tools/calibration/tier_r/{manifest,annotate}.py | `calibration-corpus/1` manifest; labels -> hash-chained annotation log -> `calibration-labels/1` (`synthetic-exact`) | calibration.contracts, label, lineage | tests/test_tier_r_eval_corpus.py |
 | tier-r CLI | tools/calibration/tier_r/{cli,__main__}.py; hook in tools/calibration/corpus.py | `python -m tools.calibration.tier_r <cmd>` (exit 0/1/2/3), `corpus known-answer <cmd>` | factory, fetch, toolchain, evaluate, manifest, annotate | tests/test_tier_r_eval_cli.py |
@@ -1202,7 +1205,7 @@ Calls panel (id graph): `callgraph/panel.py` (PanelSpec), `panel_qt.py` (widgets
 | Module | Responsibility | Verification |
 |---|---|---|
 | `kbcorrelation/adapters/panel_snapshot.py` | Capture the current project and integrity-checked enrichment rows on their owning GUI thread as immutable strings. Workers rebuild leads from that snapshot and the advisory workspace without reopening the locked project or sharing SQLite objects. | `tests/test_ui_kb_current_project.py` |
-| `gui/qt/kb_selftest.py` | Generated synthetic offline investigation, fixture analysis import, actual candidate panel, exports and stale/reopen checks inside packaged `--self-test`; no test-directory dependency, provider calls or target execution. | `tests/test_ui_kb_frozen_journey.py`; frozen smoke gate |
+| `gui/qt/kb_selftest.py` | Timer-owned continuations under one top-level application event loop: sample desktop check, synthetic offline investigation, fixture import, actual candidate panel, exports and stale/reopen checks inside packaged `--self-test`; bounded waits/failure cleanup; no test-directory dependency, provider calls or target execution. | `tests/test_ui_kb_frozen_journey.py`; GUI architecture and frozen smoke gates |
 
 
 ### Matching/semantic reconciliation (October 31 UTC continuation)

@@ -1,0 +1,11 @@
+{
+  "xml_capture_sha256": "a26d04c5e2e49c471f00c2c87f9f9fa3e4874a4a6289abfa5200a8ad37747a9a",
+  "old_and_discovered_namespace_maps_identical": true,
+  "namespace_events": 9,
+  "namespace_bindings": 9,
+  "document_status": "Final",
+  "known_affected_memberships": 2684,
+  "all_other_evidence_check_ast_identical": true,
+  "preserved_prior_script_exact": true,
+  "reviewed_script_sha256": "2d5ec419f5e631f498947ed77978e38c4befa70e2f991a813bc43041212bd264"
+}

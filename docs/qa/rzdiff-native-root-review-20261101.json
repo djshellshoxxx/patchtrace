@@ -1,0 +1,51 @@
+{
+  "source_evidence_commit": "3705dd1e2d78245bc4402823d6a031d604ac3aaf",
+  "review": "coordinator independent byte/hash and production-parser replay",
+  "runtime_files_verified": 675,
+  "controls_streams_verified": 26,
+  "separate_core_counts": [
+    0,
+    1,
+    2,
+    2
+  ],
+  "reverse_raw_identical": true,
+  "production_parser_refusals": [
+    {
+      "label": "zero-vs-two",
+      "code": "PT-SECONDARY-INPUT"
+    },
+    {
+      "label": "one-vs-two",
+      "code": "PT-SECONDARY-ORIENTATION"
+    },
+    {
+      "label": "two-vs-one",
+      "code": "PT-SECONDARY-ORIENTATION"
+    },
+    {
+      "label": "two-vs-shift",
+      "code": "PT-SECONDARY-ORIENTATION"
+    },
+    {
+      "label": "forced-one-vs-two",
+      "code": "PT-SECONDARY-ORIENTATION"
+    },
+    {
+      "label": "forced-two-vs-one",
+      "code": "PT-SECONDARY-ORIENTATION"
+    },
+    {
+      "label": "forced-two-vs-shift",
+      "code": "PT-SECONDARY-ORIENTATION"
+    },
+    {
+      "label": "missing-function",
+      "code": "PT-SECONDARY-INPUT"
+    }
+  ],
+  "same_matcher_state_proven": false,
+  "quarantine_lift_authorized": false,
+  "new_native_runs_by_reviewer": 0,
+  "evidence_json_sha256": "22df2c9fa6904c6b7d4d1be461586b1f26edf672b3f09590694a9617967acf97"
+}

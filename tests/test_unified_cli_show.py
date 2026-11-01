@@ -121,7 +121,7 @@ def test_show_lists_the_most_important_rows_first_with_each_source_in_its_own_co
     first = out.splitlines()
     assert first[0].startswith('unified show: result ') and '9 rows, 9 match, 9 shown' in first[0]
     assert first[1] == '9 rows - 1 material - 1 review - 1 contested - 1 older-only - 2 newer-only'
-    assert first[2].startswith('Unified: ude/1, run ') and 'Sources: Ghidriff 1, BinDiff 8.0, rz-diff 0.9.1' in first[2]
+    assert first[2].startswith('Unified: ude/1, run ') and 'Sources: Ghidriff 1, BinDiff 8.0, rz-diff 0.9.0' in first[2]
     assert 'Not present: Diaphora, PatchTrace ladder, PatchTrace bytes, Analyst' in first[2]
     assert out.splitlines()[-1] == 'Native values are engine-specific and never combined.'
     contested = next(line for line in out.splitlines() if '[!] Contested' in line)
@@ -135,7 +135,7 @@ def test_show_lists_the_most_important_rows_first_with_each_source_in_its_own_co
     assert by_name['read_item']['cells'][2]['text'] == 'byte sim 0.5'
     assert [(s['source'], s['unit'], s['version']) for s in result['sources']] == [
         ('ghidriff', 'match type (raw)', '1'), ('bindiff', 'similarity / algorithm', '8.0'),
-        ('rz-diff', 'byte similarity', '0.9.1')]
+        ('rz-diff', 'byte similarity', '0.9.0')]
     assert result['counts']['rows'] == 9 and result['counts']['decision/contested'] == 1 and result['hidden'] == 0
 
 
