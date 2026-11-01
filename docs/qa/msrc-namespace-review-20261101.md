@@ -1,0 +1,7 @@
+# MSRC offline XML review follow-up — November 1, 2026
+
+Sonar on published `cf6620f` reported two insecure-HTTP warnings at the independent review script's XML namespace map. Source inspection establishes these were XML namespace identifiers passed to ElementTree XPath lookup, not request URLs: the script reads the already SHA-verified local XML capture with `Path.read_bytes` and uses `xml.etree.ElementTree.fromstring`. No network client or HTTP request occurs in this script. The exact annotations and prior script are retained beside this note.
+
+The review now discovers namespace bindings from the same verified capture using ElementTree `start-ns` events. This removes duplicated namespace constants and keeps the upstream namespace bytes unchanged. It does not substitute HTTPS namespace identifiers, change production adapter behavior, relax validation, or suppress Sonar. Run under `python -O` with this worktree's source: all 394 projected scalar facts, 2,684 XML memberships, both full capture edge/status/problem pointers, limits and unknown-enum controls must retain their original results. Fresh source quality checks remain required.
+
+Coordinator optimization-mode run passed with unchanged 394 scalar facts, 2,684 memberships, both full-capture counts/pointers, five limits and eight unknown enums. Independent review verified all selected namespace bindings and memberships exactly equal the prior script, every other check AST unchanged and preserved prior script byte-exact. Receipt: `msrc-namespace-independent-review.json`.

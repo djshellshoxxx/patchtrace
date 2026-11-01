@@ -1,6 +1,7 @@
 """Independent offline review of the native adapter; no production source changes."""
 import copy
 import hashlib
+import io
 import json
 from pathlib import Path
 import xml.etree.ElementTree as ET
@@ -53,7 +54,9 @@ xml_raw = (CAP / '2024-Aug.xml').read_bytes()
 if not (hashlib.sha256(xml_raw).hexdigest() == prov['semantic_evidence']['paired_xml_capture']['sha256']):
     raise RuntimeError('independent evidence check failed at original line 48')
 xml = ET.fromstring(xml_raw)
-ns = {'c':'http://www.icasi.org/CVRF/schema/cvrf/1.1', 'v':'http://www.icasi.org/CVRF/schema/vuln/1.1'}
+# Namespace identifiers are read from the hash-verified local capture, not fetched.
+namespaces = dict(value for _, value in ET.iterparse(io.BytesIO(xml_raw), events=('start-ns',)))
+ns = {'c': namespaces['cvrf'], 'v': namespaces['vuln']}
 if not (xml.find('c:DocumentTracking/c:Status', ns).text == 'Final'):
     raise RuntimeError('independent evidence check failed at original line 51')
 if not (actual['DocumentTracking']['Status'] == 2):
