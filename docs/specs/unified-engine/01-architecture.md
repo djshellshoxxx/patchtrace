@@ -86,6 +86,14 @@ Rules: one analysis job per window (C-11): the unified run is disabled while a G
 
 ## 5. Data flow (normative pseudocode)
 
+Identity preparation amendment (2026-11-01): the Qt owner captures validated immutable plan/request snapshots
+with `capture_plan` / `capture_request`; task work resolves their complete identity under the active budget.
+An unresolved capture has no usable result key. A load callback checks the current project/revision before
+the owner performs exact-key pointer selection, then task work builds the view. Run publication receives the
+resolved request. Synchronous `make_plan` / `prepare` compose the same steps for CLI callers. Repeated loads
+may reuse only an internally completed manual digest after checking every exact immutable manual snapshot;
+source selection without manual evidence must never supply an empty digest for a nonempty manual snapshot.
+
 ```python
 def execute(req: UnifiedRequest, cancel: Event, emit: Callable[[StageEvent], None]) -> WorkerOutput:   # UnifiedRunThread
     budget = Budget(req.deadline, cancel)

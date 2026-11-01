@@ -264,13 +264,14 @@ def refacts_stage(inputs: SourceInputs, addr: AddressMap, *, result_dir: Path, i
     written again. A pair without a text on both sides is left as it is. The result id does not change: the text is
     deterministic given the retained programs and is not an input of the key (a text only ever adds a second channel)."""
     budget = budget or Budget()
+    budget.check()
     result_dir = Path(result_dir)
     if emit is not None:
         emit(StageEvent('refacts', 0, 1))
     manifest, _sha = store.read_manifest(result_dir)
     selected = frozenset(sources)
     if manifest.result_id != plan_identity(inputs, addr, selected, registry, limits, ir=ir.digests(),
-                                           residual=residual).result_id:
+                                           residual=residual, budget=budget).result_id:
         raise UnifiedError('PT-UNIFIED-STORE', 'The staged result is not the one this request describes',
                            reason='staged-mismatch')
     texts = {side: refacts.texts(side) for side in ('older', 'newer')}
@@ -286,7 +287,7 @@ def refacts_stage(inputs: SourceInputs, addr: AddressMap, *, result_dir: Path, i
     sides = IrSides(ir.older, ir.newer, ir.older_sections, ir.newer_sections,
                     identical=inputs.older_sha256 == inputs.newer_sha256)
     context = FactsContext.build(older_sha256=inputs.older_sha256, newer_sha256=inputs.newer_sha256, addr=addr,
-                                 matches=inputs.matches, rows=decided, bindiff_flags=bindiff_flags(scoped, addr),
+                                 matches=inputs.matches, rows=decided, bindiff_flags=bindiff_flags(scoped, addr, budget),
                                  limits=limits, ir_sides=sides, budget=budget, decompiled=texts)
     index = {d.pair: i for i, d in enumerate(decided) if d.pair is not None}
     again: dict[str, ChangeFacts] = {}
