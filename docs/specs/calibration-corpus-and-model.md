@@ -477,3 +477,23 @@ preserved PR #85 remains separate acceptance work. The low-level `run_training`
 library accepts a caller-validated SHA; CLI validation must not be bypassed by
 production command paths. No frozen preregistration bytes or numeric thresholds
 change in this repair.
+
+November 1 parser-boundary amendment: a record's first pipe must be the original,
+visible column-zero character, outside any comment already open at the start of
+that physical line. Removing a comment cannot manufacture that provenance.
+Recognize closed same-line code spans before comment delimiters so literal
+`<!--`/`-->` examples cannot alter comment state. The SHA must occupy a complete
+plain cell as exactly 64 lowercase hexadecimal characters; a substring with a
+prefix, suffix or formatting is not a digest value. Pipe-delimited record rows
+may omit the trailing pipe. Backslash-escaped pipes remain cell text rather than
+creating identifier/digest cells. These rules concern recorded identity only;
+they confer no owner approval, lock authority or final-evaluation permission.
+
+Escaped-opening follow-up: outside a code span, backslash escapes apply to an
+opening backtick (odd/even preceding-backslash parity). An escaped first tick
+cannot protect a real HTML comment from scanning. Inside an established code
+span, backslashes are literal: they do not escape an otherwise matching closing
+backtick run. See CommonMark 0.31.2 [backslash escapes](https://spec.commonmark.org/0.31.2/#backslash-escapes),
+[code spans](https://spec.commonmark.org/0.31.2/#code-spans) and
+[raw HTML](https://spec.commonmark.org/0.31.2/#raw-html). Unsupported multiline
+code still fails conservatively; comment-hidden rows cannot record an identity.

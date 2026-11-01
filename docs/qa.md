@@ -418,3 +418,16 @@ Preregistration review follow-up: fenced/commented/indented example rows could s
 Final preregistration format follow-up: independent review found raw HTML and list-nested code contexts could still resemble lock records. The supported format now requires column-zero rows and rejects unsupported raw HTML/multiline code with a controlled error. Existing QA prose compatibility and final selection/tools/constants checks pass: 99 passed (1.02 s), full Ruff clean. Review source/results are retained in the corpus safeguard record; no real final look was consumed.
 
 Independent preregistration identity review complete: `cancel_fix` cleared source `42a3d5dee13ac4ff87436a66f787c6b3b5e093ad` with 102 focused checks passing (1.40 s), original false-lock probes replayed, source hashes verified and unchanged lineage/frozen/final-gate boundaries confirmed. This supersedes pending-review notes above; integration/full/cross-OS and remaining GT-05 acceptance remain separate.
+
+External #154 parser follow-up: actual comment-fragment, whole-digest-cell and inline-code/comment boundaries
+reproduced; escaped-pipe false cells and optional trailing delimiter were also verified. Original new regression
+run:21 failed/61 passed; repaired selection/tools/constants:123 passed. Before-input probes used only synthetic
+protocol/QA files and a mocked corpus boundary. No actual corpus, final look, approval authority or frozen
+protocol changed. Preserved closed #155 overlap was inspected; its intended cases are covered while its
+prefix-comment false-lock regression is refused. [Detailed source/disposition/evidence](qa/prereg-markdown-review-20261101.md).
+
+Root review found an additional escaped-opening backtick false lock on5e008a5, so its earlier approval
+is withdrawn pending follow-up. A closed multiline comment reproduced verification and mocked corpus-boundary
+access. Source-backed opening-escape handling now preserves literal backslashes inside established code;
+new red6 failed/91 passed, repaired selection/tools/constants138 passed (all prior123 included), whole Ruff/diff
+clean. No real corpus or final evaluation was read. Independent exact-follow-up review remains required.
