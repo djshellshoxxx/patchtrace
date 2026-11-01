@@ -195,8 +195,10 @@ class RealProjectPort:
     """``ProjectPort`` over ``ProjectService`` and ``EnrichmentStore`` (the project store stays single-owner: every
     call opens, uses and closes it)."""
 
-    def __init__(self, workspace: WorkspaceStore | None = None, name: str = 'KB comparison'):
+    def __init__(self, workspace: WorkspaceStore | None = None, name: str = 'KB comparison', *,
+                 reuse_existing: bool = True):
         self.name = name
+        self.reuse_existing = reuse_existing
         self._dirs: dict[str, Path] = {}
         self._workspace = workspace
 
@@ -212,7 +214,7 @@ class RealProjectPort:
     def create_project(self, older_path: str, newer_path: str, *, directory: str) -> Mapping[str, Any]:
         from ..service import ProjectService
         root = Path(directory)
-        if (root / 'project.sqlite3').is_file():
+        if self.reuse_existing and (root / 'project.sqlite3').is_file():
             service = ProjectService.open(root, maintenance=False)
         else:
             service = ProjectService.create(Path(older_path), Path(newer_path), self.name, root)
@@ -271,6 +273,14 @@ def escape_markdown(text: str) -> str:
 
 def _project_factory(workspace: WorkspaceStore | None, name: str) -> RealProjectPort:
     return RealProjectPort(workspace, name)
+
+
+def new_project_factory(workspace: WorkspaceStore | None, name: str) -> RealProjectPort:
+    """Desktop create-only route; ProjectService.create refuses a concurrently existing database.
+
+    The normal CLI factory retains its journal-resume behavior.
+    """
+    return RealProjectPort(workspace, name, reuse_existing=False)
 
 
 def build_env(*, clock=None, fault: Fault | None = None, advisory=None, acquirer=None) -> Env:

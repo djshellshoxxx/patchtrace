@@ -851,3 +851,11 @@ Done: dock with state matrix, consent, import, changes, copy, go to CVE. Open: r
 
 - [x] Reconcile substantive Qodo review: Qt release dependency/status evidence, G-U1 endpoint coverage, optional decompile write rollback, stale KB/KEV/Diaphora ownership, calibration grouping/leak audits, staged archive handoff and cancellable PDB discovery.
 - [ ] Validate the final combined review repairs on their own published head; merge and close only proven superseded work after acceptance.
+
+### Essential project-safety / offline KB desktop continuation (2026-10-31)
+
+- [x] PT-EXPORT-GUARD implementation + independent review: protect DB/evidence before report writes; committed non-mutating export; bounded alias checks.
+- [x] PT-KB-SCOPE implementation + review: exact acquisition scope/revision/hash binding; preview revision CAS; known architecture contradiction refusal; conservative pair provenance.
+- [x] PT-KB-GUI implementation + review: local advisory import/search/explicit product/local pair preview/new-only project creation; safe cancel/partial retention; main-thread adoption with original-project rollback.
+- [ ] PT-SAFETY-INTEGRATE acceptance: final product024a00b fully exercised (18,348 passed, one host Git-marker failure; unchanged isolated rerun passed), Linux build/self-test/frozen smoke/checksum/Ruff PASS. Publication is BLOCKED by automatic approval review pending explicit destination authorization; new Windows/native acceptance cannot start until publication. No global release-ready claim.
+- [ ] PR147 current-head Windows packaging and Sonar disposition after LF/output staging repairs; do not close original PR102 by partial adoption.
