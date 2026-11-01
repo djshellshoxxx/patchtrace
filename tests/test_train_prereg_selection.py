@@ -199,6 +199,15 @@ def test_inline_raw_html_cannot_hide_a_record(tmp_path, protocol):
         select(path, qa)
 
 
+def test_pipe_inside_multiline_comment_cannot_start_a_record(tmp_path, protocol):
+    from tools.calibration.prereg_gate import PreregGateError, select
+
+    path, qa, sha = protocol
+    qa.write_text(f'<!-- hidden\n| --> | C9-PREREG-v1 | {sha} |\n', encoding='utf-8')
+    with pytest.raises(PreregGateError, match='need one unambiguous'):
+        select(path, qa)
+
+
 @pytest.mark.parametrize('opening', ['<pre\n>\n', '<script\n', '<div\nhidden>\n'])
 def test_multiline_unclosed_html_is_refused(tmp_path, protocol, opening):
     from tools.calibration.prereg_gate import PreregGateError, select
@@ -216,6 +225,14 @@ def test_multiline_inline_code_is_conservatively_refused(tmp_path, protocol):
     qa.write_text(f'Example `\n| C9-PREREG-v1 | {sha} |\n`\n', encoding='utf-8')
     with pytest.raises(PreregGateError, match='unsupported QA format'):
         select(path, qa)
+
+
+def test_inline_comment_example_allows_a_later_real_record(tmp_path, protocol):
+    from tools.calibration.prereg_gate import select
+
+    path, qa, sha = protocol
+    qa.write_text(f'Example `<!--` in prose.\n\n| C9-PREREG-v1 | {sha} |\n', encoding='utf-8')
+    assert select(path, qa).sha == sha
 
 
 def test_existing_qa_prose_and_inline_path_examples_allow_a_real_record(tmp_path, protocol):

@@ -58,7 +58,6 @@ def _visible_lines(text: str) -> Iterator[str]:
     fence = ''
     commented = False
     for line in text.splitlines():
-        record_at_start = line.startswith('|')
         if fence:
             closing = line.lstrip(' ')
             marker = closing.rstrip(' \t')
@@ -75,6 +74,16 @@ def _visible_lines(text: str) -> Iterator[str]:
                 line, commented = line[end + 3:], False
             else:
                 start = line.find('<!--')
+                code = _BACKTICKS.search(line)
+                if code and (start < 0 or code.start() < start):
+                    closing = next((match for match in _BACKTICKS.finditer(line, code.end())
+                                    if len(match[0]) == len(code[0])), None)
+                    if closing is None:
+                        visible += line
+                        break
+                    visible += line[:closing.end()]
+                    line = line[closing.end():]
+                    continue
                 if start < 0:
                     visible += line
                     break
@@ -87,7 +96,7 @@ def _visible_lines(text: str) -> Iterator[str]:
         if visible.expandtabs(4).startswith('    '):
             continue
         _check_plain_markup(visible)
-        if record_at_start:
+        if visible.startswith('|'):
             yield visible
 
 
