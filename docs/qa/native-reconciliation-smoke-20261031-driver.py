@@ -38,7 +38,8 @@ for name,oldname,newname,expected in [('bounds','bounds-old','bounds-new','chang
    built=sides[label].run('gzf',program,digest(program));place_ir(service.root,run.id,built['directory'])
    entry['ir'][label]={'content_digest':built['manifest'].content_digest,'functions':built['manifest'].counts.functions}
   pipeline.run_unified(service,pipeline.UnifiedOptions(backend=config,timeout_s=600))
-  loaded=pipeline.load_current(service,pipeline.make_plan(service));assert loaded is not None
+  loaded=pipeline.load_current(service,pipeline.make_plan(service))
+  if loaded is None:raise RuntimeError('Unified result was not persisted')
   facts={f.row_id:f for f in store.read_facts(loaded.directory,loaded.manifest)}
   rows=[]
   for r in store.read_rows(loaded.directory,loaded.manifest):
@@ -46,10 +47,13 @@ for name,oldname,newname,expected in [('bounds','bounds-old','bounds-new','chang
    rows.append({'older':[(s.name,s.rva) for s in r.older],'newer':[(s.name,s.rva) for s in r.newer],'decision':r.decision,'verdict':f.verdict if f else None,'proof':f.proof if f else None,'classes':[d.cls for d in f.deltas] if f else [],'channels':dict(f.channels) if f else {},'eh':f.eh if f else None})
   entry.update(result_id=loaded.manifest.result_id,manifest_status=loaded.manifest.status,rows=rows)
   paired=[r for r in rows if r['older'] and r['newer']]
-  assert paired,'no paired exported function'
-  if expected=='unchanged':assert all(r['verdict']=='unchanged' for r in paired),paired
-  else:assert all(r['verdict'] in ('material','review','unknown') for r in paired),paired
-  assert digest(old)==entry['older_sha256'] and digest(new)==entry['newer_sha256']
+  if not paired:raise RuntimeError('no paired exported function')
+  if expected=='unchanged':
+   if not all(r['verdict']=='unchanged' for r in paired):raise RuntimeError(f'Identical control changed: {paired}')
+  elif not all(r['verdict'] in ('material','review','unknown') for r in paired):
+   raise RuntimeError(f'Changed control received a benign verdict: {paired}')
+  if digest(old)!=entry['older_sha256'] or digest(new)!=entry['newer_sha256']:
+   raise RuntimeError('Input bytes changed during native analysis')
   entry['status']='passed'
  except Exception as exc:
   failed=True;entry.update(status='failed',error=redact_log(f'{type(exc).__name__}: {exc}',4000))

@@ -138,6 +138,8 @@ def run_checks(launcher: Sequence[str], *, frozen: bool, emit: Callable[[str], N
             line = next((x for x in r.stdout.splitlines() if x.startswith('optional-deps:')), '')
             check('A4 self-test reports every optional dependency present', bool(line) and 'missing=none' in line,
                   line or r.stdout[-300:])
+            check('A4 complete constructed offline KB journey',
+                  'offline-investigation: synthetic F8 journey passed' in r.stdout, r.stdout[-500:])
             left = [p.name for p in temp.glob('patchtrace-self-test-*')]
             check('A4 self-test temp directory removed', not left, str(left))
 

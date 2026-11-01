@@ -495,7 +495,7 @@ class ProjectStore:
             chunk = delete[start:start + 500]
             self.connection.execute(f'DELETE FROM history WHERE sequence IN ({",".join("?" * len(chunk))})', chunk)
 
-    def load(self) -> ComparisonProject:
+    def load(self, *, recover_interrupted: bool = True) -> ComparisonProject:
         import hashlib
         self._check_open()
         try:
@@ -512,7 +512,7 @@ class ProjectStore:
                                  f'(at {_error_location(exc)})') from None
             self._verify_files(project)
             self.project_id = project.id
-            interrupted = [run for run in project.runs if run.status in {'queued', 'running'}]
+            interrupted = [run for run in project.runs if recover_interrupted and run.status in {'queued', 'running'}]
             for run in interrupted:
                 run.status = 'failed'
                 run.error = 'Analysis was interrupted before a terminal result was saved'

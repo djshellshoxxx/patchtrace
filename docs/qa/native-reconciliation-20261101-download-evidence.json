@@ -1,0 +1,50 @@
+[
+  {
+    "name": "ghidra.zip",
+    "url": "https://github.com/NationalSecurityAgency/ghidra/releases/download/Ghidra_12.0.4_build/ghidra_12.0.4_PUBLIC_20260303.zip",
+    "expected_sha256": "c3b458661d69e26e203d739c0c82d143cc8a4a29d9e571f099c2cf4bda62a120",
+    "actual_sha256": "c3b458661d69e26e203d739c0c82d143cc8a4a29d9e571f099c2cf4bda62a120",
+    "bytes": 509952513,
+    "passed": true
+  },
+  {
+    "name": "jdk-linux.tar.gz",
+    "url": "https://github.com/adoptium/temurin21-binaries/releases/download/jdk-21.0.12.1%2B1/OpenJDK21U-jdk_x64_linux_hotspot_21.0.12.1_1.tar.gz",
+    "expected_sha256": "ce79869e1307ed8ee1e2baa86a412b1eb5b75d10a01006d788a6f968bcfaee94",
+    "actual_sha256": "ce79869e1307ed8ee1e2baa86a412b1eb5b75d10a01006d788a6f968bcfaee94",
+    "bytes": 207473347,
+    "passed": true
+  },
+  {
+    "name": "jpype1-1.5.2-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
+    "url": "https://files.pythonhosted.org/packages/74/f3/1cd4332076ed0421e703412f47f15f43af170809435c57ba3162edc80d4b/jpype1-1.5.2-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
+    "expected_sha256": "b5b1fb2b430a50f081ea0ee24d19232ae0d03dbfe3dd076ec5f8ae42b30a656f",
+    "actual_sha256": "b5b1fb2b430a50f081ea0ee24d19232ae0d03dbfe3dd076ec5f8ae42b30a656f",
+    "bytes": 493520,
+    "passed": true
+  },
+  {
+    "name": "pyghidra-3.0.2-py3-none-any.whl",
+    "url": "https://files.pythonhosted.org/packages/69/95/b63d7950dd83af3be92dda506ed0b6abe00a1cd623883bf3ff574507a38a/pyghidra-3.0.2-py3-none-any.whl",
+    "expected_sha256": "1bd49496e90d67b8aa06adeb3d80e0a5be6f5582f754e83625197a326772ebfe",
+    "actual_sha256": "1bd49496e90d67b8aa06adeb3d80e0a5be6f5582f754e83625197a326772ebfe",
+    "bytes": 50728,
+    "passed": true
+  },
+  {
+    "name": "packaging-25.0-py3-none-any.whl",
+    "url": "https://files.pythonhosted.org/packages/20/12/38679034af332785aac8774540895e234f4d07f7545804097de4b666afd8/packaging-25.0-py3-none-any.whl",
+    "expected_sha256": "29572ef2b1f17581046b3a2227d5c611fb25ec70ca1ba8554b24b0e69331a484",
+    "actual_sha256": "29572ef2b1f17581046b3a2227d5c611fb25ec70ca1ba8554b24b0e69331a484",
+    "bytes": 66469,
+    "passed": true
+  },
+  {
+    "name": "mdutils-1.6.0.tar.gz",
+    "url": "https://files.pythonhosted.org/packages/b1/ec/6240f147530a2c8d362ed3f2f7985aca92cda68c25ffc2fc216504b17148/mdutils-1.6.0.tar.gz",
+    "expected_sha256": "647f3cf00df39fee6c57fa6738dc1160fce1788276b5530c87d43a70cdefdaf1",
+    "actual_sha256": "647f3cf00df39fee6c57fa6738dc1160fce1788276b5530c87d43a70cdefdaf1",
+    "bytes": 22881,
+    "passed": true
+  }
+]

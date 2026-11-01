@@ -76,6 +76,12 @@ REGISTRY: dict[str, TooltipEntry] = {
         'Winbindex metadata and the Microsoft symbol server. Availability and signature authenticity are '
         'separate questions.',
         'Disabled while a job is running.'),
+    'action.kb_investigation': _e(
+        'Investigate a KB or CVE using local advisory files and local older/newer binaries.',
+        'Connects an explicitly selected product to a previewed comparison without network access.',
+        'Opens a local-only investigation dialog; a new comparison opens only after successful creation.',
+        'Imported advisory metadata and analyst-selected local files; pairing does not prove vulnerability.',
+        'Disabled while a job is running.'),
     'action.sample': _e(
         'Create a separate synthetic comparison project.',
         'Demonstrates code, evidence and reviews without analyzing actual binaries.',

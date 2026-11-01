@@ -917,3 +917,16 @@ Done: dock with state matrix, consent, import, changes, copy, go to CVE. Open: r
 - [x] Publish #146 coordinator rule-matrix repairs (798e11e), 157 focused tests, independent review; original #126 untouched. Full exact-head CI and Windows special-device evidence pending.
 - [x] Resolve three R1 documentary provenance threads after independent hash/binding verification; retain parent TOCTOU and unadopted receipt-publication repair as open.
 - [ ] Refetch #144/#145/#146 and all parent heads; finish required exact-head CI/native corpus gates, then reviewed passing merges and post-merge canonical verification. No completion claim before remaining committed feature/release/branch dispositions are accepted.
+### WIN-1 selective PR #102 reconciliation (2026-10-30 continuation)
+
+- [x] PT-WIN1: selectively port owner mark/version resource; preserve current launch/extractor inventory and workflow policy; add exact upstream QtSvg notices. Source `5429e84`.
+- [x] PT-WIN1-REVIEW: independently reproduce and repair hidden/capped/duplicate version identity; source `78ff0c7`; 310 integrated focused tests and Ruff pass.
+- [ ] PT-WIN1-ACCEPT: full integrated run recorded (18,358 passed, one host Git-marker failure; unchanged failing node passes in non-Git temp), Linux build/frozen smoke/checksum PASS. Exact-source Windows resource/portable/installer CI remains queued; release acceptance BLOCKED. Draft PR #147 and `docs/qa.md` hold evidence. No assertion/guard weakened.
+- [ ] Preserve #102 author branch and other active repair stacks; this port does not establish all of #102 is superseded.
+### Essential project-safety / offline KB desktop continuation (2026-10-31)
+
+- [x] PT-EXPORT-GUARD implementation + independent review: protect DB/evidence before report writes; committed non-mutating export; bounded alias checks.
+- [x] PT-KB-SCOPE implementation + review: exact acquisition scope/revision/hash binding; preview revision CAS; known architecture contradiction refusal; conservative pair provenance.
+- [x] PT-KB-GUI implementation + review: local advisory import/search/explicit product/local pair preview/new-only project creation; safe cancel/partial retention; main-thread adoption with original-project rollback.
+- [ ] PT-SAFETY-INTEGRATE acceptance: final product024a00b fully exercised (18,348 passed, one host Git-marker failure; unchanged isolated rerun passed), Linux build/self-test/frozen smoke/checksum/Ruff PASS. Publication is BLOCKED by automatic approval review pending explicit destination authorization; new Windows/native acceptance cannot start until publication. No global release-ready claim.
+- [ ] PR147 current-head Windows packaging and Sonar disposition after LF/output staging repairs; do not close original PR102 by partial adoption.

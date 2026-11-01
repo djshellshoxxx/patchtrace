@@ -23,7 +23,7 @@ from pydantic import ValidationError
 from . import components as comp
 from . import pairs as pr
 from . import resolver
-from .acquire import AcquirePort, build_plan, row_for, verify_consent
+from .acquire import AcquirePlan, AcquirePort, build_plan, row_for, verify_consent
 from .acquire import acquire_pair as run_acquire
 from .cli_index import IndexPorts, load_index
 from .context import ContextBundle, RulesPort, build_bundle, vulnerability_pointer
@@ -123,6 +123,11 @@ class Outcome:
 
 def _fail(code: str, message: str) -> KbcStoreError:
     return KbcStoreError(code, message)
+
+
+def _cancel_checkpoint(cancel: Callable[[], bool] | None) -> None:
+    if cancel is not None and cancel():
+        raise _fail('PT-KBC-CANCEL', 'The local operation was cancelled before its next commit.')
 
 
 MIN_PAIR_PREFIX = 8
@@ -564,13 +569,17 @@ class KbService:
             done = run_acquire(
                 plan, older_row, newer_row, port=self.env.acquirer, directory=directory, consent_hosts=consent_hosts,
                 consent_plan=consent_plan, offline=offline,
-                import_pair=lambda o, n, d: self.import_pair(rev.investigation_id, o, n, d, name=name))
+                import_pair=lambda o, n, d: self._import_pair(
+                    rev.investigation_id, o, n, d, name=name, acquired=(rev, plan)))
         except KbcStoreError as exc:
             if exc.code != 'PT-KBC-CANCEL':
                 raise
             return Outcome(5, 'cancelled', result, exc.message)
         return Outcome(done.outcome.exit, done.outcome.status,
                        {**done.outcome.result, 'acquisition': {'plan_sha': done.plan_sha,
+                                                               'source_pair_id': plan.pair_id,
+                                                               'verified_pair_id': done.outcome.result['pair']['pair_id'],
+                                                               'scope_id': rev.selected_scope_id,
                                                                'downloads': list(done.downloads)}},
                        done.outcome.text, done.outcome.warnings, done.outcome.error)
 
@@ -578,11 +587,50 @@ class KbService:
 
     def import_pair(self, investigation: str, older: str, newer: str, directory: str, *, name: str | None = None,
                     confirm_same_component: bool = False, dry_run: bool = False,
-                    expected_pair_id: str | None = None) -> Outcome:
-        older_f, newer_f = self.env.inspect(older), self.env.inspect(newer)
+                    expected_pair_id: str | None = None, expected_revision: int | None = None,
+                    cancel: Callable[[], bool] | None = None) -> Outcome:
+        return self._import_pair(investigation, older, newer, directory, name=name,
+                                 confirm_same_component=confirm_same_component, dry_run=dry_run,
+                                 expected_pair_id=expected_pair_id, expected_revision=expected_revision, cancel=cancel)
+
+    def _import_pair(self, investigation: str, older: str, newer: str, directory: str, *, name: str | None = None,
+                     confirm_same_component: bool = False, dry_run: bool = False,
+                     expected_pair_id: str | None = None, expected_revision: int | None = None,
+                     acquired: tuple[InvestigationRevision, AcquirePlan] | None = None,
+                     cancel: Callable[[], bool] | None = None) -> Outcome:
+        _cancel_checkpoint(cancel)
+        older_f = self.env.inspect(older)
+        _cancel_checkpoint(cancel)
+        newer_f = self.env.inspect(newer)
+        _cancel_checkpoint(cancel)
         with self._open() as ws:
             rev = None if investigation == 'new' else self._get(ws, investigation)
-            scope_id = rev.selected_scope_id if rev and rev.selected_scope_id else UNSELECTED_SCOPE
+            index = None
+            expected = acquired[0].revision if acquired is not None else expected_revision
+            if expected is not None and (rev is None or rev.revision != expected):
+                raise _fail('PT-KBC-STALE', 'the investigation changed after preview; review the pair again')
+            if acquired is not None:
+                captured, acquisition_plan = acquired
+                if rev.investigation_id != captured.investigation_id:
+                    raise _fail('PT-KBC-STALE', 'the acquisition belongs to another investigation')
+                if (older_f.sha256, newer_f.sha256) != (acquisition_plan.older_sha, acquisition_plan.newer_sha):
+                    raise _fail('PT-KBC-VERIFY', 'the staged files changed after acquisition verification')
+                index, _ = load_index(ws, self.ports)
+                scope_id = captured.selected_scope_id
+                if scope_id not in rev.scope_ids or not any(s.scope_id == scope_id for s in index.scopes()):
+                    raise _fail('PT-KBC-STALE', 'the planned product mapping changed; review the acquisition again')
+            else:
+                scope_id = rev.selected_scope_id if rev and rev.selected_scope_id else UNSELECTED_SCOPE
+            if scope_id != UNSELECTED_SCOPE:
+                if index is None:
+                    index, _ = load_index(ws, self.ports)
+                selected = next((s for s in index.scopes() if s.scope_id == scope_id), None)
+                if selected is None:
+                    raise _fail('PT-KBC-STALE', 'the selected product mapping changed; select the product again')
+                if selected.architecture != 'unknown' and any(
+                        file.machine != selected.architecture for file in (older_f, newer_f)):
+                    raise _fail('PT-KBC-VERIFY', 'the selected product architecture contradicts these files; '
+                                'choose a matching product')
             pair = pr.propose_manual(older_f, newer_f, scope_id=scope_id,
                                      confirm_same_component=confirm_same_component)
             if expected_pair_id is not None and pair.pair_id != expected_pair_id:
@@ -592,9 +640,22 @@ class KbService:
                 return self._blocked(pair)
             if dry_run:
                 return Outcome(0, 'complete', {'contract': 'kbcorrelation/1', 'plan': plan.as_dict(),
+                                               'investigation_revision': rev.revision if rev is not None else None,
                                                'pair': self._pair_dict(pair)}, plan.text)
+            # From the first revision mutation onward, preserve the existing
+            # transactional/recovery result rather than claiming cancellation rolled it back.
+            _cancel_checkpoint(cancel)
+            if acquired is not None and rev.selected_scope_id != scope_id:
+                # Existing compare-and-swap prevents a change after the captured-revision check.
+                rev = self._step(ws, rev, 'product_selected', scope_id=scope_id)
             rev = self._approve_pair(ws, rev, pair, older_f, newer_f, confirm_same_component)
-            index, _ = load_index(ws, self.ports)
+            if acquired is not None:
+                self._decide(ws, rev.investigation_id, 'acquisition-pair-binding', acquisition_plan.pair_id,
+                             pair.pair_id, f'Acquisition plan {acquisition_plan.plan_sha}; scope {scope_id}; '
+                             f'older {older_f.sha256}; newer {newer_f.sha256}. '
+                             'Local verification is manual grade B and does not prove lineage.')
+            if index is None:
+                index, _ = load_index(ws, self.ports)
             bundle = self._bundle(index, ws, rev, base=rev.revision, pair_id=pair.pair_id, older=pair.older.sha256,
                                   newer=pair.newer.sha256)
             request = AttachRequest(revision=rev, pair_id=pair.pair_id, older_path=older, newer_path=newer,

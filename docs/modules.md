@@ -140,7 +140,7 @@ Built: common, process, capa, floss, diec, normalize, delta (tests: `tests/test_
 ### [B:hardening] Phase D track B modules (2026-10-14)
 | Module | File | Responsibility | Depends on | Tests |
 |---|---|---|---|---|
-| verified backup | verified_backup.py | SPEC-07h H1/H2 amendment: `write_verified_backup` (backup API -> `.part` -> close -> read-only re-open -> `integrity_check` + identity queries -> rename), `find_verified_backup`/`trusted_backup` (read-only `quick_check`, project id, required table; verdict cached per process by path+size+mtime), `ensure_verified_backup`; used before every history prune and enrichment retention/`make_room`/engine-run deletion | stdlib, ingestion.safe_path | `tests/test_prune_backup.py` |
+| verified backup | verified_backup.py | SPEC-07h H1/H2 amendment: `write_verified_backup` (backup API -> `.part` -> close -> read-only re-open -> `integrity_check` + identity queries -> rename -> byte revalidation), `find_verified_backup`/`trusted_backup` (read-only `quick_check`, project id, required table; verdict cached per process by path+identity+size+mtime+SHA-256, fresh byte hashing before every trust reuse), `ensure_verified_backup`; used before every history prune and enrichment retention/`make_room`/engine-run deletion | stdlib, ingestion.safe_path | `tests/test_prune_backup.py`, `tests/test_verified_backup_byte_integrity.py` |
 | raw cleanup | raw_cleanup.py | SPEC-07h H8 amendment: `cleanup_legacy_raw_duplicates(root, project)` on `ProjectService.open(maintenance=True)` removes `runs/<id>/raw/json/*.ghidriff.json` only when the run's `raw_path` is the legacy copy and both hash to `raw_sha256`; journal `backups/raw-duplicates.jsonl` written (fsync) before each removal; `restore_raw_duplicates(root)` reverses it; never raises; N-way readers open with `maintenance=False` | ingestion.safe_path | `tests/test_raw_legacy_cleanup.py` |
 | live NVD/MSRC probe | tools/live_nvd_probe.py, .github/workflows/live-nvd.yml | SPEC-07h H10: direct TCP reachability per provider host, then the real `correlate --fetch` CLI (keyless, two CVEs so NVD pacing is exercised) on a synthetic sample project; strict live-status JSON (`passed/failed/blocked`, `tools/check_live_status.py`); advisory workflow (weekly + manual, never required) | patchtrace CLI | `tests/test_live_nvd_probe.py` (recorded fixtures, mocked transport) |
 ### [G:bindiff-gui-setup] Phase D track G: BinDiff + BinExport GUI setup (2026-10-14; spec `docs/specs/multi-engine-evidence-panel.md` §16)
@@ -1193,6 +1193,13 @@ Calls panel (id graph): `callgraph/panel.py` (PanelSpec), `panel_qt.py` (widgets
 |---|---|---|
 | `kbcorrelation/investigation_qt.py` | Offline KB/CVE investigation controls and controller: advisory import, local search, explicit product scope, verified local pair preview and isolated new-project creation over existing service contracts and TaskRunner. No socket APIs or target execution. | `tests/test_ui_kb_investigation.py` |
 
+### KB current-project capture and frozen journey (2026-11-01)
+
+| Module | Responsibility | Verification |
+|---|---|---|
+| `kbcorrelation/adapters/panel_snapshot.py` | Capture the current project and integrity-checked enrichment rows on their owning GUI thread as immutable strings. Workers rebuild leads from that snapshot and the advisory workspace without reopening the locked project or sharing SQLite objects. | `tests/test_ui_kb_current_project.py` |
+| `gui/qt/kb_selftest.py` | Generated synthetic offline investigation, fixture analysis import, actual candidate panel, exports and stale/reopen checks inside packaged `--self-test`; no test-directory dependency, provider calls or target execution. | `tests/test_ui_kb_frozen_journey.py`; frozen smoke gate |
+
 
 ### Matching/semantic reconciliation (October 31 UTC continuation)
 
@@ -1204,3 +1211,28 @@ through rendering and value anchoring and abstain on IR exception/register uncer
 Cache policy includes `matching/2`, `canon/2` and `COS-PSEUDO/1` implementation version 2;
 wire/ProgramIR contracts are unchanged. Regression sources and independent acceptance
 boundaries are recorded in `docs/plans/milestone-ledger-20261030.md`.
+## Windows branding reconciliation (SPEC-52 WIN-1)
+
+| Module | Files | Responsibility | Verification |
+|---|---|---|---|
+| Application mark | `src/patchtrace/app_icon.py`, `resources/patchtrace-mark.svg` | Render the existing owner mark through QtSvg for window and build icons; packaged data hook | Offscreen render and package-data tests |
+| Windows executable identity | `tools/windows_version_info.py`, `windows_icon.py`, `check_windows_exe.py` | Deterministic validated version metadata/ICO generation and bounded read-back gate, no target execution | PyInstaller version serializer round trip and hostile/missing resource tests; real Windows build separately required |
+## Essential workflow safety continuation (2026-10-31)
+
+- `service.ProjectService.export_report` / `reports.export_project(..., project_root=...)`: enforce project-owned report destination boundary before filesystem writes; UI consumes service route. Existing renderer/preview compatibility retained.
+- `kbcorrelation.service.KbService.acquire/import_pair`: bind consented acquisition completion to captured investigation revision and explicit preview scope, using existing workspace lock/history; retain conservative pairing provenance.
+
+- `persistence.ProjectStore.load(*, recover_interrupted=True)`: default startup recovery unchanged; non-mutating committed reads for report generation set False. No schema change.
+
+## Offline KB desktop service seam (2026-10-31 implementation)
+
+| Module | Contract / responsibility | Verification |
+|---|---|---|
+| `kbcorrelation/investigation_service.py` | Frozen `InvestigationRequest` / `InvestigationResult`; `execute_request(request,cancel,service_factory=None)` local-only task-local facade over strict advisory import, search/products and preview-bound local pair creation. No Qt/network calls. | `tests/test_kb_investigation_service.py` |
+| `kbcorrelation/investigation_qt.py` | Parented `InvestigationDialog(parent,workspace=None,tasks=None,on_created=None,current_project=None,execute=execute_request)`: explicit scope/local-pair controls, immutable requests, TaskRunner lifecycle/generation checks; caller adopts new project on GUI thread. Existing index row was ahead of implementation. | `tests/test_ui_kb_investigation.py`; offscreen only, native Windows UI separate |
+
+- `kbcorrelation/wiring.py`: GUI-only create-new project-port factory uses existing ProjectService.create; default CLI/resume factory remains compatible. The investigation service selects the new-only factory per operation.
+
+- `gui/qt/host.py`: `PanelHost.investigation_dialog()` constructs the parented offline dialog and owns retained-path/adoption callbacks; MainWindow delegates without naming/importing a feature package.
+
+- `gui/qt/project_adoption.py`: `adopt_project(window, service)` owns the generic GUI transaction for service/render/preferences adoption and rollback; MainWindow.set_service stays a thin facade. Existing real-service entry regressions cover rollback and lock release.

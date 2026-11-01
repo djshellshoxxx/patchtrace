@@ -254,6 +254,26 @@ class PanelHost(QObject):
         if app is not None:
             app.aboutToQuit.connect(self.shutdown)
 
+    def investigation_dialog(self):
+        from ...kbcorrelation.investigation_qt import InvestigationDialog
+        from ...service import ProjectService
+
+        window, original = self.window, self.window.service
+        current_root = original.root if original else None
+
+        def notice(message):
+            self.port.status(message)
+            window.logs.appendPlainText(message)
+
+        def adopt(path):
+            if window._close_requested or window.worker is not None or window.service is not original:
+                notice(f'KB comparison retained without opening: {path}')
+                return
+            window.set_service(ProjectService.open(Path(path)))
+
+        return InvestigationDialog(window, tasks=self.tasks, current_project=current_root,
+                                   on_created=adopt, notice=notice)
+
     # ---- specs and shells -------------------------------------------------------------------------
 
     @property

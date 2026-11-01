@@ -8,23 +8,26 @@ so a crash or a failed check never leaves a half-trusted file under the trusted 
 
 An existing backup is trusted only after the same read-only re-open with `PRAGMA quick_check`, a
 matching project id and the label's table. The verdict (good or bad) is cached per process by
-(path, size, mtime_ns): the check runs once per backup file version, not on every save, and a file
-that changes or disappears is checked again. The cache is shared between threads (a worker may
-verify; the owner thread then only stats the file).
+path, file identity, size, mtime_ns and SHA-256. Every reuse freshly hashes the bytes: restoring
+metadata after an edit cannot retain trust. SQLite checks run once per verified byte version.
+The cache is shared between threads (a worker may verify; the owner re-hashes before deletion).
 
 Pure stdlib plus `ingestion.safe_path`; no Qt. Errors are `BackupError` (a `ValueError` whose message
 starts with `PT-STORAGE:`); callers keep every row when they see one.
 """
 from __future__ import annotations
 
+import hashlib
+import os
 import sqlite3
+import stat
 import threading
 from collections.abc import Sequence
 from dataclasses import dataclass
 from datetime import UTC, datetime
 from pathlib import Path
 
-from .ingestion import safe_path
+from .ingestion import file_fingerprint, safe_path
 
 BACKUP_DIR = 'backups'
 SNAPSHOT_SHA = 'SELECT sha256 FROM current_snapshot WHERE singleton=1'
@@ -44,8 +47,9 @@ class _Facts:
 
 
 _LOCK = threading.Lock()
-# str(path) -> ((size, mtime_ns), facts or None for a file that failed its check)
-_VERIFIED: dict[str, tuple[tuple[int, int], _Facts | None]] = {}
+_Version = tuple[int, int, int, int, str]
+# str(path) -> ((device, inode, size, mtime_ns, fresh SHA-256), facts or failed-check None)
+_VERIFIED: dict[str, tuple[_Version, _Facts | None]] = {}
 
 
 def forget_all() -> None:
@@ -54,12 +58,49 @@ def forget_all() -> None:
         _VERIFIED.clear()
 
 
-def _fingerprint(path: Path) -> tuple[int, int] | None:
+def _stat_key(info) -> tuple[int, int, int, int, int]:
+    return info.st_dev, info.st_ino, info.st_size, info.st_mtime_ns, info.st_ctime_ns
+
+
+def _fingerprint(path: Path) -> _Version | None:
+    """Fresh bytes, never a metadata-only trust decision; bounded reads of one regular file.
+
+    Metadata checks detect observed movement during hashing. The digest detects
+    persistent same-size edits with restored mtime on Windows as well as POSIX.
+    """
     try:
-        st = path.stat()
+        flags = os.O_RDONLY | getattr(os, 'O_BINARY', 0) | getattr(os, 'O_NOFOLLOW', 0)
+        fd = os.open(path, flags | getattr(os, 'O_NONBLOCK', 0))
+        try:
+            before = os.fstat(fd)
+            if not stat.S_ISREG(before.st_mode):
+                return None
+            # On Windows st_ctime is creation time. The shared helper queries
+            # FILE_BASIC_INFO.ChangeTime, so restored mtime during hashing is
+            # still observable. Bind its path handle to the descriptor below.
+            named_before = file_fingerprint(path)
+            if named_before[:4] != _stat_key(before)[:4]:
+                return None
+            digest = hashlib.sha256()
+            remaining = before.st_size
+            with os.fdopen(fd, 'rb', closefd=False) as stream:
+                while remaining:
+                    block = stream.read(min(1024 * 1024, remaining))
+                    if not block:
+                        return None
+                    digest.update(block)
+                    remaining -= len(block)
+            after = os.fstat(fd)
+            named = path.lstat()
+            if (not stat.S_ISREG(named.st_mode) or _stat_key(before) != _stat_key(after)
+                    or _stat_key(after) != _stat_key(named)
+                    or file_fingerprint(path) != named_before):
+                return None
+            return before.st_dev, before.st_ino, before.st_size, before.st_mtime_ns, digest.hexdigest()
+        finally:
+            os.close(fd)
     except OSError:
         return None
-    return st.st_size, st.st_mtime_ns
 
 
 def _open_read_only(path: Path) -> sqlite3.Connection:
@@ -102,7 +143,7 @@ def _verify(path: Path, check: str, queries: Sequence[str] = (),
         return f'{type(exc).__name__} while reading the copy', None
 
 
-def _remember(path: Path, facts: _Facts | None, checked: tuple[int, int] | None) -> bool:
+def _remember(path: Path, facts: _Facts | None, checked: _Version | None) -> bool:
     """Cache a verdict for `checked`, the fingerprint taken before the check. False (nothing cached) if
     the file changed while it was being checked, because the verdict then describes another file."""
     if checked is None or _fingerprint(path) != checked:
@@ -146,8 +187,11 @@ def _candidates(root: Path, label: str) -> list[Path]:
 
 def trusted_backup(root: Path, label: str, *, project_id: str | None = None, snapshot_sha: str | None = None,
                    require_tables: Sequence[str] = ()) -> Path | None:
-    """A backup with a cached good verdict for its unchanged file. Lists and stats files only (no reads),
-    so it is cheap enough to call inside a write transaction."""
+    """A cached good SQLite verdict whose complete bytes still hash to the verified version.
+
+    This reads the backup even inside a write transaction; mutable timestamps
+    cannot authorize irreversible pruning. It does not repeat SQLite queries.
+    """
     for candidate in _candidates(Path(root), label):
         known, facts = _cached(candidate)
         if known and _acceptable(facts, project_id, snapshot_sha, require_tables):
@@ -163,6 +207,8 @@ def find_verified_backup(root: Path, label: str, *, project_id: str | None = Non
         known, facts = _cached(candidate)
         if not known:
             checked = _fingerprint(candidate)
+            if checked is None:
+                continue
             problem, facts = _verify(candidate, 'quick_check')
             if not _remember(candidate, facts if problem is None else None, checked):
                 continue
@@ -194,6 +240,8 @@ def write_verified_backup(root: Path, connection: sqlite3.Connection, label: str
             copy.close()
         _after_copy(part)
         checked = _fingerprint(part)
+        if checked is None:
+            raise BackupError(f'PT-STORAGE: pre-{label} database backup changed during verification')
         problem, facts = _verify(part, 'integrity_check', queries, expected)
         if problem is not None or facts is None:
             raise BackupError(f'PT-STORAGE: pre-{label} database backup failed verification ({problem})')
@@ -206,7 +254,10 @@ def write_verified_backup(root: Path, connection: sqlite3.Connection, label: str
     except (sqlite3.Error, OSError, ValueError) as exc:
         part.unlink(missing_ok=True)
         raise BackupError(f'PT-STORAGE: pre-{label} database backup failed ({type(exc).__name__})') from exc
-    _remember(target, facts, checked)  # rename keeps size and mtime; a mismatch just means "verify again"
+    # A caller may prune immediately when this returns. Do not return success
+    # when the published name no longer contains the bytes that SQLite checked.
+    if not _remember(target, facts, checked):
+        raise BackupError(f'PT-STORAGE: pre-{label} database backup changed during publication')
     return target
 
 

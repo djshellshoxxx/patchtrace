@@ -54,33 +54,40 @@ class RealEngine:
     note = ''
 
     def read(self, project_dir: str) -> EngineView | None:
-        from ..enrichment.pipeline import load_default
         from ..enrichment.storage import EnrichmentStore
-        from ..enrichment.views import build_views
         from ..service import ProjectService
         try:
             service = ProjectService.open(Path(project_dir), maintenance=False)
         except Exception:
             raise KbcStoreError('PT-KBC-STORAGE', 'the project cannot be opened') from None
         try:
-            result, sets, self.note = load_default(EnrichmentStore(service.store), service.project)
-            if result is None:
-                return None
-            views = build_views(service.project)
+            view, self.note = engine_view(service.project, EnrichmentStore(service.store))
+            return view
         finally:
             service.close()
-        by_match = {s.match_id: s for s in sets}
-        ranks = {e.match_id: e.rank for e in result.entries}
-        rows = []
-        for match in views.matches:
-            signals = by_match[match.match_id].signals if match.match_id in by_match else ()
-            names = sorted({f.name for f in match.older + match.newer})
-            rows.append(EngineRow(
-                match_id=match.match_id, name=' / '.join(names), change=_change(match),
-                attention_rank=ranks.get(match.match_id),
-                signals=tuple(EngineSignal(s.detector, s.confidence, s.group_key,
-                                           plain_text(s.rationale, SIGNAL_SUMMARY)) for s in signals)))
-        return EngineView(views.revision, views.run_id, views.older_sha256, views.newer_sha256, tuple(rows))
+
+
+def engine_view(project, store) -> tuple[EngineView | None, str]:
+    """Convert a project and stored ranking to leads; store may be an immutable captured row reader."""
+    from ..enrichment.pipeline import load_default
+    from ..enrichment.views import build_views
+
+    result, sets, note = load_default(store, project)
+    if result is None:
+        return None, note
+    views = build_views(project)
+    by_match = {s.match_id: s for s in sets}
+    ranks = {e.match_id: e.rank for e in result.entries}
+    rows = []
+    for match in views.matches:
+        signals = by_match[match.match_id].signals if match.match_id in by_match else ()
+        names = sorted({f.name for f in match.older + match.newer})
+        rows.append(EngineRow(
+            match_id=match.match_id, name=' / '.join(names), change=_change(match),
+            attention_rank=ranks.get(match.match_id),
+            signals=tuple(EngineSignal(s.detector, s.confidence, s.group_key,
+                                       plain_text(s.rationale, SIGNAL_SUMMARY)) for s in signals)))
+    return EngineView(views.revision, views.run_id, views.older_sha256, views.newer_sha256, tuple(rows)), note
 
 
 def _elsewhere(service: KbService, bundle: ContextBundle) -> tuple[list[NotApplicable], list[str], list[str]]:

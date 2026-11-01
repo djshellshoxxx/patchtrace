@@ -28,11 +28,16 @@ def main() -> int:
     app = QApplication.instance() or QApplication(sys.argv)
     app.setApplicationName('PatchTrace')
     app.setOrganizationName('PatchTrace')
+    from .app_icon import app_icon
+
+    app.setWindowIcon(app_icon())
     if self_test:
         from PySide6.QtCore import QSettings
 
         from .optional_deps import summary_line
         from .service import ProjectService
+        if app.windowIcon().isNull():
+            raise RuntimeError('Application icon did not load: the packaged mark is missing or invalid')
         print(summary_line())  # frozen_smoke asserts the guarded imports survive PyInstaller
         with tempfile.TemporaryDirectory(prefix='patchtrace-self-test-') as directory:
             root = Path(directory)
@@ -51,6 +56,9 @@ def main() -> int:
                 # Release the project lock/SQLite connection even on failure so cleanup can proceed.
                 window.close()
                 app.processEvents()
+            from .gui.qt.kb_selftest import MARKER, run_journey
+            run_journey(app, root)
+            print(MARKER)
             # Windows cannot remove immutable copied artifacts until permissions are restored.
             for path in root.rglob('*'):
                 if path.is_file():
