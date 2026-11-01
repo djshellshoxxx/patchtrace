@@ -2979,7 +2979,7 @@ class MainWindow(QMainWindow):
         dialog.refresh_preview()
         if dialog.exec() == QDialog.DialogCode.Accepted:
             output = Path(dialog.destination.text())
-            result = self._guard(lambda: export_project(self.project, dialog.format.currentText(), output,
+            result = self._guard(lambda: self.service.export_report(dialog.format.currentText(), output,
                                                        **dialog.options()))
             if result is not None:
                 self.statusBar().showMessage(f'Report written: {output}')
