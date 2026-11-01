@@ -153,3 +153,20 @@ H7 (builder + opt-in `restrict_env`/`env_passthrough`, default OFF pending the n
 - **Algorithm digests in derived-cache keys and stored rows (P2 "derived-cache keys lack algorithm digest").** `identity.constants_digest(domain, version, namespaces, exclude)` digests every plain-data module constant (int/str/bool/None, compiled regex as `{re, flags}`, float as its repr, tuples/lists, sets as sorted lists, dicts with stringified keys, dataclass instances without callable fields; functions, classes, modules and dunder names are skipped). `pipeline.algorithm_digests()` returns one digest per stage: `signals` (constants of `signals`, `views`, `alignment`; `CANCEL_EVERY` excluded), `wil` (`wil` + the `signals` set, because WIL reuses its normalization), `ranking` (`ranking`), `contextual` (`cve`). Each stage id adds the input `'algorithm': <digest>` (stage versions unchanged), so the derived cache misses and new rows get new ids whenever an algorithm constant changes, even if nobody bumps a version. The `pipeline` row body gains the additive key `algorithms` (stage -> digest); `load_default`/`load_profile` serve a row only when its stage versions **and** `algorithms` equal the running code's, otherwise the note reads "Stored ranking is stale (computed by an older PatchTrace version). Rank changes again." Rows written before this change have no `algorithms` and are recomputed once (deliberate re-baseline, listed in `docs/qa.md`). Logic changes that touch no constant still need a stage/detector version bump; a golden-digest test makes every constant change a visible, reviewed re-baseline and checks that the digests are identical on Linux and Windows.
 - **H10 live probe (separate, non-gating).** `tools/live_nvd_probe.py` checks direct TCP reachability of each provider host (no proxy, like the transport), then runs the real `patchtrace correlate --fetch` (keyless; two CVEs by default so the 6 s NVD pacing is observable) on a synthetic sample project and writes `build/live-status/cve-providers.json` (`passed | failed | blocked`, per-provider detail, consent preview, pacing evidence). Unreachable hosts, `PT-ENRICH-NETWORK`/rate limits and probe timeouts are `blocked`; normalization failures, CLI errors and broken pacing are `failed` (exit 1). `.github/workflows/live-nvd.yml` runs it weekly and on demand only; it is never a required check and its results are never summed with pytest counts.
 - **Performance (no contract change).** Diff hunks are derived lazily, canonical JSON has an exact-type fast path, `_clean` skips delimiter-free lines, WIL skips functions without `Feature` text and reuses B1's hunk filter, and `pipeline.run` pauses the cyclic GC (re-entrant, restores the caller's setting). The 500 ms derived-cache objective at 10,000 pairs remains unmet: strict re-validation of the cached records and ownership revalidation are kept by design; numbers in `docs/qa.md` `[B:hardening]`.
+
+### Backup trust amendment (2026-11-01; issue #121)
+
+The metadata-only backup cache rule above is superseded. Before any cached
+backup verdict authorizes deletion, freshly hash the complete backup bytes and
+match their SHA-256, file identity and size to the checked version. Restoring a
+file's modification time must not preserve trust after its bytes change. Keep
+SQLite integrity/identity results cached for unchanged verified bytes, including
+worker-to-owner reuse; do not repeat SQLite checks merely because trust is queried.
+
+Read in bounded chunks through one regular-file descriptor. Reject an unreadable,
+replaced, resized, or observably changing file during that read. Bind the SQLite
+verification to matching fingerprints taken before and after the check, and
+revalidate the published copy after rename before returning it. Failure retains
+all live rows and preserves previously published evidence. This fresh read has
+linear I/O cost in backup size; it is a deliberate durability boundary, not a
+metadata-only performance shortcut or a lock against arbitrary later writers.

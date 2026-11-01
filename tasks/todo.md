@@ -851,3 +851,9 @@ Done: dock with state matrix, consent, import, changes, copy, go to CVE. Open: r
 
 - [x] Reconcile substantive Qodo review: Qt release dependency/status evidence, G-U1 endpoint coverage, optional decompile write rollback, stale KB/KEV/Diaphora ownership, calibration grouping/leak audits, staged archive handoff and cancellable PDB discovery.
 - [ ] Validate the final combined review repairs on their own published head; merge and close only proven superseded work after acceptance.
+
+## 2026-11-01 backup and SQLite iteration integrity
+
+- [x] Reproduce/fix metadata-only backup trust and bind verified publication to fresh bytes; preserve live rows on failure.
+- [x] Reproduce/fix sliding Diaphora row-query deadlines and small-query cancellation without inventing a whole-import scope.
+- [ ] Merge these independently reviewed fixes only after exact-head applicable QA gates; native Windows is not inferred from Linux. Issue #121 memory caps and its other findings remain separate.
