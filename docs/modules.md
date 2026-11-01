@@ -1193,3 +1193,11 @@ Calls panel (id graph): `callgraph/panel.py` (PanelSpec), `panel_qt.py` (widgets
 |---|---|---|
 | `kbcorrelation/investigation_qt.py` | Offline KB/CVE investigation controls and controller: advisory import, local search, explicit product scope, verified local pair preview and isolated new-project creation over existing service contracts and TaskRunner. No socket APIs or target execution. | `tests/test_ui_kb_investigation.py` |
 
+
+
+## Issue #120 evidence identity repair (2026-11-01; independent main port)
+
+- `unified/keys.py`, `unified/sources/{manual,secondary,__init__}.py`: byte-exact complete source identities, ambiguous manual declarations as abstaining groups, immutable per-input identity/order caches and cooperative preparation budgets. Original secondary entry references stay in atoms; raw file hashes stay upstream provenance.
+- `enrichment/storage.py`, `secondary/__init__.py`, `unified/pipeline.py`: retain already verified immutable body JSON/checksum, parse that authority, transport exact bytes and independently validate them in the worker. Added internal `Entry` fields preserve existing constructor/equality and capture compatibility.
+- `secondary/contracts.py`: validate alternative source/candidate/set engine and version, and exact non-null anchor endpoint. No public field/schema additions.
+- Regression files: `tests/test_unified_evidence_identity_20261101.py`, `test_secondary_alternative_identity_20261101.py`, `test_unified_identity_budget_20261101.py`; the last includes a real Python worker plus project-store/cache round-trip on authored data. No native comparator evidence.

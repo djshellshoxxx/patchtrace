@@ -200,11 +200,39 @@ In-memory only (frozen dataclasses, never persisted): `IrReader` / `FunctionTabl
 | `ir_key` | `{artifact_sha256, producer_kind, mode, symbols, ghidra, pyghidra, python, script_sha256, analysis_options_digest, ingest_version, norm_version, ingest_limits_digest}` | computable BEFORE extraction (Ghidra version from `application.properties`, pyghidra/python from the run settings of the Ghidriff run); `gzf_sha256` and `java` are provenance only (R-09); any `unknown` version -> IR usable but never cached globally (RuntimeFingerprint rule, cache.py:114) |
 | `result_key` | `{older_sha256, newer_sha256, orientation, ghidriff_raw_sha256, ir_older_digest|null, ir_newer_digest|null, sources: sorted [(source, entry_id, file_sha256, version)], manual_digest, config_digest}` | swapped orientation -> different key |
 | `config_digest` | `{engine_version, pass_table_digest, registry_digest, channel_versions, proof_versions, limits_digest}` | changes on any rule change |
-| `manual_digest` | sorted `[(category, older addresses, newer addresses)]` of `manual=True` matches | |
+| `manual_digest` | `unified-source-content/2` over every field of the `manual=True` snapshot matches, sorted by stable match id | Includes references, names, code and address spellings used by adapters/facts; empty input retains the legacy empty digest |
 | `row_id` | `{older_sha256, newer_sha256, older_rvas: sorted, newer_rvas: sorted}` | stable across runs for the same pairing |
 | `limits_digest` | canonical JSON of the content-affecting limits: every `UnifiedLimits` field except `OPERATIONAL_LIMIT_FIELDS` (timeouts, memory, store/pointer caps, retention, UI and performance targets), domain version 2 | in `config_digest` only; an operational knob never re-keys cached results |
 | `ingest_limits_digest` | canonical JSON of the limits that change IR content: L-01, L-02, L-05, L-06, L-07, L-11 | a ladder or facts threshold change never invalidates IR (which costs Ghidra minutes to hours, R-09) |
 Timestamps, absolute paths and display preferences are never hashed (SPEC-07 s3 rule).
+
+Issue #120 identity amendment (2026-11-01): manual adapter version `manual/2` binds the complete validated
+manual snapshot, rather than category/addresses alone. Secondary `SourceRef.entry_id` is a derived identity:
+`unified-source-content/2` binds `{entry_id: <original stored entry id>, match_set: <complete validated set>}`.
+The original stored identifier remains in `Atom.ref`; `SourceRef.file_sha256` remains the upstream raw-file
+digest and `version` remains the upstream engine version. These fields retain their existing wire types;
+older manifests remain readable and the new digest invalidates old cached results without mutating them.
+Resource amendment: persisted secondary rows use `unified-source-content/3` bound to the existing byte-exact,
+integrity-verified enrichment body checksum plus a byte-exact digest of the original entry id. The id is
+ASCII-escaped and prehashed before domain separation: NFC/NFD-distinct accepted identifiers must not collapse
+while their original `Atom.ref` text differs. `Entry.body_json` is immutable authority;
+its legacy mutable `body` dictionary cannot change the validated snapshot. The owner thread does not deep-copy,
+serialize or sort sets to plan an identity. The worker transports those exact body bytes, independently hashes
+and validates them, and derives the same identity. No unchecked transported checksum is trusted. In-memory
+sets without stored byte provenance retain the complete normalized-content `/2` fallback. These two bases
+may conservatively give distinct identities for equivalent content with different stored representations.
+Derived identity/order caches belong only to a frozen validated `LoadedSecondary` instance; replacement resets
+the cache. Never cache by mutable store entry id alone. Record ordering uses typed field tuples, without
+per-record JSON/SHA passes. Added preparation/hashing checks cancellation at entry and per record/chunk;
+cancelled/incomplete work cannot publish an identity cache. JSON hashing streams chunks rather than making
+another complete JSON byte buffer. Manual snapshots likewise reuse their digest within immutable SourceInputs.
+The content digest hashes compact, sorted-key, ASCII-escaped JSON before domain separation, preserving
+exact string code points. Secondary matches/alternatives are canonically ordered by their complete record
+content for fallback identity and adapter traversal (including name/flag tie-breaking); reordering them changes
+neither emitted content nor the fallback identity. A changed stored byte representation may re-key conservatively.
+It must not NFC-fold distinct names/code that remain
+distinct in emitted rows. This deliberately conservative identity may invalidate results for snapshot
+changes that do not alter a particular output; different emitted content must never share an identity.
 
 ## 6. Limits (single source of numbers)
 Defaults of `UnifiedLimits`; each is enforced or measured by the named code, bench or test. Other files repeat a number only next to its L-id.

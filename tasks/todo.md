@@ -856,3 +856,10 @@ Done: dock with state matrix, consent, import, changes, copy, go to CVE. Open: r
 
 - [x] Selectively reconcile PR #148's independent existing-report safety fix (project ownership, evidence aliases, committed read without recovery) on main; no KB workflow/adoption or unaccepted stack dependency imported.
 - [ ] Exact-head independent review and Linux/Windows QA/packaging for this focused PR; mark merged only after those checks pass.
+
+
+### Issue #120 independent main repair (2026-11-01)
+
+- [x] Reproduce the original identity/ambiguity/alternative defects on canonical main `6579ed8` (28 failing tests, including service/store/cache paths).
+- [x] Port only reviewed source identity, immutable-body/resource and alternative consistency fixes; preserve main's existing matching-policy/ladder/facts behavior and keep rz-diff quarantine separate. Focused regressions, a real Python worker/cache round-trip, full Ruff and schema regeneration pass.
+- [ ] Root independent review, exact-head full pytest and applicable remote/native acceptance before publication or merge; current synthetic checks do not close broader matching accuracy gates.

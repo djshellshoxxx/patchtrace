@@ -197,6 +197,15 @@ current_sets(store, current):
 Tie-break when two rows have identical `created`: higher entry id (lexicographic) wins, deterministic. A stale newest row does not hide a non-stale older one (stale rows are excluded first, per "keep newest non-stale set"). `reconcile` CLI and `assess_reports` callers use `current_sets()` only; `assess_reports` keeps its `ValueError` as a defensive invariant but the CLI converts it to `PT-SECONDARY-RUN`/exit 3 rather than a traceback. Property to hold: for any sequence of publishes/re-imports/re-runs, `reconcile` returns exit 0 or 4, never an uncaught exception.
 
 ### 6.2 Alternative matches
+Issue #120 validation amendment (2026-11-01): each alternative's `source` must equal its candidate's engine
+and the containing set's engine; the candidate engine version must equal the set's version. Its declared
+`anchor_side` selects a non-null candidate address exactly equal to `anchor_address`. Validate these relations
+on construction/import, including nested alternatives; reject inconsistent identity rather than silently
+ignoring a differently labeled candidate or attributing it to another engine. Existing field names and
+serialization remain unchanged. An invalid historical stored set is an invalid input, not evidence of an
+empty successful engine result. The existing `load_secondary` policy skips invalid rows with a warning;
+this amendment adds no new visible unified limitation. Retain original stored/raw bytes.
+
 When a secondary engine pairs one endpoint with several counterparts (rz-diff one-sided plus partial rows; BinDiff multi-candidate), the adapter's `parse` keeps the engine's highest-similarity candidate (ties: lowest address) as the primary `matches` row and emits the rest as `AlternativeMatch(source=<engine>, rank=2..)`, bounded to 8 per anchor and 50,000 per set (`PT-SECONDARY-LIMIT` beyond). `reconcile` stays read-only: a `Reconciliation` row gains `alternatives: tuple[AlternativeMatch, ...]` (default `()`: those anchored at the row's older or newer address), `alternative_rank: int | None` and `disagreement_kind: str | None`. When the primary pairing disagrees and the Ghidriff pairing equals an alternative's `(older, newer)`, the row stays `disagreement` (never `agreement`; counts and verdicts are identical to a run without alternatives), `disagreement_kind = 'matches-alternative-rank-N'` (lowest matching rank) and the note says "the Ghidriff pairing equals its alternative rank N". Other disagreements have kind `conflicting-endpoints`; non-disagreement rows have `None`. `assess_reports` keeps `contested`/index 0 and only adds `MatchEvidence.alternative_ranks: ((engine, rank), ...)` plus an explanation sentence. Alternatives are never merged across engines and never scored. Status: model, limits and reconcile/evidence reporting are implemented; the current adapters do not yet emit alternatives (rz-diff JSON has one record per function), so the field is exercised by tests and future/imported sets only.
 
 ## 7. CLI

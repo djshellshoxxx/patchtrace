@@ -114,20 +114,22 @@ def compute_config_digest(registry: Registry = REGISTRY, limits: UnifiedLimits =
 
 def plan_identity(inputs: SourceInputs, addr: AddressMap, sources: Iterable[str], registry: Registry = REGISTRY,
                   limits: UnifiedLimits = DEFAULT_LIMITS, *, ir: tuple[str, str] | None = None,
-                  residual: bool = True) -> Identity:
+                  residual: bool = True, budget: Budget | None = None) -> Identity:
     """The inputs that make a result (02 s5) without computing it: the owner calls this before the run (cache
     lookup) and again with the worker's observed raw status to check the answer. `ir` = the content digests of the
     two ProgramIR sidecars the run will use, or None for S0 mode."""
+    if budget is not None:
+        budget.check()
     selected = frozenset(sources)
     refs: list[SourceRef] = []
     if 'ghidriff' in selected:
         refs.append(GhidriffAdapter(registry).source_ref(inputs))
     # Every stored set of a selected engine is an input, one for another pair included: it is refused with a
     # degrading limitation, which changes the result, so it must change the id (same id, same content).
-    refs.extend(source_ref_of(s) for s in inputs.secondary if s.match_set.engine in selected)
-    manual_refs = ManualAdapter().source_refs(inputs, addr) if 'manual' in selected else ()
+    refs.extend(source_ref_of(s, budget) for s in inputs.secondary if s.match_set.engine in selected)
+    manual_refs = ManualAdapter().source_refs(inputs, addr, budget) if 'manual' in selected else ()
     refs.extend(manual_refs)
-    manual = manual_digest_of(inputs, addr) if manual_refs else keys.manual_digest([])
+    manual = manual_digest_of(inputs, addr, budget) if manual_refs else keys.manual_digest([])
     config = compute_config_digest(registry, limits, residual=residual)
     raw_sha = inputs.run.raw.sha256
     if raw_sha is None:
@@ -173,7 +175,7 @@ def compute_stage(inputs: SourceInputs, addr: AddressMap, *, result_dir: Path, s
     budget = budget or Budget()
     say = _announce(emit, ir is not None)
     selected = frozenset(sources)
-    ident = plan_identity(inputs, addr, selected, registry, limits, residual=residual)  # refs and digests of the manifest
+    ident = plan_identity(inputs, addr, selected, registry, limits, residual=residual, budget=budget)
     say('sources')
     scoped = dataclasses.replace(inputs, secondary=tuple(s for s in inputs.secondary
                                                           if s.match_set.engine in selected))
@@ -203,7 +205,7 @@ def compute_stage(inputs: SourceInputs, addr: AddressMap, *, result_dir: Path, s
     sides = None if ir is None else IrSides(ir.older, ir.newer, ir.older_sections, ir.newer_sections,
                                             identical=inputs.older_sha256 == inputs.newer_sha256)
     context = FactsContext.build(older_sha256=inputs.older_sha256, newer_sha256=inputs.newer_sha256, addr=addr,
-                                 matches=inputs.matches, rows=decided, bindiff_flags=bindiff_flags(scoped, addr),
+                                 matches=inputs.matches, rows=decided, bindiff_flags=bindiff_flags(scoped, addr, shared),
                                  limits=limits, ir_sides=sides, budget=shared)
     rows: list[UnifiedMatch] = []
     facts = []
@@ -363,7 +365,9 @@ def run_request(request_path: Path, result_dir: Path, *, cancel: threading.Event
     private = request_path.parent
     snapshot = read_snapshot(inside(req.snapshot.path, private), expected_sha256=req.snapshot.sha256,
                              expected_lines=req.snapshot_lines, limits=limits)
-    secondary = tuple(read_loaded(inside(f.path, private), expected_sha256=f.sha256, expected_size=f.size)
+    load_budget = Budget(started + req.budget_seconds, cancel)
+    secondary = tuple(read_loaded(inside(f.path, private), expected_sha256=f.sha256, expected_size=f.size,
+                                  budget=load_budget)
                       for f in req.secondary)
     if req.raw_status == 'ok':
         raw = load_raw(Path(req.raw_path) if req.raw_path else None, req.raw_sha256, limits)
@@ -386,7 +390,7 @@ def run_request(request_path: Path, result_dir: Path, *, cancel: threading.Event
         if emit:
             emit(event)
     ir = open_ir(req)
-    budget = Budget.after(req.budget_seconds, cancel)
+    budget = load_budget
     try:
         if req.refacts is None:
             computed = compute_stage(inputs, addr, result_dir=Path(result_dir), sources=req.sources,
