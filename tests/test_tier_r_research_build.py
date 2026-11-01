@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import json
+import os
 from pathlib import Path
 from types import SimpleNamespace
 
@@ -244,15 +245,25 @@ def test_cli_exclusive_publication_refuses_file_appearing_at_open(monkeypatch, t
     """Exercise the real filesystem race at the final open, rather than merely asserting an open mode."""
     output = tmp_path / 'receipt.json'
     original_open = Path.open
+    original_os_open = os.open
+
+    def occupy():
+        with original_open(output, 'xb') as other:
+            other.write(b'late competing receipt')
 
     def raced_open(path, mode='r', *args, **kwargs):
         if path == output and any(flag in mode for flag in 'wax'):
-            with original_open(path, 'xb') as other:
-                other.write(b'late competing receipt')
+            occupy()
         return original_open(path, mode, *args, **kwargs)
+
+    def raced_os_open(path, flags, *args, **kwargs):
+        if flags & os.O_CREAT and Path(path).name == output.name:
+            occupy()
+        return original_os_open(path, flags, *args, **kwargs)
 
     monkeypatch.setattr(R, 'build_pilot', lambda *args, **kwargs: {'status': 'built', 'unit_only': True})
     monkeypatch.setattr(Path, 'open', raced_open)
+    monkeypatch.setattr(os, 'open', raced_os_open)
     assert R.main(['--store', str(tmp_path / 'store'), '--output', str(output)]) == 2
     assert json.loads(capsys.readouterr().out)['status'] == 'error'
     assert output.read_bytes() == b'late competing receipt'

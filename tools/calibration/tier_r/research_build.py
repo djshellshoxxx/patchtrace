@@ -14,6 +14,7 @@ from pathlib import Path
 from . import factory as F
 from .build import OPTS, BuildError
 from .labeler import label_authored
+from .receipts import validate_spelling, write_new_receipt
 from .toolchain import Blocked, ToolError, probe
 
 REPO = Path(__file__).resolve().parents[3]
@@ -39,8 +40,9 @@ def _outside_repository(path: Path) -> Path:
 def _new_receipt_path(path: Path) -> Path:
     """Check the original CLI spelling before resolving aliases or starting builds."""
     path = Path(path)
-    if not path.is_absolute() or path.suffix != '.json':
-        raise ValueError('receipt must be an absolute .json path outside the repository')
+    validate_spelling(path)
+    if path.is_relative_to(REPO):
+        raise ValueError('generated artifacts must be outside the repository')
     if any(part.is_symlink() for part in (path, *path.parents)):
         raise ValueError('receipt destination and parent paths cannot contain symlinks')
     target = _outside_repository(path)
@@ -141,10 +143,8 @@ def main(argv: Sequence[str] | None = None) -> int:
         receipt = build_pilot(args.store, profiles=args.profiles.split(','), opts=args.opts.split(','),
                               suite_dir=args.suite)
         text = json.dumps(receipt, indent=2, sort_keys=True) + '\n'
-        output = _new_receipt_path(args.output)
-        output.parent.mkdir(parents=True, exist_ok=True)
-        with _new_receipt_path(args.output).open('xb') as stream:
-            stream.write(text.encode('utf-8'))
+        _new_receipt_path(args.output)
+        write_new_receipt(args.output, text.encode('utf-8'), create_parents=True)
     except (ValueError, OSError) as exc:
         error = {'command': 'research-build', 'status': 'error', 'reason': str(exc)[:4000]}
         if receipt is not None:

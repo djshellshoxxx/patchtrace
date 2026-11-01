@@ -238,6 +238,42 @@ no-recipe; evaluation metrics on hand-computed match sets; report determinism; a
    recipe digests remain unchanged; invocation identity is recorded in the R1
    reconciliation evidence pending a separately reviewed contract enhancement.
 
+### [R1-20261101] Anchored development receipt publication
+
+This amendment supersedes the concurrent-parent limitation of R1-20261030
+items 6 and 7 for the development matrix and pilot receipt writers. Keep their
+pre-work validation, outside-repository and (pilot only) work-root containment
+requirements. At publication, walk the original absolute path without resolving
+aliases, retain verified directory handles, and exclusively create the leaf in
+that directory. Reject traversal and symlink/reparse directory components.
+
+On POSIX, use no-follow directory-relative opens for every component and leaf;
+hold the ancestors through writing and check their identities before reporting
+success. A concurrent rename cannot redirect output through a replacement link.
+If the original directory was moved, return an error and retain all completed
+receipt data on stdout; a receipt may remain in that original, now-renamed
+directory. Do not unlink by the changed pathname or claim rollback.
+
+On Windows, hold every parent directory with list-directory access and no write
+or delete sharing, and reject all reparse points before exclusive leaf creation.
+Attribute-only access does not establish share enforcement. Deny in-place reparse
+mutation as well as rename/replacement. Device namespaces, reserved
+device names, alternate data streams, and trailing-dot/space aliases are invalid
+receipt paths. Unsupported safe directory-opening facilities are an explicit
+error, never permission to fall back to a checked-but-unanchored pathname.
+
+Both CLIs preserve an existing or racing destination. A failure after completed
+work emits an error JSON object containing the complete `receipt` on stdout;
+pre-work errors do not invent a receipt. The pilot also retains its stderr
+diagnostic. This is filesystem publication evidence, not engine/corpus acceptance
+or a guarantee against later modification by a writer with access to the same
+directory. Windows native tests are a separate acceptance requirement.
+
+Windows mechanism references (read 2026-11-01):
+- [MS-FSA sharing checks](https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-fsa/8c0e3f4f-0729-49f4-a14d-7f7add593819)
+- [CreateFileW access and sharing](https://learn.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-createfilew)
+- [FSCTL_SET_REPARSE_POINT](https://learn.microsoft.com/en-us/windows/win32/api/winioctl/ni-winioctl-fsctl_set_reparse_point)
+
 ### [D:known-answer-factory] 2026-10-14 build amendments
 1. Built and tested: s3 inputs I1 (recipe contract), I2/I3 (case cards via `factory.run_card`), I4 (suites via `factory.run_suite` with cross-check); s4 profiles `msvc-free`, `mingw-gcc`, `mingw-clang`; s5 inventory and hashes; s6 contract; s7 decision table; s9 A/A rebuild, layout and noise (`factory.run_aa`, `factory.run_noise`).
 2. Determinism facts found while building: clang must get `-ffile-compilation-dir=.` (a `-ffile-prefix-map` argument is itself recorded in the CodeView build info) plus `-gno-codeview-command-line`; lld-link needs `/pdbsourcepath:` (it absolutises relative CodeView paths and records cwd in S_ENVBLOCK), so PDB paths read `/ka-src/<rel>` and are mapped back; llvm-pdbutil prints `addr = SSSS:OOOO` in decimal; `llvm-strip` rewrites the debug directory's PointerToRawData, which the RVA check masks; multi-call tools (lld-link -> lld) must not be symlink-resolved.
