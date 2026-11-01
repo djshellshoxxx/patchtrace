@@ -200,6 +200,57 @@ duplicate-scoring behavior and replace-after-existence-check writer are not
 imported. Verified shard/merge artifact transfer remains a separate acceptance
 task; none of this authorizes Tier W redistribution or a final evaluation.
 
+#### Credited replay and producer validation (#157, November 1, 2026)
+
+Every successful provider answer, with or without retention, must satisfy the
+existing normalized-output field bounds before scoring. The existing in-memory
+`unified` provider remains supported through a private validation shape using the
+report engine vocabulary; persisted output/credit schemas retain their four
+existing engines, so retained `unified` answers are explicitly refused. Names remain capped at 512
+characters and versions at 200; invalid answers fail with no metrics/digest rather
+than being truncated or accepted only by the in-memory path. Validate the Python
+document before JSON serialization, converting only JSON array containers to
+tuples for strict validation. Scalar types, code points, absent defaults and the
+original accepted document are preserved. Retention's incremental 64 MiB
+serialization cap remains. Changed, deduplicated predictions must have mutually comparable
+effective ordering keys under the existing scorer (`order_key` or its unchanged
+similarity/name fallback). Reject incompatible keys, including conflicts with a
+missing-key fallback; do not impose a uniform column type, change ranking/ties,
+or add attention to training's feature engines.
+
+A fresh `OutputStore` publishes `.tier-r-output-run.json` with contract
+`tier-r-output-run/1` before any output. After evaluation/report assembly,
+`finalize(reports)` publishes `output-credits.json` (`tier-r-output-credits/1`)
+exclusively. It embeds the validated, digest-checked reports and one record for
+each successful pair/engine reference, binding report digest, pair id, engine,
+exact canonical output SHA-256, ordered image hashes, symbol mode and producer
+version. Duplicate/ambiguous references and inconsistent report ownership fail.
+Finalization rechecks run ownership and the referenced bytes; a failure leaves
+the run incomplete and cannot return a successful evaluation report. Failed or
+unreferenced raw artifacts are preserved but never credited.
+
+The public `write_raw(pair_id, engine, raw)` retains exact validated canonical
+bytes; `finalize(reports)` and `MANAGED_FILES` also support the separately owned
+verified-transfer writer. A transferred run uses the same reader contract, with
+the parent transfer manifest additionally binding the managed metadata files.
+
+`train.load_outputs` recognizes managed markers with no-follow checks (including
+broken links), requires a valid completed credit manifest, and rechecks every
+successful reference's exact bytes and metadata before reconstruction. A missing,
+unreadable, linked, incomplete or inconsistent managed record is an error, never
+a fallback to legacy loading. Selecting a parent containing managed runs is
+ambiguous and refused. Legacy loose output folders remain an explicitly
+**unverified compatibility path** for existing callers: schema validation and
+duplicate-key rejection do not establish report credit, transfer ownership or
+final-evaluation acceptance. This includes output directories created before
+this amendment: their missing markers cannot retroactively prove success.
+`load_outputs(..., allow_legacy=True)` emits `LegacyOutputWarning` whenever it
+uses this path; `allow_legacy=False` refuses it. No existing directory is silently
+stamped as managed or assigned inferred credit.
+Removing all managed metadata by the filesystem
+owner is outside the local integrity/authenticity claim. No signature, hostile
+same-user lock, model change or final-run permission is implied.
+
 ## 11. Lineage, roles and existing tooling
 Lineage = project (`L-<project>`; suites `L-ours-<suite>-<project>`); mutants, A/A and noise pairs inherit the lineage of
 their base source so grouped CV (SPEC-28 s4) never splits a function identity across folds; `family` comes from the recipe.

@@ -218,11 +218,16 @@ def evaluate_full(labels_docs: Sequence[C.KnownAnswerLabels], providers: Sequenc
             counts = sha = None
             if out.engine != provider.engine:
                 out = failed(provider.engine, 'engine response does not match its provider owner')
-            if out.status == 'ok' and output_store is not None:
+            if out.status == 'ok':
                 try:
-                    sha = output_store.write(labels.pair_id, provider.engine, engine_output_doc(out, labels, symbols))
-                except OS.OutputError as exc:
-                    out = failed(provider.engine, f'normalized output not retained: {str(exc)[:250]}')
+                    document = engine_output_doc(out, labels, symbols)
+                    if output_store is not None:
+                        sha = output_store.write(labels.pair_id, provider.engine, document)
+                    else:
+                        RS.validate_provider_output_document(document)
+                        sha = RS.output_sha256(document)
+                except (C.ContractError, OS.OutputError, TypeError, ValueError) as exc:
+                    out = failed(provider.engine, f'normalized output rejected: {str(exc)[:250]}')
             if out.status == 'ok':
                 counts, wrong = score_pair(labels, out)
                 runs[provider.engine].append(ER.Run(labels, to_engine_pairs(out, symbols)))
@@ -230,8 +235,6 @@ def evaluate_full(labels_docs: Sequence[C.KnownAnswerLabels], providers: Sequenc
                 dropped = dedupe_predictions(out.predictions)[1]
                 if dropped:
                     duplicates[provider.engine] += dropped
-                if sha is None:
-                    sha = RS.output_sha256(engine_output_doc(out, labels, symbols))
                 if out.implicit_unchanged and IMPLICIT_NOTE not in all_notes:
                     all_notes.append(IMPLICIT_NOTE)
             acc.results.append((labels.pair_id, labels.stratum, out.status, out.reason, counts, sha, out.version))
@@ -271,7 +274,10 @@ def evaluate_full(labels_docs: Sequence[C.KnownAnswerLabels], providers: Sequenc
     attempts = [(e, r[1], r[2]) for e, acc in by_engine.items() for r in acc.results]
     fields, deltas = ER.build_blocks(docs, runs, attempts, symbols=symbols, shift_lineages=shift_lineages,
                                      b_count=b_count)
-    return finalize_report({**report, **fields}), deltas
+    report = finalize_report({**report, **fields})
+    if output_store is not None:
+        output_store.finalize([report])
+    return report, deltas
 
 
 def finalize_report(report: dict) -> dict:
