@@ -80,6 +80,14 @@ class ProjectService:
     def save(self) -> None:
         self._commit(self.project)
 
+    def export_report(self, format: str, destination: Path, **options):
+        """Export the current persisted snapshot while protecting this project's owned files."""
+        from .reports import export_project
+
+        self.store._check_open()
+        committed = self.store.load(recover_interrupted=False)
+        return export_project(committed, format, destination, project_root=self.root, **options)
+
     def close(self) -> None:
         self._prepared.clear()
         self.store.close()
