@@ -114,7 +114,7 @@ def test_publication_failure_gets_no_metrics_or_digest(tmp_path, monkeypatch, fa
     link = os.link
 
     def fail(src, dst, **kwargs):
-        if Path(dst).name not in OS.MANAGED_FILES:
+        if Path(dst).name == OS.output_file_name(LABELS.pair_id, 'rz-diff'):
             raise failure
         return link(src, dst, **kwargs)
 
@@ -154,7 +154,7 @@ def test_racing_existing_artifact_is_never_replaced(tmp_path, monkeypatch):
     previous = b'concurrent evidence must remain'
 
     def compete(src, dst, **kwargs):
-        if Path(dst).name not in OS.MANAGED_FILES:
+        if Path(dst).name == OS.output_file_name(LABELS.pair_id, 'rz-diff'):
             Path(dst).write_bytes(previous)
         return link(src, dst, **kwargs)
 
@@ -171,7 +171,7 @@ def test_changed_published_bytes_are_not_credited(tmp_path, monkeypatch):
 
     def corrupt(src, dst, **kwargs):
         result = link(src, dst, **kwargs)
-        if Path(dst).name not in OS.MANAGED_FILES:
+        if Path(dst).name == OS.output_file_name(LABELS.pair_id, 'rz-diff'):
             Path(dst).write_bytes(b'changed after stage flush')
         return result
 
@@ -185,7 +185,7 @@ def test_output_directory_replacement_is_not_a_successful_run(tmp_path, monkeypa
     publish = OS.publish_bytes
 
     def move_before_publication(path, raw):
-        if Path(path).name not in OS.MANAGED_FILES:
+        if Path(path).name == OS.output_file_name(LABELS.pair_id, 'rz-diff'):
             outputs.rename(moved)
             outputs.mkdir()
         return publish(path, raw)
@@ -388,7 +388,7 @@ def test_cli_default_output_publication_failure_is_a_failed_pair(tmp_path, monke
     link = os.link
 
     def deny_output(src, dst, **kwargs):
-        if store / 'outputs' in Path(dst).parents and Path(dst).name not in OS.MANAGED_FILES:
+        if store / 'outputs' in Path(dst).parents and Path(dst).name == OS.output_file_name(LABELS.pair_id, 'rz-diff'):
             raise PermissionError('injected output permission failure')
         return link(src, dst, **kwargs)
 

@@ -25,7 +25,12 @@ MAX_ENGINE_OUTPUT_BYTES = 64 * 1024 * 1024
 MANAGED_MARKER = '.tier-r-output-run.json'
 CREDIT_FILE = 'output-credits.json'
 MANAGED_FILES = (MANAGED_MARKER, CREDIT_FILE)
+COMPLETION_FILE = '.tier-r-output-incomplete.json'
+FAILURE_FILE = 'evaluation-failure.json'
+UNCREDITED_REPORT = 'uncredited-report.json'
+_INCOMPLETE_FILES = (COMPLETION_FILE, FAILURE_FILE, UNCREDITED_REPORT)
 _MARKER_BYTES = b'{"contract":"tier-r-output-run/1"}'
+_COMPLETION_BYTES = b'{"contract":"tier-r-output-completion/1","status":"incomplete"}'
 _NAME = re.compile(r'[A-Za-z0-9][A-Za-z0-9._-]{0,95}\Z')
 _ENGINES = frozenset(('rz-diff', 'bindiff', 'ghidriff', 'attention'))
 
@@ -134,7 +139,7 @@ def legacy_output_paths(folder: Path) -> list[Path]:
         raise OutputError(f'output directory unreadable: {type(exc).__name__}') from None
 
     for directory, children, files in os.walk(folder, followlinks=False, onerror=error):
-        if set(MANAGED_FILES) & set((*children, *files)):
+        if set((*MANAGED_FILES, *_INCOMPLETE_FILES)) & set((*children, *files)):
             raise OutputError('select one managed output run; parent collections are ambiguous')
         paths.extend(Path(directory) / name for name in files if name.endswith('.json'))
     return sorted(paths)
@@ -169,9 +174,9 @@ def _report_references(reports: Sequence[dict]) -> dict[tuple[str, str], tuple[s
     return references
 
 
-def _verified_credits(folder: Path, document: dict) -> list[tuple[Path, bytes, RS.EngineOutputDoc, str]]:
+def _validated_credits(document: dict) -> RS.OutputCredits:
     try:
-        raw = _canonical_bytes(document, RS.MAX_OUTPUT_BYTES)
+        raw = _canonical_bytes(document, RS.MAX_CREDIT_BYTES)
         model = RS.OutputCredits.model_validate_json(raw)
     except (ValidationError, ValueError) as exc:
         raise OutputError(f'invalid output credit manifest: {str(exc)[:250]}') from None
@@ -179,10 +184,54 @@ def _verified_credits(folder: Path, document: dict) -> list[tuple[Path, bytes, R
     records = {(record.pair_id, record.engine): record for record in model.outputs}
     if len(records) != len(model.outputs) or records.keys() != references.keys():
         raise OutputError('credit records do not uniquely cover successful report references')
-    result = []
     for key, record in sorted(records.items()):
         if (record.report_sha256, record.output_sha256, record.symbols) != references[key]:
             raise OutputError('credit record differs from its successful report reference')
+    return model
+
+
+def _credit_document(reports: Sequence[dict], output_records: Sequence[dict]) -> dict:
+    # Bound complete batches before validating/copying each potentially large report.
+    try:
+        _canonical_bytes({'reports': reports}, RS.MAX_CREDIT_BYTES)
+    except OutputError as exc:
+        raise OutputError(f'invalid output credit manifest: {exc}') from None
+    references = _report_references(reports)
+    records = {}
+    for record in output_records:
+        try:
+            key = record['pair_id'], record['engine']
+            if key in records:
+                raise OutputError('duplicate retained output metadata')
+            records[key] = record
+        except (KeyError, TypeError) as exc:
+            raise OutputError(f'invalid retained output metadata: {type(exc).__name__}') from None
+    outputs = []
+    for key, (report_sha, output_sha, symbols) in sorted(references.items()):
+        record = records.get(key)
+        if record is None or (record.get('output_sha256'), record.get('symbols')) != (output_sha, symbols):
+            raise OutputError('successful report reference has no matching retained output')
+        outputs.append({**record, 'report_sha256': report_sha})
+    document = {'contract': RS.CREDITS_CONTRACT, 'reports': list(reports), 'outputs': outputs}
+    _validated_credits(document)
+    return document
+
+
+def preflight_credit_manifest(reports: Sequence[dict], output_records: Sequence[dict]) -> None:
+    """Check complete batches and the exact aggregate budget without creating files.
+
+    Records contain write_raw metadata (without report_sha256). Retained records
+    not referenced by a successful report remain uncredited, as in finalization.
+    Actual retained bytes and directory ownership are rechecked by finalize.
+    """
+    _credit_document(reports, output_records)
+
+
+def _verified_credits(folder: Path, document: dict) -> list[tuple[Path, bytes, RS.EngineOutputDoc, str]]:
+    model = _validated_credits(document)
+    result = []
+    for record in sorted(model.outputs, key=lambda row: (row.pair_id, row.engine)):
+        key = record.pair_id, record.engine
         path = folder / output_file_name(*key)
         raw = read_output_bytes(path)
         if hashlib.sha256(raw).hexdigest() != record.output_sha256:
@@ -204,18 +253,31 @@ def read_credited_outputs(folder: Path) -> list[tuple[Path, bytes, RS.EngineOutp
     """Verify a completed managed run; None means explicitly unverified legacy compatibility, never credit."""
     folder = Path(folder)
     owner = _directory_identity(folder)
+    if any(_present(folder / name) for name in _INCOMPLETE_FILES):
+        raise OutputError('managed output run is incomplete or failed')
     marked = _present(folder / MANAGED_MARKER)
     if not marked:
         if _present(folder / CREDIT_FILE):
             raise OutputError('credit manifest lacks its managed run marker')
         legacy_output_paths(folder)  # Reject a parent collection before selecting legacy compatibility.
         return None
+    result = _verify_completed_outputs(folder)
+    if any(_present(folder / name) for name in _INCOMPLETE_FILES):
+        raise OutputError('managed output run became incomplete or failed')
+    if _directory_identity(folder) != owner:
+        raise OutputError('output directory ownership changed during credit verification')
+    return result
+
+
+def _verify_completed_outputs(folder: Path) -> list[tuple[Path, bytes, RS.EngineOutputDoc, str]]:
+    """Common exact-byte checks; the writer calls this while its sentinel still blocks readers."""
+    owner = _directory_identity(folder)
     if read_output_bytes(folder / MANAGED_MARKER, 4096) != _MARKER_BYTES:
         raise OutputError('invalid managed output run marker')
     if not _present(folder / CREDIT_FILE):
         raise OutputError('managed output run has no completed credit manifest')
     try:
-        document = strict_json(read_output_bytes(folder / CREDIT_FILE))
+        document = strict_json(read_output_bytes(folder / CREDIT_FILE, RS.MAX_CREDIT_BYTES))
     except (ValueError, RecursionError) as exc:
         raise OutputError(f'invalid output credit manifest: {type(exc).__name__}') from None
     result = _verified_credits(folder, document)
@@ -225,6 +287,11 @@ def read_credited_outputs(folder: Path) -> list[tuple[Path, bytes, RS.EngineOutp
 
 
 def publish_bytes(path: Path, raw: bytes) -> str:
+    """Publish verified bytes exclusively; return their exact digest."""
+    return _publish_owned_bytes(path, raw)[0]
+
+
+def _publish_owned_bytes(path: Path, raw: bytes) -> tuple[str, tuple[int, int]]:
     """Publish complete bytes without replacing any existing file, link or device.
 
     A flushed/fsynced private stage is hard-linked into place atomically. Verify
@@ -269,7 +336,7 @@ def publish_bytes(path: Path, raw: bytes) -> str:
                 raise OutputError('published evidence bytes changed')
             if _identity(path.lstat()) != owned:
                 raise OutputError('published evidence identity changed')
-        return expected
+        return expected, owned
     except (OSError, NotImplementedError) as exc:
         raise OutputError(f'evidence publication failed: {type(exc).__name__}') from None
     finally:
@@ -300,6 +367,7 @@ class OutputStore:
             raise OutputError(f'a fresh output directory is required: {type(exc).__name__}') from None
         self._written: dict[tuple[str, str], dict] = {}
         self._finalized = False
+        self._attempted = False
         publish_bytes(self.folder / MANAGED_MARKER, _MARKER_BYTES)
         self._check_owner()
 
@@ -319,7 +387,7 @@ class OutputStore:
         """Retain exact validated canonical bytes, including transfer copies, without inferring report credit."""
         filename = output_file_name(pair_id, engine)
         self._check_owner()
-        if self._finalized or _present(self.folder / CREDIT_FILE):
+        if self._finalized or self._attempted or _present(self.folder / CREDIT_FILE):
             raise OutputError('managed output run is already finalized')
         if type(raw) is not bytes or len(raw) > MAX_ENGINE_OUTPUT_BYTES:
             raise OutputError('normalized output must be bounded immutable bytes')
@@ -342,21 +410,46 @@ class OutputStore:
     def finalize(self, reports: Sequence[dict]) -> None:
         """Publish credit only after report assembly and renewed exact-byte verification of every success."""
         self._check_owner()
-        if self._finalized or _present(self.folder / CREDIT_FILE):
+        if self._finalized or self._attempted or _present(self.folder / CREDIT_FILE):
             raise OutputError('managed output run is already finalized')
+        self._attempted = True
         if read_output_bytes(self.folder / MANAGED_MARKER, 4096) != _MARKER_BYTES:
             raise OutputError('managed output run marker changed')
-        references = _report_references(reports)
-        outputs = []
-        for key, (report_sha, output_sha, symbols) in sorted(references.items()):
-            record = self._written.get(key)
-            if record is None or (record['output_sha256'], record['symbols']) != (output_sha, symbols):
-                raise OutputError('successful report reference has no matching retained output')
-            outputs.append({**record, 'report_sha256': report_sha})
-        document = {'contract': RS.CREDITS_CONTRACT, 'reports': list(reports), 'outputs': outputs}
+        document = _credit_document(reports, list(self._written.values()))
         _verified_credits(self.folder, document)
         self._check_owner()
-        publish_bytes(self.folder / CREDIT_FILE, _canonical_bytes(document, RS.MAX_OUTPUT_BYTES))
+        sentinel = self.folder / COMPLETION_FILE
+        _, owned = _publish_owned_bytes(sentinel, _COMPLETION_BYTES)
         self._check_owner()
-        read_credited_outputs(self.folder)
+        publish_bytes(self.folder / CREDIT_FILE, _canonical_bytes(document, RS.MAX_CREDIT_BYTES))
+        _verify_completed_outputs(self.folder)
+        self._check_owner()
+        if any(_present(self.folder / name) for name in (FAILURE_FILE, UNCREDITED_REPORT)):
+            raise OutputError('managed output run has failure diagnostics')
+        try:
+            if read_output_bytes(sentinel, 4096) != _COMPLETION_BYTES or _identity(sentinel.lstat()) != owned:
+                raise OutputError('completion sentinel ownership or content changed')
+            sentinel.unlink()  # Final success transition: no fallible validation after this point.
+        except OSError as exc:
+            raise OutputError(f'completion sentinel removal failed: {type(exc).__name__}') from None
         self._finalized = True
+
+    def retain_failure(self, report: dict, error: Exception) -> dict:
+        """Best-effort exclusive diagnostics; never change an already completed run."""
+        if self._finalized or not self._attempted:
+            raise OutputError('managed output run is finalized or finalization was not attempted')
+        attempted = {'marker': (self.folder / FAILURE_FILE).as_posix(),
+                     'report': (self.folder / UNCREDITED_REPORT).as_posix()}
+        result = {'attempted': attempted, 'errors': {}}
+        marker = {'contract': RS.FAILURE_CONTRACT, 'status': 'failed', 'credited': False,
+                  'report_file': UNCREDITED_REPORT, 'report_sha256': report['report_sha256'],
+                  'error': str(error)[:1000]}
+        for kind, document, maximum in (('marker', marker, 8192), ('report', report, RS.MAX_OUTPUT_BYTES)):
+            try:
+                self._check_owner()
+                publish_bytes(Path(attempted[kind]), _canonical_bytes(document, maximum))
+                self._check_owner()
+                result[kind] = attempted[kind]
+            except (OutputError, OSError) as exc:
+                result['errors'][kind] = str(exc)[:1000]
+        return result

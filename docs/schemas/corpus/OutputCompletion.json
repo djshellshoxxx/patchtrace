@@ -1,0 +1,24 @@
+{
+  "$id": "https://patchtrace.local/schemas/tier-r-output-completion/1/OutputCompletion.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "Presence blocks credit; removal is the final successful completion transition.",
+  "properties": {
+    "contract": {
+      "const": "tier-r-output-completion/1",
+      "title": "Contract",
+      "type": "string"
+    },
+    "status": {
+      "const": "incomplete",
+      "title": "Status",
+      "type": "string"
+    }
+  },
+  "required": [
+    "contract",
+    "status"
+  ],
+  "title": "OutputCompletion",
+  "type": "object"
+}

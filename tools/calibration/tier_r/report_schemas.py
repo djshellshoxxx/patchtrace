@@ -27,6 +27,9 @@ OUTPUT_CONTRACT = 'tier-r-engine-output/1'
 CREDITS_CONTRACT = 'tier-r-output-credits/1'
 MAX_PREDICTIONS = 1_000_000
 MAX_OUTPUT_BYTES = 64 * 1024 * 1024
+MAX_CREDIT_BYTES = 64 * 1024 * 1024
+FAILURE_CONTRACT = 'tier-r-evaluation-failure/1'
+COMPLETION_CONTRACT = 'tier-r-output-completion/1'
 Engine = Literal['rz-diff', 'bindiff', 'ghidriff', 'attention']
 OrderKeyPart = int | Annotated[float, Field(allow_inf_nan=False)] | Annotated[str, Field(max_length=512)]
 
@@ -155,11 +158,28 @@ class OutputCredits(_Strict):
     outputs: tuple[OutputCredit, ...] = Field(max_length=MAX_PREDICTIONS)
 
 
+class OutputCompletion(_Strict):
+    """Presence blocks credit; removal is the final successful completion transition."""
+    contract: Literal['tier-r-output-completion/1']
+    status: Literal['incomplete']
+
+
+class EvaluationFailure(_Strict):
+    """Uncredited diagnostic reference, never a completed output manifest."""
+    contract: Literal['tier-r-evaluation-failure/1']
+    status: Literal['failed']
+    credited: Literal[False]
+    report_file: Literal['uncredited-report.json']
+    report_sha256: C.Sha256
+    error: str = Field(max_length=1000)
+
+
 def output_sha256(doc: dict) -> str:
     return hashlib.sha256(canonical_json(doc)).hexdigest()
 
 
-SCHEMAS = ((EngineOutputDoc, OUTPUT_CONTRACT), (OutputCredits, CREDITS_CONTRACT))
+SCHEMAS = ((EngineOutputDoc, OUTPUT_CONTRACT), (OutputCredits, CREDITS_CONTRACT),
+           (OutputCompletion, COMPLETION_CONTRACT), (EvaluationFailure, FAILURE_CONTRACT))
 
 
 def render() -> dict[str, str]:
