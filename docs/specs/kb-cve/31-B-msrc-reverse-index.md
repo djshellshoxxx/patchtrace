@@ -118,6 +118,10 @@ without a zone is diagnosed and is **not** coerced to UTC or retrieval time. A s
 containing native snapshots with unknown revision instants, or tied distinct native snapshots,
 keeps all snapshots active with `REVISION_ORDER_UNKNOWN`; no digest tie-break declares one newest.
 Comparable explicit-zone revisions retain normal latest-instant selection and all prior history.
+When an ambiguous same-month group has multiple snapshots, KB/CVE/product applicability present in
+only some snapshots is reported as disputed with a revision-conflict reference; it is not presented
+as a current remediation or as superseded, because the order is unknown. A single snapshot has no
+revision-order ambiguity. This does not resolve historical applicability beyond the loaded snapshots.
 For each queried CVE and source kind, lookup card metadata uses only facts on which all selected
 active cards agree. A disagreement in title, stated CWE, or severity context (including absent versus
 present) withholds that field and emits a stable `CARD_FACT_CONFLICT` warning naming the fields.

@@ -55,7 +55,7 @@ if not (hashlib.sha256(xml_raw).hexdigest() == prov['semantic_evidence']['paired
     raise RuntimeError('independent evidence check failed at original line 48')
 xml = ET.fromstring(xml_raw)
 # Namespace identifiers are read from the hash-verified local capture, not fetched.
-namespaces = dict(value for _, value in ET.iterparse(io.BytesIO(xml_raw), events=('start-ns',)))
+namespaces = {prefix: uri for _, (prefix, uri) in ET.iterparse(io.BytesIO(xml_raw), events=('start-ns',))}
 ns = {'c': namespaces['cvrf'], 'v': namespaces['vuln']}
 if not (xml.find('c:DocumentTracking/c:Status', ns).text == 'Final'):
     raise RuntimeError('independent evidence check failed at original line 51')

@@ -125,7 +125,7 @@ def test_card_only_fact_never_borrows_other_source_edge_pointer(reverse, monkeyp
 def test_native_agreeing_contributors_keep_all_exact_fields_without_strength_promotion(monkeypatch):
     from patchtrace.intelligence import lexicon
     values = (native(title='out-of-bounds read in exampledrv.sys'),
-              native(title='out-of-bounds read in exampledrv.sys', edge=False, position=1))
+              native(title='out-of-bounds read in exampledrv.sys', edge=True, position=1))
     a, b = map(imported, values)
     calls, original = [], lexicon.classify
     def record(fact, **kwargs):
@@ -147,7 +147,7 @@ def test_native_agreeing_contributors_keep_all_exact_fields_without_strength_pro
 
 @pytest.mark.parametrize('field,missing', [('title', False), ('title', True), ('stated_cwe', False), ('stated_cwe', True)])
 def test_conflicting_and_missing_fields_are_withheld_without_borrowed_refs(field, missing):
-    left, right = native(), native(edge=False, position=1)
+    left, right = native(), native(edge=True, position=1)
     row = right['Vulnerability'][1]
     key = 'Title' if field == 'title' else 'CWE'
     if missing:

@@ -35,7 +35,7 @@ def _snapshots(conflict=True):
     left = json.loads(FIXTURE.read_bytes())
     left['Vulnerability'][0]['Title'] = {'Value': 'Alpha title'}
     right = copy.deepcopy(left)
-    right['Vulnerability'][0]['Remediations'] = []
+    right['DocumentTracking']['RevisionHistory'][0]['Description'] = {'Value': 'Distinct retained snapshot bytes'}
     if conflict:
         right['Vulnerability'][0]['Title'] = {'Value': 'Beta title'}
         right['Vulnerability'][0]['CWE'] = [{'ID': 'CWE-125'}]
@@ -61,11 +61,11 @@ def _bundle(index):
 
 
 @pytest.mark.parametrize('conflict', [False, True], ids=['agreement', 'conflict'])
-def test_card_only_source_changes_identity_even_without_an_edge_change(conflict):
+def test_active_card_source_dependencies_are_bound_with_their_edges(conflict):
     a, b = map(_doc, _snapshots(conflict))
-    assert not b.edges and len(b.cards) == 1
+    assert b.edges and len(b.cards) == 1
     before, after = _bundle(_index(a)), _bundle(_index(a, b))
-    assert before.edge_set_digest == after.edge_set_digest
+    assert before.edge_set_digest != after.edge_set_digest
     assert before.context_key != after.context_key
     assert {s.doc_id for s in after.sources} == {a.doc_id, b.doc_id}
     card, = after.context.cards
@@ -73,7 +73,7 @@ def test_card_only_source_changes_identity_even_without_an_edge_change(conflict)
     assert any(w.startswith('CARD_FACT_CONFLICT:') for w in after.context.unknowns) == conflict
 
 
-def test_new_card_only_bytes_change_key_even_when_conflicting_facts_and_edges_match():
+def test_new_active_source_bytes_change_key_even_when_card_consensus_is_unchanged():
     left, right = _snapshots()
     changed = copy.deepcopy(right)
     changed['DocumentTracking']['RevisionHistory'][0]['Description'] = {'Value': 'New raw revision note'}
@@ -81,7 +81,7 @@ def test_new_card_only_bytes_change_key_even_when_conflicting_facts_and_edges_ma
     before, after = _bundle(_index(a, b)), _bundle(_index(a, c))
     assert before.context.cards == after.context.cards
     assert before.context.unknowns == after.context.unknowns
-    assert before.edge_set_digest == after.edge_set_digest
+    assert before.edge_set_digest != after.edge_set_digest
     assert before.context_key != after.context_key
     assert {s.doc_id for s in after.sources} == {a.doc_id, c.doc_id}
 
@@ -95,9 +95,11 @@ def test_card_contributor_ids_and_context_are_independent_of_insertion_order():
 
 def test_lookup_contributors_follow_selected_documents_and_cve():
     a, b = map(_doc, _snapshots())
-    unrelated = _snapshots()[1]
-    unrelated['Vulnerability'][0]['CVE'] = 'CVE-2024-39999'
-    c = _doc(unrelated)
+    unrelated = valid_csaf()
+    unrelated['vulnerabilities'][0]['cve'] = 'CVE-2024-39999'
+    unrelated['vulnerabilities'][0]['product_status'].pop('fixed', None)
+    unrelated['vulnerabilities'][0].pop('remediations', None)
+    c = import_bytes(_raw(unrelated), now=NOW, advisory=IntelligenceAdvisoryPort())
     index = _index(a, b, c)
     selected = SearchScope(kind='provided_files', doc_ids=(a.doc_id,))
     assert index.lookup_cve(CVE, scope=selected, now=NOW).card_doc_ids == (a.doc_id,)
@@ -137,6 +139,25 @@ def test_other_source_kind_conflict_warning_keeps_its_own_raw_dependencies():
     assert any('csaf active source cards disagree' in warning for warning in bundle.context.unknowns)
     assert {s.doc_id for s in bundle.sources} == {native.doc_id, *(doc.doc_id for doc in csafs)}
     assert {s.kind for s in bundle.sources} == {'cvrf-month', 'csaf'}
+
+
+def test_unlocatable_xml_card_does_not_hide_locatable_csaf_card():
+    from test_kbc_cvrf import XML_VULN, xml_doc
+
+    xml_cve = 'CVE-2099-30002'
+    xml = import_bytes(xml_doc(XML_VULN), now=NOW)
+    value = valid_csaf()
+    value['vulnerabilities'][0]['cve'] = xml_cve
+    value['vulnerabilities'][0]['title'] = 'Located CSAF card'
+    csaf = import_bytes(_raw(value), now=NOW, advisory=IntelligenceAdvisoryPort())
+    bundle = build_bundle(investigation_id=INV, base_revision=3,
+                          lead=Lead(kind='cve', value=xml_cve, raw=xml_cve), cves=(xml_cve,),
+                          index=_index(xml, csaf), rules=wiring.IntelligenceRules(), now=NOW,
+                          coverage=(), scope_id=None, pair_id=None, older_sha=None, newer_sha=None)
+    card, = bundle.context.cards
+    assert card.source_kind == 'csaf' and card.title == 'Located CSAF card'
+    assert {source.doc_id for source in bundle.sources} == {xml.doc_id, csaf.doc_id}
+    assert not any('CARD_FACT_SOURCE_MISSING:' in warning for warning in bundle.context.unknowns)
 
 
 def test_card_only_conflict_without_a_remediation_still_retains_warning_sources():

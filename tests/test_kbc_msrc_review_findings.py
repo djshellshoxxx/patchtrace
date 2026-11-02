@@ -111,6 +111,36 @@ def test_agreeing_active_cards_keep_facts_without_claiming_known_revision_order(
     assert any(w.startswith('REVISION_ORDER_UNKNOWN:') for w in lookup.warnings)
 
 
+def test_one_native_snapshot_has_no_revision_order_ambiguity():
+    doc = _import(_data())
+    lookup = _index(doc).lookup_cve(CVE, now=NOW)
+    assert not any(w.startswith('REVISION_ORDER_UNKNOWN:') for w in lookup.warnings)
+
+
+def test_ambiguous_snapshots_dispute_edges_not_shared_by_every_snapshot():
+    left, right = _snapshots()
+    right['Vulnerability'][0]['Remediations'] = []
+    a, b = _import(left), _import(right)
+    lookup = _index(a, b).lookup_kb(KB, now=NOW)
+    assert not lookup.edges
+    assert {edge.ref.doc_id for edge in lookup.disputed} == {a.doc_id}
+    assert all(edge.conflict_ids for edge in lookup.disputed)
+    assert any(w.startswith('REVISION_EDGE_CONFLICT:') and CVE in w and KB in w for w in lookup.warnings)
+    assert any(w.startswith('REVISION_ORDER_UNKNOWN:') for w in lookup.warnings)
+
+
+def test_revision_conflict_does_not_spread_to_a_different_release_month():
+    left, right = _snapshots()
+    right['Vulnerability'][0]['Remediations'] = []
+    separate_month = copy.deepcopy(left)
+    separate_month['DocumentTracking']['Identification']['ID']['Value'] = '2024-Sep'
+    separate_month['DocumentTracking']['CurrentReleaseDate'] = '2024-09-01T00:00:00Z'
+    ambiguous, missing, independent = map(_import, (left, right, separate_month))
+    lookup = _index(ambiguous, missing, independent).lookup_kb(KB, now=NOW)
+    assert {edge.ref.doc_id for edge in lookup.edges} == {independent.doc_id}
+    assert {edge.ref.doc_id for edge in lookup.disputed} == {ambiguous.doc_id}
+
+
 def test_comparable_newer_revision_keeps_its_own_facts_without_conflict_with_superseded_cards():
     left, right = _snapshots(zoned=True)
     right['DocumentTracking']['CurrentReleaseDate'] = '2026-10-29T01:48:49Z'
@@ -187,6 +217,25 @@ def test_type2_missing_description_has_resolvable_diagnostic_and_skips_only_its_
         assert ws.read_object(doc.source.sha256) == raw
         restored, = ws.load_index().documents
         assert restored == doc
+
+
+def test_missing_native_fields_use_existing_parent_pointers():
+    value = _data()
+    del value['DocumentTracking']['CurrentReleaseDate']
+    del value['Vulnerability'][0]['Remediations'][0]['Description']
+    raw = _raw(value)
+    doc = _import(value)
+
+    def resolve(pointer):
+        target = json.loads(raw)
+        for part in pointer.split('/')[1:]:
+            part = part.replace('~1', '/').replace('~0', '~')
+            target = target[int(part)] if isinstance(target, list) else target[part]
+        return True
+
+    for problem in doc.problems:
+        assert resolve(problem.pointer)
+    assert next(p for p in doc.problems if p.code == 'DATE_INVALID').pointer == '/DocumentTracking'
 
 
 def test_legitimate_nonfix_rows_may_omit_description_without_new_shape_errors():

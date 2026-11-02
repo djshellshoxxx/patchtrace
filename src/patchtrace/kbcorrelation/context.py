@@ -155,17 +155,29 @@ def build_bundle(*, investigation_id: str, base_revision: int, lead: Lead, cves:
             source = index.get(doc_id).source
             docs[doc_id] = SourceDigest(doc_id=doc_id, sha256=source.sha256, kind=source.kind,
                                        release_id=source.release_id)
-        card = next((c for c in lookup.cards if c.source_kind == 'cvrf'), None) or next(iter(lookup.cards), None)
-        if card is None or not lookup.edges:
+        if not lookup.edges:
             unknowns.append(f'{cve} has no advisory text in the loaded documents; no interpretation was made.')
             continue
-        # Eligibility still requires an association; its edge never locates an advisory card field.
-        card, refs, missing = bind_consensus(card, (index.get(doc_id) for doc_id in lookup.card_doc_ids))
+        # Prefer CVRF, then CSAF, but do not let an unlocatable XML/duplicate-row card hide a bindable card.
+        candidates = sorted(lookup.cards, key=lambda item: (item.source_kind != 'cvrf', item.source_kind))
+        bound = None
+        missing_by_kind = {}
+        for candidate in candidates:
+            candidate_card, refs, missing = bind_consensus(
+                candidate, (index.get(doc_id) for doc_id in lookup.card_doc_ids))
+            if candidate_card is not None:
+                bound = candidate_card, refs, missing
+                break
+            missing_by_kind[candidate.source_kind] = missing
+        if bound is None:
+            details = '; '.join(f'{kind}: {", ".join(fields)}' for kind, fields in sorted(missing_by_kind.items()))
+            unknowns.append(f'CARD_FACT_SOURCE_MISSING: {cve} has no JSON-located advisory card; '
+                            f'the CVE was left out of the context ({details or "no source card"})')
+            continue
+        card, refs, missing = bound
         if missing:
             unknowns.append(f'CARD_FACT_SOURCE_MISSING: {cve} {", ".join(missing)} has no complete JSON '
                             'field provenance; unavailable fields were withheld')
-        if card is None:
-            continue
         shown = card.model_copy(update={'title': clean_text(card.title, 1000) if card.title else None,
                                         'applicability': APPLICABILITY})
         profile, hypothesis = rules.interpret(shown, refs)

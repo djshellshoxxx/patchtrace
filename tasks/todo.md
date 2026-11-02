@@ -2,6 +2,12 @@
 - [x] Fixed the two locally reproducible full-suite issues recorded in `docs/qa.md`: site screenshot renderer follows the Files panel; Tier R rejects an unknown mutation operator before toolchain probing. Focused rerun: 27 passed, 2 skipped.
 - [x] Linux-container-only full-suite failures documented in `docs/qa.md` are environment limitations (`python -I` excludes the editable install; AF_UNIX sockets are denied; timing budgets are load-sensitive); full pytest and Ruff passed on Windows and Ubuntu CI (run 39456546905).
 
+## 2026-11-02 PR #153 native MSRC review follow-up
+- [x] One-snapshot native data no longer emits `REVISION_ORDER_UNKNOWN`; missing-field diagnostics resolve to existing source nodes; namespace discovery in the offline XML control is a prefix/URI map.
+- [x] Ambiguous same-month snapshots that disagree on KB/CVE/product applicability report those edges as disputed with stable conflict identities; no unzoned time or unverified revision number selects a winner. XML CVRF card failure now falls through to an attributable CSAF card, or emits an explicit omitted-CVE unknown.
+- [x] `tests/test_kbc_*.py`: 1,054 passed; whole-tree Ruff and whitespace checks passed on the local PR #153 branch.
+- [ ] Publish this follow-up, rerun hosted checks on the updated PR head, and request independent re-review. Native, UI, package and release acceptance remains open.
+
 ## Windows Setup release track (PR #95, 2026-10-17)
 - [x] Implement pinned NSIS per-user Windows installer on existing PyInstaller onedir runtime.
 - [x] Add portable extracted-ZIP and installed-frozen-executable smoke tests, checksums, and data-preserving uninstall logic.
