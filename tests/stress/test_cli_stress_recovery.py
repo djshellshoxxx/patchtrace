@@ -14,7 +14,6 @@ import pytest
 from cli_stress_support import SRC, assert_clean, json_documents, make_sample, run_main
 
 from patchtrace import cli
-from patchtrace.persistence import ProjectStore
 from patchtrace.sample import synthetic_pe
 from patchtrace.service import ProjectService
 
@@ -43,7 +42,7 @@ from pathlib import Path
 from patchtrace import service as service_module
 
 def park(*args):
-    # The database and its tables are committed; no snapshot exists yet.
+    # Private project staging is in progress; the user-selected destination is untouched.
     sys.stdout.write("PARKED\n")
     sys.stdout.flush()
     threading.Event().wait()
@@ -100,23 +99,18 @@ def test_sigkill_inside_save_keeps_the_committed_snapshot(tmp_path, capsys):
     assert len(json_documents(out)) == 1
 
 
-def test_sigkill_during_creation_is_recycled_by_the_next_create(tmp_path):
+def test_sigkill_during_staged_creation_leaves_destination_untouched_before_retry(tmp_path):
     pair = (tmp_path / 'older.dll', tmp_path / 'newer.dll')
     pair[0].write_bytes(synthetic_pe(0))
     pair[1].write_bytes(synthetic_pe(1))
     root = tmp_path / 'case'
 
     _kill_while_parked(CREATE_CHILD, root, *pair)
-    assert _database(root).is_file(), 'the killed creation leaves a database without a snapshot'
-    store = ProjectStore(root)
-    try:
-        with pytest.raises(ValueError, match='^PT-STORAGE: project snapshot is missing'):
-            store.load()
-    finally:
-        store.close()
+    assert not root.exists(), 'interrupted private staging must not create the user-selected destination'
 
     with ProjectService.create(*pair, 'Retry', root) as created:
         assert created.project.name == 'Retry'
+    assert _database(root).is_file()
 
 
 def test_torn_database_is_refused_with_a_document_not_a_traceback(tmp_path, capsys):
