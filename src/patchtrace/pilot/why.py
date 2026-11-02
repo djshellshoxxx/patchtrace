@@ -54,6 +54,7 @@ ORIGIN_WORDS = MappingProxyType({
 SOURCE_WORDS = MappingProxyType({'csaf-fact': 'CSAF', 'nvd-record': 'NVD', 'msrc-entry': 'MSRC',
                                  'kev-entry': 'CISA KEV', 'cve-record': 'CVE record'})
 BASIS_WORDS = MappingProxyType({'explicit-csaf-cwe': 'as stated by the advisory',
+                                'explicit-advisory-cwe': 'as stated by the advisory',
                                 'cwe-id-in-text': 'named in the advisory text',
                                 'curated-vocabulary': 'inferred from the advisory wording'})
 CHANGE_WORDS = MappingProxyType({

@@ -14,10 +14,11 @@ from __future__ import annotations
 
 import hashlib
 import zlib
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 
 from pydantic import ValidationError
 
+from ..card_provenance import CardFactRef, locate_cards
 from ..contracts import CveCard, KbCveEdge, ProductScope, SourceDoc, domain_id
 from ..limits import DEFAULT_LIMITS, KbcLimits
 from ..ports import AdvisoryPort
@@ -52,6 +53,7 @@ class ImportedDocument:
     problems: tuple[Problem, ...]
     vulnerabilities: int
     tracking_id: str | None = None
+    card_facts: tuple[CardFactRef, ...] = ()
 
     @property
     def doc_id(self) -> str:
@@ -131,8 +133,10 @@ def _import_plain(raw: bytes, now: str, advisory: AdvisoryPort | None, limits: K
     document = value.get('document') if isinstance(value, dict) else None
     if isinstance(value, dict) and 'dialect' not in value and isinstance(document, dict) \
             and 'csaf_version' in document:
-        return _from_csaf(raw, now, advisory)
-    return _from_cvrf(parse_json_document(value, limits), raw, now, limits)
+        doc = _from_csaf(raw, now, advisory)
+    else:
+        doc = _from_cvrf(parse_json_document(value, limits), raw, now, limits)
+    return replace(doc, card_facts=locate_cards(value, doc.source, doc.cards))
 
 
 def _from_cvrf(parsed, raw: bytes, now: str, limits: KbcLimits) -> ImportedDocument:
