@@ -217,6 +217,10 @@ effective ordering keys under the existing scorer (`order_key` or its unchanged
 similarity/name fallback). Reject incompatible keys, including conflicts with a
 missing-key fallback; do not impose a uniform column type, change ranking/ties,
 or add attention to training's feature engines.
+The same text bounds apply wherever accepted metadata is copied: `tier-r-report/1`
+wrong-match names allow 4,096 characters and `tier-r-feature-rows/1` engine-run
+versions allow 1,024. Evaluation reports and training rows preserve those values
+without truncation.
 
 A fresh `OutputStore` publishes `.tier-r-output-run.json` with contract
 `tier-r-output-run/1` before any output. After evaluation/report assembly,

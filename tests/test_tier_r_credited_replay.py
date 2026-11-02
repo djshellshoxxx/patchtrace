@@ -84,6 +84,27 @@ def test_invalid_producer_bounds_fail_consistently_without_or_with_retention(tmp
         assert pair['status'] == 'failed' and pair['metrics'] is None and pair['output_sha256'] is None
 
 
+def test_long_upstream_names_and_versions_are_preserved_through_score_and_retention(tmp_path):
+    base = provider().outputs[LABELS.pair_id]
+    long_name, long_version = 'visible-symbol-' + 'x' * 500, 'producer-version-' + 'v' * 500
+    answer = dataclasses.replace(
+        base, version=long_version,
+        predictions=(dataclasses.replace(base.predictions[0], old_name=long_name, new_name=long_name),
+                     *base.predictions[1:]))
+    owner = E.StaticProvider('rz-diff', {LABELS.pair_id: answer})
+    unretained = E.evaluate([LABELS], [owner], b_count=20)
+    assert unretained['pairs'][0]['status'] == 'ok' and unretained['pairs'][0]['metrics'] is not None
+    folder = tmp_path / 'outputs'
+    retained = E.evaluate([LABELS], [owner], output_dir=folder, b_count=20)
+    assert retained['pairs'][0]['status'] == 'ok' and retained['pairs'][0]['output_sha256']
+    parsed = RS.load_engine_output((folder / OS.output_file_name(LABELS.pair_id, 'rz-diff')).read_bytes())
+    assert parsed.predictions[0].old_name == long_name == parsed.predictions[0].new_name
+    assert parsed.version == long_version
+    feature_rows = train.build_pair_rows(
+        LABELS, {'rz-diff': (train._output_from_doc(parsed), retained['pairs'][0]['output_sha256'])}, 'G')
+    assert feature_rows.engine_runs[0].version == long_version
+
+
 def test_failed_valid_json_is_preserved_but_not_adopted_by_actual_loader(tmp_path, monkeypatch):
     original = OS.os.link
 
