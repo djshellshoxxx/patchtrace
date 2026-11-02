@@ -252,7 +252,7 @@ def test_credit_publication_failure_withholds_the_evaluation_report(tmp_path, mo
     with pytest.raises(OS.OutputError):
         E.evaluate([LABELS], [provider()], output_dir=folder, b_count=20)
     assert (folder / f'{LABELS.pair_id}.rz-diff.json').is_file()
-    with pytest.raises(train.TrainError, match='completed'):
+    with pytest.raises(train.TrainError, match='incomplete'):
         train.load_outputs(folder)
 
 
