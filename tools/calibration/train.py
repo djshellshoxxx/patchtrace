@@ -172,7 +172,7 @@ class _Strict(BaseModel):
 
 class EngineRun(_Strict):
     engine: Literal['rz-diff', 'ghidriff']
-    version: str | None = Field(default=None, max_length=200)
+    version: str | None = Field(default=None, max_length=C.MAX_ENGINE_VERSION_CHARS)
     output_sha256: C.Sha256
 
 
