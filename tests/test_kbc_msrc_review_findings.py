@@ -263,14 +263,17 @@ def test_present_malformed_type2_description_keeps_existing_rejection(descriptio
 
 def test_mixed_native_and_synthetic_revisions_dispute_withdrawn_remediation():
     native = _import(_data())
-    synthetic = native.model_copy(update={
-        'source': native.source.model_copy(update={
-            'doc_id': native.doc_id + '-synthetic',
-            'dialect': 'cvrf-json/0',
-        }),
-        'edges': (),
+    synthetic = _import({
+        'dialect': 'cvrf-json/0',
+        'document': {'release_id': native.source.release_id},
+        'product_tree': [],
+        'vulnerabilities': [],
     })
-    lookup = _index(native, synthetic).lookup_kb(KB, now=NOW)
+    index = _index(native, synthetic)
+    assert native.source.kind == synthetic.source.kind == 'cvrf-month'
+    assert native.source.release_id == synthetic.source.release_id
+    assert index.active_ids() == {native.doc_id, synthetic.doc_id}
+    lookup = index.lookup_kb(KB, now=NOW)
     assert not lookup.edges
     assert {edge.ref.doc_id for edge in lookup.disputed} == {native.doc_id}
     assert any(w.startswith('REVISION_EDGE_CONFLICT:') and CVE in w and KB in w
