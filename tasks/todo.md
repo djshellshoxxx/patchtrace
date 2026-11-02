@@ -2,6 +2,11 @@
 - [x] Fixed the two locally reproducible full-suite issues recorded in `docs/qa.md`: site screenshot renderer follows the Files panel; Tier R rejects an unknown mutation operator before toolchain probing. Focused rerun: 27 passed, 2 skipped.
 - [x] Linux-container-only full-suite failures documented in `docs/qa.md` are environment limitations (`python -I` excludes the editable install; AF_UNIX sockets are denied; timing budgets are load-sensitive); full pytest and Ruff passed on Windows and Ubuntu CI (run 39456546905).
 
+## 2026-11-02 PR #157 metadata-bound review follow-up
+- [x] Widen normalized producer names and string tie-break keys to 4,096 characters and versions to 1,024; preserve original strings and sorting behavior; regenerate output/credit schemas.
+- [x] Add acceptance coverage for names/version values above the prior limits and rejection beyond the new bounds. After reconciling current main, Tier R suites: 448 passed, 8 skipped; Ruff and whitespace checks passed. Seven local live compiler/toolchain probes reported BLOCKED due unavailable host tools.
+- [ ] Publish this follow-up, rerun hosted checks, and obtain independent review. Tier R/native/calibration acceptance remains separate.
+
 ## Windows Setup release track (PR #95, 2026-10-17)
 - [x] Implement pinned NSIS per-user Windows installer on existing PyInstaller onedir runtime.
 - [x] Add portable extracted-ZIP and installed-frozen-executable smoke tests, checksums, and data-preserving uninstall logic.
@@ -852,23 +857,19 @@ Done: dock with state matrix, consent, import, changes, copy, go to CVE. Open: r
 - [x] Reconcile substantive Qodo review: Qt release dependency/status evidence, G-U1 endpoint coverage, optional decompile write rollback, stale KB/KEV/Diaphora ownership, calibration grouping/leak audits, staged archive handoff and cancellable PDB discovery.
 - [ ] Validate the final combined review repairs on their own published head; merge and close only proven superseded work after acceptance.
 
+## 2026-11-01 backup and SQLite iteration integrity
+
+- [x] Reproduce/fix metadata-only backup trust and bind verified publication to fresh bytes; preserve live rows on failure.
+- [x] Reproduce/fix sliding Diaphora row-query deadlines and small-query cancellation without inventing a whole-import scope.
+- [ ] Merge these independently reviewed fixes only after exact-head applicable QA gates; native Windows is not inferred from Linux. Issue #121 memory caps and its other findings remain separate.
+
 ## 2026-11-01 isolated report destination repair
 
 - [x] Selectively reconcile PR #148's independent existing-report safety fix (project ownership, evidence aliases, committed read without recovery) on main; no KB workflow/adoption or unaccepted stack dependency imported.
 - [ ] Exact-head independent review and Linux/Windows QA/packaging for this focused PR; mark merged only after those checks pass.
 
-### GT05 bounded normalized output retention (2026-11-01)
-
-- [x] Reproduce missing source documents behind actual CLI output digests and selectively reconcile #78 retention against current scoring. Fresh exclusive run directories, exact canonical bytes, atomic no-overwrite publication, truthful failure metrics and attention ranking fields are covered by 164 focused passes (2 native-tool BLOCKED skips). See `docs/qa/corpus-output-persistence-20261101.md`.
-- [x] Independent output-retention review cleared `ad35469`: 164 focused passes/2 native-tool BLOCKED skips, production-loader/two-rank replay and failure/no-key differential controls. Reader metadata-loss finding closed.
-- [ ] Coordinator integration and exact-source cross-OS gates remain pending; library persistence is explicitly opt-in.
-- [ ] #78 verified shard/merge transfer and the remaining GT05 growth/source/pin/license, both-side recipe controls, pre-lock/native lineage/OOD, single-use-final CLI and guarded-promotion acceptance remain open. No real locked evaluation consumed or numeric confidence promoted.
-
-### PR #157 credited replay follow-up (2026-11-01)
-- [x] Reproduce incompatible ranking keys, encode-before-validation and valid failed-artifact adoption by the actual loader; repair producer validation and new managed-run report-bound replay with meaningful CLI/reader controls (237 passed, 2 native-tool BLOCKED skips).
-- [x] Preserve old no-key bytes/ranking and private in-memory unified support; keep persisted engine vocabulary unchanged; expose legacy unmarked replay as unverified rather than infer historical credit.
-- [ ] Independent final review, coordinator integration/cross-OS and verified transfer integration remain pending; broader locked training/final-run/promotion safeguards are not completed by this slice. See `docs/qa/output-credited-replay-20261101.md`.
-- [x] Independent credited-replay review approved exact source `5c26af9` with 119 passes/1 native-tool BLOCKED skip and direct scalar/failed-valid-artifact controls; no remaining bounded source blocker. Integration/cross-OS/transfer and broader safeguards above remain open.
+- [x] Reproduce and independently repair PR151 backup timestamp/pending-file collisions without overwriting prior evidence; 39 focused tests pass.
+- [ ] Qualify the updated storage head on full Windows/Linux/Qt/package/native gates before merge; existing prior-head success is historical.
 
 
 ### Issue #120 independent main repair (2026-11-01)
@@ -876,3 +877,15 @@ Done: dock with state matrix, consent, import, changes, copy, go to CVE. Open: r
 - [x] Reproduce the original identity/ambiguity/alternative defects on canonical main `6579ed8` (28 failing tests, including service/store/cache paths).
 - [x] Port only reviewed source identity, immutable-body/resource and alternative consistency fixes; preserve main's existing matching-policy/ladder/facts behavior and keep rz-diff quarantine separate. Focused regressions, a real Python worker/cache round-trip, full Ruff and schema regeneration pass.
 - [ ] Root independent review, exact-head full pytest and applicable remote/native acceptance before publication or merge; current synthetic checks do not close broader matching accuracy gates.
+
+### [storage:publication-admission] 2026-11-02
+
+- [x] Verify review 5734146359 against exact #151 source `9c468bc` using real valid-but-mutated SQLite and subsequent retention/history deletion; preserve failed and earlier copies as evidence.
+- [x] Clarify staging-name admission before code; retain failed unique stages, exclude matching unfinished final names across restart, and never unlink or rename final/foreign evidence. Final baseline 7 failed / 1 passed; 60 related checks passed; Ruff/diff clean.
+- [ ] Independent frozen-source review and central integration; native Windows/full-suite acceptance remains separate. Existing legacy backups with no matching unique stage retain the previous verification/adoption policy.
+
+- [x] Storage admission review blocker: replace error-suppressing glob discovery with explicit scandir; failed opening/iteration cannot mean no pending stages. Red 2 failed / 1 passed; revised 63 related passes.
+- [ ] Rereview amended storage admission source; `536aebc` alone is not an approved candidate.
+
+- [x] PR #151 cleanup completion: reproduce real caller inconsistency on `1f284a1`; require owned-stage removal before backup success, with first-prune/history/replacement controls (76 focused passes; final baseline 7 red cases). Source `4bfc2c0`; no observed data loss in the original probe.
+- [ ] Independently review and integrate the frozen #151 cleanup-completion follow-up; exact published CI remains separate.

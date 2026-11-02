@@ -28,10 +28,13 @@ CREDITS_CONTRACT = 'tier-r-output-credits/1'
 MAX_PREDICTIONS = 1_000_000
 MAX_OUTPUT_BYTES = 64 * 1024 * 1024
 MAX_CREDIT_BYTES = 64 * 1024 * 1024
+MAX_ENGINE_NAME_CHARS = 4096
+MAX_ENGINE_VERSION_CHARS = 1024
 FAILURE_CONTRACT = 'tier-r-evaluation-failure/1'
 COMPLETION_CONTRACT = 'tier-r-output-completion/1'
 Engine = Literal['rz-diff', 'bindiff', 'ghidriff', 'attention']
-OrderKeyPart = int | Annotated[float, Field(allow_inf_nan=False)] | Annotated[str, Field(max_length=512)]
+OrderKeyPart = int | Annotated[float, Field(allow_inf_nan=False)] \
+    | Annotated[str, Field(max_length=MAX_ENGINE_NAME_CHARS)]
 
 
 class _Strict(BaseModel):
@@ -43,8 +46,8 @@ class PredictionDoc(_Strict):
     new_rva: C.Rva
     changed: bool
     similarity_milli: int | None = Field(default=None, ge=0, le=1000)
-    old_name: str | None = Field(default=None, max_length=512)
-    new_name: str | None = Field(default=None, max_length=512)
+    old_name: str | None = Field(default=None, max_length=MAX_ENGINE_NAME_CHARS)
+    new_name: str | None = Field(default=None, max_length=MAX_ENGINE_NAME_CHARS)
     order_key: tuple[OrderKeyPart, ...] | None = Field(default=None, max_length=16)
 
 
@@ -52,7 +55,7 @@ class EngineOutputDoc(_Strict):
     """One engine's answer for one pair, reduced to RVAs: the only thing the scorer reads."""
     contract: Literal['tier-r-engine-output/1']
     engine: Engine
-    version: str | None = Field(default=None, max_length=200)
+    version: str | None = Field(default=None, max_length=MAX_ENGINE_VERSION_CHARS)
     symbols: Literal['hidden', 'visible']
     older_sha256: C.Sha256
     newer_sha256: C.Sha256
@@ -148,7 +151,7 @@ class OutputCredit(_Strict):
     older_sha256: C.Sha256
     newer_sha256: C.Sha256
     symbols: Literal['hidden', 'visible']
-    version: str | None = Field(default=None, max_length=200)
+    version: str | None = Field(default=None, max_length=MAX_ENGINE_VERSION_CHARS)
 
 
 class OutputCredits(_Strict):
