@@ -1,6 +1,6 @@
 name: Corpus Tier R (sharded)
 # SPEC-32 s13. Heavy known-answer corpus work (compilers, pinned rizin, optional Ghidra/Ghidriff) runs here, not in agent
-# loops. plan -> matrix of shards -> merge. Artifacts hold labels metadata, feature tables and aggregate metrics only.
+# loops. plan -> matrix of shards -> merge. Verified training JSON is separate from always-retained diagnostics.
 # Never uploads images or binaries. Tier W (Microsoft-derived) data is local-only and refused by tools/calibration/tier_r/shard.py.
 on:
   workflow_dispatch:
@@ -134,11 +134,12 @@ jobs:
           echo "GHIDRA_INSTALL_DIR=$(find "$PWD/ghidra-runtime" -mindepth 1 -maxdepth 1 -type d | head -n 1)" >> "$GITHUB_ENV"
           python -m pip install "$GHIDRIFF_PIN"
       - name: Run shard
+        id: run-shard
         shell: bash
         run: >-
           python -m tools.calibration.tier_r.shard run-shard
           --shard "${{ matrix.shard }}" --of "${{ matrix.of }}" --seed "$SEED" --plan-sha256 "${{ matrix.plan }}"
-          --cases "$SHARD_CASES" --engines "$ENGINES" --subset "$SUBSET" --out shard-out --timeout 1800
+          --cases "$SHARD_CASES" --engines "$ENGINES" --subset "$SUBSET" --out shard-out --timeout 1800 --collect-artifacts
       - name: Step summary
         if: always()
         shell: bash
@@ -150,6 +151,20 @@ jobs:
           name: tier-r-shard-${{ matrix.shard }}
           path: shard-out/shard-*.json
           if-no-files-found: warn
+      - name: Upload completed training bundle
+        uses: actions/upload-artifact@v4
+        if: always() && steps.run-shard.outputs.verified_training == 'true'
+        with:
+          name: tier-r-training-${{ matrix.shard }}
+          include-hidden-files: true
+          path: |
+            shard-out/shard-${{ matrix.shard }}.json
+            shard-out/training/shard-${{ matrix.shard }}/manifest.json
+            shard-out/training/shard-${{ matrix.shard }}/labels/[A-Za-z0-9]*.json
+            shard-out/training/shard-${{ matrix.shard }}/reports/[A-Za-z0-9]*.json
+            shard-out/training/shard-${{ matrix.shard }}/outputs/[A-Za-z0-9]*.json
+            shard-out/training/shard-${{ matrix.shard }}/outputs/.tier-r-output-run.json
+          if-no-files-found: error
   merge:
     name: merge
     needs: [plan, shard]
@@ -169,13 +184,19 @@ jobs:
           merge-multiple: true
       - uses: actions/download-artifact@v4
         with:
+          pattern: tier-r-training-*
+          path: shards
+          merge-multiple: true
+      - uses: actions/download-artifact@v4
+        with:
           name: tier-r-plan
           path: plan
       - name: Merge (fails on missing, duplicate or foreign shards)
-        run: python -m tools.calibration.tier_r.shard merge --in shards --plan plan/plan.json --out merged
+        id: merge
+        run: python -m tools.calibration.tier_r.shard merge --in shards --plan plan/plan.json --artifacts shards/training --out merged
       - name: Determinism (second merge of the same shards must give the same report_sha256)
         run: |
-          python -m tools.calibration.tier_r.shard merge --in shards --plan plan/plan.json --out merged-again
+          python -m tools.calibration.tier_r.shard merge --in shards --plan plan/plan.json --artifacts shards/training --out merged-again
           python -m tools.calibration.ci_summary determinism merged merged-again
       - name: CI status JSON (never silent, even when the shard set is rejected)
         if: always()
@@ -193,8 +214,26 @@ jobs:
         if: always()
         with:
           name: tier-r-aggregate
-          path: merged/
+          path: |
+            merged/tier-r-aggregate.json
+            merged/tier-r-merge.json
+            merged/tier-r-report.md
+            merged/ci-summary.json
+            merged/ci-summary.md
           if-no-files-found: warn
+      - name: Upload completed merged training bundle
+        uses: actions/upload-artifact@v4
+        if: always() && steps.merge.outputs.verified_training == 'true'
+        with:
+          name: tier-r-training-merged
+          include-hidden-files: true
+          path: |
+            merged/training/manifest.json
+            merged/training/labels/[A-Za-z0-9]*.json
+            merged/training/reports/[A-Za-z0-9]*.json
+            merged/training/outputs/[A-Za-z0-9]*.json
+            merged/training/outputs/.tier-r-output-run.json
+          if-no-files-found: error
   windows-advisory:
     # Advisory leg: the runner's LLVM clang and lld-link build freestanding suites; missing tools are BLOCKED, not fatal.
     name: windows advisory (smoke)

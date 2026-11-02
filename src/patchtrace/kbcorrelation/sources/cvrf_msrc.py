@@ -75,14 +75,19 @@ def parse_document(value: dict, limits: KbcLimits) -> CvrfDocument:
     if not isinstance(vulns, list):
         raise _shape('/Vulnerability is not an array')
     problems: list[Problem] = []
-    stamp = _current_date(tracking.get('CurrentReleaseDate'), problems)
+    stamp = _current_date(tracking, problems)
     revisions = _revisions(tracking.get('RevisionHistory'), '/DocumentTracking/RevisionHistory', problems)
     products = _products(tree['FullProductName'], problems)
     rows = [_vulnerability(i, row, limits, problems) for i, row in enumerate(vulns)]
     return replace(_finish(DIALECT_MSRC, release, release, stamp, products, rows, problems), revisions=revisions)
 
 
-def _current_date(value, problems) -> str | None:
+def _current_date(tracking: dict, problems) -> str | None:
+    if 'CurrentReleaseDate' not in tracking:
+        problems.append(Problem('DATE_INVALID', '/DocumentTracking',
+                                'missing CurrentReleaseDate; revision order is unknown'))
+        return None
+    value = tracking['CurrentReleaseDate']
     at = '/DocumentTracking/CurrentReleaseDate'
     # normal_timestamp also accepts date-only strings; native revision ordering needs an explicit zone.
     stamp = normal_timestamp(value) if isinstance(value, str) and 'T' in value else None
@@ -172,7 +177,8 @@ def _vulnerability(index: int, value, limits, problems) -> RawVulnerability | No
         return None
     cve = value.get('CVE')
     if not isinstance(cve, str) or not is_cve(cve):
-        problems.append(Problem('CVE_INVALID', at + '/CVE', 'not a canonical CVE id'))
+        problems.append(Problem('CVE_INVALID', at + '/CVE' if 'CVE' in value else at,
+                                'not a canonical CVE id' if 'CVE' in value else 'missing CVE'))
         return None
     statuses, allowed = _statuses(value.get('ProductStatuses', []), at + '/ProductStatuses', problems)
     rems = []
@@ -210,7 +216,8 @@ def _remediation(index: int, value, at: str, allowed: set[str], limits, problems
         return None
     kind = value.get('Type')
     if type(kind) is not int:
-        problems.append(Problem('TYPE_INVALID', at + '/Type', 'remediation type is not an integer'))
+        problems.append(Problem('TYPE_INVALID', at + '/Type' if 'Type' in value else at,
+                                'remediation type is not an integer' if 'Type' in value else 'missing Type'))
         return None
     desc = _wrapped(value['Description']) if 'Description' in value else ''
     pids = value.get('ProductID', [])

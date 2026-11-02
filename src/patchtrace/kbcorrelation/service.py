@@ -26,7 +26,7 @@ from . import resolver
 from .acquire import AcquirePlan, AcquirePort, build_plan, row_for, verify_consent
 from .acquire import acquire_pair as run_acquire
 from .cli_index import IndexPorts, load_index
-from .context import ContextBundle, RulesPort, build_bundle, vulnerability_pointer
+from .context import ContextBundle, RulesPort, build_bundle, saved_search_scope, vulnerability_pointer
 from .contracts import (
     HARD_BLOCKS,
     AnalystDecision,
@@ -247,6 +247,32 @@ class KbService:
         look = index.lookup_kb if kind == 'kb' else index.lookup_cve
         return look(value, scope=scope, scope_id=scope_id, now=now)
 
+    def _search_index(self, index: ReverseIndex, ws: WorkspaceStore,
+                      rev: InvestigationRevision) -> tuple[ReverseIndex, tuple[Coverage, ...]]:
+        """Resolve saved coverage before any downstream write; never fall back to the live corpus."""
+        try:
+            coverage = tuple(ws.get_coverage(key) for key in rev.coverage_ids)
+            if any(c is None or c.coverage_id != key for key, c in zip(rev.coverage_ids, coverage, strict=True)):
+                raise ValueError('a referenced coverage record is missing or has another identity')
+            scope = saved_search_scope(rev.lead, coverage)
+            if scope is None:
+                return ReverseIndex(), coverage
+            view = index.within_scope(scope)
+            wanted = {s.doc_id for s in ws.sources()
+                      if s.release_id in scope.months or s.doc_id in scope.doc_ids}
+            if scope.kind == 'cached_corpus':
+                wanted.update(scope.doc_ids)
+            if wanted - {d.doc_id for d in view.documents}:
+                raise ValueError('a selected source is unavailable')
+            current = view.coverage(scope, now=self._now())
+            saved, = coverage
+            if (current.requested_ids, current.inspected_ids) != (saved.requested_ids, saved.inspected_ids):
+                raise ValueError('the inspected source labels changed')
+            return view, coverage
+        except (ValueError, KbcStoreError):
+            raise _fail('PT-KBC-SCOPE', 'the saved search scope is missing, unreadable or inconsistent; '
+                        'repeat the search before continuing') from None
+
     # ------------------------------------------------------------------------------------------ search
 
     def search(self, lead: str, *, months: str | None = None, scope_file: Path | None = None,
@@ -254,7 +280,8 @@ class KbService:
         kind, value = parse_lead(lead)
         with self._open() as ws:
             index, unreadable = load_index(ws, self.ports)
-            scope = self._scope(index, months, scope_file)
+            scope = self._scope(index, months, scope_file) or index.cached_scope()
+            index = index.within_scope(scope)
             now = self._now()
             full = self._lookup(index, kind, value, scope, None, now)
             names = {s.scope_id: s.display_name for s in full.scopes}
@@ -319,6 +346,7 @@ class KbService:
         with self._open() as ws:
             rev = self._get(ws, investigation)
             index, _ = load_index(ws, self.ports)
+            index, _ = self._search_index(index, ws, rev)
         wanted = set(rev.scope_ids)
         scopes = [_scope_dict(s) for s in index.scopes() if s.scope_id in wanted]
         if wanted - {s['scope_id'] for s in scopes}:
@@ -341,6 +369,8 @@ class KbService:
             raise _fail('PT-KBC-INPUT', str(exc)) from None
         with self._open() as ws:
             rev = self._get(ws, investigation)
+            index, _ = load_index(ws, self.ports)
+            index, _ = self._search_index(index, ws, rev)
             scope_id = product or rev.selected_scope_id
             if scope_id is None:
                 raise _fail('PT-KBC-INPUT', TEXT_KB6)
@@ -353,7 +383,6 @@ class KbService:
                              'File name entered by the analyst; a user assertion, not evidence.')
             entered = sorted({*names, *(d.next for d in ws.decisions(rev.investigation_id)
                                         if d.op == 'component-name')})
-            index, _ = load_index(ws, self.ports)
             cards, refs = self._lead_cards(index, rev, ws)
             hints, truncated = comp.hints_for(cards, refs, entered, scope_id)
             rev = self._step(ws, rev, 'components_ready' if comp.selectable(hints) else 'needs_filename')
@@ -369,11 +398,13 @@ class KbService:
 
     def _lead_cards(self, index: ReverseIndex, rev: InvestigationRevision,
                     ws: WorkspaceStore) -> tuple[list[CveCard], dict[str, SourceRef]]:
-        cves, _, _ = self._lead_cves(index, rev, ws)
+        index, coverage = self._search_index(index, ws, rev)
+        cves, _, _ = self._lead_cves(index, rev, coverage)
+        search_scope = coverage[0].scope if coverage else None
         cards: list[CveCard] = []
         refs: dict[str, SourceRef] = {}
         for cve in cves:
-            look = index.lookup_cve(cve, scope_id=rev.selected_scope_id, now=self._now())
+            look = index.lookup_cve(cve, scope=search_scope, scope_id=rev.selected_scope_id, now=self._now())
             cards += look.cards[:1]
             if look.edges:
                 edge = look.edges[0]
@@ -382,27 +413,30 @@ class KbService:
         return cards, refs
 
     def _lead_cves(self, index: ReverseIndex, rev: InvestigationRevision,
-                   ws: WorkspaceStore) -> tuple[tuple[str, ...], tuple[str, ...], tuple[Coverage, ...]]:
+                   coverage: tuple[Coverage, ...]) -> tuple[tuple[str, ...], tuple[str, ...], tuple[Coverage, ...]]:
         """CVEs the lead names under the selected product, CVEs mentioned only, and the stored search coverage."""
-        coverage = tuple(c for c in (ws.get_coverage(i) for i in rev.coverage_ids) if c is not None)
         now, scope_id, lead = self._now(), rev.selected_scope_id, rev.lead
+        search_scope = coverage[0].scope if coverage else None
         if lead.kind == 'kb':
-            look = index.lookup_kb(lead.value, scope_id=scope_id, now=now)
+            look = index.lookup_kb(lead.value, scope=search_scope, scope_id=scope_id, now=now)
             return (tuple(sorted({e.cve for e in look.edges})), tuple(sorted({e.cve for e in look.mention_only})),
-                    coverage or (look.coverage,))
+                    coverage)
         if lead.kind == 'cve':
             return (lead.value,), (), coverage
         return (), (), coverage
 
-    def _lead_kbs(self, index: ReverseIndex, rev: InvestigationRevision) -> dict[str, str | None]:
+    def _lead_kbs(self, index: ReverseIndex, rev: InvestigationRevision,
+                  ws: WorkspaceStore) -> dict[str, str | None]:
         """KB ids the lead leads to under the selected product, each with its one vendor-stated fixed build (or None
         when the documents state none or disagree)."""
+        index, coverage = self._search_index(index, ws, rev)
+        search_scope = coverage[0].scope if coverage else None
         lead, scope_id, now = rev.lead, rev.selected_scope_id, self._now()
         if lead.kind == 'kb':
-            look = index.lookup_kb(lead.value, scope_id=scope_id, now=now)
+            look = index.lookup_kb(lead.value, scope=search_scope, scope_id=scope_id, now=now)
             kbs = {lead.value}
         elif lead.kind == 'cve':
-            look = index.lookup_cve(lead.value, scope_id=scope_id, now=now)
+            look = index.lookup_cve(lead.value, scope=search_scope, scope_id=scope_id, now=now)
             kbs = {e.kb for e in look.edges}
         else:
             raise _fail('PT-KBC-INPUT', 'this investigation started from two files and has no KB to look up')
@@ -424,6 +458,8 @@ class KbService:
         file_index = self.env.file_index(self.root) if self.env.file_index else None
         with self._open() as ws:
             rev = self._get(ws, investigation)
+            index, _ = load_index(ws, self.ports)
+            index, _ = self._search_index(index, ws, rev)
             if file_index is None or not file_index.available():
                 return rev, self._unanswered(rev, 'file index not available offline', TEXT_PAIRS_E0)
             scope_id = product or rev.selected_scope_id
@@ -432,7 +468,6 @@ class KbService:
             if scope_id not in rev.scope_ids:
                 raise _fail('PT-KBC-INPUT', 'that product is not one of the products listed for the lead')
             rev = rev.model_copy(update={'selected_scope_id': scope_id})
-            index, _ = load_index(ws, self.ports)
             scope = next((s for s in index.scopes() if s.scope_id == scope_id), None)
             if scope is None:
                 raise _fail('PT-KBC-INPUT', 'the selected product mapping is no longer current; repeat the search '
@@ -442,7 +477,7 @@ class KbService:
             cards, refs = self._lead_cards(index, rev, ws)
             hints, _ = comp.hints_for(cards, refs, entered, scope_id)
             chosen = sorted({h.basename for h in hints if h.tier in comp.SELECTING_TIERS})
-            kbs = self._lead_kbs(index, rev)
+            kbs = self._lead_kbs(index, rev, ws)
         if not chosen:
             return rev, self._unanswered(rev, 'no file name', TEXT_KB7)
         covered = scope.family != 'windows-server' and scope.winbindex_key is not None
@@ -609,13 +644,15 @@ class KbService:
             expected = acquired[0].revision if acquired is not None else expected_revision
             if expected is not None and (rev is None or rev.revision != expected):
                 raise _fail('PT-KBC-STALE', 'the investigation changed after preview; review the pair again')
+            if rev is not None:
+                index, _ = load_index(ws, self.ports)
+                index, _ = self._search_index(index, ws, rev)
             if acquired is not None:
                 captured, acquisition_plan = acquired
                 if rev.investigation_id != captured.investigation_id:
                     raise _fail('PT-KBC-STALE', 'the acquisition belongs to another investigation')
                 if (older_f.sha256, newer_f.sha256) != (acquisition_plan.older_sha, acquisition_plan.newer_sha):
                     raise _fail('PT-KBC-VERIFY', 'the staged files changed after acquisition verification')
-                index, _ = load_index(ws, self.ports)
                 scope_id = captured.selected_scope_id
                 if scope_id not in rev.scope_ids or not any(s.scope_id == scope_id for s in index.scopes()):
                     raise _fail('PT-KBC-STALE', 'the planned product mapping changed; review the acquisition again')
@@ -710,7 +747,8 @@ class KbService:
 
     def _bundle(self, index: ReverseIndex, ws: WorkspaceStore, rev: InvestigationRevision, *, base: int,
                 pair_id: str | None, older: str | None, newer: str | None) -> ContextBundle:
-        cves, mention, coverage = self._lead_cves(index, rev, ws)
+        index, coverage = self._search_index(index, ws, rev)
+        cves, mention, coverage = self._lead_cves(index, rev, coverage)
         return build_bundle(investigation_id=rev.investigation_id, base_revision=base, lead=rev.lead, cves=cves,
                             index=index, rules=self.env.rules, now=self._now(), coverage=coverage,
                             scope_id=rev.selected_scope_id, pair_id=pair_id, older_sha=older, newer_sha=newer,
@@ -744,8 +782,12 @@ class KbService:
             if not repair_it:
                 return self._link_outcome(ours, None, 'Context is not attached yet. Run "kb attach --repair".')
             index, _ = load_index(ws, self.ports)
+            # Repair marks attempts before invoking context_for. Validate every target's captured
+            # search scope first, so a corrupt scope cannot cause even those preliminary writes.
+            prepared = {op: self._rebuilt_rows(index, ws, body) for op, state, body in ours
+                        if state != 'done' or body.get('link_state') == 'context-pending'}
             port = self.env.project(ws, 'KB comparison')
-            result = repair(ws, port, context_for=lambda op, body: self._rebuilt_rows(index, ws, body),
+            result = repair(ws, port, context_for=lambda op, body: prepared[op],
                             only=lambda body: body['directory'] == directory
                             and body['revision']['investigation_id'] == investigation)
             return self._link_outcome(self._ops_for(ws, directory, investigation), result,

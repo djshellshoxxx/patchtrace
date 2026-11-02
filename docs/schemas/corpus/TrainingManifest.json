@@ -1,0 +1,252 @@
+{
+  "$defs": {
+    "MergeOwner": {
+      "additionalProperties": false,
+      "properties": {
+        "plan_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Plan Sha256",
+          "type": "string"
+        },
+        "shards": {
+          "items": {
+            "$ref": "#/$defs/ShardOwner"
+          },
+          "maxItems": 256,
+          "minItems": 1,
+          "title": "Shards",
+          "type": "array"
+        }
+      },
+      "required": [
+        "plan_sha256",
+        "shards"
+      ],
+      "title": "MergeOwner",
+      "type": "object"
+    },
+    "PairOwner": {
+      "additionalProperties": false,
+      "properties": {
+        "case": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Case",
+          "type": "string"
+        },
+        "shard": {
+          "maximum": 255,
+          "minimum": 0,
+          "title": "Shard",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "shard",
+        "case"
+      ],
+      "title": "PairOwner",
+      "type": "object"
+    },
+    "ShardOwner": {
+      "additionalProperties": false,
+      "properties": {
+        "cases": {
+          "items": {
+            "$ref": "#/$defs/TransferCase"
+          },
+          "maxItems": 10000,
+          "title": "Cases",
+          "type": "array"
+        },
+        "of": {
+          "maximum": 256,
+          "minimum": 1,
+          "title": "Of",
+          "type": "integer"
+        },
+        "pair_cases": {
+          "maxProperties": 200000,
+          "patternProperties": {
+            "^[A-Za-z0-9][A-Za-z0-9._-]{0,95}$": {
+              "type": "string"
+            }
+          },
+          "title": "Pair Cases",
+          "type": "object"
+        },
+        "plan_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Plan Sha256",
+          "type": "string"
+        },
+        "seed": {
+          "title": "Seed",
+          "type": "integer"
+        },
+        "shard": {
+          "maximum": 255,
+          "minimum": 0,
+          "title": "Shard",
+          "type": "integer"
+        },
+        "shard_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Shard Sha256",
+          "type": "string"
+        },
+        "subset": {
+          "enum": [
+            "smoke",
+            "suites",
+            "cards",
+            "mutations",
+            "noise",
+            "full"
+          ],
+          "title": "Subset",
+          "type": "string"
+        }
+      },
+      "required": [
+        "plan_sha256",
+        "shard_sha256",
+        "shard",
+        "of",
+        "seed",
+        "subset",
+        "cases",
+        "pair_cases"
+      ],
+      "title": "ShardOwner",
+      "type": "object"
+    },
+    "TransferCase": {
+      "additionalProperties": false,
+      "properties": {
+        "digest": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Digest"
+        },
+        "id": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "reason": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Reason"
+        },
+        "status": {
+          "enum": [
+            "ok",
+            "findings",
+            "failed",
+            "timeout",
+            "blocked",
+            "skipped"
+          ],
+          "title": "Status",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "status",
+        "reason",
+        "digest"
+      ],
+      "title": "TransferCase",
+      "type": "object"
+    }
+  },
+  "$id": "https://patchtrace.local/schemas/tier-r-training/1/TrainingManifest.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "contract": {
+      "const": "tier-r-training/1",
+      "title": "Contract",
+      "type": "string"
+    },
+    "files": {
+      "additionalProperties": {
+        "pattern": "^[0-9a-f]{64}$",
+        "type": "string"
+      },
+      "maxProperties": 400000,
+      "title": "Files",
+      "type": "object"
+    },
+    "manifest_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Manifest Sha256",
+      "type": "string"
+    },
+    "owner": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ShardOwner"
+        },
+        {
+          "$ref": "#/$defs/MergeOwner"
+        }
+      ],
+      "title": "Owner"
+    },
+    "pair_cases": {
+      "maxProperties": 200000,
+      "patternProperties": {
+        "^[A-Za-z0-9][A-Za-z0-9._-]{0,95}$": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "#/$defs/PairOwner"
+            }
+          ]
+        }
+      },
+      "title": "Pair Cases",
+      "type": "object"
+    },
+    "reports": {
+      "items": {
+        "pattern": "^[0-9a-f]{64}$",
+        "type": "string"
+      },
+      "maxItems": 10000,
+      "minItems": 1,
+      "title": "Reports",
+      "type": "array"
+    }
+  },
+  "required": [
+    "contract",
+    "owner",
+    "pair_cases",
+    "reports",
+    "files",
+    "manifest_sha256"
+  ],
+  "title": "TrainingManifest",
+  "type": "object"
+}

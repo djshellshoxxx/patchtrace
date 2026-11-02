@@ -172,6 +172,15 @@ arbitrary same-user hostile process or full power-loss durability on every OS.
 An integrity failure after publication can leave an uncredited file. Transfer
 consumers must verify successful report references, not adopt directory contents.
 
+Retained-file reads compare descriptor metadata before/after the read and pathname
+metadata before/after the open/read separately, including each API's `ctime`.
+Across descriptor and pathname results, compare identity, size and `mtime`; do
+not assume their `ctime` meanings agree. CPython 3.12 on Windows reports change
+time through `fstat` but creation time through `stat`/`lstat`. A stable difference
+between those API meanings is not a content change. Changed descriptor or
+pathname timestamps, replaced identities, linked/reparse paths, excess bytes and
+digest mismatches still refuse successful credit; the underlying file is retained.
+
 CLI JSON reports and their Markdown companions are also published without
 replacement. Default filenames remain under the selected store's `reports/` and
 include the fresh run token; equal evaluations retain equal report bytes/digests
@@ -252,6 +261,48 @@ owner is outside the local integrity/authenticity claim. No signature, hostile
 same-user lock, model change or final-run permission is implied.
 
 ## 11. Lineage, roles and existing tooling
+### Verified shard transfer (November 2, 2026)
+
+`shard run-shard --collect-artifacts` exports a separate completed bundle at
+`<out>/training/shard-<index>/`. `manifest.json` (`tier-r-training/1`) is published
+last and exclusively, after exact source reports, report-referenced labels and
+successful managed outputs have been validated and copied. It binds the plan,
+shard diagnostic digest, planned cases, each label's producing case, semantic
+label/report digests, and SHA-256 of every transferred byte stream, including
+the managed marker and credit manifest. Reports are named by their semantic
+digest; labels and output filenames are derived from validated pair/engine IDs.
+Case ownership comes only from explicit successful builder `written` summaries;
+files found by scanning scratch are never adopted. Repeated pair ownership is
+refused, even if the bytes agree. Only `status=ok` report references earn output
+credit; failed files remain in their original run and are not transferred.
+The diagnostic shard binds `pair_cases` before its own digest is calculated.
+Both shard and merged manifests must exactly match those recorded assignments;
+merged ownership names the source shard and its completed producing case.
+The strict generated `TrainingManifest.json` schema caps a manifest at 10,000
+reports, 200,000 pair assignments and 400,000 fixed file references; its encoded
+bytes are additionally capped at 8 MiB. Existing 64 MiB label/output/managed
+credit limits remain in force, including merged credit manifests. Exceeding a
+limit preserves partial destination evidence without transfer completion.
+
+`shard merge --artifacts <download-root>/training` requires the fixed
+`shard-<index>` bundle for every diagnostic shard, verifies all ownership and
+exact bytes before writing, and creates `<out>/training/` with exact reports,
+labels, a managed `outputs/` run and its own final manifest. The actual training
+reader can consume `<out>/training/outputs` with `allow_legacy=False`.
+Every source and target parent and leaf is checked without following links,
+including Windows reparse points; changed identities and incomplete bundles
+are refused. Existing destinations are never replaced. Publication failures
+preserve partial files for diagnosis, without a completed transfer manifest.
+This is bounded local integrity verification, not an authenticity signature or
+a lock against arbitrary same-user concurrent filesystem mutation.
+
+Actions uploads diagnostics unconditionally and a completed training bundle
+only when the producing step emits the fixed boolean `verified_training=true`.
+The payload names fixed visible JSON locations and the exact hidden managed
+marker; it never uploads scratch, images, binaries, Tier W or unknown hidden
+files. Evaluator summaries declaring `failed` remain failed even with exit 1;
+this does not change metric thresholds, completion policy or training gates.
+
 Lineage = project (`L-<project>`; suites `L-ours-<suite>-<project>`); mutants, A/A and noise pairs inherit the lineage of
 their base source so grouped CV (SPEC-28 s4) never splits a function identity across folds; `family` comes from the recipe.
 `tier_r/manifest.py` emits a `calibration-corpus/1` manifest (Tier R binaries with source pins and recipe digests, pairs,

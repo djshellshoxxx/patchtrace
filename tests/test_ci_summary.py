@@ -171,11 +171,28 @@ def test_merge_job_runs_determinism_and_the_never_silent_summary(wf):
     assert first < again and 'ci_summary determinism merged merged-again' in runs[again]
     summary = next(s for s in steps if 'ci_summary summarize' in s.get('run', ''))
     assert summary['if'] == 'always()' and '--out merged/ci-summary.json' in summary['run']
+    assert '--artifacts' not in summary['run']  # The diagnostics CLI has no transfer argument.
 
 
 def test_artifacts_hold_only_labels_and_reports(wf):
-    paths = [s['with']['path'] for j in wf['jobs'].values() for s in j['steps']
-             if str(s.get('uses', '')).startswith('actions/upload-artifact')]
-    # the MSVC advisory leg uploads its toolchain probe and status files only
-    assert sorted(paths) == ['merged/', 'msvc-toolchain.json\nmsvc-status/\n', 'plan.json', 'shard-out/shard-*.json',
-                             'shard-out/shard-*.json']
+    uploads = [s for j in wf['jobs'].values() for s in j['steps']
+               if str(s.get('uses', '')).startswith('actions/upload-artifact')]
+    training = [s for s in uploads if s['with']['name'].startswith('tier-r-training')]
+    assert len(training) == 2
+    for step in training:
+        assert step['if'].startswith('always() && steps.')
+        assert step['if'].endswith(".outputs.verified_training == 'true'")
+        assert step['with']['include-hidden-files'] is True
+        paths = step['with']['path'].splitlines()
+        assert sum('/outputs/.tier-r-output-run.json' in p for p in paths) == 1
+        assert all(p.endswith(('/manifest.json', '/labels/[A-Za-z0-9]*.json', '/reports/[A-Za-z0-9]*.json', '/outputs/[A-Za-z0-9]*.json',
+                               '/outputs/.tier-r-output-run.json', 'shard-${{ matrix.shard }}.json')) for p in paths)
+        assert not any('**' in p or '.outputs.' in p or p.endswith('/') for p in paths)
+        assert step['with']['if-no-files-found'] == 'error'
+    diagnostics = [s for s in uploads if s not in training and s['with']['name'] != 'tier-r-plan']
+    assert all(s['if'] == 'always()' for s in diagnostics)
+    aggregate = next(s for s in diagnostics if s['with']['name'] == 'tier-r-aggregate')
+    assert aggregate['with']['path'].splitlines() == [
+        'merged/tier-r-aggregate.json', 'merged/tier-r-merge.json', 'merged/tier-r-report.md',
+        'merged/ci-summary.json', 'merged/ci-summary.md']
+    assert all(not s.get('with', {}).get('include-hidden-files', False) for s in diagnostics)

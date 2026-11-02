@@ -1,0 +1,32 @@
+{
+  "recorded_utc": "2026-11-02T08:24:03.374070+00:00",
+  "source_local": "f7e65462e30775b28757c166bd012085afd56a81",
+  "main": "25c9795bd9cd58bfad855f30594ee3a0c7584cec",
+  "previous_remote": "039c696c93a443d152d4ddc1383179408ff86b75",
+  "recovery": "Previous scratch and unpublished full2/native controls unavailable. Remote checkpoints restored; no recovered local full2 claim.",
+  "source_reviews": {
+    "backup": "7b238d1c28055eeed5811872057b2356a9b22c33",
+    "msrc_provenance": "aa85b775431f40a1041b19fff82b3182f93617fa",
+    "output_stat": "cb22780bffbabf0e6fddfbc7562fe20ee699e35e",
+    "rd_ui": "aa82d17cd730affdc362fad14a0fb79533f7df6d",
+    "corpus_transfer": "bb892a2cc0c7053b73b2539c05e897e5e6c8f6bf",
+    "saved_scope": "d3cc9b8f1897a01054982549f1a25a2db8e6e43d",
+    "fixtures": "2f69f083482a927454a48c31ec19fadad09f2fa4"
+  },
+  "root_checks": {
+    "main_identity": "47 passed",
+    "storage_after_main": "41 passed",
+    "msrc_after_main": "200 passed",
+    "output_after_main": "100 passed; prior guessed filename collection error preserved",
+    "rd_transfer_combined": "106 passed in 18.70s",
+    "full_combined": "pending; preceding remote039 Linux11 failed19112 passed49 skipped7 xfailed; Windows658 failed18233 passed83 skipped6 xfailed206errors"
+  },
+  "gates": "No whole project acceptance or final release. Fresh exact-head QA required; Sonar/source-specific open findings preserved.",
+  "artifact_sha256": {
+    "output-windows-stat-20261102.tar.gz": "c11d909706749bfcbb5c91e29ab0aee7780e919c41a48f8af43f2b106a0c9610",
+    "ci-resume-evidence-20261102.tar.gz": "41d489272486ce4ea2dbc23db54983175a825c1dadc3089bdef83d15e8a0fcab",
+    "prereg-fence-audit-20261102.tar.gz": "218278acd59eaf3507ce942146cd651a1696caffc28d1ad6bffca7048bb536e7",
+    "resume-root-checks-20261102.tar.gz": "d9b9099994dc1c32c5a1b09a08df2cd309db9759cfe8620257425ded21553885"
+  },
+  "integration_addendum": "Both reviewed slices integrated after initial receipt source pin; no new full suite claim."
+}

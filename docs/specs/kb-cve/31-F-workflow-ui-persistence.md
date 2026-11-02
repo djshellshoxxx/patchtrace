@@ -42,6 +42,22 @@ Every mutation:
 (7) after commit notify UI, never before.
 On fail roll back, leaving prior current pointer untouched. SQLite DDL must be explicitly transactional (existing enrichment tests found a historical DDL atomicity issue). Backup before first extension schema write, follow ProjectStore.backup conventions and inclusion of source blobs in backup/export. On restored project with missing external cache, source pointers degrade to 'missing source bytes', no phantom verification.
 
+An investigation started from a KB or CVE retains the exact `Coverage` from its explicit search.
+All later product, component, CVE/card, KB/fixed-build, pair and attached-context selection uses that
+coverage's finite `SearchScope`; it must not fall back to the currently loaded corpus. A saved
+`cached_corpus` scope means its saved `doc_ids`, including an empty set. A newer document outside
+those IDs must neither add evidence nor suppress a selected older revision. Active revision selection
+is computed inside the selected document set. Explicit month/file/mixed selectors retain their
+respective bounds. Preserve the saved coverage objects in the report, rather than silently replacing
+them with newly computed coverage.
+
+Before downstream decisions, revision advances, acquisition completion, project creation or context
+repair, require the referenced coverage record to be readable, identity-consistent and unambiguous.
+Missing/invalid/contradictory scope, unavailable selected source bytes, or changed inspected-label
+availability returns `PT-KBC-SCOPE` with a repeat-search instruction and no operation writes.
+An explicit repeat search may replace the saved scope through the existing revision flow. A local
+pair-only investigation without advisory coverage remains supported and yields no advisory evidence.
+
 Cache key: (operation, normalized request, source connector versions, raw snapshot digests, product alias version, input project SHA/revision, rules and engine versions when relevant). No sharing derived assessments across projects unless artifact hashes and all relevant context match. Source cache may be reused offline without granting previously used network consent.
 
 ## F4. Consent rules and preview protocol

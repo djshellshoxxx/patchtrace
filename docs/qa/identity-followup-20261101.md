@@ -37,3 +37,7 @@ All commands used `/workspace/scratch/142cb233d750/full-venv/bin/python`, `PYTHO
 This is bounded source and synthetic regression evidence. No full suite, performance acceptance, native comparator or target execution was run. Existing owner-side capture I/O remains on the owner thread; this does not claim that all owner work is now asynchronous. Root owns integration and the next exact-source full run.
 
 Read-only port check: the owner-only patch applies cleanly to central `f1dcc5a`, which already contains refacts cherry-pick `1dc34fb`. The initial combined check refused the already-applied refacts files; no source mutation occurred.
+
+Coordinator main-port verification: 79 focused plan/capture/refacts/wire/Qt checks passed17.25s at local2bac65b. The combined source selection separately passed159 in20.26s; these overlap and are not summed. Whole source Ruff and schema drift checks are rerun before publication. Exact-head CI and packaging remain required.
+
+Resume integration retains main’s complete archive at the original filename and the preceding combined archive as `identity-followup-integrated-original-20261101.tar.gz`; neither historical evidence set was discarded.

@@ -173,3 +173,25 @@ def test_stored_and_worker_source_ids_bind_nfc_distinct_original_entry_reference
     assert emitted[0].atoms != emitted[1].atoms
     assert references[0] != references[1]
     assert identities[0].result_id != identities[1].result_id
+
+
+def test_real_worker_round_trip_uses_the_verified_stored_secondary_identity(tmp_path):
+    """Real Python worker and project store, with authored data; no native comparator or target execution."""
+    project = make_project(tmp_path / 'project')
+    try:
+        sides = {artifact.side: artifact.sha256 for artifact in project.project.artifacts}
+        normalized = bindiff_set([bd(0x1000, 0x1080)], older=sides['older'], newer=sides['newer'])
+        run = project.project.runs[-1]
+        guard = Guard(project.project.id, run.id, run.raw_sha256, normalized.file_sha256)
+        publish_engine_set(EnrichmentStore(project.store), guard, guard, project.project.revision, normalized)
+        sources = ('bindiff',)
+        planned = pipeline.make_plan(project, sources, use_ir=False)
+        assert planned.secondary[0]._body_json is not None
+        options = pipeline.UnifiedOptions(sources=sources, use_ir=False, isolate=True, timeout_s=60)
+        result = pipeline.run_unified(project, options)
+        assert result.status == 'ok' and result.result_id == planned.result_id
+        assert pipeline.recent_runs(project)[0].provenance['worker'] == 'child'
+        repeated = pipeline.run_unified(project, options)
+        assert repeated.status == 'cached' and repeated.result_id == result.result_id
+    finally:
+        project.close()

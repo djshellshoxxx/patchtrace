@@ -1,0 +1,47 @@
+{
+  "reviewer": "review_resume independent helper",
+  "reviewed_head": "d3cc9b8f1897a01054982549f1a25a2db8e6e43d",
+  "reviewed_tree": "00522e2384b66f0a5ab06f6f3343696ceae58d4a",
+  "base": "039c696c93a443d152d4ddc1383179408ff86b75",
+  "worktree": "/workspace/scratch/142cb233d750/wt-kb-scope",
+  "decision": "no blocking findings in the bounded saved-search-scope repair",
+  "source_sha256": {
+    "src/patchtrace/kbcorrelation/context.py": "a63d4856a64725066526820ca1c9197c23a8bb399a0b0a75a017d08108ce6785",
+    "src/patchtrace/kbcorrelation/index.py": "b98000755a5fa74579f3b7238bed57f485ba2d6873cef73dc3b7533ca3ac4715",
+    "src/patchtrace/kbcorrelation/service.py": "9ee27c2e6777c31122e71891114ad3ff0ab973c131753d362f9601825b1a7fc7"
+  },
+  "scope": [
+    "bound downstream products/components/CVE/cards/fixed-build/pairs/context and source/digests to saved coverage selector",
+    "cached corpus uses exact saved IDs including empty; active revision choice occurs inside selected set",
+    "missing/corrupt/contradictory/unavailable scope fails before decisions/project/context-repair writes",
+    "pair-only investigations retain no-advisory path; no card/schema redesign"
+  ],
+  "validation": [
+    {
+      "command": "QT_QPA_PLATFORM=offscreen PYTHONPATH=.:src:tests /workspace/scratch/142cb233d750/venv/bin/python -m pytest -q --tb=short tests/test_kbc_saved_scope.py tests/test_kbc_service.py tests/test_kbc_context.py tests/test_kbc_index.py tests/test_kbc_workflow.py",
+      "result": "135 passed in3.19s"
+    },
+    {
+      "control": "Two real interrupted attachments for January/February; delete target January saved coverage before repair",
+      "result": "PT-KBC-SCOPE; whole workspace dump and both project bytes unchanged; unrelated journal not marked interrupted; restoring coverage permits January-only context attachment"
+    },
+    {
+      "command": "changed-source/test Ruff; git diff --check base..head",
+      "result": "passed"
+    }
+  ],
+  "non_evidence_attempts": [
+    "Initial selection named nonexistent tests/test_kbc_attach.py; pytest exit4/no tests. Corrected selection above is qualified.",
+    "Attempted different current search after PROJECT_CREATED was refused by existing workflow; no acceptance result claimed from that exploratory setup."
+  ],
+  "environment": {
+    "python": "3.12.14",
+    "platform": "Linux"
+  },
+  "limitations": [
+    "Synthetic offline evidence through real service/SQLite/project flows; not live MSRC/native compatibility",
+    "No broad card provenance redesign reviewed",
+    "No full-suite/nativeWindows/hostedCI claim",
+    "No remote GitHub review submitted"
+  ]
+}

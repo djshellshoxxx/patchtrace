@@ -989,3 +989,29 @@ Done: dock with state matrix, consent, import, changes, copy, go to CVE. Open: r
 - [ ] Finish native BinExport/BinDiff evidence and independent review; preserve approved pins and trust limits.
 - [ ] Run required immutable combined full suite and native/frozen/package gates after current integrations; no full success claim yet.
 - [ ] Complete live issue/branch semantic reconciliation and remaining accepted v2/source/acquisition/provider/isolation/performance work. Current handoff names exact external/human-only boundaries; overall agent execution remains unfinished.
+
+### Issue #120 independent main repair (2026-11-01)
+
+- [x] Reproduce the original identity/ambiguity/alternative defects on canonical main `6579ed8` (28 failing tests, including service/store/cache paths).
+- [x] Port only reviewed source identity, immutable-body/resource and alternative consistency fixes; preserve main's existing matching-policy/ladder/facts behavior and keep rz-diff quarantine separate. Focused regressions, a real Python worker/cache round-trip, full Ruff and schema regeneration pass.
+- [ ] Root independent review, exact-head full pytest and applicable remote/native acceptance before publication or merge; current synthetic checks do not close broader matching accuracy gates.
+
+### RD-F03 recovery — 2026-11-02
+
+- [x] Reimplement the lost paired physical-window Hex/Binary UI against the published alignment backend; explicit
+  16..4096-byte windows, physical gutters, display gaps, exact original Copy, EOF/ambiguity reasons and span navigation.
+- [x] Exercise context invalidation, actual isolated application quit, independent physical offsets, public offset
+  navigation and tooltip/keyboard/context-menu Copy provenance; repair immediate status allocation and stale
+  inspection-thread pointer with regressions. Fresh bounded suite: 191 passed; whole Ruff/diff clean (docs/qa.md).
+- [ ] Independent exact-source review and central integration, required combined full-suite gates and native Windows/
+  DPI/performance/human acceptance remain open; lost unpublished implementation claims are not reused.
+
+## November 2 recovered continuation
+
+- [x] Restore published checkpoints; explicitly distinguish lost unpublished full2/native evidence.
+- [x] Independently qualify and merge #156 exact tree; retain actual package inner hashes.
+- [x] Reconstruct/review/integrate Windows backup/output stat-API compatibility, MSRC missing-field provenance, RD paired-window UI and verified shard transfer.
+- [x] Complete fixture and saved-scope independent reviews and integrate both.
+- [ ] Run immutable combined full/Windows/Qt/native/package acceptance.
+- [ ] Repair reproduced MSRC fact disagreement/Type2 diagnostic, aggregate credit failure retention, #105 numeric callee and #116 lifecycle failures.
+- [ ] Continue all original corpus/source/acquisition/provider/isolation/UI/performance/accepted-v2 work in the dated handoff; no final release or completion claim.

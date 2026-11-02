@@ -184,7 +184,7 @@ def _cli(root, exe, capsys):
 
 def test_adapter_parse_input_error_is_runtime_exit_3(tmp_path, capsys):
     from fake_exe import make_fake_exe
-    source = ("import sys\nif sys.argv[1:] == ['-v']:\n    print('rz-diff 0.9.1')\n    sys.exit(0)\n"
+    source = ("import sys\nif sys.argv[1:] == ['-v']:\n    print('rz-diff 0.9.0')\n    sys.exit(0)\n"
               "print('this is not json')\n")
     exe = str(make_fake_exe(tmp_path / 'bin', 'rz-diff', source))
     code, doc = _cli(_cli_project(tmp_path), exe, capsys)

@@ -1,0 +1,19 @@
+{
+  "parent_executable": "/workspace/scratch/142cb233d750/venv/bin/python",
+  "parent_compute": "/workspace/scratch/142cb233d750/wt-identity-main/src/patchtrace/unified/compute.py",
+  "parent_pythonpath": "/workspace/scratch/142cb233d750/wt-identity-main/src:/workspace/scratch/142cb233d750/wt-identity-main/tests",
+  "worker_argv": [
+    "/workspace/scratch/142cb233d750/venv/bin/python",
+    "-P",
+    "-m",
+    "patchtrace"
+  ],
+  "worker_pythonpath": "/workspace/scratch/142cb233d750/wt-identity-main/src",
+  "child_observed": {
+    "executable": "/workspace/scratch/142cb233d750/venv/bin/python",
+    "package": "/workspace/scratch/142cb233d750/wt-identity-main/src/patchtrace/__init__.py",
+    "compute": "/workspace/scratch/142cb233d750/wt-identity-main/src/patchtrace/unified/compute.py",
+    "worker_bootstrap": "/workspace/scratch/142cb233d750/wt-identity-main/src/patchtrace/secondary/binexport_run.py"
+  },
+  "source_head": "65857d4aad2a67d1d2a8ede3a4856ba0caba4fcd"
+}

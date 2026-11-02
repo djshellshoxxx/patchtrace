@@ -115,12 +115,13 @@ def test_capability_and_outcome_views():
 class FakeRz(RzDiffAdapter):
     reads_artifacts = False  # the sample project's declared hashes have no files behind them
 
-    def __init__(self, code):
+    def __init__(self, code, version='0.9.0'):
         super().__init__()
         self.code = code
+        self.version = version
 
     def probe(self, job_env, cancel):
-        return Capability(engine='rz-diff', supported=True, version='0.9.1', path=sys.executable,
+        return Capability(engine='rz-diff', supported=True, version=self.version, path=sys.executable,
                           supports_json=True)
 
     def argv(self, cap, job):
@@ -146,6 +147,21 @@ def test_execute_run_success_and_failure_isolated(tmp_path):
     assert views[0].status == 'ok' and views[0].match_set is not None
     assert views[1].status == 'failed' and views[1].error_code == 'PT-SECONDARY-RUN'
     assert {e.phase for e in events} == {'started', 'finished'}
+
+
+def test_synthetic_good_output_still_refuses_quarantined_version(tmp_path):
+    import hashlib
+    import json
+
+    [outcome] = execute_run(run_request(tmp_path), threading.Event(),
+                            registry={'rz-diff': FakeRz(GOOD, version='0.9.1')}, env={})
+    raw = (json.dumps([{'similarity': 0.5, 'type': 'PARTIAL',
+                       'original': {'addr': 16, 'name': 'f', 'size': 1},
+                       'modified': {'addr': 32, 'name': 'g', 'size': 1}}]) + '\n').encode()
+    assert outcome.match_set is None and outcome.run.status == 'failed'
+    assert outcome.error.code == 'PT-SECONDARY-ORIENTATION'
+    assert hashlib.sha256(raw).hexdigest() in outcome.error.message
+    assert (outcome.run.older_sha256, outcome.run.newer_sha256) == (OLD, NEW)
 
 
 def test_execute_run_cancelled_before_start(tmp_path):

@@ -1,0 +1,70 @@
+{
+  "reviewer": "review_resume independent helper",
+  "reviewed_head": "bb892a2cc0c7053b73b2539c05e897e5e6c8f6bf",
+  "reviewed_tree": "ad3748bab73401890433ef659ca8df5537384442",
+  "evidence_only_descendant": "bd5a6f21e12b8421de736593cd30bd9f1276522a",
+  "descendant_changed_paths": [
+    "docs/qa/corpus-verified-transfer-recovery-20261102.md"
+  ],
+  "base": "039c696c93a443d152d4ddc1383179408ff86b75",
+  "worktree": "/workspace/scratch/142cb233d750/corpus-recover",
+  "decision": "no blocking findings remain in the verified shard-transfer slice",
+  "source_sha256": {
+    "tools/calibration/tier_r/training_artifacts.py": "222d17e394da2a304051948ef2e29f90ae0641e9761c164be7c4c774d16d8fbd",
+    "tools/calibration/tier_r/shard.py": "913d5b84bf29c62ada571c592a4a8dd206846fec040c608fd48d1526a239730f",
+    "tools/calibration/tier_r/cli.py": "8f1353c2ca78f802ce5b42a4104741a1dd5bd79c5882977e0a5d5ba676190044",
+    ".github/workflows/corpus-tier-r.yml": "7a6616c83f66fc8ea19e109d3ea68afdd7bafc01c83bc6a479f50e90852c9e51",
+    "docs/schemas/corpus/TrainingManifest.json": "2de1fd6e33b748fa13e6d0d26f6b4e9288daea703e728f5dca24a179ad2c3b27"
+  },
+  "scope": [
+    "explicit successful builder case ownership is bound to shard diagnostic digest and exact merged map",
+    "exact label/report/output bytes, ordered images, symbols/version/provider, managed credit and fixed inventory are verified",
+    "missing/corrupt/linked/reparse/parent-replaced artifacts fail closed; no replacement publication; incomplete artifacts retained without success flag",
+    "workflow visibleJSON and exact hiddenmarker payload is distinct from unconditional diagnostic upload"
+  ],
+  "review_findings_resolved": [
+    "Merged pair_cases could previously claim arbitrary shard/case; now derived exactly from completed diagnostic ownership",
+    "Deep nested manifest/report JSON escaped as RecursionError; now structured refusal and failed diagnostic retention",
+    "Legacy diagnostic without pair_cases raised KeyError; now explicit ArtifactError/CLI usage refusal",
+    "Author additionally repaired symlink-before-dotdot lexical validation and added actual merge controls"
+  ],
+  "validation": [
+    {
+      "head": "7767fc9e27449f184f78b3ff9e9ab044c97af258",
+      "command": "QT_QPA_PLATFORM=offscreen PYTHONPATH=.:src:tests /workspace/scratch/142cb233d750/venv/bin/python -m pytest -q --tb=short tests/test_tier_r_training_artifacts.py tests/test_tier_r_shard.py tests/test_ci_summary.py tests/test_tier_r_credited_replay.py tests/test_tier_r_output_persistence.py tests/test_tier_r_contracts.py tests/test_tier_r_eval_cli.py tests/test_train_helpers.py",
+      "result": "237 passed,2 native-tool-blocked skips,3 expected LegacyOutputWarnings in7.42s"
+    },
+    {
+      "head": "bb892a2cc0c7053b73b2539c05e897e5e6c8f6bf",
+      "command": "QT_QPA_PLATFORM=offscreen PYTHONPATH=.:src:tests /workspace/scratch/142cb233d750/venv/bin/python -m pytest -q --tb=short tests/test_tier_r_training_artifacts.py tests/test_tier_r_shard.py tests/test_ci_summary.py",
+      "result": "115 passed in5.78s; scopes overlap and are not additive"
+    },
+    {
+      "head": "bb892a2cc0c7053b73b2539c05e897e5e6c8f6bf",
+      "control": "Independent absent pair_cases reproduction from real constructed evaluator shard with recalculated diagnostic digest",
+      "result": "structured exit2; no output created; prior rawKeyError repaired"
+    },
+    {
+      "head": "bb892a2cc0c7053b73b2539c05e897e5e6c8f6bf",
+      "control": "10,000 nested-array manifest20KB direct verify_bundle and exact TrainingManifest schema regeneration comparison",
+      "result": "ArtifactError refusal; generated schema identical"
+    },
+    {
+      "head": "bb892a2cc0c7053b73b2539c05e897e5e6c8f6bf",
+      "command": "changed-source/test Ruff and git diff --check base..head",
+      "result": "passed"
+    }
+  ],
+  "environment": {
+    "python": "3.12.14",
+    "platform": "Linux"
+  },
+  "limitations": [
+    "Constructed provider over actual evaluator/storage/merge/training reader; not native engine compatibility evidence",
+    "Two broader-selection skips require absent LLVM/MSVC tooling; not passed",
+    "Hosted GitHub upload/download payload integration not executed here",
+    "No TierW/privateinput/upload/fit/final-evaluation execution",
+    "No remote GitHub review submitted; Windows/full-suite/native gates remain separate",
+    "Future aggregate-credit preflight work is outside this source-bound review"
+  ]
+}

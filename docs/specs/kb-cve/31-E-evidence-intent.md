@@ -75,6 +75,14 @@ Alternative hypotheses include code optimizer churn, debug/symbol changes, unrel
 
 Store output keyed by input tuple (project ID/rev, old/new SHA, run ID, match-override revision, product_scope_id, KB/CVE edge-set digest, advisory SHA, rules SHA, engine/version/settings, source-coverage digest). An advisory or build lineage revision invalidates derived assessments; immutable raw runs and analyst notes persist. Persist transformed reports with source id plus JSON pointer and code location; default reports exclude raw binary, code and local paths. No user source is transmitted to remote AI without existing separate preview/consent and explicit user action. E0 can reuse existing report export extension; E1 may append optional PILOT/1 section, never replacing original Finding.
 
+E0 context construction must use the investigation's saved finite search scope for CVE/card lookups,
+source snapshots, active revision selection and the edge-set digest. A saved cached-corpus search is
+bounded by its recorded document IDs, not by documents imported later. Unselected sources must not
+enter interpretation or change its digest; selected older snapshots remain usable when a newer
+revision was not selected. Preserve the exact saved coverage in the context. Missing or contradictory
+scope requires an explicit repeat search under SPEC-31-F; no inferred whole-corpus fallback is allowed.
+This rule does not redesign card provenance or claim that a documentary association proves a fix.
+
 ## E8. Calibration and negative test requirements
 
 Golden negative fixtures: CWE text says 'not affected'; source contains generic 'memory' terms; introduced log string; tool disagreement; NVD-only CVE; wrong-product KB; Ghidra shared lineage; absent capa rule; blank function code; compiler-only rebuild; intervening nonsecurity LCU; missing signature; stale project revision. Outcomes must not become strong or claim vulnerability verified.

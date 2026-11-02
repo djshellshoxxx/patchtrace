@@ -296,15 +296,47 @@ REGISTRY: dict[str, TooltipEntry] = {
         'Copy the full text of the older code pane to the clipboard.',
         'Lets you paste the older representation into notes or other tools.',
         'Places plain text on the clipboard; the project is unchanged.',
-        'Exactly what the older pane shows, including display-only alignment gaps.',
+        'Code text, or exact original raw window bytes with physical offsets and provenance; raw display gaps excluded.',
         'Needs a selected match with text shown.'),
     'viewer.copy_newer': _e(
         'Copy the full text of the newer code pane to the clipboard.',
         'Lets you paste the newer representation into notes or other tools.',
         'Places plain text on the clipboard; the project is unchanged.',
-        'Exactly what the newer pane shows, including display-only alignment gaps.',
+        'Code text, or exact original raw window bytes with physical offsets and provenance; raw display gaps excluded.',
         'Needs a selected match with text shown.'),
     'viewer.older_code': _code_pane('older', 'newer'),
+    'viewer.raw_align': _e(
+        'Opt into bounded byte alignment at independent older and newer physical file offsets.',
+        'Inspect local insertions or deletions without implying function or instruction equivalence.',
+        'Reads only verified original bytes; gaps are display-only and Copy excludes them.',
+        'Exact byte anchors in this window only; ambiguity and unresolved reasons remain visible.',
+        'Hex and Binary only; default fixed-offset and Base64 behavior is unchanged.'),
+    'viewer.raw_align_older': _e(
+        'Enter the older physical file offset in hexadecimal, optionally prefixed with 0x.',
+        'Choose an independent verified older byte window.', 'Editing clears the result; Align windows reads it.',
+        'Original on-disk offset, never RVA or inferred continuation.'),
+    'viewer.raw_align_newer': _e(
+        'Enter the newer physical file offset in hexadecimal, optionally prefixed with 0x.',
+        'Choose an independent verified newer byte window.', 'Editing clears the result; Align windows reads it.',
+        'Original on-disk offset, never RVA or inferred continuation.'),
+    'viewer.raw_align_size': _e(
+        'Request 16..4096 bytes per side, in multiples of 16.',
+        'Bounds reads and alignment work.', 'Editing clears the result; EOF clipping is labelled.',
+        'Verified artifact sizes; no bytes are added beyond EOF.'),
+    'viewer.raw_align_run': _e(
+        'Read and align the two explicit physical windows in a background task.',
+        'Inspect bounded byte correspondence and unresolved regions.',
+        'Replaces only this display; no project changes or inferred shift carry.'),
+    'viewer.raw_align_spans': _e(
+        'Select an equal, inserted, deleted, replaced or unresolved byte span.',
+        'Navigate the current bounded result with both physical ranges visible.',
+        'Scrolls both raw panes; offsets and window bytes stay unchanged.'),
+    'viewer.raw_align_previous': _e(
+        'Select the preceding byte span in this window.', 'Review the current bounded result.',
+        'Scrolls both panes; never infers a preceding window or shift.'),
+    'viewer.raw_align_next': _e(
+        'Select the next byte span in this window.', 'Review the current bounded result.',
+        'Scrolls both panes; never infers a following window or shift.'),
     'viewer.newer_code': _code_pane('newer', 'older'),
     'nav.hunk_list': _e(
         'Jump to a particular inserted, removed or replaced region in the selected function.',

@@ -71,6 +71,7 @@ from .ui_bundle_setup import BundleSetup
 from .ui_inspection import InspectionThread, side_summary
 from .ui_persistence import commit_and_report
 from .ui_profiles import PROFILE_SETTING, profiles_dir, selected_profile
+from .ui_raw_alignment import RawAlignmentController
 from .ui_symbols import SymbolChoice, config_kwargs, configured_symbol_mode, effective_profile_symbol_mode
 
 REVIEWS = ['unreviewed', 'accepted', 'rejected', 'needs-review']
@@ -1753,6 +1754,7 @@ class MainWindow(QMainWindow):
         apply_tooltips(self, {'mode': 'viewer.mode', 'sync_scroll': 'viewer.sync_scroll',
                               'previous_diff': 'nav.previous_hunk', 'next_diff': 'nav.next_hunk',
                               'hunk_list': 'nav.hunk_list'})
+        self.raw_alignment = RawAlignmentController(self, pane, layout)
         self.workspace.addWidget(pane)
 
     def _build_findings(self):
@@ -2044,6 +2046,7 @@ class MainWindow(QMainWindow):
             self.panels.selection_changed(self.current_match())
 
     def render_match(self, *_):
+        self.raw_alignment.sync()
         match = self.current_match()
         self._render_signals(match)
         self._function_offsets = {}
@@ -2183,6 +2186,9 @@ class MainWindow(QMainWindow):
         artifact = next(a for a in self.project.artifacts if a.side == side)
         text = f'PatchTrace project {self.project.id} / revision {self.project.revision}\n'
         if self._raw_mode():
+            if self.raw_alignment.active():
+                self.raw_alignment.copy(side, text, artifact)
+                return
             raw = self._raw_sides.get(side) if self._current_inspection() is not None else None
             if raw is None or raw.rendered is None:
                 self.statusBar().showMessage('No raw bytes are displayed for this side; nothing copied.')
@@ -2580,6 +2586,9 @@ class MainWindow(QMainWindow):
     def _render_raw(self, match, clamped_from: int | None = None):
         self._hunks = []
         self._hunk_index = -1
+        if self.raw_alignment.active():
+            self.raw_alignment.render()
+            return
         inspection = self._current_inspection()
         if inspection is None:
             self._raw_sides = {}  # never let Copy return bytes from a previous orientation
@@ -2663,6 +2672,7 @@ class MainWindow(QMainWindow):
         if not sizes or offset < 0 or offset >= max(sizes):
             self.statusBar().showMessage('Offset is outside the verified artifact bytes.')
             return
+        self.raw_alignment.toggle.setChecked(False)
         self.raw_scope.blockSignals(True)
         self.raw_scope.setCurrentIndex(SCOPES.index('whole'))
         self.raw_scope.blockSignals(False)
@@ -2714,6 +2724,7 @@ class MainWindow(QMainWindow):
         self.logs.appendPlainText('File inspection failed: ' + message)
 
     def _clear_inspection(self):
+        self.raw_alignment.invalidate()
         if self._inspection is not None:
             self._inspection.close()
         self._inspection, self._inspection_key, self._raw_sides = None, None, {}
@@ -2725,10 +2736,13 @@ class MainWindow(QMainWindow):
             if thread.isRunning():
                 alive.append(thread)
             else:
+                if self._inspection_thread is thread:
+                    self._inspection_thread = None
                 thread.deleteLater()
         self._inspection_threads = alive
 
     def _stop_inspection(self):
+        self.raw_alignment.invalidate()
         # Every started thread is cancelled and joined: destroying a running QThread aborts the process.
         for thread in self._inspection_threads:
             thread.cancel.set()
@@ -3045,6 +3059,7 @@ class MainWindow(QMainWindow):
         for name, splitter in [('workspace', self.workspace), ('vertical', self.vertical), ('code', self.code_split)]:
             self.settings.setValue('desktop/' + name, splitter.saveState())
         self.settings.setValue('desktop/sync', self.sync_scroll.isChecked())
+        self.raw_alignment.shutdown()
         self.panels.shutdown()
         self.settings.sync()
         self._stop_inspection()

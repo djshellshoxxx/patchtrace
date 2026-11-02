@@ -202,6 +202,18 @@ class ReverseIndex:
     def scopes(self) -> tuple[ProductScope, ...]:
         return merge_scopes(s for d in self.documents for s in d.scopes)
 
+    def within_scope(self, scope: SearchScope) -> ReverseIndex:
+        """An independent view whose revision selection cannot see documents outside the saved scope.
+
+        A cached corpus is its recorded document IDs, including the empty set; it is not a live wildcard.
+        """
+        view = ReverseIndex()
+        for doc in self._docs.values():
+            if ((scope.kind in ('selected_months', 'mixed') and doc.source.release_id in scope.months)
+                    or (scope.kind in ('provided_files', 'mixed', 'cached_corpus') and doc.doc_id in scope.doc_ids)):
+                view.add(doc)
+        return view
+
     # ------------------------------------------------------------------------------------------ coverage
 
     def _select(self, scope: SearchScope) -> tuple[set[str], set[str], list[ImportedDocument], bool]:

@@ -74,6 +74,11 @@ dialect may hide contradictory fields as tolerated extensions.
 
 Read native fields directly; do not convert to a fictional lowercase document. Edge/status/problem
 pointers use the original key case and array positions, e.g. `/Vulnerability/193/Remediations/0`.
+Diagnostics for an absent `DocumentTracking.CurrentReleaseDate`, vulnerability `CVE`, or remediation
+`Type` point to the nearest existing parent object and name the missing field in their detail. If the
+field is present but invalid (including JSON null), its diagnostic retains the exact field pointer.
+These diagnostic locators must resolve in the imported bytes; they do not insert missing fields or
+alter the adapter's acceptance, applicability, or revision-ordering rules.
 Source IDs/digests and stored raw objects refer to the exact imported bytes. Derived factual fixtures
 are explicitly labelled projections with both capture and fixture hashes and upstream index maps;
 their pointers resolve in the fixture, not the full capture. Local import remains unverified, and

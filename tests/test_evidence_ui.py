@@ -122,7 +122,7 @@ def test_state_ready_three_engines_columns_headers_and_units(panel):
     assert headers[0].startswith('Match') and headers[1].startswith('Verdict')
     assert headers[2] == 'Ghidriff (baseline)\nmatch type (raw)'
     assert headers[3] == 'BinDiff 8\nsimilarity / algorithm'
-    assert headers[4] == 'rz-diff 0.9.1\nbyte similarity (raw bytes)'
+    assert headers[4] == 'rz-diff 0.9.0\nbyte similarity (raw bytes)'
     assert model.rowCount() == 4 and visible(panel.split)
     assert panel.footer.text() == FOOTER
     assert panel.status.text().startswith('Summary: 4 matches')
@@ -630,7 +630,7 @@ def real_outcomes(window, tmp_path, engines):
 
 
 def supported():
-    return {'rz-diff': Capability(engine='rz-diff', supported=True, version='0.9.1', path=sys.executable,
+    return {'rz-diff': Capability(engine='rz-diff', supported=True, version='0.9.0', path=sys.executable,
                                   supports_json=True),
             'bindiff': Capability(engine='bindiff', supported=True, version='8', path='x', supports_json=False)}
 

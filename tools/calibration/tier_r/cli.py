@@ -300,8 +300,11 @@ def cmd_vendoring(args) -> tuple[int, dict]:
 
 
 def cmd_schemas(args) -> tuple[int, dict]:
+    from . import training_artifacts as TA
+
     root = Path(args.out)
     written = [p.as_posix() for p in S.write_all(root)] + [p.as_posix() for p in RS.write_all(root)]
+    written.append(TA.write_schema(root).as_posix())
     return OK, {'command': 'schemas', 'status': 'ok', 'written': sorted(written)}
 
 

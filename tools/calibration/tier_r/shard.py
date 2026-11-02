@@ -31,7 +31,8 @@ from pathlib import Path
 
 from patchtrace.calibration.scope import TIER_R_CLAIM
 
-from ..common import canonical_json, digest, r12
+from ..common import canonical_json, digest, r12, strict_json
+from . import training_artifacts as TA
 from .contracts import COSMETIC_OPERATORS, PERMISSIVE_SPDX, SEMANTIC_OPERATORS, ContractError, load_report
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
@@ -278,8 +279,8 @@ def _summary(stdout: str) -> dict | None:
     candidates += ['\n'.join(lines[i:]) for i in range(len(lines) - 1, -1, -1) if lines[i].startswith('{')][:1]
     for candidate in candidates:
         try:
-            value = json.loads(candidate)
-        except ValueError:
+            value = strict_json(candidate)
+        except (ValueError, RecursionError):
             continue
         if isinstance(value, dict):
             return value
@@ -289,12 +290,11 @@ def _summary(stdout: str) -> dict | None:
 def _scratch_json(scratch: Path, value) -> dict | None:
     """A JSON file named by a command summary, read only when it lies inside this shard's scratch store."""
     try:
-        path = Path(value).resolve()
-        path.relative_to(scratch.resolve())
-        if path.suffix != '.json' or path.stat().st_size > MAX_SHARD_BYTES:
+        path = TA.inside(scratch, value)
+        if path.suffix != '.json':
             return None
-        doc = json.loads(path.read_text(encoding='utf-8'))
-    except (OSError, ValueError, TypeError):
+        doc = strict_json(TA.read_bytes(path, MAX_SHARD_BYTES))
+    except (OSError, ValueError, TypeError, RecursionError):
         return None
     return doc if isinstance(doc, dict) else None
 
@@ -352,6 +352,8 @@ def _absorb(summary: dict, labels: list, features: list, reports: list) -> None:
 def _classify(rc: int | None, reason: str | None, summary: dict | None = None) -> str:
     if rc is None:
         return 'timeout'
+    if summary and summary.get('status') in ('failed', 'error'):
+        return 'failed'
     status = {0: 'ok', 1: 'findings', 3: 'blocked'}.get(rc, 'failed')
     if status == 'ok' and summary and summary.get('status') == 'skipped':
         return 'skipped'
@@ -369,7 +371,8 @@ def _report_problem(case_id: str, status: str, detail: str | None, stderr: str, 
 
 def run_shard(plan: dict, shard: int, *, timeout: int = DEFAULT_TIMEOUT, runner: Runner | None = None,
               python: str | None = None, scratch: Path | None = None, engines: Sequence[str] | None = None,
-              verify_plan: bool = True, log: Callable[[str], None] | None = None) -> dict:
+              verify_plan: bool = True, log: Callable[[str], None] | None = None,
+              artifacts_dir: Path | None = None) -> dict:
     runner = runner or default_runner       # looked up at call time so tests and callers can substitute it
     log = log or (lambda text: print(text, file=sys.stderr, flush=True))
     entry = next((s for s in plan['shards'] if s['shard'] == shard), None)
@@ -385,6 +388,9 @@ def run_shard(plan: dict, shard: int, *, timeout: int = DEFAULT_TIMEOUT, runner:
         labels: list = []
         features: list = []
         reports: list = []
+        sources: list = []
+        pair_cases: dict[str, str] = {}
+        transfer_error = None
         results = []
         for case_id in entry['cases']:
             status, detail, summary = 'ok', None, None
@@ -397,6 +403,15 @@ def run_shard(plan: dict, shard: int, *, timeout: int = DEFAULT_TIMEOUT, runner:
                     summary = sanitize(parsed)
                     refuse_microsoft(canonical_json(summary).decode())
                     _absorb(summary, labels, features, reports)
+                    if artifacts_dir is not None and status in ('ok', 'findings'):
+                        try:
+                            for name in parsed.get('written', []):
+                                pair = name.removesuffix('.json')
+                                if TA.pair_name(pair) != name or pair in pair_cases:
+                                    raise TA.ArtifactError('duplicate or invalid builder pair ownership')
+                                pair_cases[pair] = case_id
+                        except (ValueError, TypeError, AttributeError) as exc:
+                            transfer_error = str(exc)
                 if status == 'skipped':
                     detail = ' '.join(str(parsed.get('reason') or 'skipped').split())[:REASON_CHARS]
                     log(f'[SKIPPED] {case_id}: {detail}')
@@ -418,6 +433,8 @@ def run_shard(plan: dict, shard: int, *, timeout: int = DEFAULT_TIMEOUT, runner:
                                                       engine, '--symbols', 'hidden'], timeout, env)
                 parsed = _summary(out)
                 if parsed is not None:
+                    if artifacts_dir is not None:
+                        sources.append((engine, parsed.get('report'), parsed.get('outputs')))
                     report_doc = _scratch_json(scope, parsed.get('report')) if isinstance(parsed.get('report'), str) else None
                     parsed = sanitize(parsed)
                     if report_doc is not None:
@@ -430,24 +447,38 @@ def run_shard(plan: dict, shard: int, *, timeout: int = DEFAULT_TIMEOUT, runner:
                     detail = failure_reason(rc, reason, parsed, err)
                     _report_problem(f'evaluate:{engine}', status, detail, err, log)
                 results.append({'id': f'evaluate:{engine}', 'status': status, 'reason': detail, 'digest': None})
-    doc = {'contract': SHARD_CONTRACT, 'shard': shard, 'of': plan['of'], 'seed': plan['seed'],
-           'plan_sha256': plan['plan_sha256'], 'subset': plan['subset'], 'engines': engines,
-           'cases': results, 'labels': sorted(labels, key=canonical_json), 'features': sorted(features, key=canonical_json),
-           'reports': reports}
-    refuse_microsoft(canonical_json(doc).decode())
-    doc['shard_sha256'] = digest(doc, 'shard_sha256')
-    return doc
+        doc = {'contract': SHARD_CONTRACT, 'shard': shard, 'of': plan['of'], 'seed': plan['seed'],
+               'plan_sha256': plan['plan_sha256'], 'subset': plan['subset'], 'engines': engines,
+               'cases': results, 'labels': sorted(labels, key=canonical_json), 'features': sorted(features, key=canonical_json),
+               'reports': reports}
+        refuse_microsoft(canonical_json(doc).decode())
+        if artifacts_dir is not None:
+            doc['pair_cases'] = pair_cases
+        doc['shard_sha256'] = digest(doc, 'shard_sha256')
+        if artifacts_dir is not None:
+            try:
+                if transfer_error:
+                    raise TA.ArtifactError(transfer_error)
+                TA.export_training_artifacts(doc, scope, artifacts_dir / f'shard-{shard}', sources, pair_cases)
+            except (ValueError, OSError, TypeError, RecursionError) as exc:
+                detail = f'training transfer refused: {str(exc)[:REASON_CHARS]}'
+                results.append({'id': 'transfer:training', 'status': 'failed', 'reason': detail, 'digest': None})
+                doc['shard_sha256'] = digest(doc, 'shard_sha256')
+                _report_problem('transfer:training', 'failed', detail, '', log)
+        return doc
 
 
 def write_shard(doc: dict, out: Path) -> Path:
     out = Path(out)
     if 'tier-w' in out.resolve().parts:
         raise ShardError('refused: output inside a tier-w directory')
+    TA.checked_path(out, missing=True)
     out.mkdir(parents=True, exist_ok=True)
     data = (json.dumps(doc, sort_keys=True, indent=1, allow_nan=False) + '\n').encode()
     if len(data) > MAX_SHARD_BYTES:
         raise ShardError(f'shard file would be {len(data)} bytes (cap {MAX_SHARD_BYTES}); it must be aggregate-only')
     path = out / f'shard-{doc["shard"]}.json'
+    TA.checked_path(path, missing=True)
     path.write_bytes(data)
     return path
 
@@ -501,7 +532,7 @@ def load_shards(directory: Path, *, plan: dict | None = None) -> list[dict]:
     docs = []
     for path in sorted(Path(directory).glob('shard-*.json')):
         try:
-            doc = json.loads(path.read_text(encoding='utf-8'))
+            doc = strict_json(TA.read_bytes(path, MAX_SHARD_BYTES))
         except (OSError, ValueError) as exc:
             raise ShardError(f'{path.name}: unreadable ({exc})') from None
         if not isinstance(doc, dict) or doc.get('contract') != SHARD_CONTRACT:
@@ -532,7 +563,7 @@ def load_shards(directory: Path, *, plan: dict | None = None) -> list[dict]:
             raise ShardError('shards do not belong to the given plan')
         for doc in docs:
             want = next(s['cases'] for s in plan['shards'] if s['shard'] == doc['shard'])
-            got = sorted(c['id'] for c in doc['cases'] if not c['id'].startswith('evaluate:'))
+            got = sorted(c['id'] for c in doc['cases'] if not c['id'].startswith(('evaluate:', 'transfer:')))
             if got != want:
                 raise ShardError(f'shard {doc["shard"]} did not run exactly its planned cases')
     return sorted(docs, key=lambda d: d['shard'])
@@ -635,14 +666,15 @@ def write_merge(report: dict, prov: dict, out: Path) -> list[Path]:
     out = Path(out)
     if 'tier-w' in out.resolve().parts:
         raise ShardError('refused: output inside a tier-w directory')
+    TA.checked_path(out, missing=True)
     out.mkdir(parents=True, exist_ok=True)
     paths = []
     for name, data in (('tier-r-aggregate.json', report), ('tier-r-merge.json', prov)):
         path = out / name
-        path.write_bytes((json.dumps(data, sort_keys=True, indent=1, allow_nan=False) + '\n').encode())
+        TA.publish_bytes(path, (json.dumps(data, sort_keys=True, indent=1, allow_nan=False) + '\n').encode())
         paths.append(path)
     md = out / 'tier-r-report.md'
-    md.write_text(render_markdown(report, prov), encoding='utf-8')
+    TA.publish_bytes(md, render_markdown(report, prov).encode('utf-8'))
     return paths + [md]
 
 
@@ -678,19 +710,21 @@ def build_parser() -> argparse.ArgumentParser:
     r.add_argument('--subset', default='smoke')
     r.add_argument('--timeout', type=int, default=DEFAULT_TIMEOUT, help='seconds per case')
     r.add_argument('--out', type=Path, required=True)
+    r.add_argument('--collect-artifacts', action='store_true', help='export a verified training bundle')
     m = sub.add_parser('merge', help='fold shard files into one tier-r-report/1')
     m.add_argument('--in', dest='src', type=Path, required=True)
     m.add_argument('--plan', type=Path)
     m.add_argument('--out', type=Path, required=True)
+    m.add_argument('--artifacts', type=Path, help='require verified per-shard training bundles')
     return ap
 
 
 def _plan_from_args(args) -> dict:
     if args.plan:
-        return json.loads(args.plan.read_text(encoding='utf-8'))
+        return strict_json(TA.read_bytes(args.plan, MAX_SHARD_BYTES))
     if args.cases is None or args.of is None or args.seed is None or not args.plan_sha256:
         raise ShardError('run-shard needs --plan, or --cases with --of --seed --plan-sha256')
-    cases = json.loads(args.cases)
+    cases = strict_json(args.cases)
     if not isinstance(cases, list) or not all(isinstance(c, str) for c in cases):
         raise ShardError('--cases must be a JSON list of strings')
     shards = [{'shard': i, 'cases': cases if i == args.shard else []} for i in range(args.of)]
@@ -713,20 +747,27 @@ def main(argv: Sequence[str] | None = None) -> int:
             return OK
         if args.cmd == 'run-shard':
             plan = _plan_from_args(args)
-            doc = run_shard(plan, args.shard, timeout=args.timeout, verify_plan=args.plan is not None)
+            doc = run_shard(plan, args.shard, timeout=args.timeout, verify_plan=args.plan is not None,
+                            artifacts_dir=args.out / 'training' if args.collect_artifacts else None)
             path = write_shard(doc, args.out)
+            verified = args.collect_artifacts and not any(c['id'] == 'transfer:training' for c in doc['cases'])
+            _github_output({'verified_training': 'true' if verified else 'false'})
             bad = [c['id'] for c in doc['cases'] if c['status'] in ('failed', 'timeout')]
             blocked = [c['id'] for c in doc['cases'] if c['status'] == 'blocked']
             print(json.dumps({'shard': doc['shard'], 'file': path.name, 'cases': len(doc['cases']),
                               'failed': bad, 'blocked': blocked, 'shard_sha256': doc['shard_sha256']}, sort_keys=True))
             return FINDINGS if bad else (BLOCKED if blocked else OK)
-        plan = json.loads(args.plan.read_text(encoding='utf-8')) if args.plan else None
-        report, prov = merge(load_shards(args.src, plan=plan))
+        plan = strict_json(TA.read_bytes(args.plan, MAX_SHARD_BYTES)) if args.plan else None
+        docs = load_shards(args.src, plan=plan)
+        report, prov = merge(docs)
+        if args.artifacts is not None:
+            TA.merge_training_artifacts(docs, args.artifacts, args.out / 'training')
         write_merge(report, prov, args.out)
+        _github_output({'verified_training': 'true' if args.artifacts is not None else 'false'})
         print(json.dumps({'report_sha256': report['report_sha256'], 'merge_sha256': prov['merge_sha256'],
                           'shards': len(prov['shards']), 'failing_cases': len(prov['failing_cases'])}, sort_keys=True))
         return FINDINGS if prov['failing_cases'] else OK
-    except (ShardError, ValueError, OSError) as exc:
+    except (ShardError, ValueError, OSError, RecursionError) as exc:
         print(f'tier_r.shard: {exc}', file=sys.stderr)
         return USAGE
 

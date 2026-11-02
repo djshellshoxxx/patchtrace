@@ -46,8 +46,12 @@ def _identity(info: os.stat_result) -> tuple[int, int]:
     return info.st_dev, info.st_ino
 
 
+def _content_version(info: os.stat_result) -> tuple[int, int, int, int]:
+    return info.st_dev, info.st_ino, info.st_size, info.st_mtime_ns
+
+
 def _file_version(info: os.stat_result) -> tuple[int, int, int, int, int]:
-    return info.st_dev, info.st_ino, info.st_size, info.st_mtime_ns, info.st_ctime_ns
+    return *_content_version(info), info.st_ctime_ns
 
 
 def _linked(info: os.stat_result) -> bool:
@@ -96,8 +100,11 @@ def read_output_bytes(path: Path, maximum: int = RS.MAX_OUTPUT_BYTES) -> bytes:
             with os.fdopen(descriptor, 'rb', closefd=False) as stream:
                 raw = stream.read(maximum + 1)
             after, final = os.fstat(descriptor), path.lstat()
+            # Windows fstat ctime is ChangeTime, while lstat ctime can be CreationTime.
+            # Retain both clocks as independent before/after checks, never compare their meanings.
             if (len(raw) > maximum or _linked(final) or _file_version(before) != _file_version(after)
-                    or _file_version(after) != _file_version(final)):
+                    or _file_version(named) != _file_version(final)
+                    or _content_version(after) != _content_version(final)):
                 raise OutputError('output bytes changed while reading or exceed their byte limit')
             return raw
         finally:

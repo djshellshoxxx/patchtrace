@@ -76,11 +76,15 @@ def _fingerprint(path: Path) -> _Version | None:
             before = os.fstat(fd)
             if not stat.S_ISREG(before.st_mode):
                 return None
-            # On Windows st_ctime is creation time. The shared helper queries
-            # FILE_BASIC_INFO.ChangeTime, so restored mtime during hashing is
-            # still observable. Bind its path handle to the descriptor below.
+            # Windows path stat can expose creation time while fstat exposes
+            # change time. Compare ctime only within each observation API.
+            # The shared helper also reads FILE_BASIC_INFO.ChangeTime, retaining
+            # detection of restored-mtime edits independently of that mismatch.
             named_before = file_fingerprint(path)
-            if named_before[:4] != _stat_key(before)[:4]:
+            path_before = path.lstat()
+            if (not stat.S_ISREG(path_before.st_mode)
+                    or named_before[:4] != _stat_key(before)[:4]
+                    or _stat_key(path_before)[:4] != _stat_key(before)[:4]):
                 return None
             digest = hashlib.sha256()
             remaining = before.st_size
@@ -94,7 +98,8 @@ def _fingerprint(path: Path) -> _Version | None:
             after = os.fstat(fd)
             named = path.lstat()
             if (not stat.S_ISREG(named.st_mode) or _stat_key(before) != _stat_key(after)
-                    or _stat_key(after) != _stat_key(named)
+                    or _stat_key(path_before) != _stat_key(named)
+                    or _stat_key(after)[:4] != _stat_key(named)[:4]
                     or file_fingerprint(path) != named_before):
                 return None
             return before.st_dev, before.st_ino, before.st_size, before.st_mtime_ns, digest.hexdigest()

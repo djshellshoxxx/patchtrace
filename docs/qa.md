@@ -644,3 +644,46 @@ Independent credited-replay review approved source `5c26af904a28dd41aaacb3a60f98
 ## Combined source verification — 2026-11-01 14:32 UTC
 
 Source `78722316df82bd606402c9c8af3db87ab11a3e53`: 216 passed, 1 native-tool PATH skip, 14 expected warnings in 27.55 s for credited replay/persistence/synthetic training/preregistration. Whole Ruff/pip/general+corpus schema/KBC checks passed. Earlier full f005c66 failed 3 tests; its two source findings are now reviewed repairs, with no fresh full run claimed. Original failures retained. [Current evidence](qa/integration-checkpoint2-20261101.json); [current status and ownership](handoff/autonomous-continuation-20261101.md).
+
+## Issue #120 independent main repair (2026-11-01)
+
+Base: canonical `6579ed83211b7ff2039e3152728ac1cddc3e93d6`. Before implementation, the two defect suites produced **28 failed, 3 passed**: manual 1:1 ambiguity became an affirmative pairing; reference/name/code changes reused manual identity; changed normalized secondary content reused result identity; inconsistent alternative engine/version/anchor input was accepted. The failures include real ProjectService correction, persisted secondary republish, cache and refresh scenarios.
+
+Ported only the reviewed issue #120 changes from `5db4de9`, `25bfc96`, `59e80be`, and `4578c90`. Relevant source contracts already exist on main. The PR #144 matching-policy hook, ladder/facts/pseudocode reconciliation and typed-literal changes were not required or imported. No rz-diff quarantine was imported.
+
+Focused checks on the main port: identity/alternative/budget/source/key suites **126 passed**; related storage, secondary, read-model, in-process pipeline and wire-compute suites **141 passed, 1 real-child node deselected**; unified contracts/import-boundary suites **141 passed**. That real-child node was then run separately and **1 passed**. A new stored-secondary identity round-trip also ran a real Python worker and verified its next run was cached; the complete resource suite with that new case **8 passed**. Full `ruff check src tests tools` passed. `tools/generate_schemas.py` regenerated without any schema drift.
+
+The main-only source retains existing matching semantics outside the repaired identity/ambiguity/alternative rules. Valid upstream fields, Atom.ref values and raw hashes are preserved; malformed historical rows follow the existing logged per-row skip policy. Stored-byte and in-memory canonical identity domains may conservatively miss cache across representations; distinct emitted content must not collide.
+
+All fixtures are authored or synthetic; a Python worker round-trip is not a native matching/accuracy gate. Full pytest on the final published head, independent review and remote/native checks remain pending. No main merge or publication is asserted by this record.
+
+Independent main identity repair: original28 failures reproduced on main; final coordinator125 focused/worker/child checks passed. Refused-source assertion now verifies derived identity and original raw provenance; independent fault controls and original failures retained in `docs/qa/identity-main-repair-20261101.md`. Exact published full/native/Qt gates remain required.
+
+PR156 external-review follow-up: active Budget now reaches refacts identity/flag work; Qt captures validated inputs on owner and resolves new identity hashing in task work before exact-key owner DB lookup/publication. Both defects independently reviewed; main-port79 coordinator checks passed. Original red/independent evidence is retained in `docs/qa/identity-followup-20261101.md`. Existing capture I/O remains owner-side; no full responsiveness/performance claim.
+
+## RD-F03 paired raw UI recovery — 2026-11-02
+
+Fresh implementation from `039c696` after the unpublished workspace source was lost; earlier source/test claims
+do not qualify this implementation. Pure `raw_alignment_view.py` and TaskRunner-based `ui_raw_alignment.py`
+provide opt-in Hex/Binary physical windows, original-window Copy, visible unresolved/EOF reasons and bounded
+span navigation. Default fixed-offset and Base64 views remain covered by the existing integration tests.
+
+The stronger immediate-result geometry regression first failed at both starting widths: 1440 allocated 27 px
+for a 28 px status, and 1100 allocated 35 px for 42 px. Existing child/parent layout allocation order was repaired;
+tests inspect immediate delivery and resize to 960 without event pumping or size-policy overrides. Removing
+only the inspection reap fix reproduced a retained deleted `InspectionThread` C++ wrapper (1 failing regression);
+the fix clears the current pointer only when reaping that exact finished thread. An initial exit-time event-filter
+access to a deleted control was also repaired by removing filters during shutdown and refusing closed events.
+
+Focused command (offscreen, `PYTHONPATH=.:src:tests`):
+`python -m pytest -q tests/test_raw_alignment_view.py tests/test_ui_raw_alignment.py tests/test_alpha_integration.py tests/test_tooltips.py tests/test_representation_alignment.py tests/test_gui_tasks.py tests/test_gui_host_seam.py`.
+Final source result: **191 passed**. Whole `python -m ruff check src tests tools` and `git diff --check` pass;
+a fresh pure-view import loads no Qt modules. Tests include actual `QApplication.quit()` in an isolated subprocess,
+real verified-reader reads, exact physical gutters and Copy reconstruction, EOF/tamper/bounds, all context-change
+stale-result paths, worker-thread capture, public fixed-offset navigation, current tooltip provenance, button/
+keyboard/context-menu Copy and span selection preservation on redraw. Independent review and central integration
+remain separate. No target execution, full-suite, native Windows, DPI, performance or human acceptance is claimed.
+
+## November 2 recovery and reviewed integration
+
+Previous scratch-only full2/native work is unavailable; no outcome is inferred. [Dated continuation](handoff/autonomous-continuation-20261102.md), [machine receipt](qa/resume-checkpoint-20261102.json) and [CI archive](qa/ci-resume-evidence-20261102.tar.gz) preserve actual original failures, #156 exact-tree acceptance/package hashes, fresh stat-API repairs, independent RD/transfer reviews and current gate limits. Combined RD/transfer106 passed18.70s; no new combined full/Windows pass is claimed. All broader accepted work remains open as individually recorded.

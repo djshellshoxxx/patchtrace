@@ -1,0 +1,96 @@
+{
+  "reviewer": "review_resume independent helper",
+  "reviewed_head": "aa82d17cd730affdc362fad14a0fb79533f7df6d",
+  "reviewed_tree": "df22c7be13bb8148d8c5601536ca18417c21ef86",
+  "base": "039c696c93a443d152d4ddc1383179408ff86b75",
+  "worktree": "/workspace/scratch/142cb233d750/patchtrace-rd",
+  "decision": "no blocking findings remain in accepted bounded paired physical-window UI slice",
+  "source_sha256": {
+    "src/patchtrace/raw_alignment_view.py": "de1bd55be946816b32b3ece72369ebb71020525137d65853ae13d53691221b30",
+    "src/patchtrace/ui_raw_alignment.py": "06b955de7fe799fd5f019d7af017756f4cb93aa704697e1e8ae4b5adf96b6c31",
+    "src/patchtrace/ui.py": "7a6f8e9d24f8b777bfd746c271ed5762ab13d1475f496b1ed41672bbf0197f71",
+    "src/patchtrace/tooltips.py": "523b09d3b38b93b9bf31b1a5fadb4f7b926217e06b22b81cdbb801ab3d8740c2"
+  },
+  "scope": [
+    "unchecked-by-default Hex/Binary independent physical offsets and bounded16..4096byte windows",
+    "original bytes/copy/digests and independent physical gutters preserved; display-only gaps never copied",
+    "explicit EOF/ambiguous/unresolved output, single-window span navigation, fixed-offset public navigation fallback",
+    "TaskRunner readers/scalars capture with generation/context invalidation and lifecycle cancellation"
+  ],
+  "review_observations_resolved": [
+    "Public raw-offset navigation exits paired mode before legacy paging",
+    "Paired tooltip now binds current original-window captions and clears stale provenance",
+    "Button, Ctrl+C and active context-menu Copy all route through exact original-window provenance copy",
+    "Same-context redraw reapplies selected span cursor/highlight"
+  ],
+  "validation": [
+    {
+      "command": "QT_QPA_PLATFORM=offscreen PYTHONPATH=.:src:tests /workspace/scratch/142cb233d750/venv/bin/python -m pytest -q --tb=short tests/test_raw_alignment_view.py tests/test_ui_raw_alignment.py tests/test_alpha_integration.py tests/test_tooltips.py tests/test_representation_alignment.py tests/test_gui_tasks.py tests/test_gui_host_seam.py",
+      "result": "191 passed in31.24s"
+    },
+    {
+      "command": "python -m ruff check changed source and new tests",
+      "result": "All checks passed"
+    },
+    {
+      "command": "git diff --check base..head",
+      "result": "passed"
+    },
+    {
+      "command": "QT_QPA_PLATFORM=offscreen PYTHONPATH=.:src:tests /workspace/scratch/142cb233d750/venv/bin/python /workspace/scratch/142cb233d750/reviews-resume/inspect_rd_visual.py",
+      "result": "passed; captured1440x960 and960x740 independent-offset/EOF views; status heights28/42/42 equal required heights; narrow/EOF screenshots visually inspected with no summary clipping or overlap"
+    }
+  ],
+  "visuals": [
+    {
+      "image": "/workspace/scratch/142cb233d750/reviews-resume/rd-paired-wide.png",
+      "window": [
+        1440,
+        960
+      ],
+      "status": "Bounded byte alignment: ambiguous \u00b7 repeated-anchor \u00b7 1 spans; byte equality only\nOLDER: 0x200, 128/128 bytes; NEWER: 0x210, 128/128 bytes",
+      "status_bounds": [
+        817,
+        28
+      ],
+      "required_height": 28
+    },
+    {
+      "image": "/workspace/scratch/142cb233d750/reviews-resume/rd-paired-narrow.png",
+      "window": [
+        960,
+        740
+      ],
+      "status": "Bounded byte alignment: ambiguous \u00b7 repeated-anchor \u00b7 1 spans; byte equality only\nOLDER: 0x200, 128/128 bytes; NEWER: 0x210, 128/128 bytes",
+      "status_bounds": [
+        429,
+        42
+      ],
+      "required_height": 42
+    },
+    {
+      "image": "/workspace/scratch/142cb233d750/reviews-resume/rd-paired-eof.png",
+      "window": [
+        960,
+        740
+      ],
+      "status": "Alignment unavailable: a physical window starts at EOF\nOLDER: 0x400, 0/128 bytes \u00b7 EOF (window clipped); NEWER: 0x210, 128/128 bytes",
+      "status_bounds": [
+        429,
+        42
+      ],
+      "required_height": 42
+    }
+  ],
+  "environment": {
+    "python": "3.12.14",
+    "platform": "Linux",
+    "Qt": "offscreen"
+  },
+  "limitations": [
+    "Portable offscreen rendering, not native Windows highDPI/screenreader/human usability acceptance",
+    "No native performance/full-suite claim",
+    "No target binary or backend engine executed",
+    "No remote GitHub review submitted"
+  ]
+}

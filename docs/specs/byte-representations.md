@@ -28,8 +28,8 @@ Code-line evidence navigation (next/previous hunk, evidence jump, line anchors) 
 
 This is an opt-in backend API in `representations/alignment.py`; `byte_diff_mask` and all existing consumers
 retain their equal-logical-offset behavior. It uses only stdlib and original byte sequences, with no external
-engine, disassembler, function matching, cache or persisted schema. D-24/D-25/D-26 remain unchanged. UI adoption,
-paired navigation and native performance acceptance are separate work.
+engine, disassembler, function matching, cache or persisted schema. D-24/D-25/D-26 remain unchanged.
+Native performance acceptance remains separate work. The opt-in desktop adoption is described below.
 
 * `align_bytes(older: bytes, newer: bytes, *, older_offset=0, newer_offset=0, limits=AlignmentLimits(), cancel=None)`
   returns frozen `ByteAlignment(policy, status, reason, spans, work_used)`. Both inputs must be immutable `bytes`,
@@ -80,6 +80,31 @@ mask; noncontiguous/malformed page rejection; deterministic work/span bounds and
 search. No binary is executed by these controls.
 
 ### Formats
+
+#### RD-F03 paired physical windows (desktop)
+
+Hex/Binary offer an unchecked-by-default paired alignment control. Older and newer physical file offsets are
+entered independently as hexadecimal, and the requested window is an integer multiple of 16 within 16..4096
+bytes. These values never infer function identity or an RVA. Each submission captures verified readers and
+scalar inputs on the GUI thread, then reads and aligns on the existing TaskRunner. Reads use exact, EOF-clipped
+file-range scopes with `clip=False`; nonempty pages go through `align_pages`. An offset at EOF yields an explicit
+unavailable alignment and original bytes from the other side, not fabricated padding or a claimed insertion.
+Offsets past EOF are rejected. Clipped windows and complete/ambiguous/unaligned/limited reasons remain visible.
+
+Aligned rows retain each side's physical gutter; missing row bytes appear as a labelled display-only gap, never
+zero bytes or an invented file offset. A span selector and previous/next controls navigate this single bounded
+result, including unresolved spans. They never carry an inferred shift into another window. Copy formats the
+exact original window bytes and their physical ranges/digest, without alignment labels or gaps. Base64 and the
+default fixed-offset view retain their existing behavior. The controls never infer continuation offsets.
+While paired mode is active, the Copy buttons, keyboard Copy shortcut and raw-pane context-menu Copy all use
+this original-window copy route. Current paired captions replace earlier fixed-window tooltip provenance;
+invalidating a result clears both its Copy availability and its provenance tooltip.
+
+Mode, project, orientation, selection, inspection, input and panel visibility changes invalidate pending and
+displayed results. Cancellation happens before releasing inspected readers; late results must match the captured
+context and generation. Close and application quit cancel work through the shared TaskRunner. Summary layout is
+allocated by its existing parent layout before result paint, including status/EOF line wrapping at narrow widths.
+
 
 Hex line: lower-case offset gutter (at least 8 digits, widened consistently when needed), two spaces, byte columns with an extra space after the 8th byte, then `|ascii|` where only 0x20..0x7e are shown and every other byte (nulls, high-bit) is `.`. A partial last line is padded so the ASCII column aligns. Binary line: offset gutter, two spaces, 8-bit groups (`01001101`) separated by a space. Base64: RFC 4648 standard alphabet with padding; wrapping is display only, `base64_exact` is the single-line form and encodes exactly the page bytes in logical order. For non-contiguous pages Hex/Binary emit one segment header line per chunk; Base64 shows no headers inside the encoded text (the caption lists the segments) so the text stays valid Base64.
 

@@ -26,6 +26,7 @@ from .contracts import (
     CveCard,
     Lead,
     Record,
+    SearchScope,
     Sha256,
     Short,
     Uuid,
@@ -33,6 +34,7 @@ from .contracts import (
 )
 from .index import ReverseIndex
 from .products import clean_text
+from .sources.scope import build_coverage, corpus_digest
 
 BUNDLE_VERSION = 1
 HOOKS = ('kb.meaning.coverage', 'kb.meaning.hypothesis', 'kb.meaning.kev', 'kb.meaning.relation',
@@ -100,17 +102,56 @@ def vulnerability_pointer(pointer: str) -> str:
     return match.group(1) if match else '/'
 
 
+def saved_search_scope(lead: Lead, coverage: Sequence[Coverage]) -> SearchScope | None:
+    """Validate the saved selector without replacing coverage or guessing a wider scope.
+
+    Pair-only local investigations may have no advisory coverage. The service translates ValueError
+    to PT-KBC-SCOPE before making decisions or changing investigation/project state.
+    """
+    if not coverage and lead.kind == 'pair':
+        return None
+    if len(coverage) != 1:
+        raise ValueError('one saved search coverage is required')
+    saved, = coverage
+    scope = saved.scope
+    if (saved.state == 'unknown_scope'
+            or (scope.kind in ('cached_corpus', 'provided_files') and scope.months)
+            or (scope.kind == 'selected_months' and scope.doc_ids)
+            or (scope.kind == 'mixed' and (not scope.months or not scope.doc_ids))
+            or (scope.kind == 'cached_corpus' and scope.corpus_digest != corpus_digest(scope.doc_ids))):
+        raise ValueError('the saved search selector is contradictory')
+    rebuilt = build_coverage(
+        source_kind=saved.source_kind, scope=scope, requested=saved.requested_ids, inspected=saved.inspected_ids,
+        failed=((f.id, f.reason) for f in saved.failed), unfetchable=saved.unfetchable_ids,
+        watermark=saved.watermark_current_release_date, retrieved_at=saved.retrieved_at,
+        stale=saved.state == 'stale_cache')
+    if rebuilt != saved:
+        raise ValueError('the saved coverage identity is inconsistent')
+    if scope.kind != 'cached_corpus' and set(saved.requested_ids) != set(scope.months) | set(scope.doc_ids):
+        raise ValueError('the saved coverage contradicts its selector')
+    return scope
+
+
 def build_bundle(*, investigation_id: str, base_revision: int, lead: Lead, cves: Iterable[str], index: ReverseIndex,
                  rules: RulesPort, now: str, coverage: Sequence[Coverage], scope_id: str | None,
                  pair_id: str | None, older_sha: str | None, newer_sha: str | None,
                  mention_only: Iterable[str] = ()) -> ContextBundle:
+    search_scope = saved_search_scope(lead, coverage)
+    index = index.within_scope(search_scope) if search_scope is not None else ReverseIndex()
+    if search_scope is not None:
+        saved, = coverage
+        current = index.coverage(search_scope, now=now)
+        if ((current.requested_ids, current.inspected_ids) != (saved.requested_ids, saved.inspected_ids)
+                or (search_scope.kind == 'cached_corpus'
+                    and set(search_scope.doc_ids) != {d.doc_id for d in index.documents})):
+            raise ValueError('the saved search coverage cannot be reproduced; repeat the search')
     cards: list[CveCard] = []
     profiles: list[CweProfile] = []
     hypotheses: list[HypothesisSet] = []
     docs: dict[str, SourceDigest] = {}
     unknowns: list[str] = ['KEV listing was not loaded, so exploitation status is unknown.']
     for cve in sorted(set(cves)):
-        lookup = index.lookup_cve(cve, scope_id=scope_id, now=now)
+        lookup = index.lookup_cve(cve, scope=search_scope, scope_id=scope_id, now=now)
         card = next((c for c in lookup.cards if c.source_kind == 'cvrf'), None) or next(iter(lookup.cards), None)
         edge = next(iter(lookup.edges), None)
         if card is None or edge is None:
