@@ -872,3 +872,12 @@ Done: dock with state matrix, consent, import, changes, copy, go to CVE. Open: r
 - [x] Reproduce the original identity/ambiguity/alternative defects on canonical main `6579ed8` (28 failing tests, including service/store/cache paths).
 - [x] Port only reviewed source identity, immutable-body/resource and alternative consistency fixes; preserve main's existing matching-policy/ladder/facts behavior and keep rz-diff quarantine separate. Focused regressions, a real Python worker/cache round-trip, full Ruff and schema regeneration pass.
 - [ ] Root independent review, exact-head full pytest and applicable remote/native acceptance before publication or merge; current synthetic checks do not close broader matching accuracy gates.
+
+### [storage:publication-admission] 2026-11-02
+
+- [x] Verify review 5734146359 against exact #151 source `9c468bc` using real valid-but-mutated SQLite and subsequent retention/history deletion; preserve failed and earlier copies as evidence.
+- [x] Clarify staging-name admission before code; retain failed unique stages, exclude matching unfinished final names across restart, and never unlink or rename final/foreign evidence. Final baseline 7 failed / 1 passed; 60 related checks passed; Ruff/diff clean.
+- [ ] Independent frozen-source review and central integration; native Windows/full-suite acceptance remains separate. Existing legacy backups with no matching unique stage retain the previous verification/adoption policy.
+
+- [x] Storage admission review blocker: replace error-suppressing glob discovery with explicit scandir; failed opening/iteration cannot mean no pending stages. Red 2 failed / 1 passed; revised 63 related passes.
+- [ ] Rereview amended storage admission source; `536aebc` alone is not an approved candidate.

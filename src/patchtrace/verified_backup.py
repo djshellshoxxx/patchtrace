@@ -4,7 +4,8 @@ Rule: no backup, no deletion. A new backup is written with the SQLite backup API
 an exclusively created `backups/project-pre-<label>-<UTC stamp>-*.sqlite3.part`; the writing connection is closed, the file is
 re-opened read-only and must pass `PRAGMA integrity_check` and answer the caller's identity queries
 (snapshot hash, row counts) exactly like the live database. Only then is it hard-linked to an unused final name,
-so a crash or a failed check never leaves a half-trusted file under the trusted name.
+and revalidated before its unique staging name is removed. A matching staging name makes the
+final name ineligible for discovery, including after restart; failed publication retains its evidence.
 
 An existing backup is trusted only after the same read-only re-open with `PRAGMA quick_check`, a
 matching project id and the label's table. The verdict (good or bad) is cached per process by
@@ -23,6 +24,7 @@ import sqlite3
 import stat
 import tempfile
 import threading
+from bisect import bisect_left
 from collections.abc import Sequence
 from dataclasses import dataclass
 from datetime import UTC, datetime
@@ -185,10 +187,26 @@ def _candidates(root: Path, label: str) -> list[Path]:
         directory = safe_path(root, BACKUP_DIR)
         if not directory.is_dir():
             return []
-        found = [p for p in directory.glob(f'project-pre-{label}-*.sqlite3') if not p.is_symlink() and p.is_file()]
+        prefix = f'project-pre-{label}-'
+        with os.scandir(directory) as entries:
+            found = [Path(entry.path) for entry in entries
+                     if entry.name.startswith(prefix) and entry.name.endswith('.sqlite3')
+                     and not entry.is_symlink() and entry.is_file(follow_symlinks=False)]
+        # List finals first: each new final is linked only after its unique stage exists.
+        # Stage presence is refusal only, never evidence that bytes may be trusted.
+        # Unlike Path.glob, scandir propagates failures during opening or iteration.
+        # An unreadable pending-stage scan must never look like an empty one.
+        with os.scandir(directory) as entries:
+            pending = sorted(entry.name for entry in entries if entry.name.endswith('.sqlite3.part'))
     except (OSError, ValueError):
         return []
-    return sorted(found, reverse=True)  # the UTC stamp sorts newest first
+    admitted = []
+    for candidate in found:
+        prefix = candidate.stem + '-'
+        position = bisect_left(pending, prefix)
+        if position == len(pending) or not pending[position].startswith(prefix):
+            admitted.append(candidate)
+    return sorted(admitted, reverse=True)  # the UTC stamp sorts newest first
 
 
 def trusted_backup(root: Path, label: str, *, project_id: str | None = None, snapshot_sha: str | None = None,
@@ -245,6 +263,7 @@ def write_verified_backup(root: Path, connection: sqlite3.Connection, label: str
                           f'({type(exc).__name__})') from exc
     part: Path | None = None
     owned: tuple[int, int] | None = None
+    retain_stage = False
     try:
         descriptor, name = tempfile.mkstemp(prefix=f'project-pre-{label}-{stamp}-', suffix='.sqlite3.part', dir=directory)
         part = Path(name)
@@ -268,12 +287,18 @@ def write_verified_backup(root: Path, connection: sqlite3.Connection, label: str
         if _fingerprint(part) != checked:
             raise BackupError(f'PT-STORAGE: pre-{label} database backup changed during verification')
         os.link(part, target, follow_symlinks=False)
+        # Retain the pending name on any post-link failure: a later process must not
+        # adopt changed-but-valid SQLite bytes as a newly verified existing backup.
+        retain_stage = True
+        if not _remember(target, facts, checked):
+            raise BackupError(f'PT-STORAGE: pre-{label} database backup changed during publication')
+        retain_stage = False
     except BackupError:
         raise
     except (sqlite3.Error, OSError, ValueError, NotImplementedError) as exc:
         raise BackupError(f'PT-STORAGE: pre-{label} database backup failed ({type(exc).__name__})') from exc
     finally:
-        if part is not None and owned is not None:
+        if part is not None and owned is not None and not retain_stage:
             try:
                 info = part.lstat()
                 if (info.st_dev, info.st_ino) == owned:
@@ -282,10 +307,6 @@ def write_verified_backup(root: Path, connection: sqlite3.Connection, label: str
                 # An untrusted leftover is not a verified backup. Never remove
                 # the published name or a replacement temporary owned elsewhere.
                 pass
-    # A caller may prune immediately when this returns. Do not return success
-    # when the published name no longer contains the bytes that SQLite checked.
-    if not _remember(target, facts, checked):
-        raise BackupError(f'PT-STORAGE: pre-{label} database backup changed during publication')
     return target
 
 
