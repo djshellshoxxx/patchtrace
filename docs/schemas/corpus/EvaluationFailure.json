@@ -1,0 +1,48 @@
+{
+  "$id": "https://patchtrace.local/schemas/tier-r-evaluation-failure/1/EvaluationFailure.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "Uncredited diagnostic reference, never a completed output manifest.",
+  "properties": {
+    "contract": {
+      "const": "tier-r-evaluation-failure/1",
+      "title": "Contract",
+      "type": "string"
+    },
+    "credited": {
+      "const": false,
+      "title": "Credited",
+      "type": "boolean"
+    },
+    "error": {
+      "maxLength": 1000,
+      "title": "Error",
+      "type": "string"
+    },
+    "report_file": {
+      "const": "uncredited-report.json",
+      "title": "Report File",
+      "type": "string"
+    },
+    "report_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Report Sha256",
+      "type": "string"
+    },
+    "status": {
+      "const": "failed",
+      "title": "Status",
+      "type": "string"
+    }
+  },
+  "required": [
+    "contract",
+    "status",
+    "credited",
+    "report_file",
+    "report_sha256",
+    "error"
+  ],
+  "title": "EvaluationFailure",
+  "type": "object"
+}
