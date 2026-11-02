@@ -403,11 +403,21 @@ Final runtime integration full run at `8bf483c`: **18,265 passed, 135 skipped, 7
 
 Full d34efeb snapshot before final Qodo repairs: **18,304 passed, 128 skipped, 7 xfailed, 1 failed** in 371.25 s. Only failure: executor denies AF_UNIX socket creation. Final substantive Qodo findings are repaired and focused-tested (see 20261030-consolidation-review.md); a new combined full suite and exact-head GitHub gates follow. Schema regeneration completed without schema-file changes.
 
+## 2026-11-01 independent backup and Diaphora integrity repairs
+
+Base main `a04f5a299a8d4afef023261e52e08d14678cf1e7`. Issue #121 backup metadata-cache failure reproduced in three tests, including real history deletion after a damaged backup was trusted. Fresh bounded byte hashing now binds reuse and publication to the checked copy; unchanged-byte SQLite checks remain cached. Six regressions cover same-size/restored-mtime edits, verification/publication races, unreadability and mutation of already-read bytes. Root independently ran 41 backup/prune/history/storage/sidecar tests; a second reviewer ran 24 retention/integrity tests. No native Windows claim from Linux results; fresh hashing has linear I/O cost.
+
+Issue #121 Diaphora row deadline failure reproduced in three cases (sliding budget, interleaved count, small-query cancellation). Each row query now retains its original budget across yields, with explicit checks around fetches and deterministic cursor cleanup. Seven regressions preserve independent per-query scope; 65 Diaphora tests and independent two-iterator checks passed. This does not implement a whole-import memory cap.
+
+These two isolated source repairs retain all other issue findings and do not qualify the broad native/unified feature candidates. Combined focused checks and full Ruff passed; exact-head Linux/Windows/full-suite/native CI must be recorded before merge.
+
 ## 2026-11-01 isolated report destination repair
 
 Baseline `a04f5a299a8d4afef023261e52e08d14678cf1e7`: the imported 13 destination/export cases fail (including the existing GUI export overwriting a protected destination; new service API absent). The narrow port from `c3868d8335a8f32f676905032dc1a6d0e9f22fd6` retains project-owned path checks, persisted snapshot reads without recovery, and one GUI call change. Independent of new KB investigation, cancellation and adoption features. Source tests and CI evidence will be appended below; neither earlier #148 green jobs nor future integration checks substitute for this exact head.
 
 Focused validation: `QT_QPA_PLATFORM=offscreen python -m pytest -q tests/test_export_destination_guard.py tests/test_report_export_backup.py tests/test_service_storage_audit.py` passed; whole-tree Ruff passed. An initial command named nonexistent test files and ran no tests; corrected command above is the evidence. Full suite and native CI remain pending until recorded.
+
+PR151 backup publication follow-up: actual fixed-clock/pending-file regressions2failed before repair; reviewed exclusive-stage/non-replacing publication39 tests passed (independent39 plus live-save failure controls). Prior evidence and no-prune-on-failure preserved; exact newhead CI required. See `docs/qa/backup-publication-collision-20261101.md`.
 
 
 ## Issue #120 independent main repair (2026-11-01)
@@ -425,3 +435,9 @@ All fixtures are authored or synthetic; a Python worker round-trip is not a nati
 Independent main identity repair: original28 failures reproduced on main; final coordinator125 focused/worker/child checks passed. Refused-source assertion now verifies derived identity and original raw provenance; independent fault controls and original failures retained in `docs/qa/identity-main-repair-20261101.md`. Exact published full/native/Qt gates remain required.
 
 PR156 external-review follow-up: active Budget now reaches refacts identity/flag work; Qt captures validated inputs on owner and resolves new identity hashing in task work before exact-key owner DB lookup/publication. Both defects independently reviewed; main-port79 coordinator checks passed. Original red/independent evidence is retained in `docs/qa/identity-followup-20261101.md`. Existing capture I/O remains owner-side; no full responsiveness/performance claim.
+
+PR #151 post-link admission follow-up (2026-11-02): exact `9c468bc` reproduced real later deletion after failed publication, despite valid SQLite/project/snapshot facts. Final regression file gives 7 failures / 1 pass on that baseline; stage-based admission repair gives 60 related passes (5.68 s), with earlier and foreign files preserved and failed bytes retained outside adoptable publication state. Whole Ruff/diff clean; independent review and integration pending. Evidence, limits and initial probe setup error: [backup-publication-admission-20261102.md](qa/backup-publication-admission-20261102.md).
+
+PR #151 admission review follow-up: independent review blocked `536aebc` because `Path.glob` swallowed pending-stage scan errors. Explicit `os.scandir` now propagates opening/iteration/entry failures to refusal; two author red cases plus three independent error cases are retained. Revised related selection: 63 passed (5.57 s), Ruff/diff clean. Rereview remains required; see the admission QA record and scan evidence archive.
+
+PR #151 cleanup-completion follow-up (2026-11-02): exact `1f284a1` retained all deleted rows in its valid copy but authorized enrichment pruning while that copy remained undiscoverable. Successful backup return now requires owned-stage removal and observed absence; failures keep every live row and preserve final/foreign evidence. Final regressions: 7 failures / 10 passes on baseline; 76 focused passes on `4bfc2c0`, Ruff/diff clean. Independent review pending; no data-loss or native/full claim. See [backup-completion-20261102.md](qa/backup-completion-20261102.md).

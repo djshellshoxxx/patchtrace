@@ -1,0 +1,35 @@
+{
+  "reviewer": "/root/cancel_fix",
+  "date": "2026-11-01",
+  "worktree": "/workspace/scratch/142cb233d750/wt-storage",
+  "reviewed_commit": "3ff98f7748f30db3223348389fb2661c7aec92d3",
+  "reviewed_tree": "314b31c881d9daa39ed76242e01bf24e296cd825",
+  "worktree_clean": true,
+  "verdict": "PASS: no remaining concrete blocker in bounded exclusive backup publication repair",
+  "source_checks": [
+    "Spec clarification precedes the new contract: exclusive unique sibling stage, atomic non-replacing hardlink, fail closed without supported hardlinks, retain earlier final/interrupted files and clean up only owned stage inode.",
+    "tempfile.mkstemp exclusively creates the stage; descriptor is closed in finally; SQLite copies into that stage and retains integrity/identity query verification.",
+    "os.link with follow_symlinks=False publishes without replacing an existing final name. There is no overwrite/copy fallback for timestamp collision, permission or unsupported-filesystem errors.",
+    "Stage cleanup checks device/inode before removing the temporary name and never removes the final target. Post-publication _remember byte verification still gates success/prune authorization.",
+    "Normal trust/fingerprint/SQLite verification logic and prune/retention callers are unchanged. Existing post-publication corruption test now injects at the actual hardlink seam without weakening the expected refusal.",
+    "Scoped Ruff and git diff --check HEAD~1..HEAD passed; clean source head/tree confirmed."
+  ],
+  "tests": [
+    {
+      "command": "QT_QPA_PLATFORM=offscreen PYTHONPATH=src /workspace/scratch/142cb233d750/full-venv/bin/python -m pytest -q --tb=short tests/test_verified_backup_byte_integrity.py tests/test_prune_backup.py tests/test_backup_sidecars.py tests/test_enrichment_retention.py",
+      "result": "39 passed in 2.86s",
+      "raw_log": "/workspace/scratch/142cb233d750/reconciliation/backup-publication-independent-green.log"
+    },
+    {
+      "script": "/workspace/scratch/142cb233d750/reconciliation/backup-publication-independent-controls.py",
+      "result": "Actual SQLite same-clock collision preserves prior bytes and trusted snapshot; replaced temporary name survives failure cleanup. Actual ProjectService saves under NotImplementedError and EPERM hardlink failures commit their new snapshots while retaining every history row, leaving no verified final/temporary artifact and no trusted backup.",
+      "raw_log": "/workspace/scratch/142cb233d750/reconciliation/backup-publication-independent-controls.log"
+    }
+  ],
+  "limits": [
+    "Unsupported Windows/filesystem behavior was fault-injected and verified to fail closed; this is not a native Windows filesystem acceptance result.",
+    "Hardlink support is now required for new verified backup publication. An already verified prior backup remains reusable under the existing contract.",
+    "No arbitrary same-user hostile-process exclusion or universal power-loss durability claim is made.",
+    "No full/performance suite, target execution, real corpus, reviewer source edits or remote writes were used. Coordinator owns integration and broader release acceptance."
+  ]
+}
