@@ -51,3 +51,7 @@ is claimed by this author receipt. No target binaries were executed, and no remo
 | `src/patchtrace/kbcorrelation/sources/cvrf_msrc.py` | `e451b845199f59e42f5e41a5479cb549b025e4b248a376942b066caa88d16835` |
 | `tests/test_kbc_msrc_provenance.py` | `c7f67697f7e770b2a51c5e4855501966276cb721909f419cd520110473153c25` |
 | `docs/specs/kb-cve/31-B-msrc-reverse-index.md` | `e96d9a8c2ea47dcc23471bf10c567e64300fa751e0da64be9765fb9b8ecf8420` |
+
+Independent review approved source `aa85b775431f40a1041b19fff82b3182f93617fa`: 88 fresh tests plus a separate 124-pointer omission/shift control passed, with raw SHA and unknown revision semantics retained. Main `25c9795bd9cd58bfad855f30594ee3a0c7584cec` merged without conflicts. Exact updated-head CI remains required.
+
+Coordinator after accepted-main merge: 200 MSRC/provenance/CVRF tests passed; completed JUnit and console capture retained. Whole-tree Ruff passed. No new full/native result claimed.

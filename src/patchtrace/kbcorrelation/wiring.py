@@ -18,6 +18,7 @@ from collections.abc import Mapping
 from pathlib import Path
 from typing import Any
 
+from .card_provenance import FIELDS, CardFactRef
 from .components import normalise_name
 from .contracts import Arch, CveCard
 from .lineage import IndexRow, index_rows
@@ -146,14 +147,64 @@ class IntelligenceRules:
         self.rules_digest = hypotheses.rules_digest()
         self.lexicon_digest = lexicon.lexicon_digest()
 
-    def interpret(self, card: CveCard, pointer: str, source_sha256: str):
-        from ..intelligence.contracts import CVEFact, CweRef
+    def interpret(self, card: CveCard, facts: tuple[CardFactRef, ...]):
+        """Classify each agreeing source on its own; the bundle maps every output pointer to its raw source."""
+        from ..intelligence.contracts import CVEFact, CweRef, Note
         from ..intelligence.hypotheses import hypotheses_for
         from ..intelligence.lexicon import classify
-        cwe = CweRef(id=card.stated_cwe, name=card.stated_cwe, pointer=f'{pointer}/cwe') if card.stated_cwe else None
-        fact = CVEFact(source_id=source_sha256, cve=card.cve, pointer=pointer, title=card.title, cwe=cwe)
-        profile = classify(fact)
+        grouped: dict[str, list[CardFactRef]] = {}
+        for ref in facts:
+            if ref.cve != card.cve or ref.source_kind != card.source_kind or ref.value != getattr(card, ref.field):
+                raise ValueError('interpretation field does not match its card')
+            grouped.setdefault(ref.doc_id, []).append(ref)
+        profiles = []
+        for _, refs in sorted(grouped.items()):
+            by_field = {field: sorted((r for r in refs if r.field == field), key=lambda r: r.pointer)
+                        for field in FIELDS}
+            if len({r.source_sha256 for r in refs}) != 1 or any(
+                    getattr(card, field) is not None and not by_field[field] for field in FIELDS):
+                raise ValueError('each interpreted source needs every displayed field')
+            cve_ref = by_field['cve'][0]
+            cwe_refs = by_field['stated_cwe']
+            cwe = CweRef(id=card.stated_cwe, name=card.stated_cwe, pointer=cwe_refs[0].pointer) if cwe_refs else None
+            # The classifier's title convenience field invents a lowercase /title suffix. An explicitly
+            # located description carries identical text semantics while preserving native JSON casing.
+            notes = tuple(Note(category='description', text=r.value, pointer=r.pointer) for r in by_field['title'])
+            fact = CVEFact(source_id=cve_ref.source_sha256, cve=card.cve,
+                           pointer=cve_ref.pointer.rsplit('/', 1)[0], notes=notes, cwe=cwe)
+            profile = classify(fact, explicit_basis=('explicit-csaf-cwe' if card.source_kind == 'csaf'
+                                                    else 'explicit-advisory-cwe'))
+            if cwe_refs:
+                profile = profile.model_copy(update={'classifications': tuple(
+                    item.model_copy(update={'pointers': tuple(sorted(set(item.pointers) |
+                                                                 {r.pointer for r in cwe_refs}))})
+                    if item.basis.startswith('explicit-') else item for item in profile.classifications)})
+            profiles.append(profile)
+        if not profiles:
+            raise ValueError('interpretation requires source-bound card fields')
+        profile = _merge_profiles(profiles)
         return profile, hypotheses_for(profile)
+
+
+def _merge_profiles(profiles):
+    """All values agreed before classification; combine references without counting sources as votes."""
+    groups = {}
+    for profile in profiles:
+        for item in profile.classifications:
+            key = item.cwe_id, item.family, item.basis, item.confidence, item.assessment
+            groups.setdefault(key, []).append(item)
+    def hits(items):
+        return tuple(sorted(set(items), key=lambda h: (h.pointer, h.term_id, h.phrase, h.excerpt, h.negated)))
+    classifications = [items[0].model_copy(update={
+        'pointers': tuple(sorted({p for item in items for p in item.pointers})),
+        'hits': hits(h for item in items for h in item.hits)}) for items in groups.values()]
+    return profiles[0].model_copy(update={
+        'classifications': tuple(sorted(classifications,
+                                        key=lambda c: (('explicit', 'phrase-match', 'weak').index(c.confidence), c.cwe_id))),
+        'negated_hits': hits(h for p in profiles for h in p.negated_hits),
+        'effect_hits': hits(h for p in profiles for h in p.effect_hits),
+        'disagreements': tuple(sorted({d for p in profiles for d in p.disagreements})),
+        'limitations': tuple(sorted({d for p in profiles for d in p.limitations}))})
 
 
 def inspect_local_file(path: str) -> LocalFile:

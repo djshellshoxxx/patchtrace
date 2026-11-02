@@ -88,10 +88,33 @@ consensus, including card-only snapshots and source-kind groups whose conflict w
 contributors come from the same bounded lookup as the cards; superseded, out-of-scope, and unrelated-CVE
 documents are excluded. Union their source digests with the selected edge sources and copy every resulting
 raw object into the attached project. The key includes their document IDs, raw SHA-256 values, kinds, and
-release IDs even when the edge-set digest is unchanged. Key-policy version 2 separates these complete identities
+release IDs even when the edge-set digest is unchanged. Key-policy version 3 includes these complete identities and the card-field references below, separating them
 from older keys; this is an internal identity version, not a wire bundle schema change. Existing persisted
 version-1 bundles remain readable and are not rewritten. Raw cards, source-kind separation, revision selection,
 and saved investigation scope remain unchanged.
+
+### Card field attribution
+
+Every new context card's CVE, title and stated CWE must carry source-bound field references: document ID,
+raw SHA-256, source kind, existing JSON pointer and the accepted normalized value. Derive these from the
+accepted source object, independently of remediation edges. Retain all agreeing active contributors of the
+selected source kind, including card-only documents. A conflict or a missing/unverifiable field locator cannot
+be repaired by taking another document's edge pointer; withhold that field and state the limitation. Duplicate
+CVE rows remain ambiguous. XML inputs retain their raw bytes and lookup behavior but cannot supply fabricated
+JSON field references to this context interpreter.
+
+Interpret each contributing document separately using its actual field locations, then combine agreeing
+classifications and their source references. Do not construct a CVEFact using one document's value and another
+document's identity or pointer. Non-CSAF explicit CWE claims use the additive `explicit-advisory-cwe` basis;
+ordinary CSAF classification keeps `explicit-csaf-cwe`. This distinction changes provenance, not evidence
+strength, and neither establishes applicability or binary vulnerability verification.
+
+New ContextBundle records add a default-empty `card_facts` tuple; existing records lacking it remain readable
+as recorded, without inventing missing provenance. Strict older readers may reject the additive field or the
+new basis enum; this is forward readability by the new reader, not a promise that old software reads new
+records. Bundle wire generation remains 1 under the additive-field convention. Internal context key policy 3
+invalidates keys made under the former mixed-field interpretation, even for identical source bytes. Saved
+search scope continues to bound active contributors, source copying, interpretation and identity.
 
 ## E8. Calibration and negative test requirements
 
