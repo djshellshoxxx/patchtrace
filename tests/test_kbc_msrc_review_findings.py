@@ -129,6 +129,27 @@ def test_ambiguous_snapshots_dispute_edges_not_shared_by_every_snapshot():
     assert any(w.startswith('REVISION_ORDER_UNKNOWN:') for w in lookup.warnings)
 
 
+def test_ambiguous_native_and_synthetic_snapshots_compare_all_active_applicability():
+    native = _import(_data())
+    synthetic = json.loads((Path(__file__).parent / 'fixtures' / 'kbcorrelation' /
+                            'cvrf-2099-Feb.json').read_bytes())
+    synthetic['document']['release_id'] = native.source.release_id
+    synthetic['vulnerabilities'][0]['cve'] = CVE
+    synthetic['vulnerabilities'][0]['remediations'] = []
+    synthetic_doc = _import(synthetic)
+    assert synthetic_doc.source.dialect == 'cvrf-json/0'
+
+    index = _index(native, synthetic_doc)
+    assert index.active_ids() == {native.doc_id, synthetic_doc.doc_id}
+    scope_id = next(edge.scope_id for edge in native.edges if edge.kb == KB)
+    lookup = index.lookup_kb(KB, scope_id=scope_id, now=NOW)
+
+    assert not lookup.edges
+    assert {edge.ref.doc_id for edge in lookup.disputed} == {native.doc_id}
+    assert any(w.startswith('REVISION_EDGE_CONFLICT: 2024-Aug has competing snapshots')
+               and CVE in w and KB in w for w in lookup.warnings)
+
+
 def test_revision_conflict_does_not_spread_to_a_different_release_month():
     left, right = _snapshots()
     right['Vulnerability'][0]['Remediations'] = []

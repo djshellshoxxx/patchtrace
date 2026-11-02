@@ -64,4 +64,26 @@ The integration owner retains publication responsibility; no remote writes occur
 | `tests/test_kbc_msrc_review_findings.py` | `7f532e8b59422794e988d3423656e6e9adc17238e0b5a2c65f7731c31015d1fd` |
 | `docs/specs/kb-cve/31-B-msrc-reverse-index.md` | `948b425b42687edce74a9e80f2636f6a57fc5181fbd7b215ba5d45505eb9b95a` |
 
-Independent review of7533fe0 found no blockers:165focusedpasses plus six-order severity/scope/raw-source preservation controls; source hashes in adjacent review receipt. Fresh exact-head hosted QA remains required.
+Independent review of `7533fe0` found no blockers: 165 focused passes plus six-order severity/scope/raw-source preservation controls; source hashes in adjacent review receipt. Fresh exact-head hosted QA remains required.
+
+## Mixed native/synthetic revision follow-up
+
+The new #153 inline review finding `PRRT_kwDOVEPRFc6y0dze` identified that
+`_lookup` compared remediation applicability only among active native snapshots.
+When a same-month synthetic CVRF snapshot was also active, a native fix absent
+from the synthetic snapshot remained a current edge.
+
+The regression imports one pinned native MSRC snapshot and one valid synthetic
+CVRF snapshot for the same release month. Before the fix, the lookup returned
+the native `KB5041571` edge as `found`. The index now compares applicability
+across every active snapshot in that release month when the group contains a
+native snapshot and its ordering is ambiguous. A discrepant product-scoped edge
+is disputed and carries the existing revision-conflict warning. The native and
+synthetic source parsers, active-document selection, and other months are
+unchanged. `docs/specs/kb-cve/31-B-msrc-reverse-index.md` records this mixed
+format rule.
+
+Checks on the amended PR #153 source: **21 passed** in the finding regression
+file and **1,055 passed** across `tests/test_kbc_*.py`; scoped Ruff and
+`git diff --check` passed. Exact-head hosted QA and independent review of this
+amendment remain pending.

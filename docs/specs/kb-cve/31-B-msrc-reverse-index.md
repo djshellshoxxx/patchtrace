@@ -118,6 +118,10 @@ without a zone is diagnosed and is **not** coerced to UTC or retrieval time. A s
 containing native snapshots with unknown revision instants, or tied distinct native snapshots,
 keeps all snapshots active with `REVISION_ORDER_UNKNOWN`; no digest tie-break declares one newest.
 Comparable explicit-zone revisions retain normal latest-instant selection and all prior history.
+When an active native snapshot shares a release month with an active snapshot of another dialect,
+and their current-release instants cannot establish an order (missing or tied), compare applicability
+across every active snapshot for that month, not only the native documents. A KB/CVE/product relation
+present in only part of that mixed-format group is disputed and is not presented as a current fix.
 When an ambiguous same-month group has multiple snapshots, KB/CVE/product applicability present in
 only some snapshots is reported as disputed with a revision-conflict reference; it is not presented
 as a current remediation or as superseded, because the order is unknown. A single snapshot has no

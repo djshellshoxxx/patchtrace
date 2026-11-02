@@ -291,20 +291,19 @@ class ReverseIndex:
         chosen: list[KbCveEdge] = []
         old: list[KbCveEdge] = []
         revision_conflicts: list[tuple[str, str, str, str]] = []
-        conflict_docs: dict[tuple, list[ImportedDocument]] = {}
+        conflict_docs: dict[str, list[ImportedDocument]] = {}
         for doc in picked:
-            if doc.doc_id in active and doc.source.dialect == DIALECT_MSRC:
-                conflict_docs.setdefault(_group_key(doc), []).append(doc)
+            if doc.doc_id in active and doc.source.release_id:
+                conflict_docs.setdefault(doc.source.release_id, []).append(doc)
         conflicted_keys: set[tuple[str, str, str, str, str]] = set()
-        for key, docs in conflict_docs.items():
-            if not _native_revision_ambiguous(docs):
+        for month, docs in conflict_docs.items():
+            if not any(doc.source.dialect == DIALECT_MSRC for doc in docs) or not _native_revision_ambiguous(docs):
                 continue
             per_doc = [{(edge.kb, edge.cve, edge.scope_id, edge.relation) for edge in doc.edges
                         if edge.relation in REMEDIATION_RELATIONS} for doc in docs]
             all_keys = set.union(*per_doc) if per_doc else set()
             for edge_key in all_keys:
                 if any(edge_key not in rows for rows in per_doc):
-                    month = key[1] or ''
                     conflicted_keys.add((month, *edge_key))
                     if ((query_kind == 'cve' and edge_key[1] == query)
                             or (query_kind == 'kb' and edge_key[0] == query)) \
