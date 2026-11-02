@@ -1,0 +1,41 @@
+{
+  "reviewer": "review_resume independent helper",
+  "reviewed_head": "aa85b775431f40a1041b19fff82b3182f93617fa",
+  "reviewed_tree": "e73ca6d090892f5a8dd50ec90e8e6984ee2e0788",
+  "base": "141f8176d4dbcebe23dada481a4fe8660a332dcb",
+  "worktree": "/workspace/scratch/142cb233d750/wt-msrc-recover",
+  "decision": "no blocking findings in the bounded missing-field provenance repair",
+  "source_sha256": "e451b845199f59e42f5e41a5479cb549b025e4b248a376942b066caa88d16835",
+  "scope": [
+    "absent CurrentReleaseDate, CVE and remediation Type point to their existing parent",
+    "present invalid values retain exact field pointer",
+    "raw evidence identity, applicability, filtering and revision-order rules unchanged"
+  ],
+  "validation": [
+    {
+      "command": "QT_QPA_PLATFORM=offscreen PYTHONPATH=.:src:tests /workspace/scratch/142cb233d750/venv/bin/python -m pytest -q --tb=short tests/test_kbc_msrc_provenance.py tests/test_kbc_msrc_cvrf.py",
+      "result": "88 passed in 1.16s"
+    },
+    {
+      "command": "python -m ruff check src/patchtrace/kbcorrelation/sources/cvrf_msrc.py tests/test_kbc_msrc_provenance.py",
+      "result": "All checks passed"
+    },
+    {
+      "command": "git diff --check base..head",
+      "result": "passed"
+    },
+    {
+      "control": "simultaneous absent fields after preceding malformed vulnerability/remediation rows",
+      "result": "passed; all 124 imported pointers resolved; source input unchanged, exact byte SHA preserved, one valid vulnerability and unaffected edges retained"
+    }
+  ],
+  "environment": {
+    "python": "3.12.14",
+    "platform": "Linux"
+  },
+  "limitations": [
+    "No remote GitHub review submitted",
+    "No native Windows/full-suite/live-provider acceptance claimed",
+    "Conditional on exact source integration and required gates"
+  ]
+}

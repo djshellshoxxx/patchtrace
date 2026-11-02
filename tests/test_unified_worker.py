@@ -3,6 +3,7 @@ Synthetic inputs only; the worker is called in process here (the real child is e
 from __future__ import annotations
 
 import dataclasses
+import hashlib
 import json
 import threading
 from pathlib import Path
@@ -166,7 +167,18 @@ def test_same_id_means_same_content_for_refused_inputs(tmp_path):
     assert first.status == 'partial' and 'bindiff-pair-mismatch' in first.limitations
     assert first == second and files_of(tmp_path / 'a') == files_of(tmp_path / 'b')
     assert first.result_id != run(data, tmp_path / 'c').result_id
-    assert any(ref.entry_id == 'foreign' for ref in first.sources)  # looked at, listed, refused
+    # SPEC31 source-content/2 binds the original entry id and normalized snapshot, including refused inputs.
+    # This one-match fixture has no ordering ambiguity; empty alternatives are omitted by that normalization.
+    snapshot = {'entry_id': refused.entry_id,
+                'match_set': refused.match_set.model_dump(mode='json', exclude={'alternatives'})}
+    snapshot_bytes = json.dumps(snapshot, sort_keys=True, separators=(',', ':'), ensure_ascii=True).encode('ascii')
+    identity_bytes = json.dumps({'source': 'bindiff', 'snapshot_sha256': hashlib.sha256(snapshot_bytes).hexdigest()},
+                               sort_keys=True, separators=(',', ':')).encode('ascii')
+    # Independent protocol oracle: do not ask source_ref_of/plan_identity for the expected derived identity.
+    expected_id = hashlib.sha256(b'patchtrace\x00unified-source-content\x002\x00' + identity_bytes).hexdigest()
+    refused_refs = [ref for ref in first.sources if ref.file_sha256 == '9' * 64]
+    assert [(ref.source, ref.entry_id, ref.file_sha256, ref.version) for ref in refused_refs] == [
+        ('bindiff', expected_id, '9' * 64, '8.0')]  # looked at, listed, refused; original raw provenance retained
 
 
 def test_the_source_selection_is_part_of_the_identity():

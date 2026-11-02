@@ -1,6 +1,7 @@
 """Manual corrections (06 s6, D-29, 02 s10 item 6): the analyst's `ProjectService.correct_match` results as tier-M claims.
 
-One function per side -> a tier-M edge; a function on one side only -> a one-sided declaration (`removed`,
+An affirmative one-function-per-side relation -> a tier-M edge; an ambiguous relation stays an ambiguous group.
+A function on one side only -> a one-sided declaration (`removed`,
 `unmatched`, `added`); anything larger -> a manual group (`split`/`merged` decide `matched`, `ambiguous` decides
 `ambiguous`). The correction itself is never re-validated here: the service already guarantees a function belongs to
 one match. `manual_digest` (02 s5) covers the corrections, so any change of them makes a different `result_key`.
@@ -24,7 +25,7 @@ from . import (
     function_rva,
 )
 
-VERSION = 'manual/1'
+VERSION = 'manual/2'
 
 
 def _manual(inputs: SourceInputs) -> list[SnapshotMatch]:
@@ -37,20 +38,23 @@ def _basis(matches: list[SnapshotMatch], addr: AddressMap) -> str:
     return addr.set_basis(older, newer)
 
 
-def manual_digest_of(inputs: SourceInputs, addr: AddressMap) -> str:
-    """`keys.manual_digest` over the corrections: RVAs when the addresses convert, else their lower-case text."""
+def manual_digest_of(inputs: SourceInputs, addr: AddressMap, budget: Budget | None = None) -> str:
+    """Every validated manual snapshot field can affect atoms, names or facts; bind all of them."""
+    if budget is not None:
+        budget.check()
+    if inputs._manual_digest is not None:
+        return inputs._manual_digest
     matches = _manual(inputs)
-    basis = _basis(matches, addr)
-
-    def label(function, side: str):
-        value = parse_va_text(function.address)
-        if basis != 'not-comparable' and value is not None:
-            rva = addr.to_rva(side, value, basis)
-            if rva is not None:
-                return rva
-        return (function.address or f'name:{function.name}').strip().lower()
-    return keys.manual_digest([(m.category, [label(f, 'older') for f in m.older], [label(f, 'newer') for f in m.newer])
-                               for m in matches])
+    if not matches:
+        return keys.manual_digest([])
+    snapshot = []
+    for match in matches:
+        if budget is not None:
+            budget.check()
+        snapshot.append(match.model_dump(mode='json'))
+    digest = keys.source_content_digest('manual', snapshot, budget=budget)
+    object.__setattr__(inputs, '_manual_digest', digest)
+    return digest
 
 
 class ManualAdapter:
@@ -59,19 +63,20 @@ class ManualAdapter:
     def available(self, inputs: SourceInputs) -> Availability:
         return Availability('ok') if _manual(inputs) else Availability('missing', 'no-manual-corrections')
 
-    def source_refs(self, inputs: SourceInputs, addr: AddressMap) -> tuple[SourceRef, ...]:
+    def source_refs(self, inputs: SourceInputs, addr: AddressMap, budget: Budget | None = None) -> tuple[SourceRef, ...]:
         if not _manual(inputs):
             return ()
-        return (SourceRef(source='manual', entry_id=manual_digest_of(inputs, addr), file_sha256=None,
+        return (SourceRef(source='manual', entry_id=manual_digest_of(inputs, addr, budget), file_sha256=None,
                           version=VERSION),)
 
     def atoms(self, inputs: SourceInputs, addr: AddressMap, budget: Budget) -> AdapterOutput:
+        budget.check()
         matches = _manual(inputs)
         if not matches:
             return AdapterOutput()
         ledger = Ledger()
         basis = _basis(matches, addr)
-        refs = self.source_refs(inputs, addr)
+        refs = self.source_refs(inputs, addr, budget)
         if basis == 'not-comparable':
             ledger.flag('manual-address-basis-not-comparable')
             return AdapterOutput(limitations=ledger.render(), source_refs=refs)
@@ -85,10 +90,11 @@ class ManualAdapter:
             for side, items in (('older', older), ('newer', newer)):
                 for rva, function in items:
                     nodes[(side, rva)] = nodes.get((side, rva)) or clean_name(function.name)
-            if len(older) == 1 and len(newer) == 1:
+            if len(older) == 1 and len(newer) == 1 and match.category != 'ambiguous':
                 atoms.append(self._atom(older[0][0], newer[0][0], '1:1', match.id))
             elif older and newer:
-                cards = '1:N' if len(older) == 1 else 'N:1' if len(newer) == 1 else 'N:M'
+                cards = ('1:1' if len(older) == len(newer) == 1 else
+                         '1:N' if len(older) == 1 else 'N:1' if len(newer) == 1 else 'N:M')
                 group_atoms = tuple(sorted((self._atom(o, n, cards, match.id) for o, _ in older for n, _ in newer),
                                            key=atom_order))
                 groups.append(SourceGroup(

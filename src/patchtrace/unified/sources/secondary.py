@@ -11,10 +11,12 @@ from pathlib import Path
 
 from pydantic import ValidationError
 
-from ...secondary.contracts import SecondaryMatch, SecondaryMatchSet
+from ...enrichment.identity import domain_id
+from ...secondary.contracts import AlternativeMatch, SecondaryMatch, SecondaryMatchSet
+from .. import keys
 from ..addressing import AddressMap
 from ..contracts import Atom, SourceRef
-from ..limits import UnifiedError
+from ..limits import Budget, UnifiedError
 from ..registry import REGISTRY, STEP_MAX, Registry
 from . import (
     AdapterOutput,
@@ -31,30 +33,94 @@ from . import (
 MAX_SET_BYTES = 256 * 1024 * 1024
 
 
+def _value_key(value):
+    if value is None:
+        return (0,)
+    if isinstance(value, int):
+        return 1, value
+    if isinstance(value, str):
+        return 2, value
+    if isinstance(value, tuple):
+        return 3, tuple(_value_key(item) for item in value)
+    if isinstance(value, SecondaryMatch | AlternativeMatch):
+        return 4, tuple(_value_key(getattr(value, name)) for name in type(value).model_fields)
+    raise TypeError('secondary sort keys contain validated scalar/tuple/model fields only')
+
+
+def _record_key(record):
+    return _value_key(record)
+
+
+def _ordered(loaded: LoadedSecondary, budget: Budget | None = None):
+    if budget is not None:
+        budget.check()
+    if loaded._ordered is not None:
+        return loaded._ordered
+    ordered = []
+    for records in (loaded.match_set.matches, loaded.match_set.alternatives):
+        rows = []
+        for record in records:
+            if budget is not None:
+                budget.check()
+            rows.append((_record_key(record), record))
+        rows.sort(key=lambda item: item[0])
+        if budget is not None:
+            budget.check()
+        ordered.append(tuple(record for _, record in rows))
+    value = tuple(ordered)
+    object.__setattr__(loaded, '_ordered', value)
+    return value
+
+
 def write_loaded(path: Path, loaded: LoadedSecondary) -> tuple[str, int]:
     """One JSON file per stored set (entry id + the validated set); returns (sha256, bytes)."""
     import hashlib
-    data = json.dumps({'entry_id': loaded.entry_id, 'match_set': json.loads(loaded.match_set.model_dump_json())},
+    payload = ({'entry_id': loaded.entry_id, 'body_json': loaded._body_json} if loaded._body_json is not None else
+               {'entry_id': loaded.entry_id, 'match_set': json.loads(loaded.match_set.model_dump_json())})
+    data = json.dumps(payload,
                       sort_keys=True, separators=(',', ':'), ensure_ascii=False, allow_nan=False).encode('utf-8')
     Path(path).write_bytes(data)
     return hashlib.sha256(data).hexdigest(), len(data)
 
 
-def read_loaded(path: Path, *, expected_sha256: str, expected_size: int) -> LoadedSecondary:
+def read_loaded(path: Path, *, expected_sha256: str, expected_size: int,
+                budget: Budget | None = None) -> LoadedSecondary:
     import hashlib
+    if budget is not None:
+        budget.check()
     try:
         info = Path(path).stat()
         if info.st_size > MAX_SET_BYTES or info.st_size != expected_size:
             raise UnifiedError('PT-UNIFIED-INPUT', 'A secondary set file does not match its request',
                                reason='secondary-size-mismatch')
-        data = Path(path).read_bytes()
-        if hashlib.sha256(data).hexdigest() != expected_sha256:
+        data, digest = bytearray(), hashlib.sha256()
+        with Path(path).open('rb') as stream:
+            while True:
+                if budget is not None:
+                    budget.check()
+                chunk = stream.read(65536)
+                if not chunk:
+                    break
+                data.extend(chunk)
+                digest.update(chunk)
+                if len(data) > MAX_SET_BYTES:
+                    raise ValueError('set grew beyond limit')
+        if len(data) != expected_size or digest.hexdigest() != expected_sha256:
             raise UnifiedError('PT-UNIFIED-INPUT', 'A secondary set file does not match its request',
                                reason='secondary-hash-mismatch')
         document = json.loads(data.decode('utf-8'))
         entry_id = document['entry_id']
         if not isinstance(entry_id, str) or not entry_id:
             raise ValueError('entry id')
+        if 'body_json' in document:
+            body = document['body_json']
+            if not isinstance(body, str):
+                raise ValueError('body text')
+            body_sha = keys.text_sha256(body, budget)
+            match_set = SecondaryMatchSet.model_validate_json(body)
+            if budget is not None:
+                budget.check()
+            return LoadedSecondary.from_verified_body(entry_id, match_set, body, body_sha)
         return LoadedSecondary(entry_id=entry_id,
                                match_set=SecondaryMatchSet.model_validate_json(json.dumps(document['match_set'])))
     except UnifiedError:
@@ -69,18 +135,22 @@ def usable_sets(inputs: SourceInputs, selected) -> list[LoadedSecondary]:
             and (s.match_set.older_sha256, s.match_set.newer_sha256) == (inputs.older_sha256, inputs.newer_sha256)]
 
 
-def bindiff_flags(inputs: SourceInputs, addr: AddressMap) -> dict[tuple[int, int], tuple[str, ...]]:
+def bindiff_flags(inputs: SourceInputs, addr: AddressMap, budget: Budget | None = None) -> dict[tuple[int, int], tuple[str, ...]]:
     """BinDiff flags per exact (older rva, newer rva) pair, for channel C8; sets that are for another pair or whose
     addresses are not comparable contribute nothing (never a guess)."""
     found: dict[tuple[int, int], tuple[str, ...]] = {}
-    for loaded in sorted(usable_sets(inputs, {'bindiff'}), key=lambda s: s.entry_id):
+    if budget is not None:
+        budget.check()
+    for loaded in sorted(usable_sets(inputs, {'bindiff'}), key=lambda s: (s.entry_id, source_ref_of(s, budget).entry_id)):
         match_set = loaded.match_set
         rows = [*match_set.matches, *(a.candidate for a in match_set.alternatives if a.source == 'bindiff')]
         basis = addr.set_basis({r.older_address for r in rows if r.older_address is not None},
                                {r.newer_address for r in rows if r.newer_address is not None})
         if basis == 'not-comparable':
             continue
-        for row in match_set.matches:
+        for row in _ordered(loaded, budget)[0]:
+            if budget is not None:
+                budget.check()
             if row.older_address is None or row.newer_address is None:
                 continue
             older, newer = addr.to_rva('older', row.older_address, basis), addr.to_rva('newer', row.newer_address, basis)
@@ -89,10 +159,39 @@ def bindiff_flags(inputs: SourceInputs, addr: AddressMap) -> dict[tuple[int, int
     return found
 
 
-def source_ref_of(loaded: LoadedSecondary) -> SourceRef:
+def source_ref_of(loaded: LoadedSecondary, budget: Budget | None = None) -> SourceRef:
+    """The current-set id/raw hash alone do not bind normalized matches or alternatives."""
     match_set = loaded.match_set
-    return SourceRef(source=match_set.engine, entry_id=loaded.entry_id[:128], file_sha256=match_set.file_sha256,
-                     version=match_set.engine_version[:64])
+    if budget is not None:
+        budget.check()
+    if loaded._source_ref is not None:
+        return loaded._source_ref
+    if loaded._body_sha256 is not None:
+        entry_digest = keys.source_content_digest('secondary-entry-id', loaded.entry_id, budget=budget)
+        content_id = domain_id('unified-source-content', 3,
+                               {'source': match_set.engine, 'entry_id_digest': entry_digest,
+                                'validated_body_sha256': loaded._body_sha256})
+        ref = SourceRef(source=match_set.engine, entry_id=content_id, file_sha256=match_set.file_sha256,
+                        version=match_set.engine_version[:64])
+        object.__setattr__(loaded, '_source_ref', ref)
+        return ref
+    matches, alternatives = _ordered(loaded, budget)
+    snapshot = match_set.model_dump(mode='json', exclude={'matches', 'alternatives'})
+    for field, records in (('matches', matches), ('alternatives', alternatives)):
+        if field == 'alternatives' and not records:
+            continue
+        snapshot[field] = []
+        for record in records:
+            if budget is not None:
+                budget.check()
+            snapshot[field].append(record.model_dump(mode='json'))
+    content_id = keys.source_content_digest(match_set.engine,
+                                           {'entry_id': loaded.entry_id,
+                                            'match_set': snapshot}, budget=budget)
+    ref = SourceRef(source=match_set.engine, entry_id=content_id, file_sha256=match_set.file_sha256,
+                    version=match_set.engine_version[:64])
+    object.__setattr__(loaded, '_source_ref', ref)
+    return ref
 
 
 class SecondaryAdapter:
@@ -105,15 +204,18 @@ class SecondaryAdapter:
         return Availability('ok') if inputs.secondary else Availability('missing', 'no-secondary-sets')
 
     def atoms(self, inputs: SourceInputs, addr: AddressMap, budget) -> AdapterOutput:
+        budget.check()
         ledger = Ledger()
         atoms: list[Atom] = []
         refs: list[SourceRef] = []
         nodes: dict[tuple[str, int], str | None] = {}
         order = {s.id: i for i, s in enumerate(self.registry.sources)}
-        for loaded in sorted(inputs.secondary, key=lambda s: (order.get(s.match_set.engine, 99), s.entry_id)):
+        sets = [(loaded, source_ref_of(loaded, budget)) for loaded in inputs.secondary]
+        for loaded, ref in sorted(sets, key=lambda item: (order.get(item[0].match_set.engine, 99),
+                                                        item[0].entry_id, item[1].entry_id)):
             match_set = loaded.match_set
             engine = match_set.engine
-            refs.append(source_ref_of(loaded))  # every set looked at is an input, a refused one included
+            refs.append(ref)  # every set looked at is an input, a refused one included
             if (match_set.older_sha256, match_set.newer_sha256) != (inputs.older_sha256, inputs.newer_sha256):
                 ledger.flag(f'{engine}-pair-mismatch')
                 continue
@@ -144,12 +246,11 @@ class SecondaryAdapter:
     # -- BinDiff ---------------------------------------------------------------------------------------------------
 
     def _bindiff(self, loaded: LoadedSecondary, addr, basis, budget, atoms: list[Atom], nodes) -> None:
-        match_set = loaded.match_set
-        for row in match_set.matches:
+        for row in _ordered(loaded, budget)[0]:
             budget.tick()
             step, tier, cls = self.registry.bindiff_meta(row.algorithm)
             self._emit(atoms, nodes, row, addr, basis, step, tier, cls, '1:1', loaded.entry_id, extra=True)
-        for alt in match_set.alternatives:
+        for alt in _ordered(loaded, budget)[1]:
             if alt.source != 'bindiff':
                 continue
             budget.tick()
@@ -185,9 +286,10 @@ class SecondaryAdapter:
         step, tier, cls = self.registry.rzdiff_meta
         shared: dict[int, int] = {}
         for row in match_set.matches:
+            budget.check()
             if row.older_address is not None and row.newer_address is not None:
                 shared[row.newer_address] = shared.get(row.newer_address, 0) + 1
-        for row in match_set.matches:
+        for row in _ordered(loaded, budget)[0]:
             budget.tick()
             both = row.older_address is not None and row.newer_address is not None
             cardinality = 'non-exclusive' if both and shared[row.newer_address] > 1 else '1:1'

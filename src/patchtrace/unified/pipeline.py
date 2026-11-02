@@ -87,7 +87,8 @@ from .sources.ghidriff import MAX_RAW_BYTES
 from .sources.secondary import write_loaded
 
 __all__ = ['ALL_SOURCES', 'PlacedIr', 'Plan', 'RunReport', 'StageEvent', 'UnifiedOptions', 'UnifiedRequest',
-           'WorkerOutput', 'cached', 'execute', 'load_current', 'make_plan', 'prepare', 'publish', 'recent_runs',
+           'WorkerOutput', 'cached', 'capture_plan', 'capture_request', 'execute', 'load_current', 'make_plan',
+           'prepare', 'publish', 'recent_runs', 'resolve_plan', 'resolve_request',
            'run_unified', 'total_ram_bytes']
 
 SECONDARY_ENGINES = ('bindiff', 'rz-diff')
@@ -142,14 +143,19 @@ class Plan:
     ir: tuple[PlacedIr, PlacedIr] | None = None     # older, newer; None = S0 mode
     ir_note: str | None = None                      # why placed sidecars were not used (a warning of the report)
     residual: bool = True
+    _identity_inputs: SourceInputs | None = field(default=None, init=False, compare=False, repr=False)
 
     @property
     def result_id(self) -> str:
-        return self.identity.result_id  # type: ignore[union-attr]
+        if self.identity is None:
+            raise fail('PT-UNIFIED-INPUT', 'plan-unresolved')
+        return self.identity.result_id
 
     @property
     def config_digest(self) -> str:
-        return self.identity.config_digest  # type: ignore[union-attr]
+        if self.identity is None:
+            raise fail('PT-UNIFIED-INPUT', 'plan-unresolved')
+        return self.identity.config_digest
 
     @property
     def mode(self) -> str:
@@ -163,9 +169,13 @@ class Plan:
 
     def inputs(self, matches: Iterable[SnapshotMatch] | None = None, raw_status: str | None = None) -> SourceInputs:
         raw = RawGhidriff(status=raw_status or self.raw_status, sha256=self.raw_sha256)  # type: ignore[arg-type]
-        return SourceInputs(older_sha256=self.older_sha256, newer_sha256=self.newer_sha256,
-                            run=GhidriffRun(self.run_id, self.backend_version, raw),
-                            matches=self.manual if matches is None else tuple(matches), secondary=self.secondary)
+        inputs = SourceInputs(older_sha256=self.older_sha256, newer_sha256=self.newer_sha256,
+                              run=GhidriffRun(self.run_id, self.backend_version, raw),
+                              matches=self.manual if matches is None else tuple(matches), secondary=self.secondary)
+        if matches is None and self._identity_inputs is not None:
+            # This exact immutable plan owns the completed digest; replace() drops its private cache.
+            object.__setattr__(inputs, '_manual_digest', self._identity_inputs._manual_digest)
+        return inputs
 
     def guard(self, result_id: str | None = None) -> Guard:
         return Guard(self.project_id, self.run_id, self.raw_sha256, result_id or self.result_id)
@@ -306,7 +316,9 @@ def _stored_sets(service, sources: tuple[str, ...], pair: tuple[str, str] | None
         rows = current_sets(EnrichmentStore(service.store), pair=pair)
     except (EnrichmentError, sqlite3.Error, ValueError):
         raise fail('PT-UNIFIED-STORE', 'secondary-unreadable') from None
-    return tuple(LoadedSecondary(entry.id, match_set) for entry, match_set in rows if match_set.engine in wanted)
+    return tuple(LoadedSecondary.from_verified_body(entry.id, match_set, entry.body_json, entry.body_sha256)
+                 if entry.body_json is not None and entry.body_sha256 is not None else LoadedSecondary(entry.id, match_set)
+                 for entry, match_set in rows if match_set.engine in wanted)
 
 
 def _producer(manifest: ProgramIrManifest) -> tuple:
@@ -336,9 +348,9 @@ def _find_ir(root: Path, run_id: str, older: tuple[str, PeLayout],
     return None, IR_ASYMMETRIC
 
 
-def make_plan(service, sources: Iterable[str] = ALL_SOURCES, *, limits: UnifiedLimits = DEFAULT_LIMITS,
-              registry: Registry = REGISTRY, use_ir: bool = True, residual: bool = True) -> Plan:
-    """Owner thread, read-only. Raises `UnifiedError(INPUT)` when there is nothing to build a result from."""
+def capture_plan(service, sources: Iterable[str] = ALL_SOURCES, *, limits: UnifiedLimits = DEFAULT_LIMITS,
+                 use_ir: bool = True, residual: bool = True) -> Plan:
+    """Owner-thread snapshot only. The returned capture has no result identity until `resolve_plan`."""
     chosen = _validate_sources(sources)
     project = service.project
     run = _completed_run(project)
@@ -351,13 +363,40 @@ def make_plan(service, sources: Iterable[str] = ALL_SOURCES, *, limits: UnifiedL
     secondary = _stored_sets(service, chosen, (sides['older'], sides['newer']) if {'older', 'newer'} <= sides.keys() else None)
     placed, note = (_find_ir(service.root, run.id, (sides['older'], older), (sides['newer'], newer)) if use_ir
                     else (None, None))
-    base = Plan(project_id=project.id, revision=project.revision, run_id=run.id, raw_sha256=run.raw_sha256,
+    return Plan(project_id=project.id, revision=project.revision, run_id=run.id, raw_sha256=run.raw_sha256,
                 raw_path=raw_path, raw_status=raw_status, backend_version=str(run.backend_version)[:64],
                 older_sha256=sides['older'], newer_sha256=sides['newer'], older_layout=older, newer_layout=newer,
                 sources=chosen, secondary=secondary, manual=manual, ir=placed, ir_note=note, residual=residual)
-    identity = plan_identity(base.inputs(), base.addr(), chosen, registry, limits, ir=base.ir_digests(),
-                             residual=residual)
-    return dataclasses.replace(base, identity=identity)
+
+
+def resolve_plan(plan: Plan, *, limits: UnifiedLimits = DEFAULT_LIMITS, registry: Registry = REGISTRY,
+                 budget: Budget | None = None, previous: Plan | None = None) -> Plan:
+    """Pure task work over validated captures; never accesses the project or trusts a transported digest."""
+    budget = budget or Budget()
+    budget.check()
+    inputs = plan.inputs()
+    prior = None if previous is None else previous._identity_inputs
+    if prior is not None and prior._manual_digest is not None and len(prior.matches) == len(inputs.matches):
+        for old, new in zip(prior.matches, inputs.matches, strict=True):
+            budget.check()
+            if old != new:
+                break
+        else:
+            budget.check()
+            object.__setattr__(inputs, '_manual_digest', prior._manual_digest)
+    identity = plan_identity(inputs, plan.addr(), plan.sources, registry, limits, ir=plan.ir_digests(),
+                             residual=plan.residual, budget=budget)
+    budget.check()
+    resolved = dataclasses.replace(plan, identity=identity)
+    object.__setattr__(resolved, '_identity_inputs', inputs)
+    return resolved
+
+
+def make_plan(service, sources: Iterable[str] = ALL_SOURCES, *, limits: UnifiedLimits = DEFAULT_LIMITS,
+              registry: Registry = REGISTRY, use_ir: bool = True, residual: bool = True) -> Plan:
+    """Synchronous owner-thread API for CLI callers; Qt captures first and resolves in task work."""
+    return resolve_plan(capture_plan(service, sources, limits=limits, use_ir=use_ir, residual=residual),
+                        limits=limits, registry=registry)
 
 
 def _sections(service) -> tuple[tuple[tuple[int, int], ...], tuple[tuple[int, int], ...]]:
@@ -376,13 +415,13 @@ def _sections(service) -> tuple[tuple[tuple[int, int], ...], tuple[tuple[int, in
     return found['older'], found['newer']
 
 
-def prepare(service, options: UnifiedOptions | None = None, *, limits: UnifiedLimits = DEFAULT_LIMITS,
-            registry: Registry = REGISTRY) -> UnifiedRequest:
-    """Owner thread: everything `execute` needs, copied out of the project."""
+def capture_request(service, options: UnifiedOptions | None = None, *,
+                    limits: UnifiedLimits = DEFAULT_LIMITS) -> UnifiedRequest:
+    """Owner thread: capture validated inputs; identity resolution remains separate task work."""
     options = options or UnifiedOptions()
     timeout = limits.checked_timeout(options.timeout_s, kind='worker')
     started_utc, started = _now(), time.monotonic()
-    plan = make_plan(service, options.sources, limits=limits, registry=registry, use_ir=options.use_ir,
+    plan = capture_plan(service, options.sources, limits=limits, use_ir=options.use_ir,
                      residual=options.residual)
     snapshot = snapshot_from_project(service.project, plan.run_id, limits)
     ram = options.total_ram_bytes if options.total_ram_bytes is not None else total_ram_bytes()
@@ -397,6 +436,20 @@ def prepare(service, options: UnifiedOptions | None = None, *, limits: UnifiedLi
                                      for a in service.project.artifacts},
                           gzf_recorded={side: info['sha256'] for side, info in (recorded or {}).items()
                                         if isinstance(info, dict) and isinstance(info.get('sha256'), str)})
+
+
+def resolve_request(request: UnifiedRequest, *, cancel=None, limits: UnifiedLimits = DEFAULT_LIMITS,
+                    registry: Registry = REGISTRY, previous: Plan | None = None) -> UnifiedRequest:
+    """Complete a captured request off-thread before executing or publishing it."""
+    budget = Budget(request.started_monotonic + request.timeout_s, cancel)
+    plan = resolve_plan(request.plan, limits=limits, registry=registry, budget=budget, previous=previous)
+    return dataclasses.replace(request, plan=plan, prepare_ms=_ms(request.started_monotonic))
+
+
+def prepare(service, options: UnifiedOptions | None = None, *, limits: UnifiedLimits = DEFAULT_LIMITS,
+            registry: Registry = REGISTRY) -> UnifiedRequest:
+    """Synchronous capture and identity resolution for CLI callers."""
+    return resolve_request(capture_request(service, options, limits=limits), limits=limits, registry=registry)
 
 
 # --- execute (no SQLite; any thread) ------------------------------------------------------------------------------
@@ -784,7 +837,7 @@ def run_unified(service, options: UnifiedOptions | None = None, *, cancel: threa
     cancel = cancel or threading.Event()
     if cancel.is_set():
         raise fail('PT-UNIFIED-CANCEL', 'cancelled')
-    request = prepare(service, options)
+    request = resolve_request(capture_request(service, options), cancel=cancel)
     hit = cached(service, request, enrichment=enrichment)
     if hit is not None:
         return hit
