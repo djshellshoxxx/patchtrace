@@ -1,0 +1,72 @@
+{
+  "reviewer": "review_resume independent helper",
+  "decision": "No blocking findings in the card-contributor context identity and raw-retention repair",
+  "reviewed_head": "76ca406ab51f93c7cd166e575c0aa6cf1ef80b2b",
+  "reviewed_tree": "8777716b279606dd65c88484eeb78936954099fc",
+  "base": "9ae5731cadebd691a1aedc5b5727c3af3fcd58a0",
+  "observed_qa_only_head": "443fc8e9410ca9eb8f50acf8ce730c6beac5b3eb",
+  "worktree": "/workspace/scratch/142cb233d750/wt-card-context",
+  "changed_paths": [
+    "docs/specs/kb-cve/31-E-evidence-intent.md",
+    "src/patchtrace/kbcorrelation/context.py",
+    "src/patchtrace/kbcorrelation/index.py",
+    "tests/test_kbc_card_context_sources.py"
+  ],
+  "changed_file_sha256": {
+    "docs/specs/kb-cve/31-E-evidence-intent.md": "82ed867acf2ff6919302530d3532e94976f33f5e318e27dfceb056c194825f7c",
+    "src/patchtrace/kbcorrelation/context.py": "e9f113f40630f7fdf77f274ffa22ccf46abbede34abd4d7e5838ff482bf4dc0b",
+    "src/patchtrace/kbcorrelation/index.py": "df9af7e075eb6a6372cd6e7b8c001d04ef76e638efde937cfe9984ca6245afb3",
+    "tests/test_kbc_card_context_sources.py": "318217f909a5eca621d98834f66666ae42dd4f6c4ee3f0752fbf25a917bf5d9b"
+  },
+  "scope_and_reasoning": [
+    "Internal Lookup.card_doc_ids records exactly the selected active documents whose cards enter the per-CVE/source-kind consensus, with deterministic deduplication. It includes card-only agreeing/conflicting documents and warning dependencies, excluding unrelated CVEs and superseded documents.",
+    "Context creation unions those contributor source digests with its selected edge source before the existing service attachment copies raw objects. Changing relevant card-only bytes changes identity even when edges and rendered consensus facts are unchanged.",
+    "Context-key policy advances to version 2 and hashes doc ID, raw digest, kind, and release ID in deterministic order. The persisted ContextBundle wire shape and BUNDLE_VERSION 1 remain unchanged; older keys are loaded without recomputation.",
+    "The separate #118 integration keeps the saved-scope validation and bounded index before contributor lookup. An independently exercised explicit saved scope excludes a later conflicting card-only document from both identity and copied raw sources.",
+    "This is source dependency and identity repair only; it does not redesign card provenance or the separately noted field-pointer/hypothesis attribution."
+  ],
+  "validation": [
+    {
+      "command": "QT_QPA_PLATFORM=offscreen PYTHONPATH=.:src:tests /workspace/scratch/142cb233d750/venv/bin/python -m pytest -q --tb=short tests/test_kbc_card_context_sources.py tests/test_kbc_msrc_review_findings.py tests/test_kbc_index.py tests/test_kbc_context.py tests/test_kbc_service.py",
+      "result": "87 passed in 3.78 seconds. Includes agreement/conflict identity changes, unchanged-edge/raw-byte mutation, deterministic insertion order, excluded and superseded sources, actual conflicting-source project copying, and old-policy bundle loading."
+    },
+    {
+      "command": "QT_QPA_PLATFORM=offscreen PYTHONPATH=.:src:tests /workspace/scratch/142cb233d750/venv/bin/python /workspace/scratch/142cb233d750/reviews-resume/card_context_source_control.py",
+      "result": "Independent actual attachment on isolated source passed: agreeing card-only document is retained alongside the edge document, both compressed raw objects decode byte-for-byte with matching digests, and an unrelated CVE document is excluded."
+    },
+    {
+      "command": "QT_QPA_PLATFORM=offscreen PYTHONPATH=.:src:tests /workspace/scratch/142cb233d750/venv/bin/python /workspace/scratch/142cb233d750/reviews-resume/card_context_source_control.py scoped (cwd wt-card-scope-validation)",
+      "result": "Independent combined #118 control passed: later unselected conflicting source leaves complete saved-scope bundle/key unchanged; actual project receives exactly the two selected raw objects."
+    },
+    {
+      "command": "Changed source/test Ruff; git diff --check base..source; source equality against QA-only head",
+      "result": "Passed; four changed source paths; clean source and combined worktrees."
+    }
+  ],
+  "unqualified_attempts": [
+    {
+      "command": "Initial focused selection also named nonexistent tests/test_kbc_context_export.py",
+      "result": "pytest exit 4; no tests ran; corrected selection above is the only counted pytest result."
+    }
+  ],
+  "combined_control_source": {
+    "head": "0a920f6f10fc8e03e96f97a182ab1d05bdc28351",
+    "tree": "fd82f8bb7dd4f2b862ac4eaeab4f297980f9dd05",
+    "base": "197186a20f48e2a70931a720f4d68950d8a8c8fa",
+    "worktree": "/workspace/scratch/142cb233d750/wt-card-scope-validation"
+  },
+  "independent_artifacts": {
+    "/workspace/scratch/142cb233d750/reviews-resume/card_context_source_control.py": "d3184d39f358ca4592084876b8b6332f12a0c1d42134d2aeec68ba60a880d0c8",
+    "/workspace/scratch/142cb233d750/reviews-resume/card-context-control-6jf0myl7/result.json": "ffa465459f1f7aefd4a740dfe31cf0cc6f674745b42f6b9f8c32e9198b7e0cf8",
+    "/workspace/scratch/142cb233d750/reviews-resume/card-context-control-wdm0d6os/result.json": "380521a3e7c89919fe962ade8dcb34a3e123d394bb41429bc4bba8779cbba47c"
+  },
+  "environment": {
+    "python": "3.12.14",
+    "platform": "Linux",
+    "Qt": "offscreen"
+  },
+  "limitations": [
+    "No live vendor retrieval, full suite, native Windows, broad provenance-schema redesign, or other #153 closure claim.",
+    "No repository source edits, target execution, remote mutation, or GitHub approval performed."
+  ]
+}

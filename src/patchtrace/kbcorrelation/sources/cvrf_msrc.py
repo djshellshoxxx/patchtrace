@@ -224,8 +224,20 @@ def _remediation(index: int, value, at: str, allowed: set[str], limits, problems
         return None
     desc = _wrapped(value['Description']) if 'Description' in value else ''
     pids = value.get('ProductID', [])
-    if desc is None or not _members(pids):
-        problems.append(Problem('ROW_SHAPE', at, 'Description.Value or ProductID has the wrong type'))
+    valid_pids = _members(pids)
+    if desc is None:
+        description = value['Description']
+        description_at = at + '/Description'
+        detail = 'Description.Value has the wrong type'
+        if isinstance(description, dict):
+            if 'Value' in description:
+                description_at += '/Value'
+            else:
+                detail = 'missing Description.Value'
+        problems.append(Problem('ROW_SHAPE', description_at, detail))
+    if not valid_pids:
+        problems.append(Problem('ROW_SHAPE', at + '/ProductID', 'ProductID has the wrong type'))
+    if desc is None or not valid_pids:
         return None
     try:
         desc_bytes = len(desc.encode('utf-8'))

@@ -96,6 +96,12 @@ fields are diagnosed without truncating a partial KB into a claim.
 If a Type `2` remediation omits `Description`, report `ROW_SHAPE` at the existing remediation
 object, name the missing field, and skip the row. Other remediation kinds may omit this field;
 their existing handling remains unchanged.
+Malformed `Description` and `ProductID` fields have separate `ROW_SHAPE` diagnostics. A malformed
+present `ProductID` points to `/ProductID` without blaming a valid description. A non-object
+description points to `/Description`; an invalid present wrapped value points to `/Description/Value`.
+An absent wrapped `Value` points to the existing `/Description` object and names missing
+`Description.Value`. If both present fields are invalid, both diagnostics are retained. Row rejection and
+the Type `2`-only requirement for a description remain unchanged.
 
 Only numeric product status `3` is mapped to `Known Affected`: the paired official JSON/XML
 capture establishes identical CVE/product memberships. Other numeric values, including `4`, are

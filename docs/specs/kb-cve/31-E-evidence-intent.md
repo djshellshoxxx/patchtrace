@@ -75,6 +75,16 @@ Alternative hypotheses include code optimizer churn, debug/symbol changes, unrel
 
 Store output keyed by input tuple (project ID/rev, old/new SHA, run ID, match-override revision, product_scope_id, KB/CVE edge-set digest, advisory SHA, rules SHA, engine/version/settings, source-coverage digest). An advisory or build lineage revision invalidates derived assessments; immutable raw runs and analyst notes persist. Persist transformed reports with source id plus JSON pointer and code location; default reports exclude raw binary, code and local paths. No user source is transmitted to remote AI without existing separate preview/consent and explicit user action. E0 can reuse existing report export extension; E1 may append optional PILOT/1 section, never replacing original Finding.
 
+Documentary context source identity includes every active document contributing to the selected CVEs' card
+consensus, including card-only snapshots and source-kind groups whose conflict warnings are displayed. These
+contributors come from the same bounded lookup as the cards; superseded, out-of-scope, and unrelated-CVE
+documents are excluded. Union their source digests with the selected edge sources and copy every resulting
+raw object into the attached project. The key includes their document IDs, raw SHA-256 values, kinds, and
+release IDs even when the edge-set digest is unchanged. Key-policy version 2 separates these complete identities
+from older keys; this is an internal identity version, not a wire bundle schema change. Existing persisted
+version-1 bundles remain readable and are not rewritten. Raw cards, source-kind separation, revision selection,
+and saved investigation scope remain unchanged.
+
 ## E8. Calibration and negative test requirements
 
 Golden negative fixtures: CWE text says 'not affected'; source contains generic 'memory' terms; introduced log string; tool disagreement; NVD-only CVE; wrong-product KB; Ghidra shared lineage; absent capa rule; blank function code; compiler-only rebuild; intervening nonsecurity LCU; missing signature; stale project revision. Outcomes must not become strong or claim vulnerability verified.

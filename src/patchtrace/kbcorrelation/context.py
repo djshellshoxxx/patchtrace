@@ -35,6 +35,7 @@ from .index import ReverseIndex
 from .products import clean_text
 
 BUNDLE_VERSION = 1
+CONTEXT_KEY_VERSION = 2  # Identity policy only; persisted ContextBundle wire fields stay unchanged.
 HOOKS = ('kb.meaning.coverage', 'kb.meaning.hypothesis', 'kb.meaning.kev', 'kb.meaning.relation',
          'kb.next.run_comparison')
 LIMITATION = ('The context records what advisory documents state and which checks could not be made; it does not '
@@ -83,13 +84,14 @@ class ContextBundle(Contract):
         return self
 
 
-def context_key(*, investigation_id: str, base_revision: int, edge_set_digest: str, csaf_shas: Sequence[str],
+def context_key(*, investigation_id: str, base_revision: int, edge_set_digest: str, sources: Sequence[SourceDigest],
                 rules_digest: str, lexicon_digest: str, older_sha: str | None, newer_sha: str | None,
                 scope_id: str | None) -> str:
     """Plan 7.4 context key; ``kev_snapshot_sha`` is None until the KEV adapter (K8) loads a snapshot."""
-    return domain_id('kbc.context', 1, {
+    return domain_id('kbc.context', CONTEXT_KEY_VERSION, {
         'inv': investigation_id, 'revision': base_revision, 'edge_set_digest': edge_set_digest,
-        'csaf_source_shas': sorted(csaf_shas), 'rules_digest': rules_digest, 'lexicon_digest': lexicon_digest,
+        'advisory_sources': [d.model_dump(mode='json') for d in sorted(sources, key=lambda d: d.doc_id)],
+        'rules_digest': rules_digest, 'lexicon_digest': lexicon_digest,
         'kev_snapshot_sha': None, 'older': older_sha, 'newer': newer_sha, 'scope_id': scope_id,
         'versions': {'contract': CONTRACT, 'bundle': BUNDLE_VERSION}})
 
@@ -112,6 +114,10 @@ def build_bundle(*, investigation_id: str, base_revision: int, lead: Lead, cves:
     for cve in sorted(set(cves)):
         lookup = index.lookup_cve(cve, scope_id=scope_id, now=now)
         unknowns.extend(w for w in lookup.warnings if w.startswith('CARD_FACT_CONFLICT:'))
+        for doc_id in lookup.card_doc_ids:
+            source = index.get(doc_id).source
+            docs[doc_id] = SourceDigest(doc_id=doc_id, sha256=source.sha256, kind=source.kind,
+                                       release_id=source.release_id)
         card = next((c for c in lookup.cards if c.source_kind == 'cvrf'), None) or next(iter(lookup.cards), None)
         edge = next(iter(lookup.edges), None)
         if card is None or edge is None:
@@ -135,7 +141,7 @@ def build_bundle(*, investigation_id: str, base_revision: int, lead: Lead, cves:
                            limitations=(LIMITATION,), hooks=HOOKS)
     key = context_key(investigation_id=investigation_id, base_revision=base_revision,
                       edge_set_digest=index.edge_set_digest(),
-                      csaf_shas=[d.sha256 for d in docs.values() if d.kind == 'csaf'],
+                      sources=tuple(docs.values()),
                       rules_digest=rules.rules_digest, lexicon_digest=rules.lexicon_digest, older_sha=older_sha,
                       newer_sha=newer_sha, scope_id=scope_id)
     return ContextBundle(

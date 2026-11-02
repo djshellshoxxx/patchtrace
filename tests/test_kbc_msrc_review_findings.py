@@ -200,10 +200,13 @@ def test_legitimate_nonfix_rows_may_omit_description_without_new_shape_errors():
         rem.pointer for rem in parsed.vulnerabilities[0].remediations}
 
 
-@pytest.mark.parametrize('description', [None, {}, {'Value': None}, '5041571'])
-def test_present_malformed_type2_description_keeps_existing_rejection(description):
+@pytest.mark.parametrize(('description', 'suffix'), [
+    (None, '/Description'), ({}, '/Description'), ({'Value': None}, '/Description/Value'),
+    ('5041571', '/Description')])
+def test_present_malformed_type2_description_keeps_existing_rejection(description, suffix):
     value = _data()
     value['Vulnerability'][0]['Remediations'][0]['Description'] = description
     doc = _import(value)
     assert not [e for e in doc.edges if e.kb == KB]
-    assert any(p.code == 'ROW_SHAPE' and p.pointer == '/Vulnerability/0/Remediations/0' for p in doc.problems)
+    assert any(p.code == 'ROW_SHAPE' and p.pointer == '/Vulnerability/0/Remediations/0' + suffix
+               for p in doc.problems)
