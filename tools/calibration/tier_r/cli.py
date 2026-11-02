@@ -221,7 +221,12 @@ def cmd_evaluate(args) -> tuple[int, dict]:
                                     engines=engines)
     run_token = uuid.uuid4().hex
     outputs = Path(args.outputs) if args.outputs else store / 'outputs' / run_token
-    report = E.evaluate(docs, providers, symbols=args.symbols, output_dir=outputs)
+    try:
+        report = E.evaluate(docs, providers, symbols=args.symbols, output_dir=outputs)
+    except E.EvaluationRetentionError as exc:
+        return FINDINGS, {'command': 'evaluate', 'status': 'failed', 'credited': False, 'error': str(exc),
+                          'outputs': exc.outputs.as_posix(), 'diagnostics': exc.diagnostics,
+                          **({'report_data': exc.report} if 'report' not in exc.diagnostics else {})}
     out = Path(args.out) if args.out else store / 'reports' / (
         f'tier-r-{args.symbols}-{report["report_sha256"][:12]}-{run_token}.json')
     try:

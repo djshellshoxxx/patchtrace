@@ -1,0 +1,26 @@
+{
+  "source": "4a82fd311877d31fc322027a94fa1aecfbbec0a9",
+  "tree": "47e5221f4209d2a2ce3846a37171aa22f35a13e7",
+  "cwd": "/workspace/scratch/142cb233d750/wt-full-recovered",
+  "command": [
+    "/workspace/scratch/142cb233d750/venv-full-recovered/bin/python",
+    "-m",
+    "pytest",
+    "-q",
+    "--junitxml=/workspace/scratch/142cb233d750/reconciliation/full-recovered-20261102/pytest.xml"
+  ],
+  "QT_QPA_PLATFORM": "offscreen",
+  "started_utc": "2026-11-02T08:29:49.440935+00:00",
+  "status": "completed",
+  "exit_code": 1,
+  "seconds": 1970.4665686180006,
+  "finished_utc": "2026-11-02T09:02:39.907840+00:00",
+  "counts": {
+    "passed": 19266,
+    "skipped": 128,
+    "xfailed": 7,
+    "failed": 1
+  },
+  "test_log_note": "Captured console progress stopped at 41%; completed JUnit is the final count source.",
+  "af_unix_control": "Isolated python -I stdlib socket.socket(AF_UNIX), without PatchTrace import, also raises PermissionError errno1. Test bytes equal main25c9795; no skip/xfail/guard change."
+}

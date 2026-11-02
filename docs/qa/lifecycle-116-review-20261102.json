@@ -1,0 +1,65 @@
+{
+  "review_date_utc": "2026-11-02",
+  "reviewer": "/root/msrc_recover",
+  "author": "/root/corpus_recover",
+  "base": "f7e65462e30775b28757c166bd012085afd56a81",
+  "head": "3f5b63b8b0d8ea6004f0492bbc9d3e338d5919ec",
+  "tree": "1217eb2bb745c3da02090e29f289265624b952db",
+  "worktree": "/workspace/scratch/142cb233d750/wt-lifecycle-review",
+  "clean": true,
+  "conclusion": "No blocking findings in this committed slice.",
+  "findings": [],
+  "changed_file_sha256": {
+    "docs/modules.md": "f5a20c5908165b07544ce03ad645e647ecd1c2be4b8be83cb7b3d2d202990a35",
+    "docs/specs/gui-preflight-inspection.md": "5d96adf36e97de53315c3e717ef925f7363f01404014b6248014dec0288314ba",
+    "docs/specs/ui.md": "dfd02ba0db448d0aeba581845d69fcbd9b4a10d735baf43a0280c400874747ce",
+    "src/patchtrace/tooltips.py": "bc6abbb06e24e9ea880b68435782af3b6349a4a29d1d399d887ff93c9dee367e",
+    "src/patchtrace/ui.py": "8a939b5590593a4e162d0d3b12f2c456bcb6a8961010aaca0b0cbd55bb95e995",
+    "src/patchtrace/ui_inspection.py": "fbf391c819fc9253f723418201bf63eb68f5e919ae455026cc031410917a8957",
+    "src/patchtrace/ui_profiles.py": "396aa96d9ccb53bb194d610b8939e19b9e955ee89488a5588eb209c14f386900",
+    "tests/test_lifecycle_116.py": "e6d1b7f69b484d3a4ca6175c580e9f62ed42bf15cde9068c4e8c9cfa42acee81",
+    "tests/test_tooltips.py": "a72a072611426878851fff5ab704a06d36e51ec057edf3ffc169c1e7eee54fb9"
+  },
+  "independent_controls": {
+    "path": "/workspace/scratch/142cb233d750/reviews-msrc/test_lifecycle_controls_20261102.py",
+    "sha256": "432aef3ccecf3ab9a3e80db519dede353db5af0298b542a4ba7b9553a9c119b6",
+    "count": 15
+  },
+  "checks": [
+    {
+      "command": "QT_QPA_PLATFORM=offscreen PYTHONPATH=.:src:tests /workspace/scratch/142cb233d750/venv/bin/python -m pytest -q tests/test_lifecycle_116.py tests/test_ui_profiles.py tests/test_ui_setup_dialog.py tests/test_ui_raw_alignment.py tests/test_tooltips.py tests/test_gui_host_seam.py",
+      "result": "92 passed in 32.74s",
+      "log": "/workspace/scratch/142cb233d750/lifecycle-review-focused-20261102.txt"
+    },
+    {
+      "command": "QT_QPA_PLATFORM=offscreen PYTHONPATH=.:src:tests /workspace/scratch/142cb233d750/venv/bin/python -m pytest -q /workspace/scratch/142cb233d750/reviews-msrc/test_lifecycle_controls_20261102.py",
+      "result": "15 passed in 1.84s",
+      "log": "/workspace/scratch/142cb233d750/reviews-msrc/lifecycle-controls-20261102.txt"
+    },
+    {
+      "command": "/workspace/scratch/142cb233d750/venv/bin/python -m ruff check src/patchtrace/tooltips.py src/patchtrace/ui.py src/patchtrace/ui_inspection.py src/patchtrace/ui_profiles.py tests/test_lifecycle_116.py tests/test_tooltips.py",
+      "result": "All checks passed!"
+    },
+    {
+      "command": "git diff --check f7e65462e30775b28757c166bd012085afd56a81 3f5b63b8b0d8ea6004f0492bbc9d3e338d5919ec",
+      "result": "passed"
+    }
+  ],
+  "ui_lines": 3077,
+  "ui_ceiling": 3077,
+  "ceiling_unchanged": true,
+  "reviewed_behaviors": [
+    "Dirty profile selection/New/Duplicate Save, Discard and Cancel retention",
+    "Actual modal Save/Discard/Cancel buttons, Escape/default Cancel, plain text, tooltips/accessibility",
+    "Validation and storage failures retain dirty editor, selection and original saved JSON bytes",
+    "Successful save-and-rename restores requested destination without reusing deleted list items",
+    "Old project and old orientation queued failures cannot alter current cached error, Files status or logs",
+    "Actual InspectionThread cancellation retains diagnostic logging and suppresses failure signal/UI delivery; current uncancelled failures visible"
+  ],
+  "limits": [
+    "Only pinned committed range; untracked creation tests and later creation slice excluded",
+    "No production edits, remote mutations, native/manual desktop claim, full-suite or performance claim",
+    "Current full integration and PR CI remain root-owned",
+    "Receipt is independent review evidence, not a GitHub APPROVE event"
+  ]
+}

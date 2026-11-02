@@ -13,6 +13,7 @@ MAX_DEPTH = 4
 DEFAULT_NODES, MAX_NODES = 100, 500
 DEFAULT_EDGES, MAX_EDGES = 250, 2_000
 NEIGHBOURS_PER_NODE = 64
+CAPPED_VIEW_NOTE = 'The view is capped; some nodes or edges may be omitted.'
 
 QueryDirection = Literal['out', 'in', 'both']
 
@@ -74,7 +75,7 @@ def neighbourhood(snap: CallSnapshot, side: Side, focus: list[str], direction: Q
     if not 1 <= max_nodes <= MAX_NODES or not 1 <= max_edges <= MAX_EDGES:
         raise GraphError('PT-GRAPH-INPUT', f'limits are at most {MAX_NODES} nodes and {MAX_EDGES} edges')
     graph = snap.side(side)
-    roots = [_position(graph, side, node_id) for node_id in focus]
+    roots = list(dict.fromkeys(_position(graph, side, node_id) for node_id in focus))
     seen = dict.fromkeys(roots[:max_nodes], 0)
     truncated = len(roots) > max_nodes
     edges: dict[tuple[int, int], None] = {}
@@ -87,6 +88,7 @@ def neighbourhood(snap: CallSnapshot, side: Side, focus: list[str], direction: Q
             continue
         around = _neighbours(graph, node, direction)
         if len(around) > NEIGHBOURS_PER_NODE:
+            truncated = True
             more.append(MoreMarker(node=graph.nodes[node].id, count=len(around) - NEIGHBOURS_PER_NODE))
         for other in around[:NEIGHBOURS_PER_NODE]:
             if other not in seen:
@@ -108,7 +110,7 @@ def _view(snap: CallSnapshot, side: Side, graph: SideGraph, nodes: list[int], ed
           more: list[MoreMarker], truncated: bool) -> GraphView:
     limitations = list(snap.limitations)
     if truncated or snap.truncated:
-        limitations.append('The view is capped; more nodes or edges exist than are shown.')
+        limitations.append(CAPPED_VIEW_NOTE)
     shown = sorted((graph.nodes[p] for p in nodes), key=lambda n: (n.label, n.id))
     ordered = sorted(edges, key=lambda e: (graph.nodes[e[0]].label, graph.nodes[e[1]].label,
                                            graph.nodes[e[0]].id, graph.nodes[e[1]].id))

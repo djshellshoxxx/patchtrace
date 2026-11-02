@@ -83,6 +83,16 @@ revision was not selected. Preserve the exact saved coverage in the context. Mis
 scope requires an explicit repeat search under SPEC-31-F; no inferred whole-corpus fallback is allowed.
 This rule does not redesign card provenance or claim that a documentary association proves a fix.
 
+Documentary context source identity includes every active document contributing to the selected CVEs' card
+consensus, including card-only snapshots and source-kind groups whose conflict warnings are displayed. These
+contributors come from the same bounded lookup as the cards; superseded, out-of-scope, and unrelated-CVE
+documents are excluded. Union their source digests with the selected edge sources and copy every resulting
+raw object into the attached project. The key includes their document IDs, raw SHA-256 values, kinds, and
+release IDs even when the edge-set digest is unchanged. Key-policy version 2 separates these complete identities
+from older keys; this is an internal identity version, not a wire bundle schema change. Existing persisted
+version-1 bundles remain readable and are not rewritten. Raw cards, source-kind separation, revision selection,
+and saved investigation scope remain unchanged.
+
 ## E8. Calibration and negative test requirements
 
 Golden negative fixtures: CWE text says 'not affected'; source contains generic 'memory' terms; introduced log string; tool disagreement; NVD-only CVE; wrong-product KB; Ghidra shared lineage; absent capa rule; blank function code; compiler-only rebuild; intervening nonsecurity LCU; missing signature; stale project revision. Outcomes must not become strong or claim vulnerability verified.

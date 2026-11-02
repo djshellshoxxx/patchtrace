@@ -687,3 +687,72 @@ remain separate. No target execution, full-suite, native Windows, DPI, performan
 ## November 2 recovery and reviewed integration
 
 Previous scratch-only full2/native work is unavailable; no outcome is inferred. [Dated continuation](handoff/autonomous-continuation-20261102.md), [machine receipt](qa/resume-checkpoint-20261102.json) and [CI archive](qa/ci-resume-evidence-20261102.tar.gz) preserve actual original failures, #156 exact-tree acceptance/package hashes, fresh stat-API repairs, independent RD/transfer reviews and current gate limits. Combined RD/transfer106 passed18.70s; no new combined full/Windows pass is claimed. All broader accepted work remains open as individually recorded.
+
+## Issue #105 BUG-CG-2 — numeric callee suffix recovery (2026-11-02)
+
+Live [BUG-CG-2 report](https://github.com/djshellshoxxx/patchtrace/issues/105#issuecomment-6487334009) read and
+reproduced on `ab8476c`: `normalize_ghidriff` and `read_project_input` preserve `ReadBuffer-` plus 5000 decimal
+digits, then the actual `build_snapshot` raises Python's integer-string conversion `ValueError`. This is fresh
+evidence; the lost unpublished audit is not used to qualify the fix.
+
+`split_count_suffix` now accepts a complete ASCII decimal suffix and treats a refused integer conversion as
+no suffix. Original text, raw snapshot labels and exact-record precedence remain intact; no interpreter policy
+is changed and no arbitrary nine-digit cap is introduced (the applicable contract had none). Unicode decimal
+digits and a trailing newline no longer establish inferred count identity. Existing 10-digit and 200-digit
+accepted counts remain supported. The resolver-policy cache version becomes `callgraph/2` under WB2 section 7.5;
+wire schemas are unchanged.
+
+Fresh red regressions: **5 failed, 10 passed**, covering real 5000-digit ingestion/snapshot, Unicode and newline
+suffix inference and the previous cache-policy key. Final bounded selection: **220 passed in 3.88 s** using
+`PYTHONPATH=.:src:tests QT_QPA_PLATFORM=offscreen python -m pytest -q tests/test_callgraph_count_suffix_guard.py tests/test_callgraph_labels.py tests/test_callgraph_input.py tests/test_callgraph_pairing.py tests/test_callgraph_snapshot.py tests/test_callgraph_delta.py tests/test_callgraph_dot.py tests/test_callgraph_cli.py tests/test_callgraph_schemas.py`.
+The huge-count regression uses an isolated subprocess with `-X int_max_str_digits=4300` and both caller/callee
+directions; it checks original labels, distinct identities despite display truncation, retained edges and exact
+emitted-record precedence. Whole Ruff and diff hygiene pass; schema regeneration comparison passes in the selection.
+
+This slice addresses **BUG-CG-2 only**, not the whole issue. A separate fresh `cycle_hub` probe confirms BUG-CG-3
+still exposes 65 nodes and `+2 more` with `truncated=False` and no cap note. BUG-CG-1 successor-scan accounting
+still appears in source, but its performance repro was not rerun here. Other #105 rules, KEV/acquisition, KBC,
+strings and PE findings need their own disposition; historical issue comments are not fresh closure evidence.
+Independent review/integration and combined/native gates remain separate; no target binary was executed.
+
+## Issue #105 BUG-CG-3 — truthful call-graph caps (2026-11-02)
+
+Separate follow-up from frozen CG-2 candidate `424e59d`. The real `cycle_hub` fixture again produced 65 displayed
+nodes, 64 edges and `+2 more` with `truncated=False`; the CLI reported complete exit 0. New regressions also
+showed that duplicate focus IDs could consume the node budget before deduplication and hide a distinct root.
+Fresh red selection: **6 failed, 1 passed**. The old snapshot test explicitly expected the incorrect false
+truncation value; it now requires the existing GL-03 partial contract and a cap limitation.
+
+The existing 64-neighbour cap now marks the query partial, keeps its per-origin `more` counts and emits the
+conservative visible note "The view is capped; some nodes or edges may be omitted." Shared frontiers can omit
+the same node, so their counts are not presented as a missing unique-node total. Duplicate roots are deduplicated
+before the node budget. Paired JSON exports retain query limitations; standalone DOT includes a fixed warning
+comment and graph label; actual CLI neighbours and exports return partial exit 3. The Calls panel shows the
+cap note instead of "64 of 64 neighbours", preserves it when an independent Changes task finishes, and clears
+the cap state after an uncapped query. Existing caps and stored schemas are unchanged.
+
+Final bounded correctness selection: **185 passed in 10.03 s**, with
+`PYTHONPATH=.:src:tests QT_QPA_PLATFORM=offscreen python -m pytest -q tests/test_callgraph_cap_truth.py tests/test_ui_callgraph_cap_truth.py tests/test_callgraph_snapshot.py tests/test_callgraph_dot.py tests/test_callgraph_cli.py tests/test_callgraph_schemas.py tests/test_callgraph_inspection.py tests/test_ui_graph_panel.py tests/test_ui_graph_inspection.py tests/test_callgraph_view_model.py::test_every_headline_state_has_its_text tests/test_callgraph_view_model.py::test_notes_follow_the_headline_and_headline_precedence tests/test_callgraph_view_model.py::test_footer_and_state_copy_exact`.
+This includes real synthetic project persistence/CLI export, overlapping/duplicate frontiers, schema regeneration
+comparison, existing DOT goldens/escaping and offscreen Qt delivery order. Whole Ruff and diff hygiene pass.
+No graph path/performance job ran alongside the coordinator's combined suite. Independent review and central
+integration remain separate; CG-1 successor-scan complexity and other #105 findings are not closed by this work.
+No target execution, native Windows or human visual acceptance is claimed.
+
+## November 2 second reviewed recovery wave
+
+Reviewed output completion/transfer preflight, MSRC consensus, callgraph suffix/cap truth, profile/stale-inspection lifecycle and refusal-only backup filtering are integrated. Combined selections106 and163 passed at their pinned sources; source-bound independent receipts and [second checkpoint](qa/resume-followup-checkpoint-20261102.json) record the boundaries. The required frozen4a82fd3 full run remains pending at this entry's preparation and cannot qualify later changes. Card-only source/key identity, creation staging, precise diagnostics, CG1 and native/hosted/full/quality/remaining accepted work remain open.
+
+Completed frozen4a82fd3 local full:19,266passed/128skipped/7xfailed/1hostAF_UNIXfailure in1970.47s. Isolated stdlibcontrol reproducesEPERM; testbytesmatchmain25. Hosted Linux job125172582878 atidentical47e5221ftree passed19,314/49skip/7xfail. [Raw complete JUnit and controls](qa/full-recovered-20261102.tar.gz). Neitherqualifieslaterfollowups; no guard/testweakening.
+
+## November 2, 09:45 UTC checkpoint
+
+Creation/held-lock cleanup, card identity and pointers are reviewed/integrated; root113 and87 related checks passed. Dev-only PyYAML enables35 existing checks; all pass with independent configuration review. Old central Windows8 failures and skipped packages are archived. Backup re-adoption, retry lexical-path review finding and native exporter protobuf failure remain open. See current handoff; later assembled source is unqualified.
+### [CG-1:shared-path-budget] 2026-11-02
+
+- Source investigation began at `1367889d549a4db290b669df4ed97ac20b553428`; issue #105 comment 6487333023. Actual normalized graph -> snapshot -> `find_paths`: 816 nodes / 851 edges (`K=6`, 800 dead successors) copied and examined 202,444 DFS adjacency items despite the 200,000 visit budget, returned `truncated=false`, and made no DFS cancellation callback. Subgraph rebuilding separately read 851 edges, bidirectional reachability 8, reverse distances 51. A 416-node / 451-edge control examined 101,644 DFS items. These are operation counts, not throughput evidence.
+- GL-04 now meters every raw adjacency examination before retrieval across all path phases, including cyclic/dead/excluded candidates. Lazy CSR traversal avoids row copies and complete induced-graph rebuilding. Membership uses the existing immutable listed set plus endpoints; whole-program traversal remains unrestricted. No global/persistent index, schema expansion or new numerical limit.
+- First dedicated red run: 9 failures / 2 passes. The shared-budget implementation passed 11 checks, then moderate phase/cancellation/order coverage grew. An authorized serial run of the existing 60k/447k algorithm gate exposed a real regression: shortest reachability established distance 6 in 738 reads, reverse preparation exhausted the remaining 199,262, and an empty partial result failed the unchanged `paths.paths` assertion (1 failed in 2.53 s).
+- The refined bidirectional pass retains its completed lexicographically first shortest witness from query-local parent links, without another edge scan. An incomplete BFS layer establishes no witness. Forward parents follow FIFO prefix order, not a sort of frontier node IDs; reverse ties choose the smallest forward next hop. Exhaustion preserves enumerated paths, or that witness when enumeration has not produced one. Moderate regressions include 80 seven-node graphs at nine budgets against exhaustive shortest/lexicographic path oracles, explicit contrary frontier/suffix order, precise prepass boundaries, real normalization and actual CLI partial exit 3.
+- Final bounded selection: **82 passed, 3 deselected in 3.00 s** (the two large gates and deep-chain test deliberately excluded from this concurrent slice). The existing 60k/447k algorithm gate was then rerun serially after coordination: **1 passed in 2.50 s**, assertion and 20 s objective unchanged; 446,969 actual edges, exactly 200,000 reads, one valid six-hop simple path retained with `truncated=true`. Query elapsed 0.08668 s on that one instrumented run is recorded only as an observation, not a throughput claim. Whole Ruff and whitespace checks passed. Logs, counters and the moderate reproduction are archived in `docs/qa/callgraph-path-budget-20261102.tar.gz`.
+- Independent exact-source review and central/full integration remain pending. The CLI can resolve one API name to multiple destination identities; its total path work remains at most one 200,000-examination budget per source/destination pair, not one shared command budget. Snapshot construction and target-name lookup are outside that query budget. This does not close the broad #105 tracker or claim native Windows/full-suite/performance acceptance.

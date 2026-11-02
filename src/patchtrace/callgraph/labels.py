@@ -5,7 +5,7 @@ import re
 from typing import NamedTuple
 
 _DEFAULT = re.compile(r'^FUN_([0-9a-fA-F]+)$')
-_COUNT_SUFFIX = re.compile(r'^(.+)-(\d+)$')
+_COUNT_SUFFIX = re.compile(r'(.+)-([0-9]+)')
 _ORDINAL = re.compile(r'^#(\d+)$')
 _LIB_SUFFIXES = ('.dll', '.drv', '.so')
 _EXTERNAL_PREFIX = 'EXTERNAL:'
@@ -39,9 +39,18 @@ def thunk_target(label: str) -> str | None:
 
 
 def split_count_suffix(label: str) -> tuple[str, int] | None:
-    """`name-N` (--use-calling-counts) -> (`name`, N); None when there is no numeric suffix."""
-    m = _COUNT_SUFFIX.match(label)
-    return (m.group(1), int(m.group(2))) if m else None
+    """`name-N` -> (`name`, N); only a complete ASCII decimal suffix accepted by Python's integer guard.
+
+    A refused conversion is not evidence of a calling-count suffix. Leave the original label to the resolver;
+    never raise the interpreter limit or truncate source text to manufacture a count or a function identity.
+    """
+    m = _COUNT_SUFFIX.fullmatch(label)
+    if m is None:
+        return None
+    try:
+        return m.group(1), int(m.group(2))
+    except ValueError:  # an upstream decimal string can exceed the interpreter's conversion bound
+        return None
 
 
 def is_external_address(address: object) -> bool:

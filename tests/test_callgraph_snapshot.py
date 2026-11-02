@@ -178,7 +178,8 @@ def test_hub_neighbours_stop_at_64_then_plus_n_more():
     assert len(view.nodes) == 65  # the hub plus 64 callers
     [marker] = view.more
     assert (marker.node, marker.count) == (hub.id, 2)
-    assert not view.truncated
+    assert view.truncated
+    assert any('capped' in note for note in view.limitations)
 
 
 def test_cycle_does_not_loop():

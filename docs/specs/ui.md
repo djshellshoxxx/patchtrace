@@ -12,6 +12,15 @@ Interpret control enabled for selected matches and idle state; builds exact cont
 
 Setup dialog (Backend and desktop tab): external Python executable, Ghidra install directory, optional private Java home, symbol-server lookup opt-in (default off), comparison timeout, code font size, interpretation context budget and synchronized scroll; offline backend ZIP install and local discovery of existing tools run on background workers; diagnose versions without launching target. Saving with unsaved Profile editor edits prompts to save them first. There are no user-visible worker-count or theme settings (future work; the single retained job worker is fixed). The provider kind, model, endpoint and session credential are entered in the interpretation context preview, not in Setup; kind, model and endpoint are remembered in OS settings, the credential never is. A Profiles tab manages analysis profiles. No automatic downloads. Help explains dependency setup and representative workflow.
 
+Profile navigation preserves unsaved editor values until Save, Discard or Cancel
+is chosen. This applies when selecting another profile or creating/duplicating
+one. Save must succeed before navigation; validation/storage failure keeps the
+original selection, editable values and inline error. Discard loads the requested
+profile without modifying the saved original. Cancel (also the default/escape
+choice) leaves the editor and selection unchanged. Programmatic reload after a
+successful save must not trigger another navigation prompt. Existing Setup Save
+and Cancel behavior, built-in defaults and stored profile contracts stay unchanged.
+
 Export dialog: choose Markdown/HTML/JSON, destination, selected/all findings, code default off, notes default on; exact preview before write; success shows destination. Options are: include function code (default off), include analyst notes (default on) and only selected findings; no separate redaction controls exist yet (future work), so exclusion of code and notes is the only content reduction. No raw model text unless separately explicitly included. Imported strings rendered as plain text throughout.
 
 Annotated layout: navigator corresponds to FunctionMatch; each code pane displays FunctionRecord tied to artifact ID; findings derives InterpretationRun; evidence links resolve AnalysisContext; diagnostics derives JobEvent. These boundaries prevent UI from owning analysis state.

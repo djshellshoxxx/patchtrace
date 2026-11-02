@@ -250,6 +250,14 @@ def test_every_registry_id_is_applied_somewhere(window, qtbot, tmp_path, setting
     window.tabifyDockWidget(first, second)
     name_tab_bars(window)
     names |= {window.panels.strip.objectName()}
+    # Exercise the dirty-profile transition so its real modal buttons are part
+    # of this audit, rather than exempting their registry IDs from coverage.
+    profile_panel = next(root for root in roots if isinstance(root, SetupDialog)).profiles
+    profile_panel.new_profile()
+    profile_panel.weights['BND'].setValue(profile_panel.weights['BND'].value() + 1)
+    with monkeypatch.context() as local:
+        local.setattr(QMessageBox, 'exec', lambda box: roots.append(box) or QMessageBox.StandardButton.Cancel)
+        assert not ui_module.profile_ui.confirm_profile_leave(profile_panel)
     for root in roots + [window]:
         names |= {w.objectName() for w in controls(root)}
         names |= {a.objectName() for a in actions(root)}

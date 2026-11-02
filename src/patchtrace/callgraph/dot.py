@@ -6,6 +6,7 @@ import re
 
 from .contracts import GraphEdge, GraphNode, GraphView
 from .export_json import GraphExport, check_size
+from .query import CAPPED_VIEW_NOTE
 from .text import one_line
 
 GRAPH_ID = 'patchtrace_calls'
@@ -37,6 +38,8 @@ def _label(node: GraphNode) -> str:
 
 def _header(export: GraphExport) -> list[str]:
     lines = ['// patchtrace call graph export (workbench-graph-export/1)']
+    if export.truncated:
+        lines.append('// Partial graph: ' + CAPPED_VIEW_NOTE)
     if _SAFE_ID.match(export.match_id):
         lines.append(f'// match: {export.match_id}')
     for side in ('older', 'newer'):
@@ -67,6 +70,8 @@ def render_dot(export: GraphExport) -> str:
                      key=lambda item: (item[0] != 'older', item[1].label, item[1].id))
     ids = {node.id: f'n{k}' for k, (_, node) in enumerate(ordered, 1)}
     out = [*_header(export), f'digraph {GRAPH_ID} {{', '  rankdir=LR;', '  node [shape=box, fontname="Helvetica"];']
+    if export.truncated:
+        out.append(f'  label="{CAPPED_VIEW_NOTE}";')
     for side, view in sides:
         indent = '    ' if paired else '  '
         if paired:

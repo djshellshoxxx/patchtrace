@@ -407,3 +407,26 @@ def test_actual_merge_refuses_link_before_dotdot(built, tmp_path, side):
     assert merge(source, out) == S.USAGE
     assert not (tmp_path / 'merged').exists()
     assert not (external / 'merged').exists()
+
+
+def test_known_aggregate_credit_limit_is_checked_before_transfer_destination(built, tmp_path, monkeypatch):
+    _doc, source, _ = built()
+    before = (source / 'shard-0.json').read_bytes()
+    checked = []
+    original = OS.preflight_credit_manifest
+
+    def small_budget(reports, output_records):
+        checked.append(output_records)
+        monkeypatch.setattr(OS.RS, 'MAX_CREDIT_BYTES', 100)
+        return original(reports, output_records)
+
+    monkeypatch.setattr(OS, 'preflight_credit_manifest', small_budget)
+    out = tmp_path / 'merged'
+    assert merge(source, out) == S.USAGE
+    assert len(checked) == 1
+    assert checked[0][0]['pair_id'] == LABELS.pair_id
+    assert checked[0][0]['version'] == 'constructed-control'
+    assert set(checked[0][0]) == {'pair_id', 'engine', 'output_sha256', 'older_sha256',
+                               'newer_sha256', 'symbols', 'version'}
+    assert not out.exists(), 'known aggregate metadata overflow created partial destination evidence'
+    assert (source / 'shard-0.json').read_bytes() == before

@@ -1,0 +1,52 @@
+{
+  "reviewer": "review_resume independent helper",
+  "decision": "No blocking findings in narrow verified-transfer preflight adoption",
+  "reviewed_head": "d696be1aaa516d33a417d18cb1b74ab942e4a60b",
+  "reviewed_tree": "1e9617f85a4d5306c30a5986f4a2ce1a68ef385d",
+  "base": "b899baca33ee1c69e55b29c3398170a483f0ba55",
+  "worktree": "/workspace/scratch/142cb233d750/transfer-preflight",
+  "changed_paths": [
+    "docs/specs/known-answer-corpus.md",
+    "tests/test_tier_r_training_artifacts.py",
+    "tools/calibration/tier_r/training_artifacts.py"
+  ],
+  "changed_file_sha256": {
+    "docs/specs/known-answer-corpus.md": "293e0b83f21fdecbf8b0c9240af3c0f5c3c762e83bf74d3c42d8d3d16e25bb27",
+    "tests/test_tier_r_training_artifacts.py": "634ceb14443164dc643e4fb1fcaccdb30dcced7723c64cdbaa6ef0b1d28e42df",
+    "tools/calibration/tier_r/training_artifacts.py": "16e27d7dea0a0dd5d07effd382f78b4d68a374deac934a541d7c25ede34c4105"
+  },
+  "scope_and_reasoning": [
+    "The shared bundle writer derives exact output metadata from already verified output tuples and calls preflight_credit_manifest after report/label/output/case checks but before _fresh creates the destination.",
+    "The extraction of pair ID matches the immediately preceding filename and ownership validation, including pair IDs containing dots. Metadata fields match OutputStore.write_raw records; report_sha256 remains the shared builder responsibility.",
+    "Both shard export and merge use this common path. Known aggregate overflow cannot create a transfer destination; later IO failure preservation and source records remain unchanged.",
+    "Only five production lines, one focused regression, and a specification clarification change. The output-store/evaluator/schema API equals reviewed a142557; MANAGED_FILES and credit schemas are untouched."
+  ],
+  "validation": [
+    {
+      "command": "QT_QPA_PLATFORM=offscreen PYTHONPATH=.:src:tests /workspace/scratch/142cb233d750/venv/bin/python -m pytest -q --tb=short tests/test_tier_r_training_artifacts.py tests/test_tier_r_shard.py",
+      "result": "102 passed in 5.57 seconds. Includes actual constructed-provider shard evaluation, merge, credit reading, exact-byte ownership, and the new known aggregate overflow rejection before destination creation."
+    },
+    {
+      "command": "QT_QPA_PLATFORM=offscreen PYTHONPATH=.:src:tests /workspace/scratch/142cb233d750/venv/bin/python /workspace/scratch/142cb233d750/reviews-resume/transfer_preflight_control.py",
+      "result": "Independent complementary shard-export control passed: one preflight call; insufficient batch budget yields failed transfer diagnostic and no training destination; original completed evaluator report and credited exact output remain readable and hash-consistent. Expected injected [FAILED] diagnostic is evidence of refusal, not a test failure."
+    },
+    {
+      "command": "Changed-file Ruff; git diff --check HEAD^ HEAD; diff of output_store/evaluate/report_schemas against a142557",
+      "result": "Passed; shared reviewed API files are unchanged; three changed paths and clean worktree."
+    }
+  ],
+  "independent_artifacts": {
+    "/workspace/scratch/142cb233d750/reviews-resume/transfer_preflight_control.py": "54a43c569db438c1744bfdbcd6b1dd2ac838a54586e5bb633d347094a0485fda",
+    "/workspace/scratch/142cb233d750/reviews-resume/transfer-preflight-bd6bb1pn/result.json": "3468bdf5c90e4c1078e0a51f0f0030ffae879a2492db6034980d993c3a841057"
+  },
+  "environment": {
+    "python": "3.12.14",
+    "platform": "Linux",
+    "Qt": "offscreen"
+  },
+  "limitations": [
+    "Root should adopt only d696be1 after the shared output-completion API, not the branch parents containing integration copies.",
+    "Constructed local transfer checks only; no hosted artifact roundtrip, native engine, training fit, full suite, performance run, or final-evaluation acceptance.",
+    "No repository source edits, target execution, remote mutation, or GitHub approval performed."
+  ]
+}

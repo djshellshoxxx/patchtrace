@@ -1,0 +1,77 @@
+{
+  "recorded_utc": "2026-11-02T09:44:57.966043+00:00",
+  "source_local": "eccfb8d587f94e927f857fad248531a002ecc36c",
+  "previous_published": "51a9b4af02acb6078f8e06028aa4374eb381766f",
+  "previous_tree": "47e5221f4209d2a2ce3846a37171aa22f35a13e7",
+  "reviewed_followups": {
+    "msrc_consensus": "7533fe07365524526915c53b71b9cf45fc3e1bae",
+    "callgraph_numeric_suffix": "424e59dbc800ff7419c2fe47a3eb7f642a5a49b4",
+    "callgraph_partial_coverage": "96256be573481757c705d4e6b09c67628fa713f7",
+    "output_completion": "a14255715b051b0e5500786049669f77789943d9",
+    "transfer_preflight": "d696be1aaa516d33a417d18cb1b74ab942e4a60b",
+    "profile_stale_inspection": "3f5b63b8b0d8ea6004f0492bbc9d3e338d5919ec",
+    "backup_refusal_filter": "94caeb1e3ac723163f47f952ba395346a197cd02",
+    "card_sources": "76ca406ab51f93c7cd166e575c0aa6cf1ef80b2b",
+    "field_diagnostics": "89110d12018c0373e371704934d4ebaf69c9998e",
+    "creation_staging": "0e04915213139ba8cdb8d0f4d9b5a7f5b5e234e1",
+    "creation_lock_cleanup": "86c5b23f9441d4f6d947fc4a59fe6e3ac53c06ac",
+    "callgraph_shared_budget": "0a7e2ad6c1b4409d585179d185a9249a2d5d3784"
+  },
+  "combined_focused": [
+    {
+      "source": "8deafa2",
+      "result": "106 passed in3.82s",
+      "selection": "saved scope, consensus, context, service, callee suffix"
+    },
+    {
+      "source": "df67b4388bc2a1adf46a7d6f45c70aa2ea9fc4ac",
+      "result": "163 passed in28.02s",
+      "selection": "completion, transfer, lifecycle, paired raw UI, cap truth, tooltips, GUI host seam"
+    }
+  ],
+  "full_run": {
+    "source": "4a82fd311877d31fc322027a94fa1aecfbbec0a9",
+    "tree": "47e5221f4209d2a2ce3846a37171aa22f35a13e7",
+    "cwd": "/workspace/scratch/142cb233d750/wt-full-recovered",
+    "command": [
+      "/workspace/scratch/142cb233d750/venv-full-recovered/bin/python",
+      "-m",
+      "pytest",
+      "-q",
+      "--junitxml=/workspace/scratch/142cb233d750/reconciliation/full-recovered-20261102/pytest.xml"
+    ],
+    "QT_QPA_PLATFORM": "offscreen",
+    "started_utc": "2026-11-02T08:29:49.440935+00:00",
+    "status": "completed",
+    "exit_code": 1,
+    "seconds": 1970.4665686180006,
+    "finished_utc": "2026-11-02T09:02:39.907840+00:00",
+    "counts": {
+      "passed": 19266,
+      "skipped": 128,
+      "xfailed": 7,
+      "failed": 1
+    },
+    "test_log_note": "Captured console progress stopped at 41%; completed JUnit is the final count source.",
+    "af_unix_control": "Isolated python -I stdlib socket.socket(AF_UNIX), without PatchTrace import, also raises PermissionError errno1. Test bytes equal main25c9795; no skip/xfail/guard change."
+  },
+  "native_setup": "Downloaded Ghidra12.0.4 and Temurin21.0.12.1+1 match unchanged committed pins; no analysis acceptance. Separate exporter11.0.3 setup active.",
+  "open": "Backup failed-publication re-adoption; explicit retry lexical path; Windows failures; native exporter protobuf incompatibility; later full/Windows/package/quality and broader accepted work.",
+  "full_hosted_linux": {
+    "head": "51a9b4af02acb6078f8e06028aa4374eb381766f",
+    "tree": "47e5221f4209d2a2ce3846a37171aa22f35a13e7",
+    "job": 125172582878,
+    "result": "SUCCESS:19314passed49skipped7xfailed,1660.87s",
+    "scope": "same prior frozen tree only"
+  },
+  "full_hosted_windows": {
+    "head": "51a9b4af02acb6078f8e06028aa4374eb381766f",
+    "job": 125172583133,
+    "passed": 19272,
+    "failed": 8,
+    "skipped": 84,
+    "xfailed": 6,
+    "seconds": 2800.22,
+    "packaging": "skipped"
+  }
+}

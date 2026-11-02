@@ -279,6 +279,11 @@ def _write_bundle(root: Path, owner: dict, pair_cases: dict, report_bytes: list[
     reports = [_json(raw) for raw in report_bytes]
     _validate(reports, labels, outputs)
     _case_ownership(owner, pair_cases, set(labels))
+    OS.preflight_credit_manifest(reports, [
+        {'pair_id': Path(name).name.rsplit('.', 2)[0], 'engine': model.engine, 'output_sha256': sha,
+         'older_sha256': model.older_sha256, 'newer_sha256': model.newer_sha256,
+         'symbols': model.symbols, 'version': model.version}
+        for name, _raw, model, sha in outputs])
     _fresh(root)
     for kind in ('labels', 'reports'):
         (root / kind).mkdir()

@@ -60,6 +60,17 @@ IMPLICIT_NOTE = ('ghidriff lists only added/deleted/modified functions: truth pa
                  'matched and unchanged, so its identity numbers are an upper bound')
 
 
+class EvaluationRetentionError(OS.OutputError):
+    """Evaluation assembled a report, but retained output completion failed."""
+
+    def __init__(self, report: dict, outputs: Path, cause: Exception, diagnostics: dict):
+        super().__init__(f'evaluation output completion failed: {cause}')
+        self.report = report
+        self.outputs = outputs
+        self.cause = cause
+        self.diagnostics = diagnostics
+
+
 def duplicate_note(engine: str, count: int) -> str:
     return f'{engine}: {count} duplicate predictions for one (old, new) resolved deterministically'
 
@@ -276,7 +287,17 @@ def evaluate_full(labels_docs: Sequence[C.KnownAnswerLabels], providers: Sequenc
                                      b_count=b_count)
     report = finalize_report({**report, **fields})
     if output_store is not None:
-        output_store.finalize([report])
+        try:
+            output_store.finalize([report])
+        except (OS.OutputError, OSError) as exc:
+            try:
+                diagnostics = output_store.retain_failure(report, exc)
+            except Exception as diagnostic_exc:  # noqa: BLE001 - diagnostic failure must not lose the assembled report
+                diagnostics = {'attempted': {'marker': (output_store.folder / OS.FAILURE_FILE).as_posix(),
+                                             'report': (output_store.folder / OS.UNCREDITED_REPORT).as_posix()},
+                               'errors': {'marker': str(diagnostic_exc)[:1000],
+                                          'report': str(diagnostic_exc)[:1000]}}
+            raise EvaluationRetentionError(report, output_store.folder, exc, diagnostics) from exc
     return report, deltas
 
 

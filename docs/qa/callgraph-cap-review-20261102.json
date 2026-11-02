@@ -1,0 +1,75 @@
+{
+  "reviewer": "review_resume independent helper",
+  "decision": "No blocking findings in the bounded BUG-CG-3 cap-truth repair",
+  "reviewed_head": "96256be573481757c705d4e6b09c67628fa713f7",
+  "reviewed_tree": "f9c961b1a431d38912116e2dd2233547fb075638",
+  "base": "424e59dbc800ff7419c2fe47a3eb7f642a5a49b4",
+  "worktree": "/workspace/scratch/142cb233d750/wt-callgraph-cap",
+  "changed_paths": [
+    "docs/qa.md",
+    "docs/specs/panels/graph-inspection.md",
+    "docs/specs/program-e/WB2-integration-plan.md",
+    "src/patchtrace/callgraph/dot.py",
+    "src/patchtrace/callgraph/export_json.py",
+    "src/patchtrace/callgraph/panel_qt.py",
+    "src/patchtrace/callgraph/query.py",
+    "src/patchtrace/callgraph/view_model.py",
+    "tasks/todo.md",
+    "tests/test_callgraph_cap_truth.py",
+    "tests/test_callgraph_snapshot.py",
+    "tests/test_ui_callgraph_cap_truth.py"
+  ],
+  "changed_file_sha256": {
+    "docs/qa.md": "e60cbfbd7c979c4e82d248b9586af5a45effc0079cdd096eda087362de24709e",
+    "docs/specs/panels/graph-inspection.md": "90d44f382581f6edc0bb797fe24c179c31b46b20d5622989207482ac4b640aab",
+    "docs/specs/program-e/WB2-integration-plan.md": "a16e9c9899aa8e6104a8e777f674ccfeffc6baa98c03aca49c27393f97706e76",
+    "src/patchtrace/callgraph/dot.py": "83120db8a567d0ecd37da9c3e75328f06da1e5d3a8cea07aef31bdc115c6608c",
+    "src/patchtrace/callgraph/export_json.py": "fdc8854d1ce3f393929144b07b8f18cdedde6e5a43f68d98bbb0a09ad98f168a",
+    "src/patchtrace/callgraph/panel_qt.py": "987dd0be32aa98730238ab262ca7f0fe593442905a1f7e00e55fc7ee17372aa4",
+    "src/patchtrace/callgraph/query.py": "5efa7b6cab2b2e4abe095ee21d09e0d3f4f71a2a1a57775973da6080c2eb2f7c",
+    "src/patchtrace/callgraph/view_model.py": "59f186ce10f758d470dc2eb3e18a17b342aa12309f5ceaaf784481351ed1a291",
+    "tasks/todo.md": "dac1cac2d015cdfe822fb5b089ff5fdbdaca28c3ed596be2c8961ad053159258",
+    "tests/test_callgraph_cap_truth.py": "280f4fc64bad1c9eae1eafc60cd9c513dd9bf814e3a62e8e3c28610b15a91466",
+    "tests/test_callgraph_snapshot.py": "52e58d80bc7577a83ace5bca5022da0afcb557f917d1ab7074b57cc12babc108",
+    "tests/test_ui_callgraph_cap_truth.py": "49b023864c3898c2979f5ef19f87f3062fcd6579bddc38bf118442ec13af6e34"
+  },
+  "scope_and_reasoning": [
+    "The existing per-origin 64-neighbour exploration cap now marks its view partial. Unique focus positions are collected before node budgeting, preserving a distinct root after duplicate requests.",
+    "Per-origin more counts remain separate and are never summed into a claimed missing unique-node total. The new wording says nodes or edges may be omitted, including when another frontier recovers some or all skipped elements.",
+    "Paired export aggregates query limitations deterministically without duplicates; DOT adds a fixed comment and graph label only for a partial export. Existing safe label escaping, output bounds, and schema are unchanged.",
+    "The controller derives cap state from both Changes and the current neighbourhood, so later independent Changes delivery cannot clear an active query cap. It clears the flag when all contributing caps disappear; query-cap wording avoids a false 64 of 64 total.",
+    "Actual CLI neighbours and paired exports propagate partial exit 3 under the existing envelope. This is a query/presentation repair, with no new numerical cap or resolver/cache-policy change."
+  ],
+  "validation": [
+    {
+      "command": "QT_QPA_PLATFORM=offscreen PYTHONPATH=.:src:tests /workspace/scratch/142cb233d750/venv/bin/python -m pytest -q --tb=short tests/test_callgraph_cap_truth.py tests/test_ui_callgraph_cap_truth.py tests/test_callgraph_snapshot.py tests/test_callgraph_dot.py tests/test_callgraph_cli.py tests/test_callgraph_schemas.py tests/test_callgraph_inspection.py tests/test_ui_graph_panel.py tests/test_ui_graph_inspection.py tests/test_callgraph_view_model.py::test_every_headline_state_has_its_text tests/test_callgraph_view_model.py::test_notes_follow_the_headline_and_headline_precedence tests/test_callgraph_view_model.py::test_footer_and_state_copy_exact",
+      "result": "185 passed in 9.01 seconds, including actual synthetic-project CLI persistence/export, DOT escaping/goldens, schema comparison, and offscreen Qt delivery lifecycle."
+    },
+    {
+      "command": "QT_QPA_PLATFORM=offscreen PYTHONPATH=.:src:tests /workspace/scratch/142cb233d750/venv/bin/python /workspace/scratch/142cb233d750/reviews-resume/callgraph_cap_controls.py",
+      "result": "Independent normalized graph control: the second frontier recovers all 66 nodes and 65 edges, but exploration remains partial with conservative wording; two duplicate-focus permutations preserve both roots without false truncation."
+    },
+    {
+      "command": "Same independent control script: actual CallsController._update_capped function on controlled state",
+      "result": "All eight combinations of Changes cap, query cap, and row slicing preserve the union; empty state clears the cap and keeps unrelated flags. This direct state control supplements, rather than replaces, the offscreen Qt tests."
+    },
+    {
+      "command": "Ruff on the eight changed Python paths; git diff --check HEAD^ HEAD",
+      "result": "Passed; twelve changed paths total, clean worktree."
+    }
+  ],
+  "independent_control": {
+    "path": "/workspace/scratch/142cb233d750/reviews-resume/callgraph_cap_controls.py",
+    "sha256": "61d33f5f34076f2b0adb9a92615f2d7fe548a2a153f2d58678e18a1ca7d5c50f"
+  },
+  "environment": {
+    "python": "3.12.14",
+    "platform": "Linux",
+    "Qt": "offscreen"
+  },
+  "limitations": [
+    "No path-complexity/performance run, full-suite duplication, native Windows or human visual acceptance claim.",
+    "CG-1 successor-scan complexity and other #105 findings remain separate; this receipt only addresses the bounded CG-3 repair on top of independently reviewed CG-2.",
+    "No source edits, target execution, remote mutation, or GitHub approval performed."
+  ]
+}

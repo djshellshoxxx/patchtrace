@@ -247,6 +247,14 @@ def _abandoned_creation(path: Path) -> bool:
         return False
 
 
+def _creation_identity(path: Path, *, directory: bool = False) -> tuple[int, int]:
+    info = path.lstat()
+    if (stat.S_ISLNK(info.st_mode) or getattr(info, 'st_file_attributes', 0) & 0x400
+            or not (stat.S_ISDIR(info.st_mode) if directory else stat.S_ISREG(info.st_mode))):
+        raise OSError('creation path is linked or has the wrong file type')
+    return info.st_dev, info.st_ino
+
+
 class ProjectLock:
     """Kernel-owned advisory lock; crashes release it without stealing a live lock file."""
     def __init__(self, root: Path):
@@ -309,8 +317,14 @@ class ProjectStore:
             raise ValueError('PT-STORAGE: project path is not a directory' if self.root.exists()
                              else 'PT-STORAGE: project directory does not exist')
         self.lock = ProjectLock(self.root)
-        created_database = False
+        database_owner = None
         try:
+            if create:
+                root_identity = _creation_identity(self.root, directory=True)
+                held = os.fstat(self.lock.stream.fileno())
+                lock_identity = held.st_dev, held.st_ino
+                if _creation_identity(self.lock.path) != lock_identity:
+                    raise OSError('creation destination lock identity changed')
             path = safe_path(self.root, 'project.sqlite3')
             if create and path.exists():
                 if not _abandoned_creation(path):
@@ -320,7 +334,8 @@ class ProjectStore:
             if not create and not path.is_file():
                 raise ValueError('PT-STORAGE: project database is missing')
             self.connection = sqlite3.connect(path, timeout=5)
-            created_database = create
+            if create:
+                database_owner = _creation_identity(path)
             self.connection.execute('PRAGMA foreign_keys=ON')
             if create:
                 with self.connection:
@@ -338,11 +353,24 @@ class ProjectStore:
                     raise ValueError(f'PT-SCHEMA: unsupported database version {version}')
                 if self.connection.execute('PRAGMA quick_check').fetchone()[0] != 'ok':
                     raise ValueError('PT-STORAGE: database integrity check failed')
-        except Exception as exc:
-            self.close()
-            if created_database:
-                # Never leave a half-initialized database that blocks retry yet cannot be opened.
-                path.unlink(missing_ok=True)
+        except BaseException as exc:
+            try:
+                connection, self.connection = self.connection, None
+                if connection is not None:
+                    connection.close()
+                # Closing SQLite permits Windows unlink, but the kernel project
+                # lock must remain held until all owned-path cleanup has finished.
+                if (database_owner is not None
+                        and _creation_identity(self.root, directory=True) == root_identity
+                        and _creation_identity(self.lock.path) == lock_identity
+                        and _creation_identity(path) == database_owner
+                        and _abandoned_creation(path)):
+                    path.unlink()
+            except (OSError, ValueError, sqlite3.Error) as cleanup_error:
+                logging.getLogger(__name__).warning('Database initialization cleanup preserved unverified paths (%s)',
+                                                    type(cleanup_error).__name__)
+            finally:
+                self.close()
             if isinstance(exc, sqlite3.Error):
                 raise ValueError('PT-STORAGE: project database cannot be opened') from exc
             raise

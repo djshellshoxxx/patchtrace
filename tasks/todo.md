@@ -1015,3 +1015,39 @@ Done: dock with state matrix, consent, import, changes, copy, go to CVE. Open: r
 - [ ] Run immutable combined full/Windows/Qt/native/package acceptance.
 - [ ] Repair reproduced MSRC fact disagreement/Type2 diagnostic, aggregate credit failure retention, #105 numeric callee and #116 lifecycle failures.
 - [ ] Continue all original corpus/source/acquisition/provider/isolation/UI/performance/accepted-v2 work in the dated handoff; no final release or completion claim.
+
+### Issue #105 numeric callee suffix — 2026-11-02
+
+- [x] Freshly reproduce BUG-CG-2 from actual normalized call lists; preserve upstream text and exact-record precedence,
+  refuse guarded integer conversions and nonterminal/non-ASCII suffix inference; version the resolver cache policy.
+- [x] Dedicated red5/green15 regressions plus bounded callgraph integration/schema/CLI selection: 220 passed;
+  whole Ruff/diff clean. No new numeric-count cap and no global interpreter policy change.
+- [ ] Independent review and central integration of this slice; do not close #105 wholesale. CG-3 neighbour-cap
+  completeness still reproduces; CG-1 successor-scan accounting and the issue's other findings remain separately scoped.
+
+### Issue #105 neighbour-cap truth — 2026-11-02
+
+- [x] Freshly reproduce CG-3 and duplicate-root capacity loss; retain existing GL-03 caps, truthful per-origin
+  markers and partial status across queries, paired JSON, standalone DOT, CLI and Calls UI.
+- [x] Test actual cycle_hub, shared frontiers, repeated claims/focus IDs, real project CLI export and Qt row/query
+  delivery ordering; red 6 failed/1 passed, final bounded 185 passed, whole Ruff/diff/schema checks clean.
+- [ ] Independent exact-source review and central integration; CG-1 complexity, other #105 findings and native/
+  combined acceptance remain separate. No concurrent path/performance qualification was run.
+
+- [x] Review/integrate aggregate output completion, transfer preflight, callgraph suffix/cap truth, dirty-profile/stale-inspection protection and cached-backup refusal filter.
+- [ ] Finish and review card-only advisory context source/key identity and precise remediation pointers.
+- [ ] Finish/review creation staging; separately complete safe GUI retry after late publication failure.
+- [ ] Collect frozen4a82fd3 full result and qualify later assembled source independently; retain all old-head cancellations and intentional Rizin blocks.
+
+### Current November 2 disposition
+
+- [x] Review/integrate card identity, pointers and creation/held-lock cleanup.
+- [x] Complete old-tree full runs; retain Windows8 failures and host AF_UNIX denial; enable35 workflow checks via reviewed dev-only PyYAML.
+- [ ] Integrate reviewed CG1; finish retry/backup/Windows repairs and native exporter compatibility.
+- [ ] Qualify later assembled full/Windows/Qt/native/package/quality gates and broader accepted v2 work.
+### [CG-1:shared-path-budget] 2026-11-02
+
+- [x] Reproduce #105 successor-scan amplification through actual normalized graph/snapshot/path caller with moderate operation counts; preserve existing GL-04 value and define its unit before code.
+- [x] Meter all path phases through query-local lazy CSR traversal, including rejected candidates; retain a completed shortest witness on later exhaustion, preserve sorted shortest-first results and existing listed-node scope, and report partial/CLI 3. No remap/global cache/schema addition.
+- [x] Dedicated red/green and 82 bounded focused passes; unchanged 60k/447k algorithm gate passed in a separately coordinated serial run after an observed empty-witness failure was repaired. Whole Ruff/diff clean.
+- [ ] Independent source-bound review and central/full integration; retain CLI multi-target budget multiplier as an explicit remaining scope boundary. Other #105 findings and native acceptance remain separately tracked.

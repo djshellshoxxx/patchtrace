@@ -42,6 +42,7 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 
+from . import ui_profiles as profile_ui
 from .acquisition import quarantine, winbindex
 from .acquisition.contracts import AUTHENTICITY_NOTE, AcquisitionError, validate_file_name
 from .acquisition.transport import BLOB_SUFFIX, METADATA_HOST, SYMBOL_HOST, AcquisitionConsent, Transport
@@ -714,7 +715,7 @@ class ProfilesPanel(QWidget):
         self.list = QListWidget()
         self.list.setAccessibleName('Analysis profiles')
         apply_tooltip(self.list, 'profile.list')
-        self.list.currentItemChanged.connect(lambda *_: self._show_current())
+        self.list.currentItemChanged.connect(lambda *_: profile_ui.profile_selection_changed(self))
         left.addWidget(self.list)
         buttons = QHBoxLayout()
         self.new_button = QPushButton('New')
@@ -800,9 +801,9 @@ class ProfilesPanel(QWidget):
             item = QListWidgetItem(profile.name + (' (built-in, read-only)' if profile.is_default else ''))
             item.setData(Qt.ItemDataRole.UserRole, profile.name)
             self.list.addItem(item)
-        self.list.blockSignals(False)
         names = [p.name for p in profiles]
         self.list.setCurrentRow(names.index(select) if select in names else 0)
+        self.list.blockSignals(False)
         self._show_current()
 
     def selected_name(self) -> str:
@@ -876,10 +877,14 @@ class ProfilesPanel(QWidget):
         self.reload(new.name)
 
     def new_profile(self):
+        if not profile_ui.confirm_profile_leave(self):
+            return
         from .enrichment.profiles import DEFAULT_PROFILE
         self._create_from(DEFAULT_PROFILE, 'profile')
 
     def duplicate_profile(self):
+        if not profile_ui.confirm_profile_leave(self):
+            return
         from .enrichment.profiles import ProfileError
         try:
             source = self.store.get(self.selected_name())
@@ -2719,7 +2724,10 @@ class MainWindow(QMainWindow):
             self.render_match()
 
     def _inspection_failed(self, message, key=None):
-        self._inspection_error = (key or self._project_inspection_key(), message)
+        current = self._project_inspection_key()
+        if current is None or key != current:
+            return
+        self._inspection_error = (key, message)
         self.inspection_status.emit('File inspection failed: ' + message)
         self.logs.appendPlainText('File inspection failed: ' + message)
 

@@ -24,6 +24,31 @@ flowchart TD
 Build order: contracts → ingestion/persistence/normalization → backend/jobs and context/providers/reports → service → desktop → packaging/acceptance.
 
 ## Interfaces and ownership
+Generic project creation first prepares both immutable input copies and validates
+the initial database snapshot in a private temporary directory. Input validation,
+partial copy, interruption or initial snapshot failure must not mutate the chosen
+destination, including an existing empty directory. Only a complete staged project
+may acquire the destination project lock and publish its fixed artifact paths and
+first snapshot. Each artifact is created exclusively; a file already present is
+reused only after verifying its identity, exact content and PE structure, never
+overwritten. Incomplete publication bytes are retained if their ownership/content
+cannot be proven. Existing committed databases remain refused; existing snapshotless
+database retry compatibility remains under the existing exclusive lock.
+
+On later publication failure, cleanup runs before releasing that lock and removes
+only completed files created by this attempt whose recorded filesystem identities
+and content versions still match. A replaced root/path, pre-existing artifact,
+unknown file or committed first snapshot is preserved. The kernel lock file is
+retained under the existing lock contract; no unlink-after-unlock cleanup or
+recursive deletion of a user-selected root is permitted. Such later failures can
+leave a failed-attempt directory for service retry; the GUI's nonempty-directory
+guard is unchanged, and an explicit validated GUI recovery route is separate work.
+Destination database initialization follows the same rule even before the service
+receives a store: close SQLite, verify the owned root/lock/database identities and
+snapshotless state, clean up while locked, then release the lock in all cases.
+The held lock descriptor supplies the lock identity; the named lock path must
+continue to match that descriptor before publication or cleanup.
+
 Domain models are immutable by convention except project aggregate changes in the service. UUID identifiers are assigned by PatchTrace. Every model forbids extra fields. Database loads validate schema versions and relationships before use. Workers return values to UI thread through queued signals; only service transactions change project state. One active job per window, one writer per project through exclusive lock file. No module imports UI except UI. Cancellation is cooperative for providers and process-tree termination for analysis; delivered remote data cannot be recalled. Logs omit credentials and are capped.
 
 Project directory: `project.sqlite3`, `.patchtrace.lock`, `artifacts/{sha256}.bin`, `runs/{run_id}/raw/`, `exports/`. Relative artifact paths cannot escape root. Each DB commit stores current validated aggregate plus history. Backup uses SQLite backup API and copied artifact/run files. Interrupted runs are marked failed on load. Future schema versions fail closed; v1 needs no legacy migration. Migrations require backup and explicit ordered transforms, never reinterpret future data.

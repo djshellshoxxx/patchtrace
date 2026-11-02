@@ -87,6 +87,7 @@ class Lookup:
     scopes: tuple[ProductScope, ...]
     excluded: tuple[tuple[str, int], ...]
     cards: tuple[CveCard, ...]
+    card_doc_ids: tuple[str, ...]  # exact active documents contributing card consensus, including warnings
     warnings: tuple[str, ...]
 
     @property
@@ -131,6 +132,31 @@ def _native_revision_ambiguous(docs: list[ImportedDocument]) -> bool:
         return True
     newest = max(_instant(d.source.current_release_date) for d in docs)
     return sum(_instant(d.source.current_release_date) == newest for d in docs) > 1
+
+
+def _card_consensus(docs: Iterable[ImportedDocument], active: frozenset[str], cves: set[str]
+                    ) -> tuple[tuple[CveCard, ...], tuple[str, ...], tuple[str, ...]]:
+    """Keep agreeing vendor facts by CVE/source kind; never pick a conflicting active snapshot's metadata."""
+    groups: dict[tuple[str, str], list[CveCard]] = {}
+    contributors: set[str] = set()
+    for doc in docs:
+        if doc.doc_id in active:
+            for card in doc.cards:
+                if card.cve in cves:
+                    groups.setdefault((card.cve, card.source_kind), []).append(card)
+                    contributors.add(doc.doc_id)
+    cards, warnings = [], []
+    for (cve, kind), group in sorted(groups.items()):
+        values = {field: {getattr(card, field) for card in group}
+                  for field in ('title', 'stated_cwe', 'severity_context')}
+        conflict = [field for field, candidates in values.items() if len(candidates) > 1]
+        cards.append(CveCard(cve=cve, source_kind=kind, **{
+            field: next(iter(candidates)) if len(candidates) == 1 else None
+            for field, candidates in values.items()}))
+        if conflict:
+            warnings.append(f'CARD_FACT_CONFLICT: {cve} {kind} active source cards disagree on '
+                            f'{", ".join(conflict)}; conflicting facts were withheld')
+    return tuple(cards), tuple(warnings), tuple(sorted(contributors))
 
 
 def distinct_groups(edges: Iterable[KbCveEdge]) -> tuple[EdgeGroup, ...]:
@@ -294,18 +320,14 @@ class ReverseIndex:
         status = self._status(coverage, edges)
         used = {e.scope_id for e in (*edges, *mention, *disputed, *superseded)}
         scopes = tuple(s for s in self.scopes() if s.scope_id in used)
-        cards = ()
-        if query_kind == 'cve':
-            seen: dict[str, CveCard] = {}
-            for doc in picked:
-                for card in doc.cards:
-                    if card.cve == query and doc.doc_id in active:
-                        seen.setdefault(card.source_kind, card)
-            cards = tuple(seen[k] for k in sorted(seen))
+        cards, card_warnings, card_doc_ids = _card_consensus(
+            picked, active, {query} if query_kind == 'cve' else {e.cve for e in chosen})
         return Lookup(query_kind=query_kind, query=query, status=status, coverage=coverage, edges=edges,
                       groups=distinct_groups(edges), mention_only=mention, disputed=disputed,
-                      superseded=superseded, scopes=scopes, excluded=tuple(sorted(excluded.items())), cards=cards,
-                      warnings=self._warnings(coverage, picked, edges, mention, disputed, superseded, status))
+                      superseded=superseded, scopes=scopes, excluded=tuple(sorted(excluded.items())),
+                      cards=cards if query_kind == 'cve' else (), card_doc_ids=card_doc_ids,
+                      warnings=self._warnings(coverage, picked, edges, mention, disputed, superseded, status)
+                      + card_warnings)
 
     @staticmethod
     def _status(coverage: Coverage, edges: tuple[KbCveEdge, ...]) -> str:

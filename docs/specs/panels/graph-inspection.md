@@ -18,6 +18,8 @@ Status: implemented contract for `graph.export_dot`, `graph.callsite` and `graph
   taken from function names.
 - Result and failures are shown in the status bar and announced; they never replace the committed call view.
 - Disabled (with the reason in its tooltip) while there is no visible graph.
+- A capped neighbourhood remains partial in the exported DOT, including a fixed comment and visible graph label.
+  The panel uses a cap explanation rather than claiming that its displayed neighbour count is the full total.
 
 ## 2 Call-site reveal (`graph.callsite`)
 

@@ -238,6 +238,41 @@ Finalization rechecks run ownership and the referenced bytes; a failure leaves
 the run incomplete and cannot return a successful evaluation report. Failed or
 unreferenced raw artifacts are preserved but never credited.
 
+The aggregate credit manifest has its own explicit 64 MiB byte budget, unchanged
+from the previous effective limit. It is independent of the 64 MiB per-output
+limit; no pair-count estimate substitutes for exact bounded serialization.
+`preflight_credit_manifest(reports, output_records)` checks the complete report
+batch and retained-output metadata without filesystem writes, using the same
+builder and budget as finalization. Transfer writers with a complete batch call
+it before creating their destination. Reports and successful credit wire formats
+are unchanged.
+
+Before publishing credits, finalization exclusively publishes
+`.tier-r-output-incomplete.json` (`tier-r-output-completion/1`, `status: incomplete`).
+The reader refuses any presence of this sentinel, including malformed files or
+broken links. All credit and owner verification finishes while it remains;
+removing the owned sentinel is the final success transition. Removal failure is
+failure, with no subsequent validation after successful removal. A crash before
+credits leaves an incomplete run; a crash after credits but before sentinel
+removal also leaves an incomplete run. Started or completed stores cannot be
+finalized again. Existing successful `MANAGED_FILES` remains the original two
+files. These rules do not add an OS-wide lock or power-loss durability claim.
+
+If credit finalization fails after evaluation has assembled its report, the
+library raises `EvaluationRetentionError`, retaining that complete report and
+the original failure even if diagnostic persistence fails. It attempts exclusive
+publication of `uncredited-report.json` (the unchanged report, bounded at 64 MiB)
+and `evaluation-failure.json` (`tier-r-evaluation-failure/1`, `status: failed`,
+`credited: false`, report filename/digest and bounded error text). These are
+diagnostics outside ordinary report discovery, never training success evidence.
+Either diagnostic filename also blocks managed or legacy credit loading.
+Diagnostic writes cannot overwrite an existing file or mark a prior completed
+run failed. The CLI reports exit 1, `status: failed`, `credited: false`, exact
+attempted and retained diagnostic paths, and each persistence error. If report
+retention fails it includes the assembled report in `report_data`; it never
+publishes that diagnostic through the ordinary success-report path. This is a
+runtime completion failure, distinct from exit-2 usage/contract errors.
+
 The public `write_raw(pair_id, engine, raw)` retains exact validated canonical
 bytes; `finalize(reports)` and `MANAGED_FILES` also support the separately owned
 verified-transfer writer. A transferred run uses the same reader contract, with
@@ -283,6 +318,10 @@ reports, 200,000 pair assignments and 400,000 fixed file references; its encoded
 bytes are additionally capped at 8 MiB. Existing 64 MiB label/output/managed
 credit limits remain in force, including merged credit manifests. Exceeding a
 limit preserves partial destination evidence without transfer completion.
+For verified transfers, all report and output metadata is already available:
+the writer calls the shared credit-manifest preflight before creating its
+destination. Known aggregate-credit overflow therefore creates no destination;
+later IO/finalization failures still preserve partial uncredited evidence.
 
 `shard merge --artifacts <download-root>/training` requires the fixed
 `shard-<index>` bundle for every diagnostic shard, verifies all ownership and
@@ -312,7 +351,8 @@ candidates into the hash-chained annotation log (`label.AnnotationLog`, annotato
 
 ## 12. CLI (`python -m tools.calibration.tier_r <cmd>`)
 `toolchain` (probe, BLOCKED reasons) | `fetch` (network) | `build-suite DIR` | `build-card ID` | `mutate` | `aa` | `noise` |
-`evaluate` | `manifest` | `annotate` | `schemas` | `catalogue-check`. Exit codes: 0 ok, 1 findings/disagreements,
+`evaluate` | `manifest` | `annotate` | `schemas` | `catalogue-check`. Exit codes: 0 ok, 1 findings/disagreements
+or evaluation output completion failure,
 2 usage or contract error, 3 BLOCKED.
 
 ## 13. CI (`.github/workflows/corpus-tier-r.yml`)

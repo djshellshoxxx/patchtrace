@@ -171,7 +171,9 @@ worker-to-owner reuse; do not repeat SQLite checks merely because trust is queri
 Read in bounded chunks through one regular-file descriptor. Reject an unreadable,
 replaced, resized, or observably changing file during that read. Bind the SQLite
 verification to matching fingerprints taken before and after the check, and
-revalidate the published copy after rename before returning it. Failure retains
+revalidate the published copy after exclusive hard-link publication before returning it. Failure retains
 all live rows and preserves previously published evidence. This fresh read has
 linear I/O cost in backup size; it is a deliberate durability boundary, not a
 metadata-only performance shortcut or a lock against arbitrary later writers.
+
+The cached trust-only path may reject a known failed verdict or already-ineligible project/snapshot/table facts without reading the bytes. This is refusal only: every eligible verdict must still pass the complete fresh byte hash before it authorizes deletion. Preparatory verification remains able to inspect a changed candidate and establish a new verdict.

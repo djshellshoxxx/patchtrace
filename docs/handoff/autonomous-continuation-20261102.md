@@ -76,3 +76,48 @@ QT_QPA_PLATFORM=offscreen ../venv-final/bin/python -m pytest -q --junitxml=../fi
 ```
 
 Do not run concurrent full/performance suites. If capacity ends, publish exact source/evidence/owners and explicitly state unfinished agent work. This checkpoint is a restart point, not completion.
+
+## Second recovered checkpoint — November 2, about 09:00 UTC
+
+This section supersedes the earlier live-head/owner snapshot; all earlier evidence remains historical and retained. Main remains25c9795. The previous combined published checkpoint51a9b4af exactly matches local4a82fd3/tree47e5221f. Its required full serial run completed09:02:39UTC:19,266passed,128skipped,7xfailed and1failure in1970.47s. The only failure is host-denied AF_UNIX creation; isolated stdlib python-I reproduces errno1 without PatchTrace. No test or network guard changed. Completed JUnit establishes counts despite console progress ceasing at41%. Hosted Linux job125172582878 at the same tree separately passed19,314/49skipped/7xfailed in1660.87s. Neither run qualifies later changes. [Full evidence](../qa/full-recovered-20261102.tar.gz).
+
+New independently reviewed and integrated slices:
+
+- MSRC7533fe0: deterministic field consensus with explicit conflict warnings; missing Type2 Description diagnostic. The card-only source dependency omission is also repaired/reviewed in76ca406, with internal key policy2 and unchanged version1 wire bundles. Precise field diagnostics89110d1 are reviewed. Both are integrated; fresh hosted acceptance remains required.
+- Callgraph424e59d and96256be: bounded numeric conversion preserves original unresolved labels and exact-record precedence; cap/partial truth propagates through backend, UI, CLI, JSON and DOT without invented missing totals. Existing caps remain. CG1 work-accounting/performance and other #105 findings remain open.
+- Output a142557: explicit64MiB credit budget, pure preflight, owned incomplete sentinel, verified completion before the final sentinel removal, typed uncredited report retention. Independent real-process exit controls passed. No hostile-writer lock or power-loss claim.
+- Transfer d696be1: completed known batches preflight before destination creation; overflow preserves source evidence and creates no destination. Actual shard export and actual merge paths exercised.
+- Lifecycle3f5b63b: Save/Discard/Cancel retains dirty profile edits on cancellation/save failure; stale inspection failures cannot update another project.92 independent focused and15 additional Qt controls passed. ui.py remains3077 at the unchanged ceiling. Project creation staging is a separate active repair.
+- Backup94caeb1: ineligible cached facts are refused before byte reads; eligible trust still requires fresh full hashing and final fact validation.52 independent related and7 additional real SQLite/cache-race controls passed; all4 final regressions fail on originalparent7d9dce5. No throughput claim.
+
+Coordinator combined selections:106 passed on8deafa2 (saved scope/consensus/context/service/callee) and163 passed28.02s ondf67b4 (completion/transfer/lifecycle/paired raw/cap/tooltip/host seam). They overlap other checks and are not added. [Machine receipt](../qa/resume-followup-checkpoint-20261102.json) and [root logs/JUnit/setup evidence](../qa/combined-followups-root-20261102.tar.gz) bind scope.
+
+Latest independent publication heads:
+
+| PR | Head / tree | Remaining qualification |
+|---|---|---|
+| #151 | `9c468bc75077484c1780305d7cc927b30fd0bc8b` / `7841c1bea17657c0085015c429520d12a01c823b` | Fresh hosted QA/native/package; prior7d9 Linux full passed, Windows printed a summary but Actions marked cancellation and skipped packaging, so no passed gate is inferred |
+| #153 | `9ae5731cadebd691a1aedc5b5727c3af3fcd58a0` / `295f92680ad8987c33abd79bd6878dd26ed13cf0` | Fresh hosted QA plus card-only source/key repair and precise pointer follow-up; no merge qualification |
+| #157 | `bb98bae3cf0a3b6a38a298a14186d7f4e1c9c151` / `ba2e53eae575956b60a4adcea7decfb85b065d3d` | Fresh QA/Qt/package/Sonar; native workflow did not trigger for these paths, so no new-head native pass is claimed |
+
+The prior #152 51a9 head's two native workflows passed all five applicable variants, with actual analysis/cache/PDB steps inspected. Its liveRizin/corpus checks retain the explicit `rz-diff-orientation-unverified` block; this is intentional policy, not silent missing evaluation. Sonar has10 open annotations; the old variable tuple-length findings are gone, and a generic publish_bytes path allegation lacks detailed source-to-sink access (403). No suppression, fabricated finding dismissal or workflow trigger change.
+
+Active owners: msrc_recover implements card-only context source/key identity (76ca406 plus receipt443fc8e under review; wire bundle version1 preserved, internal key policy2) and then precise remediation field pointers. corpus_recover implements creation staging before target mutation and owned cleanup; later publication-fault GUI recovery remains separate. review_resume independently checks those frozen slices. rd_recover investigates CG1 work accounting with bounded counted controls, no benchmark during full QA. output_windows prepares a separate repo-pinned Ghidra11.0.3 exporter/BinDiff8 environment; core Ghidra12.0.4 is unchanged. All setup/archives remain outside the repository; tool hashes/trust/compatibility limitations go into QA. BinDiff TOFU/signature verification remains unaccepted; no target executed and no native analysis starts until the full-run resource gate is released. ci_resume monitors hosted exact heads and preserves cancellation states.
+
+Next: collect the full4a82fd3 result; independently review/integrate material card/source and creation repairs; publish the next exact-tree checkpoint; run isolated authored native controls with verified input/output ownership; then full serial acceptance on the later assembled tree. Continue remaining ledger work rather than treating this checkpoint as completion.
+
+Latest source addendum:76ca406/89110d1 advisory identity/pointer repairs are independently reviewed and integrated. Creation0e04915 remains unaccepted after independent review reproduced constructor DB unlink after lock release; a held-lock fix is in progress. CG1 moderategraph repro exceeded200,000rawedgevisits withoutpartial; shared-budget repair is under implementation and oneexisting447k gate is authorized serially after the full run. Native analysis waits for that gate and harness review.
+
+## Authoritative current status — November 2, 09:45 UTC
+
+This section supersedes earlier live status/owner tables, not their evidence. Main25c9795; central remote51a9/tree47e5221f; assembled local eccfb8d. Current narrow heads:1519c468bc,1536f92375/tree99031dd,157bb98bae. No current slice is merge-qualified.
+
+Creation0e04915 plus held-lock cleanup86c5b23 are reviewed/integrated (123 independent tests and real lock-replacement control). Card source/key76ca406 and pointer89110d1 are reviewed/integrated. Root113 context/scope/field and87 creation/scope/backup checks passed. Dev-only PyYAML enables35 existing workflow checks skipped by hosted collection;35 pass and independent configuration review confirms no runtime/workflow change. CG1 shared-budget0a7e2ad6 passed82 independent tests, unchanged60k/447k gate,4,400 oracle queries and raw-read/cancellation controls; queued for integration. Per-target cost remains separate.
+
+Old central51a Windows full125172583133 failed8 with19,272passed/84skipped/6xfailed in2800.22s: quarantine fixture path/stream assumptions, schema newline drift, output separator assertion, transfer confinement refusal and two paired raw summary allocation failures. Packaging skipped. Original logs/JUnit archived; same-tree Linux pass cannot qualify later source. #157 Windows also failed two output-path expectations; packaging skipped.
+
+Fresh SQLite evidence confirms failed post-link backup can be re-adopted after cache reset/reopen and authorize pruning of absent rows. rd_recover repairs publication/discovery while preserving evidence. Retry7c20e54 review found abspath erased link/.. before validation; corpus_recover repairs, review_resume rechecks. Retry is not integrated. msrc_recover froze test-only Windows quarantine repair3731a8c with52 passes, awaiting review. corpus_recover next handles Windows schema/output/transfer. Coordinator handles raw UI; ci_resume preserves hosted evidence.
+
+Native authored attempt1 at reviewed25c4114/base1367889: compilation exit0, Ghidra11.0.3 analysis exit0, exporter exit1 (IllegalAccessError for protobuf LazyStringArrayList.emptyList). No accepted export, BinDiff or target execution. output_windows preserves first failure. No trust/pin changes; core Ghidra12.0.4 unchanged. No local heavy task remains active.
+
+Next: publish reviewed exact tree; finish independent retry/backup/Windows repairs; diagnose native class compatibility; run immutable later-tree full and required native/Windows/package/quality gates. Continue broader accepted v2 work. Agent work is unfinished; no final release.

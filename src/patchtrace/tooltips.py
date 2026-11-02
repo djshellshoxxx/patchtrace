@@ -617,11 +617,17 @@ REGISTRY: dict[str, TooltipEntry] = {
     'profile.list': _e(
         'List of analysis profiles; select one to view or edit it.',
         'Profiles control which detectors rank changes and how.',
-        'Selecting loads the profile into the editor.',
+        'Selecting loads the profile after you save or discard any unsaved edits; Cancel keeps editing.',
         'Profile files in your profile folder. The default profile is read-only.'),
     'profile.new': _e(
         'Create a new profile from the default settings.', 'Start a custom ranking setup.',
         'Adds a profile you can edit and save.'),
+    'profile.discard': _e(
+        'Discard the unsaved profile edits and continue.', 'Leave the saved profile unchanged.',
+        'Loads the requested profile or creates the requested new profile.'),
+    'profile.keep_editing': _e(
+        'Cancel navigation and keep editing this profile.', 'Preserves the unsaved editor values.',
+        'Keeps the original profile selected without saving or discarding edits.'),
     'profile.duplicate': _e(
         'Copy the selected profile under a new name.', 'Tweak a profile without losing the original.',
         'Adds a copy to the list.', availability='Needs a selected profile.'),
