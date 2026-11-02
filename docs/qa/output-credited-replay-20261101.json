@@ -1,0 +1,89 @@
+{
+  "base": "99660cc825b366a28e50b18eacad44dbb069ca69",
+  "final": {
+    "passed": 237,
+    "seconds": 4.7,
+    "skip_reason": "required clang/lld-link/LLVM native toolchain absent",
+    "skipped": 2,
+    "warnings": 5
+  },
+  "independent_review": {
+    "evidence": {
+      "base": "99660cc825b366a28e50b18eacad44dbb069ca69",
+      "checks": [
+        {
+          "command": "QT_QPA_PLATFORM=offscreen PYTHONPATH=<wt>:<wt>/src:<wt>/tests /workspace/scratch/142cb233d750/venv/bin/python -m pytest -q tests/test_tier_r_credited_replay.py tests/test_tier_r_output_persistence.py tests/test_train_pipeline.py -p no:cacheprovider",
+          "result": "119 passed, 1 skipped, 11 warnings in 26.55s",
+          "skip": "Explicit LIVE ACCEPTANCE BLOCKED tier-r-msvc-free: missing clang/lld-link/llvm-pdbutil/llvm-objdump/llvm-nm/llvm-strip. Not native acceptance.",
+          "warnings": "Expected explicit LegacyOutputWarning for unverified loose output directories."
+        },
+        {
+          "command": "Independent direct loader/fault probes",
+          "result": "Strict old_rva=True/1.0, changed=1 and order_key=[True] rejected. Valid post-link changed JSON retained, pair reported failed/nullsha, actual strict managed loader adopts zero."
+        },
+        {
+          "command": "Compare RS.render() with checked-in schema text",
+          "result": "EngineOutputDoc and OutputCredits schema text matches."
+        },
+        {
+          "command": "Scoped Ruff and git diff --check HEAD^ HEAD",
+          "result": "clean"
+        }
+      ],
+      "date": "2026-11-01",
+      "disposition": "approved",
+      "head": "5c26af904a28dd41aaacb3a60f9826037a85980d",
+      "limits": "Legacy unmarked folders (including old pre-marker evaluation dirs) remain explicitly warned unverified compatibility and may be refused with allow_legacy=False; no retroactive report credit/authenticity claim. Managed integrity is not hostile same-user authentication. Retention serialization cap stays64MiB; no stronger in-memory hashing memory claim. No actual corpus/final evaluation/native run/performance/full suite acceptance.",
+      "receipt_kind": "Independent reviewer summary of observed outputs, not a saved raw command log.",
+      "review": "Preflight validates known fields and bounded scalar/array types before provider JSON encoding. Effective deduplicated flagged keys use unchanged scorer fallback/order/ties. Fixed managed marker precedes outputs; immutable completed credit manifest embeds digest-validated successful report references. Finalization rechecks exact output bytes/metadata and run ownership, reader verifies marker/manifest/no-follow regular bounded files/report refs/raw digest/canonical bytes/owner images/symbol/version. Failed valid artifacts preserved but not replayed. Duplicate/incomplete/ambiguous managed refs fail closed. Private in-memory unified validation preserves existing provider route without widening persisted engine/credit vocabulary. No model/scorer math, training prereg/final-guard or transfer writer changes.",
+      "reviewer": "ci_review",
+      "tree": "f57a7dd2c210b773956bf218ad088295a03f93ff",
+      "worktree": "/workspace/scratch/142cb233d750/wt-output-replay"
+    },
+    "receipt": "/workspace/scratch/142cb233d750/reconciliation/pr157-credited-replay-independent-review-20261101.json",
+    "receipt_sha256": "67b9f24dc4ae887d9a2ebf7411e3a7bf7766c09f205ace24709865ca8ff281f6"
+  },
+  "interpreter": "/workspace/scratch/142cb233d750/venv-output-replay/bin/python",
+  "limits": [
+    "constructed controls only; author subset performed no training fit; independent existing synthetic train-pipeline regressions ran; no actual corpus/final evaluation",
+    "legacy unmarked directories remain unverified; no retrospective report credit",
+    "no persisted unified engine expansion or scorer/model/feature-engine change",
+    "no signature or hostile same-user filesystem lock",
+    "integration, cross-OS, verified transfer and broader GT05 safeguards pending; independent bounded review approved"
+  ],
+  "logs": {
+    "output-replay-bounded-final.log": {
+      "path": "/workspace/scratch/142cb233d750/reconciliation/output-replay-bounded-final.log",
+      "sha256": "d0b2d8f1c88d008abb2397c28104d0cd0626f5c3618e953378eaf99d7bc1b112"
+    },
+    "output-replay-original-red.json": {
+      "path": "/workspace/scratch/142cb233d750/reconciliation/output-replay-original-red.json",
+      "sha256": "2eba92e28868493f1dd1931d1a26ed01ff4567afbb92f49783880ffd14fcaebd"
+    },
+    "output-replay-tests-red.log": {
+      "path": "/workspace/scratch/142cb233d750/reconciliation/output-replay-tests-red.log",
+      "sha256": "df59e2aa03127a2cd5a4316d2d0687437779b7b5f9d9680d55a55962c8e6254a"
+    },
+    "output-replay-unified-red.log": {
+      "path": "/workspace/scratch/142cb233d750/reconciliation/output-replay-unified-red.log",
+      "sha256": "0f7800a5f8005752a8748ba74e700445650d78dfa0abbe5068cf1e0eaefb10cd"
+    }
+  },
+  "reviewed_source_commit": "5c26af904a28dd41aaacb3a60f9826037a85980d",
+  "reviewed_source_tree": "f57a7dd2c210b773956bf218ad088295a03f93ff",
+  "source_sha256": {
+    "docs/schemas/corpus/OutputCredits.json": "8059f00f0b5b5b0ed5b99f1d99601ad7a3ee30d30b3c6c0e01e65d9dba53ab26",
+    "docs/specs/known-answer-corpus.md": "2165045da9361fff28e1078938b9b298723dde587a1fffbb48a87334a77390f4",
+    "tests/test_tier_r_credited_replay.py": "7c01a2225d5690e935e268c6031ccaef9894446a7d5232f8b6dccce7edcdc9a3",
+    "tests/test_tier_r_output_persistence.py": "9b6f2ac8d8a64dea1cf0e864e81fe401a253024333e9116e5da2b1ee386253c2",
+    "tools/calibration/tier_r/evaluate.py": "8d42f2b17811024618f033ce5ab69b0c683d1864e3a04575353c45fe99e11d2b",
+    "tools/calibration/tier_r/output_store.py": "dc86f063347afefd7d21ea9871e77108ede540a83ac8105e3c082ce232b8c944",
+    "tools/calibration/tier_r/report_schemas.py": "f0949b28e3745d742efb8968c3dfeb495b5431614d322bda104a9b5e954e4f70",
+    "tools/calibration/train.py": "c40308134f1540d21f67f0e76f0a982cb11f0ca3ba1c39f5c0dc74b54c9148aa"
+  },
+  "train_changed_definitions": [
+    "_output_from_doc",
+    "LegacyOutputWarning",
+    "load_outputs"
+  ]
+}

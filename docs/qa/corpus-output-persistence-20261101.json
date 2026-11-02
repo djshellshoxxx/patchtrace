@@ -1,0 +1,364 @@
+{
+  "candidate_base": "06b56a69320ce289cd0d1fb62675b4dc5b148fca",
+  "changed_ast_definitions": {
+    "tools/calibration/tier_r/cli.py": [
+      "build_parser",
+      "cmd_evaluate"
+    ],
+    "tools/calibration/tier_r/evaluate.py": [
+      "evaluate_full"
+    ],
+    "tools/calibration/train.py": [
+      "_output_from_doc"
+    ]
+  },
+  "independent_retained_evidence": [
+    {
+      "bytes": 5554,
+      "content": "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",
+      "encoding": "zlib+base64",
+      "file": "output-persistence-independent-review-20261101.json",
+      "sha256": "ffed0aaf3dd60dee4ff6b8c3d2540c16fce2d3f71b81d72f6f4682b6cf182272"
+    },
+    {
+      "bytes": 478,
+      "content": "eJytkM9qwzAMxu95CpFLWkiaNW0ZhHWwQ/cEu4UsuI5oTVTbyA4jjL37lO4POwx2mQ6fDfrsTz+9po7NyVhF3YBTSGtomnWbQ1O1oimjJzVh/920I1EOs7ZvyRMrjUelB1hcXIjAqNFG0IoISIW4rBOAR0MIafnieAhe/GXQrKI+l+ttpY/VZtPf7m5KeeqsNmRUNM6Wbox+jIVHDiZEtBoLY3v0KGJjId7IjsLKT2kOZCzCbpuDsXB3cf1IeC/BACoE5AiHVXQdWqHEzivDYfHFnEN2Nr18mS1hv//F+MH/wyZXzxKh5zGBnOqR5ZjhlR1gXlN2zf6s53+s5OHKI8EHZsc1/DVJ8g4ZZKXt",
+      "encoding": "zlib+base64",
+      "file": "output-persistence-independent-loader-red.log",
+      "sha256": "e0abf840c309651e71bc3384a9444a1659875405015c89c6e556054ac92d3626"
+    },
+    {
+      "bytes": 968,
+      "content": "eJztkEFrwkAQhe/5Fe8iGHBDbERE8JCmgZaKepBepIfobsvU3c2SWf39BgRvMWvPvsMwD775DpMkoeG7HTtMssF3FKzrSeubTTt9eDy7cZq2vkV3sPz4KpEXRbnZ5quixOtyXXyWb7hzs4g6jubwpBrRCMPng/hplMLwts5hiJnsLw66aufQ1h5k2VdaK3mttcUm377H8QhaS6HJHvu5sxFO7k+edBBb7//kybgg1pogjH1DPcL4+bN//Gw8ncBVzEqO8AI+knMtRRZZkqUcXQDgSBCe",
+      "encoding": "zlib+base64",
+      "file": "output-persistence-independent-final-pytest.log",
+      "sha256": "3e2c511ffea8bebdaf011209e788ee1b30b882be93dcd826e9a031043771be65"
+    },
+    {
+      "bytes": 402,
+      "content": "eJxlkEFqAzEMRfc5RZh1N+0yVwlBaGzNRB1HMrKcZAi5ezWh0EA3BmO9p+//GNR4ZsECC61tOOyPx8/Tx/74dYpzMKoFV8r/H5+7x1BNc0/OKpAKA7qTvG5+UzCUBUy7ZDeuwQ4VW6M8hFZLBtFNCuPq1AAlA90xOYzYqLAQZEqayWCkM15ZDbqkM8ochsPerVN4JjXiWQDNedrozdPWy6gFLkGD0Tclf0ea40ygleQ1fEbLsW6BCbl0iyiRK1NLkdljaSFc2h9NaIUjlHav3RvUIMiuUdAmE3V4NZbeN4bQDVlYZgijoPOVgGTefkl3Sn3r7Hf+ufsBVaSXmA==",
+      "encoding": "zlib+base64",
+      "file": "output-persistence-independent-controls-green.log",
+      "sha256": "4bb82d7e6413bb27e717adb0d0f2a50e6cab9c88ce9301c5da3dda26c05dd9ea"
+    },
+    {
+      "bytes": 4327,
+      "content": "eJztV11v4jgUfedX+GXlRIJAWDrTQctIDKXa0VTTajq7+4BQ5CZO8TaxI9uhRaP573ttJyFAS5k+bx7Adu499+v42gmCg+fycMk86ugcLdDo99+Wned1f/0BvPP3L+ChtzyLcDAAvMnrD7qcfr7669v8Fp0g3IlaD9JU6YjEuiRZRLSmXDPBI5YXQsI6TyJJ+APj9xGRNJJUE8ZpgtoQUaej8yIqiF6hCboRij3dwNjDfVjuFxtjoSfSnhRC19PwbNQ/bnmA/U5MCrVRAPpH5PQCWNGlpMHM/V+yJ/OHxN2/NNaIaDR4ep/Gw7s4Cc8GZPCx0zGJTGj6tji9OrAucr74405dnVSK3KHSNcliAWqU34OWQg4VfZ3/E82uL+ZddH11UY2ilMPP/YolkqWpBdtDFCJTEGfG7iQxPtZoWoJLr8gGtStB5UrQhFrDTOuFGynWLKFy1welQRsybv+jjNzRTDVZ8BsxB6ZqQdRHuFrC+zJB/pAw6e3rAokm20R4V9NP86vbQ6EFTkseG38VXi5wLhKWMprAOIQpp49mNRYJxUvAqzN+OkxAioLyxGs0zPMDiyzBY1MsD89xF1gVDkaDbR39LrK2XxGxRQGhQfDhQ3fHAsI50fEq0puCKpBY4PkTkPOTYTlegir4l9q39qUL8Oc2PV5dgD5K8Q+XvKAgTEYs+RnUWQ3+VYJjP3iUTNNI0yftmZUgKfNCeXVuwFPKwQKQf4JLnfbO8dYQUYoCa+KMBTnwz1tgQ7GSaAox417Plh+GSkvPjn27XNHPyDQMxEsf2pOFuv7SGJBUlZmG2lnPMkES5bm9FkhKElFqKoE9AQz8lpLl8gTNrEbk5p5tOw5wgd0aGLU40Z1Jree3MMgjAOzqgJGiBA6Dp310fRu4eZSyjEac5NTbzfROdP6uocZOQaSyZP9265x1uYkctgduHGTbqVR72OSsZQZBr6oF1lQqs7V3JPrhjkwhacIc8/fNEL7xikBIaALRA92gVEhUIMafUT1wcUXUCtpOoFZkePbORhGs6FPC7qEjerbQrgA2V2oxWNbJdBoNnpAMoiQZJOigNdUs96u8Q76B2QnleIcKGdl0q//IOQBgtl26hFdVfanU/mJna9Y1hhZAZRVfF1WLsOlbi+3qL/cztOfQqfmotJXdms+Xp05Zu0CIpagI4hXh97CjjbmFF3ZhM3rD7qFvpvJc6K2GY8ypxvzOx128eaBFzWsbn1eXpSmYcelQrEZvV3ZeYU8tNtibSynkuLFl9W+sOoWrFa9CmHyXJXVmjko0+HDqbYfXOdMaOiAaIWAe1BROVQRdM1ddVCqKeus1HLdIrcRjS+sCmiyVRg2YINkdNCs1br1fYBsmXj5v9EKyLEOJeITTmQN6cgiHLEAbE1VLyNvG6QFZI7kmk1E4PO8iYGlrlmbk3oYOL+BAWtPJV8Fh0hR74jGeQgVmGPjiotebiXUdjkhYe9bQaNQ2ZGYnG7r4JUPvBm1DZmYNXZJMvWzJzU+28WG4teFUrQ03PNFEyY8aqbDqQIYDUxpg5/PUgBeXJZDDNQnoZnB9gUM3cWzEQEfc8LFjbqHK3ac1A+9k1fKiwhwQCnpUTINiMx6enY/3ttWxrwt09fnvOZrOZvOb79Ovszn6dHU9+zK/OPqR0XlBaYyMaz3Zy9U67qWSUuQ1wzHKmVKG+HEGWxXZ5sS40iTLoDnZKZxzN9Pvf/qQ3SxLehnjD6/LrfNekcA+YtlJsvAdYe5GJ8ny/CQxuBixVwD9/3P2hpwdIy5sC/PFZA5eVeY5kRsASsVx4ppvaCD3qZtp/KYvyk6IUgLXSdjI4bsQWjnsRhgPkXpg8CWSmCP3LAhD1fkP5E9Mow==",
+      "encoding": "zlib+base64",
+      "file": "output-persistence-independent-inflight.log",
+      "sha256": "a995123aac42ad155f4c2bf8afe36a5419bfddc91c31a0dfa765584aadad63fd"
+    },
+    {
+      "bytes": 6999,
+      "content": "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",
+      "encoding": "zlib+base64",
+      "file": "output-persistence-independent-controls.py",
+      "sha256": "7291e9ef345daac1a75f37963f05f948b1919b22e50404d3cca6c43950e267ba"
+    }
+  ],
+  "independent_review": {
+    "base": "06b56a69320ce289cd0d1fb62675b4dc5b148fca",
+    "closed_finding": {
+      "green_result": "Original ranks, EnginePairs, canonical output digest and replayed report bytes all match. Old no-key behavior matches the exact baseline decoder body.",
+      "independent_red": "/workspace/scratch/142cb233d750/reconciliation/output-persistence-independent-loader-red.log",
+      "problem": "The extended schema accepted production attention rank keys, but train.load_outputs/_output_from_doc discarded them. Initial regression reconstructed EngineOutput manually and missed this loss.",
+      "red_result": "Actual CLI and AttentionProvider produced two keys [1] and [2]; actual reader returned null/null and EnginePairs differed.",
+      "repair": "Coordinator-approved one-field prediction reconstruction retains p.order_key; regression now uses the production loader."
+    },
+    "date": "2026-11-01",
+    "limitations": [
+      "This accepts the narrow GT05 output-retention slice, not all #78 artifact transfer or GT05 delivery.",
+      "Library retention remains opt-in. Verified output/label transfer through shard and merge consumers remains open; directory contents must not be adopted without successful report-reference verification.",
+      "Report JSON and Markdown are separate exclusive publications, not a multi-file transaction. Post-publication integrity failure may retain an uncredited file.",
+      "Unsupported hardlinks fail closed. Native Windows/cross-OS publication and live engine accuracy were not tested by this reviewer.",
+      "No claim of arbitrary same-user hostile-process exclusion or universal power-loss durability.",
+      "All inputs were small constructed controls. No actual corpus, Tier W data, final evaluation, heavy training, full/performance suite, source edits or remote writes were used by this reviewer.",
+      "Growth/source/license/pin audits, recipe A/A/noise, pre-lock/native lineage/OOD, final CLI single-use locking and guarded promotion remain open."
+    ],
+    "reviewed_commit": "ad35469860d402c4dfa86f041be3ce6996323465",
+    "reviewed_tree": "bb7bd51dc64b08cc6fd33d8d7c90f4bf72b47841",
+    "reviewer": "/root/cancel_fix",
+    "source_binding": {
+      "result": "All eight tested production, schema, example and new regression file hashes exactly match the clean final commit. Tests ran before the author's documentation/commit finalization; no unnecessary rerun was used.",
+      "tested_hash_map": "/workspace/scratch/142cb233d750/reconciliation/output-persistence-independent-tested-files.json"
+    },
+    "static_checks": [
+      "Scoped Ruff passed for changed production modules and the new regression test; git diff --check passed.",
+      "Scorer, evalcore, calibration models/features, enrichment and provider defaults are unchanged from base.",
+      "The sole train.py edit adds p.order_key to reconstruction. FEATURE_ENGINES still excludes attention; no fitting or lineage grouping changed.",
+      "Canonical bytes are validated directly, then staged, fsynced, hard-linked without replacement, verified and hashed without reserializing model defaults.",
+      "Successful pair metrics/run credit are added only after requested persistence succeeds. Failed publication preserves earlier outputs and report references; explicit report conflicts never replace prior reports.",
+      "Fresh default/explicit output directories and pair/provider ownership are checked. Artifact hashes and symbol mode are bound through the existing producer/import contracts.",
+      "Additive /1 reader limitations and uncredited files after post-publication integrity failure are explicitly documented."
+    ],
+    "tests": [
+      {
+        "command": "PYTHONPATH=src QT_QPA_PLATFORM=offscreen /workspace/scratch/142cb233d750/venv-corpus-output/bin/python -m pytest -q tests/test_tier_r_output_persistence.py tests/test_tier_r_eval_cli.py tests/test_tier_r_eval_report.py tests/test_tier_r_eval_metrics.py tests/test_evalcore_engines.py tests/test_evalcore_scoring.py tests/test_evalcore_report.py tests/test_train_pipeline.py::test_indeterminate_and_ambiguous_candidates_are_excluded_and_counted tests/test_train_pipeline.py::test_visible_symbol_outputs_and_duplicates_are_refused",
+        "raw_log": "/workspace/scratch/142cb233d750/reconciliation/output-persistence-independent-final-pytest.log",
+        "result": "164 passed, 2 skipped in 3.30s",
+        "skips": "Two explicit native-tool acceptance BLOCKED checks: clang/lld-link and LLVM inventory tools unavailable on PATH."
+      },
+      {
+        "command": "PYTHONPATH=src:tests:. /workspace/scratch/142cb233d750/venv-corpus-output/bin/python /workspace/scratch/142cb233d750/reconciliation/output-persistence-independent-controls.py",
+        "raw_log": "/workspace/scratch/142cb233d750/reconciliation/output-persistence-independent-controls-green.log",
+        "result": "Actual CLI, actual attention import/enrichment/ranking, two opposing-name ranks and production load_outputs replay pass. Foreign artifact and symbol-mode imports fail without metrics/digest. Descriptor-open and unsupported-hardlink failures leak no descriptors and preserve prior evidence. The old no-key fixture retains pinned original/canonical hashes and exactly matches baseline decoder behavior.",
+        "script": "/workspace/scratch/142cb233d750/reconciliation/output-persistence-independent-controls.py"
+      }
+    ],
+    "verdict": "PASS for the bounded normalized-output persistence and faithful reader slice; no remaining concrete blocker found",
+    "worktree": "/workspace/scratch/142cb233d750/wt-corpus-output",
+    "worktree_clean": true
+  },
+  "independent_tested_file_hashes": {
+    "docs/schemas/corpus/EngineOutputDoc.json": "a5563c706bad36a1cce589fb91925633262ace96061d8480bbbdb53221e0edf3",
+    "docs/schemas/corpus/report-examples/valid-engine-output-attention.json": "785290aab16c0f9aa7cf9826dc55c04b1baa05e1a214ada7753ed87bc8611009",
+    "tests/test_tier_r_output_persistence.py": "bbbafbcc9aa2c92489c9719a3c99c21470a7f030429b281a16703f24baecf61e",
+    "tools/calibration/tier_r/cli.py": "31c50063c6677d2a3518ed0467774b69e9dddbdebf94e138ddacba672f6416d4",
+    "tools/calibration/tier_r/evaluate.py": "1cd307483890517b5e552e1a57a6841520a88daebadc15f9e0f7d945c05c3724",
+    "tools/calibration/tier_r/output_store.py": "109e47feec174af6d64bdc4ebf07eabd2c5ec66ee1b07d7ca63c90965072fa5c",
+    "tools/calibration/tier_r/report_schemas.py": "ac77c4faeb3c8000c0bed51f29bbc9937f1376f32d0cb5d3bb66506eda70ff65",
+    "tools/calibration/train.py": "59246324bedcfb07f73a51ec2c837c75cef694f723ffa2a9ecc58550eedfaa3c"
+  },
+  "limitations": [
+    "library retention remains opt-in",
+    "an integrity failure after publication can retain an uncredited file; transfer must check successful report references",
+    "reports and Markdown are separate exclusive publications, not a multi-file transaction",
+    "no lock against arbitrary same-user hostile mutation; no universal power-loss durability",
+    "no verified shard/merge transfer in this slice",
+    "no native/cross-OS/real-model numerical acceptance",
+    "no real locked evaluation, Tier W input or numeric-confidence promotion"
+  ],
+  "logs": [
+    {
+      "bytes": 2712,
+      "content": "eJytVttu2zgQfddXzMuCsmsrdrJtWmNdIJvYQNC0DZrdJ8FL0BJlsZFEgaQau1+/Q+piJWiyibN8Ec3LmTMzZ4ZeLpfwv4xwOpn8tvLm/z1geXZ59fe3xQ0847BHmwGGa0NjnrAqMzTKBFXcMFFoalJOYxlVOS8MLiZc8SLiMV3v3JbipVQGWhzPM3lJS2ZSmMO11GJ7jXOfHOHyUbmzVsYyGSspTftzevzh6GnrEzLwclnc8h0CRxb5D1pfDnrLwWc3v3ZH5Po7jwwwA5PtaXLK4/dJ/OFkOvnoRazUO93HwBVTKR6c19+l2NrPLyBYdMoThPBsRpDtK4Pmt6EaQc+NEdQMBzOvTb42EvnM6y/N2Jpnurs86I71Y6GRiDHKR1LBYgSkJVkq+UPEXGkygozl65jBkKmNHsFweHtnZzMI20P+YLVHZ1pzTLQFzNFHPyT8B8sqZjhCkfHYkcOpRqtuPnDLvNiIgltzRP0cxyJJyGqA0nRAXz918Ipr5IdOfteyCDLJYu3XgQgUZ7GsDFdIKMDJoHfJiW8O5+5GG1cnuRowJPUaGnU4mAFMmj/YYyQi41YOYQmJVFCCKOpAB2qTybVPhoGlRPY3uiESSJlOM7EOdMqO377zy/tGgpRvY7FBlfjO55pLUDKhdDhZWWfKytD68sr7eD/UGS98x87dnWIEdRVFXOukylrXa3RLAwoJtfx4jHOVs0z8xCm3qUTxEW/RwJ85eCGLhVJSzeA1qB1ow3niqHar8AbgLkX12w3nUIiS8mzd6LrojeCKKtpEokRlCm0sclDuZr+fzh6w7RrWvmlh1rjYFJ20aS05KjQtJAY3wv2YSkUj/AqD5PsYD4r5xWB+r047OS6Ctjb88Orsz8XVzWrUKysMaKUwoA34nGxSEStbGgM8t6aRrAozP57sJWcVA61+QuIERFYooYeasTsh0Vj8FR6wySAJQw3FBFgRN9v3ZIenhIYvsuC9Ezk3SkR6v/eoeBq7PpG3pG9uLwHoTcdQb/eW3oC8fYEk3r5/VBJNO67KTEQY+n0O5V2BIKkobRoVt23d9mJuk035lkeVBYNHJHEwoJVGm547gS9i894oJjS2h/PgXBZGscg4N/ARsJ17Tjp7wbDWB+lJzI1/Dh1d2JcuCzO4uLyAL1//gm9nlzcLuMfn+Sl5dzJrAJ/6fwI6tcVh4bDj5DlTO2y1iXzyb4pn/8wsLuC5VGave5EPM/finnGgV4fq0Dtpqs4+bdPgZKK9fwF0rouC",
+      "encoding": "zlib+base64",
+      "file": "corpus-output-red.log",
+      "raw_log_retained": true,
+      "sha256": "dd1d5515623ee05ede0e4ebf49a780515d01d5fc6bb109e322cdbfb97920d3da",
+      "stage": "baseline plus initial three regressions"
+    },
+    {
+      "bytes": 807,
+      "content": "eJztkDELwjAQhff+ilsEC02o3Sw41FpQLOpQXMShNVFOkzT0Un+/giA6VIuzb3jcg+/d8DjnxN/1mqG3dqMwHOy9SbcgX2wzSNI02xTJKs1gmq/TZTaDD52J11GKwaFsWMM0XQ/s2EgJw+cZg0YiNCc4qPLuQ1M7QEOuVEqKR6wNbJJi7vsBKCWYQnP5zl01s6JqHapebF2dRattL9boXhi5Br889P+b/bBZNAZbEkkRQAR0QWvvEBqIeBiRdwOBw/PY",
+      "encoding": "zlib+base64",
+      "file": "corpus-output-initial-green.log",
+      "raw_log_retained": true,
+      "sha256": "13b4af104272eb8f431b5c0dd1fe2d94a59888d7b0a99dab533e554dd8ae92f2",
+      "stage": "initial persistence implementation"
+    },
+    {
+      "bytes": 1987,
+      "content": "eJytVdtu2zgQfedXDAwsJKPW1ZYlG+sA2V0HKBqgRYt9KgqC4iVmY0sCSTUJgvx7SclS3S7qFNnOi8jRzJkzF5Jh+B+5gpfIxySO//iENs8LXF2+vv73/fYD/IIxwicChmuDCTUt2WNiDK+MrCssD02trL5iWJHqVlY3mCiOFTdEVpzBKQRGyBwa3BCzgw28q7W8f2fXvhdZddQ8uAhBLQJV12bYJotldD5y7E0RJY1+0Bb0T9z7hVZjWsXDv/vvlbx3H6jLz5waIAbi+1zkRZnQgmbL+AIhV0jGxcvy9IfEZtBzma7R0B2h6kOPaiRXWGH+xULz6sY6auiBAd/sJFNSiM5t9NWmtqw3/RfvScn3eow1Hc16ED0YQgTeUeX9aBMebplU/jdff3COQHiP15d/ba8/hA2RCkv2FA60ws+6rrxpeKek4djwe+M7TcjaQ6P9kb3f+0+nM+AVrZmt08ZrjQgK26WLY0SiNbcp070MD7Z6/kfPVaQlhnsz8IKgy8EutVF+t5526mPFnM3YF+/T1E5yB/X2DdoeA1x2AezvrVK1Wg8BE2caj1bwCuBux225Ejc5oq2o8wHH6WRC4jxZZIv44qc0/+f4RiPOT1P8jvJA+lnCsBlL/B2AnWG7iGEsG3IMdXQ6onVrmtbghisttSVCedg8rNN5tv6huCg4J3A8fsz2kllMezj2ezjrgh4RTMp9TW85m6zh8Wlm97Q+HCxtu58MPZg4/bFezs7O82SsmTMURO4tBIIOoU/IWU5+R7uiI15UrMosjZd5MY/LRZrnJWH5Ml3RouTzeJ7GHU3FnfNvi93D2YbZXgUqsEeP8SogdE5yJsgqTfPgOVrdcT7hhvWOpNnSUTzFKVNW5IuSslWRiTKlhCxEMi9X8SJZZuUyKZhgWSLoUmQizuhqnpR9xtoQ0+rTNjyde55A79wl6NIH3dpeqweQlajPvlLIvWXbf+BXp3f9opsdJdCnMINkBY27SpjlBnFY5Bp9BYvlbJQ=",
+      "encoding": "zlib+base64",
+      "file": "corpus-output-expanded.log",
+      "raw_log_retained": true,
+      "sha256": "8a6fbac2447119682e4799e59507c7c523571a6f775e2643a82097a163801985",
+      "stage": "attention schema missing already-produced order_key"
+    },
+    {
+      "bytes": 99,
+      "content": "eJzT0yMSKBAA0YYGBqqxXCaGCgWJxcWpKQqZeQoGepbmxVwATAYSPg==",
+      "encoding": "zlib+base64",
+      "file": "corpus-output-expanded-green.log",
+      "raw_log_retained": true,
+      "sha256": "e5ebdb968715937a8bb0c5c289893202a976fdf54453883714dd3d5bb1266035",
+      "stage": "bounded order_key schema added"
+    },
+    {
+      "bytes": 968,
+      "content": "eJztkEFrwkAQhe/5Fe9SMOCG2LRVBA9pGlAqrQfxIh6iuy1TdzdLZvX3GxB6i1k8+w7DPPjmO0ySBIZvd2zxkj3tolBdX1rfZNzlwx3ZjtK09c26g+ViUyIvinK1zr+KEu/L7+Kz/MCNm1nUcTSFJ9WIRhg+H8RPoxQG/+sUhpjJ/uKgq3YObO1Bln2ltZLXWlus8vU8jofQWgpN9tjPnY1wcn/ypIPYev8nT8YFsdYEYewb6hHGj5/d8bPRWwZXMSs5xDP4SM61FFlkyWvK0QW43xCS",
+      "encoding": "zlib+base64",
+      "file": "corpus-output-focused-green.log",
+      "raw_log_retained": true,
+      "sha256": "802c31f7489ef1fd0de82d3e86a8117a22015564360cd5cf4a1b6483de2b4f27",
+      "stage": "expanded evaluator integration"
+    },
+    {
+      "bytes": 968,
+      "content": "eJztkEFrwkAQhe/5Fe8iGHCDWglW8JCmgRZFPUgv0kN0t2Xq7mbJrP5+A4K3mNVz32GYB998h0mS0PDdjh0mL73vKFjXkcY3TVt9eDy70XDY+ObtwfLzq0CW58Vmm63yAm/Ldb4o3nHnZh61HM3gSdWiFobPB/FTK4X+bZ3BEDPZXxx02cy+rTzIsi+1VvJaK4tNtv2I4wG0lkKTPXZzZyOc3J886SC22v/Jk3FBrDVBGPuaOoTx/8+e+NkoncCVzEoOMAYfybmGIotx8ppydAHgbBCp",
+      "encoding": "zlib+base64",
+      "file": "corpus-output-final-green.log",
+      "raw_log_retained": true,
+      "sha256": "49b2c77664e0aadcccc4551b24dcda485505a447ee7f02abb3fed1b4a1486ff7",
+      "stage": "pre-review, inline attention reconstruction"
+    },
+    {
+      "bytes": 3097,
+      "content": "eJytVttu4zYQfddXsA+FJMCmL0l2U6NaIE0cYNGgCTbtkxEQjETZ3EikQFJOjKL/3iEpybKTOMa2epE4mjlnbhzyGv1Pz2IyHv/8ECQfP+j64uvNX9/m9+gI5YD0HmSYNoSmpqYFocYwYbgUhJeVVCAXGVFUPHGxJFQxopihXLAM9SFIEJiyIhU1K5SgO6n5yx18R+EIxKNqYxmGMh8qKU27nJydjA4zj8M4SGmlNxpAfyXeDoPE1IrhS/++5i/2heTjd5YaRA0av3zOP52l9GScTybjL0FgE5mx/MfijNrABsj7Es+Ctjq5kqVHZWtapBLMmFiClUYeFZHlimeK57mz2TOUstAQTsEfFbWutEZGAfMHurhlxA0j7iJqYS5awZ2Sa54xteuDNmANiXVvUtBHVugu2LhT82C6VUQjFDaicF8Hl08ZV9HWNmqNRygP/765+G1+c48ryhXh2T+4TQ3+rqUIY/ysuGHEsBcTWQnO6rLSUZfByNvH8QAxkcoMCpWEtcmH5+GWkWrNIPS04LiEJEaL0OappoaFAxQOhy4G+NRGRe47duImh1anS2P4EMNWclC3v3cEium6MJAN52IhaaYj3xdYMZrJ2jAFKcDwEfeMXEESdOksiF9Hbot4wEXoZUDqcMijbfYo7mHQZwDYtQGSqoZCgKcjdHuP/ZrkvGBE0JJFuynfiS7eJep4Kqo07O4Efbv3zvrcEI8dgRuvsu1Nmka0OevRINhXrcKaKW37c0djNNnRqRTLeGp/6H0aKjZRhaWCTiZPbINyqVCFuHjD9JWLK6pXsHewXtHp2ScXBV6xl4wvYfdGrtC+AC5XejF+aJPpLTo8qThESQtI0Kv91bZ73OQd8g29mzER7rRCQTeD5k28AwDm9rxPeFPV90odLzowt8eaGssCPGjiG6BGKNhzT9iv/sN+hvYcOjYfO7VJV1QsoXlcPXuVArRoMoi3FWuzeLBmFlNIaK93cT/A+7KLN8dGtt3sooraYnRlsp6+VmvR+/WcN9gXDhv45kpJNeu4nP2dM2cYY9GEkPypauZpDmp0+DCwt5+3JTcG5h46RdBvUEk4EBAMzVIPUK0ZGq7XcFIgvZLPPasrGJ5MWTOov+KPMKL0rPd/Eboww4e3Sa8ULwqUyWc4WASgZ6/hkAPoY6JGhKJtnBG0KFFrmpxOpucDBL3ZW+UFXbrQ4QcccGuW/CEFLLpiJxEXOVTgMoSR7aM3m8S5zjIre5Po9LRPZFeO6JoW+n0mvz6a45fplsObOg7/eSRFLQ6SNFhtINPx+X8jidFPyfGlge58uzXgx3UNzeFHA8ywWqRw1Ga+G0Nox7Drx8Dek7S/8RkOHqpm0JHKHgsaJlPKcLWZTc9OZnvb6tD916LbO5OdWrouS6o20Ke5PHgNDuxleX6FjvVp9kNXx2CCcgpncWZH1Bh/nurgX+RN5ZE=",
+      "encoding": "zlib+base64",
+      "file": "corpus-output-review-loader-red.log",
+      "raw_log_retained": true,
+      "sha256": "b65db84ecc4f49ac38eae7419e4d552a2e8e4285fec85d0a9c41a452db7e71e3",
+      "stage": "production loader loses rank (before one-field fix)"
+    },
+    {
+      "bytes": 968,
+      "content": "eJztkEFrwkAQhe/5Fe8iGHBDrCJW8BDTQItiPUgv0kN0t2V0d7NkVn+/AaG3mNVz32GYB998h0mS0PDdjh3Go953FKzrSOObTlp9eDy7YZo2vnl7sPr4KpDlebHZZuu8wGL1mS+LN9y5mUctRzN4UrWoheHLQfzUSqH/t85giJnsLw66bGbfVh5k2ZdaK3mrlcUm277H8QBaS6HJnrq5ixFO7s+edBBb7Y/ybFwQa00Qxr6mDmH8/7MnfjacjOFKZiUHeAGfyLmGIotRkr5ydAXgVxCk",
+      "encoding": "zlib+base64",
+      "file": "corpus-output-review-loader-green.log",
+      "raw_log_retained": true,
+      "sha256": "8e9f4eedb8b82dae92d480fd43e452b12151b0c38246de906e098a1121ea4543",
+      "stage": "final production source and actual loader control"
+    },
+    {
+      "bytes": 19,
+      "content": "eJxzzMlRSM5ITc4uVihILC5OTVHkAgBDRwZ2",
+      "encoding": "zlib+base64",
+      "file": "corpus-output-final-ruff.log",
+      "raw_log_retained": true,
+      "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+      "stage": "final whole-repository Ruff"
+    },
+    {
+      "bytes": 0,
+      "content": "eJwDAAAAAAE=",
+      "encoding": "zlib+base64",
+      "file": "corpus-output-final-diffcheck.log",
+      "raw_log_retained": true,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stage": "final diff hygiene"
+    }
+  ],
+  "main_port": {
+    "base": "6579ed83211b7ff2039e3152728ac1cddc3e93d6",
+    "baseline_qa_todo_prefixes_preserved": true,
+    "command": "PYTHONPATH=src:. QT_QPA_PLATFORM=offscreen /workspace/scratch/142cb233d750/venv-corpus-output/bin/python -m pytest -q tests/test_tier_r_output_persistence.py tests/test_tier_r_eval_cli.py tests/test_tier_r_eval_report.py tests/test_tier_r_eval_metrics.py tests/test_evalcore_engines.py tests/test_evalcore_scoring.py tests/test_evalcore_report.py tests/test_tier_r_contracts.py tests/test_train_deferred.py::test_dedupe_is_order_independent_and_counts_the_dropped_duplicates tests/test_train_deferred.py::test_scorer_views_ignore_provider_order_and_the_report_carries_a_warning",
+    "diff_check": "passed",
+    "full_ruff": "passed",
+    "independent_equivalence": {
+      "result": "All eight original tested hashes, reviewed contract/schema bytes and owned 14-path diff match. Complete main QA/todo prefixes retained; sole train edit preserves order_key. Prior bounded independent review transfers unchanged.",
+      "reviewed_commit": "5a957728afd0fb8cc974e6f49c515d4b363dd40d",
+      "reviewed_tree": "d0b8b4e31998dd4ab10399ef79f0c21ee2863be6",
+      "reviewer": "/root/cancel_fix"
+    },
+    "module_paths": {
+      "patchtrace": "/workspace/scratch/142cb233d750/wt-corpus-output-main/src/patchtrace/__init__.py",
+      "tools.calibration.tier_r.evaluate": "/workspace/scratch/142cb233d750/wt-corpus-output-main/tools/calibration/tier_r/evaluate.py",
+      "tools.calibration.tier_r.output_store": "/workspace/scratch/142cb233d750/wt-corpus-output-main/tools/calibration/tier_r/output_store.py",
+      "tools.calibration.tier_r.report_schemas": "/workspace/scratch/142cb233d750/wt-corpus-output-main/tools/calibration/tier_r/report_schemas.py",
+      "tools.calibration.train": "/workspace/scratch/142cb233d750/wt-corpus-output-main/tools/calibration/train.py"
+    },
+    "preregistration_branch_dependency": false,
+    "raw_logs": [
+      {
+        "bytes": 968,
+        "content": "eJztkEFrwkAQhe/5Fe8iGHBDrIhW8BDTQEtFPUgv0kN0t2V0d7NkVn9/A4K3mNVz32GYB998h0mS0PDdjh1Gk953FKzrSOObjB/2oT27YZo2vnl7sPz4KpDlebHZZqu8wGK5zj+LN9y5mUctRzN4UrWoheHLQfzUSqF/W2cwxEz2FwddNrNvKw+y7EutlbzWymKTbd/jeACtpdBkT93cxQgn92dPOoit9kd5Ni6ItSYIY19ThzD+/9kTPxtOp3Als5IDvIBP5FxDkcUoeU05+gPd7hH7",
+        "encoding": "zlib+base64",
+        "file": "corpus-output-main-green.log",
+        "sha256": "ab6d561fd2cb298648fec8f91f6a883e762a7174230c04451b7e42145a68b8e6"
+      },
+      {
+        "bytes": 19,
+        "content": "eJxzzMlRSM5ITc4uVihILC5OTVHkAgBDRwZ2",
+        "encoding": "zlib+base64",
+        "file": "corpus-output-main-ruff.log",
+        "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+      }
+    ],
+    "remote_writes": false,
+    "schema_drift": "passed owned output and corpus contracts/examples",
+    "source_commit": "522fe1ba1acef282a8c218f2cc2411b42464b008",
+    "source_sha256_unchanged": true,
+    "tested_commit": "5a957728afd0fb8cc974e6f49c515d4b363dd40d",
+    "tested_tree": "d0b8b4e31998dd4ab10399ef79f0c21ee2863be6",
+    "tests": {
+      "passed": 188,
+      "seconds": 3.9,
+      "skip_reason": "LIVE ACCEPTANCE BLOCKED: required clang/lld-link/LLVM tools unavailable",
+      "skipped": 2
+    },
+    "train_changed_ast_definitions": [
+      "_output_from_doc"
+    ]
+  },
+  "protected_unchanged_sha256": {
+    "docs/plans/c9-preregistration-v1.md": "be8590fb20437af7f75279a2e3f6469896555691729b426344200780d2fd7d7c",
+    "tools/calibration/evalcore/engines/attention.py": "b184ad223aae3f47c9de667deba5dae4792facd41d7e3415e537ef9066d100aa",
+    "tools/calibration/evalcore/engines/common.py": "2ca648a522a544ffb30b2fff33eac79b9c906775511a36823c453d3c62d27ecc",
+    "tools/calibration/guards.py": "95efd4e17e863deb6dd628c7b47bc6d216ca2bdc81c1ee974f62cb822861cc60",
+    "tools/calibration/lineage.py": "3378ff6db15318e7787d1b1c21f0154a5823107d5afb7964df052e132ac4f8c7",
+    "tools/calibration/prereg.py": "087e90c64772d0260c95986330c03855661a0820391dfe8d05e477abb2027d4b",
+    "tools/calibration/run_locked_test.py": "32f637cd49535fc73a922003875d523b1bf4160ced26ac37f7da5aa85c650a15",
+    "tools/calibration/tier_r/contracts.py": "afefbf76ddaf26373ead9a3b651ef6e0a864263946ea8e2ac38f274ab3d78e22"
+  },
+  "remaining_requirements": [
+    "verified #78 shard/merge artifact transfer",
+    "growth source/license/pin audit",
+    "both-side recipe A/A/noise",
+    "pin-provenance collision contract",
+    "pre-lock/native lineage and OOD acceptance",
+    "single-use-final CLI lifecycle",
+    "guarded promotion"
+  ],
+  "reviewed_source_commit": "ad35469860d402c4dfa86f041be3ce6996323465",
+  "reviewed_source_tree": "bb7bd51dc64b08cc6fd33d8d7c90f4bf72b47841",
+  "schema_extension": {
+    "contract": "tier-r-engine-output/1",
+    "fields": [
+      "attention engine kind",
+      "optional bounded strict finite scalar order_key"
+    ],
+    "old_reader_behavior": "reject unknown kind/field",
+    "original_bytes_retained": true,
+    "other_schema_artifacts_unchanged": true
+  },
+  "scope": "GT05 selective Tier R normalized-output retention; constructed controls only; no corpus growth or final evaluation",
+  "source_adoption": {
+    "adopted": "retention intent and filename convention; new exclusive hardlink publisher",
+    "copyright": "2026 Circuit Drift Labs",
+    "head": "2019a37fa65fc37f4758469143c2daadc07e0098",
+    "license": "MIT",
+    "license_matches_repository": true,
+    "license_text_inspected": true,
+    "not_adopted": [
+      "check-then-replace writer",
+      "existing empty directory adoption",
+      "older duplicate scorer",
+      "training_artifacts.py",
+      "shard/workflow/recipe/pilot helpers"
+    ],
+    "pr": 78,
+    "sha256": {
+      "LICENSE": "8c00b102d1864981961f41eb079d0b531f3d07fcae5a5a781f647f43f5be7177",
+      "tools/calibration/tier_r/output_store.py": "54e85776712f6e9f157ab68e281af3d00b5de70d84e000c6a1e5bdced777fd80",
+      "tools/calibration/tier_r/training_artifacts.py": "6ddee1110a7746965dfb07f92fd03559540e25a645cb51f410cc1599edcb229d"
+    }
+  },
+  "source_sha256": {
+    "docs/schemas/corpus/EngineOutputDoc.json": "a5563c706bad36a1cce589fb91925633262ace96061d8480bbbdb53221e0edf3",
+    "docs/schemas/corpus/report-examples/valid-engine-output-attention.json": "785290aab16c0f9aa7cf9826dc55c04b1baa05e1a214ada7753ed87bc8611009",
+    "docs/specs/known-answer-corpus.md": "49f5fcffae5dc0e56b190f6b7d77ce9d97c46a9dc7ab00cdf41f1739d003ed6b",
+    "tests/test_tier_r_output_persistence.py": "bbbafbcc9aa2c92489c9719a3c99c21470a7f030429b281a16703f24baecf61e",
+    "tools/calibration/tier_r/cli.py": "31c50063c6677d2a3518ed0467774b69e9dddbdebf94e138ddacba672f6416d4",
+    "tools/calibration/tier_r/evaluate.py": "1cd307483890517b5e552e1a57a6841520a88daebadc15f9e0f7d945c05c3724",
+    "tools/calibration/tier_r/output_store.py": "109e47feec174af6d64bdc4ebf07eabd2c5ec66ee1b07d7ca63c90965072fa5c",
+    "tools/calibration/tier_r/report_schemas.py": "ac77c4faeb3c8000c0bed51f29bbc9937f1376f32d0cb5d3bb66506eda70ff65",
+    "tools/calibration/train.py": "59246324bedcfb07f73a51ec2c837c75cef694f723ffa2a9ecc58550eedfaa3c"
+  },
+  "validation": {
+    "command": "QT_QPA_PLATFORM=offscreen python -m pytest -q tests/test_tier_r_output_persistence.py tests/test_tier_r_eval_cli.py tests/test_tier_r_eval_report.py tests/test_tier_r_eval_metrics.py tests/test_evalcore_engines.py tests/test_evalcore_scoring.py tests/test_evalcore_report.py tests/test_train_deferred.py::test_dedupe_is_order_independent_and_counts_the_dropped_duplicates tests/test_train_deferred.py::test_scorer_views_ignore_provider_order_and_the_report_carries_a_warning",
+    "diff_check": "passed",
+    "final": {
+      "passed": 164,
+      "seconds": 3.09,
+      "skip_reason": "LIVE ACCEPTANCE BLOCKED: clang/lld-link and required LLVM tools absent on PATH",
+      "skipped": 2
+    },
+    "interpreter": "/workspace/scratch/142cb233d750/venv-corpus-output/bin/python",
+    "red_actual_loader": {
+      "failed": 1,
+      "seconds": 0.72
+    },
+    "red_attention_schema": {
+      "failed": 1,
+      "passed": 19,
+      "seconds": 0.87
+    },
+    "red_initial": {
+      "failed": 3,
+      "seconds": 1.3
+    },
+    "ruff": "passed whole src/tests/tools"
+  }
+}

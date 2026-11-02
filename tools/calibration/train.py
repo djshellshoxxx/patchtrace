@@ -51,6 +51,7 @@ import hashlib
 import json
 import math
 import sys
+import warnings
 from collections import Counter
 from collections.abc import Mapping, Sequence
 from dataclasses import asdict, dataclass, field
@@ -166,7 +167,7 @@ class _Strict(BaseModel):
 
 class EngineRun(_Strict):
     engine: Literal['rz-diff', 'ghidriff']
-    version: str | None = Field(default=None, max_length=200)
+    version: str | None = Field(default=None, max_length=C.MAX_ENGINE_VERSION_CHARS)
     output_sha256: C.Sha256
 
 
@@ -235,35 +236,49 @@ def toolchain_of(side: C.ImageSide) -> str:
 
 
 def _output_from_doc(doc: RS.EngineOutputDoc) -> E.EngineOutput:
-    preds = tuple(E.Prediction(p.old_rva, p.new_rva, p.changed, p.similarity_milli, p.old_name, p.new_name)
-                  for p in doc.predictions)
-    return E.EngineOutput(doc.engine, 'ok', version=doc.version, predictions=preds,
-                          old_only=frozenset(doc.old_only_rvas), new_only=frozenset(doc.new_only_rvas),
-                          implicit_unchanged=doc.implicit_unchanged, ignored_unaddressed=doc.ignored_unaddressed)
+    return RS.engine_output_from_doc(doc)
 
 
-def load_outputs(folder: Path) -> dict[tuple[str, str, str], tuple[E.EngineOutput, str]]:
-    """`tier-r-engine-output/1` files keyed by (older image sha, newer image sha, engine) with the SHA-256 of the
-    canonical document (the engine-run digest). Symbols must be hidden; a duplicate key is an error."""
+class LegacyOutputWarning(UserWarning):
+    """Unmarked output loading validates data but cannot prove successful report credit or transfer ownership."""
+
+
+def load_outputs(folder: Path, *, allow_legacy: bool = True) -> dict[tuple[str, str, str], tuple[E.EngineOutput, str]]:
+    """Load report-bound managed output bytes, or explicitly warn for unverified legacy compatibility.
+
+    Keys are ordered image hashes/engine. Hidden symbols and unique keys are required for both paths;
+    pre-marker directories cannot acquire retrospective credit. Set allow_legacy=False to refuse them.
+    """
+    from .tier_r import output_store as OS
+
     found: dict[tuple[str, str, str], tuple[E.EngineOutput, str]] = {}
-    for path in sorted(Path(folder).rglob('*.json')):
-        raw = path.read_bytes()
-        try:
-            head = strict_json(raw)
-        except ValueError:
-            continue
-        if not isinstance(head, dict) or head.get('contract') != RS.OUTPUT_CONTRACT:
-            continue
-        try:
-            doc = RS.load_engine_output(raw)
-        except (C.ContractError, ValueError) as exc:
-            raise TrainError('PT-KA-EVAL', f'{path.name}: {str(exc)[:300]}') from None
+    try:
+        records = OS.read_credited_outputs(Path(folder))
+        if records is None:
+            if not allow_legacy:
+                raise OS.OutputError('legacy output directory has no verified managed credit')
+            warnings.warn('Legacy output directory is unverified: no successful report credit or transfer ownership',
+                          LegacyOutputWarning, stacklevel=2)
+            records = []
+            for path in OS.legacy_output_paths(Path(folder)):
+                raw = OS.read_output_bytes(path)
+                try:
+                    head = strict_json(raw)
+                except ValueError:
+                    continue
+                if not isinstance(head, dict) or head.get('contract') != RS.OUTPUT_CONTRACT:
+                    continue
+                doc = RS.load_engine_output(raw)
+                records.append((path, raw, doc, hashlib.sha256(canonical_json(head)).hexdigest()))
+    except (C.ContractError, OS.OutputError, ValueError) as exc:
+        raise TrainError('PT-KA-EVAL', str(exc)[:300]) from None
+    for path, _raw, doc, output_sha in records:
         if doc.symbols != 'hidden':
             raise TrainError('PT-KA-EVAL', f'{path.name}: engine output with visible symbols cannot feed training')
         key = (doc.older_sha256, doc.newer_sha256, doc.engine)
         if key in found:
             raise TrainError('PT-KA-EVAL', f'{path.name}: second engine output for the same pair and engine')
-        found[key] = (_output_from_doc(doc), hashlib.sha256(canonical_json(head)).hexdigest())
+        found[key] = (_output_from_doc(doc), output_sha)
     return found
 
 

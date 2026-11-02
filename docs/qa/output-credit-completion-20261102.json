@@ -1,0 +1,64 @@
+{
+  "kind": "source-bound-local-output-credit-completion-review",
+  "date_utc": "2026-11-02",
+  "base_sha": "692e9b009c9f4bba5edceb2a97c207713152d4cb",
+  "source_sha": "a14255715b051b0e5500786049669f77789943d9",
+  "source_tree": "9fa4779bf8031878ded162ebc64328db01ab3a1d",
+  "checks": [
+    {
+      "name": "focused",
+      "tests": 140,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 3.034
+    },
+    {
+      "name": "cli",
+      "tests": 17,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 2,
+      "seconds": 1.467
+    }
+  ],
+  "source_sha256": {
+    "docs/schemas/corpus/EvaluationFailure.json": "835af1509ea3a589b66c51873be23b642e8a9ae6da3309215e08d426a990c90e",
+    "docs/schemas/corpus/OutputCompletion.json": "9d12335bbcdb477066f140f5ea2ca3dc9f318dbf28ebd7d6f76c72caa68930a7",
+    "docs/specs/known-answer-corpus.md": "838095e187be66c495c17b15f6ce3529976bf7abc3de328126680301881ad16d",
+    "tests/test_tier_r_credit_completion.py": "568928d67d42051268f734c3424c88d28088e759c19b6813c2a8b8af80891b8f",
+    "tests/test_tier_r_credited_replay.py": "1edf175d374add82001e7d5c1906a309d5e6601f0f5cb2d0deba4a7a21b45dfe",
+    "tests/test_tier_r_output_persistence.py": "3fd5c06e27447bcb0c076eb8b49ad9af33365116b16877fdb6b97a72ac29f986",
+    "tools/calibration/tier_r/cli.py": "a3283ba98bbb57908f00d2720d4e5842ad90204a29744f3f199276c191474c24",
+    "tools/calibration/tier_r/evaluate.py": "ad4fc881e4fd0b807a9c93f4a7ec4fb936346c846b4b84d2b3b0611cdae44617",
+    "tools/calibration/tier_r/output_store.py": "35a4514336acbbc65f3b509028cd17bb46842b94d82a1b93402e922e2eb6f6ee",
+    "tools/calibration/tier_r/report_schemas.py": "517b03898df9966f32e0b8fe93756896cb0c9e0939c372e36a91a3cfb91dd19d"
+  },
+  "archive": "output-credit-completion-20261102.tar.gz",
+  "archive_sha256": "2f8da120cd8be966ba20e53c53060e21cf09f675908602f80fe9b40ece31ab70",
+  "artifacts_sha256": {
+    "credit-cap-small-repro-20261102.json": "785f934aef01c3ebc0224690035881fb03c75e5576985f29e5a60351cb9f19fa",
+    "credit-completion-focused.log": "425da24130b5b52ee77037b3228ad044a06930fd3ecb5e4fc53bbcd74901e508",
+    "credit-completion-focused.xml": "4f23478557e1acbe3983a50ff84e8c5061f433ba9a6b3e70ad8f3967b95aacca",
+    "credit-completion-cli.log": "2bf59848ec837178c3f234641a957bd1b61c8239eca5261c2d91aad7bfe79c05",
+    "credit-completion-cli.xml": "340bd0daf49933ed376e0a53cafe0be445a60c8ecdccfe3f240a431cb6295c75"
+  },
+  "independent_review": {
+    "decision": "No blocking findings within the aggregate credit and output-completion slice",
+    "source_sha": "a14255715b051b0e5500786049669f77789943d9",
+    "receipt": "output-credit-completion-independent-review-20261102.json",
+    "receipt_sha256": "069ca9ec88eacf5c662f9efd0a056db804842e95b5870d718da095392f4e66b1",
+    "focused_result": "140 passed, 3 expected legacy warnings in 2.60 seconds",
+    "additional_controls": "Real child process exits after sentinel/credit publication remain refused; completion readable; exact two-report 7882-byte aggregate boundary and 7881-byte refusal; preflight writes no files."
+  },
+  "qualified_scope": "Local constructed regression and CLI controls only; no >64MiB actual corpus, native Windows, full-suite, performance, training, or final-evaluation acceptance.",
+  "budget": {
+    "engine_output_bytes": 67108864,
+    "credit_manifest_bytes": 67108864,
+    "changed_existing_wire_formats": false,
+    "successful_managed_files": [
+      ".tier-r-output-run.json",
+      "output-credits.json"
+    ]
+  }
+}

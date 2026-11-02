@@ -6,6 +6,12 @@ Total output lines: 941
 ## Current evidence
 2026-10-11: source inspection of pinned upstream revisions completed. Linux Qt offscreen desktop self-test starts and displays the synthetic project. Integrated Linux QA: 91 tests passed, 2 Windows-only tests skipped; Ruff and Qt offscreen desktop self-test passed. Domain, transport, worker, schema and UI tests are included. Synthetic fixtures and mocked providers verify wiring and validation, not real matching accuracy or model interpretation correctness.
 
+## 2026-11-02 PR #157 long producer metadata
+
+The credited-output contract's 512-character name/order-key cap and 200-character version cap rejected upstream values that the Ghidriff importer otherwise preserves, causing successful answers to lose score and retention credit. The documented `/1` bounds are now 4,096 characters for names and string order keys and 1,024 for producer versions. No truncation changes the sort key. The existing 64 MiB document limit remains the aggregate bound; values beyond the field caps still fail before scoring. Generated output and credit schemas were regenerated.
+
+Validation on the local PR #157 tree after reconciling current main: all Tier R suites **448 passed, 8 skipped**; whole-tree Ruff and `git diff --check` passed. The 7 live compiler/toolchain probes in the suite were explicitly `BLOCKED` because this POSIX host lacks the required Clang/LLVM/MinGW tools; no live score is claimed. Synthetic adapter/retention checks establish contract behavior, not live engine accuracy. Fresh exact-head CI and independent re-review remain pending.
+
 ## Repaired audit defects
 - Ghidra rejected `runs/.quarantine-<uuid>/raw` with `Path element starting with '.' is not permitted`. Active and normalization-failed run directories now use `quarantine-<uuid>`. Preflight validates every resolved output ancestor, with an actionable error for dot-prefixed names and excessively long Windows output paths. The fake backend reproduces this exact rejection; native Ghidriff confirmation on Windows and clean-user reinstall remain release checks.
 - Artifact storage could escape project roots: pure models and disk paths now reject traversal, absolute/drive paths and symlinks.
