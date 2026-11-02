@@ -13,7 +13,8 @@ from pathlib import Path
 from . import prereg
 
 _SHA = re.compile(r'[0-9a-f]{64}')
-_FENCE = re.compile(r'^ {0,3}(`{3,}|~{3,})(.*)$')
+# Only the marker prefix is used; callers supply splitlines-derived text.
+_FENCE = re.compile(r'^ {0,3}(`{3,}|~{3,})')
 _BACKTICKS = re.compile(r'`+')
 _RAW_HTML = re.compile(r'<(?:[!?]|/?[A-Za-z][A-Za-z0-9-]*(?=[\s/>]|$))')
 
